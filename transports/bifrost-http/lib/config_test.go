@@ -936,6 +936,10 @@ func (m *MockConfigStore) GetVirtualKey(ctx context.Context, id string) (*tables
 	return nil, nil
 }
 
+func (m *MockConfigStore) GetVirtualKeyForUpdate(ctx context.Context, id string, _ *gorm.DB) (*tables.TableVirtualKey, error) {
+	return m.GetVirtualKey(ctx, id)
+}
+
 func (m *MockConfigStore) GetVirtualKeys(ctx context.Context) ([]tables.TableVirtualKey, error) {
 	return nil, nil
 }
