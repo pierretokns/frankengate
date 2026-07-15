@@ -1,51 +1,67 @@
-name: Release Helm Chart
+name: Release FrankenGate Helm Chart
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - "helm-charts/bifrost/**"
-      - ".github/workflows/helm-release.yml"
+    tags:
+      - "v*"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing FrankenGate v* release to publish the chart into
+        required: true
+        type: string
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: frankengate-helm-${{ inputs.release_tag || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    name: Publish chart for ${{ inputs.release_tag || github.ref_name }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
     permissions:
       contents: write
       packages: write
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Harden Runner
+      - name: Harden runner
         uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
         with:
           egress-policy: block
           allowed-endpoints: >
             api.github.com:443
-            auth.docker.io:443
             get.helm.sh:443
             ghcr.io:443
             github.com:443
-            registry-1.docker.io:443
-            maximhq.github.io:443
+            pkg-containers.githubusercontent.com:443
             proxy.golang.org:443
             release-assets.githubusercontent.com:443
             storage.googleapis.com:443
             sum.golang.org:443
             uploads.github.com:443
 
-      - name: Checkout
+      - name: Validate release tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "release_tag must be a semantic v* tag, got: $RELEASE_TAG" >&2
+            exit 1
+          fi
+
+      - name: Checkout release tag
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          # A manual run repairs an existing release from the workflow commit;
+          # tag-triggered publication always builds the immutable tag contents.
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || env.RELEASE_TAG }}
+          persist-credentials: false
 
       - name: Install Helm
         uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
@@ -55,111 +71,100 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
-          go-version: "1.26.4"
+          go-version: "1.26.5"
 
-      - name: Run chart-testing (lint)
+      - name: Validate chart release identity
+        id: chart
+        shell: bash
         run: |
+          set -euo pipefail
+          chart_version="$(awk '$1 == "version:" {print $2}' helm-charts/bifrost/Chart.yaml)"
+          app_version="$(awk '$1 == "appVersion:" {gsub(/\"/, "", $2); print $2}' helm-charts/bifrost/Chart.yaml)"
+          expected_app_version="${RELEASE_TAG#v}"
+          if [[ -z "$chart_version" || "$app_version" != "$expected_app_version" ]]; then
+            echo "Chart.yaml must have a version and appVersion=$expected_app_version; got version=$chart_version appVersion=$app_version" >&2
+            exit 1
+          fi
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          {
+            echo "version=$chart_version"
+            echo "package=bifrost-$chart_version.tgz"
+            echo "oci_repository=ghcr.io/$owner/helm-charts/bifrost"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run chart validation gates
+        shell: bash
+        run: |
+          set -euo pipefail
           helm lint helm-charts/bifrost
-
-      - name: Validate Helm templates
-        run: |
-          chmod +x .github/workflows/scripts/validate-helm-templates.sh
           .github/workflows/scripts/validate-helm-templates.sh
-
-      - name: Validate Helm config fields
-        run: |
-          chmod +x .github/workflows/scripts/validate-helm-config-fields.sh
           .github/workflows/scripts/validate-helm-config-fields.sh
-
-      - name: Validate Go ↔ config.schema.json ↔ helm-chart sync (schemasync)
-        run: |
-          chmod +x .github/workflows/scripts/validate-schema-sync.sh
           .github/workflows/scripts/validate-schema-sync.sh
 
-      - name: Get chart version
-        id: chart-version
+      - name: Package chart and checksum
+        shell: bash
         run: |
-          VERSION=$(grep '^version:' helm-charts/bifrost/Chart.yaml | awk '{print $2}')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Chart version: $VERSION"
+          set -euo pipefail
+          mkdir -p dist
+          helm package helm-charts/bifrost --destination dist
+          cd dist
+          sha256sum "${{ steps.chart.outputs.package }}" > "${{ steps.chart.outputs.package }}.sha256"
 
-      - name: Check if release exists
-        id: check-release
+      - name: Wait for matching GitHub release
+        shell: bash
         run: |
-          if gh release view "helm-chart-v${{ steps.chart-version.outputs.version }}" &>/dev/null; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Package Helm chart
-        run: |
-          cd helm-charts
-          helm package bifrost
-
-      - name: Create GitHub Release
-        if: steps.check-release.outputs.exists == 'false'
-        run: |
-          cd helm-charts
-          gh release create "helm-chart-v${{ steps.chart-version.outputs.version }}" \
-            bifrost-${{ steps.chart-version.outputs.version }}.tgz \
-            --target ${{ github.sha }} \
-            --title "Helm Chart v${{ steps.chart-version.outputs.version }}" \
-            --notes "Helm chart release for Bifrost v${{ steps.chart-version.outputs.version }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update Helm repository index
-        run: |
-          cd helm-charts
-          # Download existing index if it exists
-          curl -sLO https://maximhq.github.io/bifrost/helm-charts/index.yaml || true
-          # Merge with new chart only if index.yaml exists
-          if [ -f index.yaml ]; then
-            helm repo index . --url https://github.com/maximhq/bifrost/releases/download/helm-chart-v${{ steps.chart-version.outputs.version }} --merge index.yaml
-          else
-            helm repo index . --url https://github.com/maximhq/bifrost/releases/download/helm-chart-v${{ steps.chart-version.outputs.version }}
-          fi
-
-      - name: Deploy to GitHub Pages
-        uses: step-security/actions-gh-pages@db28a5e317d585916043c4acc5a4319ab3da9275 # v4.0.1
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/v1.5.0'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./helm-charts
-          destination_dir: helm-charts
-          keep_files: false
-          enable_jekyll: false
-          user_name: "github-actions[bot]"
-          user_email: "github-actions[bot]@users.noreply.github.com"
+          set -euo pipefail
+          for attempt in {1..180}; do
+            if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              exit 0
+            fi
+            if (( attempt == 180 )); then
+              echo "GitHub release $RELEASE_TAG did not appear within 60 minutes" >&2
+              exit 1
+            fi
+            sleep 20
+          done
 
       - name: Login to GitHub Container Registry
-        if: steps.check-release.outputs.exists == 'false'
-        continue-on-error: true
         uses: step-security/docker-login-action@870af644803bf9f204aed474adbad2958fec048b # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ github.token }}
 
-      - name: Login to Docker Hub
-        if: steps.check-release.outputs.exists == 'false'
-        continue-on-error: true
-        uses: step-security/docker-login-action@870af644803bf9f204aed474adbad2958fec048b # v4.1.0
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Push Helm chart as OCI artifact to GHCR
-        if: steps.check-release.outputs.exists == 'false'
-        continue-on-error: true
+      - name: Publish OCI chart to fork namespace
+        id: oci
+        shell: bash
         run: |
-          helm push helm-charts/bifrost-${{ steps.chart-version.outputs.version }}.tgz oci://ghcr.io/maximhq/helm-charts
+          set -euo pipefail
+          output="$(helm push "dist/${{ steps.chart.outputs.package }}" "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/helm-charts" 2>&1)"
+          printf '%s\n' "$output"
+          digest="$(printf '%s\n' "$output" | awk '$1 == "Digest:" {print $2}' | tail -1)"
+          if [[ ! "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+            echo "helm push did not return a valid OCI digest" >&2
+            exit 1
+          fi
+          printf '%s@%s\n' "${{ steps.chart.outputs.oci_repository }}" "$digest" > dist/OCI_CHART_DIGEST
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
-      - name: Push Helm chart as OCI artifact to Docker Hub
-        if: steps.check-release.outputs.exists == 'false'
-        continue-on-error: true
+      - name: Verify published OCI chart
+        shell: bash
         run: |
-          helm push helm-charts/bifrost-${{ steps.chart-version.outputs.version }}.tgz oci://registry-1.docker.io/maximhq
+          set -euo pipefail
+          mkdir -p verified
+          helm pull \
+            "oci://${{ steps.chart.outputs.oci_repository }}" \
+            --version "${{ steps.chart.outputs.version }}" \
+            --destination verified
+          cmp "dist/${{ steps.chart.outputs.package }}" "verified/${{ steps.chart.outputs.package }}"
+
+      - name: Attach verified chart and OCI digest to GitHub release
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release upload "$RELEASE_TAG" \
+            "dist/${{ steps.chart.outputs.package }}" \
+            "dist/${{ steps.chart.outputs.package }}.sha256" \
+            dist/OCI_CHART_DIGEST \
+            --clobber \
+            --repo "$GITHUB_REPOSITORY"

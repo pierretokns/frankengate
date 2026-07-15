@@ -1,16 +1,23 @@
-# Bifrost Helm Charts
+# FrankenGate Helm Chart
 
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/bifrost)](https://artifacthub.io/packages/helm/bifrost/bifrost)
 
-Official Helm charts for deploying [Bifrost](https://github.com/maximhq/bifrost) - a high-performance AI gateway with unified interface for multiple providers.
+Bifrost-compatible Helm chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS.
 
-**Latest Version:** 2.1.29
+**Latest Version:** 2.1.30
 
 ## Changelog
 
 ### Upcoming
 
+- Default `image.repository` and `image.tag` now install the public FrankenGate v0.2.0 image from GHCR.
+- Added `image.digest` as an immutable, tag-overriding image reference for reproducible deployments.
 - Split gateway probes: `livenessProbe` now uses process-only `/livez`, `readinessProbe` uses dependency-aware `/readyz`, and `startupProbe` uses `/startupz`.
+
+### 2.1.30
+
+- Default `image.repository` and `image.tag` install the public FrankenGate v0.2.0 image from GHCR.
+- Added `image.digest` as an immutable, tag-overriding image reference for reproducible deployments.
 
 ### 2.1.29
 

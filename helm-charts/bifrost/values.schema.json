@@ -23,7 +23,12 @@
         },
         "tag": {
           "type": "string",
-          "description": "Image tag (required - validated at template render time)"
+          "description": "Image tag used when digest is empty"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^(|sha256:[a-f0-9]{64})$",
+          "description": "Optional immutable image digest; takes precedence over tag"
         }
       }
     },
