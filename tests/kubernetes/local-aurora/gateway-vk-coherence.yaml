@@ -11,6 +11,8 @@ data:
     {}
   model-parameters.json: |
     {}
+  mcp-library.json: |
+    []
   config.json: |
     {
       "config_store": {
@@ -38,6 +40,7 @@ data:
         }
       },
       "framework": {
+        "mcp_library_url": "file:///app/catalog/mcp-library.json",
         "pricing": {
           "pricing_url": "file:///app/catalog/pricing.json",
           "pricing_sync_interval": 86400,
@@ -77,6 +80,11 @@ spec:
         app.kubernetes.io/name: frankengate-vk
         app.kubernetes.io/part-of: frankengate
         frankengate.dev/test-only: "true"
+      annotations:
+        # Replaced by run-vk-coherence.sh before the Deployment is created.
+        # This makes the tested artifact part of the initial pod template and
+        # avoids a second, artificial cold-start rollout.
+        frankengate.dev/test-artifact-sha256: "__ARTIFACT_SHA256__"
     spec:
       automountServiceAccountToken: false
       # Co-locate with the disposable PostgreSQL fixture. This keeps the
@@ -142,6 +150,9 @@ spec:
             - name: config
               mountPath: /app/catalog/model-parameters.json
               subPath: model-parameters.json
+            - name: config
+              mountPath: /app/catalog/mcp-library.json
+              subPath: mcp-library.json
             - name: data
               mountPath: /app/data/runtime
       volumes:

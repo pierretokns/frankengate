@@ -9,6 +9,7 @@ MANIFEST="$ROOT/tests/kubernetes/local-aurora/gateway-vk-coherence.yaml"
 SERVER_SCRIPT="$ROOT/tests/kubernetes/local-aurora/serve-binary.sh"
 WORK_DIR="$(mktemp -d)"
 BINARY="${FRANKENGATE_BINARY:-$WORK_DIR/frankengate}"
+FRANKENGATE_IMAGE="${FRANKENGATE_IMAGE:-}"
 
 cleanup() {
   local status=$?
@@ -30,7 +31,7 @@ for command in git go jq kubectl shasum; do
   }
 done
 
-if [[ -z "${FRANKENGATE_BINARY:-}" ]]; then
+if [[ -z "$FRANKENGATE_IMAGE" && -z "${FRANKENGATE_BINARY:-}" ]]; then
   node_arch="$(kubectl get nodes -o jsonpath='{.items[0].status.nodeInfo.architecture}')"
   case "$node_arch" in
     arm64|amd64) ;;
@@ -81,29 +82,53 @@ kubectl -n "$NAMESPACE" run frankengate-binary \
   --overrides='{"spec":{"affinity":{"podAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchLabels":{"app.kubernetes.io/name":"postgres"}},"topologyKey":"kubernetes.io/hostname"}]}}}}' \
   --restart=Never --command -- sleep 3600
 kubectl -n "$NAMESPACE" wait --for=condition=Ready pod/frankengate-binary --timeout=120s
-kubectl -n "$NAMESPACE" cp "$BINARY" frankengate-binary:/tmp/frankengate
-kubectl -n "$NAMESPACE" cp "$SERVER_SCRIPT" frankengate-binary:/tmp/serve-binary.sh
-kubectl -n "$NAMESPACE" exec frankengate-binary -- chmod 0555 /tmp/frankengate /tmp/serve-binary.sh
-kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c \
-  'nohup /tmp/serve-binary.sh /tmp/frankengate 18080 >/tmp/binary-server.log 2>&1 &'
-if ! kubectl -n "$NAMESPACE" get service/frankengate-binary >/dev/null 2>&1; then
-  kubectl -n "$NAMESPACE" expose pod/frankengate-binary --name=frankengate-binary --port=18080 --target-port=18080
+if [[ -z "$FRANKENGATE_IMAGE" ]]; then
+  kubectl -n "$NAMESPACE" cp "$BINARY" frankengate-binary:/tmp/frankengate
+  kubectl -n "$NAMESPACE" cp "$SERVER_SCRIPT" frankengate-binary:/tmp/serve-binary.sh
+  kubectl -n "$NAMESPACE" exec frankengate-binary -- chmod 0555 /tmp/frankengate /tmp/serve-binary.sh
+  kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c \
+    'nohup /tmp/serve-binary.sh /tmp/frankengate 18080 >/tmp/binary-server.log 2>&1 &'
+  if ! kubectl -n "$NAMESPACE" get service/frankengate-binary >/dev/null 2>&1; then
+    kubectl -n "$NAMESPACE" expose pod/frankengate-binary --name=frankengate-binary --port=18080 --target-port=18080
+  fi
+  binary_service_ip="$(kubectl -n "$NAMESPACE" get service/frankengate-binary -o jsonpath='{.spec.clusterIP}')"
+  if [[ -z "$binary_service_ip" || "$binary_service_ip" == "None" ]]; then
+    echo "binary service has no usable ClusterIP" >&2
+    exit 1
+  fi
+else
+  # The release-image path removes the test-only init transfer and runs the
+  # image's own ENTRYPOINT/CMD. Keep the utility pod for in-cluster HTTP oracles.
+  binary_service_ip="127.0.0.1"
 fi
-
-binary_service_ip="$(kubectl -n "$NAMESPACE" get service/frankengate-binary -o jsonpath='{.spec.clusterIP}')"
-if [[ -z "$binary_service_ip" || "$binary_service_ip" == "None" ]]; then
-  echo "binary service has no usable ClusterIP" >&2
-  exit 1
+if [[ -n "$FRANKENGATE_IMAGE" ]]; then
+  artifact_sha256="$(printf '%s' "$FRANKENGATE_IMAGE" | shasum -a 256 | awk '{print $1}')"
+else
+  artifact_sha256="$(shasum -a 256 "$BINARY" | awk '{print $1}')"
 fi
-sed "s/__BINARY_SERVICE_IP__/$binary_service_ip/g" "$MANIFEST" > "$WORK_DIR/gateway.yaml"
+sed -e "s/__BINARY_SERVICE_IP__/$binary_service_ip/g" \
+  -e "s/__ARTIFACT_SHA256__/$artifact_sha256/g" \
+  "$MANIFEST" > "$WORK_DIR/gateway.yaml"
 kubectl apply -f "$WORK_DIR/gateway.yaml"
-binary_sha256="$(shasum -a 256 "$BINARY" | awk '{print $1}')"
-# The init container copies bytes from a stable in-cluster Service URL. The
-# rendered Deployment can therefore be unchanged even when those bytes differ;
-# stamp the content digest into the pod template so every tested binary gets a
-# real rollout and no run can accidentally exercise stale gateway processes.
-kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=merge \
-  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"frankengate.dev/test-binary-sha256\":\"$binary_sha256\"}}}}}"
+if [[ -n "$FRANKENGATE_IMAGE" ]]; then
+  image_patch="$(jq -cn --arg image "$FRANKENGATE_IMAGE" '[
+    {op:"remove",path:"/spec/template/spec/initContainers"},
+    {op:"replace",path:"/spec/template/spec/containers/0/image",value:$image},
+    {op:"replace",path:"/spec/template/spec/containers/0/imagePullPolicy",value:"Always"},
+    {op:"remove",path:"/spec/template/spec/containers/0/command"},
+    {op:"remove",path:"/spec/template/spec/containers/0/args"},
+    {op:"remove",path:"/spec/template/spec/containers/0/volumeMounts/0"},
+    {op:"remove",path:"/spec/template/spec/volumes/0"},
+    {op:"remove",path:"/spec/template/spec/affinity"},
+    {op:"add",path:"/spec/template/spec/topologySpreadConstraints",value:[{
+      maxSkew:1,
+      topologyKey:"kubernetes.io/hostname",
+      whenUnsatisfiable:"DoNotSchedule",
+      labelSelector:{matchLabels:{"app.kubernetes.io/name":"frankengate-vk"}}
+    }]}
+  ]')"
+  kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=json -p "$image_patch"
+fi
 kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
 
 list_ready_gateway_ips() {
@@ -119,6 +144,14 @@ done < <(list_ready_gateway_ips)
 if [[ "${#pod_ips[@]}" -ne 3 ]]; then
   echo "expected 3 gateway pod IPs, got ${#pod_ips[@]}" >&2
   exit 1
+fi
+if [[ -n "$FRANKENGATE_IMAGE" ]]; then
+  distinct_nodes="$(kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk -o json |
+    jq -r '.items[] | select(.metadata.deletionTimestamp == null) | .spec.nodeName' | sort -u | wc -l | tr -d ' ')"
+  if [[ "$distinct_nodes" -ne 3 ]]; then
+    echo "release-image proof expected 3 distinct Kubernetes nodes, got $distinct_nodes" >&2
+    exit 1
+  fi
 fi
 
 wait_for_cache() {
@@ -201,4 +234,5 @@ done < <(list_ready_gateway_ips)
 wait_for_cache absent "$vk_id"
 
 jq -n --arg vk_id "$vk_id" --argjson pods "${#pod_ips[@]}" \
-  '{ok:true,pods:$pods,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,outbox:["reload","reload","delete"],restart_replay:"passed"}'
+  --arg artifact "${FRANKENGATE_IMAGE:-loose-binary}" \
+  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,outbox:["reload","reload","delete"],restart_replay:"passed"}'

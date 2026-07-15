@@ -228,3 +228,52 @@ jobs:
             "frankengate-${RELEASE_TAG}-container-digest.txt" \
             --clobber \
             --repo "$GITHUB_REPOSITORY"
+
+  kubernetes-vk-coherence:
+    name: Prove release image across three Kubernetes nodes
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - name: Checkout immutable release tag
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.release_tag }}
+          persist-credentials: false
+
+      - name: Install pinned k3d
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            https://github.com/k3d-io/k3d/releases/download/v5.8.3/k3d-linux-amd64 \
+            --output /tmp/k3d
+          echo 'dbaa79a76ace7f4ca230a1ff41dc7d8a5036a8ad0309e9c54f9bf3836dbe853e  /tmp/k3d' | sha256sum --check
+          sudo install -m 0555 /tmp/k3d /usr/local/bin/k3d
+
+      - name: Create three-worker k3s cluster
+        run: k3d cluster create frankengate-release --agents 3 --wait --timeout 180s
+
+      - name: Run immutable-image virtual-key coherence oracle
+        env:
+          FRANKENGATE_IMAGE: ${{ needs.publish.outputs.image }}@${{ needs.publish.outputs.digest }}
+        run: tests/kubernetes/local-aurora/run-vk-coherence.sh
+
+      - name: Collect failure evidence
+        if: failure()
+        run: |
+          kubectl get pods -A -o wide || true
+          kubectl -n frankengate-test get events --sort-by=.lastTimestamp || true
+          kubectl -n frankengate-test logs -l app.kubernetes.io/name=frankengate-vk --all-containers --tail=200 || true
+
+      - name: Delete test cluster
+        if: always()
+        run: k3d cluster delete frankengate-release

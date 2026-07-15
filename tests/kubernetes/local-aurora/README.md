@@ -68,8 +68,22 @@ container-image build is not part of this coherence assertion. It discovers
 that Service's ClusterIP and renders a temporary gateway manifest, so the
 checked-in template contains no cluster-specific address.
 
-This is a same-cluster, shared-authority coherence proof. It does not prove
-cross-region Aurora behavior, cross-node network behavior, production image
+To prove the shipped container rather than a loose binary, pass an immutable
+image digest. This path uses the image's own entrypoint and command, requires
+three distinct Kubernetes nodes, and runs the same create/rotate/delete/restart
+oracle against the artifact:
+
+```sh
+FRANKENGATE_IMAGE='ghcr.io/pierretokns/frankengate@sha256:<manifest-digest>' \
+tests/kubernetes/local-aurora/run-vk-coherence.sh
+```
+
+Release CI must use this mode. The loose-binary mode remains useful for fast
+local iteration but is not evidence that a published image contains the fix.
+
+This is a same-cluster, shared-authority coherence proof. Image mode proves
+cross-node scheduling and the published container entrypoint; loose-binary mode
+does not. Neither mode proves cross-region Aurora behavior, production image
 hardening, HPA behavior, or real Aurora failover.
 
 Delete the complete fixture, including its persistent volume claim:
