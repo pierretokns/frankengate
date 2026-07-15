@@ -1,4 +1,4 @@
-Bifrost has been installed!
+FrankenGate has been installed!
 
 {{- $isLegacy := true }}
 {{- range $k, $v := .Values.ingress }}
@@ -6,14 +6,14 @@ Bifrost has been installed!
 {{- end }}
 {{- if and .Values.ingress $isLegacy .Values.ingress.enabled }}
 
-1. Access Bifrost at:
+1. Access FrankenGate at:
 {{- range .Values.ingress.hosts }}
    http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .host }}
 {{- end }}
 
 {{- else if and .Values.ingress (not $isLegacy) }}
 
-1. Access Bifrost at:
+1. Access FrankenGate at:
 {{- range (keys .Values.ingress | sortAlpha) }}
 {{- $ing := index $.Values.ingress . }}
 {{- if and (kindIs "map" $ing) $ing.enabled }}
@@ -28,7 +28,7 @@ Bifrost has been installed!
 1. Get the LoadBalancer IP:
    kubectl get svc {{ include "bifrost.fullname" . }} -n {{ .Release.Namespace }}
 
-2. Access Bifrost at:
+2. Access FrankenGate at:
    http://<EXTERNAL-IP>:{{ .Values.service.port }}
 
 {{- else if eq .Values.service.type "NodePort" }}
@@ -37,15 +37,15 @@ Bifrost has been installed!
    export NODE_PORT=$(kubectl get svc {{ include "bifrost.fullname" . }} -n {{ .Release.Namespace }} -o jsonpath='{.spec.ports[0].nodePort}')
    export NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}' || kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
 
-2. Access Bifrost at:
+2. Access FrankenGate at:
    http://$NODE_IP:$NODE_PORT
 
 {{- else }}
 
-1. Port-forward to access Bifrost:
+1. Port-forward to access FrankenGate:
    kubectl port-forward svc/{{ include "bifrost.fullname" . }} 8080:{{ .Values.service.port }} -n {{ .Release.Namespace }}
 
-2. Access Bifrost at:
+2. Access FrankenGate at:
    http://localhost:8080
 
 {{- end }}
@@ -65,8 +65,10 @@ Configuration:
 {{- else }}
 - PostgreSQL: External ({{ .Values.postgresql.external.host }})
 {{- end }}
-{{- else }}
+{{- else if .Values.storage.persistence.enabled }}
 - SQLite: Using persistent volume ({{ .Values.storage.persistence.size }})
+{{- else }}
+- SQLite: Ephemeral pod storage
 {{- end }}
 {{- if and .Values.vectorStore.enabled (ne .Values.vectorStore.type "none") }}
 - Vector Store: {{ .Values.vectorStore.type }}
@@ -79,4 +81,4 @@ Configuration:
 
 Metrics: http://{{ include "bifrost.fullname" . }}:{{ .Values.service.port }}/metrics
 
-For documentation, visit: https://www.getbifrost.ai/docs
+For documentation, visit: https://github.com/pierretokns/frankengate

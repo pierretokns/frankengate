@@ -490,6 +490,31 @@ else
   head -10 /tmp/helm-template-output.yaml | sed 's/^/    /'
 fi
 
+# 8. Replacement-facing install notes
+echo ""
+echo -e "${CYAN}📝 8/8 - Validating FrankenGate install notes...${NC}"
+echo "--------------------------------------------------"
+
+test_name="ephemeral SQLite notes are branded and accurate"
+notes_file=./helm-charts/bifrost/templates/NOTES.txt
+if grep -Fq 'FrankenGate has been installed!' "$notes_file" &&
+  grep -Fq '{{- else if .Values.storage.persistence.enabled }}' "$notes_file" &&
+  grep -Fq 'SQLite: Ephemeral pod storage' "$notes_file" &&
+  ! grep -Fq 'getbifrost.ai' "$notes_file"; then
+  report_result "$test_name" 0
+else
+  report_result "$test_name" 1
+  echo -e "${YELLOW}  Notes were unbranded, inaccurate, or linked upstream${NC}"
+fi
+
+test_name="persistent SQLite notes report configured volume size"
+if grep -Fq 'SQLite: Using persistent volume ({{ .Values.storage.persistence.size }})' "$notes_file"; then
+  report_result "$test_name" 0
+else
+  report_result "$test_name" 1
+  echo -e "${YELLOW}  Persistent SQLite notes did not report the configured volume${NC}"
+fi
+
 # Cleanup
 rm -f /tmp/helm-template-output.yaml
 
