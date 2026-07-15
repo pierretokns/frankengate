@@ -83,7 +83,14 @@ run_in_modules() {
     echo "::group::${label}: ${module}"
     (
       cd "$ROOT/$module"
-      "$@"
+      if [[ "$label" == "go vet" && "$module" == "examples/plugins/hello-world-wasm-go" ]]; then
+        # This WASM ABI intentionally converts a uint32 linear-memory offset
+        # into an unsafe.Pointer. Keep every other vet analyzer enabled and
+        # scope the host-only unsafeptr exception to this target-specific module.
+        go vet -unsafeptr=false ./...
+      else
+        "$@"
+      fi
     )
     echo "::endgroup::"
   done
