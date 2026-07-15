@@ -678,7 +678,7 @@ func (m *MCPManager) VerifyHeadersConnection(ctx context.Context, config *schema
 	return tools, toolNameMapping, nil
 }
 
-// SetClientTools updates the tool map and name mapping for an existing client.
+// SetClientTools replaces the tool map and name mapping for an existing client.
 // This is used to populate tools discovered during per-user OAuth verification,
 // where tool discovery happens separately from client creation.
 //
@@ -691,10 +691,14 @@ func (m *MCPManager) SetClientTools(clientID string, tools map[string]schemas.Ch
 	defer m.mu.Unlock()
 
 	if client, exists := m.clientMap[clientID]; exists {
-		for toolName, tool := range tools {
-			client.ToolMap[toolName] = tool
+		client.ToolMap = maps.Clone(tools)
+		if client.ToolMap == nil {
+			client.ToolMap = make(map[string]schemas.ChatTool)
 		}
-		client.ToolNameMapping = toolNameMapping
+		client.ToolNameMapping = maps.Clone(toolNameMapping)
+		if client.ToolNameMapping == nil {
+			client.ToolNameMapping = make(map[string]string)
+		}
 		client.State = schemas.MCPConnectionStateConnected
 		m.logger.Debug("%s Set %d tools on client '%s'", MCPLogPrefix, len(tools), client.Name)
 	}

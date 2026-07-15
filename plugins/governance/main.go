@@ -861,6 +861,9 @@ func (p *GovernancePlugin) computeMCPIncludeToolsWith(virtualKey *configstoreTab
 	// Track which AllowOnAllVirtualKeys clients have an explicit VK config so we don't double-add them.
 	handledClients := make(map[string]bool)
 	for _, vkMcpConfig := range virtualKey.MCPConfigs {
+		if vkMcpConfig.MCPClient.Disabled {
+			continue
+		}
 		clientID := vkMcpConfig.MCPClient.ClientID
 		if _, isAllowAll := allowAllVKsClients[clientID]; isAllowAll {
 			// Explicit VK config exists — it takes precedence; mark as handled regardless of tool list
@@ -1205,6 +1208,9 @@ func (p *GovernancePlugin) isMCPToolAllowedByVK(vk *configstoreTables.TableVirtu
 func (p *GovernancePlugin) isMCPToolAllowedByVKWith(vk *configstoreTables.TableVirtualKey, toolPattern string, allowAllClients map[string]string) bool {
 	// Check VK-specific MCP configs first — explicit config always overrides AllowOnAllVirtualKeys.
 	for _, mcpConfig := range vk.MCPConfigs {
+		if mcpConfig.MCPClient.Disabled {
+			continue
+		}
 		clientName := mcpConfig.MCPClient.Name
 		if toolPattern != clientName+"-*" && !strings.HasPrefix(toolPattern, clientName+"-") {
 			continue

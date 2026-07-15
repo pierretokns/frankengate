@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"path/filepath"
+	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -220,6 +221,167 @@ func TestVirtualKeyInvalidationPollerAppliesOrderedBatchAndPublishesFreshness(t 
 	state := poller.Freshness(time.Now(), time.Minute)
 	if state.Cursor != 3 || state.HighWatermark != 3 || state.Lag != 0 || !state.Fresh || state.LastSuccess.IsZero() {
 		t.Fatalf("unexpected freshness state: %+v", state)
+	}
+}
+
+func TestApplyGovernanceInvalidationDispatchesMCPClientEvents(t *testing.T) {
+	var calls []string
+	reloadVK := func(context.Context, string) (*tables.TableVirtualKey, error) {
+		return nil, errors.New("unexpected VK reload")
+	}
+	removeVK := func(context.Context, string) error { return errors.New("unexpected VK delete") }
+	reloadMCP := func(_ context.Context, id string) error {
+		calls = append(calls, "reload:"+id)
+		return nil
+	}
+	removeMCP := func(_ context.Context, id string) error {
+		calls = append(calls, "delete:"+id)
+		return nil
+	}
+	for _, event := range []tables.TableVirtualKeyInvalidationEvent{
+		{EntityType: tables.VirtualKeyInvalidationEntityType, Action: tables.VirtualKeyInvalidationActionReload, EntityID: tables.MCPClientInvalidationEntityID("mcp-a")},
+		{EntityType: tables.VirtualKeyInvalidationEntityType, Action: tables.VirtualKeyInvalidationActionDelete, EntityID: tables.MCPClientInvalidationEntityID("mcp-b")},
+	} {
+		if err := applyGovernanceInvalidation(context.Background(), event, reloadVK, removeVK, reloadMCP, removeMCP); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if want := []string{"reload:mcp-a", "delete:mcp-b"}; !reflect.DeepEqual(calls, want) {
+		t.Fatalf("calls = %v, want %v", calls, want)
+	}
+}
+
+func TestMCPControlRecordIsSafeForPreMCPConsumer(t *testing.T) {
+	entityID := tables.MCPClientInvalidationEntityID("mcp-a")
+	var removed string
+	err := applyVirtualKeyInvalidation(
+		context.Background(),
+		tables.TableVirtualKeyInvalidationEvent{
+			EntityType: tables.VirtualKeyInvalidationEntityType,
+			Action:     tables.VirtualKeyInvalidationActionReload,
+			EntityID:   entityID,
+		},
+		func(context.Context, string) (*tables.TableVirtualKey, error) { return nil, configstore.ErrNotFound },
+		func(_ context.Context, id string) error { removed = id; return nil },
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if removed != entityID {
+		t.Fatalf("legacy consumer removed %q, want reserved control id %q", removed, entityID)
+	}
+}
+
+func TestLegacyConsumerAdvancesPastMCPControlRecordInMigratedStore(t *testing.T) {
+	ctx := context.Background()
+	store, err := configstore.NewConfigStore(ctx, &configstore.Config{
+		Enabled: true,
+		Type:    configstore.ConfigStoreTypeSQLite,
+		Config:  &configstore.SQLiteConfig{Path: filepath.Join(t.TempDir(), "legacy.db")},
+	}, bifrost.NewDefaultLogger(schemas.LogLevelError))
+	require.NoError(t, err)
+	event := &tables.TableVirtualKeyInvalidationEvent{
+		EntityType: tables.VirtualKeyInvalidationEntityType,
+		Action:     tables.VirtualKeyInvalidationActionReload,
+		EntityID:   tables.MCPClientInvalidationEntityID("mcp-rolling-upgrade"),
+	}
+	require.NoError(t, store.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+		return store.AppendVirtualKeyInvalidation(ctx, tx, event)
+	}))
+
+	// This callback is the complete pre-MCP consumer behavior: it knows only
+	// reload/delete VK records and resolves against the real migrated store.
+	legacyPoller := newVirtualKeyInvalidationPoller(store, func(ctx context.Context, event tables.TableVirtualKeyInvalidationEvent) error {
+		return applyVirtualKeyInvalidation(ctx, event, store.GetVirtualKey, func(context.Context, string) error { return nil })
+	}, 100, time.Second)
+	more, err := legacyPoller.pollOnce(ctx)
+	require.NoError(t, err)
+	require.False(t, more)
+	require.Equal(t, event.ID, legacyPoller.Cursor())
+	require.True(t, legacyPoller.Freshness(time.Now(), time.Minute).Fresh)
+}
+
+func TestMCPRuntimeReconcileNewerGenerationCannotBeLost(t *testing.T) {
+	server := &BifrostHTTPServer{mcpReconcileWorkers: make(map[string]*mcpRuntimeReconcileState)}
+	state := &mcpRuntimeReconcileState{generation: 1}
+	server.mcpReconcileWorkers["mcp-a"] = state
+
+	// A newer event arrives while the generation-1 attempt is in flight.
+	state.generation = 2
+	done, changed := server.completeMCPRuntimeReconcileAttempt("mcp-a", state, 1, nil)
+	if done || !changed {
+		t.Fatalf("older success done=%v changed=%v, want retained dirty generation", done, changed)
+	}
+	if server.mcpReconcileWorkers["mcp-a"] != state {
+		t.Fatal("older success deleted the worker for a newer generation")
+	}
+
+	done, changed = server.completeMCPRuntimeReconcileAttempt("mcp-a", state, 2, nil)
+	if !done || changed {
+		t.Fatalf("latest success done=%v changed=%v, want completion", done, changed)
+	}
+	if _, exists := server.mcpReconcileWorkers["mcp-a"]; exists {
+		t.Fatal("latest successful generation left a retry worker behind")
+	}
+}
+
+func TestNewMCPEventQuarantinesAfterBlockedOlderRuntimeAttempt(t *testing.T) {
+	server := &BifrostHTTPServer{mcpReconcileWorkers: make(map[string]*mcpRuntimeReconcileState)}
+	state := &mcpRuntimeReconcileState{generation: 1, ready: make(chan struct{})}
+	server.mcpReconcileWorkers["mcp-a"] = state
+	oldStarted := make(chan struct{})
+	releaseOld := make(chan struct{})
+	order := make(chan string, 2)
+	go func() {
+		state.operation.Lock()
+		close(oldStarted)
+		<-releaseOld
+		order <- "old-runtime-write"
+		state.operation.Unlock()
+	}()
+	<-oldStarted
+
+	server.mcpReconcileMu.Lock()
+	state.generation++
+	server.mcpReconcileMu.Unlock()
+	newQuarantined := make(chan struct{})
+	go func() {
+		state.operation.Lock()
+		order <- "new-quarantine"
+		state.operation.Unlock()
+		close(newQuarantined)
+	}()
+	close(releaseOld)
+	<-newQuarantined
+	if first, second := <-order, <-order; first != "old-runtime-write" || second != "new-quarantine" {
+		t.Fatalf("operation order = %q then %q, want old write then final quarantine", first, second)
+	}
+	done, changed := server.completeMCPRuntimeReconcileAttempt("mcp-a", state, 1, nil)
+	if done || !changed {
+		t.Fatalf("older attempt done=%v changed=%v, want retry of latest generation", done, changed)
+	}
+}
+
+func TestOnlyPerUserAuthUsesPersistedMCPToolSnapshot(t *testing.T) {
+	for _, tt := range []struct {
+		name string
+		auth schemas.MCPAuthType
+		want bool
+	}{
+		{name: "none", auth: schemas.MCPAuthTypeNone, want: false},
+		{name: "static headers", auth: schemas.MCPAuthTypeHeaders, want: false},
+		{name: "server oauth", auth: schemas.MCPAuthTypeOauth, want: false},
+		{name: "per-user oauth", auth: schemas.MCPAuthTypePerUserOauth, want: true},
+		{name: "per-user headers", auth: schemas.MCPAuthTypePerUserHeaders, want: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := usesPersistedMCPToolSnapshot(&schemas.MCPClientConfig{AuthType: tt.auth}); got != tt.want {
+				t.Fatalf("usesPersistedMCPToolSnapshot(%q) = %v, want %v", tt.auth, got, tt.want)
+			}
+		})
+	}
+	if usesPersistedMCPToolSnapshot(&schemas.MCPClientConfig{AuthType: schemas.MCPAuthTypePerUserOauth, Disabled: true}) {
+		t.Fatal("disabled per-user client attempted to restore persisted tools")
 	}
 }
 

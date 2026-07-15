@@ -2077,8 +2077,55 @@ func (s *RDBConfigStore) CreateMCPClientConfig(ctx context.Context, clientConfig
 		if err := tx.WithContext(ctx).Create(&dbClient).Error; err != nil {
 			return s.parseGormError(err)
 		}
+		if err := s.AppendVirtualKeyInvalidation(ctx, tx, &tables.TableVirtualKeyInvalidationEvent{
+			EntityType: tables.VirtualKeyInvalidationEntityType,
+			Action:     tables.VirtualKeyInvalidationActionReload,
+			EntityID:   tables.MCPClientInvalidationEntityID(dbClient.ClientID),
+		}); err != nil {
+			return fmt.Errorf("append MCP client creation invalidation: %w", err)
+		}
+		if dbClient.AllowOnAllVirtualKeys {
+			virtualKeyIDs, err := affectedVirtualKeyIDsForMCPClient(ctx, tx, dbClient.ID, true)
+			if err != nil {
+				return err
+			}
+			if err := s.appendVirtualKeyReloadInvalidations(ctx, tx, virtualKeyIDs); err != nil {
+				return err
+			}
+		}
 		return nil
 	})
+}
+
+func affectedVirtualKeyIDsForMCPClient(ctx context.Context, tx *gorm.DB, mcpClientID uint, includeAll bool) ([]string, error) {
+	query := tx.WithContext(ctx)
+	var virtualKeyIDs []string
+	if includeAll {
+		if err := query.Model(&tables.TableVirtualKey{}).Order("id ASC").Pluck("id", &virtualKeyIDs).Error; err != nil {
+			return nil, fmt.Errorf("list virtual keys affected by allow-all MCP client: %w", err)
+		}
+	} else if err := query.Model(&tables.TableVirtualKeyMCPConfig{}).
+		Where("mcp_client_id = ?", mcpClientID).
+		Distinct().
+		Order("virtual_key_id ASC").
+		Pluck("virtual_key_id", &virtualKeyIDs).Error; err != nil {
+		return nil, fmt.Errorf("list virtual keys referencing MCP client: %w", err)
+	}
+	sort.Strings(virtualKeyIDs)
+	return virtualKeyIDs, nil
+}
+
+func (s *RDBConfigStore) appendVirtualKeyReloadInvalidations(ctx context.Context, tx *gorm.DB, virtualKeyIDs []string) error {
+	for _, virtualKeyID := range virtualKeyIDs {
+		if err := s.AppendVirtualKeyInvalidation(ctx, tx, &tables.TableVirtualKeyInvalidationEvent{
+			EntityType: tables.VirtualKeyInvalidationEntityType,
+			Action:     tables.VirtualKeyInvalidationActionReload,
+			EntityID:   virtualKeyID,
+		}); err != nil {
+			return fmt.Errorf("append MCP client virtual-key invalidation for %s: %w", virtualKeyID, err)
+		}
+	}
+	return nil
 }
 
 // UpdateMCPClientConfig updates an existing MCP client configuration in the database.
@@ -2279,30 +2326,24 @@ func (s *RDBConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, c
 		if err := tx.WithContext(ctx).Model(&existingClient).Updates(updates).Error; err != nil {
 			return s.parseGormError(err)
 		}
+		if err := s.AppendVirtualKeyInvalidation(ctx, tx, &tables.TableVirtualKeyInvalidationEvent{
+			EntityType: tables.VirtualKeyInvalidationEntityType,
+			Action:     tables.VirtualKeyInvalidationActionReload,
+			EntityID:   tables.MCPClientInvalidationEntityID(existingClient.ClientID),
+		}); err != nil {
+			return fmt.Errorf("append MCP client reload invalidation: %w", err)
+		}
 
 		// MCP client policy is preloaded into every referencing virtual key.
 		// Publish those cache reloads in the same transaction as the client row
 		// so every mutation path (API, OAuth refresh, config reconciliation,
 		// enable/disable) has identical cross-pod coherence semantics.
-		var virtualKeyIDs []string
-		if err := tx.WithContext(ctx).
-			Model(&tables.TableVirtualKeyMCPConfig{}).
-			Where("mcp_client_id = ?", existingClient.ID).
-			Distinct().
-			Pluck("virtual_key_id", &virtualKeyIDs).Error; err != nil {
-			return s.parseGormError(err)
+		virtualKeyIDs, err := affectedVirtualKeyIDsForMCPClient(ctx, tx, existingClient.ID,
+			existingClient.AllowOnAllVirtualKeys || clientConfigCopy.AllowOnAllVirtualKeys)
+		if err != nil {
+			return err
 		}
-		sort.Strings(virtualKeyIDs)
-		for _, virtualKeyID := range virtualKeyIDs {
-			if err := s.AppendVirtualKeyInvalidation(ctx, tx, &tables.TableVirtualKeyInvalidationEvent{
-				EntityType: tables.VirtualKeyInvalidationEntityType,
-				Action:     tables.VirtualKeyInvalidationActionReload,
-				EntityID:   virtualKeyID,
-			}); err != nil {
-				return fmt.Errorf("append MCP client virtual-key invalidation for %s: %w", virtualKeyID, err)
-			}
-		}
-		return nil
+		return s.appendVirtualKeyReloadInvalidations(ctx, tx, virtualKeyIDs)
 	})
 }
 
@@ -2320,6 +2361,10 @@ func (s *RDBConfigStore) DeleteMCPClientConfig(ctx context.Context, id string) e
 
 		// Delete any virtual key MCP configs that reference this client
 		var configIDs []uint
+		virtualKeyIDs, err := affectedVirtualKeyIDsForMCPClient(ctx, tx, existingClient.ID, existingClient.AllowOnAllVirtualKeys)
+		if err != nil {
+			return err
+		}
 		if err := dbForUpdate(tx.WithContext(ctx)).
 			Model(&tables.TableVirtualKeyMCPConfig{}).
 			Where("mcp_client_id = ?", existingClient.ID).
@@ -2351,8 +2396,18 @@ func (s *RDBConfigStore) DeleteMCPClientConfig(ctx context.Context, id string) e
 			return err
 		}
 
-		// Delete the client (this will also handle foreign key cascades)
-		return tx.WithContext(ctx).Delete(&existingClient).Error
+		// Delete the client (this will also handle foreign key cascades).
+		if err := tx.WithContext(ctx).Delete(&existingClient).Error; err != nil {
+			return err
+		}
+		if err := s.AppendVirtualKeyInvalidation(ctx, tx, &tables.TableVirtualKeyInvalidationEvent{
+			EntityType: tables.VirtualKeyInvalidationEntityType,
+			Action:     tables.VirtualKeyInvalidationActionDelete,
+			EntityID:   tables.MCPClientInvalidationEntityID(existingClient.ClientID),
+		}); err != nil {
+			return fmt.Errorf("append MCP client deletion invalidation: %w", err)
+		}
+		return s.appendVirtualKeyReloadInvalidations(ctx, tx, virtualKeyIDs)
 	})
 }
 
@@ -3390,6 +3445,12 @@ func (s *RDBConfigStore) GetVirtualKeyQuotaByValue(ctx context.Context, value st
 
 // CreateVirtualKey creates a new virtual key in the database.
 func (s *RDBConfigStore) CreateVirtualKey(ctx context.Context, virtualKey *tables.TableVirtualKey, tx ...*gorm.DB) error {
+	if virtualKey == nil {
+		return errors.New("virtual key is required")
+	}
+	if tables.IsReservedVirtualKeyEntityID(virtualKey.ID) {
+		return fmt.Errorf("virtual key id uses reserved invalidation namespace %q", tables.MCPClientInvalidationEntityIDPrefix)
+	}
 	var txDB *gorm.DB
 	if len(tx) > 0 {
 		txDB = tx[0]
@@ -3404,6 +3465,12 @@ func (s *RDBConfigStore) CreateVirtualKey(ctx context.Context, virtualKey *table
 
 // UpdateVirtualKey updates an existing virtual key in the database.
 func (s *RDBConfigStore) UpdateVirtualKey(ctx context.Context, virtualKey *tables.TableVirtualKey, tx ...*gorm.DB) error {
+	if virtualKey == nil {
+		return errors.New("virtual key is required")
+	}
+	if tables.IsReservedVirtualKeyEntityID(virtualKey.ID) {
+		return fmt.Errorf("virtual key id uses reserved invalidation namespace %q", tables.MCPClientInvalidationEntityIDPrefix)
+	}
 	if len(tx) == 0 {
 		return s.DB().WithContext(ctx).Transaction(func(transaction *gorm.DB) error {
 			return s.UpdateVirtualKey(ctx, virtualKey, transaction)
@@ -3433,6 +3500,23 @@ func (s *RDBConfigStore) UpdateVirtualKey(ctx context.Context, virtualKey *table
 			Updates(virtualKey).Error; err != nil {
 			return s.parseGormError(err)
 		}
+	}
+	return nil
+}
+
+// ValidateVirtualKeyInvalidationNamespace rejects a pre-existing VK whose ID
+// collides with the backward-compatible MCP control-record namespace. Startup
+// calls this before consuming outbox events so such a row can never be silently
+// misrouted as an MCP operation.
+func (s *RDBConfigStore) ValidateVirtualKeyInvalidationNamespace(ctx context.Context) error {
+	var count int64
+	if err := s.DB().WithContext(ctx).Model(&tables.TableVirtualKey{}).
+		Where("id LIKE ?", tables.MCPClientInvalidationEntityIDPrefix+"%").
+		Count(&count).Error; err != nil {
+		return fmt.Errorf("audit reserved virtual-key invalidation namespace: %w", err)
+	}
+	if count != 0 {
+		return fmt.Errorf("found %d virtual key ids using reserved invalidation namespace %q", count, tables.MCPClientInvalidationEntityIDPrefix)
 	}
 	return nil
 }

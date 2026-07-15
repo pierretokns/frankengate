@@ -158,6 +158,22 @@ func TestIsMCPToolAllowedByVK_UsesInMemoryStore(t *testing.T) {
 		"isMCPToolAllowedByVK should use inMemoryStore to resolve AllowOnAllVirtualKeys")
 }
 
+func TestDisabledExplicitMCPClientNeverGrantsTools(t *testing.T) {
+	p := &GovernancePlugin{}
+	vk := &configstoreTables.TableVirtualKey{
+		MCPConfigs: []configstoreTables.TableVirtualKeyMCPConfig{{
+			MCPClient:      configstoreTables.TableMCPClient{ClientID: "disabled", Name: "tools", Disabled: true},
+			ToolsToExecute: []string{"*"},
+		}},
+	}
+	if p.isMCPToolAllowedByVKWith(vk, "tools-*", nil) {
+		t.Fatal("disabled explicit MCP client granted wildcard access")
+	}
+	if got := p.computeMCPIncludeToolsWith(vk, nil); len(got) != 0 {
+		t.Fatalf("disabled explicit MCP client produced include tools: %v", got)
+	}
+}
+
 // isMCPToolAllowedByVK with nil inMemoryStore → blocked
 func TestIsMCPToolAllowedByVK_NilStore_Blocked(t *testing.T) {
 	p := &GovernancePlugin{inMemoryStore: nil}

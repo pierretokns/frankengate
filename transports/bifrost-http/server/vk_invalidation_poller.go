@@ -4,9 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"hash/fnv"
+	"maps"
+	"os"
+	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
+	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/plugins/governance"
@@ -19,12 +25,21 @@ const (
 	virtualKeyInvalidationErrorLogInterval    = 30 * time.Second
 )
 
+var mcpRuntimeJitterSalt = uint32(time.Now().UnixNano()) ^ uint32(os.Getpid())
+
 type virtualKeyInvalidationSource interface {
 	ListVirtualKeyInvalidationsAfter(ctx context.Context, cursor uint64, limit int) ([]tables.TableVirtualKeyInvalidationEvent, error)
 	GetVirtualKeyInvalidationHighWatermark(ctx context.Context) (uint64, error)
 }
 
 type virtualKeyInvalidationApply func(context.Context, tables.TableVirtualKeyInvalidationEvent) error
+
+type mcpRuntimeReconcileState struct {
+	generation uint64
+	operation  sync.Mutex
+	ready      chan struct{}
+	readyOnce  sync.Once
+}
 
 // VirtualKeyInvalidationFreshness is an immutable snapshot of one pod's
 // progress through the durable virtual-key invalidation outbox.
@@ -78,10 +93,24 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 	if !s.Config.IsPluginLoaded(s.getGovernancePluginName()) {
 		return nil
 	}
+	if validator, ok := s.Config.ConfigStore.(interface {
+		ValidateVirtualKeyInvalidationNamespace(context.Context) error
+	}); ok {
+		if err := validator.ValidateVirtualKeyInvalidationNamespace(ctx); err != nil {
+			return fmt.Errorf("validate virtual-key invalidation namespace: %w", err)
+		}
+	}
 	s.VKInvalidationPoller = newVirtualKeyInvalidationPoller(
 		s.Config.ConfigStore,
 		func(ctx context.Context, event tables.TableVirtualKeyInvalidationEvent) error {
-			return applyVirtualKeyInvalidation(ctx, event, s.ReloadVirtualKey, s.RemoveVirtualKey)
+			return applyGovernanceInvalidation(
+				ctx,
+				event,
+				s.ReloadVirtualKey,
+				s.RemoveVirtualKey,
+				s.reloadMCPClientFromAuthority,
+				s.removeMCPClientFromAuthority,
+			)
 		},
 		defaultVirtualKeyInvalidationBatchSize,
 		defaultVirtualKeyInvalidationPollInterval,
@@ -101,6 +130,246 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 	setter.SetAuthorityFreshnessSource(s.VKInvalidationPoller)
 	go s.VKInvalidationPoller.Run(ctx)
 	return nil
+}
+
+func (s *BifrostHTTPServer) reloadMCPClientFromAuthority(ctx context.Context, id string) error {
+	clientConfig, err := s.Config.ConfigStore.GetMCPClientConfigByID(ctx, id)
+	if errors.Is(err, configstore.ErrNotFound) {
+		return s.removeMCPClientFromAuthority(ctx, id)
+	}
+	if err != nil {
+		return fmt.Errorf("load MCP client %s from authority: %w", id, err)
+	}
+	s.Config.ApplyMCPClientAuthority(clientConfig)
+	state := s.scheduleMCPClientRuntimeReconcile(ctx, id)
+	if err := s.quarantineMCPClientRuntime(ctx, id); err != nil {
+		return fmt.Errorf("quarantine stale MCP runtime %s: %w", id, err)
+	}
+	if state != nil {
+		// An older runtime update may already be in flight. Quarantine once
+		// immediately, then again after that operation exits so it cannot
+		// republish stale tools after this authority event is acknowledged.
+		state.operation.Lock()
+		defer state.operation.Unlock()
+		if err := s.quarantineMCPClientRuntime(ctx, id); err != nil {
+			return fmt.Errorf("finalize MCP runtime quarantine %s: %w", id, err)
+		}
+		state.readyOnce.Do(func() { close(state.ready) })
+	}
+	return nil
+}
+
+func (s *BifrostHTTPServer) removeMCPClientFromAuthority(ctx context.Context, id string) error {
+	s.Config.RemoveMCPClientAuthority(id)
+	state := s.scheduleMCPClientRuntimeReconcile(ctx, id)
+	if err := s.quarantineMCPClientRuntime(ctx, id); err != nil {
+		return fmt.Errorf("quarantine deleted MCP runtime %s: %w", id, err)
+	}
+	if state != nil {
+		state.operation.Lock()
+		defer state.operation.Unlock()
+		if err := s.quarantineMCPClientRuntime(ctx, id); err != nil {
+			return fmt.Errorf("finalize deleted MCP runtime quarantine %s: %w", id, err)
+		}
+		state.readyOnce.Do(func() { close(state.ready) })
+	}
+	return nil
+}
+
+func (s *BifrostHTTPServer) quarantineMCPClientRuntime(ctx context.Context, id string) error {
+	// Clearing tools is local and does not dial the remote endpoint. Do it before
+	// attempting any reconnect so revoked/disabled/changed credentials cannot
+	// remain exposed through the global or lazily cached per-VK MCP servers.
+	s.Client.SetClientTools(id, map[string]schemas.ChatTool{}, map[string]string{})
+	if s.MCPServerHandler != nil {
+		return s.MCPServerHandler.SyncAllMCPServers(ctx)
+	}
+	return nil
+}
+
+func (s *BifrostHTTPServer) reconcileMCPClientRuntimeOnce(ctx context.Context, id string) error {
+	clientConfig, err := s.Config.ConfigStore.GetMCPClientConfigByID(ctx, id)
+	if errors.Is(err, configstore.ErrNotFound) {
+		if err := s.Client.RemoveMCPClient(id); err != nil && !strings.Contains(strings.ToLower(err.Error()), "not found") {
+			return err
+		}
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	clients, err := s.Client.GetMCPClients()
+	if err != nil {
+		return err
+	}
+	registered := false
+	for _, client := range clients {
+		if client.Config.ID == id {
+			registered = true
+			break
+		}
+	}
+	if registered {
+		// Replace rather than edit in place: UpdateMCPClient intentionally does
+		// not reconnect credentials or drive disabled/enabled lifecycle. A full
+		// remove/add applies the complete authority row and stops old workers and
+		// transports. AddMCPClient creates a disabled placeholder without dialing
+		// when the authority row is disabled.
+		if err := s.Client.RemoveMCPClient(id); err != nil {
+			return err
+		}
+	}
+	if err := s.Client.AddMCPClient(ctx, clientConfig); err != nil {
+		return err
+	}
+	if usesPersistedMCPToolSnapshot(clientConfig) {
+		// Per-user auth clients discover tools during verified user flows and
+		// persist that snapshot; they have no shared connection from which Add can
+		// rediscover. Publish the durable snapshot exactly. Persistent clients keep
+		// the fresh tools AddMCPClient just discovered from their live endpoint.
+		s.Client.SetClientTools(
+			id,
+			maps.Clone(clientConfig.DiscoveredTools),
+			maps.Clone(clientConfig.DiscoveredToolNameMapping),
+		)
+	}
+	if s.MCPServerHandler != nil {
+		if err := s.MCPServerHandler.SyncAllMCPServers(ctx); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func usesPersistedMCPToolSnapshot(config *schemas.MCPClientConfig) bool {
+	return config != nil && !config.Disabled &&
+		(config.AuthType == schemas.MCPAuthTypePerUserOauth || config.AuthType == schemas.MCPAuthTypePerUserHeaders)
+}
+
+func (s *BifrostHTTPServer) scheduleMCPClientRuntimeReconcile(ctx context.Context, id string) *mcpRuntimeReconcileState {
+	s.mcpReconcileMu.Lock()
+	if s.mcpReconcileStopping {
+		s.mcpReconcileMu.Unlock()
+		return nil
+	}
+	if s.mcpReconcileWorkers == nil {
+		s.mcpReconcileWorkers = make(map[string]*mcpRuntimeReconcileState)
+	}
+	if state, ok := s.mcpReconcileWorkers[id]; ok {
+		state.generation++
+		s.mcpReconcileMu.Unlock()
+		return state
+	}
+	state := &mcpRuntimeReconcileState{generation: 1, ready: make(chan struct{})}
+	s.mcpReconcileWorkers[id] = state
+	s.mcpReconcileWG.Add(1)
+	s.mcpReconcileMu.Unlock()
+
+	go func() {
+		defer s.mcpReconcileWG.Done()
+		select {
+		case <-ctx.Done():
+			s.mcpReconcileMu.Lock()
+			delete(s.mcpReconcileWorkers, id)
+			s.mcpReconcileMu.Unlock()
+			return
+		case <-state.ready:
+		}
+		attempt := 0
+		for {
+			s.mcpReconcileMu.Lock()
+			targetGeneration := state.generation
+			s.mcpReconcileMu.Unlock()
+
+			delay := mcpRuntimeReconcileBackoff(id, attempt)
+			timer := time.NewTimer(delay)
+			select {
+			case <-ctx.Done():
+				if !timer.Stop() {
+					<-timer.C
+				}
+				s.mcpReconcileMu.Lock()
+				delete(s.mcpReconcileWorkers, id)
+				s.mcpReconcileMu.Unlock()
+				return
+			case <-timer.C:
+			}
+
+			state.operation.Lock()
+			err := s.reconcileMCPClientRuntimeOnce(ctx, id)
+			state.operation.Unlock()
+			done, generationChanged := s.completeMCPRuntimeReconcileAttempt(id, state, targetGeneration, err)
+			if done {
+				return
+			}
+			if generationChanged {
+				attempt = 0
+				continue
+			}
+			attempt++
+			if logger != nil && (attempt == 1 || attempt&(attempt-1) == 0) {
+				logger.Warn("MCP runtime reconciliation for %s still failing after %d attempts: %v", id, attempt, err)
+			}
+		}
+	}()
+	return state
+}
+
+func (s *BifrostHTTPServer) stopMCPRuntimeReconcilers() {
+	s.mcpReconcileMu.Lock()
+	s.mcpReconcileStopping = true
+	s.mcpReconcileMu.Unlock()
+}
+
+func (s *BifrostHTTPServer) completeMCPRuntimeReconcileAttempt(
+	id string,
+	state *mcpRuntimeReconcileState,
+	targetGeneration uint64,
+	err error,
+) (done bool, generationChanged bool) {
+	s.mcpReconcileMu.Lock()
+	defer s.mcpReconcileMu.Unlock()
+	generationChanged = state.generation != targetGeneration
+	if err == nil && !generationChanged {
+		delete(s.mcpReconcileWorkers, id)
+		return true, false
+	}
+	return false, generationChanged
+}
+
+func mcpRuntimeReconcileBackoff(id string, attempt int) time.Duration {
+	if attempt > 6 {
+		attempt = 6
+	}
+	base := time.Second * time.Duration(1<<attempt)
+	h := fnv.New32a()
+	_, _ = fmt.Fprintf(h, "%s:%d", id, mcpRuntimeJitterSalt)
+	jitter := time.Duration(h.Sum32()%500) * time.Millisecond
+	return base + jitter
+}
+
+func applyGovernanceInvalidation(
+	ctx context.Context,
+	event tables.TableVirtualKeyInvalidationEvent,
+	reloadVirtualKey func(context.Context, string) (*tables.TableVirtualKey, error),
+	removeVirtualKey func(context.Context, string) error,
+	reloadMCPClient func(context.Context, string) error,
+	removeMCPClient func(context.Context, string) error,
+) error {
+	if event.EntityType != tables.VirtualKeyInvalidationEntityType {
+		return fmt.Errorf("unsupported governance invalidation entity type %q", event.EntityType)
+	}
+	if mcpClientID, ok := tables.ParseMCPClientInvalidationEntityID(event.EntityID); ok {
+		switch event.Action {
+		case tables.VirtualKeyInvalidationActionReload:
+			return reloadMCPClient(ctx, mcpClientID)
+		case tables.VirtualKeyInvalidationActionDelete:
+			return removeMCPClient(ctx, mcpClientID)
+		default:
+			return fmt.Errorf("unsupported MCP client invalidation action %q", event.Action)
+		}
+	}
+	return applyVirtualKeyInvalidation(ctx, event, reloadVirtualKey, removeVirtualKey)
 }
 
 func applyVirtualKeyInvalidation(

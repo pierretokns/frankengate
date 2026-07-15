@@ -1,16 +1,36 @@
 package tables
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 const (
 	VirtualKeyInvalidationEntityType           = "virtual_key"
 	VirtualKeyInvalidationActionReload         = "reload"
 	VirtualKeyInvalidationActionDelete         = "delete"
 	VirtualKeyInvalidationSchemaVersion uint16 = 1
+	MCPClientInvalidationEntityIDPrefix        = "__frankengate_mcp_client__:"
 )
+
+func MCPClientInvalidationEntityID(clientID string) string {
+	return MCPClientInvalidationEntityIDPrefix + clientID
+}
+
+func ParseMCPClientInvalidationEntityID(entityID string) (string, bool) {
+	clientID, ok := strings.CutPrefix(entityID, MCPClientInvalidationEntityIDPrefix)
+	return clientID, ok && clientID != ""
+}
+
+func IsReservedVirtualKeyEntityID(entityID string) bool {
+	return strings.HasPrefix(entityID, MCPClientInvalidationEntityIDPrefix)
+}
 
 // TableVirtualKeyInvalidationEvent is an immutable, cursor-addressable signal
 // that a consumer must reload or delete one virtual key from its local snapshot.
+// MCP control records use a reserved EntityID prefix while retaining the v1
+// virtual_key entity type: pre-MCP consumers safely treat the reserved ID as a
+// nonexistent VK and advance, which makes rolling upgrades backward compatible.
 // ID is the durable global ordering token; consumers persist the greatest ID
 // they have successfully applied and may safely apply an event more than once.
 type TableVirtualKeyInvalidationEvent struct {

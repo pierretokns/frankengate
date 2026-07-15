@@ -24,6 +24,32 @@ func TestCreateSTDIOConnectionAllowsInlineEnvAssignments(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestSetClientToolsReplacesSnapshotAndClearsRemovedTools(t *testing.T) {
+	manager := &MCPManager{
+		logger: &MockLogger{},
+		clientMap: map[string]*schemas.MCPClientState{
+			"client-a": {
+				Name: "client-a",
+				ToolMap: map[string]schemas.ChatTool{
+					"old": {Type: schemas.ChatToolTypeFunction, Function: &schemas.ChatToolFunction{Name: "old"}},
+				},
+				ToolNameMapping: map[string]string{"old": "old"},
+			},
+		},
+	}
+	manager.SetClientTools("client-a", map[string]schemas.ChatTool{
+		"new": {Type: schemas.ChatToolTypeFunction, Function: &schemas.ChatToolFunction{Name: "new"}},
+	}, map[string]string{"new": "new"})
+	state := manager.clientMap["client-a"]
+	require.NotContains(t, state.ToolMap, "old")
+	require.Contains(t, state.ToolMap, "new")
+	require.Equal(t, map[string]string{"new": "new"}, state.ToolNameMapping)
+
+	manager.SetClientTools("client-a", nil, nil)
+	require.Empty(t, state.ToolMap)
+	require.Empty(t, state.ToolNameMapping)
+}
+
 func TestCreateSTDIOConnectionAllowsSetReferencedEnvVars(t *testing.T) {
 	t.Setenv("TEST_STDIO_ENV_REFERENCE_SET", "set-value")
 

@@ -170,6 +170,10 @@ type BifrostHTTPServer struct {
 	TempTokenSweepWorker *temptoken.SweepWorker
 	OAuth2SweepWorker    *oauth2SweepWorker
 	VKInvalidationPoller *virtualKeyInvalidationPoller
+	mcpReconcileMu       sync.Mutex
+	mcpReconcileWorkers  map[string]*mcpRuntimeReconcileState
+	mcpReconcileWG       sync.WaitGroup
+	mcpReconcileStopping bool
 	// OAuth2IdentityResolver scopes a user-mode /mcp request to the user's own
 	// tools. Optional; wired at server init when user-mode identity resolution
 	// is available, otherwise left nil (user-mode requests fall back to the
@@ -2045,6 +2049,7 @@ func (s *BifrostHTTPServer) Start() error {
 			logger.Info("server gracefully shutdown")
 		}
 		// Cancelling main context
+		s.stopMCPRuntimeReconcilers()
 		if s.cancel != nil {
 			s.cancel()
 		}
@@ -2052,6 +2057,8 @@ func (s *BifrostHTTPServer) Start() error {
 		done := make(chan struct{})
 		go func() {
 			defer close(done)
+			logger.Info("waiting for MCP runtime reconciliation workers...")
+			s.mcpReconcileWG.Wait()
 			logger.Info("shutting down bifrost client...")
 			s.Client.Shutdown()
 			logger.Info("bifrost client shutdown completed")

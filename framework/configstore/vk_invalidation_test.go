@@ -166,9 +166,73 @@ func TestUpdateMCPClientConfigInvalidatesEveryReferencingVirtualKey(t *testing.T
 	require.NoError(t, store.UpdateMCPClientConfig(ctx, client.ClientID, client))
 	events, err := store.ListVirtualKeyInvalidationsAfter(ctx, 0, 10)
 	require.NoError(t, err)
-	require.Len(t, events, 2)
-	require.Equal(t, []string{"vk-a", "vk-b"}, []string{events[0].EntityID, events[1].EntityID})
-	for _, event := range events {
+	require.Len(t, events, 3)
+	require.Equal(t, tables.VirtualKeyInvalidationEntityType, events[0].EntityType)
+	require.Equal(t, tables.MCPClientInvalidationEntityID(client.ClientID), events[0].EntityID)
+	require.Equal(t, []string{"vk-a", "vk-b"}, []string{events[1].EntityID, events[2].EntityID})
+	for _, event := range events[1:] {
 		require.Equal(t, tables.VirtualKeyInvalidationActionReload, event.Action)
 	}
+}
+
+func TestUpdateAllowAllMCPClientInvalidatesEveryVirtualKey(t *testing.T) {
+	store := setupVKInvalidationTestStore(t)
+	ctx := context.Background()
+	for _, id := range []string{"vk-b", "vk-a"} {
+		require.NoError(t, store.CreateVirtualKey(ctx, &tables.TableVirtualKey{ID: id, Name: id, Value: *schemas.NewSecretVar("sk-bf-" + id)}))
+	}
+	client := &schemas.MCPClientConfig{ID: "mcp-all", Name: "all-tools", ConnectionType: schemas.MCPConnectionTypeHTTP}
+	require.NoError(t, store.CreateMCPClientConfig(ctx, client))
+	before, err := store.GetVirtualKeyInvalidationHighWatermark(ctx)
+	require.NoError(t, err)
+	dbClient, err := store.GetMCPClientByID(ctx, client.ID)
+	require.NoError(t, err)
+	dbClient.AllowOnAllVirtualKeys = true
+	require.NoError(t, store.UpdateMCPClientConfig(ctx, client.ID, dbClient))
+
+	events, err := store.ListVirtualKeyInvalidationsAfter(ctx, before, 10)
+	require.NoError(t, err)
+	require.Len(t, events, 3)
+	require.Equal(t, []string{tables.MCPClientInvalidationEntityID("mcp-all"), "vk-a", "vk-b"}, []string{events[0].EntityID, events[1].EntityID, events[2].EntityID})
+	require.Equal(t, tables.VirtualKeyInvalidationEntityType, events[0].EntityType)
+}
+
+func TestDeleteMCPClientCapturesReferencesAndPublishesDelete(t *testing.T) {
+	store := setupVKInvalidationTestStore(t)
+	ctx := context.Background()
+	client := &schemas.MCPClientConfig{ID: "mcp-delete", Name: "delete-tools", ConnectionType: schemas.MCPConnectionTypeHTTP}
+	require.NoError(t, store.CreateMCPClientConfig(ctx, client))
+	dbClient, err := store.GetMCPClientByID(ctx, client.ID)
+	require.NoError(t, err)
+	for _, id := range []string{"vk-b", "vk-a"} {
+		require.NoError(t, store.CreateVirtualKey(ctx, &tables.TableVirtualKey{ID: id, Name: id, Value: *schemas.NewSecretVar("sk-bf-" + id)}))
+		require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKeyMCPConfig{VirtualKeyID: id, MCPClientID: dbClient.ID}).Error)
+	}
+	before, err := store.GetVirtualKeyInvalidationHighWatermark(ctx)
+	require.NoError(t, err)
+	require.NoError(t, store.DeleteMCPClientConfig(ctx, client.ID))
+
+	events, err := store.ListVirtualKeyInvalidationsAfter(ctx, before, 10)
+	require.NoError(t, err)
+	require.Len(t, events, 3)
+	require.Equal(t, tables.VirtualKeyInvalidationEntityType, events[0].EntityType)
+	require.Equal(t, tables.VirtualKeyInvalidationActionDelete, events[0].Action)
+	require.Equal(t, []string{tables.MCPClientInvalidationEntityID("mcp-delete"), "vk-a", "vk-b"}, []string{events[0].EntityID, events[1].EntityID, events[2].EntityID})
+}
+
+func TestVirtualKeyInvalidationControlNamespaceIsReserved(t *testing.T) {
+	store := setupVKInvalidationTestStore(t)
+	ctx := context.Background()
+	reservedID := tables.MCPClientInvalidationEntityID("collision")
+	err := store.CreateVirtualKey(ctx, &tables.TableVirtualKey{
+		ID: reservedID, Name: "collision", Value: *schemas.NewSecretVar("sk-bf-collision"),
+	})
+	require.ErrorContains(t, err, "reserved invalidation namespace")
+
+	// Simulate a pre-upgrade row inserted by an older binary and prove startup
+	// auditing catches it even though normal ingestion now rejects the prefix.
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKey{
+		ID: reservedID, Name: "legacy-collision", Value: *schemas.NewSecretVar("sk-bf-legacy-collision"),
+	}).Error)
+	require.ErrorContains(t, store.ValidateVirtualKeyInvalidationNamespace(ctx), "found 1 virtual key ids")
 }

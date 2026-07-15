@@ -4486,7 +4486,7 @@ func (c *Config) GetAllowOnAllVirtualKeysClients() map[string]string {
 	}
 	result := make(map[string]string)
 	for _, client := range c.MCPConfig.ClientConfigs {
-		if client != nil && client.AllowOnAllVirtualKeys {
+		if client != nil && !client.Disabled && client.AllowOnAllVirtualKeys {
 			result[client.ID] = client.Name
 		}
 	}
@@ -5717,6 +5717,44 @@ func (c *Config) GetMCPClient(id string) (*schemas.MCPClientConfig, error) {
 	}
 
 	return nil, fmt.Errorf("MCP client '%s' not found", id)
+}
+
+// ApplyMCPClientAuthority updates the pod-local governance snapshot without
+// dialing the MCP endpoint. Durable invalidation consumers use this before
+// reconciling runtime connectivity so an unreachable tool server cannot leave
+// authorization policy stale or stall the global VK authority cursor.
+func (c *Config) ApplyMCPClientAuthority(clientConfig *schemas.MCPClientConfig) {
+	if clientConfig == nil {
+		return
+	}
+	c.muMCP.Lock()
+	defer c.muMCP.Unlock()
+	if c.MCPConfig == nil {
+		c.MCPConfig = &schemas.MCPConfig{}
+	}
+	for i, existing := range c.MCPConfig.ClientConfigs {
+		if existing != nil && existing.ID == clientConfig.ID {
+			c.MCPConfig.ClientConfigs[i] = clientConfig
+			return
+		}
+	}
+	c.MCPConfig.ClientConfigs = append(c.MCPConfig.ClientConfigs, clientConfig)
+}
+
+// RemoveMCPClientAuthority removes a client from the pod-local governance
+// snapshot without depending on runtime connection teardown.
+func (c *Config) RemoveMCPClientAuthority(id string) {
+	c.muMCP.Lock()
+	defer c.muMCP.Unlock()
+	if c.MCPConfig == nil {
+		return
+	}
+	for i, existing := range c.MCPConfig.ClientConfigs {
+		if existing != nil && existing.ID == id {
+			c.MCPConfig.ClientConfigs = append(c.MCPConfig.ClientConfigs[:i], c.MCPConfig.ClientConfigs[i+1:]...)
+			return
+		}
+	}
 }
 
 // AddMCPClient adds a new MCP client to the configuration.
