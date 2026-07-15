@@ -4,15 +4,17 @@
 
 Bifrost-compatible Helm chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS.
 
-**Latest Version:** 2.1.30
+**Latest Version:** 2.1.31
 
 ## Changelog
 
 ### Upcoming
 
-- Default `image.repository` and `image.tag` now install the public FrankenGate v0.2.0 image from GHCR.
-- Added `image.digest` as an immutable, tag-overriding image reference for reproducible deployments.
-- Split gateway probes: `livenessProbe` now uses process-only `/livez`, `readinessProbe` uses dependency-aware `/readyz`, and `startupProbe` uses `/startupz`.
+- Default `image.tag` now installs FrankenGate v0.3.0, whose runtime hotpaths include horizontally coherent virtual-key invalidation and MCP principal-authority enforcement.
+
+### 2.1.31
+
+- Default `image.tag` installs the public FrankenGate v0.3.0 image from GHCR.
 
 ### 2.1.30
 
