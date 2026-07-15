@@ -110,6 +110,8 @@ jobs:
             org.opencontainers.image.revision=${{ steps.meta.outputs.source_sha }}
             org.opencontainers.image.version=${{ inputs.release_tag }}
             org.opencontainers.image.licenses=Apache-2.0
+          cache-from: type=gha,scope=frankengate-release
+          cache-to: type=gha,mode=max,scope=frankengate-release
           provenance: false
           sbom: false
 
