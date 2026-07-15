@@ -1,4 +1,25 @@
-# Bifrost AI Gateway
+# FrankenGate
+
+FrankenGate is an Apache-2.0 open-source enterprise AI gateway built from the
+[Bifrost AI Gateway](https://github.com/maximhq/bifrost). It preserves Bifrost's
+high-performance Go provider and transport substrate while adding an explicit
+roadmap for multi-pod governance, virtual-key authority, identity-derived model
+access, deterministic routing, MCP governance, privacy-safe evidence, and
+human-approved skill improvement loops.
+
+> **Release status:** the first FrankenGate release is a compatibility baseline.
+> Existing Bifrost functionality is retained; enterprise roadmap items are not
+> claimed complete until their implementation and conformance gates pass.
+
+## Upstream attribution and compatibility
+
+Copyright and attribution for Bifrost and its contributors are retained under
+the repository's [Apache License 2.0](LICENSE). Go module paths, configuration
+keys, API routes, and the `bifrost-http` binary name remain compatible during
+the initial fork phase. See [NOTICE](NOTICE) for provenance and modification
+information.
+
+## Upstream Bifrost overview
 
 <a href="https://trendshift.io/repositories/14529?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-14529" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/14529" alt="maximhq%2Fbifrost | Trendshift" width="250" height="55"/></a>
 

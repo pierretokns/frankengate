@@ -25,7 +25,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-var loggingSkipPaths = []string{"/health", "/_next", "/api/dev"}
+var loggingSkipPaths = []string{"/health", "/livez", "/readyz", "/startupz", "/_next", "/api/dev"}
 var realtimeTransportPaths = buildRealtimeTransportPathSet()
 
 // SecurityHeadersMiddleware sets security-related HTTP headers on every response.
@@ -897,6 +897,9 @@ func (m *AuthMiddleware) APIMiddleware() schemas.BifrostHTTPMiddleware {
 		"/api/session/login",
 		"/api/oauth/callback",
 		"/health",
+		"/livez",
+		"/readyz",
+		"/startupz",
 		"/login",
 		"/favicon.ico",
 		"/assets/*",
@@ -904,7 +907,6 @@ func (m *AuthMiddleware) APIMiddleware() schemas.BifrostHTTPMiddleware {
 		"/api/scim/oauth/callback",
 		"/api/scim/oauth/refresh",
 		"/api/scim/oauth/logout",
-		"/health",
 		"/api/version",
 	}
 	whitelistedPrefixes := []string{

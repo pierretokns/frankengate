@@ -1,3 +1,4 @@
+// Modified by the FrankenGate project to separate process liveness from dependency readiness.
 package handlers
 
 import (
@@ -26,6 +27,16 @@ func NewHealthHandler(config *lib.Config) *HealthHandler {
 // RegisterRoutes registers the health-related routes.
 func (h *HealthHandler) RegisterRoutes(r *router.Router, middlewares ...schemas.BifrostHTTPMiddleware) {
 	r.GET("/health", lib.ChainMiddlewares(h.getHealth, middlewares...))
+	r.GET("/livez", lib.ChainMiddlewares(h.getLiveness, middlewares...))
+	r.GET("/readyz", lib.ChainMiddlewares(h.getHealth, middlewares...))
+	r.GET("/startupz", lib.ChainMiddlewares(h.getHealth, middlewares...))
+}
+
+// getLiveness reports only whether the gateway process can serve HTTP. It must
+// never probe external dependencies: Kubernetes uses failure here as a signal
+// to restart the process.
+func (h *HealthHandler) getLiveness(ctx *fasthttp.RequestCtx) {
+	SendJSON(ctx, map[string]any{"status": "ok", "components": map[string]any{"process": "alive"}})
 }
 
 // getHealth handles GET /api/health - Get the health status of the server.

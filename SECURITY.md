@@ -1,8 +1,10 @@
 # Security Policy
 
+<!-- Modified by the FrankenGate project for fork-owned security reporting. -->
+
   ## Reporting a Vulnerability
 
-  The Bifrost team takes security issues seriously. We appreciate your efforts to responsibly
+  The FrankenGate maintainers take security issues seriously. We appreciate your efforts to responsibly
    disclose any vulnerabilities you find.
 
   **Please do NOT report security vulnerabilities through public GitHub issues.**
@@ -10,10 +12,8 @@
   Instead, please report them via one of the following methods:
 
   1. **GitHub Security Advisories (preferred)**: Use [GitHub's private vulnerability
-  reporting](https://github.com/maximhq/bifrost/security/advisories/new) to submit a report
+  reporting](https://github.com/pierretokns/frankengate/security/advisories/new) to submit a report
   directly through the repository.
-  2. **Email**: Send an email to **akshay@getmaxim.ai** with the details of the
-  vulnerability.
 
   ### What to include
 
@@ -27,9 +27,8 @@
 
   ### What to expect
 
-  - **Acknowledgment**: We will acknowledge receipt of your report within **48 hours**.
-  - **Updates**: We will provide status updates as we investigate, typically within **5
-  business days**.
+  - **Acknowledgment**: We will acknowledge receipt as maintainer availability permits.
+  - **Updates**: We will provide status updates as the investigation progresses.
   - **Resolution**: Once a fix is available, we will coordinate with you on disclosure
   timing.
   - **Credit**: We are happy to credit reporters in our release notes and security advisories
@@ -51,8 +50,8 @@
 
   ## Security Considerations
 
-  Bifrost is an AI gateway that routes requests to multiple LLM providers. When deploying
-  Bifrost, keep the following in mind:
+  FrankenGate is a Bifrost-derived AI gateway that routes requests to multiple LLM providers.
+  When deploying FrankenGate, keep the following in mind:
 
   - **API Key Management**: Bifrost handles provider API keys. Ensure keys are stored
   securely and never committed to version control. Use environment variables or a secrets
@@ -82,10 +81,10 @@
 
   The following are **in scope** for security reports:
 
-  - The Bifrost gateway (core, transports, framework, CLI)
-  - Official Bifrost plugins (`plugins/` directory)
-  - The Bifrost Docker image (`maximhq/bifrost`)
-  - The Bifrost web UI
+  - The FrankenGate gateway fork (core, transports, framework, CLI)
+  - Plugins shipped in this repository (`plugins/` directory)
+  - FrankenGate release artifacts published by this repository
+  - The FrankenGate web UI
 
   The following are **out of scope**:
 

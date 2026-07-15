@@ -1,3 +1,4 @@
+// Modified by the FrankenGate project to provide fork branding and version output.
 // Package main provides an HTTP service using FastHTTP that exposes endpoints
 // for text and chat completions using various AI model providers (OpenAI, Anthropic, Bedrock, Mistral, Ollama, etc.).
 //
@@ -75,6 +76,8 @@ var uiContent embed.FS
 
 var Version string
 
+var printVersion bool
+
 var logger = bifrost.NewDefaultLogger(schemas.LogLevelInfo)
 var server *bifrostServer.BifrostHTTPServer
 
@@ -108,12 +111,17 @@ func init() {
 	flag.StringVar(&server.AppDir, "app-dir", bifrostServer.DefaultAppDir, "Application data directory (contains config.json and logs)")
 	flag.StringVar(&server.LogLevel, "log-level", defaultLogLevel, "Logger level (debug, info, warn, error). Default is info.")
 	flag.StringVar(&server.LogOutputStyle, "log-style", bifrostServer.DefaultLogOutputStyle, "Logger output type (json or pretty). Default is JSON.")
+	flag.BoolVar(&printVersion, "version", false, "Print the FrankenGate version and exit")
 }
 
 // main is the entry point of the application.
 func main() {
 	// Parse command line flags
 	flag.Parse()
+	if printVersion {
+		fmt.Printf("FrankenGate %s (derived from Bifrost)\n", Version)
+		return
+	}
 
 	// Printing version
 	versionLine := fmt.Sprintf("║%s%s%s║", strings.Repeat(" ", (61-2-len(Version))/2), Version, strings.Repeat(" ", (61-2-len(Version)+1)/2))
@@ -121,19 +129,15 @@ func main() {
 	fmt.Printf(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   ██████╗ ██╗███████╗██████╗  ██████╗ ███████╗████████╗   ║
-║   ██╔══██╗██║██╔════╝██╔══██╗██╔═══██╗██╔════╝╚══██╔══╝   ║
-║   ██████╔╝██║█████╗  ██████╔╝██║   ██║███████╗   ██║      ║
-║   ██╔══██╗██║██╔══╝  ██╔══██╗██║   ██║╚════██║   ██║      ║
-║   ██████╔╝██║██║     ██║  ██║╚██████╔╝███████║   ██║      ║
-║   ╚═════╝ ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝      ║
+║                       FRANKENGATE                         ║
+║          Enterprise AI gateway and governance plane      ║
 ║                                                           ║
 ║═══════════════════════════════════════════════════════════║
 %s
 ║═══════════════════════════════════════════════════════════║
-║                 The Fastest LLM Gateway                   ║
+║              Bifrost-compatible data plane                ║
 ║═══════════════════════════════════════════════════════════║
-║             https://github.com/maximhq/bifrost            ║
+║          https://github.com/pierretokns/frankengate       ║
 ╚═══════════════════════════════════════════════════════════╝
 
 `, versionLine)

@@ -229,6 +229,9 @@
     "readinessProbe": {
       "type": "object"
     },
+    "startupProbe": {
+      "type": "object"
+    },
     "autoscaling": {
       "type": "object",
       "properties": {

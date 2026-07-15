@@ -4,9 +4,17 @@
 
 Official Helm charts for deploying [Bifrost](https://github.com/maximhq/bifrost) - a high-performance AI gateway with unified interface for multiple providers.
 
-**Latest Version:** 2.1.28
+**Latest Version:** 2.1.29
 
 ## Changelog
+
+### Upcoming
+
+- Split gateway probes: `livenessProbe` now uses process-only `/livez`, `readinessProbe` uses dependency-aware `/readyz`, and `startupProbe` uses `/startupz`.
+
+### 2.1.29
+
+- Split gateway probes: `livenessProbe` now uses process-only `/livez`, `readinessProbe` uses dependency-aware `/readyz`, and `startupProbe` uses `/startupz`.
 
 ### 2.1.28
 

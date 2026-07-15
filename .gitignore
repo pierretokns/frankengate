@@ -255,3 +255,13 @@ ui/app/routeTree.gen.ts
 bifrost-migration-cli
 
 tests/e2e/clis/reports
+
+# bv (beads viewer) local config and caches
+.bv/
+
+# JSM-managed project skill material is installed state, not source.
+/.claude/skills/
+/.agents/
+
+# NTM sessions, logs, summaries, and rate-limit state are machine-local.
+/.ntm/

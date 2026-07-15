@@ -750,6 +750,9 @@ func TestAuthMiddleware_WhitelistedRoutes(t *testing.T) {
 		"/api/session/login",
 		"/api/oauth/callback",
 		"/health",
+		"/livez",
+		"/readyz",
+		"/startupz",
 	}
 
 	for _, route := range whitelistedRoutes {
