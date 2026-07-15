@@ -137,22 +137,38 @@ list_ready_gateway_ips() {
     sort
 }
 
-pod_ips=()
-while IFS= read -r ip; do
-  [[ -n "$ip" ]] && pod_ips+=("$ip")
-done < <(list_ready_gateway_ips)
-if [[ "${#pod_ips[@]}" -ne 3 ]]; then
-  echo "expected 3 gateway pod IPs, got ${#pod_ips[@]}" >&2
-  exit 1
-fi
-if [[ -n "$FRANKENGATE_IMAGE" ]]; then
+wait_for_three_ready_gateway_ips() {
+  local deadline
+  deadline=$(( $(date +%s) + 240 ))
+  while :; do
+    pod_ips=()
+    while IFS= read -r ip; do
+      [[ -n "$ip" ]] && pod_ips+=("$ip")
+    done < <(list_ready_gateway_ips)
+    if [[ "${#pod_ips[@]}" -eq 3 ]]; then
+      return 0
+    fi
+    if [[ "$(date +%s)" -ge "$deadline" ]]; then
+      echo "expected 3 non-terminating Ready gateway pod IPs, got ${#pod_ips[@]}" >&2
+      return 1
+    fi
+    sleep 1
+  done
+}
+
+assert_release_image_spans_three_nodes() {
+  [[ -z "$FRANKENGATE_IMAGE" ]] && return 0
   distinct_nodes="$(kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk -o json |
-    jq -r '.items[] | select(.metadata.deletionTimestamp == null) | .spec.nodeName' | sort -u | wc -l | tr -d ' ')"
+    jq -r '.items[] | select(.metadata.deletionTimestamp == null) | select(any(.status.conditions[]?; .type == "Ready" and .status == "True")) | .spec.nodeName' | sort -u | wc -l | tr -d ' ')"
   if [[ "$distinct_nodes" -ne 3 ]]; then
     echo "release-image proof expected 3 distinct Kubernetes nodes, got $distinct_nodes" >&2
-    exit 1
+    return 1
   fi
-fi
+}
+
+pod_ips=()
+wait_for_three_ready_gateway_ips
+assert_release_image_spans_three_nodes
 
 wait_for_cache() {
   local expected_state="$1" expected_id="$2" expected_marker="${3:-}"
@@ -227,10 +243,8 @@ restarted_pod="$(kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=fran
   -o jsonpath='{.items[0].metadata.name}')"
 kubectl -n "$NAMESPACE" delete pod "$restarted_pod" --wait=false >/dev/null
 kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
-pod_ips=()
-while IFS= read -r ip; do
-  [[ -n "$ip" ]] && pod_ips+=("$ip")
-done < <(list_ready_gateway_ips)
+wait_for_three_ready_gateway_ips
+assert_release_image_spans_three_nodes
 wait_for_cache absent "$vk_id"
 
 partition_created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
