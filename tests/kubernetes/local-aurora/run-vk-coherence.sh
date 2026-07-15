@@ -121,6 +121,10 @@ if [[ -n "$FRANKENGATE_IMAGE" ]]; then
     {op:"remove",path:"/spec/template/spec/containers/0/volumeMounts/0"},
     {op:"remove",path:"/spec/template/spec/volumes/0"},
     {op:"remove",path:"/spec/template/spec/affinity"},
+    {op:"add",path:"/spec/template/spec/affinity",value:{podAntiAffinity:{requiredDuringSchedulingIgnoredDuringExecution:[{
+      labelSelector:{matchLabels:{"app.kubernetes.io/name":"frankengate-vk"}},
+      topologyKey:"kubernetes.io/hostname"
+    }]}}},
     {op:"add",path:"/spec/template/spec/topologySpreadConstraints",value:[{
       maxSkew:1,
       topologyKey:"kubernetes.io/hostname",
