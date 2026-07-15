@@ -26,6 +26,8 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
+      attestations: write
     env:
       RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
       GH_TOKEN: ${{ github.token }}
@@ -58,9 +60,7 @@ jobs:
       - name: Checkout release tag
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          # A manual run repairs an existing release from the workflow commit;
-          # tag-triggered publication always builds the immutable tag contents.
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || env.RELEASE_TAG }}
+          ref: ${{ env.RELEASE_TAG }}
           persist-credentials: false
 
       - name: Install Helm
@@ -97,6 +97,12 @@ jobs:
         run: |
           set -euo pipefail
           helm lint helm-charts/bifrost
+          cmp LICENSE helm-charts/bifrost/LICENSE
+          cmp NOTICE helm-charts/bifrost/NOTICE
+          if [[ -x scripts/verify-provenance.sh ]]; then
+            bash scripts/verify-provenance.sh --self-test
+            bash scripts/verify-provenance.sh
+          fi
           .github/workflows/scripts/validate-helm-templates.sh
           .github/workflows/scripts/validate-helm-config-fields.sh
           .github/workflows/scripts/validate-schema-sync.sh
@@ -109,6 +115,39 @@ jobs:
           helm package helm-charts/bifrost --destination dist
           cd dist
           sha256sum "${{ steps.chart.outputs.package }}" > "${{ steps.chart.outputs.package }}.sha256"
+
+      - name: Inspect packaged legal and attribution files
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="dist/${{ steps.chart.outputs.package }}"
+          tar -tzf "$package" > dist/chart-contents.txt
+          grep -Fx 'bifrost/LICENSE' dist/chart-contents.txt
+          grep -Fx 'bifrost/NOTICE' dist/chart-contents.txt
+          inspect="$RUNNER_TEMP/frankengate-chart-inspect"
+          mkdir -p "$inspect"
+          tar -xzf "$package" -C "$inspect" bifrost/LICENSE bifrost/NOTICE
+          cmp LICENSE "$inspect/bifrost/LICENSE"
+          cmp NOTICE "$inspect/bifrost/NOTICE"
+
+      - name: Generate packaged chart SPDX SBOM
+        uses: anchore/sbom-action@f8bdd1d8ac5e901a77a92f111440fdb1b593736b # v0.20.6
+        with:
+          path: dist/${{ steps.chart.outputs.package }}
+          format: spdx-json
+          output-file: dist/${{ steps.chart.outputs.package }}.spdx.json
+          upload-artifact: false
+
+      - name: Attest packaged Helm chart
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
+        with:
+          subject-path: dist/${{ steps.chart.outputs.package }}
+
+      - name: Attest packaged Helm chart SBOM
+        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3.0.0
+        with:
+          subject-path: dist/${{ steps.chart.outputs.package }}
+          sbom-path: dist/${{ steps.chart.outputs.package }}.spdx.json
 
       - name: Wait for matching GitHub release
         shell: bash
@@ -158,6 +197,21 @@ jobs:
             --destination verified
           cmp "dist/${{ steps.chart.outputs.package }}" "verified/${{ steps.chart.outputs.package }}"
 
+      - name: Attest published OCI chart digest
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
+        with:
+          subject-name: ${{ steps.chart.outputs.oci_repository }}
+          subject-digest: ${{ steps.oci.outputs.digest }}
+          push-to-registry: true
+
+      - name: Attest published OCI chart SBOM
+        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3.0.0
+        with:
+          subject-name: ${{ steps.chart.outputs.oci_repository }}
+          subject-digest: ${{ steps.oci.outputs.digest }}
+          sbom-path: dist/${{ steps.chart.outputs.package }}.spdx.json
+          push-to-registry: true
+
       - name: Verify anonymous OCI chart retrieval
         shell: bash
         run: |
@@ -183,6 +237,7 @@ jobs:
           gh release upload "$RELEASE_TAG" \
             "dist/${{ steps.chart.outputs.package }}" \
             "dist/${{ steps.chart.outputs.package }}.sha256" \
+            "dist/${{ steps.chart.outputs.package }}.spdx.json" \
             dist/OCI_CHART_DIGEST \
             --clobber \
             --repo "$GITHUB_REPOSITORY"

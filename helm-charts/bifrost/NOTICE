@@ -1,0 +1,14 @@
+FrankenGate
+Copyright 2026 FrankenGate contributors
+
+This product is derived from Bifrost AI Gateway:
+https://github.com/maximhq/bifrost
+
+Bifrost is licensed under the Apache License, Version 2.0. FrankenGate retains
+the upstream copyright, patent, trademark, and attribution notices that apply
+to the incorporated work. FrankenGate is an independent fork and is not
+affiliated with or endorsed by Maxim AI or the Bifrost maintainers.
+
+Files changed by the FrankenGate project are recorded in Git history and, where
+appropriate, carry an additional modification notice. The Bifrost and Maxim
+names and marks are used only to describe origin and compatibility.
