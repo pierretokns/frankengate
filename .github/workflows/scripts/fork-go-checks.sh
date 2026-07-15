@@ -11,6 +11,7 @@ done < <(
   find "$ROOT" -type f -name go.mod \
     -not -path '*/node_modules/*' \
     -not -path '*/.git/*' \
+    -not -path '*/.cache/*' \
     -print | sed 's#/go\.mod$##' | sort
 )
 
