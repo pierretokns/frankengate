@@ -2,9 +2,6 @@
   FROM node:25-alpine3.23@sha256:bdf2cca6fe3dabd014ea60163eca3f0f7015fbd5c7ee1b0e9ccb4ced6eb02ef4 AS ui-builder
   WORKDIR /app
 
-  # Apply latest alpine security patches before installing packages
-  RUN apk upgrade --no-cache
-
   # Copy UI package files and install dependencies
   COPY ui/package*.json ./
   RUN npm ci
@@ -17,35 +14,43 @@
   # Skip the copy-build step since we'll copy the files in the Go build stage
 
   # --- Go Build Stage: Compile the Go binary ---
-  FROM golang:1.26.4-alpine3.23@sha256:f23e8b227fb4493eabe03bede4d5a32d04092da71962f1fb79b5f7d1e6c2a17f AS builder
-  WORKDIR /app
+  FROM golang:1.26.5-alpine3.23@sha256:622e56dbc11a8cfe87cafa2331e9a201877271cbff918af53d3be315f3da88cc AS builder
+  WORKDIR /src
 
-  # Install dependencies including gcc for CGO and sqlite (with latest security patches)
-  RUN apk upgrade --no-cache && \
-    apk add --no-cache gcc musl-dev sqlite-dev binutils binutils-gold
+  RUN apk add --no-cache gcc musl-dev sqlite-dev binutils binutils-gold
 
   # Set environment for CGO-enabled build (required for go-sqlite3)
   ENV CGO_ENABLED=1 GOOS=linux
 
-  COPY transports/go.mod transports/go.sum ./
-  RUN ls
-  RUN cat go.mod
-  RUN go mod download
-
-  # Copy source code and dependencies
-  COPY transports/ ./
-
-  COPY --from=ui-builder /app/out ./bifrost-http/ui
+  # Compile the selected source tree as one monorepo. FrankenGate changes core,
+  # framework, plugins, and transports in lockstep; GOWORK=off would silently
+  # replace local security fixes with older published Bifrost modules.
+  COPY . ./
+  COPY --from=ui-builder /app/out ./transports/bifrost-http/ui
+  RUN go work init \
+    ./core \
+    ./framework \
+    ./plugins/compat \
+    ./plugins/governance \
+    ./plugins/jsonparser \
+    ./plugins/logging \
+    ./plugins/maxim \
+    ./plugins/mocker \
+    ./plugins/modelcatalogresolver \
+    ./plugins/otel \
+    ./plugins/prompts \
+    ./plugins/semanticcache \
+    ./plugins/telemetry \
+    ./transports
 
   # Build the binary with CGO enabled and static SQLite linking
-  ENV GOWORK=off
   ARG VERSION=unknown
   RUN go build \
     -ldflags="-w -s -X main.Version=v${VERSION} -extldflags '-static'" \
     -a -trimpath \
     -tags "sqlite_static" \
     -o /app/main \
-    ./bifrost-http
+    ./transports/bifrost-http
 
   # Verify build succeeded
   RUN test -f /app/main || (echo "Build failed" && exit 1)
@@ -54,16 +59,12 @@
   FROM alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
   WORKDIR /app
 
-  # Install runtime dependencies for CGO-enabled binary
-  # musl: C standard library (required for CGO binaries)
-  # libgcc: GCC runtime library
-  # ca-certificates: For HTTPS connections
-  RUN apk upgrade --no-cache && \
-    apk add --no-cache musl libgcc ca-certificates zlib
+  # The binary is statically linked; only the CA bundle is required at runtime.
+  RUN apk add --no-cache ca-certificates
 
   # Create data directory and set up user
   COPY --from=builder /app/main .
-  COPY --from=builder /app/docker-entrypoint.sh .
+  COPY --from=builder /src/transports/docker-entrypoint.sh .
 
   # Getting arguments
   ARG ARG_APP_PORT=8080
@@ -100,7 +101,7 @@
     chown -R appuser:appuser /app && \
     chown -R appuser:0 "$APP_DIR" && \
     { [ "$APP_DIR" = "/app" ] || chmod -R g=rwX "$APP_DIR"; } && \
-    chmod +x /app/docker-entrypoint.sh
+    chmod 0555 /app/main /app/docker-entrypoint.sh
   # Numeric USER (uid:gid) so kubelet can verify runAsNonRoot; group 0 grants
   # write access to the group-0-owned data dir under arbitrary OpenShift UIDs.
   USER 1000:0
