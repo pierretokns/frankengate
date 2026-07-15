@@ -20,6 +20,25 @@ ENV CGO_ENABLED=1 GOOS=linux
 COPY . ./
 COPY --from=ui-builder /app/out ./transports/bifrost-http/ui
 
+# Older FrankenGate tags did not commit a root go.work (and .dockerignore
+# intentionally excludes local workspace files), so construct the exact module
+# graph needed by the transport from the tag contents.
+RUN go work init \
+    ./core \
+    ./framework \
+    ./plugins/compat \
+    ./plugins/governance \
+    ./plugins/jsonparser \
+    ./plugins/logging \
+    ./plugins/maxim \
+    ./plugins/mocker \
+    ./plugins/modelcatalogresolver \
+    ./plugins/otel \
+    ./plugins/prompts \
+    ./plugins/semanticcache \
+    ./plugins/telemetry \
+    ./transports
+
 ARG VERSION=unknown
 RUN go build \
     -ldflags="-w -s -X main.Version=v${VERSION} -extldflags '-static'" \
