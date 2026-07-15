@@ -18,12 +18,59 @@ real-Aurora conformance run before a release claim.
 The checked-in password is deliberately test-only. This manifest must never be
 used for a shared or production environment.
 
+The fixture expects the cluster to provide a default dynamic `ReadWriteOnce`
+storage class. The PostgreSQL image is pinned by manifest-list digest; changing
+the tag or digest requires an explicit fixture review and a fresh SQL smoke
+test on every CI architecture.
+
 Apply and wait:
 
 ```sh
 kubectl apply -f tests/kubernetes/local-aurora/postgres.yaml
 kubectl rollout status statefulset/postgres -n frankengate-test --timeout=120s
 ```
+
+## Three-pod virtual-key coherence proof
+
+`run-vk-coherence.sh` builds (or accepts) a Linux FrankenGate binary, starts
+three isolated gateway pods against the shared PostgreSQL authority, and
+proves the following sequence against each pod's in-memory governance cache:
+
+1. create on pod A converges to all three pods;
+2. rotate on pod B replaces the value on all three pods;
+3. delete on pod C removes the key from all three pods;
+4. PostgreSQL records exactly `reload`, `reload`, `delete` in monotonic order;
+5. a replacement pod replays the complete history without resurrecting the
+   deleted key or wedging on the historical reload events.
+
+The convergence oracle runs inside the cluster once per second with an
+eight-second hard deadline. `kubectl` startup latency is therefore excluded
+from the measured propagation window.
+
+Run against the current Kubernetes context:
+
+```sh
+tests/kubernetes/local-aurora/run-vk-coherence.sh
+```
+
+For an offline cluster, provide an already-built Linux binary and an image tag
+present in the node's containerd cache:
+
+```sh
+FRANKENGATE_BINARY=/tmp/frankengate-vk \
+POSTGRES_IMAGE=docker.io/library/postgres:16-alpine \
+tests/kubernetes/local-aurora/run-vk-coherence.sh
+```
+
+Set `KEEP_FIXTURE=1` to retain the disposable pods for inspection. The runner
+uses a temporary in-cluster HTTP service to transfer the binary because a
+container-image build is not part of this coherence assertion. It discovers
+that Service's ClusterIP and renders a temporary gateway manifest, so the
+checked-in template contains no cluster-specific address.
+
+This is a same-cluster, shared-authority coherence proof. It does not prove
+cross-region Aurora behavior, cross-node network behavior, production image
+hardening, HPA behavior, or real Aurora failover.
 
 Delete the complete fixture, including its persistent volume claim:
 

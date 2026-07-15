@@ -1,0 +1,171 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frankengate-vk-config
+  namespace: frankengate-test
+  labels:
+    app.kubernetes.io/part-of: frankengate
+    frankengate.dev/test-only: "true"
+data:
+  pricing.json: |
+    {}
+  model-parameters.json: |
+    {}
+  config.json: |
+    {
+      "config_store": {
+        "enabled": true,
+        "type": "postgres",
+        "config": {
+          "host": "postgres.frankengate-test.svc.cluster.local",
+          "port": "5432",
+          "user": "frankengate",
+          "password": "test-only-password",
+          "db_name": "frankengate",
+          "ssl_mode": "disable"
+        }
+      },
+      "logs_store": {
+        "enabled": true,
+        "type": "postgres",
+        "config": {
+          "host": "postgres.frankengate-test.svc.cluster.local",
+          "port": "5432",
+          "user": "frankengate",
+          "password": "test-only-password",
+          "db_name": "frankengate",
+          "ssl_mode": "disable"
+        }
+      },
+      "framework": {
+        "pricing": {
+          "pricing_url": "file:///app/catalog/pricing.json",
+          "pricing_sync_interval": 86400,
+          "model_parameters_url": "file:///app/catalog/model-parameters.json"
+        }
+      },
+      "client": {
+        "enforce_auth_on_inference": true,
+        "enable_logging": false
+      },
+      "governance": {
+        "auth_config": {
+          "is_enabled": false,
+          "disable_auth_on_inference": false
+        },
+        "virtual_keys": []
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frankengate-vk
+  namespace: frankengate-test
+  labels:
+    app.kubernetes.io/name: frankengate-vk
+    app.kubernetes.io/part-of: frankengate
+    frankengate.dev/test-only: "true"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: frankengate-vk
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: frankengate-vk
+        app.kubernetes.io/part-of: frankengate
+        frankengate.dev/test-only: "true"
+    spec:
+      automountServiceAccountToken: false
+      # Co-locate with the disposable PostgreSQL fixture. This keeps the
+      # offline harness portable across k3d node names while reusing the
+      # runtime image already pulled for postgres-0. The assertion is
+      # independent process/pod coherence, not cross-node networking.
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: postgres
+              topologyKey: kubernetes.io/hostname
+      initContainers:
+        - name: fetch-test-binary
+          # Reuse the exact tag already present for postgres-0. k3d's offline
+          # containerd cache retains the platform image by tag/image ID rather
+          # than by the manifest-list digest used by the StatefulSet spec.
+          image: docker.io/library/postgres:16-alpine
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-ec"]
+          args:
+            - wget -q -O /work/frankengate "http://${BINARY_SERVER_HOST}:18080/frankengate" && chmod 0555 /work/frankengate
+          env:
+            # Replaced by run-vk-coherence.sh after it creates the disposable
+            # in-cluster binary service. A raw apply intentionally fails fast.
+            - name: BINARY_SERVER_HOST
+              value: "__BINARY_SERVICE_IP__"
+          volumeMounts:
+            - name: binary
+              mountPath: /work
+      containers:
+        - name: gateway
+          image: docker.io/library/postgres:16-alpine
+          imagePullPolicy: IfNotPresent
+          command: ["/work/frankengate"]
+          args: ["-app-dir", "/app/data", "-host", "0.0.0.0", "-port", "8080", "-log-level", "info", "-log-style", "json"]
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 2
+            failureThreshold: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          volumeMounts:
+            - name: binary
+              mountPath: /work
+            - name: config
+              mountPath: /app/data/config.json
+              subPath: config.json
+            - name: config
+              mountPath: /app/catalog/pricing.json
+              subPath: pricing.json
+            - name: config
+              mountPath: /app/catalog/model-parameters.json
+              subPath: model-parameters.json
+            - name: data
+              mountPath: /app/data/runtime
+      volumes:
+        - name: binary
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: frankengate-vk-config
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frankengate-vk
+  namespace: frankengate-test
+  labels:
+    app.kubernetes.io/name: frankengate-vk
+    app.kubernetes.io/part-of: frankengate
+    frankengate.dev/test-only: "true"
+spec:
+  selector:
+    app.kubernetes.io/name: frankengate-vk
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
