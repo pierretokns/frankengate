@@ -1007,6 +1007,7 @@ func TestUpdateVirtualKey(t *testing.T) {
 	}
 	err := store.CreateVirtualKey(ctx, vk)
 	require.NoError(t, err)
+	beforeUpdate := vk.UpdatedAt
 
 	// Update
 	vk.Name = "Updated Name"
@@ -1018,6 +1019,7 @@ func TestUpdateVirtualKey(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "Updated Name", result.Name)
 	assert.False(t, result.IsActiveValue())
+	assert.True(t, result.UpdatedAt.After(beforeUpdate), "virtual-key updates must advance the CAS timestamp")
 }
 
 func TestDeleteVirtualKey(t *testing.T) {

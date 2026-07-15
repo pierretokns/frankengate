@@ -813,10 +813,14 @@ paths:
   # Governance - Virtual Keys
   /api/governance/virtual-keys:
     $ref: './paths/management/governance.yaml#/virtual-keys'
+  /api/governance/virtual-keys/rotate:
+    $ref: './paths/management/governance.yaml#/virtual-keys-rotate'
   /api/governance/virtual-keys/quota:
     $ref: './paths/management/governance.yaml#/virtual-keys-quota'
   /api/governance/virtual-keys/{vk_id}:
     $ref: './paths/management/governance.yaml#/virtual-keys-by-id'
+  /api/governance/virtual-keys/{vk_id}/rotate:
+    $ref: './paths/management/governance.yaml#/virtual-keys-by-id-rotate'
 
   # Governance - Teams
   /api/governance/teams:

@@ -97,7 +97,7 @@ virtual-keys:
         content:
           application/json:
             schema:
-              $ref: '../../schemas/management/governance.yaml#/VirtualKeyResponse'
+              $ref: '../../schemas/management/governance.yaml#/CreateVirtualKeyResponse'
       '400':
         $ref: '../../openapi.yaml#/components/responses/BadRequest'
       '500':
@@ -137,6 +137,65 @@ virtual-keys-quota:
               properties:
                 error:
                   type: string
+      '500':
+        $ref: '../../openapi.yaml#/components/responses/InternalError'
+
+virtual-keys-rotate:
+  post:
+    operationId: rotateVirtualKeys
+    summary: Rotate multiple virtual keys
+    description: Rotates each requested credential and reveals every successfully committed secret exactly once.
+    tags: [Governance]
+    security:
+      - ManagementBearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [virtual_key_ids]
+            properties:
+              virtual_key_ids:
+                type: array
+                items: {type: string}
+    responses:
+      '200':
+        description: Rotation results, including per-key failures and one-time secrets for committed rotations
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/governance.yaml#/BulkRotateVirtualKeysResponse'
+      '400':
+        $ref: '../../openapi.yaml#/components/responses/BadRequest'
+
+virtual-keys-by-id-rotate:
+  post:
+    operationId: rotateVirtualKey
+    summary: Rotate a virtual key
+    description: |
+      Commits a new credential and reveals it exactly once. `runtime_converged` is false when
+      persistence succeeded but this pod's in-memory reload is still pending; the committed
+      credential remains successful and must not be retried automatically.
+    tags: [Governance]
+    parameters:
+      - name: vk_id
+        in: path
+        required: true
+        schema: {type: string}
+    security:
+      - ManagementBearerAuth: []
+    responses:
+      '200':
+        description: Credential committed and revealed once
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/governance.yaml#/RotateVirtualKeyResponse'
+      '404':
+        description: Virtual key not found
+      '409':
+        description: The key changed after the rotation request observed it
       '500':
         $ref: '../../openapi.yaml#/components/responses/InternalError'
 

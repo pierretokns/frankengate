@@ -197,6 +197,62 @@ func TestPostgresVirtualKeyBudgetConcurrentMutationsDoNotDeadlock(t *testing.T) 
 	}
 }
 
+// TestPostgresVirtualKeyCredentialCASSerializesConcurrentRotations exercises
+// the exact read/lock/compare/write sequence used by the HTTP rotation path
+// against PostgreSQL. Both contenders observe one generation, but only the
+// first transaction may commit a replacement credential.
+func TestPostgresVirtualKeyCredentialCASSerializesConcurrentRotations(t *testing.T) {
+	store := setupPostgresDeadlockStore(t)
+	ctx := context.Background()
+	vk := &tables.TableVirtualKey{
+		ID: "vk-postgres-cas", Name: "postgres-cas", Value: *schemas.NewSecretVar("sk-bf-original"),
+	}
+	require.NoError(t, store.CreateVirtualKey(ctx, vk))
+
+	observed, err := store.GetVirtualKey(ctx, vk.ID)
+	require.NoError(t, err)
+	observedAt, observedValue := observed.UpdatedAt, observed.Value.GetValue()
+	conflict := errors.New("stale virtual-key generation")
+	start := make(chan struct{})
+	errs := make(chan error, 2)
+	for _, replacement := range []string{"sk-bf-rotation-a", "sk-bf-rotation-b"} {
+		replacement := replacement
+		go func() {
+			<-start
+			errs <- store.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+				locked, err := store.GetVirtualKeyForUpdate(ctx, vk.ID, tx)
+				if err != nil {
+					return err
+				}
+				if !locked.UpdatedAt.Equal(observedAt) || locked.Value.GetValue() != observedValue {
+					return conflict
+				}
+				locked.Value = *schemas.NewSecretVar(replacement)
+				return store.UpdateVirtualKey(ctx, locked, tx)
+			})
+		}()
+	}
+	close(start)
+
+	var successes, conflicts int
+	for range 2 {
+		err := <-errs
+		switch {
+		case err == nil:
+			successes++
+		case errors.Is(err, conflict):
+			conflicts++
+		default:
+			t.Fatalf("unexpected concurrent rotation error: %v", err)
+		}
+	}
+	require.Equal(t, 1, successes)
+	require.Equal(t, 1, conflicts)
+	committed, err := store.GetVirtualKey(ctx, vk.ID)
+	require.NoError(t, err)
+	require.Contains(t, []string{"sk-bf-rotation-a", "sk-bf-rotation-b"}, committed.Value.GetValue())
+}
+
 // TestPostgresFirstCredentialCallbackSerializesWithMCPRevocation proves the
 // no-existing-row race: a callback that validated before revocation is allowed
 // to finish, then the waiting authority transaction must observe and orphan its

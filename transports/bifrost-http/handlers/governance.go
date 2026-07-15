@@ -1131,6 +1131,178 @@ func (h *GovernanceHandler) reloadComplexityAnalyzerConfig(ctx context.Context, 
 
 // Virtual Key CRUD Operations
 
+var errVirtualKeyRotationConflict = errors.New("virtual key changed during rotation")
+
+// redactedVirtualKey is the public HTTP representation of a virtual key after
+// its one-time creation/rotation response. It deliberately has no Value field:
+// the durable TableVirtualKey still owns the credential, while ordinary read
+// and mutation responses expose metadata only.
+type redactedVirtualKey struct {
+	ID              string                             `json:"id"`
+	Name            string                             `json:"name"`
+	Description     string                             `json:"description,omitempty"`
+	IsActive        *bool                              `json:"is_active,omitempty"`
+	ExpiresAt       *time.Time                         `json:"expires_at,omitempty"`
+	ProviderConfigs []redactedVirtualKeyProviderConfig `json:"provider_configs"`
+	MCPConfigs      []redactedVirtualKeyMCPConfig      `json:"mcp_configs"`
+	TeamID          *string                            `json:"team_id,omitempty"`
+	CustomerID      *string                            `json:"customer_id,omitempty"`
+	RateLimitID     *string                            `json:"rate_limit_id,omitempty"`
+	CalendarAligned bool                               `json:"calendar_aligned"`
+	Team            *virtualKeyRelationSummary         `json:"team,omitempty"`
+	Customer        *virtualKeyRelationSummary         `json:"customer,omitempty"`
+	RateLimit       *configstoreTables.TableRateLimit  `json:"rate_limit,omitempty"`
+	Budgets         []configstoreTables.TableBudget    `json:"budgets,omitempty"`
+	ConfigHash      string                             `json:"config_hash"`
+	CreatedByUserID *string                            `json:"created_by_user_id,omitempty"`
+	CreatedAt       time.Time                          `json:"created_at"`
+	UpdatedAt       time.Time                          `json:"updated_at"`
+}
+
+type virtualKeyRelationSummary struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type redactedProviderKey struct {
+	ID          uint      `json:"id"`
+	Name        string    `json:"name"`
+	ProviderID  uint      `json:"provider_id"`
+	Provider    string    `json:"provider"`
+	KeyID       string    `json:"key_id"`
+	Weight      *float64  `json:"weight"`
+	Enabled     *bool     `json:"enabled,omitempty"`
+	Status      string    `json:"status"`
+	Description string    `json:"description,omitempty"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type redactedVirtualKeyProviderConfig struct {
+	ID                uint                              `json:"id"`
+	VirtualKeyID      string                            `json:"virtual_key_id"`
+	Provider          string                            `json:"provider"`
+	Weight            *float64                          `json:"weight"`
+	AllowedModels     schemas.WhiteList                 `json:"allowed_models"`
+	BlacklistedModels schemas.BlackList                 `json:"blacklisted_models"`
+	AllowAllKeys      bool                              `json:"allow_all_keys"`
+	RateLimitID       *string                           `json:"rate_limit_id,omitempty"`
+	RateLimit         *configstoreTables.TableRateLimit `json:"rate_limit,omitempty"`
+	Budgets           []configstoreTables.TableBudget   `json:"budgets,omitempty"`
+	Keys              []redactedProviderKey             `json:"keys"`
+}
+
+func redactProviderConfigs(values []configstoreTables.TableVirtualKeyProviderConfig) []redactedVirtualKeyProviderConfig {
+	redacted := make([]redactedVirtualKeyProviderConfig, len(values))
+	for i := range values {
+		value := values[i]
+		keys := make([]redactedProviderKey, len(value.Keys))
+		for j := range value.Keys {
+			key := value.Keys[j]
+			keys[j] = redactedProviderKey{
+				ID: key.ID, Name: key.Name, ProviderID: key.ProviderID, Provider: key.Provider,
+				KeyID: key.KeyID, Weight: key.Weight, Enabled: key.Enabled, Status: key.Status,
+				Description: key.Description, CreatedAt: key.CreatedAt, UpdatedAt: key.UpdatedAt,
+			}
+		}
+		redacted[i] = redactedVirtualKeyProviderConfig{
+			ID: value.ID, VirtualKeyID: value.VirtualKeyID, Provider: value.Provider, Weight: value.Weight,
+			AllowedModels: value.AllowedModels, BlacklistedModels: value.BlacklistedModels,
+			AllowAllKeys: value.AllowAllKeys, RateLimitID: value.RateLimitID, RateLimit: value.RateLimit,
+			Budgets: value.Budgets, Keys: keys,
+		}
+	}
+	return redacted
+}
+
+type redactedMCPClient struct {
+	ID                    uint              `json:"id"`
+	ClientID              string            `json:"client_id"`
+	Name                  string            `json:"name"`
+	IsCodeModeClient      bool              `json:"is_code_mode_client"`
+	ConnectionType        string            `json:"connection_type"`
+	ToolsToExecute        schemas.WhiteList `json:"tools_to_execute"`
+	ToolsToAutoExecute    schemas.WhiteList `json:"tools_to_auto_execute"`
+	AllowedExtraHeaders   schemas.WhiteList `json:"allowed_extra_headers"`
+	PerUserHeaderKeys     []string          `json:"per_user_header_keys"`
+	IsPingAvailable       *bool             `json:"is_ping_available,omitempty"`
+	ToolSyncInterval      int               `json:"tool_sync_interval"`
+	ToolExecutionTimeout  int               `json:"tool_execution_timeout"`
+	AuthType              string            `json:"auth_type"`
+	OauthConfigID         *string           `json:"oauth_config_id,omitempty"`
+	AllowOnAllVirtualKeys bool              `json:"allow_on_all_virtual_keys"`
+	Disabled              bool              `json:"disabled"`
+	CreatedAt             time.Time         `json:"created_at"`
+	UpdatedAt             time.Time         `json:"updated_at"`
+}
+
+type redactedVirtualKeyMCPConfig struct {
+	ID             uint              `json:"id"`
+	VirtualKeyID   string            `json:"virtual_key_id"`
+	MCPClientID    uint              `json:"mcp_client_id"`
+	MCPClient      redactedMCPClient `json:"mcp_client"`
+	ToolsToExecute schemas.WhiteList `json:"tools_to_execute"`
+}
+
+func redactMCPConfigs(values []configstoreTables.TableVirtualKeyMCPConfig) []redactedVirtualKeyMCPConfig {
+	redacted := make([]redactedVirtualKeyMCPConfig, len(values))
+	for i := range values {
+		value, client := values[i], values[i].MCPClient
+		redacted[i] = redactedVirtualKeyMCPConfig{
+			ID: value.ID, VirtualKeyID: value.VirtualKeyID, MCPClientID: value.MCPClientID,
+			ToolsToExecute: value.ToolsToExecute,
+			MCPClient: redactedMCPClient{
+				ID: client.ID, ClientID: client.ClientID, Name: client.Name,
+				IsCodeModeClient: client.IsCodeModeClient, ConnectionType: client.ConnectionType,
+				ToolsToExecute: client.ToolsToExecute, ToolsToAutoExecute: client.ToolsToAutoExecute,
+				AllowedExtraHeaders: client.AllowedExtraHeaders, PerUserHeaderKeys: client.PerUserHeaderKeys,
+				IsPingAvailable: client.IsPingAvailable, ToolSyncInterval: client.ToolSyncInterval,
+				ToolExecutionTimeout: client.ToolExecutionTimeout, AuthType: client.AuthType,
+				OauthConfigID: client.OauthConfigID, AllowOnAllVirtualKeys: client.AllowOnAllVirtualKeys,
+				Disabled: client.Disabled, CreatedAt: client.CreatedAt, UpdatedAt: client.UpdatedAt,
+			},
+		}
+	}
+	return redacted
+}
+
+func redactVirtualKey(vk *configstoreTables.TableVirtualKey) *redactedVirtualKey {
+	if vk == nil {
+		return nil
+	}
+	redacted := &redactedVirtualKey{
+		ID: vk.ID, Name: vk.Name, Description: vk.Description, IsActive: vk.IsActive,
+		ExpiresAt: vk.ExpiresAt, ProviderConfigs: redactProviderConfigs(vk.ProviderConfigs), MCPConfigs: redactMCPConfigs(vk.MCPConfigs),
+		TeamID: vk.TeamID, CustomerID: vk.CustomerID, RateLimitID: vk.RateLimitID,
+		CalendarAligned: vk.CalendarAligned,
+		RateLimit:       vk.RateLimit, Budgets: vk.Budgets, ConfigHash: vk.ConfigHash,
+		CreatedByUserID: vk.CreatedByUserID, CreatedAt: vk.CreatedAt, UpdatedAt: vk.UpdatedAt,
+	}
+	if vk.Team != nil {
+		redacted.Team = &virtualKeyRelationSummary{ID: vk.Team.ID, Name: vk.Team.Name}
+	}
+	if vk.Customer != nil {
+		redacted.Customer = &virtualKeyRelationSummary{ID: vk.Customer.ID, Name: vk.Customer.Name}
+	}
+	return redacted
+}
+
+func redactVirtualKeys(values []configstoreTables.TableVirtualKey) []*redactedVirtualKey {
+	redacted := make([]*redactedVirtualKey, len(values))
+	for i := range values {
+		redacted[i] = redactVirtualKey(&values[i])
+	}
+	return redacted
+}
+
+func redactVirtualKeyPointers(values []*configstoreTables.TableVirtualKey) []*redactedVirtualKey {
+	redacted := make([]*redactedVirtualKey, len(values))
+	for i, vk := range values {
+		redacted[i] = redactVirtualKey(vk)
+	}
+	return redacted
+}
+
 // getVirtualKeys handles GET /api/governance/virtual-keys - Get all virtual keys with relationships
 func (h *GovernanceHandler) getVirtualKeys(ctx *fasthttp.RequestCtx) {
 	// Check if "from_memory" query parameter is set to true
@@ -1160,7 +1332,7 @@ func (h *GovernanceHandler) getVirtualKeys(ctx *fasthttp.RequestCtx) {
 			hydratedVKs[i] = &clone
 		}
 		SendJSON(ctx, map[string]interface{}{
-			"virtual_keys": hydratedVKs,
+			"virtual_keys": redactVirtualKeyPointers(hydratedVKs),
 			"count":        len(hydratedVKs),
 			"total_count":  len(hydratedVKs),
 			"limit":        len(hydratedVKs),
@@ -1233,7 +1405,7 @@ func (h *GovernanceHandler) getVirtualKeys(ctx *fasthttp.RequestCtx) {
 		// Reverse-map governance from VK-scoped model configs for display.
 		h.hydrateVKListGovernance(ctx, virtualKeys)
 		SendJSON(ctx, map[string]interface{}{
-			"virtual_keys": virtualKeys,
+			"virtual_keys": redactVirtualKeys(virtualKeys),
 			"count":        len(virtualKeys),
 			"total_count":  totalCount,
 			"limit":        params.Limit,
@@ -1251,7 +1423,7 @@ func (h *GovernanceHandler) getVirtualKeys(ctx *fasthttp.RequestCtx) {
 	}
 	h.hydrateVKListGovernance(ctx, virtualKeys)
 	SendJSON(ctx, map[string]interface{}{
-		"virtual_keys": virtualKeys,
+		"virtual_keys": redactVirtualKeys(virtualKeys),
 		"count":        len(virtualKeys),
 		"total_count":  len(virtualKeys),
 		"limit":        len(virtualKeys),
@@ -1319,11 +1491,13 @@ func (h *GovernanceHandler) createVirtualKey(ctx *fasthttp.RequestCtx) {
 		}
 	}
 	var vk configstoreTables.TableVirtualKey
+	var createdSecret string
 	if err := h.configStore.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+		createdSecret = governance.GenerateVirtualKey()
 		vk = configstoreTables.TableVirtualKey{
 			ID:              uuid.NewString(),
 			Name:            req.Name,
-			Value:           *schemas.NewSecretVar(governance.GenerateVirtualKey()),
+			Value:           *schemas.NewSecretVar(createdSecret),
 			Description:     req.Description,
 			TeamID:          req.TeamID,
 			CustomerID:      req.CustomerID,
@@ -1475,7 +1649,8 @@ func (h *GovernanceHandler) createVirtualKey(ctx *fasthttp.RequestCtx) {
 
 	SendJSON(ctx, map[string]any{
 		"message":     "Virtual key created successfully",
-		"virtual_key": preloadedVk,
+		"virtual_key": redactVirtualKey(preloadedVk),
+		"secret":      createdSecret,
 	})
 }
 
@@ -1499,7 +1674,7 @@ func (h *GovernanceHandler) getVirtualKey(ctx *fasthttp.RequestCtx) {
 				clone.ProviderConfigs = pcs
 				applyVKGovernanceFromModelConfigs(&clone, byKey)
 				SendJSON(ctx, map[string]interface{}{
-					"virtual_key": &clone,
+					"virtual_key": redactVirtualKey(&clone),
 				})
 				return
 			}
@@ -1520,7 +1695,7 @@ func (h *GovernanceHandler) getVirtualKey(ctx *fasthttp.RequestCtx) {
 	h.hydrateVKGovernance(ctx, vk)
 
 	SendJSON(ctx, map[string]interface{}{
-		"virtual_key": vk,
+		"virtual_key": redactVirtualKey(vk),
 	})
 }
 
@@ -1996,19 +2171,35 @@ func (h *GovernanceHandler) updateVirtualKey(ctx *fasthttp.RequestCtx) {
 
 	SendJSON(ctx, map[string]interface{}{
 		"message":     "Virtual key updated successfully",
-		"virtual_key": preloadedVk,
+		"virtual_key": redactVirtualKey(preloadedVk),
 	})
 }
 
-func (h *GovernanceHandler) rotateVirtualKeyByID(ctx context.Context, vkID string) (*configstoreTables.TableVirtualKey, error) {
-	vk, err := h.configStore.GetVirtualKey(ctx, vkID)
+func (h *GovernanceHandler) rotateVirtualKeyByID(ctx context.Context, vkID string) (*configstoreTables.TableVirtualKey, string, error) {
+	observed, err := h.configStore.GetVirtualKey(ctx, vkID)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
+	observedUpdatedAt := observed.UpdatedAt
+	observedValue := observed.Value.GetValue()
+	var vk *configstoreTables.TableVirtualKey
+	var secret string
 	err = h.configStore.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+		locked, err := h.configStore.GetVirtualKeyForUpdate(ctx, vkID, tx)
+		if err != nil {
+			return err
+		}
+		// The credential comparison is the strict generation check. UpdatedAt is
+		// retained as a metadata CAS, but timestamp precision alone cannot prove
+		// that no intervening rotation committed.
+		if !locked.UpdatedAt.Equal(observedUpdatedAt) || locked.Value.GetValue() != observedValue {
+			return errVirtualKeyRotationConflict
+		}
+		vk = locked
 		oldValue := vk.Value.GetValue()
-		vk.Value = *schemas.NewSecretVar(governance.GenerateVirtualKey())
-		if vk.Value.GetValue() == oldValue {
+		secret = governance.GenerateVirtualKey()
+		vk.Value = *schemas.NewSecretVar(secret)
+		if secret == oldValue {
 			return fmt.Errorf("generated virtual key matched existing value")
 		}
 		if err := h.configStore.UpdateVirtualKey(ctx, vk, tx); err != nil {
@@ -2021,32 +2212,54 @@ func (h *GovernanceHandler) rotateVirtualKeyByID(ctx context.Context, vkID strin
 		})
 	})
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	preloadedVk, err := h.governanceManager.ReloadVirtualKey(ctx, vk.ID)
 	if err != nil {
-		return nil, fmt.Errorf("virtual key rotated in database but failed to reload in-memory state: %w", err)
+		// The credential is already committed and cannot be re-derived. Return
+		// both metadata and the one-time secret with the error so callers never
+		// lose the only recoverable copy merely because runtime convergence failed.
+		return vk, secret, fmt.Errorf("virtual key rotated in database but failed to reload in-memory state: %w", err)
 	}
 	h.hydrateVKGovernance(ctx, preloadedVk)
-	return preloadedVk, nil
+	return preloadedVk, secret, nil
 }
 
 // rotateVirtualKey handles POST /api/governance/virtual-keys/{vk_id}/rotate - Rotate only the virtual key value
 func (h *GovernanceHandler) rotateVirtualKey(ctx *fasthttp.RequestCtx) {
 	vkID := ctx.UserValue("vk_id").(string)
-	preloadedVk, err := h.rotateVirtualKeyByID(ctx, vkID)
+	preloadedVk, secret, err := h.rotateVirtualKeyByID(ctx, vkID)
 	if err != nil {
+		if errors.Is(err, errVirtualKeyRotationConflict) {
+			SendError(ctx, 409, "Virtual key changed during rotation; retry with the latest resource")
+			return
+		}
 		if errors.Is(err, configstore.ErrNotFound) {
 			SendError(ctx, 404, "Virtual key not found")
 			return
 		}
 		logger.Error("failed to rotate virtual key: %v", err)
+		if secret != "" && preloadedVk != nil {
+			// Persistence succeeded, so this response must be successful. Returning
+			// 5xx encourages clients to discard the one-time secret or retry the
+			// mutation, which would immediately invalidate the disclosed credential.
+			SendJSON(ctx, map[string]interface{}{
+				"message":           "Virtual key rotated; runtime convergence is pending",
+				"virtual_key":       redactVirtualKey(preloadedVk),
+				"secret":            secret,
+				"runtime_converged": false,
+				"warning":           "The credential is committed, but this gateway has not reloaded it yet",
+			})
+			return
+		}
 		SendError(ctx, 500, fmt.Sprintf("Failed to rotate virtual key: %v", err))
 		return
 	}
 	SendJSON(ctx, map[string]interface{}{
-		"message":     "Virtual key rotated successfully",
-		"virtual_key": preloadedVk,
+		"message":           "Virtual key rotated successfully",
+		"virtual_key":       redactVirtualKey(preloadedVk),
+		"secret":            secret,
+		"runtime_converged": true,
 	})
 }
 
@@ -2077,11 +2290,23 @@ func (h *GovernanceHandler) rotateVirtualKeys(ctx *fasthttp.RequestCtx) {
 		ids = append(ids, id)
 	}
 
-	rotated := make([]*configstoreTables.TableVirtualKey, 0, len(ids))
+	type rotatedVirtualKeyResponse struct {
+		*redactedVirtualKey
+		Secret string `json:"secret"`
+	}
+	rotated := make([]rotatedVirtualKeyResponse, 0, len(ids))
 	failures := make(map[string]string)
 	for _, id := range ids {
-		vk, err := h.rotateVirtualKeyByID(ctx, id)
+		vk, secret, err := h.rotateVirtualKeyByID(ctx, id)
 		if err != nil {
+			if secret != "" && vk != nil {
+				// The database commit succeeded, so include the one-time secret even
+				// though this pod could not converge its runtime cache.
+				rotated = append(rotated, rotatedVirtualKeyResponse{redactedVirtualKey: redactVirtualKey(vk), Secret: secret})
+				failures[id] = err.Error()
+				logger.Error("virtual key %s rotated but runtime reload failed: %v", id, err)
+				continue
+			}
 			if errors.Is(err, configstore.ErrNotFound) {
 				failures[id] = "virtual key not found"
 			} else {
@@ -2090,7 +2315,7 @@ func (h *GovernanceHandler) rotateVirtualKeys(ctx *fasthttp.RequestCtx) {
 			logger.Error("failed to rotate virtual key %s: %v", id, err)
 			continue
 		}
-		rotated = append(rotated, vk)
+		rotated = append(rotated, rotatedVirtualKeyResponse{redactedVirtualKey: redactVirtualKey(vk), Secret: secret})
 	}
 
 	response := map[string]interface{}{

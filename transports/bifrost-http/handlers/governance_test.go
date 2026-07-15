@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -53,20 +55,84 @@ type mockConfigStoreForVK struct {
 	configstore.ConfigStore
 	getVirtualKeysCalls          int
 	getVirtualKeysPaginatedCalls int
+	virtualKeys                  []configstoreTables.TableVirtualKey
 }
 
 func (m *mockConfigStoreForVK) GetVirtualKeysPaginated(_ context.Context, _ configstore.VirtualKeyQueryParams) ([]configstoreTables.TableVirtualKey, int64, error) {
 	m.getVirtualKeysPaginatedCalls++
-	return nil, 0, nil
+	return m.virtualKeys, int64(len(m.virtualKeys)), nil
 }
 
 func (m *mockConfigStoreForVK) GetVirtualKeys(_ context.Context) ([]configstoreTables.TableVirtualKey, error) {
 	m.getVirtualKeysCalls++
+	return m.virtualKeys, nil
+}
+
+func (m *mockConfigStoreForVK) GetModelConfigs(context.Context) ([]configstoreTables.TableModelConfig, error) {
 	return nil, nil
+}
+
+func assertVirtualKeyMetadataIsRedacted(t *testing.T, value any) map[string]any {
+	t.Helper()
+	metadata, ok := value.(map[string]any)
+	if !ok {
+		t.Fatalf("virtual key metadata has type %T, want object", value)
+	}
+	if leaked, exists := metadata["value"]; exists {
+		t.Fatalf("virtual key metadata exposed value %#v", leaked)
+	}
+	return metadata
+}
+
+func TestRedactVirtualKeyRemovesNestedCredentials(t *testing.T) {
+	vk := &configstoreTables.TableVirtualKey{
+		ID: "vk-public", Name: "Public metadata", Value: *schemas.NewSecretVar("sk-bf-top-secret"),
+		ProviderConfigs: []configstoreTables.TableVirtualKeyProviderConfig{{
+			ID: 1, Provider: "openai", Keys: []configstoreTables.TableKey{{
+				ID: 2, Name: "provider-key", KeyID: "key-id", Value: *schemas.NewSecretVar("provider-secret"),
+			}},
+		}},
+		MCPConfigs: []configstoreTables.TableVirtualKeyMCPConfig{{
+			ID: 3, MCPClientID: 4, MCPClient: configstoreTables.TableMCPClient{
+				ID: 4, Name: "mcp", ConnectionString: schemas.NewSecretVar("mcp-connection-secret"),
+				Headers: map[string]schemas.SecretVar{"Authorization": *schemas.NewSecretVar("mcp-header-secret")},
+			},
+		}},
+		Customer: &configstoreTables.TableCustomer{
+			ID: "customer-1", Name: "Customer",
+			VirtualKeys: []configstoreTables.TableVirtualKey{{
+				ID: "vk-sibling", Name: "Sibling", Value: *schemas.NewSecretVar("sk-bf-sibling-secret"),
+			}},
+		},
+		Team: &configstoreTables.TableTeam{
+			ID: "team-1", Name: "Team",
+			VirtualKeys: []configstoreTables.TableVirtualKey{{
+				ID: "vk-team-sibling", Name: "Sibling", Value: *schemas.NewSecretVar("sk-bf-team-sibling-secret"),
+			}},
+		},
+	}
+
+	encoded, err := json.Marshal(redactVirtualKey(vk))
+	require.NoError(t, err)
+	for _, secret := range []string{
+		"sk-bf-top-secret", "provider-secret", "mcp-connection-secret", "mcp-header-secret",
+		"sk-bf-sibling-secret", "sk-bf-team-sibling-secret",
+	} {
+		require.NotContains(t, string(encoded), secret)
+	}
+	var response map[string]any
+	require.NoError(t, json.Unmarshal(encoded, &response))
+	require.NotContains(t, response, "value")
+	require.NotContains(t, response["customer"].(map[string]any), "virtual_keys")
+	require.NotContains(t, response["team"].(map[string]any), "virtual_keys")
 }
 
 type mockRotateConfigStore struct {
 	configstore.ConfigStore
+	transactionMu sync.Mutex
+	mapMu         sync.RWMutex
+	initialReads  atomic.Int32
+	readBarrier   chan struct{}
 	virtualKeys   map[string]*configstoreTables.TableVirtualKey
 	modelConfigs  map[string]*configstoreTables.TableModelConfig
 	invalidations []configstoreTables.TableVirtualKeyInvalidationEvent
@@ -76,14 +142,20 @@ type mockRotateConfigStore struct {
 }
 
 func (m *mockRotateConfigStore) ExecuteTransaction(_ context.Context, fn func(tx *gorm.DB) error) error {
+	m.transactionMu.Lock()
+	defer m.transactionMu.Unlock()
+	m.mapMu.RLock()
 	snapshot := make(map[string]*configstoreTables.TableVirtualKey, len(m.virtualKeys))
 	for id, vk := range m.virtualKeys {
 		snapshot[id] = cloneTestVirtualKey(vk)
 	}
+	m.mapMu.RUnlock()
 	beforeInvalidations := len(m.invalidations)
 	beforeUpdates := m.updates
 	if err := fn(nil); err != nil {
+		m.mapMu.Lock()
 		m.virtualKeys = snapshot
+		m.mapMu.Unlock()
 		m.invalidations = m.invalidations[:beforeInvalidations]
 		m.updates = beforeUpdates
 		return err
@@ -111,23 +183,43 @@ func cloneTestVirtualKey(vk *configstoreTables.TableVirtualKey) *configstoreTabl
 }
 
 func (m *mockRotateConfigStore) GetVirtualKey(_ context.Context, id string) (*configstoreTables.TableVirtualKey, error) {
+	m.mapMu.RLock()
 	vk, ok := m.virtualKeys[id]
 	if !ok {
+		m.mapMu.RUnlock()
 		return nil, configstore.ErrNotFound
 	}
-	return cloneTestVirtualKey(vk), nil
+	clone := cloneTestVirtualKey(vk)
+	m.mapMu.RUnlock()
+	if m.readBarrier != nil {
+		read := m.initialReads.Add(1)
+		if read == 2 {
+			close(m.readBarrier)
+		}
+		if read <= 2 {
+			<-m.readBarrier
+		}
+	}
+	return clone, nil
+}
+
+func (m *mockRotateConfigStore) GetVirtualKeyForUpdate(_ context.Context, id string, _ *gorm.DB) (*configstoreTables.TableVirtualKey, error) {
+	return m.GetVirtualKey(context.Background(), id)
 }
 
 func (m *mockRotateConfigStore) UpdateVirtualKey(_ context.Context, virtualKey *configstoreTables.TableVirtualKey, _ ...*gorm.DB) error {
 	if m.updateErr != nil {
 		return m.updateErr
 	}
+	m.mapMu.Lock()
+	defer m.mapMu.Unlock()
 	existing, ok := m.virtualKeys[virtualKey.ID]
 	if !ok {
 		return configstore.ErrNotFound
 	}
 	updated := cloneTestVirtualKey(existing)
 	updated.Value = virtualKey.Value
+	updated.UpdatedAt = time.Now().UTC()
 	m.virtualKeys[virtualKey.ID] = updated
 	m.updates++
 	return nil
@@ -1141,15 +1233,88 @@ func TestRotateVirtualKey_OnlyChangesValueAndReloads(t *testing.T) {
 	}
 
 	var resp struct {
-		Message    string                            `json:"message"`
-		VirtualKey configstoreTables.TableVirtualKey `json:"virtual_key"`
+		Message    string         `json:"message"`
+		VirtualKey map[string]any `json:"virtual_key"`
+		Secret     string         `json:"secret"`
 	}
 	if err := json.Unmarshal(ctx.Response.Body(), &resp); err != nil {
 		t.Fatalf("failed to parse response: %v", err)
 	}
-	if resp.VirtualKey.Value.GetValue() != updated.Value.GetValue() {
-		t.Fatalf("response value = %q, want %q", resp.VirtualKey.Value.GetValue(), updated.Value.GetValue())
+	if _, exists := resp.VirtualKey["value"]; exists {
+		t.Fatalf("rotated virtual key metadata leaked value: %#v", resp.VirtualKey)
 	}
+	if resp.Secret != updated.Value.GetValue() {
+		t.Fatalf("response secret = %q, want newly rotated secret", resp.Secret)
+	}
+}
+
+func TestRotateVirtualKey_ReturnsCommittedSecretWhenRuntimeReloadFails(t *testing.T) {
+	SetLogger(&mockLogger{})
+	store := &mockRotateConfigStore{virtualKeys: map[string]*configstoreTables.TableVirtualKey{
+		"vk-1": {ID: "vk-1", Name: "Production", Value: *schemas.NewSecretVar("sk-bf-old")},
+	}}
+	manager := &mockRotateGovernanceManager{store: store, reloadErr: errors.New("runtime unavailable")}
+	h := &GovernanceHandler{configStore: store, governanceManager: manager}
+	ctx := &fasthttp.RequestCtx{}
+	ctx.SetUserValue("vk_id", "vk-1")
+
+	h.rotateVirtualKey(ctx)
+
+	require.Equal(t, 200, ctx.Response.StatusCode(), string(ctx.Response.Body()))
+	var response map[string]any
+	require.NoError(t, json.Unmarshal(ctx.Response.Body(), &response))
+	metadata := assertVirtualKeyMetadataIsRedacted(t, response["virtual_key"])
+	require.Equal(t, "vk-1", metadata["id"])
+	secret, ok := response["secret"].(string)
+	require.True(t, ok)
+	require.NotEmpty(t, secret)
+	require.Equal(t, store.virtualKeys["vk-1"].Value.GetValue(), secret)
+	require.Equal(t, 1, strings.Count(string(ctx.Response.Body()), secret))
+	require.Equal(t, false, response["runtime_converged"])
+	require.NotEmpty(t, response["warning"])
+	require.NotContains(t, string(ctx.Response.Body()), "runtime unavailable")
+}
+
+func TestRotateVirtualKey_ConcurrentRequestsRejectStaleRotation(t *testing.T) {
+	SetLogger(&mockLogger{})
+	store := &mockRotateConfigStore{
+		virtualKeys: map[string]*configstoreTables.TableVirtualKey{
+			"vk-1": {ID: "vk-1", Name: "Production", Value: *schemas.NewSecretVar("sk-bf-old"), UpdatedAt: time.Now().Add(-time.Minute)},
+		},
+		readBarrier: make(chan struct{}),
+	}
+	manager := &mockRotateGovernanceManager{store: store}
+	h := &GovernanceHandler{configStore: store, governanceManager: manager}
+	contexts := []*fasthttp.RequestCtx{{}, {}}
+	for _, ctx := range contexts {
+		ctx.SetUserValue("vk_id", "vk-1")
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+	for _, ctx := range contexts {
+		go func(requestCtx *fasthttp.RequestCtx) {
+			defer wg.Done()
+			h.rotateVirtualKey(requestCtx)
+		}(ctx)
+	}
+	wg.Wait()
+
+	statuses := map[int]int{}
+	var committedSecret string
+	for _, ctx := range contexts {
+		statuses[ctx.Response.StatusCode()]++
+		if ctx.Response.StatusCode() == 200 {
+			var response map[string]any
+			require.NoError(t, json.Unmarshal(ctx.Response.Body(), &response))
+			committedSecret, _ = response["secret"].(string)
+		}
+	}
+	require.Equal(t, 1, statuses[200])
+	require.Equal(t, 1, statuses[409])
+	require.NotEmpty(t, committedSecret)
+	require.Equal(t, committedSecret, store.virtualKeys["vk-1"].Value.GetValue())
+	require.Len(t, store.invalidations, 1)
 }
 
 func TestVirtualKeyLifecyclePublishesOrderedDurableInvalidations(t *testing.T) {
@@ -1162,31 +1327,64 @@ func TestVirtualKeyLifecyclePublishesOrderedDurableInvalidations(t *testing.T) {
 	h.createVirtualKey(createCtx)
 	require.Equal(t, 200, createCtx.Response.StatusCode(), string(createCtx.Response.Body()))
 	var created struct {
-		VirtualKey configstoreTables.TableVirtualKey `json:"virtual_key"`
+		VirtualKey map[string]any `json:"virtual_key"`
+		Secret     string         `json:"secret"`
 	}
 	require.NoError(t, json.Unmarshal(createCtx.Response.Body(), &created))
-	require.NotEmpty(t, created.VirtualKey.ID)
+	require.NotEmpty(t, created.VirtualKey["id"])
+	require.NotEmpty(t, created.Secret)
+	require.NotContains(t, created.VirtualKey, "value")
+	require.Equal(t, 1, strings.Count(string(createCtx.Response.Body()), created.Secret))
+	createdID := created.VirtualKey["id"].(string)
+	storedCreated, err := store.GetVirtualKey(context.Background(), createdID)
+	require.NoError(t, err)
+	require.Equal(t, created.Secret, storedCreated.Value.GetValue())
+
+	getCtx := newTestRequestCtx("")
+	getCtx.SetUserValue("vk_id", createdID)
+	h.getVirtualKey(getCtx)
+	require.Equal(t, 200, getCtx.Response.StatusCode(), string(getCtx.Response.Body()))
+	var fetched map[string]any
+	require.NoError(t, json.Unmarshal(getCtx.Response.Body(), &fetched))
+	assertVirtualKeyMetadataIsRedacted(t, fetched["virtual_key"])
+	require.NotContains(t, fetched, "secret")
+
+	updateCtx := newTestRequestCtx(`{"description":"updated metadata"}`)
+	updateCtx.SetUserValue("vk_id", createdID)
+	h.updateVirtualKey(updateCtx)
+	require.Equal(t, 200, updateCtx.Response.StatusCode(), string(updateCtx.Response.Body()))
+	var updated map[string]any
+	require.NoError(t, json.Unmarshal(updateCtx.Response.Body(), &updated))
+	assertVirtualKeyMetadataIsRedacted(t, updated["virtual_key"])
+	require.NotContains(t, updated, "secret")
 
 	rotateCtx := newTestRequestCtx("")
-	rotateCtx.SetUserValue("vk_id", created.VirtualKey.ID)
+	rotateCtx.SetUserValue("vk_id", createdID)
 	h.rotateVirtualKey(rotateCtx)
 	require.Equal(t, 200, rotateCtx.Response.StatusCode(), string(rotateCtx.Response.Body()))
+	var rotated map[string]any
+	require.NoError(t, json.Unmarshal(rotateCtx.Response.Body(), &rotated))
+	assertVirtualKeyMetadataIsRedacted(t, rotated["virtual_key"])
+	require.NotEmpty(t, rotated["secret"])
+	require.NotEqual(t, created.Secret, rotated["secret"])
+	require.Equal(t, 1, strings.Count(string(rotateCtx.Response.Body()), rotated["secret"].(string)))
 
 	deleteCtx := newTestRequestCtx("")
-	deleteCtx.SetUserValue("vk_id", created.VirtualKey.ID)
+	deleteCtx.SetUserValue("vk_id", createdID)
 	h.deleteVirtualKey(deleteCtx)
 	require.Equal(t, 200, deleteCtx.Response.StatusCode(), string(deleteCtx.Response.Body()))
 
 	events, err := store.ListVirtualKeyInvalidationsAfter(context.Background(), 0, 10)
 	require.NoError(t, err)
-	require.Len(t, events, 3)
+	require.Len(t, events, 4)
 	require.Equal(t, []string{
 		configstoreTables.VirtualKeyInvalidationActionReload,
 		configstoreTables.VirtualKeyInvalidationActionReload,
+		configstoreTables.VirtualKeyInvalidationActionReload,
 		configstoreTables.VirtualKeyInvalidationActionDelete,
-	}, []string{events[0].Action, events[1].Action, events[2].Action})
+	}, []string{events[0].Action, events[1].Action, events[2].Action, events[3].Action})
 	for _, event := range events {
-		require.Equal(t, created.VirtualKey.ID, event.EntityID)
+		require.Equal(t, createdID, event.EntityID)
 	}
 }
 
@@ -1267,7 +1465,7 @@ func TestRotateVirtualKey_UpdateFailureDoesNotReload(t *testing.T) {
 	}
 }
 
-func TestRotateVirtualKey_ReloadFailureReturnsErrorAfterUpdate(t *testing.T) {
+func TestRotateVirtualKey_ReloadFailureReturnsCommittedSecretWithWarning(t *testing.T) {
 	SetLogger(&mockLogger{})
 
 	store := &mockRotateConfigStore{
@@ -1283,8 +1481,8 @@ func TestRotateVirtualKey_ReloadFailureReturnsErrorAfterUpdate(t *testing.T) {
 
 	h.rotateVirtualKey(ctx)
 
-	if ctx.Response.StatusCode() != 500 {
-		t.Fatalf("expected status 500, got %d: %s", ctx.Response.StatusCode(), string(ctx.Response.Body()))
+	if ctx.Response.StatusCode() != 200 {
+		t.Fatalf("expected status 200, got %d: %s", ctx.Response.StatusCode(), string(ctx.Response.Body()))
 	}
 	if store.updates != 1 {
 		t.Fatalf("expected one update, got %d", store.updates)
@@ -1295,9 +1493,12 @@ func TestRotateVirtualKey_ReloadFailureReturnsErrorAfterUpdate(t *testing.T) {
 	if len(manager.reloadIDs) != 1 || manager.reloadIDs[0] != "vk-1" {
 		t.Fatalf("expected reload for vk-1, got %#v", manager.reloadIDs)
 	}
-	if !strings.Contains(string(ctx.Response.Body()), "failed to reload in-memory state") {
-		t.Fatalf("expected reload failure in response, got %s", string(ctx.Response.Body()))
-	}
+	var response map[string]any
+	require.NoError(t, json.Unmarshal(ctx.Response.Body(), &response))
+	require.Equal(t, false, response["runtime_converged"])
+	require.Equal(t, store.virtualKeys["vk-1"].Value.GetValue(), response["secret"])
+	require.NotEmpty(t, response["warning"])
+	require.NotContains(t, string(ctx.Response.Body()), "reload failed")
 }
 
 func TestRotateVirtualKeys_PartialSuccess(t *testing.T) {
@@ -1331,14 +1532,30 @@ func TestRotateVirtualKeys_PartialSuccess(t *testing.T) {
 	}
 
 	var resp struct {
-		VirtualKeys []configstoreTables.TableVirtualKey `json:"virtual_keys"`
-		Errors      map[string]string                   `json:"errors"`
+		VirtualKeys []map[string]any  `json:"virtual_keys"`
+		Errors      map[string]string `json:"errors"`
 	}
 	if err := json.Unmarshal(ctx.Response.Body(), &resp); err != nil {
 		t.Fatalf("failed to parse response: %v", err)
 	}
 	if len(resp.VirtualKeys) != 2 {
 		t.Fatalf("expected two rotated keys in response, got %d", len(resp.VirtualKeys))
+	}
+	for _, item := range resp.VirtualKeys {
+		if _, exists := item["value"]; exists {
+			t.Fatalf("bulk rotation metadata leaked value: %#v", item)
+		}
+		secret, _ := item["secret"].(string)
+		if !strings.HasPrefix(secret, governance.VirtualKeyPrefix) {
+			t.Fatalf("bulk rotation omitted generated secret: %#v", item)
+		}
+		id, _ := item["id"].(string)
+		if store.virtualKeys[id].Value.GetValue() != secret {
+			t.Fatalf("bulk response secret for %s does not match stored rotation", id)
+		}
+		if strings.Count(string(ctx.Response.Body()), secret) != 1 {
+			t.Fatalf("bulk response exposed secret for %s more than once", id)
+		}
 	}
 	if resp.Errors["missing"] != "virtual key not found" {
 		t.Fatalf("expected missing error, got %#v", resp.Errors)
@@ -2181,7 +2398,9 @@ func TestGetVirtualKeys_PaginatedEndpoint_ResponseShape(t *testing.T) {
 	SetLogger(&mockLogger{})
 
 	h := &GovernanceHandler{
-		configStore:       &mockConfigStoreForVK{},
+		configStore: &mockConfigStoreForVK{virtualKeys: []configstoreTables.TableVirtualKey{
+			{ID: "vk-1", Name: "redacted", Value: *schemas.NewSecretVar("sk-bf-must-not-leak")},
+		}},
 		governanceManager: &mockGovernanceManagerForVK{},
 	}
 
@@ -2246,6 +2465,30 @@ func TestGetVirtualKeys_PaginatedEndpoint_ResponseShape(t *testing.T) {
 			t.Errorf("unexpected field %q in response", key)
 		}
 	}
+	items := resp["virtual_keys"].([]any)
+	require.Len(t, items, 1)
+	assertVirtualKeyMetadataIsRedacted(t, items[0])
+}
+
+func TestGetVirtualKeys_ExportRedactsSecret(t *testing.T) {
+	SetLogger(&mockLogger{})
+	store := &mockConfigStoreForVK{virtualKeys: []configstoreTables.TableVirtualKey{
+		{ID: "vk-export", Name: "exported", Value: *schemas.NewSecretVar("sk-bf-export-must-not-leak")},
+	}}
+	h := &GovernanceHandler{configStore: store, governanceManager: &mockGovernanceManagerForVK{}}
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.SetMethod("GET")
+	ctx.Request.SetRequestURI("/api/governance/virtual-keys?export=true")
+
+	h.getVirtualKeys(ctx)
+
+	require.Equal(t, 200, ctx.Response.StatusCode(), string(ctx.Response.Body()))
+	var resp map[string]any
+	require.NoError(t, json.Unmarshal(ctx.Response.Body(), &resp))
+	items := resp["virtual_keys"].([]any)
+	require.Len(t, items, 1)
+	assertVirtualKeyMetadataIsRedacted(t, items[0])
+	require.NotContains(t, string(ctx.Response.Body()), "sk-bf-export-must-not-leak")
 }
 
 // TestGetVirtualKeys_PaginatedEndpoint_QueryParams verifies query parameters are
@@ -2314,7 +2557,9 @@ func TestGetVirtualKeys_FromMemoryUsesGovernanceData(t *testing.T) {
 	store := &mockConfigStoreForVK{}
 	manager := &mockGovernanceManagerForVK{
 		data: &governance.GovernanceData{
-			VirtualKeys: map[string]*configstoreTables.TableVirtualKey{},
+			VirtualKeys: map[string]*configstoreTables.TableVirtualKey{
+				"vk-1": {ID: "vk-1", Name: "memory", Value: *schemas.NewSecretVar("sk-bf-memory-secret")},
+			},
 		},
 	}
 	h := &GovernanceHandler{
@@ -2340,6 +2585,22 @@ func TestGetVirtualKeys_FromMemoryUsesGovernanceData(t *testing.T) {
 	if store.getVirtualKeysPaginatedCalls != 0 {
 		t.Fatalf("from_memory path called GetVirtualKeysPaginated %d times", store.getVirtualKeysPaginatedCalls)
 	}
+	var resp map[string]any
+	require.NoError(t, json.Unmarshal(ctx.Response.Body(), &resp))
+	items := resp["virtual_keys"].([]any)
+	require.Len(t, items, 1)
+	assertVirtualKeyMetadataIsRedacted(t, items[0])
+
+	getCtx := &fasthttp.RequestCtx{}
+	getCtx.Request.Header.SetMethod("GET")
+	getCtx.Request.SetRequestURI("/api/governance/virtual-keys/vk-1?from_memory=true")
+	getCtx.SetUserValue("vk_id", "vk-1")
+	h.getVirtualKey(getCtx)
+	require.Equal(t, 200, getCtx.Response.StatusCode(), string(getCtx.Response.Body()))
+	var getResp map[string]any
+	require.NoError(t, json.Unmarshal(getCtx.Response.Body(), &getResp))
+	assertVirtualKeyMetadataIsRedacted(t, getResp["virtual_key"])
+	require.NotContains(t, getResp, "secret")
 }
 
 // TestGetVirtualKeys_FromMemoryTakesPrecedenceOverLimit verifies the

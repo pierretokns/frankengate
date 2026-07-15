@@ -3398,6 +3398,23 @@ func (s *RDBConfigStore) GetVirtualKey(ctx context.Context, id string) (*tables.
 	return &virtualKey, nil
 }
 
+// GetVirtualKeyForUpdate reads and row-locks a virtual key inside the caller's
+// transaction. Credential rotations use it so two successful responses can
+// never disclose competing secrets for the same final row generation.
+func (s *RDBConfigStore) GetVirtualKeyForUpdate(ctx context.Context, id string, tx *gorm.DB) (*tables.TableVirtualKey, error) {
+	if tx == nil {
+		return nil, errors.New("transaction is required")
+	}
+	var virtualKey tables.TableVirtualKey
+	if err := dbForUpdate(tx.WithContext(ctx)).First(&virtualKey, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+	return &virtualKey, nil
+}
+
 // GetVirtualKeyByValue retrieves a virtual key by its value using hash-based lookup.
 func (s *RDBConfigStore) GetVirtualKeyByValue(ctx context.Context, value string) (*tables.TableVirtualKey, error) {
 	valueHash := encrypt.HashSHA256(value)

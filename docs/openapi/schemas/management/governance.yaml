@@ -236,11 +236,10 @@ VirtualKeyMCPConfig:
 
 VirtualKey:
   type: object
-  description: Virtual key configuration
+  description: Public virtual-key metadata. The credential is never returned by ordinary read or update operations.
   required:
     - id
     - name
-    - value
     - is_active
     - provider_configs
     - mcp_configs
@@ -252,8 +251,6 @@ VirtualKey:
     id:
       type: string
     name:
-      type: string
-    value:
       type: string
     description:
       type: string
@@ -595,6 +592,62 @@ VirtualKeyResponse:
       type: string
     virtual_key:
       $ref: '#/VirtualKey'
+
+CreateVirtualKeyResponse:
+  type: object
+  description: Reveal-once response for a newly created virtual key
+  required: [message, virtual_key, secret]
+  properties:
+    message:
+      type: string
+    virtual_key:
+      $ref: '#/VirtualKey'
+    secret:
+      type: string
+      writeOnly: true
+      description: Newly generated credential. This is the only response in which it is revealed.
+
+RotateVirtualKeyResponse:
+  type: object
+  description: Reveal-once response for a committed virtual-key rotation
+  required: [message, virtual_key, secret, runtime_converged]
+  properties:
+    message:
+      type: string
+    virtual_key:
+      $ref: '#/VirtualKey'
+    secret:
+      type: string
+      writeOnly: true
+      description: Newly generated credential. This is the only response in which it is revealed.
+    runtime_converged:
+      type: boolean
+    warning:
+      type: string
+      description: Present when persistence committed but this pod's runtime reload is pending.
+
+BulkRotateVirtualKeysResponse:
+  type: object
+  required: [message, virtual_keys]
+  properties:
+    message:
+      type: string
+    virtual_keys:
+      type: array
+      items:
+        allOf:
+          - $ref: '#/VirtualKey'
+          - type: object
+            required: [secret]
+            properties:
+              secret:
+                type: string
+                writeOnly: true
+                description: Newly generated credential, revealed once.
+    errors:
+      type: object
+      additionalProperties:
+        type: string
 
 Team:
   type: object
