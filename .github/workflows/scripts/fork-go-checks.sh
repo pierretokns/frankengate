@@ -97,6 +97,27 @@ run_in_modules() {
   done
 }
 
+download_dependencies() {
+  for module in "${MODULES[@]}"; do
+    echo "::group::go mod download: ${module}"
+    local attempt
+    for attempt in 1 2 3; do
+      if (cd "$ROOT/$module" && go mod download); then
+        break
+      fi
+      if [ "$attempt" -eq 3 ]; then
+        echo "dependency download failed after $attempt attempts: $module" >&2
+        return 1
+      fi
+      # GitHub's Go proxy occasionally resets an HTTP/2 stream. Populate the
+      # immutable module cache before compile/vet/vuln work and retry only this
+      # side-effect-free acquisition boundary, never a test execution.
+      sleep $((attempt * 2))
+    done
+    echo "::endgroup::"
+  done
+}
+
 run_focused_race_tests() {
   echo "::group::focused race tests: core enterprise primitives"
   (
@@ -123,6 +144,7 @@ run_focused_race_tests() {
 
 case "$MODE" in
   test-vet)
+    download_dependencies
     # Compile every package and test binary without executing suites whose
     # explicit service fixtures belong in separate integration jobs.
     run_in_modules "go test compile" go test -run '^$' ./...
@@ -130,6 +152,7 @@ case "$MODE" in
     run_in_modules "go vet" go vet ./...
     ;;
   vuln)
+    download_dependencies
     run_in_modules "govulncheck" go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
     ;;
   *)
