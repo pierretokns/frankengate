@@ -460,20 +460,66 @@ func (s *BifrostHTTPServer) RemoveVirtualKey(ctx context.Context, id string) err
 	if err != nil {
 		return err
 	}
+	governanceStore := governancePlugin.GetGovernanceStore()
 	preloadedVk, err := s.Config.ConfigStore.GetVirtualKey(ctx, id)
 	if err != nil {
 		if !errors.Is(err, configstore.ErrNotFound) {
 			return err
 		}
 	}
-	if preloadedVk == nil {
-		// This could be broadcast message from other server, so we will just clean up in-memory store
-		governancePlugin.GetGovernanceStore().DeleteVirtualKeyInMemory(ctx, id)
-		return nil
+	var knownValue string
+	if preloadedVk != nil {
+		knownValue = preloadedVk.Value.GetValue()
 	}
-	governancePlugin.GetGovernanceStore().DeleteVirtualKeyInMemory(ctx, id)
-	s.MCPServerHandler.DeleteVKMCPServer(preloadedVk.Value.GetValue())
+	evictVirtualKeyRuntime(ctx, governanceStore, id, knownValue, func(value string) {
+		if s.MCPServerHandler != nil {
+			s.MCPServerHandler.DeleteVKMCPServer(value)
+		}
+	})
 	return nil
+}
+
+type governanceVirtualKeyByIDLookup interface {
+	GetVirtualKeyByID(context.Context, string) (*tables.TableVirtualKey, bool)
+}
+
+// evictVirtualKeyRuntime removes every process-local capability derived from a
+// virtual key. On peer invalidation the authoritative row has normally already
+// been deleted, so recover the old secret from the governance snapshot before
+// deleting that snapshot; otherwise the per-VK MCP server remains addressable
+// by the revoked secret through its cache fast path.
+func evictVirtualKeyRuntime(
+	ctx context.Context,
+	store governance.GovernanceStore,
+	id string,
+	knownValue string,
+	deleteMCPServer func(string),
+) {
+	if store == nil || id == "" {
+		return
+	}
+	value := knownValue
+	if value == "" {
+		if indexed, ok := store.(governanceVirtualKeyByIDLookup); ok {
+			if vk, found := indexed.GetVirtualKeyByID(ctx, id); found && vk != nil {
+				value = vk.Value.GetValue()
+			}
+		} else if data := store.GetGovernanceData(ctx); data != nil {
+			for _, vk := range data.VirtualKeys {
+				if vk != nil && vk.ID == id {
+					value = vk.Value.GetValue()
+					break
+				}
+			}
+		}
+	}
+	// Evict the capability cache before the governance snapshot. This ordering
+	// closes the dangerous window where /mcp can hit its cached-server fast path
+	// after governance no longer retains the secret needed to remove it.
+	if value != "" && deleteMCPServer != nil {
+		deleteMCPServer(value)
+	}
+	store.DeleteVirtualKeyInMemory(ctx, id)
 }
 
 // ReloadTeam reloads a team from the in-memory store
