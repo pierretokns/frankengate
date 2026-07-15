@@ -10,6 +10,7 @@ SERVER_SCRIPT="$ROOT/tests/kubernetes/local-aurora/serve-binary.sh"
 WORK_DIR="$(mktemp -d)"
 BINARY="${FRANKENGATE_BINARY:-$WORK_DIR/frankengate}"
 FRANKENGATE_IMAGE="${FRANKENGATE_IMAGE:-}"
+FRANKENGATE_IMAGE_PULL_POLICY="${FRANKENGATE_IMAGE_PULL_POLICY:-Always}"
 
 cleanup() {
   local status=$?
@@ -114,7 +115,7 @@ if [[ -n "$FRANKENGATE_IMAGE" ]]; then
   image_patch="$(jq -cn --arg image "$FRANKENGATE_IMAGE" '[
     {op:"remove",path:"/spec/template/spec/initContainers"},
     {op:"replace",path:"/spec/template/spec/containers/0/image",value:$image},
-    {op:"replace",path:"/spec/template/spec/containers/0/imagePullPolicy",value:"Always"},
+    {op:"replace",path:"/spec/template/spec/containers/0/imagePullPolicy",value:$pull_policy},
     {op:"remove",path:"/spec/template/spec/containers/0/command"},
     {op:"remove",path:"/spec/template/spec/containers/0/args"},
     {op:"remove",path:"/spec/template/spec/containers/0/volumeMounts/0"},
@@ -126,7 +127,7 @@ if [[ -n "$FRANKENGATE_IMAGE" ]]; then
       whenUnsatisfiable:"DoNotSchedule",
       labelSelector:{matchLabels:{"app.kubernetes.io/name":"frankengate-vk"}}
     }]}
-  ]')"
+  ]' --arg pull_policy "$FRANKENGATE_IMAGE_PULL_POLICY")"
   kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=json -p "$image_patch"
 fi
 kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
