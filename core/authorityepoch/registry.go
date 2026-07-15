@@ -156,9 +156,11 @@ func (r *Registry) AdvanceEpoch(principal Principal, reason Reason) (EpochEvent,
 	if !ok {
 		return EpochEvent{}, ErrUnknownPrincipal
 	}
+	if !state.active {
+		return EpochEvent{}, ErrInactivePrincipal
+	}
 	oldEpoch := state.epoch
 	state.epoch++
-	state.active = true
 	r.principals[principal] = state
 	r.revision++
 	event := EpochEvent{

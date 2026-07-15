@@ -188,6 +188,13 @@ func TestDeactivationInvalidatesAndStaleEpochsNeverRevive(t *testing.T) {
 		t.Fatal("websocket did not receive deactivation cancellation")
 	}
 
+	if _, err := reg.AdvanceEpoch(principal, ReasonGroupRemoved); !errors.Is(err, ErrInactivePrincipal) {
+		t.Fatalf("advance inactive principal err = %v, want ErrInactivePrincipal", err)
+	}
+	if _, err := reg.Mint(principal, ArtifactKey, "key-after-invalid-advance"); !errors.Is(err, ErrInactivePrincipal) {
+		t.Fatalf("mint after rejected inactive advance err = %v, want ErrInactivePrincipal", err)
+	}
+
 	if err := reg.Activate(principal, 8); err == nil {
 		t.Fatal("reactivation at stale epoch succeeded; want monotonic rejection")
 	}
