@@ -31,7 +31,22 @@ const (
 	VirtualKeyPrefix = "sk-bf-"
 
 	noComplexitySignalLog = "Complexity analysis skipped: no configured complexity signal matched the latest user message; continuing with existing routing path"
+
+	// VirtualKeyAuthorityStaleReason is returned when a pod cannot prove that its
+	// virtual-key authority snapshot is current enough to make an access decision.
+	VirtualKeyAuthorityStaleReason = "virtual key authority is stale; retry when governance synchronization is healthy"
 )
+
+// AuthorityFreshnessSource reports whether this pod's virtual-key authority
+// snapshot is fresh. Implementations may use atomics or their own synchronization.
+type AuthorityFreshnessSource interface {
+	IsAuthorityFresh() bool
+}
+
+// AuthorityFreshnessFunc adapts a function to AuthorityFreshnessSource.
+type AuthorityFreshnessFunc func() bool
+
+func (f AuthorityFreshnessFunc) IsAuthorityFresh() bool { return f() }
 
 // Config is the configuration for the governance plugin
 type Config struct {
@@ -88,8 +103,33 @@ type GovernancePlugin struct {
 	requiredHeaders       *[]string // pointer to live config slice; lowercased at check time
 	isEnterprise          bool
 	disableAutoToolInject *bool
+	authorityFreshness    AuthorityFreshnessSource
 
 	complexityAnalyzer atomic.Pointer[complexity.ComplexityAnalyzer]
+}
+
+// SetAuthorityFreshnessSource installs the pod-local authority freshness
+// signal. A nil source preserves the historical behavior (authority assumed
+// fresh), allowing server wiring to opt in once its poller is available.
+func (p *GovernancePlugin) SetAuthorityFreshnessSource(source AuthorityFreshnessSource) {
+	p.cfgMutex.Lock()
+	p.authorityFreshness = source
+	p.cfgMutex.Unlock()
+}
+
+func (p *GovernancePlugin) isAuthorityFresh() bool {
+	p.cfgMutex.RLock()
+	source := p.authorityFreshness
+	p.cfgMutex.RUnlock()
+	return source == nil || source.IsAuthorityFresh()
+}
+
+func virtualKeyAuthorityStaleError() *schemas.BifrostError {
+	return &schemas.BifrostError{
+		Type:       new(string(DecisionVirtualKeyAuthorityStale)),
+		StatusCode: new(503),
+		Error:      &schemas.ErrorField{Message: VirtualKeyAuthorityStaleReason},
+	}
 }
 
 // Init initializes and returns a governance plugin instance.
@@ -924,6 +964,13 @@ func (p *GovernancePlugin) pruneMCPIncludeToolsFromContext(ctx *schemas.BifrostC
 //   - *EvaluationResult: The governance evaluation result
 //   - *schemas.BifrostError: The error to return if request is not allowed, nil if allowed
 func (p *GovernancePlugin) EvaluateGovernanceRequest(ctx *schemas.BifrostContext, evaluationRequest *EvaluationRequest, requestType schemas.RequestType) (*EvaluationResult, *schemas.BifrostError) {
+	if evaluationRequest.VirtualKey != "" && !p.isAuthorityFresh() {
+		result := &EvaluationResult{
+			Decision: DecisionVirtualKeyAuthorityStale,
+			Reason:   VirtualKeyAuthorityStaleReason,
+		}
+		return result, virtualKeyAuthorityStaleError()
+	}
 	// Check if authentication is mandatory (either VK or user auth)
 	// Checking if the virtual key is valid or not
 	isVirtualKeyValid := false
@@ -1398,6 +1445,10 @@ func (p *GovernancePlugin) PostLLMHook(ctx *schemas.BifrostContext, result *sche
 //   - *schemas.MCPPluginShortCircuit: The plugin short circuit if the request is not allowed
 //   - error: Any error that occurred during processing
 func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.BifrostMCPRequest) (*schemas.BifrostMCPRequest, *schemas.MCPPluginShortCircuit, error) {
+	virtualKeyValue := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyVirtualKey)
+	if virtualKeyValue != "" && !p.isAuthorityFresh() {
+		return req, &schemas.MCPPluginShortCircuit{Error: virtualKeyAuthorityStaleError()}, nil
+	}
 	toolName := req.GetToolName()
 
 	// Skip for non tool execution requests
@@ -1416,7 +1467,6 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 	}
 
 	// Extract governance headers and virtual key using utility functions
-	virtualKeyValue := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyVirtualKey)
 	// Extract user ID for enterprise user-level governance
 	userID := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyUserID)
 
@@ -1588,6 +1638,9 @@ func (p *GovernancePlugin) PreMCPConnectionHook(ctx *schemas.BifrostContext, req
 	virtualKeyValue := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyVirtualKey)
 	if virtualKeyValue == "" {
 		return req, nil, nil
+	}
+	if !p.isAuthorityFresh() {
+		return req, &schemas.MCPConnectionShortCircuit{Error: virtualKeyAuthorityStaleError()}, nil
 	}
 	vk, ok := p.store.GetVirtualKey(ctx, virtualKeyValue)
 	if !ok || vk == nil {

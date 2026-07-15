@@ -15,16 +15,17 @@ import (
 type Decision string
 
 const (
-	DecisionAllow              Decision = "allow"
-	DecisionVirtualKeyNotFound Decision = "virtual_key_not_found"
-	DecisionVirtualKeyBlocked  Decision = "virtual_key_blocked"
-	DecisionRateLimited        Decision = "rate_limited"
-	DecisionBudgetExceeded     Decision = "budget_exceeded"
-	DecisionTokenLimited       Decision = "token_limited"
-	DecisionRequestLimited     Decision = "request_limited"
-	DecisionModelBlocked       Decision = "model_blocked"
-	DecisionProviderBlocked    Decision = "provider_blocked"
-	DecisionMCPToolBlocked     Decision = "mcp_tool_blocked"
+	DecisionAllow                    Decision = "allow"
+	DecisionVirtualKeyNotFound       Decision = "virtual_key_not_found"
+	DecisionVirtualKeyBlocked        Decision = "virtual_key_blocked"
+	DecisionRateLimited              Decision = "rate_limited"
+	DecisionBudgetExceeded           Decision = "budget_exceeded"
+	DecisionTokenLimited             Decision = "token_limited"
+	DecisionRequestLimited           Decision = "request_limited"
+	DecisionModelBlocked             Decision = "model_blocked"
+	DecisionProviderBlocked          Decision = "provider_blocked"
+	DecisionMCPToolBlocked           Decision = "mcp_tool_blocked"
+	DecisionVirtualKeyAuthorityStale Decision = "virtual_key_authority_stale"
 )
 
 // EvaluationRequest contains the context for evaluating a request

@@ -2082,8 +2082,12 @@ func (s *RDBConfigStore) CreateMCPClientConfig(ctx context.Context, clientConfig
 }
 
 // UpdateMCPClientConfig updates an existing MCP client configuration in the database.
-func (s *RDBConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, clientConfig *tables.TableMCPClient) error {
-	return s.DB().Transaction(func(tx *gorm.DB) error {
+func (s *RDBConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, clientConfig *tables.TableMCPClient, transactions ...*gorm.DB) error {
+	db := s.DB()
+	if len(transactions) > 0 {
+		db = transactions[0]
+	}
+	return db.Transaction(func(tx *gorm.DB) error {
 		// Find existing client
 		var existingClient tables.TableMCPClient
 		if err := dbForUpdate(tx.WithContext(ctx)).Where("client_id = ?", id).First(&existingClient).Error; err != nil {
@@ -2274,6 +2278,29 @@ func (s *RDBConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, c
 
 		if err := tx.WithContext(ctx).Model(&existingClient).Updates(updates).Error; err != nil {
 			return s.parseGormError(err)
+		}
+
+		// MCP client policy is preloaded into every referencing virtual key.
+		// Publish those cache reloads in the same transaction as the client row
+		// so every mutation path (API, OAuth refresh, config reconciliation,
+		// enable/disable) has identical cross-pod coherence semantics.
+		var virtualKeyIDs []string
+		if err := tx.WithContext(ctx).
+			Model(&tables.TableVirtualKeyMCPConfig{}).
+			Where("mcp_client_id = ?", existingClient.ID).
+			Distinct().
+			Pluck("virtual_key_id", &virtualKeyIDs).Error; err != nil {
+			return s.parseGormError(err)
+		}
+		sort.Strings(virtualKeyIDs)
+		for _, virtualKeyID := range virtualKeyIDs {
+			if err := s.AppendVirtualKeyInvalidation(ctx, tx, &tables.TableVirtualKeyInvalidationEvent{
+				EntityType: tables.VirtualKeyInvalidationEntityType,
+				Action:     tables.VirtualKeyInvalidationActionReload,
+				EntityID:   virtualKeyID,
+			}); err != nil {
+				return fmt.Errorf("append MCP client virtual-key invalidation for %s: %w", virtualKeyID, err)
+			}
 		}
 		return nil
 	})
@@ -4049,16 +4076,16 @@ func (s *RDBConfigStore) CreateTeam(ctx context.Context, team *tables.TableTeam,
 
 // UpdateTeam updates an existing team in the database.
 func (s *RDBConfigStore) UpdateTeam(ctx context.Context, team *tables.TableTeam, tx ...*gorm.DB) error {
-	var txDB *gorm.DB
-	if len(tx) > 0 {
-		txDB = tx[0]
-	} else {
-		txDB = s.DB()
+	if len(tx) == 0 || tx[0] == nil {
+		return s.DB().WithContext(ctx).Transaction(func(transaction *gorm.DB) error {
+			return s.UpdateTeam(ctx, team, transaction)
+		})
 	}
+	txDB := tx[0]
 	if err := txDB.WithContext(ctx).Save(team).Error; err != nil {
 		return s.parseGormError(err)
 	}
-	return nil
+	return s.appendVirtualKeyReloads(ctx, txDB, txDB.WithContext(ctx).Model(&tables.TableVirtualKey{}).Where("team_id = ?", team.ID))
 }
 
 // DeleteTeam deletes a team from the database.
@@ -4072,6 +4099,10 @@ func (s *RDBConfigStore) DeleteTeam(ctx context.Context, id string, tx ...*gorm.
 	}
 
 	txDB := tx[0]
+	var affectedVKIDs []string
+	if err := txDB.WithContext(ctx).Model(&tables.TableVirtualKey{}).Where("team_id = ?", id).Pluck("id", &affectedVKIDs).Error; err != nil {
+		return err
+	}
 	var team tables.TableTeam
 	if err := dbForUpdate(txDB.WithContext(ctx)).Preload("RateLimit").First(&team, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -4097,7 +4128,7 @@ func (s *RDBConfigStore) DeleteTeam(ctx context.Context, id string, tx ...*gorm.
 			return err
 		}
 	}
-	return nil
+	return s.appendVirtualKeyReloadIDs(ctx, txDB, affectedVKIDs)
 }
 
 // GetCustomers retrieves all customers from the database.
@@ -4183,16 +4214,17 @@ func (s *RDBConfigStore) CreateCustomer(ctx context.Context, customer *tables.Ta
 
 // UpdateCustomer updates an existing customer in the database.
 func (s *RDBConfigStore) UpdateCustomer(ctx context.Context, customer *tables.TableCustomer, tx ...*gorm.DB) error {
-	var txDB *gorm.DB
-	if len(tx) > 0 {
-		txDB = tx[0]
-	} else {
-		txDB = s.DB()
+	if len(tx) == 0 || tx[0] == nil {
+		return s.DB().WithContext(ctx).Transaction(func(transaction *gorm.DB) error {
+			return s.UpdateCustomer(ctx, customer, transaction)
+		})
 	}
+	txDB := tx[0]
 	if err := txDB.WithContext(ctx).Save(customer).Error; err != nil {
 		return s.parseGormError(err)
 	}
-	return nil
+	return s.appendVirtualKeyReloads(ctx, txDB, txDB.WithContext(ctx).Model(&tables.TableVirtualKey{}).
+		Where("customer_id = ? OR team_id IN (?)", customer.ID, txDB.WithContext(ctx).Model(&tables.TableTeam{}).Select("id").Where("customer_id = ?", customer.ID)))
 }
 
 // DeleteCustomer deletes a customer from the database.
@@ -4204,6 +4236,12 @@ func (s *RDBConfigStore) DeleteCustomer(ctx context.Context, id string, tx ...*g
 	}
 
 	txDB := tx[0]
+	var affectedVKIDs []string
+	if err := txDB.WithContext(ctx).Model(&tables.TableVirtualKey{}).
+		Where("customer_id = ? OR team_id IN (?)", id, txDB.WithContext(ctx).Model(&tables.TableTeam{}).Select("id").Where("customer_id = ?", id)).
+		Pluck("id", &affectedVKIDs).Error; err != nil {
+		return err
+	}
 	var customer tables.TableCustomer
 	if err := dbForUpdate(txDB.WithContext(ctx)).Preload("RateLimit").First(&customer, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -4234,6 +4272,28 @@ func (s *RDBConfigStore) DeleteCustomer(ctx context.Context, id string, tx ...*g
 	if rateLimitID != nil {
 		if err := txDB.WithContext(ctx).Delete(&tables.TableRateLimit{}, "id = ?", *rateLimitID).Error; err != nil {
 			return err
+		}
+	}
+	return s.appendVirtualKeyReloadIDs(ctx, txDB, affectedVKIDs)
+}
+
+func (s *RDBConfigStore) appendVirtualKeyReloads(ctx context.Context, tx *gorm.DB, query *gorm.DB) error {
+	var ids []string
+	if err := query.Pluck("id", &ids).Error; err != nil {
+		return err
+	}
+	return s.appendVirtualKeyReloadIDs(ctx, tx, ids)
+}
+
+func (s *RDBConfigStore) appendVirtualKeyReloadIDs(ctx context.Context, tx *gorm.DB, ids []string) error {
+	sort.Strings(ids)
+	for _, id := range ids {
+		if err := s.AppendVirtualKeyInvalidation(ctx, tx, &tables.TableVirtualKeyInvalidationEvent{
+			EntityType: tables.VirtualKeyInvalidationEntityType,
+			Action:     tables.VirtualKeyInvalidationActionReload,
+			EntityID:   id,
+		}); err != nil {
+			return fmt.Errorf("append virtual-key invalidation for %s: %w", id, err)
 		}
 	}
 	return nil

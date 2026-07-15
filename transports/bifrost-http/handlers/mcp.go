@@ -1435,6 +1435,18 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		for _, vc := range *req.VKConfigs {
 			requestedByVKID[vc.VirtualKeyID] = vc
 		}
+		affectedVKSet := make(map[string]struct{}, len(requestedByVKID)+len(currentByVKID))
+		for vkID := range requestedByVKID {
+			affectedVKSet[vkID] = struct{}{}
+		}
+		for vkID := range currentByVKID {
+			affectedVKSet[vkID] = struct{}{}
+		}
+		affectedVKIDs := make([]string, 0, len(affectedVKSet))
+		for vkID := range affectedVKSet {
+			affectedVKIDs = append(affectedVKIDs, vkID)
+		}
+		sort.Strings(affectedVKIDs)
 		if err := h.store.ConfigStore.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
 			// Create or update
 			for _, vc := range *req.VKConfigs {
@@ -1459,6 +1471,15 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 					if err := h.store.ConfigStore.DeleteVirtualKeyMCPConfig(ctx, existing.ID, tx); err != nil {
 						return fmt.Errorf("failed to remove VK MCP config for %s: %w", vkID, err)
 					}
+				}
+			}
+			for _, vkID := range affectedVKIDs {
+				if err := h.store.ConfigStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+					EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+					Action:     configstoreTables.VirtualKeyInvalidationActionReload,
+					EntityID:   vkID,
+				}); err != nil {
+					return fmt.Errorf("failed to publish VK MCP assignment update for %s: %w", vkID, err)
 				}
 			}
 			return nil

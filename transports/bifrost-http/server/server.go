@@ -169,6 +169,7 @@ type BifrostHTTPServer struct {
 	TempTokens           *temptoken.Service
 	TempTokenSweepWorker *temptoken.SweepWorker
 	OAuth2SweepWorker    *oauth2SweepWorker
+	VKInvalidationPoller *virtualKeyInvalidationPoller
 	// OAuth2IdentityResolver scopes a user-mode /mcp request to the user's own
 	// tools. Optional; wired at server init when user-mode identity resolution
 	// is available, otherwise left nil (user-mode requests fall back to the
@@ -1991,6 +1992,12 @@ func (s *BifrostHTTPServer) Bootstrap(ctx context.Context) error {
 		Handler:            handlers.SecurityHeadersMiddleware()(s.CORSMiddleware.Middleware()(handlers.RequestDecompressionMiddleware(s.Config)(s.Router.Handler))),
 		MaxRequestBodySize: s.Config.ClientConfig.MaxRequestBodySizeMB * 1024 * 1024,
 		ReadBufferSize:     s.Config.ServerConfig.ReadBufferSize,
+	}
+	// Every pod tails the durable VK authority outbox. The poller also supplies
+	// the governance plugin's bounded freshness lease, so a disconnected pod
+	// cannot continue accepting a revoked key indefinitely.
+	if err := s.StartVirtualKeyInvalidationPoller(s.Ctx); err != nil {
+		return fmt.Errorf("failed to start virtual-key invalidation poller: %w", err)
 	}
 	startSkillsOrphanCleanupWorker(s.Ctx, s.Config)
 	return nil

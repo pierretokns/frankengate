@@ -446,6 +446,73 @@ var configstoreMigrationSteps = []migrationStep{
 	{IDs: []string{"add_inference_geo_multiplier_column"}, run: migrationAddInferenceGeoMultiplierColumn},
 	{IDs: []string{"repair_bare_wildcard_allowed_models"}, run: migrationRepairBareWildcardAllowedModels},
 	{IDs: []string{"add_bedrock_project_id_columns"}, run: migrationAddBedrockProjectIDColumns},
+	{IDs: []string{"add_virtual_key_invalidation_outbox"}, run: migrationAddVirtualKeyInvalidationOutbox},
+}
+
+// migrationAddVirtualKeyInvalidationOutbox adds the durable cursor source used
+// to reconcile process-local virtual-key snapshots. PostgreSQL notifications may
+// advertise new IDs later, but this table is the correctness mechanism.
+func migrationAddVirtualKeyInvalidationOutbox(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {
+	const migrationName = "add_virtual_key_invalidation_outbox"
+	logger.Info("[configstore] starting migration %s", migrationName)
+	defer logger.Info("[configstore] finished migration %s", migrationName)
+
+	m := migrator.New(db, migrator.DefaultOptions, []*migrator.Migration{{
+		ID: migrationName,
+		Migrate: func(tx *gorm.DB) error {
+			tx = tx.WithContext(ctx)
+			var createTable string
+			switch tx.Dialector.Name() {
+			case "postgres":
+				createTable = `CREATE TABLE IF NOT EXISTS governance_virtual_key_invalidation_outbox (
+					id BIGSERIAL PRIMARY KEY,
+					entity_type VARCHAR(64) NOT NULL,
+					action VARCHAR(32) NOT NULL,
+					entity_id VARCHAR(255) NOT NULL,
+					tenant_id VARCHAR(255),
+					scope VARCHAR(255),
+					schema_version SMALLINT NOT NULL DEFAULT 1,
+					created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					CONSTRAINT chk_vk_invalidation_entity_type CHECK (entity_type = 'virtual_key'),
+					CONSTRAINT chk_vk_invalidation_action CHECK (action IN ('reload', 'delete')),
+					CONSTRAINT chk_vk_invalidation_schema CHECK (schema_version = 1)
+				)`
+			case "sqlite":
+				createTable = `CREATE TABLE IF NOT EXISTS governance_virtual_key_invalidation_outbox (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					entity_type VARCHAR(64) NOT NULL CHECK (entity_type = 'virtual_key'),
+					action VARCHAR(32) NOT NULL CHECK (action IN ('reload', 'delete')),
+					entity_id VARCHAR(255) NOT NULL,
+					tenant_id VARCHAR(255),
+					scope VARCHAR(255),
+					schema_version INTEGER NOT NULL DEFAULT 1 CHECK (schema_version = 1),
+					created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+				)`
+			default:
+				return fmt.Errorf("unsupported database dialect for %s: %s", migrationName, tx.Dialector.Name())
+			}
+			if err := tx.Exec(createTable).Error; err != nil {
+				return err
+			}
+			for _, indexSQL := range []string{
+				"CREATE INDEX IF NOT EXISTS idx_vk_invalidation_entity ON governance_virtual_key_invalidation_outbox (entity_id)",
+				"CREATE INDEX IF NOT EXISTS idx_vk_invalidation_tenant ON governance_virtual_key_invalidation_outbox (tenant_id)",
+				"CREATE INDEX IF NOT EXISTS idx_vk_invalidation_created ON governance_virtual_key_invalidation_outbox (created_at)",
+			} {
+				if err := tx.Exec(indexSQL).Error; err != nil {
+					return err
+				}
+			}
+			return nil
+		},
+		Rollback: func(tx *gorm.DB) error {
+			return tx.WithContext(ctx).Exec("DROP TABLE IF EXISTS governance_virtual_key_invalidation_outbox").Error
+		},
+	}})
+	if err := m.Migrate(); err != nil {
+		return fmt.Errorf("error running %s migration: %w", migrationName, err)
+	}
+	return nil
 }
 
 // quoteSQLiteIdentifier quotes a SQLite identifier, escaping any double quotes.

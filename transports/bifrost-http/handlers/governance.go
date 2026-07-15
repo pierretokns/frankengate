@@ -1442,7 +1442,11 @@ func (h *GovernanceHandler) createVirtualKey(ctx *fasthttp.RequestCtx) {
 				}
 			}
 		}
-		return nil
+		return h.configStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+			EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+			Action:     configstoreTables.VirtualKeyInvalidationActionReload,
+			EntityID:   vk.ID,
+		})
 	}); err != nil {
 		var badReqErr *badRequestError
 		if errors.As(err, &badReqErr) {
@@ -1900,7 +1904,11 @@ func (h *GovernanceHandler) updateVirtualKey(ctx *fasthttp.RequestCtx) {
 			}
 		}
 
-		return nil
+		return h.configStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+			EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+			Action:     configstoreTables.VirtualKeyInvalidationActionReload,
+			EntityID:   vk.ID,
+		})
 	}); err != nil {
 		var badReqErr *badRequestError
 		if errors.As(err, &badReqErr) {
@@ -1954,12 +1962,22 @@ func (h *GovernanceHandler) rotateVirtualKeyByID(ctx context.Context, vkID strin
 	if err != nil {
 		return nil, err
 	}
-	oldValue := vk.Value.GetValue()
-	vk.Value = *schemas.NewSecretVar(governance.GenerateVirtualKey())
-	if vk.Value.GetValue() == oldValue {
-		return nil, fmt.Errorf("generated virtual key matched existing value")
-	}
-	if err := h.configStore.UpdateVirtualKey(ctx, vk); err != nil {
+	err = h.configStore.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+		oldValue := vk.Value.GetValue()
+		vk.Value = *schemas.NewSecretVar(governance.GenerateVirtualKey())
+		if vk.Value.GetValue() == oldValue {
+			return fmt.Errorf("generated virtual key matched existing value")
+		}
+		if err := h.configStore.UpdateVirtualKey(ctx, vk, tx); err != nil {
+			return err
+		}
+		return h.configStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+			EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+			Action:     configstoreTables.VirtualKeyInvalidationActionReload,
+			EntityID:   vk.ID,
+		})
+	})
+	if err != nil {
 		return nil, err
 	}
 	preloadedVk, err := h.governanceManager.ReloadVirtualKey(ctx, vk.ID)
@@ -2060,8 +2078,18 @@ func (h *GovernanceHandler) deleteVirtualKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, 500, "Failed to retrieve virtual key")
 		return
 	}
-	// Deleting key from database
-	if err := h.configStore.DeleteVirtualKey(ctx, vkID); err != nil {
+	// Delete the authority row and publish its invalidation atomically. If either
+	// operation fails, neither is visible to another pod.
+	if err := h.configStore.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+		if err := h.configStore.DeleteVirtualKey(ctx, vkID, tx); err != nil {
+			return err
+		}
+		return h.configStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+			EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+			Action:     configstoreTables.VirtualKeyInvalidationActionDelete,
+			EntityID:   vk.ID,
+		})
+	}); err != nil {
 		if errors.Is(err, configstore.ErrNotFound) {
 			SendError(ctx, 404, "Virtual key not found")
 			return

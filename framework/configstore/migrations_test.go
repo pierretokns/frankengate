@@ -29,8 +29,14 @@ import (
 var testMigrationLogger = bifrost.NewDefaultLogger(schemas.LogLevelInfo)
 
 // postgresDSN matches the postgres service in tests/docker-compose.yml and
-// framework/docker-compose.yml.
-const postgresDSN = "host=localhost user=bifrost password=bifrost_password dbname=bifrost port=5432 sslmode=disable"
+// framework/docker-compose.yml. Kubernetes fixtures can inject their own
+// ephemeral credentials without weakening their manifests.
+var postgresDSN = func() string {
+	if dsn := os.Getenv("BIFROST_TEST_POSTGRES_DSN"); dsn != "" {
+		return dsn
+	}
+	return "host=localhost user=bifrost password=bifrost_password dbname=bifrost port=5432 sslmode=disable"
+}()
 
 // namedDB pairs a backend name with its GORM connection for use in subtests.
 type namedDB struct {
@@ -1161,6 +1167,7 @@ func TestTriggerMigrations_FreshDB(t *testing.T) {
 		&tables.TableClientConfig{},
 		&tables.TableVirtualKeyProviderConfig{},
 		&tables.TableVirtualKeyMCPConfig{},
+		&tables.TableVirtualKeyInvalidationEvent{},
 	}
 
 	migrator := db.Migrator()
@@ -1168,6 +1175,33 @@ func TestTriggerMigrations_FreshDB(t *testing.T) {
 		assert.True(t, migrator.HasTable(table), "table should exist: %T", table)
 	}
 	assert.True(t, migrator.HasColumn(&tables.TableModelPricing{}, "is_deprecated"), "model pricing is_deprecated column should exist")
+}
+
+func TestMigrationVirtualKeyInvalidationOutboxSQLiteAndPostgres(t *testing.T) {
+	dbs := []namedDB{{"sqlite", setupTestDB(t)}}
+	if pg, err := gorm.Open(postgres.Open(postgresDSN), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)}); err == nil {
+		if sqlDB, dbErr := pg.DB(); dbErr == nil && sqlDB.Ping() == nil {
+			dbs = append(dbs, namedDB{"postgres", pg})
+		}
+	}
+
+	for _, ndb := range dbs {
+		t.Run(ndb.name, func(t *testing.T) {
+			db := ndb.db
+			require.NoError(t, db.Exec(`CREATE TABLE IF NOT EXISTS migrations (id VARCHAR(255) PRIMARY KEY)`).Error)
+			require.NoError(t, db.Exec("DELETE FROM migrations WHERE id = ?", "add_virtual_key_invalidation_outbox").Error)
+			require.NoError(t, db.Exec("DROP TABLE IF EXISTS governance_virtual_key_invalidation_outbox").Error)
+			t.Cleanup(func() {
+				db.Exec("DELETE FROM migrations WHERE id = ?", "add_virtual_key_invalidation_outbox")
+				db.Exec("DROP TABLE IF EXISTS governance_virtual_key_invalidation_outbox")
+			})
+
+			require.NoError(t, migrationAddVirtualKeyInvalidationOutbox(context.Background(), db, testMigrationLogger))
+			require.True(t, db.Migrator().HasTable(&tables.TableVirtualKeyInvalidationEvent{}))
+			// Re-running is safe because the migration is tracked and DDL is idempotent.
+			require.NoError(t, migrationAddVirtualKeyInvalidationOutbox(context.Background(), db, testMigrationLogger))
+		})
+	}
 }
 
 func TestTriggerMigrations_Idempotent(t *testing.T) {

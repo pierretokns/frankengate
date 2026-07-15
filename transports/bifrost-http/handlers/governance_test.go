@@ -18,6 +18,7 @@ import (
 	"github.com/maximhq/bifrost/plugins/governance"
 	"github.com/maximhq/bifrost/plugins/governance/complexity"
 	"github.com/maximhq/bifrost/plugins/logging"
+	"github.com/stretchr/testify/require"
 	"github.com/valyala/fasthttp"
 	"gorm.io/gorm"
 )
@@ -29,6 +30,17 @@ type mockGovernanceManagerForVK struct {
 	getGovernanceDataCalls int
 	data                   *governance.GovernanceData
 }
+
+type vkEventGovernanceManager struct {
+	GovernanceManager
+	store configstore.ConfigStore
+}
+
+func (m *vkEventGovernanceManager) ReloadVirtualKey(ctx context.Context, id string) (*configstoreTables.TableVirtualKey, error) {
+	return m.store.GetVirtualKey(ctx, id)
+}
+
+func (m *vkEventGovernanceManager) RemoveVirtualKey(context.Context, string) error { return nil }
 
 func (m *mockGovernanceManagerForVK) GetGovernanceData(ctx context.Context) *governance.GovernanceData {
 	m.getGovernanceDataCalls++
@@ -55,10 +67,36 @@ func (m *mockConfigStoreForVK) GetVirtualKeys(_ context.Context) ([]configstoreT
 
 type mockRotateConfigStore struct {
 	configstore.ConfigStore
-	virtualKeys  map[string]*configstoreTables.TableVirtualKey
-	modelConfigs map[string]*configstoreTables.TableModelConfig
-	updates      int
-	updateErr    error
+	virtualKeys   map[string]*configstoreTables.TableVirtualKey
+	modelConfigs  map[string]*configstoreTables.TableModelConfig
+	invalidations []configstoreTables.TableVirtualKeyInvalidationEvent
+	updates       int
+	updateErr     error
+	appendErr     error
+}
+
+func (m *mockRotateConfigStore) ExecuteTransaction(_ context.Context, fn func(tx *gorm.DB) error) error {
+	snapshot := make(map[string]*configstoreTables.TableVirtualKey, len(m.virtualKeys))
+	for id, vk := range m.virtualKeys {
+		snapshot[id] = cloneTestVirtualKey(vk)
+	}
+	beforeInvalidations := len(m.invalidations)
+	beforeUpdates := m.updates
+	if err := fn(nil); err != nil {
+		m.virtualKeys = snapshot
+		m.invalidations = m.invalidations[:beforeInvalidations]
+		m.updates = beforeUpdates
+		return err
+	}
+	return nil
+}
+
+func (m *mockRotateConfigStore) AppendVirtualKeyInvalidation(_ context.Context, _ *gorm.DB, event *configstoreTables.TableVirtualKeyInvalidationEvent) error {
+	if m.appendErr != nil {
+		return m.appendErr
+	}
+	m.invalidations = append(m.invalidations, *event)
+	return nil
 }
 
 func cloneTestVirtualKey(vk *configstoreTables.TableVirtualKey) *configstoreTables.TableVirtualKey {
@@ -1075,6 +1113,9 @@ func TestRotateVirtualKey_OnlyChangesValueAndReloads(t *testing.T) {
 	if len(manager.reloadIDs) != 1 || manager.reloadIDs[0] != "vk-1" {
 		t.Fatalf("expected reload for vk-1, got %#v", manager.reloadIDs)
 	}
+	if len(store.invalidations) != 1 || store.invalidations[0].Action != configstoreTables.VirtualKeyInvalidationActionReload || store.invalidations[0].EntityID != "vk-1" {
+		t.Fatalf("expected one reload invalidation for vk-1, got %#v", store.invalidations)
+	}
 
 	updated := store.virtualKeys["vk-1"]
 	if updated.Value.GetValue() == "sk-bf-old" {
@@ -1108,6 +1149,70 @@ func TestRotateVirtualKey_OnlyChangesValueAndReloads(t *testing.T) {
 	}
 	if resp.VirtualKey.Value.GetValue() != updated.Value.GetValue() {
 		t.Fatalf("response value = %q, want %q", resp.VirtualKey.Value.GetValue(), updated.Value.GetValue())
+	}
+}
+
+func TestVirtualKeyLifecyclePublishesOrderedDurableInvalidations(t *testing.T) {
+	SetLogger(&mockLogger{})
+	store := setupPricingOverrideHandlerStore(t)
+	manager := &vkEventGovernanceManager{store: store}
+	h := &GovernanceHandler{configStore: store, governanceManager: manager}
+
+	createCtx := newTestRequestCtx(`{"name":"cluster-key"}`)
+	h.createVirtualKey(createCtx)
+	require.Equal(t, 200, createCtx.Response.StatusCode(), string(createCtx.Response.Body()))
+	var created struct {
+		VirtualKey configstoreTables.TableVirtualKey `json:"virtual_key"`
+	}
+	require.NoError(t, json.Unmarshal(createCtx.Response.Body(), &created))
+	require.NotEmpty(t, created.VirtualKey.ID)
+
+	rotateCtx := newTestRequestCtx("")
+	rotateCtx.SetUserValue("vk_id", created.VirtualKey.ID)
+	h.rotateVirtualKey(rotateCtx)
+	require.Equal(t, 200, rotateCtx.Response.StatusCode(), string(rotateCtx.Response.Body()))
+
+	deleteCtx := newTestRequestCtx("")
+	deleteCtx.SetUserValue("vk_id", created.VirtualKey.ID)
+	h.deleteVirtualKey(deleteCtx)
+	require.Equal(t, 200, deleteCtx.Response.StatusCode(), string(deleteCtx.Response.Body()))
+
+	events, err := store.ListVirtualKeyInvalidationsAfter(context.Background(), 0, 10)
+	require.NoError(t, err)
+	require.Len(t, events, 3)
+	require.Equal(t, []string{
+		configstoreTables.VirtualKeyInvalidationActionReload,
+		configstoreTables.VirtualKeyInvalidationActionReload,
+		configstoreTables.VirtualKeyInvalidationActionDelete,
+	}, []string{events[0].Action, events[1].Action, events[2].Action})
+	for _, event := range events {
+		require.Equal(t, created.VirtualKey.ID, event.EntityID)
+	}
+}
+
+func TestRotateVirtualKey_InvalidationFailureRollsBackAndDoesNotReload(t *testing.T) {
+	SetLogger(&mockLogger{})
+	store := &mockRotateConfigStore{
+		virtualKeys: map[string]*configstoreTables.TableVirtualKey{
+			"vk-1": {ID: "vk-1", Name: "One", Value: *schemas.NewSecretVar("sk-bf-old")},
+		},
+		appendErr: errors.New("outbox unavailable"),
+	}
+	manager := &mockRotateGovernanceManager{store: store}
+	h := &GovernanceHandler{configStore: store, governanceManager: manager}
+	ctx := &fasthttp.RequestCtx{}
+	ctx.SetUserValue("vk_id", "vk-1")
+
+	h.rotateVirtualKey(ctx)
+
+	if ctx.Response.StatusCode() != 500 {
+		t.Fatalf("expected status 500, got %d: %s", ctx.Response.StatusCode(), string(ctx.Response.Body()))
+	}
+	if got := store.virtualKeys["vk-1"].Value.GetValue(); got != "sk-bf-old" {
+		t.Fatalf("expected transaction rollback to preserve old key, got %q", got)
+	}
+	if store.updates != 0 || len(store.invalidations) != 0 || len(manager.reloadIDs) != 0 {
+		t.Fatalf("expected no committed update/event/reload, got updates=%d events=%#v reloads=%#v", store.updates, store.invalidations, manager.reloadIDs)
 	}
 }
 

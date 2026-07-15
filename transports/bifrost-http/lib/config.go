@@ -2621,11 +2621,25 @@ func pruneGovernanceConfigToFile(ctx context.Context, config *Config, configData
 				if err := reconcileVirtualKeyAssociations(ctx, config.ConfigStore, tx, vk.ID, vk.ProviderConfigs, vk.MCPConfigs); err != nil {
 					return fmt.Errorf("failed to reconcile associations for virtual key %s: %w", vk.ID, err)
 				}
+				if err := config.ConfigStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+					EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+					Action:     configstoreTables.VirtualKeyInvalidationActionReload,
+					EntityID:   vk.ID,
+				}); err != nil {
+					return fmt.Errorf("failed to publish virtual key %s reconciliation: %w", vk.ID, err)
+				}
 			}
 			for _, existing := range config.GovernanceConfig.VirtualKeys {
 				if existing.ID != "" && !keep[existing.ID] {
 					if err := config.ConfigStore.DeleteVirtualKey(ctx, existing.ID, tx); err != nil {
 						return fmt.Errorf("failed to delete virtual key %s: %w", existing.ID, err)
+					}
+					if err := config.ConfigStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+						EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+						Action:     configstoreTables.VirtualKeyInvalidationActionDelete,
+						EntityID:   existing.ID,
+					}); err != nil {
+						return fmt.Errorf("failed to publish virtual key %s deletion: %w", existing.ID, err)
 					}
 				}
 			}
@@ -3004,6 +3018,13 @@ func updateGovernanceConfigInStore(
 
 			virtualKey.ProviderConfigs = providerConfigs
 			virtualKey.MCPConfigs = mcpConfigs
+			if err := config.ConfigStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+				EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+				Action:     configstoreTables.VirtualKeyInvalidationActionReload,
+				EntityID:   virtualKey.ID,
+			}); err != nil {
+				return fmt.Errorf("failed to publish virtual key %s creation: %w", virtualKey.ID, err)
+			}
 		}
 
 		// Update virtual keys (config.json changed)
@@ -3013,6 +3034,13 @@ func updateGovernanceConfigInStore(
 			}
 			if err := config.ConfigStore.UpdateVirtualKey(ctx, &virtualKey, tx); err != nil {
 				return fmt.Errorf("failed to update virtual key %s: %w", virtualKey.ID, err)
+			}
+			if err := config.ConfigStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+				EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+				Action:     configstoreTables.VirtualKeyInvalidationActionReload,
+				EntityID:   virtualKey.ID,
+			}); err != nil {
+				return fmt.Errorf("failed to publish virtual key %s update: %w", virtualKey.ID, err)
 			}
 		}
 

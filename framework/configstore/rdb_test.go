@@ -45,6 +45,7 @@ func setupRDBTestStore(t *testing.T) *RDBConfigStore {
 		&tables.TableMCPClient{},
 		&tables.TableMCPLibrary{},
 		&tables.TableVirtualKeyMCPConfig{},
+		&tables.TableVirtualKeyInvalidationEvent{},
 		&tables.TableFolder{},
 		&tables.TablePrompt{},
 		&tables.TablePromptVersion{},

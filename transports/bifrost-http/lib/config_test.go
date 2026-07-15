@@ -410,7 +410,8 @@ type MockConfigStore struct {
 		teams       []tables.TableTeam
 		virtualKeys []tables.TableVirtualKey
 	}
-	flushSessionsCalled bool
+	virtualKeyInvalidations []tables.TableVirtualKeyInvalidationEvent
+	flushSessionsCalled     bool
 }
 
 // NewMockConfigStore creates a new mock config store
@@ -489,6 +490,28 @@ func (m *MockConfigStore) DB() *gorm.DB                                   { retu
 func (m *MockConfigStore) ScopedDB(ctx context.Context) *gorm.DB          { return nil }
 func (m *MockConfigStore) ExecuteTransaction(ctx context.Context, fn func(tx *gorm.DB) error) error {
 	return fn(nil)
+}
+
+func (m *MockConfigStore) AppendVirtualKeyInvalidation(_ context.Context, _ *gorm.DB, event *tables.TableVirtualKeyInvalidationEvent) error {
+	m.virtualKeyInvalidations = append(m.virtualKeyInvalidations, *event)
+	return nil
+}
+
+func (m *MockConfigStore) ListVirtualKeyInvalidationsAfter(_ context.Context, cursor uint64, limit int) ([]tables.TableVirtualKeyInvalidationEvent, error) {
+	result := make([]tables.TableVirtualKeyInvalidationEvent, 0, limit)
+	for _, event := range m.virtualKeyInvalidations {
+		if event.ID > cursor && len(result) < limit {
+			result = append(result, event)
+		}
+	}
+	return result, nil
+}
+
+func (m *MockConfigStore) GetVirtualKeyInvalidationHighWatermark(context.Context) (uint64, error) {
+	if len(m.virtualKeyInvalidations) == 0 {
+		return 0, nil
+	}
+	return m.virtualKeyInvalidations[len(m.virtualKeyInvalidations)-1].ID, nil
 }
 
 func (m *MockConfigStore) GetOauthConfigByID(ctx context.Context, id string) (*tables.TableOauthConfig, error) {
@@ -640,7 +663,7 @@ func (m *MockConfigStore) CreateMCPClientConfig(ctx context.Context, clientConfi
 	return nil
 }
 
-func (m *MockConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, clientConfig *tables.TableMCPClient) error {
+func (m *MockConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, clientConfig *tables.TableMCPClient, _ ...*gorm.DB) error {
 	m.mcpClientConfigUpdates = append(m.mcpClientConfigUpdates, struct {
 		ID     string
 		Config tables.TableMCPClient
