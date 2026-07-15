@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/framework/logstore"
@@ -13,6 +14,20 @@ import (
 	"github.com/maximhq/bifrost/framework/vectorstore"
 	"gorm.io/gorm"
 )
+
+// PrincipalAuthorizationEpochStore is the durable store surface for
+// tenant+issuer+subject authorization epochs and the replayable outbox peers use
+// to invalidate stale process-local references.
+type PrincipalAuthorizationEpochStore interface {
+	GetPrincipalAuthorizationEpoch(ctx context.Context, principal authorityepoch.Principal) (*tables.TablePrincipalAuthorizationEpoch, error)
+	ActivatePrincipalAuthorizationEpoch(ctx context.Context, principal authorityepoch.Principal, epoch uint64, tx ...*gorm.DB) (*tables.TablePrincipalAuthorizationEpoch, error)
+	AdvancePrincipalAuthorizationEpoch(ctx context.Context, principal authorityepoch.Principal, reason authorityepoch.Reason, tx ...*gorm.DB) (*tables.TablePrincipalAuthorizationEpochEvent, error)
+	DeactivatePrincipalAuthorizationEpoch(ctx context.Context, principal authorityepoch.Principal, reason authorityepoch.Reason, tx ...*gorm.DB) (*tables.TablePrincipalAuthorizationEpochEvent, error)
+	ValidatePrincipalAuthorizationEpoch(ctx context.Context, ref authorityepoch.Reference) error
+	ListPrincipalAuthorizationEpochEventsAfter(ctx context.Context, cursor uint64, limit int) ([]tables.TablePrincipalAuthorizationEpochEvent, error)
+	GetPrincipalAuthorizationEpochHighWatermark(ctx context.Context) (uint64, error)
+	PrincipalAuthorizationEpochWakeups(ctx context.Context) <-chan struct{}
+}
 
 // VirtualKeyQueryParams holds pagination, filtering, and search parameters for virtual key queries.
 type VirtualKeyQueryParams struct {

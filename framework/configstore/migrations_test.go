@@ -1168,6 +1168,8 @@ func TestTriggerMigrations_FreshDB(t *testing.T) {
 		&tables.TableVirtualKeyProviderConfig{},
 		&tables.TableVirtualKeyMCPConfig{},
 		&tables.TableVirtualKeyInvalidationEvent{},
+		&tables.TablePrincipalAuthorizationEpoch{},
+		&tables.TablePrincipalAuthorizationEpochEvent{},
 	}
 
 	migrator := db.Migrator()
@@ -1200,6 +1202,35 @@ func TestMigrationVirtualKeyInvalidationOutboxSQLiteAndPostgres(t *testing.T) {
 			require.True(t, db.Migrator().HasTable(&tables.TableVirtualKeyInvalidationEvent{}))
 			// Re-running is safe because the migration is tracked and DDL is idempotent.
 			require.NoError(t, migrationAddVirtualKeyInvalidationOutbox(context.Background(), db, testMigrationLogger))
+		})
+	}
+}
+
+func TestMigrationPrincipalAuthorizationEpochTablesSQLiteAndPostgres(t *testing.T) {
+	dbs := []namedDB{{"sqlite", setupTestDB(t)}}
+	if pg, err := gorm.Open(postgres.Open(postgresDSN), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)}); err == nil {
+		if sqlDB, dbErr := pg.DB(); dbErr == nil && sqlDB.Ping() == nil {
+			dbs = append(dbs, namedDB{"postgres", pg})
+		}
+	}
+
+	for _, ndb := range dbs {
+		t.Run(ndb.name, func(t *testing.T) {
+			db := ndb.db
+			require.NoError(t, db.Exec(`CREATE TABLE IF NOT EXISTS migrations (id VARCHAR(255) PRIMARY KEY)`).Error)
+			require.NoError(t, db.Exec("DELETE FROM migrations WHERE id = ?", "add_principal_authorization_epoch_tables").Error)
+			require.NoError(t, db.Exec("DROP TABLE IF EXISTS governance_principal_authorization_epoch_outbox").Error)
+			require.NoError(t, db.Exec("DROP TABLE IF EXISTS governance_principal_authorization_epochs").Error)
+			t.Cleanup(func() {
+				db.Exec("DELETE FROM migrations WHERE id = ?", "add_principal_authorization_epoch_tables")
+				db.Exec("DROP TABLE IF EXISTS governance_principal_authorization_epoch_outbox")
+				db.Exec("DROP TABLE IF EXISTS governance_principal_authorization_epochs")
+			})
+
+			require.NoError(t, migrationAddPrincipalAuthorizationEpochTables(context.Background(), db, testMigrationLogger))
+			require.True(t, db.Migrator().HasTable(&tables.TablePrincipalAuthorizationEpoch{}))
+			require.True(t, db.Migrator().HasTable(&tables.TablePrincipalAuthorizationEpochEvent{}))
+			require.NoError(t, migrationAddPrincipalAuthorizationEpochTables(context.Background(), db, testMigrationLogger))
 		})
 	}
 }

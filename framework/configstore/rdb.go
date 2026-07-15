@@ -36,11 +36,12 @@ import (
 // can swap it out without tearing callers down. migrateOnFreshFn and refreshPoolFn
 // are backend-specific hooks installed by the constructor (postgres vs sqlite).
 type RDBConfigStore struct {
-	db                               atomic.Pointer[gorm.DB]
-	logger                           schemas.Logger
-	migrateOnFreshFn                 func(ctx context.Context, fn func(context.Context, *gorm.DB) error) error
-	refreshPoolFn                    func(ctx context.Context) error
-	virtualKeyInvalidationNotifyDial func(context.Context) (virtualKeyInvalidationNotifyConn, error)
+	db                                    atomic.Pointer[gorm.DB]
+	logger                                schemas.Logger
+	migrateOnFreshFn                      func(ctx context.Context, fn func(context.Context, *gorm.DB) error) error
+	refreshPoolFn                         func(ctx context.Context) error
+	virtualKeyInvalidationNotifyDial      func(context.Context) (virtualKeyInvalidationNotifyConn, error)
+	principalAuthorizationEpochNotifyDial func(context.Context) (principalAuthorizationEpochNotifyConn, error)
 }
 
 // getWeight safely dereferences a *float64 weight pointer, returning 1.0 as default if nil.

@@ -91,6 +91,21 @@ func newPostgresConfigStore(ctx context.Context, config *PostgresConfig, logger 
 		}
 		return &pgxVirtualKeyInvalidationNotifyConn{conn: conn}, nil
 	}
+	d.principalAuthorizationEpochNotifyDial = func(ctx context.Context) (principalAuthorizationEpochNotifyConn, error) {
+		connConfig := notifyConfig.Copy()
+		if config.PasswordCommand != nil {
+			password, err := postgresconn.RunPasswordCommand(ctx, config.PasswordCommand)
+			if err != nil {
+				return nil, fmt.Errorf("resolve postgres notification password: %w", err)
+			}
+			connConfig.Password = password
+		}
+		conn, err := pgx.ConnectConfig(ctx, connConfig)
+		if err != nil {
+			return nil, err
+		}
+		return &pgxPrincipalAuthorizationEpochNotifyConn{conn: conn}, nil
+	}
 
 	// migrateOnFreshFn: downstream consumers (e.g. bifrost-enterprise) run
 	// their migrations via this hook on a throwaway pool that closes after fn.

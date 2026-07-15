@@ -447,6 +447,7 @@ var configstoreMigrationSteps = []migrationStep{
 	{IDs: []string{"repair_bare_wildcard_allowed_models"}, run: migrationRepairBareWildcardAllowedModels},
 	{IDs: []string{"add_bedrock_project_id_columns"}, run: migrationAddBedrockProjectIDColumns},
 	{IDs: []string{"add_virtual_key_invalidation_outbox"}, run: migrationAddVirtualKeyInvalidationOutbox},
+	{IDs: []string{"add_principal_authorization_epoch_tables"}, run: migrationAddPrincipalAuthorizationEpochTables},
 }
 
 // migrationAddVirtualKeyInvalidationOutbox adds the durable cursor source used
@@ -507,6 +508,110 @@ func migrationAddVirtualKeyInvalidationOutbox(ctx context.Context, db *gorm.DB, 
 		},
 		Rollback: func(tx *gorm.DB) error {
 			return tx.WithContext(ctx).Exec("DROP TABLE IF EXISTS governance_virtual_key_invalidation_outbox").Error
+		},
+	}})
+	if err := m.Migrate(); err != nil {
+		return fmt.Errorf("error running %s migration: %w", migrationName, err)
+	}
+	return nil
+}
+
+// migrationAddPrincipalAuthorizationEpochTables adds the durable authorization
+// epoch row and replayable outbox for tenant+issuer+subject principals. The
+// tables are additive so mixed-version pods that do not know about the feature
+// can continue reading existing governance tables during rollout.
+func migrationAddPrincipalAuthorizationEpochTables(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {
+	const migrationName = "add_principal_authorization_epoch_tables"
+	logger.Info("[configstore] starting migration %s", migrationName)
+	defer logger.Info("[configstore] finished migration %s", migrationName)
+
+	m := migrator.New(db, migrator.DefaultOptions, []*migrator.Migration{{
+		ID: migrationName,
+		Migrate: func(tx *gorm.DB) error {
+			tx = tx.WithContext(ctx)
+			var createEpochTable, createOutboxTable string
+			switch tx.Dialector.Name() {
+			case "postgres":
+				createEpochTable = `CREATE TABLE IF NOT EXISTS governance_principal_authorization_epochs (
+					tenant_id VARCHAR(255) NOT NULL,
+					issuer VARCHAR(255) NOT NULL,
+					subject VARCHAR(255) NOT NULL,
+					epoch BIGINT NOT NULL CHECK (epoch > 0),
+					active BOOLEAN NOT NULL DEFAULT TRUE,
+					last_reason VARCHAR(64) NOT NULL DEFAULT '',
+					revision BIGINT NOT NULL DEFAULT 1 CHECK (revision > 0),
+					created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					deactivated_at TIMESTAMPTZ,
+					PRIMARY KEY (tenant_id, issuer, subject)
+				)`
+				createOutboxTable = `CREATE TABLE IF NOT EXISTS governance_principal_authorization_epoch_outbox (
+					id BIGSERIAL PRIMARY KEY,
+					tenant_id VARCHAR(255) NOT NULL,
+					issuer VARCHAR(255) NOT NULL,
+					subject VARCHAR(255) NOT NULL,
+					old_epoch BIGINT NOT NULL CHECK (old_epoch >= 0),
+					new_epoch BIGINT NOT NULL CHECK (new_epoch > old_epoch),
+					active BOOLEAN NOT NULL,
+					reason VARCHAR(64) NOT NULL,
+					revision BIGINT NOT NULL CHECK (revision > 0),
+					schema_version SMALLINT NOT NULL DEFAULT 1,
+					created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					CONSTRAINT chk_principal_authorization_epoch_schema CHECK (schema_version = 1)
+				)`
+			case "sqlite":
+				createEpochTable = `CREATE TABLE IF NOT EXISTS governance_principal_authorization_epochs (
+					tenant_id VARCHAR(255) NOT NULL,
+					issuer VARCHAR(255) NOT NULL,
+					subject VARCHAR(255) NOT NULL,
+					epoch INTEGER NOT NULL CHECK (epoch > 0),
+					active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
+					last_reason VARCHAR(64) NOT NULL DEFAULT '',
+					revision INTEGER NOT NULL DEFAULT 1 CHECK (revision > 0),
+					created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					deactivated_at DATETIME,
+					PRIMARY KEY (tenant_id, issuer, subject)
+				)`
+				createOutboxTable = `CREATE TABLE IF NOT EXISTS governance_principal_authorization_epoch_outbox (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					tenant_id VARCHAR(255) NOT NULL,
+					issuer VARCHAR(255) NOT NULL,
+					subject VARCHAR(255) NOT NULL,
+					old_epoch INTEGER NOT NULL CHECK (old_epoch >= 0),
+					new_epoch INTEGER NOT NULL CHECK (new_epoch > old_epoch),
+					active INTEGER NOT NULL CHECK (active IN (0, 1)),
+					reason VARCHAR(64) NOT NULL,
+					revision INTEGER NOT NULL CHECK (revision > 0),
+					schema_version INTEGER NOT NULL DEFAULT 1 CHECK (schema_version = 1),
+					created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+				)`
+			default:
+				return fmt.Errorf("unsupported database dialect for %s: %s", migrationName, tx.Dialector.Name())
+			}
+			if err := tx.Exec(createEpochTable).Error; err != nil {
+				return err
+			}
+			if err := tx.Exec(createOutboxTable).Error; err != nil {
+				return err
+			}
+			for _, indexSQL := range []string{
+				"CREATE INDEX IF NOT EXISTS idx_principal_authorization_epochs_active ON governance_principal_authorization_epochs (active)",
+				"CREATE INDEX IF NOT EXISTS idx_principal_authorization_epoch_outbox_principal ON governance_principal_authorization_epoch_outbox (tenant_id, issuer, subject)",
+				"CREATE INDEX IF NOT EXISTS idx_principal_authorization_epoch_outbox_created ON governance_principal_authorization_epoch_outbox (created_at)",
+			} {
+				if err := tx.Exec(indexSQL).Error; err != nil {
+					return err
+				}
+			}
+			return nil
+		},
+		Rollback: func(tx *gorm.DB) error {
+			tx = tx.WithContext(ctx)
+			if err := tx.Exec("DROP TABLE IF EXISTS governance_principal_authorization_epoch_outbox").Error; err != nil {
+				return err
+			}
+			return tx.Exec("DROP TABLE IF EXISTS governance_principal_authorization_epochs").Error
 		},
 	}})
 	if err := m.Migrate(); err != nil {
