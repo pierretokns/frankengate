@@ -35,6 +35,41 @@ func TestMintedReferencesAreBoundToPrincipalAndEpoch(t *testing.T) {
 	}
 }
 
+func TestRegistryApplyDurableEventCancelsLiveReferences(t *testing.T) {
+	reg := NewRegistry()
+	principal := Principal{Tenant: "tenant-a", Issuer: "issuer-a", Subject: "user-a"}
+	if err := reg.Apply(EpochEvent{Principal: principal, NewEpoch: 1, Revision: 1, Reason: Reason("activated")}, true); err != nil {
+		t.Fatalf("apply activation: %v", err)
+	}
+	ref, err := reg.Mint(principal, ArtifactMCPLiveConnection, "connection-1")
+	if err != nil {
+		t.Fatalf("mint: %v", err)
+	}
+	cancelled, unsubscribe, err := reg.Subscribe(ref)
+	if err != nil {
+		t.Fatalf("subscribe: %v", err)
+	}
+	defer unsubscribe()
+	deactivation := EpochEvent{Principal: principal, OldEpoch: 1, NewEpoch: 2, Revision: 2, Reason: ReasonDeactivated}
+	if err := reg.Apply(deactivation, false); err != nil {
+		t.Fatalf("apply deactivation: %v", err)
+	}
+	if err := reg.Validate(ref); !errors.Is(err, ErrInactivePrincipal) {
+		t.Fatalf("validate error = %v, want inactive", err)
+	}
+	select {
+	case got := <-cancelled:
+		if got.Reference != ref || got.Reason != ReasonDeactivated {
+			t.Fatalf("cancellation = %+v", got)
+		}
+	default:
+		t.Fatal("durable event did not cancel live reference")
+	}
+	if err := reg.Apply(deactivation, false); err != nil {
+		t.Fatalf("idempotent replay: %v", err)
+	}
+}
+
 func TestGroupRemovalCancelsArtifactsWithinLogicalSLO(t *testing.T) {
 	reg := NewRegistry()
 	principal := Principal{

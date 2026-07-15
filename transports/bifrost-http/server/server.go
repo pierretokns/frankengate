@@ -18,6 +18,7 @@ import (
 	"github.com/fasthttp/router"
 	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
@@ -162,18 +163,20 @@ type BifrostHTTPServer struct {
 	devPprofHandler    *handlers.DevPprofHandler
 	IntegrationHandler *handlers.IntegrationHandler
 
-	AuthMiddleware       *handlers.AuthMiddleware
-	CORSMiddleware       *handlers.CorsMiddleware
-	TracingMiddleware    *handlers.TracingMiddleware
-	WSTicketStore        *handlers.WSTicketStore
-	TempTokens           *temptoken.Service
-	TempTokenSweepWorker *temptoken.SweepWorker
-	OAuth2SweepWorker    *oauth2SweepWorker
-	VKInvalidationPoller *virtualKeyInvalidationPoller
-	mcpReconcileMu       sync.Mutex
-	mcpReconcileWorkers  map[string]*mcpRuntimeReconcileState
-	mcpReconcileWG       sync.WaitGroup
-	mcpReconcileStopping bool
+	AuthMiddleware             *handlers.AuthMiddleware
+	CORSMiddleware             *handlers.CorsMiddleware
+	TracingMiddleware          *handlers.TracingMiddleware
+	WSTicketStore              *handlers.WSTicketStore
+	TempTokens                 *temptoken.Service
+	TempTokenSweepWorker       *temptoken.SweepWorker
+	OAuth2SweepWorker          *oauth2SweepWorker
+	VKInvalidationPoller       *virtualKeyInvalidationPoller
+	PrincipalAuthorityRegistry *authorityepoch.Registry
+	PrincipalAuthorityPoller   *principalAuthorityPoller
+	mcpReconcileMu             sync.Mutex
+	mcpReconcileWorkers        map[string]*mcpRuntimeReconcileState
+	mcpReconcileWG             sync.WaitGroup
+	mcpReconcileStopping       bool
 	// OAuth2IdentityResolver scopes a user-mode /mcp request to the user's own
 	// tools. Optional; wired at server init when user-mode identity resolution
 	// is available, otherwise left nil (user-mode requests fall back to the
@@ -2048,6 +2051,9 @@ func (s *BifrostHTTPServer) Bootstrap(ctx context.Context) error {
 	// cannot continue accepting a revoked key indefinitely.
 	if err := s.StartVirtualKeyInvalidationPoller(s.Ctx); err != nil {
 		return fmt.Errorf("failed to start virtual-key invalidation poller: %w", err)
+	}
+	if err := s.StartPrincipalAuthorityPoller(s.Ctx); err != nil {
+		return fmt.Errorf("failed to start principal authority poller: %w", err)
 	}
 	startSkillsOrphanCleanupWorker(s.Ctx, s.Config)
 	return nil

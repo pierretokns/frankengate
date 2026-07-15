@@ -2329,6 +2329,16 @@ func (gs *LocalGovernanceStore) loadFromDatabase(ctx context.Context) error {
 	return nil
 }
 
+// ReloadAuthorityFromDatabase refreshes the complete governance snapshot. The
+// transport invokes this only before it begins serving requests, after fencing
+// the durable invalidation outbox.
+func (gs *LocalGovernanceStore) ReloadAuthorityFromDatabase(ctx context.Context) error {
+	if gs == nil || gs.configStore == nil {
+		return fmt.Errorf("governance database snapshot is unavailable")
+	}
+	return gs.loadFromDatabase(ctx)
+}
+
 // loadFromConfigMemory loads all governance data from the config's memory into store's memory
 func (gs *LocalGovernanceStore) loadFromConfigMemory(ctx context.Context, config *configstore.GovernanceConfig) error {
 	if config == nil {

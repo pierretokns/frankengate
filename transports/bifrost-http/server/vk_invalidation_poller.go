@@ -123,6 +123,10 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 		defaultVirtualKeyInvalidationBatchSize,
 		defaultVirtualKeyInvalidationPollInterval,
 	)
+	if err := s.VKInvalidationPoller.bootstrap(ctx, s.rebuildVirtualKeyAuthoritySnapshot); err != nil {
+		s.VKInvalidationPoller = nil
+		return fmt.Errorf("bootstrap virtual-key authority: %w", err)
+	}
 	plugin, err := s.getGovernancePlugin()
 	if err != nil {
 		s.VKInvalidationPoller = nil
@@ -143,6 +147,55 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 		s.VKInvalidationPoller.wake = wakeSource.VirtualKeyInvalidationWakeups(ctx)
 	}
 	go s.VKInvalidationPoller.Run(ctx)
+	return nil
+}
+
+// rebuildVirtualKeyAuthoritySnapshot replaces the pod-local VK authority from
+// current database rows without replaying the historical outbox. The caller
+// fences the outbox before invoking this function; mutations racing this read
+// are therefore either represented in the snapshot, replayed after the fence,
+// or both (all updates are idempotent).
+func (s *BifrostHTTPServer) rebuildVirtualKeyAuthoritySnapshot(ctx context.Context) error {
+	plugin, err := s.getGovernancePlugin()
+	if err != nil {
+		return err
+	}
+	store := plugin.GetGovernanceStore()
+	snapshotStore, ok := store.(interface {
+		ReloadAuthorityFromDatabase(context.Context) error
+	})
+	if !ok {
+		return fmt.Errorf("governance store does not support complete authority snapshots")
+	}
+	oldValues := make(map[string]string)
+	if data := store.GetGovernanceData(ctx); data != nil {
+		for _, vk := range data.VirtualKeys {
+			if vk != nil {
+				oldValues[vk.ID] = vk.Value.GetValue()
+			}
+		}
+	}
+	if err := snapshotStore.ReloadAuthorityFromDatabase(ctx); err != nil {
+		return fmt.Errorf("reload complete governance authority snapshot: %w", err)
+	}
+	currentValues := make(map[string]string)
+	if data := store.GetGovernanceData(ctx); data != nil {
+		for _, vk := range data.VirtualKeys {
+			if vk != nil {
+				currentValues[vk.ID] = vk.Value.GetValue()
+			}
+		}
+	}
+	if s.MCPServerHandler != nil {
+		for id, oldValue := range oldValues {
+			if newValue, ok := currentValues[id]; !ok || newValue != oldValue {
+				s.MCPServerHandler.DeleteVKMCPServer(oldValue)
+			}
+		}
+		if err := s.MCPServerHandler.SyncAllMCPServers(ctx); err != nil {
+			return fmt.Errorf("resync MCP virtual-key authority caches: %w", err)
+		}
+	}
 	return nil
 }
 
@@ -511,6 +564,34 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 				wake = nil
 			}
 		case <-timer.C:
+		}
+	}
+}
+
+// bootstrap fences the historical outbox before rebuilding current authority,
+// then consumes only mutations that committed after the fence. Snapshot failure
+// is fatal: falling back to cursor zero would make startup latency proportional
+// to retained history and can violate revocation SLOs.
+func (p *virtualKeyInvalidationPoller) bootstrap(ctx context.Context, snapshot func(context.Context) error) error {
+	if p == nil || p.store == nil || snapshot == nil {
+		return errors.New("virtual-key snapshot bootstrap is not configured")
+	}
+	fence, err := p.store.GetVirtualKeyInvalidationHighWatermark(ctx)
+	if err != nil {
+		return fmt.Errorf("fence virtual-key invalidation outbox: %w", err)
+	}
+	if err := snapshot(ctx); err != nil {
+		return err
+	}
+	p.cursor.Store(fence)
+	p.highWatermark.Store(fence)
+	for {
+		more, err := p.pollOnce(ctx)
+		if err != nil {
+			return err
+		}
+		if !more {
+			return nil
 		}
 	}
 }

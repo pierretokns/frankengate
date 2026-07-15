@@ -478,6 +478,10 @@ func (h *OAuth2IssuanceHandler) handleTokenRefresh(ctx *fasthttp.RequestCtx) {
 			return
 		}
 		if !active {
+			if err := deactivateMCPUserAuthority(ctx, h.store.ConfigStore, rt.Resource, oauth2IssuerURL(ctx, h.store), rt.BfSub); err != nil {
+				sendOAuthError(ctx, fasthttp.StatusInternalServerError, "server_error", "failed to publish user deactivation")
+				return
+			}
 			sendOAuthError(ctx, fasthttp.StatusBadRequest, "invalid_grant", "user is no longer active")
 			return
 		}

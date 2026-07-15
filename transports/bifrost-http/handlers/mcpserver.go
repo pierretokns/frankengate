@@ -72,14 +72,101 @@ type MCPServerHandler struct {
 	// authorityFreshness shares the VK outbox consumer's bounded lease with the
 	// direct /mcp authentication path. Without it, a disconnected pod could keep
 	// accepting a revoked VK from vkCache even after inference had failed closed.
-	authorityFreshness governance.AuthorityFreshnessSource
-	mu                 sync.RWMutex
+	authorityFreshness          governance.AuthorityFreshnessSource
+	principalAuthorityFreshness PrincipalAuthorityFreshnessSource
+	authorityRegistry           *authorityepoch.Registry
+	mu                          sync.RWMutex
+}
+
+// PrincipalAuthorityFreshnessSource reports whether this pod has contacted the
+// durable principal-authority outbox within its bounded lease.
+type PrincipalAuthorityFreshnessSource interface {
+	IsPrincipalAuthorityFresh() bool
+}
+
+type principalAuthorityFreshnessDeadlineSource interface {
+	PrincipalAuthorityFreshUntil() time.Time
 }
 
 // SetAuthorityFreshnessSource wires the pod-local durable-outbox freshness
 // lease after the poller is constructed during server bootstrap.
 func (h *MCPServerHandler) SetAuthorityFreshnessSource(source governance.AuthorityFreshnessSource) {
 	h.authorityFreshness = source
+}
+
+func (h *MCPServerHandler) SetAuthorityRegistry(registry *authorityepoch.Registry) {
+	h.authorityRegistry = registry
+}
+
+func (h *MCPServerHandler) SetPrincipalAuthorityFreshnessSource(source PrincipalAuthorityFreshnessSource) {
+	h.principalAuthorityFreshness = source
+}
+
+func (h *MCPServerHandler) subscribeAuthority(ctx context.Context) (<-chan authorityepoch.Cancellation, func(), error) {
+	ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
+	if err != nil {
+		return nil, func() {}, nil
+	}
+	var (
+		registryCancelled   <-chan authorityepoch.Cancellation
+		unsubscribeRegistry = func() {}
+	)
+	if h.authorityRegistry != nil {
+		registryCancelled, unsubscribeRegistry, err = h.authorityRegistry.Subscribe(ref)
+		if err != nil {
+			return nil, func() {}, err
+		}
+	}
+	if h.principalAuthorityFreshness == nil {
+		return registryCancelled, unsubscribeRegistry, nil
+	}
+
+	cancelled := make(chan authorityepoch.Cancellation, 1)
+	done := make(chan struct{})
+	var once sync.Once
+	unsubscribe := func() {
+		once.Do(func() {
+			close(done)
+			unsubscribeRegistry()
+		})
+	}
+	go func() {
+		for {
+			if !h.principalAuthorityFreshness.IsPrincipalAuthorityFresh() {
+				cancelled <- authorityepoch.Cancellation{Reference: ref, Reason: authorityepoch.Reason("authority_stale")}
+				return
+			}
+			wait := 100 * time.Millisecond
+			if source, ok := h.principalAuthorityFreshness.(principalAuthorityFreshnessDeadlineSource); ok {
+				wait = time.Until(source.PrincipalAuthorityFreshUntil())
+				if wait <= 0 {
+					continue
+				}
+			}
+			timer := time.NewTimer(wait)
+			select {
+			case cancellation := <-registryCancelled:
+				if !timer.Stop() {
+					select {
+					case <-timer.C:
+					default:
+					}
+				}
+				cancelled <- cancellation
+				return
+			case <-timer.C:
+			case <-done:
+				if !timer.Stop() {
+					select {
+					case <-timer.C:
+					default:
+					}
+				}
+				return
+			}
+		}
+	}()
+	return cancelled, unsubscribe, nil
 }
 
 // getVirtualKeyByID resolves a virtual key by its row ID for the JWT auth path,
@@ -248,12 +335,19 @@ func (h *MCPServerHandler) handleMCPServerSSE(ctx *fasthttp.RequestCtx) {
 			return
 		}
 	}
+	authorityCancelled, unsubscribeAuthority, err := h.subscribeAuthority(bifrostCtx)
+	if err != nil {
+		cancel()
+		SendError(ctx, fasthttp.StatusUnauthorized, "authorization is no longer current")
+		return
+	}
 
 	// Use SSEStreamReader to bypass fasthttp's internal pipe batching
 	reader := lib.NewSSEStreamReader()
 	ctx.Response.SetBodyStream(reader, -1)
 
 	go func() {
+		defer unsubscribeAuthority()
 		var transportLogs []schemas.PluginLogEntry
 		completerRan := false
 		// runCompleter invokes the transport post-hook completer at most once.
@@ -339,6 +433,12 @@ func (h *MCPServerHandler) handleMCPServerSSE(ctx *fasthttp.RequestCtx) {
 		ping := []byte(": ping\n\n")
 		for {
 			select {
+			case cancellation := <-authorityCancelled:
+				errorJSON, marshalErr := sonic.Marshal(map[string]string{"error": "authorization revoked", "reason": string(cancellation.Reason)})
+				if marshalErr == nil {
+					reader.SendError(errorJSON)
+				}
+				return
 			case <-ticker.C:
 				if !reader.Send(ping) {
 					return
@@ -839,6 +939,9 @@ func (h *MCPServerHandler) validateJWTAuthority(ctx context.Context, claims *jwt
 	if claims == nil || schemas.MCPAuthMode(claims.BfMode) != schemas.MCPAuthModeUser {
 		return nil
 	}
+	if h.principalAuthorityFreshness != nil && !h.principalAuthorityFreshness.IsPrincipalAuthorityFresh() {
+		return fmt.Errorf("principal authority is stale")
+	}
 	if claims.BfAuthEpoch == 0 {
 		// Legacy compatibility is explicit: unsupported stores accept legacy JWTs.
 		// A supported store also accepts a pre-rollout token only while the
@@ -904,6 +1007,9 @@ func (h *MCPServerHandler) userScopedServer(ctx *fasthttp.RequestCtx, claims *jw
 	if active, err := h.identityResolver.IsUserActive(ctx, claims.Subject); err != nil {
 		return nil, fmt.Errorf("failed to verify user: %w", err)
 	} else if !active {
+		if err := deactivateMCPUserAuthority(ctx, h.config.ConfigStore, claims.BfTenant, claims.Issuer, claims.Subject); err != nil {
+			return nil, fmt.Errorf("failed to publish user deactivation: %w", err)
+		}
 		return nil, fmt.Errorf("user is no longer active")
 	}
 	vkID, err := h.identityResolver.ResolveUserVirtualKey(ctx, claims.Subject)

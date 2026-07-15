@@ -234,6 +234,64 @@ func TestVirtualKeyInvalidationPollerAppliesOrderedBatchAndPublishesFreshness(t 
 	}
 }
 
+func TestVirtualKeyInvalidationBootstrapSkipsBoundedHistoricalOutbox(t *testing.T) {
+	const history = 100_000
+	store := &fakeVKInvalidationStore{highWater: history}
+	for id := uint64(1); id <= history; id++ {
+		store.events = append(store.events, tables.TableVirtualKeyInvalidationEvent{
+			ID: id, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "deleted-vk", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion,
+		})
+	}
+	applied := 0
+	snapshots := 0
+	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error {
+		applied++
+		return nil
+	}, 100, time.Second)
+	require.NoError(t, poller.bootstrap(context.Background(), func(context.Context) error {
+		snapshots++
+		return nil
+	}))
+	require.Equal(t, 1, snapshots)
+	require.Equal(t, 0, applied)
+	require.Equal(t, uint64(history), poller.Cursor())
+	require.Equal(t, 1, store.listCalls, "bootstrap must not page through historical events")
+}
+
+func TestVirtualKeyInvalidationBootstrapAppliesMutationAfterFence(t *testing.T) {
+	store := &fakeVKInvalidationStore{highWater: 7}
+	var applied []uint64
+	poller := newVirtualKeyInvalidationPoller(store, func(_ context.Context, event tables.TableVirtualKeyInvalidationEvent) error {
+		applied = append(applied, event.ID)
+		return nil
+	}, 100, time.Second)
+	require.NoError(t, poller.bootstrap(context.Background(), func(context.Context) error {
+		store.mu.Lock()
+		defer store.mu.Unlock()
+		store.events = append(store.events, tables.TableVirtualKeyInvalidationEvent{
+			ID: 8, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-after-fence", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion,
+		})
+		store.highWater = 8
+		return nil
+	}))
+	require.Equal(t, []uint64{8}, applied)
+	require.Equal(t, uint64(8), poller.Cursor())
+}
+
+func TestVirtualKeyInvalidationBootstrapFailsClosedWhenSnapshotUnavailable(t *testing.T) {
+	store := &fakeVKInvalidationStore{highWater: 50_000}
+	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error {
+		t.Fatal("historical replay must not be used as a snapshot fallback")
+		return nil
+	}, 100, time.Second)
+	err := poller.bootstrap(context.Background(), func(context.Context) error {
+		return errors.New("snapshot unavailable")
+	})
+	require.ErrorContains(t, err, "snapshot unavailable")
+	require.Equal(t, uint64(0), poller.Cursor())
+	require.Equal(t, 0, store.listCalls)
+}
+
 func TestApplyGovernanceInvalidationDispatchesMCPClientEvents(t *testing.T) {
 	var calls []string
 	reloadVK := func(context.Context, string) (*tables.TableVirtualKey, error) {

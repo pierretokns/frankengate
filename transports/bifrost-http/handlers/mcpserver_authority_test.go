@@ -3,7 +3,9 @@ package handlers
 import (
 	"context"
 	"errors"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/maximhq/bifrost/core/authorityepoch"
@@ -16,10 +18,11 @@ import (
 )
 
 type rejectingAuthorityStore struct {
-	err       error
-	validated int
-	row       *tables.TablePrincipalAuthorizationEpoch
-	getErr    error
+	err         error
+	validated   int
+	row         *tables.TablePrincipalAuthorizationEpoch
+	getErr      error
+	deactivated int
 }
 
 func (s *rejectingAuthorityStore) GetPrincipalAuthorizationEpoch(context.Context, authorityepoch.Principal) (*tables.TablePrincipalAuthorizationEpoch, error) {
@@ -31,8 +34,9 @@ func (*rejectingAuthorityStore) ActivatePrincipalAuthorizationEpoch(context.Cont
 func (*rejectingAuthorityStore) AdvancePrincipalAuthorizationEpoch(context.Context, authorityepoch.Principal, authorityepoch.Reason, ...*gorm.DB) (*tables.TablePrincipalAuthorizationEpochEvent, error) {
 	panic("not used")
 }
-func (*rejectingAuthorityStore) DeactivatePrincipalAuthorizationEpoch(context.Context, authorityepoch.Principal, authorityepoch.Reason, ...*gorm.DB) (*tables.TablePrincipalAuthorizationEpochEvent, error) {
-	panic("not used")
+func (s *rejectingAuthorityStore) DeactivatePrincipalAuthorizationEpoch(_ context.Context, _ authorityepoch.Principal, _ authorityepoch.Reason, _ ...*gorm.DB) (*tables.TablePrincipalAuthorizationEpochEvent, error) {
+	s.deactivated++
+	return &tables.TablePrincipalAuthorizationEpochEvent{}, s.err
 }
 func (s *rejectingAuthorityStore) ValidatePrincipalAuthorizationEpoch(_ context.Context, ref authorityepoch.Reference) error {
 	s.validated++
@@ -109,6 +113,19 @@ func TestMCPUserJWTAuthorityCompatibilityIsExplicit(t *testing.T) {
 	require.ErrorContains(t, enabled.validateJWTAuthority(context.Background(), claims), "authority unavailable")
 }
 
+type principalAuthorityFreshnessFunc func() bool
+
+func (f principalAuthorityFreshnessFunc) IsPrincipalAuthorityFresh() bool { return f() }
+
+func TestMCPUserJWTAuthorityFailsClosedWhenPrincipalPollerIsStale(t *testing.T) {
+	h := &MCPServerHandler{authorityStore: &rejectingAuthorityStore{row: &tables.TablePrincipalAuthorizationEpoch{Epoch: 1, Active: true}}}
+	h.SetPrincipalAuthorityFreshnessSource(principalAuthorityFreshnessFunc(func() bool { return false }))
+	claims := &jwtMCPClaims{BfMode: string(schemas.MCPAuthModeUser), BfTenant: testMCPResource, BfAuthEpoch: 1}
+	claims.Issuer = testIssuer
+	claims.Subject = "user-1"
+	require.ErrorContains(t, h.validateJWTAuthority(context.Background(), claims), "principal authority is stale")
+}
+
 func TestMCPRefreshGrantCannotCrossAuthorityEpoch(t *testing.T) {
 	token := bindMCPRefreshTokenAuthority("opaque-random", 7)
 	epoch, ok := mcpRefreshTokenAuthorityEpoch(token)
@@ -155,4 +172,59 @@ func TestMCPDirectAuthFailsClosedWhenVKAuthorityIsStale(t *testing.T) {
 	res, err := h.getMCPServerForRequest(ctx)
 	require.Nil(t, res)
 	require.ErrorContains(t, err, "authority is stale")
+}
+
+func TestMCPLiveAuthoritySubscriptionCancelsOnPeerEvent(t *testing.T) {
+	principal := authorityepoch.Principal{Tenant: testMCPResource, Issuer: testIssuer, Subject: "user-1"}
+	registry := authorityepoch.NewRegistry()
+	require.NoError(t, registry.Apply(authorityepoch.EpochEvent{Principal: principal, NewEpoch: 1, Reason: "activated", Revision: 1}, true))
+	h := &MCPServerHandler{}
+	h.SetAuthorityRegistry(registry)
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	require.NoError(t, schemas.SetAuthorizationEpochReference(ctx, authorityepoch.Reference{
+		Principal: principal, Epoch: 1, Kind: authorityepoch.ArtifactMCPGrant, ID: "grant-1",
+	}))
+	cancelled, unsubscribe, err := h.subscribeAuthority(ctx)
+	require.NoError(t, err)
+	defer unsubscribe()
+	require.NoError(t, registry.Apply(authorityepoch.EpochEvent{
+		Principal: principal, OldEpoch: 1, NewEpoch: 2, Reason: authorityepoch.ReasonGroupRemoved, Revision: 2,
+	}, true))
+	select {
+	case got := <-cancelled:
+		require.Equal(t, authorityepoch.ReasonGroupRemoved, got.Reason)
+	default:
+		t.Fatal("live MCP authority was not cancelled")
+	}
+}
+
+func TestMCPLiveAuthoritySubscriptionCancelsWhenPrincipalPollerBecomesStale(t *testing.T) {
+	principal := authorityepoch.Principal{Tenant: testMCPResource, Issuer: testIssuer, Subject: "user-1"}
+	registry := authorityepoch.NewRegistry()
+	require.NoError(t, registry.Apply(authorityepoch.EpochEvent{Principal: principal, NewEpoch: 1, Reason: "activated", Revision: 1}, true))
+	fresh := atomic.Bool{}
+	fresh.Store(true)
+	h := &MCPServerHandler{}
+	h.SetAuthorityRegistry(registry)
+	h.SetPrincipalAuthorityFreshnessSource(principalAuthorityFreshnessFunc(fresh.Load))
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	require.NoError(t, schemas.SetAuthorizationEpochReference(ctx, authorityepoch.Reference{
+		Principal: principal, Epoch: 1, Kind: authorityepoch.ArtifactMCPLiveConnection, ID: "mcp-live-1",
+	}))
+	cancelled, unsubscribe, err := h.subscribeAuthority(ctx)
+	require.NoError(t, err)
+	defer unsubscribe()
+	fresh.Store(false)
+	select {
+	case got := <-cancelled:
+		require.Equal(t, authorityepoch.Reason("authority_stale"), got.Reason)
+	case <-time.After(time.Second):
+		t.Fatal("live MCP authority was not cancelled after freshness lease expired")
+	}
+}
+
+func TestInactiveMCPIdentityPublishesDurableDeactivation(t *testing.T) {
+	store := &rejectingAuthorityStore{}
+	require.NoError(t, deactivateMCPUserAuthority(context.Background(), store, testMCPResource, testIssuer, "user-1"))
+	require.Equal(t, 1, store.deactivated)
 }

@@ -94,6 +94,19 @@ func validateMCPRefreshAuthority(ctx context.Context, store any, token string, r
 	return authorityStore.ValidatePrincipalAuthorizationEpoch(ctx, ref)
 }
 
+func deactivateMCPUserAuthority(ctx context.Context, store any, tenant, issuer, subject string) error {
+	authorityStore, ok := store.(configstore.PrincipalAuthorizationEpochStore)
+	if !ok || authorityStore == nil {
+		return nil
+	}
+	principal := authorityepoch.Principal{Tenant: tenant, Issuer: issuer, Subject: subject}
+	_, err := authorityStore.DeactivatePrincipalAuthorizationEpoch(ctx, principal, authorityepoch.ReasonDeactivated)
+	if errors.Is(err, authorityepoch.ErrUnknownPrincipal) || errors.Is(err, authorityepoch.ErrInactivePrincipal) {
+		return nil
+	}
+	return err
+}
+
 // jwtMCPClaims are the custom claims embedded in Bifrost-issued /mcp JWTs.
 type jwtMCPClaims struct {
 	jwt.RegisteredClaims

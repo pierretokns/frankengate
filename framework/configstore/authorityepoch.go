@@ -17,16 +17,35 @@ import (
 )
 
 const (
-	MaxPrincipalAuthorizationEpochEventBatchSize          = 1000
-	PrincipalAuthorizationEpochReasonActivated            = "activated"
-	PrincipalAuthorizationEpochReasonReactivated          = "reactivated"
-	principalAuthorizationEpochMaxSigned           uint64 = uint64(math.MaxInt64)
-	principalAuthorizationEpochNotificationChannel        = "bifrost_principal_authorization_epoch_v1"
-	principalAuthorizationEpochReconnectMinBackoff        = 100 * time.Millisecond
-	principalAuthorizationEpochReconnectMaxBackoff        = 30 * time.Second
-	principalAuthorizationEpochStableConnection           = 30 * time.Second
-	principalAuthorizationEpochListenerLogInterval        = 30 * time.Second
+	MaxPrincipalAuthorizationEpochEventBatchSize           = 1000
+	MaxPrincipalAuthorizationEpochSnapshotBatchSize        = 1000
+	PrincipalAuthorizationEpochReasonActivated             = "activated"
+	PrincipalAuthorizationEpochReasonReactivated           = "reactivated"
+	principalAuthorizationEpochMaxSigned            uint64 = uint64(math.MaxInt64)
+	principalAuthorizationEpochNotificationChannel         = "bifrost_principal_authorization_epoch_v1"
+	principalAuthorizationEpochReconnectMinBackoff         = 100 * time.Millisecond
+	principalAuthorizationEpochReconnectMaxBackoff         = 30 * time.Second
+	principalAuthorizationEpochStableConnection            = 30 * time.Second
+	principalAuthorizationEpochListenerLogInterval         = 30 * time.Second
 )
+
+// ListPrincipalAuthorizationEpochsAfter returns a stable, bounded page of the
+// current principal authority table ordered by its composite primary key.
+func (s *RDBConfigStore) ListPrincipalAuthorizationEpochsAfter(ctx context.Context, tenant, issuer, subject string, limit int) ([]tables.TablePrincipalAuthorizationEpoch, error) {
+	if limit <= 0 || limit > MaxPrincipalAuthorizationEpochSnapshotBatchSize {
+		return nil, fmt.Errorf("principal authorization epoch snapshot batch size must be between 1 and %d", MaxPrincipalAuthorizationEpochSnapshotBatchSize)
+	}
+	rows := make([]tables.TablePrincipalAuthorizationEpoch, 0, limit)
+	query := s.DB().WithContext(ctx).Order("tenant_id ASC, issuer ASC, subject ASC").Limit(limit)
+	if tenant != "" || issuer != "" || subject != "" {
+		query = query.Where(
+			"tenant_id > ? OR (tenant_id = ? AND issuer > ?) OR (tenant_id = ? AND issuer = ? AND subject > ?)",
+			tenant, tenant, issuer, tenant, issuer, subject,
+		)
+	}
+	err := query.Find(&rows).Error
+	return rows, err
+}
 
 type principalAuthorizationEpochNotifyConn interface {
 	Listen(context.Context) error

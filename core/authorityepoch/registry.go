@@ -95,6 +95,49 @@ func NewRegistry() *Registry {
 	}
 }
 
+// Apply installs a committed durable authority event into the process-local
+// registry. Replays are idempotent, older events cannot roll state back, and a
+// forward event cancels every live artifact minted from an earlier epoch.
+func (r *Registry) Apply(event EpochEvent, active bool) error {
+	if err := validatePrincipal(event.Principal); err != nil {
+		return err
+	}
+	if event.NewEpoch == 0 || event.Reason == "" {
+		return ErrInvalidReference
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	state, exists := r.principals[event.Principal]
+	if exists && event.NewEpoch < state.epoch {
+		return nil
+	}
+	if exists && event.NewEpoch == state.epoch {
+		if state.active != active {
+			return ErrInvalidReference
+		}
+		return nil
+	}
+	if exists && event.OldEpoch != state.epoch {
+		return ErrStaleEpoch
+	}
+	if !exists && event.OldEpoch != 0 {
+		// A restarted consumer may begin from a compacted/out-of-window event.
+		// The event carries complete post-state, so install it and still cancel any
+		// locally-held older references (normally none on a fresh registry).
+	}
+	r.principals[event.Principal] = principalState{epoch: event.NewEpoch, active: active}
+	if event.Revision > r.revision {
+		r.revision = event.Revision
+	}
+	for ref := range r.subscriptions {
+		if ref.Principal == event.Principal && ref.Epoch < event.NewEpoch {
+			r.cancelLocked(event.Principal, ref.Epoch, event.Reason, event.Revision)
+		}
+	}
+	return nil
+}
+
 func (r *Registry) Activate(principal Principal, epoch uint64) error {
 	if err := validatePrincipal(principal); err != nil {
 		return err

@@ -271,3 +271,25 @@ func TestPrincipalAuthorizationEpochPrincipalLengthValidation(t *testing.T) {
 		require.ErrorIs(t, err, authorityepoch.ErrInvalidPrincipal)
 	}
 }
+
+func TestListPrincipalAuthorizationEpochsAfterPagesCompositeKey(t *testing.T) {
+	store := setupAuthorityEpochTestStore(t)
+	ctx := context.Background()
+	principals := []authorityepoch.Principal{
+		{Tenant: "a", Issuer: "issuer", Subject: "one"},
+		{Tenant: "a", Issuer: "issuer", Subject: "two"},
+		{Tenant: "b", Issuer: "issuer", Subject: "one"},
+	}
+	for _, principal := range principals {
+		_, err := store.ActivatePrincipalAuthorizationEpoch(ctx, principal, 1)
+		require.NoError(t, err)
+	}
+	first, err := store.ListPrincipalAuthorizationEpochsAfter(ctx, "", "", "", 2)
+	require.NoError(t, err)
+	require.Len(t, first, 2)
+	last := first[len(first)-1]
+	second, err := store.ListPrincipalAuthorizationEpochsAfter(ctx, last.TenantID, last.Issuer, last.Subject, 2)
+	require.NoError(t, err)
+	require.Len(t, second, 1)
+	require.Equal(t, "b", second[0].TenantID)
+}
