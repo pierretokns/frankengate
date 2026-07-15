@@ -74,8 +74,12 @@ jobs:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           image="ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
-          echo "image=$image" >> "$GITHUB_OUTPUT"
-          echo "version=${RELEASE_TAG#v}" >> "$GITHUB_OUTPUT"
+          {
+            echo "image=$image"
+            echo "version=${RELEASE_TAG#v}"
+            echo "source_sha=$(git rev-parse HEAD)"
+            echo "workflow_sha=$GITHUB_SHA"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
@@ -103,7 +107,7 @@ jobs:
           build-args: VERSION=${{ steps.meta.outputs.version }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.revision=${{ steps.meta.outputs.source_sha }}
             org.opencontainers.image.version=${{ inputs.release_tag }}
             org.opencontainers.image.licenses=Apache-2.0
           provenance: false
@@ -134,6 +138,20 @@ jobs:
           docker buildx imagetools inspect "$IMAGE@$DIGEST" > manifest.txt
           grep -q 'linux/amd64' manifest.txt
           grep -q 'linux/arm64' manifest.txt
+
+      - name: Verify anonymous public pull metadata
+        env:
+          IMAGE: ${{ steps.meta.outputs.image }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          repository=${IMAGE#ghcr.io/}
+          token=$(curl --fail --silent --show-error "https://ghcr.io/token?scope=repository:${repository}:pull" | jq -er .token)
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer $token" \
+            -H 'Accept: application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json' \
+            "https://ghcr.io/v2/${repository}/manifests/${RELEASE_TAG}" \
+            > anonymous-manifest.json
+          jq -e '[.manifests[].platform | (.os + "/" + .architecture)] | contains(["linux/amd64", "linux/arm64"])' anonymous-manifest.json
 
       - name: Verify each platform reports the release version
         env:
@@ -176,8 +194,14 @@ jobs:
           IMAGE: ${{ steps.meta.outputs.image }}
           DIGEST: ${{ steps.image.outputs.digest }}
           RELEASE_TAG: ${{ inputs.release_tag }}
+          SOURCE_SHA: ${{ steps.meta.outputs.source_sha }}
+          WORKFLOW_SHA: ${{ steps.meta.outputs.workflow_sha }}
         run: |
-          echo "$IMAGE@$DIGEST" > "frankengate-${RELEASE_TAG}-container-digest.txt"
+          {
+            echo "image=$IMAGE@$DIGEST"
+            echo "source_sha=$SOURCE_SHA"
+            echo "workflow_sha=$WORKFLOW_SHA"
+          } > "frankengate-${RELEASE_TAG}-container-digest.txt"
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
