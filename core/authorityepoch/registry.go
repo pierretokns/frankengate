@@ -262,10 +262,7 @@ func (r *Registry) Subscribe(ref Reference) (<-chan Cancellation, func(), error)
 }
 
 func validatePrincipal(principal Principal) error {
-	if principal.Tenant == "" || principal.Issuer == "" || principal.Subject == "" {
-		return ErrInvalidPrincipal
-	}
-	return nil
+	return ValidatePrincipal(principal)
 }
 
 func isSupportedArtifactKind(kind ArtifactKind) bool {

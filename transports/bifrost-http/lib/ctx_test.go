@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/framework/kvstore"
 	"github.com/maximhq/bifrost/framework/logstore"
@@ -11,6 +12,34 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/valyala/fasthttp"
 )
+
+func TestConvertToBifrostContext_PropagatesAuthorizationSnapshotByValue(t *testing.T) {
+	fastCtx := &fasthttp.RequestCtx{}
+	principal := authorityepoch.Principal{
+		Tenant: "tenant-a", Issuer: "https://idp.example.com", Subject: "user-1",
+	}
+	ref := authorityepoch.Reference{
+		Principal: principal, Epoch: 9, Kind: authorityepoch.ArtifactQueued, ID: "request-1",
+	}
+	fastCtx.SetUserValue(schemas.BifrostContextKeyUserID, "user-1")
+	fastCtx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, principal)
+	fastCtx.SetUserValue(schemas.BifrostContextKeyAuthorizationEpochReference, ref)
+
+	bifrostCtx, cancel := ConvertToBifrostContext(fastCtx, testHandlerStore{})
+	defer cancel()
+
+	gotPrincipal, err := schemas.AuthorizationPrincipalFromContext(bifrostCtx)
+	if err != nil || gotPrincipal != principal {
+		t.Fatalf("principal = %#v, err = %v", gotPrincipal, err)
+	}
+	gotRef, err := schemas.AuthorizationEpochReferenceFromContext(bifrostCtx)
+	if err != nil || gotRef != ref {
+		t.Fatalf("reference = %#v, err = %v", gotRef, err)
+	}
+	if got := bifrostCtx.Value(schemas.BifrostContextKeyUserID); got != "user-1" {
+		t.Fatalf("legacy user id = %#v, want user-1", got)
+	}
+}
 
 // testHandlerStore is a minimal HandlerStore for ctx tests.
 type testHandlerStore struct {

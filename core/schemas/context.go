@@ -29,6 +29,8 @@ var reservedKeys = []any{
 	BifrostContextKeyAttemptTrail,
 	BifrostContextKeyStreamGated,
 	BifrostContextKeyMCPHealthCheckRequest,
+	BifrostContextKeyAuthorizationPrincipal,
+	BifrostContextKeyAuthorizationEpochReference,
 }
 
 // pluginLogStore holds plugin log entries accumulated during request processing.
