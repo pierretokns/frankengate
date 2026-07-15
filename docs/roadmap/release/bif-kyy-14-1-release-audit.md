@@ -1,8 +1,8 @@
 # bif-kyy.14.1 Reproducible Release Audit
 
-Date: 2026-07-15  
-Auditor: Codex  
-Bead: `bif-kyy.14.1`  
+Date: 2026-07-15
+Auditor: Codex
+Bead: `bif-kyy.14.1`
 Scope: reproducible release audit only. No code, workflow, README, release asset, or existing roadmap file was edited.
 
 ## Audit Result
