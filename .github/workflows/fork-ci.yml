@@ -17,7 +17,7 @@ defaults:
     shell: bash
 
 env:
-  GO_VERSION: "1.26.4"
+  GO_VERSION: "1.26.5"
 
 jobs:
   go-checks:
@@ -97,6 +97,8 @@ jobs:
         if: steps.provenance.outputs.present == 'true'
         run: bash scripts/verify-provenance.sh
 
-      - name: No provenance hook
+      - name: Missing provenance hook
         if: steps.provenance.outputs.present != 'true'
-        run: echo "No scripts/verify-provenance.sh hook present."
+        run: |
+          echo "Required scripts/verify-provenance.sh hook is missing." >&2
+          exit 1

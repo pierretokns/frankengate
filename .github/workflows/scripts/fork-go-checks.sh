@@ -49,6 +49,12 @@ run_in_modules() {
   shift
 
   for module in "${MODULES[@]}"; do
+    if [[ "$label" == "go test compile" && "$module" == "tests/semanticcache" ]]; then
+      echo "::group::${label}: ${module}"
+      echo "Skipping service-backed semantic-cache TestMain; covered by the dedicated integration job."
+      echo "::endgroup::"
+      continue
+    fi
     echo "::group::${label}: ${module}"
     (
       cd "$ROOT/$module"
