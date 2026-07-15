@@ -11,12 +11,15 @@ WORK_DIR="$(mktemp -d)"
 BINARY="${FRANKENGATE_BINARY:-$WORK_DIR/frankengate}"
 
 cleanup() {
+  local status=$?
+  trap - EXIT
   if [[ "$KEEP_FIXTURE" != "1" ]]; then
     kubectl -n "$NAMESPACE" delete deployment/frankengate-vk service/frankengate-vk \
       pod/frankengate-binary service/frankengate-binary configmap/frankengate-vk-config \
       --ignore-not-found --wait=false >/dev/null 2>&1 || true
   fi
   rm -rf "$WORK_DIR"
+  exit "$status"
 }
 trap cleanup EXIT
 
@@ -119,14 +122,14 @@ if [[ "${#pod_ips[@]}" -ne 3 ]]; then
 fi
 
 wait_for_cache() {
-  local expected_state="$1" expected_id="$2" expected_value="${3:-}"
+  local expected_state="$1" expected_id="$2" expected_marker="${3:-}"
   # The single-quoted program is evaluated by the in-cluster BusyBox shell;
   # positional arguments below intentionally provide all dynamic values.
   # shellcheck disable=SC2016
   kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c '
     expected_state="$1"
     expected_id="$2"
-    expected_value="$3"
+    expected_marker="$3"
     shift 3
     deadline=$(( $(date +%s) + 8 ))
     while [ "$(date +%s)" -le "$deadline" ]; do
@@ -137,7 +140,7 @@ wait_for_cache() {
           break
         }
         case "$expected_state:$body" in
-          present:*"$expected_id"*"$expected_value"*) ;;
+          present:*"$expected_id"*"$expected_marker"*) ;;
           absent:*"$expected_id"*) all_match=0; break ;;
           absent:*) ;;
           *) all_match=0; break ;;
@@ -148,7 +151,7 @@ wait_for_cache() {
     done
     echo "pod caches did not converge to state=$expected_state id=$expected_id" >&2
     exit 1
-  ' sh "$expected_state" "$expected_id" "$expected_value" "${pod_ips[@]}"
+  ' sh "$expected_state" "$expected_id" "$expected_marker" "${pod_ips[@]}"
 }
 
 created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
@@ -156,17 +159,23 @@ created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
   --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\"}" \
   "http://${pod_ips[0]}:8080/api/governance/virtual-keys")"
 vk_id="$(jq -er '.virtual_key.id' <<<"$created")"
-original_value="$(jq -er '.virtual_key.value' <<<"$created")"
-wait_for_cache present "$vk_id" "$original_value"
+original_secret="$(jq -er '.secret' <<<"$created")"
+created_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$created")"
+wait_for_cache present "$vk_id" "$created_updated_at"
 
 rotated="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- --post-data '' \
   "http://${pod_ips[1]}:8080/api/governance/virtual-keys/$vk_id/rotate")"
-rotated_value="$(jq -er '.virtual_key.value' <<<"$rotated")"
-if [[ "$rotated_value" == "$original_value" ]]; then
+rotated_secret="$(jq -er '.secret' <<<"$rotated")"
+rotated_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$rotated")"
+if [[ "$rotated_secret" == "$original_secret" ]]; then
   echo "rotation did not change the virtual-key value" >&2
   exit 1
 fi
-wait_for_cache present "$vk_id" "$rotated_value"
+if [[ "$rotated_updated_at" == "$created_updated_at" ]]; then
+  echo "rotation did not advance virtual-key updated_at" >&2
+  exit 1
+fi
+wait_for_cache present "$vk_id" "$rotated_updated_at"
 
 delete_response="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c \
   "printf 'DELETE /api/governance/virtual-keys/$vk_id HTTP/1.1\\r\\nHost: ${pod_ips[2]}\\r\\nConnection: close\\r\\n\\r\\n' | nc ${pod_ips[2]} 8080")"
@@ -191,6 +200,5 @@ while IFS= read -r ip; do
 done < <(list_ready_gateway_ips)
 wait_for_cache absent "$vk_id"
 
-jq -n --arg vk_id "$vk_id" --arg original "$original_value" --arg rotated "$rotated_value" \
-  --argjson pods "${#pod_ips[@]}" \
-  '{ok:true,pods:$pods,virtual_key_id:$vk_id,create_value:$original,rotated_value:$rotated,outbox:["reload","reload","delete"],restart_replay:"passed"}'
+jq -n --arg vk_id "$vk_id" --argjson pods "${#pod_ips[@]}" \
+  '{ok:true,pods:$pods,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,outbox:["reload","reload","delete"],restart_replay:"passed"}'
