@@ -7,6 +7,10 @@ on:
         description: Existing immutable FrankenGate release tag to publish
         required: true
         type: string
+      existing_digest:
+        description: Existing manifest digest to verify and attest without rebuilding
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -22,7 +26,7 @@ jobs:
       id-token: write
       attestations: write
     outputs:
-      digest: ${{ steps.build.outputs.digest }}
+      digest: ${{ steps.image.outputs.digest }}
       image: ${{ steps.meta.outputs.image }}
     steps:
       - name: Harden runner
@@ -78,6 +82,7 @@ jobs:
 
       - name: Build and push release image
         id: build
+        if: inputs.existing_digest == ''
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: .
@@ -94,10 +99,27 @@ jobs:
           provenance: false
           sbom: false
 
+      - name: Resolve immutable image digest
+        id: image
+        env:
+          BUILT_DIGEST: ${{ steps.build.outputs.digest }}
+          EXISTING_DIGEST: ${{ inputs.existing_digest }}
+          IMAGE: ${{ steps.meta.outputs.image }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          digest=${EXISTING_DIGEST:-$BUILT_DIGEST}
+          case "$digest" in
+            sha256:[0-9a-f][0-9a-f]*) ;;
+            *) echo "invalid or missing image digest: $digest" >&2; exit 2 ;;
+          esac
+          tagged_digest=$(docker buildx imagetools inspect "$IMAGE:$RELEASE_TAG" --format '{{json .Manifest.Digest}}' | tr -d '"')
+          test "$tagged_digest" = "$digest"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
       - name: Verify manifest platforms
         env:
           IMAGE: ${{ steps.meta.outputs.image }}
-          DIGEST: ${{ steps.build.outputs.digest }}
+          DIGEST: ${{ steps.image.outputs.digest }}
         run: |
           docker buildx imagetools inspect "$IMAGE@$DIGEST" > manifest.txt
           grep -q 'linux/amd64' manifest.txt
@@ -106,19 +128,20 @@ jobs:
       - name: Verify each platform reports the release version
         env:
           IMAGE: ${{ steps.meta.outputs.image }}
-          DIGEST: ${{ steps.build.outputs.digest }}
+          DIGEST: ${{ steps.image.outputs.digest }}
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           for platform in linux/amd64 linux/arm64; do
             output=$(docker run --rm --platform "$platform" --entrypoint /app/main "$IMAGE@$DIGEST" -version)
             echo "$output"
             echo "$output" | grep -F "$RELEASE_TAG"
+            docker image rm "$IMAGE@$DIGEST" >/dev/null 2>&1 || true
           done
 
       - name: Verify image startup and health
         env:
           IMAGE: ${{ steps.meta.outputs.image }}
-          DIGEST: ${{ steps.build.outputs.digest }}
+          DIGEST: ${{ steps.image.outputs.digest }}
         run: |
           container=$(docker run -d --platform linux/amd64 -p 18080:8080 "$IMAGE@$DIGEST")
           trap 'docker logs "$container"; docker rm -f "$container"' EXIT
@@ -133,7 +156,7 @@ jobs:
       - name: Generate SPDX SBOM
         uses: anchore/sbom-action@f8bdd1d8ac5e901a77a92f111440fdb1b593736b # v0.20.6
         with:
-          image: ${{ steps.meta.outputs.image }}@${{ steps.build.outputs.digest }}
+          image: ${{ steps.meta.outputs.image }}@${{ steps.image.outputs.digest }}
           format: spdx-json
           output-file: frankengate-${{ inputs.release_tag }}-container.spdx.json
           upload-artifact: false
@@ -141,7 +164,7 @@ jobs:
       - name: Record immutable image digest
         env:
           IMAGE: ${{ steps.meta.outputs.image }}
-          DIGEST: ${{ steps.build.outputs.digest }}
+          DIGEST: ${{ steps.image.outputs.digest }}
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           echo "$IMAGE@$DIGEST" > "frankengate-${RELEASE_TAG}-container-digest.txt"
@@ -150,14 +173,14 @@ jobs:
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
         with:
           subject-name: ${{ steps.meta.outputs.image }}
-          subject-digest: ${{ steps.build.outputs.digest }}
+          subject-digest: ${{ steps.image.outputs.digest }}
           push-to-registry: true
 
       - name: Attest SBOM
         uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3.0.0
         with:
           subject-name: ${{ steps.meta.outputs.image }}
-          subject-digest: ${{ steps.build.outputs.digest }}
+          subject-digest: ${{ steps.image.outputs.digest }}
           sbom-path: frankengate-${{ inputs.release_tag }}-container.spdx.json
           push-to-registry: true
 
