@@ -1536,6 +1536,9 @@ func (m *MockConfigStore) ReconcileOauthAfterVKChange(ctx context.Context, vkID 
 func (m *MockConfigStore) ReconcileMCPHeadersAfterVKChange(ctx context.Context, vkID string) error {
 	return nil
 }
+func (m *MockConfigStore) ReconcileCredentialsAfterVKChangeTx(ctx context.Context, tx *gorm.DB, vkID string) error {
+	return nil
+}
 func (m *MockConfigStore) ReconcileOauthAfterMCPChange(ctx context.Context, mcpClientID string) error {
 	return nil
 }

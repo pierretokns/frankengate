@@ -610,6 +610,10 @@ type ConfigStore interface {
 	// grant-change so both stay consistent.
 	ReconcileOauthAfterVKChange(ctx context.Context, vkID string) error
 	ReconcileMCPHeadersAfterVKChange(ctx context.Context, vkID string) error
+	// ReconcileCredentialsAfterVKChangeTx updates both credential surfaces in
+	// the caller's authority transaction. Revocation handlers must prefer this
+	// form so a committed allowlist can never retain active revoked credentials.
+	ReconcileCredentialsAfterVKChangeTx(ctx context.Context, tx *gorm.DB, vkID string) error
 	// MCP-side variants: called when the change originates on the MCP
 	// client (vk_configs edit OR AllowOnAllVirtualKeys toggle). Each
 	// re-evaluates every VK that holds a credential for the changed MCP.

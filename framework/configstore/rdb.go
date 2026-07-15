@@ -6178,6 +6178,11 @@ func (s *RDBConfigStore) UpdateOauthUserSession(ctx context.Context, session *ta
 // atomic under concurrent same-identity races.
 func (s *RDBConfigStore) CreateOauthUserToken(ctx context.Context, token *tables.TableOauthUserToken) error {
 	return s.DB().WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if token.AuthMode == string(schemas.MCPAuthModeVK) && token.VirtualKeyID != nil && *token.VirtualKeyID != "" {
+			if err := assertVKAllowsMCP(tx, *token.VirtualKeyID, token.MCPClientID); err != nil {
+				return err
+			}
+		}
 		var existing tables.TableOauthUserToken
 		var lookupErr error
 		switch {
@@ -6495,6 +6500,11 @@ func (s *RDBConfigStore) GetMCPPerUserHeaderCredentialByID(ctx context.Context, 
 // binding, so a re-submit preserves CreatedAt.
 func (s *RDBConfigStore) UpsertMCPPerUserHeaderCredential(ctx context.Context, cred *tables.TableMCPPerUserHeaderCredential) error {
 	return s.DB().WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if cred.AuthMode == string(schemas.MCPAuthModeVK) && cred.VirtualKeyID != nil && *cred.VirtualKeyID != "" {
+			if err := assertVKAllowsMCP(tx, *cred.VirtualKeyID, cred.MCPClientID); err != nil {
+				return err
+			}
+		}
 		var existing tables.TableMCPPerUserHeaderCredential
 		var lookupErr error
 		switch {
@@ -6831,13 +6841,13 @@ func vkEffectiveMCPClientIDs(tx *gorm.DB, vkID string) ([]string, error) {
 	if err := tx.Table("governance_virtual_key_mcp_configs vkmc").
 		Distinct("mcp.client_id").
 		Joins("JOIN config_mcp_clients mcp ON mcp.id = vkmc.mcp_client_id").
-		Where("vkmc.virtual_key_id = ?", vkID).
+		Where("vkmc.virtual_key_id = ? AND mcp.disabled = ?", vkID, false).
 		Pluck("mcp.client_id", &explicit).Error; err != nil {
 		return nil, fmt.Errorf("read VK %s explicit allowlist: %w", vkID, err)
 	}
 	var implicit []string
 	if err := tx.Table("config_mcp_clients").
-		Where("allow_on_all_virtual_keys = ?", true).
+		Where("allow_on_all_virtual_keys = ? AND disabled = ?", true, false).
 		Pluck("client_id", &implicit).Error; err != nil {
 		return nil, fmt.Errorf("read AllowOnAllVirtualKeys MCPs: %w", err)
 	}
@@ -6861,6 +6871,30 @@ func vkEffectiveMCPClientIDs(tx *gorm.DB, vkID string) ([]string, error) {
 		out = append(out, id)
 	}
 	return out, nil
+}
+
+// assertVKAllowsMCP serializes a VK-mode credential write with concurrent
+// grant mutation and rechecks authority in the same transaction. A callback
+// that began before revocation therefore waits for the VK row lock and cannot
+// recreate an active credential after the revocation commits.
+func assertVKAllowsMCP(tx *gorm.DB, vkID, mcpClientID string) error {
+	var vk tables.TableVirtualKey
+	if err := dbForUpdate(tx).Select("id").Where("id = ?", vkID).First(&vk).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrMCPAccessDenied
+		}
+		return fmt.Errorf("lock virtual key %s before credential write: %w", vkID, err)
+	}
+	allowed, err := vkEffectiveMCPClientIDs(tx, vkID)
+	if err != nil {
+		return err
+	}
+	for _, id := range allowed {
+		if id == mcpClientID {
+			return nil
+		}
+	}
+	return ErrMCPAccessDenied
 }
 
 // reconcileVKDirectTokensDB orphans/reactivates vk-keyed OAuth token rows
@@ -7008,6 +7042,24 @@ func (s *RDBConfigStore) ReconcileMCPHeadersAfterVKChange(ctx context.Context, v
 	return s.DB().WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		return reconcileVKDirectHeaderRowsDB(tx, vkID)
 	})
+}
+
+// ReconcileCredentialsAfterVKChangeTx reconciles OAuth tokens/flows and
+// per-user header credentials/flows inside the caller's authority transaction.
+// Keeping both surfaces in one transaction prevents a committed revocation
+// from leaving either credential type usable after a partial failure.
+func (s *RDBConfigStore) ReconcileCredentialsAfterVKChangeTx(ctx context.Context, tx *gorm.DB, vkID string) error {
+	if tx == nil {
+		return errors.New("credential reconciliation transaction is required")
+	}
+	if vkID == "" {
+		return nil
+	}
+	tx = tx.WithContext(ctx)
+	if err := reconcileVKDirectTokensDB(tx, vkID); err != nil {
+		return err
+	}
+	return reconcileVKDirectHeaderRowsDB(tx, vkID)
 }
 
 // ReconcileOauthAfterMCPChange re-evaluates every VK that holds an OAuth

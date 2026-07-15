@@ -1442,6 +1442,11 @@ func (h *GovernanceHandler) createVirtualKey(ctx *fasthttp.RequestCtx) {
 				}
 			}
 		}
+		if req.MCPConfigs != nil {
+			if err := h.configStore.ReconcileCredentialsAfterVKChangeTx(ctx, tx, vk.ID); err != nil {
+				return fmt.Errorf("reconcile credentials for virtual key %s: %w", vk.ID, err)
+			}
+		}
 		return h.configStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
 			EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
 			Action:     configstoreTables.VirtualKeyInvalidationActionReload,
@@ -1904,6 +1909,11 @@ func (h *GovernanceHandler) updateVirtualKey(ctx *fasthttp.RequestCtx) {
 			}
 		}
 
+		if req.MCPConfigs != nil {
+			if err := h.configStore.ReconcileCredentialsAfterVKChangeTx(ctx, tx, vk.ID); err != nil {
+				return fmt.Errorf("reconcile credentials for virtual key %s: %w", vk.ID, err)
+			}
+		}
 		return h.configStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
 			EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
 			Action:     configstoreTables.VirtualKeyInvalidationActionReload,
@@ -1935,20 +1945,6 @@ func (h *GovernanceHandler) updateVirtualKey(ctx *fasthttp.RequestCtx) {
 		logger.Error("failed to reload virtual key after update: %v", err)
 		SendError(ctx, 500, "Virtual key updated in database but failed to reload in-memory state")
 		return
-	}
-
-	// Per-user credential reconciliation when the VK's MCP allowlist
-	// changed. Mirrors the AP-propagation path: enterprise orphans /
-	// reactivates credentials keyed to this VK (vk-keyed creds) and to the
-	// VK's owner (user-keyed creds) against the new effective allowlist
-	// (explicit rows ∪ MCPs with AllowOnAllVirtualKeys=true). OSS no-ops.
-	if req.MCPConfigs != nil && h.configStore != nil {
-		if err := h.configStore.ReconcileOauthAfterVKChange(ctx, vk.ID); err != nil {
-			logger.Error("reconcile OAuth credentials after VK %s update failed: %v", vk.ID, err)
-		}
-		if err := h.configStore.ReconcileMCPHeadersAfterVKChange(ctx, vk.ID); err != nil {
-			logger.Error("reconcile per-user-headers credentials after VK %s update failed: %v", vk.ID, err)
-		}
 	}
 
 	SendJSON(ctx, map[string]interface{}{

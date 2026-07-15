@@ -8,6 +8,7 @@ import (
 
 var ErrNotFound = errors.New("not found")
 var ErrAlreadyExists = errors.New("already exists")
+var ErrMCPAccessDenied = errors.New("virtual key no longer grants access to MCP client")
 
 // ErrUnresolvedKeys is returned when one or more keys could not be resolved
 type ErrUnresolvedKeys struct {
