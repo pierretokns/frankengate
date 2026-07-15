@@ -1,0 +1,6 @@
+mark	owner	allowed_use	approval_required	approval_ref	notes
+Bifrost	Maxim HQ	origin-compatibility-attribution	no	none	Use only to describe the upstream Bifrost AI Gateway origin, compatibility, retained package coordinates, and NOTICE content.
+Maxim	Maxim HQ	origin-attribution	no	none	Use only in retained attribution, author fields, upstream URLs, and non-affiliation statements.
+Maxim HQ	Maxim HQ	origin-attribution	no	none	Use only in retained attribution and author fields.
+getbifrost.ai	Maxim HQ	origin-documentation-link	no	none	Retained links must describe upstream docs or origin and must not imply endorsement.
+FrankenGate	local-fork	product-name	no	none	Selected fork name; not a Maxim mark.

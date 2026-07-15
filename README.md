@@ -1,306 +1,155 @@
 # FrankenGate
 
-FrankenGate is an Apache-2.0 open-source enterprise AI gateway built from the
-[Bifrost AI Gateway](https://github.com/maximhq/bifrost). It preserves Bifrost's
-high-performance Go provider and transport substrate while adding an explicit
-roadmap for multi-pod governance, virtual-key authority, identity-derived model
-access, deterministic routing, MCP governance, privacy-safe evidence, and
-human-approved skill improvement loops.
+**CONTROL SURFACE // BEAUTIFUL MONSTER GATEWAY**
 
-> **Release status:** the first FrankenGate release is a compatibility baseline.
-> Existing Bifrost functionality is retained; enterprise roadmap items are not
-> claimed complete until their implementation and conformance gates pass.
+FrankenGate is an AI gateway assembled from proven Bifrost machinery and new
+enterprise control parts. The goal is a living gateway kernel for internal AI:
+one disciplined membrane between teams, models, tools, budgets, identities, and
+evidence.
 
-## Upstream attribution and compatibility
+The current public surface is a compatibility baseline, not the finished
+monster. It preserves the low-overhead provider and transport substrate while
+the FrankenGate-specific authority systems are built, tested, and promoted
+behind explicit evidence gates.
 
-Copyright and attribution for Bifrost and its contributors are retained under
-the repository's [Apache License 2.0](LICENSE). Go module paths, configuration
-keys, API routes, and the `bifrost-http` binary name remain compatible during
-the initial fork phase. See [NOTICE](NOTICE) for provenance and modification
-information.
+## Current Status
 
-## Upstream Bifrost overview
+| Area | Status | Local proof |
+|---|---|---|
+| Fork identity and attribution | Shipped baseline | [NOTICE](NOTICE), [LICENSE](LICENSE), [provenance ledger](docs/roadmap/provenance-ledger.md) |
+| Bifrost-compatible Go gateway substrate | Shipped baseline inherited from Bifrost | [release audit](docs/roadmap/release/bif-kyy-14-1-release-audit.md), [stable component baseline](docs/roadmap/release/stable-component-baseline.md) |
+| FrankenGate public release workflow | Implemented but still gated | [frankengate-release workflow](.github/workflows/frankengate-release.yml), [release gates](docs/roadmap/release/stable-component-baseline.md#release-gates) |
+| Enterprise governance primitives | Implemented but unreleased in isolated slices | [admission](core/admission), [authority epochs](core/authorityepoch), [reservations](core/reservations), [privacy receipts](core/privacy), [MCP ownership](core/mcpownership) |
+| Multi-pod virtual keys, Okta access, hard budgets, MCP governance, privacy-safe evals, and extreme availability | Roadmap, not complete | [enterprise program](docs/roadmap/enterprise-oss-program.md), [seam matrix](docs/roadmap/oss-enterprise-seam-matrix.md), [reliability plan](docs/roadmap/extreme-reliability-and-day2-operations.md) |
 
-<a href="https://trendshift.io/repositories/14529?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-14529" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/14529" alt="maximhq%2Fbifrost | Trendshift" width="250" height="55"/></a>
+The detailed marketing claim ledger is maintained in
+[docs/roadmap/marketing/claim-ledger.md](docs/roadmap/marketing/claim-ledger.md).
+If a claim is not in that ledger with local evidence, it should not appear in
+public FrankenGate marketing.
 
-[![Discord badge](https://dcbadge.limes.pink/api/server/https://discord.gg/exN5KAydbU?style=flat)](https://discord.gg/exN5KAydbU)
-[![codecov](https://codecov.io/gh/maximhq/bifrost/branch/main/graph/badge.svg)](https://codecov.io/gh/maximhq/bifrost)
-![Docker Pulls](https://img.shields.io/docker/pulls/maximhq/bifrost)
-[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 95px; height: 21px;">](https://app.getpostman.com/run-collection/31642484-2ba0e658-4dcd-49f4-845a-0c7ed745b916?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D31642484-2ba0e658-4dcd-49f4-845a-0c7ed745b916%26entityType%3Dcollection%26workspaceId%3D63e853c8-9aec-477f-909c-7f02f543150e)
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/bifrost)](https://artifacthub.io/packages/search?repo=bifrost)
-[![License](https://img.shields.io/github/license/maximhq/bifrost)](LICENSE)
+## What FrankenGate Is
 
-## The fastest way to build AI applications that never go down
+FrankenGate is a forked gateway for teams that want the Bifrost provider and
+transport foundation, but need stricter enterprise control before launching
+inside their own infrastructure. It is being shaped as a control room, not a
+demo booth: every serious claim needs a local proof artifact, a status label,
+and a release gate.
 
-Bifrost is a high-performance AI gateway that unifies access to 23+ providers (OpenAI, Anthropic, AWS Bedrock, Google Vertex, and more) through a single OpenAI-compatible API. Deploy in seconds with zero configuration and get automatic failover, load balancing, semantic caching, and enterprise-grade features.
+The product direction is FrankenGate-first. The wire compatibility and much of
+the implementation still use Bifrost names because those names are part of the
+inherited API, config, and SDK contract. The near-term work is the hard part:
+proving that authority can hold across pods without putting optional learning,
+eval, or promotion services in the inference availability path.
 
-## Quick Start
+## What Is Working Now
 
-![Get started](./docs/media/getting-started.png)
+The repository contains the inherited Bifrost gateway substrate:
 
-**Go from zero to production-ready AI gateway in under a minute.**
+- Provider adapters and shared schemas under [core](core).
+- HTTP gateway transport under [transports/bifrost-http](transports/bifrost-http).
+- Persistence, streaming, tracing, and vector-store framework code under
+  [framework](framework).
+- Plugins for governance, logging, telemetry, semantic cache, OpenTelemetry,
+  mock responses, and compatibility under [plugins](plugins).
+- UI, Helm, Terraform, Nix, NPX, and release infrastructure inherited from the
+  Bifrost baseline.
 
-**Step 1:** Start Bifrost Gateway
+The current fork also has local FrankenGate planning and proof artifacts:
 
-```bash
-# Install and run locally
-npx -y @maximhq/bifrost
+- [Branding surface audit](docs/roadmap/frankengate-branding-surface.md)
+- [OSS and enterprise seam matrix](docs/roadmap/oss-enterprise-seam-matrix.md)
+- [Stable component baseline](docs/roadmap/release/stable-component-baseline.md)
+- [Release audit](docs/roadmap/release/bif-kyy-14-1-release-audit.md)
+- [Disconnected authorization ADR](docs/roadmap/architecture/disconnected-authorization.md)
+- [MCP connection ownership ADR](docs/roadmap/architecture/mcp-connection-ownership.md)
+- [Outbox cursor lifecycle design](docs/roadmap/architecture/outbox-cursor-lifecycle.md)
+- [Principal deprovisioning design](docs/roadmap/architecture/principal-deprovisioning.md)
+- [Privacy and learning boundary](docs/roadmap/privacy-redaction-and-learning-boundaries.md)
 
-# Or use Docker
-docker run -p 8080:8080 maximhq/bifrost
-```
+## What Is Not Claimed
 
-**Step 2:** Configure via Web UI
+FrankenGate does not currently claim:
 
-```bash
-# Open the built-in web interface
-open http://localhost:8080
-```
+- completed horizontal scaling;
+- completed enterprise Kubernetes readiness;
+- production-ready Okta or SCIM entitlement enforcement;
+- distributed virtual-key revocation across pods;
+- Aurora-backed hard budget reservations;
+- controlled overdraft and alerting in the request path;
+- production MCP governance before credential or connection acquisition;
+- privacy-safe trace, replay, eval, or skill-promotion pipelines;
+- published FrankenGate npm, Docker, Helm, Terraform, or docs-domain install
+  surfaces.
 
-**Step 3:** Make your first API call
+Those are roadmap targets. They need implementation, conformance evidence, and
+release gates before they become product claims.
 
-```bash
-curl -X POST http://localhost:8080/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "openai/gpt-4o-mini",
-    "messages": [{"role": "user", "content": "Hello, Bifrost!"}]
-  }'
-```
+## Compatibility And Naming
 
-**That's it!** Your AI gateway is running with a web interface for visual configuration, real-time monitoring, and analytics.
+FrankenGate is derived from Bifrost and remains Bifrost-compatible where the
+code, modules, headers, config keys, binary names, and package paths have not
+yet been deliberately migrated. This is intentional for the compatibility
+baseline.
 
-**Complete Setup Guides:**
+Names such as `bifrost-http`, `github.com/maximhq/bifrost/...`, `BIFROST_*`,
+`x-bf-*`, `sk-bf-*`, and `BifrostError` are retained as compatibility surfaces
+until a tested migration plan exists. They should not be presented as the
+current product brand.
 
-- [Gateway Setup](https://docs.getbifrost.ai/quickstart/gateway/setting-up) - HTTP API deployment
-- [Go SDK Setup](https://docs.getbifrost.ai/quickstart/go-sdk/setting-up) - Direct integration
+The Maxim observability plugin, where present, is an optional inherited
+third-party integration. Maxim is not the owner, maintainer, or support route
+for FrankenGate.
 
----
+## Source Verification
 
-## Enterprise Deployments
+This README intentionally does not publish upstream NPX, Docker, Helm, or demo
+commands as FrankenGate installation instructions. Current local verification
+evidence is recorded in the release documents:
 
-Bifrost supports enterprise-grade, private deployments for teams running production AI systems at scale.
-In addition to private networking, custom security controls, and governance, enterprise deployments unlock advanced capabilities including adaptive load balancing, clustering, guardrails, MCP gateway and and other features designed for enterprise-grade scale and reliability.
+- [Stable component baseline](docs/roadmap/release/stable-component-baseline.md)
+- [Release audit](docs/roadmap/release/bif-kyy-14-1-release-audit.md)
 
-<img src=".github/assets/features.png" alt="Book a Demo" width="100%" style="margin-top:5px;"/>
+For local source verification, use the commands recorded in those documents and
+re-run them in a clean checkout before relying on the result. The current
+baseline evidence includes local `make build` and selected Go test runs, but it
+also records failed or unverified release surfaces. Do not turn that partial
+evidence into broad performance, scaling, or release-readiness claims.
 
-
-<div align="center" style="display: flex; flex-direction: column;">
-  <a href="https://calendly.com/maximai/bifrost-demo">
-    <img src=".github/assets/book-demo-button.png" alt="Book a Demo" width="170" style="margin-top:5px;"/>
-  </a>
-  <div>
-  <a href="https://www.getmaxim.ai/bifrost/enterprise" target="_blank" rel="noopener noreferrer">Explore enterprise capabilities</a>
-  </div>
-</div>
-
----
-
-## Key Features
-
-### Core Infrastructure
-
-- **[Unified Interface](https://docs.getbifrost.ai/providers/supported-providers/overview)** - Single OpenAI-compatible API for all providers
-- **[Multi-Provider Support](https://docs.getbifrost.ai/quickstart/gateway/provider-configuration)** - OpenAI, Anthropic, AWS Bedrock, Google Vertex, Azure, Cerebras, Cohere, Mistral, Ollama, Groq, and more
-- **[Automatic Fallbacks](https://docs.getbifrost.ai/features/retries-and-fallbacks)** - Seamless failover between providers and models with zero downtime
-- **[Load Balancing](https://docs.getbifrost.ai/features/retries-and-fallbacks)** - Intelligent request distribution across multiple API keys and providers
-
-### Advanced Features
-
-- **[Model Context Protocol (MCP)](https://docs.getbifrost.ai/mcp/overview)** - Enable AI models to use external tools (filesystem, web search, databases)
-- **[Semantic Caching](https://docs.getbifrost.ai/features/semantic-caching)** - Intelligent response caching based on semantic similarity to reduce costs and latency
-- **[Multimodal Support](https://docs.getbifrost.ai/quickstart/gateway/streaming)** - Support for text,images, audio, and streaming, all behind a common interface.
-- **[Custom Plugins](https://docs.getbifrost.ai/enterprise/custom-plugins)** - Extensible middleware architecture for analytics, monitoring, and custom logic
-- **[Governance](https://docs.getbifrost.ai/features/governance/virtual-keys)** - Usage tracking, rate limiting, and fine-grained access control
-
-### Enterprise & Security
-
-- **[Budget Management](https://docs.getbifrost.ai/features/governance/budget-and-limits)** - Hierarchical cost control with virtual keys, teams, and customer budgets
-- **[User Provisioning (OIDC)](https://docs.getbifrost.ai/enterprise/user-provisioning)** - OAuth 2.0 / OIDC login with background directory sync for teams, roles, and business units
-- **[Observability](https://docs.getbifrost.ai/features/observability/default)** - Native Prometheus metrics, distributed tracing, and comprehensive logging
-- **[Secrets Management](https://docs.getbifrost.ai/deployment-guides/config-json#environment-variable-references)** - Secure API key management with environment variables and deployment secrets
-
-### Developer Experience
-
-- **[Zero-Config Startup](https://docs.getbifrost.ai/quickstart/gateway/setting-up)** - Start immediately with dynamic provider configuration
-- **[Drop-in Replacement](https://docs.getbifrost.ai/features/drop-in-replacement)** - Replace OpenAI/Anthropic/GenAI APIs with one line of code
-- **[SDK Integrations](https://docs.getbifrost.ai/integrations/what-is-an-integration)** - Native support for popular AI SDKs with zero code changes
-- **[Configuration Flexibility](https://docs.getbifrost.ai/quickstart/gateway/provider-configuration)** - Web UI, API-driven, or file-based configuration options
-
----
-
-## Repository Structure
-
-Bifrost uses a modular architecture for maximum flexibility:
+## Repository Map
 
 ```text
-bifrost/
-├── npx/                 # NPX script for easy installation
-├── core/                # Core functionality and shared components
-│   ├── providers/       # Provider-specific implementations (OpenAI, Anthropic, etc.)
-│   ├── schemas/         # Interfaces and structs used throughout Bifrost
-│   └── bifrost.go       # Main Bifrost implementation
-├── framework/           # Framework components for data persistence
-│   ├── configstore/     # Configuration storages
-│   ├── logstore/        # Request logging storages
-│   └── vectorstore/     # Vector storages
-├── transports/          # HTTP gateway and other interface layers
-│   └── bifrost-http/    # HTTP transport implementation
-├── ui/                  # Web interface for HTTP gateway
-├── plugins/             # Extensible plugin system
-│   ├── governance/      # Budget management and access control
-│   ├── jsonparser/      # JSON parsing and manipulation utilities
-│   ├── logging/         # Request logging and analytics
-│   ├── maxim/           # Maxim's observability integration
-│   ├── mocker/          # Mock responses for testing and development
-│   ├── semanticcache/   # Intelligent response caching
-│   └── telemetry/       # Monitoring and observability
-├── docs/                # Documentation and guides
-└── tests/               # Comprehensive test suites
+frankengate/
+├── core/                         # inherited gateway core plus isolated fork primitives
+│   ├── providers/                # provider implementations
+│   ├── schemas/                  # shared API and plugin schemas
+│   ├── admission/                # unreleased mandatory guard prototype
+│   ├── authorityepoch/           # unreleased principal authority epoch prototype
+│   ├── mcpownership/             # unreleased MCP ownership prototype
+│   ├── privacy/                  # unreleased privacy receipt prototype
+│   └── reservations/             # unreleased reservation prototype
+├── framework/                    # config, logging, streaming, tracing, vector stores
+├── transports/bifrost-http/      # inherited HTTP gateway transport
+├── plugins/                      # governance, logging, telemetry, cache, OTEL, etc.
+├── ui/                           # inherited web UI source
+├── helm-charts/                  # inherited chart surface, not rebranded for release yet
+├── terraform/                    # inherited Terraform module surface
+├── docs/roadmap/                 # fork planning, proofs, release audits, claim ledgers
+└── .github/workflows/            # inherited workflows plus FrankenGate release workflow
 ```
 
----
+## Apache-2.0 Attribution
 
-## Getting Started Options
+FrankenGate is derived from Bifrost AI Gateway. The upstream work is licensed
+under Apache License 2.0, and this fork retains the applicable copyright,
+patent, trademark, and attribution notices.
 
-Choose the deployment method that fits your needs:
+See [LICENSE](LICENSE), [NOTICE](NOTICE), and the
+[provenance ledger](docs/roadmap/provenance-ledger.md). FrankenGate is an
+independent fork and is not affiliated with or endorsed by Maxim AI or the
+Bifrost maintainers.
 
-### 1. Gateway (HTTP API)
+## Issues And Pull Requests
 
-**Best for:** Language-agnostic integration, microservices, and production deployments
-
-```bash
-# NPX - Get started in 30 seconds
-npx -y @maximhq/bifrost
-
-# Docker - Production ready
-docker run -p 8080:8080 -v $(pwd)/data:/app/data maximhq/bifrost
-```
-
-**Features:** Web UI, real-time monitoring, multi-provider management, zero-config startup
-
-**Learn More:** [Gateway Setup Guide](https://docs.getbifrost.ai/quickstart/gateway/setting-up)
-
-### 2. Go SDK
-
-**Best for:** Direct Go integration with maximum performance and control
-
-```bash
-go get github.com/maximhq/bifrost/core
-```
-
-**Features:** Native Go APIs, embedded deployment, custom middleware integration
-
-**Learn More:** [Go SDK Guide](https://docs.getbifrost.ai/quickstart/go-sdk/setting-up)
-
-### 3. Drop-in Replacement
-
-**Best for:** Migrating existing applications with zero code changes
-
-```diff
-# OpenAI SDK
-- base_url = "https://api.openai.com"
-+ base_url = "http://localhost:8080/openai"
-
-# Anthropic SDK  
-- base_url = "https://api.anthropic.com"
-+ base_url = "http://localhost:8080/anthropic"
-
-# Google GenAI SDK
-- api_endpoint = "https://generativelanguage.googleapis.com"
-+ api_endpoint = "http://localhost:8080/genai"
-```
-
-**Learn More:** [Integration Guides](https://docs.getbifrost.ai/integrations/what-is-an-integration)
-
----
-
-## Performance
-
-Bifrost adds virtually zero overhead to your AI requests. In sustained 5,000 RPS benchmarks, the gateway added only **11 µs** of overhead per request.
-
-| Metric | t3.medium | t3.xlarge | Improvement |
-|--------|-----------|-----------|-------------|
-| Added latency (Bifrost overhead) | 59 µs | **11 µs** | **-81%** |
-| Success rate @ 5k RPS | 100% | 100% | No failed requests |
-| Avg. queue wait time | 47 µs | **1.67 µs** | **-96%** |
-| Avg. request latency (incl. provider) | 2.12 s | **1.61 s** | **-24%** |
-
-**Key Performance Highlights:**
-
-- **Perfect Success Rate** - 100% request success rate even at 5k RPS
-- **Minimal Overhead** - Less than 15 µs additional latency per request
-- **Efficient Queuing** - Sub-microsecond average wait times
-- **Fast Key Selection** - ~10 ns to pick weighted API keys
-
-**Complete Benchmarks:** [Performance Analysis](https://docs.getbifrost.ai/benchmarking/getting-started)
-
----
-
-## Documentation
-
-**Complete Documentation:** [https://docs.getbifrost.ai](https://docs.getbifrost.ai)
-
-### Quick Start
-
-- [Gateway Setup](https://docs.getbifrost.ai/quickstart/gateway/setting-up) - HTTP API deployment in 30 seconds
-- [Go SDK Setup](https://docs.getbifrost.ai/quickstart/go-sdk/setting-up) - Direct Go integration
-- [Provider Configuration](https://docs.getbifrost.ai/quickstart/gateway/provider-configuration) - Multi-provider setup
-
-### Features
-
-- [Multi-Provider Support](https://docs.getbifrost.ai/providers/supported-providers/overview) - Single API for all providers
-- [MCP Integration](https://docs.getbifrost.ai/mcp/overview) - External tool calling
-- [Semantic Caching](https://docs.getbifrost.ai/features/semantic-caching) - Intelligent response caching
-- [Fallbacks & Load Balancing](https://docs.getbifrost.ai/features/retries-and-fallbacks) - Reliability features
-- [Budget Management](https://docs.getbifrost.ai/features/governance/budget-and-limits) - Cost control and governance
-
-### Integrations
-
-- [OpenAI SDK](https://docs.getbifrost.ai/integrations/openai-sdk/overview) - Drop-in OpenAI replacement
-- [Anthropic SDK](https://docs.getbifrost.ai/integrations/anthropic-sdk/overview) - Drop-in Anthropic replacement
-- [AWS Bedrock SDK](https://docs.getbifrost.ai/integrations/bedrock-sdk/overview) - AWS Bedrock integration
-- [Google GenAI SDK](https://docs.getbifrost.ai/integrations/genai-sdk/overview) - Drop-in GenAI replacement
-- [LiteLLM SDK](https://docs.getbifrost.ai/integrations/litellm-sdk) - LiteLLM integration
-- [Langchain SDK](https://docs.getbifrost.ai/integrations/langchain-sdk) - Langchain integration
-
-### Enterprise
-
-- [Custom Plugins](https://docs.getbifrost.ai/enterprise/custom-plugins) - Extend functionality
-- [Clustering](https://docs.getbifrost.ai/enterprise/clustering) - Multi-node deployment
-- [Secrets Management](https://docs.getbifrost.ai/deployment-guides/config-json#environment-variable-references) - Secure key management
-- [Production Deployment](https://docs.getbifrost.ai/deployment-guides/k8s) - Scaling and monitoring
-
----
-
-## Need Help?
-
-**[Join our Discord](https://discord.gg/exN5KAydbU)** for community support and discussions.
-
-Get help with:
-
-- Quick setup assistance and troubleshooting
-- Best practices and configuration tips  
-- Community discussions and support
-- Real-time help with integrations
-
----
-
-## Contributing
-
-We welcome contributions of all kinds! See our [Contributing Guide](https://docs.getbifrost.ai/contributing/setting-up-repo) for:
-
-- Setting up the development environment
-- Code conventions and best practices
-- How to submit pull requests
-- Building and testing locally
-
-For development requirements and build instructions, see our [Development Setup Guide](https://docs.getbifrost.ai/contributing/setting-up-repo#development-environment-setup).
-
----
-
-## License
-
-This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
-
-Built with ❤️ by [Maxim](https://github.com/maximhq)
+Issues and pull requests are welcome as evidence, bug reports, or proposed
+patches. Merges, releases, and public artifact publication are handled through
+protected review paths with human approval.

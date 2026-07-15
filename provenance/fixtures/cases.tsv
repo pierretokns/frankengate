@@ -1,0 +1,6 @@
+name	root	expected
+valid	provenance/fixtures/valid	pass
+missing-ledger	provenance/fixtures/missing-ledger	fail
+missing-approval	provenance/fixtures/missing-approval	fail
+missing-notice	provenance/fixtures/missing-notice	fail
+denied-license	provenance/fixtures/denied-license	fail

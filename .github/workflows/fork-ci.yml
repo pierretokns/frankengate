@@ -1,0 +1,102 @@
+name: Fork CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  GO_VERSION: "1.26.4"
+
+jobs:
+  go-checks:
+    name: Go checks (no provider secrets)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    env:
+      GOCACHE: ${{ github.workspace }}/.cache/go-build
+      GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Run unit tests and vet
+        run: .github/workflows/scripts/fork-go-checks.sh test-vet
+
+  go-security:
+    name: Go vulnerability checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      GOCACHE: ${{ github.workspace }}/.cache/go-build
+      GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Run govulncheck
+        run: .github/workflows/scripts/fork-go-checks.sh vuln
+
+  provenance-hook:
+    name: Provenance hook
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Detect provenance hook
+        id: provenance
+        run: |
+          if [ -f scripts/verify-provenance.sh ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run provenance self-test
+        if: steps.provenance.outputs.present == 'true'
+        run: bash scripts/verify-provenance.sh --self-test
+
+      - name: Run provenance gate
+        if: steps.provenance.outputs.present == 'true'
+        run: bash scripts/verify-provenance.sh
+
+      - name: No provenance hook
+        if: steps.provenance.outputs.present != 'true'
+        run: echo "No scripts/verify-provenance.sh hook present."

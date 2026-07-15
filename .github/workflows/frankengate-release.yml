@@ -96,7 +96,7 @@ jobs:
 
       - name: Generate checksums
         working-directory: dist
-        run: sha256sum *.tar.gz > SHA256SUMS
+        run: sha256sum ./*.tar.gz > SHA256SUMS
 
       - name: Publish release
         env:

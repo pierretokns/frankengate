@@ -1,0 +1,7 @@
+component	distribution_surface	license	notice_file	source	notes
+Bifrost AI Gateway	repository	Apache-2.0	NOTICE	https://github.com/maximhq/bifrost	Root upstream notice retained for repository redistributions.
+FrankenGate modifications	repository	Apache-2.0	NOTICE	local-fork	Root NOTICE records fork modifications and non-affiliation.
+NPM package metadata	npx/bifrost/package.json	Apache-2.0	LICENSE	local-package	Package license field points to Apache-2.0.
+NPM CLI package metadata	npx/bifrost-cli/package.json	Apache-2.0	LICENSE	local-package	Package license field points to Apache-2.0.
+NPM migration CLI package metadata	npx/bifrost-migration-cli/package.json	Apache-2.0	LICENSE	local-package	Package license field points to Apache-2.0.
+OCI image license	transports/Dockerfile.redhat	Apache-2.0	LICENSE	local-image	Red Hat image copies LICENSE into /licenses.

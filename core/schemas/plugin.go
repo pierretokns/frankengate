@@ -121,9 +121,21 @@ func ReleaseHTTPRequest(req *HTTPRequest) {
 		return
 	}
 	// Clear the maps
-	clear(req.Headers)
-	clear(req.Query)
-	clear(req.PathParams)
+	if req.Headers == nil {
+		req.Headers = make(map[string]string, 16)
+	} else {
+		clear(req.Headers)
+	}
+	if req.Query == nil {
+		req.Query = make(map[string]string, 8)
+	} else {
+		clear(req.Query)
+	}
+	if req.PathParams == nil {
+		req.PathParams = make(map[string]string, 4)
+	} else {
+		clear(req.PathParams)
+	}
 	// Reset fields
 	req.Method = ""
 	req.Path = ""
@@ -155,7 +167,11 @@ func ReleaseHTTPResponse(resp *HTTPResponse) {
 		return
 	}
 	// Clear the map
-	clear(resp.Headers)
+	if resp.Headers == nil {
+		resp.Headers = make(map[string]string, 8)
+	} else {
+		clear(resp.Headers)
+	}
 	// Reset fields
 	resp.StatusCode = 0
 	resp.Body = nil

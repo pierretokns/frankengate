@@ -1,0 +1,5 @@
+LICENSE
+NOTICE
+dist/app.txt
+package.json
+package-lock.json

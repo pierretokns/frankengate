@@ -1,0 +1,2 @@
+ecosystem	manifest	lockfile	scan_mode	allowed_licenses	denied_patterns	approval_ref	notes
+npm	package.json	package-lock.json	lockfile-license-scan	Apache-2.0|MIT	GPL|AGPL	none	Fixture dependency scan should fail.

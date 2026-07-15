@@ -1,0 +1,28 @@
+name: Provenance Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  provenance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Run provenance gate self-tests
+        run: bash scripts/verify-provenance.sh --self-test
+
+      - name: Run provenance gate
+        run: bash scripts/verify-provenance.sh

@@ -1,0 +1,103 @@
+path	origin	license	attribution	modification_notice_required	modification_notice_location	approval_ref	notes
+LICENSE	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Root Apache-2.0 license retained.
+NOTICE	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Root attribution and non-affiliation notice.
+README.md	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Public identity surface references fork origin and Apache attribution.
+Makefile	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and test command surface.
+helm-charts/bifrost/Chart.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm chart metadata.
+helm-charts/bifrost/README.md	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm chart documentation.
+helm-charts/bifrost/templates/configmap.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/deployment.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/hpa.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/ingress.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/postgresql-deployment.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/postgresql-pvc.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/postgresql-service.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/qdrant-deployment.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/qdrant-pvc.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/qdrant-service.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/rbac.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/redis-deployment.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/redis-pvc.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/redis-service.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/secrets.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/service-headless.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/service.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/serviceaccount.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/stateful.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/weaviate-deployment.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/weaviate-pvc.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/templates/weaviate-service.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
+helm-charts/bifrost/values-examples/external-postgres.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/mixed-backend.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/postgres-only.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/postgres-qdrant.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/postgres-redis.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/postgres-weaviate.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/production-ha.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/providers-and-virtual-keys.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/secrets-from-k8s.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/semantic-cache-secret-example.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/sqlite-only.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/sqlite-qdrant.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/sqlite-redis.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values-examples/sqlite-weaviate.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/values.schema.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm schema.
+helm-charts/bifrost/values.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values.
+helm-charts/index.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm repository index.
+npx/bifrost-cli/bin.js	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	NPX CLI entrypoint.
+npx/bifrost-cli/package.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	NPX package metadata.
+npx/bifrost-migration-cli/bin.js	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	NPX migration CLI entrypoint.
+npx/bifrost-migration-cli/package.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	NPX migration package metadata.
+npx/bifrost/bin.js	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	NPX binary entrypoint.
+npx/bifrost/package.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	NPX package metadata.
+terraform/examples/aws-ecs/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/aws-ecs/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/aws-ecs/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/azure-aks/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/azure-aks/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/azure-aks/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/gcp-gke/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/gcp-gke/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/gcp-gke/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/kubernetes/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/kubernetes/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/examples/kubernetes/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform example.
+terraform/modules/bifrost/aws/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/aws/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/aws/services/ecs/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/aws/services/ecs/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/aws/services/ecs/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/aws/services/eks/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/aws/services/eks/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/aws/services/eks/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/aws/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/services/aci/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/services/aci/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/services/aci/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/services/aks/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/services/aks/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/services/aks/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/azure/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/services/cloud-run/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/services/cloud-run/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/services/cloud-run/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/services/gke/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/services/gke/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/services/gke/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/gcp/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/kubernetes/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/kubernetes/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/kubernetes/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+terraform/modules/bifrost/tests/setup/main.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform test support.
+terraform/modules/bifrost/tests/setup/outputs.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform test support.
+terraform/modules/bifrost/tests/setup/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform test support.
+terraform/modules/bifrost/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Terraform module.
+transports/Dockerfile	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	OCI image build surface.
+transports/Dockerfile.local	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Local OCI image build surface.
+transports/Dockerfile.redhat	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Red Hat OCI image build surface.

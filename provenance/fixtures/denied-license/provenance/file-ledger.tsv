@@ -1,0 +1,5 @@
+path	origin	license	attribution	modification_notice_required	modification_notice_location	approval_ref	notes
+LICENSE	upstream-bifrost	Apache-2.0	Bifrost fixture	no	none	none	Fixture license.
+NOTICE	local-fork	Apache-2.0	Bifrost fixture	yes	NOTICE	none	Fixture notice.
+package.json	local-fork	Apache-2.0	Bifrost fixture	no	none	none	Fixture package manifest.
+package-lock.json	generated	Apache-2.0	Bifrost fixture	no	none	none	Fixture lockfile.

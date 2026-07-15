@@ -1,0 +1,21 @@
+ecosystem	manifest	lockfile	scan_mode	allowed_licenses	denied_patterns	approval_ref	notes
+go	core/go.mod	core/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Core module dependency SBOM source.
+go	framework/go.mod	framework/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Framework module dependency SBOM source.
+go	transports/go.mod	transports/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	HTTP transport module dependency SBOM source.
+go	cli/go.mod	cli/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	CLI module dependency SBOM source.
+go	scripts/bifrost-migration-cli/go.mod	scripts/bifrost-migration-cli/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Migration CLI module dependency SBOM source.
+go	plugins/compat/go.mod	plugins/compat/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/governance/go.mod	plugins/governance/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/jsonparser/go.mod	plugins/jsonparser/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/logging/go.mod	plugins/logging/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/maxim/go.mod	plugins/maxim/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/mocker/go.mod	plugins/mocker/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/modelcatalogresolver/go.mod	plugins/modelcatalogresolver/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/otel/go.mod	plugins/otel/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/prompts/go.mod	plugins/prompts/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/semanticcache/go.mod	plugins/semanticcache/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+go	plugins/telemetry/go.mod	plugins/telemetry/go.sum	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	Plugin module dependency SBOM source.
+npm	ui/package.json	ui/package-lock.json	lockfile-license-scan	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	UI package dependency SBOM source.
+npm	npx/bifrost/package.json	npx/bifrost/package-lock.json	lockfile-license-scan	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	NPX package dependency SBOM source.
+npm	npx/bifrost-cli/package.json	none	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	NPX CLI package has no lockfile in current checkout.
+npm	npx/bifrost-migration-cli/package.json	none	manifest-inventory	Apache-2.0|MIT|BSD-2-Clause|BSD-3-Clause|ISC|MPL-2.0|Unlicense	GPL|AGPL|SSPL|BUSL	none	NPX migration CLI package has no lockfile in current checkout.
