@@ -4,13 +4,13 @@
 
 Bifrost-compatible Helm chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS.
 
-**Latest Version:** 2.1.32
+**Latest Version:** 2.1.33
 
 ## Changelog
 
 ### Upcoming
 
-- Default `image.tag` now installs FrankenGate v0.3.1, whose release gates exclude runner-local module caches and whose runtime hotpaths include horizontally coherent virtual-key invalidation and MCP principal-authority enforcement.
+- Default `image.tag` now installs FrankenGate v0.3.2, which fails direct MCP virtual-key authorization closed when this pod's durable authority synchronization lease is stale.
 
 ### 2.1.32
 

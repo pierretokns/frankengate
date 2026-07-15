@@ -15,7 +15,7 @@ image:
   repository: ghcr.io/pierretokns/frankengate
   pullPolicy: IfNotPresent
   # Defaults to the release matching this chart's appVersion.
-  tag: "v0.3.1"
+  tag: "v0.3.2"
   # Optional immutable sha256 digest. When set, it takes precedence over tag.
   # digest: "sha256:3eac7c45e52ad5ca6cab5a4217828a1f8954637872ba3eab9016b4dcb67f9c43"
   digest: ""
