@@ -1,0 +1,61 @@
+# syntax=docker/dockerfile:1.7
+
+# Release-only monorepo builder. Unlike the legacy transport Dockerfile, this
+# intentionally compiles against the local workspace modules from the selected
+# release tag instead of older, independently published Go modules.
+FROM node:25-alpine3.23@sha256:bdf2cca6fe3dabd014ea60163eca3f0f7015fbd5c7ee1b0e9ccb4ced6eb02ef4 AS ui-builder
+WORKDIR /app
+COPY ui/package*.json ./
+RUN npm ci
+COPY ui/ ./
+RUN npm run build-enterprise
+
+FROM golang:1.26.4-alpine3.23@sha256:f23e8b227fb4493eabe03bede4d5a32d04092da71962f1fb79b5f7d1e6c2a17f AS builder
+WORKDIR /src
+RUN apk add --no-cache gcc musl-dev sqlite-dev binutils binutils-gold
+ENV CGO_ENABLED=1 GOOS=linux
+
+# The release tag is the sole source context. Copying the workspace is required:
+# FrankenGate changes framework/core/plugins in lockstep with the HTTP transport.
+COPY . ./
+COPY --from=ui-builder /app/out ./transports/bifrost-http/ui
+
+ARG VERSION=unknown
+RUN go build \
+    -ldflags="-w -s -X main.Version=v${VERSION} -extldflags '-static'" \
+    -a -trimpath \
+    -tags "sqlite_static" \
+    -o /app/main \
+    ./transports/bifrost-http
+RUN test -x /app/main
+
+FROM alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
+WORKDIR /app
+RUN apk add --no-cache ca-certificates
+
+COPY --from=builder /app/main /app/main
+COPY --from=builder /src/transports/docker-entrypoint.sh /app/docker-entrypoint.sh
+
+ARG ARG_APP_PORT=8080
+ARG ARG_APP_HOST=0.0.0.0
+ARG ARG_LOG_LEVEL=info
+ARG ARG_LOG_STYLE=json
+ARG ARG_APP_DIR=/app/data
+ENV APP_PORT=$ARG_APP_PORT \
+    APP_HOST=$ARG_APP_HOST \
+    LOG_LEVEL=$ARG_LOG_LEVEL \
+    LOG_STYLE=$ARG_LOG_STYLE \
+    APP_DIR=$ARG_APP_DIR \
+    GOGC="" \
+    GOMEMLIMIT=""
+
+RUN mkdir -p "$APP_DIR/logs" && \
+    adduser -D -s /bin/sh appuser && \
+    chown -R appuser:0 /app && \
+    chmod -R g=rwX "$APP_DIR" && \
+    chmod 0555 /app/main /app/docker-entrypoint.sh
+USER 1000:0
+VOLUME ["/app/data"]
+EXPOSE 8080
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["/app/main"]

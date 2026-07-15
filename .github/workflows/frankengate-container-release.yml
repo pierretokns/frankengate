@@ -47,6 +47,13 @@ jobs:
           ref: ${{ inputs.release_tag }}
           persist-credentials: false
 
+      - name: Install release builder from workflow revision
+        env:
+          WORKFLOW_SHA: ${{ github.sha }}
+        run: |
+          git fetch --no-tags origin "$WORKFLOW_SHA"
+          git show "$WORKFLOW_SHA:transports/Dockerfile.release" > transports/Dockerfile.release
+
       - name: Derive image metadata
         id: meta
         env:
@@ -74,7 +81,7 @@ jobs:
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: .
-          file: transports/Dockerfile
+          file: transports/Dockerfile.release
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.image }}:${{ inputs.release_tag }}
