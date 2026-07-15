@@ -1322,6 +1322,14 @@ postgresql:
   # Deploy PostgreSQL as part of this chart
   enabled: false
 
+  # Prevent the gateway from crash-looping while the chart-managed database
+  # is still starting. This gate is used only for the bundled PostgreSQL;
+  # external/Aurora deployments retain the gateway's own retry semantics.
+  startupGate:
+    enabled: true
+    maxAttempts: 60
+    intervalSeconds: 2
+
   # Use external PostgreSQL instance
   external:
     enabled: false

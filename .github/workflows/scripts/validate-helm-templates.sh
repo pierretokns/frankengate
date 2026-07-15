@@ -515,6 +515,54 @@ else
   echo -e "${YELLOW}  Persistent SQLite notes did not report the configured volume${NC}"
 fi
 
+# 9. Bundled PostgreSQL startup gate
+echo ""
+echo -e "${CYAN}⏳ 9/9 - Validating bundled PostgreSQL startup gate...${NC}"
+echo "---------------------------------------------------------"
+
+test_name="bundled PostgreSQL renders a bounded readiness init container"
+if helm template bifrost ./helm-charts/bifrost \
+  --set image.tag=v1.0.0 \
+  --set storage.mode=postgres \
+  --set postgresql.enabled=true \
+  -s templates/deployment.yaml \
+  > /tmp/helm-template-output.yaml 2>&1; then
+  if grep -Fq 'name: wait-for-postgresql' /tmp/helm-template-output.yaml &&
+    grep -Fq 'until pg_isready -h bifrost-postgresql' /tmp/helm-template-output.yaml &&
+    grep -Fq 'PostgreSQL did not become ready after $attempts attempts' /tmp/helm-template-output.yaml; then
+    report_result "$test_name" 0
+  else
+    report_result "$test_name" 1
+    echo -e "${YELLOW}  Bundled PostgreSQL readiness gate is missing or unbounded${NC}"
+  fi
+else
+  report_result "$test_name" 1
+  echo -e "${YELLOW}  Error output:${NC}"
+  head -10 /tmp/helm-template-output.yaml | sed 's/^/    /'
+fi
+
+test_name="external PostgreSQL does not render the bundled-database gate"
+if helm template bifrost ./helm-charts/bifrost \
+  --set image.tag=v1.0.0 \
+  --set storage.mode=postgres \
+  --set postgresql.external.enabled=true \
+  --set postgresql.external.host=aurora.example \
+  --set postgresql.external.user=bifrost \
+  --set postgresql.external.password=testpass \
+  -s templates/deployment.yaml \
+  > /tmp/helm-template-output.yaml 2>&1; then
+  if grep -Fq 'name: wait-for-postgresql' /tmp/helm-template-output.yaml; then
+    report_result "$test_name" 1
+    echo -e "${YELLOW}  Bundled PostgreSQL gate leaked into the external/Aurora path${NC}"
+  else
+    report_result "$test_name" 0
+  fi
+else
+  report_result "$test_name" 1
+  echo -e "${YELLOW}  Error output:${NC}"
+  head -10 /tmp/helm-template-output.yaml | sed 's/^/    /'
+fi
+
 # Cleanup
 rm -f /tmp/helm-template-output.yaml
 

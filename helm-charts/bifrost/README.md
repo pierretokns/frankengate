@@ -10,6 +10,7 @@ Bifrost-compatible Helm chart for deploying [FrankenGate](https://github.com/pie
 
 ### Upcoming
 
+- Bundled PostgreSQL installs now place a bounded `pg_isready` startup gate before each gateway container, preventing avoidable crash loops while the chart-managed database starts. The gate is configurable under `postgresql.startupGate` and is deliberately omitted for external PostgreSQL and Aurora deployments.
 - Default `image.tag` now installs FrankenGate v0.3.3. Pods fence the durable authority outbox, rebuild current virtual-key and principal authority snapshots, and replay only post-fence mutations, keeping restart convergence proportional to current authority state instead of retained event history.
 - Default `image.tag` now installs FrankenGate v0.3.2, which fails direct MCP virtual-key authorization closed when this pod's durable authority synchronization lease is stale.
 
