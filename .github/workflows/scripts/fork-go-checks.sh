@@ -25,7 +25,32 @@ fi
 # fork. Build an isolated workspace and force every command below through it so
 # cross-module imports always resolve to this checkout.
 WORKSPACE_DIR="$(mktemp -d)"
-trap 'rm -rf "$WORKSPACE_DIR"' EXIT
+UI_DIR="$ROOT/transports/bifrost-http/ui"
+UI_PLACEHOLDER="$UI_DIR/ci-placeholder.txt"
+UI_DIR_CREATED=0
+UI_PLACEHOLDER_CREATED=0
+cleanup() {
+  rm -rf "$WORKSPACE_DIR"
+  if [ "$UI_PLACEHOLDER_CREATED" -eq 1 ]; then
+    rm -f "$UI_PLACEHOLDER"
+  fi
+  if [ "$UI_DIR_CREATED" -eq 1 ]; then
+    rmdir "$UI_DIR" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
+
+# The HTTP binary embeds `all:ui`, but the generated UI directory is ignored
+# and absent in a clean source checkout. Give compile/vet/vuln jobs a
+# runner-local visible file; release jobs still build and embed the real UI.
+if [ ! -d "$UI_DIR" ]; then
+  mkdir -p "$UI_DIR"
+  UI_DIR_CREATED=1
+fi
+if [ -z "$(find "$UI_DIR" -mindepth 1 -maxdepth 1 -not -name '.*' -print -quit)" ]; then
+  printf '%s\n' 'CI compile placeholder; release builds embed the generated UI.' > "$UI_PLACEHOLDER"
+  UI_PLACEHOLDER_CREATED=1
+fi
 WORKSPACE_MODULES=()
 for module in "${MODULES[@]}"; do
   WORKSPACE_MODULES+=("$ROOT/$module")
