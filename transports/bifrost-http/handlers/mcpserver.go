@@ -43,6 +43,10 @@ type VirtualKeyCache interface {
 	GetVirtualKeyByID(ctx context.Context, vkID string) (*tables.TableVirtualKey, bool)
 }
 
+type virtualKeyValueCache interface {
+	GetVirtualKey(ctx context.Context, vkValue string) (*tables.TableVirtualKey, bool)
+}
+
 // MCPServerHandler manages HTTP requests for MCP server operations
 // It implements the MCP protocol over HTTP streaming (SSE) for MCP clients
 type MCPServerHandler struct {
@@ -662,7 +666,7 @@ func (h *MCPServerHandler) getMCPServerForRequest(ctx *fasthttp.RequestCtx) (*mc
 			if !vk.IsActiveValue() {
 				return nil, fmt.Errorf("virtual key is inactive")
 			}
-			vkServer, err := h.ensureVKMCPServerByValue(ctx, vk.Value.GetValue())
+			vkServer, err := h.ensureVKMCPServerForVK(vk)
 			if err != nil {
 				return nil, err
 			}
@@ -753,7 +757,7 @@ func (h *MCPServerHandler) getMCPServerForRequest(ctx *fasthttp.RequestCtx) (*mc
 				return nil, fmt.Errorf("virtual key is inactive")
 			}
 			res.jwtVK = vk
-			vkServer, serverErr := h.ensureVKMCPServerByValue(ctx, vk.Value.GetValue())
+			vkServer, serverErr := h.ensureVKMCPServerForVK(vk)
 			if serverErr != nil {
 				return nil, serverErr
 			}
@@ -840,20 +844,61 @@ func (h *MCPServerHandler) userScopedServer(ctx *fasthttp.RequestCtx, claims *jw
 	if !vk.IsActiveValue() {
 		return nil, fmt.Errorf("virtual key is inactive")
 	}
-	return h.ensureVKMCPServerByValue(ctx, vk.Value.GetValue())
+	return h.ensureVKMCPServerForVK(vk)
 }
 
 // ensureVKMCPServerByValue returns the per-VK server from cache or creates it.
 func (h *MCPServerHandler) ensureVKMCPServerByValue(ctx context.Context, vkValue string) (*server.MCPServer, error) {
+	// Validate current authority before consulting the derived server cache. A VK
+	// can remain present but inactive after revocation; returning the cached MCP
+	// server first would let that secret bypass the active-state check forever.
+	vk, err := h.getVirtualKeyByValue(ctx, vkValue)
+	if err != nil || vk == nil || !vk.IsActiveValue() {
+		h.DeleteVKMCPServer(vkValue)
+		if err != nil {
+			return nil, err
+		}
+		if vk != nil && !vk.IsActiveValue() {
+			return nil, fmt.Errorf("virtual key is inactive")
+		}
+		return nil, fmt.Errorf("virtual key not found")
+	}
+	return h.ensureVKMCPServerForVK(vk)
+}
+
+func (h *MCPServerHandler) ensureVKMCPServerForVK(vk *tables.TableVirtualKey) (*server.MCPServer, error) {
+	if vk == nil {
+		return nil, fmt.Errorf("virtual key not found")
+	}
+	if !vk.IsActiveValue() {
+		h.DeleteVKMCPServer(vk.Value.GetValue())
+		return nil, fmt.Errorf("virtual key is inactive")
+	}
+	value := vk.Value.GetValue()
 	h.mu.RLock()
-	s, ok := h.vkMCPServers[vkValue]
+	s, ok := h.vkMCPServers[value]
 	h.mu.RUnlock()
 	// Fast path: a per-VK server already exists in the cache.
 	if ok {
 		return s, nil
 	}
-	// Slow path: build the per-VK server lazily on first use.
-	return h.ensureVKMCPServer(ctx, vkValue)
+	return h.SyncVKMCPServer(vk), nil
+}
+
+func (h *MCPServerHandler) getVirtualKeyByValue(ctx context.Context, vkValue string) (*tables.TableVirtualKey, error) {
+	if cache, ok := h.vkCache.(virtualKeyValueCache); ok {
+		if vk, found := cache.GetVirtualKey(ctx, vkValue); found && vk != nil {
+			return vk, nil
+		}
+	}
+	if h.config == nil || h.config.ConfigStore == nil {
+		return nil, fmt.Errorf("virtual key not found")
+	}
+	vk, err := h.config.ConfigStore.GetVirtualKeyByValue(ctx, vkValue)
+	if err != nil || vk == nil {
+		return nil, fmt.Errorf("virtual key not found")
+	}
+	return vk, nil
 }
 
 // ensureVKMCPServer lazily builds and caches the MCP server for a virtual key on
@@ -862,10 +907,7 @@ func (h *MCPServerHandler) ensureVKMCPServerByValue(ctx context.Context, vkValue
 // key materializes it here. Returns "virtual key not found" if the value does
 // not resolve to a known virtual key (or no config store is configured).
 func (h *MCPServerHandler) ensureVKMCPServer(ctx context.Context, vkValue string) (*server.MCPServer, error) {
-	if h.config.ConfigStore == nil {
-		return nil, fmt.Errorf("virtual key not found")
-	}
-	vk, err := h.config.ConfigStore.GetVirtualKeyByValue(ctx, vkValue)
+	vk, err := h.getVirtualKeyByValue(ctx, vkValue)
 	if err != nil || vk == nil {
 		return nil, fmt.Errorf("virtual key not found")
 	}
