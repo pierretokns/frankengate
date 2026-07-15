@@ -20,7 +20,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command in git go jq kubectl; do
+for command in git go jq kubectl shasum; do
   command -v "$command" >/dev/null || {
     echo "required command not found: $command" >&2
     exit 1
@@ -62,6 +62,15 @@ if [[ -n "$live_postgres_image" && "$live_postgres_image" != "$POSTGRES_IMAGE" ]
 fi
 kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=180s
 
+# This namespace and database are explicitly test-only. A retained fixture may
+# contain encrypted rows or schema mutations from focused PostgreSQL tests,
+# which can make governance fail closed before this oracle begins. Stop every
+# old gateway connection and rebuild the disposable public schema so each run
+# proves the current binary from a deterministic authority state.
+kubectl -n "$NAMESPACE" delete deployment/frankengate-vk --ignore-not-found --wait=true >/dev/null
+kubectl -n "$NAMESPACE" exec postgres-0 -- psql -v ON_ERROR_STOP=1 -U frankengate -d frankengate \
+  -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO frankengate;'
+
 kubectl -n "$NAMESPACE" delete pod/frankengate-binary --ignore-not-found --wait=true >/dev/null
 kubectl -n "$NAMESPACE" run frankengate-binary \
   --image="$POSTGRES_IMAGE" --image-pull-policy=IfNotPresent \
@@ -85,6 +94,13 @@ if [[ -z "$binary_service_ip" || "$binary_service_ip" == "None" ]]; then
 fi
 sed "s/__BINARY_SERVICE_IP__/$binary_service_ip/g" "$MANIFEST" > "$WORK_DIR/gateway.yaml"
 kubectl apply -f "$WORK_DIR/gateway.yaml"
+binary_sha256="$(shasum -a 256 "$BINARY" | awk '{print $1}')"
+# The init container copies bytes from a stable in-cluster Service URL. The
+# rendered Deployment can therefore be unchanged even when those bytes differ;
+# stamp the content digest into the pod template so every tested binary gets a
+# real rollout and no run can accidentally exercise stale gateway processes.
+kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=merge \
+  -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"frankengate.dev/test-binary-sha256\":\"$binary_sha256\"}}}}}"
 kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
 
 list_ready_gateway_ips() {

@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"reflect"
 	"sync"
@@ -157,15 +158,24 @@ func TestApplyVirtualKeyInvalidationHistoricalReloadOfDeletedRowBecomesDelete(t 
 }
 
 type fakeVKInvalidationStore struct {
-	mu        sync.Mutex
-	events    []tables.TableVirtualKeyInvalidationEvent
-	listErr   error
-	highWater uint64
+	mu         sync.Mutex
+	events     []tables.TableVirtualKeyInvalidationEvent
+	listErr    error
+	highWater  uint64
+	listCalls  int
+	listCalled chan struct{}
 }
 
 func (s *fakeVKInvalidationStore) ListVirtualKeyInvalidationsAfter(_ context.Context, cursor uint64, limit int) ([]tables.TableVirtualKeyInvalidationEvent, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.listCalls++
+	if s.listCalled != nil {
+		select {
+		case s.listCalled <- struct{}{}:
+		default:
+		}
+	}
 	if s.listErr != nil {
 		return nil, s.listErr
 	}
@@ -471,5 +481,154 @@ func TestVirtualKeyInvalidationPollerStopsOnContextCancellation(t *testing.T) {
 	case <-done:
 	case <-time.After(time.Second):
 		t.Fatal("poller did not stop after context cancellation")
+	}
+}
+
+func TestVirtualKeyInvalidationWakeInterruptsLongPollAndDrainsAllBatches(t *testing.T) {
+	store := &fakeVKInvalidationStore{listCalled: make(chan struct{}, 1)}
+	wake := make(chan struct{}, 1)
+	applied := make(chan uint64, 5)
+	poller := newVirtualKeyInvalidationPoller(store, func(_ context.Context, event tables.TableVirtualKeyInvalidationEvent) error {
+		applied <- event.ID
+		return nil
+	}, 2, time.Hour)
+	poller.wake = wake
+
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() {
+		poller.Run(ctx)
+		close(done)
+	}()
+	defer func() {
+		cancel()
+		<-done
+	}()
+
+	select {
+	case <-store.listCalled:
+	case <-time.After(time.Second):
+		t.Fatal("initial durable poll did not run")
+	}
+
+	store.mu.Lock()
+	store.highWater = 5
+	for id := uint64(1); id <= 5; id++ {
+		store.events = append(store.events, tables.TableVirtualKeyInvalidationEvent{
+			ID: id, EntityType: tables.VirtualKeyInvalidationEntityType,
+			EntityID: fmt.Sprintf("vk-%d", id), Action: tables.VirtualKeyInvalidationActionReload,
+			SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion,
+		})
+	}
+	store.mu.Unlock()
+
+	// A storm coalesces into one buffered hint. The poller still drains every
+	// durable batch immediately and in cursor order.
+	for i := 0; i < 100; i++ {
+		select {
+		case wake <- struct{}{}:
+		default:
+		}
+	}
+	for want := uint64(1); want <= 5; want++ {
+		select {
+		case got := <-applied:
+			if got != want {
+				t.Fatalf("applied event %d, want %d", got, want)
+			}
+		case <-time.After(time.Second):
+			t.Fatalf("notification wake did not drain event %d", want)
+		}
+	}
+	if poller.Cursor() != 5 {
+		t.Fatalf("cursor = %d, want 5", poller.Cursor())
+	}
+}
+
+func TestVirtualKeyInvalidationClosedWakeFallsBackWithoutSpin(t *testing.T) {
+	store := &fakeVKInvalidationStore{listCalled: make(chan struct{}, 2)}
+	wake := make(chan struct{})
+	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error { return nil }, 10, time.Hour)
+	poller.wake = wake
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() { poller.Run(ctx); close(done) }()
+	<-store.listCalled
+	close(wake)
+	<-store.listCalled // one final immediate durable check after closure
+	time.Sleep(25 * time.Millisecond)
+	store.mu.Lock()
+	calls := store.listCalls
+	store.mu.Unlock()
+	cancel()
+	<-done
+	if calls != 2 {
+		t.Fatalf("closed wake caused %d durable polls, want exactly 2", calls)
+	}
+}
+
+func TestVirtualKeyInvalidationLostWakeFallsBackToPeriodicPoll(t *testing.T) {
+	store := &fakeVKInvalidationStore{listCalled: make(chan struct{}, 1)}
+	applied := make(chan uint64, 1)
+	poller := newVirtualKeyInvalidationPoller(store, func(_ context.Context, event tables.TableVirtualKeyInvalidationEvent) error {
+		applied <- event.ID
+		return nil
+	}, 10, 20*time.Millisecond)
+	poller.wake = make(chan struct{}, 1) // deliberately never signaled
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() { poller.Run(ctx); close(done) }()
+	defer func() { cancel(); <-done }()
+	<-store.listCalled
+
+	store.mu.Lock()
+	store.highWater = 1
+	store.events = []tables.TableVirtualKeyInvalidationEvent{{
+		ID: 1, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-lost-wake",
+		Action: tables.VirtualKeyInvalidationActionDelete, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion,
+	}}
+	store.mu.Unlock()
+	select {
+	case got := <-applied:
+		if got != 1 {
+			t.Fatalf("applied event %d, want 1", got)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("periodic durable poll did not repair a lost notification")
+	}
+}
+
+func TestVirtualKeyInvalidationWakeStormCannotBypassFailureBackoff(t *testing.T) {
+	store := &fakeVKInvalidationStore{listErr: errors.New("database unavailable")}
+	wake := make(chan struct{}, 1)
+	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error {
+		return nil
+	}, 10, 30*time.Millisecond)
+	poller.wake = wake
+
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() { poller.Run(ctx); close(done) }()
+	stormDone := make(chan struct{})
+	go func() {
+		defer close(stormDone)
+		for ctx.Err() == nil {
+			select {
+			case wake <- struct{}{}:
+			default:
+			}
+			time.Sleep(time.Millisecond)
+		}
+	}()
+
+	time.Sleep(140 * time.Millisecond)
+	cancel()
+	<-done
+	<-stormDone
+	store.mu.Lock()
+	calls := store.listCalls
+	store.mu.Unlock()
+	if calls < 3 || calls > 6 {
+		t.Fatalf("database failure made %d polls during 140ms with 30ms backoff; want 3..6", calls)
 	}
 }

@@ -32,6 +32,13 @@ type virtualKeyInvalidationSource interface {
 	GetVirtualKeyInvalidationHighWatermark(ctx context.Context) (uint64, error)
 }
 
+// virtualKeyInvalidationWakeSource is an optional acceleration capability.
+// Implementations may lose or coalesce signals; the durable cursor remains the
+// sole authority and periodic polling remains mandatory.
+type virtualKeyInvalidationWakeSource interface {
+	VirtualKeyInvalidationWakeups(context.Context) <-chan struct{}
+}
+
 type virtualKeyInvalidationApply func(context.Context, tables.TableVirtualKeyInvalidationEvent) error
 
 type mcpRuntimeReconcileState struct {
@@ -59,6 +66,7 @@ type virtualKeyInvalidationPoller struct {
 	apply        virtualKeyInvalidationApply
 	batchSize    int
 	pollInterval time.Duration
+	wake         <-chan struct{}
 
 	cursor           atomic.Uint64
 	highWatermark    atomic.Uint64
@@ -128,6 +136,9 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 		return fmt.Errorf("governance plugin %q does not support virtual-key authority freshness", s.getGovernancePluginName())
 	}
 	setter.SetAuthorityFreshnessSource(s.VKInvalidationPoller)
+	if wakeSource, ok := s.Config.ConfigStore.(virtualKeyInvalidationWakeSource); ok {
+		s.VKInvalidationPoller.wake = wakeSource.VirtualKeyInvalidationWakeups(ctx)
+	}
 	go s.VKInvalidationPoller.Run(ctx)
 	return nil
 }
@@ -449,6 +460,7 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 	if p == nil || p.store == nil || p.apply == nil {
 		return
 	}
+	wake := p.wake
 	for {
 		more, err := p.pollOnce(ctx)
 		if err == nil && more {
@@ -465,6 +477,17 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 		} else if err == nil && p.failureActive.Swap(false) && logger != nil {
 			logger.Info("virtual-key invalidation polling recovered; VK authority freshness restored")
 		}
+		waitWake := wake
+		if err != nil {
+			// Notification hints must never bypass the database failure backoff.
+			// Drain a coalesced hint and disable wake acceleration for this wait;
+			// the next retry remains timer-bounded even during a NOTIFY storm.
+			select {
+			case <-wake:
+			default:
+			}
+			waitWake = nil
+		}
 		timer := time.NewTimer(p.pollInterval)
 		select {
 		case <-ctx.Done():
@@ -472,6 +495,18 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 				<-timer.C
 			}
 			return
+		case _, ok := <-waitWake:
+			if !timer.Stop() {
+				select {
+				case <-timer.C:
+				default:
+				}
+			}
+			if !ok {
+				// A wake source ending is not an authority failure. Disable it and
+				// retain the periodic durable poll without spinning on a closed channel.
+				wake = nil
+			}
 		case <-timer.C:
 		}
 	}
