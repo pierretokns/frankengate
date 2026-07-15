@@ -112,6 +112,12 @@ sed -e "s/__BINARY_SERVICE_IP__/$binary_service_ip/g" \
   "$MANIFEST" > "$WORK_DIR/gateway.yaml"
 kubectl apply -f "$WORK_DIR/gateway.yaml"
 if [[ -n "$FRANKENGATE_IMAGE" ]]; then
+  # The checked-in manifest intentionally starts with the binary-transfer init
+  # container. Remove that ReplicaSet completely before switching to the image
+  # template so required one-pod-per-node anti-affinity cannot deadlock a
+  # rolling update behind an obsolete init pod.
+  kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=0
+  kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=120s
   image_patch="$(jq -cn --arg image "$FRANKENGATE_IMAGE" '[
     {op:"remove",path:"/spec/template/spec/initContainers"},
     {op:"replace",path:"/spec/template/spec/containers/0/image",value:$image},
@@ -133,6 +139,7 @@ if [[ -n "$FRANKENGATE_IMAGE" ]]; then
     }]}
   ]' --arg pull_policy "$FRANKENGATE_IMAGE_PULL_POLICY")"
   kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=json -p "$image_patch"
+  kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=3
 fi
 kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
 
