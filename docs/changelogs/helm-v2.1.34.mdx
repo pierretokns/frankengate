@@ -1,0 +1,15 @@
+---
+title: "v2.1.34"
+description: "Helm v2.1.34 changelog - 2026-07-15"
+---
+
+<Update label="FrankenGate Helm" description="v2.1.34">
+
+## Authority restart hardening
+
+- Default `image.tag` installs FrankenGate v0.3.3.
+- Virtual-key consumers fence the durable outbox, reload the complete current governance authority snapshot, and replay only mutations committed after the fence.
+- Principal authority uses the same bounded snapshot and post-fence replay pattern for MCP admission and live-session cancellation.
+- Release-image validation now requires three distinct Kubernetes nodes and exercises create, rotate, delete, restart replay, and stale-authority fail-closed behavior through the image's own entrypoint.
+
+</Update>

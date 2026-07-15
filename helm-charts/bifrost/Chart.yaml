@@ -2,8 +2,8 @@ apiVersion: v2
 name: bifrost
 description: FrankenGate enterprise AI gateway, packaged as a drop-in Bifrost-compatible Helm deployment
 type: application
-version: 2.1.33
-appVersion: "0.3.2"
+version: 2.1.34
+appVersion: "0.3.3"
 keywords:
   - ai
   - gateway
