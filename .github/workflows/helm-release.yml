@@ -158,6 +158,24 @@ jobs:
             --destination verified
           cmp "dist/${{ steps.chart.outputs.package }}" "verified/${{ steps.chart.outputs.package }}"
 
+      - name: Verify anonymous OCI chart retrieval
+        shell: bash
+        run: |
+          set -euo pipefail
+          anon_root="$RUNNER_TEMP/frankengate-anonymous-helm"
+          mkdir -p "$anon_root/docker" "$anon_root/pull"
+          printf '{"auths":{}}\n' > "$anon_root/docker/config.json"
+          printf '{"auths":{}}\n' > "$anon_root/registry.json"
+          DOCKER_CONFIG="$anon_root/docker" \
+            HELM_REGISTRY_CONFIG="$anon_root/registry.json" \
+            helm pull \
+              "oci://${{ steps.chart.outputs.oci_repository }}" \
+              --version "${{ steps.chart.outputs.version }}" \
+              --destination "$anon_root/pull"
+          cmp \
+            "dist/${{ steps.chart.outputs.package }}" \
+            "$anon_root/pull/${{ steps.chart.outputs.package }}"
+
       - name: Attach verified chart and OCI digest to GitHub release
         shell: bash
         run: |
