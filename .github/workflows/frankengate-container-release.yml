@@ -168,6 +168,22 @@ jobs:
             docker image rm "$IMAGE@$DIGEST" >/dev/null 2>&1 || true
           done
 
+      - name: Verify license and modification notice are in every platform image
+        env:
+          IMAGE: ${{ steps.meta.outputs.image }}
+          DIGEST: ${{ steps.image.outputs.digest }}
+        run: |
+          for platform in linux/amd64 linux/arm64; do
+            docker run --rm --platform "$platform" --entrypoint /bin/sh "$IMAGE@$DIGEST" -ec '
+              test -r /licenses/LICENSE
+              test -r /licenses/NOTICE
+              grep -F "Apache License" /licenses/LICENSE >/dev/null
+              grep -F "derived from Bifrost AI Gateway" /licenses/NOTICE >/dev/null
+              grep -F "affiliated with or endorsed by Maxim AI" /licenses/NOTICE >/dev/null
+            '
+            docker image rm "$IMAGE@$DIGEST" >/dev/null 2>&1 || true
+          done
+
       - name: Verify image startup and health
         env:
           IMAGE: ${{ steps.meta.outputs.image }}
@@ -205,7 +221,19 @@ jobs:
             echo "workflow_sha=$WORKFLOW_SHA"
           } > "frankengate-${RELEASE_TAG}-container-digest.txt"
 
+      - name: Verify existing image build provenance before repair
+        if: inputs.existing_digest != ''
+        env:
+          IMAGE: ${{ steps.meta.outputs.image }}
+          DIGEST: ${{ steps.image.outputs.digest }}
+        run: |
+          gh attestation verify "oci://$IMAGE@$DIGEST" \
+            --repo "$GITHUB_REPOSITORY" \
+            --predicate-type https://slsa.dev/provenance/v1 \
+            --deny-self-hosted-runners
+
       - name: Attest build provenance
+        if: inputs.existing_digest == ''
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
         with:
           subject-name: ${{ steps.meta.outputs.image }}

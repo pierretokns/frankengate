@@ -54,6 +54,7 @@ RUN apk add --no-cache ca-certificates
 
 COPY --from=builder /app/main /app/main
 COPY --from=builder /src/transports/docker-entrypoint.sh /app/docker-entrypoint.sh
+COPY LICENSE NOTICE /licenses/
 
 ARG ARG_APP_PORT=8080
 ARG ARG_APP_HOST=0.0.0.0
@@ -72,7 +73,8 @@ RUN mkdir -p "$APP_DIR/logs" && \
     adduser -D -s /bin/sh appuser && \
     chown -R appuser:0 /app && \
     chmod -R g=rwX "$APP_DIR" && \
-    chmod 0555 /app/main /app/docker-entrypoint.sh
+    chmod 0555 /app/main /app/docker-entrypoint.sh && \
+    chmod 0444 /licenses/LICENSE /licenses/NOTICE
 USER 1000:0
 VOLUME ["/app/data"]
 EXPOSE 8080
