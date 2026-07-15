@@ -1037,6 +1037,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 	// than a bare slice-header copy, so we're safe if a future change mutates the
 	// slice contents in-place instead of reassigning the header.
 	existingAllowOnAllVirtualKeys := existingConfig.AllowOnAllVirtualKeys
+	existingDisabled := existingConfig.Disabled
 	existingPerUserHeaderKeys := append([]string(nil), existingConfig.PerUserHeaderKeys...)
 
 	// Resolve all mutable fields with PATCH semantics: use the provided value if
@@ -1282,6 +1283,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		Disabled:              disabled,
 		PerUserHeaderKeys:     perUserHeaderKeys,
 		TLSConfig:             tlsConfig,
+		UpdatedAt:             oldDBConfig.UpdatedAt,
 	}
 	// Rebind persisted discovered tool keys (and inner Function.Name) to the current
 	// client name so a restart restores them under the right prefix.
@@ -1303,11 +1305,108 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		dbUpdateRecord.DiscoveredTools = migrated
 		dbUpdateRecord.DiscoveredToolNameMapping = oldDBConfig.DiscoveredToolNameMapping
 	}
-	if h.store.ConfigStore != nil {
-		if err := h.store.ConfigStore.UpdateMCPClientConfig(ctx, id, &dbUpdateRecord); err != nil {
-			SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("failed to update mcp client config in store: %v", err))
+	// Build and validate the complete assignment replacement before changing
+	// durable state. The config row, grants, credentials, and invalidation
+	// outbox are one authority mutation and must commit or roll back together.
+	currentByVKID := make(map[string]*configstoreTables.TableVirtualKeyMCPConfig)
+	requestedByVKID := make(map[string]MCPVKConfigRequest)
+	affectedVKSet := make(map[string]struct{})
+	var requestedVKIDs []string
+	if req.VKConfigs != nil {
+		for _, vc := range *req.VKConfigs {
+			if vc.VirtualKeyID == "" {
+				SendError(ctx, fasthttp.StatusBadRequest, "virtual_key_id must not be empty")
+				return
+			}
+			if _, exists := requestedByVKID[vc.VirtualKeyID]; exists {
+				SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("duplicate virtual_key_id in vk_configs: %s", vc.VirtualKeyID))
+				return
+			}
+			if err := vc.ToolsToExecute.Validate(); err != nil {
+				SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("invalid tools_to_execute for virtual key %s: %v", vc.VirtualKeyID, err))
+				return
+			}
+			requestedByVKID[vc.VirtualKeyID] = vc
+			requestedVKIDs = append(requestedVKIDs, vc.VirtualKeyID)
+			affectedVKSet[vc.VirtualKeyID] = struct{}{}
+		}
+	}
+	sort.Strings(requestedVKIDs)
+	var affectedVKIDs []string
+	headerSchemaExpanded := existingConfig.AuthType == schemas.MCPAuthTypePerUserHeaders &&
+		perUserHeaderKeysAdded(existingPerUserHeaderKeys, perUserHeaderKeys)
+	shouldReconcileCredentials := req.VKConfigs != nil ||
+		allowOnAllVKs != existingAllowOnAllVirtualKeys || disabled != existingDisabled
+	lockAllVirtualKeys := allowOnAllVKs != existingAllowOnAllVirtualKeys || disabled != existingDisabled ||
+		(headerSchemaExpanded && allowOnAllVKs)
+
+	if err := h.store.ConfigStore.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+		if shouldReconcileCredentials || headerSchemaExpanded {
+			current, err := h.store.ConfigStore.LockMCPAuthorityChangeTx(ctx, tx, id, requestedVKIDs, lockAllVirtualKeys)
+			if err != nil {
+				return fmt.Errorf("lock MCP authority change: %w", err)
+			}
+			for i := range current {
+				currentByVKID[current[i].VirtualKeyID] = &current[i]
+				affectedVKSet[current[i].VirtualKeyID] = struct{}{}
+			}
+		}
+		if err := h.store.ConfigStore.UpdateMCPClientConfig(ctx, id, &dbUpdateRecord, tx); err != nil {
+			return fmt.Errorf("update MCP client config: %w", err)
+		}
+		if req.VKConfigs != nil {
+			for _, vc := range *req.VKConfigs {
+				if existing, ok := currentByVKID[vc.VirtualKeyID]; ok {
+					existing.ToolsToExecute = vc.ToolsToExecute
+					if err := h.store.ConfigStore.UpdateVirtualKeyMCPConfig(ctx, existing, tx); err != nil {
+						return fmt.Errorf("update VK MCP config for %s: %w", vc.VirtualKeyID, err)
+					}
+				} else if err := h.store.ConfigStore.CreateVirtualKeyMCPConfig(ctx, &configstoreTables.TableVirtualKeyMCPConfig{
+					VirtualKeyID: vc.VirtualKeyID, MCPClientID: oldDBConfig.ID, ToolsToExecute: vc.ToolsToExecute,
+				}, tx); err != nil {
+					return fmt.Errorf("create VK MCP config for %s: %w", vc.VirtualKeyID, err)
+				}
+			}
+			for vkID, existing := range currentByVKID {
+				if _, retained := requestedByVKID[vkID]; !retained {
+					if err := h.store.ConfigStore.DeleteVirtualKeyMCPConfig(ctx, existing.ID, tx); err != nil {
+						return fmt.Errorf("remove VK MCP config for %s: %w", vkID, err)
+					}
+				}
+			}
+		}
+		affectedVKIDs = make([]string, 0, len(affectedVKSet))
+		for vkID := range affectedVKSet {
+			affectedVKIDs = append(affectedVKIDs, vkID)
+		}
+		sort.Strings(affectedVKIDs)
+		if shouldReconcileCredentials || headerSchemaExpanded {
+			if err := h.store.ConfigStore.ReconcileCredentialsAfterMCPChangeTx(ctx, tx, id, headerSchemaExpanded); err != nil {
+				return fmt.Errorf("reconcile MCP credentials: %w", err)
+			}
+		}
+		for _, vkID := range affectedVKIDs {
+			// UpdateMCPClientConfig already publishes every pre-update/current
+			// assignment. Only a newly added assignment is absent from that set.
+			if _, alreadyPublished := currentByVKID[vkID]; alreadyPublished {
+				continue
+			}
+			if err := h.store.ConfigStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
+				EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
+				Action:     configstoreTables.VirtualKeyInvalidationActionReload,
+				EntityID:   vkID,
+			}); err != nil {
+				return fmt.Errorf("publish VK MCP assignment update for %s: %w", vkID, err)
+			}
+		}
+		return nil
+	}); err != nil {
+		if errors.Is(err, configstore.ErrMCPConcurrentUpdate) {
+			SendError(ctx, fasthttp.StatusConflict, "MCP client changed concurrently; retry the update")
 			return
 		}
+		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("failed to update MCP authority atomically: %v", err))
+		return
 	}
 
 	toolSyncInterval := resolvedToolSyncInterval
@@ -1348,167 +1447,39 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 
 	// Update MCP client config in memory (always — applies name/tools/header changes,
 	if err := h.mcpManager.UpdateMCPClient(ctx, id, schemasConfig); err != nil {
-		// Rollback DB update to keep DB and memory in sync
-		if h.store.ConfigStore != nil && oldDBConfig != nil {
-			if rollbackErr := h.store.ConfigStore.UpdateMCPClientConfig(ctx, id, oldDBConfig); rollbackErr != nil {
-				logger.Error(fmt.Sprintf("Failed to rollback MCP client DB update: %v. please restart bifrost to keep core and database in sync", rollbackErr))
-			}
-		}
-		logger.Error(fmt.Sprintf("Failed to update MCP client: %v", err))
-		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("failed to update mcp client: %v", err))
+		// Durable authority is already committed. Never compensate by restoring
+		// stale DB state: this pod and its peers converge from the outbox-backed
+		// source of truth, while the error tells the caller initialization is
+		// temporarily degraded.
+		logger.Error(fmt.Sprintf("Failed to apply committed MCP client update to runtime: %v", err))
+		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("MCP authority committed but runtime convergence is pending: %v", err))
 		return
 	}
 
-	// If the per-user-headers schema now requires additional keys, flip every
-	// existing active row to 'needs_update' so callers are forced to submit the
-	// new values on next tool use. Removed-only schema changes do not need a
-	// resubmission: runtime resolution and flow-submit both filter stored
-	// credentials to the current schema before using/persisting them.
-	//
-	// Runs AFTER the in-memory UpdateMCPClient succeeds — if we flipped
-	// credentials first and the runtime update then failed, the rollback
-	// above would revert the DB row but leave every credential stuck in
-	// needs_update, even though the old schema is still the active one.
-	// Users would see a spurious "resubmit" prompt with no actual schema
-	// change to reconcile.
-	if existingConfig.AuthType == schemas.MCPAuthTypePerUserHeaders &&
-		perUserHeaderKeysAdded(existingPerUserHeaderKeys, schemasConfig.PerUserHeaderKeys) &&
-		h.store.ConfigStore != nil {
-		if err := h.store.ConfigStore.MarkMCPPerUserHeaderCredentialsNeedsUpdate(ctx, existingConfig.ID); err != nil {
-			logger.Error(fmt.Sprintf("failed to flip per-user header credentials to needs_update for client %s: %v", existingConfig.ID, err))
+	// Reload both the post-commit assignments and every removed assignment.
+	// Current rows cover name/tool/header-only edits; affectedVKIDs preserves
+	// revoked VKs that disappeared from the post-commit query.
+	if h.governanceManager != nil {
+		reloadSet := make(map[string]struct{}, len(affectedVKIDs))
+		for _, vkID := range affectedVKIDs {
+			reloadSet[vkID] = struct{}{}
 		}
-	}
-
-	// Reload every VK currently referencing this MCP client so the governance
-	// cache's preloaded MCPClient relation picks up the rename / tool / header
-	// changes. The VK-assignment-change block below does its own targeted
-	// reload, but only fires when req.VKConfigs != nil — a name-only update
-	// otherwise leaves every cached VK pointing at the old MCPClient.Name and
-	// the per-VK allowlist check rejects tool calls under the new prefix.
-	if h.store.ConfigStore != nil && h.governanceManager != nil {
 		assignedVKs, listErr := h.store.ConfigStore.GetVirtualKeyMCPConfigsByMCPClientID(ctx, oldDBConfig.ID)
 		if listErr != nil {
 			logger.Error(fmt.Sprintf("failed to fetch VK assignments for MCP client %s after update: %v", id, listErr))
 		} else {
 			for _, av := range assignedVKs {
-				if _, err := h.governanceManager.ReloadVirtualKey(ctx, av.VirtualKeyID); err != nil {
-					logger.Error(fmt.Sprintf("failed to reload virtual key %s after MCP client update: %v", av.VirtualKeyID, err))
-				}
+				reloadSet[av.VirtualKeyID] = struct{}{}
 			}
 		}
-	}
-
-	// Manage VK assignments if vk_configs was provided
-	if req.VKConfigs != nil && h.store.ConfigStore != nil {
-		current, err := h.store.ConfigStore.GetVirtualKeyMCPConfigsByMCPClientID(ctx, oldDBConfig.ID)
-		if err != nil {
-			SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("failed to get current VK MCP configs: %v", err))
-			return
+		reloadIDs := make([]string, 0, len(reloadSet))
+		for vkID := range reloadSet {
+			reloadIDs = append(reloadIDs, vkID)
 		}
-		// Index current assignments by VK ID for diffing
-		currentByVKID := make(map[string]*configstoreTables.TableVirtualKeyMCPConfig, len(current))
-		for i := range current {
-			currentByVKID[current[i].VirtualKeyID] = &current[i]
-		}
-		// Validate and reject empty/duplicate virtual_key_id entries
-		seen := make(map[string]struct{}, len(*req.VKConfigs))
-		for _, vc := range *req.VKConfigs {
-			if vc.VirtualKeyID == "" {
-				SendError(ctx, fasthttp.StatusBadRequest, "virtual_key_id must not be empty")
-				return
-			}
-			if _, exists := seen[vc.VirtualKeyID]; exists {
-				SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("duplicate virtual_key_id in vk_configs: %s", vc.VirtualKeyID))
-				return
-			}
-			seen[vc.VirtualKeyID] = struct{}{}
-		}
-		// Validate tools_to_execute before entering the transaction so failures return 400
-		for _, vc := range *req.VKConfigs {
-			if err := vc.ToolsToExecute.Validate(); err != nil {
-				SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("invalid tools_to_execute for virtual key %s: %v", vc.VirtualKeyID, err))
-				return
-			}
-		}
-		// Index requested assignments by VK ID
-		requestedByVKID := make(map[string]MCPVKConfigRequest, len(*req.VKConfigs))
-		for _, vc := range *req.VKConfigs {
-			requestedByVKID[vc.VirtualKeyID] = vc
-		}
-		affectedVKSet := make(map[string]struct{}, len(requestedByVKID)+len(currentByVKID))
-		for vkID := range requestedByVKID {
-			affectedVKSet[vkID] = struct{}{}
-		}
-		for vkID := range currentByVKID {
-			affectedVKSet[vkID] = struct{}{}
-		}
-		affectedVKIDs := make([]string, 0, len(affectedVKSet))
-		for vkID := range affectedVKSet {
-			affectedVKIDs = append(affectedVKIDs, vkID)
-		}
-		sort.Strings(affectedVKIDs)
-		if err := h.store.ConfigStore.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
-			// Create or update
-			for _, vc := range *req.VKConfigs {
-				if existing, ok := currentByVKID[vc.VirtualKeyID]; ok {
-					existing.ToolsToExecute = vc.ToolsToExecute
-					if err := h.store.ConfigStore.UpdateVirtualKeyMCPConfig(ctx, existing, tx); err != nil {
-						return fmt.Errorf("failed to update VK MCP config for %s: %w", vc.VirtualKeyID, err)
-					}
-				} else {
-					if err := h.store.ConfigStore.CreateVirtualKeyMCPConfig(ctx, &configstoreTables.TableVirtualKeyMCPConfig{
-						VirtualKeyID:   vc.VirtualKeyID,
-						MCPClientID:    oldDBConfig.ID,
-						ToolsToExecute: vc.ToolsToExecute,
-					}, tx); err != nil {
-						return fmt.Errorf("failed to create VK MCP config for %s: %w", vc.VirtualKeyID, err)
-					}
-				}
-			}
-			// Delete removed assignments
-			for vkID, existing := range currentByVKID {
-				if _, ok := requestedByVKID[vkID]; !ok {
-					if err := h.store.ConfigStore.DeleteVirtualKeyMCPConfig(ctx, existing.ID, tx); err != nil {
-						return fmt.Errorf("failed to remove VK MCP config for %s: %w", vkID, err)
-					}
-				}
-			}
-			for _, vkID := range affectedVKIDs {
-				if err := h.store.ConfigStore.AppendVirtualKeyInvalidation(ctx, tx, &configstoreTables.TableVirtualKeyInvalidationEvent{
-					EntityType: configstoreTables.VirtualKeyInvalidationEntityType,
-					Action:     configstoreTables.VirtualKeyInvalidationActionReload,
-					EntityID:   vkID,
-				}); err != nil {
-					return fmt.Errorf("failed to publish VK MCP assignment update for %s: %w", vkID, err)
-				}
-			}
-			return nil
-		}); err != nil {
-			// NOTE: Partial success — the MCP client config was already updated in DB and memory above.
-			// Only the VK assignment changes failed. The VK assignments remain unchanged in DB.
-			// The MCP client update is idempotent, so retrying the full request is safe.
-			logger.Error(fmt.Sprintf(
-				"[PARTIAL SUCCESS] MCP client %s was updated successfully but VK assignment update failed: %v. "+
-					"VK assignments remain unchanged. Retry the request to apply VK changes.",
-				id, err,
-			))
-			SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("MCP client was updated but VK assignment update failed: %v", err))
-			return
-		}
-		// Reload all affected VKs in memory so governance enforcement reflects the new MCP assignments.
-		// requestedByVKID and currentByVKID together cover the full affected set (no duplicates since both are maps).
-		if h.governanceManager != nil {
-			for vkID := range requestedByVKID {
-				if _, err := h.governanceManager.ReloadVirtualKey(ctx, vkID); err != nil {
-					logger.Error(fmt.Sprintf("failed to reload virtual key %s in memory after MCP VK assignment update: %v", vkID, err))
-				}
-			}
-			for vkID := range currentByVKID {
-				if _, alreadyReloaded := requestedByVKID[vkID]; !alreadyReloaded {
-					if _, err := h.governanceManager.ReloadVirtualKey(ctx, vkID); err != nil {
-						logger.Error(fmt.Sprintf("failed to reload virtual key %s in memory after MCP VK assignment update: %v", vkID, err))
-					}
-				}
+		sort.Strings(reloadIDs)
+		for _, vkID := range reloadIDs {
+			if _, err := h.governanceManager.ReloadVirtualKey(ctx, vkID); err != nil {
+				logger.Error(fmt.Sprintf("failed to reload virtual key %s after MCP client update: %v", vkID, err))
 			}
 		}
 	}
@@ -1550,28 +1521,6 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 	// 	})
 	// 	return
 	// }
-
-	// Per-user credential reconciliation for changes that mutate who can
-	// access this MCP. Two trigger conditions:
-	//   1. vk_configs explicitly diffed (rows added/removed/updated).
-	//   2. AllowOnAllVirtualKeys flipped — the implicit fallback toggled,
-	//      every VK with a credential for this MCP needs re-evaluation.
-	//
-	// Reconcile is enterprise-only behavior (no-op in OSS). It orphans
-	// credentials whose MCP just lost the grant and reactivates orphaned
-	// ones whose MCP regained the grant. Both surfaces (OAuth + headers)
-	// are reconciled — they share the same VK→MCP allowlist model.
-	if h.store.ConfigStore != nil {
-		shouldReconcile := req.VKConfigs != nil || allowOnAllVKs != existingAllowOnAllVirtualKeys
-		if shouldReconcile {
-			if err := h.store.ConfigStore.ReconcileOauthAfterMCPChange(ctx, id); err != nil {
-				logger.Error(fmt.Sprintf("reconcile OAuth credentials after MCP %s update failed: %v", id, err))
-			}
-			if err := h.store.ConfigStore.ReconcileMCPHeadersAfterMCPChange(ctx, id); err != nil {
-				logger.Error(fmt.Sprintf("reconcile per-user-headers credentials after MCP %s update failed: %v", id, err))
-			}
-		}
-	}
 
 	SendJSON(ctx, map[string]any{
 		"status":  "success",

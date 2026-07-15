@@ -1572,6 +1572,53 @@ func (h *GovernanceHandler) updateVirtualKey(ctx *fasthttp.RequestCtx) {
 		var rateLimitIDToDelete string
 		var providerBudgetIDsToDelete []string
 		var providerRateLimitIDsToDelete []string
+		lockedMCPClientsByName := make(map[string]configstoreTables.TableMCPClient)
+		if req.MCPConfigs != nil {
+			// MCP-side edits use MCP -> VK -> assignment lock order. Resolve and
+			// lock every old/new MCP row before locking this VK so the VK-side
+			// replacement follows the same order and cannot deadlock or race a
+			// first-credential callback.
+			var existingMCPClientIDs []uint
+			if err := tx.Model(&configstoreTables.TableVirtualKeyMCPConfig{}).
+				Where("virtual_key_id = ?", vkID).
+				Pluck("mcp_client_id", &existingMCPClientIDs).Error; err != nil {
+				return err
+			}
+			requestedNames := make([]string, 0, len(req.MCPConfigs))
+			for _, mc := range req.MCPConfigs {
+				requestedNames = append(requestedNames, mc.MCPClientName)
+			}
+			var requestedClients []configstoreTables.TableMCPClient
+			if len(requestedNames) > 0 {
+				if err := tx.Where("name IN ?", requestedNames).Find(&requestedClients).Error; err != nil {
+					return err
+				}
+			}
+			mcpIDSet := make(map[uint]struct{}, len(existingMCPClientIDs)+len(requestedClients))
+			for _, mcpID := range existingMCPClientIDs {
+				mcpIDSet[mcpID] = struct{}{}
+			}
+			for _, client := range requestedClients {
+				mcpIDSet[client.ID] = struct{}{}
+			}
+			mcpIDs := make([]uint, 0, len(mcpIDSet))
+			for mcpID := range mcpIDSet {
+				mcpIDs = append(mcpIDs, mcpID)
+			}
+			sort.Slice(mcpIDs, func(i, j int) bool { return mcpIDs[i] < mcpIDs[j] })
+			for _, mcpID := range mcpIDs {
+				var client configstoreTables.TableMCPClient
+				if err := dbForUpdate(tx).Where("id = ?", mcpID).First(&client).Error; err != nil {
+					return err
+				}
+				lockedMCPClientsByName[client.Name] = client
+			}
+			for _, name := range requestedNames {
+				if _, ok := lockedMCPClientsByName[name]; !ok {
+					return &badRequestError{err: fmt.Errorf("MCP client not found: %s", name)}
+				}
+			}
+		}
 		var lockedVK configstoreTables.TableVirtualKey
 		if err := dbForUpdate(tx.WithContext(ctx)).
 			Preload("Budgets").
@@ -1823,7 +1870,7 @@ func (h *GovernanceHandler) updateVirtualKey(ctx *fasthttp.RequestCtx) {
 			}
 			// Get existing MCP configs for comparison
 			var existingMCPConfigs []configstoreTables.TableVirtualKeyMCPConfig
-			if err := tx.Where("virtual_key_id = ?", vk.ID).Find(&existingMCPConfigs).Error; err != nil {
+			if err := dbForUpdate(tx).Where("virtual_key_id = ?", vk.ID).Find(&existingMCPConfigs).Error; err != nil {
 				return err
 			}
 			sort.Slice(existingMCPConfigs, func(i, j int) bool { return existingMCPConfigs[i].ID < existingMCPConfigs[j].ID })
@@ -1851,9 +1898,9 @@ func (h *GovernanceHandler) updateVirtualKey(ctx *fasthttp.RequestCtx) {
 					return &badRequestError{err: fmt.Errorf("invalid tools_to_execute for mcp client %s: %w", mc.MCPClientName, err)}
 				}
 				if mc.ID == nil {
-					mcpClient, err := h.configStore.GetMCPClientByName(ctx, mc.MCPClientName)
-					if err != nil {
-						return fmt.Errorf("failed to get MCP client: %w", err)
+					mcpClient, ok := lockedMCPClientsByName[mc.MCPClientName]
+					if !ok {
+						return &badRequestError{err: fmt.Errorf("MCP client not found: %s", mc.MCPClientName)}
 					}
 					// Create new MCP config
 					if err := h.configStore.CreateVirtualKeyMCPConfig(ctx, &configstoreTables.TableVirtualKeyMCPConfig{

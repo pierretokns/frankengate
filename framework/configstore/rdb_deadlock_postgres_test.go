@@ -197,6 +197,197 @@ func TestPostgresVirtualKeyBudgetConcurrentMutationsDoNotDeadlock(t *testing.T) 
 	}
 }
 
+// TestPostgresFirstCredentialCallbackSerializesWithMCPRevocation proves the
+// no-existing-row race: a callback that validated before revocation is allowed
+// to finish, then the waiting authority transaction must observe and orphan its
+// new credential before committing.
+func TestPostgresFirstCredentialCallbackSerializesWithMCPRevocation(t *testing.T) {
+	store := setupPostgresDeadlockStore(t)
+	ctx := context.Background()
+	mcpClient := &tables.TableMCPClient{ClientID: "pg-mcp-callback", Name: "pg-mcp-callback", ConnectionType: "stdio"}
+	require.NoError(t, store.DB().WithContext(ctx).Create(mcpClient).Error)
+	vkID := "pg-vk-first-callback"
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKey{
+		ID: vkID, Name: vkID, Value: *schemas.NewSecretVar("sk-pg-first-callback"),
+	}).Error)
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKeyMCPConfig{
+		VirtualKeyID: vkID, MCPClientID: mcpClient.ID, ToolsToExecute: []string{"*"},
+	}).Error)
+
+	callbackLocked := make(chan struct{})
+	releaseCallback := make(chan struct{})
+	callbackErr := make(chan error, 1)
+	go func() {
+		callbackErr <- store.DB().WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+			if err := assertVKAllowsMCP(tx, vkID, mcpClient.ClientID); err != nil {
+				return err
+			}
+			close(callbackLocked)
+			<-releaseCallback
+			return tx.Create(&tables.TableOauthUserToken{
+				ID: "pg-first-token", VirtualKeyID: &vkID, MCPClientID: mcpClient.ClientID,
+				AuthMode: string(schemas.MCPAuthModeVK), Status: "active", OauthConfigID: "oauth-config",
+				AccessToken: "token", TokenType: "Bearer", Scopes: "[]",
+			}).Error
+		})
+	}()
+	<-callbackLocked
+
+	revokeErr := make(chan error, 1)
+	go func() {
+		revokeErr <- store.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+			if _, err := store.LockMCPAuthorityChangeTx(ctx, tx, mcpClient.ClientID, []string{vkID}, false); err != nil {
+				return err
+			}
+			if err := tx.Where("virtual_key_id = ? AND mcp_client_id = ?", vkID, mcpClient.ID).
+				Delete(&tables.TableVirtualKeyMCPConfig{}).Error; err != nil {
+				return err
+			}
+			return store.ReconcileCredentialsAfterMCPChangeTx(ctx, tx, mcpClient.ClientID, false)
+		})
+	}()
+
+	select {
+	case err := <-revokeErr:
+		t.Fatalf("revocation bypassed callback authority locks: %v", err)
+	case <-time.After(150 * time.Millisecond):
+		// Expected: revocation is waiting on the callback's MCP row lock.
+	}
+	close(releaseCallback)
+	require.NoError(t, <-callbackErr)
+	require.NoError(t, <-revokeErr)
+
+	var token tables.TableOauthUserToken
+	require.NoError(t, store.DB().WithContext(ctx).First(&token, "id = ?", "pg-first-token").Error)
+	require.Equal(t, "orphaned", token.Status)
+}
+
+func TestPostgresMCPAndVKSideAssignmentReplacementsDoNotDeadlock(t *testing.T) {
+	store := setupPostgresDeadlockStore(t)
+	ctx := context.Background()
+	mcpClient := &tables.TableMCPClient{ClientID: "pg-mcp-assignment-race", Name: "pg-mcp-assignment-race", ConnectionType: "stdio"}
+	require.NoError(t, store.DB().WithContext(ctx).Create(mcpClient).Error)
+	vkID := "pg-vk-assignment-race"
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKey{
+		ID: vkID, Name: vkID, Value: *schemas.NewSecretVar("sk-pg-assignment-race"),
+	}).Error)
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKeyMCPConfig{
+		VirtualKeyID: vkID, MCPClientID: mcpClient.ID, ToolsToExecute: []string{"*"},
+	}).Error)
+
+	for i := 0; i < 20; i++ {
+		start := make(chan struct{})
+		errs := make(chan error, 2)
+		var wg sync.WaitGroup
+		wg.Add(2)
+		go func(iter int) {
+			defer wg.Done()
+			<-start
+			errs <- store.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+				current, err := store.LockMCPAuthorityChangeTx(ctx, tx, mcpClient.ClientID, []string{vkID}, false)
+				if err != nil {
+					return err
+				}
+				if len(current) != 1 {
+					return fmt.Errorf("MCP-side expected one assignment, got %d", len(current))
+				}
+				current[0].ToolsToExecute = []string{fmt.Sprintf("mcp-%d", iter)}
+				return store.UpdateVirtualKeyMCPConfig(ctx, &current[0], tx)
+			})
+		}(i)
+		go func(iter int) {
+			defer wg.Done()
+			<-start
+			errs <- store.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+				// Mirrors GovernanceHandler's MCP -> VK -> assignment order.
+				var lockedMCP tables.TableMCPClient
+				if err := dbForUpdate(tx).Where("id = ?", mcpClient.ID).First(&lockedMCP).Error; err != nil {
+					return err
+				}
+				var lockedVK tables.TableVirtualKey
+				if err := dbForUpdate(tx).Where("id = ?", vkID).First(&lockedVK).Error; err != nil {
+					return err
+				}
+				var assignment tables.TableVirtualKeyMCPConfig
+				if err := dbForUpdate(tx).Where("virtual_key_id = ? AND mcp_client_id = ?", vkID, mcpClient.ID).
+					First(&assignment).Error; err != nil {
+					return err
+				}
+				assignment.ToolsToExecute = []string{fmt.Sprintf("vk-%d", iter)}
+				return store.UpdateVirtualKeyMCPConfig(ctx, &assignment, tx)
+			})
+		}(i)
+		close(start)
+		wg.Wait()
+		close(errs)
+		for err := range errs {
+			if isPostgresDeadlock(err) {
+				t.Fatalf("MCP/VK assignment replacement deadlocked on iteration %d: %v", i, err)
+			}
+			require.NoError(t, err)
+		}
+	}
+}
+
+func TestPostgresCrossedMCPHolderLockSetsDoNotDeadlock(t *testing.T) {
+	store := setupPostgresDeadlockStore(t)
+	ctx := context.Background()
+	mcpA := &tables.TableMCPClient{ClientID: "pg-cross-mcp-a", Name: "pg-cross-mcp-a", ConnectionType: "stdio"}
+	mcpB := &tables.TableMCPClient{ClientID: "pg-cross-mcp-b", Name: "pg-cross-mcp-b", ConnectionType: "stdio"}
+	require.NoError(t, store.DB().WithContext(ctx).Create(mcpA).Error)
+	require.NoError(t, store.DB().WithContext(ctx).Create(mcpB).Error)
+	for _, vkID := range []string{"a-cross-vk", "z-cross-vk"} {
+		require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKey{
+			ID: vkID, Name: vkID, Value: *schemas.NewSecretVar("sk-" + vkID),
+		}).Error)
+	}
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKeyMCPConfig{
+		VirtualKeyID: "z-cross-vk", MCPClientID: mcpA.ID, ToolsToExecute: []string{"*"},
+	}).Error)
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableVirtualKeyMCPConfig{
+		VirtualKeyID: "a-cross-vk", MCPClientID: mcpB.ID, ToolsToExecute: []string{"*"},
+	}).Error)
+	aVK, zVK := "a-cross-vk", "z-cross-vk"
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableOauthUserToken{
+		ID: "cross-holder-a", VirtualKeyID: &aVK, MCPClientID: mcpA.ClientID,
+		AuthMode: string(schemas.MCPAuthModeVK), Status: "orphaned", OauthConfigID: "oauth-a",
+		AccessToken: "token-a", TokenType: "Bearer", Scopes: "[]",
+	}).Error)
+	require.NoError(t, store.DB().WithContext(ctx).Create(&tables.TableOauthUserToken{
+		ID: "cross-holder-z", VirtualKeyID: &zVK, MCPClientID: mcpB.ClientID,
+		AuthMode: string(schemas.MCPAuthModeVK), Status: "orphaned", OauthConfigID: "oauth-b",
+		AccessToken: "token-b", TokenType: "Bearer", Scopes: "[]",
+	}).Error)
+
+	for i := 0; i < 20; i++ {
+		start := make(chan struct{})
+		errs := make(chan error, 2)
+		var wg sync.WaitGroup
+		for _, mcpID := range []string{mcpA.ClientID, mcpB.ClientID} {
+			wg.Add(1)
+			go func(clientID string) {
+				defer wg.Done()
+				<-start
+				errs <- store.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+					if _, err := store.LockMCPAuthorityChangeTx(ctx, tx, clientID, nil, false); err != nil {
+						return err
+					}
+					return store.ReconcileCredentialsAfterMCPChangeTx(ctx, tx, clientID, false)
+				})
+			}(mcpID)
+		}
+		close(start)
+		wg.Wait()
+		close(errs)
+		for err := range errs {
+			if isPostgresDeadlock(err) {
+				t.Fatalf("crossed MCP holder lock sets deadlocked on iteration %d: %v", i, err)
+			}
+			require.NoError(t, err)
+		}
+	}
+}
+
 // installRoutingRuleDeadlockAmplifier widens the old routing-rule lock inversion window.
 func installRoutingRuleDeadlockAmplifier(t *testing.T, db *gorm.DB) {
 	t.Helper()

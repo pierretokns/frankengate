@@ -1545,6 +1545,12 @@ func (m *MockConfigStore) ReconcileOauthAfterMCPChange(ctx context.Context, mcpC
 func (m *MockConfigStore) ReconcileMCPHeadersAfterMCPChange(ctx context.Context, mcpClientID string) error {
 	return nil
 }
+func (m *MockConfigStore) LockMCPAuthorityChangeTx(ctx context.Context, tx *gorm.DB, mcpClientID string, requestedVKIDs []string, lockAllVirtualKeys bool) ([]tables.TableVirtualKeyMCPConfig, error) {
+	return nil, nil
+}
+func (m *MockConfigStore) ReconcileCredentialsAfterMCPChangeTx(ctx context.Context, tx *gorm.DB, mcpClientID string, markHeaderSchemaChanged bool) error {
+	return nil
+}
 
 // Routing rules
 func (m *MockConfigStore) GetRoutingRules(ctx context.Context) ([]tables.TableRoutingRule, error) {

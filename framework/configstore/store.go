@@ -619,6 +619,16 @@ type ConfigStore interface {
 	// re-evaluates every VK that holds a credential for the changed MCP.
 	ReconcileOauthAfterMCPChange(ctx context.Context, mcpClientID string) error
 	ReconcileMCPHeadersAfterMCPChange(ctx context.Context, mcpClientID string) error
+	// LockMCPAuthorityChangeTx locks the MCP row and every VK whose authority
+	// can be changed by an MCP-side mutation. It returns the locked current
+	// assignments so callers derive their replacement diff from serialized state.
+	LockMCPAuthorityChangeTx(ctx context.Context, tx *gorm.DB, mcpClientID string, requestedVKIDs []string, lockAllVirtualKeys bool) ([]tables.TableVirtualKeyMCPConfig, error)
+	// ReconcileCredentialsAfterMCPChangeTx reconciles both per-user credential
+	// surfaces in the caller's MCP-authority transaction after the caller has
+	// acquired the complete lock set with LockMCPAuthorityChangeTx. When
+	// markHeaderSchemaChanged is true, every still-active header credential for
+	// the client is additionally moved to needs_update in that same transaction.
+	ReconcileCredentialsAfterMCPChangeTx(ctx context.Context, tx *gorm.DB, mcpClientID string, markHeaderSchemaChanged bool) error
 
 	// Not found retry wrapper
 	RetryOnNotFound(ctx context.Context, fn func(ctx context.Context) (any, error), maxRetries int, retryDelay time.Duration) (any, error)

@@ -2143,6 +2143,14 @@ func (s *RDBConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, c
 			}
 			return err
 		}
+		// API PATCH callers pass the UpdatedAt snapshot they resolved omitted
+		// fields from. Reject a stale full-row replacement after acquiring the
+		// lock so concurrent disjoint PATCHes cannot silently overwrite each
+		// other. Config-file reconciliation leaves UpdatedAt zero and retains
+		// its existing last-writer-wins behavior.
+		if !clientConfig.UpdatedAt.IsZero() && !existingClient.UpdatedAt.Equal(clientConfig.UpdatedAt) {
+			return ErrMCPConcurrentUpdate
+		}
 
 		// Create a deep copy to avoid modifying the original
 		clientConfigCopy, err := deepCopy(clientConfig)
@@ -6878,6 +6886,16 @@ func vkEffectiveMCPClientIDs(tx *gorm.DB, vkID string) ([]string, error) {
 // that began before revocation therefore waits for the VK row lock and cannot
 // recreate an active credential after the revocation commits.
 func assertVKAllowsMCP(tx *gorm.DB, vkID, mcpClientID string) error {
+	// MCP-side authority mutations lock this row first. Credential writers use
+	// the identical MCP -> VK order so first-time callbacks serialize even when
+	// no credential/flow row exists yet, without introducing lock inversion.
+	var mcpClient tables.TableMCPClient
+	if err := dbForUpdate(tx).Select("id", "client_id").Where("client_id = ?", mcpClientID).First(&mcpClient).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrMCPAccessDenied
+		}
+		return fmt.Errorf("lock MCP client %s before credential write: %w", mcpClientID, err)
+	}
 	var vk tables.TableVirtualKey
 	if err := dbForUpdate(tx).Select("id").Where("id = ?", vkID).First(&vk).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -7108,6 +7126,154 @@ func (s *RDBConfigStore) ReconcileMCPHeadersAfterMCPChange(ctx context.Context, 
 		}
 		return nil
 	})
+}
+
+// LockMCPAuthorityChangeTx serializes an MCP-side authority mutation with
+// concurrent PATCHes and first-time VK credential callbacks. Callback writers
+// lock the MCP row and then their VK before the final grant check. By locking
+// the complete affected VK set before changing authority, this transaction
+// either observes and reconciles their insert or makes their post-lock check
+// see the revocation.
+func (s *RDBConfigStore) LockMCPAuthorityChangeTx(ctx context.Context, tx *gorm.DB, mcpClientID string, requestedVKIDs []string, lockAllVirtualKeys bool) ([]tables.TableVirtualKeyMCPConfig, error) {
+	if tx == nil {
+		return nil, errors.New("MCP authority transaction is required")
+	}
+	tx = tx.WithContext(ctx)
+
+	var client tables.TableMCPClient
+	if err := dbForUpdate(tx).Select("id", "client_id").Where("client_id = ?", mcpClientID).First(&client).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("lock MCP client %s for authority change: %w", mcpClientID, err)
+	}
+
+	var current []tables.TableVirtualKeyMCPConfig
+	if err := tx.Where("mcp_client_id = ?", client.ID).Find(&current).Error; err != nil {
+		return nil, fmt.Errorf("read MCP assignments for %s: %w", mcpClientID, err)
+	}
+
+	vkSet := make(map[string]struct{}, len(current)+len(requestedVKIDs))
+	if lockAllVirtualKeys {
+		var allVKIDs []string
+		if err := tx.Model(&tables.TableVirtualKey{}).Order("id ASC").Pluck("id", &allVKIDs).Error; err != nil {
+			return nil, fmt.Errorf("list virtual keys for global MCP authority change: %w", err)
+		}
+		for _, vkID := range allVKIDs {
+			vkSet[vkID] = struct{}{}
+		}
+	} else {
+		for _, assignment := range current {
+			vkSet[assignment.VirtualKeyID] = struct{}{}
+		}
+		for _, vkID := range requestedVKIDs {
+			if strings.TrimSpace(vkID) != "" {
+				vkSet[vkID] = struct{}{}
+			}
+		}
+	}
+	// Historical/orphaned credentials can belong to VKs outside the current
+	// assignment diff. Include both credential surfaces before taking any VK
+	// lock so reconciliation never introduces a second, differently ordered
+	// lock phase across concurrent MCP updates.
+	oauthHolderVKIDs, err := readVKsHoldingOauthCredsForMCP(tx, mcpClientID)
+	if err != nil {
+		return nil, err
+	}
+	headerHolderVKIDs, err := readVKsHoldingHeaderCredsForMCP(tx, mcpClientID)
+	if err != nil {
+		return nil, err
+	}
+	for _, vkID := range oauthHolderVKIDs {
+		vkSet[vkID] = struct{}{}
+	}
+	for _, vkID := range headerHolderVKIDs {
+		vkSet[vkID] = struct{}{}
+	}
+	vkIDs := make([]string, 0, len(vkSet))
+	for vkID := range vkSet {
+		vkIDs = append(vkIDs, vkID)
+	}
+	sort.Strings(vkIDs)
+	for _, vkID := range vkIDs {
+		var vk tables.TableVirtualKey
+		if err := dbForUpdate(tx).Select("id").Where("id = ?", vkID).First(&vk).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, fmt.Errorf("virtual key %s in MCP authority change: %w", vkID, ErrNotFound)
+			}
+			return nil, fmt.Errorf("lock virtual key %s for MCP authority change: %w", vkID, err)
+		}
+	}
+	// Assignment rows are locked last, matching VK-side mutation order
+	// (MCP rows -> VK row -> assignment rows) and avoiding an assignment/VK
+	// inversion under concurrent dashboard edits.
+	current = nil
+	if err := dbForUpdate(tx).Where("mcp_client_id = ?", client.ID).Find(&current).Error; err != nil {
+		return nil, fmt.Errorf("lock MCP assignments for %s: %w", mcpClientID, err)
+	}
+	return current, nil
+}
+
+// ReconcileCredentialsAfterMCPChangeTx reconciles both credential surfaces
+// against the MCP client's current authority state using the caller's
+// transaction. It deliberately does not open or commit a nested transaction:
+// callers compose it with the MCP config/assignment mutation and its outbox
+// records so none can become visible independently. The caller must first use
+// LockMCPAuthorityChangeTx in this transaction; reconciliation deliberately
+// adds no row locks so every VK is acquired once in one deterministic order.
+//
+// Header schema expansion is part of the same state transition. Reconciliation
+// runs first so a credential restored by a simultaneous grant is also marked
+// needs_update, while a credential orphaned by a simultaneous revocation stays
+// orphaned rather than being overwritten with the weaker needs_update state.
+func (s *RDBConfigStore) ReconcileCredentialsAfterMCPChangeTx(ctx context.Context, tx *gorm.DB, mcpClientID string, markHeaderSchemaChanged bool) error {
+	if tx == nil {
+		return errors.New("credential reconciliation transaction is required")
+	}
+	if strings.TrimSpace(mcpClientID) == "" {
+		return nil
+	}
+
+	tx = tx.WithContext(ctx)
+	oauthVKIDs, err := readVKsHoldingOauthCredsForMCP(tx, mcpClientID)
+	if err != nil {
+		return err
+	}
+	headerVKIDs, err := readVKsHoldingHeaderCredsForMCP(tx, mcpClientID)
+	if err != nil {
+		return err
+	}
+
+	vkSet := make(map[string]struct{}, len(oauthVKIDs)+len(headerVKIDs))
+	for _, vkID := range oauthVKIDs {
+		vkSet[vkID] = struct{}{}
+	}
+	for _, vkID := range headerVKIDs {
+		vkSet[vkID] = struct{}{}
+	}
+	vkIDs := make([]string, 0, len(vkSet))
+	for vkID := range vkSet {
+		vkIDs = append(vkIDs, vkID)
+	}
+	sort.Strings(vkIDs)
+
+	for _, vkID := range vkIDs {
+		if err := reconcileVKDirectTokensDB(tx, vkID); err != nil {
+			return err
+		}
+		if err := reconcileVKDirectHeaderRowsDB(tx, vkID); err != nil {
+			return err
+		}
+	}
+
+	if markHeaderSchemaChanged {
+		if err := tx.Model(&tables.TableMCPPerUserHeaderCredential{}).
+			Where("mcp_client_id = ? AND status = ?", mcpClientID, "active").
+			Update("status", "needs_update").Error; err != nil {
+			return fmt.Errorf("mark header credentials needs_update for mcp %s: %w", mcpClientID, err)
+		}
+	}
+	return nil
 }
 
 // GetOAuth2SigningKey returns the signing key, creating and persisting a new
