@@ -69,7 +69,17 @@ type MCPServerHandler struct {
 	// When present, user JWTs carrying an authority epoch are validated before
 	// any derived/cached MCP server can be returned.
 	authorityStore configstore.PrincipalAuthorizationEpochStore
-	mu             sync.RWMutex
+	// authorityFreshness shares the VK outbox consumer's bounded lease with the
+	// direct /mcp authentication path. Without it, a disconnected pod could keep
+	// accepting a revoked VK from vkCache even after inference had failed closed.
+	authorityFreshness governance.AuthorityFreshnessSource
+	mu                 sync.RWMutex
+}
+
+// SetAuthorityFreshnessSource wires the pod-local durable-outbox freshness
+// lease after the poller is constructed during server bootstrap.
+func (h *MCPServerHandler) SetAuthorityFreshnessSource(source governance.AuthorityFreshnessSource) {
+	h.authorityFreshness = source
 }
 
 // getVirtualKeyByID resolves a virtual key by its row ID for the JWT auth path,
@@ -645,6 +655,15 @@ func (h *MCPServerHandler) getMCPServerForRequest(ctx *fasthttp.RequestCtx) (*mc
 	enforceAuth := h.config.ClientConfig.EnforceAuthOnInference
 	authMode := h.config.ClientConfig.MCPServerAuthMode
 	h.config.Mu.RUnlock()
+	if h.authorityFreshness != nil && !h.authorityFreshness.IsAuthorityFresh() {
+		// Anonymous development traffic carries no cached authorization decision.
+		// Every explicit VK, OAuth JWT, or pre-authenticated user does, and must
+		// therefore fail closed once this pod can no longer prove cache freshness.
+		userID, _ := ctx.UserValue(schemas.BifrostContextKeyUserID).(string)
+		if enforceAuth || userID != "" || getVKFromRequest(ctx) != "" || extractBearerJWT(ctx) != "" {
+			return nil, fmt.Errorf("virtual key authority is stale; retry when governance synchronization is healthy")
+		}
+	}
 
 	discoveryEnabled := authMode == tables.MCPServerAuthModeBoth || authMode == tables.MCPServerAuthModeOAuth
 

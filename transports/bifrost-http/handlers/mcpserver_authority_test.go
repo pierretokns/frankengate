@@ -9,6 +9,7 @@ import (
 	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
+	"github.com/maximhq/bifrost/plugins/governance"
 	"github.com/stretchr/testify/require"
 	"github.com/valyala/fasthttp"
 	"gorm.io/gorm"
@@ -142,4 +143,16 @@ func TestInjectMCPUserJWTPropagatesValidatedAuthorityReference(t *testing.T) {
 	require.Equal(t, uint64(7), ref.Epoch)
 	require.Equal(t, authorityepoch.ArtifactMCPGrant, ref.Kind)
 	require.Equal(t, "grant-1", ref.ID)
+}
+
+func TestMCPDirectAuthFailsClosedWhenVKAuthorityIsStale(t *testing.T) {
+	cfg := newTestOAuth2Config(&mockOAuth2Store{}, tables.MCPServerAuthModeHeaders, true)
+	h := newTestMCPHandler(cfg)
+	h.SetAuthorityFreshnessSource(governance.AuthorityFreshnessFunc(func() bool { return false }))
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.Set("x-bf-vk", "sk-bf-stale")
+
+	res, err := h.getMCPServerForRequest(ctx)
+	require.Nil(t, res)
+	require.ErrorContains(t, err, "authority is stale")
 }

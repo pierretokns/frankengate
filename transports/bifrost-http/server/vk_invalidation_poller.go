@@ -136,6 +136,9 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 		return fmt.Errorf("governance plugin %q does not support virtual-key authority freshness", s.getGovernancePluginName())
 	}
 	setter.SetAuthorityFreshnessSource(s.VKInvalidationPoller)
+	if s.MCPServerHandler != nil {
+		s.MCPServerHandler.SetAuthorityFreshnessSource(s.VKInvalidationPoller)
+	}
 	if wakeSource, ok := s.Config.ConfigStore.(virtualKeyInvalidationWakeSource); ok {
 		s.VKInvalidationPoller.wake = wakeSource.VirtualKeyInvalidationWakeups(ctx)
 	}
