@@ -233,6 +233,59 @@ while IFS= read -r ip; do
 done < <(list_ready_gateway_ips)
 wait_for_cache absent "$vk_id"
 
+partition_created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
+  --header 'Content-Type: application/json' \
+  --post-data "{\"name\":\"mcp-partition-proof-${RANDOM}-${SECONDS}\"}" \
+  "http://${pod_ips[0]}:8080/api/governance/virtual-keys")"
+partition_vk_id="$(jq -er '.virtual_key.id' <<<"$partition_created")"
+partition_secret="$(jq -er '.secret' <<<"$partition_created")"
+partition_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$partition_created")"
+wait_for_cache present "$partition_vk_id" "$partition_updated_at"
+
+# A release image must fail direct MCP authorization closed when this pod can
+# no longer prove its cached VK authority is current. Removing the disposable
+# PostgreSQL authority severs both LISTEN/NOTIFY and the mandatory cursor poll;
+# after the five-second lease, every pod must reject a previously valid key
+# before consulting its per-VK MCP server cache.
+kubectl -n "$NAMESPACE" scale statefulset/postgres --replicas=0
+kubectl -n "$NAMESPACE" wait --for=delete pod/postgres-0 --timeout=120s
+
+call_mcp_initialize() {
+  local ip="$1" secret="$2"
+  # The single-quoted program runs inside the utility pod; all dynamic values
+  # enter as positional arguments so host-shell interpolation is impossible.
+  # shellcheck disable=SC2016
+  kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c '
+    ip="$1"
+    secret="$2"
+    body='"'"'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"frankengate-vk-oracle","version":"1"}}}'"'"'
+    length="$(printf %s "$body" | wc -c | tr -d " ")"
+    printf "POST /mcp HTTP/1.1\r\nHost: %s\r\nx-bf-vk: %s\r\nContent-Type: application/json\r\nContent-Length: %s\r\nConnection: close\r\n\r\n%s" \
+      "$ip" "$secret" "$length" "$body" | nc "$ip" 8080
+  ' sh "$ip" "$secret"
+}
+
+deadline=$(( $(date +%s) + 20 ))
+while :; do
+  all_stale_closed=1
+  for ip in "${pod_ips[@]}"; do
+    response="$(call_mcp_initialize "$ip" "$partition_secret" 2>/dev/null || true)"
+    if ! grep -q '401 Unauthorized' <<<"$response" ||
+       ! grep -q 'virtual key authority is stale' <<<"$response"; then
+      all_stale_closed=0
+      break
+    fi
+  done
+  if [[ "$all_stale_closed" -eq 1 ]]; then
+    break
+  fi
+  if [[ "$(date +%s)" -ge "$deadline" ]]; then
+    echo "MCP virtual-key authorization did not fail closed on every pod after authority partition" >&2
+    exit 1
+  fi
+  sleep 1
+done
+
 jq -n --arg vk_id "$vk_id" --argjson pods "${#pod_ips[@]}" \
   --arg artifact "${FRANKENGATE_IMAGE:-loose-binary}" \
-  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,outbox:["reload","reload","delete"],restart_replay:"passed"}'
+  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,outbox:["reload","reload","delete"],restart_replay:"passed",mcp_authority_partition:"stale-closed-on-all-pods"}'
