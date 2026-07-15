@@ -9,6 +9,7 @@ import (
 
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
+	"github.com/maximhq/bifrost/framework/encrypt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
@@ -972,6 +973,26 @@ func TestGetVirtualKeyByValue(t *testing.T) {
 	result, err := store.GetVirtualKeyByValue(ctx, "vk-unique-value-xyz")
 	require.NoError(t, err)
 	assert.Equal(t, "vk-lookup", result.ID)
+}
+
+func TestGetVirtualKeyByValueRejectsHashIndexCandidateWithDifferentSecret(t *testing.T) {
+	store := setupRDBTestStore(t)
+	ctx := context.Background()
+	vk := &tables.TableVirtualKey{
+		ID: "vk-hash-candidate", Name: "Hash Candidate",
+		Value: *schemas.NewSecretVar("vk-real-secret"), IsActive: schemas.Ptr(true),
+	}
+	require.NoError(t, store.CreateVirtualKey(ctx, vk))
+	// Simulate a corrupt/colliding index entry without changing the encrypted
+	// candidate. The lookup index must never be accepted as authentication.
+	require.NoError(t, store.DB().Model(&tables.TableVirtualKey{}).
+		Where("id = ?", vk.ID).
+		UpdateColumn("value_hash", encrypt.HashSHA256("vk-presented-secret")).Error)
+
+	_, err := store.GetVirtualKeyByValue(ctx, "vk-presented-secret")
+	require.ErrorIs(t, err, ErrNotFound)
+	_, err = store.GetVirtualKeyQuotaByValue(ctx, "vk-presented-secret")
+	require.ErrorIs(t, err, ErrNotFound)
 }
 
 func TestUpdateVirtualKey(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/subtle"
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
@@ -3419,6 +3420,9 @@ func (s *RDBConfigStore) GetVirtualKeyByValue(ctx context.Context, value string)
 			return nil, err
 		}
 	}
+	if subtle.ConstantTimeCompare([]byte(virtualKey.Value.GetValue()), []byte(value)) != 1 {
+		return nil, ErrNotFound
+	}
 	return &virtualKey, nil
 }
 
@@ -3448,6 +3452,9 @@ func (s *RDBConfigStore) GetVirtualKeyQuotaByValue(ctx context.Context, value st
 		} else {
 			return nil, err
 		}
+	}
+	if subtle.ConstantTimeCompare([]byte(virtualKey.Value.GetValue()), []byte(value)) != 1 {
+		return nil, ErrNotFound
 	}
 	return &virtualKey, nil
 }
