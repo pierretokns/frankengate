@@ -4,6 +4,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -15,7 +16,9 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
+	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/plugins/governance"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
@@ -62,7 +65,11 @@ type MCPServerHandler struct {
 	// governance in-memory store, avoiding a per-request DB read. Optional: a nil
 	// cache or a miss falls back to the config store. See getVirtualKeyByID.
 	vkCache VirtualKeyCache
-	mu      sync.RWMutex
+	// authorityStore is optional for backward compatibility with non-RDB stores.
+	// When present, user JWTs carrying an authority epoch are validated before
+	// any derived/cached MCP server can be returned.
+	authorityStore configstore.PrincipalAuthorizationEpochStore
+	mu             sync.RWMutex
 }
 
 // getVirtualKeyByID resolves a virtual key by its row ID for the JWT auth path,
@@ -109,6 +116,9 @@ func NewMCPServerHandler(ctx context.Context, config *lib.Config, toolManager MC
 		vkMCPServers:     make(map[string]*server.MCPServer),
 		identityResolver: identityResolver,
 		vkCache:          vkCache,
+	}
+	if authorityStore, ok := config.ConfigStore.(configstore.PrincipalAuthorizationEpochStore); ok {
+		handler.authorityStore = authorityStore
 	}
 
 	// Register per-request tool filter so x-bf-mcp-include-clients and x-bf-mcp-include-tools are respected on tools/list
@@ -707,6 +717,10 @@ func (h *MCPServerHandler) getMCPServerForRequest(ctx *fasthttp.RequestCtx) (*mc
 			// the client's token being bad.
 			return nil, err
 		}
+		if err := h.validateJWTAuthority(ctx, claims); err != nil {
+			ctx.Response.Header.Set("WWW-Authenticate", wwwAuthenticateValue(ctx, h.config))
+			return nil, fmt.Errorf("authorization is no longer current: %w", err)
+		}
 
 		// For user-mode JWTs, if a dashboard session is present on the request
 		// (BifrostContextKeyUserID, set by the auth middleware) it must match
@@ -800,6 +814,51 @@ func (h *MCPServerHandler) getMCPServerForRequest(ctx *fasthttp.RequestCtx) (*mc
 		return nil, err
 	}
 	return &mcpAuthResult{mcpServer: vkServer}, nil
+}
+
+func (h *MCPServerHandler) validateJWTAuthority(ctx context.Context, claims *jwtMCPClaims) error {
+	if claims == nil || schemas.MCPAuthMode(claims.BfMode) != schemas.MCPAuthModeUser {
+		return nil
+	}
+	if claims.BfAuthEpoch == 0 {
+		// Legacy compatibility is explicit: unsupported stores accept legacy JWTs.
+		// A supported store also accepts a pre-rollout token only while the
+		// principal has never been activated. The refresh path immediately rotates
+		// it into an epoch-bound token; once a principal row exists, an unbound
+		// token cannot prove current authority and fails closed.
+		if h.authorityStore == nil {
+			return nil
+		}
+		principal, err := mcpJWTAuthorizationPrincipal(claims)
+		if err != nil {
+			return err
+		}
+		_, err = h.authorityStore.GetPrincipalAuthorizationEpoch(ctx, principal)
+		if errors.Is(err, authorityepoch.ErrUnknownPrincipal) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		return authorityepoch.ErrInvalidReference
+	}
+	if h.authorityStore == nil {
+		return authorityepoch.ErrInvalidReference
+	}
+	principal, err := mcpJWTAuthorizationPrincipal(claims)
+	if err != nil {
+		return err
+	}
+	ref := authorityepoch.Reference{
+		Principal: principal,
+		Epoch:     claims.BfAuthEpoch,
+		Kind:      authorityepoch.ArtifactMCPGrant,
+		ID:        claims.ID,
+	}
+	if err := authorityepoch.ValidateReferenceShape(ref); err != nil {
+		return err
+	}
+	return h.authorityStore.ValidatePrincipalAuthorizationEpoch(ctx, ref)
 }
 
 // userScopedServer returns a per-VK MCP server scoped to a user-mode token's

@@ -20,6 +20,7 @@ import (
 	"github.com/fasthttp/router"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	configtables "github.com/maximhq/bifrost/framework/configstore/tables"
@@ -481,6 +482,17 @@ func (h *OAuth2IssuanceHandler) handleTokenRefresh(ctx *fasthttp.RequestCtx) {
 			return
 		}
 	}
+	// The opaque refresh token itself carries its issuance epoch (inside the
+	// random value covered by TokenHash), so an epoch advance cannot be bypassed
+	// by exchanging an old refresh grant for a newly-current access token.
+	if err := validateMCPRefreshAuthority(ctx, h.store.ConfigStore, refreshToken, rt, oauth2IssuerURL(ctx, h.store)); err != nil {
+		if errors.Is(err, authorityepoch.ErrStaleEpoch) || errors.Is(err, authorityepoch.ErrInactivePrincipal) || errors.Is(err, authorityepoch.ErrInvalidReference) {
+			sendOAuthError(ctx, fasthttp.StatusBadRequest, "invalid_grant", "user authorization is no longer current; re-authenticate")
+		} else {
+			sendOAuthError(ctx, fasthttp.StatusInternalServerError, "server_error", "failed to verify user authorization")
+		}
+		return
+	}
 
 	// RFC 8707: resource (audience URI) is distinct from scope. When the client
 	// omits it on refresh, carry forward the original resource captured at
@@ -553,15 +565,28 @@ func (h *OAuth2IssuanceHandler) issueTokenPair(
 
 	issuer := oauth2IssuerURL(ctx, h.store)
 	now := time.Now()
+	authorityEpoch := uint64(0)
+	if schemas.MCPAuthMode(bfMode) == schemas.MCPAuthModeUser {
+		authorityEpoch, err = ensureMCPJWTAuthorizationEpoch(ctx, h.store.ConfigStore, resource, issuer, bfSub)
+		if err != nil {
+			sendOAuthError(ctx, fasthttp.StatusInternalServerError, "server_error", "failed to establish current user authority")
+			return
+		}
+	}
 	claims := jwt.MapClaims{
 		"iss":     issuer,
 		"aud":     jwt.ClaimStrings{resource},
 		"sub":     bfSub,
+		"jti":     uuid.NewString(),
 		"bf_mode": bfMode,
 		"scope":   scope,
 		"iat":     now.Unix(),
 		"nbf":     now.Unix(),
 		"exp":     now.Add(time.Duration(accessTokenTTL) * time.Second).Unix(),
+	}
+	if authorityEpoch > 0 {
+		claims["bf_tenant"] = resource
+		claims["bf_auth_epoch"] = authorityEpoch
 	}
 	tok := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	tok.Header["kid"] = signingKey.KID
@@ -576,6 +601,7 @@ func (h *OAuth2IssuanceHandler) issueTokenPair(
 		sendOAuthError(ctx, fasthttp.StatusInternalServerError, "server_error", "failed to generate refresh token")
 		return
 	}
+	refreshTokenPlain = bindMCPRefreshTokenAuthority(refreshTokenPlain, authorityEpoch)
 	rt = &configtables.TableOAuth2RefreshToken{
 		ID:        uuid.New().String(),
 		TokenHash: hashSHA256Hex(refreshTokenPlain),
