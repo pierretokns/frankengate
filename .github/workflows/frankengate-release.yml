@@ -10,8 +10,47 @@ permissions:
   contents: read
 
 jobs:
+  verify:
+    name: Verify release gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      GOCACHE: ${{ github.workspace }}/.cache/go-build
+      GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version: "1.26.5"
+          cache: false
+
+      - name: Verify provenance self-tests
+        run: bash scripts/verify-provenance.sh --self-test
+
+      - name: Verify provenance and redistribution policy
+        run: bash scripts/verify-provenance.sh
+
+      - name: Run tests, race checks, and vet
+        run: .github/workflows/scripts/fork-go-checks.sh test-vet
+
+      - name: Run vulnerability checks
+        run: .github/workflows/scripts/fork-go-checks.sh vuln
+
   build:
     name: Build ${{ matrix.artifact }}
+    needs: verify
     strategy:
       fail-fast: false
       matrix:
@@ -39,7 +78,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
-          go-version: "1.26.4"
+          go-version: "1.26.5"
           cache-dependency-path: "**/go.sum"
 
       - name: Set up Node
@@ -109,3 +148,15 @@ jobs:
             --verify-tag \
             --title "FrankenGate $TAG" \
             --notes "FrankenGate $TAG is a Bifrost-compatible public fork baseline. It includes fork branding, explicit Apache-2.0 provenance, a verified embedded-UI gateway binary, and separated Kubernetes liveness/readiness/startup probes. Enterprise roadmap capabilities remain gated by their published conformance tests and are not claimed complete in this release."
+
+  container:
+    name: Publish matching GHCR image
+    needs: release
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+      attestations: write
+    uses: ./.github/workflows/frankengate-container-release.yml
+    with:
+      release_tag: ${{ github.ref_name }}
