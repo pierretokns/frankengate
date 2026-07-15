@@ -40,11 +40,11 @@ data:
         }
       },
       "framework": {
-        "mcp_library_url": "file:///app/catalog/mcp-library.json",
         "pricing": {
           "pricing_url": "file:///app/catalog/pricing.json",
           "pricing_sync_interval": 86400,
-          "model_parameters_url": "file:///app/catalog/model-parameters.json"
+          "model_parameters_url": "file:///app/catalog/model-parameters.json",
+          "mcp_library_url": "file:///app/catalog/mcp-library.json"
         }
       },
       "client": {
