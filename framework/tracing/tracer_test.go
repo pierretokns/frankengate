@@ -11,7 +11,7 @@ import (
 )
 
 type testRealtimeObservabilityPlugin struct {
-	injected        chan *schemas.Trace
+	injectedTraceID chan string
 	injectedPayload chan string
 }
 
@@ -36,11 +36,10 @@ func (p *testRealtimeObservabilityPlugin) Inject(_ context.Context, trace *schem
 		return nil
 	}
 	if trace == nil {
-		p.injected <- nil
+		p.injectedTraceID <- ""
 		return nil
 	}
-	traceCopy := *trace
-	p.injected <- &traceCopy
+	p.injectedTraceID <- trace.TraceID
 	return nil
 }
 
@@ -53,16 +52,16 @@ func TestTracer_CompleteAndFlushTraceInjectsObservabilityPlugins(t *testing.T) {
 
 	traceID := tracer.CreateTrace("")
 	plugin := &testRealtimeObservabilityPlugin{
-		injected: make(chan *schemas.Trace, 1),
+		injectedTraceID: make(chan string, 1),
 	}
 
 	tracer.SetObservabilityPlugins([]schemas.ObservabilityPlugin{plugin})
 	tracer.CompleteAndFlushTrace(traceID)
 
 	select {
-	case trace := <-plugin.injected:
-		if trace == nil || trace.TraceID != traceID {
-			t.Fatalf("injected trace = %+v, want trace %q", trace, traceID)
+	case injectedTraceID := <-plugin.injectedTraceID:
+		if injectedTraceID != traceID {
+			t.Fatalf("injected trace ID = %q, want %q", injectedTraceID, traceID)
 		}
 	case <-time.After(time.Second):
 		t.Fatal("timed out waiting for observability inject")
