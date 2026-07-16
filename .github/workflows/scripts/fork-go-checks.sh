@@ -4,6 +4,8 @@ set -euo pipefail
 MODE="${1:-test-vet}"
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 
+echo "[$(date -u +%FT%TZ)] fork-go-checks starting mode=${MODE} root=${ROOT}"
+
 MODULES=()
 while IFS= read -r module_file; do
   MODULES+=("${module_file#"$ROOT/"}")
@@ -42,6 +44,7 @@ fi
 # fork. Build an isolated workspace and force every command below through it so
 # cross-module imports always resolve to this checkout.
 WORKSPACE_DIR="$(mktemp -d)"
+echo "[$(date -u +%FT%TZ)] creating isolated Go workspace at ${WORKSPACE_DIR}"
 UI_DIR="$ROOT/transports/bifrost-http/ui"
 UI_PLACEHOLDER="$UI_DIR/ci-placeholder.txt"
 UI_DIR_CREATED=0
