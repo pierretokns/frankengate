@@ -14,8 +14,12 @@ import (
 // token usage are deliberately absent: the coordinator owns any conservative
 // reservation estimate and may reject when it cannot make one safely.
 type AdmissionRequest struct {
-	Evaluation  EvaluationRequest
-	Result      *EvaluationResult
+	Evaluation EvaluationRequest
+	Result     *EvaluationResult
+	// Request is the original request envelope. Estimators may use its bounded
+	// request metadata (for example max output tokens) without retaining the
+	// response or placing stream-sized data in context.
+	Request     *schemas.BifrostRequest
 	RequestType schemas.RequestType
 	RequestID   string
 	Attempt     int

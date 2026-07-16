@@ -15,14 +15,28 @@ type testReservationCoordinator struct {
 	reserved   int
 	settled    int
 	refunded   int
+	request    *schemas.BifrostRequest
 }
 
-func (c *testReservationCoordinator) Reserve(context.Context, AdmissionRequest) (any, error) {
+func (c *testReservationCoordinator) Reserve(_ context.Context, req AdmissionRequest) (any, error) {
 	if c.reserveErr != nil {
 		return nil, c.reserveErr
 	}
 	c.reserved++
+	c.request = req.Request
 	return "reservation-1", nil
+}
+
+func TestPreLLMHookPassesRequestEnvelopeToAdmissionEstimator(t *testing.T) {
+	p := admissionTestPlugin(t)
+	coordinator := &testReservationCoordinator{}
+	p.SetReservationCoordinator(coordinator)
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	req := admissionRequest()
+	_, shortCircuit, err := p.PreLLMHook(ctx, req)
+	require.NoError(t, err)
+	require.Nil(t, shortCircuit)
+	require.Same(t, req, coordinator.request)
 }
 func (c *testReservationCoordinator) Settle(context.Context, any, AdmissionSettlement) error {
 	c.settled++
