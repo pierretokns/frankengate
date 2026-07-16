@@ -1725,6 +1725,9 @@ type DimensionRankingWithTrend struct {
 type DimensionRankingResult struct {
 	Rankings  []DimensionRankingWithTrend `json:"rankings"`
 	Dimension RankingDimension            `json:"dimension"`
+	// Provenance makes dashboard results auditable without changing the ranking
+	// rows. Fields are additive so older consumers remain compatible.
+	Provenance *DashboardProvenance `json:"provenance,omitempty"`
 	// TotalActualRequests / TotalAttributedRequests are only set for fan-out
 	// dimensions (team / business unit / customer) on Postgres. Attributed
 	// counts credit a request to every dimension value it touches, so their
@@ -1732,6 +1735,13 @@ type DimensionRankingResult struct {
 	// over the same attributed population. Zero/omitted when not computed.
 	TotalActualRequests     int64 `json:"total_actual_requests,omitempty"`
 	TotalAttributedRequests int64 `json:"total_attributed_requests,omitempty"`
+}
+
+type DashboardProvenance struct {
+	Source      string     `json:"source"`
+	GeneratedAt time.Time  `json:"generated_at"`
+	WindowStart *time.Time `json:"window_start,omitempty"`
+	WindowEnd   *time.Time `json:"window_end,omitempty"`
 }
 
 // ==================== CONSOLIDATED DASHBOARD RESULT ====================

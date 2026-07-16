@@ -418,7 +418,6 @@ func (h *LoggingHandler) getLogSessionSummaryByID(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("Session summary fetch failed: %v", err))
 		return
 	}
-
 	SendJSON(ctx, result)
 }
 
@@ -1160,6 +1159,12 @@ func (h *LoggingHandler) getDimensionRankings(ctx *fasthttp.RequestCtx) {
 		logger.Error("failed to get dimension rankings: %v", err)
 		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("Dimension rankings calculation failed: %v", err))
 		return
+	}
+	result.Provenance = &logstore.DashboardProvenance{
+		Source:      "logstore",
+		GeneratedAt: time.Now().UTC(),
+		WindowStart: filters.StartTime,
+		WindowEnd:   filters.EndTime,
 	}
 
 	SendJSON(ctx, result)

@@ -1247,6 +1247,12 @@ export interface DimensionRankingEntry {
 export interface DimensionRankingsResponse {
 	rankings: DimensionRankingEntry[];
 	dimension: RankingDimension;
+	provenance?: {
+		source: string;
+		generated_at: string;
+		window_start?: string;
+		window_end?: string;
+	};
 	total_actual_requests?: number; // shows the actual request count for units that can have multiple child entities
 	total_attributed_requests?: number; // shows the request count attributed to all entities for units that can have multiple child entities
 }
