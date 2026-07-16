@@ -1,6 +1,12 @@
 name: FrankenGate Native Image Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing GitHub release tag to publish or repair
+        required: true
+        type: string
   workflow_call:
     inputs:
       release_tag:
@@ -11,6 +17,9 @@ on:
       digest:
         description: Immutable multi-architecture image digest
         value: ${{ jobs.manifest.outputs.digest }}
+
+env:
+  RELEASE_TAG: ${{ inputs.release_tag }}
 
 permissions:
   contents: read
