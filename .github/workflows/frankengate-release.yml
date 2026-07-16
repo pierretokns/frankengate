@@ -5,6 +5,9 @@ on:
   push:
     tags:
       - "v*"
+  # Allows an immutable-tag release to be retried when a hosted runner stalls
+  # without force-moving or recreating the version tag.
+  workflow_dispatch:
 
 permissions:
   contents: read
