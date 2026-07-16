@@ -82,12 +82,14 @@ done
 export GOWORK="$WORKSPACE_DIR/go.work"
 
 echo "using local fork workspace: $GOWORK"
-go list -m all |
+echo "[$(date -u +%FT%TZ)] validating local module graph"
+timeout --signal=TERM --kill-after=30s "${MODULE_GRAPH_TIMEOUT_SECONDS:-300}s" go list -m all |
   awk '$1 ~ /^github\.com\/maximhq\/bifrost(\/|$)/ && NF > 1 { print }' |
   while IFS= read -r remote_module; do
     echo "unexpected remote Bifrost module: $remote_module" >&2
     exit 1
   done
+echo "[$(date -u +%FT%TZ)] local module graph validated"
 
 run_in_modules() {
   local label="$1"
