@@ -132,6 +132,29 @@ func (p *GovernancePlugin) IsAuthorityFresh() bool {
 	return p.isAuthorityFresh()
 }
 
+// validatePrincipalEpoch closes the inference-path gap where MCP handlers
+// already reject stale/deactivated enterprise principals but unary/SSE LLM
+// requests could reach a provider without consulting the durable epoch store.
+// Legacy virtual-key-only requests intentionally remain compatible; enterprise
+// principal requests must carry a structurally valid, current reference.
+func (p *GovernancePlugin) validatePrincipalEpoch(ctx *schemas.BifrostContext, userID string) *schemas.BifrostError {
+	if userID == "" || p.configStore == nil || !p.isEnterprise {
+		return nil
+	}
+	authorityStore, ok := p.configStore.(configstore.PrincipalAuthorizationEpochStore)
+	if !ok {
+		return &schemas.BifrostError{Type: new("authorization_epoch_unavailable"), StatusCode: new(503), Error: &schemas.ErrorField{Message: "authorization epoch authority is unavailable"}}
+	}
+	ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
+	if err != nil {
+		return &schemas.BifrostError{Type: new("authorization_epoch_required"), StatusCode: new(401), Error: &schemas.ErrorField{Message: "authorization epoch reference is required"}}
+	}
+	if err := authorityStore.ValidatePrincipalAuthorizationEpoch(ctx, ref); err != nil {
+		return &schemas.BifrostError{Type: new("authorization_epoch_invalid"), StatusCode: new(401), Error: &schemas.ErrorField{Message: "authorization epoch is stale or inactive"}}
+	}
+	return nil
+}
+
 func virtualKeyAuthorityStaleError() *schemas.BifrostError {
 	return &schemas.BifrostError{
 		Type:       new(string(DecisionVirtualKeyAuthorityStale)),
@@ -1349,6 +1372,9 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 
 	// Extract user ID for enterprise user-level governance
 	userID := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyUserID)
+	if epochErr := p.validatePrincipalEpoch(ctx, userID); epochErr != nil {
+		return req, &schemas.LLMPluginShortCircuit{Error: epochErr}, nil
+	}
 	// Getting provider and mode from the request
 	provider, model, _ := req.GetRequestFields()
 	// Create request context for evaluation
