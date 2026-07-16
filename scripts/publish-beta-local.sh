@@ -58,11 +58,11 @@ NOTES="Locally tested beta for commit ${SHA}.\n\nThis is not an official release
 # Create draft-first and upload independently. A single gh release create call
 # can leave a partially uploaded release when one asset request times out.
 gh release create "$TAG" --repo "$REPO" --target "$SHA" --prerelease --draft \
-	--title "FrankenGate local beta ${SHORT_SHA}" --notes "$NOTES"
+	--title "FrankenGate local beta ${SHORT_SHA}" --notes "$NOTES" >/dev/null
 for asset in "$WORK/$PACKAGE.tar.gz" "$WORK/SHA256SUMS"; do
 	 uploaded=false
 	 for attempt in 1 2 3; do
-		if gh release upload "$TAG" "$asset" --repo "$REPO" --clobber; then
+		if gh release upload "$TAG" "$asset" --repo "$REPO" --clobber >/dev/null; then
 			uploaded=true
 			break
 		fi
@@ -76,5 +76,15 @@ done
 # Do not publish until both expected assets are visible on the draft release.
 ASSET_COUNT="$(gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets | map(select(.name == "'"$(basename "$WORK/$PACKAGE.tar.gz")"'" or .name == "SHA256SUMS")) | length')"
 [[ "$ASSET_COUNT" == 2 ]] || { echo "beta release asset verification failed (found $ASSET_COUNT/2)" >&2; exit 1; }
-gh release edit "$TAG" --repo "$REPO" --tag "$TAG" --draft=false
-echo "published https://github.com/${REPO}/releases/tag/${TAG}"
+gh release edit "$TAG" --repo "$REPO" --tag "$TAG" --draft=false >/dev/null
+for attempt in 1 2 3 4 5; do
+	DRAFT_STATE="$(gh release view "$TAG" --repo "$REPO" --json isDraft --jq '.isDraft' 2>/dev/null || true)"
+	if [[ "$DRAFT_STATE" == false ]]; then
+		FINAL_URL="$(gh release view "$TAG" --repo "$REPO" --json url --jq '.url')"
+		echo "published $FINAL_URL"
+		exit 0
+	fi
+	sleep "$attempt"
+done
+echo "release $TAG did not become published after asset verification" >&2
+exit 1
