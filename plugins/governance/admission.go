@@ -76,6 +76,10 @@ func NewAsyncOverdraftNotifier(ctx context.Context, downstream OverdraftNotifier
 			case <-workerCtx.Done():
 				return
 			case event := <-n.events:
+				if downstream == nil {
+					n.failed.Add(1)
+					continue
+				}
 				if err := downstream.Notify(workerCtx, event); err != nil {
 					n.failed.Add(1)
 				} else {
