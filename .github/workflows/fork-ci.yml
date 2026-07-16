@@ -65,8 +65,24 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
 
-      - name: Run govulncheck
+      - name: Derive vulnerability cache epoch
+        id: vuln-week
+        run: echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore dependency vulnerability result
+        id: vuln-cache
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: .cache/vulncheck
+          key: govuln-${{ env.GO_VERSION }}-${{ steps.vuln-week.outputs.week }}-${{ hashFiles('**/go.mod', '**/go.sum', '.github/workflows/scripts/fork-go-checks.sh') }}
+
+      - name: Run govulncheck when dependencies or scanner epoch changed
+        if: steps.vuln-cache.outputs.cache-hit != 'true'
         run: .github/workflows/scripts/fork-go-checks.sh vuln
+
+      - name: Record vulnerability result for cache
+        if: steps.vuln-cache.outputs.cache-hit != 'true'
+        run: mkdir -p .cache/vulncheck && printf '%s\n' "govulncheck ${{ env.GO_VERSION }} ${{ steps.vuln-week.outputs.week }}" > .cache/vulncheck/passed
 
   provenance-hook:
     name: Provenance hook
