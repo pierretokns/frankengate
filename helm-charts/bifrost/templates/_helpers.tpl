@@ -1813,8 +1813,9 @@ Call this template at the beginning of deployment/stateful templates
 {{- if not .Values.bifrost.plugins.semanticCache.config.provider }}
 {{- fail "ERROR: bifrost.plugins.semanticCache.config.provider is required for semantic caching. Supported providers: openai, anthropic, gemini, bedrock, azure, cohere, mistral, groq, ollama, openrouter, vertex, cerebras, parasail, perplexity, sgl, huggingface. For direct (hash-based) caching, set dimension: 1." }}
 {{- end }}
-{{- if not .Values.bifrost.plugins.semanticCache.config.keys }}
-{{- fail "ERROR: bifrost.plugins.semanticCache.config.keys is required for semantic caching. Provide at least one API key for the embedding provider. For direct (hash-based) caching, set dimension: 1." }}
+{{- $semanticCacheSecretRef := .Values.bifrost.plugins.semanticCache.secretRef | default dict }}
+{{- if and (not .Values.bifrost.plugins.semanticCache.config.keys) (not $semanticCacheSecretRef.name) }}
+{{- fail "ERROR: bifrost.plugins.semanticCache.config.keys or secretRef.name is required for semantic caching. Provide an embedding-provider key directly or through a Kubernetes Secret. For direct (hash-based) caching, set dimension: 1." }}
 {{- end }}
 {{- end }}
 {{- end }}

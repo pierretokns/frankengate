@@ -894,6 +894,19 @@
                 "enabled": {
                   "type": "boolean"
                 },
+                "secretRef": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "type": "string",
+                      "default": "api-key"
+                    }
+                  },
+                  "required": ["name"]
+                },
                 "config": {
                   "type": "object",
                   "properties": {
