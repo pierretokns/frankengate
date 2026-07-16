@@ -16,6 +16,8 @@ import (
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/plugins/governance"
+	"github.com/maximhq/bifrost/plugins/telemetry"
+	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 )
 
 const (
@@ -37,6 +39,13 @@ type virtualKeyInvalidationSource interface {
 // sole authority and periodic polling remains mandatory.
 type virtualKeyInvalidationWakeSource interface {
 	VirtualKeyInvalidationWakeups(context.Context) <-chan struct{}
+}
+
+// governanceSyncMetricSink receives low-cardinality control-plane metrics.
+// Implementations must be non-blocking; this is called by the poller, never by
+// the inference request path.
+type governanceSyncMetricSink interface {
+	SetGovernanceSyncMetric(name string, value float64)
 }
 
 type virtualKeyInvalidationApply func(context.Context, tables.TableVirtualKeyInvalidationEvent) error
@@ -73,6 +82,7 @@ type virtualKeyInvalidationPoller struct {
 	lastSuccessNano  atomic.Int64
 	lastErrorLogNano atomic.Int64
 	failureActive    atomic.Bool
+	metricSink       governanceSyncMetricSink
 }
 
 func newVirtualKeyInvalidationPoller(store virtualKeyInvalidationSource, apply virtualKeyInvalidationApply, batchSize int, pollInterval time.Duration) *virtualKeyInvalidationPoller {
@@ -146,6 +156,9 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 	}
 	if wakeSource, ok := s.Config.ConfigStore.(virtualKeyInvalidationWakeSource); ok {
 		s.VKInvalidationPoller.wake = wakeSource.VirtualKeyInvalidationWakeups(ctx)
+	}
+	if metrics, err := lib.FindPluginAs[*telemetry.PrometheusPlugin](s.Config, telemetry.PluginName); err == nil {
+		s.VKInvalidationPoller.metricSink = metrics
 	}
 	go s.VKInvalidationPoller.Run(ctx)
 	return nil
@@ -563,6 +576,8 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 				// A wake source ending is not an authority failure. Disable it and
 				// retain the periodic durable poll without spinning on a closed channel.
 				wake = nil
+			} else if p.metricSink != nil {
+				p.metricSink.SetGovernanceSyncMetric("wakeups", 1)
 			}
 		case <-timer.C:
 		}
@@ -644,5 +659,14 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 		p.highWatermark.Store(previous)
 	}
 	p.lastSuccessNano.Store(time.Now().UnixNano())
+	if p.metricSink != nil {
+		lag := uint64(0)
+		if highWatermark > previous {
+			lag = highWatermark - previous
+		}
+		p.metricSink.SetGovernanceSyncMetric("consumer_lag", float64(lag))
+		p.metricSink.SetGovernanceSyncMetric("outbox_depth", float64(lag))
+		p.metricSink.SetGovernanceSyncMetric("ready", 1)
+	}
 	return len(events) == p.batchSize, nil
 }
