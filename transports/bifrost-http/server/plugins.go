@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"github.com/maximhq/bifrost/core/schemas"
+	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/plugins/compat"
 	"github.com/maximhq/bifrost/plugins/governance"
 	"github.com/maximhq/bifrost/plugins/logging"
@@ -90,9 +91,25 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 			return nil, fmt.Errorf("failed to marshal governance plugin config: %w", err)
 		}
 		inMemoryStore := &GovernanceInMemoryStore{Config: bifrostConfig}
-		return governance.Init(ctx, governanceConfig, logger, bifrostConfig.ConfigStore,
+		plugin, err := governance.Init(ctx, governanceConfig, logger, bifrostConfig.ConfigStore,
 			bifrostConfig.GovernanceConfig, bifrostConfig.ModelCatalog,
 			bifrostConfig.MCPCatalog, inMemoryStore)
+		if err != nil {
+			return nil, err
+		}
+		// Durable admission is enabled only when the deployment explicitly
+		// supplies both the transactional reservation store and a conservative
+		// estimator. This keeps OSS/legacy deployments compatible without ever
+		// reserving guessed zero-cost amounts.
+		if reservationStore, ok := bifrostConfig.ConfigStore.(configstore.BudgetReservationStore); ok {
+			if estimator, ok := bifrostConfig.ConfigStore.(governance.ReservationEstimator); ok {
+				plugin.SetReservationCoordinator(&governance.DurableReservationCoordinator{
+					Store:     reservationStore,
+					Estimator: estimator,
+				})
+			}
+		}
+		return plugin, nil
 
 	case maxim.PluginName:
 		maximConfig, err := MarshalPluginConfig[maxim.Config](pluginConfig)
