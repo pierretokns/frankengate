@@ -29,6 +29,13 @@ func (excessUsageEstimator) Actual(context.Context, AdmissionSettlement) reserva
 	return reservations.Amount{Tokens: 20, CostMicros: 20}
 }
 
+type overdraftNotifier struct{ events []OverdraftEvent }
+
+func (n *overdraftNotifier) Notify(_ context.Context, event OverdraftEvent) error {
+	n.events = append(n.events, event)
+	return nil
+}
+
 type testReservationCoordinator struct {
 	reserveErr error
 	reserved   int
@@ -118,7 +125,8 @@ func TestDurableCoordinatorControlledOverdraftPolicy(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
-			coordinator := &DurableReservationCoordinator{Store: store, Estimator: excessUsageEstimator{}, Overdraft: reservations.OverdraftPolicy{Allow: tc.allow, Reason: "approved research overdraft"}}
+			notifier := &overdraftNotifier{}
+			coordinator := &DurableReservationCoordinator{Store: store, Estimator: excessUsageEstimator{}, Notifier: notifier, Overdraft: reservations.OverdraftPolicy{Allow: tc.allow, Reason: "approved research overdraft"}}
 			handle, err := coordinator.Reserve(context.Background(), AdmissionRequest{RequestID: tc.name, Result: result})
 			require.NoError(t, err)
 			err = coordinator.Settle(context.Background(), handle, AdmissionSettlement{})
@@ -130,6 +138,8 @@ func TestDurableCoordinatorControlledOverdraftPolicy(t *testing.T) {
 			row, getErr := store.Get(context.Background(), handle.(*durableReservationHandle).rows[0].ID)
 			require.NoError(t, getErr)
 			require.Equal(t, tc.want, row.OverdraftState)
+			require.Len(t, notifier.events, 1)
+			require.Equal(t, tc.allow, notifier.events[0].Allowed)
 		})
 	}
 }

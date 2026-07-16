@@ -103,20 +103,22 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 		// estimator. This keeps OSS/legacy deployments compatible without ever
 		// reserving guessed zero-cost amounts.
 		if reservationStore, ok := bifrostConfig.ConfigStore.(configstore.BudgetReservationStore); ok {
+			allowOverdraft := governanceConfig.ReservationAllowOverdraft != nil && *governanceConfig.ReservationAllowOverdraft
+			overdraft := reservations.OverdraftPolicy{Allow: allowOverdraft, Reason: governanceConfig.ReservationOverdraftReason}
 			if estimator, ok := bifrostConfig.ConfigStore.(governance.ReservationEstimator); ok {
 				plugin.SetReservationCoordinator(&governance.DurableReservationCoordinator{
 					Store:     reservationStore,
 					Estimator: estimator,
+					Overdraft: overdraft,
 				})
 			} else if governanceConfig.ReservationMaxTokens != nil && governanceConfig.ReservationCostMicrosPerToken != nil {
-				allowOverdraft := governanceConfig.ReservationAllowOverdraft != nil && *governanceConfig.ReservationAllowOverdraft
 				plugin.SetReservationCoordinator(&governance.DurableReservationCoordinator{
 					Store: reservationStore,
 					Estimator: governance.ConfiguredReservationEstimator{
 						MaxTokens:          *governanceConfig.ReservationMaxTokens,
 						CostMicrosPerToken: *governanceConfig.ReservationCostMicrosPerToken,
 					},
-					Overdraft: reservations.OverdraftPolicy{Allow: allowOverdraft, Reason: governanceConfig.ReservationOverdraftReason},
+					Overdraft: overdraft,
 				})
 			} else if governanceConfig.IsEnterprise {
 				return nil, fmt.Errorf("enterprise governance requires a reservation estimator when the config store supports durable reservations")

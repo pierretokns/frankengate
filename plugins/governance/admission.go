@@ -32,6 +32,23 @@ type ReservationEstimator interface {
 	Actual(context.Context, AdmissionSettlement) reservations.Amount
 }
 
+// OverdraftEvent is emitted after a request exceeds its reservation. The
+// notifier is intentionally transport-agnostic: deployments can adapt it to
+// SNS, SQS, webhook, email, or an internal alert bus without coupling the
+// request hot path to an AWS client.
+type OverdraftEvent struct {
+	ReservationID reservations.ReservationID
+	Reserved      reservations.Amount
+	Actual        reservations.Amount
+	Excess        reservations.Amount
+	Allowed       bool
+	Reason        string
+}
+
+type OverdraftNotifier interface {
+	Notify(context.Context, OverdraftEvent) error
+}
+
 // ConfiguredReservationEstimator provides a deterministic, conservative
 // reservation for deployments that do not have a provider-specific preflight
 // tokenizer. It reserves a configured token ceiling and per-token cost, then
@@ -96,6 +113,13 @@ type DurableReservationCoordinator struct {
 	Lease     time.Duration
 	Now       func() time.Time // injectable clock for deterministic retry/replay tests
 	Overdraft reservations.OverdraftPolicy
+	Notifier  OverdraftNotifier
+}
+
+func (c *DurableReservationCoordinator) SetNotifier(notifier OverdraftNotifier) {
+	if c != nil {
+		c.Notifier = notifier
+	}
 }
 
 func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req AdmissionRequest) (any, error) {
@@ -156,6 +180,18 @@ func (c *DurableReservationCoordinator) Settle(ctx context.Context, handle any, 
 		settleAmount := amount
 		if settleAmount.Tokens == 0 && settleAmount.CostMicros == 0 {
 			settleAmount = r.ReservedAmount
+		}
+		excess := reservations.Amount{}
+		if settleAmount.Tokens > r.ReservedAmount.Tokens {
+			excess.Tokens = settleAmount.Tokens - r.ReservedAmount.Tokens
+		}
+		if settleAmount.CostMicros > r.ReservedAmount.CostMicros {
+			excess.CostMicros = settleAmount.CostMicros - r.ReservedAmount.CostMicros
+		}
+		if (excess != reservations.Amount{}) && c.Notifier != nil {
+			if err := c.Notifier.Notify(ctx, OverdraftEvent{ReservationID: r.ID, Reserved: r.ReservedAmount, Actual: settleAmount, Excess: excess, Allowed: c.Overdraft.Allow, Reason: c.Overdraft.Reason}); err != nil && first == nil {
+				first = fmt.Errorf("overdraft notification: %w", err)
+			}
 		}
 		if _, err := c.Store.Settle(ctx, reservations.SettleRequest{ReservationID: r.ID, AttemptEpoch: r.AttemptEpoch, ActualAmount: settleAmount, IdempotencyKey: "settle-" + string(r.ID), Overdraft: c.Overdraft}); err != nil && first == nil {
 			first = err
