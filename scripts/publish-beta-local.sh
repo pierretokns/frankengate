@@ -45,9 +45,9 @@ printf '%s\n' "$VERSION_OUTPUT" > "$WORK/$PACKAGE/version.txt"
 cat > "$WORK/$PACKAGE/build-metadata.json" <<EOF
 {"source_sha":"$SHA","tag":"$TAG","origin":"local-tested-beta","binary":"$(basename "$BINARY")","platform":"$(uname -s)/$(uname -m)","go_version":"$(go version)","published_at":"$(date -u +%FT%TZ)"}
 EOF
-(cd "$WORK" && sha256sum "$PACKAGE/frankengate" > "$PACKAGE/SHA256SUMS")
+(cd "$WORK/$PACKAGE" && sha256sum frankengate > SHA256SUMS)
 tar -C "$WORK" -czf "$WORK/$PACKAGE.tar.gz" "$PACKAGE"
-(cd "$WORK" && sha256sum "$PACKAGE.tar.gz" > SHA256SUMS)
+(cd "$WORK" && sha256sum "$(basename "$PACKAGE.tar.gz")" > SHA256SUMS)
 
 REPO="$(git -C "$ROOT" remote get-url origin | sed -E 's#^https://github.com/##; s#\.git$##')"
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then

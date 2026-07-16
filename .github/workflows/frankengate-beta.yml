@@ -178,7 +178,7 @@ jobs:
           ./tmp/bifrost-http -version > "dist/${package}/version.txt"
           printf '{"source_sha":"%s","ref":"%s","workflow_sha":"%s","go_version":"%s","node_version":"%s"}\n' \
             "$sha" "$REF_NAME" "$GITHUB_SHA" "$GO_VERSION" "$NODE_VERSION" > "dist/${package}/build-metadata.json"
-          (cd dist && sha256sum "${package}/frankengate" > "${package}/SHA256SUMS")
+          (cd "dist/${package}" && sha256sum frankengate > SHA256SUMS)
           tar -C dist -czf "dist/${package}.tar.gz" "${package}"
 
       - name: Upload beta binary artifact
@@ -222,7 +222,7 @@ jobs:
           tag="beta-${short}"
           archive="$(find dist -maxdepth 1 -type f -name 'frankengate-beta-*-linux-amd64.tar.gz' -print -quit)"
           test -n "$archive"
-          sha256sum "$archive" > dist/SHA256SUMS
+          (cd dist && sha256sum "$(basename "$archive")" > SHA256SUMS)
           notes="FrankenGate beta for ${REF_NAME}\n\nSource commit: ${sha}\n\nThe archive includes CHANGELOG.md with the recent commit history and local build metadata.\n\nDownload:\n- curl -fL -o frankengate.tar.gz https://github.com/${REPO}/releases/download/${tag}/$(basename "$archive")\n- gh release download ${tag} --repo ${REPO}"
           gh release create "$tag" "$archive" dist/SHA256SUMS \
             --repo "$REPO" --target "$sha" --prerelease \
