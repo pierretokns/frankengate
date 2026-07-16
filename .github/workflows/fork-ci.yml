@@ -37,6 +37,10 @@ jobs:
     env:
       GOCACHE: ${{ github.workspace }}/.cache/go-build
       GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
+      # The main fork gate validates modules that can ship in FrankenGate
+      # artifacts. Example/test fixture modules have dedicated jobs and make
+      # this gate needlessly expensive and opaque.
+      FORK_RELEASE: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
