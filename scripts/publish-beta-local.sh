@@ -40,6 +40,7 @@ mkdir -p "$WORK/$PACKAGE"
 cp "$BINARY" "$WORK/$PACKAGE/frankengate"
 cp "$ROOT/LICENSE" "$ROOT/NOTICE" "$WORK/$PACKAGE/"
 cp "$TEST_REPORT" "$WORK/$PACKAGE/local-test-report"
+git -C "$ROOT" log -n 30 --date=short --pretty=format:'%h %ad %s' > "$WORK/$PACKAGE/CHANGELOG.md"
 printf '%s\n' "$VERSION_OUTPUT" > "$WORK/$PACKAGE/version.txt"
 cat > "$WORK/$PACKAGE/build-metadata.json" <<EOF
 {"source_sha":"$SHA","tag":"$TAG","origin":"local-tested-beta","binary":"$(basename "$BINARY")","platform":"$(uname -s)/$(uname -m)","go_version":"$(go version)","published_at":"$(date -u +%FT%TZ)"}
@@ -56,5 +57,5 @@ fi
 gh release create "$TAG" "$WORK/$PACKAGE.tar.gz" "$WORK/SHA256SUMS" \
   --repo "$REPO" --target "$SHA" --prerelease \
   --title "FrankenGate local beta ${SHORT_SHA}" \
-  --notes "Locally tested beta for commit ${SHA}.\n\nThis is not an official release; see local-test-report and build-metadata.json.\n\nDownload with: gh release download ${TAG} --repo ${REPO}"
+  --notes "Locally tested beta for commit ${SHA}.\n\nThis is not an official release; the archive includes CHANGELOG.md, local-test-report, and build-metadata.json.\n\nDownload with: gh release download ${TAG} --repo ${REPO}"
 echo "published https://github.com/${REPO}/releases/tag/${TAG}"
