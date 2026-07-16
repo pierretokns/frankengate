@@ -253,10 +253,10 @@ jobs:
             --repo "$GITHUB_REPOSITORY"
 
   kubernetes-vk-coherence:
-    name: Prove release image across three Kubernetes nodes
+    name: Prove image and Helm replacement across three Kubernetes nodes
     needs: publish
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 75
     permissions:
       contents: read
       packages: read
@@ -290,12 +290,68 @@ jobs:
           FRANKENGATE_IMAGE: ${{ needs.publish.outputs.image }}@${{ needs.publish.outputs.digest }}
         run: tests/kubernetes/local-aurora/run-vk-coherence.sh
 
+      - name: Install pinned Helm
+        uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
+        with:
+          version: v4.0.0
+
+      - name: Set up Go for pinned crane
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version: "1.26.5"
+
+      - name: Install pinned crane
+        run: go install github.com/google/go-containerregistry/cmd/crane@v0.20.6
+
+      - name: Download public release chart
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          chart_version=$(awk '$1 == "version:" {print $2}' helm-charts/bifrost/Chart.yaml)
+          chart="bifrost-${chart_version}.tgz"
+          mkdir -p "$RUNNER_TEMP/public-chart"
+          for attempt in {1..180}; do
+            if gh release download "$RELEASE_TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --pattern "$chart" \
+              --dir "$RUNNER_TEMP/public-chart" \
+              --clobber; then
+              test -s "$RUNNER_TEMP/public-chart/$chart"
+              echo "chart=$RUNNER_TEMP/public-chart/$chart" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            if (( attempt == 180 )); then
+              echo "public chart $chart did not appear within 60 minutes" >&2
+              exit 1
+            fi
+            sleep 20
+          done
+
+      - name: Prove Helm install, upgrade, rollback, and re-upgrade
+        env:
+          # v0.3.3 is the independently verified public compatibility baseline.
+          BASELINE_INDEX_DIGEST: sha256:3d4b1e10f556326f0506b937d81258c058f202877d302f4bbcb7db7d1e54517e
+          CURRENT_INDEX_DIGEST: ${{ needs.publish.outputs.digest }}
+          IMAGE: ${{ needs.publish.outputs.image }}
+        run: |
+          tests/kubernetes/helm/run-replacement-oracle.sh \
+            "$chart" \
+            "$IMAGE" \
+            "$BASELINE_INDEX_DIGEST" \
+            "$CURRENT_INDEX_DIGEST"
+
       - name: Collect failure evidence
         if: failure()
         run: |
           kubectl get pods -A -o wide || true
           kubectl -n frankengate-test get events --sort-by=.lastTimestamp || true
           kubectl -n frankengate-test logs -l app.kubernetes.io/name=frankengate-vk --all-containers --tail=200 || true
+          helm -n frankengate-helm-replacement history frankengate-replacement || true
+          kubectl -n frankengate-helm-replacement get deployments,replicasets,pods -o wide || true
+          kubectl -n frankengate-helm-replacement get events --sort-by=.lastTimestamp || true
+          kubectl -n frankengate-helm-replacement logs -l app.kubernetes.io/component=server --all-containers --tail=200 || true
 
       - name: Delete test cluster
         if: always()
