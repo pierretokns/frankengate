@@ -78,6 +78,17 @@ for config in "$CHART_DIR"/values-examples/*.yaml; do
     fi
 done
 
+# Validate the fork's governance virtual-key schema/render contract without a
+# Kubernetes cluster. Keep this before the optional helm install dry-run so a
+# missing local cluster does not hide chart contract regressions.
+print_info "Validating governance virtual-key schema and render..."
+if "$SCRIPT_DIR/validate-governance-values.sh"; then
+    print_success "Governance virtual-key validation passed"
+else
+    print_error "Governance virtual-key validation failed"
+    exit 1
+fi
+
 # Dry run install
 print_info "Performing dry-run installation..."
 if helm install test-release "$CHART_DIR" --dry-run --debug > /dev/null 2>&1; then
@@ -91,4 +102,3 @@ echo ""
 print_success "All validation checks passed!"
 echo ""
 print_info "Chart is ready for installation"
-
