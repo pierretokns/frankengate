@@ -54,8 +54,14 @@ type testReservationCoordinator struct {
 	reserved   int
 	settled    int
 	refunded   int
+	renewed    int
 	request    *schemas.BifrostRequest
 	settlement AdmissionSettlement
+}
+
+func (c *testReservationCoordinator) Renew(context.Context, any) error {
+	c.renewed++
+	return nil
 }
 
 func (c *testReservationCoordinator) Reserve(_ context.Context, req AdmissionRequest) (any, error) {
@@ -94,6 +100,24 @@ func TestConfiguredReservationEstimatorUsesCeilingAndObservedUsage(t *testing.T)
 	actual = e.Actual(context.Background(), AdmissionSettlement{Response: response})
 	require.Equal(t, int64(19), actual.Tokens)
 	require.Equal(t, int64(38), actual.CostMicros)
+}
+
+func TestDurableReservationCoordinatorRenewsAllBudgetLeases(t *testing.T) {
+	store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
+	now := time.Date(2026, 7, 16, 12, 0, 0, 0, time.UTC)
+	coordinator := &DurableReservationCoordinator{
+		Store:     store,
+		Estimator: ConfiguredReservationEstimator{MaxTokens: 10, CostMicrosPerToken: 2},
+		Lease:     time.Minute,
+		Now:       func() time.Time { return now },
+	}
+	result := &EvaluationResult{BudgetInfo: []*configstoreTables.TableBudget{{ID: "renew-budget"}}}
+	handle, err := coordinator.Reserve(context.Background(), AdmissionRequest{Result: result, RequestID: "renew-request"})
+	require.NoError(t, err)
+	require.NoError(t, coordinator.Renew(context.Background(), handle))
+	row, err := store.Get(context.Background(), handle.(*durableReservationHandle).rows[0].ID)
+	require.NoError(t, err)
+	require.Equal(t, now.Add(time.Minute), row.LeaseUntil)
 }
 
 func TestDurableCoordinatorSettlesReservedAmountWhenUsageMissing(t *testing.T) {
@@ -219,6 +243,7 @@ func TestPostLLMHookStreamingReservationWaitsForTerminalChunk(t *testing.T) {
 	ctx.SetValue(schemas.BifrostContextKeyStreamEndIndicator, false)
 	_, _, _ = p.PostLLMHook(ctx, chunk, nil)
 	require.Equal(t, 0, coordinator.refunded)
+	require.Equal(t, 1, coordinator.renewed)
 	ctx.SetValue(schemas.BifrostContextKeyStreamEndIndicator, true)
 	_, _, _ = p.PostLLMHook(ctx, chunk, nil)
 	require.Equal(t, 1, coordinator.settled)

@@ -266,6 +266,41 @@ func (c *DurableReservationCoordinator) Settle(ctx context.Context, handle any, 
 	return first
 }
 
+// Renew extends active reservation leases while a stream is still producing
+// chunks. It is intentionally separate from settlement so a sweeper cannot
+// reclaim a live stream between nonterminal callbacks.
+func (c *DurableReservationCoordinator) Renew(ctx context.Context, handle any) error {
+	h, ok := handle.(*durableReservationHandle)
+	if !ok {
+		return fmt.Errorf("invalid durable reservation handle")
+	}
+	now := time.Now().UTC()
+	if c.Now != nil {
+		now = c.Now().UTC()
+	}
+	lease := c.Lease
+	if lease <= 0 {
+		lease = 30 * time.Second
+	}
+	var first error
+	for i := range h.rows {
+		r, err := c.Store.Renew(ctx, reservations.RenewRequest{
+			ReservationID: h.rows[i].ID,
+			AttemptEpoch:  h.rows[i].AttemptEpoch,
+			LeaseUntil:    now.Add(lease),
+			Now:           now,
+		})
+		if err != nil {
+			if first == nil {
+				first = err
+			}
+			continue
+		}
+		h.rows[i] = r
+	}
+	return first
+}
+
 func (c *DurableReservationCoordinator) Refund(ctx context.Context, handle any, settlement AdmissionSettlement) error {
 	h, ok := handle.(*durableReservationHandle)
 	if !ok {
@@ -295,6 +330,12 @@ type ReservationCoordinator interface {
 	Reserve(context.Context, AdmissionRequest) (any, error)
 	Settle(context.Context, any, AdmissionSettlement) error
 	Refund(context.Context, any, AdmissionSettlement) error
+}
+
+// ReservationRenewer is an optional extension used by streaming hooks. Older
+// coordinators remain valid and simply do not participate in lease renewal.
+type ReservationRenewer interface {
+	Renew(context.Context, any) error
 }
 
 type reservationContextKey struct{}

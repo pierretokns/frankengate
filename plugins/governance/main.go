@@ -1456,10 +1456,17 @@ func (p *GovernancePlugin) PostLLMHook(ctx *schemas.BifrostContext, result *sche
 			settlement := AdmissionSettlement{Response: result, Error: err}
 			// Streaming reservations remain open until the terminal chunk. A
 			// provider error has no terminal success chunk and is refunded here.
-			if err != nil || bifrost.IsFinalChunk(ctx) || !bifrost.IsStreamRequestType(func() schemas.RequestType {
+			streamRequest := bifrost.IsStreamRequestType(func() schemas.RequestType {
 				t, _, _, _ := bifrost.GetResponseFields(result, err)
 				return t
-			}()) {
+			}())
+			if err == nil && streamRequest && !bifrost.IsFinalChunk(ctx) {
+				if renewer, ok := coordinator.(ReservationRenewer); ok {
+					if renewErr := renewer.Renew(ctx, handle); renewErr != nil && p.logger != nil {
+						p.logger.Warn("governance reservation lease renewal failed: %v", renewErr)
+					}
+				}
+			} else if err != nil || bifrost.IsFinalChunk(ctx) || !streamRequest {
 				var settleErr error
 				if err != nil {
 					settleErr = coordinator.Refund(ctx, handle, settlement)
