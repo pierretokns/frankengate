@@ -166,9 +166,10 @@ jobs:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           repo="${GITHUB_REPOSITORY,,}"
+          source_sha="$(git rev-parse HEAD 2>/dev/null || printf 'release-tag-%s' "$RELEASE_TAG")"
           {
             echo "image=ghcr.io/${repo}@${DIGEST}"
-            echo "source_sha=$(git rev-parse HEAD 2>/dev/null || echo release-tag-${RELEASE_TAG})"
+            echo "source_sha=${source_sha}"
             echo "workflow_sha=$GITHUB_SHA"
           } > "frankengate-${RELEASE_TAG}-container-digest.txt"
 
