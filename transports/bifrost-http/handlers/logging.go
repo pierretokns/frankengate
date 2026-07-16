@@ -1318,6 +1318,12 @@ func (h *LoggingHandler) getDashboard(ctx *fasthttp.RequestCtx) {
 			if err != nil {
 				return fmt.Errorf("%s rankings: %w", dim, err)
 			}
+			res.Provenance = &logstore.DashboardProvenance{
+				Source:      "logstore",
+				GeneratedAt: result.Meta.GeneratedAt,
+				WindowStart: filters.StartTime,
+				WindowEnd:   filters.EndTime,
+			}
 			dimMu.Lock()
 			result.DimensionRankings[string(dim)] = res
 			dimMu.Unlock()
