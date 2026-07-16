@@ -22,6 +22,17 @@ type ReservationStore interface {
 	Get(context.Context, reservations.ReservationID) (reservations.Reservation, error)
 }
 
+// BudgetReservationStore is the admission-facing extension. Implementations
+// must perform the budget lock, active-reservation check, and insert in one
+// transaction; callers must not substitute the unbound Reserve method when a
+// budget owner is known.
+type BudgetReservationStore interface {
+	ReservationStore
+	ReserveAgainstBudget(context.Context, BudgetReservationRequest) (reservations.Reservation, error)
+}
+
+var _ BudgetReservationStore = (*RDBConfigStore)(nil)
+
 // BudgetReservationRequest binds a reservation to one authoritative budget.
 // Hierarchical governance calls this once per budget owner in a single outer
 // transaction when it is wired into admission.

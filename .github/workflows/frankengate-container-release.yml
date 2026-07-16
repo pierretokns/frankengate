@@ -354,7 +354,7 @@ jobs:
                 exit 0
               fi
             fi
-            if (( attempt == 180 )); then
+            if (( attempt == 90 )); then
               echo "verified public charts did not appear within 30 minutes" >&2
               exit 1
             fi
