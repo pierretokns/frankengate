@@ -58,7 +58,18 @@ jobs:
           echo "fork-go-checks preflight complete"
 
       - name: Run unit tests and vet
-        run: timeout 25m .github/workflows/scripts/fork-go-checks.sh test-vet
+        run: |
+          set -euo pipefail
+          heartbeat() {
+            while sleep 30; do
+              echo "[$(date -u +%FT%TZ)] fork-go-checks heartbeat"
+            done
+          }
+          heartbeat &
+          heartbeat_pid=$!
+          trap 'kill "$heartbeat_pid" 2>/dev/null || true' EXIT
+          timeout --foreground --signal=TERM --kill-after=30s 25m \
+            .github/workflows/scripts/fork-go-checks.sh test-vet
 
   go-security:
     name: Go vulnerability checks
