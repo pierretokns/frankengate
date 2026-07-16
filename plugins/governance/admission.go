@@ -3,6 +3,7 @@ package governance
 import (
 	"context"
 	"fmt"
+	"sync/atomic"
 	"time"
 
 	"github.com/maximhq/bifrost/core/reservations"
@@ -54,8 +55,11 @@ type OverdraftNotifier interface {
 // caller can record the delivery failure without blocking on an external SNS
 // or webhook round trip.
 type AsyncOverdraftNotifier struct {
-	events chan OverdraftEvent
-	done   chan struct{}
+	events    chan OverdraftEvent
+	done      chan struct{}
+	delivered atomic.Uint64
+	failed    atomic.Uint64
+	dropped   atomic.Uint64
 }
 
 func NewAsyncOverdraftNotifier(ctx context.Context, downstream OverdraftNotifier, buffer int) *AsyncOverdraftNotifier {
@@ -70,7 +74,11 @@ func NewAsyncOverdraftNotifier(ctx context.Context, downstream OverdraftNotifier
 			case <-ctx.Done():
 				return
 			case event := <-n.events:
-				_ = downstream.Notify(ctx, event)
+				if err := downstream.Notify(ctx, event); err != nil {
+					n.failed.Add(1)
+				} else {
+					n.delivered.Add(1)
+				}
 			}
 		}
 	}()
@@ -85,9 +93,14 @@ func (n *AsyncOverdraftNotifier) Notify(_ context.Context, event OverdraftEvent)
 	case n.events <- event:
 		return nil
 	default:
+		n.dropped.Add(1)
 		return fmt.Errorf("overdraft notification queue is full")
 	}
 }
+
+func (n *AsyncOverdraftNotifier) Delivered() uint64 { return n.delivered.Load() }
+func (n *AsyncOverdraftNotifier) Failed() uint64    { return n.failed.Load() }
+func (n *AsyncOverdraftNotifier) Dropped() uint64   { return n.dropped.Load() }
 
 func (n *AsyncOverdraftNotifier) Close() {
 	if n != nil {
