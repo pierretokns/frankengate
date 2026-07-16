@@ -100,6 +100,26 @@ func TestMCPHooksUseDurableAdmissionBoundary(t *testing.T) {
 	require.Equal(t, 1, coordinator.settled)
 }
 
+func TestMCPPolicyRejectionDoesNotReserve(t *testing.T) {
+	vk := buildVKForMCPStamping([]string{"allowed"})
+	p := newPluginForMCPStamping(t, vk, false)
+	coordinator := &testReservationCoordinator{}
+	p.SetReservationCoordinator(coordinator)
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyVirtualKey, mcpTestVKValue)
+	name := "sentry-blocked"
+	req := &schemas.BifrostMCPRequest{
+		RequestType: schemas.MCPRequestTypeChatToolCall,
+		ChatAssistantMessageToolCall: &schemas.ChatAssistantMessageToolCall{
+			Function: schemas.ChatAssistantMessageToolCallFunction{Name: &name},
+		},
+	}
+	_, shortCircuit, err := p.PreMCPHook(ctx, req)
+	require.NoError(t, err)
+	require.NotNil(t, shortCircuit)
+	require.Equal(t, 0, coordinator.reserved)
+}
+
 func TestConfiguredReservationEstimatorUsesCeilingAndObservedUsage(t *testing.T) {
 	e := ConfiguredReservationEstimator{MaxTokens: 1000, CostMicrosPerToken: 2}
 	reserved, err := e.Estimate(context.Background(), AdmissionRequest{})
