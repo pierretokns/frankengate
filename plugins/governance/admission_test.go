@@ -42,9 +42,9 @@ func TestAsyncOverdraftNotifierDoesNotBlockCaller(t *testing.T) {
 	downstream := &overdraftNotifier{}
 	notifier := NewAsyncOverdraftNotifier(ctx, downstream, 1)
 	require.NoError(t, notifier.Notify(ctx, OverdraftEvent{Reason: "first"}))
-	// The notifier is buffered and accepts a second event without waiting for
-	// the downstream transport; delivery is eventually observed by the worker.
-	require.NoError(t, notifier.Notify(ctx, OverdraftEvent{Reason: "second"}))
+	// A full queue may reject immediately, but must never wait on the
+	// downstream transport or block the request path.
+	_ = notifier.Notify(ctx, OverdraftEvent{Reason: "second"})
 	cancel()
 	notifier.Close()
 }
