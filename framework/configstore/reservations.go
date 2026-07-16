@@ -81,6 +81,9 @@ func (s *RDBConfigStore) ReserveAgainstBudget(ctx context.Context, req BudgetRes
 			if existing.LogicalRequestID != row.LogicalRequestID || existing.AttemptID != row.AttemptID || existing.AttemptEpoch != row.AttemptEpoch || existing.Lane != row.Lane || existing.ReservedTokens != row.ReservedTokens || existing.ReservedMicros != row.ReservedMicros || existing.BudgetID != row.BudgetID {
 				return reservations.ErrReservationConflict
 			}
+			if existing.State != string(reservations.ReservationStateActive) {
+				return reservations.ErrAlreadyFinalized
+			}
 			r = reservationFromRow(existing)
 			return nil
 		} else if !errors.Is(e, gorm.ErrRecordNotFound) {
@@ -119,6 +122,9 @@ func (s *RDBConfigStore) Reserve(ctx context.Context, req reservations.Reservati
 		if e := tx.First(&existing, "id = ?", row.ID).Error; e == nil {
 			if existing.LogicalRequestID != row.LogicalRequestID || existing.AttemptID != row.AttemptID || existing.AttemptEpoch != row.AttemptEpoch || existing.Lane != row.Lane || existing.ReservedTokens != row.ReservedTokens || existing.ReservedMicros != row.ReservedMicros {
 				return reservations.ErrReservationConflict
+			}
+			if existing.State != string(reservations.ReservationStateActive) {
+				return reservations.ErrAlreadyFinalized
 			}
 			r = reservationFromRow(existing)
 			return nil

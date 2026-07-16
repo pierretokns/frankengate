@@ -29,6 +29,8 @@ func TestRDBReservationLifecycleIsIdempotentAndFenced(t *testing.T) {
 	retrySettle, err := store.Settle(ctx, reservations.SettleRequest{ReservationID: first.ID, AttemptEpoch: 3, ActualAmount: reservations.Amount{Tokens: 8, CostMicros: 80}, IdempotencyKey: "settle-1", Now: now})
 	require.NoError(t, err)
 	require.Equal(t, settled.ID, retrySettle.ID)
+	_, err = store.Reserve(ctx, req)
+	require.ErrorIs(t, err, reservations.ErrAlreadyFinalized)
 	_, err = store.Refund(ctx, reservations.RefundRequest{ReservationID: first.ID, AttemptEpoch: 3, IdempotencyKey: "refund-1", Now: now})
 	require.ErrorIs(t, err, reservations.ErrAlreadyFinalized)
 }
