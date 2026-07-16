@@ -296,12 +296,13 @@ call_models() {
 }
 
 assert_retained_vk() {
-  local db_pod deadline all_valid pod ip memory response pod_count
+  local db_pod deadline all_valid pod ip memory response pod_count ready_count
   db_pod=$(database_pod)
   deadline=$(( $(date +%s) + 30 ))
   while :; do
     all_valid=1
     pod_count=0
+    ready_count=0
     while IFS=$'\t' read -r pod ip; do
       [[ -n $pod && -n $ip ]] || continue
       pod_count=$((pod_count + 1))
@@ -317,9 +318,12 @@ assert_retained_vk() {
         all_valid=0
         break
       fi
+      ready_count=$((ready_count + 1))
     done < <(kubectl -n "$NAMESPACE" get pods -l "$selector" -o json |
-      jq -r '.items[] | [.metadata.name,.status.podIP] | @tsv')
-    if [[ $all_valid -eq 1 && $pod_count -eq 3 ]]; then
+      jq -r '.items[] |
+        select(any(.status.conditions[]?; .type == "Ready" and .status == "True")) |
+        [.metadata.name,.status.podIP] | @tsv')
+    if [[ $all_valid -eq 1 && $pod_count -eq 3 && $ready_count -eq 3 ]]; then
       return 0
     fi
     if (( $(date +%s) >= deadline )); then
