@@ -85,6 +85,21 @@ func TestPreLLMHookPassesRequestEnvelopeToAdmissionEstimator(t *testing.T) {
 	require.Same(t, req, coordinator.request)
 }
 
+func TestMCPHooksUseDurableAdmissionBoundary(t *testing.T) {
+	p := admissionTestPlugin(t)
+	coordinator := &testReservationCoordinator{}
+	p.SetReservationCoordinator(coordinator)
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	req := &schemas.BifrostMCPRequest{RequestType: schemas.MCPRequestTypeExecuteTool}
+	_, shortCircuit, err := p.PreMCPHook(ctx, req)
+	require.NoError(t, err)
+	require.Nil(t, shortCircuit)
+	require.Equal(t, 1, coordinator.reserved)
+	_, _, err = p.PostMCPHook(ctx, &schemas.BifrostMCPResponse{ExtraFields: schemas.BifrostMCPResponseExtraFields{MCPRequestType: schemas.MCPRequestTypeExecuteTool}}, nil)
+	require.NoError(t, err)
+	require.Equal(t, 1, coordinator.settled)
+}
+
 func TestConfiguredReservationEstimatorUsesCeilingAndObservedUsage(t *testing.T) {
 	e := ConfiguredReservationEstimator{MaxTokens: 1000, CostMicrosPerToken: 2}
 	reserved, err := e.Estimate(context.Background(), AdmissionRequest{})
