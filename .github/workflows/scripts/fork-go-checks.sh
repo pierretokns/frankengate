@@ -98,24 +98,36 @@ run_in_modules() {
 }
 
 download_dependencies() {
-  for module in "${MODULES[@]}"; do
+  local max_parallel=8 failed=0
+  local -a pids=()
+  download_one() {
+    local module="$1" attempt
     echo "::group::go mod download: ${module}"
-    local attempt
     for attempt in 1 2 3; do
-      if (cd "$ROOT/$module" && go mod download); then
-        break
+      if timeout 180s bash -c 'cd "$1" && go mod download' _ "$ROOT/$module"; then
+        echo "::endgroup::"
+        return 0
       fi
-      if [ "$attempt" -eq 3 ]; then
-        echo "dependency download failed after $attempt attempts: $module" >&2
-        return 1
+      if [ "$attempt" -lt 3 ]; then
+        sleep $((attempt * 2))
       fi
-      # GitHub's Go proxy occasionally resets an HTTP/2 stream. Populate the
-      # immutable module cache before compile/vet/vuln work and retry only this
-      # side-effect-free acquisition boundary, never a test execution.
-      sleep $((attempt * 2))
     done
+    echo "dependency download failed after 3 attempts: $module" >&2
     echo "::endgroup::"
+    return 1
+  }
+  for module in "${MODULES[@]}"; do
+    download_one "$module" &
+    pids+=("$!")
+    if [ "${#pids[@]}" -ge "$max_parallel" ]; then
+      if ! wait "${pids[0]}"; then failed=1; fi
+      pids=("${pids[@]:1}")
+    fi
   done
+  for pid in "${pids[@]}"; do
+    if ! wait "$pid"; then failed=1; fi
+  done
+  return "$failed"
 }
 
 run_focused_race_tests() {
