@@ -36,6 +36,19 @@ func (n *overdraftNotifier) Notify(_ context.Context, event OverdraftEvent) erro
 	return nil
 }
 
+func TestAsyncOverdraftNotifierDoesNotBlockCaller(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	downstream := &overdraftNotifier{}
+	notifier := NewAsyncOverdraftNotifier(ctx, downstream, 1)
+	require.NoError(t, notifier.Notify(ctx, OverdraftEvent{Reason: "first"}))
+	// The notifier is buffered and accepts a second event without waiting for
+	// the downstream transport; delivery is eventually observed by the worker.
+	require.NoError(t, notifier.Notify(ctx, OverdraftEvent{Reason: "second"}))
+	cancel()
+	notifier.Close()
+}
+
 type testReservationCoordinator struct {
 	reserveErr error
 	reserved   int

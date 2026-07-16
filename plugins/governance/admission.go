@@ -49,6 +49,52 @@ type OverdraftNotifier interface {
 	Notify(context.Context, OverdraftEvent) error
 }
 
+// AsyncOverdraftNotifier decouples alert delivery from request settlement.
+// Events are bounded; when the buffer is full, Notify returns an error so the
+// caller can record the delivery failure without blocking on an external SNS
+// or webhook round trip.
+type AsyncOverdraftNotifier struct {
+	events chan OverdraftEvent
+	done   chan struct{}
+}
+
+func NewAsyncOverdraftNotifier(ctx context.Context, downstream OverdraftNotifier, buffer int) *AsyncOverdraftNotifier {
+	if buffer <= 0 {
+		buffer = 256
+	}
+	n := &AsyncOverdraftNotifier{events: make(chan OverdraftEvent, buffer), done: make(chan struct{})}
+	go func() {
+		defer close(n.done)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case event := <-n.events:
+				_ = downstream.Notify(ctx, event)
+			}
+		}
+	}()
+	return n
+}
+
+func (n *AsyncOverdraftNotifier) Notify(_ context.Context, event OverdraftEvent) error {
+	if n == nil {
+		return fmt.Errorf("overdraft notifier is nil")
+	}
+	select {
+	case n.events <- event:
+		return nil
+	default:
+		return fmt.Errorf("overdraft notification queue is full")
+	}
+}
+
+func (n *AsyncOverdraftNotifier) Close() {
+	if n != nil {
+		<-n.done
+	}
+}
+
 // ConfiguredReservationEstimator provides a deterministic, conservative
 // reservation for deployments that do not have a provider-specific preflight
 // tokenizer. It reserves a configured token ceiling and per-token cost, then
