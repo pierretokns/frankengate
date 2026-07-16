@@ -1601,30 +1601,6 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 			Error: bifrostError,
 		}, nil
 	}
-	// MCP tool calls are billable executions too. Reserve before dispatch so a
-	// tool cannot bypass the durable hard-budget boundary used by LLM calls.
-	if coordinator := p.admissionCoordinator(); coordinator != nil {
-		attempt := 0
-		if value, ok := ctx.Value(schemas.BifrostContextKeyFallbackIndex).(int); ok {
-			attempt = value
-		}
-		handle, err := coordinator.Reserve(ctx, AdmissionRequest{
-			Evaluation:  *evaluationRequest,
-			Result:      nil,
-			RequestType: schemas.MCPToolExecutionRequest,
-			RequestID:   bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyRequestID),
-			Attempt:     attempt,
-		})
-		if err != nil {
-			return req, &schemas.MCPPluginShortCircuit{Error: &schemas.BifrostError{
-				Type:       new("governance_reservation_denied"),
-				StatusCode: new(429),
-				Error:      &schemas.ErrorField{Message: err.Error()},
-			}}, nil
-		}
-		setReservationHandle(ctx, handle)
-	}
-
 	// Blind single-tool check: validate the specific tool being executed against VK MCPConfigs.
 	// This runs independently of EvaluateGovernanceRequest to enforce execution-time allow-list.
 	if virtualKeyValue != "" {
@@ -1670,7 +1646,29 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 				},
 			}}, nil
 		}
-		return req, nil, nil
+	}
+	// Reserve only after all identity and tool-policy gates pass. This avoids
+	// leaking a reservation when a request is rejected by a later VK check.
+	if coordinator := p.admissionCoordinator(); coordinator != nil {
+		attempt := 0
+		if value, ok := ctx.Value(schemas.BifrostContextKeyFallbackIndex).(int); ok {
+			attempt = value
+		}
+		handle, err := coordinator.Reserve(ctx, AdmissionRequest{
+			Evaluation:  *evaluationRequest,
+			Result:      nil,
+			RequestType: schemas.MCPToolExecutionRequest,
+			RequestID:   bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyRequestID),
+			Attempt:     attempt,
+		})
+		if err != nil {
+			return req, &schemas.MCPPluginShortCircuit{Error: &schemas.BifrostError{
+				Type:       new("governance_reservation_denied"),
+				StatusCode: new(429),
+				Error:      &schemas.ErrorField{Message: err.Error()},
+			}}, nil
+		}
+		setReservationHandle(ctx, handle)
 	}
 
 	return req, nil, nil
