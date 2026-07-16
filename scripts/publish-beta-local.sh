@@ -54,8 +54,27 @@ if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
   echo "release $TAG already exists; refusing to overwrite it" >&2
   exit 1
 fi
-gh release create "$TAG" "$WORK/$PACKAGE.tar.gz" "$WORK/SHA256SUMS" \
-  --repo "$REPO" --target "$SHA" --prerelease \
-  --title "FrankenGate local beta ${SHORT_SHA}" \
-  --notes "Locally tested beta for commit ${SHA}.\n\nThis is not an official release; the archive includes CHANGELOG.md, local-test-report, and build-metadata.json.\n\nDownload with: gh release download ${TAG} --repo ${REPO}"
+NOTES="Locally tested beta for commit ${SHA}.\n\nThis is not an official release; the archive includes CHANGELOG.md, local-test-report, and build-metadata.json.\n\nDownload with: gh release download ${TAG} --repo ${REPO}"
+# Create draft-first and upload independently. A single gh release create call
+# can leave a partially uploaded release when one asset request times out.
+gh release create "$TAG" --repo "$REPO" --target "$SHA" --prerelease --draft \
+	--title "FrankenGate local beta ${SHORT_SHA}" --notes "$NOTES"
+for asset in "$WORK/$PACKAGE.tar.gz" "$WORK/SHA256SUMS"; do
+	 uploaded=false
+	 for attempt in 1 2 3; do
+		if gh release upload "$TAG" "$asset" --repo "$REPO" --clobber; then
+			uploaded=true
+			break
+		fi
+		sleep $((attempt * 2))
+	 done
+	 if [[ "$uploaded" != true ]]; then
+		echo "failed to upload beta asset $(basename "$asset"); draft release left for inspection" >&2
+		exit 1
+	 fi
+done
+# Do not publish until both expected assets are visible on the draft release.
+ASSET_COUNT="$(gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets | map(select(.name == "'"$(basename "$WORK/$PACKAGE.tar.gz")"'" or .name == "SHA256SUMS")) | length')"
+[[ "$ASSET_COUNT" == 2 ]] || { echo "beta release asset verification failed (found $ASSET_COUNT/2)" >&2; exit 1; }
+gh release edit "$TAG" --repo "$REPO" --draft=false
 echo "published https://github.com/${REPO}/releases/tag/${TAG}"
