@@ -626,6 +626,20 @@ RotateVirtualKeyResponse:
       type: string
       description: Present when persistence committed but this pod's runtime reload is pending.
 
+RevealVirtualKeyResponse:
+  type: object
+  description: Current credential for an authorized control-plane reveal request
+  required: [message, virtual_key, secret]
+  properties:
+    message:
+      type: string
+    virtual_key:
+      $ref: '#/VirtualKey'
+    secret:
+      type: string
+      writeOnly: true
+      description: Current credential; clients must treat it as sensitive and non-cacheable.
+
 BulkRotateVirtualKeysResponse:
   type: object
   required: [message, virtual_keys]

@@ -40182,7 +40182,26 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VirtualKeyResponse"
+                  "type": "object",
+                  "description": "Reveal-once response for a newly created virtual key",
+                  "required": [
+                    "message",
+                    "virtual_key",
+                    "secret"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "virtual_key": {
+                      "$ref": "#/components/schemas/VirtualKey"
+                    },
+                    "secret": {
+                      "type": "string",
+                      "writeOnly": true,
+                      "description": "Newly generated credential. This is the only response in which it is revealed."
+                    }
+                  }
                 }
               }
             }
@@ -40199,6 +40218,102 @@
           },
           "500": {
             "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/governance/virtual-keys/rotate": {
+      "post": {
+        "operationId": "rotateVirtualKeys",
+        "summary": "Rotate multiple virtual keys",
+        "description": "Rotates each requested credential and reveals every successfully committed secret exactly once.",
+        "tags": [
+          "Governance"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "virtual_key_ids"
+                ],
+                "properties": {
+                  "virtual_key_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rotation results, including per-key failures and one-time secrets for committed rotations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "message",
+                    "virtual_keys"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "virtual_keys": {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/VirtualKey"
+                          },
+                          {
+                            "type": "object",
+                            "required": [
+                              "secret"
+                            ],
+                            "properties": {
+                              "secret": {
+                                "type": "string",
+                                "writeOnly": true,
+                                "description": "Newly generated credential, revealed once."
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -40461,6 +40576,158 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/governance/virtual-keys/{vk_id}/rotate": {
+      "post": {
+        "operationId": "rotateVirtualKey",
+        "summary": "Rotate a virtual key",
+        "description": "Commits a new credential and reveals it exactly once. `runtime_converged` is false when\npersistence succeeded but this pod's in-memory reload is still pending; the committed\ncredential remains successful and must not be retried automatically.\n",
+        "tags": [
+          "Governance"
+        ],
+        "parameters": [
+          {
+            "name": "vk_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Credential committed and revealed once",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Reveal-once response for a committed virtual-key rotation",
+                  "required": [
+                    "message",
+                    "virtual_key",
+                    "secret",
+                    "runtime_converged"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "virtual_key": {
+                      "$ref": "#/components/schemas/VirtualKey"
+                    },
+                    "secret": {
+                      "type": "string",
+                      "writeOnly": true,
+                      "description": "Newly generated credential. This is the only response in which it is revealed."
+                    },
+                    "runtime_converged": {
+                      "type": "boolean"
+                    },
+                    "warning": {
+                      "type": "string",
+                      "description": "Present when persistence committed but this pod's runtime reload is pending."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Virtual key not found"
+          },
+          "409": {
+            "description": "The key changed after the rotation request observed it"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/governance/virtual-keys/{vk_id}/reveal": {
+      "get": {
+        "operationId": "revealVirtualKey",
+        "summary": "Reveal an existing virtual key secret",
+        "description": "Returns the current credential for an existing virtual key to an authorized\ncontrol-plane caller. The response is marked no-store by the gateway; ordinary\nvirtual-key reads remain redacted.\n",
+        "tags": [
+          "Governance"
+        ],
+        "parameters": [
+          {
+            "name": "vk_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current credential and redacted virtual-key metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Current credential for an authorized control-plane reveal request",
+                  "required": [
+                    "message",
+                    "virtual_key",
+                    "secret"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "virtual_key": {
+                      "$ref": "#/components/schemas/VirtualKey"
+                    },
+                    "secret": {
+                      "type": "string",
+                      "writeOnly": true,
+                      "description": "Current credential; clients must treat it as sensitive and non-cacheable."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Virtual key not found"
+          },
+          "409": {
+            "description": "Virtual key secret is unavailable"
           },
           "500": {
             "description": "Internal server error",
@@ -74840,11 +75107,10 @@
       },
       "VirtualKey": {
         "type": "object",
-        "description": "Virtual key configuration",
+        "description": "Public virtual-key metadata. The credential is never returned by ordinary read or update operations.",
         "required": [
           "id",
           "name",
-          "value",
           "is_active",
           "provider_configs",
           "mcp_configs",
@@ -74858,9 +75124,6 @@
             "type": "string"
           },
           "name": {
-            "type": "string"
-          },
-          "value": {
             "type": "string"
           },
           "description": {

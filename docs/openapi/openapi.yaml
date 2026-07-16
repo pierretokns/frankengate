@@ -821,6 +821,8 @@ paths:
     $ref: './paths/management/governance.yaml#/virtual-keys-by-id'
   /api/governance/virtual-keys/{vk_id}/rotate:
     $ref: './paths/management/governance.yaml#/virtual-keys-by-id-rotate'
+  /api/governance/virtual-keys/{vk_id}/reveal:
+    $ref: './paths/management/governance.yaml#/virtual-keys-by-id-reveal'
 
   # Governance - Teams
   /api/governance/teams:
