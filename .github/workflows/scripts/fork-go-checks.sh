@@ -83,7 +83,7 @@ export GOWORK="$WORKSPACE_DIR/go.work"
 
 echo "using local fork workspace: $GOWORK"
 echo "[$(date -u +%FT%TZ)] validating local module graph"
-timeout --signal=TERM --kill-after=30s "${MODULE_GRAPH_TIMEOUT_SECONDS:-300}s" go list -m all |
+timeout --foreground --signal=TERM --kill-after=30s "${MODULE_GRAPH_TIMEOUT_SECONDS:-300}s" go list -m all |
   awk '$1 ~ /^github\.com\/maximhq\/bifrost(\/|$)/ && NF > 1 { print }' |
   while IFS= read -r remote_module; do
     echo "unexpected remote Bifrost module: $remote_module" >&2
@@ -110,9 +110,9 @@ run_in_modules() {
       cd "$ROOT/$module"
       echo "[$(date -u +%FT%TZ)] start ${label}: ${module} (timeout ${module_timeout}s)"
       if [[ "$label" == "go vet" && "$module" == "examples/plugins/hello-world-wasm-go" ]]; then
-        timeout --signal=TERM --kill-after=30s "${module_timeout}s" go vet -unsafeptr=false ./...
+        timeout --foreground --signal=TERM --kill-after=30s "${module_timeout}s" go vet -unsafeptr=false ./...
       else
-        timeout --signal=TERM --kill-after=30s "${module_timeout}s" "$@"
+        timeout --foreground --signal=TERM --kill-after=30s "${module_timeout}s" "$@"
       fi
       echo "[$(date -u +%FT%TZ)] complete ${label}: ${module}"
     )
@@ -139,7 +139,7 @@ download_dependencies() {
     local module="$1" attempt
     echo "::group::go mod download: ${module}"
     for attempt in 1 2 3; do
-      if timeout 180s bash -c 'cd "$1" && go mod download' _ "$ROOT/$module"; then
+      if timeout --foreground --kill-after=30s 180s bash -c 'cd "$1" && go mod download' _ "$ROOT/$module"; then
         echo "::endgroup::"
         return 0
       fi
