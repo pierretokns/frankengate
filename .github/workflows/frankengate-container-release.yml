@@ -106,7 +106,6 @@ jobs:
             org.opencontainers.image.licenses=Apache-2.0
           cache-from: type=gha,scope=frankengate-release
           cache-to: type=gha,mode=max,scope=frankengate-release
-          progress: plain
           provenance: false
           sbom: false
 
