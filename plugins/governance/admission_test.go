@@ -19,6 +19,16 @@ func (s testBudgetReservationStore) ReserveAgainstBudget(ctx context.Context, re
 	return s.Reserve(ctx, req.Request)
 }
 
+type excessUsageEstimator struct{}
+
+func (excessUsageEstimator) Estimate(context.Context, AdmissionRequest) (reservations.Amount, error) {
+	return reservations.Amount{Tokens: 10, CostMicros: 10}, nil
+}
+
+func (excessUsageEstimator) Actual(context.Context, AdmissionSettlement) reservations.Amount {
+	return reservations.Amount{Tokens: 20, CostMicros: 20}
+}
+
 type testReservationCoordinator struct {
 	reserveErr error
 	reserved   int
@@ -93,6 +103,35 @@ func TestDurableCoordinatorIsIdempotentAcrossReplicaCoordinators(t *testing.T) {
 	require.Equal(t, h1.(*durableReservationHandle).rows[0].ID, h2.(*durableReservationHandle).rows[0].ID)
 	require.NoError(t, first.Settle(context.Background(), h1, AdmissionSettlement{}))
 	require.NoError(t, second.Settle(context.Background(), h2, AdmissionSettlement{}))
+}
+
+func TestDurableCoordinatorControlledOverdraftPolicy(t *testing.T) {
+	result := &EvaluationResult{BudgetInfo: []*configstoreTables.TableBudget{{ID: "budget-overdraft"}}}
+	for _, tc := range []struct {
+		name    string
+		allow   bool
+		want    reservations.OverdraftState
+		wantErr error
+	}{
+		{name: "denied by default", allow: false, want: reservations.OverdraftStateDenied, wantErr: reservations.ErrOverdraftDenied},
+		{name: "explicitly approved", allow: true, want: reservations.OverdraftStateControlled},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
+			coordinator := &DurableReservationCoordinator{Store: store, Estimator: excessUsageEstimator{}, Overdraft: reservations.OverdraftPolicy{Allow: tc.allow, Reason: "approved research overdraft"}}
+			handle, err := coordinator.Reserve(context.Background(), AdmissionRequest{RequestID: tc.name, Result: result})
+			require.NoError(t, err)
+			err = coordinator.Settle(context.Background(), handle, AdmissionSettlement{})
+			if tc.wantErr != nil {
+				require.ErrorIs(t, err, tc.wantErr)
+			} else {
+				require.NoError(t, err)
+			}
+			row, getErr := store.Get(context.Background(), handle.(*durableReservationHandle).rows[0].ID)
+			require.NoError(t, getErr)
+			require.Equal(t, tc.want, row.OverdraftState)
+		})
+	}
 }
 func (c *testReservationCoordinator) Settle(context.Context, any, AdmissionSettlement) error {
 	c.settled++
