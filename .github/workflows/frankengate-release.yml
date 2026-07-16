@@ -85,6 +85,9 @@ jobs:
           - runner: macos-15-intel
             artifact: darwin-amd64
     runs-on: ${{ matrix.runner }}
+    # A platform runner must not hold the single-release/Helm publication
+    # chain forever if the UI build or hosted macOS queue stalls.
+    timeout-minutes: 35
     permissions:
       contents: read
       id-token: write
