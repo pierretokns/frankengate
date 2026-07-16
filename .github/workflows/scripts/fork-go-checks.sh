@@ -153,7 +153,13 @@ case "$MODE" in
     ;;
   vuln)
     download_dependencies
-    run_in_modules "govulncheck" go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+    # Compile the scanner once per job. `go run ...@version` recompiles and
+    # resolves the tool for every module, which made release tags spend most
+    # of their wall time repeating identical scanner setup.
+    VULN_BIN="$WORKSPACE_DIR/bin/govulncheck"
+    mkdir -p "$(dirname "$VULN_BIN")"
+    GOBIN="$(dirname "$VULN_BIN")" go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+    run_in_modules "govulncheck" "$VULN_BIN" ./...
     ;;
   *)
     echo "unknown mode: $MODE" >&2
