@@ -1751,8 +1751,12 @@
                     }
                   }
                 },
-                "required": ["id", "name"]
+              "required": ["id", "name"]
               }
+            },
+            "virtual-keys": {
+              "$ref": "#/properties/bifrost/properties/governance/properties/virtualKeys",
+              "description": "Compatibility alias for virtualKeys; rendered as virtual_keys in the gateway config."
             },
             "routingRules": {
               "type": "array",

@@ -508,9 +508,13 @@ false
 {{- end }}
 {{- $_ := set $governance "roles" $roles }}
 {{- end }}
-{{- if .Values.bifrost.governance.virtualKeys }}
+{{- $configuredVks := list }}
+{{- if .Values.bifrost.governance.virtualKeys }}{{- $configuredVks = concat $configuredVks .Values.bifrost.governance.virtualKeys }}{{- end }}
+{{- $legacyVks := index .Values.bifrost.governance "virtual-keys" }}
+{{- if $legacyVks }}{{- $configuredVks = concat $configuredVks $legacyVks }}{{- end }}
+{{- if $configuredVks }}
 {{- $vks := list }}
-{{- range .Values.bifrost.governance.virtualKeys }}
+{{- range $configuredVks }}
 {{- $vk := dict "id" .id "name" .name }}
 {{- if .value }}{{- $_ := set $vk "value" .value }}{{- end }}
 {{- if .description }}{{- $_ := set $vk "description" .description }}{{- end }}
