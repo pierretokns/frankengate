@@ -72,3 +72,38 @@ func TestPostLLMHookReservationSettlementIsIdempotentAtPluginBoundary(t *testing
 	_, _, _ = p.PostLLMHook(ctx, nil, &schemas.BifrostError{Error: &schemas.ErrorField{Message: "duplicate terminal hook"}})
 	require.Equal(t, 1, coordinator.refunded)
 }
+
+func TestPostLLMHookStreamingReservationWaitsForTerminalChunk(t *testing.T) {
+	p := admissionTestPlugin(t)
+	coordinator := &testReservationCoordinator{}
+	p.SetReservationCoordinator(coordinator)
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	req := admissionRequest()
+	req.RequestType = schemas.ChatCompletionStreamRequest
+	_, shortCircuit, err := p.PreLLMHook(ctx, req)
+	require.NoError(t, err)
+	require.Nil(t, shortCircuit)
+	chunk := &schemas.BifrostResponse{ChatResponse: &schemas.BifrostChatResponse{ExtraFields: schemas.BifrostResponseExtraFields{RequestType: schemas.ChatCompletionStreamRequest}}}
+	ctx.SetValue(schemas.BifrostContextKeyStreamEndIndicator, false)
+	_, _, _ = p.PostLLMHook(ctx, chunk, nil)
+	require.Equal(t, 0, coordinator.refunded)
+	ctx.SetValue(schemas.BifrostContextKeyStreamEndIndicator, true)
+	_, _, _ = p.PostLLMHook(ctx, chunk, nil)
+	require.Equal(t, 1, coordinator.settled)
+}
+
+func TestPreLLMHookReservesEachFallbackAttempt(t *testing.T) {
+	p := admissionTestPlugin(t)
+	coordinator := &testReservationCoordinator{}
+	p.SetReservationCoordinator(coordinator)
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyRequestID, "logical-request")
+	_, shortCircuit, err := p.PreLLMHook(ctx, admissionRequest())
+	require.NoError(t, err)
+	require.Nil(t, shortCircuit)
+	ctx.SetValue(schemas.BifrostContextKeyFallbackIndex, 1)
+	_, shortCircuit, err = p.PreLLMHook(ctx, admissionRequest())
+	require.NoError(t, err)
+	require.Nil(t, shortCircuit)
+	require.Equal(t, 2, coordinator.reserved)
+}
