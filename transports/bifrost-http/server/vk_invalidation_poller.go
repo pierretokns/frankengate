@@ -91,9 +91,10 @@ func newVirtualKeyInvalidationPoller(store virtualKeyInvalidationSource, apply v
 }
 
 // StartVirtualKeyInvalidationPoller starts this pod's ordered outbox consumer.
-// It intentionally does not wire mutation handlers; producers may be enabled
-// separately once their transaction contract is ready. Call during
-// single-threaded server bootstrap.
+// Mutation handlers append to the same transactionally durable outbox in the
+// config store; this consumer is the pod-local hot-reload half of that
+// contract. Call during single-threaded server bootstrap so every replica
+// starts with a fenced snapshot and then tails subsequent events.
 func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Context) error {
 	if s == nil || s.VKInvalidationPoller != nil || s.Config == nil || s.Config.ConfigStore == nil {
 		return nil
