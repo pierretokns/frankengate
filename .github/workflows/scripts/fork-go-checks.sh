@@ -73,28 +73,39 @@ go list -m all |
 run_in_modules() {
   local label="$1"
   shift
-
-  for module in "${MODULES[@]}"; do
+  local max_parallel=8 failed=0
+  local -a pids=()
+  run_one() {
+    local module="$1"
+    shift
+    echo "::group::${label}: ${module}"
     if [[ "$label" == "go test compile" && "$module" == "tests/semanticcache" ]]; then
-      echo "::group::${label}: ${module}"
       echo "Skipping service-backed semantic-cache TestMain; covered by the dedicated integration job."
       echo "::endgroup::"
-      continue
+      return 0
     fi
-    echo "::group::${label}: ${module}"
     (
       cd "$ROOT/$module"
       if [[ "$label" == "go vet" && "$module" == "examples/plugins/hello-world-wasm-go" ]]; then
-        # This WASM ABI intentionally converts a uint32 linear-memory offset
-        # into an unsafe.Pointer. Keep every other vet analyzer enabled and
-        # scope the host-only unsafeptr exception to this target-specific module.
         go vet -unsafeptr=false ./...
       else
         "$@"
       fi
     )
     echo "::endgroup::"
+  }
+  for module in "${MODULES[@]}"; do
+    run_one "$module" "$@" &
+    pids+=("$!")
+    if [ "${#pids[@]}" -ge "$max_parallel" ]; then
+      if ! wait "${pids[0]}"; then failed=1; fi
+      pids=("${pids[@]:1}")
+    fi
   done
+  for pid in "${pids[@]}"; do
+    if ! wait "$pid"; then failed=1; fi
+  done
+  return "$failed"
 }
 
 download_dependencies() {
