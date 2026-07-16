@@ -48,6 +48,7 @@ EOF
 (cd "$WORK/$PACKAGE" && sha256sum frankengate > SHA256SUMS)
 tar -C "$WORK" -czf "$WORK/$PACKAGE.tar.gz" "$PACKAGE"
 (cd "$WORK" && sha256sum "$(basename "$PACKAGE.tar.gz")" > SHA256SUMS)
+"$ROOT/scripts/verify-beta-local.sh" "$WORK/$PACKAGE.tar.gz" "$SHA"
 
 REPO="$(git -C "$ROOT" remote get-url origin | sed -E 's#^https://github.com/##; s#\.git$##')"
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
