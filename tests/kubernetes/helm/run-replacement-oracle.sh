@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: run-replacement-oracle.sh CHART IMAGE_REPOSITORY BASELINE_INDEX_DIGEST CURRENT_INDEX_DIGEST
+Usage: run-replacement-oracle.sh BASELINE_CHART CURRENT_CHART IMAGE_REPOSITORY BASELINE_INDEX_DIGEST CURRENT_INDEX_DIGEST
 
 Proves that a public FrankenGate Helm chart can install, upgrade, roll back,
 and re-upgrade a three-replica gateway without losing a virtual key.
@@ -18,15 +18,16 @@ Environment:
 EOF
 }
 
-if [[ $# -ne 4 ]]; then
+if [[ $# -ne 5 ]]; then
   usage >&2
   exit 2
 fi
 
-CHART=$1
-IMAGE_REPOSITORY=${2%/}
-BASELINE_INDEX_DIGEST=$3
-CURRENT_INDEX_DIGEST=$4
+BASELINE_CHART=$1
+CURRENT_CHART=$2
+IMAGE_REPOSITORY=${3%/}
+BASELINE_INDEX_DIGEST=$4
+CURRENT_INDEX_DIGEST=$5
 NAMESPACE=${NAMESPACE:-frankengate-helm-replacement}
 RELEASE_NAME=${RELEASE_NAME:-frankengate-replacement}
 KEEP_FIXTURE=${KEEP_FIXTURE:-0}
@@ -61,10 +62,12 @@ for command in crane helm jq kubectl; do
   }
 done
 
-if [[ ! -e $CHART ]]; then
-  echo "chart does not exist: $CHART" >&2
-  exit 1
-fi
+for chart in "$BASELINE_CHART" "$CURRENT_CHART"; do
+  if [[ ! -e $chart ]]; then
+    echo "chart does not exist: $chart" >&2
+    exit 1
+  fi
+done
 for digest in "$BASELINE_INDEX_DIGEST" "$CURRENT_INDEX_DIGEST"; do
   if [[ ! $digest =~ ^sha256:[a-f0-9]{64}$ ]]; then
     echo "invalid image digest: $digest" >&2
@@ -290,13 +293,15 @@ call_models() {
 }
 
 assert_retained_vk() {
-  local db_pod deadline all_valid pod ip memory response
+  local db_pod deadline all_valid pod ip memory response pod_count
   db_pod=$(database_pod)
   deadline=$(( $(date +%s) + 30 ))
   while :; do
     all_valid=1
+    pod_count=0
     while IFS=$'\t' read -r pod ip; do
       [[ -n $pod && -n $ip ]] || continue
+      pod_count=$((pod_count + 1))
       memory=$(kubectl -n "$NAMESPACE" exec "$db_pod" -- \
         wget -qO- "http://$ip:8080/api/governance/virtual-keys?from_memory=true" 2>/dev/null || true)
       if ! jq -e --arg id "$VK_ID" 'any(.virtual_keys[]?; .id == $id)' <<<"$memory" >/dev/null 2>&1; then
@@ -304,14 +309,14 @@ assert_retained_vk() {
         break
       fi
       response=$(call_models "$db_pod" "$ip" "$VK_SECRET" 2>/dev/null || true)
-      if ! grep -q '200 OK' <<<"$response"; then
+      if [[ "$(sed -n '1p' <<<"$response")" != 'HTTP/1.1 200 OK' ]]; then
         echo "retained VK was not accepted by pod $pod" >&2
         all_valid=0
         break
       fi
     done < <(kubectl -n "$NAMESPACE" get pods -l "$selector" -o json |
       jq -r '.items[] | [.metadata.name,.status.podIP] | @tsv')
-    if [[ $all_valid -eq 1 ]]; then
+    if [[ $all_valid -eq 1 && $pod_count -eq 3 ]]; then
       return 0
     fi
     if (( $(date +%s) >= deadline )); then
@@ -335,7 +340,7 @@ assert_history() {
   }
 }
 
-helm install "$RELEASE_NAME" "$CHART" \
+helm install "$RELEASE_NAME" "$BASELINE_CHART" \
   --namespace "$NAMESPACE" --values "$VALUES_FILE" \
   --wait --timeout "$HELM_TIMEOUT"
 assert_history 1
@@ -344,7 +349,7 @@ create_virtual_key
 assert_retained_vk
 capture_uids
 
-helm upgrade "$RELEASE_NAME" "$CHART" \
+helm upgrade "$RELEASE_NAME" "$CURRENT_CHART" \
   --namespace "$NAMESPACE" --reuse-values \
   --set-string "image.digest=$CURRENT_INDEX_DIGEST" \
   --wait --timeout "$HELM_TIMEOUT" --cleanup-on-fail
@@ -360,7 +365,7 @@ assert_rollout "$BASELINE_INDEX_DIGEST"
 assert_retained_vk
 capture_uids
 
-helm upgrade "$RELEASE_NAME" "$CHART" \
+helm upgrade "$RELEASE_NAME" "$CURRENT_CHART" \
   --namespace "$NAMESPACE" --reuse-values \
   --set-string "image.digest=$CURRENT_INDEX_DIGEST" \
   --wait --timeout "$HELM_TIMEOUT" --cleanup-on-fail
@@ -369,9 +374,10 @@ assert_rollout "$CURRENT_INDEX_DIGEST"
 assert_retained_vk
 
 jq -n \
-  --arg chart "$CHART" \
+  --arg baseline_chart "$BASELINE_CHART" \
+  --arg current_chart "$CURRENT_CHART" \
   --arg image "$IMAGE_REPOSITORY" \
   --arg baseline "$BASELINE_INDEX_DIGEST" \
   --arg current "$CURRENT_INDEX_DIGEST" \
   --arg vk_id "$VK_ID" \
-  '{ok:true,chart:$chart,image:$image,baseline_index_digest:$baseline,current_index_digest:$current,replicas:3,nodes:3,helm_revisions:["install","upgrade","rollback","re-upgrade"],retained_virtual_key_id:$vk_id}'
+  '{ok:true,baseline_chart:$baseline_chart,current_chart:$current_chart,image:$image,baseline_index_digest:$baseline,current_index_digest:$current,replicas:3,nodes:3,helm_revisions:["install","upgrade","rollback","re-upgrade"],retained_virtual_key_id:$vk_id}'

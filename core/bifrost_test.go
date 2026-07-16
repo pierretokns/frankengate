@@ -2831,6 +2831,21 @@ func (*rejectingAuthorityPlugin) PostLLMHook(_ *schemas.BifrostContext, resp *sc
 	return resp, bifrostErr, nil
 }
 
+type postTrackingPlugin struct{ postCalls *int }
+
+func (*postTrackingPlugin) GetName() string { return "post-tracking" }
+func (*postTrackingPlugin) Cleanup() error  { return nil }
+func (*postTrackingPlugin) PreRequestHook(*schemas.BifrostContext, *schemas.BifrostRequest) error {
+	return nil
+}
+func (*postTrackingPlugin) PreLLMHook(_ *schemas.BifrostContext, req *schemas.BifrostRequest) (*schemas.BifrostRequest, *schemas.LLMPluginShortCircuit, error) {
+	return req, nil, nil
+}
+func (p *postTrackingPlugin) PostLLMHook(_ *schemas.BifrostContext, resp *schemas.BifrostResponse, bifrostErr *schemas.BifrostError) (*schemas.BifrostResponse, *schemas.BifrostError, error) {
+	(*p.postCalls)++
+	return resp, bifrostErr, nil
+}
+
 func TestAuthenticationShortCircuitPrecedesProviderLookup(t *testing.T) {
 	client, err := Init(context.Background(), schemas.BifrostConfig{
 		Account:    NewMockAccount(), // deliberately has no configured providers
@@ -2878,6 +2893,44 @@ func TestStreamingAuthenticationShortCircuitPrecedesProviderLookup(t *testing.T)
 	}
 	if bifrostErr.Error == nil || bifrostErr.Error.Message != "virtual key revoked" {
 		t.Fatalf("ChatCompletionStreamRequest() message = %#v, want authority rejection", bifrostErr)
+	}
+}
+
+func TestProviderLookupErrorRunsPostHookCleanup(t *testing.T) {
+	postCalls := 0
+	client, err := Init(context.Background(), schemas.BifrostConfig{
+		Account:    NewMockAccount(),
+		LLMPlugins: []schemas.LLMPlugin{&postTrackingPlugin{postCalls: &postCalls}},
+		Logger:     NewDefaultLogger(schemas.LogLevelError),
+	})
+	if err != nil {
+		t.Fatalf("Init() error = %v", err)
+	}
+	defer client.Shutdown()
+
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	_, bifrostErr := client.ChatCompletionRequest(ctx, &schemas.BifrostChatRequest{
+		Provider: schemas.OpenAI,
+		Model:    "gpt-4o-mini",
+		Input:    []schemas.ChatMessage{{Role: schemas.ChatMessageRoleUser, Content: &schemas.ChatMessageContent{ContentStr: new("provider lookup probe")}}},
+	})
+	if bifrostErr == nil {
+		t.Fatal("ChatCompletionRequest() error = nil, want provider lookup error")
+	}
+	if postCalls != 1 {
+		t.Fatalf("post hook calls = %d, want 1 after provider lookup error", postCalls)
+	}
+
+	_, bifrostErr = client.ChatCompletionStreamRequest(ctx, &schemas.BifrostChatRequest{
+		Provider: schemas.OpenAI,
+		Model:    "gpt-4o-mini",
+		Input:    []schemas.ChatMessage{{Role: schemas.ChatMessageRoleUser, Content: &schemas.ChatMessageContent{ContentStr: new("stream provider lookup probe")}}},
+	})
+	if bifrostErr == nil {
+		t.Fatal("ChatCompletionStreamRequest() error = nil, want provider lookup error")
+	}
+	if postCalls != 2 {
+		t.Fatalf("post hook calls = %d, want 2 after unary and streaming lookup errors", postCalls)
 	}
 }
 

@@ -286,6 +286,21 @@ assert_chat_vk_rejected_on_all_pods() {
   done
 }
 
+assert_chat_vk_reaches_provider_phase_on_all_pods() {
+  local secret="$1"
+  local ip response status_line
+  for ip in "${pod_ips[@]}"; do
+    response="$(call_chat_completion "$ip" "$secret" 2>/dev/null || true)"
+    status_line="$(sed -n '1p' <<<"$response")"
+    if [[ "$status_line" == 'HTTP/1.1 401 Unauthorized' || "$status_line" == 'HTTP/1.1 503 Service Unavailable' ]] ||
+       grep -q 'virtual key authority is stale\|does not exist or has been revoked' <<<"$response"; then
+      echo "fresh VK did not reach provider phase on pod $ip" >&2
+      echo "$response" >&2
+      return 1
+    fi
+  done
+}
+
 created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
   --header 'Content-Type: application/json' \
   --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\"}" \
@@ -335,6 +350,8 @@ kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
 wait_for_three_ready_gateway_ips
 assert_release_image_spans_three_nodes
 wait_for_cache absent "$vk_id"
+assert_vk_status_on_all_pods "$rotated_secret" '401 Unauthorized' 'does not exist or has been revoked'
+assert_chat_vk_rejected_on_all_pods "$rotated_secret" '401 Unauthorized' 'does not exist or has been revoked'
 
 partition_created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
   --header 'Content-Type: application/json' \
@@ -345,6 +362,7 @@ partition_secret="$(jq -er '.secret' <<<"$partition_created")"
 partition_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$partition_created")"
 wait_for_cache present "$partition_vk_id" "$partition_updated_at"
 assert_vk_status_on_all_pods "$partition_secret" '200 OK'
+assert_chat_vk_reaches_provider_phase_on_all_pods "$partition_secret"
 
 # A release image must fail direct MCP authorization closed when this pod can
 # no longer prove its cached VK authority is current. Removing the disposable

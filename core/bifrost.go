@@ -5259,6 +5259,12 @@ func (bifrost *Bifrost) tryRequest(ctx *schemas.BifrostContext, req *schemas.Bif
 	if err != nil {
 		bifrostErr := newBifrostError(err)
 		bifrostErr.PopulateExtraFields(req.RequestType, provider, model, model)
+		_, postErr := pipeline.RunPostLLMHooks(ctx, nil, bifrostErr, preCount)
+		if postErr != nil {
+			postErr.PopulateExtraFields(req.RequestType, provider, model, model)
+			bifrostErr = postErr
+		}
+		drainAndAttachPluginLogs(ctx)
 		return nil, bifrostErr
 	}
 
@@ -5595,7 +5601,18 @@ func (bifrost *Bifrost) tryStreamRequest(ctx *schemas.BifrostContext, req *schem
 	if err != nil {
 		bifrostErr := newBifrostError(err)
 		bifrostErr.PopulateExtraFields(req.RequestType, provider, model, model)
-		return nil, bifrostErr
+		resp, postErr := pipeline.RunPostLLMHooks(ctx, nil, bifrostErr, preCount)
+		if postErr != nil {
+			postErr.PopulateExtraFields(req.RequestType, provider, model, model)
+			bifrostErr = postErr
+		} else if resp != nil {
+			resp.PopulateExtraFields(req.RequestType, provider, model, model)
+		}
+		drainAndAttachPluginLogs(ctx)
+		if bifrostErr != nil {
+			return nil, bifrostErr
+		}
+		return newBifrostMessageChan(resp), nil
 	}
 
 	msg := bifrost.getChannelMessage(*preReq)
