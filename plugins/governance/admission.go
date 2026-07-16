@@ -44,8 +44,8 @@ type ConfiguredReservationEstimator struct {
 }
 
 func (e ConfiguredReservationEstimator) Estimate(context.Context, AdmissionRequest) (reservations.Amount, error) {
-	if e.MaxTokens <= 0 || e.CostMicrosPerToken < 0 {
-		return reservations.Amount{}, fmt.Errorf("reservation max_tokens must be positive and cost_micros_per_token non-negative")
+	if e.MaxTokens <= 0 || e.CostMicrosPerToken <= 0 {
+		return reservations.Amount{}, fmt.Errorf("reservation max_tokens and cost_micros_per_token must be positive")
 	}
 	return reservations.Amount{Tokens: e.MaxTokens, CostMicros: e.MaxTokens * e.CostMicrosPerToken}, nil
 }
