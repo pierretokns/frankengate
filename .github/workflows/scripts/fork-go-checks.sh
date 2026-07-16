@@ -77,7 +77,8 @@ for module in "${MODULES[@]}"; do
 done
 (
   cd "$WORKSPACE_DIR"
-  go work init "${WORKSPACE_MODULES[@]}"
+  timeout --foreground --signal=TERM --kill-after=30s "${WORKSPACE_INIT_TIMEOUT_SECONDS:-120}s" \
+    go work init "${WORKSPACE_MODULES[@]}"
 )
 export GOWORK="$WORKSPACE_DIR/go.work"
 
