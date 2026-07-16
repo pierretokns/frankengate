@@ -4,11 +4,17 @@
 
 Bifrost-compatible Helm chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS.
 
-**Latest Version:** 2.1.34
+**Latest Version:** 2.1.35
 
 ## Changelog
 
 ### Upcoming
+
+### 2.1.35
+
+- Default `image.tag` installs FrankenGate v0.3.4.
+- The packaged chart now contains the complete Apache `LICENSE` and FrankenGate `NOTICE`; release automation extracts and compares both files before publication.
+- Chart `.tgz` and OCI digests now receive build-provenance and SPDX SBOM attestations, and manual repair runs build the named immutable release tag.
 
 - Bundled PostgreSQL installs now place a bounded `pg_isready` startup gate before each gateway container, preventing avoidable crash loops while the chart-managed database starts. The gate is configurable under `postgresql.startupGate` and is deliberately omitted for external PostgreSQL and Aurora deployments.
 - Default `image.tag` now installs FrankenGate v0.3.3. Pods fence the durable authority outbox, rebuild current virtual-key and principal authority snapshots, and replay only post-fence mutations, keeping restart convergence proportional to current authority state instead of retained event history.
