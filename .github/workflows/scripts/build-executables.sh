@@ -72,6 +72,9 @@ for platform in "${platforms[@]}"; do
   cd "$MODULE_PATH"
 
   if [[ "$GOOS" = "linux" ]]; then
+    # Product assembly must resolve the immutable monorepo workspace so local
+    # FrankenGate authority packages cannot silently fall back to stale
+    # published Bifrost modules. Standalone GOWORK=off checks belong to tests.
     # Detect native build: if target arch matches host, use system compiler
     if [[ "$GOARCH" = "arm64" ]] && [[ "$HOST_ARCH" = "aarch64" || "$HOST_ARCH" = "arm64" ]]; then
       echo "  🏠 Native ARM64 build detected — using system compiler"
@@ -89,7 +92,7 @@ for platform in "${platforms[@]}"; do
       CXX_COMPILER="aarch64-linux-musl-g++"
     fi
 
-    env GOWORK=off CGO_ENABLED=1 GOOS="$GOOS" GOARCH="$GOARCH" CC="$CC_COMPILER" CXX="$CXX_COMPILER" \
+    env CGO_ENABLED=1 GOOS="$GOOS" GOARCH="$GOARCH" CC="$CC_COMPILER" CXX="$CXX_COMPILER" \
       go build -trimpath -tags "netgo,osusergo,sqlite_static" \
       -ldflags "-s -w -buildid= -extldflags '-static' -X main.Version=v${VERSION}" \
       -o "$PROJECT_ROOT/dist/$PLATFORM_DIR/$GOARCH/$output_name" .
@@ -100,7 +103,7 @@ for platform in "${platforms[@]}"; do
       CXX_COMPILER="x86_64-w64-mingw32-g++"
     fi
 
-    env GOWORK=off CGO_ENABLED=1 GOOS="$GOOS" GOARCH="$GOARCH" CC="$CC_COMPILER" CXX="$CXX_COMPILER" \
+    env CGO_ENABLED=1 GOOS="$GOOS" GOARCH="$GOARCH" CC="$CC_COMPILER" CXX="$CXX_COMPILER" \
       go build -trimpath -ldflags "-s -w -buildid= -X main.Version=v${VERSION}" \
       -o "$PROJECT_ROOT/dist/$PLATFORM_DIR/$GOARCH/$output_name" .
 
@@ -113,7 +116,7 @@ for platform in "${platforms[@]}"; do
       CXX_COMPILER="oa64-clang++"
     fi
 
-    env GOWORK=off CGO_ENABLED=1 GOOS="$GOOS" GOARCH="$GOARCH" CC="$CC_COMPILER" CXX="$CXX_COMPILER" \
+    env CGO_ENABLED=1 GOOS="$GOOS" GOARCH="$GOARCH" CC="$CC_COMPILER" CXX="$CXX_COMPILER" \
       go build -trimpath -ldflags "-s -w -buildid= -X main.Version=v${VERSION}" \
       -o "$PROJECT_ROOT/dist/$PLATFORM_DIR/$GOARCH/$output_name" .
   fi
