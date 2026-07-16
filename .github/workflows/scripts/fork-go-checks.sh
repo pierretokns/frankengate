@@ -90,6 +90,7 @@ run_in_modules() {
   local label="$1"
   shift
   local max_parallel=8 failed=0
+  local module_timeout="${MODULE_TIMEOUT_SECONDS:-900}"
   local -a pids=()
   run_one() {
     local module="$1"
@@ -102,11 +103,13 @@ run_in_modules() {
     fi
     (
       cd "$ROOT/$module"
+      echo "[$(date -u +%FT%TZ)] start ${label}: ${module} (timeout ${module_timeout}s)"
       if [[ "$label" == "go vet" && "$module" == "examples/plugins/hello-world-wasm-go" ]]; then
-        go vet -unsafeptr=false ./...
+        timeout --signal=TERM --kill-after=30s "${module_timeout}s" go vet -unsafeptr=false ./...
       else
-        "$@"
+        timeout --signal=TERM --kill-after=30s "${module_timeout}s" "$@"
       fi
+      echo "[$(date -u +%FT%TZ)] complete ${label}: ${module}"
     )
     echo "::endgroup::"
   }
