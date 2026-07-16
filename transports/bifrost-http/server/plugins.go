@@ -107,6 +107,8 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 					Store:     reservationStore,
 					Estimator: estimator,
 				})
+			} else if governanceConfig.IsEnterprise {
+				return nil, fmt.Errorf("enterprise governance requires a reservation estimator when the config store supports durable reservations")
 			}
 		}
 		return plugin, nil
