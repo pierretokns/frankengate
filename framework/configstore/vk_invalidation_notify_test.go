@@ -57,6 +57,13 @@ func TestVirtualKeyInvalidationWakeupsCoalesceAndReconnect(t *testing.T) {
 	connections := []virtualKeyInvalidationNotifyConn{first, second}
 	var mu sync.Mutex
 	store := &RDBConfigStore{}
+	var metricMu sync.Mutex
+	metrics := map[string]float64{}
+	store.SetVirtualKeyInvalidationMetricSink(func(name string, value float64) {
+		metricMu.Lock()
+		metrics[name] += value
+		metricMu.Unlock()
+	})
 	store.virtualKeyInvalidationNotifyDial = func(context.Context) (virtualKeyInvalidationNotifyConn, error) {
 		mu.Lock()
 		defer mu.Unlock()
@@ -96,6 +103,10 @@ func TestVirtualKeyInvalidationWakeupsCoalesceAndReconnect(t *testing.T) {
 		t.Fatal("listener did not reconnect")
 	}
 	require.Eventually(t, first.closed.Load, time.Second, 10*time.Millisecond)
+	metricMu.Lock()
+	defer metricMu.Unlock()
+	require.GreaterOrEqual(t, metrics["listener_reconnects"], float64(2), "initial listen and reconnect should be observable")
+	require.GreaterOrEqual(t, metrics["wakeups"], float64(2), "initial and reconnect wake hints should be observable")
 }
 
 func TestVirtualKeyInvalidationListenerCancellationInterruptsBackoff(t *testing.T) {
