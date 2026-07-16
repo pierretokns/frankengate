@@ -99,13 +99,28 @@ type GovernancePlugin struct {
 
 	cfgMutex sync.RWMutex
 
-	isVkMandatory         *bool
-	requiredHeaders       *[]string // pointer to live config slice; lowercased at check time
-	isEnterprise          bool
-	disableAutoToolInject *bool
-	authorityFreshness    AuthorityFreshnessSource
+	isVkMandatory          *bool
+	requiredHeaders        *[]string // pointer to live config slice; lowercased at check time
+	isEnterprise           bool
+	disableAutoToolInject  *bool
+	authorityFreshness     AuthorityFreshnessSource
+	reservationCoordinator ReservationCoordinator
 
 	complexityAnalyzer atomic.Pointer[complexity.ComplexityAnalyzer]
+}
+
+// SetReservationCoordinator enables the durable admission boundary. It is
+// optional so OSS and legacy callers retain their historical behavior.
+func (p *GovernancePlugin) SetReservationCoordinator(coordinator ReservationCoordinator) {
+	p.cfgMutex.Lock()
+	p.reservationCoordinator = coordinator
+	p.cfgMutex.Unlock()
+}
+
+func (p *GovernancePlugin) admissionCoordinator() ReservationCoordinator {
+	p.cfgMutex.RLock()
+	defer p.cfgMutex.RUnlock()
+	return p.reservationCoordinator
 }
 
 // SetAuthorityFreshnessSource installs the pod-local authority freshness
@@ -1385,12 +1400,33 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 		UserID:     userID,
 	}
 	// Evaluate governance using common function
-	_, bifrostError := p.EvaluateGovernanceRequest(ctx, evaluationRequest, req.RequestType)
+	evaluationResult, bifrostError := p.EvaluateGovernanceRequest(ctx, evaluationRequest, req.RequestType)
 	// Convert BifrostError to LLMPluginShortCircuit if needed
 	if bifrostError != nil {
 		return req, &schemas.LLMPluginShortCircuit{
 			Error: bifrostError,
 		}, nil
+	}
+	if coordinator := p.admissionCoordinator(); coordinator != nil {
+		attempt := 0
+		if value, ok := ctx.Value(schemas.BifrostContextKeyFallbackIndex).(int); ok {
+			attempt = value
+		}
+		handle, err := coordinator.Reserve(ctx, AdmissionRequest{
+			Evaluation:  *evaluationRequest,
+			Result:      evaluationResult,
+			RequestType: req.RequestType,
+			RequestID:   bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyRequestID),
+			Attempt:     attempt,
+		})
+		if err != nil {
+			return req, &schemas.LLMPluginShortCircuit{Error: &schemas.BifrostError{
+				Type:       new("governance_reservation_denied"),
+				StatusCode: new(429),
+				Error:      &schemas.ErrorField{Message: err.Error()},
+			}}, nil
+		}
+		setReservationHandle(ctx, handle)
 	}
 
 	return req, nil, nil
@@ -1407,6 +1443,31 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 //   - *schemas.BifrostError: The processed error
 //   - error: Any error that occurred during processing
 func (p *GovernancePlugin) PostLLMHook(ctx *schemas.BifrostContext, result *schemas.BifrostResponse, err *schemas.BifrostError) (*schemas.BifrostResponse, *schemas.BifrostError, error) {
+	if coordinator := p.admissionCoordinator(); coordinator != nil {
+		if handle, ok := reservationHandleFromContext(ctx); ok {
+			settlement := AdmissionSettlement{Response: result, Error: err}
+			// Streaming reservations remain open until the terminal chunk. A
+			// provider error has no terminal success chunk and is refunded here.
+			if err != nil || bifrost.IsFinalChunk(ctx) || !bifrost.IsStreamRequestType(func() schemas.RequestType {
+				t, _, _, _ := bifrost.GetResponseFields(result, err)
+				return t
+			}()) {
+				var settleErr error
+				if err != nil {
+					settleErr = coordinator.Refund(ctx, handle, settlement)
+				} else {
+					settleErr = coordinator.Settle(ctx, handle, settlement)
+				}
+				if settleErr != nil {
+					if p.logger != nil {
+						p.logger.Warn("governance reservation finalization failed: %v", settleErr)
+					}
+				} else {
+					clearReservationHandle(ctx)
+				}
+			}
+		}
+	}
 	if _, ok := ctx.Value(governanceRejectedContextKey).(bool); ok {
 		return result, err, nil
 	}
