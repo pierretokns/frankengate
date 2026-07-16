@@ -20,6 +20,22 @@ if [ "${#MODULES[@]}" -eq 0 ]; then
   exit 1
 fi
 
+# Release verification must cover everything that can enter the shipped
+# binaries, but it should not rebuild example servers and service fixtures that
+# have their own CI jobs. Those modules made immutable-tag verification spend
+# most of its timeout compiling code that cannot be packaged into FrankenGate.
+if [[ "${FORK_RELEASE:-0}" == "1" ]]; then
+  RELEASE_MODULES=()
+  for module in "${MODULES[@]}"; do
+    case "$module" in
+      cli|core|framework|plugins/*|transports)
+        RELEASE_MODULES+=("$module")
+        ;;
+    esac
+  done
+  MODULES=("${RELEASE_MODULES[@]}")
+fi
+
 # Every module still uses the upstream-compatible
 # github.com/maximhq/bifrost/... namespace. Running a module in isolation can
 # therefore download a published upstream sibling instead of testing the local
