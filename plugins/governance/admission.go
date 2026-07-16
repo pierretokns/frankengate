@@ -32,6 +32,38 @@ type ReservationEstimator interface {
 	Actual(context.Context, AdmissionSettlement) reservations.Amount
 }
 
+// ConfiguredReservationEstimator provides a deterministic, conservative
+// reservation for deployments that do not have a provider-specific preflight
+// tokenizer. It reserves a configured token ceiling and per-token cost, then
+// settles to observed usage when the response exposes it. The ceiling is
+// intentionally explicit so enterprise deployments cannot silently run with
+// guessed zero-cost admission.
+type ConfiguredReservationEstimator struct {
+	MaxTokens          int64
+	CostMicrosPerToken int64
+}
+
+func (e ConfiguredReservationEstimator) Estimate(context.Context, AdmissionRequest) (reservations.Amount, error) {
+	if e.MaxTokens <= 0 || e.CostMicrosPerToken < 0 {
+		return reservations.Amount{}, fmt.Errorf("reservation max_tokens must be positive and cost_micros_per_token non-negative")
+	}
+	return reservations.Amount{Tokens: e.MaxTokens, CostMicros: e.MaxTokens * e.CostMicrosPerToken}, nil
+}
+
+func (e ConfiguredReservationEstimator) Actual(_ context.Context, settlement AdmissionSettlement) reservations.Amount {
+	if settlement.Response != nil && settlement.Response.ChatResponse != nil && settlement.Response.ChatResponse.Usage != nil {
+		u := settlement.Response.ChatResponse.Usage
+		amount := reservations.Amount{Tokens: int64(u.TotalTokens)}
+		if u.Cost != nil && u.Cost.TotalCost > 0 {
+			amount.CostMicros = int64(u.Cost.TotalCost * 1_000_000)
+		} else {
+			amount.CostMicros = int64(u.TotalTokens) * e.CostMicrosPerToken
+		}
+		return amount
+	}
+	return reservations.Amount{}
+}
+
 type durableReservationHandle struct{ rows []reservations.Reservation }
 
 // DurableReservationCoordinator adapts the Postgres reservation store to the

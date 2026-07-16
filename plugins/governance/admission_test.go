@@ -38,6 +38,18 @@ func TestPreLLMHookPassesRequestEnvelopeToAdmissionEstimator(t *testing.T) {
 	require.Nil(t, shortCircuit)
 	require.Same(t, req, coordinator.request)
 }
+
+func TestConfiguredReservationEstimatorUsesCeilingAndObservedUsage(t *testing.T) {
+	e := ConfiguredReservationEstimator{MaxTokens: 1000, CostMicrosPerToken: 2}
+	reserved, err := e.Estimate(context.Background(), AdmissionRequest{})
+	require.NoError(t, err)
+	require.Equal(t, int64(1000), reserved.Tokens)
+	require.Equal(t, int64(2000), reserved.CostMicros)
+	response := &schemas.BifrostResponse{ChatResponse: &schemas.BifrostChatResponse{Usage: &schemas.BifrostLLMUsage{TotalTokens: 37}}}
+	actual := e.Actual(context.Background(), AdmissionSettlement{Response: response})
+	require.Equal(t, int64(37), actual.Tokens)
+	require.Equal(t, int64(74), actual.CostMicros)
+}
 func (c *testReservationCoordinator) Settle(context.Context, any, AdmissionSettlement) error {
 	c.settled++
 	return nil

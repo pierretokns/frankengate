@@ -55,6 +55,11 @@ type Config struct {
 	IsEnterprise          bool      `json:"is_enterprise"`
 	DisableAutoToolInject *bool     `json:"disable_auto_tool_inject"`
 	RoutingChainMaxDepth  *int      `json:"routing_chain_max_depth"` // Pointer to live config value; changes are reflected immediately without restart
+	// Reservation settings are explicit because preflight tokenization is not
+	// available for every provider. When set, enterprise admission reserves a
+	// bounded ceiling before provider effects.
+	ReservationMaxTokens          *int64 `json:"reservation_max_tokens,omitempty"`
+	ReservationCostMicrosPerToken *int64 `json:"reservation_cost_micros_per_token,omitempty"`
 }
 
 type InMemoryStore interface {
@@ -1415,6 +1420,7 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 		handle, err := coordinator.Reserve(ctx, AdmissionRequest{
 			Evaluation:  *evaluationRequest,
 			Result:      evaluationResult,
+			Request:     req,
 			RequestType: req.RequestType,
 			RequestID:   bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyRequestID),
 			Attempt:     attempt,
