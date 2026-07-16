@@ -253,6 +253,37 @@ func TestGetMetricsGathererCombinesRegistries(t *testing.T) {
 	}
 }
 
+func TestGovernanceSyncMetricsAreScrapeable(t *testing.T) {
+	p := newTestPlugin(t)
+	p.AddGovernanceSyncMetric("wakeups", 2)
+	p.AddGovernanceSyncMetric("listener_reconnects", 1)
+	p.SetGovernanceSyncMetric("outbox_depth", 7)
+	p.SetGovernanceSyncMetric("reload_latency_seconds", 0.25)
+	p.SetGovernanceSyncMetric("consumer_lag", 3)
+	p.SetGovernanceSyncMetric("ready", 1)
+
+	families, err := p.GetMetricsGatherer().Gather()
+	if err != nil {
+		t.Fatalf("Gather: %v", err)
+	}
+	present := map[string]bool{}
+	for _, family := range families {
+		present[family.GetName()] = true
+	}
+	for _, name := range []string{
+		"bifrost_governance_sync_wakeups_total",
+		"bifrost_governance_sync_listener_reconnects_total",
+		"bifrost_governance_sync_outbox_depth",
+		"bifrost_governance_sync_reload_latency_seconds",
+		"bifrost_governance_sync_consumer_lag",
+		"bifrost_governance_sync_ready",
+	} {
+		if !present[name] {
+			t.Errorf("/metrics gatherer missing governance sync metric %s", name)
+		}
+	}
+}
+
 // TestPushGatewayLifecycle covers the push-gateway config plumbing: defaults are applied, the
 // running flag toggles, and re-enabling replaces the previous pusher cleanly.
 func TestPushGatewayLifecycle(t *testing.T) {
