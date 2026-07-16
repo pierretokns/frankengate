@@ -60,6 +60,8 @@ type Config struct {
 	// bounded ceiling before provider effects.
 	ReservationMaxTokens          *int64 `json:"reservation_max_tokens,omitempty"`
 	ReservationCostMicrosPerToken *int64 `json:"reservation_cost_micros_per_token,omitempty"`
+	ReservationAllowOverdraft     *bool  `json:"reservation_allow_overdraft,omitempty"`
+	ReservationOverdraftReason    string `json:"reservation_overdraft_reason,omitempty"`
 }
 
 type InMemoryStore interface {

@@ -6,6 +6,7 @@ import (
 	"math"
 	"slices"
 
+	"github.com/maximhq/bifrost/core/reservations"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/plugins/compat"
@@ -108,12 +109,14 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 					Estimator: estimator,
 				})
 			} else if governanceConfig.ReservationMaxTokens != nil && governanceConfig.ReservationCostMicrosPerToken != nil {
+				allowOverdraft := governanceConfig.ReservationAllowOverdraft != nil && *governanceConfig.ReservationAllowOverdraft
 				plugin.SetReservationCoordinator(&governance.DurableReservationCoordinator{
 					Store: reservationStore,
 					Estimator: governance.ConfiguredReservationEstimator{
 						MaxTokens:          *governanceConfig.ReservationMaxTokens,
 						CostMicrosPerToken: *governanceConfig.ReservationCostMicrosPerToken,
 					},
+					Overdraft: reservations.OverdraftPolicy{Allow: allowOverdraft, Reason: governanceConfig.ReservationOverdraftReason},
 				})
 			} else if governanceConfig.IsEnterprise {
 				return nil, fmt.Errorf("enterprise governance requires a reservation estimator when the config store supports durable reservations")

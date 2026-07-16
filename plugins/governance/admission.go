@@ -95,6 +95,7 @@ type DurableReservationCoordinator struct {
 	Estimator ReservationEstimator
 	Lease     time.Duration
 	Now       func() time.Time // injectable clock for deterministic retry/replay tests
+	Overdraft reservations.OverdraftPolicy
 }
 
 func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req AdmissionRequest) (any, error) {
@@ -156,7 +157,7 @@ func (c *DurableReservationCoordinator) Settle(ctx context.Context, handle any, 
 		if settleAmount.Tokens == 0 && settleAmount.CostMicros == 0 {
 			settleAmount = r.ReservedAmount
 		}
-		if _, err := c.Store.Settle(ctx, reservations.SettleRequest{ReservationID: r.ID, AttemptEpoch: r.AttemptEpoch, ActualAmount: settleAmount, IdempotencyKey: "settle-" + string(r.ID), Overdraft: reservations.OverdraftPolicy{}}); err != nil && first == nil {
+		if _, err := c.Store.Settle(ctx, reservations.SettleRequest{ReservationID: r.ID, AttemptEpoch: r.AttemptEpoch, ActualAmount: settleAmount, IdempotencyKey: "settle-" + string(r.ID), Overdraft: c.Overdraft}); err != nil && first == nil {
 			first = err
 		}
 	}
