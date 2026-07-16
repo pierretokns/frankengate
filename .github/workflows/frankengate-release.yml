@@ -220,14 +220,7 @@ jobs:
               --deny-self-hosted-runners
           done
 
-  container:
-    name: Publish matching GHCR image
-    needs: release
-    permissions:
-      contents: write
-      packages: write
-      id-token: write
-      attestations: write
-    uses: ./.github/workflows/frankengate-image-release-native.yml
-    with:
-      release_tag: ${{ github.ref_name }}
+  # Container publishing is intentionally decoupled from the binary release.
+  # The native image workflow remains available through workflow_dispatch for
+  # an explicit, separately approved GHCR build; Docker/Buildx failures must
+  # not block binary and Helm artifact delivery.

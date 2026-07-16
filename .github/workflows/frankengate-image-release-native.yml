@@ -1,6 +1,8 @@
-name: FrankenGate Native Image Release
+name: FrankenGate Native Image Release (Manual)
 
 on:
+  # This workflow is deliberately not part of the binary release dependency
+  # graph. Invoke it explicitly when a GHCR image is desired.
   workflow_dispatch:
     inputs:
       release_tag:
