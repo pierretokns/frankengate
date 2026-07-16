@@ -41,13 +41,21 @@ type principalAuthorityPoller struct {
 	lastSuccessUnixNano  atomic.Int64
 	lastErrorLogUnixNano atomic.Int64
 	wake                 <-chan struct{}
+	now                  func() time.Time
 }
 
 func newPrincipalAuthorityPoller(store principalAuthorityEventSource, registry *authorityepoch.Registry, batch int) *principalAuthorityPoller {
 	if batch <= 0 {
 		batch = defaultPrincipalAuthorityBatchSize
 	}
-	return &principalAuthorityPoller{store: store, registry: registry, batch: batch}
+	return &principalAuthorityPoller{store: store, registry: registry, batch: batch, now: time.Now}
+}
+
+func (p *principalAuthorityPoller) clock() time.Time {
+	if p != nil && p.now != nil {
+		return p.now().UTC()
+	}
+	return time.Now().UTC()
 }
 
 func (p *principalAuthorityPoller) Cursor() uint64 {
@@ -81,7 +89,7 @@ func (p *principalAuthorityPoller) pollOnce(ctx context.Context) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	p.lastSuccessUnixNano.Store(time.Now().UnixNano())
+	p.lastSuccessUnixNano.Store(p.clock().UnixNano())
 	return cursor < high, nil
 }
 
@@ -134,7 +142,11 @@ func (p *principalAuthorityPoller) IsPrincipalAuthorityFresh() bool {
 		return false
 	}
 	lastSuccess := p.lastSuccessUnixNano.Load()
-	return lastSuccess != 0 && time.Since(time.Unix(0, lastSuccess)) <= defaultPrincipalAuthorityMaxStaleness
+	if lastSuccess == 0 {
+		return false
+	}
+	age := p.clock().Sub(time.Unix(0, lastSuccess))
+	return age >= 0 && age <= defaultPrincipalAuthorityMaxStaleness
 }
 
 func (p *principalAuthorityPoller) PrincipalAuthorityFreshUntil() time.Time {
@@ -166,7 +178,7 @@ func (p *principalAuthorityPoller) Run(ctx context.Context) {
 		if err == nil && more {
 			continue
 		}
-		if err != nil && ctx.Err() == nil && logger != nil && p.shouldLogError(time.Now()) {
+		if err != nil && ctx.Err() == nil && logger != nil && p.shouldLogError(p.clock()) {
 			logger.Error("principal authority polling failed; live principal revocation may be delayed: %v", err)
 		}
 		timer := time.NewTimer(defaultPrincipalAuthorityPollInterval)

@@ -70,6 +70,16 @@ func TestPrincipalAuthorityPollerFreshnessExpiresAfterFailedReads(t *testing.T) 
 	}
 }
 
+func TestPrincipalAuthorityPollerFailsClosedWhenClockMovesBackward(t *testing.T) {
+	now := time.Date(2026, 7, 16, 12, 0, 0, 0, time.UTC)
+	poller := newPrincipalAuthorityPoller(&principalAuthorityTestSource{}, authorityepoch.NewRegistry(), 100)
+	poller.now = func() time.Time { return now }
+	poller.lastSuccessUnixNano.Store(now.UnixNano())
+	require.True(t, poller.IsPrincipalAuthorityFresh())
+	now = now.Add(-time.Second)
+	require.False(t, poller.IsPrincipalAuthorityFresh(), "backward clock movement must fail closed")
+}
+
 func (s *principalAuthorityTestSource) GetPrincipalAuthorizationEpochHighWatermark(context.Context) (uint64, error) {
 	if len(s.events) == 0 {
 		return 0, nil
