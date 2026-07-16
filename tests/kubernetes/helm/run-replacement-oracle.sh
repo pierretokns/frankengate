@@ -224,7 +224,7 @@ assert_rollout() {
   }
 
   pod_json=$(kubectl -n "$NAMESPACE" get pods -l "$selector" -o json)
-  jq -e --arg image "$expected_image" --arg platform "$expected_platform" '
+  jq -e --arg image "$expected_image" --arg index "$expected_index" --arg platform "$expected_platform" '
     (.items | length) == 3
     and ([.items[].spec.nodeName] | unique | length) == 3
     and all(.items[];
@@ -233,7 +233,10 @@ assert_rollout() {
       and ([.spec.containers[] | select(.name == "bifrost") | .image] == [$image])
       and (([.status.containerStatuses[] | select(.name == "bifrost") | .imageID]) as $image_ids
         | ($image_ids | length) == 1
-        and ($image_ids[0] | endswith("@" + $platform))))
+        # containerd commonly records the pulled OCI index digest in imageID;
+        # some runtimes record the resolved platform child digest instead.
+        and (($image_ids[0] | endswith("@" + $index))
+          or ($image_ids[0] | endswith("@" + $platform)))))
   ' <<<"$pod_json" >/dev/null || {
     echo "gateway pods do not satisfy exact count, node, readiness, or digest assertions" >&2
     jq '.items[] | {name:.metadata.name,uid:.metadata.uid,node:.spec.nodeName,images:.spec.containers,statuses:.status.containerStatuses}' <<<"$pod_json" >&2
