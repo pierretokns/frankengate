@@ -5,10 +5,18 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/maximhq/bifrost/core/reservations"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
+	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/stretchr/testify/require"
 )
+
+type testBudgetReservationStore struct{ *reservations.InMemoryStore }
+
+func (s testBudgetReservationStore) ReserveAgainstBudget(ctx context.Context, req configstore.BudgetReservationRequest) (reservations.Reservation, error) {
+	return s.Reserve(ctx, req.Request)
+}
 
 type testReservationCoordinator struct {
 	reserveErr error
@@ -55,6 +63,19 @@ func TestConfiguredReservationEstimatorUsesCeilingAndObservedUsage(t *testing.T)
 	actual = e.Actual(context.Background(), AdmissionSettlement{Response: response})
 	require.Equal(t, int64(19), actual.Tokens)
 	require.Equal(t, int64(38), actual.CostMicros)
+}
+
+func TestDurableCoordinatorSettlesReservedAmountWhenUsageMissing(t *testing.T) {
+	store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
+	coordinator := &DurableReservationCoordinator{Store: store, Estimator: ConfiguredReservationEstimator{MaxTokens: 100, CostMicrosPerToken: 3}}
+	req := AdmissionRequest{RequestID: "missing-usage", Attempt: 0, Result: &EvaluationResult{BudgetInfo: []*configstoreTables.TableBudget{{ID: "budget-1"}}}}
+	handle, err := coordinator.Reserve(context.Background(), req)
+	require.NoError(t, err)
+	require.NoError(t, coordinator.Settle(context.Background(), handle, AdmissionSettlement{}))
+	h := handle.(*durableReservationHandle)
+	got, err := store.Get(context.Background(), h.rows[0].ID)
+	require.NoError(t, err)
+	require.Equal(t, h.rows[0].ReservedAmount, got.SettledAmount)
 }
 func (c *testReservationCoordinator) Settle(context.Context, any, AdmissionSettlement) error {
 	c.settled++
