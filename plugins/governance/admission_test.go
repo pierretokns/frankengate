@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/maximhq/bifrost/core/reservations"
 	"github.com/maximhq/bifrost/core/schemas"
@@ -76,6 +77,22 @@ func TestDurableCoordinatorSettlesReservedAmountWhenUsageMissing(t *testing.T) {
 	got, err := store.Get(context.Background(), h.rows[0].ID)
 	require.NoError(t, err)
 	require.Equal(t, h.rows[0].ReservedAmount, got.SettledAmount)
+}
+
+func TestDurableCoordinatorIsIdempotentAcrossReplicaCoordinators(t *testing.T) {
+	store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
+	estimator := ConfiguredReservationEstimator{MaxTokens: 100, CostMicrosPerToken: 3}
+	now := time.Unix(1_700_000_000, 0).UTC()
+	first := &DurableReservationCoordinator{Store: store, Estimator: estimator, Lease: time.Minute, Now: func() time.Time { return now }}
+	second := &DurableReservationCoordinator{Store: store, Estimator: estimator, Lease: time.Minute, Now: func() time.Time { return now }}
+	req := AdmissionRequest{RequestID: "shared-replica-request", Result: &EvaluationResult{BudgetInfo: []*configstoreTables.TableBudget{{ID: "budget-1"}}}}
+	h1, err := first.Reserve(context.Background(), req)
+	require.NoError(t, err)
+	h2, err := second.Reserve(context.Background(), req)
+	require.NoError(t, err)
+	require.Equal(t, h1.(*durableReservationHandle).rows[0].ID, h2.(*durableReservationHandle).rows[0].ID)
+	require.NoError(t, first.Settle(context.Background(), h1, AdmissionSettlement{}))
+	require.NoError(t, second.Settle(context.Background(), h2, AdmissionSettlement{}))
 }
 func (c *testReservationCoordinator) Settle(context.Context, any, AdmissionSettlement) error {
 	c.settled++

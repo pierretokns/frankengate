@@ -94,6 +94,7 @@ type DurableReservationCoordinator struct {
 	Store     configstore.BudgetReservationStore
 	Estimator ReservationEstimator
 	Lease     time.Duration
+	Now       func() time.Time // injectable clock for deterministic retry/replay tests
 }
 
 func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req AdmissionRequest) (any, error) {
@@ -119,6 +120,9 @@ func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req Admissi
 		return &durableReservationHandle{}, nil
 	}
 	now := time.Now().UTC()
+	if c.Now != nil {
+		now = c.Now().UTC()
+	}
 	lease := now.Add(c.Lease)
 	if c.Lease <= 0 {
 		lease = now.Add(30 * time.Second)
