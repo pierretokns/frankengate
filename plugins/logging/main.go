@@ -554,6 +554,34 @@ func (p *LoggerPlugin) captureLoggingHeaders(ctx *schemas.BifrostContext) map[st
 	}
 
 	var metadata map[string]any
+	// Safe attribution fields are always captured. Never add authorization,
+	// cookie, API-key, or virtual-key headers here: request headers may contain
+	// credentials and are only captured through explicit, separately audited
+	// configuration.
+	for _, key := range []string{
+		"user-agent",
+		"x-bf-client-name",
+		"x-bf-client-version",
+		"x-bf-device-id",
+		"x-bf-device-name",
+		"x-bf-session-id",
+		"x-bf-workstation-name",
+		"x-client-name",
+		"x-client-version",
+	} {
+		if value := strings.TrimSpace(allHeaders[key]); value != "" {
+			if metadata == nil {
+				metadata = make(map[string]any)
+			}
+			metadata[key] = value
+		}
+	}
+	if peer, ok := ctx.Value(schemas.BifrostContextKeyClientPeerAddress).(string); ok && peer != "" {
+		if metadata == nil {
+			metadata = make(map[string]any)
+		}
+		metadata["client_peer_address"] = peer
+	}
 
 	// Check configured logging headers (supports wildcard patterns like "x-custom-*")
 	if p.loggingHeaders != nil {

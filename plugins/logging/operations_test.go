@@ -55,9 +55,13 @@ func TestPostLLMHookNoPendingErrorPreservesMetadata(t *testing.T) {
 	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
 	ctx.SetValue(schemas.BifrostContextKeyRequestID, "req-error-no-pending")
 	ctx.SetValue(schemas.BifrostContextKeyRequestHeaders, map[string]string{
-		"x-bf-lh-tenant": "acme",
-		"x-custom-log":   "custom-value",
+		"x-bf-lh-tenant":   "acme",
+		"x-custom-log":     "custom-value",
+		"user-agent":       "python-openai/1.0",
+		"x-bf-device-name": "research-laptop",
+		"authorization":    "Bearer should-never-be-logged",
 	})
+	ctx.SetValue(schemas.BifrostContextKeyClientPeerAddress, "10.0.0.7:44321")
 	ctx.SetValue(schemas.BifrostContextKeyDimensions, map[string]string{
 		"region": "us-east",
 	})
@@ -105,6 +109,18 @@ func TestPostLLMHookNoPendingErrorPreservesMetadata(t *testing.T) {
 	}
 	if got := logEntry.MetadataParsed["isAsyncRequest"]; got != true {
 		t.Fatalf("expected async metadata true, got %#v", got)
+	}
+	if got := logEntry.MetadataParsed["user-agent"]; got != "python-openai/1.0" {
+		t.Fatalf("expected user-agent attribution, got %#v", got)
+	}
+	if got := logEntry.MetadataParsed["x-bf-device-name"]; got != "research-laptop" {
+		t.Fatalf("expected device attribution, got %#v", got)
+	}
+	if got := logEntry.MetadataParsed["client_peer_address"]; got != "10.0.0.7:44321" {
+		t.Fatalf("expected peer address attribution, got %#v", got)
+	}
+	if _, ok := logEntry.MetadataParsed["authorization"]; ok {
+		t.Fatal("authorization must never be persisted as attribution metadata")
 	}
 }
 

@@ -637,6 +637,12 @@ func ConvertToBifrostContext(ctx *fasthttp.RequestCtx, store HandlerStore) (*sch
 		return true
 	})
 	bifrostCtx.SetValue(schemas.BifrostContextKeyRequestHeaders, allHeaders)
+	// Preserve the transport-observed peer address for attribution. This is
+	// intentionally distinct from X-Forwarded-For, which is caller-controlled
+	// unless a trusted proxy has already been established out of band.
+	if peer := ctx.RemoteAddr(); peer != nil {
+		bifrostCtx.SetValue(schemas.BifrostContextKeyClientPeerAddress, peer.String())
+	}
 
 	// Collect all request query params for downstream use (e.g., governance routing CEL rules
 	// that read params["..."]). Keys are lowercased for case-insensitive lookup.
