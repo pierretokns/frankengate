@@ -528,6 +528,22 @@ func TestVirtualKeyInvalidationPollerLeavesFreshnessStaleAfterStoreFailure(t *te
 	}
 }
 
+func TestVirtualKeyInvalidationPollerFailsClosedOnClockRollback(t *testing.T) {
+	store := &fakeVKInvalidationStore{}
+	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error { return nil }, 10, time.Second)
+	current := time.Unix(1_000, 0)
+	poller.now = func() time.Time { return current }
+	poller.lastSuccessNano.Store(current.UnixNano())
+
+	if !poller.IsAuthorityFresh() {
+		t.Fatal("authority should be fresh at the recorded success time")
+	}
+	current = current.Add(-time.Second)
+	if poller.IsAuthorityFresh() {
+		t.Fatal("authority must fail closed when the wall clock moves backwards")
+	}
+}
+
 func TestVirtualKeyInvalidationPollerStopsOnContextCancellation(t *testing.T) {
 	store := &fakeVKInvalidationStore{}
 	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error { return nil }, 10, time.Hour)

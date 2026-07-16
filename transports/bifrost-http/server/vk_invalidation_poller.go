@@ -83,6 +83,7 @@ type virtualKeyInvalidationPoller struct {
 	lastErrorLogNano atomic.Int64
 	failureActive    atomic.Bool
 	metricSink       governanceSyncMetricSink
+	now              func() time.Time
 }
 
 func newVirtualKeyInvalidationPoller(store virtualKeyInvalidationSource, apply virtualKeyInvalidationApply, batchSize int, pollInterval time.Duration) *virtualKeyInvalidationPoller {
@@ -97,7 +98,15 @@ func newVirtualKeyInvalidationPoller(store virtualKeyInvalidationSource, apply v
 		apply:        apply,
 		batchSize:    batchSize,
 		pollInterval: pollInterval,
+		now:          time.Now,
 	}
+}
+
+func (p *virtualKeyInvalidationPoller) clock() time.Time {
+	if p != nil && p.now != nil {
+		return p.now().UTC()
+	}
+	return time.Now().UTC()
 }
 
 // StartVirtualKeyInvalidationPoller starts this pod's ordered outbox consumer.
@@ -487,7 +496,7 @@ func applyVirtualKeyInvalidation(
 // authorized to accept virtual keys only while it is caught up and has
 // successfully contacted the durable authority within the bounded lease.
 func (p *virtualKeyInvalidationPoller) IsAuthorityFresh() bool {
-	return p.Freshness(time.Now(), defaultVirtualKeyAuthorityMaxStaleness).Fresh
+	return p.Freshness(p.clock(), defaultVirtualKeyAuthorityMaxStaleness).Fresh
 }
 
 // VirtualKeyInvalidationFreshness returns this pod's current outbox progress.
@@ -520,7 +529,10 @@ func (p *virtualKeyInvalidationPoller) Freshness(now time.Time, maxAge time.Dura
 	if lastNano > 0 {
 		lastSuccess = time.Unix(0, lastNano)
 	}
-	fresh := !lastSuccess.IsZero() && lag == 0 && maxAge >= 0 && now.Sub(lastSuccess) <= maxAge
+	// A backwards wall-clock jump must fail closed. Otherwise a pod can appear
+	// fresh indefinitely after its last successful authority read.
+	age := now.Sub(lastSuccess)
+	fresh := !lastSuccess.IsZero() && lag == 0 && maxAge >= 0 && age >= 0 && age <= maxAge
 	return VirtualKeyInvalidationFreshness{
 		Cursor:        cursor,
 		HighWatermark: highWatermark,
@@ -545,7 +557,7 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 		}
 		if err != nil && ctx.Err() == nil {
 			p.failureActive.Store(true)
-			now := time.Now()
+			now := p.clock()
 			lastLog := time.Unix(0, p.lastErrorLogNano.Load())
 			if logger != nil && (lastLog.IsZero() || now.Sub(lastLog) >= virtualKeyInvalidationErrorLogInterval) {
 				p.lastErrorLogNano.Store(now.UnixNano())
@@ -667,7 +679,7 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 	if previous > highWatermark {
 		p.highWatermark.Store(previous)
 	}
-	p.lastSuccessNano.Store(time.Now().UnixNano())
+	p.lastSuccessNano.Store(p.clock().UnixNano())
 	if p.metricSink != nil {
 		lag := uint64(0)
 		if highWatermark > previous {
