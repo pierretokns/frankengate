@@ -57,6 +57,7 @@ type OverdraftNotifier interface {
 type AsyncOverdraftNotifier struct {
 	events    chan OverdraftEvent
 	done      chan struct{}
+	cancel    context.CancelFunc
 	delivered atomic.Uint64
 	failed    atomic.Uint64
 	dropped   atomic.Uint64
@@ -66,15 +67,16 @@ func NewAsyncOverdraftNotifier(ctx context.Context, downstream OverdraftNotifier
 	if buffer <= 0 {
 		buffer = 256
 	}
-	n := &AsyncOverdraftNotifier{events: make(chan OverdraftEvent, buffer), done: make(chan struct{})}
+	workerCtx, cancel := context.WithCancel(ctx)
+	n := &AsyncOverdraftNotifier{events: make(chan OverdraftEvent, buffer), done: make(chan struct{}), cancel: cancel}
 	go func() {
 		defer close(n.done)
 		for {
 			select {
-			case <-ctx.Done():
+			case <-workerCtx.Done():
 				return
 			case event := <-n.events:
-				if err := downstream.Notify(ctx, event); err != nil {
+				if err := downstream.Notify(workerCtx, event); err != nil {
 					n.failed.Add(1)
 				} else {
 					n.delivered.Add(1)
@@ -104,6 +106,7 @@ func (n *AsyncOverdraftNotifier) Dropped() uint64   { return n.dropped.Load() }
 
 func (n *AsyncOverdraftNotifier) Close() {
 	if n != nil {
+		n.cancel()
 		<-n.done
 	}
 }

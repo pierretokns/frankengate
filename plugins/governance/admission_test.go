@@ -45,8 +45,8 @@ func TestAsyncOverdraftNotifierDoesNotBlockCaller(t *testing.T) {
 	// A full queue may reject immediately, but must never wait on the
 	// downstream transport or block the request path.
 	_ = notifier.Notify(ctx, OverdraftEvent{Reason: "second"})
-	cancel()
 	notifier.Close()
+	cancel()
 }
 
 type testReservationCoordinator struct {
