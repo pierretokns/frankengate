@@ -2,6 +2,7 @@ name: Fork CI
 
 on:
   push:
+    branches: ["**"]
   pull_request:
   schedule:
     # Keep vulnerability intelligence fresh without making every code-only
