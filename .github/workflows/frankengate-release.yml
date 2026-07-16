@@ -64,6 +64,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
+      id-token: write
+      attestations: write
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
@@ -96,7 +98,7 @@ jobs:
           make build LOCAL=1 DYNAMIC=1 VERSION="${VERSION#v}"
           ./tmp/bifrost-http -version
 
-      - name: Package binary and license notices
+      - name: Stage binary and license notices
         env:
           ARTIFACT: ${{ matrix.artifact }}
           VERSION: ${{ github.ref_name }}
@@ -105,7 +107,33 @@ jobs:
           mkdir -p "dist/${package}"
           cp tmp/bifrost-http "dist/${package}/frankengate"
           cp LICENSE NOTICE "dist/${package}/"
+
+      - name: Generate platform binary SPDX SBOM
+        uses: anchore/sbom-action@f8bdd1d8ac5e901a77a92f111440fdb1b593736b # v0.20.6
+        with:
+          file: tmp/bifrost-http
+          format: spdx-json
+          output-file: dist/frankengate-${{ github.ref_name }}-${{ matrix.artifact }}/frankengate.spdx.json
+          upload-artifact: false
+
+      - name: Package binary, legal notices, and SBOM
+        env:
+          ARTIFACT: ${{ matrix.artifact }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          package="frankengate-${VERSION}-${ARTIFACT}"
           tar -C dist -czf "dist/${package}.tar.gz" "${package}"
+
+      - name: Attest platform package provenance
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
+        with:
+          subject-path: dist/frankengate-${{ github.ref_name }}-${{ matrix.artifact }}.tar.gz
+
+      - name: Attest platform package SBOM
+        uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3.0.0
+        with:
+          subject-path: dist/frankengate-${{ github.ref_name }}-${{ matrix.artifact }}.tar.gz
+          sbom-path: dist/frankengate-${{ github.ref_name }}-${{ matrix.artifact }}/frankengate.spdx.json
 
       - name: Upload package
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
@@ -126,6 +154,12 @@ jobs:
         with:
           egress-policy: audit
 
+      - name: Checkout immutable release tag
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: false
+
       - name: Download packages
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
@@ -136,6 +170,26 @@ jobs:
       - name: Generate checksums
         working-directory: dist
         run: sha256sum ./*.tar.gz > SHA256SUMS
+
+      - name: Inspect every platform package
+        run: |
+          set -euo pipefail
+          inspect="$RUNNER_TEMP/frankengate-release-inspect"
+          mkdir -p "$inspect"
+          for archive in dist/*.tar.gz; do
+            name="$(basename "$archive" .tar.gz)"
+            tar -tzf "$archive" > "$inspect/$name.contents"
+            for member in frankengate LICENSE NOTICE frankengate.spdx.json; do
+              grep -Fx "$name/$member" "$inspect/$name.contents"
+            done
+            mkdir -p "$inspect/$name"
+            tar -xzf "$archive" -C "$inspect/$name"
+            test -x "$inspect/$name/$name/frankengate"
+            cmp LICENSE "$inspect/$name/$name/LICENSE"
+            cmp NOTICE "$inspect/$name/$name/NOTICE"
+            jq -e '.spdxVersion == "SPDX-2.3" and (.packages | length > 0)' \
+              "$inspect/$name/$name/frankengate.spdx.json" >/dev/null
+          done
 
       - name: Publish release
         env:
@@ -148,6 +202,22 @@ jobs:
             --verify-tag \
             --title "FrankenGate $TAG" \
             --notes "FrankenGate $TAG is a Bifrost-compatible public fork baseline. It includes fork branding, explicit Apache-2.0 provenance, a verified embedded-UI gateway binary, and separated Kubernetes liveness/readiness/startup probes. Enterprise roadmap capabilities remain gated by their published conformance tests and are not claimed complete in this release."
+
+      - name: Verify published package attestations
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for archive in dist/*.tar.gz; do
+            gh attestation verify "$archive" \
+              --repo "$GITHUB_REPOSITORY" \
+              --predicate-type https://slsa.dev/provenance/v1 \
+              --deny-self-hosted-runners
+            gh attestation verify "$archive" \
+              --repo "$GITHUB_REPOSITORY" \
+              --predicate-type https://spdx.dev/Document/v2.3 \
+              --deny-self-hosted-runners
+          done
 
   container:
     name: Publish matching GHCR image

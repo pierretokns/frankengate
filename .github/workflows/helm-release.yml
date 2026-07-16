@@ -133,7 +133,7 @@ jobs:
       - name: Generate packaged chart SPDX SBOM
         uses: anchore/sbom-action@f8bdd1d8ac5e901a77a92f111440fdb1b593736b # v0.20.6
         with:
-          path: dist/${{ steps.chart.outputs.package }}
+          file: dist/${{ steps.chart.outputs.package }}
           format: spdx-json
           output-file: dist/${{ steps.chart.outputs.package }}.spdx.json
           upload-artifact: false
