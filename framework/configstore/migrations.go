@@ -448,6 +448,36 @@ var configstoreMigrationSteps = []migrationStep{
 	{IDs: []string{"add_bedrock_project_id_columns"}, run: migrationAddBedrockProjectIDColumns},
 	{IDs: []string{"add_virtual_key_invalidation_outbox"}, run: migrationAddVirtualKeyInvalidationOutbox},
 	{IDs: []string{"add_principal_authorization_epoch_tables"}, run: migrationAddPrincipalAuthorizationEpochTables},
+	{IDs: []string{"add_governance_reservations"}, run: migrationAddGovernanceReservations},
+}
+
+func migrationAddGovernanceReservations(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {
+	const name = "add_governance_reservations"
+	logger.Info("[configstore] starting migration %s", name)
+	return db.WithContext(ctx).Exec(`CREATE TABLE IF NOT EXISTS governance_reservations (
+		id VARCHAR(255) PRIMARY KEY,
+		budget_id VARCHAR(255),
+		logical_request_id VARCHAR(255) NOT NULL,
+		attempt_id VARCHAR(255) NOT NULL,
+		attempt_epoch BIGINT NOT NULL,
+		lane VARCHAR(32) NOT NULL,
+		reserved_tokens BIGINT NOT NULL DEFAULT 0,
+		reserved_cost_micros BIGINT NOT NULL DEFAULT 0,
+		settled_tokens BIGINT NOT NULL DEFAULT 0,
+		settled_cost_micros BIGINT NOT NULL DEFAULT 0,
+		refunded_tokens BIGINT NOT NULL DEFAULT 0,
+		refunded_cost_micros BIGINT NOT NULL DEFAULT 0,
+		overdraft_tokens BIGINT NOT NULL DEFAULT 0,
+		overdraft_cost_micros BIGINT NOT NULL DEFAULT 0,
+		overdraft_state VARCHAR(16) NOT NULL DEFAULT 'none',
+		overdraft_reason VARCHAR(255),
+		state VARCHAR(16) NOT NULL,
+		lease_until TIMESTAMP NOT NULL,
+		settlement_key VARCHAR(255),
+		refund_key VARCHAR(255),
+		created_at TIMESTAMP NOT NULL,
+		updated_at TIMESTAMP NOT NULL
+	)`).Error
 }
 
 // migrationAddVirtualKeyInvalidationOutbox adds the durable cursor source used
