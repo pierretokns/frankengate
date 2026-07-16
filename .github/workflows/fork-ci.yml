@@ -4,7 +4,7 @@ on:
   push:
     branches: ["**"]
     tags-ignore:
-      - "v*"
+      - "*"
   pull_request:
   schedule:
     # Keep vulnerability intelligence fresh without making every code-only

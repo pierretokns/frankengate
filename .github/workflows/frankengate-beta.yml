@@ -179,7 +179,46 @@ jobs:
       - name: Upload beta binary artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: frankengate-beta-${{ github.sha }}-linux-amd64
+          name: frankengate-beta-${{ github.run_id }}-linux-amd64
           path: dist/frankengate-beta-*-linux-amd64.tar.gz
           retention-days: 14
           if-no-files-found: error
+
+  publish:
+    name: Publish beta prerelease
+    needs: binary
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout exact requested ref
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download exact beta package
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: frankengate-beta-${{ github.run_id }}-linux-amd64
+          path: dist
+
+      - name: Publish prerelease with stable download URL
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          REF_NAME: ${{ inputs.ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD^{commit})"
+          short="${sha:0:12}"
+          tag="beta-${short}"
+          archive="$(find dist -maxdepth 1 -type f -name 'frankengate-beta-*-linux-amd64.tar.gz' -print -quit)"
+          test -n "$archive"
+          sha256sum "$archive" > dist/SHA256SUMS
+          notes="FrankenGate beta for ${REF_NAME}\n\nSource commit: ${sha}\n\nDownload:\n- curl -fL -o frankengate.tar.gz https://github.com/${REPO}/releases/download/${tag}/$(basename "$archive")\n- gh release download ${tag} --repo ${REPO}"
+          gh release create "$tag" "$archive" dist/SHA256SUMS \
+            --repo "$REPO" --target "$sha" --prerelease \
+            --title "FrankenGate beta ${short}" --notes "$notes"
