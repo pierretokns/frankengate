@@ -97,6 +97,14 @@ else
     exit 1
 fi
 
+print_info "Validating capacity-safe rollout strategy..."
+if "$SCRIPT_DIR/validate-rollout-strategy.sh"; then
+    print_success "Capacity-safe rollout validation passed"
+else
+    print_error "Capacity-safe rollout validation failed"
+    exit 1
+fi
+
 # Dry run install
 print_info "Performing dry-run installation..."
 if helm install test-release "$CHART_DIR" --dry-run --debug > /dev/null 2>&1; then
