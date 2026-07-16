@@ -83,7 +83,9 @@ jobs:
         run: |
           set -euo pipefail
           chart_version="$(awk '$1 == "version:" {print $2}' helm-charts/bifrost/Chart.yaml)"
-          app_version="$(awk '$1 == "appVersion:" {gsub(/\"/, "", $2); print $2}' helm-charts/bifrost/Chart.yaml)"
+          app_version="$(awk '$1 == "appVersion:" {print $2}' helm-charts/bifrost/Chart.yaml)"
+          app_version="${app_version%\"}"
+          app_version="${app_version#\"}"
           expected_app_version="${RELEASE_TAG#v}"
           if [[ -z "$chart_version" || "$app_version" != "$expected_app_version" ]]; then
             echo "Chart.yaml must have a version and appVersion=$expected_app_version; got version=$chart_version appVersion=$app_version" >&2
