@@ -1601,6 +1601,29 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 			Error: bifrostError,
 		}, nil
 	}
+	// MCP tool calls are billable executions too. Reserve before dispatch so a
+	// tool cannot bypass the durable hard-budget boundary used by LLM calls.
+	if coordinator := p.admissionCoordinator(); coordinator != nil {
+		attempt := 0
+		if value, ok := ctx.Value(schemas.BifrostContextKeyFallbackIndex).(int); ok {
+			attempt = value
+		}
+		handle, err := coordinator.Reserve(ctx, AdmissionRequest{
+			Evaluation:  *evaluationRequest,
+			Result:      nil,
+			RequestType: schemas.MCPToolExecutionRequest,
+			RequestID:   bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyRequestID),
+			Attempt:     attempt,
+		})
+		if err != nil {
+			return req, &schemas.MCPPluginShortCircuit{Error: &schemas.BifrostError{
+				Type:       new("governance_reservation_denied"),
+				StatusCode: new(429),
+				Error:      &schemas.ErrorField{Message: err.Error()},
+			}}, nil
+		}
+		setReservationHandle(ctx, handle)
+	}
 
 	// Blind single-tool check: validate the specific tool being executed against VK MCPConfigs.
 	// This runs independently of EvaluateGovernanceRequest to enforce execution-time allow-list.
@@ -1664,6 +1687,24 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 //   - *schemas.BifrostError: The processed error
 //   - error: Any error that occurred during processing
 func (p *GovernancePlugin) PostMCPHook(ctx *schemas.BifrostContext, resp *schemas.BifrostMCPResponse, bifrostErr *schemas.BifrostError) (*schemas.BifrostMCPResponse, *schemas.BifrostError, error) {
+	if coordinator := p.admissionCoordinator(); coordinator != nil {
+		if handle, ok := reservationHandleFromContext(ctx); ok {
+			settlement := AdmissionSettlement{Error: bifrostErr}
+			var settleErr error
+			if bifrostErr != nil {
+				settleErr = coordinator.Refund(ctx, handle, settlement)
+			} else {
+				// MCP responses do not expose token usage to the admission estimator;
+				// the coordinator therefore settles the conservative reservation.
+				settleErr = coordinator.Settle(ctx, handle, settlement)
+			}
+			if settleErr != nil && p.logger != nil {
+				p.logger.Warn("governance MCP reservation finalization failed: %v", settleErr)
+			} else if settleErr == nil {
+				clearReservationHandle(ctx)
+			}
+		}
+	}
 	if _, ok := ctx.Value(governanceRejectedContextKey).(bool); ok {
 		return resp, bifrostErr, nil
 	}
