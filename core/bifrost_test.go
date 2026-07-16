@@ -2810,6 +2810,77 @@ type fakeRoutingPlugin struct {
 	pinKeyID string // written to BifrostContextKeyRoutingPinnedAPIKeyID when non-empty
 }
 
+// rejectingAuthorityPlugin models an authentication plugin rejecting a request
+// before the selected provider has been configured. Provider lookup must never
+// outrank this decision: otherwise a revoked credential can traverse deeper into
+// the serving path and leak provider/configuration behavior.
+type rejectingAuthorityPlugin struct{}
+
+func (*rejectingAuthorityPlugin) GetName() string { return "rejecting-authority" }
+func (*rejectingAuthorityPlugin) Cleanup() error  { return nil }
+func (*rejectingAuthorityPlugin) PreRequestHook(*schemas.BifrostContext, *schemas.BifrostRequest) error {
+	return nil
+}
+func (*rejectingAuthorityPlugin) PreLLMHook(_ *schemas.BifrostContext, req *schemas.BifrostRequest) (*schemas.BifrostRequest, *schemas.LLMPluginShortCircuit, error) {
+	return req, &schemas.LLMPluginShortCircuit{Error: &schemas.BifrostError{
+		StatusCode: Ptr(401),
+		Error:      &schemas.ErrorField{Message: "virtual key revoked"},
+	}}, nil
+}
+func (*rejectingAuthorityPlugin) PostLLMHook(_ *schemas.BifrostContext, resp *schemas.BifrostResponse, bifrostErr *schemas.BifrostError) (*schemas.BifrostResponse, *schemas.BifrostError, error) {
+	return resp, bifrostErr, nil
+}
+
+func TestAuthenticationShortCircuitPrecedesProviderLookup(t *testing.T) {
+	client, err := Init(context.Background(), schemas.BifrostConfig{
+		Account:    NewMockAccount(), // deliberately has no configured providers
+		LLMPlugins: []schemas.LLMPlugin{&rejectingAuthorityPlugin{}},
+		Logger:     NewDefaultLogger(schemas.LogLevelError),
+	})
+	if err != nil {
+		t.Fatalf("Init() error = %v", err)
+	}
+	defer client.Shutdown()
+
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	_, bifrostErr := client.ChatCompletionRequest(ctx, &schemas.BifrostChatRequest{
+		Provider: schemas.OpenAI,
+		Model:    "gpt-4o-mini",
+		Input:    []schemas.ChatMessage{{Role: schemas.ChatMessageRoleUser, Content: &schemas.ChatMessageContent{ContentStr: new("authority probe")}}},
+	})
+	if bifrostErr == nil || bifrostErr.StatusCode == nil || *bifrostErr.StatusCode != 401 {
+		t.Fatalf("ChatCompletionRequest() error = %#v, want authority 401 before provider lookup", bifrostErr)
+	}
+	if bifrostErr.Error == nil || bifrostErr.Error.Message != "virtual key revoked" {
+		t.Fatalf("ChatCompletionRequest() message = %#v, want authority rejection", bifrostErr)
+	}
+}
+
+func TestStreamingAuthenticationShortCircuitPrecedesProviderLookup(t *testing.T) {
+	client, err := Init(context.Background(), schemas.BifrostConfig{
+		Account:    NewMockAccount(),
+		LLMPlugins: []schemas.LLMPlugin{&rejectingAuthorityPlugin{}},
+		Logger:     NewDefaultLogger(schemas.LogLevelError),
+	})
+	if err != nil {
+		t.Fatalf("Init() error = %v", err)
+	}
+	defer client.Shutdown()
+
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	_, bifrostErr := client.ChatCompletionStreamRequest(ctx, &schemas.BifrostChatRequest{
+		Provider: schemas.OpenAI,
+		Model:    "gpt-4o-mini",
+		Input:    []schemas.ChatMessage{{Role: schemas.ChatMessageRoleUser, Content: &schemas.ChatMessageContent{ContentStr: new("authority probe")}}},
+	})
+	if bifrostErr == nil || bifrostErr.StatusCode == nil || *bifrostErr.StatusCode != 401 {
+		t.Fatalf("ChatCompletionStreamRequest() error = %#v, want authority 401 before provider lookup", bifrostErr)
+	}
+	if bifrostErr.Error == nil || bifrostErr.Error.Message != "virtual key revoked" {
+		t.Fatalf("ChatCompletionStreamRequest() message = %#v, want authority rejection", bifrostErr)
+	}
+}
+
 func (f *fakeRoutingPlugin) GetName() string { return f.name }
 func (f *fakeRoutingPlugin) Cleanup() error  { return nil }
 func (f *fakeRoutingPlugin) PreRequestHook(ctx *schemas.BifrostContext, req *schemas.BifrostRequest) error {

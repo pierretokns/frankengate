@@ -5185,12 +5185,6 @@ func (bifrost *Bifrost) handleStreamRequest(ctx *schemas.BifrostContext, req *sc
 // It consolidates queue setup, plugin pipeline execution, enqueue logic, and response handling
 func (bifrost *Bifrost) tryRequest(ctx *schemas.BifrostContext, req *schemas.BifrostRequest) (*schemas.BifrostResponse, *schemas.BifrostError) {
 	provider, model, _ := req.GetRequestFields()
-	pq, err := bifrost.getProviderQueue(provider)
-	if err != nil {
-		bifrostErr := newBifrostError(err)
-		bifrostErr.PopulateExtraFields(req.RequestType, provider, model, model)
-		return nil, bifrostErr
-	}
 
 	// Add MCP tools to request if MCP is configured and requested
 	if bifrost.MCPManager != nil {
@@ -5256,6 +5250,17 @@ func (bifrost *Bifrost) tryRequest(ctx *schemas.BifrostContext, req *schemas.Bif
 	}
 
 	provider, model, _ = preReq.GetRequestFields()
+	// Authentication and other policy plugins must be able to short-circuit
+	// before provider configuration is consulted. Besides preserving the
+	// correct client-visible decision, this prevents revoked credentials from
+	// probing which providers are configured. Resolve the queue only after the
+	// pre-hook decision and after any legitimate routing mutation.
+	pq, err := bifrost.getProviderQueue(provider)
+	if err != nil {
+		bifrostErr := newBifrostError(err)
+		bifrostErr.PopulateExtraFields(req.RequestType, provider, model, model)
+		return nil, bifrostErr
+	}
 
 	msg := bifrost.getChannelMessage(*preReq)
 	msg.Context = ctx
@@ -5415,12 +5420,6 @@ func (bifrost *Bifrost) tryRequest(ctx *schemas.BifrostContext, req *schemas.Bif
 // It consolidates queue setup, plugin pipeline execution, enqueue logic, and response handling
 func (bifrost *Bifrost) tryStreamRequest(ctx *schemas.BifrostContext, req *schemas.BifrostRequest) (chan *schemas.BifrostStreamChunk, *schemas.BifrostError) {
 	provider, model, _ := req.GetRequestFields()
-	pq, err := bifrost.getProviderQueue(provider)
-	if err != nil {
-		bifrostErr := newBifrostError(err)
-		bifrostErr.PopulateExtraFields(req.RequestType, provider, model, model)
-		return nil, bifrostErr
-	}
 
 	// Add MCP tools to request if MCP is configured and requested
 	if req.RequestType != schemas.SpeechStreamRequest && req.RequestType != schemas.TranscriptionStreamRequest && bifrost.MCPManager != nil {
@@ -5590,6 +5589,14 @@ func (bifrost *Bifrost) tryStreamRequest(ctx *schemas.BifrostContext, req *schem
 	}
 
 	provider, model, _ = preReq.GetRequestFields()
+	// Match the non-streaming authority boundary: policy short-circuits and
+	// routing mutations precede provider discovery for every serving mode.
+	pq, err := bifrost.getProviderQueue(provider)
+	if err != nil {
+		bifrostErr := newBifrostError(err)
+		bifrostErr.PopulateExtraFields(req.RequestType, provider, model, model)
+		return nil, bifrostErr
+	}
 
 	msg := bifrost.getChannelMessage(*preReq)
 	msg.Context = ctx

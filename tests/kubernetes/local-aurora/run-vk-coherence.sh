@@ -232,6 +232,24 @@ call_list_models() {
   ' sh "$ip" "$secret"
 }
 
+# Exercise the ordinary body-bearing inference pipeline as well as the
+# route-specific /v1/models handler. There is deliberately no upstream provider
+# in this authority fixture: a live key may reach provider resolution and fail
+# there, but an unknown/revoked key must be rejected by governance first.
+call_chat_completion() {
+  local ip="$1" secret="$2"
+  local body='{"model":"openai/gpt-4o-mini","messages":[{"role":"user","content":"authority probe"}]}'
+  # shellcheck disable=SC2016
+  kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c '
+    ip="$1"
+    secret="$2"
+    body="$3"
+    length="${#body}"
+    printf "POST /v1/chat/completions HTTP/1.1\r\nHost: %s\r\nx-bf-vk: %s\r\nContent-Type: application/json\r\nContent-Length: %s\r\nConnection: close\r\n\r\n%s" \
+      "$ip" "$secret" "$length" "$body" | nc "$ip" 8080
+  ' sh "$ip" "$secret" "$body"
+}
+
 assert_vk_status_on_all_pods() {
   local secret="$1" expected_status="$2" expected_body="${3:-}"
   local ip response
@@ -244,6 +262,24 @@ assert_vk_status_on_all_pods() {
     fi
     if [[ -n "$expected_body" ]] && ! grep -q "$expected_body" <<<"$response"; then
       echo "VK inference hotpath on pod $ip omitted expected body marker: $expected_body" >&2
+      echo "$response" >&2
+      return 1
+    fi
+  done
+}
+
+assert_chat_vk_rejected_on_all_pods() {
+  local secret="$1" expected_status="$2" expected_body="${3:-}"
+  local ip response
+  for ip in "${pod_ips[@]}"; do
+    response="$(call_chat_completion "$ip" "$secret" 2>/dev/null || true)"
+    if ! grep -q "$expected_status" <<<"$response"; then
+      echo "VK body-bearing inference hotpath on pod $ip did not return $expected_status" >&2
+      echo "$response" >&2
+      return 1
+    fi
+    if [[ -n "$expected_body" ]] && ! grep -q "$expected_body" <<<"$response"; then
+      echo "VK body-bearing inference hotpath on pod $ip omitted expected body marker: $expected_body" >&2
       echo "$response" >&2
       return 1
     fi
@@ -274,6 +310,7 @@ if [[ "$rotated_updated_at" == "$created_updated_at" ]]; then
 fi
 wait_for_cache present "$vk_id" "$rotated_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '401 Unauthorized' 'does not exist or has been revoked'
+assert_chat_vk_rejected_on_all_pods "$original_secret" '401 Unauthorized' 'does not exist or has been revoked'
 assert_vk_status_on_all_pods "$rotated_secret" '200 OK'
 
 delete_response="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c \
@@ -281,6 +318,7 @@ delete_response="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c \
 grep -q '200 OK' <<<"$delete_response"
 wait_for_cache absent "$vk_id"
 assert_vk_status_on_all_pods "$rotated_secret" '401 Unauthorized' 'does not exist or has been revoked'
+assert_chat_vk_rejected_on_all_pods "$rotated_secret" '401 Unauthorized' 'does not exist or has been revoked'
 
 actions="$(kubectl -n "$NAMESPACE" exec postgres-0 -- psql -At -U frankengate -d frankengate \
   -c "select action from governance_virtual_key_invalidation_outbox where entity_id = '$vk_id' order by id")"
@@ -347,6 +385,12 @@ while :; do
       all_stale_closed=0
       break
     fi
+    response="$(call_chat_completion "$ip" "$partition_secret" 2>/dev/null || true)"
+    if ! grep -q '503 Service Unavailable' <<<"$response" ||
+       ! grep -q 'virtual key authority is stale' <<<"$response"; then
+      all_stale_closed=0
+      break
+    fi
   done
   if [[ "$all_stale_closed" -eq 1 ]]; then
     break
@@ -360,4 +404,4 @@ done
 
 jq -n --arg vk_id "$vk_id" --argjson pods "${#pod_ips[@]}" \
   --arg artifact "${FRANKENGATE_IMAGE:-loose-binary}" \
-  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,inference_hotpath:{create:"accepted-on-all-pods",old_secret_after_rotation:"rejected-on-all-pods",rotated_secret:"accepted-on-all-pods",deleted_secret:"rejected-on-all-pods"},outbox:["reload","reload","delete"],restart_replay:"passed",authority_partition:"inference-and-mcp-stale-closed-on-all-pods"}'
+  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,inference_hotpath:{list_models:{create:"accepted-on-all-pods",old_secret_after_rotation:"rejected-on-all-pods",rotated_secret:"accepted-on-all-pods",deleted_secret:"rejected-on-all-pods"},chat_completions:{old_secret_after_rotation:"rejected-on-all-pods",deleted_secret:"rejected-on-all-pods"}},outbox:["reload","reload","delete"],restart_replay:"passed",authority_partition:"list-models-chat-and-mcp-stale-closed-on-all-pods"}'
