@@ -39,7 +39,10 @@ export default function DashboardPage() {
 			period: parseAsString.withDefault(hasExplicitTimeRange ? "" : "1h").withOptions({ clearOnDefault: false }),
 			start_time: parseAsInteger.withDefault(defaultTimeRange.startTime),
 			end_time: parseAsInteger.withDefault(defaultTimeRange.endTime),
-			tab: parseAsString.withDefault("overview"),
+			// Governance-first default: the highest-signal view for enterprise
+			// operators is spend/usage by team. User rankings remain one tab away
+			// and preserve the same filters and time window.
+			tab: parseAsString.withDefault("team-rankings"),
 			virtual_key_ids: parseAsSafeArrayOf.withDefault([]),
 			providers: parseAsSafeArrayOf.withDefault([]),
 			models: parseAsSafeArrayOf.withDefault([]),
