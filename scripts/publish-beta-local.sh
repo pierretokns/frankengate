@@ -78,8 +78,10 @@ ASSET_COUNT="$(gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets
 [[ "$ASSET_COUNT" == 2 ]] || { echo "beta release asset verification failed (found $ASSET_COUNT/2)" >&2; exit 1; }
 gh release edit "$TAG" --repo "$REPO" --tag "$TAG" --draft=false >/dev/null
 for attempt in 1 2 3 4 5; do
-	DRAFT_STATE="$(gh release view "$TAG" --repo "$REPO" --json isDraft --jq '.isDraft' 2>/dev/null || true)"
-	if [[ "$DRAFT_STATE" == false ]]; then
+	RELEASE_STATE="$(gh release view "$TAG" --repo "$REPO" --json isDraft,tagName --jq '[.isDraft, .tagName] | @tsv' 2>/dev/null || true)"
+	DRAFT_STATE="${RELEASE_STATE%%$'\t'*}"
+	RELEASE_TAG="${RELEASE_STATE#*$'\t'}"
+	if [[ "$DRAFT_STATE" == false && "$RELEASE_TAG" == "$TAG" ]]; then
 		FINAL_URL="$(gh release view "$TAG" --repo "$REPO" --json url --jq '.url')"
 		echo "published $FINAL_URL"
 		exit 0
