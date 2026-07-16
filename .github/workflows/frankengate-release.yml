@@ -44,7 +44,7 @@ jobs:
         run: bash scripts/verify-provenance.sh
 
       - name: Run tests, race checks, and vet
-        run: .github/workflows/scripts/fork-go-checks.sh test-vet
+        run: timeout 25m .github/workflows/scripts/fork-go-checks.sh test-vet
 
       - name: Run vulnerability checks
         run: .github/workflows/scripts/fork-go-checks.sh vuln

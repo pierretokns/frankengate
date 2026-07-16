@@ -46,7 +46,7 @@ jobs:
           cache: false
 
       - name: Run unit tests and vet
-        run: .github/workflows/scripts/fork-go-checks.sh test-vet
+        run: timeout 25m .github/workflows/scripts/fork-go-checks.sh test-vet
 
   go-security:
     name: Go vulnerability checks
