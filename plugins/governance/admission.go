@@ -61,6 +61,26 @@ func (e ConfiguredReservationEstimator) Actual(_ context.Context, settlement Adm
 		}
 		return amount
 	}
+	if settlement.Response != nil && settlement.Response.ResponsesResponse != nil && settlement.Response.ResponsesResponse.Usage != nil {
+		u := settlement.Response.ResponsesResponse.Usage
+		amount := reservations.Amount{Tokens: int64(u.TotalTokens)}
+		if u.Cost != nil && u.Cost.TotalCost > 0 {
+			amount.CostMicros = int64(u.Cost.TotalCost * 1_000_000)
+		} else {
+			amount.CostMicros = int64(u.TotalTokens) * e.CostMicrosPerToken
+		}
+		return amount
+	}
+	if settlement.Response != nil && settlement.Response.ResponsesStreamResponse != nil && settlement.Response.ResponsesStreamResponse.Response != nil && settlement.Response.ResponsesStreamResponse.Response.Usage != nil {
+		u := settlement.Response.ResponsesStreamResponse.Response.Usage
+		amount := reservations.Amount{Tokens: int64(u.TotalTokens)}
+		if u.Cost != nil && u.Cost.TotalCost > 0 {
+			amount.CostMicros = int64(u.Cost.TotalCost * 1_000_000)
+		} else {
+			amount.CostMicros = int64(u.TotalTokens) * e.CostMicrosPerToken
+		}
+		return amount
+	}
 	return reservations.Amount{}
 }
 

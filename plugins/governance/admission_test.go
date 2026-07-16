@@ -49,6 +49,11 @@ func TestConfiguredReservationEstimatorUsesCeilingAndObservedUsage(t *testing.T)
 	actual := e.Actual(context.Background(), AdmissionSettlement{Response: response})
 	require.Equal(t, int64(37), actual.Tokens)
 	require.Equal(t, int64(74), actual.CostMicros)
+	responseUsage := &schemas.ResponsesResponseUsage{TotalTokens: 19}
+	response = &schemas.BifrostResponse{ResponsesResponse: &schemas.BifrostResponsesResponse{Usage: responseUsage}}
+	actual = e.Actual(context.Background(), AdmissionSettlement{Response: response})
+	require.Equal(t, int64(19), actual.Tokens)
+	require.Equal(t, int64(38), actual.CostMicros)
 }
 func (c *testReservationCoordinator) Settle(context.Context, any, AdmissionSettlement) error {
 	c.settled++
