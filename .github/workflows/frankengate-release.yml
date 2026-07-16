@@ -228,6 +228,6 @@ jobs:
       packages: write
       id-token: write
       attestations: write
-    uses: ./.github/workflows/frankengate-container-release.yml
+    uses: ./.github/workflows/frankengate-image-release-native.yml
     with:
       release_tag: ${{ github.ref_name }}
