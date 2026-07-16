@@ -92,9 +92,12 @@ timeout --foreground --signal=TERM --kill-after=30s "${MODULE_GRAPH_TIMEOUT_SECO
 echo "[$(date -u +%FT%TZ)] local module graph validated"
 
 run_in_modules() {
-  local label="$1"
-  shift
-  local max_parallel=8 failed=0
+	local label="$1"
+	shift
+	# Module-wide compile/vet jobs are memory-heavy. Eight concurrent Go
+	# workspaces can starve the runner and present as a silent hang; keep the
+	# default conservative while allowing larger runners to opt in.
+	local max_parallel="${MODULE_CHECK_MAX_PARALLEL:-2}" failed=0
   local module_timeout="${MODULE_TIMEOUT_SECONDS:-900}"
   local -a pids=()
   run_one() {
@@ -133,7 +136,7 @@ run_in_modules() {
 }
 
 download_dependencies() {
-  local max_parallel=8 failed=0
+	local max_parallel="${MODULE_DOWNLOAD_MAX_PARALLEL:-4}" failed=0
   local -a pids=()
   download_one() {
     local module="$1" attempt
