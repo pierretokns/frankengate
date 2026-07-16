@@ -23,6 +23,6 @@ if [[ "$OS" != "linux" ]]; then
 fi
 CGO_ENABLED=1 GOOS="$OS" GOARCH="$ARCH" go build \
   -ldflags="-w -s -X main.Version=v${VERSION}" \
-  -a -trimpath "${BUILD_TAGS[@]}" \
+  -trimpath "${BUILD_TAGS[@]}" \
   -o "$ROOT/tmp/bifrost-http" .
 "$ROOT/tmp/bifrost-http" -version

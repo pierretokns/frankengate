@@ -8,6 +8,11 @@ on:
   # Allows an immutable-tag release to be retried when a hosted runner stalls
   # without force-moving or recreating the version tag.
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Immutable existing v* tag to release
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -121,6 +126,9 @@ jobs:
     # A platform runner must not hold the single-release/Helm publication
     # chain forever if the UI build or hosted macOS queue stalls.
     timeout-minutes: 35
+    env:
+      GOCACHE: ${{ github.workspace }}/.cache/go-build
+      GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
     permissions:
       contents: read
       id-token: write
@@ -142,6 +150,16 @@ jobs:
           go-version: "1.26.5"
           cache-dependency-path: "**/go.sum"
 
+      - name: Restore native build Go caches
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: |
+            .cache/go-build
+            .cache/go-mod
+          key: release-build-go-${{ runner.os }}-${{ runner.arch }}-1.26.5-${{ hashFiles('go.work', 'go.work.sum', '**/go.mod', '**/go.sum') }}
+          restore-keys: |
+            release-build-go-${{ runner.os }}-${{ runner.arch }}-1.26.5-
+
       - name: Download embedded UI
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
@@ -150,7 +168,7 @@ jobs:
 
       - name: Build embedded UI and binary
         env:
-          VERSION: ${{ github.ref_name }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: |
           timeout --foreground --signal=TERM --kill-after=30s 20m \
             .github/workflows/scripts/build-release-binary.sh
@@ -158,7 +176,7 @@ jobs:
       - name: Stage binary and license notices
         env:
           ARTIFACT: ${{ matrix.artifact }}
-          VERSION: ${{ github.ref_name }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: |
           package="frankengate-${VERSION}-${ARTIFACT}"
           mkdir -p "dist/${package}"
@@ -170,13 +188,13 @@ jobs:
         with:
           file: tmp/bifrost-http
           format: spdx-json
-          output-file: dist/frankengate-${{ github.ref_name }}-${{ matrix.artifact }}/frankengate.spdx.json
+          output-file: dist/frankengate-${{ inputs.release_tag || github.ref_name }}-${{ matrix.artifact }}/frankengate.spdx.json
           upload-artifact: false
 
       - name: Package binary, legal notices, and SBOM
         env:
           ARTIFACT: ${{ matrix.artifact }}
-          VERSION: ${{ github.ref_name }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: |
           package="frankengate-${VERSION}-${ARTIFACT}"
           tar -C dist -czf "dist/${package}.tar.gz" "${package}"
@@ -184,13 +202,13 @@ jobs:
       - name: Attest platform package provenance
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
         with:
-          subject-path: dist/frankengate-${{ github.ref_name }}-${{ matrix.artifact }}.tar.gz
+          subject-path: dist/frankengate-${{ inputs.release_tag || github.ref_name }}-${{ matrix.artifact }}.tar.gz
 
       - name: Attest platform package SBOM
         uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3.0.0
         with:
-          subject-path: dist/frankengate-${{ github.ref_name }}-${{ matrix.artifact }}.tar.gz
-          sbom-path: dist/frankengate-${{ github.ref_name }}-${{ matrix.artifact }}/frankengate.spdx.json
+          subject-path: dist/frankengate-${{ inputs.release_tag || github.ref_name }}-${{ matrix.artifact }}.tar.gz
+          sbom-path: dist/frankengate-${{ inputs.release_tag || github.ref_name }}-${{ matrix.artifact }}/frankengate.spdx.json
 
       - name: Upload package
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
@@ -214,13 +232,13 @@ jobs:
       - name: Checkout immutable release tag
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ inputs.release_tag || github.ref_name }}
           persist-credentials: false
 
       - name: Download packages
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          pattern: frankengate-*
+          pattern: frankengate-linux-amd64,frankengate-darwin-arm64,frankengate-darwin-amd64
           path: dist
           merge-multiple: true
 
@@ -252,7 +270,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
           gh release create "$TAG" dist/*.tar.gz dist/SHA256SUMS \
             --repo "$REPO" \
