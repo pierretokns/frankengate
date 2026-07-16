@@ -74,9 +74,39 @@ jobs:
       - name: Run vulnerability checks
         run: .github/workflows/scripts/fork-go-checks.sh vuln
 
+  build-ui:
+    name: Build embedded UI once
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24.11.0"
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Build UI
+        run: timeout --foreground --signal=TERM --kill-after=30s 12m make build-ui
+
+      - name: Upload embedded UI
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: frankengate-embedded-ui
+          path: transports/bifrost-http/ui
+          if-no-files-found: error
+
   build:
     name: Build ${{ matrix.artifact }}
-    needs: verify
+    needs: [verify, build-ui]
     strategy:
       fail-fast: false
       matrix:
@@ -112,20 +142,18 @@ jobs:
           go-version: "1.26.5"
           cache-dependency-path: "**/go.sum"
 
-      - name: Set up Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - name: Download embedded UI
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          node-version: "24.11.0"
-          cache: npm
-          cache-dependency-path: ui/package-lock.json
+          name: frankengate-embedded-ui
+          path: transports/bifrost-http/ui
 
       - name: Build embedded UI and binary
         env:
           VERSION: ${{ github.ref_name }}
         run: |
-          make setup-workspace
-          make build LOCAL=1 DYNAMIC=1 VERSION="${VERSION#v}"
-          ./tmp/bifrost-http -version
+          timeout --foreground --signal=TERM --kill-after=30s 20m \
+            .github/workflows/scripts/build-release-binary.sh
 
       - name: Stage binary and license notices
         env:
