@@ -1,0 +1,185 @@
+name: FrankenGate Beta Artifact
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "cli/**"
+      - "core/**"
+      - "framework/**"
+      - "plugins/**"
+      - "transports/**"
+      - "ui/**"
+      - "Makefile"
+      - "go.work*"
+      - "**/go.mod"
+      - "**/go.sum"
+      - ".github/workflows/frankengate-beta.yml"
+      - ".github/workflows/scripts/**"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag, or commit to build
+        required: true
+        default: dev
+        type: string
+
+concurrency:
+  group: frankengate-beta-${{ inputs.ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: "1.26.5"
+  NODE_VERSION: "24.11.0"
+  GOFLAGS: "-p=2"
+
+jobs:
+  checks:
+    name: Focused beta checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GOCACHE: ${{ github.workspace }}/.cache/go-build
+      GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
+      FORK_RELEASE: "1"
+      MODULE_CHECK_MAX_PARALLEL: "2"
+      MODULE_TIMEOUT_SECONDS: "480"
+    steps:
+      - name: Checkout exact requested ref
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve source identity
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD^{commit})"
+          printf 'source_sha=%s\n' "$sha" >> "$GITHUB_OUTPUT"
+          printf 'source_sha=%s\n' "$sha" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Set up Go
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Restore Go caches
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: |
+            .cache/go-build
+            .cache/go-mod
+          key: beta-go-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles('go.work', 'go.work.sum', '**/go.mod', '**/go.sum') }}
+          restore-keys: |
+            beta-go-${{ runner.os }}-${{ env.GO_VERSION }}-
+
+      - name: Run focused compile, race, and vet checks
+        run: |
+          set -euo pipefail
+          heartbeat() { while sleep 30; do echo "[$(date -u +%FT%TZ)] beta checks heartbeat"; done; }
+          heartbeat & pid=$!; trap 'kill "$pid" 2>/dev/null || true' EXIT
+          timeout --foreground --signal=TERM --kill-after=30s 12m \
+            .github/workflows/scripts/fork-go-checks.sh test-vet
+
+      - name: Provenance self-test
+        run: bash scripts/verify-provenance.sh --self-test
+
+  build-ui:
+    name: Build beta UI
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact requested ref
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Build UI once
+        run: timeout --foreground --signal=TERM --kill-after=30s 8m make build-ui
+
+      - name: Upload UI artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: frankengate-beta-ui-${{ github.run_id }}
+          path: transports/bifrost-http/ui
+          retention-days: 7
+          if-no-files-found: error
+
+  binary:
+    name: Build beta Linux binary
+    needs: [checks, build-ui]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GOCACHE: ${{ github.workspace }}/.cache/go-build
+      GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
+    steps:
+      - name: Checkout exact requested ref
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Restore Go caches
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: |
+            .cache/go-build
+            .cache/go-mod
+          key: beta-build-go-${{ runner.os }}-${{ env.GO_VERSION }}-${{ hashFiles('go.work', 'go.work.sum', '**/go.mod', '**/go.sum') }}
+          restore-keys: |
+            beta-build-go-${{ runner.os }}-${{ env.GO_VERSION }}-
+
+      - name: Download UI artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: frankengate-beta-ui-${{ github.run_id }}
+          path: transports/bifrost-http/ui
+
+      - name: Build binary
+        run: |
+          export VERSION="beta-$(git rev-parse HEAD^{commit})"
+          timeout --foreground --signal=TERM --kill-after=30s 8m .github/workflows/scripts/build-release-binary.sh
+
+      - name: Package beta artifact
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD^{commit})"
+          short="${sha:0:12}"
+          package="frankengate-beta-${short}-linux-amd64"
+          mkdir -p "dist/${package}"
+          cp tmp/bifrost-http "dist/${package}/frankengate"
+          cp LICENSE NOTICE "dist/${package}/"
+          ./tmp/bifrost-http -version > "dist/${package}/version.txt"
+          printf '{"source_sha":"%s","ref":"%s","workflow_sha":"%s","go_version":"%s","node_version":"%s"}\n' \
+            "$sha" "${{ inputs.ref || github.ref }}" "$GITHUB_SHA" "$GO_VERSION" "$NODE_VERSION" > "dist/${package}/build-metadata.json"
+          (cd dist && sha256sum "${package}/frankengate" > "${package}/SHA256SUMS")
+          tar -C dist -czf "dist/${package}.tar.gz" "${package}"
+
+      - name: Upload beta binary artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: frankengate-beta-${{ github.sha }}-linux-amd64
+          path: dist/frankengate-beta-*-linux-amd64.tar.gz
+          retention-days: 14
+          if-no-files-found: error
