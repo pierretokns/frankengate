@@ -13,6 +13,7 @@ import (
 	"math"
 	"sort"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -42,6 +43,8 @@ type RDBConfigStore struct {
 	refreshPoolFn                         func(ctx context.Context) error
 	virtualKeyInvalidationNotifyDial      func(context.Context) (virtualKeyInvalidationNotifyConn, error)
 	principalAuthorizationEpochNotifyDial func(context.Context) (principalAuthorizationEpochNotifyConn, error)
+	virtualKeyInvalidationMetricsMu       sync.RWMutex
+	virtualKeyInvalidationMetrics         func(string, float64)
 }
 
 // getWeight safely dereferences a *float64 weight pointer, returning 1.0 as default if nil.

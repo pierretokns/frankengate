@@ -220,6 +220,19 @@ func (p *PrometheusPlugin) SetGovernanceSyncMetric(name string, value float64) {
 	}
 }
 
+// AddGovernanceSyncMetric records an event-style control-plane metric.
+func (p *PrometheusPlugin) AddGovernanceSyncMetric(name string, value float64) {
+	if p == nil {
+		return
+	}
+	switch name {
+	case "wakeups":
+		p.GovernanceSyncWakeups.Add(value)
+	case "listener_reconnects":
+		p.GovernanceSyncListenerReconnects.Add(value)
+	}
+}
+
 type Config struct {
 	CustomLabels []string `json:"custom_labels"`
 	Registry     *prometheus.Registry

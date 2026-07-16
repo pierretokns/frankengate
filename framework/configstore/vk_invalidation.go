@@ -31,6 +31,30 @@ type pgxVirtualKeyInvalidationNotifyConn struct {
 	conn *pgx.Conn
 }
 
+// SetVirtualKeyInvalidationMetricSink installs a non-blocking observer for
+// notification-listener metrics. The callback is deliberately tiny and may be
+// replaced during server/plugin reload without interrupting the listener.
+func (s *RDBConfigStore) SetVirtualKeyInvalidationMetricSink(sink func(string, float64)) {
+	if s == nil {
+		return
+	}
+	s.virtualKeyInvalidationMetricsMu.Lock()
+	s.virtualKeyInvalidationMetrics = sink
+	s.virtualKeyInvalidationMetricsMu.Unlock()
+}
+
+func (s *RDBConfigStore) observeVirtualKeyInvalidationMetric(name string, value float64) {
+	if s == nil {
+		return
+	}
+	s.virtualKeyInvalidationMetricsMu.RLock()
+	sink := s.virtualKeyInvalidationMetrics
+	s.virtualKeyInvalidationMetricsMu.RUnlock()
+	if sink != nil {
+		sink(name, value)
+	}
+}
+
 func (c *pgxVirtualKeyInvalidationNotifyConn) Listen(ctx context.Context) error {
 	_, err := c.conn.Exec(ctx, "LISTEN "+virtualKeyInvalidationNotificationChannel)
 	return err
@@ -116,7 +140,9 @@ func (s *RDBConfigStore) runVirtualKeyInvalidationListener(ctx context.Context, 
 		}
 		if err == nil {
 			connectedAt := time.Now()
+			s.observeVirtualKeyInvalidationMetric("listener_reconnects", 1)
 			signalVirtualKeyInvalidationWake(wake)
+			s.observeVirtualKeyInvalidationMetric("wakeups", 1)
 			for ctx.Err() == nil {
 				if err = conn.WaitForNotification(ctx); err != nil {
 					if time.Since(connectedAt) >= virtualKeyInvalidationStableConnection {
@@ -130,6 +156,7 @@ func (s *RDBConfigStore) runVirtualKeyInvalidationListener(ctx context.Context, 
 				backoff = virtualKeyInvalidationReconnectMinBackoff
 				connectedAt = time.Now()
 				signalVirtualKeyInvalidationWake(wake)
+				s.observeVirtualKeyInvalidationMetric("wakeups", 1)
 			}
 		}
 		if conn != nil {

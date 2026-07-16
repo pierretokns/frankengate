@@ -159,6 +159,13 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 	}
 	if metrics, err := lib.FindPluginAs[*telemetry.PrometheusPlugin](s.Config, telemetry.PluginName); err == nil {
 		s.VKInvalidationPoller.metricSink = metrics
+		if setter, ok := s.Config.ConfigStore.(interface {
+			SetVirtualKeyInvalidationMetricSink(func(string, float64))
+		}); ok {
+			setter.SetVirtualKeyInvalidationMetricSink(func(name string, value float64) {
+				metrics.AddGovernanceSyncMetric(name, value)
+			})
+		}
 	}
 	go s.VKInvalidationPoller.Run(ctx)
 	return nil
@@ -576,8 +583,6 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 				// A wake source ending is not an authority failure. Disable it and
 				// retain the periodic durable poll without spinning on a closed channel.
 				wake = nil
-			} else if p.metricSink != nil {
-				p.metricSink.SetGovernanceSyncMetric("wakeups", 1)
 			}
 		case <-timer.C:
 		}
@@ -645,8 +650,12 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 	}
 
 	for _, event := range events {
+		started := time.Now()
 		if err := p.apply(ctx, event); err != nil {
 			return false, fmt.Errorf("apply virtual-key invalidation event %d: %w", event.ID, err)
+		}
+		if p.metricSink != nil {
+			p.metricSink.SetGovernanceSyncMetric("reload_latency_seconds", time.Since(started).Seconds())
 		}
 		// Publish progress only after the event has been applied successfully. A
 		// later failure therefore retries that event without replaying predecessors.
