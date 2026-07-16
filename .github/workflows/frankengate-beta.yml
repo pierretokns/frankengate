@@ -56,9 +56,10 @@ jobs:
           persist-credentials: false
 
       - name: Resolve source identity
+        id: source
         run: |
           set -euo pipefail
-          sha="$(git rev-parse HEAD^{commit})"
+          sha="$(git rev-parse 'HEAD^{commit}')"
           printf 'source_sha=%s\n' "$sha" >> "$GITHUB_OUTPUT"
           printf 'source_sha=%s\n' "$sha" >> "$GITHUB_STEP_SUMMARY"
 
@@ -158,13 +159,16 @@ jobs:
 
       - name: Build binary
         run: |
-          export VERSION="beta-$(git rev-parse HEAD^{commit})"
+          VERSION="beta-$(git rev-parse 'HEAD^{commit}')"
+          export VERSION
           timeout --foreground --signal=TERM --kill-after=30s 8m .github/workflows/scripts/build-release-binary.sh
 
       - name: Package beta artifact
+        env:
+          REF_NAME: ${{ inputs.ref || github.ref }}
         run: |
           set -euo pipefail
-          sha="$(git rev-parse HEAD^{commit})"
+          sha="$(git rev-parse 'HEAD^{commit}')"
           short="${sha:0:12}"
           package="frankengate-beta-${short}-linux-amd64"
           mkdir -p "dist/${package}"
@@ -172,7 +176,7 @@ jobs:
           cp LICENSE NOTICE "dist/${package}/"
           ./tmp/bifrost-http -version > "dist/${package}/version.txt"
           printf '{"source_sha":"%s","ref":"%s","workflow_sha":"%s","go_version":"%s","node_version":"%s"}\n' \
-            "$sha" "${{ inputs.ref || github.ref }}" "$GITHUB_SHA" "$GO_VERSION" "$NODE_VERSION" > "dist/${package}/build-metadata.json"
+            "$sha" "$REF_NAME" "$GITHUB_SHA" "$GO_VERSION" "$NODE_VERSION" > "dist/${package}/build-metadata.json"
           (cd dist && sha256sum "${package}/frankengate" > "${package}/SHA256SUMS")
           tar -C dist -czf "dist/${package}.tar.gz" "${package}"
 
@@ -212,7 +216,7 @@ jobs:
           REF_NAME: ${{ inputs.ref || github.ref_name }}
         run: |
           set -euo pipefail
-          sha="$(git rev-parse HEAD^{commit})"
+          sha="$(git rev-parse 'HEAD^{commit}')"
           short="${sha:0:12}"
           tag="beta-${short}"
           archive="$(find dist -maxdepth 1 -type f -name 'frankengate-beta-*-linux-amd64.tar.gz' -print -quit)"
