@@ -290,6 +290,9 @@ func TestVirtualKeyInvalidationBootstrapFailsClosedWhenSnapshotUnavailable(t *te
 	require.ErrorContains(t, err, "snapshot unavailable")
 	require.Equal(t, uint64(0), poller.Cursor())
 	require.Equal(t, 0, store.listCalls)
+	state := poller.Freshness(time.Now(), time.Minute)
+	require.False(t, state.Fresh, "failed bootstrap must keep the authority readiness fence closed")
+	require.True(t, state.LastSuccess.IsZero(), "failed bootstrap must not publish a successful authority timestamp")
 }
 
 func TestApplyGovernanceInvalidationDispatchesMCPClientEvents(t *testing.T) {
