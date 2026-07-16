@@ -215,6 +215,41 @@ wait_for_cache() {
   ' sh "$expected_state" "$expected_id" "$expected_marker" "${pod_ips[@]}"
 }
 
+# Exercise a real inference route through the released image's HTTP middleware,
+# governance PreLLMHook, and pod-local VK authority cache. Cache inspection alone
+# cannot detect a binary that constructs the poller but never consults it while
+# serving inference requests.
+call_list_models() {
+  local ip="$1" secret="$2"
+  # The single-quoted program runs inside the utility pod; dynamic values are
+  # supplied only as positional arguments.
+  # shellcheck disable=SC2016
+  kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c '
+    ip="$1"
+    secret="$2"
+    printf "GET /v1/models HTTP/1.1\r\nHost: %s\r\nx-bf-vk: %s\r\nConnection: close\r\n\r\n" \
+      "$ip" "$secret" | nc "$ip" 8080
+  ' sh "$ip" "$secret"
+}
+
+assert_vk_status_on_all_pods() {
+  local secret="$1" expected_status="$2" expected_body="${3:-}"
+  local ip response
+  for ip in "${pod_ips[@]}"; do
+    response="$(call_list_models "$ip" "$secret" 2>/dev/null || true)"
+    if ! grep -q "$expected_status" <<<"$response"; then
+      echo "VK inference hotpath on pod $ip did not return $expected_status" >&2
+      echo "$response" >&2
+      return 1
+    fi
+    if [[ -n "$expected_body" ]] && ! grep -q "$expected_body" <<<"$response"; then
+      echo "VK inference hotpath on pod $ip omitted expected body marker: $expected_body" >&2
+      echo "$response" >&2
+      return 1
+    fi
+  done
+}
+
 created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
   --header 'Content-Type: application/json' \
   --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\"}" \
@@ -223,6 +258,7 @@ vk_id="$(jq -er '.virtual_key.id' <<<"$created")"
 original_secret="$(jq -er '.secret' <<<"$created")"
 created_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$created")"
 wait_for_cache present "$vk_id" "$created_updated_at"
+assert_vk_status_on_all_pods "$original_secret" '200 OK'
 
 rotated="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- --post-data '' \
   "http://${pod_ips[1]}:8080/api/governance/virtual-keys/$vk_id/rotate")"
@@ -237,11 +273,14 @@ if [[ "$rotated_updated_at" == "$created_updated_at" ]]; then
   exit 1
 fi
 wait_for_cache present "$vk_id" "$rotated_updated_at"
+assert_vk_status_on_all_pods "$original_secret" '401 Unauthorized' 'does not exist or has been revoked'
+assert_vk_status_on_all_pods "$rotated_secret" '200 OK'
 
 delete_response="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c \
   "printf 'DELETE /api/governance/virtual-keys/$vk_id HTTP/1.1\\r\\nHost: ${pod_ips[2]}\\r\\nConnection: close\\r\\n\\r\\n' | nc ${pod_ips[2]} 8080")"
 grep -q '200 OK' <<<"$delete_response"
 wait_for_cache absent "$vk_id"
+assert_vk_status_on_all_pods "$rotated_secret" '401 Unauthorized' 'does not exist or has been revoked'
 
 actions="$(kubectl -n "$NAMESPACE" exec postgres-0 -- psql -At -U frankengate -d frankengate \
   -c "select action from governance_virtual_key_invalidation_outbox where entity_id = '$vk_id' order by id")"
@@ -267,6 +306,7 @@ partition_vk_id="$(jq -er '.virtual_key.id' <<<"$partition_created")"
 partition_secret="$(jq -er '.secret' <<<"$partition_created")"
 partition_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$partition_created")"
 wait_for_cache present "$partition_vk_id" "$partition_updated_at"
+assert_vk_status_on_all_pods "$partition_secret" '200 OK'
 
 # A release image must fail direct MCP authorization closed when this pod can
 # no longer prove its cached VK authority is current. Removing the disposable
@@ -301,6 +341,12 @@ while :; do
       all_stale_closed=0
       break
     fi
+    response="$(call_list_models "$ip" "$partition_secret" 2>/dev/null || true)"
+    if ! grep -q '503 Service Unavailable' <<<"$response" ||
+       ! grep -q 'virtual key authority is stale' <<<"$response"; then
+      all_stale_closed=0
+      break
+    fi
   done
   if [[ "$all_stale_closed" -eq 1 ]]; then
     break
@@ -314,4 +360,4 @@ done
 
 jq -n --arg vk_id "$vk_id" --argjson pods "${#pod_ips[@]}" \
   --arg artifact "${FRANKENGATE_IMAGE:-loose-binary}" \
-  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,outbox:["reload","reload","delete"],restart_replay:"passed",mcp_authority_partition:"stale-closed-on-all-pods"}'
+  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,inference_hotpath:{create:"accepted-on-all-pods",old_secret_after_rotation:"rejected-on-all-pods",rotated_secret:"accepted-on-all-pods",deleted_secret:"rejected-on-all-pods"},outbox:["reload","reload","delete"],restart_replay:"passed",authority_partition:"inference-and-mcp-stale-closed-on-all-pods"}'

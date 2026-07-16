@@ -46,15 +46,17 @@ func forwardProviderHeadersFromContext(ctx *fasthttp.RequestCtx, bifrostCtx *sch
 
 // CompletionHandler manages HTTP requests for completion operations
 type CompletionHandler struct {
-	client *bifrost.Bifrost
-	config *lib.Config
+	client                      *bifrost.Bifrost
+	config                      *lib.Config
+	resolveListModelsVirtualKey listModelsVirtualKeyResolver
 }
 
 // NewInferenceHandler creates a new completion handler instance
 func NewInferenceHandler(client *bifrost.Bifrost, config *lib.Config) *CompletionHandler {
 	return &CompletionHandler{
-		client: client,
-		config: config,
+		client:                      client,
+		config:                      config,
+		resolveListModelsVirtualKey: newListModelsVirtualKeyResolver(config),
 	}
 }
 

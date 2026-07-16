@@ -10,34 +10,25 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
-	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 	"github.com/valyala/fasthttp"
 )
 
-type mockListModelsVKConfigStore struct {
-	configstore.ConfigStore
-	vk  *configstoreTables.TableVirtualKey
-	err error
-}
-
-func (m *mockListModelsVKConfigStore) GetVirtualKeyByValue(_ context.Context, _ string) (*configstoreTables.TableVirtualKey, error) {
-	return m.vk, m.err
+func listModelsVKHandler(vk *configstoreTables.TableVirtualKey, err error) *CompletionHandler {
+	return &CompletionHandler{resolveListModelsVirtualKey: func(context.Context, string) (*configstoreTables.TableVirtualKey, error) {
+		return vk, err
+	}}
 }
 
 func TestApplyListModelsVirtualKeyProviderFilterSetsActiveVKProviders(t *testing.T) {
-	h := &CompletionHandler{
-		config: &lib.Config{
-			ConfigStore: &mockListModelsVKConfigStore{vk: &configstoreTables.TableVirtualKey{
-				Value:    *schemas.NewSecretVar("sk-bf-active"),
-				IsActive: new(true),
-				ProviderConfigs: []configstoreTables.TableVirtualKeyProviderConfig{
-					{Provider: "openai"},
-					{Provider: " anthropic "},
-					{Provider: ""},
-				},
-			}},
+	h := listModelsVKHandler(&configstoreTables.TableVirtualKey{
+		Value:    *schemas.NewSecretVar("sk-bf-active"),
+		IsActive: new(true),
+		ProviderConfigs: []configstoreTables.TableVirtualKeyProviderConfig{
+			{Provider: "openai"},
+			{Provider: " anthropic "},
+			{Provider: ""},
 		},
-	}
+	}, nil)
 
 	ctx := &fasthttp.RequestCtx{}
 	ctx.Request.Header.Set("Authorization", "Bearer sk-bf-active")
@@ -62,11 +53,7 @@ func TestApplyListModelsVirtualKeyProviderFilterSetsActiveVKProviders(t *testing
 }
 
 func TestApplyListModelsVirtualKeyProviderFilterReturnsErrorOnLookupFailure(t *testing.T) {
-	h := &CompletionHandler{
-		config: &lib.Config{
-			ConfigStore: &mockListModelsVKConfigStore{err: errors.New("database unavailable")},
-		},
-	}
+	h := listModelsVKHandler(nil, errors.New("database unavailable"))
 
 	ctx := &fasthttp.RequestCtx{}
 	ctx.Request.Header.Set("Authorization", "Bearer sk-bf-active")
@@ -83,8 +70,8 @@ func TestApplyListModelsVirtualKeyProviderFilterReturnsErrorOnLookupFailure(t *t
 	}
 }
 
-func TestApplyListModelsVirtualKeyProviderFilterReturnsUnavailableWithoutConfigStore(t *testing.T) {
-	h := &CompletionHandler{config: &lib.Config{}}
+func TestApplyListModelsVirtualKeyProviderFilterReturnsUnavailableWithoutAuthority(t *testing.T) {
+	h := &CompletionHandler{}
 
 	ctx := &fasthttp.RequestCtx{}
 	ctx.Request.Header.Set("Authorization", "Bearer sk-bf-active")
@@ -96,51 +83,66 @@ func TestApplyListModelsVirtualKeyProviderFilterReturnsUnavailableWithoutConfigS
 	if got := ctx.Response.StatusCode(); got != fasthttp.StatusServiceUnavailable {
 		t.Fatalf("expected status %d, got %d", fasthttp.StatusServiceUnavailable, got)
 	}
-	if body := string(ctx.Response.Body()); !strings.Contains(body, "database store unavailable") {
+	if body := string(ctx.Response.Body()); !strings.Contains(body, "virtual key authority unavailable") {
 		t.Fatalf("expected unavailable response, got %q", body)
 	}
 }
 
-func TestApplyListModelsVirtualKeyProviderFilterSkipsWhenVKNotFound(t *testing.T) {
-	h := &CompletionHandler{
-		config: &lib.Config{
-			ConfigStore: &mockListModelsVKConfigStore{},
-		},
+func TestApplyListModelsVirtualKeyProviderFilterFailsClosedWhenAuthorityIsStale(t *testing.T) {
+	h := listModelsVKHandler(nil, errListModelsVKAuthorityStale)
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.Set("Authorization", "Bearer sk-bf-active")
+	bifrostCtx := schemas.NewBifrostContext(context.Background(), time.Time{})
+
+	if ok := h.applyListModelsVirtualKeyProviderFilter(ctx, bifrostCtx); ok {
+		t.Fatalf("expected stale authority to fail request")
 	}
+	if got := ctx.Response.StatusCode(); got != fasthttp.StatusServiceUnavailable {
+		t.Fatalf("expected status %d, got %d", fasthttp.StatusServiceUnavailable, got)
+	}
+	if body := string(ctx.Response.Body()); !strings.Contains(body, "virtual key authority is stale") {
+		t.Fatalf("expected stale authority response, got %q", body)
+	}
+}
+
+func TestApplyListModelsVirtualKeyProviderFilterRejectsMissingVK(t *testing.T) {
+	h := listModelsVKHandler(nil, configstore.ErrNotFound)
 
 	ctx := &fasthttp.RequestCtx{}
 	ctx.Request.Header.Set("Authorization", "Bearer sk-bf-missing")
 	bifrostCtx := schemas.NewBifrostContext(context.Background(), time.Time{})
 
-	if ok := h.applyListModelsVirtualKeyProviderFilter(ctx, bifrostCtx); !ok {
-		t.Fatalf("expected missing VK to be ignored without failing request")
+	if ok := h.applyListModelsVirtualKeyProviderFilter(ctx, bifrostCtx); ok {
+		t.Fatalf("expected missing VK to fail closed")
 	}
-	if got := bifrostCtx.Value(schemas.BifrostContextKeyAvailableProviders); got != nil {
-		t.Fatalf("expected missing VK not to set available providers, got %#v", got)
+	if got := ctx.Response.StatusCode(); got != fasthttp.StatusUnauthorized {
+		t.Fatalf("expected status %d, got %d", fasthttp.StatusUnauthorized, got)
+	}
+	if body := string(ctx.Response.Body()); !strings.Contains(body, "does not exist or has been revoked") {
+		t.Fatalf("expected revoked VK response, got %q", body)
 	}
 }
 
-func TestApplyListModelsVirtualKeyProviderFilterSkipsInactiveVK(t *testing.T) {
-	h := &CompletionHandler{
-		config: &lib.Config{
-			ConfigStore: &mockListModelsVKConfigStore{vk: &configstoreTables.TableVirtualKey{
-				Value:    *schemas.NewSecretVar("sk-bf-inactive"),
-				IsActive: new(false),
-				ProviderConfigs: []configstoreTables.TableVirtualKeyProviderConfig{
-					{Provider: "openai"},
-				},
-			}},
+func TestApplyListModelsVirtualKeyProviderFilterRejectsInactiveVK(t *testing.T) {
+	h := listModelsVKHandler(&configstoreTables.TableVirtualKey{
+		Value:    *schemas.NewSecretVar("sk-bf-inactive"),
+		IsActive: new(false),
+		ProviderConfigs: []configstoreTables.TableVirtualKeyProviderConfig{
+			{Provider: "openai"},
 		},
-	}
+	}, nil)
 
 	ctx := &fasthttp.RequestCtx{}
 	ctx.Request.Header.Set("Authorization", "Bearer sk-bf-inactive")
 	bifrostCtx := schemas.NewBifrostContext(context.Background(), time.Time{})
 
-	if ok := h.applyListModelsVirtualKeyProviderFilter(ctx, bifrostCtx); !ok {
-		t.Fatalf("expected inactive VK to be ignored without failing request")
+	if ok := h.applyListModelsVirtualKeyProviderFilter(ctx, bifrostCtx); ok {
+		t.Fatalf("expected inactive VK to fail closed")
 	}
-	if got := bifrostCtx.Value(schemas.BifrostContextKeyAvailableProviders); got != nil {
-		t.Fatalf("expected inactive VK not to set available providers, got %#v", got)
+	if got := ctx.Response.StatusCode(); got != fasthttp.StatusUnauthorized {
+		t.Fatalf("expected status %d, got %d", fasthttp.StatusUnauthorized, got)
+	}
+	if body := string(ctx.Response.Body()); !strings.Contains(body, "does not exist or has been revoked") {
+		t.Fatalf("expected revoked VK response, got %q", body)
 	}
 }

@@ -124,6 +124,14 @@ func (p *GovernancePlugin) isAuthorityFresh() bool {
 	return source == nil || source.IsAuthorityFresh()
 }
 
+// IsAuthorityFresh reports whether this process can still make VK decisions
+// from its pod-local authority snapshot. Transport-local metadata routes use
+// this alongside GetGovernanceStore so they cannot bypass the same lease that
+// protects ordinary inference and MCP requests.
+func (p *GovernancePlugin) IsAuthorityFresh() bool {
+	return p.isAuthorityFresh()
+}
+
 func virtualKeyAuthorityStaleError() *schemas.BifrostError {
 	return &schemas.BifrostError{
 		Type:       new(string(DecisionVirtualKeyAuthorityStale)),

@@ -61,13 +61,6 @@ jobs:
           ref: ${{ inputs.release_tag }}
           persist-credentials: false
 
-      - name: Install release builder from workflow revision
-        env:
-          WORKFLOW_SHA: ${{ github.sha }}
-        run: |
-          git fetch --no-tags origin "$WORKFLOW_SHA"
-          git show "$WORKFLOW_SHA:transports/Dockerfile.release" > transports/Dockerfile.release
-
       - name: Derive image metadata
         id: meta
         env:
