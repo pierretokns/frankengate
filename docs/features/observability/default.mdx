@@ -448,6 +448,8 @@ There are two ways headers get captured into log metadata:
 
 Both methods can be used together - configured headers and `x-bf-lh-*` headers are merged into the same metadata map.
 
+FrankenGate also records a bounded set of safe client-attribution fields by default when request logging is enabled: `User-Agent`, `x-bf-client-name`, `x-bf-client-version`, `x-bf-device-id`, `x-bf-device-name`, `x-bf-workstation-name`, `x-bf-session-id`, and the transport-observed peer address. These fields help attribute a shared user virtual key to a Linux workstation, Coder workspace, browser, Python client, or TypeScript client. Authorization, virtual-key/API-key, cookie, and other credential headers are never included in this automatic set; capture additional headers only through an explicit, audited `logging_headers` allowlist.
+
 ### Configuring Logging Headers
 
 <Tabs group="logging-headers-config">
