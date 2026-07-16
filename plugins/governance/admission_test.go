@@ -16,6 +16,7 @@ type testReservationCoordinator struct {
 	settled    int
 	refunded   int
 	request    *schemas.BifrostRequest
+	settlement AdmissionSettlement
 }
 
 func (c *testReservationCoordinator) Reserve(_ context.Context, req AdmissionRequest) (any, error) {

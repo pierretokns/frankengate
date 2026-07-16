@@ -145,7 +145,14 @@ func (c *DurableReservationCoordinator) Settle(ctx context.Context, handle any, 
 	amount := c.Estimator.Actual(ctx, settlement)
 	var first error
 	for _, r := range h.rows {
-		if _, err := c.Store.Settle(ctx, reservations.SettleRequest{ReservationID: r.ID, AttemptEpoch: r.AttemptEpoch, ActualAmount: amount, IdempotencyKey: "settle-" + string(r.ID), Overdraft: reservations.OverdraftPolicy{}}); err != nil && first == nil {
+		// Providers that do not expose usage must not turn a successful request
+		// into a free request. Keep the conservative reservation as the settled
+		// amount; callers can reconcile the exact cost later from durable logs.
+		settleAmount := amount
+		if settleAmount.Tokens == 0 && settleAmount.CostMicros == 0 {
+			settleAmount = r.ReservedAmount
+		}
+		if _, err := c.Store.Settle(ctx, reservations.SettleRequest{ReservationID: r.ID, AttemptEpoch: r.AttemptEpoch, ActualAmount: settleAmount, IdempotencyKey: "settle-" + string(r.ID), Overdraft: reservations.OverdraftPolicy{}}); err != nil && first == nil {
 			first = err
 		}
 	}
