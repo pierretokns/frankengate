@@ -1248,6 +1248,40 @@ func TestRotateVirtualKey_OnlyChangesValueAndReloads(t *testing.T) {
 	}
 }
 
+func TestRevealVirtualKey_ReturnsSecretWithoutExposingItInMetadata(t *testing.T) {
+	SetLogger(&mockLogger{})
+	active := true
+	store := &mockRotateConfigStore{virtualKeys: map[string]*configstoreTables.TableVirtualKey{
+		"vk-1": {ID: "vk-1", Name: "Research", Value: *schemas.NewSecretVar("sk-bf-reveal-me"), IsActive: &active},
+	}}
+	h := &GovernanceHandler{configStore: store, governanceManager: &mockRotateGovernanceManager{store: store}}
+	ctx := &fasthttp.RequestCtx{}
+	ctx.SetUserValue("vk_id", "vk-1")
+
+	h.revealVirtualKey(ctx)
+
+	if got := ctx.Response.StatusCode(); got != fasthttp.StatusOK {
+		t.Fatalf("expected status 200, got %d: %s", got, ctx.Response.Body())
+	}
+	if got := string(ctx.Response.Header.Peek("Cache-Control")); got != "no-store" {
+		t.Fatalf("expected no-store cache control, got %q", got)
+	}
+	var body map[string]any
+	if err := json.Unmarshal(ctx.Response.Body(), &body); err != nil {
+		t.Fatalf("decode reveal response: %v", err)
+	}
+	if got := body["secret"]; got != "sk-bf-reveal-me" {
+		t.Fatalf("expected secret in reveal response, got %#v", got)
+	}
+	virtualKey, ok := body["virtual_key"].(map[string]any)
+	if !ok {
+		t.Fatalf("expected redacted virtual_key object, got %#v", body["virtual_key"])
+	}
+	if _, ok := virtualKey["value"]; ok {
+		t.Fatal("reveal metadata must not contain the persisted value field")
+	}
+}
+
 func TestRotateVirtualKey_ReturnsCommittedSecretWhenRuntimeReloadFails(t *testing.T) {
 	SetLogger(&mockLogger{})
 	store := &mockRotateConfigStore{virtualKeys: map[string]*configstoreTables.TableVirtualKey{
