@@ -89,6 +89,14 @@ else
     exit 1
 fi
 
+print_info "Validating external PostgreSQL and Redis values/render..."
+if "$SCRIPT_DIR/validate-external-dependencies.sh"; then
+    print_success "External dependency validation passed"
+else
+    print_error "External dependency validation failed"
+    exit 1
+fi
+
 # Dry run install
 print_info "Performing dry-run installation..."
 if helm install test-release "$CHART_DIR" --dry-run --debug > /dev/null 2>&1; then
