@@ -160,6 +160,7 @@ type BifrostHTTPServer struct {
 
 	WebSocketHandler   *handlers.WebSocketHandler
 	MCPServerHandler   *handlers.MCPServerHandler
+	HealthHandler      *handlers.HealthHandler
 	devPprofHandler    *handlers.DevPprofHandler
 	IntegrationHandler *handlers.IntegrationHandler
 
@@ -387,6 +388,27 @@ func (s *BifrostHTTPServer) getPromptsPluginName() string {
 func (s *BifrostHTTPServer) getGovernancePlugin() (governance.BaseGovernancePlugin, error) {
 	// Use type-safe finder from Config
 	return lib.FindPluginAs[governance.BaseGovernancePlugin](s.Config, s.getGovernancePluginName())
+}
+
+// authorityReady is the Kubernetes readiness contract for authority-backed
+// deployments. A dependency ping alone is insufficient: a pod must have
+// completed its fenced authority snapshot and have a fresh durable consumer
+// lease before it can receive traffic that relies on local governance state.
+func (s *BifrostHTTPServer) authorityReady() bool {
+	if s == nil || s.Config == nil || s.Config.ConfigStore == nil {
+		return false
+	}
+	if s.Config.IsPluginLoaded(s.getGovernancePluginName()) {
+		if s.VKInvalidationPoller == nil || !s.VKInvalidationPoller.IsAuthorityFresh() {
+			return false
+		}
+	}
+	if _, ok := s.Config.ConfigStore.(configstore.PrincipalAuthorizationEpochStore); ok {
+		if s.PrincipalAuthorityPoller == nil || !s.PrincipalAuthorityPoller.IsPrincipalAuthorityFresh() {
+			return false
+		}
+	}
+	return true
 }
 
 // ReloadVirtualKey reloads a virtual key from the in-memory store
@@ -1538,6 +1560,8 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	// Chaining all middlewares
 	// lib.ChainMiddlewares chains multiple middlewares together
 	healthHandler := handlers.NewHealthHandler(s.Config)
+	s.HealthHandler = healthHandler
+	healthHandler.SetReadinessCheck(s.authorityReady)
 	providerHandler := handlers.NewProviderHandler(callbacks, s.Config, s.Client)
 	oauthHandler := handlers.NewOAuthHandler(s.Config.OAuthProvider, s.Client, s.Config)
 	mcpHandler := handlers.NewMCPHandler(callbacks, callbacks, s.Client, s.Config, oauthHandler)

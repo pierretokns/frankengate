@@ -37,6 +37,24 @@ func TestReadyzUsesDependencyReadinessChecks(t *testing.T) {
 	require.JSONEq(t, `{"status":"ok","components":{"db_pings":"disabled"}}`, string(ctx.Response.Body()))
 }
 
+func TestReadyzFailsClosedUntilAuthorityReadinessGateOpens(t *testing.T) {
+	r := router.New()
+	h := NewHealthHandler(&lib.Config{ClientConfig: &configstore.ClientConfig{DisableDBPingsInHealth: true}})
+	h.SetReadinessCheck(func() bool { return false })
+	h.RegisterRoutes(r)
+
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.SetRequestURI("/readyz")
+	ctx.Request.Header.SetMethod(fasthttp.MethodGet)
+	r.Handler(ctx)
+	require.Equal(t, fasthttp.StatusServiceUnavailable, ctx.Response.StatusCode())
+
+	ctx.Request.SetRequestURI("/livez")
+	ctx.Response.Reset()
+	r.Handler(ctx)
+	require.Equal(t, fasthttp.StatusOK, ctx.Response.StatusCode())
+}
+
 func TestStartupzIsAvailableAfterBootstrap(t *testing.T) {
 	r := router.New()
 	NewHealthHandler(&lib.Config{ClientConfig: &configstore.ClientConfig{DisableDBPingsInHealth: true}}).RegisterRoutes(r)
