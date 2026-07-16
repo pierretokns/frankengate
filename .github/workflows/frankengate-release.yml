@@ -20,6 +20,7 @@ jobs:
       GOCACHE: ${{ github.workspace }}/.cache/go-build
       GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
       FORK_RELEASE: "1"
+      GOFLAGS: "-p=2"
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
@@ -44,7 +45,18 @@ jobs:
         run: bash scripts/verify-provenance.sh
 
       - name: Run tests, race checks, and vet
-        run: timeout 25m .github/workflows/scripts/fork-go-checks.sh test-vet
+        run: |
+          set -euo pipefail
+          heartbeat() {
+            while sleep 30; do
+              echo "[$(date -u +%FT%TZ)] frankengate-release verify heartbeat"
+            done
+          }
+          heartbeat &
+          heartbeat_pid=$!
+          trap 'kill "$heartbeat_pid" 2>/dev/null || true' EXIT
+          timeout --foreground --signal=TERM --kill-after=30s 25m \
+            .github/workflows/scripts/fork-go-checks.sh test-vet
 
       - name: Run vulnerability checks
         run: .github/workflows/scripts/fork-go-checks.sh vuln
