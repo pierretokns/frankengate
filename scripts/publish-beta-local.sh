@@ -76,5 +76,5 @@ done
 # Do not publish until both expected assets are visible on the draft release.
 ASSET_COUNT="$(gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets | map(select(.name == "'"$(basename "$WORK/$PACKAGE.tar.gz")"'" or .name == "SHA256SUMS")) | length')"
 [[ "$ASSET_COUNT" == 2 ]] || { echo "beta release asset verification failed (found $ASSET_COUNT/2)" >&2; exit 1; }
-gh release edit "$TAG" --repo "$REPO" --draft=false
+gh release edit "$TAG" --repo "$REPO" --tag "$TAG" --draft=false
 echo "published https://github.com/${REPO}/releases/tag/${TAG}"
