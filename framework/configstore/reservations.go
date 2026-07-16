@@ -151,7 +151,10 @@ func (s *RDBConfigStore) Get(ctx context.Context, id reservations.ReservationID)
 }
 
 func (s *RDBConfigStore) Renew(ctx context.Context, req reservations.RenewRequest) (reservations.Reservation, error) {
-	now := time.Now().UTC()
+	now := req.Now
+	if now.IsZero() {
+		now = time.Now().UTC()
+	}
 	db, err := s.reservationDB(ctx)
 	if err != nil {
 		return reservations.Reservation{}, err
