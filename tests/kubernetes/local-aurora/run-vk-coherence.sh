@@ -149,7 +149,8 @@ list_ready_gateway_ips() {
     sort
 }
 
-wait_for_three_ready_gateway_ips() {
+wait_for_ready_gateway_ips() {
+  local expected_count="$1"
   local deadline
   deadline=$(( $(date +%s) + 240 ))
   while :; do
@@ -157,15 +158,19 @@ wait_for_three_ready_gateway_ips() {
     while IFS= read -r ip; do
       [[ -n "$ip" ]] && pod_ips+=("$ip")
     done < <(list_ready_gateway_ips)
-    if [[ "${#pod_ips[@]}" -eq 3 ]]; then
+    if [[ "${#pod_ips[@]}" -eq "$expected_count" ]]; then
       return 0
     fi
     if [[ "$(date +%s)" -ge "$deadline" ]]; then
-      echo "expected 3 non-terminating Ready gateway pod IPs, got ${#pod_ips[@]}" >&2
+      echo "expected $expected_count non-terminating Ready gateway pod IPs, got ${#pod_ips[@]}" >&2
       return 1
     fi
     sleep 1
   done
+}
+
+wait_for_three_ready_gateway_ips() {
+  wait_for_ready_gateway_ips 3
 }
 
 assert_release_image_spans_three_nodes() {
@@ -308,6 +313,21 @@ created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
 vk_id="$(jq -er '.virtual_key.id' <<<"$created")"
 original_secret="$(jq -er '.secret' <<<"$created")"
 created_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$created")"
+wait_for_cache present "$vk_id" "$created_updated_at"
+assert_vk_status_on_all_pods "$original_secret" '200 OK'
+
+# Exercise a real horizontal lifecycle, not only a pod restart: remove one
+# replica, prove the surviving pods still accept the shared key, then add a
+# fresh pod and prove it converges from the durable authority before serving.
+kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=2 >/dev/null
+kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
+wait_for_ready_gateway_ips 2
+wait_for_cache present "$vk_id" "$created_updated_at"
+assert_vk_status_on_all_pods "$original_secret" '200 OK'
+kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=3 >/dev/null
+kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
+wait_for_three_ready_gateway_ips
+assert_release_image_spans_three_nodes
 wait_for_cache present "$vk_id" "$created_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '200 OK'
 
