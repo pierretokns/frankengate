@@ -86,7 +86,7 @@ export const governanceApi = baseApi.injectEndpoints({
 			providesTags: (result, error, vkId) => [{ type: "VirtualKeys", id: vkId }],
 		}),
 
-		createVirtualKey: builder.mutation<{ message: string; virtual_key: VirtualKey }, CreateVirtualKeyRequest>({
+		createVirtualKey: builder.mutation<{ message: string; virtual_key: VirtualKey; secret: string }, CreateVirtualKeyRequest>({
 			query: (data) => ({
 				url: "/governance/virtual-keys",
 				method: "POST",
@@ -105,12 +105,17 @@ export const governanceApi = baseApi.injectEndpoints({
 			invalidatesTags: ["VirtualKeys", "ModelConfigs"],
 		}),
 
-		rotateVirtualKey: builder.mutation<{ message: string; virtual_key: VirtualKey }, string>({
+		rotateVirtualKey: builder.mutation<{ message: string; virtual_key: VirtualKey; secret: string; runtime_converged?: boolean; warning?: string }, string>({
 			query: (vkId) => ({
 				url: `/governance/virtual-keys/${vkId}/rotate`,
 				method: "POST",
 			}),
 			invalidatesTags: ["VirtualKeys"],
+		}),
+
+		revealVirtualKey: builder.query<{ message: string; virtual_key: VirtualKey; secret: string }, string>({
+			query: (vkId) => `/governance/virtual-keys/${vkId}/reveal`,
+			keepUnusedDataFor: 0,
 		}),
 
 		bulkRotateVirtualKeys: builder.mutation<BulkRotateVirtualKeysResponse, BulkRotateVirtualKeysRequest>({

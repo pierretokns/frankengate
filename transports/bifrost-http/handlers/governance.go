@@ -995,6 +995,7 @@ func (h *GovernanceHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	r.POST("/api/governance/virtual-keys", lib.ChainMiddlewares(h.createVirtualKey, middlewares...))
 	r.POST("/api/governance/virtual-keys/rotate", lib.ChainMiddlewares(h.rotateVirtualKeys, middlewares...))
 	r.GET("/api/governance/virtual-keys/{vk_id}", lib.ChainMiddlewares(h.getVirtualKey, middlewares...))
+	r.GET("/api/governance/virtual-keys/{vk_id}/reveal", lib.ChainMiddlewares(h.revealVirtualKey, middlewares...))
 	r.PUT("/api/governance/virtual-keys/{vk_id}", lib.ChainMiddlewares(h.updateVirtualKey, middlewares...))
 	r.POST("/api/governance/virtual-keys/{vk_id}/rotate", lib.ChainMiddlewares(h.rotateVirtualKey, middlewares...))
 	r.DELETE("/api/governance/virtual-keys/{vk_id}", lib.ChainMiddlewares(h.deleteVirtualKey, middlewares...))
@@ -1696,6 +1697,37 @@ func (h *GovernanceHandler) getVirtualKey(ctx *fasthttp.RequestCtx) {
 
 	SendJSON(ctx, map[string]interface{}{
 		"virtual_key": redactVirtualKey(vk),
+	})
+}
+
+// revealVirtualKey handles GET /api/governance/virtual-keys/{vk_id}/reveal.
+// Ordinary virtual-key reads are deliberately redacted, but operators need a
+// recovery path when the original one-time creation response was lost. The
+// route is protected by the same governance middleware chain as the other
+// management endpoints and never permits the secret into caches or logs.
+func (h *GovernanceHandler) revealVirtualKey(ctx *fasthttp.RequestCtx) {
+	vkID := ctx.UserValue("vk_id").(string)
+	vk, err := h.configStore.GetVirtualKey(ctx, vkID)
+	if err != nil {
+		if errors.Is(err, configstore.ErrNotFound) {
+			SendError(ctx, 404, "Virtual key not found")
+			return
+		}
+		logger.Error("failed to retrieve virtual key for reveal: %v", err)
+		SendError(ctx, 500, "Failed to retrieve virtual key")
+		return
+	}
+	secret := vk.Value.GetValue()
+	if secret == "" {
+		SendError(ctx, 409, "Virtual key secret is unavailable")
+		return
+	}
+	ctx.Response.Header.Set("Cache-Control", "no-store")
+	ctx.Response.Header.Set("Pragma", "no-cache")
+	SendJSON(ctx, map[string]interface{}{
+		"message":     "Virtual key secret revealed",
+		"virtual_key": redactVirtualKey(vk),
+		"secret":      secret,
 	})
 }
 
