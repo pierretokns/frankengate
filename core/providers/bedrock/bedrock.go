@@ -264,9 +264,56 @@ func newBedrockStreamException(providerName, excType string, payload []byte) *sc
 // completeRequest sends a request to Bedrock's API and handles the response.
 // It constructs the API URL, sets up AWS authentication, and processes the response.
 // Returns the response body, request latency, or an error if the request fails.
+// injectConverseAnthropicBeta mirrors the Anthropic beta opt-in into
+// additionalModelRequestFields for Bedrock Converse. Bedrock consumes the
+// outer anthropic-beta HTTP header at its edge; model-specific beta options
+// (including context-1m-2025-08-07) must also be present in the Converse
+// payload to reach the underlying Claude model. Invoke payloads and
+// non-Anthropic models intentionally remain unchanged.
+func (provider *BedrockProvider) injectConverseAnthropicBeta(ctx *schemas.BifrostContext, jsonData []byte, path, model string) []byte {
+	if !strings.Contains(path, "converse") || !schemas.IsAnthropicModelFamily(ctx, model) {
+		return jsonData
+	}
+	filtered := anthropic.FilterBetaHeadersForProvider(
+		anthropic.MergeBetaHeaders(ctx, provider.networkConfig.ExtraHeaders),
+		schemas.Bedrock,
+		provider.networkConfig.BetaHeaderOverrides,
+	)
+	if len(filtered) == 0 {
+		return jsonData
+	}
+	// Preserve beta values already tunneled by server-tool conversion while
+	// deduplicating values supplied through headers/configuration.
+	seen := make(map[string]struct{}, len(filtered))
+	merged := make([]string, 0, len(filtered))
+	for _, h := range filtered {
+		if _, ok := seen[h]; !ok {
+			seen[h] = struct{}{}
+			merged = append(merged, h)
+		}
+	}
+	for _, item := range providerUtils.GetJSONField(jsonData, "additionalModelRequestFields.anthropic_beta").Array() {
+		value := item.String()
+		if value == "" {
+			continue
+		}
+		if _, ok := seen[value]; ok {
+			continue
+		}
+		seen[value] = struct{}{}
+		merged = append(merged, value)
+	}
+	updated, err := providerUtils.SetJSONField(jsonData, "additionalModelRequestFields.anthropic_beta", merged)
+	if err != nil {
+		return jsonData
+	}
+	return updated
+}
+
 func (provider *BedrockProvider) completeRequest(ctx *schemas.BifrostContext, jsonData []byte, path string, key schemas.Key, model string) ([]byte, time.Duration, map[string]string, *schemas.BifrostError) {
 	config := key.BedrockKeyConfig
 	region := resolveBedrockRegion(ctx, key, model)
+	jsonData = provider.injectConverseAnthropicBeta(ctx, jsonData, path, model)
 
 	// Create the request with the JSON body
 	requestURL := fmt.Sprintf("https://bedrock-runtime.%s.amazonaws.com/model/%s", region, path)
@@ -475,6 +522,7 @@ func (provider *BedrockProvider) completeAgentRuntimeRequest(ctx *schemas.Bifros
 func (provider *BedrockProvider) makeStreamingRequest(ctx *schemas.BifrostContext, jsonData []byte, key schemas.Key, model string, action string) (*http.Response, *schemas.BifrostError) {
 	// Parse region and path in one pass to avoid running the regex twice.
 	path, region := provider.getModelPathAndRegion(ctx, action, model, key)
+	jsonData = provider.injectConverseAnthropicBeta(ctx, jsonData, path, model)
 
 	// Create HTTP request for streaming
 	requestURL := fmt.Sprintf("https://bedrock-runtime.%s.amazonaws.com/model/%s", region, path)
