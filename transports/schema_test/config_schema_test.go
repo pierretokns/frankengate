@@ -358,6 +358,17 @@ func validateConfig(t *testing.T, schema *jsonschema.Schema, configJSON string) 
 	return schema.Validate(v)
 }
 
+func TestSchemaAlertingNativeChannels(t *testing.T) {
+	compiled := compileSchema(t)
+	config := `{"alerting":{"channels":[
+		{"id":"sns-1","name":"ops sns","type":"sns","enabled":true,"config":{"topic_arn":"arn:aws:sns:us-east-1:1:ops"}},
+		{"id":"email-1","name":"ops email","type":"email","enabled":true,"config":{"from":"alerts@example.com","recipients":"ops@example.com"}}
+	]}}`
+	if err := validateConfig(t, compiled, config); err != nil {
+		t.Fatalf("native SNS/email alerting channels should validate: %v", err)
+	}
+}
+
 func TestSchemaSCIMConfigValidation(t *testing.T) {
 	compiled := compileSchema(t)
 
@@ -382,6 +393,25 @@ func TestSchemaSCIMConfigValidation(t *testing.T) {
 			name:      "enabled okta with empty config is invalid",
 			config:    `{"scim_config":{"enabled":true,"provider":"okta","config":{}}}`,
 			wantError: true,
+		},
+		{
+			name: "enabled okta rejects insecure issuer",
+			config: `{"scim_config":{"enabled":true,"provider":"okta","config":{
+				"issuerUrl":"http://okta.example.com/oauth2/default",
+				"clientId":"client",
+				"clientSecret":"env.OKTA_CLIENT_SECRET",
+				"apiToken":"env.OKTA_API_TOKEN"
+			}}}`,
+			wantError: true,
+		},
+		{
+			name: "enabled okta accepts secure issuer",
+			config: `{"scim_config":{"enabled":true,"provider":"okta","config":{
+				"issuerUrl":"https://okta.example.com/oauth2/default",
+				"clientId":"client",
+				"clientSecret":"env.OKTA_CLIENT_SECRET",
+				"apiToken":"env.OKTA_API_TOKEN"
+			}}}`,
 		},
 		{
 			name:      "enabled entra with empty config is invalid",
