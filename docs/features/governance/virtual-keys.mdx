@@ -830,8 +830,8 @@ alert service. When wired by a deployment, it sends JSON with a stable
 with bounded exponential backoff; client errors are not retried.
 
 SNS and SES are also supported through the same asynchronous boundary. The
-`sns` channel reads `topic_arn` and optional `subject`; the `email` channel
-reads `from`, comma-separated `recipients`, and optional `subject`. FrankenGate
+`sns` channel reads `topic_arn` and optional `subject`/`region`; the `email` channel
+reads `from`, comma-separated `recipients`, and optional `subject`/`region`. FrankenGate
 uses the AWS SDK default credential and region chain, so IAM policies and SES
 identity verification remain deployment responsibilities. If AWS credentials
 or channel configuration are unavailable, delivery fails closed and inference
