@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -523,6 +524,7 @@ func (m *MetricsExporter) RecordCost(ctx context.Context, cost float64, attrs ..
 // governance depend on OTEL or Prometheus. outcome is a bounded value such as
 // reserved or rejected.
 func (m *MetricsExporter) ReservationObserved(ctx context.Context, outcome string, amount reservations.Amount) {
+	outcome = boundedGovernanceOutcome(outcome)
 	attrs := metric.WithAttributes(attribute.String("outcome", outcome))
 	m.governanceReservationsTotal.Add(ctx, 1, attrs)
 	if amount.Tokens > 0 {
@@ -547,7 +549,21 @@ func (m *MetricsExporter) OverdraftObserved(ctx context.Context, allowed bool, a
 // NotifierObserved records delivery outcomes (delivered or failed), leaving
 // alert routing and user notifications to the notifier/Alertmanager layer.
 func (m *MetricsExporter) NotifierObserved(ctx context.Context, outcome string) {
+	outcome = boundedGovernanceOutcome(outcome)
 	m.governanceNotifierDeliveriesTotal.Add(ctx, 1, metric.WithAttributes(attribute.String("outcome", outcome)))
+}
+
+// boundedGovernanceOutcome keeps OTLP attribute cardinality bounded just like
+// the direct Prometheus exporter. Unknown values are intentionally collapsed.
+func boundedGovernanceOutcome(outcome string) string {
+	switch strings.ToLower(strings.TrimSpace(outcome)) {
+	case "accepted", "allowed", "delivered", "success":
+		return strings.ToLower(strings.TrimSpace(outcome))
+	case "rejected", "denied", "failed", "dropped":
+		return strings.ToLower(strings.TrimSpace(outcome))
+	default:
+		return "other"
+	}
 }
 
 // RecordUpstreamLatency records upstream latency metric

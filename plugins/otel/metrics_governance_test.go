@@ -20,7 +20,7 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 	ctx := context.Background()
 	exporter.ReservationObserved(ctx, "accepted", reservations.Amount{Tokens: 12})
 	exporter.OverdraftObserved(ctx, true, reservations.Amount{Tokens: 3})
-	exporter.NotifierObserved(ctx, "success")
+	exporter.NotifierObserved(ctx, "unexpected-future-value")
 
 	for name, instrument := range map[string]any{
 		"reservations":        exporter.governanceReservationsTotal,
@@ -55,6 +55,20 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 	for name, found := range want {
 		if !found {
 			t.Errorf("collected metrics missing %s", name)
+		}
+	}
+}
+
+func TestGovernanceOutcomeLabelsAreBounded(t *testing.T) {
+	for _, tc := range []struct {
+		in, want string
+	}{
+		{"delivered", "delivered"},
+		{" FAILED ", "failed"},
+		{"unexpected-future-value", "other"},
+	} {
+		if got := boundedGovernanceOutcome(tc.in); got != tc.want {
+			t.Fatalf("boundedGovernanceOutcome(%q) = %q, want %q", tc.in, got, tc.want)
 		}
 	}
 }
