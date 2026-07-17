@@ -268,8 +268,10 @@ func newBedrockStreamException(providerName, excType string, payload []byte) *sc
 // additionalModelRequestFields for Bedrock Converse. Bedrock consumes the
 // outer anthropic-beta HTTP header at its edge; model-specific beta options
 // (including context-1m-2025-08-07) must also be present in the Converse
-// payload to reach the underlying Claude model. Invoke payloads and
-// non-Anthropic models intentionally remain unchanged.
+// payload to reach the underlying Claude model. InvokeModel uses the same
+// Anthropic Messages envelope and therefore carries the beta in the top-level
+// anthropic_beta field (rather than Converse's additionalModelRequestFields).
+// Non-Anthropic models intentionally remain unchanged.
 func (provider *BedrockProvider) injectConverseAnthropicBeta(ctx *schemas.BifrostContext, jsonData []byte, path, model string) []byte {
 	if !strings.Contains(path, "converse") || !schemas.IsAnthropicModelFamily(ctx, model) {
 		return jsonData
@@ -311,10 +313,54 @@ func (provider *BedrockProvider) injectConverseAnthropicBeta(ctx *schemas.Bifros
 	return updated
 }
 
+// injectInvokeAnthropicBeta tunnels filtered Anthropic beta headers into the
+// top-level InvokeModel Messages payload. Bedrock consumes the outer HTTP
+// header at its edge; without this body field the beta never reaches Claude.
+// The same helper is used for InvokeModelWithResponseStream to keep unary and
+// streaming behavior identical. Existing body values are preserved and
+// deduplicated, while the model-aware filter remains fail-closed.
+func (provider *BedrockProvider) injectInvokeAnthropicBeta(ctx *schemas.BifrostContext, jsonData []byte, path, model string) []byte {
+	if !strings.Contains(path, "invoke") || strings.Contains(path, "converse") || !schemas.IsAnthropicModelFamily(ctx, model) {
+		return jsonData
+	}
+	filtered := anthropic.FilterBetaHeadersForModel(
+		anthropic.MergeBetaHeaders(ctx, provider.networkConfig.ExtraHeaders),
+		schemas.Bedrock,
+		model,
+		provider.networkConfig.BetaHeaderOverrides,
+	)
+	if len(filtered) == 0 {
+		return jsonData
+	}
+	seen := make(map[string]struct{}, len(filtered))
+	merged := make([]string, 0, len(filtered))
+	for _, h := range filtered {
+		if h != "" {
+			seen[h] = struct{}{}
+			merged = append(merged, h)
+		}
+	}
+	for _, item := range providerUtils.GetJSONField(jsonData, "anthropic_beta").Array() {
+		value := item.String()
+		if value != "" {
+			if _, ok := seen[value]; !ok {
+				seen[value] = struct{}{}
+				merged = append(merged, value)
+			}
+		}
+	}
+	updated, err := providerUtils.SetJSONField(jsonData, "anthropic_beta", merged)
+	if err != nil {
+		return jsonData
+	}
+	return updated
+}
+
 func (provider *BedrockProvider) completeRequest(ctx *schemas.BifrostContext, jsonData []byte, path string, key schemas.Key, model string) ([]byte, time.Duration, map[string]string, *schemas.BifrostError) {
 	config := key.BedrockKeyConfig
 	region := resolveBedrockRegion(ctx, key, model)
 	jsonData = provider.injectConverseAnthropicBeta(ctx, jsonData, path, model)
+	jsonData = provider.injectInvokeAnthropicBeta(ctx, jsonData, path, model)
 
 	// Create the request with the JSON body
 	requestURL := fmt.Sprintf("https://bedrock-runtime.%s.amazonaws.com/model/%s", region, path)
@@ -524,6 +570,7 @@ func (provider *BedrockProvider) makeStreamingRequest(ctx *schemas.BifrostContex
 	// Parse region and path in one pass to avoid running the regex twice.
 	path, region := provider.getModelPathAndRegion(ctx, action, model, key)
 	jsonData = provider.injectConverseAnthropicBeta(ctx, jsonData, path, model)
+	jsonData = provider.injectInvokeAnthropicBeta(ctx, jsonData, path, model)
 
 	// Create HTTP request for streaming
 	requestURL := fmt.Sprintf("https://bedrock-runtime.%s.amazonaws.com/model/%s", region, path)

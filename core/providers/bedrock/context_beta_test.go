@@ -52,3 +52,35 @@ func TestInjectConverseAnthropicBetaDoesNotTouchInvokeOrNonAnthropic(t *testing.
 		}
 	}
 }
+
+func TestInjectInvokeAnthropicBetaTunnelsContext1MAndPreservesExisting(t *testing.T) {
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyExtraHeaders, map[string][]string{
+		anthropic.AnthropicBetaHeader: {anthropic.AnthropicContext1MBetaHeader},
+	})
+	provider := &BedrockProvider{}
+	body := []byte(`{"anthropic_version":"bedrock-2023-05-31","anthropic_beta":["computer-use-2025-01-24"]}`)
+	for _, path := range []string{"invoke", "invoke-with-response-stream"} {
+		got := provider.injectInvokeAnthropicBeta(ctx, body, path, "anthropic.claude-sonnet-4-6")
+		var decoded struct{ Beta []string `json:"anthropic_beta"` }
+		if err := json.Unmarshal(got, &decoded); err != nil {
+			t.Fatal(err)
+		}
+		if len(decoded.Beta) != 2 || decoded.Beta[0] != anthropic.AnthropicContext1MBetaHeader || decoded.Beta[1] != "computer-use-2025-01-24" {
+			t.Fatalf("%s: unexpected beta values: %#v", path, decoded.Beta)
+		}
+	}
+}
+
+func TestInjectInvokeAnthropicBetaFailClosedForUnsupportedModel(t *testing.T) {
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyExtraHeaders, map[string][]string{
+		anthropic.AnthropicBetaHeader: {anthropic.AnthropicContext1MBetaHeader},
+	})
+	provider := &BedrockProvider{}
+	body := []byte(`{"messages":[]}`)
+	got := provider.injectInvokeAnthropicBeta(ctx, body, "invoke", "anthropic.claude-sonnet-9-9")
+	if string(got) != string(body) {
+		t.Fatalf("unsupported model received beta: %s", got)
+	}
+}
