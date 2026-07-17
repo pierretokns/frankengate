@@ -58,8 +58,18 @@ func isMantleModel(ctx *schemas.BifrostContext, model string) bool {
 // wire request.Model. Frontier families (closed gpt-5.x, Gemma 4) live under the "openai/v1"
 // base path; gpt-oss uses the bare "v1" path.
 func mantleOpenAIURL(region, model, path string) string {
+	// This compatibility wrapper has no request context, so it must retain the
+	// historical string-based behavior. Callers with resolved alias metadata use
+	// mantleOpenAIURLForFamily directly.
+	return mantleOpenAIURLForFamily(region, model, "", path)
+}
+
+// mantleOpenAIURLForFamily selects the Mantle URL from the resolved model
+// capability. Explicit alias metadata must win over string heuristics: Claude-
+// visible aliases can otherwise send an OpenAI payload to the bare /v1 path.
+func mantleOpenAIURLForFamily(region, model string, family schemas.ModelFamily, path string) string {
 	base := "v1"
-	if strings.Contains(model, "gpt-5") || strings.Contains(model, "gemma-4") {
+	if family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma || strings.Contains(model, "gpt-5") || strings.Contains(model, "gemma-4") {
 		base = "openai/v1"
 	}
 	return fmt.Sprintf("https://bedrock-mantle.%s.api.aws/%s/%s", region, base, path)
@@ -140,7 +150,7 @@ func (provider *BedrockProvider) mantleChatCompletions(
 	request *schemas.BifrostChatRequest,
 ) (*schemas.BifrostChatResponse, *schemas.BifrostError) {
 	region := resolveBedrockRegion(ctx, key, request.Model)
-	url := mantleOpenAIURL(region, schemas.ResolveCanonicalModel(ctx, request.Model), "chat/completions")
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -178,7 +188,7 @@ func (provider *BedrockProvider) mantleChatCompletionsStream(
 	request *schemas.BifrostChatRequest,
 ) (chan *schemas.BifrostStreamChunk, *schemas.BifrostError) {
 	region := resolveBedrockRegion(ctx, key, request.Model)
-	url := mantleOpenAIURL(region, schemas.ResolveCanonicalModel(ctx, request.Model), "chat/completions")
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -215,7 +225,7 @@ func (provider *BedrockProvider) mantleResponses(
 	request *schemas.BifrostResponsesRequest,
 ) (*schemas.BifrostResponsesResponse, *schemas.BifrostError) {
 	region := resolveBedrockRegion(ctx, key, request.Model)
-	url := mantleOpenAIURL(region, schemas.ResolveCanonicalModel(ctx, request.Model), "responses")
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "responses")
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -253,7 +263,7 @@ func (provider *BedrockProvider) mantleResponsesStream(
 	request *schemas.BifrostResponsesRequest,
 ) (chan *schemas.BifrostStreamChunk, *schemas.BifrostError) {
 	region := resolveBedrockRegion(ctx, key, request.Model)
-	url := mantleOpenAIURL(region, schemas.ResolveCanonicalModel(ctx, request.Model), "responses")
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "responses")
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
