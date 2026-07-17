@@ -408,9 +408,14 @@ call_mcp_initialize() {
 }
 
 deadline=$(( $(date +%s) + 20 ))
+readiness_partition_proven=0
 while :; do
   all_stale_closed=1
   for ip in "${pod_ips[@]}"; do
+    readiness="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- --server-response "http://$ip:8080/readyz" 2>&1 || true)"
+    if grep -q '503 Service Unavailable' <<<"$readiness"; then
+      readiness_partition_proven=1
+    fi
     response="$(call_mcp_initialize "$ip" "$partition_secret" 2>/dev/null || true)"
     if ! grep -q '401 Unauthorized' <<<"$response" ||
        ! grep -q 'virtual key authority is stale' <<<"$response"; then
@@ -435,6 +440,42 @@ while :; do
   fi
   if [[ "$(date +%s)" -ge "$deadline" ]]; then
     echo "MCP virtual-key authorization did not fail closed on every pod after authority partition" >&2
+    exit 1
+  fi
+  sleep 1
+done
+
+if [[ "$readiness_partition_proven" -ne 1 ]]; then
+  echo "readiness did not fail closed while the authority database was unavailable" >&2
+  exit 1
+fi
+
+# Restore the authority database and prove the readiness fence reopens only
+# after the pollers can complete a fresh durable snapshot.
+kubectl -n "$NAMESPACE" scale statefulset/postgres --replicas=1 >/dev/null
+kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=120s
+kubectl -n "$NAMESPACE" wait --for=condition=ready pod/postgres-0 --timeout=120s
+db_deadline=$(( $(date +%s) + 60 ))
+while ! kubectl -n "$NAMESPACE" exec postgres-0 -- pg_isready -U frankengate -d frankengate >/dev/null 2>&1; do
+  if [[ "$(date +%s)" -ge "$db_deadline" ]]; then
+    echo "PostgreSQL did not become query-ready after authority restoration" >&2
+    exit 1
+  fi
+  sleep 1
+done
+recovery_deadline=$(( $(date +%s) + 90 ))
+while :; do
+  recovered=1
+  for ip in "${pod_ips[@]}"; do
+    readiness="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- --server-response "http://$ip:8080/readyz" 2>&1 || true)"
+    if ! grep -q '200 OK' <<<"$readiness"; then
+      recovered=0
+      break
+    fi
+  done
+  [[ "$recovered" -eq 1 ]] && break
+  if [[ "$(date +%s)" -ge "$recovery_deadline" ]]; then
+    echo "readiness did not recover after authority database restoration" >&2
     exit 1
   fi
   sleep 1
