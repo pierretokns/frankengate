@@ -900,6 +900,32 @@ func TestGate_GateSendAfterEnd(t *testing.T) {
 	}
 }
 
+// TestGate_LateCallsAfterForceCleanupDoNotRecreateAccumulator protects the
+// terminal provider cleanup path: late chunks or plugin callbacks must be
+// dropped rather than creating a new orphan entry that survives until TTL.
+func TestGate_LateCallsAfterForceCleanupDoNotRecreateAccumulator(t *testing.T) {
+	a := newTestAccumulator(t)
+	traceID := "trace-force-cleanup-late"
+	a.CreateStreamAccumulator(traceID, time.Now())
+	a.ForceCleanupStreamAccumulator(traceID)
+
+	if a.GateSend(traceID, makeChunks(1)[0], false, false, make(chan *schemas.BifrostStreamChunk, 1), nil) {
+		t.Fatal("late GateSend after force cleanup was accepted")
+	}
+	a.PauseStream(traceID)
+	a.ResumeStream(traceID)
+	a.EndStream(traceID, nil)
+	if _, ok := a.streamAccumulators.Load(traceID); ok {
+		t.Fatal("late gate callbacks recreated an accumulator")
+	}
+
+	// An intentional new stream may reuse the trace ID and clears the tombstone.
+	a.CreateStreamAccumulator(traceID, time.Now())
+	if _, ok := a.streamAccumulators.Load(traceID); !ok {
+		t.Fatal("new stream could not reuse trace ID")
+	}
+}
+
 // TestGate_EndStreamErrorWhileActive: proactive termination from a plugin
 // during normal streaming (no prior pause) ends the gate and a flusher is
 // spawned on demand to deliver the synthetic terminal error chunk to the

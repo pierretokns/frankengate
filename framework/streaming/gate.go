@@ -30,6 +30,9 @@ func (a *Accumulator) PauseStream(traceID string) {
 	if traceID == "" {
 		return
 	}
+	if _, ended := a.endedStreamIDs.Load(traceID); ended {
+		return
+	}
 	sa := a.getOrCreateStreamAccumulator(traceID)
 	sa.Pause()
 }
@@ -37,6 +40,9 @@ func (a *Accumulator) PauseStream(traceID string) {
 // ResumeStream is the Tracer-level entry point for resuming a paused stream.
 func (a *Accumulator) ResumeStream(traceID string) {
 	if traceID == "" {
+		return
+	}
+	if _, ended := a.endedStreamIDs.Load(traceID); ended {
 		return
 	}
 	sa := a.getOrCreateStreamAccumulator(traceID)
@@ -60,6 +66,9 @@ func (a *Accumulator) ClearPausedStreamBuffer(traceID string) error {
 // as a terminal error chunk. After EndStream, further provider chunks are dropped.
 func (a *Accumulator) EndStream(traceID string, err *schemas.BifrostError) {
 	if traceID == "" {
+		return
+	}
+	if _, ended := a.endedStreamIDs.Load(traceID); ended {
 		return
 	}
 	sa := a.getOrCreateStreamAccumulator(traceID)
@@ -205,6 +214,9 @@ func (a *Accumulator) GetAccumulatedResponse(traceID string) *schemas.BifrostRes
 // behavior. Returns true if the chunk was handled (delivered or buffered),
 // false if the caller should stop sending.
 func (a *Accumulator) GateSend(traceID string, chunk *schemas.BifrostStreamChunk, isFinal, isHardErr bool, ch chan *schemas.BifrostStreamChunk, ctx *schemas.BifrostContext) bool {
+	if _, ended := a.endedStreamIDs.Load(traceID); ended {
+		return false
+	}
 	sa := a.getOrCreateStreamAccumulator(traceID)
 	return sa.GateSend(chunk, isFinal, isHardErr, ch, ctx)
 }

@@ -31,6 +31,10 @@ type Accumulator struct {
 	logger schemas.Logger
 
 	streamAccumulators sync.Map // Track accumulators by request ID (atomic)
+	// endedStreamIDs prevents late gate calls after force cleanup from
+	// recreating an orphan accumulator. CreateStreamAccumulator clears the
+	// tombstone when a request ID is intentionally reused.
+	endedStreamIDs sync.Map // request ID -> time.Time tombstone
 
 	chatStreamChunkPool          sync.Pool // Pool for reusing StreamChunk structs
 	responsesStreamChunkPool     sync.Pool // Pool for reusing ResponsesStreamChunk structs
@@ -1456,6 +1460,9 @@ func (a *Accumulator) cleanupStreamAccumulator(requestID string, forceEndGate bo
 		a.putImageStreamChunk(chunk)
 	}
 	a.streamAccumulators.Delete(requestID)
+	if forceEndGate {
+		a.endedStreamIDs.Store(requestID, time.Now())
+	}
 }
 
 // ProcessStreamingResponse processes a streaming response
@@ -1534,6 +1541,7 @@ func (a *Accumulator) Cleanup() {
 // CreateStreamAccumulator creates a new stream accumulator for a request
 // It increments the reference counter atomically for concurrent access tracking
 func (a *Accumulator) CreateStreamAccumulator(requestID string, startTimestamp time.Time) *StreamAccumulator {
+	a.endedStreamIDs.Delete(requestID)
 	sc := a.getOrCreateStreamAccumulator(requestID)
 	// Atomically increment reference counter
 	sc.refCount.Add(1)
@@ -1593,14 +1601,21 @@ func (a *Accumulator) ForceCleanupStreamAccumulator(requestID string) {
 // cleanupOldAccumulators removes old accumulators
 func (a *Accumulator) cleanupOldAccumulators() {
 	count := 0
+	cutoff := time.Now().Add(-a.ttl)
 	a.streamAccumulators.Range(func(key, value interface{}) bool {
 		accumulator := value.(*StreamAccumulator)
 		accumulator.mu.Lock()
 		defer accumulator.mu.Unlock()
-		if accumulator.Timestamp.Before(time.Now().Add(-a.ttl)) {
+		if accumulator.Timestamp.Before(cutoff) {
 			a.cleanupStreamAccumulator(key.(string), true) // orphan TTL reap — force-end gate
 		}
 		count++
+		return true
+	})
+	a.endedStreamIDs.Range(func(key, value interface{}) bool {
+		if endedAt, ok := value.(time.Time); ok && endedAt.Before(cutoff) {
+			a.endedStreamIDs.Delete(key)
+		}
 		return true
 	})
 
