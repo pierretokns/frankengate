@@ -57,8 +57,10 @@ stats() {
     { v[NR]=$1; sum+=$1 }
     END {
       n=NR; if (n == 0) exit 3;
-      p50=v[int((n+1)*0.50)]; p95=v[int((n+1)*0.95)];
-      if (p50=="") p50=v[n]; if (p95=="") p95=v[n];
+      p50_idx=int(n*0.50+0.999999); p95_idx=int(n*0.95+0.999999);
+      if (p50_idx < 1) p50_idx=1; if (p50_idx > n) p50_idx=n;
+      if (p95_idx < 1) p95_idx=1; if (p95_idx > n) p95_idx=n;
+      p50=v[p50_idx]; p95=v[p95_idx];
       printf "{\"n\":%d,\"p50_ms\":%.3f,\"p95_ms\":%.3f,\"mean_ms\":%.3f}\n", n, p50*1000, p95*1000, (sum/n)*1000
     }'
 }
