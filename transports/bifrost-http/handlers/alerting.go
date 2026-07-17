@@ -69,9 +69,11 @@ func NewAlertingHandler(s configstore.ConfigStore) *AlertingHandler {
 func (h *AlertingHandler) RegisterRoutes(r *router.Router, m ...schemas.BifrostHTTPMiddleware) {
 	r.GET("/api/alerting/channels", lib.ChainMiddlewares(h.listChannels, m...))
 	r.POST("/api/alerting/channels", lib.ChainMiddlewares(h.createChannel, m...))
+	r.PUT("/api/alerting/channels/{id}", lib.ChainMiddlewares(h.updateChannel, m...))
 	r.DELETE("/api/alerting/channels/{id}", lib.ChainMiddlewares(h.deleteChannel, m...))
 	r.GET("/api/alerting/rules", lib.ChainMiddlewares(h.listRules, m...))
 	r.POST("/api/alerting/rules", lib.ChainMiddlewares(h.createRule, m...))
+	r.PUT("/api/alerting/rules/{id}", lib.ChainMiddlewares(h.updateRule, m...))
 	r.DELETE("/api/alerting/rules/{id}", lib.ChainMiddlewares(h.deleteRule, m...))
 	r.GET("/api/alerting/history", lib.ChainMiddlewares(h.history, m...))
 }
@@ -164,6 +166,47 @@ func (h *AlertingHandler) createRule(c *fasthttp.RequestCtx) {
 		v.ID = uuid.NewString()
 	}
 	h.mutate(c, func(s *alertingState) { s.Rules = append(s.Rules, v) })
+}
+func (h *AlertingHandler) updateChannel(c *fasthttp.RequestCtx) {
+	id, _ := c.UserValue("id").(string)
+	var v AlertChannel
+	if sonic.Unmarshal(c.PostBody(), &v) != nil || v.Name == "" || v.Type == "" {
+		SendError(c, 400, "name and type are required")
+		return
+	}
+	v.Type = strings.ToLower(strings.TrimSpace(v.Type))
+	if !validAlertChannelType(v.Type) {
+		SendError(c, 400, "unsupported alert channel type")
+		return
+	}
+	v.ID = id
+	h.mutate(c, func(s *alertingState) {
+		for i := range s.Channels {
+			if s.Channels[i].ID == id {
+				s.Channels[i] = v
+				return
+			}
+		}
+		s.Channels = append(s.Channels, v)
+	})
+}
+func (h *AlertingHandler) updateRule(c *fasthttp.RequestCtx) {
+	id, _ := c.UserValue("id").(string)
+	var v AlertRule
+	if sonic.Unmarshal(c.PostBody(), &v) != nil || v.Name == "" || v.Event == "" {
+		SendError(c, 400, "name and event are required")
+		return
+	}
+	v.ID = id
+	h.mutate(c, func(s *alertingState) {
+		for i := range s.Rules {
+			if s.Rules[i].ID == id {
+				s.Rules[i] = v
+				return
+			}
+		}
+		s.Rules = append(s.Rules, v)
+	})
 }
 func (h *AlertingHandler) deleteChannel(c *fasthttp.RequestCtx) {
 	id, _ := c.UserValue("id").(string)
