@@ -246,6 +246,11 @@ func (c *AsyncJobCleaner) StartCleanupRoutine() {
 	stopCh := c.stopCleanup
 
 	go func() {
+		defer func() {
+			if recovered := recover(); recovered != nil {
+				c.logger.Error("async job cleanup routine recovered from panic: %v", recovered)
+			}
+		}()
 		// Run initial cleanup
 		ctx, cancel := context.WithTimeout(context.Background(), asyncJobCleanupTimeout)
 		c.cleanupExpiredJobs(ctx)
