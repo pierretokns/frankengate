@@ -83,7 +83,15 @@ const defaultMantleRegion = "us-east-1"
 // uses the bare "v1" path.
 func mantleOpenAIURL(region, model, path string) string {
 	base := "v1"
-	if strings.Contains(model, "gpt-5") || strings.Contains(model, "gemma-4") {
+	// Mantle's newer OpenAI frontier models (including GPT-5.6 Sol, Terra,
+	// and Luna) are exposed on the OpenAI-prefixed surface.  Keep this
+	// decision centralized so Responses and Chat Completions cannot drift.
+	canonical := strings.ToLower(model)
+	if strings.Contains(canonical, "gpt-5") ||
+		strings.Contains(canonical, "gpt-5.6-sol") ||
+		strings.Contains(canonical, "gpt-5.6-terra") ||
+		strings.Contains(canonical, "gpt-5.6-luna") ||
+		strings.Contains(canonical, "gemma-4") {
 		base = "openai/v1"
 	}
 	return fmt.Sprintf("https://bedrock-mantle.%s.api.aws/%s/%s", region, base, path)
