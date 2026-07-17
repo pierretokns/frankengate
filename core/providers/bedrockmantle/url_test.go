@@ -21,3 +21,12 @@ func TestMantleOpenAIURLUsesOpenAIPrefixForGPT56FrontierModels(t *testing.T) {
 		})
 	}
 }
+
+func TestMantleOpenAIURLHonorsExplicitAliasFamily(t *testing.T) {
+	if got := mantleOpenAIURLForFamily("us-east-1", "opaque-soul-deployment", "openai", "responses"); got != "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses" {
+		t.Fatalf("explicit OpenAI family must select /openai/v1, got %q", got)
+	}
+	if got := mantleOpenAIURLForFamily("us-east-1", "Claude-GPT-soul", "openai", "responses"); got != "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses" {
+		t.Fatalf("Claude-visible OpenAI alias must select /openai/v1, got %q", got)
+	}
+}
