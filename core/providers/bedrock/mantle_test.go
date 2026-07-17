@@ -69,4 +69,19 @@ func TestMantleOpenAIURL(t *testing.T) {
 			}
 		})
 	}
+
+	if got := mantleOpenAIURL("us-east-1", "OpenAI.GPT-5.6-SOL", "responses"); got != "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses" {
+		t.Fatalf("case-insensitive frontier model routing = %q", got)
+	}
+	if got := mantleOpenAIURL("us-east-1", "GEMMA-4-27B", "responses"); got != "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses" {
+		t.Fatalf("case-insensitive Gemma routing = %q", got)
+	}
+}
+
+func TestMantleOpenAIURLHonorsExplicitFamily(t *testing.T) {
+	got := mantleOpenAIURLForFamily("us-east-1", "claude-gpt-soul", schemas.ModelFamilyOpenAI, "responses")
+	want := "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses"
+	if got != want {
+		t.Fatalf("explicit OpenAI family selected %q, want %q", got, want)
+	}
 }

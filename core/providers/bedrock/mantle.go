@@ -49,7 +49,7 @@ func WithMantleProject(base map[string]string, headerName, projectID string) map
 // New configurations should use the "bedrock_mantle" provider, which owns the Bedrock Mantle
 // surface (Claude native-Anthropic, OpenAI-compatible, and Gemma).
 func isMantleModel(ctx *schemas.BifrostContext, model string) bool {
-	return schemas.IsOpenAIModelFamily(ctx, model) || strings.Contains(model, "gemma-4")
+	return schemas.IsOpenAIModelFamily(ctx, model) || strings.Contains(strings.ToLower(model), "gemma-4")
 }
 
 // mantleOpenAIURL builds the Bedrock Mantle OpenAI-compatible endpoint URL for the given
@@ -69,7 +69,8 @@ func mantleOpenAIURL(region, model, path string) string {
 // visible aliases can otherwise send an OpenAI payload to the bare /v1 path.
 func mantleOpenAIURLForFamily(region, model string, family schemas.ModelFamily, path string) string {
 	base := "v1"
-	if family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma || strings.Contains(model, "gpt-5") || strings.Contains(model, "gemma-4") {
+	canonical := strings.ToLower(model)
+	if family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma || strings.Contains(canonical, "gpt-5") || strings.Contains(canonical, "gemma-4") {
 		base = "openai/v1"
 	}
 	return fmt.Sprintf("https://bedrock-mantle.%s.api.aws/%s/%s", region, base, path)
