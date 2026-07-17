@@ -47,3 +47,22 @@ func TestLoadAlertingWebhookConfigIgnoresUnsupportedOrInvalidChannels(t *testing
 		t.Fatalf("expected no projected notifier, ok=%v err=%v", ok, err)
 	}
 }
+
+func TestLoadAlertingNativeChannelConfigsFailClosed(t *testing.T) {
+	store := &alertingConfigStoreStub{row: &tables.TableGovernanceConfig{Value: `{"channels":[{"type":"sns","enabled":true,"config":{"topic_arn":"arn:aws:sns:us-east-1:1:alerts","subject":"ops","buffer":"4"}},{"type":"email","enabled":true,"config":{"from":"alerts@example.com","recipients":"ops@example.com, oncall@example.com","buffer":"7"}}]}`}}
+	sns, ok, err := LoadAlertingSNSConfig(context.Background(), store)
+	if err != nil || !ok || sns.TopicARN == "" || sns.Buffer != 4 {
+		t.Fatalf("unexpected SNS config: %+v ok=%v err=%v", sns, ok, err)
+	}
+	email, ok, err := LoadAlertingEmailConfig(context.Background(), store)
+	if err != nil || !ok || email.From == "" || len(email.Recipients) != 2 || email.Buffer != 7 {
+		t.Fatalf("unexpected email config: %+v ok=%v err=%v", email, ok, err)
+	}
+	invalid := &alertingConfigStoreStub{row: &tables.TableGovernanceConfig{Value: `{"channels":[{"type":"sns","enabled":true,"config":{"topic_arn":"https://not-an-arn"}},{"type":"email","enabled":true,"config":{"from":"","recipients":""}}]}`}}
+	if _, ok, err := LoadAlertingSNSConfig(context.Background(), invalid); err != nil || ok {
+		t.Fatalf("invalid SNS config should fail closed: ok=%v err=%v", ok, err)
+	}
+	if _, ok, err := LoadAlertingEmailConfig(context.Background(), invalid); err != nil || ok {
+		t.Fatalf("invalid email config should fail closed: ok=%v err=%v", ok, err)
+	}
+}

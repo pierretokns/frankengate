@@ -33,6 +33,19 @@ type AlertingWebhookConfig struct {
 	Buffer     int
 }
 
+type AlertingSNSConfig struct {
+	TopicARN string
+	Subject  string
+	Buffer   int
+}
+
+type AlertingEmailConfig struct {
+	From       string
+	Recipients []string
+	Subject    string
+	Buffer     int
+}
+
 type AlertChannel struct {
 	ID      string            `json:"id"`
 	Name    string            `json:"name"`
@@ -64,19 +77,9 @@ type alertingState struct {
 // first enabled webhook channel. Unsupported channel types are deliberately
 // ignored rather than silently routed through a webhook implementation.
 func LoadAlertingWebhookConfig(ctx context.Context, store configstore.ConfigStore) (AlertingWebhookConfig, bool, error) {
-	if store == nil {
-		return AlertingWebhookConfig{}, false, nil
-	}
-	row, err := store.GetConfig(ctx, alertingConfigKey)
-	if err != nil {
+	state, ok, err := loadAlertingState(ctx, store)
+	if err != nil || !ok {
 		return AlertingWebhookConfig{}, false, err
-	}
-	if row == nil || strings.TrimSpace(row.Value) == "" {
-		return AlertingWebhookConfig{}, false, nil
-	}
-	var state alertingState
-	if err := sonic.Unmarshal([]byte(row.Value), &state); err != nil {
-		return AlertingWebhookConfig{}, false, fmt.Errorf("decode alerting state: %w", err)
 	}
 	for _, channel := range state.Channels {
 		if !channel.Enabled || strings.ToLower(strings.TrimSpace(channel.Type)) != "webhook" {
@@ -95,6 +98,83 @@ func LoadAlertingWebhookConfig(ctx context.Context, store configstore.ConfigStor
 		return AlertingWebhookConfig{URL: url, SigningKey: channel.Config["signing_key"], Buffer: buffer}, true, nil
 	}
 	return AlertingWebhookConfig{}, false, nil
+}
+
+func loadAlertingState(ctx context.Context, store configstore.ConfigStore) (alertingState, bool, error) {
+	if store == nil {
+		return alertingState{}, false, nil
+	}
+	row, err := store.GetConfig(ctx, alertingConfigKey)
+	if err != nil {
+		return alertingState{}, false, err
+	}
+	if row == nil || strings.TrimSpace(row.Value) == "" {
+		return alertingState{}, false, nil
+	}
+	var state alertingState
+	if err := sonic.Unmarshal([]byte(row.Value), &state); err != nil {
+		return alertingState{}, false, fmt.Errorf("decode alerting state: %w", err)
+	}
+	return state, true, nil
+}
+
+func LoadAlertingSNSConfig(ctx context.Context, store configstore.ConfigStore) (AlertingSNSConfig, bool, error) {
+	state, ok, err := loadAlertingState(ctx, store)
+	if err != nil || !ok {
+		return AlertingSNSConfig{}, false, err
+	}
+	for _, channel := range state.Channels {
+		if !channel.Enabled || strings.ToLower(strings.TrimSpace(channel.Type)) != "sns" {
+			continue
+		}
+		topic := strings.TrimSpace(channel.Config["topic_arn"])
+		if topic == "" || !strings.HasPrefix(topic, "arn:") {
+			continue
+		}
+		buffer := parseAlertBuffer(channel.Config["buffer"])
+		return AlertingSNSConfig{TopicARN: topic, Subject: strings.TrimSpace(channel.Config["subject"]), Buffer: buffer}, true, nil
+	}
+	return AlertingSNSConfig{}, false, nil
+}
+
+func LoadAlertingEmailConfig(ctx context.Context, store configstore.ConfigStore) (AlertingEmailConfig, bool, error) {
+	state, ok, err := loadAlertingState(ctx, store)
+	if err != nil || !ok {
+		return AlertingEmailConfig{}, false, err
+	}
+	for _, channel := range state.Channels {
+		if !channel.Enabled || strings.ToLower(strings.TrimSpace(channel.Type)) != "email" {
+			continue
+		}
+		from := strings.TrimSpace(channel.Config["from"])
+		recipients := splitAlertRecipients(channel.Config["recipients"])
+		if from == "" || len(recipients) == 0 {
+			continue
+		}
+		return AlertingEmailConfig{From: from, Recipients: recipients, Subject: strings.TrimSpace(channel.Config["subject"]), Buffer: parseAlertBuffer(channel.Config["buffer"])}, true, nil
+	}
+	return AlertingEmailConfig{}, false, nil
+}
+
+func parseAlertBuffer(raw string) int {
+	buffer := 256
+	if raw != "" {
+		if _, err := fmt.Sscanf(strings.TrimSpace(raw), "%d", &buffer); err != nil || buffer <= 0 {
+			buffer = 256
+		}
+	}
+	return buffer
+}
+
+func splitAlertRecipients(raw string) []string {
+	parts := strings.Split(raw, ",")
+	result := make([]string, 0, len(parts))
+	for _, part := range parts {
+		if value := strings.TrimSpace(part); value != "" {
+			result = append(result, value)
+		}
+	}
+	return result
 }
 
 type AlertingHandler struct {
