@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/maximhq/bifrost/core/schemas"
@@ -30,6 +31,11 @@ var addColumnIfNotExists = migrator.AddColumnIfNotExists
 // column-drop helper shared with configstore. Declared at package scope for the
 // same reason as above so call sites can use dropColumnIfExists(tx, ...).
 var dropColumnIfExists = migrator.DropColumnIfExists
+
+// GORM schema introspection mutates process-local caches while parsing models.
+// Serialize logstore migration runs within a process so a concurrent config
+// reload cannot race that cache or reuse a Statement mid-migration.
+var migrationRunMu sync.Mutex
 
 const (
 	// migrationAdvisoryLockKey is used for PostgreSQL advisory locks
@@ -292,6 +298,8 @@ func areThereAnyPendingMigrations(ctx context.Context, db *gorm.DB, logger schem
 // triggerMigrations runs all registered logstore schema migrations in order under
 // a PostgreSQL advisory lock so only one node migrates the logstore at a time.
 func triggerMigrations(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {
+	migrationRunMu.Lock()
+	defer migrationRunMu.Unlock()
 	if !areThereAnyPendingMigrations(ctx, db, logger) {
 		logger.Info("[logstore] migrations already current; skipping migration lock")
 		return nil
