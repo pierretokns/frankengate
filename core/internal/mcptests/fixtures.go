@@ -25,6 +25,7 @@ import (
 
 var (
 	// Global paths to MCP server binaries (initialized once)
+	mcpServerPathsOnce sync.Once
 	mcpServerPaths struct {
 		TemperatureServer  string
 		GoTestServer       string
@@ -39,29 +40,27 @@ var (
 // InitMCPServerPaths initializes the global MCP server paths
 // Call this in tests that need STDIO MCP servers
 func InitMCPServerPaths(t *testing.T) {
-	if mcpServerPaths.BifrostRoot != "" {
-		return // Already initialized
-	}
+	mcpServerPathsOnce.Do(func() {
+		bifrostRoot := GetBifrostRoot(t)
+		examplesRoot := filepath.Join(bifrostRoot, "..", "examples")
 
-	bifrostRoot := GetBifrostRoot(t)
-	examplesRoot := filepath.Join(bifrostRoot, "..", "examples")
+		mcpServerPaths.BifrostRoot = bifrostRoot
+		mcpServerPaths.ExamplesRoot = examplesRoot
+		mcpServerPaths.TemperatureServer = filepath.Join(examplesRoot, "mcps", "temperature", "dist", "index.js")
+		mcpServerPaths.GoTestServer = filepath.Join(examplesRoot, "mcps", "go-test-server", "bin", "go-test-server")
+		mcpServerPaths.EdgeCaseServer = filepath.Join(examplesRoot, "mcps", "edge-case-server", "bin", "edge-case-server")
+		mcpServerPaths.ParallelTestServer = filepath.Join(examplesRoot, "mcps", "parallel-test-server", "bin", "parallel-test-server")
+		mcpServerPaths.ErrorTestServer = filepath.Join(examplesRoot, "mcps", "error-test-server", "bin", "error-test-server")
 
-	mcpServerPaths.BifrostRoot = bifrostRoot
-	mcpServerPaths.ExamplesRoot = examplesRoot
-	mcpServerPaths.TemperatureServer = filepath.Join(examplesRoot, "mcps", "temperature", "dist", "index.js")
-	mcpServerPaths.GoTestServer = filepath.Join(examplesRoot, "mcps", "go-test-server", "bin", "go-test-server")
-	mcpServerPaths.EdgeCaseServer = filepath.Join(examplesRoot, "mcps", "edge-case-server", "bin", "edge-case-server")
-	mcpServerPaths.ParallelTestServer = filepath.Join(examplesRoot, "mcps", "parallel-test-server", "bin", "parallel-test-server")
-	mcpServerPaths.ErrorTestServer = filepath.Join(examplesRoot, "mcps", "error-test-server", "bin", "error-test-server")
-
-	t.Logf("Initialized MCP server paths:")
-	t.Logf("  - Bifrost Root: %s", mcpServerPaths.BifrostRoot)
-	t.Logf("  - Examples Root: %s", mcpServerPaths.ExamplesRoot)
-	t.Logf("  - Temperature: %s", mcpServerPaths.TemperatureServer)
-	t.Logf("  - GoTest: %s", mcpServerPaths.GoTestServer)
-	t.Logf("  - EdgeCase: %s", mcpServerPaths.EdgeCaseServer)
-	t.Logf("  - ParallelTest: %s", mcpServerPaths.ParallelTestServer)
-	t.Logf("  - ErrorTest: %s", mcpServerPaths.ErrorTestServer)
+		t.Logf("Initialized MCP server paths:")
+		t.Logf("  - Bifrost Root: %s", mcpServerPaths.BifrostRoot)
+		t.Logf("  - Examples Root: %s", mcpServerPaths.ExamplesRoot)
+		t.Logf("  - Temperature: %s", mcpServerPaths.TemperatureServer)
+		t.Logf("  - GoTest: %s", mcpServerPaths.GoTestServer)
+		t.Logf("  - EdgeCase: %s", mcpServerPaths.EdgeCaseServer)
+		t.Logf("  - ParallelTest: %s", mcpServerPaths.ParallelTestServer)
+		t.Logf("  - ErrorTest: %s", mcpServerPaths.ErrorTestServer)
+	})
 }
 
 // =============================================================================
