@@ -1494,9 +1494,19 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 	if evaluationResult != nil && evaluationResult.Decision == DecisionAllow {
 		budgetIDs, _ := p.store.CollectApplicableGovernanceIDs(ctx, virtualKeyValue, userID, provider, model)
 		for _, budgetID := range budgetIDs {
-			if budget := p.store.LoadBudget(ctx, budgetID); budget != nil {
-				evaluationResult.BudgetInfo = append(evaluationResult.BudgetInfo, budget)
+			budget := p.store.LoadBudget(ctx, budgetID)
+			if budget == nil {
+				// An applicable budget that cannot be loaded is a control-plane
+				// consistency failure. Allowing the request through would silently
+				// bypass durable admission, so fail closed until the authority
+				// snapshot/reload repairs the local index.
+				return req, &schemas.LLMPluginShortCircuit{Error: &schemas.BifrostError{
+					Type:       new("governance_budget_unavailable"),
+					StatusCode: new(503),
+					Error:      &schemas.ErrorField{Message: fmt.Sprintf("applicable governance budget %q is unavailable", budgetID)},
+				}}, nil
 			}
+			evaluationResult.BudgetInfo = append(evaluationResult.BudgetInfo, budget)
 		}
 	}
 	if coordinator := p.admissionCoordinator(); coordinator != nil {
