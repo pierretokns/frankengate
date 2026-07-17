@@ -155,7 +155,10 @@ spec:
               port: http
             periodSeconds: 2
             timeoutSeconds: 2
-            failureThreshold: 30
+            # Ten or more replicas can contend on the disposable Postgres
+            # bootstrap lock. Keep the probe fail-closed, but allow the
+            # deployment's 240s readiness oracle to observe slow starters.
+            failureThreshold: 90
           readinessProbe:
             httpGet:
               path: /health
