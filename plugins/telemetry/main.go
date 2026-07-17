@@ -15,6 +15,7 @@ import (
 
 	"github.com/bytedance/sonic"
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/reservations"
 	schemas "github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
 	"github.com/prometheus/client_golang/prometheus"
@@ -151,35 +152,40 @@ type PrometheusPlugin struct {
 	ProcessCollector prometheus.Collector
 
 	// Metrics are defined using promauto for automatic registration
-	HTTPRequestsTotal                *prometheus.CounterVec
-	HTTPRequestDuration              *prometheus.HistogramVec
-	HTTPRequestSizeBytes             *prometheus.HistogramVec
-	HTTPResponseSizeBytes            *prometheus.HistogramVec
-	UpstreamRequestsTotal            *prometheus.CounterVec
-	UpstreamLatencySeconds           *prometheus.HistogramVec
-	SuccessRequestsTotal             *prometheus.CounterVec
-	ErrorRequestsTotal               *prometheus.CounterVec
-	InputTokensTotal                 *prometheus.CounterVec
-	OutputTokensTotal                *prometheus.CounterVec
-	CacheHitsTotal                   *prometheus.CounterVec
-	CacheReadInputTokensTotal        *prometheus.CounterVec
-	CacheWriteInputTokensTotal       *prometheus.CounterVec
-	CacheWriteInputTokens5mTotal     *prometheus.CounterVec
-	CacheWriteInputTokens1hTotal     *prometheus.CounterVec
-	CostTotal                        *prometheus.CounterVec
-	StreamInterTokenLatencySeconds   *prometheus.HistogramVec
-	StreamFirstTokenLatencySeconds   *prometheus.HistogramVec
-	RequestRetries                   *prometheus.HistogramVec
-	KeyRotationEventsTotal           *prometheus.CounterVec
-	ActiveRequests                   *prometheus.GaugeVec
-	ProviderKeyUp                    *prometheus.GaugeVec
-	GovernanceSyncWakeups            prometheus.Gauge
-	GovernanceSyncListenerReconnects prometheus.Gauge
-	GovernanceSyncOutboxDepth        prometheus.Gauge
-	GovernanceSyncReloadLatency      prometheus.Gauge
-	GovernanceSyncConsumerLag        prometheus.Gauge
-	GovernanceSyncReady              prometheus.Gauge
-	customLabels                     []string
+	HTTPRequestsTotal                 *prometheus.CounterVec
+	HTTPRequestDuration               *prometheus.HistogramVec
+	HTTPRequestSizeBytes              *prometheus.HistogramVec
+	HTTPResponseSizeBytes             *prometheus.HistogramVec
+	UpstreamRequestsTotal             *prometheus.CounterVec
+	UpstreamLatencySeconds            *prometheus.HistogramVec
+	SuccessRequestsTotal              *prometheus.CounterVec
+	ErrorRequestsTotal                *prometheus.CounterVec
+	InputTokensTotal                  *prometheus.CounterVec
+	OutputTokensTotal                 *prometheus.CounterVec
+	CacheHitsTotal                    *prometheus.CounterVec
+	CacheReadInputTokensTotal         *prometheus.CounterVec
+	CacheWriteInputTokensTotal        *prometheus.CounterVec
+	CacheWriteInputTokens5mTotal      *prometheus.CounterVec
+	CacheWriteInputTokens1hTotal      *prometheus.CounterVec
+	CostTotal                         *prometheus.CounterVec
+	StreamInterTokenLatencySeconds    *prometheus.HistogramVec
+	StreamFirstTokenLatencySeconds    *prometheus.HistogramVec
+	RequestRetries                    *prometheus.HistogramVec
+	KeyRotationEventsTotal            *prometheus.CounterVec
+	ActiveRequests                    *prometheus.GaugeVec
+	ProviderKeyUp                     *prometheus.GaugeVec
+	GovernanceSyncWakeups             prometheus.Gauge
+	GovernanceSyncListenerReconnects  prometheus.Gauge
+	GovernanceSyncOutboxDepth         prometheus.Gauge
+	GovernanceSyncReloadLatency       prometheus.Gauge
+	GovernanceSyncConsumerLag         prometheus.Gauge
+	GovernanceSyncReady               prometheus.Gauge
+	GovernanceReservationsTotal       *prometheus.CounterVec
+	GovernanceReservationTokensTotal  *prometheus.CounterVec
+	GovernanceOverdraftsTotal         *prometheus.CounterVec
+	GovernanceOverdraftTokensTotal    *prometheus.CounterVec
+	GovernanceNotifierDeliveriesTotal *prometheus.CounterVec
+	customLabels                      []string
 
 	defaultHTTPLabels    []string
 	defaultBifrostLabels []string
@@ -195,6 +201,39 @@ type PrometheusPlugin struct {
 
 	// MetricsEnabled gates the /metrics scrape endpoint.
 	metricsEnabled atomic.Bool
+}
+
+// ReservationObserved implements the exporter-neutral governance metrics
+// contract. Outcome is the only label so identities never create cardinality.
+func (p *PrometheusPlugin) ReservationObserved(_ context.Context, outcome string, amount reservations.Amount) {
+	if p == nil {
+		return
+	}
+	p.GovernanceReservationsTotal.WithLabelValues(outcome).Inc()
+	p.GovernanceReservationTokensTotal.WithLabelValues(outcome).Add(float64(amount.Tokens))
+}
+
+// OverdraftObserved records policy outcome and token magnitude with bounded
+// labels; user, team, and virtual-key identities are intentionally excluded.
+func (p *PrometheusPlugin) OverdraftObserved(_ context.Context, allowed bool, amount reservations.Amount) {
+	if p == nil {
+		return
+	}
+	outcome := "denied"
+	if allowed {
+		outcome = "allowed"
+	}
+	p.GovernanceOverdraftsTotal.WithLabelValues(outcome).Inc()
+	p.GovernanceOverdraftTokensTotal.WithLabelValues(outcome).Add(float64(amount.Tokens))
+}
+
+// NotifierObserved records bounded delivery outcomes such as delivered,
+// failed, or dropped.
+func (p *PrometheusPlugin) NotifierObserved(_ context.Context, outcome string) {
+	if p == nil {
+		return
+	}
+	p.GovernanceNotifierDeliveriesTotal.WithLabelValues(outcome).Inc()
 }
 
 // SetGovernanceSyncMetric updates a low-cardinality governance control-plane
@@ -541,45 +580,55 @@ func Init(config *Config, pricingManager *modelcatalog.ModelCatalog, logger sche
 	governanceSyncReloadLatency := governanceSyncGauge("bifrost_governance_sync_reload_latency_seconds", "Most recent governance authority reload latency in seconds.")
 	governanceSyncConsumerLag := governanceSyncGauge("bifrost_governance_sync_consumer_lag", "Current governance invalidation consumer lag in outbox event IDs.")
 	governanceSyncReady := governanceSyncGauge("bifrost_governance_sync_ready", "Whether this pod has a fresh governance authority snapshot.")
+	governanceReservationsTotal := factory.NewCounterVec(prometheus.CounterOpts{Name: "bifrost_governance_reservations_total", Help: "Governance reservation events."}, []string{"outcome"})
+	governanceReservationTokensTotal := factory.NewCounterVec(prometheus.CounterOpts{Name: "bifrost_governance_reserved_tokens_total", Help: "Tokens reserved by governance admission."}, []string{"outcome"})
+	governanceOverdraftsTotal := factory.NewCounterVec(prometheus.CounterOpts{Name: "bifrost_governance_overdrafts_total", Help: "Governance overdraft decisions."}, []string{"outcome"})
+	governanceOverdraftTokensTotal := factory.NewCounterVec(prometheus.CounterOpts{Name: "bifrost_governance_overdraft_tokens_total", Help: "Tokens admitted under governance overdraft decisions."}, []string{"outcome"})
+	governanceNotifierDeliveriesTotal := factory.NewCounterVec(prometheus.CounterOpts{Name: "bifrost_governance_notifier_deliveries_total", Help: "Governance notifier delivery outcomes."}, []string{"outcome"})
 
 	plugin := &PrometheusPlugin{
-		logger:                           logger,
-		pricingManager:                   pricingManager,
-		registry:                         registry,
-		systemRegistry:                   systemRegistry,
-		GoCollector:                      goCollector,
-		ProcessCollector:                 processCollector,
-		HTTPRequestsTotal:                httpRequestsTotal,
-		HTTPRequestDuration:              httpRequestDuration,
-		HTTPRequestSizeBytes:             httpRequestSizeBytes,
-		HTTPResponseSizeBytes:            httpResponseSizeBytes,
-		UpstreamRequestsTotal:            bifrostUpstreamRequestsTotal,
-		UpstreamLatencySeconds:           bifrostUpstreamLatencySeconds,
-		SuccessRequestsTotal:             bifrostSuccessRequestsTotal,
-		ErrorRequestsTotal:               bifrostErrorRequestsTotal,
-		InputTokensTotal:                 bifrostInputTokensTotal,
-		OutputTokensTotal:                bifrostOutputTokensTotal,
-		CacheHitsTotal:                   bifrostCacheHitsTotal,
-		CacheReadInputTokensTotal:        bifrostCacheReadInputTokensTotal,
-		CacheWriteInputTokensTotal:       bifrostCacheWriteInputTokensTotal,
-		CacheWriteInputTokens5mTotal:     bifrostCacheWriteInputTokens5mTotal,
-		CacheWriteInputTokens1hTotal:     bifrostCacheWriteInputTokens1hTotal,
-		CostTotal:                        bifrostCostTotal,
-		StreamInterTokenLatencySeconds:   bifrostStreamInterTokenLatencySeconds,
-		StreamFirstTokenLatencySeconds:   bifrostStreamFirstTokenLatencySeconds,
-		RequestRetries:                   bifrostRequestRetries,
-		KeyRotationEventsTotal:           bifrostKeyRotationEventsTotal,
-		ActiveRequests:                   bifrostActiveRequests,
-		ProviderKeyUp:                    bifrostProviderKeyUp,
-		GovernanceSyncWakeups:            governanceSyncWakeups,
-		GovernanceSyncListenerReconnects: governanceSyncListenerReconnects,
-		GovernanceSyncOutboxDepth:        governanceSyncOutboxDepth,
-		GovernanceSyncReloadLatency:      governanceSyncReloadLatency,
-		GovernanceSyncConsumerLag:        governanceSyncConsumerLag,
-		GovernanceSyncReady:              governanceSyncReady,
-		customLabels:                     filteredCustomLabels,
-		defaultHTTPLabels:                defaultHTTPLabels,
-		defaultBifrostLabels:             defaultBifrostLabels,
+		logger:                            logger,
+		pricingManager:                    pricingManager,
+		registry:                          registry,
+		systemRegistry:                    systemRegistry,
+		GoCollector:                       goCollector,
+		ProcessCollector:                  processCollector,
+		HTTPRequestsTotal:                 httpRequestsTotal,
+		HTTPRequestDuration:               httpRequestDuration,
+		HTTPRequestSizeBytes:              httpRequestSizeBytes,
+		HTTPResponseSizeBytes:             httpResponseSizeBytes,
+		UpstreamRequestsTotal:             bifrostUpstreamRequestsTotal,
+		UpstreamLatencySeconds:            bifrostUpstreamLatencySeconds,
+		SuccessRequestsTotal:              bifrostSuccessRequestsTotal,
+		ErrorRequestsTotal:                bifrostErrorRequestsTotal,
+		InputTokensTotal:                  bifrostInputTokensTotal,
+		OutputTokensTotal:                 bifrostOutputTokensTotal,
+		CacheHitsTotal:                    bifrostCacheHitsTotal,
+		CacheReadInputTokensTotal:         bifrostCacheReadInputTokensTotal,
+		CacheWriteInputTokensTotal:        bifrostCacheWriteInputTokensTotal,
+		CacheWriteInputTokens5mTotal:      bifrostCacheWriteInputTokens5mTotal,
+		CacheWriteInputTokens1hTotal:      bifrostCacheWriteInputTokens1hTotal,
+		CostTotal:                         bifrostCostTotal,
+		StreamInterTokenLatencySeconds:    bifrostStreamInterTokenLatencySeconds,
+		StreamFirstTokenLatencySeconds:    bifrostStreamFirstTokenLatencySeconds,
+		RequestRetries:                    bifrostRequestRetries,
+		KeyRotationEventsTotal:            bifrostKeyRotationEventsTotal,
+		ActiveRequests:                    bifrostActiveRequests,
+		ProviderKeyUp:                     bifrostProviderKeyUp,
+		GovernanceSyncWakeups:             governanceSyncWakeups,
+		GovernanceSyncListenerReconnects:  governanceSyncListenerReconnects,
+		GovernanceSyncOutboxDepth:         governanceSyncOutboxDepth,
+		GovernanceSyncReloadLatency:       governanceSyncReloadLatency,
+		GovernanceSyncConsumerLag:         governanceSyncConsumerLag,
+		GovernanceSyncReady:               governanceSyncReady,
+		GovernanceReservationsTotal:       governanceReservationsTotal,
+		GovernanceReservationTokensTotal:  governanceReservationTokensTotal,
+		GovernanceOverdraftsTotal:         governanceOverdraftsTotal,
+		GovernanceOverdraftTokensTotal:    governanceOverdraftTokensTotal,
+		GovernanceNotifierDeliveriesTotal: governanceNotifierDeliveriesTotal,
+		customLabels:                      filteredCustomLabels,
+		defaultHTTPLabels:                 defaultHTTPLabels,
+		defaultBifrostLabels:              defaultBifrostLabels,
 	}
 
 	// Default /metrics scraping to on when the config omits the field — preserves

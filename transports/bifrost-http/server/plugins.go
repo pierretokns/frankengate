@@ -251,6 +251,7 @@ func (s *BifrostHTTPServer) LoadPlugins(ctx context.Context) error {
 func (s *BifrostHTTPServer) wireGovernanceMetrics() {
 	var governancePlugin *governance.GovernancePlugin
 	var otelPlugin *otel.OtelPlugin
+	var prometheusPlugin *telemetry.PrometheusPlugin
 	if plugins := s.Config.BasePlugins.Load(); plugins != nil {
 		for _, plugin := range *plugins {
 			switch p := plugin.(type) {
@@ -258,11 +259,42 @@ func (s *BifrostHTTPServer) wireGovernanceMetrics() {
 				governancePlugin = p
 			case *otel.OtelPlugin:
 				otelPlugin = p
+			case *telemetry.PrometheusPlugin:
+				prometheusPlugin = p
 			}
 		}
 	}
-	if governancePlugin != nil && otelPlugin != nil {
-		governancePlugin.SetMetricsSink(otelPlugin)
+	if governancePlugin != nil {
+		sinks := make([]governance.MetricsSink, 0, 2)
+		if otelPlugin != nil {
+			sinks = append(sinks, otelPlugin)
+		}
+		if prometheusPlugin != nil {
+			sinks = append(sinks, prometheusPlugin)
+		}
+		if len(sinks) == 1 {
+			governancePlugin.SetMetricsSink(sinks[0])
+		} else if len(sinks) > 1 {
+			governancePlugin.SetMetricsSink(governanceMetricsFanout(sinks))
+		}
+	}
+}
+
+type governanceMetricsFanout []governance.MetricsSink
+
+func (f governanceMetricsFanout) ReservationObserved(ctx context.Context, outcome string, amount reservations.Amount) {
+	for _, sink := range f {
+		sink.ReservationObserved(ctx, outcome, amount)
+	}
+}
+func (f governanceMetricsFanout) OverdraftObserved(ctx context.Context, allowed bool, amount reservations.Amount) {
+	for _, sink := range f {
+		sink.OverdraftObserved(ctx, allowed, amount)
+	}
+}
+func (f governanceMetricsFanout) NotifierObserved(ctx context.Context, outcome string) {
+	for _, sink := range f {
+		sink.NotifierObserved(ctx, outcome)
 	}
 }
 

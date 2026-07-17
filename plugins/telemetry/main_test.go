@@ -10,6 +10,7 @@ import (
 	"time"
 
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/reservations"
 	schemas "github.com/maximhq/bifrost/core/schemas"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -23,6 +24,34 @@ func newTestPlugin(t *testing.T) *PrometheusPlugin {
 		t.Fatalf("Init: %v", err)
 	}
 	return p
+}
+
+func TestGovernanceMetricsSinkExportsBoundedPrometheusSeries(t *testing.T) {
+	p := newTestPlugin(t)
+	p.ReservationObserved(context.Background(), "accepted", reservations.Amount{Tokens: 12})
+	p.OverdraftObserved(context.Background(), true, reservations.Amount{Tokens: 3})
+	p.NotifierObserved(context.Background(), "delivered")
+	families, err := p.GetRegistry().Gather()
+	if err != nil {
+		t.Fatalf("Gather: %v", err)
+	}
+	want := map[string]bool{
+		"bifrost_governance_reservations_total":        false,
+		"bifrost_governance_reserved_tokens_total":     false,
+		"bifrost_governance_overdrafts_total":          false,
+		"bifrost_governance_overdraft_tokens_total":    false,
+		"bifrost_governance_notifier_deliveries_total": false,
+	}
+	for _, family := range families {
+		if _, ok := want[family.GetName()]; ok {
+			want[family.GetName()] = true
+		}
+	}
+	for name, found := range want {
+		if !found {
+			t.Errorf("missing governance metric %s", name)
+		}
+	}
 }
 
 // newHookContext returns a BifrostContext primed the way the plugin pipeline primes it before
