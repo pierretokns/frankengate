@@ -108,6 +108,10 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 		}
 
 		// OpenAI accepts role only on message input items.
+		// Keep the source role available for the gpt-oss summary-to-content
+		// conversion below; that conversion produces a message input item even
+		// when the source reasoning item did not have message type set.
+		originalRole := message.Role
 		if (message.Type != nil && *message.Type != schemas.ResponsesMessageTypeMessage) ||
 			(message.Type == nil && message.ResponsesReasoning != nil) {
 			message.Role = nil
@@ -136,7 +140,7 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 				newMessage.ID = message.ID
 				newMessage.Type = message.Type
 				newMessage.Status = message.Status
-				newMessage.Role = message.Role
+				newMessage.Role = originalRole
 
 				// Convert summaries to content blocks
 				contentBlocks := make([]schemas.ResponsesMessageContentBlock, 0, len(message.ResponsesReasoning.Summary))
