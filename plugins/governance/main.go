@@ -3,6 +3,7 @@ package governance
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand/v2"
@@ -436,6 +437,51 @@ func InitFromStore(
 // GetName returns the name of the plugin
 func (p *GovernancePlugin) GetName() string {
 	return PluginName
+}
+
+// MarshalConfigForStorage normalizes SecretVar-backed reservation settings so
+// references (for example env.WEBHOOK_URL) survive persistence without storing
+// a resolved secret as an opaque map value.
+func (p *GovernancePlugin) MarshalConfigForStorage(raw map[string]any) (map[string]any, error) {
+	b, err := json.Marshal(raw)
+	if err != nil {
+		return nil, err
+	}
+	var config Config
+	if err := json.Unmarshal(b, &config); err != nil {
+		return nil, err
+	}
+	out, err := json.Marshal(config)
+	if err != nil {
+		return nil, err
+	}
+	var result map[string]any
+	return result, json.Unmarshal(out, &result)
+}
+
+// RedactConfig prevents webhook signing keys and resolved webhook values from
+// appearing in dashboard/plugin API responses.
+func (p *GovernancePlugin) RedactConfig(raw map[string]any) (map[string]any, error) {
+	b, err := json.Marshal(raw)
+	if err != nil {
+		return nil, err
+	}
+	var config Config
+	if err := json.Unmarshal(b, &config); err != nil {
+		return nil, err
+	}
+	if config.ReservationWebhookURL != nil {
+		config.ReservationWebhookURL = config.ReservationWebhookURL.Redacted()
+	}
+	if config.ReservationWebhookSigningKey != nil {
+		config.ReservationWebhookSigningKey = config.ReservationWebhookSigningKey.FullyRedacted()
+	}
+	out, err := json.Marshal(config)
+	if err != nil {
+		return nil, err
+	}
+	var result map[string]any
+	return result, json.Unmarshal(out, &result)
 }
 
 // ReloadComplexityAnalyzerConfig swaps the analyzer used by complexity_tier routing.

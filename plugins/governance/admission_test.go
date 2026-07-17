@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -50,6 +51,18 @@ func TestWebhookOverdraftNotifierDoesNotRetryClientErrors(t *testing.T) {
 	err := n.Notify(context.Background(), OverdraftEvent{ReservationID: "reservation-2"})
 	require.Error(t, err)
 	require.Equal(t, 1, attempts)
+}
+
+func TestGovernanceConfigRedactsWebhookSigningKey(t *testing.T) {
+	plugin := &GovernancePlugin{}
+	redacted, err := plugin.RedactConfig(map[string]any{
+		"reservation_webhook_url":         "https://alerts.internal/hook",
+		"reservation_webhook_signing_key": "super-secret-signing-key",
+	})
+	require.NoError(t, err)
+	b, err := json.Marshal(redacted)
+	require.NoError(t, err)
+	require.NotContains(t, string(b), "super-secret-signing-key")
 }
 
 type testBudgetReservationStore struct{ *reservations.InMemoryStore }
