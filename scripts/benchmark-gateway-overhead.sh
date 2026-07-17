@@ -10,7 +10,11 @@ set -euo pipefail
 : "${REQUEST_BODY:?set REQUEST_BODY to a JSON request body}"
 N="${N:-100}"
 MAX_P95_OVERHEAD_MS="${MAX_P95_OVERHEAD_MS:-10}"
+MAX_ERROR_RATE="${MAX_ERROR_RATE:-0}"
 HEADERS_FILE="${HEADERS_FILE:-}"
+
+awk -v v="$N" 'BEGIN { if (v < 1 || v != int(v)) exit 1 }' || { echo "N must be a positive integer" >&2; exit 2; }
+awk -v v="$MAX_ERROR_RATE" 'BEGIN { if (v < 0 || v > 1) exit 1 }' || { echo "MAX_ERROR_RATE must be between 0 and 1" >&2; exit 2; }
 
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
@@ -56,4 +60,5 @@ awk -v d="$direct_p95" -v g="$gateway_p95" -v d50="$direct_p50" -v g50="$gateway
   -v direct="$direct" -v gateway="$gateway" \
   -v de="$direct_errors" -v ge="$gateway_errors" -v n="$N" \
   -v max_overhead="$MAX_P95_OVERHEAD_MS" \
-  'BEGIN { overhead=g-d; overhead50=g50-d50; printf "{\"direct\":%s,\"gateway\":%s,\"direct_error_rate\":%.4f,\"gateway_error_rate\":%.4f,\"added_p50_ms\":%.3f,\"added_p95_ms\":%.3f,\"max_p95_overhead_ms\":%.3f,\"regression\":%s}\n", direct, gateway, de/n, ge/n, overhead50, overhead, max_overhead, (overhead > max_overhead ? "true" : "false"); if (overhead > max_overhead) exit 42 }'
+  -v max_error_rate="$MAX_ERROR_RATE" \
+  'BEGIN { overhead=g-d; overhead50=g50-d50; der=de/n; ger=ge/n; error_regression=(ger > der || ger > max_error_rate); latency_regression=(overhead > max_overhead); printf "{\"direct\":%s,\"gateway\":%s,\"direct_error_rate\":%.4f,\"gateway_error_rate\":%.4f,\"added_p50_ms\":%.3f,\"added_p95_ms\":%.3f,\"max_p95_overhead_ms\":%.3f,\"max_error_rate\":%.4f,\"regression\":%s,\"error_regression\":%s}\n", direct, gateway, der, ger, overhead50, overhead, max_overhead, max_error_rate, (latency_regression || error_regression ? "true" : "false"), (error_regression ? "true" : "false"); if (latency_regression || error_regression) exit 42 }'
