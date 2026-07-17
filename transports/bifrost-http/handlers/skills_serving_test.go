@@ -2,14 +2,11 @@ package handlers
 
 import (
 	"context"
-	"net"
 	"testing"
-	"time"
 
 	"github.com/fasthttp/router"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/valyala/fasthttp"
-	"github.com/valyala/fasthttp/fasthttputil"
 )
 
 func TestSkillsServingGenericFileDownloadDecodesEncodedPathParams(t *testing.T) {
@@ -40,36 +37,21 @@ func TestSkillsServingGenericFileDownloadDecodesEncodedPathParams(t *testing.T) 
 	r := router.New()
 	handler.RegisterRoutes(r)
 
-	server := &fasthttp.Server{Handler: r.Handler}
-	ln := fasthttputil.NewInmemoryListener()
-	go server.Serve(ln) //nolint:errcheck
-	defer ln.Close()
-	defer server.Shutdown()
+	// This is a path-decoding handler unit test; invoke the router directly so
+	// server shutdown cannot race a database/sql context watcher after the
+	// response has been written.
+	request := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(request)
+	request.Header.SetMethod(fasthttp.MethodGet)
+	request.SetRequestURI("http://test.local/api/skills/serve/encoded-file-skill/files/nested%20dir/file%20with%20spaces.txt")
+	requestCtx := &fasthttp.RequestCtx{}
+	requestCtx.Init(request, nil, nil)
+	r.Handler(requestCtx)
 
-	client := &fasthttp.Client{
-		Dial: func(addr string) (net.Conn, error) {
-			return ln.Dial()
-		},
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 5 * time.Second,
+	if requestCtx.Response.StatusCode() != fasthttp.StatusOK {
+		t.Fatalf("status got %d, want %d; body=%s", requestCtx.Response.StatusCode(), fasthttp.StatusOK, string(requestCtx.Response.Body()))
 	}
-
-	req := fasthttp.AcquireRequest()
-	resp := fasthttp.AcquireResponse()
-	defer fasthttp.ReleaseRequest(req)
-	defer fasthttp.ReleaseResponse(resp)
-
-	req.Header.SetMethod(fasthttp.MethodGet)
-	req.SetRequestURI("http://test.local/api/skills/serve/encoded-file-skill/files/nested%20dir/file%20with%20spaces.txt")
-
-	if err := client.Do(req, resp); err != nil {
-		t.Fatalf("request failed: %v", err)
-	}
-
-	if resp.StatusCode() != fasthttp.StatusOK {
-		t.Fatalf("status got %d, want %d; body=%s", resp.StatusCode(), fasthttp.StatusOK, string(resp.Body()))
-	}
-	if got := string(resp.Body()); got != string(content) {
+	if got := string(requestCtx.Response.Body()); got != string(content) {
 		t.Fatalf("body got %q, want %q", got, string(content))
 	}
 }
