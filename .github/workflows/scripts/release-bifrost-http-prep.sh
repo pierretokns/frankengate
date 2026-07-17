@@ -165,6 +165,23 @@ go build ./...
 cd ..
 echo "✅ Transport build validation successful"
 
+# A source tree can contain enterprise packages without the release binary
+# importing them.  Assert the concrete dependency graph before allowing the
+# release prep job to continue.  Keep this check on package paths (rather than
+# grepping source) so it follows Go's actual build selection.
+echo "🔎 Verifying enterprise governance packages are linked..."
+DEPENDENCIES="$(cd transports && go list -deps ./... )"
+for required_package in \
+  "github.com/maximhq/bifrost/core/authorityepoch" \
+  "github.com/maximhq/bifrost/core/reservations" \
+  "github.com/maximhq/bifrost/plugins/governance"; do
+  if ! printf '%s\n' "$DEPENDENCIES" | grep -Fxq "$required_package"; then
+    echo "❌ release dependency graph is missing $required_package" >&2
+    exit 1
+  fi
+done
+echo "✅ Enterprise governance packages are linked into the transport graph"
+
 # Note: Migration tests run as a separate CI job (test-migrations) before this release job
 
 # Commit and push changes if any
