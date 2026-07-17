@@ -211,6 +211,15 @@ function DimensionRankingsTabImpl({ data, loading, dimensionLabel, testIdPrefix,
 
 	return (
 		<div className="flex flex-col gap-4">
+			{data?.provenance && (
+				<div className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 px-1 text-xs" data-testid={`${testIdPrefix}-provenance`}>
+					<span>Source: {data.provenance.source}</span>
+					<span>Rows: {data.provenance.sample_size.toLocaleString()}</span>
+					<span>Aggregation: {data.provenance.aggregation}</span>
+					<span>Reconciled: {data.provenance.reconciliation_status}</span>
+					<span>Generated: {new Date(data.provenance.generated_at).toLocaleString()}</span>
+				</div>
+			)}
 			<TopDimensionChart
 				data={data}
 				loading={loading}
