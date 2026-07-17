@@ -480,16 +480,17 @@ func (provider *MistralProvider) TranscriptionStream(ctx *schemas.BifrostContext
 		}()
 		defer providerUtils.ReleaseStreamingResponse(ctx, resp)
 		// Decompress gzip-encoded streams transparently (no-op for non-gzip)
-		reader, releaseGzip := providerUtils.DecompressStreamBody(resp)
+		bodyStream := providerUtils.NewSynchronizedStream(resp.BodyStream())
+		reader, releaseGzip := providerUtils.DecompressStreamReader(resp, bodyStream)
 		defer releaseGzip()
 
 		// Wrap reader with idle timeout to detect stalled streams.
-		reader, stopIdleTimeout := providerUtils.NewIdleTimeoutReader(reader, resp.BodyStream(), providerUtils.GetStreamIdleTimeout(ctx), ctx)
+		reader, stopIdleTimeout := providerUtils.NewIdleTimeoutReader(reader, bodyStream, providerUtils.GetStreamIdleTimeout(ctx), ctx)
 		defer stopIdleTimeout()
 
 		// Setup cancellation handler to close the raw network stream on ctx cancellation,
 		// which immediately unblocks any in-progress read (including reads blocked inside a gzip decompression layer).
-		stopCancellation := providerUtils.SetupStreamCancellation(ctx, resp.BodyStream(), provider.logger)
+		stopCancellation := providerUtils.SetupStreamCancellation(ctx, bodyStream, provider.logger)
 		defer stopCancellation()
 		defer providerUtils.EnsureStreamFinalizerCalled(ctx, postHookSpanFinalizer)
 

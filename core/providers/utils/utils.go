@@ -1121,7 +1121,13 @@ func decompressBodyStreamIfGzip(resp *fasthttp.Response, stream io.Reader) (*gzi
 //   - func(): cleanup function that releases the gzip reader back to the pool.
 //     Must be called (typically via defer) after streaming is complete.
 func DecompressStreamBody(resp *fasthttp.Response) (io.Reader, func()) {
-	bodyStream := resp.BodyStream()
+	return DecompressStreamReader(resp, resp.BodyStream())
+}
+
+// DecompressStreamReader is DecompressStreamBody with an explicit reader.
+// Providers that synchronize transport reads and closes can pass their wrapper
+// here while retaining the response headers and pooled gzip lifecycle.
+func DecompressStreamReader(resp *fasthttp.Response, bodyStream io.Reader) (io.Reader, func()) {
 	if bodyStream == nil {
 		// Return an empty reader instead of nil to prevent panics in callers
 		// that pass the reader to bufio.NewScanner without nil checks.
@@ -2412,6 +2418,49 @@ func GetStreamIdleTimeout(ctx *schemas.BifrostContext) time.Duration {
 type streamCloserWithError interface {
 	CloseWithError(err error) error
 }
+
+// SynchronizedStream serializes reads and transport closes for streaming
+// bodies whose underlying client has non-thread-safe pooled state (notably
+// fasthttp requestStream). Cancellation may close the body while a reader is
+// blocked; holding the same mutex on both operations prevents the transport
+// from recycling that pooled state concurrently with Read.
+type SynchronizedStream struct {
+	mu     sync.Mutex
+	reader io.Reader
+	closer streamCloserWithError
+	closed io.Closer
+}
+
+func NewSynchronizedStream(reader io.Reader) *SynchronizedStream {
+	s := &SynchronizedStream{reader: reader}
+	if closer, ok := reader.(streamCloserWithError); ok {
+		s.closer = closer
+	}
+	if closer, ok := reader.(io.Closer); ok {
+		s.closed = closer
+	}
+	return s
+}
+
+func (s *SynchronizedStream) Read(p []byte) (int, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.reader.Read(p)
+}
+
+func (s *SynchronizedStream) CloseWithError(err error) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.closer != nil {
+		return s.closer.CloseWithError(err)
+	}
+	if s.closed != nil {
+		return s.closed.Close()
+	}
+	return nil
+}
+
+func (s *SynchronizedStream) Close() error { return s.CloseWithError(nil) }
 
 // closeBodyStream closes bodyStream using whatever interface it supports:
 // io.Closer for net/http responses, streamCloserWithError for fasthttp.
