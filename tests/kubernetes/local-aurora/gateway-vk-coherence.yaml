@@ -118,7 +118,18 @@ spec:
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-ec"]
           args:
-            - wget -q -O /work/frankengate "http://${BINARY_SERVER_HOST}:18080/frankengate" && printf '%s  %s\n' "$BINARY_SHA256" /work/frankengate | sha256sum -c - && chmod 0555 /work/frankengate
+            - |
+              for attempt in $(seq 1 30); do
+                if wget -q -T 2 -O /work/frankengate "http://${BINARY_SERVER_HOST}:18080/frankengate" &&
+                  printf '%s  %s\n' "$BINARY_SHA256" /work/frankengate | sha256sum -c - >/dev/null 2>&1; then
+                  chmod 0555 /work/frankengate
+                  exit 0
+                fi
+                rm -f /work/frankengate
+                sleep 1
+              done
+              echo "timed out fetching tested binary after 30 attempts" >&2
+              exit 1
           env:
             # Replaced by run-vk-coherence.sh after it creates the disposable
             # in-cluster binary service. A raw apply intentionally fails fast.
