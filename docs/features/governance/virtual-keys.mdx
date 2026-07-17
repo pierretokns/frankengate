@@ -823,10 +823,11 @@ open. The event contains the reservation ID, reserved amount, observed amount,
 excess, approval decision, and policy reason; it does not contain provider
 credentials, prompt content, or virtual-key secrets.
 
-The built-in webhook adapter is suitable for an internal alert service. It
-sends JSON with a stable `Idempotency-Key` derived from the reservation ID and,
-when configured, an `X-FrankenGate-Signature` HMAC-SHA256 header. Transient
-failures are retried with bounded exponential backoff; client errors are not
-retried. SNS/SQS and in-product delivery should be implemented as consumers of
-the same event contract, and are optional integrations rather than mandatory
-inference dependencies.
+The pluggable `WebhookOverdraftNotifier` adapter is suitable for an internal
+alert service. When wired by a deployment, it sends JSON with a stable
+`Idempotency-Key` derived from the reservation ID and an
+`X-FrankenGate-Signature` HMAC-SHA256 header. Transient failures are retried
+with bounded exponential backoff; client errors are not retried. SNS/SQS and
+in-product delivery should be implemented as consumers of the same event
+contract, and are optional integrations rather than mandatory inference
+dependencies.
