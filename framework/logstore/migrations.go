@@ -297,27 +297,16 @@ func triggerMigrations(ctx context.Context, db *gorm.DB, logger schemas.Logger) 
 		return nil
 	}
 
-	// Acquire advisory lock to serialize migrations across cluster nodes.
 	lock, err := acquireMigrationLock(ctx, db, logger)
 	if err != nil {
 		return err
 	}
 	defer lock.release(ctx)
-
-	// Advisory locks are session-scoped. acquireMigrationLock deliberately
-	// holds a dedicated *sql.Conn; running GORM migrations on the ordinary pool
-	// would silently move statements to other sessions and defeat the lock
-	// during a multi-pod bootstrap. Pin this migration handle to the locked
-	// connection for the complete pending-check and migration sequence.
-	migrationDB := db.Session(&gorm.Session{NewDB: true})
-	migrationDB.ConnPool = lock.conn
-
-	if !areThereAnyPendingMigrations(ctx, migrationDB, logger) {
+	if !areThereAnyPendingMigrations(ctx, db, logger) {
 		logger.Info("[logstore] migrations completed by another node; skipping migration run")
 		return nil
 	}
-
-	return runMigrationSteps(ctx, migrationDB, logger, logstoreMigrationSteps)
+	return runMigrationSteps(ctx, db, logger, logstoreMigrationSteps)
 }
 
 // migrationInit creates the logs table if it does not exist.
@@ -397,41 +386,57 @@ func migrationUpdateObjectColumnValues(ctx context.Context, db *gorm.DB, logger 
 				return nil
 			}
 
-			updateSQL := `
-				WITH batch AS (
-					SELECT ctid,
-						CASE object_type
-							WHEN 'chat.completion' THEN 'chat_completion'
-							WHEN 'text.completion' THEN 'text_completion'
-							WHEN 'list' THEN 'embedding'
-							WHEN 'audio.speech' THEN 'speech'
-							WHEN 'audio.transcription' THEN 'transcription'
-							WHEN 'chat.completion.chunk' THEN 'chat_completion_stream'
-							WHEN 'audio.speech.chunk' THEN 'speech_stream'
-							WHEN 'audio.transcription.chunk' THEN 'transcription_stream'
-							WHEN 'response' THEN 'responses'
-							WHEN 'response.completion.chunk' THEN 'responses_stream'
-							ELSE object_type
-						END AS normalized_object_type
-					FROM logs
-					WHERE object_type IN (
-						'chat.completion', 'text.completion', 'list',
-						'audio.speech', 'audio.transcription', 'chat.completion.chunk',
-						'audio.speech.chunk', 'audio.transcription.chunk',
-						'response', 'response.completion.chunk'
-					)
-					LIMIT ?
-					FOR UPDATE SKIP LOCKED
-				)
-				UPDATE logs
-				SET object_type = batch.normalized_object_type
-				FROM batch
-				WHERE logs.ctid = batch.ctid`
-
-			if err := execBatchedGormMaintenanceUpdate(tx, "object_type normalization", updateSQL); err != nil {
-				return err
+			// Fresh installations have no legacy object values to normalize. Avoid
+			// running the historical ctid batching path against an empty table;
+			// PostgreSQL 16 rejects that query shape even though it has no work.
+			var legacyCount int64
+			if !tx.Migrator().HasColumn(&Log{}, "object_type") {
+				// New schemas add this field in a later migration; there is no
+				// legacy data to normalize until that column exists.
+				return nil
+			}
+			if err := tx.Model(&Log{}).Where("object_type IN (?)", []string{
+				"chat.completion", "text.completion", "list", "audio.speech",
+				"audio.transcription", "chat.completion.chunk", "audio.speech.chunk",
+				"audio.transcription.chunk", "response", "response.completion.chunk",
+			}).Count(&legacyCount).Error; err != nil {
+				return fmt.Errorf("failed to inspect legacy object_type values: %w", err)
+			}
+			if legacyCount == 0 {
+				return nil
 			}
 
+			// Migrations are serialized by the PostgreSQL advisory lock, so a
+			// single CASE update is both deterministic and safe. The former ctid /
+			// FOR UPDATE SKIP LOCKED batching query is rejected by PostgreSQL 16
+			// in some migration-table states and is unnecessary during startup.
+			result := tx.Exec(`
+				UPDATE logs
+				SET object_type = CASE object_type
+					WHEN 'chat.completion' THEN 'chat_completion'
+					WHEN 'text.completion' THEN 'text_completion'
+					WHEN 'list' THEN 'embedding'
+					WHEN 'audio.speech' THEN 'speech'
+					WHEN 'audio.transcription' THEN 'transcription'
+					WHEN 'chat.completion.chunk' THEN 'chat_completion_stream'
+					WHEN 'audio.speech.chunk' THEN 'speech_stream'
+					WHEN 'audio.transcription.chunk' THEN 'transcription_stream'
+					WHEN 'response' THEN 'responses'
+					WHEN 'response.completion.chunk' THEN 'responses_stream'
+					ELSE object_type
+				END
+				WHERE object_type IN (
+					'chat.completion', 'text.completion', 'list',
+					'audio.speech', 'audio.transcription', 'chat.completion.chunk',
+					'audio.speech.chunk', 'audio.transcription.chunk',
+					'response', 'response.completion.chunk'
+				)`)
+			if result.Error != nil {
+				return fmt.Errorf("failed to update object_type values: %w", result.Error)
+			}
+			if result.RowsAffected < 0 {
+				return fmt.Errorf("object_type normalization returned invalid affected-row count: %d", result.RowsAffected)
+			}
 			return nil
 		},
 		Rollback: func(tx *gorm.DB) error {

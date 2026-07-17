@@ -536,25 +536,23 @@ func (g *Gormigrate) createMigrationTableIfNotExists() error {
 
 // backfillMigrationMetadata populates sequence, applied_at, and status for
 // rows that predate the addition of these columns (all marked as success
-// with the same timestamp). Rows are sequenced by their natural insertion
-// order (rowid for SQLite, ctid for PostgreSQL) so that the sequence column
-// reflects the actual order migrations were originally applied.
+// with the same timestamp). Rows are sequenced by a stable migration ID. Do
+// not rely on PostgreSQL ctid: it is physical-storage metadata and can cause
+// invalid grouped introspection queries on PostgreSQL 16.
 func (g *Gormigrate) backfillMigrationMetadata() error {
 	var orderCol string
 	switch g.tx.Dialector.Name() {
 	case "sqlite":
 		orderCol = "rowid"
 	case "postgres":
-		orderCol = "ctid"
+		orderCol = g.options.IDColumnName
 	default:
 		orderCol = g.options.IDColumnName
 	}
 
 	var ids []string
-	err := g.tx.Table(g.options.TableName).
-		Where(fmt.Sprintf("%s IS NULL OR %s = ''", g.options.StatusColumnName, g.options.StatusColumnName)).
-		Order(orderCol).
-		Pluck(g.options.IDColumnName, &ids).Error
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s IS NULL OR %s = '' ORDER BY %s", g.options.IDColumnName, g.options.TableName, g.options.StatusColumnName, g.options.StatusColumnName, orderCol)
+	err := g.tx.Raw(query).Scan(&ids).Error
 	if err != nil {
 		return err
 	}
