@@ -205,11 +205,12 @@ run_focused_race_tests() {
 }
 
 run_beta_checks() {
-  # Beta is the rapid feedback lane. Keep the high-risk enterprise primitives
-  # and compile every shipped module, but leave the full module-wide vet fanout
-  # to the official release lane. Every command remains individually bounded.
-  download_dependencies
-  run_in_modules "go test compile" go test -run '^$' ./...
+  # Beta is the rapid feedback lane. Avoid a second dependency-download fanout
+  # and the full module matrix; keep the high-risk enterprise primitives plus
+  # compile-only coverage for the two request-path modules. The official
+  # release lane retains the complete module matrix and vet pass.
+  timeout --foreground --signal=TERM --kill-after=30s "${MODULE_TIMEOUT_SECONDS:-480}s" bash -c 'cd "$1" && go test -run "^$" ./...' _ "$ROOT/plugins/governance"
+  timeout --foreground --signal=TERM --kill-after=30s "${MODULE_TIMEOUT_SECONDS:-480}s" bash -c 'cd "$1" && go test -run "^$" ./...' _ "$ROOT/transports/bifrost-http"
   run_focused_race_tests
 }
 
