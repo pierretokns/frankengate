@@ -37,6 +37,7 @@ func (h *SessionHandler) RegisterRoutes(r *router.Router, middlewares ...schemas
 	r.POST("/api/session/logout", lib.ChainMiddlewares(h.logout, middlewares...))
 	r.GET("/api/session/is-auth-enabled", lib.ChainMiddlewares(h.isAuthEnabled, middlewares...))
 	r.GET("/api/session/me", lib.ChainMiddlewares(h.me, middlewares...))
+	r.GET("/api/session/capabilities", lib.ChainMiddlewares(h.capabilities, middlewares...))
 	r.POST("/api/session/ws-ticket", lib.ChainMiddlewares(h.issueWSTicket, middlewares...))
 }
 
@@ -45,9 +46,41 @@ func (h *SessionHandler) RegisterRoutes(r *router.Router, middlewares ...schemas
 // (and a future OIDC callback) establish identity from the HttpOnly cookie
 // rather than copying credentials into browser storage.
 func (h *SessionHandler) me(ctx *fasthttp.RequestCtx) {
-	if h.configStore == nil {
+	session, ok := h.sessionForRequest(ctx)
+	if !ok {
 		SendError(ctx, fasthttp.StatusUnauthorized, "Unauthorized")
 		return
+	}
+	ctx.Response.Header.Set("Cache-Control", "no-store")
+	ctx.Response.Header.Set("Pragma", "no-cache")
+	SendJSON(ctx, map[string]any{
+		"authenticated": true,
+		"expires_at":    session.ExpiresAt.UTC().Format(time.RFC3339),
+	})
+}
+
+// capabilities is a small, versioned contract for dashboard feature gating.
+// A capability is true only when this process can actually serve it; unknown
+// or unimplemented enterprise surfaces remain false rather than being
+// inferred from UI routes.
+func (h *SessionHandler) capabilities(ctx *fasthttp.RequestCtx) {
+	if _, ok := h.sessionForRequest(ctx); !ok {
+		SendError(ctx, fasthttp.StatusUnauthorized, "Unauthorized")
+		return
+	}
+	SendJSON(ctx, map[string]any{
+		"version": 1,
+		"capabilities": map[string]bool{
+			"session_bootstrap": true,
+			"governance":        false,
+			"alerting":          false,
+		},
+	})
+}
+
+func (h *SessionHandler) sessionForRequest(ctx *fasthttp.RequestCtx) (*tables.SessionsTable, bool) {
+	if h.configStore == nil {
+		return nil, false
 	}
 	token, _ := ctx.UserValue(schemas.BifrostContextKeySessionToken).(string)
 	if token == "" {
@@ -59,20 +92,13 @@ func (h *SessionHandler) me(ctx *fasthttp.RequestCtx) {
 		token = string(ctx.Request.Header.Cookie("token"))
 	}
 	if token == "" {
-		SendError(ctx, fasthttp.StatusUnauthorized, "Unauthorized")
-		return
+		return nil, false
 	}
 	session, err := h.configStore.GetSession(ctx, token)
 	if err != nil || session == nil || !session.ExpiresAt.After(time.Now()) {
-		SendError(ctx, fasthttp.StatusUnauthorized, "Unauthorized")
-		return
+		return nil, false
 	}
-	ctx.Response.Header.Set("Cache-Control", "no-store")
-	ctx.Response.Header.Set("Pragma", "no-cache")
-	SendJSON(ctx, map[string]any{
-		"authenticated": true,
-		"expires_at":    session.ExpiresAt.UTC().Format(time.RFC3339),
-	})
+	return session, true
 }
 
 // isAuthEnabled handles GET /api/session/is-auth-enabled - Check if auth is enabled

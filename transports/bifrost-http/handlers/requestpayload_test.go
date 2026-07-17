@@ -59,6 +59,29 @@ func TestSessionMeRejectsExpiredOrMissingSession(t *testing.T) {
 	}
 }
 
+func TestSessionCapabilitiesFailClosedAndExposeVersionedContract(t *testing.T) {
+	h := &SessionHandler{configStore: &sessionMeConfigStore{session: &tables.SessionsTable{ExpiresAt: time.Now().Add(time.Hour)}}}
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.SetCookie("token", "token")
+	h.capabilities(ctx)
+	if ctx.Response.StatusCode() != fasthttp.StatusOK {
+		t.Fatalf("status = %d, want %d", ctx.Response.StatusCode(), fasthttp.StatusOK)
+	}
+	body := string(ctx.Response.Body())
+	for _, want := range []string{`"version":1`, `"session_bootstrap":true`, `"governance":false`, `"alerting":false`} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("response = %s, missing %s", body, want)
+		}
+	}
+
+	unauthenticated := &SessionHandler{configStore: &sessionMeConfigStore{session: nil}}
+	ctx = &fasthttp.RequestCtx{}
+	unauthenticated.capabilities(ctx)
+	if ctx.Response.StatusCode() != fasthttp.StatusUnauthorized {
+		t.Fatalf("unauthenticated status = %d, want %d", ctx.Response.StatusCode(), fasthttp.StatusUnauthorized)
+	}
+}
+
 type loginDecodeConfigStore struct {
 	configstore.ConfigStore
 }
