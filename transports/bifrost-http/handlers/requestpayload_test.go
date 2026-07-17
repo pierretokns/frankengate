@@ -37,6 +37,9 @@ func TestSessionMeUsesServerSessionWithoutExposingToken(t *testing.T) {
 	if !strings.Contains(body, `"authenticated":true`) {
 		t.Fatalf("response = %s, want authenticated session", body)
 	}
+	if got := string(ctx.Response.Header.Peek("Cache-Control")); got != "no-store" {
+		t.Fatalf("Cache-Control = %q, want no-store", got)
+	}
 }
 
 func TestSessionMeRejectsExpiredOrMissingSession(t *testing.T) {

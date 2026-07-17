@@ -67,6 +67,8 @@ func (h *SessionHandler) me(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusUnauthorized, "Unauthorized")
 		return
 	}
+	ctx.Response.Header.Set("Cache-Control", "no-store")
+	ctx.Response.Header.Set("Pragma", "no-cache")
 	SendJSON(ctx, map[string]any{
 		"authenticated": true,
 		"expires_at":    session.ExpiresAt.UTC().Format(time.RFC3339),
