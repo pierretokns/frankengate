@@ -16,6 +16,7 @@ on:
       - "**/go.sum"
       - ".github/workflows/frankengate-beta.yml"
       - ".github/workflows/scripts/**"
+      - "scripts/benchmark-gateway-overhead*.sh"
   workflow_dispatch:
     inputs:
       ref:
