@@ -387,7 +387,7 @@ func BuildAnthropicResponsesRequestBody(ctx *schemas.BifrostContext, request *sc
 	}
 
 	if defaults.InjectBetaHeadersIntoBody {
-		if betaHeaders := FilterBetaHeadersForProvider(MergeBetaHeaders(ctx, cfg.ProviderExtraHeaders), cfg.Provider, cfg.BetaHeaderOverrides); len(betaHeaders) > 0 {
+		if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, cfg.ProviderExtraHeaders), cfg.Provider, cfg.Model, cfg.BetaHeaderOverrides); len(betaHeaders) > 0 {
 			jsonBody, err = providerUtils.SetJSONField(jsonBody, "anthropic_beta", betaHeaders)
 			if err != nil {
 				return nil, newErr(schemas.ErrProviderRequestMarshal, err, jsonBody)
@@ -608,7 +608,7 @@ func BuildAnthropicChatRequestBody(ctx *schemas.BifrostContext, request *schemas
 	}
 
 	if defaults.InjectBetaHeadersIntoBody {
-		if betaHeaders := FilterBetaHeadersForProvider(MergeBetaHeaders(ctx, cfg.ProviderExtraHeaders), cfg.Provider, cfg.BetaHeaderOverrides); len(betaHeaders) > 0 {
+		if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, cfg.ProviderExtraHeaders), cfg.Provider, cfg.Model, cfg.BetaHeaderOverrides); len(betaHeaders) > 0 {
 			jsonBody, err = providerUtils.SetJSONField(jsonBody, "anthropic_beta", betaHeaders)
 			if err != nil {
 				return nil, newErr(schemas.ErrProviderRequestMarshal, err, jsonBody)
