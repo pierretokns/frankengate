@@ -112,6 +112,33 @@
         }
       }
     },
+    "monitoring": {
+      "type": "object",
+      "properties": {
+        "serviceMonitor": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "interval": { "type": "string", "minLength": 1 },
+            "scrapeTimeout": { "type": "string", "minLength": 1 },
+            "labels": { "type": "object" },
+            "annotations": { "type": "object" }
+          },
+          "additionalProperties": false
+        },
+        "prometheusRule": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "labels": { "type": "object" },
+            "annotations": { "type": "object" },
+            "rules": { "type": "array", "items": { "type": "object" } }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "ingress": {
       "description": "Ingress configuration. Either a single ingress (legacy, with top-level 'enabled') or a map of named ingresses (new format, each key becomes a separate Ingress resource named <release>-<key>).",
       "oneOf": [

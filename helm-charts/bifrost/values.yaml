@@ -87,6 +87,22 @@ service:
   port: 8080
   annotations: {}
 
+# Optional Prometheus Operator integration. This scrapes FrankenGate's
+# exporter-neutral /metrics endpoint; OTLP metrics can still be sent to an
+# OpenTelemetry Collector independently.
+monitoring:
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+    labels: {}
+    annotations: {}
+  prometheusRule:
+    enabled: false
+    labels: {}
+    annotations: {}
+    rules: []
+
 # Single ingress (legacy format):
 ingress:
   enabled: false
