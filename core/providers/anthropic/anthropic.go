@@ -34,6 +34,22 @@ type AnthropicProvider struct {
 	customProviderConfig *schemas.CustomProviderConfig // Custom provider config
 }
 
+// requestModelForBetaFiltering extracts the model from an Anthropic-shaped
+// request body. The shared transport helpers are also used by providers such
+// as Bedrock Mantle and Azure, so keeping the model beside the body avoids a
+// provider-wide beta decision when the caller has not passed an explicit
+// model argument. An absent or malformed model deliberately returns empty,
+// making model-gated capabilities fail closed.
+func requestModelForBetaFiltering(jsonBody []byte) string {
+	var envelope struct {
+		Model string `json:"model"`
+	}
+	if len(jsonBody) == 0 || sonic.Unmarshal(jsonBody, &envelope) != nil {
+		return ""
+	}
+	return strings.TrimSpace(envelope.Model)
+}
+
 // anthropicMessageResponsePool provides a pool for Anthropic chat response objects.
 var anthropicMessageResponsePool = sync.Pool{
 	New: func() interface{} {
@@ -227,7 +243,7 @@ func completeRequest(
 	// (matches the original per-provider completeRequest ordering).
 	req.Header.SetContentType("application/json")
 
-	if betaHeaders := FilterBetaHeadersForProvider(MergeBetaHeaders(ctx, extraHeaders), providerName, betaHeaderOverrides); len(betaHeaders) > 0 {
+	if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, extraHeaders), providerName, requestModelForBetaFiltering(jsonBody), betaHeaderOverrides); len(betaHeaders) > 0 {
 		req.Header.Set(AnthropicBetaHeader, strings.Join(betaHeaders, ","))
 	} else {
 		req.Header.Del(AnthropicBetaHeader)
@@ -744,7 +760,7 @@ func HandleAnthropicChatCompletionStreaming(
 
 	providerUtils.SetExtraHeaders(ctx, req, extraHeaders, []string{AnthropicBetaHeader})
 
-	if betaHeaders := FilterBetaHeadersForProvider(MergeBetaHeaders(ctx, extraHeaders), providerName, betaHeaderOverrides); len(betaHeaders) > 0 {
+	if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, extraHeaders), providerName, requestModelForBetaFiltering(jsonBody), betaHeaderOverrides); len(betaHeaders) > 0 {
 		req.Header.Set(AnthropicBetaHeader, strings.Join(betaHeaders, ","))
 	} else {
 		req.Header.Del(AnthropicBetaHeader)
@@ -1338,7 +1354,7 @@ func HandleAnthropicResponsesStream(
 
 	providerUtils.SetExtraHeaders(ctx, req, extraHeaders, []string{AnthropicBetaHeader})
 
-	if betaHeaders := FilterBetaHeadersForProvider(MergeBetaHeaders(ctx, extraHeaders), providerName, betaHeaderOverrides); len(betaHeaders) > 0 {
+	if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, extraHeaders), providerName, requestModelForBetaFiltering(jsonBody), betaHeaderOverrides); len(betaHeaders) > 0 {
 		req.Header.Set(AnthropicBetaHeader, strings.Join(betaHeaders, ","))
 	} else {
 		req.Header.Del(AnthropicBetaHeader)
