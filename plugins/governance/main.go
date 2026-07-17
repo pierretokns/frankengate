@@ -1207,6 +1207,13 @@ func (p *GovernancePlugin) EvaluateGovernanceRequest(ctx *schemas.BifrostContext
 	if !skipBudgetsAndRateLimits && result.Decision == DecisionAllow {
 		result = p.resolver.EvaluateUserRequest(ctx, evaluationRequest.UserID, evaluationRequest)
 	}
+	// Customer/team/user allow checks return their own compact result and may
+	// omit the VK carried by the earlier virtual-key evaluation. Preserve the
+	// authoritative VK on the final result so downstream admission can inspect
+	// its applicable budgets instead of silently receiving an empty handle.
+	if result != nil && result.Decision == DecisionAllow && result.VirtualKey == nil {
+		result.VirtualKey = hierarchyVK
+	}
 
 	// Check the actual MCP tools injected into the request against the VK MCPConfigs.
 	// BifrostContextKeyMCPAddedTools is populated by AddToolsToRequest (which runs before
