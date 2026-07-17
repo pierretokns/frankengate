@@ -149,11 +149,20 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-          readinessProbe:
+          startupProbe:
             httpGet:
               path: /health
               port: http
             periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 2
+            timeoutSeconds: 2
             failureThreshold: 30
           resources:
             requests:
