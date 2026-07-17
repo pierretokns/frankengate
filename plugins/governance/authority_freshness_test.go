@@ -42,6 +42,14 @@ func TestRateLimitRetryAfterSecondsRoundsUpToResetBoundary(t *testing.T) {
 	require.LessOrEqual(t, got, 2)
 }
 
+func TestRateLimitRetryAfterSecondsUsesRequestWindow(t *testing.T) {
+	d := "1m"
+	limit := &configstoreTables.TableRateLimit{RequestResetDuration: &d, RequestLastReset: time.Now().Add(-59 * time.Second)}
+	got := rateLimitRetryAfterSeconds(limit)
+	require.GreaterOrEqual(t, got, 1)
+	require.LessOrEqual(t, got, 2)
+}
+
 func TestEvaluateGovernanceRequest_DeniesVirtualKeyWhenAuthorityIsStale(t *testing.T) {
 	logger := NewMockLogger()
 	vk := buildVirtualKeyWithProviders("vk1", "sk-bf-stale", "Stale VK", nil)
