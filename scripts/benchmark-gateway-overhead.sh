@@ -21,16 +21,21 @@ trap 'rm -rf "$tmp"' EXIT
 
 run() {
   local url="$1" out="$2" status_out="$3" i status timing
+  local -a curl_args=(
+    --fail --silent --show-error --output /dev/null
+    --connect-timeout 2 --max-time 60
+    -H 'content-type: application/json'
+    --data-binary "$REQUEST_BODY"
+  )
+  if [[ -n "$HEADERS_FILE" ]]; then
+    curl_args+=(--config "$HEADERS_FILE")
+  fi
   : >"$out"
   : >"$status_out"
   for ((i=0; i<N; i++)); do
     timing="$out.$i"
     set +e
-    curl --fail --silent --show-error --output /dev/null \
-      --connect-timeout 2 --max-time 60 \
-      -H 'content-type: application/json' \
-      ${HEADERS_FILE:+--config "$HEADERS_FILE"} \
-      --data-binary "$REQUEST_BODY" \
+    curl "${curl_args[@]}" \
       -w '%{time_total}\n' "$url" >"$timing"
     status=$?
     set -e
