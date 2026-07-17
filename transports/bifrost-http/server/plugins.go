@@ -268,6 +268,25 @@ func (s *BifrostHTTPServer) loadBuiltinPlugins(ctx context.Context) error {
 			DisableAutoToolInject: &s.Config.ClientConfig.MCPDisableAutoToolInject,
 			RoutingChainMaxDepth:  &s.Config.ClientConfig.RoutingChainMaxDepth,
 		}
+		// Governance is built in, but durable-admission settings live in the
+		// persisted plugin config. Merge those fields into the built-in defaults;
+		// otherwise PostgreSQL deployments silently construct a coordinator with
+		// no estimator even when reservation settings are configured.
+		if persisted := s.getPluginConfig(governance.PluginName); persisted != nil && persisted.Config != nil {
+			extra, err := MarshalPluginConfig[governance.Config](persisted.Config)
+			if err != nil {
+				return fmt.Errorf("failed to marshal governance plugin config: %w", err)
+			}
+			if extra != nil {
+				config.ReservationMaxTokens = extra.ReservationMaxTokens
+				config.ReservationCostMicrosPerToken = extra.ReservationCostMicrosPerToken
+				config.ReservationAllowOverdraft = extra.ReservationAllowOverdraft
+				config.ReservationOverdraftReason = extra.ReservationOverdraftReason
+				config.ReservationWebhookURL = extra.ReservationWebhookURL
+				config.ReservationWebhookSigningKey = extra.ReservationWebhookSigningKey
+				config.ReservationWebhookBuffer = extra.ReservationWebhookBuffer
+			}
+		}
 		s.registerPluginWithStatus(ctx, governance.PluginName, nil, config, false)
 	} else {
 		s.markPluginDisabled(governance.PluginName)
