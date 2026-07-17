@@ -22,6 +22,7 @@ package migrator
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"reflect"
@@ -678,7 +679,17 @@ func (g *Gormigrate) insertMigration(id string) error {
 
 // begin starts a transaction when UseTransaction is enabled.
 func (g *Gormigrate) begin() {
+	// A dedicated *sql.Conn is used by logstore migrations to keep a
+	// PostgreSQL advisory lock session-scoped. GORM cannot safely begin a
+	// nested transaction on that raw connection through its normal ConnPool
+	// path; attempting to do so leaves a nil transaction and panics in the
+	// migration callback. The advisory lock already serializes this sequence,
+	// so execute the migration statements directly on the pinned session.
 	if g.options.UseTransaction {
+		if _, pinned := g.db.ConnPool.(*sql.Conn); pinned {
+			g.tx = g.db
+			return
+		}
 		g.tx = g.db.Begin()
 	} else {
 		g.tx = g.db
@@ -688,6 +699,9 @@ func (g *Gormigrate) begin() {
 // commit commits the transaction if one is in progress.
 func (g *Gormigrate) commit() error {
 	if g.options.UseTransaction {
+		if _, pinned := g.db.ConnPool.(*sql.Conn); pinned {
+			return nil
+		}
 		return g.tx.Commit().Error
 	}
 	return nil
@@ -696,6 +710,9 @@ func (g *Gormigrate) commit() error {
 // rollback rolls back the transaction if one is in progress.
 func (g *Gormigrate) rollback() {
 	if g.options.UseTransaction {
+		if _, pinned := g.db.ConnPool.(*sql.Conn); pinned {
+			return
+		}
 		g.tx.Rollback()
 	}
 }
