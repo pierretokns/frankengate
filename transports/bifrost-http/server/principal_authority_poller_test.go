@@ -125,6 +125,23 @@ func TestPrincipalAuthorityPollerReplaysAndCancelsLiveMCPReference(t *testing.T)
 	}
 }
 
+func TestPrincipalAuthorityPollerFailsClosedWhileEventsRemainPending(t *testing.T) {
+	principal := authorityepoch.Principal{Tenant: "tenant-a", Issuer: "issuer-a", Subject: "user-a"}
+	source := &principalAuthorityTestSource{events: []tables.TablePrincipalAuthorizationEpochEvent{
+		{ID: 1, TenantID: principal.Tenant, Issuer: principal.Issuer, Subject: principal.Subject, NewEpoch: 1, Active: true, Reason: "activated", Revision: 1, SchemaVersion: 1},
+		{ID: 2, TenantID: principal.Tenant, Issuer: principal.Issuer, Subject: principal.Subject, OldEpoch: 1, NewEpoch: 2, Active: false, Reason: "deactivated", Revision: 2, SchemaVersion: 1},
+	}}
+	poller := newPrincipalAuthorityPoller(source, authorityepoch.NewRegistry(), 1)
+	more, err := poller.pollOnce(context.Background())
+	require.NoError(t, err)
+	require.True(t, more)
+	require.False(t, poller.IsPrincipalAuthorityFresh(), "a successful read must not make readiness green while the durable cursor lags")
+	more, err = poller.pollOnce(context.Background())
+	require.NoError(t, err)
+	require.False(t, more)
+	require.True(t, poller.IsPrincipalAuthorityFresh())
+}
+
 func TestPrincipalAuthorityBootstrapSkipsHistoryAndAppliesPostFenceMutation(t *testing.T) {
 	principal := authorityepoch.Principal{Tenant: "tenant-a", Issuer: "issuer-a", Subject: "user-a"}
 	source := &principalAuthorityTestSource{

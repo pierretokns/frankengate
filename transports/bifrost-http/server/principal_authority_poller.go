@@ -38,6 +38,7 @@ type principalAuthorityPoller struct {
 	registry             *authorityepoch.Registry
 	batch                int
 	cursor               atomic.Uint64
+	highWatermark        atomic.Uint64
 	lastSuccessUnixNano  atomic.Int64
 	lastErrorLogUnixNano atomic.Int64
 	wake                 <-chan struct{}
@@ -89,6 +90,10 @@ func (p *principalAuthorityPoller) pollOnce(ctx context.Context) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	// Freshness is a lease over a caught-up snapshot, not merely a successful
+	// database read. Publish the watermark alongside the cursor so readiness
+	// cannot remain green while a revocation event is still pending.
+	p.highWatermark.Store(high)
 	p.lastSuccessUnixNano.Store(p.clock().UnixNano())
 	return cursor < high, nil
 }
@@ -126,6 +131,7 @@ func (p *principalAuthorityPoller) bootstrap(ctx context.Context, snapshot princ
 		}
 	}
 	p.cursor.Store(fence)
+	p.highWatermark.Store(fence)
 	for {
 		more, err := p.pollOnce(ctx)
 		if err != nil {
@@ -145,6 +151,9 @@ func (p *principalAuthorityPoller) IsPrincipalAuthorityFresh() bool {
 	if lastSuccess == 0 {
 		return false
 	}
+	if p.cursor.Load() < p.highWatermark.Load() {
+		return false
+	}
 	age := p.clock().Sub(time.Unix(0, lastSuccess))
 	return age >= 0 && age <= defaultPrincipalAuthorityMaxStaleness
 }
@@ -155,6 +164,9 @@ func (p *principalAuthorityPoller) PrincipalAuthorityFreshUntil() time.Time {
 	}
 	lastSuccess := p.lastSuccessUnixNano.Load()
 	if lastSuccess == 0 {
+		return time.Time{}
+	}
+	if p.cursor.Load() < p.highWatermark.Load() {
 		return time.Time{}
 	}
 	return time.Unix(0, lastSuccess).Add(defaultPrincipalAuthorityMaxStaleness)

@@ -24,7 +24,11 @@ func TestInjectConverseAnthropicBetaTunnelsContext1M(t *testing.T) {
 		t.Fatal(err)
 	}
 	values := decoded.Additional["anthropic_beta"]
-	if len(values) != 2 || values[0] != anthropic.AnthropicContext1MBetaHeader || values[1] != "computer-use-2025-01-24" {
+	seen := make(map[string]bool, len(values))
+	for _, value := range values {
+		seen[value] = true
+	}
+	if len(values) != 2 || !seen[anthropic.AnthropicContext1MBetaHeader] || !seen["computer-use-2025-01-24"] {
 		t.Fatalf("unexpected tunneled beta values: %#v", values)
 	}
 }
