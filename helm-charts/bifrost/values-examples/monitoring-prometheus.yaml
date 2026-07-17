@@ -32,7 +32,7 @@ monitoring:
           summary: FrankenGate governance outbox is growing
           description: Governance invalidation events are accumulating.
       - alert: FrankenGateNotificationFailures
-        expr: increase(bifrost_governance_notifier_deliveries_total{outcome!="success"}[10m]) > 0
+        expr: increase(bifrost_governance_notifier_deliveries_total{outcome=~"failed|dropped|other"}[10m]) > 0
         labels:
           severity: warning
         annotations:
