@@ -27,7 +27,8 @@ VERSION="$1"
 # module graph.  Standalone GOWORK=off probes belong in separate release-safety
 # jobs; allowing them here can silently compile an older core without the
 # authority/reservation packages this transport imports.
-ROOT_DIR="$(git rev-parse --show-toplevel)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd -P)"
+cd "$ROOT_DIR"
 if [[ ! -f "$ROOT_DIR/go.work" ]]; then
   echo "❌ release assembly requires repository go.work (source graph missing)" >&2
   exit 1
