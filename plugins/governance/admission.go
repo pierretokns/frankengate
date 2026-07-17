@@ -289,6 +289,29 @@ func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req Admissi
 				ids = append(ids, b.ID)
 			}
 		}
+		// Some governance evaluation paths retain the applicable budget rows on
+		// the evaluated VK but do not populate BudgetInfo (notably VK-scoped
+		// model-config budgets loaded after a config refresh). Never silently
+		// downgrade durable admission to a zero-row handle in that case.
+		if len(ids) == 0 && req.Result.VirtualKey != nil {
+			seen := make(map[string]struct{})
+			for _, b := range req.Result.VirtualKey.Budgets {
+				if b.ID != "" {
+					ids = append(ids, b.ID)
+					seen[b.ID] = struct{}{}
+				}
+			}
+			for _, pc := range req.Result.VirtualKey.ProviderConfigs {
+				for _, b := range pc.Budgets {
+					if b.ID != "" {
+						if _, ok := seen[b.ID]; !ok {
+							ids = append(ids, b.ID)
+							seen[b.ID] = struct{}{}
+						}
+					}
+				}
+			}
+		}
 	}
 	if len(ids) == 0 {
 		return &durableReservationHandle{}, nil
