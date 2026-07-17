@@ -827,7 +827,18 @@ The pluggable `WebhookOverdraftNotifier` adapter is suitable for an internal
 alert service. When wired by a deployment, it sends JSON with a stable
 `Idempotency-Key` derived from the reservation ID and an
 `X-FrankenGate-Signature` HMAC-SHA256 header. Transient failures are retried
-with bounded exponential backoff; client errors are not retried. SNS/SQS and
-in-product delivery should be implemented as consumers of the same event
-contract, and are optional integrations rather than mandatory inference
-dependencies.
+with bounded exponential backoff; client errors are not retried.
+
+SNS and SES are also supported through the same asynchronous boundary. The
+`sns` channel reads `topic_arn` and optional `subject`; the `email` channel
+reads `from`, comma-separated `recipients`, and optional `subject`. FrankenGate
+uses the AWS SDK default credential and region chain, so IAM policies and SES
+identity verification remain deployment responsibilities. If AWS credentials
+or channel configuration are unavailable, delivery fails closed and inference
+continues.
+
+Use Prometheus/Alertmanager (or OTEL metrics routed to a collector) for
+service-level alerts such as delivery failures, queue drops, and outbox
+growth. SNS/SES are user-facing notifications, not a replacement for SLO
+monitoring. All delivery remains asynchronous and bounded; it never holds the
+inference request open.
