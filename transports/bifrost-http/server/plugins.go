@@ -89,7 +89,11 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 	case governance.PluginName:
 		governanceConfig, err := MarshalPluginConfig[governance.Config](pluginConfig)
 		if err != nil {
-			return nil, fmt.Errorf("failed to marshal governance plugin config: %w", err)
+			// Persisted governance extensions are optional. Do not make a
+			// malformed optional row prevent the gateway from starting; the
+			// built-in defaults remain fail-closed for authorization.
+			logger.Warn("failed to decode persisted governance plugin config; using defaults: %v", err)
+			governanceConfig = &governance.Config{}
 		}
 		inMemoryStore := &GovernanceInMemoryStore{Config: bifrostConfig}
 		plugin, err := governance.Init(ctx, governanceConfig, logger, bifrostConfig.ConfigStore,
@@ -306,9 +310,8 @@ func (s *BifrostHTTPServer) loadBuiltinPlugins(ctx context.Context) error {
 		if persisted := s.getPluginConfig(governance.PluginName); persisted != nil && persisted.Config != nil {
 			extra, err := MarshalPluginConfig[governance.Config](persisted.Config)
 			if err != nil {
-				return fmt.Errorf("failed to marshal governance plugin config: %w", err)
-			}
-			if extra != nil {
+				logger.Warn("failed to decode persisted governance plugin config; using built-in defaults: %v", err)
+			} else if extra != nil {
 				config.ReservationMaxTokens = extra.ReservationMaxTokens
 				config.ReservationCostMicrosPerToken = extra.ReservationCostMicrosPerToken
 				config.ReservationAllowOverdraft = extra.ReservationAllowOverdraft
