@@ -30,7 +30,7 @@ func TestGovernanceMetricsSinkExportsBoundedPrometheusSeries(t *testing.T) {
 	p := newTestPlugin(t)
 	p.ReservationObserved(context.Background(), "accepted", reservations.Amount{Tokens: 12})
 	p.OverdraftObserved(context.Background(), true, reservations.Amount{Tokens: 3})
-	p.NotifierObserved(context.Background(), "delivered")
+	p.NotifierObserved(context.Background(), "unexpected-future-value")
 	families, err := p.GetRegistry().Gather()
 	if err != nil {
 		t.Fatalf("Gather: %v", err)
@@ -50,6 +50,14 @@ func TestGovernanceMetricsSinkExportsBoundedPrometheusSeries(t *testing.T) {
 	for name, found := range want {
 		if !found {
 			t.Errorf("missing governance metric %s", name)
+		}
+	}
+	for _, family := range families {
+		if family.GetName() != "bifrost_governance_notifier_deliveries_total" || len(family.GetMetric()) != 1 {
+			continue
+		}
+		if got := family.GetMetric()[0].GetLabel()[0].GetValue(); got != "other" {
+			t.Fatalf("unexpected notifier outcome label %q", got)
 		}
 	}
 }

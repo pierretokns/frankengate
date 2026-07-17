@@ -209,6 +209,7 @@ func (p *PrometheusPlugin) ReservationObserved(_ context.Context, outcome string
 	if p == nil {
 		return
 	}
+	outcome = boundedGovernanceOutcome(outcome)
 	p.GovernanceReservationsTotal.WithLabelValues(outcome).Inc()
 	p.GovernanceReservationTokensTotal.WithLabelValues(outcome).Add(float64(amount.Tokens))
 }
@@ -233,7 +234,18 @@ func (p *PrometheusPlugin) NotifierObserved(_ context.Context, outcome string) {
 	if p == nil {
 		return
 	}
-	p.GovernanceNotifierDeliveriesTotal.WithLabelValues(outcome).Inc()
+	p.GovernanceNotifierDeliveriesTotal.WithLabelValues(boundedGovernanceOutcome(outcome)).Inc()
+}
+
+func boundedGovernanceOutcome(outcome string) string {
+	switch strings.ToLower(strings.TrimSpace(outcome)) {
+	case "accepted", "allowed", "delivered", "success":
+		return strings.ToLower(strings.TrimSpace(outcome))
+	case "rejected", "denied", "failed", "dropped":
+		return strings.ToLower(strings.TrimSpace(outcome))
+	default:
+		return "other"
+	}
 }
 
 // SetGovernanceSyncMetric updates a low-cardinality governance control-plane
