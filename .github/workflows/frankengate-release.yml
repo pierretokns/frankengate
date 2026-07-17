@@ -176,8 +176,16 @@ jobs:
         env:
           VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: |
-          timeout --foreground --signal=TERM --kill-after=30s 20m \
+          # GNU timeout is available on Ubuntu but not on hosted macOS. The
+          # matrix job itself has a 35-minute hard timeout, so retain the
+          # tighter guard where available and use the job timeout as the
+          # portable fallback on Darwin.
+          if command -v timeout >/dev/null 2>&1; then
+            timeout --foreground --signal=TERM --kill-after=30s 20m \
+              .github/workflows/scripts/build-release-binary.sh
+          else
             .github/workflows/scripts/build-release-binary.sh
+          fi
 
       - name: Stage binary and license notices
         env:
