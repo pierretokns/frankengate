@@ -6,6 +6,7 @@ package handlers
 // delivery workers remain asynchronous and are deliberately outside this
 // request path.
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -21,6 +22,16 @@ import (
 )
 
 const alertingConfigKey = "frankengate.alerting.v1"
+
+// AlertingWebhookConfig is the small, startup-time projection consumed by the
+// governance admission notifier.  Alerting CRUD remains durable and
+// asynchronous; changing a channel takes effect on the next plugin reload.
+// Only webhook channels are projected until native SNS/email workers exist.
+type AlertingWebhookConfig struct {
+	URL        string
+	SigningKey string
+	Buffer     int
+}
 
 type AlertChannel struct {
 	ID      string            `json:"id"`
@@ -47,6 +58,43 @@ type alertingState struct {
 	Channels []AlertChannel  `json:"channels"`
 	Rules    []AlertRule     `json:"rules"`
 	History  []AlertDelivery `json:"history"`
+}
+
+// LoadAlertingWebhookConfig reads the durable alerting contract and returns the
+// first enabled webhook channel. Unsupported channel types are deliberately
+// ignored rather than silently routed through a webhook implementation.
+func LoadAlertingWebhookConfig(ctx context.Context, store configstore.ConfigStore) (AlertingWebhookConfig, bool, error) {
+	if store == nil {
+		return AlertingWebhookConfig{}, false, nil
+	}
+	row, err := store.GetConfig(ctx, alertingConfigKey)
+	if err != nil {
+		return AlertingWebhookConfig{}, false, err
+	}
+	if row == nil || strings.TrimSpace(row.Value) == "" {
+		return AlertingWebhookConfig{}, false, nil
+	}
+	var state alertingState
+	if err := sonic.Unmarshal([]byte(row.Value), &state); err != nil {
+		return AlertingWebhookConfig{}, false, fmt.Errorf("decode alerting state: %w", err)
+	}
+	for _, channel := range state.Channels {
+		if !channel.Enabled || strings.ToLower(strings.TrimSpace(channel.Type)) != "webhook" {
+			continue
+		}
+		url := strings.TrimSpace(channel.Config["url"])
+		if url == "" || (!strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://")) {
+			continue
+		}
+		buffer := 256
+		if raw := strings.TrimSpace(channel.Config["buffer"]); raw != "" {
+			if _, e := fmt.Sscanf(raw, "%d", &buffer); e != nil || buffer <= 0 {
+				buffer = 256
+			}
+		}
+		return AlertingWebhookConfig{URL: url, SigningKey: channel.Config["signing_key"], Buffer: buffer}, true, nil
+	}
+	return AlertingWebhookConfig{}, false, nil
 }
 
 type AlertingHandler struct {

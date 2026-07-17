@@ -106,9 +106,6 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 			allowOverdraft := governanceConfig.ReservationAllowOverdraft != nil && *governanceConfig.ReservationAllowOverdraft
 			overdraft := reservations.OverdraftPolicy{Allow: allowOverdraft, Reason: governanceConfig.ReservationOverdraftReason}
 			configureNotifier := func(coordinator *governance.DurableReservationCoordinator) {
-				if governanceConfig.ReservationWebhookURL == nil || governanceConfig.ReservationWebhookURL.GetValue() == "" {
-					return
-				}
 				buffer := 256
 				if governanceConfig.ReservationWebhookBuffer != nil && *governanceConfig.ReservationWebhookBuffer > 0 {
 					buffer = *governanceConfig.ReservationWebhookBuffer
@@ -117,8 +114,29 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 				if governanceConfig.ReservationWebhookSigningKey != nil {
 					signingKey = []byte(governanceConfig.ReservationWebhookSigningKey.GetValue())
 				}
+				url := ""
+				if governanceConfig.ReservationWebhookURL != nil {
+					url = governanceConfig.ReservationWebhookURL.GetValue()
+				}
+				// Durable dashboard alerting is a startup-time projection. Explicit
+				// governance config wins; otherwise use the first enabled webhook
+				// channel from the shared alerting state. SNS/email remain fail-closed
+				// until their native workers are implemented.
+				if url == "" {
+					if alert, ok, alertErr := handlers.LoadAlertingWebhookConfig(ctx, bifrostConfig.ConfigStore); alertErr != nil {
+						logger.Warn("durable alerting state unavailable; overdraft notifier disabled: %v", alertErr)
+						return
+					} else if ok {
+						url = alert.URL
+						buffer = alert.Buffer
+						signingKey = []byte(alert.SigningKey)
+					}
+				}
+				if url == "" {
+					return
+				}
 				coordinator.SetNotifier(governance.NewAsyncOverdraftNotifier(ctx, &governance.WebhookOverdraftNotifier{
-					URL: governanceConfig.ReservationWebhookURL.GetValue(), SigningKey: signingKey,
+					URL: url, SigningKey: signingKey,
 				}, buffer))
 			}
 			if estimator, ok := bifrostConfig.ConfigStore.(governance.ReservationEstimator); ok {
