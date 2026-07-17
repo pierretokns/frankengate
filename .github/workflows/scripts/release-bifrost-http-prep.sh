@@ -23,6 +23,27 @@ fi
 
 VERSION="$1"
 
+# Product assembly must resolve the fork's source graph, not a stale published
+# module graph.  Standalone GOWORK=off probes belong in separate release-safety
+# jobs; allowing them here can silently compile an older core without the
+# authority/reservation packages this transport imports.
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+if [[ ! -f "$ROOT_DIR/go.work" ]]; then
+  echo "❌ release assembly requires repository go.work (source graph missing)" >&2
+  exit 1
+fi
+WORKSPACE_MODE="$(go env GOWORK)"
+if [[ "$WORKSPACE_MODE" == "off" || -z "$WORKSPACE_MODE" ]]; then
+  echo "❌ release assembly resolved GOWORK=$WORKSPACE_MODE; refusing published-module masking" >&2
+  exit 1
+fi
+for required_dir in core/authorityepoch core/reservations; do
+  if [[ ! -d "$ROOT_DIR/$required_dir" ]]; then
+    echo "❌ release assembly source graph is missing $required_dir" >&2
+    exit 1
+  fi
+done
+
 echo "🚀 Preparing bifrost-http v$VERSION release..."
 
 # Get core and framework versions from version files
@@ -35,14 +56,33 @@ echo "🔍 DEBUG: FRAMEWORK_VERSION: $FRAMEWORK_VERSION"
 
 # Get plugin versions from version files
 echo "🔌 Getting plugin versions from version files..."
-declare -A PLUGIN_VERSIONS
+PLUGIN_NAMES=()
+PLUGIN_VERSIONS=()
+plugin_version_for() {
+  local wanted="$1" i
+  for i in "${!PLUGIN_NAMES[@]}"; do
+    if [[ "${PLUGIN_NAMES[$i]}" == "$wanted" ]]; then
+      printf '%s' "${PLUGIN_VERSIONS[$i]}"
+      return 0
+    fi
+  done
+  return 1
+}
+add_plugin_version() {
+  local name="$1" version="$2"
+  if plugin_version_for "$name" >/dev/null 2>&1; then
+    return 0
+  fi
+  PLUGIN_NAMES+=("$name")
+  PLUGIN_VERSIONS+=("$version")
+}
 
 # Get versions for plugins that exist in the plugins/ directory
 for plugin_dir in plugins/*/; do
   if [ -d "$plugin_dir" ]; then
     plugin_name=$(basename "$plugin_dir")
     PLUGIN_VERSION="v$(tr -d '\n\r' < "${plugin_dir}version")"
-    PLUGIN_VERSIONS["$plugin_name"]="$PLUGIN_VERSION"
+    add_plugin_version "$plugin_name" "$PLUGIN_VERSION"
     echo "   📦 $plugin_name: $PLUGIN_VERSION (from version file)"
   fi
 done
@@ -56,9 +96,9 @@ while IFS= read -r plugin_line; do
   current_version=$(echo "$plugin_line" | awk '{print $NF}')
 
   # Only add if we don't already have this plugin
-  if [[ -z "${PLUGIN_VERSIONS[$plugin_name]:-}" ]]; then
+  if ! plugin_version_for "$plugin_name" >/dev/null 2>&1; then
     echo "   📦 $plugin_name: $current_version (from transport go.mod)"
-    PLUGIN_VERSIONS["$plugin_name"]="$current_version"
+    add_plugin_version "$plugin_name" "$current_version"
   fi
 done < <(grep "github.com/maximhq/bifrost/plugins/" go.mod)
 cd ..
@@ -67,8 +107,8 @@ echo "🔧 Using versions:"
 echo "   Core: $CORE_VERSION"
 echo "   Framework: $FRAMEWORK_VERSION"
 echo "   Plugins:"
-for plugin_name in "${!PLUGIN_VERSIONS[@]}"; do
-  echo "     - $plugin_name: ${PLUGIN_VERSIONS[$plugin_name]}"
+for i in "${!PLUGIN_NAMES[@]}"; do
+  echo "     - ${PLUGIN_NAMES[$i]}: ${PLUGIN_VERSIONS[$i]}"
 done
 
 # Update transport dependencies to use plugin versions from version files
@@ -79,10 +119,11 @@ cd transports
 
 # Normalize the local go.mod directive up front so prior-release artifacts
 # (e.g. `go 1.26.2` written by earlier `go get` runs) don't trip GOTOOLCHAIN=local.
-go mod edit -go=1.26.4 -toolchain=none
+go mod edit -go=1.26.5 -toolchain=none
 
-for plugin_name in "${!PLUGIN_VERSIONS[@]}"; do
-  plugin_version="${PLUGIN_VERSIONS[$plugin_name]}"
+for i in "${!PLUGIN_NAMES[@]}"; do
+  plugin_name="${PLUGIN_NAMES[$i]}"
+  plugin_version="${PLUGIN_VERSIONS[$i]}"
 
   # Check if transport depends on this plugin
   if grep -q "github.com/maximhq/bifrost/plugins/$plugin_name" go.mod; then
@@ -101,7 +142,7 @@ echo "  📦 Updating framework to $FRAMEWORK_VERSION"
 go mod edit -require="github.com/maximhq/bifrost/framework@$FRAMEWORK_VERSION"
 
 # Re-normalize before tidy in case any edit reintroduced a toolchain line
-go mod edit -go=1.26.4 -toolchain=none
+go mod edit -go=1.26.5 -toolchain=none
 go mod tidy
 
 cd ..
