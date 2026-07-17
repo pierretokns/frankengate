@@ -54,6 +54,7 @@ func (a *Accumulator) processAccumulatedAudioStreamingChunks(requestID string, b
 		TokenUsage:       nil,
 		CacheDebug:       nil,
 		Cost:             nil,
+		Capture:          accumulator.captureSnapshotLocked(),
 	}
 	completeMessage := a.buildCompleteMessageFromAudioStreamChunks(accumulator.AudioStreamChunks)
 	if !isFinalChunk {
@@ -138,7 +139,8 @@ func (a *Accumulator) processAudioStreamingResponse(ctx *schemas.BifrostContext,
 		}
 		chunk.Delta = newDelta
 		if result.SpeechStreamResponse.ExtraFields.RawResponse != nil {
-			chunk.RawResponse = bifrost.Ptr(fmt.Sprintf("%v", result.SpeechStreamResponse.ExtraFields.RawResponse))
+			chunk.rawResponseCandidate = result.SpeechStreamResponse.ExtraFields.RawResponse
+			chunk.captureRawResponse = shouldCaptureRawResponse(ctx)
 		}
 		if result.SpeechStreamResponse.Usage != nil {
 			chunk.TokenUsage = result.SpeechStreamResponse.Usage

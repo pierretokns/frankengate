@@ -909,6 +909,7 @@ func (a *Accumulator) processAccumulatedResponsesStreamingChunks(requestID strin
 		TokenUsage:       nil,
 		CacheDebug:       nil,
 		Cost:             nil,
+		Capture:          accumulator.captureSnapshotLocked(),
 	}
 
 	// Build complete messages from accumulated chunks
@@ -995,7 +996,8 @@ func (a *Accumulator) processResponsesStreamingResponse(ctx *schemas.BifrostCont
 		chunk.FinishReason = bifrost.Ptr("error")
 		if bifrostErr.ExtraFields.RawResponse != nil {
 			if rawBytes, marshalErr := sonic.Marshal(bifrostErr.ExtraFields.RawResponse); marshalErr == nil {
-				chunk.RawResponse = bifrost.Ptr(string(rawBytes))
+				chunk.rawResponseCandidate = string(rawBytes)
+				chunk.captureRawResponse = shouldCaptureRawResponse(ctx)
 			}
 		}
 		// Assign a stable trailing index; reuse on duplicate plugin calls so dedup fires correctly.
@@ -1005,7 +1007,8 @@ func (a *Accumulator) processResponsesStreamingResponse(ctx *schemas.BifrostCont
 		accumulator.mu.Unlock()
 	} else if result != nil && result.ResponsesStreamResponse != nil {
 		if result.ResponsesStreamResponse.ExtraFields.RawResponse != nil {
-			chunk.RawResponse = bifrost.Ptr(fmt.Sprintf("%v", result.ResponsesStreamResponse.ExtraFields.RawResponse))
+			chunk.rawResponseCandidate = result.ResponsesStreamResponse.ExtraFields.RawResponse
+			chunk.captureRawResponse = shouldCaptureRawResponse(ctx)
 		}
 		// Store a deep copy of the stream response to prevent shared data mutation between plugins
 		chunk.StreamResponse = deepCopyResponsesStreamResponse(result.ResponsesStreamResponse)

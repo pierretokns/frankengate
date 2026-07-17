@@ -1,6 +1,7 @@
 package streaming
 
 import (
+	"hash"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -44,73 +45,141 @@ type AccumulatedData struct {
 	FinishReason          *string
 	LogProbs              *schemas.BifrostLogProbs
 	RawResponse           *string
+	Capture               *StreamCaptureMetadata
+}
+
+// StreamCaptureMode describes how much stream payload the accumulator retained.
+type StreamCaptureMode string
+
+const (
+	StreamCaptureModeFull         StreamCaptureMode = "full"
+	StreamCaptureModeMetadataOnly StreamCaptureMode = "metadata_only"
+	StreamCaptureModeDrop         StreamCaptureMode = "drop"
+)
+
+// StreamCapturePurpose identifies the accumulator payload bucket being measured.
+type StreamCapturePurpose string
+
+const (
+	StreamCapturePurposeOutput             StreamCapturePurpose = "output"
+	StreamCapturePurposeRawResponse        StreamCapturePurpose = "raw_response"
+	StreamCapturePurposePassthroughBody    StreamCapturePurpose = "passthrough_body"
+	StreamCapturePurposePassthroughHeaders StreamCapturePurpose = "passthrough_headers"
+)
+
+const (
+	StreamCaptureReasonDisabled        = "disabled"
+	StreamCaptureReasonByteLimit       = "byte_limit"
+	StreamCaptureReasonTimeLimit       = "time_limit"
+	StreamCaptureReasonOutputDowngrade = "output_downgrade"
+)
+
+// StreamCapturePurposeMetadata is fixed-size metadata for one capture purpose.
+// It can be retained after payload bytes are dropped.
+type StreamCapturePurposeMetadata struct {
+	Mode          StreamCaptureMode
+	Reason        string
+	RetainedBytes int64
+	DroppedBytes  int64
+	ChunksSeen    int64
+	DigestSHA256  string
+}
+
+// StreamCaptureMetadata records retained/drop state by purpose.
+type StreamCaptureMetadata struct {
+	Output             StreamCapturePurposeMetadata
+	RawResponse        StreamCapturePurposeMetadata
+	PassthroughBody    StreamCapturePurposeMetadata
+	PassthroughHeaders StreamCapturePurposeMetadata
+}
+
+// StreamRetentionEvent is emitted after retained-byte metadata changes.
+type StreamRetentionEvent struct {
+	RequestID     string
+	Purpose       StreamCapturePurpose
+	Mode          StreamCaptureMode
+	Reason        string
+	RetainedBytes int64
+	DroppedBytes  int64
+	ChunksSeen    int64
+	DigestSHA256  string
 }
 
 // AudioStreamChunk represents a single streaming chunk
 type AudioStreamChunk struct {
-	Timestamp          time.Time                            // When chunk was received
-	Delta              *schemas.BifrostSpeechStreamResponse // The actual delta content
-	FinishReason       *string                              // If this is the final chunk
-	TokenUsage         *schemas.SpeechUsage                 // Token usage if available
-	SemanticCacheDebug *schemas.BifrostCacheDebug           // Semantic cache debug if available
-	Cost               *float64                             // Cost in dollars from pricing plugin
-	ErrorDetails       *schemas.BifrostError                // Error if any
-	ChunkIndex         int                                  // Index of the chunk in the stream
-	RawResponse        *string
+	Timestamp            time.Time                            // When chunk was received
+	Delta                *schemas.BifrostSpeechStreamResponse // The actual delta content
+	FinishReason         *string                              // If this is the final chunk
+	TokenUsage           *schemas.SpeechUsage                 // Token usage if available
+	SemanticCacheDebug   *schemas.BifrostCacheDebug           // Semantic cache debug if available
+	Cost                 *float64                             // Cost in dollars from pricing plugin
+	ErrorDetails         *schemas.BifrostError                // Error if any
+	ChunkIndex           int                                  // Index of the chunk in the stream
+	RawResponse          *string
+	rawResponseCandidate interface{}
+	captureRawResponse   bool
 }
 
 // TranscriptionStreamChunk represents a single transcription streaming chunk
 type TranscriptionStreamChunk struct {
-	Timestamp          time.Time                                   // When chunk was received
-	Delta              *schemas.BifrostTranscriptionStreamResponse // The actual delta content
-	FinishReason       *string                                     // If this is the final chunk
-	TokenUsage         *schemas.TranscriptionUsage                 // Token usage if available
-	SemanticCacheDebug *schemas.BifrostCacheDebug                  // Semantic cache debug if available
-	Cost               *float64                                    // Cost in dollars from pricing plugin
-	ErrorDetails       *schemas.BifrostError                       // Error if any
-	ChunkIndex         int                                         // Index of the chunk in the stream
-	RawResponse        *string
+	Timestamp            time.Time                                   // When chunk was received
+	Delta                *schemas.BifrostTranscriptionStreamResponse // The actual delta content
+	FinishReason         *string                                     // If this is the final chunk
+	TokenUsage           *schemas.TranscriptionUsage                 // Token usage if available
+	SemanticCacheDebug   *schemas.BifrostCacheDebug                  // Semantic cache debug if available
+	Cost                 *float64                                    // Cost in dollars from pricing plugin
+	ErrorDetails         *schemas.BifrostError                       // Error if any
+	ChunkIndex           int                                         // Index of the chunk in the stream
+	RawResponse          *string
+	rawResponseCandidate interface{}
+	captureRawResponse   bool
 }
 
 // ChatStreamChunk represents a single streaming chunk
 type ChatStreamChunk struct {
-	Timestamp          time.Time                              // When chunk was received
-	Delta              *schemas.ChatStreamResponseChoiceDelta // The actual delta content
-	FinishReason       *string                                // If this is the final chunk
-	LogProbs           *schemas.BifrostLogProbs               // LogProbs if available
-	TokenUsage         *schemas.BifrostLLMUsage               // Token usage if available
-	SemanticCacheDebug *schemas.BifrostCacheDebug             // Semantic cache debug if available
-	Cost               *float64                               // Cost in dollars from pricing plugin
-	ErrorDetails       *schemas.BifrostError                  // Error if any
-	ChunkIndex         int                                    // Index of the chunk in the stream
-	RawResponse        *string                                // Raw response if available
+	Timestamp            time.Time                              // When chunk was received
+	Delta                *schemas.ChatStreamResponseChoiceDelta // The actual delta content
+	FinishReason         *string                                // If this is the final chunk
+	LogProbs             *schemas.BifrostLogProbs               // LogProbs if available
+	TokenUsage           *schemas.BifrostLLMUsage               // Token usage if available
+	SemanticCacheDebug   *schemas.BifrostCacheDebug             // Semantic cache debug if available
+	Cost                 *float64                               // Cost in dollars from pricing plugin
+	ErrorDetails         *schemas.BifrostError                  // Error if any
+	ChunkIndex           int                                    // Index of the chunk in the stream
+	RawResponse          *string                                // Raw response if available
+	rawResponseCandidate interface{}
+	captureRawResponse   bool
 }
 
 // ResponsesStreamChunk represents a single responses streaming chunk
 type ResponsesStreamChunk struct {
-	Timestamp          time.Time                               // When chunk was received
-	StreamResponse     *schemas.BifrostResponsesStreamResponse // The actual stream response
-	FinishReason       *string                                 // If this is the final chunk
-	TokenUsage         *schemas.BifrostLLMUsage                // Token usage if available
-	SemanticCacheDebug *schemas.BifrostCacheDebug              // Semantic cache debug if available
-	Cost               *float64                                // Cost in dollars from pricing plugin
-	ErrorDetails       *schemas.BifrostError                   // Error if any
-	ChunkIndex         int                                     // Index of the chunk in the stream
-	RawResponse        *string
+	Timestamp            time.Time                               // When chunk was received
+	StreamResponse       *schemas.BifrostResponsesStreamResponse // The actual stream response
+	FinishReason         *string                                 // If this is the final chunk
+	TokenUsage           *schemas.BifrostLLMUsage                // Token usage if available
+	SemanticCacheDebug   *schemas.BifrostCacheDebug              // Semantic cache debug if available
+	Cost                 *float64                                // Cost in dollars from pricing plugin
+	ErrorDetails         *schemas.BifrostError                   // Error if any
+	ChunkIndex           int                                     // Index of the chunk in the stream
+	RawResponse          *string
+	rawResponseCandidate interface{}
+	captureRawResponse   bool
 }
 
 // ImageStreamChunk represents a single image streaming chunk
 type ImageStreamChunk struct {
-	Timestamp          time.Time                                     // When chunk was received
-	Delta              *schemas.BifrostImageGenerationStreamResponse // The actual stream response
-	FinishReason       *string                                       // If this is the final chunk
-	ChunkIndex         int                                           // Index of the chunk in the stream
-	ImageIndex         int                                           // Index of the image in the stream
-	ErrorDetails       *schemas.BifrostError                         // Error if any
-	Cost               *float64                                      // Cost in dollars from pricing plugin
-	SemanticCacheDebug *schemas.BifrostCacheDebug                    // Semantic cache debug if available
-	TokenUsage         *schemas.ImageUsage                           // Token usage if available
-	RawResponse        *string                                       // Raw response if available
+	Timestamp            time.Time                                     // When chunk was received
+	Delta                *schemas.BifrostImageGenerationStreamResponse // The actual stream response
+	FinishReason         *string                                       // If this is the final chunk
+	ChunkIndex           int                                           // Index of the chunk in the stream
+	ImageIndex           int                                           // Index of the image in the stream
+	ErrorDetails         *schemas.BifrostError                         // Error if any
+	Cost                 *float64                                      // Cost in dollars from pricing plugin
+	SemanticCacheDebug   *schemas.BifrostCacheDebug                    // Semantic cache debug if available
+	TokenUsage           *schemas.ImageUsage                           // Token usage if available
+	RawResponse          *string                                       // Raw response if available
+	rawResponseCandidate interface{}
+	captureRawResponse   bool
 }
 
 // StreamAccumulator manages accumulation of streaming chunks
@@ -149,11 +218,26 @@ type StreamAccumulator struct {
 	PassthroughHeaders    map[string]string // Headers from passthrough response
 	PassthroughPath       string            // Stripped provider path, e.g. "/v1/chat/completions"
 
-	IsComplete     bool
-	FinalTimestamp time.Time
-	mu             sync.Mutex
-	Timestamp      time.Time
-	refCount       atomic.Int64
+	IsComplete              bool
+	FinalTimestamp          time.Time
+	mu                      sync.Mutex
+	Timestamp               time.Time
+	refCount                atomic.Int64
+	capture                 StreamCaptureMetadata
+	outputDigest            hash.Hash
+	rawDigest               hash.Hash
+	passthroughDigest       hash.Hash
+	passthroughHeaderDigest hash.Hash
+
+	metadataOnlyChatChunk          *ChatStreamChunk
+	metadataOnlyResponsesChunk     *ResponsesStreamChunk
+	metadataOnlyAudioChunk         *AudioStreamChunk
+	metadataOnlyTranscriptionChunk *TranscriptionStreamChunk
+	metadataOnlyImageChunk         *ImageStreamChunk
+	pendingRetentionEvents         []StreamRetentionEvent
+	cancelWatchOnce                sync.Once
+	cancelWatchStopOnce            sync.Once
+	cancelWatchDone                chan struct{}
 
 	// Pause/Resume gate state. All guarded by mu.
 	// gateState transitions: Active -> Paused -> Active (replay) | Ended.
@@ -207,6 +291,9 @@ func (sa *StreamAccumulator) getLastChatChunkLocked() *ChatStreamChunk {
 	if sa.MaxChatChunkIndex < 0 {
 		return nil
 	}
+	if sa.metadataOnlyChatChunk != nil && sa.metadataOnlyChatChunk.ChunkIndex == sa.MaxChatChunkIndex {
+		return sa.metadataOnlyChatChunk
+	}
 	for _, chunk := range sa.ChatStreamChunks {
 		if chunk.ChunkIndex == sa.MaxChatChunkIndex {
 			return chunk
@@ -231,6 +318,9 @@ func (sa *StreamAccumulator) getChatFinishReasonLocked() *string {
 			maxIdx = chunk.ChunkIndex
 		}
 	}
+	if sa.metadataOnlyChatChunk != nil && sa.metadataOnlyChatChunk.FinishReason != nil && sa.metadataOnlyChatChunk.ChunkIndex > maxIdx {
+		finishReason = sa.metadataOnlyChatChunk.FinishReason
+	}
 	return finishReason
 }
 
@@ -246,6 +336,9 @@ func (sa *StreamAccumulator) getLastResponsesChunk() *ResponsesStreamChunk {
 func (sa *StreamAccumulator) getLastResponsesChunkLocked() *ResponsesStreamChunk {
 	if sa.MaxResponsesChunkIndex < 0 {
 		return nil
+	}
+	if sa.metadataOnlyResponsesChunk != nil && sa.metadataOnlyResponsesChunk.ChunkIndex == sa.MaxResponsesChunkIndex {
+		return sa.metadataOnlyResponsesChunk
 	}
 	for _, chunk := range sa.ResponsesStreamChunks {
 		if chunk.ChunkIndex == sa.MaxResponsesChunkIndex {
@@ -268,6 +361,9 @@ func (sa *StreamAccumulator) getLastTranscriptionChunkLocked() *TranscriptionStr
 	if sa.MaxTranscriptionChunkIndex < 0 {
 		return nil
 	}
+	if sa.metadataOnlyTranscriptionChunk != nil && sa.metadataOnlyTranscriptionChunk.ChunkIndex == sa.MaxTranscriptionChunkIndex {
+		return sa.metadataOnlyTranscriptionChunk
+	}
 	for _, chunk := range sa.TranscriptionStreamChunks {
 		if chunk.ChunkIndex == sa.MaxTranscriptionChunkIndex {
 			return chunk
@@ -288,6 +384,9 @@ func (sa *StreamAccumulator) getLastAudioChunk() *AudioStreamChunk {
 func (sa *StreamAccumulator) getLastAudioChunkLocked() *AudioStreamChunk {
 	if sa.MaxAudioChunkIndex < 0 {
 		return nil
+	}
+	if sa.metadataOnlyAudioChunk != nil && sa.metadataOnlyAudioChunk.ChunkIndex == sa.MaxAudioChunkIndex {
+		return sa.metadataOnlyAudioChunk
 	}
 	for _, chunk := range sa.AudioStreamChunks {
 		if chunk.ChunkIndex == sa.MaxAudioChunkIndex {

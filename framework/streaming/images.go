@@ -140,6 +140,7 @@ func (a *Accumulator) processAccumulatedImageStreamingChunks(requestID string, b
 		TokenUsage:     nil,
 		CacheDebug:     nil,
 		Cost:           nil,
+		Capture:        acc.captureSnapshotLocked(),
 	}
 
 	// Build complete message from accumulated chunks
@@ -154,8 +155,12 @@ func (a *Accumulator) processAccumulatedImageStreamingChunks(requestID string, b
 	if bifrostErr != nil {
 		data.Status = "error"
 	}
+	lastImageChunk := acc.metadataOnlyImageChunk
 	if len(acc.ImageStreamChunks) > 0 {
-		lastChunk := acc.ImageStreamChunks[len(acc.ImageStreamChunks)-1]
+		lastImageChunk = acc.ImageStreamChunks[len(acc.ImageStreamChunks)-1]
+	}
+	if lastImageChunk != nil {
+		lastChunk := lastImageChunk
 		if lastChunk.Delta != nil && lastChunk.Delta.ExtraFields.Latency > 0 {
 			// Use latency from provider
 			data.Latency = lastChunk.Delta.ExtraFields.Latency
@@ -170,39 +175,39 @@ func (a *Accumulator) processAccumulatedImageStreamingChunks(requestID string, b
 	data.ErrorDetails = bifrostErr
 
 	// Update token usage from final chunk if available
-	if len(acc.ImageStreamChunks) > 0 {
-		lastChunk := acc.ImageStreamChunks[len(acc.ImageStreamChunks)-1]
-		if lastChunk.Delta != nil && lastChunk.Delta.Usage != nil {
-			promptTokens := lastChunk.Delta.Usage.InputTokens
-			if lastChunk.Delta.Usage.InputTokensDetails != nil {
-				promptTokens = lastChunk.Delta.Usage.InputTokensDetails.TextTokens
+	if lastImageChunk != nil {
+		lastChunk := lastImageChunk
+		usage := lastChunk.TokenUsage
+		if usage == nil && lastChunk.Delta != nil {
+			usage = lastChunk.Delta.Usage
+		}
+		if usage != nil {
+			promptTokens := usage.InputTokens
+			if usage.InputTokensDetails != nil {
+				promptTokens = usage.InputTokensDetails.TextTokens
 			}
 			data.TokenUsage = &schemas.BifrostLLMUsage{
 				PromptTokens:     promptTokens,
 				CompletionTokens: 0, // Image generation doesn't have completion tokens
-				TotalTokens:      lastChunk.Delta.Usage.TotalTokens,
+				TotalTokens:      usage.TotalTokens,
 			}
 		}
 	}
 
 	// Update cost from final chunk if available
-	if len(acc.ImageStreamChunks) > 0 {
-		lastChunk := acc.ImageStreamChunks[len(acc.ImageStreamChunks)-1]
-		if lastChunk.Cost != nil {
-			data.Cost = lastChunk.Cost
-		}
+	if lastImageChunk != nil && lastImageChunk.Cost != nil {
+		data.Cost = lastImageChunk.Cost
 	}
 
 	// Update semantic cache debug and raw response from final chunk if available
-	if len(acc.ImageStreamChunks) > 0 {
-		lastChunk := acc.ImageStreamChunks[len(acc.ImageStreamChunks)-1]
-		if lastChunk.SemanticCacheDebug != nil {
-			data.CacheDebug = lastChunk.SemanticCacheDebug
+	if lastImageChunk != nil {
+		if lastImageChunk.SemanticCacheDebug != nil {
+			data.CacheDebug = lastImageChunk.SemanticCacheDebug
 		}
-		if lastChunk.RawResponse != nil {
-			data.RawResponse = lastChunk.RawResponse
+		if lastImageChunk.RawResponse != nil {
+			data.RawResponse = lastImageChunk.RawResponse
 		}
-		data.FinishReason = lastChunk.FinishReason
+		data.FinishReason = lastImageChunk.FinishReason
 	}
 
 	return data, nil
@@ -265,7 +270,8 @@ func (a *Accumulator) processImageStreamingResponse(ctx *schemas.BifrostContext,
 
 		// Extract raw response if available
 		if result.ImageGenerationStreamResponse.ExtraFields.RawResponse != nil {
-			chunk.RawResponse = bifrost.Ptr(fmt.Sprintf("%v", result.ImageGenerationStreamResponse.ExtraFields.RawResponse))
+			chunk.rawResponseCandidate = result.ImageGenerationStreamResponse.ExtraFields.RawResponse
+			chunk.captureRawResponse = shouldCaptureRawResponse(ctx)
 		}
 
 		// Extract usage if available

@@ -425,6 +425,7 @@ func (a *Accumulator) processAccumulatedChatStreamingChunks(requestID string, re
 		TokenUsage:       nil,
 		CacheDebug:       nil,
 		Cost:             nil,
+		Capture:          accumulator.captureSnapshotLocked(),
 	}
 	// Build complete message from accumulated chunks
 	completeMessage := a.buildCompleteMessageFromChatStreamChunks(accumulator.ChatStreamChunks)
@@ -511,7 +512,9 @@ func (a *Accumulator) processAccumulatedChatStreamingChunks(requestID string, re
 
 // processChatStreamingResponse processes a chat streaming response
 func (a *Accumulator) processChatStreamingResponse(ctx *schemas.BifrostContext, result *schemas.BifrostResponse, bifrostErr *schemas.BifrostError) (*ProcessedStreamResponse, error) {
-	a.logger.Debug("[streaming] processing chat streaming response")
+	if a.logger != nil {
+		a.logger.Debug("[streaming] processing chat streaming response")
+	}
 	// Extract accumulator ID from context
 	requestID, ok := getAccumulatorID(ctx)
 	if !ok || requestID == "" {
@@ -551,7 +554,8 @@ func (a *Accumulator) processChatStreamingResponse(ctx *schemas.BifrostContext, 
 		}
 		chunk.ChunkIndex = result.TextCompletionResponse.ExtraFields.ChunkIndex
 		if result.TextCompletionResponse.ExtraFields.RawResponse != nil {
-			chunk.RawResponse = bifrost.Ptr(fmt.Sprintf("%v", result.TextCompletionResponse.ExtraFields.RawResponse))
+			chunk.rawResponseCandidate = result.TextCompletionResponse.ExtraFields.RawResponse
+			chunk.captureRawResponse = shouldCaptureRawResponse(ctx)
 		}
 		if isFinalChunk {
 			if a.pricingManager != nil {
@@ -577,7 +581,8 @@ func (a *Accumulator) processChatStreamingResponse(ctx *schemas.BifrostContext, 
 		}
 		chunk.ChunkIndex = result.ChatResponse.ExtraFields.ChunkIndex
 		if result.ChatResponse.ExtraFields.RawResponse != nil {
-			chunk.RawResponse = bifrost.Ptr(fmt.Sprintf("%v", result.ChatResponse.ExtraFields.RawResponse))
+			chunk.rawResponseCandidate = result.ChatResponse.ExtraFields.RawResponse
+			chunk.captureRawResponse = shouldCaptureRawResponse(ctx)
 		}
 		if isFinalChunk {
 			if a.pricingManager != nil {

@@ -2,7 +2,6 @@ package streaming
 
 import (
 	"fmt"
-	"maps"
 	"time"
 
 	bifrost "github.com/maximhq/bifrost/core"
@@ -25,6 +24,13 @@ func (a *Accumulator) processPassthroughStreamingResponse(ctx *schemas.BifrostCo
 	accumulator := a.getOrCreateStreamAccumulator(requestID)
 	accumulator.mu.Lock()
 	defer accumulator.mu.Unlock()
+	now := time.Now()
+	if accumulator.StartTimestamp.IsZero() {
+		accumulator.StartTimestamp = now
+	}
+	if accumulator.FirstChunkTimestamp.IsZero() {
+		accumulator.FirstChunkTimestamp = now
+	}
 
 	// Initialize headers map on first chunk
 	if accumulator.PassthroughHeaders == nil {
@@ -38,7 +44,7 @@ func (a *Accumulator) processPassthroughStreamingResponse(ctx *schemas.BifrostCo
 
 	// Accumulate headers if they are present in this chunk (some providers may send headers in multiple chunks)
 	if result != nil && result.PassthroughResponse != nil && len(result.PassthroughResponse.Headers) > 0 {
-		maps.Copy(accumulator.PassthroughHeaders, result.PassthroughResponse.Headers)
+		a.retainPassthroughHeadersLocked(accumulator, result.PassthroughResponse.Headers)
 	}
 
 	// Save path from the first chunk that carries it (set once in ExtraFields by the provider)
@@ -48,10 +54,10 @@ func (a *Accumulator) processPassthroughStreamingResponse(ctx *schemas.BifrostCo
 
 	// Accumulate the body bytes from this chunk
 	if result != nil && result.PassthroughResponse != nil && len(result.PassthroughResponse.Body) > 0 {
-		// Make a copy of the body bytes to avoid referencing pooled memory
-		bodyBytes := make([]byte, len(result.PassthroughResponse.Body))
-		copy(bodyBytes, result.PassthroughResponse.Body)
-		accumulator.PassthroughBody = append(accumulator.PassthroughBody, bodyBytes...)
+		bodyBytes := a.retainPassthroughBodyLocked(accumulator, result.PassthroughResponse.Body, now)
+		if len(bodyBytes) > 0 {
+			accumulator.PassthroughBody = append(accumulator.PassthroughBody, bodyBytes...)
+		}
 	}
 
 	// For non-final chunks, return early without processing
@@ -70,7 +76,7 @@ func (a *Accumulator) processPassthroughStreamingResponse(ctx *schemas.BifrostCo
 	// Mark accumulator as complete
 	if !accumulator.IsComplete {
 		accumulator.IsComplete = true
-		accumulator.FinalTimestamp = time.Now()
+		accumulator.FinalTimestamp = now
 	}
 
 	// PassthroughUsage is set by the provider on the final EOF chunk before any
@@ -89,6 +95,14 @@ func (a *Accumulator) processPassthroughStreamingResponse(ctx *schemas.BifrostCo
 		PassthroughUsage: passthroughUsage,
 	}
 
+	var rawResponse *string
+	if result != nil {
+		extraFields := result.GetExtraFields()
+		if extraFields.RawResponse != nil {
+			rawResponse = a.captureRawResponseLocked(accumulator, shouldCaptureRawResponse(ctx), extraFields.RawResponse, now)
+		}
+	}
+
 	// Build accumulated data with the passthrough response.
 	// Populate TokenUsage from PassthroughUsage.LLMUsage so applyStreamingOutputToEntry sets
 	// entry.TokenUsageParsed via the standard streaming token path.
@@ -100,6 +114,8 @@ func (a *Accumulator) processPassthroughStreamingResponse(ctx *schemas.BifrostCo
 		StartTimestamp:    accumulator.StartTimestamp,
 		EndTimestamp:      accumulator.FinalTimestamp,
 		PassthroughOutput: passthroughResp,
+		RawResponse:       rawResponse,
+		Capture:           accumulator.captureSnapshotLocked(),
 	}
 	if passthroughUsage != nil && passthroughUsage.LLMUsage != nil {
 		data.TokenUsage = passthroughUsage.LLMUsage
@@ -116,10 +132,6 @@ func (a *Accumulator) processPassthroughStreamingResponse(ctx *schemas.BifrostCo
 		extraFields := result.GetExtraFields()
 		if extraFields.Latency > 0 {
 			data.Latency = extraFields.Latency
-		}
-		if extraFields.RawResponse != nil {
-			rawResp := fmt.Sprintf("%v", extraFields.RawResponse)
-			data.RawResponse = &rawResp
 		}
 		// Populate extra fields on the passthrough response
 		passthroughResp.ExtraFields = *extraFields

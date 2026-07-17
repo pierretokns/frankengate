@@ -60,6 +60,7 @@ func (a *Accumulator) processAccumulatedTranscriptionStreamingChunks(requestID s
 		TokenUsage:       nil,
 		CacheDebug:       nil,
 		Cost:             nil,
+		Capture:          accumulator.captureSnapshotLocked(),
 	}
 	// Build complete message from accumulated chunks
 	completeMessage := a.buildCompleteMessageFromTranscriptionStreamChunks(accumulator.TranscriptionStreamChunks)
@@ -159,7 +160,8 @@ func (a *Accumulator) processTranscriptionStreamingResponse(ctx *schemas.Bifrost
 		}
 		chunk.ChunkIndex = result.TranscriptionStreamResponse.ExtraFields.ChunkIndex
 		if result.TranscriptionStreamResponse.ExtraFields.RawResponse != nil {
-			chunk.RawResponse = bifrost.Ptr(fmt.Sprintf("%v", result.TranscriptionStreamResponse.ExtraFields.RawResponse))
+			chunk.rawResponseCandidate = result.TranscriptionStreamResponse.ExtraFields.RawResponse
+			chunk.captureRawResponse = shouldCaptureRawResponse(ctx)
 		}
 		if isFinalChunk {
 			if a.pricingManager != nil {
