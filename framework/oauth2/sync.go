@@ -200,6 +200,15 @@ func (w *PerUserOAuthSweepWorker) Stop() {
 }
 
 func (w *PerUserOAuthSweepWorker) run(ctx context.Context) {
+	// Sweeps are maintenance work and must never be able to take down the
+	// gateway. A driver/schema panic is logged and terminates this worker; the
+	// request-serving process remains available for an operator to restart or
+	// reconcile the worker.
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			w.logger.Error("per-user OAuth sweep worker recovered from panic: %v", recovered)
+		}
+	}()
 	flowTicker := time.NewTicker(w.flowSweepEvery)
 	defer flowTicker.Stop()
 	orphanTicker := time.NewTicker(w.orphanSweepEvery)
