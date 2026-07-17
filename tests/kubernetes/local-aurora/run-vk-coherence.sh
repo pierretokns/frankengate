@@ -18,17 +18,19 @@ VK_COHERENCE_REPLICAS="${VK_COHERENCE_REPLICAS:-100}"
 VK_COHERENCE_MIN_REPLICAS="${VK_COHERENCE_MIN_REPLICAS:-2}"
 REQUIRE_DISTINCT_NODES="${REQUIRE_DISTINCT_NODES:-0}"
 VK_COHERENCE_STORM_REQUESTS="${VK_COHERENCE_STORM_REQUESTS:-$((VK_COHERENCE_REPLICAS * 2))}"
+BINARY_SERVER_REPLICAS="${BINARY_SERVER_REPLICAS:-5}"
 [[ "$VK_COHERENCE_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_REPLICAS must be a positive integer" >&2; exit 1; }
 [[ "$VK_COHERENCE_MIN_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_MIN_REPLICAS must be a positive integer" >&2; exit 1; }
 (( VK_COHERENCE_MIN_REPLICAS < VK_COHERENCE_REPLICAS )) || { echo "VK_COHERENCE_MIN_REPLICAS must be less than VK_COHERENCE_REPLICAS" >&2; exit 1; }
 [[ "$VK_COHERENCE_STORM_REQUESTS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_STORM_REQUESTS must be a positive integer" >&2; exit 1; }
+[[ "$BINARY_SERVER_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "BINARY_SERVER_REPLICAS must be a positive integer" >&2; exit 1; }
 
 cleanup() {
   local status=$?
   trap - EXIT
   if [[ "$KEEP_FIXTURE" != "1" ]]; then
     kubectl -n "$NAMESPACE" delete deployment/frankengate-vk service/frankengate-vk \
-      pod/frankengate-binary service/frankengate-binary configmap/frankengate-vk-config \
+      pod -l app.kubernetes.io/name=frankengate-binary service/frankengate-binary configmap/frankengate-vk-config \
       --ignore-not-found --wait=false >/dev/null 2>&1 || true
   fi
   rm -rf "$WORK_DIR"
@@ -87,19 +89,31 @@ kubectl -n "$NAMESPACE" delete deployment/frankengate-vk --ignore-not-found --wa
 kubectl -n "$NAMESPACE" exec postgres-0 -- psql -v ON_ERROR_STOP=1 -U frankengate -d frankengate \
   -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO frankengate;'
 
-kubectl -n "$NAMESPACE" delete pod/frankengate-binary --ignore-not-found --wait=true >/dev/null
-kubectl -n "$NAMESPACE" run frankengate-binary \
-  --image="$POSTGRES_IMAGE" --image-pull-policy=IfNotPresent \
-  --labels='app.kubernetes.io/name=frankengate-binary,frankengate.dev/test-only=true' \
-  --overrides='{"spec":{"affinity":{"podAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchLabels":{"app.kubernetes.io/name":"postgres"}},"topologyKey":"kubernetes.io/hostname"}]}}}}' \
-  --restart=Never --command -- sleep 3600
-kubectl -n "$NAMESPACE" wait --for=condition=Ready pod/frankengate-binary --timeout=120s
+kubectl -n "$NAMESPACE" delete pod -l app.kubernetes.io/name=frankengate-binary --ignore-not-found --wait=true >/dev/null
+for i in $(seq 0 $((BINARY_SERVER_REPLICAS - 1))); do
+  binary_pod="frankengate-binary"
+  (( i == 0 )) || binary_pod="frankengate-binary-$i"
+  kubectl -n "$NAMESPACE" run "$binary_pod" \
+    --image="$POSTGRES_IMAGE" --image-pull-policy=IfNotPresent \
+    --labels='app.kubernetes.io/name=frankengate-binary,frankengate.dev/test-only=true' \
+    --overrides='{"spec":{"affinity":{"podAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchLabels":{"app.kubernetes.io/name":"postgres"}},"topologyKey":"kubernetes.io/hostname"}]}}}}' \
+    --restart=Never --command -- sleep 3600
+done
+for i in $(seq 0 $((BINARY_SERVER_REPLICAS - 1))); do
+  binary_pod="frankengate-binary"
+  (( i == 0 )) || binary_pod="frankengate-binary-$i"
+  kubectl -n "$NAMESPACE" wait --for=condition=Ready "pod/$binary_pod" --timeout=120s
+done
 if [[ -z "$FRANKENGATE_IMAGE" ]]; then
-  kubectl -n "$NAMESPACE" cp "$BINARY" frankengate-binary:/tmp/frankengate
-  kubectl -n "$NAMESPACE" cp "$SERVER_SCRIPT" frankengate-binary:/tmp/serve-binary.sh
-  kubectl -n "$NAMESPACE" exec frankengate-binary -- chmod 0555 /tmp/frankengate /tmp/serve-binary.sh
-  kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c \
-    'nohup /tmp/serve-binary.sh /tmp/frankengate 18080 >/tmp/binary-server.log 2>&1 &'
+  for i in $(seq 0 $((BINARY_SERVER_REPLICAS - 1))); do
+    pod="frankengate-binary"
+    (( i == 0 )) || pod="frankengate-binary-$i"
+    kubectl -n "$NAMESPACE" cp "$BINARY" "$pod":/tmp/frankengate
+    kubectl -n "$NAMESPACE" cp "$SERVER_SCRIPT" "$pod":/tmp/serve-binary.sh
+    kubectl -n "$NAMESPACE" exec "$pod" -- chmod 0555 /tmp/frankengate /tmp/serve-binary.sh
+    kubectl -n "$NAMESPACE" exec "$pod" -- sh -c \
+      'nohup /tmp/serve-binary.sh /tmp/frankengate 18080 >/tmp/binary-server.log 2>&1 &'
+  done
   if ! kubectl -n "$NAMESPACE" get service/frankengate-binary >/dev/null 2>&1; then
     kubectl -n "$NAMESPACE" expose pod/frankengate-binary --name=frankengate-binary --port=18080 --target-port=18080
   fi
