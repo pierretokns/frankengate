@@ -57,7 +57,18 @@ data:
           "disable_auth_on_inference": false
         },
         "virtual_keys": []
-      }
+      },
+      "plugins": [
+        {
+          "name": "governance",
+          "enabled": true,
+          "config": {
+            "reservation_max_tokens": 128,
+            "reservation_cost_micros_per_token": 1,
+            "reservation_allow_overdraft": false
+          }
+        }
+      ]
     }
 ---
 apiVersion: apps/v1
