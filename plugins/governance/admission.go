@@ -58,6 +58,67 @@ type OverdraftNotifier interface {
 	Notify(context.Context, OverdraftEvent) error
 }
 
+// SNSPublisher is the narrow AWS adapter boundary. The governance package
+// does not construct AWS clients, preserving cheap tests and allowing the
+// transport to inject an SDK v2 publisher, local emulator, or policy wrapper.
+type SNSPublisher interface {
+	Publish(context.Context, string, string, string) error // topic ARN, subject, body
+}
+
+type EmailSender interface {
+	Send(context.Context, string, []string, string, string) error // from, recipients, subject, body
+}
+
+// SNSOverdraftNotifier adapts an injected publisher to the asynchronous
+// OverdraftNotifier contract. It validates configuration and serializes a
+// stable JSON event; delivery is still expected to run behind the bounded
+// AsyncOverdraftNotifier.
+type SNSOverdraftNotifier struct {
+	Publisher SNSPublisher
+	TopicARN  string
+	Subject   string
+}
+
+func (n *SNSOverdraftNotifier) Notify(ctx context.Context, event OverdraftEvent) error {
+	if n == nil || n.Publisher == nil || n.TopicARN == "" {
+		return fmt.Errorf("SNS notifier is not configured")
+	}
+	body, err := json.Marshal(event)
+	if err != nil {
+		return fmt.Errorf("marshal SNS overdraft event: %w", err)
+	}
+	subject := n.Subject
+	if subject == "" {
+		subject = "FrankenGate overdraft alert"
+	}
+	return n.Publisher.Publish(ctx, n.TopicARN, subject, string(body))
+}
+
+// EmailOverdraftNotifier adapts an injected mail sender. Recipient lists are
+// copied at construction/use boundaries by the caller and never sourced from
+// request data, preventing accidental per-request fanout or label leakage.
+type EmailOverdraftNotifier struct {
+	Sender     EmailSender
+	From       string
+	Recipients []string
+	Subject    string
+}
+
+func (n *EmailOverdraftNotifier) Notify(ctx context.Context, event OverdraftEvent) error {
+	if n == nil || n.Sender == nil || n.From == "" || len(n.Recipients) == 0 {
+		return fmt.Errorf("email notifier is not configured")
+	}
+	body, err := json.Marshal(event)
+	if err != nil {
+		return fmt.Errorf("marshal email overdraft event: %w", err)
+	}
+	subject := n.Subject
+	if subject == "" {
+		subject = "FrankenGate overdraft alert"
+	}
+	return n.Sender.Send(ctx, n.From, append([]string(nil), n.Recipients...), subject, string(body))
+}
+
 // MetricsSink is an optional, exporter-neutral governance metrics contract.
 // Implementations must be non-blocking and keep label cardinality bounded;
 // governance never imports Prometheus or OpenTelemetry directly.

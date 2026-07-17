@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -51,6 +52,41 @@ func TestWebhookOverdraftNotifierDoesNotRetryClientErrors(t *testing.T) {
 	err := n.Notify(context.Background(), OverdraftEvent{ReservationID: "reservation-2"})
 	require.Error(t, err)
 	require.Equal(t, 1, attempts)
+}
+
+type fakeSNSPublisher struct{ topic, subject, body string }
+
+func (p *fakeSNSPublisher) Publish(_ context.Context, topic, subject, body string) error {
+	p.topic, p.subject, p.body = topic, subject, body
+	return nil
+}
+
+type fakeEmailSender struct {
+	from, subject, body string
+	recipients          []string
+}
+
+func (s *fakeEmailSender) Send(_ context.Context, from string, recipients []string, subject, body string) error {
+	s.from, s.recipients, s.subject, s.body = from, append([]string(nil), recipients...), subject, body
+	return nil
+}
+
+func TestNativeOverdraftNotifiersUseInjectedAdapters(t *testing.T) {
+	event := OverdraftEvent{ReservationID: "r-1", Allowed: true}
+	sns := &fakeSNSPublisher{}
+	if err := (&SNSOverdraftNotifier{Publisher: sns, TopicARN: "arn:aws:sns:us-east-1:1:topic"}).Notify(context.Background(), event); err != nil {
+		t.Fatal(err)
+	}
+	if sns.topic == "" || !strings.Contains(sns.body, "r-1") {
+		t.Fatalf("unexpected SNS payload: %#v", sns)
+	}
+	mail := &fakeEmailSender{}
+	if err := (&EmailOverdraftNotifier{Sender: mail, From: "alerts@example.com", Recipients: []string{"ops@example.com"}}).Notify(context.Background(), event); err != nil {
+		t.Fatal(err)
+	}
+	if mail.from == "" || len(mail.recipients) != 1 || !strings.Contains(mail.body, "r-1") {
+		t.Fatalf("unexpected email payload: %#v", mail)
+	}
 }
 
 func TestGovernanceConfigRedactsWebhookSigningKey(t *testing.T) {
