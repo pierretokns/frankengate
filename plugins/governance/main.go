@@ -140,6 +140,17 @@ func (p *GovernancePlugin) SetReservationCoordinator(coordinator ReservationCoor
 	p.cfgMutex.Unlock()
 }
 
+// SetMetricsSink attaches an optional exporter-neutral sink to the durable
+// admission coordinator. The transport uses this to connect OTEL/Prometheus
+// without coupling governance to a particular telemetry backend.
+func (p *GovernancePlugin) SetMetricsSink(sink MetricsSink) {
+	p.cfgMutex.Lock()
+	defer p.cfgMutex.Unlock()
+	if coordinator, ok := p.reservationCoordinator.(*DurableReservationCoordinator); ok {
+		coordinator.Metrics = sink
+	}
+}
+
 func (p *GovernancePlugin) admissionCoordinator() ReservationCoordinator {
 	p.cfgMutex.RLock()
 	defer p.cfgMutex.RUnlock()

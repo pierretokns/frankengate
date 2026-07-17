@@ -240,7 +240,30 @@ func (s *BifrostHTTPServer) LoadPlugins(ctx context.Context) error {
 	}
 	// Sort all plugins by placement group and order
 	s.Config.SortAndRebuildPlugins()
+	s.wireGovernanceMetrics()
 	return nil
+}
+
+// wireGovernanceMetrics connects the optional OTEL exporter to durable
+// governance admission after all built-ins have been instantiated. The
+// governance package remains exporter-neutral and deployments without OTEL
+// retain the same behavior.
+func (s *BifrostHTTPServer) wireGovernanceMetrics() {
+	var governancePlugin *governance.GovernancePlugin
+	var otelPlugin *otel.OtelPlugin
+	if plugins := s.Config.BasePlugins.Load(); plugins != nil {
+		for _, plugin := range *plugins {
+			switch p := plugin.(type) {
+			case *governance.GovernancePlugin:
+				governancePlugin = p
+			case *otel.OtelPlugin:
+				otelPlugin = p
+			}
+		}
+	}
+	if governancePlugin != nil && otelPlugin != nil {
+		governancePlugin.SetMetricsSink(otelPlugin)
+	}
 }
 
 // getPluginConfig retrieves a plugin's config from PluginConfigs by name

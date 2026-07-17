@@ -13,6 +13,7 @@ import (
 
 	"github.com/bytedance/sonic"
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/reservations"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
 	"go.opentelemetry.io/otel/attribute"
@@ -626,6 +627,32 @@ func (p *OtelPlugin) anyMetricsEnabled() bool {
 		}
 	}
 	return false
+}
+
+// ReservationObserved forwards governance admission events to every enabled
+// metrics profile. Labels remain bounded in MetricsExporter.
+func (p *OtelPlugin) ReservationObserved(ctx context.Context, outcome string, amount reservations.Amount) {
+	for _, target := range p.targets {
+		if target.metricsExporter != nil {
+			target.metricsExporter.ReservationObserved(ctx, outcome, amount)
+		}
+	}
+}
+
+func (p *OtelPlugin) OverdraftObserved(ctx context.Context, allowed bool, amount reservations.Amount) {
+	for _, target := range p.targets {
+		if target.metricsExporter != nil {
+			target.metricsExporter.OverdraftObserved(ctx, allowed, amount)
+		}
+	}
+}
+
+func (p *OtelPlugin) NotifierObserved(ctx context.Context, outcome string) {
+	for _, target := range p.targets {
+		if target.metricsExporter != nil {
+			target.metricsExporter.NotifierObserved(ctx, outcome)
+		}
+	}
 }
 
 // RecordHTTPMetrics records HTTP-layer metrics (request count, duration, request/response
