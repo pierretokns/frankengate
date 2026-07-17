@@ -11,6 +11,17 @@ WORK_DIR="$(mktemp -d)"
 BINARY="${FRANKENGATE_BINARY:-$WORK_DIR/frankengate}"
 FRANKENGATE_IMAGE="${FRANKENGATE_IMAGE:-}"
 FRANKENGATE_IMAGE_PULL_POLICY="${FRANKENGATE_IMAGE_PULL_POLICY:-Always}"
+# Stress scale defaults to the 100-pod oracle. Set VK_COHERENCE_REPLICAS=3
+# for a fast smoke run. Distinct-node placement is opt-in because local k3d
+# clusters often have fewer nodes than replicas.
+VK_COHERENCE_REPLICAS="${VK_COHERENCE_REPLICAS:-100}"
+VK_COHERENCE_MIN_REPLICAS="${VK_COHERENCE_MIN_REPLICAS:-2}"
+REQUIRE_DISTINCT_NODES="${REQUIRE_DISTINCT_NODES:-0}"
+VK_COHERENCE_STORM_REQUESTS="${VK_COHERENCE_STORM_REQUESTS:-$((VK_COHERENCE_REPLICAS * 2))}"
+[[ "$VK_COHERENCE_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_REPLICAS must be a positive integer" >&2; exit 1; }
+[[ "$VK_COHERENCE_MIN_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_MIN_REPLICAS must be a positive integer" >&2; exit 1; }
+(( VK_COHERENCE_MIN_REPLICAS < VK_COHERENCE_REPLICAS )) || { echo "VK_COHERENCE_MIN_REPLICAS must be less than VK_COHERENCE_REPLICAS" >&2; exit 1; }
+[[ "$VK_COHERENCE_STORM_REQUESTS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_STORM_REQUESTS must be a positive integer" >&2; exit 1; }
 
 cleanup() {
   local status=$?
@@ -109,6 +120,7 @@ else
 fi
 sed -e "s/__BINARY_SERVICE_IP__/$binary_service_ip/g" \
   -e "s/__ARTIFACT_SHA256__/$artifact_sha256/g" \
+  -e "s/replicas: 3/replicas: $VK_COHERENCE_REPLICAS/" \
   "$MANIFEST" > "$WORK_DIR/gateway.yaml"
 kubectl apply -f "$WORK_DIR/gateway.yaml"
 
@@ -166,7 +178,7 @@ if [[ -n "$FRANKENGATE_IMAGE" ]]; then
     }]}
   ]' --arg pull_policy "$FRANKENGATE_IMAGE_PULL_POLICY")"
   kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=json -p "$image_patch"
-  kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=3
+  kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_REPLICAS"
 fi
 wait_for_gateway_deployment 240
 
@@ -196,23 +208,24 @@ wait_for_ready_gateway_ips() {
   done
 }
 
-wait_for_three_ready_gateway_ips() {
-  wait_for_ready_gateway_ips 3
+wait_for_configured_ready_gateway_ips() {
+  wait_for_ready_gateway_ips "$VK_COHERENCE_REPLICAS"
 }
 
-assert_release_image_spans_three_nodes() {
+assert_release_image_spans_nodes() {
+  [[ "$REQUIRE_DISTINCT_NODES" == "1" ]] || return 0
   [[ -z "$FRANKENGATE_IMAGE" ]] && return 0
   distinct_nodes="$(kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk -o json |
     jq -r '.items[] | select(.metadata.deletionTimestamp == null) | select(any(.status.conditions[]?; .type == "Ready" and .status == "True")) | .spec.nodeName' | sort -u | wc -l | tr -d ' ')"
-  if [[ "$distinct_nodes" -ne 3 ]]; then
-    echo "release-image proof expected 3 distinct Kubernetes nodes, got $distinct_nodes" >&2
+  if [[ "$distinct_nodes" -ne "$VK_COHERENCE_REPLICAS" ]]; then
+    echo "release-image proof expected $VK_COHERENCE_REPLICAS distinct Kubernetes nodes, got $distinct_nodes" >&2
     return 1
   fi
 }
 
 pod_ips=()
-wait_for_three_ready_gateway_ips
-assert_release_image_spans_three_nodes
+wait_for_configured_ready_gateway_ips
+assert_release_image_spans_nodes
 
 wait_for_cache() {
   local expected_state="$1" expected_id="$2" expected_marker="${3:-}"
@@ -355,6 +368,29 @@ created_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$created")"
 wait_for_cache present "$vk_id" "$created_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '200 OK'
 
+# Fan out concurrent reads through every ready replica. This is deliberately
+# independent of the later lifecycle mutations: it detects listener/outbox
+# backpressure and admission errors during a notification-shaped request
+# burst without making a timing claim about provider inference.
+storm_dir="$WORK_DIR/vk-storm"
+mkdir -p "$storm_dir"
+storm_started_ms=$(( $(date +%s%N) / 1000000 ))
+for ((storm_i = 0; storm_i < VK_COHERENCE_STORM_REQUESTS; storm_i++)); do
+  storm_ip="${pod_ips[$((storm_i % ${#pod_ips[@]}))]}"
+  (call_list_models "$storm_ip" "$original_secret" >"$storm_dir/$storm_i" 2>&1 || true) &
+done
+wait
+storm_finished_ms=$(( $(date +%s%N) / 1000000 ))
+storm_failures=0
+for storm_file in "$storm_dir"/*; do
+  grep -q '200 OK' "$storm_file" || storm_failures=$((storm_failures + 1))
+done
+if [[ "$storm_failures" -ne 0 ]]; then
+  echo "VK bootstrap/admission storm had $storm_failures/$VK_COHERENCE_STORM_REQUESTS failures" >&2
+  exit 1
+fi
+storm_elapsed_ms=$((storm_finished_ms - storm_started_ms))
+
 # Exercise durable admission with the disposable provider key. The provider
 # has no reachable upstream in this fixture, so the request is expected to fail
 # at provider execution; the reservation must still be recorded and refunded.
@@ -369,15 +405,15 @@ fi
 # Exercise a real horizontal lifecycle, not only a pod restart: remove one
 # replica, prove the surviving pods still accept the shared key, then add a
 # fresh pod and prove it converges from the durable authority before serving.
-kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=2 >/dev/null
+kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_MIN_REPLICAS" >/dev/null
 wait_for_gateway_deployment 240
-wait_for_ready_gateway_ips 2
+wait_for_ready_gateway_ips "$VK_COHERENCE_MIN_REPLICAS"
 wait_for_cache present "$vk_id" "$created_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '200 OK'
-kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=3 >/dev/null
+kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_REPLICAS" >/dev/null
 wait_for_gateway_deployment 240
-wait_for_three_ready_gateway_ips
-assert_release_image_spans_three_nodes
+wait_for_configured_ready_gateway_ips
+assert_release_image_spans_nodes
 wait_for_cache present "$vk_id" "$created_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '200 OK'
 
@@ -417,8 +453,8 @@ restarted_pod="$(kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=fran
   -o jsonpath='{.items[0].metadata.name}')"
 kubectl -n "$NAMESPACE" delete pod "$restarted_pod" --wait=false >/dev/null
 wait_for_gateway_deployment 240
-wait_for_three_ready_gateway_ips
-assert_release_image_spans_three_nodes
+wait_for_configured_ready_gateway_ips
+assert_release_image_spans_nodes
 wait_for_cache absent "$vk_id"
 assert_vk_status_on_all_pods "$rotated_secret" '401 Unauthorized' 'does not exist or has been revoked'
 assert_chat_vk_rejected_on_all_pods "$rotated_secret" '401 Unauthorized' 'does not exist or has been revoked'
@@ -532,5 +568,7 @@ while :; do
 done
 
 jq -n --arg vk_id "$vk_id" --argjson pods "${#pod_ips[@]}" \
+  --argjson storm_requests "$VK_COHERENCE_STORM_REQUESTS" --argjson storm_failures "$storm_failures" \
+  --argjson storm_elapsed_ms "$storm_elapsed_ms" \
   --arg artifact "${FRANKENGATE_IMAGE:-loose-binary}" \
-  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,create_secret_revealed_once:true,rotation_secret_revealed_once:true,inference_hotpath:{list_models:{create:"accepted-on-all-pods",old_secret_after_rotation:"rejected-on-all-pods",rotated_secret:"accepted-on-all-pods",deleted_secret:"rejected-on-all-pods"},chat_completions:{old_secret_after_rotation:"rejected-on-all-pods",deleted_secret:"rejected-on-all-pods"}},outbox:["reload","reload","delete"],restart_replay:"passed",authority_partition:"list-models-chat-and-mcp-stale-closed-on-all-pods"}'
+  '{ok:true,pods:$pods,artifact:$artifact,virtual_key_id:$vk_id,bootstrap_storm:{requests:$storm_requests,failures:$storm_failures,elapsed_ms:$storm_elapsed_ms},create_secret_revealed_once:true,rotation_secret_revealed_once:true,inference_hotpath:{list_models:{create:"accepted-on-all-pods",old_secret_after_rotation:"rejected-on-all-pods",rotated_secret:"accepted-on-all-pods",deleted_secret:"rejected-on-all-pods"},chat_completions:{old_secret_after_rotation:"rejected-on-all-pods",deleted_secret:"rejected-on-all-pods"}},outbox:["reload","reload","delete"],restart_replay:"passed",authority_partition:"list-models-chat-and-mcp-stale-closed-on-all-pods"}'
