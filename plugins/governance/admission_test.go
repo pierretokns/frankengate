@@ -113,6 +113,19 @@ func TestAsyncOverdraftNotifierCloseDrainsAcceptedEvents(t *testing.T) {
 	require.Error(t, notifier.Notify(ctx, OverdraftEvent{ReservationID: "after-close"}))
 }
 
+func TestDurableReservationCoordinatorSetNotifierClosesPreviousAsyncNotifier(t *testing.T) {
+	ctx := context.Background()
+	old := NewAsyncOverdraftNotifier(ctx, &overdraftNotifier{}, 1)
+	newNotifier := NewAsyncOverdraftNotifier(ctx, &overdraftNotifier{}, 1)
+	coordinator := &DurableReservationCoordinator{}
+	coordinator.SetNotifier(old)
+	coordinator.SetNotifier(newNotifier)
+	// A reload must not leave the old worker running or accepting events.
+	require.Error(t, old.Notify(ctx, OverdraftEvent{ReservationID: "stale"}))
+	coordinator.Close()
+	require.Error(t, newNotifier.Notify(ctx, OverdraftEvent{ReservationID: "closed"}))
+}
+
 type testReservationCoordinator struct {
 	reserveErr error
 	reserved   int

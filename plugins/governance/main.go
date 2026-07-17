@@ -2005,6 +2005,12 @@ func (p *GovernancePlugin) Cleanup() error {
 			p.cancelFunc()
 		}
 		p.wg.Wait() // Wait for all background workers to complete
+		p.cfgMutex.RLock()
+		coordinator := p.reservationCoordinator
+		p.cfgMutex.RUnlock()
+		if closer, ok := coordinator.(interface{ Close() }); ok {
+			closer.Close()
+		}
 		if err := p.tracker.Cleanup(); err != nil {
 			cleanupErr = err
 		}

@@ -279,18 +279,50 @@ type durableReservationHandle struct{ rows []reservations.Reservation }
 // rolls back partial admission, and settles/refunds each row idempotently.
 // Pricing/token estimation is deliberately injected instead of guessed.
 type DurableReservationCoordinator struct {
-	Store     configstore.BudgetReservationStore
-	Estimator ReservationEstimator
-	Lease     time.Duration
-	Now       func() time.Time // injectable clock for deterministic retry/replay tests
-	Overdraft reservations.OverdraftPolicy
-	Notifier  OverdraftNotifier
+	Store      configstore.BudgetReservationStore
+	Estimator  ReservationEstimator
+	Lease      time.Duration
+	Now        func() time.Time // injectable clock for deterministic retry/replay tests
+	Overdraft  reservations.OverdraftPolicy
+	notifierMu sync.RWMutex
+	Notifier   OverdraftNotifier
 }
 
 func (c *DurableReservationCoordinator) SetNotifier(notifier OverdraftNotifier) {
-	if c != nil {
-		c.Notifier = notifier
+	if c == nil {
+		return
 	}
+	c.notifierMu.Lock()
+	old := c.Notifier
+	c.Notifier = notifier
+	c.notifierMu.Unlock()
+	// Plugin reloads replace the coordinator. Close only notifiers that expose
+	// the optional lifecycle hook; the base interface remains compatible with
+	// synchronous/custom implementations.
+	if old != nil && old != notifier {
+		if closer, ok := old.(interface{ Close() }); ok {
+			closer.Close()
+		}
+	}
+}
+
+func (c *DurableReservationCoordinator) notifier() OverdraftNotifier {
+	if c == nil {
+		return nil
+	}
+	c.notifierMu.RLock()
+	defer c.notifierMu.RUnlock()
+	return c.Notifier
+}
+
+// Close releases asynchronous delivery resources during plugin shutdown or
+// replacement. It is intentionally idempotent through the notifier's own
+// lifecycle contract.
+func (c *DurableReservationCoordinator) Close() {
+	if c == nil {
+		return
+	}
+	c.SetNotifier(nil)
 }
 
 func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req AdmissionRequest) (any, error) {
@@ -394,8 +426,8 @@ func (c *DurableReservationCoordinator) Settle(ctx context.Context, handle any, 
 		if settleAmount.CostMicros > r.ReservedAmount.CostMicros {
 			excess.CostMicros = settleAmount.CostMicros - r.ReservedAmount.CostMicros
 		}
-		if (excess != reservations.Amount{}) && c.Notifier != nil {
-			if err := c.Notifier.Notify(ctx, OverdraftEvent{ReservationID: r.ID, Reserved: r.ReservedAmount, Actual: settleAmount, Excess: excess, Allowed: c.Overdraft.Allow, Reason: c.Overdraft.Reason}); err != nil && first == nil {
+		if notifier := c.notifier(); (excess != reservations.Amount{}) && notifier != nil {
+			if err := notifier.Notify(ctx, OverdraftEvent{ReservationID: r.ID, Reserved: r.ReservedAmount, Actual: settleAmount, Excess: excess, Allowed: c.Overdraft.Allow, Reason: c.Overdraft.Reason}); err != nil && first == nil {
 				first = fmt.Errorf("overdraft notification: %w", err)
 			}
 		}
