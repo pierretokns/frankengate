@@ -107,12 +107,14 @@ spec:
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-ec"]
           args:
-            - wget -q -O /work/frankengate "http://${BINARY_SERVER_HOST}:18080/frankengate" && chmod 0555 /work/frankengate
+            - wget -q -O /work/frankengate "http://${BINARY_SERVER_HOST}:18080/frankengate" && printf '%s  %s\n' "$BINARY_SHA256" /work/frankengate | sha256sum -c - && chmod 0555 /work/frankengate
           env:
             # Replaced by run-vk-coherence.sh after it creates the disposable
             # in-cluster binary service. A raw apply intentionally fails fast.
             - name: BINARY_SERVER_HOST
               value: "__BINARY_SERVICE_IP__"
+            - name: BINARY_SHA256
+              value: "__ARTIFACT_SHA256__"
           volumeMounts:
             - name: binary
               mountPath: /work
