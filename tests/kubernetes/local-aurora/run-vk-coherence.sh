@@ -46,6 +46,13 @@ for command in git go jq kubectl shasum; do
 done
 
 if [[ -z "$FRANKENGATE_IMAGE" && -z "${FRANKENGATE_BINARY:-}" ]]; then
+  # The transport embeds the generated UI tree. A clean checkout does not
+  # contain transports/bifrost-http/ui, so build it explicitly before the
+  # binary-only oracle instead of letting go:embed fail opaquely.
+  if [[ ! -f "$ROOT/transports/bifrost-http/ui/index.html" ]]; then
+    echo "generated UI artifact missing; building UI for clean binary oracle" >&2
+    make -C "$ROOT" build-ui
+  fi
   node_arch="$(kubectl get nodes -o jsonpath='{.items[0].status.nodeInfo.architecture}')"
   case "$node_arch" in
     arm64|amd64) ;;
