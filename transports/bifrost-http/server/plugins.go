@@ -145,6 +145,13 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 			} else if governanceConfig.IsEnterprise {
 				return nil, fmt.Errorf("enterprise governance requires a reservation estimator when the config store supports durable reservations")
 			}
+		} else if governanceConfig.IsEnterprise {
+			// Enterprise governance must never silently fall back to the legacy
+			// in-memory budget path. Without a transactional reservation store,
+			// horizontally scaled pods can each admit the same spend. Fail closed
+			// during plugin construction so the deployment cannot advertise
+			// enterprise governance while bypassing durable admission.
+			return nil, fmt.Errorf("enterprise governance requires a config store with durable budget reservations")
 		} else if governanceConfig.ReservationMaxTokens != nil || governanceConfig.ReservationCostMicrosPerToken != nil {
 			// Never make configured durable admission look active when the injected
 			// store cannot provide the transactional reservation surface.
