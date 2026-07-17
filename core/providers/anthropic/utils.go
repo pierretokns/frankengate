@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -16,6 +17,13 @@ import (
 	providerUtils "github.com/maximhq/bifrost/core/providers/utils"
 	"github.com/maximhq/bifrost/core/schemas"
 )
+
+// context1MModelPattern is deliberately versioned. A provider-wide
+// Context1M flag is not sufficient: Anthropic beta headers are rejected by
+// model versions that do not advertise the 1M window. Keep this allowlist
+// anchored to canonical Claude IDs (including AWS's provider prefix and
+// version suffix) so opaque aliases and future Sonnet 4.x IDs fail closed.
+var context1MModelPattern = regexp.MustCompile(`(?:^|[./])claude-(?:sonnet-4(?:$|[:])|sonnet-4-(?:20250514|5(?:[-.]\d+)?|6(?:[-.]\d+)?)(?:$|[:.-])|opus-4-6(?:$|[:.-]))`)
 
 // anthropicToolTypePrefixToFeature maps Anthropic server-tool type prefixes
 // to the corresponding ProviderFeatureSupport flag. Mirrors the structure of
@@ -1721,9 +1729,7 @@ func SupportsContext1MModel(model string) bool {
 	if m == "" {
 		return false
 	}
-	return strings.Contains(m, "claude-sonnet-4") ||
-		strings.Contains(m, "claude-opus-4-6") ||
-		strings.Contains(m, "claude-opus-4.6")
+	return context1MModelPattern.MatchString(m)
 }
 
 // FilterBetaHeadersForModel applies provider filtering and then removes the
