@@ -129,6 +129,7 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 				}
 				configureNotifier(coordinator)
 				plugin.SetReservationCoordinator(coordinator)
+				logger.Info("governance durable admission enabled with config-store reservation estimator")
 			} else if governanceConfig.ReservationMaxTokens != nil && governanceConfig.ReservationCostMicrosPerToken != nil {
 				coordinator := &governance.DurableReservationCoordinator{
 					Store: reservationStore,
@@ -140,6 +141,7 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 				}
 				configureNotifier(coordinator)
 				plugin.SetReservationCoordinator(coordinator)
+				logger.Info("governance durable admission enabled with configured reservation estimator")
 			} else if governanceConfig.IsEnterprise {
 				return nil, fmt.Errorf("enterprise governance requires a reservation estimator when the config store supports durable reservations")
 			}
