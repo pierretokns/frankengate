@@ -302,11 +302,18 @@ func triggerMigrations(ctx context.Context, db *gorm.DB, logger schemas.Logger) 
 		return err
 	}
 	defer lock.release(ctx)
-	if !areThereAnyPendingMigrations(ctx, db, logger) {
+	// Advisory locks are session-scoped. Keep the migration handle on the
+	// dedicated connection that acquired the lock; using the ordinary pool here
+	// can silently move DDL to another session and lets a rolling deployment
+	// race through the same migration sequence.
+	migrationDB := db.Session(&gorm.Session{NewDB: true})
+	migrationDB.ConnPool = lock.conn
+
+	if !areThereAnyPendingMigrations(ctx, migrationDB, logger) {
 		logger.Info("[logstore] migrations completed by another node; skipping migration run")
 		return nil
 	}
-	return runMigrationSteps(ctx, db, logger, logstoreMigrationSteps)
+	return runMigrationSteps(ctx, migrationDB, logger, logstoreMigrationSteps)
 }
 
 // migrationInit creates the logs table if it does not exist.
