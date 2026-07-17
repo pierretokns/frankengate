@@ -15,6 +15,7 @@ import (
 	"github.com/bytedance/sonic"
 	"github.com/fasthttp/router"
 	bifrost "github.com/maximhq/bifrost/core"
+	anthropicprovider "github.com/maximhq/bifrost/core/providers/anthropic"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
@@ -649,6 +650,37 @@ type ModelDetailsResponse struct {
 	IsDeprecated         bool                  `json:"is_deprecated,omitempty"`
 	AdditionalAttributes map[string]string     `json:"additional_attributes,omitempty"`
 	AccessibleByKeys     []string              `json:"accessible_by_keys,omitempty"`
+	Context1M            *Context1MCapability  `json:"context_1m,omitempty"`
+}
+
+// Context1MCapability describes the explicitly supported 1M context opt-in
+// for a model. This is metadata about request shaping, not a live provider
+// health or entitlement claim; callers must still opt in to the beta.
+type Context1MCapability struct {
+	Enabled           bool     `json:"enabled"`
+	Beta              string   `json:"beta"`
+	SupportedSurfaces []string `json:"supported_surfaces"`
+	OptInRequired     bool     `json:"opt_in_required"`
+}
+
+func context1MCapability(model string, provider schemas.ModelProvider) *Context1MCapability {
+	if !anthropicprovider.SupportsContext1MModel(model) {
+		return nil
+	}
+	var surfaces []string
+	switch provider {
+	case schemas.Anthropic:
+		surfaces = []string{"anthropic_messages"}
+	case schemas.Bedrock:
+		surfaces = []string{"bedrock_messages", "bedrock_converse", "bedrock_invoke"}
+	case schemas.BedrockMantle:
+		surfaces = []string{"mantle_anthropic_messages"}
+	case schemas.Vertex, schemas.Azure:
+		surfaces = []string{"anthropic_messages"}
+	default:
+		return nil
+	}
+	return &Context1MCapability{Enabled: true, Beta: anthropicprovider.AnthropicContext1MBetaHeader, SupportedSurfaces: surfaces, OptInRequired: true}
 }
 
 // ListModelDetailsResponse represents the response for listing detailed models.
@@ -769,6 +801,7 @@ func (h *ProviderHandler) listModelDetails(ctx *fasthttp.RequestCtx) {
 			details.IsDeprecated = capabilities.IsDeprecated
 			details.AdditionalAttributes = capabilities.AdditionalAttributes
 		}
+		details.Context1M = context1MCapability(model.Name, model.Provider)
 		responseModels = append(responseModels, details)
 	}
 

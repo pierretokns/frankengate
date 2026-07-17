@@ -20,6 +20,25 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+func TestContext1MCapabilityMetadata(t *testing.T) {
+	cap := context1MCapability("claude-sonnet-4-6", schemas.Bedrock)
+	if cap == nil || !cap.Enabled || cap.Beta != "context-1m-2025-08-07" || !cap.OptInRequired {
+		t.Fatalf("eligible Bedrock model missing 1M metadata: %#v", cap)
+	}
+	if len(cap.SupportedSurfaces) != 3 {
+		t.Fatalf("unexpected Bedrock surfaces: %#v", cap.SupportedSurfaces)
+	}
+	if got := context1MCapability("claude-sonnet-4-7", schemas.Bedrock); got != nil {
+		t.Fatalf("future model must fail closed: %#v", got)
+	}
+	if got := context1MCapability("claude-sonnet-4-6", schemas.BedrockMantle); got == nil || len(got.SupportedSurfaces) != 1 {
+		t.Fatalf("native Mantle metadata missing or overclaims surfaces: %#v", got)
+	}
+	if got := context1MCapability("claude-sonnet-4-6", schemas.OpenAI); got != nil {
+		t.Fatalf("OpenAI-compatible surface must not claim Anthropic 1M: %#v", got)
+	}
+}
+
 // mockModelsManager returns stable filtered and unfiltered model lists for handler tests.
 type mockModelsManager struct {
 	filtered    map[schemas.ModelProvider][]string
