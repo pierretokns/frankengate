@@ -306,15 +306,38 @@ assert_chat_vk_reaches_provider_phase_on_all_pods() {
   done
 }
 
+# The governance handler validates VK provider policies against configured
+# providers, so seed a disposable provider and key before creating the budget VK.
+kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
+  --header 'Content-Type: application/json' \
+  --post-data '{"provider":"openai"}' \
+  "http://${pod_ips[0]}:8080/api/providers" >/dev/null
+kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
+  --header 'Content-Type: application/json' \
+  --post-data '{"name":"vk-coherence-probe-key","value":"sk-coherence-probe-key","models":["*"]}' \
+  "http://${pod_ips[0]}:8080/api/providers/openai/keys" >/dev/null
+
 created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
   --header 'Content-Type: application/json' \
-  --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\"}" \
+  --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\",\"budgets\":[{\"max_limit\":0.001,\"reset_duration\":\"1h\"}],\"provider_configs\":[{\"provider\":\"openai\",\"weight\":1,\"allowed_models\":[\"*\"]}]}" \
   "http://${pod_ips[0]}:8080/api/governance/virtual-keys")"
 vk_id="$(jq -er '.virtual_key.id' <<<"$created")"
 original_secret="$(jq -er '.secret' <<<"$created")"
+budget_id="$(jq -er '.virtual_key.budgets[0].id' <<<"$created")"
 created_updated_at="$(jq -er '.virtual_key.updated_at' <<<"$created")"
 wait_for_cache present "$vk_id" "$created_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '200 OK'
+
+# Exercise durable admission with the disposable provider key. The provider
+# has no reachable upstream in this fixture, so the request is expected to fail
+# at provider execution; the reservation must still be recorded and refunded.
+call_chat_completion "${pod_ips[0]}" "$original_secret" >/dev/null 2>&1 || true
+reservation_row="$(kubectl -n "$NAMESPACE" exec postgres-0 -- psql -At -U frankengate -d frankengate \
+  -c "select state || '|' || reserved_tokens || '|' || refunded_tokens from governance_reservations where budget_id = '$budget_id' order by created_at desc limit 1")"
+if [[ "$reservation_row" != refunded\|*\|* ]]; then
+  echo "durable admission did not record/refund budget $budget_id: $reservation_row" >&2
+  exit 1
+fi
 
 # Exercise a real horizontal lifecycle, not only a pod restart: remove one
 # replica, prove the surviving pods still accept the shared key, then add a
