@@ -7,6 +7,8 @@ import (
 	"slices"
 
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/ses"
+	sestypes "github.com/aws/aws-sdk-go-v2/service/ses/types"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
 	"github.com/maximhq/bifrost/core/reservations"
 	"github.com/maximhq/bifrost/core/schemas"
@@ -43,6 +45,20 @@ type awsSNSPublisher struct{ client *sns.Client }
 
 func (p awsSNSPublisher) Publish(ctx context.Context, topicARN, subject, body string) error {
 	_, err := p.client.Publish(ctx, &sns.PublishInput{TopicArn: &topicARN, Subject: &subject, Message: &body})
+	return err
+}
+
+type awsSESEmailSender struct{ client *ses.Client }
+
+func (s awsSESEmailSender) Send(ctx context.Context, from string, recipients []string, subject, body string) error {
+	_, err := s.client.SendEmail(ctx, &ses.SendEmailInput{
+		Source:      &from,
+		Destination: &sestypes.Destination{ToAddresses: recipients},
+		Message: &sestypes.Message{
+			Subject: &sestypes.Content{Data: &subject},
+			Body:    &sestypes.Body{Text: &sestypes.Content{Data: &body}},
+		},
+	})
 	return err
 }
 
@@ -157,6 +173,22 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 						}
 						coordinator.SetNotifier(governance.NewAsyncOverdraftNotifier(ctx, &governance.SNSOverdraftNotifier{
 							Publisher: awsSNSPublisher{client: sns.NewFromConfig(awsCfg)}, TopicARN: alert.TopicARN, Subject: alert.Subject,
+						}, alert.Buffer))
+						return
+					}
+				}
+				if url == "" {
+					if alert, ok, alertErr := handlers.LoadAlertingEmailConfig(ctx, bifrostConfig.ConfigStore); alertErr != nil {
+						logger.Warn("durable email alerting state unavailable; native notifier disabled: %v", alertErr)
+						return
+					} else if ok {
+						awsCfg, cfgErr := awsconfig.LoadDefaultConfig(ctx)
+						if cfgErr != nil {
+							logger.Warn("AWS credentials unavailable; email notifier disabled: %v", cfgErr)
+							return
+						}
+						coordinator.SetNotifier(governance.NewAsyncOverdraftNotifier(ctx, &governance.EmailOverdraftNotifier{
+							Sender: awsSESEmailSender{client: ses.NewFromConfig(awsCfg)}, From: alert.From, Recipients: alert.Recipients, Subject: alert.Subject,
 						}, alert.Buffer))
 						return
 					}

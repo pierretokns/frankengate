@@ -5,6 +5,7 @@ go 1.26.5
 require (
 	github.com/andybalholm/brotli v1.2.2
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10
+	github.com/aws/aws-sdk-go-v2/service/ses v1.36.1
 	github.com/aws/aws-sdk-go-v2/service/sns v1.41.1
 	github.com/bytedance/sonic v1.15.1
 	github.com/fasthttp/router v1.5.4
