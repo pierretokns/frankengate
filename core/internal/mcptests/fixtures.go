@@ -942,7 +942,7 @@ func GetTemperatureMCPClientConfig(bifrostRoot string) schemas.MCPClientConfig {
 	// Use global path if available, otherwise fall back to parameter
 	serverPath := mcpServerPaths.TemperatureServer
 	if serverPath == "" {
-		serverPath = bifrostRoot + "/examples/mcps/temperature-server/dist/index.js"
+		serverPath = filepath.Join(bifrostRoot, "..", "examples", "mcps", "temperature", "dist", "index.js")
 	}
 
 	return schemas.MCPClientConfig{

@@ -18,7 +18,7 @@ func TestHealthCheckSTDIOServerDropAndRecoverIn20Seconds(t *testing.T) {
 	t.Parallel()
 
 	// Use temperature STDIO server
-	bifrostRoot := "/Users/prathammaxim/Desktop/bifrost"
+	bifrostRoot := GetBifrostRoot(t)
 	clientConfig := GetTemperatureMCPClientConfig(bifrostRoot)
 	clientConfig.ID = "stdio-health-recovery-test"
 
