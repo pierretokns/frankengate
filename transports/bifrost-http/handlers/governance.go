@@ -1717,6 +1717,14 @@ func (h *GovernanceHandler) revealVirtualKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, 500, "Failed to retrieve virtual key")
 		return
 	}
+	if vk.IsActive != nil && !*vk.IsActive {
+		SendError(ctx, 409, "Virtual key is inactive")
+		return
+	}
+	if vk.ExpiresAt != nil && !vk.ExpiresAt.After(time.Now()) {
+		SendError(ctx, 409, "Virtual key is expired")
+		return
+	}
 	secret := vk.Value.GetValue()
 	if secret == "" {
 		SendError(ctx, 409, "Virtual key secret is unavailable")

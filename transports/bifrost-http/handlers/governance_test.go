@@ -1282,6 +1282,34 @@ func TestRevealVirtualKey_ReturnsSecretWithoutExposingItInMetadata(t *testing.T)
 	}
 }
 
+func TestRevealVirtualKey_RejectsInactiveAndExpiredKeys(t *testing.T) {
+	SetLogger(&mockLogger{})
+	inactive := false
+	expired := time.Now().Add(-time.Minute)
+	store := &mockRotateConfigStore{virtualKeys: map[string]*configstoreTables.TableVirtualKey{
+		"inactive": {ID: "inactive", Value: *schemas.NewSecretVar("sk-inactive"), IsActive: &inactive},
+		"expired":  {ID: "expired", Value: *schemas.NewSecretVar("sk-expired"), ExpiresAt: &expired},
+	}}
+	h := &GovernanceHandler{configStore: store, governanceManager: &mockRotateGovernanceManager{store: store}}
+	for _, tc := range []struct {
+		id      string
+		message string
+	}{
+		{"inactive", "Virtual key is inactive"},
+		{"expired", "Virtual key is expired"},
+	} {
+		ctx := &fasthttp.RequestCtx{}
+		ctx.SetUserValue("vk_id", tc.id)
+		h.revealVirtualKey(ctx)
+		if got := ctx.Response.StatusCode(); got != fasthttp.StatusConflict {
+			t.Fatalf("%s: status = %d, want 409 (%s)", tc.id, got, tc.message)
+		}
+		if strings.Contains(string(ctx.Response.Body()), "sk-") {
+			t.Fatalf("%s: secret leaked in error response: %s", tc.id, ctx.Response.Body())
+		}
+	}
+}
+
 func TestRotateVirtualKey_ReturnsCommittedSecretWhenRuntimeReloadFails(t *testing.T) {
 	SetLogger(&mockLogger{})
 	store := &mockRotateConfigStore{virtualKeys: map[string]*configstoreTables.TableVirtualKey{
