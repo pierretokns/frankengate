@@ -63,6 +63,9 @@ jobs:
           printf 'source_sha=%s\n' "$sha" >> "$GITHUB_OUTPUT"
           printf 'source_sha=%s\n' "$sha" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Validate migration compatibility manifest
+        run: bash scripts/validate-migration-manifest.sh
+
       - name: Set up Go
         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
