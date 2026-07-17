@@ -1,0 +1,40 @@
+# Optional Prometheus Operator integration for FrankenGate.
+# Requires the Prometheus Operator CRDs in the target cluster.
+image:
+  tag: "beta"
+
+monitoring:
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+    labels:
+      release: prometheus
+  prometheusRule:
+    enabled: true
+    labels:
+      release: prometheus
+    rules:
+      - alert: FrankenGateGovernanceNotReady
+        expr: bifrost_governance_sync_ready < 1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: FrankenGate governance snapshot is not ready
+          description: A FrankenGate pod has not loaded a fresh governance snapshot.
+      - alert: FrankenGateGovernanceOutboxGrowing
+        expr: max(bifrost_governance_sync_outbox_depth) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: FrankenGate governance outbox is growing
+          description: Governance invalidation events are accumulating.
+      - alert: FrankenGateNotificationFailures
+        expr: increase(bifrost_governance_notifier_deliveries_total{outcome!="success"}[10m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: FrankenGate notification delivery failed
+          description: One or more governance notification attempts failed in the last 10 minutes.
