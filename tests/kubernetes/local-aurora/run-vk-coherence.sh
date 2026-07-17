@@ -111,13 +111,40 @@ sed -e "s/__BINARY_SERVICE_IP__/$binary_service_ip/g" \
   -e "s/__ARTIFACT_SHA256__/$artifact_sha256/g" \
   "$MANIFEST" > "$WORK_DIR/gateway.yaml"
 kubectl apply -f "$WORK_DIR/gateway.yaml"
+
+# Poll the current Deployment instead of holding a rollout watch on one object
+# UID. Disposable oracle runs may replace the Deployment during scale/recreate;
+# kubectl rollout status then reports the misleading "object has been deleted".
+wait_for_gateway_deployment() {
+  local timeout_seconds="${1:-240}"
+  local deadline=$(( $(date +%s) + timeout_seconds ))
+  while :; do
+    deployment_json="$(kubectl -n "$NAMESPACE" get deployment/frankengate-vk -o json 2>/dev/null || true)"
+    if [[ -n "$deployment_json" ]]; then
+      desired="$(jq -r '.spec.replicas // 0' <<<"$deployment_json")"
+      available="$(jq -r '.status.availableReplicas // 0' <<<"$deployment_json")"
+      generation="$(jq -r '.metadata.generation // 0' <<<"$deployment_json")"
+      observed="$(jq -r '.status.observedGeneration // 0' <<<"$deployment_json")"
+      if [[ "$generation" -le "$observed" && "$available" -ge "$desired" ]]; then
+        return 0
+      fi
+    fi
+    if [[ "$(date +%s)" -ge "$deadline" ]]; then
+      echo "gateway deployment did not become ready within ${timeout_seconds}s" >&2
+      kubectl -n "$NAMESPACE" get deployment/frankengate-vk -o wide >&2 || true
+      return 1
+    fi
+    sleep 2
+  done
+}
+
 if [[ -n "$FRANKENGATE_IMAGE" ]]; then
   # The checked-in manifest intentionally starts with the binary-transfer init
   # container. Remove that ReplicaSet completely before switching to the image
   # template so required one-pod-per-node anti-affinity cannot deadlock a
   # rolling update behind an obsolete init pod.
   kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=0
-  kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=120s
+  wait_for_gateway_deployment 120
   image_patch="$(jq -cn --arg image "$FRANKENGATE_IMAGE" '[
     {op:"remove",path:"/spec/template/spec/initContainers"},
     {op:"replace",path:"/spec/template/spec/containers/0/image",value:$image},
@@ -141,7 +168,7 @@ if [[ -n "$FRANKENGATE_IMAGE" ]]; then
   kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=json -p "$image_patch"
   kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=3
 fi
-kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
+wait_for_gateway_deployment 240
 
 list_ready_gateway_ips() {
   kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk -o json |
@@ -343,12 +370,12 @@ fi
 # replica, prove the surviving pods still accept the shared key, then add a
 # fresh pod and prove it converges from the durable authority before serving.
 kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=2 >/dev/null
-kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
+wait_for_gateway_deployment 240
 wait_for_ready_gateway_ips 2
 wait_for_cache present "$vk_id" "$created_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '200 OK'
 kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas=3 >/dev/null
-kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
+wait_for_gateway_deployment 240
 wait_for_three_ready_gateway_ips
 assert_release_image_spans_three_nodes
 wait_for_cache present "$vk_id" "$created_updated_at"
@@ -389,7 +416,7 @@ fi
 restarted_pod="$(kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk \
   -o jsonpath='{.items[0].metadata.name}')"
 kubectl -n "$NAMESPACE" delete pod "$restarted_pod" --wait=false >/dev/null
-kubectl -n "$NAMESPACE" rollout status deployment/frankengate-vk --timeout=240s
+wait_for_gateway_deployment 240
 wait_for_three_ready_gateway_ips
 assert_release_image_spans_three_nodes
 wait_for_cache absent "$vk_id"
