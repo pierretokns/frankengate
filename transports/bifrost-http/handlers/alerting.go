@@ -36,6 +36,7 @@ type AlertingWebhookConfig struct {
 type AlertingSNSConfig struct {
 	TopicARN string
 	Subject  string
+	Region   string
 	Buffer   int
 }
 
@@ -43,6 +44,7 @@ type AlertingEmailConfig struct {
 	From       string
 	Recipients []string
 	Subject    string
+	Region     string
 	Buffer     int
 }
 
@@ -132,7 +134,7 @@ func LoadAlertingSNSConfig(ctx context.Context, store configstore.ConfigStore) (
 			continue
 		}
 		buffer := parseAlertBuffer(channel.Config["buffer"])
-		return AlertingSNSConfig{TopicARN: topic, Subject: strings.TrimSpace(channel.Config["subject"]), Buffer: buffer}, true, nil
+		return AlertingSNSConfig{TopicARN: topic, Subject: strings.TrimSpace(channel.Config["subject"]), Region: strings.TrimSpace(channel.Config["region"]), Buffer: buffer}, true, nil
 	}
 	return AlertingSNSConfig{}, false, nil
 }
@@ -151,7 +153,7 @@ func LoadAlertingEmailConfig(ctx context.Context, store configstore.ConfigStore)
 		if from == "" || len(recipients) == 0 {
 			continue
 		}
-		return AlertingEmailConfig{From: from, Recipients: recipients, Subject: strings.TrimSpace(channel.Config["subject"]), Buffer: parseAlertBuffer(channel.Config["buffer"])}, true, nil
+		return AlertingEmailConfig{From: from, Recipients: recipients, Subject: strings.TrimSpace(channel.Config["subject"]), Region: strings.TrimSpace(channel.Config["region"]), Buffer: parseAlertBuffer(channel.Config["buffer"])}, true, nil
 	}
 	return AlertingEmailConfig{}, false, nil
 }

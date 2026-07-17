@@ -166,7 +166,11 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 						logger.Warn("durable SNS alerting state unavailable; native notifier disabled: %v", alertErr)
 						return
 					} else if ok {
-						awsCfg, cfgErr := awsconfig.LoadDefaultConfig(ctx)
+						loadOptions := make([]func(*awsconfig.LoadOptions) error, 0, 1)
+						if alert.Region != "" {
+							loadOptions = append(loadOptions, awsconfig.WithRegion(alert.Region))
+						}
+						awsCfg, cfgErr := awsconfig.LoadDefaultConfig(ctx, loadOptions...)
 						if cfgErr != nil {
 							logger.Warn("AWS credentials unavailable; SNS notifier disabled: %v", cfgErr)
 							return
@@ -182,7 +186,11 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 						logger.Warn("durable email alerting state unavailable; native notifier disabled: %v", alertErr)
 						return
 					} else if ok {
-						awsCfg, cfgErr := awsconfig.LoadDefaultConfig(ctx)
+						loadOptions := make([]func(*awsconfig.LoadOptions) error, 0, 1)
+						if alert.Region != "" {
+							loadOptions = append(loadOptions, awsconfig.WithRegion(alert.Region))
+						}
+						awsCfg, cfgErr := awsconfig.LoadDefaultConfig(ctx, loadOptions...)
 						if cfgErr != nil {
 							logger.Warn("AWS credentials unavailable; email notifier disabled: %v", cfgErr)
 							return
