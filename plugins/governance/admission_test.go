@@ -295,6 +295,40 @@ func TestDurableCoordinatorControlledOverdraftPolicy(t *testing.T) {
 		})
 	}
 }
+
+type admissionMetricsSink struct {
+	reservations int
+	overdrafts   int
+	notifiers    []string
+}
+
+func (m *admissionMetricsSink) ReservationObserved(context.Context, string, reservations.Amount) {
+	m.reservations++
+}
+func (m *admissionMetricsSink) OverdraftObserved(context.Context, bool, reservations.Amount) {
+	m.overdrafts++
+}
+func (m *admissionMetricsSink) NotifierObserved(_ context.Context, outcome string) {
+	m.notifiers = append(m.notifiers, outcome)
+}
+
+func TestDurableCoordinatorEmitsExporterNeutralMetrics(t *testing.T) {
+	store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
+	metrics := &admissionMetricsSink{}
+	coordinator := &DurableReservationCoordinator{
+		Store: store, Estimator: excessUsageEstimator{}, Metrics: metrics,
+		Notifier: &overdraftNotifier{}, Overdraft: reservations.OverdraftPolicy{Allow: true},
+	}
+	handle, err := coordinator.Reserve(context.Background(), AdmissionRequest{
+		RequestID: "metrics", Result: &EvaluationResult{BudgetInfo: []*configstoreTables.TableBudget{{ID: "budget-metrics"}}},
+	})
+	require.NoError(t, err)
+	require.NoError(t, coordinator.Settle(context.Background(), handle, AdmissionSettlement{}))
+	require.Equal(t, 1, metrics.reservations)
+	require.Equal(t, 1, metrics.overdrafts)
+	require.Equal(t, []string{"delivered"}, metrics.notifiers)
+}
+
 func (c *testReservationCoordinator) Settle(context.Context, any, AdmissionSettlement) error {
 	c.settled++
 	return nil
