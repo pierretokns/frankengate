@@ -274,9 +274,10 @@ func (provider *BedrockProvider) injectConverseAnthropicBeta(ctx *schemas.Bifros
 	if !strings.Contains(path, "converse") || !schemas.IsAnthropicModelFamily(ctx, model) {
 		return jsonData
 	}
-	filtered := anthropic.FilterBetaHeadersForProvider(
+	filtered := anthropic.FilterBetaHeadersForModel(
 		anthropic.MergeBetaHeaders(ctx, provider.networkConfig.ExtraHeaders),
 		schemas.Bedrock,
+		model,
 		provider.networkConfig.BetaHeaderOverrides,
 	)
 	if len(filtered) == 0 {
@@ -331,7 +332,7 @@ func (provider *BedrockProvider) completeRequest(ctx *schemas.BifrostContext, js
 	// Set any extra headers from network config
 	providerUtils.SetExtraHeadersHTTP(ctx, req, provider.networkConfig.ExtraHeaders, nil)
 
-	if filtered := anthropic.FilterBetaHeadersForProvider(anthropic.MergeBetaHeaders(ctx, provider.networkConfig.ExtraHeaders), schemas.Bedrock, provider.networkConfig.BetaHeaderOverrides); len(filtered) > 0 {
+	if filtered := anthropic.FilterBetaHeadersForModel(anthropic.MergeBetaHeaders(ctx, provider.networkConfig.ExtraHeaders), schemas.Bedrock, model, provider.networkConfig.BetaHeaderOverrides); len(filtered) > 0 {
 		req.Header.Set(anthropic.AnthropicBetaHeader, strings.Join(filtered, ","))
 	} else {
 		req.Header.Del(anthropic.AnthropicBetaHeader)
@@ -534,7 +535,7 @@ func (provider *BedrockProvider) makeStreamingRequest(ctx *schemas.BifrostContex
 	// Set any extra headers from network config
 	providerUtils.SetExtraHeadersHTTP(ctx, req, provider.networkConfig.ExtraHeaders, nil)
 
-	if filtered := anthropic.FilterBetaHeadersForProvider(anthropic.MergeBetaHeaders(ctx, provider.networkConfig.ExtraHeaders), schemas.Bedrock, provider.networkConfig.BetaHeaderOverrides); len(filtered) > 0 {
+	if filtered := anthropic.FilterBetaHeadersForModel(anthropic.MergeBetaHeaders(ctx, provider.networkConfig.ExtraHeaders), schemas.Bedrock, model, provider.networkConfig.BetaHeaderOverrides); len(filtered) > 0 {
 		req.Header.Set(anthropic.AnthropicBetaHeader, strings.Join(filtered, ","))
 	} else {
 		req.Header.Del(anthropic.AnthropicBetaHeader)

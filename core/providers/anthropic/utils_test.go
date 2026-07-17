@@ -1438,6 +1438,37 @@ func TestFilterBetaHeadersForProvider(t *testing.T) {
 	}
 }
 
+func TestSupportsContext1MModelFailsClosedForOpaqueAliases(t *testing.T) {
+	tests := []struct {
+		model string
+		want  bool
+	}{
+		{"anthropic.claude-sonnet-4-6-v1:0", true},
+		{"claude-sonnet-4-20250514", true},
+		{"claude-opus-4-6", true},
+		{"Claude-GPT-soul", false},
+		{"anthropic.claude-3-7-sonnet-v1:0", false},
+		{"", false},
+	}
+	for _, tc := range tests {
+		if got := SupportsContext1MModel(tc.model); got != tc.want {
+			t.Errorf("SupportsContext1MModel(%q) = %v, want %v", tc.model, got, tc.want)
+		}
+	}
+}
+
+func TestFilterBetaHeadersForModelContext1M(t *testing.T) {
+	headers := []string{AnthropicContext1MBetaHeader, AnthropicStructuredOutputsBetaHeader}
+	got := FilterBetaHeadersForModel(headers, schemas.Bedrock, "opaque-alias")
+	if slices.Contains(got, AnthropicContext1MBetaHeader) {
+		t.Fatalf("opaque model retained 1M beta header: %#v", got)
+	}
+	got = FilterBetaHeadersForModel(headers, schemas.Bedrock, "anthropic.claude-sonnet-4-6-v1:0")
+	if !slices.Contains(got, AnthropicContext1MBetaHeader) {
+		t.Fatalf("allowlisted model lost 1M beta header: %#v", got)
+	}
+}
+
 // TestNetworkConfigBetaOverridesFlow proves the production sequence
 //
 //	FilterBetaHeadersForProvider(MergeBetaHeaders(ctx, networkConfig.ExtraHeaders), provider, networkConfig.BetaHeaderOverrides)

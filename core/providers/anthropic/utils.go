@@ -1712,6 +1712,45 @@ func FilterBetaHeadersForProvider(headers []string, provider schemas.ModelProvid
 	return filtered
 }
 
+// SupportsContext1MModel reports whether a resolved model identifier matches
+// the AWS-documented Claude models that advertise the 1M context beta. It is
+// intentionally conservative: an empty, opaque, or merely Claude-prefixed
+// alias fails closed rather than inheriting provider-wide capability metadata.
+func SupportsContext1MModel(model string) bool {
+	m := strings.ToLower(strings.TrimSpace(model))
+	if m == "" {
+		return false
+	}
+	return strings.Contains(m, "claude-sonnet-4") ||
+		strings.Contains(m, "claude-opus-4-6") ||
+		strings.Contains(m, "claude-opus-4.6")
+}
+
+// FilterBetaHeadersForModel applies provider filtering and then removes the
+// 1M-context opt-in unless the resolved model is explicitly allowlisted. The
+// provider-only helper remains available for callers that do not have a
+// resolved model ID (and therefore cannot make a safe model-level claim).
+func FilterBetaHeadersForModel(headers []string, provider schemas.ModelProvider, model string, overrides ...map[string]bool) []string {
+	filtered := FilterBetaHeadersForProvider(headers, provider, overrides...)
+	if SupportsContext1MModel(model) {
+		return filtered
+	}
+	out := filtered[:0]
+	for _, header := range filtered {
+		keep := true
+		for token := range strings.SplitSeq(header, ",") {
+			if strings.HasPrefix(strings.TrimSpace(token), AnthropicContext1MBetaHeaderPrefix) {
+				keep = false
+				break
+			}
+		}
+		if keep {
+			out = append(out, header)
+		}
+	}
+	return out
+}
+
 // appendUniqueHeader adds a header to the slice if not already present
 func appendUniqueHeader(slice []string, item string) []string {
 	if slices.Contains(slice, item) {
