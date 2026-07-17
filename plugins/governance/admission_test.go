@@ -3,6 +3,8 @@ package governance
 import (
 	"context"
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -12,6 +14,43 @@ import (
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/stretchr/testify/require"
 )
+
+func TestWebhookOverdraftNotifierSignsAndRetriesTransientFailures(t *testing.T) {
+	var attempts int
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		if got := r.Header.Get("Idempotency-Key"); got != "reservation-1" {
+			t.Errorf("idempotency key = %q, want reservation-1", got)
+		}
+		if got := r.Header.Get("X-FrankenGate-Signature"); got == "" {
+			t.Error("missing webhook signature")
+		}
+		if attempts == 1 {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	n := &WebhookOverdraftNotifier{URL: server.URL, SigningKey: []byte("secret"), MaxAttempts: 2, Backoff: time.Millisecond}
+	err := n.Notify(context.Background(), OverdraftEvent{ReservationID: "reservation-1", Excess: reservations.Amount{Tokens: 1}})
+	require.NoError(t, err)
+	require.Equal(t, 2, attempts)
+}
+
+func TestWebhookOverdraftNotifierDoesNotRetryClientErrors(t *testing.T) {
+	attempts := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		attempts++
+		w.WriteHeader(http.StatusBadRequest)
+	}))
+	defer server.Close()
+	n := &WebhookOverdraftNotifier{URL: server.URL, MaxAttempts: 3, Backoff: time.Millisecond}
+	err := n.Notify(context.Background(), OverdraftEvent{ReservationID: "reservation-2"})
+	require.Error(t, err)
+	require.Equal(t, 1, attempts)
+}
 
 type testBudgetReservationStore struct{ *reservations.InMemoryStore }
 

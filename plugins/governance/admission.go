@@ -1,8 +1,15 @@
 package governance
 
 import (
+	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"sync/atomic"
 	"time"
 
@@ -48,6 +55,82 @@ type OverdraftEvent struct {
 
 type OverdraftNotifier interface {
 	Notify(context.Context, OverdraftEvent) error
+}
+
+// WebhookOverdraftNotifier delivers redacted overdraft events to an operator
+// endpoint. It is intended to run behind AsyncOverdraftNotifier, never in the
+// inference request path. Retries are bounded and only transient failures are
+// retried; every request carries a stable idempotency key.
+type WebhookOverdraftNotifier struct {
+	URL         string
+	SigningKey  []byte
+	Client      *http.Client
+	MaxAttempts int
+	Backoff     time.Duration
+}
+
+func (n *WebhookOverdraftNotifier) Notify(ctx context.Context, event OverdraftEvent) error {
+	if n == nil || n.URL == "" {
+		return fmt.Errorf("overdraft webhook URL is not configured")
+	}
+	attempts := n.MaxAttempts
+	if attempts <= 0 {
+		attempts = 3
+	}
+	backoff := n.Backoff
+	if backoff <= 0 {
+		backoff = 100 * time.Millisecond
+	}
+	body, err := json.Marshal(event)
+	if err != nil {
+		return fmt.Errorf("marshal overdraft webhook: %w", err)
+	}
+	idempotencyKey := string(event.ReservationID)
+	if idempotencyKey == "" {
+		return fmt.Errorf("overdraft webhook event has no reservation id")
+	}
+	client := n.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+	var last error
+	for attempt := 0; attempt < attempts; attempt++ {
+		req, reqErr := http.NewRequestWithContext(ctx, http.MethodPost, n.URL, bytes.NewReader(body))
+		if reqErr != nil {
+			return fmt.Errorf("create overdraft webhook request: %w", reqErr)
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Idempotency-Key", idempotencyKey)
+		if len(n.SigningKey) > 0 {
+			mac := hmac.New(sha256.New, n.SigningKey)
+			_, _ = mac.Write(body)
+			req.Header.Set("X-FrankenGate-Signature", hex.EncodeToString(mac.Sum(nil)))
+		}
+		resp, doErr := client.Do(req)
+		if doErr == nil {
+			_, _ = io.Copy(io.Discard, resp.Body)
+			_ = resp.Body.Close()
+			if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+				return nil
+			}
+			last = fmt.Errorf("webhook returned HTTP %d", resp.StatusCode)
+			if resp.StatusCode >= 400 && resp.StatusCode < 500 {
+				return last
+			}
+		} else {
+			last = doErr
+		}
+		if attempt+1 < attempts {
+			timer := time.NewTimer(backoff * time.Duration(1<<attempt))
+			select {
+			case <-ctx.Done():
+				timer.Stop()
+				return ctx.Err()
+			case <-timer.C:
+			}
+		}
+	}
+	return fmt.Errorf("overdraft webhook delivery failed after %d attempts: %w", attempts, last)
 }
 
 // AsyncOverdraftNotifier decouples alert delivery from request settlement.
