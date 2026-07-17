@@ -306,7 +306,10 @@ func triggerMigrations(ctx context.Context, db *gorm.DB, logger schemas.Logger) 
 	// dedicated connection that acquired the lock; using the ordinary pool here
 	// can silently move DDL to another session and lets a rolling deployment
 	// race through the same migration sequence.
-	migrationDB := db.Session(&gorm.Session{NewDB: true})
+	// Supplying the context forces GORM to clone the Statement and associate it
+	// with this session; NewDB alone intentionally reuses the original
+	// Statement, which is unsafe once its connection pool is replaced.
+	migrationDB := db.Session(&gorm.Session{NewDB: true, Context: ctx})
 	if lock.conn != nil {
 		migrationDB.ConnPool = lock.conn
 		// GORM keeps a second connection reference on Statement; update it too
