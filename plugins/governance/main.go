@@ -1743,13 +1743,31 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 	}
 
 	// Evaluate governance using common function
-	_, bifrostError := p.EvaluateGovernanceRequest(ctx, evaluationRequest, schemas.MCPToolExecutionRequest)
+	evaluationResult, bifrostError := p.EvaluateGovernanceRequest(ctx, evaluationRequest, schemas.MCPToolExecutionRequest)
 
 	// Convert BifrostError to MCPPluginShortCircuit if needed
 	if bifrostError != nil {
 		return req, &schemas.MCPPluginShortCircuit{
 			Error: bifrostError,
 		}, nil
+	}
+	// MCP tool calls have no provider/model pair, but they still consume the
+	// caller's hierarchical budgets. Rehydrate the applicable durable budget
+	// rows before admission; passing a result with no BudgetInfo would otherwise
+	// create a zero-row reservation and silently bypass shared counters.
+	if evaluationResult != nil && evaluationResult.Decision == DecisionAllow {
+		budgetIDs, _ := p.store.CollectApplicableGovernanceIDs(ctx, virtualKeyValue, userID, "", "")
+		for _, budgetID := range budgetIDs {
+			budget := p.store.LoadBudget(ctx, budgetID)
+			if budget == nil {
+				return req, &schemas.MCPPluginShortCircuit{Error: &schemas.BifrostError{
+					Type:       new("governance_budget_unavailable"),
+					StatusCode: new(503),
+					Error:      &schemas.ErrorField{Message: fmt.Sprintf("applicable governance budget %q is unavailable", budgetID)},
+				}}, nil
+			}
+			evaluationResult.BudgetInfo = append(evaluationResult.BudgetInfo, budget)
+		}
 	}
 	// Blind single-tool check: validate the specific tool being executed against VK MCPConfigs.
 	// This runs independently of EvaluateGovernanceRequest to enforce execution-time allow-list.
@@ -1806,7 +1824,7 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 		}
 		handle, err := coordinator.Reserve(ctx, AdmissionRequest{
 			Evaluation:  *evaluationRequest,
-			Result:      nil,
+			Result:      evaluationResult,
 			RequestType: schemas.MCPToolExecutionRequest,
 			RequestID:   bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyRequestID),
 			Attempt:     attempt,

@@ -108,6 +108,7 @@ type testReservationCoordinator struct {
 	refunded   int
 	renewed    int
 	request    *schemas.BifrostRequest
+	result     *EvaluationResult
 	settlement AdmissionSettlement
 }
 
@@ -122,6 +123,7 @@ func (c *testReservationCoordinator) Reserve(_ context.Context, req AdmissionReq
 	}
 	c.reserved++
 	c.request = req.Request
+	c.result = req.Result
 	return "reservation-1", nil
 }
 
@@ -147,6 +149,7 @@ func TestMCPHooksUseDurableAdmissionBoundary(t *testing.T) {
 	require.NoError(t, err)
 	require.Nil(t, shortCircuit)
 	require.Equal(t, 1, coordinator.reserved)
+	require.NotNil(t, coordinator.result, "MCP admission must receive evaluated budgets")
 	_, _, err = p.PostMCPHook(ctx, &schemas.BifrostMCPResponse{ExtraFields: schemas.BifrostMCPResponseExtraFields{MCPRequestType: schemas.MCPRequestTypeExecuteTool}}, nil)
 	require.NoError(t, err)
 	require.Equal(t, 1, coordinator.settled)
