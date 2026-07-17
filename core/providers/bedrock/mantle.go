@@ -69,12 +69,8 @@ func mantleOpenAIURL(region, model, path string) string {
 // visible aliases can otherwise send an OpenAI payload to the bare /v1 path.
 func mantleOpenAIURLForFamily(region, model string, family schemas.ModelFamily, path string) string {
 	base := "v1"
-<<<<<<< HEAD
 	canonical := strings.ToLower(model)
 	if family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma || strings.Contains(canonical, "gpt-5") || strings.Contains(canonical, "gemma-4") {
-=======
-	if family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma || strings.Contains(model, "gpt-5") || strings.Contains(model, "gemma-4") {
->>>>>>> 673f65f32 (fix(bedrock): preserve legacy Mantle URL compatibility wrapper)
 		base = "openai/v1"
 	}
 	return fmt.Sprintf("https://bedrock-mantle.%s.api.aws/%s/%s", region, base, path)
