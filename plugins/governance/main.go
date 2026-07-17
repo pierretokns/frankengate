@@ -1480,6 +1480,18 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 			Error: bifrostError,
 		}, nil
 	}
+	// Durable admission consumes the evaluated budget set, not only the allow
+	// decision. Rehydrate applicable budget rows here; otherwise an allow result
+	// reaches the coordinator with an empty BudgetInfo and silently reserves
+	// nothing on the real request path.
+	if evaluationResult != nil && evaluationResult.Decision == DecisionAllow {
+		budgetIDs, _ := p.store.CollectApplicableGovernanceIDs(ctx, virtualKeyValue, userID, provider, model)
+		for _, budgetID := range budgetIDs {
+			if budget := p.store.LoadBudget(ctx, budgetID); budget != nil {
+				evaluationResult.BudgetInfo = append(evaluationResult.BudgetInfo, budget)
+			}
+		}
+	}
 	if coordinator := p.admissionCoordinator(); coordinator != nil {
 		attempt := 0
 		if value, ok := ctx.Value(schemas.BifrostContextKeyFallbackIndex).(int); ok {
