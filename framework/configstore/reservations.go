@@ -41,6 +41,14 @@ type BudgetReservationRequest struct {
 	Request  reservations.ReservationRequest
 }
 
+// budgetReservationID keeps idempotency scoped to the budget owner. A single
+// logical request may reserve against multiple hierarchical budgets; omitting
+// the budget would make the second durable row collide with the first row's
+// primary key and silently turn valid hierarchical admission into a conflict.
+func budgetReservationID(budgetID string, req reservations.ReservationRequest) reservations.ReservationID {
+	return reservations.ReservationID(fmt.Sprintf("%s:%s:%s:%d:%s", budgetID, req.LogicalRequestID, req.AttemptID, req.AttemptEpoch, req.Lane))
+}
+
 func (s *RDBConfigStore) reservationDB(ctx context.Context) (*gorm.DB, error) {
 	db := s.db.Load()
 	if db == nil {
@@ -65,7 +73,7 @@ func (s *RDBConfigStore) ReserveAgainstBudget(ctx context.Context, req BudgetRes
 	if err != nil {
 		return reservations.Reservation{}, err
 	}
-	id := reservations.ReservationID(fmt.Sprintf("%s:%s:%d:%s", req.Request.LogicalRequestID, req.Request.AttemptID, req.Request.AttemptEpoch, req.Request.Lane))
+	id := budgetReservationID(req.BudgetID, req.Request)
 	r := reservations.Reservation{ID: id, LogicalRequestID: req.Request.LogicalRequestID, AttemptID: req.Request.AttemptID, AttemptEpoch: req.Request.AttemptEpoch, Lane: req.Request.Lane, ReservedAmount: req.Request.Amount, LeaseUntil: req.Request.LeaseUntil, State: reservations.ReservationStateActive, CreatedAt: now, UpdatedAt: now}
 	err = db.Transaction(func(tx *gorm.DB) error {
 		var budget tables.TableBudget

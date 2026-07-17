@@ -56,3 +56,29 @@ func TestRDBReserveAgainstBudgetLocksAndRejectsOverspend(t *testing.T) {
 	_, err = store.ReserveAgainstBudget(context.Background(), BudgetReservationRequest{BudgetID: "budget-1", Request: base})
 	require.ErrorIs(t, err, reservations.ErrOverdraftDenied)
 }
+
+func TestRDBReserveAgainstMultipleHierarchicalBudgetsUsesDistinctIds(t *testing.T) {
+	store := setupRDBTestStore(t)
+	require.NoError(t, store.DB().AutoMigrate(&tables.TableGovernanceReservation{}, &tables.TableBudget{}))
+	now := time.Now().UTC()
+	for _, id := range []string{"team-budget", "user-budget"} {
+		require.NoError(t, store.DB().Create(&tables.TableBudget{ID: id, MaxLimit: 10, ResetDuration: "1h", LastReset: now}).Error)
+	}
+	request := reservations.ReservationRequest{
+		LogicalRequestID: "hierarchical-logical",
+		AttemptID:        "attempt-1",
+		AttemptEpoch:     1,
+		Lane:             reservations.AccountingLaneNormal,
+		Amount:           reservations.Amount{CostMicros: 1000000},
+		LeaseUntil:       now.Add(time.Minute),
+		Now:              now,
+	}
+	team, err := store.ReserveAgainstBudget(context.Background(), BudgetReservationRequest{BudgetID: "team-budget", Request: request})
+	require.NoError(t, err)
+	user, err := store.ReserveAgainstBudget(context.Background(), BudgetReservationRequest{BudgetID: "user-budget", Request: request})
+	require.NoError(t, err)
+	require.NotEqual(t, team.ID, user.ID, "budget scope must be part of reservation identity")
+	var rows int64
+	require.NoError(t, store.DB().Model(&tables.TableGovernanceReservation{}).Count(&rows).Error)
+	require.Equal(t, int64(2), rows)
+}
