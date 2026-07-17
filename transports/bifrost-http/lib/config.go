@@ -19,7 +19,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/bytedance/sonic"
 	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/mcp"
@@ -6414,10 +6413,14 @@ func semanticCacheConfigDimension(configMap map[string]interface{}) (int, bool, 
 
 func DeepCopy[T any](in T) (T, error) {
 	var out T
-	b, err := sonic.Marshal(in)
+	// DeepCopy is used for configuration snapshots, outside the inference
+	// hot path. Keep it on the standard library encoder: Sonic's amd64 JIT
+	// can fault during first-use assembly on some container/Go combinations,
+	// turning a recoverable config refresh into a process crash.
+	b, err := json.Marshal(in)
 	if err != nil {
 		return out, err
 	}
-	err = sonic.Unmarshal(b, &out)
+	err = json.Unmarshal(b, &out)
 	return out, err
 }
