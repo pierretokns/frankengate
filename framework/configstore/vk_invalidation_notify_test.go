@@ -109,6 +109,46 @@ func TestVirtualKeyInvalidationWakeupsCoalesceAndReconnect(t *testing.T) {
 	require.GreaterOrEqual(t, metrics["wakeups"], float64(2), "initial and reconnect wake hints should be observable")
 }
 
+func TestVirtualKeyInvalidationWakeupsHundredConsumersCoalesceStorm(t *testing.T) {
+	const consumers = 100
+	type listener struct {
+		store *RDBConfigStore
+		conn  *fakeVirtualKeyNotifyConn
+		wake  <-chan struct{}
+	}
+	listeners := make([]listener, 0, consumers)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	for i := 0; i < consumers; i++ {
+		conn := &fakeVirtualKeyNotifyConn{waits: make(chan error, 256)}
+		store := &RDBConfigStore{}
+		store.virtualKeyInvalidationNotifyDial = func(context.Context) (virtualKeyInvalidationNotifyConn, error) {
+			return conn, nil
+		}
+		wake := store.VirtualKeyInvalidationWakeups(ctx)
+		select {
+		case <-wake: // synthetic wake after LISTEN establishes the durable poll edge
+		case <-time.After(time.Second):
+			t.Fatalf("consumer %d did not establish its listener", i)
+		}
+		listeners = append(listeners, listener{store: store, conn: conn, wake: wake})
+	}
+
+	// A notification storm must remain a bounded wake hint per consumer. The
+	// durable outbox is still authoritative, so no consumer needs one channel
+	// signal per database notification.
+	for i := range listeners {
+		for n := 0; n < 100; n++ {
+			listeners[i].conn.waits <- nil
+		}
+	}
+	for i := range listeners {
+		require.Eventually(t, func() bool { return len(listeners[i].wake) == 1 }, time.Second, 5*time.Millisecond,
+			"consumer %d should coalesce a notification storm", i)
+		require.Len(t, listeners[i].wake, 1)
+	}
+}
+
 func TestVirtualKeyInvalidationListenerCancellationInterruptsBackoff(t *testing.T) {
 	store := &RDBConfigStore{}
 	var dialCalls atomic.Int32
