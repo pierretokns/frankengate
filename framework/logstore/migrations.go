@@ -903,8 +903,6 @@ func migrationAddPerformanceIndexesV2(ctx context.Context, db *gorm.DB, logger s
 		},
 		Rollback: func(tx *gorm.DB) error {
 			tx = tx.WithContext(ctx)
-			migrator := tx.Migrator()
-
 			// Drop all indices added in this migration
 			indices := []string{
 				"idx_logs_timestamp",
@@ -920,10 +918,12 @@ func migrationAddPerformanceIndexesV2(ctx context.Context, db *gorm.DB, logger s
 
 			logger.Info("[logstore] %s: processing %d indices", migrationName, len(indices))
 			for _, indexName := range indices {
-				if migrator.HasIndex(&Log{}, indexName) {
-					if err := tx.Exec(fmt.Sprintf("DROP INDEX IF EXISTS %s", indexName)).Error; err != nil {
-						return fmt.Errorf("failed to drop index %s: %w", indexName, err)
-					}
+				// DROP IF EXISTS is idempotent; avoid a HasIndex catalog query here.
+				// Rollbacks run after a failed migration, where the transaction may
+				// already be aborted and any introspection query would mask the
+				// original error (or panic in some GORM dialects).
+				if err := tx.Exec(fmt.Sprintf("DROP INDEX IF EXISTS %s", indexName)).Error; err != nil {
+					return fmt.Errorf("failed to drop index %s: %w", indexName, err)
 				}
 			}
 
