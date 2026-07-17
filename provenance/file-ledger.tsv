@@ -42,6 +42,9 @@ helm-charts/bifrost/values-examples/postgres-redis.yaml	upstream-bifrost	Apache-
 helm-charts/bifrost/values-examples/postgres-weaviate.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
 helm-charts/bifrost/values-examples/production-ha.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
 helm-charts/bifrost/values-examples/providers-and-virtual-keys.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
+helm-charts/bifrost/templates/prometheusrule.yaml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Optional Prometheus Operator alert rule template.
+helm-charts/bifrost/templates/servicemonitor.yaml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Optional Prometheus Operator scrape template.
+helm-charts/bifrost/values-examples/monitoring-prometheus.yaml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Prometheus monitoring values example.
 helm-charts/bifrost/values-examples/secrets-from-k8s.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
 helm-charts/bifrost/values-examples/semantic-cache-secret-example.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
 helm-charts/bifrost/values-examples/sqlite-only.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
