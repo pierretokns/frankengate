@@ -1742,6 +1742,17 @@ type DashboardProvenance struct {
 	GeneratedAt time.Time  `json:"generated_at"`
 	WindowStart *time.Time `json:"window_start,omitempty"`
 	WindowEnd   *time.Time `json:"window_end,omitempty"`
+	// SampleSize is the number of rows returned by this read model. It is
+	// deliberately distinct from request totals, which may be attributed to
+	// multiple dimensions.
+	SampleSize int `json:"sample_size"`
+	// Aggregation identifies the read-model operation so consumers do not
+	// infer semantics from the shape of the payload.
+	Aggregation string `json:"aggregation"`
+	// ReconciliationStatus reports whether the source is known to be reconciled
+	// with the durable log store. Unknown is preferable to claiming freshness
+	// that this endpoint cannot prove.
+	ReconciliationStatus string `json:"reconciliation_status"`
 }
 
 // ==================== CONSOLIDATED DASHBOARD RESULT ====================

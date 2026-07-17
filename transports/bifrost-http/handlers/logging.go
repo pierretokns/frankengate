@@ -1323,6 +1323,11 @@ func (h *LoggingHandler) getDashboard(ctx *fasthttp.RequestCtx) {
 				GeneratedAt: result.Meta.GeneratedAt,
 				WindowStart: filters.StartTime,
 				WindowEnd:   filters.EndTime,
+				SampleSize:  len(res.Rankings),
+				Aggregation: "dimension_ranking",
+				// The query reads the durable log store directly, but this
+				// endpoint has no cross-region reconciliation watermark.
+				ReconciliationStatus: "unknown",
 			}
 			dimMu.Lock()
 			result.DimensionRankings[string(dim)] = res
