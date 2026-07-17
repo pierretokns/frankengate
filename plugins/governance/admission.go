@@ -58,6 +58,15 @@ type OverdraftNotifier interface {
 	Notify(context.Context, OverdraftEvent) error
 }
 
+// MetricsSink is an optional, exporter-neutral governance metrics contract.
+// Implementations must be non-blocking and keep label cardinality bounded;
+// governance never imports Prometheus or OpenTelemetry directly.
+type MetricsSink interface {
+	ReservationObserved(context.Context, string, reservations.Amount)
+	OverdraftObserved(context.Context, bool, reservations.Amount)
+	NotifierObserved(context.Context, string)
+}
+
 // WebhookOverdraftNotifier delivers redacted overdraft events to an operator
 // endpoint. It is intended to run behind AsyncOverdraftNotifier, never in the
 // inference request path. Retries are bounded and only transient failures are
@@ -284,6 +293,7 @@ type DurableReservationCoordinator struct {
 	Lease      time.Duration
 	Now        func() time.Time // injectable clock for deterministic retry/replay tests
 	Overdraft  reservations.OverdraftPolicy
+	Metrics    MetricsSink
 	notifierMu sync.RWMutex
 	Notifier   OverdraftNotifier
 }
@@ -389,6 +399,9 @@ func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req Admissi
 			return nil, e
 		}
 		h.rows = append(h.rows, rows...)
+		if c.Metrics != nil {
+			c.Metrics.ReservationObserved(ctx, "reserved", amount)
+		}
 		return h, nil
 	}
 	for _, request := range requests {
@@ -400,6 +413,9 @@ func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req Admissi
 			return nil, e
 		}
 		h.rows = append(h.rows, r)
+	}
+	if c.Metrics != nil {
+		c.Metrics.ReservationObserved(ctx, "reserved", amount)
 	}
 	return h, nil
 }
@@ -429,7 +445,15 @@ func (c *DurableReservationCoordinator) Settle(ctx context.Context, handle any, 
 		if notifier := c.notifier(); (excess != reservations.Amount{}) && notifier != nil {
 			if err := notifier.Notify(ctx, OverdraftEvent{ReservationID: r.ID, Reserved: r.ReservedAmount, Actual: settleAmount, Excess: excess, Allowed: c.Overdraft.Allow, Reason: c.Overdraft.Reason}); err != nil && first == nil {
 				first = fmt.Errorf("overdraft notification: %w", err)
+				if c.Metrics != nil {
+					c.Metrics.NotifierObserved(ctx, "failed")
+				}
+			} else if c.Metrics != nil {
+				c.Metrics.NotifierObserved(ctx, "delivered")
 			}
+		}
+		if c.Metrics != nil && (excess != reservations.Amount{}) {
+			c.Metrics.OverdraftObserved(ctx, c.Overdraft.Allow, excess)
 		}
 		if _, err := c.Store.Settle(ctx, reservations.SettleRequest{ReservationID: r.ID, AttemptEpoch: r.AttemptEpoch, ActualAmount: settleAmount, IdempotencyKey: "settle-" + string(r.ID), Overdraft: c.Overdraft}); err != nil && first == nil {
 			first = err
