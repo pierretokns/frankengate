@@ -33,9 +33,19 @@ TAG="${TAG:-beta-${SHORT_SHA}}"
 VERSION_OUTPUT="$({ "$BINARY" -version 2>&1 || true; })"
 [[ -n "$VERSION_OUTPUT" ]] || { echo "binary did not return version metadata" >&2; exit 1; }
 
+# Cross-built binaries are common on developer workstations. Allow the caller
+# to describe the artifact platform explicitly instead of silently labeling a
+# Linux binary as Darwin (or vice versa). Defaults preserve host behavior.
+BETA_PLATFORM="${BETA_PLATFORM:-$(uname -s | tr '[:upper:]' '[:lower:]')}"
+BETA_ARCH="${BETA_ARCH:-$(uname -m)}"
+[[ "$BETA_PLATFORM" =~ ^[a-z0-9._-]+$ && "$BETA_ARCH" =~ ^[a-z0-9._-]+$ ]] || {
+	echo "BETA_PLATFORM and BETA_ARCH must contain only lowercase safe identifier characters" >&2
+	exit 1
+}
+
 WORK="$(mktemp -d "${TMPDIR:-/tmp}/frankengate-beta.XXXXXX")"
 trap 'rm -rf "$WORK"' EXIT
-PACKAGE="frankengate-${TAG}-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)"
+PACKAGE="frankengate-${TAG}-${BETA_PLATFORM}-${BETA_ARCH}"
 mkdir -p "$WORK/$PACKAGE"
 cp "$BINARY" "$WORK/$PACKAGE/frankengate"
 cp "$ROOT/LICENSE" "$ROOT/NOTICE" "$WORK/$PACKAGE/"
@@ -43,7 +53,7 @@ cp "$TEST_REPORT" "$WORK/$PACKAGE/local-test-report"
 git -C "$ROOT" log -n 30 --date=short --pretty=format:'%h %ad %s' > "$WORK/$PACKAGE/CHANGELOG.md"
 printf '%s\n' "$VERSION_OUTPUT" > "$WORK/$PACKAGE/version.txt"
 cat > "$WORK/$PACKAGE/build-metadata.json" <<EOF
-{"source_sha":"$SHA","tag":"$TAG","origin":"local-tested-beta","binary":"$(basename "$BINARY")","platform":"$(uname -s)/$(uname -m)","go_version":"$(go version)","published_at":"$(date -u +%FT%TZ)"}
+{"source_sha":"$SHA","tag":"$TAG","origin":"local-tested-beta","binary":"$(basename "$BINARY")","platform":"$BETA_PLATFORM/$BETA_ARCH","go_version":"$(go version)","published_at":"$(date -u +%FT%TZ)"}
 EOF
 (cd "$WORK/$PACKAGE" && sha256sum frankengate > SHA256SUMS)
 tar -C "$WORK" -czf "$WORK/$PACKAGE.tar.gz" "$PACKAGE"
