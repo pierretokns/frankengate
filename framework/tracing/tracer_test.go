@@ -72,6 +72,148 @@ func TestTracer_CompleteAndFlushTraceInjectsObservabilityPlugins(t *testing.T) {
 	}
 }
 
+func TestNewTracerUsesProductionAccumulatorDefaults(t *testing.T) {
+	store := NewTraceStore(5*time.Minute, nil)
+	defer store.Stop()
+
+	tracer := NewTracer(store, nil, nil)
+	defer tracer.Stop()
+
+	limits := tracer.GetAccumulator().Options().Limits
+	if limits.ChatMaxRetainedBytes <= 0 ||
+		limits.ResponsesMaxRetainedBytes <= 0 ||
+		limits.RawResponseMaxBytes <= 0 ||
+		limits.PassthroughMaxRetainedBytes <= 0 ||
+		limits.PassthroughMaxHeaderCount <= 0 ||
+		limits.PassthroughMaxHeaderTotalBytes <= 0 {
+		t.Fatalf("tracer accumulator uses unlimited production defaults: %#v", limits)
+	}
+}
+
+func TestTracerProcessStreamingChunkPropagatesContextCancellationToAccumulator(t *testing.T) {
+	store := NewTraceStore(5*time.Minute, nil)
+	defer store.Stop()
+
+	tracer := NewTracer(store, nil, nil)
+	defer tracer.Stop()
+
+	traceID := tracer.CreateTrace("")
+	parent, cancel := context.WithCancel(context.Background())
+	ctx := schemas.NewBifrostContext(parent, time.Time{})
+
+	first := &schemas.BifrostResponse{
+		ChatResponse: &schemas.BifrostChatResponse{
+			ID:     "chatcmpl_tracer_cancel",
+			Object: "chat.completion.chunk",
+			Choices: []schemas.BifrostResponseChoice{
+				{
+					ChatStreamResponseChoice: &schemas.ChatStreamResponseChoice{
+						Delta: &schemas.ChatStreamResponseChoiceDelta{Content: schemas.Ptr("before cancel")},
+					},
+				},
+			},
+			ExtraFields: schemas.BifrostResponseExtraFields{
+				RequestType:            schemas.ChatCompletionStreamRequest,
+				Provider:               schemas.OpenAI,
+				OriginalModelRequested: "gpt-test",
+				ChunkIndex:             0,
+			},
+		},
+	}
+	if got := tracer.ProcessStreamingChunk(ctx, traceID, false, first, nil); got == nil {
+		t.Fatal("expected first streaming chunk to be accumulated")
+	}
+	if snapshot := tracer.GetAccumulatedResponse(traceID); snapshot == nil || snapshot.ChatResponse == nil {
+		t.Fatal("expected accumulated response before cancellation")
+	}
+
+	cancel()
+	select {
+	case <-ctx.Done():
+	case <-time.After(2 * time.Second):
+		t.Fatal("bifrost context did not observe cancellation")
+	}
+
+	late := &schemas.BifrostResponse{
+		ChatResponse: &schemas.BifrostChatResponse{
+			ID:     "chatcmpl_tracer_cancel",
+			Object: "chat.completion.chunk",
+			Choices: []schemas.BifrostResponseChoice{
+				{
+					ChatStreamResponseChoice: &schemas.ChatStreamResponseChoice{
+						Delta: &schemas.ChatStreamResponseChoiceDelta{Content: schemas.Ptr("after cancel")},
+					},
+				},
+			},
+			ExtraFields: schemas.BifrostResponseExtraFields{
+				RequestType:            schemas.ChatCompletionStreamRequest,
+				Provider:               schemas.OpenAI,
+				OriginalModelRequested: "gpt-test",
+				ChunkIndex:             1,
+			},
+		},
+	}
+	if got := tracer.ProcessStreamingChunk(ctx, traceID, false, late, nil); got != nil {
+		t.Fatalf("expected canceled streaming chunk to be dropped, got %#v", got)
+	}
+	if snapshot := tracer.GetAccumulatedResponse(traceID); snapshot != nil {
+		t.Fatalf("expected cancellation to clean accumulator, got %#v", snapshot)
+	}
+}
+
+func TestTracerContextCancellationCleansAccumulatorWithoutLaterChunk(t *testing.T) {
+	store := NewTraceStore(5*time.Minute, nil)
+	defer store.Stop()
+
+	tracer := NewTracer(store, nil, nil)
+	defer tracer.Stop()
+
+	traceID := tracer.CreateTrace("")
+	parent, cancel := context.WithCancel(context.Background())
+	ctx := schemas.NewBifrostContext(parent, time.Time{})
+
+	first := &schemas.BifrostResponse{
+		ChatResponse: &schemas.BifrostChatResponse{
+			ID:     "chatcmpl_tracer_cancel_watch",
+			Object: "chat.completion.chunk",
+			Choices: []schemas.BifrostResponseChoice{
+				{
+					ChatStreamResponseChoice: &schemas.ChatStreamResponseChoice{
+						Delta: &schemas.ChatStreamResponseChoiceDelta{Content: schemas.Ptr("before cancel")},
+					},
+				},
+			},
+			ExtraFields: schemas.BifrostResponseExtraFields{
+				RequestType:            schemas.ChatCompletionStreamRequest,
+				Provider:               schemas.OpenAI,
+				OriginalModelRequested: "gpt-test",
+				ChunkIndex:             0,
+			},
+		},
+	}
+	if got := tracer.ProcessStreamingChunk(ctx, traceID, false, first, nil); got == nil {
+		t.Fatal("expected first streaming chunk to be accumulated")
+	}
+	if snapshot := tracer.GetAccumulatedResponse(traceID); snapshot == nil || snapshot.ChatResponse == nil {
+		t.Fatal("expected accumulated response before cancellation")
+	}
+
+	cancel()
+	deadline := time.After(2 * time.Second)
+	ticker := time.NewTicker(10 * time.Millisecond)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-deadline:
+			t.Fatal("expected cancellation watcher to clean accumulator without another chunk")
+		case <-ticker.C:
+			if snapshot := tracer.GetAccumulatedResponse(traceID); snapshot == nil {
+				return
+			}
+		}
+	}
+}
+
 func TestTracer_CompleteAndFlushTraceRedactsContentBeforeInject(t *testing.T) {
 	store := NewTraceStore(5*time.Minute, nil)
 	defer store.Stop()

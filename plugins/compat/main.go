@@ -5,6 +5,8 @@
 package compat
 
 import (
+	"slices"
+
 	"github.com/bytedance/sonic"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
@@ -133,6 +135,17 @@ func (p *CompatPlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.Bifr
 				droppedParams := dropUnsupportedParams(ctx, modifiedReq, supportedParams)
 				if len(droppedParams) > 0 {
 					p.droppedParams = droppedParams
+				}
+				// logit_bias changes the model's token distribution and cannot be
+				// silently discarded: doing so produces a successful but materially
+				// different request. Return a client error instead of forwarding a
+				// request whose semantics were changed by compatibility filtering.
+				if slices.Contains(droppedParams, "logit_bias") {
+					return modifiedReq, &schemas.LLMPluginShortCircuit{Error: &schemas.BifrostError{
+						Type:       schemas.Ptr("unsupported_parameter"),
+						StatusCode: schemas.Ptr(400),
+						Error:      &schemas.ErrorField{Message: "logit_bias is not supported by the selected model"},
+					}}, nil
 				}
 			}
 		}

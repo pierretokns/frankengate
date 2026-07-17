@@ -598,9 +598,21 @@ func (t *Tracer) ProcessStreamingChunk(ctx *schemas.BifrostContext, traceID stri
 	if traceID == "" || t.accumulator == nil {
 		return nil
 	}
+	if ctx != nil && ctx.Err() != nil {
+		t.accumulator.ForceCleanupStreamAccumulator(traceID)
+		return nil
+	}
+	if ctx != nil {
+		t.accumulator.WatchContextCancellation(traceID, ctx)
+	}
 
 	// Create a new context for accumulator that sets the traceID as the accumulator lookup ID.
-	accumCtx := schemas.NewBifrostContext(context.Background(), time.Time{})
+	// Use the caller context as parent so cancellation propagates into accumulator cleanup.
+	parent := context.Background()
+	if ctx != nil {
+		parent = ctx
+	}
+	accumCtx := schemas.NewBifrostContext(parent, time.Time{})
 	accumCtx.SetValue(schemas.BifrostContextKeyAccumulatorID, traceID)
 	accumCtx.SetValue(schemas.BifrostContextKeyStreamEndIndicator, isFinalChunk)
 
