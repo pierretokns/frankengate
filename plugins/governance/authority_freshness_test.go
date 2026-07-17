@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
@@ -31,6 +32,14 @@ func TestValidatePrincipalEpochUsesFencedLocalRegistry(t *testing.T) {
 	err := plugin.validatePrincipalEpoch(ctx, "user-a")
 	require.NotNil(t, err)
 	require.Equal(t, "authorization_epoch_invalid", *err.Type)
+}
+
+func TestRateLimitRetryAfterSecondsRoundsUpToResetBoundary(t *testing.T) {
+	d := "30s"
+	limit := &configstoreTables.TableRateLimit{RequestResetDuration: &d, RequestLastReset: time.Now().Add(-29 * time.Second)}
+	got := rateLimitRetryAfterSeconds(limit)
+	require.GreaterOrEqual(t, got, 1)
+	require.LessOrEqual(t, got, 2)
 }
 
 func TestEvaluateGovernanceRequest_DeniesVirtualKeyWhenAuthorityIsStale(t *testing.T) {

@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -133,6 +134,9 @@ func SendBifrostError(ctx *fasthttp.RequestCtx, bifrostErr *schemas.BifrostError
 		} else {
 			ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		}
+	}
+	if bifrostErr.RetryAfterSeconds != nil && *bifrostErr.RetryAfterSeconds > 0 {
+		ctx.Response.Header.Set("Retry-After", strconv.Itoa(*bifrostErr.RetryAfterSeconds))
 	}
 
 	ctx.SetContentType("application/json")

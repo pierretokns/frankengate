@@ -1294,13 +1294,17 @@ func (p *GovernancePlugin) EvaluateGovernanceRequest(ctx *schemas.BifrostContext
 		}
 
 	case DecisionRateLimited, DecisionTokenLimited, DecisionRequestLimited:
-		return result, &schemas.BifrostError{
+		err := &schemas.BifrostError{
 			Type:       new(string(result.Decision)),
 			StatusCode: new(429),
 			Error: &schemas.ErrorField{
 				Message: result.Reason,
 			},
 		}
+		if retryAfter := rateLimitRetryAfterSeconds(result.RateLimitInfo); retryAfter > 0 {
+			err.RetryAfterSeconds = &retryAfter
+		}
+		return result, err
 
 	case DecisionBudgetExceeded:
 		return result, &schemas.BifrostError{
@@ -1341,6 +1345,36 @@ func (p *GovernancePlugin) EvaluateGovernanceRequest(ctx *schemas.BifrostContext
 // For wildcard patterns ("clientName-*"): allowed if VK has the client configured with any tools.
 // Specific tool enforcement happens at execution time via checkVKMCPToolAllowance.
 // For specific tools ("clientName-toolName"): allowed if VK has "*" or the exact tool name.
+// rateLimitRetryAfterSeconds returns the smallest positive reset interval for
+// the limit that produced a denial. HTTP Retry-After uses whole seconds and
+// rounds up so clients never retry before the authoritative reset boundary.
+func rateLimitRetryAfterSeconds(limit *configstoreTables.TableRateLimit) int {
+	if limit == nil {
+		return 0
+	}
+	now := time.Now()
+	best := time.Duration(0)
+	consider := func(last time.Time, raw *string) {
+		if raw == nil {
+			return
+		}
+		d, err := configstoreTables.ParseDuration(*raw)
+		if err != nil || d <= 0 {
+			return
+		}
+		remaining := last.Add(d).Sub(now)
+		if remaining > 0 && (best == 0 || remaining < best) {
+			best = remaining
+		}
+	}
+	consider(limit.TokenLastReset, limit.TokenResetDuration)
+	consider(limit.RequestLastReset, limit.RequestResetDuration)
+	if best <= 0 {
+		return 0
+	}
+	return int((best + time.Second - 1) / time.Second)
+}
+
 func (p *GovernancePlugin) isMCPToolAllowedByVK(vk *configstoreTables.TableVirtualKey, toolPattern string) bool {
 	var allowAllClients map[string]string
 	if p.inMemoryStore != nil {

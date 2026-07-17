@@ -1768,14 +1768,18 @@ func (bs BifrostStreamChunk) MarshalJSON() ([]byte, error) {
 // - AllowFallbacks = &false: Bifrost will return this error immediately, no fallbacks
 // - AllowFallbacks = nil: Treated as true by default (fallbacks allowed for resilience)
 type BifrostError struct {
-	EventID        *string                 `json:"event_id,omitempty"`
-	Type           *string                 `json:"type,omitempty"`
-	IsBifrostError bool                    `json:"is_bifrost_error"`
-	StatusCode     *int                    `json:"status_code,omitempty"`
-	Error          *ErrorField             `json:"error"`
-	AllowFallbacks *bool                   `json:"-"` // Optional: Controls fallback behavior (nil = true by default)
-	StreamControl  *StreamControl          `json:"-"` // Optional: Controls stream behavior
-	ExtraFields    BifrostErrorExtraFields `json:"extra_fields"`
+	EventID        *string        `json:"event_id,omitempty"`
+	Type           *string        `json:"type,omitempty"`
+	IsBifrostError bool           `json:"is_bifrost_error"`
+	StatusCode     *int           `json:"status_code,omitempty"`
+	Error          *ErrorField    `json:"error"`
+	AllowFallbacks *bool          `json:"-"` // Optional: Controls fallback behavior (nil = true by default)
+	StreamControl  *StreamControl `json:"-"` // Optional: Controls stream behavior
+	// RetryAfterSeconds is transport metadata for quota denials. It is emitted
+	// as Retry-After by HTTP transports and intentionally omitted from the JSON
+	// error body so SDK consumers retain the stable error shape.
+	RetryAfterSeconds *int                    `json:"-"`
+	ExtraFields       BifrostErrorExtraFields `json:"extra_fields"`
 }
 
 // PopulateExtraFields sets RequestType, Provider, OriginalModelRequested, and ResolvedModelUsed on the
