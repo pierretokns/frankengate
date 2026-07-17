@@ -82,3 +82,17 @@ func TestRDBReserveAgainstMultipleHierarchicalBudgetsUsesDistinctIds(t *testing.
 	require.NoError(t, store.DB().Model(&tables.TableGovernanceReservation{}).Count(&rows).Error)
 	require.Equal(t, int64(2), rows)
 }
+
+func TestRDBReserveAgainstBudgetsRollsBackAllOwnersOnDenial(t *testing.T) {
+	store := setupRDBTestStore(t)
+	require.NoError(t, store.DB().AutoMigrate(&tables.TableGovernanceReservation{}, &tables.TableBudget{}))
+	now := time.Now().UTC()
+	require.NoError(t, store.DB().Create(&tables.TableBudget{ID: "team-ok", MaxLimit: 10, ResetDuration: "1h", LastReset: now}).Error)
+	require.NoError(t, store.DB().Create(&tables.TableBudget{ID: "user-full", MaxLimit: 0.5, ResetDuration: "1h", LastReset: now}).Error)
+	req := reservations.ReservationRequest{LogicalRequestID: "atomic-logical", AttemptID: "attempt-1", AttemptEpoch: 1, Lane: reservations.AccountingLaneNormal, Amount: reservations.Amount{CostMicros: 1000000}, LeaseUntil: now.Add(time.Minute), Now: now}
+	_, err := store.ReserveAgainstBudgets(context.Background(), []BudgetReservationRequest{{BudgetID: "team-ok", Request: req}, {BudgetID: "user-full", Request: req}})
+	require.ErrorIs(t, err, reservations.ErrOverdraftDenied)
+	var rows int64
+	require.NoError(t, store.DB().Model(&tables.TableGovernanceReservation{}).Count(&rows).Error)
+	require.Zero(t, rows, "atomic multi-budget admission must not leave a partial reservation")
+}

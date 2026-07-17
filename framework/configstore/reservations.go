@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/maximhq/bifrost/core/reservations"
@@ -29,6 +30,13 @@ type ReservationStore interface {
 type BudgetReservationStore interface {
 	ReservationStore
 	ReserveAgainstBudget(context.Context, BudgetReservationRequest) (reservations.Reservation, error)
+}
+
+// MultiBudgetReservationStore performs one admission decision across all
+// hierarchical budget owners. Implementations must lock owners in a stable
+// order and commit every reservation atomically.
+type MultiBudgetReservationStore interface {
+	ReserveAgainstBudgets(context.Context, []BudgetReservationRequest) ([]reservations.Reservation, error)
 }
 
 var _ BudgetReservationStore = (*RDBConfigStore)(nil)
@@ -107,6 +115,69 @@ func (s *RDBConfigStore) ReserveAgainstBudget(ctx context.Context, req BudgetRes
 		return tx.Create(&row).Error
 	})
 	return r, err
+}
+
+func (s *RDBConfigStore) ReserveAgainstBudgets(ctx context.Context, requests []BudgetReservationRequest) ([]reservations.Reservation, error) {
+	if len(requests) == 0 {
+		return nil, nil
+	}
+	db, err := s.reservationDB(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ordered := append([]BudgetReservationRequest(nil), requests...)
+	sort.SliceStable(ordered, func(i, j int) bool { return ordered[i].BudgetID < ordered[j].BudgetID })
+	rows := make([]reservations.Reservation, 0, len(ordered))
+	err = db.Transaction(func(tx *gorm.DB) error {
+		for _, req := range ordered {
+			if req.BudgetID == "" {
+				return reservations.ErrNotFound
+			}
+			now := req.Request.Now
+			if now.IsZero() {
+				now = time.Now().UTC()
+			}
+			var budget tables.TableBudget
+			if e := dbForUpdate(tx).First(&budget, "id = ?", req.BudgetID).Error; errors.Is(e, gorm.ErrRecordNotFound) {
+				return reservations.ErrNotFound
+			} else if e != nil {
+				return e
+			}
+			id := budgetReservationID(req.BudgetID, req.Request)
+			var existing tables.TableGovernanceReservation
+			if e := tx.First(&existing, "id = ?", string(id)).Error; e == nil {
+				if existing.BudgetID != req.BudgetID || existing.ReservedTokens != req.Request.Amount.Tokens || existing.ReservedMicros != req.Request.Amount.CostMicros {
+					return reservations.ErrReservationConflict
+				}
+				if existing.State != string(reservations.ReservationStateActive) {
+					return reservations.ErrAlreadyFinalized
+				}
+				rows = append(rows, reservationFromRow(existing))
+				continue
+			} else if !errors.Is(e, gorm.ErrRecordNotFound) {
+				return e
+			}
+			var active struct{ Total float64 }
+			if e := tx.Model(&tables.TableGovernanceReservation{}).Where("budget_id = ? AND state = ?", req.BudgetID, string(reservations.ReservationStateActive)).Select("COALESCE(SUM(reserved_cost_micros),0) AS total").Scan(&active).Error; e != nil {
+				return e
+			}
+			if budget.CurrentUsage+(active.Total+float64(req.Request.Amount.CostMicros))/1_000_000 > budget.MaxLimit {
+				return reservations.ErrOverdraftDenied
+			}
+			r := reservations.Reservation{ID: id, LogicalRequestID: req.Request.LogicalRequestID, AttemptID: req.Request.AttemptID, AttemptEpoch: req.Request.AttemptEpoch, Lane: req.Request.Lane, ReservedAmount: req.Request.Amount, LeaseUntil: req.Request.LeaseUntil, State: reservations.ReservationStateActive, CreatedAt: now, UpdatedAt: now}
+			row := reservationRow(r)
+			row.BudgetID = req.BudgetID
+			if e := tx.Create(&row).Error; e != nil {
+				return e
+			}
+			rows = append(rows, r)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return rows, nil
 }
 
 func reservationFromRow(row tables.TableGovernanceReservation) reservations.Reservation {

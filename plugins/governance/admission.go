@@ -302,8 +302,20 @@ func (c *DurableReservationCoordinator) Reserve(ctx context.Context, req Admissi
 		lease = now.Add(30 * time.Second)
 	}
 	h := &durableReservationHandle{}
+	requests := make([]configstore.BudgetReservationRequest, 0, len(ids))
 	for _, id := range ids {
-		r, e := c.Store.ReserveAgainstBudget(ctx, configstore.BudgetReservationRequest{BudgetID: id, Request: reservations.ReservationRequest{LogicalRequestID: reservations.LogicalRequestID(req.RequestID), AttemptID: reservations.AttemptID(fmt.Sprintf("attempt-%d", req.Attempt)), AttemptEpoch: reservations.AttemptEpoch(req.Attempt + 1), Lane: reservations.AccountingLaneNormal, Amount: amount, LeaseUntil: lease, Now: now}})
+		requests = append(requests, configstore.BudgetReservationRequest{BudgetID: id, Request: reservations.ReservationRequest{LogicalRequestID: reservations.LogicalRequestID(req.RequestID), AttemptID: reservations.AttemptID(fmt.Sprintf("attempt-%d", req.Attempt)), AttemptEpoch: reservations.AttemptEpoch(req.Attempt + 1), Lane: reservations.AccountingLaneNormal, Amount: amount, LeaseUntil: lease, Now: now}})
+	}
+	if multi, ok := c.Store.(configstore.MultiBudgetReservationStore); ok {
+		rows, e := multi.ReserveAgainstBudgets(ctx, requests)
+		if e != nil {
+			return nil, e
+		}
+		h.rows = append(h.rows, rows...)
+		return h, nil
+	}
+	for _, request := range requests {
+		r, e := c.Store.ReserveAgainstBudget(ctx, request)
 		if e != nil {
 			for _, prior := range h.rows {
 				_, _ = c.Store.Refund(ctx, reservations.RefundRequest{ReservationID: prior.ID, AttemptEpoch: prior.AttemptEpoch, IdempotencyKey: "admission-rollback-" + string(prior.ID), Reason: "partial admission rollback"})
