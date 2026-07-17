@@ -100,6 +100,7 @@ func LoadAlertingWebhookConfig(ctx context.Context, store configstore.ConfigStor
 type AlertingHandler struct {
 	configStore configstore.ConfigStore
 	mu          sync.Mutex
+	onChanged   func()
 }
 
 func validAlertChannelType(kind string) bool {
@@ -114,6 +115,10 @@ func validAlertChannelType(kind string) bool {
 func NewAlertingHandler(s configstore.ConfigStore) *AlertingHandler {
 	return &AlertingHandler{configStore: s}
 }
+
+// SetOnChanged installs a callback invoked after durable alerting state is
+// committed. The server uses it to refresh notifier projections asynchronously.
+func (h *AlertingHandler) SetOnChanged(fn func()) { h.onChanged = fn }
 func (h *AlertingHandler) RegisterRoutes(r *router.Router, m ...schemas.BifrostHTTPMiddleware) {
 	r.GET("/api/alerting/channels", lib.ChainMiddlewares(h.listChannels, m...))
 	r.POST("/api/alerting/channels", lib.ChainMiddlewares(h.createChannel, m...))
@@ -161,6 +166,9 @@ func (h *AlertingHandler) mutate(ctx *fasthttp.RequestCtx, fn func(*alertingStat
 	if e = h.save(ctx, s); e != nil {
 		SendError(ctx, 500, "failed to persist alerting state")
 		return
+	}
+	if h.onChanged != nil {
+		h.onChanged()
 	}
 	SendJSON(ctx, s)
 }

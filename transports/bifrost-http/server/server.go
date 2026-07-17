@@ -1571,6 +1571,18 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	pluginsHandler := handlers.NewPluginsHandler(callbacks, s.Config.ConfigStore)
 	sessionHandler := handlers.NewSessionHandler(s.Config.ConfigStore, s.WSTicketStore)
 	alertingHandler := handlers.NewAlertingHandler(s.Config.ConfigStore)
+	alertingHandler.SetOnChanged(func() {
+		go func() {
+			cfg := s.getPluginConfig(governance.PluginName)
+			var raw any
+			if cfg != nil {
+				raw = cfg.Config
+			}
+			if err := s.ReloadPlugin(context.Background(), governance.PluginName, nil, raw, nil, nil); err != nil {
+				logger.Warn("failed to hot-refresh governance alerting notifier: %v", err)
+			}
+		}()
+	})
 	promptsHandler := handlers.NewPromptsHandler(s.Config.ConfigStore, promptsReloader)
 	featureFlagsHandler := handlers.NewFeatureFlagsHandler(s.Config.FeatureFlags, s.Config.ConfigStore)
 	// Going ahead with API handlers
