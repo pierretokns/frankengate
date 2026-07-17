@@ -105,21 +105,41 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 		if reservationStore, ok := bifrostConfig.ConfigStore.(configstore.BudgetReservationStore); ok {
 			allowOverdraft := governanceConfig.ReservationAllowOverdraft != nil && *governanceConfig.ReservationAllowOverdraft
 			overdraft := reservations.OverdraftPolicy{Allow: allowOverdraft, Reason: governanceConfig.ReservationOverdraftReason}
+			configureNotifier := func(coordinator *governance.DurableReservationCoordinator) {
+				if governanceConfig.ReservationWebhookURL == nil || governanceConfig.ReservationWebhookURL.GetValue() == "" {
+					return
+				}
+				buffer := 256
+				if governanceConfig.ReservationWebhookBuffer != nil && *governanceConfig.ReservationWebhookBuffer > 0 {
+					buffer = *governanceConfig.ReservationWebhookBuffer
+				}
+				var signingKey []byte
+				if governanceConfig.ReservationWebhookSigningKey != nil {
+					signingKey = []byte(governanceConfig.ReservationWebhookSigningKey.GetValue())
+				}
+				coordinator.SetNotifier(governance.NewAsyncOverdraftNotifier(ctx, &governance.WebhookOverdraftNotifier{
+					URL: governanceConfig.ReservationWebhookURL.GetValue(), SigningKey: signingKey,
+				}, buffer))
+			}
 			if estimator, ok := bifrostConfig.ConfigStore.(governance.ReservationEstimator); ok {
-				plugin.SetReservationCoordinator(&governance.DurableReservationCoordinator{
+				coordinator := &governance.DurableReservationCoordinator{
 					Store:     reservationStore,
 					Estimator: estimator,
 					Overdraft: overdraft,
-				})
+				}
+				configureNotifier(coordinator)
+				plugin.SetReservationCoordinator(coordinator)
 			} else if governanceConfig.ReservationMaxTokens != nil && governanceConfig.ReservationCostMicrosPerToken != nil {
-				plugin.SetReservationCoordinator(&governance.DurableReservationCoordinator{
+				coordinator := &governance.DurableReservationCoordinator{
 					Store: reservationStore,
 					Estimator: governance.ConfiguredReservationEstimator{
 						MaxTokens:          *governanceConfig.ReservationMaxTokens,
 						CostMicrosPerToken: *governanceConfig.ReservationCostMicrosPerToken,
 					},
 					Overdraft: overdraft,
-				})
+				}
+				configureNotifier(coordinator)
+				plugin.SetReservationCoordinator(coordinator)
 			} else if governanceConfig.IsEnterprise {
 				return nil, fmt.Errorf("enterprise governance requires a reservation estimator when the config store supports durable reservations")
 			}

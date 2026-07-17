@@ -2172,6 +2172,37 @@
                     "is_enterprise": {
                       "type": "boolean",
                       "description": "Enable enterprise mode features"
+                    },
+                    "reservation_max_tokens": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Conservative token ceiling reserved before provider effects"
+                    },
+                    "reservation_cost_micros_per_token": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Reservation cost per token in micro-units"
+                    },
+                    "reservation_allow_overdraft": {
+                      "type": "boolean",
+                      "description": "Permit only explicitly configured controlled overdraft"
+                    },
+                    "reservation_overdraft_reason": {
+                      "type": "string",
+                      "description": "Audited policy reason for controlled overdraft"
+                    },
+                    "reservation_webhook_url": {
+                      "type": "string",
+                      "description": "Optional environment-backed webhook destination for overdraft alerts"
+                    },
+                    "reservation_webhook_signing_key": {
+                      "type": "string",
+                      "description": "Optional environment-backed HMAC signing key for overdraft webhooks"
+                    },
+                    "reservation_webhook_buffer": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Bounded asynchronous overdraft webhook queue size"
                     }
                   },
                   "additionalProperties": false
