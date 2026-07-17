@@ -143,6 +143,10 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 			} else if governanceConfig.IsEnterprise {
 				return nil, fmt.Errorf("enterprise governance requires a reservation estimator when the config store supports durable reservations")
 			}
+		} else if governanceConfig.ReservationMaxTokens != nil || governanceConfig.ReservationCostMicrosPerToken != nil {
+			// Never make configured durable admission look active when the injected
+			// store cannot provide the transactional reservation surface.
+			logger.Warn("governance durable admission settings are configured but the config store does not implement BudgetReservationStore; requests will not receive durable reservations")
 		}
 		return plugin, nil
 
