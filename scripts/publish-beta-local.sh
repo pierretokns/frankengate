@@ -45,7 +45,14 @@ BETA_ARCH="${BETA_ARCH:-$(uname -m)}"
 
 WORK="$(mktemp -d "${TMPDIR:-/tmp}/frankengate-beta.XXXXXX")"
 trap 'rm -rf "$WORK"' EXIT
-PACKAGE="frankengate-${TAG}-${BETA_PLATFORM}-${BETA_ARCH}"
+# Platform-specific tags already carry their platform suffix. Avoid repeating
+# it in the archive/package name while preserving the suffix for generic tags.
+platform_suffix="-${BETA_PLATFORM}-${BETA_ARCH}"
+if [[ "$TAG" == *"$platform_suffix" ]]; then
+	PACKAGE="frankengate-${TAG}"
+else
+	PACKAGE="frankengate-${TAG}-${BETA_PLATFORM}-${BETA_ARCH}"
+fi
 mkdir -p "$WORK/$PACKAGE"
 cp "$BINARY" "$WORK/$PACKAGE/frankengate"
 cp "$ROOT/LICENSE" "$ROOT/NOTICE" "$WORK/$PACKAGE/"
