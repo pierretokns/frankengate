@@ -7,6 +7,7 @@ scripts/benchmark-gateway-overhead.sh	local-fork	Apache-2.0	FrankenGate contribu
 scripts/benchmark-gateway-overhead-loop.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Periodic direct-versus-gateway latency measurement loop.
 scripts/publish-beta-local.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Exact-SHA local beta publication lane.
 scripts/verify-beta-local.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Local beta archive verification helper.
+scripts/validate-migration-manifest.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Dependency-free migration compatibility manifest validator.
 .github/workflows/frankengate-beta.yml	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Fast local-tested beta publication workflow.
 .github/workflows/frankengate-image-release-native.yml	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Native image release workflow.
 helm-charts/bifrost/Chart.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm chart metadata.
