@@ -54,6 +54,15 @@ type AlertingHandler struct {
 	mu          sync.Mutex
 }
 
+func validAlertChannelType(kind string) bool {
+	switch strings.ToLower(strings.TrimSpace(kind)) {
+	case "webhook", "sns", "email":
+		return true
+	default:
+		return false
+	}
+}
+
 func NewAlertingHandler(s configstore.ConfigStore) *AlertingHandler {
 	return &AlertingHandler{configStore: s}
 }
@@ -133,6 +142,11 @@ func (h *AlertingHandler) createChannel(c *fasthttp.RequestCtx) {
 	var v AlertChannel
 	if sonic.Unmarshal(c.PostBody(), &v) != nil || v.Name == "" || v.Type == "" {
 		SendError(c, 400, "name and type are required")
+		return
+	}
+	v.Type = strings.ToLower(strings.TrimSpace(v.Type))
+	if !validAlertChannelType(v.Type) {
+		SendError(c, 400, "unsupported alert channel type")
 		return
 	}
 	if v.ID == "" {
