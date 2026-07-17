@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/maximhq/bifrost/core/reservations"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
@@ -64,6 +65,15 @@ type MetricsExporter struct {
 	httpRequestDuration   *syncFloat64Histogram
 	httpRequestSizeBytes  *syncFloat64Histogram
 	httpResponseSizeBytes *syncFloat64Histogram
+
+	// Governance notification/admission metrics. These deliberately use only
+	// bounded outcome labels so user, team, and virtual-key identities never
+	// become metric cardinality.
+	governanceReservationsTotal       *syncInt64Counter
+	governanceReservationTokensTotal  *syncInt64Counter
+	governanceOverdraftsTotal         *syncInt64Counter
+	governanceOverdraftTokensTotal    *syncInt64Counter
+	governanceNotifierDeliveriesTotal *syncInt64Counter
 }
 
 // syncInt64Counter wraps metric.Int64Counter with thread-safe lazy initialization
@@ -438,6 +448,12 @@ func (m *MetricsExporter) initMetrics() {
 		meter:      m.meter,
 		boundaries: httpBodySizeBuckets,
 	}
+
+	m.governanceReservationsTotal = &syncInt64Counter{name: "bifrost_governance_reservations_total", desc: "Governance reservation events", unit: "{event}", meter: m.meter}
+	m.governanceReservationTokensTotal = &syncInt64Counter{name: "bifrost_governance_reserved_tokens_total", desc: "Tokens reserved by governance", unit: "{token}", meter: m.meter}
+	m.governanceOverdraftsTotal = &syncInt64Counter{name: "bifrost_governance_overdrafts_total", desc: "Governance overdraft observations", unit: "{event}", meter: m.meter}
+	m.governanceOverdraftTokensTotal = &syncInt64Counter{name: "bifrost_governance_overdraft_tokens_total", desc: "Tokens observed above budget", unit: "{token}", meter: m.meter}
+	m.governanceNotifierDeliveriesTotal = &syncInt64Counter{name: "bifrost_governance_notifier_deliveries_total", desc: "Governance notifier delivery attempts", unit: "{event}", meter: m.meter}
 }
 
 // Shutdown gracefully shuts down the metrics exporter
@@ -501,6 +517,37 @@ func (m *MetricsExporter) RecordCacheWriteInputTokens1h(ctx context.Context, cou
 // RecordCost records cost metric
 func (m *MetricsExporter) RecordCost(ctx context.Context, cost float64, attrs ...attribute.KeyValue) {
 	m.costTotal.Add(ctx, cost, metric.WithAttributes(attrs...))
+}
+
+// ReservationObserved implements the governance metrics sink without making
+// governance depend on OTEL or Prometheus. outcome is a bounded value such as
+// reserved or rejected.
+func (m *MetricsExporter) ReservationObserved(ctx context.Context, outcome string, amount reservations.Amount) {
+	attrs := metric.WithAttributes(attribute.String("outcome", outcome))
+	m.governanceReservationsTotal.Add(ctx, 1, attrs)
+	if amount.Tokens > 0 {
+		m.governanceReservationTokensTotal.Add(ctx, amount.Tokens, attrs)
+	}
+}
+
+// OverdraftObserved records policy and magnitude separately so alerts can
+// distinguish allowed controlled overdrafts from blocked attempts.
+func (m *MetricsExporter) OverdraftObserved(ctx context.Context, allowed bool, amount reservations.Amount) {
+	policy := "blocked"
+	if allowed {
+		policy = "allowed"
+	}
+	attrs := metric.WithAttributes(attribute.String("policy", policy))
+	m.governanceOverdraftsTotal.Add(ctx, 1, attrs)
+	if amount.Tokens > 0 {
+		m.governanceOverdraftTokensTotal.Add(ctx, amount.Tokens, attrs)
+	}
+}
+
+// NotifierObserved records delivery outcomes (delivered or failed), leaving
+// alert routing and user notifications to the notifier/Alertmanager layer.
+func (m *MetricsExporter) NotifierObserved(ctx context.Context, outcome string) {
+	m.governanceNotifierDeliveriesTotal.Add(ctx, 1, metric.WithAttributes(attribute.String("outcome", outcome)))
 }
 
 // RecordUpstreamLatency records upstream latency metric
