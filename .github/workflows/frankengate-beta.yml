@@ -88,7 +88,7 @@ jobs:
           heartbeat() { while sleep 30; do echo "[$(date -u +%FT%TZ)] beta checks heartbeat"; done; }
           heartbeat & pid=$!; trap 'kill "$pid" 2>/dev/null || true' EXIT
           timeout --foreground --signal=TERM --kill-after=30s 12m \
-            .github/workflows/scripts/fork-go-checks.sh test-vet
+            .github/workflows/scripts/fork-go-checks.sh beta
 
       - name: Provenance self-test
         run: bash scripts/verify-provenance.sh --self-test

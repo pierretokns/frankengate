@@ -204,7 +204,19 @@ run_focused_race_tests() {
   echo "::endgroup::"
 }
 
+run_beta_checks() {
+  # Beta is the rapid feedback lane. Keep the high-risk enterprise primitives
+  # and compile every shipped module, but leave the full module-wide vet fanout
+  # to the official release lane. Every command remains individually bounded.
+  download_dependencies
+  run_in_modules "go test compile" go test -run '^$' ./...
+  run_focused_race_tests
+}
+
 case "$MODE" in
+  beta)
+    run_beta_checks
+    ;;
   test-vet)
     download_dependencies
     # Compile every package and test binary without executing suites whose
