@@ -20,18 +20,27 @@ tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
 run() {
-  local url="$1" out="$2" status_out="$3" i status
+  local url="$1" out="$2" status_out="$3" i status timing
+  : >"$out"
+  : >"$status_out"
   for ((i=0; i<N; i++)); do
+    timing="$out.$i"
     set +e
     curl --fail --silent --show-error --output /dev/null \
       --connect-timeout 2 --max-time 60 \
       -H 'content-type: application/json' \
       ${HEADERS_FILE:+--config "$HEADERS_FILE"} \
       --data-binary "$REQUEST_BODY" \
-      -w '%{time_total}\n' "$url" >>"$out"
+      -w '%{time_total}\n' "$url" >"$timing"
     status=$?
     set -e
     printf '%s\n' "$status" >>"$status_out"
+    # Latency percentiles describe successful inference only. Failed requests
+    # remain in the error-rate denominator but must not contaminate p50/p95.
+    if [[ "$status" -eq 0 ]]; then
+      cat "$timing" >>"$out"
+    fi
+    rm -f "$timing"
   done
 }
 
@@ -49,8 +58,14 @@ stats() {
     }'
 }
 
-direct="$(stats "$tmp/direct")"
-gateway="$(stats "$tmp/gateway")"
+direct="$(stats "$tmp/direct")" || {
+  echo "direct endpoint produced no successful latency samples" >&2
+  exit 42
+}
+gateway="$(stats "$tmp/gateway")" || {
+  echo "gateway endpoint produced no successful latency samples" >&2
+  exit 42
+}
 direct_p95="$(printf '%s' "$direct" | awk -F'\"p95_ms\":' '{split($2,a,","); print a[1]}')"
 gateway_p95="$(printf '%s' "$gateway" | awk -F'\"p95_ms\":' '{split($2,a,","); print a[1]}')"
 direct_p50="$(printf '%s' "$direct" | awk -F'\"p50_ms\":' '{split($2,a,","); print a[1]}')"
