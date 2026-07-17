@@ -48,10 +48,12 @@ direct="$(stats "$tmp/direct")"
 gateway="$(stats "$tmp/gateway")"
 direct_p95="$(printf '%s' "$direct" | awk -F'\"p95_ms\":' '{split($2,a,","); print a[1]}')"
 gateway_p95="$(printf '%s' "$gateway" | awk -F'\"p95_ms\":' '{split($2,a,","); print a[1]}')"
+direct_p50="$(printf '%s' "$direct" | awk -F'\"p50_ms\":' '{split($2,a,","); print a[1]}')"
+gateway_p50="$(printf '%s' "$gateway" | awk -F'\"p50_ms\":' '{split($2,a,","); print a[1]}')"
 direct_errors="$(awk '$1 != 0 { n++ } END { print n+0 }' "$tmp/direct.status")"
 gateway_errors="$(awk '$1 != 0 { n++ } END { print n+0 }' "$tmp/gateway.status")"
-awk -v d="$direct_p95" -v g="$gateway_p95" \
+awk -v d="$direct_p95" -v g="$gateway_p95" -v d50="$direct_p50" -v g50="$gateway_p50" \
   -v direct="$direct" -v gateway="$gateway" \
   -v de="$direct_errors" -v ge="$gateway_errors" -v n="$N" \
   -v max_overhead="$MAX_P95_OVERHEAD_MS" \
-  'BEGIN { overhead=g-d; printf "{\"direct\":%s,\"gateway\":%s,\"direct_error_rate\":%.4f,\"gateway_error_rate\":%.4f,\"added_p95_ms\":%.3f,\"max_p95_overhead_ms\":%.3f,\"regression\":%s}\n", direct, gateway, de/n, ge/n, overhead, max_overhead, (overhead > max_overhead ? "true" : "false"); if (overhead > max_overhead) exit 42 }'
+  'BEGIN { overhead=g-d; overhead50=g50-d50; printf "{\"direct\":%s,\"gateway\":%s,\"direct_error_rate\":%.4f,\"gateway_error_rate\":%.4f,\"added_p50_ms\":%.3f,\"added_p95_ms\":%.3f,\"max_p95_overhead_ms\":%.3f,\"regression\":%s}\n", direct, gateway, de/n, ge/n, overhead50, overhead, max_overhead, (overhead > max_overhead ? "true" : "false"); if (overhead > max_overhead) exit 42 }'
