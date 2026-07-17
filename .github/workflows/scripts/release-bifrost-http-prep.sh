@@ -29,8 +29,15 @@ VERSION="$1"
 # authority/reservation packages this transport imports.
 ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd -P)"
 cd "$ROOT_DIR"
+# go.work is intentionally gitignored. Clean release checkouts must regenerate
+# it from the canonical module list before the assembly graph is inspected.
 if [[ ! -f "$ROOT_DIR/go.work" ]]; then
-  echo "❌ release assembly requires repository go.work (source graph missing)" >&2
+  echo "🔧 go.work not found; initializing the release workspace..."
+  # shellcheck source=/dev/null
+  source "$SCRIPT_DIR/setup-go-workspace.sh"
+fi
+if [[ ! -f "$ROOT_DIR/go.work" ]]; then
+  echo "❌ release assembly could not initialize go.work" >&2
   exit 1
 fi
 WORKSPACE_MODE="$(go env GOWORK)"
