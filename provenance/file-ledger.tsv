@@ -3,6 +3,10 @@ LICENSE	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	n
 NOTICE	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Root attribution and non-affiliation notice.
 README.md	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Public identity surface references fork origin and Apache attribution.
 Makefile	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and test command surface.
+scripts/benchmark-gateway-overhead.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Direct-versus-gateway latency regression gate.
+scripts/benchmark-gateway-overhead-loop.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Periodic direct-versus-gateway latency measurement loop.
+scripts/publish-beta-local.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Exact-SHA local beta publication lane.
+scripts/verify-beta-local.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Local beta archive verification helper.
 helm-charts/bifrost/Chart.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm chart metadata.
 helm-charts/bifrost/README.md	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm chart documentation.
 helm-charts/bifrost/templates/configmap.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm template.
@@ -101,3 +105,39 @@ terraform/modules/bifrost/variables.tf	upstream-bifrost	Apache-2.0	Bifrost AI Ga
 transports/Dockerfile	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	OCI image build surface.
 transports/Dockerfile.local	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Local OCI image build surface.
 transports/Dockerfile.redhat	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Red Hat OCI image build surface.
+transports/Dockerfile.release	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Immutable-tag OCI image build surface.
+.github/workflows/dependabot-alerts.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/dependency-review.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/docs-validation.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/e2e-tests.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/fork-ci.yml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Fork CI automation surface.
+.github/workflows/frankengate-release.yml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Fork release automation surface.
+.github/workflows/frankengate-container-release.yml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Fork multi-architecture OCI release and attestation surface.
+.github/workflows/helm-release.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/npx-publish.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/openapi-bundle.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/pr-tests.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/provenance.yml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Provenance gate automation surface.
+.github/workflows/release-bifrost-migration-cli.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/release-cli.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/scorecards.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
+.github/workflows/configs/default/.gitkeep	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/default/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/docker-compose.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/emptystate/.gitkeep	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/noconfigstorenologstore/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/witconfigstorelogstorepostgres/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/withconfigstore/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/withconfigstorelogsstorepostgres/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/withconfigstorelogsstoresqlite/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/withdynamicplugin/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/withobservability/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/withpostgresmcpclientsinconfig/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+.github/workflows/configs/withsemanticcache/config.json	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	CI fixture/config input.
+scripts/bifrost-migration-cli/scripts/create_organizations.sh	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Migration CLI packaged shell input.
+scripts/bifrost-migration-cli/scripts/create_teams.sh	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Migration CLI packaged shell input.
+scripts/bifrost-migration-cli/scripts/create_virtual_keys.sh	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Migration CLI packaged shell input.
+scripts/bifrost-migration-cli/scripts/delete_bifrost_entities.sh	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Migration CLI packaged shell input.
+scripts/bifrost-migration-cli/scripts/delete_entities.sh	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Migration CLI packaged shell input.
+scripts/bifrost-migration-cli/scripts/seed_models.sh	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Migration CLI packaged shell input.
+scripts/verify-provenance.sh	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Deterministic provenance release gate.
