@@ -3314,7 +3314,7 @@
                   "description": { "type": "string" },
                   "type": {
                     "type": "string",
-                    "enum": ["slack", "microsoft_teams", "pagerduty", "webhook"],
+                    "enum": ["slack", "microsoft_teams", "pagerduty", "webhook", "sns", "email"],
                     "description": "Channel delivery type"
                   },
                   "enabled": { "type": "boolean" },

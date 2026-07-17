@@ -997,7 +997,7 @@
               },
               "type": {
                 "type": "string",
-                "enum": ["slack", "microsoft_teams", "pagerduty", "webhook"],
+                "enum": ["slack", "microsoft_teams", "pagerduty", "webhook", "sns", "email"],
                 "description": "Alert channel type."
               },
               "enabled": {
@@ -5255,6 +5255,7 @@
         "issuerUrl": {
           "type": "string",
           "format": "uri",
+          "pattern": "^https://",
           "description": "Okta issuer URL (e.g., https://your-domain.okta.com/oauth2/default)"
         },
         "authServerType": {
