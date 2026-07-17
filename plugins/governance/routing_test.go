@@ -16,6 +16,28 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestSelectWeightedProviderAllZeroWeightsDoesNotPinFirst(t *testing.T) {
+	configs := []configstoreTables.TableVirtualKeyProviderConfig{
+		{Provider: "openai", Weight: bifrost.Ptr(0.0)},
+		{Provider: "anthropic", Weight: bifrost.Ptr(0.0)},
+	}
+	seen := map[schemas.ModelProvider]bool{}
+	for i := 0; i < 200; i++ {
+		seen[selectWeightedProvider(configs)] = true
+	}
+	assert.Len(t, seen, 2, "all-zero weights should be uniform rather than always selecting the first provider")
+}
+
+func TestSelectWeightedProviderIgnoresNegativeWeights(t *testing.T) {
+	configs := []configstoreTables.TableVirtualKeyProviderConfig{
+		{Provider: "invalid", Weight: bifrost.Ptr(-1.0)},
+		{Provider: "openai", Weight: bifrost.Ptr(1.0)},
+	}
+	for i := 0; i < 50; i++ {
+		assert.Equal(t, schemas.ModelProvider("openai"), selectWeightedProvider(configs))
+	}
+}
+
 // TestBuildScopeChain_GlobalOnly tests scope chain with no VirtualKey
 func TestBuildScopeChain_GlobalOnly(t *testing.T) {
 	chain := buildScopeChain(nil)

@@ -656,7 +656,9 @@ func (p *GovernancePlugin) loadBalanceProvider(ctx *schemas.BifrostContext, req 
 
 	weightedConfigs := make([]configstoreTables.TableVirtualKeyProviderConfig, 0, len(allowedProviderConfigs))
 	for _, config := range allowedProviderConfigs {
-		if config.Weight != nil {
+		// Treat malformed negative weights as ineligible at runtime as well as
+		// at write time. A bad persisted row must not distort fleet-wide routing.
+		if config.Weight != nil && getWeight(config.Weight) >= 0 {
 			weightedConfigs = append(weightedConfigs, config)
 		}
 	}
@@ -670,22 +672,7 @@ func (p *GovernancePlugin) loadBalanceProvider(ctx *schemas.BifrostContext, req 
 		return nil
 	}
 
-	var selectedProvider schemas.ModelProvider
-	totalWeight := 0.0
-	for _, config := range weightedConfigs {
-		totalWeight += getWeight(config.Weight)
-	}
-	// Generate random number between 0 and totalWeight
-	randomValue := rand.Float64() * totalWeight
-	// Select provider based on weighted random selection
-	currentWeight := 0.0
-	for _, config := range weightedConfigs {
-		currentWeight += getWeight(config.Weight)
-		if randomValue <= currentWeight {
-			selectedProvider = schemas.ModelProvider(config.Provider)
-			break
-		}
-	}
+	selectedProvider := selectWeightedProvider(weightedConfigs)
 	// Fallback: if no provider was selected (shouldn't happen but guard against FP issues)
 	if selectedProvider == "" {
 		selectedProvider = schemas.ModelProvider(weightedConfigs[0].Provider)
@@ -739,6 +726,36 @@ func (p *GovernancePlugin) loadBalanceProvider(ctx *schemas.BifrostContext, req 
 	}
 
 	return nil
+}
+
+// selectWeightedProvider is defensive against malformed persisted weights.
+// All-zero weights intentionally mean uniform selection; otherwise a zero
+// random range would pin every replica to the first provider.
+func selectWeightedProvider(configs []configstoreTables.TableVirtualKeyProviderConfig) schemas.ModelProvider {
+	if len(configs) == 0 {
+		return ""
+	}
+	total := 0.0
+	for _, config := range configs {
+		if weight := getWeight(config.Weight); weight > 0 {
+			total += weight
+		}
+	}
+	if total <= 0 {
+		return schemas.ModelProvider(configs[rand.IntN(len(configs))].Provider)
+	}
+	r := rand.Float64() * total
+	for _, config := range configs {
+		weight := getWeight(config.Weight)
+		if weight <= 0 {
+			continue
+		}
+		if r < weight {
+			return schemas.ModelProvider(config.Provider)
+		}
+		r -= weight
+	}
+	return schemas.ModelProvider(configs[len(configs)-1].Provider)
 }
 
 // publishRoutingAllowlist records, for downstream routing layers, which of the VK's configured
