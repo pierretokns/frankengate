@@ -66,6 +66,55 @@ func TestGovernanceStore_GetVirtualKey(t *testing.T) {
 	}
 }
 
+func TestFullAuthoritySnapshotReplacesPreFenceVKScopedModelConfig(t *testing.T) {
+	ctx := context.Background()
+	vkID := "vk-snapshot"
+	store, err := NewLocalGovernanceStore(ctx, NewMockLogger(), nil, &configstore.GovernanceConfig{
+		ModelConfigs: []configstoreTables.TableModelConfig{{
+			ID: "old-policy", Scope: configstoreTables.ModelConfigScopeVirtualKey, ScopeID: &vkID, ModelName: "old-model",
+		}},
+	}, nil)
+	require.NoError(t, err)
+
+	store.rebuildInMemoryStructures(ctx, nil, nil, nil, nil, nil, []configstoreTables.TableModelConfig{{
+		ID: "new-policy", Scope: configstoreTables.ModelConfigScopeVirtualKey, ScopeID: &vkID, ModelName: "new-model",
+	}}, nil, nil)
+
+	data := store.GetGovernanceData(ctx)
+	require.Len(t, data.ModelConfigs, 1)
+	require.Equal(t, "new-policy", data.ModelConfigs[0].ID)
+	require.Equal(t, "new-model", data.ModelConfigs[0].ModelName)
+	require.Equal(t, []string{"new-policy"}, store.ScopedModelConfigIDs(configstoreTables.ModelConfigScopeVirtualKey, vkID))
+}
+
+func TestCollectApplicableGovernanceIDsIncludesReloadedVKModelConfigBudget(t *testing.T) {
+	ctx := context.Background()
+	vkID := "vk-reloaded"
+	provider := schemas.OpenAI
+	budget := configstoreTables.TableBudget{ID: "budget-reloaded", MaxLimit: 1}
+	mc := configstoreTables.TableModelConfig{
+		ID:        "mc-reloaded",
+		Scope:     configstoreTables.ModelConfigScopeVirtualKey,
+		ScopeID:   &vkID,
+		ModelName: "gpt-test",
+		Provider:  func() *string { s := string(provider); return &s }(),
+		Budgets:   []configstoreTables.TableBudget{budget},
+	}
+	store, err := NewLocalGovernanceStore(ctx, NewMockLogger(), nil, &configstore.GovernanceConfig{
+		VirtualKeys:  []configstoreTables.TableVirtualKey{*buildVirtualKey(vkID, "sk-reloaded", "Reloaded VK", true)},
+		ModelConfigs: []configstoreTables.TableModelConfig{mc},
+	}, nil)
+	require.NoError(t, err)
+
+	// Exercise the same update method used by the server's authority reload path.
+	store.UpdateModelConfigInMemory(ctx, &mc)
+	budgetIDs, _ := store.CollectApplicableGovernanceIDs(ctx, "sk-reloaded", "", provider, "gpt-test")
+	assert.Contains(t, budgetIDs, budget.ID)
+	loaded := store.LoadBudget(ctx, budget.ID)
+	require.NotNil(t, loaded)
+	assert.Equal(t, budget.ID, loaded.ID)
+}
+
 // TestGovernanceStore_ConcurrentReads tests lock-free concurrent reads
 func TestGovernanceStore_ConcurrentReads(t *testing.T) {
 	logger := NewMockLogger()
