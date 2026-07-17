@@ -15,6 +15,7 @@ import (
 
 	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
@@ -78,6 +79,7 @@ type BaseGovernancePlugin interface {
 	EvaluateGovernanceRequest(ctx *schemas.BifrostContext, evaluationRequest *EvaluationRequest, requestType schemas.RequestType) (*EvaluationResult, *schemas.BifrostError)
 	HTTPTransportPreHook(ctx *schemas.BifrostContext, req *schemas.HTTPRequest) (*schemas.HTTPResponse, error)
 	HTTPTransportPostHook(ctx *schemas.BifrostContext, req *schemas.HTTPRequest, resp *schemas.HTTPResponse) error
+	SetPrincipalAuthorityRegistry(registry *authorityepoch.Registry)
 	PreLLMHook(ctx *schemas.BifrostContext, req *schemas.BifrostRequest) (*schemas.BifrostRequest, *schemas.LLMPluginShortCircuit, error)
 	PostLLMHook(ctx *schemas.BifrostContext, result *schemas.BifrostResponse, err *schemas.BifrostError) (*schemas.BifrostResponse, *schemas.BifrostError, error)
 	PreMCPHook(ctx *schemas.BifrostContext, req *schemas.BifrostMCPRequest) (*schemas.BifrostMCPRequest, *schemas.MCPPluginShortCircuit, error)
@@ -110,14 +112,24 @@ type GovernancePlugin struct {
 
 	cfgMutex sync.RWMutex
 
-	isVkMandatory          *bool
-	requiredHeaders        *[]string // pointer to live config slice; lowercased at check time
-	isEnterprise           bool
-	disableAutoToolInject  *bool
-	authorityFreshness     AuthorityFreshnessSource
-	reservationCoordinator ReservationCoordinator
+	isVkMandatory              *bool
+	requiredHeaders            *[]string // pointer to live config slice; lowercased at check time
+	isEnterprise               bool
+	disableAutoToolInject      *bool
+	authorityFreshness         AuthorityFreshnessSource
+	principalAuthorityRegistry *authorityepoch.Registry
+	reservationCoordinator     ReservationCoordinator
 
 	complexityAnalyzer atomic.Pointer[complexity.ComplexityAnalyzer]
+}
+
+// SetPrincipalAuthorityRegistry installs the fenced pod-local epoch snapshot.
+// Inference requests use it as the fast authorization path once the transport
+// has completed bootstrap; durable storage remains the source of truth.
+func (p *GovernancePlugin) SetPrincipalAuthorityRegistry(registry *authorityepoch.Registry) {
+	p.cfgMutex.Lock()
+	p.principalAuthorityRegistry = registry
+	p.cfgMutex.Unlock()
 }
 
 // SetReservationCoordinator enables the durable admission boundary. It is
@@ -164,16 +176,25 @@ func (p *GovernancePlugin) IsAuthorityFresh() bool {
 // Legacy virtual-key-only requests intentionally remain compatible; enterprise
 // principal requests must carry a structurally valid, current reference.
 func (p *GovernancePlugin) validatePrincipalEpoch(ctx *schemas.BifrostContext, userID string) *schemas.BifrostError {
-	if userID == "" || p.configStore == nil || !p.isEnterprise {
+	if userID == "" || !p.isEnterprise {
+		return nil
+	}
+	ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
+	if err != nil {
+		return &schemas.BifrostError{Type: new("authorization_epoch_required"), StatusCode: new(401), Error: &schemas.ErrorField{Message: "authorization epoch reference is required"}}
+	}
+	p.cfgMutex.RLock()
+	registry := p.principalAuthorityRegistry
+	p.cfgMutex.RUnlock()
+	if registry != nil {
+		if err := registry.Validate(ref); err != nil {
+			return &schemas.BifrostError{Type: new("authorization_epoch_invalid"), StatusCode: new(401), Error: &schemas.ErrorField{Message: "authorization epoch is stale or inactive"}}
+		}
 		return nil
 	}
 	authorityStore, ok := p.configStore.(configstore.PrincipalAuthorizationEpochStore)
 	if !ok {
 		return &schemas.BifrostError{Type: new("authorization_epoch_unavailable"), StatusCode: new(503), Error: &schemas.ErrorField{Message: "authorization epoch authority is unavailable"}}
-	}
-	ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
-	if err != nil {
-		return &schemas.BifrostError{Type: new("authorization_epoch_required"), StatusCode: new(401), Error: &schemas.ErrorField{Message: "authorization epoch reference is required"}}
 	}
 	if err := authorityStore.ValidatePrincipalAuthorizationEpoch(ctx, ref); err != nil {
 		return &schemas.BifrostError{Type: new("authorization_epoch_invalid"), StatusCode: new(401), Error: &schemas.ErrorField{Message: "authorization epoch is stale or inactive"}}

@@ -5,11 +5,33 @@ import (
 	"sync/atomic"
 	"testing"
 
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/stretchr/testify/require"
 )
+
+func TestValidatePrincipalEpochUsesFencedLocalRegistry(t *testing.T) {
+	principal := authorityepoch.Principal{Tenant: "tenant-a", Issuer: "issuer-a", Subject: "user-a"}
+	registry := authorityepoch.NewRegistry()
+	require.NoError(t, registry.Activate(principal, 7))
+	ref := authorityepoch.Reference{Principal: principal, Epoch: 7, Kind: authorityepoch.ArtifactUnary, ID: "req-1"}
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	require.NoError(t, schemas.SetAuthorizationEpochReference(ctx, ref))
+
+	plugin := &GovernancePlugin{isEnterprise: true}
+	plugin.SetPrincipalAuthorityRegistry(registry)
+	require.Nil(t, plugin.validatePrincipalEpoch(ctx, "user-a"))
+
+	stale := ref
+	stale.Epoch = 6
+	ctx = schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	require.NoError(t, schemas.SetAuthorizationEpochReference(ctx, stale))
+	err := plugin.validatePrincipalEpoch(ctx, "user-a")
+	require.NotNil(t, err)
+	require.Equal(t, "authorization_epoch_invalid", *err.Type)
+}
 
 func TestEvaluateGovernanceRequest_DeniesVirtualKeyWhenAuthorityIsStale(t *testing.T) {
 	logger := NewMockLogger()

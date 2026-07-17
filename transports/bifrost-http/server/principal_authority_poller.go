@@ -224,6 +224,9 @@ func (s *BifrostHTTPServer) StartPrincipalAuthorityPoller(ctx context.Context) e
 	}
 	s.PrincipalAuthorityRegistry = registry
 	s.PrincipalAuthorityPoller = poller
+	if governancePlugin, err := s.getGovernancePlugin(); err == nil {
+		governancePlugin.SetPrincipalAuthorityRegistry(registry)
+	}
 	if s.MCPServerHandler != nil {
 		s.MCPServerHandler.SetAuthorityRegistry(registry)
 		s.MCPServerHandler.SetPrincipalAuthorityFreshnessSource(poller)
