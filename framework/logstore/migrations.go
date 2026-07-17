@@ -308,6 +308,11 @@ func triggerMigrations(ctx context.Context, db *gorm.DB, logger schemas.Logger) 
 	// race through the same migration sequence.
 	migrationDB := db.Session(&gorm.Session{NewDB: true})
 	migrationDB.ConnPool = lock.conn
+	// GORM keeps a second connection reference on Statement; update it too so
+	// AutoMigrate/Rows paths use the same pinned advisory-lock session.
+	if migrationDB.Statement != nil {
+		migrationDB.Statement.ConnPool = lock.conn
+	}
 
 	if !areThereAnyPendingMigrations(ctx, migrationDB, logger) {
 		logger.Info("[logstore] migrations completed by another node; skipping migration run")
