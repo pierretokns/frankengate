@@ -7,7 +7,7 @@ import TrialExpiryBanner from "@/components/trialExpiryBanner";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useStoreSync } from "@/hooks/useStoreSync";
 import { WebSocketProvider } from "@/hooks/useWebSocket";
-import { getErrorMessage, ReduxProvider, useGetCoreConfigQuery, useIsAuthEnabledQuery } from "@/lib/store";
+import { getErrorMessage, ReduxProvider, useCapabilitiesQuery, useGetCoreConfigQuery, useIsAuthEnabledQuery } from "@/lib/store";
 import { BifrostConfig } from "@/lib/types/config";
 import { RbacProvider, useRbacContext } from "@enterprise/lib/contexts/rbacContext";
 import { useLocation, useMatches } from "@tanstack/react-router";
@@ -41,6 +41,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
 	// anonymous visitor arriving with `#t=<token>` gets a stripped MinimalShell.
 	// The auth-via-temp-token half lives in <TempTokenScope>.
 	const matches = useMatches();
+	const location = useLocation();
 	const tempTokenScoped = matches.some((m) => (m.staticData as { tempTokenScoped?: boolean } | undefined)?.tempTokenScoped === true);
 	// publicShell: route declares it's a static, auth-free page that should
 	// always render MinimalShell — no chrome, no auth probe, no API calls.
@@ -52,6 +53,8 @@ function AppContent({ children }: { children: React.ReactNode }) {
 	// Probe dashboard auth state on opted-in routes. is-auth-enabled is whitelisted
 	// (no 401 risk) and returns whether the current cookie is a valid session.
 	const { data: authState, isLoading: authLoading } = useIsAuthEnabledQuery(undefined, { skip: !tempTokenScoped });
+	const alertingRoute = location.pathname.includes("/alerting");
+	const { data: capabilities, isLoading: capabilitiesLoading } = useCapabilitiesQuery(undefined, { skip: !alertingRoute });
 
 	// Snapshot fragment presence at mount: TempTokenScope strips the fragment
 	// shortly after, so re-reading window.location.hash would flip false on
@@ -95,6 +98,18 @@ function AppContent({ children }: { children: React.ReactNode }) {
 	}
 	if (tempTokenScoped && authLoading) {
 		return <FullPageLoader />;
+	}
+	if (alertingRoute && capabilitiesLoading) {
+		return <FullPageLoader />;
+	}
+	if (alertingRoute && capabilities && !capabilities.capabilities.alerting) {
+		return (
+			<div className="flex h-full items-center justify-center p-8">
+				<div className="max-w-lg rounded-md border border-dashed p-6 text-sm text-muted-foreground">
+					Alerting is not enabled by the authenticated gateway capability manifest.
+				</div>
+			</div>
+		);
 	}
 	if (useMinimalShell) {
 		return <MinimalShell>{children}</MinimalShell>;

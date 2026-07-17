@@ -19,6 +19,15 @@ export interface LogoutResponse {
 	message: string;
 }
 
+export interface SessionCapabilitiesResponse {
+	version: number;
+	capabilities: {
+		session_bootstrap: boolean;
+		governance: boolean;
+		alerting: boolean;
+	};
+}
+
 export const sessionApi = baseApi.injectEndpoints({
 	overrideExisting: false,
 	endpoints: (builder) => ({
@@ -28,6 +37,10 @@ export const sessionApi = baseApi.injectEndpoints({
 				url: "/session/is-auth-enabled",
 				method: "GET",
 			}),
+			providesTags: ["Sessions"],
+		}),
+		capabilities: builder.query<SessionCapabilitiesResponse, void>({
+			query: () => ({ url: "/session/capabilities", method: "GET" }),
 			providesTags: ["Sessions"],
 		}),
 		// Login endpoint
@@ -74,4 +87,4 @@ export const sessionApi = baseApi.injectEndpoints({
 	}),
 });
 
-export const { useIsAuthEnabledQuery, useLoginMutation, useLogoutMutation } = sessionApi;
+export const { useIsAuthEnabledQuery, useCapabilitiesQuery, useLoginMutation, useLogoutMutation } = sessionApi;
