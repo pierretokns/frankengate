@@ -42,7 +42,8 @@ stats() {
   sort -n "$1" | awk -v n_expected="$N" '
     { v[NR]=$1; sum+=$1 }
     END {
-      n=NR; p50=v[int((n+1)*0.50)]; p95=v[int((n+1)*0.95)];
+      n=NR; if (n == 0) exit 3;
+      p50=v[int((n+1)*0.50)]; p95=v[int((n+1)*0.95)];
       if (p50=="") p50=v[n]; if (p95=="") p95=v[n];
       printf "{\"n\":%d,\"p50_ms\":%.3f,\"p95_ms\":%.3f,\"mean_ms\":%.3f}\n", n, p50*1000, p95*1000, (sum/n)*1000
     }'
