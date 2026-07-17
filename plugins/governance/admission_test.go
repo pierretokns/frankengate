@@ -101,6 +101,18 @@ func TestAsyncOverdraftNotifierDoesNotBlockCaller(t *testing.T) {
 	cancel()
 }
 
+func TestAsyncOverdraftNotifierCloseDrainsAcceptedEvents(t *testing.T) {
+	ctx := context.Background()
+	downstream := &overdraftNotifier{}
+	notifier := NewAsyncOverdraftNotifier(ctx, downstream, 2)
+	require.NoError(t, notifier.Notify(ctx, OverdraftEvent{ReservationID: "queued-1"}))
+	require.NoError(t, notifier.Notify(ctx, OverdraftEvent{ReservationID: "queued-2"}))
+	notifier.Close()
+	require.Len(t, downstream.events, 2)
+	require.Equal(t, uint64(2), notifier.Delivered())
+	require.Error(t, notifier.Notify(ctx, OverdraftEvent{ReservationID: "after-close"}))
+}
+
 type testReservationCoordinator struct {
 	reserveErr error
 	reserved   int

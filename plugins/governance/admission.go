@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -141,6 +142,8 @@ type AsyncOverdraftNotifier struct {
 	events    chan OverdraftEvent
 	done      chan struct{}
 	cancel    context.CancelFunc
+	mu        sync.Mutex
+	closed    bool
 	delivered atomic.Uint64
 	failed    atomic.Uint64
 	dropped   atomic.Uint64
@@ -158,7 +161,10 @@ func NewAsyncOverdraftNotifier(ctx context.Context, downstream OverdraftNotifier
 			select {
 			case <-workerCtx.Done():
 				return
-			case event := <-n.events:
+			case event, ok := <-n.events:
+				if !ok {
+					return
+				}
 				if downstream == nil {
 					n.failed.Add(1)
 					continue
@@ -178,6 +184,11 @@ func (n *AsyncOverdraftNotifier) Notify(_ context.Context, event OverdraftEvent)
 	if n == nil {
 		return fmt.Errorf("overdraft notifier is nil")
 	}
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	if n.closed {
+		return fmt.Errorf("overdraft notifier is closed")
+	}
 	select {
 	case n.events <- event:
 		return nil
@@ -193,8 +204,19 @@ func (n *AsyncOverdraftNotifier) Dropped() uint64   { return n.dropped.Load() }
 
 func (n *AsyncOverdraftNotifier) Close() {
 	if n != nil {
-		n.cancel()
+		n.mu.Lock()
+		if n.closed {
+			n.mu.Unlock()
+			return
+		}
+		n.closed = true
+		close(n.events)
+		n.mu.Unlock()
+		// Closing the queue drains already accepted events before returning. This
+		// preserves alerts during orderly pod shutdown without adding provider
+		// latency to the inference path.
 		<-n.done
+		n.cancel()
 	}
 }
 
