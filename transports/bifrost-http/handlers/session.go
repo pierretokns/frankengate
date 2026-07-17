@@ -36,7 +36,41 @@ func (h *SessionHandler) RegisterRoutes(r *router.Router, middlewares ...schemas
 	r.POST("/api/session/login", lib.ChainMiddlewares(h.login, middlewares...))
 	r.POST("/api/session/logout", lib.ChainMiddlewares(h.logout, middlewares...))
 	r.GET("/api/session/is-auth-enabled", lib.ChainMiddlewares(h.isAuthEnabled, middlewares...))
+	r.GET("/api/session/me", lib.ChainMiddlewares(h.me, middlewares...))
 	r.POST("/api/session/ws-ticket", lib.ChainMiddlewares(h.issueWSTicket, middlewares...))
+}
+
+// me returns the server-side dashboard session without exposing its bearer
+// token.  Keeping this as a dedicated bootstrap endpoint lets the dashboard
+// (and a future OIDC callback) establish identity from the HttpOnly cookie
+// rather than copying credentials into browser storage.
+func (h *SessionHandler) me(ctx *fasthttp.RequestCtx) {
+	if h.configStore == nil {
+		SendError(ctx, fasthttp.StatusUnauthorized, "Unauthorized")
+		return
+	}
+	token, _ := ctx.UserValue(schemas.BifrostContextKeySessionToken).(string)
+	if token == "" {
+		if auth := string(ctx.Request.Header.Peek("Authorization")); strings.HasPrefix(auth, "Bearer ") {
+			token = strings.TrimPrefix(auth, "Bearer ")
+		}
+	}
+	if token == "" {
+		token = string(ctx.Request.Header.Cookie("token"))
+	}
+	if token == "" {
+		SendError(ctx, fasthttp.StatusUnauthorized, "Unauthorized")
+		return
+	}
+	session, err := h.configStore.GetSession(ctx, token)
+	if err != nil || session == nil || !session.ExpiresAt.After(time.Now()) {
+		SendError(ctx, fasthttp.StatusUnauthorized, "Unauthorized")
+		return
+	}
+	SendJSON(ctx, map[string]any{
+		"authenticated": true,
+		"expires_at":    session.ExpiresAt.UTC().Format(time.RFC3339),
+	})
 }
 
 // isAuthEnabled handles GET /api/session/is-auth-enabled - Check if auth is enabled

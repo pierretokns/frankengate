@@ -1,12 +1,60 @@
 package handlers
 
 import (
+	"context"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/maximhq/bifrost/framework/configstore"
+	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/valyala/fasthttp"
 )
+
+type sessionMeConfigStore struct {
+	configstore.ConfigStore
+	session *tables.SessionsTable
+}
+
+func (s *sessionMeConfigStore) GetSession(context.Context, string) (*tables.SessionsTable, error) {
+	return s.session, nil
+}
+
+func TestSessionMeUsesServerSessionWithoutExposingToken(t *testing.T) {
+	token := "must-not-appear"
+	h := &SessionHandler{configStore: &sessionMeConfigStore{session: &tables.SessionsTable{Token: token, ExpiresAt: time.Now().Add(time.Hour)}}}
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.SetCookie("token", token)
+
+	h.me(ctx)
+	if ctx.Response.StatusCode() != fasthttp.StatusOK {
+		t.Fatalf("status = %d, want %d", ctx.Response.StatusCode(), fasthttp.StatusOK)
+	}
+	body := string(ctx.Response.Body())
+	if strings.Contains(body, token) {
+		t.Fatalf("session token leaked in response: %s", body)
+	}
+	if !strings.Contains(body, `"authenticated":true`) {
+		t.Fatalf("response = %s, want authenticated session", body)
+	}
+}
+
+func TestSessionMeRejectsExpiredOrMissingSession(t *testing.T) {
+	for name, store := range map[string]*sessionMeConfigStore{
+		"missing": {session: nil},
+		"expired": {session: &tables.SessionsTable{ExpiresAt: time.Now().Add(-time.Minute)}},
+	} {
+		t.Run(name, func(t *testing.T) {
+			h := &SessionHandler{configStore: store}
+			ctx := &fasthttp.RequestCtx{}
+			ctx.Request.Header.SetCookie("token", "token")
+			h.me(ctx)
+			if ctx.Response.StatusCode() != fasthttp.StatusUnauthorized {
+				t.Fatalf("status = %d, want %d", ctx.Response.StatusCode(), fasthttp.StatusUnauthorized)
+			}
+		})
+	}
+}
 
 type loginDecodeConfigStore struct {
 	configstore.ConfigStore
