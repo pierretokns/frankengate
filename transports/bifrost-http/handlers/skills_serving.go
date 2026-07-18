@@ -1335,7 +1335,11 @@ func (h *SkillsServingHandler) genericZipDownload(ctx *fasthttp.RequestCtx) {
 // ============================================================================
 
 func writeZipEntry(zw *zip.Writer, name string, data []byte) error {
-	fw, err := zw.Create(name)
+	cleanName := path.Clean(strings.ReplaceAll(name, "\\", "/"))
+	if cleanName == "." || cleanName == ".." || path.IsAbs(cleanName) || strings.HasPrefix(cleanName, "../") {
+		return fmt.Errorf("unsafe zip entry path %q", name)
+	}
+	fw, err := zw.Create(cleanName)
 	if err != nil {
 		return err
 	}

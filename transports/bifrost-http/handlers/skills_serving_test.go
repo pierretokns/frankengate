@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"testing"
 
@@ -8,6 +10,28 @@ import (
 	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/valyala/fasthttp"
 )
+
+func TestWriteZipEntryRejectsTraversalPaths(t *testing.T) {
+	for _, name := range []string{"../escape.txt", "/absolute.txt", `..\\escape.txt`, "skill/../../escape.txt"} {
+		var buf bytes.Buffer
+		zw := zip.NewWriter(&buf)
+		if err := writeZipEntry(zw, name, []byte("secret")); err == nil {
+			t.Fatalf("writeZipEntry accepted unsafe path %q", name)
+		}
+		_ = zw.Close()
+	}
+}
+
+func TestWriteZipEntryAcceptsRelativeSkillPath(t *testing.T) {
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	if err := writeZipEntry(zw, "skill/nested/file.txt", []byte("ok")); err != nil {
+		t.Fatalf("writeZipEntry rejected safe path: %v", err)
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatalf("close zip: %v", err)
+	}
+}
 
 func TestSkillsServingGenericFileDownloadDecodesEncodedPathParams(t *testing.T) {
 	ctx := context.Background()
