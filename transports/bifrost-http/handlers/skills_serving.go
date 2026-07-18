@@ -1083,7 +1083,7 @@ func serveSkillFile(ctx *fasthttp.RequestCtx, file *tables.TableSkillFile, objSt
 	} else {
 		ctx.SetContentType("application/octet-stream")
 	}
-	ctx.Response.Header.Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, path.Base(file.Path)))
+	ctx.Response.Header.Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, safeDownloadFilename(file.Path)))
 
 	switch file.SourceType {
 	case tables.SkillSourceTypeURL:
@@ -1114,6 +1114,32 @@ func serveSkillFile(ctx *fasthttp.RequestCtx, file *tables.TableSkillFile, objSt
 	default:
 		SendError(ctx, fasthttp.StatusInternalServerError, "unsupported file source type")
 	}
+}
+
+// safeDownloadFilename prevents stored skill paths from injecting response
+// header syntax while preserving a useful basename for clients.
+func safeDownloadFilename(filePath string) string {
+	name := path.Base(strings.ReplaceAll(filePath, "\\", "/"))
+	if name == "." || name == "/" || name == "" {
+		return "download"
+	}
+	var b strings.Builder
+	for _, r := range name {
+		switch r {
+		case '"', '\r', '\n', '\t':
+			b.WriteByte('_')
+		default:
+			if r < 0x20 || r == 0x7f {
+				b.WriteByte('_')
+			} else {
+				b.WriteRune(r)
+			}
+		}
+	}
+	if b.Len() == 0 {
+		return "download"
+	}
+	return b.String()
 }
 
 func redactURLForLog(rawURL string) string {

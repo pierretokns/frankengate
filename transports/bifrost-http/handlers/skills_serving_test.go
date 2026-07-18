@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/fasthttp/router"
@@ -30,6 +31,13 @@ func TestWriteZipEntryAcceptsRelativeSkillPath(t *testing.T) {
 	}
 	if err := zw.Close(); err != nil {
 		t.Fatalf("close zip: %v", err)
+	}
+}
+
+func TestSafeDownloadFilenameStripsHeaderSyntax(t *testing.T) {
+	got := safeDownloadFilename(`nested\\bad"name` + "\r\n" + "file.txt")
+	if got == "" || got == "file.txt" || strings.ContainsAny(got, "\"\r\n\t") {
+		t.Fatalf("unsafe filename was not sanitized: %q", got)
 	}
 }
 
