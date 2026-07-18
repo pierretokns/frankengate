@@ -113,9 +113,9 @@ else
     exit 1
 fi
 
-# Dry run install
-print_info "Performing dry-run installation..."
-if helm install test-release "$CHART_DIR" --dry-run --debug > /dev/null 2>&1; then
+# Client-side install render (does not require a live Kubernetes API)
+print_info "Performing client-side install render..."
+if helm template test-release "$CHART_DIR" > /dev/null 2>&1; then
     print_success "Dry-run installation successful"
 else
     print_error "Dry-run installation failed"
