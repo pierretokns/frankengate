@@ -116,7 +116,7 @@ fi
 # Client-side install render (does not require a live Kubernetes API)
 print_info "Performing client-side install render..."
 if helm template test-release "$CHART_DIR" > /dev/null 2>&1; then
-    print_success "Dry-run installation successful"
+    print_success "Client-side install render successful"
 else
     print_error "Dry-run installation failed"
     exit 1
