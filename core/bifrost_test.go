@@ -26,6 +26,21 @@ func init() {
 	}
 }
 
+func TestReloadConfigUpdatesPluginSnapshots(t *testing.T) {
+	b := &Bifrost{}
+	llm := []schemas.LLMPlugin{nil}
+	mcp := []schemas.MCPPlugin{nil}
+	if err := b.ReloadConfig(schemas.BifrostConfig{LLMPlugins: llm, MCPPlugins: mcp}); err != nil {
+		t.Fatalf("ReloadConfig() error = %v", err)
+	}
+	if got := len(*b.llmPlugins.Load()); got != 1 {
+		t.Fatalf("LLM plugin snapshot length = %d, want 1", got)
+	}
+	if got := len(*b.mcpPlugins.Load()); got != 1 {
+		t.Fatalf("MCP plugin snapshot length = %d, want 1", got)
+	}
+}
+
 // Helper function to create test config with specific retry settings
 func createTestConfig(maxRetries int, initialBackoff, maxBackoff time.Duration) *schemas.ProviderConfig {
 	return &schemas.ProviderConfig{

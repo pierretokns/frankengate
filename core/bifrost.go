@@ -394,6 +394,20 @@ func (bifrost *Bifrost) getTracer() schemas.Tracer {
 // We will keep on adding other aspects as required
 func (bifrost *Bifrost) ReloadConfig(config schemas.BifrostConfig) error {
 	bifrost.dropExcessRequests.Store(config.DropExcessRequests)
+	// Reload plugin snapshots atomically. HTTP config reloads supply updated
+	// MCP/LLM plugin instances here; previously ReloadConfig ignored both
+	// slices, leaving the running request and MCP tool runners on stale hooks
+	// until process restart.
+	llmPlugins := config.LLMPlugins
+	if llmPlugins == nil {
+		llmPlugins = make([]schemas.LLMPlugin, 0)
+	}
+	mcpPlugins := config.MCPPlugins
+	if mcpPlugins == nil {
+		mcpPlugins = make([]schemas.MCPPlugin, 0)
+	}
+	bifrost.llmPlugins.Store(&llmPlugins)
+	bifrost.mcpPlugins.Store(&mcpPlugins)
 	return nil
 }
 
