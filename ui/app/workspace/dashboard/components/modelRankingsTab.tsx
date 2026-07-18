@@ -398,6 +398,15 @@ function ModelRankingsTabImpl({ rankingsData, loading, modelData, loadingModels,
 					</Table>
 				</Card>
 			)}
+			{rankingsData?.provenance && (
+				<div className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 px-1 text-xs" data-testid="dashboard-model-rankings-provenance">
+					<span>Source: {rankingsData.provenance.source}</span>
+					<span>Rows: {rankingsData.provenance.sample_size.toLocaleString()}</span>
+					<span>Aggregation: {rankingsData.provenance.aggregation}</span>
+					<span>Reconciled: {rankingsData.provenance.reconciliation_status}</span>
+					<span>Generated: {new Date(rankingsData.provenance.generated_at).toLocaleString()}</span>
+				</div>
+			)}
 		</div>
 	);
 }
