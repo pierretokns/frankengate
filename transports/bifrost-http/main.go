@@ -92,7 +92,9 @@ var server *bifrostServer.BifrostHTTPServer
 
 func init() {
 	if Version == "" {
-		Version = "v1.0.0"
+		// Untagged local builds must not masquerade as a released version. Release
+		// workflows inject the real version with -ldflags -X main.Version=... .
+		Version = "v0.0.0-dev"
 	}
 	// Set default host from environment variable or use localhost
 	defaultHost := os.Getenv("BIFROST_HOST")

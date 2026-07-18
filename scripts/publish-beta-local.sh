@@ -52,6 +52,13 @@ TAG="${TAG:-beta-${SHORT_SHA}}"
 
 VERSION_OUTPUT="$({ "$BINARY" -version 2>&1 || true; })"
 [[ -n "$VERSION_OUTPUT" ]] || { echo "binary did not return version metadata" >&2; exit 1; }
+# A normal beta must identify a real release version. Development binaries are
+# still useful for local experiments, but require an explicit beta-dev tag so
+# they cannot be mistaken for a consumable release artifact.
+if printf '%s\n' "$VERSION_OUTPUT" | rg -q 'FrankenGate v0\.0\.0-dev' && [[ "$TAG" != beta-dev-* ]]; then
+	echo "development binary requires an explicit beta-dev-* tag" >&2
+	exit 1
+fi
 
 # Cross-built binaries are common on developer workstations. Allow the caller
 # to describe the artifact platform explicitly instead of silently labeling a
