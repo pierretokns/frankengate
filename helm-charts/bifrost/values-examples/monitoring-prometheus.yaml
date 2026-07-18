@@ -39,6 +39,13 @@ monitoring:
         annotations:
           summary: FrankenGate governance consumer is lagging
           description: A pod is more than 100 invalidation events behind the durable governance outbox.
+      - alert: FrankenGateGovernanceListenerReconnects
+        expr: increase(bifrost_governance_sync_listener_reconnects_total[10m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: FrankenGate governance listener reconnected
+          description: A governance notification listener reconnected in the last 10 minutes.
       - alert: FrankenGateNotificationFailures
         expr: increase(bifrost_governance_notifier_deliveries_total{outcome=~"failed|dropped|other"}[10m]) > 0
         labels:
