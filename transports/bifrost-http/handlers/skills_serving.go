@@ -1300,7 +1300,7 @@ func (h *SkillsServingHandler) genericZipDownload(ctx *fasthttp.RequestCtx) {
 	}
 
 	ctx.SetContentType("application/zip")
-	ctx.Response.Header.Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.zip"`, skill.Name))
+	ctx.Response.Header.Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.zip"`, safeDownloadFilename(skill.Name)))
 	ctx.SetStatusCode(fasthttp.StatusOK)
 
 	streamCtx, cancelStream := context.WithCancel(context.Background())

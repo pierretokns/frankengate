@@ -41,6 +41,13 @@ func TestSafeDownloadFilenameStripsHeaderSyntax(t *testing.T) {
 	}
 }
 
+func TestSafeDownloadFilenameHandlesUnsafeSkillName(t *testing.T) {
+	got := safeDownloadFilename("skill\"\r\nname")
+	if strings.ContainsAny(got, "\"\r\n\t") {
+		t.Fatalf("unsafe skill name was not sanitized: %q", got)
+	}
+}
+
 func TestValidForwardedHostRejectsURLInjection(t *testing.T) {
 	for _, host := range []string{"", "evil.test/path", "evil.test?next=1", "evil.test\r\nX-Injected: yes", "evil test"} {
 		if validForwardedHost(host) {
