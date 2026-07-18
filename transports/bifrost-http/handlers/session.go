@@ -73,7 +73,10 @@ func (h *SessionHandler) capabilities(ctx *fasthttp.RequestCtx) {
 		"capabilities": map[string]bool{
 			"session_bootstrap": true,
 			"governance":        false,
-			"alerting":          false,
+			// Alerting CRUD/history is backed by the same ConfigStore used by
+			// this session handler. Advertise it only when that backend exists;
+			// otherwise the UI would render a dead feature surface.
+			"alerting": h.configStore != nil,
 		},
 	})
 }
