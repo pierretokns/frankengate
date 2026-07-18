@@ -347,6 +347,22 @@ func (s *BifrostHTTPServer) wireGovernanceMetrics() {
 
 type governanceMetricsFanout []governance.MetricsSink
 
+type governanceSyncMetricsFanout []governanceSyncMetricSink
+
+func (f governanceSyncMetricsFanout) SetGovernanceSyncMetric(name string, value float64) {
+	for _, sink := range f {
+		sink.SetGovernanceSyncMetric(name, value)
+	}
+}
+
+func (f governanceSyncMetricsFanout) AddGovernanceSyncMetric(name string, value float64) {
+	for _, sink := range f {
+		if sink, ok := sink.(interface{ AddGovernanceSyncMetric(string, float64) }); ok {
+			sink.AddGovernanceSyncMetric(name, value)
+		}
+	}
+}
+
 func (f governanceMetricsFanout) ReservationObserved(ctx context.Context, outcome string, amount reservations.Amount) {
 	for _, sink := range f {
 		sink.ReservationObserved(ctx, outcome, amount)

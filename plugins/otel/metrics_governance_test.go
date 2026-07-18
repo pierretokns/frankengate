@@ -21,6 +21,9 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 	exporter.ReservationObserved(ctx, "accepted", reservations.Amount{Tokens: 12})
 	exporter.OverdraftObserved(ctx, true, reservations.Amount{Tokens: 3})
 	exporter.NotifierObserved(ctx, "unexpected-future-value")
+	exporter.SetGovernanceSyncMetric(ctx, "ready", 1)
+	exporter.SetGovernanceSyncMetric(ctx, "consumer_lag", 4)
+	exporter.AddGovernanceSyncMetric(ctx, "wakeups", 2)
 
 	for name, instrument := range map[string]any{
 		"reservations":        exporter.governanceReservationsTotal,
@@ -44,6 +47,9 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 		"bifrost_governance_overdrafts_total":          false,
 		"bifrost_governance_overdraft_tokens_total":    false,
 		"bifrost_governance_notifier_deliveries_total": false,
+		"bifrost_governance_sync_ready":                false,
+		"bifrost_governance_sync_consumer_lag":         false,
+		"bifrost_governance_sync_wakeups_total":        false,
 	}
 	for _, scope := range metrics.ScopeMetrics {
 		for _, metric := range scope.Metrics {

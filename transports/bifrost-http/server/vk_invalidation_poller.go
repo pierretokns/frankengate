@@ -16,6 +16,7 @@ import (
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/plugins/governance"
+	"github.com/maximhq/bifrost/plugins/otel"
 	"github.com/maximhq/bifrost/plugins/telemetry"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 )
@@ -166,15 +167,28 @@ func (s *BifrostHTTPServer) StartVirtualKeyInvalidationPoller(ctx context.Contex
 	if wakeSource, ok := s.Config.ConfigStore.(virtualKeyInvalidationWakeSource); ok {
 		s.VKInvalidationPoller.wake = wakeSource.VirtualKeyInvalidationWakeups(ctx)
 	}
+	var syncSinks []governanceSyncMetricSink
 	if metrics, err := lib.FindPluginAs[*telemetry.PrometheusPlugin](s.Config, telemetry.PluginName); err == nil {
-		s.VKInvalidationPoller.metricSink = metrics
-		if setter, ok := s.Config.ConfigStore.(interface {
-			SetVirtualKeyInvalidationMetricSink(func(string, float64))
-		}); ok {
-			setter.SetVirtualKeyInvalidationMetricSink(func(name string, value float64) {
-				metrics.AddGovernanceSyncMetric(name, value)
-			})
-		}
+		syncSinks = append(syncSinks, metrics)
+	}
+	if metrics, err := lib.FindPluginAs[*otel.OtelPlugin](s.Config, otel.PluginName); err == nil {
+		syncSinks = append(syncSinks, metrics)
+	}
+	if len(syncSinks) == 1 {
+		s.VKInvalidationPoller.metricSink = syncSinks[0]
+	} else if len(syncSinks) > 1 {
+		s.VKInvalidationPoller.metricSink = governanceSyncMetricsFanout(syncSinks)
+	}
+	if setter, ok := s.Config.ConfigStore.(interface {
+		SetVirtualKeyInvalidationMetricSink(func(string, float64))
+	}); ok && len(syncSinks) > 0 {
+		setter.SetVirtualKeyInvalidationMetricSink(func(name string, value float64) {
+			for _, sink := range syncSinks {
+				if add, ok := sink.(interface{ AddGovernanceSyncMetric(string, float64) }); ok {
+					add.AddGovernanceSyncMetric(name, value)
+				}
+			}
+		})
 	}
 	go s.VKInvalidationPoller.Run(ctx)
 	return nil
@@ -557,6 +571,13 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 		}
 		if err != nil && ctx.Err() == nil {
 			p.failureActive.Store(true)
+			// Readiness is a live control-plane signal, not a boot-only fact. A
+			// failed durable poll must close the exported gauge immediately so
+			// scrapers and alerting do not continue to treat this pod as synced
+			// while the freshness lease is counting down.
+			if p.metricSink != nil {
+				p.metricSink.SetGovernanceSyncMetric("ready", 0)
+			}
 			now := p.clock()
 			lastLog := time.Unix(0, p.lastErrorLogNano.Load())
 			if logger != nil && (lastLog.IsZero() || now.Sub(lastLog) >= virtualKeyInvalidationErrorLogInterval) {

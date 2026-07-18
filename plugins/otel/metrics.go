@@ -75,6 +75,12 @@ type MetricsExporter struct {
 	governanceOverdraftsTotal         *syncInt64Counter
 	governanceOverdraftTokensTotal    *syncInt64Counter
 	governanceNotifierDeliveriesTotal *syncInt64Counter
+	governanceSyncWakeups             *syncFloat64UpDownCounter
+	governanceSyncListenerReconnects  *syncFloat64UpDownCounter
+	governanceSyncOutboxDepth         *syncFloat64UpDownCounter
+	governanceSyncReloadLatency       *syncFloat64UpDownCounter
+	governanceSyncConsumerLag         *syncFloat64UpDownCounter
+	governanceSyncReady               *syncFloat64UpDownCounter
 }
 
 // syncInt64Counter wraps metric.Int64Counter with thread-safe lazy initialization
@@ -111,6 +117,48 @@ type syncFloat64Counter struct {
 	desc    string
 	unit    string
 	meter   metric.Meter
+}
+
+// syncFloat64UpDownCounter exposes a low-cardinality current-state value over
+// OTLP while retaining Set and Add semantics used by the governance poller.
+type syncFloat64UpDownCounter struct {
+	counter metric.Float64UpDownCounter
+	once    sync.Once
+	mu      sync.Mutex
+	current float64
+	name    string
+	desc    string
+	unit    string
+	meter   metric.Meter
+}
+
+func (c *syncFloat64UpDownCounter) apply(ctx context.Context, delta float64) {
+	c.once.Do(func() {
+		var err error
+		c.counter, err = c.meter.Float64UpDownCounter(c.name,
+			metric.WithDescription(c.desc), metric.WithUnit(c.unit))
+		if err != nil {
+			logger.Error("failed to create up-down counter %s: %v", c.name, err)
+		}
+	})
+	if c.counter != nil && delta != 0 {
+		c.counter.Add(ctx, delta)
+	}
+}
+
+func (c *syncFloat64UpDownCounter) Set(ctx context.Context, value float64) {
+	c.mu.Lock()
+	delta := value - c.current
+	c.current = value
+	c.mu.Unlock()
+	c.apply(ctx, delta)
+}
+
+func (c *syncFloat64UpDownCounter) Add(ctx context.Context, value float64) {
+	c.mu.Lock()
+	c.current += value
+	c.mu.Unlock()
+	c.apply(ctx, value)
 }
 
 func (c *syncFloat64Counter) Add(ctx context.Context, value float64, opts ...metric.AddOption) {
@@ -455,6 +503,12 @@ func (m *MetricsExporter) initMetrics() {
 	m.governanceOverdraftsTotal = &syncInt64Counter{name: "bifrost_governance_overdrafts_total", desc: "Governance overdraft observations", unit: "{event}", meter: m.meter}
 	m.governanceOverdraftTokensTotal = &syncInt64Counter{name: "bifrost_governance_overdraft_tokens_total", desc: "Tokens observed above budget", unit: "{token}", meter: m.meter}
 	m.governanceNotifierDeliveriesTotal = &syncInt64Counter{name: "bifrost_governance_notifier_deliveries_total", desc: "Governance notifier delivery attempts", unit: "{event}", meter: m.meter}
+	m.governanceSyncWakeups = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_wakeups_total", desc: "Cumulative governance database wakeup hints observed by this pod", unit: "{event}", meter: m.meter}
+	m.governanceSyncListenerReconnects = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_listener_reconnects_total", desc: "Cumulative governance notification listener reconnects observed by this pod", unit: "{event}", meter: m.meter}
+	m.governanceSyncOutboxDepth = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_outbox_depth", desc: "Current governance invalidation outbox depth observed by this pod", unit: "{event}", meter: m.meter}
+	m.governanceSyncReloadLatency = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_reload_latency_seconds", desc: "Most recent governance authority reload latency", unit: "s", meter: m.meter}
+	m.governanceSyncConsumerLag = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_consumer_lag", desc: "Current governance invalidation consumer lag in outbox event IDs", unit: "{event}", meter: m.meter}
+	m.governanceSyncReady = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_ready", desc: "Whether this pod has a fresh governance authority snapshot", unit: "{state}", meter: m.meter}
 }
 
 // Shutdown gracefully shuts down the metrics exporter
@@ -551,6 +605,30 @@ func (m *MetricsExporter) OverdraftObserved(ctx context.Context, allowed bool, a
 func (m *MetricsExporter) NotifierObserved(ctx context.Context, outcome string) {
 	outcome = boundedGovernanceOutcome(outcome)
 	m.governanceNotifierDeliveriesTotal.Add(ctx, 1, metric.WithAttributes(attribute.String("outcome", outcome)))
+}
+
+// SetGovernanceSyncMetric records a low-cardinality control-plane value.
+func (m *MetricsExporter) SetGovernanceSyncMetric(ctx context.Context, name string, value float64) {
+	switch name {
+	case "outbox_depth":
+		m.governanceSyncOutboxDepth.Set(ctx, value)
+	case "reload_latency_seconds":
+		m.governanceSyncReloadLatency.Set(ctx, value)
+	case "consumer_lag":
+		m.governanceSyncConsumerLag.Set(ctx, value)
+	case "ready":
+		m.governanceSyncReady.Set(ctx, value)
+	}
+}
+
+// AddGovernanceSyncMetric records an event-style control-plane value.
+func (m *MetricsExporter) AddGovernanceSyncMetric(ctx context.Context, name string, value float64) {
+	switch name {
+	case "wakeups":
+		m.governanceSyncWakeups.Add(ctx, value)
+	case "listener_reconnects":
+		m.governanceSyncListenerReconnects.Add(ctx, value)
+	}
 }
 
 // boundedGovernanceOutcome keeps OTLP attribute cardinality bounded just like

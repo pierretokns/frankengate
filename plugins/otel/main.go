@@ -655,6 +655,26 @@ func (p *OtelPlugin) NotifierObserved(ctx context.Context, outcome string) {
 	}
 }
 
+// SetGovernanceSyncMetric forwards low-cardinality control-plane values to all
+// configured OTLP metric profiles.
+func (p *OtelPlugin) SetGovernanceSyncMetric(name string, value float64) {
+	for _, target := range p.targets {
+		if target.metricsExporter != nil {
+			target.metricsExporter.SetGovernanceSyncMetric(context.Background(), name, value)
+		}
+	}
+}
+
+// AddGovernanceSyncMetric forwards event-style control-plane values to all
+// configured OTLP metric profiles.
+func (p *OtelPlugin) AddGovernanceSyncMetric(name string, value float64) {
+	for _, target := range p.targets {
+		if target.metricsExporter != nil {
+			target.metricsExporter.AddGovernanceSyncMetric(context.Background(), name, value)
+		}
+	}
+}
+
 // RecordHTTPMetrics records HTTP-layer metrics (request count, duration, request/response
 // sizes) against every profile's metrics exporter. The HTTP transport's middleware calls
 // this once per completed request; it is a no-op when no profile has metrics enabled.
