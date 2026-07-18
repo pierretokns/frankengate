@@ -31,6 +31,14 @@ monitoring:
         annotations:
           summary: FrankenGate governance outbox is growing
           description: Governance invalidation events are accumulating.
+      - alert: FrankenGateGovernanceConsumerLag
+        expr: max(bifrost_governance_sync_consumer_lag) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: FrankenGate governance consumer is lagging
+          description: A pod is more than 100 invalidation events behind the durable governance outbox.
       - alert: FrankenGateNotificationFailures
         expr: increase(bifrost_governance_notifier_deliveries_total{outcome=~"failed|dropped|other"}[10m]) > 0
         labels:
