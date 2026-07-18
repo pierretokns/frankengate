@@ -700,6 +700,8 @@ const (
 	// call sites and will be removed once dashboards migrate over.
 	// =====================================================================
 	AttrBifrostProviderName        = "bifrost.provider.name"
+	AttrBifrostDestinationRegion   = "bifrost.destination.region"
+	AttrBifrostDestinationProject  = "bifrost.destination.project_id"
 	AttrBifrostRequestID           = "bifrost.request.id"
 	AttrBifrostVirtualKeyID        = "bifrost.virtual_key.id"
 	AttrBifrostVirtualKeyName      = "bifrost.virtual_key.name"
@@ -723,8 +725,8 @@ const (
 	AttrBifrostUserName            = "bifrost.user.name"
 	AttrBifrostRetries             = "bifrost.retries"
 	AttrBifrostFallbackIndex       = "bifrost.fallback_index"
-	AttrBifrostAlias               = "bifrost.alias"                // original requested model when it differs from the resolved model
-	AttrBifrostRoutingEngineUsed   = "bifrost.routing_engine_used"  // comma-joined routing engines that handled the request
+	AttrBifrostAlias               = "bifrost.alias"               // original requested model when it differs from the resolved model
+	AttrBifrostRoutingEngineUsed   = "bifrost.routing_engine_used" // comma-joined routing engines that handled the request
 	AttrBifrostStopSequencesJoined = "bifrost.request.stop_sequences"
 
 	// OTel general semconv (no gen_ai prefix). Emitted alongside the legacy

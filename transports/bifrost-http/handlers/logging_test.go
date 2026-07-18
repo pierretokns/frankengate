@@ -78,8 +78,19 @@ func TestGetDashboard(t *testing.T) {
 				if response.Overview.Models == nil || response.ModelRankings.Histogram == nil {
 					t.Fatal("expected shared model histogram to populate both sections")
 				}
+				if response.ModelRankings.Rankings == nil || response.ModelRankings.Rankings.Provenance == nil || response.ModelRankings.Rankings.Provenance.Aggregation != "model_ranking" {
+					t.Fatalf("model rankings missing provenance: %#v", response.ModelRankings.Rankings)
+				}
 				if len(response.DimensionRankings) != len(dashboardRankingDimensions) {
 					t.Fatalf("expected %d dimension rankings, got %d", len(dashboardRankingDimensions), len(response.DimensionRankings))
+				}
+				for dimension, ranking := range response.DimensionRankings {
+					if ranking.Provenance == nil || ranking.Provenance.Aggregation != "dimension_ranking" || ranking.Provenance.ReconciliationStatus != "unknown" {
+						t.Fatalf("dimension %s missing honest provenance: %#v", dimension, ranking.Provenance)
+					}
+					if ranking.Provenance.SampleSize != len(ranking.Rankings) {
+						t.Fatalf("dimension %s sample size=%d want %d", dimension, ranking.Provenance.SampleSize, len(ranking.Rankings))
+					}
 				}
 				if got := mgr.lastLLMFilters.Providers; len(got) != 1 || got[0] != "openai" {
 					t.Fatalf("expected LLM providers filter, got %#v", got)

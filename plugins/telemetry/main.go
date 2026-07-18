@@ -277,6 +277,9 @@ func (p *PrometheusPlugin) AddGovernanceSyncMetric(name string, value float64) {
 		p.GovernanceSyncWakeups.Add(value)
 	case "listener_reconnects":
 		p.GovernanceSyncListenerReconnects.Add(value)
+	case "overdraft_notification_enqueued", "overdraft_notification_delivered", "overdraft_notification_failed", "overdraft_notification_dropped":
+		outcome := strings.TrimPrefix(name, "overdraft_notification_")
+		p.GovernanceNotifierDeliveriesTotal.WithLabelValues(outcome).Add(value)
 	}
 }
 
@@ -322,6 +325,8 @@ var (
 // (core/schemas). Metric-tier dimensions only — no high-cardinality (user, arrays).
 var defaultBifrostLabelNames = []string{
 	"provider",
+	"destination_region",
+	"destination_project_id",
 	"model",
 	"alias",
 	"method",
@@ -834,27 +839,34 @@ func (p *PrometheusPlugin) PostLLMHook(ctx *schemas.BifrostContext, result *sche
 	customerName := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyGovernanceCustomerName)
 	businessUnitID := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyGovernanceBusinessUnitID)
 	businessUnitName := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyGovernanceBusinessUnitName)
+	destination := bifrost.GetResponseRoutingInfo(result, bifrostErr).Destination
+	destinationRegion, destinationProject := "", ""
+	if destination != nil {
+		destinationRegion, destinationProject = destination.Region, destination.ProjectID
+	}
 
 	// Extract ALL context values BEFORE spawning the goroutine.
 	labelValues := map[string]string{
-		"provider":            string(provider),
-		"model":               model,
-		"alias":               alias,
-		"method":              string(requestType),
-		"virtual_key_id":      virtualKeyID,
-		"virtual_key_name":    virtualKeyName,
-		"routing_engine_used": routingEngineUsed,
-		"routing_rule_id":     routingRuleID,
-		"routing_rule_name":   routingRuleName,
-		"selected_key_id":     selectedKeyID,
-		"selected_key_name":   selectedKeyName,
-		"fallback_index":      strconv.Itoa(fallbackIndex),
-		"team_id":             teamID,
-		"team_name":           teamName,
-		"customer_id":         customerID,
-		"customer_name":       customerName,
-		"business_unit_id":    businessUnitID,
-		"business_unit_name":  businessUnitName,
+		"provider":               string(provider),
+		"destination_region":     destinationRegion,
+		"destination_project_id": destinationProject,
+		"model":                  model,
+		"alias":                  alias,
+		"method":                 string(requestType),
+		"virtual_key_id":         virtualKeyID,
+		"virtual_key_name":       virtualKeyName,
+		"routing_engine_used":    routingEngineUsed,
+		"routing_rule_id":        routingRuleID,
+		"routing_rule_name":      routingRuleName,
+		"selected_key_id":        selectedKeyID,
+		"selected_key_name":      selectedKeyName,
+		"fallback_index":         strconv.Itoa(fallbackIndex),
+		"team_id":                teamID,
+		"team_name":              teamName,
+		"customer_id":            customerID,
+		"customer_name":          customerName,
+		"business_unit_id":       businessUnitID,
+		"business_unit_name":     businessUnitName,
 	}
 
 	// Get all custom prometheus labels from context BEFORE the goroutine.

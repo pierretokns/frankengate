@@ -6009,6 +6009,14 @@ func executeRequestWithRetries[T any](
 		tracer.SetAttribute(handle, schemas.AttrRequestModel, model)
 		tracer.SetAttribute(handle, schemas.AttrOperationName, otelOp)
 		tracer.SetAttribute(handle, schemas.AttrLegacyRequestType, string(requestType)) // legacy: replaced by gen_ai.operation.name
+		if destination := schemas.BuildRoutingInfo(ctx, providerKey, model, currentKey).Destination; destination != nil {
+			if destination.Region != "" {
+				tracer.SetAttribute(handle, schemas.AttrBifrostDestinationRegion, destination.Region)
+			}
+			if destination.ProjectID != "" {
+				tracer.SetAttribute(handle, schemas.AttrBifrostDestinationProject, destination.ProjectID)
+			}
+		}
 		if attempts > 0 {
 			tracer.SetAttribute(handle, schemas.AttrLegacyRetryCount, attempts) // legacy: bare key with no semconv prefix
 		}

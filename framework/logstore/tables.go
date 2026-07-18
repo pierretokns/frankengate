@@ -1635,7 +1635,8 @@ type ModelRankingWithTrend struct {
 
 // ModelRankingResult is the response for the model rankings endpoint.
 type ModelRankingResult struct {
-	Rankings []ModelRankingWithTrend `json:"rankings"`
+	Rankings   []ModelRankingWithTrend `json:"rankings"`
+	Provenance *DashboardProvenance    `json:"provenance,omitempty"`
 }
 
 // UserRankingEntry represents a single user's usage statistics.

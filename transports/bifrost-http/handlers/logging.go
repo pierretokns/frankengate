@@ -803,7 +803,6 @@ func (h *LoggingHandler) getLogsHistogram(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("Histogram calculation failed: %v", err))
 		return
 	}
-
 	SendJSON(ctx, result)
 }
 
@@ -1137,6 +1136,11 @@ func (h *LoggingHandler) getModelRankings(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("Model rankings calculation failed: %v", err))
 		return
 	}
+	result.Provenance = &logstore.DashboardProvenance{
+		Source: "logstore", GeneratedAt: time.Now().UTC(), WindowStart: filters.StartTime,
+		WindowEnd: filters.EndTime, SampleSize: len(result.Rankings),
+		Aggregation: "model_ranking", ReconciliationStatus: "unknown",
+	}
 
 	SendJSON(ctx, result)
 }
@@ -1165,6 +1169,11 @@ func (h *LoggingHandler) getDimensionRankings(ctx *fasthttp.RequestCtx) {
 		GeneratedAt: time.Now().UTC(),
 		WindowStart: filters.StartTime,
 		WindowEnd:   filters.EndTime,
+		SampleSize:  len(result.Rankings),
+		Aggregation: "dimension_ranking",
+		// The handler cannot prove cross-store reconciliation; unknown is
+		// explicit and safer than presenting a false freshness guarantee.
+		ReconciliationStatus: "unknown",
 	}
 
 	SendJSON(ctx, result)
@@ -1305,6 +1314,11 @@ func (h *LoggingHandler) getDashboard(ctx *fasthttp.RequestCtx) {
 		res, err := h.logManager.GetModelRankings(gCtx, filters)
 		if err != nil {
 			return fmt.Errorf("model rankings: %w", err)
+		}
+		res.Provenance = &logstore.DashboardProvenance{
+			Source: "logstore", GeneratedAt: result.Meta.GeneratedAt, WindowStart: filters.StartTime,
+			WindowEnd: filters.EndTime, SampleSize: len(res.Rankings),
+			Aggregation: "model_ranking", ReconciliationStatus: "unknown",
 		}
 		result.ModelRankings.Rankings = res
 		return nil

@@ -800,7 +800,7 @@ func buildSpanAttrs(span *schemas.Span) []attribute.KeyValue {
 	if method == "" {
 		method = span.Name
 	}
-	return BuildBifrostAttributes(
+	result := BuildBifrostAttributes(
 		getStringAttr(attrs, schemas.AttrProviderName),
 		getStringAttr(attrs, schemas.AttrRequestModel),
 		method,
@@ -814,6 +814,13 @@ func buildSpanAttrs(span *schemas.Span) []attribute.KeyValue {
 		getStringAttr(attrs, schemas.AttrCustomerID),
 		getStringAttr(attrs, schemas.AttrCustomerName),
 	)
+	if region := getStringAttr(attrs, schemas.AttrBifrostDestinationRegion); region != "" {
+		result = append(result, attribute.String("destination.region", region))
+	}
+	if project := getStringAttr(attrs, schemas.AttrBifrostDestinationProject); project != "" {
+		result = append(result, attribute.String("destination.project_id", project))
+	}
+	return result
 }
 
 // buildContextAttrs builds the same metric dimension attrs as buildSpanAttrs, but sourced

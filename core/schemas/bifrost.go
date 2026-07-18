@@ -1674,11 +1674,26 @@ type RoutingInfo struct {
 	// Populated only when Model matched an entry in this key's Aliases map
 	ResolvedKeyAlias *ResolvedKeyAlias `json:"resolved_key_alias,omitempty"`
 
+	// Destination identifies the non-secret routing scope selected for this
+	// attempt. It is intentionally limited to provider/region/project metadata;
+	// credentials and raw endpoint values never belong in response or telemetry
+	// attribution.
+	Destination *RoutingDestination `json:"destination,omitempty"`
+
 	IsFallback bool `json:"is_fallback,omitempty"`
 
 	// What the caller asked for, before any fallback resolution (populated only when fallback resolution occurred)
 	PrimaryProvider *ModelProvider `json:"primary_provider,omitempty"`
 	PrimaryModel    *string        `json:"primary_model,omitempty"`
+}
+
+// RoutingDestination is stable, non-secret destination metadata for quota and
+// observability attribution. Region and project are populated only when the
+// selected key explicitly carries them.
+type RoutingDestination struct {
+	Provider  ModelProvider `json:"provider,omitempty"`
+	Region    string        `json:"region,omitempty"`
+	ProjectID string        `json:"project_id,omitempty"`
 }
 
 type ResolvedKeyAlias struct {

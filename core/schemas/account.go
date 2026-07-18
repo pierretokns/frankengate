@@ -561,6 +561,9 @@ func BuildRoutingInfo(ctx *BifrostContext, attemptProvider ModelProvider, attemp
 		Model:    attemptModel,
 		Key:      attemptKey.Name,
 	}
+	if destination := buildRoutingDestination(attemptProvider, attemptKey); destination != nil {
+		info.Destination = destination
+	}
 	if ra := GetResolvedAlias(ctx); ra != nil && ra.Config != nil {
 		rka := &ResolvedKeyAlias{
 			ModelID: ra.Config.ModelID,
@@ -576,6 +579,36 @@ func BuildRoutingInfo(ctx *BifrostContext, attemptProvider ModelProvider, attemp
 		info.ResolvedKeyAlias = rka
 	}
 	return info
+}
+
+func buildRoutingDestination(provider ModelProvider, key Key) *RoutingDestination {
+	destination := &RoutingDestination{Provider: provider}
+	switch provider {
+	case Bedrock:
+		if cfg := key.BedrockKeyConfig; cfg != nil {
+			if cfg.Region != nil {
+				destination.Region = cfg.Region.GetValue()
+			}
+			if cfg.ProjectID != nil {
+				destination.ProjectID = cfg.ProjectID.GetValue()
+			}
+		}
+	case BedrockMantle:
+		if cfg := key.BedrockMantleKeyConfig; cfg != nil {
+			if cfg.Region != nil {
+				destination.Region = cfg.Region.GetValue()
+			}
+			if cfg.ProjectID != nil {
+				destination.ProjectID = cfg.ProjectID.GetValue()
+			}
+		}
+	default:
+		return nil
+	}
+	if destination.Region == "" && destination.ProjectID == "" {
+		return nil
+	}
+	return destination
 }
 
 // ResolveConfig returns the AliasConfig for the given user-facing model name,

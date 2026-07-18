@@ -10,6 +10,22 @@ import (
 	tracepb "go.opentelemetry.io/proto/otlp/trace/v1"
 )
 
+func TestBuildSpanAttrsCarriesDestinationAttribution(t *testing.T) {
+	attrs := buildSpanAttrs(&schemas.Span{Attributes: map[string]any{
+		schemas.AttrProviderName:              "bedrock_mantle",
+		schemas.AttrRequestModel:              "claude-sol",
+		schemas.AttrBifrostDestinationRegion:  "us-east-1",
+		schemas.AttrBifrostDestinationProject: "research-project",
+	}})
+	seen := map[string]string{}
+	for _, attr := range attrs {
+		seen[string(attr.Key)] = attr.Value.AsString()
+	}
+	if seen["destination.region"] != "us-east-1" || seen["destination.project_id"] != "research-project" {
+		t.Fatalf("destination attrs = %#v", seen)
+	}
+}
+
 // contentAttrKeysWant is the canonical set of content-bearing attribute keys — the
 // "Input/Output Attributes" block in core/schemas/trace.go. Every pass-through connector
 // must strip exactly these when content logging is disabled; this local copy is the drift
@@ -256,15 +272,15 @@ func TestConvertTraceRequestHeaderFiltering(t *testing.T) {
 		},
 	}
 
-	rs := p.convertTraceToResourceSpan("svc", trace, []string{"x-tenant-id"}, false, false, false)
+	rs := p.convertTraceToResourceSpan("svc", trace, []string{"x-tenant-id", "authorization"}, false, false, false)
 	spans := rs.ScopeSpans[0].Spans
 
 	rootOut := findRoot(spans)
 	if got := attrString(rootOut, "http.request.header.x-tenant-id"); got != "acme" {
 		t.Errorf("root allow-listed header = %q, want acme", got)
 	}
-	if got := attrString(rootOut, "http.request.header.authorization"); got != "" {
-		t.Errorf("non-allow-listed header leaked to root: %q", got)
+	if got := attrString(rootOut, "http.request.header.authorization"); got != "[REDACTED]" {
+		t.Errorf("allow-listed credential header = %q, want [REDACTED]", got)
 	}
 
 	// Headers are a root-span-only concern; children must carry none.

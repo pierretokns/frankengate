@@ -1,10 +1,12 @@
 package schemas
 
 import (
+	"context"
 	"encoding/json"
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestKeyAliasesUnmarshalLegacyStringShape(t *testing.T) {
@@ -88,6 +90,28 @@ func TestKeyAliasesProjectIDFlatRoundTrip(t *testing.T) {
 	// project_id alone (besides model_id) must force the rich object shape, not the legacy string.
 	if len(out) == 0 || !strings.Contains(string(out), `"project_id"`) {
 		t.Fatalf("expected project_id in serialized output, got %s", out)
+	}
+}
+
+func TestBuildRoutingInfoIncludesNonSecretBedrockDestination(t *testing.T) {
+	key := Key{
+		Name:  "mantle-prod",
+		Value: *NewSecretVar("do-not-leak"),
+		BedrockMantleKeyConfig: &BedrockMantleKeyConfig{
+			Region:    NewSecretVar("us-east-1"),
+			ProjectID: NewSecretVar("research-project"),
+		},
+	}
+	info := BuildRoutingInfo(NewBifrostContext(context.Background(), time.Time{}), BedrockMantle, "claude-sol", key)
+	if info.Destination == nil || info.Destination.Region != "us-east-1" || info.Destination.ProjectID != "research-project" {
+		t.Fatalf("destination attribution = %#v", info.Destination)
+	}
+	encoded, err := json.Marshal(info)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(encoded), "do-not-leak") {
+		t.Fatalf("routing attribution leaked key material: %s", encoded)
 	}
 }
 

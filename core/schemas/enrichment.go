@@ -53,6 +53,8 @@ var EnrichmentDims = []EnrichmentDim{
 	// --- Metric tier: low-cardinality, safe as Prometheus labels / Datadog tags,
 	//     and also present on records/traces. ---
 	{Name: "provider", SpanAttr: AttrBifrostProviderName, MetricSafe: true},
+	{Name: "destination_region", SpanAttr: AttrBifrostDestinationRegion, MetricSafe: true},
+	{Name: "destination_project_id", SpanAttr: AttrBifrostDestinationProject, MetricSafe: true},
 	{Name: "model", SpanAttr: AttrRequestModel, MetricSafe: true},
 	{Name: "method", Column: "request_type", SpanAttr: AttrLegacyRequestType, MetricSafe: true},
 	// alias and routing_engine_used are derived post-response and attached to the
