@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"regexp"
 	"strings"
 	"time"
@@ -26,6 +27,7 @@ const (
 	maxBehavioralSignals = 32
 	maxJudgeScores       = 32
 	maxBehavioralCount   = 1_000_000
+	maxBehavioralLatency = 24 * time.Hour
 	maxPerceivedScore    = 100
 	maxJSONEnvelopeBytes = 1 << 20
 )
@@ -33,7 +35,7 @@ const (
 var (
 	safeTokenRe     = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._:@/+~-]*$`)
 	safeCodeRe      = regexp.MustCompile(`^[a-z][a-z0-9_-]*$`)
-	safeDigestRe    = regexp.MustCompile(`^sha256:[a-fA-F0-9]{6,128}$`)
+	safeDigestRe    = regexp.MustCompile(`^sha256:[a-f0-9]{64}$`)
 	safeVaultURIRe  = regexp.MustCompile(`^vault://[A-Za-z0-9][A-Za-z0-9._:@/+~-]{0,240}$`)
 	safeMediaTypeRe = regexp.MustCompile(`^[a-z0-9][a-z0-9.+-]*/[a-z0-9][a-z0-9.+-]*$`)
 )
@@ -164,11 +166,17 @@ const (
 type BehavioralSignalType string
 
 const (
-	BehavioralRetry       BehavioralSignalType = "retry"
-	BehavioralRegenerate  BehavioralSignalType = "regenerate"
-	BehavioralToolFailure BehavioralSignalType = "tool_failure"
-	BehavioralAbandonment BehavioralSignalType = "abandonment"
-	BehavioralEscalation  BehavioralSignalType = "escalation"
+	BehavioralRetry        BehavioralSignalType = "retry"
+	BehavioralRegenerate   BehavioralSignalType = "regenerate"
+	BehavioralToolFailure  BehavioralSignalType = "tool_failure"
+	BehavioralAbandonment  BehavioralSignalType = "abandonment"
+	BehavioralEscalation   BehavioralSignalType = "escalation"
+	BehavioralCorrection   BehavioralSignalType = "correction"
+	BehavioralCitationUse  BehavioralSignalType = "citation_use"
+	BehavioralCitationMiss BehavioralSignalType = "citation_failure"
+	BehavioralManualSearch BehavioralSignalType = "manual_search"
+	BehavioralApprovalLoop BehavioralSignalType = "approval_loop"
+	BehavioralStageLatency BehavioralSignalType = "stage_latency"
 )
 
 type PerceivedFrictionScale string
@@ -331,8 +339,9 @@ type BehavioralFrictionEvidence struct {
 }
 
 type BehavioralSignal struct {
-	Type  BehavioralSignalType `json:"type"`
-	Count int                  `json:"count"`
+	Type      BehavioralSignalType `json:"type"`
+	Count     int                  `json:"count"`
+	LatencyMs int64                `json:"latency_ms,omitempty"`
 }
 
 type PerceivedFrictionEvidence struct {
@@ -499,7 +508,7 @@ func (s SamplingInfo) validate() error {
 	if !validSamplingDecision(s.Decision) {
 		return fmt.Errorf("unsupported sampling decision %q", s.Decision)
 	}
-	if s.Rate < 0 || s.Rate > 1 {
+	if math.IsNaN(s.Rate) || math.IsInf(s.Rate, 0) || s.Rate < 0 || s.Rate > 1 {
 		return errors.New("sampling rate must be between 0 and 1")
 	}
 	if s.Seed != "" {
@@ -799,6 +808,12 @@ func (b BehavioralFrictionEvidence) validate() error {
 		if signal.Count <= 0 || signal.Count > maxBehavioralCount {
 			return fmt.Errorf("behavioral friction signal[%d] count must be between 1 and %d", i, maxBehavioralCount)
 		}
+		if signal.LatencyMs < 0 || time.Duration(signal.LatencyMs)*time.Millisecond > maxBehavioralLatency {
+			return fmt.Errorf("behavioral friction signal[%d] latency_ms must be between 0 and %d", i, maxBehavioralLatency/time.Millisecond)
+		}
+		if signal.Type == BehavioralStageLatency && signal.LatencyMs == 0 {
+			return fmt.Errorf("behavioral friction signal[%d] stage_latency requires latency_ms", i)
+		}
 	}
 	return nil
 }
@@ -810,7 +825,8 @@ func (p PerceivedFrictionEvidence) validate() error {
 	if !validPerceivedFrictionScale(p.Scale) {
 		return fmt.Errorf("unsupported perceived friction scale %q", p.Scale)
 	}
-	if p.MaxScore <= 0 || p.MaxScore > maxPerceivedScore || p.Score < 0 || p.Score > p.MaxScore {
+	if math.IsNaN(p.MaxScore) || math.IsInf(p.MaxScore, 0) || math.IsNaN(p.Score) || math.IsInf(p.Score, 0) ||
+		p.MaxScore <= 0 || p.MaxScore > maxPerceivedScore || p.Score < 0 || p.Score > p.MaxScore {
 		return errors.New("perceived friction score must be between 0 and max score")
 	}
 	return nil
@@ -833,7 +849,7 @@ func (j JudgeEvidence) validate() error {
 		if err := requireSafeCode("judge score name", name, maxReasonCodeLen); err != nil {
 			return err
 		}
-		if score < 0 || score > 1 {
+		if math.IsNaN(score) || math.IsInf(score, 0) || score < 0 || score > 1 {
 			return errors.New("judge scores must be between 0 and 1")
 		}
 	}
@@ -978,7 +994,7 @@ func requireSafeDigest(name, value string) error {
 		return fmt.Errorf("%s is required", name)
 	}
 	if !safeDigestRe.MatchString(value) {
-		return fmt.Errorf("%s must be a sha256 digest reference", name)
+		return fmt.Errorf("%s must be a lowercase sha256 digest reference with exactly 64 hex characters", name)
 	}
 	return nil
 }
@@ -1129,7 +1145,9 @@ func validUserReportType(v UserReportType) bool {
 
 func validBehavioralSignalType(v BehavioralSignalType) bool {
 	switch v {
-	case BehavioralRetry, BehavioralRegenerate, BehavioralToolFailure, BehavioralAbandonment, BehavioralEscalation:
+	case BehavioralRetry, BehavioralRegenerate, BehavioralToolFailure, BehavioralAbandonment, BehavioralEscalation,
+		BehavioralCorrection, BehavioralCitationUse, BehavioralCitationMiss, BehavioralManualSearch,
+		BehavioralApprovalLoop, BehavioralStageLatency:
 		return true
 	default:
 		return false

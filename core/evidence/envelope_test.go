@@ -3,6 +3,7 @@ package evidence_test
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"strings"
 	"testing"
 	"time"
@@ -71,6 +72,38 @@ func TestValidateFailsClosedForMissingControlPlaneFields(t *testing.T) {
 	}
 }
 
+func TestBehavioralFrictionSupportsDerivedSignalsAndStageLatency(t *testing.T) {
+	env := validGatewayAttemptEnvelope()
+	env.Observation = evidence.Observation{
+		Type: evidence.ObservationBehavioralFriction,
+		BehavioralFriction: &evidence.BehavioralFrictionEvidence{
+			WindowID: "window_01",
+			Signals: []evidence.BehavioralSignal{
+				{Type: evidence.BehavioralCorrection, Count: 1},
+				{Type: evidence.BehavioralCitationMiss, Count: 1},
+				{Type: evidence.BehavioralStageLatency, Count: 1, LatencyMs: 250},
+			},
+		},
+	}
+	if err := env.Validate(); err != nil {
+		t.Fatalf("derived behavioral signals should validate: %v", err)
+	}
+}
+
+func TestBehavioralStageLatencyRequiresBoundedLatency(t *testing.T) {
+	env := validGatewayAttemptEnvelope()
+	env.Observation = evidence.Observation{
+		Type: evidence.ObservationBehavioralFriction,
+		BehavioralFriction: &evidence.BehavioralFrictionEvidence{
+			WindowID: "window_01",
+			Signals:  []evidence.BehavioralSignal{{Type: evidence.BehavioralStageLatency, Count: 1}},
+		},
+	}
+	if err := env.Validate(); err == nil {
+		t.Fatal("stage latency without latency_ms should be rejected")
+	}
+}
+
 func TestValidateRejectsUnknownEnumValues(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -121,7 +154,7 @@ func TestValidateRejectsUnknownEnumValues(t *testing.T) {
 					Case:           "TestFoo",
 					Status:         "flaky",
 					ToolRevision:   "go@1.26.4",
-					ArtifactDigest: "sha256:abc123",
+					ArtifactDigest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 				},
 			}
 		}},
@@ -194,38 +227,38 @@ func TestValidatePrivacyDispositionMatchesContentTiers(t *testing.T) {
 		{
 			name:        "metadata only rejects redacted content",
 			disposition: evidence.PrivacyMetadataOnly,
-			content:     []evidence.ContentReference{{Tier: evidence.ContentRedacted, Digest: "sha256:abc123"}},
+			content:     []evidence.ContentReference{{Tier: evidence.ContentRedacted, Digest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}},
 			wantErr:     true,
 		},
 		{
 			name:        "redacted permits redacted and derived digests",
 			disposition: evidence.PrivacyRedacted,
 			content: []evidence.ContentReference{
-				{Tier: evidence.ContentRedacted, Digest: "sha256:abc123"},
-				{Tier: evidence.ContentDerivedDigest, Digest: "sha256:def456"},
+				{Tier: evidence.ContentRedacted, Digest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+				{Tier: evidence.ContentDerivedDigest, Digest: "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
 			},
 		},
 		{
 			name:        "redacted rejects vault refs",
 			disposition: evidence.PrivacyRedacted,
-			content:     []evidence.ContentReference{{Tier: evidence.ContentVaultRef, Digest: "sha256:abc123", VaultURI: "vault://tenant/object"}},
+			content:     []evidence.ContentReference{{Tier: evidence.ContentVaultRef, Digest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", VaultURI: "vault://tenant/object"}},
 			wantErr:     true,
 		},
 		{
 			name:        "derived only permits derived digest",
 			disposition: evidence.PrivacyDerivedOnly,
-			content:     []evidence.ContentReference{{Tier: evidence.ContentDerivedDigest, Digest: "sha256:abc123"}},
+			content:     []evidence.ContentReference{{Tier: evidence.ContentDerivedDigest, Digest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}},
 		},
 		{
 			name:        "derived only rejects redacted content",
 			disposition: evidence.PrivacyDerivedOnly,
-			content:     []evidence.ContentReference{{Tier: evidence.ContentRedacted, Digest: "sha256:abc123"}},
+			content:     []evidence.ContentReference{{Tier: evidence.ContentRedacted, Digest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}},
 			wantErr:     true,
 		},
 		{
 			name:        "vault only permits vault refs",
 			disposition: evidence.PrivacyVaultOnly,
-			content:     []evidence.ContentReference{{Tier: evidence.ContentVaultRef, Digest: "sha256:abc123", VaultURI: "vault://tenant/object"}},
+			content:     []evidence.ContentReference{{Tier: evidence.ContentVaultRef, Digest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", VaultURI: "vault://tenant/object"}},
 		},
 	}
 
@@ -312,9 +345,40 @@ func TestValidateRejectsUnsafeStringsAndOversizedCollections(t *testing.T) {
 			env.Privacy.Disposition = evidence.PrivacyRedacted
 			env.Observation.Content = []evidence.ContentReference{{Tier: evidence.ContentRedacted, Digest: "not a digest"}}
 		}},
+		{name: "content digest must have full sha256 length", mutate: func(env *evidence.AgentEvidenceEnvelope) {
+			env.Privacy.Disposition = evidence.PrivacyRedacted
+			env.Observation.Content = []evidence.ContentReference{{Tier: evidence.ContentRedacted, Digest: "sha256:abc123"}}
+		}},
+		{name: "content digest must be lowercase", mutate: func(env *evidence.AgentEvidenceEnvelope) {
+			env.Privacy.Disposition = evidence.PrivacyRedacted
+			env.Observation.Content = []evidence.ContentReference{{Tier: evidence.ContentRedacted, Digest: "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"}}
+		}},
+		{name: "sampling rate rejects NaN", mutate: func(env *evidence.AgentEvidenceEnvelope) {
+			env.Sampling.Rate = math.NaN()
+		}},
+		{name: "sampling rate rejects infinity", mutate: func(env *evidence.AgentEvidenceEnvelope) {
+			env.Sampling.Rate = math.Inf(1)
+		}},
+		{name: "perceived friction rejects NaN", mutate: func(env *evidence.AgentEvidenceEnvelope) {
+			env.Observation = evidence.Observation{
+				Type: evidence.ObservationPerceivedFriction,
+				PerceivedFriction: &evidence.PerceivedFrictionEvidence{
+					InstrumentID: "survey_01", Scale: evidence.PerceivedEase, Score: math.NaN(), MaxScore: 5,
+				},
+			}
+		}},
+		{name: "judge score rejects infinity", mutate: func(env *evidence.AgentEvidenceEnvelope) {
+			env.Observation = evidence.Observation{
+				Type: evidence.ObservationJudgeEvidence,
+				JudgeEvidence: &evidence.JudgeEvidence{
+					JudgeID: "judge_01", RubricRevision: "rubric@7", Outcome: evidence.JudgePassed,
+					Scores: map[string]float64{"correctness": math.Inf(1)},
+				},
+			}
+		}},
 		{name: "vault uri must be safe", mutate: func(env *evidence.AgentEvidenceEnvelope) {
 			env.Privacy.Disposition = evidence.PrivacyVaultOnly
-			env.Observation.Content = []evidence.ContentReference{{Tier: evidence.ContentVaultRef, Digest: "sha256:abc123", VaultURI: "https://example.com/raw"}}
+			env.Observation.Content = []evidence.ContentReference{{Tier: evidence.ContentVaultRef, Digest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", VaultURI: "https://example.com/raw"}}
 		}},
 	}
 
@@ -377,8 +441,8 @@ func TestValidateAcceptsEveryObservationType(t *testing.T) {
 					Case:             "TestFoo",
 					Status:           evidence.TestPassed,
 					ToolRevision:     "go@1.26.4",
-					ArtifactDigest:   "sha256:abc123",
-					TranscriptDigest: "sha256:def456",
+					ArtifactDigest:   "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+					TranscriptDigest: "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				},
 			},
 		},
@@ -428,7 +492,7 @@ func TestValidateAcceptsEveryObservationType(t *testing.T) {
 					RubricRevision:    "rubric@7",
 					Outcome:           evidence.JudgePassed,
 					Scores:            map[string]float64{"correctness": 0.92},
-					ExplanationDigest: "sha256:cafe1234",
+					ExplanationDigest: "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
 				},
 			},
 		},
@@ -560,7 +624,7 @@ func validGatewayAttemptEnvelope() evidence.AgentEvidenceEnvelope {
 		Producer: evidence.ProducerRef{
 			Kind:     evidence.ProducerGateway,
 			ID:       "gateway-pod-a",
-			Revision: "collector@sha256:1111",
+			Revision: "collector@sha256:1111111111111111111111111111111111111111111111111111111111111111",
 		},
 		Tenant: evidence.TenantScope{
 			TenantID:  "tenant_a",
@@ -578,7 +642,7 @@ func validGatewayAttemptEnvelope() evidence.AgentEvidenceEnvelope {
 		Privacy: evidence.PrivacyReceipt{
 			ID:                "privacy_receipt_01",
 			PolicyRevision:    "privacy-policy@17",
-			TransformRevision: "redactor@sha256:2222",
+			TransformRevision: "redactor@sha256:2222222222222222222222222222222222222222222222222222222222222222",
 			Disposition:       evidence.PrivacyMetadataOnly,
 			RetentionClass:    "ephemeral-30d",
 			DeletionPolicyID:  "delete-policy-01",
@@ -602,7 +666,7 @@ func validGatewayAttemptEnvelope() evidence.AgentEvidenceEnvelope {
 			Policy:    "policy@42",
 			Privacy:   "privacy@17",
 			Route:     "route@9",
-			Gateway:   "gateway@sha256:3333",
+			Gateway:   "gateway@sha256:3333333333333333333333333333333333333333333333333333333333333333",
 		},
 		Observation: evidence.Observation{
 			Type: evidence.ObservationGatewayAttempt,
