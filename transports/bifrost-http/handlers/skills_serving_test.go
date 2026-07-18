@@ -41,6 +41,19 @@ func TestSafeDownloadFilenameStripsHeaderSyntax(t *testing.T) {
 	}
 }
 
+func TestValidForwardedHostRejectsURLInjection(t *testing.T) {
+	for _, host := range []string{"", "evil.test/path", "evil.test?next=1", "evil.test\r\nX-Injected: yes", "evil test"} {
+		if validForwardedHost(host) {
+			t.Fatalf("accepted unsafe forwarded host %q", host)
+		}
+	}
+	for _, host := range []string{"skills.example.test", "skills.example.test:8443", "[::1]:8080"} {
+		if !validForwardedHost(host) {
+			t.Fatalf("rejected valid forwarded host %q", host)
+		}
+	}
+}
+
 func TestSkillsServingGenericFileDownloadDecodesEncodedPathParams(t *testing.T) {
 	ctx := context.Background()
 	store := newTestConfigStore(t)

@@ -1434,7 +1434,10 @@ func (h *SkillsServingHandler) listAllSkills(ctx *fasthttp.RequestCtx) ([]tables
 
 // resolveBaseURL derives the base URL from the request's Host header and scheme.
 func (h *SkillsServingHandler) resolveBaseURL(ctx *fasthttp.RequestCtx) string {
-	scheme := string(ctx.Request.Header.Peek("X-Forwarded-Proto"))
+	scheme := strings.ToLower(strings.TrimSpace(string(ctx.Request.Header.Peek("X-Forwarded-Proto"))))
+	if scheme != "http" && scheme != "https" {
+		scheme = ""
+	}
 	if scheme == "" {
 		if ctx.IsTLS() {
 			scheme = "https"
@@ -1443,10 +1446,23 @@ func (h *SkillsServingHandler) resolveBaseURL(ctx *fasthttp.RequestCtx) string {
 		}
 	}
 
-	host := string(ctx.Request.Header.Peek("X-Forwarded-Host"))
+	host := strings.TrimSpace(string(ctx.Request.Header.Peek("X-Forwarded-Host")))
+	if !validForwardedHost(host) {
+		host = ""
+	}
 	if host == "" {
 		host = string(ctx.Host())
 	}
+	if !validForwardedHost(host) {
+		return ""
+	}
 
 	return scheme + "://" + host
+}
+
+func validForwardedHost(host string) bool {
+	if host == "" || strings.ContainsAny(host, "/?#\r\n\t ") {
+		return false
+	}
+	return !strings.ContainsRune(host, '\x00')
 }
