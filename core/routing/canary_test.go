@@ -89,3 +89,16 @@ func TestAssignmentHasStableAuditJSON(t *testing.T) {
 		t.Fatalf("unexpected assignment JSON: %s", encoded)
 	}
 }
+
+func TestAssignmentTraceAttributesExcludeSubject(t *testing.T) {
+	attrs := Assign("user-1", "models-v2", 5000).TraceAttributes()
+	if _, ok := attrs["routing.experiment"]; !ok {
+		t.Fatal("trace attributes missing experiment")
+	}
+	if _, ok := attrs["routing.bucket"]; !ok {
+		t.Fatal("trace attributes missing bucket")
+	}
+	if _, ok := attrs["routing.subject"]; ok {
+		t.Fatal("trace attributes must not expose subject")
+	}
+}

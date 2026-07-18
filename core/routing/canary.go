@@ -20,6 +20,19 @@ type Assignment struct {
 	InTreatment        bool   `json:"in_treatment"`
 }
 
+// TraceAttributes returns bounded, non-secret assignment metadata suitable for
+// trace-level evidence. The subject is intentionally excluded because it may
+// contain an identity or tenant identifier; callers can join it through their
+// existing privacy-safe trace correlation fields.
+func (a Assignment) TraceAttributes() map[string]any {
+	return map[string]any{
+		"routing.experiment":           a.Experiment,
+		"routing.bucket":               a.Bucket,
+		"routing.rollout_basis_points": a.RolloutBasisPoints,
+		"routing.in_treatment":         a.InTreatment,
+	}
+}
+
 // Assign evaluates a deterministic rollout and returns its complete decision.
 // Empty subjects/namespaces and invalid percentages fail closed. Callers may
 // use InTreatment to gate a canary and retain Assignment for telemetry.
