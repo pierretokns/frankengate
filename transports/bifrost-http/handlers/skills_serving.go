@@ -1120,7 +1120,7 @@ func serveSkillFile(ctx *fasthttp.RequestCtx, file *tables.TableSkillFile, objSt
 // header syntax while preserving a useful basename for clients.
 func safeDownloadFilename(filePath string) string {
 	name := path.Base(strings.ReplaceAll(filePath, "\\", "/"))
-	if name == "." || name == "/" || name == "" {
+	if name == "." || name == ".." || name == "/" || name == "" {
 		return "download"
 	}
 	var b strings.Builder

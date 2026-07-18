@@ -48,6 +48,12 @@ func TestSafeDownloadFilenameHandlesUnsafeSkillName(t *testing.T) {
 	}
 }
 
+func TestSafeDownloadFilenameRejectsDotSegments(t *testing.T) {
+	if got := safeDownloadFilename(".."); got != "download" {
+		t.Fatalf("dot segment should use fallback filename, got %q", got)
+	}
+}
+
 func TestValidForwardedHostRejectsURLInjection(t *testing.T) {
 	for _, host := range []string{"", "evil.test/path", "evil.test?next=1", "evil.test\r\nX-Injected: yes", "evil test"} {
 		if validForwardedHost(host) {
