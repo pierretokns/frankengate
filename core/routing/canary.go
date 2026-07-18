@@ -33,6 +33,18 @@ func (a Assignment) TraceAttributes() map[string]any {
 	}
 }
 
+// ApplyTraceAttributes sends the privacy-safe assignment metadata to a trace
+// attribute sink. A nil sink is a no-op so optional observability cannot affect
+// routing behavior.
+func (a Assignment) ApplyTraceAttributes(set func(string, any)) {
+	if set == nil {
+		return
+	}
+	for key, value := range a.TraceAttributes() {
+		set(key, value)
+	}
+}
+
 // Assign evaluates a deterministic rollout and returns its complete decision.
 // Empty subjects/namespaces and invalid percentages fail closed. Callers may
 // use InTreatment to gate a canary and retain Assignment for telemetry.

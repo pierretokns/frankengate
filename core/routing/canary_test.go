@@ -107,3 +107,13 @@ func TestAssignmentTraceAttributesExcludeSubject(t *testing.T) {
 		t.Fatal("trace attributes must return an independent map")
 	}
 }
+
+func TestAssignmentApplyTraceAttributesIsOptionalAndComplete(t *testing.T) {
+	assignment := Assign("user-1", "models-v2", 5000)
+	seen := map[string]any{}
+	assignment.ApplyTraceAttributes(func(key string, value any) { seen[key] = value })
+	if len(seen) != 4 || seen["routing.experiment"] != "models-v2" || seen["routing.in_treatment"] != assignment.InTreatment {
+		t.Fatalf("unexpected applied trace attributes: %#v", seen)
+	}
+	assignment.ApplyTraceAttributes(nil)
+}
