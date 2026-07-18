@@ -2,27 +2,47 @@
 set -euo pipefail
 
 usage() {
-  echo "usage: $0 --binary PATH --tests PATH [--tag beta-TAG]" >&2
+  echo "usage: $0 --binary PATH --tests PATH [--tag beta-TAG] [--prepare-only DIR]" >&2
   echo "  PATH to a test report is required so local publication is explicit." >&2
+  echo "  --prepare-only packages and verifies locally without GitHub auth." >&2
   exit 2
 }
 
 BINARY=""
 TEST_REPORT=""
 TAG=""
+PREPARE_ONLY=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --binary) BINARY="${2:-}"; shift 2 ;;
     --tests) TEST_REPORT="${2:-}"; shift 2 ;;
     --tag) TAG="${2:-}"; shift 2 ;;
+    --prepare-only) PREPARE_ONLY="${2:-}"; shift 2 ;;
     -h|--help) usage ;;
     *) echo "unknown argument: $1" >&2; usage ;;
   esac
 done
 
 [[ -n "$BINARY" && -x "$BINARY" && -n "$TEST_REPORT" && -f "$TEST_REPORT" ]] || usage
-command -v gh >/dev/null || { echo "gh CLI is required" >&2; exit 1; }
-gh auth status >/dev/null
+
+# A beta must carry evidence of a successful verification run. Merely having
+# a file at --tests is not sufficient: an earlier workflow accidentally
+# packaged reports containing a failed package or panic. Keep this check
+# intentionally format-light so Go, shell, and composite local reports work,
+# while rejecting the unambiguous failure markers emitted by those runners.
+[[ -s "$TEST_REPORT" ]] || { echo "test report is empty" >&2; exit 1; }
+if rg -n -i '(^|[[:space:]])(FAIL|panic:|fatal error:|exit status [1-9])([[:space:]]|$)' "$TEST_REPORT" >/dev/null 2>&1; then
+	echo "test report contains failure markers; refusing to package beta" >&2
+	exit 1
+fi
+if ! rg -n -i '(^|[[:space:]])(ok|pass(ed)?)([[:space:]]|$)' "$TEST_REPORT" >/dev/null 2>&1; then
+	echo "test report has no successful test marker; refusing to package beta" >&2
+	exit 1
+fi
+if [[ -z "$PREPARE_ONLY" ]]; then
+  command -v gh >/dev/null || { echo "gh CLI is required" >&2; exit 1; }
+  gh auth status >/dev/null
+fi
 
 ROOT="$(git rev-parse --show-toplevel)"
 SHA="$(git -C "$ROOT" rev-parse HEAD^{commit})"
@@ -66,6 +86,17 @@ EOF
 tar -C "$WORK" -czf "$WORK/$PACKAGE.tar.gz" "$PACKAGE"
 (cd "$WORK" && sha256sum "$(basename "$PACKAGE.tar.gz")" > SHA256SUMS)
 "$ROOT/scripts/verify-beta-local.sh" "$WORK/$PACKAGE.tar.gz" "$SHA"
+
+if [[ -n "$PREPARE_ONLY" ]]; then
+  mkdir -p "$PREPARE_ONLY"
+  cp "$WORK/$PACKAGE.tar.gz" "$WORK/SHA256SUMS" "$PREPARE_ONLY/"
+  # A prepare directory may intentionally retain older betas for comparison.
+  # Publish an explicit pointer so consumers never have to choose an archive
+  # by glob order or modification time.
+  printf '%s\n' "$(basename "$WORK/$PACKAGE.tar.gz")" > "$PREPARE_ONLY/LATEST"
+  echo "prepared $(cd "$PREPARE_ONLY" && pwd)/$(basename "$WORK/$PACKAGE.tar.gz")"
+  exit 0
+fi
 
 REPO="$(git -C "$ROOT" remote get-url origin | sed -E 's#^https://github.com/##; s#\.git$##')"
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
