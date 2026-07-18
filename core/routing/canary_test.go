@@ -91,7 +91,8 @@ func TestAssignmentHasStableAuditJSON(t *testing.T) {
 }
 
 func TestAssignmentTraceAttributesExcludeSubject(t *testing.T) {
-	attrs := Assign("user-1", "models-v2", 5000).TraceAttributes()
+	assignment := Assign("user-1", "models-v2", 5000)
+	attrs := assignment.TraceAttributes()
 	if _, ok := attrs["routing.experiment"]; !ok {
 		t.Fatal("trace attributes missing experiment")
 	}
@@ -100,5 +101,9 @@ func TestAssignmentTraceAttributesExcludeSubject(t *testing.T) {
 	}
 	if _, ok := attrs["routing.subject"]; ok {
 		t.Fatal("trace attributes must not expose subject")
+	}
+	attrs["routing.experiment"] = "mutated"
+	if assignment.TraceAttributes()["routing.experiment"] != "models-v2" {
+		t.Fatal("trace attributes must return an independent map")
 	}
 }
