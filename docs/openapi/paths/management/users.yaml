@@ -312,7 +312,7 @@ users-teams:
 
 teams:
   get:
-    operationId: listTeams
+    operationId: usersListTeams
     summary: List teams
     description: Returns a paginated list of teams with optional search.
     tags:
@@ -351,7 +351,7 @@ teams:
         $ref: '../../openapi.yaml#/components/responses/InternalError'
 
   post:
-    operationId: createTeam
+    operationId: usersCreateTeam
     summary: Create team
     description: Creates a new team. The team ID is derived from the name.
     tags:
@@ -384,7 +384,7 @@ teams:
 
 teams-by-id:
   get:
-    operationId: getTeam
+    operationId: usersGetTeam
     summary: Get team
     description: Returns details of a specific team including member count.
     tags:
@@ -415,7 +415,7 @@ teams-by-id:
         $ref: '../../openapi.yaml#/components/responses/InternalError'
 
   put:
-    operationId: updateTeam
+    operationId: usersUpdateTeam
     summary: Update team
     description: Updates a team. Note that renaming teams is not allowed.
     tags:
@@ -458,7 +458,7 @@ teams-by-id:
         $ref: '../../openapi.yaml#/components/responses/InternalError'
 
   delete:
-    operationId: deleteTeam
+    operationId: usersDeleteTeam
     summary: Delete team
     description: Permanently removes a team.
     tags:

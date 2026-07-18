@@ -346,7 +346,7 @@ virtual-keys-by-id:
 
 teams:
   get:
-    operationId: listTeams
+    operationId: governanceListTeams
     summary: List teams
     description: Returns a list of all teams.
     tags:
@@ -376,7 +376,7 @@ teams:
         $ref: '../../openapi.yaml#/components/responses/InternalError'
 
   post:
-    operationId: createTeam
+    operationId: governanceCreateTeam
     summary: Create team
     description: Creates a new team.
     tags:
@@ -403,7 +403,7 @@ teams:
 
 teams-by-id:
   get:
-    operationId: getTeam
+    operationId: governanceGetTeam
     summary: Get team
     description: Returns a specific team by ID.
     tags:
@@ -443,7 +443,7 @@ teams-by-id:
         $ref: '../../openapi.yaml#/components/responses/InternalError'
 
   put:
-    operationId: updateTeam
+    operationId: governanceUpdateTeam
     summary: Update team
     description: Updates an existing team.
     tags:
@@ -482,7 +482,7 @@ teams-by-id:
         $ref: '../../openapi.yaml#/components/responses/InternalError'
 
   delete:
-    operationId: deleteTeam
+    operationId: governanceDeleteTeam
     summary: Delete team
     description: Deletes a team.
     tags:
