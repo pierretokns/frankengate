@@ -808,7 +808,7 @@ func (b BehavioralFrictionEvidence) validate() error {
 		if signal.Count <= 0 || signal.Count > maxBehavioralCount {
 			return fmt.Errorf("behavioral friction signal[%d] count must be between 1 and %d", i, maxBehavioralCount)
 		}
-		if signal.LatencyMs < 0 || time.Duration(signal.LatencyMs)*time.Millisecond > maxBehavioralLatency {
+		if signal.LatencyMs < 0 || signal.LatencyMs > int64(maxBehavioralLatency/time.Millisecond) {
 			return fmt.Errorf("behavioral friction signal[%d] latency_ms must be between 0 and %d", i, maxBehavioralLatency/time.Millisecond)
 		}
 		if signal.Type == BehavioralStageLatency && signal.LatencyMs == 0 {

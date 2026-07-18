@@ -104,6 +104,20 @@ func TestBehavioralStageLatencyRequiresBoundedLatency(t *testing.T) {
 	}
 }
 
+func TestBehavioralLatencyRejectsIntegerOverflowInputs(t *testing.T) {
+	env := validGatewayAttemptEnvelope()
+	env.Observation = evidence.Observation{
+		Type: evidence.ObservationBehavioralFriction,
+		BehavioralFriction: &evidence.BehavioralFrictionEvidence{
+			WindowID: "window_01",
+			Signals:  []evidence.BehavioralSignal{{Type: evidence.BehavioralRetry, Count: 1, LatencyMs: math.MaxInt64}},
+		},
+	}
+	if err := env.Validate(); err == nil {
+		t.Fatal("overflow-sized latency should be rejected")
+	}
+}
+
 func TestValidateRejectsUnknownEnumValues(t *testing.T) {
 	tests := []struct {
 		name   string
