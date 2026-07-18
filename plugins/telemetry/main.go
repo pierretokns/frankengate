@@ -174,8 +174,8 @@ type PrometheusPlugin struct {
 	KeyRotationEventsTotal            *prometheus.CounterVec
 	ActiveRequests                    *prometheus.GaugeVec
 	ProviderKeyUp                     *prometheus.GaugeVec
-	GovernanceSyncWakeups             prometheus.Gauge
-	GovernanceSyncListenerReconnects  prometheus.Gauge
+	GovernanceSyncWakeups             prometheus.Counter
+	GovernanceSyncListenerReconnects  prometheus.Counter
 	GovernanceSyncOutboxDepth         prometheus.Gauge
 	GovernanceSyncReloadLatency       prometheus.Gauge
 	GovernanceSyncConsumerLag         prometheus.Gauge
@@ -256,10 +256,6 @@ func (p *PrometheusPlugin) SetGovernanceSyncMetric(name string, value float64) {
 		return
 	}
 	switch name {
-	case "wakeups":
-		p.GovernanceSyncWakeups.Set(value)
-	case "listener_reconnects":
-		p.GovernanceSyncListenerReconnects.Set(value)
 	case "outbox_depth":
 		p.GovernanceSyncOutboxDepth.Set(value)
 	case "reload_latency_seconds":
@@ -586,8 +582,11 @@ func Init(config *Config, pricingManager *modelcatalog.ModelCatalog, logger sche
 	governanceSyncGauge := func(name, help string) prometheus.Gauge {
 		return factory.NewGauge(prometheus.GaugeOpts{Name: name, Help: help})
 	}
-	governanceSyncWakeups := governanceSyncGauge("bifrost_governance_sync_wakeups_total", "Cumulative governance database wakeup hints observed by this pod.")
-	governanceSyncListenerReconnects := governanceSyncGauge("bifrost_governance_sync_listener_reconnects_total", "Cumulative governance notification listener reconnects observed by this pod.")
+	governanceSyncCounter := func(name, help string) prometheus.Counter {
+		return factory.NewCounter(prometheus.CounterOpts{Name: name, Help: help})
+	}
+	governanceSyncWakeups := governanceSyncCounter("bifrost_governance_sync_wakeups_total", "Cumulative governance database wakeup hints observed by this pod.")
+	governanceSyncListenerReconnects := governanceSyncCounter("bifrost_governance_sync_listener_reconnects_total", "Cumulative governance notification listener reconnects observed by this pod.")
 	governanceSyncOutboxDepth := governanceSyncGauge("bifrost_governance_sync_outbox_depth", "Current governance invalidation outbox depth observed by this pod.")
 	governanceSyncReloadLatency := governanceSyncGauge("bifrost_governance_sync_reload_latency_seconds", "Most recent governance authority reload latency in seconds.")
 	governanceSyncConsumerLag := governanceSyncGauge("bifrost_governance_sync_consumer_lag", "Current governance invalidation consumer lag in outbox event IDs.")
