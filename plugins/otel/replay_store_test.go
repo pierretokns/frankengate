@@ -72,6 +72,46 @@ func TestReplayQualityMetadataIsBoundedAndRedacted(t *testing.T) {
 	}
 }
 
+func TestReplayOptInStillRedactsHeadersIdentityAndToolPayloads(t *testing.T) {
+	store, err := NewJSONLReplayStore(t.TempDir(), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	trace := &schemas.Trace{
+		TraceID: "pii", RequestHeaders: map[string]string{
+			"authorization": "Bearer top-secret", "x-coder-user": "alice@example.com", "x-forwarded-for": "203.0.113.4",
+		},
+		Attributes: map[string]any{"tenant": "acme", "coder.workspace": "alice@example.com", "safe": "hello alice@example.com"},
+		PluginLogs: []schemas.PluginLogEntry{{Message: "contact alice@example.com"}},
+		Spans: []*schemas.Span{{Attributes: map[string]any{
+			"mcp.tool.name": "lookup", "mcp.tool.input": `{"ssn":"123"}`, "mcp.tool.result": "private result", "safe": "bob@example.com",
+		}}},
+	}
+	if err := store.Put(context.Background(), trace); err != nil {
+		t.Fatal(err)
+	}
+	record, err := store.Get(context.Background(), "acme", "pii")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if record.Trace.RequestHeaders != nil {
+		t.Fatal("request headers must never be persisted in replay")
+	}
+	if _, ok := record.Trace.Attributes["coder.workspace"]; ok {
+		t.Fatal("Coder identity leaked into replay")
+	}
+	if _, ok := record.Trace.Spans[0].Attributes["mcp.tool.input"]; ok {
+		t.Fatal("tool arguments leaked into replay")
+	}
+	if _, ok := record.Trace.Spans[0].Attributes["mcp.tool.result"]; ok {
+		t.Fatal("tool result leaked into replay")
+	}
+	if got := record.Trace.Attributes["safe"]; got != "hello [REDACTED]" {
+		t.Fatalf("safe metadata was not PII-redacted: %#v", got)
+	}
+}
+
 func TestJSONLReplayStoreListIsTenantScopedBoundedAndRestartSafe(t *testing.T) {
 	dir := t.TempDir()
 	store, err := NewJSONLReplayStore(dir, false)

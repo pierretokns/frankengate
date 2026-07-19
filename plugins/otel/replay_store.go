@@ -16,6 +16,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/maximhq/bifrost/core/privacy"
 	"github.com/maximhq/bifrost/core/schemas"
 )
 
@@ -188,6 +189,12 @@ func (s *JSONLReplayStore) Put(ctx context.Context, trace *schemas.Trace) error 
 	if !s.includeContent {
 		redactReplayContent(clone)
 	}
+	// Replay is an evidence store, not an identity or credential store.  Even
+	// when payload capture is explicitly enabled, transport headers (including
+	// Coder/Okta identity and peer-address headers) and tool arguments/results
+	// must never be persisted.  Apply this boundary after SnapshotForExport so
+	// the live trace remains available to the configured OTEL exporters.
+	sanitizeReplayPII(clone)
 	// Retrieval quality counters are safe to retain, but query text is never
 	// part of the replay metadata contract, even when content capture is opted in.
 	redactReplayQueryMetadata(clone)
@@ -392,5 +399,86 @@ func redactReplayQueryMetadata(t *schemas.Trace) {
 		if strings.Contains(strings.ToLower(key), "query") {
 			delete(t.Attributes, key)
 		}
+	}
+}
+
+// sanitizeReplayPII applies the replay-store privacy boundary independently of
+// includeContent.  Header values are not needed for replay and are therefore
+// dropped wholesale; trace/span metadata is retained only when it is bounded
+// operational data.  This prevents Coder identity, IP/user-agent attribution,
+// tool arguments/results, and accidental email/phone values from escaping via
+// an opted-in replay directory.
+func sanitizeReplayPII(t *schemas.Trace) {
+	if t == nil {
+		return
+	}
+	t.RequestHeaders = nil
+	for key := range t.Attributes {
+		if replayPIIKey(key) {
+			delete(t.Attributes, key)
+			continue
+		}
+		t.Attributes[key] = redactReplayStrings(t.Attributes[key])
+	}
+	for _, span := range t.Spans {
+		if span == nil {
+			continue
+		}
+		for key := range span.Attributes {
+			if replayPIIKey(key) {
+				delete(span.Attributes, key)
+				continue
+			}
+			span.Attributes[key] = redactReplayStrings(span.Attributes[key])
+		}
+	}
+	for i := range t.PluginLogs {
+		t.PluginLogs[i].Message = privacy.RedactText(t.PluginLogs[i].Message)
+	}
+}
+
+func replayPIIKey(key string) bool {
+	lower := strings.ToLower(strings.NewReplacer("-", "", "_", "", ".", "").Replace(key))
+	// Keep tenant and bounded governance IDs; remove direct identity and
+	// request-content dimensions.  Tool names remain useful operational data,
+	// but arguments/results are always removed.
+	if lower == "tenant" || lower == "tenantid" || lower == "bifrosttenantid" {
+		return false
+	}
+	for _, marker := range []string{"prompt", "completion", "content", "message", "query", "toolinput", "tooloutput", "toolargs", "toolresult", "coder", "email", "username", "principal", "peeraddress", "clientpeer", "forwardedfor", "sourceip", "remoteaddr", "useragent", "sessionid"} {
+		if strings.Contains(lower, marker) {
+			return true
+		}
+	}
+	return false
+}
+
+func redactReplayStrings(value any) any {
+	switch v := value.(type) {
+	case string:
+		return privacy.RedactText(v)
+	case []string:
+		out := append([]string(nil), v...)
+		for i := range out {
+			out[i] = privacy.RedactText(out[i])
+		}
+		return out
+	case []any:
+		out := make([]any, len(v))
+		for i := range v {
+			out[i] = redactReplayStrings(v[i])
+		}
+		return out
+	case map[string]any:
+		out := make(map[string]any, len(v))
+		for key, child := range v {
+			if replayPIIKey(key) {
+				continue
+			}
+			out[key] = redactReplayStrings(child)
+		}
+		return out
+	default:
+		return value
 	}
 }
