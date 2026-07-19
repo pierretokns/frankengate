@@ -939,3 +939,32 @@ func (plugin *Plugin) ClearCacheForCacheID(cacheID string) error {
 	plugin.logger.Debug("Deleted cache entry %s", cacheID)
 	return nil
 }
+
+// ClearCacheForCacheIDForAuthority deletes a cache entry only when it belongs
+// to the caller's immutable authorization snapshot.  Point deletes cannot
+// carry portable metadata predicates, so the entry is fetched and fenced
+// before the destructive operation.  This is the governed counterpart to the
+// legacy administrative helper above; callers handling an authenticated,
+// scoped request must use this method.
+func (plugin *Plugin) ClearCacheForCacheIDForAuthority(ctx *schemas.BifrostContext, cacheID string) error {
+	if strings.TrimSpace(cacheID) == "" {
+		return fmt.Errorf("cache ID is required")
+	}
+	if err := requireGovernedCacheAuthority(ctx); err != nil {
+		return err
+	}
+	authority, err := authorityMetadataForCaching(ctx)
+	if err != nil {
+		return err
+	}
+	deleteCtx, cancel := context.WithTimeout(context.Background(), CacheSetTimeout)
+	defer cancel()
+	entry, err := plugin.store.GetChunk(deleteCtx, plugin.config.VectorStoreNamespace, cacheID)
+	if err != nil {
+		return err
+	}
+	if !isSemanticCacheEntry(entry) || !cacheResultMatchesAuthority(entry, authority) {
+		return fmt.Errorf("cache entry %s is outside the caller authorization scope", cacheID)
+	}
+	return plugin.store.Delete(deleteCtx, plugin.config.VectorStoreNamespace, cacheID)
+}

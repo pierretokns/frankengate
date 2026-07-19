@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/fasthttp/router"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
@@ -13,6 +14,14 @@ import (
 type CacheClearer interface {
 	ClearCacheForCacheID(cacheID string) error
 	ClearCacheForKey(cacheKey string) error
+}
+
+// ScopedCacheClearer is implemented by governed cache plugins.  The legacy
+// CacheClearer methods remain available for administrative callers, while a
+// request carrying a Bifrost context must use the authority-scoped variant.
+type ScopedCacheClearer interface {
+	ClearCacheForCacheIDForAuthority(*schemas.BifrostContext, string) error
+	ClearCacheForKeyForAuthority(*schemas.BifrostContext, string) error
 }
 
 // CacheClearerResolver returns the currently-loaded cache plugin or nil if
@@ -51,7 +60,24 @@ func (h *CacheHandler) clearCache(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadRequest, "Invalid cache ID")
 		return
 	}
-	if err := plugin.ClearCacheForCacheID(cacheID); err != nil {
+	var err error
+	usedScoped := false
+	if scoped, ok := plugin.(ScopedCacheClearer); ok {
+		if bifrostCtx, ok := ctx.UserValue(lib.FastHTTPUserValueBifrostContext).(*schemas.BifrostContext); ok && bifrostCtx != nil {
+			usedScoped = true
+			err = scoped.ClearCacheForCacheIDForAuthority(bifrostCtx, cacheID)
+		}
+	}
+	if err == nil && !usedScoped {
+		// A context-less request is an administrative operation and retains the
+		// legacy behavior for compatibility with existing deployments.
+		if _, governed := ctx.UserValue(lib.FastHTTPUserValueBifrostContext).(*schemas.BifrostContext); !governed {
+			err = plugin.ClearCacheForCacheID(cacheID)
+		} else {
+			err = fmt.Errorf("governed cache clearer is unavailable")
+		}
+	}
+	if err != nil {
 		SendError(ctx, fasthttp.StatusInternalServerError, "Failed to clear cache")
 		return
 	}
@@ -72,7 +98,22 @@ func (h *CacheHandler) clearCacheByKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadRequest, "Invalid cache key")
 		return
 	}
-	if err := plugin.ClearCacheForKey(cacheKey); err != nil {
+	var err error
+	usedScoped := false
+	if scoped, ok := plugin.(ScopedCacheClearer); ok {
+		if bifrostCtx, ok := ctx.UserValue(lib.FastHTTPUserValueBifrostContext).(*schemas.BifrostContext); ok && bifrostCtx != nil {
+			usedScoped = true
+			err = scoped.ClearCacheForKeyForAuthority(bifrostCtx, cacheKey)
+		}
+	}
+	if err == nil && !usedScoped {
+		if _, governed := ctx.UserValue(lib.FastHTTPUserValueBifrostContext).(*schemas.BifrostContext); !governed {
+			err = plugin.ClearCacheForKey(cacheKey)
+		} else {
+			err = fmt.Errorf("governed cache clearer is unavailable")
+		}
+	}
+	if err != nil {
 		SendError(ctx, fasthttp.StatusInternalServerError, "Failed to clear cache")
 		return
 	}
