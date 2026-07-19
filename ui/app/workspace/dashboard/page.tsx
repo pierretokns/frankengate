@@ -26,6 +26,7 @@ import { TraceReplaySummary } from "./components/traceReplaySummary";
 import { RetrievalQualitySummary } from "./components/retrievalQualitySummary";
 import { SkillsUsageSummary } from "./components/skillsUsageSummary";
 import { RoutingDecisionSummary } from "./components/routingDecisionSummary";
+import { IdentityEntitlementSummary } from "./components/identityEntitlementSummary";
 import type { DashboardData } from "./utils/exportUtils";
 
 const toChartType = (value: string): ChartType => (value === "line" ? "line" : "bar");
@@ -508,6 +509,7 @@ export default function DashboardPage() {
 					<div className="mt-3"><RoutingDecisionSummary filters={filters} /></div>
 					<div className="mt-3"><RetrievalQualitySummary filters={filters} /></div>
 					<div className="mt-3"><SkillsUsageSummary filters={filters} /></div>
+					<div className="mt-3"><IdentityEntitlementSummary filters={filters} /></div>
 				</div>
 
 				<div className="p-4">
