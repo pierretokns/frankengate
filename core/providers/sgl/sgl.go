@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/maximhq/bifrost/core/providers/anthropic"
 	"github.com/maximhq/bifrost/core/providers/openai"
 	providerUtils "github.com/maximhq/bifrost/core/providers/utils"
 	schemas "github.com/maximhq/bifrost/core/schemas"
@@ -418,9 +419,15 @@ func (provider *SGLProvider) BatchResults(_ *schemas.BifrostContext, _ []schemas
 	return nil, providerUtils.NewUnsupportedOperationError(schemas.BatchResultsRequest, provider.GetProviderKey())
 }
 
-// CountTokens is not supported by the SGL provider.
-func (provider *SGLProvider) CountTokens(_ *schemas.BifrostContext, _ schemas.Key, _ *schemas.BifrostResponsesRequest) (*schemas.BifrostCountTokensResponse, *schemas.BifrostError) {
-	return nil, providerUtils.NewUnsupportedOperationError(schemas.CountTokensRequest, provider.GetProviderKey())
+// CountTokens counts tokens against SGLang's Anthropic-compatible endpoint.
+func (provider *SGLProvider) CountTokens(ctx *schemas.BifrostContext, key schemas.Key, request *schemas.BifrostResponsesRequest) (*schemas.BifrostCountTokensResponse, *schemas.BifrostError) {
+	baseURL, bifrostErr := provider.baseURLOrError(key)
+	if bifrostErr != nil {
+		return nil, bifrostErr
+	}
+	return anthropic.HandleAnthropicCountTokensRequest(ctx, provider.client, baseURL+providerUtils.GetPathFromContext(ctx, "/v1/messages/count_tokens"), request,
+		anthropic.AnthropicRequestBuildConfig{Provider: schemas.SGL, ShouldSendBackRawRequest: provider.sendBackRawRequest, ShouldSendBackRawResponse: provider.sendBackRawResponse},
+		openai.BearerAuthHeader(key), provider.networkConfig.ExtraHeaders, provider.logger)
 }
 
 // Compaction is not supported by the SGL provider.

@@ -2747,23 +2747,33 @@ func (provider *AnthropicProvider) CountTokens(ctx *schemas.BifrostContext, key 
 	if err := providerUtils.CheckOperationAllowed(schemas.Anthropic, provider.customProviderConfig, schemas.CountTokensRequest); err != nil {
 		return nil, err
 	}
+	return HandleAnthropicCountTokensRequest(ctx, provider.client, provider.buildRequestURL(ctx, "/v1/messages/count_tokens", schemas.CountTokensRequest), request,
+		AnthropicRequestBuildConfig{Provider: schemas.Anthropic, BetaHeaderOverrides: provider.networkConfig.BetaHeaderOverrides, ShouldSendBackRawRequest: provider.sendBackRawRequest, ShouldSendBackRawResponse: provider.sendBackRawResponse},
+		provider.anthropicRequestHeaders(ctx, key), provider.networkConfig.ExtraHeaders, provider.logger)
+}
+
+// HandleAnthropicCountTokensRequest counts tokens for a Responses-shaped request
+// against an Anthropic-compatible messages/count_tokens endpoint. Providers with
+// Anthropic-compatible surfaces reuse this helper so body shaping, beta headers,
+// raw payload handling, and error enrichment stay identical.
+func HandleAnthropicCountTokensRequest(ctx *schemas.BifrostContext, client *fasthttp.Client, url string, request *schemas.BifrostResponsesRequest, config AnthropicRequestBuildConfig, headers, extraHeaders map[string]string, logger schemas.Logger) (*schemas.BifrostCountTokensResponse, *schemas.BifrostError) {
+	config.IsStreaming = false
+	config.ExcludeFields = append(config.ExcludeFields, "max_tokens", "temperature")
 	jsonBody, err := BuildAnthropicResponsesRequestBody(ctx, request, AnthropicRequestBuildConfig{
-		Provider:                  schemas.Anthropic,
-		IsStreaming:               false,
-		ExcludeFields:             []string{"max_tokens", "temperature"},
-		ShouldSendBackRawRequest:  provider.sendBackRawRequest,
-		ShouldSendBackRawResponse: provider.sendBackRawResponse,
+		Provider: config.Provider, IsStreaming: false, IsCountTokens: true, ExcludeFields: config.ExcludeFields,
+		BetaHeaderOverrides: config.BetaHeaderOverrides, ProviderExtraHeaders: extraHeaders,
+		ShouldSendBackRawRequest: config.ShouldSendBackRawRequest, ShouldSendBackRawResponse: config.ShouldSendBackRawResponse,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	responseBody, latency, providerResponseHeaders, bifrostErr := completeRequest(ctx, provider.client, provider.buildRequestURL(ctx, "/v1/messages/count_tokens", schemas.CountTokensRequest), jsonBody, provider.anthropicRequestHeaders(ctx, key), provider.networkConfig.ExtraHeaders, provider.networkConfig.BetaHeaderOverrides, provider.GetProviderKey(), schemas.CountTokensRequest, nil, provider.logger)
+	responseBody, latency, providerResponseHeaders, bifrostErr := completeRequest(ctx, client, url, jsonBody, headers, extraHeaders, config.BetaHeaderOverrides, config.Provider, schemas.CountTokensRequest, nil, logger)
 	if providerResponseHeaders != nil {
 		ctx.SetValue(schemas.BifrostContextKeyProviderResponseHeaders, providerResponseHeaders)
 	}
 	if bifrostErr != nil {
-		return nil, providerUtils.EnrichError(ctx, bifrostErr, jsonBody, responseBody, provider.sendBackRawRequest, provider.sendBackRawResponse, latency)
+		return nil, providerUtils.EnrichError(ctx, bifrostErr, jsonBody, responseBody, config.ShouldSendBackRawRequest, config.ShouldSendBackRawResponse, latency)
 	}
 
 	anthropicResponse := &AnthropicCountTokensResponse{}
@@ -2771,12 +2781,12 @@ func (provider *AnthropicProvider) CountTokens(ctx *schemas.BifrostContext, key 
 		responseBody,
 		anthropicResponse,
 		jsonBody,
-		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
-		providerUtils.ShouldSendBackRawResponse(ctx, provider.sendBackRawResponse),
+		providerUtils.ShouldSendBackRawRequest(ctx, config.ShouldSendBackRawRequest),
+		providerUtils.ShouldSendBackRawResponse(ctx, config.ShouldSendBackRawResponse),
 	)
 
 	if bifrostErr != nil {
-		return nil, providerUtils.EnrichError(ctx, bifrostErr, jsonBody, responseBody, provider.sendBackRawRequest, provider.sendBackRawResponse, latency)
+		return nil, providerUtils.EnrichError(ctx, bifrostErr, jsonBody, responseBody, config.ShouldSendBackRawRequest, config.ShouldSendBackRawResponse, latency)
 	}
 
 	response := anthropicResponse.ToBifrostCountTokensResponse(request.Model)
@@ -2785,11 +2795,11 @@ func (provider *AnthropicProvider) CountTokens(ctx *schemas.BifrostContext, key 
 	response.ExtraFields.Latency = latency.Milliseconds()
 	response.ExtraFields.ProviderResponseHeaders = providerResponseHeaders
 
-	if providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest) {
+	if providerUtils.ShouldSendBackRawRequest(ctx, config.ShouldSendBackRawRequest) {
 		response.ExtraFields.RawRequest = rawRequest
 	}
 
-	if providerUtils.ShouldSendBackRawResponse(ctx, provider.sendBackRawResponse) {
+	if providerUtils.ShouldSendBackRawResponse(ctx, config.ShouldSendBackRawResponse) {
 		response.ExtraFields.RawResponse = rawResponse
 	}
 

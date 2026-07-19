@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/maximhq/bifrost/core/providers/anthropic"
 	"github.com/maximhq/bifrost/core/providers/openai"
 	providerUtils "github.com/maximhq/bifrost/core/providers/utils"
 	schemas "github.com/maximhq/bifrost/core/schemas"
@@ -343,9 +344,11 @@ func (provider *DeepSeekProvider) BatchResults(_ *schemas.BifrostContext, _ []sc
 	return nil, providerUtils.NewUnsupportedOperationError(schemas.BatchResultsRequest, provider.GetProviderKey())
 }
 
-// CountTokens is not supported by the DeepSeek provider.
-func (provider *DeepSeekProvider) CountTokens(_ *schemas.BifrostContext, _ schemas.Key, _ *schemas.BifrostResponsesRequest) (*schemas.BifrostCountTokensResponse, *schemas.BifrostError) {
-	return nil, providerUtils.NewUnsupportedOperationError(schemas.CountTokensRequest, provider.GetProviderKey())
+// CountTokens counts tokens against DeepSeek's Anthropic-compatible endpoint.
+func (provider *DeepSeekProvider) CountTokens(ctx *schemas.BifrostContext, key schemas.Key, request *schemas.BifrostResponsesRequest) (*schemas.BifrostCountTokensResponse, *schemas.BifrostError) {
+	return anthropic.HandleAnthropicCountTokensRequest(ctx, provider.client, provider.networkConfig.BaseURL+providerUtils.GetPathFromContext(ctx, "/anthropic/v1/messages/count_tokens"), request,
+		anthropic.AnthropicRequestBuildConfig{Provider: schemas.DeepSeek, ShouldSendBackRawRequest: provider.sendBackRawRequest, ShouldSendBackRawResponse: provider.sendBackRawResponse},
+		openai.BearerAuthHeader(key), provider.networkConfig.ExtraHeaders, provider.logger)
 }
 
 // Compaction is not supported by the DeepSeek provider.
