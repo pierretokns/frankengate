@@ -55,9 +55,17 @@ func TestWebhookOverdraftNotifierDoesNotRetryClientErrors(t *testing.T) {
 	require.Equal(t, 1, attempts)
 }
 
-type fakeSNSPublisher struct{ topic, subject, body string }
+type fakeSNSPublisher struct {
+	topic, subject, body string
+	attempts             int
+	failures             int
+}
 
 func (p *fakeSNSPublisher) Publish(_ context.Context, topic, subject, body string) error {
+	p.attempts++
+	if p.attempts <= p.failures {
+		return errors.New("transient SNS failure")
+	}
 	p.topic, p.subject, p.body = topic, subject, body
 	return nil
 }
@@ -88,6 +96,18 @@ func TestNativeOverdraftNotifiersUseInjectedAdapters(t *testing.T) {
 	if mail.from == "" || len(mail.recipients) != 1 || !strings.Contains(mail.body, "r-1") {
 		t.Fatalf("unexpected email payload: %#v", mail)
 	}
+}
+
+func TestSNSOverdraftNotifierRetriesTransientFailuresWithBound(t *testing.T) {
+	sns := &fakeSNSPublisher{failures: 2}
+	n := &SNSOverdraftNotifier{Publisher: sns, TopicARN: "arn:aws:sns:us-east-1:1:topic", MaxAttempts: 3, Backoff: time.Millisecond}
+	require.NoError(t, n.Notify(context.Background(), OverdraftEvent{ReservationID: "retry-me"}))
+	require.Equal(t, 3, sns.attempts)
+
+	sns = &fakeSNSPublisher{failures: 5}
+	n.Publisher = sns
+	require.Error(t, n.Notify(context.Background(), OverdraftEvent{ReservationID: "bounded"}))
+	require.Equal(t, 3, sns.attempts)
 }
 
 func TestGovernanceConfigRedactsWebhookSigningKey(t *testing.T) {

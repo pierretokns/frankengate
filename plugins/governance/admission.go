@@ -77,6 +77,11 @@ type SNSOverdraftNotifier struct {
 	Publisher SNSPublisher
 	TopicARN  string
 	Subject   string
+	// MaxAttempts and Backoff bound transient SNS failures. The notifier is
+	// normally wrapped by AsyncOverdraftNotifier, so retries never run in the
+	// inference request path.
+	MaxAttempts int
+	Backoff     time.Duration
 }
 
 func (n *SNSOverdraftNotifier) Notify(ctx context.Context, event OverdraftEvent) error {
@@ -91,7 +96,32 @@ func (n *SNSOverdraftNotifier) Notify(ctx context.Context, event OverdraftEvent)
 	if subject == "" {
 		subject = "FrankenGate overdraft alert"
 	}
-	return n.Publisher.Publish(ctx, n.TopicARN, subject, string(body))
+	attempts := n.MaxAttempts
+	if attempts <= 0 {
+		attempts = 3
+	}
+	backoff := n.Backoff
+	if backoff <= 0 {
+		backoff = 100 * time.Millisecond
+	}
+	var last error
+	for attempt := 0; attempt < attempts; attempt++ {
+		if err := n.Publisher.Publish(ctx, n.TopicARN, subject, string(body)); err == nil {
+			return nil
+		} else {
+			last = err
+		}
+		if attempt+1 < attempts {
+			timer := time.NewTimer(backoff * time.Duration(1<<attempt))
+			select {
+			case <-ctx.Done():
+				timer.Stop()
+				return ctx.Err()
+			case <-timer.C:
+			}
+		}
+	}
+	return fmt.Errorf("SNS overdraft delivery failed after %d attempts: %w", attempts, last)
 }
 
 // EmailOverdraftNotifier adapts an injected mail sender. Recipient lists are
