@@ -143,6 +143,27 @@ func isSemanticCacheEntry(result vectorstore.SearchResult) bool {
 // contain every trusted field with the exact current epoch.
 func cacheResultMatchesAuthority(result vectorstore.SearchResult, expected map[string]any) bool {
 	if len(expected) == 0 {
+		// An ungoverned caller may use legacy cache entries, but must never
+		// replay an entry written under an authorization snapshot.  Direct
+		// cache IDs intentionally omit authority fields for compatibility, so
+		// a governed entry can otherwise collide with an unscoped lookup.
+		// Treat any non-empty authority claim on the stored object as a hard
+		// fence; missing claims remain the legacy/unmanaged shape.
+		for _, key := range []string{
+			"authorization_tenant",
+			"authorization_issuer",
+			"authorization_subject",
+			"authorization_epoch",
+			"authorization_artifact",
+			"authorization_artifact_id",
+			"authorization_team_id",
+			"authorization_customer_id",
+			"authorization_business_unit_id",
+		} {
+			if value, ok := result.Properties[key]; ok && strings.TrimSpace(fmt.Sprint(value)) != "" {
+				return false
+			}
+		}
 		return true
 	}
 	// Scope dimensions are part of the authorization boundary, not merely

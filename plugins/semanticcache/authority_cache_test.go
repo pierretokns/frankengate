@@ -123,6 +123,26 @@ func TestCacheResultRequiresAllAuthorityFields(t *testing.T) {
 	}
 }
 
+func TestCacheResultRejectsGovernedEntryForUnscopedCaller(t *testing.T) {
+	// Direct cache IDs intentionally do not include authority metadata. An
+	// unscoped request can therefore collide with an entry written by a
+	// governed request; the post-fetch fence must reject that entry rather
+	// than replaying a response across the authorization boundary.
+	result := vectorstore.SearchResult{Properties: map[string]interface{}{
+		"authorization_tenant": "tenant-a",
+		"authorization_subject": "alice",
+		"authorization_epoch": uint64(3),
+		"response": "secret",
+	}}
+	if cacheResultMatchesAuthority(result, nil) {
+		t.Fatal("unscoped caller matched an authorization-scoped cache entry")
+	}
+	legacy := vectorstore.SearchResult{Properties: map[string]interface{}{"response": "legacy"}}
+	if !cacheResultMatchesAuthority(legacy, nil) {
+		t.Fatal("legacy unscoped cache entry was rejected")
+	}
+}
+
 func TestCacheResultRejectsEntryWithNarrowerScopeClaim(t *testing.T) {
 	// The principal and epoch can remain unchanged while team membership is
 	// removed.  An entry carrying the old team claim must not remain readable
