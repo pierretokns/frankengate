@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"slices"
 	"sort"
 	"strconv"
@@ -589,6 +590,14 @@ type MCPClientUpdateRequest struct {
 	OauthConfig           *OAuthConfigRequest          `json:"oauth_config,omitempty"`
 }
 
+// MCPClientUpdateRequest.ToolSyncInterval is expressed in minutes, then converted
+// to time.Duration. Reject values outside the exact int64 multiplication range so a
+// client cannot echo the nanosecond-valued GET response and silently overflow.
+const (
+	maxToolSyncIntervalMinutes = int64(math.MaxInt64) / int64(time.Minute)
+	minToolSyncIntervalMinutes = int64(math.MinInt64) / int64(time.Minute)
+)
+
 // addMCPClient handles POST /api/mcp/client - Add a new MCP client
 func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 	if h.store.ConfigStore == nil {
@@ -1096,6 +1105,10 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 	// boundary below; the in-memory duration is the source of truth here.
 	resolvedToolSyncInterval := existingConfig.ToolSyncInterval
 	if req.ToolSyncInterval != nil {
+		if int64(*req.ToolSyncInterval) > maxToolSyncIntervalMinutes || int64(*req.ToolSyncInterval) < minToolSyncIntervalMinutes {
+			SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("tool_sync_interval must be between %d and %d minutes", minToolSyncIntervalMinutes, maxToolSyncIntervalMinutes))
+			return
+		}
 		resolvedToolSyncInterval = time.Duration(*req.ToolSyncInterval) * time.Minute
 	}
 	resolvedToolExecutionTimeout := existingConfig.ToolExecutionTimeout
