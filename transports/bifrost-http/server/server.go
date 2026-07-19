@@ -174,10 +174,16 @@ type BifrostHTTPServer struct {
 	VKInvalidationPoller       *virtualKeyInvalidationPoller
 	PrincipalAuthorityRegistry *authorityepoch.Registry
 	PrincipalAuthorityPoller   *principalAuthorityPoller
-	mcpReconcileMu             sync.Mutex
-	mcpReconcileWorkers        map[string]*mcpRuntimeReconcileState
-	mcpReconcileWG             sync.WaitGroup
-	mcpReconcileStopping       bool
+	// authorityBootstrapReady is the process-local startup fence. It remains
+	// closed until every configured durable authority poller has completed its
+	// initial snapshot/catch-up. The readiness endpoint consults this fence in
+	// addition to the live freshness leases, so a pod cannot become ready while
+	// bootstrap is still in progress (or after a failed bootstrap).
+	authorityBootstrapReady authorityReadinessGate
+	mcpReconcileMu          sync.Mutex
+	mcpReconcileWorkers     map[string]*mcpRuntimeReconcileState
+	mcpReconcileWG          sync.WaitGroup
+	mcpReconcileStopping    bool
 	// OAuth2IdentityResolver scopes a user-mode /mcp request to the user's own
 	// tools. Optional; wired at server init when user-mode identity resolution
 	// is available, otherwise left nil (user-mode requests fall back to the
@@ -396,6 +402,9 @@ func (s *BifrostHTTPServer) getGovernancePlugin() (governance.BaseGovernancePlug
 // lease before it can receive traffic that relies on local governance state.
 func (s *BifrostHTTPServer) authorityReady() bool {
 	if s == nil || s.Config == nil || s.Config.ConfigStore == nil {
+		return false
+	}
+	if !s.authorityBootstrapReady.Ready() {
 		return false
 	}
 	if s.Config.IsPluginLoaded(s.getGovernancePluginName()) {
@@ -1503,6 +1512,10 @@ func (s *BifrostHTTPServer) RegisterInferenceRoutes(ctx context.Context, middlew
 
 // RegisterAPIRoutes initializes the routes for the Bifrost HTTP server.
 func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks ServerCallbacks, middlewares ...schemas.BifrostHTTPMiddleware) error {
+	// Keep readiness closed for the entire route/bootstrap phase. This is
+	// deliberately reset on every registration so a failed restart cannot
+	// inherit a stale ready bit from an earlier successful bootstrap.
+	s.authorityBootstrapReady.Close()
 	var err error
 	// Initializing plugin specific handlers
 	var loggingHandler *handlers.LoggingHandler
@@ -2093,6 +2106,10 @@ func (s *BifrostHTTPServer) Bootstrap(ctx context.Context) error {
 	if err := s.StartPrincipalAuthorityPoller(s.Ctx); err != nil {
 		return fmt.Errorf("failed to start principal authority poller: %w", err)
 	}
+	// Both authority pollers (when configured) have completed their fenced
+	// snapshots and catch-up synchronously by this point. Only now may the
+	// Kubernetes readiness probe admit this pod to service traffic.
+	s.authorityBootstrapReady.Open()
 	startSkillsOrphanCleanupWorker(s.Ctx, s.Config)
 	return nil
 }
