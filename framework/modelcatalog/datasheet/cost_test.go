@@ -2056,12 +2056,12 @@ func TestGetPricing_ResponsesStreamFallsBackToChat(t *testing.T) {
 	assert.Equal(t, 0.000005, derefF(p.InputCostPerToken))
 }
 
-func TestGetPricing_RealtimeFallsBackToChat(t *testing.T) {
+func TestGetPricing_RealtimeDoesNotFallBackToChat(t *testing.T) {
 	s := testStoreWithPricing(map[string]configstoreTables.TableModelPricing{
 		makeKey("gpt-4o", "openai", "chat"): chatPricing(0.000005, 0.000015),
 	})
 	p := s.resolvePricing(schemas.RoutingInfo{Provider: "openai", Model: "gpt-4o"}, schemas.RealtimeRequest, LookupScopes{Provider: "openai"})
-	assert.Equal(t, 0.000005, derefF(p.InputCostPerToken))
+	assert.Nil(t, p, "realtime must require an explicit realtime pricing row")
 }
 
 func TestGetPricing_GeminiResponsesFallsBackToVertexChat(t *testing.T) {

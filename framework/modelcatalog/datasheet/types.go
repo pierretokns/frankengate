@@ -417,7 +417,7 @@ func normalizeRequestType(reqType schemas.RequestType) string {
 // only one mode, so cost attribution retries the counterpart before giving up.
 func chatResponsesFallbackMode(reqType schemas.RequestType) (string, bool) {
 	switch reqType {
-	case schemas.ResponsesRequest, schemas.ResponsesStreamRequest, schemas.WebSocketResponsesRequest, schemas.RealtimeRequest, schemas.CompactionRequest:
+	case schemas.ResponsesRequest, schemas.ResponsesStreamRequest, schemas.WebSocketResponsesRequest, schemas.CompactionRequest:
 		return normalizeRequestType(schemas.ChatCompletionRequest), true
 	case schemas.ChatCompletionRequest, schemas.ChatCompletionStreamRequest:
 		return normalizeRequestType(schemas.ResponsesRequest), true
