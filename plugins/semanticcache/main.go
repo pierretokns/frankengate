@@ -443,6 +443,20 @@ func (plugin *Plugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.Bifro
 	}
 	provider, model, _ := req.GetRequestFields()
 	routingMetadata := routingMetadataForCaching(ctx, provider, model)
+	// CacheByProvider/CacheByModel are explicit controls for whether entries
+	// may be reused across routing identities.  The routing metadata is also
+	// folded into params_hash and semantic filters, so leaving these fields in
+	// place would silently defeat the documented false setting (and cause a
+	// miss even though the direct ID omits provider/model).  Keep destination
+	// region isolation independent: a pinned regional request must not replay
+	// an entry produced in another region.
+	if plugin.config.CacheByProvider != nil && !*plugin.config.CacheByProvider {
+		delete(routingMetadata, "routing_provider")
+	}
+	if plugin.config.CacheByModel != nil && !*plugin.config.CacheByModel {
+		delete(routingMetadata, "routing_model")
+		delete(routingMetadata, "routing_model_family")
+	}
 	for key, value := range routingMetadata {
 		metadata[key] = value
 	}
