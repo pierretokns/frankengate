@@ -95,12 +95,17 @@ func mantleOpenAIURLForFamily(region, model string, family schemas.ModelFamily, 
 	// and Luna) are exposed on the OpenAI-prefixed surface.  Keep this
 	// decision centralized so Responses and Chat Completions cannot drift.
 	canonical := strings.ToLower(model)
-	if family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma ||
+	// gpt-oss is an OpenAI-shaped model but Mantle exposes it on the bare
+	// /v1 surface.  ResolveFamily commonly classifies it as ModelFamilyOpenAI,
+	// so the model-name exception must win over the family hint; otherwise
+	// aliased gpt-oss deployments are sent to the nonexistent /openai/v1 path.
+	isGPTOSS := strings.Contains(canonical, "gpt-oss")
+	if !isGPTOSS && (family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma ||
 		strings.Contains(canonical, "gpt-5") ||
 		strings.Contains(canonical, "gpt-5.6-sol") ||
 		strings.Contains(canonical, "gpt-5.6-terra") ||
 		strings.Contains(canonical, "gpt-5.6-luna") ||
-		strings.Contains(canonical, "gemma-4") {
+		strings.Contains(canonical, "gemma-4")) {
 		base = "openai/v1"
 	}
 	return fmt.Sprintf("https://bedrock-mantle.%s.api.aws/%s/%s", region, base, path)
