@@ -443,7 +443,15 @@ wait
 storm_finished_ms=$(( $(date +%s%N) / 1000000 ))
 storm_failures=0
 for storm_file in "$storm_dir"/*; do
-  grep -q '200 OK' "$storm_file" || storm_failures=$((storm_failures + 1))
+  # The disposable provider is intentionally unreachable. A valid VK may
+  # therefore finish in provider execution with a circuit/error response; the
+  # coherence invariant is that it must not fail at authorization. Reject
+  # stale/revoked-key responses, while accepting either a successful model
+  # listing or a provider-phase error carrying provider/request metadata.
+  if ! grep -q '200 OK' "$storm_file" &&
+     ! grep -q '"provider".*"request_type":"list_models"' "$storm_file"; then
+    storm_failures=$((storm_failures + 1))
+  fi
 done
 if [[ "$storm_failures" -ne 0 ]]; then
   echo "VK bootstrap/admission storm had $storm_failures/$VK_COHERENCE_STORM_REQUESTS failures" >&2
@@ -453,7 +461,7 @@ if [[ "$storm_failures" -ne 0 ]]; then
   for storm_file in "$storm_dir"/*; do
     if ! grep -q '200 OK' "$storm_file"; then
       echo "--- failed storm response $(basename "$storm_file") ---" >&2
-      sed -n '1,12p' "$storm_file" >&2
+      sed -n '1,30p' "$storm_file" >&2
       shown=$((shown + 1))
       [[ "$shown" -ge 3 ]] && break
     fi
