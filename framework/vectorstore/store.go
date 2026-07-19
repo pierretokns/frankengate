@@ -108,6 +108,15 @@ type VectorStore interface {
 	Close(ctx context.Context, namespace string) error
 }
 
+// ConditionalDeleter is implemented by stores that can atomically delete a
+// point only when it still matches the supplied metadata predicates.  It is
+// deliberately optional so existing adapters remain source compatible; callers
+// handling an authorization snapshot must refuse an unconditional delete when
+// this capability is unavailable.
+type ConditionalDeleter interface {
+	DeleteIf(ctx context.Context, namespace, id string, queries []Query) error
+}
+
 // WithDisableScanFallback returns a derived context that tells vector stores not
 // to fall back to full scans when indexed search fails.
 func WithDisableScanFallback(ctx context.Context) context.Context {

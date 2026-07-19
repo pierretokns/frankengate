@@ -18,10 +18,10 @@ const qdrantMaxRecvMsgSize = 64 * 1024 * 1024 // 64 MB
 
 // QdrantConfig represents the configuration for the Qdrant vector store.
 type QdrantConfig struct {
-	Host             schemas.SecretVar `json:"host"`                        // Qdrant server host - REQUIRED
-	Port             schemas.SecretVar `json:"port"`                        // Qdrant server port  (fallback to 6334 for gRPC)
-	APIKey           schemas.SecretVar `json:"api_key,omitempty"`           // API key for authentication - Optional
-	UseTLS           schemas.SecretVar `json:"use_tls,omitempty"`           // Use TLS for connection - Optional
+	Host             schemas.SecretVar `json:"host"`                           // Qdrant server host - REQUIRED
+	Port             schemas.SecretVar `json:"port"`                           // Qdrant server port  (fallback to 6334 for gRPC)
+	APIKey           schemas.SecretVar `json:"api_key,omitempty"`              // API key for authentication - Optional
+	UseTLS           schemas.SecretVar `json:"use_tls,omitempty"`              // Use TLS for connection - Optional
 	MaxRecvMsgSizeMB schemas.SecretVar `json:"max_recv_msg_size_mb,omitempty"` // gRPC max receive message size in MB (default: 64). Increase when caching large payloads such as image generation responses.
 }
 
@@ -305,6 +305,29 @@ func (s *QdrantStore) Delete(ctx context.Context, namespace string, id string) e
 	_, err = s.client.Delete(ctx, &qdrant.DeletePoints{
 		CollectionName: namespace,
 		Points:         qdrant.NewPointsSelector(pointID),
+	})
+	return err
+}
+
+// DeleteIf atomically removes the point only when its payload still matches
+// every supplied predicate.  Keeping the point id and authorization predicates
+// in one Qdrant delete filter closes the read-then-delete replacement race.
+func (s *QdrantStore) DeleteIf(ctx context.Context, namespace, id string, queries []Query) error {
+	if strings.TrimSpace(id) == "" {
+		return fmt.Errorf("id is required")
+	}
+	pointID, err := parsePointID(id)
+	if err != nil {
+		return fmt.Errorf("invalid id format: %w", err)
+	}
+	conditions := []*qdrant.Condition{qdrant.NewHasID(pointID)}
+	if filter := buildQdrantFilter(queries); filter != nil {
+		conditions = append(conditions, filter.Must...)
+	}
+	_, err = s.client.Delete(ctx, &qdrant.DeletePoints{
+		CollectionName: namespace,
+		Points:         &qdrant.PointsSelector{PointsSelectorOneOf: &qdrant.PointsSelector_Filter{Filter: &qdrant.Filter{Must: conditions}}},
+		Wait:           qdrant.PtrOf(true),
 	})
 	return err
 }
