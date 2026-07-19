@@ -347,6 +347,25 @@ func TestDurableCoordinatorSettlesReservedAmountWhenUsageMissing(t *testing.T) {
 	require.Equal(t, h.rows[0].ReservedAmount, got.SettledAmount)
 }
 
+func TestDurableCoordinatorDeduplicatesBudgetOwnersBeforeReservation(t *testing.T) {
+	store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
+	coordinator := &DurableReservationCoordinator{
+		Store: store, Estimator: ConfiguredReservationEstimator{MaxTokens: 10, CostMicrosPerToken: 3},
+	}
+	// A refreshed evaluation can contain the same owner in both the flattened
+	// budget list and a VK/provider budget list. One request must consume one
+	// reservation per owner, never charge the same owner twice.
+	result := &EvaluationResult{
+		BudgetInfo: []*configstoreTables.TableBudget{{ID: "shared-owner"}, {ID: "shared-owner"}},
+		VirtualKey: &configstoreTables.TableVirtualKey{
+			Budgets: []configstoreTables.TableBudget{{ID: "shared-owner"}},
+		},
+	}
+	handle, err := coordinator.Reserve(context.Background(), AdmissionRequest{RequestID: "dedupe-owner", Result: result})
+	require.NoError(t, err)
+	require.Len(t, handle.(*durableReservationHandle).rows, 1)
+}
+
 func TestDurableCoordinatorIsIdempotentAcrossReplicaCoordinators(t *testing.T) {
 	store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
 	estimator := ConfiguredReservationEstimator{MaxTokens: 100, CostMicrosPerToken: 3}
