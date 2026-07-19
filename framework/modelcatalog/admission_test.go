@@ -92,3 +92,31 @@ func TestCapabilityAdmissionKeepsRealtimeSeparateFromResponses(t *testing.T) {
 		t.Fatal("Responses capability must not authorize realtime sessions")
 	}
 }
+
+func TestCapabilityAdmissionKeepsImageVariationSeparateFromGenerationAndEdit(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "pricing.json")
+	data := []byte(`{
+		"variation-model": {"provider":"openai", "mode":"image_variation"},
+		"generation-model": {"provider":"openai", "mode":"image_generation"},
+		"edit-model": {"provider":"openai", "mode":"image_edit"}
+	}`)
+	if err := os.WriteFile(path, data, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	ds := datasheet.New(nil, nil, datasheet.Config{URL: "file://" + path})
+	if err := ds.LoadFromURLIntoMemory(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	mc := NewTestCatalogWithDatasheet(ds)
+	if !mc.IsRequestTypeSupportedForProvider("variation-model", schemas.OpenAI, schemas.ImageVariationRequest) {
+		t.Fatal("variation capability must admit image variations")
+	}
+	if mc.IsRequestTypeSupportedForProvider("variation-model", schemas.OpenAI, schemas.ImageGenerationRequest) ||
+		mc.IsRequestTypeSupportedForProvider("variation-model", schemas.OpenAI, schemas.ImageEditRequest) {
+		t.Fatal("variation capability must not authorize generation or editing")
+	}
+	if mc.IsRequestTypeSupportedForProvider("generation-model", schemas.OpenAI, schemas.ImageVariationRequest) ||
+		mc.IsRequestTypeSupportedForProvider("edit-model", schemas.OpenAI, schemas.ImageVariationRequest) {
+		t.Fatal("generation/edit capabilities must not authorize variations")
+	}
+}

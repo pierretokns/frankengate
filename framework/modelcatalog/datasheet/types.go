@@ -380,10 +380,16 @@ func normalizeRequestType(reqType schemas.RequestType) string {
 		return "audio_speech"
 	case schemas.TranscriptionRequest, schemas.TranscriptionStreamRequest:
 		return "audio_transcription"
-	case schemas.ImageGenerationRequest, schemas.ImageGenerationStreamRequest, schemas.ImageVariationRequest:
+	case schemas.ImageGenerationRequest, schemas.ImageGenerationStreamRequest:
 		return "image_generation"
 	case schemas.ImageEditRequest, schemas.ImageEditStreamRequest:
 		return "image_edit"
+	case schemas.ImageVariationRequest:
+		// Variations require an input image and are not interchangeable with
+		// text-to-image generation or image editing. Keep this capability family
+		// distinct so admission cannot authorize a variation with a generation
+		// row (or vice versa).
+		return "image_variation"
 	case schemas.VideoGenerationRequest, schemas.VideoRemixRequest:
 		return "video_generation"
 	case schemas.OCRRequest:
