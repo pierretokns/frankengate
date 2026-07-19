@@ -473,8 +473,14 @@ func applyGovernanceInvalidation(
 	if mcpClientID, ok := tables.ParseMCPClientInvalidationEntityID(event.EntityID); ok {
 		switch event.Action {
 		case tables.VirtualKeyInvalidationActionReload:
+			if reloadMCPClient == nil {
+				return errors.New("MCP client reload handler is not configured")
+			}
 			return reloadMCPClient(ctx, mcpClientID)
 		case tables.VirtualKeyInvalidationActionDelete:
+			if removeMCPClient == nil {
+				return errors.New("MCP client removal handler is not configured")
+			}
 			return removeMCPClient(ctx, mcpClientID)
 		default:
 			return fmt.Errorf("unsupported MCP client invalidation action %q", event.Action)
@@ -491,6 +497,9 @@ func applyVirtualKeyInvalidation(
 ) error {
 	switch event.Action {
 	case tables.VirtualKeyInvalidationActionReload:
+		if reload == nil {
+			return errors.New("virtual-key reload handler is not configured")
+		}
 		_, err := reload(ctx, event.EntityID)
 		if errors.Is(err, configstore.ErrNotFound) {
 			// A restarted/lagging pod can replay an old reload after the row has
@@ -500,6 +509,9 @@ func applyVirtualKeyInvalidation(
 		}
 		return err
 	case tables.VirtualKeyInvalidationActionDelete:
+		if remove == nil {
+			return errors.New("virtual-key removal handler is not configured")
+		}
 		return remove(ctx, event.EntityID)
 	default:
 		return fmt.Errorf("unsupported virtual-key invalidation action %q", event.Action)

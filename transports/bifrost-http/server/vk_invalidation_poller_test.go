@@ -157,6 +157,32 @@ func TestApplyVirtualKeyInvalidationHistoricalReloadOfDeletedRowBecomesDelete(t 
 	require.Equal(t, []string{"vk-deleted", "vk-deleted"}, removed)
 }
 
+func TestApplyVirtualKeyInvalidationFailsClosedWhenHandlerMissing(t *testing.T) {
+	event := tables.TableVirtualKeyInvalidationEvent{Action: tables.VirtualKeyInvalidationActionReload, EntityID: "vk-1"}
+	err := applyVirtualKeyInvalidation(context.Background(), event, nil, func(context.Context, string) error { return nil })
+	require.EqualError(t, err, "virtual-key reload handler is not configured")
+
+	event.Action = tables.VirtualKeyInvalidationActionDelete
+	err = applyVirtualKeyInvalidation(context.Background(), event, func(context.Context, string) (*tables.TableVirtualKey, error) {
+		return nil, nil
+	}, nil)
+	require.EqualError(t, err, "virtual-key removal handler is not configured")
+}
+
+func TestApplyGovernanceInvalidationFailsClosedWhenMCPHandlerMissing(t *testing.T) {
+	event := tables.TableVirtualKeyInvalidationEvent{
+		EntityType: tables.VirtualKeyInvalidationEntityType,
+		EntityID:   tables.MCPClientInvalidationEntityID("mcp-1"),
+		Action:     tables.VirtualKeyInvalidationActionReload,
+	}
+	err := applyGovernanceInvalidation(context.Background(), event, nil, nil, nil, nil)
+	require.EqualError(t, err, "MCP client reload handler is not configured")
+
+	event.Action = tables.VirtualKeyInvalidationActionDelete
+	err = applyGovernanceInvalidation(context.Background(), event, nil, nil, nil, nil)
+	require.EqualError(t, err, "MCP client removal handler is not configured")
+}
+
 type fakeVKInvalidationStore struct {
 	mu         sync.Mutex
 	events     []tables.TableVirtualKeyInvalidationEvent
