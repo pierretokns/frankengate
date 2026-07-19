@@ -29,6 +29,8 @@ type DurableOperation struct {
 	Status    OperationStatus `json:"status"`
 	Attempt   uint32          `json:"attempt"`
 	Ambiguous bool            `json:"ambiguous"`
+	LastOwnerPod string       `json:"last_owner_pod,omitempty"`
+	LastFence    uint64       `json:"last_fence,omitempty"`
 }
 
 // DurableBackend is the minimum atomic contract required by a shared MCP
@@ -90,7 +92,11 @@ func registryFromDurable(rec DurableRecord) *Registry {
 	}
 	r.records[rec.Key] = &record{key: rec.Key, ownerPod: rec.OwnerPod, fence: rec.Fence, leaseUntil: rec.LeaseUntil, serverSessionID: rec.ServerSessionID, sessionResumable: rec.SessionResumable, operations: map[string]*operation{}}
 	for _, op := range rec.Operations {
-		r.records[rec.Key].operations[op.ID] = &operation{id: op.ID, status: op.Status, ambiguous: op.Ambiguous, attempts: make([]attempt, op.Attempt)}
+		attempts := make([]attempt, op.Attempt)
+		if len(attempts) > 0 {
+			attempts[len(attempts)-1] = attempt{pod: op.LastOwnerPod, fence: op.LastFence}
+		}
+		r.records[rec.Key].operations[op.ID] = &operation{id: op.ID, status: op.Status, ambiguous: op.Ambiguous, attempts: attempts}
 	}
 	return r
 }
@@ -102,7 +108,12 @@ func durableFromRegistry(r *Registry, key ConnectionKey, version uint64) Durable
 	}
 	out.OwnerPod, out.Fence, out.LeaseUntil, out.ServerSessionID, out.SessionResumable = rec.ownerPod, rec.fence, rec.leaseUntil, rec.serverSessionID, rec.sessionResumable
 	for _, op := range rec.operations {
-		out.Operations = append(out.Operations, DurableOperation{ID: op.id, Status: op.status, Attempt: uint32(len(op.attempts)), Ambiguous: op.ambiguous})
+		do := DurableOperation{ID: op.id, Status: op.status, Attempt: uint32(len(op.attempts)), Ambiguous: op.ambiguous}
+		if len(op.attempts) > 0 {
+			last := op.attempts[len(op.attempts)-1]
+			do.LastOwnerPod, do.LastFence = last.pod, last.fence
+		}
+		out.Operations = append(out.Operations, do)
 	}
 	return out
 }
