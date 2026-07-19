@@ -4964,18 +4964,24 @@ func (bifrost *Bifrost) prepareFallbackRequest(req *schemas.BifrostRequest, fall
 	}
 	if req.ImageGenerationRequest != nil {
 		tmp := *req.ImageGenerationRequest
+		tmp.Params = cloneImageGenerationParameters(tmp.Params)
+		tmp.Input = cloneImageGenerationInput(tmp.Input)
 		tmp.Provider = fallback.Provider
 		tmp.Model = fallback.Model
 		fallbackReq.ImageGenerationRequest = &tmp
 	}
 	if req.ImageEditRequest != nil {
 		tmp := *req.ImageEditRequest
+		tmp.Params = cloneImageEditParameters(tmp.Params)
+		tmp.Input = cloneImageEditInput(tmp.Input)
 		tmp.Provider = fallback.Provider
 		tmp.Model = fallback.Model
 		fallbackReq.ImageEditRequest = &tmp
 	}
 	if req.ImageVariationRequest != nil {
 		tmp := *req.ImageVariationRequest
+		tmp.Params = cloneImageVariationParameters(tmp.Params)
+		tmp.Input = cloneImageVariationInput(tmp.Input)
 		tmp.Provider = fallback.Provider
 		tmp.Model = fallback.Model
 		fallbackReq.ImageVariationRequest = &tmp
@@ -4987,6 +4993,73 @@ func (bifrost *Bifrost) prepareFallbackRequest(req *schemas.BifrostRequest, fall
 		fallbackReq.VideoGenerationRequest = &tmp
 	}
 	return &fallbackReq
+}
+
+// Image fallback attempts must not share mutable parameter maps or payload
+// slices with the primary request. Provider converters commonly remove or add
+// provider-specific ExtraParams while preparing a request.
+func cloneImageExtraParams(in map[string]interface{}) map[string]interface{} {
+	if in == nil {
+		return nil
+	}
+	out := make(map[string]interface{}, len(in))
+	for k, v := range in {
+		out[k] = v
+	}
+	return out
+}
+
+func cloneImageGenerationParameters(in *schemas.ImageGenerationParameters) *schemas.ImageGenerationParameters {
+	if in == nil {
+		return nil
+	}
+	out := *in
+	out.InputImages = append([]string(nil), in.InputImages...)
+	out.ExtraParams = cloneImageExtraParams(in.ExtraParams)
+	return &out
+}
+func cloneImageGenerationInput(in *schemas.ImageGenerationInput) *schemas.ImageGenerationInput {
+	if in == nil {
+		return nil
+	}
+	out := *in
+	return &out
+}
+func cloneImageEditParameters(in *schemas.ImageEditParameters) *schemas.ImageEditParameters {
+	if in == nil {
+		return nil
+	}
+	out := *in
+	out.Mask = append([]byte(nil), in.Mask...)
+	out.ExtraParams = cloneImageExtraParams(in.ExtraParams)
+	return &out
+}
+func cloneImageEditInput(in *schemas.ImageEditInput) *schemas.ImageEditInput {
+	if in == nil {
+		return nil
+	}
+	out := *in
+	out.Images = make([]schemas.ImageInput, len(in.Images))
+	for i, image := range in.Images {
+		out.Images[i].Image = append([]byte(nil), image.Image...)
+	}
+	return &out
+}
+func cloneImageVariationParameters(in *schemas.ImageVariationParameters) *schemas.ImageVariationParameters {
+	if in == nil {
+		return nil
+	}
+	out := *in
+	out.ExtraParams = cloneImageExtraParams(in.ExtraParams)
+	return &out
+}
+func cloneImageVariationInput(in *schemas.ImageVariationInput) *schemas.ImageVariationInput {
+	if in == nil {
+		return nil
+	}
+	out := *in
+	out.Image.Image = append([]byte(nil), in.Image.Image...)
+	return &out
 }
 
 // shouldContinueWithFallbacks processes errors from fallback attempts

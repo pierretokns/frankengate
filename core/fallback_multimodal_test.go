@@ -51,3 +51,24 @@ func TestPrepareFallbackRequestPreservesImageVariationRoute(t *testing.T) {
 		t.Fatal("preparing a fallback mutated the primary image variation request")
 	}
 }
+
+func TestPrepareFallbackRequestClonesMutableImagePayloads(t *testing.T) {
+	extra := map[string]interface{}{"provider_option": "keep"}
+	image := []byte{1, 2, 3}
+	req := &schemas.BifrostRequest{RequestType: schemas.ImageEditRequest,
+		ImageEditRequest: &schemas.BifrostImageEditRequest{
+			Provider: schemas.OpenAI, Model: "primary",
+			Input:  &schemas.ImageEditInput{Images: []schemas.ImageInput{{Image: image}}},
+			Params: &schemas.ImageEditParameters{Mask: []byte{4, 5}, ExtraParams: extra},
+		}}
+	account := NewMockAccount()
+	account.AddProvider(schemas.Bedrock, 1, 1)
+	b := &Bifrost{account: account}
+	fallback := b.prepareFallbackRequest(req, schemas.Fallback{Provider: schemas.Bedrock, Model: "fallback"})
+	fallback.ImageEditRequest.Params.ExtraParams["provider_option"] = "changed"
+	fallback.ImageEditRequest.Params.Mask[0] = 9
+	fallback.ImageEditRequest.Input.Images[0].Image[0] = 8
+	if extra["provider_option"] != "keep" || req.ImageEditRequest.Params.Mask[0] != 4 || image[0] != 1 {
+		t.Fatal("fallback preparation shared mutable image state with primary request")
+	}
+}
