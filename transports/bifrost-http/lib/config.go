@@ -485,6 +485,11 @@ type Config struct {
 	muMCP  sync.RWMutex
 	client *bifrost.Bifrost
 
+	// lifecycleCancel owns the context used while initializing background
+	// workers. Close invokes it before stopping individual components so any
+	// worker blocked in a store/catalog operation receives cancellation too.
+	lifecycleCancel context.CancelFunc
+
 	configPath string
 
 	// Stores
@@ -776,14 +781,16 @@ func registerFeatureFlags(_ context.Context) error {
 //   - In-memory storage for ultra-fast access during request processing
 //   - Graceful handling of missing config files
 func LoadConfig(ctx context.Context, configDirPath string) (*Config, error) {
+	ctx, lifecycleCancel := context.WithCancel(ctx)
 	configFilePath := filepath.Join(configDirPath, "config.json")
 	configDBPath := filepath.Join(configDirPath, "config.db")
 	logsDBPath := filepath.Join(configDirPath, "logs.db")
 	// Initialize config
 	config := &Config{
-		configPath: configFilePath,
-		Providers:  make(map[schemas.ModelProvider]configstore.ProviderConfig),
-		LLMPlugins: atomic.Pointer[[]schemas.LLMPlugin]{},
+		configPath:      configFilePath,
+		Providers:       make(map[schemas.ModelProvider]configstore.ProviderConfig),
+		LLMPlugins:      atomic.Pointer[[]schemas.LLMPlugin]{},
+		lifecycleCancel: lifecycleCancel,
 	}
 	// Register feature flags before any file/DB-driven init so the
 	// registry is populated even when config.json is absent. initFeatureFlags
@@ -4645,6 +4652,10 @@ func (c *Config) GetKVStore() *kvstore.Store {
 // ConfigStore, LogsStore, and VectorStore. It should be called when the Config is
 // no longer needed to prevent goroutine leaks.
 func (c *Config) Close(ctx context.Context) {
+	if c.lifecycleCancel != nil {
+		c.lifecycleCancel()
+		c.lifecycleCancel = nil
+	}
 	if c.ModelCatalog != nil {
 		c.ModelCatalog.Cleanup()
 	}
