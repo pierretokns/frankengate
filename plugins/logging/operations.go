@@ -1313,6 +1313,7 @@ func (p *LoggerPlugin) RecalculateCostsWithProgress(ctx context.Context, filters
 					costUpdates[logEntry.ID] = cost
 				} else {
 					result.Skipped++
+					result.Unpriced++
 					p.logger.Debug("skipping cost recalculation for log %s: resolved cost is zero", logEntry.ID)
 				}
 				// MissingCostOnly currently includes zero-cost rows, so advance past them
@@ -1344,6 +1345,7 @@ func (p *LoggerPlugin) RecalculateCostsWithProgress(ctx context.Context, filters
 				Processed:    processed,
 				Updated:      result.Updated,
 				Skipped:      result.Skipped,
+				Unpriced:     result.Unpriced,
 			})
 		}
 		if len(searchResult.Logs) < limit {
@@ -1373,6 +1375,7 @@ func (p *LoggerPlugin) RecalculateCostsWithProgress(ctx context.Context, filters
 			Processed:    processed,
 			Updated:      result.Updated,
 			Skipped:      result.Skipped,
+			Unpriced:     result.Unpriced,
 			Remaining:    &remaining,
 			Done:         true,
 		})

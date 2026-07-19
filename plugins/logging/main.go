@@ -274,7 +274,11 @@ type RecalculateCostResult struct {
 	TotalMatched int64 `json:"total_matched"`
 	Updated      int   `json:"updated"`
 	Skipped      int   `json:"skipped"`
-	Remaining    int64 `json:"remaining"`
+	// Unpriced counts rows with usable usage whose model/provider pricing could
+	// not be resolved. These rows intentionally remain unmodified so an operator
+	// can distinguish missing telemetry from a pricing-catalog miss.
+	Unpriced  int   `json:"unpriced"`
+	Remaining int64 `json:"remaining"`
 }
 
 // RecalculateCostProgress represents a progress event from a cost backfill operation.
@@ -283,6 +287,7 @@ type RecalculateCostProgress struct {
 	Processed    int    `json:"processed"`
 	Updated      int    `json:"updated"`
 	Skipped      int    `json:"skipped"`
+	Unpriced     int    `json:"unpriced"`
 	Remaining    *int64 `json:"remaining,omitempty"`
 	Done         bool   `json:"done"`
 }
