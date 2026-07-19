@@ -19,8 +19,21 @@ func contextWindowContext(value string) *schemas.BifrostContext {
 }
 
 func TestContextWindowAdmissionAllowsCataloguedProviderModel(t *testing.T) {
-	err := validateContextWindowHeaders(contextWindowContext("context-1m-2025-08-07"), schemas.Anthropic, "claude-sonnet-4-5-20250929", schemas.ChatCompletionRequest)
-	require.Nil(t, err)
+	for _, tc := range []struct {
+		provider schemas.ModelProvider
+		model    string
+	}{
+		{schemas.Anthropic, "claude-sonnet-4-5-20250929"},
+		{schemas.Bedrock, "anthropic.claude-sonnet-4-5-20250929-v1:0"},
+		{schemas.BedrockMantle, "claude-sonnet-4-6"},
+		{schemas.Vertex, "claude-opus-4-6"},
+		{schemas.Azure, "claude-sonnet-4-20250514"},
+	} {
+		t.Run(string(tc.provider)+"/"+tc.model, func(t *testing.T) {
+			err := validateContextWindowHeaders(contextWindowContext("context-1m-2025-08-07"), tc.provider, tc.model, schemas.ChatCompletionRequest)
+			require.Nil(t, err)
+		})
+	}
 }
 
 func TestContextWindowAdmissionRejectsUnknownModelAndProvider(t *testing.T) {
@@ -31,6 +44,8 @@ func TestContextWindowAdmissionRejectsUnknownModelAndProvider(t *testing.T) {
 		requestType schemas.RequestType
 	}{
 		{"opaque alias", schemas.Anthropic, "claude-internal-latest", schemas.ChatCompletionRequest},
+		{"openai mantle surface", schemas.OpenAI, "claude-sonnet-4-6", schemas.ChatCompletionRequest},
+		{"openai mantle provider family", schemas.BedrockMantle, "gpt-soul-sonnet-4-6", schemas.ChatCompletionRequest},
 		{"unsupported provider", schemas.OpenAI, "claude-sonnet-4-5-20250929", schemas.ChatCompletionRequest},
 		{"unsupported operation", schemas.Anthropic, "claude-sonnet-4-5-20250929", schemas.EmbeddingRequest},
 	} {
