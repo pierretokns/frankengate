@@ -116,3 +116,28 @@ func TestCapabilityAdmissionKeepsBedrockMantleTransportBoundary(t *testing.T) {
 		t.Fatal("Bedrock capability must not authorize Mantle requests")
 	}
 }
+
+func TestTextCompletionCapabilityKeepsBedrockMantleTransportBoundary(t *testing.T) {
+	s := NewTestStore(nil)
+	s.mu.Lock()
+	s.pricingData[makeKey("mantle-completion", string(schemas.BedrockMantle), "completion")] = configstoreTables.TableModelPricing{
+		Model: "mantle-completion", Provider: string(schemas.BedrockMantle), Mode: "completion",
+	}
+	s.pricingData[makeKey("bedrock-completion", string(schemas.Bedrock), "completion")] = configstoreTables.TableModelPricing{
+		Model: "bedrock-completion", Provider: string(schemas.Bedrock), Mode: "completion",
+	}
+	s.mu.Unlock()
+
+	if !s.IsTextCompletionSupported("mantle-completion", schemas.BedrockMantle) {
+		t.Fatal("Mantle completion row should admit Mantle text completion")
+	}
+	if s.IsTextCompletionSupported("mantle-completion", schemas.Bedrock) {
+		t.Fatal("Mantle completion row must not authorize legacy Bedrock text completion")
+	}
+	if !s.IsTextCompletionSupported("bedrock-completion", schemas.Bedrock) {
+		t.Fatal("Bedrock completion row should admit legacy Bedrock text completion")
+	}
+	if s.IsTextCompletionSupported("bedrock-completion", schemas.BedrockMantle) {
+		t.Fatal("Bedrock completion row must not authorize Mantle text completion")
+	}
+}

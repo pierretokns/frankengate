@@ -409,9 +409,23 @@ func (s *Store) GetSupportedParameters(model string) []string {
 func (s *Store) IsTextCompletionSupported(model string, provider schemas.ModelProvider) bool {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	key := makeKey(model, normalizeProvider(string(provider)), normalizeRequestType(schemas.TextCompletionRequest))
-	_, ok := s.pricingData[key]
-	return ok
+	// Text-completion admission is provider-scoped just like the other
+	// capability checks.  Do not use normalizeProvider here: that helper
+	// intentionally folds Bedrock Mantle into legacy Bedrock for pricing
+	// attribution, but doing so would let a Bedrock row authorize the Mantle
+	// transport (or vice versa) after a catalog reload.
+	wantProvider := normalizeCapabilityProvider(string(provider))
+	base := s.baseModelNameUnsafe(model)
+	for _, row := range s.pricingData {
+		if normalizeCapabilityProvider(row.Provider) != wantProvider ||
+			(row.Mode != "completion" && row.Mode != "text_completion") {
+			continue
+		}
+		if row.Model == model || (base != "" && (row.Model == base || s.baseModelNameUnsafe(row.Model) == base)) {
+			return true
+		}
+	}
+	return false
 }
 
 // --- Private capability helpers (caller holds mu) ---
