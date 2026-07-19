@@ -727,6 +727,42 @@ func TestExpiryAndControlledOverdraftStatesAreTyped(t *testing.T) {
 	}
 }
 
+func TestApprovalRequiredOverdraftFailsClosedUntilExplicitlyApproved(t *testing.T) {
+	ctx := context.Background()
+	store := reservations.NewInMemoryStore()
+	now := time.Unix(1_700_001_000, 0).UTC()
+	r, err := store.Reserve(ctx, reservations.ReservationRequest{
+		LogicalRequestID: "approval-required", AttemptID: "attempt-1", AttemptEpoch: 1,
+		Lane: reservations.AccountingLaneNormal, Amount: reservations.Amount{Tokens: 10},
+		LeaseUntil: now.Add(time.Minute), Now: now,
+	})
+	if err != nil {
+		t.Fatalf("reserve: %v", err)
+	}
+	_, err = store.Settle(ctx, reservations.SettleRequest{
+		ReservationID: r.ID, AttemptEpoch: 1, ActualAmount: reservations.Amount{Tokens: 11},
+		IdempotencyKey: "approval-denied", Overdraft: reservations.OverdraftPolicy{
+			Allow: true, ApprovalRequired: true, Approved: false, Reason: "controlled overdraft",
+		}, Now: now,
+	})
+	if !errors.Is(err, reservations.ErrOverdraftDenied) {
+		t.Fatalf("error = %v, want ErrOverdraftDenied", err)
+	}
+
+	settled, err := store.Settle(ctx, reservations.SettleRequest{
+		ReservationID: r.ID, AttemptEpoch: 1, ActualAmount: reservations.Amount{Tokens: 11},
+		IdempotencyKey: "approval-allowed", Overdraft: reservations.OverdraftPolicy{
+			Allow: true, ApprovalRequired: true, Approved: true, Reason: "operator-approved",
+		}, Now: now,
+	})
+	if err != nil {
+		t.Fatalf("approved settlement: %v", err)
+	}
+	if settled.OverdraftState != reservations.OverdraftStateControlled {
+		t.Fatalf("state = %s, want controlled", settled.OverdraftState)
+	}
+}
+
 func TestAccountingSummaryKeepsNormalShadowToolAndReplayLanesDistinct(t *testing.T) {
 	ctx := context.Background()
 	store := reservations.NewInMemoryStore()

@@ -60,6 +60,11 @@ const (
 type OverdraftPolicy struct {
 	Allow  bool
 	Reason string
+	// ApprovalRequired makes controlled overdraft admission fail closed until
+	// an explicit approval is present.  This is intentionally carried with the
+	// durable settlement request rather than inferred from dashboard metadata.
+	ApprovalRequired bool
+	Approved         bool
 }
 
 type Amount struct {
@@ -279,7 +284,10 @@ func (store *InMemoryStore) Settle(_ context.Context, req SettleRequest) (Reserv
 	if excess != (Amount{}) {
 		reservation.OverdraftAmount = excess
 		reservation.OverdraftReason = req.Overdraft.Reason
-		if !req.Overdraft.Allow {
+		// Dashboard/alert metadata is not an authorization decision.  A caller
+		// must provide the effective policy on the settlement request, and an
+		// approval-required policy must carry an explicit approval bit.
+		if !req.Overdraft.Allow || (req.Overdraft.ApprovalRequired && !req.Overdraft.Approved) {
 			reservation.OverdraftState = OverdraftStateDenied
 			reservation.UpdatedAt = now
 			store.reservations[req.ReservationID] = reservation
