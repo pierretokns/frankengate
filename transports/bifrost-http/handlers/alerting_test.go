@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -105,6 +106,20 @@ func TestNormalizeAlertingStateRemovesDanglingAndDuplicateChannels(t *testing.T)
 	normalizeAlertingState(&state)
 	if got := strings.Join(state.Rules[0].ChannelIDs, ","); got != "ops" {
 		t.Fatalf("expected only the live channel once, got %q", got)
+	}
+}
+
+func TestNormalizeAlertingStateBoundsHistory(t *testing.T) {
+	state := alertingState{History: make([]AlertDelivery, maxAlertHistoryEntries+7)}
+	for i := range state.History {
+		state.History[i].ID = fmt.Sprintf("delivery-%d", i)
+	}
+	normalizeAlertingState(&state)
+	if len(state.History) != maxAlertHistoryEntries {
+		t.Fatalf("history length = %d, want %d", len(state.History), maxAlertHistoryEntries)
+	}
+	if state.History[0].ID != "delivery-7" || state.History[len(state.History)-1].ID != "delivery-1006" {
+		t.Fatalf("normalization did not retain newest entries: first=%q last=%q", state.History[0].ID, state.History[len(state.History)-1].ID)
 	}
 }
 

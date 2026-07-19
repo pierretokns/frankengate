@@ -23,6 +23,12 @@ import (
 
 const alertingConfigKey = "frankengate.alerting.v1"
 
+// maxAlertHistoryEntries bounds the durable dashboard payload. Delivery
+// workers may append indefinitely; retaining the entire history in one JSON
+// governance row would eventually make every dashboard request and mutation
+// grow without bound. Long-term retention belongs in an external audit store.
+const maxAlertHistoryEntries = 1000
+
 // AlertingWebhookConfig is the small, startup-time projection consumed by the
 // governance admission notifier.  Alerting CRUD remains durable and
 // asynchronous; changing a channel takes effect on the next plugin reload.
@@ -75,8 +81,8 @@ type AlertRule struct {
 	Enabled    bool     `json:"enabled"`
 	// Scope makes alert evaluation explicit for team/user dashboards.  Empty
 	// scope is treated as global for backwards-compatible rules.
-	Scope      string   `json:"scope,omitempty"`
-	ScopeID    string   `json:"scope_id,omitempty"`
+	Scope   string `json:"scope,omitempty"`
+	ScopeID string `json:"scope_id,omitempty"`
 	// ApprovalRequired is used by controlled-overdraft rules.  An approval
 	// gate is metadata only here; admission remains the source of truth.
 	ApprovalRequired bool `json:"approval_required,omitempty"`
@@ -140,6 +146,11 @@ func preserveAlertChannelSecrets(existing, incoming AlertChannel) AlertChannel {
 // rule: the notifier would otherwise report a successful rule while silently
 // delivering nowhere. Unknown references are removed fail-closed.
 func normalizeAlertingState(state *alertingState) {
+	if len(state.History) > maxAlertHistoryEntries {
+		// History is chronological (oldest first). Keep the most recent entries
+		// so alert counters and the dashboard remain useful after compaction.
+		state.History = append([]AlertDelivery(nil), state.History[len(state.History)-maxAlertHistoryEntries:]...)
+	}
 	known := make(map[string]struct{}, len(state.Channels))
 	for _, channel := range state.Channels {
 		if channel.ID != "" {
