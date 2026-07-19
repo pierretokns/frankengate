@@ -24,6 +24,12 @@ breach.
   attribution from a model name alone.
 - Separate direct-provider latency from gateway overhead. Do not mix cold-start,
   model variance, or failed requests into the successful latency percentile.
+- For a deterministic local smoke check with no live model dependency, run
+  `N=200 scripts/benchmark-gateway-overhead-local.sh`. It compares identical
+  fixture responses with and without governance/trace-shaped bookkeeping and
+  reports added p50/p95 latency. This validates the measurement path only; use
+  `scripts/benchmark-gateway-overhead.sh` against a real local provider and
+  gateway for production-representative evidence.
 - A release freeze is a policy decision, not an automatic rollback. The release
   owner must record the breached signal, affected window, mitigation, and
   explicit approval before resuming publication.
