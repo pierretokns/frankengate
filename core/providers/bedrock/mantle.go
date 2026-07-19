@@ -156,7 +156,12 @@ func (provider *BedrockProvider) mantleChatCompletions(
 	request *schemas.BifrostChatRequest,
 ) (*schemas.BifrostChatResponse, *schemas.BifrostError) {
 	region := resolveBedrockRegion(ctx, key, request.Model)
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	_, bareModel := parseBedrockRegionAndModel(request.Model)
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	// A region prefix is gateway routing metadata, not part of the Mantle model ID.
+	// Keep the caller's request immutable while removing it from the upstream payload.
+	openAIRequest := *request
+	openAIRequest.Model = bareModel
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -171,7 +176,7 @@ func (provider *BedrockProvider) mantleChatCompletions(
 		ctx,
 		provider.mantleClient,
 		url,
-		request,
+		&openAIRequest,
 		openai.BearerAuthHeader(key),
 		WithMantleProject(provider.networkConfig.ExtraHeaders, MantleOpenAIProjectHeader, resolveMantleProjectID(ctx, key)),
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -194,7 +199,10 @@ func (provider *BedrockProvider) mantleChatCompletionsStream(
 	request *schemas.BifrostChatRequest,
 ) (chan *schemas.BifrostStreamChunk, *schemas.BifrostError) {
 	region := resolveBedrockRegion(ctx, key, request.Model)
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	_, bareModel := parseBedrockRegionAndModel(request.Model)
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	openAIRequest := *request
+	openAIRequest.Model = bareModel
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -206,7 +214,7 @@ func (provider *BedrockProvider) mantleChatCompletionsStream(
 	}
 
 	return openai.HandleOpenAIChatCompletionStreaming(
-		ctx, provider.mantleStreamingClient, url, request,
+		ctx, provider.mantleStreamingClient, url, &openAIRequest,
 		openai.BearerAuthHeader(key), WithMantleProject(provider.networkConfig.ExtraHeaders, MantleOpenAIProjectHeader, resolveMantleProjectID(ctx, key)),
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -236,7 +244,10 @@ func (provider *BedrockProvider) mantleResponses(
 	request *schemas.BifrostResponsesRequest,
 ) (*schemas.BifrostResponsesResponse, *schemas.BifrostError) {
 	region := resolveBedrockRegion(ctx, key, request.Model)
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "responses")
+	_, bareModel := parseBedrockRegionAndModel(request.Model)
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
+	openAIRequest := *request
+	openAIRequest.Model = bareModel
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -251,7 +262,7 @@ func (provider *BedrockProvider) mantleResponses(
 		ctx,
 		provider.mantleClient,
 		url,
-		request,
+		&openAIRequest,
 		openai.BearerAuthHeader(key),
 		WithMantleProject(provider.networkConfig.ExtraHeaders, MantleOpenAIProjectHeader, resolveMantleProjectID(ctx, key)),
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -274,7 +285,10 @@ func (provider *BedrockProvider) mantleResponsesStream(
 	request *schemas.BifrostResponsesRequest,
 ) (chan *schemas.BifrostStreamChunk, *schemas.BifrostError) {
 	region := resolveBedrockRegion(ctx, key, request.Model)
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "responses")
+	_, bareModel := parseBedrockRegionAndModel(request.Model)
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
+	openAIRequest := *request
+	openAIRequest.Model = bareModel
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -286,7 +300,7 @@ func (provider *BedrockProvider) mantleResponsesStream(
 	}
 
 	return openai.HandleOpenAIResponsesStreaming(
-		ctx, provider.mantleStreamingClient, url, request,
+		ctx, provider.mantleStreamingClient, url, &openAIRequest,
 		openai.BearerAuthHeader(key), WithMantleProject(provider.networkConfig.ExtraHeaders, MantleOpenAIProjectHeader, resolveMantleProjectID(ctx, key)),
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
