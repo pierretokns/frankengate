@@ -705,6 +705,9 @@ const (
 	AttrToolCallArguments = "gen_ai.tool.call.arguments"
 	AttrToolCallResult    = "gen_ai.tool.call.result"
 	AttrToolType          = "gen_ai.tool.type"
+	// AttrTenantID identifies the authorized tenant without exposing principal
+	// issuer/subject or raw identity claims. Values are bounded at emission sites.
+	AttrTenantID = "bifrost.tenant_id"
 
 	// =====================================================================
 	// Bifrost-namespaced attributes (bifrost.*)

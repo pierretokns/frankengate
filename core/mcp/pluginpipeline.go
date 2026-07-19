@@ -3,6 +3,7 @@ package mcp
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -51,11 +52,17 @@ func (m *MCPManager) RunWithPluginPipeline(
 
 	// Wrap the whole gate (PreHook + op + PostHook) in an outer span so traces show one
 	// row per MCP op alongside the per-plugin spans the pipeline emits internally.
-	tracer, _ := ctx.Value(schemas.BifrostContextKeyTracer).(schemas.Tracer)
+	var tracer schemas.Tracer
+	if ctx != nil {
+		tracer, _ = ctx.Value(schemas.BifrostContextKeyTracer).(schemas.Tracer)
+	}
 	var spanHandle schemas.SpanHandle
 	if tracer != nil {
-		spanName := fmt.Sprintf("mcp.%s", req.RequestType)
-		if req.ClientName != "" {
+		spanName := "mcp.unknown"
+		if req != nil {
+			spanName = fmt.Sprintf("mcp.%s", req.RequestType)
+		}
+		if req != nil && req.ClientName != "" {
 			spanName = fmt.Sprintf("%s.%s", spanName, req.ClientName)
 		}
 		// Lifecycle operations (connect/ping/list_tools) are client spans, while
@@ -72,6 +79,13 @@ func (m *MCPManager) RunWithPluginPipeline(
 		if req != nil && req.RequestType.IsExecuteTool() {
 			tracer.SetAttribute(spanHandle, schemas.AttrOperationName, schemas.OTelOperationNameExecuteTool)
 			tracer.SetAttribute(spanHandle, schemas.AttrToolType, "function")
+			// Tenant is the only identity dimension emitted here. Never export issuer,
+			// subject, credentials, or raw claims on tool spans.
+			if principal, err := schemas.AuthorizationPrincipalFromContext(ctx); err == nil {
+				if tenant := boundedMCPTraceValue(principal.Tenant); tenant != "" {
+					tracer.SetAttribute(spanHandle, schemas.AttrTenantID, tenant)
+				}
+			}
 			if name := req.GetToolName(); name != "" {
 				tracer.SetAttribute(spanHandle, schemas.AttrToolName, name)
 			}
@@ -81,10 +95,10 @@ func (m *MCPManager) RunWithPluginPipeline(
 			if args := req.GetToolArguments(); args != nil {
 				if p, ok := args.(*string); ok {
 					if p != nil {
-						tracer.SetAttribute(spanHandle, schemas.AttrToolCallArguments, *p)
+						tracer.SetAttribute(spanHandle, schemas.AttrToolCallArguments, boundedMCPTraceValue(*p))
 					}
 				} else {
-					tracer.SetAttribute(spanHandle, schemas.AttrToolCallArguments, args)
+					tracer.SetAttribute(spanHandle, schemas.AttrToolCallArguments, boundedMCPTraceValue(fmt.Sprint(args)))
 				}
 			}
 			if req.ChatAssistantMessageToolCall != nil && req.ChatAssistantMessageToolCall.ID != nil {
@@ -102,7 +116,7 @@ func (m *MCPManager) RunWithPluginPipeline(
 		// attribute lands on the open span before it's frozen.
 		if finalResponse != nil && req != nil && req.RequestType.IsExecuteTool() {
 			if data, err := schemas.MarshalString(finalResponse); err == nil {
-				tracer.SetAttribute(spanHandle, schemas.AttrToolCallResult, data)
+				tracer.SetAttribute(spanHandle, schemas.AttrToolCallResult, boundedMCPTraceValue(data))
 			}
 		}
 		if finalError != nil {
@@ -213,6 +227,19 @@ func (m *MCPManager) RunWithPluginPipeline(
 		return finalResp, finalErr
 	}
 	return finalResp, nil
+}
+
+// MCP trace payloads are diagnostic metadata, not an unbounded data channel. Keep
+// arguments/results bounded before they enter the trace store or any exporter.
+const maxMCPTraceValueRunes = 8192
+
+func boundedMCPTraceValue(value string) string {
+	value = strings.TrimSpace(value)
+	if len([]rune(value)) <= maxMCPTraceValueRunes {
+		return value
+	}
+	runes := []rune(value)
+	return string(runes[:maxMCPTraceValueRunes]) + "…[truncated]"
 }
 
 // MCPConnectOpFunc is the closure each Connect call site provides to
