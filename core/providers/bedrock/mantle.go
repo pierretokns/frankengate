@@ -206,7 +206,12 @@ func (provider *BedrockProvider) mantleChatCompletionsStream(
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
 		providerUtils.ShouldSendBackRawResponse(ctx, provider.sendBackRawResponse),
-		provider.GetProviderKey(), postHookRunner,
+		// Mantle exposes an OpenAI-compatible SSE surface. Keep the Mantle
+		// identity here even when this legacy provider is registered as
+		// `bedrock`; otherwise the OpenAI streaming loop treats the stream as
+		// native Bedrock EventStream and stops at the first finish_reason,
+		// dropping the usage/final event that follows it.
+		schemas.BedrockMantle, postHookRunner,
 		nil,
 		nil,
 		nil,
@@ -281,7 +286,7 @@ func (provider *BedrockProvider) mantleResponsesStream(
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
 		providerUtils.ShouldSendBackRawResponse(ctx, provider.sendBackRawResponse),
-		provider.GetProviderKey(), postHookRunner,
+		schemas.BedrockMantle, postHookRunner,
 		nil,
 		nil,
 		nil,

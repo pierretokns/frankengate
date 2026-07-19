@@ -32,6 +32,15 @@ func TestRewriteJSONModelValue(t *testing.T) {
 	}
 }
 
+func TestProviderSendsDoneMarker_MantleOpenAISurface(t *testing.T) {
+	if !ProviderSendsDoneMarker(schemas.BedrockMantle) {
+		t.Fatal("Bedrock Mantle uses the OpenAI-compatible SSE surface and must consume its [DONE]/usage tail")
+	}
+	if ProviderSendsDoneMarker(schemas.Bedrock) {
+		t.Fatal("native Bedrock EventStream must not require an OpenAI [DONE] marker")
+	}
+}
+
 func TestApplyLargePayloadRequestBodyWithModelNormalization(t *testing.T) {
 	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
 	payload := `{"model":"openai/gpt-5","messages":[{"role":"user","content":"hello"}]}`
