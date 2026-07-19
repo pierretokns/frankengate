@@ -473,7 +473,13 @@ func (s *BifrostHTTPServer) ReloadVirtualKey(ctx context.Context, id string) (*t
 	if governanceData := governancePlugin.GetGovernanceStore().GetGovernanceData(ctx); governanceData != nil {
 		for _, existingVK := range governanceData.VirtualKeys {
 			if existingVK != nil && existingVK.ID == virtualKey.ID && existingVK.Value.IsSet() && existingVK.Value.GetValue() != virtualKey.Value.GetValue() {
-				s.MCPServerHandler.DeleteVKMCPServer(existingVK.Value.GetValue())
+				// MCP is optional. A VK invalidation must still update the
+				// inference authority when the MCP server is disabled; calling
+				// through a nil handler here would panic the outbox consumer and
+				// leave every subsequent cross-pod VK mutation unapplied.
+				if s.MCPServerHandler != nil {
+					s.MCPServerHandler.DeleteVKMCPServer(existingVK.Value.GetValue())
+				}
 				break
 			}
 		}
@@ -495,7 +501,9 @@ func (s *BifrostHTTPServer) ReloadVirtualKey(ctx context.Context, id string) (*t
 	for mcID := range staleIDs {
 		store.DeleteModelConfigInMemory(ctx, mcID)
 	}
-	s.MCPServerHandler.SyncVKMCPServer(virtualKey)
+	if s.MCPServerHandler != nil {
+		s.MCPServerHandler.SyncVKMCPServer(virtualKey)
+	}
 	return virtualKey, nil
 }
 
