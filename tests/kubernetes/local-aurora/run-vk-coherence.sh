@@ -83,6 +83,11 @@ if [[ -z "$FRANKENGATE_IMAGE" && -z "${FRANKENGATE_BINARY:-}" ]]; then
 fi
 
 existing_postgres_ip="$(kubectl -n "$NAMESPACE" get service/postgres -o jsonpath='{.spec.clusterIP}' 2>/dev/null || true)"
+# The fixture is explicitly disposable. Reset the StatefulSet and its PVC so
+# interrupted runs cannot retain a volume with host-specific ownership or a
+# partially initialized database that prevents PostgreSQL from starting.
+kubectl -n "$NAMESPACE" delete statefulset/postgres --ignore-not-found --wait=true >/dev/null 2>&1 || true
+kubectl -n "$NAMESPACE" delete pvc/data-postgres-0 --ignore-not-found --wait=true >/dev/null 2>&1 || true
 if [[ -n "$existing_postgres_ip" && "$existing_postgres_ip" != "None" ]]; then
   echo "recreating drifted test-only postgres Service (clusterIP=$existing_postgres_ip, expected headless)" >&2
   kubectl -n "$NAMESPACE" delete service/postgres --wait=true
