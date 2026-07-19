@@ -352,6 +352,14 @@ func (t *Tracer) PopulateLLMResponseAttributes(ctx *schemas.BifrostContext, hand
 	if engines, ok := ctx.Value(schemas.BifrostContextKeyRoutingEnginesUsed).([]string); ok && len(engines) > 0 {
 		span.SetAttribute(schemas.AttrBifrostRoutingEngineUsed, strings.Join(engines, ","))
 	}
+	// Alias resolution carries an explicit model family so providers can choose
+	// the correct wire protocol (notably Claude-compatible aliases over Mantle).
+	// Export only this bounded enum; never export alias config or request data.
+	if resolvedAlias := schemas.GetResolvedAlias(ctx); resolvedAlias != nil && resolvedAlias.Config != nil && resolvedAlias.Config.ModelFamily != nil {
+		if family := string(*resolvedAlias.Config.ModelFamily); family != "" {
+			span.SetAttribute(schemas.AttrBifrostModelFamily, family)
+		}
+	}
 
 	// Populate cost attribute using pricing manager
 	if t.pricingManager != nil && resp != nil {

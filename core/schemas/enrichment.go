@@ -61,6 +61,7 @@ var EnrichmentDims = []EnrichmentDim{
 	// span in framework/tracing (they have no meaning until the model is resolved
 	// and routing has run), so connectors read them like any other dimension.
 	{Name: "alias", SpanAttr: AttrBifrostAlias, MetricSafe: true},
+	{Name: "model_family", SpanAttr: AttrBifrostModelFamily, MetricSafe: true},
 	{Name: "routing_engine_used", SpanAttr: AttrBifrostRoutingEngineUsed, MetricSafe: true},
 	{Name: "virtual_key_id", SpanAttr: AttrBifrostVirtualKeyID, MetricSafe: true},
 	{Name: "virtual_key_name", SpanAttr: AttrBifrostVirtualKeyName, MetricSafe: true},

@@ -90,6 +90,37 @@ func TestNewTracerUsesProductionAccumulatorDefaults(t *testing.T) {
 	}
 }
 
+func TestPopulateLLMResponseAttributesExportsBoundedModelFamily(t *testing.T) {
+	store := NewTraceStore(5*time.Minute, nil)
+	defer store.Stop()
+	tracer := NewTracer(store, nil, nil)
+	defer tracer.Stop()
+
+	traceID := tracer.CreateTrace("")
+	ctx := schemas.NewBifrostContext(context.Background(), time.Time{})
+	family := schemas.ModelFamilyAnthropic
+	ctx.SetValue(schemas.BifrostContextKeyResolvedAlias, &schemas.ResolvedAlias{
+		Key:    "claude-sol",
+		Config: &schemas.AliasConfig{ModelID: "mantle-sol", ModelFamily: &family},
+	})
+	spanCtx := context.WithValue(ctx, schemas.BifrostContextKeyTraceID, traceID)
+	_, handle := tracer.StartSpan(spanCtx, "llm.call", schemas.SpanKindLLMCall)
+	if handle == nil {
+		t.Fatal("expected span handle")
+	}
+	resp := &schemas.BifrostResponse{ChatResponse: &schemas.BifrostChatResponse{ExtraFields: schemas.BifrostResponseExtraFields{
+		Provider:               schemas.Bedrock,
+		RequestType:            schemas.ChatCompletionRequest,
+		OriginalModelRequested: "claude-sol",
+		ResolvedModelUsed:      "mantle-sol",
+	}}}
+	tracer.PopulateLLMResponseAttributes(ctx, handle, resp, nil)
+	span := store.GetTrace(traceID).GetSpan(handle.(*spanHandle).spanID)
+	if got := span.Attributes[schemas.AttrBifrostModelFamily]; got != string(family) {
+		t.Fatalf("model family attr = %#v, want %q", got, family)
+	}
+}
+
 func TestTracerProcessStreamingChunkPropagatesContextCancellationToAccumulator(t *testing.T) {
 	store := NewTraceStore(5*time.Minute, nil)
 	defer store.Stop()
