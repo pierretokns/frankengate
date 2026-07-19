@@ -55,8 +55,10 @@ export function formatFallback(fallback: string): string {
 export function parseFallback(fallback: string): { provider: string; model: string } | null {
 	if (!fallback) return null;
 	const parts = fallback.split("/");
-	if (parts.length !== 2) return null;
-	return { provider: parts[0], model: parts[1] };
+	if (parts.length < 2 || !parts[0] || !parts.slice(1).join("/")) return null;
+	// Model identifiers may contain slashes (for example provider/org/model).
+	// Preserve the complete identifier after the provider prefix.
+	return { provider: parts[0], model: parts.slice(1).join("/") };
 }
 
 /**
