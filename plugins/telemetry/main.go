@@ -331,6 +331,7 @@ var defaultBifrostLabelNames = []string{
 	"destination_region",
 	"destination_project_id",
 	"model",
+	"model_family",
 	"alias",
 	"method",
 	"virtual_key_id",
@@ -849,6 +850,10 @@ func (p *PrometheusPlugin) PostLLMHook(ctx *schemas.BifrostContext, result *sche
 	if destination != nil {
 		destinationRegion, destinationProject = destination.Region, destination.ProjectID
 	}
+	modelFamily := ""
+	if resolved := schemas.GetResolvedAlias(ctx); resolved != nil && resolved.Config != nil && resolved.Config.ModelFamily != nil {
+		modelFamily = string(*resolved.Config.ModelFamily)
+	}
 
 	// Extract ALL context values BEFORE spawning the goroutine.
 	labelValues := map[string]string{
@@ -856,6 +861,7 @@ func (p *PrometheusPlugin) PostLLMHook(ctx *schemas.BifrostContext, result *sche
 		"destination_region":     destinationRegion,
 		"destination_project_id": destinationProject,
 		"model":                  model,
+		"model_family":           modelFamily,
 		"alias":                  alias,
 		"method":                 string(requestType),
 		"virtual_key_id":         virtualKeyID,
