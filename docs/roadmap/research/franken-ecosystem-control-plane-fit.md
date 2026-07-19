@@ -100,7 +100,7 @@ These are not all Franken-named, but they determine whether a proposed bundle is
 | Asupersync v0.3.9 | Structured-concurrency runtime for the Rust control plane | Evaluate in a separate-binary control-plane bakeoff against Tokio; do not vendor casually. |
 | `fastapi_rust` v0.3.0 | Rust analytics HTTP API | Evaluate with Asupersync as a coherent upstream stack, acknowledging early-development maturity. |
 | `sqlmodel_rust` v0.3.0 | Typed PostgreSQL model/query layer | Evaluate with the coherent stack; SQLx remains the maturity/control baseline. |
-| Beads Rust / Beads Viewer | Planning and dependency graph | Adopt as external development tooling; never product runtime or customer data store. |
+| Beads Rust / Beads Viewer | Planning and dependency graph | Adopt as external development tooling; never product runtime or customer data store. The emerging `beads_viewer_rust` static pages exporter may supply the roadmap/DAG browser surface after a stable release, avoiding a custom viewer. |
 | NTM / FrankenTerm | Agent development orchestration | External build/research tooling only; never Helm dependency. |
 | CASS / Eidetic / coding-agent-session-search | Local session recall and mining | Strong external endpoint-tool candidates; managed collector protocol remains implementation-independent. |
 | Agent Mail | Multi-agent development coordination | Development-time only; no product control-plane dependency. |
@@ -172,7 +172,7 @@ This crate adds real value by eliminating repeated, drifting installation probes
 
 ### 7. Operator and developer experience
 
-`FrankenTUI + FrankenTerm + Beads viewers + NTM` can improve development workflows but must stay outside Helm and the customer security boundary. The web dashboard remains the uniform product interface. A future CLI may consume the same public API, but the UI library is selected independently under compatible licensing.
+`FrankenTUI + FrankenTerm + Beads viewers + NTM` can improve development workflows but must stay outside Helm and the customer security boundary. The web dashboard remains the uniform product interface. A future CLI may consume the same public API, but the UI library is selected independently under compatible licensing. Do not build a custom Beads dependency viewer while `beads_viewer_rust` is converging on self-contained static page export, preview/watch mode, deployment assistance and multi-repository workspace graphs. Re-evaluate its first stable release as a generated read-only roadmap surface. It complements rather than replaces the runtime/AWS architecture diagram because an issue DAG does not encode traffic, trust or deployment boundaries.
 
 ### 8. Snowflake and enterprise data exchange
 
