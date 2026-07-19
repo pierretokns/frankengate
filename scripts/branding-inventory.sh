@@ -29,7 +29,7 @@ mkdir -p "$(dirname "$OUT")"
 printf 'path\tline\tmatch\tclassification\towner\tdestination\n' >"$OUT"
 
 git -C "$ROOT" grep -n -I -i -E 'bifrost|maximhq/bifrost|ghcr.io/.*/bifrost|npmjs.com/.*/bifrost' -- \
-  ':!branding-inventory.tsv' ':!*.lock' 2>/dev/null |
+  ':!branding-inventory.tsv' ':!*.lock' ':!.beads/**' 2>/dev/null |
 awk -F: '
   function classify(path, text) {
     low=tolower(path " " text)
