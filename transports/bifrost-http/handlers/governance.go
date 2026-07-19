@@ -2400,6 +2400,14 @@ func (h *GovernanceHandler) rotateVirtualKey(ctx *fasthttp.RequestCtx) {
 
 // rotateVirtualKeys handles POST /api/governance/virtual-keys/rotate - Rotate multiple virtual key values
 func (h *GovernanceHandler) rotateVirtualKeys(ctx *fasthttp.RequestCtx) {
+	// Bulk rotation returns newly generated secrets, so it must enforce the same
+	// authorization-epoch fence as the single-key route before doing any work.
+	// Without this check a stale Okta/SCIM principal could rotate several keys
+	// after its grants had been revoked on another pod.
+	if err := h.validateVirtualKeyManagementAuthority(ctx); err != nil {
+		SendError(ctx, 403, "Virtual key authorization is stale or unavailable")
+		return
+	}
 	var req BulkRotateVirtualKeysRequest
 	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
 		SendError(ctx, 400, "Invalid JSON")
@@ -2473,6 +2481,13 @@ func (h *GovernanceHandler) rotateVirtualKeys(ctx *fasthttp.RequestCtx) {
 
 // deleteVirtualKey handles DELETE /api/governance/virtual-keys/{vk_id} - Delete a virtual key
 func (h *GovernanceHandler) deleteVirtualKey(ctx *fasthttp.RequestCtx) {
+	// Revocation is a management mutation and must honor the same cross-pod
+	// principal epoch fence as reveal/rotate.  Otherwise a stale operator could
+	// revoke keys after their identity grants were removed elsewhere.
+	if err := h.validateVirtualKeyManagementAuthority(ctx); err != nil {
+		SendError(ctx, 403, "Virtual key authorization is stale or unavailable")
+		return
+	}
 	vkID := ctx.UserValue("vk_id").(string)
 	// Fetch the virtual key from the database to get the budget and rate limit
 	vk, err := h.configStore.GetVirtualKey(ctx, vkID)

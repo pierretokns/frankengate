@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
@@ -1714,6 +1715,40 @@ func TestRotateVirtualKeys_RejectsInvalidRequests(t *testing.T) {
 				t.Fatalf("expected response to contain %q, got %s", tt.want, string(ctx.Response.Body()))
 			}
 		})
+	}
+}
+
+func TestVirtualKeyMutationsRejectMalformedAuthoritySnapshot(t *testing.T) {
+	SetLogger(&mockLogger{})
+	store := &mockRotateConfigStore{virtualKeys: map[string]*configstoreTables.TableVirtualKey{
+		"vk-1": {ID: "vk-1", Value: *schemas.NewSecretVar("sk-bf-old")},
+	}}
+	manager := &mockRotateGovernanceManager{store: store}
+	h := &GovernanceHandler{configStore: store, governanceManager: manager}
+
+	// A trusted principal without its matching epoch reference is malformed and
+	// must be rejected before either mutation reaches the store. This covers both
+	// bulk rotation (which historically lacked the epoch fence) and revocation.
+	for _, name := range []string{"bulk rotate", "revoke"} {
+		t.Run(name, func(t *testing.T) {
+			ctx := &fasthttp.RequestCtx{}
+			ctx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{
+				Tenant: "tenant-a", Issuer: "https://idp.example", Subject: "user-a",
+			})
+			ctx.SetUserValue("vk_id", "vk-1")
+			if name == "bulk rotate" {
+				ctx.Request.SetBodyString(`{"ids":["vk-1"]}`)
+				h.rotateVirtualKeys(ctx)
+			} else {
+				h.deleteVirtualKey(ctx)
+			}
+			if got := ctx.Response.StatusCode(); got != fasthttp.StatusForbidden {
+				t.Fatalf("expected 403, got %d: %s", got, ctx.Response.Body())
+			}
+		})
+	}
+	if store.updates != 0 {
+		t.Fatalf("malformed authority reached mutation store: %d updates", store.updates)
 	}
 }
 
