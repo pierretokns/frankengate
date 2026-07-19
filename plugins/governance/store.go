@@ -2663,6 +2663,9 @@ func (gs *LocalGovernanceStore) collectRateLimitsFromHierarchy(ctx context.Conte
 		if pc.RateLimitID != nil && pc.Provider == string(requestedProvider) {
 			if rateLimitValue, exists := gs.rateLimits.Load(*pc.RateLimitID); exists && rateLimitValue != nil {
 				if rateLimit, ok := rateLimitValue.(*configstoreTables.TableRateLimit); ok && rateLimit != nil {
+					if seen[rateLimit.ID] {
+						continue
+					}
 					if categoryRateLimits := rateLimitsWithCategories[pc.Provider]; categoryRateLimits == nil {
 						rateLimitsWithCategories[pc.Provider] = []*configstoreTables.TableRateLimit{}
 					}
@@ -2676,11 +2679,13 @@ func (gs *LocalGovernanceStore) collectRateLimitsFromHierarchy(ctx context.Conte
 	if vk.RateLimitID != nil {
 		if rateLimitValue, exists := gs.rateLimits.Load(*vk.RateLimitID); exists && rateLimitValue != nil {
 			if rateLimit, ok := rateLimitValue.(*configstoreTables.TableRateLimit); ok && rateLimit != nil {
-				if categoryRateLimits := rateLimitsWithCategories["VK"]; categoryRateLimits == nil {
-					rateLimitsWithCategories["VK"] = []*configstoreTables.TableRateLimit{}
+				if !seen[rateLimit.ID] {
+					if categoryRateLimits := rateLimitsWithCategories["VK"]; categoryRateLimits == nil {
+						rateLimitsWithCategories["VK"] = []*configstoreTables.TableRateLimit{}
+					}
+					rateLimitsWithCategories["VK"] = append(rateLimitsWithCategories["VK"], rateLimit)
+					seen[rateLimit.ID] = true
 				}
-				rateLimitsWithCategories["VK"] = append(rateLimitsWithCategories["VK"], rateLimit)
-				seen[rateLimit.ID] = true
 			}
 		}
 	}
@@ -2693,11 +2698,13 @@ func (gs *LocalGovernanceStore) collectRateLimitsFromHierarchy(ctx context.Conte
 				if team.RateLimitID != nil {
 					if rateLimitValue, exists := gs.rateLimits.Load(*team.RateLimitID); exists && rateLimitValue != nil {
 						if rateLimit, ok := rateLimitValue.(*configstoreTables.TableRateLimit); ok && rateLimit != nil {
-							if categoryRateLimits := rateLimitsWithCategories["Team"]; categoryRateLimits == nil {
-								rateLimitsWithCategories["Team"] = []*configstoreTables.TableRateLimit{}
+							if !seen[rateLimit.ID] {
+								if categoryRateLimits := rateLimitsWithCategories["Team"]; categoryRateLimits == nil {
+									rateLimitsWithCategories["Team"] = []*configstoreTables.TableRateLimit{}
+								}
+								rateLimitsWithCategories["Team"] = append(rateLimitsWithCategories["Team"], rateLimit)
+								seen[rateLimit.ID] = true
 							}
-							rateLimitsWithCategories["Team"] = append(rateLimitsWithCategories["Team"], rateLimit)
-							seen[rateLimit.ID] = true
 						}
 					}
 				}
@@ -2712,11 +2719,13 @@ func (gs *LocalGovernanceStore) collectRateLimitsFromHierarchy(ctx context.Conte
 							if customer.RateLimitID != nil {
 								if rateLimitValue, exists := gs.rateLimits.Load(*customer.RateLimitID); exists && rateLimitValue != nil {
 									if rateLimit, ok := rateLimitValue.(*configstoreTables.TableRateLimit); ok && rateLimit != nil {
-										if categoryRateLimits := rateLimitsWithCategories["Customer"]; categoryRateLimits == nil {
-											rateLimitsWithCategories["Customer"] = []*configstoreTables.TableRateLimit{}
+										if !seen[rateLimit.ID] {
+											if categoryRateLimits := rateLimitsWithCategories["Customer"]; categoryRateLimits == nil {
+												rateLimitsWithCategories["Customer"] = []*configstoreTables.TableRateLimit{}
+											}
+											rateLimitsWithCategories["Customer"] = append(rateLimitsWithCategories["Customer"], rateLimit)
+											seen[rateLimit.ID] = true
 										}
-										rateLimitsWithCategories["Customer"] = append(rateLimitsWithCategories["Customer"], rateLimit)
-										seen[rateLimit.ID] = true
 									}
 								}
 							}
@@ -2734,11 +2743,13 @@ func (gs *LocalGovernanceStore) collectRateLimitsFromHierarchy(ctx context.Conte
 				if customer.RateLimitID != nil {
 					if rateLimitValue, exists := gs.rateLimits.Load(*customer.RateLimitID); exists && rateLimitValue != nil {
 						if rateLimit, ok := rateLimitValue.(*configstoreTables.TableRateLimit); ok && rateLimit != nil {
-							if categoryRateLimits := rateLimitsWithCategories["Customer"]; categoryRateLimits == nil {
-								rateLimitsWithCategories["Customer"] = []*configstoreTables.TableRateLimit{}
+							if !seen[rateLimit.ID] {
+								if categoryRateLimits := rateLimitsWithCategories["Customer"]; categoryRateLimits == nil {
+									rateLimitsWithCategories["Customer"] = []*configstoreTables.TableRateLimit{}
+								}
+								rateLimitsWithCategories["Customer"] = append(rateLimitsWithCategories["Customer"], rateLimit)
+								seen[rateLimit.ID] = true
 							}
-							rateLimitsWithCategories["Customer"] = append(rateLimitsWithCategories["Customer"], rateLimit)
-							seen[rateLimit.ID] = true
 						}
 					}
 				}

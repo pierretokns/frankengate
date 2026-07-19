@@ -66,6 +66,31 @@ func TestGovernanceStore_GetVirtualKey(t *testing.T) {
 	}
 }
 
+// A shared policy ID may be referenced by more than one hierarchy level after
+// a config reload. It is one quota, not one quota per reference: duplicate
+// collection would double-charge usage and make an otherwise valid request
+// fail early. Keep this race-safe because the collector is used concurrently
+// with immutable snapshot reads on the request path.
+func TestCollectRateLimitsFromHierarchyDeduplicatesSharedIDs(t *testing.T) {
+	ctx := context.Background()
+	rateLimit := buildRateLimit("shared-rate", 1000, 1000)
+	vk := buildVirtualKey("vk-shared", "sk-shared", "shared", true)
+	vk.RateLimitID = func() *string { s := rateLimit.ID; return &s }()
+	vk.ProviderConfigs = []configstoreTables.TableVirtualKeyProviderConfig{buildProviderConfig(string(schemas.OpenAI), []string{"*"})}
+	vk.ProviderConfigs[0].RateLimitID = func() *string { s := rateLimit.ID; return &s }()
+	store, err := NewLocalGovernanceStore(ctx, NewMockLogger(), nil, &configstore.GovernanceConfig{
+		VirtualKeys: []configstoreTables.TableVirtualKey{*vk},
+		RateLimits:  []configstoreTables.TableRateLimit{*rateLimit},
+	}, nil)
+	require.NoError(t, err)
+	loaded, ok := store.GetVirtualKey(ctx, "sk-shared")
+	require.True(t, ok)
+	limits := store.collectRateLimitsFromHierarchy(ctx, loaded, schemas.OpenAI)
+	require.Len(t, limits["openai"], 1)
+	require.Empty(t, limits["VK"], "shared VK/provider reference must not create a second quota")
+	assert.Equal(t, rateLimit.ID, limits["openai"][0].ID)
+}
+
 func TestFullAuthoritySnapshotReplacesPreFenceVKScopedModelConfig(t *testing.T) {
 	ctx := context.Background()
 	vkID := "vk-snapshot"
