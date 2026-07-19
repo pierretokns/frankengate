@@ -1519,6 +1519,12 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	var err error
 	// Initializing plugin specific handlers
 	var loggingHandler *handlers.LoggingHandler
+	var replayHandler *handlers.ReplayHandler
+	if otelPlugin, pluginErr := lib.FindPluginAs[*otel.OtelPlugin](s.Config, otel.PluginName); pluginErr == nil && otelPlugin != nil {
+		if replayStore := otelPlugin.ReplayStore(); replayStore != nil {
+			replayHandler = handlers.NewReplayHandler(replayStore)
+		}
+	}
 	loggerPlugin, _ := lib.FindPluginAs[*logging.LoggerPlugin](s.Config, logging.PluginName)
 	var govLogManager logging.LogManager
 	if loggerPlugin != nil {
@@ -1643,6 +1649,9 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	}
 	if loggingHandler != nil {
 		loggingHandler.RegisterRoutes(s.Router, middlewares...)
+	}
+	if replayHandler != nil {
+		replayHandler.RegisterRoutes(s.Router, middlewares...)
 	}
 	if s.WebSocketHandler != nil {
 		s.WebSocketHandler.RegisterRoutes(s.Router, middlewares...)

@@ -527,6 +527,16 @@ func (p *OtelPlugin) GetName() string {
 	return PluginName
 }
 
+// ReplayStore returns the opt-in durable replay boundary for authenticated
+// consumers such as the dashboard API. A nil result means replay persistence
+// is disabled; callers must not invent an in-memory fallback.
+func (p *OtelPlugin) ReplayStore() ReplayStore {
+	if p == nil {
+		return nil
+	}
+	return p.replayStore
+}
+
 // MarshalConfigForStorage implements schemas.ConfigMarshallerPlugin.
 func (p *OtelPlugin) MarshalConfigForStorage(raw map[string]any) (map[string]any, error) {
 	b, err := sonic.Marshal(raw)
