@@ -42,3 +42,21 @@ func TestProviderCircuitBoundsProviderCardinality(t *testing.T) {
 		t.Fatalf("empty decision = %#v", d)
 	}
 }
+
+func TestCircuitDecisionMetadataUsesBoundedVocabulary(t *testing.T) {
+	c := NewProviderCircuit(ProviderCircuitConfig{FailureThreshold: 1, Cooldown: time.Second})
+	now := time.Unix(100, 0)
+	c.now = func() time.Time { return now }
+	decisions := []CircuitDecision{c.Allow("openai")}
+	c.RecordFailure("openai")
+	decisions = append(decisions, c.Allow("openai"))
+	now = now.Add(2 * time.Second)
+	decisions = append(decisions, c.Allow("openai"), c.Allow("openai"))
+	allowedStates := map[string]bool{circuitClosed: true, circuitOpen: true, circuitHalfOpen: true}
+	allowedReasons := map[string]bool{"healthy": true, "cooldown": true, "probe": true, "probe_in_flight": true}
+	for _, d := range decisions {
+		if !allowedStates[d.State] || !allowedReasons[d.Reason] || d.Provider != "openai" {
+			t.Fatalf("unexpected bounded decision metadata: %#v", d)
+		}
+	}
+}
