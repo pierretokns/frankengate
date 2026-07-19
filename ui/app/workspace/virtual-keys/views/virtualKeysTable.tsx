@@ -465,6 +465,10 @@ export default function VirtualKeysTable({
 	const handleVirtualKeySaved = () => {
 		setShowVirtualKeySheet(false);
 		setEditingVirtualKeyId(null);
+		// A save may include a secret rotation. Never retain a pre-rotation
+		// secret in the table's in-memory reveal cache.
+		setRevealedKeys(new Set());
+		setRevealedValues({});
 	};
 
 	const handleRowClick = (vk: VirtualKey) => {
