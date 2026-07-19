@@ -286,9 +286,15 @@ validate_distribution_and_ledger() {
       *) fail "modification_notice_required must be yes/no for $path" ;;
     esac
     case "${origin:-}" in
-      competitor-import)
+      upstream-bifrost|local-fork|competitor-import|external-upstream|linked-crate|vendored-derivative|generated) ;;
+      *)
+        fail "unknown provenance origin '$origin' for $path"
+        ;;
+    esac
+    case "${origin:-}" in
+      competitor-import|external-upstream|linked-crate|vendored-derivative)
         if [ -z "${approval:-}" ] || [ "$approval" = "none" ]; then
-          fail "competitor import ledger row lacks approval: $path"
+          fail "non-local provenance row lacks approval: $path"
         fi
         ;;
     esac
