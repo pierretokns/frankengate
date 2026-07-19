@@ -13,10 +13,11 @@ object containing model objects, and atomically writes:
 An HTTP failure, malformed payload, or write error exits non-zero and never
 replaces `latest.json`. The helper is an independent Go module under
 `scripts/pricing-sync`; run it from that directory so it does not depend on the
-developer-only workspace file. The repository includes a minimal
+ developer-only workspace file. The repository includes a minimal
 `.gitlab-ci.yml` entrypoint which includes `.gitlab/pricing-sync.yml`. Configure
-one GitLab Pipeline Schedule for that mirror, daily in UTC, and have the site's
-deployment step publish the artifact. Do not expose credentials in the URL.
+`FRANKENGATE_PRICING_URL` and one GitLab Pipeline Schedule for that mirror, daily
+in UTC, and have the site's deployment step publish the artifact. Do not expose
+credentials in the URL.
 
 ## Attribution and licensing
 
