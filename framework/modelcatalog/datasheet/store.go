@@ -355,8 +355,13 @@ func (s *Store) HasProviderModel(model string, provider schemas.ModelProvider) b
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	base := s.baseModelNameUnsafe(model)
+	canonicalProvider := normalizeProvider(string(provider))
 	for _, row := range s.pricingData {
-		if normalizeProvider(row.Provider) != string(provider) {
+		// Datasheet rows can use upstream aliases (for example vertex_ai),
+		// while callers use the canonical enum (vertex). Normalize both sides;
+		// otherwise capability admission incorrectly treats a model as unknown
+		// after a database-backed catalog reload.
+		if normalizeProvider(row.Provider) != canonicalProvider {
 			continue
 		}
 		if row.Model == model || (base != "" && (row.Model == base || s.baseModelNameUnsafe(row.Model) == base)) {

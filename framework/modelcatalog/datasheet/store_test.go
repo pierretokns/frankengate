@@ -73,4 +73,7 @@ func TestIsRequestTypeSupportedForProviderNormalizesDatabaseProviderAliases(t *t
 	if !s.IsRequestTypeSupportedForProvider("text-embedding-alias", schemas.Vertex, schemas.EmbeddingRequest) {
 		t.Fatal("embedding capability should survive a database provider alias")
 	}
+	if !s.HasProviderModel("text-embedding-alias", schemas.Vertex) {
+		t.Fatal("provider/model lookup should survive a database provider alias")
+	}
 }
