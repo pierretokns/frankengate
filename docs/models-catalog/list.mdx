@@ -97,19 +97,29 @@ export const ModelsCatalog = () => {
   const [selectedProvider, setSelectedProvider] = useState('all')
   const [selectedModel, setSelectedModel] = useState(null)
   const [showDialog, setShowDialog] = useState(false)
+  const [pricingAttribution, setPricingAttribution] = useState(null)
 
   useEffect(() => {
     async function fetchModels () {
       try {
-        const response = await fetch('https://getbifrost.ai/datasheet')
-        if (!response.ok) {
-          throw new Error(`Failed to fetch models: ${response.status}`)
+        const paths = ['/data/pricing/latest.json', 'data/pricing/latest.json', 'https://getbifrost.ai/datasheet']
+        let data
+        let lastError
+        for (const path of paths) {
+          try {
+            const response = await fetch(path, { headers: { Accept: 'application/json' } })
+            if (!response.ok) throw new Error(`Pricing request failed: ${response.status}`)
+            data = await response.json()
+            break
+          } catch (err) { lastError = err }
         }
-        const data = await response.json()
+        if (!data) throw lastError || new Error('Pricing catalog unavailable')
+        setPricingAttribution(data.models ? { source: data.source, retrievedAt: data.retrieved_at } : null)
+        const catalog = data.models || data
         
         // Convert object format {modelName: {config}} to array format
-        if (data && typeof data === 'object' && !Array.isArray(data)) {
-          const modelsArray = Object.entries(data).map(([modelName, config]) => ({
+        if (catalog && typeof catalog === 'object' && !Array.isArray(catalog)) {
+          const modelsArray = Object.entries(catalog).map(([modelName, config]) => ({
             model: modelName,
             ...config
           }))
@@ -119,8 +129,8 @@ export const ModelsCatalog = () => {
           }
           
           setModels(modelsArray)
-        } else if (Array.isArray(data)) {
-          setModels(data)
+        } else if (Array.isArray(catalog)) {
+          setModels(catalog)
         } else {
           throw new Error('Invalid data format')
         }
@@ -305,6 +315,12 @@ export const ModelsCatalog = () => {
 
   return (
     <div className="w-full not-prose" style={{ display: 'flex', flexDirection: 'column' }}>
+      {pricingAttribution && (
+        <p className="mb-3 text-xs text-zinc-600 dark:text-zinc-400" data-testid="pricing-attribution">
+          Pricing source: {pricingAttribution.source || 'upstream datasheet'}
+          {pricingAttribution.retrievedAt ? ` · refreshed ${pricingAttribution.retrievedAt}` : ''}
+        </p>
+      )}
       <div className="sticky top-0 z-20 mb-4 pb-4 bg-white dark:bg-zinc-950" style={{ paddingTop: '1rem' }}>
         <div className="flex gap-3 mb-3">
           <input
@@ -388,4 +404,3 @@ export const ModelsCatalog = () => {
 
 
 <ModelsCatalog />
-
