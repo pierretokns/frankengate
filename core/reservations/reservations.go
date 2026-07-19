@@ -484,6 +484,9 @@ func validateSettleRequest(req SettleRequest) error {
 	if err := validateMutationIdentity(req.ReservationID, req.AttemptEpoch); err != nil {
 		return err
 	}
+	if req.IdempotencyKey == "" {
+		return fmt.Errorf("%w: idempotency key is required", ErrInvalidReservation)
+	}
 	if req.ActualAmount.Tokens < 0 {
 		return fmt.Errorf("%w: tokens must be nonnegative", ErrInvalidReservation)
 	}
@@ -494,7 +497,13 @@ func validateSettleRequest(req SettleRequest) error {
 }
 
 func validateRefundRequest(req RefundRequest) error {
-	return validateMutationIdentity(req.ReservationID, req.AttemptEpoch)
+	if err := validateMutationIdentity(req.ReservationID, req.AttemptEpoch); err != nil {
+		return err
+	}
+	if req.IdempotencyKey == "" {
+		return fmt.Errorf("%w: idempotency key is required", ErrInvalidReservation)
+	}
+	return nil
 }
 
 func validateMutationIdentity(id ReservationID, epoch AttemptEpoch) error {

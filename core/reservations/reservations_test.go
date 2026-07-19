@@ -300,6 +300,13 @@ func TestMutationsValidateRequiredIDsEpochsAmountsAndLease(t *testing.T) {
 			},
 		},
 		{
+			name: "settle missing idempotency key",
+			run: func() error {
+				_, err := store.Settle(ctx, reservations.SettleRequest{ReservationID: reservation.ID, AttemptEpoch: 1, ActualAmount: reservations.Amount{Tokens: 1}, Now: now})
+				return err
+			},
+		},
+		{
 			name: "refund missing reservation id",
 			run: func() error {
 				_, err := store.Refund(ctx, reservations.RefundRequest{AttemptEpoch: 1, IdempotencyKey: "missing-id", Now: now})
@@ -310,6 +317,13 @@ func TestMutationsValidateRequiredIDsEpochsAmountsAndLease(t *testing.T) {
 			name: "refund zero epoch",
 			run: func() error {
 				_, err := store.Refund(ctx, reservations.RefundRequest{ReservationID: reservation.ID, IdempotencyKey: "zero-epoch", Now: now})
+				return err
+			},
+		},
+		{
+			name: "refund missing idempotency key",
+			run: func() error {
+				_, err := store.Refund(ctx, reservations.RefundRequest{ReservationID: reservation.ID, AttemptEpoch: 1, Now: now})
 				return err
 			},
 		},
@@ -359,10 +373,11 @@ func TestStaleAttemptEpochCannotRefundRenewedReservation(t *testing.T) {
 	}
 
 	_, err = store.Refund(ctx, reservations.RefundRequest{
-		ReservationID: reservation.ID,
-		AttemptEpoch:  1,
-		Reason:        "stale attempt cleanup",
-		Now:           now.Add(200 * time.Millisecond),
+		ReservationID:  reservation.ID,
+		AttemptEpoch:   1,
+		IdempotencyKey: "stale-attempt-cleanup",
+		Reason:         "stale attempt cleanup",
+		Now:            now.Add(200 * time.Millisecond),
 	})
 	if !errors.Is(err, reservations.ErrStaleEpoch) {
 		t.Fatalf("refund error = %v, want ErrStaleEpoch", err)
