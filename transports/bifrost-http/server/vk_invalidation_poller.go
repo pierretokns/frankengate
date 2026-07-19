@@ -722,6 +722,15 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 	}
 
 	for _, event := range events {
+		// Do not continue mutating the pod-local authority after shutdown or a
+		// cancelled bootstrap/poll.  Besides wasting work, advancing the cursor
+		// for events applied after cancellation can make the next lifecycle start
+		// appear caught up even though its predecessor never completed.  The
+		// event remains durable and will be retried from the last published
+		// cursor on the next poll.
+		if err := ctx.Err(); err != nil {
+			return false, err
+		}
 		started := time.Now()
 		if err := p.apply(ctx, event); err != nil {
 			return false, fmt.Errorf("apply virtual-key invalidation event %d: %w", event.ID, err)

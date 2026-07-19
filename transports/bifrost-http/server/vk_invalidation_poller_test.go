@@ -635,6 +635,29 @@ func TestVirtualKeyInvalidationPollerRetriesFailedEventWithoutSkippingIt(t *test
 	}
 }
 
+func TestVirtualKeyInvalidationPollerStopsBatchWhenContextCancelled(t *testing.T) {
+	store := &fakeVKInvalidationStore{
+		highWater: 2,
+		events: []tables.TableVirtualKeyInvalidationEvent{
+			{ID: 1, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-a", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion},
+			{ID: 2, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-b", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion},
+		},
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	var applied []uint64
+	poller := newVirtualKeyInvalidationPoller(store, func(_ context.Context, event tables.TableVirtualKeyInvalidationEvent) error {
+		applied = append(applied, event.ID)
+		cancel()
+		return nil
+	}, 10, time.Second)
+
+	_, err := poller.pollOnce(ctx)
+	require.ErrorIs(t, err, context.Canceled)
+	require.Equal(t, []uint64{1}, applied, "cancellation must stop the current batch before the next authority mutation")
+	require.Equal(t, uint64(1), poller.Cursor(), "only successfully applied events may advance the cursor")
+}
+
 func TestVirtualKeyInvalidationPollerRejectsOutOfOrderBatchWithoutAdvancingPastIt(t *testing.T) {
 	store := &fakeVKInvalidationStore{
 		highWater: 3,
