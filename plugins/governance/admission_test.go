@@ -467,6 +467,33 @@ func TestDurableCoordinatorEmitsExporterNeutralMetrics(t *testing.T) {
 	require.Equal(t, []string{"delivered"}, metrics.notifiers)
 }
 
+func TestDurableCoordinatorDoesNotCountAsyncEnqueueAsDelivered(t *testing.T) {
+	store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
+	metrics := &admissionMetricsSink{}
+	ctx := context.Background()
+	downstream := &failingOverdraftNotifier{err: errors.New("downstream unavailable")}
+	async := NewAsyncOverdraftNotifier(ctx, downstream, 1)
+	coordinator := &DurableReservationCoordinator{
+		Store: store, Estimator: excessUsageEstimator{}, Metrics: metrics,
+		Notifier: async, Overdraft: reservations.OverdraftPolicy{Allow: true},
+	}
+	coordinator.SetNotifierMetricObserver(func(outcome string, _ float64) {
+		metrics.NotifierObserved(context.Background(), outcome)
+	})
+	handle, err := coordinator.Reserve(ctx, AdmissionRequest{
+		RequestID: "async-metrics", Result: &EvaluationResult{BudgetInfo: []*configstoreTables.TableBudget{{ID: "budget-async-metrics"}}},
+	})
+	require.NoError(t, err)
+	require.NoError(t, coordinator.Settle(ctx, handle, AdmissionSettlement{}))
+	async.Close()
+	require.Equal(t, []string{"enqueued", "failed"}, metrics.notifiers,
+		"async enqueue must not be reported as delivered before downstream completion")
+}
+
+type failingOverdraftNotifier struct{ err error }
+
+func (n *failingOverdraftNotifier) Notify(context.Context, OverdraftEvent) error { return n.err }
+
 func (c *testReservationCoordinator) Settle(context.Context, any, AdmissionSettlement) error {
 	c.settled++
 	return nil

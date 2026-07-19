@@ -592,8 +592,16 @@ func (c *DurableReservationCoordinator) Settle(ctx context.Context, handle any, 
 				if c.Metrics != nil {
 					c.Metrics.NotifierObserved(ctx, "failed")
 				}
+				// AsyncOverdraftNotifier reports delivery outcomes through its
+				// observer, after the downstream SNS/webhook/email call completes.
+				// Counting Notify's successful enqueue as "delivered" would make
+				// Prometheus/SLO dashboards claim an alert was delivered even when
+				// the worker later failed or the process shut down. Synchronous
+				// notifiers still have a definitive outcome here.
 			} else if c.Metrics != nil {
-				c.Metrics.NotifierObserved(ctx, "delivered")
+				if _, asynchronous := notifier.(*AsyncOverdraftNotifier); !asynchronous {
+					c.Metrics.NotifierObserved(ctx, "delivered")
+				}
 			}
 		}
 		if c.Metrics != nil && (excess != reservations.Amount{}) {
