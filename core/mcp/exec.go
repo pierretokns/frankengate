@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/mark3labs/mcp-go/client"
+	"github.com/maximhq/bifrost/core/authorityepoch"
+	"github.com/maximhq/bifrost/core/mcpownership"
 	"github.com/maximhq/bifrost/core/schemas"
 )
 
@@ -110,6 +113,20 @@ func (m *MCPManager) executeToolWithHooks(
 	}
 
 	resp, bErr := m.RunWithPluginPipeline(ctx, request, func(preReq *schemas.BifrostMCPRequest) (*schemas.BifrostMCPResponse, error) {
+		var ownershipKey mcpownership.ConnectionKey
+		var ownershipClaim mcpownership.Claim
+		var ownershipOperation string
+		if m.ownershipRegistry != nil {
+			ownershipKey, ownershipOperation = mcpOwnershipKey(ctx, state, preReq)
+			var claimErr error
+			ownershipClaim, claimErr = m.ownershipRegistry.Claim(time.Now(), ownershipKey, m.ownerPod, m.ownershipTTL)
+			if claimErr != nil {
+				return nil, fmt.Errorf("MCP ownership claim denied: %w", claimErr)
+			}
+			if _, claimErr = m.ownershipRegistry.StartCall(time.Now(), ownershipKey, m.ownerPod, ownershipClaim.Fence, ownershipOperation); claimErr != nil {
+				return nil, fmt.Errorf("MCP ownership call denied: %w", claimErr)
+			}
+		}
 		var conn *client.Client
 		var release func()
 		if state != nil {
@@ -121,6 +138,12 @@ func (m *MCPManager) executeToolWithHooks(
 			defer release()
 		}
 		result, opErr := m.toolsManager.ExecuteTool(ctx, preReq, conn, executionConfig, toolNameMapping)
+		if m.ownershipRegistry != nil {
+			_, completeErr := m.ownershipRegistry.CompleteCall(time.Now(), ownershipKey, m.ownerPod, ownershipClaim.Fence, ownershipOperation, opErr == nil)
+			if completeErr != nil {
+				return nil, fmt.Errorf("MCP ownership completion denied: %w", completeErr)
+			}
+		}
 		if opErr != nil {
 			return nil, opErr
 		}
@@ -135,6 +158,31 @@ func (m *MCPManager) executeToolWithHooks(
 		return nil, bErr
 	}
 	return resp, nil
+}
+
+func mcpOwnershipKey(ctx *schemas.BifrostContext, state *schemas.MCPClientState, request *schemas.BifrostMCPRequest) (mcpownership.ConnectionKey, string) {
+	clientID := "code-mode"
+	if state != nil && state.ExecutionConfig != nil {
+		clientID = state.ExecutionConfig.ID
+		if clientID == "" {
+			clientID = state.ExecutionConfig.Name
+		}
+	}
+	principal := "anonymous"
+	if p, ok := ctx.Value(schemas.BifrostContextKeyAuthorizationPrincipal).(authorityepoch.Principal); ok {
+		principal = p.Tenant + ":" + p.Issuer + ":" + p.Subject
+	} else if vk, ok := ctx.Value(schemas.BifrostContextKeyGovernanceVirtualKeyID).(string); ok && vk != "" {
+		principal = "vk:" + vk
+	}
+	session := "request"
+	operationSession := session
+	if requestID, ok := ctx.Value(schemas.BifrostContextKeyRequestID).(string); ok && requestID != "" {
+		session = requestID
+		operationSession = requestID
+	} else {
+		operationSession = fmt.Sprintf("%s-%d", session, time.Now().UnixNano())
+	}
+	return mcpownership.ConnectionKey{ClientID: clientID, Principal: principal, SessionKey: session}, operationSession + ":" + request.GetToolName()
 }
 
 // prepareToolExecution resolves the tool to its owning MCP client and applies
