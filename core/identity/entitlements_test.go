@@ -42,6 +42,22 @@ func TestPolicyRejectsDuplicateAndEmptyRules(t *testing.T) {
 	}
 }
 
+func TestEntitlementsAuthorizeFailsClosedAndSupportsScopedGrants(t *testing.T) {
+	e := Entitlements{Models: []string{"claude-*"}, Providers: []string{"bedrock"}, ToolGroups: []string{"sql-*"}}
+	if err := e.Authorize("bedrock", "claude-sonnet", []string{"sql-query"}); err != nil {
+		t.Fatal(err)
+	}
+	for _, denied := range []struct{ provider, model, tool string }{
+		{"openai", "claude-sonnet", "sql-query"},
+		{"bedrock", "gpt-4", "sql-query"},
+		{"bedrock", "claude-sonnet", "web-fetch"},
+	} {
+		if err := e.Authorize(denied.provider, denied.model, []string{denied.tool}); err == nil {
+			t.Fatalf("expected entitlement denial for %+v", denied)
+		}
+	}
+}
+
 func equal(a, b []string) bool {
 	if len(a) != len(b) {
 		return false

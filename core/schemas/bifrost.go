@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+
 )
 
 const (
@@ -335,6 +336,7 @@ const (
 	BifrostContextKeyUserID                              BifrostContextKey = "bifrost-user-id"                    // string (to store the user ID (set by enterprise auth middleware - DO NOT SET THIS MANUALLY))
 	BifrostContextKeyUserName                            BifrostContextKey = "bifrost-user-name"                  // string (to store the user name (set by enterprise auth middleware - DO NOT SET THIS MANUALLY))
 	BifrostContextKeyAuthorizationPrincipal              BifrostContextKey = "bifrost-authorization-principal"    // authorityepoch.Principal value (immutable identity tuple set by trusted auth middleware - DO NOT SET THIS MANUALLY)
+	BifrostContextKeyIdentityEntitlements               BifrostContextKey = "bifrost-identity-entitlements"     // identity.Entitlements snapshot set by verified IdP/SCIM middleware; absent means legacy policy
 	BifrostContextKeyAuthorizationEpochReference         BifrostContextKey = "bifrost-authorization-epoch-ref"    // authorityepoch.Reference value (immutable authorization snapshot set by trusted auth middleware - DO NOT SET THIS MANUALLY)
 	BifrostContextKeyQueryScope                          BifrostContextKey = "bifrost-query-scope"                // configstore.QueryScope (func that mutates a query; set by upstream wrapper - DO NOT SET THIS MANUALLY)
 	BifrostContextKeyVisibilityFilterProvider            BifrostContextKey = "bifrost-visibility-filter-provider" // DEPRECATED: replaced by BifrostContextKeyQueryScope. Will be removed once all callers migrate.

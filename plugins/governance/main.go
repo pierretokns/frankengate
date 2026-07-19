@@ -1587,6 +1587,19 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 	}
 	// Getting provider and mode from the request
 	provider, model, _ := req.GetRequestFields()
+	// A verified IdP/SCIM entitlement snapshot is an additional reference
+	// monitor in front of provider effects. Absence preserves OSS compatibility;
+	// presence is authoritative and always fail-closed for missing grants.
+	if entitlements, present := schemas.IdentityEntitlementsFromContext(ctx); present {
+		tools, _ := ctx.Value(schemas.BifrostContextKeyMCPAddedTools).([]string)
+		if err := entitlements.Authorize(string(provider), model, tools); err != nil {
+			return req, &schemas.LLMPluginShortCircuit{Error: &schemas.BifrostError{
+				Type:       new("identity_entitlement_denied"),
+				StatusCode: new(403),
+				Error:      &schemas.ErrorField{Message: err.Error()},
+			}}, nil
+		}
+	}
 	if capabilityErr := p.validateCatalogCapabilityFor(provider, model, req.RequestType); capabilityErr != nil {
 		return req, &schemas.LLMPluginShortCircuit{Error: capabilityErr}, nil
 	}

@@ -12,8 +12,11 @@ import (
 )
 
 var (
-	ErrNoEntitlement = errors.New("identity: no matching entitlement")
-	ErrInvalidPolicy = errors.New("identity: invalid entitlement policy")
+	ErrNoEntitlement  = errors.New("identity: no matching entitlement")
+	ErrInvalidPolicy  = errors.New("identity: invalid entitlement policy")
+	ErrModelDenied    = errors.New("identity: model is not entitled")
+	ErrProviderDenied = errors.New("identity: provider is not entitled")
+	ErrToolDenied     = errors.New("identity: tool is not entitled")
 )
 
 // GroupRule maps one IdP group to the effective model/provider/tool grants.
@@ -34,6 +37,49 @@ type Entitlements struct {
 	Models        []string
 	Providers     []string
 	ToolGroups    []string
+}
+
+// AllowsModel, AllowsProvider, and AllowsTool are deliberately fail-closed:
+// an entitlement snapshot is authoritative only when it explicitly grants the
+// requested capability. A missing/empty grant never means unrestricted access.
+func (e Entitlements) AllowsModel(model string) bool { return matchesGrant(e.Models, model) }
+func (e Entitlements) AllowsProvider(provider string) bool {
+	return matchesGrant(e.Providers, provider)
+}
+func (e Entitlements) AllowsTool(tool string) bool { return matchesGrant(e.ToolGroups, tool) }
+
+// Authorize checks the provider/model and every tool in one immutable snapshot.
+// The returned errors are stable categories suitable for transport responses.
+func (e Entitlements) Authorize(provider, model string, tools []string) error {
+	if !e.AllowsProvider(provider) {
+		return ErrProviderDenied
+	}
+	if !e.AllowsModel(model) {
+		return ErrModelDenied
+	}
+	for _, tool := range tools {
+		if !e.AllowsTool(tool) {
+			return ErrToolDenied
+		}
+	}
+	return nil
+}
+
+func matchesGrant(grants []string, value string) bool {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return false
+	}
+	for _, raw := range grants {
+		grant := strings.TrimSpace(raw)
+		if grant == "*" || strings.EqualFold(grant, value) {
+			return true
+		}
+		if strings.HasSuffix(grant, "*") && strings.HasPrefix(strings.ToLower(value), strings.ToLower(strings.TrimSuffix(grant, "*"))) {
+			return true
+		}
+	}
+	return false
 }
 
 // Policy evaluates IdP groups. If RequireMatch is true, a token with no
