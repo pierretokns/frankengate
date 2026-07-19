@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net"
+	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -17,6 +18,21 @@ import (
 	"github.com/valyala/fasthttp"
 	"gorm.io/gorm"
 )
+
+// Integration-user-agent is an independent dashboard dimension. It must not
+// require user_ids to be present: callers commonly use it to compare SDKs or
+// harnesses across all users.
+func TestParseHistogramFiltersIntegrationUserAgentsWithoutUserIDs(t *testing.T) {
+	var req fasthttp.Request
+	req.SetRequestURI("/api/logs/dashboard?integration_user_agents=claude-code,python-sdk")
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Init(&req, &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 12345}, nil)
+
+	filters := parseHistogramFilters(ctx)
+	if got, want := filters.IntegrationUserAgents, []string{"claude-code", "python-sdk"}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("integration user agents = %#v, want %#v", got, want)
+	}
+}
 
 // TestShouldUseFilterDataCacheAllowsUnscopedEmptyQuery verifies unscoped
 // requests can still share the no-query filterdata cache.
