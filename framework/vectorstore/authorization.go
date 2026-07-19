@@ -160,6 +160,7 @@ func authorizedResult(result SearchResult, authority AuthorizationEnvelope, prin
 	props := result.Properties
 	if props == nil || stringValue(props[AuthorizationTenantKey]) != authority.TenantID ||
 		stringValue(props[AuthorizationPolicyVersion]) != authority.PolicyVersion ||
+		stringValue(props[AuthorizationSourceRevision]) != authority.SourceRevision ||
 		stringValue(props[AuthorizationIndexRevision]) != authority.IndexRevision {
 		return false
 	}

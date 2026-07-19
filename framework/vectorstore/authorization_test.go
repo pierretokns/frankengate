@@ -1,6 +1,7 @@
 package vectorstore
 
 import (
+	"context"
 	"reflect"
 	"testing"
 	"time"
@@ -173,6 +174,7 @@ func TestAuthorizationEnvelopePostFilterFailsClosed(t *testing.T) {
 	}{
 		{"wrong tenant", func(p map[string]interface{}) { p[AuthorizationTenantKey] = "tenant-b" }},
 		{"wrong policy", func(p map[string]interface{}) { p[AuthorizationPolicyVersion] = "policy-old" }},
+		{"stale source", func(p map[string]interface{}) { p[AuthorizationSourceRevision] = "source-old" }},
 		{"stale deletion", func(p map[string]interface{}) { p[AuthorizationDeletionEpoch] = int64(3) }},
 		{"over-classified", func(p map[string]interface{}) { p[AuthorizationClassification] = int64(3) }},
 		{"no principal overlap", func(p map[string]interface{}) { p[AuthorizationPrincipalsKey] = []interface{}{"team:other"} }},
@@ -188,6 +190,94 @@ func TestAuthorizationEnvelopePostFilterFailsClosed(t *testing.T) {
 		})
 	}
 }
+
+// TestAuthorizationAdversarialMatrix is intentionally backend-neutral. It is
+// the local oracle for adapters whose native filter semantics may be weaker or
+// whose indexes can lag an authority update. Every mutation must fail closed;
+// this protects the boundary before reranking, semantic-cache insertion, or
+// replay exposure.
+func TestAuthorizationAdversarialMatrix(t *testing.T) {
+	authority := validAuthorizationEnvelope()
+	base := validAuthorizationEnvelopeProperties()
+	cases := []struct {
+		name   string
+		mutate func(map[string]interface{})
+	}{
+		{"cross tenant", func(p map[string]interface{}) { p[AuthorizationTenantKey] = "tenant-b" }},
+		{"cross principal", func(p map[string]interface{}) { p[AuthorizationPrincipalsKey] = []string{"team:secret"} }},
+		{"stale policy", func(p map[string]interface{}) { p[AuthorizationPolicyVersion] = "policy-6" }},
+		{"stale source", func(p map[string]interface{}) { p[AuthorizationSourceRevision] = "source-8" }},
+		{"stale index", func(p map[string]interface{}) { p[AuthorizationIndexRevision] = "index-2" }},
+		{"tombstoned deletion epoch", func(p map[string]interface{}) { p[AuthorizationDeletionEpoch] = int64(3) }},
+		{"over-classified", func(p map[string]interface{}) { p[AuthorizationClassification] = int64(3) }},
+		{"missing authority", func(p map[string]interface{}) { delete(p, AuthorizationTenantKey) }},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			candidate := cloneProperties(base)
+			tc.mutate(candidate)
+			if authority.AllowsMetadata(candidate) {
+				t.Fatalf("adversarial candidate was accepted: %#v", candidate)
+			}
+		})
+	}
+}
+
+func TestAuthorizedStorePreservesNamespaceAndCacheIsolationPredicates(t *testing.T) {
+	backend := &namespaceRecordingBackend{results: []SearchResult{{ID: "same-id", Properties: validAuthorizationEnvelopeProperties()}}}
+	store, err := NewAuthorizedStore(backend)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, namespace := range []string{"tenant-a-cache", "tenant-b-cache"} {
+		if _, _, err := store.GetAll(t.Context(), validAuthorizationEnvelope(), namespace, nil, nil, nil, 10); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if len(backend.namespaces) != 2 || backend.namespaces[0] != "tenant-a-cache" || backend.namespaces[1] != "tenant-b-cache" {
+		t.Fatalf("namespace boundary was not preserved: %#v", backend.namespaces)
+	}
+	for i, queries := range backend.queries {
+		if len(queries) < 6 || queries[0].Field != AuthorizationTenantKey || queries[0].Value != "tenant-a" {
+			t.Fatalf("request %d missing mandatory cache authorization predicates: %#v", i, queries)
+		}
+	}
+}
+
+type namespaceRecordingBackend struct {
+	namespaces []string
+	queries    [][]Query
+	results    []SearchResult
+}
+
+func (b *namespaceRecordingBackend) Ping(context.Context) error { return nil }
+func (b *namespaceRecordingBackend) CreateNamespace(context.Context, string, int, map[string]VectorStoreProperties) error {
+	return nil
+}
+func (b *namespaceRecordingBackend) DeleteNamespace(context.Context, string) error { return nil }
+func (b *namespaceRecordingBackend) GetChunk(context.Context, string, string) (SearchResult, error) {
+	return b.results[0], nil
+}
+func (b *namespaceRecordingBackend) GetChunks(context.Context, string, []string) ([]SearchResult, error) {
+	return b.results, nil
+}
+func (b *namespaceRecordingBackend) GetAll(_ context.Context, namespace string, queries []Query, _ []string, cursor *string, _ int64) ([]SearchResult, *string, error) {
+	b.namespaces = append(b.namespaces, namespace)
+	b.queries = append(b.queries, queries)
+	return b.results, cursor, nil
+}
+func (b *namespaceRecordingBackend) GetNearest(context.Context, string, []float32, []Query, []string, float64, int64) ([]SearchResult, error) {
+	return b.results, nil
+}
+func (b *namespaceRecordingBackend) RequiresVectors() bool { return true }
+func (b *namespaceRecordingBackend) Add(context.Context, string, string, []float32, map[string]interface{}) error {
+	return nil
+}
+func (b *namespaceRecordingBackend) Delete(context.Context, string, string) error { return nil }
+func (b *namespaceRecordingBackend) DeleteAll(context.Context, string, []Query) ([]DeleteResult, error) {
+	return nil, nil
+}
+func (b *namespaceRecordingBackend) Close(context.Context, string) error { return nil }
 
 func TestAuthorizationEnvelopePostFilterAcceptsJSONMetadata(t *testing.T) {
 	e := validAuthorizationEnvelope()
