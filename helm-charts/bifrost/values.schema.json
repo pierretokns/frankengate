@@ -109,6 +109,13 @@
         },
         "annotations": {
           "type": "object"
+        },
+        "sessionAffinity": {
+          "type": "string",
+          "enum": ["None", "ClientIP"]
+        },
+        "sessionAffinityConfig": {
+          "type": "object"
         }
       }
     },
@@ -287,6 +294,10 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 100
+        },
+        "customMetrics": {
+          "type": "array",
+          "items": { "type": "object" }
         }
       }
     },
@@ -304,6 +315,18 @@
     },
     "affinity": {
       "type": "object"
+    },
+    "topologySpreadConstraints": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "podDisruptionBudget": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minAvailable": { "type": ["integer", "string"], "minimum": 0 },
+        "maxUnavailable": { "type": ["integer", "string"], "minimum": 0 }
+      }
     },
     "strategy": {
       "type": "object",
