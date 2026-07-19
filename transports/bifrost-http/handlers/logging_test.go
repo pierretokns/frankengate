@@ -48,6 +48,26 @@ func TestShouldUseFilterDataCacheRejectsScopedContext(t *testing.T) {
 	}
 }
 
+func TestRedactLogForAuditExportRemovesPayloadsAndSecrets(t *testing.T) {
+	log := &logstore.Log{
+		ID: "audit-1", Provider: "openai", Model: "gpt-test", RawRequest: "secret-input",
+		RawResponse: "secret-output", InputHistory: "[{}]", OutputMessage: "{}",
+		Metadata:          func() *string { v := `{"pii":"value"}`; return &v }(),
+		PluginLogs:        `{"headers":{"authorization":"secret"}}`,
+		RoutingEngineLogs: "private routing context", RedactionMapping: "encrypted-map",
+	}
+	redactLogForAuditExport(log)
+	if log.RawRequest != "" || log.RawResponse != "" || log.InputHistory != "" || log.OutputMessage != "" {
+		t.Fatalf("audit export retained payload content: %#v", log)
+	}
+	if log.Metadata != nil || log.PluginLogs != "" || log.RoutingEngineLogs != "" || log.RedactionMapping != "" {
+		t.Fatalf("audit export retained sensitive metadata: %#v", log)
+	}
+	if log.ID != "audit-1" || log.Provider != "openai" || log.Model != "gpt-test" {
+		t.Fatalf("audit export removed operational dimensions: %#v", log)
+	}
+}
+
 func TestGetDashboard(t *testing.T) {
 	tests := []struct {
 		name       string

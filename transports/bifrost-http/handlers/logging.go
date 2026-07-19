@@ -266,6 +266,11 @@ func (h *LoggingHandler) shouldHideDeletedVirtualKeysInFilters() bool {
 func (h *LoggingHandler) RegisterRoutes(r *router.Router, middlewares ...schemas.BifrostHTTPMiddleware) {
 	// LLM Log retrieval with filtering, search, and pagination
 	r.GET("/api/logs", lib.ChainMiddlewares(h.getLogs, middlewares...))
+	// Redacted audit export is intentionally a separate surface: it is bounded
+	// and never includes request/response content, even when content logging is
+	// enabled for the dashboard. The underlying LogStore still applies any
+	// tenant/team/user scope carried by the request context.
+	r.GET("/api/logs/export", lib.ChainMiddlewares(h.exportLogs, middlewares...))
 	r.GET("/api/logs/sessions/{session_id}/summary", lib.ChainMiddlewares(h.getLogSessionSummaryByID, middlewares...))
 	r.GET("/api/logs/sessions/{session_id}", lib.ChainMiddlewares(h.getLogSessionByID, middlewares...))
 	r.GET("/api/logs/{id}", lib.ChainMiddlewares(h.getLogByID, middlewares...))
@@ -300,6 +305,108 @@ func (h *LoggingHandler) RegisterRoutes(r *router.Router, middlewares ...schemas
 	r.GET("/api/mcp-logs/histogram/top-tools", lib.ChainMiddlewares(h.getMCPTopTools, middlewares...))
 	r.GET("/api/mcp-logs/{id}", lib.ChainMiddlewares(h.getMCPLogByID, middlewares...))
 	r.DELETE("/api/mcp-logs", lib.ChainMiddlewares(h.deleteMCPLogs, middlewares...))
+}
+
+const auditExportLimit = 1000
+
+// redactLogForAuditExport removes user/model payloads and other high-cardinality
+// content from an audit export while retaining operational dimensions (IDs,
+// status, latency, token totals, provider/model and governance references).
+// Keep this explicit rather than relying on json:"-" tags: logstore parsing
+// populates virtual fields that are otherwise serializable.
+func redactLogForAuditExport(log *logstore.Log) {
+	if log == nil {
+		return
+	}
+	log.AttemptTrail = ""
+	log.InputHistory, log.ResponsesInputHistory = "", ""
+	log.OutputMessage, log.ResponsesOutput = "", ""
+	log.EmbeddingOutput, log.RerankOutput = "", ""
+	log.OCROutput, log.Params, log.Tools, log.ToolCalls = "", "", "", ""
+	log.SpeechInput, log.TranscriptionInput, log.OCRInput = "", "", ""
+	log.ImageGenerationInput, log.ImageEditInput, log.ImageVariationInput = "", "", ""
+	log.VideoGenerationOutput, log.VideoRetrieveOutput = "", ""
+	log.VideoDownloadOutput, log.VideoListOutput, log.VideoDeleteOutput = "", "", ""
+	log.SpeechOutput, log.TranscriptionOutput = "", ""
+	log.ImageGenerationOutput, log.ListModelsOutput = "", ""
+	log.CacheDebug, log.ErrorDetails = "", ""
+	log.RawRequest, log.RawResponse = "", ""
+	log.PassthroughRequestBody, log.PassthroughResponseBody = "", ""
+	log.RoutingEngineLogs, log.PluginLogs, log.Metadata = "", "", nil
+	log.RedactionData, log.RedactionMapping, log.RevealRedactionMapping = nil, "", nil
+	log.InputHistoryParsed, log.ResponsesInputHistoryParsed = nil, nil
+	log.OutputMessageParsed, log.ResponsesOutputParsed = nil, nil
+	log.EmbeddingOutputParsed, log.RerankOutputParsed = nil, nil
+	log.OCROutputParsed, log.ParamsParsed = nil, nil
+	log.ToolsParsed, log.ToolCallsParsed = nil, nil
+	log.TokenUsageParsed, log.ErrorDetailsParsed = nil, nil
+	log.SpeechInputParsed, log.TranscriptionInputParsed, log.OCRInputParsed = nil, nil, nil
+	log.ImageGenerationInputParsed, log.ImageEditInputParsed = nil, nil
+	log.ImageVariationInputParsed, log.SpeechOutputParsed = nil, nil
+	log.TranscriptionOutputParsed, log.ImageGenerationOutputParsed = nil, nil
+}
+
+// exportLogs handles GET /api/logs/export. It deliberately supports only a
+// small, bounded filter surface; callers needing rich interactive filtering
+// should use /api/logs. This prevents an export request from becoming an
+// unbounded database scan or an accidental content dump.
+func (h *LoggingHandler) exportLogs(ctx *fasthttp.RequestCtx) {
+	limit := 100
+	if raw := string(ctx.QueryArgs().Peek("limit")); raw != "" {
+		parsed, err := strconv.Atoi(raw)
+		if err != nil || parsed <= 0 || parsed > auditExportLimit {
+			SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("limit must be between 1 and %d", auditExportLimit))
+			return
+		}
+		limit = parsed
+	}
+	offset := 0
+	if raw := string(ctx.QueryArgs().Peek("offset")); raw != "" {
+		parsed, err := strconv.Atoi(raw)
+		if err != nil || parsed < 0 {
+			SendError(ctx, fasthttp.StatusBadRequest, "offset must be a non-negative integer")
+			return
+		}
+		offset = parsed
+	}
+	filters := &logstore.SearchFilters{}
+	if raw := string(ctx.QueryArgs().Peek("team_ids")); raw != "" {
+		filters.TeamIDs = parseCommaSeparated(raw)
+	}
+	if raw := string(ctx.QueryArgs().Peek("user_ids")); raw != "" {
+		filters.UserIDs = parseCommaSeparated(raw)
+	}
+	if raw := string(ctx.QueryArgs().Peek("virtual_key_ids")); raw != "" {
+		filters.VirtualKeyIDs = parseCommaSeparated(raw)
+	}
+	if raw := string(ctx.QueryArgs().Peek("start_time")); raw != "" {
+		if parsed, err := time.Parse(time.RFC3339Nano, raw); err == nil {
+			filters.StartTime = &parsed
+		} else {
+			SendError(ctx, fasthttp.StatusBadRequest, "start_time must be RFC3339")
+			return
+		}
+	}
+	if raw := string(ctx.QueryArgs().Peek("end_time")); raw != "" {
+		if parsed, err := time.Parse(time.RFC3339Nano, raw); err == nil {
+			filters.EndTime = &parsed
+		} else {
+			SendError(ctx, fasthttp.StatusBadRequest, "end_time must be RFC3339")
+			return
+		}
+	}
+	result, err := h.logManager.Search(ctx, filters, &logstore.PaginationOptions{Limit: limit, Offset: offset, SortBy: "timestamp", Order: "desc"})
+	if err != nil {
+		SendError(ctx, fasthttp.StatusInternalServerError, "audit export failed")
+		return
+	}
+	if result == nil {
+		result = &logstore.SearchResult{}
+	}
+	for i := range result.Logs {
+		redactLogForAuditExport(&result.Logs[i])
+	}
+	SendJSON(ctx, result)
 }
 
 // getLogSessionByID handles GET /api/logs/sessions/{session_id} - Get logs in a single session.
