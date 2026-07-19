@@ -8,6 +8,7 @@ import {
 	useGetAlertRulesQuery,
 	useUpdateAlertRuleMutation,
 } from "@/lib/store/apis/alertingApi";
+import type { AlertingScope } from "@/lib/store/apis/alertingApi";
 
 /**
  * The fallback view intentionally exposes operational metadata only.  It does
@@ -15,8 +16,12 @@ import {
  * the authenticated alerting API.
  */
 export default function AlertRulesView() {
-	const { data, isLoading, error } = useGetAlertRulesQuery();
-	const { data: historyData } = useGetAlertHistoryQuery();
+	const [viewScope, setViewScope] = useState<"global" | "team" | "user">("global");
+	const [viewScopeId, setViewScopeId] = useState("");
+	const scopeFilter: AlertingScope = { scope: viewScope, scope_id: viewScope === "global" ? undefined : viewScopeId.trim() || undefined };
+	const scopedQuery = viewScope !== "global" && !viewScopeId.trim() ? undefined : scopeFilter;
+	const { data, isLoading, error } = useGetAlertRulesQuery(scopedQuery);
+	const { data: historyData } = useGetAlertHistoryQuery(scopedQuery);
 	const [create] = useCreateAlertRuleMutation();
 	const [update, { isLoading: isUpdating }] = useUpdateAlertRuleMutation();
 	const [remove] = useDeleteAlertRuleMutation();
@@ -33,6 +38,14 @@ export default function AlertRulesView() {
 			<div>
 				<h1 className="text-2xl font-semibold">Alert rules</h1>
 				<p className="text-sm text-muted-foreground">Manage delivery policies and inspect their latest operational status.</p>
+			</div>
+			<div className="flex flex-wrap items-center gap-2 rounded border p-3" data-testid="alert-scope-filter">
+				<label className="text-sm" htmlFor="alert-view-scope">View</label>
+				<select id="alert-view-scope" className="rounded border px-2 py-1" value={viewScope} onChange={(e) => setViewScope(e.target.value as "global" | "team" | "user")}>
+					<option value="global">All users</option><option value="team">Team</option><option value="user">User</option>
+				</select>
+				{viewScope !== "global" && <input className="rounded border px-2 py-1" value={viewScopeId} onChange={(e) => setViewScopeId(e.target.value)} placeholder={`${viewScope} ID`} aria-label={`View ${viewScope} ID`} />}
+				{viewScope !== "global" && !viewScopeId.trim() && <span className="text-xs text-muted-foreground">Enter an ID to load the scoped view.</span>}
 			</div>
 			<form
 				className="flex flex-wrap gap-3 rounded border p-4"
