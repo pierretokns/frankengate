@@ -48,6 +48,22 @@ type RoutingContext struct {
 	computeComplexity        func() *complexity.ComplexityResult // Lazy complexity computation; called at most once when a rule references "complexity_tier"
 }
 
+// deriveModelFamily returns a stable, provider-agnostic family label for
+// routing rules. Model aliases often include deployment names (for example
+// "claude-gpt-soul" or "bedrock/nova-pro"); matching the raw model string
+// makes rules brittle. This deliberately uses a small, deterministic lexical
+// classifier and returns "unknown" for unrecognised models rather than making
+// a risky guess.
+func deriveModelFamily(model string) string {
+	s := strings.ToLower(strings.TrimSpace(model))
+	for _, family := range []string{"claude", "gpt", "o1", "o3", "o4", "gemini", "llama", "mistral", "mixtral", "nova", "titan", "command", "deepseek", "qwen", "grok", "sonnet", "haiku", "opus"} {
+		if strings.Contains(s, family) {
+			return family
+		}
+	}
+	return "unknown"
+}
+
 type RoutingEngine struct {
 	store         GovernanceStore
 	logger        schemas.Logger
@@ -444,6 +460,7 @@ func extractRoutingVariables(ctx *RoutingContext) (map[string]interface{}, error
 
 	// Basic request context
 	variables["model"] = ctx.Model
+	variables["model_family"] = deriveModelFamily(ctx.Model)
 	variables["provider"] = string(ctx.Provider)
 	variables["request_type"] = ctx.RequestType // Normalized request type (e.g., "chat_completion", "embedding")
 
@@ -602,6 +619,7 @@ func createCELEnvironment() (*cel.Env, error) {
 	return cel.NewEnv(
 		// Basic request context
 		cel.Variable("model", cel.StringType),
+		cel.Variable("model_family", cel.StringType),
 		cel.Variable("provider", cel.StringType),
 		cel.Variable("request_type", cel.StringType), // Normalized request type (e.g., "chat_completion", "embedding", "text_completion")
 
