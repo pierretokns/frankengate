@@ -151,6 +151,46 @@ func TestReplayRedactsStructuredStringMapAttributes(t *testing.T) {
 	}
 }
 
+func TestReplayRedactsNestedStructuredSlices(t *testing.T) {
+	store, err := NewJSONLReplayStore(t.TempDir(), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	trace := &schemas.Trace{TraceID: "nested", Attributes: map[string]any{
+		"tenant": "acme",
+		"dimensions": []map[string]any{{
+			"desk":  "alice@example.com",
+			"email": "alice@example.com",
+			"safe":  "research",
+		}},
+	}}
+	if err := store.Put(context.Background(), trace); err != nil {
+		t.Fatal(err)
+	}
+	record, err := store.Get(context.Background(), "acme", "nested")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dimensions, ok := record.Trace.Attributes["dimensions"].([]any)
+	if !ok || len(dimensions) != 1 {
+		t.Fatalf("nested dimensions changed type or missing: %#v", record.Trace.Attributes["dimensions"])
+	}
+	clean, ok := dimensions[0].(map[string]any)
+	if !ok {
+		t.Fatalf("nested dimensions item changed type: %#v", dimensions[0])
+	}
+	if got := clean["desk"]; got != "[REDACTED]" {
+		t.Fatalf("nested dimension PII leaked: %#v", got)
+	}
+	if _, ok := clean["email"]; ok {
+		t.Fatal("identity-like nested dimension key was persisted")
+	}
+	if got := clean["safe"]; got != "research" {
+		t.Fatalf("safe nested dimension changed: %#v", got)
+	}
+}
+
 func TestReplayRedactsRootSpanAndEventAttributes(t *testing.T) {
 	store, err := NewJSONLReplayStore(t.TempDir(), true)
 	if err != nil {

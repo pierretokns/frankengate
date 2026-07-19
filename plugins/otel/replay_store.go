@@ -612,6 +612,35 @@ func redactReplayStrings(value any) any {
 			out[i] = redactReplayStrings(v[i])
 		}
 		return out
+	case []map[string]any:
+		// Some OTEL/connector integrations retain structured dimensions as a
+		// slice of maps.  JSON decoding normally turns this into []any, but
+		// traces assembled in Go can contain the concrete slice type directly.
+		// Handle it explicitly so nested tool/user data cannot bypass the
+		// recursive map sanitizer.
+		out := make([]map[string]any, len(v))
+		for i := range v {
+			if v[i] == nil {
+				continue
+			}
+			clean := redactReplayStrings(v[i])
+			if m, ok := clean.(map[string]any); ok {
+				out[i] = m
+			}
+		}
+		return out
+	case []map[string]string:
+		out := make([]map[string]string, len(v))
+		for i := range v {
+			if v[i] == nil {
+				continue
+			}
+			clean := redactReplayStrings(v[i])
+			if m, ok := clean.(map[string]string); ok {
+				out[i] = m
+			}
+		}
+		return out
 	case map[string]any:
 		out := make(map[string]any, len(v))
 		for key, child := range v {
