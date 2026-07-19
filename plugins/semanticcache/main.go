@@ -857,6 +857,20 @@ func (plugin *Plugin) ClearCacheForCacheID(cacheID string) error {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), CacheSetTimeout)
 	defer cancel()
+	// Point IDs live in a shared vector namespace.  Never allow this helper to
+	// delete an entry owned by another plugin or application merely because a
+	// caller supplied its ID.  A read-before-delete is intentional defense in
+	// depth for adapters that cannot express a marker predicate on point
+	// deletes; bulk deletion already applies the same marker filter below.
+	entry, err := plugin.store.GetChunk(ctx, plugin.config.VectorStoreNamespace, cacheID)
+	if err != nil {
+		plugin.logger.Warn("Failed to inspect cache entry %s before deletion: %v", cacheID, err)
+		return err
+	}
+	marker, ok := entry.Properties["from_bifrost_semantic_cache_plugin"].(bool)
+	if !ok || !marker {
+		return fmt.Errorf("cache entry %s is not owned by semantic cache plugin", cacheID)
+	}
 	if err := plugin.store.Delete(ctx, plugin.config.VectorStoreNamespace, cacheID); err != nil {
 		plugin.logger.Warn("Failed to delete cache entry %s: %v", cacheID, err)
 		return err

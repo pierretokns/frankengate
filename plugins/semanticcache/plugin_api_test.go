@@ -110,6 +110,9 @@ func TestClearCacheForCacheID_EmptyIDRejected(t *testing.T) {
 func TestClearCacheForCacheID_PointDelete(t *testing.T) {
 	store := newObservableStore()
 	plugin := newTestPlugin(t, store)
+	store.chunks["cache-abc"] = vectorstore.SearchResult{ID: "cache-abc", Properties: map[string]interface{}{
+		"from_bifrost_semantic_cache_plugin": true,
+	}}
 
 	if err := plugin.ClearCacheForCacheID("cache-abc"); err != nil {
 		t.Fatalf("ClearCacheForCacheID failed: %v", err)
@@ -118,6 +121,23 @@ func TestClearCacheForCacheID_PointDelete(t *testing.T) {
 	defer store.mu.Unlock()
 	if len(store.deleteIDs) != 1 || store.deleteIDs[0] != "cache-abc" {
 		t.Fatalf("expected single Delete call for 'cache-abc', got %v", store.deleteIDs)
+	}
+}
+
+func TestClearCacheForCacheIDRejectsForeignEntry(t *testing.T) {
+	store := newObservableStore()
+	plugin := newTestPlugin(t, store)
+	store.chunks["foreign"] = vectorstore.SearchResult{ID: "foreign", Properties: map[string]interface{}{
+		"from_bifrost_semantic_cache_plugin": false,
+	}}
+
+	if err := plugin.ClearCacheForCacheID("foreign"); err == nil {
+		t.Fatal("expected foreign vector entry to be rejected")
+	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	if len(store.deleteIDs) != 0 {
+		t.Fatalf("foreign entry was deleted: %v", store.deleteIDs)
 	}
 }
 
