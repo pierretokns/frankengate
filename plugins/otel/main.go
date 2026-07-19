@@ -743,6 +743,13 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 			logger.Warn("failed to persist durable replay for trace %s: %v", trace.TraceID, err)
 		}
 	}
+	// TracingMiddleware invokes Inject after the response is written.  The
+	// request context is therefore commonly canceled by the transport before
+	// this asynchronous export starts.  Use a short, independent deadline for
+	// collector delivery as well as replay persistence; otherwise every
+	// completed request can be silently dropped at the HTTP/gRPC boundary.
+	exportCtx, exportCancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer exportCancel()
 	// Emit the trace to every configured profile's collector, and record metrics against
 	// each profile's exporter. Conversion is per-target because the resource service name
 	// differs per profile; everything else (filter, instance attrs) is shared.
@@ -754,18 +761,18 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 			if t.client != nil {
 				started := time.Now()
 				resourceSpan := p.convertTraceToResourceSpan(t.serviceName, trace, t.requestHeaders, t.disableContentLogging, t.groupTracesBySession, t.disableRootSpanContent)
-				err := t.client.Emit(ctx, []*ResourceSpan{resourceSpan})
+				err := t.client.Emit(exportCtx, []*ResourceSpan{resourceSpan})
 				if t.metricsExporter != nil {
 					// service_name is configured by the operator and bounded by the
 					// profile count; do not label this metric with endpoint or trace ID.
-					t.metricsExporter.RecordTraceExport(ctx, err == nil, time.Since(started).Seconds(), attribute.String("service_name", t.serviceName))
+					t.metricsExporter.RecordTraceExport(exportCtx, err == nil, time.Since(started).Seconds(), attribute.String("service_name", t.serviceName))
 				}
 				if err != nil {
 					logger.Error("failed to emit trace %s to %s: %v", trace.TraceID, t.url, err)
 				}
 			}
 			if t.metricsExporter != nil {
-				p.recordMetricsFromTrace(ctx, t.metricsExporter, trace)
+				p.recordMetricsFromTrace(exportCtx, t.metricsExporter, trace)
 			}
 		}(t)
 	}

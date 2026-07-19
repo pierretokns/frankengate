@@ -14,6 +14,18 @@ type replayContextStore struct {
 	putErr error
 }
 
+type exportContextClient struct {
+	ctx context.Context
+	err error
+}
+
+func (c *exportContextClient) Emit(ctx context.Context, _ []*ResourceSpan) error {
+	c.ctx = ctx
+	c.err = ctx.Err()
+	return c.err
+}
+func (*exportContextClient) Close() error { return nil }
+
 func (s *replayContextStore) Put(ctx context.Context, _ *schemas.Trace) error {
 	s.ctx = ctx
 	s.putErr = ctx.Err()
@@ -48,6 +60,25 @@ func TestInjectReplayPersistenceDoesNotInheritCanceledRequest(t *testing.T) {
 	// and does not leave a long-lived context behind.
 	if remaining := time.Until(mustDeadline(t, store.ctx)); remaining <= 0 || remaining > 5*time.Second {
 		t.Fatalf("unexpected replay deadline remaining: %s", remaining)
+	}
+}
+
+func TestInjectTraceExportDoesNotInheritCanceledRequest(t *testing.T) {
+	client := &exportContextClient{}
+	p := &OtelPlugin{targets: []*otelTarget{{client: client, serviceName: "test"}}}
+	requestCtx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if err := p.Inject(requestCtx, &schemas.Trace{TraceID: "trace", Attributes: map[string]any{"tenant": "acme"}}); err != nil {
+		t.Fatalf("Inject returned error: %v", err)
+	}
+	if client.ctx == nil {
+		t.Fatal("trace exporter was not called")
+	}
+	if client.err != nil {
+		t.Fatalf("trace export inherited canceled request context: %v", client.err)
+	}
+	if remaining, ok := client.ctx.Deadline(); !ok || time.Until(remaining) <= 0 || time.Until(remaining) > 30*time.Second {
+		t.Fatalf("trace export must have a bounded independent deadline, deadline=%v", remaining)
 	}
 }
 
