@@ -113,6 +113,44 @@ func TestReplayOptInStillRedactsHeadersIdentityAndToolPayloads(t *testing.T) {
 	}
 }
 
+func TestReplayRedactsStructuredStringMapAttributes(t *testing.T) {
+	store, err := NewJSONLReplayStore(t.TempDir(), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	trace := &schemas.Trace{TraceID: "dimensions", Attributes: map[string]any{
+		"tenant": "acme",
+		// x-bf-dim-* headers are represented as map[string]string. This must
+		// receive the same PII treatment as ordinary string attributes.
+		"bifrost.dimensions": map[string]string{
+			"desk": "alice@example.com",
+			"safe": "research",
+			"email": "alice@example.com",
+		},
+	}}
+	if err := store.Put(context.Background(), trace); err != nil {
+		t.Fatal(err)
+	}
+	record, err := store.Get(context.Background(), "acme", "dimensions")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dimensions, ok := record.Trace.Attributes["bifrost.dimensions"].(map[string]any)
+	if !ok {
+		t.Fatalf("structured dimensions changed type or missing: %#v", record.Trace.Attributes["bifrost.dimensions"])
+	}
+	if got := dimensions["desk"]; got != "[REDACTED]" {
+		t.Fatalf("dimension PII leaked: %#v", got)
+	}
+	if _, ok := dimensions["email"]; ok {
+		t.Fatal("identity-like dimension key was persisted")
+	}
+	if got := dimensions["safe"]; got != "research" {
+		t.Fatalf("safe dimension changed: %#v", got)
+	}
+}
+
 func TestJSONLReplayStoreListIsTenantScopedBoundedAndRestartSafe(t *testing.T) {
 	dir := t.TempDir()
 	store, err := NewJSONLReplayStore(dir, false)

@@ -566,6 +566,19 @@ func redactReplayStrings(value any) any {
 	switch v := value.(type) {
 	case string:
 		return privacy.RedactText(v)
+	case map[string]string:
+		// Trace dimensions and other structured attributes are commonly kept as
+		// map[string]string (rather than map[string]any).  Leaving this concrete
+		// type untouched would bypass the recursive privacy boundary and persist
+		// emails, phone numbers, or other user data in an opted-in replay file.
+		out := make(map[string]string, len(v))
+		for key, child := range v {
+			if replayPIIKey(key) {
+				continue
+			}
+			out[key] = privacy.RedactText(child)
+		}
+		return out
 	case []string:
 		out := append([]string(nil), v...)
 		for i := range out {
