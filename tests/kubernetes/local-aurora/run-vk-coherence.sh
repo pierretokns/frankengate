@@ -92,7 +92,7 @@ if [[ -n "$existing_postgres_ip" && "$existing_postgres_ip" != "None" ]]; then
   echo "recreating drifted test-only postgres Service (clusterIP=$existing_postgres_ip, expected headless)" >&2
   kubectl -n "$NAMESPACE" delete service/postgres --wait=true
 fi
-sed -E "s#^([[:space:]]*)image: pgvector/pgvector:0.8.1-pg16@sha256:[[:xdigit:]]+#\\1image: $POSTGRES_IMAGE#" \
+sed -E "s#^([[:space:]]*)image: (postgres|pgvector/pgvector):[^[:space:]]+#\\1image: $POSTGRES_IMAGE#" \
   "$ROOT/tests/kubernetes/local-aurora/postgres.yaml" > "$WORK_DIR/postgres.yaml"
 kubectl apply -f "$WORK_DIR/postgres.yaml"
 live_postgres_image="$(kubectl -n "$NAMESPACE" get pod/postgres-0 -o jsonpath='{.spec.containers[0].image}' 2>/dev/null || true)"
