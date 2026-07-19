@@ -176,3 +176,23 @@ func TestPreMCPConnectionHook_DeniesBeforeReadingStaleVirtualKeyCache(t *testing
 	require.Equal(t, 503, *shortCircuit.Error.StatusCode)
 	require.Equal(t, string(DecisionVirtualKeyAuthorityStale), *shortCircuit.Error.Type)
 }
+
+func TestPreMCPHook_CodeModeToolStillEnforcesVirtualKey(t *testing.T) {
+	logger := NewMockLogger()
+	store, err := NewLocalGovernanceStore(context.Background(), logger, nil, &configstore.GovernanceConfig{}, nil)
+	require.NoError(t, err)
+	plugin := &GovernancePlugin{
+		store:    store,
+		resolver: NewBudgetResolver(store, nil, logger, nil),
+	}
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyVirtualKey, "revoked-code-mode-vk")
+
+	_, shortCircuit, err := plugin.PreMCPHook(ctx, &schemas.BifrostMCPRequest{
+		RequestType: schemas.MCPRequestTypeExecuteTool,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, shortCircuit, "code-mode meta tools must not bypass VK governance")
+	require.NotNil(t, shortCircuit.Error)
+	require.Equal(t, "virtual_key_not_found", *shortCircuit.Error.Type)
+}

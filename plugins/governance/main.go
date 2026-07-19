@@ -1852,11 +1852,6 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 		recordIdentityEntitlementDecision(ctx, true, "mcp_tool", "granted")
 	}
 
-	// Skip governance for codemode tools
-	if bifrost.IsCodemodeTool(toolName) {
-		return req, nil, nil
-	}
-
 	// Validate required headers are present
 	if headerErr := p.validateRequiredHeaders(ctx); headerErr != nil {
 		return req, &schemas.MCPPluginShortCircuit{Error: headerErr}, nil
