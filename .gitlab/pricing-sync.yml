@@ -1,5 +1,7 @@
 # Include this file from the FrankenGate GitLab project and create a daily
-# pipeline schedule. The job only publishes after validation succeeds.
+# pipeline schedule. The job only publishes after validation succeeds. The
+# generated files live under docs/ so the normal branded site deployment can
+# publish them at /data/pricing/.
 pricing-sync:
   image: golang:1.26
   stage: maintenance
@@ -7,10 +9,10 @@ pricing-sync:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - when: manual
   script:
-    # Mintlify publishes the docs/ directory as the site root. Keep the
-    # generated cache in that same tree so the browser loader and the
-    # deployment artifact address the identical path.
-    - go run ./scripts/pricing-sync -url "${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}" -out docs/data/pricing
+    # Keep this tool independently runnable: the repository's developer
+    # go.work is intentionally ignored and does not exist in every runner.
+    - cd scripts/pricing-sync
+    - go run . -url "${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}" -out ../../docs/data/pricing
   artifacts:
     name: frankengate-pricing-$CI_COMMIT_SHA
     expire_in: 1 year
@@ -18,5 +20,6 @@ pricing-sync:
       - docs/data/pricing/latest.json
       - docs/data/pricing/latest-upstream.json
       - docs/data/pricing/archive/
-  # A publishing step (Pages, object storage, or the site's deploy job) should
-  # consume latest.json; this job deliberately does not commit generated data.
+  # The normal docs/Pages deployment consumes these files. Keeping the
+  # validated snapshot as an artifact also gives us a last-known-good cache
+  # when the upstream datasheet is unavailable on a later run.
