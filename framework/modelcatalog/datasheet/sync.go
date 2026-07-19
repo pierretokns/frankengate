@@ -222,10 +222,12 @@ func (s *Store) loadPricingFromURL(ctx context.Context) (map[string]Entry, error
 func (s *Store) populateModelParamsFromPricing(pricingData map[string]Entry) {
 	modelParamsEntries := make(map[string]providerUtils.ModelParams)
 	for modelKey, entry := range pricingData {
-		if entry.MaxOutputTokens != nil {
+		if entry.MaxOutputTokens != nil || entry.ContextLength != nil || entry.MaxInputTokens != nil {
 			modelName := extractModelName(modelKey)
 			modelParamsEntries[modelName] = providerUtils.ModelParams{
 				MaxOutputTokens: entry.MaxOutputTokens,
+				ContextLength:   entry.ContextLength,
+				MaxInputTokens:  entry.MaxInputTokens,
 			}
 		}
 	}

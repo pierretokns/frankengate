@@ -119,16 +119,20 @@ func Init(ctx context.Context, config *Config, configStore configstore.ConfigSto
 			}
 			var p struct {
 				MaxOutputTokens       *int  `json:"max_output_tokens"`
+				ContextLength         *int  `json:"context_length"`
+				MaxInputTokens        *int  `json:"max_input_tokens"`
 				VertexMultiRegionOnly *bool `json:"vertex_multi_region_only"`
 			}
 			if err := json.Unmarshal([]byte(params.Data), &p); err != nil {
 				return nil
 			}
-			if p.MaxOutputTokens == nil && p.VertexMultiRegionOnly == nil {
+			if p.MaxOutputTokens == nil && p.ContextLength == nil && p.MaxInputTokens == nil && p.VertexMultiRegionOnly == nil {
 				return nil
 			}
 			return &providerUtils.ModelParams{
 				MaxOutputTokens:         p.MaxOutputTokens,
+				ContextLength:           p.ContextLength,
+				MaxInputTokens:          p.MaxInputTokens,
 				IsVertexMultiRegionOnly: p.VertexMultiRegionOnly,
 			}
 		})

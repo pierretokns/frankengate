@@ -221,10 +221,14 @@ func (s *Store) applyModelParameters(paramsData map[string]json.RawMessage) int 
 
 		var p struct {
 			MaxOutputTokens *int `json:"max_output_tokens"`
+			ContextLength   *int `json:"context_length"`
+			MaxInputTokens  *int `json:"max_input_tokens"`
 		}
-		if err := json.Unmarshal(rawData, &p); err == nil && (p.MaxOutputTokens != nil || parsed.VertexMultiRegionOnly != nil) {
+		if err := json.Unmarshal(rawData, &p); err == nil && (p.MaxOutputTokens != nil || p.ContextLength != nil || p.MaxInputTokens != nil || parsed.VertexMultiRegionOnly != nil) {
 			modelParamsEntries[model] = providerUtils.ModelParams{
 				MaxOutputTokens:         p.MaxOutputTokens,
+				ContextLength:           p.ContextLength,
+				MaxInputTokens:          p.MaxInputTokens,
 				IsVertexMultiRegionOnly: parsed.VertexMultiRegionOnly,
 			}
 		}
