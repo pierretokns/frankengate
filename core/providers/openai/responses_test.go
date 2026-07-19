@@ -9,6 +9,29 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 )
 
+func TestToOpenAIResponsesRequest_DefaultsMissingImageDetailWithoutMutation(t *testing.T) {
+	url := "https://example.test/image.png"
+	role := schemas.ResponsesInputMessageRoleUser
+	original := schemas.ResponsesMessage{
+		Role: &role,
+		Content: &schemas.ResponsesMessageContent{ContentBlocks: []schemas.ResponsesMessageContentBlock{{
+			Type:                                   schemas.ResponsesInputMessageContentBlockTypeImage,
+			ResponsesInputMessageContentBlockImage: &schemas.ResponsesInputMessageContentBlockImage{ImageURL: &url},
+		}}},
+	}
+	request := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{Model: "gpt-4o", Input: []schemas.ResponsesMessage{original}})
+	if request == nil || len(request.Input.OpenAIResponsesRequestInputArray) != 1 || request.Input.OpenAIResponsesRequestInputArray[0].Content == nil {
+		t.Fatal("expected one converted image message")
+	}
+	detail := request.Input.OpenAIResponsesRequestInputArray[0].Content.ContentBlocks[0].ResponsesInputMessageContentBlockImage.Detail
+	if detail == nil || *detail != "auto" {
+		t.Fatalf("expected default image detail auto, got %#v", detail)
+	}
+	if original.Content.ContentBlocks[0].ResponsesInputMessageContentBlockImage.Detail != nil {
+		t.Fatal("conversion mutated caller-owned image block")
+	}
+}
+
 func TestToOpenAIResponsesRequest_ReasoningOnlyMessageSkip(t *testing.T) {
 	tests := []struct {
 		name                     string

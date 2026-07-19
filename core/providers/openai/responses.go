@@ -93,6 +93,10 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 			}
 		}
 
+		// OpenAI requires detail on input_image blocks. Default missing values while
+		// cloning shared pointers so the caller's request is not mutated.
+		message = defaultImageDetail(message)
+
 		// Strip provider reasoning signatures (e.g. Gemini thoughtSignatures smuggled into
 		// call_id as "<baseID>_ts_<sig>") from tool call IDs, but only when the id exceeds
 		// OpenAI's limit — shorter IDs are left intact so distinct upstream IDs are preserved.
@@ -331,6 +335,39 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 		req.ExtraParams = bifrostReq.Params.ExtraParams
 	}
 	return req
+}
+
+func defaultImageDetail(message schemas.ResponsesMessage) schemas.ResponsesMessage {
+	if message.Content == nil || len(message.Content.ContentBlocks) == 0 {
+		return message
+	}
+	needsDetail := func(block schemas.ResponsesMessageContentBlock) bool {
+		return block.Type == schemas.ResponsesInputMessageContentBlockTypeImage &&
+			block.ResponsesInputMessageContentBlockImage != nil &&
+			block.ResponsesInputMessageContentBlockImage.Detail == nil
+	}
+	needsCopy := false
+	for _, block := range message.Content.ContentBlocks {
+		if needsDetail(block) {
+			needsCopy = true
+			break
+		}
+	}
+	if !needsCopy {
+		return message
+	}
+	blocks := append([]schemas.ResponsesMessageContentBlock(nil), message.Content.ContentBlocks...)
+	for i, block := range blocks {
+		if needsDetail(block) {
+			image := *block.ResponsesInputMessageContentBlockImage
+			image.Detail = schemas.Ptr("auto")
+			blocks[i].ResponsesInputMessageContentBlockImage = &image
+		}
+	}
+	content := *message.Content
+	content.ContentBlocks = blocks
+	message.Content = &content
+	return message
 }
 
 // filterUnsupportedTools removes tool types that OpenAI doesn't support
