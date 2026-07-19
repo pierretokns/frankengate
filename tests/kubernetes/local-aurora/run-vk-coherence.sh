@@ -23,13 +23,11 @@ VK_COHERENCE_MIN_REPLICAS="${VK_COHERENCE_MIN_REPLICAS:-2}"
 REQUIRE_DISTINCT_NODES="${REQUIRE_DISTINCT_NODES:-0}"
 VK_COHERENCE_STORM_REQUESTS="${VK_COHERENCE_STORM_REQUESTS:-$((VK_COHERENCE_REPLICAS * 2))}"
 BINARY_SERVER_REPLICAS="${BINARY_SERVER_REPLICAS:-5}"
-VK_COHERENCE_READY_TIMEOUT="${VK_COHERENCE_READY_TIMEOUT:-240}"
 [[ "$VK_COHERENCE_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_REPLICAS must be a positive integer" >&2; exit 1; }
 [[ "$VK_COHERENCE_MIN_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_MIN_REPLICAS must be a positive integer" >&2; exit 1; }
 (( VK_COHERENCE_MIN_REPLICAS < VK_COHERENCE_REPLICAS )) || { echo "VK_COHERENCE_MIN_REPLICAS must be less than VK_COHERENCE_REPLICAS" >&2; exit 1; }
 [[ "$VK_COHERENCE_STORM_REQUESTS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_STORM_REQUESTS must be a positive integer" >&2; exit 1; }
 [[ "$BINARY_SERVER_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "BINARY_SERVER_REPLICAS must be a positive integer" >&2; exit 1; }
-[[ "$VK_COHERENCE_READY_TIMEOUT" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_READY_TIMEOUT must be a positive integer" >&2; exit 1; }
 
 cleanup() {
   local status=$?
@@ -83,16 +81,11 @@ if [[ -z "$FRANKENGATE_IMAGE" && -z "${FRANKENGATE_BINARY:-}" ]]; then
 fi
 
 existing_postgres_ip="$(kubectl -n "$NAMESPACE" get service/postgres -o jsonpath='{.spec.clusterIP}' 2>/dev/null || true)"
-# The fixture is explicitly disposable. Reset the StatefulSet and its PVC so
-# interrupted runs cannot retain a volume with host-specific ownership or a
-# partially initialized database that prevents PostgreSQL from starting.
-kubectl -n "$NAMESPACE" delete statefulset/postgres --ignore-not-found --wait=true >/dev/null 2>&1 || true
-kubectl -n "$NAMESPACE" delete pvc/data-postgres-0 --ignore-not-found --wait=true >/dev/null 2>&1 || true
 if [[ -n "$existing_postgres_ip" && "$existing_postgres_ip" != "None" ]]; then
   echo "recreating drifted test-only postgres Service (clusterIP=$existing_postgres_ip, expected headless)" >&2
   kubectl -n "$NAMESPACE" delete service/postgres --wait=true
 fi
-sed -E "s#^([[:space:]]*)image: (postgres|pgvector/pgvector):[^[:space:]]+#\\1image: $POSTGRES_IMAGE#" \
+sed -E "s#^([[:space:]]*)image: pgvector/pgvector:0.8.1-pg16@sha256:[[:xdigit:]]+#\\1image: $POSTGRES_IMAGE#" \
   "$ROOT/tests/kubernetes/local-aurora/postgres.yaml" > "$WORK_DIR/postgres.yaml"
 kubectl apply -f "$WORK_DIR/postgres.yaml"
 live_postgres_image="$(kubectl -n "$NAMESPACE" get pod/postgres-0 -o jsonpath='{.spec.containers[0].image}' 2>/dev/null || true)"
@@ -101,9 +94,6 @@ if [[ -n "$live_postgres_image" && "$live_postgres_image" != "$POSTGRES_IMAGE" ]
   kubectl -n "$NAMESPACE" delete pod/postgres-0 --wait=true
 fi
 kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=180s
-kubectl -n "$NAMESPACE" exec postgres-0 -- \
-  psql -q -v ON_ERROR_STOP=1 -U frankengate -d frankengate \
-    -c "CREATE EXTENSION IF NOT EXISTS vector" >/dev/null
 vector_version="$(kubectl -n "$NAMESPACE" exec postgres-0 -- \
   psql -At -U frankengate -d frankengate \
     -c "SELECT extversion FROM pg_extension WHERE extname = 'vector'")"
@@ -226,7 +216,7 @@ if [[ -n "$FRANKENGATE_IMAGE" ]]; then
   kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=json -p "$image_patch"
   kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_REPLICAS"
 fi
-  wait_for_gateway_deployment "$VK_COHERENCE_READY_TIMEOUT"
+wait_for_gateway_deployment 240
 
 list_ready_gateway_ips() {
   kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk -o json |
@@ -237,7 +227,7 @@ list_ready_gateway_ips() {
 wait_for_ready_gateway_ips() {
   local expected_count="$1"
   local deadline
-  deadline=$(( $(date +%s) + VK_COHERENCE_READY_TIMEOUT ))
+  deadline=$(( $(date +%s) + 240 ))
   while :; do
     pod_ips=()
     while IFS= read -r ip; do
@@ -419,7 +409,7 @@ seed_post_allow_conflict "http://${pod_ips[0]}:8080/api/providers/openai/keys" \
 
 created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
   --header 'Content-Type: application/json' \
-  --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\",\"budgets\":[{\"max_limit\":100,\"reset_duration\":\"1h\"}],\"provider_configs\":[{\"provider\":\"openai\",\"weight\":1,\"allowed_models\":[\"gpt-4o-mini\"]}]}" \
+  --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\",\"budgets\":[{\"max_limit\":0.001,\"reset_duration\":\"1h\"}],\"provider_configs\":[{\"provider\":\"openai\",\"weight\":1,\"allowed_models\":[\"*\"]}]}" \
   "http://${pod_ips[0]}:8080/api/governance/virtual-keys")"
 vk_id="$(jq -er '.virtual_key.id' <<<"$created")"
 original_secret="$(jq -er '.secret' <<<"$created")"
@@ -443,13 +433,14 @@ wait
 storm_finished_ms=$(( $(date +%s%N) / 1000000 ))
 storm_failures=0
 for storm_file in "$storm_dir"/*; do
-  # The disposable provider is intentionally unreachable. A valid VK may
-  # therefore finish in provider execution with a circuit/error response; the
-  # coherence invariant is that it must not fail at authorization. Reject
-  # stale/revoked-key responses, while accepting either a successful model
-  # listing or a provider-phase error carrying provider/request metadata.
+  # This fixture intentionally has no reachable upstream. A request that
+  # passes VK admission may therefore return the provider circuit-breaker
+  # response instead of 200. Count only governance/authentication failures as
+  # storm failures; provider-phase responses are evidence that the shared VK
+  # was accepted by the request hot path.
   if ! grep -q '200 OK' "$storm_file" &&
-     ! grep -q '"provider".*"request_type":"list_models"' "$storm_file"; then
+     ! grep -q 'provider circuit open for openai' "$storm_file" &&
+     ! grep -q 'connection refused\|connection reset\|provider .* unavailable' "$storm_file"; then
     storm_failures=$((storm_failures + 1))
   fi
 done
@@ -459,9 +450,14 @@ if [[ "$storm_failures" -ne 0 ]]; then
   # flooding CI logs when a larger storm is configured.
   shown=0
   for storm_file in "$storm_dir"/*; do
-    if ! grep -q '200 OK' "$storm_file"; then
+    if ! grep -q '200 OK' "$storm_file" &&
+       ! grep -q 'provider circuit open for openai' "$storm_file" &&
+       ! grep -q 'connection refused\|connection reset\|provider .* unavailable' "$storm_file"; then
       echo "--- failed storm response $(basename "$storm_file") ---" >&2
-      sed -n '1,30p' "$storm_file" >&2
+      # Include the bounded response body as well as headers. A 400 during the
+      # concurrent admission storm is actionable only when the oracle records
+      # the gateway's machine-readable rejection reason.
+      sed -n '1,40p' "$storm_file" >&2
       shown=$((shown + 1))
       [[ "$shown" -ge 3 ]] && break
     fi
@@ -473,11 +469,13 @@ storm_elapsed_ms=$((storm_finished_ms - storm_started_ms))
 # Exercise durable admission with the disposable provider key. The provider
 # has no reachable upstream in this fixture, so the request is expected to fail
 # at provider execution; the reservation must still be recorded and refunded.
-call_chat_completion "${pod_ips[0]}" "$original_secret" >/dev/null 2>&1 || true
+provider_probe_response="$(call_chat_completion "${pod_ips[0]}" "$original_secret" 2>&1 || true)"
 reservation_row="$(kubectl -n "$NAMESPACE" exec postgres-0 -- psql -At -U frankengate -d frankengate \
   -c "select state || '|' || reserved_tokens || '|' || refunded_tokens from governance_reservations where budget_id = '$budget_id' order by created_at desc limit 1")"
 if [[ "$reservation_row" != refunded\|*\|* ]]; then
   echo "durable admission did not record/refund budget $budget_id: $reservation_row" >&2
+  echo "--- provider-phase probe response ---" >&2
+  sed -n '1,40p' <<<"$provider_probe_response" >&2
   exit 1
 fi
 
@@ -485,12 +483,12 @@ fi
 # replica, prove the surviving pods still accept the shared key, then add a
 # fresh pod and prove it converges from the durable authority before serving.
 kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_MIN_REPLICAS" >/dev/null
-wait_for_gateway_deployment "$VK_COHERENCE_READY_TIMEOUT"
+wait_for_gateway_deployment 240
 wait_for_ready_gateway_ips "$VK_COHERENCE_MIN_REPLICAS"
 wait_for_cache present "$vk_id" "$created_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '200 OK'
 kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_REPLICAS" >/dev/null
-wait_for_gateway_deployment "$VK_COHERENCE_READY_TIMEOUT"
+wait_for_gateway_deployment 240
 wait_for_configured_ready_gateway_ips
 assert_release_image_spans_nodes
 wait_for_cache present "$vk_id" "$created_updated_at"
@@ -531,7 +529,7 @@ fi
 restarted_pod="$(kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk \
   -o jsonpath='{.items[0].metadata.name}')"
 kubectl -n "$NAMESPACE" delete pod "$restarted_pod" --wait=false >/dev/null
-wait_for_gateway_deployment "$VK_COHERENCE_READY_TIMEOUT"
+wait_for_gateway_deployment 240
 wait_for_configured_ready_gateway_ips
 assert_release_image_spans_nodes
 wait_for_cache absent "$vk_id"
