@@ -16,6 +16,8 @@ treated as a live-provider differential proof.
 | `e15c02c5`, `03ae614aa` | Responses non-message roles and redacted thinking covered by Anthropic/OpenAI response tests | Adopted |
 | `53ad48ac5` | Server tool-search behavior remains behind MCP governance policy and is covered by MCP tests | Adapted |
 | `8e5fc53fa` | Compact input serialization covered by request-shaping tests | Adopted |
+| `c6777d43b0d2` | vLLM Responses and ResponsesStream now call the native `/v1/responses` handlers; focused and full vLLM race suites plus vet pass | Adopted |
+| `d60f2969451a` | Histogram dimension SQL identifiers resolve through compile-time allowlisted column names; existing logstore regression coverage remains green | Adopted |
 
 The current local evidence is the complete provider race sweep and SDK
 compatibility suite. Live upstream differential tests, cancellation fault
