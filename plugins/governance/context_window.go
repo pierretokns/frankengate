@@ -6,6 +6,7 @@ import (
 
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/providers/anthropic"
+	providerUtils "github.com/maximhq/bifrost/core/providers/utils"
 	"github.com/maximhq/bifrost/core/schemas"
 )
 
@@ -46,7 +47,7 @@ func validateContextWindowHeaders(ctx *schemas.BifrostContext, provider schemas.
 		requestType == schemas.ResponsesStreamRequest
 	providerSupported := provider == schemas.Anthropic || provider == schemas.Bedrock ||
 		provider == schemas.BedrockMantle || provider == schemas.Vertex || provider == schemas.Azure
-	if !surfaceSupported || !providerSupported || !anthropic.SupportsContext1MModel(model) {
+	if !surfaceSupported || !providerSupported || !anthropic.SupportsContext1MModel(model) || !catalogSupportsContext1M(model) {
 		return &schemas.BifrostError{
 			Type:       bifrost.Ptr("context_window_unsupported"),
 			StatusCode: bifrost.Ptr(400),
@@ -57,4 +58,22 @@ func validateContextWindowHeaders(ctx *schemas.BifrostContext, provider schemas.
 		}
 	}
 	return nil
+}
+
+// catalogSupportsContext1M applies authoritative model metadata when it is
+// available. A catalog entry can publish either an effective context length or
+// an input-token cap; both must accommodate the 1M beta. Legacy provider
+// allowlists remain the fallback for models not yet present in the catalog.
+func catalogSupportsContext1M(model string) bool {
+	params, ok := providerUtils.GetModelParams(model)
+	if !ok {
+		return true
+	}
+	if params.ContextLength != nil && *params.ContextLength < 1_000_000 {
+		return false
+	}
+	if params.MaxInputTokens != nil && *params.MaxInputTokens < 1_000_000 {
+		return false
+	}
+	return true
 }

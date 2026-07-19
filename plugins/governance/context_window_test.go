@@ -4,12 +4,23 @@ import (
 	"context"
 	"testing"
 
+	providerUtils "github.com/maximhq/bifrost/core/providers/utils"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/stretchr/testify/require"
 )
 
 func contextWindowRequest(provider schemas.ModelProvider, model string) *schemas.BifrostRequest {
 	return &schemas.BifrostRequest{RequestType: schemas.ChatCompletionRequest, ChatRequest: &schemas.BifrostChatRequest{Provider: provider, Model: model}}
+}
+
+func TestContextWindowAdmissionHonorsCataloguedModelLimit(t *testing.T) {
+	limit := 256000
+	providerUtils.SetModelParams("claude-sonnet-4-5-20250929", providerUtils.ModelParams{ContextLength: &limit})
+	t.Cleanup(func() { providerUtils.DeleteModelParams("claude-sonnet-4-5-20250929") })
+
+	err := validateContextWindowHeaders(contextWindowContext("context-1m-2025-08-07"), schemas.Anthropic, "claude-sonnet-4-5-20250929", schemas.ChatCompletionRequest)
+	require.NotNil(t, err)
+	require.Equal(t, "context_window_unsupported", *err.Type)
 }
 
 func contextWindowContext(value string) *schemas.BifrostContext {
