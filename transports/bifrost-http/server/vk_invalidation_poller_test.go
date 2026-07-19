@@ -212,6 +212,34 @@ func TestVirtualKeyInvalidationPollerClosesReadinessMetricOnPollFailure(t *testi
 	require.Equal(t, float64(0), metrics.value("ready"))
 }
 
+func TestVirtualKeyInvalidationPollerKeepsReadinessMetricClosedWhileCatchingUp(t *testing.T) {
+	store := &fakeVKInvalidationStore{
+		highWater: 2,
+		events: []tables.TableVirtualKeyInvalidationEvent{
+			{ID: 1, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-1", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion},
+			{ID: 2, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-2", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion},
+		},
+	}
+	metrics := &recordingGovernanceSyncMetricSink{}
+	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error {
+		return nil
+	}, 1, time.Second)
+	poller.metricSink = metrics
+
+	more, err := poller.pollOnce(context.Background())
+	require.NoError(t, err)
+	require.True(t, more)
+	require.Equal(t, float64(0), metrics.value("ready"), "readiness must remain closed while cursor trails watermark")
+
+	more, err = poller.pollOnce(context.Background())
+	require.NoError(t, err)
+	require.True(t, more)
+	more, err = poller.pollOnce(context.Background())
+	require.NoError(t, err)
+	require.False(t, more)
+	require.Equal(t, float64(1), metrics.value("ready"), "readiness should open after durable cursor catches up")
+}
+
 func (s *fakeVKInvalidationStore) ListVirtualKeyInvalidationsAfter(_ context.Context, cursor uint64, limit int) ([]tables.TableVirtualKeyInvalidationEvent, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

@@ -708,7 +708,15 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 		}
 		p.metricSink.SetGovernanceSyncMetric("consumer_lag", float64(lag))
 		p.metricSink.SetGovernanceSyncMetric("outbox_depth", float64(lag))
-		p.metricSink.SetGovernanceSyncMetric("ready", 1)
+		// Match the readiness contract: a successful database read is not
+		// sufficient while the durable cursor is still behind the watermark.
+		// Keep the exported signal false during catch-up so alerts do not claim
+		// a pod is synchronized before all committed authority mutations apply.
+		ready := 0.0
+		if lag == 0 {
+			ready = 1
+		}
+		p.metricSink.SetGovernanceSyncMetric("ready", ready)
 	}
 	return len(events) == p.batchSize, nil
 }
