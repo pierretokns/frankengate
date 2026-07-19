@@ -383,6 +383,17 @@ export default function VirtualKeysTable({
 	const handleDelete = async (vkId: string) => {
 		try {
 			await deleteVirtualKey(vkId).unwrap();
+			setRevealedKeys((previous) => {
+				const next = new Set(previous);
+				next.delete(vkId);
+				return next;
+			});
+			setRevealedValues((previous) => {
+				if (!(vkId in previous)) return previous;
+				const next = { ...previous };
+				delete next[vkId];
+				return next;
+			});
 			toast.success("Virtual key deleted successfully");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
@@ -421,6 +432,11 @@ export default function VirtualKeysTable({
 				for (const id of rotatedIds) {
 					next.delete(id);
 				}
+				return next;
+			});
+			setRevealedValues((prev) => {
+				const next = { ...prev };
+				for (const id of rotatedIds) delete next[id];
 				return next;
 			});
 			setShowBulkRotateDialog(false);
