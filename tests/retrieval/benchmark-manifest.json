@@ -1,0 +1,47 @@
+{
+  "schema_version": "retrieval-eval-v1",
+  "description": "Sanitized seed contract for finance and enterprise-jargon retrieval evaluation.",
+  "raw_text_policy": "No production prompts, outputs, document bodies, or secrets are permitted.",
+  "required_slices": [
+    "finance_exact_identifier",
+    "finance_semantic_paraphrase",
+    "enterprise_jargon",
+    "hard_negative",
+    "acl_boundary",
+    "deleted_document",
+    "stale_index",
+    "out_of_domain"
+  ],
+  "arms": ["lexical", "dense", "hybrid", "hybrid_reranker", "adapted_candidate"],
+  "metrics": [
+    "recall_at_1",
+    "recall_at_5",
+    "ndcg_at_10",
+    "mrr",
+    "acl_false_positive_rate",
+    "acl_false_negative_rate",
+    "p50_latency_ms",
+    "p95_latency_ms"
+  ],
+  "record_contract": {
+    "required": [
+      "case_id",
+      "tenant_id",
+      "query_hash",
+      "positive_source_ids",
+      "hard_negative_source_ids",
+      "principal_scope",
+      "policy_version",
+      "index_revision",
+      "deleted_source_ids",
+      "expected_authorized_source_ids"
+    ],
+    "forbidden": ["query_text", "document_text", "raw_prompt", "raw_output", "token_ids"]
+  },
+  "promotion_gates": {
+    "requires_frozen_holdout": true,
+    "requires_acl_and_deletion_oracle": true,
+    "requires_human_mr_approval": true,
+    "candidate_may_auto_publish": false
+  }
+}
