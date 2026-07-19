@@ -1359,6 +1359,16 @@ postgresql:
   # Deploy PostgreSQL as part of this chart
   enabled: false
 
+  # Optional fail-fast guardrail for Aurora/RDS connection exhaustion. The
+  # budget is cluster-wide; each enabled Postgres-backed store gets its
+  # configured pool (or the application's default of 50) per gateway pod.
+  # Keep disabled when the database administrator manages this budget outside
+  # Helm, but enable it for production releases with a known max_connections.
+  connectionBudget:
+    enabled: false
+    maxConnections: 0
+    reservedConnections: 20
+
   # Prevent the gateway from crash-looping while the chart-managed database
   # is still starting. This gate is used only for the bundled PostgreSQL;
   # external/Aurora deployments retain the gateway's own retry semantics.

@@ -1712,6 +1712,30 @@ Call this template at the beginning of deployment/stateful templates
 */}}
 {{- define "bifrost.validate" -}}
 
+{{/* Fail before rollout when the configured replica ceiling can exhaust Aurora. */}}
+{{- if and .Values.postgresql.connectionBudget .Values.postgresql.connectionBudget.enabled }}
+{{- $budget := int .Values.postgresql.connectionBudget.maxConnections }}
+{{- $reserve := int (.Values.postgresql.connectionBudget.reservedConnections | default 0) }}
+{{- if le $budget $reserve }}
+{{- fail "ERROR: postgresql.connectionBudget.maxConnections must exceed reservedConnections." }}
+{{- end }}
+{{- $pods := int .Values.replicaCount }}
+{{- if .Values.autoscaling.enabled }}{{- $pods = int .Values.autoscaling.maxReplicas }}{{- end }}
+{{- $poolPerPod := 0 }}
+{{- $configType := .Values.storage.configStore.type | default .Values.storage.mode }}
+{{- $logsType := .Values.storage.logsStore.type | default .Values.storage.mode }}
+{{- if and .Values.storage.configStore.enabled (eq $configType "postgres") }}
+  {{- $poolPerPod = add $poolPerPod (int (.Values.storage.configStore.maxOpenConns | default 50)) }}
+{{- end }}
+{{- if and .Values.storage.logsStore.enabled (eq $logsType "postgres") }}
+  {{- $poolPerPod = add $poolPerPod (int (.Values.storage.logsStore.maxOpenConns | default 50)) }}
+{{- end }}
+{{- $projected := mul $pods $poolPerPod }}
+{{- if gt $projected (sub $budget $reserve) }}
+{{- fail (printf "ERROR: projected PostgreSQL pool capacity (%d pods x %d connections = %d) exceeds connectionBudget.maxConnections-reservedConnections (%d-%d=%d). Lower pools/replicas or raise the database budget." $pods $poolPerPod $projected $budget $reserve (sub $budget $reserve)) }}
+{{- end }}
+{{- end }}
+
 {{/* Validate bifrost.sourceOfTruth enum */}}
 {{- if .Values.bifrost.sourceOfTruth }}
 {{- if and (ne .Values.bifrost.sourceOfTruth "split") (ne .Values.bifrost.sourceOfTruth "config.json") }}

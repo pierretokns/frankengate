@@ -4131,6 +4131,14 @@
         "enabled": {
           "type": "boolean"
         },
+        "connectionBudget": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "maxConnections": { "type": "integer", "minimum": 0 },
+            "reservedConnections": { "type": "integer", "minimum": 0 }
+          }
+        },
         "startupGate": {
           "type": "object",
           "properties": {
