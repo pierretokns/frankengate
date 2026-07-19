@@ -34,6 +34,32 @@ func TestDropUnsupportedParams_ModelRouterDropsNonAutoReasoningSummary(t *testin
 	}
 }
 
+func TestDropUnsupportedParams_ModelRouterKeepsAutoAndNonRouterSummary(t *testing.T) {
+	tests := []struct {
+		name  string
+		model string
+	}{
+		{name: "model-router auto", model: "model-router"},
+		{name: "non-router", model: "azure/gpt-4o"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			summary := "auto"
+			req := newResponsesRequest(schemas.Azure, tt.model, &schemas.ResponsesParameters{
+				Reasoning: &schemas.ResponsesParametersReasoning{Summary: &summary},
+			})
+			dropped := dropUnsupportedParams(newTestContext(), req, []string{"reasoning"})
+			if req.ResponsesRequest.Params.Reasoning.Summary == nil ||
+				*req.ResponsesRequest.Params.Reasoning.Summary != "auto" {
+				t.Fatalf("summary was unexpectedly removed or changed: %#v", req.ResponsesRequest.Params.Reasoning)
+			}
+			if slices.Contains(dropped, "reasoning.summary") {
+				t.Fatalf("dropped=%v, want reasoning.summary preserved", dropped)
+			}
+		})
+	}
+}
+
 // TestDropUnsupportedParams_MaxOutputTokens verifies that the Responses-API
 // max_output_tokens cap is preserved whenever the (chat-named) model parameter
 // catalog authorizes the token cap under any spelling
