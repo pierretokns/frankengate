@@ -22,6 +22,9 @@ export default function AlertRulesView() {
 	const [remove] = useDeleteAlertRuleMutation();
 	const [name, setName] = useState("");
 	const [event, setEvent] = useState("overdraft");
+	const [scope, setScope] = useState<"global" | "team" | "user">("global");
+	const [scopeId, setScopeId] = useState("");
+	const [approvalRequired, setApprovalRequired] = useState(true);
 	const rules = data?.rules ?? [];
 	const history = historyData?.history ?? [];
 
@@ -36,8 +39,10 @@ export default function AlertRulesView() {
 				onSubmit={async (e) => {
 					e.preventDefault();
 					if (!name.trim()) return;
-					await create({ name: name.trim(), event, channel_ids: [], enabled: true }).unwrap();
+					if (scope !== "global" && !scopeId.trim()) return;
+					await create({ name: name.trim(), event, channel_ids: [], enabled: true, scope, scope_id: scope === "global" ? undefined : scopeId.trim(), approval_required: event === "overdraft" && approvalRequired, approved: event !== "overdraft" || !approvalRequired }).unwrap();
 					setName("");
+					setScopeId("");
 				}}
 			>
 				<input className="rounded border px-2 py-1" value={name} onChange={(e) => setName(e.target.value)} placeholder="Budget overdraft" aria-label="Rule name" />
@@ -46,6 +51,13 @@ export default function AlertRulesView() {
 					<option value="budget_limit">Budget limit</option>
 					<option value="delivery_failure">Delivery failure</option>
 				</select>
+				<select className="rounded border px-2 py-1" value={scope} onChange={(e) => setScope(e.target.value as "global" | "team" | "user")} aria-label="Rule scope">
+					<option value="global">All users</option>
+					<option value="team">Team</option>
+					<option value="user">User</option>
+				</select>
+				{scope !== "global" && <input className="rounded border px-2 py-1" value={scopeId} onChange={(e) => setScopeId(e.target.value)} placeholder={`${scope} ID`} aria-label="Scope ID" />}
+				{event === "overdraft" && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={approvalRequired} onChange={(e) => setApprovalRequired(e.target.checked)} /> Require approval</label>}
 				<button className="rounded bg-primary px-3 py-1.5 text-primary-foreground" type="submit">Add rule</button>
 			</form>
 			{isLoading ? <p>Loading rules…</p> : error ? <p role="alert">Unable to load alert rules.</p> : (
@@ -60,6 +72,8 @@ export default function AlertRulesView() {
 									<strong>{rule.name}</strong>
 									<div className="text-xs text-muted-foreground">
 										<span>{rule.event}</span> · <span>{rule.channel_ids.length} channel{rule.channel_ids.length === 1 ? "" : "s"}</span>
+										<span className="ml-2">Scope: {rule.scope === "team" ? `team ${rule.scope_id ?? "(unknown)"}` : rule.scope === "user" ? `user ${rule.scope_id ?? "(unknown)"}` : "all users"}</span>
+										{rule.event === "overdraft" && rule.approval_required && <span className={`ml-2 ${rule.approved ? "text-success" : "text-warning"}`}>{rule.approved ? "Approved" : "Approval required"}</span>}
 										<span className="ml-2" data-testid={`alert-rule-status-${rule.id}`}>
 											{latest ? `Latest: ${latest.status}${latest.created_at ? ` (${new Date(latest.created_at).toLocaleString()})` : ""}` : "No deliveries recorded"}
 										</span>
@@ -72,7 +86,7 @@ export default function AlertRulesView() {
 										className="rounded border px-2 py-1 text-xs"
 										disabled={isUpdating}
 										aria-label={`${rule.enabled ? "Disable" : "Enable"} ${rule.name}`}
-										onClick={() => void update({ id: rule.id, data: { name: rule.name, event: rule.event, channel_ids: rule.channel_ids, enabled: !rule.enabled } })}
+										onClick={() => void update({ id: rule.id, data: { name: rule.name, event: rule.event, channel_ids: rule.channel_ids, enabled: !rule.enabled, scope: rule.scope ?? "global", scope_id: rule.scope_id, approval_required: rule.approval_required, approved: rule.approved } })}
 									>
 										{rule.enabled ? "Disable" : "Enable"}
 									</button>

@@ -73,6 +73,14 @@ type AlertRule struct {
 	Event      string   `json:"event"`
 	ChannelIDs []string `json:"channel_ids"`
 	Enabled    bool     `json:"enabled"`
+	// Scope makes alert evaluation explicit for team/user dashboards.  Empty
+	// scope is treated as global for backwards-compatible rules.
+	Scope      string   `json:"scope,omitempty"`
+	ScopeID    string   `json:"scope_id,omitempty"`
+	// ApprovalRequired is used by controlled-overdraft rules.  An approval
+	// gate is metadata only here; admission remains the source of truth.
+	ApprovalRequired bool `json:"approval_required,omitempty"`
+	Approved         bool `json:"approved,omitempty"`
 }
 type AlertDelivery struct {
 	ID        string `json:"id"`
@@ -407,6 +415,20 @@ func (h *AlertingHandler) createRule(c *fasthttp.RequestCtx) {
 	if v.ID == "" {
 		v.ID = uuid.NewString()
 	}
+	if v.Scope == "" {
+		v.Scope = "global"
+	}
+	if v.Scope != "global" && v.Scope != "team" && v.Scope != "user" {
+		SendError(c, 400, "scope must be global, team, or user")
+		return
+	}
+	if v.Scope == "global" {
+		v.ScopeID = ""
+	}
+	if v.Scope != "global" && strings.TrimSpace(v.ScopeID) == "" {
+		SendError(c, 400, "scope_id is required for team or user rules")
+		return
+	}
 	h.mutate(c, func(s *alertingState) { s.Rules = append(s.Rules, v) })
 }
 func (h *AlertingHandler) updateChannel(c *fasthttp.RequestCtx) {
@@ -437,6 +459,20 @@ func (h *AlertingHandler) updateRule(c *fasthttp.RequestCtx) {
 	var v AlertRule
 	if sonic.Unmarshal(c.PostBody(), &v) != nil || v.Name == "" || v.Event == "" {
 		SendError(c, 400, "name and event are required")
+		return
+	}
+	if v.Scope == "" {
+		v.Scope = "global"
+	}
+	if v.Scope != "global" && v.Scope != "team" && v.Scope != "user" {
+		SendError(c, 400, "scope must be global, team, or user")
+		return
+	}
+	if v.Scope == "global" {
+		v.ScopeID = ""
+	}
+	if v.Scope != "global" && strings.TrimSpace(v.ScopeID) == "" {
+		SendError(c, 400, "scope_id is required for team or user rules")
 		return
 	}
 	v.ID = id

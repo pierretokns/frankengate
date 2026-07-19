@@ -22,6 +22,7 @@ export function AlertSummary() {
 	});
 	const failures = recent.filter((delivery) => delivery.status.toLowerCase() === "failed");
 	const enabledRules = (rulesData?.rules ?? []).filter((rule) => rule.enabled).length;
+	const pendingApprovals = (rulesData?.rules ?? []).filter((rule) => rule.enabled && rule.event === "overdraft" && rule.approval_required && !rule.approved).length;
 
 	if (historyError) {
 		return (
@@ -47,6 +48,11 @@ export function AlertSummary() {
 			<Badge variant="outline" title={`${enabledRules} enabled alerting rules`}>
 				{enabledRules} active {enabledRules === 1 ? "rule" : "rules"}
 			</Badge>
+			{pendingApprovals > 0 && (
+				<Badge variant="warning" title={`${pendingApprovals} controlled-overdraft rules require approval`} data-testid="dashboard-overdraft-approval-warning">
+					{pendingApprovals} overdraft approval{pendingApprovals === 1 ? "" : "s"} pending
+				</Badge>
+			)}
 		</div>
 	);
 }

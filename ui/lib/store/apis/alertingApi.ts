@@ -1,7 +1,17 @@
 import { baseApi } from "./baseApi";
 
 export type AlertChannel = { id: string; name: string; type: "webhook" | "sns" | "email" | string; config?: Record<string, string>; enabled: boolean };
-export type AlertRule = { id: string; name: string; event: string; channel_ids: string[]; enabled: boolean };
+export type AlertRule = {
+	id: string;
+	name: string;
+	event: string;
+	channel_ids: string[];
+	enabled: boolean;
+	scope?: "global" | "team" | "user" | string;
+	scope_id?: string;
+	approval_required?: boolean;
+	approved?: boolean;
+};
 export type AlertDelivery = { id: string; rule_id: string; status: string; error?: string; created_at: string };
 export type AlertingState = { channels: AlertChannel[]; rules: AlertRule[]; history: AlertDelivery[] };
 
