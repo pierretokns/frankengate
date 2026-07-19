@@ -928,6 +928,7 @@ export const {
 	// Lazy queries
 	useLazyGetVirtualKeysQuery,
 	useLazyGetVirtualKeyQuery,
+	useLazyRevealVirtualKeyQuery,
 	useLazyGetTeamsQuery,
 	useLazyGetTeamQuery,
 	useLazyGetCustomersQuery,

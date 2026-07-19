@@ -30,6 +30,7 @@ import {
 	useDeleteVirtualKeyMutation,
 	useGetVirtualKeyQuery,
 	useLazyGetVirtualKeysQuery,
+	useLazyRevealVirtualKeyQuery,
 	useUpdateVirtualKeyMutation,
 } from "@/lib/store";
 import { Customer, Team, VirtualKey } from "@/lib/types/governance";
@@ -308,6 +309,8 @@ export default function VirtualKeysTable({
 	const [showVirtualKeySheet, setShowVirtualKeySheet] = useState(false);
 	const [editingVirtualKeyId, setEditingVirtualKeyId] = useState<string | null>(null);
 	const [revealedKeys, setRevealedKeys] = useState<Set<string>>(new Set());
+	const [revealedValues, setRevealedValues] = useState<Record<string, string>>({});
+	const [revealVirtualKey] = useLazyRevealVirtualKeyQuery();
 	const [showExportDialog, setShowExportDialog] = useState(false);
 	const [exportScope, setExportScope] = useState<ExportScope>("current_page");
 	const [exportMaxLimit, setExportMaxLimit] = useState("");
@@ -512,11 +515,20 @@ export default function VirtualKeysTable({
 		}
 	};
 
-	const toggleKeyVisibility = (vkId: string) => {
+	const toggleKeyVisibility = async (vkId: string) => {
 		const newRevealed = new Set(revealedKeys);
 		if (newRevealed.has(vkId)) {
 			newRevealed.delete(vkId);
 		} else {
+			if (!revealedValues[vkId]) {
+				try {
+					const result = await revealVirtualKey(vkId).unwrap();
+					setRevealedValues((previous) => ({ ...previous, [vkId]: result.secret }));
+				} catch {
+					toast.error("Unable to reveal virtual key secret");
+					return;
+				}
+			}
 			newRevealed.add(vkId);
 		}
 		setRevealedKeys(newRevealed);
@@ -873,7 +885,7 @@ export default function VirtualKeysTable({
 											<TableCell onClick={(e) => e.stopPropagation()}>
 												<div className="flex items-center gap-2">
 													<code className="cursor-default py-1 font-mono text-sm" data-testid="vk-key-value">
-														{maskKey(vk.value, isRevealed)}
+										{maskKey(revealedValues[vk.id] ?? vk.value, isRevealed)}
 													</code>
 													<div className="flex items-center">
 														<Button
@@ -887,7 +899,7 @@ export default function VirtualKeysTable({
 														<Button
 															variant="ghost"
 															size="sm"
-															onClick={() => copyToClipboard(vk.value)}
+										onClick={() => void copyToClipboard(revealedValues[vk.id] ?? vk.value)}
 															data-testid={`vk-copy-btn-${vk.name}`}
 														>
 															<Copy className="h-4 w-4" />
