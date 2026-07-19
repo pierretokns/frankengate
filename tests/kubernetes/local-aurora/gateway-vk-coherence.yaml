@@ -111,10 +111,11 @@ spec:
               topologyKey: kubernetes.io/hostname
       initContainers:
         - name: fetch-test-binary
-          # Reuse the exact tag already present for postgres-0. k3d's offline
-          # containerd cache retains the platform image by tag/image ID rather
-          # than by the manifest-list digest used by the StatefulSet spec.
-          image: docker.io/library/postgres:16-alpine
+          # Use a tiny utility image with wget and sha256sum. The database
+          # image is intentionally not reused here: postgres/pgvector images
+          # do not guarantee either download utility, which makes the binary
+          # transfer init container fail before the gateway can start.
+          image: docker.io/library/alpine:3.20
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-ec"]
           args:
@@ -142,7 +143,7 @@ spec:
               mountPath: /work
       containers:
         - name: gateway
-          image: docker.io/library/postgres:16-alpine
+          image: docker.io/library/alpine:3.20
           imagePullPolicy: IfNotPresent
           command: ["/work/frankengate"]
           args: ["-app-dir", "/app/data", "-host", "0.0.0.0", "-port", "8080", "-log-level", "info", "-log-style", "json"]

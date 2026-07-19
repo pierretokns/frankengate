@@ -4,7 +4,11 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 NAMESPACE="${NAMESPACE:-frankengate-test}"
 KEEP_FIXTURE="${KEEP_FIXTURE:-0}"
-POSTGRES_IMAGE="${POSTGRES_IMAGE:-docker.io/library/postgres:16-alpine}"
+POSTGRES_IMAGE="${POSTGRES_IMAGE:-docker.io/pgvector/pgvector:0.8.1-pg16@sha256:33198da2828a14c30348d2ccb4750833d5ed9a44c88d840a0e523d7417120337}"
+# Utility-only pods need wget, sha256sum, and nc for binary transfer. Database
+# images intentionally do not guarantee those tools, so keep this image
+# independently configurable.
+BINARY_SERVER_IMAGE="${BINARY_SERVER_IMAGE:-docker.io/library/alpine:3.20}"
 MANIFEST="$ROOT/tests/kubernetes/local-aurora/gateway-vk-coherence.yaml"
 SERVER_SCRIPT="$ROOT/tests/kubernetes/local-aurora/serve-binary.sh"
 WORK_DIR="$(mktemp -d)"
@@ -81,7 +85,7 @@ if [[ -n "$existing_postgres_ip" && "$existing_postgres_ip" != "None" ]]; then
   echo "recreating drifted test-only postgres Service (clusterIP=$existing_postgres_ip, expected headless)" >&2
   kubectl -n "$NAMESPACE" delete service/postgres --wait=true
 fi
-sed -E "s#^([[:space:]]*)image: postgres:16-alpine@sha256:[[:xdigit:]]+#\\1image: $POSTGRES_IMAGE#" \
+sed -E "s#^([[:space:]]*)image: pgvector/pgvector:0.8.1-pg16@sha256:[[:xdigit:]]+#\\1image: $POSTGRES_IMAGE#" \
   "$ROOT/tests/kubernetes/local-aurora/postgres.yaml" > "$WORK_DIR/postgres.yaml"
 kubectl apply -f "$WORK_DIR/postgres.yaml"
 live_postgres_image="$(kubectl -n "$NAMESPACE" get pod/postgres-0 -o jsonpath='{.spec.containers[0].image}' 2>/dev/null || true)"
@@ -90,6 +94,13 @@ if [[ -n "$live_postgres_image" && "$live_postgres_image" != "$POSTGRES_IMAGE" ]
   kubectl -n "$NAMESPACE" delete pod/postgres-0 --wait=true
 fi
 kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=180s
+vector_version="$(kubectl -n "$NAMESPACE" exec postgres-0 -- \
+  psql -At -U frankengate -d frankengate \
+    -c "SELECT extversion FROM pg_extension WHERE extname = 'vector'")"
+if [[ "$vector_version" != "0.8.1" ]]; then
+  echo "pgvector 0.8.1 is required, found: ${vector_version:-not installed}" >&2
+  exit 1
+fi
 
 # This namespace and database are explicitly test-only. A retained fixture may
 # contain encrypted rows or schema mutations from focused PostgreSQL tests,
@@ -98,14 +109,14 @@ kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=180s
 # proves the current binary from a deterministic authority state.
 kubectl -n "$NAMESPACE" delete deployment/frankengate-vk --ignore-not-found --wait=true >/dev/null
 kubectl -n "$NAMESPACE" exec postgres-0 -- psql -v ON_ERROR_STOP=1 -U frankengate -d frankengate \
-  -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO frankengate;'
+  -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO frankengate; CREATE EXTENSION vector;'
 
 kubectl -n "$NAMESPACE" delete pod -l app.kubernetes.io/name=frankengate-binary --ignore-not-found --wait=true >/dev/null
 for i in $(seq 0 $((BINARY_SERVER_REPLICAS - 1))); do
   binary_pod="frankengate-binary"
   (( i == 0 )) || binary_pod="frankengate-binary-$i"
   kubectl -n "$NAMESPACE" run "$binary_pod" \
-    --image="$POSTGRES_IMAGE" --image-pull-policy=IfNotPresent \
+    --image="$BINARY_SERVER_IMAGE" --image-pull-policy=IfNotPresent \
     --labels='app.kubernetes.io/name=frankengate-binary,frankengate.dev/test-only=true' \
     --overrides='{"spec":{"affinity":{"podAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchLabels":{"app.kubernetes.io/name":"postgres"}},"topologyKey":"kubernetes.io/hostname"}]}}}}' \
     --restart=Never --command -- sleep 3600
