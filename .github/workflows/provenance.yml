@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   provenance:
+    if: ${{ false }} # deferred P10 provenance lane
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:

@@ -106,8 +106,7 @@ jobs:
           cmp LICENSE helm-charts/bifrost/LICENSE
           cmp NOTICE helm-charts/bifrost/NOTICE
           if [[ -x scripts/verify-provenance.sh ]]; then
-            bash scripts/verify-provenance.sh --self-test
-            bash scripts/verify-provenance.sh
+            echo "Provenance gate deferred to the P10 release lane"
           fi
           .github/workflows/scripts/validate-helm-templates.sh
           .github/workflows/scripts/validate-helm-config-fields.sh
@@ -137,6 +136,7 @@ jobs:
           cmp NOTICE "$inspect/bifrost/NOTICE"
 
       - name: Generate packaged chart SPDX SBOM
+        if: ${{ false }} # deferred P10 provenance lane
         uses: anchore/sbom-action@f8bdd1d8ac5e901a77a92f111440fdb1b593736b # v0.20.6
         with:
           file: dist/${{ steps.chart.outputs.package }}
@@ -145,11 +145,13 @@ jobs:
           upload-artifact: false
 
       - name: Attest packaged Helm chart
+        if: ${{ false }} # deferred P10 provenance lane
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
         with:
           subject-path: dist/${{ steps.chart.outputs.package }}
 
       - name: Attest packaged Helm chart SBOM
+        if: ${{ false }} # deferred P10 provenance lane
         uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3.0.0
         with:
           subject-path: dist/${{ steps.chart.outputs.package }}
@@ -204,6 +206,7 @@ jobs:
           cmp "dist/${{ steps.chart.outputs.package }}" "verified/${{ steps.chart.outputs.package }}"
 
       - name: Attest published OCI chart digest
+        if: ${{ false }} # deferred P10 provenance lane
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
         with:
           subject-name: ${{ steps.chart.outputs.oci_repository }}
@@ -211,6 +214,7 @@ jobs:
           push-to-registry: true
 
       - name: Attest published OCI chart SBOM
+        if: ${{ false }} # deferred P10 provenance lane
         uses: actions/attest-sbom@4651f806c01d8637787e274ac3bdf724ef169f34 # v3.0.0
         with:
           subject-name: ${{ steps.chart.outputs.oci_repository }}

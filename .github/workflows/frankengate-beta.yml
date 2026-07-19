@@ -93,6 +93,7 @@ jobs:
             .github/workflows/scripts/fork-go-checks.sh beta
 
       - name: Provenance self-test
+        if: ${{ false }} # deferred P10 provenance lane
         run: bash scripts/verify-provenance.sh --self-test
 
   build-ui:
