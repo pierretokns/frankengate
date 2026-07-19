@@ -85,3 +85,11 @@ func TestMantleOpenAIURLHonorsExplicitFamily(t *testing.T) {
 		t.Fatalf("explicit OpenAI family selected %q, want %q", got, want)
 	}
 }
+
+func TestMantleOpenAIURLGPTOSSOverridesExplicitOpenAIFamily(t *testing.T) {
+	got := mantleOpenAIURLForFamily("us-east-1", "gpt-oss-120b", schemas.ModelFamilyOpenAI, "responses")
+	want := "https://bedrock-mantle.us-east-1.api.aws/v1/responses"
+	if got != want {
+		t.Fatalf("gpt-oss must use bare Mantle surface even with OpenAI family metadata: got %q, want %q", got, want)
+	}
+}

@@ -70,7 +70,12 @@ func mantleOpenAIURL(region, model, path string) string {
 func mantleOpenAIURLForFamily(region, model string, family schemas.ModelFamily, path string) string {
 	base := "v1"
 	canonical := strings.ToLower(model)
-	if family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma || strings.Contains(canonical, "gpt-5") || strings.Contains(canonical, "gemma-4") {
+	// gpt-oss is OpenAI-shaped and ResolveFamily reports it as OpenAI, but
+	// Mantle exposes these deployments on the bare /v1 surface.  Check the
+	// concrete model before honoring the family hint so aliases and explicit
+	// family metadata cannot accidentally select /openai/v1.
+	isGPTOSS := strings.Contains(canonical, "gpt-oss")
+	if !isGPTOSS && (family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma || strings.Contains(canonical, "gpt-5") || strings.Contains(canonical, "gemma-4")) {
 		base = "openai/v1"
 	}
 	return fmt.Sprintf("https://bedrock-mantle.%s.api.aws/%s/%s", region, base, path)
