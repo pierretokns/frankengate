@@ -44,33 +44,34 @@ const (
 
 // SearchFilters represents the available filters for log searches
 type SearchFilters struct {
-	Providers         []string          `json:"providers,omitempty"`
-	Models            []string          `json:"models,omitempty"`
-	Aliases           []string          `json:"aliases,omitempty"`
-	Status            []string          `json:"status,omitempty"`
-	StopReasons       []string          `json:"stop_reasons,omitempty"` // For filtering by stop reason (stop, length, content_filter, refusal, tool_calls, etc.)
-	Objects           []string          `json:"objects,omitempty"`      // For filtering by request type (chat.completion, text.completion, embedding)
-	ParentRequestID   string            `json:"parent_request_id,omitempty"`
-	SelectedKeyIDs    []string          `json:"selected_key_ids,omitempty"`
-	VirtualKeyIDs     []string          `json:"virtual_key_ids,omitempty"`
-	RoutingRuleIDs    []string          `json:"routing_rule_ids,omitempty"`
-	TeamIDs           []string          `json:"team_ids,omitempty"`
-	CustomerIDs       []string          `json:"customer_ids,omitempty"`
-	UserIDs           []string          `json:"user_ids,omitempty"`
-	BusinessUnitIDs   []string          `json:"business_unit_ids,omitempty"`
-	RoutingEngineUsed []string          `json:"routing_engine_used,omitempty"` // For filtering by routing engine (routing-rule, governance, loadbalancing)
-	StartTime         *time.Time        `json:"start_time,omitempty"`
-	EndTime           *time.Time        `json:"end_time,omitempty"`
-	MinLatency        *float64          `json:"min_latency,omitempty"`
-	MaxLatency        *float64          `json:"max_latency,omitempty"`
-	MinTokens         *int              `json:"min_tokens,omitempty"`
-	MaxTokens         *int              `json:"max_tokens,omitempty"`
-	MinCost           *float64          `json:"min_cost,omitempty"`
-	MaxCost           *float64          `json:"max_cost,omitempty"`
-	MissingCostOnly   bool              `json:"missing_cost_only,omitempty"`
-	CacheHitTypes     []string          `json:"cache_hit_types,omitempty"` // For filtering by local-cache hit type ("direct", "semantic")
-	ContentSearch     string            `json:"content_search,omitempty"`
-	MetadataFilters   map[string]string `json:"metadata_filters,omitempty"` // key=metadataKey, value=metadataValue for filtering by metadata
+	Providers             []string          `json:"providers,omitempty"`
+	Models                []string          `json:"models,omitempty"`
+	Aliases               []string          `json:"aliases,omitempty"`
+	Status                []string          `json:"status,omitempty"`
+	StopReasons           []string          `json:"stop_reasons,omitempty"` // For filtering by stop reason (stop, length, content_filter, refusal, tool_calls, etc.)
+	Objects               []string          `json:"objects,omitempty"`      // For filtering by request type (chat.completion, text.completion, embedding)
+	ParentRequestID       string            `json:"parent_request_id,omitempty"`
+	SelectedKeyIDs        []string          `json:"selected_key_ids,omitempty"`
+	VirtualKeyIDs         []string          `json:"virtual_key_ids,omitempty"`
+	RoutingRuleIDs        []string          `json:"routing_rule_ids,omitempty"`
+	TeamIDs               []string          `json:"team_ids,omitempty"`
+	CustomerIDs           []string          `json:"customer_ids,omitempty"`
+	UserIDs               []string          `json:"user_ids,omitempty"`
+	IntegrationUserAgents []string          `json:"integration_user_agents,omitempty"`
+	BusinessUnitIDs       []string          `json:"business_unit_ids,omitempty"`
+	RoutingEngineUsed     []string          `json:"routing_engine_used,omitempty"` // For filtering by routing engine (routing-rule, governance, loadbalancing)
+	StartTime             *time.Time        `json:"start_time,omitempty"`
+	EndTime               *time.Time        `json:"end_time,omitempty"`
+	MinLatency            *float64          `json:"min_latency,omitempty"`
+	MaxLatency            *float64          `json:"max_latency,omitempty"`
+	MinTokens             *int              `json:"min_tokens,omitempty"`
+	MaxTokens             *int              `json:"max_tokens,omitempty"`
+	MinCost               *float64          `json:"min_cost,omitempty"`
+	MaxCost               *float64          `json:"max_cost,omitempty"`
+	MissingCostOnly       bool              `json:"missing_cost_only,omitempty"`
+	CacheHitTypes         []string          `json:"cache_hit_types,omitempty"` // For filtering by local-cache hit type ("direct", "semantic")
+	ContentSearch         string            `json:"content_search,omitempty"`
+	MetadataFilters       map[string]string `json:"metadata_filters,omitempty"` // key=metadataKey, value=metadataValue for filtering by metadata
 }
 
 // PaginationOptions represents pagination parameters

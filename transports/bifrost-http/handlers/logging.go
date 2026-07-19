@@ -463,6 +463,7 @@ func (h *LoggingHandler) getLogs(ctx *fasthttp.RequestCtx) {
 	}
 	if userIDs := string(ctx.QueryArgs().Peek("user_ids")); userIDs != "" {
 		filters.UserIDs = parseCommaSeparated(userIDs)
+		filters.IntegrationUserAgents = parseCommaSeparated(string(ctx.QueryArgs().Peek("integration_user_agents")))
 	}
 	if businessUnitIDs := string(ctx.QueryArgs().Peek("business_unit_ids")); businessUnitIDs != "" {
 		filters.BusinessUnitIDs = parseCommaSeparated(businessUnitIDs)
@@ -713,6 +714,7 @@ func (h *LoggingHandler) getLogsStats(ctx *fasthttp.RequestCtx) {
 	}
 	if userIDs := string(ctx.QueryArgs().Peek("user_ids")); userIDs != "" {
 		filters.UserIDs = parseCommaSeparated(userIDs)
+		filters.IntegrationUserAgents = parseCommaSeparated(string(ctx.QueryArgs().Peek("integration_user_agents")))
 	}
 	if businessUnitIDs := string(ctx.QueryArgs().Peek("business_unit_ids")); businessUnitIDs != "" {
 		filters.BusinessUnitIDs = parseCommaSeparated(businessUnitIDs)
@@ -871,6 +873,7 @@ func parseHistogramFilters(ctx *fasthttp.RequestCtx) *logstore.SearchFilters {
 	}
 	if userIDs := string(ctx.QueryArgs().Peek("user_ids")); userIDs != "" {
 		filters.UserIDs = parseCommaSeparated(userIDs)
+		filters.IntegrationUserAgents = parseCommaSeparated(string(ctx.QueryArgs().Peek("integration_user_agents")))
 	}
 	if businessUnitIDs := string(ctx.QueryArgs().Peek("business_unit_ids")); businessUnitIDs != "" {
 		filters.BusinessUnitIDs = parseCommaSeparated(businessUnitIDs)

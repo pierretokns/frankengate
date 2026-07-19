@@ -772,6 +772,7 @@ func startMatViewRefresher(ctx context.Context, db *gorm.DB, interval time.Durat
 func canUseMatViewFilters(f SearchFilters) bool {
 	return f.ContentSearch == "" &&
 		len(f.MetadataFilters) == 0 &&
+		len(f.IntegrationUserAgents) == 0 &&
 		canUseMatViewStatusFilter(f.Status) &&
 		len(f.RoutingEngineUsed) == 0 &&
 		len(f.StopReasons) == 0 &&
@@ -898,6 +899,9 @@ func applyMatViewFiltersOnly(q *gorm.DB, f SearchFilters) *gorm.DB {
 	}
 	if len(f.UserIDs) > 0 {
 		q = q.Where("user_id IN ?", f.UserIDs)
+	}
+	if len(f.IntegrationUserAgents) > 0 {
+		q = q.Where("integration_user_agent IN ?", f.IntegrationUserAgents)
 	}
 	if len(f.BusinessUnitIDs) > 0 {
 		q = q.Where("business_unit_id IN ?", f.BusinessUnitIDs)

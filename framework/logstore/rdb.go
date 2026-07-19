@@ -203,6 +203,9 @@ func (s *RDBLogStore) applyFilters(baseQuery *gorm.DB, filters SearchFilters) *g
 	if len(filters.UserIDs) > 0 {
 		baseQuery = baseQuery.Where("user_id IN ?", filters.UserIDs)
 	}
+	if len(filters.IntegrationUserAgents) > 0 {
+		baseQuery = baseQuery.Where("integration_user_agent IN ?", filters.IntegrationUserAgents)
+	}
 	if len(filters.BusinessUnitIDs) > 0 {
 		if s.db.Dialector.Name() == "postgres" {
 			sql, args := multiValueDimensionFilterSQL("business_unit_id", "business_unit_ids", filters.BusinessUnitIDs)
