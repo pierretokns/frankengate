@@ -1,0 +1,17 @@
+# APR Workflow Configuration
+# Generated: 2026-07-16T14:37:59Z
+
+name: frankengate-roadmap
+description: "FrankenGate enterprise gateway roadmap and authority design"
+
+documents:
+  readme: "README.md"
+  spec: "docs/architecture/plugins/governance.mdx"
+  implementation: ""
+
+oracle:
+  model: "5.2 Thinking"
+  thinking_time: heavy
+
+rounds:
+  output_dir: ".apr/rounds/frankengate-roadmap"

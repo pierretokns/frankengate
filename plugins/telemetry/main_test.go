@@ -294,6 +294,10 @@ func TestGovernanceSyncMetricsAreScrapeable(t *testing.T) {
 	p := newTestPlugin(t)
 	p.AddGovernanceSyncMetric("wakeups", 2)
 	p.AddGovernanceSyncMetric("listener_reconnects", 1)
+	p.AddGovernanceSyncMetric("overdraft_notification_enqueued", 1)
+	p.AddGovernanceSyncMetric("overdraft_notification_delivered", 2)
+	p.AddGovernanceSyncMetric("overdraft_notification_failed", 3)
+	p.AddGovernanceSyncMetric("overdraft_notification_dropped", 4)
 	p.SetGovernanceSyncMetric("outbox_depth", 7)
 	p.SetGovernanceSyncMetric("reload_latency_seconds", 0.25)
 	p.SetGovernanceSyncMetric("consumer_lag", 3)
@@ -314,6 +318,7 @@ func TestGovernanceSyncMetricsAreScrapeable(t *testing.T) {
 		"bifrost_governance_sync_reload_latency_seconds",
 		"bifrost_governance_sync_consumer_lag",
 		"bifrost_governance_sync_ready",
+		"bifrost_governance_notifier_deliveries_total",
 	} {
 		if !present[name] {
 			t.Errorf("/metrics gatherer missing governance sync metric %s", name)

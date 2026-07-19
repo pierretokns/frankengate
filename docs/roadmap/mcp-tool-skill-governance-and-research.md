@@ -248,6 +248,28 @@ capacity, quantization-specific canaries, and parser/vendor conformance. Kernels
 DeepSeek, Qwen, Kimi, GLM, MiniMax, Hunyuan, ERNIE, UI-TARS, AgentCPM, LMDeploy or
 NVIDIA remain in their engines/workers; the gateway normalizes and governs them.
 
+## Hermes comparison and memory-index boundary
+
+Hermes adds two useful, but non-authoritative, patterns to this design: progressive
+disclosure of skill metadata before loading a full skill, and a post-turn curator that
+can draft or revise skills from observed work. Its evolutionary self-improvement work
+also explores DSPy/GEPA-style candidate optimization, while its learning-loop
+documentation points to trajectory-based RL. These are proposal-generation and
+experiment techniques, not permission to mutate the approved marketplace. FrankenGate
+must retain immutable revisions, deterministic validators, held-out regression packs,
+human/MR approval, sticky canaries and rollback for every candidate.
+
+History storage is deliberately split by authority and purpose. Store only a
+privacy-filtered evidence envelope (tenant, purpose, retention, pseudonymous subject,
+tool/model metadata, redacted text and outcome facts); never use raw prompts, outputs or
+tokens as a general learning corpus. SQLite/CASS-style lexical history is the simplest
+authoritative per-user/team recall layer. Aurora owns durable policy, ownership,
+retention, deletion and audit state. A vector index (pgvector, Qdrant or another
+adapter) may be built as a rebuildable, tenant-scoped derived index for similarity and
+friction clustering, but it cannot authorize access, satisfy deletion by itself, or
+become the semantic-cache authority. Every index entry carries the source envelope,
+purpose and revision so it can be revoked and rebuilt after policy changes.
+
 Code, model weights, tokenizer/template, datasets, derived quantizations and containers
 each have independent license/provenance entries. OpenAI compatibility and a research
 paper grant neither behavioral equivalence nor implementation rights.
@@ -281,3 +303,6 @@ paper grant neither behavioral equivalence nor implementation rights.
 - Amazon TRAJECT-Bench: https://www.amazon.science/publications/traject-bench-a-trajectory-aware-benchmark-for-evaluating-agentic-tool-use
 - Meta Toolformer: https://ai.meta.com/research/publications/toolformer-language-models-can-teach-themselves-to-use-tools/
 - NVIDIA ASPIRE: https://research.nvidia.com/labs/gear/aspire/
+- Hermes skills: https://hermes-agent.nousresearch.com/docs/user-guide/features/skills/
+- Hermes learning loop: https://hermes-agent.ai/features/learning-loop
+- Hermes self-evolution: https://github.com/NousResearch/hermes-agent-self-evolution

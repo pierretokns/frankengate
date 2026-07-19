@@ -23,7 +23,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-[[ -n "$BINARY" && -x "$BINARY" && -n "$TEST_REPORT" && -f "$TEST_REPORT" ]] || usage
+[[ -n "$BINARY" && -f "$BINARY" && -x "$BINARY" && -n "$TEST_REPORT" && -f "$TEST_REPORT" ]] || usage
 
 # A beta must carry evidence of a successful verification run. Merely having
 # a file at --tests is not sufficient: an earlier workflow accidentally
@@ -45,7 +45,7 @@ if [[ -z "$PREPARE_ONLY" ]]; then
 fi
 
 ROOT="$(git rev-parse --show-toplevel)"
-SHA="$(git -C "$ROOT" rev-parse HEAD^{commit})"
+SHA="$(git -C "$ROOT" rev-parse 'HEAD^{commit}')"
 SHORT_SHA="${SHA:0:12}"
 TAG="${TAG:-beta-${SHORT_SHA}}"
 [[ "$TAG" == beta-* ]] || { echo "local beta tags must begin with beta-" >&2; exit 1; }

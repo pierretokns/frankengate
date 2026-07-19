@@ -1,0 +1,17 @@
+# APR Workflow Configuration
+# Generated: 2026-07-16T14:38:39Z
+
+name: frankengate-release-audit
+description: "FrankenGate release, CI, and runtime readiness audit"
+
+documents:
+  readme: "README.md"
+  spec: "docs/roadmap/release/fork-ci-audit.md"
+  implementation: ""
+
+oracle:
+  model: "5.2 Thinking"
+  thinking_time: heavy
+
+rounds:
+  output_dir: ".apr/rounds/frankengate-release-audit"

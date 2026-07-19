@@ -997,7 +997,7 @@
               },
               "type": {
                 "type": "string",
-                "enum": ["slack", "microsoft_teams", "pagerduty", "webhook", "sns", "email"],
+                "enum": ["slack", "microsoft_teams", "pagerduty", "webhook", "sns", "email", "cloudflare_email"],
                 "description": "Alert channel type."
               },
               "enabled": {

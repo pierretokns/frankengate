@@ -3,6 +3,8 @@ package logstore
 import (
 	"context"
 	"fmt"
+	"os"
+	"sync"
 	"testing"
 	"time"
 
@@ -17,11 +19,44 @@ import (
 // framework/docker-compose.yml.
 const postgresDSN = "host=localhost user=bifrost password=bifrost_password dbname=bifrost port=5432 sslmode=disable"
 
+var (
+	logstoreTestSchemaOnce sync.Once
+	logstoreTestSchema     string
+)
+
+// logstoreTestSearchPath isolates the destructive migration fixtures from
+// other Go packages that may run against the same local PostgreSQL database in
+// parallel (for example framework/configstore). The schema is process-scoped:
+// all tests in this package share it, while another package or test process
+// gets a different namespace and cannot reset our migrations table.
+func logstoreTestSearchPath(t *testing.T) string {
+	t.Helper()
+	logstoreTestSchemaOnce.Do(func() {
+		logstoreTestSchema = fmt.Sprintf("bifrost_logstore_test_%d", os.Getpid())
+	})
+	return logstoreTestSchema
+}
+
 // trySetupPostgresDB attempts to connect to Postgres and returns the connection.
 // Returns nil if Postgres is unavailable.
 func trySetupPostgresDB(t *testing.T) *gorm.DB {
 	t.Helper()
-	db, err := gorm.Open(postgres.Open(postgresDSN), &gorm.Config{
+	// Create the isolated schema through a connection that uses the default
+	// search path, then open all test connections with that schema selected.
+	admin, err := gorm.Open(postgres.Open(postgresDSN), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
+	if err != nil {
+		return nil
+	}
+	schema := logstoreTestSearchPath(t)
+	if err := admin.Exec(`CREATE SCHEMA IF NOT EXISTS "` + schema + `"`).Error; err != nil {
+		return nil
+	}
+	if sqlDB, err := admin.DB(); err == nil {
+		_ = sqlDB.Close()
+	}
+	db, err := gorm.Open(postgres.Open(postgresDSN+" search_path="+schema), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {

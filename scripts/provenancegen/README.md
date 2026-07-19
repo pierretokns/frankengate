@@ -48,3 +48,43 @@ GOWORK=off go run . \
   --spdx-out sbom.spdx.json \
   --created 2026-07-15T00:00:00Z
 ```
+
+## Offline Go module closure
+
+Go generation consumes a prehydrated JSON lock; generation never invokes
+`go list`, `go mod download`, or the network. Use `--ecosystem go` with
+`--go-lock`, `--manifest`, `--go-sum`, `--source-root`, and `--evidence-root`.
+The lock binds the exact manifest and go.sum hashes and contains a versioned
+root plus every selected module, Go Sum/GoModSum, directness, optional original
+to effective replacement, source archive path/SHA-256, licenses, and evidence.
+`GenerateGoFiles` verifies every bounded file; `GenerateGo` is structural-only.
+
+```json
+{
+  "schemaVersion": 1,
+  "moduleCount": 2,
+  "selectedModulesSha256": "<canonical-closure-sha256>",
+  "manifest": {"path": "go.mod", "sha256": "<sha256>"},
+  "goSum": {"path": "go.sum", "sha256": "<sha256>"},
+  "root": {
+    "path": "example.com/root",
+    "version": "v1.0.0",
+    "sourceArchive": {"path": "root.zip", "sha256": "<sha256>"},
+    "licenseDeclared": "Apache-2.0",
+    "licenseConcluded": "Apache-2.0",
+    "evidence": [{"path": "root-LICENSE", "sha256": "<sha256>"}]
+  },
+  "modules": [{
+    "path": "example.com/original",
+    "version": "v1.2.0",
+    "indirect": false,
+    "sum": "h1:<base64-sha256>",
+    "goModSum": "h1:<base64-sha256>",
+    "replacement": {"path": "example.com/fork", "version": "v1.2.1"},
+    "sourceArchive": {"path": "fork-v1.2.1.zip", "sha256": "<sha256>"},
+    "licenseDeclared": "MIT",
+    "licenseConcluded": "MIT",
+    "evidence": [{"path": "fork-LICENSE", "sha256": "<sha256>"}]
+  }]
+}
+```

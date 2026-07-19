@@ -1,10 +1,15 @@
 package server
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"math"
+	"net/http"
+	"net/url"
 	"slices"
+	"time"
 
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ses"
@@ -60,6 +65,49 @@ func (s awsSESEmailSender) Send(ctx context.Context, from string, recipients []s
 		},
 	})
 	return err
+}
+
+type cloudflareEmailSender struct {
+	client    *http.Client
+	accountID string
+	token     string
+	endpoint  string // test seam; production uses the Cloudflare API endpoint
+}
+
+func (s cloudflareEmailSender) Send(ctx context.Context, from string, recipients []string, subject, body string) error {
+	payload := struct {
+		From    string   `json:"from"`
+		To      []string `json:"to"`
+		Subject string   `json:"subject"`
+		Text    string   `json:"text"`
+	}{From: from, To: recipients, Subject: subject, Text: body}
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("marshal Cloudflare email: %w", err)
+	}
+	endpoint := s.endpoint
+	if endpoint == "" {
+		endpoint = "https://api.cloudflare.com/client/v4/accounts/" + url.PathEscape(s.accountID) + "/email/sending/send"
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(data))
+	if err != nil {
+		return fmt.Errorf("build Cloudflare email request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+s.token)
+	req.Header.Set("Content-Type", "application/json")
+	client := s.client
+	if client == nil {
+		client = &http.Client{Timeout: 10 * time.Second}
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("send Cloudflare email: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("Cloudflare email returned HTTP %s", resp.Status)
+	}
+	return nil
 }
 
 // Single-plugin methods used plugin create/update
@@ -148,9 +196,9 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 					url = governanceConfig.ReservationWebhookURL.GetValue()
 				}
 				// Durable dashboard alerting is a startup-time projection. Explicit
-				// governance config wins; otherwise use the first enabled webhook
-				// channel from the shared alerting state. SNS/email remain fail-closed
-				// until their native workers are implemented.
+				// governance config wins; otherwise use the first enabled channel
+				// from the shared alerting state. Native SNS and SES adapters remain
+				// fail-closed when AWS credentials or channel configuration are absent.
 				if url == "" {
 					if alert, ok, alertErr := handlers.LoadAlertingWebhookConfig(ctx, bifrostConfig.ConfigStore); alertErr != nil {
 						logger.Warn("durable alerting state unavailable; overdraft notifier disabled: %v", alertErr)
@@ -177,6 +225,17 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 						}
 						coordinator.SetNotifier(governance.NewAsyncOverdraftNotifier(ctx, &governance.SNSOverdraftNotifier{
 							Publisher: awsSNSPublisher{client: sns.NewFromConfig(awsCfg)}, TopicARN: alert.TopicARN, Subject: alert.Subject,
+						}, alert.Buffer))
+						return
+					}
+				}
+				if url == "" {
+					if alert, ok, alertErr := handlers.LoadAlertingCloudflareEmailConfig(ctx, bifrostConfig.ConfigStore); alertErr != nil {
+						logger.Warn("durable Cloudflare email alerting state unavailable; native notifier disabled: %v", alertErr)
+						return
+					} else if ok {
+						coordinator.SetNotifier(governance.NewAsyncOverdraftNotifier(ctx, &governance.EmailOverdraftNotifier{
+							Sender: cloudflareEmailSender{client: &http.Client{}, accountID: alert.AccountID, token: alert.APIToken}, From: alert.From, Recipients: alert.Recipients, Subject: alert.Subject,
 						}, alert.Buffer))
 						return
 					}
@@ -341,6 +400,15 @@ func (s *BifrostHTTPServer) wireGovernanceMetrics() {
 			governancePlugin.SetMetricsSink(sinks[0])
 		} else if len(sinks) > 1 {
 			governancePlugin.SetMetricsSink(governanceMetricsFanout(sinks))
+		}
+		if len(sinks) > 0 {
+			governancePlugin.SetNotifierMetricObserver(func(name string, value float64) {
+				for _, sink := range sinks {
+					if metricSink, ok := sink.(interface{ AddGovernanceSyncMetric(string, float64) }); ok {
+						metricSink.AddGovernanceSyncMetric("overdraft_notification_"+name, value)
+					}
+				}
+			})
 		}
 	}
 }

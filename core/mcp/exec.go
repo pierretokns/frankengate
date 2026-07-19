@@ -82,13 +82,12 @@ func (m *MCPManager) executeToolWithHooks(
 		}
 	}
 
-	// Resolve the upstream client and acquire its connection BEFORE the plugin
-	// gate runs. Connection lifecycle is the orchestrator's concern, not the
-	// plugin op's — the plugin pipeline only wraps the actual CallTool. When
-	// AcquireClientConn fails (e.g. *MCPAuthRequiredError for per-user
-	// clients that need re-auth or headers submission), the plugin gate is
-	// never invoked.
-	state, conn, release, prepErr := m.prepareToolExecution(ctx, request)
+	// Resolve the owning client and enforce static/request filters before the
+	// plugin gate, but do not acquire a connection yet. Credential resolution
+	// and connection acquisition are deliberately inside the authorized
+	// operation callback below: denied requests must not touch credential stores
+	// or establish upstream connections.
+	state, prepErr := m.prepareToolExecution(ctx, request)
 	if prepErr != nil {
 		bErr := &schemas.BifrostError{
 			IsBifrostError: false,
@@ -101,8 +100,6 @@ func (m *MCPManager) executeToolWithHooks(
 		}
 		return nil, bErr
 	}
-	defer release()
-
 	// state == nil signals a code-mode tool: pass nil conn/config/mapping and
 	// ToolsManager.ExecuteTool routes directly to CodeMode.
 	var executionConfig *schemas.MCPClientConfig
@@ -113,6 +110,16 @@ func (m *MCPManager) executeToolWithHooks(
 	}
 
 	resp, bErr := m.RunWithPluginPipeline(ctx, request, func(preReq *schemas.BifrostMCPRequest) (*schemas.BifrostMCPResponse, error) {
+		var conn *client.Client
+		var release func()
+		if state != nil {
+			var acquireErr error
+			conn, release, acquireErr = m.AcquireClientConn(ctx, state)
+			if acquireErr != nil {
+				return nil, acquireErr
+			}
+			defer release()
+		}
 		result, opErr := m.toolsManager.ExecuteTool(ctx, preReq, conn, executionConfig, toolNameMapping)
 		if opErr != nil {
 			return nil, opErr
@@ -130,32 +137,29 @@ func (m *MCPManager) executeToolWithHooks(
 	return resp, nil
 }
 
-// prepareToolExecution resolves the tool to its owning MCP client and
-// acquires a connection. Returns (state, conn, release, err):
-//   - For regular MCP tools: state non-nil, conn is the live transport, release
-//     must be called by the caller (defer).
-//   - For code-mode tools: state nil, conn nil, release is a no-op. The caller
-//     forwards nil conn/config/mapping to ToolsManager.ExecuteTool which
-//     dispatches via the CodeMode implementation.
+// prepareToolExecution resolves the tool to its owning MCP client and applies
+// all static/request policy filters without acquiring credentials or a live
+// connection. The authorized operation callback performs acquisition only
+// after PreMCPHook policy has succeeded.
 //
 // Errors here mean the call should NOT run — neither the envelope plugin
 // gate nor the wire op. Typed errors (e.g. *MCPUserOAuthRequiredError)
 // propagate so the caller can stamp BifrostError.ExtraFields.
-func (m *MCPManager) prepareToolExecution(ctx *schemas.BifrostContext, request *schemas.BifrostMCPRequest) (*schemas.MCPClientState, *client.Client, func(), error) {
+func (m *MCPManager) prepareToolExecution(ctx *schemas.BifrostContext, request *schemas.BifrostMCPRequest) (*schemas.MCPClientState, error) {
 	toolName := request.GetToolName()
 	if toolName == "" {
-		return nil, nil, nil, fmt.Errorf("tool call missing function name")
+		return nil, fmt.Errorf("tool call missing function name")
 	}
 
 	// Code-mode tools have no upstream client — skip client lookup.
 	codeMode := m.toolsManager.GetCodeMode()
 	if codeMode != nil && codeMode.IsCodeModeTool(toolName) {
-		return nil, nil, func() {}, nil
+		return nil, nil
 	}
 
 	state := m.GetClientForTool(toolName)
 	if state == nil {
-		return nil, nil, nil, fmt.Errorf("tool '%s' is not available or not permitted", toolName)
+		return nil, fmt.Errorf("tool '%s' is not available or not permitted", toolName)
 	}
 	clientName := state.ExecutionConfig.Name
 	// Enforce the same filters that GetToolPerClient applies for tool
@@ -167,26 +171,22 @@ func (m *MCPManager) prepareToolExecution(ctx *schemas.BifrostContext, request *
 	//  3. Tool allow-list   — client-level ToolsToExecute (most restrictive).
 	//  4. Tool narrowing    — request-context MCPContextKeyIncludeTools.
 	if state.State == schemas.MCPConnectionStateDisabled {
-		return nil, nil, nil, fmt.Errorf("tool '%s' is not permitted (client %s is disabled)", toolName, clientName)
+		return nil, fmt.Errorf("tool '%s' is not permitted (client %s is disabled)", toolName, clientName)
 	}
 	var includeClients []string
 	if v, ok := ctx.Value(schemas.MCPContextKeyIncludeClients).([]string); ok {
 		includeClients = v
 	}
 	if !shouldIncludeClient(clientName, includeClients, m.logger) {
-		return nil, nil, nil, fmt.Errorf("tool '%s' is not permitted (client %s is not in request-context include list)", toolName, clientName)
+		return nil, fmt.Errorf("tool '%s' is not permitted (client %s is not in request-context include list)", toolName, clientName)
 	}
 	if shouldSkipToolForConfig(toolName, state.ExecutionConfig) {
-		return nil, nil, nil, fmt.Errorf("tool '%s' is not permitted (not in client's ToolsToExecute allow-list)", toolName)
+		return nil, fmt.Errorf("tool '%s' is not permitted (not in client's ToolsToExecute allow-list)", toolName)
 	}
 	if shouldSkipToolForRequest(ctx, clientName, toolName) {
-		return nil, nil, nil, fmt.Errorf("tool '%s' is not permitted (filtered by request context)", toolName)
+		return nil, fmt.Errorf("tool '%s' is not permitted (filtered by request context)", toolName)
 	}
-	conn, release, err := m.AcquireClientConn(ctx, state)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	return state, conn, release, nil
+	return state, nil
 }
 
 // executeToolForAgent is the agent-mode-facing helper. The agent loop expects a

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "packages": [
+    {
+      "name": "fixture",
+      "version": "1.0.0",
+      "licenseDeclared": "Apache-2.0",
+      "licenseConcluded": "Apache-2.0",
+      "evidence": [
+        {
+          "path": "provenance/license-evidence/fixture-apache.txt",
+          "sha256": "75c251dbf536b9a107a9dfe757480dddad21c39709880cd28da8139adfe8e3bb"
+        }
+      ]
+    },
+    {
+      "name": "example",
+      "version": "1.0.0",
+      "licenseDeclared": "MIT",
+      "licenseConcluded": "MIT",
+      "evidence": [
+        {
+          "path": "provenance/license-evidence/example-mit.txt",
+          "sha256": "03ced4a6181209561f0babf2b52fb0c45232c51caf9f86d669b2fe2e88aa6fd1"
+        }
+      ]
+    }
+  ]
+}

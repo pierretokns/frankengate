@@ -1,0 +1,4 @@
+dependency	version	license	status	evidence	approval_ref
+# manifest_sha256=0257be98f46b5c4eae91648e24c533a641c16a5c9b0cf3de57d25488c2b52a7c lockfile_sha256=24572ba5225288b473fbd88e2d41abf2a83e3b6212339ab1b886f4000cd05e68
+fixture	1.0.0	Apache-2.0	resolved	provenance/license-evidence/fixture-apache.txt#sha256=75c251dbf536b9a107a9dfe757480dddad21c39709880cd28da8139adfe8e3bb	none
+example	1.0.0	MIT	resolved	provenance/license-evidence/example-mit.txt#sha256=03ced4a6181209561f0babf2b52fb0c45232c51caf9f86d669b2fe2e88aa6fd1	none

@@ -1,0 +1,37 @@
+# FrankenGate: use managed Aurora/Postgres and Redis services.
+# Store passwords in existing Kubernetes Secrets; do not place them in Git.
+storage:
+  mode: postgres
+
+postgresql:
+  enabled: true
+  external:
+    enabled: true
+    host: aurora-postgres.example.internal
+    port: 5432
+    database: frankengate
+    user: frankengate
+    sslMode: verify-full
+    existingSecret: frankengate-postgres
+    passwordKey: password
+
+vectorStore:
+  enabled: true
+  type: redis
+  redis:
+    enabled: true
+    external:
+      enabled: true
+      host: redis.example.internal
+      port: 6379
+      database: 0
+      existingSecret: frankengate-redis
+      passwordKey: password
+      useTls: true
+
+bifrost:
+  # Keep gateway credentials in Kubernetes Secrets as well.
+  authConfig:
+    existingSecret: frankengate-gateway-auth
+    usernameKey: username
+    passwordKey: password

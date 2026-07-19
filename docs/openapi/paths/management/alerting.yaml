@@ -1,0 +1,154 @@
+channels:
+  get:
+    operationId: listAlertChannels
+    summary: List alert channels
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    responses:
+      '200':
+        description: Alert channels
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [channels]
+              properties:
+                channels:
+                  type: array
+                  items: { $ref: '../../schemas/management/alerting.yaml#/AlertChannel' }
+  post:
+    operationId: createAlertChannel
+    summary: Create an alert channel
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '../../schemas/management/alerting.yaml#/AlertChannel' }
+    responses:
+      '200':
+        description: Created channel
+        content:
+          application/json:
+            schema: { $ref: '../../schemas/management/alerting.yaml#/AlertChannel' }
+
+channels-by-id:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema: { type: string }
+  put:
+    operationId: updateAlertChannel
+    summary: Update an alert channel
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '../../schemas/management/alerting.yaml#/AlertChannel' }
+    responses:
+      '200': { description: Updated channel }
+  delete:
+    operationId: deleteAlertChannel
+    summary: Delete an alert channel
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    responses:
+      '204': { description: Channel deleted }
+
+rules:
+  get:
+    operationId: listAlertRules
+    summary: List alert rules
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    responses:
+      '200':
+        description: Alert rules
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rules]
+              properties:
+                rules:
+                  type: array
+                  items: { $ref: '../../schemas/management/alerting.yaml#/AlertRule' }
+  post:
+    operationId: createAlertRule
+    summary: Create an alert rule
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '../../schemas/management/alerting.yaml#/AlertRule' }
+    responses:
+      '200': { description: Created rule }
+
+rules-by-id:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema: { type: string }
+  put:
+    operationId: updateAlertRule
+    summary: Update an alert rule
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '../../schemas/management/alerting.yaml#/AlertRule' }
+    responses:
+      '200': { description: Updated rule }
+  delete:
+    operationId: deleteAlertRule
+    summary: Delete an alert rule
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    responses:
+      '204': { description: Rule deleted }
+
+history:
+  get:
+    operationId: listAlertHistory
+    summary: List alert delivery history
+    tags: [Alerting]
+    security:
+      - ManagementBearerAuth: []
+      - SessionCookieAuth: []
+    responses:
+      '200':
+        description: Alert delivery history
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [history]
+              properties:
+                history:
+                  type: array
+                  items: { $ref: '../../schemas/management/alerting.yaml#/AlertDelivery' }

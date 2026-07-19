@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -149,6 +150,25 @@ func TestAsyncOverdraftNotifierCloseDrainsAcceptedEvents(t *testing.T) {
 	require.Error(t, notifier.Notify(ctx, OverdraftEvent{ReservationID: "after-close"}))
 }
 
+func TestAsyncOverdraftNotifierMetricObserver(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	var mu sync.Mutex
+	counts := map[string]int{}
+	notifier := NewAsyncOverdraftNotifier(ctx, &overdraftNotifier{}, 2)
+	notifier.SetMetricObserver(func(name string, _ float64) {
+		mu.Lock()
+		counts[name]++
+		mu.Unlock()
+	})
+	require.NoError(t, notifier.Notify(ctx, OverdraftEvent{}))
+	notifier.Close()
+	mu.Lock()
+	defer mu.Unlock()
+	require.Equal(t, 1, counts["enqueued"])
+	require.Equal(t, 1, counts["delivered"])
+}
+
 func TestDurableReservationCoordinatorSetNotifierClosesPreviousAsyncNotifier(t *testing.T) {
 	ctx := context.Background()
 	old := NewAsyncOverdraftNotifier(ctx, &overdraftNotifier{}, 1)
@@ -160,6 +180,29 @@ func TestDurableReservationCoordinatorSetNotifierClosesPreviousAsyncNotifier(t *
 	require.Error(t, old.Notify(ctx, OverdraftEvent{ReservationID: "stale"}))
 	coordinator.Close()
 	require.Error(t, newNotifier.Notify(ctx, OverdraftEvent{ReservationID: "closed"}))
+}
+
+func TestDurableReservationCoordinatorReappliesNotifierObserverOnReload(t *testing.T) {
+	ctx := context.Background()
+	coordinator := &DurableReservationCoordinator{}
+	var mu sync.Mutex
+	delivered := 0
+	coordinator.SetNotifierMetricObserver(func(name string, _ float64) {
+		if name == "delivered" {
+			mu.Lock()
+			delivered++
+			mu.Unlock()
+		}
+	})
+	first := NewAsyncOverdraftNotifier(ctx, &overdraftNotifier{}, 1)
+	coordinator.SetNotifier(first)
+	second := NewAsyncOverdraftNotifier(ctx, &overdraftNotifier{}, 1)
+	coordinator.SetNotifier(second)
+	require.NoError(t, second.Notify(ctx, OverdraftEvent{}))
+	coordinator.Close()
+	mu.Lock()
+	defer mu.Unlock()
+	require.Equal(t, 1, delivered)
 }
 
 type testReservationCoordinator struct {

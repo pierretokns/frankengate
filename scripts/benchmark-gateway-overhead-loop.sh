@@ -10,10 +10,11 @@ OUTPUT="${OUTPUT:-frankengate-overhead.jsonl}"
 N="${N:-100}"
 RUNS="${RUNS:-0}"
 MAX_P95_OVERHEAD_MS="${MAX_P95_OVERHEAD_MS:-10}"
+MAX_P50_OVERHEAD_MS="${MAX_P50_OVERHEAD_MS:-5}"
 MAX_ERROR_RATE="${MAX_ERROR_RATE:-0}"
 HEADERS_FILE="${HEADERS_FILE:-}"
 
-script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+script_dir="$(cd -- "$(dirname -- "$0")" && pwd)"
 awk -v v="$RUNS" 'BEGIN { if (v < 0 || v != int(v)) exit 1 }' || {
   echo "RUNS must be a non-negative integer (0 means run forever)" >&2
   exit 2
@@ -22,7 +23,7 @@ run_count=0
 while :; do
   set +e
   result="$(DIRECT_URL="$DIRECT_URL" GATEWAY_URL="$GATEWAY_URL" REQUEST_BODY="$REQUEST_BODY" \
-    N="$N" MAX_P95_OVERHEAD_MS="$MAX_P95_OVERHEAD_MS" \
+    N="$N" MAX_P95_OVERHEAD_MS="$MAX_P95_OVERHEAD_MS" MAX_P50_OVERHEAD_MS="$MAX_P50_OVERHEAD_MS" \
     MAX_ERROR_RATE="$MAX_ERROR_RATE" HEADERS_FILE="$HEADERS_FILE" \
     "$script_dir/benchmark-gateway-overhead.sh")"
   status=$?

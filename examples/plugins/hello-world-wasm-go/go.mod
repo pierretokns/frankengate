@@ -1,9 +1,8 @@
 module github.com/maximhq/bifrost/examples/plugins/hello-world-wasm
 
-go 1.26.4
+go 1.26.5
 
 require github.com/maximhq/bifrost/core v1.4.17
-
 
 require (
 	github.com/andybalholm/brotli v1.2.0 // indirect

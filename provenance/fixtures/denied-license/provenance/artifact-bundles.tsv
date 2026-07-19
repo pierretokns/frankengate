@@ -1,0 +1,2 @@
+artifact	notice_file	license_file	sbom_file	dependency_inventory	notes
+fixture	NOTICE	LICENSE	provenance/sbom/npm.spdx.json	provenance/dependency-inventory/npm.tsv	Fixture artifact bundle.

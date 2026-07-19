@@ -706,6 +706,18 @@ paths:
   /api/pricing/force-sync:
     $ref: './paths/management/config.yaml#/force-sync-pricing'
 
+  # Alerting
+  /api/alerting/channels:
+    $ref: './paths/management/alerting.yaml#/channels'
+  /api/alerting/channels/{id}:
+    $ref: './paths/management/alerting.yaml#/channels-by-id'
+  /api/alerting/rules:
+    $ref: './paths/management/alerting.yaml#/rules'
+  /api/alerting/rules/{id}:
+    $ref: './paths/management/alerting.yaml#/rules-by-id'
+  /api/alerting/history:
+    $ref: './paths/management/alerting.yaml#/history'
+
   # Users
   /api/users:
     $ref: './paths/management/users.yaml#/users'

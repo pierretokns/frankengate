@@ -1,2 +1,2 @@
 path	source_name	source_url	source_license	import_type	approval_ref	notes
-dist/app.txt	Competitor Gateway	https://example.invalid/competitor	unknown	copied-source	none	Missing approval should fail.
+release/app.txt	Competitor Gateway	https://example.invalid/competitor	unknown	copied-source	none	Missing approval should fail.

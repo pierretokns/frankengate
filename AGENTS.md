@@ -39,9 +39,6 @@ bifrost/
 │   │   ├── gemini/                # Google-specific API shape
 │   │   ├── groq/                  # OpenAI-compatible (minimal, delegates to openai/)
 │   │   └── utils/                 # Shared: HTTP client, SSE parsing, error handling, scanner pool
-│   ├── pool/                      # Generic Pool[T] — dual-mode (prod: sync.Pool, debug: full tracking)
-│   │   ├── pool_prod.go           # Zero-overhead sync.Pool wrapper (default build)
-│   │   └── pool_debug.go          # Double-release/use-after-release/leak detection (-tags pooldebug)
 │   ├── mcp/                       # MCP protocol implementation
 │   │   ├── agent.go               # Agent orchestration loop (multi-turn tool calling)
 │   │   ├── clientmanager.go       # MCP client lifecycle management
@@ -361,17 +358,9 @@ Four plugin interfaces exist:
 
 ### Pool System
 
-`core/pool/` provides `Pool[T]` with two build modes:
+There is currently no `core/pool` package or generic `Pool[T]` implementation in this checkout. Do not rely on the historical pool description below when designing or releasing code; use the concrete pooling helpers in `core/schemas` and provider utilities instead.
 
-```go
-// Production (default): zero-overhead sync.Pool wrapper
-// Debug (-tags pooldebug): tracks double-release, use-after-release, leaks with stack traces
-p := pool.New[MyType]("descriptive-name", func() *MyType { return &MyType{} })
-obj := p.Get()
-// ... use obj ...
-// MUST reset ALL fields before Put — pool does not auto-reset
-p.Put(obj)
-```
+The historical `Pool[T]` example is retained only as migration context and is not executable against the current source tree.
 
 **Acquire/Release pattern** for types with complex reset logic (used in `schemas/plugin.go`):
 ```go
@@ -400,7 +389,7 @@ type CompletionHandler struct {
 
 ### 1. Always Reset Pooled Objects Before Put
 
-Every pooled object must have **all** fields zeroed before `pool.Put()`. Stale data leaks between requests. The debug build catches double-release and use-after-release but **not** missing resets.
+Every pooled object must have **all** fields zeroed before it is returned to its concrete pool helper. Stale data leaks between requests. This checkout does not ship the historical `pooldebug` build, so reset conformance is enforced by the concrete release helpers and their tests rather than a generic debug pool.
 
 ```go
 // WRONG — stale data from previous request leaks to next user
@@ -653,7 +642,7 @@ Systematically address unresolved PR review comments. Uses GraphQL to get unreso
 | BifrostContext (mutable context) | `core/schemas/context.go` |
 | Chat completion types | `core/schemas/chatcompletions.go` |
 | Responses API types | `core/schemas/responses.go` |
-| Object pool (prod + debug) | `core/pool/pool_prod.go`, `pool_debug.go` |
+| Object pooling | Concrete helpers under `core/schemas` and provider utilities; no `core/pool` package is currently shipped |
 | Shared provider utils & SSE parsing | `core/providers/utils/utils.go` |
 | Streaming accumulator | `framework/streaming/accumulator.go` |
 | HTTP inference handler | `transports/bifrost-http/handlers/inference.go` |
@@ -676,7 +665,7 @@ Systematically address unresolved PR review comments. Uses GraphQL to get unreso
 - **Error strings**: Lowercase, no trailing punctuation (Go convention).
 - **Provider types**: Prefixed with provider name in PascalCase (`AnthropicChatRequest`, `GeminiEmbeddingResponse`).
 - **Converter functions**: Pure — no side effects, no logging, no HTTP.
-- **Pool names**: Descriptive string passed to `pool.New()` (e.g., `"channel-message"`, `"response-stream"`).
+- **Pooling**: Use the concrete acquire/release helpers in `core/schemas` and provider utilities; the historical `pool.New()` naming API is not present in this checkout.
 - **Context keys**: Use `BifrostContextKey` type. Custom plugins should define their own key types to avoid collisions.
 - **Go filenames**: No underscores. The only permitted underscore is the `_test.go` suffix. Examples: `pluginpipeline.go`, `pluginpipeline_test.go` — never `plugin_pipeline.go` or `plugin_pipeline_race_test.go`. Concatenate words (lowercase, no separators) for multi-word filenames.
 

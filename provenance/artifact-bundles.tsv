@@ -1,0 +1,5 @@
+artifact	notice_file	license_file	sbom_file	dependency_inventory	notes
+repository	NOTICE	LICENSE	provenance/sbom/repository.spdx.json	provenance/dependency-inventory/repository.tsv	Repository source distribution must bundle NOTICE, LICENSE, SBOM, and resolved dependency inventory.
+oci-image	NOTICE	LICENSE	provenance/sbom/oci-image.spdx.json	provenance/dependency-inventory/oci-image.tsv	OCI image release inputs must be machine-checkable before publication.
+helm-chart	NOTICE	LICENSE	provenance/sbom/helm-chart.spdx.json	provenance/dependency-inventory/helm-chart.tsv	Helm chart package must carry NOTICE/LICENSE and a chart/package SBOM.
+npm-packages	NOTICE	LICENSE	provenance/sbom/npm-packages.spdx.json	provenance/dependency-inventory/npm-packages.tsv	NPM package releases must carry NOTICE/LICENSE and package SBOM inventory.

@@ -87,6 +87,24 @@ type APIResponse struct {
 	RawBody    []byte
 }
 
+// normalizeVirtualKeySecret keeps older governance integration cases focused
+// on behavior while accepting the current API contract: virtual-key metadata
+// is redacted and the one-time credential is returned as top-level `secret`.
+// This shim exists only in the test client and never changes production JSON.
+func normalizeVirtualKeySecret(body map[string]interface{}) {
+	secret, ok := body["secret"].(string)
+	if !ok || secret == "" {
+		return
+	}
+	vk, ok := body["virtual_key"].(map[string]interface{})
+	if !ok {
+		return
+	}
+	if _, exists := vk["value"]; !exists {
+		vk["value"] = secret
+	}
+}
+
 // MakeRequest makes an HTTP request to the Bifrost API
 func MakeRequest(t *testing.T, req APIRequest) *APIResponse {
 	client := &http.Client{}
@@ -132,6 +150,7 @@ func MakeRequest(t *testing.T, req APIRequest) *APIResponse {
 			responseBody = map[string]interface{}{"raw": string(rawBody)}
 		}
 	}
+	normalizeVirtualKeySecret(responseBody)
 
 	return &APIResponse{
 		StatusCode: resp.StatusCode,
@@ -186,6 +205,7 @@ func MakeRequestWithCustomHeaders(t *testing.T, req APIRequest, customHeaders ma
 			responseBody = map[string]interface{}{"raw": string(rawBody)}
 		}
 	}
+	normalizeVirtualKeySecret(responseBody)
 
 	return &APIResponse{
 		StatusCode: resp.StatusCode,

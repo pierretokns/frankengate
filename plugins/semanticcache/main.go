@@ -403,6 +403,16 @@ func (plugin *Plugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.Bifro
 		plugin.logger.Debug("metadata build failed, caching disabled for this request: %v", err)
 		return req, nil, nil
 	}
+	if authorityMetadata, authErr := authorityMetadataForCaching(ctx); authErr != nil {
+		plugin.clearCacheState(requestID)
+		plugin.logger.Debug("authorization metadata build failed, caching disabled: %v", authErr)
+		return req, nil, nil
+	} else if len(authorityMetadata) > 0 {
+		for key, value := range authorityMetadata {
+			metadata[key] = value
+		}
+		state.AuthorityMetadata = authorityMetadata
+	}
 	paramsHash, err := hashMap(metadata)
 	if err != nil {
 		plugin.clearCacheState(requestID)

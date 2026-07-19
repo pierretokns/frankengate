@@ -140,6 +140,17 @@ func (p *GovernancePlugin) SetReservationCoordinator(coordinator ReservationCoor
 	p.cfgMutex.Unlock()
 }
 
+// SetNotifierMetricObserver wires an exporter-neutral observer into the
+// durable overdraft notifier, if the active coordinator supports it.
+func (p *GovernancePlugin) SetNotifierMetricObserver(observer func(string, float64)) {
+	if p == nil {
+		return
+	}
+	if coordinator, ok := p.reservationCoordinator.(*DurableReservationCoordinator); ok {
+		coordinator.SetNotifierMetricObserver(observer)
+	}
+}
+
 // SetMetricsSink attaches an optional exporter-neutral sink to the durable
 // admission coordinator. The transport uses this to connect OTEL/Prometheus
 // without coupling governance to a particular telemetry backend.

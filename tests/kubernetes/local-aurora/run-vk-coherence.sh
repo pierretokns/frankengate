@@ -30,7 +30,11 @@ cleanup() {
   trap - EXIT
   if [[ "$KEEP_FIXTURE" != "1" ]]; then
     kubectl -n "$NAMESPACE" delete deployment/frankengate-vk service/frankengate-vk \
-      pod -l app.kubernetes.io/name=frankengate-binary service/frankengate-binary configmap/frankengate-vk-config \
+      service/frankengate-binary configmap/frankengate-vk-config \
+      --ignore-not-found --wait=false >/dev/null 2>&1 || true
+    kubectl -n "$NAMESPACE" delete pod -l app.kubernetes.io/name=frankengate-vk \
+      --ignore-not-found --wait=false >/dev/null 2>&1 || true
+    kubectl -n "$NAMESPACE" delete pod -l app.kubernetes.io/name=frankengate-binary \
       --ignore-not-found --wait=false >/dev/null 2>&1 || true
   fi
   rm -rf "$WORK_DIR"
@@ -253,22 +257,21 @@ wait_for_cache() {
   # The single-quoted program is evaluated by the in-cluster BusyBox shell;
   # positional arguments below intentionally provide all dynamic values.
   # shellcheck disable=SC2016
-  kubectl -n "$NAMESPACE" exec frankengate-binary -- sh -c '
-    expected_state="$1"
-    expected_id="$2"
-    expected_marker="$3"
-    shift 3
+  kubectl -n "$NAMESPACE" exec frankengate-binary -- env \
+    "EXPECTED_STATE=$expected_state" "EXPECTED_ID=$expected_id" \
+    "EXPECTED_MARKER=$expected_marker" "POD_IPS=${pod_ips[*]}" \
+    sh -c '
     deadline=$(( $(date +%s) + 8 ))
     while [ "$(date +%s)" -le "$deadline" ]; do
       all_match=1
-      for ip do
+      for ip in $POD_IPS; do
         body="$(wget -T 2 -qO- "http://$ip:8080/api/governance/virtual-keys?from_memory=true")" || {
           all_match=0
           break
         }
-        case "$expected_state:$body" in
-          present:*"$expected_id"*"$expected_marker"*) ;;
-          absent:*"$expected_id"*) all_match=0; break ;;
+        case "$EXPECTED_STATE:$body" in
+          present:*"$EXPECTED_ID"*"$EXPECTED_MARKER"*) ;;
+          absent:*"$EXPECTED_ID"*) all_match=0; break ;;
           absent:*) ;;
           *) all_match=0; break ;;
         esac
@@ -276,9 +279,13 @@ wait_for_cache() {
       [ "$all_match" -eq 1 ] && exit 0
       sleep 1
     done
-    echo "pod caches did not converge to state=$expected_state id=$expected_id" >&2
+    echo "pod caches did not converge to state=$EXPECTED_STATE id=$EXPECTED_ID" >&2
+    for ip in $POD_IPS; do
+      diagnostic="$(wget -T 2 -qO- "http://$ip:8080/api/governance/virtual-keys?from_memory=true" 2>&1 || true)"
+      echo "cache diagnostic pod=$ip: $(printf '%s' "$diagnostic" | head -c 320)" >&2
+    done
     exit 1
-  ' sh "$expected_state" "$expected_id" "$expected_marker" "${pod_ips[@]}"
+  '
 }
 
 # Exercise a real inference route through the released image's HTTP middleware,
@@ -369,14 +376,25 @@ assert_chat_vk_reaches_provider_phase_on_all_pods() {
 
 # The governance handler validates VK provider policies against configured
 # providers, so seed a disposable provider and key before creating the budget VK.
-kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
-  --header 'Content-Type: application/json' \
-  --post-data '{"provider":"openai"}' \
-  "http://${pod_ips[0]}:8080/api/providers" >/dev/null
-kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
-  --header 'Content-Type: application/json' \
-  --post-data '{"name":"vk-coherence-probe-key","value":"sk-coherence-probe-key","models":["*"]}' \
-  "http://${pod_ips[0]}:8080/api/providers/openai/keys" >/dev/null
+# The bootstrap config may already contain the disposable provider/key. Treat
+# an idempotent HTTP 409 from these seed calls as success; subsequent VK
+# lifecycle assertions remain fail-closed.
+seed_post_allow_conflict() {
+  local url="$1" payload="$2" response
+  if response="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
+      --server-response --header 'Content-Type: application/json' \
+      --post-data "$payload" "$url" 2>&1)"; then
+    return 0
+  fi
+  if grep -q 'HTTP/1\.1 409 Conflict' <<<"$response"; then
+    return 0
+  fi
+  echo "$response" >&2
+  return 1
+}
+seed_post_allow_conflict "http://${pod_ips[0]}:8080/api/providers" '{"provider":"openai"}'
+seed_post_allow_conflict "http://${pod_ips[0]}:8080/api/providers/openai/keys" \
+  '{"name":"vk-coherence-probe-key","value":"sk-coherence-probe-key","models":["*"]}'
 
 created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
   --header 'Content-Type: application/json' \
@@ -408,6 +426,17 @@ for storm_file in "$storm_dir"/*; do
 done
 if [[ "$storm_failures" -ne 0 ]]; then
   echo "VK bootstrap/admission storm had $storm_failures/$VK_COHERENCE_STORM_REQUESTS failures" >&2
+  # Preserve enough response context to diagnose status mismatches without
+  # flooding CI logs when a larger storm is configured.
+  shown=0
+  for storm_file in "$storm_dir"/*; do
+    if ! grep -q '200 OK' "$storm_file"; then
+      echo "--- failed storm response $(basename "$storm_file") ---" >&2
+      sed -n '1,12p' "$storm_file" >&2
+      shown=$((shown + 1))
+      [[ "$shown" -ge 3 ]] && break
+    fi
+  done
   exit 1
 fi
 storm_elapsed_ms=$((storm_finished_ms - storm_started_ms))

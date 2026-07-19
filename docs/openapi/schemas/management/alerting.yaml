@@ -1,0 +1,31 @@
+AlertChannel:
+  type: object
+  required: [name, type, enabled]
+  properties:
+    id: { type: string }
+    name: { type: string }
+    type: { type: string, enum: [webhook, sns, email, cloudflare_email] }
+    config:
+      type: object
+      additionalProperties: { type: string }
+    enabled: { type: boolean }
+AlertRule:
+  type: object
+  required: [name, event, channel_ids, enabled]
+  properties:
+    id: { type: string }
+    name: { type: string }
+    event: { type: string }
+    channel_ids:
+      type: array
+      items: { type: string }
+    enabled: { type: boolean }
+AlertDelivery:
+  type: object
+  required: [id, rule_id, status, created_at]
+  properties:
+    id: { type: string }
+    rule_id: { type: string }
+    status: { type: string }
+    error: { type: string }
+    created_at: { type: string, format: date-time }

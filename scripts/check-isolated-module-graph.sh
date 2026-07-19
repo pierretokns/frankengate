@@ -4,7 +4,7 @@ set -euo pipefail
 # Verify that every shipped Go module can resolve its imports without the
 # developer-only go.work file. This compile-only check catches published-module
 # drift before an image or release job starts.
-ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+ROOT="$(cd -- "$(dirname -- "$0")/.." && pwd)"
 MODULES=(core framework transports plugins/governance plugins/otel plugins/telemetry plugins/logging)
 GOCACHE="${GOCACHE:-/tmp/frankengate-gocache}"
 failed=0

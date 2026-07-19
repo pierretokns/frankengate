@@ -1,5 +1,5 @@
 LICENSE
 NOTICE
-dist/app.txt
+release/app.txt
 package.json
 package-lock.json

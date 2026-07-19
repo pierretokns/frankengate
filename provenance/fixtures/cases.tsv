@@ -4,3 +4,4 @@ missing-ledger	provenance/fixtures/missing-ledger	fail
 missing-approval	provenance/fixtures/missing-approval	fail
 missing-notice	provenance/fixtures/missing-notice	fail
 denied-license	provenance/fixtures/denied-license	fail
+omitted-distributable	provenance/fixtures/omitted-distributable	fail

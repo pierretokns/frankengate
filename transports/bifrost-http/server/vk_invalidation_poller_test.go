@@ -166,6 +166,52 @@ type fakeVKInvalidationStore struct {
 	listCalled chan struct{}
 }
 
+type recordingGovernanceSyncMetricSink struct {
+	mu     sync.Mutex
+	values map[string]float64
+}
+
+func (s *recordingGovernanceSyncMetricSink) SetGovernanceSyncMetric(name string, value float64) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.values == nil {
+		s.values = make(map[string]float64)
+	}
+	s.values[name] = value
+}
+
+func (s *recordingGovernanceSyncMetricSink) value(name string) float64 {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.values[name]
+}
+
+func TestVirtualKeyInvalidationPollerClosesReadinessMetricOnPollFailure(t *testing.T) {
+	called := make(chan struct{}, 1)
+	store := &fakeVKInvalidationStore{listErr: errors.New("database unavailable"), listCalled: called}
+	metrics := &recordingGovernanceSyncMetricSink{}
+	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error {
+		return nil
+	}, 10, time.Hour)
+	poller.metricSink = metrics
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() { poller.Run(ctx); close(done) }()
+	select {
+	case <-called:
+		cancel()
+	case <-time.After(time.Second):
+		cancel()
+		t.Fatal("poller did not attempt a database read")
+	}
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("poller did not stop after cancellation")
+	}
+	require.Equal(t, float64(0), metrics.value("ready"))
+}
+
 func (s *fakeVKInvalidationStore) ListVirtualKeyInvalidationsAfter(_ context.Context, cursor uint64, limit int) ([]tables.TableVirtualKeyInvalidationEvent, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

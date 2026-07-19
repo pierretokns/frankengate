@@ -1,2 +1,2 @@
-ecosystem	manifest	lockfile	scan_mode	allowed_licenses	denied_patterns	approval_ref	notes
-npm	package.json	package-lock.json	lockfile-license-scan	Apache-2.0|MIT	GPL|AGPL	none	Fixture dependency scan.
+ecosystem	manifest	lockfile	closure_artifact	sbom_artifact	inventory_status	denied_patterns	approval_ref	notes
+npm	package.json	package-lock.json	provenance/dependency-inventory/npm.tsv	provenance/sbom/npm.spdx.json	resolved	GPL|AGPL	none	Fixture resolved dependency closure.

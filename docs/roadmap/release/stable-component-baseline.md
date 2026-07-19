@@ -42,19 +42,24 @@ Notable paths in `git diff --name-status v0.1.0..HEAD` include new core governan
 | Surface | Version / Pin | Evidence |
 |---|---:|---|
 | Host Go binary | `go1.22.4 darwin/arm64` | `go version` |
-| Go module directive | `go 1.26.4` in all 40 `go.mod` files | `find ... -name go.mod ... awk` |
-| Go toolchain behavior | Auto-switched/downloaded `go1.26.5` during `make setup-workspace` | output: `go: cli/go.mod requires go >= 1.26.4; switching to go1.26.5` |
+| Go module directive | `go 1.26.5` in all 40 `go.mod` files | `find ... -name go.mod ... awk` |
+| Go toolchain behavior | Patched to `go1.26.5` after Fork CI found reachable `GO-2026-5856` in `crypto/tls@go1.26.4` | Fork CI run `29416234643`; Go vulnerability database |
 | Host Node | `v23.1.0` | `node -v` |
 | Pinned local Node | `22.12.0` | `.nvmrc` and `make build` output |
 | npm | `10.9.0` | `npm -v`; `make build` output under Node 22.12.0 |
 | Make | `GNU Make 3.81` | `make --version` |
 | Helm | `v3.19.0+g3d8990f` | `helm version --short` |
 | Docker CLI | Podman-backed, not usable for builds in this shell | `docker build ...` failed to connect to Podman socket `127.0.0.1:60969` |
-| Fork release workflow | Go `1.26.4`, Node `22.12.0` | `.github/workflows/frankengate-release.yml` |
-| Upstream PR/release workflows | Go `1.26.4`, Node `25` in several jobs | `.github/workflows/pr-tests.yml`, `release-pipeline.yml`, `npx-publish.yml` |
-| Dockerfiles | Node `25-alpine3.23` and Go `1.26.4-alpine3.23` pinned by digest | `transports/Dockerfile*` |
+| Fork release workflow | Go `1.26.5`, Node `22.12.0` | `.github/workflows/frankengate-release.yml` |
+| Maintained PR/release workflows | Go `1.26.5`; Node remains workflow-specific | `.github/workflows/*.yml` |
+| Dockerfiles | Node `25-alpine3.23` and Go `1.26.5-alpine3.23` pinned by digest | `transports/Dockerfile*` |
 
-Toolchain decision: keep the baseline on Go module directive `1.26.4` plus auto toolchain resolution, but use Node `22.12.0` for fork release reproducibility because that is the fork release workflow and `.nvmrc` pin. Treat the Node `25` workflow/Dockerfile pins as an upstream-release-surface divergence requiring a separate release decision.
+Toolchain decision: require Go `1.26.5` throughout the maintained source,
+workflow, Nix, and container surfaces. Go `1.26.4` is prohibited for release
+because Fork CI proved a reachable standard-library TLS vulnerability. Use Node
+`22.12.0` for fork release reproducibility because that is the fork release
+workflow and `.nvmrc` pin. Treat Node `25` Dockerfile pins as a separate
+release-surface divergence requiring an explicit decision.
 
 ## Component Tag Comparison
 

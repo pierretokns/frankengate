@@ -115,4 +115,4 @@ Performed in this workspace:
 - `scripts/verify-provenance.sh --self-test` and `scripts/verify-provenance.sh` passed.
 - `git diff --check` passed for the edited workflow/doc files.
 - `actionlint` was not installed locally.
-- `GOTOOLCHAIN=local .github/workflows/scripts/fork-go-checks.sh test-vet` stopped immediately because the local Go toolchain is `go1.22.4` and the repo requires `go >= 1.26.4`; the workflow installs Go `1.26.4`.
+- `GOTOOLCHAIN=local .github/workflows/scripts/fork-go-checks.sh test-vet` stopped immediately because the local Go toolchain is `go1.22.4` and the repo requires Go `1.26.5`; the workflow installs the patched toolchain.

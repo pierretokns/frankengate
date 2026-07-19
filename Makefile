@@ -320,6 +320,10 @@ build-ui: install-ui ## Build ui
 	@$(USE_NODE); cd ui && npm run build && npm run copy-build
 
 build: build-ui ## Build bifrost-http binary
+	@if [ ! -f go.work ]; then \
+		$(ECHO) "$(YELLOW)go.work missing; bootstrapping the repository workspace for product assembly$(NC)"; \
+		$(MAKE) work-init; \
+	fi
 	@if [ -n "$(LOCAL)" ]; then \
 		$(ECHO) "$(GREEN)╔═══════════════════════════════════════════════╗$(NC)"; \
 		$(ECHO) "$(GREEN)║  Building bifrost-http with local go.work...  ║$(NC)"; \
@@ -351,14 +355,14 @@ build: build-ui ## Build bifrost-http binary
 	if [ "$$TARGET_OS" = "linux" ] && [ "$$HOST_OS" = "linux" ]; then \
 		if [ -n "$(DYNAMIC)" ]; then \
 			$(ECHO) "$(CYAN)Building for $$TARGET_OS/$$TARGET_ARCH with dynamic linking...$(NC)"; \
-			cd transports/bifrost-http && CGO_ENABLED=1 GOOS=$$TARGET_OS GOARCH=$$TARGET_ARCH $(if $(LOCAL),,GOWORK=off) go build \
+			cd transports/bifrost-http && CGO_ENABLED=1 GOOS=$$TARGET_OS GOARCH=$$TARGET_ARCH go build \
 				-ldflags="-w -s -X main.Version=v$(VERSION)" \
 				-a -trimpath \
 				-o ../../tmp/bifrost-http \
 				.; \
 		else \
 			$(ECHO) "$(CYAN)Building for $$TARGET_OS/$$TARGET_ARCH with static linking...$(NC)"; \
-			cd transports/bifrost-http && CGO_ENABLED=1 GOOS=$$TARGET_OS GOARCH=$$TARGET_ARCH $(if $(LOCAL),,GOWORK=off) go build \
+			cd transports/bifrost-http && CGO_ENABLED=1 GOOS=$$TARGET_OS GOARCH=$$TARGET_ARCH go build \
 				-ldflags="-w -s -extldflags "-static" -X main.Version=v$(VERSION)" \
 				-a -trimpath \
 				-tags "sqlite_static" \
@@ -368,7 +372,7 @@ build: build-ui ## Build bifrost-http binary
 		$(ECHO) "$(GREEN)Built: tmp/bifrost-http (version: v$(VERSION))$(NC)"; \
 	elif [ "$$TARGET_OS" = "$$HOST_OS" ] && [ "$$TARGET_ARCH" = "$$HOST_ARCH" ]; then \
 		$(ECHO) "$(CYAN)Building for $$TARGET_OS/$$TARGET_ARCH (native build with CGO)...$(NC)"; \
-		cd transports/bifrost-http && CGO_ENABLED=1 GOOS=$$TARGET_OS GOARCH=$$TARGET_ARCH $(if $(LOCAL),,GOWORK=off) go build \
+		cd transports/bifrost-http && CGO_ENABLED=1 GOOS=$$TARGET_OS GOARCH=$$TARGET_ARCH go build \
 			-ldflags="-w -s -X main.Version=v$(VERSION)" \
 			-a -trimpath \
 			-tags "sqlite_static" \
@@ -399,8 +403,8 @@ _build-with-docker: # Internal target for Docker-based cross-compilation
 				-e CGO_ENABLED=1 \
 				-e GOOS=$(TARGET_OS) \
 				-e GOARCH=$(TARGET_ARCH) \
-				 $(if $(LOCAL),,-e GOWORK=off) \
-				golang:1.26.4-alpine3.23@sha256:f23e8b227fb4493eabe03bede4d5a32d04092da71962f1fb79b5f7d1e6c2a17f \
+				 -e GOWORK=/workspace/go.work \
+				golang:1.26.5-alpine3.23@sha256:622e56dbc11a8cfe87cafa2331e9a201877271cbff918af53d3be315f3da88cc \
 				sh -c "apk add --no-cache gcc musl-dev && \
 				go build \
 					-ldflags='-w -s -X main.Version=v$(VERSION)' \
@@ -416,8 +420,8 @@ _build-with-docker: # Internal target for Docker-based cross-compilation
 				-e CGO_ENABLED=1 \
 				-e GOOS=$(TARGET_OS) \
 				-e GOARCH=$(TARGET_ARCH) \
-				 $(if $(LOCAL),,-e GOWORK=off) \
-				golang:1.26.4-alpine3.23@sha256:f23e8b227fb4493eabe03bede4d5a32d04092da71962f1fb79b5f7d1e6c2a17f \
+				 -e GOWORK=/workspace/go.work \
+				golang:1.26.5-alpine3.23@sha256:622e56dbc11a8cfe87cafa2331e9a201877271cbff918af53d3be315f3da88cc \
 				sh -c "apk add --no-cache gcc musl-dev && \
 				go build \
 					-ldflags='-w -s -extldflags "-static" -X main.Version=v$(VERSION)' \
@@ -1638,6 +1642,10 @@ quick-start: ## Quick start with example config and maxim plugin
 lint: ## Run linter for Go code
 	@$(ECHO) "$(GREEN)Running golangci-lint...$(NC)"
 	@golangci-lint run ./...
+
+check-isolated-module-graph: ## Verify shipped Go modules compile without go.work
+	@$(ECHO) "$(GREEN)Checking isolated published-module graph...$(NC)"
+	@./scripts/check-isolated-module-graph.sh
 
 fmt: ## Format Go code
 	@$(ECHO) "$(GREEN)Formatting Go code...$(NC)"

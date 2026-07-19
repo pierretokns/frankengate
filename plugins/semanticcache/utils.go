@@ -257,6 +257,37 @@ func (plugin *Plugin) buildRequestMetadataForCaching(state *cacheState, req *sch
 	return metadata, nil
 }
 
+// authorityMetadataForCaching projects only trusted, non-secret authorization
+// claims into the cache key. An epoch reference is required to be internally
+// consistent with its principal; malformed protected context fails closed.
+func authorityMetadataForCaching(ctx *schemas.BifrostContext) (map[string]any, error) {
+	if ctx == nil || ctx.Value(schemas.BifrostContextKeyAuthorizationEpochReference) == nil {
+		return nil, nil
+	}
+	ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("invalid authorization scope for semantic cache: %w", err)
+	}
+	metadata := map[string]any{
+		"authorization_tenant":      ref.Principal.Tenant,
+		"authorization_issuer":      ref.Principal.Issuer,
+		"authorization_subject":     ref.Principal.Subject,
+		"authorization_epoch":       ref.Epoch,
+		"authorization_artifact":    string(ref.Kind),
+		"authorization_artifact_id": ref.ID,
+	}
+	for key, metadataKey := range map[schemas.BifrostContextKey]string{
+		schemas.BifrostContextKeyGovernanceTeamID:         "authorization_team_id",
+		schemas.BifrostContextKeyGovernanceCustomerID:     "authorization_customer_id",
+		schemas.BifrostContextKeyGovernanceBusinessUnitID: "authorization_business_unit_id",
+	} {
+		if value, ok := ctx.Value(key).(string); ok && value != "" {
+			metadata[metadataKey] = value
+		}
+	}
+	return metadata, nil
+}
+
 // extractAttachmentsForCaching collects image/file URLs referenced by the
 // request input in document order. Attachments are part of the cache key —
 // two messages with identical text but different images must not collide.

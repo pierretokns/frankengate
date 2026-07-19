@@ -86,7 +86,10 @@ func waitForJobStatus(t *testing.T, store LogStore, jobID string) *AsyncJob {
 func TestSubmitJob_PropagatesContextValues(t *testing.T) {
 	executor := newTestAsyncExecutor(t)
 
-	capturedCtx := schemas.NewBifrostContext(context.Background(), <-time.After(1*time.Minute))
+	// Use an explicit non-blocking deadline.  The previous expression waited on
+	// a one-minute timer before the job was even submitted, making the package
+	// race suite appear hung and masking real async-job failures.
+	capturedCtx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
 	capturedCtx.SetValue(schemas.BifrostContextKeyVirtualKey, "sk-bf-test")
 	capturedCtx.SetValue(schemas.BifrostContextKey("x-bf-eh-custom"), "custom-value")
 	capturedCtx.SetValue(schemas.BifrostContextKey("x-bf-prom-env"), "production")

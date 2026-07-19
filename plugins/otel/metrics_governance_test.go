@@ -24,6 +24,8 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 	exporter.SetGovernanceSyncMetric(ctx, "ready", 1)
 	exporter.SetGovernanceSyncMetric(ctx, "consumer_lag", 4)
 	exporter.AddGovernanceSyncMetric(ctx, "wakeups", 2)
+	exporter.AddGovernanceSyncMetric(ctx, "overdraft_notification_delivered", 2)
+	exporter.AddGovernanceSyncMetric(ctx, "overdraft_notification_failed", 1)
 
 	for name, instrument := range map[string]any{
 		"reservations":        exporter.governanceReservationsTotal,

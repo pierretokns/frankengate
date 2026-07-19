@@ -26,7 +26,8 @@ import (
 var (
 	// Global paths to MCP server binaries (initialized once)
 	mcpServerPathsOnce sync.Once
-	mcpServerPaths struct {
+	mcpServerPathsMu   sync.RWMutex
+	mcpServerPaths     struct {
 		TemperatureServer  string
 		GoTestServer       string
 		EdgeCaseServer     string
@@ -44,6 +45,8 @@ func InitMCPServerPaths(t *testing.T) {
 		bifrostRoot := GetBifrostRoot(t)
 		examplesRoot := filepath.Join(bifrostRoot, "..", "examples")
 
+		mcpServerPathsMu.Lock()
+		defer mcpServerPathsMu.Unlock()
 		mcpServerPaths.BifrostRoot = bifrostRoot
 		mcpServerPaths.ExamplesRoot = examplesRoot
 		mcpServerPaths.TemperatureServer = filepath.Join(examplesRoot, "mcps", "temperature", "dist", "index.js")
@@ -940,7 +943,9 @@ func GetSampleInProcessClientConfig() schemas.MCPClientConfig {
 // The path is relative to the bifrost root directory.
 func GetTemperatureMCPClientConfig(bifrostRoot string) schemas.MCPClientConfig {
 	// Use global path if available, otherwise fall back to parameter
+	mcpServerPathsMu.RLock()
 	serverPath := mcpServerPaths.TemperatureServer
+	mcpServerPathsMu.RUnlock()
 	if serverPath == "" {
 		serverPath = filepath.Join(bifrostRoot, "..", "examples", "mcps", "temperature", "dist", "index.js")
 	}
@@ -964,7 +969,9 @@ func GetTemperatureMCPClientConfig(bifrostRoot string) schemas.MCPClientConfig {
 // The server must be built first using: go build -o bin/go-test-server
 func GetGoTestServerConfig(bifrostRoot string) schemas.MCPClientConfig {
 	// Use global path if available, otherwise fall back to parameter
+	mcpServerPathsMu.RLock()
 	serverPath := mcpServerPaths.GoTestServer
+	mcpServerPathsMu.RUnlock()
 	if serverPath == "" {
 		serverPath = bifrostRoot + "/../examples/mcps/go-test-server/bin/go-test-server"
 	}
@@ -989,7 +996,9 @@ func GetGoTestServerConfig(bifrostRoot string) schemas.MCPClientConfig {
 // The server must be built first using: go build -o bin/edge-case-server
 func GetEdgeCaseServerConfig(bifrostRoot string) schemas.MCPClientConfig {
 	// Use global path if available, otherwise fall back to parameter
+	mcpServerPathsMu.RLock()
 	serverPath := mcpServerPaths.EdgeCaseServer
+	mcpServerPathsMu.RUnlock()
 	if serverPath == "" {
 		serverPath = bifrostRoot + "/../examples/mcps/edge-case-server/bin/edge-case-server"
 	}
@@ -1014,7 +1023,9 @@ func GetEdgeCaseServerConfig(bifrostRoot string) schemas.MCPClientConfig {
 // The server must be built first using: go build -o bin/error-test-server
 func GetErrorTestServerConfig(bifrostRoot string) schemas.MCPClientConfig {
 	// Use global path if available, otherwise fall back to parameter
+	mcpServerPathsMu.RLock()
 	serverPath := mcpServerPaths.ErrorTestServer
+	mcpServerPathsMu.RUnlock()
 	if serverPath == "" {
 		serverPath = bifrostRoot + "/../examples/mcps/error-test-server/bin/error-test-server"
 	}
@@ -1039,7 +1050,9 @@ func GetErrorTestServerConfig(bifrostRoot string) schemas.MCPClientConfig {
 // The server must be built first using: go build -o bin/parallel-test-server
 func GetParallelTestServerConfig(bifrostRoot string) schemas.MCPClientConfig {
 	// Use global path if available, otherwise fall back to parameter
+	mcpServerPathsMu.RLock()
 	serverPath := mcpServerPaths.ParallelTestServer
+	mcpServerPathsMu.RUnlock()
 	if serverPath == "" {
 		serverPath = bifrostRoot + "/../examples/mcps/parallel-test-server/bin/parallel-test-server"
 	}

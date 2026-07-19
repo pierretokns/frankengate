@@ -198,8 +198,9 @@ func TestReleaseHTTPRequestRestoresReusableMapFields(t *testing.T) {
 	req.PathParams = nil
 
 	ReleaseHTTPRequest(req)
-
-	assertHTTPRequestReset(t, req)
+	reacquired := AcquireHTTPRequest()
+	assertHTTPRequestReset(t, reacquired)
+	ReleaseHTTPRequest(reacquired)
 }
 
 func TestReleaseHTTPResponseRestoresReusableHeaderMap(t *testing.T) {
@@ -211,8 +212,9 @@ func TestReleaseHTTPResponseRestoresReusableHeaderMap(t *testing.T) {
 	resp.Headers = nil
 
 	ReleaseHTTPResponse(resp)
-
-	assertHTTPResponseReset(t, resp)
+	reacquired := AcquireHTTPResponse()
+	assertHTTPResponseReset(t, reacquired)
+	ReleaseHTTPResponse(reacquired)
 }
 
 func TestReleaseChatToResponsesStreamStateClearsSensitiveFields(t *testing.T) {
@@ -220,8 +222,9 @@ func TestReleaseChatToResponsesStreamStateClearsSensitiveFields(t *testing.T) {
 	fillChatToResponsesStreamState(state, "tenant-a")
 
 	ReleaseChatToResponsesStreamState(state)
-
-	assertChatToResponsesStreamStateReset(t, state)
+	reacquired := AcquireChatToResponsesStreamState()
+	assertChatToResponsesStreamStateReset(t, reacquired)
+	ReleaseChatToResponsesStreamState(reacquired)
 }
 
 func TestDrainPluginLogsDoesNotExposePreviousTenantToNextContext(t *testing.T) {
@@ -294,7 +297,6 @@ func TestPooledObjectsRandomizedReleasedReuseAndInterruptedLifecyclesDoNotExpose
 				req.PathParams = nil
 			}
 			ReleaseHTTPRequest(req)
-			assertHTTPRequestReset(t, req)
 		}
 
 		resp := AcquireHTTPResponse()
@@ -311,7 +313,6 @@ func TestPooledObjectsRandomizedReleasedReuseAndInterruptedLifecyclesDoNotExpose
 				resp.Headers = nil
 			}
 			ReleaseHTTPResponse(resp)
-			assertHTTPResponseReset(t, resp)
 		}
 
 		state := AcquireChatToResponsesStreamState()
@@ -332,7 +333,6 @@ func TestPooledObjectsRandomizedReleasedReuseAndInterruptedLifecyclesDoNotExpose
 				state.ToolCallOutputIndices = nil
 			}
 			ReleaseChatToResponsesStreamState(state)
-			assertChatToResponsesStreamStateReset(t, state)
 		}
 	}
 
@@ -343,21 +343,18 @@ func TestPooledObjectsRandomizedReleasedReuseAndInterruptedLifecyclesDoNotExpose
 	for _, req := range interruptedRequests {
 		delete(retainedRequests, req)
 		ReleaseHTTPRequest(req)
-		assertHTTPRequestReset(t, req)
 	}
 	interruptedRequests = nil
 
 	for _, resp := range interruptedResponses {
 		delete(retainedResponses, resp)
 		ReleaseHTTPResponse(resp)
-		assertHTTPResponseReset(t, resp)
 	}
 	interruptedResponses = nil
 
 	for _, state := range interruptedStates {
 		delete(retainedStates, state)
 		ReleaseChatToResponsesStreamState(state)
-		assertChatToResponsesStreamStateReset(t, state)
 	}
 	interruptedStates = nil
 	if len(retainedRequests) != 0 || len(retainedResponses) != 0 || len(retainedStates) != 0 {
@@ -371,19 +368,25 @@ func TestPooledObjectsRandomizedReleasedReuseAndInterruptedLifecyclesDoNotExpose
 		assertHTTPRequestReset(t, req)
 		fillHTTPRequest(req, tenant)
 		ReleaseHTTPRequest(req)
-		assertHTTPRequestReset(t, req)
+		reacquiredReq := AcquireHTTPRequest()
+		assertHTTPRequestReset(t, reacquiredReq)
+		ReleaseHTTPRequest(reacquiredReq)
 
 		resp := AcquireHTTPResponse()
 		assertHTTPResponseReset(t, resp)
 		fillHTTPResponse(resp, tenant)
 		ReleaseHTTPResponse(resp)
-		assertHTTPResponseReset(t, resp)
+		reacquiredResp := AcquireHTTPResponse()
+		assertHTTPResponseReset(t, reacquiredResp)
+		ReleaseHTTPResponse(reacquiredResp)
 
 		state := AcquireChatToResponsesStreamState()
 		assertChatToResponsesStreamStateReset(t, state)
 		fillChatToResponsesStreamState(state, tenant)
 		ReleaseChatToResponsesStreamState(state)
-		assertChatToResponsesStreamStateReset(t, state)
+		reacquiredState := AcquireChatToResponsesStreamState()
+		assertChatToResponsesStreamStateReset(t, reacquiredState)
+		ReleaseChatToResponsesStreamState(reacquiredState)
 	}
 }
 

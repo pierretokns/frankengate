@@ -104,7 +104,7 @@ func TestCleanupDrainsRecoveredBatchNoDrops(t *testing.T) {
 func TestCleanupDrainsCombinedQueueAndBatchNoDrops(t *testing.T) {
 	rec := &recordingStore{
 		LogStore: newTestStore(t),
-		delay:    25 * time.Millisecond, // slow store keeps batchWriter busy so the channel buffer fills
+		delay:    2 * time.Millisecond, // slow enough to fill the channel without a race-suite floor
 	}
 	plugin, err := Init(context.Background(), &Config{}, testLogger{}, rec, nil, nil)
 	if err != nil {
@@ -116,8 +116,8 @@ func TestCleanupDrainsCombinedQueueAndBatchNoDrops(t *testing.T) {
 		plugin.enqueueLogEntry(makeTestLog(fmt.Sprintf("combined-%d", i)), nil)
 	}
 
-	// Call Cleanup while batchWriter is likely mid-processBatch (the 25ms
-	// per-batch delay means the queue is still partially full). drainPending
+	// Call Cleanup while batchWriter is likely mid-processBatch (the per-batch
+	// delay means the queue is still partially full). drainPending
 	// must wait for the ownership handoff, then drain the remainder.
 	if err := plugin.Cleanup(); err != nil {
 		t.Fatalf("Cleanup() error = %v", err)

@@ -22,6 +22,9 @@ type cacheState struct {
 	ParamsHash            string
 	Embeddings            []float32
 	EmbeddingsInputTokens int
+	// AuthorityMetadata is the immutable authorization scope included in the
+	// cache params hash and persisted metadata for protected requests.
+	AuthorityMetadata map[string]any
 
 	// FilteredInput caches getInputForCaching(req) so attachment extraction,
 	// embedding text extraction, and history-threshold checks reuse the same

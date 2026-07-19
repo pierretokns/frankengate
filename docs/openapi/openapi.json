@@ -34002,6 +34002,7 @@
         "tags": [
           "Health"
         ],
+        "security": [],
         "responses": {
           "200": {
             "description": "Server is healthy",
@@ -34385,6 +34386,543 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/alerting/channels": {
+      "get": {
+        "operationId": "listAlertChannels",
+        "summary": "List alert channels",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert channels",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "channels"
+                  ],
+                  "properties": {
+                    "channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "type",
+                          "enabled"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "webhook",
+                              "sns",
+                              "email",
+                              "cloudflare_email"
+                            ]
+                          },
+                          "config": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "string"
+                            }
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAlertChannel",
+        "summary": "Create an alert channel",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "type",
+                  "enabled"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "webhook",
+                      "sns",
+                      "email",
+                      "cloudflare_email"
+                    ]
+                  },
+                  "config": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created channel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "type",
+                    "enabled"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "webhook",
+                        "sns",
+                        "email",
+                        "cloudflare_email"
+                      ]
+                    },
+                    "config": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/alerting/channels/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "put": {
+        "operationId": "updateAlertChannel",
+        "summary": "Update an alert channel",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "type",
+                  "enabled"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "webhook",
+                      "sns",
+                      "email",
+                      "cloudflare_email"
+                    ]
+                  },
+                  "config": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated channel"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAlertChannel",
+        "summary": "Delete an alert channel",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Channel deleted"
+          }
+        }
+      }
+    },
+    "/api/alerting/rules": {
+      "get": {
+        "operationId": "listAlertRules",
+        "summary": "List alert rules",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "rules"
+                  ],
+                  "properties": {
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "event",
+                          "channel_ids",
+                          "enabled"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "event": {
+                            "type": "string"
+                          },
+                          "channel_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAlertRule",
+        "summary": "Create an alert rule",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "event",
+                  "channel_ids",
+                  "enabled"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "event": {
+                    "type": "string"
+                  },
+                  "channel_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created rule"
+          }
+        }
+      }
+    },
+    "/api/alerting/rules/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "put": {
+        "operationId": "updateAlertRule",
+        "summary": "Update an alert rule",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "event",
+                  "channel_ids",
+                  "enabled"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "event": {
+                    "type": "string"
+                  },
+                  "channel_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated rule"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAlertRule",
+        "summary": "Delete an alert rule",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Rule deleted"
+          }
+        }
+      }
+    },
+    "/api/alerting/history": {
+      "get": {
+        "operationId": "listAlertHistory",
+        "summary": "List alert delivery history",
+        "tags": [
+          "Alerting"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "SessionCookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert delivery history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "history"
+                  ],
+                  "properties": {
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "rule_id",
+                          "status",
+                          "created_at"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "rule_id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -35308,7 +35846,7 @@
     },
     "/api/teams": {
       "get": {
-        "operationId": "listTeams",
+        "operationId": "usersListTeams",
         "summary": "List teams",
         "description": "Returns a paginated list of teams with optional search.",
         "tags": [
@@ -35425,7 +35963,7 @@
         }
       },
       "post": {
-        "operationId": "createTeam",
+        "operationId": "usersCreateTeam",
         "summary": "Create team",
         "description": "Creates a new team. The team ID is derived from the name.",
         "tags": [
@@ -35509,7 +36047,7 @@
     },
     "/api/teams/{id}": {
       "get": {
-        "operationId": "getTeam",
+        "operationId": "usersGetTeam",
         "summary": "Get team",
         "description": "Returns details of a specific team including member count.",
         "tags": [
@@ -35591,7 +36129,7 @@
         }
       },
       "put": {
-        "operationId": "updateTeam",
+        "operationId": "usersUpdateTeam",
         "summary": "Update team",
         "description": "Updates a team. Note that renaming teams is not allowed.",
         "tags": [
@@ -35681,7 +36219,7 @@
         }
       },
       "delete": {
-        "operationId": "deleteTeam",
+        "operationId": "usersDeleteTeam",
         "summary": "Delete team",
         "description": "Permanently removes a team.",
         "tags": [
@@ -40744,7 +41282,7 @@
     },
     "/api/governance/teams": {
       "get": {
-        "operationId": "listTeams",
+        "operationId": "governanceListTeams",
         "summary": "List teams",
         "description": "Returns a list of all teams.",
         "tags": [
@@ -40798,7 +41336,7 @@
         }
       },
       "post": {
-        "operationId": "createTeam",
+        "operationId": "governanceCreateTeam",
         "summary": "Create team",
         "description": "Creates a new team.",
         "tags": [
@@ -40855,7 +41393,7 @@
     },
     "/api/governance/teams/{team_id}": {
       "get": {
-        "operationId": "getTeam",
+        "operationId": "governanceGetTeam",
         "summary": "Get team",
         "description": "Returns a specific team by ID.",
         "tags": [
@@ -40925,7 +41463,7 @@
         }
       },
       "put": {
-        "operationId": "updateTeam",
+        "operationId": "governanceUpdateTeam",
         "summary": "Update team",
         "description": "Updates an existing team.",
         "tags": [
@@ -41001,7 +41539,7 @@
         }
       },
       "delete": {
-        "operationId": "deleteTeam",
+        "operationId": "governanceDeleteTeam",
         "summary": "Delete team",
         "description": "Deletes a team.",
         "tags": [

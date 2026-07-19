@@ -7,6 +7,7 @@ scripts/benchmark-gateway-overhead.sh	local-fork	Apache-2.0	FrankenGate contribu
 scripts/benchmark-gateway-overhead-loop.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Periodic direct-versus-gateway latency measurement loop.
 scripts/publish-beta-local.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Exact-SHA local beta publication lane.
 scripts/verify-beta-local.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Local beta archive verification helper.
+docs/operations/beta-release-lane.md	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Fast beta preparation and publication lane instructions.
 scripts/validate-migration-manifest.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Dependency-free migration compatibility manifest validator.
 .github/workflows/frankengate-beta.yml	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Fast local-tested beta publication workflow.
 .github/workflows/frankengate-image-release-native.yml	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Native image release workflow.
@@ -45,6 +46,7 @@ helm-charts/bifrost/values-examples/providers-and-virtual-keys.yaml	upstream-bif
 helm-charts/bifrost/templates/prometheusrule.yaml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Optional Prometheus Operator alert rule template.
 helm-charts/bifrost/templates/servicemonitor.yaml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Optional Prometheus Operator scrape template.
 helm-charts/bifrost/values-examples/monitoring-prometheus.yaml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Prometheus monitoring values example.
+helm-charts/bifrost/values-examples/frankengate-external-backends.yaml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Drag-and-drop external Aurora/Postgres and Redis values example.
 helm-charts/bifrost/values-examples/secrets-from-k8s.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
 helm-charts/bifrost/values-examples/semantic-cache-secret-example.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
 helm-charts/bifrost/values-examples/sqlite-only.yaml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Helm values example.
@@ -146,3 +148,5 @@ scripts/bifrost-migration-cli/scripts/delete_bifrost_entities.sh	upstream-bifros
 scripts/bifrost-migration-cli/scripts/delete_entities.sh	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Migration CLI packaged shell input.
 scripts/bifrost-migration-cli/scripts/seed_models.sh	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Migration CLI packaged shell input.
 scripts/verify-provenance.sh	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Deterministic provenance release gate.
+scripts/branding-inventory.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Deterministic upstream-identity inventory generator used by the branding conformance program.
+scripts/check-isolated-module-graph.sh	local-fork	Apache-2.0	FrankenGate contributors	no	none	none	Release guard proving each shipped Go module compiles without relying on go.work.

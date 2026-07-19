@@ -820,6 +820,9 @@ func buildSpanAttrs(span *schemas.Span) []attribute.KeyValue {
 	if project := getStringAttr(attrs, schemas.AttrBifrostDestinationProject); project != "" {
 		result = append(result, attribute.String("destination.project_id", project))
 	}
+	if tool := getStringAttr(attrs, schemas.AttrToolName); tool != "" {
+		result = append(result, attribute.String("gen_ai.tool.name", tool))
+	}
 	return result
 }
 
@@ -852,9 +855,10 @@ func buildContextAttrs(ctx context.Context, resp *schemas.BifrostResponse, bifro
 // via the OTEL metrics exporter. This is called from Inject after trace emission.
 //
 // Per-attempt metrics (upstream_requests, errors, success, latency) are recorded once
-// per llm.call/retry span so fallback attempts and failed retries are counted with
-// their own provider/model/fallback_index labels. Per-trace metrics (tokens, cost,
-// TTFT) are recorded once, keyed off the final (latest) attempt span.
+// per llm.call/retry/mcp.tool span so fallback attempts and failed retries are counted
+// with their own provider/model/fallback_index labels and MCP tool calls are visible
+// in the same operational metrics stream. Per-trace metrics (tokens, cost, TTFT) are
+// recorded once, keyed off the final (latest) LLM attempt span.
 func (p *OtelPlugin) recordMetricsFromTrace(ctx context.Context, exporter *MetricsExporter, trace *schemas.Trace) {
 	if trace == nil || exporter == nil {
 		return
@@ -862,7 +866,7 @@ func (p *OtelPlugin) recordMetricsFromTrace(ctx context.Context, exporter *Metri
 
 	var finalSpan *schemas.Span
 	for _, span := range trace.Spans {
-		if span.Kind != schemas.SpanKindLLMCall && span.Kind != schemas.SpanKindRetry {
+		if span.Kind != schemas.SpanKindLLMCall && span.Kind != schemas.SpanKindRetry && span.Kind != schemas.SpanKindMCPTool {
 			continue
 		}
 

@@ -36,8 +36,12 @@ func TestUsageTrackingRateLimitReset(t *testing.T) {
 	vkID := ExtractIDFromResponse(t, createVKResp)
 	testData.AddVirtualKey(vkID)
 
-	vk := createVKResp.Body["virtual_key"].(map[string]interface{})
-	vkValue := vk["value"].(string)
+	// Virtual-key metadata is intentionally redacted. The one-time credential
+	// is returned at the top level as `secret` and must be used immediately.
+	vkValue, ok := createVKResp.Body["secret"].(string)
+	if !ok || vkValue == "" {
+		t.Fatalf("create response did not include a one-time secret")
+	}
 
 	t.Logf("Created VK %s with rate limit: %d tokens reset every %s", vkName, tokenLimit, tokenResetDuration)
 
@@ -161,8 +165,12 @@ func TestUsageTrackingBudgetReset(t *testing.T) {
 	vkID := ExtractIDFromResponse(t, createVKResp)
 	testData.AddVirtualKey(vkID)
 
-	vk := createVKResp.Body["virtual_key"].(map[string]interface{})
-	vkValue := vk["value"].(string)
+	// Virtual-key metadata is intentionally redacted. The one-time credential
+	// is returned at the top level as `secret` and must be used immediately.
+	vkValue, ok := createVKResp.Body["secret"].(string)
+	if !ok || vkValue == "" {
+		t.Fatalf("create response did not include a one-time secret")
+	}
 
 	t.Logf("Created VK %s with budget: $%.2f reset every %s", vkName, budgetLimit, resetDuration)
 
@@ -294,8 +302,12 @@ func TestInMemoryUsageUpdateOnRequest(t *testing.T) {
 	vkID := ExtractIDFromResponse(t, createVKResp)
 	testData.AddVirtualKey(vkID)
 
-	vk := createVKResp.Body["virtual_key"].(map[string]interface{})
-	vkValue := vk["value"].(string)
+	// Virtual-key metadata is intentionally redacted. The one-time credential
+	// is returned at the top level as `secret` and must be used immediately.
+	vkValue, ok := createVKResp.Body["secret"].(string)
+	if !ok || vkValue == "" {
+		t.Fatalf("create response did not include a one-time secret")
+	}
 
 	t.Logf("Created VK %s for usage tracking test", vkName)
 

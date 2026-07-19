@@ -176,6 +176,7 @@ type ConfigData struct {
 	Plugins           []*schemas.PluginConfig               `json:"plugins,omitempty"`
 	WebSocket         *schemas.WebSocketConfig              `json:"websocket,omitempty"`
 	FeatureFlags      *FeatureFlagsFileConfig               `json:"feature_flags,omitempty"`
+	Alerting          json.RawMessage                       `json:"alerting,omitempty"`
 
 	presentSections           map[string]bool
 	presentGovernanceSections map[string]bool
@@ -319,6 +320,8 @@ func (cd *ConfigData) sectionPresent(name string) bool {
 		return cd.LogsStoreConfig != nil
 	case "config_store":
 		return cd.ConfigStoreConfig != nil
+	case "alerting":
+		return len(cd.Alerting) > 0
 	default:
 		return false
 	}
@@ -388,6 +391,7 @@ func (cd *ConfigData) UnmarshalJSON(data []byte) error {
 		Plugins           []*schemas.PluginConfig               `json:"plugins,omitempty"`
 		WebSocket         *schemas.WebSocketConfig              `json:"websocket,omitempty"`
 		FeatureFlags      *FeatureFlagsFileConfig               `json:"feature_flags,omitempty"`
+		Alerting          json.RawMessage                       `json:"alerting,omitempty"`
 		SkillsRegistry    *SkillsRegistryConfig                 `json:"skills_registry,omitempty"`
 	}
 
@@ -410,6 +414,7 @@ func (cd *ConfigData) UnmarshalJSON(data []byte) error {
 	cd.Plugins = temp.Plugins
 	cd.WebSocket = temp.WebSocket
 	cd.FeatureFlags = temp.FeatureFlags
+	cd.Alerting = append(cd.Alerting[:0], temp.Alerting...)
 	cd.presentGovernanceSections = nil
 	if rawGovernance, ok := raw["governance"]; ok && len(rawGovernance) > 0 {
 		var rawGovernanceFields map[string]json.RawMessage
@@ -866,6 +871,9 @@ func LoadConfig(ctx context.Context, configDirPath string) (*Config, error) {
 	if err := initStores(ctx, config, &configData, configDBPath, logsDBPath); err != nil {
 		return nil, err
 	}
+	if err := syncAlertingConfig(ctx, config, &configData); err != nil {
+		return nil, err
+	}
 	// 3. KV store
 	if err := initKVStore(config); err != nil {
 		return nil, err
@@ -932,6 +940,40 @@ func LoadConfig(ctx context.Context, configDirPath string) (*Config, error) {
 		}
 	}
 	return config, nil
+}
+
+const declarativeAlertingConfigKey = "frankengate.alerting.v1"
+
+// syncAlertingConfig reconciles the declarative config.json alerting section
+// into the same durable key consumed by the HTTP alerting handlers. In split
+// mode an existing database value wins; config.json becomes authoritative only
+// when source_of_truth is explicitly set to config.json.
+func syncAlertingConfig(ctx context.Context, config *Config, configData *ConfigData) error {
+	if config == nil || config.ConfigStore == nil || configData == nil || !configData.sectionPresent("alerting") {
+		return nil
+	}
+	if len(configData.Alerting) == 0 || !json.Valid(configData.Alerting) {
+		return fmt.Errorf("invalid alerting configuration")
+	}
+	var object map[string]json.RawMessage
+	if err := json.Unmarshal(configData.Alerting, &object); err != nil || object == nil {
+		return fmt.Errorf("alerting configuration must be a JSON object")
+	}
+	if !configData.isConfigJSONSourceOfTruth() {
+		current, err := config.ConfigStore.GetConfig(ctx, declarativeAlertingConfigKey)
+		if err != nil && !errors.Is(err, configstore.ErrNotFound) {
+			return fmt.Errorf("load durable alerting configuration: %w", err)
+		}
+		if current != nil && strings.TrimSpace(current.Value) != "" {
+			return nil
+		}
+	}
+	if err := config.ConfigStore.UpdateConfig(ctx, &configstoreTables.TableGovernanceConfig{
+		Key: declarativeAlertingConfigKey, Value: string(configData.Alerting),
+	}); err != nil {
+		return fmt.Errorf("persist declarative alerting configuration: %w", err)
+	}
+	return nil
 }
 
 // initStores initializes config, logs, and vector stores.

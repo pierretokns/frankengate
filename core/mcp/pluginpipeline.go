@@ -58,7 +58,15 @@ func (m *MCPManager) RunWithPluginPipeline(
 		if req.ClientName != "" {
 			spanName = fmt.Sprintf("%s.%s", spanName, req.ClientName)
 		}
-		_, spanHandle = tracer.StartSpan(ctx, spanName, schemas.SpanKindMCPClient)
+		// Lifecycle operations (connect/ping/list_tools) are client spans, while
+		// execute-tool is a distinct tool invocation. Keeping the kinds separate is
+		// important for OTEL backends and replay/evaluation consumers that select
+		// tool calls without treating client discovery as model work.
+		spanKind := schemas.SpanKindMCPClient
+		if req != nil && req.RequestType.IsExecuteTool() {
+			spanKind = schemas.SpanKindMCPTool
+		}
+		_, spanHandle = tracer.StartSpan(ctx, spanName, spanKind)
 		// Emit OTel GenAI tool-execution attributes on execute-tool spans so downstream
 		// backends can correlate tool calls with their requesting llm.call.
 		if req != nil && req.RequestType.IsExecuteTool() {
@@ -224,7 +232,7 @@ func (m *MCPManager) runConnectWithPluginPipeline(
 	ctx *schemas.BifrostContext,
 	req *schemas.BifrostMCPConnectRequest,
 	op MCPConnectOpFunc,
-) (*schemas.BifrostMCPConnectResponse, *schemas.BifrostError) {
+) (finalResponse *schemas.BifrostMCPConnectResponse, finalError *schemas.BifrostError) {
 	if ctx != nil {
 		if _, ok := ctx.Value(schemas.BifrostContextKeyRequestID).(string); !ok {
 			ctx.SetValue(schemas.BifrostContextKeyRequestID, uuid.New().String())
@@ -248,6 +256,14 @@ func (m *MCPManager) runConnectWithPluginPipeline(
 	}
 	defer func() {
 		if tracer != nil {
+			if finalError != nil {
+				msg := ""
+				if finalError.Error != nil {
+					msg = finalError.Error.Message
+				}
+				tracer.EndSpan(spanHandle, schemas.SpanStatusError, msg)
+				return
+			}
 			tracer.EndSpan(spanHandle, schemas.SpanStatusOk, "")
 		}
 	}()
@@ -274,22 +290,22 @@ func (m *MCPManager) runConnectWithPluginPipeline(
 	if shortCircuit != nil {
 		if shortCircuit.Response != nil {
 			shortCircuit.Response.PopulateExtraFields(clientName)
-			finalResp, finalErr := pipeline.RunMCPPostConnectionHooks(ctx, shortCircuit.Response, nil, preCount)
+			postResp, postErr := pipeline.RunMCPPostConnectionHooks(ctx, shortCircuit.Response, nil, preCount)
 			drainMCPPluginLogs(ctx)
-			if finalErr != nil {
-				return nil, finalErr
+			if postErr != nil {
+				return nil, postErr
 			}
-			return finalResp, nil
+			return postResp, nil
 		}
 		if shortCircuit.Error != nil {
-			finalResp, finalErr := pipeline.RunMCPPostConnectionHooks(ctx, nil, shortCircuit.Error, preCount)
+			postResp, postErr := pipeline.RunMCPPostConnectionHooks(ctx, nil, shortCircuit.Error, preCount)
 			drainMCPPluginLogs(ctx)
-			if finalErr != nil {
-				return nil, finalErr
+			if postErr != nil {
+				return nil, postErr
 			}
-			if finalResp != nil {
-				finalResp.PopulateExtraFields(clientName)
-				return finalResp, nil
+			if postResp != nil {
+				postResp.PopulateExtraFields(clientName)
+				return postResp, nil
 			}
 			return nil, shortCircuit.Error
 		}
@@ -315,13 +331,13 @@ func (m *MCPManager) runConnectWithPluginPipeline(
 		}
 	}
 
-	finalResp, finalErr := pipeline.RunMCPPostConnectionHooks(ctx, resp, bErr, preCount)
+	postResp, postErr := pipeline.RunMCPPostConnectionHooks(ctx, resp, bErr, preCount)
 	drainMCPPluginLogs(ctx)
 
-	if finalErr != nil {
-		return finalResp, finalErr
+	if postErr != nil {
+		return postResp, postErr
 	}
-	return finalResp, nil
+	return postResp, nil
 }
 
 // drainMCPPluginLogs mirrors bifrost.drainAndAttachPluginLogs for the mcp package.

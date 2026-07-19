@@ -1071,6 +1071,40 @@ func (m *MockConfigStore) UpdateConfig(ctx context.Context, config *tables.Table
 	return nil
 }
 
+func TestSyncAlertingConfigSeedsDurableState(t *testing.T) {
+	store := NewMockConfigStore()
+	config := &Config{ConfigStore: store}
+	data := &ConfigData{Alerting: json.RawMessage(`{"channels":[]}`), presentSections: map[string]bool{"alerting": true}}
+	require.NoError(t, syncAlertingConfig(context.Background(), config, data))
+	require.Equal(t, `{"channels":[]}`, store.configEntries[declarativeAlertingConfigKey])
+}
+
+func TestSyncAlertingConfigPreservesSplitDurableState(t *testing.T) {
+	store := NewMockConfigStore()
+	store.configEntries[declarativeAlertingConfigKey] = `{"channels":[{"id":"db"}]}`
+	config := &Config{ConfigStore: store}
+	data := &ConfigData{Alerting: json.RawMessage(`{"channels":[{"id":"file"}]}`), presentSections: map[string]bool{"alerting": true}}
+	data.SourceOfTruth = SourceOfTruthSplit
+	require.NoError(t, syncAlertingConfig(context.Background(), config, data))
+	require.Equal(t, `{"channels":[{"id":"db"}]}`, store.configEntries[declarativeAlertingConfigKey])
+}
+
+func TestSyncAlertingConfigConfigJSONReplacesDurableState(t *testing.T) {
+	store := NewMockConfigStore()
+	store.configEntries[declarativeAlertingConfigKey] = `{"channels":[{"id":"db"}]}`
+	config := &Config{ConfigStore: store}
+	data := &ConfigData{Alerting: json.RawMessage(`{"channels":[{"id":"file"}]}`), presentSections: map[string]bool{"alerting": true}}
+	data.SourceOfTruth = SourceOfTruthConfigJSON
+	require.NoError(t, syncAlertingConfig(context.Background(), config, data))
+	require.Equal(t, `{"channels":[{"id":"file"}]}`, store.configEntries[declarativeAlertingConfigKey])
+}
+
+func TestSyncAlertingConfigRejectsNonObject(t *testing.T) {
+	config := &Config{ConfigStore: NewMockConfigStore()}
+	data := &ConfigData{Alerting: json.RawMessage(`[]`), presentSections: map[string]bool{"alerting": true}}
+	require.Error(t, syncAlertingConfig(context.Background(), config, data))
+}
+
 func (m *MockConfigStore) GetComplexityAnalyzerConfig(ctx context.Context) (*configstore.ComplexityAnalyzerConfig, error) {
 	if m.governanceConfig == nil {
 		return nil, nil

@@ -217,6 +217,7 @@ type AsyncOverdraftNotifier struct {
 	delivered atomic.Uint64
 	failed    atomic.Uint64
 	dropped   atomic.Uint64
+	observer  func(string, float64)
 }
 
 func NewAsyncOverdraftNotifier(ctx context.Context, downstream OverdraftNotifier, buffer int) *AsyncOverdraftNotifier {
@@ -237,12 +238,15 @@ func NewAsyncOverdraftNotifier(ctx context.Context, downstream OverdraftNotifier
 				}
 				if downstream == nil {
 					n.failed.Add(1)
+					n.observe("failed", 1)
 					continue
 				}
 				if err := downstream.Notify(workerCtx, event); err != nil {
 					n.failed.Add(1)
+					n.observe("failed", 1)
 				} else {
 					n.delivered.Add(1)
+					n.observe("delivered", 1)
 				}
 			}
 		}
@@ -255,16 +259,41 @@ func (n *AsyncOverdraftNotifier) Notify(_ context.Context, event OverdraftEvent)
 		return fmt.Errorf("overdraft notifier is nil")
 	}
 	n.mu.Lock()
-	defer n.mu.Unlock()
 	if n.closed {
+		n.mu.Unlock()
 		return fmt.Errorf("overdraft notifier is closed")
 	}
 	select {
 	case n.events <- event:
+		n.mu.Unlock()
+		n.observe("enqueued", 1)
 		return nil
 	default:
+		n.mu.Unlock()
 		n.dropped.Add(1)
+		n.observe("dropped", 1)
 		return fmt.Errorf("overdraft notification queue is full")
+	}
+}
+
+// SetMetricObserver installs a low-cardinality notification observer. The
+// callback is invoked outside the notifier's mutex and never runs on the
+// inference request path for delivery outcomes; nil disables observation.
+func (n *AsyncOverdraftNotifier) SetMetricObserver(observer func(name string, value float64)) {
+	if n == nil {
+		return
+	}
+	n.mu.Lock()
+	n.observer = observer
+	n.mu.Unlock()
+}
+
+func (n *AsyncOverdraftNotifier) observe(name string, value float64) {
+	n.mu.Lock()
+	observer := n.observer
+	n.mu.Unlock()
+	if observer != nil {
+		observer(name, value)
 	}
 }
 
@@ -349,14 +378,15 @@ type durableReservationHandle struct{ rows []reservations.Reservation }
 // rolls back partial admission, and settles/refunds each row idempotently.
 // Pricing/token estimation is deliberately injected instead of guessed.
 type DurableReservationCoordinator struct {
-	Store      configstore.BudgetReservationStore
-	Estimator  ReservationEstimator
-	Lease      time.Duration
-	Now        func() time.Time // injectable clock for deterministic retry/replay tests
-	Overdraft  reservations.OverdraftPolicy
-	Metrics    MetricsSink
-	notifierMu sync.RWMutex
-	Notifier   OverdraftNotifier
+	Store            configstore.BudgetReservationStore
+	Estimator        ReservationEstimator
+	Lease            time.Duration
+	Now              func() time.Time // injectable clock for deterministic retry/replay tests
+	Overdraft        reservations.OverdraftPolicy
+	Metrics          MetricsSink
+	notifierMu       sync.RWMutex
+	Notifier         OverdraftNotifier
+	notifierObserver func(string, float64)
 }
 
 func (c *DurableReservationCoordinator) SetNotifier(notifier OverdraftNotifier) {
@@ -366,7 +396,11 @@ func (c *DurableReservationCoordinator) SetNotifier(notifier OverdraftNotifier) 
 	c.notifierMu.Lock()
 	old := c.Notifier
 	c.Notifier = notifier
+	observer := c.notifierObserver
 	c.notifierMu.Unlock()
+	if n, ok := notifier.(*AsyncOverdraftNotifier); ok {
+		n.SetMetricObserver(observer)
+	}
 	// Plugin reloads replace the coordinator. Close only notifiers that expose
 	// the optional lifecycle hook; the base interface remains compatible with
 	// synchronous/custom implementations.
@@ -374,6 +408,23 @@ func (c *DurableReservationCoordinator) SetNotifier(notifier OverdraftNotifier) 
 		if closer, ok := old.(interface{ Close() }); ok {
 			closer.Close()
 		}
+	}
+}
+
+// SetNotifierMetricObserver forwards low-cardinality delivery metrics to the
+// currently configured asynchronous notifier when one is installed.
+func (c *DurableReservationCoordinator) SetNotifierMetricObserver(observer func(string, float64)) {
+	if c == nil {
+		return
+	}
+	c.notifierMu.RLock()
+	notifier := c.Notifier
+	c.notifierMu.RUnlock()
+	c.notifierMu.Lock()
+	c.notifierObserver = observer
+	c.notifierMu.Unlock()
+	if n, ok := notifier.(*AsyncOverdraftNotifier); ok {
+		n.SetMetricObserver(observer)
 	}
 }
 

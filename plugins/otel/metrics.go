@@ -628,6 +628,9 @@ func (m *MetricsExporter) AddGovernanceSyncMetric(ctx context.Context, name stri
 		m.governanceSyncWakeups.Add(ctx, value)
 	case "listener_reconnects":
 		m.governanceSyncListenerReconnects.Add(ctx, value)
+	case "overdraft_notification_enqueued", "overdraft_notification_delivered", "overdraft_notification_failed", "overdraft_notification_dropped":
+		outcome := strings.TrimPrefix(name, "overdraft_notification_")
+		m.governanceNotifierDeliveriesTotal.Add(ctx, int64(value), metric.WithAttributes(attribute.String("outcome", boundedGovernanceOutcome(outcome))))
 	}
 }
 

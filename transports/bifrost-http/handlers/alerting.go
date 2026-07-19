@@ -48,6 +48,18 @@ type AlertingEmailConfig struct {
 	Buffer     int
 }
 
+// AlertingCloudflareEmailConfig configures Cloudflare Email Service's REST
+// sender.  It is intentionally separate from SES so deployments can choose a
+// provider without ambiguous credential fallback.
+type AlertingCloudflareEmailConfig struct {
+	AccountID  string
+	APIToken   string
+	From       string
+	Recipients []string
+	Subject    string
+	Buffer     int
+}
+
 type AlertChannel struct {
 	ID      string            `json:"id"`
 	Name    string            `json:"name"`
@@ -73,6 +85,74 @@ type alertingState struct {
 	Channels []AlertChannel  `json:"channels"`
 	Rules    []AlertRule     `json:"rules"`
 	History  []AlertDelivery `json:"history"`
+}
+
+const redactedAlertSecret = "***REDACTED***"
+
+// publicAlertingState prevents durable channel credentials from being echoed
+// through dashboard mutation/list responses. The internal state remains
+// unchanged so notifier reloads can still read the real values.
+func publicAlertingState(state alertingState) alertingState {
+	public := state
+	public.Channels = make([]AlertChannel, len(state.Channels))
+	for i, channel := range state.Channels {
+		public.Channels[i] = channel
+		public.Channels[i].Config = make(map[string]string, len(channel.Config))
+		for key, value := range channel.Config {
+			if strings.Contains(strings.ToLower(key), "token") || strings.Contains(strings.ToLower(key), "secret") || strings.Contains(strings.ToLower(key), "signing_key") {
+				public.Channels[i].Config[key] = redactedAlertSecret
+				continue
+			}
+			public.Channels[i].Config[key] = value
+		}
+	}
+	return public
+}
+
+func preserveAlertChannelSecrets(existing, incoming AlertChannel) AlertChannel {
+	merged := incoming
+	merged.Config = make(map[string]string, len(incoming.Config)+2)
+	for key, value := range incoming.Config {
+		merged.Config[key] = value
+	}
+	for key, value := range existing.Config {
+		lower := strings.ToLower(key)
+		if !strings.Contains(lower, "token") && !strings.Contains(lower, "secret") && !strings.Contains(lower, "signing_key") {
+			continue
+		}
+		if current := strings.TrimSpace(merged.Config[key]); current == "" || current == redactedAlertSecret {
+			merged.Config[key] = value
+		}
+	}
+	return merged
+}
+
+// normalizeAlertingState keeps persisted references internally consistent.
+// A deleted or partially migrated channel must never remain attached to a
+// rule: the notifier would otherwise report a successful rule while silently
+// delivering nowhere. Unknown references are removed fail-closed.
+func normalizeAlertingState(state *alertingState) {
+	known := make(map[string]struct{}, len(state.Channels))
+	for _, channel := range state.Channels {
+		if channel.ID != "" {
+			known[channel.ID] = struct{}{}
+		}
+	}
+	for i := range state.Rules {
+		ids := state.Rules[i].ChannelIDs[:0]
+		seen := make(map[string]struct{}, len(state.Rules[i].ChannelIDs))
+		for _, id := range state.Rules[i].ChannelIDs {
+			if _, ok := known[id]; !ok {
+				continue
+			}
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			ids = append(ids, id)
+		}
+		state.Rules[i].ChannelIDs = ids
+	}
 }
 
 // LoadAlertingWebhookConfig reads the durable alerting contract and returns the
@@ -117,6 +197,7 @@ func loadAlertingState(ctx context.Context, store configstore.ConfigStore) (aler
 	if err := sonic.Unmarshal([]byte(row.Value), &state); err != nil {
 		return alertingState{}, false, fmt.Errorf("decode alerting state: %w", err)
 	}
+	normalizeAlertingState(&state)
 	return state, true, nil
 }
 
@@ -158,6 +239,27 @@ func LoadAlertingEmailConfig(ctx context.Context, store configstore.ConfigStore)
 	return AlertingEmailConfig{}, false, nil
 }
 
+func LoadAlertingCloudflareEmailConfig(ctx context.Context, store configstore.ConfigStore) (AlertingCloudflareEmailConfig, bool, error) {
+	state, ok, err := loadAlertingState(ctx, store)
+	if err != nil || !ok {
+		return AlertingCloudflareEmailConfig{}, false, err
+	}
+	for _, channel := range state.Channels {
+		if !channel.Enabled || strings.ToLower(strings.TrimSpace(channel.Type)) != "cloudflare_email" {
+			continue
+		}
+		accountID := strings.TrimSpace(channel.Config["account_id"])
+		token := strings.TrimSpace(channel.Config["api_token"])
+		from := strings.TrimSpace(channel.Config["from"])
+		recipients := splitAlertRecipients(channel.Config["recipients"])
+		if accountID == "" || token == "" || from == "" || len(recipients) == 0 {
+			continue
+		}
+		return AlertingCloudflareEmailConfig{AccountID: accountID, APIToken: token, From: from, Recipients: recipients, Subject: strings.TrimSpace(channel.Config["subject"]), Buffer: parseAlertBuffer(channel.Config["buffer"])}, true, nil
+	}
+	return AlertingCloudflareEmailConfig{}, false, nil
+}
+
 func parseAlertBuffer(raw string) int {
 	buffer := 256
 	if raw != "" {
@@ -187,7 +289,7 @@ type AlertingHandler struct {
 
 func validAlertChannelType(kind string) bool {
 	switch strings.ToLower(strings.TrimSpace(kind)) {
-	case "webhook", "sns", "email":
+	case "webhook", "sns", "email", "cloudflare_email":
 		return true
 	default:
 		return false
@@ -227,6 +329,7 @@ func (h *AlertingHandler) load(ctx *fasthttp.RequestCtx) (alertingState, error) 
 	if e = sonic.Unmarshal([]byte(row.Value), &s); e != nil {
 		return s, e
 	}
+	normalizeAlertingState(&s)
 	return s, nil
 }
 func (h *AlertingHandler) save(ctx *fasthttp.RequestCtx, s alertingState) error {
@@ -245,6 +348,7 @@ func (h *AlertingHandler) mutate(ctx *fasthttp.RequestCtx, fn func(*alertingStat
 		return
 	}
 	fn(&s)
+	normalizeAlertingState(&s)
 	if e = h.save(ctx, s); e != nil {
 		SendError(ctx, 500, "failed to persist alerting state")
 		return
@@ -252,7 +356,7 @@ func (h *AlertingHandler) mutate(ctx *fasthttp.RequestCtx, fn func(*alertingStat
 	if h.onChanged != nil {
 		h.onChanged()
 	}
-	SendJSON(ctx, s)
+	SendJSON(ctx, publicAlertingState(s))
 }
 func (h *AlertingHandler) listChannels(c *fasthttp.RequestCtx) {
 	s, e := h.load(c)
@@ -260,7 +364,7 @@ func (h *AlertingHandler) listChannels(c *fasthttp.RequestCtx) {
 		SendError(c, 500, "alerting backend unavailable")
 		return
 	}
-	SendJSON(c, map[string]any{"channels": s.Channels})
+	SendJSON(c, map[string]any{"channels": publicAlertingState(s).Channels})
 }
 func (h *AlertingHandler) listRules(c *fasthttp.RequestCtx) {
 	s, e := h.load(c)
@@ -321,7 +425,7 @@ func (h *AlertingHandler) updateChannel(c *fasthttp.RequestCtx) {
 	h.mutate(c, func(s *alertingState) {
 		for i := range s.Channels {
 			if s.Channels[i].ID == id {
-				s.Channels[i] = v
+				s.Channels[i] = preserveAlertChannelSecrets(s.Channels[i], v)
 				return
 			}
 		}

@@ -1,1 +1,1 @@
-ecosystem	manifest	lockfile	scan_mode	allowed_licenses	denied_patterns	approval_ref	notes
+ecosystem	manifest	lockfile	closure_artifact	sbom_artifact	inventory_status	denied_patterns	approval_ref	notes

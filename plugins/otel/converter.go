@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/maximhq/bifrost/core/privacy"
 	"github.com/maximhq/bifrost/core/schemas"
 	commonpb "go.opentelemetry.io/proto/otlp/common/v1"
 	resourcepb "go.opentelemetry.io/proto/otlp/resource/v1"
@@ -98,7 +99,7 @@ func hexToBytes(hexStr string, length int) []byte {
 // only the resource service name differs per profile.
 func (p *OtelPlugin) convertTraceToResourceSpan(serviceName string, trace *schemas.Trace, requestHeaders []string, disableContentLogging bool, groupTracesBySession bool, disableRootSpanContent bool) *ResourceSpan {
 	reparent := p.pluginSpanFilter.BuildReparentMap(trace.Spans)
-	filteredHeaders := schemas.FilterHeaders(trace.RequestHeaders, requestHeaders)
+	filteredHeaders := redactTraceHeaders(schemas.FilterHeaders(trace.RequestHeaders, requestHeaders))
 
 	// The x-bf-session-id header is a trace-level attribute, so it is not emitted as a span
 	// attribute by default. Surface it on the root span as the OTEL-conventional session.id
@@ -168,6 +169,27 @@ func (p *OtelPlugin) convertTraceToResourceSpan(serviceName string, trace *schem
 			Spans: otelSpans,
 		}},
 	}
+}
+
+// redactTraceHeaders keeps the configurable header allowlist useful for
+// attribution while ensuring an accidentally allowlisted credential cannot be
+// exported to an OTLP collector.
+func redactTraceHeaders(headers map[string]string) map[string]string {
+	if len(headers) == 0 {
+		return nil
+	}
+	values := make(map[string][]string, len(headers))
+	for name, value := range headers {
+		values[name] = []string{value}
+	}
+	redacted := privacy.RedactHeaders(values)
+	out := make(map[string]string, len(redacted))
+	for name, values := range redacted {
+		if len(values) > 0 {
+			out[name] = values[0]
+		}
+	}
+	return out
 }
 
 // convertSpanToOTELSpan converts a single Bifrost span to OTEL format
