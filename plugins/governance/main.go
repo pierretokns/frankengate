@@ -1597,6 +1597,9 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 	}
 	// Getting provider and mode from the request
 	provider, model, _ := req.GetRequestFields()
+	if contextErr := validateContextWindowHeaders(ctx, provider, model, req.RequestType); contextErr != nil {
+		return req, &schemas.LLMPluginShortCircuit{Error: contextErr}, nil
+	}
 	// A verified IdP/SCIM entitlement snapshot is an additional reference
 	// monitor in front of provider effects. Absence preserves OSS compatibility;
 	// presence is authoritative and always fail-closed for missing grants.
