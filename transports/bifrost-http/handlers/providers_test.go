@@ -39,6 +39,27 @@ func TestContext1MCapabilityMetadata(t *testing.T) {
 	}
 }
 
+func TestContextWindowProfileIsProviderAndCatalogSpecific(t *testing.T) {
+	cap := contextWindowProfile("claude-sonnet-4-6", schemas.Bedrock, nil)
+	if cap == nil || !cap.Known || cap.MaxTokens == nil || *cap.MaxTokens != 1_000_000 {
+		t.Fatalf("expected Bedrock Claude 1M profile, got %#v", cap)
+	}
+	if cap.BetaHeader == "" || !cap.OptInRequired {
+		t.Fatalf("expected explicit beta opt-in metadata, got %#v", cap)
+	}
+
+	length := 128000
+	cap = contextWindowProfile("gpt-4o", schemas.OpenAI, &length)
+	if cap == nil || !cap.Known || cap.MaxTokens == nil || *cap.MaxTokens != length || cap.BetaHeader != "" {
+		t.Fatalf("expected catalog limit without Anthropic beta header, got %#v", cap)
+	}
+
+	cap = contextWindowProfile("opaque-custom-model", schemas.OpenAI, nil)
+	if cap == nil || cap.Known || cap.MaxTokens != nil {
+		t.Fatalf("unknown catalog limit must remain unknown, got %#v", cap)
+	}
+}
+
 // mockModelsManager returns stable filtered and unfiltered model lists for handler tests.
 type mockModelsManager struct {
 	filtered    map[schemas.ModelProvider][]string

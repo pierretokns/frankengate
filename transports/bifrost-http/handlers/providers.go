@@ -651,6 +651,24 @@ type ModelDetailsResponse struct {
 	AdditionalAttributes map[string]string     `json:"additional_attributes,omitempty"`
 	AccessibleByKeys     []string              `json:"accessible_by_keys,omitempty"`
 	Context1M            *Context1MCapability  `json:"context_1m,omitempty"`
+	// ContextWindow is the provider/model/surface-specific limit. A nil
+	// MaxTokens means the catalog has no authoritative limit; it must not be
+	// interpreted as 1M (or as permission to send a beta header).
+	ContextWindow *ContextWindowProfile `json:"context_window,omitempty"`
+}
+
+// ContextWindowProfile describes an effective context limit for one provider
+// surface. Limits are deliberately metadata, not a promise that an account
+// or region is entitled to the maximum; callers must still handle provider
+// errors and preserve the request's selected API surface.
+type ContextWindowProfile struct {
+	MaxTokens         *int     `json:"max_tokens,omitempty"`
+	Known             bool     `json:"known"`
+	ProviderSurface   string   `json:"provider_surface,omitempty"`
+	Region            string   `json:"region,omitempty"`
+	BetaHeader        string   `json:"beta_header,omitempty"`
+	OptInRequired     bool     `json:"opt_in_required,omitempty"`
+	SupportedSurfaces []string `json:"supported_surfaces,omitempty"`
 }
 
 // Context1MCapability describes the explicitly supported 1M context opt-in
@@ -681,6 +699,28 @@ func context1MCapability(model string, provider schemas.ModelProvider) *Context1
 		return nil
 	}
 	return &Context1MCapability{Enabled: true, Beta: anthropicprovider.AnthropicContext1MBetaHeader, SupportedSurfaces: surfaces, OptInRequired: true}
+}
+
+// contextWindowProfile combines catalog metadata with the narrowly-scoped
+// Anthropic 1M opt-in. It intentionally returns unknown (Known=false) when a
+// model has no catalog context_length; unknown is distinct from unsupported.
+func contextWindowProfile(model string, provider schemas.ModelProvider, catalogLength *int) *ContextWindowProfile {
+	cap1m := context1MCapability(model, provider)
+	if cap1m != nil {
+		max := 1_000_000
+		return &ContextWindowProfile{
+			MaxTokens: &max, Known: true, BetaHeader: cap1m.Beta,
+			OptInRequired: true, SupportedSurfaces: cap1m.SupportedSurfaces,
+		}
+	}
+	if catalogLength == nil {
+		return &ContextWindowProfile{Known: false}
+	}
+	max := *catalogLength
+	if max <= 0 {
+		return &ContextWindowProfile{Known: false}
+	}
+	return &ContextWindowProfile{MaxTokens: &max, Known: true}
 }
 
 // ListModelDetailsResponse represents the response for listing detailed models.
@@ -802,6 +842,11 @@ func (h *ProviderHandler) listModelDetails(ctx *fasthttp.RequestCtx) {
 			details.AdditionalAttributes = capabilities.AdditionalAttributes
 		}
 		details.Context1M = context1MCapability(model.Name, model.Provider)
+		if capabilities := modelCatalog.GetModelCapabilityEntryForModel(model.Name, model.Provider); capabilities != nil {
+			details.ContextWindow = contextWindowProfile(model.Name, model.Provider, capabilities.ContextLength)
+		} else {
+			details.ContextWindow = contextWindowProfile(model.Name, model.Provider, nil)
+		}
 		responseModels = append(responseModels, details)
 	}
 
