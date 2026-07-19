@@ -75,3 +75,35 @@ func TestToStabilityAIImageGenerationRequestDoesNotMutateExtraParams(t *testing.
 		t.Fatalf("aspect ratio was not converted: %#v", converted)
 	}
 }
+
+func TestToBedrockImageEditRequestDoesNotMutateExtraParams(t *testing.T) {
+	params := map[string]interface{}{
+		"mask_prompt": "subject",
+		"return_mask": true,
+		"cfgScale":    6.5,
+		"vendorFlag":  "retain-me",
+	}
+	req := &schemas.BifrostImageEditRequest{
+		Input: &schemas.ImageEditInput{
+			Prompt: "edit this",
+			Images: []schemas.ImageInput{{Image: []byte("image")}},
+		},
+		Params: &schemas.ImageEditParameters{
+			Type:        schemas.Ptr("inpainting"),
+			ExtraParams: params,
+		},
+	}
+	converted, err := ToBedrockImageEditRequest(req)
+	if err != nil {
+		t.Fatalf("convert image edit request: %v", err)
+	}
+	if len(params) != 4 || params["mask_prompt"] != "subject" || params["cfgScale"] != 6.5 {
+		t.Fatalf("conversion mutated caller-owned extra params: %#v", params)
+	}
+	if _, ok := converted.ExtraParams["mask_prompt"]; ok {
+		t.Fatal("provider-only mask_prompt should not remain in converted extra params")
+	}
+	if converted.InPaintingParams == nil || converted.InPaintingParams.MaskPrompt == nil || *converted.InPaintingParams.MaskPrompt != "subject" {
+		t.Fatalf("mask_prompt was not converted: %#v", converted.InPaintingParams)
+	}
+}

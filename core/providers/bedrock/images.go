@@ -296,6 +296,14 @@ func ToBedrockImageEditRequest(request *schemas.BifrostImageEditRequest) (*Bedro
 	if request.Params == nil || request.Params.Type == nil {
 		return nil, fmt.Errorf("type field is required (must be inpainting, outpainting, or background_removal)")
 	}
+	// Edit conversion extracts provider-specific fields from ExtraParams. Work on
+	// a shallow request copy with a cloned parameter map so retries/fallbacks can
+	// safely reuse the caller-owned request.
+	requestCopy := *request
+	paramsCopy := *request.Params
+	paramsCopy.ExtraParams = maps.Clone(request.Params.ExtraParams)
+	requestCopy.Params = &paramsCopy
+	request = &requestCopy
 
 	editType := strings.ToLower(*request.Params.Type)
 
