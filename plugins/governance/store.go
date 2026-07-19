@@ -2929,8 +2929,8 @@ func (gs *LocalGovernanceStore) CollectApplicableGovernanceIDs(ctx context.Conte
 	// addModelConfigIDs accumulates the (multi-)budget and rate-limit IDs owned by a
 	// model config, matching what the enforcement/recording paths count.
 	addModelConfigIDs := func(mc *configstoreTables.TableModelConfig) {
-		for i := range mc.Budgets {
-			if id := mc.Budgets[i].ID; !seenBudgets[id] {
+		for _, budget := range gs.loadModelConfigBudgets(ctx, mc) {
+			if id := budget.ID; !seenBudgets[id] {
 				budgetIDs = append(budgetIDs, id)
 				seenBudgets[id] = true
 			}
@@ -3596,6 +3596,17 @@ func (gs *LocalGovernanceStore) UpdateModelConfigInMemory(ctx context.Context, m
 
 	// Store associated budgets, preserving existing in-memory usage per budget ID and
 	// stamping calendar alignment from the model config (consumed by the reset path).
+	// Authority reloads can provide a model config without preloaded has-many
+	// associations; hydrate those rows once here from the already-hot budget map,
+	// rather than scanning all budgets on every request.
+	if len(clone.Budgets) == 0 {
+		gs.budgets.Range(func(_, value any) bool {
+			if budget, ok := value.(*configstoreTables.TableBudget); ok && budget != nil && budget.ModelConfigID != nil && *budget.ModelConfigID == clone.ID {
+				clone.Budgets = append(clone.Budgets, *budget)
+			}
+			return true
+		})
+	}
 	for i := range clone.Budgets {
 		b := &clone.Budgets[i]
 		b.IsCalendarAligned = clone.CalendarAligned

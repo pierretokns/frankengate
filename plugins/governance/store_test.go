@@ -140,6 +140,31 @@ func TestCollectApplicableGovernanceIDsIncludesReloadedVKModelConfigBudget(t *te
 	assert.Equal(t, budget.ID, loaded.ID)
 }
 
+func TestCollectApplicableGovernanceIDsIncludesStandaloneModelConfigBudget(t *testing.T) {
+	ctx := context.Background()
+	vkID := "vk-standalone"
+	provider := schemas.OpenAI
+	modelConfigID := "mc-standalone"
+	modelConfig := configstoreTables.TableModelConfig{
+		ID:        modelConfigID,
+		Scope:     configstoreTables.ModelConfigScopeVirtualKey,
+		ScopeID:   &vkID,
+		ModelName: "*",
+		Provider:  func() *string { s := string(provider); return &s }(),
+	}
+	budget := configstoreTables.TableBudget{ID: "budget-standalone", ModelConfigID: &modelConfigID, MaxLimit: 1}
+	store, err := NewLocalGovernanceStore(ctx, NewMockLogger(), nil, &configstore.GovernanceConfig{
+		VirtualKeys:  []configstoreTables.TableVirtualKey{*buildVirtualKey(vkID, "sk-standalone", "Standalone VK", true)},
+		Budgets:      []configstoreTables.TableBudget{budget},
+		ModelConfigs: []configstoreTables.TableModelConfig{modelConfig},
+	}, nil)
+	require.NoError(t, err)
+	store.UpdateModelConfigInMemory(ctx, &modelConfig)
+
+	budgetIDs, _ := store.CollectApplicableGovernanceIDs(ctx, "sk-standalone", "", provider, "gpt-test")
+	assert.Contains(t, budgetIDs, budget.ID)
+}
+
 // TestGovernanceStore_ConcurrentReads tests lock-free concurrent reads
 func TestGovernanceStore_ConcurrentReads(t *testing.T) {
 	logger := NewMockLogger()
