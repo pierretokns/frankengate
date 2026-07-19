@@ -52,6 +52,27 @@ for required_dir in core/authorityepoch core/reservations; do
   fi
 done
 
+# Local/diagnostic mode validates the checked-out Go workspace without editing
+# transports/go.mod or resolving the fork's private enterprise packages from
+# proxy.golang.org. The official release path below intentionally continues to
+# normalize published module versions and perform its normal build/push steps.
+if [[ "${FRANKENGATE_WORKSPACE_VALIDATE:-0}" == "1" ]]; then
+  echo "🔎 Validating the checked-out FrankenGate workspace dependency graph..."
+  (cd transports && go build ./...)
+  dependencies="$(cd transports && go list -deps ./...)"
+  for required_package in \
+    "github.com/maximhq/bifrost/core/authorityepoch" \
+    "github.com/maximhq/bifrost/core/reservations" \
+    "github.com/maximhq/bifrost/plugins/governance"; do
+    if ! printf '%s\n' "$dependencies" | grep -Fxq "$required_package"; then
+      echo "❌ workspace dependency graph is missing $required_package" >&2
+      exit 1
+    fi
+  done
+  echo "✅ Checked-out workspace contains all enterprise governance dependencies"
+  exit 0
+fi
+
 echo "🚀 Preparing bifrost-http v$VERSION release..."
 
 # Get core and framework versions from version files
