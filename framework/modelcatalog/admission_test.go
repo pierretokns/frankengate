@@ -178,6 +178,9 @@ func TestCapabilityAdmissionIndexesMultimodalModelParameterEndpoints(t *testing.
 		schemas.SpeechRequest, schemas.TranscriptionRequest,
 		schemas.ImageGenerationRequest, schemas.ImageEditRequest,
 		schemas.ImageVariationRequest, schemas.VideoGenerationRequest,
+		schemas.VideoRetrieveRequest, schemas.VideoDownloadRequest,
+		schemas.VideoListRequest, schemas.VideoDeleteRequest,
+		schemas.VideoRemixRequest,
 	} {
 		if !ds.IsRequestTypeSupported("multimodal", operation) {
 			t.Fatalf("model-parameters endpoint should admit %q", operation)

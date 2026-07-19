@@ -395,7 +395,13 @@ func normalizeRequestType(reqType schemas.RequestType) string {
 		// distinct so admission cannot authorize a variation with a generation
 		// row (or vice versa).
 		return "image_variation"
-	case schemas.VideoGenerationRequest, schemas.VideoRemixRequest:
+	case schemas.VideoGenerationRequest, schemas.VideoRetrieveRequest,
+		schemas.VideoDownloadRequest, schemas.VideoDeleteRequest,
+		schemas.VideoListRequest, schemas.VideoRemixRequest:
+		// Video lifecycle operations all address the same model capability.
+		// A /v1/videos catalog row must authorize retrieve/list/download/delete
+		// and remix as well as creation; treating only generation/remix as the
+		// family made lifecycle calls fail admission after capability indexing.
 		return "video_generation"
 	case schemas.OCRRequest:
 		return "ocr"

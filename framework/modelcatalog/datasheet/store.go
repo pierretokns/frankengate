@@ -318,7 +318,25 @@ func (s *Store) IsRequestTypeSupported(model string, requestType schemas.Request
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	outputs, ok := s.supportedResponseTypes[model]
-	return ok && slices.Contains(outputs, string(requestType))
+	// The index stores endpoint output names (chat_completion, responses,
+	// video_generation, ...), while pricing normalization uses shorter mode
+	// names (chat, responses, ...). Check both representations so streaming
+	// and lifecycle variants share their indexed capability family.
+	want := string(requestType)
+	if slices.Contains(outputs, want) {
+		return true
+	}
+	switch normalizeRequestType(requestType) {
+	case "chat":
+		want = "chat_completion"
+	case "completion":
+		want = "text_completion"
+	case "responses":
+		want = "responses"
+	default:
+		want = normalizeRequestType(requestType)
+	}
+	return ok && slices.Contains(outputs, want)
 }
 
 // IsRequestTypeSupportedForProvider reports whether a model/provider row
