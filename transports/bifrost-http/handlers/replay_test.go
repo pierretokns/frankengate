@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/plugins/otel"
 	"github.com/valyala/fasthttp"
@@ -68,5 +69,23 @@ func TestReplayHandlerSummaryShape(t *testing.T) {
 	}
 	if fake.tenant != "acme" {
 		t.Fatalf("store called with tenant %q", fake.tenant)
+	}
+}
+
+func TestReplayHandlerRejectsPrincipalTenantMismatch(t *testing.T) {
+	fake := &replayListFake{rows: []otel.ReplayRecord{{TenantID: "other", TraceID: "secret"}}}
+	h := NewReplayHandler(fake)
+	var req fasthttp.Request
+	req.SetRequestURI("/api/replays?tenant_id=other")
+	req.Header.SetMethod(fasthttp.MethodGet)
+	var ctx fasthttp.RequestCtx
+	ctx.Init(&req, &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 12345}, nil)
+	ctx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "acme", Issuer: "issuer", Subject: "user"})
+	h.list(&ctx)
+	if ctx.Response.StatusCode() != fasthttp.StatusForbidden {
+		t.Fatalf("status=%d body=%s", ctx.Response.StatusCode(), ctx.Response.Body())
+	}
+	if fake.tenant != "" {
+		t.Fatalf("store must not be queried on a tenant mismatch, got %q", fake.tenant)
 	}
 }

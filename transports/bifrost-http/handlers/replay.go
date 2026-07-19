@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/fasthttp/router"
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/plugins/otel"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
@@ -39,6 +40,16 @@ func (h *ReplayHandler) list(ctx *fasthttp.RequestCtx) {
 	if tenant == "" {
 		SendError(ctx, fasthttp.StatusBadRequest, "tenant_id is required")
 		return
+	}
+	// A trusted JWT principal constrains the tenant independently of the
+	// caller-controlled query string. Local-admin/session compatibility is
+	// preserved by the auth middleware, but a principal-bearing request can
+	// never enumerate another tenant's replay metadata.
+	if principal, ok := ctx.UserValue(schemas.BifrostContextKeyAuthorizationPrincipal).(authorityepoch.Principal); ok {
+		if strings.TrimSpace(principal.Tenant) == "" || principal.Tenant != tenant {
+			SendError(ctx, fasthttp.StatusForbidden, "replay tenant is not authorized")
+			return
+		}
 	}
 	limit := 50
 	if raw := string(ctx.QueryArgs().Peek("limit")); raw != "" {
