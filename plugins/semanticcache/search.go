@@ -145,6 +145,23 @@ func cacheResultMatchesAuthority(result vectorstore.SearchResult, expected map[s
 	if len(expected) == 0 {
 		return true
 	}
+	// Scope dimensions are part of the authorization boundary, not merely
+	// optional annotations.  A caller whose current snapshot omits a team,
+	// customer, or business-unit claim must not match an entry written with
+	// that claim: otherwise a principal retaining the same epoch could read or
+	// invalidate a narrower, previously-scoped entry after its grant changed.
+	for _, key := range []string{
+		"authorization_team_id",
+		"authorization_customer_id",
+		"authorization_business_unit_id",
+	} {
+		if _, wanted := expected[key]; wanted {
+			continue
+		}
+		if have, ok := result.Properties[key]; ok && strings.TrimSpace(fmt.Sprint(have)) != "" {
+			return false
+		}
+	}
 	for key, want := range expected {
 		have, ok := result.Properties[key]
 		if !ok || !cacheMetadataValueEqual(have, want) {

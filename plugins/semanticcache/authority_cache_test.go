@@ -123,6 +123,23 @@ func TestCacheResultRequiresAllAuthorityFields(t *testing.T) {
 	}
 }
 
+func TestCacheResultRejectsEntryWithNarrowerScopeClaim(t *testing.T) {
+	// The principal and epoch can remain unchanged while team membership is
+	// removed.  An entry carrying the old team claim must not remain readable
+	// (or deletable) by the now-unscoped snapshot.
+	result := vectorstore.SearchResult{Properties: map[string]interface{}{
+		"authorization_tenant": "tenant-a", "authorization_subject": "alice",
+		"authorization_epoch": uint64(2), "authorization_team_id": "team-old",
+	}}
+	want := map[string]any{
+		"authorization_tenant": "tenant-a", "authorization_subject": "alice",
+		"authorization_epoch": uint64(2),
+	}
+	if cacheResultMatchesAuthority(result, want) {
+		t.Fatal("cache entry with stale team scope was accepted")
+	}
+}
+
 func TestSemanticCacheEntryRequiresStrictPluginMarker(t *testing.T) {
 	if isSemanticCacheEntry(vectorstore.SearchResult{Properties: map[string]interface{}{
 		"from_bifrost_semantic_cache_plugin": true,
