@@ -26,6 +26,19 @@ func (c *exportContextClient) Emit(ctx context.Context, _ []*ResourceSpan) error
 }
 func (*exportContextClient) Close() error { return nil }
 
+type flakyExportClient struct {
+	calls int
+}
+
+func (c *flakyExportClient) Emit(context.Context, []*ResourceSpan) error {
+	c.calls++
+	if c.calls < 3 {
+		return errors.New("temporary collector outage")
+	}
+	return nil
+}
+func (*flakyExportClient) Close() error { return nil }
+
 func (s *replayContextStore) Put(ctx context.Context, _ *schemas.Trace) error {
 	s.ctx = ctx
 	s.putErr = ctx.Err()
@@ -79,6 +92,17 @@ func TestInjectTraceExportDoesNotInheritCanceledRequest(t *testing.T) {
 	}
 	if remaining, ok := client.ctx.Deadline(); !ok || time.Until(remaining) <= 0 || time.Until(remaining) > 30*time.Second {
 		t.Fatalf("trace export must have a bounded independent deadline, deadline=%v", remaining)
+	}
+}
+
+func TestInjectRetriesTransientTraceExport(t *testing.T) {
+	client := &flakyExportClient{}
+	p := &OtelPlugin{targets: []*otelTarget{{client: client, serviceName: "test"}}}
+	if err := p.Inject(context.Background(), &schemas.Trace{TraceID: "trace"}); err != nil {
+		t.Fatalf("Inject returned error: %v", err)
+	}
+	if client.calls != 3 {
+		t.Fatalf("export attempts = %d, want 3 (initial plus two bounded retries)", client.calls)
 	}
 }
 

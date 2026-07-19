@@ -30,6 +30,15 @@ const OTELResponseAttributesEnvKey = "OTEL_RESOURCE_ATTRIBUTES"
 
 const PluginName = "otel"
 
+// Trace export happens after the client response has been written, so a
+// transient collector/network failure must not discard the completed trace.
+// Keep retries short and bounded: this is an observability side effect and
+// must never hold up request handling or create an unbounded retry storm.
+const (
+	traceExportAttempts = 3
+	traceExportBackoff  = 50 * time.Millisecond
+)
+
 // TraceType is the type of trace to use for the OTEL collector
 type TraceType string
 
@@ -761,7 +770,7 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 			if t.client != nil {
 				started := time.Now()
 				resourceSpan := p.convertTraceToResourceSpan(t.serviceName, trace, t.requestHeaders, t.disableContentLogging, t.groupTracesBySession, t.disableRootSpanContent)
-				err := t.client.Emit(exportCtx, []*ResourceSpan{resourceSpan})
+				err := emitTraceWithRetry(exportCtx, t.client, []*ResourceSpan{resourceSpan})
 				if t.metricsExporter != nil {
 					// service_name is configured by the operator and bounded by the
 					// profile count; do not label this metric with endpoint or trace ID.
@@ -778,6 +787,35 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 	}
 	wg.Wait()
 	return nil
+}
+
+// emitTraceWithRetry retries transient collector failures with a small bounded
+// exponential backoff. Context cancellation/deadlines stop retries immediately.
+// OTLP clients surface permanent status failures as errors too; those are not
+// distinguishable across the HTTP and gRPC implementations, so the retry
+// budget is deliberately tiny and remains isolated from the request hot path.
+func emitTraceWithRetry(ctx context.Context, client OtelClient, spans []*ResourceSpan) error {
+	var err error
+	for attempt := 0; attempt < traceExportAttempts; attempt++ {
+		err = client.Emit(ctx, spans)
+		if err == nil {
+			return nil
+		}
+		if ctx.Err() != nil || attempt == traceExportAttempts-1 {
+			break
+		}
+		delay := traceExportBackoff << attempt
+		timer := time.NewTimer(delay)
+		select {
+		case <-ctx.Done():
+			if !timer.Stop() {
+				<-timer.C
+			}
+			return ctx.Err()
+		case <-timer.C:
+		}
+	}
+	return err
 }
 
 // RequestHeaderPatterns returns the deduplicated union of request-header name patterns
