@@ -21,6 +21,7 @@ import { type ModelRankingsTabViewHandle, ModelRankingsTabView } from "./compone
 import { type OverviewTabViewHandle, OverviewTabView } from "./components/tabViews/overviewTabView";
 import { type ProviderUsageTabViewHandle, ProviderUsageTabView } from "./components/tabViews/providerUsageTabView";
 import { AlertSummary } from "./components/alertSummary";
+import { GovernanceScopeToggle } from "./components/governanceScopeToggle";
 import type { DashboardData } from "./utils/exportUtils";
 
 const toChartType = (value: string): ChartType => (value === "line" ? "line" : "bar");
@@ -434,6 +435,10 @@ export default function DashboardPage() {
 						<AlertSummary />
 					</div>
 					<div className="flex items-center gap-2">
+						<GovernanceScopeToggle
+							value={activeTab === "user-rankings" ? "user" : "team"}
+							onChange={(scope) => setUrlState({ tab: scope === "user" ? "user-rankings" : "team-rankings" })}
+						/>
 						<ExportPopover
 							getData={getDashboardData}
 							onPreloadData={handlePreloadData}
