@@ -67,3 +67,28 @@ func TestCapabilityAdmissionSupportsBatchOperationFamily(t *testing.T) {
 		t.Fatal("batch capability must not authorize embedding")
 	}
 }
+
+func TestCapabilityAdmissionKeepsRealtimeSeparateFromResponses(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "pricing.json")
+	data := []byte(`{
+		"realtime-model": {"provider":"openai", "mode":"realtime"},
+		"responses-model": {"provider":"openai", "mode":"responses"}
+	}`)
+	if err := os.WriteFile(path, data, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	ds := datasheet.New(nil, nil, datasheet.Config{URL: "file://" + path})
+	if err := ds.LoadFromURLIntoMemory(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	mc := NewTestCatalogWithDatasheet(ds)
+	if !mc.IsRequestTypeSupportedForProvider("realtime-model", schemas.OpenAI, schemas.RealtimeRequest) {
+		t.Fatal("realtime catalog row must admit realtime sessions")
+	}
+	if mc.IsRequestTypeSupportedForProvider("realtime-model", schemas.OpenAI, schemas.ResponsesRequest) {
+		t.Fatal("realtime capability must not authorize Responses requests")
+	}
+	if mc.IsRequestTypeSupportedForProvider("responses-model", schemas.OpenAI, schemas.RealtimeRequest) {
+		t.Fatal("Responses capability must not authorize realtime sessions")
+	}
+}

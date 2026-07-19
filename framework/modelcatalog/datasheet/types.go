@@ -364,8 +364,14 @@ func normalizeRequestType(reqType schemas.RequestType) string {
 		return "completion"
 	case schemas.ChatCompletionRequest, schemas.ChatCompletionStreamRequest:
 		return "chat"
-	case schemas.ResponsesRequest, schemas.ResponsesStreamRequest, schemas.WebSocketResponsesRequest, schemas.RealtimeRequest, schemas.CompactionRequest:
+	case schemas.ResponsesRequest, schemas.ResponsesStreamRequest, schemas.WebSocketResponsesRequest, schemas.CompactionRequest:
 		return "responses"
+	case schemas.RealtimeRequest:
+		// Realtime is a long-lived bidirectional transport, not an ordinary
+		// Responses request. Keep it as its own capability family so a catalog
+		// row cannot accidentally authorize websocket/WebRTC sessions merely by
+		// publishing Responses support.
+		return "realtime"
 	case schemas.EmbeddingRequest:
 		return "embedding"
 	case schemas.RerankRequest:
