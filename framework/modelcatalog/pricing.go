@@ -36,6 +36,16 @@ func (mc *ModelCatalog) HasProviderModel(model string, provider schemas.ModelPro
 	return mc != nil && mc.datasheet != nil && mc.datasheet.HasProviderModel(model, provider)
 }
 
+// ValidateCapabilityDrift compares the authoritative catalog rows with a
+// local provider capability registry. Unknown provider entries are reported
+// distinctly and never treated as unsupported.
+func (mc *ModelCatalog) ValidateCapabilityDrift(registry datasheet.CapabilityRegistry) []datasheet.CapabilityDrift {
+	if mc == nil || mc.datasheet == nil {
+		return nil
+	}
+	return mc.datasheet.ValidateCapabilityDrift(registry)
+}
+
 func (mc *ModelCatalog) GetSupportedParameters(model string) []string {
 	return mc.datasheet.GetSupportedParameters(model)
 }
