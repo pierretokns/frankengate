@@ -438,7 +438,13 @@ export default function DashboardPage() {
 					<div className="flex items-center gap-2">
 						<GovernanceScopeToggle
 							value={activeTab === "user-rankings" ? "user" : "team"}
-							onChange={(scope) => setUrlState({ tab: scope === "user" ? "user-rankings" : "team-rankings" })}
+							onChange={(scope) =>
+								setUrlState(
+									scope === "user"
+										? { tab: "user-rankings", team_ids: [] }
+										: { tab: "team-rankings", user_ids: [] },
+								)
+							}
 						/>
 						<ExportPopover
 							getData={getDashboardData}
