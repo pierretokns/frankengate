@@ -36,6 +36,17 @@ type CacheHandler struct {
 	resolve CacheClearerResolver
 }
 
+// currentPlugin resolves the cache plugin defensively.  A nil resolver can
+// occur during partially initialized server wiring or shutdown; cache admin
+// routes must return a normal not-loaded response rather than panic the HTTP
+// worker.
+func (h *CacheHandler) currentPlugin() CacheClearer {
+	if h == nil || h.resolve == nil {
+		return nil
+	}
+	return h.resolve()
+}
+
 // NewCacheHandler returns a CacheHandler that resolves the current plugin
 // at request time. The handler is safe to wire unconditionally — when no
 // plugin is loaded, each cache-clear request returns HTTP 400 with a clear
@@ -50,7 +61,7 @@ func (h *CacheHandler) RegisterRoutes(r *router.Router, middlewares ...schemas.B
 }
 
 func (h *CacheHandler) clearCache(ctx *fasthttp.RequestCtx) {
-	plugin := h.resolve()
+	plugin := h.currentPlugin()
 	if plugin == nil {
 		SendError(ctx, fasthttp.StatusBadRequest, "semantic_cache plugin is not loaded")
 		return
@@ -88,7 +99,7 @@ func (h *CacheHandler) clearCache(ctx *fasthttp.RequestCtx) {
 }
 
 func (h *CacheHandler) clearCacheByKey(ctx *fasthttp.RequestCtx) {
-	plugin := h.resolve()
+	plugin := h.currentPlugin()
 	if plugin == nil {
 		SendError(ctx, fasthttp.StatusBadRequest, "semantic_cache plugin is not loaded")
 		return

@@ -128,6 +128,17 @@ func TestClearCache_PluginNotLoaded(t *testing.T) {
 	}
 }
 
+func TestClearCache_NilResolverFailsClosed(t *testing.T) {
+	h := NewCacheHandler(nil)
+
+	ctx := newCacheCtx("cacheId", "abc-123")
+	h.clearCache(ctx)
+
+	if got := ctx.Response.StatusCode(); got != fasthttp.StatusBadRequest {
+		t.Fatalf("expected 400 when resolver is nil, got %d", got)
+	}
+}
+
 // -----------------------------------------------------------------------------
 // clearCacheByKey (DELETE /api/cache/clear-by-key/{cacheKey})
 // -----------------------------------------------------------------------------
@@ -172,5 +183,16 @@ func TestClearCacheByKey_PluginNotLoaded(t *testing.T) {
 	}
 	if !strings.Contains(string(ctx.Response.Body()), "semantic_cache plugin is not loaded") {
 		t.Fatalf("expected plugin-not-loaded message, got %s", ctx.Response.Body())
+	}
+}
+
+func TestClearCacheByKey_NilResolverFailsClosed(t *testing.T) {
+	h := NewCacheHandler(nil)
+
+	ctx := newCacheCtx("cacheKey", "session-42")
+	h.clearCacheByKey(ctx)
+
+	if got := ctx.Response.StatusCode(); got != fasthttp.StatusBadRequest {
+		t.Fatalf("expected 400 when resolver is nil, got %d", got)
 	}
 }
