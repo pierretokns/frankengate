@@ -3,6 +3,7 @@ package vectorstore
 import (
 	"reflect"
 	"testing"
+	"time"
 )
 
 func validAuthorizationEnvelope() AuthorizationEnvelope {
@@ -10,6 +11,25 @@ func validAuthorizationEnvelope() AuthorizationEnvelope {
 		TenantID: "tenant-a", Principals: []string{"team:research", "user:alice"},
 		Classification: 2, PolicyVersion: "policy-7", SourceRevision: "source-9",
 		DeletionEpoch: 4, IndexRevision: "index-3",
+	}
+}
+
+func TestFilterAuthorizedResultsRejectsExpiredRetentionAndWrongProvenance(t *testing.T) {
+	a := validAuthorizationEnvelope()
+	a.RetentionUntil = time.Now().Add(time.Hour)
+	a.ProvenanceSignature = "sig-current"
+	props, err := a.Metadata()
+	if err != nil {
+		t.Fatal(err)
+	}
+	props[AuthorizationRetentionUntil] = time.Now().Add(-time.Minute).Format(time.RFC3339Nano)
+	if got, err := FilterAuthorizedResults([]SearchResult{{ID: "expired", Properties: props}}, a); err != nil || len(got) != 0 {
+		t.Fatalf("expired result was accepted: got=%#v err=%v", got, err)
+	}
+	props[AuthorizationRetentionUntil] = time.Now().Add(time.Hour).Format(time.RFC3339Nano)
+	props[AuthorizationProvenanceSig] = "sig-old"
+	if got, err := FilterAuthorizedResults([]SearchResult{{ID: "wrong-provenance", Properties: props}}, a); err != nil || len(got) != 0 {
+		t.Fatalf("wrong provenance was accepted: got=%#v err=%v", got, err)
 	}
 }
 

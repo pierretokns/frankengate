@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"time"
 )
 
 // AuthorizationMetadataKey is the stable metadata namespace used by every
@@ -17,6 +18,8 @@ const (
 	AuthorizationSourceRevision = "fg_auth_source_revision"
 	AuthorizationDeletionEpoch  = "fg_auth_deletion_epoch"
 	AuthorizationIndexRevision  = "fg_auth_index_revision"
+	AuthorizationRetentionUntil = "fg_auth_retention_until"
+	AuthorizationProvenanceSig  = "fg_auth_provenance_signature"
 )
 
 // AuthorizationEnvelope is the minimum authority context that must accompany
@@ -31,6 +34,13 @@ type AuthorizationEnvelope struct {
 	SourceRevision string
 	DeletionEpoch  int64
 	IndexRevision  string
+	// RetentionUntil, when set, prevents expired chunks from being returned or
+	// written to a derived cache. Zero means the caller did not impose a
+	// retention deadline.
+	RetentionUntil time.Time
+	// ProvenanceSignature binds a candidate to the ingestion/provenance record.
+	// It is optional for legacy unclassified data, but enforced when supplied.
+	ProvenanceSignature string
 }
 
 // Validate rejects incomplete or ambiguous authority metadata. Classification
@@ -80,7 +90,7 @@ func (e AuthorizationEnvelope) Metadata() (map[string]interface{}, error) {
 	}
 	principals := append([]string(nil), e.Principals...)
 	sort.Strings(principals)
-	return map[string]interface{}{
+	metadata := map[string]interface{}{
 		AuthorizationTenantKey:      e.TenantID,
 		AuthorizationPrincipalsKey:  principals,
 		AuthorizationClassification: e.Classification,
@@ -88,7 +98,14 @@ func (e AuthorizationEnvelope) Metadata() (map[string]interface{}, error) {
 		AuthorizationSourceRevision: e.SourceRevision,
 		AuthorizationDeletionEpoch:  e.DeletionEpoch,
 		AuthorizationIndexRevision:  e.IndexRevision,
-	}, nil
+	}
+	if !e.RetentionUntil.IsZero() {
+		metadata[AuthorizationRetentionUntil] = e.RetentionUntil.UTC().Format(time.RFC3339Nano)
+	}
+	if e.ProvenanceSignature != "" {
+		metadata[AuthorizationProvenanceSig] = e.ProvenanceSignature
+	}
+	return metadata, nil
 }
 
 // Queries returns the mandatory equality predicates for backend-side filtering
@@ -154,12 +171,30 @@ func authorizedResult(result SearchResult, authority AuthorizationEnvelope, prin
 	if !ok || deletionEpoch < authority.DeletionEpoch {
 		return false
 	}
+	if !authority.RetentionUntil.IsZero() {
+		retention, ok := timeValue(props[AuthorizationRetentionUntil])
+		if !ok || time.Now().After(retention) {
+			return false
+		}
+	}
+	if authority.ProvenanceSignature != "" && stringValue(props[AuthorizationProvenanceSig]) != authority.ProvenanceSignature {
+		return false
+	}
 	for _, principal := range stringSlice(props[AuthorizationPrincipalsKey]) {
 		if _, allowed := principals[principal]; allowed {
 			return true
 		}
 	}
 	return false
+}
+
+func timeValue(value interface{}) (time.Time, bool) {
+	text, ok := value.(string)
+	if !ok || text == "" {
+		return time.Time{}, false
+	}
+	parsed, err := time.Parse(time.RFC3339Nano, text)
+	return parsed, err == nil
 }
 
 func stringValue(value interface{}) string {
