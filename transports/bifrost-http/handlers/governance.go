@@ -152,11 +152,15 @@ func (h *GovernanceHandler) validateVirtualKeyManagementAuthority(ctx *fasthttp.
 		ctx.Value(schemas.BifrostContextKeyAuthorizationPrincipal) == nil {
 		return nil
 	}
+	return validateVirtualKeyManagementAuthority(ctx, h.configStore)
+}
+
+func validateVirtualKeyManagementAuthority(ctx context.Context, configuredStore any) error {
 	ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
 	if err != nil {
 		return fmt.Errorf("virtual-key management authority is invalid: %w", err)
 	}
-	store, ok := h.configStore.(configstore.PrincipalAuthorizationEpochStore)
+	store, ok := configuredStore.(configstore.PrincipalAuthorizationEpochStore)
 	if !ok {
 		return fmt.Errorf("virtual-key management authority store unavailable: %w", authorityepoch.ErrInvalidReference)
 	}
