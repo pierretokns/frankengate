@@ -388,6 +388,20 @@ func normalizeRequestType(reqType schemas.RequestType) string {
 	return "unknown"
 }
 
+// chatResponsesFallbackMode returns the counterpart mode for APIs that expose
+// both Chat Completions and Responses. Pricing data is often published under
+// only one mode, so cost attribution retries the counterpart before giving up.
+func chatResponsesFallbackMode(reqType schemas.RequestType) (string, bool) {
+	switch reqType {
+	case schemas.ResponsesRequest, schemas.ResponsesStreamRequest, schemas.WebSocketResponsesRequest, schemas.RealtimeRequest, schemas.CompactionRequest:
+		return normalizeRequestType(schemas.ChatCompletionRequest), true
+	case schemas.ChatCompletionRequest, schemas.ChatCompletionStreamRequest:
+		return normalizeRequestType(schemas.ResponsesRequest), true
+	default:
+		return "", false
+	}
+}
+
 // normalizeStreamRequestType maps a stream variant to its non-stream base type.
 // Idempotent — passing a non-stream type returns it unchanged.
 func normalizeStreamRequestType(rt schemas.RequestType) schemas.RequestType {

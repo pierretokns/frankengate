@@ -2030,6 +2030,24 @@ func TestGetPricing_ResponsesFallsBackToChat(t *testing.T) {
 	assert.Equal(t, 0.000005, derefF(p.InputCostPerToken))
 }
 
+func TestGetPricing_ChatFallsBackToResponses(t *testing.T) {
+	s := testStoreWithPricing(map[string]configstoreTables.TableModelPricing{
+		makeKey("gpt-4o", "openai", "responses"): chatPricing(0.000005, 0.000015),
+	})
+	p := s.resolvePricing(schemas.RoutingInfo{Provider: "openai", Model: "gpt-4o"}, schemas.ChatCompletionRequest, LookupScopes{Provider: "openai"})
+	require.NotNil(t, p)
+	assert.Equal(t, 0.000005, derefF(p.InputCostPerToken))
+}
+
+func TestGetPricing_ChatStreamFallsBackToResponses(t *testing.T) {
+	s := testStoreWithPricing(map[string]configstoreTables.TableModelPricing{
+		makeKey("gpt-4o", "openai", "responses"): chatPricing(0.000005, 0.000015),
+	})
+	p := s.resolvePricing(schemas.RoutingInfo{Provider: "openai", Model: "gpt-4o"}, schemas.ChatCompletionStreamRequest, LookupScopes{Provider: "openai"})
+	require.NotNil(t, p)
+	assert.Equal(t, 0.000005, derefF(p.InputCostPerToken))
+}
+
 func TestGetPricing_ResponsesStreamFallsBackToChat(t *testing.T) {
 	s := testStoreWithPricing(map[string]configstoreTables.TableModelPricing{
 		makeKey("gpt-4o", "openai", "chat"): chatPricing(0.000005, 0.000015),

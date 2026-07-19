@@ -1215,6 +1215,7 @@ func (s *Store) getBasePricing(model, provider string, requestType schemas.Reque
 	defer s.mu.RUnlock()
 
 	mode := normalizeRequestType(requestType)
+	fallbackMode, hasFallbackMode := chatResponsesFallbackMode(requestType)
 
 	// Datasheet rows for all Bedrock variants are stored under the "bedrock"
 	// provider (normalizeProvider folds bedrock_* onto "bedrock"), so
@@ -1301,10 +1302,10 @@ func (s *Store) getBasePricing(model, provider string, requestType schemas.Reque
 		}
 	}
 
-	// Lookup in chat if responses/compaction not found
-	if requestType == schemas.ResponsesRequest || requestType == schemas.ResponsesStreamRequest || requestType == schemas.WebSocketResponsesRequest || requestType == schemas.RealtimeRequest || requestType == schemas.CompactionRequest {
-		s.logger.Debug("primary lookup failed, trying chat provider for the same model in chat completion")
-		pricing, ok = s.pricingData[makeKey(model, provider, normalizeRequestType(schemas.ChatCompletionRequest))]
+	// Retry the counterpart chat/responses mode for either direction.
+	if hasFallbackMode {
+		s.logger.Debug("primary lookup failed, trying counterpart pricing mode %s", fallbackMode)
+		pricing, ok = s.pricingData[makeKey(model, provider, fallbackMode)]
 		if ok {
 			return &pricing, true
 		}
