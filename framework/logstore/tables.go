@@ -1508,6 +1508,26 @@ var ValidHistogramDimensions = map[HistogramDimension]bool{
 	DimensionBusinessUnit: true,
 }
 
+// histogramDimensionColumn resolves a validated histogram dimension to a
+// compile-time SQL identifier. Never interpolate the request-derived string
+// directly into a query, even when it appears in the allowlist above.
+func histogramDimensionColumn(dimension HistogramDimension) (string, bool) {
+	switch dimension {
+	case DimensionProvider:
+		return "provider", true
+	case DimensionTeam:
+		return "team_id", true
+	case DimensionCustomer:
+		return "customer_id", true
+	case DimensionUser:
+		return "user_id", true
+	case DimensionBusinessUnit:
+		return "business_unit_id", true
+	default:
+		return "", false
+	}
+}
+
 // Dimension-level histogram types (generic version of Provider histograms)
 
 // DimensionCostHistogramBucket represents a single time bucket for dimension-grouped cost data
