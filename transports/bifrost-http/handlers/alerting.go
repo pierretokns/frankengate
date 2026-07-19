@@ -383,7 +383,31 @@ func (h *AlertingHandler) listChannels(c *fasthttp.RequestCtx) {
 		SendError(c, 500, "alerting backend unavailable")
 		return
 	}
-	SendJSON(c, map[string]any{"channels": publicAlertingState(s).Channels})
+	// Channels do not carry a separate scope field; their effective scope is
+	// inherited from the rules that reference them.  Project the same scoped
+	// rule set used by /rules and /history before returning channel metadata.
+	// Returning every channel here would expose another team's endpoint/name
+	// (and non-secret routing metadata) through a scoped dashboard view.
+	filtered, ok := alertingScopeQuery(c, s)
+	if !ok {
+		return
+	}
+	if scope := strings.TrimSpace(string(c.QueryArgs().Peek("scope"))); scope != "" {
+		allowed := make(map[string]struct{})
+		for _, rule := range filtered.Rules {
+			for _, id := range rule.ChannelIDs {
+				allowed[id] = struct{}{}
+			}
+		}
+		channels := filtered.Channels[:0]
+		for _, channel := range filtered.Channels {
+			if _, exists := allowed[channel.ID]; exists {
+				channels = append(channels, channel)
+			}
+		}
+		filtered.Channels = channels
+	}
+	SendJSON(c, map[string]any{"channels": publicAlertingState(filtered).Channels})
 }
 func (h *AlertingHandler) listRules(c *fasthttp.RequestCtx) {
 	s, e := h.load(c)
