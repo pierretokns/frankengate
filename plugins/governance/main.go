@@ -1798,6 +1798,21 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 		return req, nil, nil
 	}
 
+	// A verified IdP/SCIM snapshot is authoritative for MCP tool access. Check
+	// it before codemode exceptions, VK lookups, reservations, or any transport
+	// operation so an entitlement denial cannot trigger credential or wire I/O.
+	// Absence preserves OSS compatibility; presence is always fail-closed.
+	if entitlements, present := schemas.IdentityEntitlementsFromContext(ctx); present && !entitlements.AllowsTool(toolName) {
+		ctx.SetValue(governanceRejectedContextKey, true)
+		return req, &schemas.MCPPluginShortCircuit{Error: &schemas.BifrostError{
+			Type:       bifrost.Ptr("identity_entitlement_denied"),
+			StatusCode: bifrost.Ptr(403),
+			Error: &schemas.ErrorField{
+				Message: fmt.Sprintf("MCP tool %q is not granted by identity entitlements", toolName),
+			},
+		}}, nil
+	}
+
 	// Skip governance for codemode tools
 	if bifrost.IsCodemodeTool(toolName) {
 		return req, nil, nil
