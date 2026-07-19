@@ -23,11 +23,13 @@ VK_COHERENCE_MIN_REPLICAS="${VK_COHERENCE_MIN_REPLICAS:-2}"
 REQUIRE_DISTINCT_NODES="${REQUIRE_DISTINCT_NODES:-0}"
 VK_COHERENCE_STORM_REQUESTS="${VK_COHERENCE_STORM_REQUESTS:-$((VK_COHERENCE_REPLICAS * 2))}"
 BINARY_SERVER_REPLICAS="${BINARY_SERVER_REPLICAS:-5}"
+VK_COHERENCE_READY_TIMEOUT="${VK_COHERENCE_READY_TIMEOUT:-240}"
 [[ "$VK_COHERENCE_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_REPLICAS must be a positive integer" >&2; exit 1; }
 [[ "$VK_COHERENCE_MIN_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_MIN_REPLICAS must be a positive integer" >&2; exit 1; }
 (( VK_COHERENCE_MIN_REPLICAS < VK_COHERENCE_REPLICAS )) || { echo "VK_COHERENCE_MIN_REPLICAS must be less than VK_COHERENCE_REPLICAS" >&2; exit 1; }
 [[ "$VK_COHERENCE_STORM_REQUESTS" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_STORM_REQUESTS must be a positive integer" >&2; exit 1; }
 [[ "$BINARY_SERVER_REPLICAS" =~ ^[1-9][0-9]*$ ]] || { echo "BINARY_SERVER_REPLICAS must be a positive integer" >&2; exit 1; }
+[[ "$VK_COHERENCE_READY_TIMEOUT" =~ ^[1-9][0-9]*$ ]] || { echo "VK_COHERENCE_READY_TIMEOUT must be a positive integer" >&2; exit 1; }
 
 cleanup() {
   local status=$?
@@ -216,7 +218,7 @@ if [[ -n "$FRANKENGATE_IMAGE" ]]; then
   kubectl -n "$NAMESPACE" patch deployment/frankengate-vk --type=json -p "$image_patch"
   kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_REPLICAS"
 fi
-wait_for_gateway_deployment 240
+  wait_for_gateway_deployment "$VK_COHERENCE_READY_TIMEOUT"
 
 list_ready_gateway_ips() {
   kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk -o json |
@@ -227,7 +229,7 @@ list_ready_gateway_ips() {
 wait_for_ready_gateway_ips() {
   local expected_count="$1"
   local deadline
-  deadline=$(( $(date +%s) + 240 ))
+  deadline=$(( $(date +%s) + VK_COHERENCE_READY_TIMEOUT ))
   while :; do
     pod_ips=()
     while IFS= read -r ip; do
@@ -467,12 +469,12 @@ fi
 # replica, prove the surviving pods still accept the shared key, then add a
 # fresh pod and prove it converges from the durable authority before serving.
 kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_MIN_REPLICAS" >/dev/null
-wait_for_gateway_deployment 240
+wait_for_gateway_deployment "$VK_COHERENCE_READY_TIMEOUT"
 wait_for_ready_gateway_ips "$VK_COHERENCE_MIN_REPLICAS"
 wait_for_cache present "$vk_id" "$created_updated_at"
 assert_vk_status_on_all_pods "$original_secret" '200 OK'
 kubectl -n "$NAMESPACE" scale deployment/frankengate-vk --replicas="$VK_COHERENCE_REPLICAS" >/dev/null
-wait_for_gateway_deployment 240
+wait_for_gateway_deployment "$VK_COHERENCE_READY_TIMEOUT"
 wait_for_configured_ready_gateway_ips
 assert_release_image_spans_nodes
 wait_for_cache present "$vk_id" "$created_updated_at"
@@ -513,7 +515,7 @@ fi
 restarted_pod="$(kubectl -n "$NAMESPACE" get pods -l app.kubernetes.io/name=frankengate-vk \
   -o jsonpath='{.items[0].metadata.name}')"
 kubectl -n "$NAMESPACE" delete pod "$restarted_pod" --wait=false >/dev/null
-wait_for_gateway_deployment 240
+wait_for_gateway_deployment "$VK_COHERENCE_READY_TIMEOUT"
 wait_for_configured_ready_gateway_ips
 assert_release_image_spans_nodes
 wait_for_cache absent "$vk_id"
