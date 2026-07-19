@@ -22,6 +22,7 @@ import { type OverviewTabViewHandle, OverviewTabView } from "./components/tabVie
 import { type ProviderUsageTabViewHandle, ProviderUsageTabView } from "./components/tabViews/providerUsageTabView";
 import { AlertSummary } from "./components/alertSummary";
 import { GovernanceScopeToggle } from "./components/governanceScopeToggle";
+import { TraceReplaySummary } from "./components/traceReplaySummary";
 import type { DashboardData } from "./utils/exportUtils";
 
 const toChartType = (value: string): ChartType => (value === "line" ? "line" : "bar");
@@ -492,6 +493,9 @@ export default function DashboardPage() {
 							onTimezoneChange={setTimezone}
 						/>
 					</div>
+				</div>
+				<div className="px-4 pb-3">
+					<TraceReplaySummary filters={filters} />
 				</div>
 
 				<div className="p-4">
