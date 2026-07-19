@@ -173,7 +173,9 @@ export const mcpApi = baseApi.injectEndpoints({
 										draft.clients[index].config.tools_to_auto_execute = data.tools_to_auto_execute;
 									if (data.is_ping_available !== undefined) draft.clients[index].config.is_ping_available = data.is_ping_available;
 									if (data.tool_pricing !== undefined) draft.clients[index].config.tool_pricing = data.tool_pricing;
-									if (data.tool_sync_interval !== undefined) draft.clients[index].config.tool_sync_interval = data.tool_sync_interval;
+									// PUT accepts minutes, while GET/cache values are Go durations in nanoseconds.
+									if (data.tool_sync_interval !== undefined)
+										draft.clients[index].config.tool_sync_interval = data.tool_sync_interval * 60_000_000_000;
 									if (data.disabled !== undefined) {
 										draft.clients[index].config.disabled = data.disabled;
 										if (data.disabled) {
