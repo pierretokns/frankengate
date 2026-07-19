@@ -66,6 +66,9 @@ func (t *Trace) GetSpan(spanID string) *Span {
 
 // GetRequestID retrieves the request ID from the trace
 func (t *Trace) GetRequestID() string {
+	if t == nil {
+		return ""
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	return t.RequestID
@@ -73,6 +76,9 @@ func (t *Trace) GetRequestID() string {
 
 // SetRequestID sets the request ID for the trace
 func (t *Trace) SetRequestID(requestID string) {
+	if t == nil {
+		return
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.RequestID = requestID
@@ -80,6 +86,9 @@ func (t *Trace) SetRequestID(requestID string) {
 
 // SetRequestHeaders sets the captured request headers for the trace.
 func (t *Trace) SetRequestHeaders(headers map[string]string) {
+	if t == nil {
+		return
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.RequestHeaders = headers
@@ -87,7 +96,7 @@ func (t *Trace) SetRequestHeaders(headers map[string]string) {
 
 // SetRedactionReplacements merges connector-facing raw-to-placeholder replacements on the trace.
 func (t *Trace) SetRedactionReplacements(phase RedactionPhase, replacements map[string]string) {
-	if len(replacements) == 0 {
+	if t == nil || len(replacements) == 0 {
 		return
 	}
 	copied := make(map[string]string, len(replacements))
@@ -106,6 +115,9 @@ func (t *Trace) SetRedactionReplacements(phase RedactionPhase, replacements map[
 
 // ApplyRedactionReplacements redacts content attributes on every span in the trace and clears the replacement map.
 func (t *Trace) ApplyRedactionReplacements() {
+	if t == nil {
+		return
+	}
 	t.mu.Lock()
 	if !t.redactionReplacements.HasReplacements() {
 		t.mu.Unlock()
@@ -128,7 +140,7 @@ func (t *Trace) ApplyRedactionReplacements() {
 
 // SetAttribute sets a trace-level attribute in a thread-safe manner
 func (t *Trace) SetAttribute(key string, value any) {
-	if value == nil {
+	if t == nil || value == nil {
 		return
 	}
 	t.mu.Lock()
@@ -142,6 +154,9 @@ func (t *Trace) SetAttribute(key string, value any) {
 // GetAttribute retrieves a trace-level attribute in a thread-safe manner.
 // The second return value reports whether the key was present.
 func (t *Trace) GetAttribute(key string) (any, bool) {
+	if t == nil {
+		return nil, false
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	value, ok := t.Attributes[key]
@@ -204,6 +219,9 @@ func (t *Trace) SnapshotForExport() *Trace {
 
 // Reset clears the trace for reuse from pool
 func (t *Trace) Reset() {
+	if t == nil {
+		return
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.RequestID = ""
@@ -227,7 +245,7 @@ func (t *Trace) Reset() {
 
 // AppendPluginLogs appends plugin log entries to the trace in a thread-safe manner.
 func (t *Trace) AppendPluginLogs(logs []PluginLogEntry) {
-	if len(logs) == 0 {
+	if t == nil || len(logs) == 0 {
 		return
 	}
 	t.mu.Lock()

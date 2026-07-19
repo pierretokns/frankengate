@@ -35,3 +35,24 @@ func TestTraceAndSpanNilMutatorsNoop(t *testing.T) {
 	nilSpan.AddEvent(SpanEvent{Name: "event"})
 	nilSpan.End(SpanStatusOk, "")
 }
+
+func TestNilTraceAccessorsAndLifecycleAreNoop(t *testing.T) {
+	var trace *Trace
+	if got := trace.GetRequestID(); got != "" {
+		t.Fatalf("nil trace request ID = %q, want empty", got)
+	}
+	if value, ok := trace.GetAttribute("missing"); ok || value != nil {
+		t.Fatalf("nil trace attribute = (%v, %v), want (nil, false)", value, ok)
+	}
+
+	// These calls occur on error/finalization paths where a tracer may have
+	// already been detached. They must never turn an otherwise recoverable
+	// provider error into a process panic.
+	trace.SetRequestID("ignored")
+	trace.SetRequestHeaders(map[string]string{"x-test": "ignored"})
+	trace.SetAttribute("key", "ignored")
+	trace.SetRedactionReplacements(RedactionPhaseInput, map[string]string{"secret": "[REDACTED]"})
+	trace.ApplyRedactionReplacements()
+	trace.AppendPluginLogs([]PluginLogEntry{{}})
+	trace.Reset()
+}
