@@ -688,6 +688,8 @@ func TestOCRRequestValidation(t *testing.T) {
 			BaseURL:                        server.URL,
 			DefaultRequestTimeoutInSeconds: 300,
 		},
+		SendBackRawRequest:  true,
+		SendBackRawResponse: true,
 	}, &testLogger{})
 
 	ctx, cancel := schemas.NewBifrostContextWithTimeout(context.Background(), 10*time.Second)
@@ -711,6 +713,8 @@ func TestOCRRequestValidation(t *testing.T) {
 	require.NotNil(t, resp)
 	assert.Equal(t, "mistral-ocr-latest", resp.Model)
 	require.Len(t, resp.Pages, 2)
+	assert.NotNil(t, resp.ExtraFields.RawRequest)
+	assert.NotNil(t, resp.ExtraFields.RawResponse)
 }
 
 // TestMistralOCRIntegration tests the OCR endpoint with the real Mistral API.
