@@ -5121,8 +5121,16 @@ func (bifrost *Bifrost) handleRequest(ctx *schemas.BifrostContext, req *schemas.
 		// Layer on Primary/IsFallback — the per-attempt code populates only
 		// attempt-level RoutingInfo (Provider/Model/Key/ResolvedKeyAlias);
 		// fallback-relative signals belong to the orchestrator scope.
-		result.SetFallbackRoutingInfo(provider, model)
-		fallbackErr.SetFallbackRoutingInfo(provider, model)
+		// A fallback may fail during admission or transport setup, leaving the
+		// response nil.  Likewise, a successful attempt has no error to
+		// annotate.  Keep the orchestrator nil-safe so either outcome can be
+		// returned/continued without panicking.
+		if result != nil {
+			result.SetFallbackRoutingInfo(provider, model)
+		}
+		if fallbackErr != nil {
+			fallbackErr.SetFallbackRoutingInfo(provider, model)
+		}
 		if fallbackErr == nil {
 			bifrost.logger.Debug(fmt.Sprintf("successfully used fallback provider %s with model %s", fallback.Provider, fallback.Model))
 			ctx.AppendRoutingEngineLog(schemas.RoutingEngineCore, schemas.LogLevelInfo, fmt.Sprintf("Request served by fallback %s/%s (attempt %d/%d)", fallback.Provider, fallback.Model, i+1, len(fallbacks)))
@@ -5261,7 +5269,9 @@ func (bifrost *Bifrost) handleStreamRequest(ctx *schemas.BifrostContext, req *sc
 		// chunks already carry per-attempt RoutingInfo populated upstream,
 		// but Primary/IsFallback aren't reachable from here without wrapping
 		// the channel. See SetFallbackRoutingInfo doc.
-		fallbackErr.SetFallbackRoutingInfo(provider, model)
+		if fallbackErr != nil {
+			fallbackErr.SetFallbackRoutingInfo(provider, model)
+		}
 		if fallbackErr == nil {
 			bifrost.logger.Debug(fmt.Sprintf("successfully used fallback provider %s with model %s", fallback.Provider, fallback.Model))
 			ctx.AppendRoutingEngineLog(schemas.RoutingEngineCore, schemas.LogLevelInfo, fmt.Sprintf("Request served by fallback %s/%s (attempt %d/%d)", fallback.Provider, fallback.Model, i+1, len(fallbacks)))
