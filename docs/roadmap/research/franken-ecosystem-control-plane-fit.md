@@ -14,7 +14,7 @@ The preferred strategy is to consume independently published FrankenSuite releas
 2. **Linked library:** a Franken crate is compiled into a FrankenGate-owned binary. The full transitive license closure and rider apply to the resulting distribution; notices, source obligations, compatibility, and product licensing require explicit review.
 3. **Vendored or modified derivative:** FrankenGate copies or modifies upstream code. Preserve the upstream license/rider and attribution in the derivative and distribution, and do not describe the combined artifact as unqualified Apache-2.0. This needs owner/legal approval before implementation.
 
-This report is an engineering/provenance decision, not legal advice. Exact rider applicability and combined-work licensing should be reviewed for the intended entity and distribution. Meanwhile, external orchestration lets us evaluate and use upstream releases without copying them into FrankenGate. For code linked into the core Rust control-plane binary, Axum, Tokio, SQLx/PostgreSQL, Serde, OpenTelemetry, and generated OpenAPI remain the low-risk baseline; Asupersync/FastAPI Rust remain a worthwhile separate-binary bakeoff.
+This report is an engineering/provenance decision, not legal advice. Exact rider applicability and combined-work licensing should be reviewed for the intended entity and distribution. Meanwhile, external orchestration lets us evaluate and use upstream releases without copying them into FrankenGate. For code linked into the core Rust control-plane binary, Axum, Tokio, SQLx/PostgreSQL, Serde, OpenTelemetry, and generated OpenAPI remain the low-risk baseline. Do not spend the implementation budget building a second Asupersync/FastAPI Rust/SQLModel Rust control plane. Revisit that stack through a narrow vertical spike only when an upstream release closes a concrete baseline gap or materially reduces owned code.
 
 ## Method and scope
 
@@ -68,7 +68,7 @@ The project names are not interchangeable with deployable services. The importan
 |---|---|---|---|
 | Frankensearch v1.2.5 | `fsfs` CLI and Rust crates; Tantivy BM25, vector search, fusion/reranking, progressive results, durable local storage, JSON/JSONL/TOON/CSV, doctor and watch workflows | No production HTTP/multi-tenant/auth service or Helm packaging was found. FSVI uses memory-mapped f16 vectors and optimized brute-force; ANN is optional, so capacity must be proven on FrankenGate corpora. | P0 bakeoff behind a thin authorized adapter; upstream distribution remains independently replaceable |
 | Eidetic Engine v0.12.0 | Endpoint-local typed memory, hybrid search, graphs, provenance, deterministic hashes, redaction classes and context packs | CLI-first. The documented `serve` surface is reserved/future, not a managed multi-tenant service. | P1 endpoint-local collector/skill tool |
-| Asupersync v0.3.9 | Structured concurrency, capability context, regions, budgets and deterministic concurrency laboratory | A novel, broad runtime raises operator and migration risk even where its semantics are attractive. | P0 challenger in a separately deployable binary |
+| Asupersync v0.3.9 | Structured concurrency, capability context, regions, budgets and deterministic concurrency laboratory | A novel, broad runtime raises operator and migration risk even where its semantics are attractive. | Watch and borrow test/orchestration concepts; spike only for a measured gap |
 | FastAPI Rust v0.3.0 | Asupersync-native typed routing, extractors and OpenAPI | Upstream describes it as early development; OpenAPI is minimal, TCP hardening is evolving, WebSockets are partial and HTTP/2 is absent. | Challenger only, not initial public API default |
 | SQLModel Rust v0.3.0 | Typed models, queries, sessions, pooling, transactions and migrations across several databases | Nightly Rust and evolving API/documentation; it shares the Asupersync stack's correlated upgrade surface. | Challenger; explicit SQL migrations and SQLx remain control |
 | FrankenEngine v0.1.0 | Sandboxed extension concepts, adversarial replay and receipts | Stable source referenced absolute local `/dp/...` dependencies and does not yet prove a clean independently reproducible distribution; same-runtime multi-tenant isolation is incomplete. | Watch/bake off only after clean-build and isolation proof |
@@ -124,7 +124,7 @@ Ingress / one product origin
 
 This is one service binary plus worker binaries from one Rust workspace. It provides an ecosystem with mature licensing and operations while retaining the required bounded task trees, cancellation propagation, supervision, capability tokens, deterministic tests, and typed terminal outcomes.
 
-Challenger bundle: `fastapi_rust + Asupersync + sqlmodel_rust`. Keep it as an independently built control-plane binary or upstream-distribution integration and compare it with Axum/Tokio/SQLx. Its advantages are a coherent cancellation model, deterministic concurrency testing, generated API ergonomics, and rapid coordinated upgrades; its risks are early maturity, correlated ecosystem changes, smaller operator experience, and combined rider obligations. Promotion requires the same lifecycle, load, migration, security, and day-two tests—not only throughput benchmarks.
+Alternative bundle: `fastapi_rust + Asupersync + sqlmodel_rust`. Its advantages are a coherent cancellation model, deterministic concurrency testing, generated API ergonomics, and rapid coordinated upgrades; its risks are early maturity, correlated ecosystem changes, smaller operator experience, and combined rider obligations. Do not build it in parallel. Track upstream releases and authorize one time-boxed vertical spike only if it can remove a measured baseline limitation or a meaningful amount of FrankenGate-owned lifecycle code. The spike must reuse the same PostgreSQL schema and job protocol and have a predeclared stop decision, so it cannot become a shadow production implementation.
 
 ### 2. Authorized retrieval and agent memory
 
@@ -207,7 +207,7 @@ The following rules cover meaningful combinations without enumerating useless su
 
 ### After measured need
 
-- Bake off the official Frankensearch distribution as a sidecar/service against PostgreSQL retrieval, with PostgreSQL remaining authority.
+- Benchmark the official Frankensearch distribution through the minimum authorized adapter against the already-existing PostgreSQL retrieval path; do not build a second feature-complete backend merely for comparison.
 - Add sandboxed Python/WASM evaluator workers and customer-required warehouse/media adapters.
 - Add a separate static dashboard deployment without fragmenting browser authentication.
 
