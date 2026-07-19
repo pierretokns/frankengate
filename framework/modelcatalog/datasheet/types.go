@@ -463,6 +463,20 @@ func extractModelName(modelKey string) string {
 // normalized output type. Empty string for unrecognized endpoints.
 func normalizeEndpointToOutputType(endpoint string) string {
 	switch {
+	case strings.Contains(endpoint, "/audio/speech"):
+		return "speech"
+	case strings.Contains(endpoint, "/audio/transcriptions") || strings.Contains(endpoint, "/audio/transcription"):
+		return "transcription"
+	case strings.Contains(endpoint, "/images/variations"):
+		return "image_variation"
+	case strings.Contains(endpoint, "/images/edits") || strings.Contains(endpoint, "/images/edit"):
+		return "image_edit"
+	case strings.Contains(endpoint, "/images/generations") || strings.Contains(endpoint, "/images/generation"):
+		return "image_generation"
+	case strings.Contains(endpoint, "/videos"):
+		// Video retrieve/list/download/delete endpoints are all part of the
+		// video capability family; the request type is selected by the handler.
+		return "video_generation"
 	case strings.Contains(endpoint, "/chat/completions"):
 		return "chat_completion"
 	case strings.Contains(endpoint, "/responses"):
@@ -483,6 +497,18 @@ func normalizeModeToOutputType(mode string) string {
 		return "text_completion"
 	case "responses":
 		return "responses"
+	case "speech", "audio_speech":
+		return "speech"
+	case "transcription", "audio_transcription", "audio_transcriptions":
+		return "transcription"
+	case "image_generation", "image_generations", "images":
+		return "image_generation"
+	case "image_edit", "image_edits":
+		return "image_edit"
+	case "image_variation", "image_variations":
+		return "image_variation"
+	case "video", "videos", "video_generation", "video_generations":
+		return "video_generation"
 	default:
 		return ""
 	}

@@ -158,3 +158,29 @@ func TestCapabilityAdmissionAudioFamiliesRemainIsolated(t *testing.T) {
 		t.Fatal("embedding capability must remain isolated from audio families")
 	}
 }
+
+func TestCapabilityAdmissionIndexesMultimodalModelParameterEndpoints(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "model-parameters.json")
+	data := []byte(`{
+		"multimodal": {"provider":"openai", "supported_endpoints":[
+			"/v1/audio/speech", "/v1/audio/transcriptions", "/v1/images/generations",
+			"/v1/images/edits", "/v1/images/variations", "/v1/videos"
+		]}
+	}`)
+	if err := os.WriteFile(path, data, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	ds := datasheet.New(nil, nil, datasheet.Config{ModelParametersURL: "file://" + path})
+	if err := ds.LoadModelParamsFromURLIntoMemory(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	for _, operation := range []schemas.RequestType{
+		schemas.SpeechRequest, schemas.TranscriptionRequest,
+		schemas.ImageGenerationRequest, schemas.ImageEditRequest,
+		schemas.ImageVariationRequest, schemas.VideoGenerationRequest,
+	} {
+		if !ds.IsRequestTypeSupported("multimodal", operation) {
+			t.Fatalf("model-parameters endpoint should admit %q", operation)
+		}
+	}
+}
