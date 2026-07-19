@@ -16,7 +16,7 @@ pricing-sync:
     # up from the independent module and rejects ./... because the workspace
     # does not include scripts/pricing-sync.
     - GOWORK=off go test ./...
-    - GOWORK=off go run . -url "${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}" -out ../../docs/data/pricing
+    - GOWORK=off go run . -url "${FRANKENGATE_PRICING_URL:-${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}}" -out ../../docs/data/pricing
   artifacts:
     name: frankengate-pricing-$CI_COMMIT_SHA
     expire_in: 1 year
