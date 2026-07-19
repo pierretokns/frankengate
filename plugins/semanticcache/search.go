@@ -46,6 +46,13 @@ func (plugin *Plugin) performDirectSearch(ctx *schemas.BifrostContext, state *ca
 		}
 		return nil, fmt.Errorf("failed to fetch direct cache chunk: %w", err)
 	}
+	// Point lookups cannot express the ownership predicate.  A deterministic
+	// cache ID is not an authorization boundary: a shared namespace may contain
+	// an object with the same ID written by another application (or a stale
+	// replicated object).  Never replay such an object.
+	if !isSemanticCacheEntry(result) {
+		return nil, nil
+	}
 	// Get-by-ID backends cannot apply authorization predicates. Re-check the
 	// immutable authority snapshot on the returned entry so a revoked epoch
 	// can never be replayed if a backend ignores the deterministic key or has
@@ -109,10 +116,25 @@ func (plugin *Plugin) performSemanticSearch(ctx *schemas.BifrostContext, state *
 	if len(results) == 0 {
 		return nil, nil
 	}
+	// Some adapters are permissive or eventually consistent with metadata
+	// filters.  Enforce plugin ownership after retrieval as well as in the
+	// backend query, before deserializing or replaying the response.
+	if !isSemanticCacheEntry(results[0]) {
+		return nil, nil
+	}
 	if !cacheResultMatchesAuthority(results[0], state.AuthorityMetadata) {
 		return nil, nil
 	}
 	return plugin.buildResponseFromResult(ctx, state, req, results[0], CacheTypeSemantic, &cacheThreshold, &inputTokens)
+}
+
+// isSemanticCacheEntry is the post-fetch ownership fence for every cache read.
+// The marker is deliberately checked as a strict bool: accepting a truthy
+// string or a missing marker would allow arbitrary objects in the shared
+// vector namespace to be replayed as cached LLM responses.
+func isSemanticCacheEntry(result vectorstore.SearchResult) bool {
+	marker, ok := result.Properties["from_bifrost_semantic_cache_plugin"].(bool)
+	return ok && marker
 }
 
 // cacheResultMatchesAuthority is a defense-in-depth check for stores whose

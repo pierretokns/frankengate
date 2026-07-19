@@ -122,3 +122,21 @@ func TestCacheResultRequiresAllAuthorityFields(t *testing.T) {
 		t.Fatal("cache entry missing subject metadata was accepted")
 	}
 }
+
+func TestSemanticCacheEntryRequiresStrictPluginMarker(t *testing.T) {
+	if isSemanticCacheEntry(vectorstore.SearchResult{Properties: map[string]interface{}{
+		"from_bifrost_semantic_cache_plugin": true,
+	}}) == false {
+		t.Fatal("expected entries with the strict ownership marker to be accepted")
+	}
+	for _, marker := range []interface{}{nil, false, "true", 1} {
+		if isSemanticCacheEntry(vectorstore.SearchResult{Properties: map[string]interface{}{
+			"from_bifrost_semantic_cache_plugin": marker,
+		}}) {
+			t.Fatalf("accepted non-boolean ownership marker %#v", marker)
+		}
+	}
+	if isSemanticCacheEntry(vectorstore.SearchResult{}) {
+		t.Fatal("accepted cache entry with missing ownership marker")
+	}
+}

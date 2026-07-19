@@ -675,8 +675,9 @@ func TestCacheTypeDirectUsesChunkLookup(t *testing.T) {
 	store.chunks[directID] = vectorstore.SearchResult{
 		ID: directID,
 		Properties: map[string]interface{}{
-			"response":   string(responseJSON),
-			"expires_at": time.Now().Add(time.Minute).Unix(),
+			"response":                           string(responseJSON),
+			"expires_at":                         time.Now().Add(time.Minute).Unix(),
+			"from_bifrost_semantic_cache_plugin": true,
 		},
 	}
 
