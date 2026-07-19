@@ -20,6 +20,7 @@ import { type MCPTabViewHandle, MCPTabView } from "./components/tabViews/mcpTabV
 import { type ModelRankingsTabViewHandle, ModelRankingsTabView } from "./components/tabViews/modelRankingsTabView";
 import { type OverviewTabViewHandle, OverviewTabView } from "./components/tabViews/overviewTabView";
 import { type ProviderUsageTabViewHandle, ProviderUsageTabView } from "./components/tabViews/providerUsageTabView";
+import { AlertSummary } from "./components/alertSummary";
 import type { DashboardData } from "./utils/exportUtils";
 
 const toChartType = (value: string): ChartType => (value === "line" ? "line" : "bar");
@@ -430,6 +431,7 @@ export default function DashboardPage() {
 				<div className="flex items-center justify-between p-4">
 					<div className="flex items-center gap-2">
 						<h1 className="text-lg font-semibold">{PRODUCT_NAME} Dashboard</h1>
+						<AlertSummary />
 					</div>
 					<div className="flex items-center gap-2">
 						<ExportPopover
