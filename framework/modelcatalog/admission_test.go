@@ -120,3 +120,41 @@ func TestCapabilityAdmissionKeepsImageVariationSeparateFromGenerationAndEdit(t *
 		t.Fatal("generation/edit capabilities must not authorize variations")
 	}
 }
+
+func TestCapabilityAdmissionAudioFamiliesRemainIsolated(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "pricing.json")
+	data := []byte(`{
+		"tts-model": {"provider":"openai", "mode":"speech"},
+		"stt-model": {"provider":"openai", "mode":"transcription"},
+		"embedding-model": {"provider":"openai", "mode":"embedding"}
+	}`)
+	if err := os.WriteFile(path, data, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	ds := datasheet.New(nil, nil, datasheet.Config{URL: "file://" + path})
+	if err := ds.LoadFromURLIntoMemory(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	mc := NewTestCatalogWithDatasheet(ds)
+	if !mc.IsRequestTypeSupportedForProvider("tts-model", schemas.OpenAI, schemas.SpeechRequest) ||
+		!mc.IsRequestTypeSupportedForProvider("tts-model", schemas.OpenAI, schemas.SpeechStreamRequest) {
+		t.Fatal("speech capability must admit unary and streaming speech")
+	}
+	if mc.IsRequestTypeSupportedForProvider("tts-model", schemas.OpenAI, schemas.TranscriptionRequest) ||
+		mc.IsRequestTypeSupportedForProvider("tts-model", schemas.OpenAI, schemas.EmbeddingRequest) {
+		t.Fatal("speech capability must not authorize transcription or embedding")
+	}
+	if !mc.IsRequestTypeSupportedForProvider("stt-model", schemas.OpenAI, schemas.TranscriptionRequest) ||
+		!mc.IsRequestTypeSupportedForProvider("stt-model", schemas.OpenAI, schemas.TranscriptionStreamRequest) {
+		t.Fatal("transcription capability must admit unary and streaming transcription")
+	}
+	if mc.IsRequestTypeSupportedForProvider("stt-model", schemas.OpenAI, schemas.SpeechRequest) ||
+		mc.IsRequestTypeSupportedForProvider("stt-model", schemas.OpenAI, schemas.EmbeddingRequest) {
+		t.Fatal("transcription capability must not authorize speech or embedding")
+	}
+	if !mc.IsRequestTypeSupportedForProvider("embedding-model", schemas.OpenAI, schemas.EmbeddingRequest) ||
+		mc.IsRequestTypeSupportedForProvider("embedding-model", schemas.OpenAI, schemas.SpeechRequest) ||
+		mc.IsRequestTypeSupportedForProvider("embedding-model", schemas.OpenAI, schemas.TranscriptionRequest) {
+		t.Fatal("embedding capability must remain isolated from audio families")
+	}
+}

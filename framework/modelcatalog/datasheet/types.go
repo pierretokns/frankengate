@@ -377,9 +377,14 @@ func normalizeRequestType(reqType schemas.RequestType) string {
 	case schemas.RerankRequest:
 		return "rerank"
 	case schemas.SpeechRequest, schemas.SpeechStreamRequest:
-		return "audio_speech"
+		// Keep the catalog key aligned with schemas.SpeechRequest ("speech").
+		// The endpoint is audio, but capability and pricing rows use the
+		// request-type family name; inventing an audio_speech key makes speech
+		// admission and cost lookup miss otherwise valid catalog rows.
+		return "speech"
 	case schemas.TranscriptionRequest, schemas.TranscriptionStreamRequest:
-		return "audio_transcription"
+		// See speech above: transcription is the canonical request family.
+		return "transcription"
 	case schemas.ImageGenerationRequest, schemas.ImageGenerationStreamRequest:
 		return "image_generation"
 	case schemas.ImageEditRequest, schemas.ImageEditStreamRequest:
