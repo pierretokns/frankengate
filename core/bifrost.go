@@ -5160,8 +5160,13 @@ func (bifrost *Bifrost) handleStreamRequest(ctx *schemas.BifrostContext, req *sc
 			continue
 		}
 
-		// Try the fallback provider
+		// Try the fallback provider.  Annotate chunks as they cross the
+		// orchestrator boundary so streaming consumers receive the same
+		// fallback provenance as unary responses.
 		result, fallbackErr := bifrost.tryStreamRequest(ctx, fallbackReq)
+		if result != nil {
+			result = annotateFallbackStream(result, provider, model)
+		}
 		// Layer on Primary/IsFallback on errors. For the success case the
 		// result is a chan of stream chunks emitted asynchronously — those
 		// chunks already carry per-attempt RoutingInfo populated upstream,
@@ -5193,6 +5198,20 @@ func (bifrost *Bifrost) handleStreamRequest(ctx *schemas.BifrostContext, req *sc
 	ctx.AppendRoutingEngineLog(schemas.RoutingEngineCore, schemas.LogLevelError, fmt.Sprintf("All %d fallback(s) exhausted; returning primary error (%s)", len(fallbacks), routingErrorSummary(primaryErr)))
 	// All providers failed, return the original error
 	return nil, primaryErr
+}
+
+func annotateFallbackStream(source chan *schemas.BifrostStreamChunk, primaryProvider schemas.ModelProvider, primaryModel string) chan *schemas.BifrostStreamChunk {
+	out := make(chan *schemas.BifrostStreamChunk)
+	go func() {
+		defer close(out)
+		for chunk := range source {
+			if chunk != nil {
+				chunk.SetFallbackRoutingInfo(primaryProvider, primaryModel)
+			}
+			out <- chunk
+		}
+	}()
+	return out
 }
 
 // tryRequest is a generic function that handles common request processing logic

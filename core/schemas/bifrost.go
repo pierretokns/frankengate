@@ -1752,6 +1752,49 @@ type BifrostStreamChunk struct {
 	*BifrostError
 }
 
+// SetFallbackRoutingInfo annotates a streaming attempt with its primary
+// destination.  Fallback orchestration receives a channel rather than a
+// completed response, so this must be applied to every emitted chunk.
+func (c *BifrostStreamChunk) SetFallbackRoutingInfo(primaryProvider ModelProvider, primaryModel string) {
+	if c == nil {
+		return
+	}
+	if c.BifrostError != nil {
+		c.BifrostError.SetFallbackRoutingInfo(primaryProvider, primaryModel)
+		return
+	}
+	var ef *BifrostResponseExtraFields
+	switch {
+	case c.BifrostTextCompletionResponse != nil:
+		ef = &c.BifrostTextCompletionResponse.ExtraFields
+	case c.BifrostChatResponse != nil:
+		ef = &c.BifrostChatResponse.ExtraFields
+	case c.BifrostResponsesStreamResponse != nil:
+		ef = &c.BifrostResponsesStreamResponse.ExtraFields
+	case c.BifrostSpeechStreamResponse != nil:
+		ef = &c.BifrostSpeechStreamResponse.ExtraFields
+	case c.BifrostTranscriptionStreamResponse != nil:
+		ef = &c.BifrostTranscriptionStreamResponse.ExtraFields
+	case c.BifrostImageGenerationStreamResponse != nil:
+		ef = &c.BifrostImageGenerationStreamResponse.ExtraFields
+	case c.BifrostPassthroughResponse != nil:
+		ef = &c.BifrostPassthroughResponse.ExtraFields
+	}
+	if ef == nil {
+		return
+	}
+	ef.RoutingInfo.IsFallback = true
+	if primaryProvider != "" {
+		p := primaryProvider
+		ef.RoutingInfo.PrimaryProvider = &p
+	}
+	if primaryModel != "" {
+		m := primaryModel
+		ef.RoutingInfo.PrimaryModel = &m
+	}
+	syncDeprecatedFromRoutingInfo(ef.RoutingInfo, &ef.Provider, &ef.OriginalModelRequested, &ef.ResolvedModelUsed)
+}
+
 // MarshalJSON implements custom JSON marshaling for BifrostStreamChunk.
 // This ensures that only the non-nil embedded struct is marshaled,
 func (bs BifrostStreamChunk) MarshalJSON() ([]byte, error) {
