@@ -179,3 +179,34 @@ func TestAlertingRoutesExposeDurableCRUDSurface(t *testing.T) {
 		t.Fatalf("list channels route returned %d: %s", ctx.Response.StatusCode(), ctx.Response.Body())
 	}
 }
+
+func TestAlertingScopeQueryFiltersRulesAndHistory(t *testing.T) {
+	state := alertingState{Rules: []AlertRule{
+		{ID: "global", Scope: "global"},
+		{ID: "team-a", Scope: "team", ScopeID: "a"},
+		{ID: "team-b", Scope: "team", ScopeID: "b"},
+	}, History: []AlertDelivery{
+		{ID: "d-global", RuleID: "global"}, {ID: "d-a", RuleID: "team-a"}, {ID: "d-b", RuleID: "team-b"},
+	}}
+	c := &fasthttp.RequestCtx{}
+	c.Request.URI().QueryArgs().Set("scope", "team")
+	c.Request.URI().QueryArgs().Set("scope_id", "a")
+	filtered, ok := alertingScopeQuery(c, state)
+	if !ok || len(filtered.Rules) != 2 || len(filtered.History) != 2 {
+		t.Fatalf("team scope leaked or dropped rows: ok=%v rules=%+v history=%+v", ok, filtered.Rules, filtered.History)
+	}
+	for _, d := range filtered.History {
+		if d.RuleID == "team-b" {
+			t.Fatal("team-b delivery leaked into team-a view")
+		}
+	}
+}
+
+func TestAlertingScopeQueryRequiresIDForScopedViews(t *testing.T) {
+	c := &fasthttp.RequestCtx{}
+	c.Request.URI().QueryArgs().Set("scope", "user")
+	_, ok := alertingScopeQuery(c, alertingState{})
+	if ok || c.Response.StatusCode() != fasthttp.StatusBadRequest {
+		t.Fatalf("missing scope_id should be rejected: ok=%v status=%d", ok, c.Response.StatusCode())
+	}
+}

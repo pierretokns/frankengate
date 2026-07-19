@@ -391,7 +391,11 @@ func (h *AlertingHandler) listRules(c *fasthttp.RequestCtx) {
 		SendError(c, 500, "alerting backend unavailable")
 		return
 	}
-	SendJSON(c, map[string]any{"rules": s.Rules})
+	filtered, ok := alertingScopeQuery(c, s)
+	if !ok {
+		return
+	}
+	SendJSON(c, map[string]any{"rules": filtered.Rules})
 }
 func (h *AlertingHandler) history(c *fasthttp.RequestCtx) {
 	s, e := h.load(c)
@@ -399,7 +403,53 @@ func (h *AlertingHandler) history(c *fasthttp.RequestCtx) {
 		SendError(c, 500, "alerting backend unavailable")
 		return
 	}
-	SendJSON(c, map[string]any{"history": s.History})
+	filtered, ok := alertingScopeQuery(c, s)
+	if !ok {
+		return
+	}
+	SendJSON(c, map[string]any{"history": filtered.History})
+}
+
+// alertingScopeQuery projects rules and delivery history for a dashboard's
+// global, team, or user view.  Delivery rows carry only RuleID, so filtering
+// history must first resolve the rule scope; returning the unfiltered durable
+// history would leak another team's/user's alert activity to a scoped view.
+func alertingScopeQuery(c *fasthttp.RequestCtx, state alertingState) (alertingState, bool) {
+	scope := strings.ToLower(strings.TrimSpace(string(c.QueryArgs().Peek("scope"))))
+	scopeID := strings.TrimSpace(string(c.QueryArgs().Peek("scope_id")))
+	if scope == "" && scopeID == "" {
+		return state, true
+	}
+	if scope != "global" && scope != "team" && scope != "user" {
+		SendError(c, 400, "scope must be global, team, or user")
+		return alertingState{}, false
+	}
+	if scope == "global" {
+		scopeID = ""
+	} else if scopeID == "" {
+		SendError(c, 400, "scope_id is required for team and user scopes")
+		return alertingState{}, false
+	}
+	allowed := make(map[string]struct{}, len(state.Rules))
+	rules := make([]AlertRule, 0, len(state.Rules))
+	for _, rule := range state.Rules {
+		matches := rule.Scope == "" || rule.Scope == "global"
+		if scope != "global" {
+			matches = matches || (rule.Scope == scope && rule.ScopeID == scopeID)
+		}
+		if matches {
+			rules = append(rules, rule)
+			allowed[rule.ID] = struct{}{}
+		}
+	}
+	history := make([]AlertDelivery, 0, len(state.History))
+	for _, delivery := range state.History {
+		if _, ok := allowed[delivery.RuleID]; ok {
+			history = append(history, delivery)
+		}
+	}
+	state.Rules, state.History = rules, history
+	return state, true
 }
 func (h *AlertingHandler) createChannel(c *fasthttp.RequestCtx) {
 	var v AlertChannel
