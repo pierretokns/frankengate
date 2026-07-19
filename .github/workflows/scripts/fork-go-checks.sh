@@ -8,6 +8,13 @@ echo "[$(date -u +%FT%TZ)] fork-go-checks starting mode=${MODE} root=${ROOT}"
 
 MODULES=()
 while IFS= read -r module_file; do
+  # A prior local workspace bootstrap can leave a generated root-level
+  # go.mod beside the repository's real module directories. It is not a
+  # shipped module and, because it equals ROOT exactly, prefix stripping
+  # would otherwise leave an absolute path that go work init joins twice.
+  if [[ "$module_file" == "$ROOT" ]]; then
+    continue
+  fi
   MODULES+=("${module_file#"$ROOT/"}")
 done < <(
   find "$ROOT" -type f -name go.mod \
