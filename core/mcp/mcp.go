@@ -59,9 +59,10 @@ type MCPManager struct {
 	// before any upstream credential lookup or wire I/O. The process-local
 	// implementation is available explicitly via mcpownership.NewProcessLocalStore;
 	// it must not be mistaken for cross-replica coordination.
-	ownershipStore mcpownership.Store
-	ownerPod       string
-	ownershipTTL   time.Duration
+	ownershipStore     mcpownership.Store
+	ownerPod           string
+	ownershipTTL       time.Duration
+	ownershipConfigErr error
 }
 
 // MCPToolFunction is a generic function type for handling tool calls with typed arguments.
@@ -135,6 +136,15 @@ func NewMCPManager(ctx context.Context, config schemas.MCPConfig, credStore sche
 
 	manager.pluginPipelineProvider = pluginPipelineProvider
 	manager.releasePluginPipeline = releasePluginPipeline
+	if config.OwnershipBackend != nil {
+		// Durable backend errors remain fail-closed in exec.go; do not silently
+		// replace an explicitly requested shared backend with local memory.
+		store := mcpownership.NewDurableStore(config.OwnershipBackend)
+		if err := manager.SetMCPOwnership(store, config.OwnershipOwnerPod, config.OwnershipLease); err != nil {
+			manager.logger.Warn("%s durable ownership disabled: %v", MCPLogPrefix, err)
+			manager.ownershipConfigErr = err
+		}
+	}
 	manager.toolsManager = NewToolsManager(config.ToolManagerConfig, manager, config.FetchNewRequestIDFunc, credStore, logger)
 
 	// Set up CodeMode if provided - inject dependencies after manager is created

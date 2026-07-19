@@ -40,6 +40,111 @@ type DurableBackend interface {
 	Write(ctx context.Context, expectedVersion uint64, record DurableRecord) error
 }
 
+// DurableStore adapts a DurableBackend to the execution-facing Store
+// contract. It performs optimistic CAS retries so the backend remains the
+// sole cross-replica authority; callers never fall back to process-local
+// state when the backend is unavailable.
+type DurableStore struct{ backend DurableBackend }
+
+func NewDurableStore(backend DurableBackend) Store {
+	if backend == nil {
+		return nil
+	}
+	return &DurableStore{backend: backend}
+}
+
+func (s *DurableStore) load(key ConnectionKey) (DurableRecord, error) {
+	return s.backend.Read(context.Background(), key)
+}
+func (s *DurableStore) mutate(key ConnectionKey, fn func(*Registry) error) error {
+	if s == nil || s.backend == nil {
+		return errors.New("mcp ownership: durable backend unavailable")
+	}
+	for attempt := 0; attempt < 8; attempt++ {
+		rec, err := s.backend.Read(context.Background(), key)
+		if errors.Is(err, ErrNotFound) {
+			rec = DurableRecord{Key: key}
+			err = nil
+		}
+		if err != nil {
+			return err
+		}
+		reg := registryFromDurable(rec)
+		if err := fn(reg); err != nil {
+			return err
+		}
+		next := durableFromRegistry(reg, key, rec.Version+1)
+		if err := s.backend.Write(context.Background(), rec.Version, next); err == nil {
+			return nil
+		} else if !errors.Is(err, ErrVersionConflict) {
+			return err
+		}
+	}
+	return ErrVersionConflict
+}
+
+func registryFromDurable(rec DurableRecord) *Registry {
+	r := NewRegistry()
+	if rec.Key.ClientID == "" {
+		return r
+	}
+	r.records[rec.Key] = &record{key: rec.Key, ownerPod: rec.OwnerPod, fence: rec.Fence, leaseUntil: rec.LeaseUntil, serverSessionID: rec.ServerSessionID, sessionResumable: rec.SessionResumable, operations: map[string]*operation{}}
+	for _, op := range rec.Operations {
+		r.records[rec.Key].operations[op.ID] = &operation{id: op.ID, status: op.Status, ambiguous: op.Ambiguous, attempts: make([]attempt, op.Attempt)}
+	}
+	return r
+}
+func durableFromRegistry(r *Registry, key ConnectionKey, version uint64) DurableRecord {
+	rec := r.records[key]
+	out := DurableRecord{Key: key, Version: version}
+	if rec == nil {
+		return out
+	}
+	out.OwnerPod, out.Fence, out.LeaseUntil, out.ServerSessionID, out.SessionResumable = rec.ownerPod, rec.fence, rec.leaseUntil, rec.serverSessionID, rec.sessionResumable
+	for _, op := range rec.operations {
+		out.Operations = append(out.Operations, DurableOperation{ID: op.id, Status: op.status, Attempt: uint32(len(op.attempts)), Ambiguous: op.ambiguous})
+	}
+	return out
+}
+
+func (s *DurableStore) Claim(now time.Time, key ConnectionKey, pod string, ttl time.Duration) (Claim, error) {
+	var out Claim
+	err := s.mutate(key, func(r *Registry) error { var e error; out, e = r.Claim(now, key, pod, ttl); return e })
+	return out, err
+}
+func (s *DurableStore) Renew(now time.Time, key ConnectionKey, pod string, fence uint64, ttl time.Duration) (Claim, error) {
+	var out Claim
+	err := s.mutate(key, func(r *Registry) error { var e error; out, e = r.Renew(now, key, pod, fence, ttl); return e })
+	return out, err
+}
+func (s *DurableStore) AttachServerSession(now time.Time, key ConnectionKey, pod string, fence uint64, id string, res bool) error {
+	return s.mutate(key, func(r *Registry) error { return r.AttachServerSession(now, key, pod, fence, id, res) })
+}
+func (s *DurableStore) StartCall(now time.Time, key ConnectionKey, pod string, fence uint64, id string) (CallReceipt, error) {
+	var out CallReceipt
+	err := s.mutate(key, func(r *Registry) error { var e error; out, e = r.StartCall(now, key, pod, fence, id); return e })
+	return out, err
+}
+func (s *DurableStore) CompleteCall(now time.Time, key ConnectionKey, pod string, fence uint64, id string, ok bool) (CallReceipt, error) {
+	var out CallReceipt
+	err := s.mutate(key, func(r *Registry) error { var e error; out, e = r.CompleteCall(now, key, pod, fence, id, ok); return e })
+	return out, err
+}
+func (s *DurableStore) BeginOAuth(now time.Time, key ConnectionKey, pod string, fence uint64, state string, ttl time.Duration) error {
+	return s.mutate(key, func(r *Registry) error { return r.BeginOAuth(now, key, pod, fence, state, ttl) })
+}
+func (s *DurableStore) RouteOAuthCallback(now time.Time, state string) (OAuthRoute, error) {
+	return OAuthRoute{}, errors.New("durable ownership: OAuth callback routing requires a shared state index")
+}
+func (s *DurableStore) Operations(key ConnectionKey) []OperationSnapshot {
+	rec, err := s.load(key)
+	if err != nil {
+		return nil
+	}
+	r := registryFromDurable(rec)
+	return r.Operations(key)
+}
+
 var (
 	ErrVersionConflict = errors.New("durable ownership version conflict")
 	ErrFenceRegression = errors.New("durable ownership fence regression")

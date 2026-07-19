@@ -113,6 +113,9 @@ func (m *MCPManager) executeToolWithHooks(
 	}
 
 	resp, bErr := m.RunWithPluginPipeline(ctx, request, func(preReq *schemas.BifrostMCPRequest) (*schemas.BifrostMCPResponse, error) {
+		if m.ownershipConfigErr != nil {
+			return nil, fmt.Errorf("MCP ownership configuration denied: %w", m.ownershipConfigErr)
+		}
 		var ownershipKey mcpownership.ConnectionKey
 		var ownershipClaim mcpownership.Claim
 		var ownershipOperation string
