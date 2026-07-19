@@ -140,6 +140,26 @@ func (p *GovernancePlugin) SetReservationCoordinator(coordinator ReservationCoor
 	p.cfgMutex.Unlock()
 }
 
+// ReloadNotifier replaces the durable admission notifier through the
+// coordinator's lifecycle-safe swap path. Server reload code should use this
+// seam instead of mutating the coordinator or plugin state directly.
+func (p *GovernancePlugin) ReloadNotifier(notifier OverdraftNotifier) error {
+	if p == nil {
+		return fmt.Errorf("governance plugin is nil")
+	}
+	p.cfgMutex.RLock()
+	coordinator := p.reservationCoordinator
+	p.cfgMutex.RUnlock()
+	if coordinator == nil {
+		return fmt.Errorf("durable reservation coordinator is not configured")
+	}
+	if durable, ok := coordinator.(*DurableReservationCoordinator); ok {
+		durable.SetNotifier(notifier)
+		return nil
+	}
+	return fmt.Errorf("reservation coordinator does not support notifier reload")
+}
+
 // SetNotifierMetricObserver wires an exporter-neutral observer into the
 // durable overdraft notifier, if the active coordinator supports it.
 func (p *GovernancePlugin) SetNotifierMetricObserver(observer func(string, float64)) {

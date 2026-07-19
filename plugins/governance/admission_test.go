@@ -182,6 +182,26 @@ func TestDurableReservationCoordinatorSetNotifierClosesPreviousAsyncNotifier(t *
 	require.Error(t, newNotifier.Notify(ctx, OverdraftEvent{ReservationID: "closed"}))
 }
 
+func TestGovernancePluginReloadNotifierUsesLifecycleSafeSwap(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	first := NewAsyncOverdraftNotifier(ctx, &overdraftNotifier{}, 1)
+	second := NewAsyncOverdraftNotifier(ctx, &overdraftNotifier{}, 1)
+	coordinator := &DurableReservationCoordinator{}
+	coordinator.SetNotifier(first)
+	plugin := &GovernancePlugin{}
+	plugin.SetReservationCoordinator(coordinator)
+	if err := plugin.ReloadNotifier(second); err != nil {
+		t.Fatalf("reload notifier: %v", err)
+	}
+	if err := first.Notify(ctx, OverdraftEvent{ReservationID: "closed"}); err == nil {
+		t.Fatal("old notifier remained usable after reload")
+	}
+	if err := second.Notify(ctx, OverdraftEvent{ReservationID: "open"}); err != nil {
+		t.Fatalf("new notifier unusable after reload: %v", err)
+	}
+}
+
 func TestDurableReservationCoordinatorReappliesNotifierObserverOnReload(t *testing.T) {
 	ctx := context.Background()
 	coordinator := &DurableReservationCoordinator{}
