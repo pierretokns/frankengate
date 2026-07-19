@@ -703,6 +703,15 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 		// consumer and hold readiness closed. The normalized copy is applied
 		// below; durable cursor advancement remains tied to the original row ID.
 		event.EntityID = strings.TrimSpace(event.EntityID)
+		// Rows written before schema_version was added (or decoded from an
+		// older replica that omitted the column) arrive with the Go zero value.
+		// AppendVirtualKeyInvalidation treats zero as the v1 default, so the
+		// consumer must apply the same compatibility rule. Rejecting zero here
+		// would permanently wedge the ordered cursor on the first legacy row and
+		// keep every replica's readiness gate closed until manual repair.
+		if event.SchemaVersion == 0 {
+			event.SchemaVersion = tables.VirtualKeyInvalidationSchemaVersion
+		}
 		if event.EntityType != tables.VirtualKeyInvalidationEntityType || event.EntityID == "" || event.SchemaVersion != tables.VirtualKeyInvalidationSchemaVersion {
 			return false, fmt.Errorf("invalid virtual-key invalidation event %d", event.ID)
 		}
