@@ -202,6 +202,12 @@ func (p *principalAuthorityPoller) shouldLogError(now time.Time) bool {
 }
 
 func (p *principalAuthorityPoller) Run(ctx context.Context) {
+	// Keep a local copy so a provider that closes its wake channel can be
+	// retired cleanly. Receiving from a closed channel is always ready; leaving
+	// it in the select would turn a reconnect/teardown into a tight polling
+	// loop that hammers the database. Durable periodic polling remains the
+	// fallback after the acceleration channel ends.
+	wake := p.wake
 	for {
 		more, err := p.pollOnce(ctx)
 		if err == nil && more {
@@ -218,12 +224,15 @@ func (p *principalAuthorityPoller) Run(ctx context.Context) {
 			}
 			return
 		case <-timer.C:
-		case <-p.wake:
+		case _, ok := <-wake:
 			if !timer.Stop() {
 				select {
 				case <-timer.C:
 				default:
 				}
+			}
+			if !ok {
+				wake = nil
 			}
 		}
 	}

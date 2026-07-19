@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -17,6 +18,7 @@ type principalAuthorityTestSource struct {
 	err        error
 	highWater  uint64
 	onSnapshot func()
+	listCalls  atomic.Int64
 }
 
 func (s *principalAuthorityTestSource) ListPrincipalAuthorizationEpochsAfter(_ context.Context, tenant, issuer, subject string, limit int) ([]tables.TablePrincipalAuthorizationEpoch, error) {
@@ -37,6 +39,7 @@ func (s *principalAuthorityTestSource) ListPrincipalAuthorizationEpochsAfter(_ c
 }
 
 func (s *principalAuthorityTestSource) ListPrincipalAuthorizationEpochEventsAfter(_ context.Context, cursor uint64, limit int) ([]tables.TablePrincipalAuthorizationEpochEvent, error) {
+	s.listCalls.Add(1)
 	if s.err != nil {
 		return nil, s.err
 	}
@@ -47,6 +50,32 @@ func (s *principalAuthorityTestSource) ListPrincipalAuthorizationEpochEventsAfte
 		}
 	}
 	return out, nil
+}
+
+func TestPrincipalAuthorityPollerDisablesClosedWakeChannel(t *testing.T) {
+	source := &principalAuthorityTestSource{}
+	wake := make(chan struct{})
+	close(wake)
+	poller := newPrincipalAuthorityPoller(source, authorityepoch.NewRegistry(), 100)
+	poller.wake = wake
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+	go func() {
+		poller.Run(ctx)
+		close(done)
+	}()
+	// A closed acceleration channel must fall back to the normal one-second
+	// timer rather than making the select continuously ready.
+	time.Sleep(50 * time.Millisecond)
+	cancel()
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("poller did not stop after cancellation")
+	}
+	if calls := source.listCalls.Load(); calls > 3 {
+		t.Fatalf("closed wake channel caused tight polling: %d reads in 50ms", calls)
+	}
 }
 
 func TestPrincipalAuthorityPollerFreshnessExpiresAfterFailedReads(t *testing.T) {
