@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/maximhq/bifrost/core/reservations"
+	"go.opentelemetry.io/otel/attribute"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/metric/metricdata"
 )
@@ -79,4 +80,42 @@ func TestGovernanceOutcomeLabelsAreBounded(t *testing.T) {
 			t.Fatalf("boundedGovernanceOutcome(%q) = %q, want %q", tc.in, got, tc.want)
 		}
 	}
+}
+
+func TestOverdraftOutcomeMatchesPrometheusContract(t *testing.T) {
+	reader := sdkmetric.NewManualReader()
+	provider := sdkmetric.NewMeterProvider(sdkmetric.WithReader(reader))
+	defer provider.Shutdown(context.Background())
+	exporter := &MetricsExporter{provider: provider, meter: provider.Meter("frankengate-test")}
+	exporter.initMetrics()
+	exporter.OverdraftObserved(context.Background(), false, reservations.Amount{Tokens: 1})
+
+	var metrics metricdata.ResourceMetrics
+	if err := reader.Collect(context.Background(), &metrics); err != nil {
+		t.Fatalf("collect overdraft metric: %v", err)
+	}
+	for _, scope := range metrics.ScopeMetrics {
+		for _, metric := range scope.Metrics {
+			if metric.Name != "bifrost_governance_overdrafts_total" {
+				continue
+			}
+			data, ok := metric.Data.(metricdata.Sum[int64])
+			if !ok || len(data.DataPoints) != 1 {
+				t.Fatalf("unexpected overdraft metric data: %#v", metric.Data)
+			}
+			var got string
+			iter := data.DataPoints[0].Attributes.Iter()
+			for iter.Next() {
+				k := iter.Attribute()
+				if k.Key == attribute.Key("policy") {
+					got = k.Value.AsString()
+				}
+			}
+			if got != "denied" {
+				t.Fatalf("overdraft policy = %q, want denied", got)
+			}
+			return
+		}
+	}
+	t.Fatal("overdraft metric not collected")
 }

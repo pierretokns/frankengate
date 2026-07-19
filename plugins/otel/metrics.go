@@ -589,7 +589,11 @@ func (m *MetricsExporter) ReservationObserved(ctx context.Context, outcome strin
 // OverdraftObserved records policy and magnitude separately so alerts can
 // distinguish allowed controlled overdrafts from blocked attempts.
 func (m *MetricsExporter) OverdraftObserved(ctx context.Context, allowed bool, amount reservations.Amount) {
-	policy := "blocked"
+	// Keep the attribute contract aligned with the Prometheus exporter.  Both
+	// exporters intentionally expose only the bounded `allowed`/`denied`
+	// outcomes; using a different value ("blocked") makes cross-backend
+	// dashboards and alerts silently under-count denied overdrafts.
+	policy := "denied"
 	if allowed {
 		policy = "allowed"
 	}
