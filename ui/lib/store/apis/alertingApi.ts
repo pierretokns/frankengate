@@ -17,7 +17,7 @@ export type AlertingState = { channels: AlertChannel[]; rules: AlertRule[]; hist
 /** Optional dashboard projection. Empty scope preserves the global view. */
 export type AlertingScope = { scope?: "global" | "team" | "user"; scope_id?: string };
 
-const scopeQuery = (value?: AlertingScope) => {
+const scopeQuery = (value?: AlertingScope | void) => {
 	if (!value?.scope) return "";
 	const params = new URLSearchParams({ scope: value.scope });
 	if (value.scope !== "global" && value.scope_id?.trim()) params.set("scope_id", value.scope_id.trim());
