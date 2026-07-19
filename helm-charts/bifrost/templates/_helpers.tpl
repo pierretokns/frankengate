@@ -1712,6 +1712,26 @@ Call this template at the beginning of deployment/stateful templates
 */}}
 {{- define "bifrost.validate" -}}
 
+{{/* Keep autoscaling and disruption settings internally satisfiable.  A
+     reversed HPA range is rejected by the API server, while a PDB requiring
+     more pods than the rollout can ever create leaves every HPA scale-down
+     and voluntary disruption permanently blocked. */}}
+{{- if .Values.autoscaling.enabled }}
+{{- $hpaMin := int .Values.autoscaling.minReplicas }}
+{{- $hpaMax := int .Values.autoscaling.maxReplicas }}
+{{- if lt $hpaMax $hpaMin }}
+{{- fail (printf "ERROR: autoscaling.maxReplicas (%d) must be >= autoscaling.minReplicas (%d)." $hpaMax $hpaMin) }}
+{{- end }}
+{{- end }}
+{{- if and .Values.podDisruptionBudget.enabled (or (kindIs "int" .Values.podDisruptionBudget.minAvailable) (kindIs "int64" .Values.podDisruptionBudget.minAvailable)) }}
+{{- $pdbMin := int .Values.podDisruptionBudget.minAvailable }}
+{{- $podCeiling := int .Values.replicaCount }}
+{{- if .Values.autoscaling.enabled }}{{- $podCeiling = int .Values.autoscaling.maxReplicas }}{{- end }}
+{{- if gt $pdbMin $podCeiling }}
+{{- fail (printf "ERROR: podDisruptionBudget.minAvailable (%d) must not exceed the maximum gateway pod count (%d)." $pdbMin $podCeiling) }}
+{{- end }}
+{{- end }}
+
 {{/* Fail before rollout when the configured replica ceiling can exhaust Aurora. */}}
 {{- if and .Values.postgresql.connectionBudget .Values.postgresql.connectionBudget.enabled }}
 {{- $budget := int .Values.postgresql.connectionBudget.maxConnections }}
