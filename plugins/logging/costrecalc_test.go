@@ -217,8 +217,10 @@ func TestRunCostRecalcJob_MissingCostOnlyTiePagination(t *testing.T) {
 	if final.Skipped != 3 {
 		t.Errorf("Skipped = %d, want 3", final.Skipped)
 	}
-	if final.Unpriced != 3 {
-		t.Errorf("Unpriced = %d, want 3", final.Unpriced)
+	// The skipped fixtures have no usage, so they are not unresolved pricing
+	// rows; unpriced accounting must not inflate on rows that cannot be billed.
+	if final.Unpriced != 0 {
+		t.Errorf("Unpriced = %d, want 0", final.Unpriced)
 	}
 	if final.Processed != 7 {
 		t.Errorf("Processed = %d, want 7 (each row visited exactly once)", final.Processed)
