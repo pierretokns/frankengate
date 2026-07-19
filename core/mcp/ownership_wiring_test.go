@@ -49,6 +49,28 @@ func TestMCPOwnershipUsesBackendNeutralStoreAndExplicitLocalDefault(t *testing.T
 	}
 }
 
+func TestMCPOwnershipDurableBackendIsWiredExplicitly(t *testing.T) {
+	backend := mcpownership.NewMemoryBackend()
+	m := NewMCPManager(context.Background(), schemas.MCPConfig{
+		OwnershipBackend: backend, OwnershipOwnerPod: "pod-a", OwnershipLease: time.Second,
+	}, nil, nil, nil)
+	if m.ownershipStore == nil {
+		t.Fatal("durable ownership backend was not adapted into execution store")
+	}
+	if m.ownershipConfigErr != nil {
+		t.Fatalf("unexpected durable ownership configuration error: %v", m.ownershipConfigErr)
+	}
+}
+
+func TestMCPOwnershipDurableBackendRequiresFenceIdentity(t *testing.T) {
+	m := NewMCPManager(context.Background(), schemas.MCPConfig{
+		OwnershipBackend: mcpownership.NewMemoryBackend(), OwnershipOwnerPod: "", OwnershipLease: time.Second,
+	}, nil, nil, nil)
+	if m.ownershipConfigErr == nil {
+		t.Fatal("invalid durable ownership identity was accepted")
+	}
+}
+
 func TestMCPOwnershipKeyUsesTrustedPrincipalAndRequestID(t *testing.T) {
 	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
 	ctx.SetValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "acme", Issuer: "okta", Subject: "u-7"})
