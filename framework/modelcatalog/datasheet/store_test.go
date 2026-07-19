@@ -61,3 +61,16 @@ func TestDeprecatedDatasheetModelsForProviderUsesRebuiltIndex(t *testing.T) {
 		t.Fatalf("expected deprecated Vertex models %v, got %v", want, got)
 	}
 }
+
+func TestIsRequestTypeSupportedForProviderNormalizesDatabaseProviderAliases(t *testing.T) {
+	s := NewTestStore(nil)
+	s.mu.Lock()
+	s.pricingData[makeKey("text-embedding-alias", "vertex_ai", "embedding")] = configstoreTables.TableModelPricing{
+		Model: "text-embedding-alias", Provider: "vertex_ai", Mode: "embedding",
+	}
+	s.mu.Unlock()
+
+	if !s.IsRequestTypeSupportedForProvider("text-embedding-alias", schemas.Vertex, schemas.EmbeddingRequest) {
+		t.Fatal("embedding capability should survive a database provider alias")
+	}
+}

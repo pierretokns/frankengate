@@ -332,7 +332,12 @@ func (s *Store) IsRequestTypeSupportedForProvider(model string, provider schemas
 	base := s.baseModelNameUnsafe(model)
 	for key, row := range s.pricingData {
 		parts := strings.SplitN(key, "|", 3)
-		if len(parts) != 3 || parts[1] != string(provider) ||
+		// Database-backed catalogs may retain upstream provider aliases (for
+		// example vertex_ai), while callers use Bifrost's canonical provider
+		// enum. Compare normalized names here just as HasProviderModel and the
+		// drift checks do; otherwise a valid embedding row is rejected only
+		// after a DB reload, whereas the URL-loaded catalog works.
+		if len(parts) != 3 || normalizeProvider(parts[1]) != normalizeProvider(string(provider)) ||
 			(parts[2] != want && !(want == "batch" && strings.HasPrefix(parts[2], "batch"))) {
 			continue
 		}
