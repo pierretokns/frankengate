@@ -7,13 +7,16 @@ pricing-sync:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - when: manual
   script:
-    - go run ./scripts/pricing-sync -url "${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}" -out site/data/pricing
+    # Mintlify publishes the docs/ directory as the site root. Keep the
+    # generated cache in that same tree so the browser loader and the
+    # deployment artifact address the identical path.
+    - go run ./scripts/pricing-sync -url "${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}" -out docs/data/pricing
   artifacts:
     name: frankengate-pricing-$CI_COMMIT_SHA
     expire_in: 1 year
     paths:
-      - site/data/pricing/latest.json
-      - site/data/pricing/latest-upstream.json
-      - site/data/pricing/archive/
+      - docs/data/pricing/latest.json
+      - docs/data/pricing/latest-upstream.json
+      - docs/data/pricing/archive/
   # A publishing step (Pages, object storage, or the site's deploy job) should
   # consume latest.json; this job deliberately does not commit generated data.

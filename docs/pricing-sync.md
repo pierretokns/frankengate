@@ -11,10 +11,11 @@ object containing model objects, and atomically writes:
 * `archive/pricing-<UTC timestamp>.json` — immutable historical snapshot.
 
 An HTTP failure, malformed payload, or write error exits non-zero and never
-replaces `latest.json`. A GitLab scheduled pipeline can include
-`.gitlab/pricing-sync.yml` and publish the artifact through the site's existing
-deployment step. Keep the schedule daily (UTC); do not expose credentials in
-the URL.
+replaces `latest.json`. The checked-in GitLab job writes to `docs/data/pricing`,
+which is the deployed Mintlify site root, so the browser loader and published
+artifact use the same URL (`/data/pricing/latest.json`). Configure a daily UTC
+pipeline schedule; the job's artifact is then consumed by the normal docs
+deployment step. Do not expose credentials in the URL.
 
 ## Attribution and licensing
 
