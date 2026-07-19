@@ -8,8 +8,9 @@ import {
 	usePinOffsets,
 } from "@/components/table";
 import { Button } from "@/components/ui/button";
+import { ComboboxSelect } from "@/components/ui/combobox";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useTablePageSize } from "@/hooks/useTablePageSize";
+import { PAGE_SIZE_OPTIONS, useTablePageSizePreference } from "@/hooks/useTablePageSizePreference";
 import type { LogEntry, Pagination } from "@/lib/types/logs";
 import { cn } from "@/lib/utils";
 import type { ColumnOrderState, ColumnPinningState, VisibilityState } from "@tanstack/react-table";
@@ -57,7 +58,7 @@ export function LogsDataTable({
 }: DataTableProps) {
 	const [sorting, setSorting] = useState<SortingState>([{ id: pagination.sort_by, desc: pagination.order === "desc" }]);
 	const tableContainerRef = useRef<HTMLDivElement>(null);
-	const calculatedPageSize = useTablePageSize(tableContainerRef);
+	const [preferredPageSize, setPreferredPageSize] = useTablePageSizePreference("bifrost.logs.pageSize");
 
 	const fixedColumnIds = useMemo(() => new Set<string>(["actions"]), []);
 
@@ -83,21 +84,11 @@ export function LogsDataTable({
 		[columnEntries, onReorderColumns],
 	);
 
-	// Refs to avoid stale closures in the page size effect
-	const paginationRef = useRef(pagination);
-	const onPaginationChangeRef = useRef(onPaginationChange);
-	paginationRef.current = pagination;
-	onPaginationChangeRef.current = onPaginationChange;
-
 	useEffect(() => {
-		if (calculatedPageSize && calculatedPageSize > paginationRef.current.limit) {
-			onPaginationChangeRef.current({
-				...paginationRef.current,
-				limit: calculatedPageSize,
-				offset: 0,
-			});
+		if (preferredPageSize !== pagination.limit) {
+			onPaginationChange({ ...pagination, limit: preferredPageSize, offset: 0 });
 		}
-	}, [calculatedPageSize]);
+	}, [preferredPageSize]);
 
 	const handleSortingChange = (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => {
 		const newSorting = typeof updaterOrValue === "function" ? updaterOrValue(sorting) : updaterOrValue;
@@ -250,6 +241,22 @@ export function LogsDataTable({
 				</div>
 
 				<div className="flex items-center gap-2">
+					<span className="text-muted-foreground whitespace-nowrap">Rows per page</span>
+					<ComboboxSelect
+						options={PAGE_SIZE_OPTIONS.map((size) => ({ value: String(size), label: String(size) }))}
+						value={String(pagination.limit)}
+						onValueChange={(value) => {
+							if (value) {
+								const size = Number(value);
+								setPreferredPageSize(size);
+								onPaginationChange({ ...pagination, limit: size, offset: 0 });
+							}
+						}}
+						disableSearch
+						compactTrigger
+						className="w-16"
+						data-testid="logs-page-size"
+					/>
 					<Button
 						variant="ghost"
 						size="sm"
