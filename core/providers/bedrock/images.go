@@ -76,14 +76,17 @@ func ToStabilityAIImageGenerationRequest(request *schemas.BifrostImageGeneration
 			req.NegativePrompt = request.Params.NegativePrompt
 		}
 		if request.Params.ExtraParams != nil {
+			// Converters may be retried (or reused by fallback paths). Never
+			// consume caller-owned parameters while extracting provider fields.
+			extraParams := maps.Clone(request.Params.ExtraParams)
 			// aspect_ratio may also arrive via ExtraParams if not in knownFields; skip if already set
 			if req.AspectRatio == nil {
-				if ar, ok := schemas.SafeExtractStringPointer(request.Params.ExtraParams["aspect_ratio"]); ok {
-					delete(request.Params.ExtraParams, "aspect_ratio")
+				if ar, ok := schemas.SafeExtractStringPointer(extraParams["aspect_ratio"]); ok {
+					delete(extraParams, "aspect_ratio")
 					req.AspectRatio = ar
 				}
 			}
-			req.ExtraParams = request.Params.ExtraParams
+			req.ExtraParams = extraParams
 		}
 	}
 
@@ -145,11 +148,12 @@ func ToBedrockImageGenerationRequest(request *schemas.BifrostImageGenerationRequ
 			bedrockReq.ImageGenerationConfig.Height = schemas.Ptr(height)
 		}
 		if request.Params.ExtraParams != nil {
-			if cfgScale, ok := schemas.SafeExtractFloat64Pointer(request.Params.ExtraParams["cfgScale"]); ok {
-				delete(request.Params.ExtraParams, "cfgScale")
+			extraParams := maps.Clone(request.Params.ExtraParams)
+			if cfgScale, ok := schemas.SafeExtractFloat64Pointer(extraParams["cfgScale"]); ok {
+				delete(extraParams, "cfgScale")
 				bedrockReq.ImageGenerationConfig.CfgScale = cfgScale
 			}
-			bedrockReq.ExtraParams = request.Params.ExtraParams
+			bedrockReq.ExtraParams = extraParams
 		}
 	}
 

@@ -33,3 +33,45 @@ func TestToBedrockImageVariationRequestDoesNotMutateExtraParams(t *testing.T) {
 		t.Fatalf("prompt was not converted: %#v", converted.ImageVariationParams)
 	}
 }
+
+func TestToBedrockImageGenerationRequestDoesNotMutateExtraParams(t *testing.T) {
+	params := map[string]interface{}{"cfgScale": 7.5, "vendorFlag": "retain-me"}
+	req := &schemas.BifrostImageGenerationRequest{
+		Input:  &schemas.ImageGenerationInput{Prompt: "draw a test"},
+		Params: &schemas.ImageGenerationParameters{ExtraParams: params},
+	}
+	converted, err := ToBedrockImageGenerationRequest(req)
+	if err != nil {
+		t.Fatalf("convert image request: %v", err)
+	}
+	if len(params) != 2 || params["cfgScale"] != 7.5 || params["vendorFlag"] != "retain-me" {
+		t.Fatalf("conversion mutated caller-owned extra params: %#v", params)
+	}
+	if _, ok := converted.ExtraParams["cfgScale"]; ok {
+		t.Fatal("provider-only cfgScale should not remain in converted extra params")
+	}
+	if converted.ImageGenerationConfig.CfgScale == nil || *converted.ImageGenerationConfig.CfgScale != 7.5 {
+		t.Fatalf("cfgScale was not converted: %#v", converted.ImageGenerationConfig)
+	}
+}
+
+func TestToStabilityAIImageGenerationRequestDoesNotMutateExtraParams(t *testing.T) {
+	params := map[string]interface{}{"aspect_ratio": "16:9", "vendorFlag": "retain-me"}
+	req := &schemas.BifrostImageGenerationRequest{
+		Input:  &schemas.ImageGenerationInput{Prompt: "draw a test"},
+		Params: &schemas.ImageGenerationParameters{ExtraParams: params},
+	}
+	converted, err := ToStabilityAIImageGenerationRequest(req)
+	if err != nil {
+		t.Fatalf("convert stability image request: %v", err)
+	}
+	if len(params) != 2 || params["aspect_ratio"] != "16:9" {
+		t.Fatalf("conversion mutated caller-owned extra params: %#v", params)
+	}
+	if _, ok := converted.ExtraParams["aspect_ratio"]; ok {
+		t.Fatal("provider-only aspect_ratio should not remain in converted extra params")
+	}
+	if converted.AspectRatio == nil || *converted.AspectRatio != "16:9" {
+		t.Fatalf("aspect ratio was not converted: %#v", converted)
+	}
+}
