@@ -5723,10 +5723,16 @@ func convertBifrostReasoningToAnthropicThinking(msg *schemas.ResponsesMessage) [
 	if msg.Content != nil && msg.Content.ContentBlocks != nil {
 		for _, block := range msg.Content.ContentBlocks {
 			if block.Type == schemas.ResponsesOutputMessageContentTypeReasoning && block.Text != nil {
+				signature := block.Signature
+				if signature == nil {
+					// Strict Agent SDK parsers require the field even when the
+					// reasoning originated from a provider without signatures.
+					signature = schemas.Ptr("")
+				}
 				thinkingBlock := AnthropicContentBlock{
 					Type:      AnthropicContentBlockTypeThinking,
 					Thinking:  block.Text,
-					Signature: block.Signature,
+					Signature: signature,
 				}
 				thinkingBlocks = append(thinkingBlocks, thinkingBlock)
 			}
@@ -5740,8 +5746,9 @@ func convertBifrostReasoningToAnthropicThinking(msg *schemas.ResponsesMessage) [
 		if len(msg.ResponsesReasoning.Summary) > 0 {
 			for _, reasoningContent := range msg.ResponsesReasoning.Summary {
 				thinkingBlock := AnthropicContentBlock{
-					Type:     AnthropicContentBlockTypeThinking,
-					Thinking: &reasoningContent.Text,
+					Type:      AnthropicContentBlockTypeThinking,
+					Thinking:  &reasoningContent.Text,
+					Signature: schemas.Ptr(""),
 				}
 				thinkingBlocks = append(thinkingBlocks, thinkingBlock)
 			}
