@@ -25,6 +25,7 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 	exporter.SetGovernanceSyncMetric(ctx, "ready", 1)
 	exporter.SetGovernanceSyncMetric(ctx, "consumer_lag", 4)
 	exporter.AddGovernanceSyncMetric(ctx, "wakeups", 2)
+	exporter.AddGovernanceSyncMetric(ctx, "poll_errors", 1)
 	exporter.AddGovernanceSyncMetric(ctx, "overdraft_notification_delivered", 2)
 	exporter.AddGovernanceSyncMetric(ctx, "overdraft_notification_failed", 1)
 
@@ -53,6 +54,7 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 		"bifrost_governance_sync_ready":                false,
 		"bifrost_governance_sync_consumer_lag":         false,
 		"bifrost_governance_sync_wakeups_total":        false,
+		"bifrost_governance_sync_poll_errors_total":    false,
 	}
 	for _, scope := range metrics.ScopeMetrics {
 		for _, metric := range scope.Metrics {

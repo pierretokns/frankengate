@@ -294,6 +294,7 @@ func TestGovernanceSyncMetricsAreScrapeable(t *testing.T) {
 	p := newTestPlugin(t)
 	p.AddGovernanceSyncMetric("wakeups", 2)
 	p.AddGovernanceSyncMetric("listener_reconnects", 1)
+	p.AddGovernanceSyncMetric("poll_errors", 1)
 	p.AddGovernanceSyncMetric("overdraft_notification_enqueued", 1)
 	p.AddGovernanceSyncMetric("overdraft_notification_delivered", 2)
 	p.AddGovernanceSyncMetric("overdraft_notification_failed", 3)
@@ -314,6 +315,7 @@ func TestGovernanceSyncMetricsAreScrapeable(t *testing.T) {
 	for _, name := range []string{
 		"bifrost_governance_sync_wakeups_total",
 		"bifrost_governance_sync_listener_reconnects_total",
+		"bifrost_governance_sync_poll_errors_total",
 		"bifrost_governance_sync_outbox_depth",
 		"bifrost_governance_sync_reload_latency_seconds",
 		"bifrost_governance_sync_consumer_lag",

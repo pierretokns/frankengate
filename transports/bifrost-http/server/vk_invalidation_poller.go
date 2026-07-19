@@ -570,6 +570,9 @@ func (p *virtualKeyInvalidationPoller) Run(ctx context.Context) {
 			continue
 		}
 		if err != nil && ctx.Err() == nil {
+			if add, ok := p.metricSink.(interface{ AddGovernanceSyncMetric(string, float64) }); ok {
+				add.AddGovernanceSyncMetric("poll_errors", 1)
+			}
 			p.failureActive.Store(true)
 			// Readiness is a live control-plane signal, not a boot-only fact. A
 			// failed durable poll must close the exported gauge immediately so

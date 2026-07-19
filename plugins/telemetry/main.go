@@ -176,6 +176,7 @@ type PrometheusPlugin struct {
 	ProviderKeyUp                     *prometheus.GaugeVec
 	GovernanceSyncWakeups             prometheus.Counter
 	GovernanceSyncListenerReconnects  prometheus.Counter
+	GovernanceSyncPollErrors          prometheus.Counter
 	GovernanceSyncOutboxDepth         prometheus.Gauge
 	GovernanceSyncReloadLatency       prometheus.Gauge
 	GovernanceSyncConsumerLag         prometheus.Gauge
@@ -277,6 +278,8 @@ func (p *PrometheusPlugin) AddGovernanceSyncMetric(name string, value float64) {
 		p.GovernanceSyncWakeups.Add(value)
 	case "listener_reconnects":
 		p.GovernanceSyncListenerReconnects.Add(value)
+	case "poll_errors":
+		p.GovernanceSyncPollErrors.Add(value)
 	case "overdraft_notification_enqueued", "overdraft_notification_delivered", "overdraft_notification_failed", "overdraft_notification_dropped":
 		outcome := strings.TrimPrefix(name, "overdraft_notification_")
 		p.GovernanceNotifierDeliveriesTotal.WithLabelValues(outcome).Add(value)
@@ -592,6 +595,7 @@ func Init(config *Config, pricingManager *modelcatalog.ModelCatalog, logger sche
 	}
 	governanceSyncWakeups := governanceSyncCounter("bifrost_governance_sync_wakeups_total", "Cumulative governance database wakeup hints observed by this pod.")
 	governanceSyncListenerReconnects := governanceSyncCounter("bifrost_governance_sync_listener_reconnects_total", "Cumulative governance notification listener reconnects observed by this pod.")
+	governanceSyncPollErrors := governanceSyncCounter("bifrost_governance_sync_poll_errors_total", "Cumulative durable governance invalidation poll errors observed by this pod.")
 	governanceSyncOutboxDepth := governanceSyncGauge("bifrost_governance_sync_outbox_depth", "Current governance invalidation outbox depth observed by this pod.")
 	governanceSyncReloadLatency := governanceSyncGauge("bifrost_governance_sync_reload_latency_seconds", "Most recent governance authority reload latency in seconds.")
 	governanceSyncConsumerLag := governanceSyncGauge("bifrost_governance_sync_consumer_lag", "Current governance invalidation consumer lag in outbox event IDs.")
@@ -633,6 +637,7 @@ func Init(config *Config, pricingManager *modelcatalog.ModelCatalog, logger sche
 		ProviderKeyUp:                     bifrostProviderKeyUp,
 		GovernanceSyncWakeups:             governanceSyncWakeups,
 		GovernanceSyncListenerReconnects:  governanceSyncListenerReconnects,
+		GovernanceSyncPollErrors:          governanceSyncPollErrors,
 		GovernanceSyncOutboxDepth:         governanceSyncOutboxDepth,
 		GovernanceSyncReloadLatency:       governanceSyncReloadLatency,
 		GovernanceSyncConsumerLag:         governanceSyncConsumerLag,

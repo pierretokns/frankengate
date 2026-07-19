@@ -77,6 +77,7 @@ type MetricsExporter struct {
 	governanceNotifierDeliveriesTotal *syncInt64Counter
 	governanceSyncWakeups             *syncFloat64UpDownCounter
 	governanceSyncListenerReconnects  *syncFloat64UpDownCounter
+	governanceSyncPollErrors          *syncFloat64UpDownCounter
 	governanceSyncOutboxDepth         *syncFloat64UpDownCounter
 	governanceSyncReloadLatency       *syncFloat64UpDownCounter
 	governanceSyncConsumerLag         *syncFloat64UpDownCounter
@@ -505,6 +506,7 @@ func (m *MetricsExporter) initMetrics() {
 	m.governanceNotifierDeliveriesTotal = &syncInt64Counter{name: "bifrost_governance_notifier_deliveries_total", desc: "Governance notifier delivery attempts", unit: "{event}", meter: m.meter}
 	m.governanceSyncWakeups = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_wakeups_total", desc: "Cumulative governance database wakeup hints observed by this pod", unit: "{event}", meter: m.meter}
 	m.governanceSyncListenerReconnects = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_listener_reconnects_total", desc: "Cumulative governance notification listener reconnects observed by this pod", unit: "{event}", meter: m.meter}
+	m.governanceSyncPollErrors = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_poll_errors_total", desc: "Cumulative durable governance invalidation poll errors observed by this pod", unit: "{event}", meter: m.meter}
 	m.governanceSyncOutboxDepth = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_outbox_depth", desc: "Current governance invalidation outbox depth observed by this pod", unit: "{event}", meter: m.meter}
 	m.governanceSyncReloadLatency = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_reload_latency_seconds", desc: "Most recent governance authority reload latency", unit: "s", meter: m.meter}
 	m.governanceSyncConsumerLag = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_consumer_lag", desc: "Current governance invalidation consumer lag in outbox event IDs", unit: "{event}", meter: m.meter}
@@ -632,6 +634,8 @@ func (m *MetricsExporter) AddGovernanceSyncMetric(ctx context.Context, name stri
 		m.governanceSyncWakeups.Add(ctx, value)
 	case "listener_reconnects":
 		m.governanceSyncListenerReconnects.Add(ctx, value)
+	case "poll_errors":
+		m.governanceSyncPollErrors.Add(ctx, value)
 	case "overdraft_notification_enqueued", "overdraft_notification_delivered", "overdraft_notification_failed", "overdraft_notification_dropped":
 		outcome := strings.TrimPrefix(name, "overdraft_notification_")
 		m.governanceNotifierDeliveriesTotal.Add(ctx, int64(value), metric.WithAttributes(attribute.String("outcome", boundedGovernanceOutcome(outcome))))
