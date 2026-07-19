@@ -147,8 +147,10 @@ func Init(ctx context.Context, config *Config, configStore configstore.ConfigSto
 				mc.wg.Add(1)
 				go func() {
 					defer mc.wg.Done()
-					if err := mc.withDistributedLock(mc.syncCtx, "model_catalog_pricing_startup_sync", 10, func() error {
-						return mc.runPricingSync(mc.syncCtx)
+					startupCtx, cancel := context.WithTimeout(mc.syncCtx, 10*time.Second)
+					defer cancel()
+					if err := mc.withDistributedLock(startupCtx, "model_catalog_pricing_startup_sync", 10, func() error {
+						return mc.runPricingSync(startupCtx)
 					}); err != nil {
 						logger.Warn("background startup pricing sync failed: %v", err)
 					} else {
@@ -175,8 +177,10 @@ func Init(ctx context.Context, config *Config, configStore configstore.ConfigSto
 				mc.wg.Add(1)
 				go func() {
 					defer mc.wg.Done()
-					if err := mc.withDistributedLock(mc.syncCtx, "model_catalog_params_startup_sync", 10, func() error {
-						return mc.runParamsSync(mc.syncCtx)
+					startupCtx, cancel := context.WithTimeout(mc.syncCtx, 10*time.Second)
+					defer cancel()
+					if err := mc.withDistributedLock(startupCtx, "model_catalog_params_startup_sync", 10, func() error {
+						return mc.runParamsSync(startupCtx)
 					}); err != nil {
 						logger.Warn("background startup model parameters sync failed: %v", err)
 					} else {
@@ -212,8 +216,10 @@ func Init(ctx context.Context, config *Config, configStore configstore.ConfigSto
 			mc.wg.Add(1)
 			go func() {
 				defer mc.wg.Done()
-				if err := mc.withDistributedLock(mc.syncCtx, "model_catalog_mcp_library_startup_sync", 10, func() error {
-					return mc.syncMCPLibrary(mc.syncCtx)
+				startupCtx, cancel := context.WithTimeout(mc.syncCtx, 10*time.Second)
+				defer cancel()
+				if err := mc.withDistributedLock(startupCtx, "model_catalog_mcp_library_startup_sync", 10, func() error {
+					return mc.syncMCPLibrary(startupCtx)
 				}); err != nil {
 					mc.logger.Warn("background startup MCP library sync failed: %v", err)
 				} else {
