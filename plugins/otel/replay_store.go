@@ -188,6 +188,9 @@ func (s *JSONLReplayStore) Put(ctx context.Context, trace *schemas.Trace) error 
 	if !s.includeContent {
 		redactReplayContent(clone)
 	}
+	// Retrieval quality counters are safe to retain, but query text is never
+	// part of the replay metadata contract, even when content capture is opted in.
+	redactReplayQueryMetadata(clone)
 	record := ReplayRecord{SchemaVersion: 1, TraceID: clone.TraceID, RequestID: clone.RequestID, TenantID: tenant, CapturedAt: time.Now().UTC(), Trace: clone, RetrievalQuality: retrievalQualityFromTrace(clone)}
 	payload, err := json.Marshal(record)
 	if err != nil {
@@ -362,6 +365,12 @@ func redactReplayContent(t *schemas.Trace) {
 		return
 	}
 	t.RequestHeaders = nil
+	for key := range t.Attributes {
+		lower := strings.ToLower(key)
+		if strings.Contains(lower, "query") || strings.Contains(lower, "content") || strings.Contains(lower, "prompt") || strings.Contains(lower, "message") || strings.Contains(lower, "input") || strings.Contains(lower, "output") || strings.Contains(lower, "tool") {
+			delete(t.Attributes, key)
+		}
+	}
 	for _, span := range t.Spans {
 		if span == nil {
 			continue
@@ -371,6 +380,17 @@ func redactReplayContent(t *schemas.Trace) {
 			if strings.Contains(lower, "content") || strings.Contains(lower, "message") || strings.Contains(lower, "prompt") || strings.Contains(lower, "completion") || strings.Contains(lower, "tool") || strings.Contains(lower, "input") || strings.Contains(lower, "output") {
 				delete(span.Attributes, key)
 			}
+		}
+	}
+}
+
+func redactReplayQueryMetadata(t *schemas.Trace) {
+	if t == nil {
+		return
+	}
+	for key := range t.Attributes {
+		if strings.Contains(strings.ToLower(key), "query") {
+			delete(t.Attributes, key)
 		}
 	}
 }
