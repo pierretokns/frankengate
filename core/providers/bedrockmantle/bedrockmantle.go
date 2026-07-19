@@ -189,6 +189,7 @@ func (provider *BedrockMantleProvider) ListModels(ctx *schemas.BifrostContext, k
 // all other (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
 func (provider *BedrockMantleProvider) ChatCompletion(ctx *schemas.BifrostContext, key schemas.Key, request *schemas.BifrostChatRequest) (*schemas.BifrostChatResponse, *schemas.BifrostError) {
 	region := provider.resolveRegion(ctx, key, request.Model)
+	_, bareModel := parseBedrockRegionAndModel(request.Model)
 
 	// Anthropic-family models (Claude) use the native Anthropic Messages surface; all other
 	// (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
@@ -214,12 +215,16 @@ func (provider *BedrockMantleProvider) ChatCompletion(ctx *schemas.BifrostContex
 		)
 	}
 
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	// A region prefix is gateway routing metadata, not part of the Mantle model ID.
+	// Keep the caller's request immutable while stripping it from the provider payload.
+	openAIRequest := *request
+	openAIRequest.Model = bareModel
 	return openai.HandleOpenAIChatCompletionRequest(
 		ctx,
 		provider.mantleClient,
 		url,
-		request,
+		&openAIRequest,
 		openai.BearerAuthHeader(key),
 		bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -236,6 +241,7 @@ func (provider *BedrockMantleProvider) ChatCompletion(ctx *schemas.BifrostContex
 // endpoint, dispatching by model family (native Anthropic vs OpenAI-compatible).
 func (provider *BedrockMantleProvider) ChatCompletionStream(ctx *schemas.BifrostContext, postHookRunner schemas.PostHookRunner, postHookSpanFinalizer func(context.Context), key schemas.Key, request *schemas.BifrostChatRequest) (chan *schemas.BifrostStreamChunk, *schemas.BifrostError) {
 	region := provider.resolveRegion(ctx, key, request.Model)
+	_, bareModel := parseBedrockRegionAndModel(request.Model)
 
 	// Anthropic-family models (Claude) use the native Anthropic Messages surface; all other
 	// (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
@@ -275,9 +281,11 @@ func (provider *BedrockMantleProvider) ChatCompletionStream(ctx *schemas.Bifrost
 		)
 	}
 
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	openAIRequest := *request
+	openAIRequest.Model = bareModel
 	return openai.HandleOpenAIChatCompletionStreaming(
-		ctx, provider.mantleStreamingClient, url, request,
+		ctx, provider.mantleStreamingClient, url, &openAIRequest,
 		openai.BearerAuthHeader(key), bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -293,6 +301,7 @@ func (provider *BedrockMantleProvider) ChatCompletionStream(ctx *schemas.Bifrost
 // model family (native Anthropic vs OpenAI-compatible).
 func (provider *BedrockMantleProvider) Responses(ctx *schemas.BifrostContext, key schemas.Key, request *schemas.BifrostResponsesRequest) (*schemas.BifrostResponsesResponse, *schemas.BifrostError) {
 	region := provider.resolveRegion(ctx, key, request.Model)
+	_, bareModel := parseBedrockRegionAndModel(request.Model)
 
 	// Anthropic-family models (Claude) use the native Anthropic Messages surface; all other
 	// (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
@@ -320,12 +329,14 @@ func (provider *BedrockMantleProvider) Responses(ctx *schemas.BifrostContext, ke
 		)
 	}
 
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "responses")
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
+	openAIRequest := *request
+	openAIRequest.Model = bareModel
 	return openai.HandleOpenAIResponsesRequest(
 		ctx,
 		provider.mantleClient,
 		url,
-		request,
+		&openAIRequest,
 		openai.BearerAuthHeader(key),
 		bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -341,6 +352,7 @@ func (provider *BedrockMantleProvider) Responses(ctx *schemas.BifrostContext, ke
 // dispatching by model family (native Anthropic vs OpenAI-compatible).
 func (provider *BedrockMantleProvider) ResponsesStream(ctx *schemas.BifrostContext, postHookRunner schemas.PostHookRunner, postHookSpanFinalizer func(context.Context), key schemas.Key, request *schemas.BifrostResponsesRequest) (chan *schemas.BifrostStreamChunk, *schemas.BifrostError) {
 	region := provider.resolveRegion(ctx, key, request.Model)
+	_, bareModel := parseBedrockRegionAndModel(request.Model)
 
 	// Anthropic-family models (Claude) use the native Anthropic Messages surface; all other
 	// (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
@@ -381,9 +393,11 @@ func (provider *BedrockMantleProvider) ResponsesStream(ctx *schemas.BifrostConte
 		)
 	}
 
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, request.Model), schemas.ResolveFamily(ctx, request.Model), "responses")
+	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
+	openAIRequest := *request
+	openAIRequest.Model = bareModel
 	return openai.HandleOpenAIResponsesStreaming(
-		ctx, provider.mantleStreamingClient, url, request,
+		ctx, provider.mantleStreamingClient, url, &openAIRequest,
 		openai.BearerAuthHeader(key), bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),

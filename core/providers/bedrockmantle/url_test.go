@@ -51,3 +51,22 @@ func TestMantleOpenAIURLPreservesFamilyPrefixAcrossPaths(t *testing.T) {
 		})
 	}
 }
+
+func TestParseBedrockRegionAndModel(t *testing.T) {
+	tests := []struct {
+		input, region, model string
+	}{
+		{input: "us-east-1/gpt-oss-120b", region: "us-east-1", model: "gpt-oss-120b"},
+		{input: "eu-central-1/openai.gpt-5.6-sol", region: "eu-central-1", model: "openai.gpt-5.6-sol"},
+		{input: "gpt-oss-120b", model: "gpt-oss-120b"},
+		{input: "not-a-region/gpt-oss-120b", model: "not-a-region/gpt-oss-120b"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			region, model := parseBedrockRegionAndModel(tt.input)
+			if region != tt.region || model != tt.model {
+				t.Fatalf("parseBedrockRegionAndModel(%q) = (%q, %q), want (%q, %q)", tt.input, region, model, tt.region, tt.model)
+			}
+		})
+	}
+}
