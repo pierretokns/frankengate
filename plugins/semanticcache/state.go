@@ -25,6 +25,9 @@ type cacheState struct {
 	// AuthorityMetadata is the immutable authorization scope included in the
 	// cache params hash and persisted metadata for protected requests.
 	AuthorityMetadata map[string]any
+	// RoutingMetadata is the immutable provider/model-family/region scope used
+	// to prevent semantically similar requests from crossing routing domains.
+	RoutingMetadata map[string]any
 
 	// FilteredInput caches getInputForCaching(req) so attachment extraction,
 	// embedding text extraction, and history-threshold checks reuse the same

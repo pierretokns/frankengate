@@ -68,3 +68,34 @@ func TestAuthorizationCacheQueriesIncludeTenantAndPrincipalScope(t *testing.T) {
 		}
 	}
 }
+
+func TestRoutingMetadataForCachingIncludesFamilyAndRegion(t *testing.T) {
+	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
+	family := schemas.ModelFamilyAnthropic
+	ctx.SetValue(schemas.BifrostContextKeyResolvedAlias, &schemas.ResolvedAlias{
+		Key:    "claude-gpt-soul",
+		Config: &schemas.AliasConfig{ModelID: "mantle-soul", ModelFamily: &family},
+	})
+	ctx.SetValue(schemas.BifrostContextKeyRequiredDestinationRegion, "us-west-2")
+	metadata := routingMetadataForCaching(ctx, schemas.BedrockMantle, "mantle-soul")
+	if metadata["routing_provider"] != string(schemas.BedrockMantle) ||
+		metadata["routing_model_family"] != "anthropic" ||
+		metadata["routing_region"] != "us-west-2" {
+		t.Fatalf("unexpected routing metadata: %#v", metadata)
+	}
+	queries := routingCacheQueries(metadata)
+	if len(queries) != 4 {
+		t.Fatalf("expected four routing predicates, got %d: %#v", len(queries), queries)
+	}
+}
+
+func TestRoutingMetadataSeparatesUnpinnedAndPinnedRegion(t *testing.T) {
+	model := "claude-gpt-soul"
+	unpinned := routingMetadataForCaching(nil, schemas.BedrockMantle, model)
+	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyRequiredDestinationRegion, "us-east-1")
+	pinned := routingMetadataForCaching(ctx, schemas.BedrockMantle, model)
+	if unpinned["routing_region"] == pinned["routing_region"] {
+		t.Fatalf("pinned and unpinned routing scopes collided: %#v vs %#v", unpinned, pinned)
+	}
+}

@@ -338,6 +338,42 @@ func authorizationCacheQueries(metadata map[string]any) []vectorstore.Query {
 	return queries
 }
 
+// routingCacheQueries mirrors the routing identity embedded in cache entries.
+// These predicates are applied before vector similarity/reranking so a cache
+// result selected for one provider family or destination region can never be
+// returned for another routing domain.
+func routingCacheQueries(metadata map[string]any) []vectorstore.Query {
+	keys := []string{"routing_provider", "routing_model", "routing_model_family", "routing_region"}
+	queries := make([]vectorstore.Query, 0, len(keys))
+	for _, key := range keys {
+		if value, ok := metadata[key]; ok && value != "" {
+			queries = append(queries, vectorstore.Query{Field: key, Operator: vectorstore.QueryOperatorEqual, Value: value})
+		}
+	}
+	return queries
+}
+
+// routingMetadataForCaching captures the resolved request routing identity.
+// Model family is derived from the trusted alias context, not the caller's
+// model string alone. Region is only taken from the core's region pin; an
+// unknown region remains an explicit empty value and is still included in the
+// params hash, preventing an implicitly regional request from colliding with a
+// pinned one.
+func routingMetadataForCaching(ctx *schemas.BifrostContext, provider schemas.ModelProvider, model string) map[string]any {
+	metadata := map[string]any{
+		"routing_provider":     string(provider),
+		"routing_model":        model,
+		"routing_model_family": string(schemas.ResolveFamily(ctx, model)),
+		"routing_region":       "",
+	}
+	if ctx != nil {
+		if region, ok := ctx.Value(schemas.BifrostContextKeyRequiredDestinationRegion).(string); ok {
+			metadata["routing_region"] = strings.TrimSpace(region)
+		}
+	}
+	return metadata
+}
+
 // extractAttachmentsForCaching collects image/file URLs referenced by the
 // request input in document order. Attachments are part of the cache key —
 // two messages with identical text but different images must not collide.

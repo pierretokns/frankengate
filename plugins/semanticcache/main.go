@@ -207,6 +207,22 @@ var VectorStoreProperties = map[string]vectorstore.VectorStoreProperties{
 		DataType:    vectorstore.VectorStorePropertyTypeString,
 		Description: "The model used for the request",
 	},
+	"routing_provider": {
+		DataType:    vectorstore.VectorStorePropertyTypeString,
+		Description: "Resolved provider routing identity for cache isolation",
+	},
+	"routing_model": {
+		DataType:    vectorstore.VectorStorePropertyTypeString,
+		Description: "Resolved model routing identity for cache isolation",
+	},
+	"routing_model_family": {
+		DataType:    vectorstore.VectorStorePropertyTypeString,
+		Description: "Resolved model family for cache isolation",
+	},
+	"routing_region": {
+		DataType:    vectorstore.VectorStorePropertyTypeString,
+		Description: "Pinned destination region for cache isolation",
+	},
 	"params_hash": {
 		DataType:    vectorstore.VectorStorePropertyTypeString,
 		Description: "The hash of the parameters used for the request",
@@ -425,6 +441,12 @@ func (plugin *Plugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.Bifro
 		}
 		state.AuthorityMetadata = authorityMetadata
 	}
+	provider, model, _ := req.GetRequestFields()
+	routingMetadata := routingMetadataForCaching(ctx, provider, model)
+	for key, value := range routingMetadata {
+		metadata[key] = value
+	}
+	state.RoutingMetadata = routingMetadata
 	paramsHash, err := hashMap(metadata)
 	if err != nil {
 		plugin.clearCacheState(requestID)
@@ -645,6 +667,12 @@ func (plugin *Plugin) PostLLMHook(ctx *schemas.BifrostContext, res *schemas.Bifr
 		defer cancel()
 
 		unifiedMetadata := plugin.buildUnifiedMetadata(provider, model, paramsHash, cacheKey, cacheTTL)
+		for key, value := range state.RoutingMetadata {
+			unifiedMetadata[key] = value
+		}
+		for key, value := range state.AuthorityMetadata {
+			unifiedMetadata[key] = value
+		}
 		if isStream {
 			if err := plugin.addStreamingResponse(cacheCtx, requestID, storageID, res, embeddingToStore, unifiedMetadata, cacheTTL, isFinalChunk); err != nil {
 				plugin.logger.Warn("Failed to cache streaming response (namespace=%s, id=%s): %v. The cache_id stamped on the response will not resolve on subsequent lookups.", plugin.config.VectorStoreNamespace, storageID, err)

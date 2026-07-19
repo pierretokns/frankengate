@@ -82,6 +82,7 @@ func (plugin *Plugin) performSemanticSearch(ctx *schemas.BifrostContext, state *
 		{Field: "params_hash", Operator: vectorstore.QueryOperatorEqual, Value: paramsHash},
 		{Field: "from_bifrost_semantic_cache_plugin", Operator: vectorstore.QueryOperatorEqual, Value: true},
 	}
+	strictFilters = append(strictFilters, routingCacheQueries(state.RoutingMetadata)...)
 	// Scope semantic search to the exact authority snapshot that produced the
 	// entry. This runs in the backend query before similarity/reranking; the
 	// adapter's post-filter remains the defense-in-depth check.
