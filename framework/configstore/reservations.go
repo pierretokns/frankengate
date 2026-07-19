@@ -106,7 +106,11 @@ func (s *RDBConfigStore) ReserveAgainstBudget(ctx context.Context, req BudgetRes
 			return e
 		}
 		var active struct{ Total float64 }
-		if err := tx.Model(&tables.TableGovernanceReservation{}).Where("budget_id = ? AND state = ?", req.BudgetID, string(reservations.ReservationStateActive)).Select("COALESCE(SUM(reserved_cost_micros),0) AS total").Scan(&active).Error; err != nil {
+		// Leases are the crash-safety boundary: an abandoned request must not
+		// consume hard-budget capacity forever when its pod disappeared before
+		// the sweeper ran. Keep zero leases (explicitly non-expiring) active,
+		// while excluding expired rows atomically inside the budget lock.
+		if err := tx.Model(&tables.TableGovernanceReservation{}).Where("budget_id = ? AND state = ? AND (lease_until = ? OR lease_until > ?)", req.BudgetID, string(reservations.ReservationStateActive), time.Time{}, now).Select("COALESCE(SUM(reserved_cost_micros),0) AS total").Scan(&active).Error; err != nil {
 			return err
 		}
 		if budget.CurrentUsage+(active.Total+float64(req.Request.Amount.CostMicros))/1_000_000 > budget.MaxLimit {
@@ -158,7 +162,7 @@ func (s *RDBConfigStore) ReserveAgainstBudgets(ctx context.Context, requests []B
 				return e
 			}
 			var active struct{ Total float64 }
-			if e := tx.Model(&tables.TableGovernanceReservation{}).Where("budget_id = ? AND state = ?", req.BudgetID, string(reservations.ReservationStateActive)).Select("COALESCE(SUM(reserved_cost_micros),0) AS total").Scan(&active).Error; e != nil {
+			if e := tx.Model(&tables.TableGovernanceReservation{}).Where("budget_id = ? AND state = ? AND (lease_until = ? OR lease_until > ?)", req.BudgetID, string(reservations.ReservationStateActive), time.Time{}, now).Select("COALESCE(SUM(reserved_cost_micros),0) AS total").Scan(&active).Error; e != nil {
 				return e
 			}
 			if budget.CurrentUsage+(active.Total+float64(req.Request.Amount.CostMicros))/1_000_000 > budget.MaxLimit {

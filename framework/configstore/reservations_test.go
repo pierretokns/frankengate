@@ -57,6 +57,25 @@ func TestRDBReserveAgainstBudgetLocksAndRejectsOverspend(t *testing.T) {
 	require.ErrorIs(t, err, reservations.ErrOverdraftDenied)
 }
 
+func TestRDBReserveAgainstBudgetIgnoresExpiredActiveLease(t *testing.T) {
+	store := setupRDBTestStore(t)
+	require.NoError(t, store.DB().AutoMigrate(&tables.TableGovernanceReservation{}, &tables.TableBudget{}))
+	now := time.Now().UTC().Truncate(time.Microsecond)
+	require.NoError(t, store.DB().Create(&tables.TableBudget{ID: "budget-expired", MaxLimit: 1, ResetDuration: "1h", LastReset: now}).Error)
+	expired := reservations.ReservationRequest{LogicalRequestID: "crashed", AttemptID: "attempt-1", AttemptEpoch: 1, Lane: reservations.AccountingLaneNormal, Amount: reservations.Amount{CostMicros: 900000}, LeaseUntil: now.Add(-time.Minute), Now: now.Add(-2 * time.Minute)}
+	_, err := store.ReserveAgainstBudget(context.Background(), BudgetReservationRequest{BudgetID: "budget-expired", Request: expired})
+	require.NoError(t, err)
+	// A dead pod's active row is expired but not yet swept. It must not deny
+	// fresh admission against the same hard budget.
+	fresh := expired
+	fresh.LogicalRequestID = "fresh"
+	fresh.AttemptID = "attempt-2"
+	fresh.LeaseUntil = now.Add(time.Minute)
+	fresh.Now = now
+	_, err = store.ReserveAgainstBudget(context.Background(), BudgetReservationRequest{BudgetID: "budget-expired", Request: fresh})
+	require.NoError(t, err)
+}
+
 func TestRDBReserveAgainstMultipleHierarchicalBudgetsUsesDistinctIds(t *testing.T) {
 	store := setupRDBTestStore(t)
 	require.NoError(t, store.DB().AutoMigrate(&tables.TableGovernanceReservation{}, &tables.TableBudget{}))
