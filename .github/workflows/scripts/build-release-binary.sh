@@ -21,8 +21,16 @@ BUILD_TAGS=()
 if [[ "$OS" != "linux" ]]; then
   BUILD_TAGS=( -tags sqlite_static )
 fi
+# Official releases may force a clean dependency rebuild for reproducibility.
+# The beta lane reuses its keyed Go cache unless explicitly overridden; this
+# keeps rapid artifact iteration from spending most of its window recompiling
+# unchanged dependencies.
+REBUILD_FLAG=""
+if [[ "${FORCE_REBUILD:-1}" == "1" ]]; then
+  REBUILD_FLAG="-a"
+fi
 CGO_ENABLED=1 GOOS="$OS" GOARCH="$ARCH" go build \
   -ldflags="-w -s -X main.Version=v${VERSION}" \
-  -trimpath "${BUILD_TAGS[@]}" \
+  $REBUILD_FLAG -trimpath "${BUILD_TAGS[@]}" \
   -o "$ROOT/tmp/bifrost-http" .
 "$ROOT/tmp/bifrost-http" -version

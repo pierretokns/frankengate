@@ -153,6 +153,8 @@ jobs:
           path: transports/bifrost-http/ui
 
       - name: Build binary
+        env:
+          FORCE_REBUILD: "0"
         run: |
           VERSION="beta-$(git rev-parse 'HEAD^{commit}')"
           export VERSION
