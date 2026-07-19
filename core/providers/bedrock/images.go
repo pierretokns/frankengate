@@ -3,6 +3,7 @@ package bedrock
 import (
 	"encoding/base64"
 	"fmt"
+	"maps"
 	"strconv"
 	"strings"
 
@@ -198,8 +199,11 @@ func ToBedrockImageVariationRequest(request *schemas.BifrostImageVariationReques
 
 	// Additional images from ExtraParams (stored as [][]byte)
 	if request.Params != nil && request.Params.ExtraParams != nil {
-		if additionalImages, ok := request.Params.ExtraParams["images"]; ok {
-			delete(request.Params.ExtraParams, "images")
+		// Converters may be retried (or reused by fallback paths). Never consume
+		// caller-owned ExtraParams while translating the request.
+		extraParams := maps.Clone(request.Params.ExtraParams)
+		if additionalImages, ok := extraParams["images"]; ok {
+			delete(extraParams, "images")
 			// Handle array of byte arrays (stored by HTTP handler)
 			if imagesArray, ok := additionalImages.([][]byte); ok {
 				for _, imgBytes := range imagesArray {
@@ -212,24 +216,24 @@ func ToBedrockImageVariationRequest(request *schemas.BifrostImageVariationReques
 		}
 
 		// Extract optional fields from ExtraParams
-		if prompt, ok := schemas.SafeExtractStringPointer(request.Params.ExtraParams["prompt"]); ok {
-			delete(request.Params.ExtraParams, "prompt")
+		if prompt, ok := schemas.SafeExtractStringPointer(extraParams["prompt"]); ok {
+			delete(extraParams, "prompt")
 			bedrockReq.ImageVariationParams.Text = prompt
 		}
-		if negativeText, ok := schemas.SafeExtractStringPointer(request.Params.ExtraParams["negativeText"]); ok {
-			delete(request.Params.ExtraParams, "negativeText")
+		if negativeText, ok := schemas.SafeExtractStringPointer(extraParams["negativeText"]); ok {
+			delete(extraParams, "negativeText")
 			bedrockReq.ImageVariationParams.NegativeText = negativeText
 		}
 
-		if similarityStrength, ok := schemas.SafeExtractFloat64Pointer(request.Params.ExtraParams["similarityStrength"]); ok {
-			delete(request.Params.ExtraParams, "similarityStrength")
+		if similarityStrength, ok := schemas.SafeExtractFloat64Pointer(extraParams["similarityStrength"]); ok {
+			delete(extraParams, "similarityStrength")
 			// Validate similarityStrength range (0.2 to 1.0)
 			if *similarityStrength < 0.2 || *similarityStrength > 1.0 {
 				return nil, fmt.Errorf("similarityStrength must be between 0.2 and 1.0, got %f", *similarityStrength)
 			}
 			bedrockReq.ImageVariationParams.SimilarityStrength = similarityStrength
 		}
-		bedrockReq.ExtraParams = request.Params.ExtraParams
+		bedrockReq.ExtraParams = extraParams
 	}
 
 	// Map standard params to ImageGenerationConfig
