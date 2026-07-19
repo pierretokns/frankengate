@@ -8,7 +8,7 @@
 
   function normalize (payload) {
     const document = payload && payload.models ? payload.models : payload
-    if (!document || typeof document !== 'object' || Array.isArray(document)) throw new Error('Invalid pricing document')
+    if (!document || typeof document !== 'object') throw new Error('Invalid pricing document')
     const models = Array.isArray(document)
       ? document
       : Object.entries(document).map(([model, config]) => ({ model, ...config }))
