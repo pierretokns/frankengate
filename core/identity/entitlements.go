@@ -12,20 +12,36 @@ import (
 )
 
 var (
-	ErrNoEntitlement  = errors.New("identity: no matching entitlement")
-	ErrInvalidPolicy  = errors.New("identity: invalid entitlement policy")
-	ErrModelDenied    = errors.New("identity: model is not entitled")
-	ErrProviderDenied = errors.New("identity: provider is not entitled")
-	ErrToolDenied     = errors.New("identity: tool is not entitled")
+	ErrNoEntitlement     = errors.New("identity: no matching entitlement")
+	ErrInvalidPolicy     = errors.New("identity: invalid entitlement policy")
+	ErrModelDenied       = errors.New("identity: model is not entitled")
+	ErrProviderDenied    = errors.New("identity: provider is not entitled")
+	ErrToolDenied        = errors.New("identity: tool is not entitled")
+	ErrMarketplaceDenied = errors.New("identity: marketplace capability is not entitled")
+)
+
+// MarketplaceAction identifies the separately governed lifecycle stages for
+// skills/tools published through the enterprise marketplace. Discovery is
+// intentionally distinct from installation and invocation: seeing metadata
+// never grants the ability to install or execute it.
+type MarketplaceAction string
+
+const (
+	MarketplaceDiscover MarketplaceAction = "discover"
+	MarketplaceInstall  MarketplaceAction = "install"
+	MarketplaceInvoke   MarketplaceAction = "invoke"
 )
 
 // GroupRule maps one IdP group to the effective model/provider/tool grants.
 // Empty grant lists mean no access (never unrestricted access).
 type GroupRule struct {
-	Group      string
-	Models     []string
-	Providers  []string
-	ToolGroups []string
+	Group               string
+	Models              []string
+	Providers           []string
+	ToolGroups          []string
+	MarketplaceDiscover []string
+	MarketplaceInstall  []string
+	MarketplaceInvoke   []string
 }
 
 // Entitlements is the normalized, immutable decision returned to governance.
@@ -33,10 +49,13 @@ type GroupRule struct {
 // audit records.  Matched is intentionally retained to make no-match states
 // observable without treating an empty grant as unrestricted.
 type Entitlements struct {
-	MatchedGroups []string
-	Models        []string
-	Providers     []string
-	ToolGroups    []string
+	MatchedGroups       []string
+	Models              []string
+	Providers           []string
+	ToolGroups          []string
+	MarketplaceDiscover []string
+	MarketplaceInstall  []string
+	MarketplaceInvoke   []string
 }
 
 // Decision is the sanitized authorization outcome emitted to audit/telemetry.
@@ -56,6 +75,31 @@ func (e Entitlements) AllowsProvider(provider string) bool {
 	return matchesGrant(e.Providers, provider)
 }
 func (e Entitlements) AllowsTool(tool string) bool { return matchesGrant(e.ToolGroups, tool) }
+
+// AllowsMarketplace is fail-closed for both unknown actions and missing
+// grants. Callers must check the requested lifecycle action explicitly; an
+// install grant does not imply invoke (or even discover) access.
+func (e Entitlements) AllowsMarketplace(action MarketplaceAction, resource string) bool {
+	var grants []string
+	switch action {
+	case MarketplaceDiscover:
+		grants = e.MarketplaceDiscover
+	case MarketplaceInstall:
+		grants = e.MarketplaceInstall
+	case MarketplaceInvoke:
+		grants = e.MarketplaceInvoke
+	default:
+		return false
+	}
+	return matchesGrant(grants, resource)
+}
+
+func (e Entitlements) AuthorizeMarketplace(action MarketplaceAction, resource string) error {
+	if !e.AllowsMarketplace(action, resource) {
+		return ErrMarketplaceDenied
+	}
+	return nil
+}
 
 // Authorize checks the provider/model and every tool in one immutable snapshot.
 // The returned errors are stable categories suitable for transport responses.
@@ -110,7 +154,8 @@ func (p Policy) Validate() error {
 			return fmt.Errorf("%w: duplicate group %q", ErrInvalidPolicy, g)
 		}
 		seen[g] = struct{}{}
-		for _, grant := range append(append(append([]string{}, r.Models...), r.Providers...), r.ToolGroups...) {
+		grants := append(append(append(append(append(append([]string{}, r.Models...), r.Providers...), r.ToolGroups...), r.MarketplaceDiscover...), r.MarketplaceInstall...), r.MarketplaceInvoke...)
+		for _, grant := range grants {
 			if strings.TrimSpace(grant) == "" {
 				return fmt.Errorf("%w: empty grant for group %q", ErrInvalidPolicy, g)
 			}
@@ -150,6 +195,9 @@ func (p Policy) Evaluate(groups []string) (Entitlements, error) {
 		out.Models = append(out.Models, rule.Models...)
 		out.Providers = append(out.Providers, rule.Providers...)
 		out.ToolGroups = append(out.ToolGroups, rule.ToolGroups...)
+		out.MarketplaceDiscover = append(out.MarketplaceDiscover, rule.MarketplaceDiscover...)
+		out.MarketplaceInstall = append(out.MarketplaceInstall, rule.MarketplaceInstall...)
+		out.MarketplaceInvoke = append(out.MarketplaceInvoke, rule.MarketplaceInvoke...)
 	}
 	if p.RequireMatch && len(out.MatchedGroups) == 0 {
 		return Entitlements{}, ErrNoEntitlement
@@ -163,6 +211,9 @@ func canonicalize(e *Entitlements) {
 	e.Models = uniqueSorted(e.Models)
 	e.Providers = uniqueSorted(e.Providers)
 	e.ToolGroups = uniqueSorted(e.ToolGroups)
+	e.MarketplaceDiscover = uniqueSorted(e.MarketplaceDiscover)
+	e.MarketplaceInstall = uniqueSorted(e.MarketplaceInstall)
+	e.MarketplaceInvoke = uniqueSorted(e.MarketplaceInvoke)
 }
 
 func uniqueSorted(values []string) []string {
