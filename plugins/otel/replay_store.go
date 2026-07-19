@@ -79,7 +79,9 @@ func (s *JSONLReplayStore) Put(ctx context.Context, trace *schemas.Trace) error 
 	f := s.files[tenant]
 	if f == nil {
 		name := filepath.Join(s.dir, safeTenant(tenant)+".jsonl")
-		f, err = os.OpenFile(name, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600)
+		// Keep the handle readable as well as append-only: Get may scan a
+		// tenant's live file while the process is still accepting records.
+		f, err = os.OpenFile(name, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o600)
 		if err != nil {
 			return err
 		}
@@ -99,12 +101,15 @@ func (s *JSONLReplayStore) Get(ctx context.Context, tenantID, traceID string) (*
 		return nil, fmt.Errorf("tenant and trace ID are required")
 	}
 	s.mu.Lock()
+	defer s.mu.Unlock()
 	f := s.files[tenantID]
-	s.mu.Unlock()
 	var r *os.File
 	var err error
 	if f != nil {
 		r = f
+		if _, err = r.Seek(0, 0); err != nil {
+			return nil, err
+		}
 	} else {
 		r, err = os.Open(filepath.Join(s.dir, safeTenant(tenantID)+".jsonl"))
 		if err != nil {
