@@ -19,6 +19,14 @@ function replayHref(log: LogEntry): string {
 	return `/workspace/logs?parent_request_id=${encodeURIComponent(requestId)}`;
 }
 
+function retrievalQuality(log: LogEntry): { precision: number; recall: number } | undefined {
+	const metadata = log.metadata ?? {};
+	const precision = Number(metadata["frankengate.retrieval.precision"]);
+	const recall = Number(metadata["frankengate.retrieval.recall"]);
+	if (!Number.isFinite(precision) || !Number.isFinite(recall) || precision < 0 || precision > 1 || recall < 0 || recall > 1) return undefined;
+	return { precision, recall };
+}
+
 export function TraceReplaySummary({ filters }: { filters: LogFilters }) {
 	const { data, isLoading, isFetching, isError, refetch } = useGetLogsQuery({ filters, pagination: recentPagination });
 	const logs = data?.logs ?? [];
@@ -54,6 +62,7 @@ export function TraceReplaySummary({ filters }: { filters: LogFilters }) {
 					{logs.map((log) => {
 						const trace = traceId(log);
 						const redacted = Boolean(log.redaction_mapping) || Boolean(log.metadata?.redacted === "true");
+						const quality = retrievalQuality(log);
 						return (
 							<div key={log.id} className="flex items-center justify-between gap-3 py-2 text-xs" data-testid="dashboard-trace-row">
 								<div className="min-w-0">
@@ -61,6 +70,7 @@ export function TraceReplaySummary({ filters }: { filters: LogFilters }) {
 										<span className="font-medium">{log.model || "Unknown model"}</span>
 										<Badge variant={log.status === "success" ? "success" : "warning"}>{log.status}</Badge>
 										{redacted && <Badge variant="outline">redacted</Badge>}
+										{quality && <Badge variant="outline">retrieval P/R {(quality.precision * 100).toFixed(0)}/{(quality.recall * 100).toFixed(0)}</Badge>}
 									</div>
 									<div className="text-muted-foreground truncate">
 										{trace ? `trace ${trace}` : `request ${log.id}`} · {log.team_name || "tenant scope"}
