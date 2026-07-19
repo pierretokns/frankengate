@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/maximhq/bifrost/core/identity"
 	providerUtils "github.com/maximhq/bifrost/core/providers/utils"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
@@ -24,6 +25,58 @@ import (
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 	"github.com/valyala/fasthttp"
 )
+
+// JWTIdentityMiddleware optionally verifies a configured Coder/OIDC bearer
+// token and propagates only the bounded canonical principal into the request
+// context. It is deliberately additive: when no bearer token is present the
+// existing dashboard/VK authentication chain continues unchanged. A malformed
+// or invalid bearer token is never silently downgraded to anonymous access.
+type JWTIdentityMiddleware struct{ config identity.JWTConfig }
+
+// NewJWTIdentityMiddleware validates configuration up front so a deployment
+// cannot accidentally enable a partially configured trust boundary.
+func NewJWTIdentityMiddleware(config identity.JWTConfig) (*JWTIdentityMiddleware, error) {
+	if strings.TrimSpace(config.Tenant) == "" || strings.TrimSpace(config.Issuer) == "" ||
+		strings.TrimSpace(config.Audience) == "" || config.KeyFunc == nil {
+		return nil, errors.New("jwt identity middleware: incomplete verifier configuration")
+	}
+	return &JWTIdentityMiddleware{config: config}, nil
+}
+
+// Middleware verifies Authorization: Bearer tokens when present and exposes
+// the principal to downstream governance and attribution code. Existing auth
+// compatibility is preserved for requests without Authorization.
+func (m *JWTIdentityMiddleware) Middleware() schemas.BifrostHTTPMiddleware {
+	return func(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+		return func(ctx *fasthttp.RequestCtx) {
+			auth := strings.TrimSpace(string(ctx.Request.Header.Peek("Authorization")))
+			if auth == "" {
+				next(ctx)
+				return
+			}
+			parts := strings.SplitN(auth, " ", 2)
+			if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") || strings.TrimSpace(parts[1]) == "" {
+				SendError(ctx, fasthttp.StatusUnauthorized, "invalid bearer authorization")
+				return
+			}
+			claims, err := identity.Verify(strings.TrimSpace(parts[1]), m.config)
+			if err != nil {
+				SendError(ctx, fasthttp.StatusUnauthorized, "invalid bearer authorization")
+				return
+			}
+			// RequestCtx is the parent context used by downstream BifrostContext
+			// instances, so this propagation remains available across handlers.
+			ctx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, claims.Principal)
+			if len(claims.Groups) > 0 {
+				ctx.SetUserValue("frankengate.identity.groups", slices.Clone(claims.Groups))
+			}
+			if claims.WorkstationID != "" {
+				ctx.SetUserValue("frankengate.identity.workstation_id", claims.WorkstationID)
+			}
+			next(ctx)
+		}
+	}
+}
 
 var loggingSkipPaths = []string{"/health", "/livez", "/readyz", "/startupz", "/_next", "/api/dev/"}
 var realtimeTransportPaths = buildRealtimeTransportPathSet()

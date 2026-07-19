@@ -164,7 +164,11 @@ type BifrostHTTPServer struct {
 	devPprofHandler    *handlers.DevPprofHandler
 	IntegrationHandler *handlers.IntegrationHandler
 
-	AuthMiddleware             *handlers.AuthMiddleware
+	AuthMiddleware *handlers.AuthMiddleware
+	// JWTIdentityMiddleware is optional and must be configured before Initialize.
+	// When set, it verifies bearer tokens and propagates a canonical principal;
+	// requests without a bearer token retain the existing auth behavior.
+	JWTIdentityMiddleware      *handlers.JWTIdentityMiddleware
 	CORSMiddleware             *handlers.CorsMiddleware
 	TracingMiddleware          *handlers.TracingMiddleware
 	WSTicketStore              *handlers.WSTicketStore
@@ -219,6 +223,13 @@ func NewBifrostHTTPServer(version string, uiContent embed.FS) *BifrostHTTPServer
 		LogLevel:       DefaultLogLevel,
 		LogOutputStyle: DefaultLogOutputStyle,
 	}
+}
+
+// SetJWTIdentityMiddleware installs the optional Coder/OIDC bearer verifier.
+// Call before Initialize so every registered route receives the same trust
+// boundary. Passing nil disables this additive adapter.
+func (s *BifrostHTTPServer) SetJWTIdentityMiddleware(m *handlers.JWTIdentityMiddleware) {
+	s.JWTIdentityMiddleware = m
 }
 
 type GovernanceInMemoryStore struct {
@@ -1956,6 +1967,14 @@ func (s *BifrostHTTPServer) Bootstrap(ctx context.Context) error {
 	commonMiddlewares := s.PrepareCommonMiddlewares()
 	apiMiddlewares := commonMiddlewares
 	inferenceMiddlewares := commonMiddlewares
+	if s.JWTIdentityMiddleware != nil {
+		// Keep this adapter inside common middleware so both API and inference
+		// routes can consume the same verified principal. It is additive and
+		// does not replace virtual-key or dashboard authentication.
+		commonMiddlewares = append(commonMiddlewares, s.JWTIdentityMiddleware.Middleware())
+		apiMiddlewares = commonMiddlewares
+		inferenceMiddlewares = commonMiddlewares
+	}
 	if s.Config.ConfigStore == nil {
 		logger.Error("auth middleware requires config store, skipping auth middleware initialization")
 	} else {

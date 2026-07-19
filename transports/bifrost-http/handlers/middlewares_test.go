@@ -6,6 +6,7 @@ import (
 	"compress/zlib"
 	"context"
 	cryptoRand "crypto/rand"
+	"crypto/rsa"
 	"encoding/json"
 	"io"
 	"strings"
@@ -13,7 +14,9 @@ import (
 	"time"
 
 	"github.com/andybalholm/brotli"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/klauspost/compress/zstd"
+	"github.com/maximhq/bifrost/core/identity"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/tracing"
@@ -33,6 +36,46 @@ func (m *mockLogger) SetLevel(level schemas.LogLevel)                   {}
 func (m *mockLogger) SetOutputType(outputType schemas.LoggerOutputType) {}
 func (m *mockLogger) LogHTTPRequest(level schemas.LogLevel, msg string) schemas.LogEventBuilder {
 	return schemas.NoopLogEvent
+}
+
+func TestJWTIdentityMiddlewarePropagatesPrincipalAndFailsClosed(t *testing.T) {
+	rsaKey, err := rsa.GenerateKey(cryptoRand.Reader, 2048)
+	if err != nil {
+		t.Fatal(err)
+	}
+	now := time.Now()
+	raw, err := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
+		"iss": "https://issuer.example", "aud": "gateway", "sub": "user-1",
+		"iat": now.Unix(), "exp": now.Add(time.Minute).Unix(),
+		"groups": []string{"research"}, "workstation_id": "coder-1",
+	}).SignedString(rsaKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	m, err := NewJWTIdentityMiddleware(identity.JWTConfig{Tenant: "corp", Issuer: "https://issuer.example", Audience: "gateway", KeyFunc: identity.RSAKeyFunc(&rsaKey.PublicKey)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	called := false
+	next := func(ctx *fasthttp.RequestCtx) {
+		called = true
+		if ctx.UserValue(schemas.BifrostContextKeyAuthorizationPrincipal) == nil {
+			t.Error("principal not propagated")
+		}
+	}
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.Set("Authorization", "Bearer "+raw)
+	m.Middleware()(next)(ctx)
+	if !called {
+		t.Fatal("valid token did not reach handler")
+	}
+	called = false
+	ctx = &fasthttp.RequestCtx{}
+	ctx.Request.Header.Set("Authorization", "Bearer malformed")
+	m.Middleware()(next)(ctx)
+	if called || ctx.Response.StatusCode() != fasthttp.StatusUnauthorized {
+		t.Fatal("invalid token must be rejected")
+	}
 }
 
 // TestCorsMiddleware_LocalhostOrigins tests that localhost origins are always allowed
