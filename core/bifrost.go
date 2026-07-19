@@ -4980,7 +4980,16 @@ func (bifrost *Bifrost) prepareFallbackRequest(req *schemas.BifrostRequest, fall
 // shouldContinueWithFallbacks processes errors from fallback attempts
 // Returns true if we should continue with more fallbacks, false if we should stop
 func (bifrost *Bifrost) shouldContinueWithFallbacks(fallback schemas.Fallback, fallbackErr *schemas.BifrostError) bool {
-	if fallbackErr.Error.Type != nil && *fallbackErr.Error.Type == schemas.RequestCancelled {
+	// A nil error can be produced by an admission/transport boundary that
+	// failed before constructing the provider error. Treat it as eligible for
+	// the next route instead of panicking while deciding fallback behavior.
+	if fallbackErr == nil {
+		return true
+	}
+	// Client cancellation is terminal: the caller withdrew the request and
+	// another provider must not continue work. Provider timeouts are distinct
+	// (RequestTimedOut) and intentionally remain fallback eligible.
+	if fallbackErr.Error != nil && fallbackErr.Error.Type != nil && *fallbackErr.Error.Type == schemas.RequestCancelled {
 		return false
 	}
 
@@ -4989,7 +4998,11 @@ func (bifrost *Bifrost) shouldContinueWithFallbacks(fallback schemas.Fallback, f
 		return false
 	}
 
-	bifrost.logger.Debug(fmt.Sprintf("Fallback provider %s failed: %s", fallback.Provider, fallbackErr.Error.Message))
+	message := "unknown provider error"
+	if fallbackErr.Error != nil && fallbackErr.Error.Message != "" {
+		message = fallbackErr.Error.Message
+	}
+	bifrost.logger.Debug(fmt.Sprintf("Fallback provider %s failed: %s", fallback.Provider, message))
 	return true
 }
 
