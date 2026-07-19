@@ -429,10 +429,15 @@ func (s *Store) capabilityEntryForExactUnsafe(model string, provider schemas.Mod
 		}
 	}
 
-	prefix := model + "|" + string(provider) + "|"
 	var matchingKeys []string
 	for key := range s.pricingData {
-		if strings.HasPrefix(key, prefix) {
+		parts := strings.SplitN(key, "|", 3)
+		// Database-backed catalogs may preserve upstream provider aliases
+		// (for example vertex_ai). Capability lookup must use the same
+		// canonicalization as admission, otherwise context-window and other
+		// metadata disappear after a DB reload.
+		if len(parts) == 3 && parts[0] == model &&
+			normalizeCapabilityProvider(parts[1]) == normalizeCapabilityProvider(string(provider)) {
 			matchingKeys = append(matchingKeys, key)
 		}
 	}
@@ -445,7 +450,7 @@ func (s *Store) capabilityEntryForFamilyUnsafe(baseModel string, provider schema
 	}
 	var matchingKeys []string
 	for key, pricing := range s.pricingData {
-		if normalizeProvider(pricing.Provider) != string(provider) {
+		if normalizeCapabilityProvider(pricing.Provider) != normalizeCapabilityProvider(string(provider)) {
 			continue
 		}
 		if s.baseModelNameUnsafe(pricing.Model) != baseModel {

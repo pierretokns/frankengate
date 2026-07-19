@@ -78,6 +78,20 @@ func TestIsRequestTypeSupportedForProviderNormalizesDatabaseProviderAliases(t *t
 	}
 }
 
+func TestGetCapabilityEntryNormalizesDatabaseProviderAliases(t *testing.T) {
+	s := NewTestStore(nil)
+	s.mu.Lock()
+	s.pricingData[makeKey("text-embedding-alias", "vertex_ai", "embedding")] = configstoreTables.TableModelPricing{
+		Model: "text-embedding-alias", Provider: "vertex_ai", Mode: "embedding",
+	}
+	s.mu.Unlock()
+
+	entry := s.GetCapabilityEntry("text-embedding-alias", schemas.Vertex)
+	if entry == nil {
+		t.Fatal("capability lookup should survive a database provider alias")
+	}
+}
+
 func TestCapabilityAdmissionKeepsBedrockMantleTransportBoundary(t *testing.T) {
 	s := NewTestStore(nil)
 	s.mu.Lock()
