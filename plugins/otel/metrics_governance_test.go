@@ -75,6 +75,7 @@ func TestGovernanceOutcomeLabelsAreBounded(t *testing.T) {
 		in, want string
 	}{
 		{"delivered", "delivered"},
+		{"enqueued", "enqueued"},
 		{" FAILED ", "failed"},
 		{"unexpected-future-value", "other"},
 	} {

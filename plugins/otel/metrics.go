@@ -670,7 +670,7 @@ func (m *MetricsExporter) AddGovernanceSyncMetric(ctx context.Context, name stri
 // the direct Prometheus exporter. Unknown values are intentionally collapsed.
 func boundedGovernanceOutcome(outcome string) string {
 	switch strings.ToLower(strings.TrimSpace(outcome)) {
-	case "accepted", "allowed", "delivered", "success":
+	case "accepted", "allowed", "enqueued", "delivered", "success":
 		return strings.ToLower(strings.TrimSpace(outcome))
 	case "rejected", "denied", "failed", "dropped":
 		return strings.ToLower(strings.TrimSpace(outcome))

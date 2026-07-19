@@ -326,6 +326,24 @@ func TestGovernanceSyncMetricsAreScrapeable(t *testing.T) {
 			t.Errorf("/metrics gatherer missing governance sync metric %s", name)
 		}
 	}
+	// Enqueue is a real delivery lifecycle state, not an unknown outcome. It
+	// must remain distinct from delivered/failed so queue backlogs are visible.
+	for _, family := range families {
+		if family.GetName() != "bifrost_governance_notifier_deliveries_total" {
+			continue
+		}
+		foundEnqueued := false
+		for _, sample := range family.GetMetric() {
+			for _, label := range sample.GetLabel() {
+				if label.GetName() == "outcome" && label.GetValue() == "enqueued" {
+					foundEnqueued = true
+				}
+			}
+		}
+		if !foundEnqueued {
+			t.Fatal("notifier metrics collapsed enqueued outcome into other")
+		}
+	}
 }
 
 // TestPushGatewayLifecycle covers the push-gateway config plumbing: defaults are applied, the
