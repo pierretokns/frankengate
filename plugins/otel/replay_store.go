@@ -38,6 +38,62 @@ type ReplayStore interface {
 	Close() error
 }
 
+// TenantReplayStore is a fail-closed view over a ReplayStore.  The durable
+// store itself is partitioned by tenant, but a tenant string supplied by a
+// caller is not an authorization decision.  Consumers should hand the view
+// to a request after authenticating the principal; the view then prevents a
+// confused deputy from selecting another tenant (including an empty tenant).
+// Admin callers must deliberately construct one view per authorized tenant
+// rather than bypassing this boundary with user-controlled query parameters.
+type TenantReplayStore struct {
+	store  ReplayStore
+	tenant string
+}
+
+// NewTenantReplayStore returns a tenant-pinned replay view.  A blank tenant is
+// rejected so there is no wildcard/admin interpretation hidden in this API.
+func NewTenantReplayStore(store ReplayStore, tenant string) (*TenantReplayStore, error) {
+	if store == nil {
+		return nil, fmt.Errorf("replay store is required")
+	}
+	tenant = strings.TrimSpace(tenant)
+	if tenant == "" {
+		return nil, fmt.Errorf("tenant is required")
+	}
+	return &TenantReplayStore{store: store, tenant: tenant}, nil
+}
+
+func (s *TenantReplayStore) Put(ctx context.Context, trace *schemas.Trace) error {
+	if s == nil || s.store == nil {
+		return fmt.Errorf("replay store is unavailable")
+	}
+	if trace == nil || traceTenant(trace) != s.tenant {
+		return fmt.Errorf("replay tenant is not authorized")
+	}
+	return s.store.Put(ctx, trace)
+}
+
+func (s *TenantReplayStore) Get(ctx context.Context, tenantID, traceID string) (*ReplayRecord, error) {
+	if s == nil || s.store == nil || strings.TrimSpace(tenantID) != s.tenant {
+		return nil, os.ErrPermission
+	}
+	return s.store.Get(ctx, s.tenant, traceID)
+}
+
+func (s *TenantReplayStore) List(ctx context.Context, tenantID string, limit int) ([]ReplayRecord, error) {
+	if s == nil || s.store == nil || strings.TrimSpace(tenantID) != s.tenant {
+		return nil, os.ErrPermission
+	}
+	return s.store.List(ctx, s.tenant, limit)
+}
+
+func (s *TenantReplayStore) Close() error {
+	if s == nil || s.store == nil {
+		return nil
+	}
+	return s.store.Close()
+}
+
 // JSONLReplayStore is safe for concurrent writers and survives process restarts.
 // Files are partitioned by tenant to make accidental cross-tenant reads harder.
 type JSONLReplayStore struct {

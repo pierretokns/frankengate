@@ -98,3 +98,30 @@ func TestJSONLReplayStoreRequiresTenant(t *testing.T) {
 		t.Fatal("expected tenant boundary error")
 	}
 }
+
+func TestTenantReplayStorePinsAuthorizationBoundary(t *testing.T) {
+	store, err := NewJSONLReplayStore(t.TempDir(), false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	view, err := NewTenantReplayStore(store, "acme")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := view.Put(context.Background(), &schemas.Trace{TraceID: "ok", Attributes: map[string]any{"tenant": "acme"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := view.Put(context.Background(), &schemas.Trace{TraceID: "wrong", Attributes: map[string]any{"tenant": "other"}}); err == nil {
+		t.Fatal("tenant-pinned view accepted a trace from another tenant")
+	}
+	if _, err := view.Get(context.Background(), "other", "ok"); !os.IsPermission(err) {
+		t.Fatalf("cross-tenant get should fail closed with permission error, got %v", err)
+	}
+	if _, err := view.List(context.Background(), "other", 10); !os.IsPermission(err) {
+		t.Fatalf("cross-tenant list should fail closed with permission error, got %v", err)
+	}
+	if _, err := NewTenantReplayStore(store, " "); err == nil {
+		t.Fatal("blank tenant must not create an unrestricted replay view")
+	}
+}
