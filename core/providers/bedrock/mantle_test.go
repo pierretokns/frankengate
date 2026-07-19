@@ -7,6 +7,21 @@ import (
 	schemas "github.com/maximhq/bifrost/core/schemas"
 )
 
+func TestMantleSigningExtraHeadersIncludesRequestScopedAmzHeaders(t *testing.T) {
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyExtraHeaders, map[string][]string{
+		"X-Amz-Trace-Id": {"trace-123"},
+		"X-Request-Id":   {"request-123"},
+	})
+	got := mantleSigningExtraHeaders(ctx, map[string]string{"x-amz-source": "gateway"})
+	if got["X-Amz-Trace-Id"] != "trace-123" || got["x-amz-source"] != "gateway" {
+		t.Fatalf("signed headers missing request/provider values: %#v", got)
+	}
+	if _, ok := got["X-Request-Id"]; ok {
+		t.Fatalf("non-amz request header must not be included in signing set: %#v", got)
+	}
+}
+
 func TestIsMantleModel(t *testing.T) {
 	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
 	cases := []struct {

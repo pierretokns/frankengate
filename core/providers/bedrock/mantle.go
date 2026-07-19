@@ -39,6 +39,26 @@ func WithMantleProject(base map[string]string, headerName, projectID string) map
 	return out
 }
 
+// mantleSigningExtraHeaders returns the x-amz headers that will be present on
+// the actual request, including per-request context headers. Mantle's SigV4
+// signer must see these too: signing only provider-level headers causes a
+// request carrying a request-scoped x-amz header to fail authentication.
+func mantleSigningExtraHeaders(ctx *schemas.BifrostContext, base map[string]string) map[string]string {
+	out := maps.Clone(base)
+	if out == nil {
+		out = make(map[string]string)
+	}
+	if headers, ok := ctx.Value(schemas.BifrostContextKeyExtraHeaders).(map[string][]string); ok {
+		for name, values := range headers {
+			if !strings.HasPrefix(strings.ToLower(name), "x-amz-") || len(values) == 0 {
+				continue
+			}
+			out[name] = values[0]
+		}
+	}
+	return out
+}
+
 // isMantleModel reports whether a model should be routed via the Bedrock Mantle
 // OpenAI-compatible endpoint. OpenAI-family (gpt-*) and Gemma 4 models are mantle-only
 // (they have no Converse equivalent). Gemma 3 is intentionally excluded: it only supports
@@ -168,7 +188,7 @@ func (provider *BedrockProvider) mantleChatCompletions(
 	var signer providerUtils.BodySigner
 	if key.Value.GetValue() == "" {
 		signer = func(body []byte) (map[string]string, *schemas.BifrostError) {
-			return SignMantleV4Headers(ctx, body, url, "application/json", key, region, provider.networkConfig.ExtraHeaders)
+			return SignMantleV4Headers(ctx, body, url, "application/json", key, region, mantleSigningExtraHeaders(ctx, provider.networkConfig.ExtraHeaders))
 		}
 	}
 
@@ -209,7 +229,7 @@ func (provider *BedrockProvider) mantleChatCompletionsStream(
 	var signer providerUtils.BodySigner
 	if key.Value.GetValue() == "" {
 		signer = func(body []byte) (map[string]string, *schemas.BifrostError) {
-			return SignMantleV4Headers(ctx, body, url, "text/event-stream", key, region, provider.networkConfig.ExtraHeaders)
+			return SignMantleV4Headers(ctx, body, url, "text/event-stream", key, region, mantleSigningExtraHeaders(ctx, provider.networkConfig.ExtraHeaders))
 		}
 	}
 
@@ -254,7 +274,7 @@ func (provider *BedrockProvider) mantleResponses(
 	var signer providerUtils.BodySigner
 	if key.Value.GetValue() == "" {
 		signer = func(body []byte) (map[string]string, *schemas.BifrostError) {
-			return SignMantleV4Headers(ctx, body, url, "application/json", key, region, provider.networkConfig.ExtraHeaders)
+			return SignMantleV4Headers(ctx, body, url, "application/json", key, region, mantleSigningExtraHeaders(ctx, provider.networkConfig.ExtraHeaders))
 		}
 	}
 
@@ -295,7 +315,7 @@ func (provider *BedrockProvider) mantleResponsesStream(
 	var signer providerUtils.BodySigner
 	if key.Value.GetValue() == "" {
 		signer = func(body []byte) (map[string]string, *schemas.BifrostError) {
-			return SignMantleV4Headers(ctx, body, url, "text/event-stream", key, region, provider.networkConfig.ExtraHeaders)
+			return SignMantleV4Headers(ctx, body, url, "text/event-stream", key, region, mantleSigningExtraHeaders(ctx, provider.networkConfig.ExtraHeaders))
 		}
 	}
 
