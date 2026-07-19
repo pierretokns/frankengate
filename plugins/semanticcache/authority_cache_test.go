@@ -83,6 +83,22 @@ func TestAuthorizationCacheQueriesIncludeTenantAndPrincipalScope(t *testing.T) {
 	}
 }
 
+func TestAuthorizationCacheQueriesCanFenceConditionalDelete(t *testing.T) {
+	metadata := map[string]any{
+		"authorization_tenant":  "tenant-a",
+		"authorization_subject": "alice",
+		"authorization_epoch":   uint64(4),
+	}
+	queries := authorizationCacheQueries(metadata)
+	queries = append(queries, vectorstore.Query{Field: "from_bifrost_semantic_cache_plugin", Operator: vectorstore.QueryOperatorEqual, Value: true})
+	if len(queries) != 4 {
+		t.Fatalf("expected authority predicates plus ownership marker, got %d: %#v", len(queries), queries)
+	}
+	if queries[len(queries)-1].Field != "from_bifrost_semantic_cache_plugin" {
+		t.Fatalf("ownership marker must remain part of conditional delete fence: %#v", queries)
+	}
+}
+
 func TestRoutingMetadataForCachingIncludesFamilyAndRegion(t *testing.T) {
 	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
 	family := schemas.ModelFamilyAnthropic

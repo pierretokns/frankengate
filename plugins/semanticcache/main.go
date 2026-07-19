@@ -966,5 +966,21 @@ func (plugin *Plugin) ClearCacheForCacheIDForAuthority(ctx *schemas.BifrostConte
 	if !isSemanticCacheEntry(entry) || !cacheResultMatchesAuthority(entry, authority) {
 		return fmt.Errorf("cache entry %s is outside the caller authorization scope", cacheID)
 	}
-	return plugin.store.Delete(deleteCtx, plugin.config.VectorStoreNamespace, cacheID)
+	// A read followed by an unconditional delete is racy: the point may be
+	// replaced between those operations.  Require an adapter's atomic
+	// compare-and-delete capability for governed callers.
+	deleter, ok := plugin.store.(vectorstore.ConditionalDeleter)
+	if !ok {
+		return fmt.Errorf("vector store does not support conditional cache deletion")
+	}
+	// Keep the authorization snapshot in the compare-and-delete predicate. A
+	// read-before-delete alone is not sufficient: another writer could replace
+	// the point between the read and the conditional delete. The adapter must
+	// therefore delete only a semantic-cache entry that still belongs to this
+	// exact authority scope (including its epoch).
+	queries := authorizationCacheQueries(authority)
+	queries = append(queries, vectorstore.Query{
+		Field: "from_bifrost_semantic_cache_plugin", Operator: vectorstore.QueryOperatorEqual, Value: true,
+	})
+	return deleter.DeleteIf(deleteCtx, plugin.config.VectorStoreNamespace, cacheID, queries)
 }
