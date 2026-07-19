@@ -5,6 +5,7 @@ import (
 
 	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
+	"github.com/maximhq/bifrost/framework/vectorstore"
 )
 
 func TestAuthorityMetadataForCachingIncludesEpochAndScope(t *testing.T) {
@@ -97,5 +98,27 @@ func TestRoutingMetadataSeparatesUnpinnedAndPinnedRegion(t *testing.T) {
 	pinned := routingMetadataForCaching(ctx, schemas.BedrockMantle, model)
 	if unpinned["routing_region"] == pinned["routing_region"] {
 		t.Fatalf("pinned and unpinned routing scopes collided: %#v vs %#v", unpinned, pinned)
+	}
+}
+
+func TestCacheResultRejectsRevokedAuthorityEpoch(t *testing.T) {
+	result := vectorstore.SearchResult{Properties: map[string]interface{}{
+		"authorization_tenant": "tenant-a", "authorization_subject": "alice",
+		"authorization_epoch": float64(3), "response": "cached",
+	}}
+	want := map[string]any{"authorization_tenant": "tenant-a", "authorization_subject": "alice", "authorization_epoch": uint64(4)}
+	if cacheResultMatchesAuthority(result, want) {
+		t.Fatal("cache entry from revoked epoch was accepted")
+	}
+	result.Properties["authorization_epoch"] = float64(4)
+	if !cacheResultMatchesAuthority(result, want) {
+		t.Fatal("current authority epoch was rejected after numeric normalization")
+	}
+}
+
+func TestCacheResultRequiresAllAuthorityFields(t *testing.T) {
+	result := vectorstore.SearchResult{Properties: map[string]interface{}{"authorization_epoch": uint64(2)}}
+	if cacheResultMatchesAuthority(result, map[string]any{"authorization_epoch": uint64(2), "authorization_subject": "alice"}) {
+		t.Fatal("cache entry missing subject metadata was accepted")
 	}
 }

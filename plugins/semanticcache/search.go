@@ -46,6 +46,13 @@ func (plugin *Plugin) performDirectSearch(ctx *schemas.BifrostContext, state *ca
 		}
 		return nil, fmt.Errorf("failed to fetch direct cache chunk: %w", err)
 	}
+	// Get-by-ID backends cannot apply authorization predicates. Re-check the
+	// immutable authority snapshot on the returned entry so a revoked epoch
+	// can never be replayed if a backend ignores the deterministic key or has
+	// stale replicated data.
+	if !cacheResultMatchesAuthority(result, state.AuthorityMetadata) {
+		return nil, nil
+	}
 	return plugin.buildResponseFromResult(ctx, state, req, result, CacheTypeDirect, nil, nil)
 }
 
@@ -102,7 +109,58 @@ func (plugin *Plugin) performSemanticSearch(ctx *schemas.BifrostContext, state *
 	if len(results) == 0 {
 		return nil, nil
 	}
+	if !cacheResultMatchesAuthority(results[0], state.AuthorityMetadata) {
+		return nil, nil
+	}
 	return plugin.buildResponseFromResult(ctx, state, req, results[0], CacheTypeSemantic, &cacheThreshold, &inputTokens)
+}
+
+// cacheResultMatchesAuthority is a defense-in-depth check for stores whose
+// filtering is eventually consistent or unavailable. An ungoverned cache has
+// no authority metadata and retains legacy behavior; governed entries must
+// contain every trusted field with the exact current epoch.
+func cacheResultMatchesAuthority(result vectorstore.SearchResult, expected map[string]any) bool {
+	if len(expected) == 0 {
+		return true
+	}
+	for key, want := range expected {
+		have, ok := result.Properties[key]
+		if !ok || !cacheMetadataValueEqual(have, want) {
+			return false
+		}
+	}
+	return true
+}
+
+func cacheMetadataValueEqual(have, want any) bool {
+	if fmt.Sprint(have) == fmt.Sprint(want) {
+		return true
+	}
+	// JSON-backed stores commonly decode uint64 epochs as float64. Compare
+	// integral numeric values without weakening string/tenant comparisons.
+	toInt := func(v any) (int64, bool) {
+		switch n := v.(type) {
+		case uint64:
+			if n > uint64(^uint64(0)>>1) {
+				return 0, false
+			}
+			return int64(n), true
+		case int:
+			return int64(n), true
+		case int64:
+			return n, true
+		case float64:
+			if n != float64(int64(n)) {
+				return 0, false
+			}
+			return int64(n), true
+		default:
+			return 0, false
+		}
+	}
+	h, hok := toInt(have)
+	w, wok := toInt(want)
+	return hok && wok && h == w
 }
 
 // selectFieldsStream / selectFieldsNonStream are precomputed at package init
