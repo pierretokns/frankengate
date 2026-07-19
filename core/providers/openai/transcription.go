@@ -11,13 +11,17 @@ import (
 
 // ToBifrostTranscriptionRequest converts an OpenAI transcription request to Bifrost format
 func (request *OpenAITranscriptionRequest) ToBifrostTranscriptionRequest(ctx *schemas.BifrostContext) *schemas.BifrostTranscriptionRequest {
+	if request == nil {
+		return nil
+	}
 	provider, model := schemas.ParseModelString(request.Model, "")
 
 	return &schemas.BifrostTranscriptionRequest{
 		Provider: provider,
 		Model:    model,
 		Input: &schemas.TranscriptionInput{
-			File: request.File,
+			File:     request.File,
+			Filename: request.Filename,
 		},
 		Params:    &request.TranscriptionParameters,
 		Fallbacks: schemas.ParseFallbacks(request.Fallbacks),
@@ -26,7 +30,7 @@ func (request *OpenAITranscriptionRequest) ToBifrostTranscriptionRequest(ctx *sc
 
 // ToOpenAITranscriptionRequest converts a Bifrost transcription request to OpenAI format
 func ToOpenAITranscriptionRequest(bifrostReq *schemas.BifrostTranscriptionRequest) *OpenAITranscriptionRequest {
-	if bifrostReq == nil || bifrostReq.Input.File == nil {
+	if bifrostReq == nil || bifrostReq.Input == nil || bifrostReq.Input.File == nil {
 		return nil
 	}
 

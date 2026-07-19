@@ -6,6 +6,9 @@ import (
 
 // ToBifrostSpeechRequest converts an OpenAI speech request to Bifrost format
 func (request *OpenAISpeechRequest) ToBifrostSpeechRequest(ctx *schemas.BifrostContext) *schemas.BifrostSpeechRequest {
+	if request == nil {
+		return nil
+	}
 	provider, model := schemas.ParseModelString(request.Model, "")
 
 	return &schemas.BifrostSpeechRequest{
@@ -19,7 +22,7 @@ func (request *OpenAISpeechRequest) ToBifrostSpeechRequest(ctx *schemas.BifrostC
 
 // ToOpenAISpeechRequest converts a Bifrost speech request to OpenAI format
 func ToOpenAISpeechRequest(bifrostReq *schemas.BifrostSpeechRequest) *OpenAISpeechRequest {
-	if bifrostReq == nil || bifrostReq.Input.Input == "" {
+	if bifrostReq == nil || bifrostReq.Input == nil || bifrostReq.Input.Input == "" {
 		return nil
 	}
 
