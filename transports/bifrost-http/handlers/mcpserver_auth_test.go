@@ -235,7 +235,7 @@ func TestGetMCPServerForRequest_JWTPath(t *testing.T) {
 		require.Error(t, err)
 	})
 
-	t.Run("user JWT falls back to the global server when the user has no virtual key", func(t *testing.T) {
+	t.Run("user JWT is rejected when the resolver grants no virtual key", func(t *testing.T) {
 		store := &mockOAuth2Store{signingKey: key}
 		cfg := newTestOAuth2Config(store, configtables.MCPServerAuthModeBoth, false)
 		h := newTestMCPHandler(cfg)
@@ -248,9 +248,9 @@ func TestGetMCPServerForRequest_JWTPath(t *testing.T) {
 		ctx := &fasthttp.RequestCtx{}
 		ctx.Request.Header.Set("Authorization", "Bearer "+raw)
 
-		res, err := h.getMCPServerForRequest(ctx)
-		require.NoError(t, err)
-		assert.Equal(t, h.globalMCPServer, res.mcpServer)
+		_, err := h.getMCPServerForRequest(ctx)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "no MCP access grant")
 	})
 
 	t.Run("user JWT with a matching session is accepted", func(t *testing.T) {

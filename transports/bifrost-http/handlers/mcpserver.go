@@ -984,9 +984,11 @@ func (h *MCPServerHandler) validateJWTAuthority(ctx context.Context, claims *jwt
 }
 
 // userScopedServer returns a per-VK MCP server scoped to a user-mode token's
-// own tools, or nil (with nil error) when no scoping applies — no resolver, a
-// non-user-mode token, or a user with no virtual key — so the caller falls back
-// to the global server.
+// own tools. A configured identity resolver is authoritative: a user-mode
+// token with no representative virtual key has no MCP grant and must fail
+// closed rather than falling through to the global (unscoped) server. The
+// global fallback remains only for deployments that have no resolver (legacy
+// anonymous/dev mode).
 //
 // User-mode tokens carry a user identity but no virtual key of their own. The
 // resolver maps the user to a representative virtual key (any one of the user's
@@ -1017,7 +1019,7 @@ func (h *MCPServerHandler) userScopedServer(ctx *fasthttp.RequestCtx, claims *jw
 		return nil, fmt.Errorf("failed to resolve virtual key for user: %w", err)
 	}
 	if vkID == "" {
-		return nil, nil
+		return nil, fmt.Errorf("no MCP access grant for the authenticated user")
 	}
 	// Mirror the vk-mode branch: resolve the representative VK by ID to get its
 	// value and active state, then reuse the shared per-VK server cache.
