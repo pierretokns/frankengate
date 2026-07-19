@@ -53,7 +53,8 @@ func TestPrepareFallbackRequestPreservesImageVariationRoute(t *testing.T) {
 }
 
 func TestPrepareFallbackRequestClonesMutableImagePayloads(t *testing.T) {
-	extra := map[string]interface{}{"provider_option": "keep"}
+	nestedBytes := []byte{6, 7}
+	extra := map[string]interface{}{"provider_option": "keep", "nested": map[string]interface{}{"bytes": nestedBytes}}
 	image := []byte{1, 2, 3}
 	req := &schemas.BifrostRequest{RequestType: schemas.ImageEditRequest,
 		ImageEditRequest: &schemas.BifrostImageEditRequest{
@@ -66,9 +67,10 @@ func TestPrepareFallbackRequestClonesMutableImagePayloads(t *testing.T) {
 	b := &Bifrost{account: account}
 	fallback := b.prepareFallbackRequest(req, schemas.Fallback{Provider: schemas.Bedrock, Model: "fallback"})
 	fallback.ImageEditRequest.Params.ExtraParams["provider_option"] = "changed"
+	fallback.ImageEditRequest.Params.ExtraParams["nested"].(map[string]interface{})["bytes"].([]byte)[0] = 0
 	fallback.ImageEditRequest.Params.Mask[0] = 9
 	fallback.ImageEditRequest.Input.Images[0].Image[0] = 8
-	if extra["provider_option"] != "keep" || req.ImageEditRequest.Params.Mask[0] != 4 || image[0] != 1 {
+	if extra["provider_option"] != "keep" || nestedBytes[0] != 6 || req.ImageEditRequest.Params.Mask[0] != 4 || image[0] != 1 {
 		t.Fatal("fallback preparation shared mutable image state with primary request")
 	}
 }

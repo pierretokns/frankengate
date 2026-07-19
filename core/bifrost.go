@@ -5004,9 +5004,38 @@ func cloneImageExtraParams(in map[string]interface{}) map[string]interface{} {
 	}
 	out := make(map[string]interface{}, len(in))
 	for k, v := range in {
-		out[k] = v
+		out[k] = cloneImageExtraValue(v)
 	}
 	return out
+}
+
+// cloneImageExtraValue recursively copies the container values commonly used
+// by provider-specific image options. A shallow map copy is insufficient:
+// converters are allowed to normalize nested options and would otherwise
+// mutate the primary request before the next fallback attempt.
+func cloneImageExtraValue(v interface{}) interface{} {
+	switch value := v.(type) {
+	case map[string]interface{}:
+		return cloneImageExtraParams(value)
+	case map[string]string:
+		out := make(map[string]string, len(value))
+		for k, item := range value {
+			out[k] = item
+		}
+		return out
+	case []interface{}:
+		out := make([]interface{}, len(value))
+		for i, item := range value {
+			out[i] = cloneImageExtraValue(item)
+		}
+		return out
+	case []string:
+		return append([]string(nil), value...)
+	case []byte:
+		return append([]byte(nil), value...)
+	default:
+		return v
+	}
 }
 
 func cloneImageGenerationParameters(in *schemas.ImageGenerationParameters) *schemas.ImageGenerationParameters {
