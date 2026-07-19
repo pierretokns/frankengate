@@ -419,7 +419,7 @@ seed_post_allow_conflict "http://${pod_ips[0]}:8080/api/providers/openai/keys" \
 
 created="$(kubectl -n "$NAMESPACE" exec frankengate-binary -- wget -qO- \
   --header 'Content-Type: application/json' \
-  --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\",\"budgets\":[{\"max_limit\":0.001,\"reset_duration\":\"1h\"}],\"provider_configs\":[{\"provider\":\"openai\",\"weight\":1,\"allowed_models\":[\"*\"]}]}" \
+  --post-data "{\"name\":\"horizontal-coherence-proof-${RANDOM}-${SECONDS}\",\"budgets\":[{\"max_limit\":100,\"reset_duration\":\"1h\"}],\"provider_configs\":[{\"provider\":\"openai\",\"weight\":1,\"allowed_models\":[\"*\"]}]}" \
   "http://${pod_ips[0]}:8080/api/governance/virtual-keys")"
 vk_id="$(jq -er '.virtual_key.id' <<<"$created")"
 original_secret="$(jq -er '.secret' <<<"$created")"
