@@ -304,6 +304,12 @@ function OverviewTabImpl({
 					}
 				>
 					<CostChart data={costData} chartType={costChartType} startTime={startTime} endTime={endTime} selectedModel={costModel} />
+					{(logsStats?.unpriced_requests ?? 0) > 0 && (
+						<div className="mt-3 rounded border border-amber-300/60 bg-amber-50/60 px-3 py-2 text-xs text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/20 dark:text-amber-200" data-testid="dashboard-unpriced-warning">
+							<span className="font-medium">{logsStats?.unpriced_requests?.toLocaleString()} requests have unresolved pricing.</span>{" "}
+							Cost totals exclude these rows; token telemetry remains available for reconciliation.
+						</div>
+					)}
 				</ChartCard>
 
 				{/* Model Usage Chart */}

@@ -630,7 +630,9 @@ export interface LogStats {
 	user_facing_total_requests: number;
 	average_latency: number;
 	total_tokens: number;
-	total_cost: number;
+	 total_cost: number;
+	unpriced_requests?: number;
+	unpriced_tokens?: number;
 	cache_hit_rate_total_requests?: number | null;
 	direct_cache_hits?: number | null;
 	semantic_cache_hits?: number | null;

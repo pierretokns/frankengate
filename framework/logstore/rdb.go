@@ -1006,6 +1006,21 @@ func (s *RDBLogStore) GetStats(ctx context.Context, filters SearchFilters) (*Sea
 		`).Scan(&result).Error; err != nil {
 			return nil, err
 		}
+		// Cost is nullable in the log store. Count rows with token usage but no
+		// resolved price explicitly; this is the authoritative signal used by
+		// the dashboard to distinguish unresolved pricing from zero cost.
+		var unpriced struct {
+			Requests sql.NullInt64 `gorm:"column:requests"`
+			Tokens   sql.NullInt64 `gorm:"column:tokens"`
+		}
+		unpricedQuery := s.ScopedDB(ctx).Model(&Log{})
+		unpricedQuery = s.applyFilters(unpricedQuery, filters).Where("status IN ?", terminalLogStatuses)
+		if err := unpricedQuery.Select("COUNT(*) AS requests, COALESCE(SUM(total_tokens), 0) AS tokens").Where("cost IS NULL AND total_tokens > 0").Scan(&unpriced).Error; err == nil {
+			stats.UnpricedRequests = unpriced.Requests.Int64
+			stats.UnpricedTokens = unpriced.Tokens.Int64
+		} else {
+			s.logger.Warn(fmt.Sprintf("logstore: failed to aggregate unresolved pricing stats, skipping: %s", err))
+		}
 
 		completedCount := result.CompletedCount.Int64
 		stats.CacheHitRateTotalRequests = &completedCount
