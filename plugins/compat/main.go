@@ -194,7 +194,13 @@ func (p *CompatPlugin) Cleanup() error {
 func (p *CompatPlugin) markForConversion(ctx *schemas.BifrostContext, provider schemas.ModelProvider, model string, currentType schemas.RequestType, targetType schemas.RequestType) {
 	shouldConvert := false
 	if p.modelCatalog != nil {
-		if !p.modelCatalog.IsRequestTypeSupported(model, provider, currentType) && p.modelCatalog.IsRequestTypeSupported(model, provider, targetType) {
+		// Compatibility conversion must stay within the selected provider.  The
+		// legacy IsRequestTypeSupported API is model-only and can report an
+		// operation from a different provider (for example an OpenAI chat row for
+		// a Bedrock model).  Using the provider-scoped admission check here avoids
+		// rewriting requests into an operation that the selected upstream cannot
+		// serve.
+		if !p.modelCatalog.IsRequestTypeSupportedForProvider(model, provider, currentType) && p.modelCatalog.IsRequestTypeSupportedForProvider(model, provider, targetType) {
 			shouldConvert = true
 		}
 	} else {
