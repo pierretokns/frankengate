@@ -151,6 +151,41 @@ func TestReplayRedactsStructuredStringMapAttributes(t *testing.T) {
 	}
 }
 
+func TestReplayRedactsRootSpanAndEventAttributes(t *testing.T) {
+	store, err := NewJSONLReplayStore(t.TempDir(), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	root := &schemas.Span{SpanID: "root", StatusMsg: "failed for alice@example.com", Events: []schemas.SpanEvent{{
+		Name: "mcp.tool", Attributes: map[string]any{
+			"tool.arguments": `{"email":"alice@example.com"}`,
+			"safe":           "contact bob@example.com",
+		},
+	}}}
+	trace := &schemas.Trace{TraceID: "root-events", Attributes: map[string]any{"tenant": "acme"}, RootSpan: root}
+	if err := store.Put(context.Background(), trace); err != nil {
+		t.Fatal(err)
+	}
+	record, err := store.Get(context.Background(), "acme", "root-events")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if record.Trace.RootSpan == nil || len(record.Trace.RootSpan.Events) != 1 {
+		t.Fatalf("root span/events were not persisted: %#v", record.Trace.RootSpan)
+	}
+	event := record.Trace.RootSpan.Events[0]
+	if _, ok := event.Attributes["tool.arguments"]; ok {
+		t.Fatal("tool event arguments leaked into replay")
+	}
+	if got := event.Attributes["safe"]; got != "contact [REDACTED]" {
+		t.Fatalf("event PII was not redacted: %#v", got)
+	}
+	if got := record.Trace.RootSpan.StatusMsg; got != "failed for [REDACTED]" {
+		t.Fatalf("span status PII was not redacted: %q", got)
+	}
+}
+
 func TestJSONLReplayStoreListIsTenantScopedBoundedAndRestartSafe(t *testing.T) {
 	dir := t.TempDir()
 	store, err := NewJSONLReplayStore(dir, false)

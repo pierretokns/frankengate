@@ -529,20 +529,41 @@ func sanitizeReplayPII(t *schemas.Trace) {
 		}
 		t.Attributes[key] = redactReplayStrings(t.Attributes[key])
 	}
+	// RootSpan is not guaranteed to be present in t.Spans (callers may build a
+	// trace with only the root pointer).  Sanitize it explicitly so event
+	// attributes cannot bypass the replay privacy boundary.
+	sanitizeReplaySpan(t.RootSpan)
 	for _, span := range t.Spans {
-		if span == nil {
-			continue
-		}
-		for key := range span.Attributes {
-			if replayPIIKey(key) {
-				delete(span.Attributes, key)
-				continue
-			}
-			span.Attributes[key] = redactReplayStrings(span.Attributes[key])
-		}
+		sanitizeReplaySpan(span)
 	}
 	for i := range t.PluginLogs {
 		t.PluginLogs[i].Message = privacy.RedactText(t.PluginLogs[i].Message)
+	}
+}
+
+// sanitizeReplaySpan applies the same boundary to span attributes and event
+// attributes.  Events are a common OTEL location for tool arguments/results
+// and error details, and are otherwise easy to miss when sanitizing a trace.
+func sanitizeReplaySpan(span *schemas.Span) {
+	if span == nil {
+		return
+	}
+	for key := range span.Attributes {
+		if replayPIIKey(key) {
+			delete(span.Attributes, key)
+			continue
+		}
+		span.Attributes[key] = redactReplayStrings(span.Attributes[key])
+	}
+	span.StatusMsg = privacy.RedactText(span.StatusMsg)
+	for i := range span.Events {
+		for key := range span.Events[i].Attributes {
+			if replayPIIKey(key) {
+				delete(span.Events[i].Attributes, key)
+				continue
+			}
+			span.Events[i].Attributes[key] = redactReplayStrings(span.Events[i].Attributes[key])
+		}
 	}
 }
 
@@ -554,7 +575,7 @@ func replayPIIKey(key string) bool {
 	if lower == "tenant" || lower == "tenantid" || lower == "bifrosttenantid" {
 		return false
 	}
-	for _, marker := range []string{"prompt", "completion", "content", "message", "query", "toolinput", "tooloutput", "toolargs", "toolresult", "coder", "email", "username", "principal", "peeraddress", "clientpeer", "forwardedfor", "sourceip", "remoteaddr", "useragent", "sessionid"} {
+	for _, marker := range []string{"prompt", "completion", "content", "message", "query", "toolinput", "tooloutput", "toolargs", "toolarguments", "toolresult", "coder", "email", "username", "principal", "peeraddress", "clientpeer", "forwardedfor", "sourceip", "remoteaddr", "useragent", "sessionid"} {
 		if strings.Contains(lower, marker) {
 			return true
 		}
