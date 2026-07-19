@@ -674,6 +674,17 @@ func (plugin *Plugin) PostLLMHook(ctx *schemas.BifrostContext, res *schemas.Bifr
 		}
 		return res, nil, nil
 	}
+	// PostLLMHook returns the response to the core pipeline, which may still
+	// populate usage/extra fields after this hook returns. The writer is
+	// asynchronous, so handing it `res` directly races with that mutation and
+	// can serialize a torn response. Snapshot the bounded response before
+	// starting the goroutine; stream-sized state is already held by the stream
+	// accumulator and is not copied here.
+	cacheResponse := cloneResponseForAsync(res)
+	if cacheResponse == nil {
+		plugin.logger.Warn("Skipping semantic cache write (namespace=%s, id=%s): response snapshot failed", plugin.config.VectorStoreNamespace, storageID)
+		return res, nil, nil
+	}
 
 	plugin.writersWg.Add(1)
 	go func() {
@@ -689,17 +700,32 @@ func (plugin *Plugin) PostLLMHook(ctx *schemas.BifrostContext, res *schemas.Bifr
 			unifiedMetadata[key] = value
 		}
 		if isStream {
-			if err := plugin.addStreamingResponse(cacheCtx, requestID, storageID, res, embeddingToStore, unifiedMetadata, cacheTTL, isFinalChunk); err != nil {
+			if err := plugin.addStreamingResponse(cacheCtx, requestID, storageID, cacheResponse, embeddingToStore, unifiedMetadata, cacheTTL, isFinalChunk); err != nil {
 				plugin.logger.Warn("Failed to cache streaming response (namespace=%s, id=%s): %v. The cache_id stamped on the response will not resolve on subsequent lookups.", plugin.config.VectorStoreNamespace, storageID, err)
 			}
 		} else {
-			if err := plugin.addNonStreamingResponse(cacheCtx, storageID, res, embeddingToStore, unifiedMetadata, cacheTTL); err != nil {
+			if err := plugin.addNonStreamingResponse(cacheCtx, storageID, cacheResponse, embeddingToStore, unifiedMetadata, cacheTTL); err != nil {
 				plugin.logger.Warn("Failed to cache single response (namespace=%s, id=%s): %v. The cache_id stamped on the response will not resolve on subsequent lookups.", plugin.config.VectorStoreNamespace, storageID, err)
 			}
 		}
 	}()
 
 	return res, nil, nil
+}
+
+func cloneResponseForAsync(response *schemas.BifrostResponse) *schemas.BifrostResponse {
+	if response == nil {
+		return nil
+	}
+	raw, err := json.Marshal(response)
+	if err != nil {
+		return nil
+	}
+	var clone schemas.BifrostResponse
+	if err := json.Unmarshal(raw, &clone); err != nil {
+		return nil
+	}
+	return &clone
 }
 
 // shouldSkipCacheWrite returns true if the upstream response should NOT be

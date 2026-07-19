@@ -552,8 +552,11 @@ func NewTestSetupWithVectorStore(t *testing.T, config *Config, storeType vectors
 	// Get a mocked Bifrost client
 	client := getMockedBifrostClient(t, ctx, logger, plugin)
 
-	// Wire the global client as the embedding executor so semantic search works.
-	pluginImpl.SetEmbeddingRequestExecutor(throttledEmbeddingExecutor(client.EmbeddingRequest))
+	// Use a deterministic local embedding for semantic-cache integration tests.
+	// These tests validate cache/race behavior, not a live provider contract;
+	// relying on env.OPENAI_API_KEY made them fail closed (and race under
+	// shared external rate limits) when the key was absent.
+	pluginImpl.SetEmbeddingRequestExecutor(testEmbeddingExecutor(config.Dimension))
 
 	return &TestSetup{
 		Logger: logger,
@@ -561,6 +564,27 @@ func NewTestSetupWithVectorStore(t *testing.T, config *Config, storeType vectors
 		Plugin: plugin,
 		Client: client,
 		Config: config,
+	}
+}
+
+func testEmbeddingExecutor(dimension int) EmbeddingRequestExecutor {
+	if dimension <= 0 {
+		dimension = 3
+	}
+	return func(_ *schemas.BifrostContext, req *schemas.BifrostEmbeddingRequest) (*schemas.BifrostEmbeddingResponse, *schemas.BifrostError) {
+		count := 1
+		if req != nil && req.Input != nil {
+			if len(req.Input.Texts) > 0 {
+				count = len(req.Input.Texts)
+			}
+		}
+		data := make([]schemas.EmbeddingData, count)
+		for i := range data {
+			vector := make([]float64, dimension)
+			vector[0] = 1
+			data[i] = schemas.EmbeddingData{Embedding: schemas.EmbeddingStruct{EmbeddingArray: vector}, Index: i}
+		}
+		return &schemas.BifrostEmbeddingResponse{Data: data}, nil
 	}
 }
 
