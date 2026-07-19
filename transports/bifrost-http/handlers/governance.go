@@ -21,6 +21,7 @@ import (
 	"github.com/fasthttp/router"
 	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
@@ -131,6 +132,38 @@ type GovernanceHandler struct {
 	// but whose usage lives outside the VK's own budget rows (enterprise
 	// access-profile-managed VKs). Injected at construction; nil on OSS builds.
 	externalQuotaBudgetResolver ExternalQuotaBudgetResolver
+}
+
+// validateVirtualKeyManagementAuthority validates an authorization epoch when
+// trusted identity middleware attached one to the request.  Management routes
+// are also used by break-glass operators, so an absent snapshot remains
+// compatible with the existing admin authentication chain.  A malformed
+// snapshot, an unavailable durable epoch store, or a stale Okta/SCIM group
+// epoch fails closed: reveal and rotate must never operate on a request whose
+// identity grants may have been revoked on another pod.
+func (h *GovernanceHandler) validateVirtualKeyManagementAuthority(ctx *fasthttp.RequestCtx) error {
+	if ctx == nil {
+		return authorityepoch.ErrInvalidReference
+	}
+	// fasthttp's Value delegates to UserValue, allowing the same trusted
+	// authority snapshot propagated by the transport middleware to be checked
+	// before any secret-bearing VK operation.
+	if ctx.Value(schemas.BifrostContextKeyAuthorizationEpochReference) == nil &&
+		ctx.Value(schemas.BifrostContextKeyAuthorizationPrincipal) == nil {
+		return nil
+	}
+	ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
+	if err != nil {
+		return fmt.Errorf("virtual-key management authority is invalid: %w", err)
+	}
+	store, ok := h.configStore.(configstore.PrincipalAuthorizationEpochStore)
+	if !ok {
+		return fmt.Errorf("virtual-key management authority store unavailable: %w", authorityepoch.ErrInvalidReference)
+	}
+	if err := store.ValidatePrincipalAuthorizationEpoch(ctx, ref); err != nil {
+		return fmt.Errorf("virtual-key management authority is stale: %w", err)
+	}
+	return nil
 }
 
 // NewGovernanceHandler creates a new governance handler instance.
@@ -1717,6 +1750,10 @@ func (h *GovernanceHandler) revealVirtualKey(ctx *fasthttp.RequestCtx) {
 	// Secret-bearing endpoint responses, including errors, must never be cached.
 	ctx.Response.Header.Set("Cache-Control", "no-store")
 	ctx.Response.Header.Set("Pragma", "no-cache")
+	if err := h.validateVirtualKeyManagementAuthority(ctx); err != nil {
+		SendError(ctx, 403, "Virtual key authorization is stale or unavailable")
+		return
+	}
 	vkID := ctx.UserValue("vk_id").(string)
 	vk, err := h.configStore.GetVirtualKey(ctx, vkID)
 	if err != nil {
@@ -2276,6 +2313,12 @@ func (h *GovernanceHandler) rotateVirtualKeyByID(ctx context.Context, vkID strin
 
 // rotateVirtualKey handles POST /api/governance/virtual-keys/{vk_id}/rotate - Rotate only the virtual key value
 func (h *GovernanceHandler) rotateVirtualKey(ctx *fasthttp.RequestCtx) {
+	ctx.Response.Header.Set("Cache-Control", "no-store")
+	ctx.Response.Header.Set("Pragma", "no-cache")
+	if err := h.validateVirtualKeyManagementAuthority(ctx); err != nil {
+		SendError(ctx, 403, "Virtual key authorization is stale or unavailable")
+		return
+	}
 	vkID := ctx.UserValue("vk_id").(string)
 	preloadedVk, secret, err := h.rotateVirtualKeyByID(ctx, vkID)
 	if err != nil {
@@ -2304,8 +2347,6 @@ func (h *GovernanceHandler) rotateVirtualKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, 500, fmt.Sprintf("Failed to rotate virtual key: %v", err))
 		return
 	}
-	ctx.Response.Header.Set("Cache-Control", "no-store")
-	ctx.Response.Header.Set("Pragma", "no-cache")
 	SendJSON(ctx, map[string]interface{}{
 		"message":           "Virtual key rotated successfully",
 		"virtual_key":       redactVirtualKey(preloadedVk),
