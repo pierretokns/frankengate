@@ -46,6 +46,19 @@ func TestRequireGovernedCacheAuthorityFailsClosedBeforeLookup(t *testing.T) {
 	}
 }
 
+func TestRequireGovernedCacheAuthorityValidatesPrincipalOnlyEpochReference(t *testing.T) {
+	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyAuthorizationEpochReference, authorityepoch.Reference{
+		Principal: authorityepoch.Principal{Tenant: "tenant-a"},
+		Epoch:     1,
+		Kind:      authorityepoch.ArtifactCache,
+		ID:        "cache-scope",
+	})
+	if err := requireGovernedCacheAuthority(ctx); err == nil {
+		t.Fatal("expected malformed principal-only epoch reference to fail closed")
+	}
+}
+
 func TestAuthorizationCacheQueriesIncludeTenantAndPrincipalScope(t *testing.T) {
 	queries := authorizationCacheQueries(map[string]any{
 		"authorization_tenant":  "tenant-a",
@@ -129,10 +142,10 @@ func TestCacheResultRejectsGovernedEntryForUnscopedCaller(t *testing.T) {
 	// governed request; the post-fetch fence must reject that entry rather
 	// than replaying a response across the authorization boundary.
 	result := vectorstore.SearchResult{Properties: map[string]interface{}{
-		"authorization_tenant": "tenant-a",
+		"authorization_tenant":  "tenant-a",
 		"authorization_subject": "alice",
-		"authorization_epoch": uint64(3),
-		"response": "secret",
+		"authorization_epoch":   uint64(3),
+		"response":              "secret",
 	}}
 	if cacheResultMatchesAuthority(result, nil) {
 		t.Fatal("unscoped caller matched an authorization-scoped cache entry")

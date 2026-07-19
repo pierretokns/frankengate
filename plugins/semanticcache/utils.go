@@ -299,6 +299,19 @@ func requireGovernedCacheAuthority(ctx *schemas.BifrostContext) error {
 	if ctx == nil {
 		return nil
 	}
+	// An epoch reference is itself a governed authorization claim.  Do not
+	// classify a request as legacy merely because the caller did not also set
+	// one of the derived governance scope IDs (for example, a principal-only
+	// cache grant).  Validate the reference before allowing a lookup or
+	// invalidation to proceed; otherwise malformed principal/epoch context can
+	// silently take the unscoped compatibility path in integrations that only
+	// attach the epoch reference.
+	if ctx.Value(schemas.BifrostContextKeyAuthorizationEpochReference) != nil {
+		if _, err := authorityMetadataForCaching(ctx); err != nil {
+			return fmt.Errorf("semantic cache authorization scope is invalid: %w", err)
+		}
+		return nil
+	}
 	scoped := false
 	for _, key := range []schemas.BifrostContextKey{
 		schemas.BifrostContextKeyGovernanceVirtualKeyID,
