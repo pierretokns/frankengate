@@ -15,6 +15,7 @@ type principalAuthorityTestSource struct {
 	events     []tables.TablePrincipalAuthorizationEpochEvent
 	rows       []tables.TablePrincipalAuthorizationEpoch
 	err        error
+	highWater  uint64
 	onSnapshot func()
 }
 
@@ -81,10 +82,34 @@ func TestPrincipalAuthorityPollerFailsClosedWhenClockMovesBackward(t *testing.T)
 }
 
 func (s *principalAuthorityTestSource) GetPrincipalAuthorizationEpochHighWatermark(context.Context) (uint64, error) {
+	if s.highWater != 0 {
+		return s.highWater, nil
+	}
 	if len(s.events) == 0 {
 		return 0, nil
 	}
 	return s.events[len(s.events)-1].ID, nil
+}
+
+func TestPrincipalAuthorityPollerFailsClosedOnWatermarkRegression(t *testing.T) {
+	principal := authorityepoch.Principal{Tenant: "tenant-a", Issuer: "issuer-a", Subject: "user-a"}
+	source := &principalAuthorityTestSource{events: []tables.TablePrincipalAuthorizationEpochEvent{
+		{ID: 1, TenantID: principal.Tenant, Issuer: principal.Issuer, Subject: principal.Subject, NewEpoch: 1, Active: true, Reason: "activated", Revision: 1, SchemaVersion: 1},
+		{ID: 2, TenantID: principal.Tenant, Issuer: principal.Issuer, Subject: principal.Subject, OldEpoch: 1, NewEpoch: 2, Active: false, Reason: "deactivated", Revision: 2, SchemaVersion: 1},
+	}}
+	poller := newPrincipalAuthorityPoller(source, authorityepoch.NewRegistry(), 100)
+	more, err := poller.pollOnce(context.Background())
+	require.NoError(t, err)
+	require.False(t, more)
+	require.True(t, poller.IsPrincipalAuthorityFresh())
+
+	// Simulate a stale read replica/failover view returning an older outbox
+	// watermark after this pod has already applied the revocation.
+	source.highWater = 1
+	_, err = poller.pollOnce(context.Background())
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "watermark regressed")
+	require.False(t, poller.IsPrincipalAuthorityFresh(), "watermark regression must close the authority lease")
 }
 
 func TestPrincipalAuthorityPollerReplaysAndCancelsLiveMCPReference(t *testing.T) {

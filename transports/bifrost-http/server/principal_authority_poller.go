@@ -66,7 +66,15 @@ func (p *principalAuthorityPoller) Cursor() uint64 {
 	return p.cursor.Load()
 }
 
-func (p *principalAuthorityPoller) pollOnce(ctx context.Context) (bool, error) {
+func (p *principalAuthorityPoller) pollOnce(ctx context.Context) (more bool, err error) {
+	// Any failed authority read or event application must close the lease
+	// immediately. Retaining the previous success timestamp would let a pod
+	// continue accepting requests during a detected watermark regression.
+	defer func() {
+		if err != nil {
+			p.lastSuccessUnixNano.Store(0)
+		}
+	}()
 	cursor := p.cursor.Load()
 	events, err := p.store.ListPrincipalAuthorizationEpochEventsAfter(ctx, cursor, p.batch)
 	if err != nil {
@@ -89,6 +97,15 @@ func (p *principalAuthorityPoller) pollOnce(ctx context.Context) (bool, error) {
 	high, err := p.store.GetPrincipalAuthorizationEpochHighWatermark(ctx)
 	if err != nil {
 		return false, err
+	}
+	// A replica/read-after-failover can briefly report a watermark older than
+	// the cursor this pod has already applied. Treat that as an authority
+	// regression instead of publishing a successful fresh read: otherwise the
+	// cursor would appear caught up against the regressed watermark and a
+	// revocation present on the primary could be missed indefinitely.
+	previousHigh := p.highWatermark.Load()
+	if high < cursor || high < previousHigh {
+		return false, fmt.Errorf("principal authority watermark regressed: cursor=%d previous_high=%d high=%d", cursor, previousHigh, high)
 	}
 	// Freshness is a lease over a caught-up snapshot, not merely a successful
 	// database read. Publish the watermark alongside the cursor so readiness
