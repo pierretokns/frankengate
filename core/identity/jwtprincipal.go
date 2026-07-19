@@ -72,7 +72,7 @@ func Verify(raw string, cfg JWTConfig) (Claims, error) {
 		return cfg.KeyFunc(t)
 	}, jwt.WithValidMethods([]string{jwt.SigningMethodRS256.Alg()}),
 		jwt.WithIssuer(cfg.Issuer), jwt.WithAudience(cfg.Audience),
-		jwt.WithExpirationRequired(), jwt.WithIssuedAt())
+		jwt.WithExpirationRequired(), jwt.WithIssuedAt(), jwt.WithTimeFunc(clock))
 	if err != nil || tok == nil || !tok.Valid {
 		if err != nil {
 			if errors.Is(err, jwt.ErrTokenExpired) {
