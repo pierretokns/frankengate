@@ -32,6 +32,9 @@ type ReplayRecord struct {
 type ReplayStore interface {
 	Put(ctx context.Context, trace *schemas.Trace) error
 	Get(ctx context.Context, tenantID, traceID string) (*ReplayRecord, error)
+	// List returns at most limit records for one tenant, newest first. A
+	// tenant is always required; callers cannot enumerate other tenants.
+	List(ctx context.Context, tenantID string, limit int) ([]ReplayRecord, error)
 	Close() error
 }
 
@@ -133,6 +136,74 @@ func (s *JSONLReplayStore) Get(ctx context.Context, tenantID, traceID string) (*
 		return nil, os.ErrNotExist
 	}
 	return found, nil
+}
+
+// List is the backend-neutral export boundary for replay consumers. It scans
+// only the requested tenant partition and bounds the result so an operator
+// cannot accidentally load an unbounded history into memory. Records are
+// returned newest first (append order is the durable order).
+func (s *JSONLReplayStore) List(ctx context.Context, tenantID string, limit int) ([]ReplayRecord, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	tenantID = strings.TrimSpace(tenantID)
+	if tenantID == "" {
+		return nil, fmt.Errorf("tenant is required")
+	}
+	if limit <= 0 {
+		return nil, fmt.Errorf("limit must be positive")
+	}
+	if limit > 1000 {
+		limit = 1000
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	f := s.files[tenantID]
+	var r *os.File
+	var err error
+	if f != nil {
+		r = f
+		if _, err = r.Seek(0, 0); err != nil {
+			return nil, err
+		}
+	} else {
+		r, err = os.Open(filepath.Join(s.dir, safeTenant(tenantID)+".jsonl"))
+		if err != nil {
+			if os.IsNotExist(err) {
+				return []ReplayRecord{}, nil
+			}
+			return nil, err
+		}
+		defer r.Close()
+	}
+
+	// Keep only the newest limit records while scanning append order.
+	records := make([]ReplayRecord, 0, limit)
+	scanner := bufio.NewScanner(r)
+	scanner.Buffer(make([]byte, 4096), 16*1024*1024)
+	for scanner.Scan() {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		var candidate ReplayRecord
+		if json.Unmarshal(scanner.Bytes(), &candidate) != nil || candidate.TenantID != tenantID {
+			continue
+		}
+		if len(records) == limit {
+			copy(records, records[1:])
+			records[len(records)-1] = candidate
+		} else {
+			records = append(records, candidate)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	for i, j := 0, len(records)-1; i < j; i, j = i+1, j-1 {
+		records[i], records[j] = records[j], records[i]
+	}
+	return records, nil
 }
 
 func (s *JSONLReplayStore) Close() error {

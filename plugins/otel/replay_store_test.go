@@ -40,6 +40,54 @@ func TestJSONLReplayStoreTenantIsolationAndRedaction(t *testing.T) {
 	}
 }
 
+func TestJSONLReplayStoreListIsTenantScopedBoundedAndRestartSafe(t *testing.T) {
+	dir := t.TempDir()
+	store, err := NewJSONLReplayStore(dir, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, id := range []string{"trace-1", "trace-2", "trace-3"} {
+		if err := store.Put(context.Background(), &schemas.Trace{TraceID: id, Attributes: map[string]any{"tenant": "acme"}}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := store.Put(context.Background(), &schemas.Trace{TraceID: "other-1", Attributes: map[string]any{"tenant": "other"}}); err != nil {
+		t.Fatal(err)
+	}
+	rows, err := store.List(context.Background(), "acme", 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(rows) != 2 || rows[0].TraceID != "trace-3" || rows[1].TraceID != "trace-2" {
+		t.Fatalf("expected newest bounded records, got %#v", rows)
+	}
+	if _, err := store.List(context.Background(), "", 2); err == nil {
+		t.Fatal("expected tenant requirement")
+	}
+	if err := store.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	// A new process can export the same tenant partition without access to
+	// another tenant's records.
+	restarted, err := NewJSONLReplayStore(dir, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer restarted.Close()
+	rows, err = restarted.List(context.Background(), "acme", 10)
+	if err != nil || len(rows) != 3 {
+		t.Fatalf("restart list failed: len=%d err=%v", len(rows), err)
+	}
+	if rows[0].TenantID != "acme" || rows[0].TraceID != "trace-3" {
+		t.Fatalf("unexpected tenant/export result: %#v", rows[0])
+	}
+	other, err := restarted.List(context.Background(), "other", 10)
+	if err != nil || len(other) != 1 || other[0].TenantID != "other" {
+		t.Fatalf("other tenant partition unavailable: %#v err=%v", other, err)
+	}
+}
+
 func TestJSONLReplayStoreRequiresTenant(t *testing.T) {
 	store, err := NewJSONLReplayStore(t.TempDir(), false)
 	if err != nil {
