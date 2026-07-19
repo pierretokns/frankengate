@@ -84,6 +84,40 @@ func TestGovernanceOutcomeLabelsAreBounded(t *testing.T) {
 	}
 }
 
+func TestTraceExportHealthMetricsRecordSuccessAndFailure(t *testing.T) {
+	reader := sdkmetric.NewManualReader()
+	provider := sdkmetric.NewMeterProvider(sdkmetric.WithReader(reader))
+	defer provider.Shutdown(context.Background())
+	exporter := &MetricsExporter{provider: provider, meter: provider.Meter("frankengate-test")}
+	exporter.initMetrics()
+	ctx := context.Background()
+	attrs := attribute.String("service_name", "collector-a")
+	exporter.RecordTraceExport(ctx, true, 0.25, attrs)
+	exporter.RecordTraceExport(ctx, false, 1.5, attrs)
+
+	var metrics metricdata.ResourceMetrics
+	if err := reader.Collect(ctx, &metrics); err != nil {
+		t.Fatalf("collect trace export metrics: %v", err)
+	}
+	want := map[string]bool{
+		"bifrost_otel_trace_exports_total":          false,
+		"bifrost_otel_trace_export_errors_total":    false,
+		"bifrost_otel_trace_export_latency_seconds": false,
+	}
+	for _, scope := range metrics.ScopeMetrics {
+		for _, m := range scope.Metrics {
+			if _, ok := want[m.Name]; ok {
+				want[m.Name] = true
+			}
+		}
+	}
+	for name, found := range want {
+		if !found {
+			t.Errorf("collected metrics missing %s", name)
+		}
+	}
+}
+
 func TestOverdraftOutcomeMatchesPrometheusContract(t *testing.T) {
 	reader := sdkmetric.NewManualReader()
 	provider := sdkmetric.NewMeterProvider(sdkmetric.WithReader(reader))

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/bytedance/sonic"
 	bifrost "github.com/maximhq/bifrost/core"
@@ -743,8 +744,15 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 		go func(t *otelTarget) {
 			defer wg.Done()
 			if t.client != nil {
+				started := time.Now()
 				resourceSpan := p.convertTraceToResourceSpan(t.serviceName, trace, t.requestHeaders, t.disableContentLogging, t.groupTracesBySession, t.disableRootSpanContent)
-				if err := t.client.Emit(ctx, []*ResourceSpan{resourceSpan}); err != nil {
+				err := t.client.Emit(ctx, []*ResourceSpan{resourceSpan})
+				if t.metricsExporter != nil {
+					// service_name is configured by the operator and bounded by the
+					// profile count; do not label this metric with endpoint or trace ID.
+					t.metricsExporter.RecordTraceExport(ctx, err == nil, time.Since(started).Seconds(), attribute.String("service_name", t.serviceName))
+				}
+				if err != nil {
 					logger.Error("failed to emit trace %s to %s: %v", trace.TraceID, t.url, err)
 				}
 			}

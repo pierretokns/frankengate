@@ -82,6 +82,13 @@ type MetricsExporter struct {
 	governanceSyncReloadLatency       *syncFloat64UpDownCounter
 	governanceSyncConsumerLag         *syncFloat64UpDownCounter
 	governanceSyncReady               *syncFloat64UpDownCounter
+
+	// Trace exporter health. These describe the delivery path from the gateway
+	// to each configured collector (rather than the upstream inference path),
+	// making collector outages and reconnect/retry storms visible to operators.
+	traceExportsTotal      *syncInt64Counter
+	traceExportErrorsTotal *syncInt64Counter
+	traceExportLatency     *syncFloat64Histogram
 }
 
 // syncInt64Counter wraps metric.Int64Counter with thread-safe lazy initialization
@@ -511,6 +518,9 @@ func (m *MetricsExporter) initMetrics() {
 	m.governanceSyncReloadLatency = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_reload_latency_seconds", desc: "Most recent governance authority reload latency", unit: "s", meter: m.meter}
 	m.governanceSyncConsumerLag = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_consumer_lag", desc: "Current governance invalidation consumer lag in outbox event IDs", unit: "{event}", meter: m.meter}
 	m.governanceSyncReady = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_ready", desc: "Whether this pod has a fresh governance authority snapshot", unit: "{state}", meter: m.meter}
+	m.traceExportsTotal = &syncInt64Counter{name: "bifrost_otel_trace_exports_total", desc: "Trace export attempts to configured OpenTelemetry collectors", unit: "{export}", meter: m.meter}
+	m.traceExportErrorsTotal = &syncInt64Counter{name: "bifrost_otel_trace_export_errors_total", desc: "Trace export attempts that failed or received a non-success collector response", unit: "{export}", meter: m.meter}
+	m.traceExportLatency = &syncFloat64Histogram{name: "bifrost_otel_trace_export_latency_seconds", desc: "Latency of trace exports to configured OpenTelemetry collectors", unit: "s", meter: m.meter, boundaries: upstreamLatencyBuckets}
 }
 
 // Shutdown gracefully shuts down the metrics exporter
@@ -534,6 +544,20 @@ func (m *MetricsExporter) RecordSuccessRequest(ctx context.Context, attrs ...att
 // RecordErrorRequest records an error request metric
 func (m *MetricsExporter) RecordErrorRequest(ctx context.Context, attrs ...attribute.KeyValue) {
 	m.errorRequestsTotal.Add(ctx, 1, metric.WithAttributes(attrs...))
+}
+
+// RecordTraceExport records delivery health for one configured OTEL target.
+// The target attribute should be a bounded profile/service identifier, never
+// a URL containing credentials or arbitrary request data.
+func (m *MetricsExporter) RecordTraceExport(ctx context.Context, success bool, latencySeconds float64, attrs ...attribute.KeyValue) {
+	opts := metric.WithAttributes(attrs...)
+	m.traceExportsTotal.Add(ctx, 1, opts)
+	if !success {
+		m.traceExportErrorsTotal.Add(ctx, 1, opts)
+	}
+	if latencySeconds >= 0 {
+		m.traceExportLatency.Record(ctx, latencySeconds, opts)
+	}
 }
 
 // RecordInputTokens records input tokens metric
