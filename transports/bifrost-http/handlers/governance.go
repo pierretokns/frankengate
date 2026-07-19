@@ -134,6 +134,42 @@ type GovernanceHandler struct {
 	externalQuotaBudgetResolver ExternalQuotaBudgetResolver
 }
 
+// emitVirtualKeyAudit records a bounded management event for secret-bearing
+// virtual-key operations.  It deliberately emits only identifiers and the
+// action/outcome: key material, request bodies, headers, and claims are never
+// included in this event.  The structured logger is optional so OSS/test
+// deployments without a logger remain unaffected.
+func emitVirtualKeyAudit(ctx *fasthttp.RequestCtx, action string, vkID string) {
+	if logger == nil || ctx == nil || vkID == "" {
+		return
+	}
+	tenant, subject, issuer := virtualKeyAuditIdentity(ctx)
+	// Keep the event schema small and stable; these fields are safe to index and
+	// allow security teams to audit reveal/rotate/revoke without secret leakage.
+	logger.LogHTTPRequest(schemas.LogLevelInfo, "virtual_key_management_audit").
+		Str("audit_action", action).
+		Str("virtual_key_id", vkID).
+		Str("tenant_id", tenant).
+		Str("actor_user_id", subject).
+		Str("actor_issuer", issuer).
+		Send()
+}
+
+func virtualKeyAuditIdentity(ctx *fasthttp.RequestCtx) (tenant, subject, issuer string) {
+	if ctx == nil {
+		return "", "", ""
+	}
+	if v, ok := ctx.UserValue(schemas.BifrostContextKeyAuthorizationPrincipal).(authorityepoch.Principal); ok {
+		tenant, subject, issuer = v.Tenant, v.Subject, v.Issuer
+	}
+	if subject == "" {
+		if v, ok := ctx.UserValue(schemas.BifrostContextKeyUserID).(string); ok {
+			subject = v
+		}
+	}
+	return tenant, subject, issuer
+}
+
 // validateVirtualKeyManagementAuthority validates an authorization epoch when
 // trusted identity middleware attached one to the request.  Management routes
 // are also used by break-glass operators, so an absent snapshot remains
@@ -1782,6 +1818,7 @@ func (h *GovernanceHandler) revealVirtualKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, 409, "Virtual key secret is unavailable")
 		return
 	}
+	emitVirtualKeyAudit(ctx, "reveal", vk.ID)
 	SendJSON(ctx, map[string]interface{}{
 		"message":     "Virtual key secret revealed",
 		"virtual_key": redactVirtualKey(vk),
@@ -2339,6 +2376,7 @@ func (h *GovernanceHandler) rotateVirtualKey(ctx *fasthttp.RequestCtx) {
 			// Persistence succeeded, so this response must be successful. Returning
 			// 5xx encourages clients to discard the one-time secret or retry the
 			// mutation, which would immediately invalidate the disclosed credential.
+			emitVirtualKeyAudit(ctx, "rotate", preloadedVk.ID)
 			SendJSON(ctx, map[string]interface{}{
 				"message":           "Virtual key rotated; runtime convergence is pending",
 				"virtual_key":       redactVirtualKey(preloadedVk),
@@ -2351,6 +2389,7 @@ func (h *GovernanceHandler) rotateVirtualKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, 500, fmt.Sprintf("Failed to rotate virtual key: %v", err))
 		return
 	}
+	emitVirtualKeyAudit(ctx, "rotate", preloadedVk.ID)
 	SendJSON(ctx, map[string]interface{}{
 		"message":           "Virtual key rotated successfully",
 		"virtual_key":       redactVirtualKey(preloadedVk),
@@ -2412,6 +2451,7 @@ func (h *GovernanceHandler) rotateVirtualKeys(ctx *fasthttp.RequestCtx) {
 			continue
 		}
 		rotated = append(rotated, rotatedVirtualKeyResponse{redactedVirtualKey: redactVirtualKey(vk), Secret: secret})
+		emitVirtualKeyAudit(ctx, "rotate", vk.ID)
 	}
 
 	ctx.Response.Header.Set("Cache-Control", "no-store")
@@ -2464,6 +2504,7 @@ func (h *GovernanceHandler) deleteVirtualKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, 500, "Failed to delete virtual key")
 		return
 	}
+	emitVirtualKeyAudit(ctx, "revoke", vk.ID)
 	// Removing key from in-memory store
 	err = h.governanceManager.RemoveVirtualKey(ctx, vk.ID)
 	if err != nil {
