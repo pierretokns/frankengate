@@ -15,6 +15,10 @@ MAX_ERROR_RATE="${MAX_ERROR_RATE:-0}"
 HEADERS_FILE="${HEADERS_FILE:-}"
 
 awk -v v="$N" 'BEGIN { if (v < 1 || v != int(v)) exit 1 }' || { echo "N must be a positive integer" >&2; exit 2; }
+is_decimal() { [[ "$1" =~ ^[0-9]+([.][0-9]+)?$ ]]; }
+is_decimal "$MAX_ERROR_RATE" || { echo "MAX_ERROR_RATE must be numeric" >&2; exit 2; }
+is_decimal "$MAX_P95_OVERHEAD_MS" || { echo "MAX_P95_OVERHEAD_MS must be numeric" >&2; exit 2; }
+is_decimal "$MAX_P50_OVERHEAD_MS" || { echo "MAX_P50_OVERHEAD_MS must be numeric" >&2; exit 2; }
 awk -v v="$MAX_ERROR_RATE" 'BEGIN { if (v < 0 || v > 1) exit 1 }' || { echo "MAX_ERROR_RATE must be between 0 and 1" >&2; exit 2; }
 awk -v v="$MAX_P95_OVERHEAD_MS" 'BEGIN { if (v < 0) exit 1 }' || { echo "MAX_P95_OVERHEAD_MS must be non-negative" >&2; exit 2; }
 awk -v v="$MAX_P50_OVERHEAD_MS" 'BEGIN { if (v < 0) exit 1 }' || { echo "MAX_P50_OVERHEAD_MS must be non-negative" >&2; exit 2; }
