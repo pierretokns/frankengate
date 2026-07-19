@@ -221,7 +221,6 @@ func TestAlertingScopeQueryRequiresIDForScopedViews(t *testing.T) {
 		t.Fatalf("missing scope_id should be rejected: ok=%v status=%d", ok, c.Response.StatusCode())
 	}
 }
-
 func TestAlertingScopedChannelListDoesNotExposeOtherTeamChannels(t *testing.T) {
 	store := &alertingConfigStoreStub{row: &tables.TableGovernanceConfig{Value: `{"channels":[{"id":"a","name":"team-a","type":"webhook"},{"id":"b","name":"team-b","type":"webhook"}],"rules":[{"id":"ra","scope":"team","scope_id":"a","channel_ids":["a"]},{"id":"rb","scope":"team","scope_id":"b","channel_ids":["b"]}],"history":[]}`}}
 	r := router.New()
