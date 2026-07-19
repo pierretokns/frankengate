@@ -1624,6 +1624,55 @@ func TestRotateVirtualKeys_PartialSuccess(t *testing.T) {
 	}
 }
 
+func TestRevealVirtualKeyReturnsSecretWithoutCaching(t *testing.T) {
+	SetLogger(&mockLogger{})
+	store := &mockRotateConfigStore{virtualKeys: map[string]*configstoreTables.TableVirtualKey{
+		"vk-reveal": {ID: "vk-reveal", Name: "Reveal me", Value: *schemas.NewSecretVar("sk-bf-reveal-secret")},
+	}}
+	h := &GovernanceHandler{configStore: store}
+	ctx := &fasthttp.RequestCtx{}
+	ctx.SetUserValue("vk_id", "vk-reveal")
+	h.revealVirtualKey(ctx)
+	if ctx.Response.StatusCode() != fasthttp.StatusOK {
+		t.Fatalf("expected 200, got %d: %s", ctx.Response.StatusCode(), ctx.Response.Body())
+	}
+	if got := string(ctx.Response.Header.Peek("Cache-Control")); got != "no-store" {
+		t.Fatalf("expected no-store cache policy, got %q", got)
+	}
+	var response map[string]any
+	if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil {
+		t.Fatal(err)
+	}
+	if response["secret"] != "sk-bf-reveal-secret" {
+		t.Fatalf("unexpected revealed secret: %#v", response["secret"])
+	}
+	if strings.Contains(string(ctx.Response.Body()), `"value"`) {
+		t.Fatalf("reveal response leaked the durable value field: %s", ctx.Response.Body())
+	}
+}
+
+func TestRevealVirtualKeyRejectsInactiveAndExpiredKeys(t *testing.T) {
+	SetLogger(&mockLogger{})
+	inactive := false
+	expired := time.Now().UTC().Add(-time.Minute)
+	store := &mockRotateConfigStore{virtualKeys: map[string]*configstoreTables.TableVirtualKey{
+		"vk-inactive": {ID: "vk-inactive", Value: *schemas.NewSecretVar("sk-bf-inactive"), IsActive: &inactive},
+		"vk-expired":  {ID: "vk-expired", Value: *schemas.NewSecretVar("sk-bf-expired"), ExpiresAt: &expired},
+	}}
+	h := &GovernanceHandler{configStore: store}
+	for _, id := range []string{"vk-inactive", "vk-expired"} {
+		ctx := &fasthttp.RequestCtx{}
+		ctx.SetUserValue("vk_id", id)
+		h.revealVirtualKey(ctx)
+		if ctx.Response.StatusCode() != fasthttp.StatusConflict {
+			t.Fatalf("%s: expected 409, got %d", id, ctx.Response.StatusCode())
+		}
+		if string(ctx.Response.Header.Peek("Cache-Control")) == "" {
+			t.Fatalf("%s: rejection should also be non-cacheable", id)
+		}
+	}
+}
+
 func TestRotateVirtualKeys_RejectsInvalidRequests(t *testing.T) {
 	SetLogger(&mockLogger{})
 

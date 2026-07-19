@@ -1493,6 +1493,11 @@ func (h *GovernanceHandler) createVirtualKey(ctx *fasthttp.RequestCtx) {
 	}
 	var vk configstoreTables.TableVirtualKey
 	var createdSecret string
+	// Preserve the authenticated principal for ownership/audit and future
+	// self-service authorization. Management middleware populates this value;
+	// anonymous/internal callers intentionally leave it nil.
+	createdByUserID, _ := ctx.UserValue(schemas.BifrostContextKeyUserID).(string)
+	createdByUserID = strings.TrimSpace(createdByUserID)
 	if err := h.configStore.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
 		createdSecret = governance.GenerateVirtualKey()
 		vk = configstoreTables.TableVirtualKey{
@@ -1505,6 +1510,9 @@ func (h *GovernanceHandler) createVirtualKey(ctx *fasthttp.RequestCtx) {
 			IsActive:        isActive,
 			CalendarAligned: req.CalendarAligned,
 			ExpiresAt:       req.ExpiresAt,
+		}
+		if createdByUserID != "" {
+			vk.CreatedByUserID = &createdByUserID
 		}
 		if err := h.configStore.CreateVirtualKey(ctx, &vk, tx); err != nil {
 			return err
@@ -1706,6 +1714,9 @@ func (h *GovernanceHandler) getVirtualKey(ctx *fasthttp.RequestCtx) {
 // route is protected by the same governance middleware chain as the other
 // management endpoints and never permits the secret into caches or logs.
 func (h *GovernanceHandler) revealVirtualKey(ctx *fasthttp.RequestCtx) {
+	// Secret-bearing endpoint responses, including errors, must never be cached.
+	ctx.Response.Header.Set("Cache-Control", "no-store")
+	ctx.Response.Header.Set("Pragma", "no-cache")
 	vkID := ctx.UserValue("vk_id").(string)
 	vk, err := h.configStore.GetVirtualKey(ctx, vkID)
 	if err != nil {
@@ -1730,8 +1741,6 @@ func (h *GovernanceHandler) revealVirtualKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, 409, "Virtual key secret is unavailable")
 		return
 	}
-	ctx.Response.Header.Set("Cache-Control", "no-store")
-	ctx.Response.Header.Set("Pragma", "no-cache")
 	SendJSON(ctx, map[string]interface{}{
 		"message":     "Virtual key secret revealed",
 		"virtual_key": redactVirtualKey(vk),
@@ -2295,6 +2304,8 @@ func (h *GovernanceHandler) rotateVirtualKey(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, 500, fmt.Sprintf("Failed to rotate virtual key: %v", err))
 		return
 	}
+	ctx.Response.Header.Set("Cache-Control", "no-store")
+	ctx.Response.Header.Set("Pragma", "no-cache")
 	SendJSON(ctx, map[string]interface{}{
 		"message":           "Virtual key rotated successfully",
 		"virtual_key":       redactVirtualKey(preloadedVk),
@@ -2358,6 +2369,8 @@ func (h *GovernanceHandler) rotateVirtualKeys(ctx *fasthttp.RequestCtx) {
 		rotated = append(rotated, rotatedVirtualKeyResponse{redactedVirtualKey: redactVirtualKey(vk), Secret: secret})
 	}
 
+	ctx.Response.Header.Set("Cache-Control", "no-store")
+	ctx.Response.Header.Set("Pragma", "no-cache")
 	response := map[string]interface{}{
 		"message":      "Virtual keys rotated successfully",
 		"virtual_keys": rotated,
