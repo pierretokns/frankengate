@@ -46,6 +46,13 @@ func (mc *ModelCatalog) ValidateCapabilityDrift(registry datasheet.CapabilityReg
 	return mc.datasheet.ValidateCapabilityDrift(registry)
 }
 
+// ValidateProviderInterface performs a local provider-operation conformance
+// probe. It inspects method presence only; no provider calls or credentials
+// are required. Unknown catalog capabilities remain non-actionable.
+func (mc *ModelCatalog) ValidateProviderInterface(provider schemas.ModelProvider, implementation any, registry datasheet.CapabilityRegistry) []datasheet.ProviderOperationConformance {
+	return datasheet.ValidateProviderInterface(provider, implementation, registry)
+}
+
 func (mc *ModelCatalog) GetSupportedParameters(model string) []string {
 	return mc.datasheet.GetSupportedParameters(model)
 }
