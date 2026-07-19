@@ -23,6 +23,16 @@ func TestContextWindowAdmissionHonorsCataloguedModelLimit(t *testing.T) {
 	require.Equal(t, "context_window_unsupported", *err.Type)
 }
 
+func TestContextWindowAdmissionHonorsCataloguedInputLimit(t *testing.T) {
+	limit := 512000
+	providerUtils.SetModelParams("claude-sonnet-4-5-20250929", providerUtils.ModelParams{MaxInputTokens: &limit})
+	t.Cleanup(func() { providerUtils.DeleteModelParams("claude-sonnet-4-5-20250929") })
+
+	err := validateContextWindowHeaders(contextWindowContext("context-1m-2025-08-07"), schemas.Anthropic, "claude-sonnet-4-5-20250929", schemas.ChatCompletionRequest)
+	require.NotNil(t, err)
+	require.Equal(t, "context_window_unsupported", *err.Type)
+}
+
 func contextWindowContext(value string) *schemas.BifrostContext {
 	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
 	ctx.SetValue(schemas.BifrostContextKeyExtraHeaders, map[string][]string{"Anthropic-Beta": {value}})
