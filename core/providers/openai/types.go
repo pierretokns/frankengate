@@ -855,16 +855,24 @@ func (resp *OpenAIResponsesRequest) MarshalJSON() ([]byte, error) {
 	//       OpenAI's Responses Tool union doesn't include them — forwarding
 	//       would 400 on the discriminator.
 	//   (b) Strip CacheControl (Anthropic-only schema field).
-	//   (c) Strip Anthropic-native per-tool flags. DeferLoading is intentionally
-	//       retained: OpenAI's deferred tool discovery/tool_search flow uses
-	//       defer_loading on function and custom tools.
+	//   (c) Strip Anthropic-native per-tool flags. DeferLoading is retained only
+	//       when the request also carries OpenAI's tool_search tool; otherwise it
+	//       is an Anthropic advanced-tool-use flag that OpenAI rejects.
 	var processedTools []schemas.ResponsesTool
 	if len(resp.Tools) > 0 {
+		preserveDeferred := false
+		for _, tool := range resp.Tools {
+			if tool.Type == schemas.ResponsesToolTypeToolSearch {
+				preserveDeferred = true
+				break
+			}
+		}
 		needsReshape := false
 		for _, tool := range resp.Tools {
 			if isAnthropicOnlyResponsesToolType(tool) ||
 				tool.CacheControl != nil ||
-				hasAnthropicOnlyResponsesToolFlags(tool) {
+				hasAnthropicOnlyResponsesToolFlags(tool) ||
+				(tool.DeferLoading != nil && !preserveDeferred) {
 				needsReshape = true
 				break
 			}
@@ -883,6 +891,9 @@ func (resp *OpenAIResponsesRequest) MarshalJSON() ([]byte, error) {
 				}
 				toolCopy := tool
 				toolCopy.CacheControl = nil
+				if !preserveDeferred {
+					toolCopy.DeferLoading = nil
+				}
 				toolCopy.AllowedCallers = nil
 				toolCopy.InputExamples = nil
 				toolCopy.EagerInputStreaming = nil
