@@ -176,6 +176,21 @@ func TestClearCacheForKey_FiltersByCacheKeyAndPluginMarker(t *testing.T) {
 	}
 }
 
+func TestClearCacheForKey_EmptyKeyRejected(t *testing.T) {
+	store := newObservableStore()
+	plugin := newTestPlugin(t, store)
+	for _, key := range []string{"", "   ", "\t\n"} {
+		if err := plugin.ClearCacheForKey(key); err == nil {
+			t.Fatalf("expected empty cache key %q to be rejected", key)
+		}
+	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	if len(store.deleteAllQueries) != 0 {
+		t.Fatalf("empty cache key triggered bulk delete: %+v", store.deleteAllQueries)
+	}
+}
+
 // -----------------------------------------------------------------------------
 // stampCacheDebugForMiss
 // -----------------------------------------------------------------------------

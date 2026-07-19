@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -829,6 +830,13 @@ func (plugin *Plugin) SetEmbeddingRequestExecutor(executor EmbeddingRequestExecu
 // Use this to invalidate a tenant or feature scope in bulk. Per-entry
 // deletion is available via ClearCacheForCacheID.
 func (plugin *Plugin) ClearCacheForKey(cacheKey string) error {
+	// An empty cache key is never a valid tenant/feature scope.  Reject it
+	// before constructing the bulk-delete query: allowing an empty value would
+	// turn a caller typo into a potentially broad delete across every legacy
+	// entry whose cache_key was omitted or normalized to empty by an adapter.
+	if strings.TrimSpace(cacheKey) == "" {
+		return fmt.Errorf("cache key is required")
+	}
 	queries := []vectorstore.Query{
 		{
 			Field:    "cache_key",
