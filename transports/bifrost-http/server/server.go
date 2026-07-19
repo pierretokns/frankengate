@@ -2267,6 +2267,21 @@ func (s *BifrostHTTPServer) Start() error {
 		}
 
 	case err := <-errChan:
+		// Serve can terminate without a signal (listener failure, protocol
+		// error, or an injected test server shutdown).  Tear down the durable
+		// authority consumers on this path too: otherwise the PostgreSQL
+		// LISTEN goroutine can outlive the HTTP server and keep invoking the
+		// old telemetry/OTEL callback after the plugin graph is discarded.
+		if s.cancel != nil {
+			s.cancel()
+		}
+		if s.Config != nil {
+			if clearer, ok := s.Config.ConfigStore.(interface {
+				ClearVirtualKeyInvalidationMetricSink()
+			}); ok {
+				clearer.ClearVirtualKeyInvalidationMetricSink()
+			}
+		}
 		if s.IntegrationHandler != nil {
 			s.IntegrationHandler.Close()
 		}
