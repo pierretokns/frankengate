@@ -2,8 +2,10 @@ package otel
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/maximhq/bifrost/core/schemas"
@@ -37,6 +39,36 @@ func TestJSONLReplayStoreTenantIsolationAndRedaction(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(dir, "acme.jsonl")); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestReplayQualityMetadataIsBoundedAndRedacted(t *testing.T) {
+	dir := t.TempDir()
+	store, err := NewJSONLReplayStore(dir, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	trace := &schemas.Trace{TraceID: "quality", Attributes: map[string]any{
+		"tenant": "acme", "frankengate.retrieval.expected": 4,
+		"frankengate.retrieval.retrieved": 2, "frankengate.retrieval.precision": 0.5,
+		"frankengate.retrieval.recall": 0.25, "frankengate.retrieval.query": "secret",
+	}}
+	if err := store.Put(context.Background(), trace); err != nil {
+		t.Fatal(err)
+	}
+	record, err := store.Get(context.Background(), "acme", "quality")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if record.RetrievalQuality == nil || record.RetrievalQuality.Expected != 4 || record.RetrievalQuality.Precision != 0.5 {
+		t.Fatalf("quality metadata missing: %+v", record.RetrievalQuality)
+	}
+	encoded, err := json.Marshal(record)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(encoded), "secret") {
+		t.Fatalf("raw retrieval content leaked: %s", encoded)
 	}
 }
 

@@ -26,6 +26,66 @@ type ReplayRecord struct {
 	TenantID      string         `json:"tenant_id"`
 	CapturedAt    time.Time      `json:"captured_at"`
 	Trace         *schemas.Trace `json:"trace"`
+	// RetrievalQuality is bounded evaluation metadata only; it never contains
+	// queries, chunk IDs, embeddings, or payloads.
+	RetrievalQuality *RetrievalQualitySummary `json:"retrieval_quality,omitempty"`
+}
+
+type RetrievalQualitySummary struct {
+	Expected   int     `json:"expected"`
+	Retrieved  int     `json:"retrieved"`
+	Relevant   int     `json:"relevant"`
+	ACLDenials int     `json:"acl_denials"`
+	Stale      int     `json:"stale"`
+	Deleted    int     `json:"deleted"`
+	Fresh      int     `json:"fresh"`
+	Precision  float64 `json:"precision"`
+	Recall     float64 `json:"recall"`
+	Freshness  float64 `json:"freshness"`
+}
+
+// retrievalQualityFromTrace copies only bounded numeric evaluation fields from
+// trace attributes. Unknown or malformed values are ignored, preserving the
+// metadata-only and fail-closed replay contract.
+func retrievalQualityFromTrace(trace *schemas.Trace) *RetrievalQualitySummary {
+	if trace == nil || len(trace.Attributes) == 0 {
+		return nil
+	}
+	q := &RetrievalQualitySummary{}
+	found := false
+	ints := map[string]*int{"expected": &q.Expected, "retrieved": &q.Retrieved, "relevant": &q.Relevant, "acl_denials": &q.ACLDenials, "stale": &q.Stale, "deleted": &q.Deleted, "fresh": &q.Fresh}
+	floatVals := map[string]*float64{"precision": &q.Precision, "recall": &q.Recall, "freshness": &q.Freshness}
+	for name, dst := range ints {
+		if v, ok := boundedIntAttr(trace.Attributes["frankengate.retrieval."+name]); ok {
+			*dst = v
+			found = true
+		}
+	}
+	for name, dst := range floatVals {
+		if v, ok := boundedFloatAttr(trace.Attributes["frankengate.retrieval."+name]); ok {
+			*dst = v
+			found = true
+		}
+	}
+	if !found {
+		return nil
+	}
+	return q
+}
+
+func boundedIntAttr(v any) (int, bool) {
+	n, ok := v.(int)
+	if !ok || n < 0 || n > 1000000000 {
+		return 0, false
+	}
+	return n, true
+}
+func boundedFloatAttr(v any) (float64, bool) {
+	n, ok := v.(float64)
+	if !ok || n < 0 || n > 1 {
+		return 0, false
+	}
+	return n, true
 }
 
 // ReplayStore is the durable evidence contract used by the OTEL plugin.
@@ -128,7 +188,7 @@ func (s *JSONLReplayStore) Put(ctx context.Context, trace *schemas.Trace) error 
 	if !s.includeContent {
 		redactReplayContent(clone)
 	}
-	record := ReplayRecord{SchemaVersion: 1, TraceID: clone.TraceID, RequestID: clone.RequestID, TenantID: tenant, CapturedAt: time.Now().UTC(), Trace: clone}
+	record := ReplayRecord{SchemaVersion: 1, TraceID: clone.TraceID, RequestID: clone.RequestID, TenantID: tenant, CapturedAt: time.Now().UTC(), Trace: clone, RetrievalQuality: retrievalQualityFromTrace(clone)}
 	payload, err := json.Marshal(record)
 	if err != nil {
 		return err

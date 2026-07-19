@@ -59,12 +59,13 @@ func (h *ReplayHandler) list(ctx *fasthttp.RequestCtx) {
 	// Metadata-only responses are intentional. A replay may have content
 	// enabled for offline workflows, but the dashboard/API never returns it.
 	type replaySummary struct {
-		SchemaVersion   int       `json:"schema_version"`
-		TraceID         string    `json:"trace_id"`
-		RequestID       string    `json:"request_id,omitempty"`
-		TenantID        string    `json:"tenant_id"`
-		CapturedAt      time.Time `json:"captured_at"`
-		ContentRedacted bool      `json:"content_redacted"`
+		SchemaVersion    int                           `json:"schema_version"`
+		TraceID          string                        `json:"trace_id"`
+		RequestID        string                        `json:"request_id,omitempty"`
+		TenantID         string                        `json:"tenant_id"`
+		CapturedAt       time.Time                     `json:"captured_at"`
+		ContentRedacted  bool                          `json:"content_redacted"`
+		RetrievalQuality *otel.RetrievalQualitySummary `json:"retrieval_quality,omitempty"`
 	}
 	out := make([]replaySummary, 0, len(rows))
 	for _, row := range rows {
@@ -73,7 +74,7 @@ func (h *ReplayHandler) list(ctx *fasthttp.RequestCtx) {
 		if row.TenantID != tenant {
 			continue
 		}
-		out = append(out, replaySummary{SchemaVersion: row.SchemaVersion, TraceID: row.TraceID, RequestID: row.RequestID, TenantID: row.TenantID, CapturedAt: row.CapturedAt, ContentRedacted: true})
+		out = append(out, replaySummary{SchemaVersion: row.SchemaVersion, TraceID: row.TraceID, RequestID: row.RequestID, TenantID: row.TenantID, CapturedAt: row.CapturedAt, ContentRedacted: true, RetrievalQuality: row.RetrievalQuality})
 	}
 	SendJSON(ctx, map[string]any{"tenant_id": tenant, "records": out, "content_redacted": true})
 }
