@@ -23,6 +23,7 @@ import { type ProviderUsageTabViewHandle, ProviderUsageTabView } from "./compone
 import { AlertSummary } from "./components/alertSummary";
 import { GovernanceScopeToggle } from "./components/governanceScopeToggle";
 import { TraceReplaySummary } from "./components/traceReplaySummary";
+import { RetrievalQualitySummary } from "./components/retrievalQualitySummary";
 import type { DashboardData } from "./utils/exportUtils";
 
 const toChartType = (value: string): ChartType => (value === "line" ? "line" : "bar");
@@ -502,6 +503,7 @@ export default function DashboardPage() {
 				</div>
 				<div className="px-4 pb-3">
 					<TraceReplaySummary filters={filters} />
+					<div className="mt-3"><RetrievalQualitySummary filters={filters} /></div>
 				</div>
 
 				<div className="p-4">
