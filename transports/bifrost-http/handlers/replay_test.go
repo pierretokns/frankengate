@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net"
+	"strings"
 	"testing"
 	"time"
 
@@ -29,6 +30,15 @@ func (f *replayListFake) Close() error { return nil }
 func TestReplayHandlerRequiresTenantAndRedactsTrace(t *testing.T) {
 	fake := &replayListFake{rows: []otel.ReplayRecord{{SchemaVersion: 1, TraceID: "a", TenantID: "acme", CapturedAt: time.Unix(1, 0), Trace: &schemas.Trace{TraceID: "a"}}, {TraceID: "other", TenantID: "other"}}}
 	h := NewReplayHandler(fake)
+	var missing fasthttp.Request
+	missing.SetRequestURI("/api/replays")
+	missing.Header.SetMethod(fasthttp.MethodGet)
+	var missingCtx fasthttp.RequestCtx
+	missingCtx.Init(&missing, &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 12345}, nil)
+	h.list(&missingCtx)
+	if missingCtx.Response.StatusCode() != fasthttp.StatusBadRequest {
+		t.Fatalf("missing tenant status=%d", missingCtx.Response.StatusCode())
+	}
 	var req fasthttp.Request
 	req.SetRequestURI("/api/replays?tenant_id=acme&limit=2")
 	req.Header.SetMethod(fasthttp.MethodGet)
@@ -43,6 +53,9 @@ func TestReplayHandlerRequiresTenantAndRedactsTrace(t *testing.T) {
 	}
 	if string(ctx.Response.Body()) == "" || string(ctx.Response.Body()) == "{}" {
 		t.Fatal("expected response body")
+	}
+	if strings.Contains(string(ctx.Response.Body()), "secret") || !strings.Contains(string(ctx.Response.Body()), "content_redacted") {
+		t.Fatalf("response leaked content or redaction marker: %s", ctx.Response.Body())
 	}
 }
 
