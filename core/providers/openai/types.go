@@ -642,13 +642,12 @@ func hasAnthropicOnlyToolFlags(t schemas.ChatTool) bool {
 }
 
 // hasAnthropicOnlyResponsesToolFlags is the ResponsesTool-typed parallel of
-// hasAnthropicOnlyToolFlags. The four flags were promoted onto ResponsesTool
-// in core/schemas/responses.go for the Anthropic-via-Responses path; the
-// OpenAI Responses serializer must strip them so they don't leak to OpenAI
-// and trigger a 400 on unknown fields.
+// hasAnthropicOnlyToolFlags. DeferLoading is deliberately not included here:
+// OpenAI's deferred tool discovery/tool_search flow uses defer_loading on
+// function and custom tools. Stripping it silently disables that optimization.
+// The remaining fields are Anthropic-only and would trigger an OpenAI 400.
 func hasAnthropicOnlyResponsesToolFlags(t schemas.ResponsesTool) bool {
-	return t.DeferLoading != nil ||
-		len(t.AllowedCallers) > 0 ||
+	return len(t.AllowedCallers) > 0 ||
 		len(t.InputExamples) > 0 ||
 		t.EagerInputStreaming != nil ||
 		(t.ResponsesToolCodeInterpreter != nil && t.ResponsesToolCodeInterpreter.Version != nil)
@@ -856,8 +855,9 @@ func (resp *OpenAIResponsesRequest) MarshalJSON() ([]byte, error) {
 	//       OpenAI's Responses Tool union doesn't include them — forwarding
 	//       would 400 on the discriminator.
 	//   (b) Strip CacheControl (Anthropic-only schema field).
-	//   (c) Strip the four Anthropic-native per-tool flags (DeferLoading,
-	//       AllowedCallers, InputExamples, EagerInputStreaming).
+	//   (c) Strip Anthropic-native per-tool flags. DeferLoading is intentionally
+	//       retained: OpenAI's deferred tool discovery/tool_search flow uses
+	//       defer_loading on function and custom tools.
 	var processedTools []schemas.ResponsesTool
 	if len(resp.Tools) > 0 {
 		needsReshape := false
@@ -883,7 +883,6 @@ func (resp *OpenAIResponsesRequest) MarshalJSON() ([]byte, error) {
 				}
 				toolCopy := tool
 				toolCopy.CacheControl = nil
-				toolCopy.DeferLoading = nil
 				toolCopy.AllowedCallers = nil
 				toolCopy.InputExamples = nil
 				toolCopy.EagerInputStreaming = nil

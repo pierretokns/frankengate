@@ -936,6 +936,45 @@ func TestOpenAIResponsesRequest_MarshalJSON_KeepsAllWhenAllSupported(t *testing.
 	}
 }
 
+// Deferred tools are part of OpenAI's tool_search flow. They must retain
+// defer_loading when the request is normalized; treating this field as
+// Anthropic-only disables server-side deferred discovery without an error.
+func TestOpenAIResponsesRequest_MarshalJSON_PreservesDeferredToolFlag(t *testing.T) {
+	deferLoading := true
+	req := &OpenAIResponsesRequest{
+		Model: "gpt-5",
+		Input: OpenAIResponsesRequestInput{
+			OpenAIResponsesRequestInputArray: []schemas.ResponsesMessage{{
+				Role:    schemas.Ptr(schemas.ResponsesInputMessageRoleUser),
+				Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("find a tool")},
+			}},
+		},
+		ResponsesParameters: schemas.ResponsesParameters{
+			Tools: []schemas.ResponsesTool{
+				{Type: schemas.ResponsesToolTypeToolSearch},
+				{Type: schemas.ResponsesToolTypeFunction, Name: schemas.Ptr("deferred_lookup"), DeferLoading: &deferLoading},
+			},
+		},
+	}
+
+	b, err := req.MarshalJSON()
+	if err != nil {
+		t.Fatalf("marshal failed: %v", err)
+	}
+	var wire struct {
+		Tools []map[string]interface{} `json:"tools"`
+	}
+	if err := json.Unmarshal(b, &wire); err != nil {
+		t.Fatalf("decode failed: %v", err)
+	}
+	if len(wire.Tools) != 2 {
+		t.Fatalf("expected tool_search and deferred function, got %d: %s", len(wire.Tools), b)
+	}
+	if got, ok := wire.Tools[1]["defer_loading"].(bool); !ok || !got {
+		t.Fatalf("defer_loading was dropped from deferred tool: %s", b)
+	}
+}
+
 // TestResponsesToolMessage_NamespaceRoundTrip verifies that the namespace field
 // on function_call items (returned by OpenAI when namespace tools are used) is
 // preserved through unmarshal → marshal without being dropped.
