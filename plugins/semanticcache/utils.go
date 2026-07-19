@@ -3,6 +3,7 @@ package semanticcache
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"maps"
 	"sort"
@@ -13,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/schemas"
+	"github.com/maximhq/bifrost/framework/vectorstore"
 )
 
 // directCacheNamespace is a fixed namespace UUID for generating deterministic
@@ -286,6 +288,54 @@ func authorityMetadataForCaching(ctx *schemas.BifrostContext) (map[string]any, e
 		}
 	}
 	return metadata, nil
+}
+
+// requireGovernedCacheAuthority prevents a cache lookup from becoming an
+// authorization bypass. Governance scopes are populated on the context before
+// LLM hooks run; if one is present, a complete and internally consistent epoch
+// reference is mandatory. Requests with no governance scope are treated as
+// legacy/unmanaged traffic and keep the existing explicit cache-key behavior.
+func requireGovernedCacheAuthority(ctx *schemas.BifrostContext) error {
+	if ctx == nil {
+		return nil
+	}
+	scoped := false
+	for _, key := range []schemas.BifrostContextKey{
+		schemas.BifrostContextKeyGovernanceVirtualKeyID,
+		schemas.BifrostContextKeyGovernanceTeamID,
+		schemas.BifrostContextKeyGovernanceCustomerID,
+		schemas.BifrostContextKeyGovernanceBusinessUnitID,
+	} {
+		if value, ok := ctx.Value(key).(string); ok && value != "" {
+			scoped = true
+			break
+		}
+	}
+	if !scoped {
+		return nil
+	}
+	if ctx.Value(schemas.BifrostContextKeyAuthorizationEpochReference) == nil {
+		return errors.New("semantic cache authorization scope is missing")
+	}
+	_, err := authorityMetadataForCaching(ctx)
+	if err != nil {
+		return fmt.Errorf("semantic cache authorization scope is invalid: %w", err)
+	}
+	return nil
+}
+
+// authorizationCacheQueries mirrors the trusted metadata embedded in cache
+// entries. Semantic lookup must apply these predicates before reranking; the
+// response is then still checked by the backend adapter/post-filter.
+func authorizationCacheQueries(metadata map[string]any) []vectorstore.Query {
+	keys := []string{"authorization_tenant", "authorization_issuer", "authorization_subject", "authorization_epoch", "authorization_artifact", "authorization_artifact_id", "authorization_team_id", "authorization_customer_id", "authorization_business_unit_id"}
+	queries := make([]vectorstore.Query, 0, len(keys))
+	for _, key := range keys {
+		if value, ok := metadata[key]; ok && value != "" {
+			queries = append(queries, vectorstore.Query{Field: key, Operator: vectorstore.QueryOperatorEqual, Value: value})
+		}
+	}
+	return queries
 }
 
 // extractAttachmentsForCaching collects image/file URLs referenced by the

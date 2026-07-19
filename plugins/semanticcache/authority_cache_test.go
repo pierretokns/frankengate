@@ -36,3 +36,35 @@ func TestAuthorityMetadataForCachingFailsClosedOnMismatchedReference(t *testing.
 		t.Fatal("expected missing principal to fail closed")
 	}
 }
+
+func TestRequireGovernedCacheAuthorityFailsClosedBeforeLookup(t *testing.T) {
+	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyGovernanceTeamID, "team-research")
+	if err := requireGovernedCacheAuthority(ctx); err == nil {
+		t.Fatal("expected governed cache lookup without authority reference to fail closed")
+	}
+}
+
+func TestAuthorizationCacheQueriesIncludeTenantAndPrincipalScope(t *testing.T) {
+	queries := authorizationCacheQueries(map[string]any{
+		"authorization_tenant":  "tenant-a",
+		"authorization_subject": "alice",
+		"authorization_epoch":   uint64(4),
+		"authorization_team_id": "team-research",
+	})
+	if len(queries) != 4 {
+		t.Fatalf("expected four authorization predicates, got %d", len(queries))
+	}
+	for _, want := range []string{"authorization_tenant", "authorization_subject", "authorization_epoch", "authorization_team_id"} {
+		found := false
+		for _, query := range queries {
+			if query.Field == want {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Fatalf("missing authorization predicate %q: %#v", want, queries)
+		}
+	}
+}

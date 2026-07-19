@@ -359,6 +359,18 @@ func (plugin *Plugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.Bifro
 		return req, nil, nil
 	}
 
+	// A governed request must carry the same authenticated authority snapshot
+	// that governance used to authorize it before any cache lookup occurs.
+	// Without this fence a shared/default cache key could replay another
+	// principal's response simply because the caller supplied no scope. Legacy
+	// ungoverned callers (which have no governance scope at all) retain the
+	// existing opt-in cache behavior.
+	if err := requireGovernedCacheAuthority(ctx); err != nil {
+		plugin.logger.Warn("semantic cache bypassed: %v", err)
+		ctx.Log(schemas.LogLevelWarn, err.Error())
+		return req, nil, nil
+	}
+
 	// Create state up front so a reused/retried request ID never inherits stale fields.
 	state := plugin.createCacheState(requestID)
 
