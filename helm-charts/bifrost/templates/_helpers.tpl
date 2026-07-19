@@ -1712,6 +1712,28 @@ Call this template at the beginning of deployment/stateful templates
 */}}
 {{- define "bifrost.validate" -}}
 
+{{/* Kubernetes Service session affinity is optional.  Inference state is kept
+     in the configured stores, so ClientIP affinity must never be required for
+     correctness and should not be paired with an invalid timeout.  Validate
+     this here so a bad stickiness setting cannot silently make an HPA rollout
+     appear healthy while routing clients to an unavailable pod. */}}
+{{- $sessionAffinity := .Values.service.sessionAffinity | default "None" -}}
+{{- if not (has (toString $sessionAffinity) (list "None" "ClientIP")) }}
+{{- fail (printf "ERROR: service.sessionAffinity must be None or ClientIP (got %v)." $sessionAffinity) }}
+{{- end }}
+{{- if .Values.service.sessionAffinityConfig }}
+{{- if ne (toString $sessionAffinity) "ClientIP" }}
+{{- fail "ERROR: service.sessionAffinityConfig requires service.sessionAffinity=ClientIP; inference is stateless by default." }}
+{{- end }}
+{{- $clientIP := .Values.service.sessionAffinityConfig.clientIP -}}
+{{- if not $clientIP }}
+{{- fail "ERROR: service.sessionAffinityConfig.clientIP is required when session affinity is enabled." }}
+{{- end }}
+{{- if and (hasKey $clientIP "timeoutSeconds") (or (lt (int $clientIP.timeoutSeconds) 1) (gt (int $clientIP.timeoutSeconds) 86400)) }}
+{{- fail "ERROR: service.sessionAffinityConfig.clientIP.timeoutSeconds must be between 1 and 86400 seconds." }}
+{{- end }}
+{{- end }}
+
 {{/* Keep autoscaling and disruption settings internally satisfiable.  A
      reversed HPA range is rejected by the API server, while a PDB requiring
      more pods than the rollout can ever create leaves every HPA scale-down

@@ -115,7 +115,22 @@
           "enum": ["None", "ClientIP"]
         },
         "sessionAffinityConfig": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "clientIP": {
+              "type": "object",
+              "properties": {
+                "timeoutSeconds": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 86400,
+                  "description": "ClientIP stickiness timeout. This is an optional routing optimization; inference remains stateless across pods."
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
         }
       }
     },
