@@ -77,3 +77,28 @@ func TestIsRequestTypeSupportedForProviderNormalizesDatabaseProviderAliases(t *t
 		t.Fatal("provider/model lookup should survive a database provider alias")
 	}
 }
+
+func TestCapabilityAdmissionKeepsBedrockMantleTransportBoundary(t *testing.T) {
+	s := NewTestStore(nil)
+	s.mu.Lock()
+	s.pricingData[makeKey("mantle-model", string(schemas.BedrockMantle), "chat")] = configstoreTables.TableModelPricing{
+		Model: "mantle-model", Provider: string(schemas.BedrockMantle), Mode: "chat",
+	}
+	s.pricingData[makeKey("bedrock-model", string(schemas.Bedrock), "chat")] = configstoreTables.TableModelPricing{
+		Model: "bedrock-model", Provider: string(schemas.Bedrock), Mode: "chat",
+	}
+	s.mu.Unlock()
+
+	if !s.IsRequestTypeSupportedForProvider("mantle-model", schemas.BedrockMantle, schemas.ChatCompletionRequest) {
+		t.Fatal("Mantle row should admit Mantle requests")
+	}
+	if s.IsRequestTypeSupportedForProvider("mantle-model", schemas.Bedrock, schemas.ChatCompletionRequest) {
+		t.Fatal("Mantle capability must not authorize legacy Bedrock requests")
+	}
+	if !s.IsRequestTypeSupportedForProvider("bedrock-model", schemas.Bedrock, schemas.ChatCompletionRequest) {
+		t.Fatal("Bedrock row should admit Bedrock requests")
+	}
+	if s.IsRequestTypeSupportedForProvider("bedrock-model", schemas.BedrockMantle, schemas.ChatCompletionRequest) {
+		t.Fatal("Bedrock capability must not authorize Mantle requests")
+	}
+}

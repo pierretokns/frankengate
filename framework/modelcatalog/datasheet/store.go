@@ -355,7 +355,7 @@ func (s *Store) IsRequestTypeSupportedForProvider(model string, provider schemas
 		// enum. Compare normalized names here just as HasProviderModel and the
 		// drift checks do; otherwise a valid embedding row is rejected only
 		// after a DB reload, whereas the URL-loaded catalog works.
-		if len(parts) != 3 || normalizeProvider(parts[1]) != normalizeProvider(string(provider)) ||
+		if len(parts) != 3 || normalizeCapabilityProvider(parts[1]) != normalizeCapabilityProvider(string(provider)) ||
 			(parts[2] != want && !(want == "batch" && strings.HasPrefix(parts[2], "batch"))) {
 			continue
 		}
@@ -373,13 +373,13 @@ func (s *Store) HasProviderModel(model string, provider schemas.ModelProvider) b
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	base := s.baseModelNameUnsafe(model)
-	canonicalProvider := normalizeProvider(string(provider))
+	canonicalProvider := normalizeCapabilityProvider(string(provider))
 	for _, row := range s.pricingData {
 		// Datasheet rows can use upstream aliases (for example vertex_ai),
 		// while callers use the canonical enum (vertex). Normalize both sides;
 		// otherwise capability admission incorrectly treats a model as unknown
 		// after a database-backed catalog reload.
-		if normalizeProvider(row.Provider) != canonicalProvider {
+		if normalizeCapabilityProvider(row.Provider) != canonicalProvider {
 			continue
 		}
 		if row.Model == model || (base != "" && (row.Model == base || s.baseModelNameUnsafe(row.Model) == base)) {

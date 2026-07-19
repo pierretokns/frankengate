@@ -356,6 +356,24 @@ func normalizeProvider(p string) string {
 	}
 }
 
+// normalizeCapabilityProvider keeps providers that share pricing (notably
+// Bedrock and Bedrock Mantle) distinct for capability admission. Pricing
+// lookup intentionally folds Mantle onto Bedrock, but capability authorization
+// must never let a model published for one transport authorize the other.
+func normalizeCapabilityProvider(p string) string {
+	n := strings.ToLower(strings.TrimSpace(p))
+	switch {
+	case n == string(schemas.BedrockMantle) || strings.Contains(n, "bedrock_mantle") || strings.Contains(n, "bedrock-mantle"):
+		return string(schemas.BedrockMantle)
+	case strings.Contains(n, "vertex_ai") || n == "google-vertex":
+		return string(schemas.Vertex)
+	case strings.Contains(n, "bedrock"):
+		return string(schemas.Bedrock)
+	default:
+		return n
+	}
+}
+
 // normalizeRequestType collapses streaming and non-streaming variants of a
 // request type to a single pricing mode string.
 func normalizeRequestType(reqType schemas.RequestType) string {
