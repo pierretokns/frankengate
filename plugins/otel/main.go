@@ -356,6 +356,7 @@ type OtelPlugin struct {
 	pricingManager *modelcatalog.ModelCatalog
 
 	pluginSpanFilter *PluginSpanFilter
+	replayStore      ReplayStore
 }
 
 // Init function for the OTEL plugin
@@ -406,6 +407,17 @@ func Init(ctx context.Context, config *Config, _logger schemas.Logger, pricingMa
 		attributesFromEnvironment: attributesFromEnvironment,
 		instanceAttrs:             instanceAttrs,
 		pluginSpanFilter:          config.PluginSpanFilter,
+	}
+	// Durable replay is opt-in and asynchronous with collector export. The
+	// tenant boundary is enforced by JSONLReplayStore; traces without a tenant
+	// are rejected rather than persisted into a shared bucket.
+	if dir := strings.TrimSpace(os.Getenv("FRANKENGATE_REPLAY_DIR")); dir != "" {
+		includeContent := strings.EqualFold(os.Getenv("FRANKENGATE_REPLAY_INCLUDE_CONTENT"), "true")
+		store, err := NewJSONLReplayStore(dir, includeContent)
+		if err != nil {
+			return nil, fmt.Errorf("initialize durable replay store: %w", err)
+		}
+		p.replayStore = store
 	}
 	p.ctx, p.cancel = context.WithCancel(ctx)
 
@@ -707,6 +719,11 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 	if trace == nil {
 		return nil
 	}
+	if p.replayStore != nil {
+		if err := p.replayStore.Put(ctx, trace); err != nil {
+			logger.Warn("failed to persist durable replay for trace %s: %v", trace.TraceID, err)
+		}
+	}
 	// Emit the trace to every configured profile's collector, and record metrics against
 	// each profile's exporter. Conversion is per-target because the resource service name
 	// differs per profile; everything else (filter, instance attrs) is shared.
@@ -973,6 +990,11 @@ func (p *OtelPlugin) recordMetricsFromTrace(ctx context.Context, exporter *Metri
 func (p *OtelPlugin) Cleanup() error {
 	if p.cancel != nil {
 		p.cancel()
+	}
+	if p.replayStore != nil {
+		if err := p.replayStore.Close(); err != nil {
+			logger.Error("failed to close durable replay store: %v", err)
+		}
 	}
 	var firstErr error
 	for _, t := range p.targets {
