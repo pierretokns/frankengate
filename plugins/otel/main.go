@@ -731,7 +731,15 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 		return nil
 	}
 	if p.replayStore != nil {
-		if err := p.replayStore.Put(ctx, trace); err != nil {
+		// Inject runs after the response is written and is commonly handed the
+		// request context.  That context is often already cancelled by the
+		// transport at this point, which used to silently drop replay records.
+		// Replay persistence is an independent, bounded durability operation;
+		// retain a short deadline without inheriting request cancellation.
+		replayCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		err := p.replayStore.Put(replayCtx, trace)
+		cancel()
+		if err != nil {
 			logger.Warn("failed to persist durable replay for trace %s: %v", trace.TraceID, err)
 		}
 	}
