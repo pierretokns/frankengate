@@ -1817,6 +1817,15 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 	if virtualKeyValue != "" && !p.isAuthorityFresh() {
 		return req, &schemas.MCPPluginShortCircuit{Error: virtualKeyAuthorityStaleError()}, nil
 	}
+	// Principal authorization epochs protect enterprise identity independently
+	// of virtual keys.  Check them before request-type handling, entitlement
+	// lookup, tool resolution, or reservation so a stale principal cannot use a
+	// non-execute MCP envelope (or a VK-less execute request) to reach side
+	// effects.  This mirrors the LLM pre-hook's identity gate.
+	userID := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyUserID)
+	if epochErr := p.validatePrincipalEpoch(ctx, userID); epochErr != nil {
+		return req, &schemas.MCPPluginShortCircuit{Error: epochErr}, nil
+	}
 	toolName := req.GetToolName()
 
 	// Skip for non tool execution requests
@@ -1855,8 +1864,6 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 
 	// Extract governance headers and virtual key using utility functions
 	// Extract user ID for enterprise user-level governance
-	userID := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyUserID)
-
 	// Create request context for evaluation (MCP requests don't have provider/model)
 	evaluationRequest := &EvaluationRequest{
 		VirtualKey: virtualKeyValue,

@@ -142,6 +142,26 @@ func TestPreMCPHook_DeniesNonExecuteRequestWithVirtualKeyWhenAuthorityIsStale(t 
 	require.Equal(t, string(DecisionVirtualKeyAuthorityStale), *shortCircuit.Error.Type)
 }
 
+func TestPreMCPHookRejectsStalePrincipalBeforeToolResolution(t *testing.T) {
+	principal := authorityepoch.Principal{Tenant: "tenant-a", Issuer: "issuer-a", Subject: "user-a"}
+	registry := authorityepoch.NewRegistry()
+	require.NoError(t, registry.Activate(principal, 9))
+	ref := authorityepoch.Reference{Principal: principal, Epoch: 8, Kind: authorityepoch.ArtifactUnary, ID: "mcp-1"}
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyUserID, "user-a")
+	require.NoError(t, schemas.SetAuthorizationEpochReference(ctx, ref))
+	plugin := &GovernancePlugin{isEnterprise: true}
+	plugin.SetPrincipalAuthorityRegistry(registry)
+
+	_, shortCircuit, err := plugin.PreMCPHook(ctx, &schemas.BifrostMCPRequest{
+		RequestType: schemas.MCPRequestTypeExecuteTool,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, shortCircuit)
+	require.Equal(t, "authorization_epoch_invalid", *shortCircuit.Error.Type)
+	require.Equal(t, 401, *shortCircuit.Error.StatusCode)
+}
+
 func TestPreMCPConnectionHook_DeniesBeforeReadingStaleVirtualKeyCache(t *testing.T) {
 	plugin := &GovernancePlugin{}
 	plugin.SetAuthorityFreshnessSource(AuthorityFreshnessFunc(func() bool { return false }))
