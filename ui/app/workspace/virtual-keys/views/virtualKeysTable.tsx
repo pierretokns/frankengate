@@ -916,11 +916,18 @@ export default function VirtualKeysTable({
 														>
 															{isRevealed ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
 														</Button>
-														<Button
-															variant="ghost"
-															size="sm"
-										onClick={() => void copyToClipboard(revealedValues[vk.id] ?? vk.value)}
-															data-testid={`vk-copy-btn-${vk.name}`}
+										<Button
+											variant="ghost"
+											size="sm"
+											onClick={() => {
+												const secret = revealedValues[vk.id];
+												if (!secret) {
+													toast.error("Reveal the virtual key before copying it");
+													return;
+												}
+												void copyToClipboard(secret);
+											}}
+											data-testid={`vk-copy-btn-${vk.name}`}
 														>
 															<Copy className="h-4 w-4" />
 														</Button>
