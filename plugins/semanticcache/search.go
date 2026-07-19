@@ -358,6 +358,20 @@ func (plugin *Plugin) buildResponseFromResult(ctx *schemas.BifrostContext, state
 			defer plugin.writersWg.Done()
 			deleteCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
+			// The point may have been replaced between the lookup and this
+			// asynchronous cleanup. Re-read and fence it before deleting: a
+			// shared namespace must never let stale-entry cleanup remove a
+			// foreign application's object (or an entry written under a newer
+			// authorization snapshot) that reused the same ID.
+			current, err := plugin.store.GetChunk(deleteCtx, plugin.config.VectorStoreNamespace, result.ID)
+			if err != nil {
+				plugin.logger.Debug("Skipping expired cache cleanup for %s after re-read failure: %v", result.ID, err)
+				return
+			}
+			if !isSemanticCacheEntry(current) || !cacheResultMatchesAuthority(current, state.AuthorityMetadata) {
+				plugin.logger.Debug("Skipping expired cache cleanup for %s after ownership/authority changed", result.ID)
+				return
+			}
 			if err := plugin.store.Delete(deleteCtx, plugin.config.VectorStoreNamespace, result.ID); err != nil {
 				plugin.logger.Warn("Failed to delete expired entry %s: %v", result.ID, err)
 			}

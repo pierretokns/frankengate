@@ -201,6 +201,7 @@ func TestExpiredEntry_DetectedAndDeleted(t *testing.T) {
 		Properties: map[string]interface{}{
 			"response":   string(chunkJSON),
 			"expires_at": time.Now().Add(-1 * time.Minute).Unix(),
+			"from_bifrost_semantic_cache_plugin": true,
 		},
 	}
 
