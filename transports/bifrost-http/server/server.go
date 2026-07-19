@@ -2246,6 +2246,15 @@ func (s *BifrostHTTPServer) Start() error {
 			}
 			// Cleanup Config and all its background components
 			if s.Config != nil {
+				// Detach control-plane metric callbacks before tearing down the
+				// plugin graph. The PostgreSQL LISTEN goroutine is cancelled by the
+				// server context, but may still be unwinding while Config.Close
+				// replaces metric plugins.
+				if clearer, ok := s.Config.ConfigStore.(interface {
+					ClearVirtualKeyInvalidationMetricSink()
+				}); ok {
+					clearer.ClearVirtualKeyInvalidationMetricSink()
+				}
 				s.Config.Close(shutdownCtx)
 			}
 			logger.Info("storage engines cleanup completed")

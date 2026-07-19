@@ -51,6 +51,16 @@ func TestVirtualKeyInvalidationWakeupsUnsupportedForSQLite(t *testing.T) {
 	require.Nil(t, store.VirtualKeyInvalidationWakeups(context.Background()))
 }
 
+func TestClearVirtualKeyInvalidationMetricSinkDetachesCallback(t *testing.T) {
+	store := &RDBConfigStore{}
+	store.SetVirtualKeyInvalidationMetricSink(func(string, float64) {})
+	store.ClearVirtualKeyInvalidationMetricSink()
+	store.virtualKeyInvalidationMetricsMu.RLock()
+	sink := store.virtualKeyInvalidationMetrics
+	store.virtualKeyInvalidationMetricsMu.RUnlock()
+	require.Nil(t, sink)
+}
+
 func TestVirtualKeyInvalidationWakeupsCoalesceAndReconnect(t *testing.T) {
 	first := &fakeVirtualKeyNotifyConn{waits: make(chan error, 2)}
 	second := &fakeVirtualKeyNotifyConn{waits: make(chan error, 2)}

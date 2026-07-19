@@ -43,6 +43,17 @@ func (s *RDBConfigStore) SetVirtualKeyInvalidationMetricSink(sink func(string, f
 	s.virtualKeyInvalidationMetricsMu.Unlock()
 }
 
+// ClearVirtualKeyInvalidationMetricSink detaches the listener's observer.
+//
+// The listener owns a long-lived goroutine and may outlive a plugin reload or
+// server shutdown by a small amount while its context is being cancelled. A
+// stale callback would otherwise retain the previous plugin graph (and keep
+// publishing into closed/replaced metric registries). Clearing the callback is
+// idempotent and intentionally separate from closing the database connection.
+func (s *RDBConfigStore) ClearVirtualKeyInvalidationMetricSink() {
+	s.SetVirtualKeyInvalidationMetricSink(nil)
+}
+
 func (s *RDBConfigStore) observeVirtualKeyInvalidationMetric(name string, value float64) {
 	if s == nil {
 		return
