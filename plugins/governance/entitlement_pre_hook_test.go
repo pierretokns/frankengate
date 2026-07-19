@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -26,6 +27,24 @@ func TestPreLLMHookEnforcesIdentityEntitlementsBeforeProviderEffects(t *testing.
 	}
 	if shortCircuit == nil || shortCircuit.Error == nil || shortCircuit.Error.Type == nil || *shortCircuit.Error.Type != "identity_entitlement_denied" {
 		t.Fatalf("short circuit = %#v, want identity entitlement denial", shortCircuit)
+	}
+	decision, ok := schemas.IdentityEntitlementDecisionFromContext(ctx)
+	if !ok || decision.Allowed || decision.Capability != "provider_model" || decision.Reason != "provider_not_granted" {
+		t.Fatalf("decision=%+v present=%v, want sanitized provider denial", decision, ok)
+	}
+
+	// A denied decision must not expose group claims or grant lists.
+	if got := shortCircuit.Error.Error.Message; got == "" || strings.Contains(got, "bedrock") {
+		t.Fatalf("denial leaked sensitive entitlement detail: %q", got)
+	}
+}
+
+func TestPreLLMHookRecordsGrantedEntitlementDecision(t *testing.T) {
+	ctx := schemas.NewBifrostContext(context.Background(), time.Time{})
+	recordIdentityEntitlementDecision(ctx, true, "provider_model", "granted")
+	decision, ok := schemas.IdentityEntitlementDecisionFromContext(ctx)
+	if !ok || !decision.Allowed || decision.Capability != "provider_model" || decision.Reason != "granted" {
+		t.Fatalf("decision=%+v present=%v, want granted provider/model decision", decision, ok)
 	}
 }
 
@@ -52,5 +71,9 @@ func TestPreMCPHookEnforcesIdentityEntitlementsBeforeCodemodeOrWireEffects(t *te
 	}
 	if rejected, _ := ctx.Value(governanceRejectedContextKey).(bool); !rejected {
 		t.Fatal("expected governance rejection marker")
+	}
+	decision, ok := schemas.IdentityEntitlementDecisionFromContext(ctx)
+	if !ok || decision.Allowed || decision.Capability != "mcp_tool" || decision.Reason != "tool_not_granted" {
+		t.Fatalf("decision=%+v present=%v, want sanitized MCP denial", decision, ok)
 	}
 }

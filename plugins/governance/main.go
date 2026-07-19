@@ -16,6 +16,7 @@ import (
 	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/authorityepoch"
+	"github.com/maximhq/bifrost/core/identity"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
@@ -38,6 +39,15 @@ const (
 	// virtual-key authority snapshot is current enough to make an access decision.
 	VirtualKeyAuthorityStaleReason = "virtual key authority is stale; retry when governance synchronization is healthy"
 )
+
+// recordIdentityEntitlementDecision emits only low-cardinality, non-sensitive
+// metadata. Group names and token claims are deliberately excluded.
+func recordIdentityEntitlementDecision(ctx *schemas.BifrostContext, allowed bool, capability, reason string) {
+	_ = schemas.SetIdentityEntitlementDecision(ctx, identity.Decision{Allowed: allowed, Capability: capability, Reason: reason})
+	ctx.SetTraceAttribute("identity.entitlement.allowed", allowed)
+	ctx.SetTraceAttribute("identity.entitlement.capability", capability)
+	ctx.SetTraceAttribute("identity.entitlement.reason", reason)
+}
 
 // AuthorityFreshnessSource reports whether this pod's virtual-key authority
 // snapshot is fresh. Implementations may use atomics or their own synchronization.
@@ -1593,12 +1603,25 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 	if entitlements, present := schemas.IdentityEntitlementsFromContext(ctx); present {
 		tools, _ := ctx.Value(schemas.BifrostContextKeyMCPAddedTools).([]string)
 		if err := entitlements.Authorize(string(provider), model, tools); err != nil {
+			reason := "denied"
+			capability := "provider_model"
+			switch {
+			case errors.Is(err, identity.ErrProviderDenied):
+				reason = "provider_not_granted"
+			case errors.Is(err, identity.ErrModelDenied):
+				reason = "model_not_granted"
+			case errors.Is(err, identity.ErrToolDenied):
+				reason = "tool_not_granted"
+				capability = "mcp_tool"
+			}
+			recordIdentityEntitlementDecision(ctx, false, capability, reason)
 			return req, &schemas.LLMPluginShortCircuit{Error: &schemas.BifrostError{
 				Type:       new("identity_entitlement_denied"),
 				StatusCode: new(403),
 				Error:      &schemas.ErrorField{Message: err.Error()},
 			}}, nil
 		}
+		recordIdentityEntitlementDecision(ctx, true, "provider_model", "granted")
 	}
 	if capabilityErr := p.validateCatalogCapabilityFor(provider, model, req.RequestType); capabilityErr != nil {
 		return req, &schemas.LLMPluginShortCircuit{Error: capabilityErr}, nil
@@ -1803,6 +1826,7 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 	// operation so an entitlement denial cannot trigger credential or wire I/O.
 	// Absence preserves OSS compatibility; presence is always fail-closed.
 	if entitlements, present := schemas.IdentityEntitlementsFromContext(ctx); present && !entitlements.AllowsTool(toolName) {
+		recordIdentityEntitlementDecision(ctx, false, "mcp_tool", "tool_not_granted")
 		ctx.SetValue(governanceRejectedContextKey, true)
 		return req, &schemas.MCPPluginShortCircuit{Error: &schemas.BifrostError{
 			Type:       bifrost.Ptr("identity_entitlement_denied"),
@@ -1811,6 +1835,9 @@ func (p *GovernancePlugin) PreMCPHook(ctx *schemas.BifrostContext, req *schemas.
 				Message: fmt.Sprintf("MCP tool %q is not granted by identity entitlements", toolName),
 			},
 		}}, nil
+	}
+	if _, present := schemas.IdentityEntitlementsFromContext(ctx); present {
+		recordIdentityEntitlementDecision(ctx, true, "mcp_tool", "granted")
 	}
 
 	// Skip governance for codemode tools

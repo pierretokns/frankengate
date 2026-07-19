@@ -39,6 +39,15 @@ type Entitlements struct {
 	ToolGroups    []string
 }
 
+// Decision is the sanitized authorization outcome emitted to audit/telemetry.
+// It intentionally contains only stable categories; never put IdP groups or
+// raw claims in this value.
+type Decision struct {
+	Allowed    bool
+	Capability string
+	Reason     string
+}
+
 // AllowsModel, AllowsProvider, and AllowsTool are deliberately fail-closed:
 // an entitlement snapshot is authoritative only when it explicitly grants the
 // requested capability. A missing/empty grant never means unrestricted access.

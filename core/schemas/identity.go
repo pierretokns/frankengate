@@ -25,3 +25,21 @@ func IdentityEntitlementsFromContext(ctx context.Context) (identity.Entitlements
 	entitlements, ok := ctx.Value(BifrostContextKeyIdentityEntitlements).(identity.Entitlements)
 	return entitlements, ok
 }
+
+// SetIdentityEntitlementDecision stores sanitized authorization metadata for
+// audit consumers. Callers must not include group names or token claims.
+func SetIdentityEntitlementDecision(ctx *BifrostContext, decision identity.Decision) error {
+	if ctx == nil {
+		return fmt.Errorf("identity entitlement decision: nil context")
+	}
+	ctx.SetValue(BifrostContextKeyIdentityEntitlementDecision, decision)
+	return nil
+}
+
+func IdentityEntitlementDecisionFromContext(ctx context.Context) (identity.Decision, bool) {
+	if ctx == nil {
+		return identity.Decision{}, false
+	}
+	decision, ok := ctx.Value(BifrostContextKeyIdentityEntitlementDecision).(identity.Decision)
+	return decision, ok
+}
