@@ -2,6 +2,7 @@ package vectorstore
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 
@@ -28,6 +29,9 @@ type PineconeTestSetup struct {
 }
 
 func NewPineconeTestSetup(t *testing.T) *PineconeTestSetup {
+	if os.Getenv("PINECONE_INDEX_HOST") == "" {
+		t.Skip("Pinecone integration tests require explicit PINECONE_INDEX_HOST")
+	}
 	apiKey := schemas.NewSecretVar(getEnvWithDefault("PINECONE_API_KEY", PineconeTestDefaultAPIKey))
 	indexHost := schemas.NewSecretVar(getEnvWithDefault("PINECONE_INDEX_HOST", PineconeTestDefaultIndexHost))
 
@@ -251,7 +255,7 @@ func TestBuildPineconeCondition(t *testing.T) {
 		{
 			name:     "contains any operator",
 			query:    Query{Field: "tags", Operator: QueryOperatorContainsAny, Value: []string{"a", "b"}},
-			expected: map[string]interface{}{"$in": []string{"a", "b"}},
+			expected: map[string]interface{}{"$in": []interface{}{"a", "b"}},
 		},
 	}
 

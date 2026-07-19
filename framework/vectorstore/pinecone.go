@@ -630,6 +630,16 @@ func buildPineconeCondition(q Query) interface{} {
 	case QueryOperatorIsNotNull:
 		return map[string]interface{}{"$ne": nil}
 	case QueryOperatorContainsAny:
+		// structpb rejects []string values. Normalize to []interface{};
+		// Pinecone's $in operator then performs the server-side overlap
+		// check for the string-array principal metadata field.
+		if values, ok := q.Value.([]string); ok {
+			converted := make([]interface{}, len(values))
+			for i, value := range values {
+				converted[i] = value
+			}
+			return map[string]interface{}{"$in": converted}
+		}
 		return map[string]interface{}{"$in": q.Value}
 	case QueryOperatorContainsAll:
 		// Build an $and array of equality checks so all values must match

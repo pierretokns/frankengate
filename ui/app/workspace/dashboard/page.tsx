@@ -3,6 +3,7 @@ import { DateTimePickerWithRange } from "@/components/ui/datePickerWithRange";
 import { ScrollArea } from "@/components/ui/scrollArea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTimezonePreference } from "@/lib/hooks/useTimezonePreference";
+import { PRODUCT_NAME } from "@/lib/constants/brand";
 import { parseAsSafeArrayOf } from "@/lib/queryParamsParser";
 import { useGetMCPAvailableFilterDataQuery } from "@/lib/store";
 import type { LogFilters, MCPToolLogFilters } from "@/lib/types/logs";
@@ -428,7 +429,7 @@ export default function DashboardPage() {
 				{/* Header */}
 				<div className="flex items-center justify-between p-4">
 					<div className="flex items-center gap-2">
-						<h1 className="text-lg font-semibold">Dashboard</h1>
+						<h1 className="text-lg font-semibold">{PRODUCT_NAME} Dashboard</h1>
 					</div>
 					<div className="flex items-center gap-2">
 						<ExportPopover

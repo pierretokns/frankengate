@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/components/themeProvider";
 import { ReduxProvider } from "@/lib/store/provider";
 import { DEFAULT_POST_LOGIN_PATH, getLoginGotoFromSearch } from "@/lib/utils/loginGoto";
 import { getApiBaseUrl } from "@/lib/utils/port";
+import { PRODUCT_NAME } from "@/lib/constants/brand";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 import LoginPage from "./page";
@@ -27,7 +28,7 @@ function PendingComponent() {
 				<div className="w-full max-w-md">
 					<div className="border-border bg-card w-full space-y-6 rounded-sm border p-8">
 						<div className="flex items-center justify-center">
-							<img src="/bifrost-logo.webp" alt="Bifrost" width={160} height={26} />
+							<img src="/bifrost-logo.webp" alt={PRODUCT_NAME} width={160} height={26} />
 						</div>
 						<div className="flex items-center justify-center py-6">
 							<div className="text-muted-foreground text-sm">Checking authentication...</div>
