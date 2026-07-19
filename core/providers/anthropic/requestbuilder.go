@@ -387,7 +387,10 @@ func BuildAnthropicResponsesRequestBody(ctx *schemas.BifrostContext, request *sc
 	}
 
 	if defaults.InjectBetaHeadersIntoBody {
-		if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, cfg.ProviderExtraHeaders), cfg.Provider, cfg.Model, cfg.BetaHeaderOverrides); len(betaHeaders) > 0 {
+		// Use the resolved canonical model for capability gating. cfg.Model is the
+		// wire/deployment identifier and may be an opaque alias, which would
+		// incorrectly strip model-scoped features such as the 1M context beta.
+		if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, cfg.ProviderExtraHeaders), cfg.Provider, capModel, cfg.BetaHeaderOverrides); len(betaHeaders) > 0 {
 			jsonBody, err = providerUtils.SetJSONField(jsonBody, "anthropic_beta", betaHeaders)
 			if err != nil {
 				return nil, newErr(schemas.ErrProviderRequestMarshal, err, jsonBody)
@@ -608,7 +611,9 @@ func BuildAnthropicChatRequestBody(ctx *schemas.BifrostContext, request *schemas
 	}
 
 	if defaults.InjectBetaHeadersIntoBody {
-		if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, cfg.ProviderExtraHeaders), cfg.Provider, cfg.Model, cfg.BetaHeaderOverrides); len(betaHeaders) > 0 {
+		// Capability checks must use the canonical model, not the opaque wire
+		// deployment identifier (see the Responses builder above).
+		if betaHeaders := FilterBetaHeadersForModel(MergeBetaHeaders(ctx, cfg.ProviderExtraHeaders), cfg.Provider, capModel, cfg.BetaHeaderOverrides); len(betaHeaders) > 0 {
 			jsonBody, err = providerUtils.SetJSONField(jsonBody, "anthropic_beta", betaHeaders)
 			if err != nil {
 				return nil, newErr(schemas.ErrProviderRequestMarshal, err, jsonBody)
