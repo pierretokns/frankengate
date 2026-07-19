@@ -20,6 +20,20 @@ func newResponsesRequest(provider schemas.ModelProvider, model string, params *s
 	}
 }
 
+func TestDropUnsupportedParams_ModelRouterDropsNonAutoReasoningSummary(t *testing.T) {
+	summary := "detailed"
+	req := newResponsesRequest(schemas.Azure, "model-router", &schemas.ResponsesParameters{
+		Reasoning: &schemas.ResponsesParametersReasoning{Summary: &summary},
+	})
+	dropped := dropUnsupportedParams(newTestContext(), req, []string{"reasoning"})
+	if req.ResponsesRequest.Params.Reasoning.Summary != nil {
+		t.Fatal("model-router retained unsupported reasoning summary")
+	}
+	if !slices.Contains(dropped, "reasoning.summary") {
+		t.Fatalf("dropped=%v, want reasoning.summary", dropped)
+	}
+}
+
 // TestDropUnsupportedParams_MaxOutputTokens verifies that the Responses-API
 // max_output_tokens cap is preserved whenever the (chat-named) model parameter
 // catalog authorizes the token cap under any spelling

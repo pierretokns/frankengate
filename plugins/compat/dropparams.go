@@ -2,6 +2,7 @@ package compat
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/maximhq/bifrost/core/schemas"
 )
@@ -161,6 +162,10 @@ func dropUnsupportedParams(ctx *schemas.BifrostContext, req *schemas.BifrostRequ
 		if params.Reasoning != nil && !isSupported["reasoning"] {
 			params.Reasoning = nil
 			dropped = append(dropped, "reasoning")
+		} else if params.Reasoning != nil && schemas.IsModelRouter(req.ResponsesRequest.Model) &&
+			params.Reasoning.Summary != nil && !strings.EqualFold(*params.Reasoning.Summary, "auto") {
+			params.Reasoning.Summary = nil
+			dropped = append(dropped, "reasoning.summary")
 		}
 		if params.ServiceTier != nil && !isSupported["service_tier"] {
 			params.ServiceTier = nil

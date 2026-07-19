@@ -1640,6 +1640,12 @@ func IsOpenAIModel(model string) bool {
 	return isOpenAIReasoningModel(model)
 }
 
+// IsModelRouter identifies Azure's model-router model, which only accepts an
+// "auto" reasoning summary value.
+func IsModelRouter(model string) bool {
+	return strings.EqualFold(strings.TrimSpace(model), "model-router")
+}
+
 // isOpenAIReasoningModel reports whether model names an OpenAI o-series
 // reasoning model. It strips any provider prefix (e.g. "openai/o3") and matches
 // an "o" followed by a single digit, where the next character is either end of
