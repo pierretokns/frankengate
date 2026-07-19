@@ -426,6 +426,7 @@ func buildInitialLogEntry(pending *PendingLogData) *logstore.Log {
 		Object:                      pending.InitialData.Object,
 		Provider:                    pending.InitialData.Provider,
 		Model:                       pending.InitialData.Model,
+		IntegrationUserAgent:        pending.InitialData.IntegrationUserAgent,
 		FallbackIndex:               pending.FallbackIndex,
 		Status:                      "processing",
 		Stream:                      false,
@@ -450,14 +451,15 @@ func buildInitialLogEntry(pending *PendingLogData) *logstore.Log {
 // and output fields fully populated. The caller provides a function to apply output-specific fields.
 func buildCompleteLogEntryFromPending(pending *PendingLogData) *logstore.Log {
 	entry := &logstore.Log{
-		ID:            pending.RequestID,
-		Timestamp:     pending.Timestamp,
-		Object:        pending.InitialData.Object,
-		Provider:      pending.InitialData.Provider,
-		Model:         pending.InitialData.Model,
-		FallbackIndex: pending.FallbackIndex,
-		Status:        "success",
-		CreatedAt:     pending.Timestamp,
+		ID:                   pending.RequestID,
+		Timestamp:            pending.Timestamp,
+		Object:               pending.InitialData.Object,
+		Provider:             pending.InitialData.Provider,
+		Model:                pending.InitialData.Model,
+		IntegrationUserAgent: pending.InitialData.IntegrationUserAgent,
+		FallbackIndex:        pending.FallbackIndex,
+		Status:               "success",
+		CreatedAt:            pending.Timestamp,
 		// Set parsed fields for serialization via GORM hooks
 		InputHistoryParsed:          pending.InitialData.InputHistory,
 		ResponsesInputHistoryParsed: pending.InitialData.ResponsesInputHistory,

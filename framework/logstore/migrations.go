@@ -280,6 +280,7 @@ var logstoreMigrationSteps = []migrationStep{
 	{IDs: []string{"logs_recreate_filter_customers_matview_multivalue"}, run: migrationRecreateFilterCustomersMatView},
 	{IDs: []string{"logs_add_canonical_model_columns_v2"}, run: migrationAddCanonicalModelColumns},
 	{IDs: []string{"logs_add_redaction_mapping_column"}, run: migrationAddRedactionMappingColumn},
+	{IDs: []string{"logs_add_integration_user_agent_column"}, run: migrationAddIntegrationUserAgentColumn},
 }
 
 // areThereAnyPendingMigrations returns true if there are any pending migrations to be applied.
@@ -3634,6 +3635,36 @@ func migrationRecreateFilterCustomersMatView(ctx context.Context, db *gorm.DB, l
 	}})
 	if err := m.Migrate(); err != nil {
 		return fmt.Errorf("error while recreating filter customers matview: %s", err.Error())
+	}
+	return nil
+}
+
+// migrationAddIntegrationUserAgentColumn persists the bounded, allowlisted
+// integration user-agent captured by the HTTP transport. It is nullable so
+// unknown or non-integration clients remain indistinguishable from legacy rows.
+func migrationAddIntegrationUserAgentColumn(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {
+	migrationName := "logs_add_integration_user_agent_column"
+	logger.Info("[logstore] starting migration %s", migrationName)
+	defer logger.Info("[logstore] finished migration %s", migrationName)
+	opts := *migrator.DefaultOptions
+	opts.UseTransaction = true
+	m := migrator.New(db, &opts, []*migrator.Migration{{
+		ID: migrationName,
+		Migrate: func(tx *gorm.DB) error {
+			tx = tx.WithContext(ctx)
+			if !tx.Migrator().HasColumn(&Log{}, "integration_user_agent") {
+				if err := tx.Exec("ALTER TABLE logs ADD COLUMN integration_user_agent VARCHAR(255)").Error; err != nil {
+					return err
+				}
+			}
+			return tx.Exec("CREATE INDEX IF NOT EXISTS idx_logs_integration_user_agent ON logs(integration_user_agent)").Error
+		},
+		Rollback: func(tx *gorm.DB) error {
+			return dropColumnIfExists(tx.WithContext(ctx), logger, &Log{}, "integration_user_agent")
+		},
+	}})
+	if err := m.Migrate(); err != nil {
+		return fmt.Errorf("error while adding integration user agent column: %s", err.Error())
 	}
 	return nil
 }

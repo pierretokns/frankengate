@@ -316,6 +316,7 @@ type InitialLogData struct {
 	Provider               string
 	Model                  string
 	Object                 string
+	IntegrationUserAgent   *string
 	InputHistory           []schemas.ChatMessage
 	ResponsesInputHistory  []schemas.ResponsesMessage
 	Params                 any
@@ -670,6 +671,9 @@ func (p *LoggerPlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.Bifr
 		Provider: string(provider),
 		Model:    model,
 		Object:   string(req.RequestType),
+	}
+	if userAgent := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyUserAgent); userAgent != "" {
+		initialData.IntegrationUserAgent = &userAgent
 	}
 	if req.RequestType == schemas.RealtimeRequest {
 		initialData.Object = "realtime.turn"
