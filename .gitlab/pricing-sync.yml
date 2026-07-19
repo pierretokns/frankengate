@@ -12,7 +12,11 @@ pricing-sync:
     # Keep this tool independently runnable: the repository's developer
     # go.work is intentionally ignored and does not exist in every runner.
     - cd scripts/pricing-sync
-    - go run . -url "${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}" -out ../../docs/data/pricing
+    # Explicitly disable any parent checkout go.work. Without this, Go walks
+    # up from the independent module and rejects ./... because the workspace
+    # does not include scripts/pricing-sync.
+    - GOWORK=off go test ./...
+    - GOWORK=off go run . -url "${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}" -out ../../docs/data/pricing
   artifacts:
     name: frankengate-pricing-$CI_COMMIT_SHA
     expire_in: 1 year
