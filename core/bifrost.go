@@ -5951,6 +5951,14 @@ func executeRequestWithRetries[T any](
 			if err == nil {
 				if required, _ := ctx.Value(schemas.BifrostContextKeyRequiredDestinationRegion).(string); required != "" {
 					actual := schemas.DestinationRegionForKey(providerKey, selectedKey)
+					if keyTracer != nil {
+						// These are bounded region identifiers, not endpoint or credential
+						// values. Emit them even when actual is empty so unknown-region
+						// failures are observable as fail-closed decisions.
+						keyTracer.SetAttribute(keyHandle, schemas.AttrBifrostRequiredDestinationRegion, required)
+						keyTracer.SetAttribute(keyHandle, schemas.AttrBifrostSelectedDestinationRegion, actual)
+						keyTracer.SetAttribute(keyHandle, schemas.AttrBifrostDestinationRegionMismatch, actual == "" || !strings.EqualFold(actual, required))
+					}
 					// Only regional providers can satisfy a region pin. An empty
 					// destination is therefore a fail-closed mismatch, not a wildcard.
 					if actual == "" || !strings.EqualFold(actual, required) {
