@@ -103,6 +103,22 @@ type alertingState struct {
 
 const redactedAlertSecret = "***REDACTED***"
 
+// isSensitiveAlertConfigKey is deliberately name-based: channel configuration
+// is extensible and new providers often call credentials something other than
+// "token" or "secret".  Dashboard responses must never echo those values.
+func isSensitiveAlertConfigKey(key string) bool {
+	lower := strings.ToLower(strings.TrimSpace(key))
+	for _, marker := range []string{
+		"token", "secret", "signing_key", "password", "passwd", "api_key",
+		"apikey", "private_key", "credential", "authorization", "access_key",
+	} {
+		if strings.Contains(lower, marker) {
+			return true
+		}
+	}
+	return false
+}
+
 // publicAlertingState prevents durable channel credentials from being echoed
 // through dashboard mutation/list responses. The internal state remains
 // unchanged so notifier reloads can still read the real values.
@@ -113,7 +129,7 @@ func publicAlertingState(state alertingState) alertingState {
 		public.Channels[i] = channel
 		public.Channels[i].Config = make(map[string]string, len(channel.Config))
 		for key, value := range channel.Config {
-			if strings.Contains(strings.ToLower(key), "token") || strings.Contains(strings.ToLower(key), "secret") || strings.Contains(strings.ToLower(key), "signing_key") {
+			if isSensitiveAlertConfigKey(key) {
 				public.Channels[i].Config[key] = redactedAlertSecret
 				continue
 			}
@@ -130,8 +146,7 @@ func preserveAlertChannelSecrets(existing, incoming AlertChannel) AlertChannel {
 		merged.Config[key] = value
 	}
 	for key, value := range existing.Config {
-		lower := strings.ToLower(key)
-		if !strings.Contains(lower, "token") && !strings.Contains(lower, "secret") && !strings.Contains(lower, "signing_key") {
+		if !isSensitiveAlertConfigKey(key) {
 			continue
 		}
 		if current := strings.TrimSpace(merged.Config[key]); current == "" || current == redactedAlertSecret {
@@ -457,9 +472,10 @@ func alertingScopeQuery(c *fasthttp.RequestCtx, state alertingState) (alertingSt
 	allowed := make(map[string]struct{}, len(state.Rules))
 	rules := make([]AlertRule, 0, len(state.Rules))
 	for _, rule := range state.Rules {
-		matches := rule.Scope == "" || rule.Scope == "global"
+		ruleScope := strings.ToLower(strings.TrimSpace(rule.Scope))
+		matches := ruleScope == "" || ruleScope == "global"
 		if scope != "global" {
-			matches = matches || (rule.Scope == scope && rule.ScopeID == scopeID)
+			matches = matches || (ruleScope == scope && strings.TrimSpace(rule.ScopeID) == scopeID)
 		}
 		if matches {
 			rules = append(rules, rule)

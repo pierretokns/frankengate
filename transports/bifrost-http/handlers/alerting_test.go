@@ -125,14 +125,25 @@ func TestNormalizeAlertingStateBoundsHistory(t *testing.T) {
 
 func TestPublicAlertingStateRedactsChannelSecrets(t *testing.T) {
 	state := alertingState{Channels: []AlertChannel{{ID: "cf", Config: map[string]string{
-		"api_token": "real-token", "signing_key": "real-signing-key", "from": "alerts@example.com",
+		"api_token": "real-token", "signing_key": "real-signing-key", "password": "real-password", "from": "alerts@example.com",
 	}}}}
 	public := publicAlertingState(state)
-	if public.Channels[0].Config["api_token"] != redactedAlertSecret || public.Channels[0].Config["signing_key"] != redactedAlertSecret {
+	if public.Channels[0].Config["api_token"] != redactedAlertSecret || public.Channels[0].Config["signing_key"] != redactedAlertSecret || public.Channels[0].Config["password"] != redactedAlertSecret {
 		t.Fatalf("channel secrets were not redacted: %#v", public.Channels[0].Config)
 	}
 	if public.Channels[0].Config["from"] != "alerts@example.com" || state.Channels[0].Config["api_token"] != "real-token" {
 		t.Fatalf("redaction mutated state or non-secret fields: public=%#v state=%#v", public.Channels[0].Config, state.Channels[0].Config)
+	}
+}
+
+func TestAlertingScopeQueryNormalizesPersistedRuleScope(t *testing.T) {
+	state := alertingState{Rules: []AlertRule{{ID: "team-a", Scope: " Team ", ScopeID: " a "}}, History: []AlertDelivery{{ID: "d", RuleID: "team-a"}}}
+	c := &fasthttp.RequestCtx{}
+	c.Request.URI().QueryArgs().Set("scope", "team")
+	c.Request.URI().QueryArgs().Set("scope_id", "a")
+	filtered, ok := alertingScopeQuery(c, state)
+	if !ok || len(filtered.Rules) != 1 || len(filtered.History) != 1 {
+		t.Fatalf("normalized team rule was not visible: ok=%v state=%+v", ok, filtered)
 	}
 }
 
