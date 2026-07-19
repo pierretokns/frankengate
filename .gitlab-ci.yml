@@ -1,0 +1,8 @@
+# FrankenGate's GitLab mirror uses this small maintenance pipeline for the
+# branded public pricing cache. Configure the schedule as a daily UTC GitLab
+# Pipeline Schedule; ordinary pushes do not run the maintenance job.
+stages:
+  - maintenance
+
+include:
+  - local: ".gitlab/pricing-sync.yml"
