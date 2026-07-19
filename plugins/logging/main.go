@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"net"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -569,19 +570,29 @@ func (p *LoggerPlugin) captureLoggingHeaders(ctx *schemas.BifrostContext) map[st
 		"x-bf-workstation-name",
 		"x-client-name",
 		"x-client-version",
+		// Coder identity is useful for workstation attribution.  Deliberately
+		// exclude x-coder-session-token and other credential-bearing headers.
+		"x-coder-user-name",
+		"x-coder-user-id",
+		"x-coder-workspace-name",
+		"x-coder-workspace-id",
+		"x-coder-agent-name",
 	} {
 		if value := strings.TrimSpace(allHeaders[key]); value != "" {
 			if metadata == nil {
 				metadata = make(map[string]any)
 			}
-			metadata[key] = value
+			metadata[key] = boundedAttributionValue(value)
 		}
 	}
 	if peer, ok := ctx.Value(schemas.BifrostContextKeyClientPeerAddress).(string); ok && peer != "" {
 		if metadata == nil {
 			metadata = make(map[string]any)
 		}
-		metadata["client_peer_address"] = peer
+		// Keep the transport-observed peer (not a caller-controlled forwarded
+		// address), plus a normalized IP for grouping across ephemeral ports.
+		metadata["client_peer_address"] = boundedAttributionValue(peer)
+		metadata["client_peer_ip"] = boundedPeerAddress(peer)
 	}
 
 	// Check configured logging headers (supports wildcard patterns like "x-custom-*")
@@ -593,7 +604,9 @@ func (p *LoggerPlugin) captureLoggingHeaders(ctx *schemas.BifrostContext) map[st
 					if metadata == nil {
 						metadata = make(map[string]any)
 					}
-					metadata[hKey] = hVal
+					if !isSensitiveAttributionHeader(hKey) {
+						metadata[hKey] = boundedAttributionValue(hVal)
+					}
 				}
 			}
 		}
@@ -605,7 +618,7 @@ func (p *LoggerPlugin) captureLoggingHeaders(ctx *schemas.BifrostContext) map[st
 			if metadata == nil {
 				metadata = make(map[string]any)
 			}
-			metadata[labelName] = val
+			metadata[labelName] = boundedAttributionValue(val)
 		}
 	}
 
@@ -616,12 +629,45 @@ func (p *LoggerPlugin) captureLoggingHeaders(ctx *schemas.BifrostContext) map[st
 				metadata = make(map[string]any)
 			}
 			if _, exists := metadata[k]; !exists {
-				metadata[k] = v
+				metadata[k] = boundedAttributionValue(v)
 			}
 		}
 	}
 
 	return metadata
+}
+
+const maxAttributionValueLen = 256
+
+func boundedAttributionValue(value string) string {
+	value = strings.Map(func(r rune) rune {
+		if r == '\n' || r == '\r' || r == '\t' || (r >= 0x20 && r != 0x7f) {
+			return r
+		}
+		return -1
+	}, strings.TrimSpace(value))
+	if len(value) > maxAttributionValueLen {
+		return value[:maxAttributionValueLen]
+	}
+	return value
+}
+
+func isSensitiveAttributionHeader(name string) bool {
+	name = strings.ToLower(strings.TrimSpace(name))
+	for _, token := range []string{"authorization", "cookie", "token", "secret", "api-key", "apikey", "password", "credential", "virtual-key"} {
+		if strings.Contains(name, token) {
+			return true
+		}
+	}
+	return false
+}
+
+func boundedPeerAddress(peer string) string {
+	peer = boundedAttributionValue(peer)
+	if host, _, err := net.SplitHostPort(peer); err == nil {
+		return host
+	}
+	return peer
 }
 
 // PreRequestHook implements schemas.LLMPlugin (no-op — required for plugin indexing).

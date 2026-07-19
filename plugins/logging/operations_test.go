@@ -77,11 +77,14 @@ func TestPostLLMHookNoPendingErrorPreservesMetadata(t *testing.T) {
 	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
 	ctx.SetValue(schemas.BifrostContextKeyRequestID, "req-error-no-pending")
 	ctx.SetValue(schemas.BifrostContextKeyRequestHeaders, map[string]string{
-		"x-bf-lh-tenant":   "acme",
-		"x-custom-log":     "custom-value",
-		"user-agent":       "python-openai/1.0",
-		"x-bf-device-name": "research-laptop",
-		"authorization":    "Bearer should-never-be-logged",
+		"x-bf-lh-tenant":         "acme",
+		"x-custom-log":           "custom-value",
+		"user-agent":             "python-openai/1.0",
+		"x-bf-device-name":       "research-laptop",
+		"authorization":          "Bearer should-never-be-logged",
+		"x-coder-user-name":      "pierre",
+		"x-coder-workspace-name": "research-workspace",
+		"x-coder-session-token":  "coder-secret-must-not-be-logged",
 	})
 	ctx.SetValue(schemas.BifrostContextKeyClientPeerAddress, "10.0.0.7:44321")
 	ctx.SetValue(schemas.BifrostContextKeyDimensions, map[string]string{
@@ -140,6 +143,15 @@ func TestPostLLMHookNoPendingErrorPreservesMetadata(t *testing.T) {
 	}
 	if got := logEntry.MetadataParsed["client_peer_address"]; got != "10.0.0.7:44321" {
 		t.Fatalf("expected peer address attribution, got %#v", got)
+	}
+	if got := logEntry.MetadataParsed["client_peer_ip"]; got != "10.0.0.7" {
+		t.Fatalf("expected normalized peer IP attribution, got %#v", got)
+	}
+	if got := logEntry.MetadataParsed["x-coder-user-name"]; got != "pierre" {
+		t.Fatalf("expected Coder user attribution, got %#v", got)
+	}
+	if _, ok := logEntry.MetadataParsed["x-coder-session-token"]; ok {
+		t.Fatal("Coder session token must never be persisted as attribution metadata")
 	}
 	if _, ok := logEntry.MetadataParsed["authorization"]; ok {
 		t.Fatal("authorization must never be persisted as attribution metadata")
