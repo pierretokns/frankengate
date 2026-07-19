@@ -94,9 +94,15 @@ func (s *RDBConfigStore) AppendVirtualKeyInvalidation(ctx context.Context, tx *g
 	if event.EntityType != tables.VirtualKeyInvalidationEntityType {
 		return fmt.Errorf("invalid virtual-key invalidation entity type %q", event.EntityType)
 	}
-	if strings.TrimSpace(event.EntityID) == "" {
+	entityID := strings.TrimSpace(event.EntityID)
+	if entityID == "" {
 		return errors.New("virtual-key invalidation entity id is required")
 	}
+	// Entity IDs are used as exact lookup keys by every replica. Canonicalize
+	// harmless surrounding whitespace at the write boundary so a client that
+	// copied an ID from a form cannot create an event that permanently wedges
+	// the ordered consumer (the row would be valid but no pod could resolve it).
+	event.EntityID = entityID
 	if event.Action != tables.VirtualKeyInvalidationActionReload && event.Action != tables.VirtualKeyInvalidationActionDelete {
 		return fmt.Errorf("invalid virtual-key invalidation action %q", event.Action)
 	}

@@ -124,6 +124,24 @@ func TestVirtualKeyInvalidationValidatesContractAndReportsHighWatermark(t *testi
 	require.Equal(t, &scope, events[0].Scope)
 }
 
+func TestAppendVirtualKeyInvalidationCanonicalizesEntityID(t *testing.T) {
+	store := setupVKInvalidationTestStore(t)
+	ctx := context.Background()
+	event := &tables.TableVirtualKeyInvalidationEvent{
+		EntityType: tables.VirtualKeyInvalidationEntityType,
+		Action:     tables.VirtualKeyInvalidationActionReload,
+		EntityID:   "  vk-canonical  ",
+	}
+	require.NoError(t, store.ExecuteTransaction(ctx, func(tx *gorm.DB) error {
+		return store.AppendVirtualKeyInvalidation(ctx, tx, event)
+	}))
+	require.Equal(t, "vk-canonical", event.EntityID)
+	events, err := store.ListVirtualKeyInvalidationsAfter(ctx, 0, 1)
+	require.NoError(t, err)
+	require.Len(t, events, 1)
+	require.Equal(t, "vk-canonical", events[0].EntityID)
+}
+
 func TestAppendVirtualKeyInvalidationCommitsWithCallerTransaction(t *testing.T) {
 	store := setupVKInvalidationTestStore(t)
 	ctx := context.Background()
