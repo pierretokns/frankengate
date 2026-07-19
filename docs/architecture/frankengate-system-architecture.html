@@ -748,196 +748,269 @@ svg {
 html&gt;body{padding:0}&lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;div id=&quot;fg-architecture&quot;&gt;
+&lt;div id=&quot;fg-box-architecture&quot;&gt;
   &lt;style&gt;
-    #fg-architecture { color: var(--foreground); font-size: var(--font-size-base); }
-    #fg-architecture .controls { margin-bottom: 14px; }
-    #fg-architecture .legend { display:flex; flex-wrap:wrap; gap:8px 14px; margin:10px 0 16px; color:var(--muted-foreground); }
-    #fg-architecture .legend span { display:inline-flex; align-items:center; gap:5px; }
-    #fg-architecture .swatch { width:13px; height:13px; display:inline-block; background:color-mix(in srgb,var(--viz-series-1) 18%,transparent); border:1px solid color-mix(in srgb,var(--viz-series-1) 55%,var(--border)); }
-    #fg-architecture .swatch.async { background:color-mix(in srgb,var(--viz-series-2) 18%,transparent); border-color:color-mix(in srgb,var(--viz-series-2) 55%,var(--border)); }
-    #fg-architecture .swatch.external { background:color-mix(in srgb,var(--viz-series-3) 18%,transparent); border-color:color-mix(in srgb,var(--viz-series-3) 55%,var(--border)); }
-    #fg-architecture .zone { margin:0 0 18px; }
-    #fg-architecture .zone-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0 0 8px; border-bottom:1px solid var(--border); padding-bottom:5px; }
-    #fg-architecture .zone-head h3 { margin:0; }
-    #fg-architecture .zone-head span { color:var(--muted-foreground); }
-    #fg-architecture .flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:18px; align-items:stretch; }
-    #fg-architecture .node { position:relative; min-width:0; padding:11px 10px 10px; border:1px solid var(--border); background:var(--card); color:var(--card-foreground); }
-    #fg-architecture .node.hot { background:color-mix(in srgb,var(--viz-series-1) 10%,var(--card)); border-color:color-mix(in srgb,var(--viz-series-1) 45%,var(--border)); }
-    #fg-architecture .node.async { background:color-mix(in srgb,var(--viz-series-2) 10%,var(--card)); border-color:color-mix(in srgb,var(--viz-series-2) 45%,var(--border)); }
-    #fg-architecture .node.external { background:color-mix(in srgb,var(--viz-series-3) 10%,var(--card)); border-color:color-mix(in srgb,var(--viz-series-3) 45%,var(--border)); }
-    #fg-architecture .node::after { content:&quot;→&quot;; position:absolute; right:-15px; top:50%; transform:translateY(-50%); color:var(--muted-foreground); }
-    #fg-architecture .node:last-child::after, #fg-architecture .no-arrow::after { display:none; }
-    #fg-architecture .node h4 { margin:0 44px 5px 0; font-weight:500; }
-    #fg-architecture .node p { margin:0 0 5px; color:var(--muted-foreground); }
-    #fg-architecture .node .api { margin-top:7px; color:var(--foreground); }
-    #fg-architecture .badges { position:absolute; right:6px; top:6px; display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
-    #fg-architecture .origin { display:inline-flex; min-width:29px; justify-content:center; padding:1px 4px; border:1px solid var(--border); background:var(--background); color:var(--foreground); font-size:11px; font-weight:500; }
-    #fg-architecture .concerns { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }
-    #fg-architecture .concern { padding:1px 4px; background:var(--muted); color:var(--muted-foreground); font-size:11px; }
-    #fg-architecture .aws { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }
-    #fg-architecture .aws span { padding:1px 4px; border:1px solid var(--border); font-size:11px; }
-    #fg-architecture .branch { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
-    #fg-architecture .branch .node::after { display:none; }
-    #fg-architecture .boundary { margin:8px 0 10px; padding:5px 8px; border-top:1px dashed var(--border); border-bottom:1px dashed var(--border); color:var(--muted-foreground); text-align:center; }
-    #fg-architecture .detail { margin-top:12px; min-height:22px; color:var(--muted-foreground); }
-    #fg-architecture[data-view=&quot;hot&quot;] .node:not(.hot), #fg-architecture[data-view=&quot;async&quot;] .node:not(.async), #fg-architecture[data-view=&quot;external&quot;] .node:not(.external) { opacity:.18; }
-    #fg-architecture[data-concerns=&quot;off&quot;] .concerns { display:none; }
-    #fg-architecture .node:focus-within { outline:2px solid var(--ring); outline-offset:2px; }
-    @media (max-width:700px) {
-      #fg-architecture .flow, #fg-architecture .branch { grid-template-columns:1fr; }
-      #fg-architecture .node::after { content:&quot;↓&quot;; right:50%; top:auto; bottom:-19px; transform:translateX(50%); }
-      #fg-architecture .branch .node::after { display:none; }
-      #fg-architecture .zone-head { align-items:flex-start; flex-direction:column; gap:2px; }
-    }
+    #fg-box-architecture { color:var(--foreground); }
+    #fg-box-architecture .controls { margin-bottom:10px; }
+    #fg-box-architecture svg { display:block; width:100%; height:auto; }
+    #fg-box-architecture .lane { fill:color-mix(in srgb,var(--muted) 25%,transparent); stroke:var(--border); stroke-width:1; }
+    #fg-box-architecture .lane-title { fill:var(--foreground); font-weight:500; font-size:17px; }
+    #fg-box-architecture .lane-note { fill:var(--muted-foreground); font-size:12px; }
+    #fg-box-architecture .box { fill:var(--card); stroke:var(--border); stroke-width:1.4; rx:7; }
+    #fg-box-architecture .hot-box { fill:color-mix(in srgb,var(--viz-series-1) 12%,var(--card)); stroke:color-mix(in srgb,var(--viz-series-1) 58%,var(--border)); }
+    #fg-box-architecture .async-box { fill:color-mix(in srgb,var(--viz-series-2) 12%,var(--card)); stroke:color-mix(in srgb,var(--viz-series-2) 58%,var(--border)); }
+    #fg-box-architecture .external-box { fill:color-mix(in srgb,var(--viz-series-3) 12%,var(--card)); stroke:color-mix(in srgb,var(--viz-series-3) 58%,var(--border)); }
+    #fg-box-architecture .optional-box { stroke-dasharray:6 4; }
+    #fg-box-architecture .title { fill:var(--card-foreground); font-size:14px; font-weight:500; }
+    #fg-box-architecture .copy { fill:var(--muted-foreground); font-size:11px; }
+    #fg-box-architecture .api { fill:var(--foreground); font-size:10px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    #fg-box-architecture .aws { fill:color-mix(in srgb,var(--viz-series-4) 13%,var(--card)); stroke:color-mix(in srgb,var(--viz-series-4) 55%,var(--border)); }
+    #fg-box-architecture .aws-text { fill:var(--foreground); font-size:9px; }
+    #fg-box-architecture .badge { fill:var(--background); stroke:var(--border); }
+    #fg-box-architecture .badge-text { fill:var(--foreground); font-size:8px; font-weight:500; text-anchor:middle; }
+    #fg-box-architecture .link { fill:none; stroke:var(--muted-foreground); stroke-width:1.5; marker-end:url(#fg-arrow); }
+    #fg-box-architecture .hot-link { stroke:var(--viz-series-1); stroke-width:2.7; }
+    #fg-box-architecture .async-link { stroke:var(--viz-series-2); stroke-width:1.8; stroke-dasharray:6 4; }
+    #fg-box-architecture .external-link { stroke:var(--viz-series-3); }
+    #fg-box-architecture .label-bg { fill:var(--background); }
+    #fg-box-architecture .link-label { fill:var(--foreground); font-size:9px; text-anchor:middle; }
+    #fg-box-architecture .boundary { fill:none; stroke:var(--destructive); stroke-width:1.3; stroke-dasharray:8 5; }
+    #fg-box-architecture .boundary-label { fill:var(--destructive); font-size:10px; font-weight:500; }
+    #fg-box-architecture[data-view=&quot;hot&quot;] .async-group, #fg-box-architecture[data-view=&quot;hot&quot;] .external-only { opacity:.13; }
+    #fg-box-architecture[data-view=&quot;async&quot;] .hot-group, #fg-box-architecture[data-view=&quot;async&quot;] .external-only { opacity:.13; }
+    #fg-box-architecture[data-view=&quot;external&quot;] .hot-group, #fg-box-architecture[data-view=&quot;external&quot;] .async-group:not(.external-only) { opacity:.13; }
+    #fg-box-architecture[data-concerns=&quot;off&quot;] .concern { display:none; }
+    #fg-box-architecture .legend { display:flex; flex-wrap:wrap; gap:7px 14px; margin-top:9px; color:var(--muted-foreground); }
+    #fg-box-architecture .legend span { display:inline-flex; align-items:center; gap:5px; }
+    #fg-box-architecture .line-key { width:28px; border-top:3px solid var(--viz-series-1); }
+    #fg-box-architecture .line-key.async { border-top:2px dashed var(--viz-series-2); }
+    #fg-box-architecture .line-key.external { border-top:2px solid var(--viz-series-3); }
   &lt;/style&gt;
 
-  &lt;div class=&quot;viz-controls controls&quot; aria-label=&quot;Architecture view controls&quot;&gt;
-    &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-view=&quot;all&quot; aria-pressed=&quot;true&quot;&gt;Whole system&lt;/button&gt;
-    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-view=&quot;hot&quot; aria-pressed=&quot;false&quot;&gt;Hot inference path&lt;/button&gt;
-    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-view=&quot;async&quot; aria-pressed=&quot;false&quot;&gt;Async control &amp;amp; evidence&lt;/button&gt;
-    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-view=&quot;external&quot; aria-pressed=&quot;false&quot;&gt;External tools &amp;amp; providers&lt;/button&gt;
-    &lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;fg-concerns&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;Security &amp;amp; privacy&lt;/span&gt;&lt;/label&gt;
+  &lt;div class=&quot;viz-controls controls&quot;&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; data-view=&quot;all&quot; aria-pressed=&quot;true&quot;&gt;Whole architecture&lt;/button&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn&quot; data-view=&quot;hot&quot; aria-pressed=&quot;false&quot;&gt;Hot path&lt;/button&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn&quot; data-view=&quot;async&quot; aria-pressed=&quot;false&quot;&gt;Control &amp;amp; async&lt;/button&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn&quot; data-view=&quot;external&quot; aria-pressed=&quot;false&quot;&gt;External ecosystem&lt;/button&gt;
+    &lt;label class=&quot;form-check form-switch&quot;&gt;&lt;input id=&quot;fg-box-concerns&quot; class=&quot;form-check-input&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;form-check-label&quot;&gt;Security/privacy marks&lt;/span&gt;&lt;/label&gt;
   &lt;/div&gt;
 
-  &lt;div class=&quot;legend text-small&quot; aria-label=&quot;Legend&quot;&gt;
-    &lt;span&gt;&lt;i class=&quot;swatch&quot;&gt;&lt;/i&gt; synchronous hot path&lt;/span&gt;
-    &lt;span&gt;&lt;i class=&quot;swatch async&quot;&gt;&lt;/i&gt; asynchronous / control plane&lt;/span&gt;
-    &lt;span&gt;&lt;i class=&quot;swatch external&quot;&gt;&lt;/i&gt; outside FrankenGate trust boundary&lt;/span&gt;
-    &lt;span&gt;🆕 net-new FrankenGate feature&lt;/span&gt;&lt;span&gt;🛡️ security concern&lt;/span&gt;&lt;span&gt;🔒 privacy concern&lt;/span&gt;
-    &lt;span&gt;&lt;b&gt;BF&lt;/b&gt; Bifrost&lt;/span&gt;&lt;span&gt;&lt;b&gt;FG&lt;/b&gt; FrankenGate&lt;/span&gt;&lt;span&gt;&lt;b&gt;FS&lt;/b&gt; Frankensearch&lt;/span&gt;&lt;span&gt;&lt;b&gt;EE&lt;/b&gt; Eidetic&lt;/span&gt;&lt;span&gt;&lt;b&gt;FP&lt;/b&gt; Franken family&lt;/span&gt;
+  &lt;svg viewBox=&quot;0 0 1600 1270&quot; role=&quot;img&quot; aria-labelledby=&quot;fg-svg-title fg-svg-desc&quot;&gt;
+    &lt;title id=&quot;fg-svg-title&quot;&gt;FrankenGate architecture and integration boundaries&lt;/title&gt;
+    &lt;desc id=&quot;fg-svg-desc&quot;&gt;Box-and-line architecture diagram separating hot inference, durable authority, product control plane, asynchronous workers, retrieval, and endpoint tooling. Boxes show project provenance and AWS services.&lt;/desc&gt;
+    &lt;defs&gt;
+      &lt;marker id=&quot;fg-arrow&quot; viewBox=&quot;0 0 10 10&quot; refX=&quot;9&quot; refY=&quot;5&quot; markerWidth=&quot;7&quot; markerHeight=&quot;7&quot; orient=&quot;auto-start-reverse&quot;&gt;&lt;path d=&quot;M 0 0 L 10 5 L 0 10 z&quot; fill=&quot;context-stroke&quot;/&gt;&lt;/marker&gt;
+    &lt;/defs&gt;
+
+    &lt;!-- lanes --&gt;
+    &lt;rect class=&quot;lane&quot; x=&quot;18&quot; y=&quot;18&quot; width=&quot;1564&quot; height=&quot;245&quot; rx=&quot;10&quot;/&gt;
+    &lt;text class=&quot;lane-title&quot; x=&quot;36&quot; y=&quot;47&quot;&gt;HOT INFERENCE DATA PLANE&lt;/text&gt;
+    &lt;text class=&quot;lane-note&quot; x=&quot;36&quot; y=&quot;66&quot;&gt;Synchronous availability domain · no evals, reports, training, OCR, ASR or index builds&lt;/text&gt;
+
+    &lt;rect class=&quot;lane&quot; x=&quot;18&quot; y=&quot;280&quot; width=&quot;1564&quot; height=&quot;245&quot; rx=&quot;10&quot;/&gt;
+    &lt;text class=&quot;lane-title&quot; x=&quot;36&quot; y=&quot;309&quot;&gt;DURABLE AUTHORITY + PRODUCT CONTROL PLANE&lt;/text&gt;
+    &lt;text class=&quot;lane-note&quot; x=&quot;36&quot; y=&quot;328&quot;&gt;One browser origin · one PostgreSQL authority · independently bounded roles, pools and deployments&lt;/text&gt;
+
+    &lt;rect class=&quot;lane&quot; x=&quot;18&quot; y=&quot;542&quot; width=&quot;1564&quot; height=&quot;355&quot; rx=&quot;10&quot;/&gt;
+    &lt;text class=&quot;lane-title&quot; x=&quot;36&quot; y=&quot;571&quot;&gt;ASYNCHRONOUS ANALYTICS, RETRIEVAL + ENRICHMENT&lt;/text&gt;
+    &lt;text class=&quot;lane-note&quot; x=&quot;36&quot; y=&quot;590&quot;&gt;One leased-job protocol · worker classes scale on queue age, bytes, quota or device utilization&lt;/text&gt;
+
+    &lt;rect class=&quot;lane&quot; x=&quot;18&quot; y=&quot;914&quot; width=&quot;1564&quot; height=&quot;235&quot; rx=&quot;10&quot;/&gt;
+    &lt;text class=&quot;lane-title&quot; x=&quot;36&quot; y=&quot;943&quot;&gt;ENDPOINT-LOCAL + EXTERNAL ECOSYSTEM&lt;/text&gt;
+    &lt;text class=&quot;lane-note&quot; x=&quot;36&quot; y=&quot;962&quot;&gt;Outside product Helm and gateway trust boundary unless explicitly admitted through governed APIs&lt;/text&gt;
+
+    &lt;!-- hot path connections --&gt;
+    &lt;g class=&quot;hot-group&quot;&gt;
+      &lt;path class=&quot;link hot-link&quot; d=&quot;M235 160 H305&quot;/&gt;
+      &lt;path class=&quot;link hot-link&quot; d=&quot;M510 160 H585&quot;/&gt;
+      &lt;path class=&quot;link hot-link&quot; d=&quot;M855 160 H930&quot;/&gt;
+      &lt;path class=&quot;link hot-link external-link&quot; d=&quot;M1155 160 H1228&quot;/&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;244&quot; y=&quot;143&quot; width=&quot;52&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;270&quot; y=&quot;153&quot;&gt;HTTPS/SSE&lt;/text&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;516&quot; y=&quot;143&quot; width=&quot;62&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;547&quot; y=&quot;153&quot;&gt;signed identity&lt;/text&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;864&quot; y=&quot;143&quot; width=&quot;58&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;893&quot; y=&quot;153&quot;&gt;route attempt&lt;/text&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;1163&quot; y=&quot;143&quot; width=&quot;58&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;1192&quot; y=&quot;153&quot;&gt;provider API&lt;/text&gt;
+    &lt;/g&gt;
+
+    &lt;!-- hot boxes --&gt;
+    &lt;g class=&quot;external-only&quot;&gt;
+      &lt;rect class=&quot;box external-box&quot; x=&quot;45&quot; y=&quot;95&quot; width=&quot;190&quot; height=&quot;130&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;61&quot; y=&quot;121&quot;&gt;Clients &amp;amp; agents&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;61&quot; y=&quot;143&quot;&gt;Claude Code · SDKs · apps&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;61&quot; y=&quot;160&quot;&gt;MCP clients · A2A clients&lt;/text&gt;&lt;text class=&quot;api&quot; x=&quot;61&quot; y=&quot;183&quot;&gt;HTTPS · SSE · WS · MCP&lt;/text&gt;
+      &lt;text class=&quot;copy concern&quot; x=&quot;61&quot; y=&quot;207&quot;&gt;🛡 untrusted input  🔒 prompts/files&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;194&quot; y=&quot;104&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;209.5&quot; y=&quot;116&quot;&gt;EXT&lt;/text&gt;
+    &lt;/g&gt;
+    &lt;g class=&quot;hot-group&quot;&gt;
+      &lt;rect class=&quot;box hot-box&quot; x=&quot;305&quot; y=&quot;95&quot; width=&quot;205&quot; height=&quot;130&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;321&quot; y=&quot;121&quot;&gt;🆕 Edge / ingress / BFF&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;321&quot; y=&quot;143&quot;&gt;TLS · route split · sessions&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;321&quot; y=&quot;160&quot;&gt;WAF · one browser origin&lt;/text&gt;
+      &lt;rect class=&quot;aws&quot; x=&quot;321&quot; y=&quot;177&quot; width=&quot;44&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;328&quot; y=&quot;189&quot;&gt;ALB&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;370&quot; y=&quot;177&quot; width=&quot;44&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;377&quot; y=&quot;189&quot;&gt;WAF&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;419&quot; y=&quot;177&quot; width=&quot;44&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;426&quot; y=&quot;189&quot;&gt;ACM&lt;/text&gt;
+      &lt;text class=&quot;copy concern&quot; x=&quot;321&quot; y=&quot;211&quot;&gt;🛡 spoofing/CSRF  🔒 access logs&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;469&quot; y=&quot;104&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;484.5&quot; y=&quot;116&quot;&gt;FG&lt;/text&gt;
+
+      &lt;rect class=&quot;box hot-box&quot; x=&quot;585&quot; y=&quot;82&quot; width=&quot;270&quot; height=&quot;156&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;601&quot; y=&quot;110&quot;&gt;Go inference gateway&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;601&quot; y=&quot;132&quot;&gt;AuthN/Z · policy · quota reservation&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;601&quot; y=&quot;149&quot;&gt;routing · fallback · streaming · MCP&lt;/text&gt;&lt;text class=&quot;api&quot; x=&quot;601&quot; y=&quot;174&quot;&gt;/v1/* + provider-compatible APIs&lt;/text&gt;
+      &lt;rect class=&quot;aws&quot; x=&quot;601&quot; y=&quot;190&quot; width=&quot;40&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;609&quot; y=&quot;202&quot;&gt;EKS&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;646&quot; y=&quot;190&quot; width=&quot;40&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;654&quot; y=&quot;202&quot;&gt;ECR&lt;/text&gt;
+      &lt;text class=&quot;copy concern&quot; x=&quot;601&quot; y=&quot;225&quot;&gt;🛡 deny default  🔒 bounded/redacted evidence&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;814&quot; y=&quot;91&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;829.5&quot; y=&quot;103&quot;&gt;BF&lt;/text&gt;&lt;rect class=&quot;badge&quot; x=&quot;814&quot; y=&quot;111&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;829.5&quot; y=&quot;123&quot;&gt;FG&lt;/text&gt;
+
+      &lt;rect class=&quot;box hot-box&quot; x=&quot;930&quot; y=&quot;95&quot; width=&quot;225&quot; height=&quot;130&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;946&quot; y=&quot;121&quot;&gt;Provider adapters&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;946&quot; y=&quot;143&quot;&gt;Bedrock · OpenAI · Anthropic&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;946&quot; y=&quot;160&quot;&gt;Gemini · 20+ providers&lt;/text&gt;&lt;text class=&quot;api&quot; x=&quot;946&quot; y=&quot;183&quot;&gt;SigV4 · HTTPS · SSE&lt;/text&gt;
+      &lt;text class=&quot;copy concern&quot; x=&quot;946&quot; y=&quot;207&quot;&gt;🛡 egress/region  🔒 retention&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1114&quot; y=&quot;104&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1129.5&quot; y=&quot;116&quot;&gt;BF&lt;/text&gt;
+    &lt;/g&gt;
+    &lt;g class=&quot;external-only&quot;&gt;
+      &lt;rect class=&quot;box external-box&quot; x=&quot;1228&quot; y=&quot;82&quot; width=&quot;310&quot; height=&quot;156&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;1244&quot; y=&quot;110&quot;&gt;External models + MCP tools&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1244&quot; y=&quot;132&quot;&gt;Bedrock profiles · hosted APIs&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1244&quot; y=&quot;149&quot;&gt;embeddings · tools · side effects&lt;/text&gt;
+      &lt;rect class=&quot;aws&quot; x=&quot;1244&quot; y=&quot;166&quot; width=&quot;62&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1251&quot; y=&quot;178&quot;&gt;Bedrock&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;1311&quot; y=&quot;166&quot; width=&quot;40&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1321&quot; y=&quot;178&quot;&gt;STS&lt;/text&gt;
+      &lt;text class=&quot;copy concern&quot; x=&quot;1244&quot; y=&quot;207&quot;&gt;🛡 injection/side effects  🔒 disclosure&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1497&quot; y=&quot;91&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1512.5&quot; y=&quot;103&quot;&gt;EXT&lt;/text&gt;
+    &lt;/g&gt;
+
+    &lt;!-- vertical hot/control boundaries --&gt;
+    &lt;g class=&quot;hot-group&quot;&gt;
+      &lt;path class=&quot;link hot-link&quot; d=&quot;M690 238 V352&quot;/&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;636&quot; y=&quot;272&quot; width=&quot;108&quot; height=&quot;15&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;690&quot; y=&quot;283&quot;&gt;reserve / reconcile quota&lt;/text&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M770 238 V562 H860 V630&quot;/&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;778&quot; y=&quot;548&quot; width=&quot;91&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;823&quot; y=&quot;558&quot;&gt;bounded evidence event&lt;/text&gt;
+    &lt;/g&gt;
+    &lt;rect class=&quot;boundary&quot; x=&quot;566&quot; y=&quot;257&quot; width=&quot;316&quot; height=&quot;23&quot; rx=&quot;5&quot;/&gt;&lt;text class=&quot;boundary-label&quot; x=&quot;582&quot; y=&quot;273&quot;&gt;HARD AVAILABILITY BOUNDARY — ASYNC WORK CANNOT BORROW GATEWAY PODS&lt;/text&gt;
+
+    &lt;!-- control plane connections --&gt;
+    &lt;g class=&quot;async-group&quot;&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M230 414 H294&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M486 394 H548&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M486 438 H548&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M790 394 H852&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M790 438 H852&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1100 394 H1162&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1100 438 H1162&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1388 454 V630&quot;/&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;238&quot; y=&quot;397&quot; width=&quot;48&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;262&quot; y=&quot;407&quot;&gt;one origin&lt;/text&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;797&quot; y=&quot;377&quot; width=&quot;48&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;821&quot; y=&quot;387&quot;&gt;SQL/RLS&lt;/text&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;1110&quot; y=&quot;377&quot; width=&quot;44&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;1132&quot; y=&quot;387&quot;&gt;outbox&lt;/text&gt;
+    &lt;/g&gt;
+
+    &lt;!-- control boxes --&gt;
+    &lt;g class=&quot;external-only async-group&quot;&gt;
+      &lt;rect class=&quot;box external-box&quot; x=&quot;45&quot; y=&quot;360&quot; width=&quot;185&quot; height=&quot;108&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;61&quot; y=&quot;386&quot;&gt;Admins + users&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;61&quot; y=&quot;408&quot;&gt;self-service traces · runs&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;61&quot; y=&quot;425&quot;&gt;reports · skills · governance&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;61&quot; y=&quot;451&quot;&gt;🔒 individual surveillance&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;189&quot; y=&quot;369&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;204.5&quot; y=&quot;381&quot;&gt;EXT&lt;/text&gt;
+    &lt;/g&gt;
+    &lt;g class=&quot;async-group&quot;&gt;
+      &lt;rect class=&quot;box async-box&quot; x=&quot;294&quot; y=&quot;352&quot; width=&quot;192&quot; height=&quot;124&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;310&quot; y=&quot;378&quot;&gt;Dashboard SPA&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;310&quot; y=&quot;400&quot;&gt;capability-gated routes&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;310&quot; y=&quot;417&quot;&gt;uniform UX + typed clients&lt;/text&gt;&lt;text class=&quot;api&quot; x=&quot;310&quot; y=&quot;440&quot;&gt;static + /api/*&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;310&quot; y=&quot;461&quot;&gt;🛡 honest UI  🔒 safe aggregates&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;445&quot; y=&quot;361&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;460.5&quot; y=&quot;373&quot;&gt;BF+FG&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box&quot; x=&quot;548&quot; y=&quot;348&quot; width=&quot;242&quot; height=&quot;64&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;564&quot; y=&quot;374&quot;&gt;Go admin APIs&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;564&quot; y=&quot;394&quot;&gt;keys · providers · routing · MCP · config&lt;/text&gt;&lt;rect class=&quot;badge&quot; x=&quot;749&quot; y=&quot;357&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;764.5&quot; y=&quot;369&quot;&gt;BF+FG&lt;/text&gt;
+      &lt;rect class=&quot;box async-box&quot; x=&quot;548&quot; y=&quot;422&quot; width=&quot;242&quot; height=&quot;64&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;564&quot; y=&quot;448&quot;&gt;🆕 Rust analytics API&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;564&quot; y=&quot;468&quot;&gt;runs · evals · reports · search · A2A&lt;/text&gt;&lt;rect class=&quot;badge&quot; x=&quot;749&quot; y=&quot;431&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;764.5&quot; y=&quot;443&quot;&gt;FG&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box&quot; x=&quot;852&quot; y=&quot;348&quot; width=&quot;248&quot; height=&quot;138&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;868&quot; y=&quot;374&quot;&gt;Aurora PostgreSQL authority&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;868&quot; y=&quot;397&quot;&gt;RLS · policies · keys · reservations&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;868&quot; y=&quot;414&quot;&gt;runs · evals · jobs · ACL · pgvector/FTS&lt;/text&gt;&lt;text class=&quot;api&quot; x=&quot;868&quot; y=&quot;437&quot;&gt;outbox · LISTEN/NOTIFY · leases&lt;/text&gt;
+      &lt;rect class=&quot;aws&quot; x=&quot;868&quot; y=&quot;449&quot; width=&quot;102&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;875&quot; y=&quot;461&quot;&gt;Aurora PostgreSQL&lt;/text&gt;
+      &lt;text class=&quot;copy concern&quot; x=&quot;868&quot; y=&quot;477&quot;&gt;🛡 role/pool isolation  🔒 row/chunk ACL&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1059&quot; y=&quot;357&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1074.5&quot; y=&quot;369&quot;&gt;BF+FG&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box&quot; x=&quot;1162&quot; y=&quot;348&quot; width=&quot;226&quot; height=&quot;138&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;1178&quot; y=&quot;374&quot;&gt;🆕 Job + snapshot control&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1178&quot; y=&quot;397&quot;&gt;idempotency · leases · cancel · drain&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1178&quot; y=&quot;414&quot;&gt;monotonic policy snapshots&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1178&quot; y=&quot;431&quot;&gt;signed artifact manifests&lt;/text&gt;
+      &lt;rect class=&quot;aws&quot; x=&quot;1178&quot; y=&quot;449&quot; width=&quot;32&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1187&quot; y=&quot;461&quot;&gt;S3&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;1215&quot; y=&quot;449&quot; width=&quot;40&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1223&quot; y=&quot;461&quot;&gt;KMS&lt;/text&gt;
+      &lt;text class=&quot;copy concern&quot; x=&quot;1260&quot; y=&quot;461&quot;&gt;🛡 stale fail closed&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1347&quot; y=&quot;357&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1362.5&quot; y=&quot;369&quot;&gt;FG&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box optional-box&quot; x=&quot;1430&quot; y=&quot;348&quot; width=&quot;120&quot; height=&quot;138&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;1446&quot; y=&quot;374&quot;&gt;Optional AWS&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1446&quot; y=&quot;398&quot;&gt;RDS Proxy&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1446&quot; y=&quot;417&quot;&gt;ElastiCache&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1446&quot; y=&quot;436&quot;&gt;Batch / GPU&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1446&quot; y=&quot;455&quot;&gt;CloudFront&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1446&quot; y=&quot;474&quot;&gt;only if measured&lt;/text&gt;
+    &lt;/g&gt;
+
+    &lt;!-- worker fanout --&gt;
+    &lt;g class=&quot;async-group&quot;&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1388 630 H1455 V684 H1330&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1388 630 H1455 V807 H1330&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1162 630 H1110 V684 H1030&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1162 630 H1110 V807 H1030&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1162 630 H810 V684 H730&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M1162 630 H810 V807 H730&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M852 630 H510 V684 H430&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M852 630 H510 V807 H430&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M852 630 H210 V684 H130&quot;/&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;1120&quot; y=&quot;612&quot; width=&quot;83&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;1161&quot; y=&quot;622&quot;&gt;leased job + manifest&lt;/text&gt;
+    &lt;/g&gt;
+
+    &lt;!-- worker boxes --&gt;
+    &lt;g class=&quot;async-group&quot;&gt;
+      &lt;rect class=&quot;box async-box&quot; x=&quot;55&quot; y=&quot;636&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;71&quot; y=&quot;662&quot;&gt;🆕 Replay + eval&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;71&quot; y=&quot;684&quot;&gt;deterministic replay · rules · LLM judges&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;71&quot; y=&quot;701&quot;&gt;promotion evidence · budgeted provider calls&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;71&quot; y=&quot;726&quot;&gt;🛡 quota/cost  🔒 evaluator leakage&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;259&quot; y=&quot;645&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;274.5&quot; y=&quot;657&quot;&gt;FG&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box&quot; x=&quot;355&quot; y=&quot;636&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;371&quot; y=&quot;662&quot;&gt;🆕 Embedding + index build&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;371&quot; y=&quot;684&quot;&gt;versioned models · dual write · backfill&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;371&quot; y=&quot;701&quot;&gt;checkpoint · atomic promotion&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;371&quot; y=&quot;726&quot;&gt;🛡 provenance  🔒 eligible text only&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;559&quot; y=&quot;645&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;574.5&quot; y=&quot;657&quot;&gt;FG+HF&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box&quot; x=&quot;655&quot; y=&quot;636&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;671&quot; y=&quot;662&quot;&gt;🆕 Reports + skill mining&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;671&quot; y=&quot;684&quot;&gt;Polars · graph analysis · Markdown/PDF&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;671&quot; y=&quot;701&quot;&gt;read-only Aurora role · S3 output&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;671&quot; y=&quot;726&quot;&gt;🛡 query limits  🔒 employee inference&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;859&quot; y=&quot;645&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;874.5&quot; y=&quot;657&quot;&gt;FG+PL+FP&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box external-box&quot; x=&quot;955&quot; y=&quot;636&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;971&quot; y=&quot;662&quot;&gt;🆕 Training + scorers&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;971&quot; y=&quot;684&quot;&gt;sandboxed Python/CUDA · HF · NVIDIA&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;971&quot; y=&quot;701&quot;&gt;MLflow/Phoenix adapters, not authority&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;971&quot; y=&quot;726&quot;&gt;🛡 image/egress  🔒 training corpus&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1159&quot; y=&quot;645&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1174.5&quot; y=&quot;657&quot;&gt;FG+ML+NV&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box external-box&quot; x=&quot;1255&quot; y=&quot;636&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;1271&quot; y=&quot;662&quot;&gt;🆕 A2A broker&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1271&quot; y=&quot;684&quot;&gt;agent cards · discovery · task lifecycle&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1271&quot; y=&quot;701&quot;&gt;delegation · artifacts · cancellation&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;1271&quot; y=&quot;726&quot;&gt;🛡 confused deputy  🔒 remote retention&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1459&quot; y=&quot;645&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1474.5&quot; y=&quot;657&quot;&gt;FG+A2A&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box external-box optional-box&quot; x=&quot;355&quot; y=&quot;759&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;371&quot; y=&quot;785&quot;&gt;🆕 Optional search query&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;371&quot; y=&quot;807&quot;&gt;Frankensearch adapter · BM25/vector&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;371&quot; y=&quot;824&quot;&gt;rerank · authorized progressive results&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;371&quot; y=&quot;849&quot;&gt;🛡 ACL before candidate  🔒 cache/snippet&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;559&quot; y=&quot;768&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;574.5&quot; y=&quot;780&quot;&gt;FG+FS&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box external-box optional-box&quot; x=&quot;655&quot; y=&quot;759&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;671&quot; y=&quot;785&quot;&gt;🆕 OCR + ASR enrichment&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;671&quot; y=&quot;807&quot;&gt;FrankenOCR · FrankenWhisper&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;671&quot; y=&quot;824&quot;&gt;redaction/classification before indexing&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;671&quot; y=&quot;849&quot;&gt;🛡 model supply chain  🔒 raw media&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;859&quot; y=&quot;768&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;874.5&quot; y=&quot;780&quot;&gt;FOCR+FW&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box external-box optional-box&quot; x=&quot;955&quot; y=&quot;759&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;971&quot; y=&quot;785&quot;&gt;🆕 Export adapters&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;971&quot; y=&quot;807&quot;&gt;Snowflake · MLflow · customer stores&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;971&quot; y=&quot;824&quot;&gt;separate credentials/egress/audit&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;971&quot; y=&quot;849&quot;&gt;🛡 scoped secrets  🔒 export approval&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1159&quot; y=&quot;768&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1174.5&quot; y=&quot;780&quot;&gt;FG+FSNOW&lt;/text&gt;
+
+      &lt;rect class=&quot;box async-box optional-box&quot; x=&quot;1255&quot; y=&quot;759&quot; width=&quot;245&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;1271&quot; y=&quot;785&quot;&gt;Optional accelerators&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1271&quot; y=&quot;807&quot;&gt;Redis/FrankenRedis · never authority&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1271&quot; y=&quot;824&quot;&gt;only after measured Aurora contention&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;1271&quot; y=&quot;849&quot;&gt;🛡 tenant key isolation&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1459&quot; y=&quot;768&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1474.5&quot; y=&quot;780&quot;&gt;FG+FP&lt;/text&gt;
+    &lt;/g&gt;
+
+    &lt;!-- endpoint connections --&gt;
+    &lt;g class=&quot;external-only&quot;&gt;
+      &lt;path class=&quot;link external-link&quot; d=&quot;M270 1033 H340&quot;/&gt;
+      &lt;path class=&quot;link external-link&quot; d=&quot;M625 1033 H700&quot;/&gt;
+      &lt;path class=&quot;link external-link&quot; d=&quot;M985 1033 H1060&quot;/&gt;
+      &lt;path class=&quot;link async-link&quot; d=&quot;M445 973 V897&quot;/&gt;
+      &lt;rect class=&quot;label-bg&quot; x=&quot;394&quot; y=&quot;904&quot; width=&quot;102&quot; height=&quot;14&quot;/&gt;&lt;text class=&quot;link-label&quot; x=&quot;445&quot; y=&quot;914&quot;&gt;reviewed governed upload&lt;/text&gt;
+    &lt;/g&gt;
+
+    &lt;!-- endpoint boxes --&gt;
+    &lt;g class=&quot;external-only&quot;&gt;
+      &lt;rect class=&quot;box external-box&quot; x=&quot;45&quot; y=&quot;988&quot; width=&quot;225&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;61&quot; y=&quot;1014&quot;&gt;🆕 Endpoint collector&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;61&quot; y=&quot;1036&quot;&gt;agent detection · encrypted local spool&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;61&quot; y=&quot;1053&quot;&gt;device auth · explicit review/redaction&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;61&quot; y=&quot;1078&quot;&gt;🛡 device binding  🔒 consent&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;229&quot; y=&quot;997&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;244.5&quot; y=&quot;1009&quot;&gt;FG+FAD&lt;/text&gt;
+
+      &lt;rect class=&quot;box external-box&quot; x=&quot;340&quot; y=&quot;988&quot; width=&quot;285&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;356&quot; y=&quot;1014&quot;&gt;Local recall + skill tools&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;356&quot; y=&quot;1036&quot;&gt;CASS · Eidetic · MetaSkill&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;356&quot; y=&quot;1053&quot;&gt;session search · memory · validation&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;356&quot; y=&quot;1078&quot;&gt;🛡 injection  🔒 raw sessions stay local&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;584&quot; y=&quot;997&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;599.5&quot; y=&quot;1009&quot;&gt;CASS+EE+MS&lt;/text&gt;
+
+      &lt;rect class=&quot;box external-box&quot; x=&quot;700&quot; y=&quot;988&quot; width=&quot;285&quot; height=&quot;105&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;716&quot; y=&quot;1014&quot;&gt;Agentic development flywheel&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;716&quot; y=&quot;1036&quot;&gt;NTM · FrankenTerm · Agent Mail&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;716&quot; y=&quot;1053&quot;&gt;Beads/BV · DCG/UBS · RCH&lt;/text&gt;&lt;text class=&quot;copy concern&quot; x=&quot;716&quot; y=&quot;1078&quot;&gt;🛡 dev credentials  🔒 session artifacts&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;944&quot; y=&quot;997&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;959.5&quot; y=&quot;1009&quot;&gt;NTM+FT+BR&lt;/text&gt;
+
+      &lt;rect class=&quot;box external-box&quot; x=&quot;1060&quot; y=&quot;976&quot; width=&quot;478&quot; height=&quot;129&quot;/&gt;
+      &lt;text class=&quot;title&quot; x=&quot;1076&quot; y=&quot;1002&quot;&gt;AWS operations + supply chain&lt;/text&gt;&lt;text class=&quot;copy&quot; x=&quot;1076&quot; y=&quot;1024&quot;&gt;images · secrets · encryption · telemetry · audit · backup&lt;/text&gt;
+      &lt;rect class=&quot;aws&quot; x=&quot;1076&quot; y=&quot;1041&quot; width=&quot;40&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1085&quot; y=&quot;1053&quot;&gt;ECR&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;1121&quot; y=&quot;1041&quot; width=&quot;88&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1128&quot; y=&quot;1053&quot;&gt;Secrets Mgr&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;1214&quot; y=&quot;1041&quot; width=&quot;40&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1222&quot; y=&quot;1053&quot;&gt;KMS&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;1259&quot; y=&quot;1041&quot; width=&quot;89&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1266&quot; y=&quot;1053&quot;&gt;CloudWatch&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;1353&quot; y=&quot;1041&quot; width=&quot;68&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1360&quot; y=&quot;1053&quot;&gt;CloudTrail&lt;/text&gt;&lt;rect class=&quot;aws&quot; x=&quot;1426&quot; y=&quot;1041&quot; width=&quot;72&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;aws-text&quot; x=&quot;1433&quot; y=&quot;1053&quot;&gt;AWS Backup&lt;/text&gt;
+      &lt;text class=&quot;copy concern&quot; x=&quot;1076&quot; y=&quot;1086&quot;&gt;🛡 IAM least privilege · signed images · content-free telemetry by default&lt;/text&gt;
+      &lt;rect class=&quot;badge&quot; x=&quot;1497&quot; y=&quot;985&quot; width=&quot;31&quot; height=&quot;17&quot; rx=&quot;3&quot;/&gt;&lt;text class=&quot;badge-text&quot; x=&quot;1512.5&quot; y=&quot;997&quot;&gt;AWS+FG&lt;/text&gt;
+    &lt;/g&gt;
+  &lt;/svg&gt;
+
+  &lt;div class=&quot;legend text-small&quot;&gt;
+    &lt;span&gt;&lt;i class=&quot;line-key&quot;&gt;&lt;/i&gt; synchronous hot path&lt;/span&gt;&lt;span&gt;&lt;i class=&quot;line-key async&quot;&gt;&lt;/i&gt; async/event/job boundary&lt;/span&gt;&lt;span&gt;&lt;i class=&quot;line-key external&quot;&gt;&lt;/i&gt; external trust boundary&lt;/span&gt;&lt;span&gt;🆕 net-new FrankenGate&lt;/span&gt;&lt;span&gt;🛡 security&lt;/span&gt;&lt;span&gt;🔒 privacy&lt;/span&gt;&lt;span&gt;Dashed box = optional / measured-need only&lt;/span&gt;
   &lt;/div&gt;
-
-  &lt;section class=&quot;zone&quot;&gt;
-    &lt;div class=&quot;zone-head&quot;&gt;&lt;h3&gt;1 · Request and inference data plane&lt;/h3&gt;&lt;span&gt;Latency-critical; analytics failure must not affect it&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;flow&quot;&gt;
-      &lt;article class=&quot;node external hot&quot; data-detail=&quot;SDKs, Claude Code, customer apps and MCP clients enter through one public origin.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;EXT&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Clients &amp;amp; agents&lt;/h4&gt;&lt;p&gt;OpenAI/Anthropic/Bedrock SDKs · Claude Code · MCP&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;HTTPS · SSE · WebSocket · MCP&lt;/code&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ untrusted input&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 prompts/files&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node hot&quot; data-detail=&quot;One origin keeps browser auth uniform while routing static, admin, analytics and inference traffic to separate backends.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Edge / ingress / BFF&lt;/h4&gt;&lt;p&gt;TLS · WAF policy · session boundary · route split&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;AWS ALB&lt;/span&gt;&lt;span&gt;AWS WAF&lt;/span&gt;&lt;span&gt;ACM&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ header spoofing&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 access logs&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node hot&quot; data-detail=&quot;The Go gateway remains the only synchronous inference engine: auth, policy, quota reservation, routing, providers, streaming and minimal evidence emission.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;BF&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Go inference gateway&lt;/h4&gt;&lt;p&gt;AuthN/Z · governance · quota · routing · plugins · MCP · streaming&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;/v1/* · provider-native APIs&lt;/code&gt;&lt;/div&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;EKS&lt;/span&gt;&lt;span&gt;ECR&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ deny-by-default&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 no raw log blocking&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node hot external&quot; data-detail=&quot;Provider selection can target Bedrock inference profiles or external model APIs. Retries/fallbacks stay inside the same entitlement and reservation decision.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;BF&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Provider adapters&lt;/h4&gt;&lt;p&gt;Bedrock · OpenAI · Anthropic · Gemini · 20+ providers&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;HTTPS / SigV4 / SSE&lt;/code&gt;&lt;/div&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;Bedrock&lt;/span&gt;&lt;span&gt;STS&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ egress/region&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 provider retention&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node hot external no-arrow&quot; data-detail=&quot;Models and MCP tools are external side effects. Tool access is intersected at global, client, tool and request scopes.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;EXT&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;BF&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Models &amp;amp; MCP tools&lt;/h4&gt;&lt;p&gt;Inference · embeddings · tool execution&lt;/p&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ prompt injection&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 data disclosure&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-    &lt;/div&gt;
-  &lt;/section&gt;
-
-  &lt;div class=&quot;boundary&quot;&gt;Hard availability boundary · gateway emits bounded metadata/events; it never runs evals, reports, training, OCR, ASR or index builds&lt;/div&gt;
-
-  &lt;section class=&quot;zone&quot;&gt;
-    &lt;div class=&quot;zone-head&quot;&gt;&lt;h3&gt;2 · Durable authority and propagation&lt;/h3&gt;&lt;span&gt;One authority per datum; caches and indexes are rebuildable&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;flow&quot;&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Identity is federated from Okta/OIDC and SCIM, but authorization remains a FrankenGate policy decision.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Identity &amp;amp; directory&lt;/h4&gt;&lt;p&gt;OIDC PKCE · Okta · SCIM · groups · access profiles&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;OIDC · SCIM 2.0&lt;/code&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ token/JWKS&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 directory attributes&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Aurora PostgreSQL is canonical for policies, keys, quota reservations, audit metadata, trace manifests, runs, evals, jobs and retrieval ACLs.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;BF&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Aurora PostgreSQL authority&lt;/h4&gt;&lt;p&gt;RLS · policy epochs · reservations · outbox · leases · pgvector/FTS&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;Aurora PostgreSQL&lt;/span&gt;&lt;span&gt;RDS Proxy optional&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ role/pool isolation&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 row/chunk ACL&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Same-transaction outbox plus LISTEN/NOTIFY and polling repair distributes monotonic revisions without adding a mandatory queue or Redis service.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Outbox &amp;amp; snapshot publisher&lt;/h4&gt;&lt;p&gt;&lt;code&gt;LISTEN/NOTIFY&lt;/code&gt; fast wakeup · polling repair · signed snapshots&lt;/p&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ stale-policy fail closed&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Gateway pods consume immutable versioned policy snapshots. They do not synchronously query analytics systems.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;BF&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Per-pod immutable cache&lt;/h4&gt;&lt;p&gt;Atomic swap · checksum · freshness lease · bounded staleness&lt;/p&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ revocation SLO&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async no-arrow&quot; data-detail=&quot;Large objects stay out of PostgreSQL. Content-addressed manifests, KMS encryption and short-lived signed URLs preserve provenance.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Artifact store&lt;/h4&gt;&lt;p&gt;Datasets · reports · model/checkpoint files · screenshots · bundles&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;S3&lt;/span&gt;&lt;span&gt;KMS&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ signed URL scope&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 retention/deletion&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-    &lt;/div&gt;
-  &lt;/section&gt;
-
-  &lt;section class=&quot;zone&quot;&gt;
-    &lt;div class=&quot;zone-head&quot;&gt;&lt;h3&gt;3 · Product control plane and dashboard&lt;/h3&gt;&lt;span&gt;Same browser origin; independently scalable deployments&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;flow&quot;&gt;
-      &lt;article class=&quot;node external async&quot; data-detail=&quot;Admins and individual users see only capability-backed routes and their authorized tenants, traces, runs, reports and skills.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;EXT&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Browser / operator CLI&lt;/h4&gt;&lt;p&gt;Admin · self-service traces · runs · evals · reports · skill mining&lt;/p&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ CSRF/session&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 individual surveillance&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;The React/Vite dashboard is separately deployed but remains visually and authentically one product through the edge.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;BF&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Dashboard SPA&lt;/h4&gt;&lt;p&gt;Capability manifest · governance · observability · analytics workbench&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;static assets + typed clients&lt;/code&gt;&lt;/div&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;S3/CloudFront optional&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ honest feature gating&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 safe aggregates&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Existing administrative endpoints stay in Go during staged extraction: providers, keys, governance, routing, MCP and config.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;BF&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Go admin APIs&lt;/h4&gt;&lt;p&gt;Providers · keys · governance · routing · MCP · config&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;/api/*&lt;/code&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ admin RBAC&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;The new Rust API owns experiments, runs, evals, lineage, retrieval, reports and job admission. It returns handles for unbounded work.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Rust analytics control API&lt;/h4&gt;&lt;p&gt;Experiments · runs · evals · lineage · reports · jobs · search&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;/api/analytics/* · OpenAPI&lt;/code&gt;&lt;/div&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;EKS&lt;/span&gt;&lt;span&gt;ECR&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ reauthorize every call&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 purpose binding&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async no-arrow&quot; data-detail=&quot;PostgreSQL leases and workload queues preserve one minimal operations model. Each worker class scales on its own demand signal.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Job admission &amp;amp; leases&lt;/h4&gt;&lt;p&gt;Idempotency · heartbeat · checkpoint · cancel · drain · typed outcomes&lt;/p&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ no detached work&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-    &lt;/div&gt;
-  &lt;/section&gt;
-
-  &lt;section class=&quot;zone&quot;&gt;
-    &lt;div class=&quot;zone-head&quot;&gt;&lt;h3&gt;4 · Independently scaled analytics and enrichment workers&lt;/h3&gt;&lt;span&gt;One job protocol; distinct CPU/GPU/quota/privacy profiles&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;branch&quot;&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Replay and deterministic evaluation consume frozen revisions and never borrow gateway provider quotas or pods.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;BF&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Replay &amp;amp; eval workers&lt;/h4&gt;&lt;p&gt;Deterministic replay · rules · LLM judges · promotion evidence&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;EKS Jobs&lt;/span&gt;&lt;span&gt;Bedrock optional&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ budget admission&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 evaluator leakage&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Versioned embedding jobs write rebuildable derived indexes. Query serving is separate from index construction.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;HF&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Embedding &amp;amp; index builders&lt;/h4&gt;&lt;p&gt;Model revisions · dual-write/backfill · checkpoint · atomic promotion&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;EKS CPU/GPU&lt;/span&gt;&lt;span&gt;S3&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ model provenance&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 eligible text only&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Polars is the default analytical dataframe engine. FrankenNetworkX and FrankenMarkdown/Mermaid are optional upstream workers for graph and rendering needs.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;PL&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FP&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Reports &amp;amp; skill mining&lt;/h4&gt;&lt;p&gt;Polars · graph analysis · Markdown/PDF · skill-loop metrics&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;EKS&lt;/span&gt;&lt;span&gt;Aurora read role&lt;/span&gt;&lt;span&gt;S3&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ statement limits&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 employee inference&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async external&quot; data-detail=&quot;Arbitrary scorers and training remain in pinned sandboxed Python/GPU images. MLflow, Phoenix, Hugging Face and NVIDIA are adapters, not authorities.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;ML&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;HF&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;NV&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Sandboxed training/scorers&lt;/h4&gt;&lt;p&gt;Python · CUDA · MLflow/Phoenix I/O · HF models · NVIDIA workflows&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;EKS GPU / AWS Batch optional&lt;/span&gt;&lt;span&gt;S3&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ signed image/egress&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 training corpus&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async&quot; data-detail=&quot;Media and document enrichment are optional worker deployments, never gateway plugins.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FOCR&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FW&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 OCR / ASR enrichment&lt;/h4&gt;&lt;p&gt;FrankenOCR · FrankenWhisper · redaction/classification gates&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;EKS CPU/GPU&lt;/span&gt;&lt;span&gt;S3&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ model supply chain&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 raw media&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async external&quot; data-detail=&quot;Snowflake export and other customer integrations are asynchronous adapters with separate credentials, egress and audit boundaries.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FSNOW&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Export adapters&lt;/h4&gt;&lt;p&gt;Snowflake · MLflow · customer object stores · signed bundles&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;Secrets Manager&lt;/span&gt;&lt;span&gt;KMS&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ scoped credentials&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 export approval&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async external&quot; data-detail=&quot;Frankensearch is tested through the smallest tenant-aware adapter. PostgreSQL remains source of truth and fallback.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FS&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Optional search service&lt;/h4&gt;&lt;p&gt;Frankensearch BM25/vector/rerank · authorized progressive results&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;versioned retrieval API&lt;/code&gt;&lt;/div&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;EKS&lt;/span&gt;&lt;span&gt;EBS/S3 snapshots&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ ACL before candidates&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 snippets/cache&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node async external&quot; data-detail=&quot;Redis is not a launch dependency. Add ElastiCache only if measured Aurora contention justifies a non-authoritative accelerator.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FP&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Optional accelerators&lt;/h4&gt;&lt;p&gt;Redis/FrankenRedis · never policy/evidence authority&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;ElastiCache optional&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ tenant key isolation&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-    &lt;/div&gt;
-  &lt;/section&gt;
-
-  &lt;section class=&quot;zone&quot;&gt;
-    &lt;div class=&quot;zone-head&quot;&gt;&lt;h3&gt;5 · Endpoint-local and development ecosystem&lt;/h3&gt;&lt;span&gt;Outside product Helm and customer runtime boundary&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;branch&quot;&gt;
-      &lt;article class=&quot;node external&quot; data-detail=&quot;Local collectors detect agent installations, keep encrypted local spools and require explicit review before upload.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FAD&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;🆕 Endpoint collector&lt;/h4&gt;&lt;p&gt;franken-agent-detection · adapters · encrypted SQLite/files · device auth&lt;/p&gt;&lt;div class=&quot;api&quot;&gt;&lt;code&gt;OAuth device flow · batch upload&lt;/code&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ device binding&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 consent/redaction&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node external&quot; data-detail=&quot;CASS, Eidetic and MetaSkill remain local-first tools. They can emit governed evidence but never become the managed tenant authority.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;CASS&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;EE&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;MS&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Local recall &amp;amp; skill tools&lt;/h4&gt;&lt;p&gt;Session search · personal memory · skill validation/promotion&lt;/p&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ prompt injection&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 raw sessions local&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node external&quot; data-detail=&quot;NTM, FrankenTerm, Agent Mail, Beads/BV and CI safety tools accelerate development only; none are production dependencies.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;NTM&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FT&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;BR&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Agentic development flywheel&lt;/h4&gt;&lt;p&gt;NTM · FrankenTerm · Agent Mail · Beads/BV · DCG/UBS · RCH&lt;/p&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ dev credentials&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 session artifacts&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-      &lt;article class=&quot;node external&quot; data-detail=&quot;AWS operational services surround deployments but are not application authorities.&quot;&gt;
-        &lt;div class=&quot;badges&quot;&gt;&lt;span class=&quot;origin&quot;&gt;AWS&lt;/span&gt;&lt;span class=&quot;origin&quot;&gt;FG&lt;/span&gt;&lt;/div&gt;&lt;h4&gt;Operations &amp;amp; supply chain&lt;/h4&gt;&lt;p&gt;Images · secrets · telemetry · autoscaling · audit · backup&lt;/p&gt;&lt;div class=&quot;aws&quot;&gt;&lt;span&gt;ECR&lt;/span&gt;&lt;span&gt;Secrets Manager&lt;/span&gt;&lt;span&gt;KMS&lt;/span&gt;&lt;span&gt;CloudWatch/OTel&lt;/span&gt;&lt;span&gt;CloudTrail&lt;/span&gt;&lt;span&gt;AWS Backup&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;concerns&quot;&gt;&lt;span class=&quot;concern&quot;&gt;🛡️ IAM least privilege&lt;/span&gt;&lt;span class=&quot;concern&quot;&gt;🔒 telemetry content off&lt;/span&gt;&lt;/div&gt;
-      &lt;/article&gt;
-    &lt;/div&gt;
-  &lt;/section&gt;
-
-  &lt;div class=&quot;detail text-small&quot; id=&quot;fg-detail&quot; aria-live=&quot;polite&quot;&gt;Select a component to inspect its architectural role.&lt;/div&gt;
 
   &lt;script&gt;
     (() =&gt; {
-      const root = document.getElementById(&#x27;fg-architecture&#x27;);
-      const detail = document.getElementById(&#x27;fg-detail&#x27;);
+      const root = document.getElementById(&#x27;fg-box-architecture&#x27;);
       const buttons = Array.from(root.querySelectorAll(&#x27;[data-view]&#x27;));
       buttons.forEach((button) =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; {
         root.dataset.view = button.dataset.view;
@@ -946,13 +1019,9 @@ html&gt;body{padding:0}&lt;/style&gt;
           peer.setAttribute(&#x27;aria-pressed&#x27;, String(active));
           peer.classList.toggle(&#x27;btn-primary&#x27;, active);
         });
-        detail.textContent = button.dataset.view === &#x27;all&#x27; ? &#x27;Whole-system view: hot inference, asynchronous control/evidence, and external integrations.&#x27; : button.textContent.trim() + &#x27; highlighted; other components remain visible as context.&#x27;;
       }));
-      root.querySelector(&#x27;#fg-concerns&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; {
+      root.querySelector(&#x27;#fg-box-concerns&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; {
         root.dataset.concerns = event.target.checked ? &#x27;on&#x27; : &#x27;off&#x27;;
-      });
-      root.querySelectorAll(&#x27;.node&#x27;).forEach((node) =&gt; {
-        node.addEventListener(&#x27;click&#x27;, () =&gt; { detail.textContent = node.dataset.detail; });
       });
     })();
   &lt;/script&gt;
