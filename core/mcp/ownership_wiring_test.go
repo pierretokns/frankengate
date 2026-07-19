@@ -27,6 +27,28 @@ func TestMCPOwnershipConfigurationRequiresFenceIdentity(t *testing.T) {
 	}
 }
 
+func TestMCPOwnershipUsesBackendNeutralStoreAndExplicitLocalDefault(t *testing.T) {
+	var store mcpownership.Store = mcpownership.NewProcessLocalStore()
+	if store == nil {
+		t.Fatal("explicit process-local ownership store is nil")
+	}
+	m := NewMCPManager(context.Background(), schemas.MCPConfig{}, nil, nil, nil)
+	if err := m.SetMCPOwnership(store, "pod-a", time.Second); err != nil {
+		t.Fatalf("configure backend-neutral store: %v", err)
+	}
+	if m.ownershipStore == nil {
+		t.Fatal("configured ownership store was not retained")
+	}
+	// A missing store is an explicit opt-out, not an accidental process-local
+	// fallback. Hosts that need cross-replica fencing must inject one above.
+	if err := m.SetMCPOwnership(nil, "", 0); err != nil {
+		t.Fatalf("disable optional ownership gate: %v", err)
+	}
+	if m.ownershipStore != nil {
+		t.Fatal("nil store should disable the optional gate")
+	}
+}
+
 func TestMCPOwnershipKeyUsesTrustedPrincipalAndRequestID(t *testing.T) {
 	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
 	ctx.SetValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "acme", Issuer: "okta", Subject: "u-7"})

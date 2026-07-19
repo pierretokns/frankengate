@@ -116,14 +116,14 @@ func (m *MCPManager) executeToolWithHooks(
 		var ownershipKey mcpownership.ConnectionKey
 		var ownershipClaim mcpownership.Claim
 		var ownershipOperation string
-		if m.ownershipRegistry != nil {
+		if m.ownershipStore != nil {
 			ownershipKey, ownershipOperation = mcpOwnershipKey(ctx, state, preReq)
 			var claimErr error
-			ownershipClaim, claimErr = m.ownershipRegistry.Claim(time.Now(), ownershipKey, m.ownerPod, m.ownershipTTL)
+			ownershipClaim, claimErr = m.ownershipStore.Claim(time.Now(), ownershipKey, m.ownerPod, m.ownershipTTL)
 			if claimErr != nil {
 				return nil, fmt.Errorf("MCP ownership claim denied: %w", claimErr)
 			}
-			if _, claimErr = m.ownershipRegistry.StartCall(time.Now(), ownershipKey, m.ownerPod, ownershipClaim.Fence, ownershipOperation); claimErr != nil {
+			if _, claimErr = m.ownershipStore.StartCall(time.Now(), ownershipKey, m.ownerPod, ownershipClaim.Fence, ownershipOperation); claimErr != nil {
 				return nil, fmt.Errorf("MCP ownership call denied: %w", claimErr)
 			}
 		}
@@ -138,8 +138,8 @@ func (m *MCPManager) executeToolWithHooks(
 			defer release()
 		}
 		result, opErr := m.toolsManager.ExecuteTool(ctx, preReq, conn, executionConfig, toolNameMapping)
-		if m.ownershipRegistry != nil {
-			_, completeErr := m.ownershipRegistry.CompleteCall(time.Now(), ownershipKey, m.ownerPod, ownershipClaim.Fence, ownershipOperation, opErr == nil)
+		if m.ownershipStore != nil {
+			_, completeErr := m.ownershipStore.CompleteCall(time.Now(), ownershipKey, m.ownerPod, ownershipClaim.Fence, ownershipOperation, opErr == nil)
 			if completeErr != nil {
 				return nil, fmt.Errorf("MCP ownership completion denied: %w", completeErr)
 			}

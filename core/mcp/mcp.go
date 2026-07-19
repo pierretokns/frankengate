@@ -54,12 +54,14 @@ type MCPManager struct {
 	pluginPipelineProvider func() PluginPipeline
 	releasePluginPipeline  func(pipeline PluginPipeline)
 
-	// ownershipRegistry is optional until a durable shared ownership backend is
+	// ownershipStore is optional until a durable shared ownership backend is
 	// supplied by the host. When configured, stateful tool calls are fenced
-	// before any upstream credential lookup or wire I/O.
-	ownershipRegistry *mcpownership.Registry
-	ownerPod          string
-	ownershipTTL      time.Duration
+	// before any upstream credential lookup or wire I/O. The process-local
+	// implementation is available explicitly via mcpownership.NewProcessLocalStore;
+	// it must not be mistaken for cross-replica coordination.
+	ownershipStore mcpownership.Store
+	ownerPod       string
+	ownershipTTL   time.Duration
 }
 
 // MCPToolFunction is a generic function type for handling tool calls with typed arguments.
@@ -152,13 +154,14 @@ func NewMCPManager(ctx context.Context, config schemas.MCPConfig, credStore sche
 	return manager
 }
 
-// SetMCPOwnership enables fenced ownership for stateful MCP calls. The
-// registry is deliberately injected by the host: this package does not assume
-// Redis, Postgres, or any other persistence backend. Passing nil disables the
-// optional gate. A non-empty pod ID and positive lease are required.
-func (m *MCPManager) SetMCPOwnership(registry *mcpownership.Registry, ownerPod string, lease time.Duration) error {
-	if registry == nil {
-		m.ownershipRegistry = nil
+// SetMCPOwnership enables fenced ownership for stateful MCP calls. The store
+// is deliberately injected by the host: this package does not assume Redis,
+// Postgres, or any other persistence backend. Passing nil disables the optional
+// gate for backwards compatibility. A non-empty pod ID and positive lease are
+// required when a store is configured. Store errors fail closed before wire I/O.
+func (m *MCPManager) SetMCPOwnership(store mcpownership.Store, ownerPod string, lease time.Duration) error {
+	if store == nil {
+		m.ownershipStore = nil
 		m.ownerPod = ""
 		m.ownershipTTL = 0
 		return nil
@@ -166,7 +169,7 @@ func (m *MCPManager) SetMCPOwnership(registry *mcpownership.Registry, ownerPod s
 	if ownerPod == "" || lease <= 0 {
 		return fmt.Errorf("MCP ownership requires owner pod and positive lease")
 	}
-	m.ownershipRegistry = registry
+	m.ownershipStore = store
 	m.ownerPod = ownerPod
 	m.ownershipTTL = lease
 	return nil

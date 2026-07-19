@@ -69,6 +69,28 @@ type OAuthRoute struct {
 	Fence    uint64
 }
 
+// Store is the fencing contract used by the MCP execution path.
+//
+// Registry is the deliberately explicit process-local implementation. Hosts
+// running more than one gateway replica must inject a durable implementation
+// (for example, one backed by the existing Postgres/config-store machinery)
+// that preserves these atomic claim, fence, and idempotency semantics. The
+// MCP package depends on this interface rather than a particular database or
+// cache, so a durable adapter can be added without changing request handling.
+// Implementations must return an error on unavailable state; callers treat
+// those errors as authorization failures and do not touch the upstream MCP
+// connection.
+type Store interface {
+	Claim(now time.Time, key ConnectionKey, ownerPod string, ttl time.Duration) (Claim, error)
+	Renew(now time.Time, key ConnectionKey, ownerPod string, fence uint64, ttl time.Duration) (Claim, error)
+	AttachServerSession(now time.Time, key ConnectionKey, ownerPod string, fence uint64, serverSessionID string, resumable bool) error
+	StartCall(now time.Time, key ConnectionKey, ownerPod string, fence uint64, operationID string) (CallReceipt, error)
+	CompleteCall(now time.Time, key ConnectionKey, ownerPod string, fence uint64, operationID string, success bool) (CallReceipt, error)
+	BeginOAuth(now time.Time, key ConnectionKey, ownerPod string, fence uint64, state string, ttl time.Duration) error
+	RouteOAuthCallback(now time.Time, state string) (OAuthRoute, error)
+	Operations(key ConnectionKey) []OperationSnapshot
+}
+
 type OperationSnapshot struct {
 	ID        string
 	Status    OperationStatus
@@ -117,6 +139,11 @@ func NewRegistry() *Registry {
 		oauth:   make(map[string]oauthFlow),
 	}
 }
+
+// NewProcessLocalStore makes the non-durable default explicit at call sites.
+// It is suitable for a single process or tests only; multi-replica hosts must
+// inject a shared Store implementation.
+func NewProcessLocalStore() Store { return NewRegistry() }
 
 func (r *Registry) Claim(now time.Time, key ConnectionKey, ownerPod string, ttl time.Duration) (Claim, error) {
 	if err := validateClaim(key, ownerPod, ttl); err != nil {
