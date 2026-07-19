@@ -29,11 +29,11 @@ export const alertingApi = baseApi.injectEndpoints({
 		getAlertChannels: builder.query<{ channels: AlertChannel[] }, AlertingScope | void>({ query: (scope) => `/alerting/channels${scopeQuery(scope)}`, providesTags: ["AlertChannels"] }),
 		createAlertChannel: builder.mutation<AlertingState, Omit<AlertChannel, "id">>({ query: (body) => ({ url: "/alerting/channels", method: "POST", body }), invalidatesTags: ["AlertChannels", "AlertRules", "AlertHistory"] }),
 		updateAlertChannel: builder.mutation<AlertingState, { id: string; data: Omit<AlertChannel, "id"> }>({ query: ({ id, data }) => ({ url: `/alerting/channels/${id}`, method: "PUT", body: data }), invalidatesTags: ["AlertChannels", "AlertRules", "AlertHistory"] }),
-		deleteAlertChannel: builder.mutation<void, string>({ query: (id) => ({ url: `/alerting/channels/${id}`, method: "DELETE" }), invalidatesTags: ["AlertChannels", "AlertRules"] }),
+		deleteAlertChannel: builder.mutation<void, string>({ query: (id) => ({ url: `/alerting/channels/${id}`, method: "DELETE" }), invalidatesTags: ["AlertChannels", "AlertRules", "AlertHistory"] }),
 		getAlertRules: builder.query<{ rules: AlertRule[] }, AlertingScope | void>({ query: (scope) => `/alerting/rules${scopeQuery(scope)}`, providesTags: ["AlertRules"] }),
 		createAlertRule: builder.mutation<AlertingState, Omit<AlertRule, "id">>({ query: (body) => ({ url: "/alerting/rules", method: "POST", body }), invalidatesTags: ["AlertRules", "AlertChannels", "AlertHistory"] }),
 		updateAlertRule: builder.mutation<AlertingState, { id: string; data: Omit<AlertRule, "id"> }>({ query: ({ id, data }) => ({ url: `/alerting/rules/${id}`, method: "PUT", body: data }), invalidatesTags: ["AlertRules", "AlertChannels", "AlertHistory"] }),
-		deleteAlertRule: builder.mutation<void, string>({ query: (id) => ({ url: `/alerting/rules/${id}`, method: "DELETE" }), invalidatesTags: ["AlertRules"] }),
+		deleteAlertRule: builder.mutation<void, string>({ query: (id) => ({ url: `/alerting/rules/${id}`, method: "DELETE" }), invalidatesTags: ["AlertRules", "AlertHistory"] }),
 		getAlertHistory: builder.query<{ history: AlertDelivery[] }, AlertingScope | void>({ query: (scope) => `/alerting/history${scopeQuery(scope)}`, providesTags: ["AlertHistory"] }),
 	}),
 });
