@@ -33,6 +33,9 @@ env:
 jobs:
   go-checks:
     name: Go checks (no provider secrets)
+    # The dev branch has a dedicated, faster beta gate. Keep this full lane
+    # for pull requests, other branches, schedules, and explicit dispatches.
+    if: ${{ github.event_name != 'push' || github.ref != 'refs/heads/dev' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     permissions:
@@ -90,6 +93,9 @@ jobs:
 
   go-security:
     name: Go vulnerability checks
+    # Avoid duplicating the beta push lane; weekly schedule and dependency
+    # changes on PRs/other branches still exercise this check.
+    if: ${{ github.event_name != 'push' || github.ref != 'refs/heads/dev' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     permissions:
