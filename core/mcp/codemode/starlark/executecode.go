@@ -468,16 +468,6 @@ func (s *StarlarkCodeMode) callMCPTool(ctx *schemas.BifrostContext, clientName, 
 		ChatAssistantMessageToolCall: &toolCallReq,
 	}
 
-	// Acquire a connection through the shared ClientManager abstraction outside
-	// the gate, mirroring the gateway's exec.go:prepareToolExecution → gate
-	// ordering. Connection lifecycle is the caller's concern; the gate's op
-	// closure only performs the wire CallTool.
-	conn, release, err := s.clientManager.AcquireClientConn(nestedCtx, client)
-	if err != nil {
-		return nil, err
-	}
-	defer release()
-
 	toolExecutionTimeout := s.getToolExecutionTimeout()
 
 	// Delegate to the canonical plugin gate. RunWithPluginPipeline owns the
@@ -486,6 +476,17 @@ func (s *StarlarkCodeMode) callMCPTool(ctx *schemas.BifrostContext, clientName, 
 	// the op closure below only handles the wire CallTool. Keeps Starlark
 	// nested calls observationally identical to gateway-routed calls.
 	finalResp, finalErr := s.clientManager.RunWithPluginPipeline(nestedCtx, mcpRequest, func(preReq *schemas.BifrostMCPRequest) (*schemas.BifrostMCPResponse, error) {
+		// Credential resolution and connection establishment must happen only
+		// after PreMCPHooks authorize the call. Keeping this inside the gated
+		// operation prevents a denied nested call from touching credential stores
+		// or opening an upstream connection (the regular gateway path follows the
+		// same ordering).
+		conn, release, acquireErr := s.clientManager.AcquireClientConn(nestedCtx, client)
+		if acquireErr != nil {
+			return nil, acquireErr
+		}
+		defer release()
+
 		// Honor any pre-hook mutation of tool name + arguments before the wire
 		// call. Mirrors ToolsManager.executeToolInternal (toolmanager.go:648–670):
 		// mutated name has its client prefix stripped using the ORIGINAL client
