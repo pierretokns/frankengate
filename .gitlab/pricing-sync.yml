@@ -1,0 +1,19 @@
+# Include this file from the FrankenGate GitLab project and create a daily
+# pipeline schedule. The job only publishes after validation succeeds.
+pricing-sync:
+  image: golang:1.26
+  stage: maintenance
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - when: manual
+  script:
+    - go run ./scripts/pricing-sync -url "${BIFROST_PRICING_URL:-https://getbifrost.ai/datasheet}" -out site/data/pricing
+  artifacts:
+    name: frankengate-pricing-$CI_COMMIT_SHA
+    expire_in: 1 year
+    paths:
+      - site/data/pricing/latest.json
+      - site/data/pricing/latest-upstream.json
+      - site/data/pricing/archive/
+  # A publishing step (Pages, object storage, or the site's deploy job) should
+  # consume latest.json; this job deliberately does not commit generated data.
