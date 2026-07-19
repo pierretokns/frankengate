@@ -903,7 +903,9 @@ func (s *RDBLogStore) listSelectColumns() string {
 		"business_unit_id", "business_unit_name",
 		"team_ids", "team_names", "customer_ids", "customer_names", "business_unit_ids", "business_unit_names",
 		"speech_input", "transcription_input", "image_generation_input", "video_generation_input",
-		"latency", "token_usage", "cost", "status", "error_details", "stream",
+		// error_details is intentionally omitted from list queries: provider
+		// payloads can be unbounded and belong on the per-log detail endpoint.
+		"latency", "token_usage", "cost", "status", "stream",
 		fmt.Sprintf("substr(content_summary, 1, %d) AS content_summary", maxContentSummaryBytes),
 		"metadata", "cache_debug",
 		"is_large_payload_request", "is_large_payload_response",
