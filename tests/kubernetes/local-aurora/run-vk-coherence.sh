@@ -101,9 +101,12 @@ if [[ -n "$live_postgres_image" && "$live_postgres_image" != "$POSTGRES_IMAGE" ]
   kubectl -n "$NAMESPACE" delete pod/postgres-0 --wait=true
 fi
 kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=180s
+kubectl -n "$NAMESPACE" exec postgres-0 -- \
+  psql -q -v ON_ERROR_STOP=1 -U frankengate -d frankengate \
+    -c "CREATE EXTENSION IF NOT EXISTS vector" >/dev/null
 vector_version="$(kubectl -n "$NAMESPACE" exec postgres-0 -- \
-  psql -At -v ON_ERROR_STOP=1 -U frankengate -d frankengate \
-    -c "CREATE EXTENSION IF NOT EXISTS vector; SELECT extversion FROM pg_extension WHERE extname = 'vector'")"
+  psql -At -U frankengate -d frankengate \
+    -c "SELECT extversion FROM pg_extension WHERE extname = 'vector'")"
 if [[ "$vector_version" != "0.8.1" ]]; then
   echo "pgvector 0.8.1 is required, found: ${vector_version:-not installed}" >&2
   exit 1
