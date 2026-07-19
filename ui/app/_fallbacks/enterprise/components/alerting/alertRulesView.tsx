@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
 	useCreateAlertRuleMutation,
 	useDeleteAlertRuleMutation,
+	useGetAlertChannelsQuery,
 	useGetAlertHistoryQuery,
 	useGetAlertRulesQuery,
 	useUpdateAlertRuleMutation,
@@ -22,6 +23,7 @@ export default function AlertRulesView() {
 	const scopedQuery = viewScope !== "global" && !viewScopeId.trim() ? undefined : scopeFilter;
 	const { data, isLoading, error } = useGetAlertRulesQuery(scopedQuery);
 	const { data: historyData } = useGetAlertHistoryQuery(scopedQuery);
+	const { data: channelsData } = useGetAlertChannelsQuery(scopedQuery);
 	const [create] = useCreateAlertRuleMutation();
 	const [update, { isLoading: isUpdating }] = useUpdateAlertRuleMutation();
 	const [remove] = useDeleteAlertRuleMutation();
@@ -30,8 +32,10 @@ export default function AlertRulesView() {
 	const [scope, setScope] = useState<"global" | "team" | "user">("global");
 	const [scopeId, setScopeId] = useState("");
 	const [approvalRequired, setApprovalRequired] = useState(true);
+	const [channelIds, setChannelIds] = useState<string[]>([]);
 	const rules = data?.rules ?? [];
 	const history = historyData?.history ?? [];
+	const channels = channelsData?.channels ?? [];
 
 	return (
 		<section className="mx-auto w-full max-w-5xl space-y-6 p-8" data-testid="alert-rules-view">
@@ -53,9 +57,10 @@ export default function AlertRulesView() {
 					e.preventDefault();
 					if (!name.trim()) return;
 					if (scope !== "global" && !scopeId.trim()) return;
-					await create({ name: name.trim(), event, channel_ids: [], enabled: true, scope, scope_id: scope === "global" ? undefined : scopeId.trim(), approval_required: event === "overdraft" && approvalRequired, approved: event !== "overdraft" || !approvalRequired }).unwrap();
+					await create({ name: name.trim(), event, channel_ids: channelIds, enabled: true, scope, scope_id: scope === "global" ? undefined : scopeId.trim(), approval_required: event === "overdraft" && approvalRequired, approved: event !== "overdraft" || !approvalRequired }).unwrap();
 					setName("");
 					setScopeId("");
+					setChannelIds([]);
 				}}
 			>
 				<input className="rounded border px-2 py-1" value={name} onChange={(e) => setName(e.target.value)} placeholder="Budget overdraft" aria-label="Rule name" />
@@ -71,6 +76,7 @@ export default function AlertRulesView() {
 				</select>
 				{scope !== "global" && <input className="rounded border px-2 py-1" value={scopeId} onChange={(e) => setScopeId(e.target.value)} placeholder={`${scope} ID`} aria-label="Scope ID" />}
 				{event === "overdraft" && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={approvalRequired} onChange={(e) => setApprovalRequired(e.target.checked)} /> Require approval</label>}
+				{channels.length > 0 && <fieldset className="flex flex-wrap items-center gap-2 text-sm"><legend className="sr-only">Alert channels</legend>{channels.map((channel) => <label className="flex items-center gap-1" key={channel.id}><input type="checkbox" checked={channelIds.includes(channel.id)} onChange={(e) => setChannelIds((previous) => e.target.checked ? [...previous, channel.id] : previous.filter((id) => id !== channel.id))} />{channel.name}</label>)}</fieldset>}
 				<button className="rounded bg-primary px-3 py-1.5 text-primary-foreground" type="submit">Add rule</button>
 			</form>
 			{isLoading ? <p>Loading rules…</p> : error ? <p role="alert">Unable to load alert rules.</p> : (
