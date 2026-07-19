@@ -163,4 +163,22 @@ func TestAlertingRoutesExposeDurableCRUDSurface(t *testing.T) {
 	if ctx.Response.StatusCode() != fasthttp.StatusOK || !strings.Contains(string(ctx.Response.Body()), `"ops"`) {
 		t.Fatalf("list channels route returned %d: %s", ctx.Response.StatusCode(), ctx.Response.Body())
 	}
+
+	ctx.Response.Reset()
+	ctx.Request.Header.SetMethod(fasthttp.MethodPost)
+	ctx.Request.SetRequestURI("/api/alerting/rules")
+	ctx.Request.SetBodyString(`{"name":"team overdraft","event":"overdraft","scope":"team","scope_id":"research","approval_required":true}`)
+	r.Handler(ctx)
+	if ctx.Response.StatusCode() != fasthttp.StatusOK || !strings.Contains(string(ctx.Response.Body()), `"scope":"team"`) || !strings.Contains(string(ctx.Response.Body()), `"approval_required":true`) {
+		t.Fatalf("create scoped rule route returned %d: %s", ctx.Response.StatusCode(), ctx.Response.Body())
+	}
+
+	ctx.Response.Reset()
+	ctx.Request.Header.SetMethod(fasthttp.MethodPost)
+	ctx.Request.SetRequestURI("/api/alerting/rules")
+	ctx.Request.SetBodyString(`{"name":"invalid scope","event":"overdraft","scope":"team"}`)
+	r.Handler(ctx)
+	if ctx.Response.StatusCode() != fasthttp.StatusBadRequest {
+		t.Fatalf("missing scope_id should be rejected, got %d: %s", ctx.Response.StatusCode(), ctx.Response.Body())
+	}
 }

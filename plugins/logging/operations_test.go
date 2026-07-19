@@ -690,7 +690,7 @@ func TestRecalculateCostsDoesNotWriteZeroForUnresolvedPricing(t *testing.T) {
 	if err != nil {
 		t.Fatalf("RecalculateCosts() error = %v", err)
 	}
-	if result.TotalMatched != 1 || result.Updated != 0 || result.Skipped != 1 || result.Remaining != 1 {
+	if result.TotalMatched != 1 || result.Updated != 0 || result.Skipped != 1 || result.Unpriced != 1 || result.Remaining != 1 {
 		t.Fatalf("unexpected result: %+v", result)
 	}
 

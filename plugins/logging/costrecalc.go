@@ -48,6 +48,9 @@ type CostRecalcJobMeta struct {
 	Processed int   `json:"processed"`
 	Updated   int   `json:"updated"`
 	Skipped   int   `json:"skipped"`
+	// Unpriced counts rows with usage that could not be matched to a pricing
+	// entry. They remain unmodified for safe, operator-driven backfill.
+	Unpriced int `json:"unpriced"`
 	// Message carries a human-readable completion note for the UI.
 	Message string `json:"message,omitempty"`
 }
@@ -165,6 +168,7 @@ func (p *LoggerPlugin) RunCostRecalcJob(ctx context.Context, metaJSON string, ch
 		costUpdates := make(map[string]float64, len(batch))
 		gotPositiveCost := make([]bool, len(batch))
 		batchSkipped := 0
+		batchUnpriced := 0
 		for i := range batch {
 			logEntry := batch[i]
 			cost, calcErr := p.calculateCostForLog(&logEntry)
@@ -178,6 +182,7 @@ func (p *LoggerPlugin) RunCostRecalcJob(ctx context.Context, metaJSON string, ch
 					costUpdates[logEntry.ID] = cost
 				} else {
 					batchSkipped++
+					batchUnpriced++
 					p.logger.Debug("skipping cost recalculation for log %s: resolved cost is zero", logEntry.ID)
 				}
 				continue
@@ -195,6 +200,7 @@ func (p *LoggerPlugin) RunCostRecalcJob(ctx context.Context, metaJSON string, ch
 		// Merge the skip count only once the batch is durably committed, so a retry
 		// after a BulkUpdateCost failure cannot double-count the same skipped rows.
 		meta.Skipped += batchSkipped
+		meta.Unpriced += batchUnpriced
 		meta.Processed += len(batch)
 
 		// Advance the cursor. The lower bound is inclusive and rows that keep matching
@@ -231,6 +237,6 @@ func (p *LoggerPlugin) RunCostRecalcJob(ctx context.Context, metaJSON string, ch
 		}
 	}
 
-	meta.Message = fmt.Sprintf("Recalculated %d cost value(s); %d skipped.", meta.Updated, meta.Skipped)
+	meta.Message = fmt.Sprintf("Recalculated %d cost value(s); %d skipped (%d unpriced).", meta.Updated, meta.Skipped, meta.Unpriced)
 	return snapshot(), nil
 }
