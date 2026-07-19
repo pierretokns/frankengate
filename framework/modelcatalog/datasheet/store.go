@@ -332,7 +332,8 @@ func (s *Store) IsRequestTypeSupportedForProvider(model string, provider schemas
 	base := s.baseModelNameUnsafe(model)
 	for key, row := range s.pricingData {
 		parts := strings.SplitN(key, "|", 3)
-		if len(parts) != 3 || parts[1] != string(provider) || parts[2] != want {
+		if len(parts) != 3 || parts[1] != string(provider) ||
+			(parts[2] != want && !(want == "batch" && strings.HasPrefix(parts[2], "batch"))) {
 			continue
 		}
 		if parts[0] == model || (base != "" && (parts[0] == base || s.baseModelNameUnsafe(row.Model) == base)) {

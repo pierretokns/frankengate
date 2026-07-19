@@ -382,6 +382,13 @@ func normalizeRequestType(reqType schemas.RequestType) string {
 		return "video_generation"
 	case schemas.OCRRequest:
 		return "ocr"
+	case schemas.BatchCreateRequest, schemas.BatchListRequest, schemas.BatchRetrieveRequest,
+		schemas.BatchCancelRequest, schemas.BatchResultsRequest, schemas.BatchDeleteRequest:
+		// Batch endpoints are one model capability family.  Keeping the
+		// operation variants under one canonical mode lets admission enforce
+		// an explicitly published batch row while still accepting list/retrieve
+		// operations that do not have a distinct pricing row.
+		return "batch"
 	case schemas.ContainerCreateRequest:
 		return "container_create"
 	}
