@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/maximhq/bifrost/core/schemas"
 )
@@ -195,5 +196,60 @@ func TestTenantReplayStorePinsAuthorizationBoundary(t *testing.T) {
 	}
 	if _, err := NewTenantReplayStore(store, " "); err == nil {
 		t.Fatal("blank tenant must not create an unrestricted replay view")
+	}
+}
+
+func TestJSONLReplayStoreRetentionIsTenantScopedAndFailClosed(t *testing.T) {
+	dir := t.TempDir()
+	store, err := NewJSONLReplayStore(dir, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	old := time.Now().UTC().Add(-48 * time.Hour)
+	recent := time.Now().UTC().Add(-time.Hour)
+	write := func(tenant, id string, captured time.Time) {
+		record := ReplayRecord{SchemaVersion: 1, TenantID: tenant, TraceID: id, CapturedAt: captured, Trace: &schemas.Trace{TraceID: id}}
+		payload, _ := json.Marshal(record)
+		if err := os.WriteFile(filepath.Join(dir, safeTenant(tenant)+".jsonl"), append(payload, '\n'), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write("acme", "old", old)
+	write("acme", "recent", recent)
+	// An invalid row must survive because the retention predicate cannot
+	// authenticate its tenant or timestamp.
+	if err := os.WriteFile(filepath.Join(dir, "acme.jsonl"), []byte("not-json\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	// Recreate the complete partition after the malformed-row append.
+	for _, r := range []ReplayRecord{{SchemaVersion: 1, TenantID: "acme", TraceID: "old", CapturedAt: old}, {SchemaVersion: 1, TenantID: "acme", TraceID: "recent", CapturedAt: recent}} {
+		payload, _ := json.Marshal(r)
+		f, err := os.OpenFile(filepath.Join(dir, "acme.jsonl"), os.O_APPEND|os.O_WRONLY, 0o600)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, _ = f.Write(append(payload, '\n'))
+		_ = f.Close()
+	}
+	if _, err := store.DeleteBefore(context.Background(), "", recent); err == nil {
+		t.Fatal("blank tenant must fail closed")
+	}
+	removed, err := store.DeleteBefore(context.Background(), "acme", recent)
+	if err != nil || removed != 1 {
+		t.Fatalf("retention deletion removed=%d err=%v", removed, err)
+	}
+	if _, err := store.Get(context.Background(), "acme", "old"); !os.IsNotExist(err) {
+		t.Fatalf("old record should be deleted, got %v", err)
+	}
+	if _, err := store.Get(context.Background(), "acme", "recent"); err != nil {
+		t.Fatalf("recent record should remain: %v", err)
+	}
+	if _, err := store.DeleteBefore(context.Background(), "other", time.Now().UTC()); err != nil && !os.IsNotExist(err) {
+		t.Fatalf("other tenant should not affect acme: %v", err)
+	}
+	data, err := os.ReadFile(filepath.Join(dir, "acme.jsonl"))
+	if err != nil || !strings.Contains(string(data), "not-json") {
+		t.Fatalf("malformed row was not preserved: %q err=%v", data, err)
 	}
 }

@@ -99,6 +99,15 @@ type ReplayStore interface {
 	Close() error
 }
 
+// ReplayRetentionStore is an optional maintenance boundary for durable
+// stores. Deletion is always tenant-scoped; implementations must reject a
+// blank tenant or non-positive cutoff rather than interpreting either as a
+// wildcard. Keeping this separate preserves compatibility with read-only
+// replay implementations.
+type ReplayRetentionStore interface {
+	DeleteBefore(ctx context.Context, tenantID string, cutoff time.Time) (int, error)
+}
+
 // TenantReplayStore is a fail-closed view over a ReplayStore.  The durable
 // store itself is partitioned by tenant, but a tenant string supplied by a
 // caller is not an authorization decision.  Consumers should hand the view
@@ -146,6 +155,17 @@ func (s *TenantReplayStore) List(ctx context.Context, tenantID string, limit int
 		return nil, os.ErrPermission
 	}
 	return s.store.List(ctx, s.tenant, limit)
+}
+
+func (s *TenantReplayStore) DeleteBefore(ctx context.Context, tenantID string, cutoff time.Time) (int, error) {
+	if s == nil || s.store == nil || strings.TrimSpace(tenantID) != s.tenant {
+		return 0, os.ErrPermission
+	}
+	retainer, ok := s.store.(ReplayRetentionStore)
+	if !ok {
+		return 0, fmt.Errorf("replay store does not support retention deletion")
+	}
+	return retainer.DeleteBefore(ctx, s.tenant, cutoff)
 }
 
 func (s *TenantReplayStore) Close() error {
@@ -330,6 +350,95 @@ func (s *JSONLReplayStore) List(ctx context.Context, tenantID string, limit int)
 		records[i], records[j] = records[j], records[i]
 	}
 	return records, nil
+}
+
+// DeleteBefore removes only records in one tenant partition whose captured
+// timestamp is strictly older than cutoff. Malformed records are preserved
+// (fail closed) rather than deleted, so retention maintenance cannot destroy
+// evidence it cannot authenticate. The rewrite is atomic within the local
+// filesystem and the live append handle is reopened after replacement.
+func (s *JSONLReplayStore) DeleteBefore(ctx context.Context, tenantID string, cutoff time.Time) (int, error) {
+	if err := ctx.Err(); err != nil {
+		return 0, err
+	}
+	tenantID = strings.TrimSpace(tenantID)
+	if tenantID == "" {
+		return 0, fmt.Errorf("tenant is required")
+	}
+	if cutoff.IsZero() {
+		return 0, fmt.Errorf("retention cutoff is required")
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	name := filepath.Join(s.dir, safeTenant(tenantID)+".jsonl")
+	input, err := os.Open(name)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
+		return 0, err
+	}
+	tmp, err := os.CreateTemp(s.dir, ".replay-retention-*")
+	if err != nil {
+		input.Close()
+		return 0, err
+	}
+	tmpName := tmp.Name()
+	cleanup := func() { _ = input.Close(); _ = tmp.Close(); _ = os.Remove(tmpName) }
+	removed := 0
+	scanner := bufio.NewScanner(input)
+	scanner.Buffer(make([]byte, 4096), 16*1024*1024)
+	for scanner.Scan() {
+		if err := ctx.Err(); err != nil {
+			cleanup()
+			return 0, err
+		}
+		line := scanner.Bytes()
+		var record ReplayRecord
+		// Preserve malformed, cross-tenant, and timestamp-less rows. Deletion
+		// must never broaden beyond a verified tenant and timestamp predicate.
+		deleteRow := json.Unmarshal(line, &record) == nil && record.TenantID == tenantID && !record.CapturedAt.IsZero() && record.CapturedAt.Before(cutoff)
+		if deleteRow {
+			removed++
+			continue
+		}
+		if _, err := tmp.Write(append(append([]byte(nil), line...), '\n')); err != nil {
+			cleanup()
+			return 0, err
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		cleanup()
+		return 0, err
+	}
+	if err := input.Close(); err != nil {
+		cleanup()
+		return 0, err
+	}
+	if err := tmp.Sync(); err != nil {
+		cleanup()
+		return 0, err
+	}
+	if err := tmp.Close(); err != nil {
+		_ = os.Remove(tmpName)
+		return 0, err
+	}
+	if old := s.files[tenantID]; old != nil {
+		_ = old.Close()
+		delete(s.files, tenantID)
+	}
+	if err := os.Rename(tmpName, name); err != nil {
+		_ = os.Remove(tmpName)
+		return 0, err
+	}
+	// Reopen now so subsequent Put/Get operations retain the normal live-file
+	// behavior. A zero-row rewrite is still useful for atomic compaction.
+	f, err := os.OpenFile(name, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o600)
+	if err != nil {
+		return 0, err
+	}
+	s.files[tenantID] = f
+	return removed, nil
 }
 
 func (s *JSONLReplayStore) Close() error {
