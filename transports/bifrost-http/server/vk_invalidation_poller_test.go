@@ -334,6 +334,29 @@ func TestVirtualKeyInvalidationPollerAppliesOrderedBatchAndPublishesFreshness(t 
 	}
 }
 
+func TestVirtualKeyInvalidationPollerNormalizesLegacyPaddedEntityID(t *testing.T) {
+	store := &fakeVKInvalidationStore{
+		highWater: 1,
+		events: []tables.TableVirtualKeyInvalidationEvent{{
+			ID: 1, EntityType: tables.VirtualKeyInvalidationEntityType,
+			EntityID: "  vk-legacy  ", Action: tables.VirtualKeyInvalidationActionReload,
+			SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion,
+		}},
+	}
+	var applied string
+	poller := newVirtualKeyInvalidationPoller(store, func(_ context.Context, event tables.TableVirtualKeyInvalidationEvent) error {
+		applied = event.EntityID
+		return nil
+	}, 10, time.Second)
+	require.NoError(t, func() error {
+		_, err := poller.pollOnce(context.Background())
+		return err
+	}())
+	require.Equal(t, "vk-legacy", applied)
+	require.Equal(t, uint64(1), poller.Cursor(), "normalized legacy rows must not wedge cursor progress")
+	require.True(t, poller.Freshness(time.Now(), time.Minute).Fresh)
+}
+
 func TestVirtualKeyInvalidationBootstrapSkipsBoundedHistoricalOutbox(t *testing.T) {
 	const history = 100_000
 	store := &fakeVKInvalidationStore{highWater: history}

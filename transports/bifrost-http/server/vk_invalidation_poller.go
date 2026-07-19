@@ -692,10 +692,17 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 		return false, fmt.Errorf("list virtual-key invalidations after %d: %w", cursor, err)
 	}
 	previous := cursor
-	for _, event := range events {
+	for i := range events {
+		event := &events[i]
 		if event.ID <= previous {
 			return false, fmt.Errorf("virtual-key invalidation events are not strictly ordered: id %d after %d", event.ID, previous)
 		}
+		// Older outbox rows may have been written before the write-boundary
+		// canonicalization was added. Normalize the ID while validating so one
+		// harmlessly padded legacy row cannot permanently wedge the ordered
+		// consumer and hold readiness closed. The normalized copy is applied
+		// below; durable cursor advancement remains tied to the original row ID.
+		event.EntityID = strings.TrimSpace(event.EntityID)
 		if event.EntityType != tables.VirtualKeyInvalidationEntityType || event.EntityID == "" || event.SchemaVersion != tables.VirtualKeyInvalidationSchemaVersion {
 			return false, fmt.Errorf("invalid virtual-key invalidation event %d", event.ID)
 		}
