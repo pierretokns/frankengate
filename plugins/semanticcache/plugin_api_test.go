@@ -8,6 +8,7 @@ import (
 	"time"
 
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/vectorstore"
 )
@@ -188,6 +189,43 @@ func TestClearCacheForKey_EmptyKeyRejected(t *testing.T) {
 	defer store.mu.Unlock()
 	if len(store.deleteAllQueries) != 0 {
 		t.Fatalf("empty cache key triggered bulk delete: %+v", store.deleteAllQueries)
+	}
+}
+
+func TestClearCacheForKeyForAuthorityScopesDeletion(t *testing.T) {
+	store := newObservableStore()
+	plugin := newTestPlugin(t, store)
+	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
+	if err := schemas.SetAuthorizationEpochReference(ctx, authorityepoch.Reference{
+		Principal: authorityepoch.Principal{Tenant: "tenant-a", Issuer: "okta", Subject: "alice"},
+		Epoch:     7, Kind: authorityepoch.ArtifactCache, ID: "scope-a",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	ctx.SetValue(schemas.BifrostContextKeyGovernanceTeamID, "team-research")
+	if err := plugin.ClearCacheForKeyForAuthority(ctx, "shared-key"); err != nil {
+		t.Fatalf("scoped clear failed: %v", err)
+	}
+	queries := store.deleteAllQueries[0]
+	for _, field := range []string{"cache_key", "authorization_tenant", "authorization_subject", "authorization_epoch", "authorization_team_id"} {
+		found := false
+		for _, q := range queries {
+			if q.Field == field {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Fatalf("scoped deletion missing %s predicate: %#v", field, queries)
+		}
+	}
+}
+
+func TestClearCacheForKeyForAuthorityRejectsUnscopedCaller(t *testing.T) {
+	plugin := newTestPlugin(t, newObservableStore())
+	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
+	if err := plugin.ClearCacheForKeyForAuthority(ctx, "shared-key"); err == nil {
+		t.Fatal("expected unscoped caller to be rejected")
 	}
 }
 

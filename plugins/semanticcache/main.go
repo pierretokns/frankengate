@@ -869,6 +869,45 @@ func (plugin *Plugin) ClearCacheForKey(cacheKey string) error {
 	return nil
 }
 
+// ClearCacheForKeyForAuthority deletes only entries in cacheKey that were
+// written for the caller's current authorization epoch.  Cache keys are
+// caller-controlled and are not an authorization boundary; the same key can
+// legitimately be used by multiple tenants or principals.  Callers handling
+// governed requests must use this scoped variant rather than the legacy
+// administrative ClearCacheForKey method.
+func (plugin *Plugin) ClearCacheForKeyForAuthority(ctx *schemas.BifrostContext, cacheKey string) error {
+	if strings.TrimSpace(cacheKey) == "" {
+		return fmt.Errorf("cache key is required")
+	}
+	if err := requireGovernedCacheAuthority(ctx); err != nil {
+		return err
+	}
+	authority, err := authorityMetadataForCaching(ctx)
+	if err != nil {
+		return err
+	}
+	if len(authority) == 0 {
+		return fmt.Errorf("semantic cache authorization scope is required")
+	}
+	queries := []vectorstore.Query{
+		{Field: "cache_key", Operator: vectorstore.QueryOperatorEqual, Value: cacheKey},
+		{Field: "from_bifrost_semantic_cache_plugin", Operator: vectorstore.QueryOperatorEqual, Value: true},
+	}
+	queries = append(queries, authorizationCacheQueries(authority)...)
+	deleteCtx, cancel := context.WithTimeout(context.Background(), CacheSetTimeout)
+	defer cancel()
+	results, err := plugin.store.DeleteAll(deleteCtx, plugin.config.VectorStoreNamespace, queries)
+	if err != nil {
+		return err
+	}
+	for _, result := range results {
+		if result.Status == vectorstore.DeleteStatusError {
+			plugin.logger.Warn("Failed to delete scoped cache entry %s: %s", result.ID, result.Error)
+		}
+	}
+	return nil
+}
+
 // ClearCacheForCacheID deletes a single cache entry by its storage ID. The
 // caller obtains the ID from BifrostResponse.ExtraFields.CacheDebug.CacheID,
 // which is stamped on both cache hits and cache misses — so the same handle
