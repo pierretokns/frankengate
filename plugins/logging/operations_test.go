@@ -44,6 +44,28 @@ func newTestStore(t *testing.T) logstore.LogStore {
 	return store
 }
 
+func TestBuildLogEntriesPreserveIntegrationUserAgent(t *testing.T) {
+	ua := "claude-code/1.2.3"
+	pending := &PendingLogData{
+		RequestID: "ua-propagation",
+		Timestamp: time.Unix(10, 0).UTC(),
+		InitialData: &InitialLogData{
+			Object:               "chat.completion",
+			Provider:             "openai",
+			Model:                "gpt-test",
+			IntegrationUserAgent: &ua,
+		},
+	}
+	initial := buildInitialLogEntry(pending)
+	complete := buildCompleteLogEntryFromPending(pending)
+	if initial.IntegrationUserAgent == nil || *initial.IntegrationUserAgent != ua {
+		t.Fatalf("initial log lost integration user agent: %#v", initial.IntegrationUserAgent)
+	}
+	if complete.IntegrationUserAgent == nil || *complete.IntegrationUserAgent != ua {
+		t.Fatalf("complete log lost integration user agent: %#v", complete.IntegrationUserAgent)
+	}
+}
+
 func TestPostLLMHookNoPendingErrorPreservesMetadata(t *testing.T) {
 	store := newTestStore(t)
 	loggingHeaders := []string{"x-custom-log"}
