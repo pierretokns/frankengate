@@ -661,6 +661,14 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 	if err != nil {
 		return false, fmt.Errorf("get virtual-key invalidation high watermark: %w", err)
 	}
+	// A failover or a read from an eventually-consistent replica can briefly
+	// return a watermark older than one this consumer has already observed.
+	// Never move the local fence backwards: doing so would publish a false
+	// zero-lag/readiness signal and could hide committed events until a later
+	// notification happens to wake the poller.
+	if observed := p.highWatermark.Load(); observed > highWatermark {
+		highWatermark = observed
+	}
 	p.highWatermark.Store(highWatermark)
 
 	cursor := p.cursor.Load()

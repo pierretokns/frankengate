@@ -602,6 +602,32 @@ func TestVirtualKeyInvalidationPollerLeavesFreshnessStaleAfterStoreFailure(t *te
 	}
 }
 
+func TestVirtualKeyInvalidationPollerDoesNotRegressWatermarkAfterReplicaLag(t *testing.T) {
+	store := &fakeVKInvalidationStore{highWater: 4, events: []tables.TableVirtualKeyInvalidationEvent{
+		{ID: 1, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-1", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion},
+		{ID: 2, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-2", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion},
+		{ID: 3, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-3", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion},
+		{ID: 4, EntityType: tables.VirtualKeyInvalidationEntityType, EntityID: "vk-4", Action: tables.VirtualKeyInvalidationActionReload, SchemaVersion: tables.VirtualKeyInvalidationSchemaVersion},
+	}}
+	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error { return nil }, 10, time.Second)
+	if _, err := poller.pollOnce(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if got := poller.Freshness(time.Now(), time.Minute).HighWatermark; got != 4 {
+		t.Fatalf("initial watermark = %d, want 4", got)
+	}
+	store.mu.Lock()
+	store.highWater = 2 // simulate a stale reader after failover
+	store.mu.Unlock()
+	if _, err := poller.pollOnce(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	state := poller.Freshness(time.Now(), time.Minute)
+	if state.HighWatermark != 4 || state.Cursor != 4 || state.Lag != 0 || !state.Fresh {
+		t.Fatalf("watermark regressed after stale read: %+v", state)
+	}
+}
+
 func TestVirtualKeyInvalidationPollerFailsClosedOnClockRollback(t *testing.T) {
 	store := &fakeVKInvalidationStore{}
 	poller := newVirtualKeyInvalidationPoller(store, func(context.Context, tables.TableVirtualKeyInvalidationEvent) error { return nil }, 10, time.Second)
