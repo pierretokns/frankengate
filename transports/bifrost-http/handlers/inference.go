@@ -767,12 +767,14 @@ func (h *CompletionHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	batchListMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.BatchListRequest)}, middlewares...)
 	batchRetrieveMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.BatchRetrieveRequest)}, middlewares...)
 	batchCancelMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.BatchCancelRequest)}, middlewares...)
+	batchDeleteMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.BatchDeleteRequest)}, middlewares...)
 	batchResultsMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.BatchResultsRequest)}, middlewares...)
 
 	r.POST("/v1/batches", lib.ChainMiddlewares(h.batchCreate, batchCreateMW...))
 	r.GET("/v1/batches", lib.ChainMiddlewares(h.batchList, batchListMW...))
 	r.GET("/v1/batches/{batch_id}", lib.ChainMiddlewares(h.batchRetrieve, batchRetrieveMW...))
 	r.POST("/v1/batches/{batch_id}/cancel", lib.ChainMiddlewares(h.batchCancel, batchCancelMW...))
+	r.DELETE("/v1/batches/{batch_id}", lib.ChainMiddlewares(h.batchDelete, batchDeleteMW...))
 	r.GET("/v1/batches/{batch_id}/results", lib.ChainMiddlewares(h.batchResults, batchResultsMW...))
 
 	// File API endpoints (parameterized routes need explicit request type middleware)
@@ -3237,6 +3239,51 @@ func (h *CompletionHandler) batchCancel(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
+	if resp != nil && resp.ExtraFields.ProviderResponseHeaders != nil {
+		forwardProviderHeaders(ctx, resp.ExtraFields.ProviderResponseHeaders)
+	}
+	if streamLargeResponseIfActive(ctx, bifrostCtx) {
+		return
+	}
+	SendJSON(ctx, resp)
+}
+
+// batchDelete handles DELETE /v1/batches/{batch_id} - Delete a batch job.
+// The provider is explicit because batch IDs are not globally namespaced
+// across providers. Path decoding mirrors retrieve/cancel/results so provider
+// ARNs and other slash-bearing identifiers survive the transport boundary.
+func (h *CompletionHandler) batchDelete(ctx *fasthttp.RequestCtx) {
+	batchIDValue, ok := ctx.UserValue("batch_id").(string)
+	if !ok || batchIDValue == "" {
+		SendError(ctx, fasthttp.StatusBadRequest, "batch_id is required")
+		return
+	}
+	batchID := batchIDValue
+	if decoded, err := url.PathUnescape(batchID); err == nil {
+		batchID = decoded
+	}
+	provider := string(ctx.QueryArgs().Peek("provider"))
+	if provider == "" {
+		SendError(ctx, fasthttp.StatusBadRequest, "provider query parameter is required")
+		return
+	}
+
+	bifrostBatchReq := &schemas.BifrostBatchDeleteRequest{
+		Provider: schemas.ModelProvider(provider),
+		BatchID:  batchID,
+	}
+	bifrostCtx, cancel := lib.ConvertToBifrostContext(ctx, h.config)
+	defer cancel()
+	if bifrostCtx == nil {
+		SendError(ctx, fasthttp.StatusBadRequest, "Failed to convert context")
+		return
+	}
+	resp, bifrostErr := h.client.BatchDeleteRequest(bifrostCtx, bifrostBatchReq)
+	if bifrostErr != nil {
+		forwardProviderHeadersFromContext(ctx, bifrostCtx)
+		SendBifrostError(ctx, bifrostErr)
+		return
+	}
 	if resp != nil && resp.ExtraFields.ProviderResponseHeaders != nil {
 		forwardProviderHeaders(ctx, resp.ExtraFields.ProviderResponseHeaders)
 	}
