@@ -23,6 +23,19 @@ func (mc *ModelCatalog) IsRequestTypeSupported(model string, provider schemas.Mo
 	return mc.datasheet.IsRequestTypeSupported(model, requestType)
 }
 
+// IsRequestTypeSupportedForProvider preserves the provider boundary when
+// making pre-queue capability decisions.
+func (mc *ModelCatalog) IsRequestTypeSupportedForProvider(model string, provider schemas.ModelProvider, requestType schemas.RequestType) bool {
+	return mc != nil && mc.datasheet != nil && mc.datasheet.IsRequestTypeSupportedForProvider(model, provider, requestType)
+}
+
+// HasProviderModel reports whether the catalog has an authoritative capability
+// row for this model/provider pair. Unknown rows remain provider-owned so
+// deployments with custom models are not broken by a stale catalog.
+func (mc *ModelCatalog) HasProviderModel(model string, provider schemas.ModelProvider) bool {
+	return mc != nil && mc.datasheet != nil && mc.datasheet.HasProviderModel(model, provider)
+}
+
 func (mc *ModelCatalog) GetSupportedParameters(model string) []string {
 	return mc.datasheet.GetSupportedParameters(model)
 }

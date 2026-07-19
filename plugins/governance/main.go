@@ -1473,6 +1473,9 @@ func (p *GovernancePlugin) PreRequestHook(ctx *schemas.BifrostContext, req *sche
 	virtualKeyValue := bifrost.GetStringFromContext(ctx, schemas.BifrostContextKeyVirtualKey)
 	hasRoutingRules := p.store.HasRoutingRules(ctx)
 	if virtualKeyValue == "" && !hasRoutingRules {
+		// Capability enforcement runs in PreLLMHook below, which has a
+		// short-circuit channel for stable client errors. Unknown/custom models
+		// remain provider-owned and are not rejected here.
 		return nil
 	}
 
@@ -1544,6 +1547,21 @@ func (p *GovernancePlugin) PreRequestHook(ctx *schemas.BifrostContext, req *sche
 	return nil
 }
 
+func (p *GovernancePlugin) validateCatalogCapabilityFor(provider schemas.ModelProvider, model string, requestType schemas.RequestType) *schemas.BifrostError {
+	if p.modelCatalog == nil || provider == "" || model == "" || !p.modelCatalog.HasProviderModel(model, provider) {
+		return nil
+	}
+	if p.modelCatalog.IsRequestTypeSupportedForProvider(model, provider, requestType) {
+		return nil
+	}
+	return &schemas.BifrostError{
+		Type:           bifrost.Ptr("model_capability_unsupported"),
+		StatusCode:     bifrost.Ptr(400),
+		Error:          &schemas.ErrorField{Message: fmt.Sprintf("model %q for provider %q does not support request type %q", model, provider, requestType)},
+		AllowFallbacks: bifrost.Ptr(true),
+	}
+}
+
 // PreLLMHook intercepts requests before they are processed (governance decision point)
 // Parameters:
 //   - ctx: The Bifrost context
@@ -1569,6 +1587,9 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 	}
 	// Getting provider and mode from the request
 	provider, model, _ := req.GetRequestFields()
+	if capabilityErr := p.validateCatalogCapabilityFor(provider, model, req.RequestType); capabilityErr != nil {
+		return req, &schemas.LLMPluginShortCircuit{Error: capabilityErr}, nil
+	}
 	// Create request context for evaluation
 	evaluationRequest := &EvaluationRequest{
 		VirtualKey: virtualKeyValue,

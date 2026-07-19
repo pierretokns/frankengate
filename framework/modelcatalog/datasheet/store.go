@@ -321,6 +321,45 @@ func (s *Store) IsRequestTypeSupported(model string, requestType schemas.Request
 	return ok && slices.Contains(outputs, string(requestType))
 }
 
+// IsRequestTypeSupportedForProvider reports whether a model/provider row
+// explicitly declares the requested operation. Unlike IsRequestTypeSupported,
+// this keeps provider boundaries intact; a model's OpenAI row must not make an
+// otherwise unsupported Bedrock operation appear valid.
+func (s *Store) IsRequestTypeSupportedForProvider(model string, provider schemas.ModelProvider, requestType schemas.RequestType) bool {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	want := normalizeRequestType(requestType)
+	base := s.baseModelNameUnsafe(model)
+	for key, row := range s.pricingData {
+		parts := strings.SplitN(key, "|", 3)
+		if len(parts) != 3 || parts[1] != string(provider) || parts[2] != want {
+			continue
+		}
+		if parts[0] == model || (base != "" && (parts[0] == base || s.baseModelNameUnsafe(row.Model) == base)) {
+			return true
+		}
+	}
+	return false
+}
+
+// HasProviderModel reports whether the catalog has any authoritative row for
+// a model/provider pair. Unknown models are intentionally left to provider
+// validation; callers should only fail closed after this returns true.
+func (s *Store) HasProviderModel(model string, provider schemas.ModelProvider) bool {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	base := s.baseModelNameUnsafe(model)
+	for _, row := range s.pricingData {
+		if normalizeProvider(row.Provider) != string(provider) {
+			continue
+		}
+		if row.Model == model || (base != "" && (row.Model == base || s.baseModelNameUnsafe(row.Model) == base)) {
+			return true
+		}
+	}
+	return false
+}
+
 // GetSupportedParameters returns the list of OpenAI-compatible parameter
 // names a model accepts (e.g. temperature, top_p, tools). nil for unknown.
 func (s *Store) GetSupportedParameters(model string) []string {
