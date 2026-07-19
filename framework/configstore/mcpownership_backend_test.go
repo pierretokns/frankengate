@@ -59,3 +59,39 @@ func TestGORMMCPOwnershipBackendNotFoundAndCancellation(t *testing.T) {
 		t.Fatal("expected cancellation error")
 	}
 }
+
+func TestGORMMCPOwnershipDurableStoreRestartAndOperationRetry(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file:mcp_ownership_restart?mode=memory&cache=shared"), &gorm.Config{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := EnsureMCPOwnershipSchema(context.Background(), db); err != nil {
+		t.Fatal(err)
+	}
+	backend := NewGORMMCPOwnershipBackend(db)
+	first := mcpownership.NewDurableStore(backend)
+	second := mcpownership.NewDurableStore(backend)
+	key := mcpownership.ConnectionKey{ClientID: "client", Principal: "tenant:user", SessionKey: "session"}
+	now := time.Unix(100, 0)
+	a, err := first.Claim(now, key, "pod-a", time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := first.StartCall(now, key, "pod-a", a.Fence, "op-1"); err != nil {
+		t.Fatal(err)
+	}
+	b, err := second.Claim(now.Add(2*time.Second), key, "pod-b", time.Second)
+	if err != nil || len(b.Reconnect.AmbiguousOperations) != 1 {
+		t.Fatalf("restart claim=%#v err=%v", b, err)
+	}
+	retry, err := second.StartCall(now.Add(2*time.Second), key, "pod-b", b.Fence, "op-1")
+	if err != nil || !retry.AmbiguousPrevious || retry.Attempt != 2 {
+		t.Fatalf("retry=%#v err=%v", retry, err)
+	}
+	if _, err := first.CompleteCall(now.Add(2*time.Second), key, "pod-a", a.Fence, "op-1", true); !errors.Is(err, mcpownership.ErrStaleFence) {
+		t.Fatalf("old owner completion=%v", err)
+	}
+	if _, err := second.CompleteCall(now.Add(2*time.Second), key, "pod-b", b.Fence, "op-1", true); err != nil {
+		t.Fatal(err)
+	}
+}
