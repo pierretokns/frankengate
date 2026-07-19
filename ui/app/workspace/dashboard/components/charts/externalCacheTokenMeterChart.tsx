@@ -89,7 +89,7 @@ function ExternalCacheTokenMeterChartImpl({ data }: ExternalCacheTokenMeterChart
 											<Info className="h-3 w-3" />
 										</button>
 									</TooltipTrigger>
-									<TooltipContent side="top">This reflects provider-level caching, not Bifrost semantic cache hits.</TooltipContent>
+									<TooltipContent side="top">This reflects provider-level caching, not FrankenGate semantic cache hits.</TooltipContent>
 								</Tooltip>
 							</div>
 						</div>
