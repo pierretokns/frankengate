@@ -218,13 +218,14 @@ const (
 
 // BifrostContextKeyRequestType is a context key for the request type.
 const (
-	BifrostContextKeySessionToken      BifrostContextKey = "bifrost-session-token" // string (session token for authentication - set by auth middleware)
-	BifrostContextKeyVirtualKey        BifrostContextKey = "x-bf-vk"               // string
-	BifrostContextKeyAPIKeyName        BifrostContextKey = "x-bf-api-key"          // string (explicit key name selection)
-	BifrostContextKeyAPIKeyID          BifrostContextKey = "x-bf-api-key-id"       // string (explicit key ID selection, takes priority over name)
-	BifrostContextKeyDirectKey         BifrostContextKey = "x-bf-direct-key"       // schemas.Key (raw key supplied via x-bf-direct-key: true header; bypasses registered key pool)
-	BifrostContextKeyRequestID         BifrostContextKey = "request-id"            // string
-	BifrostContextKeyFallbackRequestID BifrostContextKey = "fallback-request-id"   // string
+	BifrostContextKeySessionToken              BifrostContextKey = "bifrost-session-token"               // string (session token for authentication - set by auth middleware)
+	BifrostContextKeyVirtualKey                BifrostContextKey = "x-bf-vk"                             // string
+	BifrostContextKeyAPIKeyName                BifrostContextKey = "x-bf-api-key"                        // string (explicit key name selection)
+	BifrostContextKeyAPIKeyID                  BifrostContextKey = "x-bf-api-key-id"                     // string (explicit key ID selection, takes priority over name)
+	BifrostContextKeyDirectKey                 BifrostContextKey = "x-bf-direct-key"                     // schemas.Key (raw key supplied via x-bf-direct-key: true header; bypasses registered key pool)
+	BifrostContextKeyRequestID                 BifrostContextKey = "request-id"                          // string
+	BifrostContextKeyFallbackRequestID         BifrostContextKey = "fallback-request-id"                 // string
+	BifrostContextKeyRequiredDestinationRegion BifrostContextKey = "bifrost-required-destination-region" // string (set by core for region-pinned fallbacks)
 
 	// NOTE: []string is used for both keys, and by default all clients/tools are included (when nil).
 	// If "*" is present, all clients/tools are included, and [] means no clients/tools are included.
@@ -478,6 +479,9 @@ type LargePayloadMetadata struct {
 type Fallback struct {
 	Provider ModelProvider `json:"provider"`
 	Model    string        `json:"model"`
+	// Region optionally pins this fallback to a provider destination region.
+	// Regional providers fail closed when the selected key does not match.
+	Region string `json:"region,omitempty"`
 }
 
 // BifrostRequest is the request struct for all bifrost requests.

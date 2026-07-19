@@ -5008,6 +5008,8 @@ func (bifrost *Bifrost) handleRequest(ctx *schemas.BifrostContext, req *schemas.
 
 	// Try the primary provider first
 	ctx.SetValue(schemas.BifrostContextKeyFallbackIndex, 0)
+	ctx.SetValue(schemas.BifrostContextKeyRequiredDestinationRegion, "")
+	ctx.SetValue(schemas.BifrostContextKeyRequiredDestinationRegion, "")
 	// Ensure request ID is set in context before PreHooks
 	if _, ok := ctx.Value(schemas.BifrostContextKeyRequestID).(string); !ok {
 		requestID := uuid.New().String()
@@ -5071,6 +5073,8 @@ func (bifrost *Bifrost) handleRequest(ctx *schemas.BifrostContext, req *schemas.
 	// Try fallbacks in order
 	for i, fallback := range fallbacks {
 		ctx.SetValue(schemas.BifrostContextKeyFallbackIndex, i+1)
+		ctx.SetValue(schemas.BifrostContextKeyRequiredDestinationRegion, fallback.Region)
+		ctx.SetValue(schemas.BifrostContextKeyRequiredDestinationRegion, fallback.Region)
 		bifrost.logger.Debug(fmt.Sprintf("trying fallback provider %s with model %s", fallback.Provider, fallback.Model))
 		ctx.AppendRoutingEngineLog(schemas.RoutingEngineCore, schemas.LogLevelInfo, fmt.Sprintf("Trying fallback %d/%d: %s/%s (previous attempt failed: %s)", i+1, len(fallbacks), fallback.Provider, fallback.Model, routingErrorSummary(lastErr)))
 		ctx.SetValue(schemas.BifrostContextKeyFallbackRequestID, uuid.New().String())
@@ -5840,6 +5844,10 @@ var errAllKeysDead = errors.New("all configured keys returned permanent per-key 
 // condition (the filter/circuit breaker self-heals), so it surfaces as a 503 rather than a 502.
 var errAllKeysFiltered = errors.New("all eligible keys are temporarily suppressed by the key pool filter")
 
+// errDestinationRegionMismatch prevents a region-pinned fallback from
+// silently using a credential whose endpoint is in another AWS region.
+var errDestinationRegionMismatch = errors.New("selected provider key does not match required destination region")
+
 // executeRequestWithRetries is a generic function that handles common request processing logic.
 // It consolidates retry logic, backoff calculation, error handling, and key rotation.
 // It is not a bifrost method because interface methods in go cannot be generic.
@@ -5940,6 +5948,16 @@ func executeRequestWithRetries[T any](
 			}
 
 			selectedKey, err := keyProvider(usedKeyIDs, deadKeyIDs)
+			if err == nil {
+				if required, _ := ctx.Value(schemas.BifrostContextKeyRequiredDestinationRegion).(string); required != "" {
+					actual := schemas.DestinationRegionForKey(providerKey, selectedKey)
+					// Only regional providers can satisfy a region pin. An empty
+					// destination is therefore a fail-closed mismatch, not a wildcard.
+					if actual == "" || !strings.EqualFold(actual, required) {
+						err = fmt.Errorf("%w: required=%s actual=%s provider=%s", errDestinationRegionMismatch, required, actual, providerKey)
+					}
+				}
+			}
 
 			if keyTracer != nil {
 				if err != nil {

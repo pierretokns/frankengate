@@ -611,6 +611,17 @@ func buildRoutingDestination(provider ModelProvider, key Key) *RoutingDestinatio
 	return destination
 }
 
+// DestinationRegionForKey returns the concrete regional destination selected
+// by a provider key. It is intentionally empty for providers whose endpoint
+// is not region-scoped, so callers can distinguish "not applicable" from a
+// configured region without inspecting provider-specific key fields.
+func DestinationRegionForKey(provider ModelProvider, key Key) string {
+	if destination := buildRoutingDestination(provider, key); destination != nil {
+		return destination.Region
+	}
+	return ""
+}
+
 // ResolveConfig returns the AliasConfig for the given user-facing model name,
 // or nil if no alias matches. Case-insensitive fallback matches Resolve.
 func (ka KeyAliases) ResolveConfig(model string) *AliasConfig {

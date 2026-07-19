@@ -115,6 +115,18 @@ func TestBuildRoutingInfoIncludesNonSecretBedrockDestination(t *testing.T) {
 	}
 }
 
+func TestDestinationRegionForKeyIsProviderBound(t *testing.T) {
+	key := Key{BedrockKeyConfig: &BedrockKeyConfig{Region: NewSecretVar("us-west-2")}}
+	if got := DestinationRegionForKey(Bedrock, key); got != "us-west-2" {
+		t.Fatalf("bedrock destination region = %q, want us-west-2", got)
+	}
+	// A region on a Bedrock key must never bleed into an unrelated provider
+	// fallback; non-regional providers return an empty destination.
+	if got := DestinationRegionForKey(OpenAI, key); got != "" {
+		t.Fatalf("openai destination region = %q, want empty", got)
+	}
+}
+
 // TestKeyAliasesLegacyVertexProjectIDPromotedOnMarshal guards the back-compat
 // shim: a Go-constructed alias that sets only the deprecated VertexAliasCfg.ProjectID
 // (json:"-") must not lose its project on a marshal/unmarshal round-trip. MarshalJSON
