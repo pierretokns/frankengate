@@ -83,8 +83,14 @@ type virtualKeyInvalidationPoller struct {
 	lastSuccessNano  atomic.Int64
 	lastErrorLogNano atomic.Int64
 	failureActive    atomic.Bool
-	metricSink       governanceSyncMetricSink
-	now              func() time.Time
+	// watermarkStale is set when the authority read comes from a replica that
+	// regressed behind a watermark already observed by this pod.  Retaining the
+	// larger watermark prevents cursor regression, but an empty result from that
+	// stale replica cannot prove the pod is caught up.  Keep readiness closed
+	// until a later read reaches the observed watermark again.
+	watermarkStale atomic.Bool
+	metricSink     governanceSyncMetricSink
+	now            func() time.Time
 }
 
 func newVirtualKeyInvalidationPoller(store virtualKeyInvalidationSource, apply virtualKeyInvalidationApply, batchSize int, pollInterval time.Duration) *virtualKeyInvalidationPoller {
@@ -559,6 +565,9 @@ func (p *virtualKeyInvalidationPoller) Freshness(now time.Time, maxAge time.Dura
 	// fresh indefinitely after its last successful authority read.
 	age := now.Sub(lastSuccess)
 	fresh := !lastSuccess.IsZero() && lag == 0 && maxAge >= 0 && age >= 0 && age <= maxAge
+	if p.watermarkStale.Load() {
+		fresh = false
+	}
 	return VirtualKeyInvalidationFreshness{
 		Cursor:        cursor,
 		HighWatermark: highWatermark,
@@ -681,10 +690,20 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 	// Never move the local fence backwards: doing so would publish a false
 	// zero-lag/readiness signal and could hide committed events until a later
 	// notification happens to wake the poller.
-	if observed := p.highWatermark.Load(); observed > highWatermark {
-		highWatermark = observed
+	previousWatermark := p.highWatermark.Load()
+	watermarkStale := false
+	if previousWatermark > highWatermark {
+		watermarkStale = true
+		highWatermark = previousWatermark
 	}
 	p.highWatermark.Store(highWatermark)
+	if watermarkStale {
+		p.watermarkStale.Store(true)
+	} else if highWatermark >= previousWatermark {
+		// The read reached the previously observed fence again.  It is now safe
+		// to trust an empty list result for freshness.
+		p.watermarkStale.Store(false)
+	}
 
 	cursor := p.cursor.Load()
 	events, err := p.store.ListVirtualKeyInvalidationsAfter(ctx, cursor, p.batchSize)
@@ -761,7 +780,7 @@ func (p *virtualKeyInvalidationPoller) pollOnce(ctx context.Context) (bool, erro
 		// Keep the exported signal false during catch-up so alerts do not claim
 		// a pod is synchronized before all committed authority mutations apply.
 		ready := 0.0
-		if lag == 0 {
+		if lag == 0 && !p.watermarkStale.Load() {
 			ready = 1
 		}
 		p.metricSink.SetGovernanceSyncMetric("ready", ready)

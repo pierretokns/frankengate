@@ -717,8 +717,19 @@ func TestVirtualKeyInvalidationPollerDoesNotRegressWatermarkAfterReplicaLag(t *t
 		t.Fatal(err)
 	}
 	state := poller.Freshness(time.Now(), time.Minute)
-	if state.HighWatermark != 4 || state.Cursor != 4 || state.Lag != 0 || !state.Fresh {
-		t.Fatalf("watermark regressed after stale read: %+v", state)
+	if state.HighWatermark != 4 || state.Cursor != 4 || state.Lag != 0 || state.Fresh {
+		t.Fatalf("stale replica read must fail closed even when watermark is retained: %+v", state)
+	}
+	// Once the authority reader catches up to the previously observed fence,
+	// an empty result is trustworthy again and readiness recovers.
+	store.mu.Lock()
+	store.highWater = 4
+	store.mu.Unlock()
+	if _, err := poller.pollOnce(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if state = poller.Freshness(time.Now(), time.Minute); !state.Fresh {
+		t.Fatalf("fresh authority read did not reopen readiness: %+v", state)
 	}
 }
 
