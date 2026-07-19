@@ -575,7 +575,7 @@ func replayPIIKey(key string) bool {
 	if lower == "tenant" || lower == "tenantid" || lower == "bifrosttenantid" {
 		return false
 	}
-	for _, marker := range []string{"prompt", "completion", "content", "message", "query", "toolinput", "tooloutput", "toolargs", "toolarguments", "toolresult", "coder", "email", "username", "principal", "peeraddress", "clientpeer", "forwardedfor", "sourceip", "remoteaddr", "useragent", "sessionid"} {
+	for _, marker := range []string{"prompt", "completion", "content", "message", "query", "toolinput", "tooloutput", "toolargs", "toolarguments", "toolresult", "coder", "email", "username", "principal", "peeraddress", "clientpeer", "forwardedfor", "sourceip", "remoteaddr", "useragent", "sessionid", "authorization", "bearer", "password", "secret", "credential", "cookie", "apikey", "accesskey", "privatekey", "jwt"} {
 		if strings.Contains(lower, marker) {
 			return true
 		}

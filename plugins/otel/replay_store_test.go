@@ -124,8 +124,8 @@ func TestReplayRedactsStructuredStringMapAttributes(t *testing.T) {
 		// x-bf-dim-* headers are represented as map[string]string. This must
 		// receive the same PII treatment as ordinary string attributes.
 		"bifrost.dimensions": map[string]string{
-			"desk": "alice@example.com",
-			"safe": "research",
+			"desk":  "alice@example.com",
+			"safe":  "research",
 			"email": "alice@example.com",
 		},
 	}}
@@ -188,6 +188,44 @@ func TestReplayRedactsNestedStructuredSlices(t *testing.T) {
 	}
 	if got := clean["safe"]; got != "research" {
 		t.Fatalf("safe nested dimension changed: %#v", got)
+	}
+}
+
+func TestReplayRemovesCredentialAttributesAtAnyNestingLevel(t *testing.T) {
+	store, err := NewJSONLReplayStore(t.TempDir(), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	trace := &schemas.Trace{TraceID: "credentials", Attributes: map[string]any{
+		"tenant": "acme",
+		"request.metadata": map[string]any{
+			"authorization": "Bearer should-not-persist",
+			"safe":          "bounded",
+			"nested": []any{map[string]string{
+				"api_key": "sk-should-not-persist",
+				"safe":    "ok",
+			}},
+		},
+	}, Spans: []*schemas.Span{{Events: []schemas.SpanEvent{{Attributes: map[string]any{
+		"headers": map[string]string{"cookie": "session=secret", "safe": "ok"},
+	}}}}}}
+	if err := store.Put(context.Background(), trace); err != nil {
+		t.Fatal(err)
+	}
+	record, err := store.Get(context.Background(), "acme", "credentials")
+	if err != nil {
+		t.Fatal(err)
+	}
+	encoded, err := json.Marshal(record)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(encoded), "should-not-persist") || strings.Contains(string(encoded), "session=secret") {
+		t.Fatalf("credential data leaked into replay: %s", encoded)
+	}
+	if got := record.Trace.Attributes["request.metadata"].(map[string]any)["safe"]; got != "bounded" {
+		t.Fatalf("safe nested metadata was not retained: %#v", got)
 	}
 }
 
