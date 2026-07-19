@@ -1736,6 +1736,12 @@ Call this template at the beginning of deployment/stateful templates
 {{- if and .Values.postgresql.connectionBudget .Values.postgresql.connectionBudget.enabled }}
 {{- $budget := int .Values.postgresql.connectionBudget.maxConnections }}
 {{- $reserve := int (.Values.postgresql.connectionBudget.reservedConnections | default 0) }}
+{{- if lt $budget 1 }}
+{{- fail "ERROR: postgresql.connectionBudget.maxConnections must be at least 1." }}
+{{- end }}
+{{- if lt $reserve 0 }}
+{{- fail "ERROR: postgresql.connectionBudget.reservedConnections must be non-negative." }}
+{{- end }}
 {{- if le $budget $reserve }}
 {{- fail "ERROR: postgresql.connectionBudget.maxConnections must exceed reservedConnections." }}
 {{- end }}
@@ -1745,9 +1751,15 @@ Call this template at the beginning of deployment/stateful templates
 {{- $configType := .Values.storage.configStore.type | default .Values.storage.mode }}
 {{- $logsType := .Values.storage.logsStore.type | default .Values.storage.mode }}
 {{- if and .Values.storage.configStore.enabled (eq $configType "postgres") }}
+  {{- if and (hasKey .Values.storage.configStore "maxOpenConns") (lt (int .Values.storage.configStore.maxOpenConns) 0) }}
+  {{- fail "ERROR: storage.configStore.maxOpenConns must be non-negative." }}
+  {{- end }}
   {{- $poolPerPod = add $poolPerPod (int (.Values.storage.configStore.maxOpenConns | default 50)) }}
 {{- end }}
 {{- if and .Values.storage.logsStore.enabled (eq $logsType "postgres") }}
+  {{- if and (hasKey .Values.storage.logsStore "maxOpenConns") (lt (int .Values.storage.logsStore.maxOpenConns) 0) }}
+  {{- fail "ERROR: storage.logsStore.maxOpenConns must be non-negative." }}
+  {{- end }}
   {{- $poolPerPod = add $poolPerPod (int (.Values.storage.logsStore.maxOpenConns | default 50)) }}
 {{- end }}
 {{- $projected := mul $pods $poolPerPod }}

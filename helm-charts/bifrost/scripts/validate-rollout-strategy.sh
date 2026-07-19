@@ -40,3 +40,28 @@ if grep -q '^kind: HorizontalPodAutoscaler$' <<<"$rendered"; then
   exit 1
 fi
 echo "capacity-safe fixed three-replica Deployment rendered (no HPA)"
+
+# Verify the database budget is evaluated against the HPA ceiling, not merely
+# the current replica count.  This catches a rollout that is safe at startup
+# but exhausts Aurora after an HPA scale-up.
+if helm template capacity-budget "$CHART_DIR" \
+  --set autoscaling.enabled=true --set autoscaling.minReplicas=1 --set autoscaling.maxReplicas=6 \
+  --set storage.mode=postgres --set postgresql.external.enabled=true \
+  --set postgresql.external.host=aurora.example.internal \
+  --set postgresql.connectionBudget.enabled=true --set postgresql.connectionBudget.maxConnections=100 \
+  --set postgresql.connectionBudget.reservedConnections=10 \
+  --set storage.configStore.maxOpenConns=10 --set storage.logsStore.maxOpenConns=10 >/dev/null 2>&1; then
+  echo "expected HPA connection-budget overflow to be rejected" >&2
+  exit 1
+fi
+echo "capacity budget rejects HPA ceiling that would exhaust PostgreSQL"
+
+if helm template capacity-budget-invalid "$CHART_DIR" \
+  --set storage.mode=postgres --set postgresql.external.enabled=true \
+  --set postgresql.external.host=aurora.example.internal \
+  --set postgresql.connectionBudget.enabled=true --set postgresql.connectionBudget.maxConnections=100 \
+  --set postgresql.connectionBudget.reservedConnections=-1 >/dev/null 2>&1; then
+  echo "expected negative reserved PostgreSQL connections to be rejected" >&2
+  exit 1
+fi
+echo "capacity budget rejects negative reserved connections"
