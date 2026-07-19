@@ -229,6 +229,40 @@ func TestReplayRemovesCredentialAttributesAtAnyNestingLevel(t *testing.T) {
 	}
 }
 
+func TestReplayRedactsNamedAndRawJSONAttributeTypes(t *testing.T) {
+	type namedDimensions map[string]json.RawMessage
+	dimensions := namedDimensions{
+		"authorization": json.RawMessage(`"Bearer raw-secret"`),
+		"nested":        json.RawMessage(`{"safe":"ok","password":"raw-password"}`),
+	}
+	store, err := NewJSONLReplayStore(t.TempDir(), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	trace := &schemas.Trace{TraceID: "named-raw", Attributes: map[string]any{
+		"tenant":     "acme",
+		"dimensions": dimensions,
+	}}
+	if err := store.Put(context.Background(), trace); err != nil {
+		t.Fatal(err)
+	}
+	record, err := store.Get(context.Background(), "acme", "named-raw")
+	if err != nil {
+		t.Fatal(err)
+	}
+	encoded, err := json.Marshal(record)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(encoded), "raw-secret") || strings.Contains(string(encoded), "raw-password") {
+		t.Fatalf("named/raw attribute data leaked into replay: %s", encoded)
+	}
+	if !strings.Contains(string(encoded), `"safe":"ok"`) {
+		t.Fatalf("safe raw JSON metadata was not retained: %s", encoded)
+	}
+}
+
 func TestReplayRedactsRootSpanAndEventAttributes(t *testing.T) {
 	store, err := NewJSONLReplayStore(t.TempDir(), true)
 	if err != nil {

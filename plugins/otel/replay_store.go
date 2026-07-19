@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"sync"
 	"time"
@@ -650,7 +651,51 @@ func redactReplayStrings(value any) any {
 			out[key] = redactReplayStrings(child)
 		}
 		return out
+	case json.RawMessage:
+		// Raw JSON is a common OTEL attribute representation. Decode it before
+		// applying the recursive boundary; leaving it as []byte would bypass all
+		// nested key checks and persist credentials verbatim.
+		var decoded any
+		if err := json.Unmarshal(v, &decoded); err != nil {
+			return privacy.RedactText(string(v))
+		}
+		clean := redactReplayStrings(decoded)
+		encoded, err := json.Marshal(clean)
+		if err != nil {
+			return privacy.RedactText(string(v))
+		}
+		return json.RawMessage(encoded)
 	default:
+		// Integrations sometimes use named map/slice types (or maps whose value
+		// type is json.RawMessage). Handle those concrete types without relying
+		// on a finite list of aliases. Structs and scalar values are deliberately
+		// left untouched; trace attributes are expected to be JSON-like values.
+		rv := reflect.ValueOf(value)
+		if !rv.IsValid() {
+			return value
+		}
+		switch rv.Kind() {
+		case reflect.Map:
+			if rv.Type().Key().Kind() != reflect.String {
+				return value
+			}
+			out := make(map[string]any, rv.Len())
+			iter := rv.MapRange()
+			for iter.Next() {
+				key := iter.Key().String()
+				if replayPIIKey(key) {
+					continue
+				}
+				out[key] = redactReplayStrings(iter.Value().Interface())
+			}
+			return out
+		case reflect.Slice, reflect.Array:
+			out := make([]any, rv.Len())
+			for i := 0; i < rv.Len(); i++ {
+				out[i] = redactReplayStrings(rv.Index(i).Interface())
+			}
+			return out
+		}
 		return value
 	}
 }
