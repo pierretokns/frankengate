@@ -216,6 +216,52 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/jobs/replay" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let replay_id = query_param(query, "replay_id");
+            let source_job_id = query_param(query, "source_job_id");
+            let kind = query_param(query, "kind");
+            match (database.as_ref(), tenant, replay_id, source_job_id, kind) {
+                (Some(pool), Some(tenant), Some(replay_id), Some(source_job_id), Some(kind)) => {
+                    let replay = frankengate_analytics_control::ReplayJob {
+                        protocol_version: frankengate_analytics_control::PROTOCOL_VERSION,
+                        replay_id: replay_id.to_owned(),
+                        source_job_id: source_job_id.to_owned(),
+                        tenant: tenant.to_owned(),
+                        kind: kind.to_owned(),
+                    };
+                    let created = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::replay_job(
+                                    pool, &replay,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if created {
+                        (
+                            "201 Created",
+                            "text/plain",
+                            format!("id={}\n", replay.replay_id),
+                        )
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "replay rejected\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, replay_id, source_job_id, and kind is required\n"
+                        .to_string(),
+                ),
+            }
+        }
         "/v1/experiments" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let id = query_param(query, "id");

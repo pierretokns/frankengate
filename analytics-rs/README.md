@@ -78,6 +78,8 @@ Long-running workers renew it with
 `POST /v1/jobs/renew?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&lease_seconds=30`.
 Terminal worker errors are recorded with
 `POST /v1/jobs/fail?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&error_code=<bounded-code>`.
+Terminal jobs can be replayed with explicit lineage using
+`POST /v1/jobs/replay?tenant=<tenant-id>&replay_id=<new-id>&source_job_id=<old-id>&kind=<kind>`.
 Automation can create immutable experiment lineage with
 `POST /v1/experiments?tenant=<tenant-id>&id=<id>&actor=<actor>&revision=<revision>`;
 duplicate IDs are rejected idempotently.
