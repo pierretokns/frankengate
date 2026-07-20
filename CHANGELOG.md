@@ -50,6 +50,20 @@ attach the matching immutable tag and artifact digests.
   cross-replica PostgreSQL reservations are not shipped yet.
 - Synchronization metrics and a complete external Redis contract remain planned.
 
+## 0.3.10
+
+Released 2026-07-20 from the verified `dev` baseline.
+
+### Release verification
+
+- Stable release artifact selection now uses the fork-owned artifact glob.
+- Go correctness checks no longer depend on the stalled hosted cache service.
+- GitHub Dependency Review is enabled and passing for the fork.
+- The Rust analytics contract suite passes all 15 deterministic lifecycle tests.
+
+This patch release does not claim PostgreSQL-backed analytics persistence or
+production GHCR image equivalence; those remain tracked as open beads.
+
 ## 0.3.9
 
 This tag contains the release candidate at `0fb398454364426a23fb643f78c4bb101c069aaf`.
