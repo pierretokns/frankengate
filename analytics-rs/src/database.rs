@@ -402,4 +402,24 @@ impl Database {
         tx.commit().await?;
         Ok(row)
     }
+
+    pub async fn cancel_job(
+        &self,
+        tenant: &str,
+        job_id: &str,
+    ) -> Result<Option<JobRow>, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let row = sqlx::query_as::<_, JobRow>(
+            "update frankengate_analytics.jobs\
+             set state = 'cancelled', worker_id = null, lease_until = null, updated_at = now()\
+             where id = $1 and tenant_id = $2 and state in ('queued', 'leased')\
+             returning id, tenant_id, kind, state, attempt, replay_of",
+        )
+        .bind(job_id)
+        .bind(tenant)
+        .fetch_optional(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(row)
+    }
 }
