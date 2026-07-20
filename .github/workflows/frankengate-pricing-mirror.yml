@@ -1,0 +1,53 @@
+name: FrankenGate pricing mirror
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: Approved public pricing source
+        required: false
+        default: https://getbifrost.ai/datasheet
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      SOURCE_URL: ${{ inputs.source_url || vars.FRANKENGATE_PRICING_URL || 'https://getbifrost.ai/datasheet' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.5"
+          cache: false
+
+      - name: Validate and publish pricing snapshot
+        working-directory: scripts/pricing-sync
+        run: |
+          set -euo pipefail
+          GOWORK=off CGO_ENABLED=0 go test ./...
+          GOWORK=off CGO_ENABLED=0 go run . -url "$SOURCE_URL" -out ../../docs/data/pricing
+
+      - name: Commit changed snapshot
+        run: |
+          set -euo pipefail
+          git config user.name "frankengate-pricing[bot]"
+          git config user.email "frankengate-pricing[bot]@users.noreply.github.com"
+          git add docs/data/pricing
+          if git diff --cached --quiet; then
+            echo "Pricing snapshot unchanged"
+            exit 0
+          fi
+          git commit -m "chore(pricing): refresh model catalog snapshot"
+          git push

@@ -252,7 +252,7 @@ lifecycle:
       command: ["sh", "-c", "sleep 15"]
 
 # Bifrost specific configuration
-# You can find entire schema at https://getbifrost.ai/schema
+# The fork's source schema is published at https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json
 bifrost:
   # Application settings
   appDir: /app/data
@@ -264,7 +264,7 @@ bifrost:
   # envLabel: staging  # Short label (max 10 chars) shown in the UI sidebar to identify the environment
 
   # Schema location written to config.json $schema and exported as BIFROST_SCHEMA_URL.
-  # Leave empty to use the default (https://www.getbifrost.ai/schema); set it only for
+  # Leave empty to use the fork default schema URL; set it only for
   # isolated deployments that mirror the schema internally. When empty, the env var is
   # not injected, so a $schema override in a mounted config.json still takes effect.
   # Accepts an HTTP(S) URL, file:// URL, or filesystem path.
@@ -393,7 +393,7 @@ bifrost:
   # When using existingSecret in providerSecrets, the keys will be injected as env vars and
   # you should use env.VAR_NAME syntax in the value field
   # Note: The entire providers block is passed through to the config as-is.
-  # See https://getbifrost.ai/schema for the full provider schema.
+  # See the fork schema URL above for the full provider schema.
   providers: {}
     # openai:
     #   keys:

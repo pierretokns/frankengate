@@ -1,8 +1,8 @@
 # FrankenGate Helm Chart
 
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/bifrost)](https://artifacthub.io/packages/helm/bifrost/bifrost)
+Artifact Hub publication is not yet configured for the FrankenGate fork.
 
-Bifrost-compatible Helm chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS.
+Compatibility chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS. The chart path and `bifrost.*` values remain compatibility identifiers.
 
 **Latest Version:** 2.1.35
 
@@ -1133,8 +1133,8 @@ kubectl get secret bifrost -o yaml
 
 ## Resources
 
-- [Bifrost Documentation](https://docs.getbifrost.ai)
-- [GitHub Repository](https://github.com/maximhq/bifrost)
+- [FrankenGate Documentation](https://github.com/pierretokns/frankengate/tree/dev/docs)
+- [GitHub Repository](https://github.com/pierretokns/frankengate)
 - [Docker Hub](https://hub.docker.com/r/maximhq/bifrost)
 - [Discord Community](https://discord.gg/exN5KAydbU)
 

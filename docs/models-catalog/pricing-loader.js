@@ -1,10 +1,11 @@
 /*
  * Site-side pricing loader. The scheduled pricing-sync job publishes the
- * generated envelope at /data/pricing/latest.json. Keep the upstream URL as
- * a read-only fallback so an expired site artifact never blanks the catalog.
+ * generated envelope at /data/pricing/latest.json. The validated upstream
+ * snapshot is also published locally, so the site never calls the upstream
+ * product directly at runtime.
  */
 (function (root) {
-  const defaultPaths = ['/data/pricing/latest.json', 'data/pricing/latest.json', 'https://getbifrost.ai/datasheet']
+  const defaultPaths = ['/data/pricing/latest.json', 'data/pricing/latest.json', '/data/pricing/latest-upstream.json', 'data/pricing/latest-upstream.json']
 
   function normalize (payload) {
     const document = payload && payload.models ? payload.models : payload
