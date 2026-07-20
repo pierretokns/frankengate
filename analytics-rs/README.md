@@ -52,3 +52,10 @@ and verifies the typed terminal outcome:
 ```bash
 cargo run --manifest-path analytics-rs/Cargo.toml -- --check
 ```
+
+The control-plane contract also has a standalone image build, which is kept
+separate from the Go gateway image:
+
+```bash
+docker build -f analytics-rs/Dockerfile -t frankengate-analytics-control:dev analytics-rs
+```
