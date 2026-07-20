@@ -61,6 +61,22 @@ create table if not exists frankengate_analytics.jobs (
 create index if not exists jobs_tenant_state_created_idx
   on frankengate_analytics.jobs (tenant_id, state, created_at, id);
 
+create table if not exists frankengate_analytics.run_attempts (
+  id text primary key,
+  tenant_id text not null,
+  run_id text not null references frankengate_analytics.runs(id),
+  attempt integer not null check (attempt > 0),
+  worker_id text not null,
+  job_id text not null references frankengate_analytics.jobs(id),
+  outcome jsonb,
+  created_at timestamptz not null default now(),
+  unique (tenant_id, run_id, attempt),
+  unique (tenant_id, job_id)
+);
+
+create index if not exists run_attempts_tenant_run_idx
+  on frankengate_analytics.run_attempts (tenant_id, run_id, attempt);
+
 -- The table predates replay lineage in early deployments.  Keep upgrades
 -- idempotent for already-created tables as well as fresh installs.
 alter table frankengate_analytics.jobs
@@ -70,12 +86,14 @@ alter table frankengate_analytics.jobs
 -- has no CREATE POLICY IF NOT EXISTS, so replace policies deterministically.
 drop policy if exists experiments_tenant_isolation on frankengate_analytics.experiments;
 drop policy if exists runs_tenant_isolation on frankengate_analytics.runs;
+drop policy if exists run_attempts_tenant_isolation on frankengate_analytics.run_attempts;
 drop policy if exists evaluations_tenant_isolation on frankengate_analytics.evaluation_results;
 drop policy if exists artifacts_tenant_isolation on frankengate_analytics.artifact_manifests;
 drop policy if exists jobs_tenant_isolation on frankengate_analytics.jobs;
 
 alter table frankengate_analytics.experiments enable row level security;
 alter table frankengate_analytics.runs enable row level security;
+alter table frankengate_analytics.run_attempts enable row level security;
 alter table frankengate_analytics.evaluation_results enable row level security;
 alter table frankengate_analytics.artifact_manifests enable row level security;
 alter table frankengate_analytics.jobs enable row level security;
@@ -88,6 +106,33 @@ create policy experiments_tenant_isolation on frankengate_analytics.experiments
 create policy runs_tenant_isolation on frankengate_analytics.runs
   using (tenant_id = nullif(current_setting('app.tenant_id', true), ''))
   with check (tenant_id = nullif(current_setting('app.tenant_id', true), ''));
+create policy run_attempts_tenant_isolation on frankengate_analytics.run_attempts
+  using (
+    tenant_id = nullif(current_setting('app.tenant_id', true), '')
+    and exists (
+      select 1 from frankengate_analytics.runs r
+      where r.id = frankengate_analytics.run_attempts.run_id
+        and r.tenant_id = frankengate_analytics.run_attempts.tenant_id
+    )
+    and exists (
+      select 1 from frankengate_analytics.jobs j
+      where j.id = frankengate_analytics.run_attempts.job_id
+        and j.tenant_id = frankengate_analytics.run_attempts.tenant_id
+    )
+  )
+  with check (
+    tenant_id = nullif(current_setting('app.tenant_id', true), '')
+    and exists (
+      select 1 from frankengate_analytics.runs r
+      where r.id = frankengate_analytics.run_attempts.run_id
+        and r.tenant_id = frankengate_analytics.run_attempts.tenant_id
+    )
+    and exists (
+      select 1 from frankengate_analytics.jobs j
+      where j.id = frankengate_analytics.run_attempts.job_id
+        and j.tenant_id = frankengate_analytics.run_attempts.tenant_id
+    )
+  );
 create policy evaluations_tenant_isolation on frankengate_analytics.evaluation_results
   using (exists (
     select 1 from frankengate_analytics.runs r
@@ -112,6 +157,9 @@ create policy jobs_tenant_isolation on frankengate_analytics.jobs
 
 comment on table frankengate_analytics.runs is
   'Immutable run intent and revision lineage; retry attempts belong in a separate leased-job table.';
+
+comment on table frankengate_analytics.run_attempts is
+  'Tenant-scoped execution evidence linking a run attempt to one durable worker job.';
 
 comment on table frankengate_analytics.jobs is
   'Durable worker lease state; request inference workers must not write this table.';
