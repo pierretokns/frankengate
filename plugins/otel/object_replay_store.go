@@ -62,6 +62,11 @@ func (s *ObjectReplayStore) Put(ctx context.Context, trace *schemas.Trace) error
 		Trace:            clone,
 		RetrievalQuality: retrievalQualityFromTrace(clone),
 	}
+	digest, err := replayContentDigest(clone)
+	if err != nil {
+		return fmt.Errorf("digest replay record: %w", err)
+	}
+	record.ContentSHA256 = digest
 	payload, err := json.Marshal(record)
 	if err != nil {
 		return fmt.Errorf("marshal replay record: %w", err)
@@ -70,7 +75,7 @@ func (s *ObjectReplayStore) Put(ctx context.Context, trace *schemas.Trace) error
 	if err != nil {
 		return err
 	}
-	return s.store.Put(ctx, key, payload, map[string]string{"tenant_id": tenant, "schema_version": "1"})
+	return s.store.Put(ctx, key, payload, map[string]string{"tenant_id": tenant, "schema_version": "1", "content_sha256": record.ContentSHA256})
 }
 
 func (s *ObjectReplayStore) Get(ctx context.Context, tenantID, traceID string) (*ReplayRecord, error) {

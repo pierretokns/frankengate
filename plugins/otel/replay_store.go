@@ -8,6 +8,8 @@ package otel
 import (
 	"bufio"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -27,10 +29,20 @@ type ReplayRecord struct {
 	RequestID     string         `json:"request_id,omitempty"`
 	TenantID      string         `json:"tenant_id"`
 	CapturedAt    time.Time      `json:"captured_at"`
+	ContentSHA256 string         `json:"content_sha256"`
 	Trace         *schemas.Trace `json:"trace"`
 	// RetrievalQuality is bounded evaluation metadata only; it never contains
 	// queries, chunk IDs, embeddings, or payloads.
 	RetrievalQuality *RetrievalQualitySummary `json:"retrieval_quality,omitempty"`
+}
+
+func replayContentDigest(trace *schemas.Trace) (string, error) {
+	payload, err := json.Marshal(trace)
+	if err != nil {
+		return "", err
+	}
+	digest := sha256.Sum256(payload)
+	return hex.EncodeToString(digest[:]), nil
 }
 
 type RetrievalQualitySummary struct {
@@ -219,7 +231,11 @@ func (s *JSONLReplayStore) Put(ctx context.Context, trace *schemas.Trace) error 
 	// Retrieval quality counters are safe to retain, but query text is never
 	// part of the replay metadata contract, even when content capture is opted in.
 	redactReplayQueryMetadata(clone)
-	record := ReplayRecord{SchemaVersion: 1, TraceID: clone.TraceID, RequestID: clone.RequestID, TenantID: tenant, CapturedAt: time.Now().UTC(), Trace: clone, RetrievalQuality: retrievalQualityFromTrace(clone)}
+	digest, err := replayContentDigest(clone)
+	if err != nil {
+		return fmt.Errorf("digest replay record: %w", err)
+	}
+	record := ReplayRecord{SchemaVersion: 1, TraceID: clone.TraceID, RequestID: clone.RequestID, TenantID: tenant, CapturedAt: time.Now().UTC(), ContentSHA256: digest, Trace: clone, RetrievalQuality: retrievalQualityFromTrace(clone)}
 	payload, err := json.Marshal(record)
 	if err != nil {
 		return err

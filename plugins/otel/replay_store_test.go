@@ -29,6 +29,9 @@ func TestObjectReplayStoreTenantIsolationAndRedaction(t *testing.T) {
 	if record.TenantID != "acme" || record.Trace.Spans[0].Attributes["safe"] != "ok" {
 		t.Fatalf("unexpected record: %#v", record)
 	}
+	if len(record.ContentSHA256) != 64 {
+		t.Fatalf("content digest = %q, want SHA-256 hex", record.ContentSHA256)
+	}
 	if _, ok := record.Trace.Spans[0].Attributes["gen_ai.prompt"]; ok {
 		t.Fatal("prompt content was persisted")
 	}
