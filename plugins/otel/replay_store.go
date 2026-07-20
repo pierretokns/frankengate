@@ -45,6 +45,25 @@ func replayContentDigest(trace *schemas.Trace) (string, error) {
 	return hex.EncodeToString(digest[:]), nil
 }
 
+func verifyReplayRecordDigest(record *ReplayRecord) error {
+	if record == nil || record.Trace == nil {
+		return fmt.Errorf("replay record integrity metadata is missing")
+	}
+	// Records written before the digest field was introduced remain readable;
+	// all new writes include it and are verified below.
+	if record.ContentSHA256 == "" {
+		return nil
+	}
+	digest, err := replayContentDigest(record.Trace)
+	if err != nil {
+		return fmt.Errorf("digest replay record: %w", err)
+	}
+	if !strings.EqualFold(digest, record.ContentSHA256) {
+		return fmt.Errorf("replay record content digest mismatch")
+	}
+	return nil
+}
+
 type RetrievalQualitySummary struct {
 	Expected   int     `json:"expected"`
 	Retrieved  int     `json:"retrieved"`
@@ -298,6 +317,9 @@ func (s *JSONLReplayStore) Get(ctx context.Context, tenantID, traceID string) (*
 	if found == nil {
 		return nil, os.ErrNotExist
 	}
+	if err := verifyReplayRecordDigest(found); err != nil {
+		return nil, fmt.Errorf("replay record integrity check failed: %w", err)
+	}
 	return found, nil
 }
 
@@ -352,6 +374,9 @@ func (s *JSONLReplayStore) List(ctx context.Context, tenantID string, limit int)
 		var candidate ReplayRecord
 		if json.Unmarshal(scanner.Bytes(), &candidate) != nil || candidate.TenantID != tenantID {
 			continue
+		}
+		if err := verifyReplayRecordDigest(&candidate); err != nil {
+			return nil, fmt.Errorf("replay record integrity check failed: %w", err)
 		}
 		if len(records) == limit {
 			copy(records, records[1:])

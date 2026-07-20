@@ -94,6 +94,9 @@ func (s *ObjectReplayStore) Get(ctx context.Context, tenantID, traceID string) (
 	if record.TenantID != strings.TrimSpace(tenantID) || record.TraceID != strings.TrimSpace(traceID) {
 		return nil, os.ErrPermission
 	}
+	if err := verifyReplayRecordDigest(&record); err != nil {
+		return nil, fmt.Errorf("replay record integrity check failed: %w", err)
+	}
 	return &record, nil
 }
 
@@ -122,6 +125,9 @@ func (s *ObjectReplayStore) List(ctx context.Context, tenantID string, limit int
 			return nil, fmt.Errorf("decode replay record %s: %w", object.Key, err)
 		}
 		if record.TenantID == tenantID {
+			if err := verifyReplayRecordDigest(&record); err != nil {
+				return nil, fmt.Errorf("replay record integrity check failed: %w", err)
+			}
 			result = append(result, record)
 		}
 	}
