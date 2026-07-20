@@ -86,6 +86,9 @@ failed job with `POST /v1/jobs/retry?tenant=<tenant-id>&job_id=<id>`.
 Workers persist bounded resumable state with
 `POST /v1/jobs/checkpoint?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&checkpoint=<state>`;
 the database rejects checkpoints over 64 KiB or writes by non-owners.
+Kubernetes termination can release all leases for a worker with
+`POST /v1/workers/drain?tenant=<tenant-id>&worker=<worker-id>` so replacement
+replicas can claim them immediately.
 Automation can create immutable experiment lineage with
 `POST /v1/experiments?tenant=<tenant-id>&id=<id>&actor=<actor>&revision=<revision>`;
 duplicate IDs are rejected idempotently.

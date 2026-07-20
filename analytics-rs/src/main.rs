@@ -360,6 +360,30 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/workers/drain" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let worker = query_param(query, "worker");
+            match (database.as_ref(), tenant, worker) {
+                (Some(pool), Some(tenant), Some(worker)) => {
+                    let released = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::drain_worker(
+                                    pool, tenant, worker,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(0);
+                    ("200 OK", "text/plain", format!("released={}\n", released))
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant and worker is required\n".to_string(),
+                ),
+            }
+        }
         "/v1/experiments" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let id = query_param(query, "id");
