@@ -282,4 +282,25 @@ impl Database {
         tx.commit().await?;
         Ok(row)
     }
+
+    pub async fn submit_job(
+        &self,
+        tenant: &str,
+        id: &str,
+        kind: &str,
+    ) -> Result<JobRow, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let row = sqlx::query_as::<_, JobRow>(
+            "insert into frankengate_analytics.jobs (id, tenant_id, kind, state)\
+             values ($1, $2, $3, 'queued')\
+             returning id, tenant_id, kind, state, attempt, replay_of",
+        )
+        .bind(id)
+        .bind(tenant)
+        .bind(kind)
+        .fetch_one(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(row)
+    }
 }
