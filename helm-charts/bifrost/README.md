@@ -498,7 +498,7 @@ helm install frankengate frankengate/bifrost -f my-values.yaml
 
 ```bash
 # Clone the repository
-git clone https://github.com/maximhq/bifrost.git
+git clone https://github.com/pierretokns/frankengate.git
 cd bifrost/helm-charts
 
 # Install from local chart
@@ -582,11 +582,11 @@ needed.
 
 | Parameter          | Description                    | Default                     |
 | ------------------ | ------------------------------ | --------------------------- |
-| `image.repository` | Container image repository     | `docker.io/maximhq/bifrost` |
+| `image.repository` | Container image repository     | `ghcr.io/pierretokns/frankengate` |
 | `image.tag`        | Container image tag (required) | `""`                        |
 | `image.pullPolicy` | Image pull policy              | `IfNotPresent`              |
 
-> **Important:** You must specify the `image.tag`. See available tags at [Docker Hub](https://hub.docker.com/r/maximhq/bifrost/tags).
+> **Important:** You must specify the `image.tag`. See available tags at the fork-owned [GHCR package](https://github.com/pierretokns/frankengate/pkgs/container/frankengate).
 
 ### Enterprise Private Registry
 
@@ -955,7 +955,7 @@ The chart includes pre-configured examples in `values-examples/`:
 ```bash
 # From Helm repository
 helm install frankengate frankengate/bifrost \
-  -f https://raw.githubusercontent.com/maximhq/bifrost/main/helm-charts/bifrost/values-examples/postgres-only.yaml \
+  -f https://raw.githubusercontent.com/pierretokns/frankengate/dev/helm-charts/bifrost/values-examples/postgres-only.yaml \
   --set image.tag=v1.5.2
 
 # From local source
@@ -1146,11 +1146,11 @@ kubectl get secret bifrost -o yaml
 
 - [FrankenGate Documentation](https://github.com/pierretokns/frankengate/tree/dev/docs)
 - [GitHub Repository](https://github.com/pierretokns/frankengate)
-- [Docker Hub](https://hub.docker.com/r/maximhq/bifrost)
+- [GHCR](https://github.com/pierretokns/frankengate/pkgs/container/frankengate)
 - [Discord Community](https://discord.gg/exN5KAydbU)
 
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](../LICENSE) file for details.
 
-Built with ❤️ by [Maxim](https://github.com/maximhq)
+Maintained by the FrankenGate project; see the repository [license and notices](https://github.com/pierretokns/frankengate).

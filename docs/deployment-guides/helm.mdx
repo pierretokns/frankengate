@@ -35,7 +35,7 @@ helm repo update
 <Note>
 The Helm chart ships ready-made values files under `helm-charts/bifrost/values-examples/`.
 For example: `sqlite-only.yaml`, `production-ha.yaml`, `external-postgres.yaml`, and `secrets-from-k8s.yaml`.
-See the full list here: https://github.com/maximhq/bifrost/tree/main/helm-charts/bifrost/values-examples
+See the full list here: https://github.com/pierretokns/frankengate/tree/dev/helm-charts/bifrost/values-examples
 </Note>
 
 <Tabs>
@@ -197,7 +197,7 @@ helm install frankengate frankengate/bifrost -f production.yaml
 </Tabs>
 
 <Note>
-`image.tag` is required - the chart will not start without it. Check [Docker Hub](https://hub.docker.com/r/maximhq/bifrost/tags) for available versions.
+`image.tag` is required - the chart will not start without it. Check the fork-owned [GHCR packages](https://github.com/pierretokns/frankengate/pkgs/container/frankengate) for available versions.
 </Note>
 
 ## Step 3 - Verify
@@ -628,10 +628,10 @@ curl http://localhost:8080/health
 
 ## Resources
 
-- [Helm Chart Repository](https://github.com/maximhq/bifrost/tree/main/helm-charts)
+- [Helm Chart Repository](https://github.com/pierretokns/frankengate/tree/dev/helm-charts)
 - [Artifact Hub](https://artifacthub.io/packages/helm/bifrost/bifrost)
-- [Example Configurations](https://github.com/maximhq/bifrost/tree/main/helm-charts/bifrost/values-examples)
-- [GitHub Issues](https://github.com/maximhq/bifrost/issues)
+- [Example Configurations](https://github.com/pierretokns/frankengate/tree/dev/helm-charts/bifrost/values-examples)
+- [GitHub Issues](https://github.com/pierretokns/frankengate/issues)
 
 ## Next Steps
 
