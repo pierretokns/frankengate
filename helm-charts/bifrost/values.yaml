@@ -16,6 +16,10 @@ analyticsControlPlane:
     pullPolicy: IfNotPresent
   replicas: 1
   command: ["frankengate-analytics-control", "--serve"]
+  # Optional Secret-backed Postgres URL. When set, /readyz fences on reachability.
+  databaseUrl:
+    existingSecret: ""
+    existingSecretKey: DATABASE_URL
   resources: {}
   autoscaling:
     enabled: false

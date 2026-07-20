@@ -54,6 +54,14 @@ spec:
           image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}"
           imagePullPolicy: {{ .Values.analyticsControlPlane.image.pullPolicy }}
           command: {{ toJson .Values.analyticsControlPlane.command }}
+          {{- if .Values.analyticsControlPlane.databaseUrl.existingSecret }}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.analyticsControlPlane.databaseUrl.existingSecret | quote }}
+                  key: {{ .Values.analyticsControlPlane.databaseUrl.existingSecretKey | quote }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 8081

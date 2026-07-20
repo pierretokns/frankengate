@@ -24,6 +24,13 @@
         },
         "replicas": { "type": "integer", "minimum": 1 },
         "command": { "type": "array", "items": { "type": "string" } },
+        "databaseUrl": {
+          "type": "object",
+          "properties": {
+            "existingSecret": { "type": "string" },
+            "existingSecretKey": { "type": "string", "minLength": 1 }
+          }
+        },
         "resources": { "type": "object" },
         "autoscaling": {
           "type": "object",
