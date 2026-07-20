@@ -34393,6 +34393,132 @@
         }
       }
     },
+    "/api/replays": {
+      "get": {
+        "operationId": "listReplaySummaries",
+        "summary": "List tenant replay summaries",
+        "description": "Lists metadata for durable OTEL replay records. The endpoint is\nintentionally metadata-only: trace and prompt content are never returned\nby the gateway API. A trusted principal is restricted to its own tenant.\nOffline replay workers must re-authorize access at execution time.\n",
+        "tags": [
+          "Observability"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "query",
+            "required": true,
+            "description": "Tenant partition to enumerate.",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of summaries to return (default 50, maximum 100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Replay metadata for the authorized tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "tenant_id",
+                    "records",
+                    "content_redacted"
+                  ],
+                  "properties": {
+                    "tenant_id": {
+                      "type": "string"
+                    },
+                    "content_redacted": {
+                      "type": "boolean",
+                      "const": true,
+                      "description": "The API never returns replay content."
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "schema_version",
+                          "trace_id",
+                          "tenant_id",
+                          "captured_at",
+                          "content_sha256",
+                          "content_redacted"
+                        ],
+                        "properties": {
+                          "schema_version": {
+                            "type": "integer"
+                          },
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "request_id": {
+                            "type": "string"
+                          },
+                          "tenant_id": {
+                            "type": "string"
+                          },
+                          "captured_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "content_sha256": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$",
+                            "description": "SHA-256 digest of the sanitized replay payload."
+                          },
+                          "content_redacted": {
+                            "type": "boolean",
+                            "const": true
+                          },
+                          "retrieval_quality": {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid tenant_id/limit."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Principal is not authorized for the requested tenant."
+          },
+          "500": {
+            "description": "Replay store listing failed."
+          }
+        }
+      }
+    },
     "/api/alerting/channels": {
       "get": {
         "operationId": "listAlertChannels",

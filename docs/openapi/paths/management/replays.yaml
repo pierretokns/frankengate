@@ -1,0 +1,46 @@
+replays:
+  get:
+    operationId: listReplaySummaries
+    summary: List tenant replay summaries
+    description: |
+      Lists metadata for durable OTEL replay records. The endpoint is
+      intentionally metadata-only: trace and prompt content are never returned
+      by the gateway API. A trusted principal is restricted to its own tenant.
+      Offline replay workers must re-authorize access at execution time.
+    tags:
+      - Observability
+    security:
+      - bearerAuth: []
+      - cookieAuth: []
+    parameters:
+      - name: tenant_id
+        in: query
+        required: true
+        description: Tenant partition to enumerate.
+        schema:
+          type: string
+          minLength: 1
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of summaries to return (default 50, maximum 100).
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+    responses:
+      '200':
+        description: Replay metadata for the authorized tenant.
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/replays.yaml#/ReplaySummaryList'
+      '400':
+        description: Missing or invalid tenant_id/limit.
+      '401':
+        description: Authentication required.
+      '403':
+        description: Principal is not authorized for the requested tenant.
+      '500':
+        description: Replay store listing failed.
