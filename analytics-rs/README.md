@@ -36,7 +36,9 @@ independent Helm deployments remain separate implementation gates.
 
 `migrations/001_analytics_contract.sql` is the first durable schema contract.
 It enables tenant RLS and stores only artifact manifests in PostgreSQL; artifact
-bytes remain in the configured object store.
+bytes remain in the configured object store. The migration is safe to rerun
+during rolling upgrades, including upgrades of an existing `jobs` table to add
+replay lineage.
 
 Run the current contract tests with:
 
