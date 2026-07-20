@@ -13,6 +13,11 @@ Use `postgresql.external.existingSecret` for the password; the chart does not
 create or expose a plaintext password in that mode. Redis remains optional
 acceleration/vector storage and is never required as the governance authority.
 
+For OTEL replay, use the chart's `extraEnv` map. Set
+`FRANKENGATE_REPLAY_S3_BUCKET` for object storage (and optionally
+`FRANKENGATE_REPLAY_S3_PREFIX`/`AWS_REGION`), or set `FRANKENGATE_REPLAY_DIR`
+for a mounted JSONL fallback. Do not enable both in the same deployment.
+
 **Latest FrankenGate Chart:** 0.3.19
 
 The inherited upstream chart history below is retained only as compatibility
