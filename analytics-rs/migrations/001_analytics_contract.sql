@@ -92,11 +92,17 @@ drop policy if exists artifacts_tenant_isolation on frankengate_analytics.artifa
 drop policy if exists jobs_tenant_isolation on frankengate_analytics.jobs;
 
 alter table frankengate_analytics.experiments enable row level security;
+alter table frankengate_analytics.experiments force row level security;
 alter table frankengate_analytics.runs enable row level security;
+alter table frankengate_analytics.runs force row level security;
 alter table frankengate_analytics.run_attempts enable row level security;
+alter table frankengate_analytics.run_attempts force row level security;
 alter table frankengate_analytics.evaluation_results enable row level security;
+alter table frankengate_analytics.evaluation_results force row level security;
 alter table frankengate_analytics.artifact_manifests enable row level security;
+alter table frankengate_analytics.artifact_manifests force row level security;
 alter table frankengate_analytics.jobs enable row level security;
+alter table frankengate_analytics.jobs force row level security;
 
 -- The connection pool must set app.tenant_id for every transaction. Missing
 -- tenant context fails closed rather than exposing cross-tenant analytics.
