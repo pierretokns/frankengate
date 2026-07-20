@@ -258,6 +258,9 @@ mod tests {
         assert_eq!(store.reap_expired(Instant::now()), 1);
         let recovered = store.lease("j4", "worker-b").unwrap();
         assert_eq!(recovered.attempt, 2);
+        store.reap_expired(Instant::now() + Duration::from_secs(31));
+        let recovered_again = store.lease("j4", "worker-c").unwrap();
+        assert_eq!(recovered_again.attempt, 3);
     }
 
     #[test]
