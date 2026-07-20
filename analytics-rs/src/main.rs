@@ -216,6 +216,51 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/experiments" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let id = query_param(query, "id");
+            let actor = query_param(query, "actor");
+            let revision = query_param(query, "revision");
+            match (database.as_ref(), tenant, id, actor, revision) {
+                (Some(pool), Some(tenant), Some(id), Some(actor), Some(revision)) => {
+                    let experiment = frankengate_analytics_control::Experiment {
+                        id: id.to_owned(),
+                        tenant: tenant.to_owned(),
+                        actor: actor.to_owned(),
+                        revision: revision.to_owned(),
+                    };
+                    let created = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::create_experiment(
+                                    pool,
+                                    &experiment,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if created {
+                        (
+                            "201 Created",
+                            "text/plain",
+                            format!("id={}\n", experiment.id),
+                        )
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "experiment already exists\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, id, actor, and revision is required\n".to_string(),
+                ),
+            }
+        }
         "/metrics" => {
             let tenant = query
                 .split('&')

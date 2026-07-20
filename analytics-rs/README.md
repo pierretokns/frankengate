@@ -78,6 +78,9 @@ Long-running workers renew it with
 `POST /v1/jobs/renew?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&lease_seconds=30`.
 Terminal worker errors are recorded with
 `POST /v1/jobs/fail?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&error_code=<bounded-code>`.
+Automation can create immutable experiment lineage with
+`POST /v1/experiments?tenant=<tenant-id>&id=<id>&actor=<actor>&revision=<revision>`;
+duplicate IDs are rejected idempotently.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
