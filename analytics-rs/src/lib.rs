@@ -10,6 +10,7 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 pub mod auth;
+pub mod config;
 pub mod database;
 
 pub const PROTOCOL_VERSION: u16 = 1;
