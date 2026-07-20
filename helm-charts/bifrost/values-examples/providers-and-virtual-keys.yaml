@@ -46,7 +46,7 @@
 
 # Image configuration
 image:
-  repository: docker.io/maximhq/bifrost
+  repository: ghcr.io/pierretokns/frankengate
   pullPolicy: IfNotPresent
   tag: "v1.3.55"
 

@@ -451,14 +451,14 @@ Since Kubernetes doesn't allow in-place conversion from Deployment to StatefulSe
 ## Quick Start
 
 ```bash
-# Add the Bifrost Helm repository
-helm repo add bifrost https://maximhq.github.io/bifrost/helm-charts
+# Add the FrankenGate Helm repository
+helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 
 # Update your local Helm chart repository cache
 helm repo update
 
 # Install Bifrost with default configuration (SQLite storage)
-helm install bifrost bifrost/bifrost --set image.tag=v1.4.3
+helm install frankengate frankengate/bifrost --set image.tag=v0.3.14
 ```
 
 ## Prerequisites
@@ -473,25 +473,25 @@ helm install bifrost bifrost/bifrost --set image.tag=v1.4.3
 
 ```bash
 # Add repository
-helm repo add bifrost https://maximhq.github.io/bifrost/helm-charts
+helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 helm repo update
 
 # Install with default values
-helm install bifrost bifrost/bifrost --set image.tag=v1.4.3
+helm install frankengate frankengate/bifrost --set image.tag=v0.3.14
 
 # Or install with custom values
-helm install bifrost bifrost/bifrost -f my-values.yaml
+helm install frankengate frankengate/bifrost -f my-values.yaml
 ```
 
 ### From Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/maximhq/bifrost.git
-cd bifrost/helm-charts
+git clone https://github.com/pierretokns/frankengate.git
+cd frankengate/helm-charts
 
 # Install from local chart
-helm install bifrost ./bifrost --set image.tag=v1.5.2
+helm install frankengate ./bifrost --set image.tag=v0.3.14
 ```
 
 ### Interactive Installation
@@ -571,11 +571,11 @@ needed.
 
 | Parameter          | Description                    | Default                     |
 | ------------------ | ------------------------------ | --------------------------- |
-| `image.repository` | Container image repository     | `docker.io/maximhq/bifrost` |
+| `image.repository` | Container image repository     | `ghcr.io/pierretokns/frankengate` |
 | `image.tag`        | Container image tag (required) | `""`                        |
 | `image.pullPolicy` | Image pull policy              | `IfNotPresent`              |
 
-> **Important:** You must specify the `image.tag`. See available tags at [Docker Hub](https://hub.docker.com/r/maximhq/bifrost/tags).
+> **Important:** You must specify the `image.tag`. See available tags at [GitHub Container Registry](https://github.com/pierretokns/frankengate/pkgs/container/frankengate).
 
 ### Enterprise Private Registry
 
@@ -1135,11 +1135,10 @@ kubectl get secret bifrost -o yaml
 
 - [FrankenGate Documentation](https://github.com/pierretokns/frankengate/tree/dev/docs)
 - [GitHub Repository](https://github.com/pierretokns/frankengate)
-- [Docker Hub](https://hub.docker.com/r/maximhq/bifrost)
-- [Discord Community](https://discord.gg/exN5KAydbU)
+- [GitHub Container Registry](https://github.com/pierretokns/frankengate/pkgs/container/frankengate)
 
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](../LICENSE) file for details.
 
-Built with ❤️ by [Maxim](https://github.com/maximhq)
+Built and maintained by the FrankenGate contributors.

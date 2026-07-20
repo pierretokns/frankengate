@@ -406,9 +406,9 @@ bifrost:
   framework:
     pricing:
       # Custom pricing URL for model cost data
-      pricingUrl: "https://getbifrost.ai/datasheet"
+      pricingUrl: "https://github.com/pierretokns/frankengate"
       # Custom model parameters URL
-      modelParametersUrl: "https://getbifrost.ai/datasheet/model-parameters"
+      modelParametersUrl: "https://github.com/pierretokns/frankengate"
       # Sync interval in seconds (default: 86400 = 24 hours, minimum: 3600)
       pricingSyncInterval: 86400
       # Custom MCP server catalog URL (optional, leave empty to use the default Bifrost catalog)
