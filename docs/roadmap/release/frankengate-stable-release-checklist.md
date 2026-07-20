@@ -16,6 +16,10 @@ Status: preparation; no stable release claim.
 - `cargo build --release --locked` plus the exact binary `--check` passes;
   Helm lint and enabled analytics-control-plane rendering pass. Analytics pods
   use a configurable startup probe for migration/database boot fencing.
+- The analytics control-plane exposes bounded, tenant-scoped metadata
+  projections for experiments, runs, evaluations, artifacts, and attempts;
+  each projection sets the database tenant fence in-transaction and returns
+  `503` when its durable query cannot be served.
 - The fork-owned local overhead benchmark passes under elevated loopback
   networking with sub-0.1ms measured added p50/p95 overhead and zero errors;
   fixture bind failures now fail fast with an actionable diagnostic.
@@ -35,6 +39,9 @@ Status: preparation; no stable release claim.
   local contract gate.
 - Build and verify Linux/macOS binaries, Helm package, and Docker/OCI image
   digests from the same immutable commit.
+- Generate the Helm repository index with the fork-owned
+  `pierretokns/frankengate` release URL; reject any index that points back to
+  `maximhq/bifrost`.
 - Publish a real changelog with commit range and compatibility notes.
 - Replace remaining fork-facing upstream URLs in UI/runtime surfaces and
   regenerate any derived assets.
