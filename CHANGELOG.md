@@ -6,6 +6,12 @@ attach the matching immutable tag and artifact digests.
 
 ## Unreleased
 
+### Beta `v0.3.17-beta.1`
+
+- Bedrock Mantle GPT-5.6 Responses requests with plain message input now use
+  the scalar `input` form required by Mantle; structured tool-call input stays
+  in array form. Published in the beta binary release with checksums.
+
 ### Fixed
 
 - Replay admission now preserves a typed capacity-exceeded outcome instead of
