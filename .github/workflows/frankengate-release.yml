@@ -282,7 +282,20 @@ jobs:
 
       - name: Generate checksums
         working-directory: dist
-        run: sha256sum ./*.tar.gz > SHA256SUMS
+        shell: bash
+        run: |
+          set -euo pipefail
+          # download-artifact preserves each uploaded artifact's directory
+          # unless the files are flattened explicitly. The publish and inspect
+          # steps consume a single dist/*.tar.gz namespace.
+          shopt -s nullglob
+          packages=( */*.tar.gz )
+          for package in "${packages[@]}"; do
+            mv "$package" "$(basename "$package")"
+          done
+          archives=( ./*.tar.gz )
+          test "${#archives[@]}" -gt 0
+          sha256sum "${archives[@]}" > SHA256SUMS
 
       - name: Inspect every platform package
         run: |
