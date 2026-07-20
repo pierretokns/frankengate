@@ -384,6 +384,30 @@ impl JobStore {
         self.lease_for(id, worker, Duration::from_secs(30))
     }
 
+    /// Atomically claim the first queued job for a tenant.
+    pub fn lease_next_for_tenant(
+        &self,
+        tenant: &str,
+        worker: impl Into<String>,
+        duration: Duration,
+    ) -> Option<Job> {
+        let worker = worker.into();
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        let id = jobs
+            .values()
+            .filter(|job| job.tenant == tenant && matches!(job.state, JobState::Queued))
+            .map(|job| job.id.clone())
+            .min()?;
+        let job = jobs.get_mut(&id)?;
+        job.attempt = job.attempt.saturating_add(1);
+        job.state = JobState::Leased {
+            worker,
+            attempt: job.attempt,
+        };
+        job.lease_until = Some(Instant::now() + duration);
+        Some(job.clone())
+    }
+
     pub fn lease_for(
         &self,
         id: &str,
