@@ -1,6 +1,6 @@
 # FrankenGate analytics control plane
 
-This is the first isolated Rust vertical slice for the analytics plane. It is
+This is the first isolated Rust vertical slice for the analytics plane. It
 keeps the `JobStore` protocol and its durable PostgreSQL boundary separate from
 the Go gateway hot path. SQLx is used only by the independently deployed
 control-plane process.
@@ -116,3 +116,8 @@ separate from the Go gateway image:
 ```bash
 docker build -f analytics-rs/Dockerfile -t frankengate-analytics-control:dev analytics-rs
 ```
+
+The current HTTP surface is an internal worker/control-plane contract, not a
+public unauthenticated API. Put it behind cluster network policy and an
+identity-aware service boundary before exposing it outside the namespace; the
+tenant and worker query parameters are partitioning inputs, not credentials.
