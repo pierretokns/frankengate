@@ -25,6 +25,9 @@ export interface SessionCapabilitiesResponse {
 		session_bootstrap: boolean;
 		governance: boolean;
 		alerting: boolean;
+		dashboard_oidc: boolean;
+		scim_entitlements: boolean;
+		analytics_replay: boolean;
 	};
 }
 
