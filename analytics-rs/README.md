@@ -35,8 +35,10 @@ production API availability. The PostgreSQL service, supervision runtime, and
 independent Helm deployments remain separate implementation gates.
 
 `migrations/001_analytics_contract.sql` is the first durable schema contract.
-It enables tenant RLS and stores only artifact manifests in PostgreSQL; artifact
-bytes remain in the configured object store. The migration is safe to rerun
+It enables tenant RLS across experiments, runs, run attempts, evaluations,
+artifacts, and jobs, and stores only artifact manifests in PostgreSQL; artifact
+bytes remain in the configured object store. Run-attempt policies also verify
+that referenced runs and worker jobs belong to the same tenant. The migration is safe to rerun
 during rolling upgrades, including upgrades of an existing `jobs` table to add
 replay lineage.
 
