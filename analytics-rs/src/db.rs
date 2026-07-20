@@ -42,6 +42,14 @@ pub struct EvaluationSummary {
     pub created_at: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct ExperimentSummary {
+    pub id: String,
+    pub actor: String,
+    pub revision: String,
+    pub created_at: String,
+}
+
 /// Optional durable-store boot fence. The process remains usable in local
 /// development without Postgres, while production can require a reachable
 /// database by setting DATABASE_URL.
@@ -363,6 +371,41 @@ pub async fn create_experiment(
     .await?;
     tx.commit().await?;
     Ok(result.rows_affected() == 1)
+}
+
+/// Return a bounded experiment projection for one tenant. This is metadata
+/// only and remains fenced by the database session tenant setting.
+pub async fn list_experiments(
+    pool: &PgPool,
+    tenant: &str,
+    limit: i64,
+) -> Result<Vec<ExperimentSummary>, sqlx::Error> {
+    let mut tx = pool.begin().await?;
+    sqlx::query("select set_config('app.tenant_id', $1, true)")
+        .bind(tenant)
+        .execute(&mut *tx)
+        .await?;
+    let rows = sqlx::query_as::<_, (String, String, String, String)>(
+        "select id, actor_id, revision, created_at::text
+           from frankengate_analytics.experiments
+          where tenant_id = $1
+          order by created_at desc, id desc
+          limit $2",
+    )
+    .bind(tenant)
+    .bind(limit.clamp(1, 100))
+    .fetch_all(&mut *tx)
+    .await?;
+    tx.commit().await?;
+    Ok(rows
+        .into_iter()
+        .map(|(id, actor, revision, created_at)| ExperimentSummary {
+            id,
+            actor,
+            revision,
+            created_at,
+        })
+        .collect())
 }
 
 pub async fn create_run(pool: &PgPool, tenant: &str, run: &Run) -> Result<bool, sqlx::Error> {

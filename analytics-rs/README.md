@@ -77,6 +77,8 @@ Dashboard consumers can fetch a bounded tenant-scoped run projection with
 `GET /v1/runs?tenant=<tenant-id>&limit=50` (the limit is clamped to 1–100).
 The response contains revision and terminal-outcome metadata only; it does
 not expose prompt, trace, or artifact contents.
+The root experiment projection is available through
+`GET /v1/experiments?tenant=<tenant-id>&limit=50` with the same bounds.
 Artifact lineage metadata is available through
 `GET /v1/artifacts?tenant=<tenant-id>&run_id=<run-id>&limit=50`; it is
 tenant-scoped through the parent run and never reads object bytes.
