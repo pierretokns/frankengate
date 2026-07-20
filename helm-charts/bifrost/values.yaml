@@ -15,7 +15,7 @@ analyticsControlPlane:
     tag: "dev"
     pullPolicy: IfNotPresent
   replicas: 1
-  command: ["frankengate-analytics-control"]
+  command: ["frankengate-analytics-control", "--serve"]
   resources: {}
   autoscaling:
     enabled: false

@@ -34,6 +34,17 @@ spec:
           image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}"
           imagePullPolicy: {{ .Values.analyticsControlPlane.image.pullPolicy }}
           command: {{ toJson .Values.analyticsControlPlane.command }}
+          ports:
+            - name: http
+              containerPort: 8081
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
           resources:
             {{- toYaml .Values.analyticsControlPlane.resources | nindent 12 }}
 {{- if .Values.analyticsControlPlane.autoscaling.enabled }}
