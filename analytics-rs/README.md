@@ -74,6 +74,29 @@ version). When `DATABASE_URL` is set, `/readyz` fails closed until the
 PostgreSQL endpoint is reachable; without it, dependency-free local contract
 mode remains available.
 
+The governed worker HTTP surface is intentionally small and tenant-scoped. All
+`/v1/jobs/*` requests require the configured bearer token and `X-Tenant-ID`.
+Workers use:
+
+```text
+POST /v1/jobs             X-Job-ID, X-Job-Kind       -> 201 (submit)
+GET  /v1/jobs                                      -> 200 (list)
+GET  /v1/jobs/stats                                -> 200 (counts)
+POST /v1/jobs/lease        X-Worker-ID, X-Lease-Seconds
+POST /v1/jobs/renew        X-Job-ID, X-Worker-ID, X-Lease-Seconds
+POST /v1/jobs/checkpoint   X-Job-ID, X-Worker-ID, X-Checkpoint
+POST /v1/jobs/complete     X-Job-ID, X-Worker-ID
+POST /v1/jobs/fail         X-Job-ID, X-Worker-ID, X-Error-Code
+POST /v1/jobs/cancel       X-Job-ID
+POST /v1/jobs/replay       X-Replay-ID, X-Source-Job-ID
+POST /v1/jobs/drain        X-Worker-ID
+```
+
+Lease, renewal, checkpoint, and terminal transitions are owner-scoped in
+PostgreSQL. `drain` releases a worker's leases for recovery; `replay` requires
+a terminal same-tenant source job. Empty queues return `204` from lease, and
+conflicting or unauthorized transitions return `409`.
+
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
 
