@@ -26,6 +26,16 @@ analyticsControlPlane:
   # Set this to the per-pod connection budget after accounting for all other
   # clients of the database.
   databaseMaxConnections: 10
+  # The service binds its port only after migrations and the DB fence pass.
+  # Give that one-time boot work a bounded window without weakening steady-state probes.
+  startupProbe:
+    periodSeconds: 2
+    failureThreshold: 150
+  livenessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  readinessProbe:
+    periodSeconds: 5
   resources: {}
   serviceMonitor:
     enabled: false

@@ -34,6 +34,29 @@
           "additionalProperties": false
         },
         "databaseMaxConnections": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "startupProbe": {
+          "type": "object",
+          "properties": {
+            "periodSeconds": { "type": "integer", "minimum": 1 },
+            "failureThreshold": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "livenessProbe": {
+          "type": "object",
+          "properties": {
+            "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+            "periodSeconds": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "readinessProbe": {
+          "type": "object",
+          "properties": {
+            "periodSeconds": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
         "resources": { "type": "object" },
         "serviceMonitor": {
           "type": "object",

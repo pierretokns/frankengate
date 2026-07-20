@@ -104,14 +104,23 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+          startupProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: {{ .Values.analyticsControlPlane.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.analyticsControlPlane.startupProbe.failureThreshold }}
           livenessProbe:
             httpGet:
               path: /healthz
               port: http
+            initialDelaySeconds: {{ .Values.analyticsControlPlane.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.analyticsControlPlane.livenessProbe.periodSeconds }}
           readinessProbe:
             httpGet:
               path: /readyz
               port: http
+            periodSeconds: {{ .Values.analyticsControlPlane.readinessProbe.periodSeconds }}
           resources:
             {{- toYaml .Values.analyticsControlPlane.resources | nindent 12 }}
 {{- if .Values.analyticsControlPlane.autoscaling.enabled }}
