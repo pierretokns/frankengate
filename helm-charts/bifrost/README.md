@@ -42,6 +42,9 @@ only after accounting for database connection and worker-lease capacity.
 
 ### Upcoming
 
+- The default gateway image tag is aligned with the chart/app version at
+  `v0.3.19`; override it explicitly for a pinned beta or digest deployment.
+
 ### 2.1.35
 
 - Default `image.tag` installs FrankenGate v0.3.4.
