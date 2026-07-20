@@ -8,6 +8,8 @@ attach the matching immutable tag and artifact digests.
 
 ### Fixed
 
+- Helm chart defaults and documentation now agree on the `v0.3.19` gateway
+  image tag, avoiding fresh installs silently selecting an older binary.
 - Helm now rejects durable analytics deployments that enable a `ServiceMonitor`
   without an explicit tenant scope, preventing local-only queue metrics from
   being mistaken for Postgres-backed production metrics.
