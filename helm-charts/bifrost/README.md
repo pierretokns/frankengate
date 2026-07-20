@@ -607,10 +607,10 @@ needed.
 | Parameter          | Description                    | Default                     |
 | ------------------ | ------------------------------ | --------------------------- |
 | `image.repository` | Container image repository     | `ghcr.io/pierretokns/frankengate` |
-| `image.tag`        | Container image tag (required) | `""`                        |
+| `image.tag`        | Container image tag (defaults to the chart app version) | `"v0.3.19"` |
 | `image.pullPolicy` | Image pull policy              | `IfNotPresent`              |
 
-> **Important:** You must specify the `image.tag`. See available tags at the fork-owned [GHCR package](https://github.com/pierretokns/frankengate/pkgs/container/frankengate).
+> **Tip:** Pin `image.tag` or `image.digest` explicitly for reproducible deployments. See available tags at the fork-owned [GHCR package](https://github.com/pierretokns/frankengate/pkgs/container/frankengate).
 
 ### Enterprise Private Registry
 
