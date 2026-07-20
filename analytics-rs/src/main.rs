@@ -23,10 +23,14 @@ fn serve() {
     frankengate_analytics_control::contract_self_check()
         .expect("analytics control-plane boot fence failed");
 
-    let port = std::env::var("PORT").unwrap_or_else(|_| "8081".into());
-    let listener = TcpListener::bind(("0.0.0.0", port.parse::<u16>().expect("PORT must be a u16")))
+    let config = frankengate_analytics_control::config::Config::from_env()
+        .unwrap_or_else(|error| panic!("analytics control-plane configuration failed: {error}"));
+    let listener = TcpListener::bind(("0.0.0.0", config.port))
         .expect("analytics control-plane listener failed to bind");
-    println!("FrankenGate analytics control plane listening on 0.0.0.0:{port}");
+    println!(
+        "FrankenGate analytics control plane listening on 0.0.0.0:{}",
+        config.port
+    );
     for stream in listener.incoming().flatten() {
         std::thread::spawn(|| handle_connection(stream));
     }
