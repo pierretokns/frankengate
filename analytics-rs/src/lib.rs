@@ -11,6 +11,39 @@ use std::time::{Duration, Instant};
 
 pub const PROTOCOL_VERSION: u16 = 1;
 
+/// Runs a dependency-free smoke check for operators and release automation.
+/// This intentionally exercises only the protocol contract; it does not claim
+/// that the in-memory store is a production persistence implementation.
+pub fn contract_self_check() -> Result<(), &'static str> {
+    let store = JobStore::with_capacity(2);
+    let job = store
+        .submit(SubmitJob {
+            protocol_version: PROTOCOL_VERSION,
+            id: "self-check".into(),
+            tenant: "self-check-tenant".into(),
+            kind: "contract".into(),
+        })
+        .map_err(|_| "protocol version rejected")?;
+    if job.state != JobState::Queued {
+        return Err("submitted job was not queued");
+    }
+    let leased = store
+        .lease("self-check", "self-check-worker")
+        .map_err(|_| "job could not be leased")?;
+    if leased.attempt != 1 {
+        return Err("first lease did not increment attempt");
+    }
+    let completed = store
+        .complete("self-check", "self-check-worker")
+        .map_err(|_| "leased job could not be completed")?;
+    if completed.outcome().protocol_version != PROTOCOL_VERSION
+        || !completed.outcome().terminal
+    {
+        return Err("terminal outcome is invalid");
+    }
+    Ok(())
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SubmitJob {
     pub protocol_version: u16,
