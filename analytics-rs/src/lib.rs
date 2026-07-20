@@ -200,6 +200,7 @@ pub enum LeaseError {
     NotLeasable,
     AlreadyCancelled,
     CheckpointTooLarge,
+    CapacityExceeded,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -296,7 +297,7 @@ impl JobStore {
             return Ok(existing.clone());
         }
         if self.capacity.is_some_and(|capacity| jobs.len() >= capacity) {
-            return Err(LeaseError::NotLeasable);
+            return Err(LeaseError::CapacityExceeded);
         }
         let job = Job {
             id: request.replay_id.clone(),
@@ -864,5 +865,20 @@ mod tests {
             tenant: "tenant-a".into(),
             kind: "replay".into(),
         }).unwrap().id, "replay-1");
+
+        let bounded = JobStore::with_capacity(1);
+        bounded.enqueue("source", "tenant-a", "evaluation");
+        bounded.lease("source", "worker-a").unwrap();
+        bounded.complete("source", "worker-a").unwrap();
+        assert_eq!(
+            bounded.replay(ReplayJob {
+                protocol_version: PROTOCOL_VERSION,
+                replay_id: "replay-over-capacity".into(),
+                source_job_id: "source".into(),
+                tenant: "tenant-a".into(),
+                kind: "replay".into(),
+            }),
+            Err(LeaseError::CapacityExceeded)
+        );
     }
 }
