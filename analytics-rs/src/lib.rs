@@ -53,6 +53,15 @@ pub struct Experiment {
     pub revision: String,
 }
 
+impl Experiment {
+    pub fn is_well_formed(&self) -> bool {
+        !self.id.is_empty()
+            && !self.tenant.is_empty()
+            && !self.actor.is_empty()
+            && !self.revision.is_empty()
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Run {
     pub id: String,
@@ -615,6 +624,18 @@ mod tests {
         assert_ne!(run.dataset_revision, run.model_revision);
         assert!(!run.prompt_revision.is_empty());
         assert!(run.is_reproducible());
+        let experiment = Experiment {
+            id: run.experiment_id.clone(),
+            tenant: "tenant-a".into(),
+            actor: "user-a".into(),
+            revision: "exp:sha256:1".into(),
+        };
+        assert!(experiment.is_well_formed());
+        assert!(!Experiment {
+            actor: "".into(),
+            ..experiment.clone()
+        }
+        .is_well_formed());
         let mut incomplete = run.clone();
         incomplete.model_revision.clear();
         assert!(!incomplete.is_reproducible());
