@@ -76,6 +76,8 @@ The owner completes a claim with
 non-owners receive `409` and cannot mutate another worker's lease.
 Long-running workers renew it with
 `POST /v1/jobs/renew?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&lease_seconds=30`.
+Terminal worker errors are recorded with
+`POST /v1/jobs/fail?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&error_code=<bounded-code>`.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:

@@ -182,6 +182,40 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/jobs/fail" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let worker = query_param(query, "worker");
+            let job_id = query_param(query, "job_id");
+            let error_code = query_param(query, "error_code");
+            match (database.as_ref(), tenant, worker, job_id, error_code) {
+                (Some(pool), Some(tenant), Some(worker), Some(job_id), Some(error_code)) => {
+                    let failed = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::fail_job(
+                                    pool, tenant, job_id, worker, error_code,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if failed {
+                        ("200 OK", "text/plain", "failed\n".to_string())
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "lease not owned\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, worker, job_id, and error_code is required\n".to_string(),
+                ),
+            }
+        }
         "/metrics" => {
             let tenant = query
                 .split('&')
