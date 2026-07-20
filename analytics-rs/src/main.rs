@@ -32,11 +32,15 @@ fn serve() {
         config.port
     );
     for stream in listener.incoming().flatten() {
-        std::thread::spawn(|| handle_connection(stream));
+        let auth = config.worker_auth.clone();
+        std::thread::spawn(move || handle_connection(stream, &auth));
     }
 }
 
-fn handle_connection(mut stream: std::net::TcpStream) {
+fn handle_connection(
+    mut stream: std::net::TcpStream,
+    auth: &frankengate_analytics_control::auth::WorkerAuth,
+) {
     use std::io::{Read, Write};
     // Health probes are tiny and bounded.  Do not let an accepted but idle
     // socket consume a thread forever (especially during a probe storm).
@@ -44,10 +48,21 @@ fn handle_connection(mut stream: std::net::TcpStream) {
     let _ = stream.set_write_timeout(Some(std::time::Duration::from_secs(2)));
     let mut request = [0_u8; 1024];
     let size = stream.read(&mut request).unwrap_or(0);
-    let path = std::str::from_utf8(&request[..size])
-        .ok()
-        .and_then(|request| request.split_whitespace().nth(1))
-        .unwrap_or("/");
+    let parsed = frankengate_analytics_control::http::parse_request(&request[..size]);
+    let path = parsed.as_ref().map(|request| request.path).unwrap_or("/");
+    let route = frankengate_analytics_control::http::route_for(path);
+    let authorized = parsed.as_ref().is_some_and(|request| {
+        frankengate_analytics_control::http::authorize_route(route, auth, request.authorization)
+    });
+    if !authorized {
+        let body = "unauthorized\n";
+        let response = format!(
+            "HTTP/1.1 401 Unauthorized\r\nContent-Type: text/plain\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+            body.len()
+        );
+        let _ = stream.write_all(response.as_bytes());
+        return;
+    }
     let (status, content_type, body) = match path {
         "/healthz" => ("200 OK", "text/plain", "ok\n".to_string()),
         "/readyz" => readiness_response(),
