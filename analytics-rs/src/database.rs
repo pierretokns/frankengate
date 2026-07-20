@@ -437,4 +437,27 @@ impl Database {
         tx.commit().await?;
         Ok(result.rows_affected())
     }
+
+    pub async fn save_checkpoint(
+        &self,
+        tenant: &str,
+        job_id: &str,
+        worker_id: &str,
+        checkpoint: &str,
+    ) -> Result<bool, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let result = sqlx::query(
+            "update frankengate_analytics.jobs\
+             set checkpoint = $4, updated_at = now()\
+             where id = $1 and tenant_id = $2 and worker_id = $3 and state = 'leased'",
+        )
+        .bind(job_id)
+        .bind(tenant)
+        .bind(worker_id)
+        .bind(checkpoint)
+        .execute(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(result.rows_affected() == 1)
+    }
 }
