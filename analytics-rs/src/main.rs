@@ -107,7 +107,11 @@ fn postgres_endpoint(url: &str) -> Option<String> {
     let (host, port) = authority.rsplit_once(':').unwrap_or((authority, "5432"));
     let host = host.trim_matches(['[', ']']);
     let port = port.parse::<u16>().ok()?;
-    Some(format!("{host}:{port}"))
+    if host.contains(':') {
+        Some(format!("[{host}]:{port}"))
+    } else {
+        Some(format!("{host}:{port}"))
+    }
 }
 
 #[cfg(test)]
@@ -127,6 +131,14 @@ mod tests {
         assert_eq!(
             postgres_endpoint("postgres://db.internal:5432/db"),
             Some("db.internal:5432".into())
+        );
+    }
+
+    #[test]
+    fn preserves_brackets_for_ipv6_endpoints() {
+        assert_eq!(
+            postgres_endpoint("postgres://[::1]:5432/db"),
+            Some("[::1]:5432".into())
         );
     }
 }
