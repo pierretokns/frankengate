@@ -36,6 +36,16 @@ func TestToOpenAIResponsesRequest_MantleMergesAdditionalAndDeclaredTools(t *test
 	}
 }
 
+func TestToOpenAIResponsesRequest_MantleFrontierPlainTextUsesScalarInput(t *testing.T) {
+	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
+		Provider: schemas.BedrockMantle, Model: "gpt-5.6-sol",
+		Input: []schemas.ResponsesMessage{{Role: schemas.Ptr(schemas.ResponsesInputMessageRoleUser), Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("hello")}}},
+	})
+	if converted == nil || converted.Input.OpenAIResponsesRequestInputStr == nil {
+		t.Fatalf("expected scalar Mantle input, got %#v", converted)
+	}
+}
+
 func TestToOpenAIResponsesRequest_DefaultsMissingImageDetailWithoutMutation(t *testing.T) {
 	url := "https://example.test/image.png"
 	role := schemas.ResponsesInputMessageRoleUser
