@@ -26,7 +26,7 @@ If you use PostgreSQL for Bifrost storage, ensure the database is UTF8 encoded. 
 ## Step 1 - Add the Helm Repository
 
 ```bash
-helm repo add bifrost https://maximhq.github.io/bifrost/helm-charts
+helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 helm repo update
 ```
 
@@ -47,7 +47,7 @@ Fastest way to get running. Bifrost deploys as a StatefulSet with a 10Gi PVC for
 kubectl create secret generic bifrost-encryption-key \
   --from-literal=encryption-key="$(openssl rand -base64 32)"
 
-helm install bifrost bifrost/bifrost \
+helm install frankengate frankengate/bifrost \
   --set image.tag=v1.4.11 \
   --set bifrost.encryptionKeySecret.name="bifrost-encryption-key" \
   --set bifrost.encryptionKeySecret.key="encryption-key"
@@ -65,7 +65,7 @@ kubectl create secret generic bifrost-encryption-key \
 kubectl create secret generic provider-keys \
   --from-literal=openai-api-key='sk-your-key'
 
-helm install bifrost bifrost/bifrost \
+helm install frankengate frankengate/bifrost \
   --set image.tag=v1.4.11 \
   --set bifrost.encryptionKeySecret.name="bifrost-encryption-key" \
   --set bifrost.encryptionKeySecret.key="encryption-key" \
@@ -190,7 +190,7 @@ bifrost:
 
 ```bash
 # 2. Install
-helm install bifrost bifrost/bifrost -f production.yaml
+helm install frankengate frankengate/bifrost -f production.yaml
 ```
 
 </Tab>
@@ -248,7 +248,7 @@ Enterprise customers receive dedicated container images in a private registry, a
 ## Step 1 - Add the Helm Repository
 
 ```bash
-helm repo add bifrost https://maximhq.github.io/bifrost/helm-charts
+helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 helm repo update
 ```
 
@@ -472,7 +472,7 @@ affinity:
 ```
 
 ```bash
-helm install bifrost bifrost/bifrost -f enterprise.yaml
+helm install frankengate frankengate/bifrost -f enterprise.yaml
 ```
 
 Next steps: jump to [Next Steps](#next-steps).

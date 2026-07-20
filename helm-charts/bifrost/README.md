@@ -451,7 +451,7 @@ Since Kubernetes doesn't allow in-place conversion from Deployment to StatefulSe
 1. Back up your data (if needed)
 2. Uninstall the existing release: `helm uninstall bifrost`
 3. Delete the old PVC: `kubectl delete pvc bifrost-data`
-4. Install with the new chart version: `helm install bifrost bifrost/bifrost --set image.tag=<latest-image>`
+4. Install with the new chart version: `helm install frankengate frankengate/bifrost --set image.tag=<latest-image>`
 
 **Note:** For production high-availability setups, we recommend using PostgreSQL mode which scales horizontally without these concerns.
 
@@ -462,14 +462,14 @@ Since Kubernetes doesn't allow in-place conversion from Deployment to StatefulSe
 ## Quick Start
 
 ```bash
-# Add the Bifrost Helm repository
-helm repo add bifrost https://maximhq.github.io/bifrost/helm-charts
+# Add the FrankenGate Helm repository
+helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 
 # Update your local Helm chart repository cache
 helm repo update
 
-# Install Bifrost with default configuration (SQLite storage)
-helm install bifrost bifrost/bifrost --set image.tag=v1.4.3
+# Install FrankenGate with default configuration (SQLite storage)
+helm install frankengate frankengate/bifrost --set image.tag=v0.3.19
 ```
 
 ## Prerequisites
@@ -484,14 +484,14 @@ helm install bifrost bifrost/bifrost --set image.tag=v1.4.3
 
 ```bash
 # Add repository
-helm repo add bifrost https://maximhq.github.io/bifrost/helm-charts
+helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 helm repo update
 
 # Install with default values
-helm install bifrost bifrost/bifrost --set image.tag=v1.4.3
+helm install frankengate frankengate/bifrost --set image.tag=v0.3.19
 
 # Or install with custom values
-helm install bifrost bifrost/bifrost -f my-values.yaml
+helm install frankengate frankengate/bifrost -f my-values.yaml
 ```
 
 ### From Source
@@ -502,7 +502,7 @@ git clone https://github.com/maximhq/bifrost.git
 cd bifrost/helm-charts
 
 # Install from local chart
-helm install bifrost ./bifrost --set image.tag=v1.5.2
+helm install frankengate ./bifrost --set image.tag=v0.3.19
 ```
 
 ### Interactive Installation
@@ -551,7 +551,7 @@ securityContext:
 Or equivalently on the command line:
 
 ```bash
-helm install bifrost bifrost/bifrost \
+helm install frankengate frankengate/bifrost \
   --set image.tag=v1.6.4 \
   --set podSecurityContext.runAsUser=null \
   --set podSecurityContext.fsGroup=null \
@@ -954,12 +954,12 @@ The chart includes pre-configured examples in `values-examples/`:
 
 ```bash
 # From Helm repository
-helm install bifrost bifrost/bifrost \
+helm install frankengate frankengate/bifrost \
   -f https://raw.githubusercontent.com/maximhq/bifrost/main/helm-charts/bifrost/values-examples/postgres-only.yaml \
   --set image.tag=v1.5.2
 
 # From local source
-helm install bifrost ./bifrost -f ./bifrost/values-examples/postgres-only.yaml
+helm install frankengate ./bifrost -f ./bifrost/values-examples/postgres-only.yaml
 ```
 
 ## Production Deployment
