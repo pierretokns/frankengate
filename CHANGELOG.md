@@ -24,6 +24,15 @@ attach the matching immutable tag and artifact digests.
 
 ### Added
 
+- Added a separately deployable SQLx/Postgres analytics control plane with
+  tenant-scoped experiments, reproducible runs, evaluations, artifact lineage,
+  replay, and terminal outcomes.
+- Added durable worker APIs for lease claim, renewal, checkpoint, completion,
+  failure, cancellation, retry, replay, drain, and expired-lease recovery;
+  ownership is enforced by PostgreSQL row-level security and `SKIP LOCKED`.
+- Added tenant-scoped durable queue metrics at `/metrics?tenant=<id>` and
+  configurable Helm connection budgets, disruption protection, and autoscaling
+  boundaries for analytics replicas.
 - Added the isolated `analytics-rs` contract slice with versioned job
   submission, lease ownership, cancellation, terminal completion, and
   deterministic tests. It is not yet wired into the inference gateway.
@@ -47,7 +56,8 @@ attach the matching immutable tag and artifact digests.
 ### Known limitations
 
 - Governance request admission still uses pod-local budget counters; atomic
-  cross-replica PostgreSQL reservations are not shipped yet.
+  cross-replica PostgreSQL reservations are tracked separately from the
+  analytics worker queue.
 - Synchronization metrics and a complete external Redis contract remain planned.
 
 ## 0.3.10
