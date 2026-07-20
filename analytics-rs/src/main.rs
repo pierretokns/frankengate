@@ -16,6 +16,7 @@ fn main() {
 
 fn serve() {
     use std::net::TcpListener;
+    use std::sync::Arc;
 
     // Do not advertise readiness until the control-plane contract itself is
     // executable.  This is intentionally a boot fence: a future durable
@@ -25,6 +26,21 @@ fn serve() {
 
     let config = frankengate_analytics_control::config::Config::from_env()
         .unwrap_or_else(|error| panic!("analytics control-plane configuration failed: {error}"));
+    let runtime = Arc::new(
+        tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .build()
+            .expect("analytics control-plane runtime failed to start"),
+    );
+    let database = config.database_url.as_deref().map(|url| {
+        runtime
+            .block_on(frankengate_analytics_control::database::Database::connect(
+                url,
+                config.pool_max_connections,
+            ))
+            .unwrap_or_else(|error| panic!("analytics database connection failed: {error}"))
+    });
+    let database = Arc::new(database);
     let listener = TcpListener::bind(("0.0.0.0", config.port))
         .expect("analytics control-plane listener failed to bind");
     println!(
@@ -33,15 +49,17 @@ fn serve() {
     );
     for stream in listener.incoming().flatten() {
         let auth = config.worker_auth.clone();
-        let config = config.clone();
-        std::thread::spawn(move || handle_connection(stream, &auth, &config));
+        let database = database.clone();
+        let runtime = runtime.clone();
+        std::thread::spawn(move || handle_connection(stream, &auth, database, runtime));
     }
 }
 
 fn handle_connection(
     mut stream: std::net::TcpStream,
     auth: &frankengate_analytics_control::auth::WorkerAuth,
-    config: &frankengate_analytics_control::config::Config,
+    database: std::sync::Arc<Option<frankengate_analytics_control::database::Database>>,
+    runtime: std::sync::Arc<tokio::runtime::Runtime>,
 ) {
     use std::io::{Read, Write};
     // Health probes are tiny and bounded.  Do not let an accepted but idle
@@ -76,7 +94,7 @@ fn handle_connection(
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
-        "/v1/jobs" | "/v1/jobs/stats" => governed_response(parsed.as_ref(), &config),
+        "/v1/jobs" | "/v1/jobs/stats" => governed_response(parsed.as_ref(), &database, &runtime),
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
@@ -88,7 +106,8 @@ fn handle_connection(
 
 fn governed_response(
     request: Option<&frankengate_analytics_control::http::Request<'_>>,
-    config: &frankengate_analytics_control::config::Config,
+    database: &std::sync::Arc<Option<frankengate_analytics_control::database::Database>>,
+    runtime: &std::sync::Arc<tokio::runtime::Runtime>,
 ) -> (&'static str, &'static str, String) {
     let Some(request) = request else {
         return (
@@ -104,40 +123,13 @@ fn governed_response(
             "x-tenant-id is required\n".into(),
         );
     };
-    let Some(database_url) = config.database_url.as_deref() else {
+    let Some(database) = database.as_ref() else {
         return (
             "503 Service Unavailable",
             "text/plain",
             "database is not configured\n".into(),
         );
     };
-    let runtime = match tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-    {
-        Ok(runtime) => runtime,
-        Err(_) => {
-            return (
-                "500 Internal Server Error",
-                "text/plain",
-                "runtime unavailable\n".into(),
-            )
-        }
-    };
-    let database =
-        match runtime.block_on(frankengate_analytics_control::database::Database::connect(
-            database_url,
-            config.pool_max_connections,
-        )) {
-            Ok(database) => database,
-            Err(_) => {
-                return (
-                    "503 Service Unavailable",
-                    "text/plain",
-                    "database unavailable\n".into(),
-                )
-            }
-        };
     if request.path == "/v1/jobs/stats" {
         return match runtime.block_on(database.job_stats(tenant)) {
             Ok(stats) => (
