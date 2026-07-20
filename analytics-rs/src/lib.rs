@@ -318,6 +318,21 @@ impl JobStore {
         Ok(job.clone())
     }
 
+    /// Explicitly requeue a failed job for a tenant-authorized retry.
+    pub fn retry_failed_for_tenant(&self, tenant: &str, id: &str) -> Result<Job, LeaseError> {
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
+        if job.tenant != tenant {
+            return Err(LeaseError::NotFound);
+        }
+        if !matches!(job.state, JobState::Failed { .. }) {
+            return Err(LeaseError::NotLeasable);
+        }
+        job.state = JobState::Queued;
+        job.lease_until = None;
+        Ok(job.clone())
+    }
+
     pub fn complete(&self, id: &str, worker: &str) -> Result<Job, LeaseError> {
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
@@ -484,6 +499,15 @@ mod tests {
         assert!(outcome.terminal);
         assert_eq!(outcome.error_code.as_deref(), Some("model_timeout"));
         assert_eq!(outcome.protocol_version, PROTOCOL_VERSION);
+        assert_eq!(
+            store.retry_failed_for_tenant("tenant-b", "j10"),
+            Err(LeaseError::NotFound)
+        );
+        assert_eq!(
+            store.retry_failed_for_tenant("tenant-a", "j10").unwrap().state,
+            JobState::Queued
+        );
+        assert_eq!(store.lease("j10", "worker-c").unwrap().attempt, 2);
     }
 
     #[test]
