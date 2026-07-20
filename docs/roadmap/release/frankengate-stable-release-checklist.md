@@ -1,6 +1,6 @@
 # FrankenGate stable-release checklist
 
-Status: preparation; no stable release claim.
+Status: v0.3.19 published; local and external artifact verification recorded.
 
 ## Passing local gates
 
@@ -30,6 +30,13 @@ Status: preparation; no stable release claim.
   pass.
 - Pricing synchronization validates malformed documents and publishes an
   attributed FrankenGate envelope plus an immutable upstream snapshot.
+- External release verification recovered on 2026-07-20: GitHub lists
+  `v0.3.19` as the latest non-prerelease and `beta-23c574b883a5` as a
+  prerelease. The Linux amd64 tarball passes the published `SHA256SUMS` check
+  and contains the FrankenGate binary, LICENSE, NOTICE, and SPDX SBOM.
+- GHCR exposes `ghcr.io/pierretokns/frankengate:v0.3.19` plus amd64/arm64
+  tags. Release metadata records the immutable image digest and the OCI Helm
+  chart digest under `ghcr.io/pierretokns/helm-charts/bifrost`.
 
 ## Required before a stable tag
 
@@ -45,12 +52,7 @@ Status: preparation; no stable release claim.
 - Publish a real changelog with commit range and compatibility notes.
 - Replace remaining fork-facing upstream URLs in UI/runtime surfaces and
   regenerate any derived assets.
-- Verify GitHub release assets and GitHub Pages pricing snapshot externally.
-- **External verification currently blocked:** three consecutive `gh release
-  list --repo pierretokns/frankengate` attempts returned `error connecting to
-  api.github.com`, while `git ls-remote` continued to resolve the fork remote
-  and branch heads. Retry this gate when GitHub API connectivity recovers; do
-  not infer release absence from the failed API calls.
+- Verify GitHub Pages pricing snapshot externally.
 - Do not claim the Rust analytics plane is production-ready until the durable
   PostgreSQL adapter, RLS integration tests, supervised worker runtime, and
   independent Kubernetes deployment/scaling evidence exist.
