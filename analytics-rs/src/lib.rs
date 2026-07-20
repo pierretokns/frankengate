@@ -76,6 +76,8 @@ pub struct Job {
     pub tenant: String,
     pub kind: String,
     pub state: JobState,
+    /// Monotonically increasing delivery attempt, including recovered leases.
+    pub attempt: u32,
     lease_until: Option<Instant>,
 }
 
@@ -110,6 +112,7 @@ impl JobStore {
             tenant: tenant.into(),
             kind: kind.into(),
             state: JobState::Queued,
+            attempt: 0,
             lease_until: None,
         };
         self.jobs
@@ -140,7 +143,10 @@ impl JobStore {
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
         let attempt = match job.state {
-            JobState::Queued => 1,
+            JobState::Queued => {
+                job.attempt = job.attempt.saturating_add(1);
+                job.attempt
+            }
             JobState::Leased { .. } => return Err(LeaseError::NotLeasable),
             JobState::Cancelled | JobState::Completed => return Err(LeaseError::NotLeasable),
         };
@@ -247,9 +253,11 @@ mod tests {
     fn expired_lease_returns_to_queue_for_recovery() {
         let store = JobStore::default();
         store.enqueue("j4", "tenant-a", "replay");
-        store.lease_for("j4", "worker-a", Duration::ZERO).unwrap();
+        let first = store.lease_for("j4", "worker-a", Duration::ZERO).unwrap();
+        assert_eq!(first.attempt, 1);
         assert_eq!(store.reap_expired(Instant::now()), 1);
-        assert!(store.lease("j4", "worker-b").is_ok());
+        let recovered = store.lease("j4", "worker-b").unwrap();
+        assert_eq!(recovered.attempt, 2);
     }
 
     #[test]
