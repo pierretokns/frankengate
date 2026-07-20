@@ -101,6 +101,7 @@ fn handle_connection(
         "/v1/jobs"
         | "/v1/experiments"
         | "/v1/runs"
+        | "/v1/runs/outcome"
         | "/v1/evaluations"
         | "/v1/artifacts"
         | "/v1/jobs/stats"
@@ -277,6 +278,46 @@ fn governed_response(
                 "500 Internal Server Error",
                 "text/plain",
                 "run listing failed\n".into(),
+            ),
+        };
+    }
+    if request.path == "/v1/runs/outcome" {
+        if request.method != "POST" {
+            return (
+                "405 Method Not Allowed",
+                "text/plain",
+                "only POST is supported\n".into(),
+            );
+        }
+        let (Some(run_id), Some(outcome)) = (request.run_id, request.outcome) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-run-id and x-outcome are required\n".into(),
+            );
+        };
+        if outcome.is_empty() || outcome.len() > 128 {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-outcome must be 1..128 bytes\n".into(),
+            );
+        }
+        return match runtime.block_on(database.set_run_outcome(tenant, run_id, outcome)) {
+            Ok(true) => (
+                "200 OK",
+                "application/json",
+                serde_json::json!({"run_id": run_id, "terminal_outcome": outcome}).to_string(),
+            ),
+            Ok(false) => (
+                "409 Conflict",
+                "text/plain",
+                "run outcome already set or run not found\n".into(),
+            ),
+            Err(_) => (
+                "500 Internal Server Error",
+                "text/plain",
+                "run outcome update failed\n".into(),
             ),
         };
     }

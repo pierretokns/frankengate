@@ -179,6 +179,25 @@ impl Database {
         Ok(rows)
     }
 
+    pub async fn set_run_outcome(
+        &self,
+        tenant: &str,
+        run_id: &str,
+        outcome: &str,
+    ) -> Result<bool, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let result = sqlx::query(
+            "update frankengate_analytics.runs set terminal_outcome = $1 where id = $2 and tenant_id = $3 and terminal_outcome is null",
+        )
+        .bind(outcome)
+        .bind(run_id)
+        .bind(tenant)
+        .execute(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(result.rows_affected() == 1)
+    }
+
     pub async fn record_artifact(
         &self,
         tenant: &str,

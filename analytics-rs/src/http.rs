@@ -8,6 +8,7 @@ pub enum Route {
     Jobs,
     Experiments,
     Runs,
+    RunOutcome,
     Evaluations,
     Artifacts,
     JobStats,
@@ -30,6 +31,7 @@ pub fn route_for(path: &str) -> Route {
         "/v1/jobs" => Route::Jobs,
         "/v1/experiments" => Route::Experiments,
         "/v1/runs" => Route::Runs,
+        "/v1/runs/outcome" => Route::RunOutcome,
         "/v1/evaluations" => Route::Evaluations,
         "/v1/artifacts" => Route::Artifacts,
         "/v1/jobs/stats" => Route::JobStats,
@@ -72,6 +74,7 @@ pub struct Request<'a> {
     pub evaluator_revision: Option<&'a str>,
     pub model_revision: Option<&'a str>,
     pub prompt_revision: Option<&'a str>,
+    pub outcome: Option<&'a str>,
 }
 
 pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
@@ -107,6 +110,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
     let mut evaluator_revision = None;
     let mut model_revision = None;
     let mut prompt_revision = None;
+    let mut outcome = None;
     for line in lines {
         if line.is_empty() {
             break;
@@ -169,6 +173,9 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         if name.eq_ignore_ascii_case("x-prompt-revision") {
             prompt_revision = Some(value.trim());
         }
+        if name.eq_ignore_ascii_case("x-outcome") {
+            outcome = Some(value.trim());
+        }
     }
     Some(Request {
         method,
@@ -192,6 +199,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         evaluator_revision,
         model_revision,
         prompt_revision,
+        outcome,
     })
 }
 

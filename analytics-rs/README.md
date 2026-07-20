@@ -97,6 +97,7 @@ The durable lineage read surface is also tenant-scoped and bearer-protected:
 ```text
 GET  /v1/experiments       X-Limit (optional, 1..100) -> 200 JSON array
 GET  /v1/runs              X-Limit (optional, 1..100) -> 200 JSON array
+POST /v1/runs/outcome      X-Run-ID, X-Outcome            -> 200
 GET  /v1/evaluations       X-Run-ID, X-Limit             -> 200 JSON array
 GET  /v1/artifacts         X-Run-ID, X-Limit             -> 200 JSON array
 ```
