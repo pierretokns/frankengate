@@ -1,0 +1,13 @@
+[package]
+name = "frankengate-analytics-control"
+version = "0.1.0"
+edition = "2021"
+description = "Isolated analytics control-plane contracts for FrankenGate"
+license = "Apache-2.0"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "frankengate-analytics-control"
+path = "src/main.rs"

@@ -1,0 +1,31 @@
+# FrankenGate analytics control plane
+
+This is the first isolated Rust vertical slice for the analytics plane. It is
+deliberately dependency-free: the `JobStore` proves the lifecycle invariants
+before an HTTP server, PostgreSQL persistence, or worker runtime is selected.
+
+## Adoption gates
+
+Potential FrankenSuite/Dicklesworthstone/Doodlestein components are not runtime
+dependencies yet. Each candidate must provide:
+
+1. a pinned upstream release and compatible license/NOTICE entry;
+2. a measured improvement over the current slice (latency, recovery, memory,
+   or owned lifecycle code);
+3. deterministic duplicate-delivery, cancellation, shutdown, and worker-death
+   tests; and
+4. an explicit stop decision if the candidate does not close a named gap.
+
+The production direction remains a separately deployed Rust control plane with
+PostgreSQL as the authoritative contract store. It must never execute analytics
+jobs inside gateway inference workers.
+
+`migrations/001_analytics_contract.sql` is the first durable schema contract.
+It enables tenant RLS and stores only artifact manifests in PostgreSQL; artifact
+bytes remain in the configured object store.
+
+Run the current contract tests with:
+
+```bash
+cargo test --manifest-path analytics-rs/Cargo.toml
+```

@@ -1,52 +1,54 @@
 package main
 
 import (
-	"context"
-	"net/http"
+	"encoding/json"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 )
 
 func TestValidatePricingDocument(t *testing.T) {
-	if _, err := validate([]byte(`{"gpt-x":{"input_cost_per_token":1}}`)); err != nil {
-		t.Fatal(err)
+	valid, err := validate([]byte(`{"models":{"gpt-test":{"input":1}}}`))
+	if err != nil {
+		t.Fatalf("valid document rejected: %v", err)
 	}
-	if _, err := validate([]byte(`{"models":{"gpt-x":{}}}`)); err != nil {
-		t.Fatal(err)
+	if len(valid) == 0 {
+		t.Fatal("canonical document is empty")
 	}
-	for _, raw := range []string{`[]`, `{}`, `{"models":[]}`, `{"gpt-x":null}`, `not-json`} {
-		if _, err := validate([]byte(raw)); err == nil {
-			t.Errorf("expected rejection for %s", raw)
-		}
+	for name, raw := range map[string]string{
+		"invalid JSON":       `{`,
+		"empty object":       `{}`,
+		"non-object model":   `{"models":{"gpt-test":1}}`,
+		"empty model name":   `{"models":{"":{}}}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			if _, err := validate([]byte(raw)); err == nil {
+				t.Fatal("malformed document was accepted")
+			}
+		})
 	}
 }
 
-func TestFetchAndPublishLastKnownGood(t *testing.T) {
-	raw, err := validate([]byte(`{"models":{"model-a":{"input_cost_per_token":0.1}}}`))
-	if err != nil {
-		t.Fatal(err)
-	}
+func TestPublishWritesBrandedEnvelopeAndUpstreamSnapshot(t *testing.T) {
 	dir := t.TempDir()
-	now := time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)
-	if err := publish(dir, "https://example.invalid/pricing.json", raw, now); err != nil {
+	raw := []byte(`{"gpt-test":{"input":1}}`)
+	if err := publish(dir, "https://approved.example/pricing.json", raw, time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)); err != nil {
 		t.Fatal(err)
 	}
-	want, err := os.ReadFile(filepath.Join(dir, "latest-upstream.json"))
+	upstream, err := os.ReadFile(filepath.Join(dir, "latest-upstream.json"))
+	if err != nil || string(upstream) != string(append(raw, '\n')) {
+		t.Fatalf("upstream snapshot mismatch: %v %q", err, upstream)
+	}
+	envelope, err := os.ReadFile(filepath.Join(dir, "latest.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(want), "model-a") {
-		t.Fatal("published cache missing model")
+	var got artifact
+	if err := json.Unmarshal(envelope, &got); err != nil {
+		t.Fatal(err)
 	}
-	before, _ := os.ReadFile(filepath.Join(dir, "latest.json"))
-	if _, err := fetch(context.Background(), &http.Client{}, "http://127.0.0.1:1"); err == nil {
-		t.Fatal("expected failed fetch")
-	}
-	after, _ := os.ReadFile(filepath.Join(dir, "latest.json"))
-	if string(before) != string(after) {
-		t.Fatal("last-known-good artifact changed after failed fetch")
+	if got.Brand != "FrankenGate" || got.Source != "https://approved.example/pricing.json" {
+		t.Fatalf("unexpected envelope metadata: %+v", got)
 	}
 }

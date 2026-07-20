@@ -485,6 +485,21 @@ clean: ## Clean build artifacts and temporary files
 	@rm -rf $(TEST_REPORTS_DIR)/
 	@$(ECHO) "$(GREEN)Clean complete$(NC)"
 
+rust-test: ## Run the isolated Rust analytics contract tests
+	@cargo test --manifest-path analytics-rs/Cargo.toml
+
+rust-clean: ## Remove Rust build artifacts without touching source or Cargo caches
+	@$(ECHO) "$(YELLOW)Cleaning Rust target directories...$(NC)"
+	@if command -v cargo-sweep >/dev/null 2>&1; then \
+		cargo sweep --time 0 analytics-rs; \
+	else \
+		rm -rf analytics-rs/target; \
+	fi
+	@$(ECHO) "$(GREEN)Rust build artifacts cleaned$(NC)"
+
+release-local-verify: ## Run fork-owned branding, Helm, Rust, and pricing release gates
+	@./scripts/verify-frankengate-release.sh
+
 clean-test-reports: ## Clean test reports only
 	@$(ECHO) "$(YELLOW)Cleaning test reports...$(NC)"
 	@rm -rf $(TEST_REPORTS_DIR)/

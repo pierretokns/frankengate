@@ -2,8 +2,8 @@
 
 The gateway already supports a configurable pricing URL and a 24-hour runtime
 sync. For the public site, `scripts/pricing-sync` provides a separate,
-last-known-good publication path. It fetches the configured public Bifrost
-datasheet (or another approved URL), validates that it is a non-empty JSON
+last-known-good publication path. It fetches the configured approved source,
+validates that it is a non-empty JSON
 object containing model objects, and atomically writes:
 
 * `latest-upstream.json` — validated upstream document;

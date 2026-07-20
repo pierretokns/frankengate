@@ -13,6 +13,26 @@ attach the matching immutable tag and artifact digests.
 - Release vulnerability checks compile `govulncheck` once per job instead of
   recompiling it for every Go module.
 
+### Added
+
+- Added the isolated `analytics-rs` contract slice with versioned job
+  submission, lease ownership, cancellation, terminal completion, and
+  deterministic tests. It is not yet wired into the inference gateway.
+- Added `make rust-test` and `make rust-clean`; the cleanup target uses
+  `cargo-sweep` when available to bound local Rust build-artifact growth.
+
+### Branding and compatibility
+
+- Updated the Helm chart README to identify FrankenGate as the fork-owned
+  product while documenting the retained `bifrost.*` chart/value identifiers.
+- Rebranded the UI README and its documentation links to FrankenGate-owned
+  surfaces; the `BIFROST_PORT` environment variable remains a documented
+  compatibility input for now.
+- Added `scripts/audit-fork-branding.sh` to separate fork-facing upstream URLs
+  from inherited compatibility identifiers before stable-release publication.
+- Removed the unsupported upstream Artifact Hub badge from the fork README;
+  stable FrankenGate Artifact Hub publication is still pending.
+
 ### Known limitations
 
 - Governance request admission still uses pod-local budget counters; atomic
@@ -36,4 +56,3 @@ This tag contains the release candidate at `0fb398454364426a23fb643f78c4bb101c06
 - Provenance and redistribution-policy self-tests.
 - Multi-module compile, race, vet, vulnerability, chart, SBOM, and attestation
   gates as defined by the fork-owned workflows.
-
