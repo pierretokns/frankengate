@@ -1,27 +1,49 @@
 ---
-title: "Run Your Own Benchmarks"
-description: "Step-by-step guide to benchmark Bifrost in your own environment using the official benchmarking tool."
+title: "Run FrankenGate Benchmarks"
+description: "Step-by-step guide to measure FrankenGate overhead and provider workload behavior in your own environment."
 icon: "stopwatch"
 ---
 
 ## Overview
 
-Want to see Bifrost's performance in your specific environment? The [**Bifrost Benchmarking Repository**](https://github.com/maximhq/bifrost-benchmarking) provides everything you need to conduct comprehensive performance tests tailored to your infrastructure and workload requirements.
+Want to measure FrankenGate in your own environment? Start with the fork-owned
+scripts in `scripts/`. They run without live provider credentials and are the
+authoritative path for gateway-overhead regression checks:
 
-**What You Can Test:**
+```bash
+N=1000 MAX_P50_OVERHEAD_MS=5 MAX_P95_OVERHEAD_MS=10 \
+  bash scripts/benchmark-gateway-overhead-local.sh
+```
+
+The local fixture compares a direct response with a gateway-shaped path and
+reports p50/p95 overhead. Use a real provider or a separately managed load
+generator only after this deterministic baseline is green.
+
+The historical [upstream Bifrost benchmarking repository](https://github.com/maximhq/bifrost-benchmarking)
+is retained below solely as a compatibility/reference tool. It is not a
+FrankenGate release, install source, support route, or performance claim.
+
+**What the workload harness can test:**
 - **Custom Instance Sizes** - Test on your preferred AWS/GCP/Azure instances  
 - **Your Workload Patterns** - Use your actual request/response sizes
 - **Different Configurations** - Compare various Bifrost settings
 - **Provider Comparisons** - Benchmark against other AI gateways or raw OpenAI
 - **Load Scenarios** - Test burst loads, sustained traffic, and endurance
 
-The repo also ships two companion tools:
+The historical repository also ships two companion tools:
 - **[mocker](https://github.com/maximhq/bifrost-benchmarking/tree/main/mocker)** — a mock LLM provider server with configurable latency, failures, and rate limits. Point your gateways at it to measure pure gateway overhead with zero API costs.
 - **[hitter](https://github.com/maximhq/bifrost-benchmarking/tree/main/hitter)** — a load generator for stress-testing a single Bifrost deployment with realistic multi-model/streaming traffic.
 
-> **💡 Open Source**: The benchmarking tool is completely open source! Feel free to submit pull requests if you think anything is missing or could be improved.
+> **Reference notice:** upstream tools and links below retain their original
+> names for compatibility. They are not maintained or published by FrankenGate.
 
 ---
+
+## Historical upstream workload workflow
+
+The remaining instructions document the upstream workload harness for teams
+that need compatibility with it. They do not publish FrankenGate install or
+support commands; use the local script above for fork-owned regression checks.
 
 ## Prerequisites
 
