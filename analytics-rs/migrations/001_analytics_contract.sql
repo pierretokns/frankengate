@@ -61,6 +61,14 @@ create table if not exists frankengate_analytics.jobs (
 create index if not exists jobs_tenant_state_created_idx
   on frankengate_analytics.jobs (tenant_id, state, created_at, id);
 
+-- Stable aggregate surface for worker scaling and dashboards. Consumers can
+-- query one bounded projection instead of repeatedly scanning jobs and
+-- reimplementing state aggregation in each adapter.
+create or replace view frankengate_analytics.job_queue_stats as
+select tenant_id, state, count(*)::bigint as job_count
+from frankengate_analytics.jobs
+group by tenant_id, state;
+
 -- Lease, heartbeat, checkpoint, and terminal transitions must advance the
 -- timestamp used by recovery and operational dashboards.  Keep this trigger
 -- idempotent so rolling migration retries do not fail.

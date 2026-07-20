@@ -31,4 +31,15 @@ if [[ "$constraints" != "$expected" ]]; then
   exit 1
 fi
 
+view_exists="$(kubectl -n "$NAMESPACE" exec "$POD" -- psql -At \
+  -U "$DB_USER" -d "$DB_NAME" -c "
+    select count(*)
+    from pg_views
+    where schemaname = 'frankengate_analytics'
+      and viewname = 'job_queue_stats';")"
+if [[ "$view_exists" != "1" ]]; then
+  echo "analytics queue stats view is missing" >&2
+  exit 1
+fi
+
 echo "analytics migration and lease invariants verified in $NAMESPACE/$POD"
