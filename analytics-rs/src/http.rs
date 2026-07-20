@@ -9,6 +9,9 @@ pub enum Route {
     JobStats,
     Lease,
     Renew,
+    Complete,
+    Fail,
+    Cancel,
     Unknown,
 }
 
@@ -21,6 +24,9 @@ pub fn route_for(path: &str) -> Route {
         "/v1/jobs/stats" => Route::JobStats,
         "/v1/jobs/lease" => Route::Lease,
         "/v1/jobs/renew" => Route::Renew,
+        "/v1/jobs/complete" => Route::Complete,
+        "/v1/jobs/fail" => Route::Fail,
+        "/v1/jobs/cancel" => Route::Cancel,
         _ => Route::Unknown,
     }
 }
@@ -39,6 +45,7 @@ pub struct Request<'a> {
     pub job_kind: Option<&'a str>,
     pub worker_id: Option<&'a str>,
     pub lease_seconds: Option<&'a str>,
+    pub error_code: Option<&'a str>,
 }
 
 pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
@@ -61,6 +68,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
     let mut job_kind = None;
     let mut worker_id = None;
     let mut lease_seconds = None;
+    let mut error_code = None;
     for line in lines {
         if line.is_empty() {
             break;
@@ -84,6 +92,9 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         if name.eq_ignore_ascii_case("x-lease-seconds") {
             lease_seconds = Some(value.trim());
         }
+        if name.eq_ignore_ascii_case("x-error-code") {
+            error_code = Some(value.trim());
+        }
     }
     Some(Request {
         method,
@@ -94,6 +105,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         job_kind,
         worker_id,
         lease_seconds,
+        error_code,
     })
 }
 

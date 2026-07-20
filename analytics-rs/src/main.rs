@@ -94,7 +94,8 @@ fn handle_connection(
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
-        "/v1/jobs" | "/v1/jobs/stats" | "/v1/jobs/lease" | "/v1/jobs/renew" => {
+        "/v1/jobs" | "/v1/jobs/stats" | "/v1/jobs/lease" | "/v1/jobs/renew"
+        | "/v1/jobs/complete" | "/v1/jobs/fail" | "/v1/jobs/cancel" => {
             governed_response(parsed.as_ref(), &database, &runtime)
         }
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
@@ -231,6 +232,70 @@ fn governed_response(
                 "500 Internal Server Error",
                 "text/plain",
                 "lease renewal failed\n".into(),
+            ),
+        };
+    }
+    if matches!(
+        request.path,
+        "/v1/jobs/complete" | "/v1/jobs/fail" | "/v1/jobs/cancel"
+    ) {
+        if request.method != "POST" {
+            return (
+                "405 Method Not Allowed",
+                "text/plain",
+                "only POST is supported\n".into(),
+            );
+        }
+        let Some(job_id) = request.job_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-job-id is required\n".into(),
+            );
+        };
+        let result = match request.path {
+            "/v1/jobs/complete" => {
+                let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
+                    return (
+                        "400 Bad Request",
+                        "text/plain",
+                        "x-worker-id is required\n".into(),
+                    );
+                };
+                runtime.block_on(database.complete_job(tenant, job_id, worker_id))
+            }
+            "/v1/jobs/fail" => {
+                let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
+                    return (
+                        "400 Bad Request",
+                        "text/plain",
+                        "x-worker-id is required\n".into(),
+                    );
+                };
+                let error_code = request.error_code.unwrap_or("worker_failure");
+                runtime.block_on(database.fail_job(tenant, job_id, worker_id, error_code))
+            }
+            _ => runtime.block_on(database.cancel_job(tenant, job_id)),
+        };
+        return match result {
+            Ok(Some(job)) => (
+                "200 OK",
+                "application/json",
+                serde_json::json!({
+                    "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
+                    "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
+                })
+                .to_string(),
+            ),
+            Ok(None) => (
+                "409 Conflict",
+                "text/plain",
+                "job transition rejected\n".into(),
+            ),
+            Err(_) => (
+                "500 Internal Server Error",
+                "text/plain",
+                "job transition failed\n".into(),
             ),
         };
     }
