@@ -70,6 +70,9 @@ metrics, avoiding an unsafe cross-tenant aggregate query.
 Operators that need structured data can use
 `GET /v1/jobs/stats?tenant=<tenant-id>`; it reads the same durable projection
 and returns JSON, or `503` if the database cannot be queried.
+`/healthz` is process liveness only; `/readyz` also performs a bounded
+Postgres `SELECT 1` and returns `503` when the durable store is unavailable,
+so Kubernetes removes a disconnected control-plane pod from service.
 Workers can claim one durable job with
 `/v1/jobs/lease?tenant=<tenant-id>&worker=<worker-id>&lease_seconds=30`.
 Jobs are submitted with

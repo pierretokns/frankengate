@@ -61,7 +61,37 @@ fn handle_connection(
     let target = request_line.split_whitespace().nth(1).unwrap_or("/");
     let (path, query) = target.split_once('?').unwrap_or((target, ""));
     let (status, content_type, body) = match path {
-        "/healthz" | "/readyz" => ("200 OK", "text/plain", "ok\n".to_string()),
+        "/healthz" => ("200 OK", "text/plain", "ok\n".to_string()),
+        "/readyz" => {
+            // Liveness only proves that the process is accepting sockets. Readiness
+            // must also prove that the durable control-plane store is reachable;
+            // otherwise Kubernetes can route jobs to a pod that cannot persist
+            // leases, completions, or checkpoints after a database outage.
+            match database.as_ref() {
+                Some(pool) => {
+                    let reachable = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime.block_on(sqlx::query("SELECT 1").execute(pool)).ok()
+                        })
+                        .is_some();
+                    if reachable {
+                        ("200 OK", "text/plain", "ok\n".to_string())
+                    } else {
+                        (
+                            "503 Service Unavailable",
+                            "text/plain",
+                            "database unavailable\n".to_string(),
+                        )
+                    }
+                }
+                None => (
+                    "503 Service Unavailable",
+                    "text/plain",
+                    "database unavailable\n".to_string(),
+                ),
+            }
+        }
         "/version" => (
             "200 OK",
             "text/plain",
