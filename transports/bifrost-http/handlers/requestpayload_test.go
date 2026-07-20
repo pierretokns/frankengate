@@ -68,7 +68,7 @@ func TestSessionCapabilitiesFailClosedAndExposeVersionedContract(t *testing.T) {
 		t.Fatalf("status = %d, want %d", ctx.Response.StatusCode(), fasthttp.StatusOK)
 	}
 	body := string(ctx.Response.Body())
-	for _, want := range []string{`"version":1`, `"session_bootstrap":true`, `"governance":false`, `"alerting":true`} {
+	for _, want := range []string{`"version":1`, `"session_bootstrap":true`, `"governance":false`, `"alerting":true`, `"dashboard_oidc":false`, `"scim_entitlements":false`, `"analytics_replay":false`} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("response = %s, missing %s", body, want)
 		}
