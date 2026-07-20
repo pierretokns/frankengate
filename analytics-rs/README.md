@@ -42,3 +42,10 @@ Run the current contract tests with:
 ```bash
 cargo test --manifest-path analytics-rs/Cargo.toml
 ```
+
+The dependency-free operator smoke check exercises submit → lease → complete
+and verifies the typed terminal outcome:
+
+```bash
+cargo run --manifest-path analytics-rs/Cargo.toml -- --check
+```
