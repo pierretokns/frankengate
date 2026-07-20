@@ -33,6 +33,8 @@ attach the matching immutable tag and artifact digests.
 - Added durable worker APIs for lease claim, renewal, checkpoint, completion,
   failure, cancellation, retry, replay, drain, and expired-lease recovery;
   ownership is enforced by PostgreSQL row-level security and `SKIP LOCKED`.
+- Added an opt-in S3-compatible OTEL replay store with tenant-pinned object
+  keys and JSONL fallback for local deployments.
 - Added a separately published `-analytics` GHCR OCI image for the Rust
   control plane; it is released independently from the gateway image and
   binary verification lane.
