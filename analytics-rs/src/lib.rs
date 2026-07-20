@@ -191,6 +191,20 @@ impl JobStore {
         reaped
     }
 
+    /// Release all leases owned by a worker during graceful shutdown.
+    pub fn drain_worker(&self, worker: &str) -> usize {
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        let mut drained = 0;
+        for job in jobs.values_mut() {
+            if matches!(&job.state, JobState::Leased { worker: owner, .. } if owner == worker) {
+                job.state = JobState::Queued;
+                job.lease_until = None;
+                drained += 1;
+            }
+        }
+        drained
+    }
+
     pub fn renew(&self, id: &str, worker: &str, duration: Duration) -> Result<Job, LeaseError> {
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
@@ -300,6 +314,19 @@ mod tests {
             store.cancel_for_tenant("tenant-a", "j4b").unwrap().state,
             JobState::Cancelled
         );
+    }
+
+    #[test]
+    fn worker_drain_releases_owned_leases_for_recovery() {
+        let store = JobStore::default();
+        store.enqueue("j5b", "tenant-a", "eval");
+        store.enqueue("j6b", "tenant-a", "replay");
+        store.lease("j5b", "worker-a").unwrap();
+        store.lease("j6b", "worker-b").unwrap();
+        assert_eq!(store.drain_worker("worker-a"), 1);
+        assert_eq!(store.lease("j5b", "worker-c").unwrap().attempt, 2);
+        assert_eq!(store.drain_worker("worker-a"), 0);
+        assert!(matches!(store.get("j6b").unwrap().state, JobState::Leased { .. }));
     }
 
     #[test]
