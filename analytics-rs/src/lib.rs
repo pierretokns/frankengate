@@ -289,7 +289,11 @@ impl JobStore {
         {
             return Err(LeaseError::InvalidRequest);
         }
-        Ok(self.enqueue(request.id, request.tenant, request.kind))
+        self.try_enqueue(request.id, request.tenant, request.kind)
+            .map_err(|error| match error {
+                QueueError::CapacityExceeded => LeaseError::CapacityExceeded,
+                QueueError::InvalidRequest => LeaseError::InvalidRequest,
+            })
     }
 
     pub fn enqueue(
@@ -406,6 +410,9 @@ impl JobStore {
         duration: Duration,
     ) -> Option<Job> {
         let worker = worker.into();
+        if worker.is_empty() || tenant.is_empty() {
+            return None;
+        }
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let id = jobs
             .values()
@@ -428,6 +435,10 @@ impl JobStore {
         worker: impl Into<String>,
         duration: Duration,
     ) -> Result<Job, LeaseError> {
+        let worker = worker.into();
+        if worker.is_empty() || id.is_empty() {
+            return Err(LeaseError::InvalidRequest);
+        }
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
         let attempt = match job.state {
@@ -440,10 +451,7 @@ impl JobStore {
                 return Err(LeaseError::NotLeasable)
             }
         };
-        job.state = JobState::Leased {
-            worker: worker.into(),
-            attempt,
-        };
+        job.state = JobState::Leased { worker, attempt };
         job.lease_until = Some(Instant::now() + duration);
         Ok(job.clone())
     }
@@ -478,6 +486,9 @@ impl JobStore {
     }
 
     pub fn renew(&self, id: &str, worker: &str, duration: Duration) -> Result<Job, LeaseError> {
+        if id.is_empty() || worker.is_empty() {
+            return Err(LeaseError::InvalidRequest);
+        }
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
         match &job.state {
@@ -559,6 +570,9 @@ impl JobStore {
     }
 
     pub fn complete(&self, id: &str, worker: &str) -> Result<Job, LeaseError> {
+        if id.is_empty() || worker.is_empty() {
+            return Err(LeaseError::InvalidRequest);
+        }
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
         match &job.state {
@@ -579,7 +593,10 @@ impl JobStore {
         error_code: impl Into<String>,
     ) -> Result<Job, LeaseError> {
         let error_code = error_code.into();
-        if error_code.len() > 256 {
+        if id.is_empty() || worker.is_empty() {
+            return Err(LeaseError::InvalidRequest);
+        }
+        if error_code.is_empty() || error_code.len() > 256 {
             return Err(LeaseError::CheckpointTooLarge);
         }
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
@@ -805,6 +822,47 @@ mod tests {
             })
             .expect("current protocol is accepted");
         assert_eq!(job.state, JobState::Queued);
+    }
+
+    #[test]
+    fn protocol_submit_honors_bounded_capacity() {
+        let store = JobStore::with_capacity(1);
+        store
+            .submit(SubmitJob {
+                protocol_version: PROTOCOL_VERSION,
+                id: "first".into(),
+                tenant: "tenant-a".into(),
+                kind: "eval".into(),
+            })
+            .unwrap();
+        assert_eq!(
+            store.submit(SubmitJob {
+                protocol_version: PROTOCOL_VERSION,
+                id: "second".into(),
+                tenant: "tenant-a".into(),
+                kind: "eval".into(),
+            }),
+            Err(LeaseError::CapacityExceeded)
+        );
+    }
+
+    #[test]
+    fn lease_completion_and_failure_require_named_workers() {
+        let store = JobStore::default();
+        store.enqueue("worker-bound", "tenant-a", "eval");
+        assert_eq!(
+            store.lease("worker-bound", ""),
+            Err(LeaseError::InvalidRequest)
+        );
+        store.lease("worker-bound", "worker-a").unwrap();
+        assert_eq!(
+            store.complete("worker-bound", ""),
+            Err(LeaseError::InvalidRequest)
+        );
+        assert_eq!(
+            store.fail("worker-bound", "", "failed"),
+            Err(LeaseError::InvalidRequest)
+        );
     }
 
     #[test]
