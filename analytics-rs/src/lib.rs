@@ -79,6 +79,15 @@ pub struct ArtifactManifest {
     pub object_uri: String,
 }
 
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct JobStats {
+    pub queued: usize,
+    pub leased: usize,
+    pub cancelled: usize,
+    pub completed: usize,
+    pub failed: usize,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum JobState {
     Queued,
@@ -167,6 +176,22 @@ impl JobStore {
         jobs.sort_by(|left, right| left.id.cmp(&right.id));
         jobs.truncate(limit.min(1_000));
         jobs
+    }
+
+    /// Return tenant-scoped queue counters suitable for scaling and dashboards.
+    pub fn stats_for_tenant(&self, tenant: &str) -> JobStats {
+        let jobs = self.jobs.lock().expect("job store lock poisoned");
+        let mut stats = JobStats::default();
+        for job in jobs.values().filter(|job| job.tenant == tenant) {
+            match job.state {
+                JobState::Queued => stats.queued += 1,
+                JobState::Leased { .. } => stats.leased += 1,
+                JobState::Cancelled => stats.cancelled += 1,
+                JobState::Completed => stats.completed += 1,
+                JobState::Failed { .. } => stats.failed += 1,
+            }
+        }
+        stats
     }
 
     pub fn lease(&self, id: &str, worker: impl Into<String>) -> Result<Job, LeaseError> {
@@ -452,6 +477,13 @@ mod tests {
         assert!(store
             .lease_next_for_tenant("tenant-a", "worker-c", Duration::from_secs(30))
             .is_none());
+        assert_eq!(
+            store.stats_for_tenant("tenant-a"),
+            JobStats {
+                leased: 2,
+                ..JobStats::default()
+            }
+        );
     }
 
     #[test]
