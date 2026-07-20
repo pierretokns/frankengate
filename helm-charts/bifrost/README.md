@@ -4,6 +4,15 @@ Artifact Hub publication is not yet configured for the FrankenGate fork.
 
 Compatibility chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS. The chart path and `bifrost.*` values remain compatibility identifiers.
 
+## External data services
+
+The chart supports first-class external PostgreSQL configuration for production
+deployments. Set `storage.mode=postgres`, disable the bundled PostgreSQL chart,
+and configure `postgresql.external.host`, `database`, `user`, and `sslMode`.
+Use `postgresql.external.existingSecret` for the password; the chart does not
+create or expose a plaintext password in that mode. Redis remains optional
+acceleration/vector storage and is never required as the governance authority.
+
 **Latest FrankenGate Chart:** 0.3.19
 
 The inherited upstream chart history below is retained only as compatibility
