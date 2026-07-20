@@ -17,6 +17,11 @@ analyticsControlPlane:
   replicas: 1
   command: ["frankengate-analytics-control", "--serve"]
   resources: {}
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+    labels: {}
   autoscaling:
     enabled: false
     minReplicas: 1
