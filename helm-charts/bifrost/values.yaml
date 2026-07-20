@@ -5,6 +5,24 @@
 # Bifrost application configuration
 replicaCount: 1
 
+# Optional separately deployed Rust analytics/control plane. Disabled by
+# default: enabling it requires an image that contains the analytics service;
+# it never runs inside gateway inference pods.
+analyticsControlPlane:
+  enabled: false
+  image:
+    repository: ghcr.io/pierretokns/frankengate-analytics-control
+    tag: "dev"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  command: ["frankengate-analytics-control"]
+  resources: {}
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
 image:
   # Container image repository
   # Default: public FrankenGate image on GitHub Container Registry.

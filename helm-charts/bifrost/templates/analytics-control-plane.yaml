@@ -1,0 +1,64 @@
+{{- if .Values.analyticsControlPlane.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "bifrost.fullname" . }}-analytics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bifrost.labels" . | nindent 4 }}
+    app.kubernetes.io/component: analytics-control-plane
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bifrost.fullname" . }}-analytics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bifrost.labels" . | nindent 4 }}
+    app.kubernetes.io/component: analytics-control-plane
+spec:
+  replicas: {{ .Values.analyticsControlPlane.replicas }}
+  selector:
+    matchLabels:
+      {{- include "bifrost.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: analytics-control-plane
+  template:
+    metadata:
+      labels:
+        {{- include "bifrost.labels" . | nindent 8 }}
+        app.kubernetes.io/component: analytics-control-plane
+    spec:
+      serviceAccountName: {{ include "bifrost.fullname" . }}-analytics
+      containers:
+        - name: analytics-control-plane
+          image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}"
+          imagePullPolicy: {{ .Values.analyticsControlPlane.image.pullPolicy }}
+          command: {{ toJson .Values.analyticsControlPlane.command }}
+          resources:
+            {{- toYaml .Values.analyticsControlPlane.resources | nindent 12 }}
+{{- if .Values.analyticsControlPlane.autoscaling.enabled }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "bifrost.fullname" . }}-analytics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bifrost.labels" . | nindent 4 }}
+    app.kubernetes.io/component: analytics-control-plane
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "bifrost.fullname" . }}-analytics
+  minReplicas: {{ .Values.analyticsControlPlane.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.analyticsControlPlane.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.analyticsControlPlane.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
+{{- end }}
