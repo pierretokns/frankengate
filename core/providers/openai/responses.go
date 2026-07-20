@@ -347,6 +347,11 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	} else if len(additionalTools) > 0 {
 		req.Tools = append(req.Tools, additionalTools...)
 	}
+	if bifrostReq.Provider == schemas.BedrockMantle && len(req.Tools) == 0 {
+		if flattened, ok := flattenPlainTextMessages(messages); ok {
+			req.Input = OpenAIResponsesRequestInput{OpenAIResponsesRequestInputStr: schemas.Ptr(flattened)}
+		}
+	}
 	return req
 }
 
@@ -374,6 +379,34 @@ func extractOpenAIAdditionalTools(messages []schemas.ResponsesMessage) []schemas
 		}
 	}
 	return out
+}
+
+func flattenPlainTextMessages(messages []schemas.ResponsesMessage) (string, bool) {
+	if len(messages) == 0 {
+		return "", false
+	}
+	parts := make([]string, 0, len(messages))
+	for _, message := range messages {
+		if message.Type != nil && *message.Type != schemas.ResponsesMessageTypeMessage || message.Content == nil {
+			return "", false
+		}
+		if message.Content.ContentStr != nil {
+			parts = append(parts, *message.Content.ContentStr)
+			continue
+		}
+		if len(message.Content.ContentBlocks) == 0 {
+			return "", false
+		}
+		var b strings.Builder
+		for _, block := range message.Content.ContentBlocks {
+			if block.Type != schemas.ResponsesInputMessageContentBlockTypeText || block.Text == nil {
+				return "", false
+			}
+			b.WriteString(*block.Text)
+		}
+		parts = append(parts, b.String())
+	}
+	return strings.Join(parts, "\n"), true
 }
 
 func defaultImageDetail(message schemas.ResponsesMessage) schemas.ResponsesMessage {
