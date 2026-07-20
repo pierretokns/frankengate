@@ -384,6 +384,29 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/workers/reap" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            match (database.as_ref(), tenant) {
+                (Some(pool), Some(tenant)) => {
+                    let reaped = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::reap_expired(
+                                    pool, tenant,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(0);
+                    ("200 OK", "text/plain", format!("reaped={}\n", reaped))
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant is required\n".to_string(),
+                ),
+            }
+        }
         "/v1/experiments" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let id = query_param(query, "id");
