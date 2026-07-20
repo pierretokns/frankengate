@@ -4,7 +4,18 @@ Artifact Hub publication is not yet configured for the FrankenGate fork.
 
 Compatibility chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS. The chart path and `bifrost.*` values remain compatibility identifiers.
 
-**Latest Version:** 2.1.35
+**Latest FrankenGate Chart:** 0.3.19
+
+The inherited upstream chart history below is retained only as compatibility
+context; it is not a FrankenGate release catalog. The fork-owned chart index
+is intentionally empty until the first signed FrankenGate chart is published.
+
+### FrankenGate analytics control plane
+
+Set `analyticsControlPlane.enabled=true` to deploy the separately scaled Rust
+analytics service. Configure `databaseUrlSecret` for durable Postgres/Aurora
+state; `databaseMaxConnections`, autoscaling, termination grace, and the
+optional disruption budget bound worker replicas independently of inference.
 
 ## Changelog
 
