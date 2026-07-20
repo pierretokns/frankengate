@@ -132,7 +132,7 @@ const externalLinks = [
 	},
 	{
 		title: "Full Documentation",
-		url: "https://docs.getbifrost.ai",
+		url: "https://github.com/pierretokns/frankengate#readme",
 		icon: BooksIcon,
 		strokeWidth: 1,
 	},
@@ -1313,7 +1313,7 @@ export default function AppSidebar() {
 					<div className="flex h-full flex-col gap-2">
 						<img src={newReleaseImage} alt={PRODUCT_NAME} className="h-[95px] rounded-md object-cover" />
 						<a
-							href={`https://docs.getbifrost.ai/changelogs/${latestRelease.name}`}
+							href={`https://github.com/pierretokns/frankengate/releases/tag/${latestRelease.name}`}
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-primary mt-auto pb-1 font-medium underline"
