@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   check-version:
+    if: github.repository == 'maximhq/bifrost'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get-version.outputs.version }}
@@ -51,7 +52,7 @@ jobs:
 
   test-bifrost-migration-cli:
     needs: [check-version]
-    if: needs.check-version.outputs.tag_exists == 'false'
+    if: github.repository == 'maximhq/bifrost' && needs.check-version.outputs.tag_exists == 'false'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -80,7 +81,7 @@ jobs:
 
   release-bifrost-migration-cli:
     needs: [check-version, test-bifrost-migration-cli]
-    if: needs.check-version.outputs.tag_exists == 'false'
+    if: github.repository == 'maximhq/bifrost' && needs.check-version.outputs.tag_exists == 'false'
     runs-on: ubuntu-latest
     permissions:
       contents: write
