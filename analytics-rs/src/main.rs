@@ -141,6 +141,47 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/jobs/renew" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let worker = query_param(query, "worker");
+            let job_id = query_param(query, "job_id");
+            let lease_seconds = query_param(query, "lease_seconds")
+                .and_then(|value| value.parse::<i64>().ok())
+                .unwrap_or(30)
+                .clamp(1, 3600);
+            match (database.as_ref(), tenant, worker, job_id) {
+                (Some(pool), Some(tenant), Some(worker), Some(job_id)) => {
+                    let renewed = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::renew_lease(
+                                    pool,
+                                    tenant,
+                                    job_id,
+                                    worker,
+                                    lease_seconds,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if renewed {
+                        ("200 OK", "text/plain", "renewed\n".to_string())
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "lease not owned\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, worker, and job_id is required\n".to_string(),
+                ),
+            }
+        }
         "/metrics" => {
             let tenant = query
                 .split('&')

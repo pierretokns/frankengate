@@ -74,6 +74,8 @@ scaled replicas; the endpoint returns `204` when the tenant queue is empty.
 The owner completes a claim with
 `POST /v1/jobs/complete?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>`;
 non-owners receive `409` and cannot mutate another worker's lease.
+Long-running workers renew it with
+`POST /v1/jobs/renew?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&lease_seconds=30`.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
