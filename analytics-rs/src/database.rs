@@ -42,6 +42,16 @@ pub struct EvaluationRow {
     pub score: sqlx::types::Json<serde_json::Value>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, sqlx::FromRow)]
+pub struct JobRow {
+    pub id: String,
+    pub tenant_id: String,
+    pub kind: String,
+    pub state: String,
+    pub attempt: i32,
+    pub replay_of: Option<String>,
+}
+
 impl Database {
     pub async fn connect(url: &str, max_connections: u32) -> Result<Self, sqlx::Error> {
         let pool = PgPoolOptions::new()
@@ -248,5 +258,28 @@ impl Database {
         .await?;
         tx.commit().await?;
         Ok(rows)
+    }
+
+    pub async fn replay_job(
+        &self,
+        tenant: &str,
+        replay_id: &str,
+        source_id: &str,
+    ) -> Result<JobRow, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let row = sqlx::query_as::<_, JobRow>(
+            "insert into frankengate_analytics.jobs (id, tenant_id, kind, state, replay_of)\
+             select $1, tenant_id, kind, 'queued', id\
+             from frankengate_analytics.jobs\
+             where id = $2 and tenant_id = $3 and state in ('completed', 'failed', 'cancelled')\
+             returning id, tenant_id, kind, state, attempt, replay_of",
+        )
+        .bind(replay_id)
+        .bind(source_id)
+        .bind(tenant)
+        .fetch_one(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(row)
     }
 }
