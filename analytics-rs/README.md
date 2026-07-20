@@ -83,6 +83,9 @@ Terminal jobs can be replayed with explicit lineage using
 Operators can cancel queued/leased work with
 `POST /v1/jobs/cancel?tenant=<tenant-id>&job_id=<id>` and explicitly retry a
 failed job with `POST /v1/jobs/retry?tenant=<tenant-id>&job_id=<id>`.
+Workers persist bounded resumable state with
+`POST /v1/jobs/checkpoint?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&checkpoint=<state>`;
+the database rejects checkpoints over 64 KiB or writes by non-owners.
 Automation can create immutable experiment lineage with
 `POST /v1/experiments?tenant=<tenant-id>&id=<id>&actor=<actor>&revision=<revision>`;
 duplicate IDs are rejected idempotently.

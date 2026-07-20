@@ -326,6 +326,40 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/jobs/checkpoint" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let worker = query_param(query, "worker");
+            let job_id = query_param(query, "job_id");
+            let checkpoint = query_param(query, "checkpoint");
+            match (database.as_ref(), tenant, worker, job_id, checkpoint) {
+                (Some(pool), Some(tenant), Some(worker), Some(job_id), Some(checkpoint)) => {
+                    let saved = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::checkpoint_job(
+                                    pool, tenant, job_id, worker, checkpoint,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if saved {
+                        ("200 OK", "text/plain", "checkpointed\n".to_string())
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "lease not owned or checkpoint too large\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, worker, job_id, and checkpoint is required\n".to_string(),
+                ),
+            }
+        }
         "/v1/experiments" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let id = query_param(query, "id");
