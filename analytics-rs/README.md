@@ -35,8 +35,10 @@ production API availability. The PostgreSQL service, supervision runtime, and
 independent Helm deployments remain separate implementation gates.
 
 `migrations/001_analytics_contract.sql` is the first durable schema contract.
-It enables tenant RLS and stores only artifact manifests in PostgreSQL; artifact
-bytes remain in the configured object store. The migration is safe to rerun
+It enables tenant RLS across experiments, runs, run attempts, evaluations,
+artifacts, and jobs, and stores only artifact manifests in PostgreSQL; artifact
+bytes remain in the configured object store. Run-attempt policies also verify
+that referenced runs and worker jobs belong to the same tenant. The migration is safe to rerun
 during rolling upgrades, including upgrades of an existing `jobs` table to add
 replay lineage.
 
@@ -54,8 +56,10 @@ cargo run --manifest-path analytics-rs/Cargo.toml -- --check
 ```
 
 For a minimal independently deployable process, run `--serve` (default port
-8081). It exposes `/healthz` and `/readyz`; the production queue/database
-service remains a subsequent implementation gate.
+8081). It runs the contract self-check as a boot fence before accepting
+traffic, then exposes `/healthz`, `/readyz`, and `/version` (the protocol
+version). This is still only a process/readiness contract: the production
+queue/database service remains a subsequent implementation gate.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
