@@ -628,6 +628,67 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/attempts" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let id = query_param(query, "id");
+            let run_id = query_param(query, "run_id");
+            let attempt = query_param(query, "attempt").and_then(|value| value.parse().ok());
+            let worker = query_param(query, "worker");
+            let job_id = query_param(query, "job_id");
+            match (
+                database.as_ref(),
+                tenant,
+                id,
+                run_id,
+                attempt,
+                worker,
+                job_id,
+            ) {
+                (
+                    Some(pool),
+                    Some(tenant),
+                    Some(id),
+                    Some(run_id),
+                    Some(attempt),
+                    Some(worker),
+                    Some(job_id),
+                ) => {
+                    let record = frankengate_analytics_control::RunAttempt {
+                        id: id.to_owned(),
+                        run_id: run_id.to_owned(),
+                        attempt,
+                        worker: worker.to_owned(),
+                        job_id: job_id.to_owned(),
+                        outcome: None,
+                    };
+                    let inserted = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::record_attempt(
+                                    pool, tenant, &record,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if inserted {
+                        ("201 Created", "text/plain", format!("id={}\n", record.id))
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "attempt already exists\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, id, run_id, attempt, worker, and job_id is required\n"
+                        .to_string(),
+                ),
+            }
+        }
         "/v1/runs/finish" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let run_id = query_param(query, "run_id");

@@ -101,6 +101,8 @@ Evaluation results are recorded with
 the `(run, example, evaluator revision)` key is idempotent.
 Artifact lineage is recorded without copying artifact bytes into Postgres via
 `POST /v1/artifacts?tenant=<tenant-id>&run_id=<id>&digest=<digest>&media_type=<type>&object_uri=s3://...`.
+Worker/run linkage is recorded with
+`POST /v1/attempts?tenant=<tenant-id>&id=<attempt-id>&run_id=<run-id>&attempt=1&worker=<worker-id>&job_id=<job-id>`.
 Runs are terminalized once with
 `POST /v1/runs/finish?tenant=<tenant-id>&run_id=<id>&outcome=<json-or-status>`;
 subsequent terminalization attempts are rejected.
