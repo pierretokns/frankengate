@@ -151,7 +151,7 @@ jobs:
           cache: false
 
       - name: Restore Go build and module caches
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860806 # v4.2.4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: |
             .cache/go-build
