@@ -712,3 +712,19 @@ fn query_param<'a>(query: &'a str, name: &str) -> Option<&'a str> {
         })
         .filter(|value| !value.is_empty())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::query_param;
+
+    #[test]
+    fn query_params_are_exact_and_empty_values_fail_closed() {
+        let query = "tenant=team-a&worker=pod-1&job_id=j-7&tenant_extra=wrong";
+        assert_eq!(query_param(query, "tenant"), Some("team-a"));
+        assert_eq!(query_param(query, "worker"), Some("pod-1"));
+        assert_eq!(query_param(query, "job_id"), Some("j-7"));
+        assert_eq!(query_param(query, "tenant_extra"), Some("wrong"));
+        assert_eq!(query_param("tenant=&worker=pod-1", "tenant"), None);
+        assert_eq!(query_param(query, "missing"), None);
+    }
+}
