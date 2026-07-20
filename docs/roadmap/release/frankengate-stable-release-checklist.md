@@ -19,6 +19,11 @@ Status: preparation; no stable release claim.
 - The fork-owned local overhead benchmark passes under elevated loopback
   networking with sub-0.1ms measured added p50/p95 overhead and zero errors;
   fixture bind failures now fail fast with an actionable diagnostic.
+- Latest refresh at commit `79095b35c` measured `0.006ms` added p50 and
+  `0.005ms` added p95 overhead with zero errors and no regression.
+- Analytics Helm supports validated OCI digest pinning for the independently
+  released control-plane image; chart lint and digest-qualified rendering
+  pass.
 - Pricing synchronization validates malformed documents and publishes an
   attributed FrankenGate envelope plus an immutable upstream snapshot.
 
