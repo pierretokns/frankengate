@@ -7,6 +7,14 @@ pub struct Database {
     pool: PgPool,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, sqlx::FromRow)]
+pub struct ExperimentRow {
+    pub id: String,
+    pub tenant_id: String,
+    pub actor_id: String,
+    pub revision: String,
+}
+
 impl Database {
     pub async fn connect(url: &str, max_connections: u32) -> Result<Self, sqlx::Error> {
         let pool = PgPoolOptions::new()
@@ -39,5 +47,45 @@ impl Database {
             .execute(&mut *tx)
             .await?;
         Ok(tx)
+    }
+
+    pub async fn create_experiment(
+        &self,
+        tenant: &str,
+        id: &str,
+        actor: &str,
+        revision: &str,
+    ) -> Result<ExperimentRow, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let row = sqlx::query_as::<_, ExperimentRow>(
+            "insert into frankengate_analytics.experiments (id, tenant_id, actor_id, revision)\
+             values ($1, $2, $3, $4) returning id, tenant_id, actor_id, revision",
+        )
+        .bind(id)
+        .bind(tenant)
+        .bind(actor)
+        .bind(revision)
+        .fetch_one(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(row)
+    }
+
+    pub async fn list_experiments(
+        &self,
+        tenant: &str,
+        limit: i64,
+    ) -> Result<Vec<ExperimentRow>, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let rows = sqlx::query_as::<_, ExperimentRow>(
+            "select id, tenant_id, actor_id, revision\
+             from frankengate_analytics.experiments\
+             order by created_at asc, id asc limit $1",
+        )
+        .bind(limit.clamp(1, 100))
+        .fetch_all(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(rows)
     }
 }
