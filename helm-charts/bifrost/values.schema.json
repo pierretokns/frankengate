@@ -41,6 +41,13 @@
             "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 }
           }
         }
+        ,"disruptionBudget": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minAvailable": { "type": ["integer", "string"], "minimum": 0 }
+          }
+        }
       }
     },
     "image": {

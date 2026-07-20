@@ -26,6 +26,9 @@ analyticsControlPlane:
     minReplicas: 1
     maxReplicas: 10
     targetCPUUtilizationPercentage: 70
+  disruptionBudget:
+    enabled: true
+    minAvailable: 1
 
 image:
   # Container image repository
