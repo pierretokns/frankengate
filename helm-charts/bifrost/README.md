@@ -30,6 +30,9 @@ Set `analyticsControlPlane.enabled=true` to deploy the separately scaled Rust
 analytics service. Configure `databaseUrlSecret` for durable Postgres/Aurora
 state; `databaseMaxConnections`, autoscaling, termination grace, and the
 optional disruption budget bound worker replicas independently of inference.
+Set `workerTokenSecret` to require an `Authorization: Bearer` token on
+control-plane `/v1/*` requests; mount it from a Kubernetes Secret and leave it
+unset only when an equivalent network boundary protects the service.
 Set `analyticsControlPlane.image.digest` to pin the control-plane OCI image to
 the exact tested artifact; when set, it is appended after the selected tag.
 When `databaseUrlSecret` is configured and `serviceMonitor.enabled=true`, set

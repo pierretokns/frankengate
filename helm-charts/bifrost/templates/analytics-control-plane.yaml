@@ -92,9 +92,9 @@ spec:
           image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}{{- if .Values.analyticsControlPlane.image.digest }}@{{ .Values.analyticsControlPlane.image.digest }}{{- end }}"
           imagePullPolicy: {{ .Values.analyticsControlPlane.image.pullPolicy }}
           command: {{ toJson .Values.analyticsControlPlane.command }}
+          env:
           {{- with .Values.analyticsControlPlane.databaseUrlSecret }}
           {{- if .name }}
-          env:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -102,6 +102,15 @@ spec:
                   key: {{ .key | quote }}
             - name: DATABASE_MAX_CONNECTIONS
               value: {{ $.Values.analyticsControlPlane.databaseMaxConnections | quote }}
+          {{- end }}
+          {{- end }}
+          {{- with .Values.analyticsControlPlane.workerTokenSecret }}
+          {{- if .name }}
+            - name: ANALYTICS_WORKER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name | quote }}
+                  key: {{ .key | quote }}
           {{- end }}
           {{- end }}
           ports:

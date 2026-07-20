@@ -34,6 +34,14 @@
           },
           "additionalProperties": false
         },
+        "workerTokenSecret": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "key": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
         "databaseMaxConnections": { "type": "integer", "minimum": 1, "maximum": 1000 },
         "startupProbe": {
           "type": "object",

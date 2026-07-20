@@ -67,6 +67,10 @@ scrapes this endpoint. When `DATABASE_URL` is configured, a tenant-scoped
 projection is available as `/metrics?tenant=<tenant-id>` and reads the durable
 queue view. Requests without a tenant parameter retain the local process
 metrics, avoiding an unsafe cross-tenant aggregate query.
+Set `ANALYTICS_WORKER_TOKEN` in production to require
+`Authorization: Bearer <token>` on every `/v1/*` request. Mount the token from
+a Kubernetes Secret; leaving it unset is intended only for local development
+behind an equivalent network boundary.
 Operators that need structured data can use
 `GET /v1/jobs/stats?tenant=<tenant-id>`; it reads the same durable projection
 and returns JSON, or `503` if the database cannot be queried.

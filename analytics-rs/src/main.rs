@@ -60,6 +60,11 @@ fn handle_connection(
     let method = request_line.split_whitespace().next().unwrap_or("");
     let target = request_line.split_whitespace().nth(1).unwrap_or("/");
     let (path, query) = target.split_once('?').unwrap_or((target, ""));
+    if path.starts_with("/v1/") && !worker_authorized(request_line) {
+        let response = "HTTP/1.1 401 Unauthorized\r\nContent-Type: text/plain\r\nContent-Length: 13\r\nConnection: close\r\n\r\nunauthorized\n";
+        let _ = stream.write_all(response.as_bytes());
+        return;
+    }
     let (status, content_type, body) = match path {
         "/healthz" => ("200 OK", "text/plain", "ok\n".to_string()),
         "/readyz" => {
@@ -1070,9 +1075,37 @@ fn query_param<'a>(query: &'a str, name: &str) -> Option<&'a str> {
         .filter(|value| !value.is_empty())
 }
 
+/// If ANALYTICS_WORKER_TOKEN is configured, require a matching bearer token
+/// on every control-plane API request. Leaving it unset is intentionally
+/// development-friendly; production Helm deployments should provide it via a
+/// Secret and still enforce network/service-account policy at the cluster edge.
+fn worker_authorized(request: &str) -> bool {
+    let Some(expected) = std::env::var_os("ANALYTICS_WORKER_TOKEN") else {
+        return true;
+    };
+    let expected = expected.to_string_lossy();
+    let supplied = request.lines().find_map(|line| {
+        line.strip_prefix("Authorization:")
+            .or_else(|| line.strip_prefix("authorization:"))
+            .map(str::trim)
+            .and_then(|value| value.strip_prefix("Bearer "))
+    });
+    let Some(supplied) = supplied else {
+        return false;
+    };
+    // Compare every byte to avoid an early-exit timing signal. Length is
+    // included in the accumulator so short tokens are not accepted.
+    let mut diff = expected.len() ^ supplied.len();
+    for index in 0..expected.len().max(supplied.len()) {
+        diff |= expected.as_bytes().get(index).copied().unwrap_or(0) as usize
+            ^ supplied.as_bytes().get(index).copied().unwrap_or(0) as usize;
+    }
+    diff == 0
+}
+
 #[cfg(test)]
 mod tests {
-    use super::query_param;
+    use super::{query_param, worker_authorized};
 
     #[test]
     fn query_params_are_exact_and_empty_values_fail_closed() {
@@ -1083,5 +1116,18 @@ mod tests {
         assert_eq!(query_param(query, "tenant_extra"), Some("wrong"));
         assert_eq!(query_param("tenant=&worker=pod-1", "tenant"), None);
         assert_eq!(query_param(query, "missing"), None);
+    }
+
+    #[test]
+    fn worker_authorization_requires_bearer_when_configured() {
+        std::env::set_var("ANALYTICS_WORKER_TOKEN", "test-token");
+        assert!(!worker_authorized("GET /v1/jobs HTTP/1.1\r\n"));
+        assert!(!worker_authorized(
+            "GET /v1/jobs HTTP/1.1\r\nAuthorization: Bearer wrong\r\n"
+        ));
+        assert!(worker_authorized(
+            "GET /v1/jobs HTTP/1.1\r\nAuthorization: Bearer test-token\r\n"
+        ));
+        std::env::remove_var("ANALYTICS_WORKER_TOKEN");
     }
 }

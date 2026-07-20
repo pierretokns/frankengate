@@ -23,6 +23,11 @@ analyticsControlPlane:
   databaseUrlSecret:
     name: ""
     key: DATABASE_URL
+  # Optional Secret containing the bearer token required for /v1 control-plane
+  # requests. Leave unset only behind an equivalent network boundary.
+  workerTokenSecret:
+    name: ""
+    key: ANALYTICS_WORKER_TOKEN
   # Bound each replica's pool so HPA growth cannot exhaust Postgres/Aurora.
   # Set this to the per-pod connection budget after accounting for all other
   # clients of the database.
