@@ -1,4 +1,7 @@
 {{- if .Values.analyticsControlPlane.enabled }}
+{{- if and .Values.analyticsControlPlane.serviceMonitor.enabled .Values.analyticsControlPlane.databaseUrlSecret.name (not .Values.analyticsControlPlane.serviceMonitor.tenant) }}
+{{- fail "analyticsControlPlane.serviceMonitor.tenant is required when analyticsControlPlane.databaseUrlSecret.name is set" }}
+{{- end }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
