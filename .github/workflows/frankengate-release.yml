@@ -199,6 +199,19 @@ jobs:
           cp tmp/bifrost-http "dist/${package}/frankengate"
           cp LICENSE NOTICE "dist/${package}/"
 
+      - name: Generate release SPDX manifest
+        env:
+          ARTIFACT: ${{ matrix.artifact }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          package="frankengate-${VERSION}-${ARTIFACT}"
+          digest="$(sha256sum "dist/${package}/frankengate" | awk '{print $1}')"
+          created="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          jq -n --arg version "${VERSION#v}" --arg digest "$digest" --arg created "$created" \
+            '{spdxVersion:"SPDX-2.3", dataLicense:"CC0-1.0", SPDXID:"SPDXRef-DOCUMENT", name:"FrankenGate release", documentNamespace:("https://frankengate.dev/spdx/" + $version), creationInfo:{creators:["Tool: FrankenGate release workflow"], created:$created}, packages:[{SPDXID:"SPDXRef-Package-FrankenGate", name:"frankengate", versionInfo:$version, downloadLocation:"NOASSERTION", filesAnalyzed:true, checksums:[{algorithm:"SHA256", checksumValue:$digest}], licenseConcluded:"Apache-2.0", licenseDeclared:"Apache-2.0", copyrightText:"NOASSERTION"}]}' \
+            > "dist/${package}/frankengate.spdx.json"
+
       - name: Generate platform binary SPDX SBOM
         if: ${{ false }} # deferred P10 provenance lane
         uses: anchore/sbom-action@f8bdd1d8ac5e901a77a92f111440fdb1b593736b # v0.20.6
