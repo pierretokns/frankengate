@@ -56,10 +56,9 @@ fn handle_connection(
     let _ = stream.set_write_timeout(Some(std::time::Duration::from_secs(2)));
     let mut request = [0_u8; 1024];
     let size = stream.read(&mut request).unwrap_or(0);
-    let target = std::str::from_utf8(&request[..size])
-        .ok()
-        .and_then(|request| request.split_whitespace().nth(1))
-        .unwrap_or("/");
+    let request_line = std::str::from_utf8(&request[..size]).unwrap_or("");
+    let method = request_line.split_whitespace().next().unwrap_or("");
+    let target = request_line.split_whitespace().nth(1).unwrap_or("/");
     let (path, query) = target.split_once('?').unwrap_or((target, ""));
     let (status, content_type, body) = match path {
         "/healthz" | "/readyz" => ("200 OK", "text/plain", "ok\n".to_string()),
@@ -106,6 +105,39 @@ fn handle_connection(
                     "400 Bad Request",
                     "text/plain",
                     "tenant, worker, and DATABASE_URL are required\n".to_string(),
+                ),
+            }
+        }
+        "/v1/jobs/complete" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let worker = query_param(query, "worker");
+            let job_id = query_param(query, "job_id");
+            match (database.as_ref(), tenant, worker, job_id) {
+                (Some(pool), Some(tenant), Some(worker), Some(job_id)) => {
+                    let completed = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::complete_job(
+                                    pool, tenant, job_id, worker,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if completed {
+                        ("200 OK", "text/plain", "completed\n".to_string())
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "lease not owned\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, worker, and job_id is required\n".to_string(),
                 ),
             }
         }

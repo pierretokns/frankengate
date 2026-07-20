@@ -71,6 +71,9 @@ Workers can claim one durable job with
 `/v1/jobs/lease?tenant=<tenant-id>&worker=<worker-id>&lease_seconds=30`.
 Claims use PostgreSQL row locking and are therefore safe across independently
 scaled replicas; the endpoint returns `204` when the tenant queue is empty.
+The owner completes a claim with
+`POST /v1/jobs/complete?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>`;
+non-owners receive `409` and cannot mutate another worker's lease.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
