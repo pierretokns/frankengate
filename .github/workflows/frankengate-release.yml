@@ -305,6 +305,10 @@ jobs:
             mkdir -p "$inspect/$name"
             tar -xzf "$archive" -C "$inspect/$name"
             test -x "$inspect/$name/$name/frankengate"
+            if [[ "$name" == *-linux-amd64 ]]; then
+              test -x "$inspect/$name/$name/frankengate-analytics-control"
+              "$inspect/$name/$name/frankengate-analytics-control" --check
+            fi
             cmp LICENSE "$inspect/$name/$name/LICENSE"
             cmp NOTICE "$inspect/$name/$name/NOTICE"
             jq -e '.spdxVersion == "SPDX-2.3" and (.packages | length > 0)' \
