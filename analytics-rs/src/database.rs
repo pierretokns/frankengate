@@ -494,4 +494,19 @@ impl Database {
         }
         Ok(stats)
     }
+
+    pub async fn list_jobs(&self, tenant: &str, limit: i64) -> Result<Vec<JobRow>, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let rows = sqlx::query_as::<_, JobRow>(
+            "select id, tenant_id, kind, state, attempt, replay_of\
+             from frankengate_analytics.jobs\
+             where tenant_id = $1 order by created_at asc, id asc limit $2",
+        )
+        .bind(tenant)
+        .bind(limit.clamp(1, 100))
+        .fetch_all(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(rows)
+    }
 }
