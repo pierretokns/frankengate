@@ -123,6 +123,33 @@ impl Run {
     }
 }
 
+/// A single execution attempt of a run.  Keeping attempts separate from the
+/// run projection makes retries, lease recovery, and terminal evidence
+/// addressable without mutating the requested run configuration.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RunAttempt {
+    pub id: String,
+    pub run_id: String,
+    pub attempt: u32,
+    pub worker: String,
+    pub job_id: String,
+    pub outcome: Option<JobOutcome>,
+}
+
+impl RunAttempt {
+    pub fn is_well_formed(&self) -> bool {
+        !self.id.is_empty()
+            && !self.run_id.is_empty()
+            && self.attempt > 0
+            && !self.worker.is_empty()
+            && !self.job_id.is_empty()
+            && self
+                .outcome
+                .as_ref()
+                .is_none_or(|outcome| outcome.id == self.job_id)
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct EvaluationResult {
     pub run_id: String,
@@ -766,6 +793,20 @@ mod tests {
         assert_ne!(run.dataset_revision, run.model_revision);
         assert!(!run.prompt_revision.is_empty());
         assert!(run.is_reproducible());
+        let attempt = RunAttempt {
+            id: "attempt-1".into(),
+            run_id: run.id.clone(),
+            attempt: 1,
+            worker: "eval-worker-a".into(),
+            job_id: "job-1".into(),
+            outcome: None,
+        };
+        assert!(attempt.is_well_formed());
+        assert!(!RunAttempt {
+            attempt: 0,
+            ..attempt.clone()
+        }
+        .is_well_formed());
         let experiment = Experiment {
             id: run.experiment_id.clone(),
             tenant: "tenant-a".into(),
