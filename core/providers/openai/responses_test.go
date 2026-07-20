@@ -51,7 +51,7 @@ func TestToOpenAIResponsesRequest_GPT56ToolItemsRemainStructured(t *testing.T) {
 }
 
 func TestToOpenAIResponsesRequest_MantleFrontierAliasesUseScalarInput(t *testing.T) {
-	for _, model := range []string{"Claude-GPT-soul", "Claude-GPT-luna", "Claude-GPT-terra"} {
+	for _, model := range []string{"Claude-GPT-soul", "Claude-GPT-luna", "Claude-GPT-terra", "Claude-GPT-sol"} {
 		converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
 			Provider: schemas.BedrockMantle,
 			Model:    model,
