@@ -53,11 +53,11 @@ type ModelCatalog struct {
 }
 
 func Init(ctx context.Context, config *Config, configStore configstore.ConfigStore, logger schemas.Logger) (*ModelCatalog, error) {
-	pricingURL := DefaultPricingURL
+	pricingURL := datasheet.EffectiveURL()
 	if config != nil && config.PricingURL != nil {
 		pricingURL = *config.PricingURL
 	}
-	modelParametersURL := DefaultModelParametersURL
+	modelParametersURL := datasheet.EffectiveModelParametersURL()
 	if config != nil && config.ModelParametersURL != nil && *config.ModelParametersURL != "" {
 		modelParametersURL = *config.ModelParametersURL
 	}
@@ -305,11 +305,11 @@ func (mc *ModelCatalog) UpdateSyncConfig(ctx context.Context, config *Config) er
 		mc.syncTicker.Stop()
 	}
 
-	pricingURL := DefaultPricingURL
+	pricingURL := datasheet.EffectiveURL()
 	if config != nil && config.PricingURL != nil {
 		pricingURL = *config.PricingURL
 	}
-	modelParametersURL := DefaultModelParametersURL
+	modelParametersURL := datasheet.EffectiveModelParametersURL()
 	if config != nil && config.ModelParametersURL != nil && *config.ModelParametersURL != "" {
 		modelParametersURL = *config.ModelParametersURL
 	}

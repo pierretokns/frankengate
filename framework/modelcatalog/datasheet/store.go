@@ -1,6 +1,7 @@
 package datasheet
 
 import (
+	"os"
 	"slices"
 	"strings"
 	"sync"
@@ -22,6 +23,23 @@ const (
 	DefaultModelParametersTimeout = 45 * time.Second
 )
 
+// EffectiveURL and EffectiveModelParametersURL let fork deployments point at
+// a reviewed local pricing mirror while retaining the upstream-compatible
+// defaults when no override is configured.
+func EffectiveURL() string {
+	if value := strings.TrimSpace(os.Getenv("FRANKENGATE_PRICING_URL")); value != "" {
+		return value
+	}
+	return DefaultURL
+}
+
+func EffectiveModelParametersURL() string {
+	if value := strings.TrimSpace(os.Getenv("FRANKENGATE_MODEL_PARAMETERS_URL")); value != "" {
+		return value
+	}
+	return DefaultModelParametersURL
+}
+
 // Config groups the values the composer hands to New / UpdateSyncConfig.
 // Zero values fall back to the Default* constants.
 type Config struct {
@@ -32,10 +50,10 @@ type Config struct {
 
 func (c Config) resolved() Config {
 	if c.URL == "" {
-		c.URL = DefaultURL
+		c.URL = EffectiveURL()
 	}
 	if c.ModelParametersURL == "" {
-		c.ModelParametersURL = DefaultModelParametersURL
+		c.ModelParametersURL = EffectiveModelParametersURL()
 	}
 	if c.SyncInterval <= 0 {
 		c.SyncInterval = DefaultSyncInterval
