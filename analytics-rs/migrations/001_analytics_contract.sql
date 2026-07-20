@@ -52,6 +52,7 @@ create table if not exists frankengate_analytics.jobs (
   worker_id text,
   lease_until timestamptz,
   checkpoint text,
+  replay_of text references frankengate_analytics.jobs(id),
   error_code text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

@@ -27,7 +27,8 @@ The current in-memory contract already covers:
 - atomic tenant-scoped claiming, bounded listings, and queue statistics;
 - owner-only heartbeats, checkpoints, completion, and failure transitions;
 - graceful worker draining and duplicate-delivery idempotency; and
-- tenant-scoped cancellation/retry plus reproducible experiment lineage.
+- tenant-scoped cancellation/retry plus reproducible experiment lineage; and
+- terminal, same-tenant replay jobs with explicit `replay_of` lineage.
 
 These are protocol and test guarantees, not a claim of durable persistence or
 production API availability. The PostgreSQL service, supervision runtime, and

@@ -53,6 +53,15 @@ pub struct SubmitJob {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ReplayJob {
+    pub protocol_version: u16,
+    pub replay_id: String,
+    pub source_job_id: String,
+    pub tenant: String,
+    pub kind: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct JobOutcome {
     pub protocol_version: u16,
     pub id: String,
@@ -181,6 +190,7 @@ pub struct Job {
     /// Monotonically increasing delivery attempt, including recovered leases.
     pub attempt: u32,
     pub checkpoint: Option<String>,
+    pub replay_of: Option<String>,
     lease_until: Option<Instant>,
 }
 
@@ -227,6 +237,7 @@ impl JobStore {
             state: JobState::Queued,
             attempt: 0,
             checkpoint: None,
+            replay_of: None,
             lease_until: None,
         };
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
@@ -260,6 +271,7 @@ impl JobStore {
             state: JobState::Queued,
             attempt: 0,
             checkpoint: None,
+            replay_of: None,
             lease_until: None,
         };
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
@@ -268,6 +280,36 @@ impl JobStore {
         }
         jobs.insert(job.id.clone(), job.clone());
         job
+    }
+
+    /// Enqueues a replay only for a terminal source job in the same tenant.
+    pub fn replay(&self, request: ReplayJob) -> Result<Job, LeaseError> {
+        if request.protocol_version != PROTOCOL_VERSION {
+            return Err(LeaseError::NotLeasable);
+        }
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        let source = jobs.get(&request.source_job_id).ok_or(LeaseError::NotFound)?;
+        if source.tenant != request.tenant || !source.outcome().terminal {
+            return Err(LeaseError::NotLeasable);
+        }
+        if let Some(existing) = jobs.get(&request.replay_id) {
+            return Ok(existing.clone());
+        }
+        if self.capacity.is_some_and(|capacity| jobs.len() >= capacity) {
+            return Err(LeaseError::NotLeasable);
+        }
+        let job = Job {
+            id: request.replay_id.clone(),
+            tenant: request.tenant,
+            kind: request.kind,
+            state: JobState::Queued,
+            attempt: 0,
+            checkpoint: None,
+            replay_of: Some(request.source_job_id),
+            lease_until: None,
+        };
+        jobs.insert(request.replay_id, job.clone());
+        Ok(job)
     }
 
     pub fn get(&self, id: &str) -> Option<Job> {
@@ -753,5 +795,50 @@ mod tests {
             object_uri: "https://unapproved.example/object".into(),
         }
         .is_well_formed());
+    }
+
+    #[test]
+    fn replay_requires_terminal_same_tenant_source_and_preserves_lineage() {
+        let store = JobStore::default();
+        store.enqueue("source", "tenant-a", "evaluation");
+        assert_eq!(
+            store.replay(ReplayJob {
+                protocol_version: PROTOCOL_VERSION,
+                replay_id: "replay-before-terminal".into(),
+                source_job_id: "source".into(),
+                tenant: "tenant-a".into(),
+                kind: "replay".into(),
+            }),
+            Err(LeaseError::NotLeasable)
+        );
+        store.lease("source", "worker-a").unwrap();
+        store.complete("source", "worker-a").unwrap();
+        assert_eq!(
+            store.replay(ReplayJob {
+                protocol_version: PROTOCOL_VERSION,
+                replay_id: "replay-cross-tenant".into(),
+                source_job_id: "source".into(),
+                tenant: "tenant-b".into(),
+                kind: "replay".into(),
+            }),
+            Err(LeaseError::NotLeasable)
+        );
+        let replay = store
+            .replay(ReplayJob {
+                protocol_version: PROTOCOL_VERSION,
+                replay_id: "replay-1".into(),
+                source_job_id: "source".into(),
+                tenant: "tenant-a".into(),
+                kind: "replay".into(),
+            })
+            .unwrap();
+        assert_eq!(replay.replay_of.as_deref(), Some("source"));
+        assert_eq!(store.replay(ReplayJob {
+            protocol_version: PROTOCOL_VERSION,
+            replay_id: "replay-1".into(),
+            source_job_id: "source".into(),
+            tenant: "tenant-a".into(),
+            kind: "replay".into(),
+        }).unwrap().id, "replay-1");
     }
 }
