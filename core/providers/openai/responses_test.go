@@ -30,6 +30,26 @@ func TestToOpenAIResponsesRequest_GPT56PlainMessagesUseScalarInput(t *testing.T)
 	}
 }
 
+func TestToOpenAIResponsesRequest_GPT56ToolItemsRemainStructured(t *testing.T) {
+	role := schemas.ResponsesInputMessageRoleUser
+	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
+		Model: "gpt-5.6-sol",
+		Input: []schemas.ResponsesMessage{
+			{Type: schemas.Ptr(schemas.ResponsesMessageTypeMessage), Role: &role,
+				Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("call the tool")}},
+			{Type: schemas.Ptr(schemas.ResponsesMessageTypeFunctionCall), ResponsesToolMessage: &schemas.ResponsesToolMessage{
+				CallID: schemas.Ptr("call_1"), Name: schemas.Ptr("lookup"), Arguments: schemas.Ptr(`{"q":"x"}`),
+			}},
+		},
+	})
+	if converted == nil || len(converted.Input.OpenAIResponsesRequestInputArray) != 2 {
+		t.Fatal("GPT-5.6 tool-call input must remain in structured array form")
+	}
+	if converted.Input.OpenAIResponsesRequestInputStr != nil {
+		t.Fatal("GPT-5.6 tool-call input must not be flattened to a scalar")
+	}
+}
+
 func TestToOpenAIResponsesRequest_DefaultsMissingImageDetailWithoutMutation(t *testing.T) {
 	url := "https://example.test/image.png"
 	role := schemas.ResponsesInputMessageRoleUser
