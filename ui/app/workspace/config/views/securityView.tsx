@@ -299,7 +299,7 @@ export default function SecurityView() {
 								: "Require a virtual key for all inference requests."}{" "}
 							See{" "}
 							<a
-								href="https://docs.getbifrost.ai/features/governance/virtual-keys"
+								href="https://github.com/pierretokns/frankengate/tree/dev/docs/features/governance"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="text-primary underline"
