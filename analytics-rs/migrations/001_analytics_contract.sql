@@ -61,6 +61,11 @@ create table if not exists frankengate_analytics.jobs (
 create index if not exists jobs_tenant_state_created_idx
   on frankengate_analytics.jobs (tenant_id, state, created_at, id);
 
+-- The table predates replay lineage in early deployments.  Keep upgrades
+-- idempotent for already-created tables as well as fresh installs.
+alter table frankengate_analytics.jobs
+  add column if not exists replay_of text references frankengate_analytics.jobs(id);
+
 -- Re-running this migration must be safe during rolling deploys.  PostgreSQL
 -- has no CREATE POLICY IF NOT EXISTS, so replace policies deterministically.
 drop policy if exists experiments_tenant_isolation on frankengate_analytics.experiments;
