@@ -101,7 +101,8 @@ fn handle_connection(
         | "/v1/jobs/complete"
         | "/v1/jobs/fail"
         | "/v1/jobs/cancel"
-        | "/v1/jobs/checkpoint" => governed_response(parsed.as_ref(), &database, &runtime),
+        | "/v1/jobs/checkpoint"
+        | "/v1/jobs/replay" => governed_response(parsed.as_ref(), &database, &runtime),
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
@@ -343,6 +344,41 @@ fn governed_response(
                 "text/plain",
                 "checkpoint failed\n".into(),
             ),
+        };
+    }
+    if request.path == "/v1/jobs/replay" {
+        if request.method != "POST" {
+            return (
+                "405 Method Not Allowed",
+                "text/plain",
+                "only POST is supported\n".into(),
+            );
+        }
+        let Some(replay_id) = request.replay_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-replay-id is required\n".into(),
+            );
+        };
+        let Some(source_id) = request.source_job_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-source-job-id is required\n".into(),
+            );
+        };
+        return match runtime.block_on(database.replay_job(tenant, replay_id, source_id)) {
+            Ok(job) => (
+                "201 Created",
+                "application/json",
+                serde_json::json!({
+                    "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
+                    "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
+                })
+                .to_string(),
+            ),
+            Err(_) => ("409 Conflict", "text/plain", "replay rejected\n".into()),
         };
     }
     match request.method {

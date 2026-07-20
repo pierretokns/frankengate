@@ -13,6 +13,7 @@ pub enum Route {
     Fail,
     Cancel,
     Checkpoint,
+    Replay,
     Unknown,
 }
 
@@ -29,6 +30,7 @@ pub fn route_for(path: &str) -> Route {
         "/v1/jobs/fail" => Route::Fail,
         "/v1/jobs/cancel" => Route::Cancel,
         "/v1/jobs/checkpoint" => Route::Checkpoint,
+        "/v1/jobs/replay" => Route::Replay,
         _ => Route::Unknown,
     }
 }
@@ -49,6 +51,8 @@ pub struct Request<'a> {
     pub lease_seconds: Option<&'a str>,
     pub error_code: Option<&'a str>,
     pub checkpoint: Option<&'a str>,
+    pub replay_id: Option<&'a str>,
+    pub source_job_id: Option<&'a str>,
 }
 
 pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
@@ -73,6 +77,8 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
     let mut lease_seconds = None;
     let mut error_code = None;
     let mut checkpoint = None;
+    let mut replay_id = None;
+    let mut source_job_id = None;
     for line in lines {
         if line.is_empty() {
             break;
@@ -102,6 +108,12 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         if name.eq_ignore_ascii_case("x-checkpoint") {
             checkpoint = Some(value.trim());
         }
+        if name.eq_ignore_ascii_case("x-replay-id") {
+            replay_id = Some(value.trim());
+        }
+        if name.eq_ignore_ascii_case("x-source-job-id") {
+            source_job_id = Some(value.trim());
+        }
     }
     Some(Request {
         method,
@@ -114,6 +126,8 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         lease_seconds,
         error_code,
         checkpoint,
+        replay_id,
+        source_job_id,
     })
 }
 
