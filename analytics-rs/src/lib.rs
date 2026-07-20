@@ -79,6 +79,18 @@ pub struct ArtifactManifest {
     pub object_uri: String,
 }
 
+impl ArtifactManifest {
+    pub fn is_well_formed(&self) -> bool {
+        !self.run_id.is_empty()
+            && !self.digest.is_empty()
+            && self.digest.len() <= 256
+            && !self.media_type.is_empty()
+            && self.media_type.len() <= 256
+            && (self.object_uri.starts_with("s3://")
+                || self.object_uri.starts_with("file://"))
+    }
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct JobStats {
     pub queued: usize,
@@ -581,5 +593,19 @@ mod tests {
         };
         assert_ne!(run.dataset_revision, run.model_revision);
         assert!(!run.prompt_revision.is_empty());
+        let artifact = ArtifactManifest {
+            run_id: run.id,
+            digest: "sha256:abc".into(),
+            media_type: "application/json".into(),
+            object_uri: "s3://frankengate/run-1/result.json".into(),
+        };
+        assert!(artifact.is_well_formed());
+        assert!(!ArtifactManifest {
+            run_id: "run-1".into(),
+            digest: "".into(),
+            media_type: "application/json".into(),
+            object_uri: "https://unapproved.example/object".into(),
+        }
+        .is_well_formed());
     }
 }
