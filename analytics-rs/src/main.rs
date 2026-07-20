@@ -166,6 +166,55 @@ fn governed_response(
         };
     }
     if matches!(request.path, "/v1/experiments" | "/v1/runs") {
+        if request.method == "POST" {
+            if request.path == "/v1/experiments" {
+                let (Some(id), Some(actor), Some(revision)) =
+                    (request.job_id, request.actor_id, request.revision)
+                else {
+                    return (
+                        "400 Bad Request",
+                        "text/plain",
+                        "x-job-id, x-actor-id, and x-revision are required\n".into(),
+                    );
+                };
+                return match runtime.block_on(database.create_experiment(tenant, id, actor, revision)) {
+                    Ok(row) => ("201 Created", "application/json", serde_json::json!({
+                        "id": row.id, "tenant_id": row.tenant_id, "actor_id": row.actor_id, "revision": row.revision,
+                    }).to_string()),
+                    Err(_) => ("409 Conflict", "text/plain", "experiment creation rejected\n".into()),
+                };
+            }
+            let (
+                Some(id),
+                Some(experiment_id),
+                Some(dataset),
+                Some(evaluator),
+                Some(model),
+                Some(prompt),
+            ) = (
+                request.job_id,
+                request.experiment_id,
+                request.dataset_revision,
+                request.evaluator_revision,
+                request.model_revision,
+                request.prompt_revision,
+            )
+            else {
+                return (
+                    "400 Bad Request",
+                    "text/plain",
+                    "run identity and revision headers are required\n".into(),
+                );
+            };
+            return match runtime.block_on(database.create_run(tenant, id, experiment_id, dataset, evaluator, model, prompt)) {
+                Ok(row) => ("201 Created", "application/json", serde_json::json!({
+                    "id": row.id, "tenant_id": row.tenant_id, "experiment_id": row.experiment_id,
+                    "dataset_revision": row.dataset_revision, "evaluator_revision": row.evaluator_revision,
+                    "model_revision": row.model_revision, "prompt_revision": row.prompt_revision,
+                }).to_string()),
+                Err(_) => ("409 Conflict", "text/plain", "run creation rejected\n".into()),
+            };
+        }
         if request.method != "GET" {
             return (
                 "405 Method Not Allowed",

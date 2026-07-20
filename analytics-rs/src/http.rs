@@ -65,6 +65,13 @@ pub struct Request<'a> {
     pub source_job_id: Option<&'a str>,
     pub limit: Option<&'a str>,
     pub run_id: Option<&'a str>,
+    pub actor_id: Option<&'a str>,
+    pub revision: Option<&'a str>,
+    pub experiment_id: Option<&'a str>,
+    pub dataset_revision: Option<&'a str>,
+    pub evaluator_revision: Option<&'a str>,
+    pub model_revision: Option<&'a str>,
+    pub prompt_revision: Option<&'a str>,
 }
 
 pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
@@ -93,6 +100,13 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
     let mut source_job_id = None;
     let mut limit = None;
     let mut run_id = None;
+    let mut actor_id = None;
+    let mut revision = None;
+    let mut experiment_id = None;
+    let mut dataset_revision = None;
+    let mut evaluator_revision = None;
+    let mut model_revision = None;
+    let mut prompt_revision = None;
     for line in lines {
         if line.is_empty() {
             break;
@@ -134,6 +148,27 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         if name.eq_ignore_ascii_case("x-run-id") {
             run_id = Some(value.trim());
         }
+        if name.eq_ignore_ascii_case("x-actor-id") {
+            actor_id = Some(value.trim());
+        }
+        if name.eq_ignore_ascii_case("x-revision") {
+            revision = Some(value.trim());
+        }
+        if name.eq_ignore_ascii_case("x-experiment-id") {
+            experiment_id = Some(value.trim());
+        }
+        if name.eq_ignore_ascii_case("x-dataset-revision") {
+            dataset_revision = Some(value.trim());
+        }
+        if name.eq_ignore_ascii_case("x-evaluator-revision") {
+            evaluator_revision = Some(value.trim());
+        }
+        if name.eq_ignore_ascii_case("x-model-revision") {
+            model_revision = Some(value.trim());
+        }
+        if name.eq_ignore_ascii_case("x-prompt-revision") {
+            prompt_revision = Some(value.trim());
+        }
     }
     Some(Request {
         method,
@@ -150,6 +185,13 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         source_job_id,
         limit,
         run_id,
+        actor_id,
+        revision,
+        experiment_id,
+        dataset_revision,
+        evaluator_revision,
+        model_revision,
+        prompt_revision,
     })
 }
 

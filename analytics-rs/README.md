@@ -101,6 +101,12 @@ GET  /v1/evaluations       X-Run-ID, X-Limit             -> 200 JSON array
 GET  /v1/artifacts         X-Run-ID, X-Limit             -> 200 JSON array
 ```
 
+Creation uses the same routes with `POST`: experiments require `X-Job-ID`,
+`X-Actor-ID`, and `X-Revision`; runs require `X-Job-ID`, `X-Experiment-ID`,
+`X-Dataset-Revision`, `X-Evaluator-Revision`, `X-Model-Revision`, and
+`X-Prompt-Revision`. All identities are tenant-scoped and idempotency conflicts
+return `409`.
+
 These endpoints expose only revision metadata; prompts, inputs, outputs, and
 artifact bytes remain outside this control plane. Tenant fencing is enforced by
 the same PostgreSQL RLS transaction boundary used by worker operations.
