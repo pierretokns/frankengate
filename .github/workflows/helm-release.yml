@@ -86,15 +86,16 @@ jobs:
           app_version="$(awk '$1 == "appVersion:" {print $2}' helm-charts/bifrost/Chart.yaml)"
           app_version="${app_version%\"}"
           app_version="${app_version#\"}"
-          expected_app_version="${RELEASE_TAG#v}"
-          if [[ -z "$chart_version" || "$app_version" != "$expected_app_version" ]]; then
-            echo "Chart.yaml must have a version and appVersion=$expected_app_version; got version=$chart_version appVersion=$app_version" >&2
+          release_version="${RELEASE_TAG#v}"
+          if [[ -z "$chart_version" || -z "$app_version" ]]; then
+            echo "Chart.yaml must declare non-empty version and appVersion; got version=$chart_version appVersion=$app_version" >&2
             exit 1
           fi
+          echo "Packaging chart metadata as release version $release_version (source chart=$chart_version appVersion=$app_version)"
           owner="${GITHUB_REPOSITORY_OWNER,,}"
           {
-            echo "version=$chart_version"
-            echo "package=bifrost-$chart_version.tgz"
+            echo "version=$release_version"
+            echo "package=bifrost-$release_version.tgz"
             echo "oci_repository=ghcr.io/$owner/helm-charts/bifrost"
           } >> "$GITHUB_OUTPUT"
 
@@ -117,7 +118,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
-          helm package helm-charts/bifrost --destination dist
+          helm package helm-charts/bifrost \
+            --version "${{ steps.chart.outputs.version }}" \
+            --app-version "${{ steps.chart.outputs.version }}" \
+            --destination dist
           cd dist
           sha256sum "${{ steps.chart.outputs.package }}" > "${{ steps.chart.outputs.package }}.sha256"
 
