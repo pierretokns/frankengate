@@ -74,6 +74,7 @@ spec:
     spec:
       serviceAccountName: {{ include "bifrost.fullname" . }}-analytics
       automountServiceAccountToken: false
+      terminationGracePeriodSeconds: {{ .Values.analyticsControlPlane.terminationGracePeriodSeconds }}
       securityContext:
         runAsNonRoot: true
         seccompProfile:
@@ -137,5 +138,22 @@ spec:
         target:
           type: Utilization
           averageUtilization: {{ .Values.analyticsControlPlane.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
+{{- if .Values.analyticsControlPlane.podDisruptionBudget.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "bifrost.fullname" . }}-analytics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bifrost.labels" . | nindent 4 }}
+    app.kubernetes.io/component: analytics-control-plane
+spec:
+  minAvailable: {{ .Values.analyticsControlPlane.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "bifrost.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: analytics-control-plane
 {{- end }}
 {{- end }}

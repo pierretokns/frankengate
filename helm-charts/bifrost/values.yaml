@@ -16,6 +16,7 @@ analyticsControlPlane:
     pullPolicy: IfNotPresent
   replicas: 1
   command: ["frankengate-analytics-control", "--serve"]
+  terminationGracePeriodSeconds: 60
   # Secret containing the PostgreSQL URL. When unset, the control plane uses
   # its local protocol store and does not advertise durable persistence.
   databaseUrlSecret:
@@ -36,6 +37,9 @@ analyticsControlPlane:
     minReplicas: 1
     maxReplicas: 10
     targetCPUUtilizationPercentage: 70
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
 
 image:
   # Container image repository

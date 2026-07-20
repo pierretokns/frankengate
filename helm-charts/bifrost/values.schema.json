@@ -24,6 +24,7 @@
         },
         "replicas": { "type": "integer", "minimum": 1 },
         "command": { "type": "array", "items": { "type": "string" } },
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 },
         "databaseUrlSecret": {
           "type": "object",
           "properties": {
@@ -52,6 +53,14 @@
             "maxReplicas": { "type": "integer", "minimum": 1 },
             "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 }
           }
+        },
+        "podDisruptionBudget": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minAvailable": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
         }
       }
     },
