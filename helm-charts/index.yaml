@@ -2,7 +2,7 @@ apiVersion: v1
 entries:
   bifrost:
     - apiVersion: v2
-      appVersion: "0.3.14"
+      appVersion: "0.3.20-beta.2"
       description: FrankenGate enterprise AI gateway, packaged as a drop-in Bifrost-compatible Helm deployment
       home: https://github.com/pierretokns/frankengate
       keywords:
@@ -18,5 +18,5 @@ entries:
         - https://github.com/pierretokns/frankengate
       type: application
       urls:
-        - https://github.com/pierretokns/frankengate/releases/download/helm-chart-v0.3.14/bifrost-0.3.14.tgz
-      version: 0.3.14
+        - https://github.com/pierretokns/frankengate/releases/download/helm-chart-v0.3.20-beta.2/bifrost-0.3.20-beta.2.tgz
+      version: 0.3.20-beta.2
