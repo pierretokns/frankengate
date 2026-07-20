@@ -17,13 +17,17 @@ import (
 )
 
 const (
-	DefaultConfigSchemaURL = "https://www.getbifrost.ai/schema"
-	ConfigSchemaURLEnv     = "BIFROST_SCHEMA_URL"
+	DefaultConfigSchemaURL  = "https://www.getbifrost.ai/schema"
+	ConfigSchemaURLEnv      = "BIFROST_SCHEMA_URL"
+	FrankenGateSchemaURLEnv = "FRANKENGATE_SCHEMA_URL"
 )
 
 const schemaFetchTimeout = 10 * time.Second
 
 func configuredConfigSchemaLocation() string {
+	if value := strings.TrimSpace(os.Getenv(FrankenGateSchemaURLEnv)); value != "" {
+		return value
+	}
 	return strings.TrimSpace(os.Getenv(ConfigSchemaURLEnv))
 }
 
