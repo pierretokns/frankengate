@@ -69,6 +69,34 @@ func TestToOpenAIResponsesRequest_MantleFrontierAliasesUseScalarInput(t *testing
 	}
 }
 
+func TestToOpenAIResponsesRequest_LiftsAdditionalToolsForMantle(t *testing.T) {
+	var additional schemas.ResponsesMessage
+	if err := json.Unmarshal([]byte(`{"type":"additional_tools","tools":[{"type":"function","name":"lookup","description":"look up a value","parameters":{"type":"object","properties":{"q":{"type":"string"}}}}]}`), &additional); err != nil {
+		t.Fatalf("decode additional_tools: %v", err)
+	}
+	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
+		Provider: schemas.BedrockMantle,
+		Model:    "Claude-GPT-soul",
+		Input:    []schemas.ResponsesMessage{additional},
+	})
+	if converted == nil || len(converted.Tools) != 1 || converted.Tools[0].Type != schemas.ResponsesToolTypeFunction {
+		t.Fatalf("expected one lifted function tool, got %#v", converted)
+	}
+	if len(converted.Input.OpenAIResponsesRequestInputArray) != 0 && len(converted.Input.OpenAIResponsesRequestInputArray) != 1 {
+		t.Fatalf("unexpected input array: %#v", converted.Input.OpenAIResponsesRequestInputArray)
+	}
+	body, err := json.Marshal(converted)
+	if err != nil {
+		t.Fatalf("marshal Mantle request: %v", err)
+	}
+	if strings.Contains(string(body), `"type":"additional_tools"`) {
+		t.Fatalf("additional_tools leaked into Mantle wire input: %s", body)
+	}
+	if !strings.Contains(string(body), `"tools"`) {
+		t.Fatalf("lifted tools missing from Mantle request: %s", body)
+	}
+}
+
 func TestToOpenAIResponsesRequest_DefaultsMissingImageDetailWithoutMutation(t *testing.T) {
 	url := "https://example.test/image.png"
 	role := schemas.ResponsesInputMessageRoleUser

@@ -45,10 +45,23 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	capModel := schemas.ResolveCanonicalModel(ctx, bifrostReq.Model)
 
 	var messages []schemas.ResponsesMessage
+	// Codex emits tool declarations as an `additional_tools` input item. That
+	// item is accepted by Codex's front door, but Mantle's OpenAI Responses
+	// contract expects the declarations in the top-level `tools` field and
+	// rejects the unknown input-item discriminator. Lift the declarations while
+	// retaining all other input items (including tool_search call/output items).
+	liftAdditionalTools := bifrostReq.Provider == schemas.BedrockMantle
+	var additionalTools []schemas.ResponsesTool
+	if liftAdditionalTools {
+		additionalTools = extractOpenAIAdditionalTools(bifrostReq.Input)
+	}
 	// OpenAI models (except for gpt-oss) do not support reasoning content blocks, so we need to convert them to summaries, if there are any
 	// OpenAI also doesn't support compaction content blocks, so we need to convert them to text blocks
 	messages = make([]schemas.ResponsesMessage, 0, len(bifrostReq.Input))
 	for _, message := range bifrostReq.Input {
+		if liftAdditionalTools && message.Type != nil && *message.Type == schemas.ResponsesMessageTypeAdditionalTools {
+			continue
+		}
 		// First, check if message has compaction content blocks and convert them to text
 		if message.Content != nil && len(message.Content.ContentBlocks) > 0 {
 			hasCompaction := false
@@ -341,9 +354,45 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	}
 
 	if bifrostReq.Params != nil {
+		if len(additionalTools) > 0 {
+			// Copy before appending so the caller's request is never mutated.
+			req.Tools = append(append([]schemas.ResponsesTool(nil), req.Tools...), additionalTools...)
+		}
 		req.ExtraParams = bifrostReq.Params.ExtraParams
+	} else if len(additionalTools) > 0 {
+		req.Tools = append(req.Tools, additionalTools...)
 	}
 	return req
+}
+
+// extractOpenAIAdditionalTools decodes Codex's raw-preserved additional_tools
+// item into the neutral tool union. Malformed declarations are ignored here;
+// normal typed tools remain intact and the provider will return the upstream
+// validation error rather than silently serializing an invalid input item.
+func extractOpenAIAdditionalTools(messages []schemas.ResponsesMessage) []schemas.ResponsesTool {
+	var out []schemas.ResponsesTool
+	for _, message := range messages {
+		if message.Type == nil || *message.Type != schemas.ResponsesMessageTypeAdditionalTools {
+			continue
+		}
+		data, err := json.Marshal(message)
+		if err != nil {
+			continue
+		}
+		var item struct {
+			Tools []json.RawMessage `json:"tools"`
+		}
+		if err := json.Unmarshal(data, &item); err != nil {
+			continue
+		}
+		for _, raw := range item.Tools {
+			var tool schemas.ResponsesTool
+			if err := json.Unmarshal(raw, &tool); err == nil {
+				out = append(out, tool)
+			}
+		}
+	}
+	return out
 }
 
 func isGPT56Model(model string) bool {
