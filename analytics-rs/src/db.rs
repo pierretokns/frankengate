@@ -12,6 +12,18 @@ pub struct LeaseClaim {
     pub attempt: i32,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct RunSummary {
+    pub id: String,
+    pub experiment_id: String,
+    pub dataset_revision: String,
+    pub evaluator_revision: String,
+    pub model_revision: String,
+    pub prompt_revision: String,
+    pub terminal_outcome: Option<String>,
+    pub created_at: String,
+}
+
 /// Optional durable-store boot fence. The process remains usable in local
 /// development without Postgres, while production can require a reachable
 /// database by setting DATABASE_URL.
@@ -357,6 +369,70 @@ pub async fn create_run(pool: &PgPool, tenant: &str, run: &Run) -> Result<bool, 
     .await?;
     tx.commit().await?;
     Ok(result.rows_affected() == 1)
+}
+
+/// Return a bounded, deterministic run projection for one tenant. The tenant
+/// setting is established inside the same transaction as the query so RLS
+/// remains authoritative even when this endpoint is called by a dashboard.
+pub async fn list_runs(
+    pool: &PgPool,
+    tenant: &str,
+    limit: i64,
+) -> Result<Vec<RunSummary>, sqlx::Error> {
+    let mut tx = pool.begin().await?;
+    sqlx::query("select set_config('app.tenant_id', $1, true)")
+        .bind(tenant)
+        .execute(&mut *tx)
+        .await?;
+    let rows = sqlx::query_as::<
+        _,
+        (
+            String,
+            String,
+            String,
+            String,
+            String,
+            String,
+            Option<String>,
+            String,
+        ),
+    >(
+        "select id, experiment_id, dataset_revision, evaluator_revision, model_revision,
+                prompt_revision, terminal_outcome, created_at::text
+           from frankengate_analytics.runs
+          where tenant_id = $1
+          order by created_at desc, id desc
+          limit $2",
+    )
+    .bind(tenant)
+    .bind(limit.clamp(1, 100))
+    .fetch_all(&mut *tx)
+    .await?;
+    tx.commit().await?;
+    Ok(rows
+        .into_iter()
+        .map(
+            |(
+                id,
+                experiment_id,
+                dataset_revision,
+                evaluator_revision,
+                model_revision,
+                prompt_revision,
+                terminal_outcome,
+                created_at,
+            )| RunSummary {
+                id,
+                experiment_id,
+                dataset_revision,
+                evaluator_revision,
+                model_revision,
+                prompt_revision,
+                terminal_outcome,
+                created_at,
+            },
+        )
+        .collect())
 }
 
 pub async fn record_evaluation(

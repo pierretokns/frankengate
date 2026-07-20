@@ -519,6 +519,44 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/runs" if method == "GET" => {
+            let tenant = query_param(query, "tenant");
+            let limit = query_param(query, "limit")
+                .and_then(|value| value.parse::<i64>().ok())
+                .unwrap_or(50)
+                .clamp(1, 100);
+            match (database.as_ref(), tenant) {
+                (Some(pool), Some(tenant)) => {
+                    let runs = tokio::runtime::Runtime::new().ok().and_then(|runtime| {
+                        runtime
+                            .block_on(frankengate_analytics_control::db::list_runs(
+                                pool, tenant, limit,
+                            ))
+                            .ok()
+                    });
+                    match runs {
+                        Some(runs) => match serde_json::to_string(&runs) {
+                            Ok(body) => ("200 OK", "application/json", body),
+                            Err(_) => (
+                                "500 Internal Server Error",
+                                "text/plain",
+                                "failed to encode runs\n".to_string(),
+                            ),
+                        },
+                        None => (
+                            "503 Service Unavailable",
+                            "text/plain",
+                            "database unavailable\n".to_string(),
+                        ),
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "tenant and DATABASE_URL are required\n".to_string(),
+                ),
+            }
+        }
         "/v1/runs" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let id = query_param(query, "id");

@@ -73,6 +73,10 @@ and returns JSON, or `503` if the database cannot be queried.
 `/healthz` is process liveness only; `/readyz` also performs a bounded
 Postgres `SELECT 1` and returns `503` when the durable store is unavailable,
 so Kubernetes removes a disconnected control-plane pod from service.
+Dashboard consumers can fetch a bounded tenant-scoped run projection with
+`GET /v1/runs?tenant=<tenant-id>&limit=50` (the limit is clamped to 1–100).
+The response contains revision and terminal-outcome metadata only; it does
+not expose prompt, trace, or artifact contents.
 Workers can claim one durable job with
 `/v1/jobs/lease?tenant=<tenant-id>&worker=<worker-id>&lease_seconds=30`.
 Jobs are submitted with
