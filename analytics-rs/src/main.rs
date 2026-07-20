@@ -68,21 +68,30 @@ fn handle_connection(mut stream: std::net::TcpStream) {
 /// refuse readiness until its TCP endpoint is reachable.  The contract crate
 /// remains usable without a database for local protocol tests and `--check`.
 fn readiness_response() -> (&'static str, &'static str, String) {
+    use std::net::ToSocketAddrs;
     let Some(database_url) = std::env::var_os("DATABASE_URL") else {
         return ("200 OK", "text/plain", "ok\n".to_string());
     };
     let database_url = database_url.to_string_lossy();
-    let Some((host, port)) = postgres_endpoint(&database_url) else {
+    let Some(endpoint) = postgres_endpoint(&database_url) else {
         return (
             "503 Service Unavailable",
             "text/plain",
             "database endpoint is invalid\n".to_string(),
         );
     };
-    match std::net::TcpStream::connect_timeout(
-        &std::net::SocketAddr::new(host, port),
-        std::time::Duration::from_millis(250),
-    ) {
+    let address = endpoint
+        .to_socket_addrs()
+        .ok()
+        .and_then(|mut addresses| addresses.next());
+    let Some(address) = address else {
+        return (
+            "503 Service Unavailable",
+            "text/plain",
+            "database unavailable\n".to_string(),
+        );
+    };
+    match std::net::TcpStream::connect_timeout(&address, std::time::Duration::from_millis(250)) {
         Ok(_) => ("200 OK", "text/plain", "ok\n".to_string()),
         Err(_) => (
             "503 Service Unavailable",
@@ -92,30 +101,32 @@ fn readiness_response() -> (&'static str, &'static str, String) {
     }
 }
 
-fn postgres_endpoint(url: &str) -> Option<(std::net::IpAddr, u16)> {
+fn postgres_endpoint(url: &str) -> Option<String> {
     let authority = url.split("://").nth(1)?.split('/').next()?;
     let authority = authority.rsplit('@').next()?;
     let (host, port) = authority.rsplit_once(':').unwrap_or((authority, "5432"));
     let host = host.trim_matches(['[', ']']);
-    let ip = host.parse().ok()?;
-    Some((ip, port.parse().ok()?))
+    let port = port.parse::<u16>().ok()?;
+    Some(format!("{host}:{port}"))
 }
 
 #[cfg(test)]
 mod tests {
     use super::postgres_endpoint;
-    use std::net::{IpAddr, Ipv4Addr};
 
     #[test]
     fn parses_postgres_ipv4_url() {
         assert_eq!(
             postgres_endpoint("postgres://user:pass@127.0.0.1:5433/db"),
-            Some((IpAddr::V4(Ipv4Addr::LOCALHOST), 5433))
+            Some("127.0.0.1:5433".into())
         );
     }
 
     #[test]
-    fn rejects_non_ip_hosts_without_dns_side_effects() {
-        assert_eq!(postgres_endpoint("postgres://db.internal:5432/db"), None);
+    fn preserves_kubernetes_dns_hosts_for_resolution() {
+        assert_eq!(
+            postgres_endpoint("postgres://db.internal:5432/db"),
+            Some("db.internal:5432".into())
+        );
     }
 }
