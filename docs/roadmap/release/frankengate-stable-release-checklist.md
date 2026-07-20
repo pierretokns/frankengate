@@ -9,8 +9,16 @@ Status: preparation; no stable release claim.
   - Helm rendering and fork schema URL;
   - Rust analytics contract tests;
   - pricing mirror contract tests.
-- Rust contract currently has six passing tests for protocol versioning,
-  leasing, renewal, expiry/requeue, cancellation, completion, and lineage.
+- `cargo test --manifest-path analytics-rs/Cargo.toml` currently passes 22
+  tests covering protocol versioning, leasing, renewal, expiry/requeue,
+  cancellation, completion, lineage, checkpoints, drain, retry, and durable
+  SQLx lifecycle (when Postgres is configured).
+- `cargo build --release --locked` plus the exact binary `--check` passes;
+  Helm lint and enabled analytics-control-plane rendering pass. Analytics pods
+  use a configurable startup probe for migration/database boot fencing.
+- The fork-owned local overhead benchmark passes under elevated loopback
+  networking with sub-0.1ms measured added p50/p95 overhead and zero errors;
+  fixture bind failures now fail fast with an actionable diagnostic.
 - Pricing synchronization validates malformed documents and publishes an
   attributed FrankenGate envelope plus an immutable upstream snapshot.
 
