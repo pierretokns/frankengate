@@ -8,6 +8,25 @@ metadata:
     {{- include "bifrost.labels" . | nindent 4 }}
     app.kubernetes.io/component: analytics-control-plane
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bifrost.fullname" . }}-analytics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bifrost.labels" . | nindent 4 }}
+    app.kubernetes.io/component: analytics-control-plane
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "bifrost.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: analytics-control-plane
+  ports:
+    - name: http
+      port: 8081
+      targetPort: http
+      protocol: TCP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
