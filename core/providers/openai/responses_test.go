@@ -50,6 +50,25 @@ func TestToOpenAIResponsesRequest_GPT56ToolItemsRemainStructured(t *testing.T) {
 	}
 }
 
+func TestToOpenAIResponsesRequest_MantleFrontierAliasesUseScalarInput(t *testing.T) {
+	for _, model := range []string{"Claude-GPT-soul", "Claude-GPT-luna", "Claude-GPT-terra"} {
+		converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
+			Provider: schemas.BedrockMantle,
+			Model:    model,
+			Input: []schemas.ResponsesMessage{{
+				Role:    schemas.Ptr(schemas.ResponsesInputMessageRoleUser),
+				Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("hello Mantle")},
+			}},
+		})
+		if converted == nil || converted.Input.OpenAIResponsesRequestInputStr == nil {
+			t.Fatalf("%s: expected scalar input", model)
+		}
+		if converted.Input.OpenAIResponsesRequestInputArray != nil {
+			t.Fatalf("%s: expected array input to be omitted", model)
+		}
+	}
+}
+
 func TestToOpenAIResponsesRequest_DefaultsMissingImageDetailWithoutMutation(t *testing.T) {
 	url := "https://example.test/image.png"
 	role := schemas.ResponsesInputMessageRoleUser

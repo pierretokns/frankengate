@@ -233,7 +233,7 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	// union form of `input` for ordinary message turns (the same payload is
 	// accepted by public OpenAI). Keep structured arrays for tool/non-message
 	// items, but use the scalar form when every item is a plain text message.
-	if isGPT56Model(capModel) {
+	if isGPT56Model(capModel) || isMantleFrontierAlias(bifrostReq.Provider, capModel, bifrostReq.Model) {
 		if flattened, ok := flattenPlainTextMessages(messages); ok {
 			req.Input = OpenAIResponsesRequestInput{OpenAIResponsesRequestInputStr: schemas.Ptr(flattened)}
 		}
@@ -349,6 +349,24 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 func isGPT56Model(model string) bool {
 	model = strings.ToLower(model)
 	return strings.Contains(model, "gpt-5.6")
+}
+
+// Mantle exposes the GPT-5.6 Sol/Terra/Luna deployments through aliases used
+// by Claude Code model pickers (for example Claude-GPT-soul). Those aliases
+// are still served by Mantle's OpenAI Responses contract, whose input union
+// rejects the message-array form for ordinary text turns. Keep this check
+// scoped to Mantle so similarly named models on other providers retain the
+// normal OpenAI wire shape.
+func isMantleFrontierAlias(provider schemas.ModelProvider, canonical, requested string) bool {
+	if provider != schemas.BedrockMantle {
+		return false
+	}
+	name := strings.ToLower(canonical + " " + requested)
+	name = strings.NewReplacer("_", "-", "/", "-", ".", "-").Replace(name)
+	return strings.Contains(name, "gpt-soul") ||
+		strings.Contains(name, "gpt-luna") ||
+		strings.Contains(name, "gpt-terra") ||
+		strings.Contains(name, "gpt-sol")
 }
 
 func flattenPlainTextMessages(messages []schemas.ResponsesMessage) (string, bool) {
