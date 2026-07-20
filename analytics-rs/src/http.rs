@@ -12,6 +12,7 @@ pub enum Route {
     Complete,
     Fail,
     Cancel,
+    Checkpoint,
     Unknown,
 }
 
@@ -27,6 +28,7 @@ pub fn route_for(path: &str) -> Route {
         "/v1/jobs/complete" => Route::Complete,
         "/v1/jobs/fail" => Route::Fail,
         "/v1/jobs/cancel" => Route::Cancel,
+        "/v1/jobs/checkpoint" => Route::Checkpoint,
         _ => Route::Unknown,
     }
 }
@@ -46,6 +48,7 @@ pub struct Request<'a> {
     pub worker_id: Option<&'a str>,
     pub lease_seconds: Option<&'a str>,
     pub error_code: Option<&'a str>,
+    pub checkpoint: Option<&'a str>,
 }
 
 pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
@@ -69,6 +72,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
     let mut worker_id = None;
     let mut lease_seconds = None;
     let mut error_code = None;
+    let mut checkpoint = None;
     for line in lines {
         if line.is_empty() {
             break;
@@ -95,6 +99,9 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         if name.eq_ignore_ascii_case("x-error-code") {
             error_code = Some(value.trim());
         }
+        if name.eq_ignore_ascii_case("x-checkpoint") {
+            checkpoint = Some(value.trim());
+        }
     }
     Some(Request {
         method,
@@ -106,6 +113,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         worker_id,
         lease_seconds,
         error_code,
+        checkpoint,
     })
 }
 

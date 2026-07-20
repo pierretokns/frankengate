@@ -94,10 +94,14 @@ fn handle_connection(
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
-        "/v1/jobs" | "/v1/jobs/stats" | "/v1/jobs/lease" | "/v1/jobs/renew"
-        | "/v1/jobs/complete" | "/v1/jobs/fail" | "/v1/jobs/cancel" => {
-            governed_response(parsed.as_ref(), &database, &runtime)
-        }
+        "/v1/jobs"
+        | "/v1/jobs/stats"
+        | "/v1/jobs/lease"
+        | "/v1/jobs/renew"
+        | "/v1/jobs/complete"
+        | "/v1/jobs/fail"
+        | "/v1/jobs/cancel"
+        | "/v1/jobs/checkpoint" => governed_response(parsed.as_ref(), &database, &runtime),
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
@@ -296,6 +300,48 @@ fn governed_response(
                 "500 Internal Server Error",
                 "text/plain",
                 "job transition failed\n".into(),
+            ),
+        };
+    }
+    if request.path == "/v1/jobs/checkpoint" {
+        if request.method != "POST" {
+            return (
+                "405 Method Not Allowed",
+                "text/plain",
+                "only POST is supported\n".into(),
+            );
+        }
+        let Some(job_id) = request.job_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-job-id is required\n".into(),
+            );
+        };
+        let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-worker-id is required\n".into(),
+            );
+        };
+        let Some(checkpoint) = request.checkpoint.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-checkpoint is required\n".into(),
+            );
+        };
+        let checkpoint = &checkpoint[..checkpoint.len().min(4096)];
+        return match runtime
+            .block_on(database.save_checkpoint(tenant, job_id, worker_id, checkpoint))
+        {
+            Ok(true) => ("204 No Content", "text/plain", String::new()),
+            Ok(false) => ("409 Conflict", "text/plain", "checkpoint rejected\n".into()),
+            Err(_) => (
+                "500 Internal Server Error",
+                "text/plain",
+                "checkpoint failed\n".into(),
             ),
         };
     }
