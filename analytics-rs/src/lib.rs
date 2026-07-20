@@ -398,6 +398,24 @@ impl JobStore {
         stats
     }
 
+    /// Return aggregate queue counters for worker-pool scaling signals.
+    /// Counters are computed under one lock so a snapshot cannot mix states
+    /// from different queue observations.
+    pub fn stats(&self) -> JobStats {
+        let jobs = self.jobs.lock().expect("job store lock poisoned");
+        let mut stats = JobStats::default();
+        for job in jobs.values() {
+            match job.state {
+                JobState::Queued => stats.queued += 1,
+                JobState::Leased { .. } => stats.leased += 1,
+                JobState::Cancelled => stats.cancelled += 1,
+                JobState::Completed => stats.completed += 1,
+                JobState::Failed { .. } => stats.failed += 1,
+            }
+        }
+        stats
+    }
+
     pub fn lease(&self, id: &str, worker: impl Into<String>) -> Result<Job, LeaseError> {
         self.lease_for(id, worker, Duration::from_secs(30))
     }
@@ -648,6 +666,30 @@ mod tests {
         assert_eq!(jobs[0].id, "j1");
         assert_eq!(jobs[1].id, "j3");
         assert!(store.list_for_tenant("tenant-c", 10).is_empty());
+    }
+
+    #[test]
+    fn aggregate_stats_are_a_consistent_worker_scaling_snapshot() {
+        let store = JobStore::default();
+        store.enqueue("queued-a", "tenant-a", "eval");
+        store.enqueue("queued-b", "tenant-b", "eval");
+        store.enqueue("leased", "tenant-a", "eval");
+        store.lease("leased", "worker-a").unwrap();
+        store.enqueue("cancelled", "tenant-b", "eval");
+        store.cancel("cancelled").unwrap();
+        store.enqueue("completed", "tenant-a", "eval");
+        store.lease("completed", "worker-a").unwrap();
+        store.complete("completed", "worker-a").unwrap();
+        assert_eq!(
+            store.stats(),
+            JobStats {
+                queued: 2,
+                leased: 1,
+                cancelled: 1,
+                completed: 1,
+                failed: 0,
+            }
+        );
     }
 
     #[test]
