@@ -61,6 +61,24 @@ create table if not exists frankengate_analytics.jobs (
 create index if not exists jobs_tenant_state_created_idx
   on frankengate_analytics.jobs (tenant_id, state, created_at, id);
 
+-- Lease, heartbeat, checkpoint, and terminal transitions must advance the
+-- timestamp used by recovery and operational dashboards.  Keep this trigger
+-- idempotent so rolling migration retries do not fail.
+create or replace function frankengate_analytics.touch_job_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists jobs_touch_updated_at on frankengate_analytics.jobs;
+create trigger jobs_touch_updated_at
+before update on frankengate_analytics.jobs
+for each row execute function frankengate_analytics.touch_job_updated_at();
+
 create table if not exists frankengate_analytics.run_attempts (
   id text primary key,
   tenant_id text not null,
@@ -92,11 +110,17 @@ drop policy if exists artifacts_tenant_isolation on frankengate_analytics.artifa
 drop policy if exists jobs_tenant_isolation on frankengate_analytics.jobs;
 
 alter table frankengate_analytics.experiments enable row level security;
+alter table frankengate_analytics.experiments force row level security;
 alter table frankengate_analytics.runs enable row level security;
+alter table frankengate_analytics.runs force row level security;
 alter table frankengate_analytics.run_attempts enable row level security;
+alter table frankengate_analytics.run_attempts force row level security;
 alter table frankengate_analytics.evaluation_results enable row level security;
+alter table frankengate_analytics.evaluation_results force row level security;
 alter table frankengate_analytics.artifact_manifests enable row level security;
+alter table frankengate_analytics.artifact_manifests force row level security;
 alter table frankengate_analytics.jobs enable row level security;
+alter table frankengate_analytics.jobs force row level security;
 
 -- The connection pool must set app.tenant_id for every transaction. Missing
 -- tenant context fails closed rather than exposing cross-tenant analytics.
@@ -104,8 +128,20 @@ create policy experiments_tenant_isolation on frankengate_analytics.experiments
   using (tenant_id = nullif(current_setting('app.tenant_id', true), ''))
   with check (tenant_id = nullif(current_setting('app.tenant_id', true), ''));
 create policy runs_tenant_isolation on frankengate_analytics.runs
-  using (tenant_id = nullif(current_setting('app.tenant_id', true), ''))
-  with check (tenant_id = nullif(current_setting('app.tenant_id', true), ''));
+  using (
+    tenant_id = nullif(current_setting('app.tenant_id', true), '')
+    and exists (
+      select 1 from frankengate_analytics.experiments e
+      where e.id = experiment_id and e.tenant_id = runs.tenant_id
+    )
+  )
+  with check (
+    tenant_id = nullif(current_setting('app.tenant_id', true), '')
+    and exists (
+      select 1 from frankengate_analytics.experiments e
+      where e.id = experiment_id and e.tenant_id = runs.tenant_id
+    )
+  );
 create policy run_attempts_tenant_isolation on frankengate_analytics.run_attempts
   using (
     tenant_id = nullif(current_setting('app.tenant_id', true), '')

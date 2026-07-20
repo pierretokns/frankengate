@@ -225,11 +225,13 @@ pub enum LeaseError {
     AlreadyCancelled,
     CheckpointTooLarge,
     CapacityExceeded,
+    InvalidRequest,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum QueueError {
     CapacityExceeded,
+    InvalidRequest,
 }
 
 #[derive(Clone, Default)]
@@ -255,6 +257,9 @@ impl JobStore {
         let id = id.into();
         let tenant = tenant.into();
         let kind = kind.into();
+        if id.is_empty() || tenant.is_empty() || kind.is_empty() {
+            return Err(QueueError::InvalidRequest);
+        }
         let job = Job {
             id: id.clone(),
             tenant,
@@ -277,8 +282,12 @@ impl JobStore {
     }
 
     pub fn submit(&self, request: SubmitJob) -> Result<Job, LeaseError> {
-        if request.protocol_version != PROTOCOL_VERSION {
-            return Err(LeaseError::NotLeasable);
+        if request.protocol_version != PROTOCOL_VERSION
+            || request.id.is_empty()
+            || request.tenant.is_empty()
+            || request.kind.is_empty()
+        {
+            return Err(LeaseError::InvalidRequest);
         }
         Ok(self.enqueue(request.id, request.tenant, request.kind))
     }
@@ -309,8 +318,13 @@ impl JobStore {
 
     /// Enqueues a replay only for a terminal source job in the same tenant.
     pub fn replay(&self, request: ReplayJob) -> Result<Job, LeaseError> {
-        if request.protocol_version != PROTOCOL_VERSION {
-            return Err(LeaseError::NotLeasable);
+        if request.protocol_version != PROTOCOL_VERSION
+            || request.replay_id.is_empty()
+            || request.source_job_id.is_empty()
+            || request.tenant.is_empty()
+            || request.kind.is_empty()
+        {
+            return Err(LeaseError::InvalidRequest);
         }
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let source = jobs
@@ -719,6 +733,23 @@ mod tests {
     }
 
     #[test]
+    fn bounded_enqueue_rejects_empty_identity_fields() {
+        let store = JobStore::with_capacity(1);
+        assert_eq!(
+            store.try_enqueue("", "tenant-a", "eval"),
+            Err(QueueError::InvalidRequest)
+        );
+        assert_eq!(
+            store.try_enqueue("job-a", "", "eval"),
+            Err(QueueError::InvalidRequest)
+        );
+        assert_eq!(
+            store.try_enqueue("job-a", "tenant-a", ""),
+            Err(QueueError::InvalidRequest)
+        );
+    }
+
+    #[test]
     fn worker_failure_is_terminal_and_owner_scoped() {
         let store = JobStore::default();
         store.enqueue("j10", "tenant-a", "eval");
@@ -774,6 +805,30 @@ mod tests {
             })
             .expect("current protocol is accepted");
         assert_eq!(job.state, JobState::Queued);
+    }
+
+    #[test]
+    fn submitted_and_replayed_jobs_reject_empty_identity_fields() {
+        let store = JobStore::default();
+        assert_eq!(
+            store.submit(SubmitJob {
+                protocol_version: PROTOCOL_VERSION,
+                id: String::new(),
+                tenant: "tenant-a".into(),
+                kind: "eval".into(),
+            }),
+            Err(LeaseError::InvalidRequest)
+        );
+        assert_eq!(
+            store.replay(ReplayJob {
+                protocol_version: PROTOCOL_VERSION,
+                replay_id: "replay-1".into(),
+                source_job_id: String::new(),
+                tenant: "tenant-a".into(),
+                kind: "eval".into(),
+            }),
+            Err(LeaseError::InvalidRequest)
+        );
     }
 
     #[test]

@@ -49,6 +49,11 @@ spec:
         app.kubernetes.io/component: analytics-control-plane
     spec:
       serviceAccountName: {{ include "bifrost.fullname" . }}-analytics
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: analytics-control-plane
           image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}"
@@ -57,6 +62,11 @@ spec:
           ports:
             - name: http
               containerPort: 8081
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
           livenessProbe:
             httpGet:
               path: /healthz
