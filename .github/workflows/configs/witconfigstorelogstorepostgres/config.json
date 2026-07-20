@@ -1,5 +1,5 @@
 {
-    "$schema": "https://www.getbifrost.ai/schema",
+  "$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json",
     "config_store": {
         "enabled": true,
         "type": "postgres",
