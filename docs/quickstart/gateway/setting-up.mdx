@@ -167,7 +167,7 @@ For the full reconciliation rules, see [Source of Truth & Reconciliation](/deplo
 
 ### Optional: DB-backed config.json
 
-<Note>You can view entire config schema [here](https://www.getbifrost.ai/schema)</Note>
+<Note>You can view the entire [FrankenGate config schema](https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json).</Note>
 
 **When to use:** Bootstrap from file, then keep runtime UI/API configuration available.
 
@@ -175,7 +175,7 @@ Create `config.json` in your app directory:
 
 ```json
 {
-  "$schema": "https://www.getbifrost.ai/schema",
+  "$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json",
   "client": {
     "drop_excess_requests": false
   },
@@ -217,7 +217,7 @@ Set `config_store.enabled` to `false` when `config.json` should be the only conf
 
 ```json
 {
-  "$schema": "https://www.getbifrost.ai/schema",
+  "$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json",
   "providers": {
     "openai": {
       "keys": [
