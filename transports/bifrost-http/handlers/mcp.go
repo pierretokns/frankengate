@@ -301,7 +301,7 @@ func (h *MCPHandler) forceSyncMCPLibrary(ctx *fasthttp.RequestCtx) {
 		count, err = h.store.ModelCatalog.ForceReloadMCPLibrary(ctx)
 	} else {
 		// Resolve the effective MCP library URL from framework config (DB → file → default).
-		mcpLibraryURL := modelcatalog.DefaultMCPLibraryURL
+		mcpLibraryURL := modelcatalog.EffectiveMCPLibraryURL()
 		if h.store.FrameworkConfig != nil && h.store.FrameworkConfig.Pricing != nil && h.store.FrameworkConfig.Pricing.MCPLibraryURL != nil {
 			if u := *h.store.FrameworkConfig.Pricing.MCPLibraryURL; u != "" {
 				mcpLibraryURL = u

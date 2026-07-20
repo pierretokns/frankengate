@@ -61,7 +61,7 @@ func Init(ctx context.Context, config *Config, configStore configstore.ConfigSto
 	if config != nil && config.ModelParametersURL != nil && *config.ModelParametersURL != "" {
 		modelParametersURL = *config.ModelParametersURL
 	}
-	mcpLibraryURL := DefaultMCPLibraryURL
+	mcpLibraryURL := EffectiveMCPLibraryURL()
 	if config != nil && config.MCPLibraryURL != nil && *config.MCPLibraryURL != "" {
 		mcpLibraryURL = *config.MCPLibraryURL
 	}
@@ -313,7 +313,7 @@ func (mc *ModelCatalog) UpdateSyncConfig(ctx context.Context, config *Config) er
 	if config != nil && config.ModelParametersURL != nil && *config.ModelParametersURL != "" {
 		modelParametersURL = *config.ModelParametersURL
 	}
-	mcpLibraryURL := DefaultMCPLibraryURL
+	mcpLibraryURL := EffectiveMCPLibraryURL()
 	if config != nil && config.MCPLibraryURL != nil && *config.MCPLibraryURL != "" {
 		mcpLibraryURL = *config.MCPLibraryURL
 	}

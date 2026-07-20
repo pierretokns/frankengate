@@ -1,6 +1,8 @@
 package modelcatalog
 
 import (
+	"os"
+	"strings"
 	"time"
 
 	"github.com/maximhq/bifrost/core/schemas"
@@ -16,6 +18,17 @@ const (
 	ConfigLastParamsSyncKey     = "LastModelParametersSync"
 	ConfigLastMCPLibrarySyncKey = "LastMCPLibrarySync"
 )
+
+// EffectiveMCPLibraryURL allows fork deployments to point catalog sync at an
+// internally mirrored, reviewed source without changing compatibility defaults.
+// The environment override is intentionally explicit so an inherited upstream
+// endpoint is never silently replaced by a guessed fork URL.
+func EffectiveMCPLibraryURL() string {
+	if value := strings.TrimSpace(os.Getenv("FRANKENGATE_MCP_LIBRARY_URL")); value != "" {
+		return value
+	}
+	return DefaultMCPLibraryURL
+}
 
 // Config is the model pricing configuration.
 type Config struct {
