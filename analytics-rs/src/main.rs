@@ -16,6 +16,7 @@ fn main() {
 
 fn serve() {
     use std::net::TcpListener;
+    use std::sync::Arc;
 
     // Do not advertise readiness until the control-plane contract itself is
     // executable.  This is intentionally a boot fence: a future durable
@@ -26,13 +27,18 @@ fn serve() {
     let port = std::env::var("PORT").unwrap_or_else(|_| "8081".into());
     let listener = TcpListener::bind(("0.0.0.0", port.parse::<u16>().expect("PORT must be a u16")))
         .expect("analytics control-plane listener failed to bind");
+    let store = Arc::new(frankengate_analytics_control::JobStore::default());
     println!("FrankenGate analytics control plane listening on 0.0.0.0:{port}");
     for stream in listener.incoming().flatten() {
-        std::thread::spawn(|| handle_connection(stream));
+        let store = Arc::clone(&store);
+        std::thread::spawn(|| handle_connection(stream, store));
     }
 }
 
-fn handle_connection(mut stream: std::net::TcpStream) {
+fn handle_connection(
+    mut stream: std::net::TcpStream,
+    store: std::sync::Arc<frankengate_analytics_control::JobStore>,
+) {
     use std::io::{Read, Write};
     // Health probes are tiny and bounded.  Do not let an accepted but idle
     // socket consume a thread forever (especially during a probe storm).
@@ -54,6 +60,21 @@ fn handle_connection(mut stream: std::net::TcpStream) {
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
+        "/metrics" => {
+            let stats = store.stats();
+            (
+                "200 OK",
+                "text/plain; version=0.0.4",
+                format!(
+                    "# HELP frankengate_analytics_jobs Number of analytics jobs by state.\n# TYPE frankengate_analytics_jobs gauge\nfrankengate_analytics_jobs{{state=\"queued\"}} {}\nfrankengate_analytics_jobs{{state=\"leased\"}} {}\nfrankengate_analytics_jobs{{state=\"cancelled\"}} {}\nfrankengate_analytics_jobs{{state=\"completed\"}} {}\nfrankengate_analytics_jobs{{state=\"failed\"}} {}\n",
+                    stats.queued,
+                    stats.leased,
+                    stats.cancelled,
+                    stats.completed,
+                    stats.failed
+                ),
+            )
+        }
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
