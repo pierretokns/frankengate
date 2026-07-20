@@ -115,10 +115,11 @@ impl JobStore {
             attempt: 0,
             lease_until: None,
         };
-        self.jobs
-            .lock()
-            .expect("job store lock poisoned")
-            .insert(job.id.clone(), job.clone());
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        if let Some(existing) = jobs.get(&job.id) {
+            return existing.clone();
+        }
+        jobs.insert(job.id.clone(), job.clone());
         job
     }
 
@@ -224,6 +225,18 @@ mod tests {
         assert!(store.lease("j1", "worker-a").is_ok());
         assert_eq!(store.lease("j1", "worker-b"), Err(LeaseError::NotLeasable));
         assert!(store.complete("j1", "worker-a").is_ok());
+    }
+
+    #[test]
+    fn duplicate_delivery_does_not_reset_terminal_job() {
+        let store = JobStore::default();
+        store.enqueue("j1b", "tenant-a", "replay");
+        store.lease("j1b", "worker-a").unwrap();
+        store.complete("j1b", "worker-a").unwrap();
+        let duplicate = store.enqueue("j1b", "tenant-a", "replay");
+        assert_eq!(duplicate.state, JobState::Completed);
+        assert_eq!(duplicate.attempt, 1);
+        assert_eq!(store.lease("j1b", "worker-b"), Err(LeaseError::NotLeasable));
     }
 
     #[test]
