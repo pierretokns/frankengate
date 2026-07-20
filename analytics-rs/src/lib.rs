@@ -155,6 +155,30 @@ impl JobStore {
         self.lease_for(id, worker, Duration::from_secs(30))
     }
 
+    /// Atomically claim the first queued job for a tenant.
+    pub fn lease_next_for_tenant(
+        &self,
+        tenant: &str,
+        worker: impl Into<String>,
+        duration: Duration,
+    ) -> Option<Job> {
+        let worker = worker.into();
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        let id = jobs
+            .values()
+            .filter(|job| job.tenant == tenant && matches!(job.state, JobState::Queued))
+            .map(|job| job.id.clone())
+            .min()?;
+        let job = jobs.get_mut(&id)?;
+        job.attempt = job.attempt.saturating_add(1);
+        job.state = JobState::Leased {
+            worker,
+            attempt: job.attempt,
+        };
+        job.lease_until = Some(Instant::now() + duration);
+        Some(job.clone())
+    }
+
     pub fn lease_for(
         &self,
         id: &str,
@@ -371,6 +395,29 @@ mod tests {
             store.checkpoint("j7b", "worker-a", "x".repeat(4097)),
             Err(LeaseError::CheckpointTooLarge)
         );
+    }
+
+    #[test]
+    fn lease_next_claims_one_deterministic_tenant_job_atomically() {
+        let store = JobStore::default();
+        store.enqueue("j9", "tenant-a", "eval");
+        store.enqueue("j8", "tenant-a", "replay");
+        store.enqueue("j7", "tenant-b", "eval");
+        assert_eq!(
+            store.lease_next_for_tenant("tenant-a", "worker-a", Duration::from_secs(30))
+                .unwrap()
+                .id,
+            "j8"
+        );
+        assert_eq!(
+            store.lease_next_for_tenant("tenant-a", "worker-b", Duration::from_secs(30))
+                .unwrap()
+                .id,
+            "j9"
+        );
+        assert!(store
+            .lease_next_for_tenant("tenant-a", "worker-c", Duration::from_secs(30))
+            .is_none());
     }
 
     #[test]
