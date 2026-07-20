@@ -89,7 +89,7 @@ fn handle_connection(
     }
     let (status, content_type, body) = match path {
         "/healthz" => ("200 OK", "text/plain", "ok\n".to_string()),
-        "/readyz" => readiness_response(),
+        "/readyz" => readiness_response(&database, &runtime),
         "/version" => (
             "200 OK",
             "text/plain",
@@ -453,7 +453,20 @@ fn governed_response(
 /// Readiness is a boot fence, not liveness.  When a database is configured,
 /// refuse readiness until its TCP endpoint is reachable.  The contract crate
 /// remains usable without a database for local protocol tests and `--check`.
-fn readiness_response() -> (&'static str, &'static str, String) {
+fn readiness_response(
+    database: &std::sync::Arc<Option<frankengate_analytics_control::database::Database>>,
+    runtime: &std::sync::Arc<tokio::runtime::Runtime>,
+) -> (&'static str, &'static str, String) {
+    if let Some(database) = database.as_ref() {
+        return match runtime.block_on(database.ready()) {
+            Ok(()) => ("200 OK", "text/plain", "ok\n".to_string()),
+            Err(_) => (
+                "503 Service Unavailable",
+                "text/plain",
+                "database unavailable\n".to_string(),
+            ),
+        };
+    }
     use std::net::ToSocketAddrs;
     let Some(database_url) = std::env::var_os("DATABASE_URL") else {
         return ("200 OK", "text/plain", "ok\n".to_string());
