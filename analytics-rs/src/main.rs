@@ -33,12 +33,16 @@ fn serve() {
             .expect("analytics control-plane runtime failed to start"),
     );
     let database = config.database_url.as_deref().map(|url| {
-        runtime
+        let database = runtime
             .block_on(frankengate_analytics_control::database::Database::connect(
                 url,
                 config.pool_max_connections,
             ))
-            .unwrap_or_else(|error| panic!("analytics database connection failed: {error}"))
+            .unwrap_or_else(|error| panic!("analytics database connection failed: {error}"));
+        runtime
+            .block_on(database.migrate())
+            .unwrap_or_else(|error| panic!("analytics database migration failed: {error}"));
+        database
     });
     let database = Arc::new(database);
     let listener = TcpListener::bind(("0.0.0.0", config.port))
