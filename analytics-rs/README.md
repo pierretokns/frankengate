@@ -63,8 +63,10 @@ traffic, then exposes `/healthz`, `/readyz`, `/version` (the protocol
 version), and `/metrics`. The metrics endpoint emits Prometheus gauges named
 `frankengate_analytics_jobs` with `state` labels for `queued`, `leased`,
 `cancelled`, `completed`, and `failed`; the optional Helm `ServiceMonitor`
-scrapes this endpoint. This is still only a process/readiness contract: the production
-queue/database service remains a subsequent implementation gate.
+scrapes this endpoint. When `DATABASE_URL` is configured, a tenant-scoped
+projection is available as `/metrics?tenant=<tenant-id>` and reads the durable
+queue view. Requests without a tenant parameter retain the local process
+metrics, avoiding an unsafe cross-tenant aggregate query.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
