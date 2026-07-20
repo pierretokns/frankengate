@@ -25,6 +25,16 @@
         "replicas": { "type": "integer", "minimum": 1 },
         "command": { "type": "array", "items": { "type": "string" } },
         "resources": { "type": "object" },
+        "serviceMonitor": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "interval": { "type": "string", "minLength": 1 },
+            "scrapeTimeout": { "type": "string", "minLength": 1 },
+            "labels": { "type": "object" }
+          },
+          "additionalProperties": false
+        },
         "autoscaling": {
           "type": "object",
           "properties": {
