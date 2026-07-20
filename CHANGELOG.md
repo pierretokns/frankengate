@@ -24,6 +24,9 @@ attach the matching immutable tag and artifact digests.
 
 ### Added
 
+- Helm pricing defaults now consume the fork's cached GitHub Pages snapshot;
+  the scheduled mirror retains the upstream source only as an explicit input.
+
 - Added a separately deployable SQLx/Postgres analytics control plane with
   tenant-scoped experiments, reproducible runs, evaluations, artifact lineage,
   replay, and terminal outcomes.
