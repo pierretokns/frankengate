@@ -28,6 +28,23 @@ pub struct JobOutcome {
     pub error_code: Option<String>,
 }
 
+impl Job {
+    pub fn outcome(&self) -> JobOutcome {
+        let (terminal, error_code) = match &self.state {
+            JobState::Completed | JobState::Cancelled => (true, None),
+            JobState::Failed { error_code } => (true, Some(error_code.clone())),
+            JobState::Queued | JobState::Leased { .. } => (false, None),
+        };
+        JobOutcome {
+            protocol_version: PROTOCOL_VERSION,
+            id: self.id.clone(),
+            attempt: self.attempt,
+            terminal,
+            error_code,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Experiment {
     pub id: String,
@@ -439,6 +456,10 @@ mod tests {
             }
         );
         assert_eq!(store.lease("j10", "worker-c"), Err(LeaseError::NotLeasable));
+        let outcome = store.get("j10").unwrap().outcome();
+        assert!(outcome.terminal);
+        assert_eq!(outcome.error_code.as_deref(), Some("model_timeout"));
+        assert_eq!(outcome.protocol_version, PROTOCOL_VERSION);
     }
 
     #[test]
