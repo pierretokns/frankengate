@@ -9,6 +9,8 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
+pub mod database;
+
 pub const PROTOCOL_VERSION: u16 = 1;
 
 /// Runs a dependency-free smoke check for operators and release automation.
