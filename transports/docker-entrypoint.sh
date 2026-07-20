@@ -92,18 +92,26 @@ parse_args() {
                     exit 1
                 fi
                 ;;
+            --version|-version)
+                PRINT_VERSION=1
+                shift
+                ;;
             *)
-                # Keep other arguments for the main application
-                set -- "$@" "$1"
                 shift
                 ;;
         esac
     done
 }
 
+PRINT_VERSION=0
+
 # Parse arguments if any are provided
-if [ $# -gt 1 ]; then
+if [ $# -gt 0 ]; then
     parse_args "$@"
+fi
+
+if [ "$PRINT_VERSION" = "1" ]; then
+    exec /app/main -version
 fi
 
 # Build the command with environment variables and standard arguments
