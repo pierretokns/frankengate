@@ -325,6 +325,58 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/evaluations" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let run_id = query_param(query, "run_id");
+            let example_id = query_param(query, "example_id");
+            let evaluator_revision = query_param(query, "evaluator_revision");
+            let score = query_param(query, "score");
+            match (
+                database.as_ref(),
+                tenant,
+                run_id,
+                example_id,
+                evaluator_revision,
+                score,
+            ) {
+                (
+                    Some(pool),
+                    Some(tenant),
+                    Some(run_id),
+                    Some(example_id),
+                    Some(evaluator_revision),
+                    Some(score),
+                ) => {
+                    let result = frankengate_analytics_control::EvaluationResult {
+                        run_id: run_id.to_owned(),
+                        example_id: example_id.to_owned(),
+                        score: score.to_owned(),
+                        evaluator_revision: evaluator_revision.to_owned(),
+                    };
+                    let inserted = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::record_evaluation(
+                                    pool, tenant, &result,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if inserted {
+                        ("201 Created", "text/plain", "recorded\n".to_string())
+                    } else {
+                        ("409 Conflict", "text/plain", "evaluation already exists\n".to_string())
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, run_id, example_id, evaluator_revision, and score is required\n"
+                        .to_string(),
+                ),
+            }
+        }
         "/metrics" => {
             let tenant = query
                 .split('&')
