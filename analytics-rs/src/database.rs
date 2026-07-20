@@ -303,4 +303,32 @@ impl Database {
         tx.commit().await?;
         Ok(row)
     }
+
+    pub async fn lease_next_job(
+        &self,
+        tenant: &str,
+        worker_id: &str,
+        lease_seconds: i64,
+    ) -> Result<Option<JobRow>, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let row = sqlx::query_as::<_, JobRow>(
+            "with candidate as (\
+               select id from frankengate_analytics.jobs\
+               where tenant_id = $1 and (state = 'queued' or (state = 'leased' and lease_until < now()))\
+               order by created_at asc, id asc for update skip locked limit 1\
+             )\
+             update frankengate_analytics.jobs j\
+             set state = 'leased', worker_id = $2, lease_until = now() + ($3 * interval '1 second'),\
+                 attempt = j.attempt + 1, updated_at = now()\
+             from candidate where j.id = candidate.id\
+             returning j.id, j.tenant_id, j.kind, j.state, j.attempt, j.replay_of",
+        )
+        .bind(tenant)
+        .bind(worker_id)
+        .bind(lease_seconds.max(1))
+        .fetch_optional(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(row)
+    }
 }
