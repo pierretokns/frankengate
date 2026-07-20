@@ -20,6 +20,18 @@ The production direction remains a separately deployed Rust control plane with
 PostgreSQL as the authoritative contract store. It must never execute analytics
 jobs inside gateway inference workers.
 
+The current in-memory contract already covers:
+
+- monotonic delivery attempts across lease expiry and explicit retry;
+- atomic tenant-scoped claiming, bounded listings, and queue statistics;
+- owner-only heartbeats, checkpoints, completion, and failure transitions;
+- graceful worker draining and duplicate-delivery idempotency; and
+- tenant-scoped cancellation/retry plus reproducible experiment lineage.
+
+These are protocol and test guarantees, not a claim of durable persistence or
+production API availability. The PostgreSQL service, supervision runtime, and
+independent Helm deployments remain separate implementation gates.
+
 `migrations/001_analytics_contract.sql` is the first durable schema contract.
 It enables tenant RLS and stores only artifact manifests in PostgreSQL; artifact
 bytes remain in the configured object store.
