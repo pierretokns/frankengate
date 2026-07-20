@@ -81,6 +81,8 @@ Terminal worker errors are recorded with
 Automation can create immutable experiment lineage with
 `POST /v1/experiments?tenant=<tenant-id>&id=<id>&actor=<actor>&revision=<revision>`;
 duplicate IDs are rejected idempotently.
+Reproducible runs are created with
+`POST /v1/runs?tenant=<tenant-id>&id=<id>&experiment_id=<experiment-id>&dataset_revision=<r>&evaluator_revision=<r>&model_revision=<r>&prompt_revision=<r>`.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:

@@ -261,6 +261,70 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/runs" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let id = query_param(query, "id");
+            let experiment_id = query_param(query, "experiment_id");
+            let dataset_revision = query_param(query, "dataset_revision");
+            let evaluator_revision = query_param(query, "evaluator_revision");
+            let model_revision = query_param(query, "model_revision");
+            let prompt_revision = query_param(query, "prompt_revision");
+            match (
+                database.as_ref(),
+                tenant,
+                id,
+                experiment_id,
+                dataset_revision,
+                evaluator_revision,
+                model_revision,
+                prompt_revision,
+            ) {
+                (
+                    Some(pool),
+                    Some(tenant),
+                    Some(id),
+                    Some(experiment_id),
+                    Some(dataset_revision),
+                    Some(evaluator_revision),
+                    Some(model_revision),
+                    Some(prompt_revision),
+                ) => {
+                    let run = frankengate_analytics_control::Run {
+                        id: id.to_owned(),
+                        experiment_id: experiment_id.to_owned(),
+                        dataset_revision: dataset_revision.to_owned(),
+                        evaluator_revision: evaluator_revision.to_owned(),
+                        model_revision: model_revision.to_owned(),
+                        prompt_revision: prompt_revision.to_owned(),
+                    };
+                    let created = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::create_run(
+                                    pool, tenant, &run,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if created {
+                        ("201 Created", "text/plain", format!("id={}\n", run.id))
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "run already exists\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, id, experiment_id, and all revision fields is required\n"
+                        .to_string(),
+                ),
+            }
+        }
         "/metrics" => {
             let tenant = query
                 .split('&')
