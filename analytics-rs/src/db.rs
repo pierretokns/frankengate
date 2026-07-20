@@ -511,3 +511,79 @@ pub async fn finish_run(
     tx.commit().await?;
     Ok(updated.rows_affected() == 1)
 }
+
+#[cfg(test)]
+mod integration_tests {
+    use super::*;
+    use crate::SubmitJob;
+
+    /// Runs only when DATABASE_URL is supplied. This keeps the default unit
+    /// suite hermetic while giving CI/Kubernetes Postgres jobs a real proof of
+    /// migration, tenant isolation, lease ownership, and terminal cleanup.
+    #[tokio::test]
+    async fn durable_job_lifecycle_is_tenant_scoped() -> Result<(), sqlx::Error> {
+        if std::env::var_os("DATABASE_URL").is_none() {
+            eprintln!("skipping durable DB test: DATABASE_URL is not set");
+            return Ok(());
+        }
+
+        let pool = connect_from_env().await?.expect("DATABASE_URL was set");
+        let suffix = format!(
+            "{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock before epoch")
+                .as_nanos()
+        );
+        let tenant = format!("integration-{suffix}");
+        let other_tenant = format!("other-{suffix}");
+        let job_id = format!("job-{suffix}");
+
+        assert!(
+            submit_job(
+                &pool,
+                &SubmitJob {
+                    protocol_version: crate::PROTOCOL_VERSION,
+                    id: job_id.clone(),
+                    tenant: tenant.clone(),
+                    kind: "integration".into(),
+                },
+            )
+            .await?
+        );
+        assert!(
+            !submit_job(
+                &pool,
+                &SubmitJob {
+                    protocol_version: crate::PROTOCOL_VERSION,
+                    id: job_id.clone(),
+                    tenant: tenant.clone(),
+                    kind: "integration".into(),
+                },
+            )
+            .await?
+        );
+
+        let claim = lease_next(&pool, &tenant, "worker-a", 30)
+            .await?
+            .expect("queued job should be claimable");
+        assert_eq!(claim.id, job_id);
+        assert_eq!(claim.attempt, 1);
+        assert!(renew_lease(&pool, &tenant, &job_id, "worker-a", 30).await?);
+        assert!(!complete_job(&pool, &tenant, &job_id, "worker-b").await?);
+        assert!(complete_job(&pool, &tenant, &job_id, "worker-a").await?);
+
+        let own = stats(&pool, &tenant).await?;
+        assert_eq!(own.completed, 1);
+        let other = stats(&pool, &other_tenant).await?;
+        assert_eq!(other, JobStats::default());
+
+        sqlx::query("delete from frankengate_analytics.jobs where id = $1")
+            .bind(&job_id)
+            .execute(&pool)
+            .await?;
+        pool.close().await;
+        Ok(())
+    }
+}
