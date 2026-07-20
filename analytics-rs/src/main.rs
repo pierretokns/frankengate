@@ -33,13 +33,15 @@ fn serve() {
     );
     for stream in listener.incoming().flatten() {
         let auth = config.worker_auth.clone();
-        std::thread::spawn(move || handle_connection(stream, &auth));
+        let config = config.clone();
+        std::thread::spawn(move || handle_connection(stream, &auth, &config));
     }
 }
 
 fn handle_connection(
     mut stream: std::net::TcpStream,
     auth: &frankengate_analytics_control::auth::WorkerAuth,
+    config: &frankengate_analytics_control::config::Config,
 ) {
     use std::io::{Read, Write};
     // Health probes are tiny and bounded.  Do not let an accepted but idle
@@ -74,6 +76,7 @@ fn handle_connection(
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
+        "/v1/jobs" | "/v1/jobs/stats" => governed_response(parsed.as_ref(), &config),
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
@@ -81,6 +84,88 @@ fn handle_connection(
         body.len()
     );
     let _ = stream.write_all(response.as_bytes());
+}
+
+fn governed_response(
+    request: Option<&frankengate_analytics_control::http::Request<'_>>,
+    config: &frankengate_analytics_control::config::Config,
+) -> (&'static str, &'static str, String) {
+    let Some(request) = request else {
+        return (
+            "400 Bad Request",
+            "text/plain",
+            "malformed request\n".into(),
+        );
+    };
+    let Some(tenant) = request.tenant.filter(|tenant| !tenant.is_empty()) else {
+        return (
+            "400 Bad Request",
+            "text/plain",
+            "x-tenant-id is required\n".into(),
+        );
+    };
+    let Some(database_url) = config.database_url.as_deref() else {
+        return (
+            "503 Service Unavailable",
+            "text/plain",
+            "database is not configured\n".into(),
+        );
+    };
+    let runtime = match tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+    {
+        Ok(runtime) => runtime,
+        Err(_) => {
+            return (
+                "500 Internal Server Error",
+                "text/plain",
+                "runtime unavailable\n".into(),
+            )
+        }
+    };
+    let database =
+        match runtime.block_on(frankengate_analytics_control::database::Database::connect(
+            database_url,
+            config.pool_max_connections,
+        )) {
+            Ok(database) => database,
+            Err(_) => {
+                return (
+                    "503 Service Unavailable",
+                    "text/plain",
+                    "database unavailable\n".into(),
+                )
+            }
+        };
+    if request.path == "/v1/jobs/stats" {
+        return match runtime.block_on(database.job_stats(tenant)) {
+            Ok(stats) => (
+                "200 OK",
+                "application/json",
+                serde_json::json!({
+                    "queued": stats.queued, "leased": stats.leased, "completed": stats.completed,
+                    "failed": stats.failed, "cancelled": stats.cancelled,
+                })
+                .to_string(),
+            ),
+            Err(_) => (
+                "500 Internal Server Error",
+                "text/plain",
+                "job stats failed\n".into(),
+            ),
+        };
+    }
+    match request.method {
+        "GET" => match runtime.block_on(database.list_jobs(tenant, 100)) {
+            Ok(jobs) => ("200 OK", "application/json", serde_json::to_string(&jobs.iter().map(|job| serde_json::json!({
+                "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind, "state": job.state,
+                "attempt": job.attempt, "replay_of": job.replay_of,
+            })).collect::<Vec<_>>()).unwrap_or_else(|_| "[]".into())),
+            Err(_) => ("500 Internal Server Error", "text/plain", "job listing failed\n".into()),
+        },
+        _ => ("405 Method Not Allowed", "text/plain", "only GET is supported\n".into()),
+    }
 }
 
 /// Readiness is a boot fence, not liveness.  When a database is configured,

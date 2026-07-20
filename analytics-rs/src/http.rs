@@ -30,6 +30,7 @@ pub struct Request<'a> {
     pub method: &'a str,
     pub path: &'a str,
     pub authorization: Option<&'a str>,
+    pub tenant: Option<&'a str>,
 }
 
 pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
@@ -47,6 +48,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         return None;
     }
     let mut authorization = None;
+    let mut tenant = None;
     for line in lines {
         if line.is_empty() {
             break;
@@ -55,11 +57,15 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         if name.eq_ignore_ascii_case("authorization") {
             authorization = Some(value.trim());
         }
+        if name.eq_ignore_ascii_case("x-tenant-id") {
+            tenant = Some(value.trim());
+        }
     }
     Some(Request {
         method,
         path,
         authorization,
+        tenant,
     })
 }
 
@@ -92,6 +98,7 @@ mod tests {
         assert_eq!(request.method, "GET");
         assert_eq!(request.path, "/v1/jobs");
         assert_eq!(request.authorization, Some("Bearer secret"));
+        assert_eq!(request.tenant, None);
         assert!(parse_request(b"GET / HTTP/1.0\r\n\r\n").is_none());
     }
 }
