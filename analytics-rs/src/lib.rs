@@ -36,9 +36,7 @@ pub fn contract_self_check() -> Result<(), &'static str> {
     let completed = store
         .complete("self-check", "self-check-worker")
         .map_err(|_| "leased job could not be completed")?;
-    if completed.outcome().protocol_version != PROTOCOL_VERSION
-        || !completed.outcome().terminal
-    {
+    if completed.outcome().protocol_version != PROTOCOL_VERSION || !completed.outcome().terminal {
         return Err("terminal outcome is invalid");
     }
     Ok(())
@@ -158,8 +156,7 @@ impl ArtifactManifest {
             && self.digest.len() <= 256
             && !self.media_type.is_empty()
             && self.media_type.len() <= 256
-            && (self.object_uri.starts_with("s3://")
-                || self.object_uri.starts_with("file://"))
+            && (self.object_uri.starts_with("s3://") || self.object_uri.starts_with("file://"))
     }
 }
 
@@ -289,7 +286,9 @@ impl JobStore {
             return Err(LeaseError::NotLeasable);
         }
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
-        let source = jobs.get(&request.source_job_id).ok_or(LeaseError::NotFound)?;
+        let source = jobs
+            .get(&request.source_job_id)
+            .ok_or(LeaseError::NotFound)?;
         if source.tenant != request.tenant || !source.outcome().terminal {
             return Err(LeaseError::NotLeasable);
         }
@@ -594,7 +593,10 @@ mod tests {
         assert_eq!(store.drain_worker("worker-a"), 1);
         assert_eq!(store.lease("j5b", "worker-c").unwrap().attempt, 2);
         assert_eq!(store.drain_worker("worker-a"), 0);
-        assert!(matches!(store.get("j6b").unwrap().state, JobState::Leased { .. }));
+        assert!(matches!(
+            store.get("j6b").unwrap().state,
+            JobState::Leased { .. }
+        ));
     }
 
     #[test]
@@ -607,7 +609,10 @@ mod tests {
             Err(LeaseError::NotLeasable)
         );
         assert_eq!(
-            store.checkpoint("j7b", "worker-a", "step:42").unwrap().checkpoint,
+            store
+                .checkpoint("j7b", "worker-a", "step:42")
+                .unwrap()
+                .checkpoint,
             Some("step:42".into())
         );
         assert_eq!(
@@ -623,13 +628,15 @@ mod tests {
         store.enqueue("j8", "tenant-a", "replay");
         store.enqueue("j7", "tenant-b", "eval");
         assert_eq!(
-            store.lease_next_for_tenant("tenant-a", "worker-a", Duration::from_secs(30))
+            store
+                .lease_next_for_tenant("tenant-a", "worker-a", Duration::from_secs(30))
                 .unwrap()
                 .id,
             "j8"
         );
         assert_eq!(
-            store.lease_next_for_tenant("tenant-a", "worker-b", Duration::from_secs(30))
+            store
+                .lease_next_for_tenant("tenant-a", "worker-b", Duration::from_secs(30))
                 .unwrap()
                 .id,
             "j9"
@@ -654,7 +661,10 @@ mod tests {
             store.try_enqueue("j12", "tenant-a", "eval"),
             Err(QueueError::CapacityExceeded)
         );
-        assert_eq!(store.try_enqueue("j11", "tenant-a", "eval").unwrap().id, "j11");
+        assert_eq!(
+            store.try_enqueue("j11", "tenant-a", "eval").unwrap().id,
+            "j11"
+        );
     }
 
     #[test]
@@ -683,7 +693,10 @@ mod tests {
             Err(LeaseError::NotFound)
         );
         assert_eq!(
-            store.retry_failed_for_tenant("tenant-a", "j10").unwrap().state,
+            store
+                .retry_failed_for_tenant("tenant-a", "j10")
+                .unwrap()
+                .state,
             JobState::Queued
         );
         assert_eq!(store.lease("j10", "worker-c").unwrap().attempt, 2);
@@ -834,13 +847,19 @@ mod tests {
             })
             .unwrap();
         assert_eq!(replay.replay_of.as_deref(), Some("source"));
-        assert_eq!(store.replay(ReplayJob {
-            protocol_version: PROTOCOL_VERSION,
-            replay_id: "replay-1".into(),
-            source_job_id: "source".into(),
-            tenant: "tenant-a".into(),
-            kind: "replay".into(),
-        }).unwrap().id, "replay-1");
+        assert_eq!(
+            store
+                .replay(ReplayJob {
+                    protocol_version: PROTOCOL_VERSION,
+                    replay_id: "replay-1".into(),
+                    source_job_id: "source".into(),
+                    tenant: "tenant-a".into(),
+                    kind: "replay".into(),
+                })
+                .unwrap()
+                .id,
+            "replay-1"
+        );
 
         let bounded = JobStore::with_capacity(1);
         bounded.enqueue("source", "tenant-a", "evaluation");
