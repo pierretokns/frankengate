@@ -39,7 +39,10 @@ RUN go work init \
     ./plugins/telemetry \
     ./transports
 
-ARG VERSION=unknown
+# Keep untagged image builds identifiable. Release workflows override this
+# with the tag (for example, VERSION=0.3.15); local images must not advertise
+# the ambiguous `unknown` value.
+ARG VERSION=dev-build
 RUN version="$VERSION"; case "$version" in v*) ;; *) version="v$version" ;; esac; \
     go build \
     -ldflags="-w -s -X main.Version=$version -extldflags '-static'" \
