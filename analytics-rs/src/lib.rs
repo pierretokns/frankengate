@@ -82,6 +82,16 @@ pub struct EvaluationResult {
     pub evaluator_revision: String,
 }
 
+impl EvaluationResult {
+    pub fn is_well_formed(&self) -> bool {
+        !self.run_id.is_empty()
+            && !self.example_id.is_empty()
+            && !self.score.is_empty()
+            && self.score.len() <= 256
+            && !self.evaluator_revision.is_empty()
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ArtifactManifest {
     pub run_id: String,
@@ -608,6 +618,20 @@ mod tests {
         let mut incomplete = run.clone();
         incomplete.model_revision.clear();
         assert!(!incomplete.is_reproducible());
+        assert!(EvaluationResult {
+            run_id: run.id.clone(),
+            example_id: "example-1".into(),
+            score: "0.95".into(),
+            evaluator_revision: run.evaluator_revision.clone(),
+        }
+        .is_well_formed());
+        assert!(!EvaluationResult {
+            run_id: run.id.clone(),
+            example_id: "".into(),
+            score: "0.95".into(),
+            evaluator_revision: "eval:sha256:2".into(),
+        }
+        .is_well_formed());
         let artifact = ArtifactManifest {
             run_id: run.id,
             digest: "sha256:abc".into(),
