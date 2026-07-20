@@ -11,6 +11,7 @@ TEST_REPORTS_DIR ?= test-reports
 GOTESTSUM_FORMAT ?= standard-verbose
 FLOW ?=
 VERSION ?= dev-build
+GOCACHE ?= $(CURDIR)/.cache/go-build
 LOCAL ?=
 DEBUG ?=
 COMPAT ?=
@@ -340,6 +341,7 @@ build: build-ui ## Build bifrost-http binary
 	fi
 	@mkdir -p ./tmp
 	@TARGET_OS="$(GOOS)"; \
+	GOCACHE="$${GOCACHE:-$(GOCACHE)}"; export GOCACHE; mkdir -p "$$GOCACHE"; \
 	TARGET_ARCH="$(GOARCH)"; \
 	ACTUAL_OS=$$(uname -s | tr '[:upper:]' '[:lower:]' | sed 's/darwin/darwin/;s/linux/linux/;s/mingw.*/windows/'); \
 	ACTUAL_ARCH=$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/;s/arm64/arm64/'); \
