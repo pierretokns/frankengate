@@ -14,6 +14,7 @@ pub enum Route {
     Cancel,
     Checkpoint,
     Replay,
+    Drain,
     Unknown,
 }
 
@@ -31,6 +32,7 @@ pub fn route_for(path: &str) -> Route {
         "/v1/jobs/cancel" => Route::Cancel,
         "/v1/jobs/checkpoint" => Route::Checkpoint,
         "/v1/jobs/replay" => Route::Replay,
+        "/v1/jobs/drain" => Route::Drain,
         _ => Route::Unknown,
     }
 }

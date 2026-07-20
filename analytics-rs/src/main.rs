@@ -102,7 +102,8 @@ fn handle_connection(
         | "/v1/jobs/fail"
         | "/v1/jobs/cancel"
         | "/v1/jobs/checkpoint"
-        | "/v1/jobs/replay" => governed_response(parsed.as_ref(), &database, &runtime),
+        | "/v1/jobs/replay"
+        | "/v1/jobs/drain" => governed_response(parsed.as_ref(), &database, &runtime),
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
@@ -379,6 +380,34 @@ fn governed_response(
                 .to_string(),
             ),
             Err(_) => ("409 Conflict", "text/plain", "replay rejected\n".into()),
+        };
+    }
+    if request.path == "/v1/jobs/drain" {
+        if request.method != "POST" {
+            return (
+                "405 Method Not Allowed",
+                "text/plain",
+                "only POST is supported\n".into(),
+            );
+        }
+        let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-worker-id is required\n".into(),
+            );
+        };
+        return match runtime.block_on(database.drain_worker(tenant, worker_id)) {
+            Ok(released) => (
+                "200 OK",
+                "application/json",
+                serde_json::json!({ "worker_id": worker_id, "released": released }).to_string(),
+            ),
+            Err(_) => (
+                "500 Internal Server Error",
+                "text/plain",
+                "worker drain failed\n".into(),
+            ),
         };
     }
     match request.method {
