@@ -131,6 +131,23 @@ impl JobStore {
             .cloned()
     }
 
+    /// Return a deterministic, tenant-scoped snapshot bounded to 1,000 jobs.
+    /// The bound is part of the contract so an API handler cannot accidentally
+    /// turn a large queue into an unbounded response.
+    pub fn list_for_tenant(&self, tenant: &str, limit: usize) -> Vec<Job> {
+        let mut jobs: Vec<_> = self
+            .jobs
+            .lock()
+            .expect("job store lock poisoned")
+            .values()
+            .filter(|job| job.tenant == tenant)
+            .cloned()
+            .collect();
+        jobs.sort_by(|left, right| left.id.cmp(&right.id));
+        jobs.truncate(limit.min(1_000));
+        jobs
+    }
+
     pub fn lease(&self, id: &str, worker: impl Into<String>) -> Result<Job, LeaseError> {
         self.lease_for(id, worker, Duration::from_secs(30))
     }
@@ -237,6 +254,19 @@ mod tests {
         assert_eq!(duplicate.state, JobState::Completed);
         assert_eq!(duplicate.attempt, 1);
         assert_eq!(store.lease("j1b", "worker-b"), Err(LeaseError::NotLeasable));
+    }
+
+    #[test]
+    fn job_listing_is_tenant_scoped_deterministic_and_bounded() {
+        let store = JobStore::default();
+        store.enqueue("j3", "tenant-a", "eval");
+        store.enqueue("j1", "tenant-a", "replay");
+        store.enqueue("j2", "tenant-b", "eval");
+        let jobs = store.list_for_tenant("tenant-a", 1_001);
+        assert_eq!(jobs.len(), 2);
+        assert_eq!(jobs[0].id, "j1");
+        assert_eq!(jobs[1].id, "j3");
+        assert!(store.list_for_tenant("tenant-c", 10).is_empty());
     }
 
     #[test]
