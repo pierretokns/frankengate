@@ -41,6 +41,10 @@ PostgreSQL transactions set `app.tenant_id` with `set_config(..., true)` before
 queries. The migration uses forced row-level security, so missing tenant
 context fails closed. Set `DATABASE_URL` for the service deployment; the
 Helm chart can inject it from `analyticsControlPlane.databaseUrl.existingSecret`.
+Set `ANALYTICS_WORKER_TOKEN` to require `Bearer` authentication for governed
+worker endpoints; the Helm chart injects it from
+`analyticsControlPlane.workerTokenSecret`. An unset token intentionally leaves
+local contract mode open, but production deployments should configure it.
 
 `migrations/001_analytics_contract.sql` is the first durable schema contract.
 It enables tenant RLS across experiments, runs, run attempts, evaluations,
