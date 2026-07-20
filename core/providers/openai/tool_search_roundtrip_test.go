@@ -104,7 +104,7 @@ func TestResponsesInputRoundTripsAdditionalToolsItems(t *testing.T) {
 	t.Logf("round-trip OK:\n%s", out)
 }
 
-func TestToOpenAIResponsesRequestPreservesAdditionalTools(t *testing.T) {
+func TestToOpenAIResponsesRequestLiftsAdditionalToolsForMantle(t *testing.T) {
 	input := []byte(`[
 		{"type":"additional_tools","role":"developer","tools":[{"type":"custom","name":"apply_patch"},{"type":"namespace","name":"repo_tools","tools":[{"type":"function","name":"open_file","parameters":{"type":"object"}}]}]},
 		{"role":"user","content":[{"type":"input_text","text":"Reply exactly with OK."}]}
@@ -122,11 +122,11 @@ func TestToOpenAIResponsesRequestPreservesAdditionalTools(t *testing.T) {
 	if err != nil {
 		t.Fatalf("marshal converted request: %v", err)
 	}
-	if got := gjson.GetBytes(body, "input.0.type").String(); got != "additional_tools" {
-		t.Fatalf("additional_tools type lost during conversion: %s", body)
+	if gjson.GetBytes(body, "input.0.type").String() == "additional_tools" {
+		t.Fatalf("additional_tools leaked into Mantle input: %s", body)
 	}
-	if got := gjson.GetBytes(body, "input.0.tools.1.tools.0.type").String(); got != "function" {
-		t.Fatalf("nested tool type lost during conversion: %s", body)
+	if got := gjson.GetBytes(body, "tools.1.tools.0.type").String(); got != "function" {
+		t.Fatalf("nested lifted tool type lost during conversion: %s", body)
 	}
 }
 
