@@ -34,6 +34,14 @@ pub struct ArtifactRow {
     pub object_uri: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, sqlx::FromRow)]
+pub struct EvaluationRow {
+    pub run_id: String,
+    pub example_id: String,
+    pub evaluator_revision: String,
+    pub score: sqlx::types::Json<serde_json::Value>,
+}
+
 impl Database {
     pub async fn connect(url: &str, max_connections: u32) -> Result<Self, sqlx::Error> {
         let pool = PgPoolOptions::new()
@@ -188,6 +196,51 @@ impl Database {
              from frankengate_analytics.artifact_manifests a\
              join frankengate_analytics.runs r on r.id = a.run_id\
              where a.run_id = $1 order by a.created_at asc, a.digest asc limit $2",
+        )
+        .bind(run_id)
+        .bind(limit.clamp(1, 100))
+        .fetch_all(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(rows)
+    }
+
+    pub async fn record_evaluation(
+        &self,
+        tenant: &str,
+        run_id: &str,
+        example_id: &str,
+        evaluator_revision: &str,
+        score: serde_json::Value,
+    ) -> Result<EvaluationRow, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let row = sqlx::query_as::<_, EvaluationRow>(
+            "insert into frankengate_analytics.evaluation_results\
+             (run_id, example_id, evaluator_revision, score) values ($1, $2, $3, $4)\
+             returning run_id, example_id, evaluator_revision, score",
+        )
+        .bind(run_id)
+        .bind(example_id)
+        .bind(evaluator_revision)
+        .bind(sqlx::types::Json(score))
+        .fetch_one(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(row)
+    }
+
+    pub async fn list_evaluations(
+        &self,
+        tenant: &str,
+        run_id: &str,
+        limit: i64,
+    ) -> Result<Vec<EvaluationRow>, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let rows = sqlx::query_as::<_, EvaluationRow>(
+            "select e.run_id, e.example_id, e.evaluator_revision, e.score\
+             from frankengate_analytics.evaluation_results e\
+             join frankengate_analytics.runs r on r.id = e.run_id\
+             where e.run_id = $1 order by e.example_id asc, e.evaluator_revision asc limit $2",
         )
         .bind(run_id)
         .bind(limit.clamp(1, 100))
