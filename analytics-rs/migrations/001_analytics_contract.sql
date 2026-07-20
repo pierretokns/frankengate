@@ -107,8 +107,32 @@ create policy runs_tenant_isolation on frankengate_analytics.runs
   using (tenant_id = nullif(current_setting('app.tenant_id', true), ''))
   with check (tenant_id = nullif(current_setting('app.tenant_id', true), ''));
 create policy run_attempts_tenant_isolation on frankengate_analytics.run_attempts
-  using (tenant_id = nullif(current_setting('app.tenant_id', true), ''))
-  with check (tenant_id = nullif(current_setting('app.tenant_id', true), ''));
+  using (
+    tenant_id = nullif(current_setting('app.tenant_id', true), '')
+    and exists (
+      select 1 from frankengate_analytics.runs r
+      where r.id = frankengate_analytics.run_attempts.run_id
+        and r.tenant_id = frankengate_analytics.run_attempts.tenant_id
+    )
+    and exists (
+      select 1 from frankengate_analytics.jobs j
+      where j.id = frankengate_analytics.run_attempts.job_id
+        and j.tenant_id = frankengate_analytics.run_attempts.tenant_id
+    )
+  )
+  with check (
+    tenant_id = nullif(current_setting('app.tenant_id', true), '')
+    and exists (
+      select 1 from frankengate_analytics.runs r
+      where r.id = frankengate_analytics.run_attempts.run_id
+        and r.tenant_id = frankengate_analytics.run_attempts.tenant_id
+    )
+    and exists (
+      select 1 from frankengate_analytics.jobs j
+      where j.id = frankengate_analytics.run_attempts.job_id
+        and j.tenant_id = frankengate_analytics.run_attempts.tenant_id
+    )
+  );
 create policy evaluations_tenant_isolation on frankengate_analytics.evaluation_results
   using (exists (
     select 1 from frankengate_analytics.runs r
