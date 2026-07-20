@@ -24,6 +24,13 @@ fn serve() {
     frankengate_analytics_control::contract_self_check()
         .expect("analytics control-plane boot fence failed");
 
+    // When configured, Postgres is part of the readiness fence. This avoids
+    // advertising a healthy pod that cannot persist or consume jobs.
+    let runtime = tokio::runtime::Runtime::new().expect("tokio runtime failed");
+    runtime
+        .block_on(frankengate_analytics_control::db::connect_from_env())
+        .expect("analytics control-plane database boot fence failed");
+
     let port = std::env::var("PORT").unwrap_or_else(|_| "8081".into());
     let listener = TcpListener::bind(("0.0.0.0", port.parse::<u16>().expect("PORT must be a u16")))
         .expect("analytics control-plane listener failed to bind");

@@ -24,6 +24,14 @@
         },
         "replicas": { "type": "integer", "minimum": 1 },
         "command": { "type": "array", "items": { "type": "string" } },
+        "databaseUrlSecret": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "key": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
         "resources": { "type": "object" },
         "serviceMonitor": {
           "type": "object",

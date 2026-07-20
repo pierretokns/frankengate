@@ -16,6 +16,11 @@ analyticsControlPlane:
     pullPolicy: IfNotPresent
   replicas: 1
   command: ["frankengate-analytics-control", "--serve"]
+  # Secret containing the PostgreSQL URL. When unset, the control plane uses
+  # its local protocol store and does not advertise durable persistence.
+  databaseUrlSecret:
+    name: ""
+    key: DATABASE_URL
   resources: {}
   serviceMonitor:
     enabled: false
