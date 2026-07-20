@@ -231,6 +231,7 @@ pub enum LeaseError {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum QueueError {
     CapacityExceeded,
+    InvalidRequest,
 }
 
 #[derive(Clone, Default)]
@@ -256,6 +257,9 @@ impl JobStore {
         let id = id.into();
         let tenant = tenant.into();
         let kind = kind.into();
+        if id.is_empty() || tenant.is_empty() || kind.is_empty() {
+            return Err(QueueError::InvalidRequest);
+        }
         let job = Job {
             id: id.clone(),
             tenant,
@@ -725,6 +729,23 @@ mod tests {
         assert_eq!(
             store.try_enqueue("j11", "tenant-a", "eval").unwrap().id,
             "j11"
+        );
+    }
+
+    #[test]
+    fn bounded_enqueue_rejects_empty_identity_fields() {
+        let store = JobStore::with_capacity(1);
+        assert_eq!(
+            store.try_enqueue("", "tenant-a", "eval"),
+            Err(QueueError::InvalidRequest)
+        );
+        assert_eq!(
+            store.try_enqueue("job-a", "", "eval"),
+            Err(QueueError::InvalidRequest)
+        );
+        assert_eq!(
+            store.try_enqueue("job-a", "tenant-a", ""),
+            Err(QueueError::InvalidRequest)
         );
     }
 
