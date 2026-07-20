@@ -52,6 +52,9 @@ attach the matching immutable tag and artifact digests.
 - Added tenant-scoped durable queue metrics at `/metrics?tenant=<id>` and
   configurable Helm connection budgets, disruption protection, and autoscaling
   boundaries for analytics replicas.
+- Added structured tenant queue stats at
+  `GET /v1/jobs/stats?tenant=<id>` for operators and autoscalers; durable query
+  failures return `503` rather than a misleading local snapshot.
 - Added the isolated `analytics-rs` contract slice with versioned job
   submission, lease ownership, cancellation, terminal completion, and
   deterministic tests. It is not yet wired into the inference gateway.
