@@ -8,6 +8,12 @@ attach the matching immutable tag and artifact digests.
 
 ### Fixed
 
+- Helm now rejects durable analytics deployments that enable a `ServiceMonitor`
+  without an explicit tenant scope, preventing local-only queue metrics from
+  being mistaken for Postgres-backed production metrics.
+- The local overhead benchmark now fails fast with an actionable loopback/port
+  diagnostic when its fixture cannot bind, instead of emitting misleading
+  request errors and an eventual empty-sample failure.
 - Replay admission now preserves a typed capacity-exceeded outcome instead of
   collapsing bounded-queue rejection into a generic lease error.
 - Config schema validation accepts the fork-owned `FRANKENGATE_SCHEMA_URL`
@@ -24,6 +30,9 @@ attach the matching immutable tag and artifact digests.
 
 ### Added
 
+- Analytics control-plane Helm deployments now use a configurable startup
+  probe window for migration/database boot fencing, preventing slow Aurora
+  startup from triggering premature liveness restarts.
 - Helm pricing defaults now consume the fork's cached GitHub Pages snapshot;
   the scheduled mirror retains the upstream source only as an explicit input.
 
@@ -53,6 +62,10 @@ attach the matching immutable tag and artifact digests.
 
 ### Branding and compatibility
 
+- Fork-facing benchmark, provider, virtual-key, pricing, skills, and enterprise
+  fallback surfaces now link to FrankenGate-local routes; retained Bifrost
+  package names and `x-bf-*` headers remain explicitly documented compatibility
+  inputs.
 - Updated the Helm chart README to identify FrankenGate as the fork-owned
   product while documenting the retained `bifrost.*` chart/value identifiers.
 - Rebranded the UI README and its documentation links to FrankenGate-owned
