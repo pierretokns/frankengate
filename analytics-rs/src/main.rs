@@ -849,6 +849,45 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/attempts" if method == "GET" => {
+            let tenant = query_param(query, "tenant");
+            let run_id = query_param(query, "run_id");
+            let limit = query_param(query, "limit")
+                .and_then(|value| value.parse::<i64>().ok())
+                .unwrap_or(50)
+                .clamp(1, 100);
+            match (database.as_ref(), tenant, run_id) {
+                (Some(pool), Some(tenant), Some(run_id)) => {
+                    let attempts = tokio::runtime::Runtime::new().ok().and_then(|runtime| {
+                        runtime
+                            .block_on(frankengate_analytics_control::db::list_attempts(
+                                pool, tenant, run_id, limit,
+                            ))
+                            .ok()
+                    });
+                    match attempts {
+                        Some(attempts) => match serde_json::to_string(&attempts) {
+                            Ok(body) => ("200 OK", "application/json", body),
+                            Err(_) => (
+                                "500 Internal Server Error",
+                                "text/plain",
+                                "failed to encode attempts\n".to_string(),
+                            ),
+                        },
+                        None => (
+                            "503 Service Unavailable",
+                            "text/plain",
+                            "database unavailable\n".to_string(),
+                        ),
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "tenant, run_id, and DATABASE_URL are required\n".to_string(),
+                ),
+            }
+        }
         "/v1/attempts" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let id = query_param(query, "id");

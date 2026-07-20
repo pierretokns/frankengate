@@ -85,6 +85,8 @@ tenant-scoped through the parent run and never reads object bytes.
 Evaluation projections are available through
 `GET /v1/evaluations?tenant=<tenant-id>&run_id=<run-id>&limit=50`, with the
 same tenant and 1–100 row bounds.
+Retry and worker lineage is available through
+`GET /v1/attempts?tenant=<tenant-id>&run_id=<run-id>&limit=50`.
 Workers can claim one durable job with
 `/v1/jobs/lease?tenant=<tenant-id>&worker=<worker-id>&lease_seconds=30`.
 Jobs are submitted with

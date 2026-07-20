@@ -50,6 +50,17 @@ pub struct ExperimentSummary {
     pub created_at: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct AttemptSummary {
+    pub id: String,
+    pub run_id: String,
+    pub attempt: i32,
+    pub worker_id: String,
+    pub job_id: String,
+    pub outcome: Option<String>,
+    pub created_at: String,
+}
+
 /// Optional durable-store boot fence. The process remains usable in local
 /// development without Postgres, while production can require a reachable
 /// database by setting DATABASE_URL.
@@ -666,6 +677,49 @@ pub async fn record_attempt(
     .await?;
     tx.commit().await?;
     Ok(inserted.rows_affected() == 1)
+}
+
+/// Return bounded retry/worker outcome metadata for a tenant-owned run.
+pub async fn list_attempts(
+    pool: &PgPool,
+    tenant: &str,
+    run_id: &str,
+    limit: i64,
+) -> Result<Vec<AttemptSummary>, sqlx::Error> {
+    let mut tx = pool.begin().await?;
+    sqlx::query("select set_config('app.tenant_id', $1, true)")
+        .bind(tenant)
+        .execute(&mut *tx)
+        .await?;
+    let rows = sqlx::query_as::<_, (String, String, i32, String, String, Option<String>, String)>(
+        "select a.id, a.run_id, a.attempt, a.worker_id, a.job_id,
+                a.outcome::text, a.created_at::text
+           from frankengate_analytics.run_attempts a
+           join frankengate_analytics.runs r on r.id = a.run_id
+          where r.tenant_id = $1 and a.run_id = $2
+          order by a.attempt desc, a.id desc
+          limit $3",
+    )
+    .bind(tenant)
+    .bind(run_id)
+    .bind(limit.clamp(1, 100))
+    .fetch_all(&mut *tx)
+    .await?;
+    tx.commit().await?;
+    Ok(rows
+        .into_iter()
+        .map(
+            |(id, run_id, attempt, worker_id, job_id, outcome, created_at)| AttemptSummary {
+                id,
+                run_id,
+                attempt,
+                worker_id,
+                job_id,
+                outcome,
+                created_at,
+            },
+        )
+        .collect())
 }
 
 pub async fn cancel_job(pool: &PgPool, tenant: &str, job_id: &str) -> Result<bool, sqlx::Error> {
