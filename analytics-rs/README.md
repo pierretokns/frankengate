@@ -57,8 +57,11 @@ cargo run --manifest-path analytics-rs/Cargo.toml -- --check
 
 For a minimal independently deployable process, run `--serve` (default port
 8081). It runs the contract self-check as a boot fence before accepting
-traffic, then exposes `/healthz`, `/readyz`, and `/version` (the protocol
-version). This is still only a process/readiness contract: the production
+traffic, then exposes `/healthz`, `/readyz`, `/version` (the protocol
+version), and `/metrics`. The metrics endpoint emits Prometheus gauges named
+`frankengate_analytics_jobs` with `state` labels for `queued`, `leased`,
+`cancelled`, `completed`, and `failed`; the optional Helm `ServiceMonitor`
+scrapes this endpoint. This is still only a process/readiness contract: the production
 queue/database service remains a subsequent implementation gate.
 
 The control-plane contract also has a standalone image build, which is kept
