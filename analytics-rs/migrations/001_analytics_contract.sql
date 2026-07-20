@@ -104,8 +104,20 @@ create policy experiments_tenant_isolation on frankengate_analytics.experiments
   using (tenant_id = nullif(current_setting('app.tenant_id', true), ''))
   with check (tenant_id = nullif(current_setting('app.tenant_id', true), ''));
 create policy runs_tenant_isolation on frankengate_analytics.runs
-  using (tenant_id = nullif(current_setting('app.tenant_id', true), ''))
-  with check (tenant_id = nullif(current_setting('app.tenant_id', true), ''));
+  using (
+    tenant_id = nullif(current_setting('app.tenant_id', true), '')
+    and exists (
+      select 1 from frankengate_analytics.experiments e
+      where e.id = experiment_id and e.tenant_id = runs.tenant_id
+    )
+  )
+  with check (
+    tenant_id = nullif(current_setting('app.tenant_id', true), '')
+    and exists (
+      select 1 from frankengate_analytics.experiments e
+      where e.id = experiment_id and e.tenant_id = runs.tenant_id
+    )
+  );
 create policy run_attempts_tenant_isolation on frankengate_analytics.run_attempts
   using (
     tenant_id = nullif(current_setting('app.tenant_id', true), '')
