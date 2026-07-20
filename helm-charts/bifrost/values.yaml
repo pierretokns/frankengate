@@ -21,6 +21,10 @@ analyticsControlPlane:
   databaseUrlSecret:
     name: ""
     key: DATABASE_URL
+  # Bound each replica's pool so HPA growth cannot exhaust Postgres/Aurora.
+  # Set this to the per-pod connection budget after accounting for all other
+  # clients of the database.
+  databaseMaxConnections: 10
   resources: {}
   serviceMonitor:
     enabled: false

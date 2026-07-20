@@ -91,6 +91,8 @@ spec:
                 secretKeyRef:
                   name: {{ .name | quote }}
                   key: {{ .key | quote }}
+            - name: DATABASE_MAX_CONNECTIONS
+              value: {{ $.Values.analyticsControlPlane.databaseMaxConnections | quote }}
           {{- end }}
           {{- end }}
           ports:
