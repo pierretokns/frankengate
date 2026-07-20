@@ -23,6 +23,7 @@ jobs inside gateway inference workers.
 The current in-memory contract already covers:
 
 - monotonic delivery attempts across lease expiry and explicit retry;
+- optional hard queue capacity with typed admission rejection;
 - atomic tenant-scoped claiming, bounded listings, and queue statistics;
 - owner-only heartbeats, checkpoints, completion, and failure transitions;
 - graceful worker draining and duplicate-delivery idempotency; and
