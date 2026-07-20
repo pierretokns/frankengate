@@ -53,6 +53,10 @@ and verifies the typed terminal outcome:
 cargo run --manifest-path analytics-rs/Cargo.toml -- --check
 ```
 
+For a minimal independently deployable process, run `--serve` (default port
+8081). It exposes `/healthz` and `/readyz`; the production queue/database
+service remains a subsequent implementation gate.
+
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
 
