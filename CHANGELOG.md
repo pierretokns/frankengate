@@ -8,6 +8,10 @@ attach the matching immutable tag and artifact digests.
 
 ### Fixed
 
+- Replay admission now preserves a typed capacity-exceeded outcome instead of
+  collapsing bounded-queue rejection into a generic lease error.
+- Config schema validation accepts the fork-owned `FRANKENGATE_SCHEMA_URL`
+  override while retaining `BIFROST_SCHEMA_URL` compatibility.
 - OCI development images now identify themselves as `vdev-build` instead of
   the ambiguous `vunknown`; release builds continue to inject their semver.
 - The OCI entrypoint now forwards `--version`/`-version`, allowing a detached
