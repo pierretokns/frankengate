@@ -193,7 +193,7 @@ func (provider *BedrockMantleProvider) ChatCompletion(ctx *schemas.BifrostContex
 
 	// Anthropic-family models (Claude) use the native Anthropic Messages surface; all other
 	// (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
-	if schemas.IsAnthropicModelFamily(ctx, request.Model) {
+	if usesAnthropicSurface(ctx, request.Model) {
 		url := mantleAnthropicURL(region)
 		_, bareModel := parseBedrockRegionAndModel(request.Model)
 		return anthropic.HandleAnthropicChatCompletionRequest(
@@ -245,7 +245,7 @@ func (provider *BedrockMantleProvider) ChatCompletionStream(ctx *schemas.Bifrost
 
 	// Anthropic-family models (Claude) use the native Anthropic Messages surface; all other
 	// (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
-	if schemas.IsAnthropicModelFamily(ctx, request.Model) {
+	if usesAnthropicSurface(ctx, request.Model) {
 		url := mantleAnthropicURL(region)
 
 		_, bareModel := parseBedrockRegionAndModel(request.Model)
@@ -305,7 +305,7 @@ func (provider *BedrockMantleProvider) Responses(ctx *schemas.BifrostContext, ke
 
 	// Anthropic-family models (Claude) use the native Anthropic Messages surface; all other
 	// (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
-	if schemas.IsAnthropicModelFamily(ctx, request.Model) {
+	if usesAnthropicSurface(ctx, request.Model) {
 		url := mantleAnthropicURL(region)
 
 		_, bareModel := parseBedrockRegionAndModel(request.Model)
@@ -356,7 +356,7 @@ func (provider *BedrockMantleProvider) ResponsesStream(ctx *schemas.BifrostConte
 
 	// Anthropic-family models (Claude) use the native Anthropic Messages surface; all other
 	// (OpenAI-family / Gemma) models use the OpenAI-compatible surface.
-	if schemas.IsAnthropicModelFamily(ctx, request.Model) {
+	if usesAnthropicSurface(ctx, request.Model) {
 		url := mantleAnthropicURL(region)
 
 		_, bareModel := parseBedrockRegionAndModel(request.Model)
