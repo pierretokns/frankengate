@@ -50,6 +50,15 @@ analyticsControlPlane:
     minReplicas: 1
     maxReplicas: 10
     targetCPUUtilizationPercentage: 70
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 0
+        maxReplicasPerPeriod: 2
+        periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        maxReplicasPerPeriod: 1
+        periodSeconds: 60
   podDisruptionBudget:
     enabled: false
     minAvailable: 1

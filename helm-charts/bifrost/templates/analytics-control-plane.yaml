@@ -148,6 +148,19 @@ spec:
     name: {{ include "bifrost.fullname" . }}-analytics
   minReplicas: {{ .Values.analyticsControlPlane.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.analyticsControlPlane.autoscaling.maxReplicas }}
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleUp.stabilizationWindowSeconds }}
+      policies:
+        - type: Pods
+          value: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleUp.maxReplicasPerPeriod }}
+          periodSeconds: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleUp.periodSeconds }}
+    scaleDown:
+      stabilizationWindowSeconds: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleDown.stabilizationWindowSeconds }}
+      policies:
+        - type: Pods
+          value: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleDown.maxReplicasPerPeriod }}
+          periodSeconds: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleDown.periodSeconds }}
   metrics:
     - type: Resource
       resource:

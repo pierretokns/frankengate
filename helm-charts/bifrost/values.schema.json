@@ -75,7 +75,31 @@
             "enabled": { "type": "boolean" },
             "minReplicas": { "type": "integer", "minimum": 1 },
             "maxReplicas": { "type": "integer", "minimum": 1 },
-            "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 }
+            "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "behavior": {
+              "type": "object",
+              "properties": {
+                "scaleUp": {
+                  "type": "object",
+                  "properties": {
+                    "stabilizationWindowSeconds": { "type": "integer", "minimum": 0 },
+                    "maxReplicasPerPeriod": { "type": "integer", "minimum": 1 },
+                    "periodSeconds": { "type": "integer", "minimum": 1 }
+                  },
+                  "additionalProperties": false
+                },
+                "scaleDown": {
+                  "type": "object",
+                  "properties": {
+                    "stabilizationWindowSeconds": { "type": "integer", "minimum": 0 },
+                    "maxReplicasPerPeriod": { "type": "integer", "minimum": 1 },
+                    "periodSeconds": { "type": "integer", "minimum": 1 }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
           }
         },
         "podDisruptionBudget": {
