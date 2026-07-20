@@ -68,6 +68,7 @@ pub enum JobState {
     Leased { worker: String, attempt: u32 },
     Cancelled,
     Completed,
+    Failed { error_code: String },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -193,7 +194,9 @@ impl JobStore {
                 job.attempt
             }
             JobState::Leased { .. } => return Err(LeaseError::NotLeasable),
-            JobState::Cancelled | JobState::Completed => return Err(LeaseError::NotLeasable),
+            JobState::Cancelled | JobState::Completed | JobState::Failed { .. } => {
+                return Err(LeaseError::NotLeasable)
+            }
         };
         job.state = JobState::Leased {
             worker: worker.into(),
@@ -272,7 +275,7 @@ impl JobStore {
         if job.state == JobState::Cancelled {
             return Err(LeaseError::AlreadyCancelled);
         }
-        if job.state == JobState::Completed {
+        if matches!(job.state, JobState::Completed | JobState::Failed { .. }) {
             return Err(LeaseError::NotLeasable);
         }
         job.state = JobState::Cancelled;
@@ -290,7 +293,7 @@ impl JobStore {
         if job.state == JobState::Cancelled {
             return Err(LeaseError::AlreadyCancelled);
         }
-        if job.state == JobState::Completed {
+        if matches!(job.state, JobState::Completed | JobState::Failed { .. }) {
             return Err(LeaseError::NotLeasable);
         }
         job.state = JobState::Cancelled;
@@ -304,6 +307,29 @@ impl JobStore {
         match &job.state {
             JobState::Leased { worker: owner, .. } if owner == worker => {
                 job.state = JobState::Completed;
+                job.lease_until = None;
+                Ok(job.clone())
+            }
+            _ => Err(LeaseError::NotLeasable),
+        }
+    }
+
+    /// Mark a leased job as terminally failed with a bounded machine-readable code.
+    pub fn fail(
+        &self,
+        id: &str,
+        worker: &str,
+        error_code: impl Into<String>,
+    ) -> Result<Job, LeaseError> {
+        let error_code = error_code.into();
+        if error_code.len() > 256 {
+            return Err(LeaseError::CheckpointTooLarge);
+        }
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
+        match &job.state {
+            JobState::Leased { worker: owner, .. } if owner == worker => {
+                job.state = JobState::Failed { error_code };
                 job.lease_until = None;
                 Ok(job.clone())
             }
@@ -418,6 +444,25 @@ mod tests {
         assert!(store
             .lease_next_for_tenant("tenant-a", "worker-c", Duration::from_secs(30))
             .is_none());
+    }
+
+    #[test]
+    fn worker_failure_is_terminal_and_owner_scoped() {
+        let store = JobStore::default();
+        store.enqueue("j10", "tenant-a", "eval");
+        store.lease("j10", "worker-a").unwrap();
+        assert_eq!(
+            store.fail("j10", "worker-b", "model_timeout"),
+            Err(LeaseError::NotLeasable)
+        );
+        let failed = store.fail("j10", "worker-a", "model_timeout").unwrap();
+        assert_eq!(
+            failed.state,
+            JobState::Failed {
+                error_code: "model_timeout".into()
+            }
+        );
+        assert_eq!(store.lease("j10", "worker-c"), Err(LeaseError::NotLeasable));
     }
 
     #[test]
