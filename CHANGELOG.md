@@ -8,6 +8,11 @@ attach the matching immutable tag and artifact digests.
 
 ### Fixed
 
+- OCI development images now identify themselves as `vdev-build` instead of
+  the ambiguous `vunknown`; release builds continue to inject their semver.
+- The OCI entrypoint now forwards `--version`/`-version`, allowing a detached
+  image smoke test to verify the embedded FrankenGate version without starting
+  the gateway.
 - `/readyz` now fails closed until the VK invalidation and principal-authority
   consumers have completed bootstrap and remain fresh; `/livez` remains process-only.
 - Release vulnerability checks compile `govulncheck` once per job instead of
@@ -18,6 +23,8 @@ attach the matching immutable tag and artifact digests.
 - Added the isolated `analytics-rs` contract slice with versioned job
   submission, lease ownership, cancellation, terminal completion, and
   deterministic tests. It is not yet wired into the inference gateway.
+- Added the dependency-free analytics contract operator check (`--check`) for
+  deterministic submit/lease/complete verification.
 - Added `make rust-test` and `make rust-clean`; the cleanup target uses
   `cargo-sweep` when available to bound local Rust build-artifact growth.
 
