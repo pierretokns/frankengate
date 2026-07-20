@@ -9,67 +9,53 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 )
 
-func TestToOpenAIResponsesRequest_GPT56PlainMessagesUseScalarInput(t *testing.T) {
-	role := schemas.ResponsesInputMessageRoleUser
-	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
-		Model: "gpt-5.6-sol",
-		Input: []schemas.ResponsesMessage{{
-			Type:    schemas.Ptr(schemas.ResponsesMessageTypeMessage),
-			Role:    &role,
-			Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("hello Mantle")},
-		}},
-	})
-	if converted == nil || converted.Input.OpenAIResponsesRequestInputStr == nil {
-		t.Fatal("GPT-5.6 plain message input must use scalar Responses input form")
-	}
-	if got := *converted.Input.OpenAIResponsesRequestInputStr; got != "hello Mantle" {
-		t.Fatalf("scalar input = %q, want %q", got, "hello Mantle")
-	}
-	if converted.Input.OpenAIResponsesRequestInputArray != nil {
-		t.Fatal("GPT-5.6 scalar input must not also emit the array union")
-	}
-}
-
-func TestToOpenAIResponsesRequest_GPT56ToolItemsRemainStructured(t *testing.T) {
-	role := schemas.ResponsesInputMessageRoleUser
-	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
-		Model: "gpt-5.6-sol",
-		Input: []schemas.ResponsesMessage{
-			{Type: schemas.Ptr(schemas.ResponsesMessageTypeMessage), Role: &role,
-				Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("call the tool")}},
-			{Type: schemas.Ptr(schemas.ResponsesMessageTypeFunctionCall), ResponsesToolMessage: &schemas.ResponsesToolMessage{
-				CallID: schemas.Ptr("call_1"), Name: schemas.Ptr("lookup"), Arguments: schemas.Ptr(`{"q":"x"}`),
-			}},
-		},
-	})
-	if converted == nil || len(converted.Input.OpenAIResponsesRequestInputArray) != 2 {
-		t.Fatal("GPT-5.6 tool-call input must remain in structured array form")
-	}
-	if converted.Input.OpenAIResponsesRequestInputStr != nil {
-		t.Fatal("GPT-5.6 tool-call input must not be flattened to a scalar")
-	}
-}
-
-func TestToOpenAIResponsesRequest_MantleFrontierAliasesUseScalarInput(t *testing.T) {
-	for _, model := range []string{"Claude-GPT-soul", "Claude-GPT-luna", "Claude-GPT-terra", "Claude-GPT-sol"} {
+func TestToOpenAIResponsesRequest_MantleUsesResponsesLite(t *testing.T) {
+	for _, model := range []string{"gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "gemma-4-31b"} {
+		instructions := "You are Codex."
+		parallel := true
+		detail := "high"
+		reasoning := &schemas.ResponsesParametersReasoning{Effort: schemas.Ptr("high")}
 		converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
 			Provider: schemas.BedrockMantle,
 			Model:    model,
 			Input: []schemas.ResponsesMessage{{
-				Role:    schemas.Ptr(schemas.ResponsesInputMessageRoleUser),
-				Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("hello Mantle")},
+				Role: schemas.Ptr(schemas.ResponsesInputMessageRoleUser),
+				Content: &schemas.ResponsesMessageContent{ContentBlocks: []schemas.ResponsesMessageContentBlock{{
+					Type: schemas.ResponsesInputMessageContentBlockTypeImage,
+					ResponsesInputMessageContentBlockImage: &schemas.ResponsesInputMessageContentBlockImage{
+						ImageURL: schemas.Ptr("data:image/png;base64,abc"), Detail: &detail,
+					},
+				}}},
 			}},
+			Params: &schemas.ResponsesParameters{
+				Instructions: &instructions, ParallelToolCalls: &parallel, Reasoning: reasoning,
+				Tools: []schemas.ResponsesTool{{Type: schemas.ResponsesToolTypeFunction, Name: schemas.Ptr("lookup"), ResponsesToolFunction: &schemas.ResponsesToolFunction{}}},
+			},
 		})
-		if converted == nil || converted.Input.OpenAIResponsesRequestInputStr == nil {
-			t.Fatalf("%s: expected scalar input", model)
+		if converted == nil || len(converted.Input.OpenAIResponsesRequestInputArray) != 3 {
+			t.Fatalf("%s: expected lite input prefix plus user message, got %#v", model, converted)
 		}
-		if converted.Input.OpenAIResponsesRequestInputArray != nil {
-			t.Fatalf("%s: expected array input to be omitted", model)
+		body, err := json.Marshal(converted)
+		if err != nil {
+			t.Fatal(err)
+		}
+		wire := string(body)
+		for _, want := range []string{`"type":"additional_tools"`, `"role":"developer"`, `"context":"all_turns"`, `"parallel_tool_calls":false`} {
+			if !strings.Contains(wire, want) {
+				t.Fatalf("%s: missing %s in %s", model, want, wire)
+			}
+		}
+		if converted.Instructions != nil || len(converted.Tools) != 0 {
+			t.Fatalf("%s: lite request retained top-level instructions/tools", model)
+		}
+		image := converted.Input.OpenAIResponsesRequestInputArray[2].Content.ContentBlocks[0].ResponsesInputMessageContentBlockImage
+		if image.Detail != nil {
+			t.Fatalf("%s: lite request retained image detail", model)
 		}
 	}
 }
 
-func TestToOpenAIResponsesRequest_LiftsAdditionalToolsForMantle(t *testing.T) {
+func TestToOpenAIResponsesRequest_PreservesAlreadyLiteAdditionalToolsForMantle(t *testing.T) {
 	var additional schemas.ResponsesMessage
 	if err := json.Unmarshal([]byte(`{"type":"additional_tools","tools":[{"type":"function","name":"lookup","description":"look up a value","parameters":{"type":"object","properties":{"q":{"type":"string"}}}}]}`), &additional); err != nil {
 		t.Fatalf("decode additional_tools: %v", err)
@@ -79,8 +65,8 @@ func TestToOpenAIResponsesRequest_LiftsAdditionalToolsForMantle(t *testing.T) {
 		Model:    "Claude-GPT-soul",
 		Input:    []schemas.ResponsesMessage{additional},
 	})
-	if converted == nil || len(converted.Tools) != 1 || converted.Tools[0].Type != schemas.ResponsesToolTypeFunction {
-		t.Fatalf("expected one lifted function tool, got %#v", converted)
+	if converted == nil || len(converted.Tools) != 0 {
+		t.Fatalf("expected no top-level tools, got %#v", converted)
 	}
 	if len(converted.Input.OpenAIResponsesRequestInputArray) != 0 && len(converted.Input.OpenAIResponsesRequestInputArray) != 1 {
 		t.Fatalf("unexpected input array: %#v", converted.Input.OpenAIResponsesRequestInputArray)
@@ -89,11 +75,8 @@ func TestToOpenAIResponsesRequest_LiftsAdditionalToolsForMantle(t *testing.T) {
 	if err != nil {
 		t.Fatalf("marshal Mantle request: %v", err)
 	}
-	if strings.Contains(string(body), `"type":"additional_tools"`) {
-		t.Fatalf("additional_tools leaked into Mantle wire input: %s", body)
-	}
-	if !strings.Contains(string(body), `"tools"`) {
-		t.Fatalf("lifted tools missing from Mantle request: %s", body)
+	if !strings.Contains(string(body), `"type":"additional_tools"`) {
+		t.Fatalf("additional_tools missing from Mantle lite input: %s", body)
 	}
 }
 

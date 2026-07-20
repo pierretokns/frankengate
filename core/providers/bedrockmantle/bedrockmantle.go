@@ -71,6 +71,8 @@ func NewBedrockMantleProvider(config *schemas.ProviderConfig, logger schemas.Log
 // version as an "anthropic_version" body field).
 const mantleAnthropicVersion = "2023-06-01"
 
+const mantleResponsesLiteHeader = "x-openai-internal-codex-responses-lite"
+
 // defaultMantleRegion is the fallback AWS region used to build the bedrock-mantle host when
 // no region is supplied by the model prefix, the resolved alias, or the key config.
 const defaultMantleRegion = "us-east-1"
@@ -127,6 +129,17 @@ func (provider *BedrockMantleProvider) mantleSigner(ctx *schemas.BifrostContext,
 	return func(body []byte) (map[string]string, *schemas.BifrostError) {
 		return bedrock.SignMantleV4Headers(ctx, body, url, accept, key, region, provider.networkConfig.ExtraHeaders)
 	}
+}
+
+func (provider *BedrockMantleProvider) mantleOpenAIHeaders(ctx *schemas.BifrostContext, key schemas.Key, url string) map[string]string {
+	headers := bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key))
+	if !strings.Contains(url, "/openai/v1/") {
+		return headers
+	}
+	withLite := make(map[string]string, len(headers)+1)
+	maps.Copy(withLite, headers)
+	withLite[mantleResponsesLiteHeader] = "true"
+	return withLite
 }
 
 // GetProviderKey returns the provider identifier for Bedrock Mantle.
@@ -338,7 +351,7 @@ func (provider *BedrockMantleProvider) Responses(ctx *schemas.BifrostContext, ke
 		url,
 		&openAIRequest,
 		openai.BearerAuthHeader(key),
-		bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
+		provider.mantleOpenAIHeaders(ctx, key, url),
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
 		providerUtils.ShouldSendBackRawResponse(ctx, provider.sendBackRawResponse),
 		provider.GetProviderKey(),
@@ -398,7 +411,7 @@ func (provider *BedrockMantleProvider) ResponsesStream(ctx *schemas.BifrostConte
 	openAIRequest.Model = bareModel
 	return openai.HandleOpenAIResponsesStreaming(
 		ctx, provider.mantleStreamingClient, url, &openAIRequest,
-		openai.BearerAuthHeader(key), bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
+		openai.BearerAuthHeader(key), provider.mantleOpenAIHeaders(ctx, key, url),
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
 		providerUtils.ShouldSendBackRawResponse(ctx, provider.sendBackRawResponse),

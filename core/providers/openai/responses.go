@@ -45,23 +45,10 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	capModel := schemas.ResolveCanonicalModel(ctx, bifrostReq.Model)
 
 	var messages []schemas.ResponsesMessage
-	// Codex emits tool declarations as an `additional_tools` input item. That
-	// item is accepted by Codex's front door, but Mantle's OpenAI Responses
-	// contract expects the declarations in the top-level `tools` field and
-	// rejects the unknown input-item discriminator. Lift the declarations while
-	// retaining all other input items (including tool_search call/output items).
-	liftAdditionalTools := bifrostReq.Provider == schemas.BedrockMantle
-	var additionalTools []schemas.ResponsesTool
-	if liftAdditionalTools {
-		additionalTools = extractOpenAIAdditionalTools(bifrostReq.Input)
-	}
 	// OpenAI models (except for gpt-oss) do not support reasoning content blocks, so we need to convert them to summaries, if there are any
 	// OpenAI also doesn't support compaction content blocks, so we need to convert them to text blocks
 	messages = make([]schemas.ResponsesMessage, 0, len(bifrostReq.Input))
 	for _, message := range bifrostReq.Input {
-		if liftAdditionalTools && message.Type != nil && *message.Type == schemas.ResponsesMessageTypeAdditionalTools {
-			continue
-		}
 		// First, check if message has compaction content blocks and convert them to text
 		if message.Content != nil && len(message.Content.ContentBlocks) > 0 {
 			hasCompaction := false
@@ -108,7 +95,11 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 
 		// OpenAI requires detail on input_image blocks. Default missing values while
 		// cloning shared pointers so the caller's request is not mutated.
-		message = defaultImageDetail(message)
+		if usesMantleResponsesLite(ctx, bifrostReq) {
+			message = stripImageDetail(message)
+		} else {
+			message = defaultImageDetail(message)
+		}
 
 		// Strip provider reasoning signatures (e.g. Gemini thoughtSignatures smuggled into
 		// call_id as "<baseID>_ts_<sig>") from tool call IDs, but only when the id exceeds
@@ -242,16 +233,6 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 			OpenAIResponsesRequestInputArray: messages,
 		},
 	}
-	// Bedrock Mantle's GPT-5.6 Responses surface currently rejects the array
-	// union form of `input` for ordinary message turns (the same payload is
-	// accepted by public OpenAI). Keep structured arrays for tool/non-message
-	// items, but use the scalar form when every item is a plain text message.
-	if isGPT56Model(capModel) || isMantleFrontierAlias(bifrostReq.Provider, capModel, bifrostReq.Model) {
-		if flattened, ok := flattenPlainTextMessages(messages); ok {
-			req.Input = OpenAIResponsesRequestInput{OpenAIResponsesRequestInputStr: schemas.Ptr(flattened)}
-		}
-	}
-
 	if params != nil {
 		req.ResponsesParameters = *params
 		if req.ResponsesParameters.MaxOutputTokens != nil && *req.ResponsesParameters.MaxOutputTokens < MinMaxCompletionTokens {
@@ -354,99 +335,70 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	}
 
 	if bifrostReq.Params != nil {
-		if len(additionalTools) > 0 {
-			// Copy before appending so the caller's request is never mutated.
-			req.Tools = append(append([]schemas.ResponsesTool(nil), req.Tools...), additionalTools...)
-		}
 		req.ExtraParams = bifrostReq.Params.ExtraParams
-	} else if len(additionalTools) > 0 {
-		req.Tools = append(req.Tools, additionalTools...)
+	}
+	if usesMantleResponsesLite(ctx, bifrostReq) {
+		applyResponsesLite(req)
 	}
 	return req
 }
 
-// extractOpenAIAdditionalTools decodes Codex's raw-preserved additional_tools
-// item into the neutral tool union. Malformed declarations are ignored here;
-// normal typed tools remain intact and the provider will return the upstream
-// validation error rather than silently serializing an invalid input item.
-func extractOpenAIAdditionalTools(messages []schemas.ResponsesMessage) []schemas.ResponsesTool {
-	var out []schemas.ResponsesTool
-	for _, message := range messages {
-		if message.Type == nil || *message.Type != schemas.ResponsesMessageTypeAdditionalTools {
-			continue
-		}
-		data, err := json.Marshal(message)
-		if err != nil {
-			continue
-		}
-		var item struct {
-			Tools []json.RawMessage `json:"tools"`
-		}
-		if err := json.Unmarshal(data, &item); err != nil {
-			continue
-		}
-		for _, raw := range item.Tools {
-			var tool schemas.ResponsesTool
-			if err := json.Unmarshal(raw, &tool); err == nil {
-				out = append(out, tool)
-			}
-		}
-	}
-	return out
-}
-
-func isGPT56Model(model string) bool {
-	model = strings.ToLower(model)
-	return strings.Contains(model, "gpt-5.6")
-}
-
-// Mantle exposes the GPT-5.6 Sol/Terra/Luna deployments through aliases used
-// by Claude Code model pickers (for example Claude-GPT-soul). Those aliases
-// are still served by Mantle's OpenAI Responses contract, whose input union
-// rejects the message-array form for ordinary text turns. Keep this check
-// scoped to Mantle so similarly named models on other providers retain the
-// normal OpenAI wire shape.
-func isMantleFrontierAlias(provider schemas.ModelProvider, canonical, requested string) bool {
-	if provider != schemas.BedrockMantle {
+func usesMantleResponsesLite(ctx *schemas.BifrostContext, req *schemas.BifrostResponsesRequest) bool {
+	if req == nil || req.Provider != schemas.BedrockMantle {
 		return false
 	}
-	name := strings.ToLower(canonical + " " + requested)
-	name = strings.NewReplacer("_", "-", "/", "-", ".", "-").Replace(name)
-	return strings.Contains(name, "gpt-soul") ||
-		strings.Contains(name, "gpt-luna") ||
-		strings.Contains(name, "gpt-terra") ||
-		strings.Contains(name, "gpt-sol")
+	model := strings.ToLower(schemas.ResolveCanonicalModel(ctx, req.Model))
+	if strings.Contains(model, "gpt-oss") {
+		return false
+	}
+	family := schemas.ResolveFamily(ctx, req.Model)
+	return family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma ||
+		strings.Contains(model, "gpt-5") || strings.Contains(model, "gemma-4")
 }
 
-func flattenPlainTextMessages(messages []schemas.ResponsesMessage) (string, bool) {
-	if len(messages) == 0 {
-		return "", false
+// applyResponsesLite maps an ordinary Responses request to the transport shape
+// used by Codex for models whose Responses implementation is the reduced (lite)
+// contract. Bedrock Mantle exposes that contract even when the caller is an
+// older Codex client that sends the regular top-level instructions/tools form.
+func applyResponsesLite(req *OpenAIResponsesRequest) {
+	if req == nil {
+		return
 	}
-	parts := make([]string, 0, len(messages))
-	for _, message := range messages {
-		if message.Type != nil && *message.Type != schemas.ResponsesMessageTypeMessage {
-			return "", false
-		}
-		if message.Content == nil {
-			return "", false
-		}
-		if message.Content.ContentStr != nil {
-			parts = append(parts, *message.Content.ContentStr)
-			continue
-		}
-		if len(message.Content.ContentBlocks) == 0 {
-			return "", false
-		}
-		var text strings.Builder
-		for _, block := range message.Content.ContentBlocks {
-			if block.Type != schemas.ResponsesInputMessageContentBlockTypeText || block.Text == nil {
-				return "", false
+	prefix := make([]schemas.ResponsesMessage, 0, 2)
+	if len(req.Tools) > 0 {
+		if data, err := json.Marshal(struct {
+			Type  schemas.ResponsesMessageType `json:"type"`
+			Role  string                       `json:"role"`
+			Tools []schemas.ResponsesTool      `json:"tools"`
+		}{schemas.ResponsesMessageTypeAdditionalTools, "developer", req.Tools}); err == nil {
+			var item schemas.ResponsesMessage
+			if json.Unmarshal(data, &item) == nil {
+				prefix = append(prefix, item)
 			}
-			text.WriteString(*block.Text)
 		}
-		parts = append(parts, text.String())
 	}
-	return strings.Join(parts, "\n"), true
+	if req.Instructions != nil && *req.Instructions != "" {
+		prefix = append(prefix, schemas.ResponsesMessage{
+			Type: schemas.Ptr(schemas.ResponsesMessageTypeMessage),
+			Role: schemas.Ptr(schemas.ResponsesInputMessageRoleDeveloper),
+			Content: &schemas.ResponsesMessageContent{ContentBlocks: []schemas.ResponsesMessageContentBlock{{
+				Type: schemas.ResponsesInputMessageContentBlockTypeText,
+				Text: req.Instructions,
+			}}},
+		})
+	}
+	if len(prefix) > 0 {
+		input := append(prefix, req.Input.OpenAIResponsesRequestInputArray...)
+		req.Input = OpenAIResponsesRequestInput{OpenAIResponsesRequestInputArray: input}
+	}
+	req.Instructions = nil
+	req.Tools = nil
+	req.ParallelToolCalls = schemas.Ptr(false)
+	if req.Reasoning != nil {
+		reasoning := *req.Reasoning
+		reasoning.Context = schemas.Ptr("all_turns")
+		req.Reasoning = &reasoning
+	}
 }
 
 func defaultImageDetail(message schemas.ResponsesMessage) schemas.ResponsesMessage {
@@ -479,6 +431,30 @@ func defaultImageDetail(message schemas.ResponsesMessage) schemas.ResponsesMessa
 	content := *message.Content
 	content.ContentBlocks = blocks
 	message.Content = &content
+	return message
+}
+
+func stripImageDetail(message schemas.ResponsesMessage) schemas.ResponsesMessage {
+	if message.Content == nil || len(message.Content.ContentBlocks) == 0 {
+		return message
+	}
+	blocks := append([]schemas.ResponsesMessageContentBlock(nil), message.Content.ContentBlocks...)
+	changed := false
+	for i, block := range blocks {
+		if block.Type == schemas.ResponsesInputMessageContentBlockTypeImage &&
+			block.ResponsesInputMessageContentBlockImage != nil &&
+			block.ResponsesInputMessageContentBlockImage.Detail != nil {
+			image := *block.ResponsesInputMessageContentBlockImage
+			image.Detail = nil
+			blocks[i].ResponsesInputMessageContentBlockImage = &image
+			changed = true
+		}
+	}
+	if changed {
+		content := *message.Content
+		content.ContentBlocks = blocks
+		message.Content = &content
+	}
 	return message
 }
 

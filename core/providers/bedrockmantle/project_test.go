@@ -56,3 +56,23 @@ func TestResolveProjectID(t *testing.T) {
 		})
 	}
 }
+
+func TestMantleOpenAIHeadersEnableResponsesLiteWithoutMutatingConfig(t *testing.T) {
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	defer ctx.Cancel()
+	provider := &BedrockMantleProvider{networkConfig: schemas.NetworkConfig{ExtraHeaders: map[string]string{"x-custom": "value"}}}
+	headers := provider.mantleOpenAIHeaders(ctx, schemas.Key{}, "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses")
+	if got := headers[mantleResponsesLiteHeader]; got != "true" {
+		t.Fatalf("responses lite header = %q, want true", got)
+	}
+	if got := headers["x-custom"]; got != "value" {
+		t.Fatalf("custom header = %q, want value", got)
+	}
+	if _, mutated := provider.networkConfig.ExtraHeaders[mantleResponsesLiteHeader]; mutated {
+		t.Fatal("mantleOpenAIHeaders mutated provider network config")
+	}
+	bareHeaders := provider.mantleOpenAIHeaders(ctx, schemas.Key{}, "https://bedrock-mantle.us-east-1.api.aws/v1/responses")
+	if _, present := bareHeaders[mantleResponsesLiteHeader]; present {
+		t.Fatal("bare /v1 Mantle route must not receive the Responses Lite header")
+	}
+}
