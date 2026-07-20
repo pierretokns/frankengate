@@ -792,6 +792,42 @@ fn handle_connection(
                 ),
             )
         }
+        "/v1/jobs/stats" if method == "GET" => {
+            let tenant = query_param(query, "tenant");
+            match (database.as_ref(), tenant) {
+                (Some(pool), Some(tenant)) => {
+                    match tokio::runtime::Runtime::new().ok().and_then(|runtime| {
+                        runtime
+                            .block_on(frankengate_analytics_control::db::stats(pool, tenant))
+                            .ok()
+                    }) {
+                        Some(stats) => (
+                            "200 OK",
+                            "application/json",
+                            serde_json::json!({
+                                "tenant": tenant,
+                                "queued": stats.queued,
+                                "leased": stats.leased,
+                                "cancelled": stats.cancelled,
+                                "completed": stats.completed,
+                                "failed": stats.failed,
+                            })
+                            .to_string(),
+                        ),
+                        None => (
+                            "503 Service Unavailable",
+                            "text/plain",
+                            "durable queue stats unavailable\n".to_string(),
+                        ),
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "GET with tenant and DATABASE_URL is required\n".to_string(),
+                ),
+            }
+        }
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
