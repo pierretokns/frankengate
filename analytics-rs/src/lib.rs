@@ -63,6 +63,17 @@ pub struct Run {
     pub prompt_revision: String,
 }
 
+impl Run {
+    pub fn is_reproducible(&self) -> bool {
+        !self.id.is_empty()
+            && !self.experiment_id.is_empty()
+            && !self.dataset_revision.is_empty()
+            && !self.evaluator_revision.is_empty()
+            && !self.model_revision.is_empty()
+            && !self.prompt_revision.is_empty()
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct EvaluationResult {
     pub run_id: String,
@@ -617,6 +628,10 @@ mod tests {
         };
         assert_ne!(run.dataset_revision, run.model_revision);
         assert!(!run.prompt_revision.is_empty());
+        assert!(run.is_reproducible());
+        let mut incomplete = run.clone();
+        incomplete.model_revision.clear();
+        assert!(!incomplete.is_reproducible());
         let artifact = ArtifactManifest {
             run_id: run.id,
             digest: "sha256:abc".into(),
