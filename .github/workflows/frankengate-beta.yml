@@ -177,12 +177,16 @@ jobs:
           package="frankengate-beta-${short}-linux-amd64"
           mkdir -p "dist/${package}"
           cp tmp/bifrost-http "dist/${package}/frankengate"
+          timeout --foreground --signal=TERM --kill-after=30s 8m \
+            cargo build --release --manifest-path analytics-rs/Cargo.toml
+          cp analytics-rs/target/release/frankengate-analytics-control \
+            "dist/${package}/frankengate-analytics-control"
           cp LICENSE NOTICE "dist/${package}/"
           git log -n 30 --date=short --pretty=format:'%h %ad %s' > "dist/${package}/CHANGELOG.md"
           ./tmp/bifrost-http -version > "dist/${package}/version.txt"
           printf '{"source_sha":"%s","ref":"%s","workflow_sha":"%s","go_version":"%s","node_version":"%s"}\n' \
             "$sha" "$REF_NAME" "$GITHUB_SHA" "$GO_VERSION" "$NODE_VERSION" > "dist/${package}/build-metadata.json"
-          (cd "dist/${package}" && sha256sum frankengate > SHA256SUMS)
+          (cd "dist/${package}" && sha256sum frankengate frankengate-analytics-control > SHA256SUMS)
           tar -C dist -czf "dist/${package}.tar.gz" "${package}"
 
       - name: Upload beta binary artifact
