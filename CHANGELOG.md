@@ -35,6 +35,8 @@ attach the matching immutable tag and artifact digests.
   ownership is enforced by PostgreSQL row-level security and `SKIP LOCKED`.
 - Added an opt-in S3-compatible OTEL replay store with tenant-pinned object
   keys and JSONL fallback for local deployments.
+- Added SHA-256 digests to sanitized replay records and object metadata for
+  independent payload-integrity verification.
 - Added a separately published `-analytics` GHCR OCI image for the Rust
   control plane; it is released independently from the gateway image and
   binary verification lane.
