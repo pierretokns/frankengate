@@ -18,6 +18,9 @@ on:
       - ".github/workflows/frankengate-beta.yml"
       - ".github/workflows/scripts/**"
       - "scripts/benchmark-gateway-overhead*.sh"
+      - "analytics-rs/**"
+      - "helm-charts/bifrost/**"
+      - "CHANGELOG.md"
   workflow_dispatch:
     inputs:
       ref:
@@ -91,6 +94,9 @@ jobs:
           heartbeat & pid=$!; trap 'kill "$pid" 2>/dev/null || true' EXIT
           timeout --foreground --signal=TERM --kill-after=30s 12m \
             .github/workflows/scripts/fork-go-checks.sh beta
+
+      - name: Test analytics control plane
+        run: timeout --foreground --signal=TERM --kill-after=30s 5m cargo test --manifest-path analytics-rs/Cargo.toml
 
       - name: Provenance self-test
         if: ${{ false }} # deferred P10 provenance lane
