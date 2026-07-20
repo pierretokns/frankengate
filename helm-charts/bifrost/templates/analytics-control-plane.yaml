@@ -50,6 +50,11 @@ spec:
       path: /metrics
       interval: {{ .Values.analyticsControlPlane.serviceMonitor.interval }}
       scrapeTimeout: {{ .Values.analyticsControlPlane.serviceMonitor.scrapeTimeout }}
+      {{- with .Values.analyticsControlPlane.serviceMonitor.tenant }}
+      params:
+        tenant:
+          - {{ . | quote }}
+      {{- end }}
 {{- end }}
 ---
 apiVersion: apps/v1
