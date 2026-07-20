@@ -89,7 +89,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: analytics-control-plane
-          image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}"
+          image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}{{- if .Values.analyticsControlPlane.image.digest }}@{{ .Values.analyticsControlPlane.image.digest }}{{- end }}"
           imagePullPolicy: {{ .Values.analyticsControlPlane.image.pullPolicy }}
           command: {{ toJson .Values.analyticsControlPlane.command }}
           {{- with .Values.analyticsControlPlane.databaseUrlSecret }}

@@ -13,6 +13,7 @@ analyticsControlPlane:
   image:
     repository: ghcr.io/pierretokns/frankengate-analytics-control
     tag: "dev"
+    digest: ""
     pullPolicy: IfNotPresent
   replicas: 1
   command: ["frankengate-analytics-control", "--serve"]
