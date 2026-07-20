@@ -247,7 +247,6 @@ jobs:
           gh release upload "$RELEASE_TAG" \
             "dist/${{ steps.chart.outputs.package }}" \
             "dist/${{ steps.chart.outputs.package }}.sha256" \
-            "dist/${{ steps.chart.outputs.package }}.spdx.json" \
             dist/OCI_CHART_DIGEST \
             --clobber \
             --repo "$GITHUB_REPOSITORY"
