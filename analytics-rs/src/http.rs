@@ -165,6 +165,7 @@ mod tests {
         assert_eq!(route_for("/v1/jobs/stats"), Route::JobStats);
         assert_eq!(route_for("/v1/experiments"), Route::Experiments);
         assert_eq!(route_for("/v1/evaluations"), Route::Evaluations);
+        assert_eq!(route_for("/v1/artifacts"), Route::Artifacts);
         assert_eq!(route_for("/other"), Route::Unknown);
     }
 
@@ -189,5 +190,21 @@ mod tests {
         assert_eq!(request.limit, None);
         assert_eq!(request.run_id, None);
         assert!(parse_request(b"GET / HTTP/1.0\r\n\r\n").is_none());
+    }
+
+    #[test]
+    fn parses_lineage_read_headers() {
+        let request = parse_request(
+            b"GET /v1/evaluations HTTP/1.1\r\nX-Tenant-ID: tenant-a\r\nX-Run-ID: run-7\r\nX-Limit: 25\r\n\r\n",
+        )
+        .expect("valid lineage request");
+        assert_eq!(request.tenant, Some("tenant-a"));
+        assert_eq!(request.run_id, Some("run-7"));
+        assert_eq!(request.limit, Some("25"));
+        assert!(!authorize_route(
+            Route::Artifacts,
+            &WorkerAuth::from_token(Some("secret")),
+            None,
+        ));
     }
 }
