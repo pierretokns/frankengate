@@ -6,6 +6,29 @@ attach the matching immutable tag and artifact digests.
 
 ## Unreleased
 
+### Beta `v0.3.20-beta.4`
+
+- Added the isolated Rust analytics control plane for tenant-scoped
+  experiments, runs, evaluations, artifact manifests, replay lineage, and
+  governed worker leases. PostgreSQL is the authoritative store; inference
+  remains on the Go gateway boundary.
+- Added durable terminal run outcomes with idempotent conflict handling and
+  tenant/actor authorization checks.
+- Added independent analytics-control-plane Helm deployment, autoscaling,
+  readiness, and database-connection budget configuration.
+- Bedrock Mantle GPT-Soul, GPT-Luna, GPT-Terra, and GPT-Sol aliases now use
+  the `/openai/v1/responses` route and scalar plain-message input required by
+  the Mantle GPT-5.6 contract; structured tool input remains array-shaped.
+- Release verification covers Go provider regression tests, Rust contract
+  tests/build, Helm rendering, branding checks, and the pricing mirror.
+
+### Compatibility
+
+- This remains a prerelease (`0.3.20-beta.4`). Existing Bifrost-compatible
+  chart/value identifiers are retained; the Rust analytics API is additive
+  and opt-in. Stable promotion still requires successful external workflow
+  and artifact verification.
+
 ### Beta `v0.3.17-beta.1`
 
 - Bedrock Mantle GPT-5.6 Responses requests with plain message input now use
