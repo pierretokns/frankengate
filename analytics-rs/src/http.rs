@@ -8,6 +8,8 @@ pub enum Route {
     Jobs,
     Experiments,
     Runs,
+    Evaluations,
+    Artifacts,
     JobStats,
     Lease,
     Renew,
@@ -28,6 +30,8 @@ pub fn route_for(path: &str) -> Route {
         "/v1/jobs" => Route::Jobs,
         "/v1/experiments" => Route::Experiments,
         "/v1/runs" => Route::Runs,
+        "/v1/evaluations" => Route::Evaluations,
+        "/v1/artifacts" => Route::Artifacts,
         "/v1/jobs/stats" => Route::JobStats,
         "/v1/jobs/lease" => Route::Lease,
         "/v1/jobs/renew" => Route::Renew,
@@ -60,6 +64,7 @@ pub struct Request<'a> {
     pub replay_id: Option<&'a str>,
     pub source_job_id: Option<&'a str>,
     pub limit: Option<&'a str>,
+    pub run_id: Option<&'a str>,
 }
 
 pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
@@ -87,6 +92,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
     let mut replay_id = None;
     let mut source_job_id = None;
     let mut limit = None;
+    let mut run_id = None;
     for line in lines {
         if line.is_empty() {
             break;
@@ -125,6 +131,9 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         if name.eq_ignore_ascii_case("x-limit") {
             limit = Some(value.trim());
         }
+        if name.eq_ignore_ascii_case("x-run-id") {
+            run_id = Some(value.trim());
+        }
     }
     Some(Request {
         method,
@@ -140,6 +149,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         replay_id,
         source_job_id,
         limit,
+        run_id,
     })
 }
 
@@ -154,6 +164,7 @@ mod tests {
         assert_eq!(route_for("/v1/jobs"), Route::Jobs);
         assert_eq!(route_for("/v1/jobs/stats"), Route::JobStats);
         assert_eq!(route_for("/v1/experiments"), Route::Experiments);
+        assert_eq!(route_for("/v1/evaluations"), Route::Evaluations);
         assert_eq!(route_for("/other"), Route::Unknown);
     }
 
@@ -176,6 +187,7 @@ mod tests {
         assert_eq!(request.tenant, None);
         assert_eq!(request.job_id, None);
         assert_eq!(request.limit, None);
+        assert_eq!(request.run_id, None);
         assert!(parse_request(b"GET / HTTP/1.0\r\n\r\n").is_none());
     }
 }

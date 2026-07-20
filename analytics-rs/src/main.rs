@@ -101,6 +101,8 @@ fn handle_connection(
         "/v1/jobs"
         | "/v1/experiments"
         | "/v1/runs"
+        | "/v1/evaluations"
+        | "/v1/artifacts"
         | "/v1/jobs/stats"
         | "/v1/jobs/lease"
         | "/v1/jobs/renew"
@@ -226,6 +228,63 @@ fn governed_response(
                 "500 Internal Server Error",
                 "text/plain",
                 "run listing failed\n".into(),
+            ),
+        };
+    }
+    if matches!(request.path, "/v1/evaluations" | "/v1/artifacts") {
+        if request.method != "GET" {
+            return (
+                "405 Method Not Allowed",
+                "text/plain",
+                "only GET is supported\n".into(),
+            );
+        }
+        let Some(run_id) = request.run_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-run-id is required\n".into(),
+            );
+        };
+        let limit = request
+            .limit
+            .and_then(|value| value.parse::<i64>().ok())
+            .unwrap_or(100)
+            .clamp(1, 100);
+        if request.path == "/v1/evaluations" {
+            return match runtime.block_on(database.list_evaluations(tenant, run_id, limit)) {
+                Ok(rows) => (
+                    "200 OK",
+                    "application/json",
+                    serde_json::to_string(&rows.into_iter().map(|row| serde_json::json!({
+                        "run_id": row.run_id, "example_id": row.example_id,
+                        "evaluator_revision": row.evaluator_revision, "score": row.score,
+                    })).collect::<Vec<_>>()).unwrap_or_else(|_| "[]".into()),
+                ),
+                Err(_) => ("500 Internal Server Error", "text/plain", "evaluation listing failed\n".into()),
+            };
+        }
+        return match runtime.block_on(database.list_artifacts(tenant, run_id, limit)) {
+            Ok(rows) => (
+                "200 OK",
+                "application/json",
+                serde_json::to_string(
+                    &rows
+                        .into_iter()
+                        .map(|row| {
+                            serde_json::json!({
+                                "run_id": row.run_id, "digest": row.digest,
+                                "media_type": row.media_type, "object_uri": row.object_uri,
+                            })
+                        })
+                        .collect::<Vec<_>>(),
+                )
+                .unwrap_or_else(|_| "[]".into()),
+            ),
+            Err(_) => (
+                "500 Internal Server Error",
+                "text/plain",
+                "artifact listing failed\n".into(),
             ),
         };
     }
