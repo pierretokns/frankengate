@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/bytedance/sonic"
+	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/tidwall/gjson"
 )
 
@@ -100,4 +102,60 @@ func TestResponsesInputRoundTripsAdditionalToolsItems(t *testing.T) {
 		t.Fatalf("plain user message broke: %q", got)
 	}
 	t.Logf("round-trip OK:\n%s", out)
+}
+
+func TestToOpenAIResponsesRequestPreservesAdditionalTools(t *testing.T) {
+	input := []byte(`[
+		{"type":"additional_tools","role":"developer","tools":[{"type":"custom","name":"apply_patch"},{"type":"namespace","name":"repo_tools","tools":[{"type":"function","name":"open_file","parameters":{"type":"object"}}]}]},
+		{"role":"user","content":[{"type":"input_text","text":"Reply exactly with OK."}]}
+	]`)
+	var messages []schemas.ResponsesMessage
+	if err := sonic.Unmarshal(input, &messages); err != nil {
+		t.Fatalf("unmarshal Bifrost input: %v", err)
+	}
+	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
+		Provider: schemas.BedrockMantle,
+		Model:    "Claude-GPT-soul",
+		Input:    messages,
+	})
+	body, err := sonic.Marshal(converted)
+	if err != nil {
+		t.Fatalf("marshal converted request: %v", err)
+	}
+	if got := gjson.GetBytes(body, "input.0.type").String(); got != "additional_tools" {
+		t.Fatalf("additional_tools type lost during conversion: %s", body)
+	}
+	if got := gjson.GetBytes(body, "input.0.tools.1.tools.0.type").String(); got != "function" {
+		t.Fatalf("nested tool type lost during conversion: %s", body)
+	}
+}
+
+func TestToOpenAIResponsesRequestPreservesMCPAllowedToolsUnion(t *testing.T) {
+	server := "corp-tools"
+	allowed := &schemas.ResponsesToolMCPAllowedTools{ToolNames: []string{"search", "read"}}
+	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
+		Provider: schemas.BedrockMantle,
+		Model:    "openai.gpt-oss-120b",
+		Input: []schemas.ResponsesMessage{{
+			Role:    schemas.Ptr(schemas.ResponsesInputMessageRoleUser),
+			Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("hello")},
+		}},
+		Params: &schemas.ResponsesParameters{Tools: []schemas.ResponsesTool{{
+			Type: schemas.ResponsesToolTypeMCP,
+			ResponsesToolMCP: &schemas.ResponsesToolMCP{
+				ServerLabel:  server,
+				AllowedTools: allowed,
+			},
+		}}},
+	})
+	body, err := sonic.Marshal(converted)
+	if err != nil {
+		t.Fatalf("marshal converted request: %v", err)
+	}
+	if got := gjson.GetBytes(body, "tools.0.allowed_tools.0").String(); got != "search" {
+		t.Fatalf("MCP allowed_tools array was reshaped: %s", body)
+	}
+	if got := gjson.GetBytes(body, "tools.0.server_label").String(); got != server {
+		t.Fatalf("MCP server label lost: %s", body)
+	}
 }

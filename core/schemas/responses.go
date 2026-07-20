@@ -2839,8 +2839,42 @@ type ResponsesToolMCP struct {
 // ResponsesToolMCPAllowedTools - List of allowed tool names or a filter object
 type ResponsesToolMCPAllowedTools struct {
 	// Either a simple array of tool names or a filter object
-	ToolNames []string                            `json:",omitempty"`
-	Filter    *ResponsesToolMCPAllowedToolsFilter `json:",omitempty"`
+	ToolNames []string                            `json:"-"`
+	Filter    *ResponsesToolMCPAllowedToolsFilter `json:"-"`
+}
+
+// MarshalJSON emits the two wire forms accepted by the Responses API:
+// either an array of tool names or a filter object. Keeping this as a union is
+// important for Bedrock Mantle MCP tools, which rejects the internal
+// {"ToolNames": ...} representation produced by default encoding/json.
+func (a ResponsesToolMCPAllowedTools) MarshalJSON() ([]byte, error) {
+	if len(a.ToolNames) > 0 && a.Filter != nil {
+		return nil, fmt.Errorf("allowed_tools cannot contain both tool names and a filter")
+	}
+	if len(a.ToolNames) > 0 {
+		return MarshalSorted(a.ToolNames)
+	}
+	if a.Filter != nil {
+		return MarshalSorted(a.Filter)
+	}
+	return MarshalSorted([]string{})
+}
+
+// UnmarshalJSON accepts either the array or object form and preserves it for
+// a subsequent request/response round trip.
+func (a *ResponsesToolMCPAllowedTools) UnmarshalJSON(data []byte) error {
+	*a = ResponsesToolMCPAllowedTools{}
+	var names []string
+	if err := Unmarshal(data, &names); err == nil {
+		a.ToolNames = names
+		return nil
+	}
+	var filter ResponsesToolMCPAllowedToolsFilter
+	if err := Unmarshal(data, &filter); err == nil {
+		a.Filter = &filter
+		return nil
+	}
+	return fmt.Errorf("allowed_tools is neither an array of tool names nor a filter object")
 }
 
 // ResponsesToolMCPAllowedToolsFilter - A filter object to specify which tools are allowed
