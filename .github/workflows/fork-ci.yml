@@ -2,7 +2,9 @@ name: Fork CI
 
 on:
   push:
-    branches: ["**"]
+    # Feature branches are covered by pull_request. Restrict push runs to
+    # integration branches so a PR push does not launch a duplicate suite.
+    branches: ["dev", "main"]
     tags-ignore:
       - "*"
   pull_request:
