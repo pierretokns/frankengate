@@ -437,6 +437,39 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/runs/finish" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let run_id = query_param(query, "run_id");
+            let outcome = query_param(query, "outcome");
+            match (database.as_ref(), tenant, run_id, outcome) {
+                (Some(pool), Some(tenant), Some(run_id), Some(outcome)) => {
+                    let finished = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::finish_run(
+                                    pool, tenant, run_id, outcome,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if finished {
+                        ("200 OK", "text/plain", "finished\n".to_string())
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "run already terminal or not found\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, run_id, and outcome is required\n".to_string(),
+                ),
+            }
+        }
         "/metrics" => {
             let tenant = query
                 .split('&')

@@ -88,6 +88,9 @@ Evaluation results are recorded with
 the `(run, example, evaluator revision)` key is idempotent.
 Artifact lineage is recorded without copying artifact bytes into Postgres via
 `POST /v1/artifacts?tenant=<tenant-id>&run_id=<id>&digest=<digest>&media_type=<type>&object_uri=s3://...`.
+Runs are terminalized once with
+`POST /v1/runs/finish?tenant=<tenant-id>&run_id=<id>&outcome=<json-or-status>`;
+subsequent terminalization attempts are rejected.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
