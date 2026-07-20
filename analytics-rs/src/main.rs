@@ -108,6 +108,43 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/jobs" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let id = query_param(query, "id");
+            let kind = query_param(query, "kind");
+            match (database.as_ref(), tenant, id, kind) {
+                (Some(pool), Some(tenant), Some(id), Some(kind)) => {
+                    let job = frankengate_analytics_control::SubmitJob {
+                        protocol_version: frankengate_analytics_control::PROTOCOL_VERSION,
+                        id: id.to_owned(),
+                        tenant: tenant.to_owned(),
+                        kind: kind.to_owned(),
+                    };
+                    let submitted = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::submit_job(pool, &job))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if submitted {
+                        ("201 Created", "text/plain", format!("id={}\n", job.id))
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "job already exists\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, id, and kind is required\n".to_string(),
+                ),
+            }
+        }
         "/v1/jobs/complete" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let worker = query_param(query, "worker");

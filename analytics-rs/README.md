@@ -69,6 +69,9 @@ queue view. Requests without a tenant parameter retain the local process
 metrics, avoiding an unsafe cross-tenant aggregate query.
 Workers can claim one durable job with
 `/v1/jobs/lease?tenant=<tenant-id>&worker=<worker-id>&lease_seconds=30`.
+Jobs are submitted with
+`POST /v1/jobs?tenant=<tenant-id>&id=<job-id>&kind=<job-kind>`; duplicate IDs
+are idempotent conflicts.
 Claims use PostgreSQL row locking and are therefore safe across independently
 scaled replicas; the endpoint returns `204` when the tenant queue is empty.
 The owner completes a claim with
