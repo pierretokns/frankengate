@@ -52,6 +52,15 @@ pub struct JobRow {
     pub replay_of: Option<String>,
 }
 
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct JobStats {
+    pub queued: i64,
+    pub leased: i64,
+    pub completed: i64,
+    pub failed: i64,
+    pub cancelled: i64,
+}
+
 impl Database {
     pub async fn connect(url: &str, max_connections: u32) -> Result<Self, sqlx::Error> {
         let pool = PgPoolOptions::new()
@@ -459,5 +468,30 @@ impl Database {
         .await?;
         tx.commit().await?;
         Ok(result.rows_affected() == 1)
+    }
+
+    pub async fn job_stats(&self, tenant: &str) -> Result<JobStats, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let rows = sqlx::query_as::<_, (String, i64)>(
+            "select state, count(*)::bigint\
+             from frankengate_analytics.jobs\
+             where tenant_id = $1 group by state",
+        )
+        .bind(tenant)
+        .fetch_all(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        let mut stats = JobStats::default();
+        for (state, count) in rows {
+            match state.as_str() {
+                "queued" => stats.queued = count,
+                "leased" => stats.leased = count,
+                "completed" => stats.completed = count,
+                "failed" => stats.failed = count,
+                "cancelled" => stats.cancelled = count,
+                _ => {}
+            }
+        }
+        Ok(stats)
     }
 }
