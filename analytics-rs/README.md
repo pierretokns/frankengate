@@ -80,6 +80,9 @@ not expose prompt, trace, or artifact contents.
 Artifact lineage metadata is available through
 `GET /v1/artifacts?tenant=<tenant-id>&run_id=<run-id>&limit=50`; it is
 tenant-scoped through the parent run and never reads object bytes.
+Evaluation projections are available through
+`GET /v1/evaluations?tenant=<tenant-id>&run_id=<run-id>&limit=50`, with the
+same tenant and 1–100 row bounds.
 Workers can claim one durable job with
 `/v1/jobs/lease?tenant=<tenant-id>&worker=<worker-id>&lease_seconds=30`.
 Jobs are submitted with

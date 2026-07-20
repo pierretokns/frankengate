@@ -33,6 +33,15 @@ pub struct ArtifactSummary {
     pub created_at: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct EvaluationSummary {
+    pub run_id: String,
+    pub example_id: String,
+    pub evaluator_revision: String,
+    pub score: String,
+    pub created_at: String,
+}
+
 /// Optional durable-store boot fence. The process remains usable in local
 /// development without Postgres, while production can require a reachable
 /// database by setting DATABASE_URL.
@@ -467,6 +476,48 @@ pub async fn record_evaluation(
     .await?;
     tx.commit().await?;
     Ok(inserted.rows_affected() == 1)
+}
+
+/// Return bounded evaluation metadata for a tenant-owned run. Scores remain
+/// JSON values but are returned as stored; prompt and trace payloads are not
+/// part of this projection.
+pub async fn list_evaluations(
+    pool: &PgPool,
+    tenant: &str,
+    run_id: &str,
+    limit: i64,
+) -> Result<Vec<EvaluationSummary>, sqlx::Error> {
+    let mut tx = pool.begin().await?;
+    sqlx::query("select set_config('app.tenant_id', $1, true)")
+        .bind(tenant)
+        .execute(&mut *tx)
+        .await?;
+    let rows = sqlx::query_as::<_, (String, String, String, String, String)>(
+        "select e.run_id, e.example_id, e.evaluator_revision, e.score::text, e.created_at::text
+           from frankengate_analytics.evaluation_results e
+           join frankengate_analytics.runs r on r.id = e.run_id
+          where r.tenant_id = $1 and e.run_id = $2
+          order by e.created_at desc, e.example_id desc
+          limit $3",
+    )
+    .bind(tenant)
+    .bind(run_id)
+    .bind(limit.clamp(1, 100))
+    .fetch_all(&mut *tx)
+    .await?;
+    tx.commit().await?;
+    Ok(rows
+        .into_iter()
+        .map(
+            |(run_id, example_id, evaluator_revision, score, created_at)| EvaluationSummary {
+                run_id,
+                example_id,
+                evaluator_revision,
+                score,
+                created_at,
+            },
+        )
+        .collect())
 }
 
 pub async fn record_artifact(
