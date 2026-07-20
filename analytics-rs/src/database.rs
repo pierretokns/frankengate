@@ -422,4 +422,19 @@ impl Database {
         tx.commit().await?;
         Ok(row)
     }
+
+    pub async fn drain_worker(&self, tenant: &str, worker_id: &str) -> Result<u64, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let result = sqlx::query(
+            "update frankengate_analytics.jobs\
+             set state = 'queued', worker_id = null, lease_until = null, updated_at = now()\
+             where tenant_id = $1 and worker_id = $2 and state = 'leased'",
+        )
+        .bind(tenant)
+        .bind(worker_id)
+        .execute(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(result.rows_affected())
+    }
 }
