@@ -34,6 +34,9 @@ When `databaseUrlSecret` is configured and `serviceMonitor.enabled=true`, set
 `analyticsControlPlane.serviceMonitor.tenant` to scrape durable tenant-scoped
 queue gauges. An empty tenant intentionally reports only the local protocol
 store and must not be used as a durable production metric.
+The optional analytics HPA uses bounded scale-up and a five-minute scale-down
+stabilization window by default; tune `analyticsControlPlane.autoscaling.behavior`
+only after accounting for database connection and worker-lease capacity.
 
 ## Changelog
 
