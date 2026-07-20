@@ -34,6 +34,10 @@ fn serve() {
 
 fn handle_connection(mut stream: std::net::TcpStream) {
     use std::io::{Read, Write};
+    // Health probes are tiny and bounded.  Do not let an accepted but idle
+    // socket consume a thread forever (especially during a probe storm).
+    let _ = stream.set_read_timeout(Some(std::time::Duration::from_secs(2)));
+    let _ = stream.set_write_timeout(Some(std::time::Duration::from_secs(2)));
     let mut request = [0_u8; 1024];
     let size = stream.read(&mut request).unwrap_or(0);
     let path = std::str::from_utf8(&request[..size])
