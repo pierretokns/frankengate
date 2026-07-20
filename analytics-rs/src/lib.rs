@@ -217,6 +217,24 @@ impl JobStore {
         Ok(job.clone())
     }
 
+    /// Tenant-scoped cancellation boundary for API callers.
+    pub fn cancel_for_tenant(&self, tenant: &str, id: &str) -> Result<Job, LeaseError> {
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
+        if job.tenant != tenant {
+            return Err(LeaseError::NotFound);
+        }
+        if job.state == JobState::Cancelled {
+            return Err(LeaseError::AlreadyCancelled);
+        }
+        if job.state == JobState::Completed {
+            return Err(LeaseError::NotLeasable);
+        }
+        job.state = JobState::Cancelled;
+        job.lease_until = None;
+        Ok(job.clone())
+    }
+
     pub fn complete(&self, id: &str, worker: &str) -> Result<Job, LeaseError> {
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
         let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
@@ -267,6 +285,21 @@ mod tests {
         assert_eq!(jobs[0].id, "j1");
         assert_eq!(jobs[1].id, "j3");
         assert!(store.list_for_tenant("tenant-c", 10).is_empty());
+    }
+
+    #[test]
+    fn tenant_scoped_cancellation_cannot_cross_tenant_boundary() {
+        let store = JobStore::default();
+        store.enqueue("j4b", "tenant-a", "eval");
+        assert_eq!(
+            store.cancel_for_tenant("tenant-b", "j4b"),
+            Err(LeaseError::NotFound)
+        );
+        assert_eq!(store.get("j4b").unwrap().state, JobState::Queued);
+        assert_eq!(
+            store.cancel_for_tenant("tenant-a", "j4b").unwrap().state,
+            JobState::Cancelled
+        );
     }
 
     #[test]
