@@ -9,12 +9,6 @@ const jsonLd = {
 		"@type": "Organization",
 		name: "FrankenGate",
 		url: "https://github.com/pierretokns/frankengate",
-		logo: {
-			"@type": "ImageObject",
-			url: "https://pierretokns.github.io/frankengate/logo.svg",
-			width: 300,
-			height: 60,
-		},
 		sameAs: ["https://github.com/pierretokns/frankengate"],
 	},
 	mainEntity: {
