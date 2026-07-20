@@ -37,6 +37,34 @@ func TestObjectReplayStoreTenantIsolationAndRedaction(t *testing.T) {
 	}
 }
 
+func TestObjectReplayStoreListAndRetentionAreTenantScoped(t *testing.T) {
+	store, err := NewObjectReplayStore(objectstore.NewInMemoryObjectStore(), "fg/replay")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, id := range []string{"one", "two"} {
+		if err := store.Put(context.Background(), &schemas.Trace{TraceID: id, Attributes: map[string]any{"tenant": "acme"}}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := store.Put(context.Background(), &schemas.Trace{TraceID: "other", Attributes: map[string]any{"tenant": "other"}}); err != nil {
+		t.Fatal(err)
+	}
+	rows, err := store.List(context.Background(), "acme", 10)
+	if err != nil || len(rows) != 2 {
+		t.Fatalf("tenant list = %d, err=%v", len(rows), err)
+	}
+	if _, err := store.List(context.Background(), "", 10); !os.IsPermission(err) {
+		t.Fatalf("blank tenant should fail closed, got %v", err)
+	}
+	if _, err := store.DeleteBefore(context.Background(), "other", time.Now().Add(time.Second)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := store.Get(context.Background(), "acme", "one"); err != nil {
+		t.Fatalf("other-tenant deletion affected acme: %v", err)
+	}
+}
+
 func TestJSONLReplayStoreTenantIsolationAndRedaction(t *testing.T) {
 	dir := t.TempDir()
 	store, err := NewJSONLReplayStore(dir, false)
