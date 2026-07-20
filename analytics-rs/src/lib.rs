@@ -78,6 +78,7 @@ pub struct Job {
     pub state: JobState,
     /// Monotonically increasing delivery attempt, including recovered leases.
     pub attempt: u32,
+    pub checkpoint: Option<String>,
     lease_until: Option<Instant>,
 }
 
@@ -86,6 +87,7 @@ pub enum LeaseError {
     NotFound,
     NotLeasable,
     AlreadyCancelled,
+    CheckpointTooLarge,
 }
 
 #[derive(Clone, Default)]
@@ -113,6 +115,7 @@ impl JobStore {
             kind: kind.into(),
             state: JobState::Queued,
             attempt: 0,
+            checkpoint: None,
             lease_until: None,
         };
         let mut jobs = self.jobs.lock().expect("job store lock poisoned");
@@ -211,6 +214,28 @@ impl JobStore {
         match &job.state {
             JobState::Leased { worker: owner, .. } if owner == worker => {
                 job.lease_until = Some(Instant::now() + duration);
+                Ok(job.clone())
+            }
+            _ => Err(LeaseError::NotLeasable),
+        }
+    }
+
+    /// Store a bounded progress checkpoint owned by the active lease holder.
+    pub fn checkpoint(
+        &self,
+        id: &str,
+        worker: &str,
+        value: impl Into<String>,
+    ) -> Result<Job, LeaseError> {
+        let value = value.into();
+        if value.len() > 4096 {
+            return Err(LeaseError::CheckpointTooLarge);
+        }
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        let job = jobs.get_mut(id).ok_or(LeaseError::NotFound)?;
+        match &job.state {
+            JobState::Leased { worker: owner, .. } if owner == worker => {
+                job.checkpoint = Some(value);
                 Ok(job.clone())
             }
             _ => Err(LeaseError::NotLeasable),
@@ -327,6 +352,25 @@ mod tests {
         assert_eq!(store.lease("j5b", "worker-c").unwrap().attempt, 2);
         assert_eq!(store.drain_worker("worker-a"), 0);
         assert!(matches!(store.get("j6b").unwrap().state, JobState::Leased { .. }));
+    }
+
+    #[test]
+    fn checkpoints_are_owner_scoped_and_bounded() {
+        let store = JobStore::default();
+        store.enqueue("j7b", "tenant-a", "eval");
+        store.lease("j7b", "worker-a").unwrap();
+        assert_eq!(
+            store.checkpoint("j7b", "worker-b", "wrong"),
+            Err(LeaseError::NotLeasable)
+        );
+        assert_eq!(
+            store.checkpoint("j7b", "worker-a", "step:42").unwrap().checkpoint,
+            Some("step:42".into())
+        );
+        assert_eq!(
+            store.checkpoint("j7b", "worker-a", "x".repeat(4097)),
+            Err(LeaseError::CheckpointTooLarge)
+        );
     }
 
     #[test]
