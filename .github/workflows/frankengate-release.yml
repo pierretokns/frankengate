@@ -197,6 +197,12 @@ jobs:
           package="frankengate-${VERSION}-${ARTIFACT}"
           mkdir -p "dist/${package}"
           cp tmp/bifrost-http "dist/${package}/frankengate"
+          if [[ "${ARTIFACT}" == "linux-amd64" ]]; then
+            timeout --foreground --signal=TERM --kill-after=30s 12m \
+              cargo build --release --manifest-path analytics-rs/Cargo.toml
+            cp analytics-rs/target/release/frankengate-analytics-control \
+              "dist/${package}/frankengate-analytics-control"
+          fi
           cp LICENSE NOTICE "dist/${package}/"
 
       - name: Generate release SPDX manifest
