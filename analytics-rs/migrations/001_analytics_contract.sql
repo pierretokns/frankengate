@@ -100,6 +100,34 @@ create index if not exists run_attempts_tenant_run_idx
 alter table frankengate_analytics.jobs
   add column if not exists replay_of text references frankengate_analytics.jobs(id);
 
+-- Reject impossible lease projections at the database boundary. These
+-- constraints are added idempotently so rolling migration retries are safe.
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'jobs_lease_projection_consistency'
+      and conrelid = 'frankengate_analytics.jobs'::regclass
+  ) then
+    alter table frankengate_analytics.jobs
+      add constraint jobs_lease_projection_consistency check (
+        (state = 'leased' and worker_id is not null and lease_until is not null)
+        or (state <> 'leased' and worker_id is null and lease_until is null)
+      );
+  end if;
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'jobs_terminal_error_consistency'
+      and conrelid = 'frankengate_analytics.jobs'::regclass
+  ) then
+    alter table frankengate_analytics.jobs
+      add constraint jobs_terminal_error_consistency check (
+        (state = 'failed' and error_code is not null and length(error_code) between 1 and 256)
+        or (state <> 'failed' and error_code is null)
+      );
+  end if;
+end $$;
+
 -- Re-running this migration must be safe during rolling deploys.  PostgreSQL
 -- has no CREATE POLICY IF NOT EXISTS, so replace policies deterministically.
 drop policy if exists experiments_tenant_isolation on frankengate_analytics.experiments;
