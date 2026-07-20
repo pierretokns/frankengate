@@ -6,6 +6,8 @@ pub enum Route {
     Ready,
     Version,
     Jobs,
+    Experiments,
+    Runs,
     JobStats,
     Lease,
     Renew,
@@ -24,6 +26,8 @@ pub fn route_for(path: &str) -> Route {
         "/readyz" => Route::Ready,
         "/version" => Route::Version,
         "/v1/jobs" => Route::Jobs,
+        "/v1/experiments" => Route::Experiments,
+        "/v1/runs" => Route::Runs,
         "/v1/jobs/stats" => Route::JobStats,
         "/v1/jobs/lease" => Route::Lease,
         "/v1/jobs/renew" => Route::Renew,
@@ -55,6 +59,7 @@ pub struct Request<'a> {
     pub checkpoint: Option<&'a str>,
     pub replay_id: Option<&'a str>,
     pub source_job_id: Option<&'a str>,
+    pub limit: Option<&'a str>,
 }
 
 pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
@@ -81,6 +86,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
     let mut checkpoint = None;
     let mut replay_id = None;
     let mut source_job_id = None;
+    let mut limit = None;
     for line in lines {
         if line.is_empty() {
             break;
@@ -116,6 +122,9 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         if name.eq_ignore_ascii_case("x-source-job-id") {
             source_job_id = Some(value.trim());
         }
+        if name.eq_ignore_ascii_case("x-limit") {
+            limit = Some(value.trim());
+        }
     }
     Some(Request {
         method,
@@ -130,6 +139,7 @@ pub fn parse_request(raw: &[u8]) -> Option<Request<'_>> {
         checkpoint,
         replay_id,
         source_job_id,
+        limit,
     })
 }
 
@@ -143,6 +153,7 @@ mod tests {
         assert_eq!(route_for("/healthz"), Route::Health);
         assert_eq!(route_for("/v1/jobs"), Route::Jobs);
         assert_eq!(route_for("/v1/jobs/stats"), Route::JobStats);
+        assert_eq!(route_for("/v1/experiments"), Route::Experiments);
         assert_eq!(route_for("/other"), Route::Unknown);
     }
 
@@ -164,6 +175,7 @@ mod tests {
         assert_eq!(request.authorization, Some("Bearer secret"));
         assert_eq!(request.tenant, None);
         assert_eq!(request.job_id, None);
+        assert_eq!(request.limit, None);
         assert!(parse_request(b"GET / HTTP/1.0\r\n\r\n").is_none());
     }
 }

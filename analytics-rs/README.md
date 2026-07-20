@@ -92,6 +92,17 @@ POST /v1/jobs/replay       X-Replay-ID, X-Source-Job-ID
 POST /v1/jobs/drain        X-Worker-ID
 ```
 
+The durable lineage read surface is also tenant-scoped and bearer-protected:
+
+```text
+GET  /v1/experiments       X-Limit (optional, 1..100) -> 200 JSON array
+GET  /v1/runs              X-Limit (optional, 1..100) -> 200 JSON array
+```
+
+These endpoints expose only revision metadata; prompts, inputs, outputs, and
+artifact bytes remain outside this control plane. Tenant fencing is enforced by
+the same PostgreSQL RLS transaction boundary used by worker operations.
+
 Lease, renewal, checkpoint, and terminal transitions are owner-scoped in
 PostgreSQL. `drain` releases a worker's leases for recovery; `replay` requires
 a terminal same-tenant source job. Empty queues return `204` from lease, and

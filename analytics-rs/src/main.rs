@@ -99,6 +99,8 @@ fn handle_connection(
             ),
         ),
         "/v1/jobs"
+        | "/v1/experiments"
+        | "/v1/runs"
         | "/v1/jobs/stats"
         | "/v1/jobs/lease"
         | "/v1/jobs/renew"
@@ -158,6 +160,72 @@ fn governed_response(
                 "500 Internal Server Error",
                 "text/plain",
                 "job stats failed\n".into(),
+            ),
+        };
+    }
+    if matches!(request.path, "/v1/experiments" | "/v1/runs") {
+        if request.method != "GET" {
+            return (
+                "405 Method Not Allowed",
+                "text/plain",
+                "only GET is supported\n".into(),
+            );
+        }
+        let limit = request
+            .limit
+            .and_then(|value| value.parse::<i64>().ok())
+            .unwrap_or(100)
+            .clamp(1, 100);
+        if request.path == "/v1/experiments" {
+            return match runtime.block_on(database.list_experiments(tenant, limit)) {
+                Ok(rows) => (
+                    "200 OK",
+                    "application/json",
+                    serde_json::to_string(
+                        &rows
+                            .into_iter()
+                            .map(|row| {
+                                serde_json::json!({
+                                    "id": row.id, "tenant_id": row.tenant_id,
+                                    "actor_id": row.actor_id, "revision": row.revision,
+                                })
+                            })
+                            .collect::<Vec<_>>(),
+                    )
+                    .unwrap_or_else(|_| "[]".into()),
+                ),
+                Err(_) => (
+                    "500 Internal Server Error",
+                    "text/plain",
+                    "experiment listing failed\n".into(),
+                ),
+            };
+        }
+        return match runtime.block_on(database.list_runs(tenant, limit)) {
+            Ok(rows) => (
+                "200 OK",
+                "application/json",
+                serde_json::to_string(
+                    &rows
+                        .into_iter()
+                        .map(|row| {
+                            serde_json::json!({
+                                "id": row.id, "tenant_id": row.tenant_id,
+                                "experiment_id": row.experiment_id,
+                                "dataset_revision": row.dataset_revision,
+                                "evaluator_revision": row.evaluator_revision,
+                                "model_revision": row.model_revision,
+                                "prompt_revision": row.prompt_revision,
+                            })
+                        })
+                        .collect::<Vec<_>>(),
+                )
+                .unwrap_or_else(|_| "[]".into()),
+            ),
+            Err(_) => (
+                "500 Internal Server Error",
+                "text/plain",
+                "run listing failed\n".into(),
             ),
         };
     }
