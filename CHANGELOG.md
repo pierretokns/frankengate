@@ -33,6 +33,9 @@ attach the matching immutable tag and artifact digests.
 - Added durable worker APIs for lease claim, renewal, checkpoint, completion,
   failure, cancellation, retry, replay, drain, and expired-lease recovery;
   ownership is enforced by PostgreSQL row-level security and `SKIP LOCKED`.
+- Added a separately published `-analytics` GHCR OCI image for the Rust
+  control plane; it is released independently from the gateway image and
+  binary verification lane.
 - Added tenant-scoped durable queue metrics at `/metrics?tenant=<id>` and
   configurable Helm connection budgets, disruption protection, and autoscaling
   boundaries for analytics replicas.
