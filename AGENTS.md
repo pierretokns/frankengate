@@ -918,6 +918,20 @@ cd ui && npm run build
 
 ---
 
+## Agent Communication
+
+Keep agent-facing and user-facing updates brief and outcome-first.
+
+* State the result, changed files, and verification in a few sentences.
+* Do not repeat the task context, plan, or prior status unless it changed.
+* Prefer concise command output; summarize long logs and link to artifacts.
+* Explain details only when they establish evidence, a blocker, a trade-off, or
+  are explicitly requested.
+* Keep commentary updates short while work is running; put the complete handoff
+  in the final response.
+
+---
+
 ## Summary
 
 * Prioritize **reusability, performance, and consistency**
