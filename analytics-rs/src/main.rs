@@ -94,7 +94,7 @@ fn handle_connection(
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
-        "/v1/jobs" | "/v1/jobs/stats" | "/v1/jobs/lease" => {
+        "/v1/jobs" | "/v1/jobs/stats" | "/v1/jobs/lease" | "/v1/jobs/renew" => {
             governed_response(parsed.as_ref(), &database, &runtime)
         }
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
@@ -182,6 +182,56 @@ fn governed_response(
             ),
             Ok(None) => ("204 No Content", "application/json", String::new()),
             Err(_) => ("409 Conflict", "text/plain", "job lease rejected\n".into()),
+        };
+    }
+    if request.path == "/v1/jobs/renew" {
+        if request.method != "POST" {
+            return (
+                "405 Method Not Allowed",
+                "text/plain",
+                "only POST is supported\n".into(),
+            );
+        }
+        let Some(job_id) = request.job_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-job-id is required\n".into(),
+            );
+        };
+        let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
+            return (
+                "400 Bad Request",
+                "text/plain",
+                "x-worker-id is required\n".into(),
+            );
+        };
+        let lease_seconds = request
+            .lease_seconds
+            .and_then(|value| value.parse::<i64>().ok())
+            .unwrap_or(30)
+            .clamp(1, 3600);
+        return match runtime.block_on(database.renew_job(tenant, job_id, worker_id, lease_seconds))
+        {
+            Ok(Some(job)) => (
+                "200 OK",
+                "application/json",
+                serde_json::json!({
+                    "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
+                    "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
+                })
+                .to_string(),
+            ),
+            Ok(None) => (
+                "409 Conflict",
+                "text/plain",
+                "lease renewal rejected\n".into(),
+            ),
+            Err(_) => (
+                "500 Internal Server Error",
+                "text/plain",
+                "lease renewal failed\n".into(),
+            ),
         };
     }
     match request.method {

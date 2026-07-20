@@ -8,6 +8,7 @@ pub enum Route {
     Jobs,
     JobStats,
     Lease,
+    Renew,
     Unknown,
 }
 
@@ -19,6 +20,7 @@ pub fn route_for(path: &str) -> Route {
         "/v1/jobs" => Route::Jobs,
         "/v1/jobs/stats" => Route::JobStats,
         "/v1/jobs/lease" => Route::Lease,
+        "/v1/jobs/renew" => Route::Renew,
         _ => Route::Unknown,
     }
 }
