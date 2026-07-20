@@ -166,7 +166,7 @@ write_config() {
   mkdir -p "${APP_DIR}"
   cat > "${APP_DIR}/config.json" <<EOF
 {
-  "\$schema": "https://www.getbifrost.ai/schema",
+  "\$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json",
   "client": {
     "enable_logging": true,
     "drop_excess_requests": false,
