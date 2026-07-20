@@ -9,6 +9,33 @@
       "minimum": 1,
       "description": "Number of Bifrost replicas"
     },
+    "analyticsControlPlane": {
+      "type": "object",
+      "description": "Optional independently scaled Rust analytics control plane",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "image": {
+          "type": "object",
+          "properties": {
+            "repository": { "type": "string" },
+            "tag": { "type": "string" },
+            "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+          }
+        },
+        "replicas": { "type": "integer", "minimum": 1 },
+        "command": { "type": "array", "items": { "type": "string" } },
+        "resources": { "type": "object" },
+        "autoscaling": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minReplicas": { "type": "integer", "minimum": 1 },
+            "maxReplicas": { "type": "integer", "minimum": 1 },
+            "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 }
+          }
+        }
+      }
+    },
     "image": {
       "type": "object",
       "properties": {
