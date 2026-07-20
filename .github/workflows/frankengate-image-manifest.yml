@@ -1,0 +1,62 @@
+name: FrankenGate Image Manifest (Manual)
+
+on:
+  # This job intentionally does not build anything.  It repairs/assembles a
+  # release from the immutable architecture tags produced by the native image
+  # workflow, so a slow runner cannot leave a usable image without a manifest.
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag whose amd64 and arm64 tags are present
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  manifest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - name: Log in to GHCR
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Assemble and verify manifest
+        env:
+          IMAGE: ghcr.io/${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]
+          docker buildx imagetools inspect "$IMAGE:$RELEASE_TAG-amd64" >/dev/null
+          docker buildx imagetools inspect "$IMAGE:$RELEASE_TAG-arm64" >/dev/null
+          docker buildx imagetools create \
+            --tag "$IMAGE:$RELEASE_TAG" \
+            "$IMAGE:$RELEASE_TAG-amd64" \
+            "$IMAGE:$RELEASE_TAG-arm64"
+          digest="$(docker buildx imagetools inspect "$IMAGE:$RELEASE_TAG" --format '{{json .Manifest.Digest}}' | tr -d '"')"
+          [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
+          docker buildx imagetools inspect "$IMAGE@$digest" | tee manifest.txt
+          grep -q 'linux/amd64' manifest.txt
+          grep -q 'linux/arm64' manifest.txt
+          printf 'image=%s@%s\n' "$IMAGE" "$digest" > "frankengate-${RELEASE_TAG}-container-digest.txt"
+
+      - name: Attach digest evidence to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          gh release upload "$RELEASE_TAG" \
+            "frankengate-${RELEASE_TAG}-container-digest.txt" \
+            --clobber --repo "$GITHUB_REPOSITORY"
