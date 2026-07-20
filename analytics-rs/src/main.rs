@@ -71,6 +71,44 @@ fn handle_connection(
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
+        "/v1/jobs/lease" => {
+            let tenant = query_param(query, "tenant");
+            let worker = query_param(query, "worker");
+            let lease_seconds = query_param(query, "lease_seconds")
+                .and_then(|value| value.parse::<i64>().ok())
+                .unwrap_or(30)
+                .clamp(1, 3600);
+            match (database.as_ref(), tenant, worker) {
+                (Some(pool), Some(tenant), Some(worker)) => {
+                    let result = tokio::runtime::Runtime::new().ok().and_then(|runtime| {
+                        runtime
+                            .block_on(frankengate_analytics_control::db::lease_next(
+                                pool,
+                                tenant,
+                                worker,
+                                lease_seconds,
+                            ))
+                            .ok()
+                    });
+                    match result.flatten() {
+                        Some(claim) => (
+                            "200 OK",
+                            "text/plain",
+                            format!(
+                                "id={}\ntenant={}\nkind={}\nattempt={}\n",
+                                claim.id, claim.tenant, claim.kind, claim.attempt
+                            ),
+                        ),
+                        None => ("204 No Content", "text/plain", String::new()),
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "tenant, worker, and DATABASE_URL are required\n".to_string(),
+                ),
+            }
+        }
         "/metrics" => {
             let tenant = query
                 .split('&')
@@ -111,4 +149,14 @@ fn handle_connection(
         body.len()
     );
     let _ = stream.write_all(response.as_bytes());
+}
+
+fn query_param<'a>(query: &'a str, name: &str) -> Option<&'a str> {
+    query
+        .split('&')
+        .find_map(|pair| {
+            pair.strip_prefix(name)
+                .and_then(|value| value.strip_prefix('='))
+        })
+        .filter(|value| !value.is_empty())
 }

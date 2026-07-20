@@ -67,6 +67,10 @@ scrapes this endpoint. When `DATABASE_URL` is configured, a tenant-scoped
 projection is available as `/metrics?tenant=<tenant-id>` and reads the durable
 queue view. Requests without a tenant parameter retain the local process
 metrics, avoiding an unsafe cross-tenant aggregate query.
+Workers can claim one durable job with
+`/v1/jobs/lease?tenant=<tenant-id>&worker=<worker-id>&lease_seconds=30`.
+Claims use PostgreSQL row locking and are therefore safe across independently
+scaled replicas; the endpoint returns `204` when the tenant queue is empty.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
