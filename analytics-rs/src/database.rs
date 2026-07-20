@@ -355,4 +355,51 @@ impl Database {
         tx.commit().await?;
         Ok(row)
     }
+
+    pub async fn complete_job(
+        &self,
+        tenant: &str,
+        job_id: &str,
+        worker_id: &str,
+    ) -> Result<Option<JobRow>, sqlx::Error> {
+        self.finish_job(tenant, job_id, worker_id, "completed", None)
+            .await
+    }
+
+    pub async fn fail_job(
+        &self,
+        tenant: &str,
+        job_id: &str,
+        worker_id: &str,
+        error_code: &str,
+    ) -> Result<Option<JobRow>, sqlx::Error> {
+        self.finish_job(tenant, job_id, worker_id, "failed", Some(error_code))
+            .await
+    }
+
+    async fn finish_job(
+        &self,
+        tenant: &str,
+        job_id: &str,
+        worker_id: &str,
+        state: &str,
+        error_code: Option<&str>,
+    ) -> Result<Option<JobRow>, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let row = sqlx::query_as::<_, JobRow>(
+            "update frankengate_analytics.jobs\
+             set state = $4, worker_id = null, lease_until = null, error_code = $5, updated_at = now()\
+             where id = $1 and tenant_id = $2 and worker_id = $3 and state = 'leased'\
+             returning id, tenant_id, kind, state, attempt, replay_of",
+        )
+        .bind(job_id)
+        .bind(tenant)
+        .bind(worker_id)
+        .bind(state)
+        .bind(error_code)
+        .fetch_optional(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(row)
+    }
 }
