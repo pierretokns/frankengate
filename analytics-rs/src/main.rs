@@ -377,6 +377,66 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/artifacts" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let run_id = query_param(query, "run_id");
+            let digest = query_param(query, "digest");
+            let media_type = query_param(query, "media_type");
+            let object_uri = query_param(query, "object_uri");
+            match (
+                database.as_ref(),
+                tenant,
+                run_id,
+                digest,
+                media_type,
+                object_uri,
+            ) {
+                (
+                    Some(pool),
+                    Some(tenant),
+                    Some(run_id),
+                    Some(digest),
+                    Some(media_type),
+                    Some(object_uri),
+                ) => {
+                    let artifact = frankengate_analytics_control::ArtifactManifest {
+                        run_id: run_id.to_owned(),
+                        digest: digest.to_owned(),
+                        media_type: media_type.to_owned(),
+                        object_uri: object_uri.to_owned(),
+                    };
+                    let inserted = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::record_artifact(
+                                    pool, tenant, &artifact,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if inserted {
+                        (
+                            "201 Created",
+                            "text/plain",
+                            format!("digest={}\n", artifact.digest),
+                        )
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "artifact already exists\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant, run_id, digest, media_type, and object_uri is required\n"
+                        .to_string(),
+                ),
+            }
+        }
         "/metrics" => {
             let tenant = query
                 .split('&')
