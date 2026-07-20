@@ -35,6 +35,14 @@
           },
           "additionalProperties": false
         },
+        "podDisruptionBudget": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minAvailable": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
         "autoscaling": {
           "type": "object",
           "properties": {
