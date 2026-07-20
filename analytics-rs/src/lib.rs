@@ -159,12 +159,54 @@ pub enum LeaseError {
     CheckpointTooLarge,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum QueueError {
+    CapacityExceeded,
+}
+
 #[derive(Clone, Default)]
 pub struct JobStore {
     jobs: Arc<Mutex<HashMap<String, Job>>>,
+    capacity: Option<usize>,
 }
 
 impl JobStore {
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            jobs: Arc::new(Mutex::new(HashMap::new())),
+            capacity: Some(capacity),
+        }
+    }
+
+    pub fn try_enqueue(
+        &self,
+        id: impl Into<String>,
+        tenant: impl Into<String>,
+        kind: impl Into<String>,
+    ) -> Result<Job, QueueError> {
+        let id = id.into();
+        let tenant = tenant.into();
+        let kind = kind.into();
+        let job = Job {
+            id: id.clone(),
+            tenant,
+            kind,
+            state: JobState::Queued,
+            attempt: 0,
+            checkpoint: None,
+            lease_until: None,
+        };
+        let mut jobs = self.jobs.lock().expect("job store lock poisoned");
+        if let Some(existing) = jobs.get(&id) {
+            return Ok(existing.clone());
+        }
+        if self.capacity.is_some_and(|capacity| jobs.len() >= capacity) {
+            return Err(QueueError::CapacityExceeded);
+        }
+        jobs.insert(id, job.clone());
+        Ok(job)
+    }
+
     pub fn submit(&self, request: SubmitJob) -> Result<Job, LeaseError> {
         if request.protocol_version != PROTOCOL_VERSION {
             return Err(LeaseError::NotLeasable);
@@ -526,6 +568,17 @@ mod tests {
                 ..JobStats::default()
             }
         );
+    }
+
+    #[test]
+    fn bounded_enqueue_rejects_new_jobs_but_keeps_duplicate_idempotent() {
+        let store = JobStore::with_capacity(1);
+        store.try_enqueue("j11", "tenant-a", "eval").unwrap();
+        assert_eq!(
+            store.try_enqueue("j12", "tenant-a", "eval"),
+            Err(QueueError::CapacityExceeded)
+        );
+        assert_eq!(store.try_enqueue("j11", "tenant-a", "eval").unwrap().id, "j11");
     }
 
     #[test]
