@@ -51,6 +51,8 @@ attach the matching immutable tag and artifact digests.
 - Added a separately published `-analytics` GHCR OCI image for the Rust
   control plane; it is released independently from the gateway image and
   binary verification lane.
+- Helm can now pin that analytics OCI image by validated `sha256` digest,
+  keeping independently scaled control-plane rollouts reproducible.
 - Added tenant-scoped durable queue metrics at `/metrics?tenant=<id>` and
   configurable Helm connection budgets, disruption protection, and autoscaling
   boundaries for analytics replicas.
