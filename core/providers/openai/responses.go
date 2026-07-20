@@ -229,6 +229,15 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 			OpenAIResponsesRequestInputArray: messages,
 		},
 	}
+	// Bedrock Mantle's GPT-5.6 Responses surface currently rejects the array
+	// union form of `input` for ordinary message turns (the same payload is
+	// accepted by public OpenAI). Keep structured arrays for tool/non-message
+	// items, but use the scalar form when every item is a plain text message.
+	if isGPT56Model(capModel) {
+		if flattened, ok := flattenPlainTextMessages(messages); ok {
+			req.Input = OpenAIResponsesRequestInput{OpenAIResponsesRequestInputStr: schemas.Ptr(flattened)}
+		}
+	}
 
 	if params != nil {
 		req.ResponsesParameters = *params
@@ -335,6 +344,42 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 		req.ExtraParams = bifrostReq.Params.ExtraParams
 	}
 	return req
+}
+
+func isGPT56Model(model string) bool {
+	model = strings.ToLower(model)
+	return strings.Contains(model, "gpt-5.6")
+}
+
+func flattenPlainTextMessages(messages []schemas.ResponsesMessage) (string, bool) {
+	if len(messages) == 0 {
+		return "", false
+	}
+	parts := make([]string, 0, len(messages))
+	for _, message := range messages {
+		if message.Type != nil && *message.Type != schemas.ResponsesMessageTypeMessage {
+			return "", false
+		}
+		if message.Content == nil {
+			return "", false
+		}
+		if message.Content.ContentStr != nil {
+			parts = append(parts, *message.Content.ContentStr)
+			continue
+		}
+		if len(message.Content.ContentBlocks) == 0 {
+			return "", false
+		}
+		var text strings.Builder
+		for _, block := range message.Content.ContentBlocks {
+			if block.Type != schemas.ResponsesInputMessageContentBlockTypeText || block.Text == nil {
+				return "", false
+			}
+			text.WriteString(*block.Text)
+		}
+		parts = append(parts, text.String())
+	}
+	return strings.Join(parts, "\n"), true
 }
 
 func defaultImageDetail(message schemas.ResponsesMessage) schemas.ResponsesMessage {

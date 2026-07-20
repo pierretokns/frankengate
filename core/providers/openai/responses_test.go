@@ -9,6 +9,27 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 )
 
+func TestToOpenAIResponsesRequest_GPT56PlainMessagesUseScalarInput(t *testing.T) {
+	role := schemas.ResponsesInputMessageRoleUser
+	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
+		Model: "gpt-5.6-sol",
+		Input: []schemas.ResponsesMessage{{
+			Type:    schemas.Ptr(schemas.ResponsesMessageTypeMessage),
+			Role:    &role,
+			Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("hello Mantle")},
+		}},
+	})
+	if converted == nil || converted.Input.OpenAIResponsesRequestInputStr == nil {
+		t.Fatal("GPT-5.6 plain message input must use scalar Responses input form")
+	}
+	if got := *converted.Input.OpenAIResponsesRequestInputStr; got != "hello Mantle" {
+		t.Fatalf("scalar input = %q, want %q", got, "hello Mantle")
+	}
+	if converted.Input.OpenAIResponsesRequestInputArray != nil {
+		t.Fatal("GPT-5.6 scalar input must not also emit the array union")
+	}
+}
+
 func TestToOpenAIResponsesRequest_DefaultsMissingImageDetailWithoutMutation(t *testing.T) {
 	url := "https://example.test/image.png"
 	role := schemas.ResponsesInputMessageRoleUser
