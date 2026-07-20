@@ -75,6 +75,7 @@ func (h *ReplayHandler) list(ctx *fasthttp.RequestCtx) {
 		RequestID        string                        `json:"request_id,omitempty"`
 		TenantID         string                        `json:"tenant_id"`
 		CapturedAt       time.Time                     `json:"captured_at"`
+		ContentSHA256    string                        `json:"content_sha256"`
 		ContentRedacted  bool                          `json:"content_redacted"`
 		RetrievalQuality *otel.RetrievalQualitySummary `json:"retrieval_quality,omitempty"`
 	}
@@ -85,7 +86,7 @@ func (h *ReplayHandler) list(ctx *fasthttp.RequestCtx) {
 		if row.TenantID != tenant {
 			continue
 		}
-		out = append(out, replaySummary{SchemaVersion: row.SchemaVersion, TraceID: row.TraceID, RequestID: row.RequestID, TenantID: row.TenantID, CapturedAt: row.CapturedAt, ContentRedacted: true, RetrievalQuality: row.RetrievalQuality})
+		out = append(out, replaySummary{SchemaVersion: row.SchemaVersion, TraceID: row.TraceID, RequestID: row.RequestID, TenantID: row.TenantID, CapturedAt: row.CapturedAt, ContentSHA256: row.ContentSHA256, ContentRedacted: true, RetrievalQuality: row.RetrievalQuality})
 	}
 	SendJSON(ctx, map[string]any{"tenant_id": tenant, "records": out, "content_redacted": true})
 }
