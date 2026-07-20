@@ -25,6 +25,13 @@
         "replicas": { "type": "integer", "minimum": 1 },
         "command": { "type": "array", "items": { "type": "string" } },
         "resources": { "type": "object" },
+        "podDisruptionBudget": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minAvailable": { "type": "integer", "minimum": 0 }
+          }
+        },
         "autoscaling": {
           "type": "object",
           "properties": {

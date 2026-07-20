@@ -17,6 +17,9 @@ analyticsControlPlane:
   replicas: 1
   command: ["frankengate-analytics-control", "--serve"]
   resources: {}
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
   autoscaling:
     enabled: false
     minReplicas: 1
