@@ -10,7 +10,32 @@ import (
 	"time"
 
 	"github.com/maximhq/bifrost/core/schemas"
+	"github.com/maximhq/bifrost/framework/objectstore"
 )
+
+func TestObjectReplayStoreTenantIsolationAndRedaction(t *testing.T) {
+	store, err := NewObjectReplayStore(objectstore.NewInMemoryObjectStore(), "fg/replay")
+	if err != nil {
+		t.Fatal(err)
+	}
+	trace := &schemas.Trace{TraceID: "object-trace", RequestID: "req", Attributes: map[string]any{"tenant": "acme", "coder.token": "do-not-store"}, Spans: []*schemas.Span{{SpanID: "span", Attributes: map[string]any{"gen_ai.prompt": "secret", "safe": "ok"}}}}
+	if err := store.Put(context.Background(), trace); err != nil {
+		t.Fatal(err)
+	}
+	record, err := store.Get(context.Background(), "acme", "object-trace")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if record.TenantID != "acme" || record.Trace.Spans[0].Attributes["safe"] != "ok" {
+		t.Fatalf("unexpected record: %#v", record)
+	}
+	if _, ok := record.Trace.Spans[0].Attributes["gen_ai.prompt"]; ok {
+		t.Fatal("prompt content was persisted")
+	}
+	if _, err := store.Get(context.Background(), "other", "object-trace"); !os.IsPermission(err) {
+		t.Fatalf("cross-tenant lookup should fail closed, got %v", err)
+	}
+}
 
 func TestJSONLReplayStoreTenantIsolationAndRedaction(t *testing.T) {
 	dir := t.TempDir()
