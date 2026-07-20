@@ -26,6 +26,14 @@ pub struct RunRow {
     pub prompt_revision: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, sqlx::FromRow)]
+pub struct ArtifactRow {
+    pub run_id: String,
+    pub digest: String,
+    pub media_type: String,
+    pub object_uri: String,
+}
+
 impl Database {
     pub async fn connect(url: &str, max_connections: u32) -> Result<Self, sqlx::Error> {
         let pool = PgPoolOptions::new()
@@ -137,6 +145,51 @@ impl Database {
              from frankengate_analytics.runs\
              order by created_at asc, id asc limit $1",
         )
+        .bind(limit.clamp(1, 100))
+        .fetch_all(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(rows)
+    }
+
+    pub async fn record_artifact(
+        &self,
+        tenant: &str,
+        run_id: &str,
+        digest: &str,
+        media_type: &str,
+        object_uri: &str,
+    ) -> Result<ArtifactRow, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let row = sqlx::query_as::<_, ArtifactRow>(
+            "insert into frankengate_analytics.artifact_manifests\
+             (run_id, digest, media_type, object_uri) values ($1, $2, $3, $4)\
+             returning run_id, digest, media_type, object_uri",
+        )
+        .bind(run_id)
+        .bind(digest)
+        .bind(media_type)
+        .bind(object_uri)
+        .fetch_one(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(row)
+    }
+
+    pub async fn list_artifacts(
+        &self,
+        tenant: &str,
+        run_id: &str,
+        limit: i64,
+    ) -> Result<Vec<ArtifactRow>, sqlx::Error> {
+        let mut tx = self.begin_tenant(tenant).await?;
+        let rows = sqlx::query_as::<_, ArtifactRow>(
+            "select a.run_id, a.digest, a.media_type, a.object_uri\
+             from frankengate_analytics.artifact_manifests a\
+             join frankengate_analytics.runs r on r.id = a.run_id\
+             where a.run_id = $1 order by a.created_at asc, a.digest asc limit $2",
+        )
+        .bind(run_id)
         .bind(limit.clamp(1, 100))
         .fetch_all(&mut *tx)
         .await?;
