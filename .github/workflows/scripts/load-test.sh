@@ -344,7 +344,7 @@ create_config() {
 
   cat > "${WORK_DIR}/config.json" << 'EOF'
 {
-  "$schema": "https://www.getbifrost.ai/schema",
+  "$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json",
   "client": {
     "enable_logging": false,
     "disable_content_logging": true,
