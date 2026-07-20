@@ -149,6 +149,30 @@ fn governed_response(
         };
     }
     match request.method {
+        "POST" => {
+            let Some(id) = request.job_id.filter(|value| !value.is_empty()) else {
+                return ("400 Bad Request", "text/plain", "x-job-id is required\n".into());
+            };
+            let Some(kind) = request.job_kind.filter(|value| !value.is_empty()) else {
+                return (
+                    "400 Bad Request",
+                    "text/plain",
+                    "x-job-kind is required\n".into(),
+                );
+            };
+            match runtime.block_on(database.submit_job(tenant, id, kind)) {
+                Ok(job) => (
+                    "201 Created",
+                    "application/json",
+                    serde_json::json!({
+                        "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
+                        "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
+                    })
+                    .to_string(),
+                ),
+                Err(_) => ("409 Conflict", "text/plain", "job submission rejected\n".into()),
+            }
+        }
         "GET" => match runtime.block_on(database.list_jobs(tenant, 100)) {
             Ok(jobs) => ("200 OK", "application/json", serde_json::to_string(&jobs.iter().map(|job| serde_json::json!({
                 "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind, "state": job.state,
