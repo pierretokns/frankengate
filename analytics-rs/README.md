@@ -80,6 +80,9 @@ Terminal worker errors are recorded with
 `POST /v1/jobs/fail?tenant=<tenant-id>&worker=<worker-id>&job_id=<id>&error_code=<bounded-code>`.
 Terminal jobs can be replayed with explicit lineage using
 `POST /v1/jobs/replay?tenant=<tenant-id>&replay_id=<new-id>&source_job_id=<old-id>&kind=<kind>`.
+Operators can cancel queued/leased work with
+`POST /v1/jobs/cancel?tenant=<tenant-id>&job_id=<id>` and explicitly retry a
+failed job with `POST /v1/jobs/retry?tenant=<tenant-id>&job_id=<id>`.
 Automation can create immutable experiment lineage with
 `POST /v1/experiments?tenant=<tenant-id>&id=<id>&actor=<actor>&revision=<revision>`;
 duplicate IDs are rejected idempotently.

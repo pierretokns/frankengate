@@ -262,6 +262,70 @@ fn handle_connection(
                 ),
             }
         }
+        "/v1/jobs/cancel" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let job_id = query_param(query, "job_id");
+            match (database.as_ref(), tenant, job_id) {
+                (Some(pool), Some(tenant), Some(job_id)) => {
+                    let cancelled = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::cancel_job(
+                                    pool, tenant, job_id,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if cancelled {
+                        ("200 OK", "text/plain", "cancelled\n".to_string())
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "job is not cancellable\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant and job_id is required\n".to_string(),
+                ),
+            }
+        }
+        "/v1/jobs/retry" if method == "POST" => {
+            let tenant = query_param(query, "tenant");
+            let job_id = query_param(query, "job_id");
+            match (database.as_ref(), tenant, job_id) {
+                (Some(pool), Some(tenant), Some(job_id)) => {
+                    let retried = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime
+                                .block_on(frankengate_analytics_control::db::retry_job(
+                                    pool, tenant, job_id,
+                                ))
+                                .ok()
+                        })
+                        .unwrap_or(false);
+                    if retried {
+                        ("200 OK", "text/plain", "queued\n".to_string())
+                    } else {
+                        (
+                            "409 Conflict",
+                            "text/plain",
+                            "job is not retryable\n".to_string(),
+                        )
+                    }
+                }
+                _ => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "POST with tenant and job_id is required\n".to_string(),
+                ),
+            }
+        }
         "/v1/experiments" if method == "POST" => {
             let tenant = query_param(query, "tenant");
             let id = query_param(query, "id");
