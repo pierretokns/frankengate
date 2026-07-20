@@ -200,6 +200,7 @@ jobs:
           if [[ "${ARTIFACT}" == "linux-amd64" ]]; then
             timeout --foreground --signal=TERM --kill-after=30s 12m \
               cargo build --release --manifest-path analytics-rs/Cargo.toml
+            analytics-rs/target/release/frankengate-analytics-control --check
             cp analytics-rs/target/release/frankengate-analytics-control \
               "dist/${package}/frankengate-analytics-control"
           fi
