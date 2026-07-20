@@ -20,6 +20,9 @@ analyticsControlPlane:
   databaseUrl:
     existingSecret: ""
     existingSecretKey: DATABASE_URL
+  workerTokenSecret:
+    name: ""
+    key: WORKER_TOKEN
   resources: {}
   autoscaling:
     enabled: false

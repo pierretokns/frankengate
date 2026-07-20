@@ -54,13 +54,22 @@ spec:
           image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}"
           imagePullPolicy: {{ .Values.analyticsControlPlane.image.pullPolicy }}
           command: {{ toJson .Values.analyticsControlPlane.command }}
-          {{- if .Values.analyticsControlPlane.databaseUrl.existingSecret }}
+          {{- if or .Values.analyticsControlPlane.databaseUrl.existingSecret .Values.analyticsControlPlane.workerTokenSecret.name }}
           env:
+          {{- if .Values.analyticsControlPlane.databaseUrl.existingSecret }}
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.analyticsControlPlane.databaseUrl.existingSecret | quote }}
                   key: {{ .Values.analyticsControlPlane.databaseUrl.existingSecretKey | quote }}
+          {{- end }}
+          {{- if .Values.analyticsControlPlane.workerTokenSecret.name }}
+            - name: ANALYTICS_WORKER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.analyticsControlPlane.workerTokenSecret.name | quote }}
+                  key: {{ .Values.analyticsControlPlane.workerTokenSecret.key | quote }}
+          {{- end }}
           {{- end }}
           ports:
             - name: http
