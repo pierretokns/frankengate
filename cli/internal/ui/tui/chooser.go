@@ -18,7 +18,7 @@ import (
 
 const issuesURL = "https://github.com/maximhq/bifrost/issues/new"
 const repoURL = "https://github.com/maximhq/bifrost"
-const docsURL = "https://docs.getbifrost.ai/quickstart/cli/getting-started"
+const docsURL = "https://github.com/pierretokns/frankengate#readme"
 
 // HarnessOption represents a selectable coding harness (e.g. Claude Code, Codex)
 // with its installation status.
