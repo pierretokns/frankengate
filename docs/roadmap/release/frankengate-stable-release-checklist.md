@@ -39,6 +39,11 @@ Status: preparation; no stable release claim.
 - Replace remaining fork-facing upstream URLs in UI/runtime surfaces and
   regenerate any derived assets.
 - Verify GitHub release assets and GitHub Pages pricing snapshot externally.
+- **External verification currently blocked:** three consecutive `gh release
+  list --repo pierretokns/frankengate` attempts returned `error connecting to
+  api.github.com`, while `git ls-remote` continued to resolve the fork remote
+  and branch heads. Retry this gate when GitHub API connectivity recovers; do
+  not infer release absence from the failed API calls.
 - Do not claim the Rust analytics plane is production-ready until the durable
   PostgreSQL adapter, RLS integration tests, supervised worker runtime, and
   independent Kubernetes deployment/scaling evidence exist.
