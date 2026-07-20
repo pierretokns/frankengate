@@ -61,6 +61,24 @@ create table if not exists frankengate_analytics.jobs (
 create index if not exists jobs_tenant_state_created_idx
   on frankengate_analytics.jobs (tenant_id, state, created_at, id);
 
+-- Lease, heartbeat, checkpoint, and terminal transitions must advance the
+-- timestamp used by recovery and operational dashboards.  Keep this trigger
+-- idempotent so rolling migration retries do not fail.
+create or replace function frankengate_analytics.touch_job_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists jobs_touch_updated_at on frankengate_analytics.jobs;
+create trigger jobs_touch_updated_at
+before update on frankengate_analytics.jobs
+for each row execute function frankengate_analytics.touch_job_updated_at();
+
 create table if not exists frankengate_analytics.run_attempts (
   id text primary key,
   tenant_id text not null,
