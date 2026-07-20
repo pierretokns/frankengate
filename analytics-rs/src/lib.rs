@@ -12,6 +12,7 @@ use std::time::{Duration, Instant};
 pub mod auth;
 pub mod config;
 pub mod database;
+pub mod http;
 
 pub const PROTOCOL_VERSION: u16 = 1;
 
