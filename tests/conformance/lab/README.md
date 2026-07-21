@@ -51,7 +51,7 @@ Bifrost ingress receipt.
 The `exec`, `--strict-config`, `--ephemeral`, `--sandbox`, `--color`, and `--json` syntax is derived from the exact
 `@openai/codex` 0.144.5 artifact locked by `images.lock.v1.json` (its `codex exec --help` surface).
 The request serialization authority remains the independently pinned
-`codex-cli-responses-lite-fd3c1dc1` row in
+`codex-cli-responses-lite-0.144.5-87db9bc1` row in
 `tests/conformance/bedrock/sources/source-lock.v1.json`; its authority ceiling is client emission,
 not gateway translation or AWS acceptance.
 

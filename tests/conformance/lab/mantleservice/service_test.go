@@ -380,3 +380,75 @@ func TestCoverageIsCryptographicallyBoundToCanonicalSourceLock(t *testing.T) {
 		t.Fatalf("observation digest=%s lock=%s", got, wantObservation)
 	}
 }
+
+func TestCodexExecutableVersionMatchesExactSerializationSource(t *testing.T) {
+	imageData, err := os.ReadFile(filepath.Join("..", "images.lock.v1.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var images struct {
+		CLIPackages []struct {
+			ID      string `json:"id"`
+			Package string `json:"package"`
+			Version string `json:"version"`
+		} `json:"cli_packages"`
+	}
+	if json.Unmarshal(imageData, &images) != nil {
+		t.Fatal("decode image lock")
+	}
+	version := ""
+	for _, cli := range images.CLIPackages {
+		if cli.ID == "codex-production" && cli.Package == "@openai/codex" {
+			version = cli.Version
+		}
+	}
+	if version != "0.144.5" {
+		t.Fatalf("Codex executable version = %q", version)
+	}
+
+	sourceData, err := os.ReadFile(filepath.Join("..", "..", "bedrock", "sources", "source-lock.v1.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var sourceLock struct {
+		Sources []struct {
+			ID              string   `json:"id"`
+			Revision        string   `json:"revision"`
+			Locator         string   `json:"locator"`
+			ArtifactDigest  string   `json:"artifact_digest"`
+			ContentDigest   string   `json:"content_digest"`
+			Paths           []string `json:"paths"`
+			CoveredSurfaces []string `json:"covered_surfaces"`
+		} `json:"sources"`
+	}
+	if json.Unmarshal(sourceData, &sourceLock) != nil {
+		t.Fatal("decode source lock")
+	}
+	const sourceID = "codex-cli-responses-lite-0.144.5-87db9bc1"
+	var matches int
+	for _, source := range sourceLock.Sources {
+		if !strings.HasPrefix(source.ID, "codex-cli-responses-lite-") {
+			continue
+		}
+		matches++
+		if source.ID != sourceID ||
+			source.Revision != "rust-v"+version+"@87db9bc18ba5bc82c1cb4e4381b44f693ee35623" ||
+			source.Locator != "https://github.com/openai/codex/tree/87db9bc18ba5bc82c1cb4e4381b44f693ee35623" ||
+			source.ArtifactDigest != "sha256:cf843051ea7f9004f2f2950f525f41e12ea83fe142de59799dcfeeeda3ad4184" ||
+			source.ContentDigest != "sha256:ef7e3f1afe258e50ebd2dac20b2874d194aadde8d2b2f1616610ed9e910870a2" {
+			t.Fatalf("Codex source authority does not match executable version: %#v", source)
+		}
+		wantPaths := "codex-rs/core/src/client.rs\n" +
+			"codex-rs/core/tests/suite/responses_lite.rs\n" +
+			"codex-rs/model-provider-info/src/lib.rs\n" +
+			"codex-rs/models-manager/models.json\n" +
+			"codex-rs/models-manager/src/manager.rs\n" +
+			"codex-rs/models-manager/src/manager_tests.rs"
+		if strings.Join(source.Paths, "\n") != wantPaths || strings.Join(source.CoveredSurfaces, "\n") != "codex-bedrock-provider\ncodex-namespaced-model-resolution\ncodex-responses-lite-request" {
+			t.Fatalf("Codex source review surfaces drifted: %#v", source)
+		}
+	}
+	if matches != 1 {
+		t.Fatalf("Codex Responses Lite source rows = %d, want 1", matches)
+	}
+}

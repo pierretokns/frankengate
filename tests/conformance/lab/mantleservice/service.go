@@ -17,7 +17,7 @@ import (
 )
 
 const maxRequestBytes = 1 << 20
-const expectedSourceLockSHA256 = "e1e5bc8be5297e0b21acb69aca7e7431a7c5032ba4eafbfb810d151b232cf6d7"
+const expectedSourceLockSHA256 = "c2ba4e5348dcaddf8ca508f2f3fbcaeee966055057b852fe4899bf901e1e7350"
 const syntheticAuthorization = "Bearer synthetic-mantle-contract"
 
 //go:embed coverage.v1.json
