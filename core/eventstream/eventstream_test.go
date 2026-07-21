@@ -63,7 +63,7 @@ func TestMalformedAndUnsupportedHeaders(t *testing.T) {
 		t.Fatalf("expected malformed, got %v", err)
 	}
 	b, _ := Encode(Frame{Headers: []Header{{Name: "x", Type: HeaderString, Value: "y"}}})
-	b[14] = byte(HeaderUUID) // mutate type, preserve valid framing
+	b[14] = 0xff // mutate type, preserve valid framing
 	// header mutation is intentionally detected as an unsupported type, not CRC.
 	imported := b[:len(b)-4]
 	binary.BigEndian.PutUint32(b[len(b)-4:], crc32.ChecksumIEEE(imported))
