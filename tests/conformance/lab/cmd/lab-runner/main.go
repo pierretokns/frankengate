@@ -71,19 +71,20 @@ type networkProbeResult struct {
 }
 
 func main() {
-	var lockPath, sourceLockPath, composePath, dockerBinary string
-	flag.StringVar(&lockPath, "runtime-lock", "", "path to sealed-lab-runtime-lock/v1")
+	var lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath string
+	flag.StringVar(&lockPath, "runtime-lock", "", "path to sealed-lab-runtime-lock/v1 or v2")
 	flag.StringVar(&sourceLockPath, "source-lock", "", "path to committed sealed-lab-image-lock/v1")
 	flag.StringVar(&composePath, "compose", "compose.yaml", "sealed lab Compose file")
 	flag.StringVar(&dockerBinary, "docker", "docker", "reviewed Docker CLI path")
+	flag.StringVar(&recorderPolicyPath, "recorder-policy", "", "absolute path to compiled recorder policy required by runtime-lock/v2")
 	flag.Parse()
-	if err := run(osExecutor{}, lockPath, sourceLockPath, composePath, dockerBinary, os.Stdout, os.Stderr); err != nil {
+	if err := run(osExecutor{}, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintln(os.Stderr, "lab-runner:", err)
 		os.Exit(1)
 	}
 }
 
-func run(executor commandExecutor, lockPath, sourceLockPath, composePath, dockerBinary string, stdout, stderr io.Writer) error {
+func run(executor commandExecutor, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath string, stdout, stderr io.Writer) error {
 	startedAt := time.Now().UTC()
 	if lockPath == "" || !filepath.IsAbs(lockPath) || !filepath.IsAbs(sourceLockPath) || !filepath.IsAbs(composePath) || !filepath.IsAbs(dockerBinary) {
 		return errors.New("runtime lock, source lock, Compose file, and Docker binary must be absolute paths")
@@ -95,6 +96,12 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	lock, err := contract.DecodeRuntimeLock(bytes.NewReader(lockData))
 	if err != nil {
 		return fmt.Errorf("runtime lock: %w", err)
+	}
+	if lock.IsRecorderCapable() && (recorderPolicyPath == "" || !filepath.IsAbs(recorderPolicyPath)) {
+		return errors.New("runtime-lock/v2 requires an absolute recorder policy path")
+	}
+	if !lock.IsRecorderCapable() && recorderPolicyPath != "" {
+		return errors.New("recorder policy is forbidden for runtime-lock/v1 smoke runs")
 	}
 	sourceData, err := os.ReadFile(sourceLockPath)
 	if err != nil {
@@ -135,6 +142,11 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		}
 		if err := validateOCIIndex(raw.Bytes()); err != nil {
 			return fmt.Errorf("runtime image %s: %w", image.ID, err)
+		}
+	}
+	if lock.IsRecorderCapable() {
+		if err := verifyPinnedRecorderArtifacts(executor, environment, stderr, dockerBinary, recorderPolicyPath, nativePlatform, *lock); err != nil {
+			return err
 		}
 	}
 	projectName := "fg-lab-" + lock.RunID
