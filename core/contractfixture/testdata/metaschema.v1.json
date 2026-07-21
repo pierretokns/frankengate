@@ -1,0 +1,13 @@
+{
+  "schema": "bedrock-mantle-contract-fixture-meta-schema/v1",
+  "input_schema": "bedrock-mantle-contract-fixture-input/v1",
+  "ir_schema": "bedrock-mantle-contract-ir/v1",
+  "reader_version": 1,
+  "required_artifacts": [
+    "corpus.bundle",
+    "coverage.json",
+    "discrepancies.json",
+    "corpus.index.json",
+    "provenance.json"
+  ]
+}
