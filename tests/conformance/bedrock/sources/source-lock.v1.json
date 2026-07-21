@@ -138,6 +138,36 @@
       "omissions": ["exhaustive-server-acceptance", "immutable-publication-history"]
     },
     {
+      "id": "aws-model-card-openai-gpt-54-2026-07-21",
+      "authority_class": "official-doc-derived",
+      "authority_ceiling": "GPT-5.4 model identifier, Responses-only capability, and exceptional Mantle route at retrieval time only",
+      "revision": "retrieved-2026-07-21T12:20:00Z",
+      "locator": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-54.html",
+      "artifact_digest": "sha256:7a5fd36a39ec0d1ecfd71fc537fa07fc3d89905722c89d99b0f0f00d3a5f1263",
+      "retrieved_at": "2026-07-21T12:20:00Z",
+      "license_or_terms": "AWS Site Terms snapshot sha256:c947d9437cd71e627e9d3b729478b8bd01e0d8389ff50c24c3c3dd9652d4945e",
+      "redistribution": "prohibited",
+      "extraction_recipe": "GET with Accept-Encoding identity; hash exact response bytes; review model ID, Chat Completions capability row, and exceptional openai/v1 Responses note",
+      "paths": ["bedrock/latest/userguide/model-card-openai-gpt-54.html"],
+      "covered_surfaces": ["mantle-openai-gpt-54-model-route"],
+      "omissions": ["exhaustive-server-acceptance", "immutable-publication-history"]
+    },
+    {
+      "id": "aws-model-card-openai-gpt-55-2026-07-21",
+      "authority_class": "official-doc-derived",
+      "authority_ceiling": "GPT-5.5 model identifier, Responses-only capability, and exceptional Mantle route at retrieval time only",
+      "revision": "retrieved-2026-07-21T12:20:00Z",
+      "locator": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-55.html",
+      "artifact_digest": "sha256:3e2075457bc5402d2363b00c0f5c7fadb2a6f0db6360fdab912546bd7cf071c3",
+      "retrieved_at": "2026-07-21T12:20:00Z",
+      "license_or_terms": "AWS Site Terms snapshot sha256:c947d9437cd71e627e9d3b729478b8bd01e0d8389ff50c24c3c3dd9652d4945e",
+      "redistribution": "prohibited",
+      "extraction_recipe": "GET with Accept-Encoding identity; hash exact response bytes; review model ID, Chat Completions capability row, and exceptional openai/v1 Responses note",
+      "paths": ["bedrock/latest/userguide/model-card-openai-gpt-55.html"],
+      "covered_surfaces": ["mantle-openai-gpt-55-model-route"],
+      "omissions": ["exhaustive-server-acceptance", "immutable-publication-history"]
+    },
+    {
       "id": "botocore-bedrock-endpoints-1.43.52",
       "authority_class": "native-aws-service-model",
       "authority_ceiling": "AWS-published native Bedrock endpoint resolution only; not Mantle routing",
@@ -184,6 +214,22 @@
       "paths": ["codex-rs/core/src/client.rs", "codex-rs/core/tests/suite/responses_lite.rs", "codex-rs/model-provider-info/src/lib.rs", "codex-rs/models-manager/models.json", "codex-rs/models-manager/src/manager.rs"],
       "covered_surfaces": ["codex-bedrock-provider", "codex-namespaced-model-resolution", "codex-responses-lite-request"],
       "omissions": ["aws-server-acceptance", "gateway-translation"]
+    },
+    {
+      "id": "mantle-frontier-observation-2026-07-21",
+      "authority_class": "aws-observed-sample",
+      "authority_ceiling": "observed authenticated route reachability and authorization failures only; no request-schema or inference-success claim",
+      "revision": "observed-2026-07-21T00:05:58Z",
+      "locator": "tests/conformance/bedrock/observations/mantle-frontier-access-denied.v1.json",
+      "artifact_digest": "sha256:10f1e7678e1e801babd2ea31a1a9b9b98780e49021d729eada6525c1d377a9cb",
+      "content_digest": "sha256:10f1e7678e1e801babd2ea31a1a9b9b98780e49021d729eada6525c1d377a9cb",
+      "retrieved_at": "2026-07-21T00:05:58Z",
+      "license_or_terms": "project-owned sanitized observation; secrets and request identifiers removed",
+      "redistribution": "permitted",
+      "extraction_recipe": "verify checked-in sanitized observation bytes and sha256; consume only explicit route/model/status claims within its authority ceiling",
+      "paths": ["tests/conformance/bedrock/observations/mantle-frontier-access-denied.v1.json"],
+      "covered_surfaces": ["mantle-frontier-route-observation"],
+      "omissions": ["chat-completions", "request-schema-acceptance", "successful-inference"]
     },
     {
       "id": "openai-node-mantle-6.48.0",

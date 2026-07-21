@@ -1,0 +1,23 @@
+event: response.created
+data: {"response":{"id":"resp_3dd6c57733bf24a1","model":"openai.gpt-5.5","object":"response","output":[],"status":"in_progress"},"sequence_number":0,"type":"response.created"}
+
+event: response.output_item.added
+data: {"item":{"content":[],"id":"msg_3dd6c57733bf24a1","role":"assistant","status":"in_progress","type":"message"},"output_index":0,"sequence_number":1,"type":"response.output_item.added"}
+
+event: response.content_part.added
+data: {"content_index":0,"item_id":"msg_3dd6c57733bf24a1","output_index":0,"part":{"annotations":[],"text":"","type":"output_text"},"sequence_number":2,"type":"response.content_part.added"}
+
+event: response.output_text.delta
+data: {"content_index":0,"delta":"deterministic mantle response","item_id":"msg_3dd6c57733bf24a1","output_index":0,"sequence_number":3,"type":"response.output_text.delta"}
+
+event: response.output_text.done
+data: {"content_index":0,"item_id":"msg_3dd6c57733bf24a1","output_index":0,"sequence_number":4,"text":"deterministic mantle response","type":"response.output_text.done"}
+
+event: response.content_part.done
+data: {"content_index":0,"item_id":"msg_3dd6c57733bf24a1","output_index":0,"part":{"annotations":[],"text":"deterministic mantle response","type":"output_text"},"sequence_number":5,"type":"response.content_part.done"}
+
+event: response.output_item.done
+data: {"item":{"content":[{"annotations":[],"text":"deterministic mantle response","type":"output_text"}],"id":"msg_3dd6c57733bf24a1","role":"assistant","status":"completed","type":"message"},"output_index":0,"sequence_number":6,"type":"response.output_item.done"}
+
+event: response.completed
+data: {"response":{"id":"resp_3dd6c57733bf24a1","model":"openai.gpt-5.5","object":"response","output":[{"content":[{"annotations":[],"text":"deterministic mantle response","type":"output_text"}],"id":"msg_3dd6c57733bf24a1","role":"assistant","status":"completed","type":"message"}],"status":"completed","usage":{"input_tokens":4,"output_tokens":3,"total_tokens":7}},"sequence_number":7,"type":"response.completed"}
