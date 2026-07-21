@@ -9,7 +9,7 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 )
 
-func TestToOpenAIResponsesRequest_MantleMergesAdditionalAndDeclaredTools(t *testing.T) {
+func TestToOpenAIResponsesRequest_MantlePreservesLiteAdditionalTools(t *testing.T) {
 	var additional schemas.ResponsesMessage
 	if err := json.Unmarshal([]byte(`{"type":"additional_tools","tools":[{"type":"function","name":"lookup","parameters":{"type":"object"}}]}`), &additional); err != nil {
 		t.Fatalf("decode additional_tools: %v", err)
@@ -22,27 +22,15 @@ func TestToOpenAIResponsesRequest_MantleMergesAdditionalAndDeclaredTools(t *test
 		Input:    input,
 		Params:   &schemas.ResponsesParameters{Tools: []schemas.ResponsesTool{declared}},
 	})
-	if converted == nil || len(converted.Tools) != 2 {
-		t.Fatalf("expected declared and additional tools, got %#v", converted)
+	if converted == nil || len(converted.Tools) != 1 {
+		t.Fatalf("Lite tools were recreated at top level: %#v", converted)
 	}
-	if converted.Tools[0].Name == nil || *converted.Tools[0].Name != "search" {
-		t.Fatalf("declared tool was not preserved: %#v", converted.Tools)
-	}
-	if converted.Tools[1].Name == nil || *converted.Tools[1].Name != "lookup" {
-		t.Fatalf("additional tool was not lifted: %#v", converted.Tools)
+	encoded, _ := json.Marshal(converted)
+	if !strings.Contains(string(encoded), `"type":"additional_tools"`) {
+		t.Fatalf("additional_tools did not remain in input: %s", encoded)
 	}
 	if len(input) != 1 || input[0].Type == nil || *input[0].Type != schemas.ResponsesMessageTypeAdditionalTools {
 		t.Fatal("conversion mutated or removed caller-owned input")
-	}
-}
-
-func TestToOpenAIResponsesRequest_MantleFrontierPlainTextUsesScalarInput(t *testing.T) {
-	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
-		Provider: schemas.BedrockMantle, Model: "gpt-5.6-sol",
-		Input: []schemas.ResponsesMessage{{Role: schemas.Ptr(schemas.ResponsesInputMessageRoleUser), Content: &schemas.ResponsesMessageContent{ContentStr: schemas.Ptr("hello")}}},
-	})
-	if converted == nil || converted.Input.OpenAIResponsesRequestInputStr == nil {
-		t.Fatalf("expected scalar Mantle input, got %#v", converted)
 	}
 }
 

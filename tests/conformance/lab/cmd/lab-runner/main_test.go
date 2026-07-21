@@ -120,6 +120,63 @@ func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
 	}
 }
 
+func TestValidateCodexIngressTranscriptRejectsContractMutants(t *testing.T) {
+	valid := codexIngressRecord{
+		Schema: "sealed-codex-bifrost-ingress/v1", RunID: "test-1", Method: "POST",
+		Path: "/openai/v1/responses", Model: "bedrock_mantle/gpt-5.5", Stream: true,
+		LiteHeaderCount: 1, LiteHeaderValue: "true", FirstInputType: "additional_tools",
+		FirstInputRole: "developer", BodyBytes: 512,
+		BodySHA256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+	}
+	boundary := &cellResult{RunID: "test-1", Client: "codex", ExitCode: 0, ProcessStarted: true, RequestInitiated: true, TransportOutcome: "completed", EventCount: 4, OutputBytes: 10, OutputSHA256: valid.BodySHA256}
+	encode := func(record codexIngressRecord) []byte {
+		data, err := json.Marshal(record)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return append(data, '\n')
+	}
+	if _, err := validateCodexIngressTranscript(encode(valid), "test-1", boundary); err != nil {
+		t.Fatal(err)
+	}
+	mutations := []func(*codexIngressRecord){
+		func(r *codexIngressRecord) { r.Method = "GET" },
+		func(r *codexIngressRecord) { r.Path = "/v1/responses" },
+		func(r *codexIngressRecord) { r.Model = "openai/gpt-5.5" },
+		func(r *codexIngressRecord) { r.Stream = false },
+		func(r *codexIngressRecord) { r.LiteHeaderCount = 2 },
+		func(r *codexIngressRecord) { r.LiteHeaderValue = "false" },
+		func(r *codexIngressRecord) { r.WebsocketUpgrade = true },
+		func(r *codexIngressRecord) { r.TopLevelInstructions = true },
+		func(r *codexIngressRecord) { r.TopLevelTools = true },
+		func(r *codexIngressRecord) { r.ParallelToolCalls = true },
+		func(r *codexIngressRecord) { r.FirstInputType = "message" },
+		func(r *codexIngressRecord) { r.FirstInputRole = "user" },
+		func(r *codexIngressRecord) { r.BodyBytes = 0 },
+		func(r *codexIngressRecord) { r.BodySHA256 = "raw-body-forbidden" },
+	}
+	for index, mutate := range mutations {
+		candidate := valid
+		mutate(&candidate)
+		if _, err := validateCodexIngressTranscript(encode(candidate), "test-1", boundary); err == nil {
+			t.Fatalf("unsafe ingress mutation %d accepted", index)
+		}
+	}
+	if _, err := validateCodexIngressTranscript(append(encode(valid), encode(valid)...), "test-1", boundary); err == nil {
+		t.Fatal("duplicate ingress record accepted")
+	}
+	wrongRun := valid
+	wrongRun.RunID = "other-run"
+	if _, err := validateCodexIngressTranscript(encode(wrongRun), "test-1", boundary); err == nil {
+		t.Fatal("wrong-run ingress record accepted")
+	}
+	badBoundary := *boundary
+	badBoundary.TransportOutcome = "failed"
+	if _, err := validateCodexIngressTranscript(encode(valid), "test-1", &badBoundary); err == nil {
+		t.Fatal("failed Codex terminal evidence accepted")
+	}
+}
+
 const validRuntimeLock = `{
   "schema":"sealed-lab-runtime-lock/v1",
   "run_id":"test-1",
@@ -448,6 +505,8 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
 	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1"}`+"\n")
+	case strings.Contains(joined, " logs --no-color --no-log-prefix bifrost-1"):
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-ingress/v1","run_id":"test-1","method":"POST","path":"/openai/v1/responses","model":"bedrock_mantle/gpt-5.5","stream":true,"lite_header_count":1,"lite_header_value":"true","websocket_upgrade":false,"top_level_instructions":false,"top_level_tools":false,"parallel_tool_calls":false,"first_input_type":"additional_tools","first_input_role":"developer","body_bytes":512,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix config-seed"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1","provider":"bedrock_mantle","alias":"gpt-5.5","model":"openai.gpt-5.5","tls":"private-ca-verified"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix egress-sentinel"):

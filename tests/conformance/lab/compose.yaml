@@ -13,6 +13,7 @@ x-bifrost: &bifrost
   user: "1000:0"
   environment:
     HOME: /nonexistent
+    LAB_RUN_ID: ${LAB_RUN_ID:?set the sealed lab run ID}
     TZ: UTC
     FRANKENGATE_PRICING_URL: file:///lab-fixtures/pricing.json
     FRANKENGATE_MODEL_PARAMETERS_URL: file:///lab-fixtures/model-parameters.json

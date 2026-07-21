@@ -4,6 +4,7 @@ package handlers
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -12,6 +13,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -726,7 +728,17 @@ func (h *CompletionHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	// Completion endpoints (non-parameterized)
 	r.POST("/v1/completions", lib.ChainMiddlewares(h.textCompletion, baseMiddlewares...))
 	r.POST("/v1/chat/completions", lib.ChainMiddlewares(h.chatCompletion, baseMiddlewares...))
-	r.POST("/v1/responses", lib.ChainMiddlewares(h.responses, baseMiddlewares...))
+	responsesHandler := h.responses
+	if runID := os.Getenv("LAB_RUN_ID"); runID != "" {
+		responsesHandler = func(ctx *fasthttp.RequestCtx) {
+			if err := observeSealedCodexIngress(ctx, runID); err != nil {
+				SendError(ctx, fasthttp.StatusBadRequest, err.Error())
+				return
+			}
+			h.responses(ctx)
+		}
+	}
+	r.POST("/v1/responses", lib.ChainMiddlewares(responsesHandler, baseMiddlewares...))
 	responsesRetrieveMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.ResponsesRetrieveRequest)}, middlewares...)
 	responsesDeleteMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.ResponsesDeleteRequest)}, middlewares...)
 	responsesCancelMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.ResponsesCancelRequest)}, middlewares...)
@@ -1156,6 +1168,50 @@ func (h *CompletionHandler) responses(ctx *fasthttp.RequestCtx) {
 	}
 	// Send successful response
 	SendJSON(ctx, resp)
+}
+
+func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) error {
+	if runID == "" {
+		return errors.New("sealed Codex ingress run ID is empty")
+	}
+	body := ctx.PostBody()
+	if len(body) == 0 || len(body) > 1<<20 {
+		return errors.New("sealed Codex ingress body out of bounds")
+	}
+	var request struct {
+		Model        string          `json:"model"`
+		Stream       bool            `json:"stream"`
+		Instructions json.RawMessage `json:"instructions"`
+		Tools        json.RawMessage `json:"tools"`
+		Parallel     bool            `json:"parallel_tool_calls"`
+		Input        []struct {
+			Type string `json:"type"`
+			Role string `json:"role"`
+		} `json:"input"`
+	}
+	if err := json.Unmarshal(body, &request); err != nil {
+		return err
+	}
+	headerCount, headerValue, upgrade := 0, "", false
+	ctx.Request.Header.VisitAll(func(k, v []byte) {
+		name := strings.ToLower(string(k))
+		if name == "x-openai-internal-codex-responses-lite" {
+			headerCount++
+			headerValue = string(v)
+		}
+		if name == "upgrade" {
+			upgrade = true
+		}
+	})
+	valid := string(ctx.Method()) == "POST" && request.Model == "bedrock_mantle/gpt-5.5" && request.Stream && headerCount == 1 && headerValue == "true" && !upgrade && len(request.Instructions) == 0 && len(request.Tools) == 0 && !request.Parallel && len(request.Input) > 0 && request.Input[0].Type == "additional_tools" && request.Input[0].Role == "developer"
+	if !valid {
+		return errors.New("sealed Codex ingress is not Responses Lite")
+	}
+	sum := sha256.Sum256(body)
+	record := map[string]any{"schema": "sealed-codex-bifrost-ingress/v1", "run_id": runID, "method": "POST", "path": "/openai/v1/responses", "model": request.Model, "stream": true, "lite_header_count": headerCount, "lite_header_value": headerValue, "websocket_upgrade": false, "top_level_instructions": false, "top_level_tools": false, "parallel_tool_calls": false, "first_input_type": "additional_tools", "first_input_role": "developer", "body_bytes": len(body), "body_sha256": fmt.Sprintf("%x", sum)}
+	encoded, _ := json.Marshal(record)
+	fmt.Println(string(encoded))
+	return nil
 }
 
 // prepareEmbeddingRequest prepares a BifrostEmbeddingRequest from the HTTP request body

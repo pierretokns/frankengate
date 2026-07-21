@@ -522,20 +522,40 @@ type cellResult struct {
 }
 
 type lifecycleResult struct {
-	Schema                         string      `json:"schema"`
-	RunID                          string      `json:"run_id"`
-	NativePlatform                 string      `json:"native_platform"`
-	StartedAt                      string      `json:"started_at"`
-	CompletedAt                    string      `json:"completed_at"`
-	SourceLockSHA256               string      `json:"source_lock_sha256"`
-	RuntimeLockSHA256              string      `json:"runtime_lock_sha256"`
-	SeedConfigRevision             string      `json:"seed_config_revision"`
-	Clients                        []string    `json:"clients"`
-	NormalCellForbiddenEvents      int         `json:"normal_cell_forbidden_events"`
-	AdversarialProbeRecordedEvents int         `json:"adversarial_probe_recorded_events"`
-	PaidInferenceProof             string      `json:"paid_inference_proof"`
-	TeardownClean                  bool        `json:"teardown_clean"`
-	CodexInferenceBoundary         *cellResult `json:"codex_inference_boundary,omitempty"`
+	Schema                         string              `json:"schema"`
+	RunID                          string              `json:"run_id"`
+	NativePlatform                 string              `json:"native_platform"`
+	StartedAt                      string              `json:"started_at"`
+	CompletedAt                    string              `json:"completed_at"`
+	SourceLockSHA256               string              `json:"source_lock_sha256"`
+	RuntimeLockSHA256              string              `json:"runtime_lock_sha256"`
+	SeedConfigRevision             string              `json:"seed_config_revision"`
+	Clients                        []string            `json:"clients"`
+	NormalCellForbiddenEvents      int                 `json:"normal_cell_forbidden_events"`
+	AdversarialProbeRecordedEvents int                 `json:"adversarial_probe_recorded_events"`
+	PaidInferenceProof             string              `json:"paid_inference_proof"`
+	TeardownClean                  bool                `json:"teardown_clean"`
+	CodexInferenceBoundary         *cellResult         `json:"codex_inference_boundary,omitempty"`
+	CodexBifrostIngress            *codexIngressRecord `json:"codex_bifrost_ingress,omitempty"`
+}
+
+type codexIngressRecord struct {
+	Schema               string `json:"schema"`
+	RunID                string `json:"run_id"`
+	Method               string `json:"method"`
+	Path                 string `json:"path"`
+	Model                string `json:"model"`
+	Stream               bool   `json:"stream"`
+	LiteHeaderCount      int    `json:"lite_header_count"`
+	LiteHeaderValue      string `json:"lite_header_value"`
+	WebsocketUpgrade     bool   `json:"websocket_upgrade"`
+	TopLevelInstructions bool   `json:"top_level_instructions"`
+	TopLevelTools        bool   `json:"top_level_tools"`
+	ParallelToolCalls    bool   `json:"parallel_tool_calls"`
+	FirstInputType       string `json:"first_input_type"`
+	FirstInputRole       string `json:"first_input_role"`
+	BodyBytes            int    `json:"body_bytes"`
+	BodySHA256           string `json:"body_sha256"`
 }
 
 type networkProbeResult struct {
@@ -718,6 +738,14 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if codexBoundary == nil {
 		return fmt.Errorf("Codex boundary evidence is absent")
 	}
+	var bifrostLogs bytes.Buffer
+	if err := executor.Run(environment, &bifrostLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "bifrost-1")...); err != nil {
+		return fmt.Errorf("read Bifrost ingress transcript: %w", err)
+	}
+	ingress, err := validateCodexIngressTranscript(bifrostLogs.Bytes(), lock.RunID, codexBoundary)
+	if err != nil {
+		return fmt.Errorf("join Codex terminal evidence to Bifrost ingress: %w", err)
+	}
 	if err := validateMantleTranscript(mantleLogs.Bytes(), lock.RunID); err != nil {
 		return fmt.Errorf("join Codex/Bifrost boundary to Mantle transcript: %w", err)
 	}
@@ -787,7 +815,33 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		Clients: clients, NormalCellForbiddenEvents: forbidden, AdversarialProbeRecordedEvents: probeEvents,
 		PaidInferenceProof: "unproven-external-recorder-required", TeardownClean: teardownClean,
 		CodexInferenceBoundary: codexBoundary,
+		CodexBifrostIngress:    &ingress,
 	})
+}
+
+func validateCodexIngressTranscript(data []byte, runID string, boundary *cellResult) (codexIngressRecord, error) {
+	var matched []codexIngressRecord
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var record codexIngressRecord
+		if json.Unmarshal(line, &record) == nil && record.Schema == "sealed-codex-bifrost-ingress/v1" && record.RunID == runID {
+			matched = append(matched, record)
+		}
+	}
+	if len(matched) != 1 {
+		return codexIngressRecord{}, fmt.Errorf("expected exactly one run-correlated Codex ingress record, got %d", len(matched))
+	}
+	record := matched[0]
+	if boundary == nil || boundary.RunID != runID || boundary.Client != "codex" || boundary.ExitCode != 0 || !boundary.ProcessStarted || !boundary.RequestInitiated || boundary.TransportOutcome != "completed" || boundary.EventCount == 0 || boundary.OutputBytes == 0 || !sha256Value.MatchString(boundary.OutputSHA256) {
+		return codexIngressRecord{}, errors.New("Codex terminal evidence does not prove a completed inference")
+	}
+	if record.Method != "POST" || record.Path != "/openai/v1/responses" || record.Model != "bedrock_mantle/gpt-5.5" || !record.Stream || record.LiteHeaderCount != 1 || record.LiteHeaderValue != "true" || record.WebsocketUpgrade || record.TopLevelInstructions || record.TopLevelTools || record.ParallelToolCalls || record.FirstInputType != "additional_tools" || record.FirstInputRole != "developer" || record.BodyBytes <= 0 || record.BodyBytes > 1<<20 || !sha256Value.MatchString(record.BodySHA256) {
+		return codexIngressRecord{}, errors.New("Codex ingress record violates the Responses Lite contract")
+	}
+	return record, nil
 }
 
 func validateMantleTranscript(data []byte, runID string) error {
