@@ -2,13 +2,57 @@ package contract
 
 import (
 	"encoding/json"
+	"fmt"
+	"math"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/maximhq/bifrost/framework/configstore"
 )
+
+const sealedLabPostgresPassword = "sealed-lab-only"
+
+func credentialEntropy(value string) float64 {
+	counts := make(map[rune]int)
+	for _, character := range value {
+		counts[character]++
+	}
+	length := float64(len([]rune(value)))
+	if length == 0 {
+		return 0
+	}
+	var entropy float64
+	for _, count := range counts {
+		probability := float64(count) / length
+		entropy -= probability * math.Log2(probability)
+	}
+	return entropy
+}
+
+func validateSealedCredential(fixtureCredential, composeCredential string) error {
+	lower := strings.ToLower(fixtureCredential)
+	for _, prefix := range []string{"sk-", "akia", "ghp_", "github_pat_", "xoxb-", "xoxp-", "eyj"} {
+		if strings.HasPrefix(lower, prefix) {
+			return fmt.Errorf("credential uses known secret prefix %q", prefix)
+		}
+	}
+	if strings.Contains(fixtureCredential, "-----BEGIN") || strings.Contains(fixtureCredential, "PRIVATE KEY") {
+		return fmt.Errorf("credential contains PEM material")
+	}
+	if len(fixtureCredential) >= 24 && credentialEntropy(fixtureCredential) >= 3.5 {
+		return fmt.Errorf("credential resembles high-entropy secret material")
+	}
+	if fixtureCredential != sealedLabPostgresPassword {
+		return fmt.Errorf("credential is not the exact reviewed synthetic value")
+	}
+	if composeCredential != fixtureCredential {
+		return fmt.Errorf("fixture and Compose credentials differ")
+	}
+	return nil
+}
 
 func TestBootstrapConfigOnlySelectsPostgresAuthority(t *testing.T) {
 	root := filepath.Join("..", "..", "..", "..")
@@ -83,5 +127,33 @@ func TestBootstrapConfigOnlySelectsPostgresAuthority(t *testing.T) {
 	}
 	if strings.Contains(compose, "BIFROST_CONFIG_STORE_") {
 		t.Fatal("Compose still advertises unsupported config-store environment variables")
+	}
+	passwordLines := regexp.MustCompile(`(?m)^\s+POSTGRES_PASSWORD:\s*([^\s#]+)\s*$`).FindAllStringSubmatch(compose, -1)
+	if len(passwordLines) != 1 || len(passwordLines[0]) != 2 {
+		t.Fatal("Compose must declare exactly one unambiguous POSTGRES_PASSWORD")
+	}
+	if err := validateSealedCredential(store.Config.Password, passwordLines[0][1]); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSealedCredentialRejectsMutants(t *testing.T) {
+	tests := map[string]struct {
+		fixture string
+		compose string
+	}{
+		"mismatch":      {sealedLabPostgresPassword, "sealed-lab-other"},
+		"non-synthetic": {"production-password", "production-password"},
+		"OpenAI prefix": {"sk-not-a-real-key", "sk-not-a-real-key"},
+		"AWS prefix":    {"AKIAIOSFODNN7EXAMPLE", "AKIAIOSFODNN7EXAMPLE"},
+		"PEM material":  {"-----BEGIN PRIVATE KEY-----", "-----BEGIN PRIVATE KEY-----"},
+		"high entropy":  {"mL7$2qP9!vR4#xT8@kN6&wC3", "mL7$2qP9!vR4#xT8@kN6&wC3"},
+	}
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			if err := validateSealedCredential(test.fixture, test.compose); err == nil {
+				t.Fatal("mutant credential accepted")
+			}
+		})
 	}
 }

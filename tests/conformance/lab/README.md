@@ -106,23 +106,28 @@ GOWORK=off go run ./cmd/lab-runner \
   --source-lock /absolute/path/images.lock.v1.json \
   --compose /absolute/path/compose.yaml \
   --docker /absolute/path/to/docker \
-  --compose-logs-artifact /absolute/new/path/compose.log \
-  --compose-ps-artifact /absolute/new/path/compose-ps.txt
+  --failure-diagnostics-artifact /absolute/new/path/failure-diagnostics.json
 ```
 
-When both diagnostic paths are supplied, the runner captures `compose ps --all` and the final 2,000
-log lines before every teardown, including failure teardown. Capture is bounded (256 KiB for `ps`,
-4 MiB for logs) and creates distinct new regular files with mode 0600; existing files and symlinks
-fail closed. Diagnostics never share stdout with the single lifecycle JSON record. They are bounded
-troubleshooting artifacts, not proof of request delivery, network isolation, or lifecycle success.
+When supplied, the runner captures bounded metadata for an allowlisted service set before every
+runner-controlled teardown, including failure teardown. Each diagnostic command has a five-second
+deadline within a twenty-second aggregate budget. Raw status and log bytes never enter the artifact;
+only classifications, byte counts, and SHA-256 digests are retained. Publication uses a mode-0600
+temporary regular file and an atomic fresh hard-link; stale targets, symlinked/nonregular/hardlinked
+directory entries, and unsafe directories fail closed. Diagnostics never share stdout with the
+single lifecycle JSON record. They are troubleshooting metadata, not proof of request delivery,
+network isolation, or lifecycle success; process termination outside runner-controlled teardown may
+prevent capture.
 
-The gateway replicas mount `fixtures/bootstrap-config.json` read-only. That fixture selects the
-PostgreSQL config store and disables the otherwise implicit SQLite log store; it intentionally has
-no provider, governance, MCP, client, or plugin sections. In split-authority mode the serving pods
-therefore load the provider seeded in PostgreSQL without making the fixture a mutable configuration
-authority. This proves only the sealed lab's immutable database bootstrap. It does not prove a
-config-file-free production bootstrap, connection-secret rotation, change-notification convergence,
-or general high availability.
+The gateway replicas declare a mode-0444 mount of `fixtures/bootstrap-config.json`. That fixture
+selects the PostgreSQL config store and disables the otherwise implicit SQLite log store; it
+intentionally has no provider, governance, MCP, client, or plugin sections. In split-authority mode
+the serving pods therefore load provider data seeded in PostgreSQL without making the fixture the
+authority for mutable configuration. Only a successful sealed lifecycle with runtime evidence bound
+to provider `bedrock_mantle` and config revision `sealed-lab-c9-gpt55-v1` proves that this bootstrap
+worked for the tested build. The Compose declaration alone does not prove runtime immutability. This
+slice also does not prove config-file-free production bootstrap, connection-secret rotation,
+change-notification convergence, or general high availability.
 
 The PR-triggered `sealed-mantle-lab.yml` GitHub Actions workflow builds both platform variants from
 the reviewed tracked source and top-level integrity-locked npm artifacts, publishes them only to an ephemeral runner-local
