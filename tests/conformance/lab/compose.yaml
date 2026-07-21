@@ -13,6 +13,7 @@ x-bifrost: &bifrost
   user: "1000:0"
   environment:
     HOME: /nonexistent
+    BIFROST_HOST: 0.0.0.0
     BIFROST_SEALED_LAB_INGRESS_OBSERVER: "1"
     LAB_RUN_ID: ${LAB_RUN_ID:?set the sealed lab run ID}
     TZ: UTC

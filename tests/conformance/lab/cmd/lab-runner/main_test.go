@@ -903,6 +903,7 @@ func resolvedComposeForTest() string {
 	services["bifrost-3"]["network_mode"] = "service:netns-bifrost-3"
 	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
 		services[name]["environment"] = map[string]any{
+			"BIFROST_HOST":                        "0.0.0.0",
 			"BIFROST_SEALED_LAB_INGRESS_OBSERVER": "1",
 			"LAB_RUN_ID":                          "test-1",
 		}
