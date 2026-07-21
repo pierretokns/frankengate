@@ -17,7 +17,7 @@ func TestIntegrationHandlerPreservesAuthorityPathAndSecretFreeTranscript(t *test
 	if err != nil {
 		t.Fatal(err)
 	}
-	body := `{"model":"openai.gpt-5.5","input":"sealed-c9-gpt55 SEALED_CODEX_RUN_ID:test-1","stream":true}`
+	body := `{"model":"openai.gpt-5.5","input":"sealed-c9-gpt55 SEALED_CODEX_RUN_ID:test-1","stream":true,"tools":[{"type":"function","name":"lookup","parameters":{"type":"object"}}]}`
 	request := httptest.NewRequest(http.MethodPost, "https://"+mantleservice.IntegrationHost+"/openai/v1/responses", strings.NewReader(body))
 	request.Host = mantleservice.IntegrationHost
 	request.Header.Set("Authorization", "Bearer synthetic-mantle-contract")
@@ -31,7 +31,7 @@ func TestIntegrationHandlerPreservesAuthorityPathAndSecretFreeTranscript(t *test
 	if err := json.NewDecoder(&transcript).Decode(&record); err != nil {
 		t.Fatal(err)
 	}
-	if record.Schema != mantleservice.TranscriptSchema || record.RunID != "test-1" || record.Sequence != 1 || record.Host != mantleservice.IntegrationHost || record.Path != "/openai/v1/responses" || record.Model != "openai.gpt-5.5" || !record.Stream || record.Status != http.StatusOK || len(record.BodySHA256) != 64 || record.Authorization != "synthetic-bearer" {
+	if record.Schema != mantleservice.TranscriptSchema || record.RunID != "test-1" || record.Sequence != 1 || record.Host != mantleservice.IntegrationHost || record.Path != "/openai/v1/responses" || record.Model != "openai.gpt-5.5" || !record.Stream || record.Status != http.StatusOK || len(record.BodySHA256) != 64 || record.Authorization != "synthetic-bearer" || record.TopLevelTools != 1 || record.AdditionalTools != 0 {
 		t.Fatalf("transcript=%#v", record)
 	}
 	if strings.Contains(transcript.String(), "synthetic-mantle-contract") || strings.Contains(transcript.String(), "sealed-c9-gpt55") {

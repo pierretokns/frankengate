@@ -298,6 +298,10 @@ func (provider *BedrockProvider) mantleResponses(
 	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
 	openAIRequest := *request
 	openAIRequest.Model = bareModel
+	requestForUpstream := &openAIRequest
+	if strings.Contains(url, "/openai/v1/") {
+		requestForUpstream = openai.UnlightifyMantleResponsesRequest(requestForUpstream)
+	}
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -312,7 +316,7 @@ func (provider *BedrockProvider) mantleResponses(
 		ctx,
 		provider.mantleClient,
 		url,
-		&openAIRequest,
+		requestForUpstream,
 		openai.BearerAuthHeader(key),
 		WithMantleProject(provider.networkConfig.ExtraHeaders, MantleOpenAIProjectHeader, resolveMantleProjectID(ctx, key)),
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -339,6 +343,10 @@ func (provider *BedrockProvider) mantleResponsesStream(
 	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
 	openAIRequest := *request
 	openAIRequest.Model = bareModel
+	requestForUpstream := &openAIRequest
+	if strings.Contains(url, "/openai/v1/") {
+		requestForUpstream = openai.UnlightifyMantleResponsesRequest(requestForUpstream)
+	}
 
 	// SigV4 (empty key value): sign the exact body the handler builds via a signer closure.
 	// Bearer (key has a value): no signer; auth flows through the Authorization header.
@@ -350,7 +358,7 @@ func (provider *BedrockProvider) mantleResponsesStream(
 	}
 
 	return openai.HandleOpenAIResponsesStreaming(
-		ctx, provider.mantleStreamingClient, url, &openAIRequest,
+		ctx, provider.mantleStreamingClient, url, requestForUpstream,
 		openai.BearerAuthHeader(key), WithMantleProject(provider.networkConfig.ExtraHeaders, MantleOpenAIProjectHeader, resolveMantleProjectID(ctx, key)),
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),

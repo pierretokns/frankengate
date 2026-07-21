@@ -250,6 +250,10 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusBadRequest, "invalid_request", "Responses requires input")
 			return
 		}
+		if r.URL.Path == "/openai/v1/responses" && containsAdditionalTools(request.Input) {
+			writeError(w, http.StatusBadRequest, "invalid_input", "value did not match any expected variant")
+			return
+		}
 		if request.Stream {
 			s.serveResponsesStream(w, r, row, body)
 		} else {
@@ -272,6 +276,21 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		writeError(w, http.StatusNotFound, "unsupported_route", "request target is not a covered Mantle route")
 	}
+}
+
+func containsAdditionalTools(input json.RawMessage) bool {
+	var items []struct {
+		Type string `json:"type"`
+	}
+	if json.Unmarshal(input, &items) != nil {
+		return false
+	}
+	for _, item := range items {
+		if item.Type == "additional_tools" {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *Service) serveModels(w http.ResponseWriter) {

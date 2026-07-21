@@ -337,6 +337,56 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	return req
 }
 
+// UnlightifyMantleResponsesRequest converts Codex's Responses Lite tool
+// declaration item back to the classic OpenAI Responses shape accepted by
+// Bedrock Mantle's /openai route. It returns a copy and never mutates the
+// caller's request. All non-additional_tools input items retain their order.
+func UnlightifyMantleResponsesRequest(request *schemas.BifrostResponsesRequest) *schemas.BifrostResponsesRequest {
+	if request == nil {
+		return nil
+	}
+
+	converted := *request
+	converted.Input = make([]schemas.ResponsesMessage, 0, len(request.Input))
+	lifted := make([]schemas.ResponsesTool, 0)
+	for _, message := range request.Input {
+		if message.Type == nil || *message.Type != schemas.ResponsesMessageTypeAdditionalTools {
+			converted.Input = append(converted.Input, message)
+			continue
+		}
+
+		data, err := json.Marshal(message)
+		if err != nil {
+			return request
+		}
+		var item struct {
+			Tools []json.RawMessage `json:"tools"`
+		}
+		if err := json.Unmarshal(data, &item); err != nil {
+			return request
+		}
+		for _, raw := range item.Tools {
+			var tool schemas.ResponsesTool
+			if err := json.Unmarshal(raw, &tool); err != nil {
+				return request
+			}
+			lifted = append(lifted, tool)
+		}
+	}
+
+	if len(lifted) == 0 {
+		return &converted
+	}
+	if request.Params == nil {
+		converted.Params = &schemas.ResponsesParameters{Tools: lifted}
+		return &converted
+	}
+	params := *request.Params
+	params.Tools = append(append([]schemas.ResponsesTool(nil), request.Params.Tools...), lifted...)
+	converted.Params = &params
+	return &converted
+}
+
 func defaultImageDetail(message schemas.ResponsesMessage) schemas.ResponsesMessage {
 	if message.Content == nil || len(message.Content.ContentBlocks) == 0 {
 		return message

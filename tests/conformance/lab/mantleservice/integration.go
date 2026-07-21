@@ -18,17 +18,19 @@ const (
 )
 
 type TranscriptRecord struct {
-	Schema        string `json:"schema"`
-	Sequence      uint64 `json:"sequence"`
-	Method        string `json:"method"`
-	Host          string `json:"host"`
-	Path          string `json:"path"`
-	Model         string `json:"model,omitempty"`
-	Stream        bool   `json:"stream"`
-	BodySHA256    string `json:"body_sha256"`
-	Status        int    `json:"status"`
-	Authorization string `json:"authorization_class"`
-	RunID         string `json:"run_id"`
+	Schema          string `json:"schema"`
+	Sequence        uint64 `json:"sequence"`
+	Method          string `json:"method"`
+	Host            string `json:"host"`
+	Path            string `json:"path"`
+	Model           string `json:"model,omitempty"`
+	Stream          bool   `json:"stream"`
+	BodySHA256      string `json:"body_sha256"`
+	Status          int    `json:"status"`
+	Authorization   string `json:"authorization_class"`
+	RunID           string `json:"run_id"`
+	TopLevelTools   int    `json:"top_level_tool_count"`
+	AdditionalTools int    `json:"additional_tools_input_count"`
 }
 
 type transcriptWriter struct {
@@ -88,10 +90,20 @@ func NewIntegrationHandler(writer io.Writer) (http.Handler, error) {
 		}
 		r.Body = io.NopCloser(bytes.NewReader(body))
 		var envelope struct {
-			Model  string `json:"model"`
-			Stream bool   `json:"stream"`
+			Model  string            `json:"model"`
+			Stream bool              `json:"stream"`
+			Tools  []json.RawMessage `json:"tools"`
+			Input  []struct {
+				Type string `json:"type"`
+			} `json:"input"`
 		}
 		_ = json.Unmarshal(body, &envelope)
+		additionalTools := 0
+		for _, item := range envelope.Input {
+			if item.Type == "additional_tools" {
+				additionalTools++
+			}
+		}
 		runID := extractRunID(body)
 		status := &statusRecorder{ResponseWriter: w}
 		service.ServeHTTP(status, r)
@@ -101,6 +113,7 @@ func NewIntegrationHandler(writer io.Writer) (http.Handler, error) {
 			Path: r.URL.Path, Model: envelope.Model, Stream: envelope.Stream,
 			BodySHA256: hex.EncodeToString(digest[:]), Status: status.status,
 			Authorization: "synthetic-bearer",
+			TopLevelTools: len(envelope.Tools), AdditionalTools: additionalTools,
 		}
 		recorder.mu.Lock()
 		recorder.sequence++

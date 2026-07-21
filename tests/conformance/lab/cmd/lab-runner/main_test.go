@@ -93,12 +93,12 @@ func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	req := httptest.NewRequest(http.MethodPost, "https://"+mantleservice.IntegrationHost+"/openai/v1/responses", strings.NewReader(`{"model":"openai.gpt-5.5","input":"SEALED_CODEX_RUN_ID:test-1","stream":true}`))
+	req := httptest.NewRequest(http.MethodPost, "https://"+mantleservice.IntegrationHost+"/openai/v1/responses", strings.NewReader(`{"model":"openai.gpt-5.5","input":"SEALED_CODEX_RUN_ID:test-1","stream":true,"tools":[{"type":"function","name":"lookup","parameters":{"type":"object"}}]}`))
 	req.Host = mantleservice.IntegrationHost
 	req.Header.Set("Authorization", "Bearer synthetic-mantle-contract")
 	req.Header.Set("Content-Type", "application/json")
 	handler.ServeHTTP(httptest.NewRecorder(), req)
-	if err := validateMantleTranscript(transcript.Bytes(), "test-1"); err != nil {
+	if err := validateMantleTranscript(transcript.Bytes(), "test-1", 1); err != nil {
 		t.Fatal(err)
 	}
 	var valid mantleservice.TranscriptRecord
@@ -108,6 +108,8 @@ func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
 	mutations := []func(*mantleservice.TranscriptRecord){
 		func(r *mantleservice.TranscriptRecord) { r.Stream = false },
 		func(r *mantleservice.TranscriptRecord) { r.Sequence = 2 },
+		func(r *mantleservice.TranscriptRecord) { r.TopLevelTools = 0 },
+		func(r *mantleservice.TranscriptRecord) { r.AdditionalTools = 1 },
 		func(r *mantleservice.TranscriptRecord) { r.Authorization = "none" },
 		func(r *mantleservice.TranscriptRecord) { r.RunID = "other-run" },
 	}
@@ -115,7 +117,7 @@ func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
 		candidate := valid
 		mutate(&candidate)
 		encoded, _ := json.Marshal(candidate)
-		if err := validateMantleTranscript(append(encoded, '\n'), "test-1"); err == nil {
+		if err := validateMantleTranscript(append(encoded, '\n'), "test-1", 1); err == nil {
 			t.Fatalf("unsafe transcript mutation %d accepted: %s", index, encoded)
 		}
 	}
@@ -681,7 +683,7 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "network-probe"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
 	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1"}`+"\n")
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1","top_level_tool_count":1,"additional_tools_input_count":0}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix bifrost-1"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-header/v1","run_id":"test-1","method_post":true,"target_exact":true,"content_type_json":true,"content_encoding_none":true,"content_length_bounded":true,"lite_header_ok":true}`+"\n")
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-arrival/v1","run_id":"test-1","method_post":true,"path_exact":true,"query_empty":true}`+"\n")

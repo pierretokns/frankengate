@@ -145,6 +145,41 @@ func TestResponsesUnaryIsByteDeterministicAndHeaderAgnostic(t *testing.T) {
 	}
 }
 
+func TestOpenAIResponsesRejectsLiteShapeAndAcceptsClassicToolsRegardlessOfHeaders(t *testing.T) {
+	server := newServer(t)
+	lite := `{"model":"openai.gpt-5.5","input":[{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"lookup","parameters":{"type":"object"}}]},{"role":"user","content":"hello"}]}`
+	classic := `{"model":"openai.gpt-5.5","input":[{"role":"user","content":"hello"}],"tools":[{"type":"function","name":"lookup","parameters":{"type":"object"}}]}`
+	for _, header := range []bool{false, true} {
+		for _, test := range []struct {
+			body       string
+			wantStatus int
+			wantCode   string
+		}{{lite, http.StatusBadRequest, "invalid_input"}, {classic, http.StatusOK, ""}} {
+			req, _ := http.NewRequest(http.MethodPost, server.URL+"/openai/v1/responses", strings.NewReader(test.body))
+			req.Header.Set("Authorization", "Bearer synthetic-mantle-contract")
+			req.Header.Set("Content-Type", "application/json")
+			if header {
+				req.Header.Set("x-openai-internal-codex-responses-lite", "true")
+				req.Header.Set("x-amzn-mantle-client-agent", "codex")
+			}
+			response, err := server.Client().Do(req)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if response.StatusCode != test.wantStatus {
+				t.Fatalf("header=%v body=%s status=%d want=%d", header, test.body, response.StatusCode, test.wantStatus)
+			}
+			if test.wantCode != "" {
+				if got := errorCode(t, response); got != test.wantCode {
+					t.Fatalf("header=%v error=%s want=%s", header, got, test.wantCode)
+				}
+			} else {
+				response.Body.Close()
+			}
+		}
+	}
+}
+
 func TestPublicResponsesMatchReviewedGoldenBytes(t *testing.T) {
 	server := newServer(t)
 	for _, test := range []struct{ name, body, golden string }{

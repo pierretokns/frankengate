@@ -1135,7 +1135,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if err != nil {
 		return fmt.Errorf("join Codex terminal evidence to Bifrost ingress: %w", err)
 	}
-	if err := validateMantleTranscript(mantleLogs.Bytes(), lock.RunID); err != nil {
+	if err := validateMantleTranscript(mantleLogs.Bytes(), lock.RunID, ingress.FirstInputToolCount); err != nil {
 		return fmt.Errorf("join Codex/Bifrost boundary to Mantle transcript: %w", err)
 	}
 	var sentinelLogs bytes.Buffer
@@ -1233,7 +1233,7 @@ func validateCodexIngressTranscript(data []byte, runID string, boundary *cellRes
 	return record, nil
 }
 
-func validateMantleTranscript(data []byte, runID string) error {
+func validateMantleTranscript(data []byte, runID string, ingressToolCount int) error {
 	matched := 0
 	for _, line := range bytes.Split(data, []byte{'\n'}) {
 		line = bytes.TrimSpace(line)
@@ -1244,7 +1244,7 @@ func validateMantleTranscript(data []byte, runID string) error {
 		if json.Unmarshal(line, &record) != nil || record.Schema != mantleservice.TranscriptSchema {
 			continue
 		}
-		if record.Sequence == 1 && record.Method == "POST" && record.Host == mantleservice.IntegrationHost && record.Path == "/openai/v1/responses" && record.Model == "openai.gpt-5.5" && record.Stream && record.Status == 200 && record.Authorization == "synthetic-bearer" && record.RunID == runID && sha256Value.MatchString(record.BodySHA256) {
+		if record.Sequence == 1 && record.Method == "POST" && record.Host == mantleservice.IntegrationHost && record.Path == "/openai/v1/responses" && record.Model == "openai.gpt-5.5" && record.Stream && record.Status == 200 && record.Authorization == "synthetic-bearer" && record.RunID == runID && ingressToolCount > 0 && record.TopLevelTools == ingressToolCount && record.AdditionalTools == 0 && sha256Value.MatchString(record.BodySHA256) {
 			matched++
 		}
 	}
