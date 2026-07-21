@@ -393,9 +393,21 @@ type PreRequestCallback func(ctx *fasthttp.RequestCtx, bifrostCtx *schemas.Bifro
 // If it returns an error, an error response is sent instead of the success response.
 type PostRequestCallback func(ctx *fasthttp.RequestCtx, req interface{}, resp interface{}) error
 
-// RawPreRequestCallback observes the untouched HTTP request before integration
-// parsing. It must not mutate the request or write a response.
+// RawPreRequestCallback observes the untouched HTTP request before route
+// middleware and integration parsing. It must not mutate the request or write a
+// response.
 type RawPreRequestCallback func(ctx *fasthttp.RequestCtx)
+
+func chainRouteHandler(handler fasthttp.RequestHandler, callback RawPreRequestCallback, middlewares ...schemas.BifrostHTTPMiddleware) fasthttp.RequestHandler {
+	chained := lib.ChainMiddlewares(handler, middlewares...)
+	if callback == nil {
+		return chained
+	}
+	return func(ctx *fasthttp.RequestCtx) {
+		callback(ctx)
+		chained(ctx)
+	}
+}
 
 // HTTPRequestTypeGetter is a function type that accepts only a *fasthttp.RequestCtx and
 // returns a schemas.RequestType indicating the HTTP request type derived from the context.
@@ -630,29 +642,22 @@ func (g *GenericRouter) RegisterRoutes(r *router.Router, middlewares ...schemas.
 		// This ensures each route only has its own middleware plus the originally passed middlewares
 		routeMiddlewares := append([]schemas.BifrostHTTPMiddleware{registerRequestTypeMiddleware}, middlewares...)
 
-		handler := g.createHandler(route)
-		if callback := route.RawPreCallback; callback != nil {
-			baseHandler := handler
-			handler = func(ctx *fasthttp.RequestCtx) {
-				callback(ctx)
-				baseHandler(ctx)
-			}
-		}
+		handler := chainRouteHandler(g.createHandler(route), route.RawPreCallback, routeMiddlewares...)
 		switch method {
 		case fasthttp.MethodPost:
-			r.POST(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.POST(route.Path, handler)
 		case fasthttp.MethodGet:
-			r.GET(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.GET(route.Path, handler)
 		case fasthttp.MethodPut:
-			r.PUT(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.PUT(route.Path, handler)
 		case fasthttp.MethodDelete:
-			r.DELETE(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.DELETE(route.Path, handler)
 		case fasthttp.MethodPatch:
-			r.PATCH(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.PATCH(route.Path, handler)
 		case fasthttp.MethodHead:
-			r.HEAD(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.HEAD(route.Path, handler)
 		default:
-			r.POST(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...)) // Default to POST
+			r.POST(route.Path, handler) // Default to POST
 		}
 	}
 

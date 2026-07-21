@@ -38,6 +38,46 @@ func TestParsePassthroughBody_MultipartExtractsModelAfterFilePart(t *testing.T) 
 	assert.True(t, stream)
 }
 
+func TestChainRouteHandlerObservesBeforeShortCircuitingMiddleware(t *testing.T) {
+	var order []string
+	callback := func(*fasthttp.RequestCtx) {
+		order = append(order, "raw")
+	}
+	shortCircuit := func(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+		return func(*fasthttp.RequestCtx) {
+			order = append(order, "middleware")
+		}
+	}
+	inner := func(*fasthttp.RequestCtx) {
+		order = append(order, "handler")
+	}
+
+	chainRouteHandler(inner, callback, shortCircuit)(&fasthttp.RequestCtx{})
+	require.Equal(t, []string{"raw", "middleware"}, order)
+}
+
+func TestChainRouteHandlerPreservesMiddlewareOrderWithoutObserver(t *testing.T) {
+	var order []string
+	first := func(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+		return func(ctx *fasthttp.RequestCtx) {
+			order = append(order, "first")
+			next(ctx)
+		}
+	}
+	second := func(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+		return func(ctx *fasthttp.RequestCtx) {
+			order = append(order, "second")
+			next(ctx)
+		}
+	}
+	inner := func(*fasthttp.RequestCtx) {
+		order = append(order, "handler")
+	}
+
+	chainRouteHandler(inner, nil, first, second)(&fasthttp.RequestCtx{})
+	require.Equal(t, []string{"first", "second", "handler"}, order)
+}
+
 func TestRequestWithSettableExtraParams_OpenAIChatRequest(t *testing.T) {
 	t.Run("SetExtraParams populates both standalone and embedded ExtraParams", func(t *testing.T) {
 		req := &openai.OpenAIChatRequest{}
