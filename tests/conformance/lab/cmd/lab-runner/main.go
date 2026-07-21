@@ -229,7 +229,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 				}
 			}
 		}
-		failed := exitCode != 0 || (state != "running" && state != "unknown") || (health != "healthy" && health != "unknown" && health != "")
+		failed := serviceStatusFailed(state, health, exitCode)
 		failureClass = classifySanitizedFailure(capture.data.Bytes(), failed)
 		if _, ok := status[service]; !ok {
 			failureClass = "missing-status-row"
@@ -305,6 +305,10 @@ func classifySanitizedFailure(data []byte, failed bool) string {
 		return "generic-startup"
 	}
 	return "none"
+}
+
+func serviceStatusFailed(state, health string, exitCode int) bool {
+	return exitCode > 0 || state == "dead" || state == "restarting" || health == "unhealthy"
 }
 
 type seedRecord struct {

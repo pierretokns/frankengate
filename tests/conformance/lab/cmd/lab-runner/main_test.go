@@ -259,6 +259,23 @@ func TestSanitizedFailureClassificationMutants(t *testing.T) {
 	}
 }
 
+func TestSuccessfulOneShotServiceIsNotFailed(t *testing.T) {
+	if serviceStatusFailed("exited", "unknown", 0) {
+		t.Fatal("expected exited/0 config seed was classified as failed")
+	}
+	if got := classifySanitizedFailure([]byte("seed completed normally"), serviceStatusFailed("exited", "unknown", 0)); got != "none" {
+		t.Fatalf("normal one-shot log got %q", got)
+	}
+	for _, test := range []struct {
+		state, health string
+		exit          int
+	}{{"exited", "unknown", 1}, {"dead", "unknown", 0}, {"restarting", "unknown", 0}, {"running", "unhealthy", 0}} {
+		if !serviceStatusFailed(test.state, test.health, test.exit) {
+			t.Errorf("failed status accepted: %#v", test)
+		}
+	}
+}
+
 func TestConfigSeedRecordRequiresOneExactJSONRecord(t *testing.T) {
 	valid := `{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1","provider":"bedrock_mantle","alias":"gpt-5.5","model":"openai.gpt-5.5","tls":"private-ca-verified"}`
 	if _, err := parseSeedRecord([]byte(valid + "\n")); err != nil {
