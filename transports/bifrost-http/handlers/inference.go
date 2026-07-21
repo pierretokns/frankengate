@@ -1265,7 +1265,12 @@ func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) (err erro
 			case "namespace":
 				shapeOK = shapeOK && shape.Name != "" && len(shape.Tools) > 0
 			case "tool_search":
-				shapeOK = shapeOK && shape.Execution != "" && shape.Description != "" && len(shape.Parameters) > 0
+				var parameters struct {
+					Type string `json:"type"`
+				}
+				trimmedParameters := bytes.TrimSpace(shape.Parameters)
+				parametersObject := len(trimmedParameters) >= 2 && trimmedParameters[0] == '{' && trimmedParameters[len(trimmedParameters)-1] == '}' && json.Unmarshal(trimmedParameters, &parameters) == nil && parameters.Type == "object"
+				shapeOK = shapeOK && shape.Execution == "client" && shape.Description != "" && parametersObject
 			default:
 				shapeOK = false
 			}
