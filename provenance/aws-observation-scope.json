@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "bead_id": "bg-pg-config-mantle-program-gzg9.10",
+  "title": "Authorized AWS observation scope and pinned client matrix",
+  "effective_date": "2026-07-21",
+  "scope_policy": {
+    "aws_calls_in_this_bead": false,
+    "credentials_in_this_bead": false,
+    "paid_inference_in_this_bead": false,
+    "future_observations_require_explicit_consent": true,
+    "future_observations_require_preconnect_verification": true,
+    "naturally_occurring_safe_errors_only": true,
+    "unsafe_failure_provocation_allowed": false,
+    "prompt_or_response_content_retention_allowed": false
+  },
+  "authorization": {
+    "accounts": {
+      "rule": "Exactly one operator-approved AWS account ID or account alias per run record; wildcard or inherited account scope is forbidden.",
+      "wildcard_accounts_allowed": false
+    },
+    "regions": {
+      "allowed": ["us-east-1"],
+      "additional_regions_require_manifest_update": true
+    },
+    "projects_or_workspaces": {
+      "required": true,
+      "native_bedrock": "Record the Bedrock project_id from the key or alias when configured; record default-project when absent.",
+      "mantle_openai": "Record the Bedrock project_id sent as OpenAI-Project; record default-project when absent.",
+      "mantle_anthropic": "Record the Bedrock project_id sent as anthropic-workspace-id; record default-project when absent."
+    },
+    "operator": {
+      "required": true,
+      "rule": "A human operator identity and approval timestamp must be recorded before any connection is attempted."
+    },
+    "retention": {
+      "raw_wire_observations_max_days": 7,
+      "redacted_facts_max_days": 90,
+      "secrets_retained": false,
+      "prompt_response_bodies_retained": false,
+      "credential_material_retained": false
+    },
+    "allowed_facts": [
+      "consent_id",
+      "operator",
+      "client_id",
+      "client_version",
+      "lane_id",
+      "bifrost_container_digest",
+      "aws_account_id_or_alias",
+      "region",
+      "endpoint_host",
+      "endpoint_path_template",
+      "provider_surface",
+      "model_id",
+      "project_or_workspace_id",
+      "request_id",
+      "http_status_class",
+      "aws_request_id_if_returned",
+      "bifrost_request_id_if_returned",
+      "local_latency_ms",
+      "local_input_tokens",
+      "local_output_tokens",
+      "estimated_cost_usd",
+      "assurance_level"
+    ]
+  },
+  "client_matrix": [
+    {
+      "lane_id": "direct-native-bedrock",
+      "mode": "direct_client",
+      "surface": "native_bedrock",
+      "client_ids": ["boto3-python", "aws-sdk-js-bedrock-runtime"],
+      "preconnect_enabled": true
+    },
+    {
+      "lane_id": "bifrost-native-bedrock",
+      "mode": "through_bifrost",
+      "surface": "native_bedrock",
+      "client_ids": ["codex-cli", "claude-code", "openai-typescript", "anthropic-typescript", "openai-python", "anthropic-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "lane_id": "direct-mantle-openai",
+      "mode": "direct_client",
+      "surface": "mantle_openai",
+      "client_ids": ["openai-typescript", "openai-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "lane_id": "bifrost-mantle-openai",
+      "mode": "through_bifrost",
+      "surface": "mantle_openai",
+      "client_ids": ["codex-cli", "openai-typescript", "openai-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "lane_id": "direct-mantle-anthropic",
+      "mode": "direct_client",
+      "surface": "mantle_anthropic",
+      "client_ids": ["anthropic-typescript", "anthropic-python"],
+      "preconnect_enabled": false
+    },
+    {
+      "lane_id": "bifrost-mantle-anthropic",
+      "mode": "through_bifrost",
+      "surface": "mantle_anthropic",
+      "client_ids": ["claude-code", "anthropic-typescript", "anthropic-python"],
+      "preconnect_enabled": false
+    }
+  ],
+  "required_run_record_fields": [
+    "consent_id",
+    "consent_timestamp_utc",
+    "aws_account_id_or_alias",
+    "region",
+    "endpoint_host",
+    "endpoint_path_template",
+    "model_id",
+    "project_or_workspace_id",
+    "retention_policy_id",
+    "operator",
+    "allowed_facts",
+    "client_id",
+    "client_version",
+    "lane_id",
+    "billable_call_ceiling",
+    "token_ceiling",
+    "dollar_ceiling",
+    "account_budget_evidence",
+    "pricing_source",
+    "pricing_retrieved_at",
+    "pricing_sha256"
+  ],
+  "pricing": {
+    "source": "https://getbifrost.ai/datasheet",
+    "retrieved_at": "2026-07-20T12:45:12Z",
+    "locked_sha256": "ac9333eef09e45b3b882d1d5886acc23a4afd852018de04ba3b92e5839d98596",
+    "catalog_path": "docs/data/pricing/latest.json",
+    "max_age_hours_before_connect": 168,
+    "preconnect_failure_on_unknown_or_stale": true,
+    "preconnect_failure_on_missing_maxima": true
+  },
+  "ceilings": {
+    "max_attempts_total": 6,
+    "max_attempts_per_lane": 1,
+    "max_billable_calls_total": 4,
+    "max_billable_calls_per_lane": 1,
+    "max_input_tokens_per_call": 512,
+    "max_output_tokens_per_call": 64,
+    "max_total_tokens_all_calls": 4096,
+    "max_estimated_dollars_total": 0.25,
+    "max_estimated_dollars_per_lane": 0.05,
+    "required_independently_verified_account_budget_usd_lte": 0.1,
+    "max_response_body_bytes_per_call": 16384,
+    "max_redirects_per_call": 0,
+    "max_client_retries_per_call": 0,
+    "max_gateway_retries_per_call": 0,
+    "max_provider_fallbacks_per_call": 0
+  },
+  "models": [
+    {
+      "id": "native-bedrock-nova-lite",
+      "surface": "native_bedrock",
+      "model_id": "amazon.nova-lite-v1:0",
+      "max_input_tokens": 300000,
+      "max_output_tokens": 10000,
+      "pricing": {
+        "required": true,
+        "key": "amazon.nova-lite-v1:0",
+        "provider": "bedrock",
+        "input_cost_per_token": 0.00000006,
+        "output_cost_per_token": 0.00000024
+      }
+    },
+    {
+      "id": "native-bedrock-claude-haiku",
+      "surface": "native_bedrock",
+      "model_id": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "max_input_tokens": 200000,
+      "max_output_tokens": 64000,
+      "pricing": {
+        "required": true,
+        "key": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+        "provider": "bedrock",
+        "input_cost_per_token": 0.000001,
+        "output_cost_per_token": 0.000005
+      }
+    },
+    {
+      "id": "mantle-openai-gpt-oss-20b",
+      "surface": "mantle_openai",
+      "model_id": "openai.gpt-oss-20b",
+      "max_input_tokens": 131072,
+      "max_output_tokens": 32768,
+      "pricing": {
+        "required": true,
+        "key": "bedrock_mantle/openai.gpt-oss-20b",
+        "provider": "bedrock_mantle",
+        "input_cost_per_token": 0.000000075,
+        "output_cost_per_token": 0.0000003
+      }
+    },
+    {
+      "id": "mantle-openai-gpt-oss-120b",
+      "surface": "mantle_openai",
+      "model_id": "openai.gpt-oss-120b",
+      "max_input_tokens": 131072,
+      "max_output_tokens": 32768,
+      "pricing": {
+        "required": true,
+        "key": "bedrock_mantle/openai.gpt-oss-120b",
+        "provider": "bedrock_mantle",
+        "input_cost_per_token": 0.00000015,
+        "output_cost_per_token": 0.0000006
+      }
+    },
+    {
+      "id": "mantle-anthropic-claude-opus-4-8-candidate",
+      "surface": "mantle_anthropic",
+      "model_id": "anthropic.claude-opus-4-8",
+      "max_input_tokens": null,
+      "max_output_tokens": null,
+      "pricing": {
+        "required": false,
+        "key": "anthropic.claude-opus-4-8",
+        "provider": "bedrock",
+        "blocked_reason": "The local pricing catalog has a Bedrock row for this Claude model, but no Bedrock Mantle Anthropic row. Mantle Anthropic observations must fail before connect until a Mantle-specific pricing source and context/output maxima are pinned."
+      }
+    }
+  ],
+  "client_pins": {
+    "coding_cli_tiers": [
+      {
+        "id": "codex-cli",
+        "name": "Codex CLI",
+        "owner": "OpenAI",
+        "artifact": "npm:@openai/codex",
+        "tiers": {
+          "minimum": "0.144.6",
+          "production": "0.144.6",
+          "advisory": "0.144.6"
+        },
+        "minimum_floor_policy": "No lower Codex CLI version is authorized until this manifest records exact artifact evidence for that floor.",
+        "local_verification": {
+          "command": "CODEX_DISABLE_TELEMETRY=1 codex --version",
+          "observed": "codex-cli 0.144.6"
+        },
+        "allowed_surfaces": ["mantle_openai", "native_bedrock_through_bifrost"]
+      },
+      {
+        "id": "claude-code",
+        "name": "Claude Code",
+        "owner": "Anthropic",
+        "artifact": "installer:https://claude.ai/install.sh",
+        "tiers": {
+          "minimum": "2.1.214",
+          "production": "2.1.214",
+          "advisory": "2.1.214"
+        },
+        "minimum_floor_policy": "No lower Claude Code version is authorized until this manifest records exact artifact evidence for that floor.",
+        "local_verification": {
+          "command": "CLAUDE_CODE_DISABLE_TELEMETRY=1 claude --version",
+          "observed": "2.1.214 (Claude Code)"
+        },
+        "allowed_surfaces": ["mantle_anthropic", "native_bedrock_through_bifrost"]
+      }
+    ],
+    "sdk_artifacts": [
+      {
+        "id": "openai-typescript",
+        "name": "OpenAI TypeScript SDK",
+        "artifact": "npm:openai",
+        "version": "6.15.0",
+        "resolved": "https://registry.npmjs.org/openai/-/openai-6.15.0.tgz",
+        "integrity": "sha512-F1Lvs5BoVvmZtzkUEVyh8mDQPPFolq4F+xdsx/DO8Hee8YF3IGAlZqUIsF+DVGhqf4aU0a3bTghsxB6OIsRy1g==",
+        "lockfile": "tests/integrations/typescript/package-lock.json",
+        "allowed_surfaces": ["mantle_openai", "through_bifrost"]
+      },
+      {
+        "id": "anthropic-typescript",
+        "name": "Anthropic TypeScript SDK",
+        "artifact": "npm:@anthropic-ai/sdk",
+        "version": "0.71.2",
+        "resolved": "https://registry.npmjs.org/@anthropic-ai/sdk/-/sdk-0.71.2.tgz",
+        "integrity": "sha512-TGNDEUuEstk/DKu0/TflXAEt+p+p/WhTlFzEnoosvbaDU2LTjm42igSdlL0VijrKpWejtOKxX0b8A7uc+XiSAQ==",
+        "lockfile": "tests/integrations/typescript/package-lock.json",
+        "allowed_surfaces": ["mantle_anthropic", "through_bifrost"]
+      },
+      {
+        "id": "openai-python",
+        "name": "OpenAI Python SDK",
+        "artifact": "pypi:openai",
+        "version": "2.40.0",
+        "wheel_hash_sha256": "2b205637ff214477f9ce9ab035e9f494db0e3fa8f1e599008953735fbf6ff1ff",
+        "lockfile": "tests/integrations/python/uv.lock",
+        "allowed_surfaces": ["mantle_openai", "through_bifrost"]
+      },
+      {
+        "id": "anthropic-python",
+        "name": "Anthropic Python SDK",
+        "artifact": "pypi:anthropic",
+        "version": "0.105.2",
+        "wheel_hash_sha256": "e53ed5f6bf36fb1ecb9b25d8634cfd30e02fab9fb3374a0c2d5c585874757230",
+        "lockfile": "tests/integrations/python/uv.lock",
+        "allowed_surfaces": ["mantle_anthropic", "through_bifrost"]
+      },
+      {
+        "id": "boto3-python",
+        "name": "boto3",
+        "artifact": "pypi:boto3",
+        "version": "1.43.19",
+        "wheel_hash_sha256": "ec6825193b75fbb6bfbf12181e4960d00ad2f404343586765394ce620e63783c",
+        "lockfile": "tests/integrations/python/uv.lock",
+        "allowed_surfaces": ["native_bedrock"],
+        "mantle_allowed": false
+      },
+      {
+        "id": "aws-sdk-js-bedrock-runtime",
+        "name": "AWS SDK for JavaScript Bedrock Runtime",
+        "artifact": "npm:@aws-sdk/client-bedrock-runtime",
+        "version": "3.1015.0",
+        "lockfile": "tests/integrations/typescript/package-lock.json",
+        "allowed_surfaces": ["native_bedrock"],
+        "mantle_allowed": false
+      }
+    ]
+  },
+  "containers": {
+    "bifrost_release": {
+      "required_for_through_bifrost_lanes": true,
+      "runtime_image_digest_required_before_connect": true,
+      "allowed_reference_pattern": "ghcr.io/maximhq/bifrost@sha256:<64 lowercase hex>",
+      "source_dockerfile": "transports/Dockerfile.release",
+      "source_dockerfile_sha256": "c1eb0878fb73c1a2d16b88521b1925d728879668c59301137ea22a22aa478ae9",
+      "base_images": [
+        "node:25-alpine3.23@sha256:bdf2cca6fe3dabd014ea60163eca3f0f7015fbd5c7ee1b0e9ccb4ced6eb02ef4",
+        "golang:1.26.5-alpine3.23@sha256:622e56dbc11a8cfe87cafa2331e9a201877271cbff918af53d3be315f3da88cc",
+        "alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11"
+      ]
+    },
+    "client_containers": {
+      "rule": "Any client container used for observations must be built from the pinned client artifact versions in this manifest and a digest-pinned base image. latest tags and mutable tags are forbidden."
+    }
+  },
+  "lanes": [
+    {
+      "id": "direct-native-bedrock",
+      "mode": "direct_client",
+      "surface": "native_bedrock",
+      "endpoint_host": "bedrock-runtime.{region}.amazonaws.com",
+      "endpoint_path_template": "/model/{model_id}/converse",
+      "model_scope_id": "native-bedrock-nova-lite",
+      "client_ids": ["boto3-python", "aws-sdk-js-bedrock-runtime"],
+      "preconnect_enabled": true
+    },
+    {
+      "id": "bifrost-native-bedrock",
+      "mode": "through_bifrost",
+      "surface": "native_bedrock",
+      "endpoint_host": "bifrost.local/openai/v1 or bifrost.local/anthropic",
+      "endpoint_path_template": "/v1/chat/completions or /anthropic/v1/messages through provider=bedrock",
+      "model_scope_id": "native-bedrock-claude-haiku",
+      "client_ids": ["codex-cli", "claude-code", "openai-typescript", "anthropic-typescript", "openai-python", "anthropic-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "id": "direct-mantle-openai",
+      "mode": "direct_client",
+      "surface": "mantle_openai",
+      "endpoint_host": "bedrock-mantle.{region}.api.aws",
+      "endpoint_path_template": "/v1/chat/completions",
+      "project_header": "OpenAI-Project",
+      "model_scope_id": "mantle-openai-gpt-oss-20b",
+      "client_ids": ["openai-typescript", "openai-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "id": "bifrost-mantle-openai",
+      "mode": "through_bifrost",
+      "surface": "mantle_openai",
+      "endpoint_host": "bifrost.local/openai/v1",
+      "endpoint_path_template": "/v1/chat/completions through provider=bedrock_mantle",
+      "project_header": "OpenAI-Project",
+      "model_scope_id": "mantle-openai-gpt-oss-120b",
+      "client_ids": ["codex-cli", "openai-typescript", "openai-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "id": "direct-mantle-anthropic",
+      "mode": "direct_client",
+      "surface": "mantle_anthropic",
+      "endpoint_host": "bedrock-mantle.{region}.api.aws",
+      "endpoint_path_template": "/anthropic/v1/messages",
+      "project_header": "anthropic-workspace-id",
+      "model_scope_id": "mantle-anthropic-claude-opus-4-8-candidate",
+      "client_ids": ["anthropic-typescript", "anthropic-python"],
+      "preconnect_enabled": false,
+      "blocked_reason": "No Mantle-specific Anthropic price and context/output maxima are pinned in the local catalog."
+    },
+    {
+      "id": "bifrost-mantle-anthropic",
+      "mode": "through_bifrost",
+      "surface": "mantle_anthropic",
+      "endpoint_host": "bifrost.local/anthropic",
+      "endpoint_path_template": "/anthropic/v1/messages through provider=bedrock_mantle",
+      "project_header": "anthropic-workspace-id",
+      "model_scope_id": "mantle-anthropic-claude-opus-4-8-candidate",
+      "client_ids": ["claude-code", "anthropic-typescript", "anthropic-python"],
+      "preconnect_enabled": false,
+      "blocked_reason": "No Mantle-specific Anthropic price and context/output maxima are pinned in the local catalog."
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "github_models",
+      "rule": "GitHub Models is not an AWS Bedrock or Bedrock Mantle observation surface and is excluded."
+    },
+    {
+      "id": "localstack",
+      "rule": "LocalStack is excluded because it cannot prove AWS Bedrock or Mantle wire contracts."
+    },
+    {
+      "id": "unsafe_failure_provocation",
+      "rule": "Do not intentionally trigger auth failures, destructive requests, quota exhaustion, 429s, malformed SigV4, or policy-denied calls. Only naturally occurring safe errors may be recorded."
+    },
+    {
+      "id": "aws_cli_mantle_without_pinned_code",
+      "rule": "AWS CLI is excluded from Mantle lanes unless exact pinned code proves Mantle support. boto3 and AWS SDK lanes are native Bedrock only unless this manifest is updated with such proof."
+    }
+  ]
+}
