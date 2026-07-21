@@ -122,10 +122,10 @@ func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
 
 func TestValidateCodexIngressTranscriptRejectsContractMutants(t *testing.T) {
 	valid := codexIngressRecord{
-		Schema: "sealed-codex-bifrost-ingress/v1", RunID: "test-1", Method: "POST",
+		Schema: "sealed-codex-bifrost-ingress/v1", RunID: "test-1", InputRunID: "test-1", Method: "POST",
 		Path: "/openai/v1/responses", Model: "bedrock_mantle/gpt-5.5", Stream: true,
 		LiteHeaderCount: 1, LiteHeaderValue: "true", FirstInputType: "additional_tools",
-		FirstInputRole: "developer", BodyBytes: 512,
+		FirstInputRole: "developer", FirstInputToolCount: 1, BodyBytes: 512,
 		BodySHA256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	}
 	boundary := &cellResult{RunID: "test-1", Client: "codex", ExitCode: 0, ProcessStarted: true, RequestInitiated: true, TransportOutcome: "completed", EventCount: 4, OutputBytes: 10, OutputSHA256: valid.BodySHA256}
@@ -141,6 +141,7 @@ func TestValidateCodexIngressTranscriptRejectsContractMutants(t *testing.T) {
 	}
 	mutations := []func(*codexIngressRecord){
 		func(r *codexIngressRecord) { r.Method = "GET" },
+		func(r *codexIngressRecord) { r.InputRunID = "other-run" },
 		func(r *codexIngressRecord) { r.Path = "/v1/responses" },
 		func(r *codexIngressRecord) { r.Model = "openai/gpt-5.5" },
 		func(r *codexIngressRecord) { r.Stream = false },
@@ -152,6 +153,7 @@ func TestValidateCodexIngressTranscriptRejectsContractMutants(t *testing.T) {
 		func(r *codexIngressRecord) { r.ParallelToolCalls = true },
 		func(r *codexIngressRecord) { r.FirstInputType = "message" },
 		func(r *codexIngressRecord) { r.FirstInputRole = "user" },
+		func(r *codexIngressRecord) { r.FirstInputToolCount = 0 },
 		func(r *codexIngressRecord) { r.BodyBytes = 0 },
 		func(r *codexIngressRecord) { r.BodySHA256 = "raw-body-forbidden" },
 	}
@@ -506,7 +508,7 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix bifrost-1"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-ingress/v1","run_id":"test-1","method":"POST","path":"/openai/v1/responses","model":"bedrock_mantle/gpt-5.5","stream":true,"lite_header_count":1,"lite_header_value":"true","websocket_upgrade":false,"top_level_instructions":false,"top_level_tools":false,"parallel_tool_calls":false,"first_input_type":"additional_tools","first_input_role":"developer","body_bytes":512,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}`+"\n")
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-ingress/v1","run_id":"test-1","input_run_id":"test-1","method":"POST","path":"/openai/v1/responses","model":"bedrock_mantle/gpt-5.5","stream":true,"lite_header_count":1,"lite_header_value":"true","websocket_upgrade":false,"top_level_instructions":false,"top_level_tools":false,"parallel_tool_calls":false,"first_input_type":"additional_tools","first_input_role":"developer","first_input_tool_count":1,"body_bytes":512,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix config-seed"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1","provider":"bedrock_mantle","alias":"gpt-5.5","model":"openai.gpt-5.5","tls":"private-ca-verified"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix egress-sentinel"):

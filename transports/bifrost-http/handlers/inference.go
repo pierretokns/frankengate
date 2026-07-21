@@ -3,6 +3,7 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/base64"
@@ -15,6 +16,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -729,7 +731,7 @@ func (h *CompletionHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	r.POST("/v1/completions", lib.ChainMiddlewares(h.textCompletion, baseMiddlewares...))
 	r.POST("/v1/chat/completions", lib.ChainMiddlewares(h.chatCompletion, baseMiddlewares...))
 	responsesHandler := h.responses
-	if runID := os.Getenv("LAB_RUN_ID"); runID != "" {
+	if runID := sealedIngressObserverRunID(); runID != "" {
 		responsesHandler = func(ctx *fasthttp.RequestCtx) {
 			if err := observeSealedCodexIngress(ctx, runID); err != nil {
 				SendError(ctx, fasthttp.StatusBadRequest, err.Error())
@@ -1171,47 +1173,164 @@ func (h *CompletionHandler) responses(ctx *fasthttp.RequestCtx) {
 }
 
 func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) error {
-	if runID == "" {
-		return errors.New("sealed Codex ingress run ID is empty")
+	if !sealedLabRunID.MatchString(runID) {
+		return errors.New("sealed Codex ingress run ID is invalid")
 	}
 	body := ctx.PostBody()
 	if len(body) == 0 || len(body) > 1<<20 {
 		return errors.New("sealed Codex ingress body out of bounds")
+	}
+	if err := rejectDuplicateJSONKeys(body); err != nil {
+		return err
 	}
 	var request struct {
 		Model        string          `json:"model"`
 		Stream       bool            `json:"stream"`
 		Instructions json.RawMessage `json:"instructions"`
 		Tools        json.RawMessage `json:"tools"`
-		Parallel     bool            `json:"parallel_tool_calls"`
+		Parallel     *bool           `json:"parallel_tool_calls"`
 		Input        []struct {
-			Type string `json:"type"`
-			Role string `json:"role"`
+			Type    string            `json:"type"`
+			Role    string            `json:"role"`
+			Tools   []json.RawMessage `json:"tools"`
+			Content json.RawMessage   `json:"content"`
 		} `json:"input"`
 	}
 	if err := json.Unmarshal(body, &request); err != nil {
 		return err
 	}
-	headerCount, headerValue, upgrade := 0, "", false
-	ctx.Request.Header.VisitAll(func(k, v []byte) {
-		name := strings.ToLower(string(k))
-		if name == "x-openai-internal-codex-responses-lite" {
-			headerCount++
-			headerValue = string(v)
+	liteHeaders := ctx.Request.Header.PeekAll("x-openai-internal-codex-responses-lite")
+	headerCount, headerValue := len(liteHeaders), ""
+	if headerCount == 1 {
+		headerValue = string(liteHeaders[0])
+	}
+	upgrade := len(ctx.Request.Header.PeekAll("Upgrade")) != 0
+	toolsValid := len(request.Input) > 0 && len(request.Input[0].Tools) > 0 && len(request.Input[0].Tools) <= 128
+	for _, tool := range request.Input[0].Tools {
+		var shape struct {
+			Type string `json:"type"`
 		}
-		if name == "upgrade" {
-			upgrade = true
+		if len(tool) == 0 || len(tool) > 64<<10 || json.Unmarshal(tool, &shape) != nil || (shape.Type != "custom" && shape.Type != "function" && shape.Type != "namespace") {
+			toolsValid = false
+			break
 		}
-	})
-	valid := string(ctx.Method()) == "POST" && request.Model == "bedrock_mantle/gpt-5.5" && request.Stream && headerCount == 1 && headerValue == "true" && !upgrade && len(request.Instructions) == 0 && len(request.Tools) == 0 && !request.Parallel && len(request.Input) > 0 && request.Input[0].Type == "additional_tools" && request.Input[0].Role == "developer"
+	}
+	inputRunID, err := extractSealedRunID(request.Input)
+	if err != nil {
+		return err
+	}
+	valid := string(ctx.Method()) == "POST" && request.Model == "bedrock_mantle/gpt-5.5" && request.Stream && headerCount == 1 && headerValue == "true" && !upgrade && len(request.Instructions) == 0 && len(request.Tools) == 0 && request.Parallel != nil && !*request.Parallel && len(request.Input) > 0 && request.Input[0].Type == "additional_tools" && request.Input[0].Role == "developer" && toolsValid && inputRunID == runID
 	if !valid {
 		return errors.New("sealed Codex ingress is not Responses Lite")
 	}
 	sum := sha256.Sum256(body)
-	record := map[string]any{"schema": "sealed-codex-bifrost-ingress/v1", "run_id": runID, "method": "POST", "path": "/openai/v1/responses", "model": request.Model, "stream": true, "lite_header_count": headerCount, "lite_header_value": headerValue, "websocket_upgrade": false, "top_level_instructions": false, "top_level_tools": false, "parallel_tool_calls": false, "first_input_type": "additional_tools", "first_input_role": "developer", "body_bytes": len(body), "body_sha256": fmt.Sprintf("%x", sum)}
+	record := map[string]any{"schema": "sealed-codex-bifrost-ingress/v1", "run_id": runID, "input_run_id": inputRunID, "method": "POST", "path": "/openai/v1/responses", "model": request.Model, "stream": true, "lite_header_count": headerCount, "lite_header_value": headerValue, "websocket_upgrade": false, "top_level_instructions": false, "top_level_tools": false, "parallel_tool_calls": false, "first_input_type": "additional_tools", "first_input_role": "developer", "first_input_tool_count": len(request.Input[0].Tools), "body_bytes": len(body), "body_sha256": fmt.Sprintf("%x", sum)}
 	encoded, _ := json.Marshal(record)
 	fmt.Println(string(encoded))
 	return nil
+}
+
+var sealedLabRunID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`)
+var sealedRunIDMarker = regexp.MustCompile(`SEALED_CODEX_RUN_ID:([A-Za-z0-9][A-Za-z0-9._-]{0,127})`)
+
+func sealedIngressObserverRunID() string {
+	if os.Getenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER") != "1" {
+		return ""
+	}
+	runID := os.Getenv("LAB_RUN_ID")
+	if !sealedLabRunID.MatchString(runID) {
+		panic("BIFROST_SEALED_LAB_INGRESS_OBSERVER requires a valid LAB_RUN_ID")
+	}
+	return runID
+}
+
+func rejectDuplicateJSONKeys(body []byte) error {
+	decoder := json.NewDecoder(bytes.NewReader(body))
+	var parse func() error
+	parse = func() error {
+		token, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		delim, ok := token.(json.Delim)
+		if !ok {
+			return nil
+		}
+		switch delim {
+		case '{':
+			seen := map[string]struct{}{}
+			for decoder.More() {
+				keyToken, err := decoder.Token()
+				if err != nil {
+					return err
+				}
+				key, ok := keyToken.(string)
+				if !ok {
+					return errors.New("invalid JSON object key")
+				}
+				if _, exists := seen[key]; exists {
+					return fmt.Errorf("duplicate JSON key %q", key)
+				}
+				seen[key] = struct{}{}
+				if err := parse(); err != nil {
+					return err
+				}
+			}
+			_, err = decoder.Token()
+			return err
+		case '[':
+			for decoder.More() {
+				if err := parse(); err != nil {
+					return err
+				}
+			}
+			_, err = decoder.Token()
+			return err
+		default:
+			return errors.New("unexpected JSON delimiter")
+		}
+	}
+	if err := parse(); err != nil {
+		return err
+	}
+	if _, err := decoder.Token(); !errors.Is(err, io.EOF) {
+		return errors.New("request body must contain exactly one JSON value")
+	}
+	return nil
+}
+
+func extractSealedRunID(input any) (string, error) {
+	data, err := json.Marshal(input)
+	if err != nil {
+		return "", err
+	}
+	var parsed any
+	if err := json.Unmarshal(data, &parsed); err != nil {
+		return "", err
+	}
+	var matches []string
+	var walk func(any)
+	walk = func(value any) {
+		switch value := value.(type) {
+		case string:
+			for _, match := range sealedRunIDMarker.FindAllStringSubmatch(value, -1) {
+				matches = append(matches, match[1])
+			}
+		case []any:
+			for _, item := range value {
+				walk(item)
+			}
+		case map[string]any:
+			for _, item := range value {
+				walk(item)
+			}
+		}
+	}
+	walk(parsed)
+	if len(matches) != 1 {
+		return "", fmt.Errorf("expected exactly one sealed run ID in input, got %d", len(matches))
+	}
+	return matches[0], nil
 }
 
 // prepareEmbeddingRequest prepares a BifrostEmbeddingRequest from the HTTP request body

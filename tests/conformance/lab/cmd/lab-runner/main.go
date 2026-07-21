@@ -542,6 +542,7 @@ type lifecycleResult struct {
 type codexIngressRecord struct {
 	Schema               string `json:"schema"`
 	RunID                string `json:"run_id"`
+	InputRunID           string `json:"input_run_id"`
 	Method               string `json:"method"`
 	Path                 string `json:"path"`
 	Model                string `json:"model"`
@@ -554,6 +555,7 @@ type codexIngressRecord struct {
 	ParallelToolCalls    bool   `json:"parallel_tool_calls"`
 	FirstInputType       string `json:"first_input_type"`
 	FirstInputRole       string `json:"first_input_role"`
+	FirstInputToolCount  int    `json:"first_input_tool_count"`
 	BodyBytes            int    `json:"body_bytes"`
 	BodySHA256           string `json:"body_sha256"`
 }
@@ -838,7 +840,7 @@ func validateCodexIngressTranscript(data []byte, runID string, boundary *cellRes
 	if boundary == nil || boundary.RunID != runID || boundary.Client != "codex" || boundary.ExitCode != 0 || !boundary.ProcessStarted || !boundary.RequestInitiated || boundary.TransportOutcome != "completed" || boundary.EventCount == 0 || boundary.OutputBytes == 0 || !sha256Value.MatchString(boundary.OutputSHA256) {
 		return codexIngressRecord{}, errors.New("Codex terminal evidence does not prove a completed inference")
 	}
-	if record.Method != "POST" || record.Path != "/openai/v1/responses" || record.Model != "bedrock_mantle/gpt-5.5" || !record.Stream || record.LiteHeaderCount != 1 || record.LiteHeaderValue != "true" || record.WebsocketUpgrade || record.TopLevelInstructions || record.TopLevelTools || record.ParallelToolCalls || record.FirstInputType != "additional_tools" || record.FirstInputRole != "developer" || record.BodyBytes <= 0 || record.BodyBytes > 1<<20 || !sha256Value.MatchString(record.BodySHA256) {
+	if record.InputRunID != runID || record.Method != "POST" || record.Path != "/openai/v1/responses" || record.Model != "bedrock_mantle/gpt-5.5" || !record.Stream || record.LiteHeaderCount != 1 || record.LiteHeaderValue != "true" || record.WebsocketUpgrade || record.TopLevelInstructions || record.TopLevelTools || record.ParallelToolCalls || record.FirstInputType != "additional_tools" || record.FirstInputRole != "developer" || record.FirstInputToolCount <= 0 || record.FirstInputToolCount > 128 || record.BodyBytes <= 0 || record.BodyBytes > 1<<20 || !sha256Value.MatchString(record.BodySHA256) {
 		return codexIngressRecord{}, errors.New("Codex ingress record violates the Responses Lite contract")
 	}
 	return record, nil
