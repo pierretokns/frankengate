@@ -188,6 +188,22 @@ func SHA256Hex(data []byte) string {
 	return hex.EncodeToString(digest[:])
 }
 
+func BridgeNames(runID string) (map[string]string, error) {
+	if !runtimeRunID.MatchString(runID) {
+		return nil, fmt.Errorf("invalid run id for bridge names")
+	}
+	digest := sha256.Sum256([]byte(runID))
+	// Linux interface names are limited to 15 visible bytes. Twelve digest hex
+	// characters plus the two-byte namespace and one role suffix use the full
+	// budget while keeping independently derived run names collision-resistant.
+	prefix := "fg" + hex.EncodeToString(digest[:6])
+	return map[string]string{
+		"client_net":  prefix + "c",
+		"control_net": prefix + "o",
+		"data_net":    prefix + "d",
+	}, nil
+}
+
 func DecodeLock(reader io.Reader) (*Lock, error) {
 	data, err := io.ReadAll(io.LimitReader(reader, (1<<20)+1))
 	if err != nil || len(data) > 1<<20 {
@@ -263,6 +279,7 @@ func ValidateCompose(data []byte) error {
 		"sealed_pricing_fixture:", "sealed_model_parameters_fixture:",
 		"netns-bifrost-1:", "netns-bifrost-2:", "netns-bifrost-3:", "netns-codex:", "netns-claude:",
 		"client_net:", "data_net:", "control_net:", "internal: true", "enable_ipv6: true",
+		"driver: bridge", "com.docker.network.bridge.name:", "lab_client_bridge", "lab_data_bridge", "lab_control_bridge",
 		"read_only: true", "cap_drop: [all]", "no-new-privileges:true", "pids_limit:", "tmpfs:",
 		"cap_add: [net_admin]", "ip route | awk '$$1 == \"default\"'", "ip -6 route | awk '$$1 == \"default\"'", "ip route get", "network_mode: service:netns-codex", "network_mode: service:netns-claude",
 		"cap_add: [net_bind_service]", "user: \"70:70\"", "/var/run/postgresql:rw,nosuid,nodev,noexec,size=4m,uid=70,gid=70",

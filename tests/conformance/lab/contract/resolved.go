@@ -40,9 +40,11 @@ type resolvedMount struct {
 }
 
 type resolvedNetwork struct {
-	Internal   bool `json:"internal"`
-	EnableIPv6 bool `json:"enable_ipv6"`
-	External   bool `json:"external"`
+	Internal   bool              `json:"internal"`
+	EnableIPv6 bool              `json:"enable_ipv6"`
+	External   bool              `json:"external"`
+	Driver     string            `json:"driver"`
+	DriverOpts map[string]string `json:"driver_opts"`
 }
 
 // ValidateResolvedCompose validates Docker Compose's normalized JSON output.
@@ -90,10 +92,25 @@ func ValidateResolvedCompose(data []byte, source Lock, runtime RuntimeLock) erro
 	if len(document.Networks) != 3 {
 		return fmt.Errorf("resolved Compose must contain exactly three networks")
 	}
+	for _, name := range []string{"client_net", "control_net", "data_net"} {
+		if _, ok := document.Networks[name]; !ok {
+			return fmt.Errorf("resolved Compose misses required network %q", name)
+		}
+	}
+	bridgeNames, err := BridgeNames(runtime.RunID)
+	if err != nil {
+		return err
+	}
+	seenBridges := map[string]bool{}
 	for name, network := range document.Networks {
 		if !network.Internal || !network.EnableIPv6 || network.External {
 			return fmt.Errorf("network %q is not internal dual-stack", name)
 		}
+		bridge := network.DriverOpts["com.docker.network.bridge.name"]
+		if network.Driver != "bridge" || bridge != bridgeNames[name] || len(network.DriverOpts) != 1 || seenBridges[bridge] {
+			return fmt.Errorf("network %q does not use its unique run-bound bridge", name)
+		}
+		seenBridges[bridge] = true
 	}
 	wantImages := make(map[string]string)
 	for _, image := range source.Images {

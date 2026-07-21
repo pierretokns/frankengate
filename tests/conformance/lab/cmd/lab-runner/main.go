@@ -263,8 +263,12 @@ func networkEnvironment(runID string) []string {
 	first := 100 + int(digest[0])%100
 	second := int(digest[1])
 	v6 := fmt.Sprintf("%x%x", digest[0], digest[1])
+	bridges, _ := contract.BridgeNames(runID) // RuntimeLock validation already proves runID.
 	return []string{
 		"LAB_RUN_ID=" + runID,
+		"LAB_CLIENT_BRIDGE=" + bridges["client_net"],
+		"LAB_CONTROL_BRIDGE=" + bridges["control_net"],
+		"LAB_DATA_BRIDGE=" + bridges["data_net"],
 		fmt.Sprintf("LAB_CLIENT_IPV4_SUBNET=10.%d.%d.0/24", first, second),
 		fmt.Sprintf("LAB_DATA_IPV4_SUBNET=10.%d.%d.0/24", first+1, second),
 		fmt.Sprintf("LAB_CONTROL_IPV4_SUBNET=10.%d.%d.0/24", first+2, second),

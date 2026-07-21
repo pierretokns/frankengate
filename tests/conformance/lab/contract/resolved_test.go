@@ -41,6 +41,27 @@ func TestResolvedComposeIsStructurallyBoundToLocks(t *testing.T) {
 			network.External = true
 			d.Networks["client_net"] = network
 		}},
+		{"wrong bridge driver", func(d *resolvedCompose) {
+			network := d.Networks["client_net"]
+			network.Driver = "overlay"
+			d.Networks["client_net"] = network
+		}},
+		{"swapped bridge identity", func(d *resolvedCompose) {
+			client := d.Networks["client_net"]
+			data := d.Networks["data_net"]
+			client.DriverOpts["com.docker.network.bridge.name"], data.DriverOpts["com.docker.network.bridge.name"] = data.DriverOpts["com.docker.network.bridge.name"], client.DriverOpts["com.docker.network.bridge.name"]
+			d.Networks["client_net"], d.Networks["data_net"] = client, data
+		}},
+		{"extra bridge option", func(d *resolvedCompose) {
+			network := d.Networks["control_net"]
+			network.DriverOpts["com.docker.network.bridge.enable_ip_masquerade"] = "true"
+			d.Networks["control_net"] = network
+		}},
+		{"renamed logical network", func(d *resolvedCompose) {
+			network := d.Networks["control_net"]
+			delete(d.Networks, "control_net")
+			d.Networks["evil_net"] = network
+		}},
 		{"wrong run identity", func(d *resolvedCompose) {
 			service := d.Services["egress-sentinel"]
 			service.Command = []string{"-run-id=other"}
@@ -101,10 +122,10 @@ func resolvedFixture() (resolvedCompose, Lock, RuntimeLock) {
 	sentinel := base(digest("d"))
 	sentinel.Command = []string{"-run-id=run-1"}
 	services["egress-sentinel"] = sentinel
-	networks := map[string]resolvedNetwork{
-		"client_net":  {Internal: true, EnableIPv6: true},
-		"data_net":    {Internal: true, EnableIPv6: true},
-		"control_net": {Internal: true, EnableIPv6: true},
+	bridges, _ := BridgeNames("run-1")
+	networks := map[string]resolvedNetwork{}
+	for _, name := range []string{"client_net", "control_net", "data_net"} {
+		networks[name] = resolvedNetwork{Internal: true, EnableIPv6: true, Driver: "bridge", DriverOpts: map[string]string{"com.docker.network.bridge.name": bridges[name]}}
 	}
 	return resolvedCompose{Services: services, Networks: networks}, source, runtime
 }

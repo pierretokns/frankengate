@@ -204,6 +204,28 @@ func TestRuntimeLockRequiresAllProducedMultiArchDigests(t *testing.T) {
 	}
 }
 
+func TestBridgeNamesUseFullLinuxInterfaceBudgetAndAreRunBound(t *testing.T) {
+	first, err := BridgeNames("run-1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := BridgeNames("run-2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	seen := map[string]bool{}
+	for _, role := range []string{"client_net", "control_net", "data_net"} {
+		name := first[role]
+		if len(name) != 15 || seen[name] || name == second[role] {
+			t.Fatalf("bridge name is not unique, full-width, and run-bound: role=%s name=%q second=%q", role, name, second[role])
+		}
+		seen[name] = true
+	}
+	if names, err := BridgeNames("../../escape"); err == nil || names != nil {
+		t.Fatal("invalid run id produced bridge names")
+	}
+}
+
 func TestRuntimeLockV2DeclaresAndVerifiesExternalRecorderImageBinaryAndPolicy(t *testing.T) {
 	policy, binary := []byte("compiled recorder policy v1"), []byte("static recorder binary")
 	valid := `{
