@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -57,13 +58,14 @@ type seedFile struct {
 }
 
 type evidence struct {
-	Schema        string   `json:"schema"`
-	RunID         string   `json:"run_id"`
-	Client        string   `json:"client"`
-	ExitCode      int      `json:"exit_code"`
-	Environment   []string `json:"environment_names"`
-	ResidueCount  int      `json:"residue_count"`
-	ClientVersion string   `json:"client_version"`
+	Schema         string   `json:"schema"`
+	RunID          string   `json:"run_id"`
+	Client         string   `json:"client"`
+	ExitCode       int      `json:"exit_code"`
+	Environment    []string `json:"environment_names"`
+	ResidueCount   int      `json:"residue_count"`
+	ClientVersion  string   `json:"client_version"`
+	NativePlatform string   `json:"native_platform"`
 }
 
 type boundedCapture struct {
@@ -193,6 +195,7 @@ func run(lifecycleRunID string) error {
 	return json.NewEncoder(os.Stdout).Encode(evidence{
 		Schema: "sealed-cli-cell-evidence/v1", RunID: cfg.RunID, Client: cfg.Client,
 		ExitCode: exitCode, Environment: names, ResidueCount: residue, ClientVersion: version,
+		NativePlatform: runtime.GOOS + "/" + runtime.GOARCH,
 	})
 }
 

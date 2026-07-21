@@ -33,14 +33,16 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	fake.calls = append(fake.calls, strings.Join(args, " "))
 	joined := strings.Join(args, " ")
 	switch {
+	case strings.Contains(joined, "info --format"):
+		_, _ = io.WriteString(stdout, "linux/arm64\n")
 	case strings.Contains(joined, "buildx imagetools inspect"):
 		_, _ = io.WriteString(stdout, `{"manifests":[{"platform":{"os":"linux","architecture":"amd64"}},{"platform":{"os":"linux","architecture":"arm64"}}]}`)
 	case strings.Contains(joined, " config --format json"):
 		_, _ = io.WriteString(stdout, resolvedComposeForTest())
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "claude-runner"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"claude","exit_code":0,"residue_count":0,"client_version":"2.1.214"}`)
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"claude","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"2.1.214","native_platform":"linux/arm64"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "codex-runner"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"codex","exit_code":0,"residue_count":0,"client_version":"0.144.5"}`)
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "network-probe"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
 	case strings.Contains(joined, " logs --no-color --no-log-prefix egress-sentinel"):
@@ -80,13 +82,43 @@ func TestLifecycleUsesPinnedImagesRunsFreshCellsAndTearsDown(t *testing.T) {
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
 		t.Fatal(err)
 	}
-	if result.Schema != "sealed-lab-lifecycle-result/v1" || result.RunID != "test-1" || !result.TeardownClean || result.NormalCellForbiddenEvents != 0 || result.AdversarialProbeRecordedEvents != 1 || result.PaidInferenceProof != "unproven-external-recorder-required" || len(result.Clients) != 2 {
+	if result.Schema != "sealed-lab-lifecycle-result/v1" || result.RunID != "test-1" || result.NativePlatform != "linux/arm64" || result.SourceLockSHA256 != sha256Hex(sourceData) || result.StartedAt == "" || result.CompletedAt == "" || !result.TeardownClean || result.NormalCellForbiddenEvents != 0 || result.AdversarialProbeRecordedEvents != 1 || result.PaidInferenceProof != "unproven-external-recorder-required" || len(result.Clients) != 2 {
 		t.Fatalf("unexpected lifecycle result: %#v", result)
 	}
 	calls := strings.Join(fake.calls, "\n")
-	for _, required := range []string{"buildx imagetools inspect --raw", " config --format json", " up --detach --wait", " run --rm --no-deps claude-runner", " run --rm --no-deps codex-runner", " run --rm --no-deps network-probe", " logs --no-color --no-log-prefix egress-sentinel", " down --volumes --remove-orphans", " ps --all --quiet", "network ls --quiet --filter", "volume ls --quiet --filter"} {
+	for _, required := range []string{"info --format {{.OSType}}/{{.Architecture}}", "buildx imagetools inspect --raw", " config --format json", " up --detach --wait", " run --rm --no-deps claude-runner", " run --rm --no-deps codex-runner", " run --rm --no-deps network-probe", " logs --no-color --no-log-prefix egress-sentinel", " down --volumes --remove-orphans", " ps --all --quiet", "network ls --quiet --filter", "volume ls --quiet --filter"} {
 		if !strings.Contains(calls, required) {
 			t.Fatalf("lifecycle omitted %q\n%s", required, calls)
+		}
+	}
+}
+
+func TestNativePlatformEvidenceNormalizesDockerAliasesAndRejectsUnreviewedPlatforms(t *testing.T) {
+	for input, want := range map[string]string{"linux/amd64": "linux/amd64", "linux/x86_64": "linux/amd64", "linux/arm64\n": "linux/arm64", "linux/aarch64": "linux/arm64"} {
+		if got, err := validateNativePlatform(input); err != nil || got != want {
+			t.Fatalf("valid native platform %q: got=%q want=%q err=%v", input, got, want, err)
+		}
+	}
+	for _, invalid := range []string{"", "darwin/arm64", "linux/386", "linux/amd64\nlinux/arm64", "linux/amd64 (emulated)"} {
+		if _, err := validateNativePlatform(invalid); err == nil {
+			t.Fatalf("unsupported or ambiguous platform %q accepted", invalid)
+		}
+	}
+}
+
+func TestCellRuntimePlatformMustMatchNormalizedDaemonPlatform(t *testing.T) {
+	valid := `{"schema":"sealed-cli-cell-evidence/v1","run_id":"run-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64"}`
+	if got, err := validateCellResult([]byte(valid), "run-1", "codex", "0.144.5", "linux/arm64"); err != nil || got != "linux/arm64" {
+		t.Fatalf("matching cell platform rejected: got=%q err=%v", got, err)
+	}
+	for _, mutation := range []string{
+		strings.Replace(valid, "linux/arm64", "linux/amd64", 1),
+		strings.Replace(valid, "linux/arm64", "linux/aarch64", 1),
+		strings.Replace(valid, `"PATH"`, `"HTTP_PROXY"`, 1),
+		strings.Replace(valid, `"PATH",`, "", 1),
+	} {
+		if _, err := validateCellResult([]byte(mutation), "run-1", "codex", "0.144.5", "linux/arm64"); err == nil {
+			t.Fatalf("invalid cell platform evidence accepted: %s", mutation)
 		}
 	}
 }

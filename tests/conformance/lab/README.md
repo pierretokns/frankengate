@@ -66,13 +66,20 @@ GOWORK=off go run ./cmd/lab-runner \
   --docker /absolute/path/to/docker
 ```
 
-It inspects the actual OCI indexes for both required architectures, validates resolved Compose,
+It first normalizes the Docker daemon's reported Linux architecture and requires both independent
+CLI cell binaries to report the same Go runtime architecture. The raw result binds that observed
+cell platform, the source-lock digest, lifecycle timestamps, and runtime-lock digest. Non-Linux,
+ambiguous, or unreviewed values fail closed. This proves the CLI cell-init binaries actually ran on
+the selected architecture; it does not yet prove every service image ran natively. It then inspects the
+actual OCI indexes for both required architectures, validates resolved Compose,
 starts the core topology, executes fresh Codex and Claude version cells, rejects residue or any
 sentinel event, removes containers and volumes, and proves the project inventory is empty. The
 external orchestrator passes only reviewed Docker connection variables; proxy and cloud/provider
 credentials are discarded and none of its HOME or Docker state enters a runner container. This
-version-cell result is a raw lab record, not the canonical release evidence defined by the next
-bead.
+version-cell result is a raw lab record, not canonical release evidence. No aggregate certification
+gate is provided yet: it would be unsafe until it independently re-hashes both lock files, consumes
+the external recorder artifact, and binds raw per-cell evidence. The current runner deliberately
+emits `unproven-external-recorder-required`; OCI declarations or edited JSON cannot certify the lab.
 
 The binary placed at `offline/egress-sentinel` must be a Linux binary for the target platform; a
 plain host `go build` on macOS produces an unusable Mach-O file. Build each native row explicitly:
