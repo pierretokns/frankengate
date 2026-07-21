@@ -204,6 +204,69 @@ func TestRuntimeLockRequiresAllProducedMultiArchDigests(t *testing.T) {
 	}
 }
 
+func TestRuntimeLockV2DeclaresAndVerifiesExternalRecorderImageBinaryAndPolicy(t *testing.T) {
+	policy, binary := []byte("compiled recorder policy v1"), []byte("static recorder binary")
+	valid := `{
+  "schema":"sealed-lab-runtime-lock/v2",
+  "run_id":"run-1",
+  "source_lock_sha256":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+	  "recorder_policy_sha256":"` + SHA256Hex(policy) + `",
+  "images":[
+    {"id":"bifrost","reference":"registry.invalid/bifrost@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","platforms":["linux/amd64","linux/arm64"],"source":"git:abc"},
+    {"id":"claude-runner","reference":"registry.invalid/claude@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","platforms":["linux/amd64","linux/arm64"],"source":"lock:claude","client_version":"2.1.214"},
+    {"id":"codex-runner","reference":"registry.invalid/codex@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","platforms":["linux/amd64","linux/arm64"],"source":"lock:codex","client_version":"0.144.5"},
+    {"id":"egress-sentinel","reference":"registry.invalid/sentinel@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","platforms":["linux/amd64","linux/arm64"],"source":"git:abc"},
+	    {"id":"network-recorder","reference":"registry.invalid/recorder@sha256:1111111111111111111111111111111111111111111111111111111111111111","platforms":["linux/amd64","linux/arm64"],"source":"git:3333333333333333333333333333333333333333","binary_sha256":"` + SHA256Hex(binary) + `"}
+  ]
+}`
+	lock, err := DecodeRuntimeLock(strings.NewReader(valid))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !lock.IsRecorderCapable() {
+		t.Fatal("v2 lock did not enable recorder capability")
+	}
+	recorder, ok := lock.NetworkRecorderImage()
+	if !ok || recorder.ID != "network-recorder" || len(lock.ComposeEnvironment()) != 4 {
+		t.Fatalf("invalid recorder isolation: recorder=%#v ok=%v env=%v", recorder, ok, lock.ComposeEnvironment())
+	}
+	if err := lock.VerifyRecorderArtifacts(policy, binary); err != nil {
+		t.Fatal(err)
+	}
+	if err := lock.VerifyRecorderArtifacts(append(policy, '!'), binary); err == nil {
+		t.Fatal("mutated recorder policy bytes accepted")
+	}
+	if err := lock.VerifyRecorderArtifacts(policy, append(binary, '!')); err == nil {
+		t.Fatal("mutated recorder binary bytes accepted")
+	}
+	for _, candidate := range []string{
+		strings.Replace(valid, `"recorder_policy_sha256":"`+SHA256Hex(policy)+`"`, `"recorder_policy_sha256":""`, 1),
+		strings.Replace(valid, `"binary_sha256":"`+SHA256Hex(binary)+`"`, `"binary_sha256":""`, 1),
+		strings.Replace(valid, `"source":"git:`+strings.Repeat("3", 40)+`"`, `"source":"git:main"`, 1),
+		strings.Replace(valid, `"id":"network-recorder"`, `"id":"egress-sentinel"`, 1),
+		strings.Replace(valid, `"schema":"sealed-lab-runtime-lock/v2"`, `"schema":"sealed-lab-runtime-lock/v1"`, 1),
+	} {
+		if _, err := DecodeRuntimeLock(strings.NewReader(candidate)); err == nil {
+			t.Fatal("unsafe v2 recorder lock mutation accepted")
+		}
+	}
+	for _, candidate := range []string{
+		strings.Replace(valid, `"schema":"sealed-lab-runtime-lock/v2"`, `"schema":"sealed-lab-runtime-lock/v2","schema":"sealed-lab-runtime-lock/v2"`, 1),
+		strings.Replace(valid, `"recorder_policy_sha256":"`+SHA256Hex(policy)+`"`, `"recorder_policy_sha256":"`+SHA256Hex(policy)+`","recorder_policy_sha256":"`+SHA256Hex(policy)+`"`, 1),
+		strings.Replace(valid, `"binary_sha256":"`+SHA256Hex(binary)+`"`, `"binary_sha256":"`+SHA256Hex(binary)+`","binary_sha256":"`+SHA256Hex(binary)+`"`, 1),
+		strings.Replace(valid, `"schema":"sealed-lab-runtime-lock/v2"`, `"Schema":"sealed-lab-runtime-lock/v2"`, 1),
+		strings.Replace(valid, `"binary_sha256":"`+SHA256Hex(binary)+`"`, `"Binary_SHA256":"`+SHA256Hex(binary)+`"`, 1),
+		strings.Replace(valid, `"schema":"sealed-lab-runtime-lock/v2"`, `"schema":"sealed-lab-runtime-lock/v2","Schema":"sealed-lab-runtime-lock/v2"`, 1),
+	} {
+		if _, err := DecodeRuntimeLock(strings.NewReader(candidate)); err == nil {
+			t.Fatal("duplicate runtime-lock key accepted")
+		}
+	}
+	if _, ok := (RuntimeLock{Schema: RuntimeLockSchemaV2}).NetworkRecorderImage(); ok {
+		t.Fatal("unvalidated v2 lock exposed a recorder image")
+	}
+}
+
 func TestClientSeedsAreHashBoundAndDisableExternalTraffic(t *testing.T) {
 	for _, client := range []string{"claude", "codex"} {
 		root := filepath.Join("..", "seed", client)

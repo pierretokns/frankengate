@@ -56,6 +56,17 @@ environment variables accepted by the lifecycle runner. Declaring the platform r
 proof that those manifests or native executions exist; the live runner must inspect and execute
 them before the bead can close.
 
+The external recorder work uses a separate `sealed-lab-runtime-lock/v2` contract rather than
+silently changing v1. V2 declares a fifth digest-pinned multi-architecture `network-recorder`
+image, an immutable recorder source revision, the recorder binary SHA-256, and the compiled
+recorder-policy SHA-256. Before recorder capability is used, `VerifyRecorderArtifacts` must hash
+the reviewed policy and extracted recorder binary bytes and match both declarations. The later host
+capture lifecycle must perform that verification against bytes obtained from the pinned image; a
+syntactically valid lock alone is not execution or recorder evidence. The recorder reference is
+not exported into Compose: it belongs to the host-side capture lifecycle and must never enter a
+runner or service environment. V1 remains decodable for existing smoke evidence but is explicitly
+not recorder-capable and cannot satisfy the final network-evidence gate.
+
 The lifecycle entry point accepts absolute, reviewed inputs and emits a single raw JSON result:
 
 ```bash
