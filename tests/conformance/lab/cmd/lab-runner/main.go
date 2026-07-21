@@ -17,7 +17,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
-	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -108,6 +107,14 @@ type codexIngressRejectionRecord struct {
 	InvalidToolIndices   []int    `json:"invalid_tool_indices"`
 	InputRunIDCount      int      `json:"input_run_id_count"`
 	InputRunIDMatches    bool     `json:"input_run_id_matches"`
+}
+
+type codexIngressArrivalRecord struct {
+	Schema     string `json:"schema"`
+	RunID      string `json:"run_id"`
+	MethodPost bool   `json:"method_post"`
+	PathExact  bool   `json:"path_exact"`
+	QueryEmpty bool   `json:"query_empty"`
 }
 
 var diagnosticToolTypes = map[string]bool{
@@ -206,11 +213,13 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		StatusRecordCount  int                           `json:"status_record_count"`
 		StatusRowCount     int                           `json:"status_row_count"`
 		MissingStatusRows  int                           `json:"missing_status_rows"`
-		LogTailLines       int                           `json:"log_tail_lines"`
+		LogCaptureLimit    int                           `json:"log_capture_limit_bytes"`
+		IngressState       string                        `json:"codex_ingress_state"`
+		IngressArrivals    []codexIngressArrivalRecord   `json:"codex_ingress_arrivals,omitempty"`
 		IngressAccepted    []codexIngressRecord          `json:"codex_ingress_accepted,omitempty"`
 		IngressRejections  []codexIngressRejectionRecord `json:"codex_ingress_rejections,omitempty"`
 		Services           []row                         `json:"services"`
-	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1", LogTailLines: 2000}
+	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1", LogCaptureLimit: 256 << 10}
 	nonce := make([]byte, 16)
 	if _, err := rand.Read(nonce); err != nil {
 		return err
@@ -240,6 +249,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 	}
 	aggregate, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
+	bifrostLogCaptureIncomplete := false
 	status := map[string]composePSRow{}
 	psCtx, psStop := context.WithTimeout(aggregate, 5*time.Second)
 	defer psStop()
@@ -293,8 +303,8 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 	result.StatusRowCount = len(status)
 	for _, service := range services {
 		ctx, stop := context.WithTimeout(aggregate, 5*time.Second)
-		capture := &diagnosticTailCapture{limit: 256 << 10}
-		args := append(compose, "logs", "--tail", strconv.Itoa(result.LogTailLines), "--no-color", "--no-log-prefix", service)
+		capture := &diagnosticTailCapture{limit: result.LogCaptureLimit}
+		args := append(compose, "logs", "--no-color", "--no-log-prefix", service)
 		var commandErr error
 		if specialized, ok := executor.(diagnosticExecutor); ok {
 			commandErr = specialized.RunDiagnostic(ctx, environment, capture, capture, dockerBinary, args...)
@@ -351,7 +361,14 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		if logTruncated {
 			errorClass = "oversize"
 		}
+		if strings.HasPrefix(service, "bifrost-") && (logTruncated || commandErr != nil) {
+			bifrostLogCaptureIncomplete = true
+		}
 		if strings.HasPrefix(service, "bifrost-") {
+			if len(result.IngressArrivals) < 4 {
+				remaining := 4 - len(result.IngressArrivals)
+				result.IngressArrivals = append(result.IngressArrivals, parseCodexIngressArrivals(logData, paths.RunID, remaining)...)
+			}
 			if len(result.IngressAccepted) < 4 {
 				remaining := 4 - len(result.IngressAccepted)
 				result.IngressAccepted = append(result.IngressAccepted, parseCodexIngressAccepted(logData, paths.RunID, remaining)...)
@@ -363,6 +380,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		}
 		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
+	result.IngressState = classifyCodexIngressEvidence(result.IngressArrivals, result.IngressAccepted, result.IngressRejections, bifrostLogCaptureIncomplete)
 	encoded, err := json.Marshal(result)
 	if err != nil || len(encoded) > 1<<20 {
 		return errors.New("structured diagnostics exceed bound")
@@ -392,6 +410,27 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return fmt.Errorf("publish fresh diagnostics: %w", err)
 	}
 	return nil
+}
+
+func classifyCodexIngressEvidence(arrivals []codexIngressArrivalRecord, accepted []codexIngressRecord, rejected []codexIngressRejectionRecord, logCaptureIncomplete bool) string {
+	if len(accepted) > 0 {
+		return "accepted"
+	}
+	if len(rejected) > 0 {
+		return "predicate-rejected"
+	}
+	for _, arrival := range arrivals {
+		if !arrival.MethodPost || !arrival.PathExact || !arrival.QueryEmpty {
+			return "route-mismatch"
+		}
+	}
+	if logCaptureIncomplete {
+		return "evidence-incomplete-log-capture"
+	}
+	if len(arrivals) > 0 {
+		return "canonical-arrival-unclassified"
+	}
+	return "no-correlated-server-arrival"
 }
 
 var stackFramePattern = regexp.MustCompile(`^(?:/src/|github\.com/maximhq/bifrost/)([A-Za-z0-9_./-]{1,240}\.go):([0-9]{1,7})(?:\s|$)`)
@@ -509,6 +548,37 @@ func parseCodexIngressAccepted(data []byte, runID string, limit int) []codexIngr
 			continue
 		}
 		result = append(result, record)
+	}
+	return result
+}
+
+func parseCodexIngressArrivals(data []byte, runID string, limit int) []codexIngressArrivalRecord {
+	result := make([]codexIngressArrivalRecord, 0, limit)
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(line, &fields) != nil || len(fields) != 5 {
+			continue
+		}
+		validKeys := true
+		for _, key := range []string{"schema", "run_id", "method_post", "path_exact", "query_empty"} {
+			if _, ok := fields[key]; !ok {
+				validKeys = false
+			}
+		}
+		if !validKeys {
+			continue
+		}
+		var record codexIngressArrivalRecord
+		if json.Unmarshal(line, &record) == nil && record.Schema == "sealed-codex-bifrost-arrival/v1" && record.RunID == runID {
+			result = append(result, record)
+		}
 	}
 	return result
 }

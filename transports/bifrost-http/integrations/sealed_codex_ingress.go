@@ -33,11 +33,55 @@ func wrapSealedCodexIngressObserverWithWriter(next fasthttp.RequestHandler, outp
 	}
 	return func(ctx *fasthttp.RequestCtx) {
 		uri := ctx.Request.URI()
-		if string(ctx.Method()) == fasthttp.MethodPost && string(uri.PathOriginal()) == "/openai/v1/responses" && len(uri.QueryString()) == 0 {
+		methodPost := string(ctx.Method()) == fasthttp.MethodPost
+		pathExact := string(uri.PathOriginal()) == "/openai/v1/responses"
+		queryEmpty := len(uri.QueryString()) == 0
+		if sealedCodexRequestCarriesRunMarker(ctx.PostBody(), runID) {
+			record, _ := json.Marshal(struct {
+				Schema     string `json:"schema"`
+				RunID      string `json:"run_id"`
+				MethodPost bool   `json:"method_post"`
+				PathExact  bool   `json:"path_exact"`
+				QueryEmpty bool   `json:"query_empty"`
+			}{Schema: "sealed-codex-bifrost-arrival/v1", RunID: runID, MethodPost: methodPost, PathExact: pathExact, QueryEmpty: queryEmpty})
+			_, _ = fmt.Fprintln(output, string(record))
+		}
+		if methodPost && pathExact && queryEmpty {
 			observeSealedCodexIntegrationIngress(ctx, runID, output)
 		}
 		next(ctx)
 	}
+}
+
+func sealedCodexRequestCarriesRunMarker(body []byte, runID string) bool {
+	if len(body) == 0 || len(body) > 1<<20 || rejectSealedDuplicateKeys(body) != nil {
+		return false
+	}
+	var request struct {
+		Input []struct {
+			Type    string          `json:"type"`
+			Role    string          `json:"role"`
+			Content json.RawMessage `json:"content"`
+		} `json:"input"`
+	}
+	if json.Unmarshal(body, &request) != nil {
+		return false
+	}
+	matches := make([][][]byte, 0, 2)
+	for _, item := range request.Input {
+		if item.Type != "message" || item.Role != "user" || len(item.Content) == 0 {
+			continue
+		}
+		itemMatches, ok := sealedSemanticUserMarkers(item.Content, 2-len(matches))
+		if !ok {
+			return false
+		}
+		matches = append(matches, itemMatches...)
+		if len(matches) == 2 {
+			break
+		}
+	}
+	return len(matches) == 1 && string(matches[0][1]) == runID
 }
 
 func observeSealedCodexIntegrationIngress(ctx *fasthttp.RequestCtx, runID string, output io.Writer) {

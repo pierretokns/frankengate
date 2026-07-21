@@ -2,6 +2,7 @@ package integrations
 
 import (
 	"bytes"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -34,7 +35,7 @@ func TestSealedCodexResponsesObserverRunsOutsideServerHandler(t *testing.T) {
 	if nextCalls != 1 {
 		t.Fatalf("wrapped handler calls = %d", nextCalls)
 	}
-	if !strings.Contains(output.String(), `"schema":"sealed-codex-bifrost-ingress/v1"`) || strings.Contains(output.String(), "rejected") {
+	if !strings.Contains(output.String(), `"schema":"sealed-codex-bifrost-arrival/v1"`) || !strings.Contains(output.String(), `"schema":"sealed-codex-bifrost-ingress/v1"`) || strings.Contains(output.String(), "rejected") {
 		t.Fatalf("valid integration Lite ingress not accepted: %s", output.String())
 	}
 
@@ -83,31 +84,54 @@ func TestSealedCodexResponsesObserverRunsOutsideServerHandler(t *testing.T) {
 	}
 }
 
-func TestSealedCodexResponsesObserverIgnoresOtherRoutes(t *testing.T) {
+func TestSealedCodexResponsesObserverClassifiesMarkedRouteMismatches(t *testing.T) {
 	t.Setenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER", "1")
 	t.Setenv("LAB_RUN_ID", "run-1")
 	var output bytes.Buffer
 	nextCalls := 0
 	handler := wrapSealedCodexIngressObserverWithWriter(func(*fasthttp.RequestCtx) { nextCalls++ }, &output)
-	for _, path := range []string{
-		"/openai/responses",
-		"/openai//v1/responses",
-		"/openai/%76%31/responses",
-		"/openai/x/../v1/responses",
-		"/openai/v1/responses?model=bedrock_mantle%2Fgpt-5.5",
+	for _, testCase := range []struct {
+		path       string
+		pathExact  bool
+		queryEmpty bool
+	}{
+		{"/openai/responses", false, true},
+		{"/openai//v1/responses", false, true},
+		{"/openai/%76%31/responses", false, true},
+		{"/openai/x/../v1/responses", false, true},
+		{"/openai/v1/responses?model=bedrock_mantle%2Fgpt-5.5", true, false},
 	} {
 		output.Reset()
 		ctx := &fasthttp.RequestCtx{}
 		ctx.Request.Header.SetMethod(fasthttp.MethodPost)
-		ctx.Request.SetRequestURI(path)
-		ctx.Request.SetBodyString(`{"model":"bedrock_mantle/gpt-5.5"}`)
+		ctx.Request.SetRequestURI(testCase.path)
+		ctx.Request.SetBodyString(`{"input":[{"type":"message","role":"user","content":"SEALED_CODEX_RUN_ID:run-1"}]}`)
 		handler(ctx)
-		if output.Len() != 0 {
-			t.Fatalf("non-canonical route %q observed: %q", path, output.String())
+		wantPath := fmt.Sprintf(`"path_exact":%t`, testCase.pathExact)
+		wantQuery := fmt.Sprintf(`"query_empty":%t`, testCase.queryEmpty)
+		if !strings.Contains(output.String(), `"schema":"sealed-codex-bifrost-arrival/v1"`) ||
+			!strings.Contains(output.String(), `"method_post":true`) || !strings.Contains(output.String(), wantPath) ||
+			!strings.Contains(output.String(), wantQuery) || strings.Contains(output.String(), "ingress-rejected") {
+			t.Fatalf("non-canonical route %q not safely classified: %q", testCase.path, output.String())
 		}
 	}
 	if nextCalls != 5 {
 		t.Fatalf("non-canonical routes were swallowed: calls=%d", nextCalls)
+	}
+}
+
+func TestSealedCodexResponsesObserverDoesNotCorrelateMetadataMarker(t *testing.T) {
+	t.Setenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER", "1")
+	t.Setenv("LAB_RUN_ID", "run-1")
+	var output bytes.Buffer
+	handler := wrapSealedCodexIngressObserverWithWriter(func(*fasthttp.RequestCtx) {}, &output)
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.SetMethod(fasthttp.MethodPost)
+	ctx.Request.SetRequestURI("/wrong")
+	ctx.Request.SetBodyString(`{"input":[{"type":"message","role":"user","content":"no marker","metadata":"SEALED_CODEX_RUN_ID:run-1"}]}`)
+	handler(ctx)
+	if output.Len() != 0 {
+		t.Fatalf("metadata marker falsely correlated request: %s", output.String())
 	}
 }
 

@@ -234,6 +234,51 @@ func TestParseCodexIngressAcceptedPreservesOnlyValidatedMetadata(t *testing.T) {
 	}
 }
 
+func TestParseCodexIngressArrivals(t *testing.T) {
+	valid := `{"schema":"sealed-codex-bifrost-arrival/v1","run_id":"test-1","method_post":true,"path_exact":false,"query_empty":true}`
+	records := parseCodexIngressArrivals([]byte(valid+"\n"), "test-1", 4)
+	if len(records) != 1 || !records[0].MethodPost || records[0].PathExact || !records[0].QueryEmpty {
+		t.Fatalf("valid run-bound arrival not recognized: %#v", records)
+	}
+	for _, mutant := range []string{
+		"bifrost-1 | " + valid,
+		strings.TrimSuffix(valid, "}") + `,"raw_body":"Bearer secret"}`,
+		strings.Replace(valid, `"query_empty":true`, `"raw_body":"Bearer secret"`, 1),
+		strings.Replace(valid, `"run_id":"test-1"`, `"run_id":"other"`, 1),
+		strings.Replace(valid, `"schema":"sealed-codex-bifrost-arrival/v1"`, `"schema":"other"`, 1),
+	} {
+		if got := parseCodexIngressArrivals([]byte(mutant+"\n"), "test-1", 4); len(got) != 0 {
+			t.Fatalf("unsafe arrival mutant accepted: %s", mutant)
+		}
+	}
+}
+
+func TestClassifyCodexIngressEvidence(t *testing.T) {
+	arrival := codexIngressArrivalRecord{MethodPost: true, PathExact: true, QueryEmpty: true}
+	cases := []struct {
+		name     string
+		arrivals []codexIngressArrivalRecord
+		accepted []codexIngressRecord
+		rejected []codexIngressRejectionRecord
+		oversize bool
+		expected string
+	}{
+		{"accepted", []codexIngressArrivalRecord{{PathExact: false}}, []codexIngressRecord{{}}, []codexIngressRejectionRecord{{}}, true, "accepted"},
+		{"predicate rejected", []codexIngressArrivalRecord{arrival}, nil, []codexIngressRejectionRecord{{}}, false, "predicate-rejected"},
+		{"route mismatch", []codexIngressArrivalRecord{{MethodPost: true, PathExact: false, QueryEmpty: true}}, nil, nil, false, "route-mismatch"},
+		{"canonical unclassified", []codexIngressArrivalRecord{arrival}, nil, nil, false, "canonical-arrival-unclassified"},
+		{"incomplete capture", nil, nil, nil, true, "evidence-incomplete-log-capture"},
+		{"no arrival", nil, nil, nil, false, "no-correlated-server-arrival"},
+	}
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			if got := classifyCodexIngressEvidence(testCase.arrivals, testCase.accepted, testCase.rejected, testCase.oversize); got != testCase.expected {
+				t.Fatalf("classification = %q, want %q", got, testCase.expected)
+			}
+		})
+	}
+}
+
 func TestSanitizedPanicFingerprintKeepsOnlyRepositoryFrames(t *testing.T) {
 	input := []byte("panic: Bearer secret\n\t/src/transports/bifrost-http/handlers/inference.go:1234 +0x1\n\tgithub.com/maximhq/bifrost/core/bifrost.go:88 +0x2\n\t/secret/token.go:9\n")
 	detected, frames := sanitizedPanicFingerprint(input, 16)
@@ -462,7 +507,7 @@ func TestDiagnosticsRejectDuplicateStatusAndInspectOOM(t *testing.T) {
 			_, _ = io.WriteString(stdout, `[{"Service":"postgres","ID":"aaaaaaaaaaaa","State":"exited","ExitCode":1},{"Service":"postgres","ID":"bbbbbbbbbbbb","State":"running","ExitCode":0}]`)
 		case strings.HasPrefix(joined, "inspect --format"):
 			_, _ = io.WriteString(stdout, "true\n")
-		case strings.Contains(joined, "logs --tail 2000") && strings.HasSuffix(joined, "postgres"):
+		case strings.Contains(joined, "logs --no-color --no-log-prefix") && strings.HasSuffix(joined, "postgres"):
 			_, _ = io.WriteString(stdout, "password authentication failed")
 		}
 		return nil
@@ -513,7 +558,7 @@ func TestDiagnosticsAcceptCompleteKnownComposeStatus(t *testing.T) {
 		if strings.HasPrefix(joined, "inspect --format") {
 			_, _ = io.WriteString(stdout, "false\n")
 		}
-		if strings.Contains(joined, "logs --tail 2000") {
+		if strings.Contains(joined, "logs --no-color --no-log-prefix") {
 			_, _ = io.WriteString(stdout, "healthy startup chatter")
 		}
 		return nil
@@ -603,6 +648,7 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix bifrost-1"):
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-arrival/v1","run_id":"test-1","method_post":true,"path_exact":true,"query_empty":true}`+"\n")
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-ingress/v1","run_id":"test-1","input_run_id":"test-1","method":"POST","path":"/openai/v1/responses","model":"bedrock_mantle/gpt-5.5","stream":true,"lite_header_count":1,"lite_header_value":"true","websocket_upgrade":false,"top_level_instructions":false,"top_level_tools":false,"parallel_tool_calls":false,"first_input_type":"additional_tools","first_input_role":"developer","first_input_tool_count":1,"body_bytes":512,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix config-seed"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1","provider":"bedrock_mantle","alias":"gpt-5.5","model":"openai.gpt-5.5","tls":"private-ca-verified"}`+"\n")
@@ -642,7 +688,7 @@ func TestFailureDiagnosticsPrecedeTeardownAndDoNotContaminateStdout(t *testing.T
 	}
 	calls := strings.Join(fake.calls, "\n")
 	psIndex := strings.Index(calls, " ps --all --format json")
-	logIndex := strings.Index(calls, " logs --tail 2000")
+	logIndex := strings.Index(calls, " logs --no-color --no-log-prefix")
 	downIndex := strings.Index(calls, " down --volumes")
 	if psIndex < 0 || logIndex < psIndex || downIndex < logIndex {
 		t.Fatalf("diagnostics were not captured in ps/logs/down order:\n%s", calls)
@@ -826,6 +872,12 @@ func resolvedComposeForTest() string {
 	services["bifrost-1"]["network_mode"] = "service:netns-bifrost-1"
 	services["bifrost-2"]["network_mode"] = "service:netns-bifrost-2"
 	services["bifrost-3"]["network_mode"] = "service:netns-bifrost-3"
+	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
+		services[name]["environment"] = map[string]any{
+			"BIFROST_SEALED_LAB_INGRESS_OBSERVER": "1",
+			"LAB_RUN_ID":                          "test-1",
+		}
+	}
 	services["claude-runner"] = base("registry.invalid/claude@sha256:" + strings.Repeat("b", 64))
 	services["claude-runner"]["network_mode"] = "service:netns-claude"
 	services["codex-runner"] = base("registry.invalid/codex@sha256:" + strings.Repeat("c", 64))

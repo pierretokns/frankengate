@@ -81,6 +81,12 @@ func ValidateResolvedCompose(data []byte, source Lock, runtime RuntimeLock) erro
 			return fmt.Errorf("service %q network mode %q does not match %q", name, document.Services[name].NetworkMode, mode)
 		}
 	}
+	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
+		environment := document.Services[name].Environment
+		if environment["BIFROST_SEALED_LAB_INGRESS_OBSERVER"] != "1" || environment["LAB_RUN_ID"] != runtime.RunID {
+			return fmt.Errorf("service %q lacks run-bound sealed ingress observer activation", name)
+		}
+	}
 	for _, name := range []string{"netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "netns-claude", "netns-codex"} {
 		command := strings.Join(document.Services[name].Command, "\n")
 		for _, required := range []string{"ip route del", "ip -6 route del", "test -z", "ip route get"} {
