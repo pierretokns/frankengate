@@ -105,8 +105,16 @@ GOWORK=off go run ./cmd/lab-runner \
   --runtime-lock /absolute/path/runtime-lock.json \
   --source-lock /absolute/path/images.lock.v1.json \
   --compose /absolute/path/compose.yaml \
-  --docker /absolute/path/to/docker
+  --docker /absolute/path/to/docker \
+  --compose-logs-artifact /absolute/new/path/compose.log \
+  --compose-ps-artifact /absolute/new/path/compose-ps.txt
 ```
+
+When both diagnostic paths are supplied, the runner captures `compose ps --all` and the final 2,000
+log lines before every teardown, including failure teardown. Capture is bounded (256 KiB for `ps`,
+4 MiB for logs) and creates distinct new regular files with mode 0600; existing files and symlinks
+fail closed. Diagnostics never share stdout with the single lifecycle JSON record. They are bounded
+troubleshooting artifacts, not proof of request delivery, network isolation, or lifecycle success.
 
 The PR-triggered `sealed-mantle-lab.yml` GitHub Actions workflow builds both platform variants from
 the reviewed tracked source and top-level integrity-locked npm artifacts, publishes them only to an ephemeral runner-local

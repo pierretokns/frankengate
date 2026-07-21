@@ -36,6 +36,7 @@ func TestHostedWorkflowPreservesSealedLabInputs(t *testing.T) {
 		"git -C \"$root\" archive HEAD", "--file \"$build/source/tests/conformance/lab/Dockerfile.gateway\"", "\"$build/source\"",
 		"test -f \"$build/source/tests/conformance/lab/cmd/config-seed/main.go\"",
 		"artifact_status", "rejected-oversize", "size > 4194304", "total > 8388608", "runtime-lock.json", "lifecycle.json",
+		`--compose-logs-artifact "$artifacts/compose.log"`, `--compose-ps-artifact "$artifacts/compose-ps.txt"`,
 		`LAB_CLIENT_BRIDGE="${bridge_prefix}c"`, `LAB_CONTROL_BRIDGE="${bridge_prefix}o"`, `LAB_DATA_BRIDGE="${bridge_prefix}d"`,
 		`node --test "$lab/prefetch/verify-tree.test.mjs"`,
 		`docker buildx build --network=none --platform "linux/$arch" --file "$lab/Dockerfile.runner" --push --tag "$tag" "$context"`,

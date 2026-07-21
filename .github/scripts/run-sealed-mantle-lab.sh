@@ -17,8 +17,8 @@ printf '{"schema":"sealed-mantle-ci-diagnostics/v1","run_id":"%s","artifact_stat
 cleanup() {
   local status=$? bounds=0 total=0 count=0 file size
   trap - EXIT
-  docker compose --project-name "fg-lab-$run_id" --file "$lab/compose.yaml" --profile clients logs --tail 2000 --no-color --no-log-prefix >"$artifacts/compose.log" 2>&1 || true
-  docker compose --project-name "fg-lab-$run_id" --file "$lab/compose.yaml" --profile clients ps --all >"$artifacts/compose-ps.txt" 2>&1 || true
+  test -e "$artifacts/compose.log" || docker compose --project-name "fg-lab-$run_id" --file "$lab/compose.yaml" --profile clients logs --tail 2000 --no-color --no-log-prefix >"$artifacts/compose.log" 2>&1 || true
+  test -e "$artifacts/compose-ps.txt" || docker compose --project-name "fg-lab-$run_id" --file "$lab/compose.yaml" --profile clients ps --all >"$artifacts/compose-ps.txt" 2>&1 || true
   docker compose --project-name "fg-lab-$run_id" --file "$lab/compose.yaml" --profile clients down --volumes --remove-orphans --timeout 10 || true
   docker rm --force sealed-lab-registry >/dev/null 2>&1 || true
   for file in "$artifacts"/*; do
@@ -89,5 +89,5 @@ export BIFROST_IMAGE="$bifrost_ref" CODEX_RUNNER_IMAGE="$codex_ref" CLAUDE_RUNNE
 
 jq -n --arg run "$run_id" --arg source "$source_hash" --arg bifrost "$bifrost_ref" --arg codex "$codex_ref" --arg claude "$claude_ref" --arg sentinel "$sentinel_ref" --arg cv "$codex_version" --arg av "$claude_version" '{schema:"sealed-lab-runtime-lock/v1",run_id:$run,source_lock_sha256:$source,images:[{id:"bifrost",reference:$bifrost,platforms:["linux/amd64","linux/arm64"],source:("git:"+env.GITHUB_SHA)},{id:"claude-runner",reference:$claude,platforms:["linux/amd64","linux/arm64"],source:("lock:"+$av),client_version:$av},{id:"codex-runner",reference:$codex,platforms:["linux/amd64","linux/arm64"],source:("lock:"+$cv),client_version:$cv},{id:"egress-sentinel",reference:$sentinel,platforms:["linux/amd64","linux/arm64"],source:("git:"+env.GITHUB_SHA)}]}' >"$artifacts/runtime-lock.json"
 
-(cd "$lab" && GOWORK=off go run ./cmd/lab-runner --runtime-lock "$artifacts/runtime-lock.json" --source-lock "$lab/images.lock.v1.json" --compose "$lab/compose.yaml" --docker "$(command -v docker)") >"$artifacts/lifecycle.json"
+(cd "$lab" && GOWORK=off go run ./cmd/lab-runner --runtime-lock "$artifacts/runtime-lock.json" --source-lock "$lab/images.lock.v1.json" --compose "$lab/compose.yaml" --docker "$(command -v docker)" --compose-logs-artifact "$artifacts/compose.log" --compose-ps-artifact "$artifacts/compose-ps.txt") >"$artifacts/lifecycle.json"
 jq -e '.schema=="sealed-lab-lifecycle-result/v2" and .teardown_clean==true and .codex_inference_boundary.exit_code==0 and .codex_inference_boundary.transport_outcome=="completed"' "$artifacts/lifecycle.json" >/dev/null

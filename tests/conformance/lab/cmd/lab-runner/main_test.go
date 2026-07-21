@@ -134,6 +134,44 @@ type fakeExecutor struct {
 	logCalls int
 }
 
+type executorFunc func([]string, io.Writer, io.Writer, string, ...string) error
+
+func (fn executorFunc) Run(env []string, stdout, stderr io.Writer, name string, args ...string) error {
+	return fn(env, stdout, stderr, name, args...)
+}
+
+func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
+	directory := t.TempDir()
+	paths := diagnosticsPaths{Logs: filepath.Join(directory, "logs.txt"), PS: filepath.Join(directory, "ps.txt")}
+	executor := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, args ...string) error {
+		_, _ = io.WriteString(stdout, strings.Join(args, " "))
+		return nil
+	})
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, paths); err != nil {
+		t.Fatal(err)
+	}
+	for _, path := range []string{paths.Logs, paths.PS} {
+		info, err := os.Lstat(path)
+		if err != nil || !info.Mode().IsRegular() || info.Size() == 0 {
+			t.Fatalf("invalid diagnostic %s: %v %#v", path, err, info)
+		}
+	}
+	symlink := filepath.Join(directory, "link")
+	if err := os.Symlink(paths.Logs, symlink); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Logs: symlink, PS: filepath.Join(directory, "new-ps")}); err == nil {
+		t.Fatal("diagnostics followed or replaced symlink")
+	}
+	oversized := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, _ ...string) error {
+		_, _ = stdout.Write(bytes.Repeat([]byte{'x'}, (4<<20)+1))
+		return nil
+	})
+	if err := writeComposeDiagnostics(oversized, nil, "/docker", []string{"compose"}, diagnosticsPaths{Logs: filepath.Join(directory, "large-logs"), PS: filepath.Join(directory, "large-ps")}); err == nil {
+		t.Fatal("oversized diagnostics accepted")
+	}
+}
+
 func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ string, args ...string) error {
 	fake.calls = append(fake.calls, strings.Join(args, " "))
 	joined := strings.Join(args, " ")
@@ -182,7 +220,7 @@ func TestLifecycleUsesPinnedImagesRunsFreshCellsAndTearsDown(t *testing.T) {
 	}
 	fake := &fakeExecutor{}
 	var stdout, stderr bytes.Buffer
-	if err := run(fake, lockPath, sourceLockPath, composePath, "/reviewed/docker", "", recorderEvidencePaths{}, &stdout, &stderr); err != nil {
+	if err := run(fake, lockPath, sourceLockPath, composePath, "/reviewed/docker", "", recorderEvidencePaths{}, diagnosticsPaths{}, &stdout, &stderr); err != nil {
 		t.Fatalf("lifecycle failed: %v\nstderr: %s", err, stderr.String())
 	}
 	var result lifecycleResult

@@ -27,6 +27,75 @@ type commandExecutor interface {
 
 type osExecutor struct{}
 
+type diagnosticsPaths struct{ Logs, PS string }
+
+type diagnosticCapture struct {
+	data      bytes.Buffer
+	limit     int
+	truncated bool
+}
+
+func (capture *diagnosticCapture) Write(data []byte) (int, error) {
+	original := len(data)
+	remaining := capture.limit - capture.data.Len()
+	if remaining < len(data) {
+		capture.truncated = true
+		if remaining < 0 {
+			remaining = 0
+		}
+		data = data[:remaining]
+	}
+	_, _ = capture.data.Write(data)
+	return original, nil
+}
+
+func (paths diagnosticsPaths) validate() error {
+	if paths.Logs == "" && paths.PS == "" {
+		return nil
+	}
+	if paths.Logs == "" || paths.PS == "" || !filepath.IsAbs(paths.Logs) || !filepath.IsAbs(paths.PS) || paths.Logs == paths.PS {
+		return errors.New("Compose diagnostic artifact paths must be distinct absolute paths or both omitted")
+	}
+	return nil
+}
+
+func writeComposeDiagnostics(executor commandExecutor, environment []string, dockerBinary string, compose []string, paths diagnosticsPaths) error {
+	if paths.Logs == "" {
+		return nil
+	}
+	items := []struct {
+		path  string
+		limit int
+		args  []string
+	}{
+		{paths.PS, 256 << 10, []string{"ps", "--all"}},
+		{paths.Logs, 4 << 20, []string{"logs", "--tail", "2000", "--no-color", "--no-log-prefix"}},
+	}
+	for _, item := range items {
+		capture := &diagnosticCapture{limit: item.limit}
+		if err := executor.Run(environment, capture, capture, dockerBinary, append(compose, item.args...)...); err != nil {
+			return fmt.Errorf("capture %s: %w", filepath.Base(item.path), err)
+		}
+		if capture.truncated {
+			return fmt.Errorf("diagnostic %s exceeds %d-byte bound", filepath.Base(item.path), item.limit)
+		}
+		file, err := os.OpenFile(item.path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+		if err != nil {
+			return fmt.Errorf("create diagnostic regular file: %w", err)
+		}
+		data := capture.data.Bytes()
+		_, writeErr := file.Write(data)
+		closeErr := file.Close()
+		if writeErr != nil {
+			return writeErr
+		}
+		if closeErr != nil {
+			return closeErr
+		}
+	}
+	return nil
+}
+
 func (osExecutor) Run(env []string, stdout, stderr io.Writer, name string, args ...string) error {
 	command := exec.Command(name, args...)
 	command.Env = env
@@ -84,6 +153,7 @@ type networkProbeResult struct {
 
 func main() {
 	var lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath string
+	var diagnostics diagnosticsPaths
 	var recorderEvidence recorderEvidencePaths
 	flag.StringVar(&lockPath, "runtime-lock", "", "path to sealed-lab-runtime-lock/v1 or v2")
 	flag.StringVar(&sourceLockPath, "source-lock", "", "path to committed sealed-lab-image-lock/v1")
@@ -94,17 +164,22 @@ func main() {
 	flag.StringVar(&recorderEvidence.Transcript, "recorder-transcript", "", "absolute path to recorder control JSONL")
 	flag.StringVar(&recorderEvidence.PCAPNG, "recorder-pcapng", "", "absolute path to recorder PCAPNG evidence")
 	flag.StringVar(&recorderEvidence.Ledger, "recorder-ledger", "", "absolute path to recorder canonical JSONL ledger")
+	flag.StringVar(&diagnostics.Logs, "compose-logs-artifact", "", "absolute new file for bounded pre-teardown Compose logs")
+	flag.StringVar(&diagnostics.PS, "compose-ps-artifact", "", "absolute new file for bounded pre-teardown Compose ps")
 	flag.Parse()
-	if err := run(osExecutor{}, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath, recorderEvidence, os.Stdout, os.Stderr); err != nil {
+	if err := run(osExecutor{}, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath, recorderEvidence, diagnostics, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintln(os.Stderr, "lab-runner:", err)
 		os.Exit(1)
 	}
 }
 
-func run(executor commandExecutor, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath string, recorderEvidence recorderEvidencePaths, stdout, stderr io.Writer) error {
+func run(executor commandExecutor, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath string, recorderEvidence recorderEvidencePaths, diagnostics diagnosticsPaths, stdout, stderr io.Writer) error {
 	startedAt := time.Now().UTC()
 	if lockPath == "" || !filepath.IsAbs(lockPath) || !filepath.IsAbs(sourceLockPath) || !filepath.IsAbs(composePath) || !filepath.IsAbs(dockerBinary) {
 		return errors.New("runtime lock, source lock, Compose file, and Docker binary must be absolute paths")
+	}
+	if err := diagnostics.validate(); err != nil {
+		return err
 	}
 	lockData, err := os.ReadFile(lockPath)
 	if err != nil {
@@ -184,8 +259,20 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	}
 	teardownClean := false
 	tornDown := false
+	diagnosticsCaptured := false
+	var diagnosticsErr error
+	captureDiagnostics := func() {
+		if diagnosticsCaptured {
+			return
+		}
+		diagnosticsCaptured = true
+		if diagnosticsErr = writeComposeDiagnostics(executor, environment, dockerBinary, compose, diagnostics); diagnosticsErr != nil {
+			fmt.Fprintln(stderr, "lab-runner diagnostics:", diagnosticsErr)
+		}
+	}
 	defer func() {
 		if !tornDown {
+			captureDiagnostics()
 			_ = executor.Run(environment, io.Discard, stderr, dockerBinary, append(compose, "down", "--volumes", "--remove-orphans", "--timeout", "10")...)
 		}
 	}()
@@ -258,6 +345,10 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	}
 	if probeEvents == 0 {
 		return errors.New("known-host adversarial probe was not observed by the external sentinel")
+	}
+	captureDiagnostics()
+	if diagnosticsErr != nil {
+		return diagnosticsErr
 	}
 	if err := executor.Run(environment, io.Discard, stderr, dockerBinary, append(compose, "down", "--volumes", "--remove-orphans", "--timeout", "10")...); err != nil {
 		return fmt.Errorf("teardown sealed lab: %w", err)
