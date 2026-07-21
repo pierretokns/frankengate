@@ -131,6 +131,14 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 	}
 	result.Nonce = hex.EncodeToString(nonce)
 	services := []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "controlled-dns", "egress-sentinel", "codex-runner"}
+	knownServices := map[string]bool{}
+	for _, service := range []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "netns-codex", "netns-claude", "health-stub", "contract-stub", "controlled-dns", "egress-sentinel", "codex-runner", "claude-runner", "network-probe"} {
+		knownServices[service] = true
+	}
+	diagnosticServices := map[string]bool{}
+	for _, service := range services {
+		diagnosticServices[service] = true
+	}
 	aggregate, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	type psRow struct {
@@ -162,23 +170,18 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		var rows []psRow
 		if json.Unmarshal(psCapture.data.Bytes(), &rows) == nil {
 			malformed := false
+			seen := map[string]bool{}
 			for _, item := range rows {
-				matched := false
-				for _, allowed := range services {
-					if item.Service == allowed {
-						matched = true
-						if _, duplicate := status[allowed]; duplicate {
-							malformed = true
-							continue
-						}
-						if !regexp.MustCompile(`^[a-f0-9]{12,64}$`).MatchString(item.ID) || !regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.State) {
-							malformed = true
-						}
-						status[allowed] = item
-					}
-				}
-				if !matched {
+				if !knownServices[item.Service] || seen[item.Service] {
 					malformed = true
+					continue
+				}
+				seen[item.Service] = true
+				if !regexp.MustCompile(`^[a-f0-9]{12,64}$`).MatchString(item.ID) || !regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.State) {
+					malformed = true
+				}
+				if diagnosticServices[item.Service] {
+					status[item.Service] = item
 				}
 			}
 			if malformed {
@@ -226,7 +229,8 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 				}
 			}
 		}
-		failureClass = classifySanitizedFailure(capture.data.Bytes())
+		failed := exitCode != 0 || (state != "running" && state != "unknown") || (health != "healthy" && health != "unknown" && health != "")
+		failureClass = classifySanitizedFailure(capture.data.Bytes(), failed)
 		if _, ok := status[service]; !ok {
 			failureClass = "missing-status-row"
 			result.MissingStatusRows++
@@ -279,7 +283,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 	return nil
 }
 
-func classifySanitizedFailure(data []byte) string {
+func classifySanitizedFailure(data []byte, failed bool) string {
 	s := strings.ToLower(string(data))
 	patterns := []struct {
 		class string
@@ -297,7 +301,7 @@ func classifySanitizedFailure(data []byte) string {
 			}
 		}
 	}
-	if strings.TrimSpace(s) != "" {
+	if failed && strings.TrimSpace(s) != "" {
 		return "generic-startup"
 	}
 	return "none"

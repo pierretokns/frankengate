@@ -239,17 +239,22 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 }
 
 func TestSanitizedFailureClassificationMutants(t *testing.T) {
-	cases := map[string]string{
-		"CONFIG Parse failed":           "config-parse",
-		"SQLite driver requires CGO":    "sqlite-cgo-disabled",
-		"SQLSTATE 28P01":                "postgres-auth",
-		"could not connect to POSTGRES": "postgres-connect",
-		"unexpected startup panic":      "generic-startup",
-		"":                              "none",
+	cases := []struct {
+		input  string
+		failed bool
+		want   string
+	}{
+		{"CONFIG Parse failed", false, "config-parse"},
+		{"SQLite driver requires CGO", false, "sqlite-cgo-disabled"},
+		{"SQLSTATE 28P01", false, "postgres-auth"},
+		{"could not connect to POSTGRES", false, "postgres-connect"},
+		{"unexpected startup panic", true, "generic-startup"},
+		{"healthy startup chatter", false, "none"},
+		{"", true, "none"},
 	}
-	for input, want := range cases {
-		if got := classifySanitizedFailure([]byte(input)); got != want {
-			t.Errorf("%q: got %q want %q", input, got, want)
+	for _, test := range cases {
+		if got := classifySanitizedFailure([]byte(test.input), test.failed); got != test.want {
+			t.Errorf("%q: got %q want %q", test.input, got, test.want)
 		}
 	}
 }
@@ -316,6 +321,53 @@ func TestDiagnosticsRejectDuplicateStatusAndInspectOOM(t *testing.T) {
 	}
 	if got.Services[1].FailureClass != "missing-status-row" {
 		t.Fatalf("missing status not classified: %s", data)
+	}
+}
+
+func TestDiagnosticsAcceptCompleteKnownComposeStatus(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "failure.json")
+	names := []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "netns-codex", "netns-claude", "health-stub", "contract-stub", "controlled-dns", "egress-sentinel", "codex-runner", "claude-runner", "network-probe"}
+	rows := make([]map[string]any, 0, len(names))
+	for index, name := range names {
+		rows = append(rows, map[string]any{"Service": name, "ID": fmt.Sprintf("%012x", index+1), "State": "running", "Health": "healthy", "ExitCode": 0})
+	}
+	statusJSON, _ := json.Marshal(rows)
+	executor := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, args ...string) error {
+		joined := strings.Join(args, " ")
+		if strings.Contains(joined, " ps --all --format json") {
+			_, _ = stdout.Write(statusJSON)
+		}
+		if strings.HasPrefix(joined, "inspect --format") {
+			_, _ = io.WriteString(stdout, "false\n")
+		}
+		if strings.Contains(joined, "logs --tail 200") {
+			_, _ = io.WriteString(stdout, "healthy startup chatter")
+		}
+		return nil
+	})
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, boundDiagnostic(path)); err != nil {
+		t.Fatal(err)
+	}
+	var got struct {
+		Status   string `json:"status_capture"`
+		Rows     int    `json:"status_row_count"`
+		Missing  int    `json:"missing_status_rows"`
+		Services []struct {
+			Failure string `json:"failure_class"`
+		} `json:"services"`
+	}
+	data, _ := os.ReadFile(path)
+	if err := json.Unmarshal(data, &got); err != nil {
+		t.Fatal(err)
+	}
+	if got.Status != "ok" || got.Rows != 9 || got.Missing != 0 || len(got.Services) != 9 {
+		t.Fatalf("full Compose status rejected: %s", data)
+	}
+	for _, service := range got.Services {
+		if service.Failure != "none" {
+			t.Fatalf("healthy logs classified as failure: %s", data)
+		}
 	}
 }
 

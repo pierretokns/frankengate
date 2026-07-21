@@ -51,6 +51,7 @@ cleanup() {
       previous="$current"
     done
   fi
+  if (( count > 4 || total > 8388608 )); then bounds=1; status=1; fi
   if test "$(jq -r .file_count "$artifacts/diagnostics.json")" != "$count" || test "$(jq -r .observed_bytes "$artifacts/diagnostics.json")" != "$total" || { (( bounds != 0 )) && test "$(jq -r .artifact_status "$artifacts/diagnostics.json")" != rejected-oversize; }; then bounds=1; status=1; fi
   if (( bounds != 0 )); then status=1; fi
   exit "$status"
