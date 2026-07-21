@@ -82,14 +82,25 @@ type RuntimeLock struct {
 }
 
 type RuntimeImage struct {
-	ID                string           `json:"id"`
-	Reference         string           `json:"reference"`
-	Platforms         []string         `json:"platforms"`
-	Source            string           `json:"source"`
-	ClientVersion     string           `json:"client_version,omitempty"`
-	BinaryDigests     []PlatformDigest `json:"binary_digests,omitempty"`
-	ChildDigests      []PlatformDigest `json:"child_digests,omitempty"`
-	AttestationSHA256 string           `json:"attestation_sha256,omitempty"`
+	ID                string                `json:"id"`
+	Reference         string                `json:"reference"`
+	Platforms         []string              `json:"platforms"`
+	Source            string                `json:"source"`
+	ClientVersion     string                `json:"client_version,omitempty"`
+	BinaryDigests     []PlatformDigest      `json:"binary_digests,omitempty"`
+	ChildDigests      []PlatformDigest      `json:"child_digests,omitempty"`
+	AttestationSHA256 string                `json:"attestation_sha256,omitempty"`
+	Attestations      []CLIImageAttestation `json:"attestations,omitempty"`
+}
+type CLIImageAttestation struct {
+	Schema          string `json:"schema"`
+	Client          string `json:"client"`
+	Platform        string `json:"platform"`
+	ChildDigest     string `json:"child_digest"`
+	ExpectedVersion string `json:"expected_version"`
+	ObservedVersion string `json:"observed_version"`
+	ExitCode        int    `json:"exit_code"`
+	NativePlatform  string `json:"native_platform"`
 }
 
 type PlatformDigest struct {
@@ -154,15 +165,26 @@ func (lock RuntimeLock) Validate() error {
 			return fmt.Errorf("runtime image %q has invalid client version binding", image.ID)
 		}
 		if isRunner && (lock.Schema == RuntimeLockSchemaV3 || image.AttestationSHA256 != "" || len(image.ChildDigests) != 0) {
-			if !sha256Value.MatchString(image.AttestationSHA256) || len(image.ChildDigests) != 2 {
+			if !sha256Value.MatchString(image.AttestationSHA256) || len(image.ChildDigests) != 2 || len(image.Attestations) != 2 {
 				return fmt.Errorf("runtime image %q lacks child attestations", image.ID)
+			}
+			encoded, _ := json.Marshal(image.Attestations)
+			encoded = append(encoded, '\n')
+			if SHA256Hex(encoded) != image.AttestationSHA256 {
+				return fmt.Errorf("runtime image %q attestation hash mismatch", image.ID)
 			}
 			for digestIndex, digest := range image.ChildDigests {
 				if digest.Platform != image.Platforms[digestIndex] || !sha256Value.MatchString(digest.SHA256) {
 					return fmt.Errorf("runtime image %q child digest[%d] invalid", image.ID, digestIndex)
 				}
+				a := image.Attestations[digestIndex]
+				client := strings.TrimSuffix(image.ID, "-runner")
+				native := map[string]string{"linux/amd64": "x86_64", "linux/arm64": "aarch64"}[digest.Platform]
+				if a.Schema != "sealed-cli-image-attestation/v1" || a.Client != client || a.Platform != digest.Platform || a.ChildDigest != "sha256:"+digest.SHA256 || a.ExpectedVersion != image.ClientVersion || !strings.Contains(a.ObservedVersion, image.ClientVersion) || a.ExitCode != 0 || a.NativePlatform != native {
+					return fmt.Errorf("runtime image %q attestation[%d] invalid", image.ID, digestIndex)
+				}
 			}
-		} else if image.AttestationSHA256 != "" || len(image.ChildDigests) != 0 {
+		} else if image.AttestationSHA256 != "" || len(image.ChildDigests) != 0 || len(image.Attestations) != 0 {
 			return fmt.Errorf("non-runner image %q carries runner attestations", image.ID)
 		}
 		if image.ID == "network-recorder" {

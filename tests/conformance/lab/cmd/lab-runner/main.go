@@ -638,7 +638,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		if err := executor.Run(environment, &raw, stderr, dockerBinary, "buildx", "imagetools", "inspect", "--raw", image.Reference); err != nil {
 			return fmt.Errorf("inspect runtime image %s: %w", image.ID, err)
 		}
-		if err := validateOCIIndex(raw.Bytes()); err != nil {
+		if err := validateOCIIndexForImage(raw.Bytes(), image); err != nil {
 			return fmt.Errorf("runtime image %s: %w", image.ID, err)
 		}
 	}
@@ -998,8 +998,13 @@ func validateNetworkProbe(data []byte) error {
 }
 
 func validateOCIIndex(data []byte) error {
+	return validateOCIIndexForImage(data, contract.RuntimeImage{})
+}
+
+func validateOCIIndexForImage(data []byte, expected contract.RuntimeImage) error {
 	var index struct {
 		Manifests []struct {
+			Digest   string `json:"digest"`
 			Platform struct {
 				OS           string `json:"os"`
 				Architecture string `json:"architecture"`
@@ -1010,12 +1015,31 @@ func validateOCIIndex(data []byte) error {
 	if err := decoder.Decode(&index); err != nil {
 		return err
 	}
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		return errors.New("OCI index contains trailing JSON")
+	}
 	seen := map[string]bool{}
+	digests := map[string]string{}
 	for _, manifest := range index.Manifests {
-		seen[manifest.Platform.OS+"/"+manifest.Platform.Architecture] = true
+		platform := manifest.Platform.OS + "/" + manifest.Platform.Architecture
+		if seen[platform] {
+			return errors.New("OCI index contains duplicate platform")
+		}
+		seen[platform] = true
+		digests[platform] = manifest.Digest
 	}
 	if !seen["linux/amd64"] || !seen["linux/arm64"] {
 		return errors.New("OCI index does not contain linux/amd64 and linux/arm64")
+	}
+	if len(expected.ChildDigests) > 0 {
+		if len(index.Manifests) != 2 {
+			return errors.New("OCI index descriptor count mismatch")
+		}
+		for _, want := range expected.ChildDigests {
+			if digests[want.Platform] != "sha256:"+want.SHA256 {
+				return errors.New("OCI child digest does not match attestation")
+			}
+		}
 	}
 	return nil
 }

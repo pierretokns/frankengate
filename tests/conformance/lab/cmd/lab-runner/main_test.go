@@ -413,6 +413,20 @@ func TestComposePSAcceptsArrayAndJSONL(t *testing.T) {
 	}
 }
 
+func TestOCIIndexMustMatchAttestedChildren(t *testing.T) {
+	a, b := strings.Repeat("a", 64), strings.Repeat("b", 64)
+	image := contract.RuntimeImage{ChildDigests: []contract.PlatformDigest{{Platform: "linux/amd64", SHA256: a}, {Platform: "linux/arm64", SHA256: b}}}
+	valid := []byte(`{"manifests":[{"digest":"sha256:` + a + `","platform":{"os":"linux","architecture":"amd64"}},{"digest":"sha256:` + b + `","platform":{"os":"linux","architecture":"arm64"}}]}`)
+	if err := validateOCIIndexForImage(valid, image); err != nil {
+		t.Fatal(err)
+	}
+	for _, bad := range [][]byte{bytes.Replace(valid, []byte("sha256:"+a), []byte("sha256:"+strings.Repeat("c", 64)), 1), bytes.Replace(valid, []byte(`"amd64"`), []byte(`"arm64"`), 1), append(valid, []byte(` {}`)...)} {
+		if validateOCIIndexForImage(bad, image) == nil {
+			t.Fatal("OCI index mutant accepted")
+		}
+	}
+}
+
 func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ string, args ...string) error {
 	fake.calls = append(fake.calls, strings.Join(args, " "))
 	joined := strings.Join(args, " ")
