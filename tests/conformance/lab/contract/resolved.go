@@ -83,9 +83,6 @@ func ValidateResolvedCompose(data []byte, source Lock, runtime RuntimeLock) erro
 	}
 	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
 		environment := document.Services[name].Environment
-		if environment["BIFROST_HOST"] != "0.0.0.0" {
-			return fmt.Errorf("service %q must bind Bifrost within its isolated network namespace", name)
-		}
 		if environment["BIFROST_SEALED_LAB_INGRESS_OBSERVER"] != "1" || environment["LAB_RUN_ID"] != runtime.RunID {
 			return fmt.Errorf("service %q lacks run-bound sealed ingress observer activation", name)
 		}

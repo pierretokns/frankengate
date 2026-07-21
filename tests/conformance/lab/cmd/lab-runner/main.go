@@ -1073,6 +1073,14 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if err != nil {
 		return err
 	}
+	var preflightOutput bytes.Buffer
+	preflightArgs := append(append([]string{}, compose...), "run", "--rm", "--no-deps", "-e", "LAB_NETWORK_PROBE_MODE=preflight", "network-probe")
+	if err := executor.Run(environment, &preflightOutput, stderr, dockerBinary, preflightArgs...); err != nil {
+		return fmt.Errorf("run Codex-namespace Bifrost preflight: %w", err)
+	}
+	if err := validateClientPreflight(preflightOutput.Bytes()); err != nil {
+		return err
+	}
 	clients := []string{"claude", "codex"}
 	cellPlatforms := make([]string, 0, len(clients))
 	var codexBoundary *cellResult
@@ -1408,6 +1416,39 @@ func validateNetworkProbe(data []byte) error {
 		result.KnownHostTrapped != 1 || result.DirectIPv4Blocked != 1 || result.DirectIPv6Blocked != 1 ||
 		result.QUICBlocked != 1 || result.ProxyBypassBlocked != 1 {
 		return errors.New("network probe did not prove every escape negative")
+	}
+	return nil
+}
+
+func validateClientPreflight(data []byte) error {
+	if err := contract.RejectDuplicateJSONKeys(data); err != nil {
+		return fmt.Errorf("client preflight JSON structure: %w", err)
+	}
+	var result struct {
+		Schema       string `json:"schema"`
+		DNSExact     bool   `json:"dns_exact"`
+		TCPReachable bool   `json:"tcp_reachable"`
+		HealthOK     bool   `json:"health_ok"`
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&result); err != nil {
+		return fmt.Errorf("client preflight JSON: %w", err)
+	}
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		return errors.New("client preflight emitted more than one JSON record")
+	}
+	if result.Schema != "sealed-lab-client-preflight/v1" {
+		return errors.New("client preflight schema is invalid")
+	}
+	if !result.DNSExact {
+		return errors.New("client preflight did not prove controlled Bifrost DNS resolution")
+	}
+	if !result.TCPReachable {
+		return errors.New("client preflight did not prove Bifrost TCP reachability")
+	}
+	if !result.HealthOK {
+		return errors.New("client preflight did not prove Bifrost HTTP health reachability")
 	}
 	return nil
 }

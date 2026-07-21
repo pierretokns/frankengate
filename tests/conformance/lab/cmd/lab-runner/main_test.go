@@ -360,9 +360,10 @@ const validRuntimeLock = `{
 }`
 
 type fakeExecutor struct {
-	calls    []string
-	logCalls int
-	failUp   bool
+	calls             []string
+	logCalls          int
+	failUp            bool
+	failPreflightFact string
 }
 
 type executorFunc func([]string, io.Writer, io.Writer, string, ...string) error
@@ -671,6 +672,12 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"claude","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"2.1.214","native_platform":"linux/arm64"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "codex-runner"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v2","run_id":"test-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LAB_RUN_ID","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"completed","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`)
+	case strings.Contains(joined, "LAB_NETWORK_PROBE_MODE=preflight") && strings.HasSuffix(joined, "network-probe"):
+		record := `{"schema":"sealed-lab-client-preflight/v1","dns_exact":true,"tcp_reachable":true,"health_ok":true}`
+		if fake.failPreflightFact != "" {
+			record = strings.Replace(record, `"`+fake.failPreflightFact+`":true`, `"`+fake.failPreflightFact+`":false`, 1)
+		}
+		_, _ = io.WriteString(stdout, record)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "network-probe"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
 	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
@@ -769,6 +776,33 @@ func TestLifecycleUsesPinnedImagesRunsFreshCellsAndTearsDown(t *testing.T) {
 			t.Fatalf("lifecycle omitted %q\n%s", required, calls)
 		}
 	}
+	preflightIndex := strings.Index(calls, "-e LAB_NETWORK_PROBE_MODE=preflight network-probe")
+	upIndex := strings.Index(calls, " up --detach --wait")
+	seedIndex := strings.Index(calls, " logs --no-color --no-log-prefix config-seed")
+	claudeIndex := strings.Index(calls, " run --rm --no-deps claude-runner")
+	codexIndex := strings.Index(calls, " run --rm --no-deps codex-runner")
+	if upIndex < 0 || seedIndex < upIndex || preflightIndex < seedIndex || claudeIndex < preflightIndex || codexIndex < preflightIndex {
+		t.Fatalf("client preflight did not run after startup/seed and before both client cells:\n%s", calls)
+	}
+}
+
+func TestClientPreflightFailurePreventsClientCells(t *testing.T) {
+	directory := t.TempDir()
+	sourceLockPath, _ := filepath.Abs(filepath.Join("..", "..", "images.lock.v1.json"))
+	sourceData, _ := os.ReadFile(sourceLockPath)
+	lockPath := filepath.Join(directory, "runtime.json")
+	_ = os.WriteFile(lockPath, []byte(strings.Replace(validRuntimeLock, "SOURCE_HASH", sha256Hex(sourceData), 1)), 0o600)
+	composePath, _ := filepath.Abs(filepath.Join("..", "..", "compose.yaml"))
+	fake := &fakeExecutor{failPreflightFact: "tcp_reachable"}
+	var stdout, stderr bytes.Buffer
+	err := run(fake, lockPath, sourceLockPath, composePath, "/reviewed/docker", "", recorderEvidencePaths{}, diagnosticsPaths{}, &stdout, &stderr)
+	if err == nil || !strings.Contains(err.Error(), "TCP reachability") {
+		t.Fatalf("preflight failure not preserved: %v", err)
+	}
+	calls := strings.Join(fake.calls, "\n")
+	if strings.Contains(calls, " run --rm --no-deps codex-runner") || strings.Contains(calls, " run --rm --no-deps claude-runner") {
+		t.Fatalf("client cell ran after failed preflight:\n%s", calls)
+	}
 }
 
 func TestNativePlatformEvidenceNormalizesDockerAliasesAndRejectsUnreviewedPlatforms(t *testing.T) {
@@ -815,6 +849,25 @@ func TestNetworkProbeEvidenceRequiresEveryNegative(t *testing.T) {
 		if err := validateNetworkProbe([]byte(mutated)); err == nil {
 			t.Fatalf("missing negative %s unexpectedly accepted", field)
 		}
+	}
+}
+
+func TestClientPreflightRequiresDNSAndReachability(t *testing.T) {
+	valid := `{"schema":"sealed-lab-client-preflight/v1","dns_exact":true,"tcp_reachable":true,"health_ok":true}`
+	if err := validateClientPreflight([]byte(valid)); err != nil {
+		t.Fatal(err)
+	}
+	for _, field := range []string{"dns_exact", "tcp_reachable", "health_ok"} {
+		mutated := strings.Replace(valid, `"`+field+`":true`, `"`+field+`":false`, 1)
+		if err := validateClientPreflight([]byte(mutated)); err == nil {
+			t.Fatalf("missing preflight proof %s unexpectedly accepted", field)
+		}
+	}
+	if err := validateClientPreflight([]byte(valid + ` {}`)); err == nil {
+		t.Fatal("client preflight accepted trailing record")
+	}
+	if err := validateClientPreflight([]byte(strings.Replace(valid, `"dns_exact":true`, `"dns_exact":false,"dns_exact":true`, 1))); err == nil {
+		t.Fatal("client preflight accepted duplicate key")
 	}
 }
 
@@ -903,7 +956,6 @@ func resolvedComposeForTest() string {
 	services["bifrost-3"]["network_mode"] = "service:netns-bifrost-3"
 	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
 		services[name]["environment"] = map[string]any{
-			"BIFROST_HOST":                        "0.0.0.0",
 			"BIFROST_SEALED_LAB_INGRESS_OBSERVER": "1",
 			"LAB_RUN_ID":                          "test-1",
 		}
