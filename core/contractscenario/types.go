@@ -29,6 +29,21 @@ func CanonicalTarget(raw string) (string, error) {
 }
 func sigv4Escape(s string) string { return strings.ReplaceAll(url.QueryEscape(s), "+", "%20") }
 
+func CanonicalHeaders(headers map[string]string) (string, string, error) {
+	if len(headers) == 0 { return "", "", fmt.Errorf("headers are required") }
+	type item struct { name, value string }
+	items := make([]item, 0, len(headers))
+	for k, v := range headers { n := strings.ToLower(strings.TrimSpace(k)); if n == "" { return "", "", fmt.Errorf("empty header name") }; items = append(items, item{n, strings.Join(strings.Fields(v), " ")}) }
+	sort.Slice(items, func(i, j int) bool { return items[i].name < items[j].name })
+	var b strings.Builder; names := make([]string, len(items)); for i, h := range items { b.WriteString(h.name); b.WriteByte(':'); b.WriteString(h.value); b.WriteByte('\n'); names[i] = h.name }
+	return b.String(), strings.Join(names, ";"), nil
+}
+
+func CanonicalRequest(method, target string, headers map[string]string, body []byte) (string, error) {
+	ct, signed, err := CanonicalHeaders(headers); if err != nil { return "", err }; canon, err := CanonicalTarget(target); if err != nil { return "", err }; sum := sha256.Sum256(body)
+	return strings.ToUpper(method)+"\n"+canon+"\n"+ct+"\n"+signed+"\n"+hex.EncodeToString(sum[:]), nil
+}
+
 type CellSpec struct { Name, InitialState string; Expectations []Expectation }
 type Cell struct { Name, ID, State string; Expectations []Expectation }
 
