@@ -42,7 +42,7 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "claude-runner"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"claude","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"2.1.214","native_platform":"linux/arm64"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "codex-runner"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64"}`)
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v2","run_id":"test-1","client":"codex","exit_code":1,"environment_names":["CODEX_HOME","HOME","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"transport_failure_after_turn_start","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "network-probe"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
 	case strings.Contains(joined, " logs --no-color --no-log-prefix egress-sentinel"):
@@ -82,7 +82,7 @@ func TestLifecycleUsesPinnedImagesRunsFreshCellsAndTearsDown(t *testing.T) {
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
 		t.Fatal(err)
 	}
-	if result.Schema != "sealed-lab-lifecycle-result/v1" || result.RunID != "test-1" || result.NativePlatform != "linux/arm64" || result.SourceLockSHA256 != sha256Hex(sourceData) || result.StartedAt == "" || result.CompletedAt == "" || !result.TeardownClean || result.NormalCellForbiddenEvents != 0 || result.AdversarialProbeRecordedEvents != 1 || result.PaidInferenceProof != "unproven-external-recorder-required" || len(result.Clients) != 2 {
+	if result.Schema != "sealed-lab-lifecycle-result/v2" || result.RunID != "test-1" || result.NativePlatform != "linux/arm64" || result.SourceLockSHA256 != sha256Hex(sourceData) || result.StartedAt == "" || result.CompletedAt == "" || !result.TeardownClean || result.NormalCellForbiddenEvents != 0 || result.AdversarialProbeRecordedEvents != 1 || result.PaidInferenceProof != "unproven-external-recorder-required" || len(result.Clients) != 2 || result.CodexInferenceBoundary == nil || !result.CodexInferenceBoundary.RequestInitiated {
 		t.Fatalf("unexpected lifecycle result: %#v", result)
 	}
 	calls := strings.Join(fake.calls, "\n")
@@ -107,15 +107,19 @@ func TestNativePlatformEvidenceNormalizesDockerAliasesAndRejectsUnreviewedPlatfo
 }
 
 func TestCellRuntimePlatformMustMatchNormalizedDaemonPlatform(t *testing.T) {
-	valid := `{"schema":"sealed-cli-cell-evidence/v1","run_id":"run-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64"}`
-	if got, err := validateCellResult([]byte(valid), "run-1", "codex", "0.144.5", "linux/arm64"); err != nil || got != "linux/arm64" {
-		t.Fatalf("matching cell platform rejected: got=%q err=%v", got, err)
+	valid := `{"schema":"sealed-cli-cell-evidence/v2","run_id":"run-1","client":"codex","exit_code":1,"environment_names":["CODEX_HOME","HOME","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"transport_failure_after_turn_start","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`
+	if got, err := validateCellResult([]byte(valid), "run-1", "codex", "0.144.5", "linux/arm64"); err != nil || got.NativePlatform != "linux/arm64" {
+		t.Fatalf("matching cell platform rejected: got=%#v err=%v", got, err)
 	}
 	for _, mutation := range []string{
 		strings.Replace(valid, "linux/arm64", "linux/amd64", 1),
 		strings.Replace(valid, "linux/arm64", "linux/aarch64", 1),
 		strings.Replace(valid, `"PATH"`, `"HTTP_PROXY"`, 1),
 		strings.Replace(valid, `"PATH",`, "", 1),
+		strings.Replace(valid, `"request_initiated":true`, `"request_initiated":false`, 1),
+		strings.Replace(valid, `"exit_code":1`, `"exit_code":124`, 1),
+		strings.Replace(valid, `"exit_code":1`, `"exit_code":-1`, 1),
+		strings.Replace(valid, `http://bifrost-1:8080/openai/v1`, `https://api.openai.com/v1`, 1),
 	} {
 		if _, err := validateCellResult([]byte(mutation), "run-1", "codex", "0.144.5", "linux/arm64"); err == nil {
 			t.Fatalf("invalid cell platform evidence accepted: %s", mutation)

@@ -219,7 +219,7 @@ services:
     image: ${CODEX_RUNNER_IMAGE:?set a digest-pinned sealed Codex runner image}
     network_mode: service:netns-codex
     configs:
-      - source: codex_version_scenario
+      - source: codex_inference_boundary_scenario
         target: /scenario/scenario.json
         mode: 0444
     depends_on:
@@ -303,8 +303,8 @@ networks:
 configs:
   sealed_dns_corefile:
     file: ./dns/Corefile
-  codex_version_scenario:
-    file: ./scenario/codex-version.json
+  codex_inference_boundary_scenario:
+    file: ./scenario/codex-inference-boundary.json
   claude_version_scenario:
     file: ./scenario/claude-version.json
   sealed_network_probe:

@@ -297,7 +297,7 @@ func ValidateCompose(data []byte) error {
 		"bifrost-1:", "bifrost-2:", "bifrost-3:", "postgres:", "health-stub:", "contract-stub:", "codex-runner:", "claude-runner:",
 		"controlled-dns:", "egress-sentinel:", "sealed_dns_corefile:", "file: ./dns/corefile",
 		"network-probe:", "sealed_network_probe:", "file: ./probe/network-negatives.sh", "target: /probe/network-negatives.sh",
-		"codex_version_scenario:", "claude_version_scenario:", "target: /scenario/scenario.json",
+		"codex_inference_boundary_scenario:", "claude_version_scenario:", "target: /scenario/scenario.json",
 		"frankengate_pricing_url: file:///lab-fixtures/pricing.json", "frankengate_model_parameters_url: file:///lab-fixtures/model-parameters.json",
 		"sealed_pricing_fixture:", "sealed_model_parameters_fixture:",
 		"netns-bifrost-1:", "netns-bifrost-2:", "netns-bifrost-3:", "netns-codex:", "netns-claude:",

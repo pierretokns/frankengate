@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -34,29 +35,39 @@ func (osExecutor) Run(env []string, stdout, stderr io.Writer, name string, args 
 }
 
 type cellResult struct {
-	Schema         string   `json:"schema"`
-	RunID          string   `json:"run_id"`
-	Client         string   `json:"client"`
-	ExitCode       int      `json:"exit_code"`
-	Environment    []string `json:"environment_names"`
-	ResidueCount   int      `json:"residue_count"`
-	ClientVersion  string   `json:"client_version"`
-	NativePlatform string   `json:"native_platform"`
+	Schema           string   `json:"schema"`
+	RunID            string   `json:"run_id"`
+	Client           string   `json:"client"`
+	ExitCode         int      `json:"exit_code"`
+	Environment      []string `json:"environment_names"`
+	ResidueCount     int      `json:"residue_count"`
+	ClientVersion    string   `json:"client_version"`
+	NativePlatform   string   `json:"native_platform"`
+	Operation        string   `json:"operation,omitempty"`
+	ProcessStarted   bool     `json:"process_started,omitempty"`
+	RequestInitiated bool     `json:"request_initiated,omitempty"`
+	TransportOutcome string   `json:"transport_outcome,omitempty"`
+	EventCount       int      `json:"jsonl_event_count,omitempty"`
+	OutputBytes      int      `json:"inference_output_bytes,omitempty"`
+	OutputSHA256     string   `json:"inference_output_sha256,omitempty"`
+	OutputTruncated  bool     `json:"inference_output_truncated,omitempty"`
+	GatewayBaseURL   string   `json:"gateway_base_url,omitempty"`
 }
 
 type lifecycleResult struct {
-	Schema                         string   `json:"schema"`
-	RunID                          string   `json:"run_id"`
-	NativePlatform                 string   `json:"native_platform"`
-	StartedAt                      string   `json:"started_at"`
-	CompletedAt                    string   `json:"completed_at"`
-	SourceLockSHA256               string   `json:"source_lock_sha256"`
-	RuntimeLockSHA256              string   `json:"runtime_lock_sha256"`
-	Clients                        []string `json:"clients"`
-	NormalCellForbiddenEvents      int      `json:"normal_cell_forbidden_events"`
-	AdversarialProbeRecordedEvents int      `json:"adversarial_probe_recorded_events"`
-	PaidInferenceProof             string   `json:"paid_inference_proof"`
-	TeardownClean                  bool     `json:"teardown_clean"`
+	Schema                         string      `json:"schema"`
+	RunID                          string      `json:"run_id"`
+	NativePlatform                 string      `json:"native_platform"`
+	StartedAt                      string      `json:"started_at"`
+	CompletedAt                    string      `json:"completed_at"`
+	SourceLockSHA256               string      `json:"source_lock_sha256"`
+	RuntimeLockSHA256              string      `json:"runtime_lock_sha256"`
+	Clients                        []string    `json:"clients"`
+	NormalCellForbiddenEvents      int         `json:"normal_cell_forbidden_events"`
+	AdversarialProbeRecordedEvents int         `json:"adversarial_probe_recorded_events"`
+	PaidInferenceProof             string      `json:"paid_inference_proof"`
+	TeardownClean                  bool        `json:"teardown_clean"`
+	CodexInferenceBoundary         *cellResult `json:"codex_inference_boundary,omitempty"`
 }
 
 type networkProbeResult struct {
@@ -184,17 +195,22 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	}
 	clients := []string{"claude", "codex"}
 	cellPlatforms := make([]string, 0, len(clients))
+	var codexBoundary *cellResult
 	for _, client := range clients {
 		var raw bytes.Buffer
 		args := append(append([]string{}, compose...), "run", "--rm", "--no-deps", client+"-runner")
 		if err := executor.Run(environment, &raw, stderr, dockerBinary, args...); err != nil {
 			return fmt.Errorf("run %s cell: %w", client, err)
 		}
-		cellPlatform, err := validateCellResult(raw.Bytes(), lock.RunID, client, pinnedVersion(*lock, client), nativePlatform)
+		cellEvidence, err := validateCellResult(raw.Bytes(), lock.RunID, client, pinnedVersion(*lock, client), nativePlatform)
 		if err != nil {
 			return fmt.Errorf("%s cell evidence: %w", client, err)
 		}
-		cellPlatforms = append(cellPlatforms, cellPlatform)
+		cellPlatforms = append(cellPlatforms, cellEvidence.NativePlatform)
+		if client == "codex" {
+			copy := cellEvidence
+			codexBoundary = &copy
+		}
 	}
 	var sentinelLogs bytes.Buffer
 	if err := executor.Run(environment, &sentinelLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "egress-sentinel")...); err != nil {
@@ -205,7 +221,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		return err
 	}
 	if forbidden != 0 {
-		return fmt.Errorf("sealed version cells emitted %d forbidden egress events", forbidden)
+		return fmt.Errorf("sealed client cells emitted %d forbidden egress events", forbidden)
 	}
 	var probeOutput bytes.Buffer
 	probeArgs := append(append([]string{}, compose...), "run", "--rm", "--no-deps", "network-probe")
@@ -251,11 +267,12 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		}
 	}
 	return json.NewEncoder(stdout).Encode(lifecycleResult{
-		Schema: "sealed-lab-lifecycle-result/v1", RunID: lock.RunID, NativePlatform: cellPlatforms[0],
+		Schema: "sealed-lab-lifecycle-result/v2", RunID: lock.RunID, NativePlatform: cellPlatforms[0],
 		StartedAt: startedAt.Format(time.RFC3339Nano), CompletedAt: time.Now().UTC().Format(time.RFC3339Nano),
 		SourceLockSHA256: lock.SourceLockSHA256, RuntimeLockSHA256: digest,
 		Clients: clients, NormalCellForbiddenEvents: forbidden, AdversarialProbeRecordedEvents: probeEvents,
 		PaidInferenceProof: "unproven-external-recorder-required", TeardownClean: teardownClean,
+		CodexInferenceBoundary: codexBoundary,
 	})
 }
 
@@ -353,32 +370,61 @@ func validatePinnedClientVersions(runtime contract.RuntimeLock, source contract.
 	return nil
 }
 
-func validateCellResult(data []byte, runID, client, version, daemonPlatform string) (string, error) {
+func validateCellResult(data []byte, runID, client, version, daemonPlatform string) (cellResult, error) {
 	decoder := json.NewDecoder(io.LimitReader(bytes.NewReader(data), 1<<20))
 	decoder.DisallowUnknownFields()
 	var result cellResult
 	if err := decoder.Decode(&result); err != nil {
-		return "", err
+		return cellResult{}, err
 	}
 	if err := decoder.Decode(&struct{}{}); err != io.EOF {
-		return "", errors.New("cell emitted more than one JSON record")
+		return cellResult{}, errors.New("cell emitted more than one JSON record")
 	}
-	if result.Schema != "sealed-cli-cell-evidence/v1" || result.Client != client || result.ExitCode != 0 || result.ResidueCount != 0 || result.ClientVersion == "" {
-		return "", errors.New("cell result violates the sealed contract")
+	if result.Client != client || result.ResidueCount != 0 || result.ClientVersion == "" {
+		return cellResult{}, errors.New("cell result violates the sealed contract")
 	}
-	if !validVersionCellEnvironment(result.Environment) {
-		return "", errors.New("cell result environment does not match the sealed version-cell allowlist")
+	if client == "codex" {
+		validOutcome := (result.ExitCode == 0 && result.TransportOutcome == "completed") || (result.ExitCode > 0 && result.ExitCode != 124 && result.TransportOutcome == "transport_failure_after_turn_start")
+		if result.Schema != "sealed-cli-cell-evidence/v2" || result.Operation != "codex-inference-boundary" || !result.ProcessStarted || !result.RequestInitiated || !validOutcome || result.EventCount < 3 || result.OutputBytes <= 0 || !sha256Value.MatchString(result.OutputSHA256) || result.OutputTruncated || !internalCellGateway.MatchString(result.GatewayBaseURL) {
+			return cellResult{}, errors.New("Codex cell did not prove the sealed inference invocation boundary")
+		}
+		if !validInferenceCellEnvironment(result.Environment) {
+			return cellResult{}, errors.New("Codex cell environment does not match the sealed inference-cell allowlist")
+		}
+	} else {
+		if result.Schema != "sealed-cli-cell-evidence/v1" || result.ExitCode != 0 || result.Operation != "" || result.ProcessStarted || result.RequestInitiated || result.TransportOutcome != "" || result.EventCount != 0 || result.OutputBytes != 0 || result.OutputSHA256 != "" || result.OutputTruncated || result.GatewayBaseURL != "" {
+			return cellResult{}, errors.New("version cell result violates the sealed contract")
+		}
+		if !validVersionCellEnvironment(result.Environment) {
+			return cellResult{}, errors.New("cell result environment does not match the sealed version-cell allowlist")
+		}
 	}
 	if version != "" && result.ClientVersion != version {
-		return "", errors.New("cell version does not match runtime lock")
+		return cellResult{}, errors.New("cell version does not match runtime lock")
 	}
 	if result.RunID != runID || runID == "" {
-		return "", errors.New("cell result is not bound to lifecycle run identity")
+		return cellResult{}, errors.New("cell result is not bound to lifecycle run identity")
 	}
 	if result.NativePlatform != daemonPlatform || (result.NativePlatform != "linux/amd64" && result.NativePlatform != "linux/arm64") {
-		return "", errors.New("cell runtime architecture does not match the native Docker daemon platform")
+		return cellResult{}, errors.New("cell runtime architecture does not match the native Docker daemon platform")
 	}
-	return result.NativePlatform, nil
+	return result, nil
+}
+
+var sha256Value = regexp.MustCompile(`^[0-9a-f]{64}$`)
+var internalCellGateway = regexp.MustCompile(`^http://bifrost-[123]:8080/openai/v1/?$`)
+
+func validInferenceCellEnvironment(names []string) bool {
+	want := []string{"CODEX_HOME", "HOME", "LANG", "OPENAI_API_KEY", "OPENAI_BASE_URL", "PATH", "TMPDIR", "TZ", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME"}
+	if len(names) != len(want) {
+		return false
+	}
+	for index := range want {
+		if names[index] != want[index] {
+			return false
+		}
+	}
+	return true
 }
 
 func validVersionCellEnvironment(names []string) bool {
