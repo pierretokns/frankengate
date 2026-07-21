@@ -40,10 +40,17 @@ type Engine struct { mu sync.Mutex; scenario string; cells map[string]*Cell; aut
 type Budget struct { Requests, Objects, BodyBytes uint64 }
 type Usage struct { Requests, Objects, BodyBytes uint64 }
 type Barrier struct { mu sync.Mutex; reached map[string]bool }
+type Cancellation struct { mu sync.Mutex; cancelled bool; reason string }
+type RetryCounter struct { mu sync.Mutex; attempts, limit uint64 }
 
 func NewBarrier() *Barrier { return &Barrier{reached: make(map[string]bool)} }
 func (b *Barrier) Reach(name string) error { if strings.TrimSpace(name)=="" { return fmt.Errorf("barrier name is required") }; b.mu.Lock(); b.reached[name]=true; b.mu.Unlock(); return nil }
 func (b *Barrier) Reached(name string) bool { b.mu.Lock(); defer b.mu.Unlock(); return b.reached[name] }
+func (c *Cancellation) Cancel(reason string) { c.mu.Lock(); if !c.cancelled { c.cancelled=true; c.reason=reason }; c.mu.Unlock() }
+func (c *Cancellation) State() (bool, string) { c.mu.Lock(); defer c.mu.Unlock(); return c.cancelled, c.reason }
+func NewRetryCounter(limit uint64) *RetryCounter { return &RetryCounter{limit: limit} }
+func (r *RetryCounter) Next() error { r.mu.Lock(); defer r.mu.Unlock(); if r.limit > 0 && r.attempts >= r.limit { return fmt.Errorf("retry budget exceeded") }; r.attempts++; return nil }
+func (r *RetryCounter) Attempts() uint64 { r.mu.Lock(); defer r.mu.Unlock(); return r.attempts }
 
 func (e *Engine) Consume(id string, budget Budget, usage *Usage, bodyBytes, objects uint64) error {
 	if usage == nil { return fmt.Errorf("usage is required") }

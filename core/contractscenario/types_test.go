@@ -27,3 +27,9 @@ func TestBudgetAndBarrierAreDeterministic(t *testing.T) {
 	if err := e.Consume(id, Budget{Requests: 1, BodyBytes: 3}, &u, 0, 0); err == nil { t.Fatal("request budget not enforced") }
 	b := NewBarrier(); if b.Reached("headers") { t.Fatal("barrier reached before signal") }; if err := b.Reach("headers"); err != nil { t.Fatal(err) }; if !b.Reached("headers") { t.Fatal("barrier signal lost") }
 }
+
+func TestCancellationAndRetryAccounting(t *testing.T) {
+	var c Cancellation; if ok, _ := c.State(); ok { t.Fatal("cancelled before signal") }; c.Cancel("client-close"); c.Cancel("late-error")
+	if ok, reason := c.State(); !ok || reason != "client-close" { t.Fatalf("latch: %v %q", ok, reason) }
+	r := NewRetryCounter(2); if err := r.Next(); err != nil { t.Fatal(err) }; if err := r.Next(); err != nil { t.Fatal(err) }; if err := r.Next(); err == nil { t.Fatal("retry limit not enforced") }; if r.Attempts() != 2 { t.Fatalf("attempt count: %d", r.Attempts()) }
+}
