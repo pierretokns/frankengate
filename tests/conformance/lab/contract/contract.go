@@ -190,7 +190,7 @@ func ValidateCompose(data []byte) error {
 		}
 	}
 	for _, required := range []string{
-		"bifrost-1:", "bifrost-2:", "bifrost-3:", "postgres:", "health-stub:", "codex-runner:", "claude-runner:",
+		"bifrost-1:", "bifrost-2:", "bifrost-3:", "postgres:", "health-stub:", "contract-stub:", "codex-runner:", "claude-runner:",
 		"controlled-dns:", "egress-sentinel:", "sealed_dns_corefile:", "file: ./dns/corefile",
 		"network-probe:", "sealed_network_probe:", "file: ./probe/network-negatives.sh", "target: /probe/network-negatives.sh",
 		"codex_version_scenario:", "claude_version_scenario:", "target: /scenario/scenario.json",
@@ -217,7 +217,7 @@ func ValidateCompose(data []byte) error {
 	if strings.Count(lower, "ip route | awk '$$1 == \"default\"'") != 2 {
 		return fmt.Errorf("namespace startup and health checks must preserve the IPv4 default-route contract")
 	}
-	for _, service := range []string{"controlled-dns", "egress-sentinel", "network-probe"} {
+	for _, service := range []string{"contract-stub", "controlled-dns", "egress-sentinel", "network-probe"} {
 		if !strings.Contains(lower, "\n  "+service+":\n") {
 			return fmt.Errorf("compose misses top-level service %q", service)
 		}

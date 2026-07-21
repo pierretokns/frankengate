@@ -96,6 +96,14 @@ func TestPinnedVersionMustBeExactSemver(t *testing.T) {
 	if !capture.Contains("0.144.5") || capture.Contains("2.1.214") {
 		t.Fatal("bounded version observation is incorrect")
 	}
+	if got, err := parseObservedVersion([]byte("codex-cli 0.144.5\n")); err != nil || got != "0.144.5" {
+		t.Fatalf("parsed version = %q, %v", got, err)
+	}
+	for _, invalid := range []string{"codex 0.144.5 node 24.0.0", "codex 0.144.5.1", "no-version"} {
+		if _, err := parseObservedVersion([]byte(invalid)); err == nil {
+			t.Fatalf("ambiguous/malformed observed version accepted: %q", invalid)
+		}
+	}
 }
 
 func TestScenarioJSONRejectsDuplicateKeysAtAnyDepth(t *testing.T) {

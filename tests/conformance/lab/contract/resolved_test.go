@@ -1,0 +1,115 @@
+package contract
+
+import (
+	"encoding/json"
+	"strings"
+	"testing"
+)
+
+func TestResolvedComposeIsStructurallyBoundToLocks(t *testing.T) {
+	document, source, runtime := resolvedFixture()
+	data, _ := json.Marshal(document)
+	if err := ValidateResolvedCompose(data, source, runtime); err != nil {
+		t.Fatal(err)
+	}
+	mutations := []struct {
+		name   string
+		mutate func(*resolvedCompose)
+	}{
+		{"privileged yes", func(d *resolvedCompose) {
+			service := d.Services["postgres"]
+			service.Privileged = true
+			d.Services["postgres"] = service
+		}},
+		{"host network quoted", func(d *resolvedCompose) {
+			service := d.Services["network-probe"]
+			service.NetworkMode = "host"
+			d.Services["network-probe"] = service
+		}},
+		{"swapped locked image", func(d *resolvedCompose) {
+			service := d.Services["postgres"]
+			service.Image = "attacker.invalid/postgres@sha256:" + strings.Repeat("f", 64)
+			d.Services["postgres"] = service
+		}},
+		{"published port", func(d *resolvedCompose) {
+			service := d.Services["bifrost-1"]
+			service.Ports = []json.RawMessage{json.RawMessage(`{"published":8080}`)}
+			d.Services["bifrost-1"] = service
+		}},
+		{"external network", func(d *resolvedCompose) {
+			network := d.Networks["client_net"]
+			network.External = true
+			d.Networks["client_net"] = network
+		}},
+		{"wrong run identity", func(d *resolvedCompose) {
+			service := d.Services["egress-sentinel"]
+			service.Command = []string{"-run-id=other"}
+			d.Services["egress-sentinel"] = service
+		}},
+		{"route isolation removed", func(d *resolvedCompose) {
+			service := d.Services["netns-codex"]
+			service.Command = []string{"tail -f /dev/null"}
+			d.Services["netns-codex"] = service
+		}},
+	}
+	for _, mutation := range mutations {
+		t.Run(mutation.name, func(t *testing.T) {
+			candidate, _, _ := resolvedFixture()
+			mutation.mutate(&candidate)
+			data, _ := json.Marshal(candidate)
+			if err := ValidateResolvedCompose(data, source, runtime); err == nil {
+				t.Fatal("unsafe normalized Compose mutation was accepted")
+			}
+		})
+	}
+}
+
+func resolvedFixture() (resolvedCompose, Lock, RuntimeLock) {
+	digest := func(letter string) string { return "registry.invalid/image@sha256:" + strings.Repeat(letter, 64) }
+	source := Lock{Images: []Image{
+		{ID: "alpine-netns", Reference: digest("1")}, {ID: "coredns", Reference: digest("2")},
+		{ID: "health-stub", Reference: digest("3")}, {ID: "postgres", Reference: digest("4")},
+	}}
+	runtime := RuntimeLock{RunID: "run-1", Images: []RuntimeImage{
+		{ID: "bifrost", Reference: digest("a")}, {ID: "claude-runner", Reference: digest("b")},
+		{ID: "codex-runner", Reference: digest("c")}, {ID: "egress-sentinel", Reference: digest("d")},
+	}}
+	base := func(image string) resolvedService {
+		return resolvedService{Image: image, ReadOnly: true, CapDrop: []string{"ALL"}, SecurityOpt: []string{"no-new-privileges:true"}}
+	}
+	services := map[string]resolvedService{}
+	for _, name := range []string{"netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "netns-claude", "netns-codex"} {
+		service := base(digest("1"))
+		service.CapAdd = []string{"NET_ADMIN"}
+		service.Command = []string{"ip route del default; ip -6 route del default; test -z routes; ip route get dns"}
+		services[name] = service
+	}
+	services["network-probe"] = base(digest("1"))
+	services["network-probe"] = withMode(services["network-probe"], "service:netns-codex")
+	services["controlled-dns"] = base(digest("2"))
+	dns := services["controlled-dns"]
+	dns.CapAdd = []string{"NET_BIND_SERVICE"}
+	services["controlled-dns"] = dns
+	services["health-stub"] = base(digest("3"))
+	services["contract-stub"] = base(digest("3"))
+	services["postgres"] = base(digest("4"))
+	services["bifrost-1"] = withMode(base(digest("a")), "service:netns-bifrost-1")
+	services["bifrost-2"] = withMode(base(digest("a")), "service:netns-bifrost-2")
+	services["bifrost-3"] = withMode(base(digest("a")), "service:netns-bifrost-3")
+	services["claude-runner"] = withMode(base(digest("b")), "service:netns-claude")
+	services["codex-runner"] = withMode(base(digest("c")), "service:netns-codex")
+	sentinel := base(digest("d"))
+	sentinel.Command = []string{"-run-id=run-1"}
+	services["egress-sentinel"] = sentinel
+	networks := map[string]resolvedNetwork{
+		"client_net":  {Internal: true, EnableIPv6: true},
+		"data_net":    {Internal: true, EnableIPv6: true},
+		"control_net": {Internal: true, EnableIPv6: true},
+	}
+	return resolvedCompose{Services: services, Networks: networks}, source, runtime
+}
+
+func withMode(service resolvedService, mode string) resolvedService {
+	service.NetworkMode = mode
+	return service
+}
