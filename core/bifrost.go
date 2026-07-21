@@ -5906,7 +5906,7 @@ var errAllKeysDead = errors.New("all configured keys returned permanent per-key 
 
 // errAllKeysFiltered is returned by a keyProvider closure when healthy (non-dead) keys exist but
 // the KeyPoolFilter hook suppressed all of them. Unlike errAllKeysDead this is a transient
-// condition (the filter/circuit breaker self-heals), so it surfaces as a 503 rather than a 502.
+// condition (the filter state can change), so it surfaces as a 503 rather than a 502.
 var errAllKeysFiltered = errors.New("all eligible keys are temporarily suppressed by the key pool filter")
 
 // errDestinationRegionMismatch prevents a region-pinned fallback from
