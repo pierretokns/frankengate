@@ -9,12 +9,16 @@ import (
 	"fmt"
 	"hash/crc32"
 	"io"
+	"unicode/utf8"
 )
 
 const (
-	preludeLen  = 12 // total length, headers length, prelude CRC
-	minFrameLen = 16 // prelude + message CRC
-	maxFrameLen = 16 << 20
+	preludeLen        = 12 // total length, headers length, prelude CRC
+	minFrameLen       = 16 // prelude + message CRC
+	maxPayloadLen     = 24 << 20
+	maxHeadersLen     = 128 << 10
+	maxHeaderValueLen = (1 << 15) - 1
+	maxFrameLen       = minFrameLen + maxHeadersLen + maxPayloadLen
 )
 
 var (
@@ -53,7 +57,7 @@ func Encode(f Frame) ([]byte, error) {
 		return nil, err
 	}
 	total := preludeLen + len(h) + len(f.Payload) + 4
-	if total < minFrameLen || total > maxFrameLen || len(h) > 0xffff {
+	if len(h) > maxHeadersLen || len(f.Payload) > maxPayloadLen || total < minFrameLen || total > maxFrameLen {
 		return nil, fmt.Errorf("%w: invalid frame size", ErrMalformed)
 	}
 	b := make([]byte, total)
@@ -74,8 +78,12 @@ func Read(r io.Reader) (Frame, error) {
 		return Frame{}, err
 	}
 	total, headersLen := binary.BigEndian.Uint32(p[:4]), binary.BigEndian.Uint32(p[4:8])
-	if total < minFrameLen || total > maxFrameLen || headersLen > total-minFrameLen {
+	if total < minFrameLen || total > maxFrameLen || headersLen > maxHeadersLen || headersLen > total-minFrameLen {
 		return Frame{}, fmt.Errorf("%w: lengths", ErrMalformed)
+	}
+	payloadLen := total - headersLen - minFrameLen
+	if payloadLen > maxPayloadLen {
+		return Frame{}, fmt.Errorf("%w: payload length", ErrMalformed)
 	}
 	if crc32.ChecksumIEEE(p[:8]) != binary.BigEndian.Uint32(p[8:12]) {
 		return Frame{}, ErrCRC
@@ -100,10 +108,15 @@ func Read(r io.Reader) (Frame, error) {
 
 func encodeHeaders(hs []Header) ([]byte, error) {
 	b := make([]byte, 0)
+	names := make(map[string]struct{}, len(hs))
 	for _, h := range hs {
-		if len(h.Name) == 0 || len(h.Name) > 255 {
+		if len(h.Name) == 0 || len(h.Name) > 255 || !utf8.ValidString(h.Name) {
 			return nil, fmt.Errorf("%w: header name", ErrMalformed)
 		}
+		if _, exists := names[h.Name]; exists {
+			return nil, fmt.Errorf("%w: duplicate header %q", ErrMalformed, h.Name)
+		}
+		names[h.Name] = struct{}{}
 		b = append(b, byte(len(h.Name)))
 		b = append(b, h.Name...)
 		b = append(b, byte(h.Type))
@@ -142,15 +155,30 @@ func encodeHeaders(hs []Header) ([]byte, error) {
 			var x [8]byte
 			binary.BigEndian.PutUint64(x[:], uint64(v))
 			b = append(b, x[:]...)
+		case HeaderByteArray:
+			v, ok := h.Value.([]byte)
+			if !ok || len(v) == 0 || len(v) > maxHeaderValueLen {
+				return nil, fmt.Errorf("%w: byte-array value", ErrMalformed)
+			}
+			var x [2]byte
+			binary.BigEndian.PutUint16(x[:], uint16(len(v)))
+			b = append(b, x[:]...)
+			b = append(b, v...)
 		case HeaderString:
 			v, ok := h.Value.(string)
-			if !ok || len(v) > 65535 {
+			if !ok || len(v) == 0 || len(v) > maxHeaderValueLen || !utf8.ValidString(v) {
 				return nil, fmt.Errorf("%w: string value", ErrMalformed)
 			}
 			var x [2]byte
 			binary.BigEndian.PutUint16(x[:], uint16(len(v)))
 			b = append(b, x[:]...)
 			b = append(b, v...)
+		case HeaderUUID:
+			v, ok := h.Value.([16]byte)
+			if !ok {
+				return nil, fmt.Errorf("%w: UUID value", ErrMalformed)
+			}
+			b = append(b, v[:]...)
 		default:
 			return nil, fmt.Errorf("%w: unsupported header type %d", ErrMalformed, h.Type)
 		}
@@ -160,6 +188,7 @@ func encodeHeaders(hs []Header) ([]byte, error) {
 
 func decodeHeaders(b []byte) ([]Header, error) {
 	var out []Header
+	names := make(map[string]struct{})
 	for len(b) > 0 {
 		if len(b) < 2 {
 			return nil, ErrMalformed
@@ -169,7 +198,15 @@ func decodeHeaders(b []byte) ([]Header, error) {
 		if n == 0 || len(b) < n+1 {
 			return nil, ErrMalformed
 		}
-		name := string(b[:n])
+		nameBytes := b[:n]
+		if !utf8.Valid(nameBytes) {
+			return nil, fmt.Errorf("%w: header name is not UTF-8", ErrMalformed)
+		}
+		name := string(nameBytes)
+		if _, exists := names[name]; exists {
+			return nil, fmt.Errorf("%w: duplicate header %q", ErrMalformed, name)
+		}
+		names[name] = struct{}{}
 		typ := HeaderType(b[n])
 		b = b[n+1:]
 		var v any
@@ -202,17 +239,32 @@ func decodeHeaders(b []byte) ([]Header, error) {
 			}
 			v = int64(binary.BigEndian.Uint64(b))
 			b = b[8:]
-		case HeaderString:
+		case HeaderByteArray, HeaderString:
 			if len(b) < 2 {
 				return nil, ErrMalformed
 			}
 			n := int(binary.BigEndian.Uint16(b))
 			b = b[2:]
-			if len(b) < n {
+			if n == 0 || n > maxHeaderValueLen || len(b) < n {
 				return nil, ErrMalformed
 			}
-			v = string(b[:n])
+			if typ == HeaderString {
+				if !utf8.Valid(b[:n]) {
+					return nil, fmt.Errorf("%w: string value is not UTF-8", ErrMalformed)
+				}
+				v = string(b[:n])
+			} else {
+				v = append([]byte(nil), b[:n]...)
+			}
 			b = b[n:]
+		case HeaderUUID:
+			if len(b) < 16 {
+				return nil, ErrMalformed
+			}
+			var uuid [16]byte
+			copy(uuid[:], b[:16])
+			v = uuid
+			b = b[16:]
 		default:
 			return nil, fmt.Errorf("%w: unsupported header type %d", ErrMalformed, typ)
 		}
