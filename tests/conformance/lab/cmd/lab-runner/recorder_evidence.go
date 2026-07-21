@@ -83,6 +83,10 @@ func verifyExternalRecorderEvidence(paths recorderEvidencePaths, lock contract.R
 	if err != nil {
 		return fmt.Errorf("verify recorder transcript: %w", err)
 	}
+	final := transcript.Records[len(transcript.Records)-1]
+	if final.Outcome != contract.RecorderOutcomeComplete {
+		return fmt.Errorf("external recorder did not complete: outcome %q", final.Outcome)
+	}
 	pcapng, err := readBoundedRegularFile(paths.PCAPNG, 256<<20)
 	if err != nil {
 		return fmt.Errorf("read recorder pcapng: %w", err)

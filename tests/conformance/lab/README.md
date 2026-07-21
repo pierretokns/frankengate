@@ -97,7 +97,9 @@ readiness or completeness until the recorder process is launched and acknowledge
 interfaces. After teardown, the runner decodes the bounded control transcript, derives immutable
 bindings from the runtime lock, policy, and observed platform, then verifies the exact PCAPNG and
 canonical ledger bytes. PCAPNG interfaces must declare decimal `if_tsresol=9`; implicit
-microsecond timestamps cannot be compared with the recorder's monotonic-nanosecond lifecycle.
+microsecond timestamps cannot be compared with the recorder's monotonic-nanosecond lifecycle. A
+structurally valid `aborted` transcript remains diagnostic evidence only and fails the runner; only
+a fully verified `complete` recorder outcome may reach lifecycle result emission.
 
 It first normalizes the Docker daemon's reported Linux architecture and requires both independent
 CLI cell binaries to report the same Go runtime architecture. The raw result binds that observed
