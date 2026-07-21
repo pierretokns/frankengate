@@ -33,3 +33,9 @@ func TestCancellationAndRetryAccounting(t *testing.T) {
 	if ok, reason := c.State(); !ok || reason != "client-close" { t.Fatalf("latch: %v %q", ok, reason) }
 	r := NewRetryCounter(2); if err := r.Next(); err != nil { t.Fatal(err) }; if err := r.Next(); err != nil { t.Fatal(err) }; if err := r.Next(); err == nil { t.Fatal("retry limit not enforced") }; if r.Attempts() != 2 { t.Fatalf("attempt count: %d", r.Attempts()) }
 }
+
+func TestCanonicalTargetPreservesRepeatedAndEmptyValues(t *testing.T) {
+	g, err := CanonicalTarget("/invoke?z=last&a=two&a=&a=one"); if err != nil { t.Fatal(err) }
+	if g != "/invoke?a=&a=one&a=two&z=last" { t.Fatalf("canonical target: %s", g) }
+	if g, err := CanonicalTarget("/"); err != nil || g != "/" { t.Fatalf("root: %q %v", g, err) }
+}
