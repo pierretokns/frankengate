@@ -43,6 +43,7 @@ func recorderPCAPNGTestBlocks(t *testing.T, order binary.ByteOrder) [][]byte {
 		order.PutUint32(body[4:8], 65535)
 		options := appendRecorderPCAPNGTestOption(nil, order, pcapngIfNameOption, []byte(bridge.Name))
 		options = appendRecorderPCAPNGTestOption(options, order, pcapngIfDescriptionOption, []byte("linux-ifindex="+strconv.FormatUint(uint64(bridge.IfIndex), 10)))
+		options = appendRecorderPCAPNGTestOption(options, order, pcapngIfTimestampResolution, []byte{9})
 		options = append(options, 0, 0, 0, 0)
 		body = append(body, options...)
 		blocks = append(blocks, recorderPCAPNGTestBlock(order, pcapngInterfaceDescription, body))
@@ -224,6 +225,16 @@ func TestRecorderPCAPNGMutationsFailClosed(t *testing.T) {
 			blocks := validBlocks()
 			index := bytes.Index(blocks[1], []byte("linux-ifindex=11"))
 			blocks[1][index+len("linux-ifindex=")] = '9'
+			return joinRecorderPCAPNGBlocks(blocks)
+		},
+		"microsecond default forbidden": func() []byte {
+			blocks := validBlocks()
+			pattern := []byte{byte(pcapngIfTimestampResolution), 0, 1, 0, 9, 0, 0, 0}
+			index := bytes.Index(blocks[1], pattern)
+			if index < 0 {
+				t.Fatal("test IDB omitted timestamp resolution option")
+			}
+			blocks[1][index+4] = 6
 			return joinRecorderPCAPNGBlocks(blocks)
 		},
 		"non ethernet": func() []byte {
