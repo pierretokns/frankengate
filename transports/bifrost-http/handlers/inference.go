@@ -1206,13 +1206,15 @@ func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) error {
 	}
 	upgrade := len(ctx.Request.Header.PeekAll("Upgrade")) != 0
 	toolsValid := len(request.Input) > 0 && len(request.Input[0].Tools) > 0 && len(request.Input[0].Tools) <= 128
-	for _, tool := range request.Input[0].Tools {
-		var shape struct {
-			Type string `json:"type"`
-		}
-		if len(tool) == 0 || len(tool) > 64<<10 || json.Unmarshal(tool, &shape) != nil || (shape.Type != "custom" && shape.Type != "function" && shape.Type != "namespace") {
-			toolsValid = false
-			break
+	if len(request.Input) > 0 {
+		for _, tool := range request.Input[0].Tools {
+			var shape struct {
+				Type string `json:"type"`
+			}
+			if len(tool) == 0 || len(tool) > 64<<10 || json.Unmarshal(tool, &shape) != nil || (shape.Type != "custom" && shape.Type != "function" && shape.Type != "namespace") {
+				toolsValid = false
+				break
+			}
 		}
 	}
 	inputRunID, err := extractSealedRunID(request.Input)

@@ -30,6 +30,8 @@ func TestSealedCodexIngressRequiresExactLiteShape(t *testing.T) {
 		{strings.Replace(valid, `"parallel_tool_calls":false`, `"parallel_tool_calls":true`, 1), header},
 		{strings.Replace(valid, `,"parallel_tool_calls":false`, ``, 1), header},
 		{strings.Replace(valid, `"additional_tools"`, `"message"`, 1), header},
+		{strings.Replace(valid, `,"input":[{"type":"additional_tools","role":"developer","tools":[{"type":"custom","name":"apply_patch"}]},{"type":"message","role":"user","content":"SEALED_CODEX_RUN_ID:run-1"}]`, ``, 1), header},
+		{strings.Replace(valid, `[{"type":"additional_tools","role":"developer","tools":[{"type":"custom","name":"apply_patch"}]},{"type":"message","role":"user","content":"SEALED_CODEX_RUN_ID:run-1"}]`, `[]`, 1), header},
 		{strings.Replace(valid, `[{"type":"custom","name":"apply_patch"}]`, `[]`, 1), header},
 		{strings.Replace(valid, `"custom"`, `"unknown"`, 1), header},
 		{strings.Replace(valid, `SEALED_CODEX_RUN_ID:run-1`, `SEALED_CODEX_RUN_ID:other`, 1), header},
