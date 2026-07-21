@@ -2,9 +2,14 @@
   "schema": "sealed-cli-seed/v1",
   "files": [
     {
+      "source": "model-catalog.json",
+      "target": "codex/model-catalog.json",
+      "sha256": "fedde3d5652207e6a9c33f05bf079893f6b51c38849e324f3eec8d5db5a6c267"
+    },
+    {
       "source": "config.toml",
       "target": "codex/config.toml",
-      "sha256": "be38600a774a5429525888f04623ab47ba8ce3cf67cd327d54d45fed063c8840"
+      "sha256": "f21989a51319e6757e9cde858c5f4647524d90e7835ebb0e8b51659f22adcdf3"
     }
   ]
 }

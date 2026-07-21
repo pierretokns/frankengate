@@ -373,21 +373,26 @@ func TestClientSeedsAreHashBoundAndDisableExternalTraffic(t *testing.T) {
 			t.Fatal(err)
 		}
 		var manifest testSeedManifest
-		if err := json.Unmarshal(manifestBytes, &manifest); err != nil || manifest.Schema != "sealed-cli-seed/v1" || len(manifest.Files) != 1 {
+		if err := json.Unmarshal(manifestBytes, &manifest); err != nil || manifest.Schema != "sealed-cli-seed/v1" || len(manifest.Files) == 0 {
 			t.Fatalf("invalid %s seed manifest: %v", client, err)
 		}
-		entry := manifest.Files[0]
-		data, err := os.ReadFile(filepath.Join(root, entry.Source))
-		if err != nil {
-			t.Fatal(err)
+		var text string
+		for _, entry := range manifest.Files {
+			data, err := os.ReadFile(filepath.Join(root, entry.Source))
+			if err != nil {
+				t.Fatal(err)
+			}
+			digest := sha256.Sum256(data)
+			if hex.EncodeToString(digest[:]) != entry.SHA256 {
+				t.Fatalf("%s seed digest drift", client)
+			}
+			text += string(data)
+			if entry.Source == "model-catalog.json" && (!strings.Contains(string(data), `"use_responses_lite":true`) || !strings.Contains(string(data), `"slug":"bedrock_mantle/gpt-5.5"`)) {
+				t.Fatal("Codex catalog does not force Responses Lite")
+			}
 		}
-		digest := sha256.Sum256(data)
-		if hex.EncodeToString(digest[:]) != entry.SHA256 {
-			t.Fatalf("%s seed digest drift", client)
-		}
-		text := string(data)
 		if client == "codex" {
-			for _, required := range []string{"bedrock_mantle/gpt-5.5", "http://bifrost-1:8080/openai/v1", "check_for_update_on_startup = false", "request_max_retries = 0", "stream_max_retries = 0"} {
+			for _, required := range []string{"bedrock_mantle/gpt-5.5", "http://bifrost-1:8080/openai/v1", "responses_websockets = false", "responses_websockets_v2 = false", "requires_openai_auth = false", "model_catalog_json", "request_max_retries = 0", "stream_max_retries = 0"} {
 				if !strings.Contains(text, required) {
 					t.Fatalf("Codex seed misses %q", required)
 				}

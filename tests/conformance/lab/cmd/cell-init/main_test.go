@@ -172,6 +172,8 @@ func TestCodexInferenceCommandHasNoScenarioControlledArguments(t *testing.T) {
 	got := codexInferenceCommand("/opt/client/node_modules/.bin/codex", "run-1")
 	want := commandSpec{Binary: "/opt/client/node_modules/.bin/codex", Args: []string{
 		"exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
+		"-c", `model_provider="frankengate"`, "-c", `model="bedrock_mantle/gpt-5.5"`,
+		"-c", `features.responses_websockets=false`, "-c", `features.responses_websockets_v2=false`,
 		"--color", "never", "--json", codexBoundaryPrompt + "run-1",
 	}}
 	if !reflect.DeepEqual(got, want) {

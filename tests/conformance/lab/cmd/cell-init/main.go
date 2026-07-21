@@ -300,6 +300,8 @@ func summarizeInferenceOutput(output []byte, truncated bool) (int, string, bool)
 func codexInferenceCommand(binary, runID string) commandSpec {
 	return commandSpec{Binary: binary, Args: []string{
 		"exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
+		"-c", `model_provider="frankengate"`, "-c", `model="bedrock_mantle/gpt-5.5"`,
+		"-c", `features.responses_websockets=false`, "-c", `features.responses_websockets_v2=false`,
 		"--color", "never", "--json", codexBoundaryPrompt + runID,
 	}}
 }
