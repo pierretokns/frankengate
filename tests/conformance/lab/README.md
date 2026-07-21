@@ -58,7 +58,8 @@ them before the bead can close.
 
 The external recorder work uses a separate `sealed-lab-runtime-lock/v2` contract rather than
 silently changing v1. V2 declares a fifth digest-pinned multi-architecture `network-recorder`
-image, an immutable recorder source revision, the recorder binary SHA-256, and the compiled
+image, an immutable recorder source revision, separate recorder binary SHA-256 values for
+`linux/amd64` and `linux/arm64`, and the compiled
 recorder-policy SHA-256. Before recorder capability is used, `VerifyRecorderArtifacts` must hash
 the reviewed policy and extracted recorder binary bytes and match both declarations. The later host
 capture lifecycle must perform that verification against bytes obtained from the pinned image; a
@@ -76,6 +77,21 @@ GOWORK=off go run ./cmd/lab-runner \
   --compose /absolute/path/compose.yaml \
   --docker /absolute/path/to/docker
 ```
+
+A v2 run additionally requires `--recorder-policy /absolute/path/policy.bin`. Before Compose creates
+or starts any service, the runner creates a non-running, networkless, read-only container from the
+exact pinned recorder image, copies `/network-recorder` through Docker's bounded tar stream, and
+recomputes the policy and binary hashes declared by the v2 runtime lock. Selecting the exact path
+avoids treating daemon-injected container entries such as device nodes as image payload.
+The temporary extraction container is labeled with the run identity plus a cryptographically unique
+invocation token. Docker's canonical returned container ID—not its reusable name—is used for copying
+and normal cleanup. After an ambiguous create failure, cleanup occurs only when inspection proves the
+unique token and exact pinned image identity; otherwise the run fails without deleting an unowned
+container. Missing, empty, oversized, non-executable, duplicate, or hash-mismatched artifacts fail
+the run. CI also characterizes the accepted artifact archive using a real Docker
+import/create/copy cycle. This verifies selected image contents before capture; it still does not prove capture
+readiness or completeness until the recorder process is launched and acknowledges all three bridge
+interfaces.
 
 It first normalizes the Docker daemon's reported Linux architecture and requires both independent
 CLI cell binaries to report the same Go runtime architecture. The raw result binds that observed

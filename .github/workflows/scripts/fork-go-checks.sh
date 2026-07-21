@@ -203,6 +203,13 @@ run_focused_race_tests() {
   )
   echo "::endgroup::"
 
+  echo "::group::sealed lab recorder Docker artifact contract"
+  (
+    cd "$ROOT/tests/conformance/lab"
+    GOWORK=off FRANKENGATE_DOCKER_ARTIFACT_TEST=1 go test -count=1 ./cmd/lab-runner -run '^TestDockerRecorderCopyContract$'
+  )
+  echo "::endgroup::"
+
   echo "::group::focused race tests: framework streaming"
   (
     cd "$ROOT/framework"
