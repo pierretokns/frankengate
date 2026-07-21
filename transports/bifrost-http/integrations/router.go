@@ -393,22 +393,6 @@ type PreRequestCallback func(ctx *fasthttp.RequestCtx, bifrostCtx *schemas.Bifro
 // If it returns an error, an error response is sent instead of the success response.
 type PostRequestCallback func(ctx *fasthttp.RequestCtx, req interface{}, resp interface{}) error
 
-// RawPreRequestCallback observes the untouched HTTP request before route
-// middleware and integration parsing. It must not mutate the request or write a
-// response.
-type RawPreRequestCallback func(ctx *fasthttp.RequestCtx)
-
-func chainRouteHandler(handler fasthttp.RequestHandler, callback RawPreRequestCallback, middlewares ...schemas.BifrostHTTPMiddleware) fasthttp.RequestHandler {
-	chained := lib.ChainMiddlewares(handler, middlewares...)
-	if callback == nil {
-		return chained
-	}
-	return func(ctx *fasthttp.RequestCtx) {
-		callback(ctx)
-		chained(ctx)
-	}
-}
-
 // HTTPRequestTypeGetter is a function type that accepts only a *fasthttp.RequestCtx and
 // returns a schemas.RequestType indicating the HTTP request type derived from the context.
 type HTTPRequestTypeGetter func(ctx *fasthttp.RequestCtx) schemas.RequestType
@@ -518,7 +502,6 @@ type RouteConfig struct {
 	StreamConfig                           *StreamConfig                          // Optional: Streaming configuration (if nil, streaming not supported)
 	PreCallback                            PreRequestCallback                     // Optional: called after parsing but before Bifrost processing
 	PostCallback                           PostRequestCallback                    // Optional: called after request processing
-	RawPreCallback                         RawPreRequestCallback                  // Optional: passive observation before parsing
 	ShortCircuit                           ShortCircuit
 }
 
@@ -642,7 +625,7 @@ func (g *GenericRouter) RegisterRoutes(r *router.Router, middlewares ...schemas.
 		// This ensures each route only has its own middleware plus the originally passed middlewares
 		routeMiddlewares := append([]schemas.BifrostHTTPMiddleware{registerRequestTypeMiddleware}, middlewares...)
 
-		handler := chainRouteHandler(g.createHandler(route), route.RawPreCallback, routeMiddlewares...)
+		handler := lib.ChainMiddlewares(g.createHandler(route), routeMiddlewares...)
 		switch method {
 		case fasthttp.MethodPost:
 			r.POST(route.Path, handler)

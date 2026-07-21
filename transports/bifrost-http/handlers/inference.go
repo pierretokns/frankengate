@@ -3,9 +3,7 @@
 package handlers
 
 import (
-	"bytes"
 	"context"
-	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -14,9 +12,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -730,17 +726,7 @@ func (h *CompletionHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	// Completion endpoints (non-parameterized)
 	r.POST("/v1/completions", lib.ChainMiddlewares(h.textCompletion, baseMiddlewares...))
 	r.POST("/v1/chat/completions", lib.ChainMiddlewares(h.chatCompletion, baseMiddlewares...))
-	responsesHandler := h.responses
-	if runID := sealedIngressObserverRunID(); runID != "" {
-		responsesHandler = func(ctx *fasthttp.RequestCtx) {
-			// Evidence collection must remain observational: lifecycle validation
-			// rejects a missing valid record, but the observer never changes the
-			// gateway behavior being measured.
-			_ = observeSealedCodexIngress(ctx, runID)
-			h.responses(ctx)
-		}
-	}
-	r.POST("/v1/responses", lib.ChainMiddlewares(responsesHandler, baseMiddlewares...))
+	r.POST("/v1/responses", lib.ChainMiddlewares(h.responses, baseMiddlewares...))
 	responsesRetrieveMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.ResponsesRetrieveRequest)}, middlewares...)
 	responsesDeleteMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.ResponsesDeleteRequest)}, middlewares...)
 	responsesCancelMW := append([]schemas.BifrostHTTPMiddleware{createRequestTypeMiddleware(schemas.ResponsesCancelRequest)}, middlewares...)
@@ -1170,264 +1156,6 @@ func (h *CompletionHandler) responses(ctx *fasthttp.RequestCtx) {
 	}
 	// Send successful response
 	SendJSON(ctx, resp)
-}
-
-func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) (err error) {
-	diagnostic := map[string]any{
-		"schema": "sealed-codex-bifrost-ingress-rejected/v1", "run_id": runID,
-		"body_bounded": false, "json_unique": false, "json_decoded": false,
-		"method_ok": false, "model_ok": false, "stream_ok": false,
-		"lite_header_ok": false, "no_websocket_upgrade": false,
-		"instructions_absent": false, "top_level_tools_absent": false,
-		"parallel_false_present": false, "input_present": false,
-		"first_input_type_ok": false, "first_input_role_ok": false,
-		"tool_count_ok": false, "tool_shapes_ok": false,
-		"tool_types": []string{}, "invalid_tool_indices": []int{},
-		"input_run_id_count": 0, "input_run_id_matches": false,
-	}
-	reason := "invalid_run_id"
-	defer func() {
-		if err == nil {
-			return
-		}
-		diagnostic["reason"] = reason
-		encoded, marshalErr := json.Marshal(diagnostic)
-		if marshalErr == nil && len(encoded) <= 8<<10 {
-			fmt.Println(string(encoded))
-		}
-	}()
-	if !sealedLabRunID.MatchString(runID) {
-		return errors.New("sealed Codex ingress run ID is invalid")
-	}
-	body := ctx.PostBody()
-	if len(body) == 0 || len(body) > 1<<20 {
-		reason = "body_out_of_bounds"
-		return errors.New("sealed Codex ingress body out of bounds")
-	}
-	diagnostic["body_bounded"] = true
-	if err := rejectDuplicateJSONKeys(body); err != nil {
-		reason = "invalid_or_duplicate_json"
-		return err
-	}
-	diagnostic["json_unique"] = true
-	var request struct {
-		Model        string          `json:"model"`
-		Stream       bool            `json:"stream"`
-		Instructions json.RawMessage `json:"instructions"`
-		Tools        json.RawMessage `json:"tools"`
-		Parallel     *bool           `json:"parallel_tool_calls"`
-		Input        []struct {
-			Type    string            `json:"type"`
-			Role    string            `json:"role"`
-			Tools   []json.RawMessage `json:"tools"`
-			Content json.RawMessage   `json:"content"`
-		} `json:"input"`
-	}
-	if err := json.Unmarshal(body, &request); err != nil {
-		reason = "json_shape_decode_failed"
-		return err
-	}
-	diagnostic["json_decoded"] = true
-	liteHeaders := ctx.Request.Header.PeekAll("x-openai-internal-codex-responses-lite")
-	headerCount, headerValue := len(liteHeaders), ""
-	if headerCount == 1 {
-		headerValue = string(liteHeaders[0])
-	}
-	upgrade := len(ctx.Request.Header.PeekAll("Upgrade")) != 0
-	diagnostic["method_ok"] = string(ctx.Method()) == "POST"
-	diagnostic["model_ok"] = request.Model == "bedrock_mantle/gpt-5.5"
-	diagnostic["stream_ok"] = request.Stream
-	diagnostic["lite_header_ok"] = headerCount == 1 && headerValue == "true"
-	diagnostic["no_websocket_upgrade"] = !upgrade
-	diagnostic["instructions_absent"] = len(request.Instructions) == 0
-	diagnostic["top_level_tools_absent"] = len(request.Tools) == 0
-	diagnostic["parallel_false_present"] = request.Parallel != nil && !*request.Parallel
-	diagnostic["input_present"] = len(request.Input) > 0
-	diagnostic["first_input_type_ok"] = len(request.Input) > 0 && request.Input[0].Type == "additional_tools"
-	diagnostic["first_input_role_ok"] = len(request.Input) > 0 && request.Input[0].Role == "developer"
-	toolsValid := len(request.Input) > 0 && len(request.Input[0].Tools) > 0 && len(request.Input[0].Tools) <= 128
-	diagnostic["tool_count_ok"] = toolsValid
-	toolTypes := make([]string, 0)
-	invalidToolIndices := make([]int, 0)
-	if len(request.Input) > 0 {
-		for index, tool := range request.Input[0].Tools {
-			var shape struct {
-				Type              string          `json:"type"`
-				Name              string          `json:"name"`
-				Execution         string          `json:"execution"`
-				Description       string          `json:"description"`
-				Parameters        json.RawMessage `json:"parameters"`
-				Tools             json.RawMessage `json:"tools"`
-				ExternalWebAccess *bool           `json:"external_web_access"`
-				IndexedWebAccess  *bool           `json:"indexed_web_access"`
-			}
-			shapeOK := len(tool) > 0 && len(tool) <= 64<<10 && json.Unmarshal(tool, &shape) == nil
-			if len(toolTypes) < 128 && isSealedCodexToolType(shape.Type) {
-				toolTypes = append(toolTypes, shape.Type)
-			}
-			switch shape.Type {
-			case "custom":
-				shapeOK = shapeOK && shape.Name != ""
-			case "function":
-				shapeOK = shapeOK && shape.Name != "" && len(shape.Parameters) > 0
-			case "namespace":
-				shapeOK = shapeOK && shape.Name != "" && len(shape.Tools) > 0
-			case "tool_search":
-				var parameters struct {
-					Type string `json:"type"`
-				}
-				trimmedParameters := bytes.TrimSpace(shape.Parameters)
-				parametersObject := len(trimmedParameters) >= 2 && trimmedParameters[0] == '{' && trimmedParameters[len(trimmedParameters)-1] == '}' && json.Unmarshal(trimmedParameters, &parameters) == nil && parameters.Type == "object"
-				shapeOK = shapeOK && shape.Execution == "client" && shape.Description != "" && parametersObject
-			case "web_search":
-				shapeOK = shapeOK && shape.ExternalWebAccess != nil && (shape.IndexedWebAccess == nil || (*shape.ExternalWebAccess && *shape.IndexedWebAccess))
-			default:
-				shapeOK = false
-			}
-			if !shapeOK {
-				toolsValid = false
-				if len(invalidToolIndices) < 16 {
-					invalidToolIndices = append(invalidToolIndices, index)
-				}
-			}
-		}
-	}
-	diagnostic["tool_types"] = toolTypes
-	diagnostic["invalid_tool_indices"] = invalidToolIndices
-	diagnostic["tool_shapes_ok"] = toolsValid
-	inputRunID, markerCount, markerErr := extractSealedRunID(request.Input)
-	diagnostic["input_run_id_count"] = markerCount
-	diagnostic["input_run_id_matches"] = markerErr == nil && inputRunID == runID
-	if markerErr != nil {
-		reason = "input_run_id_cardinality"
-		return markerErr
-	}
-	valid := string(ctx.Method()) == "POST" && request.Model == "bedrock_mantle/gpt-5.5" && request.Stream && headerCount == 1 && headerValue == "true" && !upgrade && len(request.Instructions) == 0 && len(request.Tools) == 0 && request.Parallel != nil && !*request.Parallel && len(request.Input) > 0 && request.Input[0].Type == "additional_tools" && request.Input[0].Role == "developer" && toolsValid && inputRunID == runID
-	if !valid {
-		reason = "lite_predicate_mismatch"
-		return errors.New("sealed Codex ingress is not Responses Lite")
-	}
-	sum := sha256.Sum256(body)
-	record := map[string]any{"schema": "sealed-codex-bifrost-ingress/v1", "run_id": runID, "input_run_id": inputRunID, "method": "POST", "path": "/openai/v1/responses", "model": request.Model, "stream": true, "lite_header_count": headerCount, "lite_header_value": headerValue, "websocket_upgrade": false, "top_level_instructions": false, "top_level_tools": false, "parallel_tool_calls": false, "first_input_type": "additional_tools", "first_input_role": "developer", "first_input_tool_count": len(request.Input[0].Tools), "body_bytes": len(body), "body_sha256": fmt.Sprintf("%x", sum)}
-	encoded, _ := json.Marshal(record)
-	fmt.Println(string(encoded))
-	return nil
-}
-
-var sealedLabRunID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`)
-var sealedRunIDMarker = regexp.MustCompile(`SEALED_CODEX_RUN_ID:([A-Za-z0-9][A-Za-z0-9._-]{0,127})`)
-
-func isSealedCodexToolType(value string) bool {
-	switch value {
-	case "custom", "function", "namespace", "tool_search", "web_search":
-		return true
-	default:
-		return false
-	}
-}
-
-func sealedIngressObserverRunID() string {
-	if os.Getenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER") != "1" {
-		return ""
-	}
-	runID := os.Getenv("LAB_RUN_ID")
-	if !sealedLabRunID.MatchString(runID) {
-		panic("BIFROST_SEALED_LAB_INGRESS_OBSERVER requires a valid LAB_RUN_ID")
-	}
-	return runID
-}
-
-func rejectDuplicateJSONKeys(body []byte) error {
-	decoder := json.NewDecoder(bytes.NewReader(body))
-	var parse func() error
-	parse = func() error {
-		token, err := decoder.Token()
-		if err != nil {
-			return err
-		}
-		delim, ok := token.(json.Delim)
-		if !ok {
-			return nil
-		}
-		switch delim {
-		case '{':
-			seen := map[string]struct{}{}
-			for decoder.More() {
-				keyToken, err := decoder.Token()
-				if err != nil {
-					return err
-				}
-				key, ok := keyToken.(string)
-				if !ok {
-					return errors.New("invalid JSON object key")
-				}
-				if _, exists := seen[key]; exists {
-					return fmt.Errorf("duplicate JSON key %q", key)
-				}
-				seen[key] = struct{}{}
-				if err := parse(); err != nil {
-					return err
-				}
-			}
-			_, err = decoder.Token()
-			return err
-		case '[':
-			for decoder.More() {
-				if err := parse(); err != nil {
-					return err
-				}
-			}
-			_, err = decoder.Token()
-			return err
-		default:
-			return errors.New("unexpected JSON delimiter")
-		}
-	}
-	if err := parse(); err != nil {
-		return err
-	}
-	if _, err := decoder.Token(); !errors.Is(err, io.EOF) {
-		return errors.New("request body must contain exactly one JSON value")
-	}
-	return nil
-}
-
-func extractSealedRunID(input any) (string, int, error) {
-	data, err := json.Marshal(input)
-	if err != nil {
-		return "", 0, err
-	}
-	var parsed any
-	if err := json.Unmarshal(data, &parsed); err != nil {
-		return "", 0, err
-	}
-	var matches []string
-	var walk func(any)
-	walk = func(value any) {
-		switch value := value.(type) {
-		case string:
-			for _, match := range sealedRunIDMarker.FindAllStringSubmatch(value, -1) {
-				matches = append(matches, match[1])
-			}
-		case []any:
-			for _, item := range value {
-				walk(item)
-			}
-		case map[string]any:
-			for _, item := range value {
-				walk(item)
-			}
-		}
-	}
-	walk(parsed)
-	if len(matches) != 1 {
-		count := len(matches)
-		if count > 2 {
-			count = 2
-		}
-		return "", count, fmt.Errorf("expected exactly one sealed run ID in input, got %d", len(matches))
-	}
-	return matches[0], 1, nil
 }
 
 // prepareEmbeddingRequest prepares a BifrostEmbeddingRequest from the HTTP request body

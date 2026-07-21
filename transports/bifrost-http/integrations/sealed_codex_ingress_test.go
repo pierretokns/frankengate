@@ -2,29 +2,38 @@ package integrations
 
 import (
 	"bytes"
+	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/valyala/fasthttp"
 )
 
-func TestSealedCodexResponsesObserverRunsOnActualIntegrationRoute(t *testing.T) {
+func TestSealedCodexResponsesObserverDisabledReturnsHandlerUnchanged(t *testing.T) {
+	t.Setenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER", "")
+	next := func(*fasthttp.RequestCtx) {}
+	wrapped := wrapSealedCodexIngressObserverWithWriter(next, &bytes.Buffer{})
+	if reflect.ValueOf(wrapped).Pointer() != reflect.ValueOf(next).Pointer() {
+		t.Fatal("disabled observer added a production request wrapper")
+	}
+}
+
+func TestSealedCodexResponsesObserverRunsOutsideServerHandler(t *testing.T) {
 	t.Setenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER", "1")
 	t.Setenv("LAB_RUN_ID", "run-1")
-	if sealedCodexResponsesObserverWithWriter("/openai/responses", &bytes.Buffer{}) != nil {
-		t.Fatal("observer attached to non-canonical integration route")
-	}
 	var output bytes.Buffer
-	observer := sealedCodexResponsesObserverWithWriter("/openai/v1/responses", &output)
-	if observer == nil {
-		t.Fatal("observer absent from actual Codex integration route")
-	}
+	nextCalls := 0
+	observer := wrapSealedCodexIngressObserverWithWriter(func(*fasthttp.RequestCtx) { nextCalls++ }, &output)
 	valid := `{"model":"bedrock_mantle/gpt-5.5","stream":true,"parallel_tool_calls":false,"input":[{"type":"additional_tools","role":"developer","tools":[{"type":"tool_search","execution":"client","description":"search tools","parameters":{"type":"object"}}]},{"type":"message","role":"user","content":"SEALED_CODEX_RUN_ID:run-1"}]}`
 	ctx := &fasthttp.RequestCtx{}
 	ctx.Request.Header.SetMethod(fasthttp.MethodPost)
+	ctx.Request.SetRequestURI("/openai/v1/responses")
 	ctx.Request.Header.Set("x-openai-internal-codex-responses-lite", "true")
 	ctx.Request.SetBodyString(valid)
 	observer(ctx)
+	if nextCalls != 1 {
+		t.Fatalf("wrapped handler calls = %d", nextCalls)
+	}
 	if !strings.Contains(output.String(), `"schema":"sealed-codex-bifrost-ingress/v1"`) || strings.Contains(output.String(), "rejected") {
 		t.Fatalf("valid integration Lite ingress not accepted: %s", output.String())
 	}
@@ -71,5 +80,51 @@ func TestSealedCodexResponsesObserverRunsOnActualIntegrationRoute(t *testing.T) 
 	observer(ctx)
 	if !strings.Contains(output.String(), `"schema":"sealed-codex-bifrost-ingress/v1"`) || strings.Contains(output.String(), "rejected") {
 		t.Fatalf("semantic input_text marker not accepted: %s", output.String())
+	}
+}
+
+func TestSealedCodexResponsesObserverIgnoresOtherRoutes(t *testing.T) {
+	t.Setenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER", "1")
+	t.Setenv("LAB_RUN_ID", "run-1")
+	var output bytes.Buffer
+	nextCalls := 0
+	handler := wrapSealedCodexIngressObserverWithWriter(func(*fasthttp.RequestCtx) { nextCalls++ }, &output)
+	for _, path := range []string{
+		"/openai/responses",
+		"/openai//v1/responses",
+		"/openai/%76%31/responses",
+		"/openai/x/../v1/responses",
+		"/openai/v1/responses?model=bedrock_mantle%2Fgpt-5.5",
+	} {
+		output.Reset()
+		ctx := &fasthttp.RequestCtx{}
+		ctx.Request.Header.SetMethod(fasthttp.MethodPost)
+		ctx.Request.SetRequestURI(path)
+		ctx.Request.SetBodyString(`{"model":"bedrock_mantle/gpt-5.5"}`)
+		handler(ctx)
+		if output.Len() != 0 {
+			t.Fatalf("non-canonical route %q observed: %q", path, output.String())
+		}
+	}
+	if nextCalls != 5 {
+		t.Fatalf("non-canonical routes were swallowed: calls=%d", nextCalls)
+	}
+}
+
+func TestSealedCodexResponsesObserverPreservesWrappedResponse(t *testing.T) {
+	t.Setenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER", "1")
+	t.Setenv("LAB_RUN_ID", "run-1")
+	var output bytes.Buffer
+	handler := wrapSealedCodexIngressObserverWithWriter(func(ctx *fasthttp.RequestCtx) {
+		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+	}, &output)
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.SetMethod(fasthttp.MethodPost)
+	ctx.Request.SetRequestURI("/openai/v1/responses")
+	ctx.Request.Header.Set("x-openai-internal-codex-responses-lite", "true")
+	ctx.Request.SetBodyString(`{"model":"bedrock_mantle/gpt-5.5","stream":true,"parallel_tool_calls":false,"input":[{"type":"additional_tools","role":"developer","tools":[{"type":"tool_search","execution":"client","description":"search tools","parameters":{"type":"object"}}]},{"type":"message","role":"user","content":"SEALED_CODEX_RUN_ID:run-1"}]}`)
+	handler(ctx)
+	if ctx.Response.StatusCode() != fasthttp.StatusBadRequest || !strings.Contains(output.String(), `"schema":"sealed-codex-bifrost-ingress/v1"`) {
+		t.Fatalf("outer observer altered response or missed ingress: status=%d output=%s", ctx.Response.StatusCode(), output.String())
 	}
 }

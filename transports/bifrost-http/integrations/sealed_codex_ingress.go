@@ -16,23 +16,27 @@ import (
 var sealedIntegrationRunID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`)
 var sealedIntegrationMarker = regexp.MustCompile(`SEALED_CODEX_RUN_ID:([A-Za-z0-9][A-Za-z0-9._-]{0,127})`)
 
-func sealedCodexResponsesObserver(routePath string) RawPreRequestCallback {
-	return sealedCodexResponsesObserverWithWriter(routePath, os.Stdout)
+// WrapSealedCodexIngressObserver wraps the final HTTP server handler only in the
+// sealed lab. The disabled path returns next unchanged, so production requests
+// have no observer branch.
+func WrapSealedCodexIngressObserver(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+	return wrapSealedCodexIngressObserverWithWriter(next, os.Stdout)
 }
 
-func sealedCodexResponsesObserverWithWriter(routePath string, output io.Writer) RawPreRequestCallback {
+func wrapSealedCodexIngressObserverWithWriter(next fasthttp.RequestHandler, output io.Writer) fasthttp.RequestHandler {
 	if os.Getenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER") != "1" {
-		return nil
+		return next
 	}
 	runID := os.Getenv("LAB_RUN_ID")
 	if !sealedIntegrationRunID.MatchString(runID) {
 		panic("BIFROST_SEALED_LAB_INGRESS_OBSERVER requires a valid LAB_RUN_ID")
 	}
-	if routePath != "/openai/v1/responses" {
-		return nil
-	}
 	return func(ctx *fasthttp.RequestCtx) {
-		observeSealedCodexIntegrationIngress(ctx, runID, output)
+		uri := ctx.Request.URI()
+		if string(ctx.Method()) == fasthttp.MethodPost && string(uri.PathOriginal()) == "/openai/v1/responses" && len(uri.QueryString()) == 0 {
+			observeSealedCodexIntegrationIngress(ctx, runID, output)
+		}
+		next(ctx)
 	}
 }
 
