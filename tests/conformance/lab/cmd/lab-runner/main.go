@@ -207,6 +207,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		StatusRowCount     int                           `json:"status_row_count"`
 		MissingStatusRows  int                           `json:"missing_status_rows"`
 		LogTailLines       int                           `json:"log_tail_lines"`
+		IngressAccepted    []codexIngressRecord          `json:"codex_ingress_accepted,omitempty"`
 		IngressRejections  []codexIngressRejectionRecord `json:"codex_ingress_rejections,omitempty"`
 		Services           []row                         `json:"services"`
 	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1", LogTailLines: 2000}
@@ -350,9 +351,15 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		if logTruncated {
 			errorClass = "oversize"
 		}
-		if strings.HasPrefix(service, "bifrost-") && len(result.IngressRejections) < 4 {
-			remaining := 4 - len(result.IngressRejections)
-			result.IngressRejections = append(result.IngressRejections, parseCodexIngressRejections(logData, paths.RunID, remaining)...)
+		if strings.HasPrefix(service, "bifrost-") {
+			if len(result.IngressAccepted) < 4 {
+				remaining := 4 - len(result.IngressAccepted)
+				result.IngressAccepted = append(result.IngressAccepted, parseCodexIngressAccepted(logData, paths.RunID, remaining)...)
+			}
+			if len(result.IngressRejections) < 4 {
+				remaining := 4 - len(result.IngressRejections)
+				result.IngressRejections = append(result.IngressRejections, parseCodexIngressRejections(logData, paths.RunID, remaining)...)
+			}
 		}
 		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
@@ -471,6 +478,34 @@ func parseCodexIngressRejections(data []byte, runID string, limit int) []codexIn
 			}
 		}
 		if !validMetadata {
+			continue
+		}
+		result = append(result, record)
+	}
+	return result
+}
+
+func parseCodexIngressAccepted(data []byte, runID string, limit int) []codexIngressRecord {
+	result := make([]codexIngressRecord, 0, limit)
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var record codexIngressRecord
+		if json.Unmarshal(line, &record) != nil ||
+			record.Schema != "sealed-codex-bifrost-ingress/v1" ||
+			record.RunID != runID || record.InputRunID != runID ||
+			record.Method != "POST" || record.Path != "/openai/v1/responses" ||
+			record.Model != "bedrock_mantle/gpt-5.5" || !record.Stream ||
+			record.LiteHeaderCount != 1 || record.LiteHeaderValue != "true" ||
+			record.WebsocketUpgrade || record.TopLevelInstructions || record.TopLevelTools || record.ParallelToolCalls ||
+			record.FirstInputType != "additional_tools" || record.FirstInputRole != "developer" ||
+			record.FirstInputToolCount <= 0 || record.FirstInputToolCount > 128 ||
+			record.BodyBytes <= 0 || record.BodyBytes > 1<<20 || !sha256Value.MatchString(record.BodySHA256) {
 			continue
 		}
 		result = append(result, record)

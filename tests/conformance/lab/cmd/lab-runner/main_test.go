@@ -207,6 +207,33 @@ func TestParseCodexIngressRejectionsPreservesOnlyAllowlistedMetadata(t *testing.
 	}
 }
 
+func TestParseCodexIngressAcceptedPreservesOnlyValidatedMetadata(t *testing.T) {
+	valid := `{"schema":"sealed-codex-bifrost-ingress/v1","run_id":"test-1","input_run_id":"test-1","method":"POST","path":"/openai/v1/responses","model":"bedrock_mantle/gpt-5.5","stream":true,"lite_header_count":1,"lite_header_value":"true","websocket_upgrade":false,"top_level_instructions":false,"top_level_tools":false,"parallel_tool_calls":false,"first_input_type":"additional_tools","first_input_role":"developer","first_input_tool_count":2,"body_bytes":512,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","raw_body":"Bearer secret"}`
+	records := parseCodexIngressAccepted([]byte(valid+"\n"), "test-1", 4)
+	if len(records) != 1 || records[0].BodyBytes != 512 || records[0].FirstInputToolCount != 2 {
+		t.Fatalf("accepted ingress metadata not preserved: %#v", records)
+	}
+	encoded, _ := json.Marshal(records)
+	if bytes.Contains(encoded, []byte("Bearer")) || bytes.Contains(encoded, []byte("raw_body")) {
+		t.Fatalf("unallowlisted content survived: %s", encoded)
+	}
+	if prefixed := parseCodexIngressAccepted([]byte("bifrost-2 | "+valid+"\n"), "test-1", 4); len(prefixed) != 0 {
+		t.Fatalf("prefixed attacker-controlled marker accepted: %#v", prefixed)
+	}
+	mutants := []string{
+		strings.Replace(valid, `"run_id":"test-1"`, `"run_id":"other"`, 1),
+		strings.Replace(valid, `"model":"bedrock_mantle/gpt-5.5"`, `"model":"other"`, 1),
+		strings.Replace(valid, `"lite_header_count":1`, `"lite_header_count":2`, 1),
+		strings.Replace(valid, `"first_input_tool_count":2`, `"first_input_tool_count":129`, 1),
+		strings.Replace(valid, `"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"`, `"body_sha256":"bad"`, 1),
+	}
+	for index, mutant := range mutants {
+		if got := parseCodexIngressAccepted([]byte(mutant+"\n"), "test-1", 4); len(got) != 0 {
+			t.Fatalf("unsafe accepted-ingress mutant %d accepted: %#v", index, got)
+		}
+	}
+}
+
 func TestSanitizedPanicFingerprintKeepsOnlyRepositoryFrames(t *testing.T) {
 	input := []byte("panic: Bearer secret\n\t/src/transports/bifrost-http/handlers/inference.go:1234 +0x1\n\tgithub.com/maximhq/bifrost/core/bifrost.go:88 +0x2\n\t/secret/token.go:9\n")
 	detected, frames := sanitizedPanicFingerprint(input, 16)
