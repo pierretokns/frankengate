@@ -83,13 +83,13 @@ build_cli() {
     native_package="$(jq -r --arg platform "linux/$arch" '.native_cli_packages[]? | select(.platform==$platform) | .package' "$lab/images.lock.v1.json")"
     native_tarball="$(jq -r --arg platform "linux/$arch" '.native_cli_packages[]? | select(.platform==$platform) | .tarball' "$lab/images.lock.v1.json")"
     native_integrity="$(jq -r --arg platform "linux/$arch" '.native_cli_packages[]? | select(.platform==$platform) | .integrity' "$lab/images.lock.v1.json")"
-    context="$build/$client-$arch"; mkdir -p "$context/offline" "$context/seed"
+    context="$build/$client-$arch"; mkdir -p "$context/offline" "$context/seed/$client"
     docker buildx build --provenance=false --sbom=false --platform "linux/$arch" --file "$lab/Dockerfile.prefetch" \
       --build-arg "CLI_PACKAGE=$package" --build-arg "CLI_VERSION=$version" --build-arg "CLI_INTEGRITY=$integrity" \
       --build-arg "NATIVE_PACKAGE=$native_package" --build-arg "NATIVE_TARBALL=$native_tarball" --build-arg "NATIVE_INTEGRITY=$native_integrity" \
       --output "type=local,dest=$context/offline" "$lab"
     (cd "$lab" && GOWORK=off CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath -ldflags='-s -w' -o "$context/cell-init" ./cmd/cell-init)
-    cp -R "$lab/seed/$client/." "$context/seed/"
+    cp -R "$lab/seed/$client/." "$context/seed/$client/"
     tag="$registry/sealed-$client:$run_id-$arch"
     docker buildx build --provenance=false --sbom=false --network=none --platform "linux/$arch" --file "$lab/Dockerfile.runner" --push --tag "$tag" "$context"
     child="$(reference "$tag")"; cli_binary="/opt/client/node_modules/.bin/$client"; exit_code=0

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -37,6 +39,44 @@ func TestTargetPlatformManifestBindsRuntimeArchitecture(t *testing.T) {
 		if err := validateTargetPlatform(mutant, "linux", "amd64"); err == nil {
 			t.Fatalf("accepted target mutant %s", mutant)
 		}
+	}
+}
+
+func TestRequiredSeedNamespacesFailClosed(t *testing.T) {
+	validCodex := map[string]struct{}{"codex/config.toml": {}, "codex/model-catalog.json": {}}
+	if err := validateRequiredSeedTargets("codex", validCodex); err != nil {
+		t.Fatal(err)
+	}
+	for _, targets := range []map[string]struct{}{{}, {"config.toml": {}, "model-catalog.json": {}}, {"codex/config.toml": {}}, {"codex/config.toml": {}, "codex/model-catalog.json": {}, "home/config.toml": {}}} {
+		if validateRequiredSeedTargets("codex", targets) == nil {
+			t.Fatalf("invalid Codex namespace accepted: %#v", targets)
+		}
+	}
+	if validateRequiredSeedTargets("unknown", map[string]struct{}{}) == nil {
+		t.Fatal("unknown client seed accepted")
+	}
+}
+
+func TestRequiredSeedManifestRejectsMissingAndFlattenedLayout(t *testing.T) {
+	root := t.TempDir()
+	if _, err := readRequiredSeedManifest(root, "codex"); err == nil {
+		t.Fatal("missing manifest accepted")
+	}
+	if err := os.WriteFile(filepath.Join(root, "manifest.json"), []byte(`{}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := readRequiredSeedManifest(root, "codex"); err == nil {
+		t.Fatal("flattened manifest accepted")
+	}
+	dir := filepath.Join(root, "codex")
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "manifest.json"), []byte(`{"schema":"sealed-cli-seed/v1"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := readRequiredSeedManifest(root, "codex"); err != nil {
+		t.Fatal(err)
 	}
 }
 

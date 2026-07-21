@@ -42,12 +42,17 @@ func TestHostedWorkflowPreservesSealedLabInputs(t *testing.T) {
 		"refusing stale artifact directory", "count > 4",
 		`LAB_CLIENT_BRIDGE="${bridge_prefix}c"`, `LAB_CONTROL_BRIDGE="${bridge_prefix}o"`, `LAB_DATA_BRIDGE="${bridge_prefix}d"`,
 		`node --test "$lab/prefetch/verify-tree.test.mjs"`,
+		`mkdir -p "$context/offline" "$context/seed/$client"`,
+		`cp -R "$lab/seed/$client/." "$context/seed/$client/"`,
 		`docker buildx build --provenance=false --sbom=false --network=none --platform "linux/$arch" --file "$lab/Dockerfile.runner" --push --tag "$tag" "$context"`,
 		`docker buildx build --provenance=false --sbom=false --network=none --platform "linux/$arch" --file "$lab/Dockerfile.sentinel" --push --tag "$registry/sentinel:$run_id-$arch" "$build/sentinel-$arch"`,
 	} {
 		if !strings.Contains(script, required) {
 			t.Fatalf("hosted runner misses %q", required)
 		}
+	}
+	if strings.Contains(script, `cp -R "$lab/seed/$client/." "$context/seed/"`) {
+		t.Fatal("client seed flattened out of its required namespace")
 	}
 	if strings.Count(script, "--provenance=false --sbom=false") != 4 {
 		t.Fatal("offline second-stage build count drifted")

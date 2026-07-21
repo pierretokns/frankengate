@@ -536,11 +536,7 @@ func prepareCell(client string) error {
 			return err
 		}
 	}
-	manifestPath := filepath.Join("/opt/seed", client, "manifest.json")
-	data, err := os.ReadFile(manifestPath)
-	if os.IsNotExist(err) {
-		return nil
-	}
+	data, err := readRequiredSeedManifest("/opt/seed", client)
 	if err != nil {
 		return err
 	}
@@ -581,6 +577,33 @@ func prepareCell(client string) error {
 		}
 		if err := copySeed(client, file); err != nil {
 			return err
+		}
+	}
+	if err := validateRequiredSeedTargets(client, seenTargets); err != nil {
+		return err
+	}
+	return nil
+}
+
+func readRequiredSeedManifest(seedRoot, client string) ([]byte, error) {
+	if client != "codex" && client != "claude" {
+		return nil, errors.New("unknown seed client")
+	}
+	data, err := os.ReadFile(filepath.Join(seedRoot, client, "manifest.json"))
+	if err != nil {
+		return nil, fmt.Errorf("required %s seed manifest: %w", client, err)
+	}
+	return data, nil
+}
+
+func validateRequiredSeedTargets(client string, targets map[string]struct{}) error {
+	want := map[string][]string{"codex": {"codex/config.toml", "codex/model-catalog.json"}, "claude": {"home/.claude/settings.json"}}[client]
+	if want == nil || len(targets) != len(want) {
+		return errors.New("seed manifest has wrong client namespace")
+	}
+	for _, target := range want {
+		if _, ok := targets[target]; !ok {
+			return fmt.Errorf("seed manifest misses required target %s", target)
 		}
 	}
 	return nil
@@ -672,7 +695,19 @@ func copySeed(client string, file seedFile) error {
 	if err := os.MkdirAll(filepath.Dir(target), 0o700); err != nil {
 		return err
 	}
-	return os.WriteFile(target, data, 0o600)
+	if err := os.WriteFile(target, data, 0o600); err != nil {
+		return err
+	}
+	written, err := os.ReadFile(target)
+	if err != nil {
+		return err
+	}
+	writtenDigest := sha256.Sum256(written)
+	info, err = os.Lstat(target)
+	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm() != 0o600 || writtenDigest != digest {
+		return errors.New("post-copy seed verification failed")
+	}
+	return nil
 }
 
 func countEntries(root string) int {
