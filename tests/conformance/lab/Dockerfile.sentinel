@@ -1,0 +1,6 @@
+FROM scratch
+
+COPY --chown=65532:65532 offline/egress-sentinel /usr/local/bin/egress-sentinel
+
+USER 65532:65532
+ENTRYPOINT ["/usr/local/bin/egress-sentinel"]

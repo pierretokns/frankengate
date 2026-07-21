@@ -1,0 +1,48 @@
+# syntax=docker/dockerfile:1.7
+
+# The sealed lab always uses PostgreSQL for config and logs, so its gateway
+# binary intentionally excludes the SQLite CGO driver. Building on the native
+# BuildKit platform and cross-compiling the pure-Go binary avoids executing a
+# foreign Go toolchain under QEMU while retaining the production HTTP entrypoint.
+FROM --platform=$BUILDPLATFORM golang:1.26.5-alpine3.23@sha256:622e56dbc11a8cfe87cafa2331e9a201877271cbff918af53d3be315f3da88cc AS builder
+ARG TARGETOS
+ARG TARGETARCH
+WORKDIR /src
+COPY . ./
+RUN go work init \
+    ./core \
+    ./framework \
+    ./plugins/compat \
+    ./plugins/governance \
+    ./plugins/jsonparser \
+    ./plugins/logging \
+    ./plugins/maxim \
+    ./plugins/mocker \
+    ./plugins/modelcatalogresolver \
+    ./plugins/otel \
+    ./plugins/prompts \
+    ./plugins/semanticcache \
+    ./plugins/telemetry \
+    ./transports
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
+    -ldflags="-w -s -X main.Version=vsealed-lab" \
+    -trimpath \
+    -o /out/bifrost-http \
+    ./transports/bifrost-http
+
+FROM alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
+ENV APP_PORT=8080 \
+    APP_HOST=0.0.0.0 \
+    APP_DIR=/app/data \
+    LOG_LEVEL=info \
+    LOG_STYLE=json \
+    BIFROST_SKIP_WRITE_CHECK=1 \
+    GOGC="" \
+    GOMEMLIMIT=""
+WORKDIR /app
+COPY --from=builder --chown=1000:0 --chmod=0555 /out/bifrost-http /app/main
+COPY --chown=1000:0 --chmod=0555 transports/docker-entrypoint.sh /app/docker-entrypoint.sh
+USER 1000:0
+EXPOSE 8080
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["/app/main"]

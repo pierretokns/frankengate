@@ -1,0 +1,11 @@
+{
+  "openai.gpt-5.6-sol": {
+    "base_model": "openai.gpt-5.6-sol",
+    "provider": "bedrock_mantle",
+    "mode": "responses",
+    "input_cost_per_token": 0,
+    "output_cost_per_token": 0,
+    "max_input_tokens": 128000,
+    "max_output_tokens": 4096
+  }
+}
