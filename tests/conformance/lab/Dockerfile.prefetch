@@ -5,6 +5,9 @@ ARG CLI_VERSION
 ARG CLI_INTEGRITY
 ARG TARGETOS
 ARG TARGETARCH
+ARG NATIVE_PACKAGE
+ARG NATIVE_TARBALL
+ARG NATIVE_INTEGRITY
 
 COPY prefetch/verify-tree.mjs /usr/local/lib/verify-tree.mjs
 COPY prefetch/verify-sri.mjs /usr/local/lib/verify-sri.mjs
@@ -24,7 +27,7 @@ RUN test -n "$CLI_PACKAGE" && test -n "$CLI_VERSION" && test -n "$CLI_INTEGRITY"
     && node /usr/local/lib/verify-root-lock.mjs /opt/client/package-lock.json "$CLI_PACKAGE" "$CLI_VERSION" "$CLI_INTEGRITY" \
     && npm_config_platform="$TARGETOS" npm_config_arch="$npm_cpu" npm_config_os="$TARGETOS" npm_config_cpu="$npm_cpu" npm ci --prefix /opt/client --ignore-scripts --omit=dev \
     && case "$CLI_PACKAGE" in \
-         @anthropic-ai/claude-code) node /usr/local/lib/select-claude-native.mjs /opt/client "$CLI_VERSION" "$TARGETARCH" && /opt/client/node_modules/.bin/claude --version | grep -Ex "${CLI_VERSION}( \(Claude Code\))?" ;; \
+         @anthropic-ai/claude-code) node /usr/local/lib/select-claude-native.mjs /opt/client "$CLI_VERSION" "$TARGETARCH" "$NATIVE_PACKAGE" "$NATIVE_TARBALL" "$NATIVE_INTEGRITY" && /opt/client/node_modules/.bin/claude --version | grep -Ex "${CLI_VERSION}( \(Claude Code\))?" ;; \
          @openai/codex) /opt/client/node_modules/.bin/codex --version | grep -Ex "codex-cli ${CLI_VERSION}" ;; \
          *) exit 1 ;; \
        esac \

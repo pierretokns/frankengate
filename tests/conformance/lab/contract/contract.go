@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"regexp"
@@ -15,6 +16,7 @@ import (
 const LockSchema = "sealed-lab-image-lock/v1"
 const RuntimeLockSchema = "sealed-lab-runtime-lock/v1"
 const RuntimeLockSchemaV2 = "sealed-lab-runtime-lock/v2"
+const RuntimeLockSchemaV3 = "sealed-lab-runtime-lock/v3"
 
 var (
 	digestReference = regexp.MustCompile(`^[^\s]+@sha256:[0-9a-f]{64}$`)
@@ -25,9 +27,18 @@ var (
 )
 
 type Lock struct {
-	Schema      string       `json:"schema"`
-	Images      []Image      `json:"images"`
-	CLIPackages []CLIPackage `json:"cli_packages"`
+	Schema            string             `json:"schema"`
+	Images            []Image            `json:"images"`
+	CLIPackages       []CLIPackage       `json:"cli_packages"`
+	NativeCLIPackages []NativeCLIPackage `json:"native_cli_packages,omitempty"`
+}
+type NativeCLIPackage struct {
+	ID        string `json:"id"`
+	Package   string `json:"package"`
+	Platform  string `json:"platform"`
+	Version   string `json:"version"`
+	Tarball   string `json:"tarball"`
+	Integrity string `json:"integrity"`
 }
 
 type Image struct {
@@ -124,6 +135,10 @@ func (lock RuntimeLock) Validate() error {
 			return fmt.Errorf("incomplete %s lock", RuntimeLockSchemaV2)
 		}
 		want = append(want, "network-recorder")
+	case RuntimeLockSchemaV3:
+		if lock.RecorderPolicySHA256 != "" || len(lock.Images) != 4 {
+			return fmt.Errorf("incomplete %s lock", RuntimeLockSchemaV3)
+		}
 	default:
 		return fmt.Errorf("unsupported runtime lock schema %q", lock.Schema)
 	}
@@ -138,7 +153,7 @@ func (lock RuntimeLock) Validate() error {
 		if isRunner != exactVersion.MatchString(image.ClientVersion) {
 			return fmt.Errorf("runtime image %q has invalid client version binding", image.ID)
 		}
-		if isRunner && (image.AttestationSHA256 != "" || len(image.ChildDigests) != 0) {
+		if isRunner && (lock.Schema == RuntimeLockSchemaV3 || image.AttestationSHA256 != "" || len(image.ChildDigests) != 0) {
 			if !sha256Value.MatchString(image.AttestationSHA256) || len(image.ChildDigests) != 2 {
 				return fmt.Errorf("runtime image %q lacks child attestations", image.ID)
 			}
@@ -288,6 +303,16 @@ func (lock Lock) Validate() error {
 		}
 		if !strings.Contains(cli.Tarball, cli.Version) {
 			return fmt.Errorf("CLI package %q tarball does not bind its version", cli.ID)
+		}
+	}
+	if len(lock.NativeCLIPackages) != 0 {
+		if len(lock.NativeCLIPackages) != 2 {
+			return errors.New("native CLI package matrix incomplete")
+		}
+		for i, p := range lock.NativeCLIPackages {
+			if p.Platform != []string{"linux/amd64", "linux/arm64"}[i] || p.Version != "2.1.214" || !strings.HasPrefix(p.Package, "@anthropic-ai/claude-code-linux-") || !strings.HasPrefix(p.Tarball, "https://registry.npmjs.org/") || !strings.HasPrefix(p.Integrity, "sha512-") {
+				return errors.New("native CLI package lock invalid")
+			}
 		}
 	}
 	return nil

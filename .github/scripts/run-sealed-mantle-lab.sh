@@ -74,15 +74,19 @@ reference() {
 
 build_cli() {
   local client="$1" package_id="$2"
-  local package version integrity arch context tag child cli_binary observed native exit_code attest first second
+  local package version integrity arch context tag child cli_binary observed native exit_code attest first second native_package native_tarball native_integrity
   package="$(jq -r --arg id "$package_id" '.cli_packages[] | select(.id==$id) | .package' "$lab/images.lock.v1.json")"
   version="$(jq -r --arg id "$package_id" '.cli_packages[] | select(.id==$id) | .version' "$lab/images.lock.v1.json")"
   integrity="$(jq -r --arg id "$package_id" '.cli_packages[] | select(.id==$id) | .integrity' "$lab/images.lock.v1.json")"
   attest="$build/$client-attestations.json"; printf '[]\n' >"$attest"
   for arch in amd64 arm64; do
+    native_package="$(jq -r --arg platform "linux/$arch" '.native_cli_packages[]? | select(.platform==$platform) | .package' "$lab/images.lock.v1.json")"
+    native_tarball="$(jq -r --arg platform "linux/$arch" '.native_cli_packages[]? | select(.platform==$platform) | .tarball' "$lab/images.lock.v1.json")"
+    native_integrity="$(jq -r --arg platform "linux/$arch" '.native_cli_packages[]? | select(.platform==$platform) | .integrity' "$lab/images.lock.v1.json")"
     context="$build/$client-$arch"; mkdir -p "$context/offline" "$context/seed"
     docker buildx build --platform "linux/$arch" --file "$lab/Dockerfile.prefetch" \
       --build-arg "CLI_PACKAGE=$package" --build-arg "CLI_VERSION=$version" --build-arg "CLI_INTEGRITY=$integrity" \
+      --build-arg "NATIVE_PACKAGE=$native_package" --build-arg "NATIVE_TARBALL=$native_tarball" --build-arg "NATIVE_INTEGRITY=$native_integrity" \
       --output "type=local,dest=$context/offline" "$lab"
     (cd "$lab" && GOWORK=off CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath -ldflags='-s -w' -o "$context/cell-init" ./cmd/cell-init)
     cp -R "$lab/seed/$client/." "$context/seed/"
@@ -127,7 +131,7 @@ claude_ref="$(reference "$registry/sealed-claude:$run_id")"
 sentinel_ref="$(reference "$registry/sentinel:$run_id")"
 export BIFROST_IMAGE="$bifrost_ref" CODEX_RUNNER_IMAGE="$codex_ref" CLAUDE_RUNNER_IMAGE="$claude_ref" EGRESS_SENTINEL_IMAGE="$sentinel_ref"
 
-jq -n --slurpfile ca "$build/claude-attestations.json" --slurpfile xa "$build/codex-attestations.json" --arg casha "$(sha256sum "$build/claude-attestations.json" | cut -d' ' -f1)" --arg xasha "$(sha256sum "$build/codex-attestations.json" | cut -d' ' -f1)" --arg run "$run_id" --arg source "$source_hash" --arg bifrost "$bifrost_ref" --arg codex "$codex_ref" --arg claude "$claude_ref" --arg sentinel "$sentinel_ref" --arg cv "$codex_version" --arg av "$claude_version" '{schema:"sealed-lab-runtime-lock/v1",run_id:$run,source_lock_sha256:$source,images:[{id:"bifrost",reference:$bifrost,platforms:["linux/amd64","linux/arm64"],source:("git:"+env.GITHUB_SHA)},{id:"claude-runner",reference:$claude,platforms:["linux/amd64","linux/arm64"],source:("lock:"+$av),client_version:$av,child_digests:($ca[0]|map({platform,sha256:(.child_digest|sub("^sha256:";""))})),attestation_sha256:$casha},{id:"codex-runner",reference:$codex,platforms:["linux/amd64","linux/arm64"],source:("lock:"+$cv),client_version:$cv,child_digests:($xa[0]|map({platform,sha256:(.child_digest|sub("^sha256:";""))})),attestation_sha256:$xasha},{id:"egress-sentinel",reference:$sentinel,platforms:["linux/amd64","linux/arm64"],source:("git:"+env.GITHUB_SHA)}]}' >"$artifacts/runtime-lock.json"
+jq -n --slurpfile ca "$build/claude-attestations.json" --slurpfile xa "$build/codex-attestations.json" --arg casha "$(sha256sum "$build/claude-attestations.json" | cut -d' ' -f1)" --arg xasha "$(sha256sum "$build/codex-attestations.json" | cut -d' ' -f1)" --arg run "$run_id" --arg source "$source_hash" --arg bifrost "$bifrost_ref" --arg codex "$codex_ref" --arg claude "$claude_ref" --arg sentinel "$sentinel_ref" --arg cv "$codex_version" --arg av "$claude_version" '{schema:"sealed-lab-runtime-lock/v3",run_id:$run,source_lock_sha256:$source,images:[{id:"bifrost",reference:$bifrost,platforms:["linux/amd64","linux/arm64"],source:("git:"+env.GITHUB_SHA)},{id:"claude-runner",reference:$claude,platforms:["linux/amd64","linux/arm64"],source:("lock:"+$av),client_version:$av,child_digests:($ca[0]|map({platform,sha256:(.child_digest|sub("^sha256:";""))})),attestation_sha256:$casha},{id:"codex-runner",reference:$codex,platforms:["linux/amd64","linux/arm64"],source:("lock:"+$cv),client_version:$cv,child_digests:($xa[0]|map({platform,sha256:(.child_digest|sub("^sha256:";""))})),attestation_sha256:$xasha},{id:"egress-sentinel",reference:$sentinel,platforms:["linux/amd64","linux/arm64"],source:("git:"+env.GITHUB_SHA)}]}' >"$artifacts/runtime-lock.json"
 
 (cd "$lab" && GOWORK=off go run ./cmd/lab-runner --runtime-lock "$artifacts/runtime-lock.json" --source-lock "$lab/images.lock.v1.json" --compose "$lab/compose.yaml" --docker "$(command -v docker)" --failure-diagnostics-artifact "$artifacts/failure-diagnostics.json") >"$artifacts/lifecycle.json"
 jq -e '.schema=="sealed-lab-lifecycle-result/v2" and .teardown_clean==true and .codex_inference_boundary.exit_code==0 and .codex_inference_boundary.transport_outcome=="completed"' "$artifacts/lifecycle.json" >/dev/null
