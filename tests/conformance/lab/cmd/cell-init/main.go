@@ -32,7 +32,7 @@ const (
 
 const sealedFakeCredential = "sealed-lab-not-a-real-credential"
 
-const codexBoundaryPrompt = "Reply with exactly SEALED_CODEX_BOUNDARY_OK. Do not use tools or execute commands."
+const codexBoundaryPrompt = "Reply with exactly deterministic mantle response. Do not use tools or execute commands. SEALED_CODEX_RUN_ID:"
 
 var internalBaseURL = regexp.MustCompile(`^http://bifrost-[123]:8080/(?:openai/v1|anthropic)(?:/)?$`)
 var exactOpenAIBaseURL = regexp.MustCompile(`^http://bifrost-[123]:8080/openai/v1$`)
@@ -218,7 +218,7 @@ func run(lifecycleRunID string) error {
 	transportOutcome := ""
 	eventCount := 0
 	if operation == "codex-inference-boundary" {
-		spec := codexInferenceCommand(cfg.Binary)
+		spec := codexInferenceCommand(cfg.Binary, cfg.RunID)
 		var inferenceResult commandResult
 		inferenceResult, err = execute(spec, environment, timeout)
 		if err != nil {
@@ -271,10 +271,10 @@ func summarizeInferenceOutput(output []byte, truncated bool) (int, string, bool)
 	return len(output), hex.EncodeToString(digest[:]), truncated
 }
 
-func codexInferenceCommand(binary string) commandSpec {
+func codexInferenceCommand(binary, runID string) commandSpec {
 	return commandSpec{Binary: binary, Args: []string{
 		"exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
-		"--color", "never", "--json", codexBoundaryPrompt,
+		"--color", "never", "--json", codexBoundaryPrompt + runID,
 	}}
 }
 
@@ -323,6 +323,7 @@ func validateCodexJSONL(data []byte, exitCode int) (string, int, error) {
 	completedHasUsage := false
 	failedHasError := false
 	terminalCount := 0
+	responseMarkerSeen := false
 	allowedTypes := map[string]bool{
 		"thread.started": true, "turn.started": true, "turn.completed": true, "turn.failed": true,
 		"item.started": true, "item.updated": true, "item.completed": true, "error": true,
@@ -373,6 +374,15 @@ func validateCodexJSONL(data []byte, exitCode int) (string, int, error) {
 				failedHasError = true
 			}
 		}
+		if eventType == "item.completed" {
+			var item struct {
+				Type string `json:"type"`
+				Text string `json:"text"`
+			}
+			if json.Unmarshal(event["item"], &item) == nil && item.Type == "agent_message" && item.Text == "deterministic mantle response" {
+				responseMarkerSeen = true
+			}
+		}
 		types = append(types, eventType)
 		if len(types) > 4096 {
 			return "", 0, errors.New("event stream exceeds event-count bound")
@@ -386,7 +396,7 @@ func validateCodexJSONL(data []byte, exitCode int) (string, int, error) {
 	}
 	terminal := types[len(types)-1]
 	if exitCode == 0 {
-		if terminal != "turn.completed" || !completedHasUsage {
+		if terminal != "turn.completed" || !completedHasUsage || !responseMarkerSeen {
 			return "", 0, errors.New("successful process lacks terminal turn.completed usage")
 		}
 		return "completed", len(types), nil

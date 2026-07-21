@@ -60,7 +60,7 @@ func ValidateResolvedCompose(data []byte, source Lock, runtime RuntimeLock) erro
 	}
 	requiredServices := []string{
 		"bifrost-1", "bifrost-2", "bifrost-3", "claude-runner", "codex-runner", "contract-stub", "controlled-dns",
-		"egress-sentinel", "health-stub", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3",
+		"config-seed", "egress-sentinel", "health-stub", "mantle-contract-service", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3",
 		"netns-claude", "netns-codex", "network-probe", "postgres",
 	}
 	for _, name := range requiredServices {
@@ -131,7 +131,7 @@ func ValidateResolvedCompose(data []byte, source Lock, runtime RuntimeLock) erro
 	for _, image := range runtime.Images {
 		switch image.ID {
 		case "bifrost":
-			for _, service := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
+			for _, service := range []string{"bifrost-1", "bifrost-2", "bifrost-3", "config-seed", "mantle-contract-service"} {
 				wantImages[service] = image.Reference
 			}
 		case "claude-runner":

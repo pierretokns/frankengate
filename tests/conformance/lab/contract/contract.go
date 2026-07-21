@@ -377,6 +377,7 @@ func ValidateDNSCorefile(data []byte) error {
 		"{$lab_bifrost_2_client_ipv4} bifrost-2", "{$lab_bifrost_2_client_ipv6} bifrost-2",
 		"{$lab_bifrost_3_client_ipv4} bifrost-3", "{$lab_bifrost_3_client_ipv6} bifrost-3",
 		"{$lab_health_ipv4} health-stub", "{$lab_health_ipv6} health-stub",
+		"{$lab_mantle_ipv4} bedrock-mantle.us-east-1.api.aws", "{$lab_mantle_ipv6} bedrock-mantle.us-east-1.api.aws",
 		"{$lab_sentinel_ipv4} api.anthropic.com", "{$lab_sentinel_ipv6} api.anthropic.com",
 	} {
 		if !strings.Contains(lower, required) {
@@ -384,7 +385,7 @@ func ValidateDNSCorefile(data []byte) error {
 		}
 	}
 	for _, dualStackTrap := range []string{
-		"api.anthropic.com", "api.openai.com", "bedrock-mantle.us-east-1.api.aws",
+		"api.anthropic.com", "api.openai.com",
 		"metadata.google.internal", "registry.npmjs.org",
 		"sentry.io", "statsig.anthropic.com",
 	} {
@@ -408,8 +409,8 @@ func ValidateBootstrapFixture(data []byte, requireCapabilities bool) error {
 	if len(models) != 1 {
 		return fmt.Errorf("bootstrap fixture must contain exactly one synthetic model")
 	}
-	model, ok := models["openai.gpt-5.6-sol"]
-	if !ok || model.BaseModel != "openai.gpt-5.6-sol" || model.Provider != "bedrock_mantle" || model.Mode != "responses" {
+	model, ok := models["openai.gpt-5.5"]
+	if !ok || model.BaseModel != "openai.gpt-5.5" || model.Provider != "bedrock_mantle" || model.Mode != "responses" {
 		return fmt.Errorf("bootstrap fixture identity drift")
 	}
 	if model.InputCostPerToken == nil || model.OutputCostPerToken == nil || *model.InputCostPerToken != 0 || *model.OutputCostPerToken != 0 {

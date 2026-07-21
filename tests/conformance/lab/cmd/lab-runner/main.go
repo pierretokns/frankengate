@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/maximhq/bifrost/tests/conformance/lab/contract"
+	"github.com/maximhq/bifrost/tests/conformance/lab/mantleservice"
 )
 
 type commandExecutor interface {
@@ -178,7 +179,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		return fmt.Errorf("resolved Compose contract: %w", err)
 	}
 	coreServices := []string{
-		"postgres", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "bifrost-1", "bifrost-2", "bifrost-3",
+		"postgres", "config-seed", "mantle-contract-service", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "bifrost-1", "bifrost-2", "bifrost-3",
 		"health-stub", "contract-stub", "controlled-dns", "egress-sentinel", "netns-codex", "netns-claude",
 	}
 	teardownClean := false
@@ -211,6 +212,16 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 			copy := cellEvidence
 			codexBoundary = &copy
 		}
+	}
+	var mantleLogs bytes.Buffer
+	if err := executor.Run(environment, &mantleLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "mantle-contract-service")...); err != nil {
+		return fmt.Errorf("read Mantle contract transcript: %w", err)
+	}
+	if codexBoundary == nil {
+		return fmt.Errorf("Codex boundary evidence is absent")
+	}
+	if err := validateMantleTranscript(mantleLogs.Bytes(), lock.RunID); err != nil {
+		return fmt.Errorf("join Codex/Bifrost boundary to Mantle transcript: %w", err)
 	}
 	var sentinelLogs bytes.Buffer
 	if err := executor.Run(environment, &sentinelLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "egress-sentinel")...); err != nil {
@@ -274,6 +285,27 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		PaidInferenceProof: "unproven-external-recorder-required", TeardownClean: teardownClean,
 		CodexInferenceBoundary: codexBoundary,
 	})
+}
+
+func validateMantleTranscript(data []byte, runID string) error {
+	matched := 0
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var record mantleservice.TranscriptRecord
+		if json.Unmarshal(line, &record) != nil || record.Schema != mantleservice.TranscriptSchema {
+			continue
+		}
+		if record.Sequence == 1 && record.Method == "POST" && record.Host == mantleservice.IntegrationHost && record.Path == "/openai/v1/responses" && record.Model == "openai.gpt-5.5" && record.Stream && record.Status == 200 && record.Authorization == "synthetic-bearer" && record.RunID == runID && sha256Value.MatchString(record.BodySHA256) {
+			matched++
+		}
+	}
+	if matched != 1 {
+		return fmt.Errorf("expected exactly one run-correlated successful GPT-5.5 Responses hop, got %d", matched)
+	}
+	return nil
 }
 
 func validateNativePlatform(raw string) (string, error) {
@@ -384,7 +416,7 @@ func validateCellResult(data []byte, runID, client, version, daemonPlatform stri
 		return cellResult{}, errors.New("cell result violates the sealed contract")
 	}
 	if client == "codex" {
-		validOutcome := (result.ExitCode == 0 && result.TransportOutcome == "completed") || (result.ExitCode > 0 && result.ExitCode != 124 && result.TransportOutcome == "transport_failure_after_turn_start")
+		validOutcome := result.ExitCode == 0 && result.TransportOutcome == "completed"
 		if result.Schema != "sealed-cli-cell-evidence/v2" || result.Operation != "codex-inference-boundary" || !result.ProcessStarted || !result.RequestInitiated || !validOutcome || result.EventCount < 3 || result.OutputBytes <= 0 || !sha256Value.MatchString(result.OutputSHA256) || result.OutputTruncated || !internalCellGateway.MatchString(result.GatewayBaseURL) {
 			return cellResult{}, errors.New("Codex cell did not prove the sealed inference invocation boundary")
 		}

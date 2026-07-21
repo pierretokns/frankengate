@@ -10,7 +10,9 @@
         {$LAB_BIFROST_3_CLIENT_IPV6} bifrost-3
         {$LAB_HEALTH_IPV4} health-stub
         {$LAB_HEALTH_IPV6} health-stub
-        {$LAB_SENTINEL_IPV4} api.anthropic.com api.openai.com bedrock-mantle.us-east-1.api.aws metadata.google.internal registry.npmjs.org sentry.io statsig.anthropic.com
-        {$LAB_SENTINEL_IPV6} api.anthropic.com api.openai.com bedrock-mantle.us-east-1.api.aws metadata.google.internal registry.npmjs.org sentry.io statsig.anthropic.com
+        {$LAB_MANTLE_IPV4} bedrock-mantle.us-east-1.api.aws
+        {$LAB_MANTLE_IPV6} bedrock-mantle.us-east-1.api.aws
+        {$LAB_SENTINEL_IPV4} api.anthropic.com api.openai.com metadata.google.internal registry.npmjs.org sentry.io statsig.anthropic.com
+        {$LAB_SENTINEL_IPV6} api.anthropic.com api.openai.com metadata.google.internal registry.npmjs.org sentry.io statsig.anthropic.com
     }
 }

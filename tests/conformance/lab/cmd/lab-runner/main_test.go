@@ -4,13 +4,50 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/maximhq/bifrost/tests/conformance/lab/contract"
+	"github.com/maximhq/bifrost/tests/conformance/lab/mantleservice"
 )
+
+func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
+	var transcript bytes.Buffer
+	handler, err := mantleservice.NewIntegrationHandler(&transcript)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest(http.MethodPost, "https://"+mantleservice.IntegrationHost+"/openai/v1/responses", strings.NewReader(`{"model":"openai.gpt-5.5","input":"SEALED_CODEX_RUN_ID:test-1","stream":true}`))
+	req.Host = mantleservice.IntegrationHost
+	req.Header.Set("Authorization", "Bearer synthetic-mantle-contract")
+	req.Header.Set("Content-Type", "application/json")
+	handler.ServeHTTP(httptest.NewRecorder(), req)
+	if err := validateMantleTranscript(transcript.Bytes(), "test-1"); err != nil {
+		t.Fatal(err)
+	}
+	var valid mantleservice.TranscriptRecord
+	if err := json.Unmarshal(bytes.TrimSpace(transcript.Bytes()), &valid); err != nil {
+		t.Fatal(err)
+	}
+	mutations := []func(*mantleservice.TranscriptRecord){
+		func(r *mantleservice.TranscriptRecord) { r.Stream = false },
+		func(r *mantleservice.TranscriptRecord) { r.Sequence = 2 },
+		func(r *mantleservice.TranscriptRecord) { r.Authorization = "none" },
+		func(r *mantleservice.TranscriptRecord) { r.RunID = "other-run" },
+	}
+	for index, mutate := range mutations {
+		candidate := valid
+		mutate(&candidate)
+		encoded, _ := json.Marshal(candidate)
+		if err := validateMantleTranscript(append(encoded, '\n'), "test-1"); err == nil {
+			t.Fatalf("unsafe transcript mutation %d accepted: %s", index, encoded)
+		}
+	}
+}
 
 const validRuntimeLock = `{
   "schema":"sealed-lab-runtime-lock/v1",
@@ -42,9 +79,11 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "claude-runner"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"claude","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"2.1.214","native_platform":"linux/arm64"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "codex-runner"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v2","run_id":"test-1","client":"codex","exit_code":1,"environment_names":["CODEX_HOME","HOME","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"transport_failure_after_turn_start","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`)
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v2","run_id":"test-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"completed","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "network-probe"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
+	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix egress-sentinel"):
 		fake.logCalls++
 		if fake.logCalls > 1 {
@@ -107,7 +146,7 @@ func TestNativePlatformEvidenceNormalizesDockerAliasesAndRejectsUnreviewedPlatfo
 }
 
 func TestCellRuntimePlatformMustMatchNormalizedDaemonPlatform(t *testing.T) {
-	valid := `{"schema":"sealed-cli-cell-evidence/v2","run_id":"run-1","client":"codex","exit_code":1,"environment_names":["CODEX_HOME","HOME","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"transport_failure_after_turn_start","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`
+	valid := `{"schema":"sealed-cli-cell-evidence/v2","run_id":"run-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"completed","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`
 	if got, err := validateCellResult([]byte(valid), "run-1", "codex", "0.144.5", "linux/arm64"); err != nil || got.NativePlatform != "linux/arm64" {
 		t.Fatalf("matching cell platform rejected: got=%#v err=%v", got, err)
 	}
@@ -117,8 +156,8 @@ func TestCellRuntimePlatformMustMatchNormalizedDaemonPlatform(t *testing.T) {
 		strings.Replace(valid, `"PATH"`, `"HTTP_PROXY"`, 1),
 		strings.Replace(valid, `"PATH",`, "", 1),
 		strings.Replace(valid, `"request_initiated":true`, `"request_initiated":false`, 1),
-		strings.Replace(valid, `"exit_code":1`, `"exit_code":124`, 1),
-		strings.Replace(valid, `"exit_code":1`, `"exit_code":-1`, 1),
+		strings.Replace(valid, `"exit_code":0`, `"exit_code":124`, 1),
+		strings.Replace(valid, `"exit_code":0`, `"exit_code":-1`, 1),
 		strings.Replace(valid, `http://bifrost-1:8080/openai/v1`, `https://api.openai.com/v1`, 1),
 	} {
 		if _, err := validateCellResult([]byte(mutation), "run-1", "codex", "0.144.5", "linux/arm64"); err == nil {
@@ -217,7 +256,7 @@ func resolvedComposeForTest() string {
 	services["health-stub"] = base("hashicorp/http-echo:1.0.0@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186")
 	services["contract-stub"] = base("hashicorp/http-echo:1.0.0@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186")
 	services["postgres"] = base("postgres:16.9-alpine@sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7")
-	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
+	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3", "config-seed", "mantle-contract-service"} {
 		services[name] = base("registry.invalid/bifrost@sha256:" + strings.Repeat("a", 64))
 	}
 	services["bifrost-1"]["network_mode"] = "service:netns-bifrost-1"

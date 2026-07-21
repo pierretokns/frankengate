@@ -326,7 +326,7 @@ func TestClientSeedsAreHashBoundAndDisableExternalTraffic(t *testing.T) {
 		}
 		text := string(data)
 		if client == "codex" {
-			for _, required := range []string{"bedrock_mantle/gpt-5.6-sol", "http://bifrost-1:8080/openai/v1", "check_for_update_on_startup = false", "request_max_retries = 0", "stream_max_retries = 0"} {
+			for _, required := range []string{"bedrock_mantle/gpt-5.5", "http://bifrost-1:8080/openai/v1", "check_for_update_on_startup = false", "request_max_retries = 0", "stream_max_retries = 0"} {
 				if !strings.Contains(text, required) {
 					t.Fatalf("Codex seed misses %q", required)
 				}

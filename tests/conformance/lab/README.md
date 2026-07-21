@@ -27,7 +27,7 @@ The committed contract currently proves:
   runs only the expected read-only CLI binary, verifies the pinned semantic version from observed
   CLI output, bounds process lifetime, sends CLI output to stderr, emits one JSON evidence record to
   stdout, and removes cell residue;
-- a Codex seed selecting `bedrock_mantle/gpt-5.6-sol` through `/openai/v1` with retries and updates
+- a Codex seed selecting `bedrock_mantle/gpt-5.5` through `/openai/v1` with retries and updates
   disabled, and a Claude seed disabling updater, telemetry, error reporting, and nonessential
   traffic.
 
@@ -37,12 +37,13 @@ an ephemeral session, the sealed fake credential, and one validated internal Bif
 data cannot supply arguments or a prompt. The cell first observes `codex --version`, then validates
 the CLI's stdout as bounded JSONL. It records `process_started` separately from
 `request_initiated`; the latter requires `thread.started` followed immediately by `turn.started`
-and a valid terminal event. Successful turns require `turn.completed` with usage, while a failed
-post-initiation turn is classified separately as `transport_failure_after_turn_start`. Plain-text
+and a valid terminal event. Evidence accepted by the lifecycle requires exit zero,
+`turn.completed` with usage, and the exact deterministic Mantle response marker. Failed
+post-initiation turns, including `transport_failure_after_turn_start`, are rejected. Plain-text
 configuration errors, malformed JSONL, reordered events, missing usage, timeouts, and truncated
-output cannot earn request-initiation evidence. Neither request initiation nor a JSONL digest proves
-that Bifrost received the request, contacted Mantle, or received Mantle acceptance. C9 owns that
-joined evidence.
+output cannot earn request-initiation evidence. The lifecycle semantically correlates the completed
+Codex turn with the run-bound deterministic Mantle transcript; it does not independently capture a
+Bifrost ingress receipt.
 
 The `exec`, `--strict-config`, `--ephemeral`, `--sandbox`, `--color`, and `--json` syntax is derived from the exact
 `@openai/codex` 0.144.5 artifact locked by `images.lock.v1.json` (its `codex exec --help` surface).

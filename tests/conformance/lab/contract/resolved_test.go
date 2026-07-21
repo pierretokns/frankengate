@@ -114,6 +114,8 @@ func resolvedFixture() (resolvedCompose, Lock, RuntimeLock) {
 	services["health-stub"] = base(digest("3"))
 	services["contract-stub"] = base(digest("3"))
 	services["postgres"] = base(digest("4"))
+	services["config-seed"] = base(digest("a"))
+	services["mantle-contract-service"] = base(digest("a"))
 	services["bifrost-1"] = withMode(base(digest("a")), "service:netns-bifrost-1")
 	services["bifrost-2"] = withMode(base(digest("a")), "service:netns-bifrost-2")
 	services["bifrost-3"] = withMode(base(digest("a")), "service:netns-bifrost-3")

@@ -4,7 +4,7 @@
     {
       "source": "config.toml",
       "target": "codex/config.toml",
-      "sha256": "9787ce6d1dc7d7a84f819c658065803c82514c1ce73b2141cc6103a599466ef8"
+      "sha256": "be38600a774a5429525888f04623ab47ba8ce3cf67cd327d54d45fed063c8840"
     }
   ]
 }

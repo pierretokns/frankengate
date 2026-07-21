@@ -152,10 +152,10 @@ func TestCodexInferenceBoundaryScenarioIsClosedAndExact(t *testing.T) {
 }
 
 func TestCodexInferenceCommandHasNoScenarioControlledArguments(t *testing.T) {
-	got := codexInferenceCommand("/opt/client/bin/codex")
+	got := codexInferenceCommand("/opt/client/bin/codex", "run-1")
 	want := commandSpec{Binary: "/opt/client/bin/codex", Args: []string{
 		"exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
-		"--color", "never", "--json", codexBoundaryPrompt,
+		"--color", "never", "--json", codexBoundaryPrompt + "run-1",
 	}}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("Codex inference invocation drifted: %#v", got)
@@ -179,7 +179,7 @@ func TestCodexJSONLProvesTurnInitiationAndTerminalUsage(t *testing.T) {
 	stream := strings.Join([]string{
 		`{"type":"thread.started","thread_id":"019c-test"}`,
 		`{"type":"turn.started"}`,
-		`{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"SEALED_CODEX_BOUNDARY_OK"}}`,
+		`{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"deterministic mantle response"}}`,
 		`{"type":"turn.completed","usage":{"input_tokens":12,"cached_input_tokens":0,"output_tokens":4}}`,
 	}, "\n") + "\n"
 	outcome, count, err := validateCodexJSONL([]byte(stream), 0)

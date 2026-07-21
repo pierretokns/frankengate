@@ -35,6 +35,8 @@ x-bifrost: &bifrost
   depends_on:
     postgres:
       condition: service_healthy
+    config-seed:
+      condition: service_completed_successfully
 
 x-runner: &runner
   <<: *hardened
@@ -94,10 +96,53 @@ services:
       retries: 30
     networks: [data_net]
 
+  config-seed:
+    <<: *hardened
+    image: ${BIFROST_IMAGE:?set a digest-pinned multi-arch Bifrost image}
+    user: "1000:0"
+    entrypoint: [/app/lab-config-seed]
+    configs:
+      - source: sealed_mantle_ca
+        target: /lab-tls/ca.pem
+        mode: 0444
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [data_net]
+
+  mantle-contract-service:
+    <<: *hardened
+    image: ${BIFROST_IMAGE:?set a digest-pinned multi-arch Bifrost image}
+    user: "1000:0"
+    entrypoint:
+      - /app/mantle-contract-service
+      - -listen=:443
+      - -tls-cert=/lab-tls/server.pem
+      - -tls-key=/lab-tls/server.key
+      - -integration
+    configs:
+      - source: sealed_mantle_server_cert
+        target: /lab-tls/server.pem
+        mode: 0444
+      - source: sealed_mantle_server_key
+        target: /lab-tls/server.key
+        mode: 0444
+    networks:
+      data_net:
+        ipv4_address: "${LAB_MANTLE_IPV4:-172.30.20.20}"
+        ipv6_address: "${LAB_MANTLE_IPV6:-fd00:bf:20::20}"
+    healthcheck:
+      test: [CMD-SHELL, "wget -q --no-check-certificate -O /dev/null https://127.0.0.1/healthz || exit 1"]
+      interval: 1s
+      timeout: 2s
+      retries: 30
+
   bifrost-1:
     <<: *bifrost
     network_mode: service:netns-bifrost-1
     depends_on:
+      config-seed:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
       netns-bifrost-1:
@@ -106,6 +151,8 @@ services:
     <<: *bifrost
     network_mode: service:netns-bifrost-2
     depends_on:
+      config-seed:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
       netns-bifrost-2:
@@ -114,6 +161,8 @@ services:
     <<: *bifrost
     network_mode: service:netns-bifrost-3
     depends_on:
+      config-seed:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
       netns-bifrost-3:
@@ -192,6 +241,8 @@ services:
       LAB_BIFROST_3_CLIENT_IPV6: "${LAB_BIFROST_3_CLIENT_IPV6:-fd00:bf:10::13}"
       LAB_HEALTH_IPV4: "${LAB_HEALTH_IPV4:-172.30.10.20}"
       LAB_HEALTH_IPV6: "${LAB_HEALTH_IPV6:-fd00:bf:10::20}"
+      LAB_MANTLE_IPV4: "${LAB_MANTLE_IPV4:-172.30.20.20}"
+      LAB_MANTLE_IPV6: "${LAB_MANTLE_IPV6:-fd00:bf:20::20}"
     cap_add: [NET_BIND_SERVICE]
     configs:
       - source: sealed_dns_corefile
@@ -313,3 +364,9 @@ configs:
     file: ./fixtures/pricing.json
   sealed_model_parameters_fixture:
     file: ./fixtures/model-parameters.json
+  sealed_mantle_ca:
+    file: ./tls/ca.pem
+  sealed_mantle_server_cert:
+    file: ./tls/server.pem
+  sealed_mantle_server_key:
+    file: ./tls/server.key

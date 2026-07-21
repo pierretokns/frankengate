@@ -23,12 +23,17 @@ RUN go work init \
     ./plugins/prompts \
     ./plugins/semanticcache \
     ./plugins/telemetry \
-    ./transports
+    ./transports \
+    ./tests/conformance/lab
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
     -ldflags="-w -s -X main.Version=vsealed-lab" \
     -trimpath \
     -o /out/bifrost-http \
     ./transports/bifrost-http
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags='-s -w' \
+    -o /out/mantle-contract-service ./tests/conformance/lab/cmd/mantle-contract-service
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags='-s -w' \
+    -o /out/lab-config-seed ./tests/conformance/lab/cmd/config-seed
 
 FROM alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
 ENV APP_PORT=8080 \
@@ -41,6 +46,8 @@ ENV APP_PORT=8080 \
     GOMEMLIMIT=""
 WORKDIR /app
 COPY --from=builder --chown=1000:0 --chmod=0555 /out/bifrost-http /app/main
+COPY --from=builder --chown=1000:0 --chmod=0555 /out/mantle-contract-service /app/mantle-contract-service
+COPY --from=builder --chown=1000:0 --chmod=0555 /out/lab-config-seed /app/lab-config-seed
 COPY --chown=1000:0 --chmod=0555 transports/docker-entrypoint.sh /app/docker-entrypoint.sh
 USER 1000:0
 EXPOSE 8080
