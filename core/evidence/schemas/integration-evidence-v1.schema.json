@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.dev/schemas/integration-evidence-v1.schema.json",
+  "title": "FrankenGate integration evidence JSONL record",
+  "description": "One line in the zero-paid-inference integration evidence JSONL stream.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile",
+    "ci_required",
+    "run_id",
+    "scenario_id",
+    "started_at",
+    "completed_at",
+    "versions",
+    "confidence_tier",
+    "provider",
+    "route",
+    "models",
+    "lite_request",
+    "redacted_hashes",
+    "auth_mode",
+    "network",
+    "result",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": { "const": "frankengate-integration-evidence/v1" },
+    "profile": { "enum": ["normal_ci", "optional_real_aws"] },
+    "ci_required": { "type": "boolean" },
+    "run_id": { "$ref": "#/$defs/safe_token" },
+    "scenario_id": { "$ref": "#/$defs/safe_token" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "versions": { "$ref": "#/$defs/versions" },
+    "confidence_tier": {
+      "enum": ["contract_only", "hermetic_replay", "wire_observed", "optional_real_aws"]
+    },
+    "provider": { "$ref": "#/$defs/safe_token" },
+    "route": { "$ref": "#/$defs/safe_token" },
+    "models": { "$ref": "#/$defs/models" },
+    "lite_request": { "$ref": "#/$defs/lite_request" },
+    "redacted_hashes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/named_digest" },
+      "maxItems": 32
+    },
+    "auth_mode": { "enum": ["dummy", "static", "iam", "sts", "oauth", "none"] },
+    "network": { "$ref": "#/$defs/network" },
+    "result": { "$ref": "#/$defs/result" },
+    "waiver": { "$ref": "#/$defs/waiver" },
+    "artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact" },
+      "minItems": 1,
+      "maxItems": 32
+    }
+  },
+  "$defs": {
+    "safe_token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/+~-]*$"
+    },
+    "safe_code": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "diagnostic_code": {
+      "type": "string",
+      "pattern": "^IE_[A-Z0-9_]{2,61}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["git", "image", "cli", "backend", "postgresql"],
+      "properties": {
+        "git": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["commit", "tree_digest", "dirty"],
+          "properties": {
+            "commit": { "$ref": "#/$defs/safe_token" },
+            "tree_digest": { "$ref": "#/$defs/digest" },
+            "dirty": { "type": "boolean" }
+          }
+        },
+        "image": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["repository", "tag", "digest"],
+          "properties": {
+            "repository": { "$ref": "#/$defs/safe_token" },
+            "tag": { "$ref": "#/$defs/safe_token" },
+            "digest": { "$ref": "#/$defs/digest" }
+          }
+        },
+        "cli": { "$ref": "#/$defs/component" },
+        "backend": { "$ref": "#/$defs/component" },
+        "postgresql": { "$ref": "#/$defs/component" }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "digest"],
+      "properties": {
+        "name": { "$ref": "#/$defs/safe_token" },
+        "version": { "$ref": "#/$defs/safe_token" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "models": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advertised", "selected", "resolved"],
+      "properties": {
+        "advertised": { "$ref": "#/$defs/safe_token" },
+        "selected": { "$ref": "#/$defs/safe_token" },
+        "resolved": { "$ref": "#/$defs/safe_token" }
+      }
+    },
+    "lite_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "path", "header_names", "body_shape_digest", "streaming"],
+      "properties": {
+        "method": { "type": "string", "pattern": "^[A-Z]{3,10}$" },
+        "path": { "type": "string", "pattern": "^/[A-Za-z0-9._~:/{}+-]*$" },
+        "header_names": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,126}$" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "query_shape_digest": { "$ref": "#/$defs/digest" },
+        "body_shape_digest": { "$ref": "#/$defs/digest" },
+        "redacted_hashes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/named_digest" },
+          "maxItems": 32
+        },
+        "streaming": { "type": "boolean" }
+      }
+    },
+    "named_digest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "digest"],
+      "properties": {
+        "name": { "$ref": "#/$defs/safe_code" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recorder_id",
+        "recorder_digest",
+        "total_outbound_requests",
+        "loopback_requests",
+        "allowed_external_requests",
+        "forbidden_egress_requests",
+        "paid_inference_requests",
+        "dns_queries"
+      ],
+      "properties": {
+        "recorder_id": { "$ref": "#/$defs/safe_token" },
+        "recorder_digest": { "$ref": "#/$defs/digest" },
+        "total_outbound_requests": { "type": "integer", "minimum": 0 },
+        "loopback_requests": { "type": "integer", "minimum": 0 },
+        "allowed_external_requests": { "type": "integer", "minimum": 0 },
+        "forbidden_egress_requests": { "type": "integer", "minimum": 0 },
+        "paid_inference_requests": { "type": "integer", "minimum": 0 },
+        "dns_queries": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "diagnostic_code"],
+      "properties": {
+        "status": { "enum": ["pass", "fail", "error", "skip"] },
+        "diagnostic_code": { "$ref": "#/$defs/diagnostic_code" }
+      }
+    },
+    "waiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "reason", "expires_at"],
+      "properties": {
+        "owner": { "$ref": "#/$defs/safe_token" },
+        "reason": { "$ref": "#/$defs/safe_code" },
+        "expires_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "path", "digest", "media_type", "required"],
+      "properties": {
+        "name": { "$ref": "#/$defs/safe_code" },
+        "path": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/+~-]{0,240}$"
+        },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9.+-]*/[a-z0-9][a-z0-9.+-]*$"
+        },
+        "required": { "type": "boolean" }
+      }
+    }
+  }
+}
