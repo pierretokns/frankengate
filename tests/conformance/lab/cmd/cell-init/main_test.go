@@ -1,6 +1,7 @@
 package main
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -118,5 +119,99 @@ func TestScenarioJSONRejectsDuplicateKeysAtAnyDepth(t *testing.T) {
 	}
 	if err := rejectDuplicateJSONKeys([]byte(`{"env":{"OPENAI_API_KEY":"one"},"args":["--version"]}`)); err != nil {
 		t.Fatalf("valid JSON rejected: %v", err)
+	}
+}
+
+func TestCodexInferenceBoundaryScenarioIsClosedAndExact(t *testing.T) {
+	base := scenario{
+		Schema: "sealed-cli-cell-scenario/v2", Operation: "codex-inference-boundary",
+		RunID: "run-1", Client: "codex", Binary: "/opt/client/bin/codex",
+		Env: map[string]string{
+			"OPENAI_API_KEY":  sealedFakeCredential,
+			"OPENAI_BASE_URL": "http://bifrost-1:8080/openai/v1",
+		},
+		ExpectedVersion: "0.144.5", TimeoutMS: 30000,
+	}
+	if err := validateScenario(base); err != nil {
+		t.Fatalf("valid inference-boundary scenario: %v", err)
+	}
+	mutations := []scenario{base, base, base, base, base, base, base, base}
+	mutations[0].Operation = "arbitrary-command"
+	mutations[1].Client = "claude"
+	mutations[2].Args = []string{"exec", "attacker prompt"}
+	mutations[3].Env = map[string]string{"OPENAI_API_KEY": sealedFakeCredential, "OPENAI_BASE_URL": "https://api.openai.com/v1"}
+	mutations[4].Env = map[string]string{"OPENAI_API_KEY": sealedFakeCredential, "OPENAI_BASE_URL": "http://bifrost-1:8080/openai/v1", "EXTRA": "1"}
+	mutations[5].Env = map[string]string{"OPENAI_BASE_URL": "http://bifrost-1:8080/openai/v1"}
+	mutations[6].Env = map[string]string{"OPENAI_API_KEY": sealedFakeCredential, "OPENAI_BASE_URL": "http://bifrost-1:8080/openai/v1/"}
+	mutations[7].Env = map[string]string{"OPENAI_API_KEY": sealedFakeCredential, "OPENAI_BASE_URL": "http://bifrost-1:8080/anthropic"}
+	for index, mutated := range mutations {
+		if err := validateScenario(mutated); err == nil {
+			t.Fatalf("unsafe mutation %d accepted", index)
+		}
+	}
+}
+
+func TestCodexInferenceCommandHasNoScenarioControlledArguments(t *testing.T) {
+	got := codexInferenceCommand("/opt/client/bin/codex")
+	want := commandSpec{Binary: "/opt/client/bin/codex", Args: []string{
+		"exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
+		"--color", "never", "--json", codexBoundaryPrompt,
+	}}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("Codex inference invocation drifted: %#v", got)
+	}
+	joined := strings.Join(got.Args, " ")
+	for _, forbidden := range []string{"--dangerously-bypass", "workspace-write", "danger-full-access", "sh -c", "bash -c"} {
+		if strings.Contains(joined, forbidden) {
+			t.Fatalf("inference invocation contains unsafe token %q", forbidden)
+		}
+	}
+}
+
+func TestInferenceOutputEvidenceIsBoundedDigestMetadata(t *testing.T) {
+	bytes, digest, truncated := summarizeInferenceOutput([]byte("codex-jsonl\n"), true)
+	if bytes != 12 || digest != "8d8c418f70cfda7aa01b43bca0fd05cb6b98a518f9567e8f73cf1f12e44de03f" || !truncated {
+		t.Fatalf("output evidence = %d %q %v", bytes, digest, truncated)
+	}
+}
+
+func TestCodexJSONLProvesTurnInitiationAndTerminalUsage(t *testing.T) {
+	stream := strings.Join([]string{
+		`{"type":"thread.started","thread_id":"019c-test"}`,
+		`{"type":"turn.started"}`,
+		`{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"SEALED_CODEX_BOUNDARY_OK"}}`,
+		`{"type":"turn.completed","usage":{"input_tokens":12,"cached_input_tokens":0,"output_tokens":4}}`,
+	}, "\n") + "\n"
+	outcome, count, err := validateCodexJSONL([]byte(stream), 0)
+	if err != nil || outcome != "completed" || count != 4 {
+		t.Fatalf("valid pinned-like JSONL: outcome=%q count=%d err=%v", outcome, count, err)
+	}
+	failure := strings.Join([]string{
+		`{"type":"thread.started","thread_id":"019c-test"}`,
+		`{"type":"turn.started"}`,
+		`{"type":"error","message":"request failed"}`,
+		`{"type":"turn.failed","error":{"message":"request failed"}}`,
+	}, "\n") + "\n"
+	outcome, count, err = validateCodexJSONL([]byte(failure), 1)
+	if err != nil || outcome != "transport_failure_after_turn_start" || count != 4 {
+		t.Fatalf("valid transport-failure JSONL: outcome=%q count=%d err=%v", outcome, count, err)
+	}
+}
+
+func TestCodexJSONLRejectsUsageAndConfigurationTheater(t *testing.T) {
+	missingUsage := "{\"type\":\"thread.started\",\"thread_id\":\"019c-test\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"turn.completed\"}\n"
+	configError := "error: invalid configuration key model_provider\n"
+	wrongOrder := "{\"type\":\"turn.started\"}\n{\"type\":\"thread.started\",\"thread_id\":\"019c-test\"}\n{\"type\":\"turn.failed\"}\n"
+	for name, test := range map[string]struct {
+		data string
+		exit int
+	}{
+		"missing terminal usage": {missingUsage, 0},
+		"configuration stderr":   {configError, 1},
+		"wrong semantic order":   {wrongOrder, 1},
+	} {
+		if _, _, err := validateCodexJSONL([]byte(test.data), test.exit); err == nil {
+			t.Fatalf("%s earned request-initiation evidence", name)
+		}
 	}
 }

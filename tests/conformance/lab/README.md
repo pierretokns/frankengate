@@ -31,6 +31,26 @@ The committed contract currently proves:
   disabled, and a Claude seed disabling updater, telemetry, error reporting, and nonessential
   traffic.
 
+The optional `scenario/codex-inference-boundary.json` cell runs the pinned Codex executable with a
+fixed noninteractive `codex exec` argument vector, a fixed no-tools prompt, read-only sandboxing,
+an ephemeral session, the sealed fake credential, and one validated internal Bifrost URL. Scenario
+data cannot supply arguments or a prompt. The cell first observes `codex --version`, then validates
+the CLI's stdout as bounded JSONL. It records `process_started` separately from
+`request_initiated`; the latter requires `thread.started` followed immediately by `turn.started`
+and a valid terminal event. Successful turns require `turn.completed` with usage, while a failed
+post-initiation turn is classified separately as `transport_failure_after_turn_start`. Plain-text
+configuration errors, malformed JSONL, reordered events, missing usage, timeouts, and truncated
+output cannot earn request-initiation evidence. Neither request initiation nor a JSONL digest proves
+that Bifrost received the request, contacted Mantle, or received Mantle acceptance. C9 owns that
+joined evidence.
+
+The `exec`, `--strict-config`, `--ephemeral`, `--sandbox`, `--color`, and `--json` syntax is derived from the exact
+`@openai/codex` 0.144.5 artifact locked by `images.lock.v1.json` (its `codex exec --help` surface).
+The request serialization authority remains the independently pinned
+`codex-cli-responses-lite-fd3c1dc1` row in
+`tests/conformance/bedrock/sources/source-lock.v1.json`; its authority ceiling is client emission,
+not gateway translation or AWS acceptance.
+
 ## Prefetch and runner builds
 
 `Dockerfile.prefetch` is intentionally networked and must run in a separate project. Supply the
@@ -107,17 +127,20 @@ cell platform, the source-lock digest, lifecycle timestamps, and runtime-lock di
 ambiguous, or unreviewed values fail closed. This proves the CLI cell-init binaries actually ran on
 the selected architecture; it does not yet prove every service image ran natively. It then inspects the
 actual OCI indexes for both required architectures, validates resolved Compose,
-starts the core topology, executes fresh Codex and Claude version cells, rejects residue or any
+starts the core topology, executes a fresh Codex inference-boundary cell and a Claude version cell,
+rejects residue or any
 sentinel event, removes containers and volumes, and proves the project inventory is empty. The
 external orchestrator passes only reviewed Docker connection variables; proxy and cloud/provider
 credentials are discarded and none of its HOME or Docker state enters a runner container. This
-version-cell result is a raw lab record, not canonical release evidence. No aggregate certification
+boundary result is a raw lab record, not canonical release evidence. No aggregate certification
 gate is provided yet: it would be unsafe until it independently binds raw per-cell evidence and
 proves the provider-side observation boundary. The current runner deliberately emits
 `unproven-external-recorder-required` even after structural recorder verification. Structural
 capture evidence does not by itself prove that no paid provider request occurred, and the runner
 does not yet own recorder launch or nonce generation; OCI declarations, replayable input files, or
 edited JSON cannot certify the lab.
+The lifecycle record is `sealed-lab-lifecycle-result/v2`; unlike v1 it embeds the validated Codex
+inference-boundary cell record so its exit status and bounded output digest are not discarded.
 
 The binary placed at `offline/egress-sentinel` must be a Linux binary for the target platform; a
 plain host `go build` on macOS produces an unusable Mach-O file. Build each native row explicitly:
@@ -136,8 +159,9 @@ promote production pins through deployment policy. A candidate row cannot certif
 
 ## Remaining exit work for the lab bead
 
-Local arm64 smoke execution has exercised the three-pod PostgreSQL topology, fresh Codex and Claude
-version cells, the dual-stack DNS/direct-IP/QUIC/proxy-bypass mutants, residue checks, and teardown.
+Earlier local arm64 smoke execution exercised the three-pod PostgreSQL topology, fresh Codex and
+Claude version cells, the dual-stack DNS/direct-IP/QUIC/proxy-bypass mutants, residue checks, and
+teardown. It predates the inference-boundary scenario and therefore does not prove that scenario ran.
 Those local observations are useful debugging evidence only: the ignored local runtime lock and
 Docker inventory are not checked release artifacts and must not be cited as portable certification.
 
