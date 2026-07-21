@@ -64,6 +64,50 @@
       "assurance_level"
     ]
   },
+  "client_matrix": [
+    {
+      "lane_id": "direct-native-bedrock",
+      "mode": "direct_client",
+      "surface": "native_bedrock",
+      "client_ids": ["boto3-python", "aws-sdk-js-bedrock-runtime"],
+      "preconnect_enabled": true
+    },
+    {
+      "lane_id": "bifrost-native-bedrock",
+      "mode": "through_bifrost",
+      "surface": "native_bedrock",
+      "client_ids": ["codex-cli", "claude-code", "openai-typescript", "anthropic-typescript", "openai-python", "anthropic-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "lane_id": "direct-mantle-openai",
+      "mode": "direct_client",
+      "surface": "mantle_openai",
+      "client_ids": ["openai-typescript", "openai-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "lane_id": "bifrost-mantle-openai",
+      "mode": "through_bifrost",
+      "surface": "mantle_openai",
+      "client_ids": ["codex-cli", "openai-typescript", "openai-python"],
+      "preconnect_enabled": true
+    },
+    {
+      "lane_id": "direct-mantle-anthropic",
+      "mode": "direct_client",
+      "surface": "mantle_anthropic",
+      "client_ids": ["anthropic-typescript", "anthropic-python"],
+      "preconnect_enabled": false
+    },
+    {
+      "lane_id": "bifrost-mantle-anthropic",
+      "mode": "through_bifrost",
+      "surface": "mantle_anthropic",
+      "client_ids": ["claude-code", "anthropic-typescript", "anthropic-python"],
+      "preconnect_enabled": false
+    }
+  ],
   "required_run_record_fields": [
     "consent_id",
     "consent_timestamp_utc",

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SCOPE="$ROOT/provenance/aws-observation-scope.json"
+SCOPE="${SCOPE_PATH:-$ROOT/provenance/aws-observation-scope.json}"
 PRICING="$ROOT/docs/data/pricing/latest.json"
 DOC="$ROOT/docs/architecture/aws-observation-scope-and-client-matrix.md"
 TS_LOCK="$ROOT/tests/integrations/typescript/package-lock.json"
@@ -54,6 +54,11 @@ jq -e --argjson expected "$expected_lanes" '([.lanes[].id] | sort) == ($expected
 
 require_jq '([.lanes[] | select(.mode == "direct_client")] | length) == 3' "$SCOPE" "must define three direct-client lanes"
 require_jq '([.lanes[] | select(.mode == "through_bifrost")] | length) == 3' "$SCOPE" "must define three through-Bifrost lanes"
+require_jq '.client_matrix | type == "array" and length == 6' "$SCOPE" "client_matrix must contain exactly six lane entries"
+require_jq '. as $root | ([.lanes[].id] | sort) == ([$root.client_matrix[].lane_id] | sort)' "$SCOPE" "client_matrix must cover every lane exactly once"
+require_jq 'all(.client_matrix[]; (.lane_id | type == "string" and length > 0) and (.mode == "direct_client" or .mode == "through_bifrost") and (.surface | type == "string" and length > 0) and (.client_ids | type == "array" and length > 0) and (.preconnect_enabled | type == "boolean"))' "$SCOPE" "client_matrix entries must have explicit mode, surface, clients, and preconnect policy"
+require_jq '. as $root | all(.client_matrix[]; . as $entry | any($root.lanes[]; .id == $entry.lane_id and .mode == $entry.mode and .surface == $entry.surface and .preconnect_enabled == $entry.preconnect_enabled and ((.client_ids | sort) == ($entry.client_ids | sort))))' "$SCOPE" "client_matrix must exactly match lane client policy"
+require_jq '. as $root | all(.client_matrix[].client_ids[]; . as $id | any(($root.client_pins.sdk_artifacts + $root.client_pins.coding_cli_tiers)[]; .id == $id))' "$SCOPE" "client_matrix contains an unpinned client artifact"
 require_jq 'all(.lanes[] | select(.surface == "mantle_anthropic"); .preconnect_enabled == false and (.blocked_reason | length > 0))' "$SCOPE" "Mantle Anthropic lanes must be blocked before connect until pricing/maxima are pinned"
 require_jq '. as $root | all($root.lanes[] | select(.preconnect_enabled == true); . as $lane | any($root.models[]; .id == $lane.model_scope_id and .pricing.required == true and (.max_input_tokens | type == "number") and (.max_output_tokens | type == "number")))' "$SCOPE" "every enabled lane must have required pricing and numeric maxima"
 
