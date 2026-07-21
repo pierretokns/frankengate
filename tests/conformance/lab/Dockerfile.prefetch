@@ -1,0 +1,17 @@
+FROM node:24.11.0-alpine3.21@sha256:0d4cd385375043fc4612c20ede8b240b6b560dfdaef7cdaeff8e440c6a5b8499 AS prefetch
+
+ARG CLI_PACKAGE
+ARG CLI_VERSION
+ARG CLI_INTEGRITY
+
+RUN test -n "$CLI_PACKAGE" && test -n "$CLI_VERSION" && test -n "$CLI_INTEGRITY" \
+    && actual="$(npm view "${CLI_PACKAGE}@${CLI_VERSION}" dist.integrity)" \
+    && test "$actual" = "$CLI_INTEGRITY" \
+    && mkdir -p /mirror /opt/client \
+    && npm pack "${CLI_PACKAGE}@${CLI_VERSION}" --pack-destination /mirror \
+    && npm install --global --prefix /opt/client /mirror/*.tgz \
+    && npm cache clean --force
+
+FROM scratch AS export
+COPY --from=prefetch /mirror/ /mirror/
+COPY --from=prefetch /opt/client/ /opt/client/

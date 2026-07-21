@@ -1,0 +1,10 @@
+{
+  "schema": "sealed-cli-cell-scenario/v1",
+  "run_id": "claude-version-smoke",
+  "client": "claude",
+  "binary": "/opt/client/bin/claude",
+  "args": ["--version"],
+  "env": {},
+  "expected_version": "2.1.214",
+  "timeout_ms": 30000
+}

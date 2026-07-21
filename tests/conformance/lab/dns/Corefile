@@ -1,0 +1,16 @@
+.:53 {
+    errors
+    log
+    hosts {
+        {$LAB_BIFROST_1_CLIENT_IPV4} bifrost-1
+        {$LAB_BIFROST_1_CLIENT_IPV6} bifrost-1
+        {$LAB_BIFROST_2_CLIENT_IPV4} bifrost-2
+        {$LAB_BIFROST_2_CLIENT_IPV6} bifrost-2
+        {$LAB_BIFROST_3_CLIENT_IPV4} bifrost-3
+        {$LAB_BIFROST_3_CLIENT_IPV6} bifrost-3
+        {$LAB_HEALTH_IPV4} health-stub
+        {$LAB_HEALTH_IPV6} health-stub
+        {$LAB_SENTINEL_IPV4} api.anthropic.com api.openai.com bedrock-mantle.us-east-1.api.aws metadata.google.internal registry.npmjs.org sentry.io statsig.anthropic.com
+        {$LAB_SENTINEL_IPV6} api.anthropic.com api.openai.com bedrock-mantle.us-east-1.api.aws metadata.google.internal registry.npmjs.org sentry.io statsig.anthropic.com
+    }
+}
