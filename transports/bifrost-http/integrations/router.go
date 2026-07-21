@@ -393,6 +393,10 @@ type PreRequestCallback func(ctx *fasthttp.RequestCtx, bifrostCtx *schemas.Bifro
 // If it returns an error, an error response is sent instead of the success response.
 type PostRequestCallback func(ctx *fasthttp.RequestCtx, req interface{}, resp interface{}) error
 
+// RawPreRequestCallback observes the untouched HTTP request before integration
+// parsing. It must not mutate the request or write a response.
+type RawPreRequestCallback func(ctx *fasthttp.RequestCtx)
+
 // HTTPRequestTypeGetter is a function type that accepts only a *fasthttp.RequestCtx and
 // returns a schemas.RequestType indicating the HTTP request type derived from the context.
 type HTTPRequestTypeGetter func(ctx *fasthttp.RequestCtx) schemas.RequestType
@@ -502,6 +506,7 @@ type RouteConfig struct {
 	StreamConfig                           *StreamConfig                          // Optional: Streaming configuration (if nil, streaming not supported)
 	PreCallback                            PreRequestCallback                     // Optional: called after parsing but before Bifrost processing
 	PostCallback                           PostRequestCallback                    // Optional: called after request processing
+	RawPreCallback                         RawPreRequestCallback                  // Optional: passive observation before parsing
 	ShortCircuit                           ShortCircuit
 }
 
@@ -626,6 +631,13 @@ func (g *GenericRouter) RegisterRoutes(r *router.Router, middlewares ...schemas.
 		routeMiddlewares := append([]schemas.BifrostHTTPMiddleware{registerRequestTypeMiddleware}, middlewares...)
 
 		handler := g.createHandler(route)
+		if callback := route.RawPreCallback; callback != nil {
+			baseHandler := handler
+			handler = func(ctx *fasthttp.RequestCtx) {
+				callback(ctx)
+				baseHandler(ctx)
+			}
+		}
 		switch method {
 		case fasthttp.MethodPost:
 			r.POST(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))

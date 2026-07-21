@@ -701,9 +701,10 @@ func CreateOpenAIRouteConfigs(pathPrefix string, handlerStore lib.HandlerStore) 
 		"/openai/responses",
 	} {
 		routes = append(routes, RouteConfig{
-			Type:   RouteConfigTypeOpenAI,
-			Path:   pathPrefix + path,
-			Method: "POST",
+			Type:           RouteConfigTypeOpenAI,
+			Path:           pathPrefix + path,
+			Method:         "POST",
+			RawPreCallback: sealedCodexResponsesObserver(pathPrefix + path),
 			GetHTTPRequestType: func(ctx *fasthttp.RequestCtx) schemas.RequestType {
 				return schemas.ResponsesRequest
 			},
