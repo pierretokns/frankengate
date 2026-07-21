@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -13,6 +15,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/maximhq/bifrost/tests/conformance/lab/contract"
 	"github.com/maximhq/bifrost/tests/conformance/lab/mantleservice"
@@ -132,6 +135,7 @@ const validRuntimeLock = `{
 type fakeExecutor struct {
 	calls    []string
 	logCalls int
+	failUp   bool
 }
 
 type executorFunc func([]string, io.Writer, io.Writer, string, ...string) error
@@ -140,41 +144,94 @@ func (fn executorFunc) Run(env []string, stdout, stderr io.Writer, name string, 
 	return fn(env, stdout, stderr, name, args...)
 }
 
+type deadlineExecutor struct{ deadlines int }
+
+func (executor *deadlineExecutor) Run(_ []string, _ io.Writer, _ io.Writer, _ string, _ ...string) error {
+	return nil
+}
+func (executor *deadlineExecutor) RunDiagnostic(ctx context.Context, _ []string, _ io.Writer, _ io.Writer, _ string, _ ...string) error {
+	deadline, ok := ctx.Deadline()
+	if !ok || time.Until(deadline) > 5*time.Second {
+		return errors.New("missing diagnostic deadline")
+	}
+	executor.deadlines++
+	return context.DeadlineExceeded
+}
+
 func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 	directory := t.TempDir()
-	paths := diagnosticsPaths{Logs: filepath.Join(directory, "logs.txt"), PS: filepath.Join(directory, "ps.txt")}
+	path := filepath.Join(directory, "failure-diagnostics.json")
 	executor := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, args ...string) error {
-		_, _ = io.WriteString(stdout, strings.Join(args, " "))
+		_, _ = io.WriteString(stdout, "Authorization: Bearer secret PEM -----BEGIN PRIVATE KEY----- "+strings.Join(args, " "))
 		return nil
 	})
-	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, paths); err != nil {
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: path}); err != nil {
 		t.Fatal(err)
 	}
-	for _, path := range []string{paths.Logs, paths.PS} {
-		info, err := os.Lstat(path)
-		if err != nil || !info.Mode().IsRegular() || info.Size() == 0 {
-			t.Fatalf("invalid diagnostic %s: %v %#v", path, err, info)
-		}
+	info, err := os.Lstat(path)
+	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm() != 0o600 || info.Size() == 0 {
+		t.Fatalf("invalid diagnostic %s: %v %#v", path, err, info)
 	}
-	symlink := filepath.Join(directory, "link")
-	if err := os.Symlink(paths.Logs, symlink); err != nil {
+	data, _ := os.ReadFile(path)
+	if bytes.Contains(data, []byte("Bearer")) || bytes.Contains(data, []byte("PRIVATE KEY")) {
+		t.Fatal("structured diagnostics leaked raw secret content")
+	}
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: path}); err == nil {
+		t.Fatal("stale artifact was preserved or overwritten")
+	}
+	unsafeDir := t.TempDir()
+	target := filepath.Join(unsafeDir, "target")
+	_ = os.WriteFile(target, []byte("x"), 0o600)
+	if err := os.Symlink(target, filepath.Join(unsafeDir, "link")); err != nil {
 		t.Fatal(err)
 	}
-	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Logs: symlink, PS: filepath.Join(directory, "new-ps")}); err == nil {
-		t.Fatal("diagnostics followed or replaced symlink")
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: filepath.Join(unsafeDir, "new.json")}); err == nil {
+		t.Fatal("symlink directory entry accepted")
 	}
+	hardDir := t.TempDir()
+	first := filepath.Join(hardDir, "first")
+	_ = os.WriteFile(first, []byte("x"), 0o600)
+	if err := os.Link(first, filepath.Join(hardDir, "second")); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: filepath.Join(hardDir, "new.json")}); err == nil {
+		t.Fatal("hardlink directory entry accepted")
+	}
+	if err := (diagnosticsPaths{Artifact: "relative"}).validate(); err == nil {
+		t.Fatal("relative artifact accepted")
+	}
+	if err := (diagnosticsPaths{}).validate(); err != nil {
+		t.Fatal(err)
+	}
+	oversizedDir := t.TempDir()
 	oversized := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, _ ...string) error {
-		_, _ = stdout.Write(bytes.Repeat([]byte{'x'}, (4<<20)+1))
+		_, _ = stdout.Write(bytes.Repeat([]byte{'x'}, (256<<10)+1))
 		return nil
 	})
-	if err := writeComposeDiagnostics(oversized, nil, "/docker", []string{"compose"}, diagnosticsPaths{Logs: filepath.Join(directory, "large-logs"), PS: filepath.Join(directory, "large-ps")}); err == nil {
-		t.Fatal("oversized diagnostics accepted")
+	largePath := filepath.Join(oversizedDir, "failure.json")
+	if err := writeComposeDiagnostics(oversized, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: largePath}); err != nil {
+		t.Fatal(err)
+	}
+	largeData, _ := os.ReadFile(largePath)
+	if bytes.Contains(largeData, bytes.Repeat([]byte{'x'}, 64)) {
+		t.Fatal("oversized content was not reduced to metadata")
+	}
+	deadlineDir := t.TempDir()
+	deadline := &deadlineExecutor{}
+	if err := writeComposeDiagnostics(deadline, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: filepath.Join(deadlineDir, "failure.json")}); err != nil {
+		t.Fatal(err)
+	}
+	if deadline.deadlines != 10 {
+		t.Fatalf("expected one bounded ps plus nine log commands, got %d", deadline.deadlines)
 	}
 }
 
 func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ string, args ...string) error {
 	fake.calls = append(fake.calls, strings.Join(args, " "))
 	joined := strings.Join(args, " ")
+	if fake.failUp && strings.Contains(joined, " up --detach --wait") {
+		return errors.New("synthetic up failure")
+	}
 	switch {
 	case strings.Contains(joined, "info --format"):
 		_, _ = io.WriteString(stdout, "linux/arm64\n")
@@ -197,6 +254,35 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 		}
 	}
 	return nil
+}
+
+func TestFailureDiagnosticsPrecedeTeardownAndDoNotContaminateStdout(t *testing.T) {
+	directory := t.TempDir()
+	sourceLockPath, _ := filepath.Abs(filepath.Join("..", "..", "images.lock.v1.json"))
+	sourceData, _ := os.ReadFile(sourceLockPath)
+	lockPath := filepath.Join(directory, "runtime.json")
+	_ = os.WriteFile(lockPath, []byte(strings.Replace(validRuntimeLock, "SOURCE_HASH", sha256Hex(sourceData), 1)), 0o600)
+	composePath, _ := filepath.Abs(filepath.Join("..", "..", "compose.yaml"))
+	diagnosticPath := filepath.Join(directory, "failure.json")
+	fake := &fakeExecutor{failUp: true}
+	var stdout, stderr bytes.Buffer
+	err := run(fake, lockPath, sourceLockPath, composePath, "/reviewed/docker", "", recorderEvidencePaths{}, diagnosticsPaths{Artifact: diagnosticPath}, &stdout, &stderr)
+	if err == nil || !strings.Contains(err.Error(), "synthetic up failure") {
+		t.Fatalf("primary error was not preserved: %v", err)
+	}
+	if stdout.Len() != 0 {
+		t.Fatalf("failure diagnostics contaminated lifecycle stdout: %q", stdout.String())
+	}
+	calls := strings.Join(fake.calls, "\n")
+	psIndex := strings.Index(calls, " ps --all --format json")
+	logIndex := strings.Index(calls, " logs --tail 200")
+	downIndex := strings.Index(calls, " down --volumes")
+	if psIndex < 0 || logIndex < psIndex || downIndex < logIndex {
+		t.Fatalf("diagnostics were not captured in ps/logs/down order:\n%s", calls)
+	}
+	if _, err := os.Stat(diagnosticPath); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestLifecycleUsesPinnedImagesRunsFreshCellsAndTearsDown(t *testing.T) {

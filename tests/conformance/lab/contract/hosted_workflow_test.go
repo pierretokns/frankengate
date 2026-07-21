@@ -36,7 +36,8 @@ func TestHostedWorkflowPreservesSealedLabInputs(t *testing.T) {
 		"git -C \"$root\" archive HEAD", "--file \"$build/source/tests/conformance/lab/Dockerfile.gateway\"", "\"$build/source\"",
 		"test -f \"$build/source/tests/conformance/lab/cmd/config-seed/main.go\"",
 		"artifact_status", "rejected-oversize", "size > 4194304", "total > 8388608", "runtime-lock.json", "lifecycle.json",
-		`--compose-logs-artifact "$artifacts/compose.log"`, `--compose-ps-artifact "$artifacts/compose-ps.txt"`,
+		`--failure-diagnostics-artifact "$artifacts/failure-diagnostics.json"`,
+		"refusing stale artifact directory", "count > 4",
 		`LAB_CLIENT_BRIDGE="${bridge_prefix}c"`, `LAB_CONTROL_BRIDGE="${bridge_prefix}o"`, `LAB_DATA_BRIDGE="${bridge_prefix}d"`,
 		`node --test "$lab/prefetch/verify-tree.test.mjs"`,
 		`docker buildx build --network=none --platform "linux/$arch" --file "$lab/Dockerfile.runner" --push --tag "$tag" "$context"`,
@@ -49,7 +50,7 @@ func TestHostedWorkflowPreservesSealedLabInputs(t *testing.T) {
 	if strings.Count(script, "docker buildx build --network=none") != 2 {
 		t.Fatal("offline second-stage build count drifted")
 	}
-	for _, forbidden := range []string{"truncate -s", "registry:2\n", `docker buildx build --platform linux/amd64,linux/arm64 --file "$lab/Dockerfile.gateway"`} {
+	for _, forbidden := range []string{"truncate -s", "compose.log", "compose-ps.txt", "registry:2\n", `docker buildx build --platform linux/amd64,linux/arm64 --file "$lab/Dockerfile.gateway"`} {
 		if strings.Contains(script, forbidden) {
 			t.Fatalf("hosted runner retains unsafe pattern %q", forbidden)
 		}

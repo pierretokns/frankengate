@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -15,6 +17,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/maximhq/bifrost/tests/conformance/lab/contract"
@@ -24,10 +27,13 @@ import (
 type commandExecutor interface {
 	Run(env []string, stdout, stderr io.Writer, name string, args ...string) error
 }
+type diagnosticExecutor interface {
+	RunDiagnostic(context.Context, []string, io.Writer, io.Writer, string, ...string) error
+}
 
 type osExecutor struct{}
 
-type diagnosticsPaths struct{ Logs, PS string }
+type diagnosticsPaths struct{ Artifact string }
 
 type diagnosticCapture struct {
 	data      bytes.Buffer
@@ -50,54 +56,168 @@ func (capture *diagnosticCapture) Write(data []byte) (int, error) {
 }
 
 func (paths diagnosticsPaths) validate() error {
-	if paths.Logs == "" && paths.PS == "" {
-		return nil
-	}
-	if paths.Logs == "" || paths.PS == "" || !filepath.IsAbs(paths.Logs) || !filepath.IsAbs(paths.PS) || paths.Logs == paths.PS {
-		return errors.New("Compose diagnostic artifact paths must be distinct absolute paths or both omitted")
+	if paths.Artifact != "" && !filepath.IsAbs(paths.Artifact) {
+		return errors.New("failure diagnostic artifact path must be absolute")
 	}
 	return nil
 }
 
 func writeComposeDiagnostics(executor commandExecutor, environment []string, dockerBinary string, compose []string, paths diagnosticsPaths) error {
-	if paths.Logs == "" {
+	if paths.Artifact == "" {
 		return nil
 	}
-	items := []struct {
-		path  string
-		limit int
-		args  []string
-	}{
-		{paths.PS, 256 << 10, []string{"ps", "--all"}},
-		{paths.Logs, 4 << 20, []string{"logs", "--tail", "2000", "--no-color", "--no-log-prefix"}},
+	dir := filepath.Dir(paths.Artifact)
+	info, err := os.Lstat(dir)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("diagnostic directory must be real")
 	}
-	for _, item := range items {
-		capture := &diagnosticCapture{limit: item.limit}
-		if err := executor.Run(environment, capture, capture, dockerBinary, append(compose, item.args...)...); err != nil {
-			return fmt.Errorf("capture %s: %w", filepath.Base(item.path), err)
-		}
-		if capture.truncated {
-			return fmt.Errorf("diagnostic %s exceeds %d-byte bound", filepath.Base(item.path), item.limit)
-		}
-		file, err := os.OpenFile(item.path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		item, err := os.Lstat(filepath.Join(dir, entry.Name()))
 		if err != nil {
-			return fmt.Errorf("create diagnostic regular file: %w", err)
+			return err
 		}
-		data := capture.data.Bytes()
-		_, writeErr := file.Write(data)
-		closeErr := file.Close()
-		if writeErr != nil {
-			return writeErr
+		stat, ok := item.Sys().(*syscall.Stat_t)
+		if !item.Mode().IsRegular() || item.Mode()&os.ModeSymlink != 0 || !ok || stat.Nlink != 1 {
+			return fmt.Errorf("unsafe diagnostic directory entry %s", entry.Name())
 		}
-		if closeErr != nil {
-			return closeErr
+	}
+	if _, err := os.Lstat(paths.Artifact); !errors.Is(err, os.ErrNotExist) {
+		return errors.New("diagnostic artifact must be fresh")
+	}
+	type row struct {
+		Service    string `json:"service"`
+		State      string `json:"state"`
+		Health     string `json:"health"`
+		OOM        string `json:"oom"`
+		LogSHA256  string `json:"log_sha256,omitempty"`
+		LogContent string `json:"log_content"`
+		ExitCode   int    `json:"exit_code"`
+		LogBytes   int    `json:"log_bytes"`
+	}
+	result := struct {
+		Schema   string `json:"schema"`
+		Capture  string `json:"capture"`
+		Services []row  `json:"services"`
+	}{Schema: "sealed-lab-failure-diagnostics/v1", Capture: "metadata-only"}
+	services := []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "controlled-dns", "egress-sentinel", "codex-runner"}
+	aggregate, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	type psRow struct {
+		Service  string `json:"Service"`
+		State    string `json:"State"`
+		Health   string `json:"Health"`
+		ExitCode int    `json:"ExitCode"`
+	}
+	status := map[string]psRow{}
+	psCtx, psStop := context.WithTimeout(aggregate, 5*time.Second)
+	psCapture := &diagnosticCapture{limit: 256 << 10}
+	psArgs := append(compose, "ps", "--all", "--format", "json")
+	var psErr error
+	if specialized, ok := executor.(diagnosticExecutor); ok {
+		psErr = specialized.RunDiagnostic(psCtx, environment, psCapture, psCapture, dockerBinary, psArgs...)
+	} else {
+		done := make(chan error, 1)
+		go func() { done <- executor.Run(environment, psCapture, psCapture, dockerBinary, psArgs...) }()
+		select {
+		case psErr = <-done:
+		case <-psCtx.Done():
+			psErr = psCtx.Err()
 		}
+	}
+	psStop()
+	if psErr == nil && !psCapture.truncated {
+		var rows []psRow
+		if json.Unmarshal(psCapture.data.Bytes(), &rows) == nil {
+			for _, item := range rows {
+				for _, allowed := range services {
+					if item.Service == allowed {
+						status[allowed] = item
+					}
+				}
+			}
+		}
+	}
+	for _, service := range services {
+		ctx, stop := context.WithTimeout(aggregate, 5*time.Second)
+		capture := &diagnosticCapture{limit: 256 << 10}
+		args := append(compose, "logs", "--tail", "200", "--no-color", "--no-log-prefix", service)
+		var commandErr error
+		if specialized, ok := executor.(diagnosticExecutor); ok {
+			commandErr = specialized.RunDiagnostic(ctx, environment, capture, capture, dockerBinary, args...)
+		} else {
+			done := make(chan error, 1)
+			go func() { done <- executor.Run(environment, capture, capture, dockerBinary, args...) }()
+			select {
+			case commandErr = <-done:
+			case <-ctx.Done():
+				commandErr = ctx.Err()
+			}
+		}
+		stop()
+		state, health, exitCode := "unknown", "unknown", -1
+		if item, ok := status[service]; ok {
+			if regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.State) {
+				state = item.State
+			}
+			if regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.Health) {
+				health = item.Health
+			}
+			exitCode = item.ExitCode
+		}
+		if commandErr != nil {
+			state = "diagnostic-error"
+		}
+		digest := ""
+		if !capture.truncated {
+			sum := sha256.Sum256(capture.data.Bytes())
+			digest = hex.EncodeToString(sum[:])
+		}
+		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: "unknown", ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
+	}
+	encoded, err := json.Marshal(result)
+	if err != nil || len(encoded) > 1<<20 {
+		return errors.New("structured diagnostics exceed bound")
+	}
+	temp, err := os.CreateTemp(dir, ".failure-diagnostics-*")
+	if err != nil {
+		return err
+	}
+	tempName := temp.Name()
+	defer os.Remove(tempName)
+	if err := temp.Chmod(0o600); err != nil {
+		temp.Close()
+		return err
+	}
+	if _, err := temp.Write(append(encoded, '\n')); err != nil {
+		temp.Close()
+		return err
+	}
+	if err := temp.Sync(); err != nil {
+		temp.Close()
+		return err
+	}
+	if err := temp.Close(); err != nil {
+		return err
+	}
+	if err := os.Link(tempName, paths.Artifact); err != nil {
+		return fmt.Errorf("publish fresh diagnostics: %w", err)
 	}
 	return nil
 }
 
 func (osExecutor) Run(env []string, stdout, stderr io.Writer, name string, args ...string) error {
 	command := exec.Command(name, args...)
+	command.Env = env
+	command.Stdout = stdout
+	command.Stderr = stderr
+	return command.Run()
+}
+func (osExecutor) RunDiagnostic(ctx context.Context, env []string, stdout, stderr io.Writer, name string, args ...string) error {
+	command := exec.CommandContext(ctx, name, args...)
 	command.Env = env
 	command.Stdout = stdout
 	command.Stderr = stderr
@@ -164,8 +284,7 @@ func main() {
 	flag.StringVar(&recorderEvidence.Transcript, "recorder-transcript", "", "absolute path to recorder control JSONL")
 	flag.StringVar(&recorderEvidence.PCAPNG, "recorder-pcapng", "", "absolute path to recorder PCAPNG evidence")
 	flag.StringVar(&recorderEvidence.Ledger, "recorder-ledger", "", "absolute path to recorder canonical JSONL ledger")
-	flag.StringVar(&diagnostics.Logs, "compose-logs-artifact", "", "absolute new file for bounded pre-teardown Compose logs")
-	flag.StringVar(&diagnostics.PS, "compose-ps-artifact", "", "absolute new file for bounded pre-teardown Compose ps")
+	flag.StringVar(&diagnostics.Artifact, "failure-diagnostics-artifact", "", "absolute fresh file for structured pre-teardown diagnostics")
 	flag.Parse()
 	if err := run(osExecutor{}, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath, recorderEvidence, diagnostics, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintln(os.Stderr, "lab-runner:", err)
