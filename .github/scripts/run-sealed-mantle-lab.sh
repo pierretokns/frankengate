@@ -23,17 +23,35 @@ cleanup() {
   for file in "$artifacts"/*; do
     test -f "$file" || continue
     case "$(basename "$file")" in diagnostics.json|runtime-lock.json|lifecycle.json|failure-diagnostics.json) ;; *) rm -f "$file"; bounds=1; continue ;; esac
-    size="$(stat -c %s "$file")"; count=$((count+1)); total=$((total+size))
-    if (( size > 4194304 )); then rm -f "$file"; bounds=1; fi
+    size="$(stat -c %s "$file")"
+    if (( size > 4194304 )); then rm -f "$file"; bounds=1; continue; fi
+    count=$((count+1)); total=$((total+size))
   done
   if (( count > 4 || total > 8388608 )); then bounds=1; fi
-  for _ in 1 2 3 4; do
+  local previous="" summary_status
+  for _ in $(seq 1 20); do
+    if (( count > 4 || total > 8388608 )); then bounds=1; fi
+    summary_status="$([[ $bounds == 0 ]] && echo bounded || echo rejected-oversize)"
     printf '{"schema":"sealed-mantle-ci-diagnostics/v1","run_id":"%s","artifact_status":"%s","file_count":%d,"observed_bytes":%d}\n' "$run_id" "$([[ $bounds == 0 ]] && echo bounded || echo rejected-oversize)" "$count" "$total" >"$artifacts/diagnostics.json"
     count=0; total=0
     for file in "$artifacts"/*; do test -f "$file" || continue; count=$((count+1)); total=$((total+$(stat -c %s "$file"))); done
+    current="$summary_status:$count:$total"
+    test "$current" = "$previous" && break
+    previous="$current"
   done
   if (( count > 4 || total > 8388608 )); then bounds=1; fi
-  if test "$(jq -r .file_count "$artifacts/diagnostics.json")" != "$count" || test "$(jq -r .observed_bytes "$artifacts/diagnostics.json")" != "$total"; then bounds=1; fi
+  if (( bounds != 0 )); then
+    previous=""
+    for _ in $(seq 1 20); do
+      printf '{"schema":"sealed-mantle-ci-diagnostics/v1","run_id":"%s","artifact_status":"rejected-oversize","file_count":%d,"observed_bytes":%d}\n' "$run_id" "$count" "$total" >"$artifacts/diagnostics.json"
+      count=0; total=0
+      for file in "$artifacts"/*; do test -f "$file" || continue; count=$((count+1)); total=$((total+$(stat -c %s "$file"))); done
+      current="rejected-oversize:$count:$total"
+      test "$current" = "$previous" && break
+      previous="$current"
+    done
+  fi
+  if test "$(jq -r .file_count "$artifacts/diagnostics.json")" != "$count" || test "$(jq -r .observed_bytes "$artifacts/diagnostics.json")" != "$total" || { (( bounds != 0 )) && test "$(jq -r .artifact_status "$artifacts/diagnostics.json")" != rejected-oversize; }; then bounds=1; status=1; fi
   if (( bounds != 0 )); then status=1; fi
   exit "$status"
 }

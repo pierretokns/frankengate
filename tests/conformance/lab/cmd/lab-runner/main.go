@@ -99,15 +99,17 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return errors.New("diagnostic artifact must be fresh")
 	}
 	type row struct {
-		Service    string `json:"service"`
-		State      string `json:"state"`
-		Health     string `json:"health"`
-		OOM        string `json:"oom"`
-		LogSHA256  string `json:"log_sha256,omitempty"`
-		LogContent string `json:"log_content"`
-		ErrorClass string `json:"error_class"`
-		ExitCode   int    `json:"exit_code"`
-		LogBytes   int    `json:"log_bytes"`
+		Service      string `json:"service"`
+		State        string `json:"state"`
+		Health       string `json:"health"`
+		OOM          string `json:"oom"`
+		OOMSource    string `json:"oom_source"`
+		LogSHA256    string `json:"log_sha256,omitempty"`
+		LogContent   string `json:"log_content"`
+		ErrorClass   string `json:"error_class"`
+		FailureClass string `json:"failure_class"`
+		ExitCode     int    `json:"exit_code"`
+		LogBytes     int    `json:"log_bytes"`
 	}
 	result := struct {
 		Schema            string `json:"schema"`
@@ -118,8 +120,11 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		Phase             string `json:"phase"`
 		Nonce             string `json:"nonce"`
 		Capture           string `json:"capture"`
+		StatusCapture     string `json:"status_capture"`
+		StatusRowCount    int    `json:"status_row_count"`
+		MissingStatusRows int    `json:"missing_status_rows"`
 		Services          []row  `json:"services"`
-	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only"}
+	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok"}
 	nonce := make([]byte, 16)
 	if _, err := rand.Read(nonce); err != nil {
 		return err
@@ -129,11 +134,11 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 	aggregate, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	type psRow struct {
-		Service   string `json:"Service"`
-		State     string `json:"State"`
-		Health    string `json:"Health"`
-		ExitCode  int    `json:"ExitCode"`
-		OOMKilled *bool  `json:"OOMKilled"`
+		ID       string `json:"ID"`
+		Service  string `json:"Service"`
+		State    string `json:"State"`
+		Health   string `json:"Health"`
+		ExitCode int    `json:"ExitCode"`
 	}
 	status := map[string]psRow{}
 	psCtx, psStop := context.WithTimeout(aggregate, 5*time.Second)
@@ -147,18 +152,43 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return errors.New("diagnostic executor lacks context support")
 	}
 	psStop()
-	if psErr == nil && !psCapture.truncated {
+	if psCapture.truncated {
+		result.StatusCapture = "oversize"
+	} else if errors.Is(psErr, context.DeadlineExceeded) {
+		result.StatusCapture = "timeout"
+	} else if psErr != nil {
+		result.StatusCapture = "command-error"
+	} else {
 		var rows []psRow
 		if json.Unmarshal(psCapture.data.Bytes(), &rows) == nil {
+			malformed := false
 			for _, item := range rows {
+				matched := false
 				for _, allowed := range services {
 					if item.Service == allowed {
+						matched = true
+						if _, duplicate := status[allowed]; duplicate {
+							malformed = true
+							continue
+						}
+						if !regexp.MustCompile(`^[a-f0-9]{12,64}$`).MatchString(item.ID) || !regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.State) {
+							malformed = true
+						}
 						status[allowed] = item
 					}
 				}
+				if !matched {
+					malformed = true
+				}
 			}
+			if malformed {
+				result.StatusCapture = "malformed"
+			}
+		} else {
+			result.StatusCapture = "malformed"
 		}
 	}
+	result.StatusRowCount = len(status)
 	for _, service := range services {
 		ctx, stop := context.WithTimeout(aggregate, 5*time.Second)
 		capture := &diagnosticCapture{limit: 256 << 10}
@@ -171,7 +201,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 			return errors.New("diagnostic executor lacks context support")
 		}
 		stop()
-		state, health, oom, errorClass, exitCode := "unknown", "unknown", "unknown", "none", -1
+		state, health, oom, oomSource, errorClass, failureClass, exitCode := "unknown", "unknown", "unsupported", "unsupported", "none", "none", -1
 		if item, ok := status[service]; ok {
 			if regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.State) {
 				state = item.State
@@ -180,13 +210,26 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 				health = item.Health
 			}
 			exitCode = item.ExitCode
-			if item.OOMKilled != nil {
-				if *item.OOMKilled {
-					oom = "true"
-				} else {
-					oom = "false"
+			if regexp.MustCompile(`^[a-f0-9]{12,64}$`).MatchString(item.ID) {
+				oomSource = "docker-inspect"
+				inspectCtx, inspectStop := context.WithTimeout(aggregate, 5*time.Second)
+				inspectCapture := &diagnosticCapture{limit: 32}
+				inspectErr := executor.(diagnosticExecutor).RunDiagnostic(inspectCtx, environment, inspectCapture, inspectCapture, dockerBinary, "inspect", "--format", "{{json .State.OOMKilled}}", item.ID)
+				inspectStop()
+				if inspectErr == nil {
+					switch strings.TrimSpace(inspectCapture.data.String()) {
+					case "true":
+						oom = "true"
+					case "false":
+						oom = "false"
+					}
 				}
 			}
+		}
+		failureClass = classifySanitizedFailure(capture.data.Bytes())
+		if _, ok := status[service]; !ok {
+			failureClass = "missing-status-row"
+			result.MissingStatusRows++
 		}
 		if commandErr != nil {
 			state = "diagnostic-error"
@@ -203,7 +246,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		if capture.truncated {
 			errorClass = "oversize"
 		}
-		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, ErrorClass: errorClass, ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
+		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
 	encoded, err := json.Marshal(result)
 	if err != nil || len(encoded) > 1<<20 {
@@ -234,6 +277,64 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return fmt.Errorf("publish fresh diagnostics: %w", err)
 	}
 	return nil
+}
+
+func classifySanitizedFailure(data []byte) string {
+	s := strings.ToLower(string(data))
+	patterns := []struct {
+		class string
+		terms []string
+	}{
+		{"config-parse", []string{"invalid config", "config parse", "decode config", "unmarshal config"}},
+		{"sqlite-cgo-disabled", []string{"sqlite", "cgo_enabled=0", "cgo disabled", "requires cgo"}},
+		{"postgres-auth", []string{"password authentication failed", "authentication failed for user", "sqlstate 28p01"}},
+		{"postgres-connect", []string{"connection refused", "could not connect to postgres", "dial tcp", "sqlstate 08001"}},
+	}
+	for _, pattern := range patterns {
+		for _, term := range pattern.terms {
+			if strings.Contains(s, term) {
+				return pattern.class
+			}
+		}
+	}
+	if strings.TrimSpace(s) != "" {
+		return "generic-startup"
+	}
+	return "none"
+}
+
+type seedRecord struct {
+	Schema   string `json:"schema"`
+	Revision string `json:"revision"`
+	Provider string `json:"provider"`
+	Alias    string `json:"alias"`
+	Model    string `json:"model"`
+	TLS      string `json:"tls"`
+}
+
+func parseSeedRecord(data []byte) (seedRecord, error) {
+	var record seedRecord
+	if len(data) == 0 || len(data) > 4096 {
+		return record, errors.New("config seed output exceeds exact record bound")
+	}
+	for _, key := range []string{"schema", "revision", "provider", "alias", "model", "tls"} {
+		if bytes.Count(data, []byte(`"`+key+`"`)) != 1 {
+			return record, errors.New("config seed record has missing or duplicate fields")
+		}
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&record); err != nil {
+		return record, fmt.Errorf("decode config seed record: %w", err)
+	}
+	var extra any
+	if err := decoder.Decode(&extra); !errors.Is(err, io.EOF) {
+		return record, errors.New("config seed output must contain exactly one JSON record")
+	}
+	if record != (seedRecord{Schema: "sealed-lab-config-seed/v1", Revision: "sealed-lab-c9-gpt55-v1", Provider: "bedrock_mantle", Alias: "gpt-5.5", Model: "openai.gpt-5.5", TLS: "private-ca-verified"}) {
+		return record, errors.New("config seed record contract mismatch")
+	}
+	return record, nil
 }
 
 func (osExecutor) Run(env []string, stdout, stderr io.Writer, name string, args ...string) error {
@@ -435,8 +536,12 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		return fmt.Errorf("start sealed lab: %w", err)
 	}
 	var seedLogs bytes.Buffer
-	if err := executor.Run(environment, &seedLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "config-seed")...); err != nil || !bytes.Contains(seedLogs.Bytes(), []byte(`"revision":"sealed-lab-c9-gpt55-v1"`)) {
+	if err := executor.Run(environment, &seedLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "config-seed")...); err != nil {
 		return errors.New("config seed revision was not observed from completed seed service")
+	}
+	seedEvidence, err := parseSeedRecord(seedLogs.Bytes())
+	if err != nil {
+		return err
 	}
 	clients := []string{"claude", "codex"}
 	cellPlatforms := make([]string, 0, len(clients))
@@ -529,7 +634,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	return json.NewEncoder(stdout).Encode(lifecycleResult{
 		Schema: "sealed-lab-lifecycle-result/v2", RunID: lock.RunID, NativePlatform: cellPlatforms[0],
 		StartedAt: startedAt.Format(time.RFC3339Nano), CompletedAt: time.Now().UTC().Format(time.RFC3339Nano),
-		SourceLockSHA256: lock.SourceLockSHA256, RuntimeLockSHA256: digest, SeedConfigRevision: "sealed-lab-c9-gpt55-v1",
+		SourceLockSHA256: lock.SourceLockSHA256, RuntimeLockSHA256: digest, SeedConfigRevision: seedEvidence.Revision,
 		Clients: clients, NormalCellForbiddenEvents: forbidden, AdversarialProbeRecordedEvents: probeEvents,
 		PaidInferenceProof: "unproven-external-recorder-required", TeardownClean: teardownClean,
 		CodexInferenceBoundary: codexBoundary,

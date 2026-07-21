@@ -238,6 +238,87 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 	}
 }
 
+func TestSanitizedFailureClassificationMutants(t *testing.T) {
+	cases := map[string]string{
+		"CONFIG Parse failed":           "config-parse",
+		"SQLite driver requires CGO":    "sqlite-cgo-disabled",
+		"SQLSTATE 28P01":                "postgres-auth",
+		"could not connect to POSTGRES": "postgres-connect",
+		"unexpected startup panic":      "generic-startup",
+		"":                              "none",
+	}
+	for input, want := range cases {
+		if got := classifySanitizedFailure([]byte(input)); got != want {
+			t.Errorf("%q: got %q want %q", input, got, want)
+		}
+	}
+}
+
+func TestConfigSeedRecordRequiresOneExactJSONRecord(t *testing.T) {
+	valid := `{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1","provider":"bedrock_mantle","alias":"gpt-5.5","model":"openai.gpt-5.5","tls":"private-ca-verified"}`
+	if _, err := parseSeedRecord([]byte(valid + "\n")); err != nil {
+		t.Fatal(err)
+	}
+	mutants := []string{
+		`prefix ` + valid,
+		valid + "\n" + valid,
+		`{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1"}`,
+		strings.Replace(valid, `"provider":"bedrock_mantle"`, `"provider":"bedrock"`, 1),
+		strings.Replace(valid, `"tls":"private-ca-verified"`, `"tls":"insecure"`, 1),
+		strings.TrimSuffix(valid, "}") + `,"extra":true}`,
+		strings.TrimSuffix(valid, "}") + `,"revision":"sealed-lab-c9-gpt55-v1"}`,
+		valid + strings.Repeat(" ", 4096),
+	}
+	for _, mutant := range mutants {
+		if _, err := parseSeedRecord([]byte(mutant)); err == nil {
+			t.Errorf("accepted mutant %q", mutant)
+		}
+	}
+}
+
+func TestDiagnosticsRejectDuplicateStatusAndInspectOOM(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "failure.json")
+	executor := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, args ...string) error {
+		joined := strings.Join(args, " ")
+		switch {
+		case strings.Contains(joined, " ps --all --format json"):
+			_, _ = io.WriteString(stdout, `[{"Service":"postgres","ID":"aaaaaaaaaaaa","State":"exited","ExitCode":1},{"Service":"postgres","ID":"bbbbbbbbbbbb","State":"running"}]`)
+		case strings.HasPrefix(joined, "inspect --format"):
+			_, _ = io.WriteString(stdout, "true\n")
+		case strings.Contains(joined, "logs --tail 200") && strings.HasSuffix(joined, "postgres"):
+			_, _ = io.WriteString(stdout, "password authentication failed")
+		}
+		return nil
+	})
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, boundDiagnostic(path)); err != nil {
+		t.Fatal(err)
+	}
+	var got struct {
+		StatusCapture  string `json:"status_capture"`
+		StatusRowCount int    `json:"status_row_count"`
+		Missing        int    `json:"missing_status_rows"`
+		Services       []struct {
+			Service      string `json:"service"`
+			OOM          string `json:"oom"`
+			FailureClass string `json:"failure_class"`
+		} `json:"services"`
+	}
+	data, _ := os.ReadFile(path)
+	if err := json.Unmarshal(data, &got); err != nil {
+		t.Fatal(err)
+	}
+	if got.StatusCapture != "malformed" || got.StatusRowCount != 1 || got.Missing != 8 {
+		t.Fatalf("bad status summary: %s", data)
+	}
+	if got.Services[0].Service != "postgres" || got.Services[0].OOM != "true" || got.Services[0].FailureClass != "postgres-auth" {
+		t.Fatalf("bad postgres classification: %s", data)
+	}
+	if got.Services[1].FailureClass != "missing-status-row" {
+		t.Fatalf("missing status not classified: %s", data)
+	}
+}
+
 func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ string, args ...string) error {
 	fake.calls = append(fake.calls, strings.Join(args, " "))
 	joined := strings.Join(args, " ")
@@ -260,7 +341,7 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix config-seed"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1"}`+"\n")
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1","provider":"bedrock_mantle","alias":"gpt-5.5","model":"openai.gpt-5.5","tls":"private-ca-verified"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix egress-sentinel"):
 		fake.logCalls++
 		if fake.logCalls > 1 {
