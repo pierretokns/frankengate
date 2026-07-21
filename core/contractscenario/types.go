@@ -35,6 +35,28 @@ type Fault struct { Kind FaultKind; Value string }
 
 type Engine struct { mu sync.Mutex; scenario string; cells map[string]*Cell; auth AuthPolicy; transitions []Transition; faults map[string][]Fault; faultPos map[string]int }
 
+// Budget is a deterministic per-cell execution bound. A zero field means
+// unlimited; callers should set every bound required by their scenario.
+type Budget struct { Requests, Objects, BodyBytes uint64 }
+type Usage struct { Requests, Objects, BodyBytes uint64 }
+type Barrier struct { mu sync.Mutex; reached map[string]bool }
+
+func NewBarrier() *Barrier { return &Barrier{reached: make(map[string]bool)} }
+func (b *Barrier) Reach(name string) error { if strings.TrimSpace(name)=="" { return fmt.Errorf("barrier name is required") }; b.mu.Lock(); b.reached[name]=true; b.mu.Unlock(); return nil }
+func (b *Barrier) Reached(name string) bool { b.mu.Lock(); defer b.mu.Unlock(); return b.reached[name] }
+
+func (e *Engine) Consume(id string, budget Budget, usage *Usage, bodyBytes, objects uint64) error {
+	if usage == nil { return fmt.Errorf("usage is required") }
+	e.mu.Lock(); defer e.mu.Unlock()
+	if _, ok := e.cells[id]; !ok { return fmt.Errorf("unknown cell %q", id) }
+	next := Usage{Requests: usage.Requests+1, Objects: usage.Objects+objects, BodyBytes: usage.BodyBytes+bodyBytes}
+	if budget.Requests > 0 && next.Requests > budget.Requests { return fmt.Errorf("request budget exceeded") }
+	if budget.Objects > 0 && next.Objects > budget.Objects { return fmt.Errorf("object budget exceeded") }
+	if budget.BodyBytes > 0 && next.BodyBytes > budget.BodyBytes { return fmt.Errorf("body byte budget exceeded") }
+	*usage = next
+	return nil
+}
+
 func New(scenario string, specs []CellSpec, auth AuthPolicy) (*Engine, error) {
 	if strings.TrimSpace(scenario) == "" { return nil, fmt.Errorf("scenario name is required") }
 	e := &Engine{scenario: scenario, cells: make(map[string]*Cell), auth: auth, faults: make(map[string][]Fault), faultPos: make(map[string]int)}
