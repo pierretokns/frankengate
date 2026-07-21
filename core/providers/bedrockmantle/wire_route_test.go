@@ -9,6 +9,8 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -27,6 +29,126 @@ func (wireTestLogger) SetLevel(schemas.LogLevel)              {}
 func (wireTestLogger) SetOutputType(schemas.LoggerOutputType) {}
 func (wireTestLogger) LogHTTPRequest(schemas.LogLevel, string) schemas.LogEventBuilder {
 	return schemas.NoopLogEvent
+}
+
+func TestResponsesStreamParsesDeterministicMantleServiceGolden(t *testing.T) {
+	golden, err := os.ReadFile(filepath.Join("..", "..", "..", "tests", "conformance", "lab", "mantleservice", "testdata", "responses-stream.golden.sse"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		_, _ = w.Write(golden)
+	}))
+	defer ts.Close()
+	config := &schemas.ProviderConfig{NetworkConfig: schemas.NetworkConfig{DefaultRequestTimeoutInSeconds: 5}}
+	provider, err := NewBedrockMantleProvider(config, wireTestLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	dial := func(string) (net.Conn, error) {
+		return net.DialTimeout("tcp", ts.Listener.Addr().String(), 5*time.Second)
+	}
+	provider.mantleStreamingClient.Dial = dial
+	provider.mantleStreamingClient.TLSConfig = &tls.Config{InsecureSkipVerify: true} // test server certificate
+	region := schemas.NewSecretVar("us-east-1")
+	key := schemas.Key{Value: *schemas.NewSecretVar("test-key"), BedrockMantleKeyConfig: &schemas.BedrockMantleKeyConfig{Region: region}}
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	messageType := schemas.ResponsesMessageType("message")
+	role := schemas.ResponsesMessageRoleType("user")
+	content := "golden"
+	request := &schemas.BifrostResponsesRequest{Model: "openai.gpt-5.5", Input: []schemas.ResponsesMessage{{Type: &messageType, Role: &role, Content: &schemas.ResponsesMessageContent{ContentStr: &content}}}}
+	stream, bifrostErr := provider.ResponsesStream(ctx, func(_ *schemas.BifrostContext, result *schemas.BifrostResponse, err *schemas.BifrostError) (*schemas.BifrostResponse, *schemas.BifrostError) {
+		return result, err
+	}, nil, key, request)
+	if bifrostErr != nil {
+		t.Fatalf("ResponsesStream: %v", bifrostErr)
+	}
+	var types []schemas.ResponsesStreamResponseType
+	var terminal *schemas.BifrostResponsesResponse
+	for chunk := range stream {
+		if chunk.BifrostError != nil {
+			t.Fatalf("parse golden: %v", chunk.BifrostError)
+		}
+		if chunk.BifrostResponsesStreamResponse == nil {
+			t.Fatalf("non-Responses chunk: %#v", chunk)
+		}
+		types = append(types, chunk.BifrostResponsesStreamResponse.Type)
+		if chunk.BifrostResponsesStreamResponse.Type == schemas.ResponsesStreamResponseTypeCompleted {
+			terminal = chunk.Response
+		}
+	}
+	want := []schemas.ResponsesStreamResponseType{
+		schemas.ResponsesStreamResponseTypeCreated, schemas.ResponsesStreamResponseTypeOutputItemAdded,
+		schemas.ResponsesStreamResponseTypeContentPartAdded, schemas.ResponsesStreamResponseTypeOutputTextDelta,
+		schemas.ResponsesStreamResponseTypeOutputTextDone, schemas.ResponsesStreamResponseTypeContentPartDone,
+		schemas.ResponsesStreamResponseTypeOutputItemDone, schemas.ResponsesStreamResponseTypeCompleted,
+	}
+	if len(types) != len(want) {
+		t.Fatalf("parsed types=%v want=%v", types, want)
+	}
+	for index := range want {
+		if types[index] != want[index] {
+			t.Fatalf("type[%d]=%q want=%q", index, types[index], want[index])
+		}
+	}
+	if terminal == nil || terminal.ID == nil || *terminal.ID != "resp_3dd6c57733bf24a1" || terminal.Status == nil || *terminal.Status != "completed" || len(terminal.Output) != 1 {
+		t.Fatalf("terminal output lost: %#v", terminal)
+	}
+}
+
+func TestUnaryResponsesAndGPTOSSChatParseDeterministicServiceGoldens(t *testing.T) {
+	goldenDir := filepath.Join("..", "..", "..", "tests", "conformance", "lab", "mantleservice", "testdata")
+	responseGolden, err := os.ReadFile(filepath.Join(goldenDir, "response.golden.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	chatGolden, err := os.ReadFile(filepath.Join(goldenDir, "chat.golden.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.URL.Path == "/v1/chat/completions" {
+			_, _ = w.Write(chatGolden)
+			return
+		}
+		if r.URL.Path == "/openai/v1/responses" {
+			_, _ = w.Write(responseGolden)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer ts.Close()
+	provider, err := NewBedrockMantleProvider(&schemas.ProviderConfig{NetworkConfig: schemas.NetworkConfig{DefaultRequestTimeoutInSeconds: 5}}, wireTestLogger{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	dial := func(string) (net.Conn, error) {
+		return net.DialTimeout("tcp", ts.Listener.Addr().String(), 5*time.Second)
+	}
+	provider.mantleClient.Dial = dial
+	provider.mantleClient.TLSConfig = &tls.Config{InsecureSkipVerify: true} // test server certificate
+	region := schemas.NewSecretVar("us-east-1")
+	key := schemas.Key{Value: *schemas.NewSecretVar("test-key"), BedrockMantleKeyConfig: &schemas.BedrockMantleKeyConfig{Region: region}}
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	messageType := schemas.ResponsesMessageType("message")
+	responseRole := schemas.ResponsesMessageRoleType("user")
+	golden := "golden"
+	response, bifrostErr := provider.Responses(ctx, key, &schemas.BifrostResponsesRequest{Model: "openai.gpt-5.5", Input: []schemas.ResponsesMessage{{Type: &messageType, Role: &responseRole, Content: &schemas.ResponsesMessageContent{ContentStr: &golden}}}})
+	if bifrostErr != nil {
+		t.Fatalf("Responses: %v", bifrostErr)
+	}
+	if response.ID == nil || *response.ID != "resp_86aab3a4055fa4de" || response.Status == nil || *response.Status != "completed" || len(response.Output) != 1 {
+		t.Fatalf("unary golden lost fields: %#v", response)
+	}
+	chat, bifrostErr := provider.ChatCompletion(ctx, key, &schemas.BifrostChatRequest{Model: "openai.gpt-oss-120b", Input: []schemas.ChatMessage{{Role: schemas.ChatMessageRoleUser, Content: &schemas.ChatMessageContent{ContentStr: &golden}}}})
+	if bifrostErr != nil {
+		t.Fatalf("ChatCompletion: %v", bifrostErr)
+	}
+	if chat.ID != "chatcmpl_5a3bc44d08783f97" || chat.Model != "openai.gpt-oss-120b" || len(chat.Choices) != 1 {
+		t.Fatalf("Chat golden lost fields: %#v", chat)
+	}
 }
 
 type capturedMantleRequest struct {

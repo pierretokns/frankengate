@@ -1,0 +1,32 @@
+{
+  "schema": "bedrock-mantle-openai-service-coverage/v1",
+  "source_lock_sha256": "e1e5bc8be5297e0b21acb69aca7e7431a7c5032ba4eafbfb810d151b232cf6d7",
+  "sources": [
+    {"id":"aws-docs-mantle-2026-07-20","authority_class":"official-doc-derived","artifact_digest":"sha256:a2dfa8a9c6b982258d01bcf6bbebaf01da4f7ded5efd982f547b66128304e4c3"},
+    {"id":"aws-model-card-openai-gpt-54-2026-07-21","authority_class":"official-doc-derived","artifact_digest":"sha256:7a5fd36a39ec0d1ecfd71fc537fa07fc3d89905722c89d99b0f0f00d3a5f1263"},
+    {"id":"aws-model-card-openai-gpt-55-2026-07-21","authority_class":"official-doc-derived","artifact_digest":"sha256:3e2075457bc5402d2363b00c0f5c7fadb2a6f0db6360fdab912546bd7cf071c3"},
+    {"id":"mantle-frontier-observation-2026-07-21","authority_class":"aws-observed-sample","artifact_digest":"sha256:10f1e7678e1e801babd2ea31a1a9b9b98780e49021d729eada6525c1d377a9cb"},
+    {"id":"openai-node-mantle-6.48.0","authority_class":"official-client-serialization","artifact_digest":"sha256:4937935684e4e0245b4c211266d0f8af746202d08825b31b057d4de9ca6405fa"}
+  ],
+  "model_routes": [
+    {"method":"GET","path":"/v1/models","auth":"synthetic-bearer","content_type":"application/json","event_grammar":"openai-model-list-json","source_id":"aws-docs-mantle-2026-07-20"},
+    {"method":"GET","path":"/openai/v1/models","auth":"synthetic-bearer","content_type":"application/json","event_grammar":"openai-model-list-json","source_id":"openai-node-mantle-6.48.0"}
+  ],
+  "omissions": [
+    {"id":"anthropic-separate-surface","subject":"Anthropic Messages","reason":"Anthropic Mantle is a separately authenticated and serialized surface owned by a later C8 slice"},
+    {"id":"chat-streaming-excluded","subject":"OpenAI Chat Completions streaming","reason":"this revision models only unary Chat and rejects stream=true"},
+    {"id":"gemma-4-missing-authority","subject":"Google Gemma 4","reason":"the checked-in source lock has no exact Gemma 4 model identifier and route authority row"}
+  ],
+  "discrepancies": [
+    {"id":"openai-base-path-by-model","status":"resolved-by-explicit-model-row","resolution":"GPT-5.4/5.5 use model-card /openai/v1; GPT OSS uses documented generic /v1; observed GPT-5.6 rows remain negative only","source_ids":["aws-docs-mantle-2026-07-20","aws-model-card-openai-gpt-54-2026-07-21","aws-model-card-openai-gpt-55-2026-07-21","mantle-frontier-observation-2026-07-21"]}
+  ],
+  "rows": [
+    {"model_id":"openai.gpt-5.4","revision":"aws-model-card-retrieved-2026-07-21","authority":"official-doc-derived","source_id":"aws-model-card-openai-gpt-54-2026-07-21","method":"POST","path":"/openai/v1/responses","auth":"synthetic-bearer","content_type":"application/json","responses_event_grammar":"openai-responses-sse-v1","chat_event_grammar":"","responses":true,"chat":false,"chat_streaming":false},
+    {"model_id":"openai.gpt-5.5","revision":"aws-model-card-retrieved-2026-07-21","authority":"official-doc-derived","source_id":"aws-model-card-openai-gpt-55-2026-07-21","method":"POST","path":"/openai/v1/responses","auth":"synthetic-bearer","content_type":"application/json","responses_event_grammar":"openai-responses-sse-v1","chat_event_grammar":"","responses":true,"chat":false,"chat_streaming":false},
+    {"model_id":"openai.gpt-5.6-luna","revision":"deployment-observation-2026-07-21","authority":"aws-observed-sample","source_id":"mantle-frontier-observation-2026-07-21","method":"POST","path":"/openai/v1/responses","auth":"synthetic-bearer","content_type":"application/json","responses_event_grammar":"","chat_event_grammar":"","responses":false,"chat":false,"chat_streaming":false,"expected_status":401,"expected_error_code":"access_denied"},
+    {"model_id":"openai.gpt-5.6-sol","revision":"deployment-observation-2026-07-21","authority":"aws-observed-sample","source_id":"mantle-frontier-observation-2026-07-21","method":"POST","path":"/openai/v1/responses","auth":"synthetic-bearer","content_type":"application/json","responses_event_grammar":"","chat_event_grammar":"","responses":false,"chat":false,"chat_streaming":false,"expected_status":401,"expected_error_code":"access_denied"},
+    {"model_id":"openai.gpt-5.6-terra","revision":"deployment-observation-2026-07-21","authority":"aws-observed-sample","source_id":"mantle-frontier-observation-2026-07-21","method":"POST","path":"/openai/v1/responses","auth":"synthetic-bearer","content_type":"application/json","responses_event_grammar":"","chat_event_grammar":"","responses":false,"chat":false,"chat_streaming":false,"expected_status":401,"expected_error_code":"access_denied"},
+    {"model_id":"openai.gpt-oss-120b","revision":"aws-mantle-guide-retrieved-2026-07-20","authority":"official-doc-derived","source_id":"aws-docs-mantle-2026-07-20","method":"POST","path":"/v1/responses","chat_path":"/v1/chat/completions","auth":"synthetic-bearer","content_type":"application/json","responses_event_grammar":"openai-responses-sse-v1","chat_event_grammar":"openai-chat-completions-json-v1","responses":true,"chat":true,"chat_streaming":false},
+    {"model_id":"openai.gpt-oss-20b","revision":"aws-mantle-guide-retrieved-2026-07-20","authority":"official-doc-derived","source_id":"aws-docs-mantle-2026-07-20","method":"POST","path":"/v1/responses","chat_path":"/v1/chat/completions","auth":"synthetic-bearer","content_type":"application/json","responses_event_grammar":"openai-responses-sse-v1","chat_event_grammar":"openai-chat-completions-json-v1","responses":true,"chat":true,"chat_streaming":false}
+  ]
+}
