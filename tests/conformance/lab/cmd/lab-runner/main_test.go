@@ -179,6 +179,28 @@ func TestValidateCodexIngressTranscriptRejectsContractMutants(t *testing.T) {
 	}
 }
 
+func TestParseCodexIngressRejectionsPreservesOnlyAllowlistedMetadata(t *testing.T) {
+	valid := `{"schema":"sealed-codex-bifrost-ingress-rejected/v1","run_id":"test-1","reason":"lite_predicate_mismatch","body_bounded":true,"json_unique":true,"json_decoded":true,"method_ok":true,"model_ok":true,"stream_ok":true,"lite_header_ok":true,"no_websocket_upgrade":true,"instructions_absent":true,"top_level_tools_absent":true,"parallel_false_present":true,"input_present":true,"first_input_type_ok":true,"first_input_role_ok":true,"tool_count_ok":true,"tool_shapes_ok":false,"input_run_id_count":1,"input_run_id_matches":true,"raw_body":"Bearer secret"}`
+	records := parseCodexIngressRejections([]byte(valid+"\n"), "test-1", 4)
+	if len(records) != 1 || records[0].ToolShapesOK || !records[0].InputRunIDMatches {
+		t.Fatalf("rejection metadata not preserved: %#v", records)
+	}
+	encoded, _ := json.Marshal(records)
+	if bytes.Contains(encoded, []byte("Bearer")) || bytes.Contains(encoded, []byte("raw_body")) {
+		t.Fatalf("unallowlisted content survived: %s", encoded)
+	}
+	mutants := []string{
+		strings.Replace(valid, `"run_id":"test-1"`, `"run_id":"other"`, 1),
+		strings.Replace(valid, `"reason":"lite_predicate_mismatch"`, `"reason":"Bearer secret"`, 1),
+		strings.Replace(valid, `"input_run_id_count":1`, `"input_run_id_count":99`, 1),
+	}
+	for index, mutant := range mutants {
+		if got := parseCodexIngressRejections([]byte(mutant+"\n"), "test-1", 4); len(got) != 0 {
+			t.Fatalf("unsafe rejection mutant %d accepted: %#v", index, got)
+		}
+	}
+}
+
 const validRuntimeLock = `{
   "schema":"sealed-lab-runtime-lock/v1",
   "run_id":"test-1",

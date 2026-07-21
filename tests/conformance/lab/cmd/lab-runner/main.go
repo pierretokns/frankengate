@@ -50,6 +50,30 @@ type composePSRow struct {
 	ExitCode int    `json:"ExitCode"`
 }
 
+type codexIngressRejectionRecord struct {
+	Schema               string `json:"schema"`
+	RunID                string `json:"run_id"`
+	Reason               string `json:"reason"`
+	BodyBounded          bool   `json:"body_bounded"`
+	JSONUnique           bool   `json:"json_unique"`
+	JSONDecoded          bool   `json:"json_decoded"`
+	MethodOK             bool   `json:"method_ok"`
+	ModelOK              bool   `json:"model_ok"`
+	StreamOK             bool   `json:"stream_ok"`
+	LiteHeaderOK         bool   `json:"lite_header_ok"`
+	NoWebsocketUpgrade   bool   `json:"no_websocket_upgrade"`
+	InstructionsAbsent   bool   `json:"instructions_absent"`
+	TopLevelToolsAbsent  bool   `json:"top_level_tools_absent"`
+	ParallelFalsePresent bool   `json:"parallel_false_present"`
+	InputPresent         bool   `json:"input_present"`
+	FirstInputTypeOK     bool   `json:"first_input_type_ok"`
+	FirstInputRoleOK     bool   `json:"first_input_role_ok"`
+	ToolCountOK          bool   `json:"tool_count_ok"`
+	ToolShapesOK         bool   `json:"tool_shapes_ok"`
+	InputRunIDCount      int    `json:"input_run_id_count"`
+	InputRunIDMatches    bool   `json:"input_run_id_matches"`
+}
+
 func (capture *diagnosticCapture) Write(data []byte) (int, error) {
 	original := len(data)
 	remaining := capture.limit - capture.data.Len()
@@ -120,27 +144,28 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		LogBytes     int    `json:"log_bytes"`
 	}
 	result := struct {
-		Schema             string `json:"schema"`
-		RunID              string `json:"run_id"`
-		SourceLockSHA256   string `json:"source_lock_sha256"`
-		RuntimeLockSHA256  string `json:"runtime_lock_sha256"`
-		CapturedAt         string `json:"captured_at"`
-		Phase              string `json:"phase"`
-		Nonce              string `json:"nonce"`
-		Capture            string `json:"capture"`
-		StatusCapture      string `json:"status_capture"`
-		StatusFormat       string `json:"status_format"`
-		StatusParser       string `json:"status_parser_version"`
-		ComposeVersion     string `json:"compose_version"`
-		ComposeVersionHash string `json:"compose_version_sha256"`
-		StatusStdoutBytes  int    `json:"status_stdout_bytes"`
-		StatusStdoutHash   string `json:"status_stdout_sha256"`
-		StatusStderrBytes  int    `json:"status_stderr_bytes"`
-		StatusStderrHash   string `json:"status_stderr_sha256"`
-		StatusRecordCount  int    `json:"status_record_count"`
-		StatusRowCount     int    `json:"status_row_count"`
-		MissingStatusRows  int    `json:"missing_status_rows"`
-		Services           []row  `json:"services"`
+		Schema             string                        `json:"schema"`
+		RunID              string                        `json:"run_id"`
+		SourceLockSHA256   string                        `json:"source_lock_sha256"`
+		RuntimeLockSHA256  string                        `json:"runtime_lock_sha256"`
+		CapturedAt         string                        `json:"captured_at"`
+		Phase              string                        `json:"phase"`
+		Nonce              string                        `json:"nonce"`
+		Capture            string                        `json:"capture"`
+		StatusCapture      string                        `json:"status_capture"`
+		StatusFormat       string                        `json:"status_format"`
+		StatusParser       string                        `json:"status_parser_version"`
+		ComposeVersion     string                        `json:"compose_version"`
+		ComposeVersionHash string                        `json:"compose_version_sha256"`
+		StatusStdoutBytes  int                           `json:"status_stdout_bytes"`
+		StatusStdoutHash   string                        `json:"status_stdout_sha256"`
+		StatusStderrBytes  int                           `json:"status_stderr_bytes"`
+		StatusStderrHash   string                        `json:"status_stderr_sha256"`
+		StatusRecordCount  int                           `json:"status_record_count"`
+		StatusRowCount     int                           `json:"status_row_count"`
+		MissingStatusRows  int                           `json:"missing_status_rows"`
+		IngressRejections  []codexIngressRejectionRecord `json:"codex_ingress_rejections,omitempty"`
+		Services           []row                         `json:"services"`
 	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1"}
 	nonce := make([]byte, 16)
 	if _, err := rand.Read(nonce); err != nil {
@@ -280,6 +305,9 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		if capture.truncated {
 			errorClass = "oversize"
 		}
+		if service == "bifrost-1" && !capture.truncated {
+			result.IngressRejections = parseCodexIngressRejections(capture.data.Bytes(), paths.RunID, 4)
+		}
 		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
 	encoded, err := json.Marshal(result)
@@ -311,6 +339,26 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return fmt.Errorf("publish fresh diagnostics: %w", err)
 	}
 	return nil
+}
+
+func parseCodexIngressRejections(data []byte, runID string, limit int) []codexIngressRejectionRecord {
+	allowedReasons := map[string]bool{"invalid_run_id": true, "body_out_of_bounds": true, "invalid_or_duplicate_json": true, "json_shape_decode_failed": true, "input_run_id_cardinality": true, "lite_predicate_mismatch": true}
+	result := make([]codexIngressRejectionRecord, 0, limit)
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var record codexIngressRejectionRecord
+		if json.Unmarshal(line, &record) != nil || record.Schema != "sealed-codex-bifrost-ingress-rejected/v1" || record.RunID != runID || !allowedReasons[record.Reason] || record.InputRunIDCount < 0 || record.InputRunIDCount > 2 {
+			continue
+		}
+		result = append(result, record)
+	}
+	return result
 }
 
 func decodeComposePS(data []byte) ([]composePSRow, string, error) {

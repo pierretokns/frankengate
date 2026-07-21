@@ -22,6 +22,11 @@ func TestSealedCodexIngressRequiresExactLiteShape(t *testing.T) {
 	if err := check(valid, header); err != nil {
 		t.Fatal(err)
 	}
+	// 0.144.5 ToolSpec serializes client tool search as type=tool_search in Lite input.
+	toolSearch := strings.Replace(valid, `{"type":"custom","name":"apply_patch"}`, `{"type":"tool_search","execution":"client","description":"search tools","parameters":{"type":"object"}}`, 1)
+	if err := check(toolSearch, header); err != nil {
+		t.Fatal("0.144.5 tool_search Lite shape rejected")
+	}
 	mutants := []struct {
 		body    string
 		headers map[string]string
