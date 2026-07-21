@@ -8,7 +8,9 @@ build="$RUNNER_TEMP/sealed-mantle-build"
 run_id="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
 registry="localhost:5000"
 placeholder="registry.invalid/cleanup@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+bridge_prefix="fg$(printf '%s' "$run_id" | sha256sum | cut -c1-12)"
 export LAB_RUN_ID="$run_id" BIFROST_IMAGE="$placeholder" CODEX_RUNNER_IMAGE="$placeholder" CLAUDE_RUNNER_IMAGE="$placeholder" EGRESS_SENTINEL_IMAGE="$placeholder"
+export LAB_CLIENT_BRIDGE="${bridge_prefix}c" LAB_CONTROL_BRIDGE="${bridge_prefix}o" LAB_DATA_BRIDGE="${bridge_prefix}d"
 mkdir -p "$artifacts" "$build"
 printf '{"schema":"sealed-mantle-ci-diagnostics/v1","run_id":"%s","artifact_status":"collecting"}\n' "$run_id" >"$artifacts/diagnostics.json"
 
@@ -33,6 +35,7 @@ cleanup() {
 trap cleanup EXIT
 
 docker run -d --name sealed-lab-registry --network host registry:2@sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373
+node --test "$lab/prefetch/verify-tree.test.mjs"
 
 source_hash="$(sha256sum "$lab/images.lock.v1.json" | cut -d' ' -f1)"
 codex_version="$(jq -r '.cli_packages[] | select(.id=="codex-production") | .version' "$lab/images.lock.v1.json")"

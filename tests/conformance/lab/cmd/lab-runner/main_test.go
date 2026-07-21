@@ -3,17 +3,85 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/maximhq/bifrost/tests/conformance/lab/contract"
 	"github.com/maximhq/bifrost/tests/conformance/lab/mantleservice"
 )
+
+func TestNetworkEnvironmentCoversEveryComposeStaticIPWithinRunSubnet(t *testing.T) {
+	items := networkEnvironment("test-1")
+	env := map[string]string{}
+	for _, item := range items {
+		key, value, _ := strings.Cut(item, "=")
+		env[key] = value
+	}
+	compose, err := os.ReadFile(filepath.Join("..", "..", "compose.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	variable := regexp.MustCompile(`\$\{(LAB_[A-Z0-9_]*(?:IPV4|IPV6)[A-Z0-9_]*)`)
+	for _, match := range variable.FindAllStringSubmatch(string(compose), -1) {
+		key := match[1]
+		if _, ok := env[key]; !ok {
+			t.Fatalf("networkEnvironment omits Compose variable %s", key)
+		}
+	}
+	if err := validateNetworkAddressPlan(env); err != nil {
+		t.Fatal(err)
+	}
+	candidate := make(map[string]string, len(env))
+	for key, value := range env {
+		candidate[key] = value
+	}
+	candidate["LAB_MANTLE_IPV4"] = candidate["LAB_BIFROST_1_DATA_IPV4"]
+	if err := validateNetworkAddressPlan(candidate); err == nil {
+		t.Fatal("duplicate data-network IPv4 address was accepted")
+	}
+}
+
+func validateNetworkAddressPlan(env map[string]string) error {
+	seen := map[string]string{}
+	for key, value := range env {
+		if strings.Contains(key, "SUBNET") || (!strings.Contains(key, "IPV4") && !strings.Contains(key, "IPV6")) {
+			continue
+		}
+		role := "CLIENT"
+		if strings.Contains(key, "DATA") || strings.Contains(key, "MANTLE") {
+			role = "DATA"
+		}
+		if strings.Contains(key, "CONTROL") || strings.Contains(key, "CONTRACT") {
+			role = "CONTROL"
+		}
+		family := "IPV4"
+		if strings.Contains(key, "IPV6") {
+			family = "IPV6"
+		}
+		_, subnet, err := net.ParseCIDR(env["LAB_"+role+"_"+family+"_SUBNET"])
+		if err != nil {
+			return err
+		}
+		ip := net.ParseIP(value)
+		if ip == nil || !subnet.Contains(ip) {
+			return fmt.Errorf("%s=%s is outside %s", key, value, subnet)
+		}
+		identity := role + "/" + family + "/" + ip.String()
+		if previous, exists := seen[identity]; exists {
+			return fmt.Errorf("%s duplicates %s at %s", key, previous, identity)
+		}
+		seen[identity] = key
+	}
+	return nil
+}
 
 func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
 	var transcript bytes.Buffer
@@ -205,7 +273,7 @@ func TestExactOrchestratorEnvironmentDropsProxyAndCloudCredentials(t *testing.T)
 func TestEachRunGetsACompleteDeterministicAddressPlan(t *testing.T) {
 	first := networkEnvironment("test-1")
 	second := networkEnvironment("test-2")
-	if len(first) != 28 || len(second) != 28 || strings.Join(first, "\n") == strings.Join(second, "\n") {
+	if len(first) != 32 || len(second) != 32 || strings.Join(first, "\n") == strings.Join(second, "\n") {
 		t.Fatalf("invalid per-run address plans: first=%v second=%v", first, second)
 	}
 	joined := strings.Join(first, "\n")
@@ -219,7 +287,7 @@ func TestEachRunGetsACompleteDeterministicAddressPlan(t *testing.T) {
 			t.Fatalf("address plan misses recorder bridge %s: %s", key, joined)
 		}
 	}
-	for _, key := range []string{"LAB_BIFROST_1_CLIENT_IPV4=", "LAB_BIFROST_1_DATA_IPV4=", "LAB_BIFROST_2_CLIENT_IPV4=", "LAB_BIFROST_2_DATA_IPV4=", "LAB_BIFROST_3_CLIENT_IPV4=", "LAB_BIFROST_3_DATA_IPV4=", "LAB_HEALTH_IPV4="} {
+	for _, key := range []string{"LAB_BIFROST_1_CLIENT_IPV4=", "LAB_BIFROST_1_DATA_IPV4=", "LAB_BIFROST_2_CLIENT_IPV4=", "LAB_BIFROST_2_DATA_IPV4=", "LAB_BIFROST_3_CLIENT_IPV4=", "LAB_BIFROST_3_DATA_IPV4=", "LAB_HEALTH_IPV4=", "LAB_MANTLE_IPV4=", "LAB_CONTRACT_IPV4="} {
 		if !strings.Contains(joined, key) {
 			t.Fatalf("address plan misses service address %s: %s", key, joined)
 		}

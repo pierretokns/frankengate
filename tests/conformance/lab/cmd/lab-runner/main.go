@@ -371,6 +371,10 @@ func networkEnvironment(runID string) []string {
 		fmt.Sprintf("LAB_BIFROST_3_DATA_IPV6=fd00:bf:%s:20::13", v6),
 		fmt.Sprintf("LAB_HEALTH_IPV4=10.%d.%d.20", first, second),
 		fmt.Sprintf("LAB_HEALTH_IPV6=fd00:bf:%s:10::20", v6),
+		fmt.Sprintf("LAB_MANTLE_IPV4=10.%d.%d.20", first+1, second),
+		fmt.Sprintf("LAB_MANTLE_IPV6=fd00:bf:%s:20::20", v6),
+		fmt.Sprintf("LAB_CONTRACT_IPV4=10.%d.%d.20", first+2, second),
+		fmt.Sprintf("LAB_CONTRACT_IPV6=fd00:bf:%s:30::20", v6),
 	}
 }
 

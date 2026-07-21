@@ -68,10 +68,13 @@ func TestPrefetchProducesLockedContentEvidenceWithoutLifecycleScripts(t *testing
 		t.Fatal(err)
 	}
 	text := string(dockerfile)
-	for _, required := range []string{"--package-lock-only", "--ignore-scripts", "verify-tree.mjs", "client-files.sha256", "resolved-dependencies.json", "prefetch-artifacts.sha256"} {
+	for _, required := range []string{"--package-lock-only", "--ignore-scripts", `npm pack "${CLI_PACKAGE}@${CLI_VERSION}"`, `node /usr/local/lib/verify-sri.mjs /mirror/*.tgz "$CLI_INTEGRITY"`, `node /usr/local/lib/verify-root-lock.mjs /opt/client/package-lock.json "$CLI_PACKAGE" "$CLI_VERSION" "$CLI_INTEGRITY"`, "npm ci --prefix /opt/client --ignore-scripts --omit=dev", "verify-tree.mjs", "client-files.sha256", "resolved-dependencies.json", "prefetch-artifacts.sha256"} {
 		if !strings.Contains(text, required) {
 			t.Fatalf("prefetch Dockerfile misses %q", required)
 		}
+	}
+	if strings.Count(text, "npm install ") != 1 || strings.Contains(text, "npm install --global") {
+		t.Fatal("prefetch must use one lock-generation install and materialize only through npm ci")
 	}
 	verifier, err := os.ReadFile(filepath.Join(root, "prefetch", "verify-tree.mjs"))
 	if err != nil {

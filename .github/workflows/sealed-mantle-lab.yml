@@ -53,6 +53,8 @@ jobs:
           CLAUDE_RUNNER_IMAGE: registry.invalid/cleanup@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
           EGRESS_SENTINEL_IMAGE: registry.invalid/cleanup@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
         run: |
+          bridge_prefix="fg$(printf '%s' "$LAB_RUN_ID" | sha256sum | cut -c1-12)"
+          export LAB_CLIENT_BRIDGE="${bridge_prefix}c" LAB_CONTROL_BRIDGE="${bridge_prefix}o" LAB_DATA_BRIDGE="${bridge_prefix}d"
           docker compose --project-name "fg-lab-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
             --file tests/conformance/lab/compose.yaml --profile clients \
             down --volumes --remove-orphans --timeout 10 || true

@@ -419,7 +419,7 @@ func validateScenario(cfg scenario) error {
 	if (cfg.Schema != "sealed-cli-cell-scenario/v1" && cfg.Schema != "sealed-cli-cell-scenario/v2") || cfg.RunID == "" || (cfg.Client != "codex" && cfg.Client != "claude") {
 		return errors.New("invalid scenario identity")
 	}
-	wantBinary := map[string]string{"codex": "/opt/client/bin/codex", "claude": "/opt/client/bin/claude"}[cfg.Client]
+	wantBinary := map[string]string{"codex": "/opt/client/node_modules/.bin/codex", "claude": "/opt/client/node_modules/.bin/claude"}[cfg.Client]
 	if cfg.Binary != wantBinary || !exactSemver(cfg.ExpectedVersion) || cfg.TimeoutMS < 0 || cfg.TimeoutMS > int((15*time.Minute)/time.Millisecond) {
 		return errors.New("invalid scenario process contract")
 	}
@@ -494,7 +494,7 @@ func validateScenarioEnvironment(key, value string) error {
 
 func baseEnvironment() []string {
 	return []string{
-		"CODEX_HOME=/cell/codex", "HOME=/cell/home", "LANG=C.UTF-8", "PATH=/opt/client/bin:/usr/local/bin:/usr/bin:/bin",
+		"CODEX_HOME=/cell/codex", "HOME=/cell/home", "LANG=C.UTF-8", "PATH=/opt/client/node_modules/.bin:/usr/local/bin:/usr/bin:/bin",
 		"TMPDIR=/cell/tmp", "TZ=UTC", "XDG_CACHE_HOME=/cell/xdg-cache", "XDG_CONFIG_HOME=/cell/xdg-config", "XDG_DATA_HOME=/cell/xdg-data",
 	}
 }

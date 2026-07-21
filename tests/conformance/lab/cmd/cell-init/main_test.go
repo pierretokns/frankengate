@@ -9,7 +9,7 @@ import (
 func TestScenarioContractRejectsHostAndCloudEnvironment(t *testing.T) {
 	base := scenario{
 		Schema: "sealed-cli-cell-scenario/v1", RunID: "run-1", Client: "codex",
-		Binary: "/opt/client/bin/codex", Args: []string{"--version"}, Env: map[string]string{}, ExpectedVersion: "0.144.5",
+		Binary: "/opt/client/node_modules/.bin/codex", Args: []string{"--version"}, Env: map[string]string{}, ExpectedVersion: "0.144.5",
 	}
 	if err := validateScenario(base); err != nil {
 		t.Fatalf("valid scenario: %v", err)
@@ -54,7 +54,7 @@ func TestScenarioEnvironmentAcceptsOnlyFakeCredentialsAndInternalGateways(t *tes
 func TestBaseEnvironmentIsExactAndSecretFree(t *testing.T) {
 	environment := baseEnvironment()
 	want := []string{
-		"CODEX_HOME=/cell/codex", "HOME=/cell/home", "LANG=C.UTF-8", "PATH=/opt/client/bin:/usr/local/bin:/usr/bin:/bin",
+		"CODEX_HOME=/cell/codex", "HOME=/cell/home", "LANG=C.UTF-8", "PATH=/opt/client/node_modules/.bin:/usr/local/bin:/usr/bin:/bin",
 		"TMPDIR=/cell/tmp", "TZ=UTC", "XDG_CACHE_HOME=/cell/xdg-cache", "XDG_CONFIG_HOME=/cell/xdg-config", "XDG_DATA_HOME=/cell/xdg-data",
 	}
 	if strings.Join(environment, "\n") != strings.Join(want, "\n") {
@@ -69,7 +69,7 @@ func TestBaseEnvironmentIsExactAndSecretFree(t *testing.T) {
 }
 
 func TestScenarioBindsClientToExpectedReadOnlyBinary(t *testing.T) {
-	for client, binary := range map[string]string{"codex": "/opt/client/bin/codex", "claude": "/opt/client/bin/claude"} {
+	for client, binary := range map[string]string{"codex": "/opt/client/node_modules/.bin/codex", "claude": "/opt/client/node_modules/.bin/claude"} {
 		cfg := scenario{Schema: "sealed-cli-cell-scenario/v1", RunID: "run", Client: client, Binary: binary, Args: []string{"--version"}, Env: map[string]string{}, ExpectedVersion: "1.2.3"}
 		if err := validateScenario(cfg); err != nil {
 			t.Fatalf("%s: %v", client, err)
@@ -125,7 +125,7 @@ func TestScenarioJSONRejectsDuplicateKeysAtAnyDepth(t *testing.T) {
 func TestCodexInferenceBoundaryScenarioIsClosedAndExact(t *testing.T) {
 	base := scenario{
 		Schema: "sealed-cli-cell-scenario/v2", Operation: "codex-inference-boundary",
-		RunID: "run-1", Client: "codex", Binary: "/opt/client/bin/codex",
+		RunID: "run-1", Client: "codex", Binary: "/opt/client/node_modules/.bin/codex",
 		Env: map[string]string{
 			"OPENAI_API_KEY":  sealedFakeCredential,
 			"OPENAI_BASE_URL": "http://bifrost-1:8080/openai/v1",
@@ -152,8 +152,8 @@ func TestCodexInferenceBoundaryScenarioIsClosedAndExact(t *testing.T) {
 }
 
 func TestCodexInferenceCommandHasNoScenarioControlledArguments(t *testing.T) {
-	got := codexInferenceCommand("/opt/client/bin/codex", "run-1")
-	want := commandSpec{Binary: "/opt/client/bin/codex", Args: []string{
+	got := codexInferenceCommand("/opt/client/node_modules/.bin/codex", "run-1")
+	want := commandSpec{Binary: "/opt/client/node_modules/.bin/codex", Args: []string{
 		"exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
 		"--color", "never", "--json", codexBoundaryPrompt + "run-1",
 	}}

@@ -18,6 +18,9 @@ The committed contract currently proves:
 - synthetic zero-cost `file://` pricing and parameter fixtures so a fresh database can bootstrap
   without remote catalog traffic (these fixtures have no production pricing authority);
 - three internal dual-stack networks, no published ports, no Docker socket, and hardened services;
+- deterministic run-scoped subnet and unique per-network static-address derivation. This is not a
+  claim of global collision freedom across concurrent runs on one Docker daemon: hosted jobs use
+  isolated daemons, and Docker network creation fails closed if independently derived ranges overlap;
 - network-namespace keepers that remove IPv4 and IPv6 default routes, a fail-closed controlled DNS
   policy, and a dual-stack TCP/UDP forbidden-egress sentinel;
 - separate digest-required Codex, Claude, and Bifrost runtime images;
@@ -56,7 +59,13 @@ not gateway translation or AWS acceptance.
 
 `Dockerfile.prefetch` is intentionally networked and must run in a separate project. Supply the
 exact package/version/integrity triplet from `images.lock.v1.json`, export its `scratch` target to a
-content-addressed offline directory, then destroy the prefetch project. `Dockerfile.runner` consumes
+content-addressed offline directory, then destroy the prefetch project. Prefetch computes the packed
+top-level tarball's SHA-512 SRI and matches the locked registry integrity byte-for-byte. It generates
+one package lock from the exact registry package/version and materializes `/opt/client` only through
+`npm ci`. Before materialization, the exact top-level install-path lock row must repeat the requested
+version and the same top-level SRI, closing the tarball-to-lock provenance join. Lock SRIs then authorize installed bytes while npm resolves compatible platform-optional
+packages. The installed-tree verifier additionally binds every observed coordinate. The tarball is
+preserved provenance evidence, not a second installation source. `Dockerfile.runner` consumes
 only that offline directory and the locally built static `cell-init`; its build must use
 `--network=none`. The resulting per-platform images must be assembled into an OCI index and supplied
 to Compose by digest as `CODEX_RUNNER_IMAGE` and `CLAUDE_RUNNER_IMAGE`. `BIFROST_IMAGE` is likewise
@@ -103,7 +112,10 @@ The PR-triggered `sealed-mantle-lab.yml` GitHub Actions workflow builds both pla
 the reviewed tracked source and top-level integrity-locked npm artifacts, publishes them only to an ephemeral runner-local
 registry, constructs the runtime lock from the resulting OCI digests, and runs this entry point on
 the hosted Linux Docker daemon. It uploads bounded lifecycle and Compose diagnostics on both success
-and failure and performs an additional unconditional teardown.
+and failure and performs an additional unconditional teardown. The tracked source archive excludes
+the ignored generated web UI, so the lab gateway embeds one reviewed deterministic placeholder file
+instead of downloading or building UI assets. Consequently this evidence covers the gateway API,
+provider routing, and Mantle/Codex protocol path only; it provides no UI build or serving evidence.
 
 A v2 run additionally requires `--recorder-policy /absolute/path/policy.bin` plus the complete
 `--recorder-expectations`, `--recorder-transcript`, `--recorder-pcapng`, and `--recorder-ledger`

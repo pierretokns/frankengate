@@ -9,6 +9,9 @@ ARG TARGETOS
 ARG TARGETARCH
 WORKDIR /src
 COPY . ./
+# The API-only sealed lab intentionally excludes the ignored generated UI.
+# Supply one reviewed deterministic embed input without fetching/building UI.
+COPY tests/conformance/lab/fixtures/ui-placeholder.html ./transports/bifrost-http/ui/index.html
 RUN go work init \
     ./core \
     ./framework \
