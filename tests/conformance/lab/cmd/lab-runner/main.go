@@ -137,17 +137,19 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return errors.New("diagnostic artifact must be fresh")
 	}
 	type row struct {
-		Service      string `json:"service"`
-		State        string `json:"state"`
-		Health       string `json:"health"`
-		OOM          string `json:"oom"`
-		OOMSource    string `json:"oom_source"`
-		LogSHA256    string `json:"log_sha256,omitempty"`
-		LogContent   string `json:"log_content"`
-		ErrorClass   string `json:"error_class"`
-		FailureClass string `json:"failure_class"`
-		ExitCode     int    `json:"exit_code"`
-		LogBytes     int    `json:"log_bytes"`
+		Service       string   `json:"service"`
+		State         string   `json:"state"`
+		Health        string   `json:"health"`
+		OOM           string   `json:"oom"`
+		OOMSource     string   `json:"oom_source"`
+		LogSHA256     string   `json:"log_sha256,omitempty"`
+		LogContent    string   `json:"log_content"`
+		ErrorClass    string   `json:"error_class"`
+		FailureClass  string   `json:"failure_class"`
+		PanicDetected bool     `json:"panic_detected"`
+		StackFrames   []string `json:"stack_frames,omitempty"`
+		ExitCode      int      `json:"exit_code"`
+		LogBytes      int      `json:"log_bytes"`
 	}
 	result := struct {
 		Schema             string                        `json:"schema"`
@@ -292,6 +294,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		}
 		failed := serviceStatusFailed(state, health, exitCode)
 		failureClass = classifySanitizedFailure(capture.data.Bytes(), failed)
+		panicDetected, stackFrames := sanitizedPanicFingerprint(capture.data.Bytes(), 16)
 		if _, ok := status[service]; !ok {
 			failureClass = "missing-status-row"
 			result.MissingStatusRows++
@@ -315,7 +318,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 			remaining := 4 - len(result.IngressRejections)
 			result.IngressRejections = append(result.IngressRejections, parseCodexIngressRejections(capture.data.Bytes(), paths.RunID, remaining)...)
 		}
-		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
+		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
 	encoded, err := json.Marshal(result)
 	if err != nil || len(encoded) > 1<<20 {
@@ -346,6 +349,63 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return fmt.Errorf("publish fresh diagnostics: %w", err)
 	}
 	return nil
+}
+
+var stackFramePattern = regexp.MustCompile(`^(?:/src/|github\.com/maximhq/bifrost/)([A-Za-z0-9_./-]{1,240}\.go):([0-9]{1,7})(?:\s|$)`)
+
+var diagnosticStackFiles = map[string]bool{
+	"transports/bifrost-http/handlers/inference.go":  true,
+	"transports/bifrost-http/integrations/openai.go": true,
+	"transports/bifrost-http/integrations/router.go": true,
+	"transports/bifrost-http/integrations/utils.go":  true,
+	"transports/bifrost-http/lib/lib.go":             true,
+	"transports/bifrost-http/lib/middleware.go":      true,
+	"core/bifrost.go":                    true,
+	"core/providers/openai/openai.go":    true,
+	"core/providers/openai/responses.go": true,
+	"core/providers/openai/utils.go":     true,
+	"core/providers/utils/stream.go":     true,
+	"core/providers/utils/utils.go":      true,
+}
+
+func sanitizedPanicFingerprint(data []byte, limit int) (bool, []string) {
+	detected := false
+	lines := bytes.Split(data, []byte{'\n'})
+	for _, line := range lines {
+		trimmed := bytes.TrimSpace(line)
+		if bytes.HasPrefix(trimmed, []byte("panic:")) || bytes.HasPrefix(trimmed, []byte("http: panic serving ")) || bytes.HasPrefix(trimmed, []byte("recovered from panic:")) {
+			detected = true
+			break
+		}
+	}
+	if !detected || limit <= 0 {
+		return detected, nil
+	}
+	frames := make([]string, 0, limit)
+	seen := map[string]bool{}
+	for _, line := range lines {
+		if len(line) == 0 || line[0] != '\t' {
+			continue
+		}
+		match := stackFramePattern.FindSubmatch(bytes.TrimSpace(line))
+		if match == nil {
+			continue
+		}
+		path := string(match[1])
+		if !diagnosticStackFiles[path] {
+			continue
+		}
+		frame := path + ":" + string(match[2])
+		if seen[frame] {
+			continue
+		}
+		seen[frame] = true
+		frames = append(frames, frame)
+		if len(frames) == limit {
+			break
+		}
+	}
+	return detected, frames
 }
 
 func parseCodexIngressRejections(data []byte, runID string, limit int) []codexIngressRejectionRecord {

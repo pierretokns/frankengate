@@ -207,6 +207,35 @@ func TestParseCodexIngressRejectionsPreservesOnlyAllowlistedMetadata(t *testing.
 	}
 }
 
+func TestSanitizedPanicFingerprintKeepsOnlyRepositoryFrames(t *testing.T) {
+	input := []byte("panic: Bearer secret\n\t/src/transports/bifrost-http/handlers/inference.go:1234 +0x1\n\tgithub.com/maximhq/bifrost/core/bifrost.go:88 +0x2\n\t/secret/token.go:9\n")
+	detected, frames := sanitizedPanicFingerprint(input, 16)
+	want := []string{"transports/bifrost-http/handlers/inference.go:1234", "core/bifrost.go:88"}
+	if !detected || !reflect.DeepEqual(frames, want) {
+		t.Fatalf("panic fingerprint = %v %#v", detected, frames)
+	}
+	encoded, _ := json.Marshal(frames)
+	if bytes.Contains(encoded, []byte("Bearer")) || bytes.Contains(encoded, []byte("secret")) {
+		t.Fatalf("panic fingerprint leaked log content: %s", encoded)
+	}
+	if detected, frames := sanitizedPanicFingerprint([]byte("ordinary log /src/core/bifrost.go:88"), 16); detected || len(frames) != 0 {
+		t.Fatalf("ordinary log produced panic fingerprint: %v %#v", detected, frames)
+	}
+	mutants := [][]byte{
+		[]byte("do not panic /src/core/bifrost.go:88"),
+		[]byte("panic: forged\n\t/src/../../secret/token.go:9"),
+		[]byte("panic: forged\n\t/src/core/bearer_secret_value.go:9"),
+		[]byte("panic: forged\n/src/core/bifrost.go:88"),
+		[]byte("panic: forged\n\t/src/" + strings.Repeat("a", 300) + ".go:9"),
+	}
+	for index, mutant := range mutants {
+		_, frames := sanitizedPanicFingerprint(mutant, 16)
+		if len(frames) != 0 {
+			t.Fatalf("unsafe panic mutant %d emitted frames: %#v", index, frames)
+		}
+	}
+}
+
 const validRuntimeLock = `{
   "schema":"sealed-lab-runtime-lock/v1",
   "run_id":"test-1",
