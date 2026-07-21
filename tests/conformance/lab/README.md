@@ -119,6 +119,11 @@ single lifecycle JSON record. They are troubleshooting metadata, not proof of re
 network isolation, or lifecycle success; process termination outside runner-controlled teardown may
 prevent capture.
 
+The lifecycle accepts the database bootstrap only after observing config-seed revision
+`sealed-lab-c9-gpt55-v1`; that revision is repeated in successful lifecycle evidence. It binds this
+specific synthetic GPT-5.5 provider/key/alias/TLS seed contract, not arbitrary production database
+contents or later configuration convergence.
+
 The gateway replicas declare a mode-0444 mount of `fixtures/bootstrap-config.json`. That fixture
 selects the PostgreSQL config store and disables the otherwise implicit SQLite log store; it
 intentionally has no provider, governance, MCP, client, or plugin sections. In split-authority mode

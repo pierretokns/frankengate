@@ -50,6 +50,11 @@ func TestHostedWorkflowPreservesSealedLabInputs(t *testing.T) {
 	if strings.Count(script, "docker buildx build --network=none") != 2 {
 		t.Fatal("offline second-stage build count drifted")
 	}
+	summaryWrite := strings.LastIndex(script, `>"$artifacts/diagnostics.json"`)
+	finalRecount := strings.LastIndex(script, "count=0; total=0")
+	if summaryWrite < 0 || finalRecount < summaryWrite || !strings.Contains(script[finalRecount:], "count > 4 || total > 8388608") {
+		t.Fatal("artifact summary is not followed by a final count/byte consistency gate")
+	}
 	for _, forbidden := range []string{"truncate -s", "compose.log", "compose-ps.txt", "registry:2\n", `docker buildx build --platform linux/amd64,linux/arm64 --file "$lab/Dockerfile.gateway"`} {
 		if strings.Contains(script, forbidden) {
 			t.Fatalf("hosted runner retains unsafe pattern %q", forbidden)

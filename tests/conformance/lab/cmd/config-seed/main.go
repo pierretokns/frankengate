@@ -12,6 +12,7 @@ import (
 )
 
 const (
+	seedRevision    = "sealed-lab-c9-gpt55-v1"
 	providerKeyID   = "00000000-0000-4000-8000-000000000055"
 	providerKeyName = "sealed-mantle-gpt55"
 	providerAPIKey  = "synthetic-mantle-contract"
@@ -88,6 +89,6 @@ func seed(ctx context.Context) error {
 	if !ok || len(seeded.Keys) != 1 || seeded.Keys[0].ID != providerKeyID || seeded.Keys[0].Aliases[aliasName].ModelID != upstreamModel || seeded.NetworkConfig == nil || seeded.NetworkConfig.InsecureSkipVerify || seeded.NetworkConfig.CACertPEM == nil || seeded.NetworkConfig.CACertPEM.GetValue() == "" {
 		return fmt.Errorf("seeded provider authority failed closed verification")
 	}
-	fmt.Println(`{"schema":"sealed-lab-config-seed/v1","provider":"bedrock_mantle","alias":"gpt-5.5","model":"openai.gpt-5.5","tls":"private-ca-verified"}`)
+	fmt.Printf("{\"schema\":\"sealed-lab-config-seed/v1\",\"revision\":%q,\"provider\":\"bedrock_mantle\",\"alias\":\"gpt-5.5\",\"model\":\"openai.gpt-5.5\",\"tls\":\"private-ca-verified\"}\n", seedRevision)
 	return nil
 }

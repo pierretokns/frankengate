@@ -143,8 +143,20 @@ type executorFunc func([]string, io.Writer, io.Writer, string, ...string) error
 func (fn executorFunc) Run(env []string, stdout, stderr io.Writer, name string, args ...string) error {
 	return fn(env, stdout, stderr, name, args...)
 }
+func (fn executorFunc) RunDiagnostic(ctx context.Context, env []string, stdout, stderr io.Writer, name string, args ...string) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return fn(env, stdout, stderr, name, args...)
+	}
+}
 
 type deadlineExecutor struct{ deadlines int }
+
+func boundDiagnostic(path string) diagnosticsPaths {
+	return diagnosticsPaths{Artifact: path, RunID: "test-1", SourceLockSHA256: strings.Repeat("a", 64), RuntimeLockSHA256: strings.Repeat("b", 64), Phase: "failure-teardown"}
+}
 
 func (executor *deadlineExecutor) Run(_ []string, _ io.Writer, _ io.Writer, _ string, _ ...string) error {
 	return nil
@@ -165,7 +177,7 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 		_, _ = io.WriteString(stdout, "Authorization: Bearer secret PEM -----BEGIN PRIVATE KEY----- "+strings.Join(args, " "))
 		return nil
 	})
-	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: path}); err != nil {
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, boundDiagnostic(path)); err != nil {
 		t.Fatal(err)
 	}
 	info, err := os.Lstat(path)
@@ -176,7 +188,7 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 	if bytes.Contains(data, []byte("Bearer")) || bytes.Contains(data, []byte("PRIVATE KEY")) {
 		t.Fatal("structured diagnostics leaked raw secret content")
 	}
-	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: path}); err == nil {
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, boundDiagnostic(path)); err == nil {
 		t.Fatal("stale artifact was preserved or overwritten")
 	}
 	unsafeDir := t.TempDir()
@@ -185,7 +197,7 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 	if err := os.Symlink(target, filepath.Join(unsafeDir, "link")); err != nil {
 		t.Fatal(err)
 	}
-	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: filepath.Join(unsafeDir, "new.json")}); err == nil {
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, boundDiagnostic(filepath.Join(unsafeDir, "new.json"))); err == nil {
 		t.Fatal("symlink directory entry accepted")
 	}
 	hardDir := t.TempDir()
@@ -194,7 +206,7 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 	if err := os.Link(first, filepath.Join(hardDir, "second")); err != nil {
 		t.Fatal(err)
 	}
-	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: filepath.Join(hardDir, "new.json")}); err == nil {
+	if err := writeComposeDiagnostics(executor, nil, "/docker", []string{"compose"}, boundDiagnostic(filepath.Join(hardDir, "new.json"))); err == nil {
 		t.Fatal("hardlink directory entry accepted")
 	}
 	if err := (diagnosticsPaths{Artifact: "relative"}).validate(); err == nil {
@@ -209,7 +221,7 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 		return nil
 	})
 	largePath := filepath.Join(oversizedDir, "failure.json")
-	if err := writeComposeDiagnostics(oversized, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: largePath}); err != nil {
+	if err := writeComposeDiagnostics(oversized, nil, "/docker", []string{"compose"}, boundDiagnostic(largePath)); err != nil {
 		t.Fatal(err)
 	}
 	largeData, _ := os.ReadFile(largePath)
@@ -218,7 +230,7 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 	}
 	deadlineDir := t.TempDir()
 	deadline := &deadlineExecutor{}
-	if err := writeComposeDiagnostics(deadline, nil, "/docker", []string{"compose"}, diagnosticsPaths{Artifact: filepath.Join(deadlineDir, "failure.json")}); err != nil {
+	if err := writeComposeDiagnostics(deadline, nil, "/docker", []string{"compose"}, boundDiagnostic(filepath.Join(deadlineDir, "failure.json"))); err != nil {
 		t.Fatal(err)
 	}
 	if deadline.deadlines != 10 {
@@ -247,6 +259,8 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
 	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1"}`+"\n")
+	case strings.Contains(joined, " logs --no-color --no-log-prefix config-seed"):
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-config-seed/v1","revision":"sealed-lab-c9-gpt55-v1"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix egress-sentinel"):
 		fake.logCalls++
 		if fake.logCalls > 1 {
@@ -254,6 +268,14 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 		}
 	}
 	return nil
+}
+func (fake *fakeExecutor) RunDiagnostic(ctx context.Context, environment []string, stdout, stderr io.Writer, name string, args ...string) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return fake.Run(environment, stdout, stderr, name, args...)
+	}
 }
 
 func TestFailureDiagnosticsPrecedeTeardownAndDoNotContaminateStdout(t *testing.T) {
@@ -282,6 +304,11 @@ func TestFailureDiagnosticsPrecedeTeardownAndDoNotContaminateStdout(t *testing.T
 	}
 	if _, err := os.Stat(diagnosticPath); err != nil {
 		t.Fatal(err)
+	}
+	var diagnostic map[string]any
+	data, _ := os.ReadFile(diagnosticPath)
+	if json.Unmarshal(data, &diagnostic) != nil || diagnostic["run_id"] != "test-1" || diagnostic["source_lock_sha256"] != sha256Hex(sourceData) || diagnostic["runtime_lock_sha256"] == "" || diagnostic["phase"] != "failure-teardown" || diagnostic["nonce"] == "" || diagnostic["captured_at"] == "" {
+		t.Fatalf("unbound failure diagnostics: %s", data)
 	}
 }
 
@@ -313,7 +340,7 @@ func TestLifecycleUsesPinnedImagesRunsFreshCellsAndTearsDown(t *testing.T) {
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
 		t.Fatal(err)
 	}
-	if result.Schema != "sealed-lab-lifecycle-result/v2" || result.RunID != "test-1" || result.NativePlatform != "linux/arm64" || result.SourceLockSHA256 != sha256Hex(sourceData) || result.StartedAt == "" || result.CompletedAt == "" || !result.TeardownClean || result.NormalCellForbiddenEvents != 0 || result.AdversarialProbeRecordedEvents != 1 || result.PaidInferenceProof != "unproven-external-recorder-required" || len(result.Clients) != 2 || result.CodexInferenceBoundary == nil || !result.CodexInferenceBoundary.RequestInitiated {
+	if result.Schema != "sealed-lab-lifecycle-result/v2" || result.SeedConfigRevision != "sealed-lab-c9-gpt55-v1" || result.RunID != "test-1" || result.NativePlatform != "linux/arm64" || result.SourceLockSHA256 != sha256Hex(sourceData) || result.StartedAt == "" || result.CompletedAt == "" || !result.TeardownClean || result.NormalCellForbiddenEvents != 0 || result.AdversarialProbeRecordedEvents != 1 || result.PaidInferenceProof != "unproven-external-recorder-required" || len(result.Clients) != 2 || result.CodexInferenceBoundary == nil || !result.CodexInferenceBoundary.RequestInitiated {
 		t.Fatalf("unexpected lifecycle result: %#v", result)
 	}
 	calls := strings.Join(fake.calls, "\n")

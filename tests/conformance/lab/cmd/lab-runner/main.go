@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -33,7 +34,7 @@ type diagnosticExecutor interface {
 
 type osExecutor struct{}
 
-type diagnosticsPaths struct{ Artifact string }
+type diagnosticsPaths struct{ Artifact, RunID, SourceLockSHA256, RuntimeLockSHA256, Phase string }
 
 type diagnosticCapture struct {
 	data      bytes.Buffer
@@ -59,10 +60,19 @@ func (paths diagnosticsPaths) validate() error {
 	if paths.Artifact != "" && !filepath.IsAbs(paths.Artifact) {
 		return errors.New("failure diagnostic artifact path must be absolute")
 	}
+	if paths.Artifact != "" && paths.Phase != "" && (paths.RunID == "" || !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(paths.SourceLockSHA256) || !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(paths.RuntimeLockSHA256) || (paths.Phase != "failure-teardown" && paths.Phase != "pre-success-teardown")) {
+		return errors.New("failure diagnostic artifact lacks lifecycle bindings")
+	}
 	return nil
 }
 
 func writeComposeDiagnostics(executor commandExecutor, environment []string, dockerBinary string, compose []string, paths diagnosticsPaths) error {
+	if err := paths.validate(); err != nil {
+		return err
+	}
+	if paths.Artifact != "" && paths.Phase == "" {
+		return errors.New("failure diagnostic artifact lacks lifecycle phase")
+	}
 	if paths.Artifact == "" {
 		return nil
 	}
@@ -95,38 +105,46 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		OOM        string `json:"oom"`
 		LogSHA256  string `json:"log_sha256,omitempty"`
 		LogContent string `json:"log_content"`
+		ErrorClass string `json:"error_class"`
 		ExitCode   int    `json:"exit_code"`
 		LogBytes   int    `json:"log_bytes"`
 	}
 	result := struct {
-		Schema   string `json:"schema"`
-		Capture  string `json:"capture"`
-		Services []row  `json:"services"`
-	}{Schema: "sealed-lab-failure-diagnostics/v1", Capture: "metadata-only"}
+		Schema            string `json:"schema"`
+		RunID             string `json:"run_id"`
+		SourceLockSHA256  string `json:"source_lock_sha256"`
+		RuntimeLockSHA256 string `json:"runtime_lock_sha256"`
+		CapturedAt        string `json:"captured_at"`
+		Phase             string `json:"phase"`
+		Nonce             string `json:"nonce"`
+		Capture           string `json:"capture"`
+		Services          []row  `json:"services"`
+	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only"}
+	nonce := make([]byte, 16)
+	if _, err := rand.Read(nonce); err != nil {
+		return err
+	}
+	result.Nonce = hex.EncodeToString(nonce)
 	services := []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "controlled-dns", "egress-sentinel", "codex-runner"}
 	aggregate, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	type psRow struct {
-		Service  string `json:"Service"`
-		State    string `json:"State"`
-		Health   string `json:"Health"`
-		ExitCode int    `json:"ExitCode"`
+		Service   string `json:"Service"`
+		State     string `json:"State"`
+		Health    string `json:"Health"`
+		ExitCode  int    `json:"ExitCode"`
+		OOMKilled *bool  `json:"OOMKilled"`
 	}
 	status := map[string]psRow{}
 	psCtx, psStop := context.WithTimeout(aggregate, 5*time.Second)
+	defer psStop()
 	psCapture := &diagnosticCapture{limit: 256 << 10}
 	psArgs := append(compose, "ps", "--all", "--format", "json")
 	var psErr error
 	if specialized, ok := executor.(diagnosticExecutor); ok {
 		psErr = specialized.RunDiagnostic(psCtx, environment, psCapture, psCapture, dockerBinary, psArgs...)
 	} else {
-		done := make(chan error, 1)
-		go func() { done <- executor.Run(environment, psCapture, psCapture, dockerBinary, psArgs...) }()
-		select {
-		case psErr = <-done:
-		case <-psCtx.Done():
-			psErr = psCtx.Err()
-		}
+		return errors.New("diagnostic executor lacks context support")
 	}
 	psStop()
 	if psErr == nil && !psCapture.truncated {
@@ -149,16 +167,11 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		if specialized, ok := executor.(diagnosticExecutor); ok {
 			commandErr = specialized.RunDiagnostic(ctx, environment, capture, capture, dockerBinary, args...)
 		} else {
-			done := make(chan error, 1)
-			go func() { done <- executor.Run(environment, capture, capture, dockerBinary, args...) }()
-			select {
-			case commandErr = <-done:
-			case <-ctx.Done():
-				commandErr = ctx.Err()
-			}
+			stop()
+			return errors.New("diagnostic executor lacks context support")
 		}
 		stop()
-		state, health, exitCode := "unknown", "unknown", -1
+		state, health, oom, errorClass, exitCode := "unknown", "unknown", "unknown", "none", -1
 		if item, ok := status[service]; ok {
 			if regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.State) {
 				state = item.State
@@ -167,16 +180,30 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 				health = item.Health
 			}
 			exitCode = item.ExitCode
+			if item.OOMKilled != nil {
+				if *item.OOMKilled {
+					oom = "true"
+				} else {
+					oom = "false"
+				}
+			}
 		}
 		if commandErr != nil {
 			state = "diagnostic-error"
+			errorClass = "command-error"
+			if errors.Is(commandErr, context.DeadlineExceeded) {
+				errorClass = "timeout"
+			}
 		}
 		digest := ""
 		if !capture.truncated {
 			sum := sha256.Sum256(capture.data.Bytes())
 			digest = hex.EncodeToString(sum[:])
 		}
-		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: "unknown", ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
+		if capture.truncated {
+			errorClass = "oversize"
+		}
+		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, ErrorClass: errorClass, ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
 	encoded, err := json.Marshal(result)
 	if err != nil || len(encoded) > 1<<20 {
@@ -252,6 +279,7 @@ type lifecycleResult struct {
 	CompletedAt                    string      `json:"completed_at"`
 	SourceLockSHA256               string      `json:"source_lock_sha256"`
 	RuntimeLockSHA256              string      `json:"runtime_lock_sha256"`
+	SeedConfigRevision             string      `json:"seed_config_revision"`
 	Clients                        []string    `json:"clients"`
 	NormalCellForbiddenEvents      int         `json:"normal_cell_forbidden_events"`
 	AdversarialProbeRecordedEvents int         `json:"adversarial_probe_recorded_events"`
@@ -328,6 +356,12 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if contract.SHA256Hex(sourceData) != lock.SourceLockSHA256 {
 		return errors.New("runtime lock does not bind the committed source lock")
 	}
+	if diagnostics.Artifact != "" {
+		diagnostics.RunID = lock.RunID
+		diagnostics.SourceLockSHA256 = contract.SHA256Hex(sourceData)
+		diagnostics.RuntimeLockSHA256 = contract.SHA256Hex(lockData)
+		diagnostics.Phase = "failure-teardown"
+	}
 	if err := validatePinnedClientVersions(*lock, *sourceLock); err != nil {
 		return err
 	}
@@ -400,6 +434,10 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if err := executor.Run(environment, io.Discard, stderr, dockerBinary, upArgs...); err != nil {
 		return fmt.Errorf("start sealed lab: %w", err)
 	}
+	var seedLogs bytes.Buffer
+	if err := executor.Run(environment, &seedLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "config-seed")...); err != nil || !bytes.Contains(seedLogs.Bytes(), []byte(`"revision":"sealed-lab-c9-gpt55-v1"`)) {
+		return errors.New("config seed revision was not observed from completed seed service")
+	}
 	clients := []string{"claude", "codex"}
 	cellPlatforms := make([]string, 0, len(clients))
 	var codexBoundary *cellResult
@@ -465,6 +503,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if probeEvents == 0 {
 		return errors.New("known-host adversarial probe was not observed by the external sentinel")
 	}
+	diagnostics.Phase = "pre-success-teardown"
 	captureDiagnostics()
 	if diagnosticsErr != nil {
 		return diagnosticsErr
@@ -490,7 +529,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	return json.NewEncoder(stdout).Encode(lifecycleResult{
 		Schema: "sealed-lab-lifecycle-result/v2", RunID: lock.RunID, NativePlatform: cellPlatforms[0],
 		StartedAt: startedAt.Format(time.RFC3339Nano), CompletedAt: time.Now().UTC().Format(time.RFC3339Nano),
-		SourceLockSHA256: lock.SourceLockSHA256, RuntimeLockSHA256: digest,
+		SourceLockSHA256: lock.SourceLockSHA256, RuntimeLockSHA256: digest, SeedConfigRevision: "sealed-lab-c9-gpt55-v1",
 		Clients: clients, NormalCellForbiddenEvents: forbidden, AdversarialProbeRecordedEvents: probeEvents,
 		PaidInferenceProof: "unproven-external-recorder-required", TeardownClean: teardownClean,
 		CodexInferenceBoundary: codexBoundary,

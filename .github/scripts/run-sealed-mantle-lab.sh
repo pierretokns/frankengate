@@ -27,10 +27,13 @@ cleanup() {
     if (( size > 4194304 )); then rm -f "$file"; bounds=1; fi
   done
   if (( count > 4 || total > 8388608 )); then bounds=1; fi
-  printf '{"schema":"sealed-mantle-ci-diagnostics/v1","run_id":"%s","artifact_status":"%s","file_count":%d,"observed_bytes":%d}\n' "$run_id" "$([[ $bounds == 0 ]] && echo bounded || echo rejected-oversize)" "$count" "$total" >"$artifacts/diagnostics.json"
-  count=0; total=0
-  for file in "$artifacts"/*; do test -f "$file" || continue; count=$((count+1)); total=$((total+$(stat -c %s "$file"))); done
+  for _ in 1 2 3 4; do
+    printf '{"schema":"sealed-mantle-ci-diagnostics/v1","run_id":"%s","artifact_status":"%s","file_count":%d,"observed_bytes":%d}\n' "$run_id" "$([[ $bounds == 0 ]] && echo bounded || echo rejected-oversize)" "$count" "$total" >"$artifacts/diagnostics.json"
+    count=0; total=0
+    for file in "$artifacts"/*; do test -f "$file" || continue; count=$((count+1)); total=$((total+$(stat -c %s "$file"))); done
+  done
   if (( count > 4 || total > 8388608 )); then bounds=1; fi
+  if test "$(jq -r .file_count "$artifacts/diagnostics.json")" != "$count" || test "$(jq -r .observed_bytes "$artifacts/diagnostics.json")" != "$total"; then bounds=1; fi
   if (( bounds != 0 )); then status=1; fi
   exit "$status"
 }
