@@ -13,7 +13,7 @@ GOWORK=off go test ./...
 The committed contract currently proves:
 
 - digest-pinned multi-architecture PostgreSQL, health-stub, CoreDNS, and prefetch bases;
-- exact observed Codex and Claude Code npm tarballs plus registry integrity;
+- exact observed Codex and Claude Code top-level npm tarballs plus their registry-published integrity;
 - three gateway services with PostgreSQL and no mounted `config.json`;
 - synthetic zero-cost `file://` pricing and parameter fixtures so a fresh database can bootstrap
   without remote catalog traffic (these fixtures have no production pricing authority);
@@ -98,6 +98,12 @@ GOWORK=off go run ./cmd/lab-runner \
   --compose /absolute/path/compose.yaml \
   --docker /absolute/path/to/docker
 ```
+
+The PR-triggered `sealed-mantle-lab.yml` GitHub Actions workflow builds both platform variants from
+the reviewed tracked source and top-level integrity-locked npm artifacts, publishes them only to an ephemeral runner-local
+registry, constructs the runtime lock from the resulting OCI digests, and runs this entry point on
+the hosted Linux Docker daemon. It uploads bounded lifecycle and Compose diagnostics on both success
+and failure and performs an additional unconditional teardown.
 
 A v2 run additionally requires `--recorder-policy /absolute/path/policy.bin` plus the complete
 `--recorder-expectations`, `--recorder-transcript`, `--recorder-pcapng`, and `--recorder-ledger`
