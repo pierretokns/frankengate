@@ -4836,31 +4836,11 @@ func (bifrost *Bifrost) shouldTryFallbacks(req *schemas.BifrostRequest, primaryE
 // admitProvider applies the local circuit gate immediately before an upstream
 // attempt. A rejected attempt is represented as a fallback-eligible error so
 // configured alternatives can still serve the request.
-func (bifrost *Bifrost) admitProvider(ctx *schemas.BifrostContext, req *schemas.BifrostRequest, provider schemas.ModelProvider, model string) *schemas.BifrostError {
+func (bifrost *Bifrost) admitProvider(req *schemas.BifrostRequest, provider schemas.ModelProvider, model string) *schemas.BifrostError {
 	if bifrost.providerCircuit == nil {
 		return nil
 	}
 	decision := bifrost.providerCircuit.Allow(string(provider))
-	// Attach only the bounded circuit outcome to the active attempt span. The
-	// circuit reason is from a fixed vocabulary (healthy/probe/cooldown/etc.),
-	// and provider is already a low-cardinality routing dimension; no payload,
-	// key, or user-controlled value is exported here.
-	if ctx != nil {
-		tracer := bifrost.getTracer()
-		traceID, _ := ctx.Value(schemas.BifrostContextKeyTraceID).(string)
-		spanID, _ := ctx.Value(schemas.BifrostContextKeySpanID).(string)
-		if traceID != "" {
-			handle := tracer.GetSpanHandleByID(traceID, func() *string {
-				if spanID == "" {
-					return nil
-				}
-				return &spanID
-			}())
-			tracer.SetAttribute(handle, schemas.AttrBifrostCircuitAllowed, decision.Allowed)
-			tracer.SetAttribute(handle, schemas.AttrBifrostCircuitState, decision.State)
-			tracer.SetAttribute(handle, schemas.AttrBifrostCircuitReason, decision.Reason)
-		}
-	}
 	if decision.Allowed {
 		return nil
 	}
@@ -5163,7 +5143,7 @@ func (bifrost *Bifrost) handleRequest(ctx *schemas.BifrostContext, req *schemas.
 
 	bifrost.logger.Debug(fmt.Sprintf("primary provider %s with model %s and %d fallbacks", provider, model, len(fallbacks)))
 
-	primaryErr := bifrost.admitProvider(ctx, req, provider, model)
+	primaryErr := bifrost.admitProvider(req, provider, model)
 	var primaryResult *schemas.BifrostResponse
 	if primaryErr == nil {
 		primaryResult, primaryErr = bifrost.tryRequest(ctx, req)
@@ -5226,7 +5206,7 @@ func (bifrost *Bifrost) handleRequest(ctx *schemas.BifrostContext, req *schemas.
 		}
 
 		// Try the fallback provider
-		fallbackErr := bifrost.admitProvider(ctx, fallbackReq, fallback.Provider, fallback.Model)
+		fallbackErr := bifrost.admitProvider(fallbackReq, fallback.Provider, fallback.Model)
 		var result *schemas.BifrostResponse
 		if fallbackErr == nil {
 			result, fallbackErr = bifrost.tryRequest(ctx, fallbackReq)
@@ -5311,7 +5291,7 @@ func (bifrost *Bifrost) handleStreamRequest(ctx *schemas.BifrostContext, req *sc
 
 	bifrost.logger.Debug(fmt.Sprintf("primary provider %s with model %s and %d fallbacks", provider, model, len(fallbacks)))
 
-	primaryErr := bifrost.admitProvider(ctx, req, provider, model)
+	primaryErr := bifrost.admitProvider(req, provider, model)
 	var primaryResult chan *schemas.BifrostStreamChunk
 	if primaryErr == nil {
 		primaryResult, primaryErr = bifrost.tryStreamRequest(ctx, req)
@@ -5369,7 +5349,7 @@ func (bifrost *Bifrost) handleStreamRequest(ctx *schemas.BifrostContext, req *sc
 		// Try the fallback provider.  Annotate chunks as they cross the
 		// orchestrator boundary so streaming consumers receive the same
 		// fallback provenance as unary responses.
-		fallbackErr := bifrost.admitProvider(ctx, fallbackReq, fallback.Provider, fallback.Model)
+		fallbackErr := bifrost.admitProvider(fallbackReq, fallback.Provider, fallback.Model)
 		var result chan *schemas.BifrostStreamChunk
 		if fallbackErr == nil {
 			result, fallbackErr = bifrost.tryStreamRequest(ctx, fallbackReq)
