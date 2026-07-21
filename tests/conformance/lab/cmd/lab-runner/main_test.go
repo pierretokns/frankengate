@@ -673,9 +673,9 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "codex-runner"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v2","run_id":"test-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LAB_RUN_ID","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"completed","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`)
 	case strings.Contains(joined, "LAB_NETWORK_PROBE_MODE=preflight") && strings.HasSuffix(joined, "network-probe"):
-		record := `{"schema":"sealed-lab-client-preflight/v1","dns_exact":true,"tcp_reachable":true,"health_ok":true}`
+		record := `{"schema":"sealed-lab-client-preflight/v1","dns_exact":1,"tcp_reachable":1,"health_ok":1}`
 		if fake.failPreflightFact != "" {
-			record = strings.Replace(record, `"`+fake.failPreflightFact+`":true`, `"`+fake.failPreflightFact+`":false`, 1)
+			record = strings.Replace(record, `"`+fake.failPreflightFact+`":1`, `"`+fake.failPreflightFact+`":0`, 1)
 		}
 		_, _ = io.WriteString(stdout, record)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "network-probe"):
@@ -853,21 +853,43 @@ func TestNetworkProbeEvidenceRequiresEveryNegative(t *testing.T) {
 }
 
 func TestClientPreflightRequiresDNSAndReachability(t *testing.T) {
-	valid := `{"schema":"sealed-lab-client-preflight/v1","dns_exact":true,"tcp_reachable":true,"health_ok":true}`
+	valid := `{"schema":"sealed-lab-client-preflight/v1","dns_exact":1,"tcp_reachable":1,"health_ok":1}`
 	if err := validateClientPreflight([]byte(valid)); err != nil {
 		t.Fatal(err)
 	}
 	for _, field := range []string{"dns_exact", "tcp_reachable", "health_ok"} {
-		mutated := strings.Replace(valid, `"`+field+`":true`, `"`+field+`":false`, 1)
-		if err := validateClientPreflight([]byte(mutated)); err == nil {
-			t.Fatalf("missing preflight proof %s unexpectedly accepted", field)
+		for _, invalid := range []string{"-1", "0", "2", "true"} {
+			mutated := strings.Replace(valid, `"`+field+`":1`, `"`+field+`":`+invalid, 1)
+			if err := validateClientPreflight([]byte(mutated)); err == nil {
+				t.Fatalf("invalid preflight proof %s=%s unexpectedly accepted", field, invalid)
+			}
 		}
 	}
 	if err := validateClientPreflight([]byte(valid + ` {}`)); err == nil {
 		t.Fatal("client preflight accepted trailing record")
 	}
-	if err := validateClientPreflight([]byte(strings.Replace(valid, `"dns_exact":true`, `"dns_exact":false,"dns_exact":true`, 1))); err == nil {
+	if err := validateClientPreflight([]byte(strings.Replace(valid, `"dns_exact":1`, `"dns_exact":0,"dns_exact":1`, 1))); err == nil {
 		t.Fatal("client preflight accepted duplicate key")
+	}
+}
+
+func TestListenerBindEvidenceIsClosedAndMetadataOnly(t *testing.T) {
+	for _, testCase := range []struct {
+		service string
+		log     string
+		want    string
+	}{
+		{"postgres", "http://0.0.0.0:8080", "not-applicable"},
+		{"bifrost-1", `{"message":"successfully started bifrost, serving UI on http://0.0.0.0:8080"}`, "all-ipv4"},
+		{"bifrost-2", "successfully started bifrost, serving UI on http://localhost:8080", "loopback"},
+		{"bifrost-2", "request body mentioned http://localhost:8080", "other-or-unobserved"},
+		{"bifrost-2", "config value http://0.0.0.0:8080", "other-or-unobserved"},
+		{"bifrost-2", "successfully started bifrost, serving UI on http://0.0.0.0:8080\nsuccessfully started bifrost, serving UI on http://127.0.0.1:8080", "conflicting"},
+		{"bifrost-3", "Bearer secret", "other-or-unobserved"},
+	} {
+		if got := listenerBindEvidence(testCase.service, []byte(testCase.log)); got != testCase.want {
+			t.Fatalf("listener bind = %q, want %q", got, testCase.want)
+		}
 	}
 }
 

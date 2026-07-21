@@ -210,6 +210,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		StackFrames   []string `json:"stack_frames,omitempty"`
 		ExitCode      int      `json:"exit_code"`
 		LogBytes      int      `json:"log_bytes"`
+		ListenerBind  string   `json:"listener_bind"`
 	}
 	result := struct {
 		Schema             string                        `json:"schema"`
@@ -407,7 +408,8 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 				result.IngressRejections = append(result.IngressRejections, parseCodexIngressRejections(logData, paths.RunID, remaining)...)
 			}
 		}
-		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only"})
+		listenerBind := listenerBindEvidence(service, logData)
+		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only", ListenerBind: listenerBind})
 	}
 	result.IngressState = classifyCodexIngressEvidence(result.HeaderRecords, result.ParseErrors, result.IngressArrivals, result.IngressAccepted, result.IngressRejections, bifrostLogCaptureIncomplete)
 	encoded, err := json.Marshal(result)
@@ -439,6 +441,24 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return fmt.Errorf("publish fresh diagnostics: %w", err)
 	}
 	return nil
+}
+
+func listenerBindEvidence(service string, logData []byte) string {
+	if !strings.HasPrefix(service, "bifrost-") {
+		return "not-applicable"
+	}
+	allIPv4 := bytes.Contains(logData, []byte("successfully started bifrost, serving UI on http://0.0.0.0:8080"))
+	loopback := bytes.Contains(logData, []byte("successfully started bifrost, serving UI on http://localhost:8080")) || bytes.Contains(logData, []byte("successfully started bifrost, serving UI on http://127.0.0.1:8080"))
+	switch {
+	case allIPv4 && loopback:
+		return "conflicting"
+	case allIPv4:
+		return "all-ipv4"
+	case loopback:
+		return "loopback"
+	default:
+		return "other-or-unobserved"
+	}
 }
 
 func classifyCodexIngressEvidence(headers []codexHeaderRecord, parseErrors []codexParseErrorRecord, arrivals []codexIngressArrivalRecord, accepted []codexIngressRecord, rejected []codexIngressRejectionRecord, logCaptureIncomplete bool) string {
@@ -1426,9 +1446,9 @@ func validateClientPreflight(data []byte) error {
 	}
 	var result struct {
 		Schema       string `json:"schema"`
-		DNSExact     bool   `json:"dns_exact"`
-		TCPReachable bool   `json:"tcp_reachable"`
-		HealthOK     bool   `json:"health_ok"`
+		DNSExact     int    `json:"dns_exact"`
+		TCPReachable int    `json:"tcp_reachable"`
+		HealthOK     int    `json:"health_ok"`
 	}
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
@@ -1441,13 +1461,13 @@ func validateClientPreflight(data []byte) error {
 	if result.Schema != "sealed-lab-client-preflight/v1" {
 		return errors.New("client preflight schema is invalid")
 	}
-	if !result.DNSExact {
+	if result.DNSExact != 1 {
 		return errors.New("client preflight did not prove controlled Bifrost DNS resolution")
 	}
-	if !result.TCPReachable {
+	if result.TCPReachable != 1 {
 		return errors.New("client preflight did not prove Bifrost TCP reachability")
 	}
-	if !result.HealthOK {
+	if result.HealthOK != 1 {
 		return errors.New("client preflight did not prove Bifrost HTTP health reachability")
 	}
 	return nil
