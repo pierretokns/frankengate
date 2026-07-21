@@ -19,6 +19,56 @@ type testSeedManifest struct {
 	} `json:"files"`
 }
 
+func TestRuntimeV3AttestationMutants(t *testing.T) {
+	digests := []string{strings.Repeat("a", 64), strings.Repeat("b", 64)}
+	makeRunner := func(id, version string) RuntimeImage {
+		client := strings.TrimSuffix(id, "-runner")
+		observed := version
+		if client == "codex" {
+			observed = "codex-cli " + version
+		}
+		a := []CLIImageAttestation{{"sealed-cli-image-attestation/v1", client, "linux/amd64", "sha256:" + digests[0], version, observed, 0, "x86_64"}, {"sealed-cli-image-attestation/v1", client, "linux/arm64", "sha256:" + digests[1], version, observed, 0, "aarch64"}}
+		raw, _ := json.Marshal(a)
+		raw = append(raw, '\n')
+		return RuntimeImage{ID: id, Reference: "x@sha256:" + strings.Repeat("c", 64), Platforms: []string{"linux/amd64", "linux/arm64"}, Source: "lock:x", ClientVersion: version, ChildDigests: []PlatformDigest{{"linux/amd64", digests[0]}, {"linux/arm64", digests[1]}}, AttestationSHA256: SHA256Hex(raw), Attestations: a}
+	}
+	base := RuntimeLock{Schema: RuntimeLockSchemaV3, RunID: "run-1", SourceLockSHA256: strings.Repeat("d", 64), Images: []RuntimeImage{{ID: "bifrost", Reference: "x@sha256:" + strings.Repeat("1", 64), Platforms: []string{"linux/amd64", "linux/arm64"}, Source: "git:x"}, makeRunner("claude-runner", "2.1.214"), makeRunner("codex-runner", "0.144.5"), {ID: "egress-sentinel", Reference: "x@sha256:" + strings.Repeat("2", 64), Platforms: []string{"linux/amd64", "linux/arm64"}, Source: "git:x"}}}
+	if err := base.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	for _, mutate := range []func(*RuntimeLock){func(l *RuntimeLock) { l.Images[1].Attestations = nil }, func(l *RuntimeLock) { l.Images[1].AttestationSHA256 = strings.Repeat("e", 64) }, func(l *RuntimeLock) { l.Images[1].Attestations[0].ObservedVersion = "prefix 2.1.214 suffix" }, func(l *RuntimeLock) { l.Images[2].Attestations[0].ObservedVersion = "codex-cli 0.144.50" }} {
+		candidate := base
+		candidate.Images = append([]RuntimeImage(nil), base.Images...)
+		candidate.Images[1].Attestations = append([]CLIImageAttestation(nil), base.Images[1].Attestations...)
+		candidate.Images[2].Attestations = append([]CLIImageAttestation(nil), base.Images[2].Attestations...)
+		mutate(&candidate)
+		if candidate.Validate() == nil {
+			t.Fatal("runtime v3 mutant accepted")
+		}
+	}
+}
+
+func TestNativeCLIPackageMatrixMutants(t *testing.T) {
+	data, err := os.ReadFile(filepath.Join("..", "images.lock.v1.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var base Lock
+	if json.Unmarshal(data, &base) != nil || base.Validate() != nil {
+		t.Fatal("source lock invalid")
+	}
+	for _, mutate := range []func(*Lock){func(l *Lock) { l.NativeCLIPackages = nil }, func(l *Lock) {
+		l.NativeCLIPackages[0], l.NativeCLIPackages[1] = l.NativeCLIPackages[1], l.NativeCLIPackages[0]
+	}, func(l *Lock) { l.NativeCLIPackages[0].ID = "wrong" }, func(l *Lock) { l.NativeCLIPackages[0].Tarball += "/wrong" }, func(l *Lock) { l.NativeCLIPackages[0].Integrity = "sha512-AAAA" }} {
+		candidate := base
+		candidate.NativeCLIPackages = append([]NativeCLIPackage(nil), base.NativeCLIPackages...)
+		mutate(&candidate)
+		if candidate.Validate() == nil {
+			t.Fatal("native package mutant accepted")
+		}
+	}
+}
+
 type testScenario struct {
 	Schema          string `json:"schema"`
 	Client          string `json:"client"`

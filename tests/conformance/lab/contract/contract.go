@@ -3,6 +3,7 @@ package contract
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -180,7 +181,8 @@ func (lock RuntimeLock) Validate() error {
 				a := image.Attestations[digestIndex]
 				client := strings.TrimSuffix(image.ID, "-runner")
 				native := map[string]string{"linux/amd64": "x86_64", "linux/arm64": "aarch64"}[digest.Platform]
-				if a.Schema != "sealed-cli-image-attestation/v1" || a.Client != client || a.Platform != digest.Platform || a.ChildDigest != "sha256:"+digest.SHA256 || a.ExpectedVersion != image.ClientVersion || !strings.Contains(a.ObservedVersion, image.ClientVersion) || a.ExitCode != 0 || a.NativePlatform != native {
+				observedOK := (client == "claude" && (a.ObservedVersion == image.ClientVersion || a.ObservedVersion == image.ClientVersion+" (Claude Code)")) || (client == "codex" && a.ObservedVersion == "codex-cli "+image.ClientVersion)
+				if a.Schema != "sealed-cli-image-attestation/v1" || a.Client != client || a.Platform != digest.Platform || a.ChildDigest != "sha256:"+digest.SHA256 || a.ExpectedVersion != image.ClientVersion || !observedOK || a.ExitCode != 0 || a.NativePlatform != native {
 					return fmt.Errorf("runtime image %q attestation[%d] invalid", image.ID, digestIndex)
 				}
 			}
@@ -327,12 +329,16 @@ func (lock Lock) Validate() error {
 			return fmt.Errorf("CLI package %q tarball does not bind its version", cli.ID)
 		}
 	}
-	if len(lock.NativeCLIPackages) != 0 {
+	{
 		if len(lock.NativeCLIPackages) != 2 {
 			return errors.New("native CLI package matrix incomplete")
 		}
+		wantIDs := []string{"claude-linux-amd64-musl", "claude-linux-arm64-musl"}
+		wantPackages := []string{"@anthropic-ai/claude-code-linux-x64-musl", "@anthropic-ai/claude-code-linux-arm64-musl"}
 		for i, p := range lock.NativeCLIPackages {
-			if p.Platform != []string{"linux/amd64", "linux/arm64"}[i] || p.Version != "2.1.214" || !strings.HasPrefix(p.Package, "@anthropic-ai/claude-code-linux-") || !strings.HasPrefix(p.Tarball, "https://registry.npmjs.org/") || !strings.HasPrefix(p.Integrity, "sha512-") {
+			wantTarball := "https://registry.npmjs.org/" + wantPackages[i] + "/-/" + strings.TrimPrefix(wantPackages[i], "@anthropic-ai/") + "-2.1.214.tgz"
+			digest, err := base64.StdEncoding.DecodeString(strings.TrimPrefix(p.Integrity, "sha512-"))
+			if p.ID != wantIDs[i] || p.Package != wantPackages[i] || p.Platform != []string{"linux/amd64", "linux/arm64"}[i] || p.Version != "2.1.214" || p.Tarball != wantTarball || !strings.HasPrefix(p.Integrity, "sha512-") || err != nil || len(digest) != 64 {
 				return errors.New("native CLI package lock invalid")
 			}
 		}

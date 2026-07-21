@@ -84,14 +84,14 @@ build_cli() {
     native_tarball="$(jq -r --arg platform "linux/$arch" '.native_cli_packages[]? | select(.platform==$platform) | .tarball' "$lab/images.lock.v1.json")"
     native_integrity="$(jq -r --arg platform "linux/$arch" '.native_cli_packages[]? | select(.platform==$platform) | .integrity' "$lab/images.lock.v1.json")"
     context="$build/$client-$arch"; mkdir -p "$context/offline" "$context/seed"
-    docker buildx build --platform "linux/$arch" --file "$lab/Dockerfile.prefetch" \
+    docker buildx build --provenance=false --sbom=false --platform "linux/$arch" --file "$lab/Dockerfile.prefetch" \
       --build-arg "CLI_PACKAGE=$package" --build-arg "CLI_VERSION=$version" --build-arg "CLI_INTEGRITY=$integrity" \
       --build-arg "NATIVE_PACKAGE=$native_package" --build-arg "NATIVE_TARBALL=$native_tarball" --build-arg "NATIVE_INTEGRITY=$native_integrity" \
       --output "type=local,dest=$context/offline" "$lab"
     (cd "$lab" && GOWORK=off CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath -ldflags='-s -w' -o "$context/cell-init" ./cmd/cell-init)
     cp -R "$lab/seed/$client/." "$context/seed/"
     tag="$registry/sealed-$client:$run_id-$arch"
-    docker buildx build --network=none --platform "linux/$arch" --file "$lab/Dockerfile.runner" --push --tag "$tag" "$context"
+    docker buildx build --provenance=false --sbom=false --network=none --platform "linux/$arch" --file "$lab/Dockerfile.runner" --push --tag "$tag" "$context"
     child="$(reference "$tag")"; cli_binary="/opt/client/node_modules/.bin/$client"; exit_code=0
     observed="$(docker run --rm --platform "linux/$arch" --network none --entrypoint "$cli_binary" "$child" --version)" || exit_code=$?
     native="$(docker run --rm --platform "linux/$arch" --network none --entrypoint /bin/uname "$child" -m)"
@@ -117,11 +117,11 @@ mkdir -p "$build/source"
 git -C "$root" archive HEAD | tar -x -C "$build/source"
 test -f "$build/source/tests/conformance/lab/cmd/config-seed/main.go"
 test -f "$build/source/tests/conformance/lab/mantleservice/integration.go"
-docker buildx build --platform linux/amd64,linux/arm64 --file "$build/source/tests/conformance/lab/Dockerfile.gateway" --push --tag "$registry/bifrost:$run_id" "$build/source"
+docker buildx build --provenance=false --sbom=false --platform linux/amd64,linux/arm64 --file "$build/source/tests/conformance/lab/Dockerfile.gateway" --push --tag "$registry/bifrost:$run_id" "$build/source"
 for arch in amd64 arm64; do
   mkdir -p "$build/sentinel-$arch/offline"
   (cd "$lab" && GOWORK=off CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath -ldflags='-s -w' -o "$build/sentinel-$arch/offline/egress-sentinel" ./cmd/egress-sentinel)
-  docker buildx build --network=none --platform "linux/$arch" --file "$lab/Dockerfile.sentinel" --push --tag "$registry/sentinel:$run_id-$arch" "$build/sentinel-$arch"
+  docker buildx build --provenance=false --sbom=false --network=none --platform "linux/$arch" --file "$lab/Dockerfile.sentinel" --push --tag "$registry/sentinel:$run_id-$arch" "$build/sentinel-$arch"
 done
 docker buildx imagetools create --tag "$registry/sentinel:$run_id" "$registry/sentinel:$run_id-amd64" "$registry/sentinel:$run_id-arm64"
 
