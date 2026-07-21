@@ -116,6 +116,14 @@ log lines before every teardown, including failure teardown. Capture is bounded 
 fail closed. Diagnostics never share stdout with the single lifecycle JSON record. They are bounded
 troubleshooting artifacts, not proof of request delivery, network isolation, or lifecycle success.
 
+The gateway replicas mount `fixtures/bootstrap-config.json` read-only. That fixture selects the
+PostgreSQL config store and disables the otherwise implicit SQLite log store; it intentionally has
+no provider, governance, MCP, client, or plugin sections. In split-authority mode the serving pods
+therefore load the provider seeded in PostgreSQL without making the fixture a mutable configuration
+authority. This proves only the sealed lab's immutable database bootstrap. It does not prove a
+config-file-free production bootstrap, connection-secret rotation, change-notification convergence,
+or general high availability.
+
 The PR-triggered `sealed-mantle-lab.yml` GitHub Actions workflow builds both platform variants from
 the reviewed tracked source and top-level integrity-locked npm artifacts, publishes them only to an ephemeral runner-local
 registry, constructs the runtime lock from the resulting OCI digests, and runs this entry point on

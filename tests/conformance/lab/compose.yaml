@@ -14,15 +14,12 @@ x-bifrost: &bifrost
   environment:
     HOME: /nonexistent
     TZ: UTC
-    BIFROST_CONFIG_STORE_TYPE: postgres
-    BIFROST_CONFIG_STORE_HOST: postgres
-    BIFROST_CONFIG_STORE_PORT: "5432"
-    BIFROST_CONFIG_STORE_USER: bifrost
-    BIFROST_CONFIG_STORE_DB: bifrost
-    BIFROST_CONFIG_STORE_PASSWORD: sealed-lab-only
     FRANKENGATE_PRICING_URL: file:///lab-fixtures/pricing.json
     FRANKENGATE_MODEL_PARAMETERS_URL: file:///lab-fixtures/model-parameters.json
   configs:
+    - source: sealed_bootstrap_config
+      target: /app/data/config.json
+      mode: 0444
     - source: sealed_pricing_fixture
       target: /lab-fixtures/pricing.json
       mode: 0444
@@ -352,6 +349,8 @@ networks:
         - subnet: "${LAB_CONTROL_IPV6_SUBNET:-fd00:bf:30::/64}"
 
 configs:
+  sealed_bootstrap_config:
+    file: ./fixtures/bootstrap-config.json
   sealed_dns_corefile:
     file: ./dns/Corefile
   codex_inference_boundary_scenario:
