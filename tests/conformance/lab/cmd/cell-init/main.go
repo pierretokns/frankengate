@@ -31,6 +31,8 @@ const (
 const sealedFakeCredential = "sealed-lab-not-a-real-credential"
 
 var internalBaseURL = regexp.MustCompile(`^http://bifrost-[123]:8080/(?:openai/v1|anthropic)(?:/)?$`)
+var exactRunID = regexp.MustCompile(`^[a-z0-9][a-z0-9-]{0,47}$`)
+var observedSemver = regexp.MustCompile(`(?:^|[^0-9.])([0-9]+\.[0-9]+\.[0-9]+)(?:[^0-9.]|$)`)
 
 type scenario struct {
 	Schema          string            `json:"schema"`
@@ -92,15 +94,22 @@ func (capture *boundedCapture) Contains(value string) bool {
 	return bytes.Contains(capture.data, []byte(value))
 }
 
+func (capture *boundedCapture) Bytes() []byte {
+	capture.mu.Lock()
+	defer capture.mu.Unlock()
+	return append([]byte(nil), capture.data...)
+}
+
 func main() {
+	runID := os.Getenv("LAB_RUN_ID")
 	os.Clearenv()
-	if err := run(); err != nil {
+	if err := run(runID); err != nil {
 		fmt.Fprintln(os.Stderr, "cell-init:", err)
 		os.Exit(1)
 	}
 }
 
-func run() error {
+func run(lifecycleRunID string) error {
 	path := "/scenario/scenario.json"
 	data, err := os.ReadFile(path)
 	if err != nil || len(data) > maxScenario {
@@ -118,6 +127,10 @@ func run() error {
 	if err := decoder.Decode(&struct{}{}); err != io.EOF {
 		return errors.New("scenario contains trailing JSON")
 	}
+	if !exactRunID.MatchString(lifecycleRunID) {
+		return errors.New("missing or invalid lifecycle run identity")
+	}
+	cfg.RunID = lifecycleRunID
 	if err := validateScenario(cfg); err != nil {
 		return err
 	}
@@ -165,8 +178,9 @@ func run() error {
 		<-done
 		exitCode = 124
 	}
-	if !output.Contains(cfg.ExpectedVersion) {
-		return fmt.Errorf("client output did not contain pinned version %q", cfg.ExpectedVersion)
+	version, err := parseObservedVersion(output.Bytes())
+	if err != nil || version != cfg.ExpectedVersion {
+		return fmt.Errorf("client version output %q does not exactly match pinned version %q", version, cfg.ExpectedVersion)
 	}
 	if err := clearCell(); err != nil {
 		return err
@@ -178,8 +192,16 @@ func run() error {
 	}
 	return json.NewEncoder(os.Stdout).Encode(evidence{
 		Schema: "sealed-cli-cell-evidence/v1", RunID: cfg.RunID, Client: cfg.Client,
-		ExitCode: exitCode, Environment: names, ResidueCount: residue, ClientVersion: cfg.ExpectedVersion,
+		ExitCode: exitCode, Environment: names, ResidueCount: residue, ClientVersion: version,
 	})
+}
+
+func parseObservedVersion(output []byte) (string, error) {
+	matches := observedSemver.FindAllSubmatch(output, -1)
+	if len(matches) != 1 {
+		return "", fmt.Errorf("version output must contain exactly one semantic version")
+	}
+	return string(matches[0][1]), nil
 }
 
 func validateScenario(cfg scenario) error {

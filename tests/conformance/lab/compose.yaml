@@ -43,6 +43,8 @@ x-runner: &runner
     - /cell:rw,nosuid,nodev,noexec,size=64m,uid=65532,gid=65532,mode=0700
     - /tmp:rw,nosuid,nodev,noexec,size=16m,uid=65532,gid=65532,mode=0700
   profiles: [clients]
+  environment:
+    LAB_RUN_ID: "${LAB_RUN_ID:?set the lifecycle run identity}"
 
 x-netns: &netns
   <<: *hardened
@@ -164,6 +166,16 @@ services:
         ipv4_address: "${LAB_HEALTH_IPV4:-172.30.10.20}"
         ipv6_address: "${LAB_HEALTH_IPV6:-fd00:bf:10::20}"
 
+  contract-stub:
+    <<: *hardened
+    image: hashicorp/http-echo:1.0.0@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186
+    command: [-listen=:8080, -text=contract-ok]
+    user: "65532:65532"
+    networks:
+      control_net:
+        ipv4_address: "${LAB_CONTRACT_IPV4:-172.30.30.20}"
+        ipv6_address: "${LAB_CONTRACT_IPV6:-fd00:bf:30::20}"
+
   controlled-dns:
     <<: *hardened
     image: coredns/coredns:1.12.4@sha256:986f04c2e15e147d00bdd51e8c51bcef3644b13ff806be7d2ff1b261d6dfbae1
@@ -194,7 +206,7 @@ services:
     <<: *hardened
     image: ${EGRESS_SENTINEL_IMAGE:?set a digest-pinned sealed egress sentinel image}
     user: "65532:65532"
-    command: [-run-id=compose-smoke]
+    command: ["-run-id=${LAB_RUN_ID:?set the lifecycle run identity}"]
     tmpfs:
       - /records:rw,nosuid,nodev,noexec,size=16m,uid=65532,gid=65532,mode=0700
     networks:

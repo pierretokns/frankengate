@@ -35,16 +35,18 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	switch {
 	case strings.Contains(joined, "buildx imagetools inspect"):
 		_, _ = io.WriteString(stdout, `{"manifests":[{"platform":{"os":"linux","architecture":"amd64"}},{"platform":{"os":"linux","architecture":"arm64"}}]}`)
+	case strings.Contains(joined, " config --format json"):
+		_, _ = io.WriteString(stdout, resolvedComposeForTest())
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "claude-runner"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"claude-version-smoke","client":"claude","exit_code":0,"residue_count":0,"client_version":"2.1.214"}`)
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"claude","exit_code":0,"residue_count":0,"client_version":"2.1.214"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "codex-runner"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"codex-version-smoke","client":"codex","exit_code":0,"residue_count":0,"client_version":"0.144.5"}`)
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"codex","exit_code":0,"residue_count":0,"client_version":"0.144.5"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "network-probe"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
 	case strings.Contains(joined, " logs --no-color --no-log-prefix egress-sentinel"):
 		fake.logCalls++
 		if fake.logCalls > 1 {
-			_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-egress-event/v1","classification":"forbidden-egress-attempt"}`+"\n")
+			_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-egress-event/v1","observed_at":"2026-07-21T00:00:00Z","run_id":"test-1","source":"172.30.10.10:1234","destination":"172.30.10.254:443","family":"ipv4","transport":"tcp","port":"443","classification":"forbidden-egress-attempt","bytes":1}`+"\n")
 		}
 	}
 	return nil
@@ -78,11 +80,11 @@ func TestLifecycleUsesPinnedImagesRunsFreshCellsAndTearsDown(t *testing.T) {
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
 		t.Fatal(err)
 	}
-	if result.Schema != "sealed-lab-lifecycle-result/v1" || result.RunID != "test-1" || !result.TeardownClean || result.NormalCellForbiddenEvents != 0 || result.AdversarialProbeRecordedEvents != 1 || result.PaidInferenceRequests != 0 || len(result.Clients) != 2 {
+	if result.Schema != "sealed-lab-lifecycle-result/v1" || result.RunID != "test-1" || !result.TeardownClean || result.NormalCellForbiddenEvents != 0 || result.AdversarialProbeRecordedEvents != 1 || result.PaidInferenceProof != "unproven-external-recorder-required" || len(result.Clients) != 2 {
 		t.Fatalf("unexpected lifecycle result: %#v", result)
 	}
 	calls := strings.Join(fake.calls, "\n")
-	for _, required := range []string{"buildx imagetools inspect --raw", " config --quiet", " up --detach --wait", " run --rm --no-deps claude-runner", " run --rm --no-deps codex-runner", " run --rm --no-deps network-probe", " logs --no-color --no-log-prefix egress-sentinel", " down --volumes --remove-orphans", " ps --all --quiet"} {
+	for _, required := range []string{"buildx imagetools inspect --raw", " config --format json", " up --detach --wait", " run --rm --no-deps claude-runner", " run --rm --no-deps codex-runner", " run --rm --no-deps network-probe", " logs --no-color --no-log-prefix egress-sentinel", " down --volumes --remove-orphans", " ps --all --quiet", "network ls --quiet --filter", "volume ls --quiet --filter"} {
 		if !strings.Contains(calls, required) {
 			t.Fatalf("lifecycle omitted %q\n%s", required, calls)
 		}
@@ -128,7 +130,7 @@ func TestExactOrchestratorEnvironmentDropsProxyAndCloudCredentials(t *testing.T)
 func TestEachRunGetsACompleteDeterministicAddressPlan(t *testing.T) {
 	first := networkEnvironment("test-1")
 	second := networkEnvironment("test-2")
-	if len(first) != 24 || len(second) != 24 || strings.Join(first, "\n") == strings.Join(second, "\n") {
+	if len(first) != 25 || len(second) != 25 || strings.Join(first, "\n") == strings.Join(second, "\n") {
 		t.Fatalf("invalid per-run address plans: first=%v second=%v", first, second)
 	}
 	joined := strings.Join(first, "\n")
@@ -148,11 +150,50 @@ func TestOCIIndexAndSentinelJSONLFailClosed(t *testing.T) {
 	if err := validateOCIIndex([]byte(`{"manifests":[{"platform":{"os":"linux","architecture":"amd64"}}]}`)); err == nil {
 		t.Fatal("single-platform OCI index accepted")
 	}
-	valid := "{\"schema\":\"sealed-lab-egress-event/v1\",\"classification\":\"forbidden-egress-attempt\"}\n"
-	if count, err := countSentinelEvents([]byte(valid + valid)); err != nil || count != 2 {
+	valid := "{\"schema\":\"sealed-lab-egress-event/v1\",\"observed_at\":\"2026-07-21T00:00:00Z\",\"run_id\":\"run-1\",\"source\":\"172.30.10.10:1234\",\"destination\":\"172.30.10.254:443\",\"family\":\"ipv4\",\"transport\":\"tcp\",\"port\":\"443\",\"classification\":\"forbidden-egress-attempt\",\"bytes\":1}\n"
+	if count, err := countSentinelEvents([]byte(valid+valid), "run-1"); err != nil || count != 2 {
 		t.Fatalf("valid sentinel events: count=%d err=%v", count, err)
 	}
-	if _, err := countSentinelEvents([]byte(`{"schema":"unknown"}`)); err == nil {
+	if _, err := countSentinelEvents([]byte(`{"schema":"unknown"}`), "run-1"); err == nil {
 		t.Fatal("unknown sentinel event accepted")
 	}
+}
+
+func resolvedComposeForTest() string {
+	base := func(image string) map[string]any {
+		return map[string]any{"image": image, "read_only": true, "cap_drop": []string{"ALL"}, "security_opt": []string{"no-new-privileges:true"}}
+	}
+	services := map[string]map[string]any{}
+	alpine := "alpine:3.21.7@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d"
+	for _, name := range []string{"netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "netns-claude", "netns-codex"} {
+		services[name] = base(alpine)
+		services[name]["cap_add"] = []string{"NET_ADMIN"}
+		services[name]["command"] = []string{"ip route del default; ip -6 route del default; test -z routes; ip route get dns"}
+	}
+	services["network-probe"] = base(alpine)
+	services["controlled-dns"] = base("coredns/coredns:1.12.4@sha256:986f04c2e15e147d00bdd51e8c51bcef3644b13ff806be7d2ff1b261d6dfbae1")
+	services["controlled-dns"]["cap_add"] = []string{"NET_BIND_SERVICE"}
+	services["health-stub"] = base("hashicorp/http-echo:1.0.0@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186")
+	services["contract-stub"] = base("hashicorp/http-echo:1.0.0@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186")
+	services["postgres"] = base("postgres:16.9-alpine@sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7")
+	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
+		services[name] = base("registry.invalid/bifrost@sha256:" + strings.Repeat("a", 64))
+	}
+	services["bifrost-1"]["network_mode"] = "service:netns-bifrost-1"
+	services["bifrost-2"]["network_mode"] = "service:netns-bifrost-2"
+	services["bifrost-3"]["network_mode"] = "service:netns-bifrost-3"
+	services["claude-runner"] = base("registry.invalid/claude@sha256:" + strings.Repeat("b", 64))
+	services["claude-runner"]["network_mode"] = "service:netns-claude"
+	services["codex-runner"] = base("registry.invalid/codex@sha256:" + strings.Repeat("c", 64))
+	services["codex-runner"]["network_mode"] = "service:netns-codex"
+	services["network-probe"]["network_mode"] = "service:netns-codex"
+	services["egress-sentinel"] = base("registry.invalid/sentinel@sha256:" + strings.Repeat("d", 64))
+	services["egress-sentinel"]["command"] = []string{"-run-id=test-1"}
+	document := map[string]any{"services": services, "networks": map[string]any{
+		"client_net":  map[string]any{"internal": true, "enable_ipv6": true},
+		"data_net":    map[string]any{"internal": true, "enable_ipv6": true},
+		"control_net": map[string]any{"internal": true, "enable_ipv6": true},
+	}}
+	encoded, _ := json.Marshal(document)
+	return string(encoded)
 }

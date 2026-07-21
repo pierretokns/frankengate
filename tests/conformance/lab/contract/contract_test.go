@@ -61,6 +61,29 @@ func TestCommittedLabContract(t *testing.T) {
 	}
 }
 
+func TestPrefetchProducesLockedContentEvidenceWithoutLifecycleScripts(t *testing.T) {
+	root := filepath.Join("..")
+	dockerfile, err := os.ReadFile(filepath.Join(root, "Dockerfile.prefetch"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(dockerfile)
+	for _, required := range []string{"--package-lock-only", "--ignore-scripts", "verify-tree.mjs", "client-files.sha256", "resolved-dependencies.json", "prefetch-artifacts.sha256"} {
+		if !strings.Contains(text, required) {
+			t.Fatalf("prefetch Dockerfile misses %q", required)
+		}
+	}
+	verifier, err := os.ReadFile(filepath.Join(root, "prefetch", "verify-tree.mjs"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, required := range []string{"lockfileVersion", "integrity", "sha512-", "installed dependency absent from package lock"} {
+		if !strings.Contains(string(verifier), required) {
+			t.Fatalf("prefetch verifier misses %q", required)
+		}
+	}
+}
+
 func TestBootstrapFixturesRejectCostAndIdentityDrift(t *testing.T) {
 	data, err := os.ReadFile(filepath.Join("..", "fixtures", "pricing.json"))
 	if err != nil {

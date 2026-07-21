@@ -1,12 +1,14 @@
 FROM node:24.11.0-alpine3.21@sha256:0d4cd385375043fc4612c20ede8b240b6b560dfdaef7cdaeff8e440c6a5b8499
 
 COPY --chown=0:0 offline/opt/client/ /opt/client/
+COPY --chown=0:0 offline/mirror/ /opt/client-manifest/
 COPY --chown=0:0 --chmod=0555 cell-init /usr/local/bin/cell-init
 COPY --chown=0:0 seed/ /opt/seed/
 
 RUN find /opt/client -type d -exec chmod 0555 {} + \
     && find /opt/seed -type d -exec chmod 0555 {} + \
-    && chmod -R a-w /opt/client /opt/seed
+    && find /opt/client-manifest -type d -exec chmod 0555 {} + \
+    && chmod -R a-w /opt/client /opt/client-manifest /opt/seed
 
 USER 65532:65532
 ENTRYPOINT ["/usr/local/bin/cell-init"]

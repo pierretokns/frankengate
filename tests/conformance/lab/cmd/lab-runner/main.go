@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -48,7 +49,7 @@ type lifecycleResult struct {
 	Clients                        []string `json:"clients"`
 	NormalCellForbiddenEvents      int      `json:"normal_cell_forbidden_events"`
 	AdversarialProbeRecordedEvents int      `json:"adversarial_probe_recorded_events"`
-	PaidInferenceRequests          int      `json:"paid_inference_requests"`
+	PaidInferenceProof             string   `json:"paid_inference_proof"`
 	TeardownClean                  bool     `json:"teardown_clean"`
 }
 
@@ -106,7 +107,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if err != nil {
 		return err
 	}
-	if err := contract.ValidateCompose(composeData); err != nil {
+	if err := contract.ValidateComposeAgainstLock(composeData, *sourceLock); err != nil {
 		return fmt.Errorf("compose contract: %w", err)
 	}
 	environment := exactEnvironment(lock.ComposeEnvironment(), os.Getenv)
@@ -121,13 +122,18 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 			return fmt.Errorf("runtime image %s: %w", image.ID, err)
 		}
 	}
-	compose := []string{"compose", "--project-name", "fg-lab-" + lock.RunID, "--file", composePath, "--profile", "clients"}
-	if err := executor.Run(environment, io.Discard, stderr, dockerBinary, append(compose, "config", "--quiet")...); err != nil {
+	projectName := "fg-lab-" + lock.RunID
+	compose := []string{"compose", "--project-name", projectName, "--file", composePath, "--profile", "clients"}
+	var resolvedCompose bytes.Buffer
+	if err := executor.Run(environment, &resolvedCompose, stderr, dockerBinary, append(compose, "config", "--format", "json")...); err != nil {
 		return fmt.Errorf("resolved Compose validation: %w", err)
+	}
+	if err := contract.ValidateResolvedCompose(resolvedCompose.Bytes(), *sourceLock, *lock); err != nil {
+		return fmt.Errorf("resolved Compose contract: %w", err)
 	}
 	coreServices := []string{
 		"postgres", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "bifrost-1", "bifrost-2", "bifrost-3",
-		"health-stub", "controlled-dns", "egress-sentinel", "netns-codex", "netns-claude",
+		"health-stub", "contract-stub", "controlled-dns", "egress-sentinel", "netns-codex", "netns-claude",
 	}
 	teardownClean := false
 	tornDown := false
@@ -156,7 +162,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if err := executor.Run(environment, &sentinelLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "egress-sentinel")...); err != nil {
 		return fmt.Errorf("read egress recorder: %w", err)
 	}
-	forbidden, err := countSentinelEvents(sentinelLogs.Bytes())
+	forbidden, err := countSentinelEvents(sentinelLogs.Bytes(), lock.RunID)
 	if err != nil {
 		return err
 	}
@@ -177,7 +183,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		if err := executor.Run(environment, &logs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "egress-sentinel")...); err != nil {
 			return fmt.Errorf("read adversarial egress recorder: %w", err)
 		}
-		probeEvents, err = countSentinelEvents(logs.Bytes())
+		probeEvents, err = countSentinelEvents(logs.Bytes(), lock.RunID)
 		if err != nil {
 			return err
 		}
@@ -192,19 +198,15 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		return fmt.Errorf("teardown sealed lab: %w", err)
 	}
 	tornDown = true
-	var remaining bytes.Buffer
-	if err := executor.Run(environment, &remaining, stderr, dockerBinary, append(compose, "ps", "--all", "--quiet")...); err != nil {
-		return fmt.Errorf("teardown inventory: %w", err)
+	if err := verifyTeardownInventory(executor, environment, stderr, dockerBinary, compose, projectName); err != nil {
+		return err
 	}
-	teardownClean = strings.TrimSpace(remaining.String()) == ""
-	if !teardownClean {
-		return errors.New("sealed lab teardown left containers behind")
-	}
+	teardownClean = true
 	digest := contract.SHA256Hex(lockData)
 	return json.NewEncoder(stdout).Encode(lifecycleResult{
 		Schema: "sealed-lab-lifecycle-result/v1", RunID: lock.RunID, RuntimeLockSHA256: digest,
 		Clients: clients, NormalCellForbiddenEvents: forbidden, AdversarialProbeRecordedEvents: probeEvents,
-		PaidInferenceRequests: 0, TeardownClean: teardownClean,
+		PaidInferenceProof: "unproven-external-recorder-required", TeardownClean: teardownClean,
 	})
 }
 
@@ -230,6 +232,7 @@ func networkEnvironment(runID string) []string {
 	second := int(digest[1])
 	v6 := fmt.Sprintf("%x%x", digest[0], digest[1])
 	return []string{
+		"LAB_RUN_ID=" + runID,
 		fmt.Sprintf("LAB_CLIENT_IPV4_SUBNET=10.%d.%d.0/24", first, second),
 		fmt.Sprintf("LAB_DATA_IPV4_SUBNET=10.%d.%d.0/24", first+1, second),
 		fmt.Sprintf("LAB_CONTROL_IPV4_SUBNET=10.%d.%d.0/24", first+2, second),
@@ -301,10 +304,8 @@ func validateCellResult(data []byte, runID, client, version string) error {
 	if version != "" && result.ClientVersion != version {
 		return errors.New("cell version does not match runtime lock")
 	}
-	// Compose scenarios have stable per-client run IDs; the lifecycle run ID is
-	// carried by the runtime lock and intentionally does not overwrite them.
-	if result.RunID == "" || runID == "" {
-		return errors.New("missing run identity")
+	if result.RunID != runID || runID == "" {
+		return errors.New("cell result is not bound to lifecycle run identity")
 	}
 	return nil
 }
@@ -350,13 +351,21 @@ func validateOCIIndex(data []byte) error {
 	return nil
 }
 
-func countSentinelEvents(data []byte) (int, error) {
+func countSentinelEvents(data []byte, runID string) (int, error) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	count := 0
 	for {
 		var event struct {
-			Schema         string `json:"schema"`
-			Classification string `json:"classification"`
+			Schema         string    `json:"schema"`
+			ObservedAt     time.Time `json:"observed_at"`
+			RunID          string    `json:"run_id"`
+			Source         string    `json:"source"`
+			Destination    string    `json:"destination"`
+			Family         string    `json:"family"`
+			Transport      string    `json:"transport"`
+			Port           string    `json:"port"`
+			Classification string    `json:"classification"`
+			Bytes          int       `json:"bytes"`
 		}
 		if err := decoder.Decode(&event); err != nil {
 			if err == io.EOF {
@@ -364,9 +373,51 @@ func countSentinelEvents(data []byte) (int, error) {
 			}
 			return 0, fmt.Errorf("invalid egress recorder JSONL: %w", err)
 		}
-		if event.Schema != "sealed-lab-egress-event/v1" || event.Classification != "forbidden-egress-attempt" {
+		if event.Schema != "sealed-lab-egress-event/v1" || event.RunID != runID || event.ObservedAt.IsZero() ||
+			!validSentinelEndpoints(event.Source, event.Destination, event.Family, event.Port) ||
+			(event.Transport != "tcp" && event.Transport != "udp") || !allowedSentinelPort(event.Transport, event.Port) ||
+			event.Bytes < 0 || event.Classification != "forbidden-egress-attempt" {
 			return 0, errors.New("invalid egress recorder event")
 		}
 		count++
 	}
+}
+
+func validSentinelEndpoints(source, destination, family, port string) bool {
+	sourceHost, _, sourceErr := net.SplitHostPort(source)
+	destinationHost, destinationPort, destinationErr := net.SplitHostPort(destination)
+	sourceIP, destinationIP := net.ParseIP(sourceHost), net.ParseIP(destinationHost)
+	if sourceErr != nil || destinationErr != nil || sourceIP == nil || destinationIP == nil || destinationPort != port {
+		return false
+	}
+	if family == "ipv4" {
+		return sourceIP.To4() != nil && destinationIP.To4() != nil
+	}
+	return family == "ipv6" && sourceIP.To4() == nil && destinationIP.To4() == nil
+}
+
+func allowedSentinelPort(transport, port string) bool {
+	if transport == "udp" {
+		return port == "53" || port == "443"
+	}
+	return port == "80" || port == "443" || port == "3128" || port == "8080"
+}
+
+func verifyTeardownInventory(executor commandExecutor, environment []string, stderr io.Writer, dockerBinary string, compose []string, projectName string) error {
+	queries := [][]string{
+		append(append([]string{}, compose...), "ps", "--all", "--quiet"),
+		{"ps", "--all", "--quiet", "--filter", "label=com.docker.compose.project=" + projectName},
+		{"network", "ls", "--quiet", "--filter", "label=com.docker.compose.project=" + projectName},
+		{"volume", "ls", "--quiet", "--filter", "label=com.docker.compose.project=" + projectName},
+	}
+	for _, query := range queries {
+		var output bytes.Buffer
+		if err := executor.Run(environment, &output, stderr, dockerBinary, query...); err != nil {
+			return fmt.Errorf("teardown inventory %q: %w", strings.Join(query, " "), err)
+		}
+		if strings.TrimSpace(output.String()) != "" {
+			return fmt.Errorf("sealed lab teardown left resources for %q", strings.Join(query, " "))
+		}
+	}
+	return nil
 }
