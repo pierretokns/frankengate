@@ -18,7 +18,7 @@ if [ "${LAB_NETWORK_PROBE_MODE:-negatives}" = "preflight" ]; then
   if [ "$answers" = "$LAB_BIFROST_1_CLIENT_IPV4" ]; then
     dns_exact=1
   fi
-  if nc -z -w 2 bifrost-1 8080 >/dev/null 2>&1; then
+  if nc -z -w 2 "$LAB_BIFROST_1_CLIENT_IPV4" 8080 >/dev/null 2>&1; then
     tcp_reachable=1
   fi
   if wget -T 2 -q -O /dev/null http://bifrost-1:8080/health; then
