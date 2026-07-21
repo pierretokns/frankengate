@@ -223,6 +223,7 @@ func run(lifecycleRunID string) error {
 	eventCount := 0
 	if operation == "codex-inference-boundary" {
 		spec := codexInferenceCommand(cfg.Binary, cfg.RunID)
+		environment = inferenceEnvironment(environment, lifecycleRunID)
 		var inferenceResult commandResult
 		inferenceResult, err = execute(spec, environment, timeout)
 		if err != nil {
@@ -268,6 +269,13 @@ func run(lifecycleRunID string) error {
 		result.EventCount = eventCount
 	}
 	return json.NewEncoder(os.Stdout).Encode(result)
+}
+
+func inferenceEnvironment(base []string, runID string) []string {
+	result := append([]string(nil), base...)
+	result = append(result, "LAB_RUN_ID="+runID)
+	sort.Strings(result)
+	return result
 }
 
 func validateTargetPlatform(data []byte, goos, goarch string) error {

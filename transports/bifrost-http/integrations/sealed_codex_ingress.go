@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"regexp"
 
@@ -21,6 +22,93 @@ var sealedIntegrationMarker = regexp.MustCompile(`SEALED_CODEX_RUN_ID:([A-Za-z0-
 // have no observer branch.
 func WrapSealedCodexIngressObserver(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return wrapSealedCodexIngressObserverWithWriter(next, os.Stdout)
+}
+
+// SealedCodexHeaderReceivedObserver records only run-bound predicate metadata
+// after fasthttp has parsed the request header but before it reads the body.
+// It is nil outside the sealed lab.
+func SealedCodexHeaderReceivedObserver() func(*fasthttp.RequestHeader) fasthttp.RequestConfig {
+	return sealedCodexHeaderReceivedObserverWithWriter(os.Stdout)
+}
+
+func sealedCodexHeaderReceivedObserverWithWriter(output io.Writer) func(*fasthttp.RequestHeader) fasthttp.RequestConfig {
+	if os.Getenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER") != "1" {
+		return nil
+	}
+	runID := os.Getenv("LAB_RUN_ID")
+	if !sealedIntegrationRunID.MatchString(runID) {
+		panic("BIFROST_SEALED_LAB_INGRESS_OBSERVER requires a valid LAB_RUN_ID")
+	}
+	return func(header *fasthttp.RequestHeader) fasthttp.RequestConfig {
+		if string(header.Peek("x-sealed-codex-run-id")) != runID {
+			return fasthttp.RequestConfig{}
+		}
+		contentEncoding := header.ContentEncoding()
+		record, _ := json.Marshal(struct {
+			Schema               string `json:"schema"`
+			RunID                string `json:"run_id"`
+			MethodPost           bool   `json:"method_post"`
+			TargetExact          bool   `json:"target_exact"`
+			ContentTypeJSON      bool   `json:"content_type_json"`
+			ContentEncodingNone  bool   `json:"content_encoding_none"`
+			ContentLengthBounded bool   `json:"content_length_bounded"`
+			LiteHeaderOK         bool   `json:"lite_header_ok"`
+		}{
+			Schema:               "sealed-codex-bifrost-header/v1",
+			RunID:                runID,
+			MethodPost:           string(header.Method()) == fasthttp.MethodPost,
+			TargetExact:          string(header.RequestURI()) == "/openai/v1/responses",
+			ContentTypeJSON:      bytes.Equal(header.ContentType(), []byte("application/json")),
+			ContentEncodingNone:  len(contentEncoding) == 0,
+			ContentLengthBounded: header.ContentLength() > 0 && header.ContentLength() <= 1<<20,
+			LiteHeaderOK:         string(header.Peek("x-openai-internal-codex-responses-lite")) == "true",
+		})
+		_, _ = fmt.Fprintln(output, string(record))
+		return fasthttp.RequestConfig{}
+	}
+}
+
+// SealedCodexParseErrorObserver preserves fasthttp's default error response and
+// emits only an allowlisted parser failure class in the sealed lab.
+func SealedCodexParseErrorObserver() func(*fasthttp.RequestCtx, error) {
+	return sealedCodexParseErrorObserverWithWriter(os.Stdout)
+}
+
+func sealedCodexParseErrorObserverWithWriter(output io.Writer) func(*fasthttp.RequestCtx, error) {
+	if os.Getenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER") != "1" {
+		return nil
+	}
+	runID := os.Getenv("LAB_RUN_ID")
+	if !sealedIntegrationRunID.MatchString(runID) {
+		panic("BIFROST_SEALED_LAB_INGRESS_OBSERVER requires a valid LAB_RUN_ID")
+	}
+	return func(ctx *fasthttp.RequestCtx, err error) {
+		class := "other"
+		status, message := fasthttp.StatusBadRequest, "Error when parsing request"
+		switch {
+		case func() bool { _, ok := err.(*fasthttp.ErrSmallBuffer); return ok }():
+			class, status, message = "header_too_large", fasthttp.StatusRequestHeaderFieldsTooLarge, "Too big request header"
+		case errors.Is(err, fasthttp.ErrBodyTooLarge):
+			class = "body_too_large"
+		case func() bool { netError, ok := err.(*net.OpError); return ok && netError.Timeout() }():
+			class, status, message = "timeout", fasthttp.StatusRequestTimeout, "Request timeout"
+		case errors.Is(err, io.ErrUnexpectedEOF):
+			class = "unexpected_eof"
+		case errors.Is(err, io.EOF):
+			class = "eof"
+		}
+		if string(ctx.Request.Header.Peek("x-sealed-codex-run-id")) == runID {
+			record, _ := json.Marshal(struct {
+				Schema      string `json:"schema"`
+				RunID       string `json:"run_id"`
+				Class       string `json:"class"`
+				MethodPost  bool   `json:"method_post"`
+				TargetExact bool   `json:"target_exact"`
+			}{Schema: "sealed-codex-bifrost-parse-error/v1", RunID: runID, Class: class, MethodPost: string(ctx.Method()) == fasthttp.MethodPost, TargetExact: string(ctx.RequestURI()) == "/openai/v1/responses"})
+			_, _ = fmt.Fprintln(output, string(record))
+		}
+		ctx.Error(message, status)
+	}
 }
 
 func wrapSealedCodexIngressObserverWithWriter(next fasthttp.RequestHandler, output io.Writer) fasthttp.RequestHandler {

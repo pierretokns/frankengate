@@ -117,6 +117,25 @@ type codexIngressArrivalRecord struct {
 	QueryEmpty bool   `json:"query_empty"`
 }
 
+type codexHeaderRecord struct {
+	Schema               string `json:"schema"`
+	RunID                string `json:"run_id"`
+	MethodPost           bool   `json:"method_post"`
+	TargetExact          bool   `json:"target_exact"`
+	ContentTypeJSON      bool   `json:"content_type_json"`
+	ContentEncodingNone  bool   `json:"content_encoding_none"`
+	ContentLengthBounded bool   `json:"content_length_bounded"`
+	LiteHeaderOK         bool   `json:"lite_header_ok"`
+}
+
+type codexParseErrorRecord struct {
+	Schema      string `json:"schema"`
+	RunID       string `json:"run_id"`
+	Class       string `json:"class"`
+	MethodPost  bool   `json:"method_post"`
+	TargetExact bool   `json:"target_exact"`
+}
+
 var diagnosticToolTypes = map[string]bool{
 	"custom": true, "function": true, "namespace": true, "tool_search": true, "web_search": true,
 }
@@ -215,6 +234,8 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		MissingStatusRows  int                           `json:"missing_status_rows"`
 		LogCaptureLimit    int                           `json:"log_capture_limit_bytes"`
 		IngressState       string                        `json:"codex_ingress_state"`
+		HeaderRecords      []codexHeaderRecord           `json:"codex_header_records,omitempty"`
+		ParseErrors        []codexParseErrorRecord       `json:"codex_parse_errors,omitempty"`
 		IngressArrivals    []codexIngressArrivalRecord   `json:"codex_ingress_arrivals,omitempty"`
 		IngressAccepted    []codexIngressRecord          `json:"codex_ingress_accepted,omitempty"`
 		IngressRejections  []codexIngressRejectionRecord `json:"codex_ingress_rejections,omitempty"`
@@ -365,6 +386,14 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 			bifrostLogCaptureIncomplete = true
 		}
 		if strings.HasPrefix(service, "bifrost-") {
+			if len(result.HeaderRecords) < 4 {
+				remaining := 4 - len(result.HeaderRecords)
+				result.HeaderRecords = append(result.HeaderRecords, parseCodexHeaderRecords(logData, paths.RunID, remaining)...)
+			}
+			if len(result.ParseErrors) < 4 {
+				remaining := 4 - len(result.ParseErrors)
+				result.ParseErrors = append(result.ParseErrors, parseCodexParseErrors(logData, paths.RunID, remaining)...)
+			}
 			if len(result.IngressArrivals) < 4 {
 				remaining := 4 - len(result.IngressArrivals)
 				result.IngressArrivals = append(result.IngressArrivals, parseCodexIngressArrivals(logData, paths.RunID, remaining)...)
@@ -380,7 +409,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		}
 		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
-	result.IngressState = classifyCodexIngressEvidence(result.IngressArrivals, result.IngressAccepted, result.IngressRejections, bifrostLogCaptureIncomplete)
+	result.IngressState = classifyCodexIngressEvidence(result.HeaderRecords, result.ParseErrors, result.IngressArrivals, result.IngressAccepted, result.IngressRejections, bifrostLogCaptureIncomplete)
 	encoded, err := json.Marshal(result)
 	if err != nil || len(encoded) > 1<<20 {
 		return errors.New("structured diagnostics exceed bound")
@@ -412,7 +441,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 	return nil
 }
 
-func classifyCodexIngressEvidence(arrivals []codexIngressArrivalRecord, accepted []codexIngressRecord, rejected []codexIngressRejectionRecord, logCaptureIncomplete bool) string {
+func classifyCodexIngressEvidence(headers []codexHeaderRecord, parseErrors []codexParseErrorRecord, arrivals []codexIngressArrivalRecord, accepted []codexIngressRecord, rejected []codexIngressRejectionRecord, logCaptureIncomplete bool) string {
 	if len(accepted) > 0 {
 		return "accepted"
 	}
@@ -424,13 +453,73 @@ func classifyCodexIngressEvidence(arrivals []codexIngressArrivalRecord, accepted
 			return "route-mismatch"
 		}
 	}
+	for _, parseError := range parseErrors {
+		if parseError.MethodPost && parseError.TargetExact {
+			return "fasthttp-parse-error-" + parseError.Class
+		}
+	}
 	if logCaptureIncomplete {
 		return "evidence-incomplete-log-capture"
+	}
+	for _, header := range headers {
+		if header.MethodPost && header.TargetExact {
+			return "header-received-body-or-handler-gap"
+		}
 	}
 	if len(arrivals) > 0 {
 		return "canonical-arrival-unclassified"
 	}
 	return "no-correlated-server-arrival"
+}
+
+func parseCodexHeaderRecords(data []byte, runID string, limit int) []codexHeaderRecord {
+	result := make([]codexHeaderRecord, 0, limit)
+	allowed := map[string]bool{"schema": true, "run_id": true, "method_post": true, "target_exact": true, "content_type_json": true, "content_encoding_none": true, "content_length_bounded": true, "lite_header_ok": true}
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(line, &fields) != nil || len(fields) != len(allowed) {
+			continue
+		}
+		valid := true
+		for key := range fields {
+			valid = valid && allowed[key]
+		}
+		var record codexHeaderRecord
+		if valid && json.Unmarshal(line, &record) == nil && record.Schema == "sealed-codex-bifrost-header/v1" && record.RunID == runID {
+			result = append(result, record)
+		}
+	}
+	return result
+}
+
+func parseCodexParseErrors(data []byte, runID string, limit int) []codexParseErrorRecord {
+	classes := map[string]bool{"header_too_large": true, "body_too_large": true, "timeout": true, "unexpected_eof": true, "eof": true, "other": true}
+	result := make([]codexParseErrorRecord, 0, limit)
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(line, &fields) != nil || len(fields) != 5 || fields["schema"] == nil || fields["run_id"] == nil || fields["class"] == nil || fields["method_post"] == nil || fields["target_exact"] == nil {
+			continue
+		}
+		var record codexParseErrorRecord
+		if json.Unmarshal(line, &record) == nil && record.Schema == "sealed-codex-bifrost-parse-error/v1" && record.RunID == runID && classes[record.Class] {
+			result = append(result, record)
+		}
+	}
+	return result
 }
 
 var stackFramePattern = regexp.MustCompile(`^(?:/src/|github\.com/maximhq/bifrost/)([A-Za-z0-9_./-]{1,240}\.go):([0-9]{1,7})(?:\s|$)`)
@@ -1280,7 +1369,7 @@ var sha256Value = regexp.MustCompile(`^[0-9a-f]{64}$`)
 var internalCellGateway = regexp.MustCompile(`^http://bifrost-[123]:8080/openai/v1/?$`)
 
 func validInferenceCellEnvironment(names []string) bool {
-	want := []string{"CODEX_HOME", "HOME", "LANG", "OPENAI_API_KEY", "OPENAI_BASE_URL", "PATH", "TMPDIR", "TZ", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME"}
+	want := []string{"CODEX_HOME", "HOME", "LAB_RUN_ID", "LANG", "OPENAI_API_KEY", "OPENAI_BASE_URL", "PATH", "TMPDIR", "TZ", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME"}
 	if len(names) != len(want) {
 		return false
 	}

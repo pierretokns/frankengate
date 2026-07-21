@@ -2134,6 +2134,8 @@ func (s *BifrostHTTPServer) Bootstrap(ctx context.Context) error {
 		Handler:            httpHandler,
 		MaxRequestBodySize: s.Config.ClientConfig.MaxRequestBodySizeMB * 1024 * 1024,
 		ReadBufferSize:     s.Config.ServerConfig.ReadBufferSize,
+		HeaderReceived:     integrations.SealedCodexHeaderReceivedObserver(),
+		ErrorHandler:       integrations.SealedCodexParseErrorObserver(),
 	}
 	// Every pod tails the durable VK authority outbox. The poller also supplies
 	// the governance plugin's bounded freshness lease, so a disconnected pod

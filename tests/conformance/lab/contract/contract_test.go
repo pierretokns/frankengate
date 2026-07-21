@@ -392,7 +392,7 @@ func TestClientSeedsAreHashBoundAndDisableExternalTraffic(t *testing.T) {
 			}
 		}
 		if client == "codex" {
-			for _, required := range []string{"bedrock_mantle/gpt-5.5", "http://bifrost-1:8080/openai/v1", "responses_websockets = false", "responses_websockets_v2 = false", "requires_openai_auth = false", "model_catalog_json", "request_max_retries = 0", "stream_max_retries = 0"} {
+			for _, required := range []string{"bedrock_mantle/gpt-5.5", "http://bifrost-1:8080/openai/v1", "responses_websockets = false", "responses_websockets_v2 = false", "requires_openai_auth = false", `env_http_headers = { "x-sealed-codex-run-id" = "LAB_RUN_ID" }`, "model_catalog_json", "request_max_retries = 0", "stream_max_retries = 0"} {
 				if !strings.Contains(text, required) {
 					t.Fatalf("Codex seed misses %q", required)
 				}

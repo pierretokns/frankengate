@@ -20,3 +20,4 @@ request_max_retries = 0
 stream_max_retries = 0
 requires_openai_auth = false
 supports_websockets = false
+env_http_headers = { "x-sealed-codex-run-id" = "LAB_RUN_ID" }

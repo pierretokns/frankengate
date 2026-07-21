@@ -3,6 +3,7 @@ package integrations
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"reflect"
 	"strings"
 	"testing"
@@ -16,6 +17,71 @@ func TestSealedCodexResponsesObserverDisabledReturnsHandlerUnchanged(t *testing.
 	wrapped := wrapSealedCodexIngressObserverWithWriter(next, &bytes.Buffer{})
 	if reflect.ValueOf(wrapped).Pointer() != reflect.ValueOf(next).Pointer() {
 		t.Fatal("disabled observer added a production request wrapper")
+	}
+	if sealedCodexHeaderReceivedObserverWithWriter(&bytes.Buffer{}) != nil || sealedCodexParseErrorObserverWithWriter(&bytes.Buffer{}) != nil {
+		t.Fatal("disabled observer installed fasthttp parsing callbacks")
+	}
+}
+
+func TestSealedCodexHeaderObserverRecordsOnlyRunBoundPredicates(t *testing.T) {
+	t.Setenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER", "1")
+	t.Setenv("LAB_RUN_ID", "run-1")
+	var output bytes.Buffer
+	observer := sealedCodexHeaderReceivedObserverWithWriter(&output)
+	var header fasthttp.RequestHeader
+	header.SetMethod(fasthttp.MethodPost)
+	header.SetRequestURI("/openai/v1/responses")
+	header.SetContentType("application/json")
+	header.SetContentLength(512)
+	header.Set("x-openai-internal-codex-responses-lite", "true")
+	header.Set("x-sealed-codex-run-id", "run-1")
+	observer(&header)
+	for _, required := range []string{
+		`"schema":"sealed-codex-bifrost-header/v1"`, `"run_id":"run-1"`,
+		`"method_post":true`, `"target_exact":true`, `"content_type_json":true`,
+		`"content_encoding_none":true`, `"content_length_bounded":true`, `"lite_header_ok":true`,
+	} {
+		if !strings.Contains(output.String(), required) {
+			t.Fatalf("header diagnostic misses %s: %s", required, output.String())
+		}
+	}
+	if strings.Contains(output.String(), "/openai") || strings.Contains(output.String(), "x-sealed") {
+		t.Fatalf("header diagnostic leaked raw metadata: %s", output.String())
+	}
+	output.Reset()
+	header.Set("x-sealed-codex-run-id", "other")
+	observer(&header)
+	if output.Len() != 0 {
+		t.Fatalf("wrong-run header produced evidence: %s", output.String())
+	}
+}
+
+func TestSealedCodexParseErrorObserverPreservesDefaultClasses(t *testing.T) {
+	t.Setenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER", "1")
+	t.Setenv("LAB_RUN_ID", "run-1")
+	for _, testCase := range []struct {
+		err    error
+		class  string
+		status int
+	}{
+		{&fasthttp.ErrSmallBuffer{}, "header_too_large", fasthttp.StatusRequestHeaderFieldsTooLarge},
+		{fmt.Errorf("wrapped: %w", &fasthttp.ErrSmallBuffer{}), "other", fasthttp.StatusBadRequest},
+		{fasthttp.ErrBodyTooLarge, "body_too_large", fasthttp.StatusBadRequest},
+		{io.ErrUnexpectedEOF, "unexpected_eof", fasthttp.StatusBadRequest},
+	} {
+		var output bytes.Buffer
+		ctx := &fasthttp.RequestCtx{}
+		ctx.Request.Header.Set("x-sealed-codex-run-id", "run-1")
+		sealedCodexParseErrorObserverWithWriter(&output)(ctx, testCase.err)
+		if ctx.Response.StatusCode() != testCase.status || !strings.Contains(output.String(), `"class":"`+testCase.class+`"`) || strings.Contains(output.String(), "body size exceeds") {
+			t.Fatalf("parse error diagnostic=%q status=%d", output.String(), ctx.Response.StatusCode())
+		}
+	}
+	var output bytes.Buffer
+	ctx := &fasthttp.RequestCtx{}
+	sealedCodexParseErrorObserverWithWriter(&output)(ctx, io.ErrUnexpectedEOF)
+	if output.Len() != 0 || ctx.Response.StatusCode() != fasthttp.StatusBadRequest {
+		t.Fatalf("uncorrelated parse error emitted evidence or changed response: %q status=%d", output.String(), ctx.Response.StatusCode())
 	}
 }
 

@@ -9,7 +9,7 @@
     {
       "source": "config.toml",
       "target": "codex/config.toml",
-      "sha256": "f21989a51319e6757e9cde858c5f4647524d90e7835ebb0e8b51659f22adcdf3"
+      "sha256": "bd422b384608a67519061593aef5df192e6ae517ea68fa7938dfbe176d3939aa"
     }
   ]
 }

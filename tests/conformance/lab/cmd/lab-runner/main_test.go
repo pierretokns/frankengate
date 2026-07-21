@@ -257,25 +257,53 @@ func TestClassifyCodexIngressEvidence(t *testing.T) {
 	arrival := codexIngressArrivalRecord{MethodPost: true, PathExact: true, QueryEmpty: true}
 	cases := []struct {
 		name     string
+		headers  []codexHeaderRecord
+		errors   []codexParseErrorRecord
 		arrivals []codexIngressArrivalRecord
 		accepted []codexIngressRecord
 		rejected []codexIngressRejectionRecord
 		oversize bool
 		expected string
 	}{
-		{"accepted", []codexIngressArrivalRecord{{PathExact: false}}, []codexIngressRecord{{}}, []codexIngressRejectionRecord{{}}, true, "accepted"},
-		{"predicate rejected", []codexIngressArrivalRecord{arrival}, nil, []codexIngressRejectionRecord{{}}, false, "predicate-rejected"},
-		{"route mismatch", []codexIngressArrivalRecord{{MethodPost: true, PathExact: false, QueryEmpty: true}}, nil, nil, false, "route-mismatch"},
-		{"canonical unclassified", []codexIngressArrivalRecord{arrival}, nil, nil, false, "canonical-arrival-unclassified"},
-		{"incomplete capture", nil, nil, nil, true, "evidence-incomplete-log-capture"},
-		{"no arrival", nil, nil, nil, false, "no-correlated-server-arrival"},
+		{"accepted", nil, nil, []codexIngressArrivalRecord{{PathExact: false}}, []codexIngressRecord{{}}, []codexIngressRejectionRecord{{}}, true, "accepted"},
+		{"predicate rejected", nil, nil, []codexIngressArrivalRecord{arrival}, nil, []codexIngressRejectionRecord{{}}, false, "predicate-rejected"},
+		{"route mismatch", nil, nil, []codexIngressArrivalRecord{{MethodPost: true, PathExact: false, QueryEmpty: true}}, nil, nil, false, "route-mismatch"},
+		{"parse error", []codexHeaderRecord{{}}, []codexParseErrorRecord{{Class: "unexpected_eof", MethodPost: true, TargetExact: true}}, nil, nil, nil, false, "fasthttp-parse-error-unexpected_eof"},
+		{"ancillary parse error", nil, []codexParseErrorRecord{{Class: "unexpected_eof"}}, nil, nil, nil, false, "no-correlated-server-arrival"},
+		{"header received", []codexHeaderRecord{{MethodPost: true, TargetExact: true}}, nil, nil, nil, nil, false, "header-received-body-or-handler-gap"},
+		{"ancillary header", []codexHeaderRecord{{MethodPost: false, TargetExact: false}}, nil, nil, nil, nil, false, "no-correlated-server-arrival"},
+		{"header with incomplete capture", []codexHeaderRecord{{MethodPost: true, TargetExact: true}}, nil, nil, nil, nil, true, "evidence-incomplete-log-capture"},
+		{"canonical unclassified", nil, nil, []codexIngressArrivalRecord{arrival}, nil, nil, false, "canonical-arrival-unclassified"},
+		{"incomplete capture", nil, nil, nil, nil, nil, true, "evidence-incomplete-log-capture"},
+		{"no arrival", nil, nil, nil, nil, nil, false, "no-correlated-server-arrival"},
 	}
 	for _, testCase := range cases {
 		t.Run(testCase.name, func(t *testing.T) {
-			if got := classifyCodexIngressEvidence(testCase.arrivals, testCase.accepted, testCase.rejected, testCase.oversize); got != testCase.expected {
+			if got := classifyCodexIngressEvidence(testCase.headers, testCase.errors, testCase.arrivals, testCase.accepted, testCase.rejected, testCase.oversize); got != testCase.expected {
 				t.Fatalf("classification = %q, want %q", got, testCase.expected)
 			}
 		})
+	}
+}
+
+func TestParseCodexHeaderAndParseErrorRecords(t *testing.T) {
+	header := `{"schema":"sealed-codex-bifrost-header/v1","run_id":"test-1","method_post":true,"target_exact":true,"content_type_json":true,"content_encoding_none":true,"content_length_bounded":true,"lite_header_ok":true}`
+	if got := parseCodexHeaderRecords([]byte(header+"\n"), "test-1", 4); len(got) != 1 || !got[0].TargetExact || !got[0].LiteHeaderOK {
+		t.Fatalf("header record not parsed: %#v", got)
+	}
+	parseError := `{"schema":"sealed-codex-bifrost-parse-error/v1","run_id":"test-1","class":"unexpected_eof","method_post":true,"target_exact":true}`
+	if got := parseCodexParseErrors([]byte(parseError+"\n"), "test-1", 4); len(got) != 1 || got[0].Class != "unexpected_eof" {
+		t.Fatalf("parse error record not parsed: %#v", got)
+	}
+	for _, mutant := range []string{
+		"bifrost-1 | " + header,
+		strings.TrimSuffix(header, "}") + `,"raw":"Bearer secret"}`,
+		strings.Replace(header, `"run_id":"test-1"`, `"run_id":"other"`, 1),
+		strings.Replace(parseError, `"class":"unexpected_eof"`, `"class":"Bearer secret"`, 1),
+	} {
+		if len(parseCodexHeaderRecords([]byte(mutant+"\n"), "test-1", 4)) != 0 || len(parseCodexParseErrors([]byte(mutant+"\n"), "test-1", 4)) != 0 {
+			t.Fatalf("unsafe header/parser mutant accepted: %s", mutant)
+		}
 	}
 }
 
@@ -642,12 +670,13 @@ func (fake *fakeExecutor) Run(environment []string, stdout, _ io.Writer, _ strin
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "claude-runner"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v1","run_id":"test-1","client":"claude","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"2.1.214","native_platform":"linux/arm64"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "codex-runner"):
-		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v2","run_id":"test-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"completed","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`)
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-cli-cell-evidence/v2","run_id":"test-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LAB_RUN_ID","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"completed","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`)
 	case strings.Contains(joined, " run ") && strings.HasSuffix(joined, "network-probe"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-lab-network-probe/v1","known_dns":1,"unknown_dns_blocked":1,"known_host_trapped":1,"direct_ipv4_blocked":1,"direct_ipv6_blocked":1,"quic_blocked":1,"proxy_bypass_blocked":1}`)
 	case strings.Contains(joined, " logs --no-color --no-log-prefix mantle-contract-service"):
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-mantle-upstream-transcript/v1","sequence":1,"method":"POST","host":"bedrock-mantle.us-east-1.api.aws","path":"/openai/v1/responses","model":"openai.gpt-5.5","stream":true,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":200,"authorization_class":"synthetic-bearer","run_id":"test-1"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix bifrost-1"):
+		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-header/v1","run_id":"test-1","method_post":true,"target_exact":true,"content_type_json":true,"content_encoding_none":true,"content_length_bounded":true,"lite_header_ok":true}`+"\n")
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-arrival/v1","run_id":"test-1","method_post":true,"path_exact":true,"query_empty":true}`+"\n")
 		_, _ = io.WriteString(stdout, `{"schema":"sealed-codex-bifrost-ingress/v1","run_id":"test-1","input_run_id":"test-1","method":"POST","path":"/openai/v1/responses","model":"bedrock_mantle/gpt-5.5","stream":true,"lite_header_count":1,"lite_header_value":"true","websocket_upgrade":false,"top_level_instructions":false,"top_level_tools":false,"parallel_tool_calls":false,"first_input_type":"additional_tools","first_input_role":"developer","first_input_tool_count":1,"body_bytes":512,"body_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}`+"\n")
 	case strings.Contains(joined, " logs --no-color --no-log-prefix config-seed"):
@@ -756,7 +785,7 @@ func TestNativePlatformEvidenceNormalizesDockerAliasesAndRejectsUnreviewedPlatfo
 }
 
 func TestCellRuntimePlatformMustMatchNormalizedDaemonPlatform(t *testing.T) {
-	valid := `{"schema":"sealed-cli-cell-evidence/v2","run_id":"run-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"completed","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`
+	valid := `{"schema":"sealed-cli-cell-evidence/v2","run_id":"run-1","client":"codex","exit_code":0,"environment_names":["CODEX_HOME","HOME","LAB_RUN_ID","LANG","OPENAI_API_KEY","OPENAI_BASE_URL","PATH","TMPDIR","TZ","XDG_CACHE_HOME","XDG_CONFIG_HOME","XDG_DATA_HOME"],"residue_count":0,"client_version":"0.144.5","native_platform":"linux/arm64","operation":"codex-inference-boundary","process_started":true,"request_initiated":true,"transport_outcome":"completed","jsonl_event_count":4,"inference_output_bytes":10,"inference_output_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","gateway_base_url":"http://bifrost-1:8080/openai/v1"}`
 	if got, err := validateCellResult([]byte(valid), "run-1", "codex", "0.144.5", "linux/arm64"); err != nil || got.NativePlatform != "linux/arm64" {
 		t.Fatalf("matching cell platform rejected: got=%#v err=%v", got, err)
 	}

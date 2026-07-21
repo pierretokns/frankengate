@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -122,6 +123,17 @@ func TestBaseEnvironmentIsExactAndSecretFree(t *testing.T) {
 		if strings.Contains(joined, forbidden) {
 			t.Fatalf("base environment contains %q", forbidden)
 		}
+	}
+}
+
+func TestInferenceEnvironmentAddsOnlyValidatedRunIdentity(t *testing.T) {
+	base := baseEnvironment()
+	got := inferenceEnvironment(base, "run-1")
+	if !slices.Contains(got, "LAB_RUN_ID=run-1") {
+		t.Fatalf("inference environment misses run identity: %v", got)
+	}
+	if slices.Contains(base, "LAB_RUN_ID=run-1") || len(got) != len(base)+1 {
+		t.Fatalf("base/version environment was mutated: base=%v inference=%v", base, got)
 	}
 }
 
