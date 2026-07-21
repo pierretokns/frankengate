@@ -42,6 +42,14 @@ type diagnosticCapture struct {
 	truncated bool
 }
 
+type composePSRow struct {
+	ID       string `json:"ID"`
+	Service  string `json:"Service"`
+	State    string `json:"State"`
+	Health   string `json:"Health"`
+	ExitCode int    `json:"ExitCode"`
+}
+
 func (capture *diagnosticCapture) Write(data []byte) (int, error) {
 	original := len(data)
 	remaining := capture.limit - capture.data.Len()
@@ -121,10 +129,17 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		Nonce             string `json:"nonce"`
 		Capture           string `json:"capture"`
 		StatusCapture     string `json:"status_capture"`
+		StatusFormat      string `json:"status_format"`
+		StatusParser      string `json:"status_parser_version"`
+		StatusStdoutBytes int    `json:"status_stdout_bytes"`
+		StatusStdoutHash  string `json:"status_stdout_sha256"`
+		StatusStderrBytes int    `json:"status_stderr_bytes"`
+		StatusStderrHash  string `json:"status_stderr_sha256"`
+		StatusRecordCount int    `json:"status_record_count"`
 		StatusRowCount    int    `json:"status_row_count"`
 		MissingStatusRows int    `json:"missing_status_rows"`
 		Services          []row  `json:"services"`
-	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok"}
+	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1"}
 	nonce := make([]byte, 16)
 	if _, err := rand.Read(nonce); err != nil {
 		return err
@@ -141,34 +156,34 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 	}
 	aggregate, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	type psRow struct {
-		ID       string `json:"ID"`
-		Service  string `json:"Service"`
-		State    string `json:"State"`
-		Health   string `json:"Health"`
-		ExitCode int    `json:"ExitCode"`
-	}
-	status := map[string]psRow{}
+	status := map[string]composePSRow{}
 	psCtx, psStop := context.WithTimeout(aggregate, 5*time.Second)
 	defer psStop()
 	psCapture := &diagnosticCapture{limit: 256 << 10}
+	psStderr := &diagnosticCapture{limit: 64 << 10}
 	psArgs := append(compose, "ps", "--all", "--format", "json")
 	var psErr error
 	if specialized, ok := executor.(diagnosticExecutor); ok {
-		psErr = specialized.RunDiagnostic(psCtx, environment, psCapture, psCapture, dockerBinary, psArgs...)
+		psErr = specialized.RunDiagnostic(psCtx, environment, psCapture, psStderr, dockerBinary, psArgs...)
 	} else {
 		return errors.New("diagnostic executor lacks context support")
 	}
 	psStop()
-	if psCapture.truncated {
+	result.StatusStdoutBytes = psCapture.data.Len()
+	result.StatusStderrBytes = psStderr.data.Len()
+	stdoutSum, stderrSum := sha256.Sum256(psCapture.data.Bytes()), sha256.Sum256(psStderr.data.Bytes())
+	result.StatusStdoutHash, result.StatusStderrHash = hex.EncodeToString(stdoutSum[:]), hex.EncodeToString(stderrSum[:])
+	if psCapture.truncated || psStderr.truncated {
 		result.StatusCapture = "oversize"
 	} else if errors.Is(psErr, context.DeadlineExceeded) {
 		result.StatusCapture = "timeout"
 	} else if psErr != nil {
 		result.StatusCapture = "command-error"
 	} else {
-		var rows []psRow
-		if json.Unmarshal(psCapture.data.Bytes(), &rows) == nil {
+		rows, format, decodeErr := decodeComposePS(psCapture.data.Bytes())
+		if decodeErr == nil {
+			result.StatusFormat = format
+			result.StatusRecordCount = len(rows)
 			malformed := false
 			seen := map[string]bool{}
 			for _, item := range rows {
@@ -281,6 +296,28 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return fmt.Errorf("publish fresh diagnostics: %w", err)
 	}
 	return nil
+}
+
+func decodeComposePS(data []byte) ([]composePSRow, string, error) {
+	var array []composePSRow
+	if json.Unmarshal(data, &array) == nil && len(array) > 0 {
+		return array, "legacy-json-array", nil
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	rows := []composePSRow{}
+	for {
+		var item composePSRow
+		if err := decoder.Decode(&item); errors.Is(err, io.EOF) {
+			break
+		} else if err != nil {
+			return nil, "", err
+		}
+		rows = append(rows, item)
+	}
+	if len(rows) == 0 {
+		return nil, "", errors.New("empty Compose ps status")
+	}
+	return rows, "jsonl", nil
 }
 
 func classifySanitizedFailure(data []byte, failed bool) string {

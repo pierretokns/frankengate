@@ -37,6 +37,7 @@ func TestHostedWorkflowPreservesSealedLabInputs(t *testing.T) {
 		"test -f \"$build/source/tests/conformance/lab/cmd/config-seed/main.go\"",
 		"artifact_status", "rejected-oversize", "size > 4194304", "total > 8388608", "runtime-lock.json", "lifecycle.json",
 		`--failure-diagnostics-artifact "$artifacts/failure-diagnostics.json"`,
+		`docker run --rm --platform "linux/$arch" --network none --entrypoint "$cli_binary" "$tag" --version`,
 		"refusing stale artifact directory", "count > 4",
 		`LAB_CLIENT_BRIDGE="${bridge_prefix}c"`, `LAB_CONTROL_BRIDGE="${bridge_prefix}o"`, `LAB_DATA_BRIDGE="${bridge_prefix}d"`,
 		`node --test "$lab/prefetch/verify-tree.test.mjs"`,

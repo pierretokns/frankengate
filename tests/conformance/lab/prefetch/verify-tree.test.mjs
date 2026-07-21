@@ -20,16 +20,28 @@ const lock = {lockfileVersion: 3, packages: {
   "node_modules/required-other": {name: "required-other", version: "1.0.0-required", integrity: "sha512-required", os: [incompatibleOS]},
 }};
 
-function verify(tree, lockInput = lock) {
+function verify(tree, lockInput = lock, targetOS = process.platform, targetCPU = process.arch) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "verify-tree-"));
   const lockPath = path.join(directory, "lock.json");
   const treePath = path.join(directory, "tree.json");
   const outputPath = path.join(directory, "output.json");
   fs.writeFileSync(lockPath, JSON.stringify(lockInput));
   fs.writeFileSync(treePath, JSON.stringify(tree));
-  execFileSync(process.execPath, [verifier, lockPath, treePath, outputPath], {stdio: "pipe"});
+  execFileSync(process.execPath, [verifier, lockPath, treePath, outputPath, targetOS, targetCPU], {stdio: "pipe"});
   return JSON.parse(fs.readFileSync(outputPath, "utf8"));
 }
+
+test("uses explicit target architecture rather than prefetch worker architecture", () => {
+  const targetCPU = process.arch === "arm64" ? "x64" : "arm64";
+  const targetLock = {lockfileVersion: 3, packages: {
+    "": {}, "node_modules/root": {version:"1.0.0", integrity:"sha512-root"},
+    "node_modules/native-target": {version:"1.0.0", integrity:"sha512-target", optional:true, os:["linux"], cpu:[targetCPU]},
+    "node_modules/native-worker": {version:"1.0.0", integrity:"sha512-worker", optional:true, os:["linux"], cpu:[process.arch]},
+  }};
+  const output = verify({dependencies:{root:{version:"1.0.0", dependencies:{"native-target":{version:"1.0.0"}, "native-worker":{}}}}}, targetLock, "linux", targetCPU);
+  assert.deepEqual(output.packages, ["native-target@1.0.0", "root@1.0.0"]);
+  assert.throws(() => verify({dependencies:{root:{version:"1.0.0", dependencies:{"native-target":{}, "native-worker":{version:"1.0.0"}}}}}, targetLock, "linux", targetCPU));
+});
 
 test("excludes lock-declared empty optional nodes and records installed coordinates", () => {
   const output = verify({dependencies: {root: {version: "1.0.0", dependencies: {

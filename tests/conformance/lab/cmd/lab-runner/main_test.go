@@ -173,7 +173,7 @@ func (executor *deadlineExecutor) RunDiagnostic(ctx context.Context, _ []string,
 func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 	directory := t.TempDir()
 	path := filepath.Join(directory, "failure-diagnostics.json")
-	executor := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, args ...string) error {
+	executor := executorFunc(func(_ []string, stdout, stderr io.Writer, _ string, args ...string) error {
 		_, _ = io.WriteString(stdout, "Authorization: Bearer secret PEM -----BEGIN PRIVATE KEY----- "+strings.Join(args, " "))
 		return nil
 	})
@@ -301,7 +301,7 @@ func TestConfigSeedRecordRequiresOneExactJSONRecord(t *testing.T) {
 func TestDiagnosticsRejectDuplicateStatusAndInspectOOM(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "failure.json")
-	executor := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, args ...string) error {
+	executor := executorFunc(func(_ []string, stdout, stderr io.Writer, _ string, args ...string) error {
 		joined := strings.Join(args, " ")
 		switch {
 		case strings.Contains(joined, " ps --all --format json"):
@@ -350,10 +350,11 @@ func TestDiagnosticsAcceptCompleteKnownComposeStatus(t *testing.T) {
 		rows = append(rows, map[string]any{"Service": name, "ID": fmt.Sprintf("%012x", index+1), "State": "running", "Health": "healthy", "ExitCode": 0})
 	}
 	statusJSON, _ := json.Marshal(rows)
-	executor := executorFunc(func(_ []string, stdout, _ io.Writer, _ string, args ...string) error {
+	executor := executorFunc(func(_ []string, stdout, stderr io.Writer, _ string, args ...string) error {
 		joined := strings.Join(args, " ")
 		if strings.Contains(joined, " ps --all --format json") {
 			_, _ = stdout.Write(statusJSON)
+			_, _ = io.WriteString(stderr, "compose mode warning\n")
 		}
 		if strings.HasPrefix(joined, "inspect --format") {
 			_, _ = io.WriteString(stdout, "false\n")
@@ -367,10 +368,13 @@ func TestDiagnosticsAcceptCompleteKnownComposeStatus(t *testing.T) {
 		t.Fatal(err)
 	}
 	var got struct {
-		Status   string `json:"status_capture"`
-		Rows     int    `json:"status_row_count"`
-		Missing  int    `json:"missing_status_rows"`
-		Services []struct {
+		Status      string `json:"status_capture"`
+		Format      string `json:"status_format"`
+		Rows        int    `json:"status_row_count"`
+		Records     int    `json:"status_record_count"`
+		StderrBytes int    `json:"status_stderr_bytes"`
+		Missing     int    `json:"missing_status_rows"`
+		Services    []struct {
 			Failure string `json:"failure_class"`
 		} `json:"services"`
 	}
@@ -378,12 +382,28 @@ func TestDiagnosticsAcceptCompleteKnownComposeStatus(t *testing.T) {
 	if err := json.Unmarshal(data, &got); err != nil {
 		t.Fatal(err)
 	}
-	if got.Status != "ok" || got.Rows != 9 || got.Missing != 0 || len(got.Services) != 9 {
+	if got.Status != "ok" || got.Format != "legacy-json-array" || got.Rows != 9 || got.Records != 18 || got.StderrBytes == 0 || got.Missing != 0 || len(got.Services) != 9 {
 		t.Fatalf("full Compose status rejected: %s", data)
 	}
 	for _, service := range got.Services {
 		if service.Failure != "none" {
 			t.Fatalf("healthy logs classified as failure: %s", data)
+		}
+	}
+}
+
+func TestComposePSAcceptsArrayAndJSONL(t *testing.T) {
+	row1 := `{"ID":"aaaaaaaaaaaa","Service":"postgres","State":"running","Health":"healthy","ExitCode":0}`
+	row2 := `{"ID":"bbbbbbbbbbbb","Service":"config-seed","State":"exited","Health":"","ExitCode":0}`
+	for _, input := range []string{"[" + row1 + "," + row2 + "]", row1 + "\n" + row2 + "\n"} {
+		rows, _, err := decodeComposePS([]byte(input))
+		if err != nil || len(rows) != 2 {
+			t.Fatalf("status format rejected: %v %#v", err, rows)
+		}
+	}
+	for _, input := range []string{"", row1 + "\nnot-json", "[] trailing"} {
+		if _, _, err := decodeComposePS([]byte(input)); err == nil {
+			t.Fatalf("malformed status accepted: %q", input)
 		}
 	}
 }

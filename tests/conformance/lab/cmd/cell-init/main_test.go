@@ -23,6 +23,23 @@ func TestScenarioContractRejectsHostAndCloudEnvironment(t *testing.T) {
 	}
 }
 
+func TestTargetPlatformManifestBindsRuntimeArchitecture(t *testing.T) {
+	valid := []byte(`{"schema":"sealed-cli-target-platform/v1","os":"linux","architecture":"amd64","npm_cpu":"x64"}`)
+	if err := validateTargetPlatform(valid, "linux", "amd64"); err != nil {
+		t.Fatal(err)
+	}
+	for _, mutant := range [][]byte{
+		[]byte(`{"schema":"sealed-cli-target-platform/v1","os":"linux","architecture":"arm64","npm_cpu":"arm64"}`),
+		[]byte(`{"schema":"sealed-cli-target-platform/v1","os":"darwin","architecture":"amd64","npm_cpu":"x64"}`),
+		[]byte(`{"schema":"sealed-cli-target-platform/v1","os":"linux","architecture":"amd64","npm_cpu":"arm64"}`),
+		append(append([]byte(nil), valid...), []byte(` {}`)...),
+	} {
+		if err := validateTargetPlatform(mutant, "linux", "amd64"); err == nil {
+			t.Fatalf("accepted target mutant %s", mutant)
+		}
+	}
+}
+
 func TestScenarioEnvironmentAcceptsOnlyFakeCredentialsAndInternalGateways(t *testing.T) {
 	accepted := map[string]string{
 		"OPENAI_API_KEY":       sealedFakeCredential,

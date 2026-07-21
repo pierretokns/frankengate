@@ -151,6 +151,10 @@ func main() {
 }
 
 func run(lifecycleRunID string) error {
+	platformManifest, err := os.ReadFile("/opt/client-manifest/target-platform.json")
+	if err != nil || validateTargetPlatform(platformManifest, runtime.GOOS, runtime.GOARCH) != nil {
+		return errors.New("client package target does not match runtime architecture")
+	}
 	path := "/scenario/scenario.json"
 	data, err := os.ReadFile(path)
 	if err != nil || len(data) > maxScenario {
@@ -264,6 +268,28 @@ func run(lifecycleRunID string) error {
 		result.EventCount = eventCount
 	}
 	return json.NewEncoder(os.Stdout).Encode(result)
+}
+
+func validateTargetPlatform(data []byte, goos, goarch string) error {
+	var target struct {
+		Schema       string `json:"schema"`
+		OS           string `json:"os"`
+		Architecture string `json:"architecture"`
+		NPMCPU       string `json:"npm_cpu"`
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&target); err != nil {
+		return err
+	}
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		return errors.New("target platform contains trailing JSON")
+	}
+	wantCPU := map[string]string{"amd64": "x64", "arm64": "arm64"}[goarch]
+	if target.Schema != "sealed-cli-target-platform/v1" || target.OS != goos || target.Architecture != goarch || target.NPMCPU != wantCPU || wantCPU == "" {
+		return errors.New("target platform mismatch")
+	}
+	return nil
 }
 
 func summarizeInferenceOutput(output []byte, truncated bool) (int, string, bool) {

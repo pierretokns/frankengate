@@ -73,6 +73,11 @@ func TestPrefetchProducesLockedContentEvidenceWithoutLifecycleScripts(t *testing
 			t.Fatalf("prefetch Dockerfile misses %q", required)
 		}
 	}
+	for _, required := range []string{`@anthropic-ai/claude-code/install.cjs`, `@openai/codex)`, `npm_config_platform="$TARGETOS"`, `target-platform.json`} {
+		if !strings.Contains(text, required) {
+			t.Fatalf("target-native prefetch misses %q", required)
+		}
+	}
 	if strings.Count(text, "npm install ") != 1 || strings.Contains(text, "npm install --global") {
 		t.Fatal("prefetch must use one lock-generation install and materialize only through npm ci")
 	}

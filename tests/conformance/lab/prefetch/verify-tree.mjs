@@ -1,7 +1,8 @@
 import fs from "node:fs";
 
-const [lockPath, treePath, outputPath] = process.argv.slice(2);
+const [lockPath, treePath, outputPath, targetOS = process.platform, targetCPU = process.arch] = process.argv.slice(2);
 if (!lockPath || !treePath || !outputPath) throw new Error("lock, tree, and output paths are required");
+if (!["linux", "darwin"].includes(targetOS) || !["x64", "arm64"].includes(targetCPU)) throw new Error("unsupported target platform");
 const lock = JSON.parse(fs.readFileSync(lockPath, "utf8"));
 const tree = JSON.parse(fs.readFileSync(treePath, "utf8"));
 if (lock.lockfileVersion !== 3 || !lock.packages || !tree.dependencies) throw new Error("unsupported npm dependency evidence");
@@ -45,7 +46,7 @@ function isAuthorizedPlatformOmission(name) {
   const entries = permittedByName.get(name) || [];
   return entries.length > 0 && entries.every(entry =>
     entry.optional === true &&
-    (!constraintAllows(entry.os, process.platform) || !constraintAllows(entry.cpu, process.arch))
+    (!constraintAllows(entry.os, targetOS) || !constraintAllows(entry.cpu, targetCPU))
   );
 }
 

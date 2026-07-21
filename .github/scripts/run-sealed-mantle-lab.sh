@@ -80,6 +80,13 @@ build_cli() {
     cp -R "$lab/seed/$client/." "$context/seed/"
     tag="$registry/sealed-$client:$run_id-$arch"
     docker buildx build --network=none --platform "linux/$arch" --file "$lab/Dockerfile.runner" --push --tag "$tag" "$context"
+    cli_binary="/opt/client/node_modules/.bin/$client"
+    observed="$(docker run --rm --platform "linux/$arch" --network none --entrypoint "$cli_binary" "$tag" --version)"
+    case "$client" in
+      claude) printf '%s\n' "$observed" | grep -Ex "${version}( \(Claude Code\))?" >/dev/null ;;
+      codex) printf '%s\n' "$observed" | grep -Ex "codex-cli ${version}" >/dev/null ;;
+      *) return 1 ;;
+    esac
   done
   docker buildx imagetools create --tag "$registry/sealed-$client:$run_id" \
     "$registry/sealed-$client:$run_id-amd64" "$registry/sealed-$client:$run_id-arm64"
