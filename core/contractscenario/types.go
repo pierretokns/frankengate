@@ -10,9 +10,24 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"net/url"
+	"sort"
 )
 
 const SchemaV1 = "bedrock-mantle-contract-scenario/v1"
+
+// CanonicalTarget returns a stable SigV4-style path and sorted query string.
+// It preserves repeated and empty values and percent-encodes each component.
+func CanonicalTarget(raw string) (string, error) {
+	u, err := url.ParseRequestURI(raw); if err != nil { return "", fmt.Errorf("invalid target: %w", err) }
+	path := u.EscapedPath(); if path == "" { path = "/" }
+	vals, err := url.ParseQuery(u.RawQuery); if err != nil { return "", fmt.Errorf("invalid query: %w", err) }
+	type pair struct{ k, v string }; pairs := make([]pair, 0)
+	for k, vs := range vals { if len(vs)==0 { pairs=append(pairs,pair{k,""}) }; for _, v := range vs { pairs=append(pairs,pair{k,v}) } }
+	sort.Slice(pairs, func(i,j int) bool { if pairs[i].k==pairs[j].k { return pairs[i].v<pairs[j].v }; return pairs[i].k<pairs[j].k })
+	if len(pairs)==0 { return path, nil }; out := path+"?"; for i,p := range pairs { if i>0 { out += "&" }; out += sigv4Escape(p.k)+"="+sigv4Escape(p.v) }; return out,nil
+}
+func sigv4Escape(s string) string { return strings.ReplaceAll(url.QueryEscape(s), "+", "%20") }
 
 type CellSpec struct { Name, InitialState string; Expectations []Expectation }
 type Cell struct { Name, ID, State string; Expectations []Expectation }
