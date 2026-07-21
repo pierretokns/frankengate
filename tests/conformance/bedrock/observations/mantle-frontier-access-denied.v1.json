@@ -1,0 +1,65 @@
+{
+  "schema": "bedrock-mantle-sanitized-observation-set/v1",
+  "observed_at": "2026-07-21T00:05:58Z",
+  "authority": "aws-observed-sample",
+  "credential_class": "sts-session",
+  "region": "us-east-1",
+  "route": "/openai/v1/responses",
+  "request_shape": {
+    "input": "scalar-string",
+    "model": "exact-upstream-id",
+    "parallel_tool_calls": false,
+    "reasoning_context": "all_turns",
+    "reasoning_effort": "low",
+    "responses_lite_header": true,
+    "stream": false
+  },
+  "observations": [
+    {
+      "model": "openai.gpt-5.5",
+      "status": 401,
+      "error_code": "access_denied",
+      "error_type": "permission_denied_error"
+    },
+    {
+      "model": "openai.gpt-5.6-luna",
+      "status": 401,
+      "error_code": "access_denied",
+      "error_type": "permission_denied_error"
+    },
+    {
+      "model": "openai.gpt-5.6-sol",
+      "status": 401,
+      "error_code": "access_denied",
+      "error_type": "permission_denied_error"
+    },
+    {
+      "model": "openai.gpt-5.6-terra",
+      "status": 401,
+      "error_code": "access_denied",
+      "error_type": "permission_denied_error"
+    }
+  ],
+  "response_header_names": [
+    "access-control-allow-origin",
+    "access-control-expose-headers",
+    "content-length",
+    "content-type",
+    "date",
+    "vary",
+    "x-amzn-requestid",
+    "x-request-id"
+  ],
+  "omissions": [
+    "authorization",
+    "aws-session-token",
+    "request-id-values",
+    "sigv4-signature"
+  ],
+  "claims": [
+    "The account can authenticate to and list the Mantle catalog.",
+    "Catalog visibility does not imply model invocation entitlement.",
+    "These authorization failures do not establish request-body acceptance or rejection.",
+    "No inference was performed by these four rejected requests."
+  ]
+}
