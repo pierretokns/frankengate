@@ -2,6 +2,7 @@ package contractscenario
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -38,4 +39,9 @@ func TestCanonicalTargetPreservesRepeatedAndEmptyValues(t *testing.T) {
 	g, err := CanonicalTarget("/invoke?z=last&a=two&a=&a=one"); if err != nil { t.Fatal(err) }
 	if g != "/invoke?a=&a=one&a=two&z=last" { t.Fatalf("canonical target: %s", g) }
 	if g, err := CanonicalTarget("/"); err != nil || g != "/" { t.Fatalf("root: %q %v", g, err) }
+}
+
+func TestCanonicalRequestNormalizesHeadersAndHashesBody(t *testing.T) {
+	g, err := CanonicalRequest("post", "/x?b=2&a=1", map[string]string{" Host ": " example.com  ", "X-Test": "a   b"}, []byte("{}")); if err != nil { t.Fatal(err) }
+	if !strings.Contains(g, "host:example.com\nx-test:a b\n") || !strings.Contains(g, "host;x-test\n") { t.Fatalf("canonical headers: %q", g) }
 }
