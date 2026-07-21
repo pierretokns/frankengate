@@ -78,7 +78,10 @@ GOWORK=off go run ./cmd/lab-runner \
   --docker /absolute/path/to/docker
 ```
 
-A v2 run additionally requires `--recorder-policy /absolute/path/policy.bin`. Before Compose creates
+A v2 run additionally requires `--recorder-policy /absolute/path/policy.bin` plus the complete
+`--recorder-expectations`, `--recorder-transcript`, `--recorder-pcapng`, and `--recorder-ledger`
+absolute-path set. Partial, relative, empty, oversized, non-regular, or symlinked evidence fails
+closed. Before Compose creates
 or starts any service, the runner creates a non-running, networkless, read-only container from the
 exact pinned recorder image, copies `/network-recorder` through Docker's bounded tar stream, and
 recomputes the policy and binary hashes declared by the v2 runtime lock. Selecting the exact path
@@ -91,7 +94,12 @@ container. Missing, empty, oversized, non-executable, duplicate, or hash-mismatc
 the run. CI also characterizes the accepted artifact archive using a real Docker
 import/create/copy cycle. This verifies selected image contents before capture; it still does not prove capture
 readiness or completeness until the recorder process is launched and acknowledges all three bridge
-interfaces.
+interfaces. After teardown, the runner decodes the bounded control transcript, derives immutable
+bindings from the runtime lock, policy, and observed platform, then verifies the exact PCAPNG and
+canonical ledger bytes. PCAPNG interfaces must declare decimal `if_tsresol=9`; implicit
+microsecond timestamps cannot be compared with the recorder's monotonic-nanosecond lifecycle. A
+structurally valid `aborted` transcript remains diagnostic evidence only and fails the runner; only
+a fully verified `complete` recorder outcome may reach lifecycle result emission.
 
 It first normalizes the Docker daemon's reported Linux architecture and requires both independent
 CLI cell binaries to report the same Go runtime architecture. The raw result binds that observed
@@ -104,9 +112,12 @@ sentinel event, removes containers and volumes, and proves the project inventory
 external orchestrator passes only reviewed Docker connection variables; proxy and cloud/provider
 credentials are discarded and none of its HOME or Docker state enters a runner container. This
 version-cell result is a raw lab record, not canonical release evidence. No aggregate certification
-gate is provided yet: it would be unsafe until it independently re-hashes both lock files, consumes
-the external recorder artifact, and binds raw per-cell evidence. The current runner deliberately
-emits `unproven-external-recorder-required`; OCI declarations or edited JSON cannot certify the lab.
+gate is provided yet: it would be unsafe until it independently binds raw per-cell evidence and
+proves the provider-side observation boundary. The current runner deliberately emits
+`unproven-external-recorder-required` even after structural recorder verification. Structural
+capture evidence does not by itself prove that no paid provider request occurred, and the runner
+does not yet own recorder launch or nonce generation; OCI declarations, replayable input files, or
+edited JSON cannot certify the lab.
 
 The binary placed at `offline/egress-sentinel` must be a Linux binary for the target platform; a
 plain host `go build` on macOS produces an unusable Mach-O file. Build each native row explicitly:

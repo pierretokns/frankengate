@@ -75,7 +75,7 @@ func TestLifecycleUsesPinnedImagesRunsFreshCellsAndTearsDown(t *testing.T) {
 	}
 	fake := &fakeExecutor{}
 	var stdout, stderr bytes.Buffer
-	if err := run(fake, lockPath, sourceLockPath, composePath, "/reviewed/docker", "", &stdout, &stderr); err != nil {
+	if err := run(fake, lockPath, sourceLockPath, composePath, "/reviewed/docker", "", recorderEvidencePaths{}, &stdout, &stderr); err != nil {
 		t.Fatalf("lifecycle failed: %v\nstderr: %s", err, stderr.String())
 	}
 	var result lifecycleResult
