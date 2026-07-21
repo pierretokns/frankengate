@@ -981,6 +981,7 @@ func resolvedComposeForTest() string {
 			"BIFROST_SEALED_LAB_INGRESS_OBSERVER": "1",
 			"LAB_RUN_ID":                          "test-1",
 		}
+		services[name]["healthcheck"] = map[string]any{"test": []string{"CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/health || exit 1"}, "retries": 60}
 	}
 	services["claude-runner"] = base("registry.invalid/claude@sha256:" + strings.Repeat("b", 64))
 	services["claude-runner"]["network_mode"] = "service:netns-claude"

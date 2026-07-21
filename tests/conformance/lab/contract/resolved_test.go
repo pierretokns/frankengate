@@ -72,6 +72,11 @@ func TestResolvedComposeIsStructurallyBoundToLocks(t *testing.T) {
 			service.Environment["BIFROST_SEALED_LAB_INGRESS_OBSERVER"] = "0"
 			d.Services["bifrost-2"] = service
 		}},
+		{"Bifrost readiness removed", func(d *resolvedCompose) {
+			service := d.Services["bifrost-1"]
+			service.Healthcheck = nil
+			d.Services["bifrost-1"] = service
+		}},
 		{"observer wrong run identity", func(d *resolvedCompose) {
 			service := d.Services["bifrost-3"]
 			service.Environment["LAB_RUN_ID"] = "other"
@@ -131,6 +136,7 @@ func resolvedFixture() (resolvedCompose, Lock, RuntimeLock) {
 	services["bifrost-3"] = withMode(base(digest("a")), "service:netns-bifrost-3")
 	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
 		service := services[name]
+		service.Healthcheck = &resolvedHealthcheck{Test: []string{"CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/health || exit 1"}, Retries: 60}
 		service.Environment = map[string]any{
 			"BIFROST_SEALED_LAB_INGRESS_OBSERVER": "1",
 			"LAB_RUN_ID":                          runtime.RunID,

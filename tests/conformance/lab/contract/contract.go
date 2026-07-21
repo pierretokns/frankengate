@@ -371,6 +371,7 @@ func ValidateCompose(data []byte) error {
 		"client_net:", "data_net:", "control_net:", "internal: true", "enable_ipv6: true",
 		"driver: bridge", "com.docker.network.bridge.name:", "lab_client_bridge", "lab_data_bridge", "lab_control_bridge",
 		"read_only: true", "cap_drop: [all]", "no-new-privileges:true", "pids_limit:", "tmpfs:",
+		"wget -q -o /dev/null http://127.0.0.1:8080/health || exit 1", "start_period: 1s", "retries: 60",
 		"cap_add: [net_admin]", "ip route | awk '$$1 == \"default\"'", "ip -6 route | awk '$$1 == \"default\"'", "ip route get", "network_mode: service:netns-codex", "network_mode: service:netns-claude",
 		"cap_add: [net_bind_service]", "user: \"70:70\"", "/var/run/postgresql:rw,nosuid,nodev,noexec,size=4m,uid=70,gid=70",
 		"dns: [\"${lab_dns_ipv4", "${lab_dns_ipv6", "dns_opt: [attempts:1, timeout:1]", "lab_sentinel_ipv4", "lab_sentinel_ipv6",

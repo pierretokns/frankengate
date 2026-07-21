@@ -178,6 +178,7 @@ func TestLabContractRejectsAdversarialRelaxation(t *testing.T) {
 		{"remove sentinel", "\n  egress-sentinel:\n", "\n  removed-sentinel:\n"},
 		{"inject AWS credential", "user: \"65532:65532\"", "environment: {AWS_ACCESS_KEY_ID: leaked}\n  user: \"65532:65532\""},
 		{"remove default-route assertion", "ip route | awk '$$1 == \"default\"'", "ip route | awk '$$1 == \"anything\"'"},
+		{"break Bifrost readiness endpoint", "http://127.0.0.1:8080/health || exit 1", "http://127.0.0.1:8080/not-ready || exit 1"},
 	} {
 		t.Run(mutation.name, func(t *testing.T) {
 			mutated := strings.Replace(string(compose), mutation.old, mutation.new, 1)
