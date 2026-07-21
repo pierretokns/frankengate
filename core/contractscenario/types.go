@@ -4,6 +4,7 @@
 package contractscenario
 
 import (
+	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -43,6 +44,11 @@ func CanonicalRequest(method, target string, headers map[string]string, body []b
 	ct, signed, err := CanonicalHeaders(headers); if err != nil { return "", err }; canon, err := CanonicalTarget(target); if err != nil { return "", err }; sum := sha256.Sum256(body)
 	return strings.ToUpper(method)+"\n"+canon+"\n"+ct+"\n"+signed+"\n"+hex.EncodeToString(sum[:]), nil
 }
+
+func SigV4Signature(secret, date, region, service, canonical string) string {
+	kDate := hmacSHA256([]byte("AWS4"+secret), []byte(date)); kRegion := hmacSHA256(kDate, []byte(region)); kService := hmacSHA256(kRegion, []byte(service)); kSigning := hmacSHA256(kService, []byte("aws4_request")); sum := hmacSHA256(kSigning, []byte(canonical)); return hex.EncodeToString(sum)
+}
+func hmacSHA256(key, data []byte) []byte { h := hmac.New(sha256.New, key); _, _ = h.Write(data); return h.Sum(nil) }
 
 type CellSpec struct { Name, InitialState string; Expectations []Expectation }
 type Cell struct { Name, ID, State string; Expectations []Expectation }

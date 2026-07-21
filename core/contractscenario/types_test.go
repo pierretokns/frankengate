@@ -45,3 +45,10 @@ func TestCanonicalRequestNormalizesHeadersAndHashesBody(t *testing.T) {
 	g, err := CanonicalRequest("post", "/x?b=2&a=1", map[string]string{" Host ": " example.com  ", "X-Test": "a   b"}, []byte("{}")); if err != nil { t.Fatal(err) }
 	if !strings.Contains(g, "host:example.com\nx-test:a b\n") || !strings.Contains(g, "host;x-test\n") { t.Fatalf("canonical headers: %q", g) }
 }
+
+func TestSigV4SignatureIsDeterministic(t *testing.T) {
+	a := SigV4Signature("secret", "20260721", "us-east-1", "bedrock", "canonical-request")
+	b := SigV4Signature("secret", "20260721", "us-east-1", "bedrock", "canonical-request")
+	if a != b || len(a) != 64 { t.Fatalf("signature: %q %q", a, b) }
+	if a == SigV4Signature("other", "20260721", "us-east-1", "bedrock", "canonical-request") { t.Fatal("secret did not affect signature") }
+}
