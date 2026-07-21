@@ -733,10 +733,10 @@ func (h *CompletionHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	responsesHandler := h.responses
 	if runID := sealedIngressObserverRunID(); runID != "" {
 		responsesHandler = func(ctx *fasthttp.RequestCtx) {
-			if err := observeSealedCodexIngress(ctx, runID); err != nil {
-				SendError(ctx, fasthttp.StatusBadRequest, err.Error())
-				return
-			}
+			// Evidence collection must remain observational: lifecycle validation
+			// rejects a missing valid record, but the observer never changes the
+			// gateway behavior being measured.
+			_ = observeSealedCodexIngress(ctx, runID)
 			h.responses(ctx)
 		}
 	}
@@ -1182,6 +1182,7 @@ func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) (err erro
 		"parallel_false_present": false, "input_present": false,
 		"first_input_type_ok": false, "first_input_role_ok": false,
 		"tool_count_ok": false, "tool_shapes_ok": false,
+		"tool_types": []string{}, "invalid_tool_indices": []int{},
 		"input_run_id_count": 0, "input_run_id_matches": false,
 	}
 	reason := "invalid_run_id"
@@ -1246,17 +1247,24 @@ func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) (err erro
 	diagnostic["first_input_role_ok"] = len(request.Input) > 0 && request.Input[0].Role == "developer"
 	toolsValid := len(request.Input) > 0 && len(request.Input[0].Tools) > 0 && len(request.Input[0].Tools) <= 128
 	diagnostic["tool_count_ok"] = toolsValid
+	toolTypes := make([]string, 0)
+	invalidToolIndices := make([]int, 0)
 	if len(request.Input) > 0 {
-		for _, tool := range request.Input[0].Tools {
+		for index, tool := range request.Input[0].Tools {
 			var shape struct {
-				Type        string          `json:"type"`
-				Name        string          `json:"name"`
-				Execution   string          `json:"execution"`
-				Description string          `json:"description"`
-				Parameters  json.RawMessage `json:"parameters"`
-				Tools       json.RawMessage `json:"tools"`
+				Type              string          `json:"type"`
+				Name              string          `json:"name"`
+				Execution         string          `json:"execution"`
+				Description       string          `json:"description"`
+				Parameters        json.RawMessage `json:"parameters"`
+				Tools             json.RawMessage `json:"tools"`
+				ExternalWebAccess *bool           `json:"external_web_access"`
+				IndexedWebAccess  *bool           `json:"indexed_web_access"`
 			}
 			shapeOK := len(tool) > 0 && len(tool) <= 64<<10 && json.Unmarshal(tool, &shape) == nil
+			if len(toolTypes) < 128 && isSealedCodexToolType(shape.Type) {
+				toolTypes = append(toolTypes, shape.Type)
+			}
 			switch shape.Type {
 			case "custom":
 				shapeOK = shapeOK && shape.Name != ""
@@ -1271,15 +1279,21 @@ func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) (err erro
 				trimmedParameters := bytes.TrimSpace(shape.Parameters)
 				parametersObject := len(trimmedParameters) >= 2 && trimmedParameters[0] == '{' && trimmedParameters[len(trimmedParameters)-1] == '}' && json.Unmarshal(trimmedParameters, &parameters) == nil && parameters.Type == "object"
 				shapeOK = shapeOK && shape.Execution == "client" && shape.Description != "" && parametersObject
+			case "web_search":
+				shapeOK = shapeOK && shape.ExternalWebAccess != nil && (shape.IndexedWebAccess == nil || (*shape.ExternalWebAccess && *shape.IndexedWebAccess))
 			default:
 				shapeOK = false
 			}
 			if !shapeOK {
 				toolsValid = false
-				break
+				if len(invalidToolIndices) < 16 {
+					invalidToolIndices = append(invalidToolIndices, index)
+				}
 			}
 		}
 	}
+	diagnostic["tool_types"] = toolTypes
+	diagnostic["invalid_tool_indices"] = invalidToolIndices
 	diagnostic["tool_shapes_ok"] = toolsValid
 	inputRunID, markerCount, markerErr := extractSealedRunID(request.Input)
 	diagnostic["input_run_id_count"] = markerCount
@@ -1302,6 +1316,15 @@ func observeSealedCodexIngress(ctx *fasthttp.RequestCtx, runID string) (err erro
 
 var sealedLabRunID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`)
 var sealedRunIDMarker = regexp.MustCompile(`SEALED_CODEX_RUN_ID:([A-Za-z0-9][A-Za-z0-9._-]{0,127})`)
+
+func isSealedCodexToolType(value string) bool {
+	switch value {
+	case "custom", "function", "namespace", "tool_search", "web_search":
+		return true
+	default:
+		return false
+	}
+}
 
 func sealedIngressObserverRunID() string {
 	if os.Getenv("BIFROST_SEALED_LAB_INGRESS_OBSERVER") != "1" {

@@ -51,27 +51,33 @@ type composePSRow struct {
 }
 
 type codexIngressRejectionRecord struct {
-	Schema               string `json:"schema"`
-	RunID                string `json:"run_id"`
-	Reason               string `json:"reason"`
-	BodyBounded          bool   `json:"body_bounded"`
-	JSONUnique           bool   `json:"json_unique"`
-	JSONDecoded          bool   `json:"json_decoded"`
-	MethodOK             bool   `json:"method_ok"`
-	ModelOK              bool   `json:"model_ok"`
-	StreamOK             bool   `json:"stream_ok"`
-	LiteHeaderOK         bool   `json:"lite_header_ok"`
-	NoWebsocketUpgrade   bool   `json:"no_websocket_upgrade"`
-	InstructionsAbsent   bool   `json:"instructions_absent"`
-	TopLevelToolsAbsent  bool   `json:"top_level_tools_absent"`
-	ParallelFalsePresent bool   `json:"parallel_false_present"`
-	InputPresent         bool   `json:"input_present"`
-	FirstInputTypeOK     bool   `json:"first_input_type_ok"`
-	FirstInputRoleOK     bool   `json:"first_input_role_ok"`
-	ToolCountOK          bool   `json:"tool_count_ok"`
-	ToolShapesOK         bool   `json:"tool_shapes_ok"`
-	InputRunIDCount      int    `json:"input_run_id_count"`
-	InputRunIDMatches    bool   `json:"input_run_id_matches"`
+	Schema               string   `json:"schema"`
+	RunID                string   `json:"run_id"`
+	Reason               string   `json:"reason"`
+	BodyBounded          bool     `json:"body_bounded"`
+	JSONUnique           bool     `json:"json_unique"`
+	JSONDecoded          bool     `json:"json_decoded"`
+	MethodOK             bool     `json:"method_ok"`
+	ModelOK              bool     `json:"model_ok"`
+	StreamOK             bool     `json:"stream_ok"`
+	LiteHeaderOK         bool     `json:"lite_header_ok"`
+	NoWebsocketUpgrade   bool     `json:"no_websocket_upgrade"`
+	InstructionsAbsent   bool     `json:"instructions_absent"`
+	TopLevelToolsAbsent  bool     `json:"top_level_tools_absent"`
+	ParallelFalsePresent bool     `json:"parallel_false_present"`
+	InputPresent         bool     `json:"input_present"`
+	FirstInputTypeOK     bool     `json:"first_input_type_ok"`
+	FirstInputRoleOK     bool     `json:"first_input_role_ok"`
+	ToolCountOK          bool     `json:"tool_count_ok"`
+	ToolShapesOK         bool     `json:"tool_shapes_ok"`
+	ToolTypes            []string `json:"tool_types"`
+	InvalidToolIndices   []int    `json:"invalid_tool_indices"`
+	InputRunIDCount      int      `json:"input_run_id_count"`
+	InputRunIDMatches    bool     `json:"input_run_id_matches"`
+}
+
+var diagnosticToolTypes = map[string]bool{
+	"custom": true, "function": true, "namespace": true, "tool_search": true, "web_search": true,
 }
 
 func (capture *diagnosticCapture) Write(data []byte) (int, error) {
@@ -305,8 +311,9 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		if capture.truncated {
 			errorClass = "oversize"
 		}
-		if service == "bifrost-1" && !capture.truncated {
-			result.IngressRejections = parseCodexIngressRejections(capture.data.Bytes(), paths.RunID, 4)
+		if strings.HasPrefix(service, "bifrost-") && !capture.truncated && len(result.IngressRejections) < 4 {
+			remaining := 4 - len(result.IngressRejections)
+			result.IngressRejections = append(result.IngressRejections, parseCodexIngressRejections(capture.data.Bytes(), paths.RunID, remaining)...)
 		}
 		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
@@ -353,7 +360,21 @@ func parseCodexIngressRejections(data []byte, runID string, limit int) []codexIn
 			continue
 		}
 		var record codexIngressRejectionRecord
-		if json.Unmarshal(line, &record) != nil || record.Schema != "sealed-codex-bifrost-ingress-rejected/v1" || record.RunID != runID || !allowedReasons[record.Reason] || record.InputRunIDCount < 0 || record.InputRunIDCount > 2 {
+		if json.Unmarshal(line, &record) != nil || record.Schema != "sealed-codex-bifrost-ingress-rejected/v1" || record.RunID != runID || !allowedReasons[record.Reason] || record.InputRunIDCount < 0 || record.InputRunIDCount > 2 || len(record.ToolTypes) > 128 || len(record.InvalidToolIndices) > 16 {
+			continue
+		}
+		validMetadata := true
+		for _, toolType := range record.ToolTypes {
+			if !diagnosticToolTypes[toolType] {
+				validMetadata = false
+			}
+		}
+		for _, index := range record.InvalidToolIndices {
+			if index < 0 || index >= 128 {
+				validMetadata = false
+			}
+		}
+		if !validMetadata {
 			continue
 		}
 		result = append(result, record)

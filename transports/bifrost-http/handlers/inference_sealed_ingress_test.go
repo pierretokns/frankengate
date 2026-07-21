@@ -27,6 +27,14 @@ func TestSealedCodexIngressRequiresExactLiteShape(t *testing.T) {
 	if err := check(toolSearch, header); err != nil {
 		t.Fatal("0.144.5 tool_search Lite shape rejected")
 	}
+	webSearch := strings.Replace(valid, `{"type":"custom","name":"apply_patch"}`, `{"type":"web_search","external_web_access":false}`, 1)
+	if err := check(webSearch, header); err != nil {
+		t.Fatal("0.144.5 web_search Lite shape rejected")
+	}
+	indexedWebSearch := strings.Replace(webSearch, `"external_web_access":false`, `"external_web_access":true,"indexed_web_access":true`, 1)
+	if err := check(indexedWebSearch, header); err != nil {
+		t.Fatal("0.144.5 indexed web_search Lite shape rejected")
+	}
 	mutants := []struct {
 		body    string
 		headers map[string]string
@@ -43,6 +51,8 @@ func TestSealedCodexIngressRequiresExactLiteShape(t *testing.T) {
 		{strings.Replace(toolSearch, `"parameters":{"type":"object"}`, `"parameters":null`, 1), header},
 		{strings.Replace(toolSearch, `"parameters":{"type":"object"}`, `"parameters":"object"`, 1), header},
 		{strings.Replace(toolSearch, `"parameters":{"type":"object"}`, `"parameters":{"type":"string"}`, 1), header},
+		{strings.Replace(webSearch, `"external_web_access":false`, `"external_web_access":false,"indexed_web_access":true`, 1), header},
+		{strings.Replace(webSearch, `"external_web_access":false`, `"external_web_access":true,"indexed_web_access":false`, 1), header},
 		{strings.Replace(valid, `SEALED_CODEX_RUN_ID:run-1`, `SEALED_CODEX_RUN_ID:other`, 1), header},
 		{strings.Replace(valid, `SEALED_CODEX_RUN_ID:run-1`, `no marker`, 1), header},
 		{strings.Replace(valid, `SEALED_CODEX_RUN_ID:run-1`, `SEALED_CODEX_RUN_ID:run-1 SEALED_CODEX_RUN_ID:run-1`, 1), header},
