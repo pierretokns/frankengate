@@ -236,6 +236,17 @@ func TestSanitizedPanicFingerprintKeepsOnlyRepositoryFrames(t *testing.T) {
 	}
 }
 
+func TestDiagnosticTailCaptureRetainsNewestBoundedEvidence(t *testing.T) {
+	capture := &diagnosticTailCapture{limit: 64}
+	_, _ = capture.Write([]byte(strings.Repeat("x", 128)))
+	marker := []byte("\nnewest-ingress-marker")
+	_, _ = capture.Write(marker)
+	data, truncated := capture.snapshot()
+	if !truncated || len(data) != 64 || !bytes.HasSuffix(data, marker) || bytes.Contains(data, []byte(strings.Repeat("x", 64))) {
+		t.Fatalf("tail capture did not retain bounded suffix: truncated=%v len=%d data=%q", truncated, len(data), data)
+	}
+}
+
 const validRuntimeLock = `{
   "schema":"sealed-lab-runtime-lock/v1",
   "run_id":"test-1",
@@ -424,7 +435,7 @@ func TestDiagnosticsRejectDuplicateStatusAndInspectOOM(t *testing.T) {
 			_, _ = io.WriteString(stdout, `[{"Service":"postgres","ID":"aaaaaaaaaaaa","State":"exited","ExitCode":1},{"Service":"postgres","ID":"bbbbbbbbbbbb","State":"running","ExitCode":0}]`)
 		case strings.HasPrefix(joined, "inspect --format"):
 			_, _ = io.WriteString(stdout, "true\n")
-		case strings.Contains(joined, "logs --tail 200") && strings.HasSuffix(joined, "postgres"):
+		case strings.Contains(joined, "logs --tail 2000") && strings.HasSuffix(joined, "postgres"):
 			_, _ = io.WriteString(stdout, "password authentication failed")
 		}
 		return nil
@@ -475,7 +486,7 @@ func TestDiagnosticsAcceptCompleteKnownComposeStatus(t *testing.T) {
 		if strings.HasPrefix(joined, "inspect --format") {
 			_, _ = io.WriteString(stdout, "false\n")
 		}
-		if strings.Contains(joined, "logs --tail 200") {
+		if strings.Contains(joined, "logs --tail 2000") {
 			_, _ = io.WriteString(stdout, "healthy startup chatter")
 		}
 		return nil
@@ -604,7 +615,7 @@ func TestFailureDiagnosticsPrecedeTeardownAndDoNotContaminateStdout(t *testing.T
 	}
 	calls := strings.Join(fake.calls, "\n")
 	psIndex := strings.Index(calls, " ps --all --format json")
-	logIndex := strings.Index(calls, " logs --tail 200")
+	logIndex := strings.Index(calls, " logs --tail 2000")
 	downIndex := strings.Index(calls, " down --volumes")
 	if psIndex < 0 || logIndex < psIndex || downIndex < logIndex {
 		t.Fatalf("diagnostics were not captured in ps/logs/down order:\n%s", calls)

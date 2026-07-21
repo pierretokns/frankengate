@@ -17,7 +17,9 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -40,6 +42,38 @@ type diagnosticCapture struct {
 	data      bytes.Buffer
 	limit     int
 	truncated bool
+}
+
+type diagnosticTailCapture struct {
+	mu        sync.Mutex
+	limit     int
+	data      []byte
+	truncated bool
+}
+
+func (capture *diagnosticTailCapture) Write(data []byte) (int, error) {
+	capture.mu.Lock()
+	defer capture.mu.Unlock()
+	original := len(data)
+	if len(data) >= capture.limit {
+		capture.data = append(capture.data[:0], data[len(data)-capture.limit:]...)
+		capture.truncated = true
+		return original, nil
+	}
+	overflow := len(capture.data) + len(data) - capture.limit
+	if overflow > 0 {
+		copy(capture.data, capture.data[overflow:])
+		capture.data = capture.data[:len(capture.data)-overflow]
+		capture.truncated = true
+	}
+	capture.data = append(capture.data, data...)
+	return original, nil
+}
+
+func (capture *diagnosticTailCapture) snapshot() ([]byte, bool) {
+	capture.mu.Lock()
+	defer capture.mu.Unlock()
+	return append([]byte(nil), capture.data...), capture.truncated
 }
 
 type composePSRow struct {
@@ -172,9 +206,10 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		StatusRecordCount  int                           `json:"status_record_count"`
 		StatusRowCount     int                           `json:"status_row_count"`
 		MissingStatusRows  int                           `json:"missing_status_rows"`
+		LogTailLines       int                           `json:"log_tail_lines"`
 		IngressRejections  []codexIngressRejectionRecord `json:"codex_ingress_rejections,omitempty"`
 		Services           []row                         `json:"services"`
-	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1"}
+	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1", LogTailLines: 2000}
 	nonce := make([]byte, 16)
 	if _, err := rand.Read(nonce); err != nil {
 		return err
@@ -257,8 +292,8 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 	result.StatusRowCount = len(status)
 	for _, service := range services {
 		ctx, stop := context.WithTimeout(aggregate, 5*time.Second)
-		capture := &diagnosticCapture{limit: 256 << 10}
-		args := append(compose, "logs", "--tail", "200", "--no-color", "--no-log-prefix", service)
+		capture := &diagnosticTailCapture{limit: 256 << 10}
+		args := append(compose, "logs", "--tail", strconv.Itoa(result.LogTailLines), "--no-color", "--no-log-prefix", service)
 		var commandErr error
 		if specialized, ok := executor.(diagnosticExecutor); ok {
 			commandErr = specialized.RunDiagnostic(ctx, environment, capture, capture, dockerBinary, args...)
@@ -292,9 +327,10 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 				}
 			}
 		}
+		logData, logTruncated := capture.snapshot()
 		failed := serviceStatusFailed(state, health, exitCode)
-		failureClass = classifySanitizedFailure(capture.data.Bytes(), failed)
-		panicDetected, stackFrames := sanitizedPanicFingerprint(capture.data.Bytes(), 16)
+		failureClass = classifySanitizedFailure(logData, failed)
+		panicDetected, stackFrames := sanitizedPanicFingerprint(logData, 16)
 		if _, ok := status[service]; !ok {
 			failureClass = "missing-status-row"
 			result.MissingStatusRows++
@@ -307,18 +343,18 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 			}
 		}
 		digest := ""
-		if !capture.truncated {
-			sum := sha256.Sum256(capture.data.Bytes())
+		if !logTruncated {
+			sum := sha256.Sum256(logData)
 			digest = hex.EncodeToString(sum[:])
 		}
-		if capture.truncated {
+		if logTruncated {
 			errorClass = "oversize"
 		}
-		if strings.HasPrefix(service, "bifrost-") && !capture.truncated && len(result.IngressRejections) < 4 {
+		if strings.HasPrefix(service, "bifrost-") && len(result.IngressRejections) < 4 {
 			remaining := 4 - len(result.IngressRejections)
-			result.IngressRejections = append(result.IngressRejections, parseCodexIngressRejections(capture.data.Bytes(), paths.RunID, remaining)...)
+			result.IngressRejections = append(result.IngressRejections, parseCodexIngressRejections(logData, paths.RunID, remaining)...)
 		}
-		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: capture.data.Len(), LogSHA256: digest, LogContent: "omitted-metadata-only"})
+		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only"})
 	}
 	encoded, err := json.Marshal(result)
 	if err != nil || len(encoded) > 1<<20 {
