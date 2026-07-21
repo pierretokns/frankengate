@@ -1,0 +1,10 @@
+{
+  "schema": "sealed-cli-seed/v1",
+  "files": [
+    {
+      "source": "settings.json",
+      "target": "home/.claude/settings.json",
+      "sha256": "c84411714181592b3cd3d94832ca44c39088c499b98955c275937b67760e84f1"
+    }
+  ]
+}

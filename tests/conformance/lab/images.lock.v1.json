@@ -1,0 +1,48 @@
+{
+  "schema": "sealed-lab-image-lock/v1",
+  "images": [
+    {
+      "id": "alpine-netns",
+      "reference": "alpine:3.21.7@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "id": "coredns",
+      "reference": "coredns/coredns:1.12.4@sha256:986f04c2e15e147d00bdd51e8c51bcef3644b13ff806be7d2ff1b261d6dfbae1",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "id": "health-stub",
+      "reference": "hashicorp/http-echo:1.0.0@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "id": "node-prefetch",
+      "reference": "node:24.11.0-alpine3.21@sha256:0d4cd385375043fc4612c20ede8b240b6b560dfdaef7cdaeff8e440c6a5b8499",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    },
+    {
+      "id": "postgres",
+      "reference": "postgres:16.9-alpine@sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+      "platforms": ["linux/amd64", "linux/arm64"]
+    }
+  ],
+  "cli_packages": [
+    {
+      "id": "claude-code-production",
+      "package": "@anthropic-ai/claude-code",
+      "version": "2.1.214",
+      "tarball": "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.1.214.tgz",
+      "integrity": "sha512-Gf8XbPHBacVqBlxx8sMnKWPEU6AvRNUcjD0FS6zhD44fCgCHcpbpxwSoTbHlLTqKsr/0S7wdfhjjOIq8WlYbng==",
+      "role": "observed-production-candidate"
+    },
+    {
+      "id": "codex-production",
+      "package": "@openai/codex",
+      "version": "0.144.5",
+      "tarball": "https://registry.npmjs.org/@openai/codex/-/codex-0.144.5.tgz",
+      "integrity": "sha512-jjB+K+OMv572mKhS+2QuLxWXDJNdpwbPenf+V+8bdq7wg4Scqt3cn6WEekD8wPqDVZqck0HSX17K9rD9kbDJQA==",
+      "role": "observed-production-candidate"
+    }
+  ]
+}
