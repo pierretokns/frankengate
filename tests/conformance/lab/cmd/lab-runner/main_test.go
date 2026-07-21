@@ -162,13 +162,18 @@ func TestExactOrchestratorEnvironmentDropsProxyAndCloudCredentials(t *testing.T)
 func TestEachRunGetsACompleteDeterministicAddressPlan(t *testing.T) {
 	first := networkEnvironment("test-1")
 	second := networkEnvironment("test-2")
-	if len(first) != 25 || len(second) != 25 || strings.Join(first, "\n") == strings.Join(second, "\n") {
+	if len(first) != 28 || len(second) != 28 || strings.Join(first, "\n") == strings.Join(second, "\n") {
 		t.Fatalf("invalid per-run address plans: first=%v second=%v", first, second)
 	}
 	joined := strings.Join(first, "\n")
 	for _, key := range []string{"LAB_CLIENT_IPV4_SUBNET=", "LAB_DATA_IPV4_SUBNET=", "LAB_CONTROL_IPV4_SUBNET=", "LAB_DNS_IPV4=", "LAB_SENTINEL_IPV4=", "LAB_CLIENT_IPV6_SUBNET=", "LAB_DATA_IPV6_SUBNET=", "LAB_CONTROL_IPV6_SUBNET=", "LAB_DNS_IPV6=", "LAB_SENTINEL_IPV6="} {
 		if !strings.Contains(joined, key) {
 			t.Fatalf("address plan misses %s: %s", key, joined)
+		}
+	}
+	for _, key := range []string{"LAB_CLIENT_BRIDGE=", "LAB_DATA_BRIDGE=", "LAB_CONTROL_BRIDGE="} {
+		if !strings.Contains(joined, key) {
+			t.Fatalf("address plan misses recorder bridge %s: %s", key, joined)
 		}
 	}
 	for _, key := range []string{"LAB_BIFROST_1_CLIENT_IPV4=", "LAB_BIFROST_1_DATA_IPV4=", "LAB_BIFROST_2_CLIENT_IPV4=", "LAB_BIFROST_2_DATA_IPV4=", "LAB_BIFROST_3_CLIENT_IPV4=", "LAB_BIFROST_3_DATA_IPV4=", "LAB_HEALTH_IPV4="} {
@@ -221,11 +226,12 @@ func resolvedComposeForTest() string {
 	services["network-probe"]["network_mode"] = "service:netns-codex"
 	services["egress-sentinel"] = base("registry.invalid/sentinel@sha256:" + strings.Repeat("d", 64))
 	services["egress-sentinel"]["command"] = []string{"-run-id=test-1"}
-	document := map[string]any{"services": services, "networks": map[string]any{
-		"client_net":  map[string]any{"internal": true, "enable_ipv6": true},
-		"data_net":    map[string]any{"internal": true, "enable_ipv6": true},
-		"control_net": map[string]any{"internal": true, "enable_ipv6": true},
-	}}
+	bridges, _ := contract.BridgeNames("test-1")
+	networks := map[string]any{}
+	for _, name := range []string{"client_net", "control_net", "data_net"} {
+		networks[name] = map[string]any{"internal": true, "enable_ipv6": true, "driver": "bridge", "driver_opts": map[string]string{"com.docker.network.bridge.name": bridges[name]}}
+	}
+	document := map[string]any{"services": services, "networks": networks}
 	encoded, _ := json.Marshal(document)
 	return string(encoded)
 }

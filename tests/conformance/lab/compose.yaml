@@ -270,6 +270,9 @@ services:
 
 networks:
   client_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "${LAB_CLIENT_BRIDGE:?set the run-bound client bridge name}"
     internal: true
     enable_ipv6: true
     ipam:
@@ -277,6 +280,9 @@ networks:
         - subnet: "${LAB_CLIENT_IPV4_SUBNET:-172.30.10.0/24}"
         - subnet: "${LAB_CLIENT_IPV6_SUBNET:-fd00:bf:10::/64}"
   data_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "${LAB_DATA_BRIDGE:?set the run-bound data bridge name}"
     internal: true
     enable_ipv6: true
     ipam:
@@ -284,6 +290,9 @@ networks:
         - subnet: "${LAB_DATA_IPV4_SUBNET:-172.30.20.0/24}"
         - subnet: "${LAB_DATA_IPV6_SUBNET:-fd00:bf:20::/64}"
   control_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "${LAB_CONTROL_BRIDGE:?set the run-bound control bridge name}"
     internal: true
     enable_ipv6: true
     ipam:
