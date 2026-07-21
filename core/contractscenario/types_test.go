@@ -19,3 +19,11 @@ func TestAuthTransitionsAndFaults(t *testing.T) {
 	if tr,err:=e.Transition(id,"ready","request");err!=nil||tr.Sequence!=1||tr.From!="initial"{t.Fatalf("transition: %+v %v",tr,err)}; if tr,err:=e.Transition(id,"done","response");err!=nil||tr.Sequence!=2{t.Fatalf("transition: %+v %v",tr,err)}
 	if err:=e.InstallFaults(id,[]Fault{{Kind:FaultStatus,Value:"503"},{Kind:FaultDrop}});err!=nil{t.Fatal(err)}; if f,ok:=e.NextFault(id);!ok||f.Kind!=FaultStatus{t.Fatalf("fault: %+v %v",f,ok)}; if f,ok:=e.NextFault(id);!ok||f.Kind!=FaultDrop{t.Fatalf("fault: %+v %v",f,ok)}; if _,ok:=e.NextFault(id);ok{t.Fatal("fault program did not exhaust")}
 }
+
+func TestBudgetAndBarrierAreDeterministic(t *testing.T) {
+	e, err := New("s", []CellSpec{{Name: "c"}}, AuthPolicy{}); if err != nil { t.Fatal(err) }
+	id := CellID("s", "c"); var u Usage
+	if err := e.Consume(id, Budget{Requests: 1, BodyBytes: 3}, &u, 3, 0); err != nil { t.Fatal(err) }
+	if err := e.Consume(id, Budget{Requests: 1, BodyBytes: 3}, &u, 0, 0); err == nil { t.Fatal("request budget not enforced") }
+	b := NewBarrier(); if b.Reached("headers") { t.Fatal("barrier reached before signal") }; if err := b.Reach("headers"); err != nil { t.Fatal(err) }; if !b.Reached("headers") { t.Fatal("barrier signal lost") }
+}
