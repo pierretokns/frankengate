@@ -120,31 +120,46 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		LogBytes     int    `json:"log_bytes"`
 	}
 	result := struct {
-		Schema            string `json:"schema"`
-		RunID             string `json:"run_id"`
-		SourceLockSHA256  string `json:"source_lock_sha256"`
-		RuntimeLockSHA256 string `json:"runtime_lock_sha256"`
-		CapturedAt        string `json:"captured_at"`
-		Phase             string `json:"phase"`
-		Nonce             string `json:"nonce"`
-		Capture           string `json:"capture"`
-		StatusCapture     string `json:"status_capture"`
-		StatusFormat      string `json:"status_format"`
-		StatusParser      string `json:"status_parser_version"`
-		StatusStdoutBytes int    `json:"status_stdout_bytes"`
-		StatusStdoutHash  string `json:"status_stdout_sha256"`
-		StatusStderrBytes int    `json:"status_stderr_bytes"`
-		StatusStderrHash  string `json:"status_stderr_sha256"`
-		StatusRecordCount int    `json:"status_record_count"`
-		StatusRowCount    int    `json:"status_row_count"`
-		MissingStatusRows int    `json:"missing_status_rows"`
-		Services          []row  `json:"services"`
+		Schema             string `json:"schema"`
+		RunID              string `json:"run_id"`
+		SourceLockSHA256   string `json:"source_lock_sha256"`
+		RuntimeLockSHA256  string `json:"runtime_lock_sha256"`
+		CapturedAt         string `json:"captured_at"`
+		Phase              string `json:"phase"`
+		Nonce              string `json:"nonce"`
+		Capture            string `json:"capture"`
+		StatusCapture      string `json:"status_capture"`
+		StatusFormat       string `json:"status_format"`
+		StatusParser       string `json:"status_parser_version"`
+		ComposeVersion     string `json:"compose_version"`
+		ComposeVersionHash string `json:"compose_version_sha256"`
+		StatusStdoutBytes  int    `json:"status_stdout_bytes"`
+		StatusStdoutHash   string `json:"status_stdout_sha256"`
+		StatusStderrBytes  int    `json:"status_stderr_bytes"`
+		StatusStderrHash   string `json:"status_stderr_sha256"`
+		StatusRecordCount  int    `json:"status_record_count"`
+		StatusRowCount     int    `json:"status_row_count"`
+		MissingStatusRows  int    `json:"missing_status_rows"`
+		Services           []row  `json:"services"`
 	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1"}
 	nonce := make([]byte, 16)
 	if _, err := rand.Read(nonce); err != nil {
 		return err
 	}
 	result.Nonce = hex.EncodeToString(nonce)
+	versionCtx, versionStop := context.WithTimeout(context.Background(), 5*time.Second)
+	versionCapture := &diagnosticCapture{limit: 128}
+	if specialized, ok := executor.(diagnosticExecutor); ok {
+		if err := specialized.RunDiagnostic(versionCtx, environment, versionCapture, io.Discard, dockerBinary, "compose", "version", "--short"); err == nil && !versionCapture.truncated {
+			value := strings.TrimSpace(versionCapture.data.String())
+			if regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+$`).MatchString(value) {
+				result.ComposeVersion = value
+			}
+			sum := sha256.Sum256(versionCapture.data.Bytes())
+			result.ComposeVersionHash = hex.EncodeToString(sum[:])
+		}
+	}
+	versionStop()
 	services := []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "controlled-dns", "egress-sentinel", "codex-runner"}
 	knownServices := map[string]bool{}
 	for _, service := range []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "netns-codex", "netns-claude", "health-stub", "contract-stub", "controlled-dns", "egress-sentinel", "codex-runner", "claude-runner", "network-probe"} {
@@ -299,25 +314,114 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 }
 
 func decodeComposePS(data []byte) ([]composePSRow, string, error) {
-	var array []composePSRow
+	if len(data) == 0 || len(data) > 256<<10 {
+		return nil, "", errors.New("invalid Compose ps JSON")
+	}
+	var array []json.RawMessage
 	if json.Unmarshal(data, &array) == nil && len(array) > 0 {
-		return array, "legacy-json-array", nil
+		rows, err := validateComposePSRows(array)
+		return rows, "legacy-json-array", err
 	}
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	rows := []composePSRow{}
+	rawRows := []json.RawMessage{}
 	for {
-		var item composePSRow
+		var item json.RawMessage
 		if err := decoder.Decode(&item); errors.Is(err, io.EOF) {
 			break
 		} else if err != nil {
 			return nil, "", err
 		}
-		rows = append(rows, item)
+		rawRows = append(rawRows, item)
 	}
-	if len(rows) == 0 {
+	if len(rawRows) == 0 {
 		return nil, "", errors.New("empty Compose ps status")
 	}
-	return rows, "jsonl", nil
+	rows, err := validateComposePSRows(rawRows)
+	return rows, "jsonl", err
+}
+
+func validateComposePSRows(rawRows []json.RawMessage) ([]composePSRow, error) {
+	if len(rawRows) == 0 || len(rawRows) > 32 {
+		return nil, errors.New("invalid Compose ps row count")
+	}
+	allowed := map[string]bool{"ID": true, "Service": true, "State": true, "Health": true, "ExitCode": true, "Command": true, "CreatedAt": true, "Image": true, "Labels": true, "LocalVolumes": true, "Mounts": true, "Name": true, "Names": true, "Networks": true, "Ports": true, "Project": true, "Publishers": true, "RunningFor": true, "Size": true, "Status": true}
+	rows := make([]composePSRow, 0, len(rawRows))
+	for _, raw := range rawRows {
+		if rejectAnyDuplicateJSONKeys(raw) != nil {
+			return nil, errors.New("duplicate Compose ps field")
+		}
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(raw, &fields) != nil {
+			return nil, errors.New("malformed Compose ps row")
+		}
+		for key := range fields {
+			if !allowed[key] {
+				return nil, fmt.Errorf("unknown Compose ps field %q", key)
+			}
+		}
+		for _, key := range []string{"ID", "Service", "State", "ExitCode"} {
+			if _, ok := fields[key]; !ok {
+				return nil, fmt.Errorf("missing Compose ps field %q", key)
+			}
+		}
+		var row composePSRow
+		if json.Unmarshal(raw, &row) != nil || row.ID == "" || row.Service == "" || row.State == "" || row.ExitCode < 0 || row.ExitCode > 255 {
+			return nil, errors.New("invalid Compose ps field semantics")
+		}
+		rows = append(rows, row)
+	}
+	return rows, nil
+}
+
+func rejectAnyDuplicateJSONKeys(data []byte) error {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	var walk func() error
+	walk = func() error {
+		token, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		delim, ok := token.(json.Delim)
+		if !ok {
+			return nil
+		}
+		if delim == '{' {
+			seen := map[string]bool{}
+			for decoder.More() {
+				keyToken, err := decoder.Token()
+				if err != nil {
+					return err
+				}
+				key, ok := keyToken.(string)
+				if !ok || seen[key] {
+					return errors.New("duplicate or invalid JSON key")
+				}
+				seen[key] = true
+				if err := walk(); err != nil {
+					return err
+				}
+			}
+			_, err = decoder.Token()
+			return err
+		}
+		if delim == '[' {
+			for decoder.More() {
+				if err := walk(); err != nil {
+					return err
+				}
+			}
+			_, err = decoder.Token()
+			return err
+		}
+		return errors.New("unexpected JSON delimiter")
+	}
+	if err := walk(); err != nil {
+		return err
+	}
+	if _, err := decoder.Token(); err != io.EOF {
+		return errors.New("JSON contains trailing content")
+	}
+	return nil
 }
 
 func classifySanitizedFailure(data []byte, failed bool) string {

@@ -67,3 +67,5 @@ func rejectDuplicateJSONKeys(data []byte) error {
 	}
 	return nil
 }
+
+func RejectDuplicateJSONKeys(data []byte) error { return rejectDuplicateJSONKeys(data) }

@@ -71,12 +71,14 @@ type RuntimeLock struct {
 }
 
 type RuntimeImage struct {
-	ID            string           `json:"id"`
-	Reference     string           `json:"reference"`
-	Platforms     []string         `json:"platforms"`
-	Source        string           `json:"source"`
-	ClientVersion string           `json:"client_version,omitempty"`
-	BinaryDigests []PlatformDigest `json:"binary_digests,omitempty"`
+	ID                string           `json:"id"`
+	Reference         string           `json:"reference"`
+	Platforms         []string         `json:"platforms"`
+	Source            string           `json:"source"`
+	ClientVersion     string           `json:"client_version,omitempty"`
+	BinaryDigests     []PlatformDigest `json:"binary_digests,omitempty"`
+	ChildDigests      []PlatformDigest `json:"child_digests,omitempty"`
+	AttestationSHA256 string           `json:"attestation_sha256,omitempty"`
 }
 
 type PlatformDigest struct {
@@ -135,6 +137,18 @@ func (lock RuntimeLock) Validate() error {
 		isRunner := image.ID == "claude-runner" || image.ID == "codex-runner"
 		if isRunner != exactVersion.MatchString(image.ClientVersion) {
 			return fmt.Errorf("runtime image %q has invalid client version binding", image.ID)
+		}
+		if isRunner && (image.AttestationSHA256 != "" || len(image.ChildDigests) != 0) {
+			if !sha256Value.MatchString(image.AttestationSHA256) || len(image.ChildDigests) != 2 {
+				return fmt.Errorf("runtime image %q lacks child attestations", image.ID)
+			}
+			for digestIndex, digest := range image.ChildDigests {
+				if digest.Platform != image.Platforms[digestIndex] || !sha256Value.MatchString(digest.SHA256) {
+					return fmt.Errorf("runtime image %q child digest[%d] invalid", image.ID, digestIndex)
+				}
+			}
+		} else if image.AttestationSHA256 != "" || len(image.ChildDigests) != 0 {
+			return fmt.Errorf("non-runner image %q carries runner attestations", image.ID)
 		}
 		if image.ID == "network-recorder" {
 			if !immutableGitRef.MatchString(image.Source) || len(image.BinaryDigests) != 2 {

@@ -233,8 +233,8 @@ func TestComposeDiagnosticsAreBoundedNewRegularFiles(t *testing.T) {
 	if err := writeComposeDiagnostics(deadline, nil, "/docker", []string{"compose"}, boundDiagnostic(filepath.Join(deadlineDir, "failure.json"))); err != nil {
 		t.Fatal(err)
 	}
-	if deadline.deadlines != 10 {
-		t.Fatalf("expected one bounded ps plus nine log commands, got %d", deadline.deadlines)
+	if deadline.deadlines != 11 {
+		t.Fatalf("expected bounded version and ps plus nine log commands, got %d", deadline.deadlines)
 	}
 }
 
@@ -305,7 +305,7 @@ func TestDiagnosticsRejectDuplicateStatusAndInspectOOM(t *testing.T) {
 		joined := strings.Join(args, " ")
 		switch {
 		case strings.Contains(joined, " ps --all --format json"):
-			_, _ = io.WriteString(stdout, `[{"Service":"postgres","ID":"aaaaaaaaaaaa","State":"exited","ExitCode":1},{"Service":"postgres","ID":"bbbbbbbbbbbb","State":"running"}]`)
+			_, _ = io.WriteString(stdout, `[{"Service":"postgres","ID":"aaaaaaaaaaaa","State":"exited","ExitCode":1},{"Service":"postgres","ID":"bbbbbbbbbbbb","State":"running","ExitCode":0}]`)
 		case strings.HasPrefix(joined, "inspect --format"):
 			_, _ = io.WriteString(stdout, "true\n")
 		case strings.Contains(joined, "logs --tail 200") && strings.HasSuffix(joined, "postgres"):
@@ -401,10 +401,15 @@ func TestComposePSAcceptsArrayAndJSONL(t *testing.T) {
 			t.Fatalf("status format rejected: %v %#v", err, rows)
 		}
 	}
-	for _, input := range []string{"", row1 + "\nnot-json", "[] trailing"} {
+	mutants := []string{"", row1 + "\nnot-json", "[] trailing", strings.Replace(row1, `"ID":`, `"ID":"cccccccccccc","ID":`, 1), strings.Replace(row1, `"ExitCode":0`, `"ExitCode":-1`, 1), strings.Replace(row1, `,"ExitCode":0`, "", 1), strings.Replace(row1, `"ExitCode":0`, `"ExitCode":"0"`, 1), strings.TrimSuffix(row1, "}") + `,"Mystery":true}`}
+	for _, input := range mutants {
 		if _, _, err := decodeComposePS([]byte(input)); err == nil {
 			t.Fatalf("malformed status accepted: %q", input)
 		}
+	}
+	many := "[" + strings.TrimSuffix(strings.Repeat(row1+",", 33), ",") + "]"
+	if _, _, err := decodeComposePS([]byte(many)); err == nil {
+		t.Fatal("oversized row set accepted")
 	}
 }
 
