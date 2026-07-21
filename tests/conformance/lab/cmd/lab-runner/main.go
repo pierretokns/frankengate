@@ -34,17 +34,23 @@ func (osExecutor) Run(env []string, stdout, stderr io.Writer, name string, args 
 }
 
 type cellResult struct {
-	Schema        string `json:"schema"`
-	RunID         string `json:"run_id"`
-	Client        string `json:"client"`
-	ExitCode      int    `json:"exit_code"`
-	ResidueCount  int    `json:"residue_count"`
-	ClientVersion string `json:"client_version"`
+	Schema         string   `json:"schema"`
+	RunID          string   `json:"run_id"`
+	Client         string   `json:"client"`
+	ExitCode       int      `json:"exit_code"`
+	Environment    []string `json:"environment_names"`
+	ResidueCount   int      `json:"residue_count"`
+	ClientVersion  string   `json:"client_version"`
+	NativePlatform string   `json:"native_platform"`
 }
 
 type lifecycleResult struct {
 	Schema                         string   `json:"schema"`
 	RunID                          string   `json:"run_id"`
+	NativePlatform                 string   `json:"native_platform"`
+	StartedAt                      string   `json:"started_at"`
+	CompletedAt                    string   `json:"completed_at"`
+	SourceLockSHA256               string   `json:"source_lock_sha256"`
 	RuntimeLockSHA256              string   `json:"runtime_lock_sha256"`
 	Clients                        []string `json:"clients"`
 	NormalCellForbiddenEvents      int      `json:"normal_cell_forbidden_events"`
@@ -78,6 +84,7 @@ func main() {
 }
 
 func run(executor commandExecutor, lockPath, sourceLockPath, composePath, dockerBinary string, stdout, stderr io.Writer) error {
+	startedAt := time.Now().UTC()
 	if lockPath == "" || !filepath.IsAbs(lockPath) || !filepath.IsAbs(sourceLockPath) || !filepath.IsAbs(composePath) || !filepath.IsAbs(dockerBinary) {
 		return errors.New("runtime lock, source lock, Compose file, and Docker binary must be absolute paths")
 	}
@@ -113,6 +120,14 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	environment := exactEnvironment(lock.ComposeEnvironment(), os.Getenv)
 	environment = append(environment, networkEnvironment(lock.RunID)...)
 	sort.Strings(environment)
+	var platformOutput bytes.Buffer
+	if err := executor.Run(environment, &platformOutput, stderr, dockerBinary, "info", "--format", "{{.OSType}}/{{.Architecture}}"); err != nil {
+		return fmt.Errorf("inspect native Docker platform: %w", err)
+	}
+	nativePlatform, err := validateNativePlatform(platformOutput.String())
+	if err != nil {
+		return err
+	}
 	for _, image := range lock.Images {
 		var raw bytes.Buffer
 		if err := executor.Run(environment, &raw, stderr, dockerBinary, "buildx", "imagetools", "inspect", "--raw", image.Reference); err != nil {
@@ -148,15 +163,18 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		return fmt.Errorf("start sealed lab: %w", err)
 	}
 	clients := []string{"claude", "codex"}
+	cellPlatforms := make([]string, 0, len(clients))
 	for _, client := range clients {
 		var raw bytes.Buffer
 		args := append(append([]string{}, compose...), "run", "--rm", "--no-deps", client+"-runner")
 		if err := executor.Run(environment, &raw, stderr, dockerBinary, args...); err != nil {
 			return fmt.Errorf("run %s cell: %w", client, err)
 		}
-		if err := validateCellResult(raw.Bytes(), lock.RunID, client, pinnedVersion(*lock, client)); err != nil {
+		cellPlatform, err := validateCellResult(raw.Bytes(), lock.RunID, client, pinnedVersion(*lock, client), nativePlatform)
+		if err != nil {
 			return fmt.Errorf("%s cell evidence: %w", client, err)
 		}
+		cellPlatforms = append(cellPlatforms, cellPlatform)
 	}
 	var sentinelLogs bytes.Buffer
 	if err := executor.Run(environment, &sentinelLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "egress-sentinel")...); err != nil {
@@ -204,10 +222,24 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	teardownClean = true
 	digest := contract.SHA256Hex(lockData)
 	return json.NewEncoder(stdout).Encode(lifecycleResult{
-		Schema: "sealed-lab-lifecycle-result/v1", RunID: lock.RunID, RuntimeLockSHA256: digest,
+		Schema: "sealed-lab-lifecycle-result/v1", RunID: lock.RunID, NativePlatform: cellPlatforms[0],
+		StartedAt: startedAt.Format(time.RFC3339Nano), CompletedAt: time.Now().UTC().Format(time.RFC3339Nano),
+		SourceLockSHA256: lock.SourceLockSHA256, RuntimeLockSHA256: digest,
 		Clients: clients, NormalCellForbiddenEvents: forbidden, AdversarialProbeRecordedEvents: probeEvents,
 		PaidInferenceProof: "unproven-external-recorder-required", TeardownClean: teardownClean,
 	})
+}
+
+func validateNativePlatform(raw string) (string, error) {
+	platform := strings.TrimSpace(raw)
+	switch platform {
+	case "linux/amd64", "linux/x86_64":
+		return "linux/amd64", nil
+	case "linux/arm64", "linux/aarch64":
+		return "linux/arm64", nil
+	default:
+		return "", fmt.Errorf("Docker daemon platform %q is not a supported native evidence platform", platform)
+	}
 }
 
 func exactEnvironment(images map[string]string, getenv func(string) string) []string {
@@ -288,26 +320,45 @@ func validatePinnedClientVersions(runtime contract.RuntimeLock, source contract.
 	return nil
 }
 
-func validateCellResult(data []byte, runID, client, version string) error {
+func validateCellResult(data []byte, runID, client, version, daemonPlatform string) (string, error) {
 	decoder := json.NewDecoder(io.LimitReader(bytes.NewReader(data), 1<<20))
 	decoder.DisallowUnknownFields()
 	var result cellResult
 	if err := decoder.Decode(&result); err != nil {
-		return err
+		return "", err
 	}
 	if err := decoder.Decode(&struct{}{}); err != io.EOF {
-		return errors.New("cell emitted more than one JSON record")
+		return "", errors.New("cell emitted more than one JSON record")
 	}
 	if result.Schema != "sealed-cli-cell-evidence/v1" || result.Client != client || result.ExitCode != 0 || result.ResidueCount != 0 || result.ClientVersion == "" {
-		return errors.New("cell result violates the sealed contract")
+		return "", errors.New("cell result violates the sealed contract")
+	}
+	if !validVersionCellEnvironment(result.Environment) {
+		return "", errors.New("cell result environment does not match the sealed version-cell allowlist")
 	}
 	if version != "" && result.ClientVersion != version {
-		return errors.New("cell version does not match runtime lock")
+		return "", errors.New("cell version does not match runtime lock")
 	}
 	if result.RunID != runID || runID == "" {
-		return errors.New("cell result is not bound to lifecycle run identity")
+		return "", errors.New("cell result is not bound to lifecycle run identity")
 	}
-	return nil
+	if result.NativePlatform != daemonPlatform || (result.NativePlatform != "linux/amd64" && result.NativePlatform != "linux/arm64") {
+		return "", errors.New("cell runtime architecture does not match the native Docker daemon platform")
+	}
+	return result.NativePlatform, nil
+}
+
+func validVersionCellEnvironment(names []string) bool {
+	want := []string{"CODEX_HOME", "HOME", "LANG", "PATH", "TMPDIR", "TZ", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME"}
+	if len(names) != len(want) {
+		return false
+	}
+	for index := range want {
+		if names[index] != want[index] {
+			return false
+		}
+	}
+	return true
 }
 
 func validateNetworkProbe(data []byte) error {
