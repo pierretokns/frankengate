@@ -755,6 +755,7 @@ func (k *TableKey) AfterFind(tx *gorm.DB) error {
 			return err
 		}
 		k.Aliases = aliases
+		k.Aliases.PopulateModelFamilies()
 	} else {
 		k.Aliases = nil
 	}

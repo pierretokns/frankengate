@@ -237,6 +237,24 @@ type AliasConfig struct {
 	*ReplicateAliasCfg
 }
 
+// UnmarshalJSON accepts both the canonical model_family field and the older
+// config spelling alias_model_family used by deployed config files.
+func (ac *AliasConfig) UnmarshalJSON(data []byte) error {
+	type aliasConfig AliasConfig
+	var wire struct {
+		*aliasConfig
+		AliasModelFamily *ModelFamily `json:"alias_model_family"`
+	}
+	wire.aliasConfig = (*aliasConfig)(ac)
+	if err := sonic.Unmarshal(data, &wire); err != nil {
+		return err
+	}
+	if ac.ModelFamily == nil && wire.AliasModelFamily != nil {
+		ac.ModelFamily = wire.AliasModelFamily
+	}
+	return nil
+}
+
 // isLegacyShape reports whether this AliasConfig carries only ModelID and no
 // other fields. Used by MarshalJSON to emit the legacy string-valued wire
 // shape so older consumers that expect map[string]string keep working.
@@ -678,6 +696,56 @@ func (ka *KeyAliases) UnmarshalJSON(data []byte) error {
 	}
 	*ka = result
 	return nil
+}
+
+// PopulateModelFamilies upgrades aliases loaded from legacy/config storage.
+// It never infers from the cosmetic alias key, which may intentionally contain
+// a provider name while targeting a different model family.
+func (ka KeyAliases) PopulateModelFamilies() {
+	for name, ac := range ka {
+		if ac.ModelFamily != nil {
+			continue
+		}
+		family := inferModelFamily(ac.ModelID)
+		if family == "" && ac.ModelName != nil {
+			family = inferModelFamily(*ac.ModelName)
+		}
+		if family != "" {
+			ac.ModelFamily = &family
+			ka[name] = ac
+		}
+	}
+}
+
+// inferModelFamily identifies families from concrete model identifiers used in
+// config aliases. It deliberately does not inspect the alias key itself.
+func inferModelFamily(model string) ModelFamily {
+	switch {
+	case IsAnthropicModel(model):
+		return ModelFamilyAnthropic
+	case IsOpenAIModel(model):
+		return ModelFamilyOpenAI
+	case IsMistralModel(model):
+		return ModelFamilyMistral
+	case IsImagenModel(model):
+		return ModelFamilyImagen
+	case IsVeoModel(model):
+		return ModelFamilyVeo
+	case IsGeminiModel(model):
+		return ModelFamilyGemini
+	case IsGemmaModel(model):
+		return ModelFamilyGemma
+	case IsLlamaModel(model):
+		return ModelFamilyLlama
+	case IsNovaModel(model):
+		return ModelFamilyNova
+	case IsTitanModel(model):
+		return ModelFamilyTitan
+	case IsCohereModel(model):
+		return ModelFamilyCohere
+	default:
+		return ""
+	}
 }
 
 type AzureAuthType string

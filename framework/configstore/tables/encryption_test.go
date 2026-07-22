@@ -2039,18 +2039,19 @@ func TestTableKey_AliasesJSON_RichRoundTrip(t *testing.T) {
 	require.NotNil(t, rich.AzureAliasCfg.APIVersion)
 	assert.Equal(t, apiVersion, *rich.AzureAliasCfg.APIVersion)
 
-	// The unenriched sibling stays a legacy-shape entry — proves marshaling
-	// only escalates to the rich object form for entries that need it.
+	// Legacy aliases are enriched from their concrete target on load.
 	plain := found.Aliases["plain"]
 	assert.Equal(t, "gpt-4o-fallback", plain.ModelID)
 	assert.Nil(t, plain.ModelName)
-	assert.Nil(t, plain.ModelFamily)
+	require.NotNil(t, plain.ModelFamily)
+	assert.Equal(t, schemas.ModelFamilyOpenAI, *plain.ModelFamily)
 	assert.Nil(t, plain.AzureAliasCfg)
 }
 
 // TestTableKey_AliasesJSON_LegacyInputRoundTrip simulates a row written before
 // the refactor — raw legacy {"k":"v"} JSON in the aliases_json column — and
-// verifies AfterFind promotes it to AliasConfig{ModelID: v} transparently.
+// verifies AfterFind promotes it to AliasConfig{ModelID: v} and infers its
+// concrete model family transparently.
 func TestTableKey_AliasesJSON_LegacyInputRoundTrip(t *testing.T) {
 	db := setupTestDB(t)
 
@@ -2072,7 +2073,7 @@ func TestTableKey_AliasesJSON_LegacyInputRoundTrip(t *testing.T) {
 	require.NoError(t, db.Exec("UPDATE config_keys SET aliases_json = ? WHERE id = ?", encrypted, key.ID).Error)
 
 	// Read back through GORM — AfterFind should decrypt + UnmarshalJSON should
-	// promote the legacy string value into AliasConfig{ModelID: ...}.
+	// promote the legacy string value into AliasConfig with family metadata.
 	var found TableKey
 	require.NoError(t, db.First(&found, key.ID).Error)
 	require.NotNil(t, found.Aliases)
@@ -2080,5 +2081,6 @@ func TestTableKey_AliasesJSON_LegacyInputRoundTrip(t *testing.T) {
 	got := found.Aliases["best-model"]
 	assert.Equal(t, "gpt-4o-deployment", got.ModelID)
 	assert.Nil(t, got.ModelName)
-	assert.Nil(t, got.ModelFamily)
+	require.NotNil(t, got.ModelFamily)
+	assert.Equal(t, schemas.ModelFamilyOpenAI, *got.ModelFamily)
 }
