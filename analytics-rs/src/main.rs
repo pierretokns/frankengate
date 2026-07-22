@@ -180,6 +180,14 @@ fn handle_connection(
                 Err(_) => ("409 Conflict", "text/plain", "job checkpoint rejected\n".into()),
             }
         }
+        "/jobs/cancel" => {
+            let tenant = query_value(query, "tenant").unwrap_or_default();
+            let id = query_value(query, "id").unwrap_or_default();
+            match store.cancel_for_tenant(&tenant, &id) {
+                Ok(job) => ("200 OK", "application/json", job_json(&job)),
+                Err(_) => ("409 Conflict", "text/plain", "job is not cancellable\n".into()),
+            }
+        }
         "/replay" => {
             let tenant = query_value(query, "tenant").unwrap_or_default();
             match (replay_source.as_deref(), tenant.is_empty()) {
