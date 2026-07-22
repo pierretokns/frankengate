@@ -91,7 +91,8 @@ For a minimal independently deployable process, run `--serve` (default port
 traffic, then exposes `/healthz`, `/readyz`, `/version` (the protocol
 version), `/stats?tenant=<tenant>` and `/jobs?tenant=<tenant>` as bounded,
 tenant-scoped JSON APIs, `/replay?tenant=<tenant>` when
-`FRANKENGATE_REPLAY_DIR` is configured, and `/metrics`. The metrics endpoint emits Prometheus gauges named
+`FRANKENGATE_REPLAY_DIR` is configured, `/persistence` for an explicit
+durability-mode report, and `/metrics`. The metrics endpoint emits Prometheus gauges named
 `frankengate_analytics_jobs` with `state` labels for `queued`, `leased`,
 `cancelled`, `completed`, and `failed`; the optional Helm `ServiceMonitor`
 scrapes this endpoint. This is still only a process/readiness contract: the production

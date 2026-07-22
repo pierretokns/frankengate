@@ -71,6 +71,11 @@ fn handle_connection(
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
+        "/persistence" => (
+            "200 OK",
+            "application/json",
+            "{\"mode\":\"in-memory\",\"durable_schema\":\"postgresql\",\"runtime\":\"contract-only\"}\n".into(),
+        ),
         "/metrics" => {
             let stats = store.stats();
             (
