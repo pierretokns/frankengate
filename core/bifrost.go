@@ -6589,10 +6589,14 @@ func clearAnthropicPassthroughForNonNativeProvider(ctx *schemas.BifrostContext, 
 	if integrationType, _ := ctx.Value(schemas.BifrostContextKeyIntegrationType).(string); integrationType != "anthropic" {
 		return
 	}
-	if baseProvider == schemas.Anthropic ||
-		baseProvider == schemas.Vertex ||
-		baseProvider == schemas.Azure ||
-		baseProvider == schemas.BedrockMantle {
+	if baseProvider == schemas.Anthropic || baseProvider == schemas.Vertex || baseProvider == schemas.Azure {
+		return
+	}
+	// Bedrock Mantle supports both Anthropic and OpenAI surfaces. The
+	// pre-callback runs before key alias resolution and may conservatively mark
+	// a Claude-looking alias for passthrough; once the alias is attached, use its
+	// family to make the final decision rather than the provider name alone.
+	if baseProvider == schemas.BedrockMantle && schemas.ResolveFamily(ctx, "") == schemas.ModelFamilyAnthropic {
 		return
 	}
 	ctx.SetValue(schemas.BifrostContextKeyUseRawRequestBody, false)
