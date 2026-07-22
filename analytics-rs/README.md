@@ -40,6 +40,14 @@ collector or log destination before enabling live replay; the current process
 does not guess a collector endpoint or pretend that an arbitrary exporter is
 queryable.
 
+The gateway already has a concrete read-capable sink: when
+`FRANKENGATE_REPLAY_DIR` is configured, `plugins/otel` writes tenant-partitioned
+`<safe-tenant>.jsonl` files using the `ReplayRecord` envelope. The Rust
+`JsonlReplaySource` reads that exact append-only format newest-first, enforces
+the tenant partition and file/line bounds, and converts records into replay
+traces. OTLP collector endpoints remain export-only unless a separate query
+adapter is deployed.
+
 These are protocol and test guarantees, not a claim of durable persistence or
 production API availability. The PostgreSQL service, supervision runtime, and
 independent Helm deployments remain separate implementation gates.
@@ -74,7 +82,8 @@ For a minimal independently deployable process, run `--serve` (default port
 8081). It runs the contract self-check as a boot fence before accepting
 traffic, then exposes `/healthz`, `/readyz`, `/version` (the protocol
 version), `/stats?tenant=<tenant>` and `/jobs?tenant=<tenant>` as bounded,
-tenant-scoped JSON inspection APIs, and `/metrics`. The metrics endpoint emits Prometheus gauges named
+tenant-scoped JSON APIs, `/replay?tenant=<tenant>` when
+`FRANKENGATE_REPLAY_DIR` is configured, and `/metrics`. The metrics endpoint emits Prometheus gauges named
 `frankengate_analytics_jobs` with `state` labels for `queued`, `leased`,
 `cancelled`, `completed`, and `failed`; the optional Helm `ServiceMonitor`
 scrapes this endpoint. This is still only a process/readiness contract: the production

@@ -28,16 +28,23 @@ fn serve() {
     let listener = TcpListener::bind(("0.0.0.0", port.parse::<u16>().expect("PORT must be a u16")))
         .expect("analytics control-plane listener failed to bind");
     let store = Arc::new(frankengate_analytics_control::JobStore::default());
+    let replay_source = std::env::var("FRANKENGATE_REPLAY_DIR")
+        .ok()
+        .filter(|dir| !dir.trim().is_empty())
+        .map(frankengate_analytics_control::JsonlReplaySource::new)
+        .map(Arc::new);
     println!("FrankenGate analytics control plane listening on 0.0.0.0:{port}");
     for stream in listener.incoming().flatten() {
         let store = Arc::clone(&store);
-        std::thread::spawn(|| handle_connection(stream, store));
+        let replay_source = replay_source.clone();
+        std::thread::spawn(|| handle_connection(stream, store, replay_source));
     }
 }
 
 fn handle_connection(
     mut stream: std::net::TcpStream,
     store: std::sync::Arc<frankengate_analytics_control::JobStore>,
+    replay_source: Option<std::sync::Arc<frankengate_analytics_control::JsonlReplaySource>>,
 ) {
     use std::io::{Read, Write};
     // Health probes are tiny and bounded.  Do not let an accepted but idle
@@ -133,6 +140,36 @@ fn handle_connection(
                     .collect::<Vec<_>>()
                     .join(",");
                 ("200 OK", "application/json", format!("[{}]\n", items))
+            }
+        }
+        "/replay" => {
+            let tenant = query_value(query, "tenant").unwrap_or_default();
+            match (replay_source.as_deref(), tenant.is_empty()) {
+                (Some(source), false) => match source.read_tenant(&tenant, 100) {
+                    Ok(traces) => {
+                        let items = traces.iter().map(|trace| format!(
+                            "{{\"trace_id\":\"{}\",\"request_id\":\"{}\",\"tenant\":\"{}\",\"model\":\"{}\",\"provider\":\"{}\"}}",
+                            json_escape(&trace.trace_id), json_escape(&trace.request_id),
+                            json_escape(&trace.tenant), json_escape(&trace.model), json_escape(&trace.provider)
+                        )).collect::<Vec<_>>().join(",");
+                        ("200 OK", "application/json", format!("[{}]\n", items))
+                    }
+                    Err(_) => (
+                        "404 Not Found",
+                        "text/plain",
+                        "replay tenant not found\n".into(),
+                    ),
+                },
+                (None, _) => (
+                    "503 Service Unavailable",
+                    "text/plain",
+                    "replay source is not configured\n".into(),
+                ),
+                (Some(_), true) => (
+                    "400 Bad Request",
+                    "text/plain",
+                    "tenant is required\n".into(),
+                ),
             }
         }
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),

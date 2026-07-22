@@ -58,6 +58,108 @@ impl ReplaySource {
     }
 }
 
+/// Reader for the gateway's existing `plugins/otel` JSONLReplayStore. The Go
+/// side partitions files by sanitized tenant and appends one ReplayRecord per
+/// line; this adapter intentionally extracts only the stable envelope and
+/// treats the original record as the replay payload. It has no network or
+/// inference-path dependency.
+pub struct JsonlReplaySource {
+    directory: std::path::PathBuf,
+    max_bytes: u64,
+}
+
+impl JsonlReplaySource {
+    pub fn new(directory: impl Into<std::path::PathBuf>) -> Self {
+        Self {
+            directory: directory.into(),
+            max_bytes: 64 * 1024 * 1024,
+        }
+    }
+
+    pub fn read_tenant(&self, tenant: &str, limit: usize) -> Result<Vec<ReplayTrace>, String> {
+        if tenant.is_empty() || limit == 0 || limit > 1_000 {
+            return Err("invalid tenant or limit".into());
+        }
+        let path = self.directory.join(safe_tenant(tenant) + ".jsonl");
+        let metadata = std::fs::metadata(&path).map_err(|e| e.to_string())?;
+        if metadata.len() > self.max_bytes {
+            return Err("replay file exceeds configured bound".into());
+        }
+        let content = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
+        let mut traces = Vec::new();
+        for line in content.lines().rev() {
+            if traces.len() == limit {
+                break;
+            }
+            if line.len() > (1 << 20) {
+                continue;
+            }
+            let tenant_id = json_string_field(line, "tenant_id");
+            if tenant_id.as_deref() != Some(tenant) {
+                continue;
+            }
+            let trace_id = json_string_field(line, "trace_id").unwrap_or_default();
+            let request_id =
+                json_string_field(line, "request_id").unwrap_or_else(|| trace_id.clone());
+            if trace_id.is_empty() || request_id.is_empty() {
+                continue;
+            }
+            traces.push(ReplayTrace {
+                trace_id,
+                request_id,
+                tenant: tenant.to_string(),
+                model: json_string_field(line, "model").unwrap_or_else(|| "unknown".into()),
+                provider: json_string_field(line, "provider").unwrap_or_else(|| "unknown".into()),
+                input: line.to_string(),
+                output: line.to_string(),
+            });
+        }
+        Ok(traces)
+    }
+}
+
+fn safe_tenant(tenant: &str) -> String {
+    tenant
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.') {
+                c
+            } else {
+                '_'
+            }
+        })
+        .collect()
+}
+
+fn json_string_field(line: &str, key: &str) -> Option<String> {
+    let marker = format!("\"{}\":\"", key);
+    let start = line.find(&marker)? + marker.len();
+    let bytes = line.as_bytes();
+    let mut out = String::new();
+    let mut escaped = false;
+    for &byte in &bytes[start..] {
+        let ch = byte as char;
+        if escaped {
+            out.push(match ch {
+                '"' => '"',
+                '\\' => '\\',
+                'n' => '\n',
+                'r' => '\r',
+                't' => '\t',
+                _ => ch,
+            });
+            escaped = false;
+        } else if ch == '\\' {
+            escaped = true;
+        } else if ch == '"' {
+            return Some(out);
+        } else {
+            out.push(ch);
+        }
+    }
+    None
+}
+
 /// Runs a dependency-free smoke check for operators and release automation.
 /// This intentionally exercises only the protocol contract; it does not claim
 /// that the in-memory store is a production persistence implementation.
@@ -1198,5 +1300,26 @@ mod tests {
             endpoint: "collector.internal".into()
         }
         .is_configured());
+    }
+
+    #[test]
+    fn jsonl_replay_source_reads_gateway_partition_and_enforces_tenant() {
+        let dir = std::env::temp_dir().join(format!("frankengate-replay-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        std::fs::write(
+            dir.join("tenant-a.jsonl"),
+            "{\"schema_version\":1,\"trace_id\":\"trace-1\",\"request_id\":\"req-1\",\"tenant_id\":\"tenant-a\",\"model\":\"gpt-5.5\"}\n",
+        )
+        .unwrap();
+        let traces = JsonlReplaySource::new(&dir)
+            .read_tenant("tenant-a", 10)
+            .unwrap();
+        assert_eq!(traces.len(), 1);
+        assert_eq!(traces[0].trace_id, "trace-1");
+        assert_eq!(traces[0].model, "gpt-5.5");
+        assert!(JsonlReplaySource::new(&dir)
+            .read_tenant("tenant-b", 10)
+            .is_err());
+        let _ = std::fs::remove_dir_all(dir);
     }
 }
