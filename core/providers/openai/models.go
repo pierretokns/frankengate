@@ -7,6 +7,46 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 )
 
+// ToCodexListModelsResponse adds the richer model-catalog fields consumed by
+// Codex TUI. Ordinary OpenAI clients continue to receive the standard schema.
+func ToCodexListModelsResponse(ctx *schemas.BifrostContext, response *schemas.BifrostListModelsResponse) *OpenAIListModelsResponse {
+	result := ToOpenAIListModelsResponse(response)
+	if result == nil || ctx == nil {
+		return result
+	}
+	ua, _ := ctx.Value(schemas.BifrostContextKeyUserAgent).(string)
+	if !schemas.CodexCLI.Matches(ua) {
+		return result
+	}
+	for i := range result.Data {
+		model := &result.Data[i]
+		model.Slug = codexModelSlug(model.ID)
+		model.DisplayName = "Codex " + model.Slug[strings.LastIndex(model.Slug, "/")+1:]
+		model.ShellType, model.Visibility, model.DefaultReasoningLevel = "shell_command", "list", "medium"
+		yes := true
+		model.SupportedInAPI, model.SupportsReasoningSummaries, model.SupportVerbosity = &yes, &yes, &yes
+		model.DefaultReasoningSummary = "none"
+		if strings.Contains(strings.ToLower(model.Slug), "gpt-") {
+			lite := true
+			model.UseResponsesLite = &lite
+			model.SupportedReasoningLevels = []CodexReasoningLevel{{Effort: "low", Description: "Fast responses with lighter reasoning"}, {Effort: "medium", Description: "Balances speed and reasoning depth for everyday tasks"}, {Effort: "high", Description: "Greater reasoning depth for complex problems"}}
+		} else {
+			lite := false
+			model.UseResponsesLite = &lite
+			model.DefaultReasoningLevel = ""
+		}
+	}
+	return result
+}
+
+func codexModelSlug(id string) string {
+	parts := strings.SplitN(id, "/", 2)
+	if len(parts) == 2 && strings.HasPrefix(parts[1], "openai.") {
+		return parts[0] + "/" + strings.TrimPrefix(parts[1], "openai.")
+	}
+	return id
+}
+
 // ToBifrostListModelsResponse converts an OpenAI list models response to a Bifrost list models response
 func (response *OpenAIListModelsResponse) ToBifrostListModelsResponse(providerKey schemas.ModelProvider, allowedModels schemas.WhiteList, blacklistedModels schemas.BlackList, aliases schemas.KeyAliases, unfiltered bool) *schemas.BifrostListModelsResponse {
 	if response == nil {

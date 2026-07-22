@@ -1004,8 +1004,24 @@ type OpenAIModel struct {
 	Created *int64 `json:"created,omitempty"`
 
 	// GROQ specific fields
-	Active        *bool `json:"active,omitempty"`
-	ContextWindow *int  `json:"context_window,omitempty"`
+	Active                     *bool                 `json:"active,omitempty"`
+	ContextWindow              *int                  `json:"context_window,omitempty"`
+	Slug                       string                `json:"slug,omitempty"`
+	DisplayName                string                `json:"display_name,omitempty"`
+	DefaultReasoningLevel      string                `json:"default_reasoning_level,omitempty"`
+	SupportedReasoningLevels   []CodexReasoningLevel `json:"supported_reasoning_levels,omitempty"`
+	ShellType                  string                `json:"shell_type,omitempty"`
+	Visibility                 string                `json:"visibility,omitempty"`
+	SupportedInAPI             *bool                 `json:"supported_in_api,omitempty"`
+	SupportsReasoningSummaries *bool                 `json:"supports_reasoning_summaries,omitempty"`
+	DefaultReasoningSummary    string                `json:"default_reasoning_summary,omitempty"`
+	SupportVerbosity           *bool                 `json:"support_verbosity,omitempty"`
+	UseResponsesLite           *bool                 `json:"use_responses_lite,omitempty"`
+}
+
+type CodexReasoningLevel struct {
+	Effort      string `json:"effort"`
+	Description string `json:"description,omitempty"`
 }
 
 // OpenAIListModelsResponse represents an OpenAI list models response
