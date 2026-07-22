@@ -147,6 +147,22 @@ fn handle_connection(
                 ("200 OK", "application/json", format!("[{}]\n", items))
             }
         }
+        "/jobs/lease" => {
+            let id = query_value(query, "id").unwrap_or_default();
+            let worker = query_value(query, "worker").unwrap_or_default();
+            match store.lease(&id, worker) {
+                Ok(job) => ("200 OK", "application/json", job_json(&job)),
+                Err(_) => ("409 Conflict", "text/plain", "job is not leasable\n".into()),
+            }
+        }
+        "/jobs/complete" => {
+            let id = query_value(query, "id").unwrap_or_default();
+            let worker = query_value(query, "worker").unwrap_or_default();
+            match store.complete(&id, &worker) {
+                Ok(job) => ("200 OK", "application/json", job_json(&job)),
+                Err(_) => ("409 Conflict", "text/plain", "job is not completable\n".into()),
+            }
+        }
         "/replay" => {
             let tenant = query_value(query, "tenant").unwrap_or_default();
             match (replay_source.as_deref(), tenant.is_empty()) {

@@ -92,7 +92,9 @@ traffic, then exposes `/healthz`, `/readyz`, `/version` (the protocol
 version), `/stats?tenant=<tenant>` and `/jobs?tenant=<tenant>` as bounded,
 tenant-scoped JSON APIs, `/replay?tenant=<tenant>` when
 `FRANKENGATE_REPLAY_DIR` is configured, `/persistence` for an explicit
-durability-mode report, and `/metrics`. The metrics endpoint emits Prometheus gauges named
+durability-mode report, `/jobs/lease?id=<id>&worker=<worker>` and
+`/jobs/complete?id=<id>&worker=<worker>` for owner-scoped transitions, and
+`/metrics`. The metrics endpoint emits Prometheus gauges named
 `frankengate_analytics_jobs` with `state` labels for `queued`, `leased`,
 `cancelled`, `completed`, and `failed`; the optional Helm `ServiceMonitor`
 scrapes this endpoint. This is still only a process/readiness contract: the production
