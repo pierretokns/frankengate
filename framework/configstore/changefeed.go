@@ -50,6 +50,39 @@ func (s *RDBConfigStore) ConfigChangefeedWakeups(ctx context.Context) <-chan str
 	return wake
 }
 
+// ConfigChangefeedWakeupsWithPolling combines best-effort LISTEN/NOTIFY hints
+// with a durable polling heartbeat. Notifications are only an optimization;
+// the heartbeat guarantees eventual progress after dropped notifications or a
+// listener outage.
+func (s *RDBConfigStore) ConfigChangefeedWakeupsWithPolling(ctx context.Context, interval time.Duration) <-chan struct{} {
+	if interval <= 0 {
+		interval = time.Second
+	}
+	wake := make(chan struct{}, 1)
+	listener := s.ConfigChangefeedWakeups(ctx)
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case _, ok := <-listener:
+				if !ok {
+					listener = nil
+					continue
+				}
+			case <-ticker.C:
+			}
+			select {
+			case wake <- struct{}{}:
+			default:
+			}
+		}
+	}()
+	return wake
+}
+
 func (s *RDBConfigStore) runConfigChangefeedListener(ctx context.Context, wake chan<- struct{}) {
 	backoff := configChangefeedReconnectMinBackoff
 	for ctx.Err() == nil {
