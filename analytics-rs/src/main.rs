@@ -80,8 +80,9 @@ fn handle_connection(
             "200 OK",
             "application/json",
             format!(
-                "{{\"protocol_version\":{},\"replay_jsonl\":true,\"http_jobs\":true,\"metrics\":true,\"postgres_schema\":true,\"postgres_runtime\":false,\"dashboard_coupling\":false}}\n",
-                frankengate_analytics_control::PROTOCOL_VERSION
+                "{{\"protocol_version\":{},\"replay_jsonl\":{},\"http_jobs\":true,\"metrics\":true,\"postgres_schema\":true,\"postgres_runtime\":false,\"dashboard_coupling\":false}}\n",
+                frankengate_analytics_control::PROTOCOL_VERSION,
+                replay_source.is_some()
             ),
         ),
         "/metrics" => {
