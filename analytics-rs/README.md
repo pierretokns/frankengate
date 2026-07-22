@@ -72,7 +72,9 @@ cargo test --manifest-path analytics-rs/Cargo.toml
 ```
 
 The dependency-free operator smoke check exercises submit → lease → complete
-and verifies the typed terminal outcome:
+and verifies the typed terminal outcome. It also statically checks that the
+shipped PostgreSQL migration still contains the durable tables, replay
+lineage, RLS, and worker notification contract:
 
 ```bash
 cargo run --manifest-path analytics-rs/Cargo.toml -- --check

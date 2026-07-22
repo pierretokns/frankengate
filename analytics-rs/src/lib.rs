@@ -188,6 +188,29 @@ pub fn contract_self_check() -> Result<(), &'static str> {
     if completed.outcome().protocol_version != PROTOCOL_VERSION || !completed.outcome().terminal {
         return Err("terminal outcome is invalid");
     }
+    migration_self_check()?;
+    Ok(())
+}
+
+/// Verify the shipped migration still contains the durable contract required
+/// by this protocol. This is intentionally a static check; a deployment must
+/// still execute the migration and verify database connectivity separately.
+pub fn migration_self_check() -> Result<(), &'static str> {
+    let sql = include_str!("../migrations/001_analytics_contract.sql");
+    for required in [
+        "create table if not exists frankengate_analytics.jobs",
+        "create table if not exists frankengate_analytics.experiments",
+        "create table if not exists frankengate_analytics.runs",
+        "create table if not exists frankengate_analytics.evaluation_results",
+        "create table if not exists frankengate_analytics.artifact_manifests",
+        "replay_of text references frankengate_analytics.jobs(id)",
+        "enable row level security",
+        "frankengate_analytics_job_changes",
+    ] {
+        if !sql.contains(required) {
+            return Err("durable analytics migration contract is incomplete");
+        }
+    }
     Ok(())
 }
 
