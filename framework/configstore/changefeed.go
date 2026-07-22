@@ -123,6 +123,18 @@ type ConfigChangefeedGeneration struct {
 	UpdatedAt     time.Time `gorm:"column:updated_at;not null" json:"updated_at"`
 }
 
+// ConfigChangefeedCursorTooOldError tells a consumer to reload a fenced
+// snapshot before resuming event consumption.
+type ConfigChangefeedCursorTooOldError struct {
+	Scope                 string
+	Generation            uint64
+	Cursor, RetainedFloor uint64
+}
+
+func (e *ConfigChangefeedCursorTooOldError) Error() string {
+	return fmt.Sprintf("config changefeed cursor is below retained floor: scope=%s generation=%d cursor=%d floor=%d", e.Scope, e.Generation, e.Cursor, e.RetainedFloor)
+}
+
 func (ConfigChangefeedGeneration) TableName() string { return "config_changefeed_generations" }
 
 // EnsureConfigChangefeedSchema creates the additive compatibility schema. It is
@@ -184,6 +196,19 @@ func AppendConfigChangefeed(ctx context.Context, tx *gorm.DB, scope, kind, entit
 func ListConfigChangefeedAfter(ctx context.Context, db *gorm.DB, scope string, generation, cursor uint64, limit int) ([]ConfigChangefeedEvent, error) {
 	if db == nil || strings.TrimSpace(scope) == "" || generation == 0 || limit <= 0 {
 		return nil, errors.New("valid config changefeed database, scope, generation, and limit are required")
+	}
+	var authority ConfigChangefeedGeneration
+	if err := db.WithContext(ctx).Where("scope = ?", scope).First(&authority).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return []ConfigChangefeedEvent{}, nil
+		}
+		return nil, err
+	}
+	if authority.Generation != generation {
+		return nil, fmt.Errorf("config changefeed generation mismatch: scope=%s expected=%d actual=%d", scope, generation, authority.Generation)
+	}
+	if cursor+1 < authority.RetainedFloor {
+		return nil, &ConfigChangefeedCursorTooOldError{Scope: scope, Generation: generation, Cursor: cursor, RetainedFloor: authority.RetainedFloor}
 	}
 	var events []ConfigChangefeedEvent
 	err := db.WithContext(ctx).Where("scope = ? AND generation = ? AND cursor > ?", scope, generation, cursor).Order("cursor ASC").Limit(limit).Find(&events).Error
