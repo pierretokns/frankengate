@@ -30,6 +30,16 @@ The current in-memory contract already covers:
 - tenant-scoped cancellation/retry plus reproducible experiment lineage; and
 - terminal, same-tenant replay jobs with explicit `replay_of` lineage.
 
+Replay ingestion now has an explicit normalized boundary for the gateway's
+observability output. `ReplayTrace` carries the stable trace/request IDs,
+tenant, model/provider, and bounded input/output payloads; `ReplaySource`
+requires an explicitly configured OTLP HTTP or log-store HTTP endpoint. This
+keeps source-specific OTEL schemas and credentials outside the Rust job
+protocol. A deployment must select the adapter matching its configured OTLP
+collector or log destination before enabling live replay; the current process
+does not guess a collector endpoint or pretend that an arbitrary exporter is
+queryable.
+
 These are protocol and test guarantees, not a claim of durable persistence or
 production API availability. The PostgreSQL service, supervision runtime, and
 independent Helm deployments remain separate implementation gates.

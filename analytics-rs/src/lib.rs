@@ -11,6 +11,53 @@ use std::time::{Duration, Instant};
 
 pub const PROTOCOL_VERSION: u16 = 1;
 
+/// Normalized, redaction-aware input to replay. Concrete OTLP and log-store
+/// adapters must convert their source records to this shape before enqueueing.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ReplayTrace {
+    pub trace_id: String,
+    pub request_id: String,
+    pub tenant: String,
+    pub model: String,
+    pub provider: String,
+    pub input: String,
+    pub output: String,
+}
+
+impl ReplayTrace {
+    pub fn is_well_formed(&self) -> bool {
+        !self.trace_id.is_empty()
+            && !self.request_id.is_empty()
+            && !self.tenant.is_empty()
+            && !self.model.is_empty()
+            && !self.provider.is_empty()
+            && self.input.len() <= 1 << 20
+            && self.output.len() <= 1 << 20
+    }
+}
+
+/// Source selection is intentionally explicit: OTLP collectors and gateway
+/// log stores have different query/auth contracts and must not be guessed.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ReplaySource {
+    OtlpHttp { endpoint: String },
+    LogStore { endpoint: String },
+}
+
+impl ReplaySource {
+    pub fn endpoint(&self) -> &str {
+        match self {
+            Self::OtlpHttp { endpoint } | Self::LogStore { endpoint } => endpoint,
+        }
+    }
+
+    pub fn is_configured(&self) -> bool {
+        let endpoint = self.endpoint();
+        (endpoint.starts_with("http://") || endpoint.starts_with("https://"))
+            && endpoint.len() <= 2048
+    }
+}
+
 /// Runs a dependency-free smoke check for operators and release automation.
 /// This intentionally exercises only the protocol contract; it does not claim
 /// that the in-memory store is a production persistence implementation.
@@ -241,6 +288,21 @@ pub struct JobStore {
 }
 
 impl JobStore {
+    /// Convert one normalized source trace into a replayable terminal job.
+    /// Ingestion is deliberately separate from OTLP/log-store transport so
+    /// source adapters can be added without changing queue semantics.
+    pub fn ingest_replay_trace(&self, trace: &ReplayTrace) -> Result<Job, LeaseError> {
+        if !trace.is_well_formed() {
+            return Err(LeaseError::InvalidRequest);
+        }
+        self.submit(SubmitJob {
+            protocol_version: PROTOCOL_VERSION,
+            id: trace.request_id.clone(),
+            tenant: trace.tenant.clone(),
+            kind: "replay-source".into(),
+        })
+    }
+
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             jobs: Arc::new(Mutex::new(HashMap::new())),
@@ -1095,5 +1157,46 @@ mod tests {
             }),
             Err(LeaseError::CapacityExceeded)
         );
+    }
+
+    #[test]
+    fn replay_trace_boundary_accepts_normalized_otel_shape() {
+        let trace = ReplayTrace {
+            trace_id: "trace-1".into(),
+            request_id: "request-1".into(),
+            tenant: "tenant-a".into(),
+            model: "gpt-5.5".into(),
+            provider: "bedrock_mantle".into(),
+            input: "{\"input\":[]}".into(),
+            output: "{\"output\":[]}".into(),
+        };
+        assert!(trace.is_well_formed());
+        assert!(!ReplayTrace {
+            request_id: "".into(),
+            ..trace.clone()
+        }
+        .is_well_formed());
+
+        let store = JobStore::default();
+        let job = store.ingest_replay_trace(&trace).unwrap();
+        assert_eq!(job.id, "request-1");
+        assert_eq!(job.kind, "replay-source");
+        assert_eq!(job.tenant, "tenant-a");
+    }
+
+    #[test]
+    fn replay_source_requires_explicit_http_endpoint() {
+        assert!(ReplaySource::OtlpHttp {
+            endpoint: "https://otel.example/v1/traces".into()
+        }
+        .is_configured());
+        assert!(ReplaySource::LogStore {
+            endpoint: "http://logstore.example/replay".into()
+        }
+        .is_configured());
+        assert!(!ReplaySource::OtlpHttp {
+            endpoint: "collector.internal".into()
+        }
+        .is_configured());
     }
 }
