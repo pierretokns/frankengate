@@ -87,6 +87,32 @@ create trigger jobs_touch_updated_at
 before update on frankengate_analytics.jobs
 for each row execute function frankengate_analytics.touch_job_updated_at();
 
+-- Notify independent Rust workers after durable job state changes. Consumers
+-- must still re-read the row under RLS; NOTIFY is only a wake-up signal and
+-- deliberately carries a bounded identity/state envelope, not job payloads.
+create or replace function frankengate_analytics.notify_job_change()
+returns trigger
+language plpgsql
+as $$
+begin
+  perform pg_notify(
+    'frankengate_analytics_job_changes',
+    json_build_object(
+      'id', new.id,
+      'tenant_id', new.tenant_id,
+      'state', new.state,
+      'updated_at', new.updated_at
+    )::text
+  );
+  return new;
+end;
+$$;
+
+drop trigger if exists jobs_notify_change on frankengate_analytics.jobs;
+create trigger jobs_notify_change
+after insert or update on frankengate_analytics.jobs
+for each row execute function frankengate_analytics.notify_job_change();
+
 create table if not exists frankengate_analytics.run_attempts (
   id text primary key,
   tenant_id text not null,

@@ -52,6 +52,11 @@ that referenced runs and worker jobs belong to the same tenant. The migration is
 during rolling upgrades, including upgrades of an existing `jobs` table to add
 replay lineage.
 
+The migration also emits `NOTIFY frankengate_analytics_job_changes` after job
+inserts and updates. The notification is only a bounded wake-up envelope;
+workers must re-read the row under PostgreSQL RLS, so dropped notifications do
+not become lost work or a tenant-isolation bypass.
+
 Run the current contract tests with:
 
 ```bash
