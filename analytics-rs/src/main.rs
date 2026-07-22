@@ -76,6 +76,14 @@ fn handle_connection(
             "application/json",
             "{\"mode\":\"in-memory\",\"durable_schema\":\"postgresql\",\"runtime\":\"contract-only\"}\n".into(),
         ),
+        "/contract" => (
+            "200 OK",
+            "application/json",
+            format!(
+                "{{\"protocol_version\":{},\"replay_jsonl\":true,\"http_jobs\":true,\"metrics\":true,\"postgres_schema\":true,\"postgres_runtime\":false,\"dashboard_coupling\":false}}\n",
+                frankengate_analytics_control::PROTOCOL_VERSION
+            ),
+        ),
         "/metrics" => {
             let stats = store.stats();
             (
