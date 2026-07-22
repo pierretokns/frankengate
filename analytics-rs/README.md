@@ -93,7 +93,10 @@ version), `/stats?tenant=<tenant>` and `/jobs?tenant=<tenant>` as bounded,
 tenant-scoped JSON APIs, `/replay?tenant=<tenant>` when
 `FRANKENGATE_REPLAY_DIR` is configured, `/persistence` for an explicit
 durability-mode report, `/jobs/lease?id=<id>&worker=<worker>` and
-`/jobs/complete?id=<id>&worker=<worker>` for owner-scoped transitions, and
+`/jobs/complete?id=<id>&worker=<worker>` for owner-scoped transitions,
+`/jobs/renew?id=<id>&worker=<worker>` for heartbeats, and
+`/jobs/checkpoint?id=<id>&worker=<worker>&value=<value>` for bounded progress,
+and
 `/metrics`. The metrics endpoint emits Prometheus gauges named
 `frankengate_analytics_jobs` with `state` labels for `queued`, `leased`,
 `cancelled`, `completed`, and `failed`; the optional Helm `ServiceMonitor`

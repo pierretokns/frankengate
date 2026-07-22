@@ -163,6 +163,23 @@ fn handle_connection(
                 Err(_) => ("409 Conflict", "text/plain", "job is not completable\n".into()),
             }
         }
+        "/jobs/renew" => {
+            let id = query_value(query, "id").unwrap_or_default();
+            let worker = query_value(query, "worker").unwrap_or_default();
+            match store.renew(&id, &worker, std::time::Duration::from_secs(30)) {
+                Ok(job) => ("200 OK", "application/json", job_json(&job)),
+                Err(_) => ("409 Conflict", "text/plain", "job is not renewable\n".into()),
+            }
+        }
+        "/jobs/checkpoint" => {
+            let id = query_value(query, "id").unwrap_or_default();
+            let worker = query_value(query, "worker").unwrap_or_default();
+            let value = query_value(query, "value").unwrap_or_default();
+            match store.checkpoint(&id, &worker, value) {
+                Ok(job) => ("200 OK", "application/json", job_json(&job)),
+                Err(_) => ("409 Conflict", "text/plain", "job checkpoint rejected\n".into()),
+            }
+        }
         "/replay" => {
             let tenant = query_value(query, "tenant").unwrap_or_default();
             match (replay_source.as_deref(), tenant.is_empty()) {
