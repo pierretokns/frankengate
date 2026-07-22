@@ -70,6 +70,18 @@ func TestConfigChangefeedWakeupsCoalesceAndReconnect(t *testing.T) {
 	}
 }
 
+func TestConfigChangefeedWakeupsWithPollingSurvivesMissingListener(t *testing.T) {
+	store := &RDBConfigStore{}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	wake := store.ConfigChangefeedWakeupsWithPolling(ctx, 10*time.Millisecond)
+	select {
+	case <-wake:
+	case <-time.After(250 * time.Millisecond):
+		t.Fatal("polling fallback did not emit a wakeup")
+	}
+}
+
 func testChangefeedDB(t *testing.T) *gorm.DB {
 	t.Helper()
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
