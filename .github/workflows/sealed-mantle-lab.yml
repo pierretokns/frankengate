@@ -34,7 +34,9 @@ jobs:
       - name: Run sealed source-built GPT-5.5 lab
         id: lab
         shell: bash
-        run: bash .github/scripts/run-sealed-mantle-lab.sh
+        # Keep the lab bounded below the job timeout so failures always reach
+        # the artifact-upload and teardown steps with structured diagnostics.
+        run: timeout --foreground --signal=TERM --kill-after=30s 35m bash .github/scripts/run-sealed-mantle-lab.sh
       - name: Preserve bounded evidence and diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
