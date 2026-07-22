@@ -50,7 +50,8 @@ fn handle_connection(
         .ok()
         .and_then(|request| request.split_whitespace().nth(1))
         .unwrap_or("/");
-    let (status, content_type, body) = match path {
+    let (route, query) = path.split_once('?').unwrap_or((path, ""));
+    let (status, content_type, body) = match route {
         "/healthz" | "/readyz" => ("200 OK", "text/plain", "ok\n".to_string()),
         "/version" => (
             "200 OK",
@@ -75,6 +76,52 @@ fn handle_connection(
                 ),
             )
         }
+        "/stats" => {
+            let tenant = query_value(query, "tenant");
+            let stats = tenant
+                .as_deref()
+                .map(|tenant| store.stats_for_tenant(tenant))
+                .unwrap_or_else(|| store.stats());
+            (
+                "200 OK",
+                "application/json",
+                format!(
+                    "{{\"protocol_version\":{},\"queued\":{},\"leased\":{},\"cancelled\":{},\"completed\":{},\"failed\":{}}}\n",
+                    frankengate_analytics_control::PROTOCOL_VERSION,
+                    stats.queued,
+                    stats.leased,
+                    stats.cancelled,
+                    stats.completed,
+                    stats.failed
+                ),
+            )
+        }
+        "/jobs" => {
+            let tenant = query_value(query, "tenant").unwrap_or_default();
+            if tenant.is_empty() {
+                (
+                    "400 Bad Request",
+                    "text/plain",
+                    "tenant is required\n".into(),
+                )
+            } else {
+                let jobs = store.list_for_tenant(&tenant, 100);
+                let items = jobs
+                    .iter()
+                    .map(|job| {
+                        format!(
+                            "{{\"id\":\"{}\",\"tenant\":\"{}\",\"kind\":\"{}\",\"attempt\":{}}}",
+                            json_escape(&job.id),
+                            json_escape(&job.tenant),
+                            json_escape(&job.kind),
+                            job.attempt
+                        )
+                    })
+                    .collect::<Vec<_>>()
+                    .join(",");
+                ("200 OK", "application/json", format!("[{}]\n", items))
+            }
+        }
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
@@ -82,4 +129,34 @@ fn handle_connection(
         body.len()
     );
     let _ = stream.write_all(response.as_bytes());
+}
+
+fn query_value(query: &str, key: &str) -> Option<String> {
+    query.split('&').find_map(|part| {
+        let (candidate, value) = part.split_once('=')?;
+        (candidate == key).then(|| value.to_string())
+    })
+}
+
+fn json_escape(value: &str) -> String {
+    value.replace('\\', "\\\\").replace('"', "\\\"")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{json_escape, query_value};
+
+    #[test]
+    fn query_values_are_selected_without_cross_tenant_fallback() {
+        assert_eq!(
+            query_value("tenant=alpha&limit=10", "tenant"),
+            Some("alpha".into())
+        );
+        assert_eq!(query_value("tenant=alpha", "other"), None);
+    }
+
+    #[test]
+    fn json_escape_handles_identifiers() {
+        assert_eq!(json_escape("a\\\"b"), "a\\\\\\\"b");
+    }
 }
