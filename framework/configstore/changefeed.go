@@ -9,9 +9,93 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
+
+const (
+	configChangefeedNotificationChannel = "bifrost_config_changefeed_v1"
+	configChangefeedReconnectMinBackoff = 100 * time.Millisecond
+	configChangefeedReconnectMaxBackoff = 30 * time.Second
+)
+
+type configChangefeedNotifyConn interface {
+	Listen(context.Context) error
+	WaitForNotification(context.Context) error
+	Close(context.Context) error
+}
+
+type pgxConfigChangefeedNotifyConn struct{ conn *pgx.Conn }
+
+func (c *pgxConfigChangefeedNotifyConn) Listen(ctx context.Context) error {
+	_, err := c.conn.Exec(ctx, "LISTEN "+configChangefeedNotificationChannel)
+	return err
+}
+func (c *pgxConfigChangefeedNotifyConn) WaitForNotification(ctx context.Context) error {
+	_, err := c.conn.WaitForNotification(ctx)
+	return err
+}
+func (c *pgxConfigChangefeedNotifyConn) Close(ctx context.Context) error { return c.conn.Close(ctx) }
+
+// ConfigChangefeedWakeups returns a coalesced PostgreSQL wake stream. A wake
+// is only a hint; consumers must always poll the durable changefeed and use
+// their (scope,generation,cursor) fence to detect missed notifications.
+func (s *RDBConfigStore) ConfigChangefeedWakeups(ctx context.Context) <-chan struct{} {
+	if s == nil || s.configChangefeedNotifyDial == nil {
+		return nil
+	}
+	wake := make(chan struct{}, 1)
+	go s.runConfigChangefeedListener(ctx, wake)
+	return wake
+}
+
+func (s *RDBConfigStore) runConfigChangefeedListener(ctx context.Context, wake chan<- struct{}) {
+	backoff := configChangefeedReconnectMinBackoff
+	for ctx.Err() == nil {
+		conn, err := s.configChangefeedNotifyDial(ctx)
+		if err == nil {
+			err = conn.Listen(ctx)
+		}
+		if err == nil {
+			select {
+			case wake <- struct{}{}:
+			default:
+			}
+			for ctx.Err() == nil {
+				if err = conn.WaitForNotification(ctx); err != nil {
+					break
+				}
+				select {
+				case wake <- struct{}{}:
+				default:
+				}
+				backoff = configChangefeedReconnectMinBackoff
+			}
+		}
+		if conn != nil {
+			closeCtx, cancel := context.WithTimeout(context.Background(), time.Second)
+			_ = conn.Close(closeCtx)
+			cancel()
+		}
+		if ctx.Err() != nil {
+			return
+		}
+		timer := time.NewTimer(backoff)
+		select {
+		case <-ctx.Done():
+			timer.Stop()
+			return
+		case <-timer.C:
+		}
+		if backoff < configChangefeedReconnectMaxBackoff {
+			backoff *= 2
+			if backoff > configChangefeedReconnectMaxBackoff {
+				backoff = configChangefeedReconnectMaxBackoff
+			}
+		}
+	}
+}
 
 // ConfigChangefeedEvent is the durable, commit-ordered unit consumed by pods.
 // Cursor is a generation-local commit cursor; callers must never substitute a
@@ -86,6 +170,11 @@ func AppendConfigChangefeed(ctx context.Context, tx *gorm.DB, scope, kind, entit
 	generation.UpdatedAt = event.CreatedAt
 	if err := tx.WithContext(ctx).Save(&generation).Error; err != nil {
 		return ConfigChangefeedEvent{}, fmt.Errorf("advance config changefeed cursor: %w", err)
+	}
+	if tx.Dialector.Name() == "postgres" {
+		if err := tx.WithContext(ctx).Exec("SELECT pg_notify(?, ?)", configChangefeedNotificationChannel, scope).Error; err != nil {
+			return ConfigChangefeedEvent{}, fmt.Errorf("publish config changefeed wake hint: %w", err)
+		}
 	}
 	return event, nil
 }

@@ -106,6 +106,21 @@ func newPostgresConfigStore(ctx context.Context, config *PostgresConfig, logger 
 		}
 		return &pgxPrincipalAuthorizationEpochNotifyConn{conn: conn}, nil
 	}
+	d.configChangefeedNotifyDial = func(ctx context.Context) (configChangefeedNotifyConn, error) {
+		connConfig := notifyConfig.Copy()
+		if config.PasswordCommand != nil {
+			password, err := postgresconn.RunPasswordCommand(ctx, config.PasswordCommand)
+			if err != nil {
+				return nil, fmt.Errorf("resolve postgres notification password: %w", err)
+			}
+			connConfig.Password = password
+		}
+		conn, err := pgx.ConnectConfig(ctx, connConfig)
+		if err != nil {
+			return nil, err
+		}
+		return &pgxConfigChangefeedNotifyConn{conn: conn}, nil
+	}
 
 	// migrateOnFreshFn: downstream consumers (e.g. bifrost-enterprise) run
 	// their migrations via this hook on a throwaway pool that closes after fn.

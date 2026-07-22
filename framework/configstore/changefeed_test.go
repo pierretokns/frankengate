@@ -2,12 +2,73 @@ package configstore
 
 import (
 	"context"
+	"errors"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+type fakeConfigChangefeedNotifyConn struct {
+	waits  chan error
+	closed atomic.Bool
+}
+
+func (f *fakeConfigChangefeedNotifyConn) Listen(context.Context) error { return nil }
+func (f *fakeConfigChangefeedNotifyConn) WaitForNotification(ctx context.Context) error {
+	select {
+	case err := <-f.waits:
+		return err
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+func (f *fakeConfigChangefeedNotifyConn) Close(context.Context) error {
+	f.closed.Store(true)
+	return nil
+}
+
+func TestConfigChangefeedWakeupsCoalesceAndReconnect(t *testing.T) {
+	first := &fakeConfigChangefeedNotifyConn{waits: make(chan error, 2)}
+	second := &fakeConfigChangefeedNotifyConn{waits: make(chan error, 1)}
+	connections := []configChangefeedNotifyConn{first, second}
+	store := &RDBConfigStore{}
+	store.configChangefeedNotifyDial = func(context.Context) (configChangefeedNotifyConn, error) {
+		if len(connections) == 0 {
+			return nil, errors.New("no more connections")
+		}
+		c := connections[0]
+		connections = connections[1:]
+		return c, nil
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	wake := store.ConfigChangefeedWakeups(ctx)
+	select {
+	case <-wake:
+	case <-time.After(time.Second):
+		t.Fatal("listener did not become ready")
+	}
+	first.waits <- nil
+	first.waits <- nil
+	time.Sleep(20 * time.Millisecond)
+	if len(wake) != 1 {
+		t.Fatalf("wake storm was not coalesced: %d", len(wake))
+	}
+	<-wake
+	first.waits <- errors.New("connection lost")
+	select {
+	case <-wake:
+	case <-time.After(2 * time.Second):
+		t.Fatal("listener did not reconnect")
+	}
+	if !first.closed.Load() {
+		t.Fatal("lost listener was not closed")
+	}
+}
 
 func testChangefeedDB(t *testing.T) *gorm.DB {
 	t.Helper()
