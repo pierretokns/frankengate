@@ -86,10 +86,11 @@ func mantleOpenAIURL(region, model, path string) string {
 }
 
 // mantleOpenAIURLForFamily selects the URL from the resolved canonical model.
-// The family argument remains for call-site compatibility, but describes the
-// conversion surface rather than AWS's model-specific /openai/v1 namespace.
-// Opaque aliases must provide a canonical ModelName/ModelID to select that path.
-func mantleOpenAIURLForFamily(region, model string, _ schemas.ModelFamily, path string) string {
+// Explicit OpenAI/Gemma alias families retain the legacy /openai/v1 route even
+// when the wire deployment ID is opaque. Claude Code uses Claude-visible
+// aliases for OpenAI-shaped Mantle deployments, so dropping this metadata
+// silently turns working aliases into 400s on the bare /v1 surface.
+func mantleOpenAIURLForFamily(region, model string, family schemas.ModelFamily, path string) string {
 	base := "v1"
 	// Mantle's newer OpenAI frontier models (including GPT-5.6 Sol, Terra,
 	// and Luna) are exposed on the OpenAI-prefixed surface.  Keep this
@@ -98,7 +99,8 @@ func mantleOpenAIURLForFamily(region, model string, _ schemas.ModelFamily, path 
 	// gpt-oss is an OpenAI-shaped model but Mantle exposes it on the bare
 	// /v1 surface. Keep that model contract explicit.
 	isGPTOSS := strings.Contains(canonical, "gpt-oss")
-	if !isGPTOSS && (isExactMantleModelID(canonical, "gpt-5.4") ||
+	if !isGPTOSS && (family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma ||
+		isExactMantleModelID(canonical, "gpt-5.4") ||
 		isExactMantleModelID(canonical, "gpt-5.5") ||
 		isExactMantleModelID(canonical, "gpt-5.6-sol") ||
 		isExactMantleModelID(canonical, "gpt-5.6-terra") ||
