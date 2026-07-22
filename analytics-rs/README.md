@@ -65,6 +65,12 @@ inserts and updates. The notification is only a bounded wake-up envelope;
 workers must re-read the row under PostgreSQL RLS, so dropped notifications do
 not become lost work or a tenant-isolation bypass.
 
+`PostgresJobSql` exposes the parameterized insert/list/stats statements and
+tenant-setting transaction requirement without forcing a particular Rust
+PostgreSQL client into the dependency-free contract binary. Its tests reject
+unbounded limits and tenant-value interpolation; a production executor can be
+added behind this boundary without changing the protocol types.
+
 Run the current contract tests with:
 
 ```bash

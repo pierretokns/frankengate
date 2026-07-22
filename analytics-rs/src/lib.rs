@@ -214,6 +214,29 @@ pub fn migration_self_check() -> Result<(), &'static str> {
     Ok(())
 }
 
+/// Parameterized SQL boundary for a future PostgreSQL executor. Keeping SQL
+/// generation separate from the client library lets deployments choose their
+/// runtime (blocking, async, or pooled) without weakening the RLS contract.
+pub struct PostgresJobSql;
+
+impl PostgresJobSql {
+    pub const SET_TENANT: &'static str = "select set_config('app.tenant_id', $1, true)";
+    pub const INSERT_IDEMPOTENT: &'static str =
+        "insert into frankengate_analytics.jobs (id, tenant_id, kind, state) values ($1, $2, $3, 'queued') on conflict (id) do update set id = frankengate_analytics.jobs.id returning id, tenant_id, kind, state, attempt, checkpoint, replay_of";
+    pub const LIST_TENANT: &'static str =
+        "select id, tenant_id, kind, state, attempt, checkpoint, replay_of from frankengate_analytics.jobs where tenant_id = $1 order by id limit $2";
+    pub const STATS_TENANT: &'static str =
+        "select state, count(*)::bigint from frankengate_analytics.jobs where tenant_id = $1 group by state";
+
+    pub fn validate_list_limit(limit: i64) -> Result<(), &'static str> {
+        if (0..=1_000).contains(&limit) {
+            Ok(())
+        } else {
+            Err("limit must be between 0 and 1000")
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SubmitJob {
     pub protocol_version: u16,
@@ -1344,5 +1367,17 @@ mod tests {
             .read_tenant("tenant-b", 10)
             .is_err());
         let _ = std::fs::remove_dir_all(dir);
+    }
+
+    #[test]
+    fn postgres_sql_boundary_is_parameterized_and_bounded() {
+        assert!(PostgresJobSql::INSERT_IDEMPOTENT.contains("$1"));
+        assert!(PostgresJobSql::INSERT_IDEMPOTENT.contains("$2"));
+        assert!(PostgresJobSql::INSERT_IDEMPOTENT.contains("$3"));
+        assert!(PostgresJobSql::LIST_TENANT.contains("where tenant_id = $1"));
+        assert!(PostgresJobSql::STATS_TENANT.contains("where tenant_id = $1"));
+        assert!(!PostgresJobSql::LIST_TENANT.contains("tenant_id = '"));
+        assert!(PostgresJobSql::validate_list_limit(1_000).is_ok());
+        assert!(PostgresJobSql::validate_list_limit(1_001).is_err());
     }
 }
