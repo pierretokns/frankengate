@@ -9,6 +9,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -63,23 +65,24 @@ type seedFile struct {
 }
 
 type evidence struct {
-	Schema           string   `json:"schema"`
-	RunID            string   `json:"run_id"`
-	Client           string   `json:"client"`
-	ExitCode         int      `json:"exit_code"`
-	Environment      []string `json:"environment_names"`
-	ResidueCount     int      `json:"residue_count"`
-	ClientVersion    string   `json:"client_version"`
-	NativePlatform   string   `json:"native_platform"`
-	Operation        string   `json:"operation,omitempty"`
-	ProcessStarted   bool     `json:"process_started,omitempty"`
-	RequestInitiated bool     `json:"request_initiated,omitempty"`
-	TransportOutcome string   `json:"transport_outcome,omitempty"`
-	EventCount       int      `json:"jsonl_event_count,omitempty"`
-	OutputBytes      int      `json:"inference_output_bytes,omitempty"`
-	OutputSHA256     string   `json:"inference_output_sha256,omitempty"`
-	OutputTruncated  bool     `json:"inference_output_truncated,omitempty"`
-	GatewayBaseURL   string   `json:"gateway_base_url,omitempty"`
+	Schema                string   `json:"schema"`
+	RunID                 string   `json:"run_id"`
+	Client                string   `json:"client"`
+	ExitCode              int      `json:"exit_code"`
+	Environment           []string `json:"environment_names"`
+	ResidueCount          int      `json:"residue_count"`
+	ClientVersion         string   `json:"client_version"`
+	NativePlatform        string   `json:"native_platform"`
+	Operation             string   `json:"operation,omitempty"`
+	ProcessStarted        bool     `json:"process_started,omitempty"`
+	RequestInitiated      bool     `json:"request_initiated,omitempty"`
+	TransportOutcome      string   `json:"transport_outcome,omitempty"`
+	EventCount            int      `json:"jsonl_event_count,omitempty"`
+	OutputBytes           int      `json:"inference_output_bytes,omitempty"`
+	OutputSHA256          string   `json:"inference_output_sha256,omitempty"`
+	OutputTruncated       bool     `json:"inference_output_truncated,omitempty"`
+	GatewayBaseURL        string   `json:"gateway_base_url,omitempty"`
+	ModelCatalogValidated bool     `json:"codex_model_catalog_validated,omitempty"`
 }
 
 type commandSpec struct {
@@ -222,6 +225,9 @@ func run(lifecycleRunID string) error {
 	transportOutcome := ""
 	eventCount := 0
 	if operation == "codex-inference-boundary" {
+		if err := validateCodexModelCatalog(cfg.Env["OPENAI_BASE_URL"]); err != nil {
+			return fmt.Errorf("Codex model catalog: %w", err)
+		}
 		spec := codexInferenceCommand(cfg.Binary, cfg.RunID)
 		environment = inferenceEnvironment(environment, lifecycleRunID)
 		var inferenceResult commandResult
@@ -265,6 +271,7 @@ func run(lifecycleRunID string) error {
 	if processStarted {
 		result.OutputBytes, result.OutputSHA256, result.OutputTruncated = summarizeInferenceOutput(inferenceOutput, outputTruncated)
 		result.GatewayBaseURL = cfg.Env["OPENAI_BASE_URL"]
+		result.ModelCatalogValidated = true
 		result.TransportOutcome = transportOutcome
 		result.EventCount = eventCount
 	}
@@ -276,6 +283,53 @@ func inferenceEnvironment(base []string, runID string) []string {
 	result = append(result, "LAB_RUN_ID="+runID)
 	sort.Strings(result)
 	return result
+}
+
+func validateCodexModelCatalog(base string) error {
+	u, err := url.Parse(strings.TrimRight(base, "/") + "/models")
+	if err != nil || u.Scheme != "http" || u.Host == "" {
+		return errors.New("invalid OpenAI gateway base URL")
+	}
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("User-Agent", "codex-tui/0.144.5")
+	req.Header.Set("Authorization", "Bearer "+sealedFakeCredential)
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("/models returned HTTP %d", resp.StatusCode)
+	}
+	var payload struct {
+		Data []struct {
+			ID                    string `json:"id"`
+			Slug                  string `json:"slug"`
+			DisplayName           string `json:"display_name"`
+			DefaultReasoningLevel string `json:"default_reasoning_level"`
+			Supported             []struct {
+				Effort string `json:"effort"`
+			} `json:"supported_reasoning_levels"`
+			SupportedInAPI   *bool `json:"supported_in_api"`
+			UseResponsesLite *bool `json:"use_responses_lite"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&payload); err != nil {
+		return err
+	}
+	if len(payload.Data) == 0 {
+		return errors.New("/models returned no models")
+	}
+	for _, model := range payload.Data {
+		if model.ID == "" || model.Slug == "" || model.DisplayName == "" || model.DefaultReasoningLevel == "" || len(model.Supported) == 0 || model.SupportedInAPI == nil || model.UseResponsesLite == nil {
+			return fmt.Errorf("model %q lacks Codex catalog fields", model.ID)
+		}
+	}
+	return nil
 }
 
 func validateTargetPlatform(data []byte, goos, goarch string) error {
