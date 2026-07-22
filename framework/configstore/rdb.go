@@ -43,6 +43,7 @@ type RDBConfigStore struct {
 	refreshPoolFn                         func(ctx context.Context) error
 	virtualKeyInvalidationNotifyDial      func(context.Context) (virtualKeyInvalidationNotifyConn, error)
 	principalAuthorizationEpochNotifyDial func(context.Context) (principalAuthorizationEpochNotifyConn, error)
+	configChangefeedNotifyDial            func(context.Context) (configChangefeedNotifyConn, error)
 	virtualKeyInvalidationMetricsMu       sync.RWMutex
 	virtualKeyInvalidationMetrics         func(string, float64)
 }
