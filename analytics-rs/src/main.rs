@@ -46,10 +46,13 @@ fn handle_connection(
     let _ = stream.set_write_timeout(Some(std::time::Duration::from_secs(2)));
     let mut request = [0_u8; 1024];
     let size = stream.read(&mut request).unwrap_or(0);
-    let path = std::str::from_utf8(&request[..size])
+    let (method, path) = std::str::from_utf8(&request[..size])
         .ok()
-        .and_then(|request| request.split_whitespace().nth(1))
-        .unwrap_or("/");
+        .and_then(|request| {
+            let mut parts = request.split_whitespace();
+            Some((parts.next()?, parts.next()?))
+        })
+        .unwrap_or(("GET", "/"));
     let (route, query) = path.split_once('?').unwrap_or((path, ""));
     let (status, content_type, body) = match route {
         "/healthz" | "/readyz" => ("200 OK", "text/plain", "ok\n".to_string()),
@@ -104,19 +107,29 @@ fn handle_connection(
                     "text/plain",
                     "tenant is required\n".into(),
                 )
+            } else if method == "POST" {
+                let id = query_value(query, "id").unwrap_or_default();
+                let kind = query_value(query, "kind").unwrap_or_default();
+                match store.submit(frankengate_analytics_control::SubmitJob {
+                    protocol_version: frankengate_analytics_control::PROTOCOL_VERSION,
+                    id,
+                    tenant,
+                    kind,
+                }) {
+                    Ok(job) => ("201 Created", "application/json", job_json(&job)),
+                    Err(_) => ("400 Bad Request", "text/plain", "invalid job\n".into()),
+                }
+            } else if method != "GET" {
+                (
+                    "405 Method Not Allowed",
+                    "text/plain",
+                    "method not allowed\n".into(),
+                )
             } else {
                 let jobs = store.list_for_tenant(&tenant, 100);
                 let items = jobs
                     .iter()
-                    .map(|job| {
-                        format!(
-                            "{{\"id\":\"{}\",\"tenant\":\"{}\",\"kind\":\"{}\",\"attempt\":{}}}",
-                            json_escape(&job.id),
-                            json_escape(&job.tenant),
-                            json_escape(&job.kind),
-                            job.attempt
-                        )
-                    })
+                    .map(|job| format!("{}", job_json(job).trim_end()))
                     .collect::<Vec<_>>()
                     .join(",");
                 ("200 OK", "application/json", format!("[{}]\n", items))
@@ -140,6 +153,16 @@ fn query_value(query: &str, key: &str) -> Option<String> {
 
 fn json_escape(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
+}
+
+fn job_json(job: &frankengate_analytics_control::Job) -> String {
+    format!(
+        "{{\"id\":\"{}\",\"tenant\":\"{}\",\"kind\":\"{}\",\"attempt\":{}}}\n",
+        json_escape(&job.id),
+        json_escape(&job.tenant),
+        json_escape(&job.kind),
+        job.attempt
+    )
 }
 
 #[cfg(test)]
