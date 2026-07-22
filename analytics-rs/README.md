@@ -97,6 +97,7 @@ durability-mode report, `/jobs/lease?id=<id>&worker=<worker>` and
 `/jobs/renew?id=<id>&worker=<worker>` for heartbeats, and
 `/jobs/checkpoint?id=<id>&worker=<worker>&value=<value>` for bounded progress,
 and `/jobs/cancel?tenant=<tenant>&id=<id>` for tenant-scoped cancellation,
+and `/jobs/retry?tenant=<tenant>&id=<id>` for failed-job recovery,
 and
 `/metrics`. The metrics endpoint emits Prometheus gauges named
 `frankengate_analytics_jobs` with `state` labels for `queued`, `leased`,
