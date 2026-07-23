@@ -41,13 +41,13 @@ func TestMantleOpenAIURLUsesOpenAIPrefixForGPT56FrontierModels(t *testing.T) {
 	}
 }
 
-func TestMantleOpenAIURLDoesNotUseExplicitAliasFamilyAsPathAuthority(t *testing.T) {
-	want := "https://bedrock-mantle.us-east-1.api.aws/v1/responses"
+func TestMantleOpenAIURLPreservesExplicitAliasFamilyForOpaqueClaudeAliases(t *testing.T) {
+	want := "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses"
 	if got := mantleOpenAIURLForFamily("us-east-1", "opaque-soul-deployment", "openai", "responses"); got != want {
-		t.Fatalf("explicit OpenAI conversion family must not select an exceptional path: got %q, want %q", got, want)
+		t.Fatalf("explicit OpenAI conversion family must preserve the alias path: got %q, want %q", got, want)
 	}
 	if got := mantleOpenAIURLForFamily("us-east-1", "Claude-GPT-soul", "openai", "responses"); got != want {
-		t.Fatalf("alias spelling/family must not select an exceptional path: got %q, want %q", got, want)
+		t.Fatalf("Claude-visible OpenAI alias must preserve the alias path: got %q, want %q", got, want)
 	}
 }
 
@@ -60,9 +60,9 @@ func TestMantleProductionResolutionRequiresCanonicalModelForExceptionalPath(t *t
 	if unknownFamily != schemas.ModelFamilyOpenAI {
 		t.Fatalf("production fallback family resolution = %q, want openai", unknownFamily)
 	}
-	wantBare := "https://bedrock-mantle.us-east-1.api.aws/v1/responses"
-	if got := mantleOpenAIURLForFamily("us-east-1", unknownCanonical, unknownFamily, "responses"); got != wantBare {
-		t.Fatalf("unknown OpenAI-family model selected exceptional path: got %q, want %q", got, wantBare)
+	wantOpenAI := "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses"
+	if got := mantleOpenAIURLForFamily("us-east-1", unknownCanonical, unknownFamily, "responses"); got != wantOpenAI {
+		t.Fatalf("explicit OpenAI-family model lost its OpenAI path: got %q, want %q", got, wantOpenAI)
 	}
 
 	ctx.SetValue(schemas.BifrostContextKeyResolvedAlias, &schemas.ResolvedAlias{
@@ -78,8 +78,8 @@ func TestMantleProductionResolutionRequiresCanonicalModelForExceptionalPath(t *t
 	if family != schemas.ModelFamilyOpenAI {
 		t.Fatalf("production family resolution = %q, want openai", family)
 	}
-	if got := mantleOpenAIURLForFamily("us-east-1", canonical, family, "responses"); got != wantBare {
-		t.Fatalf("opaque alias family selected exceptional path: got %q, want %q", got, wantBare)
+	if got := mantleOpenAIURLForFamily("us-east-1", canonical, family, "responses"); got != "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses" {
+		t.Fatalf("opaque Claude-visible OpenAI alias lost its OpenAI path: got %q", got)
 	}
 
 	ctx.SetValue(schemas.BifrostContextKeyResolvedAlias, &schemas.ResolvedAlias{
