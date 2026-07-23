@@ -87,6 +87,17 @@ func TestPublicBoundaryUsesExactAuthorityScopedRoutes(t *testing.T) {
 	}
 }
 
+func TestResponsesAcceptsCodexStandardRequestFields(t *testing.T) {
+	server := newServer(t)
+	body := `{"model":"openai.gpt-5.5","include":["reasoning.encrypted_content"],"parallel_tool_calls":false,"prompt_cache_key":"sealed-run","store":false,"text":{"verbosity":"medium"},"tool_choice":"auto","stream":false,"input":[{"type":"message","role":"user","content":[{"type":"input_text","text":"hello"}]}],"reasoning":{"context":"all_turns","effort":"medium"},"tools":[]}`
+	response := request(t, server, http.MethodPost, "/openai/v1/responses", body)
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		data, _ := io.ReadAll(response.Body)
+		t.Fatalf("status=%d body=%s", response.StatusCode, data)
+	}
+}
+
 func TestModelsAreDeterministicWithinDeclaredCoverage(t *testing.T) {
 	server := newServer(t)
 	response := request(t, server, http.MethodGet, "/v1/models", "")

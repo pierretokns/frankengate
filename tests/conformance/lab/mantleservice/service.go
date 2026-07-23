@@ -216,6 +216,10 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Tools              json.RawMessage `json:"tools"`
 		ToolChoice         json.RawMessage `json:"tool_choice"`
 		ParallelToolCalls  *bool           `json:"parallel_tool_calls"`
+		Include            json.RawMessage `json:"include"`
+		PromptCacheKey     string          `json:"prompt_cache_key"`
+		Store              *bool           `json:"store"`
+		Text               json.RawMessage `json:"text"`
 	}
 	decoder := json.NewDecoder(bytes.NewReader(body))
 	decoder.DisallowUnknownFields()
