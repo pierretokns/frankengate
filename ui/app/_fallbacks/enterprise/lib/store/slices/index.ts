@@ -1,7 +1,6 @@
 // Placeholder for enterprise reducers
 // Export noop reducers when enterprise features are not available
 
-export const scimReducer = (state = {}) => state;
 export const userReducer = (state = {}) => state;
 export const guardrailReducer = (state = {}) => state;
 

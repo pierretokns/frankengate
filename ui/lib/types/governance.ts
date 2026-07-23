@@ -66,7 +66,7 @@ export interface RedactedDBKey {
 export interface VirtualKey {
 	id: string;
 	name: string;
-	value: string; // The actual key value
+	value: string; // Present on create/reveal responses; redacted list responses omit this at runtime
 	description?: string;
 	provider_configs?: VirtualKeyProviderConfig[];
 	mcp_configs?: VirtualKeyMCPConfig[];

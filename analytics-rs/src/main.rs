@@ -38,13 +38,15 @@ fn serve() {
     println!("FrankenGate analytics control plane listening on 0.0.0.0:{port}");
     for stream in listener.incoming().flatten() {
         let store = Arc::clone(&store);
-        std::thread::spawn(|| handle_connection(stream, store));
+        let database = database.clone();
+        std::thread::spawn(|| handle_connection(stream, store, database));
     }
 }
 
 fn handle_connection(
     mut stream: std::net::TcpStream,
     store: std::sync::Arc<frankengate_analytics_control::JobStore>,
+    database: Option<sqlx::PgPool>,
 ) {
     use std::io::{Read, Write};
     // Health probes are tiny and bounded.  Do not let an accepted but idle
