@@ -21,7 +21,7 @@ const externalLinks = [
 	},
 	{
 		title: "Full Documentation",
-		url: "https://docs.getbifrost.ai",
+		url: "/",
 		icon: BooksIcon,
 		strokeWidth: 1,
 	},

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Server } from "lucide-react";
 
-const PROVIDERS_DOCS_URL = "https://docs.getbifrost.ai/providers/supported-providers/overview";
+const PROVIDERS_DOCS_URL = "/providers/supported-providers/overview";
 
 interface ProvidersEmptyStateProps {
 	/** Dropdown (or button) for adding a provider; never greyed out */
@@ -17,7 +17,7 @@ export function ProvidersEmptyState({ addProviderDropdown }: ProvidersEmptyState
 			<div className="flex flex-col gap-1">
 				<h1 className="text-muted-foreground text-xl font-medium">Add a provider to start routing requests</h1>
 				<div className="text-muted-foreground mx-auto mt-2 max-w-[600px] text-sm font-normal">
-					Configure API keys for OpenAI, Anthropic, Bedrock, and other supported providers. Bifrost unifies them behind a single API.
+					Configure API keys for OpenAI, Anthropic, Bedrock, and other supported providers. FrankenGate unifies them behind a single API.
 				</div>
 				<div className="mx-auto mt-6 flex flex-row flex-wrap items-center justify-center gap-2">
 					<Button

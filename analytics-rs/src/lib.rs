@@ -1,9 +1,9 @@
-//! Minimal, dependency-free leased-job contract for the FrankenGate analytics plane.
+//! Minimal leased-job contract for the FrankenGate analytics plane.
 //!
-//! This crate deliberately does not run inside the Go inference gateway.  It is
+//! This crate deliberately does not run inside the Go inference gateway. It is
 //! the first vertical slice used to validate ownership, idempotent leasing,
-//! cancellation, and bounded outcomes before adding HTTP, SQLx, or worker
-//! ecosystem dependencies.
+//! cancellation, and bounded outcomes. The optional SQLx/Axum/Tokio surface is
+//! kept at the control-plane boundary so the gateway hot path stays unchanged.
 
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -1097,3 +1097,4 @@ mod tests {
         );
     }
 }
+pub mod db;

@@ -47,7 +47,9 @@ jobs:
 
   publish-bifrost:
     needs: [check-skip]
-    if: needs.check-skip.outputs.should-skip != 'true'
+    # This workflow is inherited compatibility automation. Never publish the
+    # upstream @maximhq namespace from the FrankenGate fork.
+    if: github.repository == 'maximhq/bifrost' && needs.check-skip.outputs.should-skip != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -170,7 +172,9 @@ jobs:
 
   publish-bifrost-cli:
     needs: [check-skip]
-    if: needs.check-skip.outputs.should-skip != 'true'
+    # This workflow is inherited compatibility automation. Never publish the
+    # upstream @maximhq namespace from the FrankenGate fork.
+    if: github.repository == 'maximhq/bifrost' && needs.check-skip.outputs.should-skip != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write

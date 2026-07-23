@@ -201,6 +201,8 @@ echo "🔎 Verifying enterprise governance packages are linked..."
 DEPENDENCIES="$(cd transports && go list -deps ./... )"
 for required_package in \
   "github.com/maximhq/bifrost/core/authorityepoch" \
+  "github.com/maximhq/bifrost/core/admission" \
+  "github.com/maximhq/bifrost/core/mcpownership" \
   "github.com/maximhq/bifrost/core/reservations" \
   "github.com/maximhq/bifrost/plugins/governance"; do
   if ! printf '%s\n' "$DEPENDENCIES" | grep -Fxq "$required_package"; then

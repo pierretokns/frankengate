@@ -73,6 +73,11 @@ func (h *SessionHandler) capabilities(ctx *fasthttp.RequestCtx) {
 		"capabilities": map[string]bool{
 			"session_bootstrap": true,
 			"governance":        false,
+			// Keep unfinished enterprise identity and analytics surfaces explicit
+			// so clients cannot infer support from routes or config fields.
+			"dashboard_oidc":    false,
+			"scim_entitlements": false,
+			"analytics_replay":  false,
 			// Alerting CRUD/history is backed by the same ConfigStore used by
 			// this session handler. Advertise it only when that backend exists;
 			// otherwise the UI would render a dead feature surface.

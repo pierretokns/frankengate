@@ -1,4 +1,7 @@
 {{- if .Values.analyticsControlPlane.enabled }}
+{{- if and .Values.analyticsControlPlane.serviceMonitor.enabled .Values.analyticsControlPlane.databaseUrlSecret.name (not .Values.analyticsControlPlane.serviceMonitor.tenant) }}
+{{- fail "analyticsControlPlane.serviceMonitor.tenant is required when analyticsControlPlane.databaseUrlSecret.name is set" }}
+{{- end }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -74,15 +77,37 @@ spec:
     spec:
       serviceAccountName: {{ include "bifrost.fullname" . }}-analytics
       automountServiceAccountToken: false
+      terminationGracePeriodSeconds: {{ .Values.analyticsControlPlane.terminationGracePeriodSeconds }}
       securityContext:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: analytics-control-plane
-          image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}"
+          image: "{{ .Values.analyticsControlPlane.image.repository }}:{{ .Values.analyticsControlPlane.image.tag }}{{- if .Values.analyticsControlPlane.image.digest }}@{{ .Values.analyticsControlPlane.image.digest }}{{- end }}"
           imagePullPolicy: {{ .Values.analyticsControlPlane.image.pullPolicy }}
           command: {{ toJson .Values.analyticsControlPlane.command }}
+          env:
+          {{- with .Values.analyticsControlPlane.databaseUrlSecret }}
+          {{- if .name }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name | quote }}
+                  key: {{ .key | quote }}
+            - name: DATABASE_MAX_CONNECTIONS
+              value: {{ $.Values.analyticsControlPlane.databaseMaxConnections | quote }}
+          {{- end }}
+          {{- end }}
+          {{- with .Values.analyticsControlPlane.workerTokenSecret }}
+          {{- if .name }}
+            - name: ANALYTICS_WORKER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name | quote }}
+                  key: {{ .key | quote }}
+          {{- end }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 8081
@@ -91,14 +116,23 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+          startupProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: {{ .Values.analyticsControlPlane.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.analyticsControlPlane.startupProbe.failureThreshold }}
           livenessProbe:
             httpGet:
               path: /healthz
               port: http
+            initialDelaySeconds: {{ .Values.analyticsControlPlane.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.analyticsControlPlane.livenessProbe.periodSeconds }}
           readinessProbe:
             httpGet:
               path: /readyz
               port: http
+            periodSeconds: {{ .Values.analyticsControlPlane.readinessProbe.periodSeconds }}
           resources:
             {{- toYaml .Values.analyticsControlPlane.resources | nindent 12 }}
 {{- if .Values.analyticsControlPlane.podDisruptionBudget.enabled }}
@@ -135,6 +169,19 @@ spec:
     name: {{ include "bifrost.fullname" . }}-analytics
   minReplicas: {{ .Values.analyticsControlPlane.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.analyticsControlPlane.autoscaling.maxReplicas }}
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleUp.stabilizationWindowSeconds }}
+      policies:
+        - type: Pods
+          value: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleUp.maxReplicasPerPeriod }}
+          periodSeconds: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleUp.periodSeconds }}
+    scaleDown:
+      stabilizationWindowSeconds: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleDown.stabilizationWindowSeconds }}
+      policies:
+        - type: Pods
+          value: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleDown.maxReplicasPerPeriod }}
+          periodSeconds: {{ .Values.analyticsControlPlane.autoscaling.behavior.scaleDown.periodSeconds }}
   metrics:
     - type: Resource
       resource:
@@ -142,5 +189,22 @@ spec:
         target:
           type: Utilization
           averageUtilization: {{ .Values.analyticsControlPlane.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
+{{- if .Values.analyticsControlPlane.podDisruptionBudget.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "bifrost.fullname" . }}-analytics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bifrost.labels" . | nindent 4 }}
+    app.kubernetes.io/component: analytics-control-plane
+spec:
+  minAvailable: {{ .Values.analyticsControlPlane.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "bifrost.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: analytics-control-plane
 {{- end }}
 {{- end }}

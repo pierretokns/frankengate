@@ -518,9 +518,9 @@ helm-index: ## Repackage helm chart, regenerate index.yaml digest, then remove t
 	helm package bifrost && \
 	$(ECHO) "$(YELLOW)Regenerating index.yaml digest...$(NC)" && \
 	if [ -f index.yaml ]; then \
-		helm repo index . --url https://github.com/maximhq/bifrost/releases/download/helm-chart-v$$CHART_VERSION --merge index.yaml; \
+		helm repo index . --url https://github.com/pierretokns/frankengate/releases/download/helm-chart-v$$CHART_VERSION --merge index.yaml; \
 	else \
-		helm repo index . --url https://github.com/maximhq/bifrost/releases/download/helm-chart-v$$CHART_VERSION; \
+		helm repo index . --url https://github.com/pierretokns/frankengate/releases/download/helm-chart-v$$CHART_VERSION; \
 	fi && \
 	$(ECHO) "$(YELLOW)Removing bifrost-$$CHART_VERSION.tgz...$(NC)" && \
 	rm -f bifrost-$$CHART_VERSION.tgz && \

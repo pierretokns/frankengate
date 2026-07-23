@@ -8,6 +8,14 @@ attach the matching immutable tag and artifact digests.
 
 ### Fixed
 
+- Helm chart defaults and documentation now agree on the `v0.3.19` gateway
+  image tag, avoiding fresh installs silently selecting an older binary.
+- Helm now rejects durable analytics deployments that enable a `ServiceMonitor`
+  without an explicit tenant scope, preventing local-only queue metrics from
+  being mistaken for Postgres-backed production metrics.
+- The local overhead benchmark now fails fast with an actionable loopback/port
+  diagnostic when its fixture cannot bind, instead of emitting misleading
+  request errors and an eventual empty-sample failure.
 - Replay admission now preserves a typed capacity-exceeded outcome instead of
   collapsing bounded-queue rejection into a generic lease error.
 - Config schema validation accepts the fork-owned `FRANKENGATE_SCHEMA_URL`
@@ -24,6 +32,33 @@ attach the matching immutable tag and artifact digests.
 
 ### Added
 
+- Analytics control-plane Helm deployments now use a configurable startup
+  probe window for migration/database boot fencing, preventing slow Aurora
+  startup from triggering premature liveness restarts.
+- Helm pricing defaults now consume the fork's cached GitHub Pages snapshot;
+  the scheduled mirror retains the upstream source only as an explicit input.
+
+- Added a separately deployable SQLx/Postgres analytics control plane with
+  tenant-scoped experiments, reproducible runs, evaluations, artifact lineage,
+  replay, and terminal outcomes.
+- Added durable worker APIs for lease claim, renewal, checkpoint, completion,
+  failure, cancellation, retry, replay, drain, and expired-lease recovery;
+  ownership is enforced by PostgreSQL row-level security and `SKIP LOCKED`.
+- Added an opt-in S3-compatible OTEL replay store with tenant-pinned object
+  keys and JSONL fallback for local deployments.
+- Added SHA-256 digests to sanitized replay records and object metadata for
+  independent payload-integrity verification.
+- Added a separately published `-analytics` GHCR OCI image for the Rust
+  control plane; it is released independently from the gateway image and
+  binary verification lane.
+- Helm can now pin that analytics OCI image by validated `sha256` digest,
+  keeping independently scaled control-plane rollouts reproducible.
+- Added tenant-scoped durable queue metrics at `/metrics?tenant=<id>` and
+  configurable Helm connection budgets, disruption protection, and autoscaling
+  boundaries for analytics replicas.
+- Added structured tenant queue stats at
+  `GET /v1/jobs/stats?tenant=<id>` for operators and autoscalers; durable query
+  failures return `503` rather than a misleading local snapshot.
 - Added the isolated `analytics-rs` contract slice with versioned job
   submission, lease ownership, cancellation, terminal completion, and
   deterministic tests. It is not yet wired into the inference gateway.
@@ -34,6 +69,10 @@ attach the matching immutable tag and artifact digests.
 
 ### Branding and compatibility
 
+- Fork-facing benchmark, provider, virtual-key, pricing, skills, and enterprise
+  fallback surfaces now link to FrankenGate-local routes; retained Bifrost
+  package names and `x-bf-*` headers remain explicitly documented compatibility
+  inputs.
 - Updated the Helm chart README to identify FrankenGate as the fork-owned
   product while documenting the retained `bifrost.*` chart/value identifiers.
 - Rebranded the UI README and its documentation links to FrankenGate-owned
@@ -47,7 +86,8 @@ attach the matching immutable tag and artifact digests.
 ### Known limitations
 
 - Governance request admission still uses pod-local budget counters; atomic
-  cross-replica PostgreSQL reservations are not shipped yet.
+  cross-replica PostgreSQL reservations are tracked separately from the
+  analytics worker queue.
 - Synchronization metrics and a complete external Redis contract remain planned.
 
 ## 0.3.10
