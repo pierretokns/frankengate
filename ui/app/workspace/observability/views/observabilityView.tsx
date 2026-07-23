@@ -5,21 +5,15 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { useQueryState } from "nuqs";
 import { useEffect, useMemo } from "react";
-import BigQueryView from "./plugins/bigqueryView";
-import DatadogView from "./plugins/datadogView";
-import KafkaView from "./plugins/kafkaView";
 import MaximView from "./plugins/maximView";
-import NewrelicView from "./plugins/newRelicView";
 import OtelView from "./plugins/otelView";
 import PrometheusView from "./plugins/prometheusView";
-import PubSubView from "./plugins/pubsubView";
 
 type SupportedPlatform = {
 	id: string;
 	name: string;
 	icon: React.ReactNode;
 	tag?: string;
-	disabled?: boolean;
 };
 
 const supportedPlatformsList = (resolvedTheme: string): SupportedPlatform[] => [
@@ -48,38 +42,6 @@ const supportedPlatformsList = (resolvedTheme: string): SupportedPlatform[] => [
 		id: "maxim",
 		name: "Maxim",
 		icon: <img alt="Maxim" src={`/maxim-logo${resolvedTheme === "dark" ? "-dark" : ""}.webp`} width={19} height={19} />,
-	},
-	{
-		id: "datadog",
-		name: "Datadog",
-		icon: <img alt="Datadog" src="/images/datadog-logo.webp" width={32} height={32} className="-ml-0.5" />,
-	},
-	{
-		id: "bigquery",
-		name: "BigQuery",
-		icon: <img alt="BigQuery" src="/images/bigquery-logo.svg" width={21} height={21} className="-ml-0.5" />,
-	},
-	{
-		id: "kafka",
-		name: "Kafka",
-		icon: <img alt="Kafka" src="/images/kafka-logo.svg" width={21} height={21} className="-ml-0.5" />,
-	},
-	{
-		id: "pubsub",
-		name: "Pub/Sub",
-		icon: <img alt="Pub/Sub" src="/images/pubsub-logo.svg" width={21} height={21} className="-ml-0.5" />,
-	},
-	{
-		id: "newrelic",
-		name: "New Relic",
-		icon: (
-			<svg viewBox="0 0 832.8 959.8" xmlns="http://www.w3.org/2000/svg" width="19" height="19">
-				<path d="M672.6 332.3l160.2-92.4v480L416.4 959.8V775.2l256.2-147.6z" fill="#00ac69" />
-				<path d="M416.4 184.6L160.2 332.3 0 239.9 416.4 0l416.4 239.9-160.2 92.4z" fill="#1ce783" />
-				<path d="M256.2 572.3L0 424.6V239.9l416.4 240v479.9l-160.2-92.2z" fill="#1d252c" />
-			</svg>
-		),
-		disabled: true,
 	},
 ];
 
@@ -143,35 +105,20 @@ export default function ObservabilityView() {
 								<button
 									type="button"
 									key={tab.id}
-									disabled={!!tab.disabled}
 									data-testid={`observability-provider-btn-${tab.id}`}
-									aria-disabled={tab.disabled ? true : undefined}
 									aria-current={selectedPluginId === tab.id ? "page" : undefined}
 									className={cn(
-										"mb-1 flex max-h-[32px] w-full items-center gap-2 rounded-sm border px-3 py-1.5 text-sm",
-										tab.disabled ? "opacity-50" : "",
+										"mb-1 flex max-h-[32px] w-full cursor-pointer items-center gap-2 rounded-sm border px-3 py-1.5 text-sm",
 										selectedPluginId === tab.id
 											? "bg-secondary opacity-100 hover:opacity-100"
-											: tab.disabled
-												? "border-none"
-												: "hover:bg-secondary cursor-pointer border-transparent opacity-100 hover:border",
+											: "hover:bg-secondary border-transparent opacity-100 hover:border",
 									)}
-									onClick={() => {
-										if (tab.disabled) {
-											return;
-										}
-										setSelectedPluginId(tab.id ?? supportedPlatforms[0].id);
-									}}
+									onClick={() => setSelectedPluginId(tab.id ?? supportedPlatforms[0].id)}
 								>
 									<div className="w-[24px]">{tab.icon}</div> {tab.name}
 									{tab.tag && (
 										<Badge variant="secondary" className="text-muted-foreground ml-auto text-[10px] font-medium">
 											{tab.tag.toUpperCase()}
-										</Badge>
-									)}
-									{tab.disabled && (
-										<Badge variant="secondary" className="text-muted-foreground ml-auto text-[10px] font-medium">
-											{"Coming soon".toUpperCase()}
 										</Badge>
 									)}
 								</button>
@@ -184,11 +131,6 @@ export default function ObservabilityView() {
 				{selectedPluginId === "prometheus" && <PrometheusView />}
 				{selectedPluginId === "otel" && <OtelView />}
 				{selectedPluginId === "maxim" && <MaximView />}
-				{selectedPluginId === "kafka" && <KafkaView />}
-				{selectedPluginId === "datadog" && <DatadogView />}
-				{selectedPluginId === "bigquery" && <BigQueryView />}
-				{selectedPluginId === "pubsub" && <PubSubView />}
-				{selectedPluginId === "newrelic" && <NewrelicView />}
 			</div>
 		</div>
 	);

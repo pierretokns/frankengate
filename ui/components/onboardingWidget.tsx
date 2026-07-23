@@ -5,7 +5,6 @@ import { getErrorMessage, useGetCoreConfigQuery, useLazyGetCoreConfigQuery } fro
 import { useUpdateClientMetadataMutation } from "@/lib/store/apis/configApi";
 import { useGetModelConfigsQuery, useGetVirtualKeysQuery } from "@/lib/store/apis/governanceApi";
 import { useGetAllKeysQuery } from "@/lib/store/apis/providersApi";
-import { useGetSCIMProvidersQuery } from "@enterprise/lib/store/apis/scimApi";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
 import type confetti from "canvas-confetti";
@@ -79,13 +78,10 @@ export default function OnboardingWidget() {
 	const { data: modelConfigsResponse } = useGetModelConfigsQuery(undefined, {
 		skip: shouldSkipChecklistQueries || !IS_ENTERPRISE,
 	});
-	const { data: scimProviders } = useGetSCIMProvidersQuery(undefined, {
-		skip: shouldSkipChecklistQueries || !IS_ENTERPRISE,
-	});
 	const checklistReady =
 		bifrostConfig !== undefined &&
 		allKeys !== undefined &&
-		(!IS_ENTERPRISE || (vksResponse !== undefined && modelConfigsResponse !== undefined && scimProviders !== undefined));
+		(!IS_ENTERPRISE || (vksResponse !== undefined && modelConfigsResponse !== undefined));
 
 	const skippedIds = useMemo<string[]>(() => {
 		return parseSkippedIds(bifrostConfig?.metadata?.[METADATA_SKIPPED_KEY]);
@@ -134,13 +130,6 @@ export default function OnboardingWidget() {
 		const enterprise: Step[] = IS_ENTERPRISE
 			? [
 					{
-						id: "scim",
-						title: "Configure SCIM provisioning",
-						route: "/workspace/scim",
-						section: "Everything Else",
-						complete: (scimProviders?.length ?? 0) > 0,
-					},
-					{
 						id: "models",
 						title: "Configure governance model catalog",
 						route: "/workspace/model-catalog",
@@ -157,7 +146,7 @@ export default function OnboardingWidget() {
 				]
 			: [];
 		return [...common, ...enterprise];
-	}, [allKeys, clientConfig, authConfig, scimProviders, modelConfigsResponse, vksResponse]);
+	}, [allKeys, clientConfig, authConfig, modelConfigsResponse, vksResponse]);
 
 	// Map step id → checkbox element so we can launch confetti from the
 	// exact tick position when a step transitions to complete.

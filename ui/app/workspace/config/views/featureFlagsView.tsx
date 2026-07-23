@@ -6,7 +6,7 @@ import { getErrorMessage } from "@/lib/store";
 import { useListFeatureFlagsQuery, useUpdateFeatureFlagMutation } from "@/lib/store/apis/featureFlagsApi";
 import type { FeatureFlagStatus } from "@/lib/types/featureFlag";
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
-import { Crown, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { toast } from "sonner";
 
 export default function FeatureFlagsView() {
@@ -48,7 +48,7 @@ export default function FeatureFlagsView() {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{flags.length === 0 ? (
+							{flags.filter((flag) => !flag.enterprise_only).length === 0 ? (
 								<TableRow data-testid="feature-flags-table-empty-state">
 									<TableCell colSpan={2} className="h-24 text-center">
 										<span className="text-muted-foreground text-sm">
@@ -57,7 +57,9 @@ export default function FeatureFlagsView() {
 									</TableCell>
 								</TableRow>
 							) : (
-								flags.map((flag) => <FeatureFlagRow key={flag.id} flag={flag} canUpdate={hasUpdateAccess} onToggle={handleToggle} />)
+								flags
+									.filter((flag) => !flag.enterprise_only)
+									.map((flag) => <FeatureFlagRow key={flag.id} flag={flag} canUpdate={hasUpdateAccess} onToggle={handleToggle} />)
 							)}
 						</TableBody>
 					</Table>
@@ -87,8 +89,7 @@ function FeatureFlagRow({ flag, canUpdate, onToggle }: FeatureFlagRowProps) {
 						<span className="text-sm font-medium">{primaryLabel}</span>
 						{flag.display_name && <span className="text-muted-foreground font-mono text-xs">{flag.id}</span>}
 						<SourceBadge source={flag.source} />
-						{flag.enterprise_only && <EnterpriseBadge />}
-						{flag.locked && !flag.enterprise_only && <LockedBadge />}
+						{flag.locked && <LockedBadge />}
 						{!flag.registered && <UnregisteredBadge />}
 					</div>
 					{flag.description && <p className="text-muted-foreground text-sm">{flag.description}</p>}
@@ -130,20 +131,6 @@ function LockedBadge() {
 				</Badge>
 			</TooltipTrigger>
 			<TooltipContent>Value is pinned by config.json or Helm; edit your config to change it.</TooltipContent>
-		</Tooltip>
-	);
-}
-
-function EnterpriseBadge() {
-	return (
-		<Tooltip>
-			<TooltipTrigger asChild>
-				<Badge variant="secondary" className="flex items-center gap-1 text-xs">
-					<Crown className="size-3" />
-					Enterprise
-				</Badge>
-			</TooltipTrigger>
-			<TooltipContent>This flag gates an enterprise-only feature. Upgrade to enable it.</TooltipContent>
 		</Tooltip>
 	);
 }
