@@ -71,12 +71,17 @@ type RuntimeLock struct {
 }
 
 type RuntimeImage struct {
-	ID            string   `json:"id"`
-	Reference     string   `json:"reference"`
-	Platforms     []string `json:"platforms"`
-	Source        string   `json:"source"`
-	ClientVersion string   `json:"client_version,omitempty"`
-	BinarySHA256  string   `json:"binary_sha256,omitempty"`
+	ID            string           `json:"id"`
+	Reference     string           `json:"reference"`
+	Platforms     []string         `json:"platforms"`
+	Source        string           `json:"source"`
+	ClientVersion string           `json:"client_version,omitempty"`
+	BinaryDigests []PlatformDigest `json:"binary_digests,omitempty"`
+}
+
+type PlatformDigest struct {
+	Platform string `json:"platform"`
+	SHA256   string `json:"sha256"`
 }
 
 func DecodeRuntimeLock(reader io.Reader) (*RuntimeLock, error) {
@@ -132,11 +137,16 @@ func (lock RuntimeLock) Validate() error {
 			return fmt.Errorf("runtime image %q has invalid client version binding", image.ID)
 		}
 		if image.ID == "network-recorder" {
-			if !sha256Value.MatchString(image.BinarySHA256) || !immutableGitRef.MatchString(image.Source) {
+			if !immutableGitRef.MatchString(image.Source) || len(image.BinaryDigests) != 2 {
 				return fmt.Errorf("runtime network-recorder lacks immutable source and binary digests")
 			}
-		} else if image.BinarySHA256 != "" {
-			return fmt.Errorf("runtime image %q has an unexpected binary digest", image.ID)
+			for digestIndex, digest := range image.BinaryDigests {
+				if digest.Platform != image.Platforms[digestIndex] || !sha256Value.MatchString(digest.SHA256) {
+					return fmt.Errorf("runtime network-recorder binary digest[%d] does not match its platform", digestIndex)
+				}
+			}
+		} else if len(image.BinaryDigests) != 0 {
+			return fmt.Errorf("runtime image %q has unexpected binary digests", image.ID)
 		}
 	}
 	return nil
@@ -153,15 +163,28 @@ func (lock RuntimeLock) NetworkRecorderImage() (RuntimeImage, bool) {
 	return lock.Images[len(lock.Images)-1], true
 }
 
-func (lock RuntimeLock) VerifyRecorderArtifacts(policy, binary []byte) error {
+func (lock RuntimeLock) VerifyRecorderArtifacts(policy []byte, platform string, binary []byte) error {
 	recorder, ok := lock.NetworkRecorderImage()
 	if !ok {
 		return fmt.Errorf("runtime lock is not recorder-capable")
 	}
+	if len(policy) == 0 || len(binary) == 0 {
+		return fmt.Errorf("recorder policy and binary artifacts must be nonempty")
+	}
 	if SHA256Hex(policy) != lock.RecorderPolicySHA256 {
 		return fmt.Errorf("recorder policy digest does not match runtime lock")
 	}
-	if SHA256Hex(binary) != recorder.BinarySHA256 {
+	wantBinaryDigest := ""
+	for _, digest := range recorder.BinaryDigests {
+		if digest.Platform == platform {
+			wantBinaryDigest = digest.SHA256
+			break
+		}
+	}
+	if wantBinaryDigest == "" {
+		return fmt.Errorf("recorder lock does not contain binary evidence for platform %q", platform)
+	}
+	if SHA256Hex(binary) != wantBinaryDigest {
 		return fmt.Errorf("recorder binary digest does not match runtime lock")
 	}
 	return nil
@@ -274,7 +297,7 @@ func ValidateCompose(data []byte) error {
 		"bifrost-1:", "bifrost-2:", "bifrost-3:", "postgres:", "health-stub:", "contract-stub:", "codex-runner:", "claude-runner:",
 		"controlled-dns:", "egress-sentinel:", "sealed_dns_corefile:", "file: ./dns/corefile",
 		"network-probe:", "sealed_network_probe:", "file: ./probe/network-negatives.sh", "target: /probe/network-negatives.sh",
-		"codex_version_scenario:", "claude_version_scenario:", "target: /scenario/scenario.json",
+		"codex_inference_boundary_scenario:", "claude_version_scenario:", "target: /scenario/scenario.json",
 		"frankengate_pricing_url: file:///lab-fixtures/pricing.json", "frankengate_model_parameters_url: file:///lab-fixtures/model-parameters.json",
 		"sealed_pricing_fixture:", "sealed_model_parameters_fixture:",
 		"netns-bifrost-1:", "netns-bifrost-2:", "netns-bifrost-3:", "netns-codex:", "netns-claude:",

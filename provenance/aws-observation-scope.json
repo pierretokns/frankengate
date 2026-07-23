@@ -133,8 +133,8 @@
   ],
   "pricing": {
     "source": "https://getbifrost.ai/datasheet",
-    "retrieved_at": "2026-07-20T12:45:12Z",
-    "locked_sha256": "ac9333eef09e45b3b882d1d5886acc23a4afd852018de04ba3b92e5839d98596",
+    "retrieved_at": "2026-07-23T06:13:29Z",
+    "locked_sha256": "6c96f9a7d5f5de71060f18a976762a1e833d33a8285c67ade06d5028563585c7",
     "catalog_path": "docs/data/pricing/latest.json",
     "max_age_hours_before_connect": 168,
     "preconnect_failure_on_unknown_or_stale": true,

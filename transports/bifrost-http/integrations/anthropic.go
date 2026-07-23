@@ -87,7 +87,7 @@ func createAnthropicMessagesRouteConfig(pathPrefix string, logger schemas.Logger
 			},
 			ResponsesResponseConverter: func(ctx *schemas.BifrostContext, resp *schemas.BifrostResponsesResponse) (interface{}, error) {
 				soToolName, _ := ctx.Value(schemas.BifrostContextKeyStructuredOutputToolName).(string)
-				if soToolName == "" && isClaudeModel(resp.ExtraFields.OriginalModelRequested, resp.ExtraFields.ResolvedModelUsed, string(resp.ExtraFields.Provider)) {
+				if soToolName == "" && isClaudeModel(ctx, resp.ExtraFields.OriginalModelRequested, resp.ExtraFields.ResolvedModelUsed, string(resp.ExtraFields.Provider)) {
 					if resp.ExtraFields.RawResponse != nil {
 						return resp.ExtraFields.RawResponse, nil
 					}
@@ -355,7 +355,7 @@ func checkAnthropicPassthrough(ctx *fasthttp.RequestCtx, bifrostCtx *schemas.Bif
 
 // shouldUsePassthrough checks if the request should be sent to the passthrough endpoint.
 func shouldUsePassthrough(ctx *schemas.BifrostContext, provider schemas.ModelProvider, model string, alias string) bool {
-	return anthropic.IsClaudeCodeRequest(ctx) && isClaudeModel(model, alias, string(provider))
+	return anthropic.IsClaudeCodeRequest(ctx) && isClaudeModel(ctx, model, alias, string(provider))
 }
 
 // serverToolSynthesizesResultBlock reports whether an item's output_item.done
@@ -424,12 +424,20 @@ func mustConvertInPassthrough(resp *schemas.BifrostResponsesStreamResponse) bool
 	return false
 }
 
-func isClaudeModel(model, alias, provider string) bool {
-	return (provider == string(schemas.Anthropic) ||
-		(provider == "" && (schemas.IsAnthropicModel(model) || schemas.IsAnthropicModel(alias)))) ||
-		(provider == string(schemas.BedrockMantle) && (schemas.IsAnthropicModel(model) || schemas.IsAnthropicModel(alias))) ||
-		(provider == string(schemas.Vertex) && (schemas.IsAnthropicModel(model) || schemas.IsAnthropicModel(alias))) ||
-		(provider == string(schemas.Azure) && (schemas.IsAnthropicModel(model) || schemas.IsAnthropicModel(alias)))
+func isClaudeModel(ctx *schemas.BifrostContext, model, alias, provider string) bool {
+	if provider == string(schemas.Anthropic) {
+		return true
+	}
+	if provider != "" && provider != string(schemas.BedrockMantle) && provider != string(schemas.Vertex) && provider != string(schemas.Azure) {
+		return false
+	}
+	// Alias metadata is authoritative. Claude Code uses cosmetic Claude-visible
+	// names for non-Anthropic targets, so string matching the alias first sends
+	// OpenAI-shaped requests through the wrong response converter.
+	if family := schemas.ResolveFamily(ctx, model); family != "" {
+		return family == schemas.ModelFamilyAnthropic
+	}
+	return schemas.IsAnthropicModel(model) || schemas.IsAnthropicModel(alias)
 }
 
 // extractAnthropicListModelsParams extracts query parameters for list models request

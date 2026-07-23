@@ -227,7 +227,8 @@ func TestBridgeNamesUseFullLinuxInterfaceBudgetAndAreRunBound(t *testing.T) {
 }
 
 func TestRuntimeLockV2DeclaresAndVerifiesExternalRecorderImageBinaryAndPolicy(t *testing.T) {
-	policy, binary := []byte("compiled recorder policy v1"), []byte("static recorder binary")
+	policy := []byte("compiled recorder policy v1")
+	amd64Binary, arm64Binary := []byte("static recorder binary amd64"), []byte("static recorder binary arm64")
 	valid := `{
   "schema":"sealed-lab-runtime-lock/v2",
   "run_id":"run-1",
@@ -238,7 +239,7 @@ func TestRuntimeLockV2DeclaresAndVerifiesExternalRecorderImageBinaryAndPolicy(t 
     {"id":"claude-runner","reference":"registry.invalid/claude@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","platforms":["linux/amd64","linux/arm64"],"source":"lock:claude","client_version":"2.1.214"},
     {"id":"codex-runner","reference":"registry.invalid/codex@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","platforms":["linux/amd64","linux/arm64"],"source":"lock:codex","client_version":"0.144.5"},
     {"id":"egress-sentinel","reference":"registry.invalid/sentinel@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","platforms":["linux/amd64","linux/arm64"],"source":"git:abc"},
-	    {"id":"network-recorder","reference":"registry.invalid/recorder@sha256:1111111111111111111111111111111111111111111111111111111111111111","platforms":["linux/amd64","linux/arm64"],"source":"git:3333333333333333333333333333333333333333","binary_sha256":"` + SHA256Hex(binary) + `"}
+	    {"id":"network-recorder","reference":"registry.invalid/recorder@sha256:1111111111111111111111111111111111111111111111111111111111111111","platforms":["linux/amd64","linux/arm64"],"source":"git:3333333333333333333333333333333333333333","binary_digests":[{"platform":"linux/amd64","sha256":"` + SHA256Hex(amd64Binary) + `"},{"platform":"linux/arm64","sha256":"` + SHA256Hex(arm64Binary) + `"}]}
   ]
 }`
 	lock, err := DecodeRuntimeLock(strings.NewReader(valid))
@@ -252,18 +253,32 @@ func TestRuntimeLockV2DeclaresAndVerifiesExternalRecorderImageBinaryAndPolicy(t 
 	if !ok || recorder.ID != "network-recorder" || len(lock.ComposeEnvironment()) != 4 {
 		t.Fatalf("invalid recorder isolation: recorder=%#v ok=%v env=%v", recorder, ok, lock.ComposeEnvironment())
 	}
-	if err := lock.VerifyRecorderArtifacts(policy, binary); err != nil {
+	if err := lock.VerifyRecorderArtifacts(policy, "linux/amd64", amd64Binary); err != nil {
 		t.Fatal(err)
 	}
-	if err := lock.VerifyRecorderArtifacts(append(policy, '!'), binary); err == nil {
+	if err := lock.VerifyRecorderArtifacts(policy, "linux/arm64", arm64Binary); err != nil {
+		t.Fatal(err)
+	}
+	if err := lock.VerifyRecorderArtifacts(policy, "linux/amd64", arm64Binary); err == nil {
+		t.Fatal("arm64 recorder bytes accepted for amd64")
+	}
+	if err := lock.VerifyRecorderArtifacts(nil, "linux/amd64", amd64Binary); err == nil {
+		t.Fatal("empty recorder policy accepted")
+	}
+	if err := lock.VerifyRecorderArtifacts(append(policy, '!'), "linux/amd64", amd64Binary); err == nil {
 		t.Fatal("mutated recorder policy bytes accepted")
 	}
-	if err := lock.VerifyRecorderArtifacts(policy, append(binary, '!')); err == nil {
+	if err := lock.VerifyRecorderArtifacts(policy, "linux/amd64", append(amd64Binary, '!')); err == nil {
 		t.Fatal("mutated recorder binary bytes accepted")
+	}
+	if err := lock.VerifyRecorderArtifacts(policy, "linux/s390x", amd64Binary); err == nil {
+		t.Fatal("unlocked recorder platform accepted")
 	}
 	for _, candidate := range []string{
 		strings.Replace(valid, `"recorder_policy_sha256":"`+SHA256Hex(policy)+`"`, `"recorder_policy_sha256":""`, 1),
-		strings.Replace(valid, `"binary_sha256":"`+SHA256Hex(binary)+`"`, `"binary_sha256":""`, 1),
+		strings.Replace(valid, `"binary_digests":[{"platform":"linux/amd64","sha256":"`+SHA256Hex(amd64Binary)+`"},{"platform":"linux/arm64","sha256":"`+SHA256Hex(arm64Binary)+`"}]`, `"binary_digests":[]`, 1),
+		strings.Replace(valid, `"platform":"linux/arm64"`, `"platform":"linux/amd64"`, 1),
+		strings.Replace(valid, `"sha256":"`+SHA256Hex(arm64Binary)+`"`, `"sha256":""`, 1),
 		strings.Replace(valid, `"source":"git:`+strings.Repeat("3", 40)+`"`, `"source":"git:main"`, 1),
 		strings.Replace(valid, `"id":"network-recorder"`, `"id":"egress-sentinel"`, 1),
 		strings.Replace(valid, `"schema":"sealed-lab-runtime-lock/v2"`, `"schema":"sealed-lab-runtime-lock/v1"`, 1),
@@ -275,9 +290,9 @@ func TestRuntimeLockV2DeclaresAndVerifiesExternalRecorderImageBinaryAndPolicy(t 
 	for _, candidate := range []string{
 		strings.Replace(valid, `"schema":"sealed-lab-runtime-lock/v2"`, `"schema":"sealed-lab-runtime-lock/v2","schema":"sealed-lab-runtime-lock/v2"`, 1),
 		strings.Replace(valid, `"recorder_policy_sha256":"`+SHA256Hex(policy)+`"`, `"recorder_policy_sha256":"`+SHA256Hex(policy)+`","recorder_policy_sha256":"`+SHA256Hex(policy)+`"`, 1),
-		strings.Replace(valid, `"binary_sha256":"`+SHA256Hex(binary)+`"`, `"binary_sha256":"`+SHA256Hex(binary)+`","binary_sha256":"`+SHA256Hex(binary)+`"`, 1),
+		strings.Replace(valid, `"binary_digests":[`, `"binary_digests":[],"binary_digests":[`, 1),
 		strings.Replace(valid, `"schema":"sealed-lab-runtime-lock/v2"`, `"Schema":"sealed-lab-runtime-lock/v2"`, 1),
-		strings.Replace(valid, `"binary_sha256":"`+SHA256Hex(binary)+`"`, `"Binary_SHA256":"`+SHA256Hex(binary)+`"`, 1),
+		strings.Replace(valid, `"binary_digests":[`, `"Binary_Digests":[`, 1),
 		strings.Replace(valid, `"schema":"sealed-lab-runtime-lock/v2"`, `"schema":"sealed-lab-runtime-lock/v2","Schema":"sealed-lab-runtime-lock/v2"`, 1),
 	} {
 		if _, err := DecodeRuntimeLock(strings.NewReader(candidate)); err == nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
@@ -31,12 +32,16 @@ const (
 
 const sealedFakeCredential = "sealed-lab-not-a-real-credential"
 
+const codexBoundaryPrompt = "Reply with exactly SEALED_CODEX_BOUNDARY_OK. Do not use tools or execute commands."
+
 var internalBaseURL = regexp.MustCompile(`^http://bifrost-[123]:8080/(?:openai/v1|anthropic)(?:/)?$`)
+var exactOpenAIBaseURL = regexp.MustCompile(`^http://bifrost-[123]:8080/openai/v1$`)
 var exactRunID = regexp.MustCompile(`^[a-z0-9][a-z0-9-]{0,47}$`)
 var observedSemver = regexp.MustCompile(`(?:^|[^0-9.])([0-9]+\.[0-9]+\.[0-9]+)(?:[^0-9.]|$)`)
 
 type scenario struct {
 	Schema          string            `json:"schema"`
+	Operation       string            `json:"operation,omitempty"`
 	RunID           string            `json:"run_id"`
 	Client          string            `json:"client"`
 	Binary          string            `json:"binary"`
@@ -58,20 +63,43 @@ type seedFile struct {
 }
 
 type evidence struct {
-	Schema         string   `json:"schema"`
-	RunID          string   `json:"run_id"`
-	Client         string   `json:"client"`
-	ExitCode       int      `json:"exit_code"`
-	Environment    []string `json:"environment_names"`
-	ResidueCount   int      `json:"residue_count"`
-	ClientVersion  string   `json:"client_version"`
-	NativePlatform string   `json:"native_platform"`
+	Schema           string   `json:"schema"`
+	RunID            string   `json:"run_id"`
+	Client           string   `json:"client"`
+	ExitCode         int      `json:"exit_code"`
+	Environment      []string `json:"environment_names"`
+	ResidueCount     int      `json:"residue_count"`
+	ClientVersion    string   `json:"client_version"`
+	NativePlatform   string   `json:"native_platform"`
+	Operation        string   `json:"operation,omitempty"`
+	ProcessStarted   bool     `json:"process_started,omitempty"`
+	RequestInitiated bool     `json:"request_initiated,omitempty"`
+	TransportOutcome string   `json:"transport_outcome,omitempty"`
+	EventCount       int      `json:"jsonl_event_count,omitempty"`
+	OutputBytes      int      `json:"inference_output_bytes,omitempty"`
+	OutputSHA256     string   `json:"inference_output_sha256,omitempty"`
+	OutputTruncated  bool     `json:"inference_output_truncated,omitempty"`
+	GatewayBaseURL   string   `json:"gateway_base_url,omitempty"`
+}
+
+type commandSpec struct {
+	Binary string
+	Args   []string
+}
+
+type commandResult struct {
+	Stdout          []byte
+	Stderr          []byte
+	StdoutTruncated bool
+	StderrTruncated bool
+	ExitCode        int
 }
 
 type boundedCapture struct {
 	mu        sync.Mutex
 	data      []byte
 	remaining int
+	truncated bool
 }
 
 func newBoundedCapture(limit int) *boundedCapture { return &boundedCapture{remaining: limit} }
@@ -86,8 +114,19 @@ func (capture *boundedCapture) Write(data []byte) (int, error) {
 		}
 		capture.data = append(capture.data, data[:keep]...)
 		capture.remaining -= keep
+		if keep < len(data) {
+			capture.truncated = true
+		}
+	} else if len(data) > 0 {
+		capture.truncated = true
 	}
 	return len(data), nil
+}
+
+func (capture *boundedCapture) Truncated() bool {
+	capture.mu.Lock()
+	defer capture.mu.Unlock()
+	return capture.truncated
 }
 
 func (capture *boundedCapture) Contains(value string) bool {
@@ -150,15 +189,106 @@ func run(lifecycleRunID string) error {
 	if cfg.TimeoutMS > 0 {
 		timeout = time.Duration(cfg.TimeoutMS) * time.Millisecond
 	}
-	command := exec.Command(cfg.Binary, cfg.Args...)
+	versionSpec := commandSpec{Binary: cfg.Binary, Args: []string{"--version"}}
+	versionResult, err := execute(versionSpec, environment, timeout)
+	if err != nil {
+		return err
+	}
+	if versionResult.ExitCode != 0 {
+		return fmt.Errorf("client version command exited %d", versionResult.ExitCode)
+	}
+	if versionResult.StdoutTruncated || versionResult.StderrTruncated {
+		return errors.New("client version output exceeds capture bound")
+	}
+	versionOutput := append(append([]byte(nil), versionResult.Stdout...), versionResult.Stderr...)
+	version, err := parseObservedVersion(versionOutput)
+	if err != nil || version != cfg.ExpectedVersion {
+		return fmt.Errorf("client version output %q does not exactly match pinned version %q", version, cfg.ExpectedVersion)
+	}
+
+	operation := cfg.Operation
+	if operation == "" {
+		operation = "version"
+	}
+	exitCode := versionResult.ExitCode
+	var inferenceOutput []byte
+	outputTruncated := false
+	processStarted := false
+	requestInitiated := false
+	transportOutcome := ""
+	eventCount := 0
+	if operation == "codex-inference-boundary" {
+		spec := codexInferenceCommand(cfg.Binary)
+		var inferenceResult commandResult
+		inferenceResult, err = execute(spec, environment, timeout)
+		if err != nil {
+			return err
+		}
+		processStarted = true
+		inferenceOutput = inferenceResult.Stdout
+		outputTruncated = inferenceResult.StdoutTruncated
+		exitCode = inferenceResult.ExitCode
+		if inferenceResult.StderrTruncated {
+			return errors.New("Codex inference stderr exceeds capture bound")
+		}
+		transportOutcome, eventCount, err = validateCodexJSONL(inferenceOutput, exitCode)
+		if err != nil {
+			return fmt.Errorf("Codex inference JSONL: %w", err)
+		}
+		requestInitiated = true
+	}
+	if err := clearCell(); err != nil {
+		return err
+	}
+	residue := countEntries(cellRoot)
+	names := make([]string, 0, len(environment))
+	for _, item := range environment {
+		names = append(names, strings.SplitN(item, "=", 2)[0])
+	}
+	resultSchema := "sealed-cli-cell-evidence/v1"
+	evidenceOperation := ""
+	if cfg.Schema == "sealed-cli-cell-scenario/v2" {
+		resultSchema = "sealed-cli-cell-evidence/v2"
+		evidenceOperation = operation
+	}
+	result := evidence{
+		Schema: resultSchema, RunID: cfg.RunID, Client: cfg.Client,
+		ExitCode: exitCode, Environment: names, ResidueCount: residue, ClientVersion: version,
+		NativePlatform: runtime.GOOS + "/" + runtime.GOARCH, Operation: evidenceOperation,
+		ProcessStarted: processStarted, RequestInitiated: requestInitiated,
+	}
+	if processStarted {
+		result.OutputBytes, result.OutputSHA256, result.OutputTruncated = summarizeInferenceOutput(inferenceOutput, outputTruncated)
+		result.GatewayBaseURL = cfg.Env["OPENAI_BASE_URL"]
+		result.TransportOutcome = transportOutcome
+		result.EventCount = eventCount
+	}
+	return json.NewEncoder(os.Stdout).Encode(result)
+}
+
+func summarizeInferenceOutput(output []byte, truncated bool) (int, string, bool) {
+	digest := sha256.Sum256(output)
+	return len(output), hex.EncodeToString(digest[:]), truncated
+}
+
+func codexInferenceCommand(binary string) commandSpec {
+	return commandSpec{Binary: binary, Args: []string{
+		"exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
+		"--color", "never", "--json", codexBoundaryPrompt,
+	}}
+}
+
+func execute(spec commandSpec, environment []string, timeout time.Duration) (commandResult, error) {
+	command := exec.Command(spec.Binary, spec.Args...)
 	command.Env = environment
 	command.Dir = filepath.Join(cellRoot, "home")
-	output := newBoundedCapture(1 << 20)
-	command.Stdout = io.MultiWriter(os.Stderr, output)
-	command.Stderr = io.MultiWriter(os.Stderr, output)
+	stdout := newBoundedCapture(1 << 20)
+	stderr := newBoundedCapture(1 << 20)
+	command.Stdout = io.MultiWriter(os.Stderr, stdout)
+	command.Stderr = io.MultiWriter(os.Stderr, stderr)
 	command.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if err := command.Start(); err != nil {
-		return err
+		return commandResult{}, err
 	}
 	done := make(chan error, 1)
 	go func() { done <- command.Wait() }()
@@ -170,7 +300,7 @@ func run(lifecycleRunID string) error {
 			if errors.As(waitErr, &exitErr) {
 				exitCode = exitErr.ExitCode()
 			} else {
-				return waitErr
+				return commandResult{}, waitErr
 			}
 		}
 	case <-time.After(timeout):
@@ -180,23 +310,91 @@ func run(lifecycleRunID string) error {
 		<-done
 		exitCode = 124
 	}
-	version, err := parseObservedVersion(output.Bytes())
-	if err != nil || version != cfg.ExpectedVersion {
-		return fmt.Errorf("client version output %q does not exactly match pinned version %q", version, cfg.ExpectedVersion)
+	return commandResult{Stdout: stdout.Bytes(), Stderr: stderr.Bytes(), StdoutTruncated: stdout.Truncated(), StderrTruncated: stderr.Truncated(), ExitCode: exitCode}, nil
+}
+
+func validateCodexJSONL(data []byte, exitCode int) (string, int, error) {
+	if len(data) == 0 || len(data) > 1<<20 || exitCode < 0 || exitCode == 124 {
+		return "", 0, errors.New("missing, oversized, or timed-out Codex event stream")
 	}
-	if err := clearCell(); err != nil {
-		return err
+	scanner := bufio.NewScanner(bytes.NewReader(data))
+	scanner.Buffer(make([]byte, 4096), 1<<20)
+	types := make([]string, 0, 16)
+	completedHasUsage := false
+	failedHasError := false
+	terminalCount := 0
+	allowedTypes := map[string]bool{
+		"thread.started": true, "turn.started": true, "turn.completed": true, "turn.failed": true,
+		"item.started": true, "item.updated": true, "item.completed": true, "error": true,
 	}
-	residue := countEntries(cellRoot)
-	names := make([]string, 0, len(environment))
-	for _, item := range environment {
-		names = append(names, strings.SplitN(item, "=", 2)[0])
+	for scanner.Scan() {
+		line := bytes.TrimSpace(scanner.Bytes())
+		if len(line) == 0 {
+			continue
+		}
+		if err := rejectDuplicateJSONKeys(line); err != nil {
+			return "", 0, fmt.Errorf("invalid event JSON: %w", err)
+		}
+		var event map[string]json.RawMessage
+		if err := json.Unmarshal(line, &event); err != nil {
+			return "", 0, fmt.Errorf("invalid event JSON: %w", err)
+		}
+		var eventType string
+		if err := json.Unmarshal(event["type"], &eventType); err != nil || eventType == "" {
+			return "", 0, errors.New("event is missing a string type")
+		}
+		if !allowedTypes[eventType] {
+			return "", 0, fmt.Errorf("unsupported Codex event type %q", eventType)
+		}
+		if len(types) == 0 {
+			var threadID string
+			if eventType != "thread.started" || json.Unmarshal(event["thread_id"], &threadID) != nil || threadID == "" {
+				return "", 0, errors.New("first event is not a bound thread.started")
+			}
+		} else if len(types) == 1 && eventType != "turn.started" {
+			return "", 0, errors.New("second event is not turn.started")
+		}
+		if eventType == "turn.completed" {
+			terminalCount++
+			var usage map[string]json.RawMessage
+			if json.Unmarshal(event["usage"], &usage) == nil && len(usage) > 0 {
+				var inputTokens, outputTokens int64
+				if json.Unmarshal(usage["input_tokens"], &inputTokens) == nil && json.Unmarshal(usage["output_tokens"], &outputTokens) == nil && inputTokens >= 0 && outputTokens >= 0 {
+					completedHasUsage = true
+				}
+			}
+		}
+		if eventType == "turn.failed" {
+			terminalCount++
+			var failure struct {
+				Message string `json:"message"`
+			}
+			if json.Unmarshal(event["error"], &failure) == nil && failure.Message != "" {
+				failedHasError = true
+			}
+		}
+		types = append(types, eventType)
+		if len(types) > 4096 {
+			return "", 0, errors.New("event stream exceeds event-count bound")
+		}
 	}
-	return json.NewEncoder(os.Stdout).Encode(evidence{
-		Schema: "sealed-cli-cell-evidence/v1", RunID: cfg.RunID, Client: cfg.Client,
-		ExitCode: exitCode, Environment: names, ResidueCount: residue, ClientVersion: version,
-		NativePlatform: runtime.GOOS + "/" + runtime.GOARCH,
-	})
+	if err := scanner.Err(); err != nil {
+		return "", 0, err
+	}
+	if len(types) < 3 || types[0] != "thread.started" || types[1] != "turn.started" || terminalCount != 1 {
+		return "", 0, errors.New("event stream does not prove turn initiation")
+	}
+	terminal := types[len(types)-1]
+	if exitCode == 0 {
+		if terminal != "turn.completed" || !completedHasUsage {
+			return "", 0, errors.New("successful process lacks terminal turn.completed usage")
+		}
+		return "completed", len(types), nil
+	}
+	if terminal != "turn.failed" || !failedHasError {
+		return "", 0, errors.New("failed process lacks terminal turn.failed")
+	}
+	return "transport_failure_after_turn_start", len(types), nil
 }
 
 func parseObservedVersion(output []byte) (string, error) {
@@ -208,12 +406,19 @@ func parseObservedVersion(output []byte) (string, error) {
 }
 
 func validateScenario(cfg scenario) error {
-	if cfg.Schema != "sealed-cli-cell-scenario/v1" || cfg.RunID == "" || (cfg.Client != "codex" && cfg.Client != "claude") {
+	if (cfg.Schema != "sealed-cli-cell-scenario/v1" && cfg.Schema != "sealed-cli-cell-scenario/v2") || cfg.RunID == "" || (cfg.Client != "codex" && cfg.Client != "claude") {
 		return errors.New("invalid scenario identity")
 	}
 	wantBinary := map[string]string{"codex": "/opt/client/bin/codex", "claude": "/opt/client/bin/claude"}[cfg.Client]
-	if cfg.Binary != wantBinary || len(cfg.Args) == 0 || len(cfg.Args) > 64 || !exactSemver(cfg.ExpectedVersion) || cfg.TimeoutMS < 0 || cfg.TimeoutMS > int((15*time.Minute)/time.Millisecond) {
+	if cfg.Binary != wantBinary || !exactSemver(cfg.ExpectedVersion) || cfg.TimeoutMS < 0 || cfg.TimeoutMS > int((15*time.Minute)/time.Millisecond) {
 		return errors.New("invalid scenario process contract")
+	}
+	if cfg.Schema == "sealed-cli-cell-scenario/v1" {
+		if cfg.Operation != "" || len(cfg.Args) != 1 || cfg.Args[0] != "--version" {
+			return errors.New("v1 scenarios are limited to the version operation")
+		}
+	} else if cfg.Operation != "codex-inference-boundary" || cfg.Client != "codex" || len(cfg.Args) != 0 {
+		return errors.New("v2 scenarios are limited to the fixed Codex inference-boundary operation")
 	}
 	for _, arg := range cfg.Args {
 		if len(arg) > 1<<16 || strings.IndexByte(arg, 0) >= 0 {
@@ -223,6 +428,11 @@ func validateScenario(cfg scenario) error {
 	for key, value := range cfg.Env {
 		if err := validateScenarioEnvironment(key, value); err != nil {
 			return fmt.Errorf("scenario environment key %q is not allowed", key)
+		}
+	}
+	if cfg.Schema == "sealed-cli-cell-scenario/v2" {
+		if len(cfg.Env) != 2 || cfg.Env["OPENAI_API_KEY"] != sealedFakeCredential || !exactOpenAIBaseURL.MatchString(cfg.Env["OPENAI_BASE_URL"]) {
+			return errors.New("Codex inference-boundary scenarios require only the sealed credential and internal OpenAI gateway")
 		}
 	}
 	return nil

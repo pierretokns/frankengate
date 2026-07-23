@@ -31,6 +31,26 @@ The committed contract currently proves:
   disabled, and a Claude seed disabling updater, telemetry, error reporting, and nonessential
   traffic.
 
+The optional `scenario/codex-inference-boundary.json` cell runs the pinned Codex executable with a
+fixed noninteractive `codex exec` argument vector, a fixed no-tools prompt, read-only sandboxing,
+an ephemeral session, the sealed fake credential, and one validated internal Bifrost URL. Scenario
+data cannot supply arguments or a prompt. The cell first observes `codex --version`, then validates
+the CLI's stdout as bounded JSONL. It records `process_started` separately from
+`request_initiated`; the latter requires `thread.started` followed immediately by `turn.started`
+and a valid terminal event. Successful turns require `turn.completed` with usage, while a failed
+post-initiation turn is classified separately as `transport_failure_after_turn_start`. Plain-text
+configuration errors, malformed JSONL, reordered events, missing usage, timeouts, and truncated
+output cannot earn request-initiation evidence. Neither request initiation nor a JSONL digest proves
+that Bifrost received the request, contacted Mantle, or received Mantle acceptance. C9 owns that
+joined evidence.
+
+The `exec`, `--strict-config`, `--ephemeral`, `--sandbox`, `--color`, and `--json` syntax is derived from the exact
+`@openai/codex` 0.144.5 artifact locked by `images.lock.v1.json` (its `codex exec --help` surface).
+The request serialization authority remains the independently pinned
+`codex-cli-responses-lite-fd3c1dc1` row in
+`tests/conformance/bedrock/sources/source-lock.v1.json`; its authority ceiling is client emission,
+not gateway translation or AWS acceptance.
+
 ## Prefetch and runner builds
 
 `Dockerfile.prefetch` is intentionally networked and must run in a separate project. Supply the
@@ -58,7 +78,8 @@ them before the bead can close.
 
 The external recorder work uses a separate `sealed-lab-runtime-lock/v2` contract rather than
 silently changing v1. V2 declares a fifth digest-pinned multi-architecture `network-recorder`
-image, an immutable recorder source revision, the recorder binary SHA-256, and the compiled
+image, an immutable recorder source revision, separate recorder binary SHA-256 values for
+`linux/amd64` and `linux/arm64`, and the compiled
 recorder-policy SHA-256. Before recorder capability is used, `VerifyRecorderArtifacts` must hash
 the reviewed policy and extracted recorder binary bytes and match both declarations. The later host
 capture lifecycle must perform that verification against bytes obtained from the pinned image; a
@@ -77,20 +98,49 @@ GOWORK=off go run ./cmd/lab-runner \
   --docker /absolute/path/to/docker
 ```
 
+A v2 run additionally requires `--recorder-policy /absolute/path/policy.bin` plus the complete
+`--recorder-expectations`, `--recorder-transcript`, `--recorder-pcapng`, and `--recorder-ledger`
+absolute-path set. Partial, relative, empty, oversized, non-regular, or symlinked evidence fails
+closed. Before Compose creates
+or starts any service, the runner creates a non-running, networkless, read-only container from the
+exact pinned recorder image, copies `/network-recorder` through Docker's bounded tar stream, and
+recomputes the policy and binary hashes declared by the v2 runtime lock. Selecting the exact path
+avoids treating daemon-injected container entries such as device nodes as image payload.
+The temporary extraction container is labeled with the run identity plus a cryptographically unique
+invocation token. Docker's canonical returned container ID—not its reusable name—is used for copying
+and normal cleanup. After an ambiguous create failure, cleanup occurs only when inspection proves the
+unique token and exact pinned image identity; otherwise the run fails without deleting an unowned
+container. Missing, empty, oversized, non-executable, duplicate, or hash-mismatched artifacts fail
+the run. CI also characterizes the accepted artifact archive using a real Docker
+import/create/copy cycle. This verifies selected image contents before capture; it still does not prove capture
+readiness or completeness until the recorder process is launched and acknowledges all three bridge
+interfaces. After teardown, the runner decodes the bounded control transcript, derives immutable
+bindings from the runtime lock, policy, and observed platform, then verifies the exact PCAPNG and
+canonical ledger bytes. PCAPNG interfaces must declare decimal `if_tsresol=9`; implicit
+microsecond timestamps cannot be compared with the recorder's monotonic-nanosecond lifecycle. A
+structurally valid `aborted` transcript remains diagnostic evidence only and fails the runner; only
+a fully verified `complete` recorder outcome may reach lifecycle result emission.
+
 It first normalizes the Docker daemon's reported Linux architecture and requires both independent
 CLI cell binaries to report the same Go runtime architecture. The raw result binds that observed
 cell platform, the source-lock digest, lifecycle timestamps, and runtime-lock digest. Non-Linux,
 ambiguous, or unreviewed values fail closed. This proves the CLI cell-init binaries actually ran on
 the selected architecture; it does not yet prove every service image ran natively. It then inspects the
 actual OCI indexes for both required architectures, validates resolved Compose,
-starts the core topology, executes fresh Codex and Claude version cells, rejects residue or any
+starts the core topology, executes a fresh Codex inference-boundary cell and a Claude version cell,
+rejects residue or any
 sentinel event, removes containers and volumes, and proves the project inventory is empty. The
 external orchestrator passes only reviewed Docker connection variables; proxy and cloud/provider
 credentials are discarded and none of its HOME or Docker state enters a runner container. This
-version-cell result is a raw lab record, not canonical release evidence. No aggregate certification
-gate is provided yet: it would be unsafe until it independently re-hashes both lock files, consumes
-the external recorder artifact, and binds raw per-cell evidence. The current runner deliberately
-emits `unproven-external-recorder-required`; OCI declarations or edited JSON cannot certify the lab.
+boundary result is a raw lab record, not canonical release evidence. No aggregate certification
+gate is provided yet: it would be unsafe until it independently binds raw per-cell evidence and
+proves the provider-side observation boundary. The current runner deliberately emits
+`unproven-external-recorder-required` even after structural recorder verification. Structural
+capture evidence does not by itself prove that no paid provider request occurred, and the runner
+does not yet own recorder launch or nonce generation; OCI declarations, replayable input files, or
+edited JSON cannot certify the lab.
+The lifecycle record is `sealed-lab-lifecycle-result/v2`; unlike v1 it embeds the validated Codex
+inference-boundary cell record so its exit status and bounded output digest are not discarded.
 
 The binary placed at `offline/egress-sentinel` must be a Linux binary for the target platform; a
 plain host `go build` on macOS produces an unusable Mach-O file. Build each native row explicitly:
@@ -109,8 +159,9 @@ promote production pins through deployment policy. A candidate row cannot certif
 
 ## Remaining exit work for the lab bead
 
-Local arm64 smoke execution has exercised the three-pod PostgreSQL topology, fresh Codex and Claude
-version cells, the dual-stack DNS/direct-IP/QUIC/proxy-bypass mutants, residue checks, and teardown.
+Earlier local arm64 smoke execution exercised the three-pod PostgreSQL topology, fresh Codex and
+Claude version cells, the dual-stack DNS/direct-IP/QUIC/proxy-bypass mutants, residue checks, and
+teardown. It predates the inference-boundary scenario and therefore does not prove that scenario ran.
 Those local observations are useful debugging evidence only: the ignored local runtime lock and
 Docker inventory are not checked release artifacts and must not be cited as portable certification.
 
