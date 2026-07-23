@@ -349,11 +349,15 @@ func (provider *BedrockMantleProvider) Responses(ctx *schemas.BifrostContext, ke
 	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
 	openAIRequest := *request
 	openAIRequest.Model = bareModel
+	requestForUpstream := &openAIRequest
+	if strings.Contains(url, "/openai/v1/") {
+		requestForUpstream = openai.UnlightifyMantleResponsesRequest(requestForUpstream)
+	}
 	return openai.HandleOpenAIResponsesRequest(
 		ctx,
 		provider.mantleClient,
 		url,
-		&openAIRequest,
+		requestForUpstream,
 		openai.BearerAuthHeader(key),
 		bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -413,8 +417,12 @@ func (provider *BedrockMantleProvider) ResponsesStream(ctx *schemas.BifrostConte
 	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
 	openAIRequest := *request
 	openAIRequest.Model = bareModel
+	requestForUpstream := &openAIRequest
+	if strings.Contains(url, "/openai/v1/") {
+		requestForUpstream = openai.UnlightifyMantleResponsesRequest(requestForUpstream)
+	}
 	return openai.HandleOpenAIResponsesStreaming(
-		ctx, provider.mantleStreamingClient, url, &openAIRequest,
+		ctx, provider.mantleStreamingClient, url, requestForUpstream,
 		openai.BearerAuthHeader(key), bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),

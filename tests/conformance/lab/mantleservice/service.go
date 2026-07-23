@@ -17,7 +17,7 @@ import (
 )
 
 const maxRequestBytes = 1 << 20
-const expectedSourceLockSHA256 = "e1e5bc8be5297e0b21acb69aca7e7431a7c5032ba4eafbfb810d151b232cf6d7"
+const expectedSourceLockSHA256 = "c2ba4e5348dcaddf8ca508f2f3fbcaeee966055057b852fe4899bf901e1e7350"
 const syntheticAuthorization = "Bearer synthetic-mantle-contract"
 
 //go:embed coverage.v1.json
@@ -216,6 +216,10 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Tools              json.RawMessage `json:"tools"`
 		ToolChoice         json.RawMessage `json:"tool_choice"`
 		ParallelToolCalls  *bool           `json:"parallel_tool_calls"`
+		Include            json.RawMessage `json:"include"`
+		PromptCacheKey     string          `json:"prompt_cache_key"`
+		Store              *bool           `json:"store"`
+		Text               json.RawMessage `json:"text"`
 	}
 	decoder := json.NewDecoder(bytes.NewReader(body))
 	decoder.DisallowUnknownFields()
@@ -250,6 +254,10 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusBadRequest, "invalid_request", "Responses requires input")
 			return
 		}
+		if r.URL.Path == "/openai/v1/responses" && containsAdditionalTools(request.Input) {
+			writeError(w, http.StatusBadRequest, "invalid_input", "value did not match any expected variant")
+			return
+		}
 		if request.Stream {
 			s.serveResponsesStream(w, r, row, body)
 		} else {
@@ -272,6 +280,21 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		writeError(w, http.StatusNotFound, "unsupported_route", "request target is not a covered Mantle route")
 	}
+}
+
+func containsAdditionalTools(input json.RawMessage) bool {
+	var items []struct {
+		Type string `json:"type"`
+	}
+	if json.Unmarshal(input, &items) != nil {
+		return false
+	}
+	for _, item := range items {
+		if item.Type == "additional_tools" {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *Service) serveModels(w http.ResponseWriter) {

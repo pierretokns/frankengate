@@ -2,7 +2,10 @@ package main
 
 import (
 	"bytes"
+	"context"
+	"crypto/rand"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -15,19 +18,891 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
+	"syscall"
 	"time"
 
 	"github.com/maximhq/bifrost/tests/conformance/lab/contract"
+	"github.com/maximhq/bifrost/tests/conformance/lab/mantleservice"
 )
 
 type commandExecutor interface {
 	Run(env []string, stdout, stderr io.Writer, name string, args ...string) error
 }
+type diagnosticExecutor interface {
+	RunDiagnostic(context.Context, []string, io.Writer, io.Writer, string, ...string) error
+}
 
 type osExecutor struct{}
 
+type diagnosticsPaths struct{ Artifact, RunID, SourceLockSHA256, RuntimeLockSHA256, Phase string }
+
+type diagnosticCapture struct {
+	data      bytes.Buffer
+	limit     int
+	truncated bool
+}
+
+type diagnosticTailCapture struct {
+	mu        sync.Mutex
+	limit     int
+	data      []byte
+	truncated bool
+}
+
+func (capture *diagnosticTailCapture) Write(data []byte) (int, error) {
+	capture.mu.Lock()
+	defer capture.mu.Unlock()
+	original := len(data)
+	if len(data) >= capture.limit {
+		capture.data = append(capture.data[:0], data[len(data)-capture.limit:]...)
+		capture.truncated = true
+		return original, nil
+	}
+	overflow := len(capture.data) + len(data) - capture.limit
+	if overflow > 0 {
+		copy(capture.data, capture.data[overflow:])
+		capture.data = capture.data[:len(capture.data)-overflow]
+		capture.truncated = true
+	}
+	capture.data = append(capture.data, data...)
+	return original, nil
+}
+
+func (capture *diagnosticTailCapture) snapshot() ([]byte, bool) {
+	capture.mu.Lock()
+	defer capture.mu.Unlock()
+	return append([]byte(nil), capture.data...), capture.truncated
+}
+
+type composePSRow struct {
+	ID       string `json:"ID"`
+	Service  string `json:"Service"`
+	State    string `json:"State"`
+	Health   string `json:"Health"`
+	ExitCode int    `json:"ExitCode"`
+}
+
+type codexIngressRejectionRecord struct {
+	Schema               string   `json:"schema"`
+	RunID                string   `json:"run_id"`
+	Reason               string   `json:"reason"`
+	BodyBounded          bool     `json:"body_bounded"`
+	JSONUnique           bool     `json:"json_unique"`
+	JSONDecoded          bool     `json:"json_decoded"`
+	MethodOK             bool     `json:"method_ok"`
+	ModelOK              bool     `json:"model_ok"`
+	StreamOK             bool     `json:"stream_ok"`
+	LiteHeaderOK         bool     `json:"lite_header_ok"`
+	NoWebsocketUpgrade   bool     `json:"no_websocket_upgrade"`
+	InstructionsAbsent   bool     `json:"instructions_absent"`
+	TopLevelToolsAbsent  bool     `json:"top_level_tools_absent"`
+	ParallelFalsePresent bool     `json:"parallel_false_present"`
+	InputPresent         bool     `json:"input_present"`
+	FirstInputTypeOK     bool     `json:"first_input_type_ok"`
+	FirstInputRoleOK     bool     `json:"first_input_role_ok"`
+	ToolCountOK          bool     `json:"tool_count_ok"`
+	ToolShapesOK         bool     `json:"tool_shapes_ok"`
+	ToolTypes            []string `json:"tool_types"`
+	InvalidToolIndices   []int    `json:"invalid_tool_indices"`
+	InputRunIDCount      int      `json:"input_run_id_count"`
+	InputRunIDMatches    bool     `json:"input_run_id_matches"`
+}
+
+type codexIngressArrivalRecord struct {
+	Schema     string `json:"schema"`
+	RunID      string `json:"run_id"`
+	MethodPost bool   `json:"method_post"`
+	PathExact  bool   `json:"path_exact"`
+	QueryEmpty bool   `json:"query_empty"`
+}
+
+type codexHeaderRecord struct {
+	Schema               string `json:"schema"`
+	RunID                string `json:"run_id"`
+	MethodPost           bool   `json:"method_post"`
+	TargetExact          bool   `json:"target_exact"`
+	ContentTypeJSON      bool   `json:"content_type_json"`
+	ContentEncodingNone  bool   `json:"content_encoding_none"`
+	ContentLengthBounded bool   `json:"content_length_bounded"`
+	LiteHeaderOK         bool   `json:"lite_header_ok"`
+}
+
+type codexParseErrorRecord struct {
+	Schema      string `json:"schema"`
+	RunID       string `json:"run_id"`
+	Class       string `json:"class"`
+	MethodPost  bool   `json:"method_post"`
+	TargetExact bool   `json:"target_exact"`
+}
+
+var diagnosticToolTypes = map[string]bool{
+	"custom": true, "function": true, "namespace": true, "tool_search": true, "web_search": true,
+}
+
+func (capture *diagnosticCapture) Write(data []byte) (int, error) {
+	original := len(data)
+	remaining := capture.limit - capture.data.Len()
+	if remaining < len(data) {
+		capture.truncated = true
+		if remaining < 0 {
+			remaining = 0
+		}
+		data = data[:remaining]
+	}
+	_, _ = capture.data.Write(data)
+	return original, nil
+}
+
+func (paths diagnosticsPaths) validate() error {
+	if paths.Artifact != "" && !filepath.IsAbs(paths.Artifact) {
+		return errors.New("failure diagnostic artifact path must be absolute")
+	}
+	if paths.Artifact != "" && paths.Phase != "" && (paths.RunID == "" || !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(paths.SourceLockSHA256) || !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(paths.RuntimeLockSHA256) || (paths.Phase != "failure-teardown" && paths.Phase != "pre-success-teardown")) {
+		return errors.New("failure diagnostic artifact lacks lifecycle bindings")
+	}
+	return nil
+}
+
+func writeComposeDiagnostics(executor commandExecutor, environment []string, dockerBinary string, compose []string, paths diagnosticsPaths) error {
+	if err := paths.validate(); err != nil {
+		return err
+	}
+	if paths.Artifact != "" && paths.Phase == "" {
+		return errors.New("failure diagnostic artifact lacks lifecycle phase")
+	}
+	if paths.Artifact == "" {
+		return nil
+	}
+	dir := filepath.Dir(paths.Artifact)
+	info, err := os.Lstat(dir)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("diagnostic directory must be real")
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		item, err := os.Lstat(filepath.Join(dir, entry.Name()))
+		if err != nil {
+			return err
+		}
+		stat, ok := item.Sys().(*syscall.Stat_t)
+		if !item.Mode().IsRegular() || item.Mode()&os.ModeSymlink != 0 || !ok || stat.Nlink != 1 {
+			return fmt.Errorf("unsafe diagnostic directory entry %s", entry.Name())
+		}
+	}
+	if _, err := os.Lstat(paths.Artifact); !errors.Is(err, os.ErrNotExist) {
+		return errors.New("diagnostic artifact must be fresh")
+	}
+	type row struct {
+		Service        string   `json:"service"`
+		State          string   `json:"state"`
+		Health         string   `json:"health"`
+		OOM            string   `json:"oom"`
+		OOMSource      string   `json:"oom_source"`
+		LogSHA256      string   `json:"log_sha256,omitempty"`
+		LogContent     string   `json:"log_content"`
+		ErrorClass     string   `json:"error_class"`
+		FailureClass   string   `json:"failure_class"`
+		PanicDetected  bool     `json:"panic_detected"`
+		StackFrames    []string `json:"stack_frames,omitempty"`
+		ExitCode       int      `json:"exit_code"`
+		LogBytes       int      `json:"log_bytes"`
+		ListenerBind   string   `json:"listener_bind"`
+		BootstrapError string   `json:"bootstrap_error,omitempty"`
+	}
+	result := struct {
+		Schema             string                        `json:"schema"`
+		RunID              string                        `json:"run_id"`
+		SourceLockSHA256   string                        `json:"source_lock_sha256"`
+		RuntimeLockSHA256  string                        `json:"runtime_lock_sha256"`
+		CapturedAt         string                        `json:"captured_at"`
+		Phase              string                        `json:"phase"`
+		Nonce              string                        `json:"nonce"`
+		Capture            string                        `json:"capture"`
+		StatusCapture      string                        `json:"status_capture"`
+		StatusFormat       string                        `json:"status_format"`
+		StatusParser       string                        `json:"status_parser_version"`
+		ComposeVersion     string                        `json:"compose_version"`
+		ComposeVersionHash string                        `json:"compose_version_sha256"`
+		StatusStdoutBytes  int                           `json:"status_stdout_bytes"`
+		StatusStdoutHash   string                        `json:"status_stdout_sha256"`
+		StatusStderrBytes  int                           `json:"status_stderr_bytes"`
+		StatusStderrHash   string                        `json:"status_stderr_sha256"`
+		StatusRecordCount  int                           `json:"status_record_count"`
+		StatusRowCount     int                           `json:"status_row_count"`
+		MissingStatusRows  int                           `json:"missing_status_rows"`
+		LogCaptureLimit    int                           `json:"log_capture_limit_bytes"`
+		IngressState       string                        `json:"codex_ingress_state"`
+		HeaderRecords      []codexHeaderRecord           `json:"codex_header_records,omitempty"`
+		ParseErrors        []codexParseErrorRecord       `json:"codex_parse_errors,omitempty"`
+		IngressArrivals    []codexIngressArrivalRecord   `json:"codex_ingress_arrivals,omitempty"`
+		IngressAccepted    []codexIngressRecord          `json:"codex_ingress_accepted,omitempty"`
+		IngressRejections  []codexIngressRejectionRecord `json:"codex_ingress_rejections,omitempty"`
+		Services           []row                         `json:"services"`
+	}{Schema: "sealed-lab-failure-diagnostics/v1", RunID: paths.RunID, SourceLockSHA256: paths.SourceLockSHA256, RuntimeLockSHA256: paths.RuntimeLockSHA256, CapturedAt: time.Now().UTC().Format(time.RFC3339Nano), Phase: paths.Phase, Capture: "metadata-only", StatusCapture: "ok", StatusParser: "sealed-compose-ps-parser/v1", LogCaptureLimit: 256 << 10}
+	nonce := make([]byte, 16)
+	if _, err := rand.Read(nonce); err != nil {
+		return err
+	}
+	result.Nonce = hex.EncodeToString(nonce)
+	versionCtx, versionStop := context.WithTimeout(context.Background(), 5*time.Second)
+	versionCapture := &diagnosticCapture{limit: 128}
+	if specialized, ok := executor.(diagnosticExecutor); ok {
+		if err := specialized.RunDiagnostic(versionCtx, environment, versionCapture, io.Discard, dockerBinary, "compose", "version", "--short"); err == nil && !versionCapture.truncated {
+			value := strings.TrimSpace(versionCapture.data.String())
+			if regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+$`).MatchString(value) {
+				result.ComposeVersion = value
+			}
+			sum := sha256.Sum256(versionCapture.data.Bytes())
+			result.ComposeVersionHash = hex.EncodeToString(sum[:])
+		}
+	}
+	versionStop()
+	services := []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "controlled-dns", "egress-sentinel", "codex-runner"}
+	knownServices := map[string]bool{}
+	for _, service := range []string{"postgres", "config-seed", "mantle-contract-service", "bifrost-1", "bifrost-2", "bifrost-3", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "netns-codex", "netns-claude", "health-stub", "contract-stub", "controlled-dns", "egress-sentinel", "codex-runner", "claude-runner", "network-probe"} {
+		knownServices[service] = true
+	}
+	diagnosticServices := map[string]bool{}
+	for _, service := range services {
+		diagnosticServices[service] = true
+	}
+	aggregate, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	bifrostLogCaptureIncomplete := false
+	status := map[string]composePSRow{}
+	psCtx, psStop := context.WithTimeout(aggregate, 5*time.Second)
+	defer psStop()
+	psCapture := &diagnosticCapture{limit: 256 << 10}
+	psStderr := &diagnosticCapture{limit: 64 << 10}
+	psArgs := append(compose, "ps", "--all", "--format", "json")
+	var psErr error
+	if specialized, ok := executor.(diagnosticExecutor); ok {
+		psErr = specialized.RunDiagnostic(psCtx, environment, psCapture, psStderr, dockerBinary, psArgs...)
+	} else {
+		return errors.New("diagnostic executor lacks context support")
+	}
+	psStop()
+	result.StatusStdoutBytes = psCapture.data.Len()
+	result.StatusStderrBytes = psStderr.data.Len()
+	stdoutSum, stderrSum := sha256.Sum256(psCapture.data.Bytes()), sha256.Sum256(psStderr.data.Bytes())
+	result.StatusStdoutHash, result.StatusStderrHash = hex.EncodeToString(stdoutSum[:]), hex.EncodeToString(stderrSum[:])
+	if psCapture.truncated || psStderr.truncated {
+		result.StatusCapture = "oversize"
+	} else if errors.Is(psErr, context.DeadlineExceeded) {
+		result.StatusCapture = "timeout"
+	} else if psErr != nil {
+		result.StatusCapture = "command-error"
+	} else {
+		rows, format, decodeErr := decodeComposePS(psCapture.data.Bytes())
+		if decodeErr == nil {
+			result.StatusFormat = format
+			result.StatusRecordCount = len(rows)
+			malformed := false
+			seen := map[string]bool{}
+			for _, item := range rows {
+				if !knownServices[item.Service] || seen[item.Service] {
+					malformed = true
+					continue
+				}
+				seen[item.Service] = true
+				if !regexp.MustCompile(`^[a-f0-9]{12,64}$`).MatchString(item.ID) || !regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.State) {
+					malformed = true
+				}
+				if diagnosticServices[item.Service] {
+					status[item.Service] = item
+				}
+			}
+			if malformed {
+				result.StatusCapture = "malformed"
+			}
+		} else {
+			result.StatusCapture = "malformed"
+		}
+	}
+	result.StatusRowCount = len(status)
+	for _, service := range services {
+		ctx, stop := context.WithTimeout(aggregate, 5*time.Second)
+		capture := &diagnosticTailCapture{limit: result.LogCaptureLimit}
+		args := append(compose, "logs", "--no-color", "--no-log-prefix", service)
+		var commandErr error
+		if specialized, ok := executor.(diagnosticExecutor); ok {
+			commandErr = specialized.RunDiagnostic(ctx, environment, capture, capture, dockerBinary, args...)
+		} else {
+			stop()
+			return errors.New("diagnostic executor lacks context support")
+		}
+		stop()
+		state, health, oom, oomSource, errorClass, failureClass, exitCode := "unknown", "unknown", "unsupported", "unsupported", "none", "none", -1
+		if item, ok := status[service]; ok {
+			if regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.State) {
+				state = item.State
+			}
+			if regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`).MatchString(item.Health) {
+				health = item.Health
+			}
+			exitCode = item.ExitCode
+			if regexp.MustCompile(`^[a-f0-9]{12,64}$`).MatchString(item.ID) {
+				oomSource = "docker-inspect"
+				inspectCtx, inspectStop := context.WithTimeout(aggregate, 5*time.Second)
+				inspectCapture := &diagnosticCapture{limit: 32}
+				inspectErr := executor.(diagnosticExecutor).RunDiagnostic(inspectCtx, environment, inspectCapture, inspectCapture, dockerBinary, "inspect", "--format", "{{json .State.OOMKilled}}", item.ID)
+				inspectStop()
+				if inspectErr == nil {
+					switch strings.TrimSpace(inspectCapture.data.String()) {
+					case "true":
+						oom = "true"
+					case "false":
+						oom = "false"
+					}
+				}
+			}
+		}
+		logData, logTruncated := capture.snapshot()
+		failed := serviceStatusFailed(state, health, exitCode)
+		failureClass = classifySanitizedFailure(logData, failed)
+		panicDetected, stackFrames := sanitizedPanicFingerprint(logData, 16)
+		if _, ok := status[service]; !ok {
+			failureClass = "missing-status-row"
+			result.MissingStatusRows++
+		}
+		if commandErr != nil {
+			state = "diagnostic-error"
+			errorClass = "command-error"
+			if errors.Is(commandErr, context.DeadlineExceeded) {
+				errorClass = "timeout"
+			}
+		}
+		digest := ""
+		if !logTruncated {
+			sum := sha256.Sum256(logData)
+			digest = hex.EncodeToString(sum[:])
+		}
+		if logTruncated {
+			errorClass = "oversize"
+		}
+		if strings.HasPrefix(service, "bifrost-") && (logTruncated || commandErr != nil) {
+			bifrostLogCaptureIncomplete = true
+		}
+		if strings.HasPrefix(service, "bifrost-") {
+			if len(result.HeaderRecords) < 4 {
+				remaining := 4 - len(result.HeaderRecords)
+				result.HeaderRecords = append(result.HeaderRecords, parseCodexHeaderRecords(logData, paths.RunID, remaining)...)
+			}
+			if len(result.ParseErrors) < 4 {
+				remaining := 4 - len(result.ParseErrors)
+				result.ParseErrors = append(result.ParseErrors, parseCodexParseErrors(logData, paths.RunID, remaining)...)
+			}
+			if len(result.IngressArrivals) < 4 {
+				remaining := 4 - len(result.IngressArrivals)
+				result.IngressArrivals = append(result.IngressArrivals, parseCodexIngressArrivals(logData, paths.RunID, remaining)...)
+			}
+			if len(result.IngressAccepted) < 4 {
+				remaining := 4 - len(result.IngressAccepted)
+				result.IngressAccepted = append(result.IngressAccepted, parseCodexIngressAccepted(logData, paths.RunID, remaining)...)
+			}
+			if len(result.IngressRejections) < 4 {
+				remaining := 4 - len(result.IngressRejections)
+				result.IngressRejections = append(result.IngressRejections, parseCodexIngressRejections(logData, paths.RunID, remaining)...)
+			}
+		}
+		listenerBind := listenerBindEvidence(service, logData)
+		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only", ListenerBind: listenerBind, BootstrapError: sanitizedBootstrapError(logData)})
+	}
+	result.IngressState = classifyCodexIngressEvidence(result.HeaderRecords, result.ParseErrors, result.IngressArrivals, result.IngressAccepted, result.IngressRejections, bifrostLogCaptureIncomplete)
+	encoded, err := json.Marshal(result)
+	if err != nil || len(encoded) > 1<<20 {
+		return errors.New("structured diagnostics exceed bound")
+	}
+	temp, err := os.CreateTemp(dir, ".failure-diagnostics-*")
+	if err != nil {
+		return err
+	}
+	tempName := temp.Name()
+	defer os.Remove(tempName)
+	if err := temp.Chmod(0o600); err != nil {
+		temp.Close()
+		return err
+	}
+	if _, err := temp.Write(append(encoded, '\n')); err != nil {
+		temp.Close()
+		return err
+	}
+	if err := temp.Sync(); err != nil {
+		temp.Close()
+		return err
+	}
+	if err := temp.Close(); err != nil {
+		return err
+	}
+	if err := os.Link(tempName, paths.Artifact); err != nil {
+		return fmt.Errorf("publish fresh diagnostics: %w", err)
+	}
+	return nil
+}
+
+func listenerBindEvidence(service string, logData []byte) string {
+	if !strings.HasPrefix(service, "bifrost-") {
+		return "not-applicable"
+	}
+	allIPv4 := bytes.Contains(logData, []byte("successfully started bifrost, serving UI on http://0.0.0.0:8080"))
+	loopback := bytes.Contains(logData, []byte("successfully started bifrost, serving UI on http://localhost:8080")) || bytes.Contains(logData, []byte("successfully started bifrost, serving UI on http://127.0.0.1:8080"))
+	switch {
+	case allIPv4 && loopback:
+		return "conflicting"
+	case allIPv4:
+		return "all-ipv4"
+	case loopback:
+		return "loopback"
+	default:
+		return "other-or-unobserved"
+	}
+}
+
+func classifyCodexIngressEvidence(headers []codexHeaderRecord, parseErrors []codexParseErrorRecord, arrivals []codexIngressArrivalRecord, accepted []codexIngressRecord, rejected []codexIngressRejectionRecord, logCaptureIncomplete bool) string {
+	if len(accepted) > 0 {
+		return "accepted"
+	}
+	if len(rejected) > 0 {
+		return "predicate-rejected"
+	}
+	for _, arrival := range arrivals {
+		if !arrival.MethodPost || !arrival.PathExact || !arrival.QueryEmpty {
+			return "route-mismatch"
+		}
+	}
+	for _, parseError := range parseErrors {
+		if parseError.MethodPost && parseError.TargetExact {
+			return "fasthttp-parse-error-" + parseError.Class
+		}
+	}
+	if logCaptureIncomplete {
+		return "evidence-incomplete-log-capture"
+	}
+	for _, header := range headers {
+		if header.MethodPost && header.TargetExact {
+			return "header-received-body-or-handler-gap"
+		}
+	}
+	if len(arrivals) > 0 {
+		return "canonical-arrival-unclassified"
+	}
+	return "no-correlated-server-arrival"
+}
+
+func parseCodexHeaderRecords(data []byte, runID string, limit int) []codexHeaderRecord {
+	result := make([]codexHeaderRecord, 0, limit)
+	allowed := map[string]bool{"schema": true, "run_id": true, "method_post": true, "target_exact": true, "content_type_json": true, "content_encoding_none": true, "content_length_bounded": true, "lite_header_ok": true}
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(line, &fields) != nil || len(fields) != len(allowed) {
+			continue
+		}
+		valid := true
+		for key := range fields {
+			valid = valid && allowed[key]
+		}
+		var record codexHeaderRecord
+		if valid && json.Unmarshal(line, &record) == nil && record.Schema == "sealed-codex-bifrost-header/v1" && record.RunID == runID {
+			result = append(result, record)
+		}
+	}
+	return result
+}
+
+func parseCodexParseErrors(data []byte, runID string, limit int) []codexParseErrorRecord {
+	classes := map[string]bool{"header_too_large": true, "body_too_large": true, "timeout": true, "unexpected_eof": true, "eof": true, "other": true}
+	result := make([]codexParseErrorRecord, 0, limit)
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(line, &fields) != nil || len(fields) != 5 || fields["schema"] == nil || fields["run_id"] == nil || fields["class"] == nil || fields["method_post"] == nil || fields["target_exact"] == nil {
+			continue
+		}
+		var record codexParseErrorRecord
+		if json.Unmarshal(line, &record) == nil && record.Schema == "sealed-codex-bifrost-parse-error/v1" && record.RunID == runID && classes[record.Class] {
+			result = append(result, record)
+		}
+	}
+	return result
+}
+
+var stackFramePattern = regexp.MustCompile(`^(?:/src/|github\.com/maximhq/bifrost/)([A-Za-z0-9_./-]{1,240}\.go):([0-9]{1,7})(?:\s|$)`)
+
+var diagnosticStackFiles = map[string]bool{
+	"transports/bifrost-http/handlers/inference.go":  true,
+	"transports/bifrost-http/integrations/openai.go": true,
+	"transports/bifrost-http/integrations/router.go": true,
+	"transports/bifrost-http/integrations/utils.go":  true,
+	"transports/bifrost-http/lib/lib.go":             true,
+	"transports/bifrost-http/lib/middleware.go":      true,
+	"core/bifrost.go":                    true,
+	"core/providers/openai/openai.go":    true,
+	"core/providers/openai/responses.go": true,
+	"core/providers/openai/utils.go":     true,
+	"core/providers/utils/stream.go":     true,
+	"core/providers/utils/utils.go":      true,
+}
+
+func sanitizedPanicFingerprint(data []byte, limit int) (bool, []string) {
+	detected := false
+	lines := bytes.Split(data, []byte{'\n'})
+	for _, line := range lines {
+		trimmed := bytes.TrimSpace(line)
+		if bytes.HasPrefix(trimmed, []byte("panic:")) || bytes.HasPrefix(trimmed, []byte("http: panic serving ")) || bytes.HasPrefix(trimmed, []byte("recovered from panic:")) {
+			detected = true
+			break
+		}
+	}
+	if !detected || limit <= 0 {
+		return detected, nil
+	}
+	frames := make([]string, 0, limit)
+	seen := map[string]bool{}
+	for _, line := range lines {
+		if len(line) == 0 || line[0] != '\t' {
+			continue
+		}
+		match := stackFramePattern.FindSubmatch(bytes.TrimSpace(line))
+		if match == nil {
+			continue
+		}
+		path := string(match[1])
+		if !diagnosticStackFiles[path] {
+			continue
+		}
+		frame := path + ":" + string(match[2])
+		if seen[frame] {
+			continue
+		}
+		seen[frame] = true
+		frames = append(frames, frame)
+		if len(frames) == limit {
+			break
+		}
+	}
+	return detected, frames
+}
+
+func parseCodexIngressRejections(data []byte, runID string, limit int) []codexIngressRejectionRecord {
+	allowedReasons := map[string]bool{"invalid_run_id": true, "body_out_of_bounds": true, "invalid_or_duplicate_json": true, "json_shape_decode_failed": true, "input_run_id_cardinality": true, "lite_predicate_mismatch": true}
+	result := make([]codexIngressRejectionRecord, 0, limit)
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var record codexIngressRejectionRecord
+		if json.Unmarshal(line, &record) != nil || record.Schema != "sealed-codex-bifrost-ingress-rejected/v1" || record.RunID != runID || !allowedReasons[record.Reason] || record.InputRunIDCount < 0 || record.InputRunIDCount > 2 || len(record.ToolTypes) > 128 || len(record.InvalidToolIndices) > 16 {
+			continue
+		}
+		validMetadata := true
+		for _, toolType := range record.ToolTypes {
+			if !diagnosticToolTypes[toolType] {
+				validMetadata = false
+			}
+		}
+		for _, index := range record.InvalidToolIndices {
+			if index < 0 || index >= 128 {
+				validMetadata = false
+			}
+		}
+		if !validMetadata {
+			continue
+		}
+		result = append(result, record)
+	}
+	return result
+}
+
+func parseCodexIngressAccepted(data []byte, runID string, limit int) []codexIngressRecord {
+	result := make([]codexIngressRecord, 0, limit)
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var record codexIngressRecord
+		if json.Unmarshal(line, &record) != nil ||
+			record.Schema != "sealed-codex-bifrost-ingress/v1" ||
+			record.RunID != runID || record.InputRunID != runID ||
+			record.Method != "POST" || record.Path != "/openai/v1/responses" ||
+			record.Model != "bedrock_mantle/gpt-5.5" || !record.Stream ||
+			record.LiteHeaderCount != 1 || record.LiteHeaderValue != "true" ||
+			record.WebsocketUpgrade || record.TopLevelInstructions || record.TopLevelTools || record.ParallelToolCalls ||
+			record.FirstInputType != "additional_tools" || record.FirstInputRole != "developer" ||
+			record.FirstInputToolCount <= 0 || record.FirstInputToolCount > 128 ||
+			record.BodyBytes <= 0 || record.BodyBytes > 1<<20 || !sha256Value.MatchString(record.BodySHA256) {
+			continue
+		}
+		result = append(result, record)
+	}
+	return result
+}
+
+func parseCodexIngressArrivals(data []byte, runID string, limit int) []codexIngressArrivalRecord {
+	result := make([]codexIngressArrivalRecord, 0, limit)
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		if len(result) == limit {
+			break
+		}
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(line, &fields) != nil || len(fields) != 5 {
+			continue
+		}
+		validKeys := true
+		for _, key := range []string{"schema", "run_id", "method_post", "path_exact", "query_empty"} {
+			if _, ok := fields[key]; !ok {
+				validKeys = false
+			}
+		}
+		if !validKeys {
+			continue
+		}
+		var record codexIngressArrivalRecord
+		if json.Unmarshal(line, &record) == nil && record.Schema == "sealed-codex-bifrost-arrival/v1" && record.RunID == runID {
+			result = append(result, record)
+		}
+	}
+	return result
+}
+
+func decodeComposePS(data []byte) ([]composePSRow, string, error) {
+	if len(data) == 0 || len(data) > 256<<10 {
+		return nil, "", errors.New("invalid Compose ps JSON")
+	}
+	var array []json.RawMessage
+	if json.Unmarshal(data, &array) == nil && len(array) > 0 {
+		rows, err := validateComposePSRows(array)
+		return rows, "legacy-json-array", err
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	rawRows := []json.RawMessage{}
+	for {
+		var item json.RawMessage
+		if err := decoder.Decode(&item); errors.Is(err, io.EOF) {
+			break
+		} else if err != nil {
+			return nil, "", err
+		}
+		rawRows = append(rawRows, item)
+	}
+	if len(rawRows) == 0 {
+		return nil, "", errors.New("empty Compose ps status")
+	}
+	rows, err := validateComposePSRows(rawRows)
+	return rows, "jsonl", err
+}
+
+func validateComposePSRows(rawRows []json.RawMessage) ([]composePSRow, error) {
+	if len(rawRows) == 0 || len(rawRows) > 32 {
+		return nil, errors.New("invalid Compose ps row count")
+	}
+	allowed := map[string]bool{"ID": true, "Service": true, "State": true, "Health": true, "ExitCode": true, "Command": true, "CreatedAt": true, "Image": true, "Labels": true, "LocalVolumes": true, "Mounts": true, "Name": true, "Names": true, "Networks": true, "Ports": true, "Project": true, "Publishers": true, "RunningFor": true, "Size": true, "Status": true}
+	rows := make([]composePSRow, 0, len(rawRows))
+	for _, raw := range rawRows {
+		if rejectAnyDuplicateJSONKeys(raw) != nil {
+			return nil, errors.New("duplicate Compose ps field")
+		}
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(raw, &fields) != nil {
+			return nil, errors.New("malformed Compose ps row")
+		}
+		for key := range fields {
+			if !allowed[key] {
+				return nil, fmt.Errorf("unknown Compose ps field %q", key)
+			}
+		}
+		for _, key := range []string{"ID", "Service", "State", "ExitCode"} {
+			if _, ok := fields[key]; !ok {
+				return nil, fmt.Errorf("missing Compose ps field %q", key)
+			}
+		}
+		var row composePSRow
+		if json.Unmarshal(raw, &row) != nil || row.ID == "" || row.Service == "" || row.State == "" || row.ExitCode < 0 || row.ExitCode > 255 {
+			return nil, errors.New("invalid Compose ps field semantics")
+		}
+		rows = append(rows, row)
+	}
+	return rows, nil
+}
+
+func rejectAnyDuplicateJSONKeys(data []byte) error {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	var walk func() error
+	walk = func() error {
+		token, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		delim, ok := token.(json.Delim)
+		if !ok {
+			return nil
+		}
+		if delim == '{' {
+			seen := map[string]bool{}
+			for decoder.More() {
+				keyToken, err := decoder.Token()
+				if err != nil {
+					return err
+				}
+				key, ok := keyToken.(string)
+				if !ok || seen[key] {
+					return errors.New("duplicate or invalid JSON key")
+				}
+				seen[key] = true
+				if err := walk(); err != nil {
+					return err
+				}
+			}
+			_, err = decoder.Token()
+			return err
+		}
+		if delim == '[' {
+			for decoder.More() {
+				if err := walk(); err != nil {
+					return err
+				}
+			}
+			_, err = decoder.Token()
+			return err
+		}
+		return errors.New("unexpected JSON delimiter")
+	}
+	if err := walk(); err != nil {
+		return err
+	}
+	if _, err := decoder.Token(); err != io.EOF {
+		return errors.New("JSON contains trailing content")
+	}
+	return nil
+}
+
+func classifySanitizedFailure(data []byte, failed bool) string {
+	s := strings.ToLower(string(data))
+	patterns := []struct {
+		class string
+		terms []string
+	}{
+		{"config-parse", []string{"invalid config", "config parse", "decode config", "unmarshal config"}},
+		{"sqlite-cgo-disabled", []string{"sqlite", "cgo_enabled=0", "cgo disabled", "requires cgo"}},
+		{"postgres-auth", []string{"password authentication failed", "authentication failed for user", "sqlstate 28p01"}},
+		{"postgres-connect", []string{"connection refused", "could not connect to postgres", "dial tcp", "sqlstate 08001"}},
+		{"postgres-schema", []string{"sqlstate 42703", "sqlstate 42p01", "undefined_column", "undefined_table", "column does not exist", "relation does not exist", "no such column"}},
+		{"postgres-permission", []string{"sqlstate 42501", "insufficient_privilege", "permission denied for"}},
+		{"postgres-constraint", []string{"sqlstate 23502", "sqlstate 23503", "sqlstate 23505", "not_null_violation", "foreign_key_violation", "unique_violation"}},
+		{"postgres-migration", []string{"migration failed", "migrate database", "schema version"}},
+		{"app-dir-permission", []string{"app_dir is not writable", "could not create app_dir", "permission denied"}},
+		{"config-store-bootstrap", []string{"failed to initialize config store", "config store initialization", "bootstrap config store"}},
+	}
+	for _, pattern := range patterns {
+		for _, term := range pattern.terms {
+			if strings.Contains(s, term) {
+				return pattern.class
+			}
+		}
+	}
+	if failed && strings.TrimSpace(s) != "" {
+		return "generic-startup"
+	}
+	return "none"
+}
+
+func sanitizedBootstrapError(data []byte) string {
+	var line string
+	for _, candidate := range strings.Split(string(data), "\n") {
+		if strings.Contains(strings.ToLower(candidate), "failed to bootstrap server") {
+			line = strings.TrimSpace(candidate)
+		}
+	}
+	if line == "" {
+		return ""
+	}
+	for _, secret := range []string{"sealed-lab-only", "synthetic-mantle-contract"} {
+		line = strings.ReplaceAll(line, secret, "[redacted]")
+	}
+	line = regexp.MustCompile(`(?i)([a-z][a-z0-9+.-]*://)[^/@[:space:]]+@`).ReplaceAllString(line, `${1}[redacted]@`)
+	line = regexp.MustCompile(`(?i)(password|api[_-]?key|authorization)([":=[:space:]]+)[^,}[:space:]]+`).ReplaceAllString(line, `${1}${2}[redacted]`)
+	line = regexp.MustCompile(`[A-Za-z0-9_+/=-]{32,}`).ReplaceAllString(line, `[redacted]`)
+	if len(line) > 512 {
+		line = line[:512]
+	}
+	return line
+}
+
+func serviceStatusFailed(state, health string, exitCode int) bool {
+	return exitCode > 0 || state == "dead" || state == "restarting" || health == "unhealthy"
+}
+
+type seedRecord struct {
+	Schema   string `json:"schema"`
+	Revision string `json:"revision"`
+	Provider string `json:"provider"`
+	Alias    string `json:"alias"`
+	Model    string `json:"model"`
+	TLS      string `json:"tls"`
+}
+
+func parseSeedRecord(data []byte) (seedRecord, error) {
+	var record seedRecord
+	if len(data) == 0 || len(data) > 4096 {
+		return record, errors.New("config seed output exceeds exact record bound")
+	}
+	for _, key := range []string{"schema", "revision", "provider", "alias", "model", "tls"} {
+		if bytes.Count(data, []byte(`"`+key+`"`)) != 1 {
+			return record, errors.New("config seed record has missing or duplicate fields")
+		}
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&record); err != nil {
+		return record, fmt.Errorf("decode config seed record: %w", err)
+	}
+	var extra any
+	if err := decoder.Decode(&extra); !errors.Is(err, io.EOF) {
+		return record, errors.New("config seed output must contain exactly one JSON record")
+	}
+	if record != (seedRecord{Schema: "sealed-lab-config-seed/v1", Revision: "sealed-lab-c9-gpt55-v1", Provider: "bedrock_mantle", Alias: "gpt-5.5", Model: "openai.gpt-5.5", TLS: "private-ca-verified"}) {
+		return record, errors.New("config seed record contract mismatch")
+	}
+	return record, nil
+}
+
 func (osExecutor) Run(env []string, stdout, stderr io.Writer, name string, args ...string) error {
 	command := exec.Command(name, args...)
+	command.Env = env
+	command.Stdout = stdout
+	command.Stderr = stderr
+	return command.Run()
+}
+func (osExecutor) RunDiagnostic(ctx context.Context, env []string, stdout, stderr io.Writer, name string, args ...string) error {
+	command := exec.CommandContext(ctx, name, args...)
 	command.Env = env
 	command.Stdout = stdout
 	command.Stderr = stderr
@@ -55,19 +930,42 @@ type cellResult struct {
 }
 
 type lifecycleResult struct {
-	Schema                         string      `json:"schema"`
-	RunID                          string      `json:"run_id"`
-	NativePlatform                 string      `json:"native_platform"`
-	StartedAt                      string      `json:"started_at"`
-	CompletedAt                    string      `json:"completed_at"`
-	SourceLockSHA256               string      `json:"source_lock_sha256"`
-	RuntimeLockSHA256              string      `json:"runtime_lock_sha256"`
-	Clients                        []string    `json:"clients"`
-	NormalCellForbiddenEvents      int         `json:"normal_cell_forbidden_events"`
-	AdversarialProbeRecordedEvents int         `json:"adversarial_probe_recorded_events"`
-	PaidInferenceProof             string      `json:"paid_inference_proof"`
-	TeardownClean                  bool        `json:"teardown_clean"`
-	CodexInferenceBoundary         *cellResult `json:"codex_inference_boundary,omitempty"`
+	Schema                         string              `json:"schema"`
+	RunID                          string              `json:"run_id"`
+	NativePlatform                 string              `json:"native_platform"`
+	StartedAt                      string              `json:"started_at"`
+	CompletedAt                    string              `json:"completed_at"`
+	SourceLockSHA256               string              `json:"source_lock_sha256"`
+	RuntimeLockSHA256              string              `json:"runtime_lock_sha256"`
+	SeedConfigRevision             string              `json:"seed_config_revision"`
+	Clients                        []string            `json:"clients"`
+	NormalCellForbiddenEvents      int                 `json:"normal_cell_forbidden_events"`
+	AdversarialProbeRecordedEvents int                 `json:"adversarial_probe_recorded_events"`
+	PaidInferenceProof             string              `json:"paid_inference_proof"`
+	TeardownClean                  bool                `json:"teardown_clean"`
+	CodexInferenceBoundary         *cellResult         `json:"codex_inference_boundary,omitempty"`
+	CodexBifrostIngress            *codexIngressRecord `json:"codex_bifrost_ingress,omitempty"`
+}
+
+type codexIngressRecord struct {
+	Schema               string `json:"schema"`
+	RunID                string `json:"run_id"`
+	InputRunID           string `json:"input_run_id"`
+	Method               string `json:"method"`
+	Path                 string `json:"path"`
+	Model                string `json:"model"`
+	Stream               bool   `json:"stream"`
+	LiteHeaderCount      int    `json:"lite_header_count"`
+	LiteHeaderValue      string `json:"lite_header_value"`
+	WebsocketUpgrade     bool   `json:"websocket_upgrade"`
+	TopLevelInstructions bool   `json:"top_level_instructions"`
+	TopLevelTools        bool   `json:"top_level_tools"`
+	ParallelToolCalls    bool   `json:"parallel_tool_calls"`
+	FirstInputType       string `json:"first_input_type"`
+	FirstInputRole       string `json:"first_input_role"`
+	FirstInputToolCount  int    `json:"first_input_tool_count"`
+	BodyBytes            int    `json:"body_bytes"`
+	BodySHA256           string `json:"body_sha256"`
 }
 
 type networkProbeResult struct {
@@ -83,6 +981,7 @@ type networkProbeResult struct {
 
 func main() {
 	var lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath string
+	var diagnostics diagnosticsPaths
 	var recorderEvidence recorderEvidencePaths
 	flag.StringVar(&lockPath, "runtime-lock", "", "path to sealed-lab-runtime-lock/v1 or v2")
 	flag.StringVar(&sourceLockPath, "source-lock", "", "path to committed sealed-lab-image-lock/v1")
@@ -93,17 +992,21 @@ func main() {
 	flag.StringVar(&recorderEvidence.Transcript, "recorder-transcript", "", "absolute path to recorder control JSONL")
 	flag.StringVar(&recorderEvidence.PCAPNG, "recorder-pcapng", "", "absolute path to recorder PCAPNG evidence")
 	flag.StringVar(&recorderEvidence.Ledger, "recorder-ledger", "", "absolute path to recorder canonical JSONL ledger")
+	flag.StringVar(&diagnostics.Artifact, "failure-diagnostics-artifact", "", "absolute fresh file for structured pre-teardown diagnostics")
 	flag.Parse()
-	if err := run(osExecutor{}, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath, recorderEvidence, os.Stdout, os.Stderr); err != nil {
+	if err := run(osExecutor{}, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath, recorderEvidence, diagnostics, os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintln(os.Stderr, "lab-runner:", err)
 		os.Exit(1)
 	}
 }
 
-func run(executor commandExecutor, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath string, recorderEvidence recorderEvidencePaths, stdout, stderr io.Writer) error {
+func run(executor commandExecutor, lockPath, sourceLockPath, composePath, dockerBinary, recorderPolicyPath string, recorderEvidence recorderEvidencePaths, diagnostics diagnosticsPaths, stdout, stderr io.Writer) error {
 	startedAt := time.Now().UTC()
 	if lockPath == "" || !filepath.IsAbs(lockPath) || !filepath.IsAbs(sourceLockPath) || !filepath.IsAbs(composePath) || !filepath.IsAbs(dockerBinary) {
 		return errors.New("runtime lock, source lock, Compose file, and Docker binary must be absolute paths")
+	}
+	if err := diagnostics.validate(); err != nil {
+		return err
 	}
 	lockData, err := os.ReadFile(lockPath)
 	if err != nil {
@@ -133,6 +1036,12 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if contract.SHA256Hex(sourceData) != lock.SourceLockSHA256 {
 		return errors.New("runtime lock does not bind the committed source lock")
 	}
+	if diagnostics.Artifact != "" {
+		diagnostics.RunID = lock.RunID
+		diagnostics.SourceLockSHA256 = contract.SHA256Hex(sourceData)
+		diagnostics.RuntimeLockSHA256 = contract.SHA256Hex(lockData)
+		diagnostics.Phase = "failure-teardown"
+	}
 	if err := validatePinnedClientVersions(*lock, *sourceLock); err != nil {
 		return err
 	}
@@ -159,7 +1068,7 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		if err := executor.Run(environment, &raw, stderr, dockerBinary, "buildx", "imagetools", "inspect", "--raw", image.Reference); err != nil {
 			return fmt.Errorf("inspect runtime image %s: %w", image.ID, err)
 		}
-		if err := validateOCIIndex(raw.Bytes()); err != nil {
+		if err := validateOCIIndexForImage(raw.Bytes(), image); err != nil {
 			return fmt.Errorf("runtime image %s: %w", image.ID, err)
 		}
 	}
@@ -178,13 +1087,25 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 		return fmt.Errorf("resolved Compose contract: %w", err)
 	}
 	coreServices := []string{
-		"postgres", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "bifrost-1", "bifrost-2", "bifrost-3",
+		"postgres", "config-seed", "mantle-contract-service", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "bifrost-1", "bifrost-2", "bifrost-3",
 		"health-stub", "contract-stub", "controlled-dns", "egress-sentinel", "netns-codex", "netns-claude",
 	}
 	teardownClean := false
 	tornDown := false
+	diagnosticsCaptured := false
+	var diagnosticsErr error
+	captureDiagnostics := func() {
+		if diagnosticsCaptured {
+			return
+		}
+		diagnosticsCaptured = true
+		if diagnosticsErr = writeComposeDiagnostics(executor, environment, dockerBinary, compose, diagnostics); diagnosticsErr != nil {
+			fmt.Fprintln(stderr, "lab-runner diagnostics:", diagnosticsErr)
+		}
+	}
 	defer func() {
 		if !tornDown {
+			captureDiagnostics()
 			_ = executor.Run(environment, io.Discard, stderr, dockerBinary, append(compose, "down", "--volumes", "--remove-orphans", "--timeout", "10")...)
 		}
 	}()
@@ -192,6 +1113,22 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	upArgs = append(upArgs, coreServices...)
 	if err := executor.Run(environment, io.Discard, stderr, dockerBinary, upArgs...); err != nil {
 		return fmt.Errorf("start sealed lab: %w", err)
+	}
+	var seedLogs bytes.Buffer
+	if err := executor.Run(environment, &seedLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "config-seed")...); err != nil {
+		return errors.New("config seed revision was not observed from completed seed service")
+	}
+	seedEvidence, err := parseSeedRecord(seedLogs.Bytes())
+	if err != nil {
+		return err
+	}
+	var preflightOutput bytes.Buffer
+	preflightArgs := append(append([]string{}, compose...), "run", "--rm", "--no-deps", "-e", "LAB_NETWORK_PROBE_MODE=preflight", "network-probe")
+	if err := executor.Run(environment, &preflightOutput, stderr, dockerBinary, preflightArgs...); err != nil {
+		return fmt.Errorf("run Codex-namespace Bifrost preflight: %w", err)
+	}
+	if err := validateClientPreflight(preflightOutput.Bytes()); err != nil {
+		return err
 	}
 	clients := []string{"claude", "codex"}
 	cellPlatforms := make([]string, 0, len(clients))
@@ -211,6 +1148,24 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 			copy := cellEvidence
 			codexBoundary = &copy
 		}
+	}
+	var mantleLogs bytes.Buffer
+	if err := executor.Run(environment, &mantleLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "mantle-contract-service")...); err != nil {
+		return fmt.Errorf("read Mantle contract transcript: %w", err)
+	}
+	if codexBoundary == nil {
+		return fmt.Errorf("Codex boundary evidence is absent")
+	}
+	var bifrostLogs bytes.Buffer
+	if err := executor.Run(environment, &bifrostLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "bifrost-1")...); err != nil {
+		return fmt.Errorf("read Bifrost ingress transcript: %w", err)
+	}
+	ingress, err := validateCodexIngressTranscript(bifrostLogs.Bytes(), lock.RunID, codexBoundary)
+	if err != nil {
+		return fmt.Errorf("join Codex terminal evidence to Bifrost ingress: %w", err)
+	}
+	if err := validateMantleTranscript(mantleLogs.Bytes(), lock.RunID, ingress.FirstInputToolCount); err != nil {
+		return fmt.Errorf("join Codex/Bifrost boundary to Mantle transcript: %w", err)
 	}
 	var sentinelLogs bytes.Buffer
 	if err := executor.Run(environment, &sentinelLogs, stderr, dockerBinary, append(compose, "logs", "--no-color", "--no-log-prefix", "egress-sentinel")...); err != nil {
@@ -248,6 +1203,11 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	if probeEvents == 0 {
 		return errors.New("known-host adversarial probe was not observed by the external sentinel")
 	}
+	diagnostics.Phase = "pre-success-teardown"
+	captureDiagnostics()
+	if diagnosticsErr != nil {
+		return diagnosticsErr
+	}
 	if err := executor.Run(environment, io.Discard, stderr, dockerBinary, append(compose, "down", "--volumes", "--remove-orphans", "--timeout", "10")...); err != nil {
 		return fmt.Errorf("teardown sealed lab: %w", err)
 	}
@@ -269,11 +1229,58 @@ func run(executor commandExecutor, lockPath, sourceLockPath, composePath, docker
 	return json.NewEncoder(stdout).Encode(lifecycleResult{
 		Schema: "sealed-lab-lifecycle-result/v2", RunID: lock.RunID, NativePlatform: cellPlatforms[0],
 		StartedAt: startedAt.Format(time.RFC3339Nano), CompletedAt: time.Now().UTC().Format(time.RFC3339Nano),
-		SourceLockSHA256: lock.SourceLockSHA256, RuntimeLockSHA256: digest,
+		SourceLockSHA256: lock.SourceLockSHA256, RuntimeLockSHA256: digest, SeedConfigRevision: seedEvidence.Revision,
 		Clients: clients, NormalCellForbiddenEvents: forbidden, AdversarialProbeRecordedEvents: probeEvents,
 		PaidInferenceProof: "unproven-external-recorder-required", TeardownClean: teardownClean,
 		CodexInferenceBoundary: codexBoundary,
+		CodexBifrostIngress:    &ingress,
 	})
+}
+
+func validateCodexIngressTranscript(data []byte, runID string, boundary *cellResult) (codexIngressRecord, error) {
+	var matched []codexIngressRecord
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var record codexIngressRecord
+		if json.Unmarshal(line, &record) == nil && record.Schema == "sealed-codex-bifrost-ingress/v1" && record.RunID == runID {
+			matched = append(matched, record)
+		}
+	}
+	if len(matched) != 1 {
+		return codexIngressRecord{}, fmt.Errorf("expected exactly one run-correlated Codex ingress record, got %d", len(matched))
+	}
+	record := matched[0]
+	if boundary == nil || boundary.RunID != runID || boundary.Client != "codex" || boundary.ExitCode != 0 || !boundary.ProcessStarted || !boundary.RequestInitiated || boundary.TransportOutcome != "completed" || boundary.EventCount == 0 || boundary.OutputBytes == 0 || !sha256Value.MatchString(boundary.OutputSHA256) {
+		return codexIngressRecord{}, errors.New("Codex terminal evidence does not prove a completed inference")
+	}
+	if record.InputRunID != runID || record.Method != "POST" || record.Path != "/openai/v1/responses" || record.Model != "bedrock_mantle/gpt-5.5" || !record.Stream || record.LiteHeaderCount != 1 || record.LiteHeaderValue != "true" || record.WebsocketUpgrade || record.TopLevelInstructions || record.TopLevelTools || record.ParallelToolCalls || record.FirstInputType != "additional_tools" || record.FirstInputRole != "developer" || record.FirstInputToolCount <= 0 || record.FirstInputToolCount > 128 || record.BodyBytes <= 0 || record.BodyBytes > 1<<20 || !sha256Value.MatchString(record.BodySHA256) {
+		return codexIngressRecord{}, errors.New("Codex ingress record violates the Responses Lite contract")
+	}
+	return record, nil
+}
+
+func validateMantleTranscript(data []byte, runID string, ingressToolCount int) error {
+	matched := 0
+	for _, line := range bytes.Split(data, []byte{'\n'}) {
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || line[0] != '{' {
+			continue
+		}
+		var record mantleservice.TranscriptRecord
+		if json.Unmarshal(line, &record) != nil || record.Schema != mantleservice.TranscriptSchema {
+			continue
+		}
+		if record.Sequence > 0 && record.Method == "POST" && record.Host == mantleservice.IntegrationHost && record.Path == "/openai/v1/responses" && record.Model == "openai.gpt-5.5" && record.Stream && record.Status == 200 && record.Authorization == "synthetic-bearer" && record.RunID == runID && ingressToolCount > 0 && record.TopLevelTools == ingressToolCount && record.AdditionalTools == 0 && sha256Value.MatchString(record.BodySHA256) {
+			matched++
+		}
+	}
+	if matched != 1 {
+		return fmt.Errorf("expected exactly one run-correlated successful GPT-5.5 Responses hop, got %d", matched)
+	}
+	return nil
 }
 
 func validateNativePlatform(raw string) (string, error) {
@@ -339,6 +1346,10 @@ func networkEnvironment(runID string) []string {
 		fmt.Sprintf("LAB_BIFROST_3_DATA_IPV6=fd00:bf:%s:20::13", v6),
 		fmt.Sprintf("LAB_HEALTH_IPV4=10.%d.%d.20", first, second),
 		fmt.Sprintf("LAB_HEALTH_IPV6=fd00:bf:%s:10::20", v6),
+		fmt.Sprintf("LAB_MANTLE_IPV4=10.%d.%d.20", first+1, second),
+		fmt.Sprintf("LAB_MANTLE_IPV6=fd00:bf:%s:20::20", v6),
+		fmt.Sprintf("LAB_CONTRACT_IPV4=10.%d.%d.20", first+2, second),
+		fmt.Sprintf("LAB_CONTRACT_IPV6=fd00:bf:%s:30::20", v6),
 	}
 }
 
@@ -384,7 +1395,7 @@ func validateCellResult(data []byte, runID, client, version, daemonPlatform stri
 		return cellResult{}, errors.New("cell result violates the sealed contract")
 	}
 	if client == "codex" {
-		validOutcome := (result.ExitCode == 0 && result.TransportOutcome == "completed") || (result.ExitCode > 0 && result.ExitCode != 124 && result.TransportOutcome == "transport_failure_after_turn_start")
+		validOutcome := result.ExitCode == 0 && result.TransportOutcome == "completed"
 		if result.Schema != "sealed-cli-cell-evidence/v2" || result.Operation != "codex-inference-boundary" || !result.ProcessStarted || !result.RequestInitiated || !validOutcome || result.EventCount < 3 || result.OutputBytes <= 0 || !sha256Value.MatchString(result.OutputSHA256) || result.OutputTruncated || !internalCellGateway.MatchString(result.GatewayBaseURL) {
 			return cellResult{}, errors.New("Codex cell did not prove the sealed inference invocation boundary")
 		}
@@ -415,7 +1426,7 @@ var sha256Value = regexp.MustCompile(`^[0-9a-f]{64}$`)
 var internalCellGateway = regexp.MustCompile(`^http://bifrost-[123]:8080/openai/v1/?$`)
 
 func validInferenceCellEnvironment(names []string) bool {
-	want := []string{"CODEX_HOME", "HOME", "LANG", "OPENAI_API_KEY", "OPENAI_BASE_URL", "PATH", "TMPDIR", "TZ", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME"}
+	want := []string{"CODEX_HOME", "HOME", "LAB_RUN_ID", "LANG", "OPENAI_API_KEY", "OPENAI_BASE_URL", "PATH", "TMPDIR", "TZ", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME"}
 	if len(names) != len(want) {
 		return false
 	}
@@ -458,9 +1469,47 @@ func validateNetworkProbe(data []byte) error {
 	return nil
 }
 
+func validateClientPreflight(data []byte) error {
+	if err := contract.RejectDuplicateJSONKeys(data); err != nil {
+		return fmt.Errorf("client preflight JSON structure: %w", err)
+	}
+	var result struct {
+		Schema       string `json:"schema"`
+		DNSExact     int    `json:"dns_exact"`
+		TCPReachable int    `json:"tcp_reachable"`
+		HealthOK     int    `json:"health_ok"`
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&result); err != nil {
+		return fmt.Errorf("client preflight JSON: %w", err)
+	}
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		return errors.New("client preflight emitted more than one JSON record")
+	}
+	if result.Schema != "sealed-lab-client-preflight/v1" {
+		return errors.New("client preflight schema is invalid")
+	}
+	if result.DNSExact != 1 {
+		return errors.New("client preflight did not prove controlled Bifrost DNS resolution")
+	}
+	if result.TCPReachable != 1 {
+		return errors.New("client preflight did not prove Bifrost TCP reachability")
+	}
+	if result.HealthOK != 1 {
+		return errors.New("client preflight did not prove Bifrost HTTP health reachability")
+	}
+	return nil
+}
+
 func validateOCIIndex(data []byte) error {
+	return validateOCIIndexForImage(data, contract.RuntimeImage{})
+}
+
+func validateOCIIndexForImage(data []byte, expected contract.RuntimeImage) error {
 	var index struct {
 		Manifests []struct {
+			Digest   string `json:"digest"`
 			Platform struct {
 				OS           string `json:"os"`
 				Architecture string `json:"architecture"`
@@ -471,12 +1520,31 @@ func validateOCIIndex(data []byte) error {
 	if err := decoder.Decode(&index); err != nil {
 		return err
 	}
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		return errors.New("OCI index contains trailing JSON")
+	}
 	seen := map[string]bool{}
+	digests := map[string]string{}
 	for _, manifest := range index.Manifests {
-		seen[manifest.Platform.OS+"/"+manifest.Platform.Architecture] = true
+		platform := manifest.Platform.OS + "/" + manifest.Platform.Architecture
+		if seen[platform] {
+			return errors.New("OCI index contains duplicate platform")
+		}
+		seen[platform] = true
+		digests[platform] = manifest.Digest
 	}
 	if !seen["linux/amd64"] || !seen["linux/arm64"] {
 		return errors.New("OCI index does not contain linux/amd64 and linux/arm64")
+	}
+	if len(expected.ChildDigests) > 0 {
+		if len(index.Manifests) != 2 {
+			return errors.New("OCI index descriptor count mismatch")
+		}
+		for _, want := range expected.ChildDigests {
+			if digests[want.Platform] != "sha256:"+want.SHA256 {
+				return errors.New("OCI child digest does not match attestation")
+			}
+		}
 	}
 	return nil
 }

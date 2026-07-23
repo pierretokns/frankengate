@@ -117,6 +117,16 @@ func TestOpenAIResponsesRequest_MarshalJSON_ReasoningMaxTokensAbsent(t *testing.
 				if maxTokens, exists := reasoning["max_tokens"]; exists {
 					t.Errorf("%s: reasoning.max_tokens should be absent from JSON output, but found: %v", tt.description, maxTokens)
 				}
+				if tt.request.Reasoning.Effort == nil {
+					if value, exists := reasoning["effort"]; exists {
+						t.Errorf("%s: nil reasoning.effort should be absent, found: %v", tt.description, value)
+					}
+				}
+				if tt.request.Reasoning.Summary == nil {
+					if value, exists := reasoning["summary"]; exists {
+						t.Errorf("%s: nil reasoning.summary should be absent, found: %v", tt.description, value)
+					}
+				}
 
 				// Verify other reasoning fields are present when they should be
 				if tt.request.Reasoning != nil {

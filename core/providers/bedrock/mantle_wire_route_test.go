@@ -16,10 +16,14 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-type capturedBedrockMantleRequest struct{ method, host, path, model string }
+type capturedBedrockMantleRequest struct {
+	method, host, path, model string
+	hasAdditionalTools        bool
+	toolCount                 int
+}
 
 func TestLegacyBedrockResponsesPublicOperationsUsePinnedMantleWireRoute(t *testing.T) {
-	captured := make(chan capturedBedrockMantleRequest, 2)
+	captured := make(chan capturedBedrockMantleRequest, 3)
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -27,14 +31,25 @@ func TestLegacyBedrockResponsesPublicOperationsUsePinnedMantleWireRoute(t *testi
 			return
 		}
 		var payload struct {
-			Model  string `json:"model"`
-			Stream bool   `json:"stream"`
+			Model  string            `json:"model"`
+			Stream bool              `json:"stream"`
+			Input  []json.RawMessage `json:"input"`
+			Tools  []json.RawMessage `json:"tools"`
 		}
 		if err := json.Unmarshal(body, &payload); err != nil {
 			t.Errorf("decode request: %v; body=%s", err, body)
 			return
 		}
-		captured <- capturedBedrockMantleRequest{r.Method, r.Host, r.URL.Path, payload.Model}
+		hasAdditionalTools := false
+		for _, item := range payload.Input {
+			var discriminator struct {
+				Type string `json:"type"`
+			}
+			if json.Unmarshal(item, &discriminator) == nil && discriminator.Type == "additional_tools" {
+				hasAdditionalTools = true
+			}
+		}
+		captured <- capturedBedrockMantleRequest{r.Method, r.Host, r.URL.Path, payload.Model, hasAdditionalTools, len(payload.Tools)}
 		if payload.Stream {
 			w.Header().Set("Content-Type", "text/event-stream")
 			fmt.Fprint(w, "data: {\"type\":\"response.completed\",\"sequence_number\":0,\"response\":{\"id\":\"resp_test\",\"object\":\"response\",\"created_at\":1,\"status\":\"completed\",\"model\":\"openai.gpt-5.5\",\"output\":[]}}\n\n")
@@ -63,10 +78,17 @@ func TestLegacyBedrockResponsesPublicOperationsUsePinnedMantleWireRoute(t *testi
 	role := schemas.ResponsesMessageRoleType("user")
 	content := "hello"
 	newRequest := func(model string) *schemas.BifrostResponsesRequest {
-		return &schemas.BifrostResponsesRequest{Model: model, Input: []schemas.ResponsesMessage{{Type: &messageType, Role: &role, Content: &schemas.ResponsesMessageContent{ContentStr: &content}}}}
+		var additional schemas.ResponsesMessage
+		if err := json.Unmarshal([]byte(`{"type":"additional_tools","role":"developer","tools":[{"type":"function","name":"lookup","parameters":{"type":"object"}}]}`), &additional); err != nil {
+			t.Fatal(err)
+		}
+		return &schemas.BifrostResponsesRequest{Model: model, Input: []schemas.ResponsesMessage{additional, {Type: &messageType, Role: &role, Content: &schemas.ResponsesMessageContent{ContentStr: &content}}}}
 	}
 	if _, bifrostErr := provider.Responses(ctx, testBedrockKey(), newRequest("openai.gpt-5.5")); bifrostErr != nil {
 		t.Fatalf("Responses: %v", bifrostErr)
+	}
+	if _, bifrostErr := provider.Responses(ctx, testBedrockKey(), newRequest("openai.gpt-oss-120b")); bifrostErr != nil {
+		t.Fatalf("GPT-OSS Responses: %v", bifrostErr)
 	}
 
 	modelName := "openai.gpt-5.5"
@@ -79,8 +101,9 @@ func TestLegacyBedrockResponsesPublicOperationsUsePinnedMantleWireRoute(t *testi
 	}
 
 	want := []capturedBedrockMantleRequest{
-		{http.MethodPost, "bedrock-mantle.us-east-1.api.aws", "/openai/v1/responses", "openai.gpt-5.5"},
-		{http.MethodPost, "bedrock-mantle.us-east-1.api.aws", "/openai/v1/responses", "opaque-deployment"},
+		{http.MethodPost, "bedrock-mantle.us-east-1.api.aws", "/openai/v1/responses", "openai.gpt-5.5", false, 1},
+		{http.MethodPost, "bedrock-mantle.us-east-1.api.aws", "/v1/responses", "openai.gpt-oss-120b", true, 0},
+		{http.MethodPost, "bedrock-mantle.us-east-1.api.aws", "/openai/v1/responses", "opaque-deployment", false, 1},
 	}
 	for i, expected := range want {
 		select {
@@ -94,7 +117,7 @@ func TestLegacyBedrockResponsesPublicOperationsUsePinnedMantleWireRoute(t *testi
 	}
 	select {
 	case got := <-captured:
-		t.Fatalf("unexpected third request: %#v", got)
+		t.Fatalf("unexpected fourth request: %#v", got)
 	default:
 	}
 }

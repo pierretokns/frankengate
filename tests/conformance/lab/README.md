@@ -13,11 +13,14 @@ GOWORK=off go test ./...
 The committed contract currently proves:
 
 - digest-pinned multi-architecture PostgreSQL, health-stub, CoreDNS, and prefetch bases;
-- exact observed Codex and Claude Code npm tarballs plus registry integrity;
+- exact observed Codex and Claude Code top-level npm tarballs plus their registry-published integrity;
 - three gateway services with PostgreSQL and no mounted `config.json`;
 - synthetic zero-cost `file://` pricing and parameter fixtures so a fresh database can bootstrap
   without remote catalog traffic (these fixtures have no production pricing authority);
 - three internal dual-stack networks, no published ports, no Docker socket, and hardened services;
+- deterministic run-scoped subnet and unique per-network static-address derivation. This is not a
+  claim of global collision freedom across concurrent runs on one Docker daemon: hosted jobs use
+  isolated daemons, and Docker network creation fails closed if independently derived ranges overlap;
 - network-namespace keepers that remove IPv4 and IPv6 default routes, a fail-closed controlled DNS
   policy, and a dual-stack TCP/UDP forbidden-egress sentinel;
 - separate digest-required Codex, Claude, and Bifrost runtime images;
@@ -27,7 +30,7 @@ The committed contract currently proves:
   runs only the expected read-only CLI binary, verifies the pinned semantic version from observed
   CLI output, bounds process lifetime, sends CLI output to stderr, emits one JSON evidence record to
   stdout, and removes cell residue;
-- a Codex seed selecting `bedrock_mantle/gpt-5.6-sol` through `/openai/v1` with retries and updates
+- a Codex seed selecting `bedrock_mantle/gpt-5.5` through `/openai/v1` with retries and updates
   disabled, and a Claude seed disabling updater, telemetry, error reporting, and nonessential
   traffic.
 
@@ -37,17 +40,18 @@ an ephemeral session, the sealed fake credential, and one validated internal Bif
 data cannot supply arguments or a prompt. The cell first observes `codex --version`, then validates
 the CLI's stdout as bounded JSONL. It records `process_started` separately from
 `request_initiated`; the latter requires `thread.started` followed immediately by `turn.started`
-and a valid terminal event. Successful turns require `turn.completed` with usage, while a failed
-post-initiation turn is classified separately as `transport_failure_after_turn_start`. Plain-text
+and a valid terminal event. Evidence accepted by the lifecycle requires exit zero,
+`turn.completed` with usage, and the exact deterministic Mantle response marker. Failed
+post-initiation turns, including `transport_failure_after_turn_start`, are rejected. Plain-text
 configuration errors, malformed JSONL, reordered events, missing usage, timeouts, and truncated
-output cannot earn request-initiation evidence. Neither request initiation nor a JSONL digest proves
-that Bifrost received the request, contacted Mantle, or received Mantle acceptance. C9 owns that
-joined evidence.
+output cannot earn request-initiation evidence. The lifecycle semantically correlates the completed
+Codex turn with the run-bound deterministic Mantle transcript; it does not independently capture a
+Bifrost ingress receipt.
 
 The `exec`, `--strict-config`, `--ephemeral`, `--sandbox`, `--color`, and `--json` syntax is derived from the exact
 `@openai/codex` 0.144.5 artifact locked by `images.lock.v1.json` (its `codex exec --help` surface).
 The request serialization authority remains the independently pinned
-`codex-cli-responses-lite-fd3c1dc1` row in
+`codex-cli-responses-lite-0.144.5-87db9bc1` row in
 `tests/conformance/bedrock/sources/source-lock.v1.json`; its authority ceiling is client emission,
 not gateway translation or AWS acceptance.
 
@@ -55,7 +59,13 @@ not gateway translation or AWS acceptance.
 
 `Dockerfile.prefetch` is intentionally networked and must run in a separate project. Supply the
 exact package/version/integrity triplet from `images.lock.v1.json`, export its `scratch` target to a
-content-addressed offline directory, then destroy the prefetch project. `Dockerfile.runner` consumes
+content-addressed offline directory, then destroy the prefetch project. Prefetch computes the packed
+top-level tarball's SHA-512 SRI and matches the locked registry integrity byte-for-byte. It generates
+one package lock from the exact registry package/version and materializes `/opt/client` only through
+`npm ci`. Before materialization, the exact top-level install-path lock row must repeat the requested
+version and the same top-level SRI, closing the tarball-to-lock provenance join. Lock SRIs then authorize installed bytes while npm resolves compatible platform-optional
+packages. The installed-tree verifier additionally binds every observed coordinate. The tarball is
+preserved provenance evidence, not a second installation source. `Dockerfile.runner` consumes
 only that offline directory and the locally built static `cell-init`; its build must use
 `--network=none`. The resulting per-platform images must be assembled into an OCI index and supplied
 to Compose by digest as `CODEX_RUNNER_IMAGE` and `CLAUDE_RUNNER_IMAGE`. `BIFROST_IMAGE` is likewise
@@ -95,8 +105,43 @@ GOWORK=off go run ./cmd/lab-runner \
   --runtime-lock /absolute/path/runtime-lock.json \
   --source-lock /absolute/path/images.lock.v1.json \
   --compose /absolute/path/compose.yaml \
-  --docker /absolute/path/to/docker
+  --docker /absolute/path/to/docker \
+  --failure-diagnostics-artifact /absolute/new/path/failure-diagnostics.json
 ```
+
+When supplied, the runner captures bounded metadata for an allowlisted service set before every
+runner-controlled teardown, including failure teardown. Each diagnostic command has a five-second
+deadline within a twenty-second aggregate budget. Raw status and log bytes never enter the artifact;
+only classifications, byte counts, and SHA-256 digests are retained. Publication uses a mode-0600
+temporary regular file and an atomic fresh hard-link; stale targets, symlinked/nonregular/hardlinked
+directory entries, and unsafe directories fail closed. Diagnostics never share stdout with the
+single lifecycle JSON record. They are troubleshooting metadata, not proof of request delivery,
+network isolation, or lifecycle success; process termination outside runner-controlled teardown may
+prevent capture.
+
+The lifecycle accepts the database bootstrap only after observing config-seed revision
+`sealed-lab-c9-gpt55-v1`; that revision is repeated in successful lifecycle evidence. It binds this
+specific synthetic GPT-5.5 provider/key/alias/TLS seed contract, not arbitrary production database
+contents or later configuration convergence.
+
+The gateway replicas declare a mode-0444 mount of `fixtures/bootstrap-config.json`. That fixture
+selects the PostgreSQL config store and disables the otherwise implicit SQLite log store; it
+intentionally has no provider, governance, MCP, client, or plugin sections. In split-authority mode
+the serving pods therefore load provider data seeded in PostgreSQL without making the fixture the
+authority for mutable configuration. Only a successful sealed lifecycle with runtime evidence bound
+to provider `bedrock_mantle` and config revision `sealed-lab-c9-gpt55-v1` proves that this bootstrap
+worked for the tested build. The Compose declaration alone does not prove runtime immutability. This
+slice also does not prove config-file-free production bootstrap, connection-secret rotation,
+change-notification convergence, or general high availability.
+
+The PR-triggered `sealed-mantle-lab.yml` GitHub Actions workflow builds both platform variants from
+the reviewed tracked source and top-level integrity-locked npm artifacts, publishes them only to an ephemeral runner-local
+registry, constructs the runtime lock from the resulting OCI digests, and runs this entry point on
+the hosted Linux Docker daemon. It uploads bounded lifecycle and Compose diagnostics on both success
+and failure and performs an additional unconditional teardown. The tracked source archive excludes
+the ignored generated web UI, so the lab gateway embeds one reviewed deterministic placeholder file
+instead of downloading or building UI assets. Consequently this evidence covers the gateway API,
+provider routing, and Mantle/Codex protocol path only; it provides no UI build or serving evidence.
 
 A v2 run additionally requires `--recorder-policy /absolute/path/policy.bin` plus the complete
 `--recorder-expectations`, `--recorder-transcript`, `--recorder-pcapng`, and `--recorder-ledger`

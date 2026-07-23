@@ -67,6 +67,21 @@ func TestResolvedComposeIsStructurallyBoundToLocks(t *testing.T) {
 			service.Command = []string{"-run-id=other"}
 			d.Services["egress-sentinel"] = service
 		}},
+		{"observer disabled", func(d *resolvedCompose) {
+			service := d.Services["bifrost-2"]
+			service.Environment["BIFROST_SEALED_LAB_INGRESS_OBSERVER"] = "0"
+			d.Services["bifrost-2"] = service
+		}},
+		{"Bifrost readiness removed", func(d *resolvedCompose) {
+			service := d.Services["bifrost-1"]
+			service.Healthcheck = nil
+			d.Services["bifrost-1"] = service
+		}},
+		{"observer wrong run identity", func(d *resolvedCompose) {
+			service := d.Services["bifrost-3"]
+			service.Environment["LAB_RUN_ID"] = "other"
+			d.Services["bifrost-3"] = service
+		}},
 		{"route isolation removed", func(d *resolvedCompose) {
 			service := d.Services["netns-codex"]
 			service.Command = []string{"tail -f /dev/null"}
@@ -114,9 +129,20 @@ func resolvedFixture() (resolvedCompose, Lock, RuntimeLock) {
 	services["health-stub"] = base(digest("3"))
 	services["contract-stub"] = base(digest("3"))
 	services["postgres"] = base(digest("4"))
+	services["config-seed"] = base(digest("a"))
+	services["mantle-contract-service"] = base(digest("a"))
 	services["bifrost-1"] = withMode(base(digest("a")), "service:netns-bifrost-1")
 	services["bifrost-2"] = withMode(base(digest("a")), "service:netns-bifrost-2")
 	services["bifrost-3"] = withMode(base(digest("a")), "service:netns-bifrost-3")
+	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
+		service := services[name]
+		service.Healthcheck = &resolvedHealthcheck{Test: []string{"CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/health || exit 1"}, Retries: 60}
+		service.Environment = map[string]any{
+			"BIFROST_SEALED_LAB_INGRESS_OBSERVER": "1",
+			"LAB_RUN_ID":                          runtime.RunID,
+		}
+		services[name] = service
+	}
 	services["claude-runner"] = withMode(base(digest("b")), "service:netns-claude")
 	services["codex-runner"] = withMode(base(digest("c")), "service:netns-codex")
 	sentinel := base(digest("d"))

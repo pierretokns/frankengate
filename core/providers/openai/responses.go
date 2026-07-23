@@ -45,18 +45,10 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	capModel := schemas.ResolveCanonicalModel(ctx, bifrostReq.Model)
 
 	var messages []schemas.ResponsesMessage
-	liftAdditionalTools := bifrostReq.Provider == schemas.BedrockMantle
-	var additionalTools []schemas.ResponsesTool
-	if liftAdditionalTools {
-		additionalTools = extractOpenAIAdditionalTools(bifrostReq.Input)
-	}
 	// OpenAI models (except for gpt-oss) do not support reasoning content blocks, so we need to convert them to summaries, if there are any
 	// OpenAI also doesn't support compaction content blocks, so we need to convert them to text blocks
 	messages = make([]schemas.ResponsesMessage, 0, len(bifrostReq.Input))
 	for _, message := range bifrostReq.Input {
-		if liftAdditionalTools && message.Type != nil && *message.Type == schemas.ResponsesMessageTypeAdditionalTools {
-			continue
-		}
 		// First, check if message has compaction content blocks and convert them to text
 		if message.Content != nil && len(message.Content.ContentBlocks) > 0 {
 			hasCompaction := false
@@ -340,73 +332,59 @@ func ToOpenAIResponsesRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.B
 	}
 
 	if bifrostReq.Params != nil {
-		if len(additionalTools) > 0 {
-			req.Tools = append(append([]schemas.ResponsesTool(nil), req.Tools...), additionalTools...)
-		}
 		req.ExtraParams = bifrostReq.Params.ExtraParams
-	} else if len(additionalTools) > 0 {
-		req.Tools = append(req.Tools, additionalTools...)
-	}
-	if bifrostReq.Provider == schemas.BedrockMantle && len(req.Tools) == 0 {
-		if flattened, ok := flattenPlainTextMessages(messages); ok {
-			req.Input = OpenAIResponsesRequestInput{OpenAIResponsesRequestInputStr: schemas.Ptr(flattened)}
-		}
 	}
 	return req
 }
 
-func extractOpenAIAdditionalTools(messages []schemas.ResponsesMessage) []schemas.ResponsesTool {
-	var out []schemas.ResponsesTool
-	for _, message := range messages {
+// UnlightifyMantleResponsesRequest converts Codex's Responses Lite tool
+// declaration item back to the classic OpenAI Responses shape accepted by
+// Bedrock Mantle's /openai route. It returns a copy and never mutates the
+// caller's request. All non-additional_tools input items retain their order.
+func UnlightifyMantleResponsesRequest(request *schemas.BifrostResponsesRequest) *schemas.BifrostResponsesRequest {
+	if request == nil {
+		return nil
+	}
+
+	converted := *request
+	converted.Input = make([]schemas.ResponsesMessage, 0, len(request.Input))
+	lifted := make([]schemas.ResponsesTool, 0)
+	for _, message := range request.Input {
 		if message.Type == nil || *message.Type != schemas.ResponsesMessageTypeAdditionalTools {
+			converted.Input = append(converted.Input, message)
 			continue
 		}
+
 		data, err := json.Marshal(message)
 		if err != nil {
-			continue
+			return request
 		}
 		var item struct {
 			Tools []json.RawMessage `json:"tools"`
 		}
 		if err := json.Unmarshal(data, &item); err != nil {
-			continue
+			return request
 		}
 		for _, raw := range item.Tools {
 			var tool schemas.ResponsesTool
-			if err := json.Unmarshal(raw, &tool); err == nil {
-				out = append(out, tool)
+			if err := json.Unmarshal(raw, &tool); err != nil {
+				return request
 			}
+			lifted = append(lifted, tool)
 		}
 	}
-	return out
-}
 
-func flattenPlainTextMessages(messages []schemas.ResponsesMessage) (string, bool) {
-	if len(messages) == 0 {
-		return "", false
+	if len(lifted) == 0 {
+		return &converted
 	}
-	parts := make([]string, 0, len(messages))
-	for _, message := range messages {
-		if message.Type != nil && *message.Type != schemas.ResponsesMessageTypeMessage || message.Content == nil {
-			return "", false
-		}
-		if message.Content.ContentStr != nil {
-			parts = append(parts, *message.Content.ContentStr)
-			continue
-		}
-		if len(message.Content.ContentBlocks) == 0 {
-			return "", false
-		}
-		var b strings.Builder
-		for _, block := range message.Content.ContentBlocks {
-			if block.Type != schemas.ResponsesInputMessageContentBlockTypeText || block.Text == nil {
-				return "", false
-			}
-			b.WriteString(*block.Text)
-		}
-		parts = append(parts, b.String())
+	if request.Params == nil {
+		converted.Params = &schemas.ResponsesParameters{Tools: lifted}
+		return &converted
 	}
-	return strings.Join(parts, "\n"), true
+	params := *request.Params
+	params.Tools = append(append([]schemas.ResponsesTool(nil), request.Params.Tools...), lifted...)
+	converted.Params = &params
+	return &converted
 }
 
 func defaultImageDetail(message schemas.ResponsesMessage) schemas.ResponsesMessage {

@@ -3,23 +3,40 @@ FROM node:24.11.0-alpine3.21@sha256:0d4cd385375043fc4612c20ede8b240b6b560dfdaef7
 ARG CLI_PACKAGE
 ARG CLI_VERSION
 ARG CLI_INTEGRITY
+ARG TARGETOS
+ARG TARGETARCH
+ARG NATIVE_PACKAGE
+ARG NATIVE_TARBALL
+ARG NATIVE_INTEGRITY
 
 COPY prefetch/verify-tree.mjs /usr/local/lib/verify-tree.mjs
+COPY prefetch/verify-sri.mjs /usr/local/lib/verify-sri.mjs
+COPY prefetch/verify-root-lock.mjs /usr/local/lib/verify-root-lock.mjs
+COPY prefetch/select-claude-native.mjs /usr/local/lib/select-claude-native.mjs
 
-RUN test -n "$CLI_PACKAGE" && test -n "$CLI_VERSION" && test -n "$CLI_INTEGRITY" \
+RUN test -n "$CLI_PACKAGE" && test -n "$CLI_VERSION" && test -n "$CLI_INTEGRITY" && test "$TARGETOS" = linux \
+    && case "$TARGETARCH" in amd64) npm_cpu=x64 ;; arm64) npm_cpu=arm64 ;; *) exit 1 ;; esac \
     && actual="$(npm view "${CLI_PACKAGE}@${CLI_VERSION}" dist.integrity)" \
     && test "$actual" = "$CLI_INTEGRITY" \
-    && mkdir -p /mirror /opt/client /lock \
+    && mkdir -p /mirror /opt/client \
     && npm pack "${CLI_PACKAGE}@${CLI_VERSION}" --pack-destination /mirror \
-    && cd /lock \
+    && node /usr/local/lib/verify-sri.mjs /mirror/*.tgz "$CLI_INTEGRITY" \
+    && cd /opt/client \
     && npm init --yes >/dev/null \
-    && npm install --package-lock-only --ignore-scripts "${CLI_PACKAGE}@${CLI_VERSION}" \
-    && npm install --global --prefix /opt/client --ignore-scripts --omit=dev /mirror/*.tgz \
-    && npm ls --global --prefix /opt/client --all --json > /mirror/dependency-tree.json \
-    && cp /lock/package-lock.json /mirror/package-lock.json \
-    && node /usr/local/lib/verify-tree.mjs /mirror/package-lock.json /mirror/dependency-tree.json /mirror/resolved-dependencies.json \
+    && npm_config_platform="$TARGETOS" npm_config_arch="$npm_cpu" npm_config_os="$TARGETOS" npm_config_cpu="$npm_cpu" npm install --package-lock-only --ignore-scripts "${CLI_PACKAGE}@${CLI_VERSION}" \
+    && node /usr/local/lib/verify-root-lock.mjs /opt/client/package-lock.json "$CLI_PACKAGE" "$CLI_VERSION" "$CLI_INTEGRITY" \
+    && npm_config_platform="$TARGETOS" npm_config_arch="$npm_cpu" npm_config_os="$TARGETOS" npm_config_cpu="$npm_cpu" npm ci --prefix /opt/client --ignore-scripts --omit=dev \
+    && case "$CLI_PACKAGE" in \
+         @anthropic-ai/claude-code) node /usr/local/lib/select-claude-native.mjs /opt/client "$CLI_VERSION" "$TARGETARCH" "$NATIVE_PACKAGE" "$NATIVE_TARBALL" "$NATIVE_INTEGRITY" && /opt/client/node_modules/.bin/claude --version | grep -Ex "${CLI_VERSION}( \(Claude Code\))?" ;; \
+         @openai/codex) /opt/client/node_modules/.bin/codex --version | grep -Ex "codex-cli ${CLI_VERSION}" ;; \
+         *) exit 1 ;; \
+       esac \
+    && npm ls --prefix /opt/client --all --json > /mirror/dependency-tree.json \
+    && cp /opt/client/package-lock.json /mirror/package-lock.json \
+    && node /usr/local/lib/verify-tree.mjs /mirror/package-lock.json /mirror/dependency-tree.json /mirror/resolved-dependencies.json "$TARGETOS" "$npm_cpu" \
+    && printf '{"schema":"sealed-cli-target-platform/v1","os":"%s","architecture":"%s","npm_cpu":"%s"}\n' "$TARGETOS" "$TARGETARCH" "$npm_cpu" > /mirror/target-platform.json \
     && find /opt/client -type f | LC_ALL=C sort | while IFS= read -r file; do sha256sum "$file"; done > /mirror/client-files.sha256 \
-    && sha256sum /mirror/client-files.sha256 /mirror/dependency-tree.json /mirror/package-lock.json /mirror/resolved-dependencies.json /mirror/*.tgz > /mirror/prefetch-artifacts.sha256 \
+    && sha256sum /mirror/client-files.sha256 /mirror/dependency-tree.json /mirror/package-lock.json /mirror/resolved-dependencies.json /mirror/target-platform.json /mirror/*.tgz > /mirror/prefetch-artifacts.sha256 \
     && npm cache clean --force
 
 FROM scratch AS export

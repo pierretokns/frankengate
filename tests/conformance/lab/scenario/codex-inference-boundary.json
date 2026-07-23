@@ -3,7 +3,7 @@
   "operation": "codex-inference-boundary",
   "run_id": "codex-inference-boundary",
   "client": "codex",
-  "binary": "/opt/client/bin/codex",
+  "binary": "/opt/client/node_modules/.bin/codex",
   "args": [],
   "env": {
     "OPENAI_API_KEY": "sealed-lab-not-a-real-credential",

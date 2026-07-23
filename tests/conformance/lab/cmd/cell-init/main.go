@@ -32,7 +32,7 @@ const (
 
 const sealedFakeCredential = "sealed-lab-not-a-real-credential"
 
-const codexBoundaryPrompt = "Reply with exactly SEALED_CODEX_BOUNDARY_OK. Do not use tools or execute commands."
+const codexBoundaryPrompt = "Reply with exactly deterministic mantle response. Do not use tools or execute commands. SEALED_CODEX_RUN_ID:"
 
 var internalBaseURL = regexp.MustCompile(`^http://bifrost-[123]:8080/(?:openai/v1|anthropic)(?:/)?$`)
 var exactOpenAIBaseURL = regexp.MustCompile(`^http://bifrost-[123]:8080/openai/v1$`)
@@ -151,6 +151,10 @@ func main() {
 }
 
 func run(lifecycleRunID string) error {
+	platformManifest, err := os.ReadFile("/opt/client-manifest/target-platform.json")
+	if err != nil || validateTargetPlatform(platformManifest, runtime.GOOS, runtime.GOARCH) != nil {
+		return errors.New("client package target does not match runtime architecture")
+	}
 	path := "/scenario/scenario.json"
 	data, err := os.ReadFile(path)
 	if err != nil || len(data) > maxScenario {
@@ -218,7 +222,8 @@ func run(lifecycleRunID string) error {
 	transportOutcome := ""
 	eventCount := 0
 	if operation == "codex-inference-boundary" {
-		spec := codexInferenceCommand(cfg.Binary)
+		spec := codexInferenceCommand(cfg.Binary, cfg.RunID)
+		environment = inferenceEnvironment(environment, lifecycleRunID)
 		var inferenceResult commandResult
 		inferenceResult, err = execute(spec, environment, timeout)
 		if err != nil {
@@ -266,15 +271,46 @@ func run(lifecycleRunID string) error {
 	return json.NewEncoder(os.Stdout).Encode(result)
 }
 
+func inferenceEnvironment(base []string, runID string) []string {
+	result := append([]string(nil), base...)
+	result = append(result, "LAB_RUN_ID="+runID)
+	sort.Strings(result)
+	return result
+}
+
+func validateTargetPlatform(data []byte, goos, goarch string) error {
+	var target struct {
+		Schema       string `json:"schema"`
+		OS           string `json:"os"`
+		Architecture string `json:"architecture"`
+		NPMCPU       string `json:"npm_cpu"`
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&target); err != nil {
+		return err
+	}
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		return errors.New("target platform contains trailing JSON")
+	}
+	wantCPU := map[string]string{"amd64": "x64", "arm64": "arm64"}[goarch]
+	if target.Schema != "sealed-cli-target-platform/v1" || target.OS != goos || target.Architecture != goarch || target.NPMCPU != wantCPU || wantCPU == "" {
+		return errors.New("target platform mismatch")
+	}
+	return nil
+}
+
 func summarizeInferenceOutput(output []byte, truncated bool) (int, string, bool) {
 	digest := sha256.Sum256(output)
 	return len(output), hex.EncodeToString(digest[:]), truncated
 }
 
-func codexInferenceCommand(binary string) commandSpec {
+func codexInferenceCommand(binary, runID string) commandSpec {
 	return commandSpec{Binary: binary, Args: []string{
 		"exec", "--strict-config", "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
-		"--color", "never", "--json", codexBoundaryPrompt,
+		"-c", `model_provider="frankengate"`, "-c", `model="bedrock_mantle/gpt-5.5"`,
+		"-c", `features.responses_websockets=false`, "-c", `features.responses_websockets_v2=false`,
+		"--color", "never", "--json", codexBoundaryPrompt + runID,
 	}}
 }
 
@@ -323,6 +359,7 @@ func validateCodexJSONL(data []byte, exitCode int) (string, int, error) {
 	completedHasUsage := false
 	failedHasError := false
 	terminalCount := 0
+	responseMarkerSeen := false
 	allowedTypes := map[string]bool{
 		"thread.started": true, "turn.started": true, "turn.completed": true, "turn.failed": true,
 		"item.started": true, "item.updated": true, "item.completed": true, "error": true,
@@ -373,6 +410,15 @@ func validateCodexJSONL(data []byte, exitCode int) (string, int, error) {
 				failedHasError = true
 			}
 		}
+		if eventType == "item.completed" {
+			var item struct {
+				Type string `json:"type"`
+				Text string `json:"text"`
+			}
+			if json.Unmarshal(event["item"], &item) == nil && item.Type == "agent_message" && item.Text == "deterministic mantle response" {
+				responseMarkerSeen = true
+			}
+		}
 		types = append(types, eventType)
 		if len(types) > 4096 {
 			return "", 0, errors.New("event stream exceeds event-count bound")
@@ -386,7 +432,7 @@ func validateCodexJSONL(data []byte, exitCode int) (string, int, error) {
 	}
 	terminal := types[len(types)-1]
 	if exitCode == 0 {
-		if terminal != "turn.completed" || !completedHasUsage {
+		if terminal != "turn.completed" || !completedHasUsage || !responseMarkerSeen {
 			return "", 0, errors.New("successful process lacks terminal turn.completed usage")
 		}
 		return "completed", len(types), nil
@@ -409,7 +455,7 @@ func validateScenario(cfg scenario) error {
 	if (cfg.Schema != "sealed-cli-cell-scenario/v1" && cfg.Schema != "sealed-cli-cell-scenario/v2") || cfg.RunID == "" || (cfg.Client != "codex" && cfg.Client != "claude") {
 		return errors.New("invalid scenario identity")
 	}
-	wantBinary := map[string]string{"codex": "/opt/client/bin/codex", "claude": "/opt/client/bin/claude"}[cfg.Client]
+	wantBinary := map[string]string{"codex": "/opt/client/node_modules/.bin/codex", "claude": "/opt/client/node_modules/.bin/claude"}[cfg.Client]
 	if cfg.Binary != wantBinary || !exactSemver(cfg.ExpectedVersion) || cfg.TimeoutMS < 0 || cfg.TimeoutMS > int((15*time.Minute)/time.Millisecond) {
 		return errors.New("invalid scenario process contract")
 	}
@@ -484,7 +530,7 @@ func validateScenarioEnvironment(key, value string) error {
 
 func baseEnvironment() []string {
 	return []string{
-		"CODEX_HOME=/cell/codex", "HOME=/cell/home", "LANG=C.UTF-8", "PATH=/opt/client/bin:/usr/local/bin:/usr/bin:/bin",
+		"CODEX_HOME=/cell/codex", "HOME=/cell/home", "LANG=C.UTF-8", "PATH=/opt/client/node_modules/.bin:/usr/local/bin:/usr/bin:/bin",
 		"TMPDIR=/cell/tmp", "TZ=UTC", "XDG_CACHE_HOME=/cell/xdg-cache", "XDG_CONFIG_HOME=/cell/xdg-config", "XDG_DATA_HOME=/cell/xdg-data",
 	}
 }
@@ -498,11 +544,7 @@ func prepareCell(client string) error {
 			return err
 		}
 	}
-	manifestPath := filepath.Join("/opt/seed", client, "manifest.json")
-	data, err := os.ReadFile(manifestPath)
-	if os.IsNotExist(err) {
-		return nil
-	}
+	data, err := readRequiredSeedManifest("/opt/seed", client)
 	if err != nil {
 		return err
 	}
@@ -543,6 +585,33 @@ func prepareCell(client string) error {
 		}
 		if err := copySeed(client, file); err != nil {
 			return err
+		}
+	}
+	if err := validateRequiredSeedTargets(client, seenTargets); err != nil {
+		return err
+	}
+	return nil
+}
+
+func readRequiredSeedManifest(seedRoot, client string) ([]byte, error) {
+	if client != "codex" && client != "claude" {
+		return nil, errors.New("unknown seed client")
+	}
+	data, err := os.ReadFile(filepath.Join(seedRoot, client, "manifest.json"))
+	if err != nil {
+		return nil, fmt.Errorf("required %s seed manifest: %w", client, err)
+	}
+	return data, nil
+}
+
+func validateRequiredSeedTargets(client string, targets map[string]struct{}) error {
+	want := map[string][]string{"codex": {"codex/config.toml", "codex/model-catalog.json"}, "claude": {"home/.claude/settings.json"}}[client]
+	if want == nil || len(targets) != len(want) {
+		return errors.New("seed manifest has wrong client namespace")
+	}
+	for _, target := range want {
+		if _, ok := targets[target]; !ok {
+			return fmt.Errorf("seed manifest misses required target %s", target)
 		}
 	}
 	return nil
@@ -634,7 +703,19 @@ func copySeed(client string, file seedFile) error {
 	if err := os.MkdirAll(filepath.Dir(target), 0o700); err != nil {
 		return err
 	}
-	return os.WriteFile(target, data, 0o600)
+	if err := os.WriteFile(target, data, 0o600); err != nil {
+		return err
+	}
+	written, err := os.ReadFile(target)
+	if err != nil {
+		return err
+	}
+	writtenDigest := sha256.Sum256(written)
+	info, err = os.Lstat(target)
+	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm() != 0o600 || writtenDigest != digest {
+		return errors.New("post-copy seed verification failed")
+	}
+	return nil
 }
 
 func countEntries(root string) int {

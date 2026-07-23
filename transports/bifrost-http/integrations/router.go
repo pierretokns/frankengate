@@ -625,22 +625,22 @@ func (g *GenericRouter) RegisterRoutes(r *router.Router, middlewares ...schemas.
 		// This ensures each route only has its own middleware plus the originally passed middlewares
 		routeMiddlewares := append([]schemas.BifrostHTTPMiddleware{registerRequestTypeMiddleware}, middlewares...)
 
-		handler := g.createHandler(route)
+		handler := lib.ChainMiddlewares(g.createHandler(route), routeMiddlewares...)
 		switch method {
 		case fasthttp.MethodPost:
-			r.POST(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.POST(route.Path, handler)
 		case fasthttp.MethodGet:
-			r.GET(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.GET(route.Path, handler)
 		case fasthttp.MethodPut:
-			r.PUT(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.PUT(route.Path, handler)
 		case fasthttp.MethodDelete:
-			r.DELETE(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.DELETE(route.Path, handler)
 		case fasthttp.MethodPatch:
-			r.PATCH(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.PATCH(route.Path, handler)
 		case fasthttp.MethodHead:
-			r.HEAD(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.HEAD(route.Path, handler)
 		default:
-			r.POST(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...)) // Default to POST
+			r.POST(route.Path, handler) // Default to POST
 		}
 	}
 

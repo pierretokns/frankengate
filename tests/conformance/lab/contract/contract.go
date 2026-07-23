@@ -3,8 +3,10 @@ package contract
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"regexp"
@@ -15,6 +17,7 @@ import (
 const LockSchema = "sealed-lab-image-lock/v1"
 const RuntimeLockSchema = "sealed-lab-runtime-lock/v1"
 const RuntimeLockSchemaV2 = "sealed-lab-runtime-lock/v2"
+const RuntimeLockSchemaV3 = "sealed-lab-runtime-lock/v3"
 
 var (
 	digestReference = regexp.MustCompile(`^[^\s]+@sha256:[0-9a-f]{64}$`)
@@ -25,9 +28,18 @@ var (
 )
 
 type Lock struct {
-	Schema      string       `json:"schema"`
-	Images      []Image      `json:"images"`
-	CLIPackages []CLIPackage `json:"cli_packages"`
+	Schema            string             `json:"schema"`
+	Images            []Image            `json:"images"`
+	CLIPackages       []CLIPackage       `json:"cli_packages"`
+	NativeCLIPackages []NativeCLIPackage `json:"native_cli_packages,omitempty"`
+}
+type NativeCLIPackage struct {
+	ID        string `json:"id"`
+	Package   string `json:"package"`
+	Platform  string `json:"platform"`
+	Version   string `json:"version"`
+	Tarball   string `json:"tarball"`
+	Integrity string `json:"integrity"`
 }
 
 type Image struct {
@@ -71,12 +83,25 @@ type RuntimeLock struct {
 }
 
 type RuntimeImage struct {
-	ID            string           `json:"id"`
-	Reference     string           `json:"reference"`
-	Platforms     []string         `json:"platforms"`
-	Source        string           `json:"source"`
-	ClientVersion string           `json:"client_version,omitempty"`
-	BinaryDigests []PlatformDigest `json:"binary_digests,omitempty"`
+	ID                string                `json:"id"`
+	Reference         string                `json:"reference"`
+	Platforms         []string              `json:"platforms"`
+	Source            string                `json:"source"`
+	ClientVersion     string                `json:"client_version,omitempty"`
+	BinaryDigests     []PlatformDigest      `json:"binary_digests,omitempty"`
+	ChildDigests      []PlatformDigest      `json:"child_digests,omitempty"`
+	AttestationSHA256 string                `json:"attestation_sha256,omitempty"`
+	Attestations      []CLIImageAttestation `json:"attestations,omitempty"`
+}
+type CLIImageAttestation struct {
+	Schema          string `json:"schema"`
+	Client          string `json:"client"`
+	Platform        string `json:"platform"`
+	ChildDigest     string `json:"child_digest"`
+	ExpectedVersion string `json:"expected_version"`
+	ObservedVersion string `json:"observed_version"`
+	ExitCode        int    `json:"exit_code"`
+	NativePlatform  string `json:"native_platform"`
 }
 
 type PlatformDigest struct {
@@ -122,6 +147,10 @@ func (lock RuntimeLock) Validate() error {
 			return fmt.Errorf("incomplete %s lock", RuntimeLockSchemaV2)
 		}
 		want = append(want, "network-recorder")
+	case RuntimeLockSchemaV3:
+		if lock.RecorderPolicySHA256 != "" || len(lock.Images) != 4 {
+			return fmt.Errorf("incomplete %s lock", RuntimeLockSchemaV3)
+		}
 	default:
 		return fmt.Errorf("unsupported runtime lock schema %q", lock.Schema)
 	}
@@ -135,6 +164,30 @@ func (lock RuntimeLock) Validate() error {
 		isRunner := image.ID == "claude-runner" || image.ID == "codex-runner"
 		if isRunner != exactVersion.MatchString(image.ClientVersion) {
 			return fmt.Errorf("runtime image %q has invalid client version binding", image.ID)
+		}
+		if isRunner && (lock.Schema == RuntimeLockSchemaV3 || image.AttestationSHA256 != "" || len(image.ChildDigests) != 0) {
+			if !sha256Value.MatchString(image.AttestationSHA256) || len(image.ChildDigests) != 2 || len(image.Attestations) != 2 {
+				return fmt.Errorf("runtime image %q lacks child attestations", image.ID)
+			}
+			encoded, _ := json.Marshal(image.Attestations)
+			encoded = append(encoded, '\n')
+			if SHA256Hex(encoded) != image.AttestationSHA256 {
+				return fmt.Errorf("runtime image %q attestation hash mismatch", image.ID)
+			}
+			for digestIndex, digest := range image.ChildDigests {
+				if digest.Platform != image.Platforms[digestIndex] || !sha256Value.MatchString(digest.SHA256) {
+					return fmt.Errorf("runtime image %q child digest[%d] invalid", image.ID, digestIndex)
+				}
+				a := image.Attestations[digestIndex]
+				client := strings.TrimSuffix(image.ID, "-runner")
+				native := map[string]string{"linux/amd64": "x86_64", "linux/arm64": "aarch64"}[digest.Platform]
+				observedOK := (client == "claude" && (a.ObservedVersion == image.ClientVersion || a.ObservedVersion == image.ClientVersion+" (Claude Code)")) || (client == "codex" && a.ObservedVersion == "codex-cli "+image.ClientVersion)
+				if a.Schema != "sealed-cli-image-attestation/v1" || a.Client != client || a.Platform != digest.Platform || a.ChildDigest != "sha256:"+digest.SHA256 || a.ExpectedVersion != image.ClientVersion || !observedOK || a.ExitCode != 0 || a.NativePlatform != native {
+					return fmt.Errorf("runtime image %q attestation[%d] invalid", image.ID, digestIndex)
+				}
+			}
+		} else if image.AttestationSHA256 != "" || len(image.ChildDigests) != 0 || len(image.Attestations) != 0 {
+			return fmt.Errorf("non-runner image %q carries runner attestations", image.ID)
 		}
 		if image.ID == "network-recorder" {
 			if !immutableGitRef.MatchString(image.Source) || len(image.BinaryDigests) != 2 {
@@ -276,6 +329,20 @@ func (lock Lock) Validate() error {
 			return fmt.Errorf("CLI package %q tarball does not bind its version", cli.ID)
 		}
 	}
+	{
+		if len(lock.NativeCLIPackages) != 2 {
+			return errors.New("native CLI package matrix incomplete")
+		}
+		wantIDs := []string{"claude-linux-amd64-musl", "claude-linux-arm64-musl"}
+		wantPackages := []string{"@anthropic-ai/claude-code-linux-x64-musl", "@anthropic-ai/claude-code-linux-arm64-musl"}
+		for i, p := range lock.NativeCLIPackages {
+			wantTarball := "https://registry.npmjs.org/" + wantPackages[i] + "/-/" + strings.TrimPrefix(wantPackages[i], "@anthropic-ai/") + "-2.1.214.tgz"
+			digest, err := base64.StdEncoding.DecodeString(strings.TrimPrefix(p.Integrity, "sha512-"))
+			if p.ID != wantIDs[i] || p.Package != wantPackages[i] || p.Platform != []string{"linux/amd64", "linux/arm64"}[i] || p.Version != "2.1.214" || p.Tarball != wantTarball || !strings.HasPrefix(p.Integrity, "sha512-") || err != nil || len(digest) != 64 {
+				return errors.New("native CLI package lock invalid")
+			}
+		}
+	}
 	return nil
 }
 
@@ -304,6 +371,7 @@ func ValidateCompose(data []byte) error {
 		"client_net:", "data_net:", "control_net:", "internal: true", "enable_ipv6: true",
 		"driver: bridge", "com.docker.network.bridge.name:", "lab_client_bridge", "lab_data_bridge", "lab_control_bridge",
 		"read_only: true", "cap_drop: [all]", "no-new-privileges:true", "pids_limit:", "tmpfs:",
+		"wget -q -o /dev/null http://127.0.0.1:8080/health || exit 1", "start_period: 1s", "retries: 60",
 		"cap_add: [net_admin]", "ip route | awk '$$1 == \"default\"'", "ip -6 route | awk '$$1 == \"default\"'", "ip route get", "network_mode: service:netns-codex", "network_mode: service:netns-claude",
 		"cap_add: [net_bind_service]", "user: \"70:70\"", "/var/run/postgresql:rw,nosuid,nodev,noexec,size=4m,uid=70,gid=70",
 		"dns: [\"${lab_dns_ipv4", "${lab_dns_ipv6", "dns_opt: [attempts:1, timeout:1]", "lab_sentinel_ipv4", "lab_sentinel_ipv6",
@@ -377,6 +445,7 @@ func ValidateDNSCorefile(data []byte) error {
 		"{$lab_bifrost_2_client_ipv4} bifrost-2", "{$lab_bifrost_2_client_ipv6} bifrost-2",
 		"{$lab_bifrost_3_client_ipv4} bifrost-3", "{$lab_bifrost_3_client_ipv6} bifrost-3",
 		"{$lab_health_ipv4} health-stub", "{$lab_health_ipv6} health-stub",
+		"{$lab_mantle_ipv4} bedrock-mantle.us-east-1.api.aws", "{$lab_mantle_ipv6} bedrock-mantle.us-east-1.api.aws",
 		"{$lab_sentinel_ipv4} api.anthropic.com", "{$lab_sentinel_ipv6} api.anthropic.com",
 	} {
 		if !strings.Contains(lower, required) {
@@ -384,7 +453,7 @@ func ValidateDNSCorefile(data []byte) error {
 		}
 	}
 	for _, dualStackTrap := range []string{
-		"api.anthropic.com", "api.openai.com", "bedrock-mantle.us-east-1.api.aws",
+		"api.anthropic.com", "api.openai.com",
 		"metadata.google.internal", "registry.npmjs.org",
 		"sentry.io", "statsig.anthropic.com",
 	} {
@@ -408,8 +477,8 @@ func ValidateBootstrapFixture(data []byte, requireCapabilities bool) error {
 	if len(models) != 1 {
 		return fmt.Errorf("bootstrap fixture must contain exactly one synthetic model")
 	}
-	model, ok := models["openai.gpt-5.6-sol"]
-	if !ok || model.BaseModel != "openai.gpt-5.6-sol" || model.Provider != "bedrock_mantle" || model.Mode != "responses" {
+	model, ok := models["openai.gpt-5.5"]
+	if !ok || model.BaseModel != "openai.gpt-5.5" || model.Provider != "bedrock_mantle" || model.Mode != "responses" {
 		return fmt.Errorf("bootstrap fixture identity drift")
 	}
 	if model.InputCostPerToken == nil || model.OutputCostPerToken == nil || *model.InputCostPerToken != 0 || *model.OutputCostPerToken != 0 {

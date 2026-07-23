@@ -19,6 +19,56 @@ type testSeedManifest struct {
 	} `json:"files"`
 }
 
+func TestRuntimeV3AttestationMutants(t *testing.T) {
+	digests := []string{strings.Repeat("a", 64), strings.Repeat("b", 64)}
+	makeRunner := func(id, version string) RuntimeImage {
+		client := strings.TrimSuffix(id, "-runner")
+		observed := version
+		if client == "codex" {
+			observed = "codex-cli " + version
+		}
+		a := []CLIImageAttestation{{"sealed-cli-image-attestation/v1", client, "linux/amd64", "sha256:" + digests[0], version, observed, 0, "x86_64"}, {"sealed-cli-image-attestation/v1", client, "linux/arm64", "sha256:" + digests[1], version, observed, 0, "aarch64"}}
+		raw, _ := json.Marshal(a)
+		raw = append(raw, '\n')
+		return RuntimeImage{ID: id, Reference: "x@sha256:" + strings.Repeat("c", 64), Platforms: []string{"linux/amd64", "linux/arm64"}, Source: "lock:x", ClientVersion: version, ChildDigests: []PlatformDigest{{"linux/amd64", digests[0]}, {"linux/arm64", digests[1]}}, AttestationSHA256: SHA256Hex(raw), Attestations: a}
+	}
+	base := RuntimeLock{Schema: RuntimeLockSchemaV3, RunID: "run-1", SourceLockSHA256: strings.Repeat("d", 64), Images: []RuntimeImage{{ID: "bifrost", Reference: "x@sha256:" + strings.Repeat("1", 64), Platforms: []string{"linux/amd64", "linux/arm64"}, Source: "git:x"}, makeRunner("claude-runner", "2.1.214"), makeRunner("codex-runner", "0.144.5"), {ID: "egress-sentinel", Reference: "x@sha256:" + strings.Repeat("2", 64), Platforms: []string{"linux/amd64", "linux/arm64"}, Source: "git:x"}}}
+	if err := base.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	for _, mutate := range []func(*RuntimeLock){func(l *RuntimeLock) { l.Images[1].Attestations = nil }, func(l *RuntimeLock) { l.Images[1].AttestationSHA256 = strings.Repeat("e", 64) }, func(l *RuntimeLock) { l.Images[1].Attestations[0].ObservedVersion = "prefix 2.1.214 suffix" }, func(l *RuntimeLock) { l.Images[2].Attestations[0].ObservedVersion = "codex-cli 0.144.50" }} {
+		candidate := base
+		candidate.Images = append([]RuntimeImage(nil), base.Images...)
+		candidate.Images[1].Attestations = append([]CLIImageAttestation(nil), base.Images[1].Attestations...)
+		candidate.Images[2].Attestations = append([]CLIImageAttestation(nil), base.Images[2].Attestations...)
+		mutate(&candidate)
+		if candidate.Validate() == nil {
+			t.Fatal("runtime v3 mutant accepted")
+		}
+	}
+}
+
+func TestNativeCLIPackageMatrixMutants(t *testing.T) {
+	data, err := os.ReadFile(filepath.Join("..", "images.lock.v1.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var base Lock
+	if json.Unmarshal(data, &base) != nil || base.Validate() != nil {
+		t.Fatal("source lock invalid")
+	}
+	for _, mutate := range []func(*Lock){func(l *Lock) { l.NativeCLIPackages = nil }, func(l *Lock) {
+		l.NativeCLIPackages[0], l.NativeCLIPackages[1] = l.NativeCLIPackages[1], l.NativeCLIPackages[0]
+	}, func(l *Lock) { l.NativeCLIPackages[0].ID = "wrong" }, func(l *Lock) { l.NativeCLIPackages[0].Tarball += "/wrong" }, func(l *Lock) { l.NativeCLIPackages[0].Integrity = "sha512-AAAA" }} {
+		candidate := base
+		candidate.NativeCLIPackages = append([]NativeCLIPackage(nil), base.NativeCLIPackages...)
+		mutate(&candidate)
+		if candidate.Validate() == nil {
+			t.Fatal("native package mutant accepted")
+		}
+	}
+}
+
 type testScenario struct {
 	Schema          string `json:"schema"`
 	Client          string `json:"client"`
@@ -68,10 +118,21 @@ func TestPrefetchProducesLockedContentEvidenceWithoutLifecycleScripts(t *testing
 		t.Fatal(err)
 	}
 	text := string(dockerfile)
-	for _, required := range []string{"--package-lock-only", "--ignore-scripts", "verify-tree.mjs", "client-files.sha256", "resolved-dependencies.json", "prefetch-artifacts.sha256"} {
+	for _, required := range []string{"--package-lock-only", "--ignore-scripts", `npm pack "${CLI_PACKAGE}@${CLI_VERSION}"`, `node /usr/local/lib/verify-sri.mjs /mirror/*.tgz "$CLI_INTEGRITY"`, `node /usr/local/lib/verify-root-lock.mjs /opt/client/package-lock.json "$CLI_PACKAGE" "$CLI_VERSION" "$CLI_INTEGRITY"`, "npm ci --prefix /opt/client --ignore-scripts --omit=dev", "verify-tree.mjs", "client-files.sha256", "resolved-dependencies.json", "prefetch-artifacts.sha256"} {
 		if !strings.Contains(text, required) {
 			t.Fatalf("prefetch Dockerfile misses %q", required)
 		}
+	}
+	for _, required := range []string{`select-claude-native.mjs`, `@openai/codex)`, `npm_config_platform="$TARGETOS"`, `target-platform.json`} {
+		if !strings.Contains(text, required) {
+			t.Fatalf("target-native prefetch misses %q", required)
+		}
+	}
+	if strings.Contains(text, "install.cjs") {
+		t.Fatal("prefetch executes broad package installer")
+	}
+	if strings.Count(text, "npm install ") != 1 || strings.Contains(text, "npm install --global") {
+		t.Fatal("prefetch must use one lock-generation install and materialize only through npm ci")
 	}
 	verifier, err := os.ReadFile(filepath.Join(root, "prefetch", "verify-tree.mjs"))
 	if err != nil {
@@ -117,6 +178,7 @@ func TestLabContractRejectsAdversarialRelaxation(t *testing.T) {
 		{"remove sentinel", "\n  egress-sentinel:\n", "\n  removed-sentinel:\n"},
 		{"inject AWS credential", "user: \"65532:65532\"", "environment: {AWS_ACCESS_KEY_ID: leaked}\n  user: \"65532:65532\""},
 		{"remove default-route assertion", "ip route | awk '$$1 == \"default\"'", "ip route | awk '$$1 == \"anything\"'"},
+		{"break Bifrost readiness endpoint", "http://127.0.0.1:8080/health || exit 1", "http://127.0.0.1:8080/not-ready || exit 1"},
 	} {
 		t.Run(mutation.name, func(t *testing.T) {
 			mutated := strings.Replace(string(compose), mutation.old, mutation.new, 1)
@@ -312,21 +374,26 @@ func TestClientSeedsAreHashBoundAndDisableExternalTraffic(t *testing.T) {
 			t.Fatal(err)
 		}
 		var manifest testSeedManifest
-		if err := json.Unmarshal(manifestBytes, &manifest); err != nil || manifest.Schema != "sealed-cli-seed/v1" || len(manifest.Files) != 1 {
+		if err := json.Unmarshal(manifestBytes, &manifest); err != nil || manifest.Schema != "sealed-cli-seed/v1" || len(manifest.Files) == 0 {
 			t.Fatalf("invalid %s seed manifest: %v", client, err)
 		}
-		entry := manifest.Files[0]
-		data, err := os.ReadFile(filepath.Join(root, entry.Source))
-		if err != nil {
-			t.Fatal(err)
+		var text string
+		for _, entry := range manifest.Files {
+			data, err := os.ReadFile(filepath.Join(root, entry.Source))
+			if err != nil {
+				t.Fatal(err)
+			}
+			digest := sha256.Sum256(data)
+			if hex.EncodeToString(digest[:]) != entry.SHA256 {
+				t.Fatalf("%s seed digest drift", client)
+			}
+			text += string(data)
+			if entry.Source == "model-catalog.json" && (!strings.Contains(string(data), `"use_responses_lite":true`) || !strings.Contains(string(data), `"slug":"bedrock_mantle/gpt-5.5"`)) {
+				t.Fatal("Codex catalog does not force Responses Lite")
+			}
 		}
-		digest := sha256.Sum256(data)
-		if hex.EncodeToString(digest[:]) != entry.SHA256 {
-			t.Fatalf("%s seed digest drift", client)
-		}
-		text := string(data)
 		if client == "codex" {
-			for _, required := range []string{"bedrock_mantle/gpt-5.6-sol", "http://bifrost-1:8080/openai/v1", "check_for_update_on_startup = false", "request_max_retries = 0", "stream_max_retries = 0"} {
+			for _, required := range []string{"bedrock_mantle/gpt-5.5", "http://bifrost-1:8080/openai/v1", "responses_websockets = false", "responses_websockets_v2 = false", "requires_openai_auth = false", `env_http_headers = { "x-sealed-codex-run-id" = "LAB_RUN_ID" }`, "model_catalog_json", "request_max_retries = 0", "stream_max_retries = 0"} {
 				if !strings.Contains(text, required) {
 					t.Fatalf("Codex seed misses %q", required)
 				}

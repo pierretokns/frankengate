@@ -1,6 +1,6 @@
 {
   "schema": "bedrock-mantle-openai-service-coverage/v1",
-  "source_lock_sha256": "e1e5bc8be5297e0b21acb69aca7e7431a7c5032ba4eafbfb810d151b232cf6d7",
+  "source_lock_sha256": "c2ba4e5348dcaddf8ca508f2f3fbcaeee966055057b852fe4899bf901e1e7350",
   "sources": [
     {"id":"aws-docs-mantle-2026-07-20","authority_class":"official-doc-derived","artifact_digest":"sha256:a2dfa8a9c6b982258d01bcf6bbebaf01da4f7ded5efd982f547b66128304e4c3"},
     {"id":"aws-model-card-openai-gpt-54-2026-07-21","authority_class":"official-doc-derived","artifact_digest":"sha256:7a5fd36a39ec0d1ecfd71fc537fa07fc3d89905722c89d99b0f0f00d3a5f1263"},

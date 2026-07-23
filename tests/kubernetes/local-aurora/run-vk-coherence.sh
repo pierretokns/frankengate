@@ -433,13 +433,11 @@ wait
 storm_finished_ms=$(( $(date +%s%N) / 1000000 ))
 storm_failures=0
 for storm_file in "$storm_dir"/*; do
-  # This fixture intentionally has no reachable upstream. A request that
-  # passes VK admission may therefore return the provider circuit-breaker
-  # response instead of 200. Count only governance/authentication failures as
-  # storm failures; provider-phase responses are evidence that the shared VK
-  # was accepted by the request hot path.
+  # This fixture intentionally has no reachable upstream. Count only
+  # governance/authentication failures as storm failures; provider-phase
+  # responses are evidence that the shared VK was accepted by the request hot
+  # path.
   if ! grep -q '200 OK' "$storm_file" &&
-     ! grep -q 'provider circuit open for openai' "$storm_file" &&
      ! grep -q 'connection refused\|connection reset\|provider .* unavailable' "$storm_file"; then
     storm_failures=$((storm_failures + 1))
   fi
@@ -451,7 +449,6 @@ if [[ "$storm_failures" -ne 0 ]]; then
   shown=0
   for storm_file in "$storm_dir"/*; do
     if ! grep -q '200 OK' "$storm_file" &&
-       ! grep -q 'provider circuit open for openai' "$storm_file" &&
        ! grep -q 'connection refused\|connection reset\|provider .* unavailable' "$storm_file"; then
       echo "--- failed storm response $(basename "$storm_file") ---" >&2
       # Include the bounded response body as well as headers. A 400 during the

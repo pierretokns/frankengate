@@ -15,22 +15,28 @@ type resolvedCompose struct {
 }
 
 type resolvedService struct {
-	Image         string            `json:"image"`
-	Privileged    bool              `json:"privileged"`
-	ReadOnly      bool              `json:"read_only"`
-	NetworkMode   string            `json:"network_mode"`
-	CapAdd        []string          `json:"cap_add"`
-	CapDrop       []string          `json:"cap_drop"`
-	SecurityOpt   []string          `json:"security_opt"`
-	Command       []string          `json:"command"`
-	Ports         []json.RawMessage `json:"ports"`
-	Volumes       []resolvedMount   `json:"volumes"`
-	Environment   map[string]any    `json:"environment"`
-	ExternalLinks []string          `json:"external_links"`
-	Devices       []json.RawMessage `json:"devices"`
-	IPC           string            `json:"ipc"`
-	PID           string            `json:"pid"`
-	UserNS        string            `json:"userns_mode"`
+	Image         string               `json:"image"`
+	Privileged    bool                 `json:"privileged"`
+	ReadOnly      bool                 `json:"read_only"`
+	NetworkMode   string               `json:"network_mode"`
+	CapAdd        []string             `json:"cap_add"`
+	CapDrop       []string             `json:"cap_drop"`
+	SecurityOpt   []string             `json:"security_opt"`
+	Command       []string             `json:"command"`
+	Ports         []json.RawMessage    `json:"ports"`
+	Volumes       []resolvedMount      `json:"volumes"`
+	Environment   map[string]any       `json:"environment"`
+	ExternalLinks []string             `json:"external_links"`
+	Devices       []json.RawMessage    `json:"devices"`
+	IPC           string               `json:"ipc"`
+	PID           string               `json:"pid"`
+	UserNS        string               `json:"userns_mode"`
+	Healthcheck   *resolvedHealthcheck `json:"healthcheck"`
+}
+
+type resolvedHealthcheck struct {
+	Test    []string `json:"test"`
+	Retries int      `json:"retries"`
 }
 
 type resolvedMount struct {
@@ -60,7 +66,7 @@ func ValidateResolvedCompose(data []byte, source Lock, runtime RuntimeLock) erro
 	}
 	requiredServices := []string{
 		"bifrost-1", "bifrost-2", "bifrost-3", "claude-runner", "codex-runner", "contract-stub", "controlled-dns",
-		"egress-sentinel", "health-stub", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3",
+		"config-seed", "egress-sentinel", "health-stub", "mantle-contract-service", "netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3",
 		"netns-claude", "netns-codex", "network-probe", "postgres",
 	}
 	for _, name := range requiredServices {
@@ -79,6 +85,16 @@ func ValidateResolvedCompose(data []byte, source Lock, runtime RuntimeLock) erro
 	for name, mode := range wantModes {
 		if document.Services[name].NetworkMode != mode {
 			return fmt.Errorf("service %q network mode %q does not match %q", name, document.Services[name].NetworkMode, mode)
+		}
+	}
+	for _, name := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
+		environment := document.Services[name].Environment
+		healthcheck := document.Services[name].Healthcheck
+		if healthcheck == nil || healthcheck.Retries < 1 || strings.Join(healthcheck.Test, " ") != "CMD-SHELL wget -q -O /dev/null http://127.0.0.1:8080/health || exit 1" {
+			return fmt.Errorf("service %q lacks the exact Bifrost listener readiness gate", name)
+		}
+		if environment["BIFROST_SEALED_LAB_INGRESS_OBSERVER"] != "1" || environment["LAB_RUN_ID"] != runtime.RunID {
+			return fmt.Errorf("service %q lacks run-bound sealed ingress observer activation", name)
 		}
 	}
 	for _, name := range []string{"netns-bifrost-1", "netns-bifrost-2", "netns-bifrost-3", "netns-claude", "netns-codex"} {
@@ -131,7 +147,7 @@ func ValidateResolvedCompose(data []byte, source Lock, runtime RuntimeLock) erro
 	for _, image := range runtime.Images {
 		switch image.ID {
 		case "bifrost":
-			for _, service := range []string{"bifrost-1", "bifrost-2", "bifrost-3"} {
+			for _, service := range []string{"bifrost-1", "bifrost-2", "bifrost-3", "config-seed", "mantle-contract-service"} {
 				wantImages[service] = image.Reference
 			}
 		case "claude-runner":
