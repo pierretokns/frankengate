@@ -7,6 +7,7 @@ package handlers
 // request path.
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -222,6 +223,9 @@ func loadAlertingState(ctx context.Context, store configstore.ConfigStore) (aler
 	}
 	row, err := store.GetConfig(ctx, alertingConfigKey)
 	if err != nil {
+		if errors.Is(err, configstore.ErrNotFound) {
+			return alertingState{}, false, nil
+		}
 		return alertingState{}, false, err
 	}
 	if row == nil || strings.TrimSpace(row.Value) == "" {
@@ -354,6 +358,9 @@ func (h *AlertingHandler) load(ctx *fasthttp.RequestCtx) (alertingState, error) 
 	}
 	row, e := h.configStore.GetConfig(ctx, alertingConfigKey)
 	if e != nil {
+		if errors.Is(e, configstore.ErrNotFound) {
+			return alertingState{}, nil
+		}
 		return alertingState{}, e
 	}
 	if row == nil || strings.TrimSpace(row.Value) == "" {

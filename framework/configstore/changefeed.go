@@ -39,6 +39,19 @@ type ConfigChangefeedGeneration struct {
 	UpdatedAt     time.Time `gorm:"column:updated_at;not null" json:"updated_at"`
 }
 
+// ConfigChangefeedCursorTooOldError means the consumer fell behind the
+// retained event window and must load a fenced snapshot before resuming.
+type ConfigChangefeedCursorTooOldError struct {
+	Scope         string
+	Generation    uint64
+	Cursor        uint64
+	RetainedFloor uint64
+}
+
+func (e *ConfigChangefeedCursorTooOldError) Error() string {
+	return fmt.Sprintf("config changefeed cursor is below retained floor: scope=%s generation=%d cursor=%d floor=%d", e.Scope, e.Generation, e.Cursor, e.RetainedFloor)
+}
+
 func (ConfigChangefeedGeneration) TableName() string { return "config_changefeed_generations" }
 
 // EnsureConfigChangefeedSchema creates the additive compatibility schema. It is
@@ -90,11 +103,53 @@ func AppendConfigChangefeed(ctx context.Context, tx *gorm.DB, scope, kind, entit
 	return event, nil
 }
 
+// RetainConfigChangefeedFrom advances the durable floor and deletes events
+// before it in the same transaction. The floor is monotonic and generation
+// scoped; a caller must coordinate this with its snapshot/admission fence.
+func RetainConfigChangefeedFrom(ctx context.Context, tx *gorm.DB, scope string, generation, floor uint64) error {
+	if tx == nil || strings.TrimSpace(scope) == "" || generation == 0 || floor == 0 {
+		return errors.New("valid config changefeed transaction, scope, generation, and floor are required")
+	}
+	var row ConfigChangefeedGeneration
+	q := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).Where("scope = ?", scope).First(&row)
+	if q.Error != nil {
+		return q.Error
+	}
+	if row.Generation != generation {
+		return fmt.Errorf("config changefeed generation mismatch: scope=%s expected=%d actual=%d", scope, generation, row.Generation)
+	}
+	if floor <= row.RetainedFloor {
+		return nil
+	}
+	if floor > row.NextCursor {
+		return fmt.Errorf("config changefeed floor %d exceeds next cursor %d", floor, row.NextCursor)
+	}
+	if err := tx.WithContext(ctx).Where("scope = ? AND generation = ? AND cursor < ?", scope, generation, floor).Delete(&ConfigChangefeedEvent{}).Error; err != nil {
+		return fmt.Errorf("prune config changefeed events: %w", err)
+	}
+	row.RetainedFloor = floor
+	row.UpdatedAt = time.Now().UTC()
+	return tx.WithContext(ctx).Save(&row).Error
+}
+
 // ListConfigChangefeedAfter returns only the requested generation and scope.
 // Consumers persist the tuple (scope,generation,cursor), not a global ID.
 func ListConfigChangefeedAfter(ctx context.Context, db *gorm.DB, scope string, generation, cursor uint64, limit int) ([]ConfigChangefeedEvent, error) {
 	if db == nil || strings.TrimSpace(scope) == "" || generation == 0 || limit <= 0 {
 		return nil, errors.New("valid config changefeed database, scope, generation, and limit are required")
+	}
+	var row ConfigChangefeedGeneration
+	if err := db.WithContext(ctx).Where("scope = ?", scope).First(&row).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return []ConfigChangefeedEvent{}, nil
+		}
+		return nil, err
+	}
+	if row.Generation != generation {
+		return nil, fmt.Errorf("config changefeed generation mismatch: scope=%s expected=%d actual=%d", scope, generation, row.Generation)
+	}
+	if cursor+1 < row.RetainedFloor {
+		return nil, &ConfigChangefeedCursorTooOldError{Scope: scope, Generation: generation, Cursor: cursor, RetainedFloor: row.RetainedFloor}
 	}
 	var events []ConfigChangefeedEvent
 	err := db.WithContext(ctx).Where("scope = ? AND generation = ? AND cursor > ?", scope, generation, cursor).Order("cursor ASC").Limit(limit).Find(&events).Error

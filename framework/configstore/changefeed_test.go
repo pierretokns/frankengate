@@ -61,6 +61,34 @@ func TestConfigChangefeedRollbackLeavesNoEventOrCursor(t *testing.T) {
 	require.ErrorIs(t, db.First(&generation, "scope = ?", "global").Error, gorm.ErrRecordNotFound)
 }
 
+func TestConfigChangefeedRetentionFailsClosedForStaleCursor(t *testing.T) {
+	db := testChangefeedDB(t)
+	ctx := context.Background()
+	var events []ConfigChangefeedEvent
+	for _, payload := range []string{"one", "two", "three"} {
+		require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+			event, err := AppendConfigChangefeed(ctx, tx, "tenant-a", "provider", payload, []byte(payload))
+			if err == nil {
+				events = append(events, event)
+			}
+			return err
+		}))
+	}
+	require.NoError(t, db.Transaction(func(tx *gorm.DB) error {
+		return RetainConfigChangefeedFrom(ctx, tx, "tenant-a", events[0].Generation, events[1].Cursor)
+	}))
+
+	_, err := ListConfigChangefeedAfter(ctx, db, "tenant-a", events[0].Generation, 0, 10)
+	var stale *ConfigChangefeedCursorTooOldError
+	require.ErrorAs(t, err, &stale)
+	require.Equal(t, events[1].Cursor, stale.RetainedFloor)
+
+	got, err := ListConfigChangefeedAfter(ctx, db, "tenant-a", events[0].Generation, events[1].Cursor-1, 10)
+	require.NoError(t, err)
+	require.Len(t, got, 2)
+	require.Equal(t, events[1].Cursor, got[0].Cursor)
+}
+
 func TestConfigChangefeedRejectsInvalidAppend(t *testing.T) {
 	db := testChangefeedDB(t)
 	_, err := AppendConfigChangefeed(context.Background(), db, "", "provider", "id", []byte("{}"))

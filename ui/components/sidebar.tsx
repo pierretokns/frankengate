@@ -9,7 +9,6 @@ import {
 	ChevronsLeftRightEllipsis,
 	DatabaseZap,
 	Flag,
-	FlaskConical,
 	FolderGit,
 	Gavel,
 	Globe,
@@ -583,8 +582,15 @@ export default function AppSidebar() {
 				url: "/workspace/logs",
 				icon: Telescope,
 				description: "Request logs & monitoring",
-				hasAccess: hasLogsAccess,
+				hasAccess: true,
 				subItems: [
+					{
+						title: "My History & Evals",
+						url: "/workspace/my-history",
+						icon: History,
+						description: "Your prompts and trace-guided evals",
+						hasAccess: true,
+					},
 					{
 						title: "Dashboard",
 						url: "/workspace/dashboard",
@@ -809,14 +815,6 @@ export default function AppSidebar() {
 						},
 					]
 				: []),
-			{
-				title: "Evals",
-				url: "https://www.getmaxim.ai",
-				icon: FlaskConical,
-				isExternal: true,
-				description: "Evaluations",
-				hasAccess: true,
-			},
 			{
 				title: "Settings",
 				url: "/workspace/config",
@@ -1247,7 +1245,7 @@ export default function AppSidebar() {
 					className="hidden w-full cursor-pointer flex-col items-center gap-2 py-2 group-data-[collapsible=icon]:flex"
 					onClick={toggleSidebar}
 				>
-					<img className="h-[22px] w-auto" src={iconSrc} alt={PRODUCT_NAME} width={22} height={22} style={{ width: 18 }} />
+					<CircuitBoard className="text-primary size-[18px]" aria-label={PRODUCT_NAME} />
 				</div>
 			</SidebarHeader>
 			{envLabel && (

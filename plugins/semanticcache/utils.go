@@ -263,22 +263,24 @@ func (plugin *Plugin) buildRequestMetadataForCaching(state *cacheState, req *sch
 // claims into the cache key. An epoch reference is required to be internally
 // consistent with its principal; malformed protected context fails closed.
 func authorityMetadataForCaching(ctx *schemas.BifrostContext) (map[string]any, error) {
-	if ctx == nil || ctx.Value(schemas.BifrostContextKeyAuthorizationEpochReference) == nil {
+	if ctx == nil {
 		return nil, nil
 	}
-	ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("invalid authorization scope for semantic cache: %w", err)
-	}
-	metadata := map[string]any{
-		"authorization_tenant":      ref.Principal.Tenant,
-		"authorization_issuer":      ref.Principal.Issuer,
-		"authorization_subject":     ref.Principal.Subject,
-		"authorization_epoch":       ref.Epoch,
-		"authorization_artifact":    string(ref.Kind),
-		"authorization_artifact_id": ref.ID,
+	metadata := make(map[string]any)
+	if refValue := ctx.Value(schemas.BifrostContextKeyAuthorizationEpochReference); refValue != nil {
+		ref, err := schemas.AuthorizationEpochReferenceFromContext(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("invalid authorization scope for semantic cache: %w", err)
+		}
+		metadata["authorization_tenant"] = ref.Principal.Tenant
+		metadata["authorization_issuer"] = ref.Principal.Issuer
+		metadata["authorization_subject"] = ref.Principal.Subject
+		metadata["authorization_epoch"] = ref.Epoch
+		metadata["authorization_artifact"] = string(ref.Kind)
+		metadata["authorization_artifact_id"] = ref.ID
 	}
 	for key, metadataKey := range map[schemas.BifrostContextKey]string{
+		schemas.BifrostContextKeyGovernanceVirtualKeyID:   "authorization_virtual_key_id",
 		schemas.BifrostContextKeyGovernanceTeamID:         "authorization_team_id",
 		schemas.BifrostContextKeyGovernanceCustomerID:     "authorization_customer_id",
 		schemas.BifrostContextKeyGovernanceBusinessUnitID: "authorization_business_unit_id",
@@ -291,10 +293,11 @@ func authorityMetadataForCaching(ctx *schemas.BifrostContext) (map[string]any, e
 }
 
 // requireGovernedCacheAuthority prevents a cache lookup from becoming an
-// authorization bypass. Governance scopes are populated on the context before
-// LLM hooks run; if one is present, a complete and internally consistent epoch
-// reference is mandatory. Requests with no governance scope are treated as
-// legacy/unmanaged traffic and keep the existing explicit cache-key behavior.
+// authorization bypass. Principal-governed traffic must carry its complete
+// epoch reference. Virtual-key traffic is already authenticated and authorized
+// by the governance hook before semantic cache runs, so its stable resolved VK
+// row ID is the authority fence. Derived team/customer scopes without either
+// root authority remain malformed and fail closed.
 func requireGovernedCacheAuthority(ctx *schemas.BifrostContext) error {
 	if ctx == nil {
 		return nil
@@ -312,9 +315,14 @@ func requireGovernedCacheAuthority(ctx *schemas.BifrostContext) error {
 		}
 		return nil
 	}
+	if ctx.Value(schemas.BifrostContextKeyAuthorizationPrincipal) != nil {
+		return errors.New("semantic cache authorization scope is missing")
+	}
+	if virtualKeyID, ok := ctx.Value(schemas.BifrostContextKeyGovernanceVirtualKeyID).(string); ok && virtualKeyID != "" {
+		return nil
+	}
 	scoped := false
 	for _, key := range []schemas.BifrostContextKey{
-		schemas.BifrostContextKeyGovernanceVirtualKeyID,
 		schemas.BifrostContextKeyGovernanceTeamID,
 		schemas.BifrostContextKeyGovernanceCustomerID,
 		schemas.BifrostContextKeyGovernanceBusinessUnitID,
@@ -327,21 +335,14 @@ func requireGovernedCacheAuthority(ctx *schemas.BifrostContext) error {
 	if !scoped {
 		return nil
 	}
-	if ctx.Value(schemas.BifrostContextKeyAuthorizationEpochReference) == nil {
-		return errors.New("semantic cache authorization scope is missing")
-	}
-	_, err := authorityMetadataForCaching(ctx)
-	if err != nil {
-		return fmt.Errorf("semantic cache authorization scope is invalid: %w", err)
-	}
-	return nil
+	return errors.New("semantic cache authorization scope is missing")
 }
 
 // authorizationCacheQueries mirrors the trusted metadata embedded in cache
 // entries. Semantic lookup must apply these predicates before reranking; the
 // response is then still checked by the backend adapter/post-filter.
 func authorizationCacheQueries(metadata map[string]any) []vectorstore.Query {
-	keys := []string{"authorization_tenant", "authorization_issuer", "authorization_subject", "authorization_epoch", "authorization_artifact", "authorization_artifact_id", "authorization_team_id", "authorization_customer_id", "authorization_business_unit_id"}
+	keys := []string{"authorization_tenant", "authorization_issuer", "authorization_subject", "authorization_epoch", "authorization_artifact", "authorization_artifact_id", "authorization_virtual_key_id", "authorization_team_id", "authorization_customer_id", "authorization_business_unit_id"}
 	queries := make([]vectorstore.Query, 0, len(keys))
 	for _, key := range keys {
 		if value, ok := metadata[key]; ok && value != "" {
