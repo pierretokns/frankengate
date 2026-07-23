@@ -13,7 +13,6 @@ import {
 	DatabaseZap,
 	Flag,
 	ShieldHalf,
-	FlaskConical,
 	FolderGit,
 	Gavel,
 	Globe,
@@ -614,8 +613,15 @@ export default function AppSidebar() {
 				url: "/workspace/logs",
 				icon: Telescope,
 				description: "Request logs & monitoring",
-				hasAccess: hasLogsAccess,
+				hasAccess: true,
 				subItems: [
+					{
+						title: "My History & Evals",
+						url: "/workspace/my-history",
+						icon: History,
+						description: "Your prompts and trace-guided evals",
+						hasAccess: true,
+					},
 					{
 						title: "Dashboard",
 						url: "/workspace/dashboard",
@@ -950,14 +956,6 @@ export default function AppSidebar() {
 					]
 				: []),
 			{
-				title: "Evals",
-				url: "https://www.getmaxim.ai",
-				icon: FlaskConical,
-				isExternal: true,
-				description: "Evaluations",
-				hasAccess: true,
-			},
-			{
 				title: "Settings",
 				url: "/workspace/config",
 				icon: Settings2Icon,
@@ -1279,10 +1277,6 @@ export default function AppSidebar() {
 		return false;
 	};
 
-	// Always render the light theme version for SSR to avoid hydration mismatch
-	const logoSrc = mounted && resolvedTheme === "dark" ? "/bifrost-logo-dark.webp" : "/bifrost-logo.webp";
-	const iconSrc = mounted && resolvedTheme === "dark" ? "/bifrost-icon-dark.webp" : "/bifrost-icon.webp";
-
 	const { isConnected: isWebSocketConnected } = useWebSocket();
 
 	// New release image - based on theme
@@ -1381,7 +1375,8 @@ export default function AppSidebar() {
 				{/* Expanded state: horizontal layout */}
 				<div className="flex h-10 w-full items-center justify-between px-1.5 group-data-[collapsible=icon]:hidden">
 					<Link to="/workspace/logs" className="group flex items-center gap-2 pl-2">
-						<img className="h-[22px] w-auto" src={logoSrc} alt={PRODUCT_NAME} width={70} height={70} />
+						<CircuitBoard className="text-primary size-5" aria-hidden="true" />
+						<span className="text-base font-semibold tracking-tight">{PRODUCT_NAME}</span>
 					</Link>
 					<button
 						onClick={toggleSidebar}
@@ -1398,7 +1393,7 @@ export default function AppSidebar() {
 					className="hidden w-full cursor-pointer flex-col items-center gap-2 py-2 group-data-[collapsible=icon]:flex"
 					onClick={toggleSidebar}
 				>
-					<img className="h-[22px] w-auto" src={iconSrc} alt={PRODUCT_NAME} width={22} height={22} style={{ width: 18 }} />
+					<CircuitBoard className="text-primary size-[18px]" aria-label={PRODUCT_NAME} />
 				</div>
 			</SidebarHeader>
 			{envLabel && (
