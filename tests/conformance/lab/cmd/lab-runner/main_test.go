@@ -495,6 +495,22 @@ func TestSanitizedFailureClassificationMutants(t *testing.T) {
 	}
 }
 
+func TestSanitizedBootstrapErrorIsBoundedAndRedacted(t *testing.T) {
+	input := `{"level":"error","msg":"failed to bootstrap server: postgres://bifrost:sealed-lab-only@postgres/config password=secret authorization=BearerSecret api_key=abcdefghijklmnopqrstuvwxyz0123456789 column alpha does not exist"}`
+	got := sanitizedBootstrapError([]byte(input))
+	if got == "" || len(got) > 512 {
+		t.Fatalf("unexpected bounded bootstrap error %q", got)
+	}
+	for _, secret := range []string{"sealed-lab-only", "password=secret", "BearerSecret", "abcdefghijklmnopqrstuvwxyz0123456789"} {
+		if strings.Contains(got, secret) {
+			t.Fatalf("bootstrap diagnostic leaked %q: %s", secret, got)
+		}
+	}
+	if !strings.Contains(got, "column alpha does not exist") {
+		t.Fatalf("bootstrap diagnostic lost actionable error: %s", got)
+	}
+}
+
 func TestSuccessfulOneShotServiceIsNotFailed(t *testing.T) {
 	if serviceStatusFailed("exited", "unknown", 0) {
 		t.Fatal("expected exited/0 config seed was classified as failed")

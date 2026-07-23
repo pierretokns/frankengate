@@ -197,20 +197,21 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 		return errors.New("diagnostic artifact must be fresh")
 	}
 	type row struct {
-		Service       string   `json:"service"`
-		State         string   `json:"state"`
-		Health        string   `json:"health"`
-		OOM           string   `json:"oom"`
-		OOMSource     string   `json:"oom_source"`
-		LogSHA256     string   `json:"log_sha256,omitempty"`
-		LogContent    string   `json:"log_content"`
-		ErrorClass    string   `json:"error_class"`
-		FailureClass  string   `json:"failure_class"`
-		PanicDetected bool     `json:"panic_detected"`
-		StackFrames   []string `json:"stack_frames,omitempty"`
-		ExitCode      int      `json:"exit_code"`
-		LogBytes      int      `json:"log_bytes"`
-		ListenerBind  string   `json:"listener_bind"`
+		Service        string   `json:"service"`
+		State          string   `json:"state"`
+		Health         string   `json:"health"`
+		OOM            string   `json:"oom"`
+		OOMSource      string   `json:"oom_source"`
+		LogSHA256      string   `json:"log_sha256,omitempty"`
+		LogContent     string   `json:"log_content"`
+		ErrorClass     string   `json:"error_class"`
+		FailureClass   string   `json:"failure_class"`
+		PanicDetected  bool     `json:"panic_detected"`
+		StackFrames    []string `json:"stack_frames,omitempty"`
+		ExitCode       int      `json:"exit_code"`
+		LogBytes       int      `json:"log_bytes"`
+		ListenerBind   string   `json:"listener_bind"`
+		BootstrapError string   `json:"bootstrap_error,omitempty"`
 	}
 	result := struct {
 		Schema             string                        `json:"schema"`
@@ -409,7 +410,7 @@ func writeComposeDiagnostics(executor commandExecutor, environment []string, doc
 			}
 		}
 		listenerBind := listenerBindEvidence(service, logData)
-		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only", ListenerBind: listenerBind})
+		result.Services = append(result.Services, row{Service: service, State: state, Health: health, OOM: oom, OOMSource: oomSource, ErrorClass: errorClass, FailureClass: failureClass, PanicDetected: panicDetected, StackFrames: stackFrames, ExitCode: exitCode, LogBytes: len(logData), LogSHA256: digest, LogContent: "omitted-metadata-only", ListenerBind: listenerBind, BootstrapError: sanitizedBootstrapError(logData)})
 	}
 	result.IngressState = classifyCodexIngressEvidence(result.HeaderRecords, result.ParseErrors, result.IngressArrivals, result.IngressAccepted, result.IngressRejections, bifrostLogCaptureIncomplete)
 	encoded, err := json.Marshal(result)
@@ -831,6 +832,28 @@ func classifySanitizedFailure(data []byte, failed bool) string {
 		return "generic-startup"
 	}
 	return "none"
+}
+
+func sanitizedBootstrapError(data []byte) string {
+	var line string
+	for _, candidate := range strings.Split(string(data), "\n") {
+		if strings.Contains(strings.ToLower(candidate), "failed to bootstrap server") {
+			line = strings.TrimSpace(candidate)
+		}
+	}
+	if line == "" {
+		return ""
+	}
+	for _, secret := range []string{"sealed-lab-only", "synthetic-mantle-contract"} {
+		line = strings.ReplaceAll(line, secret, "[redacted]")
+	}
+	line = regexp.MustCompile(`(?i)([a-z][a-z0-9+.-]*://)[^/@[:space:]]+@`).ReplaceAllString(line, `${1}[redacted]@`)
+	line = regexp.MustCompile(`(?i)(password|api[_-]?key|authorization)([":=[:space:]]+)[^,}[:space:]]+`).ReplaceAllString(line, `${1}${2}[redacted]`)
+	line = regexp.MustCompile(`[A-Za-z0-9_+/=-]{32,}`).ReplaceAllString(line, `[redacted]`)
+	if len(line) > 512 {
+		line = line[:512]
+	}
+	return line
 }
 
 func serviceStatusFailed(state, health string, exitCode int) bool {
