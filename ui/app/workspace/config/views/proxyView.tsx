@@ -1,5 +1,3 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -7,14 +5,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { IS_ENTERPRISE } from "@/lib/constants/config";
 import { getErrorMessage, useGetCoreConfigQuery, useUpdateProxyConfigMutation } from "@/lib/store";
 import { DefaultGlobalProxyConfig, GlobalProxyConfig } from "@/lib/types/config";
 import { globalProxyConfigSchema } from "@/lib/types/schemas";
 import { cn } from "@/lib/utils";
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, Info } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -42,7 +38,6 @@ export default function ProxyView() {
 	}, [proxyConfig, form]);
 
 	const watchedEnabled = form.watch("enabled");
-	const watchedType = form.watch("type");
 
 	const onSubmit = async (data: GlobalProxyConfig) => {
 		try {
@@ -52,8 +47,6 @@ export default function ProxyView() {
 			toast.error(getErrorMessage(error));
 		}
 	};
-
-	const isTypeUnsupported = watchedType === "socks5" || watchedType === "tcp";
 
 	return (
 		<div className="mx-auto w-full max-w-4xl space-y-4">
@@ -103,32 +96,13 @@ export default function ProxyView() {
 											</FormControl>
 											<SelectContent>
 												<SelectItem value="http">HTTP / HTTPS</SelectItem>
-												<SelectItem value="socks5" disabled>
-													SOCKS5{" "}
-													<Badge variant="outline" className="ml-2 text-xs">
-														Coming soon
-													</Badge>
-												</SelectItem>
-												<SelectItem value="tcp" disabled>
-													TCP{" "}
-													<Badge variant="outline" className="ml-2 text-xs">
-														Coming soon
-													</Badge>
-												</SelectItem>
 											</SelectContent>
 										</Select>
-										<FormDescription>Select the proxy protocol type. Currently only HTTP proxy is supported.</FormDescription>
+										<FormDescription>Select the proxy protocol type.</FormDescription>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-
-							{isTypeUnsupported && watchedEnabled && (
-								<Alert variant="destructive">
-									<AlertTriangle className="h-4 w-4" />
-									<AlertDescription>{watchedType.toUpperCase()} proxy is not yet supported. Please use HTTP proxy.</AlertDescription>
-								</Alert>
-							)}
 
 							{/* Proxy URL */}
 							<FormField
@@ -294,60 +268,6 @@ export default function ProxyView() {
 								<p className="text-muted-foreground text-sm">Select which components should use the proxy for outbound requests.</p>
 							</div>
 
-							{/* SCIM - Enterprise only */}
-							{IS_ENTERPRISE && (
-								<div className="flex items-center justify-between rounded-sm border p-4">
-									<div className="space-y-0.5">
-										<div className="flex items-center gap-2">
-											<FormLabel className="text-sm font-medium">SCIM</FormLabel>
-											<Badge variant="secondary">Enterprise</Badge>
-										</div>
-										<p className="text-muted-foreground text-sm">Use proxy for SCIM directory sync requests.</p>
-									</div>
-									<FormField
-										control={form.control}
-										name="enable_for_scim"
-										render={({ field }) => (
-											<FormItem>
-												<FormControl>
-													<Switch checked={field.value} onCheckedChange={field.onChange} disabled={!watchedEnabled} />
-												</FormControl>
-											</FormItem>
-										)}
-									/>
-								</div>
-							)}
-
-							{/* Inference - Coming Soon */}
-							<div className="flex items-center justify-between rounded-sm border p-4 opacity-60">
-								<div className="space-y-0.5">
-									<div className="flex items-center gap-2">
-										<FormLabel className="text-sm font-medium">Inference</FormLabel>
-										<Badge variant="outline">Coming soon</Badge>
-									</div>
-									<p className="text-muted-foreground text-sm">Use proxy for LLM inference requests to model providers.</p>
-								</div>
-								<Switch disabled checked={false} />
-							</div>
-
-							{/* API - Coming Soon */}
-							<div className="flex items-center justify-between rounded-sm border p-4 opacity-60">
-								<div className="space-y-0.5">
-									<div className="flex items-center gap-2">
-										<FormLabel className="text-sm font-medium">API</FormLabel>
-										<Badge variant="outline">Coming soon</Badge>
-									</div>
-									<p className="text-muted-foreground text-sm">Use proxy for external API calls and webhooks.</p>
-								</div>
-								<Switch disabled checked={false} />
-							</div>
-
-							{!IS_ENTERPRISE && (
-								<Alert>
-									<Info className="h-4 w-4" />
-									<AlertDescription>SCIM proxy support is available in Bifrost Enterprise.</AlertDescription>
-								</Alert>
-							)}
 						</div>
 					</fieldset>
 					<div className="flex justify-end pt-2">
