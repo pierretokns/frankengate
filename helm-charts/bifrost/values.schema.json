@@ -13,103 +13,206 @@
       "type": "object",
       "description": "Optional independently scaled Rust analytics control plane",
       "properties": {
-        "enabled": { "type": "boolean" },
+        "enabled": {
+          "type": "boolean"
+        },
         "image": {
           "type": "object",
           "properties": {
-            "repository": { "type": "string" },
-            "tag": { "type": "string" },
-            "digest": { "type": "string", "pattern": "^(|sha256:[a-f0-9]{64})$" },
-            "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+            "repository": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^(|sha256:[a-f0-9]{64})$"
+            },
+            "pullPolicy": {
+              "type": "string",
+              "enum": [
+                "Always",
+                "IfNotPresent",
+                "Never"
+              ]
+            }
           }
         },
-        "replicas": { "type": "integer", "minimum": 1 },
-        "command": { "type": "array", "items": { "type": "string" } },
-        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 },
+        "replicas": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "terminationGracePeriodSeconds": {
+          "type": "integer",
+          "minimum": 1
+        },
         "databaseUrlSecret": {
           "type": "object",
           "properties": {
-            "name": { "type": "string" },
-            "key": { "type": "string", "minLength": 1 }
+            "name": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           "additionalProperties": false
         },
         "workerTokenSecret": {
           "type": "object",
           "properties": {
-            "name": { "type": "string" },
-            "key": { "type": "string", "minLength": 1 }
+            "name": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           "additionalProperties": false
         },
-        "databaseMaxConnections": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "databaseMaxConnections": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
         "startupProbe": {
           "type": "object",
           "properties": {
-            "periodSeconds": { "type": "integer", "minimum": 1 },
-            "failureThreshold": { "type": "integer", "minimum": 1 }
+            "periodSeconds": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "failureThreshold": {
+              "type": "integer",
+              "minimum": 1
+            }
           },
           "additionalProperties": false
         },
         "livenessProbe": {
           "type": "object",
           "properties": {
-            "initialDelaySeconds": { "type": "integer", "minimum": 0 },
-            "periodSeconds": { "type": "integer", "minimum": 1 }
+            "initialDelaySeconds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "periodSeconds": {
+              "type": "integer",
+              "minimum": 1
+            }
           },
           "additionalProperties": false
         },
         "readinessProbe": {
           "type": "object",
           "properties": {
-            "periodSeconds": { "type": "integer", "minimum": 1 }
+            "periodSeconds": {
+              "type": "integer",
+              "minimum": 1
+            }
           },
           "additionalProperties": false
         },
-        "resources": { "type": "object" },
+        "resources": {
+          "type": "object"
+        },
         "serviceMonitor": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean" },
-            "interval": { "type": "string", "minLength": 1 },
-            "scrapeTimeout": { "type": "string", "minLength": 1 },
-            "labels": { "type": "object" }
+            "enabled": {
+              "type": "boolean"
+            },
+            "interval": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scrapeTimeout": {
+              "type": "string",
+              "minLength": 1
+            },
+            "labels": {
+              "type": "object"
+            }
           },
           "additionalProperties": false
         },
         "podDisruptionBudget": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean" },
-            "minAvailable": { "type": "integer", "minimum": 0 }
+            "enabled": {
+              "type": "boolean"
+            },
+            "minAvailable": {
+              "type": "integer",
+              "minimum": 1
+            }
           },
           "additionalProperties": false
         },
         "autoscaling": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean" },
-            "minReplicas": { "type": "integer", "minimum": 1 },
-            "maxReplicas": { "type": "integer", "minimum": 1 },
-            "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "enabled": {
+              "type": "boolean"
+            },
+            "minReplicas": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maxReplicas": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "targetCPUUtilizationPercentage": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
             "behavior": {
               "type": "object",
               "properties": {
                 "scaleUp": {
                   "type": "object",
                   "properties": {
-                    "stabilizationWindowSeconds": { "type": "integer", "minimum": 0 },
-                    "maxReplicasPerPeriod": { "type": "integer", "minimum": 1 },
-                    "periodSeconds": { "type": "integer", "minimum": 1 }
+                    "stabilizationWindowSeconds": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "maxReplicasPerPeriod": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "periodSeconds": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
                   },
                   "additionalProperties": false
                 },
                 "scaleDown": {
                   "type": "object",
                   "properties": {
-                    "stabilizationWindowSeconds": { "type": "integer", "minimum": 0 },
-                    "maxReplicasPerPeriod": { "type": "integer", "minimum": 1 },
-                    "periodSeconds": { "type": "integer", "minimum": 1 }
+                    "stabilizationWindowSeconds": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "maxReplicasPerPeriod": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "periodSeconds": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
                   },
                   "additionalProperties": false
                 }
@@ -117,14 +220,6 @@
               "additionalProperties": false
             }
           }
-        },
-        "podDisruptionBudget": {
-          "type": "object",
-          "properties": {
-            "enabled": { "type": "boolean" },
-            "minAvailable": { "type": "integer", "minimum": 1 }
-          },
-          "additionalProperties": false
         }
       }
     },
@@ -137,7 +232,11 @@
         },
         "pullPolicy": {
           "type": "string",
-          "enum": ["Always", "IfNotPresent", "Never"],
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ],
           "description": "Image pull policy"
         },
         "tag": {
@@ -219,7 +318,11 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["ClusterIP", "NodePort", "LoadBalancer"]
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
         },
         "port": {
           "type": "integer",
@@ -231,7 +334,10 @@
         },
         "sessionAffinity": {
           "type": "string",
-          "enum": ["None", "ClientIP"]
+          "enum": [
+            "None",
+            "ClientIP"
+          ]
         },
         "sessionAffinityConfig": {
           "type": "object",
@@ -259,21 +365,44 @@
         "serviceMonitor": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean" },
-            "interval": { "type": "string", "minLength": 1 },
-            "scrapeTimeout": { "type": "string", "minLength": 1 },
-            "labels": { "type": "object" },
-            "annotations": { "type": "object" }
+            "enabled": {
+              "type": "boolean"
+            },
+            "interval": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scrapeTimeout": {
+              "type": "string",
+              "minLength": 1
+            },
+            "labels": {
+              "type": "object"
+            },
+            "annotations": {
+              "type": "object"
+            }
           },
           "additionalProperties": false
         },
         "prometheusRule": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean" },
-            "labels": { "type": "object" },
-            "annotations": { "type": "object" },
-            "rules": { "type": "array", "items": { "type": "object" } }
+            "enabled": {
+              "type": "boolean"
+            },
+            "labels": {
+              "type": "object"
+            },
+            "annotations": {
+              "type": "object"
+            },
+            "rules": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
           },
           "additionalProperties": false
         }
@@ -300,7 +429,10 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["host", "paths"],
+                "required": [
+                  "host",
+                  "paths"
+                ],
                 "properties": {
                   "host": {
                     "type": "string"
@@ -309,14 +441,21 @@
                     "type": "array",
                     "items": {
                       "type": "object",
-                      "required": ["path", "pathType"],
+                      "required": [
+                        "path",
+                        "pathType"
+                      ],
                       "properties": {
                         "path": {
                           "type": "string"
                         },
                         "pathType": {
                           "type": "string",
-                          "enum": ["Prefix", "Exact", "ImplementationSpecific"]
+                          "enum": [
+                            "Prefix",
+                            "Exact",
+                            "ImplementationSpecific"
+                          ]
                         }
                       }
                     }
@@ -328,7 +467,9 @@
               "type": "array"
             }
           },
-          "required": ["enabled"]
+          "required": [
+            "enabled"
+          ]
         },
         {
           "type": "object",
@@ -349,7 +490,10 @@
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": ["host", "paths"],
+                  "required": [
+                    "host",
+                    "paths"
+                  ],
                   "properties": {
                     "host": {
                       "type": "string"
@@ -358,14 +502,21 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "required": ["path", "pathType"],
+                        "required": [
+                          "path",
+                          "pathType"
+                        ],
                         "properties": {
                           "path": {
                             "type": "string"
                           },
                           "pathType": {
                             "type": "string",
-                            "enum": ["Prefix", "Exact", "ImplementationSpecific"]
+                            "enum": [
+                              "Prefix",
+                              "Exact",
+                              "ImplementationSpecific"
+                            ]
                           }
                         }
                       }
@@ -377,10 +528,14 @@
                 "type": "array"
               }
             },
-            "required": ["enabled"]
+            "required": [
+              "enabled"
+            ]
           },
           "not": {
-            "required": ["enabled"]
+            "required": [
+              "enabled"
+            ]
           }
         }
       ]
@@ -431,7 +586,9 @@
         },
         "customMetrics": {
           "type": "array",
-          "items": { "type": "object" }
+          "items": {
+            "type": "object"
+          }
         }
       }
     },
@@ -452,14 +609,30 @@
     },
     "topologySpreadConstraints": {
       "type": "array",
-      "items": { "type": "object" }
+      "items": {
+        "type": "object"
+      }
     },
     "podDisruptionBudget": {
       "type": "object",
       "properties": {
-        "enabled": { "type": "boolean" },
-        "minAvailable": { "type": ["integer", "string"], "minimum": 0 },
-        "maxUnavailable": { "type": ["integer", "string"], "minimum": 0 }
+        "enabled": {
+          "type": "boolean"
+        },
+        "minAvailable": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "minimum": 0
+        },
+        "maxUnavailable": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "minimum": 0
+        }
       }
     },
     "strategy": {
@@ -484,11 +657,19 @@
         },
         "logLevel": {
           "type": "string",
-          "enum": ["debug", "info", "warn", "error"]
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ]
         },
         "logStyle": {
           "type": "string",
-          "enum": ["json", "text"]
+          "enum": [
+            "json",
+            "text"
+          ]
         },
         "envLabel": {
           "type": "string",
@@ -502,7 +683,10 @@
         },
         "sourceOfTruth": {
           "type": "string",
-          "enum": ["split", "config.json"],
+          "enum": [
+            "split",
+            "config.json"
+          ],
           "default": "split",
           "description": "Controls how config.json is reconciled with the database on startup. \"split\" (default) preserves existing merge behavior. \"config.json\" makes explicitly-present sections in the file authoritative — database-only rows for those sections are pruned on startup."
         },
@@ -680,7 +864,10 @@
             },
             "mcpCodeModeBindingLevel": {
               "type": "string",
-              "enum": ["server", "tool"],
+              "enum": [
+                "server",
+                "tool"
+              ],
               "description": "DEPRECATED: Code mode binding level for MCP tools. Use bifrost.mcp.toolManagerConfig.codeModeBindingLevel."
             },
             "mcpToolSyncInterval": {
@@ -747,7 +934,11 @@
             },
             "mcpServerAuthMode": {
               "type": "string",
-              "enum": ["headers", "both", "oauth"],
+              "enum": [
+                "headers",
+                "both",
+                "oauth"
+              ],
               "description": "How /mcp authenticates inbound MCP clients. 'headers' (default): VK/api-key/session headers only, discovery disabled. 'both': accepts header credentials and Bifrost-issued JWTs, discovery enabled. 'oauth': Bifrost JWTs only. Maps to client.mcp_server_auth_mode."
             },
             "oauth2ServerConfig": {
@@ -814,8 +1005,13 @@
                 "mcpLibraryUrl": {
                   "description": "URL to a custom MCP server catalog. Leave empty to use the default Bifrost catalog.",
                   "anyOf": [
-                    {"type": "string", "format": "uri"},
-                    {"const": ""}
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "const": ""
+                    }
                   ]
                 },
                 "mcpLibrarySyncInterval": {
@@ -871,7 +1067,10 @@
               "type": "object",
               "properties": {
                 "toolExecutionTimeout": {
-                  "type": ["integer", "string"],
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
                   "description": "Tool execution timeout. Integer = seconds (e.g. 30), string = Go duration (e.g. \"30s\", \"2m\"). Prefer the string form.",
                   "default": "30s"
                 },
@@ -883,7 +1082,10 @@
                 },
                 "codeModeBindingLevel": {
                   "type": "string",
-                  "enum": ["server", "tool"],
+                  "enum": [
+                    "server",
+                    "tool"
+                  ],
                   "description": "How tools are exposed in VFS for code execution"
                 },
                 "disableAutoToolInject": {
@@ -898,7 +1100,7 @@
               "oneOf": [
                 {
                   "type": "string",
-                  "pattern": "^-?(?:\\d+(?:\\.\\d+)?(?:ns|us|\u00b5s|ms|s|m|h))+$"
+                  "pattern": "^-?(?:\\d+(?:\\.\\d+)?(?:ns|us|µs|ms|s|m|h))+$"
                 },
                 {
                   "type": "integer"
@@ -978,10 +1180,15 @@
                               "description": "Password for basic authentication"
                             }
                           },
-                          "required": ["username", "password"]
+                          "required": [
+                            "username",
+                            "password"
+                          ]
                         }
                       },
-                      "required": ["push_gateway_url"]
+                      "required": [
+                        "push_gateway_url"
+                      ]
                     }
                   }
                 }
@@ -1058,14 +1265,18 @@
                   {
                     "properties": {
                       "config": {
-                        "required": ["api_key"]
+                        "required": [
+                          "api_key"
+                        ]
                       }
                     }
                   },
                   {
                     "properties": {
                       "secretRef": {
-                        "required": ["name"]
+                        "required": [
+                          "name"
+                        ]
                       }
                     }
                   }
@@ -1089,7 +1300,9 @@
                       "default": "api-key"
                     }
                   },
-                  "required": ["name"]
+                  "required": [
+                    "name"
+                  ]
                 },
                 "config": {
                   "type": "object",
@@ -1140,7 +1353,7 @@
                       "oneOf": [
                         {
                           "type": "string",
-                          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$"
+                          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$"
                         },
                         {
                           "type": "integer",
@@ -1181,7 +1394,9 @@
               "then": {
                 "properties": {
                   "config": {
-                    "required": ["dimension"]
+                    "required": [
+                      "dimension"
+                    ]
                   }
                 }
               }
@@ -1194,8 +1409,12 @@
                 },
                 "config": {
                   "anyOf": [
-                    { "$ref": "#/$defs/otelProfileConfig" },
-                    { "$ref": "#/$defs/otelProfilesConfig" }
+                    {
+                      "$ref": "#/$defs/otelProfileConfig"
+                    },
+                    {
+                      "$ref": "#/$defs/otelProfilesConfig"
+                    }
                   ],
                   "description": "Configuration for the OpenTelemetry plugin. Supports the legacy single-profile shape or the profiles wrapper for multiple collectors."
                 }
@@ -1211,8 +1430,12 @@
                 "properties": {
                   "config": {
                     "anyOf": [
-                      { "$ref": "#/$defs/otelProfileConfig" },
-                      { "$ref": "#/$defs/otelProfilesConfig" }
+                      {
+                        "$ref": "#/$defs/otelProfileConfig"
+                      },
+                      {
+                        "$ref": "#/$defs/otelProfilesConfig"
+                      }
                     ]
                   }
                 }
@@ -1348,13 +1571,21 @@
                     },
                     "service_account_key": {
                       "anyOf": [
-                        { "type": "string" },
+                        {
+                          "type": "string"
+                        },
                         {
                           "type": "object",
                           "properties": {
-                            "value": { "type": "string" },
-                            "env_var": { "type": "string" },
-                            "from_env": { "type": "boolean" }
+                            "value": {
+                              "type": "string"
+                            },
+                            "env_var": {
+                              "type": "string"
+                            },
+                            "from_env": {
+                              "type": "boolean"
+                            }
                           },
                           "additionalProperties": false
                         }
@@ -1377,13 +1608,17 @@
                     },
                     "request_headers": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "plugin_span_filter": {
                       "$ref": "#/$defs/pluginSpanFilter"
                     }
                   },
-                  "required": ["project_id"]
+                  "required": [
+                    "project_id"
+                  ]
                 }
               }
             },
@@ -1402,7 +1637,9 @@
                   "properties": {
                     "brokers": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "description": "Kafka broker addresses (required when enabled)"
                     },
                     "topic": {
@@ -1418,17 +1655,29 @@
                       "properties": {
                         "mechanism": {
                           "type": "string",
-                          "enum": ["PLAIN", "SCRAM-SHA-256", "SCRAM-SHA-512"]
+                          "enum": [
+                            "PLAIN",
+                            "SCRAM-SHA-256",
+                            "SCRAM-SHA-512"
+                          ]
                         },
                         "username": {
                           "anyOf": [
-                            { "type": "string" },
+                            {
+                              "type": "string"
+                            },
                             {
                               "type": "object",
                               "properties": {
-                                "value": { "type": "string" },
-                                "env_var": { "type": "string" },
-                                "from_env": { "type": "boolean" }
+                                "value": {
+                                  "type": "string"
+                                },
+                                "env_var": {
+                                  "type": "string"
+                                },
+                                "from_env": {
+                                  "type": "boolean"
+                                }
                               },
                               "additionalProperties": false
                             }
@@ -1437,13 +1686,21 @@
                         },
                         "password": {
                           "anyOf": [
-                            { "type": "string" },
+                            {
+                              "type": "string"
+                            },
                             {
                               "type": "object",
                               "properties": {
-                                "value": { "type": "string" },
-                                "env_var": { "type": "string" },
-                                "from_env": { "type": "boolean" }
+                                "value": {
+                                  "type": "string"
+                                },
+                                "env_var": {
+                                  "type": "string"
+                                },
+                                "from_env": {
+                                  "type": "boolean"
+                                }
                               },
                               "additionalProperties": false
                             }
@@ -1459,13 +1716,21 @@
                     },
                     "ca_cert": {
                       "anyOf": [
-                        { "type": "string" },
+                        {
+                          "type": "string"
+                        },
                         {
                           "type": "object",
                           "properties": {
-                            "value": { "type": "string" },
-                            "env_var": { "type": "string" },
-                            "from_env": { "type": "boolean" }
+                            "value": {
+                              "type": "string"
+                            },
+                            "env_var": {
+                              "type": "string"
+                            },
+                            "from_env": {
+                              "type": "boolean"
+                            }
                           },
                           "additionalProperties": false
                         }
@@ -1474,7 +1739,13 @@
                     },
                     "compression": {
                       "type": "string",
-                      "enum": ["none", "gzip", "snappy", "lz4", "zstd"],
+                      "enum": [
+                        "none",
+                        "gzip",
+                        "snappy",
+                        "lz4",
+                        "zstd"
+                      ],
                       "description": "Compression codec for published messages"
                     },
                     "batch_size": {
@@ -1495,7 +1766,9 @@
                     },
                     "request_headers": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "description": "Request-header name patterns (exact or wildcard like \"x-custom-*\") whose captured values are embedded in published traces"
                     },
                     "plugin_span_filter": {
@@ -1506,17 +1779,28 @@
               },
               "if": {
                 "properties": {
-                  "enabled": { "const": true }
+                  "enabled": {
+                    "const": true
+                  }
                 },
-                "required": ["enabled"]
+                "required": [
+                  "enabled"
+                ]
               },
               "then": {
-                "required": ["config"],
+                "required": [
+                  "config"
+                ],
                 "properties": {
                   "config": {
-                    "required": ["brokers", "topic"],
+                    "required": [
+                      "brokers",
+                      "topic"
+                    ],
                     "properties": {
-                      "brokers": { "minItems": 1 }
+                      "brokers": {
+                        "minItems": 1
+                      }
                     }
                   }
                 }
@@ -1545,13 +1829,21 @@
                     },
                     "service_account_key": {
                       "anyOf": [
-                        { "type": "string" },
+                        {
+                          "type": "string"
+                        },
                         {
                           "type": "object",
                           "properties": {
-                            "value": { "type": "string" },
-                            "env_var": { "type": "string" },
-                            "from_env": { "type": "boolean" }
+                            "value": {
+                              "type": "string"
+                            },
+                            "env_var": {
+                              "type": "string"
+                            },
+                            "from_env": {
+                              "type": "boolean"
+                            }
                           },
                           "additionalProperties": false
                         }
@@ -1568,7 +1860,9 @@
                     },
                     "request_headers": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "description": "Request-header name patterns (exact or wildcard like \"x-custom-*\") whose captured values are included in published traces"
                     },
                     "plugin_span_filter": {
@@ -1579,15 +1873,24 @@
               },
               "if": {
                 "properties": {
-                  "enabled": { "const": true }
+                  "enabled": {
+                    "const": true
+                  }
                 },
-                "required": ["enabled"]
+                "required": [
+                  "enabled"
+                ]
               },
               "then": {
-                "required": ["config"],
+                "required": [
+                  "config"
+                ],
                 "properties": {
                   "config": {
-                    "required": ["project_id", "topic_id"]
+                    "required": [
+                      "project_id",
+                      "topic_id"
+                    ]
                   }
                 }
               }
@@ -1615,7 +1918,11 @@
                   },
                   "placement": {
                     "type": "string",
-                    "enum": ["pre_builtin", "post_builtin", "builtin"],
+                    "enum": [
+                      "pre_builtin",
+                      "post_builtin",
+                      "builtin"
+                    ],
                     "default": "post_builtin",
                     "description": "Plugin execution placement relative to built-in plugins"
                   },
@@ -1625,7 +1932,10 @@
                     "description": "Position within placement group. Lower = earlier execution"
                   }
                 },
-                "required": ["name", "enabled"]
+                "required": [
+                  "name",
+                  "enabled"
+                ]
               }
             }
           }
@@ -1683,21 +1993,34 @@
                 "allOf": [
                   {
                     "not": {
-                      "required": ["virtual_key_id", "provider_config_id"]
+                      "required": [
+                        "virtual_key_id",
+                        "provider_config_id"
+                      ]
                     }
                   },
                   {
                     "not": {
-                      "required": ["virtual_key_id", "team_id"]
+                      "required": [
+                        "virtual_key_id",
+                        "team_id"
+                      ]
                     }
                   },
                   {
                     "not": {
-                      "required": ["provider_config_id", "team_id"]
+                      "required": [
+                        "provider_config_id",
+                        "team_id"
+                      ]
                     }
                   }
                 ],
-                "required": ["id", "max_limit", "reset_duration"]
+                "required": [
+                  "id",
+                  "max_limit",
+                  "reset_duration"
+                ]
               }
             },
             "rateLimits": {
@@ -1747,7 +2070,9 @@
                     "description": "Last time request counter was reset"
                   }
                 },
-                "required": ["id"],
+                "required": [
+                  "id"
+                ],
                 "additionalProperties": false
               }
             },
@@ -1769,7 +2094,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["id", "name"]
+                "required": [
+                  "id",
+                  "name"
+                ]
               }
             },
             "teams": {
@@ -1805,7 +2133,10 @@
                     "type": "object"
                   }
                 },
-                "required": ["id", "name"]
+                "required": [
+                  "id",
+                  "name"
+                ]
               }
             },
             "businessUnits": {
@@ -1841,7 +2172,10 @@
                     }
                   }
                 },
-                "required": ["id", "name"]
+                "required": [
+                  "id",
+                  "name"
+                ]
               }
             },
             "roles": {
@@ -1857,7 +2191,11 @@
                   },
                   "dac": {
                     "type": "string",
-                    "enum": ["own-data", "team-data", "all-data"],
+                    "enum": [
+                      "own-data",
+                      "team-data",
+                      "all-data"
+                    ],
                     "default": "all-data"
                   },
                   "access_profile": {
@@ -1868,15 +2206,24 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "resource": { "type": "string" },
-                        "operation": { "type": "string" }
+                        "resource": {
+                          "type": "string"
+                        },
+                        "operation": {
+                          "type": "string"
+                        }
                       },
-                      "required": ["resource", "operation"],
+                      "required": [
+                        "resource",
+                        "operation"
+                      ],
                       "additionalProperties": false
                     }
                   }
                 },
-                "required": ["name"],
+                "required": [
+                  "name"
+                ],
                 "additionalProperties": false
               }
             },
@@ -1948,7 +2295,10 @@
                     }
                   }
                 },
-              "required": ["id", "name"]
+                "required": [
+                  "id",
+                  "name"
+                ]
               }
             },
             "virtual-keys": {
@@ -2003,7 +2353,9 @@
                           "maximum": 1
                         }
                       },
-                      "required": ["weight"]
+                      "required": [
+                        "weight"
+                      ]
                     }
                   },
                   "fallbacks": {
@@ -2014,11 +2366,19 @@
                   },
                   "scope": {
                     "type": "string",
-                    "enum": ["global", "team", "customer", "virtual_key"],
+                    "enum": [
+                      "global",
+                      "team",
+                      "customer",
+                      "virtual_key"
+                    ],
                     "default": "global"
                   },
                   "scope_id": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "priority": {
                     "type": "integer",
@@ -2032,11 +2392,17 @@
                       },
                       {
                         "type": "object",
-                        "required": ["combinator", "rules"],
+                        "required": [
+                          "combinator",
+                          "rules"
+                        ],
                         "properties": {
                           "combinator": {
                             "type": "string",
-                            "enum": ["and", "or"]
+                            "enum": [
+                              "and",
+                              "or"
+                            ]
                           },
                           "rules": {
                             "type": "array",
@@ -2048,7 +2414,11 @@
                     ]
                   }
                 },
-                "required": ["id", "name", "targets"]
+                "required": [
+                  "id",
+                  "name",
+                  "targets"
+                ]
               }
             },
             "authConfig": {
@@ -2073,7 +2443,10 @@
                   },
                   "scope": {
                     "type": "string",
-                    "enum": ["global", "virtual_key"],
+                    "enum": [
+                      "global",
+                      "virtual_key"
+                    ],
                     "default": "global",
                     "description": "Scope where this limit applies"
                   },
@@ -2093,7 +2466,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["id", "model_name"]
+                "required": [
+                  "id",
+                  "model_name"
+                ]
               }
             },
             "providers": {
@@ -2122,7 +2498,9 @@
                     "type": "boolean"
                   }
                 },
-                "required": ["name"]
+                "required": [
+                  "name"
+                ]
               }
             },
             "pricingOverrides": {
@@ -2165,7 +2543,10 @@
                   },
                   "match_type": {
                     "type": "string",
-                    "enum": ["exact", "wildcard"],
+                    "enum": [
+                      "exact",
+                      "wildcard"
+                    ],
                     "description": "How the pattern is matched against model names"
                   },
                   "pattern": {
@@ -2189,11 +2570,21 @@
                     "description": "Internal hash for change detection (auto-managed)"
                   }
                 },
-                "required": ["id", "name", "scope_kind", "match_type", "pattern", "request_types"]
+                "required": [
+                  "id",
+                  "name",
+                  "scope_kind",
+                  "match_type",
+                  "pattern",
+                  "request_types"
+                ]
               }
             },
             "complexityAnalyzerConfig": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "Runtime configuration for complexity_tier CEL routing. Renders into governance.complexity_analyzer_config in config.json.",
               "properties": {
                 "tier_boundaries": {
@@ -2215,7 +2606,11 @@
                       "exclusiveMaximum": 1
                     }
                   },
-                  "required": ["simple_medium", "medium_complex", "complex_reasoning"],
+                  "required": [
+                    "simple_medium",
+                    "medium_complex",
+                    "complex_reasoning"
+                  ],
                   "additionalProperties": false
                 },
                 "keywords": {
@@ -2254,11 +2649,19 @@
                       "minItems": 1
                     }
                   },
-                  "required": ["code_keywords", "reasoning_keywords", "technical_keywords", "simple_keywords"],
+                  "required": [
+                    "code_keywords",
+                    "reasoning_keywords",
+                    "technical_keywords",
+                    "simple_keywords"
+                  ],
                   "additionalProperties": false
                 }
               },
-              "required": ["tier_boundaries", "keywords"],
+              "required": [
+                "tier_boundaries",
+                "keywords"
+              ],
               "additionalProperties": false
             }
           },
@@ -2314,11 +2717,18 @@
                       "description": "Number of failed probes before marking as failed"
                     }
                   },
-                  "required": ["timeoutSeconds", "successThreshold", "failureThreshold"],
+                  "required": [
+                    "timeoutSeconds",
+                    "successThreshold",
+                    "failureThreshold"
+                  ],
                   "additionalProperties": false
                 }
               },
-              "required": ["port", "config"],
+              "required": [
+                "port",
+                "config"
+              ],
               "additionalProperties": false
             },
             "grpc": {
@@ -2348,7 +2758,15 @@
                 },
                 "type": {
                   "type": "string",
-                  "enum": ["", "kubernetes", "dns", "udp", "consul", "etcd", "mdns"],
+                  "enum": [
+                    "",
+                    "kubernetes",
+                    "dns",
+                    "udp",
+                    "consul",
+                    "etcd",
+                    "mdns"
+                  ],
                   "description": "Discovery type (empty when not configured)"
                 },
                 "serviceName": {
@@ -2413,11 +2831,16 @@
                 {
                   "if": {
                     "properties": {
-                      "type": { "const": "udp" }
+                      "type": {
+                        "const": "udp"
+                      }
                     }
                   },
                   "then": {
-                    "required": ["udpBroadcastPort", "allowedAddressSpace"]
+                    "required": [
+                      "udpBroadcastPort",
+                      "allowedAddressSpace"
+                    ]
                   }
                 }
               ],
@@ -2429,7 +2852,9 @@
                 }
               },
               "then": {
-                "required": ["type"]
+                "required": [
+                  "type"
+                ]
               }
             }
           },
@@ -2441,7 +2866,9 @@
             }
           },
           "then": {
-            "required": ["gossip"]
+            "required": [
+              "gossip"
+            ]
           }
         },
         "scim": {
@@ -2454,7 +2881,16 @@
             },
             "provider": {
               "type": "string",
-              "enum": ["", "okta", "entra", "keycloak", "zitadel", "google", "sailpoint", "generic"],
+              "enum": [
+                "",
+                "okta",
+                "entra",
+                "keycloak",
+                "zitadel",
+                "google",
+                "sailpoint",
+                "generic"
+              ],
               "description": "SCIM/SSO provider type (empty when not configured)"
             },
             "config": {
@@ -2462,21 +2898,39 @@
               "description": "Provider-specific configuration"
             }
           },
-          "required": ["enabled"],
+          "required": [
+            "enabled"
+          ],
           "additionalProperties": false,
           "allOf": [
             {
               "if": {
-                "properties": { "enabled": { "const": true } },
-                "required": ["enabled"]
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "enabled"
+                ]
               },
               "then": {
                 "properties": {
                   "provider": {
-                    "enum": ["okta", "entra", "keycloak", "zitadel", "google", "sailpoint", "generic"]
+                    "enum": [
+                      "okta",
+                      "entra",
+                      "keycloak",
+                      "zitadel",
+                      "google",
+                      "sailpoint",
+                      "generic"
+                    ]
                   }
                 },
-                "required": ["provider"]
+                "required": [
+                  "provider"
+                ]
               }
             },
             {
@@ -2489,7 +2943,10 @@
                     "const": "okta"
                   }
                 },
-                "required": ["enabled", "provider"]
+                "required": [
+                  "enabled",
+                  "provider"
+                ]
               },
               "then": {
                 "properties": {
@@ -2504,7 +2961,10 @@
                       },
                       "authServerType": {
                         "type": "string",
-                        "enum": ["org", "custom"],
+                        "enum": [
+                          "org",
+                          "custom"
+                        ],
                         "description": "'org' for Org Authorization Server or 'custom' for Custom Authorization Server. Auto-detected from issuer URL when omitted."
                       },
                       "clientId": {
@@ -2538,12 +2998,25 @@
                         "description": "JWT claim field for roles (default: 'roles')",
                         "default": "roles"
                       },
-                      "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-                      "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-                      "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"},
-                      "claimScimAttributes": {"$ref": "#/$defs/scim_claim_attributes"}
+                      "attributeRoleMappings": {
+                        "$ref": "#/$defs/scim_attribute_role_mappings"
+                      },
+                      "attributeTeamMappings": {
+                        "$ref": "#/$defs/scim_attribute_team_mappings"
+                      },
+                      "attributeBusinessUnitMappings": {
+                        "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+                      },
+                      "claimScimAttributes": {
+                        "$ref": "#/$defs/scim_claim_attributes"
+                      }
                     },
-                    "required": ["issuerUrl", "clientId", "clientSecret", "apiToken"],
+                    "required": [
+                      "issuerUrl",
+                      "clientId",
+                      "clientSecret",
+                      "apiToken"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -2559,7 +3032,10 @@
                     "const": "entra"
                   }
                 },
-                "required": ["enabled", "provider"]
+                "required": [
+                  "enabled",
+                  "provider"
+                ]
               },
               "then": {
                 "properties": {
@@ -2581,7 +3057,11 @@
                       },
                       "cloud": {
                         "type": "string",
-                        "enum": ["commercial", "gcc-high", "dod"],
+                        "enum": [
+                          "commercial",
+                          "gcc-high",
+                          "dod"
+                        ],
                         "default": "commercial",
                         "description": "Cloud environment: 'commercial' (default), 'gcc-high' for US Government GCC High, or 'dod' for Department of Defense"
                       },
@@ -2609,12 +3089,23 @@
                         "description": "JWT claim field for roles (default: 'roles')",
                         "default": "roles"
                       },
-                      "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-                      "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-                      "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"},
-                      "claimScimAttributes": {"$ref": "#/$defs/scim_claim_attributes"}
+                      "attributeRoleMappings": {
+                        "$ref": "#/$defs/scim_attribute_role_mappings"
+                      },
+                      "attributeTeamMappings": {
+                        "$ref": "#/$defs/scim_attribute_team_mappings"
+                      },
+                      "attributeBusinessUnitMappings": {
+                        "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+                      },
+                      "claimScimAttributes": {
+                        "$ref": "#/$defs/scim_claim_attributes"
+                      }
                     },
-                    "required": ["tenantId", "clientId"],
+                    "required": [
+                      "tenantId",
+                      "clientId"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -2630,7 +3121,10 @@
                     "const": "keycloak"
                   }
                 },
-                "required": ["enabled", "provider"]
+                "required": [
+                  "enabled",
+                  "provider"
+                ]
               },
               "then": {
                 "properties": {
@@ -2674,12 +3168,25 @@
                         "description": "JWT claim field for roles (default: 'roles')",
                         "default": "roles"
                       },
-                      "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-                      "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-                      "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"},
-                      "claimScimAttributes": {"$ref": "#/$defs/scim_claim_attributes"}
+                      "attributeRoleMappings": {
+                        "$ref": "#/$defs/scim_attribute_role_mappings"
+                      },
+                      "attributeTeamMappings": {
+                        "$ref": "#/$defs/scim_attribute_team_mappings"
+                      },
+                      "attributeBusinessUnitMappings": {
+                        "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+                      },
+                      "claimScimAttributes": {
+                        "$ref": "#/$defs/scim_claim_attributes"
+                      }
                     },
-                    "required": ["serverUrl", "realm", "clientId", "clientSecret"],
+                    "required": [
+                      "serverUrl",
+                      "realm",
+                      "clientId",
+                      "clientSecret"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -2695,7 +3202,10 @@
                     "const": "zitadel"
                   }
                 },
-                "required": ["enabled", "provider"]
+                "required": [
+                  "enabled",
+                  "provider"
+                ]
               },
               "then": {
                 "properties": {
@@ -2738,12 +3248,23 @@
                         "description": "JWT claim field for team/group IDs (default: 'groups')",
                         "default": "groups"
                       },
-                      "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-                      "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-                      "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"},
-                      "claimScimAttributes": {"$ref": "#/$defs/scim_claim_attributes"}
+                      "attributeRoleMappings": {
+                        "$ref": "#/$defs/scim_attribute_role_mappings"
+                      },
+                      "attributeTeamMappings": {
+                        "$ref": "#/$defs/scim_attribute_team_mappings"
+                      },
+                      "attributeBusinessUnitMappings": {
+                        "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+                      },
+                      "claimScimAttributes": {
+                        "$ref": "#/$defs/scim_claim_attributes"
+                      }
                     },
-                    "required": ["domain", "clientId"],
+                    "required": [
+                      "domain",
+                      "clientId"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -2759,7 +3280,10 @@
                     "const": "google"
                   }
                 },
-                "required": ["enabled", "provider"]
+                "required": [
+                  "enabled",
+                  "provider"
+                ]
               },
               "then": {
                 "properties": {
@@ -2783,7 +3307,12 @@
                       },
                       "credentialMode": {
                         "type": "string",
-                        "enum": ["", "inherit", "env", "file"],
+                        "enum": [
+                          "",
+                          "inherit",
+                          "env",
+                          "file"
+                        ],
                         "description": "How Directory API credentials are sourced. 'inherit' uses Application Default Credentials; 'env' uses serviceAccountEnvVar; 'file' uses serviceAccountFile."
                       },
                       "serviceAccountEnvVar": {
@@ -2812,47 +3341,78 @@
                         "description": "Claim field for team/group IDs (default: 'groups')",
                         "default": "groups"
                       },
-                      "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-                      "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-                      "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"},
-                      "claimScimAttributes": {"$ref": "#/$defs/scim_claim_attributes"}
+                      "attributeRoleMappings": {
+                        "$ref": "#/$defs/scim_attribute_role_mappings"
+                      },
+                      "attributeTeamMappings": {
+                        "$ref": "#/$defs/scim_attribute_team_mappings"
+                      },
+                      "attributeBusinessUnitMappings": {
+                        "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+                      },
+                      "claimScimAttributes": {
+                        "$ref": "#/$defs/scim_claim_attributes"
+                      }
                     },
-                    "required": ["domain", "clientId"],
+                    "required": [
+                      "domain",
+                      "clientId"
+                    ],
                     "additionalProperties": false,
                     "allOf": [
                       {
                         "if": {
                           "properties": {
-                            "credentialMode": { "const": "env" }
+                            "credentialMode": {
+                              "const": "env"
+                            }
                           },
-                          "required": ["credentialMode"]
+                          "required": [
+                            "credentialMode"
+                          ]
                         },
                         "then": {
-                          "required": ["serviceAccountEnvVar"]
-                        }
-                      },
-                      {
-                        "if": {
-                          "properties": {
-                            "credentialMode": { "const": "file" }
-                          },
-                          "required": ["credentialMode"]
-                        },
-                        "then": {
-                          "required": ["serviceAccountFile"]
+                          "required": [
+                            "serviceAccountEnvVar"
+                          ]
                         }
                       },
                       {
                         "if": {
                           "properties": {
                             "credentialMode": {
-                              "enum": ["inherit", "env", "file"]
+                              "const": "file"
                             }
                           },
-                          "required": ["credentialMode"]
+                          "required": [
+                            "credentialMode"
+                          ]
                         },
                         "then": {
-                          "required": ["adminEmail"]
+                          "required": [
+                            "serviceAccountFile"
+                          ]
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "credentialMode": {
+                              "enum": [
+                                "inherit",
+                                "env",
+                                "file"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "credentialMode"
+                          ]
+                        },
+                        "then": {
+                          "required": [
+                            "adminEmail"
+                          ]
                         }
                       }
                     ]
@@ -2863,10 +3423,17 @@
             {
               "if": {
                 "properties": {
-                  "enabled": { "const": true },
-                  "provider": { "const": "sailpoint" }
+                  "enabled": {
+                    "const": true
+                  },
+                  "provider": {
+                    "const": "sailpoint"
+                  }
                 },
-                "required": ["enabled", "provider"]
+                "required": [
+                  "enabled",
+                  "provider"
+                ]
               },
               "then": {
                 "properties": {
@@ -2876,7 +3443,10 @@
                     "properties": {
                       "product": {
                         "type": "string",
-                        "enum": ["isc", "iiq"],
+                        "enum": [
+                          "isc",
+                          "iiq"
+                        ],
                         "description": "SailPoint product type: 'isc' for Identity Security Cloud, 'iiq' for IdentityIQ"
                       },
                       "tenant": {
@@ -2908,12 +3478,22 @@
                         "type": "string",
                         "description": "JWT claim field for team IDs"
                       },
-                      "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-                      "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-                      "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"},
-                      "claimScimAttributes": {"$ref": "#/$defs/scim_claim_attributes"}
+                      "attributeRoleMappings": {
+                        "$ref": "#/$defs/scim_attribute_role_mappings"
+                      },
+                      "attributeTeamMappings": {
+                        "$ref": "#/$defs/scim_attribute_team_mappings"
+                      },
+                      "attributeBusinessUnitMappings": {
+                        "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+                      },
+                      "claimScimAttributes": {
+                        "$ref": "#/$defs/scim_claim_attributes"
+                      }
                     },
-                    "required": ["product"],
+                    "required": [
+                      "product"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -2922,10 +3502,17 @@
             {
               "if": {
                 "properties": {
-                  "enabled": { "const": true },
-                  "provider": { "const": "generic" }
+                  "enabled": {
+                    "const": true
+                  },
+                  "provider": {
+                    "const": "generic"
+                  }
                 },
-                "required": ["enabled", "provider"]
+                "required": [
+                  "enabled",
+                  "provider"
+                ]
               },
               "then": {
                 "properties": {
@@ -2976,14 +3563,27 @@
                       "scopes": {
                         "type": "array",
                         "description": "Additional OAuth2 scopes to request",
-                        "items": { "type": "string" }
+                        "items": {
+                          "type": "string"
+                        }
                       },
-                      "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-                      "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-                      "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"},
-                      "claimScimAttributes": {"$ref": "#/$defs/scim_claim_attributes"}
+                      "attributeRoleMappings": {
+                        "$ref": "#/$defs/scim_attribute_role_mappings"
+                      },
+                      "attributeTeamMappings": {
+                        "$ref": "#/$defs/scim_attribute_team_mappings"
+                      },
+                      "attributeBusinessUnitMappings": {
+                        "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+                      },
+                      "claimScimAttributes": {
+                        "$ref": "#/$defs/scim_claim_attributes"
+                      }
                     },
-                    "required": ["issuerUrl", "clientId"],
+                    "required": [
+                      "issuerUrl",
+                      "clientId"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -3062,11 +3662,17 @@
                       },
                       {
                         "type": "object",
-                        "required": ["combinator", "rules"],
+                        "required": [
+                          "combinator",
+                          "rules"
+                        ],
                         "properties": {
                           "combinator": {
                             "type": "string",
-                            "enum": ["and", "or"]
+                            "enum": [
+                              "and",
+                              "or"
+                            ]
                           },
                           "rules": {
                             "type": "array",
@@ -3082,7 +3688,11 @@
                   },
                   "apply_to": {
                     "type": "string",
-                    "enum": ["input", "output", "both"],
+                    "enum": [
+                      "input",
+                      "output",
+                      "both"
+                    ],
                     "description": "When to apply the guardrail (input, output, or both)"
                   },
                   "sampling_rate": {
@@ -3103,7 +3713,10 @@
                   },
                   "evaluation_mode": {
                     "type": "string",
-                    "enum": ["bundled", "per_turn"],
+                    "enum": [
+                      "bundled",
+                      "per_turn"
+                    ],
                     "default": "bundled",
                     "description": "How the rule's turns are sent to its guardrail providers. 'bundled' (default) concatenates all turns into one guardrail call. 'per_turn' sends each turn in its own call, evaluated in isolation, to avoid context-sensitive classifiers (e.g. Bedrock prompt-attack) combining unrelated turns into a false-positive block; this scans every turn but uses more provider calls."
                   },
@@ -3115,7 +3728,13 @@
                     "description": "IDs of provider configurations to use with this rule"
                   }
                 },
-                "required": ["id", "name", "enabled", "cel_expression", "apply_to"],
+                "required": [
+                  "id",
+                  "name",
+                  "enabled",
+                  "cel_expression",
+                  "apply_to"
+                ],
                 "additionalProperties": false
               }
             },
@@ -3151,7 +3770,12 @@
                     "description": "Provider-specific configuration"
                   }
                 },
-                "required": ["id", "provider_name", "policy_name", "enabled"],
+                "required": [
+                  "id",
+                  "provider_name",
+                  "policy_name",
+                  "enabled"
+                ],
                 "additionalProperties": false
               }
             }
@@ -3171,7 +3795,12 @@
               "description": "Skills to create or update from config.json",
               "items": {
                 "type": "object",
-                "required": ["name", "description", "skill_md_body", "version"],
+                "required": [
+                  "name",
+                  "description",
+                  "skill_md_body",
+                  "version"
+                ],
                 "properties": {
                   "name": {
                     "type": "string"
@@ -3208,14 +3837,21 @@
                     "type": "array",
                     "items": {
                       "type": "object",
-                      "required": ["path", "source_type"],
+                      "required": [
+                        "path",
+                        "source_type"
+                      ],
                       "properties": {
                         "path": {
                           "type": "string"
                         },
                         "source_type": {
                           "type": "string",
-                          "enum": ["text", "url", "dataurl"]
+                          "enum": [
+                            "text",
+                            "url",
+                            "dataurl"
+                          ]
                         },
                         "url": {
                           "type": "string"
@@ -3235,7 +3871,9 @@
                               "const": "url"
                             }
                           },
-                          "required": ["url"]
+                          "required": [
+                            "url"
+                          ]
                         },
                         {
                           "properties": {
@@ -3243,7 +3881,9 @@
                               "const": "text"
                             }
                           },
-                          "required": ["content"]
+                          "required": [
+                            "content"
+                          ]
                         },
                         {
                           "properties": {
@@ -3251,7 +3891,9 @@
                               "const": "dataurl"
                             }
                           },
-                          "required": ["dataurl"]
+                          "required": [
+                            "dataurl"
+                          ]
                         }
                       ]
                     }
@@ -3304,7 +3946,11 @@
                       "default": false
                     }
                   },
-                  "required": ["id", "max_limit", "reset_duration"],
+                  "required": [
+                    "id",
+                    "max_limit",
+                    "reset_duration"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3327,7 +3973,9 @@
                     "type": "string"
                   }
                 },
-                "required": ["id"],
+                "required": [
+                  "id"
+                ],
                 "additionalProperties": false
               },
               "provider_configs": {
@@ -3367,7 +4015,11 @@
                             "default": false
                           }
                         },
-                        "required": ["id", "max_limit", "reset_duration"],
+                        "required": [
+                          "id",
+                          "max_limit",
+                          "reset_duration"
+                        ],
                         "additionalProperties": false
                       }
                     },
@@ -3400,7 +4052,9 @@
                       }
                     }
                   },
-                  "required": ["provider_name"],
+                  "required": [
+                    "provider_name"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3413,7 +4067,9 @@
                       "type": "integer"
                     }
                   },
-                  "required": ["tool_group_id"],
+                  "required": [
+                    "tool_group_id"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3426,7 +4082,9 @@
                       "type": "string"
                     }
                   },
-                  "required": ["mcp_server_id"],
+                  "required": [
+                    "mcp_server_id"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3443,10 +4101,17 @@
                     },
                     "action": {
                       "type": "string",
-                      "enum": ["include", "exclude"]
+                      "enum": [
+                        "include",
+                        "exclude"
+                      ]
                     }
                   },
-                  "required": ["mcp_client_id", "tool_name", "action"],
+                  "required": [
+                    "mcp_client_id",
+                    "tool_name",
+                    "action"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3456,7 +4121,9 @@
                 "default": false
               }
             },
-            "required": ["name"],
+            "required": [
+              "name"
+            ],
             "additionalProperties": false
           }
         },
@@ -3493,15 +4160,32 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "id": { "type": "string", "description": "Stable channel ID" },
-                  "name": { "type": "string", "description": "Operator-facing channel name" },
-                  "description": { "type": "string" },
+                  "id": {
+                    "type": "string",
+                    "description": "Stable channel ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Operator-facing channel name"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
                   "type": {
                     "type": "string",
-                    "enum": ["slack", "microsoft_teams", "pagerduty", "webhook", "sns", "email"],
+                    "enum": [
+                      "slack",
+                      "microsoft_teams",
+                      "pagerduty",
+                      "webhook",
+                      "sns",
+                      "email"
+                    ],
                     "description": "Channel delivery type"
                   },
-                  "enabled": { "type": "boolean" },
+                  "enabled": {
+                    "type": "boolean"
+                  },
                   "cooldown_seconds": {
                     "type": "integer",
                     "minimum": 0,
@@ -3513,12 +4197,24 @@
                     "additionalProperties": true
                   }
                 },
-                "required": ["id", "name", "type", "enabled", "config"],
+                "required": [
+                  "id",
+                  "name",
+                  "type",
+                  "enabled",
+                  "config"
+                ],
                 "allOf": [
                   {
                     "if": {
-                      "properties": { "type": { "const": "slack" } },
-                      "required": ["type"]
+                      "properties": {
+                        "type": {
+                          "const": "slack"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ]
                     },
                     "then": {
                       "properties": {
@@ -3528,27 +4224,60 @@
                             "webhook_url": {
                               "type": "string",
                               "minLength": 1,
-                              "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                              "anyOf": [
+                                {
+                                  "format": "uri"
+                                },
+                                {
+                                  "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                                }
+                              ],
                               "description": "Slack incoming webhook URL. Supports env.VAR_NAME references."
                             },
                             "url": {
                               "type": "string",
                               "minLength": 1,
-                              "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                              "anyOf": [
+                                {
+                                  "format": "uri"
+                                },
+                                {
+                                  "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                                }
+                              ],
                               "description": "Alias for webhook_url. Supports env.VAR_NAME references."
                             }
                           },
-                          "oneOf": [{ "required": ["webhook_url"] }, { "required": ["url"] }],
+                          "oneOf": [
+                            {
+                              "required": [
+                                "webhook_url"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "url"
+                              ]
+                            }
+                          ],
                           "additionalProperties": true
                         }
                       },
-                      "required": ["config"]
+                      "required": [
+                        "config"
+                      ]
                     }
                   },
                   {
                     "if": {
-                      "properties": { "type": { "const": "microsoft_teams" } },
-                      "required": ["type"]
+                      "properties": {
+                        "type": {
+                          "const": "microsoft_teams"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ]
                     },
                     "then": {
                       "properties": {
@@ -3558,27 +4287,60 @@
                             "webhook_url": {
                               "type": "string",
                               "minLength": 1,
-                              "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                              "anyOf": [
+                                {
+                                  "format": "uri"
+                                },
+                                {
+                                  "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                                }
+                              ],
                               "description": "Microsoft Teams incoming webhook or workflow URL. Supports env.VAR_NAME references."
                             },
                             "url": {
                               "type": "string",
                               "minLength": 1,
-                              "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                              "anyOf": [
+                                {
+                                  "format": "uri"
+                                },
+                                {
+                                  "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                                }
+                              ],
                               "description": "Alias for webhook_url. Supports env.VAR_NAME references."
                             }
                           },
-                          "oneOf": [{ "required": ["webhook_url"] }, { "required": ["url"] }],
+                          "oneOf": [
+                            {
+                              "required": [
+                                "webhook_url"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "url"
+                              ]
+                            }
+                          ],
                           "additionalProperties": true
                         }
                       },
-                      "required": ["config"]
+                      "required": [
+                        "config"
+                      ]
                     }
                   },
                   {
                     "if": {
-                      "properties": { "type": { "const": "pagerduty" } },
-                      "required": ["type"]
+                      "properties": {
+                        "type": {
+                          "const": "pagerduty"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ]
                     },
                     "then": {
                       "properties": {
@@ -3596,17 +4358,36 @@
                               "description": "Alias for routing_key. Supports env.VAR_NAME references."
                             }
                           },
-                          "oneOf": [{ "required": ["routing_key"] }, { "required": ["integration_key"] }],
+                          "oneOf": [
+                            {
+                              "required": [
+                                "routing_key"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "integration_key"
+                              ]
+                            }
+                          ],
                           "additionalProperties": true
                         }
                       },
-                      "required": ["config"]
+                      "required": [
+                        "config"
+                      ]
                     }
                   },
                   {
                     "if": {
-                      "properties": { "type": { "const": "webhook" } },
-                      "required": ["type"]
+                      "properties": {
+                        "type": {
+                          "const": "webhook"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ]
                     },
                     "then": {
                       "properties": {
@@ -3616,26 +4397,55 @@
                             "url": {
                               "type": "string",
                               "minLength": 1,
-                              "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                              "anyOf": [
+                                {
+                                  "format": "uri"
+                                },
+                                {
+                                  "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                                }
+                              ],
                               "description": "Generic webhook URL. Supports env.VAR_NAME references."
                             },
                             "webhook_url": {
                               "type": "string",
                               "minLength": 1,
-                              "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                              "anyOf": [
+                                {
+                                  "format": "uri"
+                                },
+                                {
+                                  "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                                }
+                              ],
                               "description": "Alias for url. Supports env.VAR_NAME references."
                             },
                             "headers": {
                               "type": "object",
                               "description": "Optional headers to send with the webhook request. Values support env.VAR_NAME references. Sensitive hop-by-hop headers are ignored at send time.",
-                              "additionalProperties": { "type": "string" }
+                              "additionalProperties": {
+                                "type": "string"
+                              }
                             }
                           },
-                          "oneOf": [{ "required": ["url"] }, { "required": ["webhook_url"] }],
+                          "oneOf": [
+                            {
+                              "required": [
+                                "url"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "webhook_url"
+                              ]
+                            }
+                          ],
                           "additionalProperties": true
                         }
                       },
-                      "required": ["config"]
+                      "required": [
+                        "config"
+                      ]
                     }
                   }
                 ],
@@ -3648,16 +4458,33 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "id": { "type": "string", "description": "Stable rule ID" },
-                  "name": { "type": "string", "description": "Operator-facing rule name" },
-                  "description": { "type": "string" },
-                  "enabled": { "type": "boolean" },
+                  "id": {
+                    "type": "string",
+                    "description": "Stable rule ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Operator-facing rule name"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
                   "scope_type": {
                     "type": "string",
-                    "enum": ["virtual_key", "team", "customer"],
+                    "enum": [
+                      "virtual_key",
+                      "team",
+                      "customer"
+                    ],
                     "description": "Governance owner scope to evaluate"
                   },
-                  "scope_id": { "type": "string", "description": "ID of the virtual key, team, or customer" },
+                  "scope_id": {
+                    "type": "string",
+                    "description": "ID of the virtual key, team, or customer"
+                  },
                   "cel_expression": {
                     "type": "string",
                     "description": "CEL expression evaluated against usage variables (budget_usage_percent, budget_spent, request_usage, token_usage, etc.)"
@@ -3681,32 +4508,56 @@
                   "channel_ids": {
                     "type": "array",
                     "description": "IDs of channels to notify when this rule matches",
-                    "items": { "type": "string", "minLength": 1 },
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
                     "minItems": 1
                   },
                   "target_type": {
                     "type": "string",
-                    "enum": ["budget"],
+                    "enum": [
+                      "budget"
+                    ],
                     "description": "Explicit target type; pair with target_id to evaluate one specific budget"
                   },
-                  "target_id": { "type": "string", "description": "ID of the explicit target" }
+                  "target_id": {
+                    "type": "string",
+                    "description": "ID of the explicit target"
+                  }
                 },
-                "required": ["id", "name", "enabled", "scope_type", "scope_id", "cel_expression", "channel_ids"],
+                "required": [
+                  "id",
+                  "name",
+                  "enabled",
+                  "scope_type",
+                  "scope_id",
+                  "cel_expression",
+                  "channel_ids"
+                ],
                 "allOf": [
                   {
                     "if": {
-                      "required": ["target_type"]
+                      "required": [
+                        "target_type"
+                      ]
                     },
                     "then": {
-                      "required": ["target_id"]
+                      "required": [
+                        "target_id"
+                      ]
                     }
                   },
                   {
                     "if": {
-                      "required": ["target_id"]
+                      "required": [
+                        "target_id"
+                      ]
                     },
                     "then": {
-                      "required": ["target_type"]
+                      "required": [
+                        "target_type"
+                      ]
                     }
                   }
                 ],
@@ -3731,7 +4582,10 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "enum": ["s3", "gcs"],
+                  "enum": [
+                    "s3",
+                    "gcs"
+                  ],
                   "description": "Object storage backend type"
                 },
                 "bucket": {
@@ -3786,7 +4640,10 @@
                   "description": "GCP service account credentials JSON or file path; omit for Application Default Credentials (GCS only)"
                 }
               },
-              "required": ["type", "bucket"]
+              "required": [
+                "type",
+                "bucket"
+              ]
             }
           }
         },
@@ -3874,101 +4731,6 @@
             }
           },
           "additionalProperties": false
-        },
-        "circuitBreakerConfig": {
-          "type": "object",
-          "description": "Circuit breaker configuration for automatic failover when a provider endpoint degrades",
-          "properties": {
-            "policies": {
-              "type": "array",
-              "description": "List of circuit breaker policies",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Unique name for this policy"
-                  },
-                  "enabled": {
-                    "type": "boolean",
-                    "description": "Whether this policy is active"
-                  },
-                  "primary_provider": {
-                    "type": "string",
-                    "description": "Provider to monitor (e.g. 'azure', 'openai')"
-                  },
-                  "primary_model": {
-                    "type": "string",
-                    "description": "Model to monitor as it appears in requests"
-                  },
-                  "primary_key_ids": {
-                    "type": "array",
-                    "description": "Optional key UUIDs to monitor individually; empty uses a single shared circuit",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "fallback_provider": {
-                    "type": "string",
-                    "description": "Provider to route to when the circuit is open"
-                  },
-                  "fallback_model": {
-                    "type": "string",
-                    "description": "Model to request from the fallback provider"
-                  },
-                  "condition": {
-                    "type": "object",
-                    "description": "Response signals that trigger the circuit to open",
-                    "properties": {
-                      "operator": {
-                        "type": "string",
-                        "enum": ["OR", "AND"],
-                        "default": "OR"
-                      },
-                      "signals": {
-                        "type": "array",
-                        "minItems": 1,
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "source": {
-                              "type": "string",
-                              "enum": ["response_header"]
-                            },
-                            "header_name": {
-                              "type": "string"
-                            },
-                            "header_value": {
-                              "type": "string"
-                            },
-                            "header_contains": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["source", "header_name"],
-                          "additionalProperties": false
-                        }
-                      }
-                    },
-                    "required": ["signals"],
-                    "additionalProperties": false
-                  },
-                  "default_cooldown": {
-                    "type": "string",
-                    "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
-                    "description": "How long to keep the circuit open when no header-based cooldown is available (Go duration, e.g. '30s')"
-                  },
-                  "cooldown_header": {
-                    "type": "string",
-                    "description": "Response header whose value (in ms) overrides default_cooldown"
-                  }
-                },
-                "required": ["name", "primary_provider", "primary_model", "fallback_provider", "fallback_model", "condition"],
-                "additionalProperties": false
-              }
-            }
-          },
-          "additionalProperties": false
         }
       }
     },
@@ -3977,7 +4739,10 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": ["sqlite", "postgres"]
+          "enum": [
+            "sqlite",
+            "postgres"
+          ]
         },
         "persistence": {
           "type": "object",
@@ -3990,7 +4755,11 @@
             },
             "accessMode": {
               "type": "string",
-              "enum": ["ReadWriteOnce", "ReadWriteMany", "ReadOnlyMany"]
+              "enum": [
+                "ReadWriteOnce",
+                "ReadWriteMany",
+                "ReadOnlyMany"
+              ]
             },
             "size": {
               "type": "string"
@@ -4008,7 +4777,11 @@
             },
             "type": {
               "type": "string",
-              "enum": ["", "sqlite", "postgres"]
+              "enum": [
+                "",
+                "sqlite",
+                "postgres"
+              ]
             },
             "maxIdleConns": {
               "type": "integer",
@@ -4027,25 +4800,44 @@
                 },
                 "type": {
                   "type": "string",
-                  "enum": ["aws-secrets-manager", "gcp-secret-manager", "hashicorp-vault"]
+                  "enum": [
+                    "aws-secrets-manager",
+                    "gcp-secret-manager",
+                    "hashicorp-vault"
+                  ]
                 },
                 "prefix": {
                   "type": "string"
                 },
                 "accessMode": {
                   "type": "string",
-                  "enum": ["read_only", "read_and_write"]
+                  "enum": [
+                    "read_only",
+                    "read_and_write"
+                  ]
                 },
                 "aws": {
                   "type": "object",
                   "description": "AWS Secrets Manager configuration",
                   "properties": {
-                    "region": { "type": "string" },
-                    "accessKeyId": { "type": "string" },
-                    "secretAccessKey": { "type": "string" },
-                    "sessionToken": { "type": "string" },
-                    "roleArn": { "type": "string" },
-                    "kmsKeyId": { "type": "string" }
+                    "region": {
+                      "type": "string"
+                    },
+                    "accessKeyId": {
+                      "type": "string"
+                    },
+                    "secretAccessKey": {
+                      "type": "string"
+                    },
+                    "sessionToken": {
+                      "type": "string"
+                    },
+                    "roleArn": {
+                      "type": "string"
+                    },
+                    "kmsKeyId": {
+                      "type": "string"
+                    }
                   },
                   "additionalProperties": false
                 },
@@ -4053,8 +4845,12 @@
                   "type": "object",
                   "description": "GCP Secret Manager configuration",
                   "properties": {
-                    "projectId": { "type": "string" },
-                    "credentialsJson": { "type": "string" }
+                    "projectId": {
+                      "type": "string"
+                    },
+                    "credentialsJson": {
+                      "type": "string"
+                    }
                   },
                   "additionalProperties": false
                 },
@@ -4062,12 +4858,24 @@
                   "type": "object",
                   "description": "HashiCorp Vault (KV v2) configuration",
                   "properties": {
-                    "address": { "type": "string" },
-                    "token": { "type": "string" },
-                    "namespace": { "type": "string" },
-                    "mountPath": { "type": "string" },
-                    "roleId": { "type": "string" },
-                    "secretId": { "type": "string" }
+                    "address": {
+                      "type": "string"
+                    },
+                    "token": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "mountPath": {
+                      "type": "string"
+                    },
+                    "roleId": {
+                      "type": "string"
+                    },
+                    "secretId": {
+                      "type": "string"
+                    }
                   },
                   "additionalProperties": false
                 }
@@ -4084,7 +4892,12 @@
             },
             "type": {
               "type": "string",
-              "enum": ["", "sqlite", "postgres", "clickhouse"]
+              "enum": [
+                "",
+                "sqlite",
+                "postgres",
+                "clickhouse"
+              ]
             },
             "maxIdleConns": {
               "type": "integer",
@@ -4108,7 +4921,10 @@
                   "description": "ClickHouse host"
                 },
                 "port": {
-                  "type": ["string", "integer"],
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
                   "description": "ClickHouse port. Defaults by protocol: native 9000 (9440 TLS), http 8123 (8443 TLS)"
                 },
                 "database": {
@@ -4125,7 +4941,10 @@
                 },
                 "protocol": {
                   "type": "string",
-                  "enum": ["native", "http"],
+                  "enum": [
+                    "native",
+                    "http"
+                  ],
                   "description": "ClickHouse wire protocol (default: native)"
                 },
                 "secure": {
@@ -4142,7 +4961,9 @@
                   "description": "Optional cluster name; when set, DDL runs ON CLUSTER with replicated table engines"
                 }
               },
-              "required": ["host"],
+              "required": [
+                "host"
+              ],
               "additionalProperties": false
             },
             "writer": {
@@ -4186,7 +5007,10 @@
                 },
                 "type": {
                   "type": "string",
-                  "enum": ["s3", "gcs"]
+                  "enum": [
+                    "s3",
+                    "gcs"
+                  ]
                 },
                 "bucket": {
                   "type": "string"
@@ -4249,10 +5073,15 @@
                     "const": true
                   }
                 },
-                "required": ["enabled"]
+                "required": [
+                  "enabled"
+                ]
               },
               "then": {
-                "required": ["type", "bucket"]
+                "required": [
+                  "type",
+                  "bucket"
+                ]
               }
             }
           }
@@ -4268,9 +5097,17 @@
         "connectionBudget": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean" },
-            "maxConnections": { "type": "integer", "minimum": 0 },
-            "reservedConnections": { "type": "integer", "minimum": 0 }
+            "enabled": {
+              "type": "boolean"
+            },
+            "maxConnections": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "reservedConnections": {
+              "type": "integer",
+              "minimum": 0
+            }
           }
         },
         "startupGate": {
@@ -4290,7 +5127,11 @@
               "maximum": 60
             }
           },
-          "required": ["enabled", "maxAttempts", "intervalSeconds"],
+          "required": [
+            "enabled",
+            "maxAttempts",
+            "intervalSeconds"
+          ],
           "additionalProperties": false
         },
         "external": {
@@ -4341,7 +5182,9 @@
                   "pattern": "^[1-9][0-9]*(ns|us|µs|ms|s|m|h)$"
                 }
               },
-              "required": ["command"],
+              "required": [
+                "command"
+              ],
               "additionalProperties": false
             },
             "connMaxLifetime": {
@@ -4353,7 +5196,14 @@
             },
             "sslMode": {
               "type": "string",
-              "enum": ["disable", "allow", "prefer", "require", "verify-ca", "verify-full"]
+              "enum": [
+                "disable",
+                "allow",
+                "prefer",
+                "require",
+                "verify-ca",
+                "verify-full"
+              ]
             },
             "existingSecret": {
               "type": "string"
@@ -4372,17 +5222,29 @@
                 }
               },
               "then": {
-                "required": ["host", "port", "user", "database", "sslMode"]
+                "required": [
+                  "host",
+                  "port",
+                  "user",
+                  "database",
+                  "sslMode"
+                ]
               }
             },
             {
               "not": {
-                "required": ["password", "passwordCommand"]
+                "required": [
+                  "password",
+                  "passwordCommand"
+                ]
               }
             },
             {
               "not": {
-                "required": ["existingSecret", "passwordCommand"]
+                "required": [
+                  "existingSecret",
+                  "passwordCommand"
+                ]
               }
             }
           ]
@@ -4398,7 +5260,11 @@
             },
             "pullPolicy": {
               "type": "string",
-              "enum": ["Always", "IfNotPresent", "Never"]
+              "enum": [
+                "Always",
+                "IfNotPresent",
+                "Never"
+              ]
             }
           }
         },
@@ -4453,7 +5319,13 @@
         },
         "type": {
           "type": "string",
-          "enum": ["none", "weaviate", "redis", "qdrant", "pinecone"]
+          "enum": [
+            "none",
+            "weaviate",
+            "redis",
+            "qdrant",
+            "pinecone"
+          ]
         },
         "weaviate": {
           "type": "object",
@@ -4469,7 +5341,10 @@
                 },
                 "scheme": {
                   "type": "string",
-                  "enum": ["http", "https"]
+                  "enum": [
+                    "http",
+                    "https"
+                  ]
                 },
                 "host": {
                   "type": "string",
@@ -4489,7 +5364,7 @@
                 },
                 "timeout": {
                   "type": "string",
-                  "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+                  "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
                   "description": "Timeout for Weaviate operations (e.g., '5s')"
                 },
                 "className": {
@@ -4511,7 +5386,10 @@
                 }
               },
               "then": {
-                "required": ["scheme", "host"]
+                "required": [
+                  "scheme",
+                  "host"
+                ]
               }
             },
             "replicas": {
@@ -4605,32 +5483,32 @@
                 },
                 "connMaxLifetime": {
                   "type": "string",
-                  "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+                  "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
                   "description": "Connection maximum lifetime (e.g., '30m')"
                 },
                 "connMaxIdleTime": {
                   "type": "string",
-                  "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+                  "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
                   "description": "Connection maximum idle time (e.g., '5m')"
                 },
                 "dialTimeout": {
                   "type": "string",
-                  "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+                  "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
                   "description": "Timeout for socket connection (e.g., '5s')"
                 },
                 "readTimeout": {
                   "type": "string",
-                  "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+                  "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
                   "description": "Timeout for socket reads (e.g., '3s')"
                 },
                 "writeTimeout": {
                   "type": "string",
-                  "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+                  "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
                   "description": "Timeout for socket writes (e.g., '3s')"
                 },
                 "contextTimeout": {
                   "type": "string",
-                  "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+                  "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
                   "description": "Timeout for Redis/Valkey operations (e.g., '10s')"
                 },
                 "existingSecret": {
@@ -4648,7 +5526,9 @@
                 }
               },
               "then": {
-                "required": ["host"]
+                "required": [
+                  "host"
+                ]
               }
             },
             "image": {
@@ -4712,7 +5592,9 @@
                 }
               },
               "then": {
-                "required": ["host"]
+                "required": [
+                  "host"
+                ]
               }
             },
             "image": {
@@ -4764,7 +5646,9 @@
                 }
               },
               "then": {
-                "required": ["indexHost"]
+                "required": [
+                  "indexHost"
+                ]
               }
             }
           }
@@ -4786,7 +5670,9 @@
             "type": "object"
           }
         },
-        "required": ["name"]
+        "required": [
+          "name"
+        ]
       }
     },
     "envFrom": {
@@ -4827,7 +5713,10 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": ["include", "exclude"]
+          "enum": [
+            "include",
+            "exclude"
+          ]
         },
         "plugins": {
           "type": "array",
@@ -4836,7 +5725,10 @@
           }
         }
       },
-      "required": ["mode", "plugins"],
+      "required": [
+        "mode",
+        "plugins"
+      ],
       "additionalProperties": false
     },
     "otelProfileConfig": {
@@ -4859,12 +5751,19 @@
         },
         "trace_type": {
           "type": "string",
-          "enum": ["genai_extension", "vercel", "open_inference"],
+          "enum": [
+            "genai_extension",
+            "vercel",
+            "open_inference"
+          ],
           "description": "Type of trace to use for the OTEL collector"
         },
         "protocol": {
           "type": "string",
-          "enum": ["http", "grpc"],
+          "enum": [
+            "http",
+            "grpc"
+          ],
           "description": "Protocol to use for the OTEL collector"
         },
         "metrics_enabled": {
@@ -4927,11 +5826,17 @@
                   "const": false
                 }
               },
-              "required": ["enabled"]
+              "required": [
+                "enabled"
+              ]
             }
           },
           "then": {
-            "required": ["collector_url", "trace_type", "protocol"]
+            "required": [
+              "collector_url",
+              "trace_type",
+              "protocol"
+            ]
           }
         },
         {
@@ -4941,10 +5846,14 @@
                 "const": true
               }
             },
-            "required": ["metrics_enabled"]
+            "required": [
+              "metrics_enabled"
+            ]
           },
           "then": {
-            "required": ["metrics_endpoint"]
+            "required": [
+              "metrics_endpoint"
+            ]
           }
         }
       ],
@@ -4979,12 +5888,19 @@
         },
         "trace_type": {
           "type": "string",
-          "enum": ["genai_extension", "vercel", "open_inference"],
+          "enum": [
+            "genai_extension",
+            "vercel",
+            "open_inference"
+          ],
           "description": "Deprecated in the profiles wrapper; configure trace_type per profile instead."
         },
         "protocol": {
           "type": "string",
-          "enum": ["http", "grpc"],
+          "enum": [
+            "http",
+            "grpc"
+          ],
           "description": "Deprecated in the profiles wrapper; configure protocol per profile instead."
         },
         "metrics_enabled": {
@@ -5029,7 +5945,9 @@
           "description": "Deprecated in the profiles wrapper; configure disable_root_span_content per profile instead."
         }
       },
-      "required": ["profiles"],
+      "required": [
+        "profiles"
+      ],
       "additionalProperties": false
     },
     "authConfig": {
@@ -5129,7 +6047,9 @@
               }
             }
           },
-          "required": ["base_provider_type"]
+          "required": [
+            "base_provider_type"
+          ]
         },
         "pricing_overrides": {
           "type": "array",
@@ -5142,14 +6062,23 @@
               },
               "match_type": {
                 "type": "string",
-                "enum": ["exact", "wildcard", "regex"]
+                "enum": [
+                  "exact",
+                  "wildcard",
+                  "regex"
+                ]
               }
             },
-            "required": ["model_pattern", "match_type"]
+            "required": [
+              "model_pattern",
+              "match_type"
+            ]
           }
         }
       },
-      "required": ["keys"]
+      "required": [
+        "keys"
+      ]
     },
     "providerKey": {
       "type": "object",
@@ -5213,11 +6142,22 @@
               "description": "Azure API version"
             }
           },
-          "required": ["endpoint"],
+          "required": [
+            "endpoint"
+          ],
           "dependentRequired": {
-            "client_id": ["client_secret", "tenant_id"],
-            "client_secret": ["client_id", "tenant_id"],
-            "tenant_id": ["client_id", "client_secret"]
+            "client_id": [
+              "client_secret",
+              "tenant_id"
+            ],
+            "client_secret": [
+              "client_id",
+              "tenant_id"
+            ],
+            "tenant_id": [
+              "client_id",
+              "client_secret"
+            ]
           },
           "additionalProperties": false
         },
@@ -5253,7 +6193,10 @@
               "description": "Model to deployment mappings"
             }
           },
-          "required": ["project_id", "region"],
+          "required": [
+            "project_id",
+            "region"
+          ],
           "additionalProperties": false
         },
         "bedrock_key_config": {
@@ -5325,7 +6268,9 @@
                         "description": "Whether this is the default bucket for batch operations"
                       }
                     },
-                    "required": ["bucket_name"],
+                    "required": [
+                      "bucket_name"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -5333,7 +6278,9 @@
               "additionalProperties": false
             }
           },
-          "required": ["region"],
+          "required": [
+            "region"
+          ],
           "additionalProperties": false
         },
         "bedrock_mantle_key_config": {
@@ -5372,7 +6319,9 @@
               "description": "Bedrock project ID scoping the Mantle sub-surface (OpenAI-compatible gpt-*/Gemma routing) via the OpenAI-Project header. When empty, AWS routes to the account's default project. No effect on the Converse/bedrock-runtime paths (can use env. prefix)"
             }
           },
-          "required": ["region"],
+          "required": [
+            "region"
+          ],
           "additionalProperties": false
         },
         "vllm_key_config": {
@@ -5387,7 +6336,10 @@
               "description": "Exact model name served on this VLLM instance"
             }
           },
-          "required": ["url", "model_name"],
+          "required": [
+            "url",
+            "model_name"
+          ],
           "additionalProperties": false
         },
         "aliases": {
@@ -5413,7 +6365,15 @@
                   },
                   "model_family": {
                     "type": "string",
-                    "enum": ["anthropic", "openai", "mistral", "cohere", "gemini", "nova", "titan"],
+                    "enum": [
+                      "anthropic",
+                      "openai",
+                      "mistral",
+                      "cohere",
+                      "gemini",
+                      "nova",
+                      "titan"
+                    ],
                     "description": "Underlying model family. Used by provider routing without substring-sniffing the wire model ID."
                   },
                   "description": {
@@ -5452,7 +6412,9 @@
                     "description": "Replicate: use the deployments endpoint instead of the predictions endpoint for this alias."
                   }
                 },
-                "required": ["model_id"],
+                "required": [
+                  "model_id"
+                ],
                 "additionalProperties": false
               }
             ]
@@ -5463,120 +6425,183 @@
           "description": "Model alias mappings: each entry maps a user-facing model name to either a bare provider identifier (legacy string shape) or an AliasConfig object carrying the wire identifier plus optional canonical name, family, and provider-specific overrides."
         }
       },
-      "required": ["name", "weight"],
+      "required": [
+        "name",
+        "weight"
+      ],
       "oneOf": [
         {
           "not": {
             "anyOf": [
               {
-                "required": ["azure_key_config"]
+                "required": [
+                  "azure_key_config"
+                ]
               },
               {
-                "required": ["vertex_key_config"]
+                "required": [
+                  "vertex_key_config"
+                ]
               },
               {
-                "required": ["bedrock_key_config"]
+                "required": [
+                  "bedrock_key_config"
+                ]
               },
               {
-                "required": ["bedrock_mantle_key_config"]
+                "required": [
+                  "bedrock_mantle_key_config"
+                ]
               },
               {
-                "required": ["vllm_key_config"]
+                "required": [
+                  "vllm_key_config"
+                ]
               }
             ]
           }
         },
         {
-          "required": ["azure_key_config"],
+          "required": [
+            "azure_key_config"
+          ],
           "not": {
             "anyOf": [
               {
-                "required": ["vertex_key_config"]
+                "required": [
+                  "vertex_key_config"
+                ]
               },
               {
-                "required": ["bedrock_key_config"]
+                "required": [
+                  "bedrock_key_config"
+                ]
               },
               {
-                "required": ["bedrock_mantle_key_config"]
+                "required": [
+                  "bedrock_mantle_key_config"
+                ]
               },
               {
-                "required": ["vllm_key_config"]
+                "required": [
+                  "vllm_key_config"
+                ]
               }
             ]
           }
         },
         {
-          "required": ["vertex_key_config"],
+          "required": [
+            "vertex_key_config"
+          ],
           "not": {
             "anyOf": [
               {
-                "required": ["azure_key_config"]
+                "required": [
+                  "azure_key_config"
+                ]
               },
               {
-                "required": ["bedrock_key_config"]
+                "required": [
+                  "bedrock_key_config"
+                ]
               },
               {
-                "required": ["bedrock_mantle_key_config"]
+                "required": [
+                  "bedrock_mantle_key_config"
+                ]
               },
               {
-                "required": ["vllm_key_config"]
+                "required": [
+                  "vllm_key_config"
+                ]
               }
             ]
           }
         },
         {
-          "required": ["bedrock_key_config"],
+          "required": [
+            "bedrock_key_config"
+          ],
           "not": {
             "anyOf": [
               {
-                "required": ["azure_key_config"]
+                "required": [
+                  "azure_key_config"
+                ]
               },
               {
-                "required": ["vertex_key_config"]
+                "required": [
+                  "vertex_key_config"
+                ]
               },
               {
-                "required": ["bedrock_mantle_key_config"]
+                "required": [
+                  "bedrock_mantle_key_config"
+                ]
               },
               {
-                "required": ["vllm_key_config"]
+                "required": [
+                  "vllm_key_config"
+                ]
               }
             ]
           }
         },
         {
-          "required": ["bedrock_mantle_key_config"],
+          "required": [
+            "bedrock_mantle_key_config"
+          ],
           "not": {
             "anyOf": [
               {
-                "required": ["azure_key_config"]
+                "required": [
+                  "azure_key_config"
+                ]
               },
               {
-                "required": ["vertex_key_config"]
+                "required": [
+                  "vertex_key_config"
+                ]
               },
               {
-                "required": ["bedrock_key_config"]
+                "required": [
+                  "bedrock_key_config"
+                ]
               },
               {
-                "required": ["vllm_key_config"]
+                "required": [
+                  "vllm_key_config"
+                ]
               }
             ]
           }
         },
         {
-          "required": ["vllm_key_config"],
+          "required": [
+            "vllm_key_config"
+          ],
           "not": {
             "anyOf": [
               {
-                "required": ["azure_key_config"]
+                "required": [
+                  "azure_key_config"
+                ]
               },
               {
-                "required": ["vertex_key_config"]
+                "required": [
+                  "vertex_key_config"
+                ]
               },
               {
-                "required": ["bedrock_key_config"]
+                "required": [
+                  "bedrock_key_config"
+                ]
               },
               {
-                "required": ["bedrock_mantle_key_config"]
+                "required": [
+                  "bedrock_mantle_key_config"
+                ]
               }
             ]
           }
@@ -5671,7 +6696,10 @@
           "description": "Buffer size for requests"
         }
       },
-      "required": ["concurrency", "buffer_size"],
+      "required": [
+        "concurrency",
+        "buffer_size"
+      ],
       "additionalProperties": false
     },
     "proxyConfig": {
@@ -5680,7 +6708,12 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["none", "http", "socks5", "environment"],
+          "enum": [
+            "none",
+            "http",
+            "socks5",
+            "environment"
+          ],
           "description": "Type of proxy to use"
         },
         "url": {
@@ -5692,7 +6725,9 @@
             {
               "type": "string",
               "format": "uri",
-              "not": { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }
+              "not": {
+                "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+              }
             }
           ],
           "description": "URL of the proxy server (supports env.VAR_NAME or a literal URI)"
@@ -5710,7 +6745,9 @@
           "description": "PEM-encoded CA certificate to trust for TLS connections through the proxy (for SSL-intercepting proxies, supports env.VAR_NAME)"
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "additionalProperties": false
     },
     "mcpClientConfig": {
@@ -5729,7 +6766,12 @@
         },
         "connectionType": {
           "type": "string",
-          "enum": ["stdio", "websocket", "http", "sse"]
+          "enum": [
+            "stdio",
+            "websocket",
+            "http",
+            "sse"
+          ]
         },
         "connectionString": {
           "type": "string",
@@ -5751,7 +6793,13 @@
         },
         "authType": {
           "type": "string",
-          "enum": ["none", "headers", "oauth", "per_user_oauth", "per_user_headers"],
+          "enum": [
+            "none",
+            "headers",
+            "oauth",
+            "per_user_oauth",
+            "per_user_headers"
+          ],
           "description": "Authentication type for MCP connection"
         },
         "oauthConfigId": {
@@ -5784,7 +6832,9 @@
               }
             }
           },
-          "required": ["command"]
+          "required": [
+            "command"
+          ]
         },
         "websocketConfig": {
           "type": "object",
@@ -5794,7 +6844,9 @@
               "format": "uri"
             }
           },
-          "required": ["url"]
+          "required": [
+            "url"
+          ]
         },
         "httpConfig": {
           "type": "object",
@@ -5804,7 +6856,9 @@
               "format": "uri"
             }
           },
-          "required": ["url"]
+          "required": [
+            "url"
+          ]
         },
         "toolsToExecute": {
           "type": "array",
@@ -5825,7 +6879,10 @@
           "description": "Per-client override for tool sync interval"
         },
         "toolExecutionTimeout": {
-          "type": ["string", "integer"],
+          "type": [
+            "string",
+            "integer"
+          ],
           "description": "Per-client override for tool execution timeout. Go duration string (e.g. '30s', '2m') or a bare integer treated as seconds. Overrides the global mcp.toolManagerConfig.toolExecutionTimeout for this server only. Omit or set to 0 to use the global default."
         },
         "isPingAvailable": {
@@ -5869,7 +6926,10 @@
           "additionalProperties": false
         }
       },
-      "required": ["name", "connectionType"],
+      "required": [
+        "name",
+        "connectionType"
+      ],
       "allOf": [
         {
           "if": {
@@ -5880,7 +6940,9 @@
             }
           },
           "then": {
-            "required": ["stdioConfig"]
+            "required": [
+              "stdioConfig"
+            ]
           }
         },
         {
@@ -5892,7 +6954,9 @@
             }
           },
           "then": {
-            "required": ["websocketConfig"]
+            "required": [
+              "websocketConfig"
+            ]
           }
         },
         {
@@ -5904,7 +6968,9 @@
             }
           },
           "then": {
-            "required": ["httpConfig"]
+            "required": [
+              "httpConfig"
+            ]
           }
         },
         {
@@ -5916,7 +6982,9 @@
             }
           },
           "then": {
-            "required": ["connectionString"]
+            "required": [
+              "connectionString"
+            ]
           }
         }
       ]
@@ -5967,10 +7035,14 @@
             },
             "oneOf": [
               {
-                "required": ["mcpClientId"]
+                "required": [
+                  "mcpClientId"
+                ]
               },
               {
-                "required": ["mcpClientName"]
+                "required": [
+                  "mcpClientName"
+                ]
               }
             ],
             "additionalProperties": false
@@ -6013,7 +7085,10 @@
           }
         }
       },
-      "required": ["name", "tools"],
+      "required": [
+        "name",
+        "tools"
+      ],
       "additionalProperties": false
     },
     "virtualKeyProviderConfig": {
@@ -6035,7 +7110,7 @@
         "weight": {
           "type": "number",
           "description": "Weight for load balancing",
-          "default": 1.0
+          "default": 1
         },
         "allowed_models": {
           "type": "array",
@@ -6098,7 +7173,7 @@
               "weight": {
                 "type": "number",
                 "minimum": 0,
-                "default": 1.0,
+                "default": 1,
                 "description": "Weight for load balancing"
               },
               "azure_key_config": {
@@ -6140,9 +7215,18 @@
                   }
                 },
                 "dependentRequired": {
-                  "client_id": ["client_secret", "tenant_id"],
-                  "client_secret": ["client_id", "tenant_id"],
-                  "tenant_id": ["client_id", "client_secret"]
+                  "client_id": [
+                    "client_secret",
+                    "tenant_id"
+                  ],
+                  "client_secret": [
+                    "client_id",
+                    "tenant_id"
+                  ],
+                  "tenant_id": [
+                    "client_id",
+                    "client_secret"
+                  ]
                 },
                 "additionalProperties": false
               },
@@ -6245,7 +7329,9 @@
                               "description": "Whether this is the default bucket for batch operations"
                             }
                           },
-                          "required": ["bucket_name"],
+                          "required": [
+                            "bucket_name"
+                          ],
                           "additionalProperties": false
                         }
                       }
@@ -6274,80 +7360,120 @@
                 "not": {
                   "anyOf": [
                     {
-                      "required": ["azure_key_config"]
+                      "required": [
+                        "azure_key_config"
+                      ]
                     },
                     {
-                      "required": ["vertex_key_config"]
+                      "required": [
+                        "vertex_key_config"
+                      ]
                     },
                     {
-                      "required": ["bedrock_key_config"]
+                      "required": [
+                        "bedrock_key_config"
+                      ]
                     },
                     {
-                      "required": ["vllm_key_config"]
+                      "required": [
+                        "vllm_key_config"
+                      ]
                     }
                   ]
                 }
               },
               {
-                "required": ["azure_key_config"],
+                "required": [
+                  "azure_key_config"
+                ],
                 "not": {
                   "anyOf": [
                     {
-                      "required": ["vertex_key_config"]
+                      "required": [
+                        "vertex_key_config"
+                      ]
                     },
                     {
-                      "required": ["bedrock_key_config"]
+                      "required": [
+                        "bedrock_key_config"
+                      ]
                     },
                     {
-                      "required": ["vllm_key_config"]
+                      "required": [
+                        "vllm_key_config"
+                      ]
                     }
                   ]
                 }
               },
               {
-                "required": ["vertex_key_config"],
+                "required": [
+                  "vertex_key_config"
+                ],
                 "not": {
                   "anyOf": [
                     {
-                      "required": ["azure_key_config"]
+                      "required": [
+                        "azure_key_config"
+                      ]
                     },
                     {
-                      "required": ["bedrock_key_config"]
+                      "required": [
+                        "bedrock_key_config"
+                      ]
                     },
                     {
-                      "required": ["vllm_key_config"]
+                      "required": [
+                        "vllm_key_config"
+                      ]
                     }
                   ]
                 }
               },
               {
-                "required": ["bedrock_key_config"],
+                "required": [
+                  "bedrock_key_config"
+                ],
                 "not": {
                   "anyOf": [
                     {
-                      "required": ["azure_key_config"]
+                      "required": [
+                        "azure_key_config"
+                      ]
                     },
                     {
-                      "required": ["vertex_key_config"]
+                      "required": [
+                        "vertex_key_config"
+                      ]
                     },
                     {
-                      "required": ["vllm_key_config"]
+                      "required": [
+                        "vllm_key_config"
+                      ]
                     }
                   ]
                 }
               },
               {
-                "required": ["vllm_key_config"],
+                "required": [
+                  "vllm_key_config"
+                ],
                 "not": {
                   "anyOf": [
                     {
-                      "required": ["azure_key_config"]
+                      "required": [
+                        "azure_key_config"
+                      ]
                     },
                     {
-                      "required": ["vertex_key_config"]
+                      "required": [
+                        "vertex_key_config"
+                      ]
                     },
                     {
-                      "required": ["bedrock_key_config"]
+                      "required": [
+                        "bedrock_key_config"
+                      ]
                     }
                   ]
                 }
@@ -6356,7 +7482,9 @@
           }
         }
       },
-      "required": ["provider"],
+      "required": [
+        "provider"
+      ],
       "additionalProperties": false
     },
     "scim_attribute_role_mappings": {
@@ -6378,7 +7506,11 @@
             "description": "Bifrost role to assign on match"
           }
         },
-        "required": ["attribute", "value", "role"],
+        "required": [
+          "attribute",
+          "value",
+          "role"
+        ],
         "additionalProperties": false
       }
     },
@@ -6401,7 +7533,10 @@
             "description": "Bifrost team slug to assign. In case of '*' value, leave this empty"
           }
         },
-        "required": ["attribute", "value"],
+        "required": [
+          "attribute",
+          "value"
+        ],
         "additionalProperties": false
       }
     },
@@ -6424,7 +7559,10 @@
             "description": "Bifrost business unit slug to assign. In case of '*' value, leave this empty"
           }
         },
-        "required": ["attribute", "value"],
+        "required": [
+          "attribute",
+          "value"
+        ],
         "additionalProperties": false
       }
     },
@@ -6436,7 +7574,10 @@
         "properties": {
           "attributeType": {
             "type": "string",
-            "enum": ["user", "group"],
+            "enum": [
+              "user",
+              "group"
+            ],
             "description": "'user' reads from SCIM User resource attributes; 'group' matches SCIM Group resource."
           },
           "attributeValue": {
@@ -6444,7 +7585,10 @@
             "description": "SCIM attribute key or group match field for this claim."
           }
         },
-        "required": ["attributeType", "attributeValue"],
+        "required": [
+          "attributeType",
+          "attributeValue"
+        ],
         "additionalProperties": false
       }
     }

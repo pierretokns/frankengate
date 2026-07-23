@@ -92,7 +92,7 @@ The worker pool system maintains a sophisticated balance between resource effici
 - **Worker Pool Management** - Pre-spawned workers reduce startup latency
 - **Job Queue System** - Buffered channels provide smooth load balancing
 - **Resource Pools** - HTTP clients and API keys are pooled for efficiency
-- **Health Monitoring** - Circuit breakers detect and isolate failing providers
+- **Health Monitoring** - failover handlings detect and isolate failing providers
 - **Graceful Shutdown** - Workers complete current jobs before terminating
 
 **Startup Process:**
@@ -666,7 +666,7 @@ Comprehensive concurrency monitoring provides operational insights and performan
 
 - **Panic Recovery Tracking** - Count and analyze worker panic occurrences
 - **Timeout Monitoring** - Track jobs that exceed processing time limits
-- **Circuit Breaker Events** - Monitor provider isolation events and recoveries
+- **failover handling Events** - Monitor provider isolation events and recoveries
 - **Error Rate Analysis** - Track failure patterns for capacity planning
 
 **Real-Time Updates:**

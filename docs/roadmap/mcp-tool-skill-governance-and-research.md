@@ -86,7 +86,7 @@ is the portable fallback.
   caller's bearer token by default and never persist credentials in traces.
 - Treat results as untrusted observations with provenance, taint, DLP, and entitlement
   labels. Returned instructions cannot grant authority or invoke another tool.
-- Enforce circuit breakers, tenant/server/tool kill switches, concurrency and budgets.
+- Enforce failover handlings, tenant/server/tool kill switches, concurrency and budgets.
 
 Computer-use, shell, code, image-region and browser actions are typed protocols with
 sandbox/environment identity and replay semantics; they are not flattened into generic

@@ -82,9 +82,9 @@ flowchart TD
     WeightedSelect --> HealthCheck{Provider Healthy?}
 
     HealthCheck -->|Yes| AssignWorker[Assign Worker]
-    HealthCheck -->|No| CircuitBreaker[Circuit Breaker]
+    HealthCheck -->|No| failover handling[failover handling]
 
-    CircuitBreaker --> FallbackCheck{Fallback Available?}
+    failover handling --> FallbackCheck{Fallback Available?}
     FallbackCheck -->|Yes| FallbackProvider[Try Fallback]
     FallbackCheck -->|No| ErrorResponse[Return Error]
 
@@ -307,7 +307,7 @@ sequenceDiagram
 
     Queue->>WorkerPool: Enqueue Request
     WorkerPool->>Worker: Assign Available Worker
-    Worker->>Circuit: Check Circuit Breaker
+    Worker->>Circuit: Check failover handling
     Circuit->>Provider: Forward Request
 
     Provider-->>Circuit: Response/Error
@@ -355,17 +355,17 @@ sequenceDiagram
     participant Worker
     participant HTTPClient
     participant Provider
-    participant CircuitBreaker
+    participant failover handling
     participant Metrics
 
     Worker->>HTTPClient: PrepareRequest()
     HTTPClient->>HTTPClient: Add Headers & Auth
-    HTTPClient->>CircuitBreaker: CheckHealth()
-    CircuitBreaker->>Provider: HTTP Request
+    HTTPClient->>failover handling: CheckHealth()
+    failover handling->>Provider: HTTP Request
 
-    Provider-->>CircuitBreaker: HTTP Response
-    CircuitBreaker->>Metrics: Record Metrics
-    CircuitBreaker-->>HTTPClient: Response/Error
+    Provider-->>failover handling: HTTP Response
+    failover handling->>Metrics: Record Metrics
+    failover handling-->>HTTPClient: Response/Error
     HTTPClient-->>Worker: Parsed Response
 ```
 
