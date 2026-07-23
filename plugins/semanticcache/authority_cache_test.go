@@ -46,6 +46,34 @@ func TestRequireGovernedCacheAuthorityFailsClosedBeforeLookup(t *testing.T) {
 	}
 }
 
+func TestRequireGovernedCacheAuthorityAcceptsResolvedVirtualKey(t *testing.T) {
+	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyGovernanceVirtualKeyID, "vk-row-123")
+	ctx.SetValue(schemas.BifrostContextKeyGovernanceTeamID, "team-research")
+	if err := requireGovernedCacheAuthority(ctx); err != nil {
+		t.Fatalf("resolved virtual-key authority was rejected: %v", err)
+	}
+	metadata, err := authorityMetadataForCaching(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if metadata["authorization_virtual_key_id"] != "vk-row-123" {
+		t.Fatalf("virtual-key authority was not projected into cache metadata: %#v", metadata)
+	}
+}
+
+func TestRequireGovernedCacheAuthorityRejectsPrincipalWithoutEpoch(t *testing.T) {
+	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
+	if err := schemas.SetAuthorizationPrincipal(ctx, authorityepoch.Principal{
+		Tenant: "tenant-a", Issuer: "okta", Subject: "alice",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := requireGovernedCacheAuthority(ctx); err == nil {
+		t.Fatal("expected principal authority without epoch reference to fail closed")
+	}
+}
+
 func TestRequireGovernedCacheAuthorityValidatesPrincipalOnlyEpochReference(t *testing.T) {
 	ctx := schemas.NewBifrostContext(nil, schemas.NoDeadline)
 	ctx.SetValue(schemas.BifrostContextKeyAuthorizationEpochReference, authorityepoch.Reference{
@@ -61,15 +89,16 @@ func TestRequireGovernedCacheAuthorityValidatesPrincipalOnlyEpochReference(t *te
 
 func TestAuthorizationCacheQueriesIncludeTenantAndPrincipalScope(t *testing.T) {
 	queries := authorizationCacheQueries(map[string]any{
-		"authorization_tenant":  "tenant-a",
-		"authorization_subject": "alice",
-		"authorization_epoch":   uint64(4),
-		"authorization_team_id": "team-research",
+		"authorization_tenant":         "tenant-a",
+		"authorization_subject":        "alice",
+		"authorization_epoch":          uint64(4),
+		"authorization_virtual_key_id": "vk-row-123",
+		"authorization_team_id":        "team-research",
 	})
-	if len(queries) != 4 {
-		t.Fatalf("expected four authorization predicates, got %d", len(queries))
+	if len(queries) != 5 {
+		t.Fatalf("expected five authorization predicates, got %d", len(queries))
 	}
-	for _, want := range []string{"authorization_tenant", "authorization_subject", "authorization_epoch", "authorization_team_id"} {
+	for _, want := range []string{"authorization_tenant", "authorization_subject", "authorization_epoch", "authorization_virtual_key_id", "authorization_team_id"} {
 		found := false
 		for _, query := range queries {
 			if query.Field == want {

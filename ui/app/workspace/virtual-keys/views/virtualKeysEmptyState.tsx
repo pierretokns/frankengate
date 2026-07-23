@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { KeyRound } from "lucide-react";
 import { ArrowUpRight } from "lucide-react";
 
-const VIRTUAL_KEYS_DOCS_URL = "https://docs.getbifrost.ai/features/governance/virtual-keys";
+const VIRTUAL_KEYS_DOCS_URL = "/features/governance/virtual-keys";
 
 interface VirtualKeysEmptyStateProps {
 	onAddClick: () => void;
@@ -29,7 +29,7 @@ export function VirtualKeysEmptyState({ onAddClick, canCreate = true }: VirtualK
 						aria-label="Read more about virtual keys (opens in new tab)"
 						data-testid="virtual-keys-button-read-more"
 						onClick={() => {
-							window.open(`${VIRTUAL_KEYS_DOCS_URL}?utm_source=bfd`, "_blank", "noopener,noreferrer");
+							window.open(`${VIRTUAL_KEYS_DOCS_URL}?utm_source=frankengate`, "_blank", "noopener,noreferrer");
 						}}
 					>
 						Read more <ArrowUpRight className="text-muted-foreground h-3 w-3" />

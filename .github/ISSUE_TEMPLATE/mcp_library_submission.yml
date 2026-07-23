@@ -1,12 +1,12 @@
 name: "Add MCP Server to Library"
-description: "Propose a new MCP server for the Bifrost community library"
+description: "Propose a new MCP server for the FrankenGate community library"
 title: "[MCP Library] Add: "
 labels: ["community", "mcp-library"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for contributing to the Bifrost MCP Library. Please fill out the details below, then open a PR editing `community/mcp-library/servers.json`.
+        Thanks for contributing to the FrankenGate MCP Library. Please fill out the details below, then open a PR editing `community/mcp-library/servers.json`.
 
         Do not include secrets, tokens, API keys, private URLs, or personal data.
 
@@ -14,7 +14,7 @@ body:
     id: name
     attributes:
       label: Server name
-      description: "Human-readable display name. Bifrost derives the internal slug from this name."
+      description: "Human-readable display name. FrankenGate derives the internal slug from this name."
       placeholder: "My Server"
     validations:
       required: true

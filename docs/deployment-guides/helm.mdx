@@ -26,7 +26,7 @@ If you use PostgreSQL for Bifrost storage, ensure the database is UTF8 encoded. 
 ## Step 1 - Add the Helm Repository
 
 ```bash
-helm repo add bifrost https://maximhq.github.io/bifrost/helm-charts
+helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 helm repo update
 ```
 
@@ -35,7 +35,7 @@ helm repo update
 <Note>
 The Helm chart ships ready-made values files under `helm-charts/bifrost/values-examples/`.
 For example: `sqlite-only.yaml`, `production-ha.yaml`, `external-postgres.yaml`, and `secrets-from-k8s.yaml`.
-See the full list here: https://github.com/maximhq/bifrost/tree/main/helm-charts/bifrost/values-examples
+See the full list here: https://github.com/pierretokns/frankengate/tree/dev/helm-charts/bifrost/values-examples
 </Note>
 
 <Tabs>
@@ -47,7 +47,7 @@ Fastest way to get running. Bifrost deploys as a StatefulSet with a 10Gi PVC for
 kubectl create secret generic bifrost-encryption-key \
   --from-literal=encryption-key="$(openssl rand -base64 32)"
 
-helm install bifrost bifrost/bifrost \
+helm install frankengate frankengate/bifrost \
   --set image.tag=v1.4.11 \
   --set bifrost.encryptionKeySecret.name="bifrost-encryption-key" \
   --set bifrost.encryptionKeySecret.key="encryption-key"
@@ -65,7 +65,7 @@ kubectl create secret generic bifrost-encryption-key \
 kubectl create secret generic provider-keys \
   --from-literal=openai-api-key='sk-your-key'
 
-helm install bifrost bifrost/bifrost \
+helm install frankengate frankengate/bifrost \
   --set image.tag=v1.4.11 \
   --set bifrost.encryptionKeySecret.name="bifrost-encryption-key" \
   --set bifrost.encryptionKeySecret.key="encryption-key" \
@@ -190,14 +190,14 @@ bifrost:
 
 ```bash
 # 2. Install
-helm install bifrost bifrost/bifrost -f production.yaml
+helm install frankengate frankengate/bifrost -f production.yaml
 ```
 
 </Tab>
 </Tabs>
 
 <Note>
-`image.tag` is required - the chart will not start without it. Check [Docker Hub](https://hub.docker.com/r/maximhq/bifrost/tags) for available versions.
+`image.tag` is required - the chart will not start without it. Check the fork-owned [GHCR packages](https://github.com/pierretokns/frankengate/pkgs/container/frankengate) for available versions.
 </Note>
 
 ## Step 3 - Verify
@@ -232,11 +232,9 @@ Next steps: jump to [Next Steps](#next-steps).
 
 <Tab title="Enterprise">
 
-Enterprise customers receive dedicated container images in a private registry, along with additional features, SLAs, and compliance documentation.
-
-<Note>
-[Book a demo](https://calendly.com/maximai/bifrost-demo) to know more about our enterprise features.
-</Note>
+Enterprise deployments use the fork-owned registry and the governance features
+documented in this repository. Availability, support, and compliance claims
+are deployment-specific and are not implied by this OSS chart.
 
 ## Prerequisites
 
@@ -248,7 +246,7 @@ Enterprise customers receive dedicated container images in a private registry, a
 ## Step 1 - Add the Helm Repository
 
 ```bash
-helm repo add bifrost https://maximhq.github.io/bifrost/helm-charts
+helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 helm repo update
 ```
 
@@ -472,7 +470,7 @@ affinity:
 ```
 
 ```bash
-helm install bifrost bifrost/bifrost -f enterprise.yaml
+helm install frankengate frankengate/bifrost -f enterprise.yaml
 ```
 
 Next steps: jump to [Next Steps](#next-steps).
@@ -490,7 +488,8 @@ Enterprise customers have access to:
 - SLA guarantees
 - Compliance documentation (SOC2, HIPAA, etc.)
 
-Contact [support@getmaxim.ai](mailto:support@getmaxim.ai) for support.
+For support, use the FrankenGate repository issue and internal operations
+channels associated with your deployment.
 
 </Tab>
 
@@ -628,10 +627,10 @@ curl http://localhost:8080/health
 
 ## Resources
 
-- [Helm Chart Repository](https://github.com/maximhq/bifrost/tree/main/helm-charts)
+- [Helm Chart Repository](https://github.com/pierretokns/frankengate/tree/dev/helm-charts)
 - [Artifact Hub](https://artifacthub.io/packages/helm/bifrost/bifrost)
-- [Example Configurations](https://github.com/maximhq/bifrost/tree/main/helm-charts/bifrost/values-examples)
-- [GitHub Issues](https://github.com/maximhq/bifrost/issues)
+- [Example Configurations](https://github.com/pierretokns/frankengate/tree/dev/helm-charts/bifrost/values-examples)
+- [GitHub Issues](https://github.com/pierretokns/frankengate/issues)
 
 ## Next Steps
 

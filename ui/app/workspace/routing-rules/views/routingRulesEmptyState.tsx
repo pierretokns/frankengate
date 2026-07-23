@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Route } from "lucide-react";
 import { ArrowUpRight } from "lucide-react";
 
-const ROUTING_RULES_DOCS_URL = "https://docs.getbifrost.ai/providers/routing-rules";
+const ROUTING_RULES_DOCS_URL = "/providers/routing-rules";
 
 interface RoutingRulesEmptyStateProps {
 	onAddClick: () => void;

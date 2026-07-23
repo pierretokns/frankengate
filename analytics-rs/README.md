@@ -1,8 +1,9 @@
 # FrankenGate analytics control plane
 
-This is the first isolated Rust vertical slice for the analytics plane. It is
-deliberately dependency-free: the `JobStore` proves the lifecycle invariants
-before an HTTP server, PostgreSQL persistence, or worker runtime is selected.
+This is the first isolated Rust vertical slice for the analytics plane. It
+keeps the `JobStore` protocol and its durable PostgreSQL boundary separate from
+the Go gateway hot path. SQLx is used only by the independently deployed
+control-plane process.
 
 ## Adoption gates
 
@@ -30,9 +31,10 @@ The current in-memory contract already covers:
 - tenant-scoped cancellation/retry plus reproducible experiment lineage; and
 - terminal, same-tenant replay jobs with explicit `replay_of` lineage.
 
-These are protocol and test guarantees, not a claim of durable persistence or
-production API availability. The PostgreSQL service, supervision runtime, and
-independent Helm deployments remain separate implementation gates.
+These are protocol and test guarantees. The SQLx migration and tenant-scoped
+database operations now provide the first durable persistence gate; the HTTP
+job API, supervision runtime, and independent Helm deployments remain separate
+implementation gates.
 
 `migrations/001_analytics_contract.sql` is the first durable schema contract.
 It enables tenant RLS across experiments, runs, run attempts, evaluations,
@@ -48,7 +50,7 @@ Run the current contract tests with:
 cargo test --manifest-path analytics-rs/Cargo.toml
 ```
 
-The dependency-free operator smoke check exercises submit → lease → complete
+The operator smoke check exercises submit → lease → complete
 and verifies the typed terminal outcome:
 
 ```bash
@@ -70,3 +72,8 @@ separate from the Go gateway image:
 ```bash
 docker build -f analytics-rs/Dockerfile -t frankengate-analytics-control:dev analytics-rs
 ```
+
+The current HTTP surface is an internal worker/control-plane contract, not a
+public unauthenticated API. Put it behind cluster network policy and an
+identity-aware service boundary before exposing it outside the namespace; the
+tenant and worker query parameters are partitioning inputs, not credentials.

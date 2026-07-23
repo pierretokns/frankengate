@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a problem or regression in Bifrost
+description: Report a problem or regression in FrankenGate
 title: "[Bug]: <short summary>"
 labels: [bug]
 assignees: []
@@ -90,7 +90,7 @@ body:
         - Go: 1.22.x
         - Node: 20.x, npm/pnpm/yarn version
         - Browser (if UI): Chrome/Firefox/Safari versions
-        - Bifrost components and versions (core, transports, ui)
+        - FrankenGate components and versions (core, transports, UI; include compatibility details when relevant)
         - Any relevant environment flags/config
       render: text
     validations:
@@ -127,5 +127,4 @@ body:
         - Critical (blocks releases or production)
     validations:
       required: true
-
 

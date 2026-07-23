@@ -19,11 +19,53 @@
           "properties": {
             "repository": { "type": "string" },
             "tag": { "type": "string" },
+            "digest": { "type": "string", "pattern": "^(|sha256:[a-f0-9]{64})$" },
             "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
           }
         },
         "replicas": { "type": "integer", "minimum": 1 },
         "command": { "type": "array", "items": { "type": "string" } },
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 1 },
+        "databaseUrlSecret": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "key": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "workerTokenSecret": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "key": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "databaseMaxConnections": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "startupProbe": {
+          "type": "object",
+          "properties": {
+            "periodSeconds": { "type": "integer", "minimum": 1 },
+            "failureThreshold": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "livenessProbe": {
+          "type": "object",
+          "properties": {
+            "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+            "periodSeconds": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "readinessProbe": {
+          "type": "object",
+          "properties": {
+            "periodSeconds": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
         "resources": { "type": "object" },
         "serviceMonitor": {
           "type": "object",
@@ -49,8 +91,40 @@
             "enabled": { "type": "boolean" },
             "minReplicas": { "type": "integer", "minimum": 1 },
             "maxReplicas": { "type": "integer", "minimum": 1 },
-            "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 }
+            "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "behavior": {
+              "type": "object",
+              "properties": {
+                "scaleUp": {
+                  "type": "object",
+                  "properties": {
+                    "stabilizationWindowSeconds": { "type": "integer", "minimum": 0 },
+                    "maxReplicasPerPeriod": { "type": "integer", "minimum": 1 },
+                    "periodSeconds": { "type": "integer", "minimum": 1 }
+                  },
+                  "additionalProperties": false
+                },
+                "scaleDown": {
+                  "type": "object",
+                  "properties": {
+                    "stabilizationWindowSeconds": { "type": "integer", "minimum": 0 },
+                    "maxReplicasPerPeriod": { "type": "integer", "minimum": 1 },
+                    "periodSeconds": { "type": "integer", "minimum": 1 }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
           }
+        },
+        "podDisruptionBudget": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minAvailable": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
         }
       }
     },

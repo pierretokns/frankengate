@@ -706,6 +706,10 @@ paths:
   /api/pricing/force-sync:
     $ref: './paths/management/config.yaml#/force-sync-pricing'
 
+  # Durable OTEL replay metadata (content is never returned)
+  /api/replays:
+    $ref: './paths/management/replays.yaml#/replays'
+
   # Alerting
   /api/alerting/channels:
     $ref: './paths/management/alerting.yaml#/channels'

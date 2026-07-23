@@ -8,6 +8,8 @@ package otel
 import (
 	"bufio"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -27,10 +29,39 @@ type ReplayRecord struct {
 	RequestID     string         `json:"request_id,omitempty"`
 	TenantID      string         `json:"tenant_id"`
 	CapturedAt    time.Time      `json:"captured_at"`
+	ContentSHA256 string         `json:"content_sha256"`
 	Trace         *schemas.Trace `json:"trace"`
 	// RetrievalQuality is bounded evaluation metadata only; it never contains
 	// queries, chunk IDs, embeddings, or payloads.
 	RetrievalQuality *RetrievalQualitySummary `json:"retrieval_quality,omitempty"`
+}
+
+func replayContentDigest(trace *schemas.Trace) (string, error) {
+	payload, err := json.Marshal(trace)
+	if err != nil {
+		return "", err
+	}
+	digest := sha256.Sum256(payload)
+	return hex.EncodeToString(digest[:]), nil
+}
+
+func verifyReplayRecordDigest(record *ReplayRecord) error {
+	if record == nil || record.Trace == nil {
+		return fmt.Errorf("replay record integrity metadata is missing")
+	}
+	// Records written before the digest field was introduced remain readable;
+	// all new writes include it and are verified below.
+	if record.ContentSHA256 == "" {
+		return nil
+	}
+	digest, err := replayContentDigest(record.Trace)
+	if err != nil {
+		return fmt.Errorf("digest replay record: %w", err)
+	}
+	if !strings.EqualFold(digest, record.ContentSHA256) {
+		return fmt.Errorf("replay record content digest mismatch")
+	}
+	return nil
 }
 
 type RetrievalQualitySummary struct {
@@ -219,7 +250,11 @@ func (s *JSONLReplayStore) Put(ctx context.Context, trace *schemas.Trace) error 
 	// Retrieval quality counters are safe to retain, but query text is never
 	// part of the replay metadata contract, even when content capture is opted in.
 	redactReplayQueryMetadata(clone)
-	record := ReplayRecord{SchemaVersion: 1, TraceID: clone.TraceID, RequestID: clone.RequestID, TenantID: tenant, CapturedAt: time.Now().UTC(), Trace: clone, RetrievalQuality: retrievalQualityFromTrace(clone)}
+	digest, err := replayContentDigest(clone)
+	if err != nil {
+		return fmt.Errorf("digest replay record: %w", err)
+	}
+	record := ReplayRecord{SchemaVersion: 1, TraceID: clone.TraceID, RequestID: clone.RequestID, TenantID: tenant, CapturedAt: time.Now().UTC(), ContentSHA256: digest, Trace: clone, RetrievalQuality: retrievalQualityFromTrace(clone)}
 	payload, err := json.Marshal(record)
 	if err != nil {
 		return err
@@ -282,6 +317,9 @@ func (s *JSONLReplayStore) Get(ctx context.Context, tenantID, traceID string) (*
 	if found == nil {
 		return nil, os.ErrNotExist
 	}
+	if err := verifyReplayRecordDigest(found); err != nil {
+		return nil, fmt.Errorf("replay record integrity check failed: %w", err)
+	}
 	return found, nil
 }
 
@@ -336,6 +374,9 @@ func (s *JSONLReplayStore) List(ctx context.Context, tenantID string, limit int)
 		var candidate ReplayRecord
 		if json.Unmarshal(scanner.Bytes(), &candidate) != nil || candidate.TenantID != tenantID {
 			continue
+		}
+		if err := verifyReplayRecordDigest(&candidate); err != nil {
+			return nil, fmt.Errorf("replay record integrity check failed: %w", err)
 		}
 		if len(records) == limit {
 			copy(records, records[1:])
