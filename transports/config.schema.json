@@ -19,18 +19,26 @@
           "default": 65536
         }
       },
-      "required": ["read_buffer_size"]
+      "required": [
+        "read_buffer_size"
+      ]
     },
     "version": {
       "type": "integer",
       "description": "Controls how empty arrays in allow-list fields (models, allowed_models, key_ids, tools_to_execute) are interpreted. Omit or set to 2 for v1.5.0+ semantics: empty = deny all, [\"*\"] = allow all. Set to 1 to restore v1.4.x semantics: empty = allow all.",
-      "enum": [1, 2],
+      "enum": [
+        1,
+        2
+      ],
       "default": 2
     },
     "source_of_truth": {
       "type": "string",
       "description": "Controls how config.json is reconciled with the config store. \"split\" preserves existing merge behavior. \"config.json\" makes present config.json sections authoritative during startup sync; missing sections leave database rows untouched.",
-      "enum": ["split", "config.json"],
+      "enum": [
+        "split",
+        "config.json"
+      ],
       "default": "split"
     },
     "encryption_key": {
@@ -236,7 +244,10 @@
         },
         "mcp_code_mode_binding_level": {
           "type": "string",
-          "enum": ["server", "tool"],
+          "enum": [
+            "server",
+            "tool"
+          ],
           "description": "DEPRECATED: Code mode binding level for MCP tools. Use mcp.tool_manager_config.code_mode_binding_level."
         },
         "mcp_tool_sync_interval": {
@@ -269,11 +280,26 @@
             {
               "type": "object",
               "properties": {
-                "value": { "type": "string" },
-                "ref": { "type": "string" },
-                "type": { "type": "string", "enum": ["plain_text", "env", "vault"] },
-                "env_var": { "type": "string" },
-                "from_env": { "type": "boolean" }
+                "value": {
+                  "type": "string"
+                },
+                "ref": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "plain_text",
+                    "env",
+                    "vault"
+                  ]
+                },
+                "env_var": {
+                  "type": "string"
+                },
+                "from_env": {
+                  "type": "boolean"
+                }
               },
               "additionalProperties": false
             }
@@ -282,7 +308,11 @@
         },
         "mcp_server_auth_mode": {
           "type": "string",
-          "enum": ["headers", "both", "oauth"],
+          "enum": [
+            "headers",
+            "both",
+            "oauth"
+          ],
           "description": "How /mcp authenticates inbound MCP clients. 'headers' (default): VK/api-key/session headers only, discovery disabled. 'both': accepts header credentials and Bifrost-issued JWTs, discovery enabled. 'oauth': Bifrost JWTs only — WARNING: disables VK/header MCP access."
         },
         "oauth2_server_config": {
@@ -290,13 +320,21 @@
           "properties": {
             "issuer_url": {
               "anyOf": [
-                { "type": "string" },
+                {
+                  "type": "string"
+                },
                 {
                   "type": "object",
                   "properties": {
-                    "value": { "type": "string" },
-                    "env_var": { "type": "string" },
-                    "from_env": { "type": "boolean" }
+                    "value": {
+                      "type": "string"
+                    },
+                    "env_var": {
+                      "type": "string"
+                    },
+                    "from_env": {
+                      "type": "boolean"
+                    }
                   },
                   "additionalProperties": false
                 }
@@ -489,7 +527,11 @@
                 "default": false
               }
             },
-            "required": ["id", "max_limit", "reset_duration"],
+            "required": [
+              "id",
+              "max_limit",
+              "reset_duration"
+            ],
             "additionalProperties": false
           }
         },
@@ -545,7 +587,9 @@
                 "default": false
               }
             },
-            "required": ["id"],
+            "required": [
+              "id"
+            ],
             "additionalProperties": false
           }
         },
@@ -584,9 +628,15 @@
                 "default": false
               }
             },
-            "required": ["id", "name"],
+            "required": [
+              "id",
+              "name"
+            ],
             "not": {
-              "required": ["budgets", "budget_id"]
+              "required": [
+                "budgets",
+                "budget_id"
+              ]
             },
             "additionalProperties": false
           }
@@ -649,7 +699,10 @@
                 "readOnly": true
               }
             },
-            "required": ["id", "name"],
+            "required": [
+              "id",
+              "name"
+            ],
             "additionalProperties": false
           }
         },
@@ -695,7 +748,10 @@
                 }
               }
             },
-            "required": ["id", "name"],
+            "required": [
+              "id",
+              "name"
+            ],
             "additionalProperties": false
           }
         },
@@ -716,7 +772,11 @@
               "dac": {
                 "type": "string",
                 "description": "Data Access Control scope: own-data (user's own records), team-data (user's team records), all-data (unrestricted). Defaults to all-data.",
-                "enum": ["own-data", "team-data", "all-data"],
+                "enum": [
+                  "own-data",
+                  "team-data",
+                  "all-data"
+                ],
                 "default": "all-data"
               },
               "access_profile": {
@@ -738,12 +798,17 @@
                       "description": "Permission operation (e.g. View, Create, Update, Delete, Download, RunInference, ManageInference, ViewInference)"
                     }
                   },
-                  "required": ["resource", "operation"],
+                  "required": [
+                    "resource",
+                    "operation"
+                  ],
                   "additionalProperties": false
                 }
               }
             },
-            "required": ["name"],
+            "required": [
+              "name"
+            ],
             "additionalProperties": false
           }
         },
@@ -816,7 +881,10 @@
                 }
               }
             },
-            "required": ["id", "name"],
+            "required": [
+              "id",
+              "name"
+            ],
             "additionalProperties": false
           }
         },
@@ -879,14 +947,19 @@
               "budget_ids": {
                 "type": "array",
                 "description": "List of budget IDs (from governance.budgets) to associate with this model config. Supports multiple budgets (e.g. daily + monthly). Replaces budget_id.",
-                "items": { "type": "string" }
+                "items": {
+                  "type": "string"
+                }
               },
               "rate_limit_id": {
                 "type": "string",
                 "description": "Rate limit ID to associate with this model"
               }
             },
-            "required": ["id", "model_name"],
+            "required": [
+              "id",
+              "model_name"
+            ],
             "additionalProperties": false
           }
         },
@@ -944,7 +1017,9 @@
                 "$ref": "#/$defs/openai_config"
               }
             },
-            "required": ["name"]
+            "required": [
+              "name"
+            ]
           }
         }
       },
@@ -997,7 +1072,15 @@
               },
               "type": {
                 "type": "string",
-                "enum": ["slack", "microsoft_teams", "pagerduty", "webhook", "sns", "email", "cloudflare_email"],
+                "enum": [
+                  "slack",
+                  "microsoft_teams",
+                  "pagerduty",
+                  "webhook",
+                  "sns",
+                  "email",
+                  "cloudflare_email"
+                ],
                 "description": "Alert channel type."
               },
               "enabled": {
@@ -1015,12 +1098,23 @@
                 "additionalProperties": true
               }
             },
-            "required": ["id", "name", "type", "enabled"],
+            "required": [
+              "id",
+              "name",
+              "type",
+              "enabled"
+            ],
             "allOf": [
               {
                 "if": {
-                  "properties": { "type": { "const": "slack" } },
-                  "required": ["type"]
+                  "properties": {
+                    "type": {
+                      "const": "slack"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
                 },
                 "then": {
                   "properties": {
@@ -1030,27 +1124,60 @@
                         "webhook_url": {
                           "type": "string",
                           "minLength": 1,
-                          "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                          "anyOf": [
+                            {
+                              "format": "uri"
+                            },
+                            {
+                              "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                            }
+                          ],
                           "description": "Slack incoming webhook URL. Supports env.VAR_NAME references."
                         },
                         "url": {
                           "type": "string",
                           "minLength": 1,
-                          "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                          "anyOf": [
+                            {
+                              "format": "uri"
+                            },
+                            {
+                              "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                            }
+                          ],
                           "description": "Alias for webhook_url. Supports env.VAR_NAME references."
                         }
                       },
-                      "oneOf": [{ "required": ["webhook_url"] }, { "required": ["url"] }],
+                      "oneOf": [
+                        {
+                          "required": [
+                            "webhook_url"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "url"
+                          ]
+                        }
+                      ],
                       "additionalProperties": true
                     }
                   },
-                  "required": ["config"]
+                  "required": [
+                    "config"
+                  ]
                 }
               },
               {
                 "if": {
-                  "properties": { "type": { "const": "microsoft_teams" } },
-                  "required": ["type"]
+                  "properties": {
+                    "type": {
+                      "const": "microsoft_teams"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
                 },
                 "then": {
                   "properties": {
@@ -1060,27 +1187,60 @@
                         "webhook_url": {
                           "type": "string",
                           "minLength": 1,
-                          "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                          "anyOf": [
+                            {
+                              "format": "uri"
+                            },
+                            {
+                              "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                            }
+                          ],
                           "description": "Microsoft Teams incoming webhook or workflow URL. Supports env.VAR_NAME references."
                         },
                         "url": {
                           "type": "string",
                           "minLength": 1,
-                          "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                          "anyOf": [
+                            {
+                              "format": "uri"
+                            },
+                            {
+                              "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                            }
+                          ],
                           "description": "Alias for webhook_url. Supports env.VAR_NAME references."
                         }
                       },
-                      "oneOf": [{ "required": ["webhook_url"] }, { "required": ["url"] }],
+                      "oneOf": [
+                        {
+                          "required": [
+                            "webhook_url"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "url"
+                          ]
+                        }
+                      ],
                       "additionalProperties": true
                     }
                   },
-                  "required": ["config"]
+                  "required": [
+                    "config"
+                  ]
                 }
               },
               {
                 "if": {
-                  "properties": { "type": { "const": "pagerduty" } },
-                  "required": ["type"]
+                  "properties": {
+                    "type": {
+                      "const": "pagerduty"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
                 },
                 "then": {
                   "properties": {
@@ -1098,17 +1258,36 @@
                           "description": "Alias for routing_key. Supports env.VAR_NAME references."
                         }
                       },
-                      "oneOf": [{ "required": ["routing_key"] }, { "required": ["integration_key"] }],
+                      "oneOf": [
+                        {
+                          "required": [
+                            "routing_key"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "integration_key"
+                          ]
+                        }
+                      ],
                       "additionalProperties": true
                     }
                   },
-                  "required": ["config"]
+                  "required": [
+                    "config"
+                  ]
                 }
               },
               {
                 "if": {
-                  "properties": { "type": { "const": "webhook" } },
-                  "required": ["type"]
+                  "properties": {
+                    "type": {
+                      "const": "webhook"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
                 },
                 "then": {
                   "properties": {
@@ -1118,26 +1297,55 @@
                         "url": {
                           "type": "string",
                           "minLength": 1,
-                          "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                          "anyOf": [
+                            {
+                              "format": "uri"
+                            },
+                            {
+                              "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                            }
+                          ],
                           "description": "Generic webhook URL. Supports env.VAR_NAME references."
                         },
                         "webhook_url": {
                           "type": "string",
                           "minLength": 1,
-                          "anyOf": [{ "format": "uri" }, { "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$" }],
+                          "anyOf": [
+                            {
+                              "format": "uri"
+                            },
+                            {
+                              "pattern": "^env\\.[A-Za-z_][A-Za-z0-9_]*$"
+                            }
+                          ],
                           "description": "Alias for url. Supports env.VAR_NAME references."
                         },
                         "headers": {
                           "type": "object",
                           "description": "Optional headers to send with the webhook request. Values support env.VAR_NAME references. Sensitive hop-by-hop headers are ignored at send time.",
-                          "additionalProperties": { "type": "string" }
+                          "additionalProperties": {
+                            "type": "string"
+                          }
                         }
                       },
-                      "oneOf": [{ "required": ["url"] }, { "required": ["webhook_url"] }],
+                      "oneOf": [
+                        {
+                          "required": [
+                            "url"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "webhook_url"
+                          ]
+                        }
+                      ],
                       "additionalProperties": true
                     }
                   },
-                  "required": ["config"]
+                  "required": [
+                    "config"
+                  ]
                 }
               }
             ],
@@ -1168,7 +1376,11 @@
               },
               "scope_type": {
                 "type": "string",
-                "enum": ["virtual_key", "team", "customer"],
+                "enum": [
+                  "virtual_key",
+                  "team",
+                  "customer"
+                ],
                 "description": "Governance owner scope to evaluate."
               },
               "scope_id": {
@@ -1198,12 +1410,17 @@
               "channel_ids": {
                 "type": "array",
                 "description": "IDs of alert channels to notify when this rule matches.",
-                "items": { "type": "string", "minLength": 1 },
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "minItems": 1
               },
               "target_type": {
                 "type": "string",
-                "enum": ["budget"],
+                "enum": [
+                  "budget"
+                ],
                 "description": "Optional explicit target type. Use budget with target_id to evaluate one specific budget; omit to evaluate all budgets for the scope."
               },
               "target_id": {
@@ -1211,22 +1428,38 @@
                 "description": "ID of the explicit target referenced by target_type."
               }
             },
-            "required": ["id", "name", "enabled", "scope_type", "scope_id", "cel_expression", "channel_ids"],
+            "required": [
+              "id",
+              "name",
+              "enabled",
+              "scope_type",
+              "scope_id",
+              "cel_expression",
+              "channel_ids"
+            ],
             "allOf": [
               {
                 "if": {
-                  "required": ["target_type"]
+                  "required": [
+                    "target_type"
+                  ]
                 },
                 "then": {
-                  "required": ["target_id"]
+                  "required": [
+                    "target_id"
+                  ]
                 }
               },
               {
                 "if": {
-                  "required": ["target_id"]
+                  "required": [
+                    "target_id"
+                  ]
                 },
                 "then": {
-                  "required": ["target_type"]
+                  "required": [
+                    "target_type"
+                  ]
                 }
               }
             ],
@@ -1282,7 +1515,12 @@
         },
         "type": {
           "type": "string",
-          "enum": ["weaviate", "redis", "qdrant", "pinecone"],
+          "enum": [
+            "weaviate",
+            "redis",
+            "qdrant",
+            "pinecone"
+          ],
           "description": "Vector store type (use \"redis\" for Redis or Valkey-compatible endpoints)"
         },
         "config": {
@@ -1350,7 +1588,10 @@
         },
         "type": {
           "type": "string",
-          "enum": ["sqlite", "postgres"],
+          "enum": [
+            "sqlite",
+            "postgres"
+          ],
           "description": "Configuration store type"
         },
         "config": {
@@ -1371,7 +1612,9 @@
                     "description": "Database file path"
                   }
                 },
-                "required": ["path"],
+                "required": [
+                  "path"
+                ],
                 "additionalProperties": false
               }
             },
@@ -1427,7 +1670,9 @@
                         "default": "10s"
                       }
                     },
-                    "required": ["command"],
+                    "required": [
+                      "command"
+                    ],
                     "additionalProperties": false
                   },
                   "db_name": {
@@ -1465,10 +1710,14 @@
                 ],
                 "oneOf": [
                   {
-                    "required": ["password"]
+                    "required": [
+                      "password"
+                    ]
                   },
                   {
-                    "required": ["password_command"]
+                    "required": [
+                      "password_command"
+                    ]
                   }
                 ],
                 "additionalProperties": false
@@ -1486,7 +1735,11 @@
             },
             "type": {
               "type": "string",
-              "enum": ["aws-secrets-manager", "gcp-secret-manager", "hashicorp-vault"],
+              "enum": [
+                "aws-secrets-manager",
+                "gcp-secret-manager",
+                "hashicorp-vault"
+              ],
               "description": "Vault backend type"
             },
             "prefix": {
@@ -1495,19 +1748,148 @@
             },
             "access_mode": {
               "type": "string",
-              "enum": ["read_only", "read_and_write"],
+              "enum": [
+                "read_only",
+                "read_and_write"
+              ],
               "description": "read_only resolves existing refs only; read_and_write also auto-stores plaintext fields and deletes owned secrets. Defaults to read_only."
             },
             "aws": {
               "type": "object",
               "description": "AWS Secrets Manager configuration",
               "properties": {
-                "region": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "access_key_id": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "secret_access_key": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "session_token": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "role_arn": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "kms_key_id": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] }
+                "region": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "access_key_id": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "secret_access_key": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "session_token": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "role_arn": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "kms_key_id": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                }
               },
               "additionalProperties": false
             },
@@ -1515,8 +1897,50 @@
               "type": "object",
               "description": "GCP Secret Manager configuration",
               "properties": {
-                "project_id": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "credentials_json": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] }
+                "project_id": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "credentials_json": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                }
               },
               "additionalProperties": false
             },
@@ -1524,12 +1948,138 @@
               "type": "object",
               "description": "HashiCorp Vault (KV v2) configuration",
               "properties": {
-                "address": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "token": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "namespace": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "mount_path": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "role_id": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] },
-                "secret_id": { "anyOf": [{ "type": "string" }, { "type": "object", "properties": { "value": { "type": "string" }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "additionalProperties": false }] }
+                "address": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "token": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "namespace": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "mount_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "role_id": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "secret_id": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "env_var": {
+                          "type": "string"
+                        },
+                        "from_env": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                }
               },
               "additionalProperties": false
             }
@@ -1549,7 +2099,11 @@
         },
         "type": {
           "type": "string",
-          "enum": ["sqlite", "postgres", "clickhouse"],
+          "enum": [
+            "sqlite",
+            "postgres",
+            "clickhouse"
+          ],
           "description": "Logs store type"
         },
         "config": {
@@ -1570,7 +2124,9 @@
                     "description": "Database file path"
                   }
                 },
-                "required": ["path"],
+                "required": [
+                  "path"
+                ],
                 "additionalProperties": false
               }
             },
@@ -1625,7 +2181,9 @@
                         "default": "10s"
                       }
                     },
-                    "required": ["command"],
+                    "required": [
+                      "command"
+                    ],
                     "additionalProperties": false
                   },
                   "db_name": {
@@ -1669,10 +2227,14 @@
                 ],
                 "oneOf": [
                   {
-                    "required": ["password"]
+                    "required": [
+                      "password"
+                    ]
                   },
                   {
-                    "required": ["password_command"]
+                    "required": [
+                      "password_command"
+                    ]
                   }
                 ],
                 "additionalProperties": false
@@ -1710,7 +2272,10 @@
                   },
                   "protocol": {
                     "type": "string",
-                    "enum": ["native", "http"],
+                    "enum": [
+                      "native",
+                      "http"
+                    ],
                     "description": "ClickHouse wire protocol (default: native)"
                   },
                   "secure": {
@@ -1729,7 +2294,9 @@
                     "description": "Optional cluster name; when set, DDL runs ON CLUSTER with replicated table engines"
                   }
                 },
-                "required": ["host"],
+                "required": [
+                  "host"
+                ],
                 "additionalProperties": false
               }
             }
@@ -1778,13 +2345,47 @@
           "properties": {
             "type": {
               "type": "string",
-              "enum": ["s3", "gcs"],
+              "enum": [
+                "s3",
+                "gcs"
+              ],
               "description": "Object storage backend type"
             },
             "bucket": {
               "anyOf": [
-                { "type": "string", "minLength": 1 },
-                { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "ref": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "plain_text",
+                        "env",
+                        "vault"
+                      ]
+                    },
+                    "env_var": {
+                      "type": "string"
+                    },
+                    "from_env": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
               ],
               "description": "Bucket name. Supports env var reference (e.g. env.S3_BUCKET) or a structured secret reference."
             },
@@ -1799,7 +2400,10 @@
               "default": false
             }
           },
-          "required": ["type", "bucket"],
+          "required": [
+            "type",
+            "bucket"
+          ],
           "if": {
             "properties": {
               "type": {
@@ -1814,43 +2418,223 @@
               "prefix": true,
               "region": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS region. Supports env var reference"
               },
               "endpoint": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "Custom S3-compatible endpoint for MinIO/R2. Supports env var reference"
               },
               "access_key_id": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS access key ID. Omit to use default credential chain (instance role, env vars, etc.). Supports env var reference"
               },
               "secret_access_key": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS secret access key. Supports env var reference"
               },
               "session_token": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS session token for STS temporary credentials. Supports env var reference"
               },
               "role_arn": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS IAM role ARN for STS AssumeRole. Works with static creds or instance role. Supports env var reference"
               },
@@ -1862,9 +2646,16 @@
               "compress": true
             },
             "dependentRequired": {
-              "access_key_id": ["secret_access_key"],
-              "secret_access_key": ["access_key_id"],
-              "session_token": ["access_key_id", "secret_access_key"]
+              "access_key_id": [
+                "secret_access_key"
+              ],
+              "secret_access_key": [
+                "access_key_id"
+              ],
+              "session_token": [
+                "access_key_id",
+                "secret_access_key"
+              ]
             },
             "additionalProperties": false
           },
@@ -1875,22 +2666,112 @@
               "prefix": true,
               "credentials_json": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "GCP service account credentials JSON or file path. Omit to use Application Default Credentials. Supports env var reference"
               },
               "credentials": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "Deprecated: use credentials_json. Kept for backwards compatibility."
               },
               "project_id": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "GCP project ID override. Supports env var reference"
               },
@@ -1927,51 +2808,105 @@
           "description": "Skills to create or update from config.json",
           "items": {
             "type": "object",
-            "required": ["name", "description", "skill_md_body", "version"],
+            "required": [
+              "name",
+              "description",
+              "skill_md_body",
+              "version"
+            ],
             "properties": {
-              "name": { "type": "string" },
-              "description": { "type": "string" },
-              "license": { "type": "string" },
-              "compatibility": { "type": "string" },
-              "allowed_tools": { "type": "string" },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "license": {
+                "type": "string"
+              },
+              "compatibility": {
+                "type": "string"
+              },
+              "allowed_tools": {
+                "type": "string"
+              },
               "extra_frontmatter": {
                 "type": "object",
                 "additionalProperties": true
               },
               "metadata": {
                 "type": "object",
-                "additionalProperties": { "type": "string" }
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
-              "skill_md_body": { "type": "string" },
-              "version": { "type": "string" },
+              "skill_md_body": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
               "files": {
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": ["path", "source_type"],
+                  "required": [
+                    "path",
+                    "source_type"
+                  ],
                   "properties": {
-                    "path": { "type": "string" },
+                    "path": {
+                      "type": "string"
+                    },
                     "source_type": {
                       "type": "string",
-                      "enum": ["text", "url", "dataurl"]
+                      "enum": [
+                        "text",
+                        "url",
+                        "dataurl"
+                      ]
                     },
-                    "url": { "type": "string" },
-                    "content": { "type": "string" },
-                    "dataurl": { "type": "string" }
+                    "url": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    },
+                    "dataurl": {
+                      "type": "string"
+                    }
                   },
                   "additionalProperties": false,
                   "oneOf": [
                     {
-                      "properties": { "source_type": { "const": "url" } },
-                      "required": ["url"]
+                      "properties": {
+                        "source_type": {
+                          "const": "url"
+                        }
+                      },
+                      "required": [
+                        "url"
+                      ]
                     },
                     {
-                      "properties": { "source_type": { "const": "text" } },
-                      "required": ["content"]
+                      "properties": {
+                        "source_type": {
+                          "const": "text"
+                        }
+                      },
+                      "required": [
+                        "content"
+                      ]
                     },
                     {
-                      "properties": { "source_type": { "const": "dataurl" } },
-                      "required": ["dataurl"]
+                      "properties": {
+                        "source_type": {
+                          "const": "dataurl"
+                        }
+                      },
+                      "required": [
+                        "dataurl"
+                      ]
                     }
                   ]
                 }
@@ -1988,7 +2923,10 @@
       "description": "Plugins configuration",
       "items": {
         "type": "object",
-        "required": ["enabled", "name"],
+        "required": [
+          "enabled",
+          "name"
+        ],
         "properties": {
           "enabled": {
             "type": "boolean",
@@ -2017,7 +2955,11 @@
           },
           "placement": {
             "type": "string",
-            "enum": ["pre_builtin", "post_builtin", "builtin"],
+            "enum": [
+              "pre_builtin",
+              "post_builtin",
+              "builtin"
+            ],
             "description": "DB-Backed Only. Whether this plugin runs before, after, or as a built-in. Default: post_builtin. Ignored in config.json.",
             "optional": true,
             "default": "post_builtin"
@@ -2039,7 +2981,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2095,10 +3039,15 @@
                               "description": "Password for basic authentication"
                             }
                           },
-                          "required": ["username", "password"]
+                          "required": [
+                            "username",
+                            "password"
+                          ]
                         }
                       },
-                      "required": ["push_gateway_url"]
+                      "required": [
+                        "push_gateway_url"
+                      ]
                     }
                   },
                   "additionalProperties": false
@@ -2115,7 +3064,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2152,7 +3103,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2219,7 +3172,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2241,7 +3196,9 @@
                       "description": "Request header name patterns (exact or wildcard like x-custom-*) to capture and attach as trace tags. Note: * captures all headers including sensitive ones like Authorization."
                     }
                   },
-                  "required": ["api_key"],
+                  "required": [
+                    "api_key"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -2256,7 +3213,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2298,7 +3257,7 @@
                       "oneOf": [
                         {
                           "type": "string",
-                          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$"
+                          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$"
                         },
                         {
                           "type": "integer",
@@ -2343,7 +3302,9 @@
                       "description": "Exclude system prompt in cache key (default: false)"
                     }
                   },
-                  "required": ["dimension"],
+                  "required": [
+                    "dimension"
+                  ],
                   "allOf": [
                     {
                       "if": {
@@ -2353,10 +3314,15 @@
                             "minLength": 1
                           }
                         },
-                        "required": ["provider"]
+                        "required": [
+                          "provider"
+                        ]
                       },
                       "then": {
-                        "required": ["provider", "embedding_model"],
+                        "required": [
+                          "provider",
+                          "embedding_model"
+                        ],
                         "properties": {
                           "dimension": {
                             "type": "integer",
@@ -2366,7 +3332,9 @@
                       },
                       "else": {
                         "not": {
-                          "required": ["embedding_model"]
+                          "required": [
+                            "embedding_model"
+                          ]
                         },
                         "properties": {
                           "dimension": {
@@ -2390,12 +3358,18 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "anyOf": [
-                    { "$ref": "#/$defs/otel_profile_config" },
-                    { "$ref": "#/$defs/otel_profiles_config" }
+                    {
+                      "$ref": "#/$defs/otel_profile_config"
+                    },
+                    {
+                      "$ref": "#/$defs/otel_profiles_config"
+                    }
                   ],
                   "description": "Configuration for the OpenTelemetry plugin. Supports the legacy single-profile shape or the profiles wrapper for multiple collectors."
                 }
@@ -2411,7 +3385,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2527,10 +3503,14 @@
                             "const": true
                           }
                         },
-                        "required": ["agentless"]
+                        "required": [
+                          "agentless"
+                        ]
                       },
                       "then": {
-                        "required": ["api_key"]
+                        "required": [
+                          "api_key"
+                        ]
                       }
                     }
                   ],
@@ -2548,7 +3528,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2575,13 +3557,21 @@
                     },
                     "service_account_key": {
                       "anyOf": [
-                        { "type": "string" },
+                        {
+                          "type": "string"
+                        },
                         {
                           "type": "object",
                           "properties": {
-                            "value": { "type": "string" },
-                            "env_var": { "type": "string" },
-                            "from_env": { "type": "boolean" }
+                            "value": {
+                              "type": "string"
+                            },
+                            "env_var": {
+                              "type": "string"
+                            },
+                            "from_env": {
+                              "type": "boolean"
+                            }
                           },
                           "additionalProperties": false
                         }
@@ -2607,13 +3597,21 @@
                       "type": "object",
                       "additionalProperties": {
                         "anyOf": [
-                          { "type": "string" },
+                          {
+                            "type": "string"
+                          },
                           {
                             "type": "object",
                             "properties": {
-                              "value": { "type": "string" },
-                              "env_var": { "type": "string" },
-                              "from_env": { "type": "boolean" }
+                              "value": {
+                                "type": "string"
+                              },
+                              "env_var": {
+                                "type": "string"
+                              },
+                              "from_env": {
+                                "type": "boolean"
+                              }
                             },
                             "additionalProperties": false
                           }
@@ -2628,14 +3626,18 @@
                     },
                     "request_headers": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "description": "Request-header name patterns (exact or wildcard like \"x-custom-*\") whose values are stored in the request_headers column"
                     },
                     "plugin_span_filter": {
                       "$ref": "#/$defs/plugin_span_filter"
                     }
                   },
-                  "required": ["project_id"],
+                  "required": [
+                    "project_id"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -2650,7 +3652,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2658,7 +3662,9 @@
                   "properties": {
                     "brokers": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "minItems": 1,
                       "description": "Kafka broker addresses (required)"
                     },
@@ -2677,17 +3683,29 @@
                       "properties": {
                         "mechanism": {
                           "type": "string",
-                          "enum": ["PLAIN", "SCRAM-SHA-256", "SCRAM-SHA-512"]
+                          "enum": [
+                            "PLAIN",
+                            "SCRAM-SHA-256",
+                            "SCRAM-SHA-512"
+                          ]
                         },
                         "username": {
                           "anyOf": [
-                            { "type": "string" },
+                            {
+                              "type": "string"
+                            },
                             {
                               "type": "object",
                               "properties": {
-                                "value": { "type": "string" },
-                                "env_var": { "type": "string" },
-                                "from_env": { "type": "boolean" }
+                                "value": {
+                                  "type": "string"
+                                },
+                                "env_var": {
+                                  "type": "string"
+                                },
+                                "from_env": {
+                                  "type": "boolean"
+                                }
                               },
                               "additionalProperties": false
                             }
@@ -2696,13 +3714,21 @@
                         },
                         "password": {
                           "anyOf": [
-                            { "type": "string" },
+                            {
+                              "type": "string"
+                            },
                             {
                               "type": "object",
                               "properties": {
-                                "value": { "type": "string" },
-                                "env_var": { "type": "string" },
-                                "from_env": { "type": "boolean" }
+                                "value": {
+                                  "type": "string"
+                                },
+                                "env_var": {
+                                  "type": "string"
+                                },
+                                "from_env": {
+                                  "type": "boolean"
+                                }
                               },
                               "additionalProperties": false
                             }
@@ -2719,13 +3745,21 @@
                     },
                     "ca_cert": {
                       "anyOf": [
-                        { "type": "string" },
+                        {
+                          "type": "string"
+                        },
                         {
                           "type": "object",
                           "properties": {
-                            "value": { "type": "string" },
-                            "env_var": { "type": "string" },
-                            "from_env": { "type": "boolean" }
+                            "value": {
+                              "type": "string"
+                            },
+                            "env_var": {
+                              "type": "string"
+                            },
+                            "from_env": {
+                              "type": "boolean"
+                            }
                           },
                           "additionalProperties": false
                         }
@@ -2734,7 +3768,13 @@
                     },
                     "compression": {
                       "type": "string",
-                      "enum": ["none", "gzip", "snappy", "lz4", "zstd"],
+                      "enum": [
+                        "none",
+                        "gzip",
+                        "snappy",
+                        "lz4",
+                        "zstd"
+                      ],
                       "description": "Compression codec for published messages",
                       "default": "none"
                     },
@@ -2760,14 +3800,19 @@
                     },
                     "request_headers": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "description": "Request-header name patterns (exact or wildcard like \"x-custom-*\") whose captured values are embedded in published traces"
                     },
                     "plugin_span_filter": {
                       "$ref": "#/$defs/plugin_span_filter"
                     }
                   },
-                  "required": ["brokers", "topic"],
+                  "required": [
+                    "brokers",
+                    "topic"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -2782,7 +3827,9 @@
               }
             },
             "then": {
-              "required": ["config"],
+              "required": [
+                "config"
+              ],
               "properties": {
                 "config": {
                   "type": "object",
@@ -2798,13 +3845,21 @@
                     },
                     "service_account_key": {
                       "anyOf": [
-                        { "type": "string" },
+                        {
+                          "type": "string"
+                        },
                         {
                           "type": "object",
                           "properties": {
-                            "value": { "type": "string" },
-                            "env_var": { "type": "string" },
-                            "from_env": { "type": "boolean" }
+                            "value": {
+                              "type": "string"
+                            },
+                            "env_var": {
+                              "type": "string"
+                            },
+                            "from_env": {
+                              "type": "boolean"
+                            }
                           },
                           "additionalProperties": false
                         }
@@ -2823,14 +3878,19 @@
                     },
                     "request_headers": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "description": "Request-header name patterns (exact or wildcard like \"x-custom-*\") whose captured values are included in published traces"
                     },
                     "plugin_span_filter": {
                       "$ref": "#/$defs/plugin_span_filter"
                     }
                   },
-                  "required": ["project_id", "topic_id"],
+                  "required": [
+                    "project_id",
+                    "topic_id"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -2866,9 +3926,6 @@
     },
     "feature_flags": {
       "$ref": "#/$defs/feature_flags_config"
-    },
-    "circuit_breaker_config": {
-      "$ref": "#/$defs/circuit_breaker_config"
     }
   },
   "additionalProperties": false,
@@ -2893,7 +3950,10 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": ["include", "exclude"]
+          "enum": [
+            "include",
+            "exclude"
+          ]
         },
         "plugins": {
           "type": "array",
@@ -2902,7 +3962,10 @@
           }
         }
       },
-      "required": ["mode", "plugins"],
+      "required": [
+        "mode",
+        "plugins"
+      ],
       "additionalProperties": false
     },
     "otel_profile_config": {
@@ -2926,12 +3989,19 @@
         "trace_type": {
           "type": "string",
           "description": "Type of trace to use for the OTEL collector",
-          "enum": ["genai_extension", "vercel", "open_inference"]
+          "enum": [
+            "genai_extension",
+            "vercel",
+            "open_inference"
+          ]
         },
         "protocol": {
           "type": "string",
           "description": "Protocol to use for the OTEL collector",
-          "enum": ["http", "grpc"]
+          "enum": [
+            "http",
+            "grpc"
+          ]
         },
         "metrics_enabled": {
           "type": "boolean",
@@ -3000,11 +4070,17 @@
                   "const": false
                 }
               },
-              "required": ["enabled"]
+              "required": [
+                "enabled"
+              ]
             }
           },
           "then": {
-            "required": ["collector_url", "trace_type", "protocol"]
+            "required": [
+              "collector_url",
+              "trace_type",
+              "protocol"
+            ]
           }
         },
         {
@@ -3014,10 +4090,14 @@
                 "const": true
               }
             },
-            "required": ["metrics_enabled"]
+            "required": [
+              "metrics_enabled"
+            ]
           },
           "then": {
-            "required": ["metrics_endpoint"]
+            "required": [
+              "metrics_endpoint"
+            ]
           }
         }
       ],
@@ -3039,7 +4119,9 @@
           "$ref": "#/$defs/plugin_span_filter"
         }
       },
-      "required": ["profiles"],
+      "required": [
+        "profiles"
+      ],
       "additionalProperties": false
     },
     "feature_flags_config": {
@@ -3054,7 +4136,9 @@
               "enabled": {
                 "description": "Boolean value or a string: either 'env.NAME' for env-var indirection, or a literal boolean (true / false / 1 / 0 / yes / no / on / off, case-insensitive).",
                 "oneOf": [
-                  { "type": "boolean" },
+                  {
+                    "type": "boolean"
+                  },
                   {
                     "type": "string",
                     "pattern": "^(env\\.[A-Za-z_][A-Za-z0-9_]*|[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]|[01]|[Yy][Ee][Ss]|[Nn][Oo]|[Oo][Nn]|[Oo][Ff][Ff])$"
@@ -3062,7 +4146,9 @@
                 ]
               }
             },
-            "required": ["enabled"],
+            "required": [
+              "enabled"
+            ],
             "additionalProperties": false
           }
         }
@@ -3095,7 +4181,9 @@
           "maximum": 1
         }
       },
-      "required": ["weight"],
+      "required": [
+        "weight"
+      ],
       "additionalProperties": false
     },
     "routing_rule": {
@@ -3147,7 +4235,12 @@
         },
         "scope": {
           "type": "string",
-          "enum": ["global", "team", "customer", "virtual_key"],
+          "enum": [
+            "global",
+            "team",
+            "customer",
+            "virtual_key"
+          ],
           "description": "Rule scope level",
           "default": "global"
         },
@@ -3168,11 +4261,17 @@
             },
             {
               "type": "object",
-              "required": ["combinator", "rules"],
+              "required": [
+                "combinator",
+                "rules"
+              ],
               "properties": {
                 "combinator": {
                   "type": "string",
-                  "enum": ["and", "or"]
+                  "enum": [
+                    "and",
+                    "or"
+                  ]
                 },
                 "rules": {
                   "type": "array",
@@ -3187,18 +4286,30 @@
           ]
         }
       },
-      "required": ["id", "name", "targets"],
+      "required": [
+        "id",
+        "name",
+        "targets"
+      ],
       "additionalProperties": false,
       "if": {
         "properties": {
           "scope": {
-            "enum": ["team", "customer", "virtual_key"]
+            "enum": [
+              "team",
+              "customer",
+              "virtual_key"
+            ]
           }
         },
-        "required": ["scope"]
+        "required": [
+          "scope"
+        ]
       },
       "then": {
-        "required": ["scope_id"],
+        "required": [
+          "scope_id"
+        ],
         "properties": {
           "scope_id": {
             "type": "string",
@@ -3224,7 +4335,10 @@
           "description": "Provider name"
         },
         "weight": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Weight for load balancing (null opts out of weighted routing)",
           "default": null
         },
@@ -3254,7 +4368,9 @@
           }
         }
       },
-      "required": ["provider"],
+      "required": [
+        "provider"
+      ],
       "additionalProperties": false
     },
     "virtual_key_mcp_config": {
@@ -3275,7 +4391,7 @@
         },
         "mcp_client_name": {
           "type": "string",
-          "description": "MCP client name (config file format \u2014 resolved to mcp_client_id at startup)"
+          "description": "MCP client name (config file format — resolved to mcp_client_id at startup)"
         },
         "tools_to_execute": {
           "type": "array",
@@ -3310,7 +4426,11 @@
           "description": "Scores below this threshold and at or above medium_complex are COMPLEX"
         }
       },
-      "required": ["simple_medium", "medium_complex", "complex_reasoning"],
+      "required": [
+        "simple_medium",
+        "medium_complex",
+        "complex_reasoning"
+      ],
       "additionalProperties": false
     },
     "complexity_analyzer_keywords": {
@@ -3369,7 +4489,10 @@
           "$ref": "#/$defs/complexity_analyzer_keywords"
         }
       },
-      "required": ["tier_boundaries", "keywords"],
+      "required": [
+        "tier_boundaries",
+        "keywords"
+      ],
       "additionalProperties": false
     },
     "auth_config": {
@@ -3602,7 +4725,10 @@
           "description": "Buffer size for requests"
         }
       },
-      "required": ["concurrency", "buffer_size"],
+      "required": [
+        "concurrency",
+        "buffer_size"
+      ],
       "additionalProperties": false
     },
     "base_key": {
@@ -3707,7 +4833,9 @@
                     "description": "Replicate: use the deployments endpoint instead of the predictions endpoint for this alias."
                   }
                 },
-                "required": ["model_id"],
+                "required": [
+                  "model_id"
+                ],
                 "additionalProperties": false
               }
             ]
@@ -3718,7 +4846,10 @@
           "description": "Model alias mappings: each entry maps a user-facing model name to either a bare provider identifier (legacy string shape) or an AliasConfig object carrying the wire identifier plus optional canonical name, family, and provider-specific overrides."
         }
       },
-      "required": ["name", "weight"]
+      "required": [
+        "name",
+        "weight"
+      ]
     },
     "bedrock_key": {
       "allOf": [
@@ -3797,7 +4928,9 @@
                             "description": "Whether this is the default bucket for batch operations"
                           }
                         },
-                        "required": ["bucket_name"],
+                        "required": [
+                          "bucket_name"
+                        ],
                         "additionalProperties": false
                       }
                     }
@@ -3805,7 +4938,9 @@
                   "additionalProperties": false
                 }
               },
-              "required": ["region"],
+              "required": [
+                "region"
+              ],
               "additionalProperties": false
             }
           }
@@ -3856,7 +4991,9 @@
                   "description": "Bedrock project ID scoping inference and model listing. Sent as the OpenAI-Project header on the OpenAI-compatible surface and the anthropic-workspace-id header on the native-Anthropic (Claude) surface. When empty, AWS routes to the account's default project (can use env. prefix)."
                 }
               },
-              "required": ["region"],
+              "required": [
+                "region"
+              ],
               "additionalProperties": false
             }
           }
@@ -3885,11 +5022,16 @@
                   "description": "Exact model name served on this VLLM instance"
                 }
               },
-              "required": ["url", "model_name"],
+              "required": [
+                "url",
+                "model_name"
+              ],
               "additionalProperties": false
             }
           },
-          "required": ["vllm_key_config"]
+          "required": [
+            "vllm_key_config"
+          ]
         }
       ]
     },
@@ -3932,11 +5074,15 @@
                   "description": "Ollama server base URL (can use env. prefix)"
                 }
               },
-              "required": ["url"],
+              "required": [
+                "url"
+              ],
               "additionalProperties": false
             }
           },
-          "required": ["ollama_key_config"]
+          "required": [
+            "ollama_key_config"
+          ]
         }
       ]
     },
@@ -3957,11 +5103,15 @@
                   "description": "SGLang server base URL (can use env. prefix)"
                 }
               },
-              "required": ["url"],
+              "required": [
+                "url"
+              ],
               "additionalProperties": false
             }
           },
-          "required": ["sgl_key_config"]
+          "required": [
+            "sgl_key_config"
+          ]
         }
       ]
     },
@@ -3994,7 +5144,9 @@
                 },
                 "scopes": {
                   "type": "array",
-                  "items": { "type": "string" },
+                  "items": {
+                    "type": "string"
+                  },
                   "description": "OAuth2 scopes for Entra authentication"
                 },
                 "api_version": {
@@ -4002,16 +5154,29 @@
                   "description": "Deprecated: Bifrost now uses the Azure OpenAI v1 API which does not require an api-version parameter."
                 }
               },
-              "required": ["endpoint"],
+              "required": [
+                "endpoint"
+              ],
               "dependentRequired": {
-                "client_id": ["client_secret", "tenant_id"],
-                "client_secret": ["client_id", "tenant_id"],
-                "tenant_id": ["client_id", "client_secret"]
+                "client_id": [
+                  "client_secret",
+                  "tenant_id"
+                ],
+                "client_secret": [
+                  "client_id",
+                  "tenant_id"
+                ],
+                "tenant_id": [
+                  "client_id",
+                  "client_secret"
+                ]
               },
               "additionalProperties": false
             }
           },
-          "required": ["azure_key_config"]
+          "required": [
+            "azure_key_config"
+          ]
         }
       ]
     },
@@ -4048,11 +5213,16 @@
                   "default": false
                 }
               },
-              "required": ["project_id", "region"],
+              "required": [
+                "project_id",
+                "region"
+              ],
               "additionalProperties": false
             }
           },
-          "required": ["vertex_key_config"]
+          "required": [
+            "vertex_key_config"
+          ]
         }
       ]
     },
@@ -4092,7 +5262,9 @@
           "$ref": "#/$defs/custom_provider_config"
         }
       },
-      "required": ["keys"],
+      "required": [
+        "keys"
+      ],
       "additionalProperties": false
     },
     "provider_with_bedrock_config": {
@@ -4131,7 +5303,9 @@
           "$ref": "#/$defs/custom_provider_config"
         }
       },
-      "required": ["keys"],
+      "required": [
+        "keys"
+      ],
       "additionalProperties": false
     },
     "provider_with_bedrock_mantle_config": {
@@ -4170,7 +5344,9 @@
           "$ref": "#/$defs/custom_provider_config"
         }
       },
-      "required": ["keys"],
+      "required": [
+        "keys"
+      ],
       "additionalProperties": false
     },
     "provider_with_vllm_config": {
@@ -4209,7 +5385,9 @@
           "$ref": "#/$defs/custom_provider_config"
         }
       },
-      "required": ["keys"],
+      "required": [
+        "keys"
+      ],
       "additionalProperties": false
     },
     "provider_with_replicate_config": {
@@ -4248,7 +5426,9 @@
           "$ref": "#/$defs/custom_provider_config"
         }
       },
-      "required": ["keys"],
+      "required": [
+        "keys"
+      ],
       "additionalProperties": false
     },
     "provider_with_azure_config": {
@@ -4287,7 +5467,9 @@
           "$ref": "#/$defs/custom_provider_config"
         }
       },
-      "required": ["keys"],
+      "required": [
+        "keys"
+      ],
       "additionalProperties": false
     },
     "provider_with_vertex_config": {
@@ -4326,7 +5508,9 @@
           "$ref": "#/$defs/custom_provider_config"
         }
       },
-      "required": ["keys"],
+      "required": [
+        "keys"
+      ],
       "additionalProperties": false
     },
     "provider_with_ollama_config": {
@@ -4422,7 +5606,12 @@
         },
         "connection_type": {
           "type": "string",
-          "enum": ["stdio", "http", "sse", "inprocess"],
+          "enum": [
+            "stdio",
+            "http",
+            "sse",
+            "inprocess"
+          ],
           "description": "Connection type for MCP client"
         },
         "connection_string": {
@@ -4480,7 +5669,9 @@
               "description": "Environment variables"
             }
           },
-          "required": ["command"],
+          "required": [
+            "command"
+          ],
           "additionalProperties": false
         },
         "tools_to_execute": {
@@ -4568,18 +5759,28 @@
           "additionalProperties": false
         }
       },
-      "required": ["name", "connection_type"],
+      "required": [
+        "name",
+        "connection_type"
+      ],
       "additionalProperties": false,
       "if": {
         "properties": {
           "auth_type": {
-            "enum": ["oauth", "per_user_oauth"]
+            "enum": [
+              "oauth",
+              "per_user_oauth"
+            ]
           }
         },
-        "required": ["auth_type"]
+        "required": [
+          "auth_type"
+        ]
       },
       "then": {
-        "required": ["oauth_config_id"]
+        "required": [
+          "oauth_config_id"
+        ]
       },
       "oneOf": [
         {
@@ -4588,7 +5789,9 @@
               "const": "stdio"
             }
           },
-          "required": ["stdio_config"]
+          "required": [
+            "stdio_config"
+          ]
         },
         {
           "properties": {
@@ -4596,7 +5799,9 @@
               "const": "websocket"
             }
           },
-          "required": ["websocket_config"]
+          "required": [
+            "websocket_config"
+          ]
         },
         {
           "properties": {
@@ -4606,10 +5811,14 @@
           },
           "anyOf": [
             {
-              "required": ["http_config"]
+              "required": [
+                "http_config"
+              ]
             },
             {
-              "required": ["connection_string"]
+              "required": [
+                "connection_string"
+              ]
             }
           ]
         },
@@ -4619,7 +5828,9 @@
               "const": "sse"
             }
           },
-          "required": ["connection_string"]
+          "required": [
+            "connection_string"
+          ]
         }
       ]
     },
@@ -4627,7 +5838,10 @@
       "type": "object",
       "properties": {
         "tool_execution_timeout": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "Tool execution timeout. Accepts a duration string (e.g. \"30s\", \"2m\") or an integer number of seconds (e.g. 30 means 30 seconds).",
           "minimum": 1,
           "default": 30
@@ -4640,7 +5854,10 @@
         },
         "code_mode_binding_level": {
           "type": "string",
-          "enum": ["server", "tool"],
+          "enum": [
+            "server",
+            "tool"
+          ],
           "description": "How tools are exposed in VFS for code execution"
         },
         "disable_auto_tool_inject": {
@@ -4696,10 +5913,14 @@
             },
             "oneOf": [
               {
-                "required": ["mcp_client_id"]
+                "required": [
+                  "mcp_client_id"
+                ]
               },
               {
-                "required": ["mcp_client_name"]
+                "required": [
+                  "mcp_client_name"
+                ]
               }
             ],
             "additionalProperties": false
@@ -4742,7 +5963,10 @@
           }
         }
       },
-      "required": ["name", "tools"],
+      "required": [
+        "name",
+        "tools"
+      ],
       "additionalProperties": false
     },
     "weaviate_config": {
@@ -4780,7 +6004,7 @@
         },
         "timeout": {
           "type": "string",
-          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
           "description": "Timeout for Weaviate operations (e.g., '5s')"
         },
         "class_name": {
@@ -4795,7 +6019,10 @@
           "description": "Properties for Weaviate vector store"
         }
       },
-      "required": ["scheme", "host"],
+      "required": [
+        "scheme",
+        "host"
+      ],
       "additionalProperties": false
     },
     "redis_config": {
@@ -4856,36 +6083,38 @@
         },
         "conn_max_lifetime": {
           "type": "string",
-          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
           "description": "Connection maximum lifetime (e.g., '30m')"
         },
         "conn_max_idle_time": {
           "type": "string",
-          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
           "description": "Connection maximum idle time (e.g., '5m')"
         },
         "dial_timeout": {
           "type": "string",
-          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
           "description": "Timeout for socket connection (e.g., '5s')"
         },
         "read_timeout": {
           "type": "string",
-          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
           "description": "Timeout for socket reads (e.g., '3s')"
         },
         "write_timeout": {
           "type": "string",
-          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
           "description": "Timeout for socket writes (e.g., '3s')"
         },
         "context_timeout": {
           "type": "string",
-          "pattern": "^[0-9]+(ns|us|\u00b5s|ms|s|m|h)$",
+          "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
           "description": "Timeout for Redis operations (e.g., '10s')"
         }
       },
-      "required": ["addr"],
+      "required": [
+        "addr"
+      ],
       "additionalProperties": false
     },
     "qdrant_config": {
@@ -4917,7 +6146,9 @@
           "default": 64
         }
       },
-      "required": ["host"],
+      "required": [
+        "host"
+      ],
       "additionalProperties": false
     },
     "pinecone_config": {
@@ -4933,7 +6164,10 @@
           "description": "Index host URL from Pinecone console - REQUIRED (e.g., your-index.svc.environment.pinecone.io)"
         }
       },
-      "required": ["api_key", "index_host"],
+      "required": [
+        "api_key",
+        "index_host"
+      ],
       "additionalProperties": false
     },
     "proxy_config": {
@@ -4942,7 +6176,12 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["none", "http", "socks5", "environment"],
+          "enum": [
+            "none",
+            "http",
+            "socks5",
+            "environment"
+          ],
           "description": "Type of proxy to use"
         },
         "url": {
@@ -4971,7 +6210,9 @@
           "description": "PEM-encoded CA certificate to trust for TLS connections through the proxy (for SSL-intercepting proxies, supports env.VAR_NAME)"
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "additionalProperties": false
     },
     "cluster_config": {
@@ -4984,7 +6225,10 @@
         },
         "type": {
           "type": "string",
-          "enum": ["mesh", "broker"],
+          "enum": [
+            "mesh",
+            "broker"
+          ],
           "default": "mesh",
           "description": "Clustering mode. 'mesh' (default) is peer-to-peer via memberlist gossip. 'broker' routes all cluster traffic through a central broker process, for platforms without peer-to-peer connectivity (e.g. Cloud Run)."
         },
@@ -5038,7 +6282,10 @@
               "additionalProperties": false
             }
           },
-          "required": ["port", "config"],
+          "required": [
+            "port",
+            "config"
+          ],
           "additionalProperties": false
         },
         "grpc": {
@@ -5071,7 +6318,14 @@
             },
             "type": {
               "type": "string",
-              "enum": ["kubernetes", "dns", "udp", "consul", "etcd", "mdns"],
+              "enum": [
+                "kubernetes",
+                "dns",
+                "udp",
+                "consul",
+                "etcd",
+                "mdns"
+              ],
               "description": "Discovery mechanism type"
             },
             "service_name": {
@@ -5132,7 +6386,9 @@
               "description": "mDNS service name for local network discovery"
             }
           },
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "additionalProperties": false
         },
         "broker": {
@@ -5158,11 +6414,15 @@
               "description": "Port the broker process serves on (default: 50051)"
             }
           },
-          "required": ["address"],
+          "required": [
+            "address"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "additionalProperties": false
     },
     "scim_config": {
@@ -5175,7 +6435,11 @@
         },
         "provider": {
           "type": "string",
-          "enum": ["okta", "entra", "keycloak"],
+          "enum": [
+            "okta",
+            "entra",
+            "keycloak"
+          ],
           "description": "SCIM provider type"
         },
         "config": {
@@ -5183,7 +6447,9 @@
           "description": "Provider-specific configuration"
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "additionalProperties": false,
       "allOf": [
         {
@@ -5196,7 +6462,10 @@
                 "const": "okta"
               }
             },
-            "required": ["enabled", "provider"]
+            "required": [
+              "enabled",
+              "provider"
+            ]
           },
           "then": {
             "properties": {
@@ -5216,7 +6485,10 @@
                 "const": "entra"
               }
             },
-            "required": ["enabled", "provider"]
+            "required": [
+              "enabled",
+              "provider"
+            ]
           },
           "then": {
             "properties": {
@@ -5236,7 +6508,10 @@
                 "const": "keycloak"
               }
             },
-            "required": ["enabled", "provider"]
+            "required": [
+              "enabled",
+              "provider"
+            ]
           },
           "then": {
             "properties": {
@@ -5260,7 +6535,10 @@
         },
         "authServerType": {
           "type": "string",
-          "enum": ["org", "custom"],
+          "enum": [
+            "org",
+            "custom"
+          ],
           "description": "'org' for Org Authorization Server or 'custom' for Custom Authorization Server. Auto-detected from issuer URL when omitted."
         },
         "clientId": {
@@ -5294,11 +6572,22 @@
           "description": "JWT claim field for roles (default: 'roles')",
           "default": "roles"
         },
-        "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-        "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-        "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"}
+        "attributeRoleMappings": {
+          "$ref": "#/$defs/scim_attribute_role_mappings"
+        },
+        "attributeTeamMappings": {
+          "$ref": "#/$defs/scim_attribute_team_mappings"
+        },
+        "attributeBusinessUnitMappings": {
+          "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+        }
       },
-      "required": ["issuerUrl", "clientId", "clientSecret", "apiToken"],
+      "required": [
+        "issuerUrl",
+        "clientId",
+        "clientSecret",
+        "apiToken"
+      ],
       "additionalProperties": false
     },
     "entra_config": {
@@ -5319,7 +6608,11 @@
         },
         "cloud": {
           "type": "string",
-          "enum": ["commercial", "gcc-high", "dod"],
+          "enum": [
+            "commercial",
+            "gcc-high",
+            "dod"
+          ],
           "default": "commercial",
           "description": "Cloud environment: 'commercial' (default), 'gcc-high' for US Government GCC High, or 'dod' for Department of Defense"
         },
@@ -5347,11 +6640,20 @@
           "description": "JWT claim field for roles (default: 'roles')",
           "default": "roles"
         },
-        "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-        "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-        "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"}
+        "attributeRoleMappings": {
+          "$ref": "#/$defs/scim_attribute_role_mappings"
+        },
+        "attributeTeamMappings": {
+          "$ref": "#/$defs/scim_attribute_team_mappings"
+        },
+        "attributeBusinessUnitMappings": {
+          "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+        }
       },
-      "required": ["tenantId", "clientId"],
+      "required": [
+        "tenantId",
+        "clientId"
+      ],
       "additionalProperties": false
     },
     "keycloak_config": {
@@ -5394,11 +6696,22 @@
           "description": "JWT claim field for roles (default: 'roles')",
           "default": "roles"
         },
-        "attributeRoleMappings": {"$ref": "#/$defs/scim_attribute_role_mappings"},
-        "attributeTeamMappings": {"$ref": "#/$defs/scim_attribute_team_mappings"},
-        "attributeBusinessUnitMappings": {"$ref": "#/$defs/scim_attribute_business_unit_mappings"}
+        "attributeRoleMappings": {
+          "$ref": "#/$defs/scim_attribute_role_mappings"
+        },
+        "attributeTeamMappings": {
+          "$ref": "#/$defs/scim_attribute_team_mappings"
+        },
+        "attributeBusinessUnitMappings": {
+          "$ref": "#/$defs/scim_attribute_business_unit_mappings"
+        }
       },
-      "required": ["serverUrl", "realm", "clientId", "clientSecret"],
+      "required": [
+        "serverUrl",
+        "realm",
+        "clientId",
+        "clientSecret"
+      ],
       "additionalProperties": false
     },
     "load_balancer_config": {
@@ -5448,7 +6761,9 @@
           }
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "additionalProperties": false
     },
     "guardrails_config": {
@@ -5489,11 +6804,17 @@
                   },
                   {
                     "type": "object",
-                    "required": ["combinator", "rules"],
+                    "required": [
+                      "combinator",
+                      "rules"
+                    ],
                     "properties": {
                       "combinator": {
                         "type": "string",
-                        "enum": ["and", "or"]
+                        "enum": [
+                          "and",
+                          "or"
+                        ]
                       },
                       "rules": {
                         "type": "array",
@@ -5509,7 +6830,11 @@
               },
               "apply_to": {
                 "type": "string",
-                "enum": ["input", "output", "both"],
+                "enum": [
+                  "input",
+                  "output",
+                  "both"
+                ],
                 "description": "When to apply the guardrail (input, output, or both)"
               },
               "sampling_rate": {
@@ -5530,7 +6855,10 @@
               },
               "evaluation_mode": {
                 "type": "string",
-                "enum": ["bundled", "per_turn"],
+                "enum": [
+                  "bundled",
+                  "per_turn"
+                ],
                 "default": "bundled",
                 "description": "How the rule's turns are sent to its guardrail providers. 'bundled' (default) concatenates all turns into one guardrail call. 'per_turn' sends each turn in its own call, evaluated in isolation, to avoid context-sensitive classifiers (e.g. Bedrock prompt-attack) combining unrelated turns into a false-positive block; this scans every turn but uses more provider calls."
               },
@@ -5542,7 +6870,13 @@
                 "description": "IDs of provider configurations to use with this rule"
               }
             },
-            "required": ["id", "name", "enabled", "cel_expression", "apply_to"],
+            "required": [
+              "id",
+              "name",
+              "enabled",
+              "cel_expression",
+              "apply_to"
+            ],
             "additionalProperties": false
           }
         },
@@ -5578,7 +6912,12 @@
                 "description": "Provider-specific configuration"
               }
             },
-            "required": ["id", "provider_name", "policy_name", "enabled"],
+            "required": [
+              "id",
+              "provider_name",
+              "policy_name",
+              "enabled"
+            ],
             "additionalProperties": false
           }
         }
@@ -5613,7 +6952,11 @@
           "default": false
         }
       },
-      "required": ["id", "max_limit", "reset_duration"],
+      "required": [
+        "id",
+        "max_limit",
+        "reset_duration"
+      ],
       "additionalProperties": false
     },
     "rate_limit_line": {
@@ -5645,7 +6988,9 @@
           "default": false
         }
       },
-      "required": ["id"],
+      "required": [
+        "id"
+      ],
       "additionalProperties": false
     },
     "access_profile": {
@@ -5715,7 +7060,9 @@
           }
         }
       },
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": false
     },
     "access_profile_provider_config": {
@@ -5754,7 +7101,9 @@
           }
         }
       },
-      "required": ["provider_name"],
+      "required": [
+        "provider_name"
+      ],
       "additionalProperties": false
     },
     "access_profile_mcp_tool_group": {
@@ -5766,7 +7115,9 @@
           "description": "MCP tool group ID"
         }
       },
-      "required": ["tool_group_id"],
+      "required": [
+        "tool_group_id"
+      ],
       "additionalProperties": false
     },
     "access_profile_mcp_server": {
@@ -5777,7 +7128,9 @@
           "description": "MCP server identifier"
         }
       },
-      "required": ["mcp_server_id"],
+      "required": [
+        "mcp_server_id"
+      ],
       "additionalProperties": false
     },
     "access_profile_mcp_tool_override": {
@@ -5793,11 +7146,18 @@
         },
         "action": {
           "type": "string",
-          "enum": ["include", "exclude"],
+          "enum": [
+            "include",
+            "exclude"
+          ],
           "description": "Override action"
         }
       },
-      "required": ["mcp_client_id", "tool_name", "action"],
+      "required": [
+        "mcp_client_id",
+        "tool_name",
+        "action"
+      ],
       "additionalProperties": false
     },
     "audit_logs_config": {
@@ -5824,13 +7184,47 @@
           "properties": {
             "type": {
               "type": "string",
-              "enum": ["s3", "gcs"],
+              "enum": [
+                "s3",
+                "gcs"
+              ],
               "description": "Object storage backend type"
             },
             "bucket": {
               "anyOf": [
-                { "type": "string", "minLength": 1 },
-                { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "ref": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "plain_text",
+                        "env",
+                        "vault"
+                      ]
+                    },
+                    "env_var": {
+                      "type": "string"
+                    },
+                    "from_env": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
               ],
               "description": "Bucket name. Supports env var reference (e.g. env.S3_BUCKET) or a structured secret reference."
             },
@@ -5845,7 +7239,10 @@
               "default": false
             }
           },
-          "required": ["type", "bucket"],
+          "required": [
+            "type",
+            "bucket"
+          ],
           "if": {
             "properties": {
               "type": {
@@ -5860,43 +7257,223 @@
               "prefix": true,
               "region": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS region. Supports env var reference"
               },
               "endpoint": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "Custom S3-compatible endpoint for MinIO/R2. Supports env var reference"
               },
               "access_key_id": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS access key ID. Omit to use default credential chain (instance role, env vars, etc.). Supports env var reference"
               },
               "secret_access_key": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS secret access key. Supports env var reference"
               },
               "session_token": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS session token for STS temporary credentials. Supports env var reference"
               },
               "role_arn": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "AWS IAM role ARN for STS AssumeRole. Works with static creds or instance role. Supports env var reference"
               },
@@ -5908,9 +7485,16 @@
               "compress": true
             },
             "dependentRequired": {
-              "access_key_id": ["secret_access_key"],
-              "secret_access_key": ["access_key_id"],
-              "session_token": ["access_key_id", "secret_access_key"]
+              "access_key_id": [
+                "secret_access_key"
+              ],
+              "secret_access_key": [
+                "access_key_id"
+              ],
+              "session_token": [
+                "access_key_id",
+                "secret_access_key"
+              ]
             },
             "additionalProperties": false
           },
@@ -5921,22 +7505,112 @@
               "prefix": true,
               "credentials_json": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "GCP service account credentials JSON or file path. Omit to use Application Default Credentials. Supports env var reference"
               },
               "credentials": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "Deprecated: use credentials_json. Kept for backwards compatibility."
               },
               "project_id": {
                 "anyOf": [
-                  { "type": "string" },
-                  { "type": "object", "properties": { "value": { "type": "string" }, "ref": { "type": "string" }, "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }, "env_var": { "type": "string" }, "from_env": { "type": "boolean" } }, "required": ["value"], "additionalProperties": false }
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "ref": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "plain_text",
+                          "env",
+                          "vault"
+                        ]
+                      },
+                      "env_var": {
+                        "type": "string"
+                      },
+                      "from_env": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
                 ],
                 "description": "GCP project ID override. Supports env var reference"
               },
@@ -6079,7 +7753,10 @@
         "match_type": {
           "type": "string",
           "description": "How the pattern is matched against model names",
-          "enum": ["exact", "wildcard"]
+          "enum": [
+            "exact",
+            "wildcard"
+          ]
         },
         "pattern": {
           "type": "string",
@@ -6114,7 +7791,10 @@
     },
     "pricing_override_match_type": {
       "type": "string",
-      "enum": ["exact", "wildcard"]
+      "enum": [
+        "exact",
+        "wildcard"
+      ]
     },
     "pricing_override_request_type": {
       "type": "string",
@@ -6376,112 +8056,9 @@
           "additionalProperties": false
         }
       },
-      "required": ["base_provider_type"],
-      "additionalProperties": false
-    },
-    "circuit_breaker_config": {
-      "type": "object",
-      "description": "Circuit breaker configuration for automatic failover when a provider endpoint degrades",
-      "properties": {
-        "policies": {
-          "type": "array",
-          "description": "List of circuit breaker policies",
-          "items": {
-            "type": "object",
-            "description": "A single circuit breaker policy that monitors a primary provider+model and redirects to a fallback when the circuit opens",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Unique name for this policy"
-              },
-              "enabled": {
-                "type": "boolean",
-                "description": "Whether this policy is active. Disabled policies are ignored by all hooks."
-              },
-              "primary_provider": {
-                "type": "string",
-                "description": "Provider to monitor (e.g. 'azure', 'openai')"
-              },
-              "primary_model": {
-                "type": "string",
-                "description": "Model to monitor as it appears in requests (e.g. 'gpt-4-ptu')"
-              },
-              "primary_key_ids": {
-                "type": "array",
-                "description": "Optional list of key UUIDs to monitor individually. Each key gets its own sub-circuit; the main circuit opens only when all listed keys are exhausted. Leave empty to use a single shared circuit for all keys serving this provider+model.",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "fallback_provider": {
-                "type": "string",
-                "description": "Provider to route to when the circuit is open"
-              },
-              "fallback_model": {
-                "type": "string",
-                "description": "Model to request from the fallback provider when the circuit is open"
-              },
-              "condition": {
-                "type": "object",
-                "description": "Response signals that trigger the circuit to open",
-                "properties": {
-                  "operator": {
-                    "type": "string",
-                    "enum": ["OR", "AND"],
-                    "default": "OR",
-                    "description": "OR (default): circuit opens when any signal matches. AND: circuit opens only when all signals match simultaneously."
-                  },
-                  "signals": {
-                    "type": "array",
-                    "description": "List of response signals to evaluate",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "source": {
-                          "type": "string",
-                          "enum": ["response_header"],
-                          "description": "What part of the HTTP response to inspect"
-                        },
-                        "header_name": {
-                          "type": "string",
-                          "description": "HTTP response header name to inspect"
-                        },
-                        "header_value": {
-                          "type": "string",
-                          "description": "Trips when the header equals this value (case-insensitive). Mutually exclusive with header_contains."
-                        },
-                        "header_contains": {
-                          "type": "string",
-                          "description": "Trips when the header value contains this substring (case-insensitive). Mutually exclusive with header_value. If neither is set, trips when the header is present."
-                        }
-                      },
-                      "required": ["source", "header_name"],
-                      "not": {
-                        "required": ["header_value", "header_contains"]
-                      },
-                      "additionalProperties": false
-                    },
-                    "minItems": 1
-                  }
-                },
-                "required": ["signals"],
-                "additionalProperties": false
-              },
-              "default_cooldown": {
-                "type": "string",
-                "pattern": "^[0-9]+(ns|us|µs|ms|s|m|h)$",
-                "description": "How long to keep the circuit open when no header-based cooldown is available. Accepts a Go duration string (e.g. '30s', '5m'). Defaults to 30s."
-              },
-              "cooldown_header": {
-                "type": "string",
-                "description": "Response header whose value (in milliseconds) overrides default_cooldown (e.g. 'retry-after-ms'). Falls back to default_cooldown when absent or unparsable."
-              }
-            },
-            "required": ["name", "primary_provider", "primary_model", "fallback_provider", "fallback_model", "condition"],
-            "additionalProperties": false
-          }
-        }
-      },
+      "required": [
+        "base_provider_type"
+      ],
       "additionalProperties": false
     },
     "scim_attribute_role_mappings": {
@@ -6503,7 +8080,11 @@
             "description": "Bifrost role to assign on match"
           }
         },
-        "required": ["attribute", "value", "role"],
+        "required": [
+          "attribute",
+          "value",
+          "role"
+        ],
         "additionalProperties": false
       }
     },
@@ -6526,7 +8107,10 @@
             "description": "Bifrost team slug to assign. In case of '*' value, leave this empty"
           }
         },
-        "required": ["attribute", "value"],
+        "required": [
+          "attribute",
+          "value"
+        ],
         "additionalProperties": false
       }
     },
@@ -6549,7 +8133,10 @@
             "description": "Bifrost business unit slug to assign. In case of '*' value, leave this empty"
           }
         },
-        "required": ["attribute", "value"],
+        "required": [
+          "attribute",
+          "value"
+        ],
         "additionalProperties": false
       }
     }

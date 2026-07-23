@@ -37,7 +37,7 @@ Initial numeric SLOs remain owner decisions, but every release must publish and 
 The request path uses immutable, locally readable policy and routing snapshots. A pod
 must not query Aurora, Okta, a peer, Redis, the dashboard, or an evaluator per token or
 per request. Each outbound provider, region, tenant, and optional policy plugin has a
-separate concurrency budget and circuit breaker so one dependency cannot consume the
+separate concurrency budget and failover handling so one dependency cannot consume the
 gateway's entire connection, goroutine, memory, or retry budget.
 
 Every request carries one end-to-end deadline. Retries and hedges spend that same
@@ -103,7 +103,7 @@ Queues are bounded and fair by tenant; overload returns an actionable retry resp
 instead of accumulating unbounded memory. Controlled spend overdraft requires an
 approved or preconfigured policy and emits user/operator alerts plus an audit receipt.
 
-Circuit breakers use slow-call and failure signals, half-open probes, jitter, and
+failover handlings use slow-call and failure signals, half-open probes, jitter, and
 provider-specific classification. Retry storms are prevented through shared budgets,
 backoff, load shedding, and bulkheads. Route selection accounts for capacity and
 health but cannot flap based on a tiny sample. All emergency behavior has a safe,

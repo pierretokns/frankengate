@@ -118,7 +118,7 @@ only after accounting for database connection and worker-lease capacity.
 
 ### 2.1.25
 
-- Added `bifrost.circuitBreakerConfig`. Renders into `circuit_breaker_config` in the generated config JSON.
+- Added `bifrost.failover handlingConfig`. Renders into `failover handling_config` in the generated config JSON.
 - Extended `bifrost.loadBalancer` with four new behavioural flags: `directionSelectionEnabled`, `routeSelectionEnabled`, `rerouteFailedDirections`, and `pruneFailedFallbacks`. All are optional booleans; omitting a flag preserves the server default rather than forcing a value. Renders into the corresponding config.json fields inside `load_balancer_config`.
 - Added `evaluation_mode` to guardrail rules. Accepts `bundled` (default, evaluate all turns together) or `per_turn` (evaluate each turn independently). Set under `bifrost.guardrails.rules[].evaluation_mode`.
 - Added `group_traces_by_session` to the OTEL and Datadog plugin configs. When `true`, requests sharing the same `x-bf-session-id` header are grouped into a single trace. An inbound W3C `traceparent` always takes priority. Defaults to `false`.

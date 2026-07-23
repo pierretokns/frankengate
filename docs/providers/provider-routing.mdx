@@ -1104,7 +1104,7 @@ flowchart TB
    - TPM hits (rate limit violations)
    - Current state (Healthy, Degraded, Failed, Recovering)
 4. **Smooth weighted selection**: Concentrate traffic on higher-weight keys, with a small dedicated probe budget reserved for recovering keys so they can prove recovery
-5. **Circuit breaker**: Skip keys with zero weight (TPM hits, repeated failures)
+5. **failover handling**: Skip keys with zero weight (TPM hits, repeated failures)
 
 ### Scoring
 
@@ -1159,7 +1159,7 @@ Which signals apply depends on the route's health: healthy routes are scored mai
 | -------------------------- | ------------------------------------------------------------------- |
 | **Automatic Optimization** | No manual weight tuning required                                    |
 | **Real-time Adaptation**   | Weights recomputed every 5 seconds based on live metrics            |
-| **Circuit Breakers**       | Failing routes automatically removed from rotation                  |
+| **failover handlings**       | Failing routes automatically removed from rotation                  |
 | **Fast Recovery**          | 90% penalty reduction in 30 seconds after issues resolve            |
 | **Health States**          | Routes transition between Healthy, Degraded, Failed, and Recovering |
 | **Smart Exploration**      | Keeps a small, dedicated share of traffic on recovering routes so they can prove recovery |
