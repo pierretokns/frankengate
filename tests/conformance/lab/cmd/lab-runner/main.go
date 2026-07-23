@@ -1273,7 +1273,7 @@ func validateMantleTranscript(data []byte, runID string, ingressToolCount int) e
 		if json.Unmarshal(line, &record) != nil || record.Schema != mantleservice.TranscriptSchema {
 			continue
 		}
-		if record.Sequence == 1 && record.Method == "POST" && record.Host == mantleservice.IntegrationHost && record.Path == "/openai/v1/responses" && record.Model == "openai.gpt-5.5" && record.Stream && record.Status == 200 && record.Authorization == "synthetic-bearer" && record.RunID == runID && ingressToolCount > 0 && record.TopLevelTools == ingressToolCount && record.AdditionalTools == 0 && sha256Value.MatchString(record.BodySHA256) {
+		if record.Sequence > 0 && record.Method == "POST" && record.Host == mantleservice.IntegrationHost && record.Path == "/openai/v1/responses" && record.Model == "openai.gpt-5.5" && record.Stream && record.Status == 200 && record.Authorization == "synthetic-bearer" && record.RunID == runID && ingressToolCount > 0 && record.TopLevelTools == ingressToolCount && record.AdditionalTools == 0 && sha256Value.MatchString(record.BodySHA256) {
 			matched++
 		}
 	}

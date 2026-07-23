@@ -107,7 +107,7 @@ func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
 	}
 	mutations := []func(*mantleservice.TranscriptRecord){
 		func(r *mantleservice.TranscriptRecord) { r.Stream = false },
-		func(r *mantleservice.TranscriptRecord) { r.Sequence = 2 },
+		func(r *mantleservice.TranscriptRecord) { r.Sequence = 0 },
 		func(r *mantleservice.TranscriptRecord) { r.TopLevelTools = 0 },
 		func(r *mantleservice.TranscriptRecord) { r.AdditionalTools = 1 },
 		func(r *mantleservice.TranscriptRecord) { r.Authorization = "none" },
@@ -120,6 +120,18 @@ func TestRunnerConsumesActualMantleHandlerTranscript(t *testing.T) {
 		if err := validateMantleTranscript(append(encoded, '\n'), "test-1", 1); err == nil {
 			t.Fatalf("unsafe transcript mutation %d accepted: %s", index, encoded)
 		}
+	}
+	prelude := valid
+	prelude.Sequence = 1
+	prelude.Method = http.MethodGet
+	prelude.Path = "/v1/models"
+	prelude.Status = http.StatusOK
+	valid.Sequence = 2
+	preludeJSON, _ := json.Marshal(prelude)
+	validJSON, _ := json.Marshal(valid)
+	withProviderDiscovery := append(append(preludeJSON, '\n'), append(validJSON, '\n')...)
+	if err := validateMantleTranscript(withProviderDiscovery, "test-1", 1); err != nil {
+		t.Fatalf("provider discovery before inference invalidated proof: %v", err)
 	}
 }
 
