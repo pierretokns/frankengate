@@ -1,0 +1,10 @@
+{
+  "schema": "sealed-cli-seed/v1",
+  "files": [
+    {
+      "source": "config.toml",
+      "target": "codex/config.toml",
+      "sha256": "9787ce6d1dc7d7a84f819c658065803c82514c1ce73b2141cc6103a599466ef8"
+    }
+  ]
+}

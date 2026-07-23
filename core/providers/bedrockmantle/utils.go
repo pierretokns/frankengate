@@ -26,6 +26,29 @@ func addAnthropicHeaders(headers map[string]string) map[string]string {
 	return out
 }
 
+// usesAnthropicSurface decides which Mantle wire surface to use. Some Codex
+// model-picker aliases intentionally begin with "Claude-" while targeting a
+// GPT frontier deployment (for example Claude-GPT-soul). When alias metadata
+// is unavailable, generic family heuristics see only the cosmetic prefix and
+// would incorrectly select native Anthropic Messages. A concrete GPT frontier
+// marker wins over that display-name prefix; explicit alias ModelFamily still
+// wins through ResolveFamily.
+func usesAnthropicSurface(ctx *schemas.BifrostContext, model string) bool {
+	if schemas.ResolveFamily(ctx, model) == schemas.ModelFamilyOpenAI {
+		return false
+	}
+	canonical := strings.ToLower(schemas.ResolveCanonicalModel(ctx, model) + " " + model)
+	canonical = strings.NewReplacer("_", "-", "/", "-", ".", "-").Replace(canonical)
+	if strings.Contains(canonical, "gpt-") ||
+		strings.Contains(canonical, "gpt-soul") ||
+		strings.Contains(canonical, "gpt-luna") ||
+		strings.Contains(canonical, "gpt-terra") ||
+		strings.Contains(canonical, "gpt-sol") {
+		return false
+	}
+	return schemas.IsAnthropicModelFamily(ctx, model)
+}
+
 // resolveProjectID returns the Bedrock project configured for this attempt, or "" when none is set
 // (AWS then routes to the account's default project). The value is sent as the OpenAI-Project or
 // anthropic-workspace-id header depending on the request surface.

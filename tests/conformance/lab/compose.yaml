@@ -1,0 +1,315 @@
+name: frankengate-sealed-lab
+
+x-hardened: &hardened
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 256
+  restart: "no"
+
+x-bifrost: &bifrost
+  <<: *hardened
+  image: ${BIFROST_IMAGE:?set a digest-pinned multi-arch Bifrost image}
+  user: "1000:0"
+  environment:
+    HOME: /nonexistent
+    TZ: UTC
+    BIFROST_CONFIG_STORE_TYPE: postgres
+    BIFROST_CONFIG_STORE_HOST: postgres
+    BIFROST_CONFIG_STORE_PORT: "5432"
+    BIFROST_CONFIG_STORE_USER: bifrost
+    BIFROST_CONFIG_STORE_DB: bifrost
+    BIFROST_CONFIG_STORE_PASSWORD: sealed-lab-only
+    FRANKENGATE_PRICING_URL: file:///lab-fixtures/pricing.json
+    FRANKENGATE_MODEL_PARAMETERS_URL: file:///lab-fixtures/model-parameters.json
+  configs:
+    - source: sealed_pricing_fixture
+      target: /lab-fixtures/pricing.json
+      mode: 0444
+    - source: sealed_model_parameters_fixture
+      target: /lab-fixtures/model-parameters.json
+      mode: 0444
+  tmpfs:
+    - /app/data:rw,nosuid,nodev,size=32m,uid=1000,gid=0,mode=0700
+    - /tmp:rw,nosuid,nodev,noexec,size=32m,uid=1000,gid=0,mode=0700
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+x-runner: &runner
+  <<: *hardened
+  user: "65532:65532"
+  tmpfs:
+    - /cell:rw,nosuid,nodev,noexec,size=64m,uid=65532,gid=65532,mode=0700
+    - /tmp:rw,nosuid,nodev,noexec,size=16m,uid=65532,gid=65532,mode=0700
+  profiles: [clients]
+  environment:
+    LAB_RUN_ID: "${LAB_RUN_ID:?set the lifecycle run identity}"
+
+x-netns: &netns
+  <<: *hardened
+  image: alpine:3.21.7@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
+  user: "0:0"
+  cap_add: [NET_ADMIN]
+  dns: ["${LAB_DNS_IPV4:-172.30.10.53}", "${LAB_DNS_IPV6:-fd00:bf:10::53}"]
+  dns_opt: [attempts:1, timeout:1]
+  environment:
+    LAB_DNS_IPV4: "${LAB_DNS_IPV4:-172.30.10.53}"
+  command:
+    - /bin/sh
+    - -ec
+    - |
+      ip route | awk '$$1 == "default"' | while read -r route; do ip route del $$route || true; done
+      ip -6 route | awk '$$1 == "default"' | while read -r route; do ip -6 route del $$route || true; done
+      test -z "$$(ip route | awk '$$1 == "default"')"
+      test -z "$$(ip -6 route | awk '$$1 == "default"')"
+      ip route get "$$LAB_DNS_IPV4" >/dev/null
+      touch /run/netns-ready
+      exec tail -f /dev/null
+  tmpfs:
+    - /run:rw,nosuid,nodev,noexec,size=1m,mode=0755
+  healthcheck:
+    test: [CMD-SHELL, "test -f /run/netns-ready && test -z \"$$(ip route | awk '$$1 == \\\"default\\\"')\" && test -z \"$$(ip -6 route | awk '$$1 == \\\"default\\\"')\" && ip route get \"$$LAB_DNS_IPV4\" >/dev/null"]
+    interval: 1s
+    timeout: 1s
+    retries: 30
+
+services:
+  postgres:
+    <<: *hardened
+    image: postgres:16.9-alpine@sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7
+    user: "70:70"
+    environment:
+      POSTGRES_USER: bifrost
+      POSTGRES_PASSWORD: sealed-lab-only
+      POSTGRES_DB: bifrost
+    tmpfs:
+      - /var/lib/postgresql/data:rw,nosuid,nodev,size=512m,uid=70,gid=70,mode=0700
+      - /var/run/postgresql:rw,nosuid,nodev,noexec,size=4m,uid=70,gid=70,mode=0750
+      - /tmp:rw,nosuid,nodev,noexec,size=32m,uid=70,gid=70,mode=0700
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U bifrost -d bifrost]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    networks: [data_net]
+
+  bifrost-1:
+    <<: *bifrost
+    network_mode: service:netns-bifrost-1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      netns-bifrost-1:
+        condition: service_healthy
+  bifrost-2:
+    <<: *bifrost
+    network_mode: service:netns-bifrost-2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      netns-bifrost-2:
+        condition: service_healthy
+  bifrost-3:
+    <<: *bifrost
+    network_mode: service:netns-bifrost-3
+    depends_on:
+      postgres:
+        condition: service_healthy
+      netns-bifrost-3:
+        condition: service_healthy
+
+  netns-bifrost-1:
+    <<: *netns
+    networks:
+      client_net:
+        ipv4_address: "${LAB_BIFROST_1_CLIENT_IPV4:-172.30.10.11}"
+        ipv6_address: "${LAB_BIFROST_1_CLIENT_IPV6:-fd00:bf:10::11}"
+      data_net:
+        ipv4_address: "${LAB_BIFROST_1_DATA_IPV4:-172.30.20.11}"
+        ipv6_address: "${LAB_BIFROST_1_DATA_IPV6:-fd00:bf:20::11}"
+  netns-bifrost-2:
+    <<: *netns
+    networks:
+      client_net:
+        ipv4_address: "${LAB_BIFROST_2_CLIENT_IPV4:-172.30.10.12}"
+        ipv6_address: "${LAB_BIFROST_2_CLIENT_IPV6:-fd00:bf:10::12}"
+      data_net:
+        ipv4_address: "${LAB_BIFROST_2_DATA_IPV4:-172.30.20.12}"
+        ipv6_address: "${LAB_BIFROST_2_DATA_IPV6:-fd00:bf:20::12}"
+  netns-bifrost-3:
+    <<: *netns
+    networks:
+      client_net:
+        ipv4_address: "${LAB_BIFROST_3_CLIENT_IPV4:-172.30.10.13}"
+        ipv6_address: "${LAB_BIFROST_3_CLIENT_IPV6:-fd00:bf:10::13}"
+      data_net:
+        ipv4_address: "${LAB_BIFROST_3_DATA_IPV4:-172.30.20.13}"
+        ipv6_address: "${LAB_BIFROST_3_DATA_IPV6:-fd00:bf:20::13}"
+
+  netns-codex:
+    <<: *netns
+    networks: [client_net]
+    profiles: [clients]
+  netns-claude:
+    <<: *netns
+    networks: [client_net]
+    profiles: [clients]
+
+  health-stub:
+    <<: *hardened
+    image: hashicorp/http-echo:1.0.0@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186
+    command: [-listen=:8080, -text=ok]
+    user: "65532:65532"
+    networks:
+      client_net:
+        ipv4_address: "${LAB_HEALTH_IPV4:-172.30.10.20}"
+        ipv6_address: "${LAB_HEALTH_IPV6:-fd00:bf:10::20}"
+
+  contract-stub:
+    <<: *hardened
+    image: hashicorp/http-echo:1.0.0@sha256:fcb75f691c8b0414d670ae570240cbf95502cc18a9ba57e982ecac589760a186
+    command: [-listen=:8080, -text=contract-ok]
+    user: "65532:65532"
+    networks:
+      control_net:
+        ipv4_address: "${LAB_CONTRACT_IPV4:-172.30.30.20}"
+        ipv6_address: "${LAB_CONTRACT_IPV6:-fd00:bf:30::20}"
+
+  controlled-dns:
+    <<: *hardened
+    image: coredns/coredns:1.12.4@sha256:986f04c2e15e147d00bdd51e8c51bcef3644b13ff806be7d2ff1b261d6dfbae1
+    command: [-conf, /etc/coredns/Corefile]
+    user: "65532:65532"
+    environment:
+      LAB_SENTINEL_IPV4: "${LAB_SENTINEL_IPV4:-172.30.10.254}"
+      LAB_SENTINEL_IPV6: "${LAB_SENTINEL_IPV6:-fd00:bf:10::fe}"
+      LAB_BIFROST_1_CLIENT_IPV4: "${LAB_BIFROST_1_CLIENT_IPV4:-172.30.10.11}"
+      LAB_BIFROST_1_CLIENT_IPV6: "${LAB_BIFROST_1_CLIENT_IPV6:-fd00:bf:10::11}"
+      LAB_BIFROST_2_CLIENT_IPV4: "${LAB_BIFROST_2_CLIENT_IPV4:-172.30.10.12}"
+      LAB_BIFROST_2_CLIENT_IPV6: "${LAB_BIFROST_2_CLIENT_IPV6:-fd00:bf:10::12}"
+      LAB_BIFROST_3_CLIENT_IPV4: "${LAB_BIFROST_3_CLIENT_IPV4:-172.30.10.13}"
+      LAB_BIFROST_3_CLIENT_IPV6: "${LAB_BIFROST_3_CLIENT_IPV6:-fd00:bf:10::13}"
+      LAB_HEALTH_IPV4: "${LAB_HEALTH_IPV4:-172.30.10.20}"
+      LAB_HEALTH_IPV6: "${LAB_HEALTH_IPV6:-fd00:bf:10::20}"
+    cap_add: [NET_BIND_SERVICE]
+    configs:
+      - source: sealed_dns_corefile
+        target: /etc/coredns/Corefile
+        mode: 0444
+    networks:
+      client_net:
+        ipv4_address: "${LAB_DNS_IPV4:-172.30.10.53}"
+        ipv6_address: "${LAB_DNS_IPV6:-fd00:bf:10::53}"
+
+  egress-sentinel:
+    <<: *hardened
+    image: ${EGRESS_SENTINEL_IMAGE:?set a digest-pinned sealed egress sentinel image}
+    user: "65532:65532"
+    command: ["-run-id=${LAB_RUN_ID:?set the lifecycle run identity}"]
+    tmpfs:
+      - /records:rw,nosuid,nodev,noexec,size=16m,uid=65532,gid=65532,mode=0700
+    networks:
+      client_net:
+        ipv4_address: "${LAB_SENTINEL_IPV4:-172.30.10.254}"
+        ipv6_address: "${LAB_SENTINEL_IPV6:-fd00:bf:10::fe}"
+
+  codex-runner:
+    <<: *runner
+    image: ${CODEX_RUNNER_IMAGE:?set a digest-pinned sealed Codex runner image}
+    network_mode: service:netns-codex
+    configs:
+      - source: codex_inference_boundary_scenario
+        target: /scenario/scenario.json
+        mode: 0444
+    depends_on:
+      bifrost-1:
+        condition: service_started
+      health-stub:
+        condition: service_started
+      netns-codex:
+        condition: service_healthy
+
+  claude-runner:
+    <<: *runner
+    image: ${CLAUDE_RUNNER_IMAGE:?set a digest-pinned sealed Claude Code runner image}
+    network_mode: service:netns-claude
+    configs:
+      - source: claude_version_scenario
+        target: /scenario/scenario.json
+        mode: 0444
+    depends_on:
+      bifrost-1:
+        condition: service_started
+      health-stub:
+        condition: service_started
+      netns-claude:
+        condition: service_healthy
+
+  network-probe:
+    <<: *hardened
+    image: alpine:3.21.7@sha256:48b0309ca019d89d40f670aa1bc06e426dc0931948452e8491e3d65087abc07d
+    user: "65532:65532"
+    network_mode: service:netns-codex
+    environment:
+      LAB_DNS_IPV4: "${LAB_DNS_IPV4:-172.30.10.53}"
+      LAB_SENTINEL_IPV4: "${LAB_SENTINEL_IPV4:-172.30.10.254}"
+    configs:
+      - source: sealed_network_probe
+        target: /probe/network-negatives.sh
+        mode: 0555
+    command: [/bin/sh, /probe/network-negatives.sh]
+    profiles: [clients]
+    depends_on:
+      controlled-dns:
+        condition: service_started
+      egress-sentinel:
+        condition: service_started
+      netns-codex:
+        condition: service_healthy
+
+networks:
+  client_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "${LAB_CLIENT_BRIDGE:?set the run-bound client bridge name}"
+    internal: true
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: "${LAB_CLIENT_IPV4_SUBNET:-172.30.10.0/24}"
+        - subnet: "${LAB_CLIENT_IPV6_SUBNET:-fd00:bf:10::/64}"
+  data_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "${LAB_DATA_BRIDGE:?set the run-bound data bridge name}"
+    internal: true
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: "${LAB_DATA_IPV4_SUBNET:-172.30.20.0/24}"
+        - subnet: "${LAB_DATA_IPV6_SUBNET:-fd00:bf:20::/64}"
+  control_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "${LAB_CONTROL_BRIDGE:?set the run-bound control bridge name}"
+    internal: true
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: "${LAB_CONTROL_IPV4_SUBNET:-172.30.30.0/24}"
+        - subnet: "${LAB_CONTROL_IPV6_SUBNET:-fd00:bf:30::/64}"
+
+configs:
+  sealed_dns_corefile:
+    file: ./dns/Corefile
+  codex_inference_boundary_scenario:
+    file: ./scenario/codex-inference-boundary.json
+  claude_version_scenario:
+    file: ./scenario/claude-version.json
+  sealed_network_probe:
+    file: ./probe/network-negatives.sh
+  sealed_pricing_fixture:
+    file: ./fixtures/pricing.json
+  sealed_model_parameters_fixture:
+    file: ./fixtures/model-parameters.json

@@ -1,0 +1,1 @@
+{"choices":[{"finish_reason":"stop","index":0,"message":{"content":"deterministic mantle chat","role":"assistant"}}],"id":"chatcmpl_5a3bc44d08783f97","model":"openai.gpt-oss-120b","object":"chat.completion","usage":{"completion_tokens":3,"prompt_tokens":4,"total_tokens":7}}

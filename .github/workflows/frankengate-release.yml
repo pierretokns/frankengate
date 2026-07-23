@@ -289,7 +289,22 @@ jobs:
 
       - name: Generate checksums
         working-directory: dist
-        run: sha256sum ./*.tar.gz > SHA256SUMS
+        shell: bash
+        run: |
+          set -euo pipefail
+          # download-artifact layout can vary between action versions and
+          # merge-multiple settings. Flatten every nested archive into the
+          # publish namespace instead of assuming exactly one directory level.
+          while IFS= read -r -d '' package; do
+            target="./$(basename "$package")"
+            test "$package" != "$target"
+            test ! -e "$target"
+            mv "$package" "$target"
+          done < <(find . -mindepth 2 -type f -name '*.tar.gz' -print0)
+          shopt -s nullglob
+          archives=( ./*.tar.gz )
+          test "${#archives[@]}" -gt 0
+          sha256sum "${archives[@]}" > SHA256SUMS
 
       - name: Inspect every platform package
         run: |

@@ -73,6 +73,13 @@ jobs:
           timeout 60s go env GOVERSION GOROOT GOPATH GOMODCACHE GOCACHE
           echo "fork-go-checks preflight complete"
 
+      - name: Verify Mantle observation acceptance contract
+        if: hashFiles('provenance/aws-observation-scope.json') != ''
+        run: |
+          set -euo pipefail
+          bash scripts/verify-aws-observation-scope.sh
+          bash scripts/test-verify-aws-observation-scope.sh
+
       - name: Run unit tests and vet
         run: |
           set -euo pipefail

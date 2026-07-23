@@ -45,12 +45,12 @@ analyticsControlPlane:
   resources: {}
   serviceMonitor:
     enabled: false
-    # Required for durable tenant-scoped queue metrics when DATABASE_URL is set.
-    # Leave empty only when intentionally scraping the local protocol store.
-    tenant: ""
     interval: 30s
     scrapeTimeout: 10s
     labels: {}
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
   autoscaling:
     enabled: false
     minReplicas: 1

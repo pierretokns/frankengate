@@ -1,0 +1,27 @@
+FROM node:24.11.0-alpine3.21@sha256:0d4cd385375043fc4612c20ede8b240b6b560dfdaef7cdaeff8e440c6a5b8499 AS prefetch
+
+ARG CLI_PACKAGE
+ARG CLI_VERSION
+ARG CLI_INTEGRITY
+
+COPY prefetch/verify-tree.mjs /usr/local/lib/verify-tree.mjs
+
+RUN test -n "$CLI_PACKAGE" && test -n "$CLI_VERSION" && test -n "$CLI_INTEGRITY" \
+    && actual="$(npm view "${CLI_PACKAGE}@${CLI_VERSION}" dist.integrity)" \
+    && test "$actual" = "$CLI_INTEGRITY" \
+    && mkdir -p /mirror /opt/client /lock \
+    && npm pack "${CLI_PACKAGE}@${CLI_VERSION}" --pack-destination /mirror \
+    && cd /lock \
+    && npm init --yes >/dev/null \
+    && npm install --package-lock-only --ignore-scripts "${CLI_PACKAGE}@${CLI_VERSION}" \
+    && npm install --global --prefix /opt/client --ignore-scripts --omit=dev /mirror/*.tgz \
+    && npm ls --global --prefix /opt/client --all --json > /mirror/dependency-tree.json \
+    && cp /lock/package-lock.json /mirror/package-lock.json \
+    && node /usr/local/lib/verify-tree.mjs /mirror/package-lock.json /mirror/dependency-tree.json /mirror/resolved-dependencies.json \
+    && find /opt/client -type f | LC_ALL=C sort | while IFS= read -r file; do sha256sum "$file"; done > /mirror/client-files.sha256 \
+    && sha256sum /mirror/client-files.sha256 /mirror/dependency-tree.json /mirror/package-lock.json /mirror/resolved-dependencies.json /mirror/*.tgz > /mirror/prefetch-artifacts.sha256 \
+    && npm cache clean --force
+
+FROM scratch AS export
+COPY --from=prefetch /mirror/ /mirror/
+COPY --from=prefetch /opt/client/ /opt/client/
