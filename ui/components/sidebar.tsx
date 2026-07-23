@@ -1,18 +1,14 @@
 import {
 	ArrowUpRight,
 	BookOpenText,
-	BookUser,
 	Boxes,
 	BoxIcon,
 	BugIcon,
 	Building,
-	Building2,
 	ChartColumnBig,
 	ChevronsLeftRightEllipsis,
-	Construction,
 	DatabaseZap,
 	Flag,
-	ShieldHalf,
 	FlaskConical,
 	FolderGit,
 	Gavel,
@@ -29,24 +25,17 @@ import {
 	PanelLeftOpen,
 	Plug,
 	Puzzle,
-	ScrollText,
 	Search,
-	SearchCheck,
 	Settings,
 	Settings2Icon,
 	ShieldCheck,
-	Shuffle,
 	Siren,
 	SlidersHorizontal,
 	Telescope,
-	ToolCase,
 	TrendingUp,
 	User,
-	UserRoundCheck,
-	Users,
 	Wallet,
 	WalletCards,
-	CircuitBoard,
 	GitCompareArrows,
 } from "lucide-react";
 
@@ -582,11 +571,7 @@ export default function AppSidebar() {
 	const hasAPIKeyAccess = useRbac(RbacResource.APIKeys, RbacOperation.View);
 	const hasPromptRepositoryAccess = useRbac(RbacResource.PromptRepository, RbacOperation.View);
 	const hasSkillsRepositoryAccess = useRbac(RbacResource.SkillsRepository, RbacOperation.View);
-	const hasAnyGovernanceAccess =
-		hasVirtualKeysAccess ||
-		hasTeamsAccess ||
-		hasCustomersAccess ||
-		hasGovernanceLegacyAccess;
+	const hasAnyGovernanceAccess = hasVirtualKeysAccess || hasTeamsAccess || hasCustomersAccess || hasGovernanceLegacyAccess;
 	const { data: coreConfig } = useGetCoreConfigQuery({});
 	const isDbConnected = coreConfig?.is_db_connected ?? false;
 	const envLabel = coreConfig?.env_label ?? null;
@@ -919,6 +904,7 @@ export default function AppSidebar() {
 			hasAnyGovernanceAccess,
 			hasRoutingRulesAccess,
 			hasSettingsAccess,
+			hasFeatureFlagsAccess,
 			hasPromptRepositoryAccess,
 			hasSkillsRepositoryAccess,
 			isDbConnected,

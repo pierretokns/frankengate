@@ -23,6 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
+import { formatVirtualKeySecret } from "@/lib/utils/virtualKeys";
 import { resetDurationLabels } from "@/lib/constants/governance";
 import {
 	getErrorMessage,
@@ -70,7 +71,7 @@ const formatResetDuration = (duration: string) => resetDurationLabels[duration] 
 
 type ExportScope = "current_page" | "all";
 
-function virtualKeysToCSV(vks: VirtualKey[], accessProfileNames: Record<number, string> = {}): string {
+function virtualKeysToCSV(vks: VirtualKey[]): string {
 	const headers = ["Name", "Status", "Assigned To", "Budget Limit", "Budget Spent", "Budget Reset", "Description", "Created At"];
 	const rows = vks.map((vk) => {
 		const isExhausted =
@@ -543,6 +544,10 @@ export default function VirtualKeysTable({
 			if (!revealedValues[vkId]) {
 				try {
 					const result = await revealVirtualKey(vkId).unwrap();
+					if (typeof result?.secret !== "string" || result.secret.length === 0) {
+						toast.error("The server did not return a virtual key secret");
+						return;
+					}
 					setRevealedValues((previous) => ({ ...previous, [vkId]: result.secret }));
 				} catch {
 					toast.error("Unable to reveal virtual key secret");
@@ -552,11 +557,6 @@ export default function VirtualKeysTable({
 			newRevealed.add(vkId);
 		}
 		setRevealedKeys(newRevealed);
-	};
-
-	const maskKey = (key: string, revealed: boolean) => {
-		if (revealed) return key;
-		return key.substring(0, 8) + "•".repeat(Math.max(0, key.length - 8));
 	};
 
 	const { copy: copyToClipboard } = useCopyToClipboard();
@@ -905,7 +905,7 @@ export default function VirtualKeysTable({
 											<TableCell onClick={(e) => e.stopPropagation()}>
 												<div className="flex items-center gap-2">
 													<code className="cursor-default py-1 font-mono text-sm" data-testid="vk-key-value">
-										{maskKey(revealedValues[vk.id] ?? vk.value, isRevealed)}
+														{formatVirtualKeySecret(revealedValues[vk.id] ?? vk.value, isRevealed)}
 													</code>
 													<div className="flex items-center">
 														<Button
@@ -916,18 +916,18 @@ export default function VirtualKeysTable({
 														>
 															{isRevealed ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
 														</Button>
-										<Button
-											variant="ghost"
-											size="sm"
-											onClick={() => {
-												const secret = revealedValues[vk.id];
-												if (!secret) {
-													toast.error("Reveal the virtual key before copying it");
-													return;
-												}
-												void copyToClipboard(secret);
-											}}
-											data-testid={`vk-copy-btn-${vk.name}`}
+														<Button
+															variant="ghost"
+															size="sm"
+															onClick={() => {
+																const secret = revealedValues[vk.id];
+																if (!secret) {
+																	toast.error("Reveal the virtual key before copying it");
+																	return;
+																}
+																void copyToClipboard(secret);
+															}}
+															data-testid={`vk-copy-btn-${vk.name}`}
 														>
 															<Copy className="h-4 w-4" />
 														</Button>
