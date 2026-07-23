@@ -813,6 +813,12 @@ func classifySanitizedFailure(data []byte, failed bool) string {
 		{"sqlite-cgo-disabled", []string{"sqlite", "cgo_enabled=0", "cgo disabled", "requires cgo"}},
 		{"postgres-auth", []string{"password authentication failed", "authentication failed for user", "sqlstate 28p01"}},
 		{"postgres-connect", []string{"connection refused", "could not connect to postgres", "dial tcp", "sqlstate 08001"}},
+		{"postgres-schema", []string{"sqlstate 42703", "sqlstate 42p01", "undefined_column", "undefined_table", "column does not exist", "relation does not exist", "no such column"}},
+		{"postgres-permission", []string{"sqlstate 42501", "insufficient_privilege", "permission denied for"}},
+		{"postgres-constraint", []string{"sqlstate 23502", "sqlstate 23503", "sqlstate 23505", "not_null_violation", "foreign_key_violation", "unique_violation"}},
+		{"postgres-migration", []string{"migration failed", "migrate database", "schema version"}},
+		{"app-dir-permission", []string{"app_dir is not writable", "could not create app_dir", "permission denied"}},
+		{"config-store-bootstrap", []string{"failed to initialize config store", "config store initialization", "bootstrap config store"}},
 	}
 	for _, pattern := range patterns {
 		for _, term := range pattern.terms {
