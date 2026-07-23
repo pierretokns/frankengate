@@ -7,6 +7,7 @@ import {
 	Building,
 	ChartColumnBig,
 	ChevronsLeftRightEllipsis,
+	CircuitBoard,
 	DatabaseZap,
 	Flag,
 	FolderGit,
