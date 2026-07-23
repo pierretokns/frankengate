@@ -264,6 +264,13 @@ func (h *LoggingHandler) shouldHideDeletedVirtualKeysInFilters() bool {
 
 // RegisterRoutes registers all logging-related routes
 func (h *LoggingHandler) RegisterRoutes(r *router.Router, middlewares ...schemas.BifrostHTTPMiddleware) {
+	// Self-service history and eval guidance are fail-closed, user-scoped
+	// surfaces. Unlike operator log routes, they never accept a user_id query
+	// parameter and derive ownership only from authenticated request context.
+	r.GET("/api/me/prompt-history", lib.ChainMiddlewares(h.getMyPromptHistory, middlewares...))
+	r.GET("/api/me/eval-suggestions", lib.ChainMiddlewares(h.getMyEvalSuggestions, middlewares...))
+	r.POST("/api/me/eval-plan", lib.ChainMiddlewares(h.createMyEvalPlan, middlewares...))
+
 	// LLM Log retrieval with filtering, search, and pagination
 	r.GET("/api/logs", lib.ChainMiddlewares(h.getLogs, middlewares...))
 	// Redacted audit export is intentionally a separate surface: it is bounded

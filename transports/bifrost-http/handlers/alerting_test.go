@@ -16,10 +16,25 @@ import (
 type alertingConfigStoreStub struct {
 	configstore.ConfigStore
 	row *tables.TableGovernanceConfig
+	err error
 }
 
 func (s *alertingConfigStoreStub) GetConfig(_ context.Context, _ string) (*tables.TableGovernanceConfig, error) {
-	return s.row, nil
+	return s.row, s.err
+}
+
+func TestAlertingMissingConfigIsAnEmptyFirstRunState(t *testing.T) {
+	store := &alertingConfigStoreStub{err: configstore.ErrNotFound}
+
+	state, ok, err := loadAlertingState(context.Background(), store)
+	if err != nil || ok || len(state.Channels) != 0 {
+		t.Fatalf("missing config should be an empty state: state=%+v ok=%v err=%v", state, ok, err)
+	}
+
+	handlerState, err := NewAlertingHandler(store).load(&fasthttp.RequestCtx{})
+	if err != nil || len(handlerState.Channels) != 0 {
+		t.Fatalf("missing dashboard config should be an empty state: state=%+v err=%v", handlerState, err)
+	}
 }
 
 func (s *alertingConfigStoreStub) UpdateConfig(_ context.Context, row *tables.TableGovernanceConfig, _ ...*gorm.DB) error {
