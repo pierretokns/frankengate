@@ -1,0 +1,5 @@
+datasets/raw/
+datasets/canonical/
+experiments/runs/
+__pycache__/
+*.pyc

@@ -1,0 +1,64 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "NJU-LINK/CodeTraceBench",
+  "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+  "license": "MIT",
+  "source_url": "https://huggingface.co/datasets/NJU-LINK/CodeTraceBench",
+  "source_format": "parquet plus per-trajectory artifacts",
+  "adapter": "codetracebench_v1_pending",
+  "admission_status": "admitted_for_pilot",
+  "split_relationship": {
+    "full_rows": 3316,
+    "verified_rows": 1000,
+    "verified_is_subset_of_full": true,
+    "unique_trajectory_count": 3316
+  },
+  "verified_aggregate_audit": {
+    "rows": 1000,
+    "solved": 504,
+    "mean_steps": 46.539,
+    "mean_stages": 6.739,
+    "rows_with_incorrect_or_error_stage": 405,
+    "incorrect_step_labels": 1695,
+    "unuseful_step_labels": 224,
+    "parquet_bytes": 984091
+  },
+  "observed_fields": [
+    "trajectory_id",
+    "agent",
+    "model",
+    "task",
+    "category",
+    "solved",
+    "step_count",
+    "stage_boundaries",
+    "incorrect_stage",
+    "incorrect_step_ids",
+    "unuseful_step_ids",
+    "annotated_action_reference",
+    "annotated_observation_reference"
+  ],
+  "pilot_claims": [
+    "informative trace selection",
+    "incorrect and unuseful step localization",
+    "stagnation and redundant exploration signals",
+    "task-family retrieval"
+  ],
+  "unsupported_claims": [
+    "enterprise transfer",
+    "person-level skill",
+    "authorization correctness",
+    "causal intervention utility"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "download_verified_parquet": true,
+    "download_artifacts_only_for_frozen_task_split": true,
+    "do_not_download_all_repository_artifacts": true
+  },
+  "split_policy": [
+    "group by task_slug, repository family, upstream source, and near-duplicate prompt",
+    "keep each verified row and its corresponding full row in one fold",
+    "freeze artifact allowlist before diagnosis prompts are run"
+  ]
+}
