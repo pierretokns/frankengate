@@ -9,6 +9,9 @@ verify: test validate compile
 test:
 	PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
 		$(PYTHON) -m unittest discover -s tests -p 'test_*.py'
+	PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
+		$(PYTHON) -m unittest discover \
+			-s nl2sql_capabilities/tests -p 'test_*.py'
 
 validate:
 	PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \

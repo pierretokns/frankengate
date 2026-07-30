@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.invalid/schemas/fg-solver-episode-v1.json",
+  "title": "Frankengate capability-isolated NL2SQL solver episode",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "question",
+    "official_instructions",
+    "authorized_database_handle",
+    "artifact_exposure",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "fg-solver-episode-v1"
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "official_instructions": {
+      "type": "string"
+    },
+    "authorized_database_handle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "handle",
+        "broker_protocol_version",
+        "authorization_epoch_ref_sha256",
+        "authority_snapshot_sha256",
+        "expires_at_unix_ms"
+      ],
+      "properties": {
+        "handle": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "broker_protocol_version": {
+          "const": "fg-governed-sql-tool-v1"
+        },
+        "authorization_epoch_ref_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "authority_snapshot_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "expires_at_unix_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "artifact_exposure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "artifact_sha256",
+        "content"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "artifact_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_model_turns",
+        "max_schema_calls",
+        "max_sql_attempts",
+        "max_generated_tokens_per_call",
+        "max_generated_tokens_per_episode",
+        "model_wall_ms",
+        "model_result_max_rows",
+        "model_result_max_bytes"
+      ],
+      "properties": {
+        "max_model_turns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "max_schema_calls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "max_sql_attempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "max_generated_tokens_per_call": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32768
+        },
+        "max_generated_tokens_per_episode": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 262144
+        },
+        "model_wall_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "model_result_max_rows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "model_result_max_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16777216
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

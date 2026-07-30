@@ -56,6 +56,44 @@ template arguments. It does **not** enforce request-side `tool_choice`,
 unknown JSON members. Frankengate's experiment runner must therefore validate
 native tool calls itself and must not claim that the server forced tool use.
 
+### Per-request tool-list switching
+
+Installed-source inspection and a local tokenizer conformance check establish
+that the runner may narrow the offered tools between model turns:
+
+- `handle_chat_completions` constructs a new request from the current HTTP
+  body's `messages` and `tools`;
+- `_tokenize` supplies that request's current `tools` to
+  `apply_chat_template`;
+- `ToolCallFormatter` parses the new generation using the current request's
+  tool schemas; and
+- the pinned Qwen chat template renders historical assistant tool calls and
+  tool results from `messages` independently of the current `<tools>` block.
+
+The conformance input contained an earlier `execute_sql` call and result. When
+the next request offered only `submit_sql` and `abstain`, the rendered current
+tool block omitted `execute_sql`, while the historical call and its
+`attempt_id` result remained intact. The all-tools prompt SHA-256 was
+`7195c5cbc3ea61f22b32b045e99471e7f16182d60a119589cfa14cda05b9424f`;
+the terminal-only prompt SHA-256 was
+`dd52e349394752f813502f889620bd0415813943d0d1d00d6fe62ad98aa6f232`.
+The reproducible conformance runner SHA-256 is
+`f174196ca708f8836cfa581715681ed9124506beb9bea1c2abb84fc79a45ee25`;
+its aggregate result SHA-256 is
+`42d132c368aa89b071c5a1c23e16492a23984134a8a4adac26848ca5ff5a1635`.
+
+This is a formatting and history-preservation result, not an authorization
+guarantee. The Qwen parser uses the current schema for argument conversion but
+does not reject an unlisted function name. The experiment runner must compare
+every returned name with the offered-name set and fail closed before dispatch.
+
+The subsequent independent live protocol pilot exercised 18 paired episodes
+and 72 native model/tool calls. All three variants completed 6/6 expected
+terminal actions without an unavailable or over-budget call. This establishes
+compatibility of terminal-only switching. It does not establish improvement:
+the all-tools and annotation controls also passed the deliberately simple
+synthetic fixture.
+
 ## Failure boundaries
 
 - Bind the server only to `127.0.0.1`; it has no request authentication and is

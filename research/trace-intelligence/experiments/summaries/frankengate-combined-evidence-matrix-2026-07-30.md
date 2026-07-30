@@ -18,7 +18,7 @@ The combined evidence supports a small governed product: personal history, conte
 | `L3_diagnosis_and_eval_proposals` | `mixed_partial` | raw eval mutation is sensitive but brittle; diagnosis and multi-agent gold do not pass |
 | `L4_semantic_candidate_retrieval` | `offline_silver_and_local_rls_partial_pass` | structured+dense wins the silver cohort; exact pgvector is the smallest local RLS lane and the tested trigram hybrid is rejected |
 | `L5_temporal_memory` | `real_trace_transition_partial_pass` | real transition import and synthetic temporal/authority invariants pass; memory quality and utility do not |
-| `L6_procedural_replay` | `governed_release_mechanics_partial_pass` | safe tool execution and hidden-test release mechanics pass; causal skill benefit does not |
+| `L6_procedural_replay` | `governed_component_isolation_partial_pass` | 48/48 DTO, broker, ledger, evaluator, and stage-sealing component tests pass; the same-profile OCI/PostgreSQL isolation gate and causal skill benefit do not |
 | `L7_to_L10` | `gated` | CMU is waived; prospective enterprise labels, privacy, and outcomes remain gated |
 
 ## Cross-arm findings
@@ -29,6 +29,7 @@ The combined evidence supports a small governed product: personal history, conte
 - MAST has 0 finalized human traces overlapping the judge release. Therefore released human-versus-judge accuracy cannot be reproduced; high Hamming accuracy from an always-negative classifier is class imbalance, not competence.
 - Structured plus dense retrieval reached 0.818 Recall@20 versus 0.732 for exact-only on silver task labels. In the same-candidate forced-RLS PostgreSQL run, exact pgvector reached 0.667 at 3.017 ms p50; the tested three-way hybrid reached only 0.672 at 256.843 ms. Keep exact/structured plus conditional dense retrieval and reject that trigram-heavy hybrid.
 - The governed skill lifecycle passed 18 PostgreSQL assertions, including hidden-test isolation and a hard security-violation veto. The Defog NL2SQL mechanics factorial subsequently completed 12 cache-disabled native-tool episodes: every arm passed the same 2/4 tasks, all authority receipts were valid, and no unauthorized observation occurred. Terminal-protocol failure was 25%–50%, so the preregistered gate failed; intervention quality and trace-mined skill benefit remain untested and hidden results stay sealed.
+- The NL2SQL capability checkpoint passes 48/48 component tests. Its combined test executes one candidate, exposes an empty model preview, seals the full three-row typed result, submits without another database call, and evaluates the full blob while the execution counter remains one. Signed/encrypted stage artifacts require an exact signed pass-only authorization before hidden unseal. This does not substitute for the still-open Linux OCI, resolver peer-capability, distinct PostgreSQL-role/audit, crash-recovery, signed OTel, and same-profile 27-gate proofs.
 
 ## Original enterprise questions
 

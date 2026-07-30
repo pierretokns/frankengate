@@ -92,6 +92,38 @@ preregistered 10% gate. The 23-task effect screen and hidden family therefore
 remain sealed until an arm-independent protocol repair passes a new P0. See
 [`experiments/summaries/defog-sql-factorial-fold0-mechanics-smoke-2026-07-30.md`](experiments/summaries/defog-sql-factorial-fold0-mechanics-smoke-2026-07-30.md).
 
+An independent, content-free native-tool pilot then ran six paired synthetic
+fixtures across the all-tools control, remaining-budget annotations, and
+terminal-only tool availability. All variants completed 6/6 expected terminal
+actions, establishing that per-request terminal-only switching is compatible
+with the pinned MLX/Qwen runtime. Because the controls also passed, this is not
+evidence of causal improvement and does not reopen P1. Reproduction and exact
+receipts are in
+[`experiments/summaries/native-tool-protocol-compliance-pilot-2026-07-30.md`](experiments/summaries/native-tool-protocol-compliance-pilot-2026-07-30.md)
+and
+[`experiments/summaries/mlx-lm-tool-runtime-audit-2026-07-30.md`](experiments/summaries/mlx-lm-tool-runtime-audit-2026-07-30.md).
+
+The subsequent capability audit found that the current single process keeps
+source task IDs, all stage memberships, gold SQL, the candidate executor, and
+evaluation code in one address space. P1 and hidden evaluation therefore also
+remain blocked on executable solver/broker/resolver/evaluator isolation,
+append-once attempt evidence, and separately sealed stage manifests. The exact
+minimum architecture and 27 release-gate tests are specified in
+[`nl2sql-capability-isolation-design-2026-07-30.md`](../../docs/roadmap/research/nl2sql-capability-isolation-design-2026-07-30.md).
+
+The first capability-isolation implementation checkpoint now passes 48/48
+component tests: strict solver and broker DTOs, current-authority revalidation,
+source-neutral SQL policy, append-only full typed results, zero-execution
+submission, no-candidate-execution evaluator imports, signed/encrypted stage
+artifacts, and pass-only hidden unseal authorization. A composition test proves
+that an empty model preview can still yield the correct verdict from the full
+sealed result while candidate execution remains exactly one. P1 is **not**
+reopened: solver/resolver process separation, the Linux OCI network/mount
+profile, distinct PostgreSQL candidate/gold audit roles, crash recovery, signed
+evaluation/OTel receipts, and the complete 27-gate same-profile run remain.
+See
+[`experiments/summaries/nl2sql-capability-isolation-component-checkpoint-2026-07-30.md`](experiments/summaries/nl2sql-capability-isolation-component-checkpoint-2026-07-30.md).
+
 Spider2 is admitted only as a later external-validity layer. The source audit
 found 135 local Lite tasks across 30 database families, but only 16/24 published
 gold SQL files pass the upstream self-check. Of 68 DBT tasks, 59 are strictly
@@ -286,5 +318,6 @@ full E0–E7 acceptance gates. In particular:
   full-text, and structured retrieval demonstrably fail; and
 - the SQL replay/verifier boundary passes on all 95 executable Defog tasks and
   the no-skill/placebo/expert-seed mechanics factorial has run, but it failed
-  its terminal-protocol gate; no trace-mined arm or causal quality screen has
-  run.
+  its terminal-protocol gate; the independent synthetic pilot proves runtime
+  compatibility but not remediation; solver/evaluator capability isolation,
+  a fresh P0, trace-mined arms, and the causal quality screen have not run.

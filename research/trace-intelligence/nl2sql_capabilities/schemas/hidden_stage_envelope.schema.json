@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.invalid/schemas/fg-hidden-stage-envelope-v1.json",
+  "title": "Frankengate recipient-bound encrypted hidden stage envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["payload", "signature"],
+  "properties": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "header",
+        "ciphertext_base64url",
+        "ciphertext_sha256"
+      ],
+      "properties": {
+        "schema_version": {"const": "fg-hidden-stage-envelope-v1"},
+        "header": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "encryption_algorithm",
+            "experiment_id",
+            "fold_id",
+            "stage_role",
+            "manifest_sequence",
+            "recipient_key_id",
+            "recipient_public_key_sha256",
+            "ephemeral_public_key_base64url",
+            "hkdf_salt_base64url",
+            "nonce_base64url",
+            "signed_manifest_sha256",
+            "manifest_signer_key_id"
+          ],
+          "properties": {
+            "encryption_algorithm": {
+              "const": "X25519-HKDF-SHA256-ChaCha20Poly1305"
+            },
+            "experiment_id": {"$ref": "#/$defs/id"},
+            "fold_id": {"$ref": "#/$defs/id"},
+            "stage_role": {"const": "hidden_test"},
+            "manifest_sequence": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "recipient_key_id": {"$ref": "#/$defs/id"},
+            "recipient_public_key_sha256": {"$ref": "#/$defs/sha256"},
+            "ephemeral_public_key_base64url": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{43}$"
+            },
+            "hkdf_salt_base64url": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{43}$"
+            },
+            "nonce_base64url": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{16}$"
+            },
+            "signed_manifest_sha256": {"$ref": "#/$defs/sha256"},
+            "manifest_signer_key_id": {"$ref": "#/$defs/id"}
+          }
+        },
+        "ciphertext_base64url": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{23,}$"
+        },
+        "ciphertext_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "signature": {"$ref": "#/$defs/signature"}
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "key_id",
+        "payload_sha256",
+        "signature_base64url"
+      ],
+      "properties": {
+        "algorithm": {"const": "Ed25519"},
+        "key_id": {"$ref": "#/$defs/id"},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "signature_base64url": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        }
+      }
+    }
+  }
+}
