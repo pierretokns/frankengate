@@ -52,6 +52,9 @@ but not parent-linked/wall-clock OTel or full assistant messages. BIRD is
 reconstructable from an external mini-dev archive; CRMArena is reconstructable
 from its official SQLite dump and is non-commercial research only. See
 [`experiments/summaries/hf-nl2sql-trace-audit-2026-07-30.md`](experiments/summaries/hf-nl2sql-trace-audit-2026-07-30.md).
+The domain decision, prior State of AI synthesis, modular skill taxonomy, and
+smallest causal sequence are recorded in
+[`experiments/summaries/nl2sql-enterprise-skill-domain-assessment-2026-07-30.md`](experiments/summaries/nl2sql-enterprise-skill-domain-assessment-2026-07-30.md).
 
 The causal SQL layer uses a separate, content-free 96-task Defog manifest and
 four disposable PostgreSQL databases. The hardened runner requires a governance

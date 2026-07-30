@@ -1,0 +1,46 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "birdsql/bird-interact-full",
+  "dataset_revision": "5d78b0722433c3821e1ebda5d8c39d24070049d7",
+  "source_url": "https://huggingface.co/datasets/birdsql/bird-interact-full",
+  "repository_url": "https://github.com/bird-bench/BIRD-Interact",
+  "license": "CC-BY-SA-4.0",
+  "source_format": "600 PostgreSQL interactive tasks with ambiguity labels, hierarchical knowledge, follow-up labels, database metadata, and executable tests",
+  "adapter": "not_implemented_inventory_only",
+  "admission_status": "priority_candidate_for_interactive_friction_and_clarification_replay",
+  "represented_modes": [
+    "passive conversational interaction",
+    "active agent-led interaction",
+    "business intelligence",
+    "CRUD workflows",
+    "critical and non-critical ambiguity",
+    "masked external knowledge"
+  ],
+  "replay_classification": {
+    "published_completed_agent_trajectories": false,
+    "user_simulator_available": true,
+    "postgresql_environment_available_separately": true,
+    "executable_test_cases_available_by_request": true,
+    "supports_clarification_policy_evaluation": true,
+    "supports_repeated_interaction_generation": true,
+    "suitable_as_independent_outcome_oracle_without_ground_truth": false
+  },
+  "frankengate_role": [
+    "generate governed interaction traces in which ambiguity should trigger clarification",
+    "measure premature SQL execution, over-questioning, correction burden, and recovery",
+    "test whether a mined clarification skill transfers across database families",
+    "supply an interactive complement to the static Defog factorial"
+  ],
+  "unsupported_claims": [
+    "the public task JSONL is a corpus of natural human interaction histories",
+    "all ground truth and executable tests are included in the public Hugging Face files",
+    "user-simulator behavior establishes natural enterprise prevalence",
+    "a benchmark interaction is an observed employee skill deficit"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "ground_truth_kept_evaluator_only": true,
+    "database_and_task_content_kept_out_of_skill_indexes": true,
+    "commit_aggregate_results_only": true
+  }
+}
