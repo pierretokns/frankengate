@@ -1,0 +1,561 @@
+{
+  "analysis_revision": "codetracebench-manifest-e1-e3-e4-v1",
+  "claim_boundary": {
+    "not_supported": [
+      "full Signals-paper replication",
+      "AgentRx/OpenRCA/LLM-judge diagnosis factorial",
+      "causal proof that a labeled step caused the terminal outcome",
+      "runnable replay eval or independent environment-state verification",
+      "enterprise, person-level skill, productivity, or intervention utility"
+    ],
+    "supported": [
+      "manifest-level label-blind selection performance on a blocked test split",
+      "deterministic step-ranking performance against released human incorrect-step labels",
+      "seeded mutation sensitivity of annotation-derived retrospective assertions"
+    ]
+  },
+  "corpus": {
+    "agents": {
+      "OpenHands": 520,
+      "SWE-agent": 108,
+      "Terminus2": 222,
+      "mini-SWE-agent": 150
+    },
+    "difficulty": {
+      "easy": 260,
+      "hard": 316,
+      "medium": 424
+    },
+    "sources": {
+      "multi-swe-bench": 44,
+      "swe-bench-pro": 84,
+      "swe-bench-verified": 212,
+      "swe-polybench": 149,
+      "terminal-bench": 503,
+      "unknown-source": 8
+    },
+    "verified_incorrect_step_labels": 1695,
+    "verified_informative": 405,
+    "verified_trajectories": 1000,
+    "verified_unuseful_step_labels": 224,
+    "verified_with_incorrect_steps": 405
+  },
+  "e1_signal_selection": {
+    "arms": {
+      "stage_count": {
+        "informative_selected": 17,
+        "population_prevalence": 0.42567567567567566,
+        "precision": 0.5666666666666667,
+        "precision_lift": 0.140990990990991,
+        "recall": 0.2698412698412698,
+        "selected": 30
+      },
+      "structural_signal": {
+        "informative_selected": 17,
+        "population_prevalence": 0.42567567567567566,
+        "precision": 0.5666666666666667,
+        "precision_lift": 0.140990990990991,
+        "recall": 0.2698412698412698,
+        "selected": 30
+      },
+      "structural_signal_plus_random_audit": {
+        "informative_selected": 19,
+        "population_prevalence": 0.42567567567567566,
+        "precision": 0.6333333333333333,
+        "precision_lift": 0.20765765765765765,
+        "recall": 0.30158730158730157,
+        "selected": 30
+      },
+      "trace_length": {
+        "informative_selected": 17,
+        "population_prevalence": 0.42567567567567566,
+        "precision": 0.5666666666666667,
+        "precision_lift": 0.140990990990991,
+        "recall": 0.2698412698412698,
+        "selected": 30
+      },
+      "uniform_random": {
+        "population_prevalence": 0.42567567567567566,
+        "precision_interval_95": [
+          0.2825000000000001,
+          0.5666666666666667
+        ],
+        "precision_mean": 0.426,
+        "recall_interval_95": [
+          0.13452380952380955,
+          0.2698412698412698
+        ],
+        "recall_mean": 0.20285714285714282,
+        "repetitions": 500,
+        "selected": 30
+      }
+    },
+    "budget": 30,
+    "budget_fraction": 0.2,
+    "forbidden_from_scores": [
+      "solved",
+      "incorrect stages or steps",
+      "unuseful steps",
+      "difficulty",
+      "category",
+      "agent",
+      "model"
+    ],
+    "gold_informative_definition": "at least one human incorrect or unuseful step label",
+    "interpretation": {
+      "conclusion": "ambiguous/negative: structural signal tied trace length and did not exceed the seeded-random 95% interval",
+      "structural_exceeds_seeded_random_95_interval": false,
+      "structural_minus_length_precision": 0.0,
+      "structural_minus_random_mean_precision": 0.14066666666666666
+    },
+    "label_blind_inputs": [
+      "step_count",
+      "stage_count",
+      "stage span coefficient of variation",
+      "largest stage span fraction"
+    ],
+    "question": "Can label-blind manifest structure enrich human-labeled traces at a fixed review budget?",
+    "status": "manifest-level deterministic baseline; not a preregistered Signals replication",
+    "structural_signal_by_source": {
+      "multi-swe-bench": {
+        "informative": 4,
+        "informative_selected": 2,
+        "population": 6,
+        "selected": 2
+      },
+      "swe-bench-pro": {
+        "informative": 7,
+        "informative_selected": 0,
+        "population": 12,
+        "selected": 1
+      },
+      "swe-bench-verified": {
+        "informative": 5,
+        "informative_selected": 1,
+        "population": 32,
+        "selected": 2
+      },
+      "swe-polybench": {
+        "informative": 13,
+        "informative_selected": 4,
+        "population": 22,
+        "selected": 6
+      },
+      "terminal-bench": {
+        "informative": 33,
+        "informative_selected": 9,
+        "population": 73,
+        "selected": 18
+      },
+      "unknown-source": {
+        "informative": 1,
+        "informative_selected": 1,
+        "population": 3,
+        "selected": 1
+      }
+    }
+  },
+  "e3_decisive_step_diagnosis": {
+    "annotation_consuming_upper_bounds": [
+      "critical_stage_start_oracle",
+      "critical_stage_end_oracle"
+    ],
+    "blind_methods": [
+      "uniform_random",
+      "forward_chronology",
+      "reverse_chronology",
+      "stage_boundary_recency",
+      "longest_stage_end"
+    ],
+    "methods": {
+      "critical_stage_end_oracle": {
+        "macro_f1_at_gold_count": 0.37782186948853613,
+        "macro_precision_at_gold_count": 0.37782186948853613,
+        "macro_recall_at_gold_count": 0.37782186948853613,
+        "mean_reciprocal_rank": 0.6398285763772691,
+        "mean_top1_distance": 0.49206349206349204,
+        "top1_accuracy": 0.5238095238095238,
+        "top3_accuracy": 0.7142857142857143,
+        "traces": 63
+      },
+      "critical_stage_start_oracle": {
+        "macro_f1_at_gold_count": 0.4694318468127992,
+        "macro_precision_at_gold_count": 0.4694318468127992,
+        "macro_recall_at_gold_count": 0.4694318468127992,
+        "mean_reciprocal_rank": 0.7878726929368238,
+        "mean_top1_distance": 0.38095238095238093,
+        "top1_accuracy": 0.6984126984126984,
+        "top3_accuracy": 0.8571428571428571,
+        "traces": 63
+      },
+      "forward_chronology": {
+        "macro_f1_at_gold_count": 0.00634920634920635,
+        "macro_precision_at_gold_count": 0.006349206349206349,
+        "macro_recall_at_gold_count": 0.006349206349206349,
+        "mean_reciprocal_rank": 0.048657026160158774,
+        "mean_top1_distance": 29.80952380952381,
+        "top1_accuracy": 0.0,
+        "top3_accuracy": 0.0,
+        "traces": 63
+      },
+      "longest_stage_end": {
+        "macro_f1_at_gold_count": 0.08120433358528596,
+        "macro_precision_at_gold_count": 0.08120433358528596,
+        "macro_recall_at_gold_count": 0.08120433358528596,
+        "mean_reciprocal_rank": 0.20845634933342677,
+        "mean_top1_distance": 13.936507936507937,
+        "top1_accuracy": 0.031746031746031744,
+        "top3_accuracy": 0.23809523809523808,
+        "traces": 63
+      },
+      "reverse_chronology": {
+        "macro_f1_at_gold_count": 0.24637188208616778,
+        "macro_precision_at_gold_count": 0.24637188208616778,
+        "macro_recall_at_gold_count": 0.24637188208616778,
+        "mean_reciprocal_rank": 0.37113608417982685,
+        "mean_top1_distance": 13.476190476190476,
+        "top1_accuracy": 0.23809523809523808,
+        "top3_accuracy": 0.4444444444444444,
+        "traces": 63
+      },
+      "stage_boundary_recency": {
+        "macro_f1_at_gold_count": 0.1744583018392542,
+        "macro_precision_at_gold_count": 0.1744583018392542,
+        "macro_recall_at_gold_count": 0.1744583018392542,
+        "mean_reciprocal_rank": 0.4059584983403447,
+        "mean_top1_distance": 13.476190476190476,
+        "top1_accuracy": 0.23809523809523808,
+        "top3_accuracy": 0.4444444444444444,
+        "traces": 63
+      },
+      "uniform_random": {
+        "macro_f1_at_gold_count": 0.11513605442176872,
+        "macro_precision_at_gold_count": 0.1151360544217687,
+        "macro_recall_at_gold_count": 0.1151360544217687,
+        "mean_reciprocal_rank": 0.23417578992490207,
+        "mean_top1_distance": 11.015873015873016,
+        "top1_accuracy": 0.09523809523809523,
+        "top3_accuracy": 0.2857142857142857,
+        "traces": 63
+      }
+    },
+    "negative_control_irrelevant_terminal_step": {
+      "forward_chronology": {
+        "injected_top1_accuracy": 0.0,
+        "original_top1_accuracy": 0.0
+      },
+      "longest_stage_end": {
+        "injected_top1_accuracy": 0.031746031746031744,
+        "original_top1_accuracy": 0.031746031746031744
+      },
+      "reverse_chronology": {
+        "injected_top1_accuracy": 0.0,
+        "original_top1_accuracy": 0.23809523809523808
+      },
+      "stage_boundary_recency": {
+        "injected_top1_accuracy": 0.23809523809523808,
+        "original_top1_accuracy": 0.23809523809523808
+      },
+      "uniform_random": {
+        "injected_top1_accuracy": 0.09523809523809523,
+        "original_top1_accuracy": 0.09523809523809523
+      }
+    },
+    "question": "How well do deterministic manifest-level baselines localize the human incorrect-step set?",
+    "status": "E3 baseline/scaffolding only: no raw action sequence, invariants, modal evidence, calibrated judge, taxonomy, or abstention was evaluated",
+    "target": "human incorrect_step_ids; the paper describes the earliest causal-chain origin as error-critical, but the released manifest may contain multiple incorrect steps and chains",
+    "unsupported_negative_controls": [
+      "wrong timestamps: manifest has no event timestamps",
+      "removed decisive evidence with calibrated abstention: baselines have no evidence model",
+      "environment or permission swap: manifest lacks those modalities"
+    ]
+  },
+  "e4_eval_assertion_mutation": {
+    "aggregate_by_assertion": {
+      "combined": {
+        "allowed_variants": 63,
+        "allowed_variants_rejected": 0,
+        "allowed_variation_false_positive_rate": 0.0,
+        "baseline_failures": 0,
+        "harmful_mutant_kill_rate": 1.0,
+        "harmful_mutants": 284,
+        "harmful_mutants_killed": 284
+      },
+      "exact_sequence": {
+        "allowed_variants": 63,
+        "allowed_variants_rejected": 63,
+        "allowed_variation_false_positive_rate": 1.0,
+        "baseline_failures": 0,
+        "harmful_mutant_kill_rate": 1.0,
+        "harmful_mutants": 284,
+        "harmful_mutants_killed": 284
+      },
+      "ordered_required": {
+        "allowed_variants": 63,
+        "allowed_variants_rejected": 0,
+        "allowed_variation_false_positive_rate": 0.0,
+        "baseline_failures": 0,
+        "harmful_mutant_kill_rate": 0.4014084507042254,
+        "harmful_mutants": 284,
+        "harmful_mutants_killed": 114
+      },
+      "unordered_required": {
+        "allowed_variants": 63,
+        "allowed_variants_rejected": 0,
+        "allowed_variation_false_positive_rate": 0.0,
+        "baseline_failures": 0,
+        "harmful_mutant_kill_rate": 0.22183098591549297,
+        "harmful_mutants": 284,
+        "harmful_mutants_killed": 63
+      }
+    },
+    "assertion_semantics": {
+      "combined": "ordered required IDs, exactly one occurrence, and label/reference fingerprint equality while allowing unrelated extra events",
+      "exact_sequence": "all annotated events must be byte-for-byte identical",
+      "ordered_required": "required annotated step IDs remain an ordered subsequence",
+      "unordered_required": "the required annotated step-ID set remains present"
+    },
+    "mutation_matrix": {
+      "alter_action_reference": {
+        "assertions": {
+          "combined": {
+            "failures": 22,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 22,
+            "mutant_kill_rate": 1.0
+          },
+          "ordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "unordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 22
+      },
+      "alter_observation_reference": {
+        "assertions": {
+          "combined": {
+            "failures": 22,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 22,
+            "mutant_kill_rate": 1.0
+          },
+          "ordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "unordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 22
+      },
+      "duplicate_required": {
+        "assertions": {
+          "combined": {
+            "failures": 63,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 63,
+            "mutant_kill_rate": 1.0
+          },
+          "ordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "unordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 63
+      },
+      "inject_irrelevant": {
+        "assertions": {
+          "combined": {
+            "failures": 0,
+            "false_positive_rate": 0.0
+          },
+          "exact_sequence": {
+            "failures": 63,
+            "false_positive_rate": 1.0
+          },
+          "ordered_required": {
+            "failures": 0,
+            "false_positive_rate": 0.0
+          },
+          "unordered_required": {
+            "failures": 0,
+            "false_positive_rate": 0.0
+          }
+        },
+        "classification": "allowed_variation",
+        "supported_traces": 63
+      },
+      "relabel_required": {
+        "assertions": {
+          "combined": {
+            "failures": 63,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 63,
+            "mutant_kill_rate": 1.0
+          },
+          "ordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "unordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 63
+      },
+      "remove_required": {
+        "assertions": {
+          "combined": {
+            "failures": 63,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 63,
+            "mutant_kill_rate": 1.0
+          },
+          "ordered_required": {
+            "failures": 63,
+            "mutant_kill_rate": 1.0
+          },
+          "unordered_required": {
+            "failures": 63,
+            "mutant_kill_rate": 1.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 63
+      },
+      "reorder_required": {
+        "assertions": {
+          "combined": {
+            "failures": 51,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 51,
+            "mutant_kill_rate": 1.0
+          },
+          "ordered_required": {
+            "failures": 51,
+            "mutant_kill_rate": 1.0
+          },
+          "unordered_required": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 51
+      }
+    },
+    "mutation_target_selection": "one supported target per trace and mutation, selected by SHA-256 of seed, trajectory ID, mutation, and step ID",
+    "question": "Which retrospective assertions detect seeded changes without rejecting an irrelevant extra event?",
+    "seed": 20260730,
+    "status": "annotation-derived retrospective audit mutation test; not a runnable agent eval and not evidence that a future behavior was corrected",
+    "unsupported_assertions": [
+      "semantic terminal condition",
+      "independently observed external state delta",
+      "authorization or policy decision",
+      "tool argument or result mutation outside annotated references"
+    ]
+  },
+  "result_content_sha256": "32e3be131f700a7df6a3c377a5ed5f8ad8f1d1b6af76031eaeef10eaa13251f3",
+  "run_date": "2026-07-30",
+  "schema_version": "frankengate-trace-empirical-result-v1",
+  "seed": 20260730,
+  "source": {
+    "dataset_id": "NJU-LINK/CodeTraceBench",
+    "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+    "dataset_url": "https://huggingface.co/datasets/NJU-LINK/CodeTraceBench/tree/aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+    "inputs": {
+      "bench_manifest.full.parquet": {
+        "rows": 3316,
+        "sha256": "0c25108022f518d09505d66cee7a8baeaa2d64708c98e8a66a061819c0b3da6d"
+      },
+      "bench_manifest.verified.parquet": {
+        "rows": 1000,
+        "sha256": "ae5926b496f2f7f4c3f6337c0ad6150311d3650c5f3bd00660556b3e41739505"
+      }
+    },
+    "license": "MIT",
+    "paper_url": "https://arxiv.org/abs/2604.11641",
+    "raw_data_committed": false,
+    "raw_trajectory_artifacts_downloaded": false
+  },
+  "split_audit": {
+    "full_counts": {
+      "dev": 776,
+      "test": 529,
+      "train": 2011
+    },
+    "method": "source-stratified greedy 70/15/15 assignment over verified rows; repository/task groups remain indivisible across sources, and a cross-source group is placed in its modal source stratum",
+    "parent_split_mismatches": 0,
+    "repository_groups_crossing_splits": 0,
+    "task_groups_crossing_splits": 0,
+    "unknown_source_rows": {
+      "full": 146,
+      "verified": 8
+    },
+    "verified_counts": {
+      "dev": 152,
+      "test": 148,
+      "train": 700
+    },
+    "verified_missing_full_parent": 0,
+    "verified_source_by_split": {
+      "multi-swe-bench": {
+        "dev": 7,
+        "test": 6,
+        "train": 31
+      },
+      "swe-bench-pro": {
+        "dev": 13,
+        "test": 12,
+        "train": 59
+      },
+      "swe-bench-verified": {
+        "dev": 32,
+        "test": 32,
+        "train": 148
+      },
+      "swe-polybench": {
+        "dev": 23,
+        "test": 22,
+        "train": 104
+      },
+      "terminal-bench": {
+        "dev": 77,
+        "test": 73,
+        "train": 353
+      },
+      "unknown-source": {
+        "test": 3,
+        "train": 5
+      }
+    },
+    "verified_to_full_parent_overlap": 1000
+  }
+}

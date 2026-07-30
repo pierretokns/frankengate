@@ -38,9 +38,13 @@ not a durable enterprise fact or user memory. Fact promotion requires scoped
 semantic evidence and review that this outcome-free public corpus does not
 provide.
 
-The seven procedure proposals require a bounded same-tool
-failure-to-completion transition. They are review candidates, not claims that
-the task recovered or that the procedure is correct.
+The seven procedure proposals contain 89 transitions produced by the same
+canonical bounded-recovery constructor used for the independent share-codex
+comparison. Each transition requires an explicitly typed error, unique
+proposal/result linkage, a newly proposed post-error action in the same
+controlled tool family, a successful result within 12 lifecycle events, and
+greedy one-to-one assignment. They are review candidates, not claims that the
+task recovered or that the procedure is correct.
 
 ## Fail-closed authority result
 
@@ -83,7 +87,7 @@ The first end-to-end run failed the lineage invariant. The earlier proposal
 generator had created six evidence-empty proposals—two each of eval, fact, and
 procedure. The benchmark stopped rather than publishing a partial success.
 
-The loader was then tightened to:
+The loader was then tightened in derivation v1 to:
 
 - emit eval proposals only for explicit errors or conformance failures with
   evidence;
@@ -97,6 +101,13 @@ lifecycle and lineage assertions then passed. This iteration is evidence that
 the benchmark tests a substantive release boundary rather than merely counting
 rows.
 
+After the independent Wisp/share-codex replication exposed incomparable
+corpus-specific recovery rules, derivation v2 replaced the exact-native-tool
+heuristic with the shared controlled-family constructor. The v2 reload
+explicitly removed superseded v1 and prior v2 rows before rematerializing 11
+eval, zero fact, and seven procedure proposals. The authorization, lifecycle,
+and lineage gauntlet passed again against v2.
+
 ## Warm-cache latency
 
 One hundred sequential iterations on local PostgreSQL 16.12 with pgvector
@@ -104,10 +115,10 @@ One hundred sequential iterations on local PostgreSQL 16.12 with pgvector
 
 | Query | p50 | p95 | Maximum |
 | --- | ---: | ---: | ---: |
-| Personal history page | 1.38 ms | 1.65 ms | 1.77 ms |
-| Controlled FTS | 2.84 ms | 3.50 ms | 3.64 ms |
-| Proposal review queue | 1.50 ms | 1.85 ms | 2.41 ms |
-| Structural tool events | 23.13 ms | 24.68 ms | 51.04 ms |
+| Personal history page | 1.46 ms | 1.68 ms | 1.74 ms |
+| Controlled FTS | 2.70 ms | 3.21 ms | 3.43 ms |
+| Proposal review queue | 1.41 ms | 1.72 ms | 1.96 ms |
+| Structural tool events | 23.29 ms | 24.27 ms | 49.45 ms |
 
 The structural-event plan is the clear first optimization target. It returns
 4,416 authorized tool lifecycle events, performs repeated indexed event

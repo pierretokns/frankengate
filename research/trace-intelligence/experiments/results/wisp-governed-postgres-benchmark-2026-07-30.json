@@ -81,31 +81,31 @@
   "latency": {
     "controlled_fts": {
       "iterations": 100,
-      "max_ms": 3.644625,
-      "mean_ms": 2.887448,
-      "p50_ms": 2.844271,
-      "p95_ms": 3.504733
+      "max_ms": 3.433709,
+      "mean_ms": 2.740519,
+      "p50_ms": 2.695,
+      "p95_ms": 3.207806
     },
     "personal_history_page": {
       "iterations": 100,
-      "max_ms": 1.774041,
-      "mean_ms": 1.401349,
-      "p50_ms": 1.37575,
-      "p95_ms": 1.647779
+      "max_ms": 1.737959,
+      "mean_ms": 1.473065,
+      "p50_ms": 1.460333,
+      "p95_ms": 1.67599
     },
     "proposal_queue": {
       "iterations": 100,
-      "max_ms": 2.408542,
-      "mean_ms": 1.518652,
-      "p50_ms": 1.496563,
-      "p95_ms": 1.849871
+      "max_ms": 1.961291,
+      "mean_ms": 1.439243,
+      "p50_ms": 1.408813,
+      "p95_ms": 1.717683
     },
     "structural_tool_events": {
       "iterations": 100,
-      "max_ms": 51.040791,
-      "mean_ms": 23.72631,
-      "p50_ms": 23.128917,
-      "p95_ms": 24.682271
+      "max_ms": 49.4515,
+      "mean_ms": 23.856414,
+      "p50_ms": 23.292813,
+      "p95_ms": 24.273219
     }
   },
   "personal_history_pagination": {
@@ -138,12 +138,12 @@
   },
   "query_plans": {
     "controlled_fts": {
-      "execution_time_ms": 1.752,
+      "execution_time_ms": 1.85,
       "nodes": [
         {
           "actual_loops": 1,
           "actual_rows": 17,
-          "actual_total_time_ms": 1.736,
+          "actual_total_time_ms": 1.831,
           "depth": 0,
           "node_type": "Limit",
           "plan_rows": 1,
@@ -155,7 +155,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 17,
-          "actual_total_time_ms": 1.734,
+          "actual_total_time_ms": 1.83,
           "depth": 1,
           "node_type": "Sort",
           "plan_rows": 1,
@@ -167,7 +167,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 17,
-          "actual_total_time_ms": 1.729,
+          "actual_total_time_ms": 1.823,
           "depth": 2,
           "join_type": "Inner",
           "node_type": "Nested Loop",
@@ -180,7 +180,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 17,
-          "actual_total_time_ms": 1.438,
+          "actual_total_time_ms": 1.455,
           "depth": 3,
           "node_type": "Seq Scan",
           "plan_rows": 1,
@@ -207,7 +207,7 @@
         {
           "actual_loops": 17,
           "actual_rows": 1,
-          "actual_total_time_ms": 0.007,
+          "actual_total_time_ms": 0.008,
           "depth": 3,
           "index": "trajectories_pkey",
           "node_type": "Index Scan",
@@ -219,16 +219,16 @@
           "temp_written_blocks": 0
         }
       ],
-      "planning_time_ms": 0.267,
+      "planning_time_ms": 0.238,
       "predicates_and_literals_emitted": false
     },
     "personal_history": {
-      "execution_time_ms": 0.69,
+      "execution_time_ms": 0.584,
       "nodes": [
         {
           "actual_loops": 1,
           "actual_rows": 20,
-          "actual_total_time_ms": 0.673,
+          "actual_total_time_ms": 0.572,
           "depth": 0,
           "node_type": "Limit",
           "plan_rows": 2,
@@ -240,7 +240,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 20,
-          "actual_total_time_ms": 0.671,
+          "actual_total_time_ms": 0.571,
           "depth": 1,
           "node_type": "Sort",
           "plan_rows": 2,
@@ -252,7 +252,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 104,
-          "actual_total_time_ms": 0.652,
+          "actual_total_time_ms": 0.552,
           "depth": 2,
           "node_type": "Bitmap Heap Scan",
           "plan_rows": 2,
@@ -265,7 +265,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 0,
-          "actual_total_time_ms": 0.036,
+          "actual_total_time_ms": 0.032,
           "depth": 3,
           "node_type": "BitmapAnd",
           "plan_rows": 7,
@@ -277,7 +277,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 0,
-          "actual_total_time_ms": 0.023,
+          "actual_total_time_ms": 0.019,
           "depth": 4,
           "node_type": "BitmapOr",
           "plan_rows": 27,
@@ -289,7 +289,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 208,
-          "actual_total_time_ms": 0.021,
+          "actual_total_time_ms": 0.018,
           "depth": 5,
           "index": "trajectories_tenant_owner_created_idx",
           "node_type": "Bitmap Index Scan",
@@ -315,7 +315,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 208,
-          "actual_total_time_ms": 0.011,
+          "actual_total_time_ms": 0.01,
           "depth": 4,
           "index": "trajectories_task_idx",
           "node_type": "Bitmap Index Scan",
@@ -326,16 +326,16 @@
           "temp_written_blocks": 0
         }
       ],
-      "planning_time_ms": 0.065,
+      "planning_time_ms": 0.036,
       "predicates_and_literals_emitted": false
     },
     "structural_tool_events": {
-      "execution_time_ms": 22.025,
+      "execution_time_ms": 21.95,
       "nodes": [
         {
           "actual_loops": 1,
           "actual_rows": 20,
-          "actual_total_time_ms": 21.993,
+          "actual_total_time_ms": 21.925,
           "depth": 0,
           "node_type": "Limit",
           "plan_rows": 11,
@@ -347,7 +347,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 20,
-          "actual_total_time_ms": 21.992,
+          "actual_total_time_ms": 21.924,
           "depth": 1,
           "node_type": "Sort",
           "plan_rows": 11,
@@ -359,7 +359,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 4416,
-          "actual_total_time_ms": 21.591,
+          "actual_total_time_ms": 21.541,
           "depth": 2,
           "join_type": "Inner",
           "node_type": "Nested Loop",
@@ -372,7 +372,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 104,
-          "actual_total_time_ms": 0.71,
+          "actual_total_time_ms": 0.619,
           "depth": 3,
           "node_type": "Bitmap Heap Scan",
           "plan_rows": 2,
@@ -409,7 +409,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 208,
-          "actual_total_time_ms": 0.017,
+          "actual_total_time_ms": 0.018,
           "depth": 6,
           "index": "trajectories_tenant_owner_created_idx",
           "node_type": "Bitmap Index Scan",
@@ -435,7 +435,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 208,
-          "actual_total_time_ms": 0.009,
+          "actual_total_time_ms": 0.01,
           "depth": 5,
           "index": "trajectories_task_idx",
           "node_type": "Bitmap Index Scan",
@@ -462,7 +462,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 104,
-          "actual_total_time_ms": 0.532,
+          "actual_total_time_ms": 0.502,
           "depth": 4,
           "node_type": "Bitmap Heap Scan",
           "plan_rows": 9,
@@ -475,7 +475,7 @@
         {
           "actual_loops": 1,
           "actual_rows": 0,
-          "actual_total_time_ms": 0.012,
+          "actual_total_time_ms": 0.011,
           "depth": 5,
           "node_type": "BitmapOr",
           "plan_rows": 27,
@@ -511,7 +511,7 @@
           "temp_written_blocks": 0
         }
       ],
-      "planning_time_ms": 0.231,
+      "planning_time_ms": 0.173,
       "predicates_and_literals_emitted": false
     }
   },

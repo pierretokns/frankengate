@@ -1,0 +1,87 @@
+{
+  "ATIF_v1_7": {
+    "canonical_event_identity_retained": 0,
+    "canonical_event_identity_retention": 0.0,
+    "canonical_parent_edge_retention": 0.0,
+    "canonical_parent_edges_retained": 0,
+    "capability_receipt_fixture_counts": {
+      "authorization": 6,
+      "dag": 12,
+      "environment": 1,
+      "evaluation": 12,
+      "parallelism": 1,
+      "replay": 1
+    },
+    "loss_item_categories": {
+      "redacted": 10,
+      "unsupported": 105
+    },
+    "native_adapter_loss_item_categories": {
+      "dropped": 48,
+      "reconstructed": 12,
+      "unsupported": 41
+    },
+    "reimported_events": 12,
+    "silent_drop_count": 0,
+    "target_revision": "ATIF-v1.7"
+  },
+  "OpenInference_OTel": {
+    "canonical_event_identity_retained": 48,
+    "canonical_event_identity_retention": 1.0,
+    "canonical_parent_edge_retention": 1.0,
+    "canonical_parent_edges_retained": 34,
+    "capability_receipt_fixture_counts": {
+      "authorization": 6,
+      "dag": 12,
+      "environment": 1,
+      "evaluation": 12,
+      "parallelism": 1,
+      "replay": 1
+    },
+    "loss_item_categories": {
+      "normalized": 73,
+      "reconstructed": 96,
+      "redacted": 75,
+      "unsupported": 3
+    },
+    "openinference_revision": "789d41974c08a9a13147977f28ef4142a07e2106",
+    "otel_core_revision": "89aae438b3b3b0a8dd33003c9d70592baf7dbd0d",
+    "otel_genai_revision": "434c91dcc34ed038e3048c07720ddfed2c6bddfc",
+    "projected_spans": 48,
+    "reimported_events": 48,
+    "silent_drop_count": 0,
+    "target_revision": "OpenInference-v0.1.30+OTel-SemConv-v1.43.0"
+  },
+  "claim_limits": [
+    "ATIF and OpenInference/OTel are projections, not canonical authorization or evidence stores",
+    "event identity/topology retention does not imply content, environment, evaluation, or replay fidelity",
+    "the OTLP envelope is dependency-free research JSON and has not been round-tripped through a production collector",
+    "synthetic governed fixtures test conformance edge cases, not population prevalence or enterprise outcomes"
+  ],
+  "determinism_and_mutation": {
+    "all_passed": true,
+    "checks": {
+      "atif_projection": 12,
+      "atif_reimport": 12,
+      "otel_projection": 12,
+      "otel_reimport": 12,
+      "source_immutability": 12
+    },
+    "receipt_hashes_cover_source_and_projection": true
+  },
+  "fixture_corpus": {
+    "canonical_events": 48,
+    "canonical_parent_edges": 34,
+    "capability_fixture_counts": {
+      "authorization": 6,
+      "dag": 12,
+      "environment": 1,
+      "evaluation": 12,
+      "parallelism": 1,
+      "replay": 1
+    },
+    "fixtures": 12,
+    "raw_fixtures_or_identifiers_emitted": false
+  },
+  "schema_version": "canonical-projection-e0-conformance-result-v1"
+}

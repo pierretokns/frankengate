@@ -1,0 +1,185 @@
+{
+  "architecture_decision": {
+    "custom_embedding_model_justified": false,
+    "new_database_justified": false,
+    "persistent_systems": [
+      "one governed PostgreSQL canonical evidence and proposal store"
+    ],
+    "projections": [
+      "ATIF v1.7 for explicitly mapped portable tasks/evals",
+      "OpenInference/OTLP for content-minimized operational topology"
+    ],
+    "reason": "current failures are labels, outcome validity, calibration, and prospective causality\u2014not demonstrated vector scale"
+  },
+  "enterprise_questions": {
+    "find_people_doing_similar_work": {
+      "basis": "no admitted cross-user semantic/outcome cohort was run",
+      "next_gate": "authorized SWE-chat or consented enterprise same-task labels with cohort privacy",
+      "status": "not_tested"
+    },
+    "find_repeated_friction_and_later_recovery": {
+      "basis": "one canonical constructor on Wisp and share-codex",
+      "next_gate": "human outcome labels and prospective validation",
+      "status": "review_candidates_supported"
+    },
+    "fine_tune_enterprise_embeddings": {
+      "basis": "no frozen E2 hard slice or hybrid baseline comparison",
+      "next_gate": "at least +5 absolute Recall@20 over the general hybrid baseline without RLS/deletion/latency regression",
+      "status": "premature"
+    },
+    "identify_missing_cloud_or_domain_skills": {
+      "basis": "CodeTrace/MAST labels describe trajectory events, not human capability",
+      "next_gate": "reviewed capability taxonomy, environmental-availability labels, abstention, and prospective task uplift",
+      "status": "not_supported"
+    },
+    "recommend_collaboration": {
+      "basis": "trace similarity is not collaboration utility",
+      "next_gate": "reciprocal opt-in introductions and independently measured outcomes under minimum cohorts",
+      "status": "not_supported"
+    },
+    "show_each_user_all_currently_authorized_history": {
+      "basis": "Wisp governed PostgreSQL pagination and denial matrix",
+      "next_gate": "complete permission-oracle/deletion/failover gauntlet",
+      "status": "local_mechanics_supported"
+    },
+    "suggest_evals_from_traces": {
+      "basis": "Wisp evidence-linked proposals plus CodeTraceBench mutation mechanics",
+      "next_gate": "guided harness/environment/verifier construction and changed-system execution",
+      "status": "proposal_and_audit_mechanics_supported"
+    },
+    "write_memory_or_memory_md": {
+      "basis": "Wisp correctly emitted zero fact proposals",
+      "next_gate": "bitemporal contradiction benchmark, citations, review, rollback, and later-query utility",
+      "status": "not_supported"
+    }
+  },
+  "input_receipts": {
+    "cmu_access": {
+      "filename": "cmu-access-audit-2026-07-30.json",
+      "schema_version": "trace-dataset-access-audit-v1",
+      "sha256": "5a2d9f1d2b6ece2abeec5ecf3a076f0535fe037960bebe5e86473939551de0dd"
+    },
+    "codetracebench": {
+      "filename": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
+      "schema_version": "frankengate-trace-empirical-result-v1",
+      "sha256": "63fed0b30f6c7e617a86d6ef754e5266614299beea61da93f86b378e15419e3f"
+    },
+    "mast": {
+      "filename": "mast_multiagent_empirical-2026-07-30.json",
+      "schema_version": "mast-multiagent-empirical-result-v1",
+      "sha256": "1433bd56431176dd91cfd732c4a0c299690dfa44346137516d24c2d33cfdee7c"
+    },
+    "projection": {
+      "filename": "canonical-projection-e0-conformance-2026-07-30.json",
+      "schema_version": "canonical-projection-e0-conformance-result-v1",
+      "sha256": "8801a8a520db47215ffe3f799f152d3d5c72947f3c3b6bd8d191cc2876499f02"
+    },
+    "wisp_governed": {
+      "filename": "wisp-governed-postgres-benchmark-2026-07-30.json",
+      "schema_version": "governed-wisp-postgres-benchmark-v1",
+      "sha256": "8dc153c0728637e5b58de8a247ee090ca6bf7c196a1d2ab9b456725bd769b1cb"
+    },
+    "wisp_recovery": {
+      "filename": "wisp-share-codex-canonical-bounded-recovery-2026-07-30.json",
+      "schema_version": "canonical-bounded-recovery-episode-v1",
+      "sha256": "16b8d54b7cc7d00e17c55ccfb13e186e1868f5e6f8c03a38473577c58a7875d2"
+    }
+  },
+  "levels": {
+    "L0_evidence_conformance": {
+      "blocking_gap": "no real collector round trip, incomplete native-source set, and ATIF is deliberately non-reversible for enterprise events",
+      "decision": "keep one governed canonical DAG; ATIF and OTel remain receipted projections",
+      "evidence": {
+        "atif_event_identity_retention": 0.0,
+        "atif_parent_edge_retention": 0.0,
+        "atif_silent_drops": 0,
+        "governed_fixture_events": 48,
+        "mast_silent_line_drops": 0,
+        "mast_source_lines": 897277,
+        "otel_event_identity_retention": 1.0,
+        "otel_parent_edge_retention": 1.0,
+        "otel_silent_drops": 0
+      },
+      "status": "partial"
+    },
+    "L1_personal_authority": {
+      "blocking_gap": "permission-oracle equality across every surface, deletion closure, concurrent policy churn, restart, replica, and failover remain untested",
+      "evidence": {
+        "all_tested_denials_zero_before_ranking": true,
+        "history_page_p95_ms": 1.67599,
+        "private_trajectories": 104,
+        "proposal_queue_p95_ms": 1.717683
+      },
+      "status": "local_partial_pass"
+    },
+    "L2_cheap_evidence_finding": {
+      "decision": "retain deterministic signals as review filters plus a random audit stratum; do not claim enrichment gate success",
+      "evidence": {
+        "codetrace_test_rows": 148,
+        "exceeds_random_95_interval": false,
+        "random_precision_mean": 0.426,
+        "required_absolute_lift": 0.15,
+        "structural_precision": 0.5666666666666667,
+        "structural_precision_lift": 0.14066666666666666,
+        "ties_trace_length": true
+      },
+      "status": "does_not_meet_gate"
+    },
+    "L3_diagnosis_and_eval_proposals": {
+      "diagnosis": {
+        "annotation_oracle_top1": 0.6984126984126984,
+        "best_blind_method": "reverse_chronology",
+        "best_blind_top1": 0.23809523809523808,
+        "gain_over_random": 0.14285714285714285,
+        "pass": false,
+        "random_top1": 0.09523809523809523,
+        "reason": "no invariants\u00d7topology\u00d7judge factorial, deterministic error baseline, calibrated abstention, or evidence entailment"
+      },
+      "multi_agent_taxonomy": {
+        "finalized_human_judge_overlap": 0,
+        "human_judge_scoring_status": "not_run_no_finalized_taxonomy_trace_overlap",
+        "pass": false,
+        "reason": "released human and judge partitions cannot reproduce finalized human-vs-judge accuracy",
+        "released_judge_traces": 1242
+      },
+      "retrospective_eval": {
+        "allowed_variation_false_positive_rate": 0.0,
+        "combined_harmful_mutants": 284,
+        "combined_kill_rate": 1.0,
+        "pass": false,
+        "reason": "annotation-derived mutation mechanics passed, but no independent verifier or changed-system rerun exists"
+      },
+      "status": "mixed_partial"
+    },
+    "L4_semantic_candidate_retrieval": {
+      "decision": "do not add or fine-tune an embedding model until a common labelled candidate-set comparison beats exact+FTS+structured",
+      "status": "missing"
+    },
+    "L5_temporal_memory": {
+      "decision": "zero facts is the correct current output; temporal truth, contradiction, citation, and rollback tests are missing",
+      "evidence": {
+        "wisp_fact_proposals": 0
+      },
+      "status": "abstained"
+    },
+    "L6_procedural_replay": {
+      "decision": "structural recovery candidates may seed reviewed procedures, but no no-memory/relevant/placebo/oracle replay has run",
+      "evidence": {
+        "share_codex_recovery_review_candidates": 31,
+        "wisp_recovery_review_candidates": 89
+      },
+      "status": "missing"
+    },
+    "L7_to_L10": {
+      "decision": "no utility routing, enterprise release, domain embedding adaptation, or generator fine-tuning claim is authorized",
+      "evidence": {
+        "cmu_access_status": "requires_approval",
+        "cmu_empirical_metrics_run": false
+      },
+      "status": "gated"
+    }
+  },
+  "overall_status": "useful L0-L3 mechanics and negative results; no E0-E7 acceptance block is complete",
+  "result_sha256": "47e8f110727048760f4f876754980baf8ebdf16485fdb66ad8490c3ef7a7780f",
+  "schema_version": "frankengate-combined-evidence-matrix-v1"
+}

@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: >-
+  If you use this research artifact, cite the Frankengate trace-intelligence
+  program and the upstream datasets named by the exact manifest revisions.
+title: Frankengate Trace Intelligence Research Program
+type: software
+version: 0.1.0
+date-released: 2026-07-30
+authors:
+  - name: Frankengate Research Contributors
+repository-code: https://github.com/pierretokns/frankengate
+license: Apache-2.0
+keywords:
+  - agent traces
+  - evaluation
+  - OpenTelemetry
+  - ATIF
+  - PostgreSQL row-level security

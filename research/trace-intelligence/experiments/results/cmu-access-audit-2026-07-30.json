@@ -1,0 +1,34 @@
+{
+  "schema_version": "trace-dataset-access-audit-v1",
+  "audit_date": "2026-07-30",
+  "dataset": {
+    "id": "cx-cmu/agent_trajectories",
+    "revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+    "license": "NOASSERTION"
+  },
+  "method": {
+    "operation": "authenticated_hugging_face_dry_run",
+    "raw_download_requested": false,
+    "raw_data_committed": false,
+    "account_identifier_recorded": false
+  },
+  "result": {
+    "status": "requires_approval",
+    "repository_files_discovered_before_denial": 23,
+    "raw_dataset_files_available_locally": 0,
+    "empirical_metrics_run": false
+  },
+  "published_card_metadata_available": {
+    "retained_trajectories": 8653,
+    "removed_incomplete_trajectories": 1445,
+    "benchmarks": 6,
+    "models": 5,
+    "maximum_independent_passes": 4
+  },
+  "claim_boundary": [
+    "Adapter conformance can be tested from the published schema.",
+    "No CMU trajectory-level empirical result may be reported until access is approved.",
+    "The missing license prevents raw redistribution even after access.",
+    "Independent passes cannot be described as user or model learning."
+  ]
+}

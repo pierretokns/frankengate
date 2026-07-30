@@ -1,0 +1,57 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "mcemri/MAST-Data",
+  "dataset_revision": "5a82e32347f70a701a3c68637de12f8a0be3de3c",
+  "license": "CC-BY-4.0",
+  "source_url": "https://huggingface.co/datasets/mcemri/MAST-Data",
+  "source_format": "two schema-incompatible JSON arrays",
+  "adapter": "mast-heterogeneous-text-v1",
+  "admission_status": "admitted_for_multi_agent_failure_research",
+  "access": "public",
+  "source_files": [
+    {
+      "path": "MAD_full_dataset.json",
+      "sha256": "a182daadb8ded015efc889db8bde29e5e4dd478e0dcc5516f6727a1bbc43eaec",
+      "size_bytes": 63463757,
+      "annotation_authority": "llm_judge"
+    },
+    {
+      "path": "MAD_human_labelled_dataset.json",
+      "sha256": "30a0c4075078e9a1b8c39bc608d2b5156cc64c6bda1f6fd262786eb81ff4a286",
+      "size_bytes": 2662908,
+      "annotation_authority": "human_expert_votes"
+    }
+  ],
+  "source_code": {
+    "repository": "multi-agent-systems-failure-taxonomy/MAST",
+    "revision": "a70542e541b2104ef8fcd785778179e173fb8d70",
+    "stable_tag": null,
+    "license_file_present": false,
+    "pinned_files": [
+      {
+        "path": "taxonomy_definitions_examples/definitions.txt",
+        "sha256": "bfefa4f2c788fa1658f6879afa8a2b4577a027f224ce3e3b6ba0927dfd82f9ce"
+      },
+      {
+        "path": "llm_judge_pipeline.ipynb",
+        "sha256": "0a40d8e29d766f27eb0d436ee9d4d41b0da0777a05f540991a56e5154ef2e850"
+      },
+      {
+        "path": "README.md",
+        "sha256": "c92db95b313ce46565917964a7d20d41463a7c50da17e5477e9b22e02824ed56"
+      }
+    ]
+  },
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "aggregate_results_only": true,
+    "human_and_judge_files_loaded_separately": true
+  },
+  "admission_scope": "multi_agent_system_failure_research_only",
+  "non_transfer_claims": [
+    "single_agent_trace_diagnosis",
+    "human_skill_or_productivity_inference",
+    "enterprise_user_or_team_behavior"
+  ]
+}

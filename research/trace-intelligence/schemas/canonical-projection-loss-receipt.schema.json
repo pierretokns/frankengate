@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.dev/schemas/research/canonical-projection-loss-receipt-v1.json",
+  "title": "Frankengate canonical projection loss receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "direction",
+    "source_format",
+    "target_format",
+    "source_event_count",
+    "accounted_source_event_count",
+    "silently_dropped_event_count",
+    "source_sha256",
+    "projection_sha256",
+    "item_category_counts",
+    "capability_summary",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "canonical-projection-loss-receipt-v1"
+    },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "direction": {
+      "type": "string"
+    },
+    "source_format": {
+      "type": "string"
+    },
+    "target_format": {
+      "type": "string"
+    },
+    "source_event_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "accounted_source_event_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "silently_dropped_event_count": {
+      "const": 0
+    },
+    "source_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "projection_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "native_receipt_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "native_receipt": {
+      "type": "object"
+    },
+    "item_category_counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "capability_summary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "present",
+          "source_field_count",
+          "receipted_field_count",
+          "categories"
+        ]
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "capability",
+          "category",
+          "path",
+          "reason"
+        ],
+        "properties": {
+          "capability": {
+            "type": "string"
+          },
+          "category": {
+            "enum": [
+              "exact",
+              "normalized",
+              "reconstructed",
+              "aggregated",
+              "redacted",
+              "unsupported",
+              "dropped"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "target_path": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

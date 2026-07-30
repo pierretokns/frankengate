@@ -3,6 +3,39 @@
 This directory is the reproducible artifact for the trace-intelligence empirical
 program. It is deliberately separate from the production analytics service.
 
+Raw public, gated, and enterprise traces never belong in this repository. Dataset
+manifests pin upstream revisions and rights; adapters read explicit external paths;
+committed results are aggregate-only. A public trace is not permission to infer a
+person's competence, productivity, or collaboration needs.
+
+## Reproduce the committed artifact
+
+The dependency lock covers the tested Python 3.9–3.13 range. PyArrow 21 does
+not publish a Python 3.14 wheel, so the upper bound is deliberate:
+
+```bash
+cd research/trace-intelligence
+uv sync --python 3.9 --frozen
+uv run make verify
+```
+
+`make verify` runs every unit/conformance test, validates dataset manifests and
+canonical governed fixtures, parses every aggregate result, checks that no raw corpus
+file is committed, and compiles the Python harness. It performs no network request,
+model call, database mutation, or dataset download.
+
+The governed Wisp target is intentionally separate because it mutates a disposable
+research schema and requires explicit private inputs:
+
+```bash
+make governed-wisp \
+  GOVERNED_POSTGRES_DSN='postgresql://…' \
+  WISP_CORPUS_ROOT='/private/research-cache/wisp/transcripts'
+```
+
+See `CITATION.cff`, `LICENSES.md`, each `configs/datasets/*.json` manifest, and each
+`experiments/summaries/*.md` interpretation before reusing a result.
+
 The first executable pilot answers two narrow questions:
 
 1. Can a native SWE-agent conversation be converted into a source-neutral event
@@ -44,6 +77,10 @@ python3 -m unittest discover \
   -p 'test_*.py'
 ```
 
+The frozen environment adds `jsonschema`, `psycopg2-binary`, and `pyarrow` for
+artifact validation, governed PostgreSQL experiments, and admitted Parquet manifests.
+Core adapters and most tests remain standard-library-only.
+
 The paper-grade design, gates, and later E0–E7 experiments are specified in
 [`docs/roadmap/research/trace-intelligence-public-dataset-empirical-program.md`](../../docs/roadmap/research/trace-intelligence-public-dataset-empirical-program.md).
 
@@ -58,3 +95,18 @@ and results as typed events.
 The eight-dimensional vectors in this lab encode deterministic signal features. They
 exercise PostgreSQL authorization and retrieval composition only; they are not an
 embedding-quality experiment.
+
+## Claim boundary
+
+The committed experiments currently establish representation, authorization,
+structural-selection, and proposal mechanics. They do not yet satisfy the program's
+full E0–E7 acceptance gates. In particular:
+
+- a bounded failure-to-later-success episode is a review candidate, not causal repair;
+- a stored-trace assertion is a retrospective audit, not a rerun;
+- an independent benchmark pass is not longitudinal user learning;
+- no public corpus supplies a gold enterprise skill-gap label;
+- cross-user suggestions require consent, minimum cohorts, privacy defenses, and
+  prospective outcomes; and
+- custom embeddings remain gated on a frozen hard slice where exact, PostgreSQL
+  full-text, and structured retrieval demonstrably fail.

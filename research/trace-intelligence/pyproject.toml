@@ -1,0 +1,13 @@
+[project]
+name = "frankengate-trace-intelligence-research"
+version = "0.1.0"
+description = "Reproducible, governed experiments for Frankengate agent-trace intelligence"
+requires-python = ">=3.9,<3.14"
+dependencies = [
+  "jsonschema==4.25.1",
+  "psycopg2-binary==2.9.11",
+  "pyarrow==21.0.0",
+]
+
+[tool.uv]
+package = false

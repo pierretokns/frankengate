@@ -1,0 +1,1090 @@
+{
+  "annotation_overlap": {
+    "development_overlap_exclusion": "Development-round labels use incompatible mode definitions and numeric identities, so their overlapping traces are not used to score the judge.",
+    "exact_trace_sha256_overlap": {
+      "development_human_vs_judge": 3,
+      "finalized_human_vs_judge": 0
+    },
+    "human_vs_judge_scoring_status": "not_run_no_finalized_taxonomy_trace_overlap"
+  },
+  "canonical_projection": {
+    "adapter": "mast-heterogeneous-text-v1",
+    "aggregate": {
+      "canonical_events": 897277,
+      "observed_complete_edges": 2025,
+      "observed_partial_edges": 2258,
+      "observed_role_markers": 12890,
+      "reconstructed_adjacent_edges": 7032,
+      "reconstructed_role_scope_lines": 815146,
+      "silently_dropped_lines": 0,
+      "source_lines": 897277,
+      "traces": 1242,
+      "unknown_role_lines": 69241
+    },
+    "edge_semantics": {
+      "observed_complete": "one source marker names both endpoints",
+      "observed_partial": "one source marker names only sender or receiver",
+      "reconstructed_adjacent": "two consecutive explicit speaker markers differ; this is a turn-order reconstruction, not an observed handoff"
+    },
+    "frameworks": [
+      {
+        "canonical_events": 3407,
+        "distinct_observed_roles": 3,
+        "framework": "AG2",
+        "observed_complete_edges": 0,
+        "observed_partial_edges": 0,
+        "observed_role_markers": 328,
+        "reconstructed_adjacent_edges": 246,
+        "reconstructed_role_scope_lines": 1282,
+        "role_available_line_coverage": 0.4725565013208101,
+        "role_marker_line_coverage": 0.09627238039330789,
+        "silently_dropped_lines": 0,
+        "source_lines": 3407,
+        "traces": 597,
+        "unknown_role_lines": 1797
+      },
+      {
+        "canonical_events": 40628,
+        "distinct_observed_roles": 9,
+        "framework": "AppWorld",
+        "observed_complete_edges": 0,
+        "observed_partial_edges": 2258,
+        "observed_role_markers": 1260,
+        "reconstructed_adjacent_edges": 694,
+        "reconstructed_role_scope_lines": 39248,
+        "role_available_line_coverage": 0.9970463719602245,
+        "role_marker_line_coverage": 0.031013094417643005,
+        "silently_dropped_lines": 0,
+        "source_lines": 40628,
+        "traces": 30,
+        "unknown_role_lines": 120
+      },
+      {
+        "canonical_events": 503650,
+        "distinct_observed_roles": 5,
+        "framework": "ChatDev",
+        "observed_complete_edges": 1795,
+        "observed_partial_edges": 0,
+        "observed_role_markers": 1795,
+        "reconstructed_adjacent_edges": 0,
+        "reconstructed_role_scope_lines": 486645,
+        "role_available_line_coverage": 0.9698004566663357,
+        "role_marker_line_coverage": 0.0035639829246500547,
+        "silently_dropped_lines": 0,
+        "source_lines": 503650,
+        "traces": 130,
+        "unknown_role_lines": 15210
+      },
+      {
+        "canonical_events": 82979,
+        "distinct_observed_roles": 7,
+        "framework": "HyperAgent",
+        "observed_complete_edges": 0,
+        "observed_partial_edges": 0,
+        "observed_role_markers": 2848,
+        "reconstructed_adjacent_edges": 1365,
+        "reconstructed_role_scope_lines": 66800,
+        "role_available_line_coverage": 0.8393448944913774,
+        "role_marker_line_coverage": 0.03432193687559503,
+        "silently_dropped_lines": 0,
+        "source_lines": 82979,
+        "traces": 30,
+        "unknown_role_lines": 13331
+      },
+      {
+        "canonical_events": 197876,
+        "distinct_observed_roles": 6,
+        "framework": "Magentic",
+        "observed_complete_edges": 0,
+        "observed_partial_edges": 0,
+        "observed_role_markers": 4853,
+        "reconstructed_adjacent_edges": 4231,
+        "reconstructed_role_scope_lines": 155583,
+        "role_available_line_coverage": 0.8107905961309103,
+        "role_marker_line_coverage": 0.024525460389334734,
+        "silently_dropped_lines": 0,
+        "source_lines": 197876,
+        "traces": 195,
+        "unknown_role_lines": 37440
+      },
+      {
+        "canonical_events": 44589,
+        "distinct_observed_roles": 22,
+        "framework": "MetaGPT",
+        "observed_complete_edges": 230,
+        "observed_partial_edges": 0,
+        "observed_role_markers": 949,
+        "reconstructed_adjacent_edges": 496,
+        "reconstructed_role_scope_lines": 42950,
+        "role_available_line_coverage": 0.9845253313597524,
+        "role_marker_line_coverage": 0.021283276144340533,
+        "silently_dropped_lines": 0,
+        "source_lines": 44589,
+        "traces": 230,
+        "unknown_role_lines": 690
+      },
+      {
+        "canonical_events": 24148,
+        "distinct_observed_roles": 1,
+        "framework": "OpenManus",
+        "observed_complete_edges": 0,
+        "observed_partial_edges": 0,
+        "observed_role_markers": 857,
+        "reconstructed_adjacent_edges": 0,
+        "reconstructed_role_scope_lines": 22638,
+        "role_available_line_coverage": 0.9729584230578102,
+        "role_marker_line_coverage": 0.035489481530561535,
+        "silently_dropped_lines": 0,
+        "source_lines": 24148,
+        "traces": 30,
+        "unknown_role_lines": 653
+      }
+    ],
+    "known_missing_fields": [
+      "stable_span_and_message_ids",
+      "tool_call_and_result_ids",
+      "causal_parent_ids",
+      "task_outcome_ground_truth",
+      "authorization_and_governance_context",
+      "agent_configuration_versions",
+      "environment_snapshot_and_replay_seed"
+    ],
+    "source_trace_digest_set_sha256": "765041fb7d5214ba6caea785d26c6ce4a1df7b2519e3362e7cb56e8a5f472223",
+    "unit_of_preservation": "physical source line including line ending"
+  },
+  "claim_boundary": {
+    "not_supported": [
+      "causal localization of a decisive failing step",
+      "independent task success or failure verification",
+      "single-agent diagnosis transfer",
+      "human skill, productivity, intent, or learning inference",
+      "enterprise user, team, or collaboration recommendations"
+    ],
+    "supported": [
+      "source-line-lossless projection of this released data",
+      "conservative extraction coverage for roles and communications",
+      "agreement of naive baselines with released model-judge codes",
+      "released annotation and taxonomy-version conformance audit"
+    ]
+  },
+  "human_annotations": {
+    "authority": "human_expert_votes",
+    "finalized_14_mode_partition": {
+      "majority_positive_trace_counts": {
+        "1.1": 3,
+        "1.2": 0,
+        "1.3": 0,
+        "1.4": 0,
+        "1.5": 0,
+        "2.1": 0,
+        "2.2": 0,
+        "2.3": 0,
+        "2.4": 0,
+        "2.5": 0,
+        "2.6": 0,
+        "3.1": 0,
+        "3.2": 3,
+        "3.3": 3
+      },
+      "n": 4,
+      "three_annotator_vote_totals": {
+        "1.1": 6,
+        "1.2": 0,
+        "1.3": 0,
+        "1.4": 0,
+        "1.5": 0,
+        "2.1": 0,
+        "2.2": 0,
+        "2.3": 0,
+        "2.4": 0,
+        "2.5": 0,
+        "2.6": 0,
+        "3.1": 0,
+        "3.2": 7,
+        "3.3": 10
+      },
+      "trace_digest_set_sha256": "3f4ad1eccceb86098e725c2f30caf303180280c7900439880490f7354d306f8e"
+    },
+    "label_handling": "Per-annotator votes are retained. Development-round numeric codes are not remapped to finalized modes.",
+    "llm_name_field_present": false,
+    "n": 19,
+    "round_counts": {
+      "Generlazability": 4,
+      "Round 1": 5,
+      "Round 2": 5,
+      "Round 3": 5
+    },
+    "taxonomy_development_partition": {
+      "aggregation_status": "not_aggregated_across_incompatible_taxonomies",
+      "n": 15,
+      "trace_digest_set_sha256": "9ae1f3bcef60588899f4286227ea3afa4b5b9b3446cfd66eebbe7088e0b40606"
+    },
+    "taxonomy_schema_count": 3,
+    "taxonomy_schemas": [
+      {
+        "modes": [
+          {
+            "code": "1.1",
+            "title": "Poor task constraint compliance"
+          },
+          {
+            "code": "1.2",
+            "title": "Inconsistency between reasoning and action"
+          },
+          {
+            "code": "1.3",
+            "title": "Unaware of stopping conditions"
+          },
+          {
+            "code": "1.4",
+            "title": "Unbatched repetitive execution"
+          },
+          {
+            "code": "1.5",
+            "title": "Step repetition"
+          },
+          {
+            "code": "1.6",
+            "title": "Backtracking interruption"
+          },
+          {
+            "code": "1.7",
+            "title": "Disobey role specification"
+          },
+          {
+            "code": "2.1",
+            "title": "Conversation reset"
+          },
+          {
+            "code": "2.2",
+            "title": "Fail to elicit clarification"
+          },
+          {
+            "code": "2.3",
+            "title": "Derailment from task"
+          },
+          {
+            "code": "2.4",
+            "title": "Undetected conversation ambiguities and contradictions"
+          },
+          {
+            "code": "2.5",
+            "title": "Disagreement induced inaction"
+          },
+          {
+            "code": "2.6",
+            "title": "Withholding relevant information"
+          },
+          {
+            "code": "2.7",
+            "title": "Ignoring suggestions from agents"
+          },
+          {
+            "code": "3.1",
+            "title": "Ill specified termination condition leading to premature termination"
+          },
+          {
+            "code": "3.2",
+            "title": "Lack of critical verification"
+          },
+          {
+            "code": "3.3",
+            "title": "Lack of result verification"
+          }
+        ],
+        "row_count": 10,
+        "schema_signature_sha256": "5c88ef3edd5ae99d81c0463a13e410e33119d815e9cc727565979ac059e91d89"
+      },
+      {
+        "modes": [
+          {
+            "code": "1.1",
+            "title": "Poor task constraint compliance"
+          },
+          {
+            "code": "1.2",
+            "title": "Inconsistency between reasoning and action"
+          },
+          {
+            "code": "1.3",
+            "title": "Undetected conversation ambiguities and contradictions"
+          },
+          {
+            "code": "1.4",
+            "title": "Fail to elicit clarification"
+          },
+          {
+            "code": "1.5",
+            "title": "Unaware of stopping conditions"
+          },
+          {
+            "code": "2.1",
+            "title": "Unbatched repetitive execution"
+          },
+          {
+            "code": "2.2",
+            "title": "Step repetition"
+          },
+          {
+            "code": "2.3",
+            "title": "Backtracking interruption"
+          },
+          {
+            "code": "2.4",
+            "title": "Conversation reset"
+          },
+          {
+            "code": "2.5",
+            "title": "Derailment from task"
+          },
+          {
+            "code": "2.6",
+            "title": "Disobey role specification"
+          },
+          {
+            "code": "3.1",
+            "title": "Disagreement induced inaction"
+          },
+          {
+            "code": "3.2",
+            "title": "Withholding relevant information"
+          },
+          {
+            "code": "3.3",
+            "title": "Ignoring suggestions from agents"
+          },
+          {
+            "code": "3.4",
+            "title": "Waiting for known information"
+          },
+          {
+            "code": "4.1",
+            "title": "Ill specified termination condition leading to premature termination"
+          },
+          {
+            "code": "4.3",
+            "title": "Lack of critical verification"
+          },
+          {
+            "code": "4.2",
+            "title": "Lack of result verification"
+          }
+        ],
+        "row_count": 5,
+        "schema_signature_sha256": "73aae35a751b1d028baac44f6cdbc1691571821896e83251baedd5dbe55a71c5"
+      },
+      {
+        "modes": [
+          {
+            "code": "1.1",
+            "title": "Disobey Task Specification"
+          },
+          {
+            "code": "1.2",
+            "title": "Disobey Role Specification"
+          },
+          {
+            "code": "1.3",
+            "title": "Step Repetition"
+          },
+          {
+            "code": "1.4",
+            "title": "Loss of Conversation History"
+          },
+          {
+            "code": "1.5",
+            "title": "Unaware of Termination Conditions"
+          },
+          {
+            "code": "2.1",
+            "title": "Conversation reset"
+          },
+          {
+            "code": "2.2",
+            "title": "Fail to ask for clarification"
+          },
+          {
+            "code": "2.3",
+            "title": "Task derailment"
+          },
+          {
+            "code": "2.4",
+            "title": "Information Witholding"
+          },
+          {
+            "code": "2.5",
+            "title": "Ignored Other Agents' Input"
+          },
+          {
+            "code": "2.6",
+            "title": "Reasoning-Action Mismatch"
+          },
+          {
+            "code": "3.1",
+            "title": "Premature Termination"
+          },
+          {
+            "code": "3.2",
+            "title": "No or Incomplete Verification"
+          },
+          {
+            "code": "3.3",
+            "title": "Incorrect Verification"
+          }
+        ],
+        "row_count": 4,
+        "schema_signature_sha256": "d375dd2c99575f98d0bff6890ea6701be5dab27d6b11155cbf96aca7526ec02e"
+      }
+    ],
+    "trace_digest_set_sha256": "eaec06a17cf4a9b8e5d5aecbd33b75735395a879b8a07527f119330388100367"
+  },
+  "llm_judge_annotations": {
+    "authority": "llm_judge",
+    "benchmark_counts": {
+      "GAIA": 195,
+      "GSM": 223,
+      "MMLU": 168,
+      "Olympiad": 206,
+      "ProgramDev": 390,
+      "SWE-Bench-Lite": 30,
+      "Test-C": 30
+    },
+    "framework_counts": {
+      "AG2": 597,
+      "AppWorld": 30,
+      "ChatDev": 130,
+      "HyperAgent": 30,
+      "Magentic": 195,
+      "MetaGPT": 230,
+      "OpenManus": 30
+    },
+    "framework_positive_counts": {
+      "AG2": {
+        "1.1": 193,
+        "1.2": 8,
+        "1.3": 232,
+        "1.4": 45,
+        "1.5": 177,
+        "2.1": 30,
+        "2.2": 170,
+        "2.3": 129,
+        "2.4": 21,
+        "2.5": 0,
+        "2.6": 295,
+        "3.1": 134,
+        "3.2": 112,
+        "3.3": 128
+      },
+      "AppWorld": {
+        "1.1": 7,
+        "1.2": 0,
+        "1.3": 6,
+        "1.4": 1,
+        "1.5": 2,
+        "2.1": 1,
+        "2.2": 2,
+        "2.3": 2,
+        "2.4": 1,
+        "2.5": 0,
+        "2.6": 4,
+        "3.1": 1,
+        "3.2": 3,
+        "3.3": 7
+      },
+      "ChatDev": {
+        "1.1": 32,
+        "1.2": 0,
+        "1.3": 47,
+        "1.4": 5,
+        "1.5": 38,
+        "2.1": 4,
+        "2.2": 27,
+        "2.3": 19,
+        "2.4": 4,
+        "2.5": 0,
+        "2.6": 37,
+        "3.1": 13,
+        "3.2": 22,
+        "3.3": 33
+      },
+      "HyperAgent": {
+        "1.1": 7,
+        "1.2": 0,
+        "1.3": 6,
+        "1.4": 1,
+        "1.5": 2,
+        "2.1": 1,
+        "2.2": 2,
+        "2.3": 2,
+        "2.4": 1,
+        "2.5": 0,
+        "2.6": 4,
+        "3.1": 1,
+        "3.2": 3,
+        "3.3": 7
+      },
+      "Magentic": {
+        "1.1": 64,
+        "1.2": 2,
+        "1.3": 66,
+        "1.4": 9,
+        "1.5": 51,
+        "2.1": 6,
+        "2.2": 48,
+        "2.3": 34,
+        "2.4": 5,
+        "2.5": 0,
+        "2.6": 81,
+        "3.1": 33,
+        "3.2": 32,
+        "3.3": 42
+      },
+      "MetaGPT": {
+        "1.1": 57,
+        "1.2": 0,
+        "1.3": 88,
+        "1.4": 9,
+        "1.5": 74,
+        "2.1": 7,
+        "2.2": 52,
+        "2.3": 36,
+        "2.4": 7,
+        "2.5": 0,
+        "2.6": 70,
+        "3.1": 25,
+        "3.2": 41,
+        "3.3": 59
+      },
+      "OpenManus": {
+        "1.1": 7,
+        "1.2": 0,
+        "1.3": 6,
+        "1.4": 1,
+        "1.5": 2,
+        "2.1": 1,
+        "2.2": 2,
+        "2.3": 2,
+        "2.4": 1,
+        "2.5": 0,
+        "2.6": 4,
+        "3.1": 1,
+        "3.2": 3,
+        "3.3": 7
+      }
+    },
+    "model_counts": {
+      "Claude": 323,
+      "GPT-4o": 919
+    },
+    "n": 1242,
+    "positive_counts": {
+      "1.1": 367,
+      "1.2": 10,
+      "1.3": 451,
+      "1.4": 71,
+      "1.5": 346,
+      "2.1": 50,
+      "2.2": 303,
+      "2.3": 224,
+      "2.4": 40,
+      "2.5": 0,
+      "2.6": 495,
+      "3.1": 208,
+      "3.2": 216,
+      "3.3": 283
+    },
+    "positive_rates": {
+      "1.1": 0.29549114331723025,
+      "1.2": 0.008051529790660225,
+      "1.3": 0.36312399355877617,
+      "1.4": 0.0571658615136876,
+      "1.5": 0.2785829307568438,
+      "2.1": 0.040257648953301126,
+      "2.2": 0.24396135265700483,
+      "2.3": 0.18035426731078905,
+      "2.4": 0.0322061191626409,
+      "2.5": 0.0,
+      "2.6": 0.39855072463768115,
+      "3.1": 0.16747181964573268,
+      "3.2": 0.17391304347826086,
+      "3.3": 0.2278582930756844
+    },
+    "reason_or_evidence_fields_present": false,
+    "semantic_warning": "The released rows contain codes only. The pinned definitions file, judge notebook, finalized human schema, and paper disagree on the 3.2/3.3 verification-mode wording; code identity is preserved without pretending that the released judge semantics are resolved.",
+    "taxonomy_codes": [
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "1.5",
+      "2.1",
+      "2.2",
+      "2.3",
+      "2.4",
+      "2.5",
+      "2.6",
+      "3.1",
+      "3.2",
+      "3.3"
+    ]
+  },
+  "naive_baselines": {
+    "always_negative": {
+      "exact_match_accuracy": 0.21030042918454936,
+      "hamming_accuracy": 0.8142244022072348,
+      "macro_f1": 0.0,
+      "micro_f1": 0.0,
+      "micro_precision": 0.0,
+      "micro_recall": 0.0,
+      "n": 233,
+      "per_mode": [
+        {
+          "code": "1.1",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 76
+        },
+        {
+          "code": "1.2",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 1
+        },
+        {
+          "code": "1.3",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 84
+        },
+        {
+          "code": "1.4",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 12
+        },
+        {
+          "code": "1.5",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 67
+        },
+        {
+          "code": "2.1",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 8
+        },
+        {
+          "code": "2.2",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 57
+        },
+        {
+          "code": "2.3",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 39
+        },
+        {
+          "code": "2.4",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 10
+        },
+        {
+          "code": "2.5",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 0
+        },
+        {
+          "code": "2.6",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 103
+        },
+        {
+          "code": "3.1",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 44
+        },
+        {
+          "code": "3.2",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 44
+        },
+        {
+          "code": "3.3",
+          "f1": 0.0,
+          "precision": 0.0,
+          "predicted_positive": 0,
+          "recall": 0.0,
+          "support": 61
+        }
+      ]
+    },
+    "evaluation_authority": "released_llm_judge_codes_only",
+    "human_labels_used_for_fitting_or_scoring": false,
+    "interpretation_limit": "These are agreement baselines against model-generated codes, not failure-ground-truth or causal-diagnosis measurements.",
+    "split": {
+      "rule": "first_32_bits_sha256(source_key) modulo 5 equals 0",
+      "test_framework_counts": {
+        "AG2": 124,
+        "AppWorld": 3,
+        "ChatDev": 19,
+        "HyperAgent": 3,
+        "Magentic": 34,
+        "MetaGPT": 46,
+        "OpenManus": 4
+      },
+      "test_n": 233,
+      "train_framework_counts": {
+        "AG2": 473,
+        "AppWorld": 27,
+        "ChatDev": 111,
+        "HyperAgent": 27,
+        "Magentic": 161,
+        "MetaGPT": 184,
+        "OpenManus": 26
+      },
+      "train_n": 1009
+    },
+    "surface_rule_baseline": {
+      "metrics": {
+        "exact_match_accuracy": 0.2017167381974249,
+        "hamming_accuracy": 0.8120784794604538,
+        "macro_f1": 0.007843556760715627,
+        "micro_f1": 0.012882447665056359,
+        "micro_precision": 0.26666666666666666,
+        "micro_recall": 0.006600660066006601,
+        "n": 233,
+        "per_mode": [
+          {
+            "code": "1.1",
+            "f1": 0.04938271604938271,
+            "precision": 0.4,
+            "predicted_positive": 5,
+            "recall": 0.02631578947368421,
+            "support": 76
+          },
+          {
+            "code": "1.2",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 1
+          },
+          {
+            "code": "1.3",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 84
+          },
+          {
+            "code": "1.4",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 12
+          },
+          {
+            "code": "1.5",
+            "f1": 0.028169014084507043,
+            "precision": 0.25,
+            "predicted_positive": 4,
+            "recall": 0.014925373134328358,
+            "support": 67
+          },
+          {
+            "code": "2.1",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 8
+          },
+          {
+            "code": "2.2",
+            "f1": 0.03225806451612903,
+            "precision": 0.2,
+            "predicted_positive": 5,
+            "recall": 0.017543859649122806,
+            "support": 57
+          },
+          {
+            "code": "2.3",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 1,
+            "recall": 0.0,
+            "support": 39
+          },
+          {
+            "code": "2.4",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 10
+          },
+          {
+            "code": "2.5",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 0
+          },
+          {
+            "code": "2.6",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 103
+          },
+          {
+            "code": "3.1",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 44
+          },
+          {
+            "code": "3.2",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 44
+          },
+          {
+            "code": "3.3",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 61
+          }
+        ]
+      },
+      "rule_revision": "mast-surface-rules-v1"
+    },
+    "train_prevalence_top_three": {
+      "metrics": {
+        "exact_match_accuracy": 0.0,
+        "hamming_accuracy": 0.7611894543225015,
+        "macro_f1": 0.11678379124765582,
+        "micro_f1": 0.40306513409961686,
+        "micro_precision": 0.37625178826895567,
+        "micro_recall": 0.43399339933993397,
+        "n": 233,
+        "per_mode": [
+          {
+            "code": "1.1",
+            "f1": 0.4919093851132686,
+            "precision": 0.3261802575107296,
+            "predicted_positive": 233,
+            "recall": 1.0,
+            "support": 76
+          },
+          {
+            "code": "1.2",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 1
+          },
+          {
+            "code": "1.3",
+            "f1": 0.5299684542586751,
+            "precision": 0.3605150214592275,
+            "predicted_positive": 233,
+            "recall": 1.0,
+            "support": 84
+          },
+          {
+            "code": "1.4",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 12
+          },
+          {
+            "code": "1.5",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 67
+          },
+          {
+            "code": "2.1",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 8
+          },
+          {
+            "code": "2.2",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 57
+          },
+          {
+            "code": "2.3",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 39
+          },
+          {
+            "code": "2.4",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 10
+          },
+          {
+            "code": "2.5",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 0
+          },
+          {
+            "code": "2.6",
+            "f1": 0.613095238095238,
+            "precision": 0.44206008583690987,
+            "predicted_positive": 233,
+            "recall": 1.0,
+            "support": 103
+          },
+          {
+            "code": "3.1",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 44
+          },
+          {
+            "code": "3.2",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 44
+          },
+          {
+            "code": "3.3",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_positive": 0,
+            "recall": 0.0,
+            "support": 61
+          }
+        ]
+      },
+      "predicted_codes": [
+        "2.6",
+        "1.3",
+        "1.1"
+      ]
+    }
+  },
+  "pinned_code_file_receipts": [
+    {
+      "path": "definitions.txt",
+      "role": "taxonomy_definitions",
+      "sha256": "bfefa4f2c788fa1658f6879afa8a2b4577a027f224ce3e3b6ba0927dfd82f9ce",
+      "size_bytes": 13162
+    },
+    {
+      "path": "llm_judge_pipeline.ipynb",
+      "role": "llm_judge_pipeline",
+      "sha256": "0a40d8e29d766f27eb0d436ee9d4d41b0da0777a05f540991a56e5154ef2e850",
+      "size_bytes": 15195
+    }
+  ],
+  "release_conformance": {
+    "huggingface_viewer_status": "schema_cast_failure_when_mixing_human_and_judge_files",
+    "human_row_shortfall_vs_paper": 2,
+    "judge_row_shortfall_vs_paper": 400,
+    "paper_claimed_human_rows": 21,
+    "paper_claimed_judge_rows": 1642,
+    "released_human_rows": 19,
+    "released_judge_rows": 1242
+  },
+  "result_sha256": "abb144d59e5405be50af7dea5bad6de386aa0f75376c0939333fef428a8baad6",
+  "schema_version": "mast-multiagent-empirical-result-v1",
+  "source_receipts": [
+    {
+      "annotation_authority": "llm_judge",
+      "path": "MAD_full_dataset.json",
+      "sha256": "a182daadb8ded015efc889db8bde29e5e4dd478e0dcc5516f6727a1bbc43eaec",
+      "size_bytes": 63463757
+    },
+    {
+      "annotation_authority": "human_expert_votes",
+      "path": "MAD_human_labelled_dataset.json",
+      "sha256": "30a0c4075078e9a1b8c39bc608d2b5156cc64c6bda1f6fd262786eb81ff4a286",
+      "size_bytes": 2662908
+    }
+  ],
+  "study_design": {
+    "annotation_authorities_never_merged": true,
+    "code_license_file_present_at_revision": false,
+    "code_repository": "multi-agent-systems-failure-taxonomy/MAST",
+    "code_revision": "a70542e541b2104ef8fcd785778179e173fb8d70",
+    "code_stable_tag": null,
+    "dataset_id": "mcemri/MAST-Data",
+    "dataset_revision": "5a82e32347f70a701a3c68637de12f8a0be3de3c",
+    "declared_dataset_license": "CC-BY-4.0",
+    "raw_data_policy": "temporary_storage_only",
+    "single_agent_or_enterprise_transfer_claim": false,
+    "unit_of_analysis": "released_multi_agent_execution_trace"
+  }
+}
