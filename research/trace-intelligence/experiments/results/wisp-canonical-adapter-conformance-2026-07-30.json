@@ -1,0 +1,39 @@
+{
+  "claim_limits": [
+    "format conformance does not establish task correctness",
+    "tool-result correlation does not establish causal recovery",
+    "one public contributor does not establish enterprise generality"
+  ],
+  "counts": {
+    "canonical_events": 17505,
+    "files": 104,
+    "silently_dropped_blocks": 0,
+    "silently_dropped_records": 0,
+    "source_native_list_blocks": 6490,
+    "source_records": 10700,
+    "unique_trace_ids": 104
+  },
+  "loss_categories": {
+    "malformed_source_bytes_not_retained": 2
+  },
+  "privacy_contract": {
+    "aggregate_counts_only": true,
+    "content_serialized": false,
+    "paths_or_native_ids_serialized": false,
+    "raw_transcripts_committed": false
+  },
+  "schema_version": "wisp-adapter-conformance-result-v1",
+  "source": {
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+    "license": "MIT"
+  },
+  "tool_result_correlation": {
+    "exact_unique_prior": 2206,
+    "unresolved": 1
+  },
+  "unknown_categories": {
+    "dangling_parent_uuid": 5,
+    "unresolved_tool_result_correlation": 1
+  }
+}

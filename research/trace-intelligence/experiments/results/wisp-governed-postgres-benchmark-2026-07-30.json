@@ -1,0 +1,544 @@
+{
+  "application_role_safety": {
+    "cannot_bypass_rls": true,
+    "cannot_create_databases": true,
+    "cannot_create_roles": true,
+    "not_superuser": true
+  },
+  "authorized_counts": {
+    "controlled_fts_candidates": 17,
+    "derived_artifacts": 122,
+    "eval_proposals": 11,
+    "events": 17505,
+    "fact_proposals": 0,
+    "malformed_source_events": 2,
+    "procedure_proposals": 7,
+    "recovery_proposals": 7,
+    "signals": 104,
+    "tool_completed": 2104,
+    "tool_errors": 103,
+    "tool_proposals": 2209,
+    "tool_results": 2207,
+    "trajectories": 104
+  },
+  "claim_limits": [
+    "local PostgreSQL proves SQL composition and fail-closed RLS behavior only; it is not an Aurora emulator",
+    "this run does not test Aurora extension allowlists, parameter groups, replicas, failover, backup, or storage autoscaling",
+    "single-node warm-cache latency is not production Aurora latency or a concurrency/load result",
+    "controlled-vocabulary FTS tests structural retrieval, not transcript semantic quality",
+    "proposal counts do not establish eval, fact, procedure, or recovery correctness"
+  ],
+  "denied_pre_ranking_candidate_matrix": {
+    "all_zero": true,
+    "checks": {
+      "insufficient_classification": true,
+      "stale_epoch": true,
+      "unauthorized_subject": true,
+      "wrong_purpose": true,
+      "wrong_tenant": true
+    },
+    "counts": {
+      "insufficient_classification": {
+        "controlled_fts_candidates": 0,
+        "history_candidates": 0,
+        "proposal_candidates": 0,
+        "structural_event_candidates": 0
+      },
+      "stale_epoch": {
+        "controlled_fts_candidates": 0,
+        "history_candidates": 0,
+        "proposal_candidates": 0,
+        "structural_event_candidates": 0
+      },
+      "unauthorized_subject": {
+        "controlled_fts_candidates": 0,
+        "history_candidates": 0,
+        "proposal_candidates": 0,
+        "structural_event_candidates": 0
+      },
+      "wrong_purpose": {
+        "controlled_fts_candidates": 0,
+        "history_candidates": 0,
+        "proposal_candidates": 0,
+        "structural_event_candidates": 0
+      },
+      "wrong_tenant": {
+        "controlled_fts_candidates": 0,
+        "history_candidates": 0,
+        "proposal_candidates": 0,
+        "structural_event_candidates": 0
+      }
+    },
+    "stage": "before_ranking_or_limit"
+  },
+  "environment": {
+    "aurora_emulation": false,
+    "database": "local_postgresql",
+    "iterations": 100,
+    "server_version": "16.12 (Debian 16.12-1.pgdg12+1)",
+    "vector_extension_version": "0.8.1"
+  },
+  "latency": {
+    "controlled_fts": {
+      "iterations": 100,
+      "max_ms": 3.644625,
+      "mean_ms": 2.887448,
+      "p50_ms": 2.844271,
+      "p95_ms": 3.504733
+    },
+    "personal_history_page": {
+      "iterations": 100,
+      "max_ms": 1.774041,
+      "mean_ms": 1.401349,
+      "p50_ms": 1.37575,
+      "p95_ms": 1.647779
+    },
+    "proposal_queue": {
+      "iterations": 100,
+      "max_ms": 2.408542,
+      "mean_ms": 1.518652,
+      "p50_ms": 1.496563,
+      "p95_ms": 1.849871
+    },
+    "structural_tool_events": {
+      "iterations": 100,
+      "max_ms": 51.040791,
+      "mean_ms": 23.72631,
+      "p50_ms": 23.128917,
+      "p95_ms": 24.682271
+    }
+  },
+  "personal_history_pagination": {
+    "first_page_rows": 20,
+    "keyset_cursor_serialized": false,
+    "page_overlap_rows": 0,
+    "page_size": 20,
+    "second_page_rows": 20
+  },
+  "privacy_contract": {
+    "content_or_identifiers_emitted": false,
+    "pagination_cursors_emitted": false,
+    "search_query_emitted": false,
+    "serialized_granularity": "aggregate_counts_latency_and_redacted_plan_structure"
+  },
+  "proposal_lifecycle": {
+    "checks": {
+      "human_review_release_policy": true,
+      "no_nonproposal_database_lifecycle": true,
+      "no_released_proposals": true,
+      "payload_lifecycle_matches": true
+    },
+    "counts": {
+      "nonproposal_database_lifecycle": 0,
+      "payload_lifecycle_mismatches": 0,
+      "release_policy_mismatches": 0,
+      "released_proposals": 0,
+      "total_proposals": 18
+    }
+  },
+  "query_plans": {
+    "controlled_fts": {
+      "execution_time_ms": 1.752,
+      "nodes": [
+        {
+          "actual_loops": 1,
+          "actual_rows": 17,
+          "actual_total_time_ms": 1.736,
+          "depth": 0,
+          "node_type": "Limit",
+          "plan_rows": 1,
+          "shared_hit_blocks": 1080,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 17,
+          "actual_total_time_ms": 1.734,
+          "depth": 1,
+          "node_type": "Sort",
+          "plan_rows": 1,
+          "shared_hit_blocks": 1080,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 17,
+          "actual_total_time_ms": 1.729,
+          "depth": 2,
+          "join_type": "Inner",
+          "node_type": "Nested Loop",
+          "plan_rows": 1,
+          "shared_hit_blocks": 1080,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 17,
+          "actual_total_time_ms": 1.438,
+          "depth": 3,
+          "node_type": "Seq Scan",
+          "plan_rows": 1,
+          "relation": "derived_artifacts",
+          "shared_hit_blocks": 995,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 122,
+          "actual_rows": 1,
+          "actual_total_time_ms": 0.006,
+          "depth": 4,
+          "index": "trajectories_pkey",
+          "node_type": "Index Scan",
+          "plan_rows": 1,
+          "relation": "trajectories",
+          "shared_hit_blocks": 610,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 17,
+          "actual_rows": 1,
+          "actual_total_time_ms": 0.007,
+          "depth": 3,
+          "index": "trajectories_pkey",
+          "node_type": "Index Scan",
+          "plan_rows": 1,
+          "relation": "trajectories",
+          "shared_hit_blocks": 85,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        }
+      ],
+      "planning_time_ms": 0.267,
+      "predicates_and_literals_emitted": false
+    },
+    "personal_history": {
+      "execution_time_ms": 0.69,
+      "nodes": [
+        {
+          "actual_loops": 1,
+          "actual_rows": 20,
+          "actual_total_time_ms": 0.673,
+          "depth": 0,
+          "node_type": "Limit",
+          "plan_rows": 2,
+          "shared_hit_blocks": 270,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 20,
+          "actual_total_time_ms": 0.671,
+          "depth": 1,
+          "node_type": "Sort",
+          "plan_rows": 2,
+          "shared_hit_blocks": 270,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 104,
+          "actual_total_time_ms": 0.652,
+          "depth": 2,
+          "node_type": "Bitmap Heap Scan",
+          "plan_rows": 2,
+          "relation": "trajectories",
+          "shared_hit_blocks": 270,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 0,
+          "actual_total_time_ms": 0.036,
+          "depth": 3,
+          "node_type": "BitmapAnd",
+          "plan_rows": 7,
+          "shared_hit_blocks": 9,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 0,
+          "actual_total_time_ms": 0.023,
+          "depth": 4,
+          "node_type": "BitmapOr",
+          "plan_rows": 27,
+          "shared_hit_blocks": 6,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 208,
+          "actual_total_time_ms": 0.021,
+          "depth": 5,
+          "index": "trajectories_tenant_owner_created_idx",
+          "node_type": "Bitmap Index Scan",
+          "plan_rows": 26,
+          "shared_hit_blocks": 5,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 0,
+          "actual_total_time_ms": 0.001,
+          "depth": 5,
+          "index": "trajectories_tenant_team_created_idx",
+          "node_type": "Bitmap Index Scan",
+          "plan_rows": 1,
+          "shared_hit_blocks": 1,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 208,
+          "actual_total_time_ms": 0.011,
+          "depth": 4,
+          "index": "trajectories_task_idx",
+          "node_type": "Bitmap Index Scan",
+          "plan_rows": 104,
+          "shared_hit_blocks": 3,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        }
+      ],
+      "planning_time_ms": 0.065,
+      "predicates_and_literals_emitted": false
+    },
+    "structural_tool_events": {
+      "execution_time_ms": 22.025,
+      "nodes": [
+        {
+          "actual_loops": 1,
+          "actual_rows": 20,
+          "actual_total_time_ms": 21.993,
+          "depth": 0,
+          "node_type": "Limit",
+          "plan_rows": 11,
+          "shared_hit_blocks": 12290,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 20,
+          "actual_total_time_ms": 21.992,
+          "depth": 1,
+          "node_type": "Sort",
+          "plan_rows": 11,
+          "shared_hit_blocks": 12290,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 4416,
+          "actual_total_time_ms": 21.591,
+          "depth": 2,
+          "join_type": "Inner",
+          "node_type": "Nested Loop",
+          "plan_rows": 11,
+          "shared_hit_blocks": 12290,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 104,
+          "actual_total_time_ms": 0.71,
+          "depth": 3,
+          "node_type": "Bitmap Heap Scan",
+          "plan_rows": 2,
+          "relation": "trajectories",
+          "shared_hit_blocks": 270,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 0,
+          "actual_total_time_ms": 0.031,
+          "depth": 4,
+          "node_type": "BitmapAnd",
+          "plan_rows": 7,
+          "shared_hit_blocks": 9,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 0,
+          "actual_total_time_ms": 0.019,
+          "depth": 5,
+          "node_type": "BitmapOr",
+          "plan_rows": 27,
+          "shared_hit_blocks": 6,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 208,
+          "actual_total_time_ms": 0.017,
+          "depth": 6,
+          "index": "trajectories_tenant_owner_created_idx",
+          "node_type": "Bitmap Index Scan",
+          "plan_rows": 26,
+          "shared_hit_blocks": 5,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 0,
+          "actual_total_time_ms": 0.001,
+          "depth": 6,
+          "index": "trajectories_tenant_team_created_idx",
+          "node_type": "Bitmap Index Scan",
+          "plan_rows": 1,
+          "shared_hit_blocks": 1,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 208,
+          "actual_total_time_ms": 0.009,
+          "depth": 5,
+          "index": "trajectories_task_idx",
+          "node_type": "Bitmap Index Scan",
+          "plan_rows": 104,
+          "shared_hit_blocks": 3,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 104,
+          "actual_rows": 42,
+          "actual_total_time_ms": 0.197,
+          "depth": 3,
+          "index": "events_tool_idx",
+          "node_type": "Index Only Scan",
+          "plan_rows": 5,
+          "relation": "events",
+          "shared_hit_blocks": 12020,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 104,
+          "actual_total_time_ms": 0.532,
+          "depth": 4,
+          "node_type": "Bitmap Heap Scan",
+          "plan_rows": 9,
+          "relation": "trajectories",
+          "shared_hit_blocks": 267,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 0,
+          "actual_total_time_ms": 0.012,
+          "depth": 5,
+          "node_type": "BitmapOr",
+          "plan_rows": 27,
+          "shared_hit_blocks": 6,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 208,
+          "actual_total_time_ms": 0.011,
+          "depth": 6,
+          "index": "trajectories_tenant_owner_created_idx",
+          "node_type": "Bitmap Index Scan",
+          "plan_rows": 26,
+          "shared_hit_blocks": 5,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        },
+        {
+          "actual_loops": 1,
+          "actual_rows": 0,
+          "actual_total_time_ms": 0.0,
+          "depth": 6,
+          "index": "trajectories_tenant_team_created_idx",
+          "node_type": "Bitmap Index Scan",
+          "plan_rows": 1,
+          "shared_hit_blocks": 1,
+          "shared_read_blocks": 0,
+          "temp_read_blocks": 0,
+          "temp_written_blocks": 0
+        }
+      ],
+      "planning_time_ms": 0.231,
+      "predicates_and_literals_emitted": false
+    }
+  },
+  "schema_version": "governed-wisp-postgres-benchmark-v1",
+  "source": {
+    "authority_values_emitted": false,
+    "dataset": "crispwisp/wisp-claude-code-sessions",
+    "raw_or_canonical_rows_emitted": false
+  },
+  "source_lineage": {
+    "checks": {
+      "artifact_sources_exist": true,
+      "event_sources_exist": true,
+      "evidence_events_exist": true,
+      "proposal_evidence_is_present": true,
+      "single_adapter_revision": true,
+      "single_source_revision": true,
+      "source_content_hash_matches": true
+    },
+    "counts": {
+      "adapter_revisions": 1,
+      "artifacts_without_source": 0,
+      "events_without_source": 0,
+      "missing_evidence_event_references": 0,
+      "proposals_without_evidence": 0,
+      "source_content_hash_mismatches": 0,
+      "source_revisions": 1
+    }
+  }
+}
