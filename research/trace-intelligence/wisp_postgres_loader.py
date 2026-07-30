@@ -24,6 +24,14 @@ from typing import Any, Iterable
 from psycopg2 import connect
 from psycopg2.extras import Json, execute_values
 
+from canonical_recovery_episodes import (
+    EVENT_ERROR,
+    EVENT_PROPOSED,
+    EVENT_SUCCESS,
+    LifecycleEvent,
+    construct_recovery_episodes,
+    tool_family,
+)
 from postgres_loader import (
     assume_application_authority,
     configure_authority,
@@ -36,13 +44,17 @@ from wisp_claude_code_adapter import (
 )
 
 
-DERIVATION_REVISION = "wisp-governed-derivation-v1"
+DERIVATION_REVISION = "wisp-governed-derivation-v2"
+REPLACED_DERIVATION_REVISIONS = (
+    "wisp-governed-derivation-v1",
+    DERIVATION_REVISION,
+)
 DEFAULT_TENANT_ID = "frankengate-private-research"
 DEFAULT_SUBJECT_ID = "wisp-public-contributor"
 DEFAULT_PURPOSE = "quality-improvement"
 DEFAULT_POLICY_REVISION = "private-research-policy-v1"
 MAX_EVIDENCE_EVENT_IDS = 32
-RECOVERY_MAX_EVENT_DISTANCE = 12
+RECOVERY_MAX_LIFECYCLE_DISTANCE = 12
 
 _PAYLOAD_KEYS = (
     "event_id",
@@ -178,50 +190,75 @@ def _event_tool_fields(event: dict[str, Any]) -> tuple[str | None, str | None]:
 def _bounded_recovery_transitions(
     events: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Find same-tool failure-to-success transitions in a fixed event window."""
-    by_id = {event["event_id"]: event for event in events}
+    """Map the shared canonical constructor back to governed evidence IDs.
 
-    def proposal_for(result: dict[str, Any]) -> dict[str, Any] | None:
+    The lifecycle stream contains only proposals and tool results, so the
+    distance unit and matching semantics are identical to the Wisp/share-codex
+    cross-corpus experiment. Native event IDs remain only in the returned
+    evidence tuple; they are not inputs to family matching or ranking.
+    """
+    by_id = {event["event_id"]: event for event in events}
+    lifecycle: list[LifecycleEvent] = []
+    source_by_lifecycle_order: list[dict[str, Any]] = []
+
+    def proposal_id_for(result: dict[str, Any]) -> str | None:
         parent_id = result.get("correlated_tool_proposal_event_id")
         if not isinstance(parent_id, str):
             parent_id = result.get("parent_event_id")
         proposal = by_id.get(parent_id)
-        return proposal if proposal and proposal["kind"] == "tool.proposed" else None
+        if proposal and proposal.get("kind") == "tool.proposed":
+            return str(proposal["event_id"])
+        return None
 
-    completed: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for event in events:
-        if event["kind"] != "tool.completed":
-            continue
-        proposal = proposal_for(event)
-        if proposal is not None and proposal.get("function_name"):
-            completed.append((event, proposal))
-
-    transitions: list[dict[str, Any]] = []
-    for failed in events:
-        if failed["kind"] != "tool.failed":
-            continue
-        failed_proposal = proposal_for(failed)
-        if failed_proposal is None or not failed_proposal.get("function_name"):
-            continue
-        for succeeded, succeeded_proposal in completed:
-            distance = succeeded["sequence"] - failed["sequence"]
-            if not 0 < distance <= RECOVERY_MAX_EVENT_DISTANCE:
-                continue
-            if (
-                succeeded_proposal["function_name"]
-                != failed_proposal["function_name"]
-            ):
-                continue
-            transitions.append(
-                {
-                    "failed_event_id": failed["event_id"],
-                    "failed_proposal_event_id": failed_proposal["event_id"],
-                    "recovery_proposal_event_id": succeeded_proposal["event_id"],
-                    "completed_event_id": succeeded["event_id"],
-                    "event_distance": distance,
-                }
+        kind = event.get("kind")
+        if kind == "tool.proposed":
+            lifecycle_event = LifecycleEvent(
+                order=len(lifecycle),
+                kind=EVENT_PROPOSED,
+                call_key=str(event["event_id"]),
+                tool_family=tool_family(event.get("function_name")),
             )
-            break
+        elif kind in {"tool.failed", "tool.completed"}:
+            lifecycle_event = LifecycleEvent(
+                order=len(lifecycle),
+                kind=EVENT_ERROR if kind == "tool.failed" else EVENT_SUCCESS,
+                call_key=proposal_id_for(event),
+                tool_family=None,
+            )
+        else:
+            continue
+        lifecycle.append(lifecycle_event)
+        source_by_lifecycle_order.append(event)
+
+    construction = construct_recovery_episodes(
+        lifecycle,
+        max_lifecycle_distance=RECOVERY_MAX_LIFECYCLE_DISTANCE,
+    )
+    transitions: list[dict[str, Any]] = []
+    for episode in construction.matched_episodes:
+        failed = source_by_lifecycle_order[episode.error_order]
+        failed_proposal_id = proposal_id_for(failed)
+        if failed_proposal_id is None:
+            raise WispPostgresLoaderError(
+                "canonical constructor returned an unlinked failed result"
+            )
+        succeeded_proposal = source_by_lifecycle_order[
+            episode.recovery_proposal_order
+        ]
+        succeeded = source_by_lifecycle_order[
+            episode.recovery_result_order
+        ]
+        transitions.append(
+            {
+                "failed_event_id": failed["event_id"],
+                "failed_proposal_event_id": failed_proposal_id,
+                "recovery_proposal_event_id": succeeded_proposal["event_id"],
+                "completed_event_id": succeeded["event_id"],
+                "controlled_tool_family": episode.tool_family,
+                "lifecycle_event_distance": episode.lifecycle_distance,
+            }
+        )
     return transitions
 
 
@@ -498,15 +535,21 @@ def build_artifacts(
         evidence_ids = evidence_ids[:MAX_EVIDENCE_EVENT_IDS]
         procedure_payload = _proposal_payload(
             artifact_kind="procedure_proposal",
-            proposal_type="bounded_same_tool_recovery_review",
+            proposal_type="bounded_same_family_recovery_review",
             evidence_event_ids=evidence_ids,
             evidence_total_count=evidence_total,
             signals=signals,
         )
         procedure_payload["controlled_vocabulary"].update(
             {
-                "recovery_semantics": "same_tool_failure_to_success",
-                "maximum_event_distance": RECOVERY_MAX_EVENT_DISTANCE,
+                "recovery_semantics": (
+                    "same_controlled_tool_family_failure_to_success"
+                ),
+                "maximum_lifecycle_event_distance": (
+                    RECOVERY_MAX_LIFECYCLE_DISTANCE
+                ),
+                "requires_recovery_proposal_after_error": True,
+                "matching": "chronological_greedy_one_to_one",
             }
         )
         procedure_payload["bounded_transition_count"] = len(transitions)
@@ -517,7 +560,7 @@ def build_artifacts(
                 "kind": "procedure_proposal",
                 "content_text": (
                     "artifact=procedure_proposal "
-                    "proposal_type=bounded_same_tool_recovery_review "
+                    "proposal_type=bounded_same_family_recovery_review "
                     f"lifecycle=proposal evidence_count={len(evidence_ids)}"
                 ),
                 "payload": procedure_payload,
@@ -766,17 +809,17 @@ def persist_prepared_rows(
 
     with connection.cursor() as cursor:
         # Derived rows are reproducible materializations, not source evidence.
-        # Replace this revision's bounded set so a tightened abstention rule
-        # removes stale proposals from earlier runs instead of leaving review
-        # spam behind under idempotent source/event inserts.
+        # Replace both the current materialization and explicitly superseded
+        # revisions. Otherwise a v1 same-tool proposal can survive beside its
+        # v2 canonical-family replacement and be presented twice for review.
         cursor.execute(
             """
             delete from trace_research.derived_artifacts
-            where derivation_revision = %s
+            where derivation_revision = any(%s)
               and source_trajectory_id = any(%s)
             """,
             (
-                DERIVATION_REVISION,
+                list(REPLACED_DERIVATION_REVISIONS),
                 [row["id"] for row in trajectory_rows],
             ),
         )

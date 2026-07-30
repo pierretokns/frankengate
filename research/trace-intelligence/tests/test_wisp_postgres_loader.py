@@ -281,7 +281,7 @@ class WispPostgresLoaderTests(unittest.TestCase):
         artifacts = LOADER.prepare_wisp_rows(trace)["artifacts"]
         self.assertEqual(["signal"], [artifact["kind"] for artifact in artifacts])
 
-    def test_procedure_requires_bounded_same_tool_recovery(self):
+    def test_procedure_requires_bounded_same_family_recovery(self):
         trace = adapt_wisp_jsonl_bytes(
             jsonl(
                 {
@@ -294,7 +294,7 @@ class WispPostgresLoaderTests(unittest.TestCase):
                             {
                                 "type": "tool_use",
                                 "id": "call-1",
-                                "name": "FixtureTool",
+                                "name": "Bash",
                                 "input": {},
                             }
                         ],
@@ -328,7 +328,7 @@ class WispPostgresLoaderTests(unittest.TestCase):
                             {
                                 "type": "tool_use",
                                 "id": "call-2",
-                                "name": "FixtureTool",
+                                "name": "exec_command",
                                 "input": {},
                             }
                         ],
@@ -365,18 +365,201 @@ class WispPostgresLoaderTests(unittest.TestCase):
             if artifact["kind"] == "procedure_proposal"
         )
         self.assertEqual(
-            "same_tool_failure_to_success",
+            "same_controlled_tool_family_failure_to_success",
             procedure["payload"]["controlled_vocabulary"][
                 "recovery_semantics"
             ],
         )
         self.assertEqual(
-            LOADER.RECOVERY_MAX_EVENT_DISTANCE,
+            LOADER.RECOVERY_MAX_LIFECYCLE_DISTANCE,
             procedure["payload"]["controlled_vocabulary"][
-                "maximum_event_distance"
+                "maximum_lifecycle_event_distance"
             ],
         )
         self.assertEqual(1, procedure["payload"]["bounded_transition_count"])
+
+    def test_procedure_excludes_in_flight_parallel_success(self):
+        trace = adapt_wisp_jsonl_bytes(
+            jsonl(
+                {
+                    "type": "assistant",
+                    "uuid": "assistant-1",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "message": {
+                        "role": "assistant",
+                        "content": [
+                            {
+                                "type": "tool_use",
+                                "id": "failed",
+                                "name": "Bash",
+                                "input": {},
+                            },
+                            {
+                                "type": "tool_use",
+                                "id": "parallel",
+                                "name": "Bash",
+                                "input": {},
+                            },
+                        ],
+                    },
+                },
+                {
+                    "type": "user",
+                    "uuid": "result-1",
+                    "parentUuid": "assistant-1",
+                    "timestamp": "2026-01-01T00:00:01Z",
+                    "message": {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "tool_result",
+                                "tool_use_id": "failed",
+                                "content": "SYNTHETIC FAILURE",
+                                "is_error": True,
+                            },
+                            {
+                                "type": "tool_result",
+                                "tool_use_id": "parallel",
+                                "content": "SYNTHETIC SUCCESS",
+                                "is_error": False,
+                            },
+                        ],
+                    },
+                },
+            ),
+            relative_path="-home-me/in-flight.jsonl",
+        )
+        self.assertEqual(
+            [],
+            LOADER._bounded_recovery_transitions(trace["events"]),
+        )
+        self.assertNotIn(
+            "procedure_proposal",
+            {
+                artifact["kind"]
+                for artifact in LOADER.prepare_wisp_rows(trace)["artifacts"]
+            },
+        )
+
+    def test_procedure_matching_is_greedy_one_to_one(self):
+        trace = adapt_wisp_jsonl_bytes(
+            jsonl(
+                {
+                    "type": "assistant",
+                    "uuid": "assistant-1",
+                    "timestamp": "2026-01-01T00:00:00Z",
+                    "message": {
+                        "role": "assistant",
+                        "content": [
+                            {
+                                "type": "tool_use",
+                                "id": "failed-1",
+                                "name": "Bash",
+                                "input": {},
+                            }
+                        ],
+                    },
+                },
+                {
+                    "type": "user",
+                    "uuid": "result-1",
+                    "parentUuid": "assistant-1",
+                    "timestamp": "2026-01-01T00:00:01Z",
+                    "message": {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "tool_result",
+                                "tool_use_id": "failed-1",
+                                "content": "SYNTHETIC FAILURE 1",
+                                "is_error": True,
+                            }
+                        ],
+                    },
+                },
+                {
+                    "type": "assistant",
+                    "uuid": "assistant-2",
+                    "parentUuid": "result-1",
+                    "timestamp": "2026-01-01T00:00:02Z",
+                    "message": {
+                        "role": "assistant",
+                        "content": [
+                            {
+                                "type": "tool_use",
+                                "id": "failed-2",
+                                "name": "Bash",
+                                "input": {},
+                            }
+                        ],
+                    },
+                },
+                {
+                    "type": "user",
+                    "uuid": "result-2",
+                    "parentUuid": "assistant-2",
+                    "timestamp": "2026-01-01T00:00:03Z",
+                    "message": {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "tool_result",
+                                "tool_use_id": "failed-2",
+                                "content": "SYNTHETIC FAILURE 2",
+                                "is_error": True,
+                            }
+                        ],
+                    },
+                },
+                {
+                    "type": "assistant",
+                    "uuid": "assistant-3",
+                    "parentUuid": "result-2",
+                    "timestamp": "2026-01-01T00:00:04Z",
+                    "message": {
+                        "role": "assistant",
+                        "content": [
+                            {
+                                "type": "tool_use",
+                                "id": "success",
+                                "name": "Bash",
+                                "input": {},
+                            }
+                        ],
+                    },
+                },
+                {
+                    "type": "user",
+                    "uuid": "result-3",
+                    "parentUuid": "assistant-3",
+                    "timestamp": "2026-01-01T00:00:05Z",
+                    "message": {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "tool_result",
+                                "tool_use_id": "success",
+                                "content": "SYNTHETIC SUCCESS",
+                                "is_error": False,
+                            }
+                        ],
+                    },
+                },
+            ),
+            relative_path="-home-me/one-to-one.jsonl",
+        )
+        transitions = LOADER._bounded_recovery_transitions(trace["events"])
+        self.assertEqual(1, len(transitions))
+        first_failure = next(
+            event
+            for event in trace["events"]
+            if event.get("tool_call_id") == "failed-1"
+            and event["kind"] == "tool.failed"
+        )
+        self.assertEqual(
+            first_failure["event_id"],
+            transitions[0]["failed_event_id"],
+        )
 
     def test_preparation_is_deterministic_and_requires_source_time(self):
         trace = synthetic_trace()
@@ -464,7 +647,8 @@ class WispPostgresLoaderTests(unittest.TestCase):
         ]
         self.assertEqual(1, len(delete_queries))
         self.assertEqual(
-            LOADER.DERIVATION_REVISION, delete_queries[0][1][0]
+            list(LOADER.REPLACED_DERIVATION_REVISIONS),
+            delete_queries[0][1][0],
         )
         self.assertEqual(
             [prepared[0]["trajectory"]["id"]], delete_queries[0][1][1]

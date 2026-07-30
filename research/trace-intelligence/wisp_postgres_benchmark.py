@@ -315,7 +315,7 @@ def authorized_counts(
           and a.payload #>>
                 '{controlled_vocabulary,proposal_type}'
               in (
-                'bounded_same_tool_recovery_review',
+                'bounded_same_family_recovery_review',
                 'tool_error_recovery_review'
               )
         """,
@@ -907,7 +907,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--search-query",
         default=(
-            '"bounded_same_tool_recovery_review" OR '
+            '"bounded_same_family_recovery_review" OR '
             '"tool_error_recovery_review" OR '
             '"tool_error_regression_eval"'
         ),
