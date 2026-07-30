@@ -268,6 +268,28 @@ def inputs():
                 "codex_repositories_with_auth_adjacent": 9,
             },
         },
+        "trace2skill_stage0": {
+            "schema_version": "trace2skill-stage0",
+            "findings": {
+                "sandbox_boundary_executed_real_model_tool_calls": True,
+                "skill_benefit_established": False,
+            },
+        },
+        "statebench_sql": {
+            "schema_version": "statebench-sql",
+            "runner": {
+                "total_tasks": 46,
+                "gold_sql_tasks": 4,
+            },
+        },
+        "skill_release": {
+            "schema_version": "skill-release",
+            "assertions": {"passed": 18, "failed": 0},
+            "gates": {
+                "any_security_violation_vetoes_release": True,
+                "hidden_test_invisible_to_proposer": True,
+            },
+        },
     }
 
 
@@ -289,6 +311,16 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
         self.assertEqual(
             "offline_silver_and_local_rls_partial_pass",
             matrix["levels"]["L4_semantic_candidate_retrieval"]["status"],
+        )
+        self.assertEqual(
+            "governed_release_mechanics_partial_pass",
+            matrix["levels"]["L6_procedural_replay"]["status"],
+        )
+        self.assertEqual(
+            18,
+            matrix["levels"]["L6_procedural_replay"]["evidence"][
+                "governed_release_assertions_passed"
+            ],
         )
         semantic = matrix["levels"]["L4_semantic_candidate_retrieval"][
             "evidence"

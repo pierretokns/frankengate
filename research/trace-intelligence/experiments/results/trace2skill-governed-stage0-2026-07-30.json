@@ -1,0 +1,76 @@
+{
+  "arms": [
+    {
+      "content_bearing_input_hashes": {
+        "post_recalculation_eval_sha256": "5165923e44baacb61f04786136186c00956ffbe6d1f065c7371b8dab8942a845",
+        "pre_recalculation_eval_sha256": "5165923e44baacb61f04786136186c00956ffbe6d1f065c7371b8dab8942a845",
+        "runner_result_sha256": "6540067c8c420e97ebbbe1f7deeca09929a849a31feb3fb141c81f5624b897f5",
+        "tool_audit_sha256": [
+          "0c31dea57c58f3f6b33250a7466ef65b17b98d3e2aaf884b4b2e1094214f585b"
+        ]
+      },
+      "formula_recalculation_changed_verdict": false,
+      "label": "no_skill",
+      "network_attempts_denied": 0,
+      "nonzero_tool_exits": 0,
+      "runner_reported_success": true,
+      "sandbox_violations": 0,
+      "tool_calls": 3,
+      "tool_timeouts": 0,
+      "turns": 6,
+      "verifier_pass_after_formula_recalculation": true,
+      "verifier_pass_before_formula_recalculation": true
+    },
+    {
+      "content_bearing_input_hashes": {
+        "post_recalculation_eval_sha256": "5165923e44baacb61f04786136186c00956ffbe6d1f065c7371b8dab8942a845",
+        "pre_recalculation_eval_sha256": "c3625b94521e9429e1102312e46a9135ade87c51a84980e18e916da85a39bdbc",
+        "runner_result_sha256": "1ee7bc99fa905fb125a1ad1908d4fbb3fbe8ae5dc07f8f2d02f861ea005a44ca",
+        "tool_audit_sha256": [
+          "8647401cc42baf39709dc1c94f69c25d703e3120551938a83d211ac474964f2a"
+        ]
+      },
+      "formula_recalculation_changed_verdict": true,
+      "label": "human_skill",
+      "network_attempts_denied": 0,
+      "nonzero_tool_exits": 4,
+      "runner_reported_success": true,
+      "sandbox_violations": 0,
+      "tool_calls": 12,
+      "tool_timeouts": 0,
+      "turns": 12,
+      "verifier_pass_after_formula_recalculation": true,
+      "verifier_pass_before_formula_recalculation": false
+    }
+  ],
+  "claim_boundary": [
+    "one task cannot estimate skill utility",
+    "runner success means an output exists, not that the verifier passes",
+    "pre-recalculation data-only comparison can falsely reject formula outputs",
+    "the smoke test establishes execution-boundary mechanics, not enterprise transfer"
+  ],
+  "dataset": {
+    "id": "Qwen-Applications/Trace2Skill:spreadsheetbench_verified_400",
+    "manifest_sha256": "bcecaa89a005bd4e3bbe98da150a86e8062c27f262e575d5e47bd9861b3525e7",
+    "revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+    "task_id": "54513"
+  },
+  "experiment_class": "execution-safety and verifier-validity smoke test",
+  "experiment_date": "2026-07-30",
+  "findings": {
+    "all_recorded_tool_calls_had_network_denied_by_policy": true,
+    "formula_recalculation_is_required_before_workbook_verification": true,
+    "primary_enterprise_domain": "NL2SQL",
+    "sandbox_boundary_executed_real_model_tool_calls": true,
+    "skill_benefit_established": false,
+    "spreadsheet_domain_priority": "cross-domain control only"
+  },
+  "model": {
+    "id": "mlx-community/Qwen3.5-9B-OptiQ-4bit",
+    "seed": 20260730,
+    "snapshot": "319aed167e31e0bf81ddba0c23f8d218a15be612",
+    "temperature": 0
+  },
+  "raw_traces_or_workbooks_committed": false,
+  "schema_version": "frankengate-trace2skill-stage0-v1"
+}

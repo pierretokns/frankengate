@@ -56,34 +56,38 @@ authorization boundary.
 | ReasoningBank | Induce lessons from successful and failed experiences, retrieve them for later tasks; `ed80611`, package `0.1.0` ([source](https://github.com/google-research/reasoning-bank/tree/ed80611788292ea739f1effd31f16c53823b8a0d), [research summary](https://research.google/blog/reasoningbank-enabling-agents-to-learn-from-experience/)) | Lessons fit candidates; success/failure evidence needs typed evaluations and exact event links | No ReasoningBank runner | Not tested | Direct append, self-judging, and benchmark-specific retrieval contaminate independent validation |
 | Hermes stable memory | Files, provenance, protected writes, snapshots, curator, and rollback; `v2026.7.20` / `3ef6bbd` ([source](https://github.com/NousResearch/hermes-agent/tree/3ef6bbd201263d354fd83ec55b3c306ded2eb72a)) | Harness projections and version lineage are proposed; files cannot carry database authority | No integration | Source tests were reviewed; no Frankengate outcome test | A reflection can still directly mutate shared files without held-out outcome evidence |
 | Hermes Self-Evolution | GEPA/MIPRO scaffold over examples and a skill; `0a929e3` ([source](https://github.com/NousResearch/hermes-agent-self-evolution/tree/0a929e3aa20e15cf04dc7c28492a7d41a5139125)) | Candidate variants/eval runs fit proposed schema | Not adopted | Targeted source review found the optimizer does not mutate the claimed skill body and a caller violates its own structure contract | Not a valid empirical baseline in the reviewed revision |
-| GEPA / Trace2Skill / SkillOpt family | Propose and select bounded text artifacts using rollout feedback and executable validation | Candidate frontier, split manifest, replay runs, per-family metrics, and release decision are proposed | Not implemented in Frankengate | Experimental protocol designed; no outcome run yet | Search strategy is composable; native mutable skill writers and self-selected tests are not |
+| GEPA / Trace2Skill / SkillOpt family | Propose and select bounded text artifacts using rollout feedback and executable validation | Candidate provenance, split manifests, evaluation runs, signed releases, exposure, influence, and withdrawal are represented in `005` | Governed tool boundary, Trace2Skill launcher, and PostgreSQL lifecycle implemented for research | **Mechanics only:** one no-skill and one human-skill run both passed after formula recalculation; 18/18 PostgreSQL lifecycle assertions passed; no skill-benefit estimate. Enterprise factorial moved to NL2SQL | Search strategy is composable; native mutable skill writers and self-selected tests are not |
 | “Jeopard” | Exact requested project remains unresolved after repository/paper search | None attributable | None | None | Do not silently equate an unknown project with GEPA or another similarly pronounced name |
 | RL environment episode | Reset, action, observation, termination, task/resource state; OpenEnv `v0.4.1` / `65c506e` ([source](https://github.com/meta-pytorch/OpenEnv/tree/65c506ef94bb1f7279cb4359673b3ef81031d01f)) | Current event graph represents actions/observations but lacks required environment attachment | Adapters exist for some public fixtures, not a production environment contract | Adapter/projection fixtures only | A flat chat or ATIF sequence does not preserve reset state, resources, overlap, or replay divergence |
-| Reward/evaluation evidence | Versioned checks and breakdowns; τ²-bench `v1.0.1` / `fc0055d` ([source](https://github.com/sierra-research/tau2-bench/tree/fc0055dc4e0a316c3f83133267fbd6faaa770992)) | Generic outcome JSONB is insufficient; proposed evaluation assertions preserve verifier, evidence, revision, and basis | Not implemented as append-only evaluation tables | A small fixture preserves reward fields; reward validity has not been tested | Scalar reward cannot support diagnosis, relabeling, or independent verification |
-| Replay | Immutable task/environment/artifact manifest plus attempt and divergence records; SWE-agent `v1.1.0` / `0f3acaf` ([source](https://github.com/SWE-agent/SWE-agent/tree/0f3acafacabc0def8cc76b4e48acb4b6cf302cb9)) | Missing from current SQL and canonical top-level schema | No end-to-end replay runner | Not tested | Re-executing actions is not exact replay unless images, commits, fixtures, clock/network, tool schemas, and secrets are frozen |
+| Reward/evaluation evidence | Versioned checks and breakdowns; τ²-bench `v1.0.1` / `fc0055d` ([source](https://github.com/sierra-research/tau2-bench/tree/fc0055dc4e0a316c3f83133267fbd6faaa770992)) | `evaluation_runs` records independent versioned outcomes, security vetoes, cost, and latency; assertion-level evidence remains future work | Append-only evaluator-only result writes implemented in research SQL | Role separation and release veto pass; reward validity has not been tested | Scalar reward cannot support diagnosis, relabeling, or independent verification |
+| Replay | Immutable task/environment/artifact manifest plus attempt and divergence records; SWE-agent `v1.1.0` / `0f3acaf` ([source](https://github.com/SWE-agent/SWE-agent/tree/0f3acafacabc0def8cc76b4e48acb4b6cf302cb9)) | Frozen split/task/environment/tool/evaluator hashes are represented; full artifact and divergence attachments remain missing | Manifest and outcome lifecycle implemented; no end-to-end NL2SQL replay runner | Hidden-test isolation and release gate pass in PostgreSQL; task benefit is untested | Re-executing actions is not exact replay unless images, commits, fixtures, clock/network, tool schemas, and secrets are frozen |
 | Learner attachment | Token IDs, role/loss masks, behavior log probabilities, checkpoint/policy lineage; Agent Lightning `v0.3.0` / `3b5d733` ([source](https://github.com/microsoft/agent-lightning/tree/3b5d733861cf313fc09821a23240bbdf3cb2ee5b)) | Explicitly optional and currently absent | Not implemented | Not tested | Tokenizer- and policy-specific tensors are derivatives, not canonical evidence; store large payloads by content-addressed reference |
-| Influence lineage | Record the release/candidate IDs that influenced a later trace | Missing from current SQL | Implemented only in the deterministic oracle | **Synthetic exclusion gate passed** | Without influence IDs, evaluation leakage and self-confirming “improvement” cannot be measured |
+| Influence lineage | Record the release/candidate IDs that influenced a later trace | `release_exposures` and `trajectory_influences` preserve scoped release-to-trace lineage | Implemented in research PostgreSQL plus the deterministic oracle | **PostgreSQL RLS gate passed** for authorized influence and denied cross-subject influence | Candidate-level influence and prospective leakage analysis remain |
 
-## What the current architecture cannot represent
+## Remaining representation gaps
 
-The current
+The base
 [`001_trace_research.sql`](../../../research/trace-intelligence/sql/001_trace_research.sql)
-has governed trajectories, events, and generic derived artifacts. It is not yet
-the architecture described above:
+and lifecycle
+[`005_skill_release_lifecycle.sql`](../../../research/trace-intelligence/sql/005_skill_release_lifecycle.sql)
+now cover governed trajectories/events, many-source candidates, frozen
+manifests, independent evaluation runs, signed releases, exposure, influence,
+audit events, and withdrawal. They still do not cover the full architecture:
 
-1. `derived_artifacts` points to one source trajectory. A memory or skill
-   candidate can depend on many events, candidates, evaluations, and releases.
-2. There is no first-class authorization epoch, evidence-scope intersection,
-   classification derivation receipt, or policy snapshot on a derived row.
+1. Candidate provenance currently covers many events, but not typed
+   candidate-to-candidate, evaluation-to-claim, or transitive deletion edges.
+2. Scope is typed and epoch-checked, but classification derivation and complete
+   policy decision receipts are not first-class.
 3. There are no `valid_from`/`valid_to` and `system_from`/`system_to` facts.
-4. `released` is an artifact lifecycle label, not immutable release membership
-   with a parent, diff, approval, and rollback.
+4. Releases are signed, parentable, withdrawable records, but diffs, atomic
+   rollout pointers, canary decisions, and signature verification are absent.
 5. There is no dream job, partial-output quarantine, deletion dependency graph,
-   export invalidation, or influence lineage.
-6. The canonical schema has no normative top-level `environment`,
+   or export invalidation; release-to-trajectory influence exists, but not
+   candidate- or assertion-level influence.
+6. The canonical event schema has no normative top-level `environment`,
    `evaluation`, `replay`, or optional `learner` attachment.
-7. Outcome JSONB is not an append-only, versioned evaluation with assertion
-   evidence and verifier provenance.
+7. Evaluations are append-only and versioned but lack assertion-level evidence
+   and verifier artifact references.
 8. There is no content-addressed artifact manifest for screenshots, DOMs,
    repository layers, Playwright traces, audio, or tensor payloads.
 
@@ -171,17 +175,24 @@ It passed 15/15 assertions for:
 
 This is **implemented and empirically tested synthetic conformance**, not a
 database, model-quality, natural-trace, or enterprise-benefit result. The next
-mandatory gates are:
+PostgreSQL implementation in
+[`005_skill_release_lifecycle.sql`](../../../research/trace-intelligence/sql/005_skill_release_lifecycle.sql)
+and rollback-only
+[`006_skill_release_assertions.sql`](../../../research/trace-intelligence/sql/006_skill_release_assertions.sql)
+then passed 18/18 checks through separate proposer, evaluator, releaser, and
+runtime roles. It covers complete-source authorization, hidden tests,
+security-vetoed release, no scope broadening, immutable signed fields, exposure,
+influence, withdrawal, and stale epochs. This is database lifecycle evidence,
+not task benefit or Aurora operations evidence. The next mandatory gates are:
 
-1. implement these records and invariants in PostgreSQL with RLS;
-2. test concurrent promotion, epoch changes, deletion, rollback, and export
+1. test concurrent promotion, epoch changes, deletion, rollback, and export
    invalidation under transactions;
-3. run at least two independent extractors on admitted natural traces and score
+2. run at least two independent extractors on admitted natural traces and score
    exact-evidence entailment, contradiction, temporal/context identity, and
    abstention;
-4. replay proposed procedural skills on frozen task-family-held-out
-   environments; and
-5. measure whether released memory or skill changes independently verified
+3. replay proposed procedural skills on frozen schema-family-held-out NL2SQL
+   environments; use SpreadsheetBench only as a cross-domain control; and
+4. measure whether released memory or skill changes independently verified
    outcomes without cross-scope leakage or per-family regression.
 
 ## Issue acceptance state

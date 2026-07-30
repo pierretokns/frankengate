@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v4"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v5"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "codetracebench": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
@@ -37,6 +37,9 @@ REQUIRED_RESULTS = {
     "agenttrace": "agenttrace-nl2bash-replay-audit-2026-07-30.json",
     "native_history": "public-native-history-fidelity-2026-07-30.json",
     "history_discovery": "public-agent-history-discovery-2026-07-30.json",
+    "trace2skill_stage0": "trace2skill-governed-stage0-2026-07-30.json",
+    "statebench_sql": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
+    "skill_release": "governed-skill-release-lifecycle-2026-07-30.json",
 }
 
 
@@ -107,6 +110,9 @@ def build_matrix(
     agenttrace = results["agenttrace"]
     native_history = results["native_history"]
     history_discovery = results["history_discovery"]
+    trace2skill_stage0 = results["trace2skill_stage0"]
+    statebench_sql = results["statebench_sql"]
+    skill_release = results["skill_release"]
 
     atif = _require(projection, "ATIF_v1_7")
     otel = _require(projection, "OpenInference_OTel")
@@ -523,7 +529,7 @@ def build_matrix(
             ),
         },
         "L6_procedural_replay": {
-            "status": "bounded_replay_only",
+            "status": "governed_release_mechanics_partial_pass",
             "evidence": {
                 "wisp_recovery_review_candidates": _require(
                     recovery,
@@ -549,11 +555,46 @@ def build_matrix(
                 "stdout_exit_equivalent_pairs": _require(
                     agenttrace, "nl2bash_replay", "equivalent_rows"
                 ),
+                "trace2skill_real_tool_boundary_passed": _require(
+                    trace2skill_stage0,
+                    "findings",
+                    "sandbox_boundary_executed_real_model_tool_calls",
+                ),
+                "trace2skill_stage0_skill_benefit_established": _require(
+                    trace2skill_stage0,
+                    "findings",
+                    "skill_benefit_established",
+                ),
+                "statebench_sql_fixture_tasks": _require(
+                    statebench_sql, "runner", "total_tasks"
+                ),
+                "statebench_executable_gold_sql_tasks": _require(
+                    statebench_sql, "runner", "gold_sql_tasks"
+                ),
+                "governed_release_assertions_passed": _require(
+                    skill_release, "assertions", "passed"
+                ),
+                "governed_release_assertions_failed": _require(
+                    skill_release, "assertions", "failed"
+                ),
+                "security_violation_veto_passed": _require(
+                    skill_release,
+                    "gates",
+                    "any_security_violation_vetoes_release",
+                ),
+                "hidden_test_boundary_passed": _require(
+                    skill_release,
+                    "gates",
+                    "hidden_test_invisible_to_proposer",
+                ),
             },
             "decision": (
-                "AgentTrace supports loss-aware telemetry and bounded command "
-                "comparison, not causal memory replay: task verdicts, expected "
-                "state digests, seeds, and intervention arms are absent"
+                "the real tool sandbox and governed proposal/evaluation/release "
+                "state machine pass, but neither establishes causal skill "
+                "benefit. AgentTrace lacks task verdicts and intervention arms; "
+                "the finance SQL fixture has only four executable gold queries. "
+                "Run the preregistered 60–120 task schema-family-held-out NL2SQL "
+                "experiment before releasing any learned procedure"
             ),
         },
         "L7_to_L10": {
@@ -588,8 +629,9 @@ def build_matrix(
         "suggest_evals_from_traces": {
             "status": "proposal_and_audit_mechanics_supported",
             "basis": (
-                "Wisp evidence-linked proposals plus CodeTraceBench mutation "
-                "mechanics"
+                "Wisp evidence-linked proposals, CodeTraceBench mutation "
+                "mechanics, and an 18-assertion governed hidden-test/release "
+                "lifecycle"
             ),
             "next_gate": (
                 "guided harness/environment/verifier construction and "
@@ -671,7 +713,8 @@ def build_matrix(
             "reason": (
                 "the real OTel path, relational memory oracle, real native "
                 "memory-transition adapter, and same-candidate forced-RLS "
-                "PostgreSQL retrieval run pass without a second authority. "
+                "PostgreSQL retrieval plus governed skill-release lifecycle "
+                "pass without a second authority. "
                 "Exact pgvector is fast on the correctness cohort while the "
                 "tested trigram-heavy fusion is rejected; current failures are "
                 "labels, scale, outcome validity, calibration, and prospective "
@@ -681,10 +724,11 @@ def build_matrix(
         "overall_status": (
             "real OTel conformance, governed history mechanics, synthetic "
             "memory invariants, and one loss-aware real memory transition "
-            "cohort pass; silver-label retrieval and same-candidate local "
-            "PostgreSQL RLS pass partially; memory utility, diagnosis, causal "
-            "replay, cross-user learning, Aurora scale, and prospective "
-            "enterprise utility do not"
+            "cohort pass; silver-label retrieval, same-candidate local "
+            "PostgreSQL RLS, and governed skill-release mechanics pass "
+            "partially; memory utility, diagnosis, causal skill benefit, "
+            "cross-user learning, Aurora scale, and prospective enterprise "
+            "utility do not"
         ),
     }
     output["result_sha256"] = hashlib.sha256(
@@ -737,7 +781,8 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "memory quality and utility do not"
         ),
         "L6_procedural_replay": (
-            "bounded command comparison works; causal memory replay does not"
+            "safe tool execution and hidden-test release mechanics pass; causal "
+            "skill benefit does not"
         ),
         "L7_to_L10": (
             "CMU is waived; prospective enterprise labels, privacy, and outcomes "
@@ -787,6 +832,13 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"three-way hybrid reached only {l4['postgres_hybrid_recall_at_20']:.3f} "
             f"at {l4['postgres_hybrid_p50_ms']:.3f} ms. Keep exact/structured plus "
             "conditional dense retrieval and reject that trigram-heavy hybrid.",
+            f"- The governed skill lifecycle passed "
+            f"{levels['L6_procedural_replay']['evidence']['governed_release_assertions_passed']} "
+            "PostgreSQL assertions, including hidden-test isolation and a hard "
+            "security-violation veto. The one-task Trace2Skill smoke established "
+            "safe tool execution but no skill benefit; the local finance fixture "
+            "has only four executable gold SQL tasks, so NL2SQL intervention "
+            "quality remains untested.",
             "",
             "## Original enterprise questions",
             "",

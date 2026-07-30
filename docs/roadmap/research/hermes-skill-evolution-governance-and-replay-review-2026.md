@@ -193,13 +193,26 @@ This is a screening experiment, not yet a publication-scale result.
 
 ### Corpus
 
-Use 60 independently verifiable task identities from an admitted public trace corpus, preferably a stratified subset of the Trace2Skill SpreadsheetBench reproduction data or an equivalently licensed CMU corpus. Preserve tool calls and outcomes. Split by task family before inspecting candidate quality:
+Use 60–120 audited executable NL2SQL tasks from multiple database/schema
+families. Preserve model calls, schema/tool discovery, SQL proposals, database
+results, policies, and outcomes. Split by schema family before inspecting
+candidate quality:
 
-- 30 train/evidence tasks;
-- 15 selection tasks;
-- 15 hidden test tasks.
+- 50% train/evidence tasks;
+- 25% selection tasks;
+- 25% hidden test tasks.
 
-Run two fixed evaluation seeds per task and record environment failures separately. If family labels are absent, create and freeze clusters before evaluating any generated skill.
+Run at least two fixed evaluation seeds per task and record environment failures
+separately. Include the same-model/no-skill arm, an unrelated SQL-skill placebo,
+and authorization-negative tasks. Score executed results, schema selection,
+correct-to-incorrect revision, cost, and a hard zero-leakage gate. The detailed
+design and sources are in
+[`nl2sql-enterprise-skill-replay-decision-2026.md`](nl2sql-enterprise-skill-replay-decision-2026.md).
+
+Trace2Skill SpreadsheetBench is retained only as a cross-domain execution
+control. A real-model Stage-0 run established the sandbox boundary and exposed
+a formula-recalculation verifier failure mode; it did not estimate skill
+benefit. CMU is gated and explicitly not on the critical path.
 
 ### Arms
 
@@ -242,6 +255,9 @@ Tests were run from clean pinned source trees using Python 3.13 and a minimal is
 | Hermes `3ef6bbd` | curator activity, curator backup, skill usage | 76 passed | Lifecycle, backup, and usage mechanisms behaved as tested |
 | Hermes `3ef6bbd` | skill manager, provenance, write approval, curator classification, background-review sessions/list/toolset | 221 passed, 1 warning | The reviewed local safety and review controls behaved as tested |
 | Hermes Self-Evolution `0a929e3a` | constraint unit tests | 16 passed | Validator units pass, but do not cover the body-only production call mismatch |
+| Trace2Skill `3d0b52a1` | governed one-task no-skill versus human-skill smoke | both pass after formula recalculation | Real tool calls stayed inside the networkless boundary; pre-recalculation evaluation falsely rejected the formula-bearing arm, so this is verifier/safety evidence only |
+| StateBench finance SQL v0 | 46 fixture consistency checks | 46 passed; 4 executable SQL tasks | Adapter/control seed only; SQLite smoke is not PostgreSQL, RLS, Aurora, or skill-learning proof |
+| Frankengate PostgreSQL lifecycle | proposer/evaluator/releaser/runtime RLS, hidden test, release, withdrawal | 18/18 assertions passed | Candidate-to-release mechanics work in local PostgreSQL; task benefit, Aurora operations, scale, and concurrency remain untested |
 
 Total: **313 passing targeted tests**: 297 for Hermes stable and 16 for Hermes Self-Evolution. The initial attempt under the machine's Python 3.9 failed during collection because the pinned Hermes source uses newer union-type syntax; rerunning under Python 3.13 removed that environment mismatch. Passing unit tests do not repair the Self-Evolution call-site and mutation defects described above.
 

@@ -1,0 +1,55 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "stateofai/statebench:finance-retrieval-sql-v0",
+  "dataset_revision": "0e91f3bb588767e999cfdb720fc5e369384dddf4",
+  "source_url": "https://github.com/pierretokns/stateofai",
+  "license": "repository license; synthetic fixture authored in State of AI",
+  "source_format": "Postgres-first schema, retrieval JSONL, and task JSON",
+  "adapter": "statebench_finance_retrieval_sql_v0",
+  "admission_status": "admitted_for_control_and_trace-capture_smoke",
+  "files": [
+    {
+      "path": "statebench/fixtures/finance-retrieval-sql/v0/gold_tasks.json",
+      "sha256": "31a1adea7c565931818d43ca667b268a09a56a5a43f4445448e16442abbec2ab"
+    },
+    {
+      "path": "statebench/fixtures/finance-retrieval-sql/v0/schema.sql",
+      "sha256": "6dacf6da678988ef82623fa9c5d42615dd95d964db01f1dbfc8e23b90976c4a1"
+    },
+    {
+      "path": "statebench/fixtures/finance-retrieval-sql/v0/retrieval_corpus.jsonl",
+      "sha256": "b8b8f93ecdb55cf01d1d01f24b42bf9c90bdad619ee07eaff6f39ef9dba23bba"
+    },
+    {
+      "path": "statebench/fixtures/finance-retrieval-sql/v0/model_prompt_contract.md",
+      "sha256": "d498ef10777692b9ca6491b648a933ee5853246c768b7a76593960eb7ddd125e"
+    },
+    {
+      "path": "statebench/runners/finance_retrieval_sql_fixture.py",
+      "sha256": "5522ff5a46d5dfa8f9e50241de844b0b21126fddaf0acc34c9c942dafa3dece6"
+    }
+  ],
+  "coverage": {
+    "total_tasks": 46,
+    "gold_sql_tasks": 4,
+    "refusal_tasks": 3,
+    "remaining_tasks_are_retrieval_or_control_contracts": 39
+  },
+  "pilot_claims": [
+    "fixture internal consistency",
+    "answer-contract scoring",
+    "SQL and retrieval trace-capture integration",
+    "refusal and entitlement negative controls"
+  ],
+  "unsupported_claims": [
+    "statistically adequate SQL skill learning",
+    "Postgres RLS correctness from the SQLite smoke runner",
+    "Aurora behavior",
+    "enterprise transfer"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "reuse_only_hash_verified_external_snapshot": true,
+    "commit_aggregate_results_only": true
+  }
+}

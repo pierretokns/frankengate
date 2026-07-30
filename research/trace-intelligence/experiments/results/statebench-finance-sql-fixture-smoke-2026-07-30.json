@@ -1,0 +1,29 @@
+{
+  "schema_version": "frankengate-statebench-finance-sql-smoke-v1",
+  "experiment_date": "2026-07-30",
+  "fixture": {
+    "id": "finance-retrieval-sql-v0",
+    "revision": "0e91f3bb588767e999cfdb720fc5e369384dddf4",
+    "gold_tasks_sha256": "31a1adea7c565931818d43ca667b268a09a56a5a43f4445448e16442abbec2ab",
+    "runner_sha256": "5522ff5a46d5dfa8f9e50241de844b0b21126fddaf0acc34c9c942dafa3dece6"
+  },
+  "runner": {
+    "declared_database_engine": "postgres",
+    "executed_engine": "sqlite_memory_smoke",
+    "total_tasks": 46,
+    "accepted_tasks": 46,
+    "pass_rate": 1.0,
+    "gold_sql_tasks": 4,
+    "refusal_tasks": 3
+  },
+  "findings": {
+    "fixture_is_internally_consistent": true,
+    "adequate_for_control_and_adapter_smoke": true,
+    "adequate_for_skill_learning": false,
+    "postgres_proof": false,
+    "rls_proof": false,
+    "aurora_proof": false
+  },
+  "next_gate": "expand to 60-120 audited executable SQL tasks split by schema family, then run paired governed skill arms on real PostgreSQL",
+  "raw_data_committed": false
+}

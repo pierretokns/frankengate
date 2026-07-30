@@ -22,6 +22,14 @@ kubectl exec -i -n frankengate-test postgres-0 -- \
 kubectl exec -i -n frankengate-test postgres-0 -- \
   psql -U frankengate -d frankengate -v ON_ERROR_STOP=1 \
   < research/trace-intelligence/sql/004_e2_authorized_retrieval.sql
+
+kubectl exec -i -n frankengate-test postgres-0 -- \
+  psql -U frankengate -d frankengate -v ON_ERROR_STOP=1 \
+  < research/trace-intelligence/sql/005_skill_release_lifecycle.sql
+
+kubectl exec -i -n frankengate-test postgres-0 -- \
+  psql -U frankengate -d frankengate -v ON_ERROR_STOP=1 \
+  < research/trace-intelligence/sql/006_skill_release_assertions.sql
 ```
 
 The assertions execute all protected queries as `trace_research_app`, a
@@ -42,3 +50,13 @@ trigram, exact-vector, and optional HNSW retrieval compose with the same authori
 boundary; missing, wrong, or stale authority returns zero candidates; and withdrawn
 or soft-deleted documents disappear before ranking. It still does not load raw
 public or enterprise traces.
+
+`005_skill_release_lifecycle.sql` adds separate proposer, evaluator, releaser,
+and runtime roles plus governed candidate provenance, frozen replay manifests,
+independent outcomes, signed releases, exposure, influence, and release-event
+records. `006_skill_release_assertions.sql` executes 18 rollback-only
+conformance checks through the non-owner roles. It proves hidden-test
+separation, release/security vetoes, no scope broadening, immutable signed
+fields, authorized influence tracking, withdrawal, and stale-epoch denial.
+It does not prove that a mined skill improves a real task, and it does not
+emulate Aurora operations, failure, concurrency, or scale.

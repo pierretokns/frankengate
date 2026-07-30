@@ -9,7 +9,7 @@
       "ATIF v1.7 for explicitly mapped portable tasks/evals",
       "OpenInference/OTLP for content-minimized operational topology"
     ],
-    "reason": "the real OTel path, relational memory oracle, real native memory-transition adapter, and same-candidate forced-RLS PostgreSQL retrieval run pass without a second authority. Exact pgvector is fast on the correctness cohort while the tested trigram-heavy fusion is rejected; current failures are labels, scale, outcome validity, calibration, and prospective causality\u2014not a demonstrated need for another database"
+    "reason": "the real OTel path, relational memory oracle, real native memory-transition adapter, and same-candidate forced-RLS PostgreSQL retrieval plus governed skill-release lifecycle pass without a second authority. Exact pgvector is fast on the correctness cohort while the tested trigram-heavy fusion is rejected; current failures are labels, scale, outcome validity, calibration, and prospective causality\u2014not a demonstrated need for another database"
   },
   "enterprise_questions": {
     "find_people_doing_similar_work": {
@@ -43,7 +43,7 @@
       "status": "local_mechanics_supported"
     },
     "suggest_evals_from_traces": {
-      "basis": "Wisp evidence-linked proposals plus CodeTraceBench mutation mechanics",
+      "basis": "Wisp evidence-linked proposals, CodeTraceBench mutation mechanics, and an 18-assertion governed hidden-test/release lifecycle",
       "next_gate": "guided harness/environment/verifier construction and changed-system execution",
       "status": "proposal_and_audit_mechanics_supported"
     },
@@ -108,6 +108,21 @@
       "filename": "canonical-projection-e0-conformance-2026-07-30.json",
       "schema_version": "canonical-projection-e0-conformance-result-v1",
       "sha256": "8801a8a520db47215ffe3f799f152d3d5c72947f3c3b6bd8d191cc2876499f02"
+    },
+    "skill_release": {
+      "filename": "governed-skill-release-lifecycle-2026-07-30.json",
+      "schema_version": "frankengate-governed-skill-release-lifecycle-v1",
+      "sha256": "9a3a6e5274461d328f05a6bf75fbdba43645e4cada60cfe3891b3c79c0d221c1"
+    },
+    "statebench_sql": {
+      "filename": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
+      "schema_version": "frankengate-statebench-finance-sql-smoke-v1",
+      "sha256": "fc96c57fc35eedc9a7caa9f6bf9746663eaa721199bca80a81f01445cf144de6"
+    },
+    "trace2skill_stage0": {
+      "filename": "trace2skill-governed-stage0-2026-07-30.json",
+      "schema_version": "frankengate-trace2skill-stage0-v1",
+      "sha256": "f8a3b22a9ae2fccfc1eb54132738277664a562c827bdade906be9d5bd879c312"
     },
     "trace_memory_conformance": {
       "filename": "trace-commons-memory-conformance-2026-07-30.json",
@@ -254,16 +269,24 @@
       "status": "real_trace_transition_partial_pass"
     },
     "L6_procedural_replay": {
-      "decision": "AgentTrace supports loss-aware telemetry and bounded command comparison, not causal memory replay: task verdicts, expected state digests, seeds, and intervention arms are absent",
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
       "evidence": {
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
         "bounded_pairs_executed": 17,
+        "governed_release_assertions_failed": 0,
+        "governed_release_assertions_passed": 18,
+        "hidden_test_boundary_passed": true,
+        "security_violation_veto_passed": true,
         "share_codex_recovery_review_candidates": 31,
+        "statebench_executable_gold_sql_tasks": 4,
+        "statebench_sql_fixture_tasks": 46,
         "stdout_exit_equivalent_pairs": 9,
+        "trace2skill_real_tool_boundary_passed": true,
+        "trace2skill_stage0_skill_benefit_established": false,
         "wisp_recovery_review_candidates": 89
       },
-      "status": "bounded_replay_only"
+      "status": "governed_release_mechanics_partial_pass"
     },
     "L7_to_L10": {
       "decision": "no utility routing, enterprise release, domain embedding adaptation, or generator fine-tuning claim is authorized; prospective labels and outcomes\u2014not access to another corpus\u2014are the blocking evidence",
@@ -274,7 +297,7 @@
       "status": "gated"
     }
   },
-  "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval and same-candidate local PostgreSQL RLS pass partially; memory utility, diagnosis, causal replay, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "ef7c23fa28dac2eb00bf258a077785c8580a34d6cf27a009a85d13e8fca8bc89",
-  "schema_version": "frankengate-combined-evidence-matrix-v4"
+  "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
+  "result_sha256": "b7ccd48e97231273424a15b10d92750736223325c2ee7e74d11c85d753e82aa9",
+  "schema_version": "frankengate-combined-evidence-matrix-v5"
 }
