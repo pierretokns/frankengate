@@ -111,18 +111,29 @@ append-once attempt evidence, and separately sealed stage manifests. The exact
 minimum architecture and 27 release-gate tests are specified in
 [`nl2sql-capability-isolation-design-2026-07-30.md`](../../docs/roadmap/research/nl2sql-capability-isolation-design-2026-07-30.md).
 
-The first capability-isolation implementation checkpoint now passes 48/48
-component tests: strict solver and broker DTOs, current-authority revalidation,
-source-neutral SQL policy, append-only full typed results, zero-execution
-submission, no-candidate-execution evaluator imports, signed/encrypted stage
-artifacts, and pass-only hidden unseal authorization. A composition test proves
-that an empty model preview can still yield the correct verdict from the full
-sealed result while candidate execution remains exactly one. P1 is **not**
-reopened: solver/resolver process separation, the Linux OCI network/mount
-profile, distinct PostgreSQL candidate/gold audit roles, crash recovery, signed
+The expanded capability-isolation implementation checkpoint now passes 61/61
+component tests. In addition to strict DTO, broker, attempt, evaluator, and
+stage-sealing contracts, it includes separate supervisor/evaluator resolver
+methods, a fresh-process solver harness with inherited Unix peers, and a
+fail-closed OCI profile contract. The frozen profile passed 21 real Linux/runc
+enforcement and protocol gates after the runtime test exposed and corrected a
+missing safe `fstatfs` syscall and an unsafe host-global `RLIMIT_NPROC`
+assumption. A bounded real PostgreSQL 16 audit also
+passed distinct candidate/evaluator roles and application names, write denial,
+three candidate plus three evaluator-only gold executions, database snapshot
+stability, and cleanup. A composition test proves that an empty model preview
+can still yield the correct verdict from the full sealed result while candidate
+execution remains exactly one. P1 is **not** reopened: the abstract resolver
+still needs OS peer credentials, the solver needs a minimal image and
+episode-specific identity/two-run isolation, database execution needs
+independently signed server/broker receipts, and crash recovery, signed
 evaluation/OTel receipts, and the complete 27-gate same-profile run remain.
 See
 [`experiments/summaries/nl2sql-capability-isolation-component-checkpoint-2026-07-30.md`](experiments/summaries/nl2sql-capability-isolation-component-checkpoint-2026-07-30.md).
+The real PostgreSQL slice is recorded separately in
+[`experiments/summaries/nl2sql-postgres-role-audit-2026-07-30.md`](experiments/summaries/nl2sql-postgres-role-audit-2026-07-30.md).
+The actual Linux profile, discovered failures, and raw-evidence contract are in
+[`experiments/summaries/nl2sql-linux-oci-conformance-runbook-2026-07-30.md`](experiments/summaries/nl2sql-linux-oci-conformance-runbook-2026-07-30.md).
 
 Spider2 is admitted only as a later external-validity layer. The source audit
 found 135 local Lite tasks across 30 database families, but only 16/24 published

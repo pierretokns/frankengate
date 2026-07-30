@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.invalid/schemas/fg-resolver-gold-request-v1.json",
+  "title": "Frankengate evaluator-only gold-resolution request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_nonce",
+    "experiment_id",
+    "fold_id",
+    "stage_role",
+    "stage_manifest_sha256",
+    "stage_episode_ref",
+    "database_snapshot_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "fg-resolver-gold-request-v1"},
+    "request_nonce": {"$ref": "#/$defs/nonce"},
+    "experiment_id": {"$ref": "#/$defs/id"},
+    "fold_id": {"$ref": "#/$defs/id"},
+    "stage_role": {
+      "enum": ["evidence", "visible_selection", "hidden_test"]
+    },
+    "stage_manifest_sha256": {"$ref": "#/$defs/sha256"},
+    "stage_episode_ref": {"$ref": "#/$defs/episode_ref"},
+    "database_snapshot_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{22}$"
+    },
+    "episode_ref": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{43}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

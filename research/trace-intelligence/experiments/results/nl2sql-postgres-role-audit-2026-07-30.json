@@ -1,0 +1,44 @@
+{
+  "claim_limits": [
+    "single disposable PostgreSQL instance, not Aurora failover",
+    "role and read-only-transaction isolation is not a hostile SQL sandbox",
+    "exact result equality is not semantic SQL correctness",
+    "aggregate excludes SQL, rows, task identities, DSN, and object names"
+  ],
+  "database_controls": {
+    "candidate_identity_asserted": true,
+    "candidate_nosuperuser_nobypassrls": true,
+    "candidate_write_denied": true,
+    "cleanup_attempted": true,
+    "cleanup_succeeded": true,
+    "distinct_application_names_asserted": true,
+    "evaluator_identity_asserted": true,
+    "evaluator_nosuperuser_nobypassrls": true,
+    "evaluator_write_denied": true,
+    "postgres_major_16": true
+  },
+  "database_snapshot": {
+    "snapshot_sha256": "7697f54272ce4149957373ed9a79354c6e16b562e059707ee5b60204f0ee1552",
+    "snapshot_unchanged": true
+  },
+  "execution_contract": {
+    "candidate_executions": 3,
+    "candidate_sql_executed_once_per_task": true,
+    "gold_never_executed_as_candidate": true,
+    "gold_only_evaluator_executions": 3
+  },
+  "fixture": {
+    "snapshot_sha256": "d987cc7b0f4628e4b82fbc39f7c092d4d96bae777f5d8fca5f76f02f3da05948",
+    "snapshot_unchanged": true,
+    "task_count": 3
+  },
+  "infrastructure_status": "valid",
+  "invalid_reasons": [],
+  "outcomes": {
+    "candidate_successes": 3,
+    "exact_matches": 2,
+    "gold_successes": 3
+  },
+  "result_sha256": "2918c6257bbd5b9d3b921ba8bb57eab14dc6e4daf21f3ed25bd79c78a71f84f0",
+  "schema_version": "frankengate-nl2sql-postgres-role-audit-v1"
+}

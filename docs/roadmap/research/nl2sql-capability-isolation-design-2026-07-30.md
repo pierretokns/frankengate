@@ -942,9 +942,37 @@ research/trace-intelligence/nl2sql_capabilities/
 
 ## Acceptance decision
 
+### Implementation evidence — 2026-07-30 checkpoint
+
+The first implementation now includes the strict solver/broker DTOs,
+append-once attempt chain, source-neutral broker, full-result evaluator,
+separate supervisor/evaluator resolver methods, signed/encrypted stage
+artifacts, a fresh-process inherited-FD solver harness, and a frozen OCI
+profile. The capability suite passes 61/61 tests.
+
+The frozen OCI profile also passed 21 real enforcement/protocol gates on
+Colima Linux `6.8.0-47-generic`/aarch64 with `runc 1.1.14`. That run found two
+defects missed by the config-shape tests:
+
+- preserved-FD startup requires the read-only `fstatfs` syscall; and
+- `RLIMIT_NPROC` is counted across all host threads sharing the real UID, so a
+  common container UID collided with CoreDNS. The profile now relies on the
+  scoped pids cgroup plus seccomp's process-creation denial instead.
+
+A separate real PostgreSQL 16 slice passed distinct constrained candidate and
+evaluator roles/application names, write denial, three calls per lane, actual
+database snapshot stability, deliberate mismatch detection, and cleanup.
+
+These results do **not** close this design. The tested Python rootfs is not
+minimal, UID 65532 is not episode-specific, only one OCI episode/kernel/runtime
+was exercised, resolver peer roles are abstract rather than `SO_PEERCRED`,
+PostgreSQL counts are coordinator receipts rather than signed independent
+server/broker evidence, and crash/OTel/complete 27-gate proofs remain open.
+
 This design meets the bead only after it is implemented and verified. The
-present code does not yet meet the capability-isolation acceptance criteria,
-despite correctly avoiding candidate re-execution in the happy-path P0.
+present code still does not meet the full capability-isolation acceptance
+criteria, despite correctly avoiding candidate re-execution and passing the
+bounded component/runtime slices above.
 
 The minimum credible release gate is:
 

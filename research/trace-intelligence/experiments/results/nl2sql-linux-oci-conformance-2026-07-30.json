@@ -1,0 +1,209 @@
+{
+  "decision": {
+    "classification": "enforcement_conformant",
+    "gates": {
+      "capabilities_empty": {
+        "observed": {
+          "CapAmb": "0000000000000000",
+          "CapBnd": "0000000000000000",
+          "CapEff": "0000000000000000",
+          "CapInh": "0000000000000000",
+          "CapPrm": "0000000000000000"
+        },
+        "passed": true
+      },
+      "deny_af_inet6_socket": {
+        "observed": {
+          "created": false,
+          "errno": 1
+        },
+        "passed": true
+      },
+      "deny_af_inet_socket": {
+        "observed": {
+          "created": false,
+          "errno": 1
+        },
+        "passed": true
+      },
+      "exact_descriptors": {
+        "observed": {
+          "fd_numbers": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "socket_fd_numbers": [
+            "3",
+            "4"
+          ]
+        },
+        "passed": true
+      },
+      "exact_staged_files": {
+        "observed": [
+          "nl2sql_capabilities/__init__.py",
+          "nl2sql_capabilities/dto.py",
+          "nl2sql_capabilities/solver_process_worker.py"
+        ],
+        "passed": true
+      },
+      "frozen_profile": {
+        "observed": "frozen",
+        "passed": true
+      },
+      "isolated_cwd": {
+        "observed": "/work",
+        "passed": true
+      },
+      "no_canary_disclosure": {
+        "observed": 0,
+        "passed": true
+      },
+      "no_new_privileges": {
+        "observed": "1",
+        "passed": true
+      },
+      "non_root_identity": {
+        "observed": [
+          65532,
+          65532,
+          65532,
+          65532
+        ],
+        "passed": true
+      },
+      "peer_protocol": {
+        "observed": {
+          "error_count": 0
+        },
+        "passed": true
+      },
+      "probe_schema": {
+        "observed": "fg-nl2sql-linux-oci-kernel-probe-v1",
+        "passed": true
+      },
+      "readonly_rootfs": {
+        "observed": {
+          "errno": 30,
+          "ok": false
+        },
+        "passed": true
+      },
+      "runc_exit_zero": {
+        "observed": 0,
+        "passed": true
+      },
+      "runtime_cleanup": {
+        "observed": {
+          "passed": true,
+          "reason": "container_absent"
+        },
+        "passed": true
+      },
+      "sanitized_environment": {
+        "observed": [
+          "FG_SOLVER_BROKER_FD",
+          "FG_SOLVER_MODEL_FD",
+          "FG_SOLVER_WORK_ROOT",
+          "HOME",
+          "LANG",
+          "LC_ALL",
+          "PYTHONDONTWRITEBYTECODE",
+          "PYTHONNOUSERSITE",
+          "TMPDIR",
+          "XDG_CACHE_HOME",
+          "XDG_CONFIG_HOME",
+          "XDG_DATA_HOME"
+        ],
+        "passed": true
+      },
+      "seccomp_filter": {
+        "observed": "2",
+        "passed": true
+      },
+      "sensitive_paths_absent": {
+        "observed": {
+          "checked_path_count": 12,
+          "present_path_count": 0
+        },
+        "passed": true
+      },
+      "tmpfs_home": {
+        "observed": {
+          "gid": 65532,
+          "mode": 448,
+          "mount_type": "tmpfs",
+          "uid": 65532,
+          "write": {
+            "errno": null,
+            "ok": true
+          }
+        },
+        "passed": true
+      },
+      "tmpfs_tmp": {
+        "observed": {
+          "gid": 65532,
+          "mode": 448,
+          "mount_type": "tmpfs",
+          "uid": 65532,
+          "write": {
+            "errno": null,
+            "ok": true
+          }
+        },
+        "passed": true
+      },
+      "tmpfs_work": {
+        "observed": {
+          "gid": 65532,
+          "mode": 448,
+          "mount_type": "tmpfs",
+          "uid": 65532,
+          "write": {
+            "errno": null,
+            "ok": true
+          }
+        },
+        "passed": true
+      },
+      "worker_receipt": {
+        "observed": true,
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "evidence": {
+    "canary_count": 6,
+    "canary_finding_count": 0,
+    "config_sha256": "226e5b35f94548774ed3a8ef01dd1ae5cc0f18754005c029e9c005d431ae7088",
+    "episode_stdin_sha256": "9d9a827eac653db50fa6468ee6a18c165bff2334ce6bff07e064bbb2a0035883",
+    "raw_sha256": "efa5bff09900f8f09a64c0748fda94906696e9b79062e932b773f5b33b9bc454",
+    "staged_file_count": 3,
+    "stderr_sha256": "99daecf9fb0088475a8e99764c8235834ed2c21e6d5ff926d009ce8aa88df978",
+    "stdout_sha256": "0262b4afad9afb60aa77564eece638ca5d60774f2674872af1e0022d7c33c2df",
+    "wire_byte_count": 791,
+    "wire_event_count": 9
+  },
+  "limitations": [
+    "one Colima Linux kernel and runc version were tested",
+    "the peer services are deterministic emulators, not production services",
+    "this proves boundary enforcement, not SQL correctness or model quality",
+    "raw evidence is mutable local evidence, not a signed WORM attestation",
+    "the pinned Python image is a general rootfs with other executables, not a minimal solver image",
+    "execve is permitted for startup and is not independently blocked after startup"
+  ],
+  "runtime": {
+    "image_digest": "sha256:399babc8b49529dabfd9c922f2b5eea81d611e4512e3ed250d75bd2e7683f4b0",
+    "kernel": "6.8.0-47-generic",
+    "machine": "aarch64",
+    "profile_variant": "frozen",
+    "runc_version_sha256": "6a63ca4258a4288871585e52521a199c2e71442e34ebb7c649edab3d2ec02682",
+    "runtime_failure_classifications": []
+  },
+  "schema_version": "fg-nl2sql-linux-oci-conformance-aggregate-v1"
+}

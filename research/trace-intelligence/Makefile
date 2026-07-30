@@ -2,7 +2,7 @@ PYTHON ?= python3
 PYTHONPYCACHEPREFIX ?= /private/tmp/frankengate-trace-intelligence-pycache
 QWEN3_EMBEDDING_DEVICE ?= cpu
 
-.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics
+.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
 
 verify: test validate compile
 
@@ -73,6 +73,35 @@ defog-sql-conformance:
 		--dsn-template "$(DEFOG_REPLAY_DSN_TEMPLATE)" \
 		--raw-audit-dir "$(DEFOG_RAW_AUDIT_DIR)" \
 		--output experiments/results/defog-governed-sql-replay-conformance-2026-07-30.json
+
+# Runs a bounded real PostgreSQL 16 candidate/evaluator role and snapshot audit.
+# The fixture and raw SQL/result/identity evidence must remain outside Git.
+nl2sql-postgres-role-audit:
+	@test -n "$(NL2SQL_PG16_DSN)" || \
+		(printf '%s\n' 'NL2SQL_PG16_DSN is required' >&2; exit 2)
+	@test -n "$(NL2SQL_ROLE_AUDIT_FIXTURE)" || \
+		(printf '%s\n' 'NL2SQL_ROLE_AUDIT_FIXTURE is required' >&2; exit 2)
+	@test -n "$(NL2SQL_ROLE_AUDIT_FIXTURE_SHA256)" || \
+		(printf '%s\n' 'NL2SQL_ROLE_AUDIT_FIXTURE_SHA256 is required' >&2; exit 2)
+	@test -n "$(NL2SQL_ROLE_AUDIT_RAW)" || \
+		(printf '%s\n' 'NL2SQL_ROLE_AUDIT_RAW is required' >&2; exit 2)
+	$(PYTHON) nl2sql_postgres_role_audit.py \
+		--dsn "$(NL2SQL_PG16_DSN)" \
+		--fixture-json "$(NL2SQL_ROLE_AUDIT_FIXTURE)" \
+		--fixture-sha256 "$(NL2SQL_ROLE_AUDIT_FIXTURE_SHA256)" \
+		--raw-audit-jsonl "$(NL2SQL_ROLE_AUDIT_RAW)" \
+		--output-json experiments/results/nl2sql-postgres-role-audit-2026-07-30.json
+
+# Must run as root inside the disposable Linux/Colima VM. The pinned image must
+# already be cached; the runner never pulls it. Exact raw evidence stays external.
+nl2sql-linux-oci-conformance:
+	@test "$$(uname -s)" = Linux || \
+		(printf '%s\n' 'nl2sql-linux-oci-conformance requires Linux' >&2; exit 2)
+	@test -n "$(NL2SQL_OCI_RAW)" || \
+		(printf '%s\n' 'NL2SQL_OCI_RAW is required' >&2; exit 2)
+	$(PYTHON) nl2sql_linux_oci_conformance.py \
+		--raw-output "$(NL2SQL_OCI_RAW)" \
+		--aggregate-output experiments/results/nl2sql-linux-oci-conformance-2026-07-30.json
 
 # This target intentionally requires explicit private paths and a disposable
 # governed database. It never downloads or discovers raw histories itself.
