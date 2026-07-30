@@ -279,6 +279,59 @@ def changed_history_fixture(root):
 
 
 class TraceCommonsMemoryCompositionTest(unittest.TestCase):
+    def test_cutoff_safe_project_identity_ignores_future_cwd(self):
+        records = [
+            assistant(
+                session_id="session-a",
+                uuid="read",
+                parent_uuid=None,
+                timestamp="2026-01-01T00:00:00Z",
+                tool_id="tool-read",
+                tool="Read",
+                tool_input={"file_path": MEMORY_PATH},
+                cwd="",
+            ),
+            tool_result(
+                session_id="session-a",
+                uuid="result",
+                parent_uuid="read",
+                timestamp="2026-01-01T00:00:01Z",
+                assistant_uuid="read",
+                tool_id="tool-read",
+                content="1\tvalue\n2\t",
+                cwd="",
+            ),
+            {
+                "type": "system",
+                "sessionId": "session-a",
+                "uuid": "future-context",
+                "parentUuid": "result",
+                "timestamp": "2026-01-01T00:01:00Z",
+                "cwd": "C:\\Future",
+            },
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            manifest = write_manifest(
+                root,
+                [write_source(root, "source.jsonl", records)],
+            )
+            cohort = native.load_verified_memory_cohort(
+                manifest,
+                root,
+                default_authority=composition.FIXED_IMPORT_AUTHORITY,
+            )
+            identity_key = hashlib.sha256(b"cutoff-safe-test").digest()
+            interactions, _ = composition._qualifying_interactions(
+                cohort,
+                identity_key,
+                {"source.jsonl": 0},
+                cutoff_safe_project_identity=True,
+            )
+
+        self.assertEqual(1, len(interactions))
+        self.assertEqual("", interactions[0].project_source)
+
     def test_project_normalization_casefolds_windows_but_not_posix(self):
         self.assertEqual(
             "d:/epilog",

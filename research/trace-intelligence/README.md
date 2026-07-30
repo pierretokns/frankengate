@@ -3,6 +3,24 @@
 This directory is the reproducible artifact for the trace-intelligence empirical
 program. It is deliberately separate from the production analytics service.
 
+The current broad program, including the independent concept audit, measured
+negative results, staged composition tests, and architecture reversal gates, is
+documented in
+[`enterprise-trace-intelligence-independent-and-composed-program-2026.md`](../../docs/roadmap/research/enterprise-trace-intelligence-independent-and-composed-program-2026.md).
+The program treats AgentRx, Signals, AgentEvals, temporal/graph memory,
+dreaming, skill learning, similar-work discovery, collaboration, and embedding
+adaptation as separable mechanisms. Product or framework names do not count as
+empirical evidence.
+
+The first independent/composed checkpoint is available in:
+
+- [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
+  a natural-history concept proxy with no changed-system execution;
+- [`wisp-recovery-adjudication-packet-2026-07-30.md`](experiments/summaries/wisp-recovery-adjudication-packet-2026-07-30.md),
+  which produces the blinded human-labeling set; and
+- [`memory-mechanism-factorial-fixture-2026-07-30.md`](experiments/summaries/memory-mechanism-factorial-fixture-2026-07-30.md),
+  a complete six-mechanism fixture that establishes mechanics, not utility.
+
 Raw public, gated, and enterprise traces never belong in this repository. Dataset
 manifests pin upstream revisions and rights; adapters read explicit external paths;
 committed results are aggregate-only. A public trace is not permission to infer a

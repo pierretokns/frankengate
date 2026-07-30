@@ -1,0 +1,73 @@
+{
+  "claim_boundary": [
+    "No Signals paper, AgentRx, or AgentEvals library replication is claimed.",
+    "Diagnosis outputs are evidence-linked hypotheses, never root causes.",
+    "Replay metrics are assertion evaluations over deterministic trace mutations, not executions of a changed agent or environment.",
+    "A failure-removed mutant is not proof that a real system change fixes the task.",
+    "No skill, productivity, collaboration, or employee-level inference is supported."
+  ],
+  "content_free": true,
+  "credential_gate": {
+    "counts_by_class": {
+      "DSN_PASSWORD": 5
+    },
+    "known_secret_snapshot_entries": 0,
+    "policy": "credential_only_pii_preserved",
+    "transformed_values": 5
+  },
+  "diagnosis": {
+    "abstentions": 0,
+    "diagnosed_traces": 11,
+    "hypotheses": 11,
+    "method": "agentrx-inspired-invariant-proxy-v1",
+    "root_cause_claims": 0,
+    "taxonomy_counts": {
+      "explicit_tool_failure": 9,
+      "orphan_tool_result": 1,
+      "repeated_tool_failure": 1
+    }
+  },
+  "eval_promotion": {
+    "changed_system_assertions": 10,
+    "method": "agentevals-inspired-assertion-proxy-v1",
+    "promotable_diagnoses": 10,
+    "stored_trace_assertions": 10
+  },
+  "replay": {
+    "actual_changed_system_runs": 0,
+    "failure_removed_mutant_passed_regression_assertion": 10,
+    "irrelevant_tail_mutant_still_failed_regression_assertion": 10,
+    "proxy_kind": "mutation_proxy_not_changed_system_replay",
+    "stored_decisive_removal_killed": 10,
+    "stored_irrelevant_tail_false_positive": 0,
+    "stored_observed_pass": 10,
+    "supplied_changed_trace_evaluations": 0,
+    "unchanged_trace_failed_regression_assertion": 10,
+    "upstream_agentevals_runs": 0
+  },
+  "run_date": "2026-07-30",
+  "schema_version": "trace-signal-diagnosis-eval-chain-v1",
+  "selection": {
+    "detector_counts": {
+      "dangling_tool_proposal": 2,
+      "explicit_tool_error": 103,
+      "repeated_failure": 7,
+      "repeated_tool_action": 7,
+      "rephrasing": 16
+    },
+    "method": "signals-inspired-deterministic-proxy-v1",
+    "review_budget": 21,
+    "selected_traces": 11,
+    "signal_positive_traces": 11,
+    "trace_length_used_for_ranking": false
+  },
+  "source": {
+    "canonical_events": 5742,
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+    "malformed_records": 2,
+    "source_files": 104,
+    "source_record_set_sha256": "1211043a67291c2a0e75b4430630fb086a246f050e66b908f275d3e66d17d2de",
+    "source_records": 10700
+  }
+}

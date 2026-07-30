@@ -179,6 +179,44 @@ def _initial_project_sources(
     return result
 
 
+def _project_source_as_of_call(
+    records: Sequence[Mapping[str, Any]],
+    call: native.ToolCall,
+    source_receipt_order: Mapping[str, int],
+) -> str:
+    """Return the first nonempty session cwd observable by this call."""
+
+    call_boundary = _source_order(
+        call.observed_at,
+        source_receipt_order[call.source_file],
+        call.source_line,
+        call.tool_id,
+    )
+    eligible: list[tuple[tuple[Any, ...], str]] = []
+    for record in records:
+        if str(record.get("sessionId", "")) != call.session_id:
+            continue
+        cwd = record.get("cwd")
+        source_file = str(record.get("_source_file", ""))
+        if (
+            not isinstance(cwd, str)
+            or not cwd
+            or source_file not in source_receipt_order
+        ):
+            continue
+        record_order = _source_order(
+            native.instant(str(record.get("timestamp", ""))),
+            source_receipt_order[source_file],
+            int(record.get("_source_line", 0)),
+            str(record.get("uuid", "")),
+        )
+        if record_order <= call_boundary:
+            eligible.append(
+                (record_order, normalize_project_source(cwd))
+            )
+    return min(eligible, default=((), ""))[1] if eligible else ""
+
+
 def _project_inventory(
     records: Sequence[Mapping[str, Any]],
 ) -> dict[str, int]:
@@ -507,6 +545,8 @@ def _qualifying_interactions(
     cohort: native.VerifiedMemoryCohort,
     identity_key: bytes,
     source_receipt_order: Mapping[str, int],
+    *,
+    cutoff_safe_project_identity: bool = False,
 ) -> tuple[list[QualifiedInteraction], dict[str, int]]:
     initial_projects = _initial_project_sources(cohort.records)
     interactions: list[QualifiedInteraction] = []
@@ -546,7 +586,15 @@ def _qualifying_interactions(
         else:
             metrics["shell_search_or_other"] += 1
 
-        project_source = initial_projects.get(call.session_id, "")
+        project_source = (
+            _project_source_as_of_call(
+                cohort.records,
+                call,
+                source_receipt_order,
+            )
+            if cutoff_safe_project_identity
+            else initial_projects.get(call.session_id, "")
+        )
         project_identity = (
             project_source
             if project_source
