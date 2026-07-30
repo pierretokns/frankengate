@@ -1,7 +1,7 @@
 {
   "brand": "FrankenGate",
   "source": "https://getbifrost.ai/datasheet",
-  "retrieved_at": "2026-07-29T06:10:16Z",
+  "retrieved_at": "2026-07-30T06:02:07Z",
   "models": {
     "1024-x-1024/50-steps/bedrock/amazon.nova-canvas-v1:0": {
       "base_model": "nova-canvas",
@@ -23045,17 +23045,43 @@
     "gemini/gemini-3.1-flash-lite-image": {
       "base_model": "gemini-3.1-flash-lite-image",
       "input_cost_per_token": 2.5e-7,
+      "input_cost_per_token_batches": 1.25e-7,
+      "max_input_tokens": 65536,
+      "max_output_tokens": 66000,
+      "max_tokens": 66000,
       "mode": "image_generation",
-      "output_cost_per_token": 0.00003,
+      "output_cost_per_image": 0.0336,
+      "output_cost_per_image_token": 0.00003,
+      "output_cost_per_token": 0.0000015,
+      "output_cost_per_token_batches": 7.5e-7,
       "provider": "gemini",
+      "rpm": null,
+      "source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-3.1-flash-lite-image",
+      "supported_endpoints": [
+        "/v1/chat/completions",
+        "/v1/completions",
+        "/v1/batch"
+      ],
+      "supported_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "supported_output_modalities": [
+        "text",
+        "image"
+      ],
       "supports_function_calling": false,
       "supports_parallel_function_calling": false,
       "supports_pdf_input": false,
       "supports_prompt_caching": false,
-      "supports_response_schema": false,
+      "supports_reasoning": false,
+      "supports_response_schema": true,
       "supports_system_messages": true,
       "supports_tool_choice": false,
-      "supports_vision": true
+      "supports_vision": true,
+      "supports_web_search": false,
+      "tpm": null
     },
     "gemini/gemini-3.1-flash-lite-preview": {
       "base_model": "gemini-3.1-flash-lite",
@@ -57398,8 +57424,8 @@
     },
     "xai/grok-4.5": {
       "base_model": "grok-4.5",
-      "cache_read_input_token_cost": 5e-7,
-      "cache_read_input_token_cost_above_200k_tokens": 0.000001,
+      "cache_read_input_token_cost": 3e-7,
+      "cache_read_input_token_cost_above_200k_tokens": 6e-7,
       "cache_read_input_token_cost_above_200k_tokens_priority": 0.000002,
       "cache_read_input_token_cost_priority": 0.000001,
       "input_cost_per_token": 0.000002,
@@ -57428,8 +57454,8 @@
     },
     "xai/grok-4.5-latest": {
       "base_model": "grok-4.5",
-      "cache_read_input_token_cost": 5e-7,
-      "cache_read_input_token_cost_above_200k_tokens": 0.000001,
+      "cache_read_input_token_cost": 3e-7,
+      "cache_read_input_token_cost_above_200k_tokens": 6e-7,
       "cache_read_input_token_cost_above_200k_tokens_priority": 0.000002,
       "cache_read_input_token_cost_priority": 0.000001,
       "input_cost_per_token": 0.000002,
