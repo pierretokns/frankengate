@@ -1,0 +1,87 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "22292e844898928e1202059286a214e992bd4ade97f549e60df101459ec68970",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "provider-fallback"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "user_request",
+      "observation_status": "observed",
+      "source_role": "user",
+      "content": "Summarize the incident.",
+      "user_attempt_id": "ua-002"
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "provider_attempt",
+      "observation_status": "observed",
+      "source_role": "gateway",
+      "content": "primary unavailable",
+      "parent_event_id": "e000",
+      "user_attempt_id": "ua-002",
+      "inference_attempt_id": "ia-010",
+      "provider": "bedrock-us-east-1",
+      "attempt_status": "failed"
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "fallback_decision",
+      "observation_status": "observed",
+      "source_role": "gateway",
+      "content": "Switch provider endpoint.",
+      "parent_event_id": "e001",
+      "from_attempt_id": "ia-010",
+      "to_attempt_id": "ia-011",
+      "reason": "endpoint_unavailable"
+    },
+    {
+      "event_id": "e003",
+      "sequence": 3,
+      "kind": "provider_attempt",
+      "observation_status": "observed",
+      "source_role": "gateway",
+      "content": "fallback response",
+      "parent_event_id": "e002",
+      "user_attempt_id": "ua-002",
+      "inference_attempt_id": "ia-011",
+      "provider": "bedrock-us-west-2",
+      "attempt_status": "succeeded"
+    }
+  ],
+  "outcome": {
+    "value": "succeeded_after_fallback",
+    "source": "gateway",
+    "evidence_event_ids": ["e001", "e002", "e003"]
+  },
+  "loss_receipt": {
+    "source_event_count": 4,
+    "canonical_event_count": 4,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": [],
+    "expected_invariants": [
+      {
+        "type": "fallback_within_user_attempt",
+        "first_attempt_event_id": "e001",
+        "fallback_event_id": "e002",
+        "second_attempt_event_id": "e003"
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "provider_fallback_identity",
+        "disposition": "degraded",
+        "reason": "Provider-level attempts collapse into the conversation unless represented as extension artifacts."
+      }
+    ]
+  }
+}

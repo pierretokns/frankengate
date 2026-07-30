@@ -1,0 +1,71 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "eb48a90e6185a5f1b02061a9414f0024bd78e1f4eec1575dff3ae52cbb700a1f",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "tool-proposal-denied"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "user_request",
+      "observation_status": "observed",
+      "source_role": "user",
+      "content": "Delete the protected object."
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "authorization_decision",
+      "observation_status": "observed",
+      "source_role": "governance",
+      "content": "Denied by object policy.",
+      "parent_event_id": "e000",
+      "decision": "deny",
+      "authorization_epoch": 7,
+      "subject_id": "user:alice",
+      "scope": ["object:protected", "action:delete"]
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "tool_call_proposal",
+      "observation_status": "observed",
+      "source_role": "assistant",
+      "content": "delete_object(object:protected)",
+      "parent_event_id": "e000",
+      "authorization_decision_event_id": "e001",
+      "execution_status": "blocked"
+    }
+  ],
+  "outcome": {
+    "value": "denied",
+    "source": "governance",
+    "evidence_event_ids": ["e001", "e002"]
+  },
+  "loss_receipt": {
+    "source_event_count": 3,
+    "canonical_event_count": 3,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": [],
+    "expected_invariants": [
+      {
+        "type": "proposal_denied_not_executed",
+        "proposal_event_id": "e002",
+        "decision_event_id": "e001"
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "authorization_decision",
+        "disposition": "degraded",
+        "reason": "The decision and blocked proposal can be messages but lack governed execution semantics."
+      }
+    ]
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "240ae13c7d26e2ad2a7ea29dda0e86f5b020f654881742896bf98aced9772961",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "parallel-branch-join"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "branch_fork",
+      "observation_status": "observed",
+      "source_role": "orchestrator",
+      "content": "Inspect logs and deployment independently.",
+      "branch_ids": ["branch-logs", "branch-deploy"]
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "branch_start",
+      "observation_status": "observed",
+      "source_role": "agent",
+      "content": "Inspect logs.",
+      "parent_event_id": "e000",
+      "branch_id": "branch-logs"
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "branch_start",
+      "observation_status": "observed",
+      "source_role": "agent",
+      "content": "Inspect deployment.",
+      "parent_event_id": "e000",
+      "branch_id": "branch-deploy"
+    },
+    {
+      "event_id": "e003",
+      "sequence": 3,
+      "kind": "branch_result",
+      "observation_status": "observed",
+      "source_role": "agent",
+      "content": "Timeouts began at 10:04.",
+      "parent_event_id": "e001",
+      "branch_id": "branch-logs"
+    },
+    {
+      "event_id": "e004",
+      "sequence": 4,
+      "kind": "branch_result",
+      "observation_status": "observed",
+      "source_role": "agent",
+      "content": "Release completed at 10:03.",
+      "parent_event_id": "e002",
+      "branch_id": "branch-deploy"
+    },
+    {
+      "event_id": "e005",
+      "sequence": 5,
+      "kind": "branch_join",
+      "observation_status": "observed",
+      "source_role": "orchestrator",
+      "content": "Correlate release and timeout evidence.",
+      "parent_event_id": "e000",
+      "predecessor_event_ids": ["e003", "e004"]
+    }
+  ],
+  "outcome": {
+    "value": "joined",
+    "source": "orchestrator",
+    "evidence_event_ids": ["e003", "e004", "e005"]
+  },
+  "loss_receipt": {
+    "source_event_count": 6,
+    "canonical_event_count": 6,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": [],
+    "expected_invariants": [
+      {
+        "type": "join_all_predecessors_observed",
+        "join_event_id": "e005",
+        "predecessor_event_ids": ["e003", "e004"]
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "parallel_branch_join",
+        "disposition": "lost",
+        "reason": "A single ordered trajectory cannot preserve partial ordering and a many-to-one join."
+      }
+    ]
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "a6bd1be17a0fe473280a7cc384ad31ea9bb692cc63765cf7c523537dc8ed8771",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "observed-state-delta"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "tool_call_proposal",
+      "observation_status": "observed",
+      "source_role": "assistant",
+      "content": "set_flag(feature-x, enabled)"
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "authorization_decision",
+      "observation_status": "observed",
+      "source_role": "governance",
+      "content": "Allowed.",
+      "parent_event_id": "e000",
+      "decision": "allow",
+      "authorization_epoch": 12
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "tool_execution",
+      "observation_status": "observed",
+      "source_role": "tool",
+      "content": "set_flag started",
+      "parent_event_id": "e000",
+      "proposal_event_id": "e000",
+      "authorization_decision_event_id": "e001",
+      "execution_id": "exec-002"
+    },
+    {
+      "event_id": "e003",
+      "sequence": 3,
+      "kind": "tool_result",
+      "observation_status": "observed",
+      "source_role": "tool",
+      "content": "{\"accepted\":true}",
+      "parent_event_id": "e002",
+      "execution_id": "exec-002"
+    },
+    {
+      "event_id": "e004",
+      "sequence": 4,
+      "kind": "state_delta",
+      "observation_status": "observed",
+      "source_role": "environment",
+      "content": "feature-x changed from disabled to enabled",
+      "parent_event_id": "e003",
+      "result_event_id": "e003",
+      "resource_id": "feature:feature-x",
+      "before_digest": "sha256:disabled",
+      "after_digest": "sha256:enabled"
+    }
+  ],
+  "outcome": {
+    "value": "state_change_verified",
+    "source": "environment",
+    "evidence_event_ids": ["e003", "e004"]
+  },
+  "loss_receipt": {
+    "source_event_count": 5,
+    "canonical_event_count": 5,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": [],
+    "expected_invariants": [
+      {
+        "type": "observed_state_delta_linked",
+        "result_event_id": "e003",
+        "state_delta_event_id": "e004"
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "state_delta",
+        "disposition": "degraded",
+        "reason": "The delta may be serialized as an artifact but has no portable state-transition type."
+      }
+    ]
+  }
+}
