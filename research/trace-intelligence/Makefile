@@ -2,7 +2,7 @@ PYTHON ?= python3
 PYTHONPYCACHEPREFIX ?= /private/tmp/frankengate-trace-intelligence-pycache
 QWEN3_EMBEDDING_DEVICE ?= cpu
 
-.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory e2-retrieval e2-postgres-joint
+.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory e2-retrieval e2-postgres-joint defog-sql-conformance
 
 verify: test validate compile
 
@@ -17,6 +17,24 @@ validate:
 compile:
 	PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
 		$(PYTHON) -m compileall -q -f -x '/datasets/' .
+
+# Replays the hash-pinned Defog cohort through a constrained local PostgreSQL
+# role. Source content and raw tool records remain outside Git; only a
+# content-free aggregate result is durable.
+defog-sql-conformance:
+	@test -n "$(DEFOG_SOURCE_ROOT)" || \
+		(printf '%s\n' 'DEFOG_SOURCE_ROOT is required' >&2; exit 2)
+	@test -n "$(DEFOG_REPLAY_DSN_TEMPLATE)" || \
+		(printf '%s\n' 'DEFOG_REPLAY_DSN_TEMPLATE is required' >&2; exit 2)
+	@test -n "$(DEFOG_RAW_AUDIT_DIR)" || \
+		(printf '%s\n' 'DEFOG_RAW_AUDIT_DIR is required' >&2; exit 2)
+	$(PYTHON) defog_sql_replay_conformance.py \
+		--source-root "$(DEFOG_SOURCE_ROOT)" \
+		--manifest experiments/manifests/defog-sql-eval-enterprise-96-2026-07-30.json \
+		--dataset-manifest configs/datasets/defog-sql-eval-enterprise.json \
+		--dsn-template "$(DEFOG_REPLAY_DSN_TEMPLATE)" \
+		--raw-audit-dir "$(DEFOG_RAW_AUDIT_DIR)" \
+		--output experiments/results/defog-governed-sql-replay-conformance-2026-07-30.json
 
 # This target intentionally requires explicit private paths and a disposable
 # governed database. It never downloads or discovers raw histories itself.

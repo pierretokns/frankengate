@@ -33,6 +33,54 @@ make governed-wisp \
   WISP_CORPUS_ROOT='/private/research-cache/wisp/transcripts'
 ```
 
+The Hugging Face NL2SQL structural audit is also external-input-only. It verifies
+pinned BIRD-SQL and CRMArena task/trace hashes and emits aggregate replay
+classification without retaining prompts, SQL, tool arguments, observations,
+answers, or identifiers:
+
+```sh
+python3 hf_nl2sql_trace_audit.py \
+  --bird-root /private/path/bird \
+  --bird-manifest configs/datasets/wmh-bird-sql-traces.json \
+  --crmarena-root /private/path/crmarena \
+  --crmarena-manifest configs/datasets/wmh-crmarena-traces.json \
+  --output experiments/results/hf-nl2sql-trace-audit-2026-07-30.json
+```
+
+The audited WMH files contain real tool arguments and environment observations,
+but not parent-linked/wall-clock OTel or full assistant messages. BIRD is
+reconstructable from an external mini-dev archive; CRMArena is reconstructable
+from its official SQLite dump and is non-commercial research only. See
+[`experiments/summaries/hf-nl2sql-trace-audit-2026-07-30.md`](experiments/summaries/hf-nl2sql-trace-audit-2026-07-30.md).
+
+The causal SQL layer uses a separate, content-free 96-task Defog manifest and
+four disposable PostgreSQL databases. The hardened runner requires a governance
+subject and authorization-epoch reference, parses and allowlists a single
+read-only query, enforces PostgreSQL and result limits, and reports semantic
+correctness separately from security authorization:
+
+```sh
+DEFOG_SOURCE_ROOT=/private/path/defog-sql-eval \
+DEFOG_REPLAY_DSN_TEMPLATE='host=127.0.0.1 port=55432 user=... dbname=fg_defog_{database}' \
+DEFOG_RAW_AUDIT_DIR=/private/path/defog-raw-audit \
+uv run make defog-sql-conformance
+```
+
+The conformance run matched all 95 PostgreSQL-executable tasks: 93 under the
+default policy and two only with explicit field-level entitlements. One source
+task is invalid PostgreSQL and remains quarantined. All security controls passed
+on all four database families. This proves the replay/verifier boundary, not
+model quality or causal skill benefit. See
+[`experiments/summaries/defog-governed-sql-replay-conformance-2026-07-30.md`](experiments/summaries/defog-governed-sql-replay-conformance-2026-07-30.md).
+
+Spider2 is admitted only as a later external-validity layer. The source audit
+found 135 local Lite tasks across 30 database families, but only 16/24 published
+gold SQL files pass the upstream self-check. Of 68 DBT tasks, 59 are strictly
+self-consistent and 62 work with deterministic filename aliases; the proposed
+cohort is 60. The upstream agent also executes ordinary tool actions twice.
+See
+[`spider2-local-replay-audit-2026.md`](../../docs/roadmap/research/spider2-local-replay-audit-2026.md).
+
 The real OpenTelemetry E0 arm is also separate because it downloads a pinned
 Collector release, binds a disposable loopback receiver, and builds the pinned
 Go SDK sender:
@@ -95,17 +143,18 @@ The command:
   budget; and
 - writes a content-addressed result manifest.
 
-Run the dependency-free conformance tests with:
+Run the frozen conformance suite with:
 
 ```bash
-python3 -m unittest discover \
-  -s research/trace-intelligence/tests \
+uv run python -m unittest discover \
+  -s tests \
   -p 'test_*.py'
 ```
 
-The frozen environment adds `jsonschema`, `psycopg2-binary`, and `pyarrow` for
-artifact validation, governed PostgreSQL experiments, and admitted Parquet manifests.
-Core adapters and most tests remain standard-library-only.
+The frozen environment adds `jsonschema`, `psycopg2-binary`, `pyarrow`, and
+`sqlglot` for artifact validation, governed PostgreSQL experiments, admitted
+Parquet manifests, and fail-closed SQL parsing. Core adapters and most tests
+remain standard-library-only.
 
 The paper-grade design, gates, and later E0–E7 experiments are specified in
 [`docs/roadmap/research/trace-intelligence-public-dataset-empirical-program.md`](../../docs/roadmap/research/trace-intelligence-public-dataset-empirical-program.md).
@@ -215,4 +264,6 @@ full E0–E7 acceptance gates. In particular:
 - cross-user suggestions require consent, minimum cohorts, privacy defenses, and
   prospective outcomes; and
 - custom embeddings remain gated on a frozen hard slice where exact, PostgreSQL
-  full-text, and structured retrieval demonstrably fail.
+  full-text, and structured retrieval demonstrably fail; and
+- the SQL replay/verifier boundary now passes on 95 executable Defog tasks, but
+  the no-skill/placebo/mined-skill model factorial has not yet run.

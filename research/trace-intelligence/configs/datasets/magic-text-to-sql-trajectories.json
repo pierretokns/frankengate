@@ -1,0 +1,41 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "microsoft/MAGIC",
+  "dataset_revision": "9b8da842fcb82ac750ca1a025af7645f5ba95a30",
+  "source_url": "https://huggingface.co/datasets/microsoft/MAGIC",
+  "paper_url": "https://arxiv.org/abs/2406.12692",
+  "license": "MIT project license; dataset card additionally restricts trajectories to text-to-SQL research",
+  "source_format": "48,124 prompt/response/caller-agent rows in one Parquet file",
+  "adapter": "not_implemented_inventory_only",
+  "admission_status": "candidate_for_procedure_and_self_correction_mining_only",
+  "observed_fields": [
+    "prompt",
+    "response",
+    "caller_agent"
+  ],
+  "observed_agent_roles": [
+    "feedback_agent_call_n",
+    "correction_agent_call_n",
+    "manager_revises_prompt_iteration_n"
+  ],
+  "replay_classification": {
+    "multi_agent_correction_trajectory": true,
+    "success_and_exhausted_iteration_labels": true,
+    "raw_tool_calls_and_environment_observations": false,
+    "database_snapshot_included": false,
+    "independently_replayable_from_dataset": false,
+    "suitable_for_candidate_skill_mining": true,
+    "suitable_as_independent_outcome_oracle": false
+  },
+  "unsupported_claims": [
+    "causal skill benefit",
+    "tool-use behavior",
+    "environment replay",
+    "2026 frontier-agent representativeness"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "download_full_parquet_for_frozen_mining_arm_only": true,
+    "commit_aggregate_results_only": true
+  }
+}

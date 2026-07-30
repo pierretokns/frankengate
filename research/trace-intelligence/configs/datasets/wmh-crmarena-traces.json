@@ -1,0 +1,68 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "experiential-labs/wmh-crmarena-traces",
+  "dataset_revision": "9a70e127f6dce74110a17092f62696f25a3a526b",
+  "source_url": "https://huggingface.co/datasets/experiential-labs/wmh-crmarena-traces",
+  "license": "CC-BY-NC-4.0; non-commercial research only",
+  "source_format": "OpenTelemetry GenAI JSONL plus task JSONL and gold-answer sidecars",
+  "source_adapter": {
+    "repository": "https://github.com/experientiallabs/world-model-harness",
+    "stable_tag": "v0.2.2",
+    "revision": "d7bb0077fb87da0b078065743f7bab310883bbb2",
+    "path": "packages/environment-capture/crmarena"
+  },
+  "adapter": "hf_nl2sql_trace_audit_v1",
+  "admission_status": "admitted_for_noncommercial_enterprise_analytics_control",
+  "task_dimension_key": "task_type",
+  "inventory": {
+    "train_tasks": 45,
+    "test_tasks": 18,
+    "gold_sidecars": 63,
+    "task_types": 9,
+    "database_families": 1,
+    "trace_file_bytes": 1626891,
+    "hf_snapshot_includes_database_file": false
+  },
+  "audit_files": {
+    "train": {
+      "relative_path": "train.jsonl",
+      "sha256": "908edb9956536fc14e0c9c9f430290e99d6a1831629dfeaf47872d2809e874fd"
+    },
+    "test": {
+      "relative_path": "test.jsonl",
+      "sha256": "2dcb95a490678744ed176716ff3913dde77bb64ae81b816e92ff7ab1871fae2d"
+    },
+    "traces.otel": {
+      "relative_path": "traces.otel.jsonl",
+      "sha256": "1c10705a5a1dd22ad6b380e97fdb8acfae81f12c71ae6fc5bf7d68d9af682ef9"
+    }
+  },
+  "replay_classification": {
+    "real_tool_calls_and_observations": true,
+    "gold_linked_retrospective_evaluation": true,
+    "deterministic_exact_or_token_f1_verifier": true,
+    "environment_reconstructable": true,
+    "hf_snapshot_self_contained": false,
+    "external_environment_source": "official SalesforceAIResearch/CRMArena SQLite org dump",
+    "fresh_read_only_database_copy_per_attempt": true,
+    "captured_split": "train only",
+    "hidden_test_trace_contamination": false,
+    "schema_family_disjoint_evaluation_supported": false,
+    "full_agent_conversation_preserved": false,
+    "real_otel_parentage_and_latency_preserved": false,
+    "commercial_training_or_product_use_supported": false
+  },
+  "claim_boundary": [
+    "the corpus covers one realistic Salesforce org, not cross-schema enterprise transfer",
+    "SQLite SQL differs from upstream SOQL and from Frankengate PostgreSQL",
+    "CC-BY-NC-4.0 prevents treating this as a commercial production-training corpus",
+    "the deterministic token-F1 knowledge grader is a stand-in for upstream LLM extraction",
+    "the spans preserve actions and observations, not full assistant reasoning or wall-clock latency"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "download_only_pinned_revision": true,
+    "verify_all_downloaded_file_hashes": true,
+    "commit_aggregate_results_only": true
+  }
+}

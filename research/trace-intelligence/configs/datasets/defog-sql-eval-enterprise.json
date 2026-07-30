@@ -1,0 +1,115 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
+  "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+  "source_url": "https://github.com/defog-ai/sql-eval",
+  "license": "Apache-2.0",
+  "source_format": "PostgreSQL question/gold-SQL CSVs plus companion database DDL/data",
+  "adapter": "frankengate_defog_governed_sql_replay_v1",
+  "admission_status": "admitted_for_hardened_schema_disjoint_causal_replay",
+  "source_pin": {
+    "revision_date": "2025-08-15",
+    "tags_or_releases_observed": false,
+    "git_archive_sha256": "553aa2f19e43032dff478400583ac4d6bf6474d83236990620890665888acd17"
+  },
+  "companion_data_pin": {
+    "repository": "https://github.com/defog-ai/defog-data",
+    "revision": "856295d8f0aa8a0b0fb71b9623e86f363469797a",
+    "license": "Apache-2.0",
+    "git_archive_sha256": "a5833163d253d8338752e979b5adbbcbb0f4f93d3996c80d3cbbec631774500a"
+  },
+  "source_files": {
+    "data/questions_gen_postgres.csv": {
+      "sha256": "fee829a042766f3e75d1a453cf6ffd7f6830ae9d68967156caa00c647b5efd0d",
+      "semantic_rows": 210,
+      "enterprise_rows_used": 20
+    },
+    "data/instruct_basic_postgres.csv": {
+      "sha256": "5a4e6112a5c2554c2963939440af6db41dfcaa3697dc131c380e7f9a1b70d5f7",
+      "semantic_rows": 40,
+      "enterprise_rows_used": 40
+    },
+    "data/instruct_advanced_postgres.csv": {
+      "sha256": "566f5267119df0eceb32054037280c2fd5bc8c21b27e9ff6b068d11a47011934",
+      "semantic_rows": 64,
+      "enterprise_rows_used": 36
+    }
+  },
+  "cohort": {
+    "manifest": "experiments/manifests/defog-sql-eval-enterprise-96-2026-07-30.json",
+    "manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "tasks": 96,
+    "tasks_per_database": 24,
+    "database_families": [
+      "broker",
+      "car_dealership",
+      "derm_treatment",
+      "ewallet"
+    ],
+    "fold_policy": "two evidence families, one visible-selection family, one hidden-test family; rotate four times",
+    "content_in_manifest": false
+  },
+  "source_execution_audit": {
+    "ordinary_postgresql_tasks": 314,
+    "expanded_gold_alternatives": 467,
+    "sqlite_gold_queries_executed": 467,
+    "sqlite_gold_query_errors": 0,
+    "sqlite_gold_empty_results": 0,
+    "gold_self_verifier_passes_pandas_2_3_3": 314,
+    "gold_self_verifier_passes_pandas_3_0_5": 313,
+    "execution_scope": "source audit only; not yet a Frankengate model factorial"
+  },
+  "governed_postgresql_conformance": {
+    "cohort_tasks": 96,
+    "default_policy_semantic_matches": 93,
+    "default_sensitive_projection_denials": 2,
+    "default_wildcard_projection_denials": 1,
+    "explicit_sensitive_entitlement_semantic_matches": 2,
+    "source_postgresql_invalid_after_dialect_repair": 1,
+    "executable_tasks": 95,
+    "semantic_matches": 95,
+    "security_controls_passed_on_database_families": 4,
+    "classification": "verifier_and_policy_self_check_not_model_factorial",
+    "aggregate_result": "experiments/results/defog-governed-sql-replay-conformance-2026-07-30.json"
+  },
+  "stock_verifier_rejections": [
+    "accepts extra projected columns, including empirically reproduced PII leakage",
+    "normalization can accept ascending versus descending result order",
+    "normalization drops duplicates and can accept DISTINCT semantic changes",
+    "sentinel fillna is dtype-fragile across unpinned pandas versions",
+    "process timeout does not cancel PostgreSQL server work",
+    "semantic correctness and security authorization are not separate verdicts"
+  ],
+  "required_frankengate_hardening": [
+    "parse and allow one read-only SELECT or CTE",
+    "allowlist database, schema, table, column, and function access",
+    "run as constrained read-only NOSUPERUSER NOBYPASSRLS role",
+    "attach current authorization epoch and fail closed when absent or stale",
+    "enforce statement, lock, wall-clock, row, and byte limits",
+    "preserve multiplicity, order, nulls, decimals, timestamps, and float policy",
+    "score semantic equivalence and security policy independently",
+    "keep hidden manifests and verifier details inaccessible to proposers",
+    "capture every schema inspection, SQL revision, database error, result hash, and skill exposure in OTel plus canonical events"
+  ],
+  "replay_classification": {
+    "real_agent_trajectories_included": false,
+    "gold_sql_and_database_fixtures_included": true,
+    "postgresql_replay_supported": true,
+    "stock_runner_adopted": false,
+    "stock_verifier_adopted": false,
+    "schema_family_disjoint_design_supported": true,
+    "causal_skill_benefit_test_run": false
+  },
+  "unsupported_claims": [
+    "enterprise-scale database performance",
+    "natural user behavior",
+    "causal skill benefit before the factorial runs",
+    "Aurora operations or failover",
+    "stock Defog verifier security"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "reuse_only_pinned_source_checkouts": true,
+    "commit_hash_only_cohort_and_aggregate_results": true
+  }
+}

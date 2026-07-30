@@ -1,0 +1,66 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+  "dataset_revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+  "source_url": "https://huggingface.co/datasets/experiential-labs/wmh-bird-sql-traces",
+  "license": "CC-BY-SA-4.0",
+  "source_format": "OpenTelemetry GenAI JSONL plus task JSONL, gold SQL sidecars, and DDL",
+  "source_adapter": {
+    "repository": "https://github.com/experientiallabs/world-model-harness",
+    "stable_tag": "v0.2.2",
+    "revision": "d7bb0077fb87da0b078065743f7bab310883bbb2",
+    "path": "packages/environment-capture/bird-sql"
+  },
+  "adapter": "hf_nl2sql_trace_audit_v1",
+  "admission_status": "admitted_for_trace_mining_and_reconstructable_causal_replay",
+  "task_dimension_key": "db_name",
+  "inventory": {
+    "train_tasks": 222,
+    "test_tasks": 20,
+    "gold_sidecars": 242,
+    "database_families": 11,
+    "trace_file_bytes": 11222989,
+    "hf_snapshot_includes_database_files": false
+  },
+  "audit_files": {
+    "train": {
+      "relative_path": "train.jsonl",
+      "sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8"
+    },
+    "test": {
+      "relative_path": "test.jsonl",
+      "sha256": "62c0bc72c4bc5a2690a34c6e5096b84b36b9f685e2abe63212d5d89417295513"
+    },
+    "traces.otel": {
+      "relative_path": "traces.otel.jsonl",
+      "sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+    }
+  },
+  "replay_classification": {
+    "real_tool_calls_and_observations": true,
+    "gold_linked_retrospective_evaluation": true,
+    "deterministic_execution_match_verifier": true,
+    "environment_reconstructable": true,
+    "hf_snapshot_self_contained": false,
+    "external_environment_source": "BIRD mini-dev v2 Google Drive archive",
+    "fresh_database_copy_per_attempt": true,
+    "captured_split": "train only",
+    "hidden_test_trace_contamination": false,
+    "default_split_is_schema_family_disjoint": false,
+    "full_agent_conversation_preserved": false,
+    "real_otel_parentage_and_latency_preserved": false
+  },
+  "claim_boundary": [
+    "candidate procedures must be mined only from evidence-family traces",
+    "selection and test database families must withhold both tasks and traces before generation",
+    "the published default split is task-disjoint but not schema-family-disjoint",
+    "SQLite outcome evidence does not establish PostgreSQL or Aurora transfer",
+    "the spans preserve actions and observations, not full assistant reasoning or wall-clock latency"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "download_only_pinned_revision": true,
+    "verify_all_downloaded_file_hashes": true,
+    "commit_aggregate_results_only": true
+  }
+}

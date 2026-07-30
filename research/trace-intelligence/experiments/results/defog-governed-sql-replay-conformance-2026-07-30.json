@@ -1,0 +1,113 @@
+{
+  "classification": "verifier_and_policy_self_check_not_model_factorial",
+  "default_policy": {
+    "by_database": {
+      "broker": {
+        "semantic_match": 24
+      },
+      "car_dealership": {
+        "semantic_match": 23,
+        "sensitive_projection": 1
+      },
+      "derm_treatment": {
+        "semantic_match": 24
+      },
+      "ewallet": {
+        "semantic_match": 22,
+        "sensitive_projection": 1,
+        "wildcard_projection": 1
+      }
+    },
+    "outcomes": {
+      "semantic_match": 93,
+      "sensitive_projection": 2,
+      "wildcard_projection": 1
+    }
+  },
+  "experiment_date": "2026-07-30",
+  "explicit_policy_remediation": {
+    "explicit_entitlement_semantic_match": 2,
+    "source_postgres_invalid_after_dialect_repair": 1
+  },
+  "interpretation": {
+    "default_sensitive_projection_denials_are_expected": true,
+    "default_wildcard_denial_is_expected": true,
+    "explicit_entitlements_are_conformance_only_not_inferred_from_gold_in_production": true,
+    "proves_aurora_compatibility": false,
+    "proves_model_quality": false,
+    "proves_rls_policy_correctness": false,
+    "source_invalid_tasks_require_manual_adjudication_or_exclusion": true
+  },
+  "limits": {
+    "idle_timeout_ms": 5000,
+    "lock_timeout_ms": 500,
+    "max_result_bytes": 8388608,
+    "max_rows": 10000,
+    "statement_timeout_ms": 5000
+  },
+  "raw_data_committed": false,
+  "runtime": {
+    "database_engine": "postgresql",
+    "psycopg2": "2.9.11",
+    "sqlglot": "30.13.0"
+  },
+  "schema_version": "frankengate-defog-replay-conformance-v1",
+  "security_controls": {
+    "all_controls_passed": true,
+    "by_database": {
+      "broker": {
+        "database_read_only_denied_mutation": true,
+        "multiple_statements_denied": true,
+        "mutation_denied": true,
+        "system_function_denied": true,
+        "unknown_table_denied": true,
+        "wildcard_denied": true
+      },
+      "car_dealership": {
+        "database_read_only_denied_mutation": true,
+        "multiple_statements_denied": true,
+        "mutation_denied": true,
+        "system_function_denied": true,
+        "unknown_table_denied": true,
+        "wildcard_denied": true
+      },
+      "derm_treatment": {
+        "database_read_only_denied_mutation": true,
+        "multiple_statements_denied": true,
+        "mutation_denied": true,
+        "system_function_denied": true,
+        "unknown_table_denied": true,
+        "wildcard_denied": true
+      },
+      "ewallet": {
+        "database_read_only_denied_mutation": true,
+        "multiple_statements_denied": true,
+        "mutation_denied": true,
+        "system_function_denied": true,
+        "unknown_table_denied": true,
+        "wildcard_denied": true
+      }
+    },
+    "governance_scope_without_epoch_denied": true
+  },
+  "semantic_comparator": {
+    "all_executable_tasks_matched_under_valid_policy": true,
+    "executable_tasks": 95,
+    "matched_tasks": 95,
+    "result_receipt_set_sha256": "b5d4267a0307414e5a037fe2d3443da0d1ffd097bc2eb81f2934123f7d8832d3",
+    "source_postgres_invalid_task_set_sha256": "2ab0e51d482dfaf6f0afc6749117d2810385e6246a90babb83678a8c517e96d6",
+    "source_postgres_invalid_tasks": 1
+  },
+  "source": {
+    "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "cohort_tasks": 96,
+    "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
+    "dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
+    "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+    "policy_module_sha256": "02bd05ccdbecb8cba101a1578b9a5942e36ded0139e9aa8da973524ffdb570e5",
+    "runner_sha256": "3d208db066196b894bd0ee8a9bb62fc82e828557b4566e1c4b0c74376d3ca0b7"
+  },
+  "source_dialect_repairs": {
+    "brace_struct_to_postgres_row": 1
+  }
+}

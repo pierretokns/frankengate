@@ -88,8 +88,8 @@ multiple stores deciding who may see a derived artifact.
 
 ## First factorial
 
-Build 60–120 audited executable tasks and split before candidate generation by
-database/schema family. The first 46-task
+Use the frozen 96-task Defog cohort (95 currently PostgreSQL-executable) and
+split before candidate generation by database/schema family. The first 46-task
 `statebench/finance-retrieval-sql-v0` fixture is only a control seed: all 46
 internal checks pass, but only four tasks currently execute gold SQL.
 [Defog SQL-Eval](https://github.com/defog-ai/sql-eval) is the preferred
@@ -107,14 +107,22 @@ The frozen task strata must cover:
 - unauthorized rows, columns, literals, and cross-tenant semantic neighbors;
 - revision traps where a correct first answer can be degraded.
 
-Run the same model, tool schema, seed, token budget, and database snapshot in:
+Run the same model, tool schema, seed, token budget, and database snapshot in
+the following preregistered arms. Each learned artifact must be evaluated alone
+before composition:
 
 1. no learned procedure;
-2. single-failure reflection;
-3. pooled success/failure procedural synthesis;
-4. pooled synthesis plus held-out selection;
-5. Signals + AgentRx localization + pooled synthesis + held-out selection;
-6. an unrelated but plausible SQL-skill placebo.
+2. an unrelated but plausible SQL-skill placebo;
+3. raw retrieved trajectories;
+4. single-failure reflection;
+5. schema-navigation/table-column skill;
+6. time-valid business-rule and metric skill;
+7. dialect/function skill;
+8. verified question-to-SQL exemplars;
+9. failure-to-repair procedure;
+10. pooled synthesis plus held-out selection;
+11. Signals + AgentRx localization + pooled synthesis + held-out selection;
+12. the preregistered strongest composition.
 
 Cross only the strongest arms with:
 
@@ -191,8 +199,22 @@ failure localization and policy audit.
   candidate provenance, hidden-test isolation, security-vetoed release, scope
   non-broadening, exposure/influence lineage, withdrawal, and stale-epoch
   denial. It does not prove SQL skill quality or Aurora behavior.
-- The next gate is real NL2SQL replay through those non-owner roles on 60–120
-  audited tasks split by schema family.
+- The Defog source audit froze 96 tasks across four database families. The
+  hardened PostgreSQL runner matches all 95 executable tasks. Under the default
+  policy, 93 match, two sensitive projections are correctly denied, and both
+  match only under explicit field entitlements. One upstream task is invalid
+  PostgreSQL and is quarantined. All parser, missing-epoch, and database
+  read-only controls pass on all four families. This is a verifier/policy
+  self-check, not a model factorial.
+- The Spider2 audit found 135 local Lite tasks across 30 families, but only
+  16/24 published gold SQL files pass upstream self-check. Of 68 DBT tasks, 59
+  are strictly self-consistent and 62 work after deterministic filename
+  aliases; the proposed later external-validity cohort is 60. The upstream
+  agent's ordinary tool actions execute twice, so its runner is not reusable
+  without repair.
+- The next gate is the no-skill/placebo/single-artifact/composed model factorial
+  on rotating Defog schema-family folds, with BIRD traces as the mined
+  procedure source and Spider2 as a later external-validity layer.
 
 CMU is not on the critical path. Its access is gated and the admitted public
 trace and SQL sources are sufficient.
