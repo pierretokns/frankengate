@@ -262,6 +262,48 @@ make trace-memory
 The committed aggregate is
 [`experiments/summaries/trace-commons-memory-conformance-2026-07-30.md`](experiments/summaries/trace-commons-memory-conformance-2026-07-30.md).
 
+## Full-cohort memory composition
+
+`trace_commons_memory_composition.py` expands the native audit to every one of
+the 28 pinned Claude Code histories (57,104,737 verified bytes and 17,991
+records). It reproduces the frozen broad context inventory—14 histories, 67
+joined operations, 19 reads, 37 writes/edits, and 11 shell/search operations—
+then compares deterministic verbatim, context-collapsing latest-only,
+contextual-bitemporal, and proposal-only dream mechanics.
+
+The natural cohort yielded only three reconstructable later-read cutoffs, one
+changed post-observation case, and one exact cross-session
+write-to-later-read transition. The 50 state observations represented 48 unique
+contextual revisions. Verbatim and bitemporal storage retained all 48;
+latest-only retained 20 and overwrote 28. Online scoring returned one exact
+state and two stale states; the two version gaps became known only from the
+later read results and therefore could not legitimately cause pre-read
+abstention. The contextual arm passed all six same-basename/different-project
+placebos, while deliberately context-collapsing latest-only failed by retrieving
+foreign-project evidence in three. All 48 evidence-linked dream proposals
+remained inactive, but failed-job atomicity was not run and is not claimed.
+All preregistered quality-comparison power gates failed. No model-quality,
+human-review, causal-usefulness, or enterprise-transfer claim is allowed from
+this run.
+
+The source receipt is
+[`configs/datasets/trace-commons-memory-full-cohort.json`](configs/datasets/trace-commons-memory-full-cohort.json),
+and the implementation-sensitive protocol is
+[`configs/experiments/trace-commons-memory-composition-2026.json`](configs/experiments/trace-commons-memory-composition-2026.json).
+Raw histories remain outside Git.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 trace_commons_memory_composition.py \
+  --manifest configs/datasets/trace-commons-memory-full-cohort.json \
+  --experiment-config configs/experiments/trace-commons-memory-composition-2026.json \
+  --source-root /private/path/trace-commons-cache \
+  --output experiments/results/trace-commons-memory-composition-2026-07-30.json \
+  --summary experiments/summaries/trace-commons-memory-composition-2026-07-30.md
+```
+
+The aggregate result is
+[`experiments/summaries/trace-commons-memory-composition-2026-07-30.md`](experiments/summaries/trace-commons-memory-composition-2026-07-30.md).
+
 ## E2 same-work retrieval factorial
 
 `e2_authorized_retrieval_factorial.py` evaluates a frozen trace-to-trace

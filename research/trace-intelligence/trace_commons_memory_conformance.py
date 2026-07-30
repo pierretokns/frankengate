@@ -407,6 +407,98 @@ def _snapshot_audit(records: Sequence[Mapping[str, Any]]) -> dict[str, int]:
     }
 
 
+@dataclass(frozen=True)
+class VerifiedMemoryCohort:
+    """Hash-verified native inputs exposed to deterministic composition studies.
+
+    This object is intentionally in-memory only. Callers must emit aggregate
+    receipts rather than serializing records, calls, results, or authority
+    values.
+    """
+
+    manifest: Mapping[str, Any]
+    records: tuple[Mapping[str, Any], ...]
+    calls: tuple[ToolCall, ...]
+    results: Mapping[tuple[str, str], ToolResult]
+    receipts: tuple[Mapping[str, Any], ...]
+    authority: AuthorityEnvelope
+    parent_audit: Mapping[str, int]
+    snapshot_audit: Mapping[str, int]
+
+
+def load_verified_memory_cohort(
+    manifest_path: Union[Path, str],
+    source_root: Union[Path, str],
+    default_authority: Optional[AuthorityEnvelope] = None,
+) -> VerifiedMemoryCohort:
+    """Verify an entire manifest before exposing any native records.
+
+    Duplicate receipts and symlink escapes are rejected here because a
+    composition runner must not analyze a partial or ambiguously rooted cohort.
+    """
+
+    manifest = _load_manifest(Path(manifest_path))
+    cohort = manifest.get("cohort")
+    if cohort is not None and not isinstance(cohort, dict):
+        raise ConformanceError("manifest cohort must be an object")
+    source_files = (
+        cohort.get("source_files")
+        if isinstance(cohort, dict)
+        else manifest.get("source_files")
+    )
+    if not isinstance(source_files, list) or not source_files:
+        raise ConformanceError("manifest source_files are required")
+    authority_mapping = (
+        cohort.get("import_authority")
+        if isinstance(cohort, dict)
+        else None
+    )
+    if isinstance(authority_mapping, dict):
+        authority = AuthorityEnvelope.from_mapping(authority_mapping)
+    elif default_authority is not None:
+        authority = default_authority
+    else:
+        raise ConformanceError(
+            "manifest import_authority or caller default is required"
+        )
+
+    root = Path(source_root).resolve()
+    seen_paths: set[str] = set()
+    records: list[dict[str, Any]] = []
+    receipts: list[dict[str, Any]] = []
+    for receipt in source_files:
+        if not isinstance(receipt, dict):
+            raise ConformanceError("source file receipt must be an object")
+        relative = Path(str(receipt.get("path", "")))
+        normalized = relative.as_posix()
+        if not normalized or normalized in seen_paths:
+            raise ConformanceError("source file receipts need unique paths")
+        seen_paths.add(normalized)
+        try:
+            candidate = (root / relative).resolve(strict=True)
+            candidate.relative_to(root)
+        except (OSError, ValueError) as exc:
+            raise ConformanceError(
+                "source path must resolve below source root"
+            ) from exc
+        source_records, verified = _load_source(root, receipt)
+        records.extend(source_records)
+        receipts.append(verified)
+
+    calls = _tool_calls(records)
+    results = _tool_results(records)
+    return VerifiedMemoryCohort(
+        manifest=manifest,
+        records=tuple(records),
+        calls=tuple(calls),
+        results=results,
+        receipts=tuple(receipts),
+        authority=authority,
+        parent_audit=_parent_audit(records),
+        snapshot_audit=_snapshot_audit(records),
+    )
+
+
 def _join_result(
     call: ToolCall,
     results: Mapping[tuple[str, str], ToolResult],

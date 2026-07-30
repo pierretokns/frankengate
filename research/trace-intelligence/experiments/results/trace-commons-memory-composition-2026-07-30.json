@@ -1,0 +1,212 @@
+{
+  "analysis_version": "deterministic-full-cohort-composition-preflight-v4",
+  "claim_boundary": "This deterministic natural-trace study measures evidence retention, temporal reconstruction, inactive proposal representation, and content-minimized composition. It does not establish failed-job atomicity, memory correctness, usefulness, human identity, skill, or enterprise transfer.",
+  "content_policy": {
+    "artifact_paths_emitted": false,
+    "per_artifact_content_hashes_emitted": false,
+    "raw_content_emitted": false,
+    "session_identifiers_emitted": false,
+    "tool_identifiers_emitted": false
+  },
+  "dataset": {
+    "id": "trace-commons/agent-traces-full-claude-memory-composition",
+    "license": "CC-BY-4.0",
+    "revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf"
+  },
+  "decision_status": {
+    "analysis_scope": "deterministic_mechanics_preflight",
+    "comparative_quality_claim_allowed": false,
+    "contextual_bitemporal_context_isolation": "passed",
+    "deterministic_contract_enforced": true,
+    "evidence_retention_h2": "passed_mechanics_only",
+    "governed_postgresql_h5": "not_run",
+    "human_review_phase": "not_run",
+    "latest_only_context_isolation": "failed",
+    "model_quality_phase": "not_run",
+    "negative_controls_all_passed": false,
+    "proposal_isolation_h4": "partial_active_isolation_only_failed_job_control_not_run",
+    "source_fidelity_h1": "passed",
+    "temporal_answerability_h3": "underpowered",
+    "underpowered_reasons": [
+      "fewer_than_10_reconstructable_read_cutoffs",
+      "fewer_than_5_changed_post_observation_cases",
+      "fewer_than_2_exact_cross_session_transitions"
+    ]
+  },
+  "discovery": {
+    "apparent_projects": 21,
+    "artifacts": 28,
+    "branch_points": 51,
+    "explicit_reads": 19,
+    "histories": 28,
+    "histories_with_qualifying_interactions": 14,
+    "joined_native_results": 4262,
+    "multi_session_project_groups": 6,
+    "native_calls": 4264,
+    "native_results": 4262,
+    "qualifying_candidate_calls": 67,
+    "qualifying_failures": 6,
+    "qualifying_interactions": 67,
+    "qualifying_unmatched_calls": 0,
+    "records": 17991,
+    "sessions_missing_initial_cwd": 0,
+    "shell_search_or_other": 11,
+    "snapshot_memory_mentions": 571,
+    "state_projects": 10,
+    "unmatched_native_calls": 2,
+    "verified_serial_session_pairs": 7,
+    "writes_or_edits": 37
+  },
+  "evaluation": {
+    "changed_artifact_post_observation_cases": 1,
+    "exact_cross_session_write_to_later_read": 1,
+    "latest_only_cross_project_returns": 0,
+    "online_queries": 3,
+    "post_observation_retention_queries": 3
+  },
+  "input_receipt": {
+    "experiment_config_sha256": "1cb52088085d9c9d2523c5c40449f1c26760c4f974f48188d2a552b7d4cf86cb",
+    "manifest_cohort_receipt_sha256": "6a9bf02d673a03c11f7270e06176dc119ce3ef0f69b0e733aa6649ac197e0a06",
+    "source_bytes_verified": 57104737,
+    "source_files_verified": 28,
+    "source_records_verified": 17991,
+    "verified_source_set_sha256": "b774b4438d2c9257cac93387004fa0ddf4d74d5aa3599507cec053eba5249775"
+  },
+  "mechanisms": {
+    "contextual_bitemporal": {
+      "interval_uncertainties": 2,
+      "online_abstentions": {
+        "denominator": 3,
+        "numerator": 0,
+        "rate": 0.0
+      },
+      "online_exact": {
+        "denominator": 3,
+        "numerator": 1,
+        "rate": 0.333333333333
+      },
+      "online_stale_returns": {
+        "denominator": 3,
+        "numerator": 2,
+        "rate": 0.666666666667
+      },
+      "overwritten_revisions": 0,
+      "post_observation_retention_exact": {
+        "denominator": 3,
+        "numerator": 3,
+        "rate": 1.0
+      },
+      "retained_revisions": 48,
+      "source_observations": 50
+    },
+    "latest_only": {
+      "online_abstentions": {
+        "denominator": 3,
+        "numerator": 0,
+        "rate": 0.0
+      },
+      "online_cross_project_returns": {
+        "denominator": 3,
+        "numerator": 0,
+        "rate": 0.0
+      },
+      "online_exact": {
+        "denominator": 3,
+        "numerator": 1,
+        "rate": 0.333333333333
+      },
+      "online_stale_returns": {
+        "denominator": 3,
+        "numerator": 2,
+        "rate": 0.666666666667
+      },
+      "overwritten_revisions": 28,
+      "post_observation_retention_exact": {
+        "denominator": 3,
+        "numerator": 1,
+        "rate": 0.333333333333
+      },
+      "retained_revisions": 20,
+      "source_observations": 50
+    },
+    "proposal_only_dream": {
+      "active_release_count": 0,
+      "automatically_active_changes": 0,
+      "evidence_linked_proposals": 48,
+      "failed_job_atomicity_control": {
+        "exposed_proposals": null,
+        "quarantined_proposals": null,
+        "status": "not_run"
+      },
+      "proposed_changes": 48,
+      "rejected_or_quarantined_proposals": 0,
+      "review_burden_proxy": 48
+    },
+    "verbatim": {
+      "online_abstentions": {
+        "denominator": 3,
+        "numerator": 0,
+        "rate": 0.0
+      },
+      "online_exact": {
+        "denominator": 3,
+        "numerator": 1,
+        "rate": 0.333333333333
+      },
+      "online_stale_returns": {
+        "denominator": 3,
+        "numerator": 2,
+        "rate": 0.666666666667
+      },
+      "overwritten_revisions": 0,
+      "post_observation_retention_exact": {
+        "denominator": 3,
+        "numerator": 3,
+        "rate": 1.0
+      },
+      "retained_revisions": 48,
+      "source_observations": 50
+    }
+  },
+  "negative_controls": {
+    "future_contaminated_positive_control": {
+      "cases": 13,
+      "detected": 13,
+      "status": "passed"
+    },
+    "future_filter": {
+      "cases": 13,
+      "contextual_bitemporal": {
+        "leaks": 0,
+        "status": "passed"
+      },
+      "latest_only": {
+        "leaks": 0,
+        "status": "passed"
+      },
+      "status": "passed"
+    },
+    "same_basename_different_project_placebo": {
+      "cases": 6,
+      "contextual_bitemporal": {
+        "leaks": 0,
+        "status": "passed"
+      },
+      "latest_only": {
+        "leaks": 3,
+        "status": "failed"
+      },
+      "status": "failed"
+    },
+    "same_name_cross_project_collisions": 8
+  },
+  "result_sha256": "3084635035e330948861c763c015cf4f6394361f7fb3960b29928fb70a1a2af5",
+  "schema_version": "trace-commons-memory-composition-result-v4",
+  "transitions": {
+    "ambiguous_transitions": 0,
+    "failed_operation_promotions": 0,
+    "interval_censored_changes": 2,
+    "supported_observations": 50,
+    "unique_supported_revisions": 48
+  }
+}

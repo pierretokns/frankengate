@@ -47,12 +47,12 @@ authorization boundary.
 
 | Concept | Primary mechanism and pin | Frankengate schema support | Implementation | Empirical status | Boundary |
 |---|---|---|---|---|---|
-| Anthropic Dreams | Asynchronous copy-on-write consolidation from selected sessions into a separate store; beta `dreaming-2026-04-21` ([docs](https://platform.claude.com/docs/en/managed-agents/dreams)) | **Proposed**, not in the current SQL: job, input release, status, candidate set, output release, and rollback are missing | No model-equivalent OSS implementation | **Synthetic mechanics only:** failed-job isolation and copy-on-write release passed | Managed black box; no arbitrary ATIF/OTel input, public evidence schema, RLS contract, or reproducible extractor |
+| Anthropic Dreams | Asynchronous copy-on-write consolidation from selected sessions into a separate store; beta `dreaming-2026-04-21` ([docs](https://platform.claude.com/docs/en/managed-agents/dreams)) | **Proposed**, not in the current SQL: job, input release, status, candidate set, output release, and rollback are missing | No model-equivalent OSS implementation | **Synthetic lifecycle plus natural-input deterministic composition:** 48 evidence-linked unique-revision proposal slots stayed inactive; failed-job atomicity is explicitly not run | Managed black box; the natural arm tests inactive proposal mechanics, not Anthropic's model, transaction behavior, memory quality, or RLS |
 | OpenAI dreaming | Background memory refresh for usefulness, preference adherence, and currentness ([product description](https://openai.com/index/chatgpt-memory-dreaming/)) | Eval dimensions can be represented as typed evaluations; current SQL has only generic JSONB outcomes/artifacts | Not implemented | Not tested | Product behavior, not a public algorithm or artifact contract |
-| MemPalace | Verbatim retrieval, deterministic IDs, temporal metadata; `v3.6.0` / `8ab251c` ([source](https://github.com/MemPalace/mempalace/tree/8ab251c452c43f2b07a76a28f2433e258307f571)) | Verbatim evidence fits trajectory/event tables; contextual valid/system time and release membership do not | No native integration | **Synthetic temporal/provenance mechanics only** | Its pgvector namespace/table convention is not RLS; it is a retrieval baseline, not a learning engine |
+| MemPalace | Verbatim retrieval, deterministic IDs, temporal metadata; `v3.6.0` / `8ab251c` ([source](https://github.com/MemPalace/mempalace/tree/8ab251c452c43f2b07a76a28f2433e258307f571)) | Verbatim evidence fits trajectory/event tables; contextual valid/system time and release membership do not | Frankengate deterministic verbatim arm; no native integration | **Natural-input mechanics:** retained all 48 unique revisions from 50 observations and reconstructed 3/3 observed historical states after ingestion | Its pgvector namespace/table convention is not RLS; this is post-observation retention, not independent answerability or useful retrieval |
 | `jeffpierce/memory-palace` | Typed extracted memories and relation edges; `v2.0.1` / `fd88282` ([source](https://github.com/jeffpierce/memory-palace/tree/fd88282c1e2404d35d284dd09f622b4c1ec9b506)) | Types and edges fit proposed candidate/dependency tables | Not implemented | Not tested | Direct writes, optional scoping, and weak evidence spans conflict with proposal-only release |
-| Graphiti | Episode provenance, entity/fact edges, valid-time invalidation, hybrid retrieval; `v0.29.3` / `021d3a5` ([source](https://github.com/getzep/graphiti/tree/021d3a57d511f21b10adaf7fa923bd5c1fce5e9d)) | **Proposed relational subset:** fact/context identity, valid time, evidence edges, contradiction and invalidation | No Graphiti service or extractor integration | **Synthetic subset:** contextual contradiction, valid/system time, and deletion closure passed | `group_id` is not authorization; stochastic multi-service extraction and a graph database add an unnecessary authority and operations surface |
-| LangMem | Schema-guided create/update/delete memory operations; commit `56d8593`, package `0.0.30` ([source](https://github.com/langchain-ai/langmem/tree/56d85939d80bb731bd5e237567148d817d7bfd16)) | Candidate payloads fit proposed typed candidates; current artifacts lack evidence, validity, and authority intersection | Not implemented | **Synthetic candidate lifecycle only** | Store namespaces are not RLS; direct mutation must be converted into proposals |
+| Graphiti | Episode provenance, entity/fact edges, valid-time invalidation, hybrid retrieval; `v0.29.3` / `021d3a5` ([source](https://github.com/getzep/graphiti/tree/021d3a57d511f21b10adaf7fa923bd5c1fce5e9d)) | **Proposed relational subset:** fact/context identity, valid time, evidence edges, contradiction and invalidation | Deterministic contextual-bitemporal arm; no Graphiti service or extractor integration | **Synthetic subset plus natural-input mechanics:** retained 48/48 unique revisions, preserved two interval uncertainties, and reconstructed 3/3 observed historical states after ingestion | `group_id` is not authorization; only one changed post-observation case existed, so no comparative quality claim is allowed |
+| LangMem | Schema-guided create/update/delete memory operations; commit `56d8593`, package `0.0.30` ([source](https://github.com/langchain-ai/langmem/tree/56d85939d80bb731bd5e237567148d817d7bfd16)) | Candidate payloads fit proposed typed candidates; current artifacts lack evidence, validity, and authority intersection | Proposal-only lifecycle implemented; no LangMem extractor integration | **Natural-input deterministic proposal mechanics:** 48/48 deduplicated candidates carried evidence and zero became active | Store namespaces are not RLS; no model extraction or human support judgment has run |
 | ReasoningBank | Induce lessons from successful and failed experiences, retrieve them for later tasks; `ed80611`, package `0.1.0` ([source](https://github.com/google-research/reasoning-bank/tree/ed80611788292ea739f1effd31f16c53823b8a0d), [research summary](https://research.google/blog/reasoningbank-enabling-agents-to-learn-from-experience/)) | Lessons fit candidates; success/failure evidence needs typed evaluations and exact event links | No ReasoningBank runner | Not tested | Direct append, self-judging, and benchmark-specific retrieval contaminate independent validation |
 | Hermes stable memory | Files, provenance, protected writes, snapshots, curator, and rollback; `v2026.7.20` / `3ef6bbd` ([source](https://github.com/NousResearch/hermes-agent/tree/3ef6bbd201263d354fd83ec55b3c306ded2eb72a)) | Harness projections and version lineage are proposed; files cannot carry database authority | No integration | Source tests were reviewed; no Frankengate outcome test | A reflection can still directly mutate shared files without held-out outcome evidence |
 | Hermes Self-Evolution | GEPA/MIPRO scaffold over examples and a skill; `0a929e3` ([source](https://github.com/NousResearch/hermes-agent-self-evolution/tree/0a929e3aa20e15cf04dc7c28492a7d41a5139125)) | Candidate variants/eval runs fit proposed schema | Not adopted | Targeted source review found the optimizer does not mutate the claimed skill body and a caller violates its own structure contract | Not a valid empirical baseline in the reviewed revision |
@@ -117,7 +117,7 @@ release, or an independent evaluation.
 | Which users are doing materially similar work? | Governed task representations, tool/artifact structure, exact identifiers, semantic features, time window, uncertainty, and minimum support | Not tested; trace similarity alone does not establish the same goal or permission to connect people |
 | Which skill or cloud capability is missing? | A versioned capability ontology, evidence-linked gap hypotheses, counterfactual skill recommendation, and verified post-recommendation outcome | Not implemented or tested |
 | Which prompt, skill, model, or tool should be suggested? | Candidate generation plus randomized/canary or matched held-out evaluation with cost, latency, safety, and per-family floors | Eval proposals are plausible; recommendation benefit is untested |
-| What should enter a user's memory? | Repeated evidence, contextual validity, contradiction handling, candidate review, release, influence tracking, and deletion closure | Lifecycle mechanics pass synthetically; extraction quality and natural-user benefit are untested |
+| What should enter a user's memory? | Repeated evidence, contextual validity, contradiction handling, candidate review, release, influence tracking, and deletion closure | Synthetic lifecycle and natural-input retention/proposal mechanics pass; extraction quality, review precision, and natural-user benefit are untested |
 | What can be shared with a team or enterprise? | Evidence-scope intersection, consent/purpose, classification, minimum support, privacy-preserving aggregate, review, and appeal | Scope mechanics pass synthetically; group inference and privacy thresholds are untested |
 | Should users working on similar tasks talk to each other? | Reciprocal opt-in, current task intent, organizational policy, calibrated similarity, explanation, and suppression of sensitive inference | Not supported; this is a product and policy decision, not a nearest-neighbor query |
 | What should be fine-tuned? | Stable taxonomy, independently verified labels, influence/leakage receipts, train/test family split, drift monitoring, and deletion handling | Not supported yet; embeddings or model training would currently learn unverified and contaminated derivatives |
@@ -183,7 +183,33 @@ then passed 18/18 checks through separate proposer, evaluator, releaser, and
 runtime roles. It covers complete-source authorization, hidden tests,
 security-vetoed release, no scope broadening, immutable signed fields, exposure,
 influence, withdrawal, and stale epochs. This is database lifecycle evidence,
-not task benefit or Aurora operations evidence. The next mandatory gates are:
+not task benefit or Aurora operations evidence.
+
+The preregistered full-cohort natural-input arm is
+[`trace_commons_memory_composition.py`](../../../research/trace-intelligence/trace_commons_memory_composition.py),
+with aggregate result
+[`trace-commons-memory-composition-2026-07-30.json`](../../../research/trace-intelligence/experiments/results/trace-commons-memory-composition-2026-07-30.json).
+It hash-verified all 28 Claude histories and reproduced the frozen 14-history,
+67-operation durable-context inventory. Its 50 supported state observations
+contained 48 unique contextual revisions. Verbatim and contextual-bitemporal
+storage retained all 48, while deliberately context-collapsing latest-only
+retained 20 and overwrote 28. The dream arm kept 48 deduplicated,
+evidence-linked proposals inactive; failed-job atomicity remains unrun. Online
+scoring returned one exact and two stale states because the interval gaps were
+only revealed by the later read results and cannot drive pre-read abstention.
+The contextual arm leaked across projects in 0/6 same-basename placebos, while
+latest-only failed with 3/6 candidate-retrieval leaks.
+
+The same run found only three reconstructable later-read cutoffs, one changed
+post-observation case, and one exact cross-session write-to-later-read
+transition.
+Therefore source fidelity and retention mechanics pass, inactive-proposal
+isolation is demonstrated only partially, latest-only context isolation fails,
+and every preregistered comparative-quality power gate fails. The frozen model
+and human-review phases remain unrun; running them on this cohort alone could
+produce descriptive examples but could not justify a product architecture.
+
+The next mandatory gates are:
 
 1. test concurrent promotion, epoch changes, deletion, rollback, and export
    invalidation under transactions;
