@@ -94,26 +94,26 @@ Status key:
 | Concept | Independent role | Current evidence | Questions | Next decisive test |
 |---|---|---|---|---|
 | Canonical event DAG | Preserve branches, model/tool lifecycle, observations, outcomes, source revisions, and loss | **Direct/mechanics.** Native adapters and real OTel round trips exist | Q1-Q8 substrate | Natural end-to-end trace through SDK, Collector, canonical import, analysis, deletion, and replay |
-| ATIF | Portable selected trajectory and eval interchange | **Direct.** Loss-aware projection exists; enterprise stress events lose canonical IDs/edges on reimport | Q1, Q3 | ATIF-to-AgentEvals export/reimport with denied calls, branches, and explicit loss assertions |
-| OTel/OpenInference | Operational span topology, timing, and tool lifecycle | **Direct.** Real SDK -> Collector -> file -> reimport retained the tested projected topology | Q1-Q3 substrate | Production backend round trip with expected-trace manifest and whole-trace drop controls |
+| ATIF | Portable selected trajectory and eval interchange | **Direct.** Profiled round trips ran on 88 coding and 2,130 RL trajectories; exact retention was 61.7% and 6.7% respectively | Q1, Q3 | Portable-core reader comparison without `extra.frankengate`, plus governed denial/authorization fixtures |
+| OTel/OpenInference | Operational span topology, timing, and tool lifecycle | **Direct.** Real Collector round trip and profiled coding/RL round trips ran; exact retention was 64.6% and 32.7% | Q1-Q3 substrate | Production backend round trip with expected-trace manifest, whole-trace drop controls, and explicit RL-state loss |
 | Signals | Cheap rephrasing, stagnation, loop, failure, disengagement, and recovery selection | **Proxy.** Typed errors and bounded later-success candidates ran; full published signal set did not | Q2, Q3 | Frozen detectors versus random, length, and stage-count on human informative-trace labels |
 | AgentRx | Canonical failure taxonomy, invariants, and decisive-step localization | **Proxy.** Deterministic invariants ran; faithful AgentRx did not | Q2, Q3, Q5 | AgentRx versus chronology, deterministic invariants, and blinded judge on decisive-step gold |
 | OpenRCA | Join trace graph, logs, metrics, topology, and time-series evidence | **Reviewed/proxy.** A topology factor ran; multimodal RCA did not | Q2, Q5 | Modality-ablation RCA with independently verified incident causes and alternatives |
-| AgentEvals | Promote stored traces into exact, ordered, unordered, invariant, or semantic assertions | **Direct for stored traces.** Pinned upstream v0.9.7 ran on natural Wisp trajectories; changed-system replay does not | Q3 | Mine assertions from adjudicated traces, execute a reset changed system, and measure harmful-regression recall plus benign false positives |
+| AgentEvals | Promote stored traces into exact, ordered, unordered, invariant, or semantic assertions | **Direct for stored and bounded changed-system replay.** Pinned upstream v0.9.7 ran on natural Wisp-derived resettable systems | Q3 | Extend from opaque transition replay to independently changed real agents/environments and adjudicated task outcomes |
 | Phoenix | Trace -> annotation -> dataset -> experiment -> replay lifecycle | **Reviewed/mechanics.** Native lifecycle records borrow the pattern; Phoenix was not run | Q3, Q4 | Export/import parity test against the native lifecycle, not a second authority |
 | Opik | Online evaluation rules, datasets, experiments, and aggregate views | **Reviewed/mechanics.** Product-specific rules were not run | Q3 | Same rule evaluated natively and in Opik with deletion/revision parity |
 | Langfuse | Sessions, feedback, datasets, and prompt experiments | **Reviewed/mechanics.** Feedback ingestion and prompt experiment behavior were not run | Q1, Q3, Q4 | Human feedback import plus dataset revision and deletion parity |
 | Temporal evidence / MemInsight concepts | Typed people, systems, tasks, outcomes, known time, valid time, gaps, and contradictions | **Direct/mechanics.** A cutoff-safe relational oracle passes synthetic tests | Q1, Q2, Q4-Q7 | Blinded natural longitudinal benchmark with online gold and interval-censored changes |
 | Memory Palace / MemPalace | Verbatim retention, stable IDs, temporal revisions, personal navigation | **Direct/proxy.** A natural 16-arm retention factorial ran, but every runnable mechanism made the same decisions | Q1, Q4 | A discriminating longitudinal corpus with historical-state, valid-time, and semantic free-text targets, followed by later-task utility |
-| Graphiti | Incremental temporal knowledge graph and hybrid retrieval | **Proxy/mechanics.** Relational facts/edges and contradiction mechanics ran; Graphiti did not | Q4, Q7 | Equal-evidence relational versus ephemeral Graphiti benchmark on multi-hop temporal questions |
-| LangMem | Structured memory candidate extraction and consolidation | **Proxy/mechanics.** Proposal lifecycle exists; extractor quality was not tested | Q4 | LangMem extraction versus deterministic and local-model extractors on cited memory gold |
+| Graphiti | Incremental temporal knowledge graph and hybrid retrieval | **Faithful bounded partial.** Pinned upstream passed a structured smoke, then returned four empty full-natural extractions and exceeded the 600-second ceiling | Q4, Q7 | Diagnose the full-input structured-extraction boundary before any retrieval or database comparison |
+| LangMem | Structured memory candidate extraction and consolidation | **Faithful smoke only.** Pinned source executed after lock alignment and `think=false`; no natural result was durably evidenced before the Graphiti ceiling | Q4 | Run natural extraction independently of Graphiti, then compare with deterministic extraction on cited memory gold |
 | Dreaming | Query-independent background synthesis of useful/current memory candidates | **Proxy only.** Release mechanics exist; the first “dream” arm did not dream | Q4, Q5 | Real pre-cutoff dream generation, independent verification, immutable release, and later-task A/B |
 | ReasoningBank | Contrast successful and failed experiences into retrievable lessons | **Reviewed.** No runner | Q5, Q6 | Family-held-out no-skill/placebo/expert/ReasoningBank comparison |
 | Hermes stable memory | Protected writes, source provenance, curator, snapshots, rollback | **Reviewed.** No Frankengate integration | Q4, Q5 | Render a reviewed release to harness memory, record exposure, rollback, and deletion propagation |
 | Hermes Self-Evolution | Search over skill variants | **Reviewed and rejected as current baseline.** Reviewed revision had contract defects | Q5, Q6 | Use only a corrected, pinned revision with a verified skill-body mutation and sealed evaluator |
 | GEPA / SkillOpt / Trace2Skill / EvoSkill | Bounded candidate search and hierarchical skill updates | **Proxy.** One tiny Trace2Skill mechanics run; no adequate outcome study | Q5, Q6 | Sealed selection/test split with no-skill, length placebo, expert, mined, and optimized arms |
 | “Jeopard” / GEPA gskill | Reflective, budgeted search over textual skill candidates with executable task feedback | **Reviewed/resolved.** Official talk captions repeatedly render GEPA as “Jeopardy”; no faithful Frankengate outcome run yet | Q5, Q6 | Run the preregistered no-skill/placebo/frozen-lesson/GEPA/expert protocol with family-disjoint hidden replay |
-| RL environment histories | Reset, action, observation, resource, termination, reward, and replay divergence | **Direct/mechanics on some datasets.** Flat traces remain insufficient | Q2, Q3, Q5, Q6 | Attach frozen environment state and compare recorded versus replayed transitions |
+| RL environment histories | Reset, action, observation, resource, termination, reward, and replay divergence | **Direct/mechanics.** 2,130 MATM ALFWorld trajectories were measured; neither ATIF nor OTel retained reset state, and the source lacked seed/snapshot | Q2, Q3, Q5, Q6 | Use a source with a frozen environment seed/snapshot and compare recorded versus replayed transitions |
 | CASS | Exact/fuzzy/semantic personal history search and compact evidence UX | **Reviewed.** No connector or query parity run | Q1, Q2, Q4 | Import the same native history into CASS and Frankengate and compare fielded recall and evidence previews |
 | Doodlestein / CM | Local memory, bookmarks, compact context, and agent control ergonomics | **Reviewed.** No integration | Q1, Q4 | Translate the useful interaction primitives into governed native records and user tests |
 | `claude-history` / Prompt-Scope | Local-first history organization, exact-term preservation, and reflection | **Reviewed/proxy.** Native history import and exact search exist | Q1, Q2 | Side-by-side personal-history task study |
@@ -129,7 +129,7 @@ Status key:
 | General embeddings | Semantic candidate retrieval | **Direct baseline.** Structured features contributed more on current silver labels | Q2, Q7, Q8 | Human enterprise task-similarity and hard-negative labels |
 | Enterprise-adapted embeddings | Organization-specific jargon and task similarity | **Missing** | Q7, Q8 | Frozen user/project/time-held-out contrastive experiment after general baseline failure |
 | Agentic coding/research traces | Real tool-call-rich histories and longitudinal work | **Direct for ingestion/mechanics; weak outcome labels** | Q1-Q5, Q7 | Human labels and prospective interventions; public traces remain fixtures, not workforce samples |
-| NL2SQL traces | Executable enterprise-like skill and replay domain | **Direct/mechanics.** Isolation/replay works; first skill factorial failed protocol and showed no arm difference | Q2-Q6, Q8 | Repair terminal protocol, then family-disjoint trace-mined skill intervention |
+| NL2SQL traces | Executable enterprise-like skill and replay domain | **Direct/mechanics.** Real model/PostgreSQL tool calls ran; terminal protocol is repaired, but no-skill/placebo/expert still tied 2/4 | Q2-Q6, Q8 | Improve intervention sensitivity on a visible family before unsealing trace-mined or hidden-family arms |
 
 Primary project evidence is indexed in the
 [trace research README](../../../research/trace-intelligence/README.md), the
@@ -163,6 +163,11 @@ work but only a small number of comparative mechanism studies.
 | PostgreSQL statistics intervention | Same 104 histories and 122 derived artifacts, 250 invocations per query before and after `ANALYZE` | Controlled-FTS p50 fell from 57.188 ms to 2.167 ms; proposal queue from 10.973 ms to 0.952 ms; all authority denials stayed at zero | Fresh-load statistics are a load-bearing readiness variable; the slow pre-statistics result is not evidence for another database |
 | Natural trace memory factorial | 219 source files, 30,496 records, 23 eligible later-read queries, full 2^4 runnable-mechanism factorial | Latest, verbatim, bitemporal, evidence retrieval, and every composition each scored 16/23 exact and 7/23 stale; no-memory abstained on all 23 | The corpus proves memory availability but cannot distinguish mechanisms; Dream and procedure arms correctly remained unrunnable because no independently released natural artifacts existed |
 | Upstream AgentEvals interoperability | 3 natural Wisp trajectories x 7 mutations x 3 deterministic match modes; 9 local semantic-judge calls | Exact/ordered/unordered assertions separated order from membership and caught every dropped/corrupted tool path; semantic matching caught 3/3 reversals and accepted 3/3 benign wrappers but rejected 1/3 unmodified baselines | Tool-path and response assertions are complementary; the semantic judge is too unstable to be a sole release gate, and no changed system was executed |
+| Changed-system AgentEvals replay | 3 natural Wisp-derived resettable systems; original, benign-audit, and harmful-drop implementations; 18 runtime invocations and 27 upstream assertions | Original completed 3/3; benign completed 3/3; harmful completed 0/3. Exact had 100% benign false positives; ordered and unordered had 0% benign false positives and 100% harmful recall | First prospective changed-system evidence for the bounded transition model; it does not reconstruct the original host or prove historical task correctness |
+| Recovery-label prompt stability | 6 blinded Wisp recovery candidates x 3 local-model rubric perturbations, 18 valid decisions | Unanimity ranged from 50% to 66.7%; kappa was 0.556 for outcome, 0.500 relation, 0.442 cause, 0.333 exploration, 0.085 usefulness, and -0.091 evidence strength | Useful for prioritizing independent review, not gold labels; usefulness and evidence-strength judgments are especially prompt-sensitive |
+| ATIF/OTel schema intersection | 88 tool-rich Wisp trajectories and 2,130 MATM ALFWorld trajectories, exact capability-fact round trips | Coding retention: ATIF 61.7%, OTel 64.6%; RL retention: ATIF 6.7%, OTel 32.7%. Canonical retained 100% of adapter-observed facts | Both are projections, not evidence authorities; event identity does not recover missing environment seed or replay snapshot |
+| Corrected Defog NL2SQL P0 | 4 paired tasks x no-skill/placebo/expert; real native model tools and disposable PostgreSQL | Missing terminal actions fell from 4/12 to 0/12; every arm still passed the same 2/4 tasks, with zero unauthorized observations | Protocol repair succeeded, intervention-sensitivity gate failed; trace-mined and hidden arms remain sealed |
+| Faithful Graphiti/LangMem bounded run | 3 preregistered natural Wisp/Fable cases, exact upstream pins and lock-aligned runtime | Both libraries passed small real API smokes; 0/3 natural cases completed. Graphiti emitted four empty structured responses on the first full input and hit the 600-second ceiling; no LangMem natural output was durably captured | A typed compatibility/failure result, not a score: neither component has earned an architecture role or a natural-mechanism effect claim |
 
 The negative results are part of the architecture decision:
 
@@ -207,6 +212,22 @@ Primary outcomes:
 
 Kill criterion: the composed path does not beat the cheapest baselines, or the
 evals cannot tolerate benign variation.
+
+The first changed-system result supports a concrete suggestion policy for the
+Frankengate UI:
+
+| Observed evidence and intended invariant | Suggested eval | Required warning or companion |
+|---|---|---|
+| Every tool call, argument, count, and order is contractually fixed | Exact trajectory | High benign-change sensitivity; the audit-only addition produced 100% false positives |
+| A required sequence must occur, but additional calls are allowed | Ordered subsequence | Add forbidden-event and budget invariants so tolerated extras cannot hide harmful side effects |
+| Required calls/arguments are commutative | Unordered membership | Require explicit commutativity evidence; do not infer it from one successful trace |
+| Success is an independently observable state | Outcome/state invariant | Prefer this over final-response wording when a deterministic oracle exists |
+| A call, data access, policy decision, or side effect must never occur | Forbidden-event invariant | Treat as a hard veto, not a semantic score |
+| Meaning is stable but wording may vary | Semantic response assertion | Advisory until calibrated; the tested judge rejected one untouched baseline |
+
+The suggestion engine should explain why it selected an assertion, show the
+source evidence, and ask the user which benign variations must remain allowed.
+It must not silently convert one recorded path into an exact contract.
 
 ### C2: Temporal evidence -> extraction -> graph -> dream -> later use
 
@@ -360,7 +381,7 @@ analysis feature, not chat inference.
 | 2 | Human/adjudicated recovery and decisive-step label set | Diagnosis and eval work currently lacks valid gold | Enables AgentRx/OpenRCA/AgentEvals comparison |
 | 3 | C1 diagnosis-to-changed-system replay | Directly tests suggested eval usefulness | Enables eval proposal UI |
 | 4 | Corrected C2 temporal/latest/real-dream replication | Existing memory pilot is invalid | Enables or kills memory/dream product work |
-| 5 | Repair NL2SQL terminal protocol and run C3 | Best executable skill-learning domain | Enables or kills trace-mined skill work |
+| 5 | Improve NL2SQL intervention sensitivity, then run C3 | Terminal protocol is repaired, but the expert/placebo/no-skill visible arms tied | Enables or kills trace-mined skill work without spending hidden families on an insensitive harness |
 | 6 | Build same-work and useful-artifact labels, then C4 | Required before cross-user product claims | Enables anonymous task patterns and collaboration trial |
 | 7 | C5 support-intervention labels and trial | Required before education or “missing skill” claims | Enables private support suggestions |
 | 8 | C6 embedding adaptation | Labels and hard slice finally exist | Enables or kills custom embeddings |
@@ -377,11 +398,14 @@ Every result must separately report:
 - runtime, cost, and operational burden;
 - limitations and forbidden interpretations.
 
-The first corrected checkpoint has begun orders 1 and 2 without claiming they
-are complete. A dependency-light Signals/AgentRx/AgentEvals-inspired proxy ran
-on Wisp, but remains a proxy with no changed-system replay. The Wisp
-adjudication builder produced 87 complete blinded recovery packets, but those
-packets still require independent reviewers. A deterministic six-mechanism
+The first corrected checkpoint has begun orders 1 through 3 without claiming
+the broader program is complete. A dependency-light
+Signals/AgentRx/AgentEvals-inspired proxy ran on Wisp, followed by a faithful
+upstream AgentEvals run and a bounded resettable changed-system replay. That
+replay is prospective for an opaque transition system, not the original Wisp
+host or independently changed production agent. The Wisp adjudication builder
+produced 87 complete blinded recovery packets, but those packets still require
+independent reviewers. A deterministic six-mechanism
 memory fixture also established isolation and composition mechanics while
 showing no fixture advantage for the all-mechanism arm over the best singleton.
 The follow-up natural-memory factorial reached the same conclusion for a
@@ -403,6 +427,7 @@ dependency-aware execution units are deliberately narrower:
 | Friction, diagnosis, and trace-to-eval | [#92](https://github.com/pierretokns/frankengate/issues/92) | `bif-kyy.17.13.4.2` |
 | Signals x diagnosis x changed-system replay | #92 child | `bif-kyy.17.13.4.2.3` |
 | Multimodal OpenRCA-style ablations | #92 child | `bif-kyy.17.13.4.2.4` |
+| Independent recovery/friction adjudication | #92 child | `bif-kyy.17.13.4.2.5` |
 | Same-work retrieval and Aurora gate | [#93](https://github.com/pierretokns/frankengate/issues/93) | `bif-kyy.17.13.4.3` |
 | Enterprise-adapted embedding study | #93 child | `bif-kyy.17.13.4.3.2` |
 | Temporal and procedural memory | [#94](https://github.com/pierretokns/frankengate/issues/94) | `bif-kyy.17.13.4.4` |
@@ -458,7 +483,7 @@ that the general baseline fails.
 
 Primary external sources and pinned reviews:
 
-- [Harbor ATIF](https://github.com/harbor-framework/harbor/tree/459ff6ec99417589b7f679d14ddf3b3f0ae4f1dc)
+- [Harbor ATIF](https://github.com/harbor-framework/harbor/tree/f5e9d0b71ac4493a4f0620653e2913aee7fc0767)
 - [OpenTelemetry GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai/tree/434c91dcc34ed038e3048c07720ddfed2c6bddfc)
 - [OpenInference](https://github.com/Arize-ai/openinference/tree/789d41974c08a9a13147977f28ef4142a07e2106)
 - [AgentRx](https://github.com/microsoft/AgentRx/tree/f228165bfec60a801fd5fedd9d8ffe0f9de0c69d)

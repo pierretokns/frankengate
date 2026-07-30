@@ -29,6 +29,7 @@ class FakeAPI:
         *,
         messages,
         seed,
+        tools=None,
         max_tokens=None,
         timeout_seconds=None,
     ):
@@ -98,6 +99,7 @@ class NoSubmissionAPI(FakeAPI):
         *,
         messages,
         seed,
+        tools=None,
         max_tokens=None,
         timeout_seconds=None,
     ):
@@ -105,6 +107,7 @@ class NoSubmissionAPI(FakeAPI):
             return super().complete(
                 messages=messages,
                 seed=seed,
+                tools=tools,
                 max_tokens=max_tokens,
                 timeout_seconds=timeout_seconds,
             )
@@ -124,12 +127,101 @@ class NoSubmissionAPI(FakeAPI):
         }, 2.5
 
 
+class TerminalBudgetAPI(FakeAPI):
+    """Keeps retrying SQL until the observation declares terminal state."""
+
+    def __init__(self):
+        super().__init__()
+        self.offered_tool_names = []
+        self.latest_attempt_id = None
+
+    def complete(
+        self,
+        *,
+        messages,
+        seed,
+        tools=None,
+        max_tokens=None,
+        timeout_seconds=None,
+    ):
+        self.calls += 1
+        names = [
+            item["function"]["name"]
+            for item in (tools or factorial.TOOLS)
+        ]
+        self.offered_tool_names.append(names)
+        observation = {}
+        for message in reversed(messages):
+            if message.get("role") != "tool":
+                continue
+            observation = json.loads(message["content"])
+            if observation.get("attempt_id"):
+                self.latest_attempt_id = observation["attempt_id"]
+            break
+        terminal_required = (
+            observation.get("protocol_state", {}).get(
+                "required_terminal_action"
+            )
+            is True
+            and messages[-1]
+            == {
+                "role": "user",
+                "content": factorial.TERMINAL_STATE_CONTROL_MESSAGE,
+            }
+        )
+        if self.calls == 1:
+            call = {
+                "id": "schema-1",
+                "type": "function",
+                "function": {
+                    "name": "describe_schema",
+                    "arguments": "{}",
+                },
+            }
+        elif not terminal_required:
+            call = {
+                "id": f"sql-{self.calls}",
+                "type": "function",
+                "function": {
+                    "name": "execute_sql",
+                    "arguments": json.dumps(
+                        {"sql": f"SELECT {self.calls} AS n"}
+                    ),
+                },
+            }
+        else:
+            call = {
+                "id": "submit-1",
+                "type": "function",
+                "function": {
+                    "name": "submit_sql",
+                    "arguments": json.dumps(
+                        {"attempt_id": self.latest_attempt_id}
+                    ),
+                },
+            }
+        return {
+            "system_fingerprint": "test-runtime",
+            "usage": {"prompt_tokens": 10, "completion_tokens": 5},
+            "choices": [
+                {
+                    "finish_reason": "tool_calls",
+                    "message": {
+                        "role": "assistant",
+                        "tool_calls": [call],
+                    },
+                }
+            ],
+        }, 2.5
+
+
 class AbstainAPI(FakeAPI):
     def complete(
         self,
         *,
         messages,
         seed,
+        tools=None,
         max_tokens=None,
         timeout_seconds=None,
     ):
@@ -170,6 +262,7 @@ class DroppedToolAPI(FakeAPI):
         *,
         messages,
         seed,
+        tools=None,
         max_tokens=None,
         timeout_seconds=None,
     ):
@@ -336,6 +429,12 @@ class DefogSQLFactorialTest(unittest.TestCase):
         ) as opener:
             api.complete(
                 messages=[{"role": "user", "content": "test"}],
+                tools=[
+                    tool
+                    for tool in factorial.TOOLS
+                    if tool["function"]["name"]
+                    in factorial.TERMINAL_TOOL_NAMES
+                ],
                 seed=7,
             )
         request = opener.call_args.args[0]
@@ -346,6 +445,10 @@ class DefogSQLFactorialTest(unittest.TestCase):
         self.assertEqual(0, payload["top_k"])
         self.assertEqual(0, payload["min_p"])
         self.assertEqual(32, payload["max_completion_tokens"])
+        self.assertEqual(
+            ["submit_sql", "abstain"],
+            [tool["function"]["name"] for tool in payload["tools"]],
+        )
 
     def test_model_result_preview_is_row_and_byte_bounded(self):
         result = factorial.QueryResult(
@@ -675,6 +778,54 @@ class DefogSQLFactorialTest(unittest.TestCase):
         self.assertEqual(1, len(receipt.attempt_receipts))
         self.assertEqual(1, executor.candidate_executions)
         equality.assert_not_called()
+
+    def test_sql_budget_exhaustion_switches_to_terminal_only_tools(self):
+        task = factorial.RuntimeTask(
+            task_id="task-1",
+            database="fixture",
+            query_category="basic",
+            question="Return the requested value.",
+            instructions="",
+            gold_sql="SELECT 4 AS n",
+        )
+        api = TerminalBudgetAPI()
+        with tempfile.TemporaryDirectory() as temporary:
+            with patch.object(
+                factorial,
+                "results_equal",
+                return_value=True,
+            ):
+                receipt = factorial.run_agent(
+                    task=task,
+                    arm="no_skill",
+                    seed=7,
+                    api=api,
+                    executor=FakeExecutor(),
+                    limits=factorial.AgentLimits(
+                        max_sql_attempts=3,
+                        max_model_turns=6,
+                    ),
+                    raw_audit_path=(
+                        pathlib.Path(temporary) / "raw.jsonl"
+                    ),
+                )
+        self.assertEqual("submit_sql", receipt.terminal_action)
+        self.assertEqual(3, receipt.sql_attempts)
+        self.assertEqual(
+            list(factorial.ALL_TOOL_NAMES)
+            if hasattr(factorial, "ALL_TOOL_NAMES")
+            else [
+                "describe_schema",
+                "execute_sql",
+                "submit_sql",
+                "abstain",
+            ],
+            api.offered_tool_names[-2],
+        )
+        self.assertEqual(
+            ["submit_sql", "abstain"],
+            api.offered_tool_names[-1],
+        )
 
     def test_abstain_is_an_explicit_terminal_action(self):
         task = factorial.RuntimeTask(

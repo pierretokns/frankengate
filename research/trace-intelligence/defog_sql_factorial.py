@@ -52,12 +52,18 @@ from defog_governed_sql_replay import (
 )
 
 
-SCHEMA_VERSION = "frankengate-defog-sql-factorial-v2"
+SCHEMA_VERSION = "frankengate-defog-sql-factorial-v3-terminal-only"
 AUTHORITY_SCOPE = "enterprise"
 AUTHORIZATION_EPOCH_REF = "defog-factorial-authority-v1"
 AUTHORITY_USER_ID = "factorial-pilot-user"
 AUTHORITY_TEAM_ID = "factorial-pilot-team"
 AUTHORITY_VIRTUAL_KEY_ID = "factorial-pilot-vk"
+TERMINAL_TOOL_NAMES = frozenset({"submit_sql", "abstain"})
+TERMINAL_STATE_CONTROL_MESSAGE = (
+    "Protocol controller: remaining_sql_attempts=0. The only valid next "
+    "action is exactly one native call to submit_sql or abstain. Do not "
+    "analyze, explain, or call an unavailable tool."
+)
 
 
 class FactorialError(RuntimeError):
@@ -207,6 +213,7 @@ class ChatAPI:
         self,
         *,
         messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]] | None = None,
         seed: int,
         max_tokens: int | None = None,
         timeout_seconds: int | None = None,
@@ -214,7 +221,7 @@ class ChatAPI:
         payload = {
             "model": self.request_model_id,
             "messages": messages,
-            "tools": TOOLS,
+            "tools": TOOLS if tools is None else tools,
             "temperature": 0,
             "top_p": 1,
             "top_k": 0,
@@ -458,6 +465,24 @@ def _tool_message(
     }
 
 
+def _tools_for_attempt_count(
+    *,
+    sql_attempts: int,
+    max_sql_attempts: int,
+) -> list[dict[str, Any]]:
+    """Preserve the frozen tool contract while enforcing terminal scheduling."""
+
+    if sql_attempts < 0 or max_sql_attempts <= 0:
+        raise FactorialError("SQL attempt budgets must be positive")
+    if sql_attempts < max_sql_attempts:
+        return TOOLS
+    return [
+        tool
+        for tool in TOOLS
+        if tool["function"]["name"] in TERMINAL_TOOL_NAMES
+    ]
+
+
 def run_agent(
     *,
     task: RuntimeTask,
@@ -524,17 +549,22 @@ def run_agent(
         if remaining_generated_tokens <= 0:
             protocol_failure_code = "generated_token_budget_exhausted"
             break
+        offered_tools = _tools_for_attempt_count(
+            sql_attempts=len(attempt_records),
+            max_sql_attempts=limits.max_sql_attempts,
+        )
         request_receipt = {
             "event": "model_request",
             "turn": turn,
             "messages": messages,
-            "tools": TOOLS,
+            "tools": offered_tools,
             "seed": seed,
             "model": api.request_model_id,
         }
         _append_raw(raw_audit_path, request_receipt)
         response, elapsed_ms = api.complete(
             messages=messages,
+            tools=offered_tools,
             seed=seed,
             max_tokens=min(api.max_tokens, remaining_generated_tokens),
             timeout_seconds=max(1, int(remaining_model_seconds)),
@@ -589,11 +619,24 @@ def run_agent(
             except json.JSONDecodeError:
                 arguments = None
 
+            enter_terminal_state = False
+            offered_names = {
+                str(tool["function"]["name"])
+                for tool in offered_tools
+            }
             if terminal_action != "none":
                 content = json.dumps(
                     {
                         "status": "terminal_action_already_selected",
                         "terminal_action": terminal_action,
+                    }
+                )
+            elif name not in offered_names:
+                content = json.dumps(
+                    {
+                        "status": "tool_not_available",
+                        "tool_name": name,
+                        "available_tools": sorted(offered_names),
                     }
                 )
             elif name == "describe_schema" and isinstance(arguments, dict):
@@ -715,6 +758,19 @@ def run_agent(
                             not call_authority_valid
                         )
                     content_value["attempt_id"] = attempt_id
+                    if (
+                        len(attempt_records) + 1
+                        >= limits.max_sql_attempts
+                    ):
+                        enter_terminal_state = True
+                        content_value["protocol_state"] = {
+                            "remaining_sql_attempts": 0,
+                            "available_actions": [
+                                "submit_sql",
+                                "abstain",
+                            ],
+                            "required_terminal_action": True,
+                        }
                     content = json.dumps(
                         content_value,
                         ensure_ascii=False,
@@ -829,6 +885,7 @@ def run_agent(
                     "tool_call_id": call_id,
                     "name": name,
                     "arguments": arguments,
+                    "tool_was_offered": name in offered_names,
                     "content": content,
                 },
             )
@@ -839,6 +896,13 @@ def run_agent(
                     content=content,
                 )
             )
+            if enter_terminal_state:
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": TERMINAL_STATE_CONTROL_MESSAGE,
+                    }
+                )
             if terminal_action != "none":
                 break
         if terminal_action != "none":
@@ -1254,6 +1318,27 @@ def run_factorial(
             "tool_schema_sha256": hashlib.sha256(
                 canonical_json_bytes(TOOLS)
             ).hexdigest(),
+        },
+        "protocol_remediation": {
+            "id": "explicit_terminal_state_and_terminal_only-v1",
+            "applies_identically_across_arms": True,
+            "transition": (
+                "when accepted SQL attempt count reaches max_sql_attempts, "
+                "the attempt observation declares zero remaining SQL "
+                "attempts, an arm-independent protocol-controller message "
+                "requires one terminal native call, and the next model "
+                "request offers only submit_sql and abstain"
+            ),
+            "terminal_state_message_sha256": sha256_text(
+                TERMINAL_STATE_CONTROL_MESSAGE
+            ),
+            "terminal_tools": sorted(TERMINAL_TOOL_NAMES),
+            "base_prompt_changed": False,
+            "arm_artifacts_changed": False,
+            "tool_schemas_changed": False,
+            "model_changed": False,
+            "task_selection_changed": False,
+            "authority_contract_changed": False,
         },
         "source_receipts": {
             "cohort_manifest_sha256": sha256_file(cohort_manifest_path),

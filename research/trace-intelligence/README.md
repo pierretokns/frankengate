@@ -49,6 +49,40 @@ deterministic modes cleanly separate tool order from membership/arguments. The
 local semantic judge caught all response reversals but rejected one unmodified
 baseline, so it cannot be the sole release gate.
 
+The follow-up
+[`changed-system replay`](experiments/summaries/changed-system-replay-wisp-2026-07-30.md)
+executes resettable original, benign-audit, and harmful-drop implementations.
+Exact matching catches the harmful change but also rejects every benign audit
+addition; ordered and unordered matching accept the benign addition while
+catching every tested omission. The result is prospective for the bounded
+transition model, not a reconstruction of the source host.
+
+The
+[`recovery-label stability study`](experiments/summaries/wisp-recovery-model-adjudication-stability-2026-07-30.md)
+runs three prompt-order/skepticism variants over six blinded natural episodes.
+Outcome and relation were moderately stable; usefulness and evidence strength
+were not. These are review-prioritization signals, not gold labels.
+
+The
+[`ATIF/OTel coding-and-RL round trip`](experiments/summaries/atif-rl-roundtrip-2026-07-30.md)
+measures exact capability-fact retention over 88 Wisp coding trajectories and
+2,130 MATM ALFWorld trajectories. Both projections lose load-bearing evidence,
+especially RL reset/reward/termination state; preserving event identity is not
+the same as preserving a replayable environment.
+
+The corrected
+[`Defog NL2SQL terminal-protocol P0`](experiments/summaries/defog-sql-terminal-protocol-repair-p0-2026-07-30.md)
+eliminates all missing terminal actions across twelve real model/PostgreSQL
+episodes. No-skill, placebo, and expert arms still solve the same two of four
+tasks, so trace-mined and hidden-family arms remain sealed.
+
+The bounded
+[`faithful Graphiti/LangMem run`](experiments/summaries/faithful-memory-components-2026-07-30.md)
+uses the real pinned libraries. Both pass small structured smokes, but no
+natural case completes: Graphiti returns empty structured responses on the
+first full document and hits the experiment ceiling. No proxy score is
+substituted, and neither component has earned a production role.
+
 Bulk raw corpora stay outside Git so revisions remain small and reproducible.
 Dataset manifests pin exact source revisions and adapters read explicit local
 paths. Frankengate's governed database may retain full internal trace content

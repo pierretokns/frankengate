@@ -1,0 +1,136 @@
+{
+  "schema_version": "frankengate.faithful-memory-components.v1",
+  "experiment_id": "faithful-memory-components-v1-2026-07-30",
+  "status": "natural-trace-component-compatibility-and-increment-study",
+  "parent_result": {
+    "path": "../../experiments/results/natural-trace-memory-factorial-2026-07-30.json",
+    "file_sha256": "8b42e33b5d5f93dd97f5104aafb45b9179e145a7b5811a4ebe2eaed7914f0db4",
+    "result_sha256": "bb939fc66b96dbec958b9bd0d41142ec6be453eb0f6a3aa27fc6c76bbe216c6d"
+  },
+  "upstreams": {
+    "graphiti": {
+      "repository": "https://github.com/getzep/graphiti",
+      "version": "0.29.3",
+      "tag": "v0.29.3",
+      "commit": "021d3a57d511f21b10adaf7fa923bd5c1fce5e9d",
+      "commit_time": "2026-07-27T16:55:45-04:00",
+      "license": "Apache-2.0",
+      "license_sha256": "2825300b20d7b951209835a4a331f29e24725a39d65168e4b831df53aa372650",
+      "lock_sha256": "198c52223745dc8d49864b58a77e4badadc302d28380cf9eddb32365e8f064bf"
+    },
+    "langmem": {
+      "repository": "https://github.com/langchain-ai/langmem",
+      "version": "0.0.30",
+      "tag": null,
+      "release_status": "unreleased-exact-main-snapshot-because-upstream-publishes-no-github-releases",
+      "commit": "56d85939d80bb731bd5e237567148d817d7bfd16",
+      "commit_time": "2026-07-25T01:08:56-07:00",
+      "license": "MIT",
+      "license_sha256": "98af1351ea856e008c835bc89a312905960a318072f950732bf346c741027c7d",
+      "lock_sha256": "b5031c66951bf52265ab300a51403728f37e2a6939be31ed75f023eaa5d49a66"
+    }
+  },
+  "runtime": {
+    "python": "3.12.4",
+    "graph_backend": "falkordblite==0.10.0",
+    "graphiti_core": "0.29.3",
+    "langmem": "0.0.30",
+    "langchain": "1.3.10",
+    "langchain_core": "1.4.8",
+    "langchain_openai": "1.1.14",
+    "langgraph": "1.2.6",
+    "langgraph_checkpoint": "4.1.1",
+    "langgraph_prebuilt": "1.1.0",
+    "langgraph_sdk": "0.4.2",
+    "trustcall": "0.0.39",
+    "ollama_endpoint": "loopback-only",
+    "qwen3_4b_manifest_sha256": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+    "nomic_embed_text_manifest_sha256": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+    "embedding_dimensions": 768,
+    "graphiti_telemetry_enabled": false,
+    "langsmith_tracing_enabled": false,
+    "llm_temperature": 0,
+    "max_coroutines": 1,
+    "ollama_compatibility_adapter": "inject extra_body.think=false through documented client injection"
+  },
+  "natural_case_selection": {
+    "sources": [
+      {
+        "label": "wisp",
+        "manifest": "../datasets/wisp-claude-code-sessions.json"
+      },
+      {
+        "label": "fable5",
+        "manifest": "../datasets/glint-fable5-partial-claude-home.json"
+      }
+    ],
+    "strata": "source_by_latest_prequery_state_matches_later_read",
+    "selector": "smallest_total_bytes_then_revision_count_then_private_query_identity",
+    "maximum_prequery_revisions_per_case": 2,
+    "expected_selected_cases": 3,
+    "future_query_result_available_to_components": false
+  },
+  "components": {
+    "graphiti": {
+      "surface": [
+        "Graphiti.build_indices_and_constraints",
+        "Graphiti.add_episode",
+        "Graphiti.search_"
+      ],
+      "search_recipe": "COMBINED_HYBRID_SEARCH_RRF",
+      "raw_episode_storage": true,
+      "measure": [
+        "source_episode_exact_retrieval",
+        "technical_identifier_recall_in_nodes_and_edges",
+        "temporal_edge_count",
+        "invalidated_edge_count"
+      ]
+    },
+    "langmem": {
+      "surface": [
+        "create_memory_manager",
+        "MemoryManager.invoke"
+      ],
+      "mode": "structured_background_memory_candidate_extraction_and_update",
+      "measure": [
+        "technical_identifier_recall",
+        "candidate_count",
+        "existing_candidate_id_updated_across_revisions"
+      ]
+    },
+    "combined": {
+      "composition": "LangMem exact-identifier candidates expand the Graphiti episode search query",
+      "measure": "source_episode_exact_retrieval",
+      "baseline": "latest eligible exact-artifact state"
+    }
+  },
+  "durable_output": {
+    "raw_content": false,
+    "artifact_paths": false,
+    "native_identifiers": false,
+    "project_identifiers": false,
+    "per_case_identifiers": false,
+    "model_outputs": false,
+    "aggregate_metrics": true,
+    "source_and_runtime_receipts": true
+  },
+  "claim_boundary": {
+    "establishes_at_most": [
+      "real_upstream_component_executability",
+      "natural_prequery_source_episode_retrieval",
+      "automatic_exact_identifier_preservation",
+      "observed_temporal_edge_mechanics",
+      "observed_memory_update_mechanics"
+    ],
+    "does_not_establish": [
+      "memory_correctness",
+      "answer_quality",
+      "user_or_model_task_utility",
+      "causal_effect",
+      "enterprise_transfer",
+      "authorization_correctness",
+      "production_scalability",
+      "production_database_necessity"
+    ]
+  }
+}
