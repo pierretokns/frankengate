@@ -313,6 +313,59 @@ bounded database-mechanics result, not an Aurora operations or memory-benefit
 result. See
 [`experiments/summaries/trace-commons-memory-h5-postgres-2026-07-30.md`](experiments/summaries/trace-commons-memory-h5-postgres-2026-07-30.md).
 
+The subsequent source-stratified external replication adds the pinned
+[Glint Fable-5](https://huggingface.co/datasets/Glint-Research/Fable-5-traces)
+top-level native Claude stratum without modifying the original
+preregistration. A path-minimizing preparer excludes 36 nested subagent files
+and materializes 79 verified histories under content digests. Combined with
+Trace Commons, the exploratory mechanics counts are 17 reconstructable reads,
+ten changed cases, and five exact cross-session transitions. The original
+`10 / 5 / 2` count gate passes, but a confirmatory diversity gate of three
+source families and five exact-transition project contexts fails at two and
+three. Model or human work may proceed only as an exploratory replication; no
+population or enterprise claim is unlocked.
+
+The Glint archive is a 115/115 byte-exact mirror of the pinned cfahlgren1
+archive and counts once. Its card describes unsanitized synthetic telemetry and
+does not establish independent contributors. An aggregate-only scan of 338,210
+strings found 65 redaction markers and 11 bearer-token-shaped candidates
+without emitting candidate values. Raw external-model egress and training are
+blocked until a separate sanitizer replaces candidates, rescans the final
+evidence pack, and passes fail closed.
+
+Rebuild from external caches:
+
+```sh
+TRACE_COMMONS_ROOT=/private/path/trace-commons-cache \
+FABLE5_SOURCE_ROOT=/private/path/fable5/claude/projects \
+FABLE5_PREPARED_ROOT=/private/path/fable5-content-addressed \
+PYTHON=python3 \
+make longitudinal-memory-expansion
+```
+
+The deterministic result and prospective pre-model protocol are
+[`experiments/summaries/longitudinal-memory-cohort-expansion-2026-07-30.md`](experiments/summaries/longitudinal-memory-cohort-expansion-2026-07-30.md)
+and
+[`configs/experiments/longitudinal-memory-model-human-replication-2026.json`](configs/experiments/longitudinal-memory-model-human-replication-2026.json).
+The sensitive scan is interpreted in
+[`experiments/summaries/fable5-sensitive-token-scan-2026-07-30.md`](experiments/summaries/fable5-sensitive-token-scan-2026-07-30.md).
+
+The H5 concurrency extension then uses independent PostgreSQL sessions to test
+failed-job atomicity, promotion and withdrawal serialization, exposure races,
+epoch and membership revocation, hard deletion, and provenance retention.
+The mechanics pass, but the run proves four hard edges: exposure metadata can
+commit after withdrawal unless both operations share a lock; REPEATABLE READ
+retains old authorization/deletion snapshots; governance mutation needs a
+narrow persistent non-owner boundary; and provenance FKs require an explicit
+tombstone/redaction policy. It is a local PostgreSQL 16.12 result, not Aurora.
+
+```sh
+PYTHON=python3 make memory-h5-concurrency
+```
+
+See
+[`experiments/summaries/trace-commons-memory-h5-concurrency-postgres-2026-07-30.md`](experiments/summaries/trace-commons-memory-h5-concurrency-postgres-2026-07-30.md).
+
 ## E2 same-work retrieval factorial
 
 `e2_authorized_retrieval_factorial.py` evaluates a frozen trace-to-trace

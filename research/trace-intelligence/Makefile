@@ -2,7 +2,7 @@ PYTHON ?= python3
 PYTHONPYCACHEPREFIX ?= /private/tmp/frankengate-trace-intelligence-pycache
 QWEN3_EMBEDDING_DEVICE ?= cpu
 
-.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
+.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory longitudinal-memory-expansion memory-h5-concurrency e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
 
 verify: test validate compile
 
@@ -143,6 +143,40 @@ trace-memory:
 		--source-root "$(TRACE_COMMONS_ROOT)" \
 		--output experiments/results/trace-commons-memory-conformance-2026-07-30.json \
 		--summary experiments/summaries/trace-commons-memory-conformance-2026-07-30.md
+
+# Rebuilds the path-minimized Fable stratum, scans it without emitting possible
+# credential values, and runs the source-stratified longitudinal expansion.
+# Both raw source trees and the prepared content-addressed quarantine are
+# external to Git.
+longitudinal-memory-expansion:
+	@test -n "$(TRACE_COMMONS_ROOT)" || \
+		(printf '%s\n' 'TRACE_COMMONS_ROOT is required' >&2; exit 2)
+	@test -n "$(FABLE5_SOURCE_ROOT)" || \
+		(printf '%s\n' 'FABLE5_SOURCE_ROOT is required' >&2; exit 2)
+	@test -n "$(FABLE5_PREPARED_ROOT)" || \
+		(printf '%s\n' 'FABLE5_PREPARED_ROOT is required' >&2; exit 2)
+	$(PYTHON) prepare_fable5_memory_cohort.py \
+		--source-root "$(FABLE5_SOURCE_ROOT)" \
+		--output-root "$(FABLE5_PREPARED_ROOT)" \
+		--manifest configs/datasets/fable5-top-level-memory-cohort.json
+	$(PYTHON) aggregate_sensitive_token_scan.py \
+		--manifest configs/datasets/fable5-top-level-memory-cohort.json \
+		--source-root "$(FABLE5_PREPARED_ROOT)" \
+		--output experiments/results/fable5-sensitive-token-scan-2026-07-30.json
+	$(PYTHON) longitudinal_memory_cohort_expansion.py \
+		--trace-commons-manifest configs/datasets/trace-commons-memory-full-cohort.json \
+		--trace-commons-root "$(TRACE_COMMONS_ROOT)" \
+		--fable-manifest configs/datasets/fable5-top-level-memory-cohort.json \
+		--fable-root "$(FABLE5_PREPARED_ROOT)" \
+		--output experiments/results/longitudinal-memory-cohort-expansion-2026-07-30.json \
+		--summary experiments/summaries/longitudinal-memory-cohort-expansion-2026-07-30.md
+
+# Drives independent PostgreSQL sessions through deterministic failure,
+# promotion, withdrawal, exposure, revocation, and deletion schedules. The
+# runner refuses every Kubernetes context except the disposable colima lab.
+memory-h5-concurrency:
+	PYTHONDONTWRITEBYTECODE=1 $(PYTHON) \
+		tests/run_trace_commons_memory_h5_concurrency.py --timeout 30
 
 # Runs the frozen raw CodeTraceBench E2 quality factorial. The archive root and
 # embedding snapshot are intentionally external to Git. PostgreSQL RLS evidence

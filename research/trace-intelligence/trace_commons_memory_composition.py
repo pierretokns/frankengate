@@ -1576,6 +1576,149 @@ def analyze_manifest(
     return result
 
 
+def longitudinal_gate_metrics(
+    manifest_path: Union[Path, str],
+    source_root: Union[Path, str],
+) -> dict[str, Any]:
+    """Return content-free project-cluster counts for longitudinal gates.
+
+    ``analyze_manifest`` intentionally avoids even keyed per-project outputs.
+    This companion reports only sorted cluster-size distributions and cluster
+    counts. It never emits keyed project values, native paths, session
+    identifiers, event identifiers, or content digests.
+    """
+
+    cohort = native.load_verified_memory_cohort(
+        manifest_path,
+        source_root,
+        default_authority=FIXED_IMPORT_AUTHORITY,
+    )
+    verified_receipt = _receipt_root(cohort.receipts)
+    identity_key = hashlib.sha256(
+        (verified_receipt + ":" + ANALYSIS_VERSION).encode("utf-8")
+    ).digest()
+    source_receipt_order = {
+        str(receipt["path"]): index
+        for index, receipt in enumerate(cohort.receipts)
+    }
+    interactions, interaction_metrics = _qualifying_interactions(
+        cohort, identity_key, source_receipt_order
+    )
+    project_inventory = _project_inventory(cohort.records)
+    _validate_expected_inventory(
+        cohort.manifest,
+        {
+            "source_files": len(cohort.receipts),
+            "histories": len(
+                {
+                    str(record.get("sessionId"))
+                    for record in cohort.records
+                    if record.get("sessionId")
+                }
+            ),
+            "records": len(cohort.records),
+            "bytes": sum(
+                int(item["bytes"]) for item in cohort.receipts
+            ),
+            "native_tool_calls": len(cohort.calls),
+            "native_tool_results": len(cohort.results),
+            "apparent_projects": project_inventory["apparent_projects"],
+            "multi_session_project_groups": project_inventory[
+                "multi_session_project_groups"
+            ],
+            "histories_with_context_artifact_interactions": len(
+                {item.session_key for item in interactions}
+            ),
+            "context_artifact_tool_interactions": interaction_metrics[
+                "qualifying_candidate_calls"
+            ],
+            "matching_tool_results": interaction_metrics[
+                "qualifying_interactions"
+            ],
+            "explicit_reads": interaction_metrics["explicit_reads"],
+            "writes_or_edits": interaction_metrics["writes_or_edits"],
+            "bash_search_or_other": interaction_metrics[
+                "shell_search_or_other"
+            ],
+        },
+    )
+    parents = _parent_maps(cohort.records)
+    serial_pairs = _serial_session_pairs(cohort.records)
+    observations, _ = _state_observations(
+        interactions,
+        parents,
+        serial_pairs,
+    )
+    interactions_by_event = {item.event_key: item for item in interactions}
+    online_projects: Counter[str] = Counter()
+    changed_projects: Counter[str] = Counter()
+    exact_cross_session_projects: Counter[str] = Counter()
+    exact_cross_session_pairs: set[tuple[str, str]] = set()
+    exact_cross_session_artifacts: set[tuple[str, str]] = set()
+
+    for target in observations:
+        if target.source_kind != "read":
+            continue
+        interaction = interactions_by_event[target.event_key]
+        candidates = _online_candidates(
+            observations,
+            target,
+            interaction,
+            parents,
+            serial_pairs,
+            contextual=True,
+        )
+        if not candidates:
+            continue
+        online_projects[target.project_key] += 1
+        outcome = _reduced_online_outcome(target, candidates)
+        top = candidates[0]
+        if (
+            top.source_kind in {"write", "edit"}
+            and outcome == "exact"
+            and top.session_id != target.session_id
+        ):
+            exact_cross_session_projects[target.project_key] += 1
+            exact_cross_session_pairs.add((top.session_key, target.session_key))
+            exact_cross_session_artifacts.add(
+                (target.project_key, target.artifact_key)
+            )
+        later = [
+            item
+            for item in observations
+            if _same_context(item, target)
+            and _future_continuation(target, item, parents, serial_pairs)
+            and item.content_sha256 != target.content_sha256
+        ]
+        if later:
+            changed_projects[target.project_key] += 1
+
+    def minimized(counter: Counter[str]) -> dict[str, Any]:
+        return {
+            "cases": sum(counter.values()),
+            "project_contexts": len(counter),
+            "cases_per_project_desc": sorted(
+                counter.values(), reverse=True
+            ),
+        }
+
+    return {
+        "schema_version": "longitudinal-memory-gate-metrics-v1",
+        "online_queries": minimized(online_projects),
+        "changed_post_observation_cases": minimized(changed_projects),
+        "exact_cross_session_write_to_later_read": {
+            **minimized(exact_cross_session_projects),
+            "distinct_session_pairs": len(exact_cross_session_pairs),
+            "distinct_context_artifacts": len(
+                exact_cross_session_artifacts
+            ),
+        },
+        "native_paths_emitted": False,
+        "native_identifiers_emitted": False,
+        "project_digests_emitted": False,
+    }
+
+
 def render_markdown(result: Mapping[str, Any]) -> str:
     discovery = result["discovery"]
     evaluation = result["evaluation"]

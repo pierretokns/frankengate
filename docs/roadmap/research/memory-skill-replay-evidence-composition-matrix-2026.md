@@ -215,19 +215,66 @@ content-free aggregate to the contextual-isolation procedure, denied missing,
 wrong-tenant, wrong-team, stale-epoch, cross-subject, premature-release, and
 forged hidden-test operations, and left zero fixture rows. This upgrades the
 single-transaction forced-RLS and lifecycle slice to real-component evidence;
-concurrency, Aurora operations, failed-job atomicity, and memory benefit remain
-untested.
+Aurora operations and memory benefit remain untested.
+
+The source-stratified external replication then added 79 top-level native
+histories from pinned
+[Glint Fable-5](https://huggingface.co/datasets/Glint-Research/Fable-5-traces/tree/e05c417852fc59fd8da758e68b352732423ca0cb/claude/projects)
+while excluding 36 nested subagents and every Pi/SFT derivative. Fable adds 14
+reconstructable reads, nine changed cases, and four exact serial cross-session
+transitions across two project contexts. Combined with Trace Commons, the
+exploratory mechanics counts are `17 / 10 / 5`, clearing the earlier
+`10 / 5 / 2` gate.
+
+This does not create population evidence. Fable's 14 reads are concentrated
+`11 + 3` in two project contexts, and the Glint archive is a byte-exact mirror
+of the pinned
+[cfahlgren1 archive](https://huggingface.co/datasets/cfahlgren1/Fable-5-traces/tree/0ba6f53852f296f8389290b112054b47cec2dc1f).
+The result therefore fails a new confirmatory diversity gate of three source
+families and five exact-transition project contexts at two and three. An
+aggregate scan also found 11 bearer-token-shaped candidates without emitting
+their values, so raw external-model egress remains blocked pending a
+deterministic sanitizer and final-pack rescan. The full protocol is
+[`longitudinal-memory-external-replication-preregistration-2026.md`](longitudinal-memory-external-replication-preregistration-2026.md).
+
+The H5 concurrency extension independently scheduled failed evaluator work,
+concurrent promotion, withdrawal/replacement, exposure/withdrawal, epoch and
+membership revocation, hard deletion, and provenance deletion. Failed work
+left zero partial rows; the unique active-release index serialized competing
+promotions; and READ COMMITTED rechecks observed epoch, membership, and
+deletion changes as `1 → 0`. The run also exposed four non-negotiable product
+boundaries:
+
+- an exposure may commit after withdrawal and remain metadata-active unless
+  both operations share one lifecycle lock and procedure;
+- REPEATABLE READ retains old authority and deletion snapshots until the
+  transaction ends, so request-time revocation needs short READ COMMITTED
+  transactions or a check outside the old MVCC snapshot;
+- governance mutation needs a persistent narrow non-owner interface; and
+- provenance references need an explicit tombstone/redaction policy rather
+  than assumed hard deletion.
+
+The run used PostgreSQL 16.12 and pgvector 0.8.1 in the disposable Colima lab,
+cleaned every fixture, and makes no Aurora, failover, scale, or memory-quality
+claim. See
+[`trace-commons-memory-h5-concurrency-postgres-2026-07-30.md`](../../../research/trace-intelligence/experiments/summaries/trace-commons-memory-h5-concurrency-postgres-2026-07-30.md).
 
 The next mandatory gates are:
 
-1. test concurrent promotion, epoch changes, deletion, rollback, and export
-   invalidation under transactions;
-2. run at least two independent extractors on admitted natural traces and score
+1. implement and retest the shared-lock release/exposure lifecycle procedure,
+   append-only event coupling, narrow governance writer, and
+   tombstone/redaction semantics;
+2. run the same schedules on Aurora PostgreSQL and through RDS Proxy, including
+   failover and replica-lag boundaries;
+3. pass the evidence-pack secret sanitizer before any external model call;
+4. run at least two independent extractors on admitted natural traces and score
    exact-evidence entailment, contradiction, temporal/context identity, and
    abstention;
-3. replay proposed procedural skills on frozen schema-family-held-out NL2SQL
+5. add at least one more source family and two more exact-transition project
+   contexts before any confirmatory architecture-quality claim;
+6. replay proposed procedural skills on frozen schema-family-held-out NL2SQL
    environments; use SpreadsheetBench only as a cross-domain control; and
-4. measure whether released memory or skill changes independently verified
+7. measure whether released memory or skill changes independently verified
    outcomes without cross-scope leakage or per-family regression.
 
 ## Issue acceptance state
@@ -240,6 +287,12 @@ The next mandatory gates are:
   environment/evaluation/replay vocabulary and source-pinned design, but the
   canonical schema, relational tables, replay runner, and empirical matrix
   remain open.
+- [Issue #112](https://github.com/pierretokns/frankengate/issues/112) now has
+  a source-stratified expansion that clears mechanics counts but fails the
+  confirmatory diversity and external-egress gates.
+- [Issue #113](https://github.com/pierretokns/frankengate/issues/113) now has
+  deterministic concurrency/failure evidence and four concrete architecture
+  gaps; Aurora and the corrective lifecycle procedure remain open.
 
 Neither issue should be closed from literature review or this synthetic arm
 alone.

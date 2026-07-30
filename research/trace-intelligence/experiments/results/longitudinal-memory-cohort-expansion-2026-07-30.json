@@ -1,0 +1,542 @@
+{
+  "aggregate_engineering_gates": {
+    "changed_post_observation_cases": {
+      "cases": 10,
+      "cases_per_source_scoped_project_desc": [
+        8,
+        1,
+        1
+      ],
+      "minimum": 5,
+      "source_scoped_project_contexts": 3,
+      "status": "passed"
+    },
+    "confirmatory_diversity_gate": {
+      "source_families_with_exact_transitions": {
+        "minimum": 3,
+        "observed": 2,
+        "status": "failed"
+      },
+      "source_scoped_project_contexts_with_exact_transitions": {
+        "minimum": 5,
+        "observed": 3,
+        "status": "failed"
+      },
+      "status": "failed"
+    },
+    "exact_cross_session_write_to_later_read": {
+      "cases": 5,
+      "cases_per_source_scoped_project_desc": [
+        2,
+        2,
+        1
+      ],
+      "minimum": 2,
+      "source_scoped_project_contexts": 3,
+      "status": "passed"
+    },
+    "independent_project_context_minimum": {
+      "minimum": 2,
+      "source_scoped_project_contexts": 3,
+      "status": "passed"
+    },
+    "minimum_count_gates_all_passed": true,
+    "online_queries": {
+      "cases": 17,
+      "cases_per_source_scoped_project_desc": [
+        11,
+        3,
+        2,
+        1
+      ],
+      "minimum": 10,
+      "source_scoped_project_contexts": 4,
+      "status": "passed"
+    },
+    "source_collection_minimum": {
+      "minimum": 2,
+      "source_collections": 2,
+      "status": "passed"
+    }
+  },
+  "analysis_version": "source-stratified-native-claude-expansion-v1",
+  "composition_contract": {
+    "cross_source_user_join_attempted": false,
+    "native_identifiers_emitted": false,
+    "native_paths_emitted": false,
+    "project_identity_pooled_across_sources": false,
+    "raw_content_emitted": false,
+    "source_identity_pooled": false,
+    "source_strata_preserved": true
+  },
+  "cross_source_duplicate_audit": {
+    "all_exact_overlap_controls_zero": true,
+    "exact_content_free_session_shape_overlap": 0,
+    "exact_native_session_id_overlap": 0,
+    "exact_record_uuid_overlap": 0,
+    "exact_session_scoped_tool_id_overlap": 0,
+    "exact_source_file_sha256_overlap": 0,
+    "semantic_or_provenance_overlap_ruled_out": false
+  },
+  "decision": {
+    "automatic_memory_promotion_allowed": false,
+    "confirmatory_architecture_quality_claim": "blocked_on_diversity",
+    "contributor_independence_established": false,
+    "deterministic_longitudinal_count_gates": "passed",
+    "enterprise_generalization_allowed": false,
+    "model_and_blinded_human_phase": "eligible_for_exploratory_replication_not_yet_evidence",
+    "population_inference_allowed": false,
+    "reason": "Counts clear the frozen mechanics gates, but evaluable cases remain concentrated in few source-scoped project contexts and contributor independence is unknown."
+  },
+  "result_sha256": "33bb7b99f1817d10ab906db02f648df1484be4261e4444e7897c93c2b1f04131",
+  "schema_version": "longitudinal-memory-cohort-expansion-result-v1",
+  "source_strata": [
+    {
+      "contributor_count_verified": null,
+      "contributor_independence_status": "not_established",
+      "dataset_id": "trace-commons/agent-traces-full-claude-memory-composition",
+      "decision_status": {
+        "analysis_scope": "deterministic_mechanics_preflight",
+        "comparative_quality_claim_allowed": false,
+        "contextual_bitemporal_context_isolation": "passed",
+        "deterministic_contract_enforced": false,
+        "evidence_retention_h2": "passed_mechanics_only",
+        "governed_postgresql_h5": "not_run",
+        "human_review_phase": "not_run",
+        "latest_only_context_isolation": "failed",
+        "model_quality_phase": "not_run",
+        "negative_controls_all_passed": false,
+        "proposal_isolation_h4": "partial_active_isolation_only_failed_job_control_not_run",
+        "source_fidelity_h1": "passed",
+        "temporal_answerability_h3": "underpowered",
+        "underpowered_reasons": [
+          "fewer_than_10_reconstructable_read_cutoffs",
+          "fewer_than_5_changed_post_observation_cases",
+          "fewer_than_2_exact_cross_session_transitions"
+        ]
+      },
+      "discovery": {
+        "apparent_projects": 21,
+        "artifacts": 28,
+        "branch_points": 51,
+        "explicit_reads": 19,
+        "histories": 28,
+        "histories_with_qualifying_interactions": 14,
+        "joined_native_results": 4262,
+        "multi_session_project_groups": 6,
+        "native_calls": 4264,
+        "native_results": 4262,
+        "qualifying_candidate_calls": 67,
+        "qualifying_failures": 6,
+        "qualifying_interactions": 67,
+        "qualifying_unmatched_calls": 0,
+        "records": 17991,
+        "sessions_missing_initial_cwd": 0,
+        "shell_search_or_other": 11,
+        "snapshot_memory_mentions": 571,
+        "state_projects": 10,
+        "unmatched_native_calls": 2,
+        "verified_serial_session_pairs": 7,
+        "writes_or_edits": 37
+      },
+      "evaluation": {
+        "changed_artifact_post_observation_cases": 1,
+        "exact_cross_session_write_to_later_read": 1,
+        "latest_only_cross_project_returns": 0,
+        "online_queries": 3,
+        "post_observation_retention_queries": 3
+      },
+      "input_receipt": {
+        "experiment_config_sha256": null,
+        "manifest_cohort_receipt_sha256": "6a9bf02d673a03c11f7270e06176dc119ce3ef0f69b0e733aa6649ac197e0a06",
+        "source_bytes_verified": 57104737,
+        "source_files_verified": 28,
+        "source_records_verified": 17991,
+        "verified_source_set_sha256": "b774b4438d2c9257cac93387004fa0ddf4d74d5aa3599507cec053eba5249775"
+      },
+      "label": "trace_commons",
+      "license": "CC-BY-4.0",
+      "manifest_sha256": "2af3b791b0a259968620c6654a722f86f786a4570caab3c1f90e73f85c2afaeb",
+      "mechanisms": {
+        "contextual_bitemporal": {
+          "online_abstentions": {
+            "denominator": 3,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "online_exact": {
+            "denominator": 3,
+            "numerator": 1,
+            "rate": 0.333333333333
+          },
+          "online_stale_returns": {
+            "denominator": 3,
+            "numerator": 2,
+            "rate": 0.666666666667
+          },
+          "overwritten_revisions": 0,
+          "post_observation_retention_exact": {
+            "denominator": 3,
+            "numerator": 3,
+            "rate": 1.0
+          },
+          "retained_revisions": 48
+        },
+        "latest_only": {
+          "online_abstentions": {
+            "denominator": 3,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "online_exact": {
+            "denominator": 3,
+            "numerator": 1,
+            "rate": 0.333333333333
+          },
+          "online_stale_returns": {
+            "denominator": 3,
+            "numerator": 2,
+            "rate": 0.666666666667
+          },
+          "overwritten_revisions": 28,
+          "post_observation_retention_exact": {
+            "denominator": 3,
+            "numerator": 1,
+            "rate": 0.333333333333
+          },
+          "retained_revisions": 20
+        },
+        "verbatim": {
+          "online_abstentions": {
+            "denominator": 3,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "online_exact": {
+            "denominator": 3,
+            "numerator": 1,
+            "rate": 0.333333333333
+          },
+          "online_stale_returns": {
+            "denominator": 3,
+            "numerator": 2,
+            "rate": 0.666666666667
+          },
+          "overwritten_revisions": 0,
+          "post_observation_retention_exact": {
+            "denominator": 3,
+            "numerator": 3,
+            "rate": 1.0
+          },
+          "retained_revisions": 48
+        }
+      },
+      "negative_controls": {
+        "future_contaminated_positive_control": {
+          "cases": 13,
+          "detected": 13,
+          "status": "passed"
+        },
+        "future_filter": {
+          "cases": 13,
+          "contextual_bitemporal": {
+            "leaks": 0,
+            "status": "passed"
+          },
+          "latest_only": {
+            "leaks": 0,
+            "status": "passed"
+          },
+          "status": "passed"
+        },
+        "same_basename_different_project_placebo": {
+          "cases": 6,
+          "contextual_bitemporal": {
+            "leaks": 0,
+            "status": "passed"
+          },
+          "latest_only": {
+            "leaks": 3,
+            "status": "failed"
+          },
+          "status": "failed"
+        },
+        "same_name_cross_project_collisions": 8
+      },
+      "project_cluster_gates": {
+        "changed_post_observation_cases": {
+          "cases": 1,
+          "cases_per_project_desc": [
+            1
+          ],
+          "project_contexts": 1
+        },
+        "exact_cross_session_write_to_later_read": {
+          "cases": 1,
+          "cases_per_project_desc": [
+            1
+          ],
+          "distinct_context_artifacts": 1,
+          "distinct_session_pairs": 1,
+          "project_contexts": 1
+        },
+        "native_identifiers_emitted": false,
+        "native_paths_emitted": false,
+        "online_queries": {
+          "cases": 3,
+          "cases_per_project_desc": [
+            2,
+            1
+          ],
+          "project_contexts": 2
+        },
+        "project_digests_emitted": false,
+        "schema_version": "longitudinal-memory-gate-metrics-v1"
+      },
+      "revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "source_provenance": null,
+      "source_selection": null,
+      "transitions": {
+        "ambiguous_transitions": 0,
+        "failed_operation_promotions": 0,
+        "interval_censored_changes": 2,
+        "supported_observations": 50,
+        "unique_supported_revisions": 48
+      }
+    },
+    {
+      "contributor_count_verified": null,
+      "contributor_independence_status": "not_established",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "decision_status": {
+        "analysis_scope": "deterministic_mechanics_preflight",
+        "comparative_quality_claim_allowed": false,
+        "contextual_bitemporal_context_isolation": "passed",
+        "deterministic_contract_enforced": false,
+        "evidence_retention_h2": "passed_mechanics_only",
+        "governed_postgresql_h5": "not_run",
+        "human_review_phase": "not_run",
+        "latest_only_context_isolation": "failed",
+        "model_quality_phase": "not_run",
+        "negative_controls_all_passed": false,
+        "proposal_isolation_h4": "partial_active_isolation_only_failed_job_control_not_run",
+        "source_fidelity_h1": "passed",
+        "temporal_answerability_h3": "eligible_for_comparison",
+        "underpowered_reasons": []
+      },
+      "discovery": {
+        "apparent_projects": 13,
+        "artifacts": 6,
+        "branch_points": 76,
+        "explicit_reads": 17,
+        "histories": 79,
+        "histories_with_qualifying_interactions": 25,
+        "joined_native_results": 3845,
+        "multi_session_project_groups": 8,
+        "native_calls": 3845,
+        "native_results": 3845,
+        "qualifying_candidate_calls": 167,
+        "qualifying_failures": 4,
+        "qualifying_interactions": 167,
+        "qualifying_unmatched_calls": 0,
+        "records": 18770,
+        "sessions_missing_initial_cwd": 0,
+        "shell_search_or_other": 40,
+        "snapshot_memory_mentions": 33,
+        "state_projects": 3,
+        "unmatched_native_calls": 0,
+        "verified_serial_session_pairs": 665,
+        "writes_or_edits": 110
+      },
+      "evaluation": {
+        "changed_artifact_post_observation_cases": 9,
+        "exact_cross_session_write_to_later_read": 4,
+        "latest_only_cross_project_returns": 0,
+        "online_queries": 14,
+        "post_observation_retention_queries": 14
+      },
+      "input_receipt": {
+        "experiment_config_sha256": null,
+        "manifest_cohort_receipt_sha256": "4b43f2eaece67e20f4b8677c8f26c5aaae5c911b7298ea83c0b160f4d3a0ced7",
+        "source_bytes_verified": 58416137,
+        "source_files_verified": 79,
+        "source_records_verified": 18770,
+        "verified_source_set_sha256": "4b43f2eaece67e20f4b8677c8f26c5aaae5c911b7298ea83c0b160f4d3a0ced7"
+      },
+      "label": "fable5_top_level",
+      "license": "AGPL-3.0",
+      "manifest_sha256": "2dd19f36a62fb35db1d77d453dff725aa30158113b3a5fcc9ee55f50a0707049",
+      "mechanisms": {
+        "contextual_bitemporal": {
+          "online_abstentions": {
+            "denominator": 14,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "online_exact": {
+            "denominator": 14,
+            "numerator": 11,
+            "rate": 0.785714285714
+          },
+          "online_stale_returns": {
+            "denominator": 14,
+            "numerator": 3,
+            "rate": 0.214285714286
+          },
+          "overwritten_revisions": 0,
+          "post_observation_retention_exact": {
+            "denominator": 14,
+            "numerator": 14,
+            "rate": 1.0
+          },
+          "retained_revisions": 29
+        },
+        "latest_only": {
+          "online_abstentions": {
+            "denominator": 14,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "online_exact": {
+            "denominator": 14,
+            "numerator": 11,
+            "rate": 0.785714285714
+          },
+          "online_stale_returns": {
+            "denominator": 14,
+            "numerator": 3,
+            "rate": 0.214285714286
+          },
+          "overwritten_revisions": 24,
+          "post_observation_retention_exact": {
+            "denominator": 14,
+            "numerator": 1,
+            "rate": 0.071428571429
+          },
+          "retained_revisions": 5
+        },
+        "verbatim": {
+          "online_abstentions": {
+            "denominator": 14,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "online_exact": {
+            "denominator": 14,
+            "numerator": 11,
+            "rate": 0.785714285714
+          },
+          "online_stale_returns": {
+            "denominator": 14,
+            "numerator": 3,
+            "rate": 0.214285714286
+          },
+          "overwritten_revisions": 0,
+          "post_observation_retention_exact": {
+            "denominator": 14,
+            "numerator": 14,
+            "rate": 1.0
+          },
+          "retained_revisions": 29
+        }
+      },
+      "negative_controls": {
+        "future_contaminated_positive_control": {
+          "cases": 15,
+          "detected": 15,
+          "status": "passed"
+        },
+        "future_filter": {
+          "cases": 15,
+          "contextual_bitemporal": {
+            "leaks": 0,
+            "status": "passed"
+          },
+          "latest_only": {
+            "leaks": 0,
+            "status": "passed"
+          },
+          "status": "passed"
+        },
+        "same_basename_different_project_placebo": {
+          "cases": 15,
+          "contextual_bitemporal": {
+            "leaks": 0,
+            "status": "passed"
+          },
+          "latest_only": {
+            "leaks": 4,
+            "status": "failed"
+          },
+          "status": "failed"
+        },
+        "same_name_cross_project_collisions": 1
+      },
+      "project_cluster_gates": {
+        "changed_post_observation_cases": {
+          "cases": 9,
+          "cases_per_project_desc": [
+            8,
+            1
+          ],
+          "project_contexts": 2
+        },
+        "exact_cross_session_write_to_later_read": {
+          "cases": 4,
+          "cases_per_project_desc": [
+            2,
+            2
+          ],
+          "distinct_context_artifacts": 2,
+          "distinct_session_pairs": 4,
+          "project_contexts": 2
+        },
+        "native_identifiers_emitted": false,
+        "native_paths_emitted": false,
+        "online_queries": {
+          "cases": 14,
+          "cases_per_project_desc": [
+            11,
+            3
+          ],
+          "project_contexts": 2
+        },
+        "project_digests_emitted": false,
+        "schema_version": "longitudinal-memory-gate-metrics-v1"
+      },
+      "revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "source_provenance": {
+        "authorship_mode": "machine_generated_dataset_card_tag",
+        "consent_or_redaction_statement_found": false,
+        "independent_contributor_count": null,
+        "known_byte_exact_mirror": {
+          "byte_exact_jsonl_files": 115,
+          "content_sha256_set_receipt": "9e434211a130b19c749c5bd50fc3cc70a88059f81a6001d69682a44473cddbf0",
+          "dataset_id": "cfahlgren1/Fable-5-traces",
+          "independent_source": false,
+          "revision": "0ba6f53852f296f8389290b112054b47cec2dc1f"
+        },
+        "publisher_or_home_cluster": "fable5_glint_cfahlgren",
+        "source_family": "fable5_teichai_ecosystem",
+        "unsanitized_telemetry_warning_in_dataset_card": true
+      },
+      "source_selection": {
+        "native_jsonl_files_seen": 115,
+        "native_object_paths_committed": false,
+        "native_session_ids_committed": false,
+        "nested_or_subagent_files_excluded": 36,
+        "selector": "exactly_two_components_below_claude_projects",
+        "source_subtree": "claude/projects",
+        "top_level_files_admitted": 79,
+        "top_level_human_facing_assumption": "top_level_is_not_proof_of_human_authorship"
+      },
+      "transitions": {
+        "ambiguous_transitions": 0,
+        "failed_operation_promotions": 0,
+        "interval_censored_changes": 3,
+        "supported_observations": 125,
+        "unique_supported_revisions": 29
+      }
+    }
+  ]
+}

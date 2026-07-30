@@ -354,6 +354,44 @@ class TraceCommonsMemoryCompositionTest(unittest.TestCase):
         self.assertNotIn(SECRET, json.dumps(first, sort_keys=True))
         self.assertNotIn(SECRET, composition.render_markdown(first))
 
+    def test_longitudinal_gate_metrics_emit_counts_without_project_keys(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            manifest = exact_write_read_fixture(root)
+            metrics = composition.longitudinal_gate_metrics(manifest, root)
+
+        self.assertEqual(
+            {
+                "cases": 1,
+                "project_contexts": 1,
+                "cases_per_project_desc": [1],
+            },
+            metrics["online_queries"],
+        )
+        self.assertEqual(
+            1,
+            metrics["exact_cross_session_write_to_later_read"]["cases"],
+        )
+        self.assertEqual(
+            1,
+            metrics["exact_cross_session_write_to_later_read"][
+                "distinct_session_pairs"
+            ],
+        )
+        self.assertEqual(
+            1,
+            metrics["exact_cross_session_write_to_later_read"][
+                "distinct_context_artifacts"
+            ],
+        )
+        serialized = json.dumps(metrics, sort_keys=True)
+        self.assertNotIn("session-a", serialized)
+        self.assertNotIn("session-b", serialized)
+        self.assertNotIn(SECRET, serialized)
+        self.assertFalse(metrics["native_paths_emitted"])
+        self.assertFalse(metrics["native_identifiers_emitted"])
+        self.assertFalse(metrics["project_digests_emitted"])
+
     def test_bitemporal_retains_an_earlier_state_that_latest_only_loses(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
