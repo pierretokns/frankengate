@@ -1,0 +1,832 @@
+{
+  "coverage": {
+    "content_types": {
+      "text": 760,
+      "thinking": 1314,
+      "tool_result": 2207,
+      "tool_use": 2209
+    },
+    "files_by_stratum": {
+      "benchmark_development": 9,
+      "benchmark_task": 44,
+      "main_user": 8,
+      "nested_subagent": 43
+    },
+    "first_timestamp": "2026-06-07T20:34:14.311000+00:00",
+    "invalid_records": 2,
+    "jsonl_files": 104,
+    "last_timestamp": "2026-07-06T13:36:58.612000+00:00",
+    "record_types": {
+      "agent-color": 305,
+      "agent-name": 398,
+      "ai-title": 14,
+      "assistant": 4247,
+      "attachment": 595,
+      "custom-title": 398,
+      "file-history-snapshot": 303,
+      "last-prompt": 447,
+      "mode": 403,
+      "permission-mode": 403,
+      "pr-link": 2,
+      "queue-operation": 372,
+      "result": 37,
+      "started": 41,
+      "system": 175,
+      "user": 2558
+    },
+    "top_tool_names": {
+      "AskUserQuestion": 4,
+      "Bash": 1417,
+      "Edit": 257,
+      "Read": 254,
+      "Skill": 3,
+      "StructuredOutput": 37,
+      "TaskCreate": 13,
+      "TaskOutput": 20,
+      "TaskUpdate": 23,
+      "ToolSearch": 8,
+      "WebFetch": 28,
+      "WebSearch": 3,
+      "Workflow": 2,
+      "Write": 140
+    },
+    "valid_records": 10698
+  },
+  "file_integrity": [
+    {
+      "invalid_records": 2,
+      "records": 5544,
+      "relative_path": "-home-me/0a3c90e0-cd2d-41f9-80e2-f6de188257ae.jsonl",
+      "sha256": "853a1f5c1ddbbc5d0c4ea381343ecab5593868df6f9495e7819acc1f29ccfa67",
+      "stratum": "main_user"
+    },
+    {
+      "invalid_records": 0,
+      "records": 5,
+      "relative_path": "-home-me/18b89ae7-d89d-406b-8000-000000000705.jsonl",
+      "sha256": "4b1eba3cce06605574c96817789bc9d855f630e6bebc62daa702f0a5ca634393",
+      "stratum": "main_user"
+    },
+    {
+      "invalid_records": 0,
+      "records": 7,
+      "relative_path": "-home-me/2017a81c-e8a5-40c9-83ce-2fe6bce15c46.jsonl",
+      "sha256": "917b97300b1a926bf4b3c2d8535acfd8a61789e9e1149c1b96b3fb8917ec2768",
+      "stratum": "main_user"
+    },
+    {
+      "invalid_records": 0,
+      "records": 229,
+      "relative_path": "-home-me/2264fc52-a01a-4aa9-9212-98cf2eaf09cd.jsonl",
+      "sha256": "c3cd78d80d220b5e59531686ff16895b7225312dce193af7b761e60aaad790e4",
+      "stratum": "main_user"
+    },
+    {
+      "invalid_records": 0,
+      "records": 24,
+      "relative_path": "-home-me/3fd308f0-0e0b-44c4-8399-6653b514758e.jsonl",
+      "sha256": "9ba8020452ce956b53ef65a7fda6e7f6535d14036d942153cb2328ac8a140ad7",
+      "stratum": "main_user"
+    },
+    {
+      "invalid_records": 0,
+      "records": 10,
+      "relative_path": "-home-me/741e1080-2a18-4edd-a662-0a88bc677c58.jsonl",
+      "sha256": "d67bb61493aedc74dd2f98fa045c8e59f5a7d8edcd498eacfc6b8fbae9ef3b7b",
+      "stratum": "main_user"
+    },
+    {
+      "invalid_records": 0,
+      "records": 319,
+      "relative_path": "-home-me/da701882-12d5-433d-a358-35710a73711e.jsonl",
+      "sha256": "a84546919541d12545eaebb7d781927377db6e780d19041b03771b3dfdfb3b4a",
+      "stratum": "main_user"
+    },
+    {
+      "invalid_records": 0,
+      "records": 4,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_afeccfb7-24c/agent-a34f4272af08a82ef.jsonl",
+      "sha256": "2e9a62cef1bbc90eef192728a2b246adeea3001d7502dd1682a652c199224560",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 4,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_afeccfb7-24c/agent-a8a9757cb8872f977.jsonl",
+      "sha256": "d0c1b34aa3a29b8e111a54656874d176bea19aecfd62d72005d3fbe8efc883e4",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 4,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_afeccfb7-24c/agent-a8cbad478bf98a90b.jsonl",
+      "sha256": "76ae264ab2241978c26b6fca6ca1d19d6fbcbf9209117189e60da10b80293522",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 4,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_afeccfb7-24c/agent-ae959855181f3047a.jsonl",
+      "sha256": "6afbd456b5d628e4816289ecb9c2a3f2037bda4ffdffc71733a0a12ebd9f1e12",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 4,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_afeccfb7-24c/journal.jsonl",
+      "sha256": "8831af8f5ac4be7f6a9800eaafb667ae92df839510ae25be18fddd68bb4dc313",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a03274ec9d58a81dc.jsonl",
+      "sha256": "cbbd15898d3793af167be2ee2dd347425fda3241f479500cf9ca3ea1802ad40e",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 29,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a036b73d53c104025.jsonl",
+      "sha256": "3cc2cdbe969b21cc93a1c72c7986824dbd4733a6dcdc317209c93ef33a75dd24",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a04220dc172ccb42f.jsonl",
+      "sha256": "2935ae7f78a32eb558078396a2c5e00ae4364bf67cfb0598dc468c76a54ca414",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 11,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a06ec9019bc066e6a.jsonl",
+      "sha256": "eb6b71176449c4059fadac11a5f607257bc8bc9d725902f986c3a97fd846e4a3",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a091cb0fc46da9c94.jsonl",
+      "sha256": "2d2b925fdace90f2e03e891bc3be2c267e8b3c35c3e8eefc86469473c51f767f",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 26,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a14b854903e0a9906.jsonl",
+      "sha256": "c001cfadd131caef4decde5c937c67fd3ba0180bed0e095e51d3c276da8d5874",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a1aa8e01835fa988e.jsonl",
+      "sha256": "ffe0b5dc77a602eafdbb7f7d9464f0691cc876c44189cb5606038c045dc0d8af",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 34,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a27b2ca1b394558cf.jsonl",
+      "sha256": "1f40bace71dee2847a3ce3ddb8d4020a05d45efcd2004fbb6ae0cbf5b70b326e",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 17,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a2b988f5c1509bb11.jsonl",
+      "sha256": "7c1edb9ebfc39f5535e4a727f2a8cc2e06a0f76493127185adea9263bd6eef8b",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 16,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a380c776348b0f9c9.jsonl",
+      "sha256": "998ba7150ae6bb737e924000ca5a42e91491d5bc4b0d749ebdba5511b245112c",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 13,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a3aa1d3eb9743078f.jsonl",
+      "sha256": "c4bfb260168c658533bfad9cb9c0d5367b9b62c9bf21ffa4f6674e5488e5b94d",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 11,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a4449e0ce6d525fe8.jsonl",
+      "sha256": "781d7673a8277a4c25dc5d2842959aae6d49b5e8c71243cf39b799f38996310d",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a50ce1c9fe46a0f02.jsonl",
+      "sha256": "3932998c5c69b36a9c2429ab020a4e97a33f6dad2d9871301cd4cc8b58f19633",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 22,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a53254753a7af450e.jsonl",
+      "sha256": "3d13b041d9e2bafc16438326c08c059d7d18c87182f374f5cca7127f3aaa330b",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a563c3d861500ca5d.jsonl",
+      "sha256": "a939d9460c7eeed132c88086736cf8ebdadc59f5182fcb96791505856bb23cd2",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 20,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a5877e600a27135d5.jsonl",
+      "sha256": "f377a0a0e3396207f77d77cbba63e467ff65e755f1f5c36f830567de61f12f8e",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 20,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a6000cb08a5f5f276.jsonl",
+      "sha256": "2ad90c85eec2b16f94e9ce2dc42e2248b5a0c8095b3d1ff78af1f19c4201a9fd",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 18,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a6693aabb80475161.jsonl",
+      "sha256": "d3d87d074d2863466a6c0d34d57717f267d5baff6571c96d6b0998de97fd6a32",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 17,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a66ff1cbd7fce5370.jsonl",
+      "sha256": "2ddbcbe4a3d942e7c31bd0d58885bff19a7f60a96cc5649c4344cc29e8955e22",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 11,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a6d01aa8d7c8f9460.jsonl",
+      "sha256": "ee7108f6f16b3e37f87212a678a62aef2be54a8cb2bfbb9e14ef688425694d77",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 18,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a713b0259a89dd9df.jsonl",
+      "sha256": "a2725f94bcceda8759bdad9f590d036735a27a1f84d536e920643a8166e7facb",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 20,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a7c51a2d36dedcdb2.jsonl",
+      "sha256": "be5fda37eb376c5937b02e5e4d4459fbd614b85830784acc2828e639eb0bb530",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a8baf2b747c5c0156.jsonl",
+      "sha256": "85c775cb6656284650127fc89e679dce7ebc06733ec58d82d346317c36c9f836",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 27,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a8cf0c6810bb20f07.jsonl",
+      "sha256": "0d3d9aa96fd8b6db436cff343a913873492c70e2d631fe78471cad305ed3f8f4",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 94,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a914d09915e39e59d.jsonl",
+      "sha256": "427f3838c767ef0822861713a0dc43dd53eb69634cd0964f20367721c6158bd3",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 32,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-a94bc1220b18a4e5c.jsonl",
+      "sha256": "5591993ab04631aa45a5d99066b93d571d2e83f800d1acbf5aee26dac82a7a25",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-aa8e5a6f3a91871fd.jsonl",
+      "sha256": "56de2ffd232d2e56bfa96ffb800b46e05986cf3457ac8451f60080ae68cef5a0",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 20,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-aaab4e0534d420bce.jsonl",
+      "sha256": "e96530e69be58ae695dd5ccccda5f30fb33b97feadfb15c72e476551fc741f30",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-aaee348b70df06233.jsonl",
+      "sha256": "b32e468a68c1df010e8d4869abf8ff661bb29df11c688c87742a7b716926928a",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 11,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-ac5363750063015c9.jsonl",
+      "sha256": "0bae2682c1a469ac48eabd32575570648f691508f0a3a7b07e92748aeda52faf",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 18,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-ac53841608e38a9cd.jsonl",
+      "sha256": "48163114a8a4dfdec7cd5d1d209462f523194e5ea17aa826c84f88d0a44ae8d9",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 12,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-acc91f6d6bea6599b.jsonl",
+      "sha256": "e7d7069df1572309815382d399ebe9d907595c8901d509fac29ae5e40ad46c18",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 25,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-ad6a29e742d0d5ecf.jsonl",
+      "sha256": "a4f6b1fa8c14d589c5cb2fde4abc21f233fa0780accaded3fd9d285f61e5c23a",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 66,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-aeccae2f5c7b9fdc6.jsonl",
+      "sha256": "d3a6d8afe5325441c36f005fb250ebf3a6a207f5741f88efca1b8db95c740475",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 125,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-af37173dd82987a72.jsonl",
+      "sha256": "09c21ac951cd896965c905bbffb934c6a5a99edfbf41c3ca1bed562f65ae0f2c",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 83,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-af8fd2ac91c4ffeaf.jsonl",
+      "sha256": "6792036828a1bf628ae12c05664ff4e23cab6e5e581312cc40e3c98f5641f8d7",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 9,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/agent-aff1b32ba8f9fa42b.jsonl",
+      "sha256": "0c73a2bcd64065c33cf61e026cf2358b4b743bc1654b101b71554f000af2baba",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 74,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba/subagents/workflows/wf_b2d918c5-2d2/journal.jsonl",
+      "sha256": "0c3ae1726d13ccd67f715bbef46e627ae3b17bb469ba41935611306c689c664c",
+      "stratum": "nested_subagent"
+    },
+    {
+      "invalid_records": 0,
+      "records": 2683,
+      "relative_path": "-home-me/df04f351-9677-4723-b621-7fb5a597caba.jsonl",
+      "sha256": "0631456271e10932109056c9d7524aad645a9a77a019ea278f8ea27f6530b2dd",
+      "stratum": "main_user"
+    },
+    {
+      "invalid_records": 0,
+      "records": 7,
+      "relative_path": "-home-me-ht-hyprland-bench/0806d35f-5425-4358-bd29-dc0b6d9049fb.jsonl",
+      "sha256": "46a73f289548d283d8ba43ca7c36674e00a02a512d7ab8d89e11002fa6c8f3c0",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 7,
+      "relative_path": "-home-me-ht-hyprland-bench/1fd26121-735b-45c4-9081-cdf92833e014.jsonl",
+      "sha256": "1f374ba426db5ab56505a480ea39fd6586d000688a1a7be71893c515f8b3b9e2",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 6,
+      "relative_path": "-home-me-ht-hyprland-bench/58e9b1c1-b3c2-419a-9abe-27315c0daf6f.jsonl",
+      "sha256": "d7bdcde48883d102fcacfd54b4d9fe143e77b2e91e007b1028fd05ff4d17e4c3",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 13,
+      "relative_path": "-home-me-ht-hyprland-bench/5af751ab-9aa2-4994-85bc-fa16e18007ce.jsonl",
+      "sha256": "5ee4529ccec7e9d7ffce7730126f2001c0289c781a11139b31ee71ba9dc975ae",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench/ac77679c-17d1-4ec5-a959-6f64fc81f727.jsonl",
+      "sha256": "bb4f5159efca609e26a4faa7b0d714fcea787636777be087ebb55944067dc04e",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 6,
+      "relative_path": "-home-me-ht-hyprland-bench/bc8f58dc-e09e-4b46-9754-ab57d46369db.jsonl",
+      "sha256": "72429f41a0dc3e7e30edebd0450a3547d8a44fb49ec0c9fc23177fd635f0d50b",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 7,
+      "relative_path": "-home-me-ht-hyprland-bench/bd54825e-7022-4669-9885-d60bccdf149b.jsonl",
+      "sha256": "16b92cf0583dddd126edb81ad402e2ba99c69d603876dbd08d9ee842aeae4d8b",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 7,
+      "relative_path": "-home-me-ht-hyprland-bench/ed0b9d29-e0e5-4d1b-8c9d-688b9493ed69.jsonl",
+      "sha256": "87460efc381eb6e5baf699c36826afbddef71e95220e67d7e2d713d9c32bdedf",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 7,
+      "relative_path": "-home-me-ht-hyprland-bench/ee19b225-7da5-47f4-9f1e-bfd3bee269a4.jsonl",
+      "sha256": "ace82a7f3429a8788d84598e7446323cd0b7d38e1306d0c3d3513082ceb17000",
+      "stratum": "benchmark_development"
+    },
+    {
+      "invalid_records": 0,
+      "records": 11,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143324-561242-nested-headless-smoke4-logs-tmp-ws-switch/38cac1ac-0e24-4fad-aab5-e8874f8f9949.jsonl",
+      "sha256": "6c2d369b8cc6e38b33bda78bb102ea74659cf67780a0cef6bc4d0c6abea03786",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143538-562602-nested-headless-pilot-claude-logs-tmp-app-mpv-pause/01c0290b-fa4a-4a20-8424-767fb762f1c8.jsonl",
+      "sha256": "39be5d207ebe1439a2ca84b3797ea3694301c421e3bb5bdcdb63c94d77896a02",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-app-mpv-pause/d95d187a-b373-48eb-85c2-83403de6fbae.jsonl",
+      "sha256": "6c92468c6b510a20a8fe401f478978acdd642a68f5619110aaa06e97bbca247b",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 17,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-app-mpv-seek/455b030f-c65f-49e4-9a34-a3fa50156d00.jsonl",
+      "sha256": "da697a8015552931a06414056be2e0d4baacd41e68278603c927dcd6d90073e6",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 79,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-app-steam-signin-field/0382aefe-e322-4a52-a16f-bbdd347daa8e.jsonl",
+      "sha256": "b8194584a40ffdae1f44297997fa7d14a18c6c122754b89e316057f145f547c5",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 39,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-br-delayed-authorize/0182891a-36d9-4d42-a6ff-294d33f87548.jsonl",
+      "sha256": "ec373a9b5012381dd74cd3c5a221abf1dedcd6609ef2806f331d0fa1f2ed9fc8",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 29,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-br-field-overwrite/4b5e88a9-4025-4529-afe5-e95cb1639c99.jsonl",
+      "sha256": "a83a07889346f279b97f8fa8a71d5765bd6cd1b005bc840bdc12e4484eca7f21",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 26,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-br-follow-link/a2b8777d-8d7b-452f-8bc3-3467aa8ac0e2.jsonl",
+      "sha256": "989ff8cb6f47be83f16cc6f33051f6bd08608ff55252a6f7bdcf939f97666a61",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 10,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-cfg-border-size/c2a2f1c3-7014-4bdf-9856-58894647253b.jsonl",
+      "sha256": "154117ddb355999aa0863d2c01797ed9ec2eda13ae20ad6273496abbc609d4fa",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 10,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-cfg-gaps/501ab949-6631-47ac-b183-e464134fa0b8.jsonl",
+      "sha256": "e788b5e9174803ea488f8f510219d163df47d2cc333d9793644503566d6abf29",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 12,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-exec-terminal/cdbe5db8-6706-40f9-a1aa-68f12da3a643.jsonl",
+      "sha256": "e9bfca62b61b1b20aad935487d098a8082bd20d171e07ca1cd0f3bee9bcc8f14",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 13,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-exec-terminal-class/c98e914a-bcba-452e-b8f2-dc3ece46b4df.jsonl",
+      "sha256": "8586c5e3ab9e780bed3a1a9dd1956555b5197fe075b7ce18fdd032a1730b996c",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 16,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-inst-game/cf772524-9bd9-4423-8ce4-4e30f107bbaa.jsonl",
+      "sha256": "defe85496daef1f1f1ff14721f66a1f56916c7c75937f7e2dedc630d219c4b8f",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-inst-remove/f17cc3f3-9369-4d2c-83c6-4e34396f2faf.jsonl",
+      "sha256": "a7be44cdfff47a9eabfcb983df848da4a985cb5167c129be61469fd00ea9f808",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-multi-float-arrange/4606b5af-d0be-4f2f-878f-4209e83dcbc6.jsonl",
+      "sha256": "44d417e12a23a003741cdaab575eff6d9362279f758c34557bdaa271d995fb1e",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-multi-junk-cleanup/d8afdf4a-1d84-49cc-a5d5-7740e6307648.jsonl",
+      "sha256": "03f2400246ee5b05d8c442a0865b27b47478759082904217adf8853f83688221",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-multi-two-terms-ws5/ece2a6dc-00ef-4ba1-aba1-9d64f31b8bd5.jsonl",
+      "sha256": "14c7ac34e3544b03721be76ffdd4a3ee8180e9ac990c2172c80a5af93e8b02f5",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 12,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-q-cpu-cores/a321e2e6-a2bc-4b29-8099-562228466ff6.jsonl",
+      "sha256": "2d74d8ed8644ab3b8e2c8c078b6f9870b4743fee9a9aeaa25fd565e026329fd6",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 12,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-q-hypr-version/02b8fdc8-2eb7-4be1-8272-c20c222de99e.jsonl",
+      "sha256": "e96862b09e0969cc5c5fb6709d020762cf0f9d97835e928b5d40102c61f6bc5e",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 12,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-q-largest-file/db3e9f70-851f-4512-a4e3-e3d7d29bb744.jsonl",
+      "sha256": "e1d17bb526e77e478fab6031b9612bf6041d8c2f9d447f1cdcbbdcceaae9c7e9",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 12,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-q-window-count/564d8ac4-1f41-42dd-9518-ec664e582bf3.jsonl",
+      "sha256": "c1fe4af72f7e5fadf9874ef42693fd8fc2f31622c75a8d73bac72bd5e98d594a",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 20,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-tt-consolidate/83efd8e1-38a8-417d-856b-cb79b53a615f.jsonl",
+      "sha256": "4f3a16525d33ec76cb494215e0749cf13784585103349ad6c3d1d39118207407",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 21,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-tt-explode/d82f3ce0-b1ba-4246-b40c-e92371773ecb.jsonl",
+      "sha256": "7d1e4f68230353802eeec2635cbf627163acb2752972283c85969984d2c6668f",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-close/3a3d2653-87cc-4259-a53a-7e5f357f1601.jsonl",
+      "sha256": "a833919f6754f96e53ccaa3c5dea3479041dd6eed1a2f9464c5bf7811bbfae72",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-float/bc43175d-8fc9-4cb2-a678-1f0ee21575a8.jsonl",
+      "sha256": "9a99e09b8906f5c55dc84d8345e774cfa68e7904df263833a464d92ca020c9a0",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 12,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-focus/63e2e531-0d68-4ad9-b0b0-3f7a62ef010e.jsonl",
+      "sha256": "c344b4593c7f0ad0493c1ddc110a8a63cd931b817513d2ba7b3e90f029aa3d9f",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-fullscreen/f456e943-8f07-4710-a6f3-e2daec1a99eb.jsonl",
+      "sha256": "86bba895f5c0697829f7bb66b0a4d4d4beab9f9bfeb15df2d80708150534a73c",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-move-floating/afed8048-4e75-4032-a81c-87651c8cbb12.jsonl",
+      "sha256": "ea5645a77077333a0a2b1a1bad03d178f5e4fcbf060cba5bc084fd4980431ec7",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-move-ws/fec46a46-23c2-40c6-8825-649848112dc9.jsonl",
+      "sha256": "c92a1b695d97308ed8e5b8075cc82b5ac52b45aa56a4d5c807a00b8ef2dd2ebb",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-pin/4ad009e9-736f-4931-bb53-2b6875507dcd.jsonl",
+      "sha256": "3c148f0c9041058bc22418f3f3431db95526696e0aaff49daa63b687f63c4147",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-resize-floating/96d82492-07bc-4363-8db5-4e4f73a2fe37.jsonl",
+      "sha256": "748b1bd5f26949ccc806924ca991bb36d7b575d01e1cd1e62ec4df4fba2848aa",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-win-tag/943322a4-372b-4915-a302-d7371684e3cd.jsonl",
+      "sha256": "19e0ebf683842de908d8c75696785524f582ab2736197c3c87d2b90aa50465cc",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 16,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wm-balance/cda84d7d-c886-4108-93b6-feeb1b230524.jsonl",
+      "sha256": "66312a3811f3b843e9514bebcb4ea40fd01a33db7c8c4d6aa5fef69704504f75",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wm-gather-terminals/1efe3865-a499-442d-a189-ea75193ae5d7.jsonl",
+      "sha256": "e5caec59a211ec7a6806c5595add2514b401454870a4602fb5f17cdf7898e1d6",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wm-new-named-ws/3e34e715-e9e5-40ff-8d2f-2270fbcf6850.jsonl",
+      "sha256": "33c69fd804ca50a97c24989b236b7ec2f645e0c1e5111ce808a11c2b2d44919c",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 15,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wm-return-from-ws5/2beeccec-d21c-4f8a-8aa6-d56c53d12fbd.jsonl",
+      "sha256": "058a1349ac2fe40ed8483778852c9d788e622f2b66932c594a5e52ed94110b0b",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wo-corner/ee1e02d4-f727-4755-9db2-92b172c49596.jsonl",
+      "sha256": "68b1d075ee8b0ca2a0f8a613c801002385e98358fe20385f923cfa7de938cbec",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 28,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wo-grid-2x2-tiled/39a1ee8a-c0be-44f8-b5bc-cdcc586144d3.jsonl",
+      "sha256": "01510409cffdf09dcc675e62f5b3edcb950d9566f28132a9e96076ac2dbfb2fb",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 17,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wo-grid-3x3/15188fc5-a4cb-4126-a155-22fc9e49f521.jsonl",
+      "sha256": "274701a6cdac8f17d304454031225d1ca547dc68100e32fcfedc316ad45d3e49",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 16,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wo-swap/71e4d776-fcf5-4a9d-abd9-e288942e1c33.jsonl",
+      "sha256": "68c1c9d8b8460ff1e4d4e8b115b1112b1c647161134d12e2a6048f831a85e5b3",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 17,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-wo-triangle/c0a07089-34a7-4929-9c69-d9fe94fd872a.jsonl",
+      "sha256": "88ac1a8e794acc622b24f2b0494a5ec56bfb8e0c0b9d2ffe9acf78b297e3291a",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 12,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-ws-rename/f057d8f8-9ced-4ea1-a89f-ca99d6f47ce7.jsonl",
+      "sha256": "27ea4d1de406f4f209d453dd3dad6228d95760ab7a510b0bcbff535509943b05",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 14,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-ws-special-scratch/d3c91750-089c-4db2-a671-f51a30181831.jsonl",
+      "sha256": "d26df8ad2121f76d61b5a740a6c88284f8253ba76d759cea028a51c4fd925874",
+      "stratum": "benchmark_task"
+    },
+    {
+      "invalid_records": 0,
+      "records": 10,
+      "relative_path": "-home-me-ht-hyprland-bench-results-20260612-143726-563908-nested-headless-pilot-claude-logs-tmp-ws-switch/a52a9d34-74c0-4cfd-bbcb-492cccfbb93d.jsonl",
+      "sha256": "e463dc6b80d394e13283d045b5fec5793de2b309bb1dffe97f6fb0e59c63ea4a",
+      "stratum": "benchmark_task"
+    }
+  ],
+  "lifecycle": {
+    "branch_points": 20,
+    "dangling_parent_references": 5,
+    "explicit_error_results": 103,
+    "files_with_explicit_error": 11,
+    "recovered_error_episodes": 84,
+    "tool_results": 2207,
+    "tool_uses": 2209
+  },
+  "privacy": {
+    "content_emitted": false,
+    "identity_scope": "one intentionally public contributor",
+    "permitted_claim": "single-user longitudinal mechanism and parser validation",
+    "prohibited_claims": [
+      "representative employee behavior",
+      "individual competence or productivity",
+      "cross-user collaboration benefit",
+      "causal effect of a prompt, skill, memory, or model"
+    ],
+    "raw_data_committed": false
+  },
+  "schema_version": "real-user-trace-pilot-v1",
+  "source": {
+    "adapter": "claude_code_longitudinal_v1",
+    "admission": "admit_for_single-user_longitudinal_mechanism_validation",
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+    "download_policy": {
+      "content_free_aggregate_only": true,
+      "raw_data_committed": false,
+      "temporary_cache_only": true
+    },
+    "enterprise_transfer": "Requires separate multi-user and prospective validation",
+    "known_scope": {
+      "benchmark_and_nested_subagent_traces": true,
+      "complete_home_directory": false,
+      "contributors": 1,
+      "project_session_tree": true,
+      "settings_plugins_credentials": false
+    },
+    "license": "MIT",
+    "privacy_review": "Credential values scanned and replaced; public contributor identifiers intentionally retained",
+    "publication_basis": "Intentional public release by the named contributor",
+    "schema_version": "trace-dataset-manifest-v1",
+    "source_format": "Claude Code JSONL under a mirror of ~/.claude/projects/",
+    "source_url": "https://huggingface.co/datasets/crispwisp/wisp-claude-code-sessions"
+  }
+}

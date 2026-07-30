@@ -1,0 +1,25 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "crispwisp/wisp-claude-code-sessions",
+  "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+  "license": "MIT",
+  "source_url": "https://huggingface.co/datasets/crispwisp/wisp-claude-code-sessions",
+  "source_format": "Claude Code JSONL under a mirror of ~/.claude/projects/",
+  "adapter": "claude_code_longitudinal_v1",
+  "publication_basis": "Intentional public release by the named contributor",
+  "privacy_review": "Credential values scanned and replaced; public contributor identifiers intentionally retained",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "contributors": 1,
+    "complete_home_directory": false,
+    "project_session_tree": true,
+    "settings_plugins_credentials": false,
+    "benchmark_and_nested_subagent_traces": true
+  },
+  "admission": "admit_for_single-user_longitudinal_mechanism_validation",
+  "enterprise_transfer": "Requires separate multi-user and prospective validation"
+}
