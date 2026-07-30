@@ -48,6 +48,50 @@ measurement kernel first. Kill or narrow the product if task boundaries,
 verified outcomes, privacy-safe aggregation, or useful repeated patterns cannot
 be established on real traces.
 
+## Empirical checkpoint: 2026-07-30
+
+Two new experiments narrow the architecture without changing the claim
+boundary:
+
+1. A frozen 145-document, 99-query
+   [CodeTraceBench](https://huggingface.co/datasets/NJU-LINK/CodeTraceBench)
+   silver-label factorial compared exact, structured, lexical, and pinned
+   [Qwen3-Embedding-0.6B](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B)
+   retrieval. Structured plus dense reached `0.8182` Recall@20 versus `0.7323`
+   for exact-only; the paired bootstrap 95% interval for the `+0.0859` lift was
+   `[0.0354, 0.1364]`. Dense alone added only `0.0051`, and the tested lexical
+   fusion regressed exact-identifier recall. This supports sparse task-level
+   general embeddings only after exact and structured signals. It does not
+   justify a custom embedding model.
+2. The same 145 documents and pinned 1,024-dimensional vectors were loaded into
+   one disposable PostgreSQL 16 plus pgvector table behind forced RLS. All
+   missing/stale-epoch, wrong-subject, wrong-tenant, and wrong-purpose candidate
+   counts were zero before ranking; withdrawn and deleted rows disappeared; and
+   rollback left zero rows. Exact pgvector achieved `0.6667` Recall@20 at
+   `3.017 ms` local sequential p50. The tested FTS/trigram/vector RRF improved
+   Recall@20 by only `0.0051`, reduced nDCG and MRR, and cost `256.843 ms` p50,
+   almost entirely because of the trigram lane. That hybrid is rejected for this
+   workload. The run is a correctness result, not Aurora, concurrency, or scale
+   evidence.
+3. A pinned two-session
+   [Trace Commons](https://huggingface.co/datasets/trace-commons/agent-traces)
+   cohort preserved 1,602 native records, all 1,266 parent edges, and all eight
+   context-artifact call/result joins. It reconstructed one exact
+   write-to-later-read continuity and two edits, and emitted an
+   interval-censored gap instead of inventing a missing revision. All temporal
+   and imported-scope negative controls passed. This proves a loss-aware
+   versioned-context import primitive, not that the memory was correct, helpful,
+   or causally responsible for later work.
+
+The smallest justified system is therefore still one governed PostgreSQL/Aurora
+authority plus asynchronous workers and conditional protected object bytes.
+Use exact and structured lanes on every eligible query; invoke general dense
+retrieval only for task-similarity questions where the benchmark supports it.
+Do not ship the tested trigram-heavy fusion, a custom embedding, another vector
+database, or automatic memory promotion. CMU access is explicitly waived:
+public pinned cohorts are sufficient for the current gates, and CMU is not on
+the critical path.
+
 ## What the current code proves—and does not prove
 
 The existing implementation is useful substrate:

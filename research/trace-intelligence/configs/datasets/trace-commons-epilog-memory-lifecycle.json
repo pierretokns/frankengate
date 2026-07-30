@@ -1,0 +1,82 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "trace-commons/agent-traces-epilog-memory-lifecycle",
+  "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+  "license": "CC-BY-4.0",
+  "source_url": "https://huggingface.co/datasets/trace-commons/agent-traces/tree/112ebd4d03ce852b00e935d523107c3d0c9a65bf/sessions/claude_code",
+  "source_format": "Two volunteered native Claude Code sessions over one scrubbed project and its durable memory files",
+  "adapter": "claude_native_context_transition_v1",
+  "publication_basis": "Opt-in public corpus with local scrubbing, contributor review, and maintainer review",
+  "rights_assertion": "Dataset metadata is CC-BY-4.0; embedded source code and other content may retain separate terms",
+  "privacy_review": "Anonymization is best-effort. Raw content remains in a disposable quarantine cache and no path, prompt, tool payload, artifact content, or authority value is committed.",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true,
+    "network_download_in_default_verify": false
+  },
+  "cohort": {
+    "source_files": [
+      {
+        "path": "sessions/claude_code/c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+        "bytes": 3405732,
+        "sha256": "d320ab80b06a019d279df1f3f3f70fad0ee12b08d1eea2339e7633acbcc80f4d",
+        "hugging_face_oid": "42a28a483c51b9e299cbfe32b63977f9b5b18d18",
+        "records": 1224
+      },
+      {
+        "path": "sessions/claude_code/479c5e9f-a299-457f-8459-5948adf8aa8e.jsonl",
+        "bytes": 1149336,
+        "sha256": "8efd5bceea8a840fd7a528e18d62251946b0c883c04883f2515b90b9133d05a9",
+        "hugging_face_oid": "02eac54aa89e8654b37c2323571976d1b530f674",
+        "records": 378
+      }
+    ],
+    "import_authority": {
+      "tenant_id": "public-research-corpus",
+      "owner_subject_id": "trace-commons-epilog-pseudonym",
+      "team_id": "trace-intelligence-study",
+      "classification": 1,
+      "purpose": "trace-memory-research",
+      "authorization_epoch": 1
+    },
+    "expected_aggregate": {
+      "input_receipts": {
+        "source_file_count": 2,
+        "source_bytes": 4555068
+      },
+      "native_trace_fidelity": {
+        "records": 1602,
+        "sessions": 2,
+        "record_uuids": 1268,
+        "parent_edges": 1266,
+        "resolved_parent_edges": 1266,
+        "unresolved_parent_edges": 0,
+        "tool_calls": 460,
+        "tool_results": 459,
+        "joined_tool_results": 459,
+        "unmatched_tool_calls": 1
+      },
+      "memory_lifecycle": {
+        "artifact_paths": 2,
+        "context_artifact_calls": 8,
+        "joined_context_artifact_results": 8,
+        "failed_reads": 1,
+        "successful_writes": 2,
+        "successful_reads": 2,
+        "successful_edits": 2,
+        "exact_write_to_later_read": 1,
+        "interval_censored_version_gaps": 1,
+        "reconstructable_edits": 2,
+        "unreconstructable_edits": 0,
+        "failed_operation_promotions": 0
+      },
+      "file_history_snapshots": {
+        "memory_path_mentions": 140,
+        "unique_session_scoped_states": 6
+      }
+    }
+  },
+  "admission": "admit_as_smallest_observed_real_cross_session_versioned_memory_conformance_cohort",
+  "enterprise_transfer": "Tests import and temporal/provenance mechanics only; it does not establish stable person identity, memory utility, causal benefit, or enterprise transfer"
+}

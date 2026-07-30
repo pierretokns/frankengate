@@ -37,6 +37,35 @@ revision. A model swap requires a shadow index and frozen holdout; never mutate
 weights or vectors in place. Store only redacted evaluation text or hashes in
 the benchmark manifest.
 
+## Frankengate E2 evidence update
+
+The first trace-specific dense baseline now uses
+[`Qwen/Qwen3-Embedding-0.6B`](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B)
+at immutable revision
+`97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3`. The contract fixes separate
+instructed query and bare-document embeddings, 1,024 dimensions, L2
+normalization, cosine distance, a 512-token experimental cap, and the exact
+tokenizer/model configuration hashes.
+
+On the frozen 145-archive CodeTraceBench raw slice, the best
+structured-plus-general-dense arm reached Recall@20 `0.8182`, compared with
+`0.7323` for exact identifiers alone. The paired bootstrap interval for the
+gain was `[0.0354, 0.1364]`. Dense alone reached `0.7374`, with an interval that
+included zero. Adding raw-trajectory lexical retrieval could reduce recall and
+exact-identifier preservation. These are silver task-identity labels, not
+human-adjudicated enterprise relevance.
+
+This result supports three decisions:
+
+1. keep structured JSONB/task views and exact identifiers as first-class
+   retrieval inputs;
+2. retain a general embedding as a conditional candidate channel, but do not
+   train a corporate adapter yet; and
+3. do not add another vector database. The next gate is the same frozen
+   candidates in forced-RLS PostgreSQL with native FTS/trigram, exact pgvector,
+   withdrawal/deletion, selectivity, latency, and human-reviewed hard
+   negatives.
+
 ## Promotion policy
 
 The default production path remains PostgreSQL/pgvector once its adapter exists.

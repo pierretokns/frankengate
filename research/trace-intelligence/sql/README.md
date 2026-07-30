@@ -18,6 +18,10 @@ kubectl exec -i -n frankengate-test postgres-0 -- \
 kubectl exec -i -n frankengate-test postgres-0 -- \
   psql -U frankengate -d frankengate -v ON_ERROR_STOP=1 \
   < research/trace-intelligence/sql/003_rls_assertions.sql
+
+kubectl exec -i -n frankengate-test postgres-0 -- \
+  psql -U frankengate -d frankengate -v ON_ERROR_STOP=1 \
+  < research/trace-intelligence/sql/004_e2_authorized_retrieval.sql
 ```
 
 The assertions execute all protected queries as `trace_research_app`, a
@@ -30,3 +34,11 @@ The assertions execute all protected queries as `trace_research_app`, a
 
 The fixture uses tiny eight-dimensional deterministic vectors only to test query and
 authorization composition. It says nothing about embedding quality.
+
+`004_e2_authorized_retrieval.sql` adds a separate 1024-dimensional, forced-RLS
+candidate table for the pinned Qwen E2 experiment. Its synthetic conformance rows
+are transaction-scoped and rolled back. It proves exact-identifier, FTS, optional
+trigram, exact-vector, and optional HNSW retrieval compose with the same authority
+boundary; missing, wrong, or stale authority returns zero candidates; and withdrawn
+or soft-deleted documents disappear before ranking. It still does not load raw
+public or enterprise traces.

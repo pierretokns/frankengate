@@ -122,6 +122,86 @@ The eight-dimensional vectors in this lab encode deterministic signal features. 
 exercise PostgreSQL authorization and retrieval composition only; they are not an
 embedding-quality experiment.
 
+## Real trace and versioned-memory conformance
+
+`trace_commons_memory_conformance.py` runs over a pinned 4,555,068-byte,
+two-session Trace Commons cohort. The raw JSONL stays in an external disposable
+cache. The adapter verifies source hashes, native parent edges, and exact
+tool-call/result joins; reconstructs only successful writes and edits; and treats a
+later read that differs from the last evidenced state as an interval-censored
+version gap.
+
+The real run preserved 1,602 records and 1,266/1,266 parent edges. All eight
+context-artifact calls joined to results. One memory write exactly matched a read
+in the later session, two edits replayed deterministically, and a second artifact
+correctly produced one version-gap receipt. These are import and provenance
+results—not evidence that the memory was correct or useful.
+
+Re-run with the two manifest-pinned files under an external root:
+
+```sh
+TRACE_COMMONS_ROOT=/private/path/trace-commons-cache \
+PYTHON=python3 \
+make trace-memory
+```
+
+The committed aggregate is
+[`experiments/summaries/trace-commons-memory-conformance-2026-07-30.md`](experiments/summaries/trace-commons-memory-conformance-2026-07-30.md).
+
+## E2 same-work retrieval factorial
+
+`e2_authorized_retrieval_factorial.py` evaluates a frozen trace-to-trace
+same-work pilot over the existing raw CodeTraceBench blocked-test allowlist. It
+compares a fixed `2 x 2 x 2` structured/lexical/dense design while retaining an
+exact-identifier channel in every arm. The optional dense lane is pinned to
+`Qwen/Qwen3-Embedding-0.6B` revision
+`97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3`. It encodes documents without a
+prompt and queries separately with the frozen instruction `Given an agent
+trajectory, retrieve other trajectories attempting the same task`; the result
+records the instruction, template, device, and snapshot hashes.
+
+The task identity is a silver positive and hard negatives are metadata-derived.
+Neither is a substitute for blinded human task-family adjudication. The quality
+factorial runs offline; it references the existing forced-RLS PostgreSQL result as
+an independent runtime proof and explicitly does not claim a joint quality/RLS,
+deletion, selective-scope latency, or Aurora result. Raw text and vectors remain
+outside Git.
+
+Run with external, hash-verified inputs:
+
+```sh
+CODETRACEBENCH_FULL=/private/path/bench_manifest.full.parquet \
+CODETRACEBENCH_ARCHIVE_ROOT=/private/path/codetracebench-raw \
+QWEN3_EMBEDDING_SNAPSHOT=/private/path/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3 \
+QWEN3_EMBEDDING_DEVICE=auto \
+PYTHON=python3 \
+make e2-retrieval
+```
+
+`e2_postgres_joint_retrieval.py` then loads those same documents and pinned
+1,024-dimensional vectors into the forced-RLS research table in one rollback-only
+transaction. All five denied authority scenarios return zero candidates for
+base, FTS, trigram, and vector queries. Withdrawal and deletion are filtered
+before ranking and the independent post-rollback count is zero.
+
+On this small local cohort, exact pgvector reached `0.6667` Recall@20 at
+`3.017 ms` sequential p50. Three-way FTS/trigram/vector RRF reached only
+`0.6717` Recall@20, reduced nDCG and MRR, and cost `256.843 ms` p50. The tested
+hybrid is therefore rejected; the experiment supports exact pgvector as the
+smallest native lane while structured plus dense remains the best offline
+quality arm. This is not an Aurora, concurrency, or scale result.
+
+Re-run it only against a disposable schema with SQL migrations 001–004 applied:
+
+```sh
+GOVERNED_POSTGRES_DSN=postgresql://... \
+CODETRACEBENCH_FULL=/private/path/bench_manifest.full.parquet \
+CODETRACEBENCH_ARCHIVE_ROOT=/private/path/codetracebench-raw \
+QWEN3_EMBEDDING_SNAPSHOT=/private/path/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3 \
+PYTHON=python3 \
+make e2-postgres-joint
+```
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,

@@ -153,6 +153,89 @@ def inputs():
             "schema_version": "memory",
             "assertions": {"passed": 15, "total": 15, "failed": 0},
         },
+        "trace_memory_conformance": {
+            "schema_version": "trace-memory",
+            "native_trace_fidelity": {
+                "records": 1602,
+                "resolved_parent_edges": 1266,
+                "unresolved_parent_edges": 0,
+            },
+            "memory_lifecycle": {
+                "context_artifact_calls": 8,
+                "joined_context_artifact_results": 8,
+                "exact_write_to_later_read": 1,
+                "interval_censored_version_gaps": 1,
+                "reconstructable_edits": 2,
+                "unreconstructable_edits": 0,
+            },
+            "negative_controls": {"all_passed": True},
+            "raw_content_emitted": False,
+        },
+        "e2_retrieval": {
+            "schema_version": "e2",
+            "cohort": {
+                "documents": 145,
+                "eligible_queries": 99,
+                "silver_positive_pairs": 87,
+                "metadata_derived_hard_negative_pairs": 301,
+            },
+            "factorial": {
+                "arms": {
+                    "S0L0D0": {
+                        "recall_at_20": 0.7323232323232324,
+                        "exact_id_recall_at_20": 0.8,
+                    },
+                    "S1L0D1": {
+                        "recall_at_20": 0.8181818181818182,
+                        "recall_at_20_delta_vs_exact": 0.08585858585858586,
+                        "recall_at_20_delta_95ci": [
+                            0.03535353535353535,
+                            0.13636363636363635,
+                        ],
+                        "exact_id_recall_at_20": 0.8944444444444445,
+                    },
+                }
+            },
+            "acceptance": {
+                "human_label_gate_passed": False,
+                "exact_identifier_no_regression": False,
+                "joint_quality_rls_gate_passed": False,
+                "custom_embedding_authorized": False,
+                "aurora_replacement_authorized": False,
+            },
+            "runtime_authorization_evidence": {
+                "all_denied_pre_ranking_candidates_zero": True,
+                "joint_quality_and_rls_run": False,
+                "same_corpus_as_quality_factorial": False,
+            },
+        },
+        "e2_postgres_joint": {
+            "schema_version": "e2-joint",
+            "acceptance": {
+                "same_candidate_local_postgres_quality_and_rls_gate_passed": True,
+                "real_aurora_gate_passed": False,
+                "concurrency_or_scale_gate_passed": False,
+            },
+            "postgresql": {
+                "all_denied_pre_ranking_candidates_zero": True,
+                "lifecycle_oracles": {"passed": True},
+                "rollback": {"post_rollback_visible_rows": 0},
+                "quality_against_silver_task_labels": {
+                    "postgres_exact_pgvector": {
+                        "recall_at_20": 0.6666666666666666
+                    },
+                    "postgres_hybrid_rrf": {
+                        "recall_at_20": 0.6717171717171717
+                    },
+                },
+                "client_observed_sequential_latency": {
+                    "postgres_exact_pgvector": {"p50_ms": 3.017},
+                    "postgres_hybrid_rrf_end_to_end": {
+                        "p50_ms": 256.843
+                    },
+                },
+            },
+        },
         "agenttrace": {
             "schema_version": "agenttrace",
             "corpus": {"rows": 1400},
@@ -200,9 +283,31 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
             matrix["levels"]["L3_diagnosis_and_eval_proposals"]["status"],
         )
         self.assertEqual(
-            "synthetic_invariant_pass",
+            "real_trace_transition_partial_pass",
             matrix["levels"]["L5_temporal_memory"]["status"],
         )
+        self.assertEqual(
+            "offline_silver_and_local_rls_partial_pass",
+            matrix["levels"]["L4_semantic_candidate_retrieval"]["status"],
+        )
+        semantic = matrix["levels"]["L4_semantic_candidate_retrieval"][
+            "evidence"
+        ]
+        self.assertEqual("S1L0D1", semantic["best_offline_arm"])
+        self.assertAlmostEqual(
+            0.08585858585858586,
+            semantic["recall_at_20_lift_over_exact"],
+        )
+        self.assertFalse(semantic["human_label_gate_passed"])
+        self.assertTrue(semantic["joint_local_postgres_gate_passed"])
+        self.assertTrue(
+            semantic["all_denied_pre_ranking_candidates_zero"]
+        )
+        self.assertEqual(0, semantic["post_rollback_visible_rows"])
+        self.assertFalse(semantic["aurora_gate_passed"])
+        temporal = matrix["levels"]["L5_temporal_memory"]["evidence"]
+        self.assertEqual(1, temporal["real_exact_cross_session_continuities"])
+        self.assertEqual(1, temporal["real_interval_censored_version_gaps"])
         self.assertEqual(
             "not_supported",
             matrix["enterprise_questions"][
@@ -216,6 +321,15 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
             matrix["architecture_decision"][
                 "custom_embedding_model_justified"
             ]
+        )
+        self.assertTrue(
+            matrix["levels"]["L7_to_L10"]["evidence"][
+                "cmu_requirement_waived"
+            ]
+        )
+        self.assertNotIn(
+            "CMU",
+            matrix["levels"]["L7_to_L10"]["decision"],
         )
 
     def test_level_two_threshold_is_not_redefined_by_observed_result(self):

@@ -1,0 +1,277 @@
+{
+  "acceptance": {
+    "concurrency_or_scale_gate_passed": false,
+    "custom_embedding_authorized": false,
+    "database_replacement_authorized": false,
+    "human_label_gate_passed": false,
+    "real_aurora_gate_passed": false,
+    "same_candidate_local_postgres_quality_and_rls_gate_passed": true
+  },
+  "analysis_revision": "e2-codetracebench-postgres-joint-v1",
+  "claim_limits": [
+    "task identity is a publisher-provided silver positive, not blinded human adjudication",
+    "the 145-document cohort is a correctness and small-query benchmark, not a scale test",
+    "latency is sequential client-observed local PostgreSQL latency without concurrency",
+    "the disposable single-node PostgreSQL fixture is not Aurora and does not test failover, replicas, RDS Proxy, or reader lag",
+    "FTS and trigram query projections are fixed bounded approximations, not learned query rewriting",
+    "all corpus documents share one synthetic private authority; this proves fail-closed mechanics, not enterprise sharing policy quality",
+    "withdrawal and deletion are tested as visibility transitions inside the same rollback-only transaction",
+    "same benchmark task does not establish that two enterprise users should collaborate",
+    "no user skill-gap, productivity, longitudinal memory, or causal improvement claim is supported"
+  ],
+  "cohort": {
+    "authorized_candidates_per_query": 144,
+    "documents": 145,
+    "eligible_queries": 99,
+    "repeated_task_identities": 37,
+    "silver_positive_pairs": 87,
+    "task_identities": 83
+  },
+  "dense_contract": {
+    "contract_file_sha256": {
+      "config.json": "b5bf1f51fc45be473a54718cef92448d90a1be001bf9b9a44b8c7f10a19feaa9",
+      "config_sentence_transformers.json": "10667c72ddb772627bf1780cb7f86af8e2ae0032b8c243c731172064105c6961",
+      "modules.json": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+      "tokenizer_config.json": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0"
+    },
+    "dimension": 1024,
+    "distance": "cosine_on_l2_normalized_vectors",
+    "document_prompt": null,
+    "max_sequence_length": 512,
+    "model_id": "Qwen/Qwen3-Embedding-0.6B",
+    "query_instruction": "Given an agent trajectory, retrieve other trajectories attempting the same task",
+    "query_template": "Instruct: {instruction}\nQuery: {trajectory}",
+    "requested_device": "auto",
+    "resolved_device": "mps",
+    "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "separate_query_and_document_embeddings": true,
+    "vectors_emitted": false,
+    "weights_emitted": false
+  },
+  "generated_at": "2026-07-30T15:44:30.626288+00:00",
+  "postgresql": {
+    "all_denied_pre_ranking_candidates_zero": true,
+    "authorized_loaded_candidate_count": 145,
+    "client_observed_sequential_latency": {
+      "hybrid_fusion_only": {
+        "max_ms": 0.392958,
+        "mean_ms": 0.11487582828282829,
+        "p50_ms": 0.107583,
+        "p95_ms": 0.130917,
+        "p99_ms": 0.3405279999999998,
+        "samples": 99
+      },
+      "postgres_exact_pgvector": {
+        "max_ms": 4.68225,
+        "mean_ms": 3.09582697979798,
+        "p50_ms": 3.016834,
+        "p95_ms": 3.4280166,
+        "p99_ms": 4.129978839999998,
+        "samples": 99
+      },
+      "postgres_fts": {
+        "max_ms": 52.550958,
+        "mean_ms": 26.3170858989899,
+        "p50_ms": 28.501959,
+        "p95_ms": 38.646704199999995,
+        "p99_ms": 39.75693549999995,
+        "samples": 99
+      },
+      "postgres_hybrid_rrf_end_to_end": {
+        "max_ms": 310.412958,
+        "mean_ms": 257.57849119191917,
+        "p50_ms": 256.842792,
+        "p95_ms": 291.11148779999996,
+        "p99_ms": 306.60990531999994,
+        "samples": 99
+      },
+      "postgres_trigram": {
+        "max_ms": 267.492291,
+        "mean_ms": 227.89565993939394,
+        "p50_ms": 223.594583,
+        "p95_ms": 261.0101203,
+        "p99_ms": 266.38660698,
+        "samples": 99
+      }
+    },
+    "denied_pre_ranking_candidate_matrix": {
+      "missing_epoch": {
+        "base_candidates": 0,
+        "fts_candidates": 0,
+        "trigram_candidates": 0,
+        "vector_candidates": 0
+      },
+      "stale_epoch": {
+        "base_candidates": 0,
+        "fts_candidates": 0,
+        "trigram_candidates": 0,
+        "vector_candidates": 0
+      },
+      "wrong_purpose": {
+        "base_candidates": 0,
+        "fts_candidates": 0,
+        "trigram_candidates": 0,
+        "vector_candidates": 0
+      },
+      "wrong_subject": {
+        "base_candidates": 0,
+        "fts_candidates": 0,
+        "trigram_candidates": 0,
+        "vector_candidates": 0
+      },
+      "wrong_tenant": {
+        "base_candidates": 0,
+        "fts_candidates": 0,
+        "trigram_candidates": 0,
+        "vector_candidates": 0
+      }
+    },
+    "environment": {
+      "application_role_superuser_or_bypassrls": false,
+      "aurora_emulation": false,
+      "database": "local_disposable_postgresql",
+      "embedding_dimension": 1024,
+      "forced_rls": true,
+      "hnsw_index_present_but_disabled_for_exact_lane": true,
+      "pg_trgm_version": "1.6",
+      "pgvector_version": "0.8.1",
+      "server_version_num": "160012"
+    },
+    "exact_pgvector_plan_receipt": {
+      "ann_index_used": false,
+      "enable_bitmapscan": false,
+      "enable_indexonlyscan": false,
+      "enable_indexscan": false,
+      "node_types": [
+        "Seq Scan",
+        "Sort"
+      ]
+    },
+    "lifecycle_oracles": {
+      "active_candidates_after_oracles": 143,
+      "deleted_candidate_count": 0,
+      "expected_active_candidates": 143,
+      "passed": true,
+      "withdrawn_candidate_count": 0
+    },
+    "load": {
+      "documents": 145,
+      "elapsed_ms": 1204.922333,
+      "fresh_transaction_local_relfilenode_for_storage_measurement": true,
+      "transaction_committed": false
+    },
+    "quality_against_silver_task_labels": {
+      "postgres_exact_pgvector": {
+        "exact_id_recall_at_20": 0.7333333333333333,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.2727272727272727,
+        "hard_negative_top1": 0.16161616161616163,
+        "mrr": 0.6662958949359515,
+        "ndcg_at_20": 0.5966332111989165,
+        "queries": 99,
+        "recall_at_1": 0.3383838383838384,
+        "recall_at_20": 0.6666666666666666,
+        "recall_at_5": 0.5606060606060606
+      },
+      "postgres_fts": {
+        "exact_id_recall_at_20": 0.4777777777777778,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.36363636363636365,
+        "hard_negative_top1": 0.010101010101010102,
+        "mrr": 0.21347920573176732,
+        "ndcg_at_20": 0.23559754988773193,
+        "queries": 99,
+        "recall_at_1": 0.06060606060606061,
+        "recall_at_20": 0.4444444444444444,
+        "recall_at_5": 0.17676767676767677
+      },
+      "postgres_hybrid_rrf": {
+        "exact_id_recall_at_20": 0.7333333333333333,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.30303030303030304,
+        "hard_negative_top1": 0.050505050505050504,
+        "mrr": 0.5103448087262549,
+        "ndcg_at_20": 0.49379914840417793,
+        "queries": 99,
+        "recall_at_1": 0.21212121212121213,
+        "recall_at_20": 0.6717171717171717,
+        "recall_at_5": 0.4797979797979798
+      },
+      "postgres_trigram": {
+        "exact_id_recall_at_20": 0.4111111111111111,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.3838383838383838,
+        "hard_negative_top1": 0.020202020202020204,
+        "mrr": 0.1851530353041569,
+        "ndcg_at_20": 0.19861848015198827,
+        "queries": 99,
+        "recall_at_1": 0.04040404040404041,
+        "recall_at_20": 0.3838383838383838,
+        "recall_at_5": 0.1717171717171717
+      }
+    },
+    "retrieval_contract": {
+      "candidate_scope": "same 145 loaded documents; self excluded; forced RLS applies before every ordering",
+      "exact_pgvector": "native cosine distance over distinct Qwen query/document vectors with index, bitmap, and index-only scans disabled",
+      "fts": "English to_tsquery over first 48 unique syntax-safe terms; native ts_rank_cd; complete authorized ordering",
+      "hybrid": "fixed equal-channel RRF over FTS, trigram, and exact pgvector; k=60",
+      "trigram": "native pg_trgm similarity over first 512 query characters; complete authorized ordering"
+    },
+    "rollback": {
+      "executed": true,
+      "post_rollback_visible_rows": 0,
+      "required": true
+    },
+    "storage_at_loaded_state": {
+      "auxiliary_bytes": 5332992,
+      "indexes_bytes": 12296192,
+      "table_heap_bytes": 180224,
+      "total_relation_bytes": 17809408
+    }
+  },
+  "result_content_sha256": "e26cc9992a1c04df3af8638339d326d4b70cd8c6ab7ae2379c049f6fc0961854",
+  "run_date": "2026-07-30",
+  "schema_version": "frankengate-e2-postgres-joint-retrieval-v1",
+  "sensitive_material_contract": {
+    "identifiers_in_result": false,
+    "rankings_in_result": false,
+    "raw_material_locations": [
+      "temporary process memory",
+      "rollback-only disposable PostgreSQL transaction"
+    ],
+    "raw_text_in_result": false,
+    "source_task_labels_in_result": false,
+    "vectors_in_result": false
+  },
+  "source": {
+    "alignment": {
+      "count_or_identity_mismatch": 67,
+      "exact": 78
+    },
+    "allowlist_identity_digest": "23a7a3b70280ad14c2da13431831e9f6e824ff1a854a918188ddb55d17d6b016",
+    "allowlist_sha256": "83c5b8852ec0dd2144de59fd0deb88fbd29f5d947fe63459fd62f17b4ff0cc86",
+    "archives": 145,
+    "compressed_bytes": 28241363,
+    "dataset_id": "NJU-LINK/CodeTraceBench",
+    "dataset_license": "MIT",
+    "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+    "document_ids_committed": false,
+    "embeddings_committed": false,
+    "full_manifest_sha256": "0c25108022f518d09505d66cee7a8baeaa2d64708c98e8a66a061819c0b3da6d",
+    "parser_variants": {
+      "miniswe_traj_json_bash_v1": 18,
+      "miniswe_unparsed": 4,
+      "openhands_event_cause_v1": 25,
+      "openhands_tensorblock_v1:drop_initial_planning_and_terminal_finish": 24,
+      "openhands_tensorblock_v1:exclude_terminal_finish": 8,
+      "openhands_tensorblock_v1:unmapped": 17,
+      "sweagent_trajectory_v1": 15,
+      "terminus2_episode_pair_v2": 34
+    },
+    "projected_text_committed": false,
+    "raw_data_committed": false,
+    "relevant_member_count": 9341,
+    "relevant_uncompressed_bytes": 772648115,
+    "task_labels_committed": false
+  }
+}

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v2"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v4"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "codetracebench": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
@@ -23,9 +23,17 @@ REQUIRED_RESULTS = {
     "mast": "mast_multiagent_empirical-2026-07-30.json",
     "wisp_governed": "wisp-governed-postgres-benchmark-2026-07-30.json",
     "wisp_recovery": "wisp-share-codex-canonical-bounded-recovery-2026-07-30.json",
-    "cmu_access": "cmu-access-audit-2026-07-30.json",
     "otel_roundtrip": "otel-collector-roundtrip-e0-2026-07-30.json",
     "memory_conformance": "bitemporal-memory-conformance-2026-07-30.json",
+    "trace_memory_conformance": (
+        "trace-commons-memory-conformance-2026-07-30.json"
+    ),
+    "e2_retrieval": (
+        "codetracebench-e2-authorized-retrieval-factorial-2026-07-30.json"
+    ),
+    "e2_postgres_joint": (
+        "codetracebench-e2-postgres-joint-retrieval-2026-07-30.json"
+    ),
     "agenttrace": "agenttrace-nl2bash-replay-audit-2026-07-30.json",
     "native_history": "public-native-history-fidelity-2026-07-30.json",
     "history_discovery": "public-agent-history-discovery-2026-07-30.json",
@@ -91,9 +99,11 @@ def build_matrix(
     mast = results["mast"]
     wisp = results["wisp_governed"]
     recovery = results["wisp_recovery"]
-    cmu = results["cmu_access"]
     otel_roundtrip = results["otel_roundtrip"]
     memory = results["memory_conformance"]
+    trace_memory = results["trace_memory_conformance"]
+    e2_retrieval = results["e2_retrieval"]
+    e2_joint = results["e2_postgres_joint"]
     agenttrace = results["agenttrace"]
     native_history = results["native_history"]
     history_discovery = results["history_discovery"]
@@ -313,14 +323,118 @@ def build_matrix(
             },
         },
         "L4_semantic_candidate_retrieval": {
-            "status": "missing",
+            "status": "offline_silver_and_local_rls_partial_pass",
+            "evidence": {
+                "documents": _require(e2_retrieval, "cohort", "documents"),
+                "eligible_queries": _require(
+                    e2_retrieval, "cohort", "eligible_queries"
+                ),
+                "best_offline_arm": "S1L0D1",
+                "exact_recall_at_20": _require(
+                    e2_retrieval,
+                    "factorial",
+                    "arms",
+                    "S0L0D0",
+                    "recall_at_20",
+                ),
+                "structured_dense_recall_at_20": _require(
+                    e2_retrieval,
+                    "factorial",
+                    "arms",
+                    "S1L0D1",
+                    "recall_at_20",
+                ),
+                "recall_at_20_lift_over_exact": _require(
+                    e2_retrieval,
+                    "factorial",
+                    "arms",
+                    "S1L0D1",
+                    "recall_at_20_delta_vs_exact",
+                ),
+                "recall_at_20_lift_95ci": _require(
+                    e2_retrieval,
+                    "factorial",
+                    "arms",
+                    "S1L0D1",
+                    "recall_at_20_delta_95ci",
+                ),
+                "exact_identifier_no_regression": _require(
+                    e2_retrieval,
+                    "acceptance",
+                    "exact_identifier_no_regression",
+                ),
+                "human_label_gate_passed": _require(
+                    e2_retrieval,
+                    "acceptance",
+                    "human_label_gate_passed",
+                ),
+                "joint_local_postgres_gate_passed": _require(
+                    e2_joint,
+                    "acceptance",
+                    "same_candidate_local_postgres_quality_and_rls_gate_passed",
+                ),
+                "all_denied_pre_ranking_candidates_zero": _require(
+                    e2_joint,
+                    "postgresql",
+                    "all_denied_pre_ranking_candidates_zero",
+                ),
+                "lifecycle_oracles_passed": _require(
+                    e2_joint, "postgresql", "lifecycle_oracles", "passed"
+                ),
+                "post_rollback_visible_rows": _require(
+                    e2_joint,
+                    "postgresql",
+                    "rollback",
+                    "post_rollback_visible_rows",
+                ),
+                "postgres_exact_pgvector_recall_at_20": _require(
+                    e2_joint,
+                    "postgresql",
+                    "quality_against_silver_task_labels",
+                    "postgres_exact_pgvector",
+                    "recall_at_20",
+                ),
+                "postgres_hybrid_recall_at_20": _require(
+                    e2_joint,
+                    "postgresql",
+                    "quality_against_silver_task_labels",
+                    "postgres_hybrid_rrf",
+                    "recall_at_20",
+                ),
+                "postgres_exact_pgvector_p50_ms": _require(
+                    e2_joint,
+                    "postgresql",
+                    "client_observed_sequential_latency",
+                    "postgres_exact_pgvector",
+                    "p50_ms",
+                ),
+                "postgres_hybrid_p50_ms": _require(
+                    e2_joint,
+                    "postgresql",
+                    "client_observed_sequential_latency",
+                    "postgres_hybrid_rrf_end_to_end",
+                    "p50_ms",
+                ),
+                "aurora_gate_passed": _require(
+                    e2_joint, "acceptance", "real_aurora_gate_passed"
+                ),
+                "concurrency_or_scale_gate_passed": _require(
+                    e2_joint,
+                    "acceptance",
+                    "concurrency_or_scale_gate_passed",
+                ),
+            },
             "decision": (
-                "do not add or fine-tune an embedding model until a common "
-                "labelled candidate-set comparison beats exact+FTS+structured"
+                "retain exact and structured retrieval and conditionally add "
+                "the pinned general dense lane; reject the tested "
+                "FTS/trigram/vector RRF because its tiny recall lift loses "
+                "ranking quality and adds about two orders of magnitude local "
+                "latency. Human labels, Aurora, concurrency, and scale remain "
+                "open; no custom embedding or database replacement is authorized"
             ),
         },
         "L5_temporal_memory": {
-            "status": "synthetic_invariant_pass",
+            "status": "real_trace_transition_partial_pass",
             "evidence": {
                 "wisp_fact_proposals": _require(
                     wisp, "authorized_counts", "fact_proposals"
@@ -333,6 +447,55 @@ def build_matrix(
                 ),
                 "bitemporal_assertions_failed": _require(
                     memory, "assertions", "failed"
+                ),
+                "real_trace_records": _require(
+                    trace_memory, "native_trace_fidelity", "records"
+                ),
+                "real_resolved_parent_edges": _require(
+                    trace_memory,
+                    "native_trace_fidelity",
+                    "resolved_parent_edges",
+                ),
+                "real_unresolved_parent_edges": _require(
+                    trace_memory,
+                    "native_trace_fidelity",
+                    "unresolved_parent_edges",
+                ),
+                "real_context_artifact_calls": _require(
+                    trace_memory,
+                    "memory_lifecycle",
+                    "context_artifact_calls",
+                ),
+                "real_joined_context_artifact_results": _require(
+                    trace_memory,
+                    "memory_lifecycle",
+                    "joined_context_artifact_results",
+                ),
+                "real_exact_cross_session_continuities": _require(
+                    trace_memory,
+                    "memory_lifecycle",
+                    "exact_write_to_later_read",
+                ),
+                "real_interval_censored_version_gaps": _require(
+                    trace_memory,
+                    "memory_lifecycle",
+                    "interval_censored_version_gaps",
+                ),
+                "real_reconstructable_edits": _require(
+                    trace_memory,
+                    "memory_lifecycle",
+                    "reconstructable_edits",
+                ),
+                "real_unreconstructable_edits": _require(
+                    trace_memory,
+                    "memory_lifecycle",
+                    "unreconstructable_edits",
+                ),
+                "real_negative_controls_passed": _require(
+                    trace_memory, "negative_controls", "all_passed"
+                ),
+                "real_raw_content_emitted": _require(
+                    trace_memory, "raw_content_emitted"
                 ),
                 "real_research_trace_strata_discovered": len(
                     _require(
@@ -352,9 +515,11 @@ def build_matrix(
             "decision": (
                 "copy-on-write correction, authority intersection, rollback, "
                 "deletion closure, influence exclusion, and stale-epoch denial "
-                "pass in a deterministic oracle; real research and paired "
-                "trace/memory strata now exist, but PostgreSQL/RLS execution "
-                "and natural-trace memory quality remain unproven"
+                "pass in a deterministic oracle; one real public two-session "
+                "cohort additionally proves one exact write/read continuity, "
+                "two edit replays, and one correctly quarantined version gap. "
+                "PostgreSQL/RLS execution, memory quality, and memory utility "
+                "remain unproven"
             ),
         },
         "L6_procedural_replay": {
@@ -394,14 +559,14 @@ def build_matrix(
         "L7_to_L10": {
             "status": "gated",
             "evidence": {
-                "cmu_access_status": _require(cmu, "result", "status"),
-                "cmu_empirical_metrics_run": _require(
-                    cmu, "result", "empirical_metrics_run"
-                ),
+                "cmu_requirement_waived": True,
+                "public_corpora_sufficient_for_current_gates": True,
             },
             "decision": (
                 "no utility routing, enterprise release, domain embedding "
-                "adaptation, or generator fine-tuning claim is authorized"
+                "adaptation, or generator fine-tuning claim is authorized; "
+                "prospective labels and outcomes—not access to another corpus—"
+                "are the blocking evidence"
             ),
         },
     }
@@ -433,7 +598,11 @@ def build_matrix(
         },
         "write_memory_or_memory_md": {
             "status": "not_supported",
-            "basis": "Wisp correctly emitted zero fact proposals",
+            "basis": (
+                "real native transition import is loss-aware, but Wisp "
+                "correctly emitted zero fact proposals and no intervention "
+                "tested whether memory improved later work"
+            ),
             "next_gate": (
                 "bitemporal contradiction benchmark, citations, review, "
                 "rollback, and later-query utility"
@@ -471,7 +640,12 @@ def build_matrix(
         },
         "fine_tune_enterprise_embeddings": {
             "status": "premature",
-            "basis": "no frozen E2 hard slice or hybrid baseline comparison",
+            "basis": (
+                "a general structured+dense arm already improved silver-label "
+                "Recall@20 by 0.0859 while dense alone added only 0.0051; the "
+                "remaining gates are human labels, exact-identifier protection, "
+                "Aurora/selective-scope scale, and prospective utility"
+            ),
             "next_gate": (
                 "at least +5 absolute Recall@20 over the general hybrid "
                 "baseline without RLS/deletion/latency regression"
@@ -495,16 +669,22 @@ def build_matrix(
             "new_database_justified": False,
             "custom_embedding_model_justified": False,
             "reason": (
-                "the real OTel path and relational memory oracle pass without a "
-                "second authority; current failures are labels, outcome "
-                "validity, calibration, and prospective causality—not "
-                "demonstrated vector scale"
+                "the real OTel path, relational memory oracle, real native "
+                "memory-transition adapter, and same-candidate forced-RLS "
+                "PostgreSQL retrieval run pass without a second authority. "
+                "Exact pgvector is fast on the correctness cohort while the "
+                "tested trigram-heavy fusion is rejected; current failures are "
+                "labels, scale, outcome validity, calibration, and prospective "
+                "causality—not a demonstrated need for another database"
             ),
         },
         "overall_status": (
-            "real OTel conformance, governed history mechanics, and synthetic "
-            "memory invariants pass; diagnosis, causal replay, cross-user "
-            "learning, and prospective enterprise utility do not"
+            "real OTel conformance, governed history mechanics, synthetic "
+            "memory invariants, and one loss-aware real memory transition "
+            "cohort pass; silver-label retrieval and same-candidate local "
+            "PostgreSQL RLS pass partially; memory utility, diagnosis, causal "
+            "replay, cross-user learning, Aurora scale, and prospective "
+            "enterprise utility do not"
         ),
     }
     output["result_sha256"] = hashlib.sha256(
@@ -548,14 +728,21 @@ def render_markdown(matrix: dict[str, Any]) -> str:
         "L3_diagnosis_and_eval_proposals": (
             "raw eval mutation is sensitive but brittle; diagnosis and multi-agent gold do not pass"
         ),
-        "L4_semantic_candidate_retrieval": "no common labelled retrieval factorial",
+        "L4_semantic_candidate_retrieval": (
+            "structured+dense wins the silver cohort; exact pgvector is the "
+            "smallest local RLS lane and the tested trigram hybrid is rejected"
+        ),
         "L5_temporal_memory": (
-            "synthetic bitemporal/authority invariants pass; natural memory quality does not"
+            "real transition import and synthetic temporal/authority invariants pass; "
+            "memory quality and utility do not"
         ),
         "L6_procedural_replay": (
             "bounded command comparison works; causal memory replay does not"
         ),
-        "L7_to_L10": "prospective enterprise outcomes and CMU access remain gated",
+        "L7_to_L10": (
+            "CMU is waived; prospective enterprise labels, privacy, and outcomes "
+            "remain gated"
+        ),
     }
     for name, value in levels.items():
         lines.append(
@@ -564,6 +751,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
 
     l2 = levels["L2_cheap_evidence_finding"]["evidence"]
     l3 = levels["L3_diagnosis_and_eval_proposals"]
+    l4 = levels["L4_semantic_candidate_retrieval"]["evidence"]
     lines.extend(
         [
             "",
@@ -590,6 +778,15 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "human traces overlapping the judge release. Therefore released "
             "human-versus-judge accuracy cannot be reproduced; high Hamming accuracy "
             "from an always-negative classifier is class imbalance, not competence.",
+            f"- Structured plus dense retrieval reached "
+            f"{l4['structured_dense_recall_at_20']:.3f} Recall@20 versus "
+            f"{l4['exact_recall_at_20']:.3f} for exact-only on silver task labels. "
+            f"In the same-candidate forced-RLS PostgreSQL run, exact pgvector "
+            f"reached {l4['postgres_exact_pgvector_recall_at_20']:.3f} at "
+            f"{l4['postgres_exact_pgvector_p50_ms']:.3f} ms p50; the tested "
+            f"three-way hybrid reached only {l4['postgres_hybrid_recall_at_20']:.3f} "
+            f"at {l4['postgres_hybrid_p50_ms']:.3f} ms. Keep exact/structured plus "
+            "conditional dense retrieval and reject that trigram-heavy hybrid.",
             "",
             "## Original enterprise questions",
             "",
@@ -618,8 +815,10 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "",
             "Keep one governed PostgreSQL evidence/proposal authority. Export selected "
             "ATIF tasks and content-minimized OTel topology with loss receipts. Do not "
-            "add a database or custom embedding model: the measured bottlenecks are "
-            "evidence validity, labels, calibration, privacy, and prospective outcomes.",
+            "add a database or custom embedding model. Exact pgvector satisfies the "
+            "current local correctness lane; the measured bottlenecks are human labels, "
+            "Aurora/selective-scope scale, evidence validity, calibration, privacy, and "
+            "prospective outcomes.",
             "",
             "Every input result is content-addressed in the aggregate JSON. No raw "
             "trace, identifier, prompt, tool argument/result, path, or authority value "
