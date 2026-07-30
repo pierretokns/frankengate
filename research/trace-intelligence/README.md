@@ -33,8 +33,34 @@ make governed-wisp \
   WISP_CORPUS_ROOT='/private/research-cache/wisp/transcripts'
 ```
 
+The real OpenTelemetry E0 arm is also separate because it downloads a pinned
+Collector release, binds a disposable loopback receiver, and builds the pinned
+Go SDK sender:
+
+```bash
+make otel-roundtrip
+```
+
+It verifies the release archive and extracted binary, keeps the content-minimized
+SDK manifest and Collector storage out of Git, runs lossless and deliberate-drop
+pipelines, and writes aggregate JSON only. See
+[`experiments/summaries/otel-collector-roundtrip-e0-2026-07-30.md`](experiments/summaries/otel-collector-roundtrip-e0-2026-07-30.md).
+
 See `CITATION.cff`, `LICENSES.md`, each `configs/datasets/*.json` manifest, and each
 `experiments/summaries/*.md` interpretation before reusing a result.
+
+The expanded real-history discovery receipt is rebuilt offline from pinned,
+content-free manifests:
+
+```bash
+make history-discovery
+```
+
+It records 359 Hugging Face discovery hits, the indexed and tree-enumerated
+native Claude/Codex supply, the first verified near-complete public Claude
+home-state tree, portable bundle/partial-home/native archive classifications,
+and the observed adjacency of Codex auth files. It commits no prompt, path,
+identifier, tool argument/result, secret candidate, or raw trace.
 
 The first executable pilot answers two narrow questions:
 

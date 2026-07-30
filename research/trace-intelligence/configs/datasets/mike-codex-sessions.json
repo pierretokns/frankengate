@@ -1,0 +1,26 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "Mike0021/codex-sessions",
+  "dataset_revision": "29b52c15654087c5c5d0adcd062bfe40f6464d6b",
+  "license": "NOASSERTION",
+  "source_url": "https://huggingface.co/datasets/Mike0021/codex-sessions",
+  "source_format": "Sanitized Codex record streams with added schema_version, session_id, and record_index",
+  "adapter": "public_native_history_fidelity_v1",
+  "publication_basis": "Intentional public dataset release; no dataset license declared",
+  "rights_assertion": "NOASSERTION: public inspection does not establish redistribution or training rights",
+  "privacy_review": "Publisher reports secret redaction; Frankengate emits aggregate structural and regex-candidate counts only",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "declared_trace_files": 27,
+    "complete_home_directory": false,
+    "byte_native": false,
+    "stable_user_identity": false,
+    "autonomous_sessions": true
+  },
+  "admission": "admit_for_codex_schema_fidelity_only",
+  "enterprise_transfer": "Not a real-user collaboration cohort; no training or redistribution claim"
+}

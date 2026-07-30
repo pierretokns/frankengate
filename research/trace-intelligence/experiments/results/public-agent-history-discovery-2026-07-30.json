@@ -1,0 +1,314 @@
+{
+  "audit_date": "2026-07-30",
+  "candidate_values_emitted": false,
+  "claim_boundary": "discovery establishes corpus availability and import-shape coverage, not independent users, task correctness, employee skill, or enterprise intervention benefit",
+  "classification": {
+    "card_only_no_payload": [
+      "zenlm/zen-agentic-dataset"
+    ],
+    "controlled_scientific_trace_strata": [
+      "FrontisAI/NatureBench-traces",
+      "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara"
+    ],
+    "native_codex_archives": [
+      "github/wjmlong/Codex_Sessions",
+      "github/byesngmin/KGA-codex-sessions"
+    ],
+    "near_complete_home_state": [
+      "github/jkim0731/2p-hcr-autocoreg/.claude"
+    ],
+    "paired_trace_and_memory_strata": [
+      "github/seokhawn01/wineLab-research/.claude",
+      "trace-commons/agent-traces-memory-pairing"
+    ],
+    "partial_home": [
+      "Glint-Research/Fable-5-traces"
+    ],
+    "portable_session_bundle": [
+      "github/jimmc414/cctrace/phase0-investigation"
+    ],
+    "real_research_trace_strata": [
+      "clem/ml-intern-sessions",
+      "evalstate/model-toolcall-research"
+    ],
+    "research_memory_target_strata": [
+      "github/biaslab/RAL2026-CPG-ActInf/.claude/memory"
+    ]
+  },
+  "discovery_scale": {
+    "github_claude_indexed_matches": 1364,
+    "github_codex_indexed_matches": 320,
+    "hugging_face_agent_trace_dataset_hits": 359,
+    "top_repo_native_claude_bytes": 2567303953,
+    "top_repo_native_claude_files": 2362,
+    "top_repo_native_codex_bytes": 280394087,
+    "top_repo_native_codex_files": 329
+  },
+  "input_receipts": {
+    "discovery_manifest_sha256": "32b2139f5327587834451dc68ae6d275acffefff8d8316192c0db10e3d285239",
+    "source_manifest_count": 13
+  },
+  "raw_content_committed": false,
+  "result_sha256": "cf0d39e22152084421f066004f75e0381644e292ee6a8de640e40a0d5be87720",
+  "schema_version": "public-agent-history-discovery-result-v1",
+  "security_observation": {
+    "codex_repositories_inspected": 10,
+    "codex_repositories_with_auth_adjacent": 9,
+    "required_control": "strict path allowlists before content scanning; deny auth, credentials, caches, shell config, and opaque account state"
+  },
+  "sources": {
+    "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara": {
+      "admission": "admit_as_hypothesis_experiment_observation_claim_paper_control",
+      "known_scope": {
+        "bytes": 26900000,
+        "evidence_artifacts": 37,
+        "files": 267,
+        "final_papers": 11,
+        "judge_jsonl_files": 11,
+        "logic_artifacts": 38,
+        "native_agent_transcripts": 11,
+        "scientific_worlds": 11,
+        "source_artifacts": 24,
+        "staging_observation_files": 11,
+        "trace_artifacts": 44
+      },
+      "license": "MIT",
+      "manifest": "datasets/discoverphysics-research-traces.json",
+      "manifest_sha256": "b158d4650a944871d2e2ff654f5c97a773bb657166e8a2b64775633f536037bc",
+      "revision": "9be6e9264220e922fa7fc18399e2f9187a7a880a"
+    },
+    "FrontisAI/NatureBench-traces": {
+      "admission": "admit_as_controlled_scientific_agent_validity_benchmark",
+      "known_scope": {
+        "paper_derived_tasks": 90,
+        "per_attempt_metric_improvements": true,
+        "resume_history": true,
+        "runs": 1080,
+        "runs_with_transcript_submission_judge_result": 1041,
+        "validity_judgments": true
+      },
+      "license": "CC-BY-4.0",
+      "manifest": "datasets/naturebench-scientific-traces.json",
+      "manifest_sha256": "0125621015b41a040858d4e1613c42b4b8b6bbe1a44385b2a5d739cf48c3787c",
+      "revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163"
+    },
+    "Glint-Research/Fable-5-traces": {
+      "admission": "admit_as_partial_home_and_native_topology_stratum",
+      "known_scope": {
+        "claude_bytes": 63184884,
+        "claude_files": 129,
+        "complete_home_directory": false,
+        "history_index_records": 1758,
+        "nested_subagent_jsonl_files": 36,
+        "present_home_areas": [
+          "projects",
+          "history.jsonl",
+          "cache",
+          "paste-cache"
+        ],
+        "project_session_jsonl_files": 115,
+        "settings_plugins_credentials": false
+      },
+      "license": "AGPL-3.0",
+      "manifest": "datasets/glint-fable5-partial-claude-home.json",
+      "manifest_sha256": "79acf75816e4040e23e1e87b555779120d57825b8070354148a18dff8d18ac64",
+      "revision": "e05c417852fc59fd8da758e68b352732423ca0cb"
+    },
+    "clem/ml-intern-sessions": {
+      "admission": "quarantine_then_admit_as_longitudinal_ml_research_stratum",
+      "known_scope": {
+        "date_end": "2026-06-11",
+        "date_start": "2026-05-01",
+        "dates": 12,
+        "jsonl_files": 92,
+        "tool_calls_and_results": true,
+        "uniform_scientific_outcome_label": false,
+        "unique_session_ids": 15
+      },
+      "license": "OTHER",
+      "manifest": "datasets/ml-intern-research-sessions.json",
+      "manifest_sha256": "152d1a77be05db6823000a5b3e04f127082c3a43aaa2b9349d24d05daab65fc9",
+      "revision": "f87189d9674394472755896350df0661154bbe0a"
+    },
+    "evalstate/model-toolcall-research": {
+      "admission": "admit_as_bounded_repeated_enterprise_like_research_campaign",
+      "known_scope": {
+        "bytes": 5470000,
+        "commands_file_reads_tool_outputs": true,
+        "indexed_research_traces": 15,
+        "model_repository_commits": true,
+        "provenance_session": true,
+        "render_and_test_results": true
+      },
+      "license": "NOASSERTION",
+      "manifest": "datasets/evalstate-model-toolcall-research.json",
+      "manifest_sha256": "567c7bf737413a0b6f8de7e847f212e930c9652349741aa31203d73f59c181c5",
+      "revision": "061ca7c19cf3333df71b6d119fd78aee16dc3227"
+    },
+    "github/biaslab/RAL2026-CPG-ActInf/.claude/memory": {
+      "admission": "admit_as_memory_target_and_temporal_contradiction_corpus",
+      "known_scope": {
+        "contradictions_and_reframing": true,
+        "distinct_origin_session_ids": 10,
+        "experiment_configs_and_seed_counts": true,
+        "invalidated_runs_and_bugs": true,
+        "memory_markdown_files": 29,
+        "raw_source_sessions_committed": false,
+        "statistical_outcomes": true
+      },
+      "license": "NOASSERTION",
+      "manifest": "datasets/biaslab-research-memory.json",
+      "manifest_sha256": "264b1d284472dee224c30274739854998cc3cf8d3f5036c98a845822eeb7fd7d",
+      "revision": "cfea3ecc32869e1cada14c875a8d72468b5338c6"
+    },
+    "github/byesngmin/KGA-codex-sessions": {
+      "admission": "conditional_native_codex_corpus_after_secret_and_provenance_review",
+      "known_scope": {
+        "complete_home_directory": false,
+        "distinct_cwd_values": 13,
+        "primary_session_ids": 37,
+        "records": 17663,
+        "rollout_bytes": 44107278,
+        "rollout_jsonl_files": 37,
+        "tool_calls": 2724,
+        "tool_outputs": 2722
+      },
+      "license": "NOASSERTION",
+      "manifest": "datasets/github-kga-codex-sessions.json",
+      "manifest_sha256": "a04befe3d5c46b1265d1d91b9fcdf8ba056b7ff739806f70590a70bc8549f5d0",
+      "revision": "fe6ce9d6287c48adce3714e47dc561bf4887dde8"
+    },
+    "github/jimmc414/cctrace/phase0-investigation": {
+      "admission": "admit_as_primary_portable_claude_session_import_corpus",
+      "known_scope": {
+        "complete_global_home_directory": false,
+        "file_history_snapshots": 13,
+        "plan_present": true,
+        "project_configuration_present": true,
+        "records": 536,
+        "sessions": 1,
+        "todos_present": true,
+        "tool_results": 151,
+        "tool_uses": 152,
+        "transcript_bytes": 1575480
+      },
+      "license": "MIT",
+      "manifest": "datasets/github-cctrace-portable-claude-session.json",
+      "manifest_sha256": "1cf7a687b2a776ec7a769810a19af26eff83ee30b93a92f9525b7c1bb4081fe3",
+      "revision": "4b4d4add0bb3a65359ccf50501c6792e2fc13ba5"
+    },
+    "github/jkim0731/2p-hcr-autocoreg/.claude": {
+      "admission": "manifest_only_then_lane_specific_quarantine_review",
+      "known_scope": {
+        "agents": 6,
+        "backups": 5,
+        "claude_blobs": 2067,
+        "claude_bytes": 76385165,
+        "complete_global_home_directory": false,
+        "file_history_files": 1477,
+        "history_index_and_backups": 3,
+        "jobs": 3,
+        "missing_observed_areas": [
+          "debug",
+          "session-env",
+          "todos",
+          "skills"
+        ],
+        "native_project_transcripts": 1,
+        "near_complete_home_state": true,
+        "paste_cache_files": 11,
+        "plans": 8,
+        "plugin_files": 397,
+        "present_sensitive_or_policy_areas": [
+          "settings.json",
+          "settings.local.json",
+          ".claude.json",
+          "remote-settings",
+          "mcp-needs-auth-cache",
+          "policy-limits"
+        ],
+        "shell_snapshots": 43,
+        "task_records": 98
+      },
+      "license": "NOASSERTION",
+      "manifest": "datasets/github-jkim-near-complete-claude-home.json",
+      "manifest_sha256": "261532be39f59f3427e700a49b14b5bae73ffb44efa0824a6c627d4b6d1cd3cb",
+      "revision": "b5a4615cdb0ffad81650a9c72a54209a202f6337"
+    },
+    "github/seokhawn01/wineLab-research/.claude": {
+      "admission": "admit_as_partial_research_workflow_and_friction_stratum",
+      "known_scope": {
+        "complete_assistant_messages": false,
+        "failed_and_successful_events": true,
+        "memory_documents": 4,
+        "normalized_outcome_scores": false,
+        "pre_and_post_tool_events": true,
+        "tool_log_lines": 230,
+        "web_search_and_fetch_events": true
+      },
+      "license": "NOASSERTION",
+      "manifest": "datasets/winelab-research-log-memory.json",
+      "manifest_sha256": "0975434cd1275d50d24dd088bf106cc9af61e3cbcb69a7b4f1b83595aa0e0c30",
+      "revision": "c48d48a4787ada6ea4e08e211bd7477ff3dd9409"
+    },
+    "github/wjmlong/Codex_Sessions": {
+      "admission": "quarantine_then_admit_as_primary_real_codex_bundle_corpus",
+      "known_scope": {
+        "bundles": 33,
+        "complete_home_directory": false,
+        "distinct_cwd_values": 4,
+        "primary_session_ids": 33,
+        "records": 24086,
+        "rollout_bytes": 77101303,
+        "rollout_jsonl_files": 33,
+        "tool_calls": 4252,
+        "tool_outputs": 4251,
+        "zero_length_history_jsonl_files": 33
+      },
+      "license": "NOASSERTION",
+      "manifest": "datasets/github-wjmlong-codex-sessions.json",
+      "manifest_sha256": "8d5d65066f803ff97ae7feb2f981df193275cb6b94c4545c34e14f5795b56768",
+      "revision": "1eceee0784f155e6cb994210cfc7b02cbc458298"
+    },
+    "trace-commons/agent-traces-memory-pairing": {
+      "admission": "admit_as_primary_real_trace_and_durable_context_pairing",
+      "known_scope": {
+        "bash_or_other_context_operations": 11,
+        "claude_code_histories": 28,
+        "context_artifact_tool_interactions": 67,
+        "cross_session_same_project_cohorts_minimum": 2,
+        "explicit_reads": 19,
+        "histories_with_context_artifact_interactions": 14,
+        "matching_tool_results": 67,
+        "observed_artifact_types": [
+          "MEMORY.md",
+          "project memory files",
+          "PROJECT.md",
+          "CLAUDE.md",
+          "AGENTS.md",
+          "user skills"
+        ],
+        "writes_or_edits": 37
+      },
+      "license": "CC-BY-4.0",
+      "manifest": "datasets/trace-commons-memory-pairing.json",
+      "manifest_sha256": "c533f50393c80303c9ee5856728aacda30a10b1205e8a10392d933dbbceb7dd5",
+      "revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf"
+    },
+    "zenlm/zen-agentic-dataset": {
+      "admission": "quarantine_card_only_no_retrievable_corpus",
+      "known_scope": {
+        "branches": [
+          "main"
+        ],
+        "dataset_payload_files": 0,
+        "repository_files": 8,
+        "used_storage_bytes": 0
+      },
+      "license": "OTHER-COMMERCIAL",
+      "manifest": "datasets/zen-agentic-card-only.json",
+      "manifest_sha256": "db86c82784f8143ee2edbfc59415037367053b8ea4432255bd6525bdb0687d84",
+      "revision": "cdc75caa622c76b86d040a3423c58c9b4aa335b1"
+    }
+  }
+}

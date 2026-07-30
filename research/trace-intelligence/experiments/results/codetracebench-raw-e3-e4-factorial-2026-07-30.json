@@ -1,0 +1,543 @@
+{
+  "analysis_revision": "codetracebench-raw-e3-e4-factorial-v1",
+  "bead": "bif-kyy.17.13.4.2.1",
+  "claim_boundary": {
+    "not_supported": [
+      "causal root cause",
+      "calibrated LLM-judge performance",
+      "changed-system replay or intervention benefit",
+      "authorization correctness",
+      "enterprise-human skill, productivity, intent, or collaboration"
+    ],
+    "supported": [
+      "raw action/observation parser coverage and explicit loss",
+      "deterministic factorial localization against released step labels",
+      "stored-trace assertion mutation sensitivity",
+      "terminal verifier availability and agreement"
+    ]
+  },
+  "cost": {
+    "compressed_input_bytes": 28241363,
+    "model_api_calls": 0,
+    "model_cost_usd": 0.0,
+    "model_tokens": 0,
+    "relevant_uncompressed_bytes": 772648115
+  },
+  "e3_factorial": {
+    "arms": {
+      "I0T0J0": {
+        "macro_f1_at_gold_count": 0.2758503401360544,
+        "mean_reciprocal_rank": 0.434376467120523,
+        "top1_accuracy": 0.2857142857142857,
+        "top3_accuracy": 0.5428571428571428,
+        "traces": 35
+      },
+      "I0T0J1": {
+        "macro_f1_at_gold_count": 0.13049886621315193,
+        "mean_reciprocal_rank": 0.3155535588054385,
+        "top1_accuracy": 0.17142857142857143,
+        "top3_accuracy": 0.37142857142857144,
+        "traces": 35
+      },
+      "I0T1J0": {
+        "macro_f1_at_gold_count": 0.26553287981859414,
+        "mean_reciprocal_rank": 0.38091775809820927,
+        "top1_accuracy": 0.22857142857142856,
+        "top3_accuracy": 0.42857142857142855,
+        "traces": 35
+      },
+      "I0T1J1": {
+        "macro_f1_at_gold_count": 0.12736961451247167,
+        "mean_reciprocal_rank": 0.3578771888364418,
+        "top1_accuracy": 0.22857142857142856,
+        "top3_accuracy": 0.2857142857142857,
+        "traces": 35
+      },
+      "I1T0J0": {
+        "macro_f1_at_gold_count": 0.18407029478458048,
+        "mean_reciprocal_rank": 0.3320811838414669,
+        "top1_accuracy": 0.17142857142857143,
+        "top3_accuracy": 0.34285714285714286,
+        "traces": 35
+      },
+      "I1T0J1": {
+        "macro_f1_at_gold_count": 0.15192743764172334,
+        "mean_reciprocal_rank": 0.33406932874977985,
+        "top1_accuracy": 0.2,
+        "top3_accuracy": 0.34285714285714286,
+        "traces": 35
+      },
+      "I1T1J0": {
+        "macro_f1_at_gold_count": 0.16359410430839003,
+        "mean_reciprocal_rank": 0.3589294558971122,
+        "top1_accuracy": 0.22857142857142856,
+        "top3_accuracy": 0.3142857142857143,
+        "traces": 35
+      },
+      "I1T1J1": {
+        "macro_f1_at_gold_count": 0.10975056689342404,
+        "mean_reciprocal_rank": 0.31115311925522937,
+        "top1_accuracy": 0.17142857142857143,
+        "top3_accuracy": 0.2571428571428571,
+        "traces": 35
+      }
+    },
+    "calibration": {
+      "reason": "the deterministic judge produces no probability; Brier score and ECE would fabricate calibration",
+      "status": "not applicable"
+    },
+    "eligible_traces": 35,
+    "exclusions": {
+      "alignment_mismatch": 67,
+      "no_incorrect_step_gold": 43
+    },
+    "factors": {
+      "I": "explicit error/missing-observation invariants",
+      "J": "deterministic error/risky-reasoning lexical judge",
+      "T": "repetition and edit/setup-to-failing-test topology/modal evidence"
+    },
+    "negative_controls": {
+      "combined_original": {
+        "macro_f1_at_gold_count": 0.10975056689342404,
+        "mean_reciprocal_rank": 0.31115311925522937,
+        "top1_accuracy": 0.17142857142857143,
+        "top3_accuracy": 0.2571428571428571,
+        "traces": 35
+      },
+      "gold_observation_evidence_removed": {
+        "macro_f1_at_gold_count": 0.13485260770975058,
+        "mean_reciprocal_rank": 0.2184281048942703,
+        "top1_accuracy": 0.05714285714285714,
+        "top3_accuracy": 0.14285714285714285,
+        "traces": 35
+      },
+      "timestamp_control_interpretation": "timestamps are preserved where available but excluded from the deterministic scorer; zero change is expected",
+      "top1_prediction_change_rate": {
+        "benign_tail": 0.0,
+        "irrelevant_error_tail": 0.2571428571428571,
+        "timestamp_shuffle": 0.0
+      },
+      "unsupported": [
+        "environment swap: no common resettable environment snapshot is present",
+        "permission/policy swap: source has no authorization decisions"
+      ]
+    },
+    "status": "deterministic label-blind factor baselines on exact-aligned raw trajectories; the lexical judge emits rankings, not probabilities"
+  },
+  "e4_assertion_mutation": {
+    "aggregate_by_assertion": {
+      "combined_raw_and_verifier": {
+        "allowed_variants": 70,
+        "allowed_variants_rejected": 34,
+        "allowed_variation_false_positive_rate": 0.4857142857142857,
+        "harmful_mutant_kill_rate": 0.9685863874345549,
+        "harmful_mutants": 191,
+        "harmful_mutants_killed": 185
+      },
+      "exact_sequence": {
+        "allowed_variants": 70,
+        "allowed_variants_rejected": 70,
+        "allowed_variation_false_positive_rate": 1.0,
+        "harmful_mutant_kill_rate": 1.0,
+        "harmful_mutants": 191,
+        "harmful_mutants_killed": 191
+      },
+      "invariant_non_regression": {
+        "allowed_variants": 70,
+        "allowed_variants_rejected": 0,
+        "allowed_variation_false_positive_rate": 0.0,
+        "harmful_mutant_kill_rate": 0.041884816753926704,
+        "harmful_mutants": 191,
+        "harmful_mutants_killed": 8
+      },
+      "ordered_gold_action": {
+        "allowed_variants": 70,
+        "allowed_variants_rejected": 0,
+        "allowed_variation_false_positive_rate": 0.0,
+        "harmful_mutant_kill_rate": 0.450261780104712,
+        "harmful_mutants": 191,
+        "harmful_mutants_killed": 86
+      }
+    },
+    "matrix": {
+      "alter_gold_action": {
+        "assertions": {
+          "combined_raw_and_verifier": {
+            "failures": 32,
+            "mutant_kill_rate": 0.9142857142857143
+          },
+          "exact_sequence": {
+            "failures": 35,
+            "mutant_kill_rate": 1.0
+          },
+          "invariant_non_regression": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "ordered_gold_action": {
+            "failures": 32,
+            "mutant_kill_rate": 0.9142857142857143
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 35
+      },
+      "alter_gold_observation": {
+        "assertions": {
+          "combined_raw_and_verifier": {
+            "failures": 32,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 32,
+            "mutant_kill_rate": 1.0
+          },
+          "invariant_non_regression": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "ordered_gold_action": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 32
+      },
+      "duplicate_gold": {
+        "assertions": {
+          "combined_raw_and_verifier": {
+            "failures": 35,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 35,
+            "mutant_kill_rate": 1.0
+          },
+          "invariant_non_regression": {
+            "failures": 8,
+            "mutant_kill_rate": 0.22857142857142856
+          },
+          "ordered_gold_action": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 35
+      },
+      "flip_verifier": {
+        "assertions": {
+          "combined_raw_and_verifier": {
+            "failures": 25,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 25,
+            "mutant_kill_rate": 1.0
+          },
+          "invariant_non_regression": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "ordered_gold_action": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 25
+      },
+      "inject_benign_tail": {
+        "assertions": {
+          "combined_raw_and_verifier": {
+            "failures": 17,
+            "false_positive_rate": 0.4857142857142857
+          },
+          "exact_sequence": {
+            "failures": 35,
+            "false_positive_rate": 1.0
+          },
+          "invariant_non_regression": {
+            "failures": 0,
+            "false_positive_rate": 0.0
+          },
+          "ordered_gold_action": {
+            "failures": 0,
+            "false_positive_rate": 0.0
+          }
+        },
+        "classification": "allowed",
+        "supported_traces": 35
+      },
+      "remove_gold": {
+        "assertions": {
+          "combined_raw_and_verifier": {
+            "failures": 32,
+            "mutant_kill_rate": 0.9142857142857143
+          },
+          "exact_sequence": {
+            "failures": 35,
+            "mutant_kill_rate": 1.0
+          },
+          "invariant_non_regression": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "ordered_gold_action": {
+            "failures": 31,
+            "mutant_kill_rate": 0.8857142857142857
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 35
+      },
+      "reorder_gold": {
+        "assertions": {
+          "combined_raw_and_verifier": {
+            "failures": 29,
+            "mutant_kill_rate": 1.0
+          },
+          "exact_sequence": {
+            "failures": 29,
+            "mutant_kill_rate": 1.0
+          },
+          "invariant_non_regression": {
+            "failures": 0,
+            "mutant_kill_rate": 0.0
+          },
+          "ordered_gold_action": {
+            "failures": 23,
+            "mutant_kill_rate": 0.7931034482758621
+          }
+        },
+        "classification": "harmful",
+        "supported_traces": 29
+      },
+      "shift_timestamps": {
+        "assertions": {
+          "combined_raw_and_verifier": {
+            "failures": 17,
+            "false_positive_rate": 0.4857142857142857
+          },
+          "exact_sequence": {
+            "failures": 35,
+            "false_positive_rate": 1.0
+          },
+          "invariant_non_regression": {
+            "failures": 0,
+            "false_positive_rate": 0.0
+          },
+          "ordered_gold_action": {
+            "failures": 0,
+            "false_positive_rate": 0.0
+          }
+        },
+        "classification": "allowed",
+        "supported_traces": 35
+      }
+    },
+    "seed": 20260730,
+    "status": "stored-trace audit mutation test; no changed agent or resettable environment was executed"
+  },
+  "independent_verifier": {
+    "agreement_with_manifest_solved": 0.9914529914529915,
+    "available": 136,
+    "interpretation": "external reports can corroborate terminal outcome but cannot prove which earlier action caused it",
+    "step_level_causal_verifier_available": 0,
+    "with_binary_outcome_and_manifest_comparator": 117
+  },
+  "issue": "https://github.com/pierretokns/frankengate/issues/104",
+  "loss_receipt_aggregate": {
+    "alignment_mismatch": 67,
+    "archives_parsed": 145,
+    "by_agent": {
+      "OpenHands": {
+        "archives": 74,
+        "exact_alignment": 32,
+        "mean_action_coverage": 0.7702702702702703,
+        "mean_observation_coverage": 0.7702702702702703,
+        "mean_timestamp_coverage": 0.7702702702702703,
+        "parser_variants": {
+          "openhands_event_cause_v1": 25,
+          "openhands_tensorblock_v1:drop_initial_planning_and_terminal_finish": 24,
+          "openhands_tensorblock_v1:exclude_terminal_finish": 8,
+          "openhands_tensorblock_v1:unmapped": 17
+        }
+      },
+      "SWE-agent": {
+        "archives": 15,
+        "exact_alignment": 15,
+        "mean_action_coverage": 0.9559322435519758,
+        "mean_observation_coverage": 1.0,
+        "mean_timestamp_coverage": 0.0,
+        "parser_variants": {
+          "sweagent_trajectory_v1": 15
+        }
+      },
+      "Terminus2": {
+        "archives": 34,
+        "exact_alignment": 14,
+        "mean_action_coverage": 0.9052427334303479,
+        "mean_observation_coverage": 0.9730787304448943,
+        "mean_timestamp_coverage": 1.0,
+        "parser_variants": {
+          "terminus2_episode_pair_v2": 34
+        }
+      },
+      "mini-SWE-agent": {
+        "archives": 22,
+        "exact_alignment": 17,
+        "mean_action_coverage": 0.8181818181818182,
+        "mean_observation_coverage": 0.7697539726356293,
+        "mean_timestamp_coverage": 0.8181818181818182,
+        "parser_variants": {
+          "miniswe_traj_json_bash_v1": 18,
+          "miniswe_unparsed": 4
+        }
+      }
+    },
+    "exact_alignment": 78,
+    "loss_types": {
+      "0 native calls remain outside the manifest step map": 7,
+      "0 native tail steps remain outside the manifest step map": 21,
+      "1 native calls remain outside the manifest step map": 8,
+      "1 native tail steps remain outside the manifest step map": 4,
+      "118 context events remain outside the action/observation projection": 1,
+      "123 context events remain outside the action/observation projection": 1,
+      "126 context events remain outside the action/observation projection": 1,
+      "131 native calls remain outside the manifest step map": 1,
+      "142 context events remain outside the action/observation projection": 1,
+      "152 context events remain outside the action/observation projection": 1,
+      "156 context events remain outside the action/observation projection": 1,
+      "185 context events remain outside the action/observation projection": 1,
+      "196 context events remain outside the action/observation projection": 1,
+      "2 native calls remain outside the manifest step map": 24,
+      "2 native tail steps remain outside the manifest step map": 7,
+      "2 non-action/context messages are not normalized as steps": 10,
+      "209 context events remain outside the action/observation projection": 1,
+      "25 native calls remain outside the manifest step map": 1,
+      "28 native calls remain outside the manifest step map": 1,
+      "29 native calls remain outside the manifest step map": 1,
+      "3 non-action/context messages are not normalized as steps": 8,
+      "30 native calls remain outside the manifest step map": 1,
+      "32 native calls remain outside the manifest step map": 1,
+      "349 context events remain outside the action/observation projection": 1,
+      "35 native calls remain outside the manifest step map": 1,
+      "40 native calls remain outside the manifest step map": 1,
+      "53 native calls remain outside the manifest step map": 1,
+      "61 context events remain outside the action/observation projection": 2,
+      "62 context events remain outside the action/observation projection": 1,
+      "63 context events remain outside the action/observation projection": 2,
+      "68 context events remain outside the action/observation projection": 1,
+      "68 native calls remain outside the manifest step map": 1,
+      "7 native tail steps remain outside the manifest step map": 2,
+      "86 context events remain outside the action/observation projection": 1,
+      "88 context events remain outside the action/observation projection": 1,
+      "90 context events remain outside the action/observation projection": 1,
+      "91 context events remain outside the action/observation projection": 2,
+      "98 context events remain outside the action/observation projection": 2,
+      "99 context events remain outside the action/observation projection": 2,
+      "authorization, purpose, classification, and authorization epoch are absent": 145,
+      "commands are reconstructed from fenced bash; no proposal/authorization event exists": 18,
+      "execution_time is a duration, not an event timestamp": 15,
+      "final response may have no following prompt/observation": 34,
+      "manifest step map mismatch: mapped=0, manifest=23": 2,
+      "manifest step map mismatch: mapped=0, manifest=26": 1,
+      "manifest step map mismatch: mapped=0, manifest=27": 1,
+      "manifest step map mismatch: mapped=0, manifest=28": 1,
+      "manifest step map mismatch: mapped=0, manifest=30": 1,
+      "manifest step map mismatch: mapped=0, manifest=31": 1,
+      "manifest step map mismatch: mapped=0, manifest=32": 1,
+      "manifest step map mismatch: mapped=0, manifest=34": 3,
+      "manifest step map mismatch: mapped=0, manifest=37": 1,
+      "manifest step map mismatch: mapped=0, manifest=39": 1,
+      "manifest step map mismatch: mapped=0, manifest=43": 1,
+      "manifest step map mismatch: mapped=0, manifest=47": 1,
+      "manifest step map mismatch: mapped=0, manifest=48": 2,
+      "manifest step map mismatch: mapped=0, manifest=62": 1,
+      "manifest step map mismatch: mapped=0, manifest=64": 1,
+      "manifest step map mismatch: mapped=0, manifest=69": 2,
+      "manifest step map mismatch: mapped=11, manifest=36": 1,
+      "manifest step map mismatch: mapped=11, manifest=38": 1,
+      "manifest step map mismatch: mapped=12, manifest=79": 1,
+      "manifest step map mismatch: mapped=14, manifest=39": 1,
+      "manifest step map mismatch: mapped=15, manifest=23": 1,
+      "manifest step map mismatch: mapped=15, manifest=31": 1,
+      "manifest step map mismatch: mapped=16, manifest=44": 1,
+      "manifest step map mismatch: mapped=18, manifest=31": 1,
+      "manifest step map mismatch: mapped=19, manifest=25": 1,
+      "manifest step map mismatch: mapped=19, manifest=26": 1,
+      "manifest step map mismatch: mapped=21, manifest=29": 1,
+      "manifest step map mismatch: mapped=21, manifest=39": 1,
+      "manifest step map mismatch: mapped=22, manifest=49": 1,
+      "manifest step map mismatch: mapped=24, manifest=42": 1,
+      "manifest step map mismatch: mapped=24, manifest=58": 1,
+      "manifest step map mismatch: mapped=24, manifest=63": 1,
+      "manifest step map mismatch: mapped=26, manifest=37": 1,
+      "manifest step map mismatch: mapped=26, manifest=45": 1,
+      "manifest step map mismatch: mapped=27, manifest=45": 1,
+      "manifest step map mismatch: mapped=28, manifest=34": 1,
+      "manifest step map mismatch: mapped=28, manifest=45": 1,
+      "manifest step map mismatch: mapped=30, manifest=36": 1,
+      "manifest step map mismatch: mapped=31, manifest=52": 1,
+      "manifest step map mismatch: mapped=31, manifest=78": 1,
+      "manifest step map mismatch: mapped=33, manifest=22": 1,
+      "manifest step map mismatch: mapped=35, manifest=46": 1,
+      "manifest step map mismatch: mapped=36, manifest=41": 1,
+      "manifest step map mismatch: mapped=36, manifest=49": 1,
+      "manifest step map mismatch: mapped=36, manifest=68": 1,
+      "manifest step map mismatch: mapped=38, manifest=60": 1,
+      "manifest step map mismatch: mapped=39, manifest=47": 1,
+      "manifest step map mismatch: mapped=40, manifest=127": 1,
+      "manifest step map mismatch: mapped=40, manifest=158": 1,
+      "manifest step map mismatch: mapped=42, manifest=59": 1,
+      "manifest step map mismatch: mapped=44, manifest=49": 1,
+      "manifest step map mismatch: mapped=46, manifest=70": 1,
+      "manifest step map mismatch: mapped=46, manifest=82": 1,
+      "manifest step map mismatch: mapped=47, manifest=125": 1,
+      "manifest step map mismatch: mapped=47, manifest=166": 1,
+      "manifest step map mismatch: mapped=51, manifest=135": 1,
+      "manifest step map mismatch: mapped=58, manifest=194": 1,
+      "manifest step map mismatch: mapped=71, manifest=87": 1,
+      "manifest step map mismatch: mapped=73, manifest=142": 1,
+      "manifest step map mismatch: mapped=80, manifest=85": 1,
+      "manifest step map mismatch: mapped=9, manifest=23": 1,
+      "manifest step map mismatch: mapped=98, manifest=102": 1,
+      "no independent step-level causal verifier exists": 145,
+      "no normalized action/observation steps": 11,
+      "no parseable messages trajectory found": 4,
+      "parallel and non-command tool actions are not represented as diagnosis steps": 25,
+      "terminal keystrokes are reconstructed commands without authorization events": 34,
+      "the published CodeTracer source has no tensorblock parser at the reviewed revision": 49,
+      "tool observations are reconstructed from the next LLM request": 49,
+      "tool proposals and authorization decisions are not distinct events": 15
+    },
+    "manifest_steps": 6883,
+    "mapped_steps": 4632,
+    "native_steps": 5191,
+    "relevant_members": 9341,
+    "relevant_uncompressed_bytes": 772648115
+  },
+  "result_content_sha256": "652ee80b5ad1888ec8c6f583e0b5db0688da402e6d3508b98b567ff08a58577c",
+  "run_date": "2026-07-30",
+  "schema_version": "frankengate-trace-empirical-result-v1",
+  "seed": 20260730,
+  "source": {
+    "all_archive_hashes_verified": true,
+    "allowlist_identity_digest": "23a7a3b70280ad14c2da13431831e9f6e824ff1a854a918188ddb55d17d6b016",
+    "allowlist_sha256": "83c5b8852ec0dd2144de59fd0deb88fbd29f5d947fe63459fd62f17b4ff0cc86",
+    "archive_count": 145,
+    "codetracer_lfs_checkout_status": "code reviewed with LFS smudge disabled because the public repository reported an exhausted LFS budget",
+    "codetracer_release_status": "untagged; no repository tags at review time",
+    "codetracer_revision": "2d302191dd07e7c0c2da6f7a5e9451c7cbb62d34",
+    "codetracer_url": "https://github.com/NJU-LINK/CodeTracer/tree/2d302191dd07e7c0c2da6f7a5e9451c7cbb62d34",
+    "compressed_bytes": 28241363,
+    "dataset_id": "NJU-LINK/CodeTraceBench",
+    "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+    "dataset_url": "https://huggingface.co/datasets/NJU-LINK/CodeTraceBench/tree/aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+    "license": "MIT",
+    "missing_artifact_rows": 3,
+    "raw_data_committed": false
+  }
+}

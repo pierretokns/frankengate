@@ -57,5 +57,7 @@ For every benchmark separately:
 8. refuse skill, employee, natural prevalence, or learning claims.
 
 This is useful for outcome-conditioned mechanism validation across task domains.
-It cannot stand in for real-user enterprise traces, and the absent dataset
-license prevents raw redistribution even if access is later granted.
+It cannot stand in for real-user enterprise traces. The dataset's
+`NOASSERTION` status does not block analysis after access approval, but this
+study makes no claim that raw records may be redistributed or used for
+training.

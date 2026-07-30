@@ -62,6 +62,31 @@ def inputs():
                 }
             },
         },
+        "codetracebench_raw": {
+            "schema_version": "codetrace-raw",
+            "e3_factorial": {
+                "eligible_traces": 35,
+                "arms": {
+                    "I0T0J0": {
+                        "top1_accuracy": 0.286,
+                        "top3_accuracy": 0.543,
+                    },
+                    "I1T1J1": {
+                        "top1_accuracy": 0.171,
+                        "top3_accuracy": 0.257,
+                    },
+                },
+            },
+            "e4_assertion_mutation": {
+                "aggregate_by_assertion": {
+                    "combined_raw_and_verifier": {
+                        "harmful_mutants": 191,
+                        "harmful_mutant_kill_rate": 0.969,
+                        "allowed_variation_false_positive_rate": 0.486,
+                    }
+                }
+            },
+        },
         "mast": {
             "schema_version": "mast",
             "canonical_projection": {
@@ -114,6 +139,52 @@ def inputs():
                 "empirical_metrics_run": False,
             },
         },
+        "otel_roundtrip": {
+            "schema_version": "otel-roundtrip",
+            "main_roundtrip": {
+                "trace_ids_retained": 12,
+                "stored_spans": 48,
+                "parent_edges_retained": 34,
+                "links_retained": 16,
+            },
+            "negative_controls_passed": True,
+        },
+        "memory_conformance": {
+            "schema_version": "memory",
+            "assertions": {"passed": 15, "total": 15, "failed": 0},
+        },
+        "agenttrace": {
+            "schema_version": "agenttrace",
+            "corpus": {"rows": 1400},
+            "nl2bash_replay": {
+                "historical_rows": 400,
+                "executed_rows": 17,
+                "equivalent_rows": 9,
+            },
+        },
+        "native_history": {
+            "schema_version": "native-history",
+            "datasets": {
+                "one": {},
+                "two": {},
+            },
+            "classification": {"complete_harness_home": []},
+        },
+        "history_discovery": {
+            "schema_version": "history-discovery",
+            "classification": {
+                "near_complete_home_state": ["one"],
+                "real_research_trace_strata": ["one", "two"],
+                "paired_trace_and_memory_strata": ["one", "two"],
+            },
+            "discovery_scale": {
+                "top_repo_native_claude_files": 2362,
+                "top_repo_native_codex_files": 329,
+            },
+            "security_observation": {
+                "codex_repositories_with_auth_adjacent": 9,
+            },
+        },
     }
 
 
@@ -127,6 +198,10 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
         self.assertEqual(
             "mixed_partial",
             matrix["levels"]["L3_diagnosis_and_eval_proposals"]["status"],
+        )
+        self.assertEqual(
+            "synthetic_invariant_pass",
+            matrix["levels"]["L5_temporal_memory"]["status"],
         )
         self.assertEqual(
             "not_supported",

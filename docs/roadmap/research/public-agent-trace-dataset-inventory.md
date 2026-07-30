@@ -17,15 +17,24 @@ admitted only for the claim its observed fields support:
 - **CodeTraceBench** for human-labeled failure localization and redundant exploration;
 - **SPARK PDI** for limited observational fail→partial→pass contrasts and generated
   `SKILL.md` artifacts;
-- **pagarsky/agent-trace** for deterministic tool replay and telemetry;
+- **pagarsky/agent-trace** for bounded tool-replay feasibility and telemetry;
 - **Exgentic v1** for OTel-shaped ingestion and chat-level signals;
 - **MCP Agent Trajectory Benchmark** for ATIF conversion and stored-trace assertions;
 - **Trace Commons** for a small, biased but ecologically real harness check; and
+- **ML Intern, evalstate model-toolcall research, and Trace Commons durable
+  context interactions** for real research and trace→memory studies;
+- **NatureBench and DiscoverPhysics** for controlled scientific
+  hypothesis→experiment→evidence→paper validity arms; and
 - **Open Agent Traces** for synthetic process-mining controls.
 
-CMU Agent Trajectories is scientifically attractive but cannot enter the publishable
-corpus until its missing license is clarified. Its removal of incomplete/crashed traces
-also creates survivorship bias around Frankengate's target failure modes.
+The detailed researcher/memory design and source pins are in
+[researcher traces and versioned harness memory](researcher-traces-and-versioned-memory-study.md).
+
+CMU Agent Trajectories is scientifically attractive and is admissible for analysis
+once the current account receives access. Its `NOASSERTION` status limits raw
+redistribution and training-right claims but is not an analysis veto. Its removal of
+incomplete/crashed traces also creates survivorship bias around Frankengate's target
+failure modes.
 
 ## Admission rules
 

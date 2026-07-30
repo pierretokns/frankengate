@@ -1,0 +1,39 @@
+{
+  "schema_version": "public-agent-history-discovery-manifest-v1",
+  "audit_date": "2026-07-30",
+  "hugging_face": {
+    "query": "Hub datasets API with filter=format:agent-traces, fully paginated",
+    "dataset_hits": 359,
+    "count_semantics": "discovery hits; not unique users, native corpora, or independent sources"
+  },
+  "github": {
+    "claude_query": "authenticated code/path search for .claude/projects/**/*.jsonl followed by immutable tree enumeration",
+    "claude_indexed_matches": 1364,
+    "claude_top_repositories_inspected": 12,
+    "claude_native_jsonl_files": 2362,
+    "claude_native_jsonl_bytes": 2567303953,
+    "codex_query": "authenticated code/path search for .codex/sessions/**/*.jsonl followed by immutable tree enumeration",
+    "codex_indexed_matches": 320,
+    "codex_top_repositories_inspected": 10,
+    "codex_native_jsonl_files": 329,
+    "codex_native_jsonl_bytes": 280394087,
+    "codex_top_repositories_with_auth_adjacent": 9
+  },
+  "source_manifests": [
+    "datasets/glint-fable5-partial-claude-home.json",
+    "datasets/github-jkim-near-complete-claude-home.json",
+    "datasets/github-cctrace-portable-claude-session.json",
+    "datasets/github-wjmlong-codex-sessions.json",
+    "datasets/github-kga-codex-sessions.json",
+    "datasets/zen-agentic-card-only.json",
+    "datasets/ml-intern-research-sessions.json",
+    "datasets/evalstate-model-toolcall-research.json",
+    "datasets/biaslab-research-memory.json",
+    "datasets/winelab-research-log-memory.json",
+    "datasets/trace-commons-memory-pairing.json",
+    "datasets/naturebench-scientific-traces.json",
+    "datasets/discoverphysics-research-traces.json"
+  ],
+  "raw_content_committed": false,
+  "candidate_values_emitted": false
+}

@@ -3,11 +3,11 @@
   "dataset_id": "cx-cmu/agent_trajectories",
   "dataset_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
   "license": "NOASSERTION",
-  "license_note": "The pinned Hugging Face dataset declares no license. Results remain private exploratory and raw records may not be redistributed.",
+  "license_note": "The pinned Hugging Face dataset declares no license. NOASSERTION does not block analysis, but raw redistribution and training-right claims remain out of scope.",
   "source_url": "https://huggingface.co/datasets/cx-cmu/agent_trajectories",
   "source_format": "benchmark-partitioned JSONL and Parquet",
   "adapter": "cmu_agent_trajectories_v1",
-  "admission_status": "access_and_license_quarantine",
+  "admission_status": "access_quarantine",
   "published_card_counts": {
     "retained_trajectories": 8653,
     "removed_incomplete_trajectories": 1445,

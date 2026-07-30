@@ -1,0 +1,26 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "RangaPrasath/coding-sessions",
+  "dataset_revision": "9745612dbb84733bd9da15544e7ca8cebaa82c2a",
+  "license": "MIT",
+  "source_url": "https://huggingface.co/datasets/RangaPrasath/coding-sessions",
+  "source_format": "pi-brain flattened/redacted session rows derived from ~/.codex/sessions",
+  "adapter": "public_native_history_fidelity_v1",
+  "publication_basis": "Intentional public exporter release",
+  "rights_assertion": "MIT dataset metadata does not override rights in embedded third-party code or outputs",
+  "privacy_review": "Publisher reports deterministic local redaction and timestamp/path transformation; aggregate-only secondary scan required",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "declared_codex_rows": 73,
+    "complete_home_directory": false,
+    "byte_native": false,
+    "flattened_messages": true,
+    "stable_user_identity": false
+  },
+  "admission": "admit_as_flattened_codex_negative_control",
+  "enterprise_transfer": "Useful for measuring flattening loss, not native parser or cross-user claims"
+}

@@ -1,0 +1,742 @@
+{
+  "classification": {
+    "actual_native_project_tree": [
+      "wisp_claude"
+    ],
+    "byte_native_session_files": [
+      "cfahlgren_codex"
+    ],
+    "complete_harness_home": [],
+    "flattened_session_derivative": [
+      "dataclaw_peter",
+      "ranga_codex"
+    ],
+    "merged_complete_workflow_derivative": [
+      "jobseek_claude"
+    ],
+    "record_preserving_normalized_native_derivative": [
+      "mike_codex"
+    ],
+    "scrubbed_native_event_stream": [
+      "alin_claude"
+    ]
+  },
+  "conclusions": [
+    "none of the audited datasets is a complete Claude or Codex harness home",
+    "Wisp is the closest project-tree mirror and preserves nested subagent files",
+    "Alin preserves the richest exact Claude event graph among the newly audited sources",
+    "cfahlgren provides the only audited byte-native Codex files, but only two sessions and NOASSERTION rights",
+    "Mike preserves Codex record types but cannot exactly join tool calls to results because call IDs are absent",
+    "Ranga originates from Codex session storage but is a flattened derivative, not native Codex JSONL",
+    "DataClaw provides useful longitudinal coverage but omits tool outputs and is a mirror, not an independent user",
+    "Jobseek preserves complete repetitive workflows after merging main and subagent records, not native file boundaries",
+    "dataset files, declared counts, native session IDs, and user identities are different quantities",
+    "public release does not establish representative enterprise behavior or training rights"
+  ],
+  "datasets": {
+    "alin_claude": {
+      "content_safety_scan": {
+        "candidate_interpretation": "regex candidates only; no values emitted and no validity asserted",
+        "possible_secret_regex_candidate_total": 0,
+        "possible_secret_regex_candidates": {},
+        "redaction_evidence": {
+          "literal_redacted": 1413,
+          "numbered_typed_placeholder": 0,
+          "scrubbed_typed_placeholder": 28292
+        },
+        "redaction_evidence_total": 29705,
+        "strings_scanned": 164463
+      },
+      "fidelity": {
+        "branch_points": 624,
+        "dangling_parent_references": 0,
+        "date_span": {
+          "first_date": "2026-06-09",
+          "last_date": "2026-06-12"
+        },
+        "explicit_compaction_records": 2,
+        "model_metadata_records": 2506,
+        "parent_reference_records": 7593,
+        "parent_references_joined": 7593,
+        "parseable_timestamp": {
+          "eligible": 7809,
+          "fraction": 1.0,
+          "present": 7809
+        },
+        "project_metadata_records": 7612,
+        "subagent_signal_records": 1195,
+        "timestamp": {
+          "eligible": 9497,
+          "fraction": 0.82226,
+          "present": 7809
+        },
+        "usage_metadata_records": 2506
+      },
+      "inventory": {
+        "actual_minus_declared_records": 0,
+        "blank_lines": 0,
+        "declared_published_files": 18,
+        "declared_published_rows": 9497,
+        "distinct_session_ids": 18,
+        "jsonl_files": 18,
+        "malformed_records": 0,
+        "valid_records": 9497
+      },
+      "longitudinal_scope": {
+        "cross_user_claim_supported": false,
+        "distinct_sessions": 18,
+        "explicit_project_metadata": true,
+        "session_files": 18,
+        "single_publisher_context_only": true,
+        "stable_user_field": false
+      },
+      "loss_receipt": [
+        "record graph is preserved but 35,732 declared scrub operations make it non-byte-native",
+        "session events only; Claude settings, skills, memories, credentials, and caches are absent",
+        "stable person identity and independently verified task outcomes are absent",
+        "hook attachments are operational events, not tool-call results"
+      ],
+      "message_and_tool_structure": {
+        "assistant_records": 2506,
+        "attachment_records": 3428,
+        "call_result_join": {
+          "ambiguous_reused_ids": 0,
+          "calls_with_id": 1170,
+          "matched_by_id": 1170,
+          "one_to_one_id_joins": 1170,
+          "results_with_id": 1170,
+          "unresolved_calls": 0,
+          "unresolved_results": 0
+        },
+        "hook_attachment_records": 3247,
+        "message_records": 3930,
+        "tool_calls": 1170,
+        "tool_results": 1170,
+        "user_records": 1424
+      },
+      "privacy_contract": {
+        "aggregate_counts_only": true,
+        "native_ids_emitted": false,
+        "raw_content_emitted": false,
+        "raw_data_committed": false,
+        "source_paths_emitted": false
+      },
+      "record_types": {
+        "agent-name": 65,
+        "ai-title": 348,
+        "assistant": 2506,
+        "attachment": 3428,
+        "file-history-snapshot": 197,
+        "last-prompt": 406,
+        "mode": 406,
+        "permission-mode": 266,
+        "queue-operation": 197,
+        "system": 254,
+        "user": 1424
+      },
+      "redaction_manifest": {
+        "declared_excluded_rows": 0,
+        "declared_scrub_operations": 35732,
+        "declared_source_rows": 9497,
+        "deterministic": true
+      },
+      "source": {
+        "dataset_id": "AlinCiocan/fable-5-claude-code-traces",
+        "home_export_status": "session files only; not a complete Claude harness home",
+        "license": "CC-BY-4.0",
+        "provenance": "public full-scrubbed release",
+        "representation": "scrubbed_native_claude_event_stream",
+        "revision": "e33ebbca230ae258b2c28aeee9fe3429e7fbeab6"
+      }
+    },
+    "cfahlgren_codex": {
+      "content_safety_scan": {
+        "candidate_interpretation": "regex candidates only; no values emitted and no validity asserted",
+        "possible_secret_regex_candidate_total": 0,
+        "possible_secret_regex_candidates": {},
+        "redaction_evidence": {
+          "literal_redacted": 0,
+          "numbered_typed_placeholder": 0,
+          "scrubbed_typed_placeholder": 11
+        },
+        "redaction_evidence_total": 11,
+        "strings_scanned": 788
+      },
+      "fidelity": {
+        "branch_points": 0,
+        "explicit_compaction_records": 0,
+        "model_metadata_records": 2,
+        "parent_reference_records": 0,
+        "parseable_timestamp": {
+          "eligible": 130,
+          "fraction": 1.0,
+          "present": 130
+        },
+        "project_metadata_records": 2,
+        "subagent_signal_records": 0,
+        "timestamp": {
+          "eligible": 130,
+          "fraction": 1.0,
+          "present": 130
+        },
+        "usage_metadata_records": 5
+      },
+      "inventory": {
+        "blank_lines": 0,
+        "derived_blank_lines": 0,
+        "derived_malformed_rows": 0,
+        "derived_rows_byte_equal_to_raw_file": 2,
+        "derived_session_rows": 2,
+        "jsonl_files": 2,
+        "malformed_records": 0,
+        "session_meta_records": 2,
+        "valid_records": 130
+      },
+      "longitudinal_scope": {
+        "cross_user_claim_supported": false,
+        "explicit_project_metadata": true,
+        "session_files": 2,
+        "stable_user_field": false
+      },
+      "loss_receipt": [
+        "the two rollout files are byte-native according to the publisher and the derived rows exactly duplicate them",
+        "the Hub license is `other`; inspection is permitted but redistribution and training rights are NOASSERTION",
+        "the sample is too small for longitudinal, population, or enterprise inference",
+        "session files are not a complete Codex harness home"
+      ],
+      "message_and_tool_structure": {
+        "call_result_join": {
+          "ambiguous_reused_ids": 0,
+          "calls_with_id": 2,
+          "matched_by_id": 2,
+          "one_to_one_id_joins": 2,
+          "results_with_id": 2,
+          "unresolved_calls": 0,
+          "unresolved_results": 0
+        },
+        "message_records": 18,
+        "tool_calls": 2,
+        "tool_results": 2
+      },
+      "payload_types": {
+        "[missing]": 4,
+        "agent_message": 5,
+        "function_call": 2,
+        "function_call_output": 2,
+        "message": 11,
+        "reasoning": 50,
+        "task_complete": 2,
+        "task_started": 2,
+        "token_count": 5,
+        "user_message": 2,
+        "web_search_call": 45
+      },
+      "privacy_contract": {
+        "aggregate_counts_only": true,
+        "native_ids_emitted": false,
+        "raw_content_emitted": false,
+        "raw_data_committed": false,
+        "source_paths_emitted": false
+      },
+      "record_types": {
+        "event_msg": 16,
+        "response_item": 110,
+        "session_meta": 2,
+        "turn_context": 2
+      },
+      "source": {
+        "dataset_id": "cfahlgren1/codex-sessions",
+        "home_export_status": "two native Codex session files; not a complete harness home",
+        "license": "NOASSERTION (Hub metadata: other)",
+        "provenance": "public dataset declaring two untouched raw Codex rollouts",
+        "representation": "byte_native_codex_rollouts_plus_derived_duplicate_view",
+        "revision": "87dcc5b0df77f94b8750772dce7078866d3e6877"
+      }
+    },
+    "dataclaw_peter": {
+      "content_safety_scan": {
+        "candidate_interpretation": "regex candidates only; no values emitted and no validity asserted",
+        "possible_secret_regex_candidate_total": 0,
+        "possible_secret_regex_candidates": {},
+        "redaction_evidence": {
+          "literal_redacted": 1078,
+          "numbered_typed_placeholder": 0,
+          "scrubbed_typed_placeholder": 85
+        },
+        "redaction_evidence_total": 1163,
+        "strings_scanned": 591219
+      },
+      "fidelity": {
+        "branch_points": 0,
+        "date_span": {
+          "first_date": "2026-01-16",
+          "last_date": "2026-02-24"
+        },
+        "distinct_model_values": 5,
+        "explicit_compaction_records": 0,
+        "model_metadata_rows": 549,
+        "parent_reference_records": 0,
+        "parseable_timestamp": {
+          "eligible": 169168,
+          "fraction": 1.0,
+          "present": 169168
+        },
+        "project_metadata_rows": 549,
+        "subagent_signal_records": 0,
+        "timestamp": {
+          "eligible": 169168,
+          "fraction": 1.0,
+          "present": 169168
+        },
+        "usage_stats_rows": 549
+      },
+      "inventory": {
+        "blank_lines": 0,
+        "declared_projects": 14,
+        "declared_sessions": 549,
+        "declared_skipped_sessions": 17,
+        "distinct_project_values": 14,
+        "duplicate_session_rows": 46,
+        "jsonl_files": 1,
+        "malformed_records": 0,
+        "unique_session_ids": 503,
+        "valid_records": 549
+      },
+      "longitudinal_scope": {
+        "cross_user_claim_supported": false,
+        "dataset_level_single_user_inference_only": true,
+        "explicit_project_metadata": true,
+        "independent_user_cohort": false,
+        "stable_user_field": false
+      },
+      "loss_receipt": [
+        "DataClaw flattened Claude records into conversations and message rows",
+        "tool outputs, native tool IDs, parent/branch/subagent/compaction events, permission decisions, and exact event envelopes are absent",
+        "549 rows contain fewer unique session IDs because duplicate session rows are present",
+        "the repository card points loaders to peteromallet/dataclaw-peteromallet; treat this as a mirror, not an independent user",
+        "paths were made project-relative and usernames hashed by the exporter"
+      ],
+      "message_and_tool_structure": {
+        "call_result_join": {
+          "exact_id_joins": 0,
+          "id_fields_present": false,
+          "unresolved_calls": 80409
+        },
+        "message_records": 169168,
+        "thinking_records": 41873,
+        "tool_calls_without_native_ids": 80409,
+        "tool_results": 0
+      },
+      "privacy_contract": {
+        "aggregate_counts_only": true,
+        "native_ids_emitted": false,
+        "raw_content_emitted": false,
+        "raw_data_committed": false,
+        "source_paths_emitted": false
+      },
+      "record_types": {
+        "flattened_conversation_rows": 549,
+        "message_roles": {
+          "assistant": 160444,
+          "user": 8724
+        }
+      },
+      "redaction_manifest": {
+        "declared_redactions": 646,
+        "declared_skipped_sessions": 17
+      },
+      "source": {
+        "dataset_id": "Edmon02/dataclaw-peteromallet",
+        "home_export_status": "normalized conversations; not native Claude files or a complete harness home",
+        "license": "MIT",
+        "provenance": "public DataClaw mirror/export pointing to Peter O'Malley's source",
+        "representation": "flattened_longitudinal_claude_derivative",
+        "revision": "96e52d19e236676f323cc41916daab006a6ac2e2"
+      }
+    },
+    "jobseek_claude": {
+      "content_safety_scan": {
+        "candidate_interpretation": "regex candidates only; no values emitted and no validity asserted",
+        "possible_secret_regex_candidate_total": 0,
+        "possible_secret_regex_candidates": {},
+        "redaction_evidence": {
+          "literal_redacted": 0,
+          "numbered_typed_placeholder": 0,
+          "scrubbed_typed_placeholder": 0
+        },
+        "redaction_evidence_total": 0,
+        "strings_scanned": 35169
+      },
+      "fidelity": {
+        "branch_points": 185,
+        "dangling_parent_references": 5,
+        "explicit_compaction_records": 0,
+        "model_metadata_records": 950,
+        "parent_reference_records": 1717,
+        "parent_references_joined_within_merged_file": 1712,
+        "parseable_timestamp": {
+          "eligible": 1799,
+          "fraction": 1.0,
+          "present": 1799
+        },
+        "project_metadata_records": 1732,
+        "subagent_signal_records": 878,
+        "timestamp": {
+          "eligible": 1851,
+          "fraction": 0.971907,
+          "present": 1799
+        },
+        "usage_metadata_records": 950
+      },
+      "inventory": {
+        "actual_minus_declared_records": 0,
+        "blank_lines": 0,
+        "declared_records_from_headers": 1851,
+        "header_rows_excluded_from_record_count": 8,
+        "jsonl_files": 8,
+        "malformed_records": 0,
+        "sample_scope": "deterministic eight-workflow sample, not the full approximately 5.155 GB corpus",
+        "valid_records": 1851
+      },
+      "longitudinal_scope": {
+        "cross_user_claim_supported": false,
+        "independent_user_cohort": false,
+        "repeated_single_application_workflow": true,
+        "stable_user_field": false
+      },
+      "loss_receipt": [
+        "each file is a complete workflow derivative with a synthetic header and main/subagent records merged into one chronology",
+        "source file-tree and per-agent file boundaries are not preserved",
+        "the sample covers eight highly repetitive job-monitor workflows and is not population evidence",
+        "publisher metadata says MIT and also not-for-AI-training; this study makes no training-right claim",
+        "the full repository was not audited, so counts apply only to the deterministic sample"
+      ],
+      "message_and_tool_structure": {
+        "call_result_join": {
+          "ambiguous_reused_ids": 0,
+          "calls_with_id": 579,
+          "matched_by_id": 577,
+          "one_to_one_id_joins": 577,
+          "results_with_id": 577,
+          "unresolved_calls": 2,
+          "unresolved_results": 0
+        },
+        "message_records": 1555,
+        "tool_calls": 579,
+        "tool_results": 577
+      },
+      "privacy_contract": {
+        "aggregate_counts_only": true,
+        "native_ids_emitted": false,
+        "raw_content_emitted": false,
+        "raw_data_committed": false,
+        "source_paths_emitted": false
+      },
+      "record_types": {
+        "assistant": 950,
+        "file-history-snapshot": 9,
+        "item.completed": 23,
+        "item.started": 20,
+        "progress": 172,
+        "queue-operation": 29,
+        "system": 5,
+        "user": 605,
+        "ws.action": 38
+      },
+      "source": {
+        "dataset_id": "viktor-shcherb/jobseek-agent-traces",
+        "home_export_status": "header plus merged main/subagent records; not a native Claude project tree",
+        "license": "MIT; publisher tag not-for-AI-training",
+        "provenance": "deterministic eight-trace sample from a public workflow corpus",
+        "representation": "merged_complete_workflow_claude_derivative",
+        "revision": "5aae997225724606da9f7d23ada9cd49e81ff177"
+      }
+    },
+    "mike_codex": {
+      "content_safety_scan": {
+        "candidate_interpretation": "regex candidates only; no values emitted and no validity asserted",
+        "possible_secret_regex_candidate_total": 6,
+        "possible_secret_regex_candidates": {
+          "jwt_candidate": 6
+        },
+        "redaction_evidence": {
+          "literal_redacted": 37,
+          "numbered_typed_placeholder": 0,
+          "scrubbed_typed_placeholder": 41
+        },
+        "redaction_evidence_total": 78,
+        "strings_scanned": 73775
+      },
+      "fidelity": {
+        "branch_points": 0,
+        "explicit_compaction_records": 0,
+        "model_metadata": {
+          "eligible": 49,
+          "fraction": 1.0,
+          "present": 49
+        },
+        "parent_reference_records": 0,
+        "parseable_timestamp": {
+          "eligible": 12316,
+          "fraction": 1.0,
+          "present": 12316
+        },
+        "project_metadata_records": 0,
+        "record_index": {
+          "eligible": 12316,
+          "fraction": 1.0,
+          "present": 12316
+        },
+        "record_index_sequence_violations": 0,
+        "subagent_or_thread_source_records": 49,
+        "timestamp": {
+          "eligible": 12316,
+          "fraction": 1.0,
+          "present": 12316
+        },
+        "usage_metadata_records": 42
+      },
+      "inventory": {
+        "actual_minus_declared_records": 432,
+        "blank_lines": 0,
+        "declared_published_records": 11884,
+        "declared_selected_files": 27,
+        "distinct_session_ids": 32,
+        "files_with_multiple_session_ids": 2,
+        "jsonl_files": 27,
+        "malformed_records": 0,
+        "session_meta_records": 49,
+        "valid_records": 12316
+      },
+      "longitudinal_scope": {
+        "autonomous_session_collection": true,
+        "explicit_project_field": false,
+        "human_collaboration_claim_supported": false,
+        "project_proxy_from_file_partition": 27,
+        "stable_user_field": false
+      },
+      "loss_receipt": [
+        "not byte-native: schema_version, session_id, and record_index were added around Codex records",
+        "sanitization changed content and the public card declares no dataset license",
+        "function calls and outputs lack call IDs; only order/cardinality pairing is possible",
+        "no parent, branch, compaction, stable-user, or explicit project field",
+        "27 published files contain more session_meta/session IDs than the file count",
+        "actual record count differs from the dataset manifest count"
+      ],
+      "message_and_tool_structure": {
+        "call_result_join": {
+          "exact_id_joins": 0,
+          "id_fields_present": false,
+          "order_only_candidate_pairs": 3175,
+          "unresolved_call_count_by_cardinality": 7,
+          "unresolved_result_count_by_cardinality": 0
+        },
+        "message_records": 2359,
+        "tool_calls": 3182,
+        "tool_results": 3175
+      },
+      "payload_types": {
+        "[missing]": 96,
+        "agent_message": 2310,
+        "function_call": 3182,
+        "function_call_output": 3175,
+        "item_completed": 3207,
+        "patch_apply_end": 213,
+        "task_complete": 42,
+        "token_count": 42,
+        "user_message": 49
+      },
+      "privacy_contract": {
+        "aggregate_counts_only": true,
+        "native_ids_emitted": false,
+        "raw_content_emitted": false,
+        "raw_data_committed": false,
+        "source_paths_emitted": false
+      },
+      "record_types": {
+        "event_msg": 5863,
+        "response_item": 6357,
+        "session_meta": 49,
+        "turn_context": 47
+      },
+      "redaction_manifest": {
+        "declared_dropped_records": 0,
+        "declared_redactions": 2,
+        "declared_truncated_fields": 0
+      },
+      "source": {
+        "dataset_id": "Mike0021/codex-sessions",
+        "home_export_status": "not a complete Codex harness home",
+        "license": "NOASSERTION",
+        "provenance": "public dataset; card declares no license",
+        "representation": "scrubbed_record_preserving_codex_derivative",
+        "revision": "29b52c15654087c5c5d0adcd062bfe40f6464d6b"
+      }
+    },
+    "ranga_codex": {
+      "content_safety_scan": {
+        "candidate_interpretation": "regex candidates only; no values emitted and no validity asserted",
+        "possible_secret_regex_candidate_total": 0,
+        "possible_secret_regex_candidates": {},
+        "redaction_evidence": {
+          "literal_redacted": 8651,
+          "numbered_typed_placeholder": 1302,
+          "scrubbed_typed_placeholder": 951
+        },
+        "redaction_evidence_total": 10904,
+        "strings_scanned": 104541
+      },
+      "fidelity": {
+        "branch_points": 0,
+        "date_span": {
+          "first_date": "2026-02-07",
+          "last_date": "2026-05-14"
+        },
+        "distinct_model_values": 6,
+        "distinct_project_values": 23,
+        "explicit_compaction_records": 0,
+        "model_metadata_records": 13462,
+        "parent_reference_records": 0,
+        "parseable_timestamp": {
+          "eligible": 22726,
+          "fraction": 0.991288,
+          "present": 22528
+        },
+        "project_metadata_rows": 79,
+        "subagent_signal_records": 0,
+        "timestamp": {
+          "eligible": 22876,
+          "fraction": 0.993443,
+          "present": 22726
+        },
+        "usage_metadata_records": 0
+      },
+      "inventory": {
+        "actual_codex_messages": 22528,
+        "actual_messages_all_sources": 22876,
+        "actual_rows_by_source": {
+          "codex": 73,
+          "opencode": 6
+        },
+        "blank_lines": 0,
+        "codex_duplicate_session_rows": 9,
+        "codex_unique_session_ids": 64,
+        "declared_codex_messages": 22528,
+        "declared_codex_sessions": 73,
+        "jsonl_files": 1,
+        "malformed_records": 0,
+        "valid_records": 79
+      },
+      "longitudinal_scope": {
+        "cross_user_claim_supported": false,
+        "dataset_level_single_exporter_inference_only": true,
+        "explicit_project_metadata": true,
+        "stable_user_field": false
+      },
+      "loss_receipt": [
+        "pi-brain flattened native Codex records into message rows",
+        "system/developer envelopes, record types, parent/branch/subagent/compaction structure, usage, and native ordering metadata are absent",
+        "timestamps and project paths were transformed by the declared privacy engine",
+        "the file has 73 Codex rows plus 6 OpenCode rows although the card foregrounds 73 Codex sessions",
+        "73 Codex rows contain fewer unique Codex session IDs because duplicate session rows are present",
+        "tool calls are assistant messages rather than native call objects; some tool messages lack call IDs"
+      ],
+      "message_and_tool_structure": {
+        "call_result_join": {
+          "ambiguous_reused_ids": 0,
+          "calls_with_id": 7447,
+          "matched_by_id": 7439,
+          "one_to_one_id_joins": 7439,
+          "results_with_id": 7439,
+          "unresolved_calls": 8,
+          "unresolved_results": 0
+        },
+        "message_records": 22876,
+        "tool_calls": 7447,
+        "tool_messages_missing_call_id": 150,
+        "tool_results": 7439
+      },
+      "privacy_contract": {
+        "aggregate_counts_only": true,
+        "native_ids_emitted": false,
+        "raw_content_emitted": false,
+        "raw_data_committed": false,
+        "source_paths_emitted": false
+      },
+      "record_types": {
+        "flattened_session_rows": 79,
+        "message_roles": {
+          "assistant": 13633,
+          "tool-result": 7589,
+          "user": 1654
+        }
+      },
+      "source": {
+        "dataset_id": "RangaPrasath/coding-sessions",
+        "home_export_status": "normalized messages; not native Codex files or a complete harness home",
+        "license": "MIT",
+        "provenance": "public pi-brain export from Codex session storage",
+        "representation": "flattened_redacted_session_derivative",
+        "revision": "9745612dbb84733bd9da15544e7ca8cebaa82c2a"
+      }
+    },
+    "wisp_claude": {
+      "fidelity": {
+        "branch_points": 20,
+        "dangling_parent_references": 5,
+        "nested_subagent_files": 43
+      },
+      "home_export_status": "mirrors the Claude project-session directory only; not a complete harness home",
+      "inventory": {
+        "jsonl_files": 104,
+        "malformed_records": 2,
+        "nested_subagent_files": 43,
+        "root_or_main_files": 61,
+        "valid_records": 10698
+      },
+      "loss_receipt": [
+        "credential replacement means the mirror is not byte-identical",
+        "only the Claude project-session directory is represented; settings, global memory, skills, plugins, credentials, and caches are absent",
+        "human-driven, autonomous benchmark, and nested-agent strata must not be merged into one user-behavior cohort"
+      ],
+      "message_and_tool_structure": {
+        "call_result_join": {
+          "exact_unique_prior": 2206,
+          "unresolved": 1
+        },
+        "message_records": 6805,
+        "tool_calls": 2209,
+        "tool_results": 2207
+      },
+      "privacy_contract": {
+        "aggregate_counts_only": true,
+        "content_serialized": false,
+        "paths_or_native_ids_serialized": false,
+        "raw_transcripts_committed": false
+      },
+      "representation": "native Claude project-session tree mirror after credential replacement",
+      "source": {
+        "dataset_id": "crispwisp/wisp-claude-code-sessions",
+        "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+        "license": "MIT"
+      }
+    }
+  },
+  "engine_version": "public-native-history-fidelity-audit-v1",
+  "not_proven": [
+    "that a session, call, or result was correct",
+    "that all rows in a dataset belong to one natural person",
+    "employee capability, productivity, skill gap, or collaboration benefit",
+    "permission to train on embedded third-party code or outputs",
+    "generalization from these public sessions to a governed enterprise"
+  ],
+  "result_sha256": "6e92d94d5c1ae8a72369e4b9678bb156b0045e7d5c8ad54298e87465beb511a1",
+  "schema_version": "public-native-history-fidelity-result-v1",
+  "study_scope": {
+    "natural_language_semantics_analyzed": false,
+    "question": "native-history structural fidelity and admission",
+    "raw_content_or_identifiers_emitted": false,
+    "raw_sources_committed": false,
+    "task_correctness_or_user_skill_measured": false
+  }
+}

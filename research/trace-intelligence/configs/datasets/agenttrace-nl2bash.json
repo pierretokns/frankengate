@@ -1,0 +1,72 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "pagarsky/agent-trace",
+  "dataset_revision": "4b05b2f00eea267a5bb4d841c228059d1bf9ac0c",
+  "license": "Apache-2.0",
+  "source_url": "https://huggingface.co/datasets/pagarsky/agent-trace",
+  "source_format": "parquet-plus-jsonl-and-fixture",
+  "adapter": "agenttrace_v0_3_0_loss_aware_v1",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true
+  },
+  "admitted_files": [
+    {
+      "path": "data/agenttrace.parquet",
+      "sha256": "11c04875f9b6e91b117b5739d748e6bd4f8fa621e95faf430fa40d5d4d223c97",
+      "size_bytes": 10638584,
+      "records": 1400
+    },
+    {
+      "path": "datasets/nl2bash_0_6B_20260328T133144Z.jsonl",
+      "sha256": "15ce46f5ad2a26de02f86c030bb1c9e174f65cdfedcb1490e642ac5c6ba519e6",
+      "size_bytes": 2194460,
+      "records": 200
+    },
+    {
+      "path": "datasets/nl2bash_1_7B_20260403T211347Z.jsonl",
+      "sha256": "250313ae096b0bb8c1986b6f571b68f4ff7617a12026db20214ad84188d12ae5",
+      "size_bytes": 4984809,
+      "records": 200
+    }
+  ],
+  "upstream_task_reference": {
+    "dataset_id": "epinnock/intercode-nl2bash-curated",
+    "dataset_revision": "019dd0389e872d8b075efbbd94a14d089e5c9f26",
+    "license": "MIT",
+    "source_url": "https://huggingface.co/datasets/epinnock/intercode-nl2bash-curated",
+    "path": "data/train-00000-of-00001-21eec28615af79c1.parquet",
+    "sha256": "28883a1da8d74d2cd486325dbdda977d17612e9c54f1df46189c199966d85153",
+    "size_bytes": 16521,
+    "records": 200,
+    "fields": [
+      "query",
+      "gold"
+    ]
+  },
+  "outcome": {
+    "field": null,
+    "semantics": "AgentTrace records collection completion and tool exit codes, but no task-correctness verdict. The upstream gold command is an intended command, not a released expected stdout or state digest.",
+    "used_by_signal_generation": false
+  },
+  "replay_policy": {
+    "arbitrary_shell_execution": false,
+    "executor": "fixed-binary read-only argv pipeline; never shell=True",
+    "fixture": "pinned repository testdata tree copied per replay",
+    "candidate_selection": "last parseable bash span in the historical trace",
+    "primary_audit": "candidate and gold command stdout plus exit-code equivalence on the same fixture",
+    "claim_boundary": "equivalence to the released gold command is a task proxy, not proof that the gold command fully captures user intent"
+  },
+  "known_missing_fields": [
+    "task_correctness",
+    "expected_stdout_digest",
+    "expected_filesystem_state_digest",
+    "tool_call_id_joining_llm_proposal_to_execution",
+    "authorization_decision",
+    "environment_snapshot_per_trace",
+    "model_sampling_seed",
+    "memory_or_procedure_exposure",
+    "memory_item_lineage",
+    "independent_replay_verdict"
+  ]
+}

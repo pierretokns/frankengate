@@ -1,0 +1,30 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "github/jimmc414/cctrace/phase0-investigation",
+  "dataset_revision": "4b4d4add0bb3a65359ccf50501c6792e2fc13ba5",
+  "license": "MIT",
+  "source_url": "https://github.com/jimmc414/cctrace/tree/4b4d4add0bb3a65359ccf50501c6792e2fc13ba5/.claude-sessions/phase0-investigation",
+  "source_format": "Portable native Claude Code session bundle",
+  "adapter": "cctrace_portable_session_v1",
+  "publication_basis": "Intentional committed example in the upstream export/import tool repository",
+  "privacy_review": "Aggregate scan found no AWS, GitHub, OpenAI, PEM, or generic secret-assignment candidates",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "sessions": 1,
+    "transcript_bytes": 1575480,
+    "records": 536,
+    "tool_uses": 152,
+    "tool_results": 151,
+    "file_history_snapshots": 13,
+    "todos_present": true,
+    "plan_present": true,
+    "project_configuration_present": true,
+    "complete_global_home_directory": false
+  },
+  "admission": "admit_as_primary_portable_claude_session_import_corpus",
+  "enterprise_transfer": "Best verified portable-session reference; one session cannot support longitudinal or cross-user conclusions"
+}

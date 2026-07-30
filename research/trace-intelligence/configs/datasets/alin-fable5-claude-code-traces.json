@@ -1,0 +1,27 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "AlinCiocan/fable-5-claude-code-traces",
+  "dataset_revision": "e33ebbca230ae258b2c28aeee9fe3429e7fbeab6",
+  "license": "CC-BY-4.0",
+  "source_url": "https://huggingface.co/datasets/AlinCiocan/fable-5-claude-code-traces",
+  "source_format": "Full-scrubbed Claude Code native event streams, one JSONL file per session",
+  "adapter": "public_native_history_fidelity_v1",
+  "publication_basis": "Intentional public full-scrubbed research release",
+  "rights_assertion": "CC-BY-4.0 applies to the dataset package; embedded third-party rights still require review",
+  "privacy_review": "Publisher reports deterministic high-level recursive scrubbing; aggregate-only secondary scan required",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "declared_session_files": 18,
+    "declared_event_rows": 9497,
+    "complete_home_directory": false,
+    "byte_native": false,
+    "record_graph_preserved": true,
+    "stable_user_identity": false
+  },
+  "admission": "admit_for_native_claude_event_graph_and_tool_correlation",
+  "enterprise_transfer": "Single publisher context; no cross-user or task-correctness claim"
+}

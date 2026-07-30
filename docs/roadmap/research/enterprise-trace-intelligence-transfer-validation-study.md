@@ -129,12 +129,13 @@ Use source-pinned, licensed partitions only:
 - MCP ATIF fixtures and Frankengate-native conformance fixtures for loss and projection;
 - CodeTraceBench verified rows for decisive-step and redundant-exploration labels;
 - Nebius same-task success/failure attempts for signal and recovery pilots;
-- AgentTrace for ordered tool execution and deterministic replay;
+- AgentTrace for ordered tool telemetry and bounded replay feasibility, followed
+  by a Frankengate-instrumented verifier cohort for causal replay;
 - SPARK PDI for observational fail-to-success sequences and procedure candidates;
 - MATM ALFWorld for its paired retrieval-condition null and instrumented-rerun design;
 - selected environment suites with reset/state verifiers for causal replay; and
-- CMU only as private exploratory evidence until licensing and access terms permit
-  publication.
+- CMU once access is approved; its `NOASSERTION` status does not block analysis,
+  but raw redistribution and training-right claims remain out of scope.
 
 Benchmark episodes test mechanism validity, not human ability or enterprise prevalence.
 All inference is clustered at task, repository/template family, source, and model where

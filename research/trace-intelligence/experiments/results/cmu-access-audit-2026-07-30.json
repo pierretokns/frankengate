@@ -28,7 +28,7 @@
   "claim_boundary": [
     "Adapter conformance can be tested from the published schema.",
     "No CMU trajectory-level empirical result may be reported until access is approved.",
-    "The missing license prevents raw redistribution even after access.",
+    "NOASSERTION does not block analysis after access approval, but no raw redistribution or training right is claimed.",
     "Independent passes cannot be described as user or model learning."
   ]
 }

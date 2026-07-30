@@ -5,7 +5,7 @@
   "license": "MIT",
   "source_url": "https://huggingface.co/datasets/NJU-LINK/CodeTraceBench",
   "source_format": "parquet plus per-trajectory artifacts",
-  "adapter": "codetracebench_v1_pending",
+  "adapter": "codetracebench_raw_factorial_v1",
   "admission_status": "admitted_for_pilot",
   "split_relationship": {
     "full_rows": 3316,
@@ -55,6 +55,22 @@
     "download_verified_parquet": true,
     "download_artifacts_only_for_frozen_task_split": true,
     "do_not_download_all_repository_artifacts": true
+  },
+  "raw_blocked_test_pilot": {
+    "issue": "https://github.com/pierretokns/frankengate/issues/104",
+    "bead": "bif-kyy.17.13.4.2.1",
+    "allowlist": "experiments/manifests/codetracebench-raw-blocked-test-allowlist-2026-07-30.json",
+    "allowlist_sha256": "83c5b8852ec0dd2144de59fd0deb88fbd29f5d947fe63459fd62f17b4ff0cc86",
+    "allowlist_identity_digest": "23a7a3b70280ad14c2da13431831e9f6e824ff1a854a918188ddb55d17d6b016",
+    "artifact_rows": 145,
+    "compressed_bytes": 28241363,
+    "missing_artifact_rows": 3,
+    "all_archive_hashes_verified": true,
+    "exact_aligned_trajectories": 78,
+    "diagnosis_eligible_trajectories": 35,
+    "result": "experiments/results/codetracebench-raw-e3-e4-factorial-2026-07-30.json",
+    "result_content_sha256": "652ee80b5ad1888ec8c6f583e0b5db0688da402e6d3508b98b567ff08a58577c",
+    "raw_data_committed": false
   },
   "split_policy": [
     "group by task_slug, repository family, upstream source, and near-duplicate prompt",

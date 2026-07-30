@@ -1,5 +1,11 @@
 # Frankengate trace intelligence: all-together system and experiment ladder
 
+The researcher-trace and durable-context extension is specified separately in
+[researcher traces and versioned harness memory](researcher-traces-and-versioned-memory-study.md).
+It treats `MEMORY.md`, `CLAUDE.md`, `AGENTS.md`, rules, skills, plans, todos,
+notebooks, and documents as bitemporal context artifacts rather than timeless
+chat messages.
+
 **Status:** normative synthesis and preregistration scaffold
 **Date:** 2026-07-30
 **Scope:** the smallest system that can support personal trace history, recurring-friction
@@ -343,19 +349,18 @@ Use each source only for claims its evidence can support:
 | CodeTraceBench verified/full | Gold-like decisive-step, stage, task-family, retrieval, and mutation work | Coding domain; verified subset and parent records must remain in the same split |
 | Nebius SWE-agent matched attempts | Cheap signals, within-task success/failure contrast, recovery candidates | Outcome proxy, no authorization, reconstructed tools, balanced sample cannot estimate prevalence |
 | SPARK PDI | Repeated attempts, failure-to-success transitions, memos and skill artifacts | Observational passes differ in more than one mechanism |
-| `pagarsky/agent-trace` | Deterministic tool preservation, assertion mutations, causal no/relevant/placebo procedure replay | Narrow NL2Bash/programming external validity |
+| `pagarsky/agent-trace` | Tool preservation, assertion mutations, and bounded replay feasibility before an instrumented causal procedure trial | No task-correctness verdict, expected output/state digest, shared proposal/execution ID, seed, or intervention exposure |
 | Trace Commons | Importer reality check, interruptions, exact identifiers, organic friction | Tiny volunteer sample, privacy/licensing review, sparse outcomes |
 | Open Agent Traces | Known anomaly, order, branch, and process-mining controls | Synthetic regularity |
 | BrowserGym/WebArena, τ²-bench, SWE-Gym | Forensic artifacts, reward evidence, state/action replay and replay-level qualification | Environment-specific fixtures; action history alone is not deterministic replay |
-| **CMU `cx-cmu/agent_trajectories`** | Private exploratory repeated-pass, multi-benchmark, multi-model outcome analysis | Gated and no declared license; 1,445 incomplete/crashed/truncated trajectories were removed, creating survivorship bias |
+| **CMU `cx-cmu/agent_trajectories`** | Repeated-pass, multi-benchmark, multi-model outcome analysis after access approval | Gated and `NOASSERTION`; raw redistribution/training-right claims remain unavailable; 1,445 incomplete/crashed/truncated trajectories were removed, creating survivorship bias |
 
-The user has authorized using the CMU corpus for internal research. That does not
-resolve its publication or redistribution rights. Pin its Hugging Face revision and
-input hashes; store it outside Git; publish only code, manifests, and results permitted
-by its eventual license. Until licensing is clarified, label every CMU result
-“private exploratory,” never make it the sole evidence for a claim, and model the
-documented failure-removal selection process. Do not infer natural failure prevalence
-from it.
+The user has authorized analyzing public Hugging Face corpora without declared
+license metadata. For CMU, the remaining gate is account approval, not license
+metadata. Pin its revision and input hashes; store it outside Git; publish only
+aggregate results and do not claim raw redistribution or training rights. Never
+make it the sole evidence for a claim, model the documented failure-removal
+selection process, and do not infer natural failure prevalence from it.
 
 Split by task, issue, repository/template family, source, and near-duplicate group.
 Private extensions add user, tenant, team, and time grouping. A trace, task, generated

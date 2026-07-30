@@ -4,7 +4,7 @@
 
 ## Bottom line
 
-Useful l0-l3 mechanics and negative results; no e0-e7 acceptance block is complete.
+Real otel conformance, governed history mechanics, and synthetic memory invariants pass; diagnosis, causal replay, cross-user learning, and prospective enterprise utility do not.
 
 The combined evidence supports a small governed product: personal history, content-minimized structural review queues, and evidence-linked eval/procedure proposals. It does not support root-cause automation, employee skill inference, automatic memory writes, collaborator matching, or embedding fine-tuning.
 
@@ -12,20 +12,20 @@ The combined evidence supports a small governed product: personal history, conte
 
 | Level | Status | Decisive interpretation |
 | --- | --- | --- |
-| `L0_evidence_conformance` | `partial` | OTel sidecar topology survives; ATIF enterprise-event identity does not |
+| `L0_evidence_conformance` | `real_roundtrip_partial_pass` | real OTel round trip passes; whole-trace upstream loss still needs a source manifest |
 | `L1_personal_authority` | `local_partial_pass` | tested denials are zero before ranking; production authority closure remains |
 | `L2_cheap_evidence_finding` | `does_not_meet_gate` | structural selection ties length and misses the +15-point gate |
-| `L3_diagnosis_and_eval_proposals` | `mixed_partial` | eval mutation mechanics work; diagnosis and multi-agent gold do not pass |
+| `L3_diagnosis_and_eval_proposals` | `mixed_partial` | raw eval mutation is sensitive but brittle; diagnosis and multi-agent gold do not pass |
 | `L4_semantic_candidate_retrieval` | `missing` | no common labelled retrieval factorial |
-| `L5_temporal_memory` | `abstained` | zero fact proposals is the correct abstention |
-| `L6_procedural_replay` | `missing` | recovery candidates exist; causal replay does not |
+| `L5_temporal_memory` | `synthetic_invariant_pass` | synthetic bitemporal/authority invariants pass; natural memory quality does not |
+| `L6_procedural_replay` | `bounded_replay_only` | bounded command comparison works; causal memory replay does not |
 | `L7_to_L10` | `gated` | prospective enterprise outcomes and CMU access remain gated |
 
 ## Cross-arm findings
 
 - CodeTraceBench structural selection precision was 0.567 versus random mean 0.426. The 0.141 absolute lift is below the preregistered 0.15 gate, ties trace length, and does not exceed random's 95% interval.
-- The best blind CodeTraceBench step-localization top-1 was 0.238; the annotation-consuming stage oracle reached 0.698. Stages help navigation but do not supply deployable diagnosis.
-- The combined retrospective assertion killed 284 supported mutants at 1.000 with 0.000 allowed-event false positives. It remains annotation-derived and was not run against a changed agent.
+- The best blind CodeTraceBench step-localization top-1 was 0.286; the combined deterministic arm reached 0.171. No evidence arm beat reverse chronology, so the result does not support deployable root-cause diagnosis.
+- The combined retrospective assertion killed 191 supported mutants at 0.969 with 0.486 allowed-event false positives. It remains annotation-derived and was not run against a changed agent.
 - MAST has 0 finalized human traces overlapping the judge release. Therefore released human-versus-judge accuracy cannot be reproduced; high Hamming accuracy from an always-negative classifier is class imbalance, not competence.
 
 ## Original enterprise questions

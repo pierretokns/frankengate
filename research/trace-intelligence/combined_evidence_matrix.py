@@ -15,14 +15,20 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v1"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v2"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "codetracebench": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
+    "codetracebench_raw": "codetracebench-raw-e3-e4-factorial-2026-07-30.json",
     "mast": "mast_multiagent_empirical-2026-07-30.json",
     "wisp_governed": "wisp-governed-postgres-benchmark-2026-07-30.json",
     "wisp_recovery": "wisp-share-codex-canonical-bounded-recovery-2026-07-30.json",
     "cmu_access": "cmu-access-audit-2026-07-30.json",
+    "otel_roundtrip": "otel-collector-roundtrip-e0-2026-07-30.json",
+    "memory_conformance": "bitemporal-memory-conformance-2026-07-30.json",
+    "agenttrace": "agenttrace-nl2bash-replay-audit-2026-07-30.json",
+    "native_history": "public-native-history-fidelity-2026-07-30.json",
+    "history_discovery": "public-agent-history-discovery-2026-07-30.json",
 }
 
 
@@ -81,22 +87,28 @@ def build_matrix(
 ) -> dict[str, Any]:
     projection = results["projection"]
     codetrace = results["codetracebench"]
+    codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
     wisp = results["wisp_governed"]
     recovery = results["wisp_recovery"]
     cmu = results["cmu_access"]
+    otel_roundtrip = results["otel_roundtrip"]
+    memory = results["memory_conformance"]
+    agenttrace = results["agenttrace"]
+    native_history = results["native_history"]
+    history_discovery = results["history_discovery"]
 
     atif = _require(projection, "ATIF_v1_7")
     otel = _require(projection, "OpenInference_OTel")
     e1_arms = _require(codetrace, "e1_signal_selection", "arms")
     random_arm = _require(e1_arms, "uniform_random")
     structural_arm = _require(e1_arms, "structural_signal")
-    e3_methods = _require(codetrace, "e3_decisive_step_diagnosis", "methods")
-    e4_combined = _require(
-        codetrace,
-        "e4_eval_assertion_mutation",
+    raw_e3_arms = _require(codetrace_raw, "e3_factorial", "arms")
+    raw_e4_combined = _require(
+        codetrace_raw,
+        "e4_assertion_mutation",
         "aggregate_by_assertion",
-        "combined",
+        "combined_raw_and_verifier",
     )
     mast_projection = _require(mast, "canonical_projection", "aggregate")
     mast_overlap = _require(mast, "annotation_overlap")
@@ -113,10 +125,6 @@ def build_matrix(
         float(structural_arm["precision"])
         > float(random_arm["precision_interval_95"][1])
     )
-    diagnosis_gain_over_random = (
-        float(e3_methods["reverse_chronology"]["top1_accuracy"])
-        - float(e3_methods["uniform_random"]["top1_accuracy"])
-    )
     all_denied_zero = all(
         all(int(value) == 0 for value in counts.values())
         for counts in authority_matrix.values()
@@ -124,7 +132,7 @@ def build_matrix(
 
     levels = {
         "L0_evidence_conformance": {
-            "status": "partial",
+            "status": "real_roundtrip_partial_pass",
             "decision": (
                 "keep one governed canonical DAG; ATIF and OTel remain "
                 "receipted projections"
@@ -151,10 +159,27 @@ def build_matrix(
                 "mast_silent_line_drops": mast_projection[
                     "silently_dropped_lines"
                 ],
+                "collector_trace_ids_retained": _require(
+                    otel_roundtrip, "main_roundtrip", "trace_ids_retained"
+                ),
+                "collector_spans_retained": _require(
+                    otel_roundtrip, "main_roundtrip", "stored_spans"
+                ),
+                "collector_parent_edges_retained": _require(
+                    otel_roundtrip, "main_roundtrip", "parent_edges_retained"
+                ),
+                "collector_links_retained": _require(
+                    otel_roundtrip, "main_roundtrip", "links_retained"
+                ),
+                "collector_negative_controls_passed": _require(
+                    otel_roundtrip, "negative_controls_passed"
+                ),
             },
             "blocking_gap": (
-                "no real collector round trip, incomplete native-source set, "
-                "and ATIF is deliberately non-reversible for enterprise events"
+                "the pinned real collector path passed, but a wholly upstream-"
+                "dropped trace requires an out-of-band source/export manifest; "
+                "production storage/failover and ATIF's deliberate enterprise-"
+                "event non-reversibility remain"
             ),
         },
         "L1_personal_authority": {
@@ -168,6 +193,38 @@ def build_matrix(
                     "p95_ms"
                 ],
                 "proposal_queue_p95_ms": latency["proposal_queue"]["p95_ms"],
+                "public_history_representations_audited": len(
+                    _require(native_history, "datasets")
+                ),
+                "complete_public_harness_homes_found": len(
+                    _require(
+                        native_history,
+                        "classification",
+                        "complete_harness_home",
+                    )
+                ),
+                "near_complete_public_harness_home_states_found": len(
+                    _require(
+                        history_discovery,
+                        "classification",
+                        "near_complete_home_state",
+                    )
+                ),
+                "github_native_claude_files_in_top_repos": _require(
+                    history_discovery,
+                    "discovery_scale",
+                    "top_repo_native_claude_files",
+                ),
+                "github_native_codex_files_in_top_repos": _require(
+                    history_discovery,
+                    "discovery_scale",
+                    "top_repo_native_codex_files",
+                ),
+                "codex_repositories_with_auth_adjacent": _require(
+                    history_discovery,
+                    "security_observation",
+                    "codex_repositories_with_auth_adjacent",
+                ),
             },
             "blocking_gap": (
                 "permission-oracle equality across every surface, deletion "
@@ -204,34 +261,36 @@ def build_matrix(
             "status": "mixed_partial",
             "diagnosis": {
                 "best_blind_method": "reverse_chronology",
-                "best_blind_top1": e3_methods["reverse_chronology"][
+                "best_blind_top1": raw_e3_arms["I0T0J0"][
                     "top1_accuracy"
                 ],
-                "random_top1": e3_methods["uniform_random"]["top1_accuracy"],
-                "gain_over_random": diagnosis_gain_over_random,
-                "annotation_oracle_top1": e3_methods[
-                    "critical_stage_start_oracle"
-                ]["top1_accuracy"],
+                "combined_top1": raw_e3_arms["I1T1J1"]["top1_accuracy"],
+                "best_blind_top3": raw_e3_arms["I0T0J0"]["top3_accuracy"],
+                "eligible_raw_traces": _require(
+                    codetrace_raw, "e3_factorial", "eligible_traces"
+                ),
                 "pass": False,
                 "reason": (
-                    "no invariants×topology×judge factorial, deterministic "
-                    "error baseline, calibrated abstention, or evidence entailment"
+                    "the full deterministic factorial ran, but no evidence arm "
+                    "beat reverse chronology and irrelevant errors changed "
+                    "rankings; no calibrated judge or step-level causal verifier"
                 ),
             },
             "retrospective_eval": {
-                "combined_harmful_mutants": e4_combined[
+                "combined_harmful_mutants": raw_e4_combined[
                     "harmful_mutants"
                 ],
-                "combined_kill_rate": e4_combined[
+                "combined_kill_rate": raw_e4_combined[
                     "harmful_mutant_kill_rate"
                 ],
-                "allowed_variation_false_positive_rate": e4_combined[
+                "allowed_variation_false_positive_rate": raw_e4_combined[
                     "allowed_variation_false_positive_rate"
                 ],
                 "pass": False,
                 "reason": (
-                    "annotation-derived mutation mechanics passed, but no "
-                    "independent verifier or changed-system rerun exists"
+                    "high harmful-mutant sensitivity came with 48.6% benign "
+                    "false positives; no changed-system rerun or step-level "
+                    "causal verifier exists"
                 ),
             },
             "multi_agent_taxonomy": {
@@ -261,19 +320,45 @@ def build_matrix(
             ),
         },
         "L5_temporal_memory": {
-            "status": "abstained",
+            "status": "synthetic_invariant_pass",
             "evidence": {
                 "wisp_fact_proposals": _require(
                     wisp, "authorized_counts", "fact_proposals"
-                )
+                ),
+                "bitemporal_assertions_passed": _require(
+                    memory, "assertions", "passed"
+                ),
+                "bitemporal_assertions_total": _require(
+                    memory, "assertions", "total"
+                ),
+                "bitemporal_assertions_failed": _require(
+                    memory, "assertions", "failed"
+                ),
+                "real_research_trace_strata_discovered": len(
+                    _require(
+                        history_discovery,
+                        "classification",
+                        "real_research_trace_strata",
+                    )
+                ),
+                "paired_trace_memory_strata_discovered": len(
+                    _require(
+                        history_discovery,
+                        "classification",
+                        "paired_trace_and_memory_strata",
+                    )
+                ),
             },
             "decision": (
-                "zero facts is the correct current output; temporal truth, "
-                "contradiction, citation, and rollback tests are missing"
+                "copy-on-write correction, authority intersection, rollback, "
+                "deletion closure, influence exclusion, and stale-epoch denial "
+                "pass in a deterministic oracle; real research and paired "
+                "trace/memory strata now exist, but PostgreSQL/RLS execution "
+                "and natural-trace memory quality remain unproven"
             ),
         },
         "L6_procedural_replay": {
-            "status": "missing",
+            "status": "bounded_replay_only",
             "evidence": {
                 "wisp_recovery_review_candidates": _require(
                     recovery,
@@ -289,10 +374,21 @@ def build_matrix(
                     "constructor",
                     "matched_episodes",
                 ),
+                "agenttrace_rows": _require(agenttrace, "corpus", "rows"),
+                "agenttrace_nl2bash_rows": _require(
+                    agenttrace, "nl2bash_replay", "historical_rows"
+                ),
+                "bounded_pairs_executed": _require(
+                    agenttrace, "nl2bash_replay", "executed_rows"
+                ),
+                "stdout_exit_equivalent_pairs": _require(
+                    agenttrace, "nl2bash_replay", "equivalent_rows"
+                ),
             },
             "decision": (
-                "structural recovery candidates may seed reviewed procedures, "
-                "but no no-memory/relevant/placebo/oracle replay has run"
+                "AgentTrace supports loss-aware telemetry and bounded command "
+                "comparison, not causal memory replay: task verdicts, expected "
+                "state digests, seeds, and intervention arms are absent"
             ),
         },
         "L7_to_L10": {
@@ -313,7 +409,10 @@ def build_matrix(
     enterprise_questions = {
         "show_each_user_all_currently_authorized_history": {
             "status": "local_mechanics_supported",
-            "basis": "Wisp governed PostgreSQL pagination and denial matrix",
+            "basis": (
+                "Wisp governed PostgreSQL pagination/denial plus seven public "
+                "native-or-derived history fidelity audits"
+            ),
             "next_gate": "complete permission-oracle/deletion/failover gauntlet",
         },
         "find_repeated_friction_and_later_recovery": {
@@ -342,7 +441,10 @@ def build_matrix(
         },
         "find_people_doing_similar_work": {
             "status": "not_tested",
-            "basis": "no admitted cross-user semantic/outcome cohort was run",
+            "basis": (
+                "the audited public histories have no stable user field and "
+                "cannot be treated as an independent cross-user enterprise cohort"
+            ),
             "next_gate": (
                 "authorized SWE-chat or consented enterprise same-task labels "
                 "with cohort privacy"
@@ -393,13 +495,16 @@ def build_matrix(
             "new_database_justified": False,
             "custom_embedding_model_justified": False,
             "reason": (
-                "current failures are labels, outcome validity, calibration, "
-                "and prospective causality—not demonstrated vector scale"
+                "the real OTel path and relational memory oracle pass without a "
+                "second authority; current failures are labels, outcome "
+                "validity, calibration, and prospective causality—not "
+                "demonstrated vector scale"
             ),
         },
         "overall_status": (
-            "useful L0-L3 mechanics and negative results; no E0-E7 acceptance "
-            "block is complete"
+            "real OTel conformance, governed history mechanics, and synthetic "
+            "memory invariants pass; diagnosis, causal replay, cross-user "
+            "learning, and prospective enterprise utility do not"
         ),
     }
     output["result_sha256"] = hashlib.sha256(
@@ -432,7 +537,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     ]
     interpretations = {
         "L0_evidence_conformance": (
-            "OTel sidecar topology survives; ATIF enterprise-event identity does not"
+            "real OTel round trip passes; whole-trace upstream loss still needs a source manifest"
         ),
         "L1_personal_authority": (
             "tested denials are zero before ranking; production authority closure remains"
@@ -441,11 +546,15 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "structural selection ties length and misses the +15-point gate"
         ),
         "L3_diagnosis_and_eval_proposals": (
-            "eval mutation mechanics work; diagnosis and multi-agent gold do not pass"
+            "raw eval mutation is sensitive but brittle; diagnosis and multi-agent gold do not pass"
         ),
         "L4_semantic_candidate_retrieval": "no common labelled retrieval factorial",
-        "L5_temporal_memory": "zero fact proposals is the correct abstention",
-        "L6_procedural_replay": "recovery candidates exist; causal replay does not",
+        "L5_temporal_memory": (
+            "synthetic bitemporal/authority invariants pass; natural memory quality does not"
+        ),
+        "L6_procedural_replay": (
+            "bounded command comparison works; causal memory replay does not"
+        ),
         "L7_to_L10": "prospective enterprise outcomes and CMU access remain gated",
     }
     for name, value in levels.items():
@@ -466,9 +575,10 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "absolute lift is below the preregistered 0.15 gate, ties trace length, "
             "and does not exceed random's 95% interval.",
             f"- The best blind CodeTraceBench step-localization top-1 was "
-            f"{l3['diagnosis']['best_blind_top1']:.3f}; the annotation-consuming "
-            f"stage oracle reached {l3['diagnosis']['annotation_oracle_top1']:.3f}. "
-            "Stages help navigation but do not supply deployable diagnosis.",
+            f"{l3['diagnosis']['best_blind_top1']:.3f}; the combined deterministic "
+            f"arm reached {l3['diagnosis']['combined_top1']:.3f}. No evidence arm "
+            "beat reverse chronology, so the result does not support deployable "
+            "root-cause diagnosis.",
             f"- The combined retrospective assertion killed "
             f"{l3['retrospective_eval']['combined_harmful_mutants']} supported mutants "
             f"at {l3['retrospective_eval']['combined_kill_rate']:.3f} with "

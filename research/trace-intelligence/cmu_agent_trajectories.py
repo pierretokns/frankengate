@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Loss-aware adapter and repeated-pass audit for CMU Agent Trajectories.
 
-Raw CMU records are gated and license-quarantined. This module is deliberately
+Raw CMU records are gated by Hugging Face account approval. The source declares
+no license, which limits redistribution and training-right claims but does not
+block analysis once access is granted. This module is deliberately
 dependency-free so its conformance contract can be tested before access is
 granted. It writes aggregate metrics only and never serializes messages, tool
 arguments/results, task identifiers, trace identifiers, or per-attempt rows.

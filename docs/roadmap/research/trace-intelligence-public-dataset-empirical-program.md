@@ -83,7 +83,7 @@ collection as representative:
 |---|---|---|---|
 | Human step labels | [`NJU-LINK/CodeTraceBench`](https://huggingface.co/datasets/NJU-LINK/CodeTraceBench) | 3,316 unique coding traces; the contained 1,000-row verified split labels incorrect actions and redundant exploration | Software-engineering-only; no enterprise users or intervention exposure |
 | Sequential recovery artifacts | [`EtaYang10th/SPARK_PDI_Trajectory`](https://huggingface.co/datasets/EtaYang10th/SPARK_PDI_Trajectory) | Multiple attempts, reflections and `SKILL.md`; 16 observed fail/error→pass sequences | Small recovery cohort and teacher/reflection confounding; observational, not causal |
-| Deterministically replayable tool tasks | [`pagarsky/agent-trace`](https://huggingface.co/datasets/pagarsky/agent-trace) | Tool calls, errors, telemetry and deterministic verification support causal memory/playbook trials | Narrow synthetic programming and shell tasks |
+| Bounded tool-replay telemetry | [`pagarsky/agent-trace`](https://huggingface.co/datasets/pagarsky/agent-trace) | Tool spans, LLM proposals, errors, timing and a deterministic filesystem fixture support loss and replay-feasibility tests | No task-correctness verdict, expected output/state digest, shared proposal/execution ID, seed, or memory intervention |
 | OTel-shaped sessions | [`Exgentic/agent-llm-traces`](https://huggingface.co/datasets/Exgentic/agent-llm-traces) | Substantial OTel-shaped corpus for ingestion and chat-level signals | Audited spans are chat operations; tool activity must be reconstructed from messages |
 | ATIF assertion fixtures | [`obaydata/mcp-agent-trajectory-benchmark`](https://huggingface.co/datasets/obaydata/mcp-agent-trajectory-benchmark) | 49 raw ATIF trajectories for exact, ordered and unordered assertion tests | Tiny and mostly synthetic |
 | Heterogeneous real coding sessions | [`trace-commons/agent-traces`](https://huggingface.co/datasets/trace-commons/agent-traces) | 30 donated Claude Code, Codex, Pi, Cursor and OpenCode sessions preserve real harness differences | Outcomes are sparse; privacy and volunteer-selection risk |
@@ -91,9 +91,10 @@ collection as representative:
 
 The broader [`neulab/agent-data-collection`](https://huggingface.co/datasets/neulab/agent-data-collection)
 may test importer breadth only through individually licensed configurations; its roughly
-649 GB repository is not one admissible corpus. CMU Agent Trajectories is quarantined
-until its missing license is clarified and its removal of 14.3% incomplete/crashed/
-truncated records is modeled as survivorship bias. The source-pinned audit is
+649 GB repository is not one admissible corpus. CMU Agent Trajectories is
+access-quarantined until the current account is approved; its `NOASSERTION`
+status does not block analysis. Its removal of 14.3% incomplete/crashed/truncated
+records must be modeled as survivorship bias. The source-pinned audit is
 [`public-agent-trace-dataset-inventory.md`](public-agent-trace-dataset-inventory.md).
 
 Hugging Face now supports native agent-session trace rendering for several harnesses,
@@ -430,12 +431,21 @@ diagnosis cohort.
 
 ### Causal replay cohort
 
-- Select 40 deterministic NL2Bash tasks from `pagarsky/agent-trace`.
+- Instrument 40 NL2Bash tasks from `pagarsky/agent-trace` with
+  verifier-owned stdout and filesystem-state digests; the released corpus alone
+  is not a causal replay benchmark.
 - Use 20 disjoint tasks to generate procedures and 20 for evaluation.
 - Run four conditions—no memory, relevant contrast-derived procedure, unrelated
   placebo, and combined curated procedure—with three seeds: 240 test runs.
-- Keep the model, tools, retrieval, limits and environment identical across arms.
+- Keep the model, frozen sampling seed, tools, retrieval, limits and environment
+  identical across arms.
 - The task's deterministic verifier, not an LLM judge, is the primary outcome.
+
+The completed admission audit projected all 4,039 LLM steps and 3,609 tool spans
+without silent loss. Only 17 of 400 historical NL2Bash task/model rows were
+supported by the deliberately narrow read-only executor; 9 matched the upstream
+gold command's stdout and exit code. That is a replay-feasibility result, not a
+task-correctness or semantic-equivalence result.
 
 This study is large enough to discover parser loss, selection enrichment, retrieval
 failure, diagnosis non-additivity, eval brittleness, and a coarse procedural-memory

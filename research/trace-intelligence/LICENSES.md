@@ -14,6 +14,8 @@ is committed here.
 | MATM ALFWorld population runs | `configs/datasets/matm-alfworld-population-runs.json` | Apache-2.0 | Aggregate results and schema-derived fixtures only. |
 | MAST-Data | `configs/datasets/mast_data.json` | CC-BY-4.0 | Aggregate results only; attribute the dataset when reusing results. |
 | CMU agent trajectories | `configs/datasets/cmu-agent-trajectories.json` | NOASSERTION; access approval required | No download, redistribution, or empirical trajectory claim until access and reuse terms are explicitly accepted by an authorized person. The committed access audit uses public metadata only. |
+| AgentTrace | `configs/datasets/agenttrace-nl2bash.json` | Apache-2.0 | Aggregate measurements and content-free replay receipts only; raw prompts, commands, outputs, and fixture contents remain outside Git. |
+| InterCode NL2Bash curated reference | `configs/datasets/agenttrace-nl2bash.json` | MIT | Used only as the pinned command reference for the bounded AgentTrace replay audit; raw rows remain outside Git. |
 
 Each manifest pins the upstream revision and records the specific files or
 published schema used by an experiment. The source repository and dataset card
@@ -33,3 +35,11 @@ Before adding another corpus:
 3. emit only aggregate or explicitly synthetic fixtures;
 4. scan outputs for secrets and direct identifiers; and
 5. distinguish observed, reconstructed, inferred, and model-judged evidence.
+
+Public Hugging Face corpora without declared license metadata are admissible for
+analysis and are recorded as `NOASSERTION`; absence of a declaration is not
+treated as an analysis veto or as permission to redistribute or train on the
+raw corpus. Both redacted and unredacted corpora are admissible. Unredacted
+sources receive the same content-minimization controls plus aggregate secret
+pattern scanning, and no raw transcript, identifier, path, prompt, tool
+argument, tool output, or extracted secret is committed.

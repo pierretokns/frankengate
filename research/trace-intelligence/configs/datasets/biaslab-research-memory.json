@@ -1,0 +1,28 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "github/biaslab/RAL2026-CPG-ActInf/.claude/memory",
+  "dataset_revision": "cfea3ecc32869e1cada14c875a8d72468b5338c6",
+  "license": "NOASSERTION",
+  "source_url": "https://github.com/biaslab/RAL2026-CPG-ActInf/tree/cfea3ecc32869e1cada14c875a8d72468b5338c6/.claude/memory",
+  "source_format": "Committed longitudinal experimental-science memory Markdown",
+  "adapter": "claude_research_memory_v1",
+  "publication_basis": "Intentional public Git repository",
+  "rights_assertion": "No repository license found; analysis does not establish redistribution or training rights",
+  "privacy_review": "Content remains outside Git; extract only source-pinned aggregate memory structure and reviewed evidence units",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "memory_markdown_files": 29,
+    "distinct_origin_session_ids": 10,
+    "experiment_configs_and_seed_counts": true,
+    "statistical_outcomes": true,
+    "invalidated_runs_and_bugs": true,
+    "contradictions_and_reframing": true,
+    "raw_source_sessions_committed": false
+  },
+  "admission": "admit_as_memory_target_and_temporal_contradiction_corpus",
+  "enterprise_transfer": "High-value memory target; source-session replay is unavailable unless matching traces are later obtained"
+}

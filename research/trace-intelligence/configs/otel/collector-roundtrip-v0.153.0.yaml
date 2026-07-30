@@ -1,0 +1,30 @@
+# Pinned runtime: otelcol-contrib v0.153.0.
+# The runner supplies loopback-only endpoint and disposable output path.
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: ${env:FRANKENGATE_OTEL_LISTEN}
+
+processors:
+  batch:
+    timeout: 100ms
+    send_batch_size: 512
+
+exporters:
+  file/roundtrip:
+    path: ${env:FRANKENGATE_OTEL_OUTPUT}
+    format: json
+    append: false
+    flush_interval: 100ms
+    create_directory: true
+
+service:
+  telemetry:
+    logs:
+      level: info
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [file/roundtrip]

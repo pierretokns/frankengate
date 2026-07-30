@@ -5,6 +5,10 @@ complete
 
 **Run date:** 2026-07-30
 
+**Follow-up:** the pinned real SDK → Collector → file exporter/storage →
+reimport arm is now complete; see
+[`otel-collector-roundtrip-e0-2026-07-30.md`](otel-collector-roundtrip-e0-2026-07-30.md).
+
 ## Decision
 
 Keep Frankengate's governed canonical event DAG as the evidence authority.
@@ -154,9 +158,10 @@ evidence, independent outcomes, review, and prospective measurement.
 
 ## Remaining empirical gates
 
-1. Send the OTLP member through a real collector/backend/export round trip and
-   measure survival of links, `AnyValue`, resource, scope, and OpenInference
-   attributes.
+1. **Completed locally:** the pinned SDK/Collector/file-exporter round trip
+   retained links, `AnyValue`, resource, scope, and OpenInference attributes.
+   Repeat against the selected production backend before making a backend-wide
+   conformance claim.
 2. Run the ATIF arm over a stratified Wisp conversation/tool sample to measure
    the portable subset separately from the enterprise-event stress corpus.
 3. Add the AgentEvals stored-trace assertion projection only after the

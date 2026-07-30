@@ -2,9 +2,26 @@
 
 **Research date:** 2026-07-30
 
-**Scope:** deliberately published, licensed coding-agent histories from real users; no leaked, credential-bearing, or obviously private material was downloaded or inspected
+**Scope:** deliberately published coding-agent histories from real users,
+including `NOASSERTION` sources for analysis; no unsupported redistribution or
+training-right claim is inferred from public availability
 
-**Decision:** real longitudinal histories exist and are useful, but no responsibly published source found in this review is a complete `~/.claude` or `~/.codex` directory
+**Decision:** real longitudinal histories are abundant enough for the proposed
+experiments. The strongest home-level find is a partial `~/.claude` tree; no
+verified source in this review is a literal complete global `~/.claude` or
+`~/.codex` directory.
+
+**Empirical update:** the aggregate-only
+[native-history fidelity study](../../../research/trace-intelligence/experiments/summaries/public-native-history-fidelity-2026-07-30.md)
+fully parsed six additional downloaded sources, one deterministic Jobseek
+sample, and the existing Wisp aggregate. A follow-up manifest audit found the
+Glint/Fable partial Claude home, multiple GitHub-native Codex collections, and
+portable Claude session bundles. It confirms that “native,”
+“session-complete,” “longitudinal,” and “complete harness home” are different
+properties. The broader Hub searches returned roughly 180 overlapping
+candidates, not 180 unique real users; mirrors, autonomous workflows,
+synthetic/SFT derivatives, and duplicate session rows must be removed before
+counting.
 
 ## Executive answer
 
@@ -14,7 +31,12 @@ There are three materially different things that are easy to conflate:
 2. **Transcript-tree mirrors** preserve the relative layout of a harness's session subtree, such as `~/.claude/projects/<project>/<session>.jsonl`.
 3. **Home-directory-complete exports** would preserve everything under `~/.claude` or `~/.codex`, including settings, memories, skills, MCP configuration, caches, account state, and potentially credentials.
 
-We found many examples of the first, one strong example of the second, and no admissible example of the third.
+We found many examples of the first, multiple examples of the second, one
+published partial home with adjacent history/cache state, and one genuine
+near-complete public Claude home-state tree. The near-complete tree is not a
+safe wholesale corpus: it has no declared license, appears unredacted, retains
+only one project transcript, includes auth-adjacent state, and is missing
+several home areas.
 
 The strongest sources are:
 
@@ -23,6 +45,7 @@ The strongest sources are:
 - [nmuendler/share-codex](https://huggingface.co/datasets/nmuendler/share-codex/tree/3d8b1397c72dbfbf8b04f518064e2c99dde84ca0) for a deep single-user longitudinal study: 4,333 sessions from `~/.codex/sessions` and `~/.claude/projects` spanning 2025-10-10 through 2026-06-18.
 - [peteromallet/my-personal-codex-data](https://huggingface.co/datasets/peteromallet/my-personal-codex-data/tree/8c9543389161e80628dcb183b30f8c6be04f627a) for a second single-user longitudinal study: 1,297 sessions in 63 daily shards, with messages, thinking, tool inputs, tool results, and status.
 - [crispwisp/wisp-claude-code-sessions](https://huggingface.co/datasets/crispwisp/wisp-claude-code-sessions/tree/c2c90b59174318ab0b163ec9c9ac82bb879288ce) for native Claude Code structure, branches, parent links, and nested subagents. It mirrors the `~/.claude/projects` transcript layout, not the entire `~/.claude` directory.
+- [Glint-Research/Fable-5-traces](https://huggingface.co/datasets/Glint-Research/Fable-5-traces/tree/e05c417852fc59fd8da758e68b352732423ca0cb/claude) for partial-home import fidelity: 115 project/session JSONL files, 36 nested subagent files, 1,758 `history.jsonl` records, paste cache, and cache metadata under one published `claude/` tree.
 
 These sources can support empirical work on recurring friction, task recurrence, tool-use patterns, candidate memories, and candidate evals. They do **not**, by themselves, justify conclusions about employee competence, productivity, missing skills, or who should collaborate. Those are prospective hypotheses that require enterprise-grounded labels, consent, interventions, and measured outcomes.
 
@@ -34,8 +57,10 @@ These sources can support empirical work on recurring friction, task recurrence,
 | Project-longitudinal | Stable person or pseudonym, project, time, multiple sessions | Yes | Repeated work, recurring friction, temporal memory tests |
 | Cross-user-longitudinal | Stable user identities across many projects/sessions | Yes, in SWE-chat and TraceLab | Similar-task cohorts and privacy-safe aggregate hypotheses |
 | Outcome-linked | Commits, diffs, tests, CI, reward, or verified task outcome | Partly | Repair and transfer evaluation; most outcomes remain proxies |
-| Transcript-tree mirror | Native session subtree and parent/subagent layout | Yes, Wisp | Parser/schema fidelity and delegation studies |
-| Complete harness home | Settings, skills, memories, MCP configuration, caches, transcripts, account state | No admissible source found | Would be too risky to treat as a normal public dataset |
+| Transcript-tree mirror | Native session subtree and parent/subagent layout | Yes, Wisp, Glint, and GitHub-native collections | Parser/schema fidelity and delegation studies |
+| Partial harness home | Sessions plus one or more adjacent global/index/cache/config areas | Yes, Glint; portable per-session bundles also exist | Import completeness receipts, area policy, replay/resume fidelity |
+| Near-complete harness home | Most global state areas plus at least one native transcript, with explicit missing areas | Yes, one high-risk GitHub source | Completeness/threat-model fixture and lane-policy tests; never wholesale training input |
+| Literal complete harness home | Every session plus settings, skills, memories, MCP configuration, caches, indexes, and account state | No verified source found | Unsafe and unnecessary as a normal import target |
 
 “Complete conversation” also does not mean “complete trajectory.” A source may omit system/developer prompts, reasoning, rejected tool calls, permission decisions, retry/fallback edges, environment state, or whether a code change was correct.
 
@@ -64,12 +89,26 @@ These sources can support empirical work on recurring friction, task recurrence,
 
 | Source | Why it is not a real-user enterprise cohort |
 |---|---|
-| [Mike0021/codex-sessions @ `29b52c1`](https://huggingface.co/datasets/Mike0021/codex-sessions/tree/29b52c15654087c5c5d0adcd062bfe40f6464d6b) | 27 sanitized autonomous Codex sessions building Hugging Face Spaces. Useful native Codex fixtures, but not longitudinal human-agent collaboration. The card does not declare a dataset license. |
+| [Mike0021/codex-sessions @ `29b52c1`](https://huggingface.co/datasets/Mike0021/codex-sessions/tree/29b52c15654087c5c5d0adcd062bfe40f6464d6b) | 27 sanitized autonomous Codex files building Hugging Face Spaces. The empirical audit shows that these are record-preserving normalized derivatives, not byte-native fixtures: an envelope was added, call IDs are absent, and observed/declared record counts disagree. Useful only as a schema/loss control. The card does not declare a dataset license (`NOASSERTION`). |
 | [ultralazr/claude-code-traces @ `afe3c10`](https://huggingface.co/datasets/ultralazr/claude-code-traces/tree/afe3c108c148427625f7b2275791517f99f8115d) | One redacted native session; useful only for parser testing. License is `other`, and the card warns embedded images and private material can remain. |
 | [Zen Agentic Dataset @ `cdc75ca`](https://huggingface.co/datasets/zenlm/zen-agentic-dataset/tree/cdc75caa622c76b86d040a3423c58c9b4aa335b1) | Claims millions of real Claude Code entries, but the pinned Hugging Face repository currently exposes only documentation/source files, requires commercial licensing contact, and does not document a contribution/consent process adequate for this study. |
 | Personal-history forks that duplicate another user's repository | They are not independent users. For example, `misterkerns/my-personal-claude-code-data` identifies itself as a duplicate of Peter O'Malley's source. Treating forks as people would invalidate cross-user statistics. |
 | `segin/my-personal-codex-data` at `0108ae7` | Public but has no dataset license in the Hub metadata. Hold until provenance and rights are clarified. |
 | Synthetic benchmark and distillation traces | Useful for ground-truth task outcomes and format diversity, but not evidence about real user needs, work patterns, learning, or organizational collaboration. Keep them in a separately labeled benchmark stratum. |
+
+### D. Native-fidelity and transformation controls added by empirical audit
+
+| Source and pinned revision | Observed structure | Fidelity decision |
+|---|---|---|
+| [Alin Fable 5 Claude @ `e33ebbca`](https://huggingface.co/datasets/AlinCiocan/fable-5-claude-code-traces/tree/e33ebbca230ae258b2c28aeee9fe3429e7fbeab6), CC-BY-4.0 | 18 files and 9,497 records; 1,170/1,170 tool calls/results joined exactly; 7,593 parent references, 624 branch points, 1,195 subagent signals, and two compaction records. Publisher declares 35,732 scrub operations. | **Admit for scrubbed native-event fidelity.** Strongest newly audited Claude event graph, but not byte-native, cross-user, or outcome-linked. |
+| [cfahlgren Codex @ `87dcc5b0`](https://huggingface.co/datasets/cfahlgren1/codex-sessions/tree/87dcc5b0df77f94b8750772dce7078866d3e6877), Hub license `other` / `NOASSERTION` | Two untouched Codex rollouts, 130 records, and two derived rows that are byte-equal to the raw files. | **Admit for byte-native parser fidelity only.** Too small for longitudinal inference; no redistribution or training-right claim. |
+| [Mike Codex @ `29b52c15`](https://huggingface.co/datasets/Mike0021/codex-sessions/tree/29b52c15654087c5c5d0adcd062bfe40f6464d6b), `NOASSERTION` | 27 sanitized files and 12,316 observed records versus 11,884 declared; 49 session metadata rows, 32 distinct IDs, and no call IDs. Aggregate scan found six unvalidated JWT-shaped candidates. | **Quarantine for schema control.** It is a normalized autonomous-session derivative, not a real-user cohort; count mismatch and secret candidates require review. |
+| [Ranga coding sessions @ `9745612d`](https://huggingface.co/datasets/RangaPrasath/coding-sessions/tree/9745612dbb84733bd9da15544e7ca8cebaa82c2a), MIT | 73 Codex rows/22,528 messages plus six OpenCode rows/348 messages. The Codex rows contain 64 unique IDs and nine duplicates. Tool messages retain 7,439 exact joins but lose native topology and usage. | **Admit as a flattened Codex negative control.** Originates from real harness storage but cannot validate native ingestion. |
+| [Peter DataClaw mirror @ `96e52d19`](https://huggingface.co/datasets/Edmon02/dataclaw-peteromallet/tree/96e52d19e236676f323cc41916daab006a6ac2e2), MIT | 549 rows, 503 unique session IDs, 14 projects, 169,168 messages, 41,873 thinking records, and 80,409 tool inputs; no tool outputs or native IDs. The card points loaders to Peter's source. | **Admit for longitudinal flattened retrieval only.** Deduplicate 46 repeated rows and treat as a mirror, not an additional user. |
+| [Jobseek traces @ `5aae9972`](https://huggingface.co/datasets/viktor-shcherb/jobseek-agent-traces/tree/5aae997225724606da9f7d23ada9cd49e81ff177), MIT plus `not-for-AI-training` | Deterministic eight-workflow sample: 1,851 records, 579 calls, 577 exact results, and merged main/subagent topology. Full corpus is approximately 5.155 GB of repetitive job-monitor workflows. | **Admit sample for merged-workflow reconstruction only.** Not a user/population cohort and not a training source. |
+
+The [source-pinned landscape correction](hugging-face-native-agent-history-landscape-2026.md)
+records the native/derived taxonomy and deduplication rules.
 
 ## The complete-directory question
 
@@ -77,6 +116,14 @@ No admissible candidate contains an entire real user's `~/.claude` or `~/.codex`
 
 The closest cases are:
 
+- The pinned `jkim0731/2p-hcr-autoreg` `.claude` tree contains 2,067
+  files/76.4 MB across history, one project transcript, file history, plugins,
+  tasks, shell snapshots, plans, agents, settings, backups, jobs, paste cache,
+  session metadata, and auth-adjacent state. It is a genuine near-complete
+  state dump, but not a literal complete home and not safe for undifferentiated
+  ingestion.
+- Glint publishes `claude/projects`, `claude/history.jsonl`, `claude/cache`, and
+  `claude/paste-cache`, but not the other global home areas.
 - Wisp mirrors only `~/.claude/projects/`, including session and subagent JSONL.
 - share-codex scans `~/.claude/projects` and `~/.codex/sessions`, then emits normalized, filtered rows.
 - DataClaw reads harness session stores and emits normalized conversation shards.
@@ -207,7 +254,16 @@ We did find real users' coding-agent histories that are substantially richer tha
 - TraceLab as a privacy-reduced control;
 - Wisp + Trace Commons for native format, branches, subagents, and ingestion fidelity.
 
-We did **not** find a safe, licensed, deliberately published complete `~/.claude` or `~/.codex` home. We should not make that the target. Frankengate should collect a typed, governed evidence export that includes the research-critical semantics and explicitly excludes credentials, unrelated caches, and opaque account state.
+We verified one genuine near-complete public Claude home-state tree, a
+substantial partial Claude home, thousands of native Claude/Codex JSONL files,
+and multiple rich native or portable session archives. We did **not** verify a
+literal complete global `~/.claude` or `~/.codex` home.
+
+Frankengate should accept near/partial homes and native archives through strict
+path and policy lanes, emit an area-by-area completeness receipt, and collect a
+typed governed evidence export that includes the research-critical semantics
+while explicitly excluding credentials, `.codex/auth*`, MCP auth/cache,
+unrelated caches, shell configuration, and opaque account state.
 
 The public corpora can establish that the machinery finds repeated friction, related work, repair candidates, memory candidates, and eval candidates. Only a consented prospective enterprise pilot can establish that these suggestions improve users or work across users.
 
@@ -221,6 +277,11 @@ The public corpora can establish that the machinery finds repeated friction, rel
 - [Peter O'Malley DataClaw history @ `8c954338`](https://huggingface.co/datasets/peteromallet/my-personal-codex-data/tree/8c9543389161e80628dcb183b30f8c6be04f627a)
 - [Claudeset community @ `fe11da9a`](https://huggingface.co/datasets/lelouch0110/claudeset-community/tree/fe11da9ac006d5592378a3d284ee2ed81ffb7578)
 - [Wisp Claude Code sessions @ `c2c90b59`](https://huggingface.co/datasets/crispwisp/wisp-claude-code-sessions/tree/c2c90b59174318ab0b163ec9c9ac82bb879288ce)
+- [Glint/Fable partial Claude home @ `e05c4178`](https://huggingface.co/datasets/Glint-Research/Fable-5-traces/tree/e05c417852fc59fd8da758e68b352732423ca0cb/claude)
+- [jkim0731 near-complete Claude home state @ `b5a4615c`](https://github.com/jkim0731/2p-hcr-autocoreg/tree/b5a4615cdb0ffad81650a9c72a54209a202f6337/.claude)
+- [NguyenDoCong native Claude project/session tree @ `2c90073c`](https://github.com/NguyenDoCong/bidding/tree/2c90073c8fe98e6c0db4c51e5ee2c47012025f1d/.claude/projects)
+- [wjmlong validated Codex Desktop bundles @ `1eceee07`](https://github.com/wjmlong/Codex_Sessions/tree/1eceee0784f155e6cb994210cfc7b02cbc458298)
+- [MaxDevv real Pi multi-source corpus @ `8c593252`](https://huggingface.co/datasets/MaxDevv/real-pi-coding-agent-traces-sessions/tree/8c593252ddad7dca08a0afc07896195fa73f2d6e)
 - [Trace Commons @ `112ebd4d`](https://huggingface.co/datasets/trace-commons/agent-traces/tree/112ebd4d03ce852b00e935d523107c3d0c9a65bf)
 - [Michaelwaves personal history @ `2ac84737`](https://huggingface.co/datasets/michaelwaves/my-personal-codex-data/tree/2ac84737812defdc1b3a8482c4897205534ab327)
 - [DataClaw 0.2.1 privacy and schema documentation](https://pypi.org/project/dataclaw/0.2.1/)
