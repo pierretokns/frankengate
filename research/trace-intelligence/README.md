@@ -304,6 +304,15 @@ PYTHONDONTWRITEBYTECODE=1 python3 trace_commons_memory_composition.py \
 The aggregate result is
 [`experiments/summaries/trace-commons-memory-composition-2026-07-30.md`](experiments/summaries/trace-commons-memory-composition-2026-07-30.md).
 
+The separate PostgreSQL H5 slice binds that content-free aggregate to a
+context-preserving procedure and rejects basename-only latest memory. All
+26 forced-RLS, role-separation, hidden-test, release, exposure, influence,
+withdrawal, and rollback assertions passed on PostgreSQL 16.12 with pgvector
+0.8.1; the transaction and residue check left zero study rows. This is a
+bounded database-mechanics result, not an Aurora operations or memory-benefit
+result. See
+[`experiments/summaries/trace-commons-memory-h5-postgres-2026-07-30.md`](experiments/summaries/trace-commons-memory-h5-postgres-2026-07-30.md).
+
 ## E2 same-work retrieval factorial
 
 `e2_authorized_retrieval_factorial.py` evaluates a frozen trace-to-trace

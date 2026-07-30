@@ -209,6 +209,15 @@ and every preregistered comparative-quality power gate fails. The frozen model
 and human-review phases remain unrun; running them on this cohort alone could
 produce descriptive examples but could not justify a product architecture.
 
+The bounded PostgreSQL H5 phase then passed 26/26 rollback-only assertions
+through the proposer, evaluator, releaser, and runtime roles. It bound the
+content-free aggregate to the contextual-isolation procedure, denied missing,
+wrong-tenant, wrong-team, stale-epoch, cross-subject, premature-release, and
+forged hidden-test operations, and left zero fixture rows. This upgrades the
+single-transaction forced-RLS and lifecycle slice to real-component evidence;
+concurrency, Aurora operations, failed-job atomicity, and memory benefit remain
+untested.
+
 The next mandatory gates are:
 
 1. test concurrent promotion, epoch changes, deletion, rollback, and export
@@ -224,8 +233,9 @@ The next mandatory gates are:
 ## Issue acceptance state
 
 - [Issue #99](https://github.com/pierretokns/frankengate/issues/99) has a
-  governed OSS dreaming design and source review, but its natural-trace,
-  Postgres RLS, concurrency, and held-out outcome gates remain open.
+  governed OSS dreaming design, natural-trace preflight, and bounded
+  PostgreSQL RLS/lifecycle pass, but concurrency, failed-job atomicity, Aurora
+  operations, and held-out outcome gates remain open.
 - [Issue #100](https://github.com/pierretokns/frankengate/issues/100) has the
   environment/evaluation/replay vocabulary and source-pinned design, but the
   canonical schema, relational tables, replay runner, and empirical matrix

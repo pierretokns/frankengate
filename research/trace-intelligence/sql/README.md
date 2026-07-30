@@ -30,6 +30,10 @@ kubectl exec -i -n frankengate-test postgres-0 -- \
 kubectl exec -i -n frankengate-test postgres-0 -- \
   psql -U frankengate -d frankengate -v ON_ERROR_STOP=1 \
   < research/trace-intelligence/sql/006_skill_release_assertions.sql
+
+kubectl exec -i -n frankengate-test postgres-0 -- \
+  psql -U frankengate -d frankengate -v ON_ERROR_STOP=1 \
+  < research/trace-intelligence/sql/007_trace_commons_memory_h5_assertions.sql
 ```
 
 The assertions execute all protected queries as `trace_research_app`, a
@@ -60,3 +64,16 @@ separation, release/security vetoes, no scope broadening, immutable signed
 fields, authorized influence tracking, withdrawal, and stale-epoch denial.
 It does not prove that a mined skill improves a real task, and it does not
 emulate Aurora operations, failure, concurrency, or scale.
+
+`007_trace_commons_memory_h5_assertions.sql` is the rollback-only PostgreSQL
+phase for the content-free Trace Commons memory-composition result. It uses
+synthetic authority values and aggregate counters only; raw traces, events,
+prompts, responses, paths, tool identifiers, and extracted memory text remain
+outside PostgreSQL. Its 20 invariant checks and six expected-denial checks
+prove team-scoped RLS denial, proposer/evaluator separation, gated release,
+authorized exposure and influence recording, and rollback visibility for
+source result
+`3084635035e330948861c763c015cf4f6394361f7fb3960b29928fb70a1a2af5`.
+It does not establish memory correctness, utility, failed-job atomicity, skill
+improvement, identity, continuous validity, Aurora operations, or enterprise
+transfer.
