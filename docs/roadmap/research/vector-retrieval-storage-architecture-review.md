@@ -130,8 +130,9 @@ Changing dimensions is a dual-index migration, not an in-place schema edit.
 
 ## Why not embed every log
 
-Logs contain credentials, prompts, completions, tool arguments/results, customer data,
-and high-cardinality identifiers. Embedding all of them creates a second representation
+Logs contain prompts, completions, tool arguments/results, customer data, and
+high-cardinality identifiers; verified credentials must already have been removed.
+Embedding all logs creates a second representation
 that is difficult to redact, interpret, delete, or prove non-memorizing. It also spends
 database CPU, WAL, storage, backup, and index-build capacity on data that often has no
 retrieval value.
@@ -144,8 +145,11 @@ Use three explicit layers:
 | Curated retrieval corpus | reviewed chunks, provenance, ACL envelope, embedding/retrieval contract | pgvector |
 | Ephemeral results | semantic cache entries and bounded working sets | PostgreSQL plus bounded in-process cache initially |
 
-Raw content is excluded by default. Curation must be purpose-bound, sampled or
-triggered, redacted before indexing, and independently deletable. An embedding never
+Curated same-scope retrieval corpora may contain authorized full text and embeddings
+when every chunk carries source, subject/audience, classification, purpose,
+policy/authorization/deletion epochs, and enforced RLS. Curation remains purpose-bound,
+sampled or triggered, and independently deletable. An index outside the equivalent
+governed scope receives a destination-transformed projection. An embedding never
 replaces the source hash or approved source reference.
 
 ### Sensitive-content governance is broader than PII redaction
@@ -182,9 +186,10 @@ Use a policy pipeline, not a universal redaction pass:
    leakage, and inference from neighboring chunks. Never use production sensitive text
    as an unreviewed regression fixture.
 
-Prefer exclusion over clever redaction for ordinary logs. The safest corpus is the one
-we never create. Preserve a metadata-only evidence event when content is ineligible so
-the flywheel can measure missingness without retaining the content.
+Prefer selective curation over embedding every log. Preserve a metadata-only evidence
+event when content is ineligible so the flywheel can measure missingness without
+retaining the content. Do not destroy useful same-scope evidence merely because it
+contains PII; enforce its classification and audience instead.
 
 Contextual sensitive-content model training is explicitly out of scope. FrankenGate
 uses conservative source allowlists, purpose restrictions, existing deterministic

@@ -42,6 +42,30 @@ work may therefore proceed as an exploratory within-corpus replication;
 architecture-quality, employee, enterprise-transfer, and population claims
 remain blocked.
 
+## Privacy-boundary amendment
+
+Before any model output or human label was observed, the execution boundary was
+clarified: useful internal logs are not blanket-redacted. Authorized local
+models and administrators may use the governed internal source under its
+existing RLS, classification, audit, retention, and deletion controls. Raw
+content may not be sent to a third-party model. The frozen OpenAI arm therefore
+remains blocked until a separate external-egress gate passes, while a local
+model arm may proceed and must be reported separately. An export transform
+creates a derived copy and never overwrites the internal trace.
+
+The first one-unit local mechanics smoke was deliberately non-confirmatory. It
+revealed two protocol defects before the full run: the longitudinal protocol
+had failed to carry forward the already-frozen 2,048-token/five-candidate
+evidence budget, and the local Qwen runtime omitted an explicit `null`
+`evidence_ref` from otherwise valid abstentions. The full local run therefore
+uses the pre-existing whole-item/trailing-item truncation rule and a narrowly
+reported serialization adapter for omitted-null abstentions. A second bounded
+smoke showed that plain-text JSON was still incomplete, so the local adapter
+uses the snapshot's already-pinned native function-calling path to submit the
+same three decision fields. No semantic smoke outcome was used to select an arm
+or metric; the amended local run remains post-pilot exploratory rather than
+confirmatory.
+
 ## Source independence and privacy
 
 The selected Glint raw archive and
@@ -57,10 +81,14 @@ The [Fable dataset card](https://huggingface.co/datasets/Glint-Research/Fable-5-
 labels the corpus machine-generated/synthetic, describes it as
 distillation-oriented, warns that raw telemetry is unsanitized, and provides
 no explicit per-user donation, consent, or redaction protocol. The raw archive
-therefore stays in local quarantine. It is not approved for training,
-quotation, or direct external-model egress.
+therefore stays in the authorized local research boundary. It may be inspected
+by authorized researchers and local models, but it is not approved for
+training, quotation, or direct third-party-model egress.
 
-Before any external model call, an aggregate-only scanner must:
+This gate applies only before a third-party model call or a lower-privilege
+export. It does not redact the internal source, the authorized administrator
+view, or a fully local analysis run. Before such an external call, an
+aggregate-only scanner must:
 
 1. replace configured credential and bearer patterns with typed placeholders;
 2. replace high-entropy secret candidates without emitting their values;

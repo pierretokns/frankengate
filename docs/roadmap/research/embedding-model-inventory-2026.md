@@ -34,8 +34,11 @@ leaderboard score is sufficient. Every candidate must be evaluated on:
 Pin model ID and revision, tokenizer ID/revision, query/document prompts,
 pooling, normalization, dimension, distance metric, chunking policy, and index
 revision. A model swap requires a shadow index and frozen holdout; never mutate
-weights or vectors in place. Store only redacted evaluation text or hashes in
-the benchmark manifest.
+weights or vectors in place. Store no plaintext in the Git benchmark manifest.
+Instead record governed query/document source references, content disposition,
+classification, purpose, policy/authorization/deletion epochs, and hashes. The
+authorized runner resolves full text locally under current RLS; credentials are
+excluded before either source storage or evaluation.
 
 ## Frankengate E2 evidence update
 

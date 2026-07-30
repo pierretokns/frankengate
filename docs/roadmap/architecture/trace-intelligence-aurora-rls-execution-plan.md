@@ -262,8 +262,9 @@ extensible PostgreSQL service before adding a second query database. See the
 - `trace_events`: ordered messages, spans, tools, outcomes, feedback and object refs;
 - `task_attempts` and `recovery_deltas`;
 - `friction_signals` and annotations;
-- `trace_documents`: sanitized, purpose-approved retrieval documents plus generated
-  `tsvector`;
+- `trace_documents`: purpose-approved, RLS-protected internal retrieval documents (or
+  object references) plus generated `tsvector`; external indexes receive separate
+  destination-transformed projections;
 - `trace_entities` and `trace_edges`;
 - `insights`;
 - `eval_cases` and dataset memberships;
@@ -271,9 +272,12 @@ extensible PostgreSQL service before adding a second query database. See the
 - `cohort_aggregates`;
 - `derived_index_releases`, tombstones and deletion receipts.
 
-Raw payload bytes do not live in these tables by default. JSONB retains bounded
-provider-specific attributes, evaluator explanations, and provenance extensions.
-Frequently filtered JSONB keys are promoted to typed columns before launch.
+Tenant policy selects metadata-only or full-content capture. Bounded full-fidelity
+payloads may live in RLS-protected rows; large payloads use authorized object
+references. JSONB retains bounded provider-specific attributes, evaluator explanations,
+and provenance extensions. Frequently filtered JSONB keys are promoted to typed columns
+before launch. PII is not destructively stripped from the authorized source merely to
+make an external derivative safe.
 
 Tool execution is not stored only as assistant-message JSON. The canonical projection
 separates model proposal, authorization/confirmation, actual attempt, observation

@@ -1,0 +1,1697 @@
+{
+  "base_result_sha256": "b65ab66ba8da6ecef77ee00eb2bc76d6beafe2116d99f1808d323b2a8f8a1629",
+  "claim_boundary": {
+    "arm_labels_hidden_from_model": false,
+    "automatic_memory_promotion_allowed": false,
+    "bitemporal_semantics_complete": false,
+    "dream_mechanism_tested": false,
+    "enterprise_generalization_allowed": false,
+    "evaluator_labels_rederived_by_finalizer": false,
+    "exploratory_within_corpus": true,
+    "frozen_diversity_gate_passed": false,
+    "human_review_completed": false,
+    "later_observation_is_hindsight_score_not_online_ground_truth": true,
+    "latest_only_context_free": false,
+    "model_is_pilot_only": true,
+    "paper_grade_confirmatory_result": false
+  },
+  "code_receipts": {
+    "finalizer_sha256": "4dfd63403810a92c48c52443dd37ca15fe918aa9084e9488ebeebd31dc13c733",
+    "runner_source_at_execution_attested": false,
+    "runner_source_at_finalization_only_sha256": "675a51f53c88b47f43fffc8ce636bdc654d62f855c5f9b5f7e92b243d2219e83",
+    "tokenizer_worker_sha256": "86842a2a0fc7fe5df1f81da7a74191711df601c5d565aadcd1d8f3e17fe807f5"
+  },
+  "evidence_budget": {
+    "contextual_bitemporal": {
+      "items_dropped_for_candidate_limit": 155,
+      "items_dropped_for_token_budget": 48,
+      "last_item_truncated": 12,
+      "maximum_pack_tokens": 2048,
+      "minimum_pack_tokens": 530,
+      "packs": 17,
+      "token_budget": 2048
+    },
+    "latest_only": {
+      "items_dropped_for_candidate_limit": 0,
+      "items_dropped_for_token_budget": 0,
+      "last_item_truncated": 12,
+      "maximum_pack_tokens": 2048,
+      "minimum_pack_tokens": 526,
+      "packs": 17,
+      "token_budget": 2048
+    },
+    "no_memory": {
+      "items_dropped_for_candidate_limit": 0,
+      "items_dropped_for_token_budget": 0,
+      "last_item_truncated": 0,
+      "maximum_pack_tokens": 297,
+      "minimum_pack_tokens": 285,
+      "packs": 17,
+      "token_budget": 2048
+    },
+    "proposal_only_dream": {
+      "items_dropped_for_candidate_limit": 155,
+      "items_dropped_for_token_budget": 48,
+      "last_item_truncated": 12,
+      "maximum_pack_tokens": 2048,
+      "minimum_pack_tokens": 528,
+      "packs": 17,
+      "token_budget": 2048
+    },
+    "verbatim": {
+      "items_dropped_for_candidate_limit": 155,
+      "items_dropped_for_token_budget": 48,
+      "last_item_truncated": 12,
+      "maximum_pack_tokens": 2048,
+      "minimum_pack_tokens": 360,
+      "packs": 17,
+      "token_budget": 2048
+    }
+  },
+  "execution": {
+    "arms": [
+      "no_memory",
+      "verbatim",
+      "latest_only",
+      "contextual_bitemporal",
+      "proposal_only_dream"
+    ],
+    "attempts": 425,
+    "candidate_limit": 5,
+    "completion_cap_bound_in_request_receipt": false,
+    "endpoint_scope": "loopback_only",
+    "evidence_pack_token_budget": 2048,
+    "max_completion_tokens": 256,
+    "model_id_declared_by_manifest": "mlx-community/Qwen3.5-9B-OptiQ-4bit",
+    "model_revision_declared_by_manifest": "319aed167e31e0bf81ddba0c23f8d218a15be612",
+    "native_decision_tool_strictly_enforced": false,
+    "raw_audit_files_verified": 425,
+    "raw_audit_set_sha256": "7a3a691a2269de12b47f5be70a940e93eb301f349ab6caffc967ce70916758f0",
+    "repeated_invocations_per_unit_arm": 5,
+    "request_model_id_declared_by_manifest": "default_model",
+    "runner_declared_native_decision_tool_required": true,
+    "runtime_identity_mechanically_attested": false,
+    "source_unit_counts": {
+      "fable5_top_level": 14,
+      "trace_commons": 3
+    },
+    "units_executed": 17
+  },
+  "input_receipts": {
+    "experiment_config_sha256": "d4ae8a182f38792ed6b307308b05c66a259553c98118a71471f037eb260946c1",
+    "model_manifest_sha256": "557d364d36ef39a0b2f810345af34dcf5794552df11db368f8eca1ff9a9b0f64",
+    "ranker_config_sha256": "1cb52088085d9c9d2523c5c40449f1c26760c4f974f48188d2a552b7d4cf86cb",
+    "source_counts": {
+      "fable5_top_level": 14,
+      "trace_commons": 3
+    },
+    "source_receipts": [
+      {
+        "manifest_sha256": "2dd19f36a62fb35db1d77d453dff725aa30158113b3a5fcc9ee55f50a0707049",
+        "records": 18770,
+        "source_label": "fable5_top_level",
+        "verified_source_set_sha256": "4b43f2eaece67e20f4b8677c8f26c5aaae5c911b7298ea83c0b160f4d3a0ced7"
+      },
+      {
+        "manifest_sha256": "2af3b791b0a259968620c6654a722f86f786a4570caab3c1f90e73f85c2afaeb",
+        "records": 17991,
+        "source_label": "trace_commons",
+        "verified_source_set_sha256": "b774b4438d2c9257cac93387004fa0ddf4d74d5aa3599507cec053eba5249775"
+      }
+    ],
+    "units": 17
+  },
+  "overall": {
+    "arms": {
+      "contextual_bitemporal": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 10,
+          "numerator": 5,
+          "rate": 0.5
+        },
+        "attempts": 85,
+        "citation_precision_on_selections": {
+          "denominator": 75,
+          "numerator": 75,
+          "rate": 1.0
+        },
+        "completion_tokens": 4585,
+        "correct_abstention": {
+          "denominator": 85,
+          "numerator": 5,
+          "rate": 0.058824
+        },
+        "decision_reasons": {
+          "exact_supported": 75,
+          "interval_uncertainty": 5,
+          "wrong_context": 5
+        },
+        "exact_decision_correct": {
+          "denominator": 85,
+          "numerator": 60,
+          "rate": 0.705882
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 85,
+          "numerator": 60,
+          "rate": 0.705882
+        },
+        "prompt_tokens": 193020,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 85
+        },
+        "selected_exact": {
+          "denominator": 85,
+          "numerator": 55,
+          "rate": 0.647059
+        },
+        "selected_stale": {
+          "denominator": 85,
+          "numerator": 20,
+          "rate": 0.235294
+        },
+        "selected_wrong_context": {
+          "denominator": 85,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 85,
+          "numerator": 85,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 85,
+            "numerator": 5,
+            "rate": 0.058824
+          },
+          "exact_decision_correct": {
+            "denominator": 85,
+            "numerator": 60,
+            "rate": 0.705882
+          },
+          "selected_exact": {
+            "denominator": 85,
+            "numerator": 55,
+            "rate": 0.647059
+          },
+          "selected_stale": {
+            "denominator": 85,
+            "numerator": 20,
+            "rate": 0.235294
+          },
+          "selected_wrong_context": {
+            "denominator": 85,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "latest_only": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 10,
+          "numerator": 5,
+          "rate": 0.5
+        },
+        "attempts": 85,
+        "citation_precision_on_selections": {
+          "denominator": 75,
+          "numerator": 75,
+          "rate": 1.0
+        },
+        "completion_tokens": 4585,
+        "correct_abstention": {
+          "denominator": 85,
+          "numerator": 5,
+          "rate": 0.058824
+        },
+        "decision_reasons": {
+          "exact_supported": 75,
+          "insufficient": 5,
+          "interval_uncertainty": 5
+        },
+        "exact_decision_correct": {
+          "denominator": 85,
+          "numerator": 60,
+          "rate": 0.705882
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 85,
+          "numerator": 60,
+          "rate": 0.705882
+        },
+        "prompt_tokens": 192920,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 85
+        },
+        "selected_exact": {
+          "denominator": 85,
+          "numerator": 55,
+          "rate": 0.647059
+        },
+        "selected_stale": {
+          "denominator": 85,
+          "numerator": 20,
+          "rate": 0.235294
+        },
+        "selected_wrong_context": {
+          "denominator": 85,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 85,
+          "numerator": 85,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 85,
+            "numerator": 5,
+            "rate": 0.058824
+          },
+          "exact_decision_correct": {
+            "denominator": 85,
+            "numerator": 60,
+            "rate": 0.705882
+          },
+          "selected_exact": {
+            "denominator": 85,
+            "numerator": 55,
+            "rate": 0.647059
+          },
+          "selected_stale": {
+            "denominator": 85,
+            "numerator": 20,
+            "rate": 0.235294
+          },
+          "selected_wrong_context": {
+            "denominator": 85,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "no_memory": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 85,
+          "numerator": 85,
+          "rate": 1.0
+        },
+        "attempts": 85,
+        "citation_precision_on_selections": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null
+        },
+        "completion_tokens": 4505,
+        "correct_abstention": {
+          "denominator": 85,
+          "numerator": 85,
+          "rate": 1.0
+        },
+        "decision_reasons": {
+          "insufficient": 85
+        },
+        "exact_decision_correct": {
+          "denominator": 85,
+          "numerator": 85,
+          "rate": 1.0
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 85,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "prompt_tokens": 65995,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 85
+        },
+        "selected_exact": {
+          "denominator": 85,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_stale": {
+          "denominator": 85,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_wrong_context": {
+          "denominator": 85,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 85,
+          "numerator": 85,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 85,
+            "numerator": 85,
+            "rate": 1.0
+          },
+          "exact_decision_correct": {
+            "denominator": 85,
+            "numerator": 85,
+            "rate": 1.0
+          },
+          "selected_exact": {
+            "denominator": 85,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_stale": {
+            "denominator": 85,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_wrong_context": {
+            "denominator": 85,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "proposal_only_dream": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 10,
+          "numerator": 5,
+          "rate": 0.5
+        },
+        "attempts": 85,
+        "citation_precision_on_selections": {
+          "denominator": 75,
+          "numerator": 75,
+          "rate": 1.0
+        },
+        "completion_tokens": 4585,
+        "correct_abstention": {
+          "denominator": 85,
+          "numerator": 5,
+          "rate": 0.058824
+        },
+        "decision_reasons": {
+          "exact_supported": 75,
+          "interval_uncertainty": 5,
+          "wrong_context": 5
+        },
+        "exact_decision_correct": {
+          "denominator": 85,
+          "numerator": 60,
+          "rate": 0.705882
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 85,
+          "numerator": 60,
+          "rate": 0.705882
+        },
+        "prompt_tokens": 192970,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 85
+        },
+        "selected_exact": {
+          "denominator": 85,
+          "numerator": 55,
+          "rate": 0.647059
+        },
+        "selected_stale": {
+          "denominator": 85,
+          "numerator": 20,
+          "rate": 0.235294
+        },
+        "selected_wrong_context": {
+          "denominator": 85,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 85,
+          "numerator": 85,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 85,
+            "numerator": 5,
+            "rate": 0.058824
+          },
+          "exact_decision_correct": {
+            "denominator": 85,
+            "numerator": 60,
+            "rate": 0.705882
+          },
+          "selected_exact": {
+            "denominator": 85,
+            "numerator": 55,
+            "rate": 0.647059
+          },
+          "selected_stale": {
+            "denominator": 85,
+            "numerator": 20,
+            "rate": 0.235294
+          },
+          "selected_wrong_context": {
+            "denominator": 85,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "verbatim": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 10,
+          "numerator": 5,
+          "rate": 0.5
+        },
+        "attempts": 85,
+        "citation_precision_on_selections": {
+          "denominator": 75,
+          "numerator": 75,
+          "rate": 1.0
+        },
+        "completion_tokens": 4580,
+        "correct_abstention": {
+          "denominator": 85,
+          "numerator": 5,
+          "rate": 0.058824
+        },
+        "decision_reasons": {
+          "exact_supported": 75,
+          "insufficient": 10
+        },
+        "exact_decision_correct": {
+          "denominator": 85,
+          "numerator": 60,
+          "rate": 0.705882
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 85,
+          "numerator": 60,
+          "rate": 0.705882
+        },
+        "prompt_tokens": 188840,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 85
+        },
+        "selected_exact": {
+          "denominator": 85,
+          "numerator": 55,
+          "rate": 0.647059
+        },
+        "selected_stale": {
+          "denominator": 85,
+          "numerator": 20,
+          "rate": 0.235294
+        },
+        "selected_wrong_context": {
+          "denominator": 85,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 85,
+          "numerator": 85,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 85,
+            "numerator": 5,
+            "rate": 0.058824
+          },
+          "exact_decision_correct": {
+            "denominator": 85,
+            "numerator": 60,
+            "rate": 0.705882
+          },
+          "selected_exact": {
+            "denominator": 85,
+            "numerator": 55,
+            "rate": 0.647059
+          },
+          "selected_stale": {
+            "denominator": 85,
+            "numerator": 20,
+            "rate": 0.235294
+          },
+          "selected_wrong_context": {
+            "denominator": 85,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      }
+    }
+  },
+  "paired_arm_behavior_agreement": {
+    "contextual_bitemporal__proposal_only_dream": {
+      "denominator": 85,
+      "numerator": 85,
+      "rate": 1.0
+    },
+    "latest_only__contextual_bitemporal": {
+      "denominator": 85,
+      "numerator": 80,
+      "rate": 0.941176
+    },
+    "latest_only__proposal_only_dream": {
+      "denominator": 85,
+      "numerator": 80,
+      "rate": 0.941176
+    },
+    "no_memory__contextual_bitemporal": {
+      "denominator": 85,
+      "numerator": 10,
+      "rate": 0.117647
+    },
+    "no_memory__latest_only": {
+      "denominator": 85,
+      "numerator": 10,
+      "rate": 0.117647
+    },
+    "no_memory__proposal_only_dream": {
+      "denominator": 85,
+      "numerator": 10,
+      "rate": 0.117647
+    },
+    "no_memory__verbatim": {
+      "denominator": 85,
+      "numerator": 10,
+      "rate": 0.117647
+    },
+    "verbatim__contextual_bitemporal": {
+      "denominator": 85,
+      "numerator": 85,
+      "rate": 1.0
+    },
+    "verbatim__latest_only": {
+      "denominator": 85,
+      "numerator": 80,
+      "rate": 0.941176
+    },
+    "verbatim__proposal_only_dream": {
+      "denominator": 85,
+      "numerator": 85,
+      "rate": 1.0
+    }
+  },
+  "privacy_boundary": {
+    "aggregate_contains_raw_paths": false,
+    "aggregate_contains_trace_content": false,
+    "aggregate_contains_unit_identifiers": false,
+    "authorized_internal_full_fidelity_used": true,
+    "credential_only_input_gate_verified": false,
+    "raw_audit_committed": false,
+    "third_party_egress": false
+  },
+  "result_sha256": "f7330a3db98acb6b8378f863aa9fb052d81c693b97878ff8f9bea11a34f22925",
+  "schema_version": "frankengate.longitudinal-local-final.v1",
+  "source_stratified": {
+    "fable5_top_level": {
+      "contextual_bitemporal": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null
+        },
+        "attempts": 70,
+        "citation_precision_on_selections": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "completion_tokens": 3780,
+        "correct_abstention": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "decision_reasons": {
+          "exact_supported": 70
+        },
+        "exact_decision_correct": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "prompt_tokens": 173835,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 70
+        },
+        "selected_exact": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "selected_stale": {
+          "denominator": 70,
+          "numerator": 15,
+          "rate": 0.214286
+        },
+        "selected_wrong_context": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "exact_decision_correct": {
+            "denominator": 70,
+            "numerator": 55,
+            "rate": 0.785714
+          },
+          "selected_exact": {
+            "denominator": 70,
+            "numerator": 55,
+            "rate": 0.785714
+          },
+          "selected_stale": {
+            "denominator": 70,
+            "numerator": 15,
+            "rate": 0.214286
+          },
+          "selected_wrong_context": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "latest_only": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null
+        },
+        "attempts": 70,
+        "citation_precision_on_selections": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "completion_tokens": 3780,
+        "correct_abstention": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "decision_reasons": {
+          "exact_supported": 70
+        },
+        "exact_decision_correct": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "prompt_tokens": 173795,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 70
+        },
+        "selected_exact": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "selected_stale": {
+          "denominator": 70,
+          "numerator": 15,
+          "rate": 0.214286
+        },
+        "selected_wrong_context": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "exact_decision_correct": {
+            "denominator": 70,
+            "numerator": 55,
+            "rate": 0.785714
+          },
+          "selected_exact": {
+            "denominator": 70,
+            "numerator": 55,
+            "rate": 0.785714
+          },
+          "selected_stale": {
+            "denominator": 70,
+            "numerator": 15,
+            "rate": 0.214286
+          },
+          "selected_wrong_context": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "no_memory": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "attempts": 70,
+        "citation_precision_on_selections": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null
+        },
+        "completion_tokens": 3710,
+        "correct_abstention": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "decision_reasons": {
+          "insufficient": 70
+        },
+        "exact_decision_correct": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "prompt_tokens": 54225,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 70
+        },
+        "selected_exact": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_stale": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_wrong_context": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 70,
+            "numerator": 70,
+            "rate": 1.0
+          },
+          "exact_decision_correct": {
+            "denominator": 70,
+            "numerator": 70,
+            "rate": 1.0
+          },
+          "selected_exact": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_stale": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_wrong_context": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "proposal_only_dream": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null
+        },
+        "attempts": 70,
+        "citation_precision_on_selections": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "completion_tokens": 3780,
+        "correct_abstention": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "decision_reasons": {
+          "exact_supported": 70
+        },
+        "exact_decision_correct": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "prompt_tokens": 173815,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 70
+        },
+        "selected_exact": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "selected_stale": {
+          "denominator": 70,
+          "numerator": 15,
+          "rate": 0.214286
+        },
+        "selected_wrong_context": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "exact_decision_correct": {
+            "denominator": 70,
+            "numerator": 55,
+            "rate": 0.785714
+          },
+          "selected_exact": {
+            "denominator": 70,
+            "numerator": 55,
+            "rate": 0.785714
+          },
+          "selected_stale": {
+            "denominator": 70,
+            "numerator": 15,
+            "rate": 0.214286
+          },
+          "selected_wrong_context": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "verbatim": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null
+        },
+        "attempts": 70,
+        "citation_precision_on_selections": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "completion_tokens": 3780,
+        "correct_abstention": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "decision_reasons": {
+          "exact_supported": 70
+        },
+        "exact_decision_correct": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "prompt_tokens": 172165,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 70
+        },
+        "selected_exact": {
+          "denominator": 70,
+          "numerator": 55,
+          "rate": 0.785714
+        },
+        "selected_stale": {
+          "denominator": 70,
+          "numerator": 15,
+          "rate": 0.214286
+        },
+        "selected_wrong_context": {
+          "denominator": 70,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 70,
+          "numerator": 70,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "exact_decision_correct": {
+            "denominator": 70,
+            "numerator": 55,
+            "rate": 0.785714
+          },
+          "selected_exact": {
+            "denominator": 70,
+            "numerator": 55,
+            "rate": 0.785714
+          },
+          "selected_stale": {
+            "denominator": 70,
+            "numerator": 15,
+            "rate": 0.214286
+          },
+          "selected_wrong_context": {
+            "denominator": 70,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      }
+    },
+    "trace_commons": {
+      "contextual_bitemporal": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 10,
+          "numerator": 5,
+          "rate": 0.5
+        },
+        "attempts": 15,
+        "citation_precision_on_selections": {
+          "denominator": 5,
+          "numerator": 5,
+          "rate": 1.0
+        },
+        "completion_tokens": 805,
+        "correct_abstention": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "decision_reasons": {
+          "exact_supported": 5,
+          "interval_uncertainty": 5,
+          "wrong_context": 5
+        },
+        "exact_decision_correct": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "prompt_tokens": 19185,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 15
+        },
+        "selected_exact": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_stale": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "selected_wrong_context": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 15,
+          "numerator": 15,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "exact_decision_correct": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "selected_exact": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_stale": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "selected_wrong_context": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "latest_only": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 10,
+          "numerator": 5,
+          "rate": 0.5
+        },
+        "attempts": 15,
+        "citation_precision_on_selections": {
+          "denominator": 5,
+          "numerator": 5,
+          "rate": 1.0
+        },
+        "completion_tokens": 805,
+        "correct_abstention": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "decision_reasons": {
+          "exact_supported": 5,
+          "insufficient": 5,
+          "interval_uncertainty": 5
+        },
+        "exact_decision_correct": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "prompt_tokens": 19125,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 15
+        },
+        "selected_exact": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_stale": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "selected_wrong_context": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 15,
+          "numerator": 15,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "exact_decision_correct": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "selected_exact": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_stale": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "selected_wrong_context": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "no_memory": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 15,
+          "numerator": 15,
+          "rate": 1.0
+        },
+        "attempts": 15,
+        "citation_precision_on_selections": {
+          "denominator": 0,
+          "numerator": 0,
+          "rate": null
+        },
+        "completion_tokens": 795,
+        "correct_abstention": {
+          "denominator": 15,
+          "numerator": 15,
+          "rate": 1.0
+        },
+        "decision_reasons": {
+          "insufficient": 15
+        },
+        "exact_decision_correct": {
+          "denominator": 15,
+          "numerator": 15,
+          "rate": 1.0
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "prompt_tokens": 11770,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 15
+        },
+        "selected_exact": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_stale": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_wrong_context": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 15,
+          "numerator": 15,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 15,
+            "numerator": 15,
+            "rate": 1.0
+          },
+          "exact_decision_correct": {
+            "denominator": 15,
+            "numerator": 15,
+            "rate": 1.0
+          },
+          "selected_exact": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_stale": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_wrong_context": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "proposal_only_dream": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 10,
+          "numerator": 5,
+          "rate": 0.5
+        },
+        "attempts": 15,
+        "citation_precision_on_selections": {
+          "denominator": 5,
+          "numerator": 5,
+          "rate": 1.0
+        },
+        "completion_tokens": 805,
+        "correct_abstention": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "decision_reasons": {
+          "exact_supported": 5,
+          "interval_uncertainty": 5,
+          "wrong_context": 5
+        },
+        "exact_decision_correct": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "prompt_tokens": 19155,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 15
+        },
+        "selected_exact": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_stale": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "selected_wrong_context": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 15,
+          "numerator": 15,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "exact_decision_correct": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "selected_exact": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_stale": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "selected_wrong_context": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      },
+      "verbatim": {
+        "abstention_correctness_on_abstentions": {
+          "denominator": 10,
+          "numerator": 5,
+          "rate": 0.5
+        },
+        "attempts": 15,
+        "citation_precision_on_selections": {
+          "denominator": 5,
+          "numerator": 5,
+          "rate": 1.0
+        },
+        "completion_tokens": 800,
+        "correct_abstention": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "decision_reasons": {
+          "exact_supported": 5,
+          "insufficient": 10
+        },
+        "exact_decision_correct": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "exact_evidence_available_post_budget": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "prompt_tokens": 16675,
+        "protocol_failure_classes": {},
+        "response_transports": {
+          "native_tool": 15
+        },
+        "selected_exact": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "selected_stale": {
+          "denominator": 15,
+          "numerator": 5,
+          "rate": 0.333333
+        },
+        "selected_wrong_context": {
+          "denominator": 15,
+          "numerator": 0,
+          "rate": 0.0
+        },
+        "valid": {
+          "denominator": 15,
+          "numerator": 15,
+          "rate": 1.0
+        },
+        "valid_conditional": {
+          "correct_abstention": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "exact_decision_correct": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "selected_exact": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          },
+          "selected_stale": {
+            "denominator": 15,
+            "numerator": 5,
+            "rate": 0.333333
+          },
+          "selected_wrong_context": {
+            "denominator": 15,
+            "numerator": 0,
+            "rate": 0.0
+          }
+        }
+      }
+    }
+  },
+  "source_stratified_five_run_stability": {
+    "fable5_top_level": {
+      "contextual_bitemporal": {
+        "all_repeats_valid": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        }
+      },
+      "latest_only": {
+        "all_repeats_valid": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        }
+      },
+      "no_memory": {
+        "all_repeats_valid": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        }
+      },
+      "proposal_only_dream": {
+        "all_repeats_valid": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        }
+      },
+      "verbatim": {
+        "all_repeats_valid": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 14,
+          "numerator": 14,
+          "rate": 1.0
+        }
+      }
+    },
+    "trace_commons": {
+      "contextual_bitemporal": {
+        "all_repeats_valid": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        }
+      },
+      "latest_only": {
+        "all_repeats_valid": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        }
+      },
+      "no_memory": {
+        "all_repeats_valid": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        }
+      },
+      "proposal_only_dream": {
+        "all_repeats_valid": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        }
+      },
+      "verbatim": {
+        "all_repeats_valid": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_behavioral": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "conditional_full_output": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        },
+        "strict_valid_and_behaviorally_stable": {
+          "denominator": 3,
+          "numerator": 3,
+          "rate": 1.0
+        }
+      }
+    }
+  }
+}

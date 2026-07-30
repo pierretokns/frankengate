@@ -185,6 +185,61 @@ The first executable pilot answers two narrow questions:
 It does **not** establish that a trace is diagnostically informative, identify a
 decisive failure step, infer a person's skill, or justify a production feature.
 
+## Authorized local-model longitudinal experiment
+
+The longitudinal state-selection experiment deliberately keeps useful trace
+content intact inside the governed internal boundary. Authorized users and
+administrators may inspect full-fidelity source evidence within their scope.
+Redaction is a disclosure control for third-party, lower-privilege, cross-scope,
+or public copies—not a destructive preprocessing step for Frankengate's own
+logs. Credentials are a separate class: authorization/cookie headers, bearer
+and session tokens, API/virtual-key values, OAuth codes, private keys, and
+secret-manager values must be stripped before durable capture or any
+model/evaluator/index path.
+
+The frozen experiment evaluates 17 cutoff-safe context-artifact units from the
+Trace Commons and Fable-5 strata across five memory surfaces and five repeated
+invocations. Those invocations measure deterministic repeatability, not five
+statistically independent samples: the local runtime uses temperature zero and
+does not promise seed support. It calls only a pinned model server bound to
+loopback. Raw prompts, model responses, trace content, unit identifiers, and the
+unminimized base result stay in explicit internal paths outside Git:
+
+```sh
+PYTHON=python3 \
+TRACE_COMMONS_ROOT=/private/path/trace-commons \
+FABLE5_PREPARED_ROOT=/private/path/fable5-content-addressed \
+LONGITUDINAL_LOCAL_ENDPOINT=http://127.0.0.1:8765 \
+LONGITUDINAL_RAW_AUDIT_DIR=/private/path/new-empty-audit-dir \
+LONGITUDINAL_BASE_RESULT=/private/path/base-result.json \
+LOCAL_TOKENIZER_PYTHON=/path/to/pinned/python \
+LOCAL_MODEL_SNAPSHOT=/private/path/pinned-model-snapshot \
+make longitudinal-memory-local-model
+
+PYTHON=python3 \
+LONGITUDINAL_RAW_AUDIT_DIR=/private/path/completed-audit-dir \
+LONGITUDINAL_BASE_RESULT=/private/path/base-result.json \
+make longitudinal-memory-local-finalize
+```
+
+The finalizer fails closed on missing, duplicate, or inconsistent attempts. Its
+committed artifact contains only source-stratified rates, decision-reason and
+protocol-failure counts, token totals, evidence-budget pressure, stability,
+content-free input receipts, and a hash commitment to the internal audit set.
+This bounded study tests state evidence selection; it does not measure employee
+skill, causal memory benefit, or enterprise-wide generalization.
+
+The completed first pilot is recorded in
+[`experiments/summaries/longitudinal-memory-local-model-replication-2026-07-30.md`](experiments/summaries/longitudinal-memory-local-model-replication-2026-07-30.md).
+All 425 loopback calls produced valid native-tool responses, but the four
+evidence-bearing arms agreed behaviorally and had identical aggregate scores.
+This is not evidence that the mechanisms are equivalent: the pilot exposed
+design confounds. The nominal dream arm did not dream, arm labels were visible,
+`latest_only` retained context, the bitemporal surface was incomplete, and the
+runtime/source was not attested at process launch. The checked-in result is
+therefore explicitly exploratory; a corrected paper-grade replication must
+remove those confounds and install an always-on credential-only input gate.
+
 ## Run the matched pilot
 
 The input is JSON Lines with the public
@@ -329,9 +384,10 @@ The Glint archive is a 115/115 byte-exact mirror of the pinned cfahlgren1
 archive and counts once. Its card describes unsanitized synthetic telemetry and
 does not establish independent contributors. An aggregate-only scan of 338,210
 strings found 65 redaction markers and 11 bearer-token-shaped candidates
-without emitting candidate values. Raw external-model egress and training are
-blocked until a separate sanitizer replaces candidates, rescans the final
-evidence pack, and passes fail closed.
+without emitting candidate values. Third-party model/evaluator/training egress
+is blocked until a credential-only hard deny and destination-approved PII
+transform rescan the final evidence pack and pass fail closed. Authorized
+same-scope local analysis may retain PII, but never reusable credentials.
 
 Rebuild from external caches:
 

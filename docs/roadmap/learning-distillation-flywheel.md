@@ -24,22 +24,27 @@ audited promotion/rollback -> new governed traces`.
 
 Identity remains attached throughout. Every trace, example, annotation, evaluator,
 experiment, job, artifact and promotion references immutable subject/team/service
-identity and the effective group-derived policy version. Content stores use pseudonymous
-research subject IDs; the re-identification map is separately protected.
+identity and the effective group-derived policy version. Derived training exports use
+pseudonymous research subject IDs; the governed internal trace record retains the
+subject linkage required for user history, administration, audit, deletion, and
+same-scope analysis.
 
 Purpose-scoped grants are distinct: `observe`, `annotate`, `replay`, `export-training`,
 `launch-job`, and `promote`. Inference permission never implies training-data export.
 Okta group removal changes future access immediately without rewriting historical audit
 provenance.
 
-## Trace capture tiers
+## Trace capture and disclosure classes
 
-1. `metadata_only`: route, policy, model, timing, tokens, cost and errors; no content.
-2. `redacted_content`: content after versioned PII/secrets/DLP transformations.
-3. `encrypted_full`: full content under a research-specific encryption and retention
-   policy; never automatically training-eligible.
-4. `training_eligible`: explicit purpose/consent and license/terms checks in addition to
-   content controls.
+1. `metadata_only`: route, policy, model, timing, tokens, cost and errors; used when
+   tenant policy disables content.
+2. `authorized_internal_full`: useful full-fidelity content, including PII, under
+   tenant/user/team scope, RLS, encryption, retention, audit, and deletion controls.
+3. `transformed_copy`: a versioned destination-specific redacted, masked,
+   pseudonymized, or minimized derivative; it never overwrites the internal source.
+4. `training_eligible`: an internal or external snapshot with explicit purpose,
+   authority, license/terms, holdout, deletion, and destination checks. External
+   eligibility additionally requires the selected disclosure transform.
 
 Each trace records inference, trace, evaluator, replay and training egress residency
 separately. U.S.-only policy rejects global Bedrock profiles and non-U.S. collectors or
@@ -52,7 +57,8 @@ An immutable dataset snapshot contains:
 - ID, version, parent snapshot and content hash.
 - Source trace query, time bounds and route/policy revisions.
 - Tenant/research purpose, consent/legal basis and retention.
-- Redaction/scanner versions and deletion tombstones.
+- Internal-source disposition or destination-transform/scanner versions, plus deletion
+  tombstones.
 - Schema: `sft`, `preference`, `prompt_only`, `trajectory`, `vision`,
   `behavioral_distillation`, or `logit_distillation`.
 - Train/development/test split seed and immutable memberships.
@@ -63,8 +69,10 @@ An immutable dataset snapshot contains:
 - Teacher, prompt, tokenizer, chat-template and tool-schema provenance.
 
 Compilation performs exact and semantic deduplication, contamination checks, quality
-and feedback filters, cohort balancing, license/terms checks, PII/DLP gates and slice
-statistics. The holdout is frozen before any optimizer can inspect it.
+and feedback filters, cohort balancing, license/terms checks, destination/purpose
+disclosure gates and slice statistics. Internal authorized jobs may use the governed
+source; third-party or cross-scope jobs receive only their approved transformed copy.
+The holdout is frozen before any optimizer can inspect it.
 
 ## Evaluation registry
 

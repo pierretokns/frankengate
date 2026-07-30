@@ -2,7 +2,7 @@ PYTHON ?= python3
 PYTHONPYCACHEPREFIX ?= /private/tmp/frankengate-trace-intelligence-pycache
 QWEN3_EMBEDDING_DEVICE ?= cpu
 
-.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory longitudinal-memory-expansion memory-h5-concurrency e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
+.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory longitudinal-memory-expansion longitudinal-memory-local-model longitudinal-memory-local-finalize memory-h5-concurrency e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
 
 verify: test validate compile
 
@@ -170,6 +170,54 @@ longitudinal-memory-expansion:
 		--fable-root "$(FABLE5_PREPARED_ROOT)" \
 		--output experiments/results/longitudinal-memory-cohort-expansion-2026-07-30.json \
 		--summary experiments/summaries/longitudinal-memory-cohort-expansion-2026-07-30.md
+
+# Runs the frozen 17-unit, five-arm, five-repeat state-selection experiment.
+# The endpoint must be loopback, while source traces, model inputs/responses, and
+# the unminimized base result remain in explicit internal paths outside Git.
+longitudinal-memory-local-model:
+	@test -n "$(TRACE_COMMONS_ROOT)" || \
+		(printf '%s\n' 'TRACE_COMMONS_ROOT is required' >&2; exit 2)
+	@test -n "$(FABLE5_PREPARED_ROOT)" || \
+		(printf '%s\n' 'FABLE5_PREPARED_ROOT is required' >&2; exit 2)
+	@test -n "$(LONGITUDINAL_LOCAL_ENDPOINT)" || \
+		(printf '%s\n' 'LONGITUDINAL_LOCAL_ENDPOINT is required' >&2; exit 2)
+	@test -n "$(LONGITUDINAL_RAW_AUDIT_DIR)" || \
+		(printf '%s\n' 'LONGITUDINAL_RAW_AUDIT_DIR is required' >&2; exit 2)
+	@test -n "$(LONGITUDINAL_BASE_RESULT)" || \
+		(printf '%s\n' 'LONGITUDINAL_BASE_RESULT is required' >&2; exit 2)
+	@test -n "$(LOCAL_TOKENIZER_PYTHON)" || \
+		(printf '%s\n' 'LOCAL_TOKENIZER_PYTHON is required' >&2; exit 2)
+	@test -n "$(LOCAL_MODEL_SNAPSHOT)" || \
+		(printf '%s\n' 'LOCAL_MODEL_SNAPSHOT is required' >&2; exit 2)
+	$(PYTHON) longitudinal_memory_local_model.py \
+		--trace-commons-manifest configs/datasets/trace-commons-memory-full-cohort.json \
+		--trace-commons-root "$(TRACE_COMMONS_ROOT)" \
+		--fable-manifest configs/datasets/fable5-top-level-memory-cohort.json \
+		--fable-root "$(FABLE5_PREPARED_ROOT)" \
+		--experiment-config configs/experiments/longitudinal-memory-model-human-replication-2026.json \
+		--model-manifest configs/models/qwen3.5-9b-optiq-4bit-mlx-runtime-0.31.2.json \
+		--endpoint "$(LONGITUDINAL_LOCAL_ENDPOINT)" \
+		--raw-audit-dir "$(LONGITUDINAL_RAW_AUDIT_DIR)" \
+		--output "$(LONGITUDINAL_BASE_RESULT)" \
+		--independent-runs 5 \
+		--timeout-seconds 180 \
+		--max-completion-tokens 256 \
+		--tokenizer-python "$(LOCAL_TOKENIZER_PYTHON)" \
+		--model-snapshot "$(LOCAL_MODEL_SNAPSHOT)"
+
+# Verifies and minimizes one completed local-model run. Only this
+# source-stratified aggregate is suitable for the repository.
+longitudinal-memory-local-finalize:
+	@test -n "$(LONGITUDINAL_RAW_AUDIT_DIR)" || \
+		(printf '%s\n' 'LONGITUDINAL_RAW_AUDIT_DIR is required' >&2; exit 2)
+	@test -n "$(LONGITUDINAL_BASE_RESULT)" || \
+		(printf '%s\n' 'LONGITUDINAL_BASE_RESULT is required' >&2; exit 2)
+	$(PYTHON) longitudinal_memory_local_finalize.py \
+		--raw-audit-dir "$(LONGITUDINAL_RAW_AUDIT_DIR)" \
+		--base-result "$(LONGITUDINAL_BASE_RESULT)" \
+		--max-completion-tokens 256 \
+		--output experiments/results/longitudinal-memory-local-model-replication-2026-07-30.json \
+		--summary experiments/summaries/longitudinal-memory-local-model-replication-2026-07-30.md
 
 # Drives independent PostgreSQL sessions through deterministic failure,
 # promotion, withdrawal, exposure, revocation, and deletion schedules. The

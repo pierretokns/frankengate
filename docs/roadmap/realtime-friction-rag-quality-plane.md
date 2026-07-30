@@ -12,14 +12,17 @@ production knowledge base directly. They create evidence-backed proposals that p
 provenance, privacy, ownership, replay, canary, and approval gates.
 
 All content capture and reuse also passes the separate privacy boundary specified in
-`docs/roadmap/privacy-redaction-and-learning-boundaries.md`. Friction analytics defaults
-to derived events and sanitized evidence rather than raw conversations.
+`docs/roadmap/privacy-redaction-and-learning-boundaries.md`. Friction analytics starts
+with cheap derived events, but authorized analysts and local evaluators may use
+full-fidelity same-scope conversations when the question requires them. Only
+third-party, cross-scope, public, or lower-privilege derivatives require transformation.
 
-Required build order is explicit: `PrivacyTransformReceipt` contract -> sanitized trace
-sink -> canonical RAG records and evaluators -> voluntary friction capture -> calibrated
-friction inference -> governed remediation proposal -> immutable KB shadow/replay ->
-tenant-sticky canary and audited promotion. No later stage may create an alternate raw-
-content path around an earlier privacy or entitlement boundary.
+Required build order is explicit: governed full-fidelity trace sink and
+authorization/audit contract -> destination transform receipt -> canonical RAG records
+and evaluators -> voluntary friction capture -> calibrated friction inference ->
+governed remediation proposal -> immutable KB shadow/replay -> tenant-sticky canary and
+audited promotion. No later stage may create an alternate unscoped content path around
+an earlier privacy or entitlement boundary.
 
 ## Architectural boundary
 
@@ -95,11 +98,12 @@ low-burden experience sampling at appropriate moments with versioned instruments
 - usefulness of clarification or review, satisfaction and willingness to reuse;
 - whether a pause/checkpoint felt protective, educational, unnecessary or obstructive.
 
-Link responses to sanitized interaction and policy revisions, never employee performance
+Link responses to governed interaction and policy revisions, never employee performance
 scoring. Use randomized sampling, honor opt-out, cap prompt frequency and measure the
 measurement burden itself. Calibrate behavioral proxy models against these reports by
-task/cohort without exporting raw conversation content. Preserve disagreement: low
-latency can still feel confusing, and high measured effort can be productive.
+task/cohort inside the authorized boundary; do not export raw conversation content to
+an unapproved destination. Preserve disagreement: low latency can still feel confusing,
+and high measured effort can be productive.
 
 Experiments report perceived friction beside verified outcome, decision quality,
 calibrated reliance, recovery, human agency, latency and cost. The goal is not universal

@@ -12,12 +12,37 @@
   "phase_status": {
     "deterministic_source_stratified_screening": "completed_exploratory",
     "source_sensitive_token_scan": "completed_candidates_detected",
+    "authorized_local_model_replication": "eligible_without_lossy_pii_redaction",
     "external_egress_sanitization": "not_run_blocking",
     "state_decision_model": "blocked_pending_egress_sanitization",
     "candidate_extraction_model": "blocked_pending_egress_sanitization",
     "dream_proposal_model": "blocked_pending_egress_sanitization",
     "blinded_human_review": "not_run",
     "automatic_promotion": "disabled"
+  },
+  "privacy_amendment": {
+    "amended_at": "2026-07-30T00:00:00Z",
+    "model_outputs_seen_before_amendment": false,
+    "human_labels_seen_before_amendment": false,
+    "reason": "preserve useful internal trace content while preventing disclosure to third-party processors",
+    "internal_source_mutated_by_export_transform": false,
+    "authorized_local_raw_model_path": "allowed",
+    "third_party_raw_model_path": "forbidden",
+    "third_party_sanitized_model_path": "blocked_until_separate_egress_gate"
+  },
+  "local_protocol_amendment": {
+    "amended_after_bounded_smoke_before_full_run": true,
+    "bounded_smoke_outputs_seen": true,
+    "semantic_outcomes_from_smoke_used_for_arm_selection": false,
+    "changes": [
+      "enforce_the_preexisting_2048_token_evidence_budget_and_five_candidate_limit",
+      "drop_lowest_ranked_whole_items_then_utf8_safe_tail_truncate_the_last_item",
+      "normalize_an_omitted_evidence_ref_to_null_only_for_an_otherwise_valid_abstention",
+      "use_the_pinned_native_function_calling_path_to_submit_the_three_field_local_decision",
+      "persist_local_model_transport_responses_before_strict_parse_in_external_audit"
+    ],
+    "reason": "the mechanics smoke exposed unbounded packs and a serialization-only omitted-null incompatibility",
+    "claim_status": "post_pilot_exploratory_protocol_not_confirmatory"
   },
   "source_strata": [
     {
@@ -58,10 +83,23 @@
   },
   "privacy_and_egress": {
     "raw_trace_content_committed": false,
+    "authorized_internal_raw_analysis_allowed": true,
+    "authorized_internal_admin_visibility_allowed": true,
+    "blanket_internal_pii_redaction_required": false,
+    "internal_protection_controls": [
+      "row_level_security",
+      "classification",
+      "encryption",
+      "audit",
+      "retention",
+      "deletion",
+      "purpose_binding"
+    ],
     "raw_external_model_egress_allowed": false,
     "raw_training_use_allowed": false,
     "training_requires_separate_rights_privacy_review": true,
     "sanitized_external_model_egress_allowed_only_after_gate": true,
+    "external_egress_gate_does_not_mutate_internal_source": true,
     "sanitizer_requirements": [
       "replace configured credential_and_bearer_patterns_with_typed_placeholders",
       "replace high_entropy_secret_candidates_with_typed_placeholders",
@@ -152,6 +190,22 @@
         4
       ],
       "retry_parse_errors": false
+    },
+    "execution_boundary": {
+      "configured_openai_model_is_third_party": true,
+      "configured_openai_model_may_run_only_after_egress_gate": true,
+      "authorized_local_model_may_receive_governed_internal_content": true,
+      "local_model_results_reported_as_a_separate_arm": true
+    },
+    "authorized_local_model": {
+      "manifest": "../models/qwen3.5-9b-optiq-4bit-mlx-runtime-0.31.2.json",
+      "model_id": "mlx-community/Qwen3.5-9B-OptiQ-4bit",
+      "revision": "319aed167e31e0bf81ddba0c23f8d218a15be612",
+      "loopback_only": true,
+      "pilot_only": true,
+      "evidence_pack_contract": "trace-commons-memory-composition-2026.json",
+      "evidence_pack_token_budget": 2048,
+      "candidate_limit": 5
     }
   },
   "structured_outputs": {
