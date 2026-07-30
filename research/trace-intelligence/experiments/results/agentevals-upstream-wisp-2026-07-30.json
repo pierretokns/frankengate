@@ -1,0 +1,270 @@
+{
+  "changed_system_executed": false,
+  "claim_boundary": "stored_trace_assertion_only",
+  "corpus": {
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "license": "MIT",
+    "revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+    "selection": "first 3 by source-content hash among complete single-turn histories with at least two paired tool calls and a final response",
+    "source_format": "Claude Code JSONL"
+  },
+  "deterministic_assertions": [
+    {
+      "arm": "baseline",
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "baseline",
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "baseline",
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "benign_id_remap",
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "benign_id_remap",
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "benign_id_remap",
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "benign_response_wrapper",
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "benign_response_wrapper",
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "benign_response_wrapper",
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "harmful_argument_corruption",
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "arm": "harmful_argument_corruption",
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "arm": "harmful_argument_corruption",
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "arm": "harmful_response_reversal",
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "harmful_response_reversal",
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "harmful_response_reversal",
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "harmful_tool_drop",
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "arm": "harmful_tool_drop",
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "arm": "harmful_tool_drop",
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "arm": "sequence_reversal",
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "sequence_reversal",
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "arm": "sequence_reversal",
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    }
+  ],
+  "independent_contribution": {
+    "any_order": "removes order sensitivity while retaining membership and argument checks",
+    "composition": "tool-path and response-semantic assertions are complementary; neither establishes changed-system behavior",
+    "exact": "detects tool name, argument, count, and order divergence",
+    "in_order": "requires expected calls in sequence while allowing extra calls",
+    "semantic": "detects response-level reversal ignored by every tool matcher, but produced one false negative on three unmodified baselines"
+  },
+  "mutation_arms": [
+    "baseline",
+    "benign_id_remap",
+    "benign_response_wrapper",
+    "sequence_reversal",
+    "harmful_tool_drop",
+    "harmful_argument_corruption",
+    "harmful_response_reversal"
+  ],
+  "natural_trajectory_count": 3,
+  "raw_artifacts_committed": false,
+  "schema_version": "frankengate-agentevals-upstream-aggregate-v1",
+  "semantic_assertions": [
+    {
+      "arm": "baseline",
+      "assertion": "final_response_match_v2",
+      "errored": 0,
+      "failed": 1,
+      "mean_score": 0.6666666666666666,
+      "n": 3,
+      "passed": 2
+    },
+    {
+      "arm": "benign_response_wrapper",
+      "assertion": "final_response_match_v2",
+      "errored": 0,
+      "failed": 0,
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "arm": "harmful_response_reversal",
+      "assertion": "final_response_match_v2",
+      "errored": 0,
+      "failed": 3,
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    }
+  ],
+  "semantic_evaluator": {
+    "judge_location": "loopback",
+    "judge_model": "openai/default_model",
+    "metric": "final_response_match_v2",
+    "model_manifest": "configs/models/qwen3.5-9b-optiq-4bit-mlx-runtime-v2.json",
+    "threshold": 0.5
+  },
+  "study_id": "agentevals-upstream-wisp-2026-07-30",
+  "upstream": {
+    "commit": "221febbe05927923242a5edc12e68a2b70fd5ae9",
+    "license": "Apache-2.0",
+    "license_sha256": "3b1ee5b1e14fda40515c18ec2f0796d632e65a20b2aca8f017c654bc26ca77bd",
+    "lock_sha256": "d5839865b53e776dbbd5c7ae5ae6c90864fc28f27499f74054e469ac9f77c034",
+    "package": "agentevals-cli",
+    "package_version": "0.9.7",
+    "python_version": "3.14.2",
+    "pyproject_sha256": "22bb0564ce3defd3e5f4a20bbc15f3f028c1cdb42363528a6bda7fa1465bfdea",
+    "release": "v0.9.7",
+    "repository": "https://github.com/agentevals-dev/agentevals"
+  }
+}

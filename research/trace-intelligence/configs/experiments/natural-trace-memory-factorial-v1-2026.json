@@ -1,0 +1,105 @@
+{
+  "schema_version": "frankengate.natural-trace-memory-factorial.v1",
+  "experiment_id": "natural-trace-memory-factorial-v1-2026-07-30",
+  "status": "observational-natural-trace-study",
+  "supersedes_for_empirical_evidence": "memory-mechanism-authored-fixture-v1",
+  "inherited_corrected_protocol": {
+    "path": "longitudinal-memory-corrected-replication-v2-2026.json",
+    "sha256": "b4f3643a9439481e3e10ede38c9c3ac420a3f5112bb893b9910e470bca67ef0c",
+    "inherited_invariants": [
+      "strict_prequery_cutoff",
+      "whole_evidence_items_only",
+      "future_result_not_transmitted",
+      "gold_scored_after_decision",
+      "derived_items_require_independent_prequery_release"
+    ]
+  },
+  "sources": [
+    {
+      "label": "wisp",
+      "manifest": "../datasets/wisp-claude-code-sessions.json",
+      "temporary_cache_hint": "/private/tmp/cache/wisp-claude-code-sessions/transcripts"
+    },
+    {
+      "label": "fable5",
+      "manifest": "../datasets/glint-fable5-partial-claude-home.json",
+      "temporary_cache_hint": "/private/tmp/cache/fable-5-traces-e05c4178/claude/projects"
+    }
+  ],
+  "natural_query": {
+    "query_boundary": "successful_explicit_context_artifact_read_call",
+    "gold_observation": "canonicalized_successful_read_result_after_query_boundary",
+    "eligible_prior_state": [
+      "successful_read_write_or_reconstructable_edit",
+      "same_source_project_and_exact_artifact",
+      "released_strictly_before_read_call",
+      "same_session_branch_ancestor_or_strictly_nonoverlapping_earlier_session"
+    ],
+    "reads_without_prior_evidence": "quantify_and_exclude_from_exact_availability_denominator"
+  },
+  "runnable_mechanisms": [
+    "latest_snapshot",
+    "verbatim_state",
+    "bitemporal_ledger",
+    "evidence_retrieval"
+  ],
+  "requested_mechanism_gates": {
+    "released_dream": {
+      "run_only_if": [
+        "query_independent_derived_item",
+        "source_evidence_references",
+        "independent_verifier_identity",
+        "immutable_release_decision_strictly_before_query",
+        "explicit_target_scope"
+      ],
+      "otherwise": "publish_not_runnable_gate"
+    },
+    "released_procedure": {
+      "run_only_if": [
+        "query_independent_derived_item",
+        "source_evidence_references",
+        "independent_verifier_identity",
+        "immutable_release_decision_strictly_before_query",
+        "explicit_target_scope"
+      ],
+      "otherwise": "publish_not_runnable_gate"
+    }
+  },
+  "factorial": {
+    "enumeration": "complete_2_to_k_lattice_over_observed_runnable_mechanisms",
+    "no_memory_control": true,
+    "expected_runnable_mechanisms": 4,
+    "expected_arms": 16
+  },
+  "splits": {
+    "source": "all_outcomes_grouped_by_public_dataset_label",
+    "project": "anonymous_project_cluster_rate_distributions",
+    "target_time": "within_source_target_time_terciles",
+    "interpretation": "descriptive_because_no_parameters_are_trained"
+  },
+  "cutoff_safe_project_identity": {
+    "source": "pretrace_corpus_project_directory",
+    "join": "exact_source_label_plus_directory_identity",
+    "future_cwd_fields_used": false,
+    "filename_only_join_forbidden": true,
+    "overlapping_cross_session_join_forbidden": true
+  },
+  "public_reproducibility_identity_seed": "frankengate-natural-memory-factorial-public-study-v1",
+  "durable_output": {
+    "raw_content": false,
+    "artifact_paths": false,
+    "native_identifiers": false,
+    "project_identifiers": false,
+    "per_item_content_hashes": false,
+    "aggregate_source_receipts": true,
+    "aggregate_split_metrics": true
+  },
+  "claim_boundary": {
+    "primary_estimand": "prequery_evidence_availability_for_later_explicit_read_state",
+    "not_memory_correctness": true,
+    "not_model_or_user_utility": true,
+    "not_causal": true,
+    "not_enterprise_transfer": true,
+    "differential_mechanism_effect_requires_observed_decision_contrast": true
+  }
+}

@@ -99,12 +99,12 @@ Status key:
 | Signals | Cheap rephrasing, stagnation, loop, failure, disengagement, and recovery selection | **Proxy.** Typed errors and bounded later-success candidates ran; full published signal set did not | Q2, Q3 | Frozen detectors versus random, length, and stage-count on human informative-trace labels |
 | AgentRx | Canonical failure taxonomy, invariants, and decisive-step localization | **Proxy.** Deterministic invariants ran; faithful AgentRx did not | Q2, Q3, Q5 | AgentRx versus chronology, deterministic invariants, and blinded judge on decisive-step gold |
 | OpenRCA | Join trace graph, logs, metrics, topology, and time-series evidence | **Reviewed/proxy.** A topology factor ran; multimodal RCA did not | Q2, Q5 | Modality-ablation RCA with independently verified incident causes and alternatives |
-| AgentEvals | Promote stored traces into exact, ordered, unordered, invariant, or semantic assertions | **Proxy.** Assertion and mutation mechanics exist; changed-system replay does not | Q3 | Mine a trace, generate assertions, mutate the agent/system, and measure harmful-regression recall plus benign false positives |
+| AgentEvals | Promote stored traces into exact, ordered, unordered, invariant, or semantic assertions | **Direct for stored traces.** Pinned upstream v0.9.7 ran on natural Wisp trajectories; changed-system replay does not | Q3 | Mine assertions from adjudicated traces, execute a reset changed system, and measure harmful-regression recall plus benign false positives |
 | Phoenix | Trace -> annotation -> dataset -> experiment -> replay lifecycle | **Reviewed/mechanics.** Native lifecycle records borrow the pattern; Phoenix was not run | Q3, Q4 | Export/import parity test against the native lifecycle, not a second authority |
 | Opik | Online evaluation rules, datasets, experiments, and aggregate views | **Reviewed/mechanics.** Product-specific rules were not run | Q3 | Same rule evaluated natively and in Opik with deletion/revision parity |
 | Langfuse | Sessions, feedback, datasets, and prompt experiments | **Reviewed/mechanics.** Feedback ingestion and prompt experiment behavior were not run | Q1, Q3, Q4 | Human feedback import plus dataset revision and deletion parity |
 | Temporal evidence / MemInsight concepts | Typed people, systems, tasks, outcomes, known time, valid time, gaps, and contradictions | **Direct/mechanics.** A cutoff-safe relational oracle passes synthetic tests | Q1, Q2, Q4-Q7 | Blinded natural longitudinal benchmark with online gold and interval-censored changes |
-| Memory Palace / MemPalace | Verbatim retention, stable IDs, temporal revisions, personal navigation | **Proxy.** Verbatim and bitemporal retention mechanics ran | Q1, Q4 | Retrieval and later-task utility versus latest-only and no-memory |
+| Memory Palace / MemPalace | Verbatim retention, stable IDs, temporal revisions, personal navigation | **Direct/proxy.** A natural 16-arm retention factorial ran, but every runnable mechanism made the same decisions | Q1, Q4 | A discriminating longitudinal corpus with historical-state, valid-time, and semantic free-text targets, followed by later-task utility |
 | Graphiti | Incremental temporal knowledge graph and hybrid retrieval | **Proxy/mechanics.** Relational facts/edges and contradiction mechanics ran; Graphiti did not | Q4, Q7 | Equal-evidence relational versus ephemeral Graphiti benchmark on multi-hop temporal questions |
 | LangMem | Structured memory candidate extraction and consolidation | **Proxy/mechanics.** Proposal lifecycle exists; extractor quality was not tested | Q4 | LangMem extraction versus deterministic and local-model extractors on cited memory gold |
 | Dreaming | Query-independent background synthesis of useful/current memory candidates | **Proxy only.** Release mechanics exist; the first “dream” arm did not dream | Q4, Q5 | Real pre-cutoff dream generation, independent verification, immutable release, and later-task A/B |
@@ -112,7 +112,7 @@ Status key:
 | Hermes stable memory | Protected writes, source provenance, curator, snapshots, rollback | **Reviewed.** No Frankengate integration | Q4, Q5 | Render a reviewed release to harness memory, record exposure, rollback, and deletion propagation |
 | Hermes Self-Evolution | Search over skill variants | **Reviewed and rejected as current baseline.** Reviewed revision had contract defects | Q5, Q6 | Use only a corrected, pinned revision with a verified skill-body mutation and sealed evaluator |
 | GEPA / SkillOpt / Trace2Skill / EvoSkill | Bounded candidate search and hierarchical skill updates | **Proxy.** One tiny Trace2Skill mechanics run; no adequate outcome study | Q5, Q6 | Sealed selection/test split with no-skill, length placebo, expert, mined, and optimized arms |
-| “Jeopard” | Intended self-improving skill system | **Missing/unresolved** | Q5, Q6 | Identify the exact repository/protocol before substituting another system |
+| “Jeopard” / GEPA gskill | Reflective, budgeted search over textual skill candidates with executable task feedback | **Reviewed/resolved.** Official talk captions repeatedly render GEPA as “Jeopardy”; no faithful Frankengate outcome run yet | Q5, Q6 | Run the preregistered no-skill/placebo/frozen-lesson/GEPA/expert protocol with family-disjoint hidden replay |
 | RL environment histories | Reset, action, observation, resource, termination, reward, and replay divergence | **Direct/mechanics on some datasets.** Flat traces remain insufficient | Q2, Q3, Q5, Q6 | Attach frozen environment state and compare recorded versus replayed transitions |
 | CASS | Exact/fuzzy/semantic personal history search and compact evidence UX | **Reviewed.** No connector or query parity run | Q1, Q2, Q4 | Import the same native history into CASS and Frankengate and compare fielded recall and evidence previews |
 | Doodlestein / CM | Local memory, bookmarks, compact context, and agent control ergonomics | **Reviewed.** No integration | Q1, Q4 | Translate the useful interaction primitives into governed native records and user tests |
@@ -160,6 +160,9 @@ work but only a small number of comparative mechanism studies.
 | Signals -> diagnosis -> eval-proposal proxy | 104 Wisp histories, 11 selected traces, 10 promotable hypotheses | Ten stored audits passed source evidence and detected decisive-evidence removal; ten prospective assertions behaved correctly on trace mutations | First natural-history chain mechanics; zero changed-system executions, upstream AgentEvals runs, or diagnostic gold |
 | Memory mechanism factorial fixture | Six mechanisms, 64 arms, four authored queries, 256 blinded decisions | Bitemporal, structured evidence, and verbatim singleton arms each scored 4/4; all mechanisms also scored 4/4 | Proves isolation/composition and blinding mechanics only; all-together did not beat the strongest singleton |
 | Recovery adjudication packet | 104 Wisp histories, 89 structural candidates, 87 complete blinded packets | Human-review evidence packs now cover relation, task outcome, cause, evidence strength, exploration, and candidate usefulness | Unlocks construct validation; the packets are unlabeled and do not yet establish recovery or cause |
+| PostgreSQL statistics intervention | Same 104 histories and 122 derived artifacts, 250 invocations per query before and after `ANALYZE` | Controlled-FTS p50 fell from 57.188 ms to 2.167 ms; proposal queue from 10.973 ms to 0.952 ms; all authority denials stayed at zero | Fresh-load statistics are a load-bearing readiness variable; the slow pre-statistics result is not evidence for another database |
+| Natural trace memory factorial | 219 source files, 30,496 records, 23 eligible later-read queries, full 2^4 runnable-mechanism factorial | Latest, verbatim, bitemporal, evidence retrieval, and every composition each scored 16/23 exact and 7/23 stale; no-memory abstained on all 23 | The corpus proves memory availability but cannot distinguish mechanisms; Dream and procedure arms correctly remained unrunnable because no independently released natural artifacts existed |
+| Upstream AgentEvals interoperability | 3 natural Wisp trajectories x 7 mutations x 3 deterministic match modes; 9 local semantic-judge calls | Exact/ordered/unordered assertions separated order from membership and caught every dropped/corrupted tool path; semantic matching caught 3/3 reversals and accepted 3/3 benign wrappers but rejected 1/3 unmodified baselines | Tool-path and response assertions are complementary; the semantic judge is too unstable to be a sole release gate, and no changed system was executed |
 
 The negative results are part of the architecture decision:
 
@@ -380,9 +383,13 @@ on Wisp, but remains a proxy with no changed-system replay. The Wisp
 adjudication builder produced 87 complete blinded recovery packets, but those
 packets still require independent reviewers. A deterministic six-mechanism
 memory fixture also established isolation and composition mechanics while
-showing no fixture advantage for the all-mechanism arm over the best
-singleton. These results narrow the next work to labels and prospective
-outcomes rather than more storage plumbing.
+showing no fixture advantage for the all-mechanism arm over the best singleton.
+The follow-up natural-memory factorial reached the same conclusion for a
+different reason: all runnable mechanisms exposed the same pre-query evidence,
+and the corpus had no historical/valid-time or semantic free-text targets to
+separate them. These results narrow the next work to discriminating labels,
+distinct treatments, and prospective outcomes rather than more storage
+plumbing.
 
 ## Durable execution graph
 
@@ -400,6 +407,7 @@ dependency-aware execution units are deliberately narrower:
 | Enterprise-adapted embedding study | #93 child | `bif-kyy.17.13.4.3.2` |
 | Temporal and procedural memory | [#94](https://github.com/pierretokns/frankengate/issues/94) | `bif-kyy.17.13.4.4` |
 | Graphiti/LangMem/Dreams/ReasoningBank comparison | #94 child | `bif-kyy.17.13.4.4.5` |
+| Sealed GEPA/gskill candidate-search arm | [#111](https://github.com/pierretokns/frankengate/issues/111) child | `bif-kyy.17.13.4.4.1.1.7` |
 | Cross-user patterns and collaboration | [#95](https://github.com/pierretokns/frankengate/issues/95) | `bif-kyy.17.13.4.5` |
 | Shared-artifact and reciprocal-introduction outcomes | #95 child | `bif-kyy.17.13.4.5.2` |
 
@@ -419,6 +427,14 @@ that value.
 - the replacement passes the same permission-oracle, deletion, backup,
   failover, and cost tests;
 - the result simplifies total operations rather than merely adding features.
+
+The first local paired intervention found a concrete native remediation that
+must precede any replacement bakeoff. A freshly loaded Wisp database selected
+an inefficient join order until `ANALYZE` refreshed table statistics.
+Controlled-FTS median latency improved 26.39x, from 57.188 ms to 2.167 ms,
+without changing rows, authority, or query semantics. Aurora readiness and
+failover tests must therefore freeze and report statistics state; a
+pre-statistics plan regression cannot be used to justify a search sidecar.
 
 ### Add a graph service only if
 
@@ -463,6 +479,7 @@ Primary external sources and pinned reviews:
 - [Trace2Skill](https://github.com/Qwen-Applications/Trace2Skill/tree/3d0b52a140f002a512930252b613c49048f7d5ac)
 - [SkillOpt](https://github.com/microsoft/SkillOpt/tree/51d0a4d96e88558c84dee637f98e24e3fb2d1547)
 - [GEPA](https://github.com/gepa-ai/gepa/tree/8b0ce6cd99a234f6b74daf37558a2ac0ce18f975)
+- [“Jeopard” identity resolution and GEPA/gskill integration protocol](jeopard-gepa-identity-resolution-and-integration-protocol-2026.md)
 - [OpenEnv](https://github.com/meta-pytorch/OpenEnv/tree/65c506ef94bb1f7279cb4359673b3ef81031d01f)
 - [Agent Lightning](https://github.com/microsoft/agent-lightning/tree/3b5d733861cf313fc09821a23240bbdf3cb2ee5b)
 - [Trace Commons](https://huggingface.co/datasets/trace-commons/agent-traces/tree/112ebd4d03ce852b00e935d523107c3d0c9a65bf)

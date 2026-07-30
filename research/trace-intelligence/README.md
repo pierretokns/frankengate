@@ -21,10 +21,39 @@ The first independent/composed checkpoint is available in:
 - [`memory-mechanism-factorial-fixture-2026-07-30.md`](experiments/summaries/memory-mechanism-factorial-fixture-2026-07-30.md),
   a complete six-mechanism fixture that establishes mechanics, not utility.
 
-Raw public, gated, and enterprise traces never belong in this repository. Dataset
-manifests pin upstream revisions and rights; adapters read explicit external paths;
-committed results are aggregate-only. A public trace is not permission to infer a
-person's competence, productivity, or collaboration needs.
+The paired
+[`Wisp PostgreSQL planner-statistics experiment`](experiments/summaries/wisp-postgres-planner-statistics-2026-07-30.md)
+shows why database alternatives remain behind measured failure gates. On the
+same governed rows, `ANALYZE` reduced controlled-FTS p50 from 57.188 ms to
+2.167 ms while all denied authorities continued to receive zero pre-ranking
+candidates.
+
+The
+[`natural trace memory factorial`](experiments/summaries/natural-trace-memory-factorial-2026-07-30.md)
+runs 16 arms over 23 later-read queries. Latest-only, verbatim, bitemporal,
+evidence retrieval, and every composition tied at 16 exact and 7 stale
+outcomes. This is a real negative result: the corpus exposes useful pre-query
+evidence but does not contain the target types needed to distinguish the
+mechanisms.
+
+The separately sourced
+[`“Jeopard” identity report`](../../docs/roadmap/research/jeopard-gepa-identity-resolution-and-integration-protocol-2026.md)
+resolves the requested system to GEPA/gskill with high confidence and defines
+it as an optional candidate-search treatment, not a trace store or release
+authority.
+
+The
+[`upstream AgentEvals interoperability run`](experiments/summaries/agentevals-upstream-wisp-2026-07-30.md)
+executes the pinned v0.9.7 library on three natural Wisp histories. Its
+deterministic modes cleanly separate tool order from membership/arguments. The
+local semantic judge caught all response reversals but rejected one unmodified
+baseline, so it cannot be the sole release gate.
+
+Bulk raw corpora stay outside Git so revisions remain small and reproducible.
+Dataset manifests pin exact source revisions and adapters read explicit local
+paths. Frankengate's governed database may retain full internal trace content
+for authorized internal analysis; sending that content to an external model or
+API remains a separate egress decision.
 
 ## Reproduce the committed artifact
 

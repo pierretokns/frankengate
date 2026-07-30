@@ -1,0 +1,276 @@
+{
+  "authorized_counts": {
+    "controlled_fts_candidates": 17,
+    "derived_artifacts": 122,
+    "eval_proposals": 11,
+    "events": 17505,
+    "fact_proposals": 0,
+    "malformed_source_events": 2,
+    "procedure_proposals": 7,
+    "recovery_proposals": 7,
+    "signals": 104,
+    "tool_completed": 2104,
+    "tool_errors": 103,
+    "tool_proposals": 2209,
+    "tool_results": 2207,
+    "trajectories": 104
+  },
+  "claim_boundary": [
+    "This is a single-node local PostgreSQL planner-statistics experiment.",
+    "It does not establish Aurora latency, failover, replication, storage, or concurrency behavior.",
+    "The paired observation is not an independent-sample causal population estimate.",
+    "It demonstrates that freshly bulk-loaded governed trace tables require planner-statistics readiness before latency evaluation."
+  ],
+  "denied_pre_ranking_candidates_after": 0,
+  "denied_pre_ranking_candidates_before": 0,
+  "environment": {
+    "database": "local_postgresql",
+    "iterations": 250,
+    "server_version": "16.12 (Debian 16.12-1.pgdg12+1)",
+    "vector_extension_version": "0.8.1"
+  },
+  "input_receipts": {
+    "after_sha256": "2cd645c2f72e63eff082151c6f5dc10303fac55a07b78ba9d7aa591c12d949fb",
+    "before_sha256": "5e30e4a29424ddf0144d68e0a5afbad2151b34c5e07c9a447f0b46678ca59580"
+  },
+  "intervention": "statistics_refresh",
+  "intervention_command_class": "ANALYZE_each_trace_research_table",
+  "paired_unit": "same_database_same_rows_same_authority_queries",
+  "queries": {
+    "controlled_fts": {
+      "after_iterations": 250,
+      "after_mean_ms": 2.206091,
+      "after_p50_ms": 2.16725,
+      "after_p95_ms": 2.506996,
+      "after_plan_signature": [
+        {
+          "depth": 0,
+          "node_type": "Limit"
+        },
+        {
+          "depth": 1,
+          "node_type": "Sort"
+        },
+        {
+          "depth": 2,
+          "join_type": "Inner",
+          "node_type": "Nested Loop"
+        },
+        {
+          "depth": 3,
+          "node_type": "Seq Scan",
+          "relation": "derived_artifacts"
+        },
+        {
+          "depth": 4,
+          "index": "trajectories_pkey",
+          "node_type": "Index Scan",
+          "relation": "trajectories"
+        },
+        {
+          "depth": 3,
+          "index": "trajectories_pkey",
+          "node_type": "Index Scan",
+          "relation": "trajectories"
+        }
+      ],
+      "before_iterations": 250,
+      "before_mean_ms": 57.233167,
+      "before_p50_ms": 57.188354,
+      "before_p95_ms": 59.257096,
+      "before_plan_signature": [
+        {
+          "depth": 0,
+          "node_type": "Limit"
+        },
+        {
+          "depth": 1,
+          "node_type": "Sort"
+        },
+        {
+          "depth": 2,
+          "join_type": "Inner",
+          "node_type": "Nested Loop"
+        },
+        {
+          "depth": 3,
+          "index": "trajectories_task_idx",
+          "node_type": "Index Scan",
+          "relation": "trajectories"
+        },
+        {
+          "depth": 3,
+          "node_type": "Seq Scan",
+          "relation": "derived_artifacts"
+        },
+        {
+          "depth": 4,
+          "node_type": "Bitmap Heap Scan",
+          "relation": "trajectories"
+        },
+        {
+          "depth": 5,
+          "index": "trajectories_tenant_owner_created_idx",
+          "node_type": "Bitmap Index Scan"
+        }
+      ],
+      "p50_speedup_ratio": 26.387521,
+      "p95_speedup_ratio": 23.636693,
+      "plan_signature_changed": true
+    },
+    "personal_history_page": {
+      "after_iterations": 250,
+      "after_mean_ms": 1.112142,
+      "after_p50_ms": 1.089062,
+      "after_p95_ms": 1.327416,
+      "after_plan_signature": [
+        {
+          "depth": 0,
+          "node_type": "Limit"
+        },
+        {
+          "depth": 1,
+          "node_type": "Sort"
+        },
+        {
+          "depth": 2,
+          "node_type": "Seq Scan",
+          "relation": "trajectories"
+        }
+      ],
+      "before_iterations": 250,
+      "before_mean_ms": 1.21501,
+      "before_p50_ms": 1.182271,
+      "before_p95_ms": 1.551634,
+      "before_plan_signature": [
+        {
+          "depth": 0,
+          "node_type": "Limit"
+        },
+        {
+          "depth": 1,
+          "node_type": "Sort"
+        },
+        {
+          "depth": 2,
+          "node_type": "Bitmap Heap Scan",
+          "relation": "trajectories"
+        },
+        {
+          "depth": 3,
+          "index": "trajectories_task_idx",
+          "node_type": "Bitmap Index Scan"
+        }
+      ],
+      "p50_speedup_ratio": 1.085586,
+      "p95_speedup_ratio": 1.168913,
+      "plan_signature_changed": true
+    },
+    "proposal_queue": {
+      "after_iterations": 250,
+      "after_mean_ms": 0.971365,
+      "after_p50_ms": 0.95175,
+      "after_p95_ms": 1.116514,
+      "after_plan_signature": null,
+      "before_iterations": 250,
+      "before_mean_ms": 11.022357,
+      "before_p50_ms": 10.973313,
+      "before_p95_ms": 11.648177,
+      "before_plan_signature": null,
+      "p50_speedup_ratio": 11.529617,
+      "p95_speedup_ratio": 10.43263,
+      "plan_signature_changed": null
+    },
+    "structural_tool_events": {
+      "after_iterations": 250,
+      "after_mean_ms": 21.841083,
+      "after_p50_ms": 21.861208,
+      "after_p95_ms": 22.834577,
+      "after_plan_signature": [
+        {
+          "depth": 0,
+          "node_type": "Limit"
+        },
+        {
+          "depth": 1,
+          "node_type": "Sort"
+        },
+        {
+          "depth": 2,
+          "join_type": "Inner",
+          "node_type": "Nested Loop"
+        },
+        {
+          "depth": 3,
+          "node_type": "Seq Scan",
+          "relation": "trajectories"
+        },
+        {
+          "depth": 3,
+          "index": "events_tool_idx",
+          "node_type": "Index Only Scan",
+          "relation": "events"
+        },
+        {
+          "depth": 4,
+          "node_type": "Seq Scan",
+          "relation": "trajectories"
+        }
+      ],
+      "before_iterations": 250,
+      "before_mean_ms": 24.139108,
+      "before_p50_ms": 24.110646,
+      "before_p95_ms": 25.084037,
+      "before_plan_signature": [
+        {
+          "depth": 0,
+          "node_type": "Limit"
+        },
+        {
+          "depth": 1,
+          "node_type": "Sort"
+        },
+        {
+          "depth": 2,
+          "join_type": "Inner",
+          "node_type": "Nested Loop"
+        },
+        {
+          "depth": 3,
+          "node_type": "Bitmap Heap Scan",
+          "relation": "trajectories"
+        },
+        {
+          "depth": 4,
+          "index": "trajectories_task_idx",
+          "node_type": "Bitmap Index Scan"
+        },
+        {
+          "depth": 3,
+          "index": "events_tool_idx",
+          "node_type": "Index Only Scan",
+          "relation": "events"
+        },
+        {
+          "depth": 4,
+          "node_type": "Bitmap Heap Scan",
+          "relation": "trajectories"
+        },
+        {
+          "depth": 5,
+          "index": "trajectories_tenant_owner_created_idx",
+          "node_type": "Bitmap Index Scan"
+        }
+      ],
+      "p50_speedup_ratio": 1.102896,
+      "p95_speedup_ratio": 1.098511,
+      "plan_signature_changed": true
+    }
+  },
+  "result_sha256": "f0a69ed9c7b03bdaf29bb2df96508a0f3734992741539b97157ffd07c9ab1bda",
+  "runtime_receipt": {
+    "image_digest": "sha256:33198da2828a14c30348d2ccb4750833d5ed9a44c88d840a0e523d7417120337",
+    "image_ref": "pgvector/pgvector:0.8.1-pg16"
+  },
+  "schema_version": "frankengate.postgres-planner-statistics-experiment.v1"
+}

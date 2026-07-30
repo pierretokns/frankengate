@@ -1,0 +1,196 @@
+{
+  "schema_version": "frankengate.research.identity-resolution.v1",
+  "generated_at": "2026-07-30",
+  "subject": "jeopard-self-improving-agent-skill-system",
+  "content_free": true,
+  "resolution": {
+    "status": "operationally_resolved_with_residual_ambiguity",
+    "resolved_identity": "GEPA/gskill",
+    "confidence": 0.97,
+    "basis": [
+      "official_talk_title_names_gepa",
+      "official_talk_captions_render_spoken_name_as_jeopardy",
+      "talk_mechanism_matches_gepa_source",
+      "literal_repository_search_found_no_matching_skill_system"
+    ],
+    "reopen_condition": "Primary-source evidence naming a distinct Jeopard agent-skill system or user-provided author, repository, paper, package, or talk identity."
+  },
+  "source_pins": [
+    {
+      "kind": "git_repository_release",
+      "name": "gepa-ai/gepa",
+      "tag": "v0.1.4",
+      "revision": "8b0ce6cd99a234f6b74daf37558a2ac0ce18f975",
+      "published_at": "2026-07-15T14:50:58Z",
+      "url": "https://github.com/gepa-ai/gepa/tree/8b0ce6cd99a234f6b74daf37558a2ac0ce18f975"
+    },
+    {
+      "kind": "huggingface_dataset",
+      "name": "SWE-bench/SWE-smith",
+      "revision": "ea6d7173829c7ec8fa16c22055699ff2e9188091",
+      "url": "https://huggingface.co/datasets/SWE-bench/SWE-smith/tree/ea6d7173829c7ec8fa16c22055699ff2e9188091",
+      "upstream_loader_enforces_revision": false
+    },
+    {
+      "kind": "git_repository_head",
+      "name": "facebookresearch/jepa",
+      "tag": null,
+      "revision": "51c59d518fc63c08464af6de585f78ac0c7ed4d5",
+      "committed_at": "2025-02-27T23:15:27Z",
+      "url": "https://github.com/facebookresearch/jepa/tree/51c59d518fc63c08464af6de585f78ac0c7ed4d5"
+    },
+    {
+      "kind": "git_repository_head",
+      "name": "banka-lecho/JeopardyAgent",
+      "revision": "e4d425cdd6abed40b1317a2697aa762f6badf691",
+      "committed_at": "2026-05-03T12:41:17Z",
+      "url": "https://github.com/banka-lecho/JeopardyAgent/tree/e4d425cdd6abed40b1317a2697aa762f6badf691"
+    },
+    {
+      "kind": "git_repository_head",
+      "name": "ashishthomas2202/Jeopardy-Agent",
+      "revision": "821de01552f903ef848e9e52c0e634260067eb28",
+      "committed_at": "2025-10-07T09:24:09Z",
+      "url": "https://github.com/ashishthomas2202/Jeopardy-Agent/tree/821de01552f903ef848e9e52c0e634260067eb28"
+    },
+    {
+      "kind": "git_repository_pin",
+      "name": "NousResearch/hermes-agent",
+      "tag": "v2026.7.20",
+      "revision": "3ef6bbd201263d354fd83ec55b3c306ded2eb72a",
+      "url": "https://github.com/NousResearch/hermes-agent/tree/3ef6bbd201263d354fd83ec55b3c306ded2eb72a"
+    },
+    {
+      "kind": "git_repository_pin",
+      "name": "NousResearch/hermes-agent-self-evolution",
+      "tag": null,
+      "revision": "0a929e3aa20e15cf04dc7c28492a7d41a5139125",
+      "url": "https://github.com/NousResearch/hermes-agent-self-evolution/tree/0a929e3aa20e15cf04dc7c28492a7d41a5139125"
+    },
+    {
+      "kind": "git_repository_pin",
+      "name": "Qwen-Applications/Trace2Skill",
+      "tag": null,
+      "revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+      "url": "https://github.com/Qwen-Applications/Trace2Skill/tree/3d0b52a140f002a512930252b613c49048f7d5ac"
+    },
+    {
+      "kind": "git_repository_pin",
+      "name": "google-research/reasoning-bank",
+      "package_version": "0.1.0",
+      "revision": "ed80611788292ea739f1effd31f16c53823b8a0d",
+      "url": "https://github.com/google-research/reasoning-bank/tree/ed80611788292ea739f1effd31f16c53823b8a0d"
+    }
+  ],
+  "transcript_evidence": {
+    "source_id": "ai-engineer:A48uhxfxbsM",
+    "title": "Agent Optimization with Pydantic AI: GEPA, Evals, Feedback Loops",
+    "url": "https://www.youtube.com/watch?v=A48uhxfxbsM",
+    "sha256": "fe2d8a7f95797430a2e3423e6a1b3b52f1cb1d4ed3972c042f3e7f538938f7db",
+    "raw_content_in_manifest": false,
+    "caption_identity_variants_observed": [
+      "Jeppa",
+      "Jeppo",
+      "Jepa",
+      "Jeopardy"
+    ]
+  },
+  "ranked_candidates": [
+    {
+      "rank": 1,
+      "identity": "GEPA/gskill",
+      "confidence": 0.97,
+      "disposition": "operational_identity"
+    },
+    {
+      "rank": 2,
+      "identity": "private_or_unindexed_jeopard_system",
+      "confidence": 0.02,
+      "disposition": "residual_unknown"
+    },
+    {
+      "rank": 3,
+      "identity": "facebookresearch/jepa",
+      "confidence": 0.009,
+      "disposition": "ruled_out_mechanism_mismatch"
+    },
+    {
+      "rank": 4,
+      "identity": "literal_jeopardy_named_github_repositories",
+      "confidence": 0.001,
+      "disposition": "ruled_out_no_trace_to_skill_learning_loop"
+    }
+  ],
+  "search_audit": {
+    "local_sources": [
+      "stateofai_ai_engineer_transcript_corpus",
+      "cass_index",
+      "existing_frankengate_research_artifacts"
+    ],
+    "repository_queries": [
+      "jeopard agent skills",
+      "jeopard self evolving agent",
+      "JEPA agent optimizer",
+      "jeopardy agent"
+    ],
+    "paper_and_web_targets": [
+      "GEPA",
+      "gskill",
+      "Pydantic Evals GEPA",
+      "Meta JEPA",
+      "Hugging Face DSPy GEPA"
+    ],
+    "exact_literal_match_to_requested_mechanism_found": false
+  },
+  "mechanism_facts": {
+    "candidate_type": "named_text_components",
+    "trajectory_schema": "adapter_defined_and_opaque_to_gepa",
+    "feedback_type": "json_serializable_reflective_dataset",
+    "proposal_type": "llm_reflective_text_mutation",
+    "selection_type": "minibatch_acceptance_plus_validation_pareto_frontier",
+    "gskill_fitness": "docker_verified_fail_to_pass_then_pass_to_pass",
+    "gskill_projection": "best_skills_txt_or_harness_skill_md",
+    "native_enterprise_trace_store": false,
+    "native_rls": false,
+    "native_authorization_epoch": false,
+    "native_release_governance": false,
+    "native_independent_evaluator_attestation": false
+  },
+  "empirical_claims": [
+    {
+      "source": "gepa_paper",
+      "claim": "Across six tasks, authors report over six percent average gain versus GRPO, up to twenty percent gain, up to thirty-five times fewer rollouts, and over ten percent average gain versus MIPROv2.",
+      "evidence_class": "author_reported_peer_review_pending_or_preprint",
+      "independently_replicated_in_this_audit": false
+    },
+    {
+      "source": "gskill_official_blog",
+      "claim": "Mini-SWE-Agent GPT-5-mini resolve rate increased from 55 to 82 percent on Jinja and 24 to 93 percent on Bleve.",
+      "evidence_class": "author_reported_repository_experiment",
+      "independently_replicated_in_this_audit": false
+    },
+    {
+      "source": "gskill_official_blog",
+      "claim": "Cross-harness Claude Code transfer is reported, but prose and figure values are internally inconsistent.",
+      "evidence_class": "author_reported_with_internal_inconsistency",
+      "independently_replicated_in_this_audit": false
+    }
+  ],
+  "integration_decision": {
+    "role": "optional_bounded_candidate_search_worker",
+    "system_of_record": "frankengate_governed_trace_and_evaluation_store",
+    "automatic_promotion_allowed": false,
+    "requires": [
+      "canonical_tool_inclusive_trace_ids",
+      "scope_and_authorization_epoch",
+      "dataset_and_environment_pins",
+      "family_disjoint_hidden_evaluation",
+      "separate_proposer_replay_evaluator_release_authorities",
+      "security_and_rls_hard_vetoes",
+      "signed_release_with_withdrawal_and_influence_tracking"
+    ]
+  },
+  "artifact": {
+    "report": "docs/roadmap/research/jeopard-gepa-identity-resolution-and-integration-protocol-2026.md"
+  }
+}
