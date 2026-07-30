@@ -1,0 +1,177 @@
+{
+  "claim_boundary": {
+    "not_identifiable": [
+      "task success or quality",
+      "whether a later success caused task recovery",
+      "user skill or productivity",
+      "cross-user collaboration benefit",
+      "causal effect of a model, prompt, memory, skill, or eval"
+    ],
+    "supported": [
+      "parser and lifecycle-linkage validation",
+      "single-user longitudinal project recurrence",
+      "proposal-only friction and recovery candidate extraction",
+      "revision-bound sparse sampling"
+    ]
+  },
+  "coverage": {
+    "first_timestamp": "2025-10-10T06:30:04.132000+00:00",
+    "last_timestamp": "2026-06-18T12:51:29.747000+00:00",
+    "maximum_sessions_in_one_project": 80,
+    "projects_with_multiple_sessions": 9,
+    "roles": {
+      "assistant": 8928,
+      "tool": 6239,
+      "user": 611
+    },
+    "sessions": 128,
+    "source_entrypoints": {
+      "cli": 27,
+      "exec": 80,
+      "vscode": 14
+    },
+    "sources": {
+      "claude": 7,
+      "codex": 121
+    },
+    "unique_projects": 15
+  },
+  "lifecycle": {
+    "error_results_with_later_same_tool_success": 34,
+    "error_results_with_later_success": 38,
+    "explicit_error_results": 47,
+    "matched_tool_results": 6239,
+    "orphan_tool_results": 0,
+    "sessions_with_error_then_later_success": 6,
+    "sessions_with_explicit_error": 6,
+    "tool_categories": {
+      "coordination": 140,
+      "file_change": 756,
+      "file_read": 105,
+      "media": 34,
+      "other_or_custom": 32,
+      "shell": 4565,
+      "shell_session": 607,
+      "web": 33
+    },
+    "tool_proposals": 6272,
+    "tool_results": 6239,
+    "unresolved_tool_proposals": 33
+  },
+  "privacy": {
+    "content_emitted": false,
+    "content_values_accessed_by_analysis": false,
+    "embedded_content_use": "structural analysis only",
+    "identifiers_emitted": false,
+    "identity_scope": "one intentionally public dataset owner",
+    "project_identifiers_retained": false,
+    "raw_data_committed": false
+  },
+  "sampling": {
+    "design": "eight_position_strata_with_sixteen_consecutive_rows_each",
+    "integrity": [
+      {
+        "length": 16,
+        "offset": 0,
+        "response_bytes": 1653476,
+        "response_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+        "response_sha256": "e7152cab98b6f1f872ba8213fcd5a086755770155579785b508d2c1462ad3d08"
+      },
+      {
+        "length": 16,
+        "offset": 617,
+        "response_bytes": 102288,
+        "response_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+        "response_sha256": "b9a0d8399a468d290f459f9d7fcfc275eb181c9f5640c74206a54cbd63e24a2c"
+      },
+      {
+        "length": 16,
+        "offset": 1233,
+        "response_bytes": 102304,
+        "response_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+        "response_sha256": "2a01340b364ded7f57d847194a9e00df38f4958440386933e59657dcfc70f665"
+      },
+      {
+        "length": 16,
+        "offset": 1850,
+        "response_bytes": 102304,
+        "response_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+        "response_sha256": "5e6a4e1506f266cc1232a5bf6aeef5817b428faba7640660e4fdd06bd2aa255b"
+      },
+      {
+        "length": 16,
+        "offset": 2467,
+        "response_bytes": 102304,
+        "response_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+        "response_sha256": "85c58bf4ada27ef7aba851285ed0d2e5051fa8d0a77197a925c607f15f8fce9f"
+      },
+      {
+        "length": 16,
+        "offset": 3084,
+        "response_bytes": 105872,
+        "response_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+        "response_sha256": "54d407fea59630dbc04febfade0e82598f99adbcdea21db69d75b44622452be0"
+      },
+      {
+        "length": 16,
+        "offset": 3700,
+        "response_bytes": 7466034,
+        "response_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+        "response_sha256": "7e015cc9a6ca82bbcde78a26282bd364d7fb97b7fddc36987370ef16b96073c2"
+      },
+      {
+        "length": 16,
+        "offset": 4317,
+        "response_bytes": 27848895,
+        "response_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+        "response_sha256": "08b56b9e8f90a006b05060ba8ab3b0f5797f1bdfec3fab64b04cd082026e9a1a"
+      }
+    ],
+    "observed_row_index_max": 4332,
+    "observed_row_index_min": 0,
+    "requests": [
+      {
+        "length": 16,
+        "offset": 0
+      },
+      {
+        "length": 16,
+        "offset": 617
+      },
+      {
+        "length": 16,
+        "offset": 1233
+      },
+      {
+        "length": 16,
+        "offset": 1850
+      },
+      {
+        "length": 16,
+        "offset": 2467
+      },
+      {
+        "length": 16,
+        "offset": 3084
+      },
+      {
+        "length": 16,
+        "offset": 3700
+      },
+      {
+        "length": 16,
+        "offset": 4317
+      }
+    ],
+    "response_bytes": 37483477
+  },
+  "schema_version": "share-codex-sparse-pilot-v1",
+  "source": {
+    "dataset_id": "nmuendler/share-codex",
+    "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+    "license": "CC-BY-4.0",
+    "population_rows": 4333,
+    "sample_rows": 128,
+    "sampling_fraction": 0.029541
+  }
+}
