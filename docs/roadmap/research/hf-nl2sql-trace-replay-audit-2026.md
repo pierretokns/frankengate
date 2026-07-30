@@ -188,9 +188,14 @@ even after an auditable dialect repair and remains quarantined. Missing epoch,
 multiple statement, mutation, system function, unknown table, wildcard, and
 database read-only controls pass on all four database families.
 
-No model-quality claim follows from this self-check. Requirements 8–9 remain
-unmet until the paired no-skill/placebo/mined-skill factorial and prospective
-release-exposure study run.
+The separate cache-disabled mechanics factorial has now run four F0 selection
+tasks under no-skill, formatting-placebo, and expert-seed arms. Every arm
+passed the same 2/4 tasks with zero unauthorized observations, but
+terminal-protocol failure was 25%, 50%, and 25%. The preregistered protocol
+gate therefore failed and hidden outcomes remain sealed. No model-quality or
+trace-learning claim follows. Requirements 8–9 remain unmet until a
+protocol-remediated paired screen, evidence-only mined artifact, hidden-family
+test, and prospective release-exposure study run.
 
 ## Sources
 

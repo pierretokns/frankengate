@@ -204,17 +204,27 @@ failure localization and policy audit.
   policy, 93 match, two sensitive projections are correctly denied, and both
   match only under explicit field entitlements. One upstream task is invalid
   PostgreSQL and is quarantined. All parser, missing-epoch, and database
-  read-only controls pass on all four families. This is a verifier/policy
-  self-check, not a model factorial.
+  read-only controls pass on all four families. Sensitive-field inference
+  through predicates, joins, grouping, ordering, windows, functions, and
+  correlated subqueries is now denied without entitlement; the entire cohort
+  requalified with the same 93/2/1 distribution. This remains a verifier/policy
+  self-check, not a model-quality result.
+- The cache-disabled four-task F0 mechanics smoke completed all 12
+  no-skill/placebo/expert-seed episodes. Every arm solved the same 2/4 tasks,
+  all authority receipts were valid, and no unauthorized observation occurred.
+  Terminal-protocol failure was 25%, 50%, and 25%, respectively. The
+  preregistered protocol and paired-win gates failed, so the 23-task selection
+  screen and hidden broker family remain sealed.
 - The Spider2 audit found 135 local Lite tasks across 30 families, but only
   16/24 published gold SQL files pass upstream self-check. Of 68 DBT tasks, 59
   are strictly self-consistent and 62 work after deterministic filename
   aliases; the proposed later external-validity cohort is 60. The upstream
   agent's ordinary tool actions execute twice, so its runner is not reusable
   without repair.
-- The next gate is the no-skill/placebo/single-artifact/composed model factorial
-  on rotating Defog schema-family folds, with BIRD traces as the mined
-  procedure source and Spider2 as a later external-validity layer.
+- The next gate is an arm-independent terminal-protocol remediation on a
+  separate protocol fixture, followed by a new complete P0 under new hashes.
+  Only after it passes may the 23-task selection screen run. BIRD remains the
+  mined-procedure source and Spider2 the later external-validity layer.
 
 CMU is not on the critical path. Its access is gated and the admitted public
 trace and SQL sources are sufficient.

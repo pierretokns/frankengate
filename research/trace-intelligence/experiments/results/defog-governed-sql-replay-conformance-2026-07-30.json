@@ -104,7 +104,7 @@
     "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
     "dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
     "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
-    "policy_module_sha256": "02bd05ccdbecb8cba101a1578b9a5942e36ded0139e9aa8da973524ffdb570e5",
+    "policy_module_sha256": "11d239b7642ac1d4b88aa680270e532a029dc2b5f819dc8c351bcaae438a652e",
     "runner_sha256": "3d208db066196b894bd0ee8a9bb62fc82e828557b4566e1c4b0c74376d3ca0b7"
   },
   "source_dialect_repairs": {

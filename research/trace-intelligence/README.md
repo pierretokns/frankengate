@@ -55,9 +55,13 @@ from its official SQLite dump and is non-commercial research only. See
 
 The causal SQL layer uses a separate, content-free 96-task Defog manifest and
 four disposable PostgreSQL databases. The hardened runner requires a governance
-subject and authorization-epoch reference, parses and allowlists a single
-read-only query, enforces PostgreSQL and result limits, and reports semantic
-correctness separately from security authorization:
+subject and an exact current authorization epoch bound to database, scope,
+user, team, and virtual key. It parses and allowlists a single read-only query,
+authorizes sensitive columns across projections, predicates, joins, grouping,
+ordering, windows, functions, and correlated subqueries, fixes the governed
+search path, enforces PostgreSQL and result limits, and reports authority,
+policy, execution, leakage, benchmark correctness, and strict answer shape
+separately:
 
 ```sh
 DEFOG_SOURCE_ROOT=/private/path/defog-sql-eval \
@@ -72,6 +76,21 @@ task is invalid PostgreSQL and remains quarantined. All security controls passed
 on all four database families. This proves the replay/verifier boundary, not
 model quality or causal skill benefit. See
 [`experiments/summaries/defog-governed-sql-replay-conformance-2026-07-30.md`](experiments/summaries/defog-governed-sql-replay-conformance-2026-07-30.md).
+
+The content-free four-fold factorial contract can be regenerated without
+network or benchmark content:
+
+```sh
+uv run make defog-sql-design
+```
+
+The first cache-disabled 12-episode mechanics smoke completed with 12/12 valid
+authority receipts and zero unauthorized observations. Every arm solved the
+same 2/4 tasks, so the expert seed showed no lift. Terminal-protocol failure was
+25% for no-skill, 50% for placebo, and 25% for the expert seed, exceeding the
+preregistered 10% gate. The 23-task effect screen and hidden family therefore
+remain sealed until an arm-independent protocol repair passes a new P0. See
+[`experiments/summaries/defog-sql-factorial-fold0-mechanics-smoke-2026-07-30.md`](experiments/summaries/defog-sql-factorial-fold0-mechanics-smoke-2026-07-30.md).
 
 Spider2 is admitted only as a later external-validity layer. The source audit
 found 135 local Lite tasks across 30 database families, but only 16/24 published
@@ -265,5 +284,7 @@ full E0–E7 acceptance gates. In particular:
   prospective outcomes; and
 - custom embeddings remain gated on a frozen hard slice where exact, PostgreSQL
   full-text, and structured retrieval demonstrably fail; and
-- the SQL replay/verifier boundary now passes on 95 executable Defog tasks, but
-  the no-skill/placebo/mined-skill model factorial has not yet run.
+- the SQL replay/verifier boundary passes on all 95 executable Defog tasks and
+  the no-skill/placebo/expert-seed mechanics factorial has run, but it failed
+  its terminal-protocol gate; no trace-mined arm or causal quality screen has
+  run.

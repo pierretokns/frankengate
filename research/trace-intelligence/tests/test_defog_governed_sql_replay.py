@@ -136,6 +136,94 @@ class SQLPolicyTest(unittest.TestCase):
             )
         self.assertEqual("sensitive_projection", caught.exception.code)
 
+    def test_rejects_reproduced_sensitive_where_bypass(self):
+        with self.assertRaises(replay.SQLPolicyError) as caught:
+            replay.validate_candidate_sql(
+                "SELECT COUNT(*) FROM customers "
+                "WHERE email = 'target@example.com'",
+                replay.SQLPolicy(catalog=CATALOG),
+            )
+        self.assertEqual("sensitive_column", caught.exception.code)
+
+    def test_rejects_reproduced_sensitive_order_by_bypass(self):
+        with self.assertRaises(replay.SQLPolicyError) as caught:
+            replay.validate_candidate_sql(
+                "SELECT name FROM customers ORDER BY email",
+                replay.SQLPolicy(catalog=CATALOG),
+            )
+        self.assertEqual("sensitive_column", caught.exception.code)
+
+    def test_rejects_reproduced_sensitive_having_bypass(self):
+        with self.assertRaises(replay.SQLPolicyError) as caught:
+            replay.validate_candidate_sql(
+                "SELECT name FROM customers GROUP BY name "
+                "HAVING MIN(email) IS NOT NULL",
+                replay.SQLPolicy(catalog=CATALOG),
+            )
+        self.assertEqual("sensitive_column", caught.exception.code)
+
+    def test_rejects_sensitive_join_condition(self):
+        with self.assertRaises(replay.SQLPolicyError):
+            replay.validate_candidate_sql(
+                "SELECT c.name FROM customers AS c "
+                "JOIN orders AS o ON c.email = o.email",
+                replay.SQLPolicy(catalog=CATALOG),
+            )
+
+    def test_rejects_sensitive_using_and_natural_joins(self):
+        for sql in (
+            "SELECT c.name FROM customers AS c "
+            "JOIN orders AS o USING (email)",
+            "SELECT name FROM customers NATURAL JOIN orders",
+            "SELECT c.name FROM customers AS c "
+            "NATURAL JOIN customers AS other_customer",
+        ):
+            with self.subTest(sql=sql):
+                with self.assertRaises(replay.SQLPolicyError) as caught:
+                    replay.validate_candidate_sql(
+                        sql, replay.SQLPolicy(catalog=CATALOG)
+                    )
+                self.assertEqual("sensitive_column", caught.exception.code)
+
+    def test_rejects_sensitive_window_partition_and_order(self):
+        for sql in (
+            "SELECT name, ROW_NUMBER() OVER (PARTITION BY email) AS rn "
+            "FROM customers",
+            "SELECT name, ROW_NUMBER() OVER (ORDER BY email) AS rn "
+            "FROM customers",
+        ):
+            with self.subTest(sql=sql):
+                with self.assertRaises(replay.SQLPolicyError):
+                    replay.validate_candidate_sql(
+                        sql, replay.SQLPolicy(catalog=CATALOG)
+                    )
+
+    def test_rejects_sensitive_group_function_and_correlated_subquery_uses(self):
+        for sql in (
+            "SELECT COUNT(*) FROM customers GROUP BY email",
+            "SELECT name FROM customers WHERE LOWER(email) = 'target@example.com'",
+            "SELECT o.id FROM orders AS o WHERE EXISTS ("
+            "SELECT 1 FROM customers AS c WHERE c.email = o.email"
+            ")",
+        ):
+            with self.subTest(sql=sql):
+                with self.assertRaises(replay.SQLPolicyError):
+                    replay.validate_candidate_sql(
+                        sql, replay.SQLPolicy(catalog=CATALOG)
+                    )
+
+    def test_table_qualified_entitlement_allows_non_projection_use(self):
+        replay.validate_candidate_sql(
+            "SELECT name FROM customers "
+            "WHERE email = 'target@example.com'",
+            replay.SQLPolicy(
+                catalog=CATALOG,
+                allowed_sensitive_columns=frozenset(
+                    {"public.customers.email"}
+                ),
+            ),
+        )
+
     def test_statement_split_preserves_postgres_text_and_literal_semicolons(self):
         statements = replay.split_sql_statements(
             "SELECT ROW(1, 'a;b'); SELECT 2;"
@@ -190,6 +278,143 @@ class AuthorityTest(unittest.TestCase):
         self.assertNotIn("u1", receipt.values())
         self.assertEqual(64, len(receipt["authorization_epoch_ref_sha256"]))
 
+    def test_executor_rejects_system_schema_in_governed_search_path(self):
+        with self.assertRaises(ValueError):
+            replay.GovernedPostgresExecutor(
+                dsn="unused",
+                authority=replay.GovernanceAuthority(
+                    governance_scope="team",
+                    authorization_epoch_ref="epoch-1",
+                    team_id="t1",
+                ),
+                allowed_schemas=frozenset({"public", "pg_catalog"}),
+            )
+
+    def test_begin_pins_and_verifies_governed_session(self):
+        class FakeCursor:
+            def __init__(self):
+                self.executions = []
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc_value, traceback):
+                return False
+
+            def execute(self, query, parameters=None):
+                self.executions.append((query, parameters))
+
+            def fetchone(self):
+                return (
+                    "on",
+                    "on",
+                    "pg_catalog, public, consumer_div",
+                    "fg_replay",
+                    "fg_replay",
+                    False,
+                    False,
+                )
+
+        class FakeConnection:
+            def __init__(self):
+                self.fake_cursor = FakeCursor()
+
+            def cursor(self):
+                return self.fake_cursor
+
+        executor = replay.GovernedPostgresExecutor(
+            dsn="unused",
+            authority=replay.GovernanceAuthority(
+                governance_scope="team",
+                authorization_epoch_ref="epoch-1",
+                team_id="t1",
+            ),
+        )
+        connection = FakeConnection()
+        executor._begin(connection)
+        self.assertIn(
+            (
+                "SELECT pg_catalog.set_config('search_path', %s, true)",
+                ("pg_catalog, public, consumer_div",),
+            ),
+            connection.fake_cursor.executions,
+        )
+
+    def test_begin_rejects_privileged_or_role_switched_session(self):
+        safe_prefix = (
+            "on",
+            "on",
+            "pg_catalog, public, consumer_div",
+        )
+
+        class FakeCursor:
+            def __init__(self, state):
+                self.state = state
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc_value, traceback):
+                return False
+
+            def execute(self, query, parameters=None):
+                pass
+
+            def fetchone(self):
+                return self.state
+
+        class FakeConnection:
+            def __init__(self, state):
+                self.state = state
+
+            def cursor(self):
+                return FakeCursor(self.state)
+
+        executor = replay.GovernedPostgresExecutor(
+            dsn="unused",
+            authority=replay.GovernanceAuthority(
+                governance_scope="team",
+                authorization_epoch_ref="epoch-1",
+                team_id="t1",
+            ),
+        )
+        unsafe_states = (
+            (
+                "off",
+                "on",
+                "pg_catalog, public, consumer_div",
+                "login_role",
+                "login_role",
+                False,
+                False,
+            ),
+            (
+                "on",
+                "off",
+                "pg_catalog, public, consumer_div",
+                "login_role",
+                "login_role",
+                False,
+                False,
+            ),
+            (
+                "on",
+                "on",
+                "public",
+                "login_role",
+                "login_role",
+                False,
+                False,
+            ),
+            safe_prefix + ("elevated", "login_role", False, False),
+            safe_prefix + ("login_role", "login_role", True, False),
+            safe_prefix + ("login_role", "login_role", False, True),
+        )
+        for state in unsafe_states:
+            with self.subTest(state=state):
+                with self.assertRaises(replay.AuthorizationError):
+                    executor._begin(FakeConnection(state))
+
 
 def result(rows, columns=("value",)):
     return replay.QueryResult(
@@ -201,6 +426,35 @@ def result(rows, columns=("value",)):
 
 
 class ResultComparatorTest(unittest.TestCase):
+    def test_benchmark_equivalence_preserves_label_agnostic_behavior(self):
+        candidate = result(((1,),), ("answer",))
+        gold = result(((1,),), ("expected_label",))
+        self.assertTrue(
+            replay.benchmark_results_equal(
+                candidate, gold, order_sensitive=False
+            )
+        )
+        self.assertTrue(
+            replay.results_equal(
+                candidate, gold, order_sensitive=False
+            )
+        )
+
+    def test_strict_answer_shape_requires_matching_column_labels(self):
+        candidate = result(((1,),), ("answer",))
+        differently_labeled = result(((1,),), ("expected_label",))
+        identically_labeled = result(((1,),), ("answer",))
+        self.assertFalse(
+            replay.strict_answer_shape_results_equal(
+                candidate, differently_labeled, order_sensitive=False
+            )
+        )
+        self.assertTrue(
+            replay.strict_answer_shape_results_equal(
+                candidate, identically_labeled, order_sensitive=False
+            )
+        )
+
     def test_ignores_row_order_only_when_not_semantic(self):
         first = result(((1,), (2,)))
         reversed_result = result(((2,), (1,)))

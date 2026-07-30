@@ -2,7 +2,7 @@ PYTHON ?= python3
 PYTHONPYCACHEPREFIX ?= /private/tmp/frankengate-trace-intelligence-pycache
 QWEN3_EMBEDDING_DEVICE ?= cpu
 
-.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory e2-retrieval e2-postgres-joint defog-sql-conformance
+.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics
 
 verify: test validate compile
 
@@ -17,6 +17,41 @@ validate:
 compile:
 	PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
 		$(PYTHON) -m compileall -q -f -x '/datasets/' .
+
+# Rebuilds the content-free, leakage-safe four-fold SQL factorial contract.
+# Model and authority manifests are pinned inputs; benchmark content is never
+# copied into this output.
+defog-sql-design:
+	$(PYTHON) defog_sql_factorial_design.py \
+		--cohort-manifest experiments/manifests/defog-sql-eval-enterprise-96-2026-07-30.json \
+		--model-manifest configs/models/qwen3.5-9b-optiq-4bit-mlx.json \
+		--authority-manifest configs/governance/defog-factorial-authority-epoch-2026-07-30.json \
+		--output experiments/manifests/defog-sql-factorial-design-2026-07-30.json
+
+# Runs the four-task/three-arm P0 mechanics smoke. The caller must start the
+# pinned loopback model runtime exactly as recorded in the model manifest.
+# Raw prompts, SQL, tool results, and model messages stay outside Git.
+defog-sql-mechanics:
+	@test -n "$(DEFOG_SOURCE_ROOT)" || \
+		(printf '%s\n' 'DEFOG_SOURCE_ROOT is required' >&2; exit 2)
+	@test -n "$(DEFOG_REPLAY_DSN_TEMPLATE)" || \
+		(printf '%s\n' 'DEFOG_REPLAY_DSN_TEMPLATE is required' >&2; exit 2)
+	@test -n "$(DEFOG_RAW_AUDIT_DIR)" || \
+		(printf '%s\n' 'DEFOG_RAW_AUDIT_DIR is required' >&2; exit 2)
+	@test -n "$(DEFOG_MODEL_ENDPOINT)" || \
+		(printf '%s\n' 'DEFOG_MODEL_ENDPOINT is required' >&2; exit 2)
+	$(PYTHON) defog_sql_factorial.py \
+		--source-root "$(DEFOG_SOURCE_ROOT)" \
+		--cohort-manifest experiments/manifests/defog-sql-eval-enterprise-96-2026-07-30.json \
+		--dataset-manifest configs/datasets/defog-sql-eval-enterprise.json \
+		--design-manifest experiments/manifests/defog-sql-factorial-design-2026-07-30.json \
+		--model-manifest configs/models/qwen3.5-9b-optiq-4bit-mlx.json \
+		--authority-manifest configs/governance/defog-factorial-authority-epoch-2026-07-30.json \
+		--fold-id fold-0 \
+		--dsn-template "$(DEFOG_REPLAY_DSN_TEMPLATE)" \
+		--endpoint "$(DEFOG_MODEL_ENDPOINT)" \
+		--raw-audit-dir "$(DEFOG_RAW_AUDIT_DIR)" \
+		--output experiments/results/defog-sql-factorial-fold0-mechanics-smoke-2026-07-30.json
 
 # Replays the hash-pinned Defog cohort through a constrained local PostgreSQL
 # role. Source content and raw tool records remain outside Git; only a

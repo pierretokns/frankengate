@@ -28,7 +28,7 @@ The combined evidence supports a small governed product: personal history, conte
 - The combined retrospective assertion killed 191 supported mutants at 0.969 with 0.486 allowed-event false positives. It remains annotation-derived and was not run against a changed agent.
 - MAST has 0 finalized human traces overlapping the judge release. Therefore released human-versus-judge accuracy cannot be reproduced; high Hamming accuracy from an always-negative classifier is class imbalance, not competence.
 - Structured plus dense retrieval reached 0.818 Recall@20 versus 0.732 for exact-only on silver task labels. In the same-candidate forced-RLS PostgreSQL run, exact pgvector reached 0.667 at 3.017 ms p50; the tested three-way hybrid reached only 0.672 at 256.843 ms. Keep exact/structured plus conditional dense retrieval and reject that trigram-heavy hybrid.
-- The governed skill lifecycle passed 18 PostgreSQL assertions, including hidden-test isolation and a hard security-violation veto. The one-task Trace2Skill smoke established safe tool execution but no skill benefit; the local finance fixture has only four executable gold SQL tasks, so NL2SQL intervention quality remains untested.
+- The governed skill lifecycle passed 18 PostgreSQL assertions, including hidden-test isolation and a hard security-violation veto. The Defog NL2SQL mechanics factorial subsequently completed 12 cache-disabled native-tool episodes: every arm passed the same 2/4 tasks, all authority receipts were valid, and no unauthorized observation occurred. Terminal-protocol failure was 25%–50%, so the preregistered gate failed; intervention quality and trace-mined skill benefit remain untested and hidden results stay sealed.
 
 ## Original enterprise questions
 

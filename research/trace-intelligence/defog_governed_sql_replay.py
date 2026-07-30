@@ -51,6 +51,7 @@ SENSITIVE_NAME_PATTERN = re.compile(
     r"credit_card|card_number|account_number)(_|$)",
     re.IGNORECASE,
 )
+GOVERNED_SCHEMA_NAME_PATTERN = re.compile(r"^[a-z_][a-z0-9_$]*$")
 DANGEROUS_FUNCTIONS = frozenset(
     {
         "current_setting",
@@ -314,6 +315,11 @@ class SQLPolicy:
     allowed_schemas: frozenset[str] = DEFAULT_ALLOWED_SCHEMAS
     allowed_functions: frozenset[str] = DEFAULT_ALLOWED_FUNCTIONS
     reject_sensitive_projections: bool = True
+    # New callers should use table-qualified entries here when possible.
+    # ``allowed_sensitive_projections`` remains a compatibility alias, but its
+    # grants apply to every semantic use of the named column. A projection-only
+    # grant would still leak the same data through predicates and ordering.
+    allowed_sensitive_columns: frozenset[str] = frozenset()
     allowed_sensitive_projections: frozenset[str] = frozenset()
 
 
@@ -351,6 +357,60 @@ def _catalog_parts(
         )
         all_columns.update(tables[normalized])
     return tables, frozenset(all_columns)
+
+
+def _column_is_within_projection(column: exp.Column) -> bool:
+    """Return whether the column contributes to its nearest SELECT output."""
+
+    child: exp.Expression = column
+    parent = child.parent
+    while parent is not None:
+        if isinstance(parent, exp.Select):
+            return any(child is projection for projection in parent.expressions)
+        child = parent
+        parent = child.parent
+    return False
+
+
+def _sensitive_column_is_authorized(
+    policy: SQLPolicy,
+    *,
+    column_name: str,
+    resolved_reference: str,
+) -> bool:
+    entitlements = {
+        _normalized_identifier(value)
+        for value in (
+            policy.allowed_sensitive_columns
+            | policy.allowed_sensitive_projections
+        )
+    }
+    return (
+        column_name in entitlements
+        or _normalized_identifier(resolved_reference) in entitlements
+    )
+
+
+def _sensitive_join_key_is_authorized(
+    policy: SQLPolicy,
+    *,
+    column_name: str,
+    candidate_tables: Sequence[str],
+) -> bool:
+    entitlements = {
+        _normalized_identifier(value)
+        for value in (
+            policy.allowed_sensitive_columns
+            | policy.allowed_sensitive_projections
+        )
+    }
+    if column_name in entitlements:
+        return True
+    required = {
+        f"{_normalized_identifier(table)}.{column_name}"
+        for table in candidate_tables
+    }
+    return bool(required) and required.issubset(entitlements)
 
 
 def validate_candidate_sql(sql: str, policy: SQLPolicy) -> ValidatedSQL:
@@ -395,7 +455,9 @@ def validate_candidate_sql(sql: str, policy: SQLPolicy) -> ValidatedSQL:
         if subquery.alias_or_name
     )
     alias_to_table: dict[str, str] = {}
+    alias_to_tables: dict[str, set[str]] = {}
     referenced_tables: set[str] = set()
+    referenced_table_occurrences: list[str] = []
     for table in statement.find_all(exp.Table):
         name = _normalized_identifier(table.name)
         schema = _normalized_identifier(table.db) if table.db else ""
@@ -426,8 +488,53 @@ def validate_candidate_sql(sql: str, policy: SQLPolicy) -> ValidatedSQL:
             raise SQLPolicyError(
                 "table_not_allowed", f"table {table.sql()!r} is not allowed"
             )
-        alias_to_table[_normalized_identifier(table.alias_or_name)] = resolved
+        normalized_alias = _normalized_identifier(table.alias_or_name)
+        alias_to_table[normalized_alias] = resolved
+        alias_to_tables.setdefault(normalized_alias, set()).add(resolved)
         referenced_tables.add(resolved)
+        referenced_table_occurrences.append(resolved)
+
+    implicit_join_columns: set[str] = set()
+    if policy.reject_sensitive_projections:
+        for join in statement.find_all(exp.Join):
+            join_key_names = {
+                _normalized_identifier(identifier.name)
+                for identifier in (join.args.get("using") or ())
+            }
+            if str(join.args.get("method") or "").upper() == "NATURAL":
+                column_frequency: dict[str, int] = {}
+                for table in referenced_table_occurrences:
+                    for column_name in tables[table]:
+                        column_frequency[column_name] = (
+                            column_frequency.get(column_name, 0) + 1
+                        )
+                join_key_names.update(
+                    column_name
+                    for column_name, frequency in column_frequency.items()
+                    if frequency >= 2
+                )
+            for column_name in join_key_names:
+                if not SENSITIVE_NAME_PATTERN.search(column_name):
+                    continue
+                candidate_tables = tuple(
+                    table
+                    for table in sorted(referenced_tables)
+                    if column_name in tables[table]
+                )
+                if not _sensitive_join_key_is_authorized(
+                    policy,
+                    column_name=column_name,
+                    candidate_tables=candidate_tables,
+                ):
+                    raise SQLPolicyError(
+                        "sensitive_column",
+                        "using sensitive columns without authorization "
+                        "is forbidden",
+                    )
+                implicit_join_columns.update(
+                    f"{table}.{column_name}"
+                    for table in candidate_tables
+                )
 
     for star in statement.find_all(exp.Star):
         if not _is_count_star(star):
@@ -454,7 +561,7 @@ def validate_candidate_sql(sql: str, policy: SQLPolicy) -> ValidatedSQL:
         for projection in select.expressions
         if projection.alias
     }
-    referenced_columns: set[str] = set()
+    referenced_columns: set[str] = set(implicit_join_columns)
     for column in statement.find_all(exp.Column):
         name = _normalized_identifier(column.name)
         qualifier = _normalized_identifier(column.table) if column.table else ""
@@ -475,13 +582,54 @@ def validate_candidate_sql(sql: str, policy: SQLPolicy) -> ValidatedSQL:
                     "column_not_allowed",
                     f"column {qualifier}.{name} is not allowed",
                 )
-            referenced_columns.add(f"{resolved_table}.{name}")
+            sensitive_resolution_candidates = alias_to_tables.get(
+                qualifier, set()
+            )
+            resolved_reference = (
+                f"{next(iter(sensitive_resolution_candidates))}.{name}"
+                if len(sensitive_resolution_candidates) == 1
+                else name
+            )
+            referenced_columns.add(resolved_reference)
         elif name not in all_columns and name not in derived_names:
             raise SQLPolicyError(
                 "column_not_allowed", f"column {name!r} is not allowed"
             )
         else:
+            matching_tables = tuple(
+                table
+                for table in referenced_tables
+                if name in tables[table]
+            )
+            resolved_reference = (
+                f"{matching_tables[0]}.{name}"
+                if len(matching_tables) == 1
+                else name
+            )
             referenced_columns.add(name)
+        if (
+            policy.reject_sensitive_projections
+            and SENSITIVE_NAME_PATTERN.search(name)
+            and not _sensitive_column_is_authorized(
+                policy,
+                column_name=name,
+                resolved_reference=resolved_reference,
+            )
+        ):
+            within_projection = _column_is_within_projection(column)
+            raise SQLPolicyError(
+                (
+                    "sensitive_projection"
+                    if within_projection
+                    else "sensitive_column"
+                ),
+                (
+                    "projecting sensitive columns is forbidden"
+                    if within_projection
+                    else "using sensitive columns without authorization "
+                    "is forbidden"
+                ),
+            )
 
     if policy.reject_sensitive_projections:
         for select in statement.find_all(exp.Select):
@@ -489,21 +637,12 @@ def validate_candidate_sql(sql: str, policy: SQLPolicy) -> ValidatedSQL:
                 output_name = _normalized_identifier(
                     projection.alias_or_name or ""
                 )
-                projected_columns = {
-                    _normalized_identifier(column.name)
-                    for column in projection.find_all(exp.Column)
-                }
                 if (
-                    (
-                        SENSITIVE_NAME_PATTERN.search(output_name)
-                        and output_name
-                        not in policy.allowed_sensitive_projections
-                    )
-                    or any(
-                        SENSITIVE_NAME_PATTERN.search(column)
-                        and column
-                        not in policy.allowed_sensitive_projections
-                        for column in projected_columns
+                    SENSITIVE_NAME_PATTERN.search(output_name)
+                    and not _sensitive_column_is_authorized(
+                        policy,
+                        column_name=output_name,
+                        resolved_reference=output_name,
                     )
                 ):
                     raise SQLPolicyError(
@@ -673,12 +812,14 @@ def rows_equal(left: Sequence[Any], right: Sequence[Any]) -> bool:
     )
 
 
-def results_equal(
+def benchmark_results_equal(
     candidate: QueryResult,
     gold: QueryResult,
     *,
     order_sensitive: bool,
 ) -> bool:
+    """Defog-compatible value equivalence, intentionally ignoring labels."""
+
     if len(candidate.columns) != len(gold.columns):
         return False
     if len(candidate.rows) != len(gold.rows):
@@ -702,6 +843,38 @@ def results_equal(
             return False
         unmatched.pop(match)
     return not unmatched
+
+
+def strict_answer_shape_results_equal(
+    candidate: QueryResult,
+    gold: QueryResult,
+    *,
+    order_sensitive: bool,
+) -> bool:
+    """Compare values and the exact ordered output-column labels."""
+
+    if candidate.columns != gold.columns:
+        return False
+    return benchmark_results_equal(
+        candidate,
+        gold,
+        order_sensitive=order_sensitive,
+    )
+
+
+def results_equal(
+    candidate: QueryResult,
+    gold: QueryResult,
+    *,
+    order_sensitive: bool,
+) -> bool:
+    """Backward-compatible alias for benchmark value equivalence."""
+
+    return benchmark_results_equal(
+        candidate,
+        gold,
+        order_sensitive=order_sensitive,
+    )
 
 
 @dataclass(frozen=True)
@@ -737,16 +910,41 @@ class GovernedPostgresExecutor:
         limits: ExecutionLimits = ExecutionLimits(),
         audit_path: Path | None = None,
         allowed_schemas: frozenset[str] = DEFAULT_ALLOWED_SCHEMAS,
+        allowed_sensitive_columns: frozenset[str] = frozenset(),
         allowed_sensitive_projections: frozenset[str] = frozenset(),
     ) -> None:
         authority.validate()
         limits.validate()
+        normalized_schemas = frozenset(
+            _normalized_identifier(schema) for schema in allowed_schemas
+        )
+        if not normalized_schemas:
+            raise ValueError("at least one governed schema is required")
+        for schema in normalized_schemas:
+            if (
+                not GOVERNED_SCHEMA_NAME_PATTERN.fullmatch(schema)
+                or schema in SYSTEM_SCHEMAS
+                or schema.startswith("pg_")
+            ):
+                raise ValueError(
+                    f"schema {schema!r} cannot be in the governed search path"
+                )
         self.dsn = dsn
         self.authority = authority
         self.limits = limits
         self.audit_path = audit_path
-        self.allowed_schemas = allowed_schemas
+        self.allowed_schemas = normalized_schemas
+        self.allowed_sensitive_columns = allowed_sensitive_columns
         self.allowed_sensitive_projections = allowed_sensitive_projections
+
+    def _governed_search_path(self) -> str:
+        ordered_schemas = []
+        if "public" in self.allowed_schemas:
+            ordered_schemas.append("public")
+        ordered_schemas.extend(
+            sorted(self.allowed_schemas - {"public"})
+        )
+        return ", ".join(("pg_catalog", *ordered_schemas))
 
     def _connect(self) -> PGConnection:
         connection = psycopg2.connect(self.dsn)
@@ -754,9 +952,14 @@ class GovernedPostgresExecutor:
         return connection
 
     def _begin(self, connection: PGConnection) -> None:
+        governed_search_path = self._governed_search_path()
         with connection.cursor() as cursor:
             cursor.execute("BEGIN READ ONLY")
             cursor.execute("SET LOCAL row_security = on")
+            cursor.execute(
+                "SELECT pg_catalog.set_config('search_path', %s, true)",
+                (governed_search_path,),
+            )
             cursor.execute(
                 "SET LOCAL statement_timeout = %s",
                 (f"{self.limits.statement_timeout_ms}ms",),
@@ -769,6 +972,54 @@ class GovernedPostgresExecutor:
                 "SET LOCAL idle_in_transaction_session_timeout = %s",
                 (f"{self.limits.idle_timeout_ms}ms",),
             )
+            cursor.execute(
+                """
+                SELECT
+                    pg_catalog.current_setting('transaction_read_only'),
+                    pg_catalog.current_setting('row_security'),
+                    pg_catalog.current_setting('search_path'),
+                    current_user::text,
+                    session_user::text,
+                    governed_role.rolsuper,
+                    governed_role.rolbypassrls
+                FROM pg_catalog.pg_roles AS governed_role
+                WHERE governed_role.rolname = current_user
+                """
+            )
+            state = cursor.fetchone()
+            if state is None:
+                raise AuthorizationError(
+                    "the active PostgreSQL role could not be verified"
+                )
+            (
+                transaction_read_only,
+                row_security,
+                actual_search_path,
+                current_user,
+                session_user,
+                role_is_superuser,
+                role_bypasses_rls,
+            ) = state
+            if transaction_read_only != "on":
+                raise AuthorizationError(
+                    "the governed PostgreSQL transaction is not read-only"
+                )
+            if row_security != "on":
+                raise AuthorizationError(
+                    "PostgreSQL row security is not enabled"
+                )
+            if actual_search_path != governed_search_path:
+                raise AuthorizationError(
+                    "PostgreSQL search_path does not match governed schemas"
+                )
+            if current_user != session_user:
+                raise AuthorizationError(
+                    "PostgreSQL role switching is forbidden"
+                )
+            if role_is_superuser or role_bypasses_rls:
+                raise AuthorizationError(
+                    "the governed PostgreSQL role may not bypass row security"
+                )
 
     def catalog(self) -> dict[str, frozenset[str]]:
         connection = self._connect()
@@ -876,6 +1127,7 @@ class GovernedPostgresExecutor:
         policy = SQLPolicy(
             catalog=self.catalog(),
             allowed_schemas=self.allowed_schemas,
+            allowed_sensitive_columns=self.allowed_sensitive_columns,
             allowed_sensitive_projections=self.allowed_sensitive_projections,
         )
         try:
@@ -1027,7 +1279,7 @@ def evaluate_candidate(
             bool(select.args.get("order"))
             for select in gold_statement.find_all(exp.Select)
         )
-        if results_equal(
+        if benchmark_results_equal(
             candidate_result,
             gold_result,
             order_sensitive=gold_order_sensitive,
