@@ -145,6 +145,16 @@ intervention with independent enterprise outcomes. SkillOpt-style bounded edits,
 independent gates, staged adoption, and rollback are adopted as proposal
 mechanics. Automatic adoption and cross-user skill sharing remain gated.
 
+The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
+adds a bounded, family-disjoint outcome matrix across five public
+harness/model arms. Ten task families were observed for each arm, with
+historical success rates ranging from 0.10 (Claude Code/GLM 5.1) to 1.00
+(Gemini CLI/Gemini 3.5 Flash). This confirms that natural tool-rich traces and
+cross-model/harness variation are available for the decisive experiment; it
+does **not** confirm a skill effect because no candidate was injected and no
+no-skill/placebo control was replayed. The next bead is the intervention matrix
+with paired repairs/regressions and independent verification.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,
@@ -183,7 +193,7 @@ model call, database mutation, or dataset download.
 
 The latest pinned audit (`uv run --frozen make verify`) ran 497 research tests
 with 13 explicit environment skips and no failures, plus 61/61 NL2SQL
-capability tests. It validated 79 aggregate results, 43 dataset manifests, 12
+capability tests. It validated 80 aggregate results, 44 dataset manifests, 12
 governed fixtures, zero committed raw corpus files, and Python compilation.
 The Seatbelt skips are host-runtime gates; Linux/container replay remains the
 required authority for sandbox execution. The separate no-install host audit

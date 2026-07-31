@@ -1,0 +1,444 @@
+{
+  "arm_count": 5,
+  "arms": {
+    "claude-code__deepseek-v4-pro": {
+      "observed_tasks": 10,
+      "other_statuses": 0,
+      "status_counts": {
+        "success": 4,
+        "timeout": 6
+      },
+      "success_rate": 0.4,
+      "successes": 4,
+      "timeouts": 6
+    },
+    "claude-code__glm-5.1": {
+      "observed_tasks": 10,
+      "other_statuses": 0,
+      "status_counts": {
+        "success": 1,
+        "timeout": 9
+      },
+      "success_rate": 0.1,
+      "successes": 1,
+      "timeouts": 9
+    },
+    "claude-code__opus-4.7": {
+      "observed_tasks": 10,
+      "other_statuses": 0,
+      "status_counts": {
+        "success": 8,
+        "timeout": 2
+      },
+      "success_rate": 0.8,
+      "successes": 8,
+      "timeouts": 2
+    },
+    "codex__gpt-5.5": {
+      "observed_tasks": 10,
+      "other_statuses": 0,
+      "status_counts": {
+        "success": 8,
+        "timeout": 2
+      },
+      "success_rate": 0.8,
+      "successes": 8,
+      "timeouts": 2
+    },
+    "gemini-cli__gemini-3.5-flash": {
+      "observed_tasks": 10,
+      "other_statuses": 0,
+      "status_counts": {
+        "success": 10
+      },
+      "success_rate": 1.0,
+      "successes": 10,
+      "timeouts": 0
+    }
+  },
+  "bounded_task_count": 10,
+  "claim_boundary": {
+    "causal_intervention_run": false,
+    "historical_outcome_matrix_available": true,
+    "natural_trace_skill_benefit_confirmed": false,
+    "next_required_run": "same family-disjoint tasks with no-skill, placebo, mined, SkillOpt/SkillGen/RHO arms, paired repair/regression outcomes, and an independent verifier",
+    "reason": "These are historical outcomes from the source harnesses. No candidate was injected into a replay with no-skill/placebo controls."
+  },
+  "dataset": {
+    "id": "FrontisAI/NatureBench-traces",
+    "license": "CC-BY-4.0",
+    "manifest_url": "https://huggingface.co/datasets/FrontisAI/NatureBench-traces/tree/caa1c5e",
+    "revision": "caa1c5e",
+    "task_count_in_source": 90
+  },
+  "missing_result_count": 0,
+  "missing_results": [],
+  "observed_result_count": 50,
+  "protocol": {
+    "candidate_skill": "inspect_task_and_data; establish_resource_and_evaluation_baseline; train_with_validation; verify_artifact",
+    "family_split": "paper_id_disjoint",
+    "independent_outcome_required": true,
+    "intervention_required_for_benefit_claim": true,
+    "source_arms": [
+      "claude-code__deepseek-v4-pro",
+      "claude-code__glm-5.1",
+      "claude-code__opus-4.7",
+      "codex__gpt-5.5",
+      "gemini-cli__gemini-3.5-flash"
+    ]
+  },
+  "raw_trace_policy": "raw transcripts remain outside Git; committed receipt contains hashes and aggregate statuses only",
+  "rows": [
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "68f9a6a5c575236dcd1fba4fe215be344963170aa3baeb5de1fca9a6f97faaa0",
+      "status": "timeout",
+      "task": "s41467-025-63412-3"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "cc302f3dea01a9c98f91c57d39ad5a0baa83f4a60c1853f1e73a501e26915930",
+      "status": "timeout",
+      "task": "s41467-025-63418-x"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "67bc60cd4de261eab9bbd67310b5f908ebd645c0b22e3d084711d579a799ad2b",
+      "status": "timeout",
+      "task": "s41467-025-64512-w"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "3c7622a5597d40d6b688f798772ba93a45d38db2c99ff945b4e077c1be4af819",
+      "status": "success",
+      "task": "s41467-025-65557-7"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "8025fd0245d5ed01ee03c528232bee0ea8672e7dbff5c51d03b4bf33f3706e0a",
+      "status": "success",
+      "task": "s41551-024-01257-9"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "a113755156c075c2b7a86cba1354176bff78a6bbe2298818355000d4325888d6",
+      "status": "success",
+      "task": "s41551-024-01312-5"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "14a7f3e21e5994f91a1d54704c7bac0632ab05597631f58c117552023e0e67d3",
+      "status": "timeout",
+      "task": "s41587-024-02414-w"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "e6eb5a11fd5d61eef6481864c933391182b6ae2ddd499a28a830bdf1250f1bd6",
+      "status": "timeout",
+      "task": "s41587-024-02428-4"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "e08015b78e3e8fdb659a7a24e8a3af02f5993b1b4e659643e462b2d8b7707283",
+      "status": "timeout",
+      "task": "s41587-025-02585-0"
+    },
+    {
+      "arm": "claude-code__deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "result_sha256": "73c5f4236b246e61786c8a5cdbc9a684e5b785b6326d796a0dbbc79b68c9fe41",
+      "status": "success",
+      "task": "s41587-025-02654-4"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "30f02588167736c41236a70fe34691aea77afbfeb5eb1655f2d1746732e59919",
+      "status": "timeout",
+      "task": "s41467-025-63412-3"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "94cb6bd87042f854387ddeea921281706cac004b597ddc5d0260734d83a7bbb4",
+      "status": "timeout",
+      "task": "s41467-025-63418-x"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "128ac0ac26541df79ba9d3eeb20aa33d6464cf72e2f5f0ba34e03b26daa42e06",
+      "status": "timeout",
+      "task": "s41467-025-64512-w"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "a2ce1f419e2f9a6591696c135d2a30a468651135ff9d7b89b305f7b5eed87c03",
+      "status": "timeout",
+      "task": "s41467-025-65557-7"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "a45916a4350c91f88ab6123727fe217fd68cf15ec48333439ffed919a2b8ef9b",
+      "status": "success",
+      "task": "s41551-024-01257-9"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "24188b9aa5854ad0a80d6b47d8130137fff7001188762ea444385b2c95fe0409",
+      "status": "timeout",
+      "task": "s41551-024-01312-5"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "4f04e97649952e86c42c4b2b41bcbb9650235b11580a52c5db1adc12a4d38e4a",
+      "status": "timeout",
+      "task": "s41587-024-02414-w"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "9627148cfa8af0502225b68968f874add1495c397d39b5489e51445014c6577e",
+      "status": "timeout",
+      "task": "s41587-024-02428-4"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "a17c2ecf870061b8eb720758cb48fa9f043534e905da672d58d2d8311ad5e6f9",
+      "status": "timeout",
+      "task": "s41587-025-02585-0"
+    },
+    {
+      "arm": "claude-code__glm-5.1",
+      "model": "glm-5.1",
+      "result_sha256": "dc4168812e8649537faf64f5b0caba715d9159c543d7b0353e5c0e11b5ba405f",
+      "status": "timeout",
+      "task": "s41587-025-02654-4"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "55a03d20374571730f8c375e4c55c1e193fe133e222a5893180ec71644d2b9e9",
+      "status": "success",
+      "task": "s41467-025-63412-3"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "f67e0a4f5075a3498132fe4ffdcf3304735398d35659630fa2a9dd2b3c50a6bf",
+      "status": "success",
+      "task": "s41467-025-63418-x"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "e5c10afff8b57cb29e2d8218758372c8cfc083ebf235ddd9f1cc20cf5a3bf60e",
+      "status": "timeout",
+      "task": "s41467-025-64512-w"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "8be12a32915365ca85b0e578f7e5221c64c27a949fb1cd8a9e6ed496534e107f",
+      "status": "timeout",
+      "task": "s41467-025-65557-7"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "f27e05e88840fbc590111f0fdf566fea52a4dbc646d7538c949375e5f070b679",
+      "status": "success",
+      "task": "s41551-024-01257-9"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "2ef735cbb2852098f0aee66cbd2c8b70b938c59079c87ce8d4e03493414b5fe0",
+      "status": "success",
+      "task": "s41551-024-01312-5"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "59d6979f31689e8813adf35644b8df3b322fc70a6df553986edecf5f80112a32",
+      "status": "success",
+      "task": "s41587-024-02414-w"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "a0b5143d90f260392e33d741706ae98973c6093ebff337466125eca7a41d9a37",
+      "status": "success",
+      "task": "s41587-024-02428-4"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "4b904de672aec5aa34805c3d07022c59ef11d5cd7d217ce3b96e384571d2060d",
+      "status": "success",
+      "task": "s41587-025-02585-0"
+    },
+    {
+      "arm": "claude-code__opus-4.7",
+      "model": "claude-opus-4.7",
+      "result_sha256": "970a1517a96eb97c8e32fecd2c91fa289d2e07a620697b2414cb89288088c8aa",
+      "status": "success",
+      "task": "s41587-025-02654-4"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "40f93677229a69b4a1334dcead5f08a4f7d4332c5de0068fc07df9d583a98bf8",
+      "status": "success",
+      "task": "s41467-025-63412-3"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "0f297abf970a4f9d5113c1e0c5cd394c0a0251f84d250c54c43c2511f159b7a2",
+      "status": "success",
+      "task": "s41467-025-63418-x"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "784b414a3e330fe4750f092d3cb9bc581d2739002474ee8b407c30fa061f3243",
+      "status": "success",
+      "task": "s41467-025-64512-w"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "c37619c2a62d9a8fdd69ad91b27be2ab5a2612694b4f7776e07ac3482e51ab1a",
+      "status": "success",
+      "task": "s41467-025-65557-7"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "2c1f5c9946631447669b19d5d493140f1851ad539ccf493c38943cf8615f3b7d",
+      "status": "success",
+      "task": "s41551-024-01257-9"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "3bf0edb3453e88bb9a8156de80c0a0fe43e1270cf621106b52eea0101244592f",
+      "status": "success",
+      "task": "s41551-024-01312-5"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "856835ee17ee90b41b34086e854a2f7c03b5102560ac6c111fcacb4135f84e38",
+      "status": "timeout",
+      "task": "s41587-024-02414-w"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "121fb577492c6002a117aabbf76e574c8bf56e816656cfe93c7f2155acc39aba",
+      "status": "success",
+      "task": "s41587-024-02428-4"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "da0545e8806a6843215637a9ef78ef99d81c702d79e7df3b2630ebe927c38108",
+      "status": "timeout",
+      "task": "s41587-025-02585-0"
+    },
+    {
+      "arm": "codex__gpt-5.5",
+      "model": "gpt-5.5",
+      "result_sha256": "000ff9c0424a2f45fcfbc4129f30c82855e51b53fb1ffd43735fe8a35de4eb3b",
+      "status": "success",
+      "task": "s41587-025-02654-4"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "c3dc5c8d77d6ba49a07f3cd75b79d303c33aac40f23bb426f1e045a77b28ce23",
+      "status": "success",
+      "task": "s41467-025-63412-3"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "ee45227395409648da38ba5d21e49e6ea6ca151b56935f34801df676eeb959fe",
+      "status": "success",
+      "task": "s41467-025-63418-x"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "2adeef68e5cb8c88298ab486ad5348931bb5edf27c8d857d6d9a74cff123028e",
+      "status": "success",
+      "task": "s41467-025-64512-w"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "fb9d4f2869e053fc004e352a7964339eef06580bc3781a3a3d9a7402764205d4",
+      "status": "success",
+      "task": "s41467-025-65557-7"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "c288bfcaa6730e4d06fb0f2ecaf5e453ff5de61a914bd06be3b7a42b7e477127",
+      "status": "success",
+      "task": "s41551-024-01257-9"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "9ae7a1a797758d0ddddb14771b4681864cb688ba7661b88790f3b218951ca8ba",
+      "status": "success",
+      "task": "s41551-024-01312-5"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "a2de8adc3ced2925a957bdd1e91468329d1078a6331362665ee222dc1c2ad1bf",
+      "status": "success",
+      "task": "s41587-024-02414-w"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "29461315a604b93b0451fc0abf2564c15041e33502d57a5ae785d4a4356a523b",
+      "status": "success",
+      "task": "s41587-024-02428-4"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "616ceb3b033064a415cd4942c7167f40d327f6ef5f6cb6588f467f6862f39605",
+      "status": "success",
+      "task": "s41587-025-02585-0"
+    },
+    {
+      "arm": "gemini-cli__gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "result_sha256": "d634a095471d7afbe92822f6c74c36a2c1d60c9adccc87e89186496a0ea8e296",
+      "status": "success",
+      "task": "s41587-025-02654-4"
+    }
+  ],
+  "schema_version": "frankengate-natural-trace-skill-transfer-preflight-v1"
+}
