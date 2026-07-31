@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v23"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v25"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -91,6 +91,10 @@ OPTIONAL_RESULTS = {
     "natural_model_dream_procedure_llama_verification": "natural-model-dream-procedure-llama-verification-2026-08-02.json",
     "natural_model_dream_procedure_luna": "natural-model-dream-procedure-luna-2026-08-02.json",
     "natural_model_dream_procedure_luna_verification": "natural-model-dream-procedure-luna-verification-2026-08-02.json",
+    "alfworld_luna_skillopt_family4": "alfworld-luna-skillopt-family4-2026-08-02.json",
+    "alfworld_luna_skillopt_family4_verification": "alfworld-luna-skillopt-family4-verification-2026-08-02.json",
+    "alfworld_luna_skillopt_long_horizon": "alfworld-luna-skillopt-long-horizon-2026-08-02.json",
+    "alfworld_luna_skillopt_long_horizon_verification": "alfworld-luna-skillopt-long-horizon-verification-2026-08-02.json",
     "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
     "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
     "h5_concurrency_live_rerun": "h5-concurrency-live-rerun-2026-08-02.json",
@@ -232,6 +236,10 @@ def build_matrix(
     natural_model_dream_procedure_llama_verification = results.get("natural_model_dream_procedure_llama_verification")
     natural_model_dream_procedure_luna = results.get("natural_model_dream_procedure_luna")
     natural_model_dream_procedure_luna_verification = results.get("natural_model_dream_procedure_luna_verification")
+    alfworld_luna_skillopt_family4 = results.get("alfworld_luna_skillopt_family4")
+    alfworld_luna_skillopt_family4_verification = results.get("alfworld_luna_skillopt_family4_verification")
+    alfworld_luna_skillopt_long_horizon = results.get("alfworld_luna_skillopt_long_horizon")
+    alfworld_luna_skillopt_long_horizon_verification = results.get("alfworld_luna_skillopt_long_horizon_verification")
     natural_released_procedure = results.get("natural_released_procedure")
     natural_released_procedure_verification = results.get("natural_released_procedure_verification")
     h5_concurrency_live_rerun = results.get("h5_concurrency_live_rerun")
@@ -1320,6 +1328,23 @@ def build_matrix(
                 "natural_model_dream_procedure_luna_quality_passed": natural_model_dream_procedure_luna.get("projects_quality_passed", 0) if natural_model_dream_procedure_luna else 0,
                 "natural_model_dream_procedure_luna_verifier_passed": bool(natural_model_dream_procedure_luna_verification and natural_model_dream_procedure_luna_verification.get("all_passed", False)),
                 "natural_model_dream_procedure_luna_semantic_utility_confirmed": bool(natural_model_dream_procedure_luna and natural_model_dream_procedure_luna.get("claim_boundary", {}).get("semantic_procedure_quality_confirmed", False)),
+                "alfworld_luna_skillopt_family4_tasks": len(alfworld_luna_skillopt_family4.get("dataset", {}).get("task_hashes", [])) if alfworld_luna_skillopt_family4 else 0,
+                "alfworld_luna_skillopt_family4_episodes": len(alfworld_luna_skillopt_family4.get("episodes", [])) if alfworld_luna_skillopt_family4 else 0,
+                "alfworld_luna_skillopt_family4_families": sorted(set((alfworld_luna_skillopt_family4.get("dataset", {}).get("family_labels", {}) if alfworld_luna_skillopt_family4 else {}).values())),
+                "alfworld_luna_skillopt_family4_no_skill_wins": alfworld_luna_skillopt_family4.get("summary", {}).get("no_skill", {}).get("wins", 0) if alfworld_luna_skillopt_family4 else 0,
+                "alfworld_luna_skillopt_family4_placebo_wins": alfworld_luna_skillopt_family4.get("summary", {}).get("formatting_placebo", {}).get("wins", 0) if alfworld_luna_skillopt_family4 else 0,
+                "alfworld_luna_skillopt_family4_candidate_wins": alfworld_luna_skillopt_family4.get("summary", {}).get("skillopt_candidate", {}).get("wins", 0) if alfworld_luna_skillopt_family4 else 0,
+                "alfworld_luna_skillopt_family4_candidate_invalid_actions": alfworld_luna_skillopt_family4.get("summary", {}).get("skillopt_candidate", {}).get("invalid_actions", 0) if alfworld_luna_skillopt_family4 else 0,
+                "alfworld_luna_skillopt_family4_verifier_passed": bool(alfworld_luna_skillopt_family4_verification and alfworld_luna_skillopt_family4_verification.get("all_passed", False)),
+                "alfworld_luna_skillopt_family4_rows_verified": alfworld_luna_skillopt_family4_verification.get("rows_verified", 0) if alfworld_luna_skillopt_family4_verification else 0,
+                "alfworld_luna_skillopt_family4_causal_benefit_confirmed": bool(alfworld_luna_skillopt_family4 and alfworld_luna_skillopt_family4.get("claim_boundary", {}).get("causal_skill_benefit_confirmed", False)),
+                "alfworld_luna_skillopt_long_horizon_steps": alfworld_luna_skillopt_long_horizon.get("episodes", [{}])[0].get("steps", 0) if alfworld_luna_skillopt_long_horizon and alfworld_luna_skillopt_long_horizon.get("episodes") else 0,
+                "alfworld_luna_skillopt_long_horizon_no_skill_wins": alfworld_luna_skillopt_long_horizon.get("summary", {}).get("no_skill", {}).get("wins", 0) if alfworld_luna_skillopt_long_horizon else 0,
+                "alfworld_luna_skillopt_long_horizon_placebo_wins": alfworld_luna_skillopt_long_horizon.get("summary", {}).get("formatting_placebo", {}).get("wins", 0) if alfworld_luna_skillopt_long_horizon else 0,
+                "alfworld_luna_skillopt_long_horizon_candidate_wins": alfworld_luna_skillopt_long_horizon.get("summary", {}).get("skillopt_candidate", {}).get("wins", 0) if alfworld_luna_skillopt_long_horizon else 0,
+                "alfworld_luna_skillopt_long_horizon_verifier_passed": bool(alfworld_luna_skillopt_long_horizon_verification and alfworld_luna_skillopt_long_horizon_verification.get("all_passed", False)),
+                "alfworld_luna_skillopt_long_horizon_rows_verified": alfworld_luna_skillopt_long_horizon_verification.get("rows_verified", 0) if alfworld_luna_skillopt_long_horizon_verification else 0,
+                "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": bool(alfworld_luna_skillopt_long_horizon and alfworld_luna_skillopt_long_horizon.get("claim_boundary", {}).get("causal_skill_benefit_confirmed", False)),
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1715,6 +1740,18 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"passed {skill['natural_model_dream_procedure_luna_quality_passed']}/3. All independent receipt "
             "verifiers passed. This measures format/grounding mechanics only; semantic procedure utility and "
             "changed-system outcomes remain unmeasured.",
+            f"- The frontier Luna SkillOpt checkpoint replication covered {skill['alfworld_luna_skillopt_family4_tasks']} "
+            f"previously unused tasks across {len(skill['alfworld_luna_skillopt_family4_families'])} families and "
+            f"{skill['alfworld_luna_skillopt_family4_episodes']} total arm episodes. No-skill, placebo, and the "
+            f"published SkillOpt checkpoint each won zero tasks; the fresh verifier checked "
+            f"{skill['alfworld_luna_skillopt_family4_rows_verified']} rows with pass={skill['alfworld_luna_skillopt_family4_verifier_passed']}. "
+            "The 12-step horizon truncated all arms, so this is stronger model/family protocol evidence but not a "
+            "general semantic skill estimate or promotion result.",
+            f"- The fair-horizon Luna follow-up extended one held-out task to {skill['alfworld_luna_skillopt_long_horizon_steps']} steps. "
+            f"No-skill, placebo, and SkillOpt each remained at zero wins; the independent verifier checked "
+            f"{skill['alfworld_luna_skillopt_long_horizon_rows_verified']} rows with pass={skill['alfworld_luna_skillopt_long_horizon_verifier_passed']}. "
+            "This removes the short-horizon explanation for that task while remaining a one-task model/harness slice, "
+            "not a general skill or enterprise-outcome estimate.",
             "- The attested 28-session Trace Commons cohort produced "
             f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
             "structural temporal candidates and "

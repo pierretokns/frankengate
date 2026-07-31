@@ -5,11 +5,11 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v23",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v25",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
-    "model-generated natural Dream/procedure quality and semantic utility evaluation",
+    "semantic Dream/procedure utility and changed-system outcome evaluation",
     "prospective enterprise task outcomes and human labels",
     "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
     "cross-user collaboration utility and consent outcomes"
@@ -142,6 +142,22 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/alfworld-luna-skillopt-family4-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-luna-skillopt-family4-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-luna-skillopt-long-horizon-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-luna-skillopt-long-horizon-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md"
         },
         {
@@ -154,7 +170,7 @@
         }
       ],
       "id": "public_trace_and_concept_audit",
-      "open_gate": "Natural release lineage is exercised; Qwen3 4B passed zero of three structural proposal gates, while Llama 3.2 and frontier Luna each passed one of three. This establishes parse/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
+      "open_gate": "Natural release lineage is exercised; Qwen3 4B passed zero of three structural proposal gates, while Llama 3.2 and frontier Luna each passed one of three. The frontier Luna SkillOpt checkpoint also produced zero wins for no-skill, placebo, and candidate across four previously unused ALFWorld families at a 12-step horizon, and a fair-horizon one-task follow-up remained zero-win at 35 steps; independent replay verification passed both. These results establish protocol/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
       "requirement": "Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.",
       "status": "natural_release_mechanics_proven_utility_unproven"
     },
@@ -297,7 +313,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "8985d8baea5076af340cd9a2b1f44deaa5566325"
+          "head": "254466f07e908217542a3932d5ea20d712342584"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

@@ -394,11 +394,37 @@
       "model_generated_dream_luna_projects": 3,
       "model_generated_dream_luna_quality_passed": 1,
       "model_generated_dream_luna_verifier_passed": true,
-      "model_generated_dream_luna_semantic_utility_confirmed": false
+      "model_generated_dream_luna_semantic_utility_confirmed": false,
+      "alfworld_luna_skillopt_family4": "experiments/results/alfworld-luna-skillopt-family4-2026-08-02.json",
+      "alfworld_luna_skillopt_family4_verification": "experiments/results/alfworld-luna-skillopt-family4-verification-2026-08-02.json",
+      "alfworld_luna_skillopt_family4_tasks": 4,
+      "alfworld_luna_skillopt_family4_episodes": 12,
+      "alfworld_luna_skillopt_family4_families": [
+        "look_at_obj_in_light",
+        "pick_and_place_simple",
+        "pick_clean_then_place_in_recep",
+        "pick_heat_then_place_in_recep"
+      ],
+      "alfworld_luna_skillopt_family4_no_skill_wins": 0,
+      "alfworld_luna_skillopt_family4_placebo_wins": 0,
+      "alfworld_luna_skillopt_family4_candidate_wins": 0,
+      "alfworld_luna_skillopt_family4_candidate_invalid_actions": 0,
+      "alfworld_luna_skillopt_family4_verifier_passed": true,
+      "alfworld_luna_skillopt_family4_rows_verified": 12,
+      "alfworld_luna_skillopt_family4_causal_benefit_confirmed": false,
+      "alfworld_luna_skillopt_long_horizon": "experiments/results/alfworld-luna-skillopt-long-horizon-2026-08-02.json",
+      "alfworld_luna_skillopt_long_horizon_verification": "experiments/results/alfworld-luna-skillopt-long-horizon-verification-2026-08-02.json",
+      "alfworld_luna_skillopt_long_horizon_steps": 35,
+      "alfworld_luna_skillopt_long_horizon_no_skill_wins": 0,
+      "alfworld_luna_skillopt_long_horizon_placebo_wins": 0,
+      "alfworld_luna_skillopt_long_horizon_candidate_wins": 0,
+      "alfworld_luna_skillopt_long_horizon_verifier_passed": true,
+      "alfworld_luna_skillopt_long_horizon_rows_verified": 3,
+      "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": false
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-      "schema_version": "frankengate-combined-evidence-matrix-v23",
+      "schema_version": "frankengate-combined-evidence-matrix-v25",
       "alfworld_semantic_pilot_consumed": true,
       "alfworld_revision_r2_consumed": true,
       "alfworld_family_disjoint_r3_consumed": true,
@@ -426,7 +452,7 @@
   "requirements_still_open": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
-    "model-generated natural Dream/procedure quality and semantic utility evaluation",
+    "semantic Dream/procedure utility and changed-system outcome evaluation",
     "prospective enterprise task outcomes and human labels",
     "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
     "cross-user collaboration utility and consent outcomes"

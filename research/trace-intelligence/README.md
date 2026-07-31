@@ -339,6 +339,21 @@ the run still establishes neither semantic procedure quality nor causal utility;
 the model saw only content-free summaries and no proposal was executed against
 an independent task outcome.
 
+The [`frontier Luna SkillOpt family replication`](experiments/summaries/alfworld-luna-skillopt-family4-2026-08-02.md)
+then evaluated the published SkillOpt ALFWorld checkpoint, no-skill, and a
+formatting placebo on four previously unused ALFWorld task families. All three
+arms were `0/4` wins at the common 12-step horizon, with zero invalid actions;
+the fresh verifier replayed all 12 rows successfully. This adds real frontier
+model and family coverage, but the horizon truncated every arm and therefore
+does not establish general semantic skill utility or authorize promotion.
+
+The [`fair-horizon Luna follow-up`](experiments/summaries/alfworld-luna-skillopt-long-horizon-2026-08-02.md)
+extended one of those tasks to 35 steps. No-skill, placebo, and the published
+SkillOpt checkpoint all remained `0/1`; all three action sequences were
+admissible and independently replayed with zero mismatches. This removes the
+short-horizon explanation for that task while remaining a one-task model and
+harness slice, not a general skill-benefit or enterprise-outcome result.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

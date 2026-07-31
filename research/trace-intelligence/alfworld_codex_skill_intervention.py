@@ -129,6 +129,11 @@ def main() -> int:
     parser.add_argument("--alfworld-data", type=Path, required=True)
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--candidate", type=Path, required=True)
+    parser.add_argument(
+        "--candidate-source",
+        default="Microsoft SkillOpt published ALFWorld checkpoint",
+        help="Content-free provenance label for the candidate artifact.",
+    )
     parser.add_argument("--task", action="append", required=True)
     parser.add_argument("--model", default="gpt-5.6-luna")
     parser.add_argument("--max-steps", type=int, default=8)
@@ -166,13 +171,22 @@ def main() -> int:
         bucket["api_calls"] += row["api_calls"]
     for bucket in summary.values():
         bucket["win_rate"] = bucket["wins"] / bucket["episodes"]
+    family_labels = {
+        r["task_hash"]: Path(task).parent.parent.name.split("-", 1)[0]
+        for r, task in zip(rows, [task for task in args.task for _ in arms])
+    }
     result = {
         "schema_version": "frankengate-alfworld-codex-skillopt-v1",
-        "dataset": {"source": "zhangdw/alfworld", "split": "valid_unseen", "task_hashes": sorted({r["task_hash"] for r in rows})},
+        "dataset": {
+            "source": "zhangdw/alfworld",
+            "split": "valid_unseen",
+            "task_hashes": sorted({r["task_hash"] for r in rows}),
+            "family_labels": family_labels,
+        },
         "model": args.model,
         "harness": "codex-cli-subscription",
         "candidate_sha256": sha256_text(candidate),
-        "candidate_source": "Microsoft SkillOpt r18 Codex optimizer",
+        "candidate_source": args.candidate_source,
         "arms": arms,
         "summary": summary,
         "episodes": rows,

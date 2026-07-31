@@ -203,6 +203,30 @@
       "schema_version": "frankengate-alfworld-intervention-verification-v1",
       "sha256": "2c68665099ab254ccea64b04c36056e52306a401cc69bbd421ef84bdb0e7326c"
     },
+    "alfworld_luna_skillopt_family4": {
+      "filename": "alfworld-luna-skillopt-family4-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "49218177bb0eed77c3ebd3092c46ab0844c07b333a5b2018956d4f3ab317f7f6"
+    },
+    "alfworld_luna_skillopt_family4_verification": {
+      "filename": "alfworld-luna-skillopt-family4-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "f70455b16759ca17c9324d57bd8caebc283a8ab6457afef6423fd773201c25fa"
+    },
+    "alfworld_luna_skillopt_long_horizon": {
+      "filename": "alfworld-luna-skillopt-long-horizon-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "9c78849c112e9d67cb4c08eac4a681a71998b667d474711098c676b3edee9b22"
+    },
+    "alfworld_luna_skillopt_long_horizon_verification": {
+      "filename": "alfworld-luna-skillopt-long-horizon-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "38107abf6bfe4be4ce807b6cfeac7133e029df06a71b58df3103a7d3573d5e11"
+    },
     "alfworld_model_generated_memory_r8": {
       "filename": "alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
       "optional": true,
@@ -848,6 +872,28 @@
         "alfworld_family_disjoint_r3_causal_skill_benefit_confirmed": false,
         "alfworld_family_disjoint_r3_episodes": 16,
         "alfworld_intervention_verifier_passed": true,
+        "alfworld_luna_skillopt_family4_candidate_invalid_actions": 0,
+        "alfworld_luna_skillopt_family4_candidate_wins": 0,
+        "alfworld_luna_skillopt_family4_causal_benefit_confirmed": false,
+        "alfworld_luna_skillopt_family4_episodes": 12,
+        "alfworld_luna_skillopt_family4_families": [
+          "look_at_obj_in_light",
+          "pick_and_place_simple",
+          "pick_clean_then_place_in_recep",
+          "pick_heat_then_place_in_recep"
+        ],
+        "alfworld_luna_skillopt_family4_no_skill_wins": 0,
+        "alfworld_luna_skillopt_family4_placebo_wins": 0,
+        "alfworld_luna_skillopt_family4_rows_verified": 12,
+        "alfworld_luna_skillopt_family4_tasks": 4,
+        "alfworld_luna_skillopt_family4_verifier_passed": true,
+        "alfworld_luna_skillopt_long_horizon_candidate_wins": 0,
+        "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": false,
+        "alfworld_luna_skillopt_long_horizon_no_skill_wins": 0,
+        "alfworld_luna_skillopt_long_horizon_placebo_wins": 0,
+        "alfworld_luna_skillopt_long_horizon_rows_verified": 3,
+        "alfworld_luna_skillopt_long_horizon_steps": 35,
+        "alfworld_luna_skillopt_long_horizon_verifier_passed": true,
         "alfworld_model_generated_memory_r8_episodes": 12,
         "alfworld_model_generated_memory_r8_invalid_action_delta_per_harness": 102,
         "alfworld_model_generated_memory_r8_verifier_passed": true,
@@ -967,6 +1013,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "f4c8e859acbddb30c59b59d74790d016dc478eceb12577dd533a8082b186ddca",
-  "schema_version": "frankengate-combined-evidence-matrix-v23"
+  "result_sha256": "b31ddf28402ac4dba684540637be1ead09e8b36905e1d3d8cf5cb69403c3a466",
+  "schema_version": "frankengate-combined-evidence-matrix-v25"
 }

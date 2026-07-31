@@ -12,7 +12,7 @@ Open gate: ATIF/OTel projections lose load-bearing RL reset, reward, termination
 
 Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.
 
-Open gate: Natural release lineage is exercised; Qwen3 4B passed zero of three structural proposal gates, while Llama 3.2 and frontier Luna each passed one of three. This establishes parse/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.
+Open gate: Natural release lineage is exercised; Qwen3 4B passed zero of three structural proposal gates, while Llama 3.2 and frontier Luna each passed one of three. The frontier Luna SkillOpt checkpoint also produced zero wins for no-skill, placebo, and candidate across four previously unused ALFWorld families at a 12-step horizon, and a fair-horizon one-task follow-up remained zero-win at 35 steps; independent replay verification passed both. These results establish protocol/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.
 
 ## `single_and_composed_mechanisms` — family_disjoint_intervention_and_composition_proven; utility_unproven
 
