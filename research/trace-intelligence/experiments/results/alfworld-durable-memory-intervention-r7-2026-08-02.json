@@ -1,0 +1,54 @@
+{
+  "schema_version": "frankengate-alfworld-durable-memory-intervention-r7-v1",
+  "study": "fair-horizon released cross-episode memory on held-out look-at-light tasks",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "task_family": "look_at_obj_in_light",
+    "source_task_hash": "8c79c8cd40907481f59933f4743a09063ccc2a4600113ca56aa17f7c23b34944",
+    "target_task_hashes": [
+      "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+      "a298cda16d9de5a542a9ab3242a1823b2fa45b485981027870b2bee4648b2db7",
+      "e7c445469fe146151a6b747d7d7f030c6f5c8bdfa721ecb98696495b6948136f"
+    ],
+    "task_count": 3
+  },
+  "memory_release": {
+    "memory_kind": "provenance-bound procedural summary",
+    "memory_sha256": "5e05130796aa85ba51d60c34bf570804d54a6adbd5232c22b7fa8c54e5685bd3",
+    "future_outcomes_in_memory": false,
+    "source_task_is_disjoint_from_targets": true
+  },
+  "protocol": {
+    "arms": ["no_memory", "released_memory"],
+    "model": "llama3.2:latest",
+    "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
+    "episodes": 12,
+    "max_steps": 35,
+    "expert_control_wins": 3,
+    "expert_steps": [10, 29, 7],
+    "expert_horizon_covers_all_tasks": true,
+    "raw_receipt": "/private/tmp/alfworld-r7b-durable-memory-llama.json"
+  },
+  "summary": {
+    "llama3.2:latest|ollama-native-api|no_memory": {"episodes": 3, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 35.0, "steps": 105},
+    "llama3.2:latest|ollama-native-api|released_memory": {"episodes": 3, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 35.0, "steps": 105},
+    "llama3.2:latest|ollama-openai-compatible|no_memory": {"episodes": 3, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 35.0, "steps": 105},
+    "llama3.2:latest|ollama-openai-compatible|released_memory": {"episodes": 3, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 35.0, "steps": 105}
+  },
+  "comparison": {
+    "released_memory_wins": 0,
+    "no_memory_wins": 0,
+    "released_memory_invalid_action_delta_per_harness": 0,
+    "memory_improved_task_success": false,
+    "memory_changed_protocol_validity": false
+  },
+  "claim_boundary": {
+    "durable_memory_intervention_executed": true,
+    "quality_comparison_valid": true,
+    "causal_memory_benefit_confirmed": false,
+    "automatic_memory_promotion_authorized": false,
+    "reason": "The expert solved all three target tasks within the 35-step budget. Released memory matched no-memory at zero wins and zero invalid actions on both harnesses; this is a small negative utility result, not a universal impossibility claim."
+  },
+  "raw_model_content_committed": false
+}

@@ -59,6 +59,18 @@
       "schema_version": "agenttrace-nl2bash-replay-audit-v1",
       "sha256": "6a7b2c25bdaf5c10e40dedb7c8ac0f2d04e391da4ca1c3ff9058c939b3fbf9f1"
     },
+    "alfworld_durable_memory_intervention_r7": {
+      "filename": "alfworld-durable-memory-intervention-r7-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-durable-memory-intervention-r7-v1",
+      "sha256": "736cbc6f08496b6fe6beb0eff505946ead17565ed4d501f2ffe3502e9efbad17"
+    },
+    "alfworld_durable_memory_verification": {
+      "filename": "alfworld-durable-memory-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-durable-memory-verification-v1",
+      "sha256": "46adc13c46d34c27ffd307f1770c9676baf98b78b39ec3cb37d9feed78ef7d48"
+    },
     "alfworld_intervention_verification": {
       "filename": "alfworld-intervention-verification-2026-08-02.json",
       "optional": true,
@@ -415,6 +427,10 @@
         "alfworld_cross_model_r5_qwen_candidate_wins": 0,
         "alfworld_cross_model_r5_qwen_episodes": 8,
         "alfworld_cross_model_r5_qwen_quality_comparison_valid": true,
+        "alfworld_durable_memory_r7_episodes": 12,
+        "alfworld_durable_memory_r7_success_delta": 0,
+        "alfworld_durable_memory_r7_verifier_passed": true,
+        "alfworld_durable_memory_r7_wins": 0,
         "alfworld_expert_control_wins": 2,
         "alfworld_family_disjoint_r3_candidate_invalid_actions": 168,
         "alfworld_family_disjoint_r3_candidate_wins": 0,
@@ -516,6 +532,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "e0bc6ced0727d50e677ac4b48344e399b95acc026c79c28d77a91617c32e5e28",
-  "schema_version": "frankengate-combined-evidence-matrix-v15"
+  "result_sha256": "a43399b29bdbc03d21498103324ddf46653a0eb8b6652b077b745dad7158bb18",
+  "schema_version": "frankengate-combined-evidence-matrix-v16"
 }
