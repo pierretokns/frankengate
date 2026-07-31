@@ -4,9 +4,9 @@ The complete research harness was run with the locked environment:
 
 ```text
 uv run --frozen make verify
-research tests: 497 passed, 13 explicit environment skips
+research tests: 498 passed, 13 explicit environment skips
 NL2SQL tests: 61 passed, 0 skips
-aggregate results: 83
+aggregate results: 84
 dataset manifests: 44
 governed fixtures: 12
 raw corpus files committed: 0

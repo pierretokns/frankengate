@@ -176,6 +176,16 @@ adds an independent local model control: 18 episodes across three protocol
 variants, each at 3/6 terminal matches. A Qwen3 4B attempt timed out under the
 endpoint's reasoning behavior and is retained only as a typed null.
 
+The [`Defog trace-mined skill pilot`](experiments/summaries/defog-trace-mined-skill-pilot-2026-07-30.md)
+is the first domain-valid local-model intervention: four visible-selection
+PostgreSQL tasks, the governed no-BYPASSRLS role, and the same three paired
+arms. All 12 runs had valid authorization and zero unauthorized observations,
+but none reached a terminal submission or semantic success. The trace-mined
+arm produced one successful SQL execution versus zero in either control while
+making more attempts, so this is a runtime diagnostic—not confirmation that
+traces optimize skills. The decisive family-disjoint held-out replay with an
+independent verifier and a repaired terminal protocol remains open.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,
@@ -704,6 +714,8 @@ full E0–E7 acceptance gates. In particular:
   full-text, and structured retrieval demonstrably fail; and
 - the SQL replay/verifier boundary passes on all 95 executable Defog tasks and
   the no-skill/placebo/expert-seed mechanics factorial has run, but it failed
-  its terminal-protocol gate; the independent synthetic pilot proves runtime
-  compatibility but not remediation; solver/evaluator capability isolation,
-  a fresh P0, trace-mined arms, and the causal quality screen have not run.
+  its terminal-protocol gate; the independent synthetic and governed
+  trace-mined pilots prove runtime compatibility but not remediation; the
+  governed four-task pilot produced one successful SQL execution in the mined
+  arm but zero terminal or semantic wins; solver/evaluator capability
+  isolation, a fresh P0, and the causal quality screen have not run.
