@@ -297,6 +297,12 @@
       "schema_version": "frankengate-governed-skill-release-lifecycle-v1",
       "sha256": "9a3a6e5274461d328f05a6bf75fbdba43645e4cada60cfe3891b3c79c0d221c1"
     },
+    "skillopt_local_runtime_attempt_r15": {
+      "filename": "skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-alfworld-local-runtime-attempt-v1",
+      "sha256": "a29abcf3e137dd808b7e98272f686d9a9a4e3466ac56704ba75bfc098bec0a79"
+    },
     "statebench_sql": {
       "filename": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
       "schema_version": "frankengate-statebench-finance-sql-smoke-v1",
@@ -667,6 +673,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "bdb9687e0ac2cd7b2542a14d6ddbc87eb360a8550567a194b1f3d299c46c1f46",
+  "result_sha256": "6235e670216a35b9786f4f7c5ea00f3e76f7486a6e7257d45adcb940a619d52c",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

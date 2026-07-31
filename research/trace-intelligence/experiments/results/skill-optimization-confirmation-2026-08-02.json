@@ -64,6 +64,13 @@
       "result": "All three arms were 0/8 wins; each emitted 280 invalid actions; the fresh semantic verifier recomputed all 24 rows with zero mismatches and all actions admissible",
       "causal": false,
       "hard_edge": "Qwen control-arm replication strengthens the negative result but does not test a SkillOpt/SkillGen/RHO candidate or establish enterprise utility"
+    },
+    {
+      "receipt": "experiments/results/skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
+      "what_was_tested": "Attempted SkillOpt's own ALFWorld training engine against the pinned local payload and Qwen endpoint",
+      "result": "No episodes or model responses were emitted: the available Python 3.9 environment lacks dataclasses(slots=True), while Python 3.14 lacks the openai dependency",
+      "causal": false,
+      "hard_edge": "This is a typed dependency/runtime null, not a SkillOpt quality result; a Python 3.10+ dependency-complete environment is still required"
     }
   ],
   "model_harness_coverage": {

@@ -50,6 +50,10 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md"
         },
         {
@@ -197,7 +201,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "768f32798b573f663ec8fb6a2db108911906e341"
+          "head": "a65bfb495f3729d4dec624f00103c7fd3fca8a61"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

@@ -12,6 +12,7 @@ We have **not** yet confirmed that Frankengate's trace-mined skills improve real
 6. A replayable rerun retained only environment actions and independently recomputed all 32 outcomes in fresh environments with zero mismatches.
 7. The r13 control arm added a formatting placebo to the same eight-task cohort across both harnesses. No-skill, placebo, and trace-derived arms were all `0/8` on both harnesses; all 48 action sequences independently replayed with zero mismatches.
 8. The r14 Qwen 3 4B native-harness replication ran the same three arms on all eight tasks. Every arm was `0/8`, and all 24 action sequences independently replayed with zero mismatches.
+9. A direct attempt to run SkillOpt's own ALFWorld optimizer was a typed dependency null: Python 3.9 cannot import its `dataclasses(slots=True)` code, and the available Python 3.14 environment lacks `openai`. No SkillOpt episodes or model responses were counted.
 
 Those are prerequisites and a negative causal test, not evidence of a beneficial skill.
 
