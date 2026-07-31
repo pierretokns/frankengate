@@ -165,6 +165,11 @@ def build_audit() -> dict[str, Any]:
                 {"remote": git_value("remote", "get-url", "origin")},
                 {"github_issue": "https://github.com/pierretokns/frankengate/issues/93"},
                 {"bead": "bif-kyy.17.13.4.4.5.3.2"},
+                {"follow_on_beads": [
+                    "bif-kyy.17.13.4.4.5.3.2.1",
+                    "bif-kyy.17.13.4.4.5.3.2.2",
+                    "bif-kyy.17.13.4.4.5.3.2.3",
+                ]},
             ],
             "open_gate": "The overall program remains active until the research gates above close; publication mechanics themselves are functioning.",
         },
