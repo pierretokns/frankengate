@@ -14,7 +14,12 @@ unsupported.
 The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
-The latest gates also keep enterprise-adapted embedding promotion deferred
-(silver dense gain +1.0 point versus a +5-point threshold) and cross-user
-collaboration at mechanics-only status (no independent labels, reciprocal
+The latest gates also keep enterprise-adapted embedding promotion deferred.
+The new public FinanceBench gate is encouraging—BalyasnyAI's
+finance-specialized embedding reaches Recall@20 1.000 versus Qwen3 0.993 and
+TF-IDF 0.687—but it is still a public relevance slice, not enterprise
+adaptation. Human hard-negative labels, disjoint adaptation folds, governed
+RLS/deletion replay, latency/cost, and held-out transfer remain missing. The
+registered +5-point promotion threshold therefore remains closed. Cross-user
+collaboration remains mechanics-only (no independent labels, reciprocal
 consent, randomized exposure, transfer outcomes, or unwanted-contact measure).

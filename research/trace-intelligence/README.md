@@ -147,6 +147,18 @@ pgContext, TurboVec, and Turbopuffer are explicit nulls rather than invented
 scores. Promotion requires same-corpus relevance, pre-ranking authorization,
 deletion closure, latency, and cost evidence.
 
+The [`FinanceBench embedding-choice benchmark`](experiments/summaries/finance-mteb-retrieval-benchmark-2026-08-02.md)
+adds a separate finance/NL2SQL relevance gate over the cached, revision-pinned
+FinanceMTEB/FinanceBench corpus (189 documents, 150 queries, 35 multi-positive
+queries). The finance-specialized `BalyasnyAI/multilingual-e5-base` reached
+Recall@20 1.000 and MRR 0.809, ahead of Qwen3-Embedding-0.6B (0.993 / 0.716)
+and TF-IDF (0.687 / 0.301) on this slice. This is strong evidence for testing
+a finance-specialized embedding in a governed shadow lane, not a production
+promotion: the data has no enterprise hard-negative labels, and the run did
+not evaluate RLS, deletion, Aurora behavior, or cross-domain transfer. Raw
+texts and vectors remain outside Git; the runner is
+`finance_mteb_retrieval_benchmark.py`.
+
 The [`skill-learning faithful preflight`](experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md)
 audits pinned Hermes Self-Evolution, GEPA/gskill, ReasoningBank, and
 Trace2Skill implementations. It finds no executable natural-trace candidate
