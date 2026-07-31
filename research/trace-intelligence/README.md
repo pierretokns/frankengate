@@ -155,6 +155,14 @@ does **not** confirm a skill effect because no candidate was injected and no
 no-skill/placebo control was replayed. The next bead is the intervention matrix
 with paired repairs/regressions and independent verification.
 
+The [`natural-trace candidate audit`](experiments/summaries/naturebench-skill-candidate-audit-2026-07-30.md)
+then extracted a six-step procedure from a successful Opus trace and checked it
+against DeepSeek, GLM, Codex, and Gemini same-task outcomes. Three of four
+available transcripts satisfied every predicate, including both timeout runs;
+Codex succeeded while missing a Claude-specific predicate, and Gemini had no
+transcript. This is a useful negative transfer diagnostic, not evidence of
+optimization. The candidate intervention remains unrun.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,
@@ -193,7 +201,7 @@ model call, database mutation, or dataset download.
 
 The latest pinned audit (`uv run --frozen make verify`) ran 497 research tests
 with 13 explicit environment skips and no failures, plus 61/61 NL2SQL
-capability tests. It validated 80 aggregate results, 44 dataset manifests, 12
+capability tests. It validated 81 aggregate results, 44 dataset manifests, 12
 governed fixtures, zero committed raw corpus files, and Python compilation.
 The Seatbelt skips are host-runtime gates; Linux/container replay remains the
 required authority for sandbox execution. The separate no-install host audit

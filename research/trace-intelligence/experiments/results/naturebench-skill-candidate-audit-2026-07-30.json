@@ -1,0 +1,118 @@
+{
+  "aggregate": {
+    "complete_protocol_count": 3,
+    "complete_protocol_rate": 0.75,
+    "run_count": 5,
+    "successful_runs_with_observed_protocol": 2,
+    "transcript_observed_count": 4,
+    "transcript_typed_null_count": 1
+  },
+  "candidate": {
+    "name": "research-task-orchestration-v1",
+    "source_role": "opus-4.7",
+    "steps": [
+      "inspect problem statement and data schema",
+      "inspect task data",
+      "check runtime, budget, and available tools",
+      "write or edit a reproducible artifact",
+      "evaluate or verify the output",
+      "iterate after inspection"
+    ]
+  },
+  "claim_boundary": {
+    "candidate_extracted": true,
+    "causal_intervention_run": false,
+    "cross_harness_protocol_observed": true,
+    "next_required": "Run the candidate, no-skill, placebo, expert, SkillOpt, SkillGen, and RHO arms on a family-disjoint replay with an independent verifier.",
+    "reason": "Protocol adherence is a historical diagnostic. Model, harness, task, and timeout are confounded; no candidate was injected and no independent outcome was rerun.",
+    "skill_improvement_confirmed": false
+  },
+  "raw_trace_policy": "raw transcripts remain external; only hashes, statuses, predicates, and aggregates are durable",
+  "rows": [
+    {
+      "label": "opus-4.7",
+      "protocol": {
+        "candidate_protocol_complete": true,
+        "candidate_protocol_score": 1.0,
+        "check_runtime_or_budget": true,
+        "evaluate_or_verify_output": true,
+        "inspect_task_data": true,
+        "iterate_after_inspection": true,
+        "read_problem_and_schema": true,
+        "tool_events": 157,
+        "write_or_edit_artifact": true
+      },
+      "result_sha256": "55a03d20374571730f8c375e4c55c1e193fe133e222a5893180ec71644d2b9e9",
+      "role": "candidate_source",
+      "status": "success",
+      "trace_available": true,
+      "trace_sha256": "e88cf792151d6b38ce0689773bb702c4058bb8cafcc8c7394ef9c6421f2eec8c"
+    },
+    {
+      "label": "deepseek",
+      "protocol": {
+        "candidate_protocol_complete": true,
+        "candidate_protocol_score": 1.0,
+        "check_runtime_or_budget": true,
+        "evaluate_or_verify_output": true,
+        "inspect_task_data": true,
+        "iterate_after_inspection": true,
+        "read_problem_and_schema": true,
+        "tool_events": 86,
+        "write_or_edit_artifact": true
+      },
+      "result_sha256": "68f9a6a5c575236dcd1fba4fe215be344963170aa3baeb5de1fca9a6f97faaa0",
+      "role": "transfer_target",
+      "status": "timeout",
+      "trace_available": true,
+      "trace_sha256": "d03c0267d4c1de59e9768dbd3ebf9b4079fd0bdd9a08196f67fdd2b10bdaa45e"
+    },
+    {
+      "label": "glm",
+      "protocol": {
+        "candidate_protocol_complete": true,
+        "candidate_protocol_score": 1.0,
+        "check_runtime_or_budget": true,
+        "evaluate_or_verify_output": true,
+        "inspect_task_data": true,
+        "iterate_after_inspection": true,
+        "read_problem_and_schema": true,
+        "tool_events": 185,
+        "write_or_edit_artifact": true
+      },
+      "result_sha256": "30f02588167736c41236a70fe34691aea77afbfeb5eb1655f2d1746732e59919",
+      "role": "transfer_target",
+      "status": "timeout",
+      "trace_available": true,
+      "trace_sha256": "0c8be2812cabe6fd3bdd207eede9d452c48aba9dd4c58b6f8083e75ec57d29e1"
+    },
+    {
+      "label": "codex",
+      "protocol": {
+        "candidate_protocol_complete": false,
+        "candidate_protocol_score": 0.8,
+        "check_runtime_or_budget": true,
+        "evaluate_or_verify_output": true,
+        "inspect_task_data": true,
+        "iterate_after_inspection": true,
+        "read_problem_and_schema": false,
+        "tool_events": 117,
+        "write_or_edit_artifact": true
+      },
+      "result_sha256": "40f93677229a69b4a1334dcead5f08a4f7d4332c5de0068fc07df9d583a98bf8",
+      "role": "transfer_target",
+      "status": "success",
+      "trace_available": true,
+      "trace_sha256": "cc445dae099a29976026dca9e2d93c826d3600b07324b9819ceba01dcac898d6"
+    },
+    {
+      "label": "gemini",
+      "result_sha256": "c3dc5c8d77d6ba49a07f3cd75b79d303c33aac40f23bb426f1e045a77b28ce23",
+      "role": "transfer_target",
+      "status": "success",
+      "trace_available": false,
+      "typed_null": "transcript unavailable; no protocol score"
+    }
+  ],
+  "schema_version": "frankengate-natural-trace-skill-candidate-audit-v1"
+}
