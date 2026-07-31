@@ -17,6 +17,13 @@ messages, and session identifiers were not emitted.
 | Rows with tool definitions | 917 |
 | Harness/benchmark stratum | `claude_code` / `appworld` |
 
+The bounded adapter projected all 46 rows into both the Frankengate ATIF and
+OpenInference/OTel projection functions. The receipts contained 46 ATIF loss
+items and 1,896 OpenInference/OTel normalization/reconstruction items. These
+are explicit accounted transformations, not silent drops; the counts reflect
+that this audit intentionally omits content while retaining event identity and
+timing. They are not a claim that the source is lossless.
+
 This establishes that the pinned source contains sufficiently rich nested OTel
 spans for a real projection and tool-correlation adapter. It does **not** yet
 measure ATIF retention, diagnosis quality, memory utility, skill improvement, or

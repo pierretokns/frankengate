@@ -1,4 +1,8 @@
 {
+  "atif_projected_rows": 46,
+  "atif_projection_loss_items": 46,
+  "openinference_otel_projected_rows": 46,
+  "openinference_otel_projection_loss_items": 1896,
   "benchmarks": ["appworld"],
   "complete_timestamp_spans": 925,
   "dataset_id": "DiscoPosse/agent-llm-traces",

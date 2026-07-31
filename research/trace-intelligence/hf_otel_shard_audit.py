@@ -15,6 +15,11 @@ from typing import Any
 
 import pyarrow.parquet as pq
 
+from canonical_projection_e0 import (
+    canonical_to_atif_e0,
+    canonical_to_openinference_otel,
+)
+
 
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -34,12 +39,17 @@ def audit(path: Path, *, dataset_revision: str) -> dict[str, Any]:
     input_message_count = 0
     output_message_count = 0
     tool_definition_count = 0
+    atif_projected_rows = 0
+    otel_projected_rows = 0
+    atif_loss_items = 0
+    otel_loss_items = 0
     harnesses: set[str] = set()
     benchmarks: set[str] = set()
     for row in rows:
         harnesses.add(str(row.get("harness") or ""))
         benchmarks.add(str(row.get("benchmark") or ""))
-        for span in row.get("spans") or []:
+        canonical_events = []
+        for index, span in enumerate(row.get("spans") or []):
             span_count += 1
             if span.get("start_time") and span.get("end_time"):
                 complete_time_count += 1
@@ -54,6 +64,43 @@ def audit(path: Path, *, dataset_revision: str) -> dict[str, Any]:
                 "gen_ai.tool.definitions"
             ):
                 tool_span_count += 1
+            canonical_events.append(
+                {
+                    "event_id": f"e{index:06d}",
+                    "sequence": index,
+                    "kind": (
+                        "tool_call"
+                        if "tool" in str(span.get("name", "")).lower()
+                        else "llm_call"
+                    ),
+                    "observation_status": "observed",
+                    "source_role": "agent",
+                    "content": None,
+                    "span_id": span.get("span_id"),
+                    "start_time": span.get("start_time"),
+                    "end_time": span.get("end_time"),
+                    "status_code": (span.get("status") or {}).get("code"),
+                }
+            )
+        canonical = {
+            "schema_version": "canonical-trajectory-v1",
+            "trace_id": str(row.get("session_id") or "row"),
+            "source": {
+                "dataset_id": "DiscoPosse/agent-llm-traces",
+                "dataset_revision": dataset_revision,
+                "adapter": "bounded-otel-shard-v1",
+            },
+            "task": {"task_id": str(row.get("session_id") or "row")},
+            "events": canonical_events,
+            "outcome": {"value": "observed", "source": "dataset"},
+        }
+        atif, atif_receipt = canonical_to_atif_e0(canonical)
+        otel, otel_receipt = canonical_to_openinference_otel(canonical)
+        del atif, otel
+        atif_projected_rows += 1
+        otel_projected_rows += 1
+        atif_loss_items += sum(atif_receipt.get("item_category_counts", {}).values())
+        otel_loss_items += sum(otel_receipt.get("item_category_counts", {}).values())
     return {
         "schema_version": "fg-hf-otel-shard-audit-v1",
         "dataset_id": "DiscoPosse/agent-llm-traces",
@@ -63,6 +110,10 @@ def audit(path: Path, *, dataset_revision: str) -> dict[str, Any]:
         "rows": len(rows),
         "spans": span_count,
         "tool_related_spans": tool_span_count,
+        "atif_projected_rows": atif_projected_rows,
+        "openinference_otel_projected_rows": otel_projected_rows,
+        "atif_projection_loss_items": atif_loss_items,
+        "openinference_otel_projection_loss_items": otel_loss_items,
         "error_spans": error_span_count,
         "complete_timestamp_spans": complete_time_count,
         "rows_with_input_messages": input_message_count,
