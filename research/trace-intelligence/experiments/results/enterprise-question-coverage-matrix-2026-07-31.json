@@ -1,4 +1,5 @@
 {
+  "schema_version": "frankengate.enterprise-question-coverage-matrix.v1",
   "date": "2026-07-31",
   "questions": [
     {"id":"Q1","question":"Can a user retrieve and understand their own history?","status":"mechanics_supported","evidence":["experiments/summaries/wisp-longitudinal-structural-pilot-2026-07-30.md","experiments/summaries/codetracebench-e2-authorized-retrieval-factorial-2026-07-30.md"],"missing":"prospective user utility and production-scale latency"},

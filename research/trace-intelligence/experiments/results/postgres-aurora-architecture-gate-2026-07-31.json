@@ -1,4 +1,5 @@
 {
+  "schema_version": "frankengate.postgres-aurora-architecture-gate.v1",
   "date": "2026-07-31",
   "local_evidence": {
     "governed_wisp": {"trajectories":104,"events":17505,"unauthorized_candidate_counts_zero":true,"proposal_lineage_passed":true,"warm_cache_structural_p50_ms":23.29,"fixture":"local PostgreSQL 16.12 + pgvector 0.8.1"},

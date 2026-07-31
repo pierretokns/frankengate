@@ -1,4 +1,5 @@
 {
+  "schema_version": "frankengate.h5-concurrency-rerun-check.v1",
   "date": "2026-07-31",
   "runner": "research/trace-intelligence/tests/run_trace_commons_memory_h5_concurrency.py --timeout 30",
   "kubernetes_context": "colima",

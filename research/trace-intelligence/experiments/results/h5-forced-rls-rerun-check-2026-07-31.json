@@ -1,4 +1,5 @@
 {
+  "schema_version": "frankengate.h5-forced-rls-rerun-check.v1",
   "date": "2026-07-31",
   "runner": "kubectl exec -i -n frankengate-test postgres-0 -- psql -X -U frankengate -d frankengate -v ON_ERROR_STOP=1 < sql/007_trace_commons_memory_h5_assertions.sql",
   "kubernetes_context": "colima",

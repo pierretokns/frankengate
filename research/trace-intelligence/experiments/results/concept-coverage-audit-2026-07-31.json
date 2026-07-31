@@ -1,4 +1,5 @@
 {
+  "schema_version": "frankengate.concept-coverage-audit.v1",
   "date": "2026-07-31",
   "purpose": "Requirement-level coverage audit for named trace, memory, retrieval, and skill-learning concepts.",
   "status_legend": {"measured": "implemented and exercised with recorded results", "bounded": "mechanics or adapter evidence exists but the enterprise claim is unproven", "deferred": "access, infrastructure, or causal evidence is missing", "not_selected": "reviewed but no current architecture benefit justifies implementation"},

@@ -11,6 +11,11 @@ import unittest
 
 from jsonschema import Draft202012Validator
 
+try:
+    import sqlglot  # noqa: F401
+except ModuleNotFoundError as exc:  # optional NL2SQL parser dependency
+    raise unittest.SkipTest("sqlglot is required for evaluator tests") from exc
+
 
 TRACE_INTELLIGENCE_ROOT = Path(__file__).parents[2]
 sys.path.insert(0, str(TRACE_INTELLIGENCE_ROOT))

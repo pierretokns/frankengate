@@ -1,4 +1,5 @@
 {
+  "schema_version": "frankengate.corpus-admission-conformance-checkpoint.v1",
   "date": "2026-07-31",
   "tests": [
     "research.trace-intelligence.tests.test_dataset_manifests",
