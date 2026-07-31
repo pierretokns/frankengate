@@ -2,6 +2,7 @@ import importlib.util
 import json
 import pathlib
 import platform
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -15,9 +16,27 @@ sys.modules[SPEC.name] = sandbox
 SPEC.loader.exec_module(sandbox)
 
 
+def _seatbelt_is_usable() -> bool:
+    """Detect hosts where sandbox-exec exists but is disabled by the runtime."""
+
+    if platform.system() != "Darwin" or not pathlib.Path("/usr/bin/sandbox-exec").exists():
+        return False
+    try:
+        probe = subprocess.run(
+            ["/usr/bin/sandbox-exec", "-p", "(version 1)", "/usr/bin/true"],
+            capture_output=True,
+            text=True,
+            timeout=2,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return probe.returncode == 0
+
+
 @unittest.skipUnless(
-    platform.system() == "Darwin" and pathlib.Path("/usr/bin/sandbox-exec").exists(),
-    "Seatbelt conformance requires macOS sandbox-exec",
+    _seatbelt_is_usable(),
+    "Seatbelt conformance requires a usable macOS sandbox-exec runtime",
 )
 class GovernedToolSandboxTest(unittest.TestCase):
     def test_can_read_and_write_inside_task_root(self):
