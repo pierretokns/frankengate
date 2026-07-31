@@ -39,6 +39,15 @@ REQUIRED_RESULTS = {
     "native_history": "public-native-history-fidelity-2026-07-30.json",
     "history_discovery": "public-agent-history-discovery-2026-07-30.json",
     "trace2skill_stage0": "trace2skill-governed-stage0-2026-07-30.json",
+    "skill_optimization_meta": (
+        "skill-optimization-meta-analysis-2026-08-02.json"
+    ),
+    "skill_harness_transfer": (
+        "model-harness-transfer-native-tool-2026-07-31.json"
+    ),
+    "skill_cross_harness_transfer": (
+        "model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json"
+    ),
     "statebench_sql": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
     "skill_release": "governed-skill-release-lifecycle-2026-07-30.json",
     "trace_commons_attestation": (
@@ -119,6 +128,9 @@ def build_matrix(
     native_history = results["native_history"]
     history_discovery = results["history_discovery"]
     trace2skill_stage0 = results["trace2skill_stage0"]
+    skill_optimization_meta = results["skill_optimization_meta"]
+    skill_harness_transfer = results["skill_harness_transfer"]
+    skill_cross_harness_transfer = results["skill_cross_harness_transfer"]
     statebench_sql = results["statebench_sql"]
     skill_release = results["skill_release"]
     trace_commons_attestation = results.get("trace_commons_attestation")
@@ -192,6 +204,21 @@ def build_matrix(
     all_denied_zero = all(
         all(int(value) == 0 for value in counts.values())
         for counts in authority_matrix.values()
+    )
+    skill_transfer_models = sorted(
+        {
+            str(model["model_id"])
+            for model in _require(skill_harness_transfer, "models")
+        }
+    )
+    skill_transfer_harnesses = sorted(
+        {
+            str(model["harness_id"])
+            for model in (
+                _require(skill_harness_transfer, "models")
+                + _require(skill_cross_harness_transfer, "models")
+            )
+        }
     )
 
     levels = {
@@ -717,14 +744,55 @@ def build_matrix(
                     "gates",
                     "hidden_test_invisible_to_proposer",
                 ),
+                "skill_meta_study_count": _require(
+                    skill_optimization_meta, "study_count"
+                ),
+                "skill_meta_trace_mined_protocol_studies": _require(
+                    skill_optimization_meta,
+                    "strata",
+                    "trace_mined_candidate",
+                    "protocol_studies",
+                ),
+                "skill_meta_trace_mined_semantic_studies": _require(
+                    skill_optimization_meta,
+                    "strata",
+                    "trace_mined_candidate",
+                    "semantic_studies",
+                ),
+                "skill_meta_causal_benefit_confirmed": _require(
+                    skill_optimization_meta,
+                    "claim_boundary",
+                    "causal_skill_benefit_confirmed",
+                ),
+                "skill_meta_automatic_promotion_authorized": _require(
+                    skill_optimization_meta,
+                    "claim_boundary",
+                    "automatic_promotion_authorized",
+                ),
+                "skill_transfer_models": skill_transfer_models,
+                "skill_transfer_harnesses": skill_transfer_harnesses,
+                "skill_transfer_same_fixture_compared": _require(
+                    skill_harness_transfer,
+                    "claim_boundary",
+                    "same_fixture_compared",
+                ),
+                "skill_cross_harness_same_fixture_compared": _require(
+                    skill_cross_harness_transfer,
+                    "claim_boundary",
+                    "same_fixture_compared",
+                ),
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
                 "state machine pass, but neither establishes causal skill "
                 "benefit. AgentTrace lacks task verdicts and intervention arms; "
                 "the finance SQL fixture has only four executable gold queries. "
-                "Run the preregistered 60–120 task schema-family-held-out NL2SQL "
-                "experiment before releasing any learned procedure"
+                "The paired skill meta-analysis covers 22 endpoint strata across "
+                "two live local models and two tool-loop harnesses, but its "
+                "protocol and semantic endpoints remain heterogeneous and no "
+                "promotion is authorized. Run the preregistered 60–120 task "
+                "schema-family-held-out NL2SQL experiment before releasing any "
+                "learned procedure"
             ),
         },
         "L7_to_L10": {
@@ -931,6 +999,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     l3 = levels["L3_diagnosis_and_eval_proposals"]
     l4 = levels["L4_semantic_candidate_retrieval"]["evidence"]
     schema = levels["L0_evidence_conformance"]["evidence"]
+    skill = levels["L6_procedural_replay"]["evidence"]
     lines.extend(
         [
             "",
@@ -982,6 +1051,14 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{schema['rl_otel_termination_retention']}. The source also omits "
             "memory snapshots and authorization fields, so schema round-trip "
             "fidelity cannot be treated as skill-learning evidence.",
+            f"- The paired skill meta-analysis contains "
+            f"{skill['skill_meta_study_count']} endpoint strata, including "
+            f"{skill['skill_meta_trace_mined_protocol_studies']} protocol and "
+            f"{skill['skill_meta_trace_mined_semantic_studies']} semantic "
+            "trace-mined comparisons. The same fixture was exercised across "
+            f"{', '.join(skill['skill_transfer_models'])} and "
+            f"{', '.join(skill['skill_transfer_harnesses'])}; causal benefit and "
+            "automatic promotion remain false.",
             "- The attested 28-session Trace Commons cohort produced "
             f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
             "structural temporal candidates and "

@@ -328,6 +328,35 @@ def inputs():
                 "skill_benefit_established": False,
             },
         },
+        "skill_optimization_meta": {
+            "schema_version": "skill-meta",
+            "study_count": 22,
+            "strata": {
+                "trace_mined_candidate": {
+                    "protocol_studies": 11,
+                    "semantic_studies": 9,
+                }
+            },
+            "claim_boundary": {
+                "causal_skill_benefit_confirmed": False,
+                "automatic_promotion_authorized": False,
+            },
+        },
+        "skill_harness_transfer": {
+            "schema_version": "skill-transfer",
+            "claim_boundary": {"same_fixture_compared": True},
+            "models": [
+                {"model_id": "llama3.2:latest", "harness_id": "openai-native"},
+                {"model_id": "qwen3:4b", "harness_id": "ollama-native-api"},
+            ],
+        },
+        "skill_cross_harness_transfer": {
+            "schema_version": "skill-cross-harness",
+            "claim_boundary": {"same_fixture_compared": True},
+            "models": [
+                {"model_id": "llama3.2:latest", "harness_id": "ollama-native-api"}
+            ],
+        },
         "statebench_sql": {
             "schema_version": "statebench-sql",
             "runner": {
@@ -421,6 +450,19 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
             "memory snapshots",
             matrix["levels"]["L0_evidence_conformance"]["blocking_gap"],
         )
+        skill = matrix["levels"]["L6_procedural_replay"]["evidence"]
+        self.assertEqual(22, skill["skill_meta_study_count"])
+        self.assertEqual(11, skill["skill_meta_trace_mined_protocol_studies"])
+        self.assertEqual(9, skill["skill_meta_trace_mined_semantic_studies"])
+        self.assertFalse(skill["skill_meta_causal_benefit_confirmed"])
+        self.assertEqual(
+            ["llama3.2:latest", "qwen3:4b"], skill["skill_transfer_models"]
+        )
+        self.assertEqual(
+            ["ollama-native-api", "openai-native"],
+            skill["skill_transfer_harnesses"],
+        )
+        self.assertTrue(skill["skill_cross_harness_same_fixture_compared"])
 
     def test_level_two_threshold_is_not_redefined_by_observed_result(self):
         source = inputs()

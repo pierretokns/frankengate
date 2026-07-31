@@ -114,6 +114,21 @@
       "schema_version": "canonical-projection-e0-conformance-result-v1",
       "sha256": "8801a8a520db47215ffe3f799f152d3d5c72947f3c3b6bd8d191cc2876499f02"
     },
+    "skill_cross_harness_transfer": {
+      "filename": "model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json",
+      "schema_version": "frankengate-model-harness-transfer-matrix-v1",
+      "sha256": "f5c18197d7953c2c4d7e6e89cfdf17a9993eb134c0f3e6e90bef7dd068181cc6"
+    },
+    "skill_harness_transfer": {
+      "filename": "model-harness-transfer-native-tool-2026-07-31.json",
+      "schema_version": "frankengate-model-harness-transfer-matrix-v1",
+      "sha256": "c68c29705c07646e97720c9d9f347d75d55dc835d906a0846ed6333e4b026c29"
+    },
+    "skill_optimization_meta": {
+      "filename": "skill-optimization-meta-analysis-2026-08-02.json",
+      "schema_version": "frankengate-skill-optimization-meta-analysis-v1",
+      "sha256": "7f813171c8d82d12dba7ee4cd4807410ee9ba971c7640dff366744332aa9c830"
+    },
     "skill_release": {
       "filename": "governed-skill-release-lifecycle-2026-07-30.json",
       "schema_version": "frankengate-governed-skill-release-lifecycle-v1",
@@ -307,7 +322,7 @@
       "status": "real_trace_transition_partial_pass"
     },
     "L6_procedural_replay": {
-      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 22 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
       "evidence": {
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
@@ -317,6 +332,21 @@
         "hidden_test_boundary_passed": true,
         "security_violation_veto_passed": true,
         "share_codex_recovery_review_candidates": 31,
+        "skill_cross_harness_same_fixture_compared": true,
+        "skill_meta_automatic_promotion_authorized": false,
+        "skill_meta_causal_benefit_confirmed": false,
+        "skill_meta_study_count": 22,
+        "skill_meta_trace_mined_protocol_studies": 11,
+        "skill_meta_trace_mined_semantic_studies": 9,
+        "skill_transfer_harnesses": [
+          "ollama-native-api",
+          "openai-native"
+        ],
+        "skill_transfer_models": [
+          "llama3.2:latest",
+          "qwen3:4b"
+        ],
+        "skill_transfer_same_fixture_compared": true,
         "statebench_executable_gold_sql_tasks": 4,
         "statebench_sql_fixture_tasks": 46,
         "stdout_exit_equivalent_pairs": 9,
@@ -338,6 +368,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "e4c8efda30c034df220e2df9be00839af754f4c5abe167f3499a6562ec3db12c",
+  "result_sha256": "c3cdd00c17dab3351ec8dc6b0da9de3d86094d1b67ed77597f132fa9f0f61b31",
   "schema_version": "frankengate-combined-evidence-matrix-v6"
 }

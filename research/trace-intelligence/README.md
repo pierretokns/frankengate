@@ -363,6 +363,12 @@ reset state, rewards, or termination facts. The source omits memory snapshots
 and authorization fields, so schema fidelity is not evidence of memory utility
 or skill learning.
 
+The same matrix now consumes the [`paired skill meta-analysis`](experiments/summaries/skill-optimization-meta-analysis-2026-08-02.md)
+and both model/harness transfer receipts: 22 endpoint strata, Llama 3.2 and
+Qwen 3 4B, and OpenAI-compatible plus Ollama-native loops. The aggregate keeps
+protocol compliance separate from semantic correctness and records causal
+benefit and automatic promotion as false.
+
 The candidate was then mined from the completed car raw audits rather than
 hand-supplied: the miner sealed an aggregate source digest and procedure hash,
 and the resulting artifact was injected into a fresh broker fold. The true
