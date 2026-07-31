@@ -71,6 +71,13 @@
       "result": "No episodes or model responses were emitted: the available Python 3.9 environment lacks dataclasses(slots=True), while Python 3.14 lacks the openai dependency",
       "causal": false,
       "hard_edge": "This is a typed dependency/runtime null, not a SkillOpt quality result; a Python 3.10+ dependency-complete environment is still required"
+    },
+    {
+      "receipt": "experiments/results/skillopt-alfworld-local-intervention-r16-2026-08-02.json",
+      "what_was_tested": "Retried SkillOpt after installing its dependency stack and making the disposable ALFWorld/TextWorld runtime compatible with modern Python",
+      "result": "SkillOpt and ALFWorld initialized and reached baseline rollout, but the configured local model endpoint was unavailable; no model response, candidate skill, or scored episode was emitted",
+      "causal": false,
+      "hard_edge": "This is an infrastructure null after engine startup, not evidence for or against SkillOpt quality; the generated candidate still must be replayed against the sealed control cohort"
     }
   ],
   "model_harness_coverage": {

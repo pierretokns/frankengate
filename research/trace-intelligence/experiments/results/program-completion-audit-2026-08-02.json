@@ -284,6 +284,10 @@
       "path_split_counts": {"train": 39, "val": 18, "test": 134},
       "game_payload_present": false,
       "model_runtime_started": false,
+      "latest_attempt": "experiments/results/skillopt-alfworld-local-intervention-r16-2026-08-02.json",
+      "latest_attempt_status": "engine_and_environment_started_model_endpoint_unavailable",
+      "latest_model_runtime_started": true,
+      "latest_model_responses_emitted": false,
       "causal_skill_benefit_confirmed": false
     },
     "skill_optimization_confirmation": {

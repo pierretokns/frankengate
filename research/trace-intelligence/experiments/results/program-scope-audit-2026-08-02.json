@@ -8,7 +8,7 @@
   "matrix_schema_version": "frankengate-combined-evidence-matrix-v18",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
-    "family-disjoint semantic skill intervention with independent outcome labels",
+    "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
     "natural released Dream/procedure evaluation",
     "prospective enterprise task outcomes and human labels",
     "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
@@ -51,6 +51,10 @@
         {
           "exists": true,
           "path": "experiments/results/skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-alfworld-local-intervention-r16-2026-08-02.json"
         },
         {
           "exists": true,
@@ -201,7 +205,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "a65bfb495f3729d4dec624f00103c7fd3fca8a61"
+          "head": "5836fb5caf1f2ef23daa75d6bc78e2382ca74509"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

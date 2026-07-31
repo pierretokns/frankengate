@@ -265,11 +265,14 @@ candidate arms, security/policy verification, larger power, and enterprise
 outcomes remain open.
 
 A direct attempt to run SkillOpt's own ALFWorld optimizer is recorded as a
-typed runtime/dependency null: the available Python 3.9 environment cannot
-import its Python-3.10+ code, while the available Python 3.14 environment lacks
-the `openai` dependency. No SkillOpt episodes or responses were counted; the
-independent Frankengate runner is the only scored optimizer-like intervention
-so far. See
+typed runtime null. After installing the dependency stack and applying a
+disposable modern-Python TextWorld compatibility patch, SkillOpt and ALFWorld
+initialized and reached baseline rollout, but the configured local model
+endpoint was unavailable. No SkillOpt response, candidate skill, or scored
+episode was counted. This is not a quality result; the independent Frankengate
+runner remains the only scored optimizer-like intervention so far. See
+[`skillopt-alfworld-local-intervention-r16-2026-08-02.json`](experiments/results/skillopt-alfworld-local-intervention-r16-2026-08-02.json)
+and the earlier dependency preflight
 [`skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json`](experiments/results/skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json).
 
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)

@@ -71,6 +71,7 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/public-agent-history-discovery-2026-07-30.json",
                 "experiments/results/skillopt-alfworld-intervention-readiness-2026-08-02.json",
                 "experiments/results/skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
+                "experiments/results/skillopt-alfworld-local-intervention-r16-2026-08-02.json",
                 "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md",
                 "experiments/summaries/skill-improvement-strategy-audit-2026-07-30.md",
                 "experiments/summaries/natural-trace-memory-factorial-2026-08-02-r2.md",

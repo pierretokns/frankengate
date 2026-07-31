@@ -71,6 +71,7 @@ REQUIRED_RESULTS = {
 }
 OPTIONAL_RESULTS = {
     "skillopt_local_runtime_attempt_r15": "skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
+    "skillopt_local_intervention_r16": "skillopt-alfworld-local-intervention-r16-2026-08-02.json",
     "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
     "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
