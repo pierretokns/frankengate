@@ -275,7 +275,7 @@ class _ThinkDisabledOpenAI:
         self.embeddings = delegate.embeddings
 
 
-def _make_langmem() -> tuple[Any, type]:
+def _make_langmem(model_id: str = "qwen3:4b") -> tuple[Any, type]:
     from langchain_openai import ChatOpenAI
     from langmem import create_memory_manager
     from pydantic import BaseModel, Field
@@ -295,7 +295,7 @@ def _make_langmem() -> tuple[Any, type]:
         )
 
     model = ChatOpenAI(
-        model="qwen3:4b",
+        model=model_id,
         base_url="http://127.0.0.1:11434/v1",
         api_key="ollama",
         temperature=0,
@@ -360,7 +360,11 @@ def _langmem_case(
     }
 
 
-def _make_graphiti(db: Any, database: str) -> Any:
+def _make_graphiti(
+    db: Any,
+    database: str,
+    model_id: str = "qwen3:4b",
+) -> Any:
     from graphiti_core import Graphiti
     from graphiti_core.cross_encoder.openai_reranker_client import (
         OpenAIRerankerClient,
@@ -386,8 +390,8 @@ def _make_graphiti(db: Any, database: str) -> Any:
     facade = _ThinkDisabledOpenAI(openai_client)
     llm_config = LLMConfig(
         api_key="ollama",
-        model="qwen3:4b",
-        small_model="qwen3:4b",
+        model=model_id,
+        small_model=model_id,
         base_url=endpoint,
         temperature=0,
         max_tokens=2048,
@@ -424,13 +428,14 @@ async def _graphiti_case(
     revisions: Sequence[Any],
     target_digest: str,
     langmem_identifiers: Sequence[str],
+    model_id: str = "qwen3:4b",
 ) -> dict[str, Any]:
     from graphiti_core.nodes import EpisodeType
     from graphiti_core.search.search_config_recipes import (
         COMBINED_HYBRID_SEARCH_RRF,
     )
 
-    graph = _make_graphiti(db, database)
+    graph = _make_graphiti(db, database, model_id=model_id)
     await graph.build_indices_and_constraints()
     nodes: dict[str, Any] = {}
     edges: dict[str, Any] = {}
@@ -519,10 +524,11 @@ async def _graphiti_case(
 async def _execute(
     selected: Sequence[faithful.SelectedNaturalCase],
     db_path: Path,
+    model_id: str = "qwen3:4b",
 ) -> tuple[list[faithful.ComponentCaseResult], list[dict[str, Any]]]:
     from redislite.async_falkordb_client import AsyncFalkorDB
 
-    manager, _ = _make_langmem()
+    manager, _ = _make_langmem(model_id=model_id)
     db = AsyncFalkorDB(dbfilename=str(db_path))
     rows: list[faithful.ComponentCaseResult] = []
     execution: list[dict[str, Any]] = []
@@ -566,6 +572,7 @@ async def _execute(
                         revisions,
                         query.target_content_sha256,
                         langmem["identifiers"],
+                        model_id=model_id,
                     )
                 except Exception as exc:  # upstream failure is a measured outcome
                     graphiti_status = "failed"
@@ -665,6 +672,7 @@ async def _execute(
 
 async def _execute_langmem_partial(
     selected: Sequence[faithful.SelectedNaturalCase],
+    model_id: str = "qwen3:4b",
 ) -> tuple[list[faithful.ComponentCaseResult], list[dict[str, Any]]]:
     """Finish the independent LangMem arm after the bounded Graphiti ceiling.
 
@@ -674,7 +682,7 @@ async def _execute_langmem_partial(
     not synthetic component scores.
     """
 
-    manager, _ = _make_langmem()
+    manager, _ = _make_langmem(model_id=model_id)
     rows: list[faithful.ComponentCaseResult] = []
     execution: list[dict[str, Any]] = []
     for index, selected_case in enumerate(selected):
@@ -860,11 +868,7 @@ def _bounded_partial_evidence(
 
 def _summary_markdown(result: Mapping[str, Any]) -> str:
     aggregate = result["aggregate"]
-    langmem_only = (
-        result.get("faithfulness", {}).get("run_disposition")
-        == "bounded_partial_after_graphiti_full_input_ceiling"
-        and aggregate["langmem_executed_cases"] > 0
-    )
+    langmem_observed = aggregate["langmem_executed_cases"] > 0
     langmem_observation = (
         f"The independent LangMem arm completed "
         f"{aggregate['langmem_executed_cases']}/{aggregate['cases']} "
@@ -875,7 +879,7 @@ def _summary_markdown(result: Mapping[str, Any]) -> str:
         f"{aggregate['langmem_updated_existing_cases']} existing-memory "
         f"updates. These are component mechanics, not a usefulness or "
         f"quality claim."
-        if langmem_only
+        if langmem_observed
         else (
             "A natural LangMem result may have existed transiently before "
             "Graphiti started, but no case-level LangMem output was durably "
@@ -909,9 +913,8 @@ Both real pinned libraries passed smaller synthetic compatibility checks before
 the natural run: Graphiti returned a structured extraction through its actual
 `OpenAIGenericClient`, and LangMem returned one structured memory through its
 actual `create_memory_manager`. Those checks establish API compatibility only.
-On the first full natural input, Graphiti's real node-extraction path logged four
-`EmptyResponseError` events and was stopped during the next in-flight request at
-the ceiling. The other two Graphiti cases were not executed. {langmem_observation}
+The execution rows below record the model-specific natural failures and the
+cases that reached each component. {langmem_observation}
 
 The deterministic exact-artifact baseline would match
 {aggregate['baseline_exact']} of the three later states. Graphiti and combined
@@ -942,12 +945,10 @@ calls it an exact source snapshot rather than a stable release.
    `langchain-openai==1.4.1` failed because
    `langchain_core.utils._gateway` did not exist. The upstream-locked
    `langchain-openai==1.1.14` was required.
-3. Ollama's Qwen3 emitted reasoning with empty final content to Graphiti and
-   ignored the tool-selection behavior LangMem needs. Both real libraries ran
-   only after their public OpenAI-compatible client surfaces injected
-   `extra_body.think=false`.
-   That adapter fixed the small smoke but did not fix full natural-document
-   Graphiti node extraction within the bound.
+3. The selected Ollama model was used through the public OpenAI-compatible
+   client surfaces with `extra_body.think=false`. Any model-specific
+   structured-output or validation failures are retained as typed execution
+   rows rather than converted into zero scores.
 4. Graphiti adds an LLM, embedding model, graph engine, graph schema/index
    lifecycle, and reranking/search configuration. The experiment used embedded
    FalkorDB and local Nomic embeddings; this does not establish Aurora
@@ -968,12 +969,12 @@ calls it an exact source snapshot rather than a stable release.
 | Graphiti source pin | `git rev-parse v0.29.3^{{commit}}` and source `LICENSE`/`uv.lock` receipts |
 | LangMem source pin | exact main `HEAD` plus source `LICENSE`/`uv.lock` receipts |
 | Natural cohort | existing Wisp/Fable canonical loaders and strict pre-query eligibility |
-| Local inference | Ollama OpenAI-compatible endpoint, Qwen3 4B, reasoning disabled |
+| Local inference | Ollama OpenAI-compatible endpoint, `{result['faithfulness']['model_id']}`, reasoning disabled |
 | Graph retrieval | `COMBINED_HYBRID_SEARCH_RRF`, limit 5 |
 
 Important configuration: Python 3.12.4, `graphiti-core==0.29.3`,
 `langmem==0.0.30`, `falkordblite==0.10.0`, `trustcall==0.0.39`,
-Qwen3 4B for extraction, Nomic Embed Text at 768 dimensions, temperature zero,
+`{result['faithfulness']['model_id']}` for extraction, Nomic Embed Text at 768 dimensions, temperature zero,
 one Graphiti coroutine, Graphiti telemetry disabled, and LangSmith tracing
 disabled. No source content or model output was durably emitted.
 
@@ -1013,6 +1014,13 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     )
     parent_receipt = _verify_parent(config_path, config)
     runtime_receipts = _runtime_receipts(config)
+    model_id = str(args.model)
+    runtime_receipts["model_id"] = model_id
+    runtime_receipts["model_manifest_binding"] = (
+        "config_runtime_qwen3_4b"
+        if model_id == "qwen3:4b"
+        else "explicit_local_ollama_override_without_pinned_model_receipt"
+    )
     queries, source_receipts = _load_natural_queries(
         config_path,
         config,
@@ -1040,14 +1048,18 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         rows, execution = _bounded_partial_evidence(selected)
     elif args.langmem_only_partial:
         rows, execution = asyncio.run(
-            _execute_langmem_partial(selected)
+            _execute_langmem_partial(selected, model_id=model_id)
         )
     else:
         with tempfile.TemporaryDirectory(
             prefix="faithful-memory-components-"
         ) as temp:
             rows, execution = asyncio.run(
-                _execute(selected, Path(temp) / "falkordblite.db")
+                _execute(
+                    selected,
+                    Path(temp) / "falkordblite.db",
+                    model_id=model_id,
+                )
             )
     aggregate = faithful.aggregate_component_results(rows)
     aggregate["natural_cases_completed"] = sum(
@@ -1082,6 +1094,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "execution": execution,
         "aggregate": aggregate,
         "faithfulness": {
+            "model_id": model_id,
+            "model_manifest_binding": runtime_receipts[
+                "model_manifest_binding"
+            ],
             "graphiti_proxy_used": False,
             "langmem_proxy_used": False,
             "actual_upstream_imports": True,
@@ -1189,6 +1205,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         / (
             "experiments/results/"
             "faithful-memory-components-2026-07-30.json"
+        ),
+    )
+    parser.add_argument(
+        "--model",
+        default="qwen3:4b",
+        help=(
+            "Loopback Ollama model. qwen3:4b is the pinned manifest arm; "
+            "other values are explicit unpinned alternative-model arms."
         ),
     )
     parser.add_argument(

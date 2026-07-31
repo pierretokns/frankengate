@@ -116,6 +116,13 @@ zero exact-identifier recall, and zero existing-memory updates. This is a
 faithful model/runtime outcome—not a proxy—and still does not establish memory
 quality, utility, or enterprise transfer.
 
+The [`Llama 3.2 alternative natural arm`](experiments/summaries/faithful-memory-components-llama32-natural-2026-08-02.md)
+then ran the same cohort with an explicit unpinned model override. LangMem
+completed one case before two typed `AttributeError` failures; Graphiti reached
+one case and returned a typed `ValidationError`; no natural Graphiti case
+completed. This rules out treating the Qwen3 failure as the only boundary, but
+it is still a negative execution result, not a component-quality score.
+
 The [`faithful diagnosis-concept audit`](experiments/summaries/faithful-diagnosis-concept-audit-wisp-2026-07-30.md)
 runs deterministic Signals and AgentRx concepts over 104 pinned Wisp histories.
 The queue selected 11/21 candidates with tool errors, versus 7 for a length
