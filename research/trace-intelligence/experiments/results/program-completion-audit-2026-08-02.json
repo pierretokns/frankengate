@@ -4,6 +4,16 @@
   "supersedes": "experiments/results/program-completion-audit-2026-08-01.json",
   "overall_status": "active_incomplete",
   "checkpoint": {
+    "skillopt_alfworld_readiness": {
+      "result": "experiments/results/skillopt-alfworld-intervention-readiness-2026-08-02.json",
+      "summary": "experiments/summaries/skillopt-alfworld-intervention-readiness-2026-08-02.md",
+      "status": "typed_data_and_runtime_null_no_semantic_replay",
+      "skillopt_revision": "7da46ae",
+      "path_split_counts": {"train": 39, "val": 18, "test": 134},
+      "game_payload_present": false,
+      "model_runtime_started": false,
+      "causal_skill_benefit_confirmed": false
+    },
     "skill_optimization_confirmation": {
       "result": "experiments/results/skill-optimization-confirmation-2026-08-02.json",
       "summary": "experiments/summaries/skill-optimization-confirmation-2026-08-02.md",
