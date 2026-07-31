@@ -58,6 +58,10 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/skillopt-deterministic-lifecycle-r17-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md"
         },
         {
@@ -205,7 +209,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "5836fb5caf1f2ef23daa75d6bc78e2382ca74509"
+          "head": "7b7253128924c980169a130c8108dfaea3106edb"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

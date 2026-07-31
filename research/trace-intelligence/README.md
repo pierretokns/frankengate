@@ -275,6 +275,13 @@ runner remains the only scored optimizer-like intervention so far. See
 and the earlier dependency preflight
 [`skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json`](experiments/results/skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json).
 
+The [`deterministic SkillOpt lifecycle smoke`](experiments/results/skillopt-deterministic-lifecycle-r17-2026-08-02.json)
+separately exercises rollout, reflection, aggregation, update, and gate
+rejection with an in-process deterministic backend. It generated and applied a
+candidate, then rejected it because baseline and candidate scores were both
+`0.0`. The shim intentionally ignores task content and makes no model calls;
+this validates lifecycle mechanics only, not skill quality.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

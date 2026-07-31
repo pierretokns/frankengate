@@ -288,6 +288,8 @@
       "latest_attempt_status": "engine_and_environment_started_model_endpoint_unavailable",
       "latest_model_runtime_started": true,
       "latest_model_responses_emitted": false,
+      "lifecycle_smoke": "experiments/results/skillopt-deterministic-lifecycle-r17-2026-08-02.json",
+      "lifecycle_smoke_status": "candidate_generated_and_gate_rejected_with_deterministic_backend",
       "causal_skill_benefit_confirmed": false
     },
     "skill_optimization_confirmation": {

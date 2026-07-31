@@ -13,6 +13,7 @@ We have **not** yet confirmed that Frankengate's trace-mined skills improve real
 7. The r13 control arm added a formatting placebo to the same eight-task cohort across both harnesses. No-skill, placebo, and trace-derived arms were all `0/8` on both harnesses; all 48 action sequences independently replayed with zero mismatches.
 8. The r14 Qwen 3 4B native-harness replication ran the same three arms on all eight tasks. Every arm was `0/8`, and all 24 action sequences independently replayed with zero mismatches.
 9. A direct SkillOpt retry after installing its dependency stack initialized SkillOpt and ALFWorld and reached baseline rollout, but the configured local model endpoint was unavailable. No SkillOpt model response, candidate skill, or scored episode was counted; this is an infrastructure null, not a quality result.
+10. A deterministic in-process backend then exercised the complete SkillOpt lifecycle. It generated and applied one candidate, evaluated it, and rejected it at the hard gate because baseline and candidate selection scores were both `0.0`. This closes the mechanics smoke only; the shim intentionally ignores task content and makes no model calls.
 
 Those are prerequisites and a negative causal test, not evidence of a beneficial skill.
 

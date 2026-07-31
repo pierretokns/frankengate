@@ -1,0 +1,55 @@
+{
+  "schema_version": "frankengate-skillopt-deterministic-lifecycle-v1",
+  "study": "Exercise SkillOpt's complete ALFWorld lifecycle with an explicitly non-semantic deterministic backend",
+  "purpose": "Mechanics and release-gate smoke only; this result is not model-quality evidence.",
+  "source": {
+    "repository": "microsoft/SkillOpt",
+    "checkout": "/private/tmp/skillopt-latest",
+    "revision": "7da46ae",
+    "alfworld_dataset_sha256": "a15b6c4eef2f86ccc39d082ecd2d99a9e022f92289f71f6367906909aa208c59",
+    "backend_shim": "experiments/support/skillopt_deterministic_backend.py",
+    "backend_shim_sha256": "04443eb5a1196cc6ea1caaedf1ad5fcb4276a9b618e01a5a0e28104c8b485f42"
+  },
+  "configuration": {
+    "python": "3.14.2",
+    "optimizer_model": "deterministic-smoke",
+    "target_model": "deterministic-smoke",
+    "optimizer_backend": "openai_compatible (in-process shim)",
+    "target_backend": "openai_compatible (in-process shim)",
+    "train_items": 1,
+    "selection_items": 1,
+    "epochs": 1,
+    "max_steps": 3,
+    "skill_update_mode": "patch",
+    "gate_metric": "hard",
+    "raw_model_content_committed": false
+  },
+  "execution": {
+    "engine_completed": true,
+    "rollout_hard": 0.0,
+    "rollout_soft": 0.0,
+    "baseline_selection_hard": 0.0,
+    "candidate_selection_hard": 0.0,
+    "candidate_hash": "bf847174449caa61",
+    "candidate_edits_applied": 1,
+    "candidate_edits_errors": 0,
+    "candidate_action": "reject",
+    "total_accepts": 0,
+    "total_rejects": 1,
+    "total_skips": 0,
+    "model_token_calls": 0
+  },
+  "claim_boundary": {
+    "skillopt_lifecycle_executed": true,
+    "candidate_generated": true,
+    "candidate_quality_evaluated": false,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "The in-process backend is deterministic and intentionally ignores task content. The run proves that a candidate can be generated, applied, evaluated, and rejected by the gate without an HTTP model service; it cannot establish semantic improvement.",
+    "next_required": [
+      "Run the identical configuration with a reachable real model endpoint",
+      "Replay the generated candidate on sealed r13/r14 tasks beside no-skill and placebo controls",
+      "Use independent correctness, security/policy, and tool-budget verification"
+    ]
+  }
+}

@@ -297,6 +297,12 @@
       "schema_version": "frankengate-governed-skill-release-lifecycle-v1",
       "sha256": "9a3a6e5274461d328f05a6bf75fbdba43645e4cada60cfe3891b3c79c0d221c1"
     },
+    "skillopt_deterministic_lifecycle_r17": {
+      "filename": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-deterministic-lifecycle-v1",
+      "sha256": "1eb732c7c88b221bc482a7d7ff272fd655980cc04ef1384c9ebd37ac418e22c7"
+    },
     "skillopt_local_intervention_r16": {
       "filename": "skillopt-alfworld-local-intervention-r16-2026-08-02.json",
       "optional": true,
@@ -679,6 +685,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "4a97c5145daa8f3c20743d36b9a822c62ea1051fac0e2a60c0ea2ff7789aefca",
+  "result_sha256": "df47ae5bfbc735eb3afa06796344b0a2b10db09839435dbb1e5d014bf5f272f2",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

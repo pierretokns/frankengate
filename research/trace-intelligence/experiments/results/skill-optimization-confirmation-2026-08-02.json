@@ -78,6 +78,13 @@
       "result": "SkillOpt and ALFWorld initialized and reached baseline rollout, but the configured local model endpoint was unavailable; no model response, candidate skill, or scored episode was emitted",
       "causal": false,
       "hard_edge": "This is an infrastructure null after engine startup, not evidence for or against SkillOpt quality; the generated candidate still must be replayed against the sealed control cohort"
+    },
+    {
+      "receipt": "experiments/results/skillopt-deterministic-lifecycle-r17-2026-08-02.json",
+      "what_was_tested": "Ran SkillOpt's complete ALFWorld rollout, reflection, aggregation, update, and selection-gate path with an explicit deterministic in-process backend",
+      "result": "A candidate was generated and applied cleanly, then rejected because baseline and candidate selection scores both equaled 0.0",
+      "causal": false,
+      "hard_edge": "The shim ignores task content and makes no model calls; this proves lifecycle/gate mechanics only and cannot establish semantic skill utility"
     }
   ],
   "model_harness_coverage": {
