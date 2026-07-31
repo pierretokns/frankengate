@@ -436,7 +436,10 @@
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-      "schema_version": "frankengate-combined-evidence-matrix-v25",
+      "schema_version": "frankengate-combined-evidence-matrix-v26",
+      "enterprise_outcome_gate": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json",
+      "enterprise_outcome_gate_mechanics_passed": true,
+      "enterprise_denials_emit_no_candidate_digests": true,
       "alfworld_semantic_pilot_consumed": true,
       "alfworld_revision_r2_consumed": true,
       "alfworld_family_disjoint_r3_consumed": true,
@@ -467,6 +470,7 @@
     "semantic Dream/procedure utility and changed-system outcome evaluation",
     "prospective enterprise task outcomes and human labels",
     "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
+    "consented minimum-cohort human outcome labels for cross-user analysis",
     "cross-user collaboration utility and consent outcomes"
   ],
   "raw_content_committed": false,

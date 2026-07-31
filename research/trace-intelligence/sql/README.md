@@ -94,3 +94,11 @@ classification checks happen before vector ranking. The paired
 `finance_governed_retrieval_replay.py` runner also checks soft deletion and
 transaction rollback. It is local PostgreSQL evidence only; it is not an
 Aurora availability, failover, or production migration.
+
+`enterprise_outcome_gate.py` and its content-free conformance receipt add the
+next application-level boundary for cross-user questions. They require current
+authority, explicit matching consent scope, a minimum three-subject cohort, and
+reviewed human outcome labels before similarity, skill-gap, or collaboration
+aggregation. Denials return no candidate counts or digests. This is a
+deterministic contract test layered above PostgreSQL RLS, not evidence that
+cross-user recommendations are useful or causal.

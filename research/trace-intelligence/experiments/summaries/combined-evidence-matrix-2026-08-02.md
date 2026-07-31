@@ -23,6 +23,7 @@ The combined evidence supports a small governed product: personal history, conte
 
 ## Cross-arm findings
 
+- The cross-user enterprise outcome gate passed its deterministic mechanics checks=True: missing consent, mismatched consent scope, stale/classification-filtered rows, insufficient cohorts, and missing human outcome labels all abstain before ranking and emit no candidate digests. This is a governance precondition only; cross-user similarity, skill-gap, and collaboration utility remain unmeasured.
 - CodeTraceBench structural selection precision was 0.567 versus random mean 0.426. The 0.141 absolute lift is below the preregistered 0.15 gate, ties trace length, and does not exceed random's 95% interval.
 - The best blind CodeTraceBench step-localization top-1 was 0.286; the combined deterministic arm reached 0.171. No evidence arm beat reverse chronology, so the result does not support deployable root-cause diagnosis.
 - The combined retrospective assertion killed 191 supported mutants at 0.969 with 0.486 allowed-event false positives. It remains annotation-derived and was not run against a changed agent.
@@ -59,9 +60,9 @@ The combined evidence supports a small governed product: personal history, conte
 | Repeated friction/recovery | `review_candidates_supported` | human outcome labels and prospective validation |
 | Suggested evals | `proposal_and_audit_mechanics_supported` | guided harness/environment/verifier construction and changed-system execution |
 | Memory / MEMORY.md | `not_supported` | bitemporal contradiction benchmark, citations, review, rollback, and later-query utility |
-| Similar work across users | `not_tested` | authorized SWE-chat or consented enterprise same-task labels with cohort privacy |
-| Missing cloud/domain skills | `not_supported` | reviewed capability taxonomy, environmental-availability labels, abstention, and prospective task uplift |
-| Who should collaborate | `not_supported` | reciprocal opt-in introductions and independently measured outcomes under minimum cohorts |
+| Similar work across users | `scope_gate_mechanics_only` | authorized SWE-chat or consented enterprise same-task labels with cohort privacy |
+| Missing cloud/domain skills | `scope_gate_mechanics_only` | reviewed capability taxonomy, environmental-availability labels, abstention, and prospective task uplift |
+| Who should collaborate | `scope_gate_mechanics_only` | reciprocal opt-in introductions and independently measured outcomes under minimum cohorts |
 | Enterprise embedding fine-tuning | `premature` | at least +5 absolute Recall@20 over the general hybrid baseline without RLS/deletion/latency regression |
 
 ## Architecture consequence

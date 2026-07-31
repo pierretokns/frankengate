@@ -30,7 +30,7 @@ Open gate: Managed Aurora semantics, extension compatibility, concurrency, and p
 
 Run public/CMU trace analyses and answer cross-user similarity, skill gaps, collaboration, and enterprise outcome questions.
 
-Open gate: CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.
+Open gate: The fail-closed consent/epoch/classification/minimum-cohort gate now passes mechanics, but CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.
 
 ## `publication_and_tracking` — proven_for_current_checkpoint
 

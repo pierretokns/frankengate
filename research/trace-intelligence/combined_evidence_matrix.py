@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v25"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v26"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -101,6 +101,7 @@ OPTIONAL_RESULTS = {
     "h5_concurrency_guarded_rerun": "h5-concurrency-guarded-rerun-2026-08-02.json",
     "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
     "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
+    "enterprise_outcome_gate": "enterprise-outcome-gate-conformance-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
     "alfworld_skill_intervention_r3": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
     "alfworld_skill_intervention_r4_qwen": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
@@ -259,6 +260,7 @@ def build_matrix(
     h5_concurrency_guarded_rerun = results.get("h5_concurrency_guarded_rerun")
     aurora_like_replication_lab = results.get("aurora_like_replication_lab")
     postgres_pitr_lab = results.get("postgres_pitr_lab")
+    enterprise_outcome_gate = results.get("enterprise_outcome_gate")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -645,11 +647,23 @@ def build_matrix(
                 "trace_commons_reproduction_metrics_compared": _require(
                     trace_commons_repro, "metrics_compared"
                 ),
+                "enterprise_outcome_gate_mechanics_passed": bool(
+                    enterprise_outcome_gate
+                    and enterprise_outcome_gate.get("all_passed", False)
+                ),
+                "enterprise_denials_emit_no_candidates": bool(
+                    enterprise_outcome_gate
+                    and enterprise_outcome_gate.get("checks", {}).get(
+                        "denials_emit_no_candidate_digests", False
+                    )
+                ),
             },
             "blocking_gap": (
                 "permission-oracle equality across every surface, deletion "
                 "closure, concurrent policy churn, restart, replica, and "
-                "failover remain untested"
+                "failover remain untested; cross-user utility additionally "
+                "requires explicit consent, minimum cohorts, and reviewed "
+                "human outcomes"
             ),
         },
         "L2_cheap_evidence_finding": {
@@ -1469,10 +1483,15 @@ def build_matrix(
             ),
         },
         "find_people_doing_similar_work": {
-            "status": "not_tested",
+            "status": (
+                "scope_gate_mechanics_only"
+                if enterprise_outcome_gate
+                else "not_tested"
+            ),
             "basis": (
                 "the audited public histories have no stable user field and "
-                "cannot be treated as an independent cross-user enterprise cohort"
+                "cannot be treated as an independent cross-user enterprise cohort; "
+                "the new gate abstains without consent and a minimum cohort"
             ),
             "next_gate": (
                 "authorized SWE-chat or consented enterprise same-task labels "
@@ -1480,10 +1499,15 @@ def build_matrix(
             ),
         },
         "identify_missing_cloud_or_domain_skills": {
-            "status": "not_supported",
+            "status": (
+                "scope_gate_mechanics_only"
+                if enterprise_outcome_gate
+                else "not_supported"
+            ),
             "basis": (
                 "CodeTrace/MAST labels describe trajectory events, not human "
-                "capability"
+                "capability; the gate additionally requires reviewed human "
+                "outcome labels before skill-gap aggregation"
             ),
             "next_gate": (
                 "reviewed capability taxonomy, environmental-availability "
@@ -1491,8 +1515,16 @@ def build_matrix(
             ),
         },
         "recommend_collaboration": {
-            "status": "not_supported",
-            "basis": "trace similarity is not collaboration utility",
+            "status": (
+                "scope_gate_mechanics_only"
+                if enterprise_outcome_gate
+                else "not_supported"
+            ),
+            "basis": (
+                "trace similarity is not collaboration utility; cross-user "
+                "consent, minimum cohorts, and outcome labels are now a "
+                "fail-closed prerequisite"
+            ),
             "next_gate": (
                 "reciprocal opt-in introductions and independently measured "
                 "outcomes under minimum cohorts"
@@ -1620,11 +1652,19 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     memory = levels["L5_temporal_memory"]["evidence"]
     schema = levels["L0_evidence_conformance"]["evidence"]
     skill = levels["L6_procedural_replay"]["evidence"]
+    authority = levels["L1_personal_authority"]["evidence"]
     lines.extend(
         [
             "",
             "## Cross-arm findings",
             "",
+            f"- The cross-user enterprise outcome gate passed its deterministic "
+            f"mechanics checks={authority['enterprise_outcome_gate_mechanics_passed']}: "
+            "missing consent, mismatched consent scope, stale/classification-filtered "
+            "rows, insufficient cohorts, and missing human outcome labels all abstain "
+            "before ranking and emit no candidate digests. This is a governance "
+            "precondition only; cross-user similarity, skill-gap, and collaboration "
+            "utility remain unmeasured.",
             f"- CodeTraceBench structural selection precision was "
             f"{l2['structural_precision']:.3f} versus random mean "
             f"{l2['random_precision_mean']:.3f}. The {l2['structural_precision_lift']:.3f} "

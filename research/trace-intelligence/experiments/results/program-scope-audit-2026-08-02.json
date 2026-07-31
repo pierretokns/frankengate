@@ -5,13 +5,14 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v25",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v26",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
     "semantic Dream/procedure utility and changed-system outcome evaluation",
     "prospective enterprise task outcomes and human labels",
     "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
+    "consented minimum-cohort human outcome labels for cross-user analysis",
     "cross-user collaboration utility and consent outcomes"
   ],
   "overall_status": "active_incomplete",
@@ -284,6 +285,10 @@
         {
           "exists": true,
           "path": "experiments/results/h5-concurrency-guarded-rerun-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json"
         }
       ],
       "id": "governed_local_stack",
@@ -300,10 +305,14 @@
         {
           "exists": true,
           "path": "experiments/results/combined-evidence-matrix-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json"
         }
       ],
       "id": "cmu_and_enterprise_outcomes",
-      "open_gate": "CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.",
+      "open_gate": "The fail-closed consent/epoch/classification/minimum-cohort gate now passes mechanics, but CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.",
       "requirement": "Run public/CMU trace analyses and answer cross-user similarity, skill gaps, collaboration, and enterprise outcome questions.",
       "status": "cmu_approval_gated; enterprise_outcomes_unmeasured"
     },
@@ -313,7 +322,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "f07d9bee36d18fcc9e3898f6cb4214d9b327683a"
+          "head": "0f6e806bc788399df75422b9f582c8a4ddda7ce7"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"
