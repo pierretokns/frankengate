@@ -1,0 +1,19 @@
+{
+  "benchmarks": ["appworld"],
+  "complete_timestamp_spans": 925,
+  "dataset_id": "DiscoPosse/agent-llm-traces",
+  "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+  "enterprise_behavior_claim": false,
+  "error_spans": 52,
+  "harnesses": ["claude_code"],
+  "raw_content_emitted": false,
+  "rows": 46,
+  "rows_with_input_messages": 925,
+  "rows_with_output_messages": 873,
+  "rows_with_tool_definitions": 917,
+  "schema_version": "fg-hf-otel-shard-audit-v1",
+  "source_file_bytes": 24144062,
+  "source_sha256": "5cfde1c01460d2f7d90fdc6c245278cee20f32101d5275b6cf3d06f30a5f8f60",
+  "spans": 925,
+  "tool_related_spans": 917
+}
