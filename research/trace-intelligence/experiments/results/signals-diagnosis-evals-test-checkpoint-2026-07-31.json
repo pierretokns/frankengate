@@ -1,0 +1,13 @@
+{
+  "date": "2026-07-31",
+  "test_modules": [
+    "research.trace-intelligence.tests.test_trace_signal_diagnosis_eval_chain",
+    "research.trace-intelligence.tests.test_changed_system_replay",
+    "research.trace-intelligence.tests.test_agentevals_upstream_interop"
+  ],
+  "tests_run": 21,
+  "tests_passed": 18,
+  "tests_skipped": 3,
+  "tests_failed": 0,
+  "interpretation": "Local chain and changed-system replay mechanics remain executable. Skips are environment/upstream availability gates; this does not satisfy blinded human-label or prospective enterprise outcome criteria."
+}
