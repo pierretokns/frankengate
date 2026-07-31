@@ -44,3 +44,15 @@ native adapter, hash the raw cache outside Git, and produce only aggregate resul
 Candidates lacking a clear license or provenance remain discovery-only rather than
 being treated as implicitly approved.
 
+## Metadata follow-up
+
+The live dataset cards provide two useful admission refinements. DiscoPosse is
+listed as CDLA-Permissive-2.0, has 1,780 rows, and exposes nested OTel spans with
+harness, benchmark, model, token, session, and collection-time fields. It is the
+best next candidate for a schema/projection experiment, but its revision and
+provenance hash still need freezing before download. ThoughtWorks is listed as a
+15,000-row derivative, multi-source corpus; its card explicitly says the traces
+are synthetic/replay data, no live tools are present, and each row inherits its
+upstream license. It is therefore useful for context-growth and schema stress,
+but not a real-user or enterprise-behavior cohort. The code-review pipeline
+remains a labeled workflow stratum pending the same revision/license freeze.
