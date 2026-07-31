@@ -1,0 +1,54 @@
+{
+  "schema_version": "frankengate-skill-optimization-confirmation-v1",
+  "study": "trace-derived skill utility and model/harness coverage audit",
+  "claim_boundary": {
+    "our_trace_mined_skill_causal_benefit_confirmed": false,
+    "skill_optimization_in_general_supported_by_external_evidence": true,
+    "real_semantic_skill_intervention_completed": false,
+    "automatic_skill_promotion_authorized": false,
+    "reason": "The local trace-derived arms either measure protocol behavior, offline recommendation quality, or small pilots without a family-disjoint held-out semantic intervention. SkillOpt's own benchmark results establish that gated skill-document optimization can improve real tasks, but they are not evidence that Frankengate traces alone produce a beneficial skill."
+  },
+  "local_evidence": [
+    {
+      "receipt": "experiments/results/matm-trace-skill-retrieval-2026-08-02.json",
+      "what_was_tested": "Leave-one-model-out retrieval of successful procedures from MATM traces",
+      "result": "Top-10 successful-neighbor rate 0.747 versus 0.681 for all-trace neighbors; lift 0.0665 with bootstrap 95% CI [-0.0196, 0.1660]",
+      "causal": false,
+      "hard_edge": "No agent was rerun with the retrieved procedure"
+    },
+    {
+      "receipt": "experiments/results/gepa-native-tool-protocol-2026-08-02-r2.json",
+      "what_was_tested": "GEPA optimizer with a train/holdout split",
+      "result": "Optimizer executed; two candidate mutations were rejected; selected skill did not improve the 3-item protocol holdout",
+      "causal": false,
+      "hard_edge": "Fixture measures terminal tool protocol only, not task quality"
+    },
+    {
+      "receipt": "experiments/results/skill-optimization-meta-analysis-2026-08-02.json",
+      "what_was_tested": "23 paired protocol/semantic strata, including trace-mined SQL candidates",
+      "result": "No reliable pooled semantic lift; family-disjoint broker arm tied no-skill at 0/6",
+      "causal": false,
+      "hard_edge": "Small, heterogeneous arms and abstention/tool-budget failures prevent a release claim"
+    }
+  ],
+  "model_harness_coverage": {
+    "models_exercised_locally": ["llama3.2:latest", "qwen3:4b"],
+    "harnesses_exercised_locally": ["OpenAI-compatible native-tool loop", "Ollama native API loop"],
+    "what_that_proves": "The candidate skill protocol is observable across two local model configurations and two transport/harness paths on the synthetic terminal fixture.",
+    "what_that_does_not_prove": "Semantic task improvement, transfer across task families, model-quality improvement, or enterprise productivity benefit"
+  },
+  "external_reference": {
+    "project": "Microsoft SkillOpt v0.2.0",
+    "source_checkout": "/private/tmp/skillopt-latest",
+    "source_revision": "7da46ae",
+    "reported_scope": "Six benchmarks, seven target models, three execution harnesses; gated skill optimization reported gains on real benchmark evaluators",
+    "relevance": "Supports the mechanism and evaluation design, not the claim that Frankengate's traces are sufficient"
+  },
+  "required_next_experiment": {
+    "design": "Family-disjoint, held-out semantic intervention with no-skill, trace-derived skill, and an expert/formatting placebo",
+    "minimum_models": 2,
+    "minimum_harnesses": 2,
+    "required_verifiers": ["independent task correctness", "security/policy verifier", "tool-budget and abstention accounting"],
+    "release_gate": "Promote only if the trace-derived arm beats no-skill on sealed held-out outcomes with uncertainty bounds and no safety regression"
+  }
+}
