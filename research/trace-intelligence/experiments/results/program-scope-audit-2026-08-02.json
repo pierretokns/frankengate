@@ -5,7 +5,7 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v27",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v28",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
@@ -297,6 +297,10 @@
         {
           "exists": true,
           "path": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json"
         }
       ],
       "id": "governed_local_stack",
@@ -317,10 +321,14 @@
         {
           "exists": true,
           "path": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json"
         }
       ],
       "id": "cmu_and_enterprise_outcomes",
-      "open_gate": "The fail-closed consent/epoch/classification/minimum-cohort gate now passes mechanics, but CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.",
+      "open_gate": "The fail-closed consent/epoch/classification/minimum-cohort gate and four answer-shaped content-free analyses now pass mechanics, but CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.",
       "requirement": "Run public/CMU trace analyses and answer cross-user similarity, skill gaps, collaboration, and enterprise outcome questions.",
       "status": "cmu_approval_gated; enterprise_outcomes_unmeasured"
     },
@@ -330,7 +338,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "7e6a82e4dccf9a1371ce8786ad52c9bd153df112"
+          "head": "e07c14e7627fa6327af63120063a5f2915acb8ce"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

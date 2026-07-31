@@ -13,9 +13,9 @@
   },
   "enterprise_questions": {
     "find_people_doing_similar_work": {
-      "basis": "the audited public histories have no stable user field and cannot be treated as an independent cross-user enterprise cohort; the new gate abstains without consent and a minimum cohort",
+      "basis": "the audited public histories have no stable user field and cannot be treated as an independent cross-user enterprise cohort; the gate and answer-shaped cohort analysis now abstain without consent and a minimum cohort",
       "next_gate": "authorized SWE-chat or consented enterprise same-task labels with cohort privacy",
-      "status": "scope_gate_mechanics_only"
+      "status": "analysis_mechanics_only"
     },
     "find_repeated_friction_and_later_recovery": {
       "basis": "one canonical constructor on Wisp and share-codex",
@@ -28,14 +28,14 @@
       "status": "premature"
     },
     "identify_missing_cloud_or_domain_skills": {
-      "basis": "CodeTrace/MAST labels describe trajectory events, not human capability; the gate additionally requires reviewed human outcome labels before skill-gap aggregation",
+      "basis": "CodeTrace/MAST labels describe trajectory events, not human capability; the gate and reviewed-label analysis now require human outcome labels before skill-gap aggregation",
       "next_gate": "reviewed capability taxonomy, environmental-availability labels, abstention, and prospective task uplift",
-      "status": "scope_gate_mechanics_only"
+      "status": "analysis_mechanics_only"
     },
     "recommend_collaboration": {
-      "basis": "trace similarity is not collaboration utility; cross-user consent, minimum cohorts, and outcome labels are now a fail-closed prerequisite",
+      "basis": "trace similarity is not collaboration utility; cross-user consent, minimum cohorts, outcome labels, and reciprocal opt-in are now a fail-closed prerequisite",
       "next_gate": "reciprocal opt-in introductions and independently measured outcomes under minimum cohorts",
-      "status": "scope_gate_mechanics_only"
+      "status": "analysis_mechanics_only"
     },
     "show_each_user_all_currently_authorized_history": {
       "basis": "Wisp governed PostgreSQL pagination/denial plus seven public native-or-derived history fidelity audits",
@@ -304,6 +304,12 @@
       "filename": "codetracebench-e2-authorized-retrieval-factorial-2026-07-30.json",
       "schema_version": "frankengate-e2-authorized-retrieval-factorial-v1",
       "sha256": "8822eaece26a3a97f2523ed583d1c6154e598c4877e78e424176562fc767a650"
+    },
+    "enterprise_outcome_analysis": {
+      "filename": "enterprise-outcome-analysis-conformance-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-enterprise-outcome-analysis-conformance-v1",
+      "sha256": "54870ccc0d943d6ab68563247ea0bafccebc8f4f59d0f43c0bddc9cd843da9c3"
     },
     "enterprise_outcome_gate": {
       "filename": "enterprise-outcome-gate-conformance-2026-08-02.json",
@@ -575,7 +581,14 @@
         "codex_repositories_with_auth_adjacent": 9,
         "complete_public_harness_homes_found": 0,
         "enterprise_denials_emit_no_candidates": true,
+        "enterprise_outcome_analysis_mechanics_passed": true,
         "enterprise_outcome_gate_mechanics_passed": true,
+        "enterprise_question_shapes_exercised": [
+          "collaboration",
+          "friction_recovery",
+          "similar_work",
+          "skill_gap"
+        ],
         "github_native_claude_files_in_top_repos": 2362,
         "github_native_codex_files_in_top_repos": 329,
         "history_page_p95_ms": 1.67599,
@@ -1055,6 +1068,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "0fc318bed86c9aabc447382b08a3b8c28c7a5f975c75a4532c2c260a8a829934",
-  "schema_version": "frankengate-combined-evidence-matrix-v27"
+  "result_sha256": "9978695d9f8587e501d98e897796c704d7d3412b82c8eb437a434f4e8c389420",
+  "schema_version": "frankengate-combined-evidence-matrix-v28"
 }

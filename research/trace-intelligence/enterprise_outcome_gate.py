@@ -83,6 +83,14 @@ def _authorized(row: TraceRow, request: ScopeRequest) -> bool:
     return False
 
 
+def authorized_rows(
+    rows: Iterable[TraceRow], request: ScopeRequest
+) -> tuple[TraceRow, ...]:
+    """Return the RLS-equivalent candidate set before any aggregation."""
+
+    return tuple(row for row in rows if _authorized(row, request))
+
+
 def evaluate(rows: Iterable[TraceRow], request: ScopeRequest) -> GateDecision:
     """Return an abstaining decision unless the complete scope is authorized.
 
@@ -103,7 +111,7 @@ def evaluate(rows: Iterable[TraceRow], request: ScopeRequest) -> GateDecision:
 
     # This is the only point at which rows enter the analysis.  All downstream
     # counts are derived from this filtered set, preventing post-ranking RLS.
-    candidates = [row for row in rows if _authorized(row, request)]
+    candidates = list(authorized_rows(rows, request))
     subjects = {row.owner_subject_id for row in candidates}
     labeled = [row for row in candidates if row.human_outcome_label]
 

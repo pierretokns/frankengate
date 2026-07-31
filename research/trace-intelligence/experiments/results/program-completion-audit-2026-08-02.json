@@ -436,7 +436,10 @@
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-      "schema_version": "frankengate-combined-evidence-matrix-v27",
+      "schema_version": "frankengate-combined-evidence-matrix-v28",
+      "enterprise_outcome_analysis": "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json",
+      "enterprise_outcome_analysis_mechanics_passed": true,
+      "enterprise_question_shapes_exercised": ["collaboration", "friction_recovery", "similar_work", "skill_gap"],
       "natural_model_dream_procedure_luna_meaningful": "experiments/results/natural-model-dream-procedure-luna-meaningful-2026-08-02.json",
       "natural_model_dream_procedure_luna_meaningful_verification": "experiments/results/natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
       "natural_model_dream_procedure_luna_meaningful_projects": 4,
@@ -479,5 +482,5 @@
     "cross-user collaboration utility and consent outcomes"
   ],
   "raw_content_committed": false,
-  "interpretation": "The checkpoint strengthens reproducibility and bounds what natural traces can establish. General skill optimization is supported by the external SkillOpt benchmark study, but Frankengate trace-derived causal skill benefit, memory utility, and enterprise work outcomes remain unconfirmed."
+  "interpretation": "The checkpoint strengthens reproducibility and bounds what natural traces can establish. Frontier structured extraction and four governed answer-shaped enterprise analyses now have independent mechanics receipts, but Frankengate trace-derived causal skill benefit, memory utility, capability validity, collaboration utility, and enterprise work outcomes remain unconfirmed."
 }

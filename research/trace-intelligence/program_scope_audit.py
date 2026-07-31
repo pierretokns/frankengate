@@ -144,6 +144,7 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/h5-concurrency-live-rerun-2026-08-02.json",
                 "experiments/results/h5-concurrency-guarded-rerun-2026-08-02.json",
                 "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json",
+                "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json",
             ),
             "decision": levels.get("L4_semantic_candidate_retrieval", {}).get("status"),
             "open_gate": "Managed Aurora semantics, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion, RLS, and WAL/PITR mechanics are measured separately.",
@@ -156,8 +157,9 @@ def build_audit() -> dict[str, Any]:
                 "experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md",
                 "experiments/results/combined-evidence-matrix-2026-08-02.json",
                 "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json",
+                "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json",
             ),
-            "open_gate": "The fail-closed consent/epoch/classification/minimum-cohort gate now passes mechanics, but CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.",
+            "open_gate": "The fail-closed consent/epoch/classification/minimum-cohort gate and four answer-shaped content-free analyses now pass mechanics, but CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.",
         },
         {
             "id": "publication_and_tracking",

@@ -1,0 +1,153 @@
+{
+  "all_passed": true,
+  "analysis_schema_version": "frankengate-enterprise-outcome-analysis-v1",
+  "checks": {
+    "all_outputs_are_content_free": true,
+    "collaboration_requires_opt_in_and_hashes_subject_pairs": true,
+    "friction_recovery_allowed_after_gate": true,
+    "similar_work_allowed_after_gate": true,
+    "skill_gap_reports_only_observed_required_deltas": true
+  },
+  "claim_boundary": {
+    "authorized_structural_answers_computed": true,
+    "capability_inference_validated": false,
+    "collaboration_outcome_measured": false,
+    "cross_user_utility_measured": false,
+    "raw_trace_content_committed": false
+  },
+  "outputs": {
+    "collaboration": {
+      "analysis": "collaboration",
+      "candidate_count": 4,
+      "decision": "allow",
+      "distinct_subject_count": 4,
+      "labeled_candidate_count": 4,
+      "payload": {
+        "candidate_pairs": [
+          {
+            "complement_count": 2,
+            "complement_digest": "a15a358453cd3c98",
+            "subject_pair_digest": "141a4cd242b67e82"
+          },
+          {
+            "complement_count": 2,
+            "complement_digest": "a15a358453cd3c98",
+            "subject_pair_digest": "1f6fa83cf5d86412"
+          },
+          {
+            "complement_count": 2,
+            "complement_digest": "a15a358453cd3c98",
+            "subject_pair_digest": "c8760140e25f3434"
+          }
+        ],
+        "opted_in_subject_count": 4
+      },
+      "reason": "scope_and_outcome_gate_passed",
+      "schema_version": "frankengate-enterprise-outcome-analysis-v1"
+    },
+    "friction_recovery": {
+      "analysis": "friction_recovery",
+      "candidate_count": 4,
+      "decision": "allow",
+      "distinct_subject_count": 4,
+      "labeled_candidate_count": 4,
+      "payload": {
+        "friction_trace_count": 4,
+        "outcome_counts": {
+          "blocked": 1,
+          "recovered": 3
+        },
+        "recovered_trace_count": 3,
+        "recovery_rate": 0.75
+      },
+      "reason": "scope_and_outcome_gate_passed",
+      "schema_version": "frankengate-enterprise-outcome-analysis-v1"
+    },
+    "similar_work": {
+      "analysis": "similar_work",
+      "candidate_count": 4,
+      "decision": "allow",
+      "distinct_subject_count": 4,
+      "labeled_candidate_count": 4,
+      "payload": {
+        "cohorts": [
+          {
+            "observed_capability_digest": "7d1507284a5757ca",
+            "outcome_counts": {
+              "recovered": 1
+            },
+            "subject_count": 1,
+            "task_family": "deploy"
+          },
+          {
+            "observed_capability_digest": "a15a358453cd3c98",
+            "outcome_counts": {
+              "recovered": 1
+            },
+            "subject_count": 1,
+            "task_family": "deploy"
+          },
+          {
+            "observed_capability_digest": "94abcb2d2773df65",
+            "outcome_counts": {
+              "recovered": 1
+            },
+            "subject_count": 1,
+            "task_family": "deploy"
+          },
+          {
+            "observed_capability_digest": "4ec7c53222c8a758",
+            "outcome_counts": {
+              "blocked": 1
+            },
+            "subject_count": 1,
+            "task_family": "sql"
+          }
+        ]
+      },
+      "reason": "scope_and_outcome_gate_passed",
+      "schema_version": "frankengate-enterprise-outcome-analysis-v1"
+    },
+    "skill_gap": {
+      "analysis": "skill_gap",
+      "candidate_count": 4,
+      "decision": "allow",
+      "distinct_subject_count": 4,
+      "labeled_candidate_count": 4,
+      "payload": {
+        "capability_gaps": [
+          {
+            "capability": "aws",
+            "gap_count": 1,
+            "observed_count": 2,
+            "outcome_counts": {
+              "recovered": 1
+            },
+            "required_count": 3
+          },
+          {
+            "capability": "kubernetes",
+            "gap_count": 1,
+            "observed_count": 2,
+            "outcome_counts": {
+              "recovered": 1
+            },
+            "required_count": 3
+          },
+          {
+            "capability": "warehouse",
+            "gap_count": 1,
+            "observed_count": 0,
+            "outcome_counts": {
+              "blocked": 1
+            },
+            "required_count": 1
+          }
+        ]
+      },
+      "reason": "scope_and_outcome_gate_passed",
+      "schema_version": "frankengate-enterprise-outcome-analysis-v1"
+    }
+  },
+  "schema_version": "frankengate-enterprise-outcome-analysis-conformance-v1"
+}

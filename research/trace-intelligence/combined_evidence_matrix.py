@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v27"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v28"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -104,6 +104,7 @@ OPTIONAL_RESULTS = {
     "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
     "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
     "enterprise_outcome_gate": "enterprise-outcome-gate-conformance-2026-08-02.json",
+    "enterprise_outcome_analysis": "enterprise-outcome-analysis-conformance-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
     "alfworld_skill_intervention_r3": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
     "alfworld_skill_intervention_r4_qwen": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
@@ -265,6 +266,7 @@ def build_matrix(
     aurora_like_replication_lab = results.get("aurora_like_replication_lab")
     postgres_pitr_lab = results.get("postgres_pitr_lab")
     enterprise_outcome_gate = results.get("enterprise_outcome_gate")
+    enterprise_outcome_analysis = results.get("enterprise_outcome_analysis")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -660,6 +662,15 @@ def build_matrix(
                     and enterprise_outcome_gate.get("checks", {}).get(
                         "denials_emit_no_candidate_digests", False
                     )
+                ),
+                "enterprise_outcome_analysis_mechanics_passed": bool(
+                    enterprise_outcome_analysis
+                    and enterprise_outcome_analysis.get("all_passed", False)
+                ),
+                "enterprise_question_shapes_exercised": sorted(
+                    enterprise_outcome_analysis.get("outputs", {})
+                    if enterprise_outcome_analysis
+                    else {}
                 ),
             },
             "blocking_gap": (
@@ -1493,14 +1504,15 @@ def build_matrix(
         },
         "find_people_doing_similar_work": {
             "status": (
-                "scope_gate_mechanics_only"
-                if enterprise_outcome_gate
+                "analysis_mechanics_only"
+                if enterprise_outcome_analysis
                 else "not_tested"
             ),
             "basis": (
                 "the audited public histories have no stable user field and "
                 "cannot be treated as an independent cross-user enterprise cohort; "
-                "the new gate abstains without consent and a minimum cohort"
+                "the gate and answer-shaped cohort analysis now abstain without "
+                "consent and a minimum cohort"
             ),
             "next_gate": (
                 "authorized SWE-chat or consented enterprise same-task labels "
@@ -1509,14 +1521,14 @@ def build_matrix(
         },
         "identify_missing_cloud_or_domain_skills": {
             "status": (
-                "scope_gate_mechanics_only"
-                if enterprise_outcome_gate
+                "analysis_mechanics_only"
+                if enterprise_outcome_analysis
                 else "not_supported"
             ),
             "basis": (
                 "CodeTrace/MAST labels describe trajectory events, not human "
-                "capability; the gate additionally requires reviewed human "
-                "outcome labels before skill-gap aggregation"
+                "capability; the gate and reviewed-label analysis now require "
+                "human outcome labels before skill-gap aggregation"
             ),
             "next_gate": (
                 "reviewed capability taxonomy, environmental-availability "
@@ -1525,14 +1537,14 @@ def build_matrix(
         },
         "recommend_collaboration": {
             "status": (
-                "scope_gate_mechanics_only"
-                if enterprise_outcome_gate
+                "analysis_mechanics_only"
+                if enterprise_outcome_analysis
                 else "not_supported"
             ),
             "basis": (
                 "trace similarity is not collaboration utility; cross-user "
-                "consent, minimum cohorts, and outcome labels are now a "
-                "fail-closed prerequisite"
+                "consent, minimum cohorts, outcome labels, and reciprocal "
+                "opt-in are now a fail-closed prerequisite"
             ),
             "next_gate": (
                 "reciprocal opt-in introductions and independently measured "
@@ -1674,6 +1686,13 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "before ranking and emit no candidate digests. This is a governance "
             "precondition only; cross-user similarity, skill-gap, and collaboration "
             "utility remain unmeasured.",
+            f"- The gated enterprise analysis layer exercised "
+            f"{len(authority['enterprise_question_shapes_exercised'])} "
+            "answer shapes (similar work, friction/recovery, reviewed skill "
+            "gaps, and opt-in collaboration) on a content-free cohort. Its "
+            f"mechanics passed={authority['enterprise_outcome_analysis_mechanics_passed']}; "
+            "this proves safe computation after authorization, not validity or "
+            "utility of any enterprise conclusion.",
             f"- CodeTraceBench structural selection precision was "
             f"{l2['structural_precision']:.3f} versus random mean "
             f"{l2['random_precision_mean']:.3f}. The {l2['structural_precision_lift']:.3f} "

@@ -102,3 +102,10 @@ reviewed human outcome labels before similarity, skill-gap, or collaboration
 aggregation. Denials return no candidate counts or digests. This is a
 deterministic contract test layered above PostgreSQL RLS, not evidence that
 cross-user recommendations are useful or causal.
+
+`enterprise_outcome_analysis.py` is the deliberately small downstream layer
+used by the companion conformance receipt. It exercises four answer shapes
+(similar work, friction/recovery, reviewed skill gaps, and reciprocal-opt-in
+collaboration) only on the gate's authorized rows. Its outputs are aggregate or
+digest-backed and content-free. The receipt proves safe computation after the
+gate, not the validity, usefulness, or causal impact of those answers.
