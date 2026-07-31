@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v16"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v17"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -78,6 +78,8 @@ OPTIONAL_RESULTS = {
     "alfworld_skill_memory_composition_r6": "alfworld-trace-skill-memory-composition-r6-2026-08-02.json",
     "alfworld_durable_memory_intervention_r7": "alfworld-durable-memory-intervention-r7-2026-08-02.json",
     "alfworld_durable_memory_verification": "alfworld-durable-memory-verification-2026-08-02.json",
+    "alfworld_model_generated_memory_r8": "alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
+    "alfworld_model_generated_memory_verification": "alfworld-model-generated-memory-verification-2026-08-02.json",
 }
 
 
@@ -164,6 +166,8 @@ def build_matrix(
     alfworld_skill_memory_composition_r6 = results.get("alfworld_skill_memory_composition_r6")
     alfworld_durable_memory_intervention_r7 = results.get("alfworld_durable_memory_intervention_r7")
     alfworld_durable_memory_verification = results.get("alfworld_durable_memory_verification")
+    alfworld_model_generated_memory_r8 = results.get("alfworld_model_generated_memory_r8")
+    alfworld_model_generated_memory_verification = results.get("alfworld_model_generated_memory_verification")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -238,6 +242,10 @@ def build_matrix(
         "r7_memory_wins": alfworld_durable_memory_intervention_r7.get("comparison", {}).get("released_memory_wins", 0) if alfworld_durable_memory_intervention_r7 else 0,
         "r7_memory_success_delta": (alfworld_durable_memory_intervention_r7.get("comparison", {}).get("released_memory_wins", 0) - alfworld_durable_memory_intervention_r7.get("comparison", {}).get("no_memory_wins", 0)) if alfworld_durable_memory_intervention_r7 else 0,
         "r7_verifier_passed": bool(alfworld_durable_memory_verification and alfworld_durable_memory_verification.get("all_passed", False)),
+        "r8_episodes": alfworld_model_generated_memory_r8.get("protocol", {}).get("episodes", 0) if alfworld_model_generated_memory_r8 else 0,
+        "r8_memory_wins": alfworld_model_generated_memory_r8.get("comparison", {}).get("generated_memory_wins", 0) if alfworld_model_generated_memory_r8 else 0,
+        "r8_invalid_action_delta_per_harness": alfworld_model_generated_memory_r8.get("comparison", {}).get("invalid_action_delta_per_harness", 0) if alfworld_model_generated_memory_r8 else 0,
+        "r8_verifier_passed": bool(alfworld_model_generated_memory_verification and alfworld_model_generated_memory_verification.get("all_passed", False)),
     }
 
     trace_commons_attestation_passed = bool(
@@ -1060,6 +1068,10 @@ def build_matrix(
                 "alfworld_durable_memory_r7_wins": revision_evidence["r7_memory_wins"],
                 "alfworld_durable_memory_r7_success_delta": revision_evidence["r7_memory_success_delta"],
                 "alfworld_durable_memory_r7_verifier_passed": revision_evidence["r7_verifier_passed"],
+                "alfworld_model_generated_memory_r8_episodes": revision_evidence["r8_episodes"],
+                "alfworld_model_generated_memory_r8_wins": revision_evidence["r8_memory_wins"],
+                "alfworld_model_generated_memory_r8_invalid_action_delta_per_harness": revision_evidence["r8_invalid_action_delta_per_harness"],
+                "alfworld_model_generated_memory_r8_verifier_passed": revision_evidence["r8_verifier_passed"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1394,6 +1406,9 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"- The durable released-memory intervention added {skill['alfworld_durable_memory_r7_episodes']} episodes on three disjoint look-at-light tasks. "
             f"It produced {skill['alfworld_durable_memory_r7_wins']} wins, with success delta {skill['alfworld_durable_memory_r7_success_delta']} versus no-memory; "
             f"the independent receipt verifier passed: {skill['alfworld_durable_memory_r7_verifier_passed']}.",
+            f"- The model-generated durable-memory arm added {skill['alfworld_model_generated_memory_r8_episodes']} episodes and produced "
+            f"{skill['alfworld_model_generated_memory_r8_wins']} wins, with {skill['alfworld_model_generated_memory_r8_invalid_action_delta_per_harness']} additional invalid actions per harness. "
+            f"Its raw projection verifier passed: {skill['alfworld_model_generated_memory_r8_verifier_passed']}; unverified generated memory remains rejected.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "

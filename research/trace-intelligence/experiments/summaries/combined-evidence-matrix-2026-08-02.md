@@ -41,6 +41,7 @@ The combined evidence supports a small governed product: personal history, conte
 - The fair-horizon Qwen3 4B replay added 8 episodes with an expert-verified sufficient horizon. The candidate won 0 and emitted 105 invalid actions; semantic comparison was valid but causal promotion remains false.
 - The composed trace-skill plus working-memory arm added 8 episodes. It changed invalid actions by 16 per harness and produced 0 wins; composition improved task success: False.
 - The durable released-memory intervention added 12 episodes on three disjoint look-at-light tasks. It produced 0 wins, with success delta 0 versus no-memory; the independent receipt verifier passed: True.
+- The model-generated durable-memory arm added 12 episodes and produced 0 wins, with 102 additional invalid actions per harness. Its raw projection verifier passed: True; unverified generated memory remains rejected.
 - The natural memory factorial covers 217 histories and 23 eligible reads across 16 arms. Every runnable singleton and the composed arm reached 16/23 exact availability; the differential mechanism gate is not identifiable, and released Dream/procedure arms remain gated because no independently released natural artifacts exist.
 - The attested 28-session Trace Commons cohort produced 263 structural temporal candidates and 269 eval-review records, while automatic memory/skill writes remained zero. The full analysis was rerun from the local pinned corpus and matched 19 aggregate metrics. This expands proposal mechanics, not outcome or skill evidence.
 

@@ -77,6 +77,18 @@
       "schema_version": "frankengate-alfworld-intervention-verification-v1",
       "sha256": "2c68665099ab254ccea64b04c36056e52306a401cc69bbd421ef84bdb0e7326c"
     },
+    "alfworld_model_generated_memory_r8": {
+      "filename": "alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-model-generated-memory-intervention-r8-v1",
+      "sha256": "3dc1571e0b5aa6d828fcb70a058b80bab7e13e121636584e91ea0c5893c4af2d"
+    },
+    "alfworld_model_generated_memory_verification": {
+      "filename": "alfworld-model-generated-memory-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-durable-memory-verification-v1",
+      "sha256": "47e5ac5def0bd1697d7da81ed6846997617badb795800e0ab7189384ae9d123b"
+    },
     "alfworld_skill_intervention": {
       "filename": "alfworld-trace-skill-intervention-2026-08-02.json",
       "schema_version": "frankengate-alfworld-trace-skill-intervention-v1",
@@ -437,6 +449,10 @@
         "alfworld_family_disjoint_r3_causal_skill_benefit_confirmed": false,
         "alfworld_family_disjoint_r3_episodes": 16,
         "alfworld_intervention_verifier_passed": true,
+        "alfworld_model_generated_memory_r8_episodes": 12,
+        "alfworld_model_generated_memory_r8_invalid_action_delta_per_harness": 102,
+        "alfworld_model_generated_memory_r8_verifier_passed": true,
+        "alfworld_model_generated_memory_r8_wins": 0,
         "alfworld_revision_r2_candidate_invalid_actions": 56,
         "alfworld_revision_r2_candidate_wins": 0,
         "alfworld_revision_r2_episodes": 6,
@@ -532,6 +548,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "a43399b29bdbc03d21498103324ddf46653a0eb8b6652b077b745dad7158bb18",
-  "schema_version": "frankengate-combined-evidence-matrix-v16"
+  "result_sha256": "9e221a29f228c3f66a51f37cd9fae1bf7fd32a830df4c7b04b2423d60e8e981e",
+  "schema_version": "frankengate-combined-evidence-matrix-v17"
 }

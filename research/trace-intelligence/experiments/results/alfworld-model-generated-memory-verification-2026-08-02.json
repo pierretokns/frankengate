@@ -1,0 +1,11 @@
+{
+  "all_passed": true,
+  "check": {
+    "all_passed": true,
+    "raw": "alfworld-r8-model-generated-memory-llama.raw.json",
+    "raw_content_committed": false,
+    "receipt": "alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
+    "summary_keys_verified": 4
+  },
+  "schema_version": "frankengate-durable-memory-verification-v1"
+}
