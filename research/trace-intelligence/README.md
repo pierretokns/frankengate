@@ -253,6 +253,17 @@ action was admissible at the corresponding fresh state. This closes the
 independent task-outcome recomputation gate for the cohort, but does not
 establish authorization/security correctness or positive skill utility.
 
+The [`formatting-placebo control`](experiments/results/alfworld-family-disjoint-powered-r13-controls-2026-08-02.json)
+added the required output-format placebo to those same eight tasks. Llama 3.2
+through both harnesses produced `0/8` for no-skill, placebo, and trace-derived
+procedure; an independent verifier replayed all 48 rows with zero mismatches.
+The [`Qwen control replication`](experiments/results/alfworld-family-disjoint-powered-r14-qwen-controls-2026-08-02.json)
+then reproduced the three-arm result on Qwen 3 4B's native API (`0/8` for each
+arm; 24/24 rows independently replayed). This closes the second-model control
+replication gate, not the overall skill-release gate: SkillOpt/SkillGen/RHO
+candidate arms, security/policy verification, larger power, and enterprise
+outcomes remain open.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

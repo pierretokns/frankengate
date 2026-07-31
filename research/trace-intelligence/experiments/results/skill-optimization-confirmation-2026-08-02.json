@@ -57,6 +57,13 @@
       "result": "All six model/harness/arm cells were 0/8 wins with 280 invalid actions per cell; the fresh semantic verifier recomputed all 48 rows with zero mismatches and all actions admissible",
       "causal": false,
       "hard_edge": "The prescribed formatting control is now exercised, but this arm has one model, no SkillOpt/SkillGen/RHO candidates, and no positive utility; promotion remains closed"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r14-qwen-controls-2026-08-02.json",
+      "what_was_tested": "The same eight sealed tasks with no-skill, formatting placebo, and trace-derived procedure arms using Qwen 3 4B on the Ollama-native harness",
+      "result": "All three arms were 0/8 wins; each emitted 280 invalid actions; the fresh semantic verifier recomputed all 24 rows with zero mismatches and all actions admissible",
+      "causal": false,
+      "hard_edge": "Qwen control-arm replication strengthens the negative result but does not test a SkillOpt/SkillGen/RHO candidate or establish enterprise utility"
     }
   ],
   "model_harness_coverage": {
@@ -73,10 +80,10 @@
     "relevance": "Supports the mechanism and evaluation design, not the claim that Frankengate's traces are sufficient"
   },
   "required_next_experiment": {
-    "design": "Family-disjoint, held-out semantic intervention with no-skill, trace-derived skill, and an expert/formatting placebo",
+    "design": "Family-disjoint, held-out semantic intervention with no-skill, trace-derived skill, and an expert/formatting placebo; the no-skill/placebo/trace controls are now replicated across Llama 3.2 and Qwen 3 4B",
     "minimum_models": 2,
     "minimum_harnesses": 2,
     "required_verifiers": ["independent task correctness", "security/policy verifier", "tool-budget and abstention accounting"],
-    "release_gate": "Promote only if the trace-derived arm beats no-skill on sealed held-out outcomes with uncertainty bounds and no safety regression"
+    "release_gate": "Promote only if a trace-derived or optimizer-generated arm beats no-skill and placebo on sealed held-out outcomes with uncertainty bounds and no safety regression; SkillOpt/SkillGen/RHO arms and enterprise outcome labels remain required"
   }
 }
