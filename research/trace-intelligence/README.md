@@ -173,8 +173,13 @@ enterprise skill benefit.
 
 The [`Ollama Llama 3.2 native-tool control`](experiments/summaries/native-tool-protocol-ollama-llama32-2026-07-30.md)
 adds an independent local model control: 18 episodes across three protocol
-variants, each at 3/6 terminal matches. A Qwen3 4B attempt timed out under the
-endpoint's reasoning behavior and is retained only as a typed null.
+variants, each at 3/6 terminal matches. The follow-up
+[`two-model transfer matrix`](experiments/summaries/model-harness-transfer-native-tool-2026-07-31.md)
+completed the same fixture on Qwen3 4B: no-skill was 6/6, formatting placebo
+0/6, and trace-mined discipline 3/6, with 40–47 s mean latency versus Llama's
+1.1–1.3 s. The candidate is therefore model-sensitive and harmful on this
+Qwen protocol slice; this rejects automatic promotion but is not a semantic or
+enterprise-quality result. A true cross-harness held-out replay remains open.
 
 The [`Defog trace-mined skill pilot`](experiments/summaries/defog-trace-mined-skill-pilot-2026-07-30.md)
 is the first domain-valid local-model intervention: four visible-selection
