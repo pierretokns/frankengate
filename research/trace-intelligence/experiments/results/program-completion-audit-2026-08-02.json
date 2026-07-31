@@ -4,6 +4,14 @@
   "supersedes": "experiments/results/program-completion-audit-2026-08-01.json",
   "overall_status": "active_incomplete",
   "checkpoint": {
+    "program_scope_audit": {
+      "result": "experiments/results/program-scope-audit-2026-08-02.json",
+      "summary": "experiments/summaries/program-scope-audit-2026-08-02.md",
+      "status": "requirement_ledger_active_incomplete",
+      "requirements_checked": 6,
+      "completion_confirmed": false,
+      "raw_content_committed": false
+    },
     "alfworld_model_generated_memory_r8": {
       "result": "experiments/results/alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
       "summary": "experiments/summaries/alfworld-model-generated-memory-intervention-r8-2026-08-02.md",

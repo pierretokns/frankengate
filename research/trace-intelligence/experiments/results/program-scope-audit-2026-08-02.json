@@ -1,0 +1,163 @@
+{
+  "claim_boundary": {
+    "automatic_skill_or_memory_promotion_authorized": false,
+    "causal_enterprise_utility_confirmed": false,
+    "completion_confirmed": false,
+    "raw_trace_content_committed": false
+  },
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v17",
+  "open_requirements": [
+    "CMU publisher approval and trajectory metrics",
+    "family-disjoint semantic skill intervention with independent outcome labels",
+    "natural released Dream/procedure evaluation",
+    "prospective enterprise task outcomes and human labels",
+    "Aurora failover, replica lag, PITR, and scale behavior",
+    "cross-user collaboration utility and consent outcomes"
+  ],
+  "overall_status": "active_incomplete",
+  "program_audit_schema_version": "frankengate.program-completion-audit.v2",
+  "requirements": [
+    {
+      "decision": "real_roundtrip_partial_pass",
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/results/canonical-projection-e0-conformance-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/atif-rl-roundtrip-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/atif-rl-roundtrip-2026-07-30.md"
+        }
+      ],
+      "id": "schema_crosswalk",
+      "open_gate": "ATIF/OTel projections lose load-bearing RL reset, reward, termination, memory, and authorization facts; canonical DAG remains required.",
+      "requirement": "Compare ATIF, OpenInference/OTel, coding traces, and RL-environment traces.",
+      "status": "partial_proven"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/results/public-agent-history-discovery-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-alfworld-intervention-readiness-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/skill-improvement-strategy-audit-2026-07-30.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/natural-trace-memory-factorial-2026-08-02-r2.md"
+        }
+      ],
+      "id": "public_trace_and_concept_audit",
+      "open_gate": "Natural released Dream/procedure artifacts and enterprise-labeled concept transfer remain unavailable.",
+      "requirement": "Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.",
+      "status": "audited_with_typed_nulls"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/results/memory-mechanism-factorial-fixture-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-trace-skill-intervention-r3-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-trace-skill-memory-composition-r6-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-durable-memory-intervention-r7-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-model-generated-memory-intervention-r8-2026-08-02.json"
+        }
+      ],
+      "id": "single_and_composed_mechanisms",
+      "open_gate": "No mechanism has a powered causal lift with independent later-task labels; all learned candidates remain rejected or proposal-only.",
+      "requirement": "Test single and combined skill/memory mechanisms against held-out traces and RL environments.",
+      "status": "mechanics_and_small_interventions_proven; utility_unproven"
+    },
+    {
+      "decision": "offline_silver_and_local_rls_partial_pass",
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/results/wisp-governed-postgres-benchmark-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/wisp-share-codex-canonical-bounded-recovery-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/codetracebench-e2-postgres-joint-retrieval-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/bitemporal-memory-conformance-2026-07-30.json"
+        }
+      ],
+      "id": "governed_local_stack",
+      "open_gate": "Aurora failover, replica lag, PITR, extension compatibility, concurrency, and production SLOs are not measured.",
+      "requirement": "Exercise a local Aurora-like governed stack with PostgreSQL, RLS, vectors, deletion, and tool/eval release controls.",
+      "status": "local_postgresql_mechanics_proven; aurora_operations_unproven"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/combined-evidence-matrix-2026-08-02.json"
+        }
+      ],
+      "id": "cmu_and_enterprise_outcomes",
+      "open_gate": "CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.",
+      "requirement": "Run public/CMU trace analyses and answer cross-user similarity, skill gaps, collaboration, and enterprise outcome questions.",
+      "status": "cmu_approval_gated; enterprise_outcomes_unmeasured"
+    },
+    {
+      "evidence": [
+        {
+          "branch": "codex/trace-intelligence-academic-program"
+        },
+        {
+          "head": "6727276ea1087dd387896afaf50708849f05174a"
+        },
+        {
+          "remote": "https://github.com/pierretokns/frankengate.git"
+        },
+        {
+          "github_issue": "https://github.com/pierretokns/frankengate/issues/93"
+        },
+        {
+          "bead": "bif-kyy.17.13.4.4.5.3.2"
+        }
+      ],
+      "id": "publication_and_tracking",
+      "open_gate": "The overall program remains active until the research gates above close; publication mechanics themselves are functioning.",
+      "requirement": "Publish reproducible artifacts on a dedicated branch and track work in GitHub issues and beads.",
+      "status": "proven_for_current_checkpoint"
+    }
+  ],
+  "schema_version": "frankengate-program-scope-audit-v1"
+}
