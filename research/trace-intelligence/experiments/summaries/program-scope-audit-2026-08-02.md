@@ -20,11 +20,11 @@ Test single and combined skill/memory mechanisms against held-out traces and RL 
 
 Open gate: No mechanism has a powered causal lift with independent later-task labels; all learned candidates remain rejected or proposal-only.
 
-## `governed_local_stack` — local_postgresql_mechanics_proven; aurora_operations_unproven
+## `governed_local_stack` — local_replication_rls_failover_proven; aurora_operations_unproven
 
 Exercise a local Aurora-like governed stack with PostgreSQL, RLS, vectors, deletion, and tool/eval release controls.
 
-Open gate: Aurora failover, replica lag, PITR, extension compatibility, concurrency, and production SLOs are not measured.
+Open gate: Managed Aurora semantics, PITR, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion and RLS mechanics are measured separately.
 
 ## `cmu_and_enterprise_outcomes` — cmu_approval_gated; enterprise_outcomes_unmeasured
 

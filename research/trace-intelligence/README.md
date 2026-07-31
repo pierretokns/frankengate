@@ -35,8 +35,8 @@ Latest public-OTel and composition checkpoints:
 The current requirement-level status is captured in the
 [`program completion audit`](experiments/summaries/program-completion-audit-2026-08-01.md).
 It records the program as active/incomplete: local mechanics and publication
-are proven, while CMU raw access, Aurora operations, and causal enterprise
-outcomes remain open.
+are proven, while CMU raw access, managed Aurora operations, and causal
+enterprise outcomes remain open.
 
 The first independent/composed checkpoint is available in:
 
@@ -900,6 +900,22 @@ with rollback-only assertions in [`sql/010_skill_release_atomic_lifecycle_assert
 
 See
 [`experiments/summaries/trace-commons-memory-h5-concurrency-postgres-2026-07-30.md`](experiments/summaries/trace-commons-memory-h5-concurrency-postgres-2026-07-30.md).
+
+### Disposable replication and promotion lab
+
+The Colima runtime probe initially reported a broken macOS Docker shim. A
+capability check now finds the daemon through `colima ssh`, and the disposable
+[`aurora_like_replication_lab.py`](aurora_like_replication_lab.py) exercises a
+fresh PostgreSQL 16 primary/standby pair with tenant RLS, physical replication,
+marker propagation, promotion, and a post-promotion write. The latest receipt
+measured marker visibility in 293.694 ms and promotion in 309.056 ms, with RLS
+isolation verified. This is evidence for local PostgreSQL mechanics only; it is
+not evidence for managed Aurora failover, PITR, RDS Proxy, extension
+compatibility, concurrency, or production SLOs. PITR remains explicitly
+unexecuted.
+
+The machine-readable result is
+[`experiments/results/aurora-like-replication-lab-2026-08-02.json`](experiments/results/aurora-like-replication-lab-2026-08-02.json).
 
 ## E2 same-work retrieval factorial
 

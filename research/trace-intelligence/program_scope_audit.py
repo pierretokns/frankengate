@@ -99,16 +99,17 @@ def build_audit() -> dict[str, Any]:
         {
             "id": "governed_local_stack",
             "requirement": "Exercise a local Aurora-like governed stack with PostgreSQL, RLS, vectors, deletion, and tool/eval release controls.",
-            "status": "local_postgresql_mechanics_proven; aurora_operations_unproven",
+            "status": "local_replication_rls_failover_proven; aurora_operations_unproven",
             "evidence": file_evidence(
                 "experiments/results/wisp-governed-postgres-benchmark-2026-07-30.json",
                 "experiments/results/wisp-share-codex-canonical-bounded-recovery-2026-07-30.json",
                 "experiments/results/codetracebench-e2-postgres-joint-retrieval-2026-07-30.json",
                 "experiments/results/bitemporal-memory-conformance-2026-07-30.json",
                 "experiments/results/aurora-runtime-probe-2026-08-02.json",
+                "experiments/results/aurora-like-replication-lab-2026-08-02.json",
             ),
             "decision": levels.get("L4_semantic_candidate_retrieval", {}).get("status"),
-            "open_gate": "Aurora failover, replica lag, PITR, extension compatibility, concurrency, and production SLOs are not measured.",
+            "open_gate": "Managed Aurora semantics, PITR, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion and RLS mechanics are measured separately.",
         },
         {
             "id": "cmu_and_enterprise_outcomes",

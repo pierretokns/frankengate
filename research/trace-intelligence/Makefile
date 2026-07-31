@@ -2,7 +2,7 @@ PYTHON ?= python3
 PYTHONPYCACHEPREFIX ?= /private/tmp/frankengate-trace-intelligence-pycache
 QWEN3_EMBEDDING_DEVICE ?= cpu
 
-.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory longitudinal-memory-expansion longitudinal-memory-local-model longitudinal-memory-local-finalize memory-h5-concurrency e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
+.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory longitudinal-memory-expansion longitudinal-memory-local-model longitudinal-memory-local-finalize memory-h5-concurrency aurora-like-replication e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
 
 verify: test validate compile
 
@@ -225,6 +225,13 @@ longitudinal-memory-local-finalize:
 memory-h5-concurrency:
 	PYTHONDONTWRITEBYTECODE=1 $(PYTHON) \
 		tests/run_trace_commons_memory_h5_concurrency.py --timeout 30
+
+# Runs a disposable PostgreSQL 16 primary/standby lab through Colima. This
+# measures local replication, tenant RLS, marker propagation, and promotion;
+# it must never be interpreted as managed Aurora or RDS Proxy evidence.
+aurora-like-replication:
+	$(PYTHON) aurora_like_replication_lab.py \
+		--output experiments/results/aurora-like-replication-lab-2026-08-02.json
 
 # Runs the frozen raw CodeTraceBench E2 quality factorial. The archive root and
 # embedding snapshot are intentionally external to Git. PostgreSQL RLS evidence

@@ -73,13 +73,24 @@
     },
     "aurora_runtime_probe": {
       "result": "experiments/results/aurora-runtime-probe-2026-08-02.json",
-      "status": "container_runtime_unavailable_typed_null",
+      "status": "colima_vm_container_path_found_no_managed_fixture",
       "colima_running": true,
-      "container_cli_usable": false,
+      "container_cli_usable": true,
+      "container_cli_source": "colima_ssh",
       "aurora_like_database_reachable": false,
       "failover_test_executed": false,
       "pitr_test_executed": false,
       "replica_lag_test_executed": false
+    },
+    "aurora_like_replication_lab": {
+      "result": "experiments/results/aurora-like-replication-lab-2026-08-02.json",
+      "status": "local_postgresql_replication_rls_failover_passed",
+      "replica_marker_propagation_ms": 293.694,
+      "promotion_ms": 309.056,
+      "rls_isolation_verified": true,
+      "post_promotion_write_verified": true,
+      "managed_aurora_behavior_proven": false,
+      "pitr_executed": false
     },
     "program_scope_audit": {
       "result": "experiments/results/program-scope-audit-2026-08-02.json",
@@ -305,7 +316,7 @@
     "family-disjoint semantic skill intervention with independent outcome labels",
     "natural released Dream/procedure evaluation",
     "prospective enterprise task outcomes and human labels",
-    "Aurora failover, replica lag, PITR, and scale behavior",
+    "Managed Aurora semantics, PITR, extension compatibility, concurrency, and scale behavior",
     "cross-user collaboration utility and consent outcomes"
   ],
   "raw_content_committed": false,

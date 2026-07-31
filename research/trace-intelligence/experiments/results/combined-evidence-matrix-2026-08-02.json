@@ -171,6 +171,12 @@
       "schema_version": "atif-rl-roundtrip-result-v1",
       "sha256": "96492638a620da3a7cf4c9d0db52d1398b7e2e27a0017a3c74d418e471ed3b5e"
     },
+    "aurora_like_replication_lab": {
+      "filename": "aurora-like-replication-lab-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-local-postgres-replication-lab-v1",
+      "sha256": "807b8b11d33d12dbcaad35d158430e5d390ed8d82a36bc2c52e46cc5efb72ac0"
+    },
     "codetracebench": {
       "filename": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
       "schema_version": "frankengate-trace-empirical-result-v1",
@@ -422,6 +428,12 @@
         "human_label_gate_passed": false,
         "joint_local_postgres_gate_passed": true,
         "lifecycle_oracles_passed": true,
+        "local_failover_promotion_ms": 309.056,
+        "local_replica_marker_propagation_ms": 293.694,
+        "local_replication_lab_executed": true,
+        "local_replication_mechanics_proven": true,
+        "local_rls_isolation_verified": true,
+        "managed_aurora_behavior_proven": false,
         "post_rollback_visible_rows": 0,
         "postgres_exact_pgvector_p50_ms": 3.016834,
         "postgres_exact_pgvector_recall_at_20": 0.6666666666666666,
@@ -605,6 +617,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "af1892ce0bcdd8a477846f94edb2f3453889064ea68766bb45fec653ed45bf39",
+  "result_sha256": "56e22370905b7ab2035f888b155b9c683817f0da0c3374d88cac97ac88f61576",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

@@ -70,6 +70,7 @@ REQUIRED_RESULTS = {
     ),
 }
 OPTIONAL_RESULTS = {
+    "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
     "alfworld_skill_intervention_r3": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
     "alfworld_skill_intervention_r4_qwen": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
@@ -182,6 +183,7 @@ def build_matrix(
     alfworld_family_disjoint_powered_r12_replayable = results.get("alfworld_family_disjoint_powered_r12_replayable")
     alfworld_family_disjoint_powered_r12_semantic_verification = results.get("alfworld_family_disjoint_powered_r12_semantic_verification")
     alfworld_family_disjoint_powered_r10_qwen_incomplete = results.get("alfworld_family_disjoint_powered_r10_qwen_incomplete")
+    aurora_like_replication_lab = results.get("aurora_like_replication_lab")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -745,6 +747,35 @@ def build_matrix(
                     e2_joint,
                     "acceptance",
                     "concurrency_or_scale_gate_passed",
+                ),
+                "local_replication_lab_executed": bool(aurora_like_replication_lab),
+                "local_replication_mechanics_proven": bool(
+                    aurora_like_replication_lab
+                    and aurora_like_replication_lab.get("claim_boundary", {}).get(
+                        "local_postgresql_mechanics_proven", False
+                    )
+                ),
+                "local_replica_marker_propagation_ms": (
+                    aurora_like_replication_lab.get("replica_lag", {}).get("propagation_ms")
+                    if aurora_like_replication_lab
+                    else None
+                ),
+                "local_failover_promotion_ms": (
+                    aurora_like_replication_lab.get("failover", {}).get("promotion_ms")
+                    if aurora_like_replication_lab
+                    else None
+                ),
+                "local_rls_isolation_verified": bool(
+                    aurora_like_replication_lab
+                    and aurora_like_replication_lab.get("rls", {}).get(
+                        "cross_tenant_isolation_verified", False
+                    )
+                ),
+                "managed_aurora_behavior_proven": bool(
+                    aurora_like_replication_lab
+                    and aurora_like_replication_lab.get("claim_boundary", {}).get(
+                        "managed_aurora_behavior_proven", False
+                    )
                 ),
             },
             "decision": (
