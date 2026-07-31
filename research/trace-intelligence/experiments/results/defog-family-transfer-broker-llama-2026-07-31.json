@@ -1,0 +1,91 @@
+{
+  "arm_metrics": {
+    "ollama-native": {
+      "formatting_placebo": {
+        "authority_valid": 4,
+        "mean_elapsed_ms": 2470.787,
+        "semantic_correct": 0,
+        "successful_sql_attempts": 0,
+        "tasks": 4,
+        "terminal_submissions": 0,
+        "unauthorized_observation": 0
+      },
+      "no_skill": {
+        "authority_valid": 4,
+        "mean_elapsed_ms": 2755.6172500000002,
+        "semantic_correct": 0,
+        "successful_sql_attempts": 0,
+        "tasks": 4,
+        "terminal_submissions": 0,
+        "unauthorized_observation": 0
+      },
+      "trace_mined_terminal_discipline": {
+        "authority_valid": 4,
+        "mean_elapsed_ms": 3232.88525,
+        "semantic_correct": 0,
+        "successful_sql_attempts": 0,
+        "tasks": 4,
+        "terminal_submissions": 0,
+        "unauthorized_observation": 0
+      }
+    },
+    "openai-compatible": {
+      "formatting_placebo": {
+        "authority_valid": 4,
+        "mean_elapsed_ms": 2467.9725,
+        "semantic_correct": 0,
+        "successful_sql_attempts": 0,
+        "tasks": 4,
+        "terminal_submissions": 0,
+        "unauthorized_observation": 0
+      },
+      "no_skill": {
+        "authority_valid": 4,
+        "mean_elapsed_ms": 2910.11025,
+        "semantic_correct": 0,
+        "successful_sql_attempts": 0,
+        "tasks": 4,
+        "terminal_submissions": 0,
+        "unauthorized_observation": 0
+      },
+      "trace_mined_terminal_discipline": {
+        "authority_valid": 4,
+        "mean_elapsed_ms": 3237.0860000000002,
+        "semantic_correct": 0,
+        "successful_sql_attempts": 0,
+        "tasks": 4,
+        "terminal_submissions": 0,
+        "unauthorized_observation": 0
+      }
+    }
+  },
+  "claim_boundary": {
+    "all_authority_valid": true,
+    "causal_skill_benefit_established": false,
+    "next_required": "Repair or replace the model/tool protocol before a held-out semantic skill comparison; then evaluate all required proposal arms with an independent verifier.",
+    "reason": "Every arm failed the terminal protocol on this Llama family-transfer slice; no submitted answer exists to score semantically.",
+    "semantic_quality_estimated": false,
+    "unauthorized_observations": 0
+  },
+  "classification": "family_disjoint_governed_harness_transfer",
+  "database_family": "broker",
+  "harnesses": [
+    {
+      "id": "openai-compatible",
+      "source_result_sha256": "561748f7271a80d4782f54618d76c3b89c725b585913cbd321496791c0362005"
+    },
+    {
+      "id": "ollama-native",
+      "source_result_sha256": "511e731e1a70a8d8e2e2ab536cf378a9f5bd49a24345057f349217e9793bd510"
+    }
+  ],
+  "raw_data_committed": false,
+  "schema_version": "frankengate-defog-family-transfer-analysis-v1",
+  "task_count": 4,
+  "task_id_hashes": [
+    "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b",
+    "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60",
+    "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58",
+    "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+  ]
+}

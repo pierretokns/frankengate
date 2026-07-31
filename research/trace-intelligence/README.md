@@ -198,6 +198,14 @@ making more attempts, so this is a runtime diagnostic—not confirmation that
 traces optimize skills. The decisive family-disjoint held-out replay with an
 independent verifier and a repaired terminal protocol remains open.
 
+The [`broker family-transfer pilot`](experiments/summaries/defog-family-transfer-broker-2026-07-31.md)
+ran four held-out broker tasks through both Llama harnesses under the same
+governed role. All 24 runs were authorized and had zero unauthorized
+observations, but every arm failed terminal submission; no semantic estimate
+is valid. The Qwen attempt timed out before its first arm. This is evidence that
+the current SQL protocol must be repaired before any trace-derived skill
+quality claim can be made on held-out families.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,
