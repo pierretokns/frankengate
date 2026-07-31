@@ -1,0 +1,255 @@
+{
+  "comparative_decision": {
+    "candidate_skill_split_rule": "partition by database/schema family before any candidate generation; withhold both tasks and traces for selection and test families",
+    "primary_enterprise_analytics_control": "crmarena",
+    "primary_immediate_postgresql_causal_runner": "defog_sql_eval",
+    "primary_trace_mining_corpus": "bird_sql",
+    "unsupported_claims": [
+      "production-user representativeness",
+      "full OTel causal or latency fidelity",
+      "person-level SQL skill inference",
+      "commercial training rights for CRMArena",
+      "Aurora compatibility from SQLite replay"
+    ],
+    "why_not_one_corpus": [
+      "BIRD-SQL supplies multi-schema real action/observation traces and reconstructable SQLite replay",
+      "CRMArena supplies realistic enterprise CRM analytics but only one org and non-commercial rights",
+      "Defog supplies locally executable PostgreSQL task families but not natural agent traces"
+    ]
+  },
+  "content_sha256": "0df2db00ec6b8fd36903e611060afb616ecc033339ed0ecaec9e3c9e190a225d",
+  "corpora": {
+    "bird_sql": {
+      "claim_boundary": [
+        "candidate procedures must be mined only from evidence-family traces",
+        "selection and test database families must withhold both tasks and traces before generation",
+        "the published default split is task-disjoint but not schema-family-disjoint",
+        "SQLite outcome evidence does not establish PostgreSQL or Aurora transfer",
+        "the spans preserve actions and observations, not full assistant reasoning or wall-clock latency"
+      ],
+      "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+      "dataset_revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+      "input_receipts": {
+        "test": {
+          "bytes": 5873,
+          "relative_path": "test.jsonl",
+          "sha256": "62c0bc72c4bc5a2690a34c6e5096b84b36b9f685e2abe63212d5d89417295513"
+        },
+        "traces.otel": {
+          "bytes": 11222989,
+          "relative_path": "traces.otel.jsonl",
+          "sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+        },
+        "train": {
+          "bytes": 73677,
+          "relative_path": "train.jsonl",
+          "sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8"
+        }
+      },
+      "license": "CC-BY-SA-4.0",
+      "otel_loss_receipt": {
+        "all_spans_are_roots": true,
+        "balanced_action_observation_traces": 1993,
+        "full_conversation_reconstruction_supported": false,
+        "latency_analysis_supported": false,
+        "maximum_end_time_unix_nano": 103,
+        "nonempty_parent_span_ids": 0,
+        "real_wall_clock_timestamps_available": false,
+        "sequence_basis": "synthetic ordinal timestamps within each trace; no parent edges"
+      },
+      "replay_classification": {
+        "captured_split": "train only",
+        "default_split_is_schema_family_disjoint": false,
+        "deterministic_execution_match_verifier": true,
+        "environment_reconstructable": true,
+        "external_environment_source": "BIRD mini-dev v2 Google Drive archive",
+        "fresh_database_copy_per_attempt": true,
+        "full_agent_conversation_preserved": false,
+        "gold_linked_retrospective_evaluation": true,
+        "hf_snapshot_self_contained": false,
+        "hidden_test_trace_contamination": false,
+        "real_otel_parentage_and_latency_preserved": false,
+        "real_tool_calls_and_observations": true
+      },
+      "source_adapter": {
+        "path": "packages/environment-capture/bird-sql",
+        "repository": "https://github.com/experientiallabs/world-model-harness",
+        "revision": "d7bb0077fb87da0b078065743f7bab310883bbb2",
+        "stable_tag": "v0.2.2"
+      },
+      "task_inventory": {
+        "dimension_counts": {
+          "california_schools": 22,
+          "card_games": 22,
+          "codebase_community": 22,
+          "debit_card_specializing": 22,
+          "european_football_2": 22,
+          "financial": 22,
+          "formula_1": 22,
+          "student_club": 22,
+          "superhero": 22,
+          "thrombosis_prediction": 22,
+          "toxicology": 22
+        },
+        "dimension_key": "db_name",
+        "malformed_task_rows": 0,
+        "test_tasks": 20,
+        "train_tasks": 222,
+        "train_test_id_overlap": 0
+      },
+      "trace_inventory": {
+        "captured_base_tasks": 222,
+        "captured_splits": {
+          "train": 1993
+        },
+        "captured_test_tasks": 0,
+        "captured_train_tasks": 222,
+        "distinct_traces": 1993,
+        "duplicate_span_ids": 0,
+        "environment_transitions": 4168,
+        "full_assistant_narrative_field_observed": false,
+        "malformed_spans": 0,
+        "mean_reward": 0.674862,
+        "metadata_records": 1993,
+        "models": {
+          "us.anthropic.claude-opus-4-6-v1": 17,
+          "us.anthropic.claude-opus-4-7": 988,
+          "us.anthropic.claude-opus-4-8": 988
+        },
+        "operations": {
+          "chat": 4168,
+          "execute_tool": 4168
+        },
+        "prompts_preserved": 1993,
+        "reward_exact_one": 1345,
+        "reward_exact_zero": 648,
+        "reward_records": 1993,
+        "spans": 8336,
+        "status_codes": {
+          "STATUS_CODE_ERROR": 7,
+          "STATUS_CODE_OK": 8329
+        },
+        "status_error_tool_results": 7,
+        "tool_arguments_preserved": 4168,
+        "tool_results_preserved": 4168,
+        "uncaptured_train_tasks": 0
+      }
+    },
+    "crmarena": {
+      "claim_boundary": [
+        "the corpus covers one realistic Salesforce org, not cross-schema enterprise transfer",
+        "SQLite SQL differs from upstream SOQL and from Frankengate PostgreSQL",
+        "CC-BY-NC-4.0 prevents treating this as a commercial production-training corpus",
+        "the deterministic token-F1 knowledge grader is a stand-in for upstream LLM extraction",
+        "the spans preserve actions and observations, not full assistant reasoning or wall-clock latency"
+      ],
+      "dataset_id": "experiential-labs/wmh-crmarena-traces",
+      "dataset_revision": "9a70e127f6dce74110a17092f62696f25a3a526b",
+      "input_receipts": {
+        "test": {
+          "bytes": 28325,
+          "relative_path": "test.jsonl",
+          "sha256": "2dcb95a490678744ed176716ff3913dde77bb64ae81b816e92ff7ab1871fae2d"
+        },
+        "traces.otel": {
+          "bytes": 1626891,
+          "relative_path": "traces.otel.jsonl",
+          "sha256": "1c10705a5a1dd22ad6b380e97fdb8acfae81f12c71ae6fc5bf7d68d9af682ef9"
+        },
+        "train": {
+          "bytes": 70886,
+          "relative_path": "train.jsonl",
+          "sha256": "908edb9956536fc14e0c9c9f430290e99d6a1831629dfeaf47872d2809e874fd"
+        }
+      },
+      "license": "CC-BY-NC-4.0; non-commercial research only",
+      "otel_loss_receipt": {
+        "all_spans_are_roots": true,
+        "balanced_action_observation_traces": 80,
+        "full_conversation_reconstruction_supported": false,
+        "latency_analysis_supported": false,
+        "maximum_end_time_unix_nano": 153,
+        "nonempty_parent_span_ids": 0,
+        "real_wall_clock_timestamps_available": false,
+        "sequence_basis": "synthetic ordinal timestamps within each trace; no parent edges"
+      },
+      "replay_classification": {
+        "captured_split": "train only",
+        "commercial_training_or_product_use_supported": false,
+        "deterministic_exact_or_token_f1_verifier": true,
+        "environment_reconstructable": true,
+        "external_environment_source": "official SalesforceAIResearch/CRMArena SQLite org dump",
+        "fresh_read_only_database_copy_per_attempt": true,
+        "full_agent_conversation_preserved": false,
+        "gold_linked_retrospective_evaluation": true,
+        "hf_snapshot_self_contained": false,
+        "hidden_test_trace_contamination": false,
+        "real_otel_parentage_and_latency_preserved": false,
+        "real_tool_calls_and_observations": true,
+        "schema_family_disjoint_evaluation_supported": false
+      },
+      "source_adapter": {
+        "path": "packages/environment-capture/crmarena",
+        "repository": "https://github.com/experientiallabs/world-model-harness",
+        "revision": "d7bb0077fb87da0b078065743f7bab310883bbb2",
+        "stable_tag": "v0.2.2"
+      },
+      "task_inventory": {
+        "dimension_counts": {
+          "best_region_identification": 7,
+          "case_routing": 7,
+          "handle_time": 7,
+          "knowledge_qa": 7,
+          "monthly_trend_analysis": 7,
+          "named_entity_disambiguation": 7,
+          "policy_violation_identification": 7,
+          "top_issue_identification": 7,
+          "transfer_count": 7
+        },
+        "dimension_key": "task_type",
+        "malformed_task_rows": 0,
+        "test_tasks": 18,
+        "train_tasks": 45,
+        "train_test_id_overlap": 0
+      },
+      "trace_inventory": {
+        "captured_base_tasks": 45,
+        "captured_splits": {
+          "train": 80
+        },
+        "captured_test_tasks": 0,
+        "captured_train_tasks": 45,
+        "distinct_traces": 80,
+        "duplicate_span_ids": 0,
+        "environment_transitions": 553,
+        "full_assistant_narrative_field_observed": false,
+        "malformed_spans": 0,
+        "mean_reward": 0.734863,
+        "metadata_records": 80,
+        "models": {
+          "us.anthropic.claude-opus-4-7": 45,
+          "us.anthropic.claude-opus-4-8": 35
+        },
+        "operations": {
+          "chat": 553,
+          "execute_tool": 553
+        },
+        "prompts_preserved": 80,
+        "reward_exact_one": 56,
+        "reward_exact_zero": 16,
+        "reward_records": 80,
+        "spans": 1106,
+        "status_codes": {
+          "STATUS_CODE_ERROR": 5,
+          "STATUS_CODE_OK": 1101
+        },
+        "status_error_tool_results": 5,
+        "tool_arguments_preserved": 553,
+        "tool_results_preserved": 553,
+        "uncaptured_train_tasks": 0
+      }
+    }
+  },
+  "engine_version": "hf-nl2sql-trace-audit-v1",
+  "schema_version": "hf-nl2sql-trace-audit-result-v1"
+}
