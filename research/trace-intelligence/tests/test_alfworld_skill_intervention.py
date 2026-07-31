@@ -20,6 +20,10 @@ class AlfworldSkillInterventionTests(unittest.TestCase):
         self.assertIn("Re-read the observation", MODULE.TRACE_MINED_SKILL_V2)
         self.assertLess(len(MODULE.TRACE_MINED_SKILL_V2), len(MODULE.TRACE_MINED_SKILL))
 
+    def test_working_memory_candidate_is_explicitly_prior_action_only(self):
+        self.assertIn("prior actions only", MODULE.TRACE_MINED_SKILL_V2_MEMORY)
+        self.assertIn("never invent state", MODULE.TRACE_MINED_SKILL_V2_MEMORY)
+
     def test_action_parser_prefers_admissible_tagged_action(self):
         action, valid = MODULE.choose_action("<action>go to drawer 1</action>", ["look", "go to drawer 1"])
         self.assertTrue(valid)

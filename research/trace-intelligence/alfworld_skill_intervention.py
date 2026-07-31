@@ -32,6 +32,12 @@ TRACE_MINED_SKILL_V2 = """Trace-derived action discipline:
 - Follow the state: navigate, open, take, perform the required transformation, then place.
 - Re-read the observation and admissible actions after every step.
 """
+TRACE_MINED_SKILL_V2_MEMORY = """Trace-derived action discipline:
+- Output exactly one admissible action in angle brackets; do not explain.
+- Follow the state: navigate, open, take, perform the required transformation, then place.
+- Re-read the observation and admissible actions after every step.
+- Treat the supplied working memory as prior actions only; never invent state from it.
+"""
 FORMAT_PLACEBO = "Respond with exactly one action enclosed in <action>...</action>."
 
 
@@ -91,6 +97,7 @@ def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: s
         steps = 0
         invalid = 0
         api_calls = 0
+        action_history: list[str] = []
         started = time.monotonic()
         while steps < max_steps and not done[0]:
             observation = obs[0][0]
@@ -103,6 +110,8 @@ def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: s
                 # Keep the intervention in the system contract so the candidate
                 # does not compete with the state/action list in the user turn.
                 system = "You are an ALFWorld agent.\n" + TRACE_MINED_SKILL_V2
+            elif arm == "trace_mined_procedure_v2_plus_working_memory":
+                system = "You are an ALFWorld agent.\n" + TRACE_MINED_SKILL_V2_MEMORY
             elif arm == "formatting_placebo":
                 skill = FORMAT_PLACEBO + "\n"
             prompt = (
@@ -112,6 +121,9 @@ def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: s
                 + "\n- ".join(admissible)
                 + "\nChoose exactly one admissible action."
             )
+            if arm == "trace_mined_procedure_v2_plus_working_memory":
+                prior = action_history[-8:] or ["<none>"]
+                prompt += "\nWorking memory (prior actions only):\n- " + "\n- ".join(prior)
             try:
                 response = call_chat(
                     endpoint,
@@ -127,6 +139,7 @@ def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: s
             if not valid:
                 invalid += 1
             obs, _, done, infos = env.step([action])
+            action_history.append(action)
             steps += 1
         return {
             "task_hash": sha256_text(task_path),
@@ -167,7 +180,7 @@ def main() -> int:
     config["dataset"]["num_eval_games"] = 1
     config["general"]["use_cuda"] = False
     base = AlfredTWEnv(config, "eval_out_of_distribution")
-    all_arms = ["no_skill", "formatting_placebo", "trace_mined_procedure", "trace_mined_procedure_v2"]
+    all_arms = ["no_skill", "formatting_placebo", "trace_mined_procedure", "trace_mined_procedure_v2", "trace_mined_procedure_v2_plus_working_memory"]
     arms = args.arm or all_arms
     unknown_arms = sorted(set(arms) - set(all_arms))
     if unknown_arms:

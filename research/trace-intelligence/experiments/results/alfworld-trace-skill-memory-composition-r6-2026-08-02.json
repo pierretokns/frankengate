@@ -1,0 +1,49 @@
+{
+  "schema_version": "frankengate-alfworld-trace-skill-memory-composition-r6-v1",
+  "study": "family-disjoint trace-skill plus working-memory composition",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "task_family_count": 4,
+    "task_families": ["look_at_obj_in_light", "pick_and_place_simple", "pick_clean_then_place_in_recep", "pick_heat_then_place_in_recep"],
+    "task_hashes": [
+      "8c79c8cd40907481f59933f4743a09063ccc2a4600113ca56aa17f7c23b34944",
+      "453f5330dd1fb27ee0a9b525af37524f1d8ea4c9489dd66c68ba8b31faa32da5",
+      "e318b564675a0771882055bd9a01adadf5963553195efbf2dce773737fcb8c3e",
+      "49cdb3fcbf886a316c5760c1b94a8d168cae29d88e9300e1f2a3dffd91d52600"
+    ]
+  },
+  "protocol": {
+    "candidate": "trace_mined_procedure_v2_plus_working_memory",
+    "comparison_arm": "trace_mined_procedure_v2",
+    "working_memory": "last eight executed admissible actions, injected after the current observation and action list",
+    "model": "llama3.2:latest",
+    "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
+    "episodes": 8,
+    "max_steps": 35,
+    "expert_control_wins": 4,
+    "expert_steps": [7, 20, 8, 11],
+    "expert_horizon_covers_all_tasks": true,
+    "raw_receipt": "/private/tmp/alfworld-r6-llama-working-memory-four-families.json"
+  },
+  "aggregate": {
+    "llama3.2:latest|ollama-native-api|trace_mined_procedure_v2_plus_working_memory": {"episodes": 4, "wins": 0, "win_rate": 0.0, "invalid_actions": 100, "mean_steps": 35.0, "mean_elapsed_ms": 7953.31225},
+    "llama3.2:latest|ollama-openai-compatible|trace_mined_procedure_v2_plus_working_memory": {"episodes": 4, "wins": 0, "win_rate": 0.0, "invalid_actions": 100, "mean_steps": 35.0, "mean_elapsed_ms": 7663.9145}
+  },
+  "comparison": {
+    "trace_mined_procedure_v2_invalid_actions_per_harness": 84,
+    "working_memory_invalid_actions_per_harness": 100,
+    "invalid_action_delta_per_harness": 16,
+    "candidate_wins": 0,
+    "composition_improved_task_success": false,
+    "composition_improved_protocol_validity": false
+  },
+  "claim_boundary": {
+    "combined_semantic_comparison_executed": true,
+    "quality_comparison_valid": true,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "The expert horizon covered every task. Adding prior-action working memory to the trace-derived procedure increased invalid actions from 84 to 100 per harness and produced no wins; this composition is rejected for this slice."
+  },
+  "raw_model_content_committed": false
+}

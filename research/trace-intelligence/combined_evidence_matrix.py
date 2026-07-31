@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v14"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v15"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -75,6 +75,7 @@ OPTIONAL_RESULTS = {
     "alfworld_skill_intervention_r4_qwen": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
     "alfworld_intervention_verification": "alfworld-intervention-verification-2026-08-02.json",
     "alfworld_skill_intervention_r5_qwen": "alfworld-trace-skill-intervention-r5-qwen-2026-08-02.json",
+    "alfworld_skill_memory_composition_r6": "alfworld-trace-skill-memory-composition-r6-2026-08-02.json",
 }
 
 
@@ -158,6 +159,7 @@ def build_matrix(
     alfworld_skill_intervention_r4_qwen = results.get("alfworld_skill_intervention_r4_qwen")
     alfworld_intervention_verification = results.get("alfworld_intervention_verification")
     alfworld_skill_intervention_r5_qwen = results.get("alfworld_skill_intervention_r5_qwen")
+    alfworld_skill_memory_composition_r6 = results.get("alfworld_skill_memory_composition_r6")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -224,6 +226,10 @@ def build_matrix(
         "r5_qwen_candidate_wins": sum(v.get("wins", 0) for k, v in (alfworld_skill_intervention_r5_qwen.get("aggregate", {}) if alfworld_skill_intervention_r5_qwen else {}).items() if "trace_mined_procedure_v2" in k),
         "r5_qwen_candidate_invalid_actions": sum(v.get("invalid_actions", 0) for k, v in (alfworld_skill_intervention_r5_qwen.get("aggregate", {}) if alfworld_skill_intervention_r5_qwen else {}).items() if "trace_mined_procedure_v2" in k),
         "r5_qwen_quality_comparison_valid": bool(alfworld_skill_intervention_r5_qwen and alfworld_skill_intervention_r5_qwen.get("claim_boundary", {}).get("quality_comparison_valid", False)),
+        "r6_episodes": alfworld_skill_memory_composition_r6.get("protocol", {}).get("episodes", 0) if alfworld_skill_memory_composition_r6 else 0,
+        "r6_candidate_wins": alfworld_skill_memory_composition_r6.get("comparison", {}).get("candidate_wins", 0) if alfworld_skill_memory_composition_r6 else 0,
+        "r6_invalid_action_delta_per_harness": alfworld_skill_memory_composition_r6.get("comparison", {}).get("invalid_action_delta_per_harness", 0) if alfworld_skill_memory_composition_r6 else 0,
+        "r6_composition_improved_task_success": bool(alfworld_skill_memory_composition_r6 and alfworld_skill_memory_composition_r6.get("comparison", {}).get("composition_improved_task_success", False)),
     }
 
     trace_commons_attestation_passed = bool(
@@ -1038,6 +1044,10 @@ def build_matrix(
                 "alfworld_cross_model_r5_qwen_candidate_wins": revision_evidence["r5_qwen_candidate_wins"],
                 "alfworld_cross_model_r5_qwen_candidate_invalid_actions": revision_evidence["r5_qwen_candidate_invalid_actions"],
                 "alfworld_cross_model_r5_qwen_quality_comparison_valid": revision_evidence["r5_qwen_quality_comparison_valid"],
+                "alfworld_skill_memory_composition_r6_episodes": revision_evidence["r6_episodes"],
+                "alfworld_skill_memory_composition_r6_candidate_wins": revision_evidence["r6_candidate_wins"],
+                "alfworld_skill_memory_composition_r6_invalid_action_delta_per_harness": revision_evidence["r6_invalid_action_delta_per_harness"],
+                "alfworld_skill_memory_composition_r6_improved_task_success": revision_evidence["r6_composition_improved_task_success"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1365,6 +1375,10 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"- The fair-horizon Qwen3 4B replay added {skill['alfworld_cross_model_r5_qwen_episodes']} episodes with an expert-verified sufficient horizon. "
             f"The candidate won {skill['alfworld_cross_model_r5_qwen_candidate_wins']} and emitted "
             f"{skill['alfworld_cross_model_r5_qwen_candidate_invalid_actions']} invalid actions; semantic comparison was valid but causal promotion remains false.",
+            f"- The composed trace-skill plus working-memory arm added {skill['alfworld_skill_memory_composition_r6_episodes']} episodes. "
+            f"It changed invalid actions by {skill['alfworld_skill_memory_composition_r6_invalid_action_delta_per_harness']} per harness and produced "
+            f"{skill['alfworld_skill_memory_composition_r6_candidate_wins']} wins; composition improved task success: "
+            f"{skill['alfworld_skill_memory_composition_r6_improved_task_success']}.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "
