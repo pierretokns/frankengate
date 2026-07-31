@@ -1,0 +1,13 @@
+{
+  "date": "2026-07-31",
+  "local_evidence": {
+    "governed_wisp": {"trajectories":104,"events":17505,"unauthorized_candidate_counts_zero":true,"proposal_lineage_passed":true,"warm_cache_structural_p50_ms":23.29,"fixture":"local PostgreSQL 16.12 + pgvector 0.8.1"},
+    "memory_h5_transaction": {"assertions_passed":26,"forced_rls":true,"zero_residue":true,"fixture":"disposable local PostgreSQL 16.12 + pgvector 0.8.1"},
+    "memory_h5_concurrency": {"mechanics_passed":true,"withdrawal_exposure_metadata_atomic":false,"repeatable_read_revocation_continuous":false,"provenance_hard_delete":false},
+    "retrieval_e2": {"documents":145,"queries":99,"exact_pgvector_recall20":0.6667,"hybrid_recall20":0.6717,"hybrid_p50_ms":256.843,"forced_rls_denials":0}
+  },
+  "architecture_decision": "Keep one governed PostgreSQL authority with authorization before ranking; optimize structural indexes and lifecycle procedures before adding another query database or custom embeddings.",
+  "not_proven": ["Aurora writer/reader failover","RDS Proxy behavior","replica lag and PITR","hundreds-of-GB concurrency/partitioning","managed extension compatibility"],
+  "required_fixes_before_production": ["lock-and-recheck exposure versus withdrawal in one lifecycle procedure","use short READ COMMITTED request transactions for continuous revocation semantics","define explicit redaction/tombstone policy for provenance dependencies","couple lifecycle status and event append atomically","replace ephemeral research authority writer with a narrow tenant-scoped production API"],
+  "local_runtime_boundary": "The host's colima Kubernetes API is unreachable under the current sandbox; no new database run was claimed."
+}
