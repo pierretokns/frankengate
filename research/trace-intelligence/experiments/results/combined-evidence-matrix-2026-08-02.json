@@ -59,6 +59,11 @@
       "schema_version": "agenttrace-nl2bash-replay-audit-v1",
       "sha256": "6a7b2c25bdaf5c10e40dedb7c8ac0f2d04e391da4ca1c3ff9058c939b3fbf9f1"
     },
+    "alfworld_skill_intervention": {
+      "filename": "alfworld-trace-skill-intervention-2026-08-02.json",
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-v1",
+      "sha256": "e4ecdd6922eb3a094fc262585ac53d80900d9b7e5373f6cf5a8075e4f36b092c"
+    },
     "atif_rl_roundtrip": {
       "filename": "atif-rl-roundtrip-2026-07-30.json",
       "schema_version": "atif-rl-roundtrip-result-v1",
@@ -365,6 +370,19 @@
       "evidence": {
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
+        "alfworld_causal_skill_benefit_confirmed": false,
+        "alfworld_expert_control_wins": 2,
+        "alfworld_semantic_pilot_episodes": 18,
+        "alfworld_semantic_pilot_harnesses": [
+          "ollama-native-api",
+          "ollama-openai-compatible"
+        ],
+        "alfworld_semantic_pilot_models": [
+          "llama3.2:latest",
+          "qwen3:4b"
+        ],
+        "alfworld_semantic_pilot_tasks": 2,
+        "alfworld_trace_procedure_wins": 0,
         "bounded_pairs_executed": 17,
         "gepa_baseline_holdout_match_rate": 0.6666666666666666,
         "gepa_enterprise_skill_benefit_confirmed": false,
@@ -442,6 +460,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "b22f2cb7b75da92bd8f8a66122b43b9d185431586e323191726403079321bba8",
-  "schema_version": "frankengate-combined-evidence-matrix-v9"
+  "result_sha256": "96e6d016f4ffb84ec69b47f04e91e2fc4c6a1c2f1ce2c54261637b10d89e81af",
+  "schema_version": "frankengate-combined-evidence-matrix-v10"
 }

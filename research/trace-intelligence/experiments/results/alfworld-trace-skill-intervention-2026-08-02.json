@@ -1,0 +1,63 @@
+{
+  "schema_version": "frankengate-alfworld-trace-skill-intervention-v1",
+  "study": "bounded semantic intervention of a MATM-derived procedure on ALFWorld valid_unseen",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "archive_sha256": "a15b6c4eef2f86ccc39d082ecd2d99a9e022f92289f71f63679069099a208c59",
+    "task_count": 2,
+    "task_hashes": [
+      "453f5330dd1fb27ee0a9b525af37524f1d8ea4c9489dd66c68ba8b31faa32da5",
+      "8c79c8cd40907481f59933f4743a09063ccc2a4600113ca56aa17f7c23b34944"
+    ],
+    "game_file_sha256": {
+      "look_at_obj_in_light": "dd4ed62001e0ef7e9cd483be23ae319e6206bfdbcce2d0e2f546fbebf9e24dac",
+      "pick_and_place_simple": "3d72c30feb708eb29d68e439619d187a15e6d12e2b6aacec46749eb6243adc13"
+    },
+    "logic_sha256": {
+      "alfred_pddl": "f1473041ed01da514de1f87adfd7ef0804862361f83ccf63c75e43633b0eb280",
+      "alfred_twl2": "c5b22f0f73309a7fd7c8e5b71de42ad4803b60766ab4a51cc2feb34162be036b"
+    }
+  },
+  "environment_gate": {
+    "runtime": "ALFWorld 0.4.2 + TextWorld 1.6.2 + fast-downward-textworld 20.6.4",
+    "expert_episodes": 2,
+    "expert_wins": 2,
+    "expert_steps": [7, 20],
+    "environment_replayable": true
+  },
+  "arms": ["no_skill", "formatting_placebo", "trace_mined_procedure"],
+  "coverage": {
+    "models": ["llama3.2:latest", "qwen3:4b"],
+    "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
+    "llama_models_harnesses": ["llama3.2:latest/ollama-native-api", "llama3.2:latest/ollama-openai-compatible"],
+    "qwen_models_harnesses": ["qwen3:4b/ollama-native-api"],
+    "episodes": 18,
+    "task_family_split": "held-out valid_unseen tasks; candidate procedure derived from successful action templates and never saw these task paths"
+  },
+  "aggregate": {
+    "llama3.2:latest|ollama-native-api|no_skill": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 20.0, "mean_elapsed_ms": 2735.101},
+    "llama3.2:latest|ollama-native-api|formatting_placebo": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 20.0, "mean_elapsed_ms": 5330.034},
+    "llama3.2:latest|ollama-native-api|trace_mined_procedure": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 36, "mean_steps": 20.0, "mean_elapsed_ms": 3733.834},
+    "llama3.2:latest|ollama-openai-compatible|no_skill": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 20.0, "mean_elapsed_ms": 2744.905},
+    "llama3.2:latest|ollama-openai-compatible|formatting_placebo": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 20.0, "mean_elapsed_ms": 5283.481},
+    "llama3.2:latest|ollama-openai-compatible|trace_mined_procedure": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 36, "mean_steps": 20.0, "mean_elapsed_ms": 3591.637},
+    "qwen3:4b|ollama-native-api|no_skill": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 6, "mean_steps": 3.0, "mean_elapsed_ms": 8359.126},
+    "qwen3:4b|ollama-native-api|formatting_placebo": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 3, "mean_steps": 3.0, "mean_elapsed_ms": 6799.345},
+    "qwen3:4b|ollama-native-api|trace_mined_procedure": {"episodes": 2, "wins": 0, "win_rate": 0.0, "invalid_actions": 6, "mean_steps": 3.0, "mean_elapsed_ms": 6597.263}
+  },
+  "claim_boundary": {
+    "semantic_intervention_executed": true,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "independent_environment_verifier_passed": true,
+    "reason": "The environment and expert controls passed, but this is only 2 held-out tasks, Qwen stopped at a 3-step typed runtime budget, and every model arm had zero wins. The procedure is not promotable and this does not estimate enterprise utility."
+  },
+  "source_receipts": [
+    "/private/tmp/alfworld-llama-native.json",
+    "/private/tmp/alfworld-llama-openai.json",
+    "/private/tmp/alfworld-qwen-one.json",
+    "/private/tmp/alfworld-qwen-two.json"
+  ],
+  "raw_model_content_committed": false
+}

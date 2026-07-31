@@ -15,11 +15,12 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v9"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v10"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
     "matm_skill_retrieval": "matm-trace-skill-retrieval-2026-08-02.json",
+    "alfworld_skill_intervention": "alfworld-trace-skill-intervention-2026-08-02.json",
     "codetracebench": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
     "codetracebench_raw": "codetracebench-raw-e3-e4-factorial-2026-07-30.json",
     "mast": "mast_multiagent_empirical-2026-07-30.json",
@@ -126,6 +127,7 @@ def build_matrix(
     projection = results["projection"]
     atif_rl_roundtrip = results["atif_rl_roundtrip"]
     matm_skill_retrieval = results["matm_skill_retrieval"]
+    alfworld_skill_intervention = results.get("alfworld_skill_intervention")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -151,6 +153,30 @@ def build_matrix(
     trace_commons_attestation = results.get("trace_commons_attestation")
     trace_commons_full = results.get("trace_commons_full")
     trace_commons_repro = results["trace_commons_repro"]
+
+    alfworld_pilot_evidence = {
+        "tasks": 0,
+        "episodes": 0,
+        "expert_wins": 0,
+        "models": [],
+        "harnesses": [],
+        "trace_procedure_wins": 0,
+        "causal_skill_benefit_confirmed": False,
+    }
+    if alfworld_skill_intervention:
+        alfworld_pilot_evidence = {
+            "tasks": alfworld_skill_intervention["dataset"]["task_count"],
+            "episodes": alfworld_skill_intervention["coverage"]["episodes"],
+            "expert_wins": alfworld_skill_intervention["environment_gate"]["expert_wins"],
+            "models": alfworld_skill_intervention["coverage"]["models"],
+            "harnesses": alfworld_skill_intervention["coverage"]["harnesses"],
+            "trace_procedure_wins": sum(
+                value["wins"]
+                for key, value in alfworld_skill_intervention["aggregate"].items()
+                if key.endswith("|trace_mined_procedure")
+            ),
+            "causal_skill_benefit_confirmed": alfworld_skill_intervention["claim_boundary"]["causal_skill_benefit_confirmed"],
+        }
 
     trace_commons_attestation_passed = bool(
         trace_commons_attestation
@@ -941,6 +967,13 @@ def build_matrix(
                     "claim_boundary",
                     "causal_skill_benefit_confirmed",
                 ),
+                "alfworld_semantic_pilot_tasks": alfworld_pilot_evidence["tasks"],
+                "alfworld_semantic_pilot_episodes": alfworld_pilot_evidence["episodes"],
+                "alfworld_expert_control_wins": alfworld_pilot_evidence["expert_wins"],
+                "alfworld_semantic_pilot_models": alfworld_pilot_evidence["models"],
+                "alfworld_semantic_pilot_harnesses": alfworld_pilot_evidence["harnesses"],
+                "alfworld_trace_procedure_wins": alfworld_pilot_evidence["trace_procedure_wins"],
+                "alfworld_causal_skill_benefit_confirmed": alfworld_pilot_evidence["causal_skill_benefit_confirmed"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1248,8 +1281,12 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"versus {skill['matm_all_neighbor_top10_rate']:.3f} for all-trace neighbors "
             f"(lift {skill['matm_successful_neighbor_top10_lift']:.3f}), but mean AUC "
             f"fell by {abs(skill['matm_successful_neighbor_auc_lift']):.3f}; the "
-            "bootstrap intervals cross zero, so this is promising recommendation "
-            "signal rather than causal skill evidence.",
+                "bootstrap intervals cross zero, so this is promising recommendation "
+                "signal rather than causal skill evidence.",
+            f"- The environment-backed ALFWorld pilot ran {skill['alfworld_semantic_pilot_episodes']} episodes over "
+            f"{skill['alfworld_semantic_pilot_tasks']} held-out tasks. The expert control won "
+            f"{skill['alfworld_expert_control_wins']} tasks, while the trace-derived procedure won "
+            f"{skill['alfworld_trace_procedure_wins']}; this is a small negative pilot and does not authorize promotion.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "
