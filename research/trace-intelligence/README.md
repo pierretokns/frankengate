@@ -171,13 +171,14 @@ canonical governed fixtures, parses every aggregate result, checks that no raw c
 file is committed, and compiles the Python harness. It performs no network request,
 model call, database mutation, or dataset download.
 
-The latest host audit ran 451 research tests with 10 explicit environment or
-optional-dependency skips and no failures. The four Seatbelt conformance tests
-now classify an unusable macOS `sandbox-exec` runtime as a skip, while the pure
-policy tests still run. The two Defog SQL modules similarly skip when optional
-`sqlglot` is unavailable. The separate NL2SQL capability suite remains 61/61
-passed in its pinned environment; Linux/container replay remains the required
-authority for sandbox execution.
+The latest pinned audit (`uv run --frozen make verify`) ran 493 research tests
+with 13 explicit environment skips and no failures, plus 61/61 NL2SQL
+capability tests. It validated 77 aggregate results, 43 dataset manifests, 12
+governed fixtures, zero committed raw corpus files, and Python compilation.
+The Seatbelt skips are host-runtime gates; Linux/container replay remains the
+required authority for sandbox execution. The separate no-install host audit
+may report additional optional-dependency skips, but is not the authoritative
+full-suite result.
 
 The governed Wisp target is intentionally separate because it mutates a disposable
 research schema and requires explicit private inputs:
