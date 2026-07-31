@@ -12,7 +12,7 @@ Open gate: ATIF/OTel projections lose load-bearing RL reset, reward, termination
 
 Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.
 
-Open gate: Natural release lineage is now exercised, but model-generated Dream/procedure quality, semantic task utility, and enterprise-labeled concept transfer remain unmeasured.
+Open gate: Natural release lineage is exercised; a local Qwen3 4B generator attempted three content-free structural proposals and passed zero quality gates. Semantic task utility and enterprise-labeled concept transfer remain unmeasured.
 
 ## `single_and_composed_mechanisms` — family_disjoint_intervention_and_composition_proven; utility_unproven
 

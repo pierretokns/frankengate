@@ -328,6 +328,18 @@
       "schema_version": "frankengate-natural-trace-memory-factorial-v1",
       "sha256": "8b42e33b5d5f93dd97f5104aafb45b9179e145a7b5811a4ebe2eaed7914f0db4"
     },
+    "natural_model_dream_procedure": {
+      "filename": "natural-model-dream-procedure-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-v1",
+      "sha256": "70a80c0add7d6c695ee7aff8d18af96bac15428838cb9ee59400ae0ebe7328e8"
+    },
+    "natural_model_dream_procedure_verification": {
+      "filename": "natural-model-dream-procedure-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "sha256": "605dd338463f36ee69d7d7156aa8ab2c64aa97af5badbb0dbbcad0a27318b67e"
+    },
     "natural_released_procedure": {
       "filename": "natural-released-procedure-2026-08-02.json",
       "optional": true,
@@ -634,7 +646,7 @@
       "status": "real_trace_transition_partial_pass"
     },
     "L6_procedural_replay": {
-      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. A provenance audit found that the r20/r21 receipts referenced an empty candidate; those rows are not skill-quality evidence. The corrected r22 run used the real 213-byte candidate and still produced 0/1 wins for no-skill, placebo, and candidate at an eight-step horizon, with fresh replay verification. The offline MATM leave-one-model-out arm gives a 0.067 top-10 recommendation lift (95% CI -0.020 to 0.166) but a -0.056 mean AUC contrast (95% CI -0.112 to 0.002); this is predictive evidence only, not changed-agent skill benefit. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. A provenance audit found that the r20/r21 receipts referenced an empty candidate; those rows are not skill-quality evidence. The corrected r22 run used the real 213-byte candidate and still produced 0/1 wins for no-skill, placebo, and candidate at an eight-step horizon, with fresh replay verification. A local Qwen3 4B model attempted three natural-trace procedure proposals from content-free structural summaries; none passed the controlled JSON/evidence-grounding rubric. The independent verifier passed, so this is a typed model quality null rather than semantic utility evidence. The offline MATM leave-one-model-out arm gives a 0.067 top-10 recommendation lift (95% CI -0.020 to 0.166) but a -0.056 mean AUC contrast (95% CI -0.112 to 0.002); this is predictive evidence only, not changed-agent skill benefit. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
       "evidence": {
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
@@ -862,6 +874,10 @@
           0.16596638655462187
         ],
         "matm_successful_neighbor_top10_rate": 0.7471988795518207,
+        "natural_model_dream_procedure_projects": 3,
+        "natural_model_dream_procedure_quality_passed": 0,
+        "natural_model_dream_procedure_utility_confirmed": false,
+        "natural_model_dream_procedure_verifier_passed": true,
         "natural_released_procedure_exact_queries": 0,
         "natural_released_procedure_projects": 3,
         "natural_released_procedure_queries": 23,
@@ -919,6 +935,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "5d7b8f1ac2f8bf508b8766630f67b107d17f96388997aa2e9878fc3762c8153f",
-  "schema_version": "frankengate-combined-evidence-matrix-v20"
+  "result_sha256": "a57e49d4be5bb4fa15400122fde5111a306f9578dc7b52794a80f00d2dba6d72",
+  "schema_version": "frankengate-combined-evidence-matrix-v21"
 }

@@ -320,6 +320,12 @@ used that same real candidate on two independently expert-solvable tasks
 matched every row. This increases power modestly while leaving the
 pre-registered larger family-disjoint and enterprise-outcome gates open.
 
+The local-only [`Qwen3 4B model-dream attempt`](experiments/results/natural-model-dream-procedure-2026-08-02.json)
+generated proposals from three content-free structural summaries. None passed
+the controlled JSON/evidence-grounding rubric; the independent receipt verifier
+passed, and no semantic or utility claim was made. External-model generation
+over trace-derived data was intentionally not used.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

@@ -1,0 +1,162 @@
+{
+  "claim_boundary": {
+    "causal_skill_or_memory_utility_confirmed": false,
+    "enterprise_transfer_confirmed": false,
+    "model_generated_procedure_executed": true,
+    "reason": "Only content-free structural summaries were supplied; no task outcome, human label, or changed-system execution was available.",
+    "semantic_procedure_quality_confirmed": false,
+    "structural_quality_measured": true
+  },
+  "content_policy": {
+    "model_response_emitted": false,
+    "paths_emitted": false,
+    "raw_trace_content_emitted": false
+  },
+  "model": "qwen3:4b",
+  "projects_attempted": 3,
+  "projects_quality_passed": 0,
+  "projects_with_valid_candidate": 0,
+  "rows": [
+    {
+      "candidate_length": 15564,
+      "candidate_sha256": null,
+      "checks": {
+        "controlled_steps": false,
+        "evidence_grounded": false,
+        "quality_passed": false,
+        "valid_json": false
+      },
+      "codex_completed": true,
+      "evidence_id": "ev-9e1530481e6dc1a4",
+      "evidence_summary": {
+        "branch_points": 13,
+        "dangling_parents": 5,
+        "evidence_id": "ev-9e1530481e6dc1a4",
+        "explicit_errors": 68,
+        "malformed_records": 2,
+        "records": 5544,
+        "recovery_candidates": 61,
+        "recovery_motifs": [
+          {
+            "count": 9,
+            "error_family": "file_mutation",
+            "recovery_family": "file_mutation",
+            "tier": "high"
+          },
+          {
+            "count": 10,
+            "error_family": "file_mutation",
+            "recovery_family": "file_mutation",
+            "tier": "medium"
+          },
+          {
+            "count": 2,
+            "error_family": "file_mutation",
+            "recovery_family": "file_read",
+            "tier": "low"
+          },
+          {
+            "count": 2,
+            "error_family": "file_mutation",
+            "recovery_family": "shell",
+            "tier": "low"
+          },
+          {
+            "count": 1,
+            "error_family": "file_read",
+            "recovery_family": "file_read",
+            "tier": "medium"
+          },
+          {
+            "count": 4,
+            "error_family": "shell",
+            "recovery_family": "file_read",
+            "tier": "low"
+          },
+          {
+            "count": 20,
+            "error_family": "shell",
+            "recovery_family": "shell",
+            "tier": "high"
+          },
+          {
+            "count": 13,
+            "error_family": "shell",
+            "recovery_family": "shell",
+            "tier": "medium"
+          }
+        ],
+        "tool_calls": 1047,
+        "tool_families": {
+          "external_retrieval": 28,
+          "file_mutation": 186,
+          "file_read": 97,
+          "human_interaction": 3,
+          "shell": 693,
+          "skill_invocation": 3,
+          "task_coordination": 33,
+          "tool_discovery": 4
+        },
+        "tool_results": 1045
+      },
+      "model": "qwen3:4b",
+      "model_response_sha256": "8bfa327f4df4fbf5b4707c139ae0bbf66368fb68e71031558a0a570494864bba"
+    },
+    {
+      "candidate_length": 18606,
+      "candidate_sha256": null,
+      "checks": {
+        "controlled_steps": false,
+        "evidence_grounded": false,
+        "quality_passed": false,
+        "valid_json": false
+      },
+      "codex_completed": true,
+      "evidence_id": "ev-9b34ac5fe2505b53",
+      "evidence_summary": {
+        "branch_points": 0,
+        "dangling_parents": 0,
+        "evidence_id": "ev-9b34ac5fe2505b53",
+        "explicit_errors": 0,
+        "malformed_records": 0,
+        "records": 5,
+        "recovery_candidates": 0,
+        "recovery_motifs": [],
+        "tool_calls": 0,
+        "tool_families": {},
+        "tool_results": 0
+      },
+      "model": "qwen3:4b",
+      "model_response_sha256": "f650e0cc6322f3b82e912932105220747bd38dcb610c53c61ca47aebf67491f8"
+    },
+    {
+      "candidate_length": 19640,
+      "candidate_sha256": null,
+      "checks": {
+        "controlled_steps": false,
+        "evidence_grounded": false,
+        "quality_passed": false,
+        "valid_json": false
+      },
+      "codex_completed": true,
+      "evidence_id": "ev-59406a23fd74f6eb",
+      "evidence_summary": {
+        "branch_points": 0,
+        "dangling_parents": 0,
+        "evidence_id": "ev-59406a23fd74f6eb",
+        "explicit_errors": 0,
+        "malformed_records": 0,
+        "records": 7,
+        "recovery_candidates": 0,
+        "recovery_motifs": [],
+        "tool_calls": 0,
+        "tool_families": {},
+        "tool_results": 0
+      },
+      "model": "qwen3:4b",
+      "model_response_sha256": "d6da56cebc29f8fcaa073ed34fbb81a7a738e6af647587b1f321cbd35c040577"
+    }
+  ],
+  "schema_version": "frankengate-natural-model-dream-procedure-v1",
+  "study": "model_generated_natural_trace_procedure_structural_quality"
+}

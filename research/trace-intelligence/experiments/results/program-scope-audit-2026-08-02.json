@@ -5,7 +5,7 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v20",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v21",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
@@ -118,6 +118,14 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md"
         },
         {
@@ -130,7 +138,7 @@
         }
       ],
       "id": "public_trace_and_concept_audit",
-      "open_gate": "Natural release lineage is now exercised, but model-generated Dream/procedure quality, semantic task utility, and enterprise-labeled concept transfer remain unmeasured.",
+      "open_gate": "Natural release lineage is exercised; a local Qwen3 4B generator attempted three content-free structural proposals and passed zero quality gates. Semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
       "requirement": "Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.",
       "status": "natural_release_mechanics_proven_utility_unproven"
     },
@@ -273,7 +281,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "706400c982da79824c20273fbd93082d66f6aa2a"
+          "head": "ad3ea9a4d8d6216585bc4d7cc89fec2daae40964"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

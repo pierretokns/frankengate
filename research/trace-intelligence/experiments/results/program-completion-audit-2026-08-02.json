@@ -376,11 +376,17 @@
       "released_procedure_verification": "experiments/results/natural-released-procedure-verification-2026-08-02.json",
       "released_procedure_projects": 3,
       "released_procedure_visible_queries": 23,
-      "released_procedure_exact_queries": 0
+      "released_procedure_exact_queries": 0,
+      "model_generated_dream_procedure": "experiments/results/natural-model-dream-procedure-2026-08-02.json",
+      "model_generated_dream_procedure_verification": "experiments/results/natural-model-dream-procedure-verification-2026-08-02.json",
+      "model_generated_dream_projects": 3,
+      "model_generated_dream_quality_passed": 0,
+      "model_generated_dream_verifier_passed": true,
+      "model_generated_dream_semantic_utility_confirmed": false
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-    "schema_version": "frankengate-combined-evidence-matrix-v18",
+    "schema_version": "frankengate-combined-evidence-matrix-v21",
       "alfworld_semantic_pilot_consumed": true,
       "alfworld_revision_r2_consumed": true,
       "alfworld_family_disjoint_r3_consumed": true,

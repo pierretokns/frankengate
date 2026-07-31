@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v20"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v21"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -85,6 +85,8 @@ OPTIONAL_RESULTS = {
     "alfworld_codex_skillopt_r23_real_candidate": "alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
     "alfworld_codex_skillopt_r23_real_candidate_verification": "alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json",
     "skillopt_candidate_provenance_audit": "skillopt-candidate-provenance-audit-2026-08-02.json",
+    "natural_model_dream_procedure": "natural-model-dream-procedure-2026-08-02.json",
+    "natural_model_dream_procedure_verification": "natural-model-dream-procedure-verification-2026-08-02.json",
     "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
     "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
     "h5_concurrency_live_rerun": "h5-concurrency-live-rerun-2026-08-02.json",
@@ -220,6 +222,8 @@ def build_matrix(
     alfworld_codex_skillopt_r23_real_candidate = results.get("alfworld_codex_skillopt_r23_real_candidate")
     alfworld_codex_skillopt_r23_real_candidate_verification = results.get("alfworld_codex_skillopt_r23_real_candidate_verification")
     skillopt_candidate_provenance_audit = results.get("skillopt_candidate_provenance_audit")
+    natural_model_dream_procedure = results.get("natural_model_dream_procedure")
+    natural_model_dream_procedure_verification = results.get("natural_model_dream_procedure_verification")
     natural_released_procedure = results.get("natural_released_procedure")
     natural_released_procedure_verification = results.get("natural_released_procedure_verification")
     h5_concurrency_live_rerun = results.get("h5_concurrency_live_rerun")
@@ -1296,6 +1300,10 @@ def build_matrix(
                 "alfworld_codex_skillopt_r23_real_candidate_rows_verified": revision_evidence["r23_real_candidate_rows_verified"],
                 "skillopt_candidate_provenance_audit_passed": revision_evidence["candidate_provenance_audit_passed"],
                 "empty_candidate_rows_explicitly_identified": revision_evidence["empty_candidate_rows_explicitly_identified"],
+                "natural_model_dream_procedure_projects": natural_model_dream_procedure.get("projects_attempted", 0) if natural_model_dream_procedure else 0,
+                "natural_model_dream_procedure_quality_passed": natural_model_dream_procedure.get("projects_quality_passed", 0) if natural_model_dream_procedure else 0,
+                "natural_model_dream_procedure_verifier_passed": bool(natural_model_dream_procedure_verification and natural_model_dream_procedure_verification.get("all_passed", False)),
+                "natural_model_dream_procedure_utility_confirmed": bool(natural_model_dream_procedure and natural_model_dream_procedure.get("claim_boundary", {}).get("semantic_procedure_quality_confirmed", False)),
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1313,6 +1321,11 @@ def build_matrix(
                 "The corrected r22 run used the real 213-byte candidate and "
                 "still produced 0/1 wins for no-skill, placebo, and candidate "
                 "at an eight-step horizon, with fresh replay verification. "
+                "A local Qwen3 4B model attempted three natural-trace "
+                "procedure proposals from content-free structural summaries; "
+                "none passed the controlled JSON/evidence-grounding rubric. "
+                "The independent verifier passed, so this is a typed model "
+                "quality null rather than semantic utility evidence. "
                 f"The offline MATM leave-one-model-out arm gives a "
                 f"{matm_skill_retrieval['aggregate']['contrast']['successful_minus_all_top_10_percent_success_rate_mean']:.3f} "
                 "top-10 recommendation lift (95% CI -0.020 to 0.166) but a "
