@@ -54,6 +54,13 @@ same governed rows, `ANALYZE` reduced controlled-FTS p50 from 57.188 ms to
 2.167 ms while all denied authorities continued to receive zero pre-ranking
 candidates.
 
+The new [`planner readiness gate`](experiments/summaries/planner-readiness-gate-2026-08-02.md)
+turns that observation into a deterministic release check: the fresh
+bulk-load phase is `not_ready`, while the post-`ANALYZE` phase is `ready` only
+after all four frozen p50 budgets, zero-denial checks, and required redacted
+plan signatures pass. This remains a local PostgreSQL gate, not an Aurora SLO
+or failover claim.
+
 The
 [`natural trace memory factorial`](experiments/summaries/natural-trace-memory-factorial-2026-07-30.md)
 runs 16 arms over 23 later-read queries. Latest-only, verbatim, bitemporal,
