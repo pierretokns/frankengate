@@ -1,0 +1,24 @@
+{
+  "schema_version": "fg-governed-hypothesis-lifecycle-mechanics-v1",
+  "mechanism": "dream_release_pipeline_v2",
+  "tests_run": 9,
+  "tests_passed": 9,
+  "tests_failed": 0,
+  "mechanics": {
+    "authority_intersection": true,
+    "citation_lineage": true,
+    "independent_verifier_record": true,
+    "quarantine": true,
+    "atomic_release_snapshot": true,
+    "rollback_or_withdrawal_visibility": true,
+    "authorization_epoch_filter": true,
+    "deletion_closure": true,
+    "influence_exclusion": true
+  },
+  "proposal_policies_run": 0,
+  "no_proposal_control_run": false,
+  "held_out_outcome": false,
+  "autonomous_model_run": false,
+  "claim_boundary": "mechanics_only_not_hypothesis_quality_or_causal_utility",
+  "raw_content_emitted": false
+}
