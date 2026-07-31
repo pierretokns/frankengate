@@ -1,0 +1,14 @@
+{
+  "date": "2026-07-31",
+  "runner": "research/trace-intelligence/tests/run_trace_commons_memory_h5_concurrency.py --timeout 30",
+  "kubernetes_context": "colima",
+  "fixture": "PostgreSQL 16.12 + pgvector 0.8.1",
+  "semantic_match_to_committed_2026_07_30_receipt": true,
+  "timing_fields_excluded_from_comparison": ["elapsed_ms", "reader_elapsed_ms", "mutation_elapsed_ms"],
+  "cleanup_marker": "H5C_ZERO_RESIDUE_OK",
+  "fixture_rows": 0,
+  "temporary_helpers": 0,
+  "temporary_roles": 0,
+  "overall": "mechanics_passed_with_architecture_gaps",
+  "claim_boundary": "Local PostgreSQL concurrency mechanics only; no Aurora, RDS Proxy, failover, replica lag, durability, scale, memory utility, identity, or enterprise-transfer claim."
+}
