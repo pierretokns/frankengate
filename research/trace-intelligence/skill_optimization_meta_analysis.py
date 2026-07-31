@@ -23,6 +23,7 @@ ROOT = pathlib.Path(__file__).resolve().parent
 DEFAULT_INPUTS = (
     "experiments/results/natural-trace-skill-protocol-intervention-2026-07-30.json",
     "experiments/results/natural-trace-skill-protocol-intervention-qwen3-4b-2026-07-31.json",
+    "experiments/results/natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json",
     "experiments/results/model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json",
     "experiments/results/defog-sql-factorial-fold0-terminal-only-p0-2026-07-30.json",
     "experiments/results/defog-car-fallback-llama-2026-07-31.json",

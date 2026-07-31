@@ -357,6 +357,25 @@ def inputs():
                 {"model_id": "llama3.2:latest", "harness_id": "ollama-native-api"}
             ],
         },
+        "skill_qwen_native": {
+            "schema_version": "qwen-native",
+            "request_model_id": "qwen3:4b",
+            "harness": {"id": "ollama-native-api"},
+            "variant_results": {
+                "no_skill": {
+                    "expected_terminal_match_rate": 0.0,
+                    "native_tool_calls": 0,
+                },
+                "formatting_placebo": {
+                    "expected_terminal_match_rate": 0.0,
+                    "native_tool_calls": 0,
+                },
+                "trace_mined_terminal_discipline": {
+                    "expected_terminal_match_rate": 0.0,
+                    "native_tool_calls": 0,
+                },
+            },
+        },
         "trace_commons_repro": {
             "schema_version": "trace-commons-repro",
             "all_passed": True,
@@ -473,6 +492,11 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
             skill["skill_transfer_harnesses"],
         )
         self.assertTrue(skill["skill_cross_harness_same_fixture_compared"])
+        self.assertEqual("qwen3:4b", skill["skill_qwen_native_model"])
+        self.assertEqual(
+            {"no_skill": 0.0, "formatting_placebo": 0.0, "trace_mined_terminal_discipline": 0.0},
+            skill["skill_qwen_native_terminal_match_rates"],
+        )
 
     def test_level_two_threshold_is_not_redefined_by_observed_result(self):
         source = inputs()

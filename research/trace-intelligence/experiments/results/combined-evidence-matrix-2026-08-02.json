@@ -127,7 +127,12 @@
     "skill_optimization_meta": {
       "filename": "skill-optimization-meta-analysis-2026-08-02.json",
       "schema_version": "frankengate-skill-optimization-meta-analysis-v1",
-      "sha256": "7f813171c8d82d12dba7ee4cd4807410ee9ba971c7640dff366744332aa9c830"
+      "sha256": "d5910e77960bf329c08254b10f3116c80b00aae1b0eb01e68c3c60955af74f3b"
+    },
+    "skill_qwen_native": {
+      "filename": "natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json",
+      "schema_version": "frankengate-ollama-native-tool-harness-v1",
+      "sha256": "21eb8526efb2a87afe5bf2782ffdc4472377f0952cb2765e7c0160313e686cd6"
     },
     "skill_release": {
       "filename": "governed-skill-release-lifecycle-2026-07-30.json",
@@ -346,9 +351,21 @@
         "skill_cross_harness_same_fixture_compared": true,
         "skill_meta_automatic_promotion_authorized": false,
         "skill_meta_causal_benefit_confirmed": false,
-        "skill_meta_study_count": 22,
-        "skill_meta_trace_mined_protocol_studies": 11,
+        "skill_meta_study_count": 23,
+        "skill_meta_trace_mined_protocol_studies": 12,
         "skill_meta_trace_mined_semantic_studies": 9,
+        "skill_qwen_native_harness": "ollama-native-api",
+        "skill_qwen_native_model": "qwen3:4b",
+        "skill_qwen_native_native_tool_call_counts": {
+          "formatting_placebo": 0,
+          "no_skill": 0,
+          "trace_mined_terminal_discipline": 0
+        },
+        "skill_qwen_native_terminal_match_rates": {
+          "formatting_placebo": 0.0,
+          "no_skill": 0.0,
+          "trace_mined_terminal_discipline": 0.0
+        },
         "skill_transfer_harnesses": [
           "ollama-native-api",
           "openai-native"
@@ -379,6 +396,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "5c07af322ee3eca1b78a35dfd93003a2d1d24691c49753a7aa1dacf80d70c4d4",
+  "result_sha256": "2435c1e0248aee725b7a5876a0e7a15ec3b804a9f40a0ba30f86341c0a83f8e4",
   "schema_version": "frankengate-combined-evidence-matrix-v6"
 }

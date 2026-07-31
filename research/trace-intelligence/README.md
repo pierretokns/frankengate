@@ -376,6 +376,11 @@ Qwen 3 4B, and OpenAI-compatible plus Ollama-native loops. The aggregate keeps
 protocol compliance separate from semantic correctness and records causal
 benefit and automatic promotion as false.
 
+A fresh full 18-episode Qwen3 4B native-Ollama replay completed without a
+single native tool call in any arm (no-skill, placebo, or trace-mined). It is
+recorded as a typed model/harness null and added to the meta-analysis, which
+now contains 23 endpoint strata; it is not treated as a semantic skill result.
+
 The candidate was then mined from the completed car raw audits rather than
 hand-supplied: the miner sealed an aggregate source digest and procedure hash,
 and the resulting artifact was injected into a fresh broker fold. The true

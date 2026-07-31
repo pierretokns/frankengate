@@ -48,6 +48,9 @@ REQUIRED_RESULTS = {
     "skill_cross_harness_transfer": (
         "model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json"
     ),
+    "skill_qwen_native": (
+        "natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json"
+    ),
     "statebench_sql": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
     "skill_release": "governed-skill-release-lifecycle-2026-07-30.json",
     "trace_commons_attestation": (
@@ -134,6 +137,7 @@ def build_matrix(
     skill_optimization_meta = results["skill_optimization_meta"]
     skill_harness_transfer = results["skill_harness_transfer"]
     skill_cross_harness_transfer = results["skill_cross_harness_transfer"]
+    skill_qwen_native = results["skill_qwen_native"]
     statebench_sql = results["statebench_sql"]
     skill_release = results["skill_release"]
     trace_commons_attestation = results.get("trace_commons_attestation")
@@ -224,6 +228,7 @@ def build_matrix(
             )
         }
     )
+    qwen_native_variants = _require(skill_qwen_native, "variant_results")
 
     levels = {
         "L0_evidence_conformance": {
@@ -803,6 +808,20 @@ def build_matrix(
                     "claim_boundary",
                     "same_fixture_compared",
                 ),
+                "skill_qwen_native_model": _require(
+                    skill_qwen_native, "request_model_id"
+                ),
+                "skill_qwen_native_harness": _require(
+                    skill_qwen_native, "harness", "id"
+                ),
+                "skill_qwen_native_terminal_match_rates": {
+                    name: _require(value, "expected_terminal_match_rate")
+                    for name, value in qwen_native_variants.items()
+                },
+                "skill_qwen_native_native_tool_call_counts": {
+                    name: _require(value, "native_tool_calls")
+                    for name, value in qwen_native_variants.items()
+                },
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1081,6 +1100,12 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{', '.join(skill['skill_transfer_models'])} and "
             f"{', '.join(skill['skill_transfer_harnesses'])}; causal benefit and "
             "automatic promotion remain false.",
+            f"- A fresh Qwen3 4B native-Ollama replay completed all 18 episodes "
+            f"but produced native tool-call counts "
+            f"{skill['skill_qwen_native_native_tool_call_counts']} and zero "
+            "terminal matches in every arm. This is a typed harness/model null, "
+            "not evidence that the trace-mined candidate improves or harms "
+            "semantic task quality.",
             "- The attested 28-session Trace Commons cohort produced "
             f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
             "structural temporal candidates and "

@@ -9,6 +9,7 @@
   "inputs": [
     "experiments/results/natural-trace-skill-protocol-intervention-2026-07-30.json",
     "experiments/results/natural-trace-skill-protocol-intervention-qwen3-4b-2026-07-31.json",
+    "experiments/results/natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json",
     "experiments/results/model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json",
     "experiments/results/defog-sql-factorial-fold0-terminal-only-p0-2026-07-30.json",
     "experiments/results/defog-car-fallback-llama-2026-07-31.json",
@@ -29,7 +30,7 @@
       "semantic_studies": 1
     },
     "trace_mined_candidate": {
-      "protocol_studies": 11,
+      "protocol_studies": 12,
       "semantic_studies": 9
     }
   },
@@ -75,6 +76,27 @@
       },
       "endpoint": "protocol",
       "receipt": "experiments/results/natural-trace-skill-protocol-intervention-qwen3-4b-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json"
     },
     {
       "baseline": "no_skill",
@@ -497,5 +519,5 @@
       "receipt": "experiments/results/defog-trace-mined-skill-family-broker-mined-schema-injected-2026-08-02.json"
     }
   ],
-  "study_count": 22
+  "study_count": 23
 }
