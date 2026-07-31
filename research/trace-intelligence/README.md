@@ -291,6 +291,12 @@ tasks: all three arms were `0/2`, and a fresh verifier checked all six action
 sequences with zero mismatches. This is real optimizer evidence, but not a
 positive utility claim or a powered release result.
 
+The follow-up [`r20 horizon pilot`](experiments/summaries/alfworld-codex-skillopt-r20-2026-08-02.md)
+ran the same candidate at eight steps on one held-out task. No-skill, placebo,
+and candidate were each `0/1`; all three sequences replayed cleanly. The
+longer pilot removes the three-step truncation ambiguity, but remains
+underpowered and does not authorize promotion.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

@@ -99,11 +99,27 @@
       "result": "All three arms were 0/2 wins over the bounded three-step pilot; all six action sequences passed fresh-environment replay with zero mismatches and admissible actions",
       "causal": false,
       "hard_edge": "This is a small, short-horizon pilot and not a powered release decision"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r20-2026-08-02.json",
+      "what_was_tested": "The same real Codex-backed SkillOpt candidate versus no-skill and formatting placebo at an eight-step horizon on a held-out ALFWorld task",
+      "result": "All three arms were 0/1 wins after eight Codex calls; each produced eight admissible actions with zero parser-invalid actions",
+      "causal": false,
+      "hard_edge": "The longer pilot removes the three-step truncation but remains one task and is still underpowered; the independent replay verifier passed all three rows"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r20-verification-2026-08-02.json",
+      "what_was_tested": "Fresh-environment replay of every r20 Codex action sequence",
+      "result": "Three rows independently recomputed with zero mismatches and all executed actions admissible",
+      "causal": false,
+      "hard_edge": "Replay integrity is established; it does not establish positive skill utility or enterprise transfer"
     }
   ],
   "model_harness_coverage": {
     "models_exercised_locally": ["llama3.2:latest", "qwen3:4b"],
+    "models_exercised_via_codex_subscription": ["gpt-5.6-luna"],
     "harnesses_exercised_locally": ["OpenAI-compatible native-tool loop", "Ollama native API loop"],
+    "subscription_harnesses_exercised": ["Codex CLI subscription harness"],
     "what_that_proves": "The candidate and formatting-control protocols can be executed across two local model configurations and two transport/harness paths; the same eight-task family-disjoint intervention has now been replayed through both Ollama-native and OpenAI-compatible harnesses.",
     "what_that_does_not_prove": "Semantic task improvement, cross-harness transfer, model-quality improvement, or enterprise productivity benefit"
   },

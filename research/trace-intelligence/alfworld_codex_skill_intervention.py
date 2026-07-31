@@ -180,7 +180,7 @@ def main() -> int:
             "real_model_intervention_executed": True,
             "causal_skill_benefit_confirmed": False,
             "automatic_promotion_authorized": False,
-            "reason": "Small four-task Codex replication; candidate and controls are compared, but this is not the preregistered powered release gate.",
+            "reason": "Small bounded Codex replication; candidate and controls are compared, but this is not the preregistered powered release gate.",
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

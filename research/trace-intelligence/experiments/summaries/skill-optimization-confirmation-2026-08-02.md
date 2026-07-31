@@ -15,6 +15,7 @@ We have **not** yet confirmed that Frankengate's trace-mined skills improve real
 9. A direct SkillOpt retry after installing its dependency stack initialized SkillOpt and ALFWorld and reached baseline rollout, but the configured local model endpoint was unavailable. No SkillOpt model response, candidate skill, or scored episode was counted; this is an infrastructure null, not a quality result.
 10. A deterministic in-process backend then exercised the complete SkillOpt lifecycle. It generated and applied one candidate, evaluated it, and rejected it at the hard gate because baseline and candidate selection scores were both `0.0`. This closes the mechanics smoke only; the shim intentionally ignores task content and makes no model calls.
 11. A real `gpt-5.6-luna` Codex-backed SkillOpt run generated a candidate and rejected it at its own selection gate (`0.0` baseline and candidate). A bounded held-out transfer pilot compared that candidate with no-skill and formatting placebo on two tasks: all three arms were `0/2`, and fresh replay verified all six action sequences with zero mismatches.
+12. The same Codex candidate was then tested at an eight-step horizon on one held-out task. No-skill, formatting placebo, and candidate were each `0/1`; all three eight-action sequences were admissible and independently replayed with zero mismatches. This removes the shortest-horizon ambiguity but remains underpowered and negative.
 
 Those are prerequisites and a negative causal test, not evidence of a beneficial skill.
 
@@ -26,7 +27,7 @@ Those are prerequisites and a negative causal test, not evidence of a beneficial
 
 ## Models and harnesses
 
-We have exercised `llama3.2:latest` and `qwen3:4b` through an OpenAI-compatible native-tool path and an Ollama-native API path. This establishes protocol portability only. It is not yet a valid semantic comparison because the shared fixture has no domain task correctness oracle.
+We have exercised `llama3.2:latest` and `qwen3:4b` through an OpenAI-compatible native-tool path and an Ollama-native API path, and `gpt-5.6-luna` through the Codex subscription harness. This establishes protocol portability only. It is not yet a valid semantic comparison because the shared fixture has no domain task correctness oracle.
 
 Microsoft SkillOpt's published v0.2.0 study is stronger external evidence: six real benchmarks, seven target models, and three harnesses with validation-gated gains. It validates the general method, not sufficiency of Frankengate traces.
 
