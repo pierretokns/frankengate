@@ -1,0 +1,12 @@
+{
+  "date": "2026-07-31",
+  "tests": [
+    "research.trace-intelligence.tests.test_dataset_manifests",
+    "research.trace-intelligence.tests.test_canonical_projection_e0"
+  ],
+  "tests_run": 9,
+  "tests_passed": 9,
+  "tests_failed": 0,
+  "raw_trace_files_committed": false,
+  "interpretation": "Dataset metadata and canonical projection conformance remain reproducible. CMU admission and trajectory-level access are still deferred gates."
+}
