@@ -90,7 +90,7 @@
     "reason": "This is a visible-selection pilot; no family-disjoint held-out quality estimate or independent verifier comparison is claimed.",
     "three_arms_executed": true
   },
-  "classification": "domain_valid_visible_selection_pilot",
+  "classification": "family_disjoint_transfer",
   "dataset": {
     "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
     "database_family": "broker",

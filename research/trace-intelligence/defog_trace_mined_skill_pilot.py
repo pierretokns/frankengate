@@ -244,7 +244,11 @@ def run_pilot(
     authority_receipts = [authority_receipt for _, authority_receipt, _ in receipts]
     result = {
         "schema_version": SCHEMA_VERSION,
-        "classification": "domain_valid_visible_selection_pilot",
+        "classification": (
+            "family_disjoint_transfer"
+            if protocol_remediation_id.startswith("family-disjoint")
+            else "domain_valid_visible_selection_pilot"
+        ),
         "dataset": {
             "cohort_manifest_sha256": _sha256_file(cohort_manifest),
             "dataset_manifest_sha256": _sha256_file(dataset_manifest),
