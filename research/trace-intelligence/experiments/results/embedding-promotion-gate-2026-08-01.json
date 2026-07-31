@@ -1,0 +1,10 @@
+{
+  "schema_version": "frankengate.embedding-promotion-gate.v1",
+  "date": "2026-08-01",
+  "baseline": {"name":"structured_plus_exact","recall20":0.808},
+  "general_embedding": {"name":"structured_plus_general_dense","recall20":0.818,"silver_delta":0.010},
+  "adapted_embedding": {"status":"not_run"},
+  "gate": {"required_absolute_recall20_gain":0.05,"human_hard_negative_labels":false,"user_project_task_time_disjoint_adaptation":false,"held_out_domain_transfer":false,"deletion_and_subgroup_regression_check":false},
+  "decision": "defer_custom_embedding",
+  "reason": "The observed dense gain is a silver-label pilot result and is below the preregistered +5-point promotion gate; no adapted-model arm or human hard-negative slice exists."
+}
