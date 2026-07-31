@@ -14,8 +14,8 @@ unsupported.
 The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
-The latest targeted parity suite passed 12 tests; offline reproducibility now
-validates 103 aggregate results, 44 manifests, 12 governed fixtures, and zero
+The latest targeted finance suite passed 20 tests; offline reproducibility now
+validates 104 aggregate results, 44 manifests, 12 governed fixtures, and zero
 committed raw corpus files. The full locked-suite count remains the historical
 506-test checkpoint recorded separately.
 
@@ -25,8 +25,10 @@ finance-specialized embedding reaches Recall@20 1.000 versus Qwen3 0.993 and
 TF-IDF 0.687. Same-projection loopback parity also found the existing nomic
 Ollama arm at Recall@20 0.453, so the model/harness choice matters. These are
 still public relevance slices, not enterprise adaptation. Human hard-negative
-labels, disjoint adaptation folds, governed RLS/deletion replay, latency/cost,
-and held-out transfer remain missing. The registered +5-point promotion
-threshold therefore remains closed. Cross-user collaboration remains
+labels, disjoint adaptation folds, latency/cost, held-out transfer, and Aurora
+behavior remain missing. The local governed replay now proves policy-before-
+ranking, deletion filtering, and rollback for this public corpus, but not
+enterprise transfer. The registered +5-point promotion threshold therefore
+remains closed. Cross-user collaboration remains
 mechanics-only (no independent labels, reciprocal consent, randomized
 exposure, transfer outcomes, or unwanted-contact measure).

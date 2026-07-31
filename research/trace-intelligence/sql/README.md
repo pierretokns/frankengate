@@ -86,3 +86,11 @@ couple release status, exposure termination, and lifecycle-event insertion.
 multi-session race and cleanup are driven by
 `tests/run_skill_release_atomic_lifecycle_race.py` using
 `011_skill_release_atomic_lifecycle_race.sql`.
+
+`012_finance_retrieval_768.sql` is a separate disposable FinanceBench gate. It
+keeps the native 768-dimensional finance embedding, creates an HNSW index, and
+uses a forced-RLS policy whose authority epoch, tenant, subject, purpose, and
+classification checks happen before vector ranking. The paired
+`finance_governed_retrieval_replay.py` runner also checks soft deletion and
+transaction rollback. It is local PostgreSQL evidence only; it is not an
+Aurora availability, failover, or production migration.

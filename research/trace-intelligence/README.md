@@ -172,6 +172,20 @@ The Ollama arm is implemented by `finance_mteb_ollama_embedding_benchmark.py`
 and joined by `finance_mteb_harness_parity.py`; its loopback endpoint and
 context projection are recorded in the machine-readable receipts.
 
+The [`FinanceBench governed pgvector replay`](experiments/summaries/finance-governed-retrieval-2026-08-02.md)
+then loaded the same projected corpus into a disposable PostgreSQL 16 +
+pgvector 0.8.1 table with native `vector(768)` storage, HNSW, forced RLS, and
+a `NOSUPERUSER NOBYPASSRLS` application role. The BalyasnyAI arm retained
+Recall@20 1.000 and MRR 0.802 at a 2.023 ms p50 query latency. Six negative
+authority cases (tenant, subject, stale/missing epoch, purpose, and clearance)
+returned zero candidates; a deleted document disappeared before ranking; and
+the data transaction rolled back to zero rows before table cleanup. This is
+the first local evidence that finance-specialized retrieval can compose with
+Frankengate's policy-before-ranking and deletion contract. It does not claim
+Aurora scale, failover, or production promotion. The migration and runner are
+`sql/012_finance_retrieval_768.sql` and
+`finance_governed_retrieval_replay.py`.
+
 The [`skill-learning faithful preflight`](experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md)
 audits pinned Hermes Self-Evolution, GEPA/gskill, ReasoningBank, and
 Trace2Skill implementations. It finds no executable natural-trace candidate
