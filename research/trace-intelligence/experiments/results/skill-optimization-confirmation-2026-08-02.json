@@ -36,12 +36,19 @@
       "result": "Both models produced 0/8 wins for no-skill and trace-mined arms; candidate invalid actions were 66 versus 0 for Llama and 140 versus 280 for Qwen",
       "causal": false,
       "hard_edge": "One Ollama-native harness and environment win flags are not an independent correctness/security verifier; no task-success lift was observed"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
+      "what_was_tested": "The same eight ALFWorld paths through the Ollama OpenAI-compatible harness",
+      "result": "Both arms were 0/8; the trace-mined arm emitted 66 invalid actions versus 0 for no-skill, matching the native-harness direction",
+      "causal": false,
+      "hard_edge": "Aggregate verifier passed, but independent semantic/security recomputation and larger task power remain open"
     }
   ],
   "model_harness_coverage": {
     "models_exercised_locally": ["llama3.2:latest", "qwen3:4b"],
     "harnesses_exercised_locally": ["OpenAI-compatible native-tool loop", "Ollama native API loop"],
-    "what_that_proves": "The candidate protocol can be executed across two local model configurations and two transport/harness paths; a family-disjoint semantic intervention has now been completed on eight new paths through the Ollama-native harness.",
+    "what_that_proves": "The candidate protocol can be executed across two local model configurations and two transport/harness paths; the same eight-task family-disjoint semantic intervention has now been replayed through both Ollama-native and OpenAI-compatible harnesses.",
     "what_that_does_not_prove": "Semantic task improvement, cross-harness transfer, model-quality improvement, or enterprise productivity benefit"
   },
   "external_reference": {

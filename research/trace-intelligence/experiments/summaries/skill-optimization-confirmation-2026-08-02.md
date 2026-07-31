@@ -8,6 +8,7 @@ We have **not** yet confirmed that Frankengate's trace-mined skills improve real
 2. A skill optimizer can run against a held-out split and reject bad edits.
 3. Trace-derived protocol instructions can be executed through more than one local model/harness path.
 4. On eight previously unused ALFWorld paths across four families, both Llama 3.2 and Qwen 3 4B achieved 0/8 wins for baseline and candidate. The candidate changed invalid-action rates in opposite directions by model but produced no success lift.
+5. Replaying those identical eight paths through the second Ollama OpenAI-compatible harness produced the same Llama result: 0/8 wins for both arms and 66 candidate invalid actions versus 0 baseline.
 
 Those are prerequisites and a negative causal test, not evidence of a beneficial skill.
 
@@ -25,6 +26,6 @@ Microsoft SkillOpt's published v0.2.0 study is stronger external evidence: six r
 
 ## Required next gate
 
-Repeat the family-disjoint intervention through a second independent harness and add sealed task-outcome recomputation plus security/policy verification. No skill should be promoted before that gate passes; the r9 result itself remains non-promotable.
+Add sealed task-outcome recomputation plus security/policy verification to both harnesses, then run a larger powered cohort. No skill should be promoted before that gate passes; the r9/r11 results remain non-promotable.
 
 Machine-readable receipt: `experiments/results/skill-optimization-confirmation-2026-08-02.json`.

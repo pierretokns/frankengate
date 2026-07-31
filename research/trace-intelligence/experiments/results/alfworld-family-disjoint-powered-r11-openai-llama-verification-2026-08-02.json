@@ -1,0 +1,11 @@
+{
+  "all_passed": true,
+  "raw": "alfworld-family-disjoint-powered-r11-openai-llama.raw.json",
+  "raw_content_policy": "aggregate episode fields only; no model text",
+  "raw_sha256": "f6ee39f7c4aab0ab069443530af1f51497315e4be576553c5e282c0f2a43f16b",
+  "receipt": "alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
+  "rows_verified": 16,
+  "schema_version": "frankengate-alfworld-powered-receipt-verification-v1",
+  "summary_keys_verified": 2,
+  "task_count_verified": 8
+}

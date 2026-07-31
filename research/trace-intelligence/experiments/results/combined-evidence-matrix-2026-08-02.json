@@ -77,6 +77,18 @@
       "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
       "sha256": "ee7fd63bab4c75f1283a7c307f841013427490d44449ae1fe9dd9da81fb7c270"
     },
+    "alfworld_family_disjoint_powered_r11_openai_llama": {
+      "filename": "alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "936cfd8268846e117d9b064b41523d28c57113cfd885eed213da268395811b4e"
+    },
+    "alfworld_family_disjoint_powered_r11_openai_llama_verification": {
+      "filename": "alfworld-family-disjoint-powered-r11-openai-llama-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-powered-receipt-verification-v1",
+      "sha256": "66196affd42afc23dd384b114106966a06db60d3a9a987909333add701b6cf82"
+    },
     "alfworld_family_disjoint_powered_r9": {
       "filename": "alfworld-family-disjoint-powered-r9-2026-08-02.json",
       "optional": true,
@@ -463,6 +475,10 @@
         "alfworld_durable_memory_r7_wins": 0,
         "alfworld_expert_control_wins": 2,
         "alfworld_family_disjoint_powered_r10_qwen_incomplete": true,
+        "alfworld_family_disjoint_powered_r11_candidate_invalid_actions": 66,
+        "alfworld_family_disjoint_powered_r11_candidate_wins": 0,
+        "alfworld_family_disjoint_powered_r11_tasks": 8,
+        "alfworld_family_disjoint_powered_r11_verifier_passed": true,
         "alfworld_family_disjoint_powered_r9_candidate_invalid_actions": 206,
         "alfworld_family_disjoint_powered_r9_candidate_wins": 0,
         "alfworld_family_disjoint_powered_r9_causal_skill_benefit_confirmed": false,
@@ -572,6 +588,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "ede32dce4eabe1c4f66d89e97640f42e099795474c413499547ac5f884e4439c",
+  "result_sha256": "1c7b2abd6ea5b3c92acc2118487f1fc858f52601ed8f2a4697f2c34d0f9f36c1",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

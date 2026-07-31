@@ -82,6 +82,8 @@ OPTIONAL_RESULTS = {
     "alfworld_model_generated_memory_verification": "alfworld-model-generated-memory-verification-2026-08-02.json",
     "alfworld_family_disjoint_powered_r9": "alfworld-family-disjoint-powered-r9-2026-08-02.json",
     "alfworld_family_disjoint_powered_r9_verification": "alfworld-family-disjoint-powered-r9-verification-2026-08-02.json",
+    "alfworld_family_disjoint_powered_r11_openai_llama": "alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
+    "alfworld_family_disjoint_powered_r11_openai_llama_verification": "alfworld-family-disjoint-powered-r11-openai-llama-verification-2026-08-02.json",
     "alfworld_family_disjoint_powered_r10_qwen_incomplete": "alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json",
 }
 
@@ -173,6 +175,8 @@ def build_matrix(
     alfworld_model_generated_memory_verification = results.get("alfworld_model_generated_memory_verification")
     alfworld_family_disjoint_powered_r9 = results.get("alfworld_family_disjoint_powered_r9")
     alfworld_family_disjoint_powered_r9_verification = results.get("alfworld_family_disjoint_powered_r9_verification")
+    alfworld_family_disjoint_powered_r11_openai_llama = results.get("alfworld_family_disjoint_powered_r11_openai_llama")
+    alfworld_family_disjoint_powered_r11_openai_llama_verification = results.get("alfworld_family_disjoint_powered_r11_openai_llama_verification")
     alfworld_family_disjoint_powered_r10_qwen_incomplete = results.get("alfworld_family_disjoint_powered_r10_qwen_incomplete")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
@@ -257,6 +261,10 @@ def build_matrix(
         "r9_candidate_invalid_actions": sum(v.get("invalid_actions", 0) for k, v in (alfworld_family_disjoint_powered_r9.get("summary", {}) if alfworld_family_disjoint_powered_r9 else {}).items() if "trace_mined_procedure_v2" in k),
         "r9_causal_skill_benefit_confirmed": bool(alfworld_family_disjoint_powered_r9 and alfworld_family_disjoint_powered_r9.get("comparison", {}).get("causal_skill_benefit_confirmed", False)),
         "r9_verifier_passed": bool(alfworld_family_disjoint_powered_r9_verification and alfworld_family_disjoint_powered_r9_verification.get("all_passed", False)),
+        "r11_task_count": alfworld_family_disjoint_powered_r11_openai_llama.get("dataset", {}).get("task_count", 0) if alfworld_family_disjoint_powered_r11_openai_llama else 0,
+        "r11_candidate_wins": sum(v.get("wins", 0) for k, v in (alfworld_family_disjoint_powered_r11_openai_llama.get("summary", {}) if alfworld_family_disjoint_powered_r11_openai_llama else {}).items() if "trace_mined_procedure_v2" in k),
+        "r11_candidate_invalid_actions": sum(v.get("invalid_actions", 0) for k, v in (alfworld_family_disjoint_powered_r11_openai_llama.get("summary", {}) if alfworld_family_disjoint_powered_r11_openai_llama else {}).items() if "trace_mined_procedure_v2" in k),
+        "r11_verifier_passed": bool(alfworld_family_disjoint_powered_r11_openai_llama_verification and alfworld_family_disjoint_powered_r11_openai_llama_verification.get("all_passed", False)),
         "r10_qwen_incomplete": bool(alfworld_family_disjoint_powered_r10_qwen_incomplete and alfworld_family_disjoint_powered_r10_qwen_incomplete.get("status") == "interrupted_runtime_error"),
     }
 
@@ -1089,6 +1097,10 @@ def build_matrix(
                 "alfworld_family_disjoint_powered_r9_candidate_invalid_actions": revision_evidence["r9_candidate_invalid_actions"],
                 "alfworld_family_disjoint_powered_r9_causal_skill_benefit_confirmed": revision_evidence["r9_causal_skill_benefit_confirmed"],
                 "alfworld_family_disjoint_powered_r9_verifier_passed": revision_evidence["r9_verifier_passed"],
+                "alfworld_family_disjoint_powered_r11_tasks": revision_evidence["r11_task_count"],
+                "alfworld_family_disjoint_powered_r11_candidate_wins": revision_evidence["r11_candidate_wins"],
+                "alfworld_family_disjoint_powered_r11_candidate_invalid_actions": revision_evidence["r11_candidate_invalid_actions"],
+                "alfworld_family_disjoint_powered_r11_verifier_passed": revision_evidence["r11_verifier_passed"],
                 "alfworld_family_disjoint_powered_r10_qwen_incomplete": revision_evidence["r10_qwen_incomplete"],
             },
             "decision": (
@@ -1432,7 +1444,10 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{skill['alfworld_family_disjoint_powered_r9_candidate_invalid_actions']} invalid actions; causal benefit remains "
             f"{skill['alfworld_family_disjoint_powered_r9_causal_skill_benefit_confirmed']}. The identical Qwen replay was "
             f"recorded as incomplete runtime evidence: {skill['alfworld_family_disjoint_powered_r10_qwen_incomplete']}. "
-            f"The r9 aggregate verifier passed: {skill['alfworld_family_disjoint_powered_r9_verifier_passed']}.",
+            f"The r9 aggregate verifier passed: {skill['alfworld_family_disjoint_powered_r9_verifier_passed']}. "
+            f"The second-harness r11 replay also produced {skill['alfworld_family_disjoint_powered_r11_candidate_wins']} wins and "
+            f"{skill['alfworld_family_disjoint_powered_r11_candidate_invalid_actions']} invalid actions, with verifier "
+            f"{skill['alfworld_family_disjoint_powered_r11_verifier_passed']}.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "

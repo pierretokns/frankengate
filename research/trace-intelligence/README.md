@@ -238,6 +238,13 @@ protocol movement without task-success lift; the aggregate projection verifier
 passed, but promotion remains closed. The interrupted duplicate Qwen run is
 recorded as a typed service `unexpected EOF` null rather than scored.
 
+The [`second-harness replay`](experiments/summaries/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.md)
+then sent those exact eight paths through Ollama's OpenAI-compatible endpoint.
+Llama again produced `0/8` wins in both arms, with 66 invalid actions for the
+trace-derived candidate versus 0 for no-skill. This makes the negative result
+harness-consistent on the tested task set, while independent semantic/security
+recomputation and a larger powered cohort remain open.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

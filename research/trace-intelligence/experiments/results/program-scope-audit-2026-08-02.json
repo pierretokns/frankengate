@@ -98,6 +98,14 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/results/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json"
         }
       ],
@@ -157,7 +165,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "6a010002f74ebb589691fbef0f5631dbadb2b15e"
+          "head": "96aed5f7d5027f587038e5c7f7a39ef0f583ec0c"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

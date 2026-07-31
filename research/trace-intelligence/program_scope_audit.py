@@ -88,6 +88,8 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
                 "experiments/results/alfworld-family-disjoint-powered-r9-2026-08-02.json",
                 "experiments/results/alfworld-family-disjoint-powered-r9-verification-2026-08-02.json",
+                "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
+                "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-verification-2026-08-02.json",
                 "experiments/results/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json",
             ),
             "open_gate": "No mechanism has a powered causal lift with independent later-task labels; all learned candidates remain rejected or proposal-only.",

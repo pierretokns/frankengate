@@ -31,6 +31,26 @@
       "completed_episode_outcomes": 0,
       "causal_skill_benefit_confirmed": false
     },
+    "alfworld_family_disjoint_powered_r11_openai_llama": {
+      "result": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
+      "summary": "experiments/summaries/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.md",
+      "status": "second_harness_family_disjoint_negative_transfer",
+      "task_count": 8,
+      "model": "llama3.2:latest",
+      "harness": "ollama-openai-compatible",
+      "candidate_wins": 0,
+      "candidate_invalid_actions": 66,
+      "quality_comparison_valid": true,
+      "causal_skill_benefit_confirmed": false,
+      "automatic_promotion_authorized": false
+    },
+    "alfworld_family_disjoint_powered_r11_openai_llama_verification": {
+      "result": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-verification-2026-08-02.json",
+      "status": "aggregate_projection_verified",
+      "all_passed": true,
+      "rows_verified": 16,
+      "raw_content_committed": false
+    },
     "aurora_runtime_probe": {
       "result": "experiments/results/aurora-runtime-probe-2026-08-02.json",
       "status": "container_runtime_unavailable_typed_null",
