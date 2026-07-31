@@ -93,6 +93,8 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/natural-model-dream-procedure-llama-verification-2026-08-02.json",
                 "experiments/results/natural-model-dream-procedure-luna-2026-08-02.json",
                 "experiments/results/natural-model-dream-procedure-luna-verification-2026-08-02.json",
+                "experiments/results/natural-model-dream-procedure-luna-meaningful-2026-08-02.json",
+                "experiments/results/natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
                 "experiments/results/alfworld-luna-skillopt-family4-2026-08-02.json",
                 "experiments/results/alfworld-luna-skillopt-family4-verification-2026-08-02.json",
                 "experiments/results/alfworld-luna-skillopt-long-horizon-2026-08-02.json",
@@ -101,7 +103,7 @@ def build_audit() -> dict[str, Any]:
                 "experiments/summaries/skill-improvement-strategy-audit-2026-07-30.md",
                 "experiments/summaries/natural-trace-memory-factorial-2026-08-02-r2.md",
             ),
-            "open_gate": "Natural release lineage is exercised; Qwen3 4B passed zero of three structural proposal gates, while Llama 3.2 and frontier Luna each passed one of three. The frontier Luna SkillOpt checkpoint also produced zero wins for no-skill, placebo, and candidate across four previously unused ALFWorld families at a 12-step horizon, and a fair-horizon one-task follow-up remained zero-win at 35 steps; independent replay verification passed both. These results establish protocol/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
+            "open_gate": "Natural release lineage is exercised; the corrected meaningful-trace Luna sample passed 3/4 structural proposal gates after excluding empty/malformed fixtures, while the earlier mixed sample passed 1/3. The frontier Luna SkillOpt checkpoint also produced zero wins for no-skill, placebo, and candidate across four previously unused ALFWorld families at a 12-step horizon, and a fair-horizon one-task follow-up remained zero-win at 35 steps; independent replay verification passed both. These results establish protocol/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
         },
         {
             "id": "single_and_composed_mechanisms",

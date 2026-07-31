@@ -128,15 +128,39 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--corpus-root", type=Path, required=True)
     parser.add_argument("--max-projects", type=int, default=3)
+    parser.add_argument(
+        "--min-tool-calls",
+        type=int,
+        default=0,
+        help="Only admit sessions with at least this many observed tool calls.",
+    )
+    parser.add_argument(
+        "--min-recovery-candidates",
+        type=int,
+        default=0,
+        help="Only admit sessions with at least this many recovery candidates.",
+    )
     parser.add_argument("--workdir", type=Path, default=Path("/private/tmp"))
     parser.add_argument("--backend", choices=("ollama", "codex"), default="ollama")
     parser.add_argument("--model", default="qwen3:4b")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    paths = sorted(args.corpus_root.rglob("*.jsonl"))[: max(1, args.max_projects)]
-    rows: list[dict[str, Any]] = []
-    for path in paths:
+    if args.max_projects < 1:
+        raise ValueError("--max-projects must be positive")
+    if args.min_tool_calls < 0 or args.min_recovery_candidates < 0:
+        raise ValueError("minimum evidence thresholds must be non-negative")
+    admitted: list[tuple[Path, str, dict[str, Any]]] = []
+    for path in sorted(args.corpus_root.rglob("*.jsonl")):
         evidence_id, evidence = structural_summary(path, args.corpus_root)
+        if evidence["tool_calls"] < args.min_tool_calls:
+            continue
+        if evidence["recovery_candidates"] < args.min_recovery_candidates:
+            continue
+        admitted.append((path, evidence_id, evidence))
+        if len(admitted) >= args.max_projects:
+            break
+    rows: list[dict[str, Any]] = []
+    for path, evidence_id, evidence in admitted:
         prompt = (
             "You are a governed procedure generator. The following is a content-free structural summary "
             "of one agent trace. Produce ONLY a JSON object with fields procedure_title (string), "
@@ -164,6 +188,12 @@ def main() -> int:
         "study": "model_generated_natural_trace_procedure_structural_quality",
         "model": args.model,
         "projects_attempted": len(rows),
+        "selection": {
+            "max_projects": args.max_projects,
+            "min_tool_calls": args.min_tool_calls,
+            "min_recovery_candidates": args.min_recovery_candidates,
+            "admitted_by_sorted_content_path": True,
+        },
         "projects_with_valid_candidate": sum(row["checks"]["valid_json"] for row in rows),
         "projects_quality_passed": sum(row["checks"]["quality_passed"] for row in rows),
         "rows": rows,

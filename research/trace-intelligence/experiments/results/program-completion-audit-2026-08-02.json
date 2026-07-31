@@ -436,7 +436,12 @@
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-      "schema_version": "frankengate-combined-evidence-matrix-v26",
+      "schema_version": "frankengate-combined-evidence-matrix-v27",
+      "natural_model_dream_procedure_luna_meaningful": "experiments/results/natural-model-dream-procedure-luna-meaningful-2026-08-02.json",
+      "natural_model_dream_procedure_luna_meaningful_verification": "experiments/results/natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
+      "natural_model_dream_procedure_luna_meaningful_projects": 4,
+      "natural_model_dream_procedure_luna_meaningful_quality_passed": 3,
+      "natural_model_dream_procedure_luna_meaningful_verifier_passed": true,
       "enterprise_outcome_gate": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json",
       "enterprise_outcome_gate_mechanics_passed": true,
       "enterprise_denials_emit_no_candidate_digests": true,

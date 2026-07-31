@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v26"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v27"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -91,6 +91,8 @@ OPTIONAL_RESULTS = {
     "natural_model_dream_procedure_llama_verification": "natural-model-dream-procedure-llama-verification-2026-08-02.json",
     "natural_model_dream_procedure_luna": "natural-model-dream-procedure-luna-2026-08-02.json",
     "natural_model_dream_procedure_luna_verification": "natural-model-dream-procedure-luna-verification-2026-08-02.json",
+    "natural_model_dream_procedure_luna_meaningful": "natural-model-dream-procedure-luna-meaningful-2026-08-02.json",
+    "natural_model_dream_procedure_luna_meaningful_verification": "natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
     "alfworld_luna_skillopt_family4": "alfworld-luna-skillopt-family4-2026-08-02.json",
     "alfworld_luna_skillopt_family4_verification": "alfworld-luna-skillopt-family4-verification-2026-08-02.json",
     "alfworld_luna_skillopt_long_horizon": "alfworld-luna-skillopt-long-horizon-2026-08-02.json",
@@ -250,6 +252,8 @@ def build_matrix(
     natural_model_dream_procedure_llama_verification = results.get("natural_model_dream_procedure_llama_verification")
     natural_model_dream_procedure_luna = results.get("natural_model_dream_procedure_luna")
     natural_model_dream_procedure_luna_verification = results.get("natural_model_dream_procedure_luna_verification")
+    natural_model_dream_procedure_luna_meaningful = results.get("natural_model_dream_procedure_luna_meaningful")
+    natural_model_dream_procedure_luna_meaningful_verification = results.get("natural_model_dream_procedure_luna_meaningful_verification")
     alfworld_luna_skillopt_family4 = results.get("alfworld_luna_skillopt_family4")
     alfworld_luna_skillopt_family4_verification = results.get("alfworld_luna_skillopt_family4_verification")
     alfworld_luna_skillopt_long_horizon = results.get("alfworld_luna_skillopt_long_horizon")
@@ -1355,6 +1359,11 @@ def build_matrix(
                 "natural_model_dream_procedure_luna_quality_passed": natural_model_dream_procedure_luna.get("projects_quality_passed", 0) if natural_model_dream_procedure_luna else 0,
                 "natural_model_dream_procedure_luna_verifier_passed": bool(natural_model_dream_procedure_luna_verification and natural_model_dream_procedure_luna_verification.get("all_passed", False)),
                 "natural_model_dream_procedure_luna_semantic_utility_confirmed": bool(natural_model_dream_procedure_luna and natural_model_dream_procedure_luna.get("claim_boundary", {}).get("semantic_procedure_quality_confirmed", False)),
+                "natural_model_dream_procedure_luna_meaningful_projects": natural_model_dream_procedure_luna_meaningful.get("projects_attempted", 0) if natural_model_dream_procedure_luna_meaningful else 0,
+                "natural_model_dream_procedure_luna_meaningful_valid_json": natural_model_dream_procedure_luna_meaningful.get("projects_with_valid_candidate", 0) if natural_model_dream_procedure_luna_meaningful else 0,
+                "natural_model_dream_procedure_luna_meaningful_quality_passed": natural_model_dream_procedure_luna_meaningful.get("projects_quality_passed", 0) if natural_model_dream_procedure_luna_meaningful else 0,
+                "natural_model_dream_procedure_luna_meaningful_selection": natural_model_dream_procedure_luna_meaningful.get("selection", {}) if natural_model_dream_procedure_luna_meaningful else {},
+                "natural_model_dream_procedure_luna_meaningful_verifier_passed": bool(natural_model_dream_procedure_luna_meaningful_verification and natural_model_dream_procedure_luna_meaningful_verification.get("all_passed", False)),
                 "alfworld_luna_skillopt_family4_tasks": len(alfworld_luna_skillopt_family4.get("dataset", {}).get("task_hashes", [])) if alfworld_luna_skillopt_family4 else 0,
                 "alfworld_luna_skillopt_family4_episodes": len(alfworld_luna_skillopt_family4.get("episodes", [])) if alfworld_luna_skillopt_family4 else 0,
                 "alfworld_luna_skillopt_family4_families": sorted(set((alfworld_luna_skillopt_family4.get("dataset", {}).get("family_labels", {}) if alfworld_luna_skillopt_family4 else {}).values())),
@@ -1807,6 +1816,18 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"passed {skill['natural_model_dream_procedure_luna_quality_passed']}/3. All independent receipt "
             "verifiers passed. This measures format/grounding mechanics only; semantic procedure utility and "
             "changed-system outcomes remain unmeasured.",
+            f"- A corrected frontier-only Luna sample admitted "
+            f"{skill['natural_model_dream_procedure_luna_meaningful_projects']} "
+            "public sessions with at least 20 tool calls and one recovery "
+            f"candidate. It produced valid JSON for "
+            f"{skill['natural_model_dream_procedure_luna_meaningful_valid_json']}/"
+            f"{skill['natural_model_dream_procedure_luna_meaningful_projects']} "
+            f"and passed the controlled grounding/shape rubric for "
+            f"{skill['natural_model_dream_procedure_luna_meaningful_quality_passed']}/"
+            f"{skill['natural_model_dream_procedure_luna_meaningful_projects']}; "
+            f"the independent verifier passed={skill['natural_model_dream_procedure_luna_meaningful_verifier_passed']}. "
+            "This corrects fixture-selection bias but remains structural evidence, "
+            "not procedure utility or causal skill benefit.",
             f"- The frontier Luna SkillOpt checkpoint replication covered {skill['alfworld_luna_skillopt_family4_tasks']} "
             f"previously unused tasks across {len(skill['alfworld_luna_skillopt_family4_families'])} families and "
             f"{skill['alfworld_luna_skillopt_family4_episodes']} total arm episodes. No-skill, placebo, and the "

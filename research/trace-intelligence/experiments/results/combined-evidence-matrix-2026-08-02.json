@@ -382,6 +382,18 @@
       "schema_version": "frankengate-natural-model-dream-procedure-v1",
       "sha256": "ab45445607cf6210ad92e6bdf2b966ac07afb033188bdea332bce59b9992d6f9"
     },
+    "natural_model_dream_procedure_luna_meaningful": {
+      "filename": "natural-model-dream-procedure-luna-meaningful-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-v1",
+      "sha256": "788986c3d7b678201210edf8fbb4bd6979cda860bc4c90aaa61749964435aa73"
+    },
+    "natural_model_dream_procedure_luna_meaningful_verification": {
+      "filename": "natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "sha256": "c63565f74563ea2cd1a343958defd10a84528018a8b44a1cda61b8ae2493e124"
+    },
     "natural_model_dream_procedure_luna_verification": {
       "filename": "natural-model-dream-procedure-luna-verification-2026-08-02.json",
       "optional": true,
@@ -967,6 +979,16 @@
         "natural_model_dream_procedure_llama_projects": 3,
         "natural_model_dream_procedure_llama_quality_passed": 1,
         "natural_model_dream_procedure_llama_verifier_passed": true,
+        "natural_model_dream_procedure_luna_meaningful_projects": 4,
+        "natural_model_dream_procedure_luna_meaningful_quality_passed": 3,
+        "natural_model_dream_procedure_luna_meaningful_selection": {
+          "admitted_by_sorted_content_path": true,
+          "max_projects": 4,
+          "min_recovery_candidates": 1,
+          "min_tool_calls": 20
+        },
+        "natural_model_dream_procedure_luna_meaningful_valid_json": 4,
+        "natural_model_dream_procedure_luna_meaningful_verifier_passed": true,
         "natural_model_dream_procedure_luna_projects": 3,
         "natural_model_dream_procedure_luna_quality_passed": 1,
         "natural_model_dream_procedure_luna_semantic_utility_confirmed": false,
@@ -1033,6 +1055,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "5ecd10fbe93262a544e80d987c8cb4eafb00566562fb4d00800399ffd6771cd7",
-  "schema_version": "frankengate-combined-evidence-matrix-v26"
+  "result_sha256": "0fc318bed86c9aabc447382b08a3b8c28c7a5f975c75a4532c2c260a8a829934",
+  "schema_version": "frankengate-combined-evidence-matrix-v27"
 }

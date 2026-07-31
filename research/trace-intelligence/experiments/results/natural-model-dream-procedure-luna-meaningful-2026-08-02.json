@@ -1,0 +1,255 @@
+{
+  "claim_boundary": {
+    "causal_skill_or_memory_utility_confirmed": false,
+    "enterprise_transfer_confirmed": false,
+    "model_generated_procedure_executed": true,
+    "reason": "Only content-free structural summaries were supplied; no task outcome, human label, or changed-system execution was available.",
+    "semantic_procedure_quality_confirmed": false,
+    "structural_quality_measured": true
+  },
+  "content_policy": {
+    "model_response_emitted": false,
+    "paths_emitted": false,
+    "raw_trace_content_emitted": false
+  },
+  "model": "gpt-5.6-luna",
+  "projects_attempted": 4,
+  "projects_quality_passed": 3,
+  "projects_with_valid_candidate": 4,
+  "rows": [
+    {
+      "candidate_length": 1218,
+      "candidate_sha256": "809733a3b3d67fb8ee70639b87f1cebba4cd314a2f006c3a51d9e261c9a0c8d9",
+      "checks": {
+        "controlled_steps": false,
+        "evidence_grounded": true,
+        "quality_passed": false,
+        "required_fields": true,
+        "valid_json": true
+      },
+      "codex_completed": true,
+      "evidence_id": "ev-9e1530481e6dc1a4",
+      "evidence_summary": {
+        "branch_points": 13,
+        "dangling_parents": 5,
+        "evidence_id": "ev-9e1530481e6dc1a4",
+        "explicit_errors": 68,
+        "malformed_records": 2,
+        "records": 5544,
+        "recovery_candidates": 61,
+        "recovery_motifs": [
+          {
+            "count": 9,
+            "error_family": "file_mutation",
+            "recovery_family": "file_mutation",
+            "tier": "high"
+          },
+          {
+            "count": 10,
+            "error_family": "file_mutation",
+            "recovery_family": "file_mutation",
+            "tier": "medium"
+          },
+          {
+            "count": 2,
+            "error_family": "file_mutation",
+            "recovery_family": "file_read",
+            "tier": "low"
+          },
+          {
+            "count": 2,
+            "error_family": "file_mutation",
+            "recovery_family": "shell",
+            "tier": "low"
+          },
+          {
+            "count": 1,
+            "error_family": "file_read",
+            "recovery_family": "file_read",
+            "tier": "medium"
+          },
+          {
+            "count": 4,
+            "error_family": "shell",
+            "recovery_family": "file_read",
+            "tier": "low"
+          },
+          {
+            "count": 20,
+            "error_family": "shell",
+            "recovery_family": "shell",
+            "tier": "high"
+          },
+          {
+            "count": 13,
+            "error_family": "shell",
+            "recovery_family": "shell",
+            "tier": "medium"
+          }
+        ],
+        "tool_calls": 1047,
+        "tool_families": {
+          "external_retrieval": 28,
+          "file_mutation": 186,
+          "file_read": 97,
+          "human_interaction": 3,
+          "shell": 693,
+          "skill_invocation": 3,
+          "task_coordination": 33,
+          "tool_discovery": 4
+        },
+        "tool_results": 1045
+      },
+      "model": "gpt-5.6-luna",
+      "model_response_sha256": "a86f1b7eb24234096bd01e93b0ceab5db5382a9c2af5d6e35976d7987a547a70"
+    },
+    {
+      "candidate_length": 670,
+      "candidate_sha256": "dd96f423c96d4a661b10610b8098068ef840e85ae369ec3abda72634a138d802",
+      "checks": {
+        "controlled_steps": true,
+        "evidence_grounded": true,
+        "quality_passed": true,
+        "required_fields": true,
+        "valid_json": true
+      },
+      "codex_completed": true,
+      "evidence_id": "ev-7878c377eb41a2f9",
+      "evidence_summary": {
+        "branch_points": 0,
+        "dangling_parents": 0,
+        "evidence_id": "ev-7878c377eb41a2f9",
+        "explicit_errors": 2,
+        "malformed_records": 0,
+        "records": 319,
+        "recovery_candidates": 2,
+        "recovery_motifs": [
+          {
+            "count": 1,
+            "error_family": "file_mutation",
+            "recovery_family": "file_mutation",
+            "tier": "high"
+          },
+          {
+            "count": 1,
+            "error_family": "shell",
+            "recovery_family": "shell",
+            "tier": "high"
+          }
+        ],
+        "tool_calls": 56,
+        "tool_families": {
+          "file_mutation": 10,
+          "file_read": 2,
+          "human_interaction": 1,
+          "shell": 43
+        },
+        "tool_results": 56
+      },
+      "model": "gpt-5.6-luna",
+      "model_response_sha256": "f19a9f63958704f2b2aaaab71273114cbc0428002a570adec1d3fa698a29452b"
+    },
+    {
+      "candidate_length": 724,
+      "candidate_sha256": "dee2dc2e4bbf9eb9d68cf083368f1f1b3215a0ee05809c66e6c19ae4da783c31",
+      "checks": {
+        "controlled_steps": true,
+        "evidence_grounded": true,
+        "quality_passed": true,
+        "required_fields": true,
+        "valid_json": true
+      },
+      "codex_completed": true,
+      "evidence_id": "ev-6cb7adcc8b344791",
+      "evidence_summary": {
+        "branch_points": 0,
+        "dangling_parents": 0,
+        "evidence_id": "ev-6cb7adcc8b344791",
+        "explicit_errors": 2,
+        "malformed_records": 0,
+        "records": 83,
+        "recovery_candidates": 2,
+        "recovery_motifs": [
+          {
+            "count": 2,
+            "error_family": "shell",
+            "recovery_family": "shell",
+            "tier": "high"
+          }
+        ],
+        "tool_calls": 39,
+        "tool_families": {
+          "file_read": 10,
+          "shell": 28,
+          "structured_output": 1
+        },
+        "tool_results": 39
+      },
+      "model": "gpt-5.6-luna",
+      "model_response_sha256": "a32ef7c0d76bc5cd22e6360f103b97f707277efe48293645678c7eab35e2c708"
+    },
+    {
+      "candidate_length": 1177,
+      "candidate_sha256": "9931353ba8cfae4a123a1c161cbf7ff3c508d4fed4c7b49ab7fb840f96da3a10",
+      "checks": {
+        "controlled_steps": true,
+        "evidence_grounded": true,
+        "quality_passed": true,
+        "required_fields": true,
+        "valid_json": true
+      },
+      "codex_completed": true,
+      "evidence_id": "ev-e310dfc9498b7f16",
+      "evidence_summary": {
+        "branch_points": 5,
+        "dangling_parents": 0,
+        "evidence_id": "ev-e310dfc9498b7f16",
+        "explicit_errors": 24,
+        "malformed_records": 0,
+        "records": 2683,
+        "recovery_candidates": 24,
+        "recovery_motifs": [
+          {
+            "count": 5,
+            "error_family": "file_mutation",
+            "recovery_family": "file_mutation",
+            "tier": "high"
+          },
+          {
+            "count": 7,
+            "error_family": "file_mutation",
+            "recovery_family": "file_mutation",
+            "tier": "medium"
+          },
+          {
+            "count": 12,
+            "error_family": "shell",
+            "recovery_family": "shell",
+            "tier": "high"
+          }
+        ],
+        "tool_calls": 541,
+        "tool_families": {
+          "delegation": 2,
+          "external_retrieval": 3,
+          "file_mutation": 200,
+          "file_read": 24,
+          "shell": 289,
+          "task_coordination": 20,
+          "tool_discovery": 3
+        },
+        "tool_results": 541
+      },
+      "model": "gpt-5.6-luna",
+      "model_response_sha256": "ff4fd55f9c2167ab3130ecd1ee27641ccec9def394bbee0736b65dfb3613204f"
+    }
+  ],
+  "schema_version": "frankengate-natural-model-dream-procedure-v1",
+  "selection": {
+    "admitted_by_sorted_content_path": true,
+    "max_projects": 4,
+    "min_recovery_candidates": 1,
+    "min_tool_calls": 20
+  },
+  "study": "model_generated_natural_trace_procedure_structural_quality"
+}
