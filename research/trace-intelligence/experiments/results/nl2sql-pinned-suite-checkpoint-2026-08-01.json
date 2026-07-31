@@ -1,0 +1,11 @@
+{
+  "schema_version": "frankengate.nl2sql-pinned-suite-checkpoint.v1",
+  "date": "2026-08-01",
+  "command": "uv run --frozen python -m unittest discover -s nl2sql_capabilities/tests -p 'test_*.py'",
+  "tests_run": 61,
+  "tests_passed": 61,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "dependency_source": "research/trace-intelligence/uv.lock",
+  "interpretation": "All NL2SQL capability tests pass in the pinned environment; the host make verify run skips two sqlglot-dependent modules only because it uses the system Python."
+}
