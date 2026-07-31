@@ -72,6 +72,9 @@ def expert_trace(config: dict[str, Any], task: str) -> tuple[list[str], bool]:
     from alfworld.agents.environment.alfred_tw_env import AlfredTWEnv
 
     base = AlfredTWEnv(config, "eval_out_of_distribution")
+    # ALFWorld exposes the environment-provided expert plan only when the
+    # evaluator is switched to its train/evaluation expert mode.
+    base.train_eval = "train"
     base.game_files = [task]
     base.num_games = 1
     env = base.init_env(batch_size=1)
