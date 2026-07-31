@@ -27,6 +27,11 @@ TRACE_MINED_SKILL = """Trace-derived procedure candidate (mined from successful 
 6. After each failed action, inspect the new observation and choose another admissible action.
 7. Stop only after the environment reports success.
 """
+TRACE_MINED_SKILL_V2 = """Trace-derived action discipline:
+- Output exactly one admissible action in angle brackets; do not explain.
+- Follow the state: navigate, open, take, perform the required transformation, then place.
+- Re-read the observation and admissible actions after every step.
+"""
 FORMAT_PLACEBO = "Respond with exactly one action enclosed in <action>...</action>."
 
 
@@ -91,8 +96,13 @@ def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: s
             observation = obs[0][0]
             admissible = list(infos.get("admissible_commands", [[]])[0])
             skill = ""
+            system = "You are an ALFWorld agent. Return one action only."
             if arm == "trace_mined_procedure":
                 skill = TRACE_MINED_SKILL + "\n"
+            elif arm == "trace_mined_procedure_v2":
+                # Keep the intervention in the system contract so the candidate
+                # does not compete with the state/action list in the user turn.
+                system = "You are an ALFWorld agent.\n" + TRACE_MINED_SKILL_V2
             elif arm == "formatting_placebo":
                 skill = FORMAT_PLACEBO + "\n"
             prompt = (
@@ -106,7 +116,7 @@ def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: s
                 response = call_chat(
                     endpoint,
                     model,
-                    "You are an ALFWorld agent. Return one action only.",
+                    system,
                     prompt,
                     timeout,
                 )
@@ -140,6 +150,7 @@ def main() -> int:
     parser.add_argument("--task", action="append", required=True)
     parser.add_argument("--model", action="append", required=True)
     parser.add_argument("--endpoint", action="append", required=True)
+    parser.add_argument("--arm", action="append", help="Arm(s) to run; defaults to all registered arms")
     parser.add_argument("--max-steps", type=int, default=30)
     parser.add_argument("--timeout", type=float, default=45)
     parser.add_argument("--output", type=Path, required=True)
@@ -156,7 +167,11 @@ def main() -> int:
     config["dataset"]["num_eval_games"] = 1
     config["general"]["use_cuda"] = False
     base = AlfredTWEnv(config, "eval_out_of_distribution")
-    arms = ["no_skill", "formatting_placebo", "trace_mined_procedure"]
+    all_arms = ["no_skill", "formatting_placebo", "trace_mined_procedure", "trace_mined_procedure_v2"]
+    arms = args.arm or all_arms
+    unknown_arms = sorted(set(arms) - set(all_arms))
+    if unknown_arms:
+        parser.error(f"unknown arm(s): {', '.join(unknown_arms)}")
     rows: list[dict[str, Any]] = []
     for model in args.model:
         for endpoint in args.endpoint:

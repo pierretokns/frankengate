@@ -1,0 +1,39 @@
+{
+  "schema_version": "frankengate-alfworld-trace-skill-intervention-r2-v1",
+  "study": "prompt-contract revision of a MATM-derived ALFWorld procedure candidate",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "archive_sha256": "a15b6c4eef2f86ccc39d082ecd2d99a9e022f92289f71f63679069099a208c59",
+    "task_hashes": [
+      "453f5330dd1fb27ee0a9b525af37524f1d8ea4c9489dd66c68ba8b31faa32da5",
+      "8c79c8cd40907481f59933f4743a09063ccc2a4600113ca56aa17f7c23b34944"
+    ]
+  },
+  "intervention": {
+    "candidate": "trace_mined_procedure_v2",
+    "change": "Shortened the procedure and moved it into the system contract; observation and admissible actions remained in the user turn.",
+    "max_steps": {"look_at_obj_in_light": 12, "pick_and_place_simple": 30},
+    "models": ["llama3.2:latest"],
+    "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
+    "episodes": 6,
+    "raw_receipts": ["/private/tmp/alfworld-r2-look-llama.json", "/private/tmp/alfworld-r2-pick-llama.json"]
+  },
+  "aggregate": {
+    "llama3.2:latest|ollama-native-api|no_skill|look": {"episodes": 1, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 12.0, "mean_elapsed_ms": 1611.96},
+    "llama3.2:latest|ollama-openai-compatible|no_skill|look": {"episodes": 1, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 12.0, "mean_elapsed_ms": 1590.222},
+    "llama3.2:latest|ollama-native-api|trace_mined_procedure_v2|look": {"episodes": 1, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 12.0, "mean_elapsed_ms": 3143.08},
+    "llama3.2:latest|ollama-openai-compatible|trace_mined_procedure_v2|look": {"episodes": 1, "wins": 0, "win_rate": 0.0, "invalid_actions": 0, "mean_steps": 12.0, "mean_elapsed_ms": 3136.34},
+    "llama3.2:latest|ollama-native-api|trace_mined_procedure_v2|pick": {"episodes": 1, "wins": 0, "win_rate": 0.0, "invalid_actions": 28, "mean_steps": 30.0, "mean_elapsed_ms": 5438.834},
+    "llama3.2:latest|ollama-openai-compatible|trace_mined_procedure_v2|pick": {"episodes": 1, "wins": 0, "win_rate": 0.0, "invalid_actions": 28, "mean_steps": 30.0, "mean_elapsed_ms": 5452.264}
+  },
+  "interpretation": {
+    "candidate_wins": 0,
+    "candidate_invalid_actions": 56,
+    "prompt_placement_hypothesis_supported": false,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "The shorter system-contract candidate removed the prior look-task invalid-action spike but still produced no wins; on pick-and-place it produced 28 invalid actions per 30-step episode. This is a diagnostic slice with task-specific budgets, not a powered benchmark."
+  },
+  "raw_model_content_committed": false
+}

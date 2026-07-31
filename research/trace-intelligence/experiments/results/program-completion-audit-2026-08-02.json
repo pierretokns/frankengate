@@ -4,6 +4,18 @@
   "supersedes": "experiments/results/program-completion-audit-2026-08-01.json",
   "overall_status": "active_incomplete",
   "checkpoint": {
+    "alfworld_trace_skill_intervention_r2": {
+      "result": "experiments/results/alfworld-trace-skill-intervention-r2-2026-08-02.json",
+      "summary": "experiments/summaries/alfworld-trace-skill-intervention-r2-2026-08-02.md",
+      "status": "prompt_contract_revision_no_skill_lift",
+      "episodes": 6,
+      "models": ["llama3.2:latest"],
+      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
+      "candidate_wins": 0,
+      "candidate_invalid_actions": 56,
+      "causal_skill_benefit_confirmed": false,
+      "automatic_promotion_authorized": false
+    },
     "alfworld_trace_skill_intervention": {
       "result": "experiments/results/alfworld-trace-skill-intervention-2026-08-02.json",
       "summary": "experiments/summaries/alfworld-trace-skill-intervention-2026-08-02.md",

@@ -15,6 +15,11 @@ class AlfworldSkillInterventionTests(unittest.TestCase):
         self.assertIn("successful action templates", MODULE.TRACE_MINED_SKILL)
         self.assertNotIn("Your task is", MODULE.TRACE_MINED_SKILL)
 
+    def test_revised_candidate_is_short_and_action_contract_safe(self):
+        self.assertIn("exactly one admissible action", MODULE.TRACE_MINED_SKILL_V2)
+        self.assertIn("Re-read the observation", MODULE.TRACE_MINED_SKILL_V2)
+        self.assertLess(len(MODULE.TRACE_MINED_SKILL_V2), len(MODULE.TRACE_MINED_SKILL))
+
     def test_action_parser_prefers_admissible_tagged_action(self):
         action, valid = MODULE.choose_action("<action>go to drawer 1</action>", ["look", "go to drawer 1"])
         self.assertTrue(valid)
