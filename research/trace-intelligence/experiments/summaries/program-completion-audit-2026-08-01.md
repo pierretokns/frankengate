@@ -15,7 +15,7 @@ The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
 The latest targeted Defog/research suite passed 66 tests (3 skipped); offline reproducibility now
-validates 119 aggregate results, 44 manifests, 12 governed fixtures, and zero
+validates 122 aggregate results, 44 manifests, 12 governed fixtures, and zero
 committed raw corpus files. The full locked-suite count remains the historical
 506-test checkpoint recorded separately.
 
@@ -72,3 +72,10 @@ their declared SHA-256 and counts. Content-minimized analysis produced 263
 structural temporal candidates and 269 eval-review records, but no automatic
 memory/skill writes or skill-gap/collaboration claims. The cohort still has no
 independent outcomes, so this strengthens ingestion and proposal mechanics only.
+
+The combined evidence matrix was regenerated with the new attestation and
+full-cohort receipts. It now explicitly records CMU as approval-gated rather
+than waived: no raw CMU shard or CMU metric is claimed. The matrix still
+supports one governed PostgreSQL authority, receipted ATIF/OTel projections,
+and proposal-only trace mining, while keeping Aurora scale, enterprise
+outcomes, memory utility, and causal skill benefit open.

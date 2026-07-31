@@ -354,15 +354,12 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
                 "custom_embedding_model_justified"
             ]
         )
-        self.assertTrue(
+        self.assertFalse(
             matrix["levels"]["L7_to_L10"]["evidence"][
                 "cmu_requirement_waived"
             ]
         )
-        self.assertNotIn(
-            "CMU",
-            matrix["levels"]["L7_to_L10"]["decision"],
-        )
+        self.assertIn("CMU", matrix["levels"]["L7_to_L10"]["decision"])
 
     def test_level_two_threshold_is_not_redefined_by_observed_result(self):
         source = inputs()

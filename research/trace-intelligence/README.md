@@ -349,6 +349,12 @@ skill-gap claims, and cross-user recommendations remained zero. This expands
 the public evidence base, but still contains no outcome labels and therefore
 cannot establish a skill or productivity effect.
 
+The [`combined evidence matrix`](experiments/summaries/combined-evidence-matrix-2026-08-02.md)
+now consumes those attestation receipts alongside the ATIF/OTel, retrieval,
+memory, and skill-release arms. It records the CMU raw-shard requirement as
+approval-gated—not waived—and keeps all enterprise causal and Aurora-scale
+claims closed.
+
 The candidate was then mined from the completed car raw audits rather than
 hand-supplied: the miner sealed an aggregate source digest and procedure hash,
 and the resulting artifact was injected into a fresh broker fold. The true

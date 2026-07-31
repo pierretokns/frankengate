@@ -1,0 +1,324 @@
+{
+  "architecture_decision": {
+    "custom_embedding_model_justified": false,
+    "new_database_justified": false,
+    "persistent_systems": [
+      "one governed PostgreSQL canonical evidence and proposal store"
+    ],
+    "projections": [
+      "ATIF v1.7 for explicitly mapped portable tasks/evals",
+      "OpenInference/OTLP for content-minimized operational topology"
+    ],
+    "reason": "the real OTel path, relational memory oracle, real native memory-transition adapter, and same-candidate forced-RLS PostgreSQL retrieval plus governed skill-release lifecycle pass without a second authority; the full Trace Commons cohort adds attested proposal mechanics without outcome labels. Exact pgvector is fast on the correctness cohort while the tested trigram-heavy fusion is rejected; current failures are labels, scale, outcome validity, calibration, and prospective causality\u2014not a demonstrated need for another database"
+  },
+  "enterprise_questions": {
+    "find_people_doing_similar_work": {
+      "basis": "the audited public histories have no stable user field and cannot be treated as an independent cross-user enterprise cohort",
+      "next_gate": "authorized SWE-chat or consented enterprise same-task labels with cohort privacy",
+      "status": "not_tested"
+    },
+    "find_repeated_friction_and_later_recovery": {
+      "basis": "one canonical constructor on Wisp and share-codex",
+      "next_gate": "human outcome labels and prospective validation",
+      "status": "review_candidates_supported"
+    },
+    "fine_tune_enterprise_embeddings": {
+      "basis": "a general structured+dense arm already improved silver-label Recall@20 by 0.0859 while dense alone added only 0.0051; the remaining gates are human labels, exact-identifier protection, Aurora/selective-scope scale, and prospective utility",
+      "next_gate": "at least +5 absolute Recall@20 over the general hybrid baseline without RLS/deletion/latency regression",
+      "status": "premature"
+    },
+    "identify_missing_cloud_or_domain_skills": {
+      "basis": "CodeTrace/MAST labels describe trajectory events, not human capability",
+      "next_gate": "reviewed capability taxonomy, environmental-availability labels, abstention, and prospective task uplift",
+      "status": "not_supported"
+    },
+    "recommend_collaboration": {
+      "basis": "trace similarity is not collaboration utility",
+      "next_gate": "reciprocal opt-in introductions and independently measured outcomes under minimum cohorts",
+      "status": "not_supported"
+    },
+    "show_each_user_all_currently_authorized_history": {
+      "basis": "Wisp governed PostgreSQL pagination/denial plus seven public native-or-derived history fidelity audits",
+      "next_gate": "complete permission-oracle/deletion/failover gauntlet",
+      "status": "local_mechanics_supported"
+    },
+    "suggest_evals_from_traces": {
+      "basis": "Wisp evidence-linked proposals, CodeTraceBench mutation mechanics, and an 18-assertion governed hidden-test/release lifecycle",
+      "next_gate": "guided harness/environment/verifier construction and changed-system execution",
+      "status": "proposal_and_audit_mechanics_supported"
+    },
+    "write_memory_or_memory_md": {
+      "basis": "real native transition import is loss-aware, but Wisp correctly emitted zero fact proposals and no intervention tested whether memory improved later work",
+      "next_gate": "bitemporal contradiction benchmark, citations, review, rollback, and later-query utility",
+      "status": "not_supported"
+    }
+  },
+  "input_receipts": {
+    "agenttrace": {
+      "filename": "agenttrace-nl2bash-replay-audit-2026-07-30.json",
+      "schema_version": "agenttrace-nl2bash-replay-audit-v1",
+      "sha256": "6a7b2c25bdaf5c10e40dedb7c8ac0f2d04e391da4ca1c3ff9058c939b3fbf9f1"
+    },
+    "codetracebench": {
+      "filename": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
+      "schema_version": "frankengate-trace-empirical-result-v1",
+      "sha256": "63fed0b30f6c7e617a86d6ef754e5266614299beea61da93f86b378e15419e3f"
+    },
+    "codetracebench_raw": {
+      "filename": "codetracebench-raw-e3-e4-factorial-2026-07-30.json",
+      "schema_version": "frankengate-trace-empirical-result-v1",
+      "sha256": "d96c4127550b301f15ac05db34ef5d997392e592ce227086d2b6603b133ee3d9"
+    },
+    "e2_postgres_joint": {
+      "filename": "codetracebench-e2-postgres-joint-retrieval-2026-07-30.json",
+      "schema_version": "frankengate-e2-postgres-joint-retrieval-v1",
+      "sha256": "cf3189c6ba409d4ce634ff9e1b96fce3af0cb75c767758b68183a9903ff84562"
+    },
+    "e2_retrieval": {
+      "filename": "codetracebench-e2-authorized-retrieval-factorial-2026-07-30.json",
+      "schema_version": "frankengate-e2-authorized-retrieval-factorial-v1",
+      "sha256": "8822eaece26a3a97f2523ed583d1c6154e598c4877e78e424176562fc767a650"
+    },
+    "history_discovery": {
+      "filename": "public-agent-history-discovery-2026-07-30.json",
+      "schema_version": "public-agent-history-discovery-result-v1",
+      "sha256": "a2160c1a8a5223439c27c66e48c1f528e000d247c1ed17f22f47367070acd0ee"
+    },
+    "mast": {
+      "filename": "mast_multiagent_empirical-2026-07-30.json",
+      "schema_version": "mast-multiagent-empirical-result-v1",
+      "sha256": "1433bd56431176dd91cfd732c4a0c299690dfa44346137516d24c2d33cfdee7c"
+    },
+    "memory_conformance": {
+      "filename": "bitemporal-memory-conformance-2026-07-30.json",
+      "schema_version": "bitemporal-memory-conformance-result-v1",
+      "sha256": "79d2759824c7c442ca8efc7c08f2e211125a970b9da65b50c8cc5bd1b0b209a5"
+    },
+    "native_history": {
+      "filename": "public-native-history-fidelity-2026-07-30.json",
+      "schema_version": "public-native-history-fidelity-result-v1",
+      "sha256": "1acef3394cbb0d95389b953cbfb981f3ceb613d47bd1690a4de578718225345e"
+    },
+    "otel_roundtrip": {
+      "filename": "otel-collector-roundtrip-e0-2026-07-30.json",
+      "schema_version": "frankengate-otel-collector-roundtrip-v1",
+      "sha256": "9c6d0565227e783b1ef2089842112e0cff7828e95897d33b766ed2d030b18729"
+    },
+    "projection": {
+      "filename": "canonical-projection-e0-conformance-2026-07-30.json",
+      "schema_version": "canonical-projection-e0-conformance-result-v1",
+      "sha256": "8801a8a520db47215ffe3f799f152d3d5c72947f3c3b6bd8d191cc2876499f02"
+    },
+    "skill_release": {
+      "filename": "governed-skill-release-lifecycle-2026-07-30.json",
+      "schema_version": "frankengate-governed-skill-release-lifecycle-v1",
+      "sha256": "9a3a6e5274461d328f05a6bf75fbdba43645e4cada60cfe3891b3c79c0d221c1"
+    },
+    "statebench_sql": {
+      "filename": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
+      "schema_version": "frankengate-statebench-finance-sql-smoke-v1",
+      "sha256": "fc96c57fc35eedc9a7caa9f6bf9746663eaa721199bca80a81f01445cf144de6"
+    },
+    "trace2skill_stage0": {
+      "filename": "trace2skill-governed-stage0-2026-07-30.json",
+      "schema_version": "frankengate-trace2skill-stage0-v1",
+      "sha256": "f8a3b22a9ae2fccfc1eb54132738277664a562c827bdade906be9d5bd879c312"
+    },
+    "trace_commons_attestation": {
+      "filename": "trace-commons-source-attestation-2026-08-02.json",
+      "schema_version": "frankengate.trace-commons-source-attestation.v1",
+      "sha256": "a6f15df92a470330f3fe869dfdbaa892879027e1818a8c3f64880410951c772d"
+    },
+    "trace_commons_full": {
+      "filename": "trace-commons-full-content-minimized-analysis-2026-08-02.json",
+      "schema_version": "content-minimized-real-user-arms-v1",
+      "sha256": "34968e9ec27171957f6f8e2e49cdf4b550aefc416c2eb6ca00b8ae8c1ed0aabf"
+    },
+    "trace_memory_conformance": {
+      "filename": "trace-commons-memory-conformance-2026-07-30.json",
+      "schema_version": "trace-commons-memory-conformance-result-v1",
+      "sha256": "7f923714866b3b7103e59bcee31bff193cedc784ef9108d4abb6cd6a37129482"
+    },
+    "wisp_governed": {
+      "filename": "wisp-governed-postgres-benchmark-2026-07-30.json",
+      "schema_version": "governed-wisp-postgres-benchmark-v1",
+      "sha256": "8dc153c0728637e5b58de8a247ee090ca6bf7c196a1d2ab9b456725bd769b1cb"
+    },
+    "wisp_recovery": {
+      "filename": "wisp-share-codex-canonical-bounded-recovery-2026-07-30.json",
+      "schema_version": "canonical-bounded-recovery-episode-v1",
+      "sha256": "16b8d54b7cc7d00e17c55ccfb13e186e1868f5e6f8c03a38473577c58a7875d2"
+    }
+  },
+  "levels": {
+    "L0_evidence_conformance": {
+      "blocking_gap": "the pinned real collector path passed, but a wholly upstream-dropped trace requires an out-of-band source/export manifest; production storage/failover and ATIF's deliberate enterprise-event non-reversibility remain",
+      "decision": "keep one governed canonical DAG; ATIF and OTel remain receipted projections",
+      "evidence": {
+        "atif_event_identity_retention": 0.0,
+        "atif_parent_edge_retention": 0.0,
+        "atif_silent_drops": 0,
+        "collector_links_retained": 16,
+        "collector_negative_controls_passed": true,
+        "collector_parent_edges_retained": 34,
+        "collector_spans_retained": 48,
+        "collector_trace_ids_retained": 12,
+        "governed_fixture_events": 48,
+        "mast_silent_line_drops": 0,
+        "mast_source_lines": 897277,
+        "otel_event_identity_retention": 1.0,
+        "otel_parent_edge_retention": 1.0,
+        "otel_silent_drops": 0
+      },
+      "status": "real_roundtrip_partial_pass"
+    },
+    "L1_personal_authority": {
+      "blocking_gap": "permission-oracle equality across every surface, deletion closure, concurrent policy churn, restart, replica, and failover remain untested",
+      "evidence": {
+        "all_tested_denials_zero_before_ranking": true,
+        "codex_repositories_with_auth_adjacent": 9,
+        "complete_public_harness_homes_found": 0,
+        "github_native_claude_files_in_top_repos": 2362,
+        "github_native_codex_files_in_top_repos": 329,
+        "history_page_p95_ms": 1.67599,
+        "near_complete_public_harness_home_states_found": 1,
+        "private_trajectories": 104,
+        "proposal_queue_p95_ms": 1.717683,
+        "public_history_representations_audited": 7,
+        "trace_commons_records": 17991,
+        "trace_commons_sessions": 28,
+        "trace_commons_source_attested": true
+      },
+      "status": "local_partial_pass"
+    },
+    "L2_cheap_evidence_finding": {
+      "decision": "retain deterministic signals as review filters plus a random audit stratum; do not claim enrichment gate success",
+      "evidence": {
+        "codetrace_test_rows": 148,
+        "exceeds_random_95_interval": false,
+        "random_precision_mean": 0.426,
+        "required_absolute_lift": 0.15,
+        "structural_precision": 0.5666666666666667,
+        "structural_precision_lift": 0.14066666666666666,
+        "ties_trace_length": true
+      },
+      "status": "does_not_meet_gate"
+    },
+    "L3_diagnosis_and_eval_proposals": {
+      "diagnosis": {
+        "best_blind_method": "reverse_chronology",
+        "best_blind_top1": 0.2857142857142857,
+        "best_blind_top3": 0.5428571428571428,
+        "combined_top1": 0.17142857142857143,
+        "eligible_raw_traces": 35,
+        "pass": false,
+        "reason": "the full deterministic factorial ran, but no evidence arm beat reverse chronology and irrelevant errors changed rankings; no calibrated judge or step-level causal verifier"
+      },
+      "multi_agent_taxonomy": {
+        "finalized_human_judge_overlap": 0,
+        "human_judge_scoring_status": "not_run_no_finalized_taxonomy_trace_overlap",
+        "pass": false,
+        "reason": "released human and judge partitions cannot reproduce finalized human-vs-judge accuracy",
+        "released_judge_traces": 1242
+      },
+      "retrospective_eval": {
+        "allowed_variation_false_positive_rate": 0.4857142857142857,
+        "combined_harmful_mutants": 191,
+        "combined_kill_rate": 0.9685863874345549,
+        "pass": false,
+        "reason": "high harmful-mutant sensitivity came with 48.6% benign false positives; no changed-system rerun or step-level causal verifier exists"
+      },
+      "status": "mixed_partial",
+      "trace_commons_full_cohort": {
+        "automatic_memory_or_skill_writes": 0,
+        "eval_review_records": 269,
+        "source_attested": true,
+        "structural_episode_candidates": 263
+      }
+    },
+    "L4_semantic_candidate_retrieval": {
+      "decision": "retain exact and structured retrieval and conditionally add the pinned general dense lane; reject the tested FTS/trigram/vector RRF because its tiny recall lift loses ranking quality and adds about two orders of magnitude local latency. Human labels, Aurora, concurrency, and scale remain open; no custom embedding or database replacement is authorized",
+      "evidence": {
+        "all_denied_pre_ranking_candidates_zero": true,
+        "aurora_gate_passed": false,
+        "best_offline_arm": "S1L0D1",
+        "concurrency_or_scale_gate_passed": false,
+        "documents": 145,
+        "eligible_queries": 99,
+        "exact_identifier_no_regression": false,
+        "exact_recall_at_20": 0.7323232323232324,
+        "human_label_gate_passed": false,
+        "joint_local_postgres_gate_passed": true,
+        "lifecycle_oracles_passed": true,
+        "post_rollback_visible_rows": 0,
+        "postgres_exact_pgvector_p50_ms": 3.016834,
+        "postgres_exact_pgvector_recall_at_20": 0.6666666666666666,
+        "postgres_hybrid_p50_ms": 256.842792,
+        "postgres_hybrid_recall_at_20": 0.6717171717171717,
+        "recall_at_20_lift_95ci": [
+          0.03535353535353535,
+          0.13636363636363635
+        ],
+        "recall_at_20_lift_over_exact": 0.08585858585858586,
+        "structured_dense_recall_at_20": 0.8181818181818182
+      },
+      "status": "offline_silver_and_local_rls_partial_pass"
+    },
+    "L5_temporal_memory": {
+      "decision": "copy-on-write correction, authority intersection, rollback, deletion closure, influence exclusion, and stale-epoch denial pass in a deterministic oracle; one real public two-session cohort additionally proves one exact write/read continuity, two edit replays, and one correctly quarantined version gap. PostgreSQL/RLS execution, memory quality, and memory utility remain unproven",
+      "evidence": {
+        "bitemporal_assertions_failed": 0,
+        "bitemporal_assertions_passed": 15,
+        "bitemporal_assertions_total": 15,
+        "paired_trace_memory_strata_discovered": 2,
+        "real_context_artifact_calls": 8,
+        "real_exact_cross_session_continuities": 1,
+        "real_interval_censored_version_gaps": 1,
+        "real_joined_context_artifact_results": 8,
+        "real_negative_controls_passed": true,
+        "real_raw_content_emitted": false,
+        "real_reconstructable_edits": 2,
+        "real_research_trace_strata_discovered": 2,
+        "real_resolved_parent_edges": 1266,
+        "real_trace_records": 1602,
+        "real_unreconstructable_edits": 0,
+        "real_unresolved_parent_edges": 0,
+        "wisp_fact_proposals": 0
+      },
+      "status": "real_trace_transition_partial_pass"
+    },
+    "L6_procedural_replay": {
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
+      "evidence": {
+        "agenttrace_nl2bash_rows": 400,
+        "agenttrace_rows": 1400,
+        "bounded_pairs_executed": 17,
+        "governed_release_assertions_failed": 0,
+        "governed_release_assertions_passed": 18,
+        "hidden_test_boundary_passed": true,
+        "security_violation_veto_passed": true,
+        "share_codex_recovery_review_candidates": 31,
+        "statebench_executable_gold_sql_tasks": 4,
+        "statebench_sql_fixture_tasks": 46,
+        "stdout_exit_equivalent_pairs": 9,
+        "trace2skill_real_tool_boundary_passed": true,
+        "trace2skill_stage0_skill_benefit_established": false,
+        "wisp_recovery_review_candidates": 89
+      },
+      "status": "governed_release_mechanics_partial_pass"
+    },
+    "L7_to_L10": {
+      "decision": "no utility routing, enterprise release, domain embedding adaptation, or generator fine-tuning claim is authorized; the pinned CMU raw shard remains approval-gated, and prospective labels and outcomes remain blocking evidence",
+      "evidence": {
+        "cmu_metrics_run": false,
+        "cmu_raw_access_approved": false,
+        "cmu_requirement_waived": false,
+        "public_corpora_sufficient_for_current_gates": false
+      },
+      "status": "gated"
+    }
+  },
+  "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
+  "result_sha256": "babe31b316ef880faddf7c59e1b4c63c13bfb3d7f59d864901ac498f0e7c0848",
+  "schema_version": "frankengate-combined-evidence-matrix-v5"
+}

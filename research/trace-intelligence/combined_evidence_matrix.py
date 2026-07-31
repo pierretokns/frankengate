@@ -40,6 +40,12 @@ REQUIRED_RESULTS = {
     "trace2skill_stage0": "trace2skill-governed-stage0-2026-07-30.json",
     "statebench_sql": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
     "skill_release": "governed-skill-release-lifecycle-2026-07-30.json",
+    "trace_commons_attestation": (
+        "trace-commons-source-attestation-2026-08-02.json"
+    ),
+    "trace_commons_full": (
+        "trace-commons-full-content-minimized-analysis-2026-08-02.json"
+    ),
 }
 
 
@@ -113,6 +119,28 @@ def build_matrix(
     trace2skill_stage0 = results["trace2skill_stage0"]
     statebench_sql = results["statebench_sql"]
     skill_release = results["skill_release"]
+    trace_commons_attestation = results.get("trace_commons_attestation")
+    trace_commons_full = results.get("trace_commons_full")
+
+    trace_commons_attestation_passed = bool(
+        trace_commons_attestation
+        and trace_commons_attestation.get("attestation") == "passed"
+    )
+    trace_commons_s0 = (
+        trace_commons_full.get("S0_metadata", {})
+        if trace_commons_full
+        else {}
+    )
+    trace_commons_s4 = (
+        trace_commons_full.get("S4_temporal_episode_candidates", {})
+        if trace_commons_full
+        else {}
+    )
+    trace_commons_s6 = (
+        trace_commons_full.get("S6_proposal_records", {})
+        if trace_commons_full
+        else {}
+    )
 
     atif = _require(projection, "ATIF_v1_7")
     otel = _require(projection, "OpenInference_OTel")
@@ -241,6 +269,9 @@ def build_matrix(
                     "security_observation",
                     "codex_repositories_with_auth_adjacent",
                 ),
+                "trace_commons_source_attested": trace_commons_attestation_passed,
+                "trace_commons_sessions": trace_commons_s0.get("sessions"),
+                "trace_commons_records": trace_commons_s0.get("valid_records"),
             },
             "blocking_gap": (
                 "permission-oracle equality across every surface, deletion "
@@ -309,7 +340,7 @@ def build_matrix(
                     "causal verifier exists"
                 ),
             },
-            "multi_agent_taxonomy": {
+                "multi_agent_taxonomy": {
                 "released_judge_traces": _require(
                     mast, "llm_judge_annotations", "n"
                 ),
@@ -326,8 +357,24 @@ def build_matrix(
                     "released human and judge partitions cannot reproduce "
                     "finalized human-vs-judge accuracy"
                 ),
+                },
+                "trace_commons_full_cohort": {
+                    "source_attested": trace_commons_attestation_passed,
+                    "structural_episode_candidates": trace_commons_s4.get(
+                        "candidate_episodes"
+                    ),
+                    "eval_review_records": (
+                        trace_commons_s6.get("candidate_records", {}).get(
+                            "eval_review"
+                        )
+                    ),
+                    "automatic_memory_or_skill_writes": (
+                        trace_commons_s6.get("candidate_records", {}).get(
+                            "automatic_memory_or_skill_writes"
+                        )
+                    ),
+                },
             },
-        },
         "L4_semantic_candidate_retrieval": {
             "status": "offline_silver_and_local_rls_partial_pass",
             "evidence": {
@@ -600,14 +647,16 @@ def build_matrix(
         "L7_to_L10": {
             "status": "gated",
             "evidence": {
-                "cmu_requirement_waived": True,
-                "public_corpora_sufficient_for_current_gates": True,
+                "cmu_requirement_waived": False,
+                "cmu_raw_access_approved": False,
+                "cmu_metrics_run": False,
+                "public_corpora_sufficient_for_current_gates": False,
             },
             "decision": (
                 "no utility routing, enterprise release, domain embedding "
                 "adaptation, or generator fine-tuning claim is authorized; "
-                "prospective labels and outcomes—not access to another corpus—"
-                "are the blocking evidence"
+                "the pinned CMU raw shard remains approval-gated, and "
+                "prospective labels and outcomes remain blocking evidence"
             ),
         },
     }
@@ -714,7 +763,8 @@ def build_matrix(
                 "the real OTel path, relational memory oracle, real native "
                 "memory-transition adapter, and same-candidate forced-RLS "
                 "PostgreSQL retrieval plus governed skill-release lifecycle "
-                "pass without a second authority. "
+                "pass without a second authority; the full Trace Commons "
+                "cohort adds attested proposal mechanics without outcome labels. "
                 "Exact pgvector is fast on the correctness cohort while the "
                 "tested trigram-heavy fusion is rejected; current failures are "
                 "labels, scale, outcome validity, calibration, and prospective "
@@ -743,7 +793,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     lines = [
         "# Frankengate combined empirical evidence matrix",
         "",
-        "**Run date:** 2026-07-30",
+        "**Run date:** 2026-08-02",
         "",
         "## Bottom line",
         "",
@@ -785,8 +835,8 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "skill benefit does not"
         ),
         "L7_to_L10": (
-            "CMU is waived; prospective enterprise labels, privacy, and outcomes "
-            "remain gated"
+            "CMU raw access is approval-gated; prospective enterprise labels, "
+            "privacy, and outcomes remain gated"
         ),
     }
     for name, value in levels.items():
@@ -839,6 +889,12 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "safe tool execution but no skill benefit; the local finance fixture "
             "has only four executable gold SQL tasks, so NL2SQL intervention "
             "quality remains untested.",
+            "- The attested 28-session Trace Commons cohort produced "
+            f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
+            "structural temporal candidates and "
+            f"{l3['trace_commons_full_cohort']['eval_review_records']} "
+            "eval-review records, while automatic memory/skill writes remained "
+            "zero. This expands proposal mechanics, not outcome or skill evidence.",
             "",
             "## Original enterprise questions",
             "",
