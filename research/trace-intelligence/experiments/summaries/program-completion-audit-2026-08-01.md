@@ -14,8 +14,8 @@ unsupported.
 The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
-The latest targeted finance suite passed 20 tests; offline reproducibility now
-validates 104 aggregate results, 44 manifests, 12 governed fixtures, and zero
+The latest targeted research suite passed 22 tests; offline reproducibility now
+validates 105 aggregate results, 44 manifests, 12 governed fixtures, and zero
 committed raw corpus files. The full locked-suite count remains the historical
 506-test checkpoint recorded separately.
 
@@ -32,3 +32,10 @@ enterprise transfer. The registered +5-point promotion threshold therefore
 remains closed. Cross-user collaboration remains
 mechanics-only (no independent labels, reciprocal consent, randomized
 exposure, transfer outcomes, or unwanted-contact measure).
+
+The paired skill meta-analysis keeps protocol compliance separate from
+semantic correctness. It finds no trace-mined lift in the Llama protocol arm,
+a −0.5 risk difference for the Qwen3 4B trace-mined arm (small-sample exact
+test p=0.25), and a 2/4 versus 2/4 tie for the only reachable semantic expert
+seed comparison. This strengthens the proposal-only decision rather than
+closing the causal gate.

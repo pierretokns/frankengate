@@ -288,6 +288,18 @@ SQL probes. The pinned Qwen3.5-9B-OptiQ manifest is not a completed run—the
 7.1 GB snapshot is absent locally and no Qwen3.5 listener is running—so it is
 explicitly excluded from the evidence base.
 
+The [`paired skill-optimization meta-analysis`](experiments/summaries/skill-optimization-meta-analysis-2026-08-02.md)
+recomputes the intervention contrasts without reading raw traces. It keeps
+protocol compliance separate from semantic correctness and keeps the
+expert-written schema seed separate from trace-mined candidates. The Llama
+trace-mined protocol arm is tied with its baseline (0.0 risk difference); the
+Qwen3 4B trace-mined arm is lower by 0.5 (bootstrap 95% interval −0.833 to
+−0.167; exact McNemar p=0.25); and the only reachable semantic comparison,
+the four-task expert seed, is tied 2/4 versus 2/4. This strengthens the
+negative conclusion: current evidence supports candidate generation and
+diagnosis, not a causal skill lift or automatic release. The runner is
+`skill_optimization_meta_analysis.py`.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,
