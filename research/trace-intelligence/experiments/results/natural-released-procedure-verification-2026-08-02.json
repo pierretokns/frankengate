@@ -1,0 +1,23 @@
+{
+  "all_passed": true,
+  "checks": {
+    "all_lineage_checks_passed": true,
+    "all_projects_have_release": true,
+    "all_proposals_verified": true,
+    "all_verifier_verdicts_verified": true,
+    "no_paths_policy": true,
+    "no_raw_content_policy": true,
+    "projects_have_matching_rows": true,
+    "schema_version": true,
+    "utility_not_overclaimed": true,
+    "visible_count_matches_queries": true
+  },
+  "content_policy": {
+    "raw_result_content_emitted": false,
+    "raw_result_content_read": false
+  },
+  "projects_verified": 3,
+  "queries_verified": 23,
+  "receipt": "natural-released-procedure-2026-08-02.json",
+  "schema_version": "frankengate-natural-released-procedure-verification-v1"
+}

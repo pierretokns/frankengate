@@ -8,11 +8,11 @@ Compare ATIF, OpenInference/OTel, coding traces, and RL-environment traces.
 
 Open gate: ATIF/OTel projections lose load-bearing RL reset, reward, termination, memory, and authorization facts; canonical DAG remains required.
 
-## `public_trace_and_concept_audit` — audited_with_typed_nulls
+## `public_trace_and_concept_audit` — natural_release_mechanics_proven_utility_unproven
 
 Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.
 
-Open gate: Natural released Dream/procedure artifacts and enterprise-labeled concept transfer remain unavailable.
+Open gate: Natural release lineage is now exercised, but model-generated Dream/procedure quality, semantic task utility, and enterprise-labeled concept transfer remain unmeasured.
 
 ## `single_and_composed_mechanisms` — family_disjoint_intervention_and_composition_proven; utility_unproven
 

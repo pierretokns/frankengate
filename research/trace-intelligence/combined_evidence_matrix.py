@@ -80,6 +80,8 @@ OPTIONAL_RESULTS = {
     "alfworld_codex_skillopt_r20_verification": "alfworld-codex-skillopt-r20-verification-2026-08-02.json",
     "alfworld_codex_skillopt_r21": "alfworld-codex-skillopt-r21-2026-08-02.json",
     "alfworld_codex_skillopt_r21_verification": "alfworld-codex-skillopt-r21-verification-2026-08-02.json",
+    "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
+    "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
     "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
     "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
@@ -206,6 +208,8 @@ def build_matrix(
     alfworld_codex_skillopt_r20_verification = results.get("alfworld_codex_skillopt_r20_verification")
     alfworld_codex_skillopt_r21 = results.get("alfworld_codex_skillopt_r21")
     alfworld_codex_skillopt_r21_verification = results.get("alfworld_codex_skillopt_r21_verification")
+    natural_released_procedure = results.get("natural_released_procedure")
+    natural_released_procedure_verification = results.get("natural_released_procedure_verification")
     aurora_like_replication_lab = results.get("aurora_like_replication_lab")
     postgres_pitr_lab = results.get("postgres_pitr_lab")
     codetrace = results["codetracebench"]
@@ -1033,6 +1037,12 @@ def build_matrix(
                     "gates",
                     "hidden_test_invisible_to_proposer",
                 ),
+                "natural_released_procedure_projects": natural_released_procedure.get("aggregate", {}).get("projects_with_release", 0) if natural_released_procedure else 0,
+                "natural_released_procedure_queries": natural_released_procedure.get("aggregate", {}).get("admitted_queries", 0) if natural_released_procedure else 0,
+                "natural_released_procedure_visible_queries": natural_released_procedure.get("aggregate", {}).get("visible_procedure_query_count", 0) if natural_released_procedure else 0,
+                "natural_released_procedure_exact_queries": natural_released_procedure.get("aggregate", {}).get("procedure_exact_queries", 0) if natural_released_procedure else 0,
+                "natural_released_procedure_verifier_passed": bool(natural_released_procedure_verification and natural_released_procedure_verification.get("all_passed", False)),
+                "natural_released_procedure_verifier_projects": natural_released_procedure_verification.get("projects_verified", 0) if natural_released_procedure_verification else 0,
                 "skill_meta_study_count": _require(
                     skill_optimization_meta, "study_count"
                 ),
@@ -1260,6 +1270,10 @@ def build_matrix(
                 "public_corpora_sufficient_for_current_gates": False,
             },
             "decision": (
+                "A natural public-trace procedure release now passes its independent "
+                "lineage/authority verifier across three anonymous projects and 23 "
+                "queries, but the digest-backed proposal matched zero target states; "
+                "this closes release mechanics only, not procedure utility. There is "
                 "no utility routing, enterprise release, domain embedding "
                 "adaptation, or generator fine-tuning claim is authorized; "
                 "the pinned CMU raw shard remains approval-gated, and "
@@ -1592,6 +1606,13 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{memory['natural_factorial_eligible_queries']} exact availability; the "
             "differential mechanism gate is not identifiable, and released Dream/procedure "
             "arms remain gated because no independently released natural artifacts exist.",
+            f"- A query-independent digest-backed procedure was actually released from "
+            f"pre-cutoff natural evidence across {skill['natural_released_procedure_projects']} "
+            f"anonymous projects and {skill['natural_released_procedure_queries']} queries. "
+            f"Its independent verifier passed for {skill['natural_released_procedure_verifier_projects']} "
+            f"projects and it was visible on {skill['natural_released_procedure_visible_queries']} "
+            f"queries, but matched {skill['natural_released_procedure_exact_queries']} target states. "
+            "This closes the natural release-lineage gate while leaving procedure quality and utility unproven.",
             "- The attested 28-session Trace Commons cohort produced "
             f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
             "structural temporal candidates and "

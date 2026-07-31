@@ -66,7 +66,7 @@ def build_audit() -> dict[str, Any]:
         {
             "id": "public_trace_and_concept_audit",
             "requirement": "Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.",
-            "status": "audited_with_typed_nulls",
+            "status": "natural_release_mechanics_proven_utility_unproven",
             "evidence": file_evidence(
                 "experiments/results/public-agent-history-discovery-2026-07-30.json",
                 "experiments/results/skillopt-alfworld-intervention-readiness-2026-08-02.json",
@@ -80,11 +80,13 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/alfworld-codex-skillopt-r20-verification-2026-08-02.json",
                 "experiments/results/alfworld-codex-skillopt-r21-2026-08-02.json",
                 "experiments/results/alfworld-codex-skillopt-r21-verification-2026-08-02.json",
+                "experiments/results/natural-released-procedure-2026-08-02.json",
+                "experiments/results/natural-released-procedure-verification-2026-08-02.json",
                 "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md",
                 "experiments/summaries/skill-improvement-strategy-audit-2026-07-30.md",
                 "experiments/summaries/natural-trace-memory-factorial-2026-08-02-r2.md",
             ),
-            "open_gate": "Natural released Dream/procedure artifacts and enterprise-labeled concept transfer remain unavailable.",
+            "open_gate": "Natural release lineage is now exercised, but model-generated Dream/procedure quality, semantic task utility, and enterprise-labeled concept transfer remain unmeasured.",
         },
         {
             "id": "single_and_composed_mechanisms",

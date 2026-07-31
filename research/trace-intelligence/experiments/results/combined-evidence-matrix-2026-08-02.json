@@ -292,6 +292,18 @@
       "schema_version": "frankengate-natural-trace-memory-factorial-v1",
       "sha256": "8b42e33b5d5f93dd97f5104aafb45b9179e145a7b5811a4ebe2eaed7914f0db4"
     },
+    "natural_released_procedure": {
+      "filename": "natural-released-procedure-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-released-procedure-v1",
+      "sha256": "2dda6cf64627aa225a363f41038c51aeb6d67ec675d470922aeea5b752e02d67"
+    },
+    "natural_released_procedure_verification": {
+      "filename": "natural-released-procedure-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-released-procedure-verification-v1",
+      "sha256": "7fd99f666fcffaf45b7e178d4df41075af3deae4d37e2a0ea33f1aa277a5b873"
+    },
     "otel_roundtrip": {
       "filename": "otel-collector-roundtrip-e0-2026-07-30.json",
       "schema_version": "frankengate-otel-collector-roundtrip-v1",
@@ -740,6 +752,12 @@
           0.16596638655462187
         ],
         "matm_successful_neighbor_top10_rate": 0.7471988795518207,
+        "natural_released_procedure_exact_queries": 0,
+        "natural_released_procedure_projects": 3,
+        "natural_released_procedure_queries": 23,
+        "natural_released_procedure_verifier_passed": true,
+        "natural_released_procedure_verifier_projects": 3,
+        "natural_released_procedure_visible_queries": 23,
         "security_violation_veto_passed": true,
         "share_codex_recovery_review_candidates": 31,
         "skill_cross_harness_same_fixture_compared": true,
@@ -779,7 +797,7 @@
       "status": "governed_release_mechanics_partial_pass"
     },
     "L7_to_L10": {
-      "decision": "no utility routing, enterprise release, domain embedding adaptation, or generator fine-tuning claim is authorized; the pinned CMU raw shard remains approval-gated, and prospective labels and outcomes remain blocking evidence",
+      "decision": "A natural public-trace procedure release now passes its independent lineage/authority verifier across three anonymous projects and 23 queries, but the digest-backed proposal matched zero target states; this closes release mechanics only, not procedure utility. There is no utility routing, enterprise release, domain embedding adaptation, or generator fine-tuning claim is authorized; the pinned CMU raw shard remains approval-gated, and prospective labels and outcomes remain blocking evidence",
       "evidence": {
         "cmu_metrics_run": false,
         "cmu_raw_access_approved": false,
@@ -790,6 +808,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "f30aea9a75e271d498267e988ef09c64490bc9e2d5cb698342b9901ae701b5b9",
+  "result_sha256": "43678d5d3b56b01008c93967d3db9f9640b0a6902801344122639708b42a3097",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

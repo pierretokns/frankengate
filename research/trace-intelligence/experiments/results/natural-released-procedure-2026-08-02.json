@@ -1,0 +1,150 @@
+{
+  "aggregate": {
+    "admitted_queries": 23,
+    "baseline_exact_queries": 16,
+    "citation_target_query_count": 0,
+    "procedure_exact_queries": 0,
+    "projects": 3,
+    "projects_with_release": 3,
+    "verifier_passed_projects": 3,
+    "visible_procedure_query_count": 23
+  },
+  "claim_boundary": {
+    "causal_memory_or_skill_utility_confirmed": false,
+    "enterprise_transfer_confirmed": false,
+    "natural_released_procedure_evaluated": true,
+    "procedure_quality_confirmed": false,
+    "reason": "The released artifact is intentionally digest-backed and query-independent; exact target matching is a diagnostic only, not a semantic utility oracle.",
+    "release_mechanics_confirmed": true
+  },
+  "content_policy": {
+    "native_identifiers_emitted": false,
+    "paths_emitted": false,
+    "per_item_content_emitted": false,
+    "raw_content_emitted": false
+  },
+  "input_receipts": [
+    {
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "label": "wisp",
+      "license": "MIT",
+      "manifest_sha256": "d5a6541a2177180f9ee32065d268169889487f04980f693155bfec25de0b0737",
+      "source_bytes": 25280300,
+      "source_files": 104,
+      "source_records": 10700,
+      "source_set_sha256": "b6778fb505147108b1c36cd0fc2e99ef79bac1dbcd97b26feae46495077fec26"
+    },
+    {
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "label": "fable5",
+      "license": "AGPL-3.0",
+      "manifest_sha256": "79acf75816e4040e23e1e87b555779120d57825b8070354148a18dff8d18ac64",
+      "source_bytes": 62071158,
+      "source_files": 115,
+      "source_records": 19796,
+      "source_set_sha256": "69ec76bb96e41c5bcf06994ee43b05f4533ea92f72b804d40b4db9352e8e27b0"
+    }
+  ],
+  "project_rows": [
+    {
+      "baseline_exact_query_count": 7,
+      "citation_target_query_count": 0,
+      "cited_evidence_count": 1,
+      "expert_release_before_first_query": true,
+      "procedure_exact_query_count": 0,
+      "proposal_id_digest": "ae6a182387ccec212daf2e4bee9ae8f816aba91ab5fb40c83d3afd74e55a328e",
+      "proposal_status": "released",
+      "query_count": 7,
+      "release_id_digest": "745b9a733ffaffb8dea73dbb83cbed7ba341d9f1015aa4974b2c7fb5d2ac9be7",
+      "source": "fable5",
+      "visible_query_count": 7
+    },
+    {
+      "baseline_exact_query_count": 9,
+      "citation_target_query_count": 0,
+      "cited_evidence_count": 3,
+      "expert_release_before_first_query": true,
+      "procedure_exact_query_count": 0,
+      "proposal_id_digest": "2590f1e46dc6cd4e2ac2b2c436ed2a13dbb96b5319536d23717dbfee977c7e84",
+      "proposal_status": "released",
+      "query_count": 12,
+      "release_id_digest": "0d771f09dc10162e6ded741f3b40f87bee624103ee4f5a2b0c7252022093b973",
+      "source": "fable5",
+      "visible_query_count": 12
+    },
+    {
+      "baseline_exact_query_count": 0,
+      "citation_target_query_count": 0,
+      "cited_evidence_count": 3,
+      "expert_release_before_first_query": true,
+      "procedure_exact_query_count": 0,
+      "proposal_id_digest": "2247fe1fb36966068924a1353166f7279bb5455c879515db7bec196e68d27c71",
+      "proposal_status": "released",
+      "query_count": 4,
+      "release_id_digest": "a3319540d6cb410a69a21d3d0a9016b65b532a792fef6584090b7b9146de9ba6",
+      "source": "wisp",
+      "visible_query_count": 4
+    }
+  ],
+  "protocol": {
+    "cutoff": "strictly before first eligible query per project",
+    "proposal_generation": "deterministic digest-backed procedure from pre-cutoff evidence",
+    "release": "atomic governed pipeline release",
+    "source_scope": "same anonymous source/project only",
+    "verifier": "distinct identity and independent lineage checks"
+  },
+  "schema_version": "frankengate-natural-released-procedure-v1",
+  "study": "natural_query_independent_released_procedure_mechanics",
+  "verifier_rows": [
+    {
+      "checks": {
+        "all_citations_present": true,
+        "all_evidence_pre_cutoff": true,
+        "citations_nonempty": true,
+        "content_digests_match": true,
+        "distinct_verifier_required": true,
+        "packet_matches_proposal": true,
+        "release_after_verification_boundary": true
+      },
+      "checks_passed": true,
+      "release_before_first_query": true,
+      "release_lineage_count": 1,
+      "source": "fable5",
+      "verification_verdict": "verified"
+    },
+    {
+      "checks": {
+        "all_citations_present": true,
+        "all_evidence_pre_cutoff": true,
+        "citations_nonempty": true,
+        "content_digests_match": true,
+        "distinct_verifier_required": true,
+        "packet_matches_proposal": true,
+        "release_after_verification_boundary": true
+      },
+      "checks_passed": true,
+      "release_before_first_query": true,
+      "release_lineage_count": 3,
+      "source": "fable5",
+      "verification_verdict": "verified"
+    },
+    {
+      "checks": {
+        "all_citations_present": true,
+        "all_evidence_pre_cutoff": true,
+        "citations_nonempty": true,
+        "content_digests_match": true,
+        "distinct_verifier_required": true,
+        "packet_matches_proposal": true,
+        "release_after_verification_boundary": true
+      },
+      "checks_passed": true,
+      "release_before_first_query": true,
+      "release_lineage_count": 3,
+      "source": "wisp",
+      "verification_verdict": "verified"
+    }
+  ]
+}

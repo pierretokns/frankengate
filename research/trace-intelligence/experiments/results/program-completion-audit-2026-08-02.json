@@ -342,7 +342,12 @@
       "runnable_singleton_exact": 16,
       "composed_arm_exact": 16,
       "differential_mechanism_effect_identifiable": false,
-      "released_dream_or_procedure_natural_gate": "not_runnable_no_natural_independent_release"
+      "released_dream_or_procedure_natural_gate": "release_mechanics_verified_utility_unproven",
+      "released_procedure": "experiments/results/natural-released-procedure-2026-08-02.json",
+      "released_procedure_verification": "experiments/results/natural-released-procedure-verification-2026-08-02.json",
+      "released_procedure_projects": 3,
+      "released_procedure_visible_queries": 23,
+      "released_procedure_exact_queries": 0
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
@@ -374,7 +379,7 @@
   "requirements_still_open": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
-    "natural released Dream/procedure evaluation",
+    "model-generated natural Dream/procedure quality and semantic utility evaluation",
     "prospective enterprise task outcomes and human labels",
     "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
     "cross-user collaboration utility and consent outcomes"

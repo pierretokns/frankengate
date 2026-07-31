@@ -9,7 +9,7 @@
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
-    "natural released Dream/procedure evaluation",
+    "model-generated natural Dream/procedure quality and semantic utility evaluation",
     "prospective enterprise task outcomes and human labels",
     "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
     "cross-user collaboration utility and consent outcomes"
@@ -90,6 +90,14 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/natural-released-procedure-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-released-procedure-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md"
         },
         {
@@ -102,9 +110,9 @@
         }
       ],
       "id": "public_trace_and_concept_audit",
-      "open_gate": "Natural released Dream/procedure artifacts and enterprise-labeled concept transfer remain unavailable.",
+      "open_gate": "Natural release lineage is now exercised, but model-generated Dream/procedure quality, semantic task utility, and enterprise-labeled concept transfer remain unmeasured.",
       "requirement": "Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.",
-      "status": "audited_with_typed_nulls"
+      "status": "natural_release_mechanics_proven_utility_unproven"
     },
     {
       "evidence": [
@@ -237,7 +245,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "c56bbb71dc165b6e1e61c277efa9308fdebb6bbc"
+          "head": "3320119691fcd57e9b2fad12f21b5da22891d058"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"
