@@ -330,10 +330,10 @@ def inputs():
         },
         "skill_optimization_meta": {
             "schema_version": "skill-meta",
-            "study_count": 22,
+            "study_count": 23,
             "strata": {
                 "trace_mined_candidate": {
-                    "protocol_studies": 11,
+                    "protocol_studies": 12,
                     "semantic_studies": 9,
                 }
             },
@@ -374,6 +374,20 @@ def inputs():
                     "expected_terminal_match_rate": 0.0,
                     "native_tool_calls": 0,
                 },
+            },
+        },
+        "gepa_protocol": {
+            "schema_version": "gepa-native-tool-protocol.v1",
+            "baseline": {"holdout": {"match_rate": 2 / 3}},
+            "selected": {
+                "holdout": {"match_rate": 2 / 3},
+                "candidate_characters": 0,
+                "gepa_total_metric_calls": 11,
+            },
+            "claim_boundary": {
+                "optimizer_executed": True,
+                "holdout_split_used": True,
+                "enterprise_skill_benefit_confirmed": False,
             },
         },
         "trace_commons_repro": {
@@ -480,8 +494,8 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
             ]
         )
         skill = matrix["levels"]["L6_procedural_replay"]["evidence"]
-        self.assertEqual(22, skill["skill_meta_study_count"])
-        self.assertEqual(11, skill["skill_meta_trace_mined_protocol_studies"])
+        self.assertEqual(23, skill["skill_meta_study_count"])
+        self.assertEqual(12, skill["skill_meta_trace_mined_protocol_studies"])
         self.assertEqual(9, skill["skill_meta_trace_mined_semantic_studies"])
         self.assertFalse(skill["skill_meta_causal_benefit_confirmed"])
         self.assertEqual(
@@ -497,6 +511,10 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
             {"no_skill": 0.0, "formatting_placebo": 0.0, "trace_mined_terminal_discipline": 0.0},
             skill["skill_qwen_native_terminal_match_rates"],
         )
+        self.assertEqual(2 / 3, skill["gepa_baseline_holdout_match_rate"])
+        self.assertEqual(2 / 3, skill["gepa_selected_holdout_match_rate"])
+        self.assertEqual(11, skill["gepa_metric_calls"])
+        self.assertFalse(skill["gepa_enterprise_skill_benefit_confirmed"])
 
     def test_level_two_threshold_is_not_redefined_by_observed_result(self):
         source = inputs()

@@ -84,6 +84,11 @@
       "schema_version": "frankengate-e2-authorized-retrieval-factorial-v1",
       "sha256": "8822eaece26a3a97f2523ed583d1c6154e598c4877e78e424176562fc767a650"
     },
+    "gepa_protocol": {
+      "filename": "gepa-native-tool-protocol-2026-08-02-r2.json",
+      "schema_version": "frankengate-gepa-native-tool-protocol.v1",
+      "sha256": "98f2a13c665a1d210a1768a8add2ed9d24cc9fc896573b79288639cb99b6286c"
+    },
     "history_discovery": {
       "filename": "public-agent-history-discovery-2026-07-30.json",
       "schema_version": "public-agent-history-discovery-result-v1",
@@ -338,11 +343,18 @@
       "status": "real_trace_transition_partial_pass"
     },
     "L6_procedural_replay": {
-      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 22 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
       "evidence": {
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
         "bounded_pairs_executed": 17,
+        "gepa_baseline_holdout_match_rate": 0.6666666666666666,
+        "gepa_enterprise_skill_benefit_confirmed": false,
+        "gepa_holdout_split_used": true,
+        "gepa_metric_calls": 11,
+        "gepa_optimizer_executed": true,
+        "gepa_selected_candidate_characters": 0,
+        "gepa_selected_holdout_match_rate": 0.6666666666666666,
         "governed_release_assertions_failed": 0,
         "governed_release_assertions_passed": 18,
         "hidden_test_boundary_passed": true,
@@ -396,6 +408,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "2435c1e0248aee725b7a5876a0e7a15ec3b804a9f40a0ba30f86341c0a83f8e4",
-  "schema_version": "frankengate-combined-evidence-matrix-v6"
+  "result_sha256": "c2d3b94165b167fcc6d19f3448512136d75fcc23737f7ff335bab6467eae3b7c",
+  "schema_version": "frankengate-combined-evidence-matrix-v7"
 }

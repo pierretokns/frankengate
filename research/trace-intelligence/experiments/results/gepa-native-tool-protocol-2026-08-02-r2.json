@@ -1,0 +1,98 @@
+{
+  "baseline": {
+    "holdout": {
+      "match_rate": 0.6666666666666666,
+      "matches": 2.0,
+      "tasks": 3
+    },
+    "train": {
+      "match_rate": 0.3333333333333333,
+      "matches": 1.0,
+      "tasks": 3
+    }
+  },
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "enterprise_skill_benefit_confirmed": false,
+    "holdout_split_used": true,
+    "optimizer_executed": true,
+    "raw_model_content_committed": false,
+    "reason": "The fixture measures only native terminal-tool protocol compliance. A positive holdout result would validate optimizer plumbing, not enterprise task quality or causal user-skill improvement.",
+    "semantic_quality_estimated": false
+  },
+  "experiment_class": "gepa_bounded_optimizer_protocol_quality",
+  "fixture": {
+    "holdout": [
+      {
+        "executor_mode": "deny",
+        "expected_terminal_action": "abstain",
+        "fixture_id_sha256": "f0e1764c43d8d8ec3c591b5422327ceb1c3bd9cc61538e446f99e4a7a6ea1a47",
+        "seed": 510004
+      },
+      {
+        "executor_mode": "success",
+        "expected_terminal_action": "submit",
+        "fixture_id_sha256": "af7c954e09f018b35e3bf4c14519f17ed270bfd705cb7ee40369ebbc3323c923",
+        "seed": 510005
+      },
+      {
+        "executor_mode": "deny",
+        "expected_terminal_action": "abstain",
+        "fixture_id_sha256": "02d906c2ddaa51454238af52c6bf1f6e571d436f18bb1615119ed02e9c69e13d",
+        "seed": 510006
+      }
+    ],
+    "manifest_sha256": "d9bab577a20688253a62cfc02ed79703abfb53741c9819d0d9f4adb950887dce",
+    "train": [
+      {
+        "executor_mode": "success",
+        "expected_terminal_action": "submit",
+        "fixture_id_sha256": "2ddc6532c8f800b3190e3114cd21f7cb531ccc690f730e5595f41bf2066cc629",
+        "seed": 510001
+      },
+      {
+        "executor_mode": "deny",
+        "expected_terminal_action": "abstain",
+        "fixture_id_sha256": "551689564375b0bfdd3fea1a95f351e426f3d28eeff23c26d3cd1e6ad1918911",
+        "seed": 510002
+      },
+      {
+        "executor_mode": "success",
+        "expected_terminal_action": "submit",
+        "fixture_id_sha256": "b0149327d196d5d2a3b0581c49e031054eea5ba300ab12138fa22247b59bed12",
+        "seed": 510003
+      }
+    ]
+  },
+  "model": {
+    "endpoint_scope": "loopback-only",
+    "harness": "ollama-openai-compatible-task-plus-native-reflection",
+    "reflection_model": "llama3.2:latest",
+    "task_model": "llama3.2:latest"
+  },
+  "optimizer": {
+    "holdout_count": 3,
+    "max_metric_calls": 8,
+    "name": "GEPA",
+    "source_checkout": "/private/tmp/gepa-v0.1.4-research",
+    "source_revision": "8b0ce6cd99a234f6b74daf37558a2ac0ce18f975",
+    "tag": "v0.1.4",
+    "train_count": 3
+  },
+  "schema_version": "frankengate-gepa-native-tool-protocol.v1",
+  "selected": {
+    "candidate_characters": 0,
+    "candidate_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gepa_total_metric_calls": 11,
+    "holdout": {
+      "match_rate": 0.6666666666666666,
+      "matches": 2.0,
+      "tasks": 3
+    },
+    "train": {
+      "match_rate": 0.3333333333333333,
+      "matches": 1.0,
+      "tasks": 3
+    }
+  }
+}

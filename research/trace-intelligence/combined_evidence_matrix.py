@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v6"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v7"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -51,6 +51,7 @@ REQUIRED_RESULTS = {
     "skill_qwen_native": (
         "natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json"
     ),
+    "gepa_protocol": "gepa-native-tool-protocol-2026-08-02-r2.json",
     "statebench_sql": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
     "skill_release": "governed-skill-release-lifecycle-2026-07-30.json",
     "trace_commons_attestation": (
@@ -138,6 +139,7 @@ def build_matrix(
     skill_harness_transfer = results["skill_harness_transfer"]
     skill_cross_harness_transfer = results["skill_cross_harness_transfer"]
     skill_qwen_native = results["skill_qwen_native"]
+    gepa_protocol = results["gepa_protocol"]
     statebench_sql = results["statebench_sql"]
     skill_release = results["skill_release"]
     trace_commons_attestation = results.get("trace_commons_attestation")
@@ -822,16 +824,42 @@ def build_matrix(
                     name: _require(value, "native_tool_calls")
                     for name, value in qwen_native_variants.items()
                 },
+                "gepa_optimizer_executed": _require(
+                    gepa_protocol, "claim_boundary", "optimizer_executed"
+                ),
+                "gepa_holdout_split_used": _require(
+                    gepa_protocol, "claim_boundary", "holdout_split_used"
+                ),
+                "gepa_baseline_holdout_match_rate": _require(
+                    gepa_protocol, "baseline", "holdout", "match_rate"
+                ),
+                "gepa_selected_holdout_match_rate": _require(
+                    gepa_protocol, "selected", "holdout", "match_rate"
+                ),
+                "gepa_selected_candidate_characters": _require(
+                    gepa_protocol, "selected", "candidate_characters"
+                ),
+                "gepa_metric_calls": _require(
+                    gepa_protocol, "selected", "gepa_total_metric_calls"
+                ),
+                "gepa_enterprise_skill_benefit_confirmed": _require(
+                    gepa_protocol,
+                    "claim_boundary",
+                    "enterprise_skill_benefit_confirmed",
+                ),
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
                 "state machine pass, but neither establishes causal skill "
                 "benefit. AgentTrace lacks task verdicts and intervention arms; "
                 "the finance SQL fixture has only four executable gold queries. "
-                "The paired skill meta-analysis covers 22 endpoint strata across "
+                f"The paired skill meta-analysis covers {skill_optimization_meta['study_count']} endpoint strata across "
                 "two live local models and two tool-loop harnesses, but its "
                 "protocol and semantic endpoints remain heterogeneous and no "
-                "promotion is authorized. Run the preregistered 60–120 task "
+                "promotion is authorized. GEPA v0.1.4 executed 11 metric calls "
+                "on a train/holdout protocol split and retained the empty seed "
+                "at 2/3 holdout matches, so the optimizer arm produced no lift. "
+                "Run the preregistered 60–120 task "
                 "schema-family-held-out NL2SQL experiment before releasing any "
                 "learned procedure"
             ),
@@ -1106,6 +1134,11 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "terminal matches in every arm. This is a typed harness/model null, "
             "not evidence that the trace-mined candidate improves or harms "
             "semantic task quality.",
+            f"- GEPA v0.1.4 ran {skill['gepa_metric_calls']} metric calls with a "
+            f"three-episode train split and three-episode holdout. The selected "
+            f"candidate matched the empty seed at {skill['gepa_selected_holdout_match_rate']:.3f} "
+            "on holdout, so this optimizer arm produced no protocol lift and "
+            "does not support automatic skill promotion.",
             "- The attested 28-session Trace Commons cohort produced "
             f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
             "structural temporal candidates and "

@@ -205,6 +205,13 @@ intervention with independent enterprise outcomes. SkillOpt-style bounded edits,
 independent gates, staged adoption, and rollback are adopted as proposal
 mechanics. Automatic adoption and cross-user skill sharing remain gated.
 
+The [`GEPA v0.1.4 native-tool protocol arm`](experiments/summaries/gepa-native-tool-protocol-2026-08-02.md)
+now runs the actual pinned optimizer against a separate three-episode train and
+three-episode holdout split using the local Llama model. GEPA made 11 metric
+calls, proposed two mutations, rejected both, and retained the empty seed at
+2/3 holdout matches. This validates the adapter, reflection, acceptance, and
+holdout plumbing; it produces no protocol lift and no enterprise skill claim.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with
