@@ -12,6 +12,12 @@ dreaming, skill learning, similar-work discovery, collaboration, and embedding
 adaptation as separable mechanisms. Product or framework names do not count as
 empirical evidence.
 
+The latest public-data discovery audit adds a rights- and provenance-gated queue
+of Hugging Face candidates spanning native user sessions, OTel-native traces, and
+labeled workflow/diagnosis traces. It is discovery only until revisions and
+licenses are frozen; see
+[`huggingface-agent-trace-discovery-2026-07-31.md`](experiments/summaries/huggingface-agent-trace-discovery-2026-07-31.md).
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
