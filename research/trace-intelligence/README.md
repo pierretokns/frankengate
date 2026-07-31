@@ -155,9 +155,14 @@ The [`retrieval backend parity study`](experiments/summaries/retrieval-backend-p
 reuses the pinned 145-document/99-query cohort and forced-RLS PostgreSQL
 receipts. PostgreSQL remains the authority. CASS 0.6.22 was capability-probed
 but its installed index is not the same corpus; Frankensearch, pg_textsearch,
-pgContext, TurboVec, and Turbopuffer are explicit nulls rather than invented
-scores. Promotion requires same-corpus relevance, pre-ranking authorization,
-deletion closure, latency, and cost evidence.
+pgContext, and Turbopuffer remain explicit nulls rather than invented scores.
+TurboVec now has a same-corpus adapter checkpoint
+([summary](experiments/summaries/turbovec-codetracebench-2026-07-31.md)): its
+2-bit local index matched exact dense Recall@20 on this slice and passed
+allowlist, persistence, and deletion checks, but it is still only a dense
+component—not an authority, lexical engine, or skill system. Promotion requires
+same-corpus relevance, pre-ranking authorization, deletion closure, latency,
+and cost evidence.
 
 The [`FinanceBench embedding-choice benchmark`](experiments/summaries/finance-mteb-retrieval-benchmark-2026-08-02.md)
 adds a separate finance/NL2SQL relevance gate over the cached, revision-pinned
@@ -216,6 +221,14 @@ SkillGen report promising external results; none is a natural Frankengate
 intervention with independent enterprise outcomes. SkillOpt-style bounded edits,
 independent gates, staged adoption, and rollback are adopted as proposal
 mechanics. Automatic adoption and cross-user skill sharing remain gated.
+
+The frontier long-horizon SkillOpt replication
+([summary](experiments/summaries/alfworld-luna-skillopt-four-family-35step-2026-07-31.md))
+closed the earlier horizon gap: four family-disjoint expert-solvable ALFWorld
+tasks, 35 steps, and three paired arms. All arms scored 0/4 wins, and a fresh
+environment replay verified all 12 action sequences. This is a valid null
+checkpoint at a sufficient horizon, not a general method-ineffective claim;
+the candidate remains quarantined.
 
 The [`GEPA v0.1.4 native-tool protocol arm`](experiments/summaries/gepa-native-tool-protocol-2026-08-02.md)
 now runs the actual pinned optimizer against a separate three-episode train and
