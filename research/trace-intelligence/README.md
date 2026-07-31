@@ -308,6 +308,12 @@ successful SQL were 0/6, with six terminal fallbacks per arm. This is a typed
 model/protocol null, not evidence for or against a skill benefit; protocol
 remediation and independent outcome/security verification remain required.
 
+The accompanying [`independent receipt verification`](experiments/summaries/defog-trace-mined-skill-heldout-car-independent-verification-2026-08-02.md)
+rechecked all 18 external raw audits: hashes, attempt chains, authority/epoch
+bindings, policy invariants, terminal scheduling, and unauthorized-observation
+flags all passed. It explicitly leaves semantic recomputation unclaimed because
+the disposable PostgreSQL executor is no longer running.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,

@@ -15,7 +15,7 @@ The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
 The latest targeted research suite passed 22 tests; offline reproducibility now
-validates 106 aggregate results, 44 manifests, 12 governed fixtures, and zero
+validates 107 aggregate results, 44 manifests, 12 governed fixtures, and zero
 committed raw corpus files. The full locked-suite count remains the historical
 506-test checkpoint recorded separately.
 
@@ -43,4 +43,6 @@ governed database in all 18 arm/task runs with zero unauthorized observations,
 but all three arms exhausted the SQL protocol (0/6 semantic correctness and
 0/6 successful SQL each). That is a typed model/protocol null, not a causal
 skill result; independent outcome and security verification after protocol
-remediation remain open.
+remediation remain open. The independent receipt verifier now passes all
+content-free security/protocol checks for the 18 external raw audits, but it
+does not recompute semantic correctness without the PostgreSQL executor.
