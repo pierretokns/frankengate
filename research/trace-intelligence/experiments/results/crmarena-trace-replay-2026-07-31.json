@@ -1,0 +1,29 @@
+{
+  "claim_boundary": {
+    "causal_skill_benefit_confirmed": false,
+    "full_otel_fidelity_confirmed": false,
+    "reason": "Recorded SQL tool calls and observations were replayed against the pinned SQLite org; this does not establish causal skill utility or production Salesforce behavior.",
+    "replay_executed": true
+  },
+  "counts": {
+    "exact_result_match": 420,
+    "non_query_tool_result": 85,
+    "query_tool_calls": 468,
+    "recorded_observation_not_json": 28,
+    "result_mismatch": 20,
+    "traces_with_metadata": 80
+  },
+  "malformed_spans": 0,
+  "rewards": {
+    "0": 16,
+    "1": 56,
+    "other": 8
+  },
+  "schema_version": "frankengate-crmarena-trace-replay-v1",
+  "source": {
+    "database_file": "crm.db",
+    "database_sha256": "42cf7585e8491f3859a1caef17944ad04660fe24bc353722904b45dd991d336a",
+    "trace_file": "traces.otel.jsonl",
+    "trace_sha256": "1c10705a5a1dd22ad6b380e97fdb8acfae81f12c71ae6fc5bf7d68d9af682ef9"
+  }
+}
