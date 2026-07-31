@@ -1,0 +1,59 @@
+{
+  "schema_version": "frankengate-independent-skill-factorial-v1",
+  "study": "family-disjoint BIRD-SQL trace-mined procedure transfer",
+  "source_trace_dataset": {
+    "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+    "revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+    "trace_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630",
+    "task_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8"
+  },
+  "evidence_families": [
+    "superhero",
+    "toxicology",
+    "student_club",
+    "california_schools"
+  ],
+  "heldout_families": [
+    "card_games",
+    "formula_1",
+    "financial"
+  ],
+  "tasks_per_heldout_family": 2,
+  "task_selection": "first two task ids after sorting within each heldout database family; no task or trace from heldout families may enter mining",
+  "arms": [
+    "no_skill",
+    "formatting_placebo",
+    "trace_mined_procedure"
+  ],
+  "model": "gpt-5.6-luna",
+  "harness": "codex-cli-subscription",
+  "max_output_tokens": 1200,
+  "replay": {
+    "database_mode": "immutable read-only SQLite",
+    "candidate_policy": "one SELECT or WITH statement; no shell, writes, multiple statements, or hidden gold access",
+    "result_limits": {
+      "max_rows": 10000,
+      "max_bytes": 8388608,
+      "max_seconds": 2
+    },
+    "verdict": "strict ordered columns and multiplicity plus unordered diagnostic",
+    "independent_evaluator": "bird_sql_trace_replay.py semantics, with gold sidecars sealed from the proposer"
+  },
+  "primary_metrics": [
+    "gold_result_exact_match",
+    "gold_result_unordered_match",
+    "parseable_single_read_query",
+    "result_limit_or_timeout_rate",
+    "cost_and_latency"
+  ],
+  "controls": {
+    "no_skill": "task and schema only",
+    "formatting_placebo": "same task and schema plus output-format instruction only",
+    "trace_mined_procedure": "procedure generated only from evidence-family traces and frozen before heldout calls"
+  },
+  "promotion": {
+    "powered_gate": "not satisfied by this six-task pilot; require at least 20 heldout tasks across four families with paired confidence intervals",
+    "automatic_skill_promotion": false,
+    "integration_allowed": false
+  }
+}
