@@ -49,7 +49,7 @@
       "what_was_tested": "Replayable action-sequence capture across both local harnesses on the same eight-task cohort",
       "result": "All 32 rows independently recomputed in fresh environments with zero mismatches; both harnesses remained 0/8 for baseline and candidate",
       "causal": false,
-      "hard_edge": "This verifies task outcome replay, not authorization/security behavior or positive skill utility"
+      "hard_edge": "All replayed actions were admissible and outcomes matched, but this verifies task replay only—not authorization/security behavior or positive skill utility"
     }
   ],
   "model_harness_coverage": {

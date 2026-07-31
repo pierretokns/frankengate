@@ -273,6 +273,7 @@ def build_matrix(
         "r12_candidate_wins": sum(v.get("wins", 0) for k, v in (alfworld_family_disjoint_powered_r12_replayable.get("summary", {}) if alfworld_family_disjoint_powered_r12_replayable else {}).items() if "trace_mined_procedure_v2" in k),
         "r12_semantic_verifier_passed": bool(alfworld_family_disjoint_powered_r12_semantic_verification and alfworld_family_disjoint_powered_r12_semantic_verification.get("all_passed", False)),
         "r12_semantic_rows_verified": alfworld_family_disjoint_powered_r12_semantic_verification.get("rows_verified", 0) if alfworld_family_disjoint_powered_r12_semantic_verification else 0,
+        "r12_all_executed_actions_admissible": bool(alfworld_family_disjoint_powered_r12_semantic_verification and alfworld_family_disjoint_powered_r12_semantic_verification.get("all_executed_actions_admissible", False)),
         "r10_qwen_incomplete": bool(alfworld_family_disjoint_powered_r10_qwen_incomplete and alfworld_family_disjoint_powered_r10_qwen_incomplete.get("status") == "interrupted_runtime_error"),
     }
 
@@ -1113,6 +1114,7 @@ def build_matrix(
                 "alfworld_family_disjoint_powered_r12_candidate_wins": revision_evidence["r12_candidate_wins"],
                 "alfworld_family_disjoint_powered_r12_semantic_verifier_passed": revision_evidence["r12_semantic_verifier_passed"],
                 "alfworld_family_disjoint_powered_r12_semantic_rows_verified": revision_evidence["r12_semantic_rows_verified"],
+                "alfworld_family_disjoint_powered_r12_all_executed_actions_admissible": revision_evidence["r12_all_executed_actions_admissible"],
                 "alfworld_family_disjoint_powered_r10_qwen_incomplete": revision_evidence["r10_qwen_incomplete"],
             },
             "decision": (
@@ -1461,7 +1463,8 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{skill['alfworld_family_disjoint_powered_r11_candidate_invalid_actions']} invalid actions, with verifier "
             f"{skill['alfworld_family_disjoint_powered_r11_verifier_passed']}. "
             f"The replayable r12 cohort independently recomputed {skill['alfworld_family_disjoint_powered_r12_semantic_rows_verified']} rows "
-            f"with zero mismatches: {skill['alfworld_family_disjoint_powered_r12_semantic_verifier_passed']}.",
+            f"with zero mismatches: {skill['alfworld_family_disjoint_powered_r12_semantic_verifier_passed']}; all executed actions "
+            f"were admissible: {skill['alfworld_family_disjoint_powered_r12_all_executed_actions_admissible']}.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "

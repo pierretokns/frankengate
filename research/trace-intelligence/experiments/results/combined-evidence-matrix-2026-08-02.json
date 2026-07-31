@@ -99,7 +99,7 @@
       "filename": "alfworld-family-disjoint-powered-r12-semantic-verification-2026-08-02.json",
       "optional": true,
       "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
-      "sha256": "8619086594144805910305561d9184c2e5beb09dd8e013a970aaa3911f73ce8d"
+      "sha256": "3733bd01ba958e8544c7338da1d02c1a88798e905a820c2b22ee191736afdcd1"
     },
     "alfworld_family_disjoint_powered_r9": {
       "filename": "alfworld-family-disjoint-powered-r9-2026-08-02.json",
@@ -491,6 +491,7 @@
         "alfworld_family_disjoint_powered_r11_candidate_wins": 0,
         "alfworld_family_disjoint_powered_r11_tasks": 8,
         "alfworld_family_disjoint_powered_r11_verifier_passed": true,
+        "alfworld_family_disjoint_powered_r12_all_executed_actions_admissible": true,
         "alfworld_family_disjoint_powered_r12_candidate_wins": 0,
         "alfworld_family_disjoint_powered_r12_semantic_rows_verified": 32,
         "alfworld_family_disjoint_powered_r12_semantic_verifier_passed": true,
@@ -604,6 +605,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "1fd5520e95af97d47cdad9c2afca274c10d887f7c1fd2ca7db25a501aa160c21",
+  "result_sha256": "af1892ce0bcdd8a477846f94edb2f3453889064ea68766bb45fec653ed45bf39",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

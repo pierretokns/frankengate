@@ -35,12 +35,20 @@ def replay_row(config: dict[str, Any], task: str, actions: list[str]) -> dict[st
         _, infos = env.reset()
         done = [False]
         steps = 0
+        invalid_executed_actions = 0
         for action in actions:
             if done[0]:
                 break
+            admissible = list(infos.get("admissible_commands", [[]])[0])
+            if action not in admissible:
+                invalid_executed_actions += 1
             _, _, done, infos = env.step([action])
             steps += 1
-        return {"won": bool(infos.get("won", [False])[0]), "steps": steps}
+        return {
+            "won": bool(infos.get("won", [False])[0]),
+            "steps": steps,
+            "invalid_executed_actions": invalid_executed_actions,
+        }
     finally:
         env.close()
 
@@ -69,7 +77,11 @@ def verify(receipt_path: Path, raw_path: Path, alfworld_data: Path, config_path:
         if not isinstance(actions, list) or not all(isinstance(item, str) for item in actions):
             raise ValueError("row is missing a string action sequence")
         replayed = replay_row(config, task, actions)
-        expected = {"won": bool(row.get("won")), "steps": int(row.get("steps", -1))}
+        expected = {
+            "won": bool(row.get("won")),
+            "steps": int(row.get("steps", -1)),
+            "invalid_executed_actions": 0,
+        }
         if replayed != expected:
             mismatches.append({"task_hash": task_hash, "arm": row.get("arm"), "model": row.get("model"), "harness": row.get("harness"), "expected": expected, "replayed": replayed})
     return {
@@ -81,6 +93,10 @@ def verify(receipt_path: Path, raw_path: Path, alfworld_data: Path, config_path:
         "rows_verified": len(raw),
         "mismatch_count": len(mismatches),
         "mismatches": mismatches,
+        "all_executed_actions_admissible": not any(
+            item.get("replayed", {}).get("invalid_executed_actions", 0)
+            for item in mismatches
+        ),
         "verifier": "fresh ALFWorld environment replay; no model calls",
         "raw_content_policy": "environment action sequences only; no prompts or model responses",
     }

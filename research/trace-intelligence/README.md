@@ -248,9 +248,10 @@ recomputation and a larger powered cohort remain open.
 The [`replayable outcome verification`](experiments/summaries/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.md)
 then retained only environment action sequences and independently replayed all
 32 episodes in fresh ALFWorld environments. Every terminal outcome and step
-count matched with zero mismatches. This closes the independent task-outcome
-recomputation gate for the cohort, but does not establish authorization/security
-correctness or positive skill utility.
+count matched with zero mismatches. The verifier also confirmed every replayed
+action was admissible at the corresponding fresh state. This closes the
+independent task-outcome recomputation gate for the cohort, but does not
+establish authorization/security correctness or positive skill utility.
 
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public

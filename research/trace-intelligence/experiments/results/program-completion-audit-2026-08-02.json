@@ -68,6 +68,7 @@
       "all_passed": true,
       "rows_verified": 32,
       "mismatch_count": 0,
+      "all_executed_actions_admissible": true,
       "raw_content_committed": false
     },
     "aurora_runtime_probe": {
