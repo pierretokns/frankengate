@@ -110,6 +110,7 @@ def main() -> int:
     parser.add_argument("--timeout", type=float, default=60)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--raw-output", type=Path, required=True)
+    parser.add_argument("--record-actions", action="store_true", help="Retain executed environment actions for independent replay")
     args = parser.parse_args()
 
     os.environ["ALFWORLD_DATA"] = str(args.alfworld_data.resolve(strict=True))
@@ -152,6 +153,7 @@ def main() -> int:
                             endpoint,
                             args.max_steps,
                             args.timeout,
+                            args.record_actions,
                         )
                     )
 
@@ -199,6 +201,7 @@ def main() -> int:
             "expert_horizon_covers_all_tasks": all(item["expert_steps"] <= args.max_steps for item in controls),
             "controls": controls,
             "raw_receipt": str(args.raw_output),
+            "action_sequences_recorded": args.record_actions,
         },
         "summary": summary,
         "comparison": {

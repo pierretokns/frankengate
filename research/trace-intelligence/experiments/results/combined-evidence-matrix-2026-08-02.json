@@ -89,6 +89,18 @@
       "schema_version": "frankengate-alfworld-powered-receipt-verification-v1",
       "sha256": "66196affd42afc23dd384b114106966a06db60d3a9a987909333add701b6cf82"
     },
+    "alfworld_family_disjoint_powered_r12_replayable": {
+      "filename": "alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "351daa8bdb1dbdcdd7002bfcb39cb425fc31975a3932e3f017892643027175aa"
+    },
+    "alfworld_family_disjoint_powered_r12_semantic_verification": {
+      "filename": "alfworld-family-disjoint-powered-r12-semantic-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
+      "sha256": "8619086594144805910305561d9184c2e5beb09dd8e013a970aaa3911f73ce8d"
+    },
     "alfworld_family_disjoint_powered_r9": {
       "filename": "alfworld-family-disjoint-powered-r9-2026-08-02.json",
       "optional": true,
@@ -479,6 +491,10 @@
         "alfworld_family_disjoint_powered_r11_candidate_wins": 0,
         "alfworld_family_disjoint_powered_r11_tasks": 8,
         "alfworld_family_disjoint_powered_r11_verifier_passed": true,
+        "alfworld_family_disjoint_powered_r12_candidate_wins": 0,
+        "alfworld_family_disjoint_powered_r12_semantic_rows_verified": 32,
+        "alfworld_family_disjoint_powered_r12_semantic_verifier_passed": true,
+        "alfworld_family_disjoint_powered_r12_tasks": 8,
         "alfworld_family_disjoint_powered_r9_candidate_invalid_actions": 206,
         "alfworld_family_disjoint_powered_r9_candidate_wins": 0,
         "alfworld_family_disjoint_powered_r9_causal_skill_benefit_confirmed": false,
@@ -588,6 +604,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "1c7b2abd6ea5b3c92acc2118487f1fc858f52601ed8f2a4697f2c34d0f9f36c1",
+  "result_sha256": "1fd5520e95af97d47cdad9c2afca274c10d887f7c1fd2ca7db25a501aa160c21",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

@@ -51,6 +51,25 @@
       "rows_verified": 16,
       "raw_content_committed": false
     },
+    "alfworld_family_disjoint_powered_r12_replayable": {
+      "result": "experiments/results/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
+      "summary": "experiments/summaries/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.md",
+      "status": "replayable_two_harness_negative_transfer",
+      "task_count": 8,
+      "models": ["llama3.2:latest"],
+      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
+      "candidate_wins": 0,
+      "action_sequences_recorded": true,
+      "causal_skill_benefit_confirmed": false
+    },
+    "alfworld_family_disjoint_powered_r12_semantic_verification": {
+      "result": "experiments/results/alfworld-family-disjoint-powered-r12-semantic-verification-2026-08-02.json",
+      "status": "independent_fresh_environment_replay_passed",
+      "all_passed": true,
+      "rows_verified": 32,
+      "mismatch_count": 0,
+      "raw_content_committed": false
+    },
     "aurora_runtime_probe": {
       "result": "experiments/results/aurora-runtime-probe-2026-08-02.json",
       "status": "container_runtime_unavailable_typed_null",

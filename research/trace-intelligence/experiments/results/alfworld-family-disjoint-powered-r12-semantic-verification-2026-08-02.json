@@ -1,0 +1,12 @@
+{
+  "all_passed": true,
+  "mismatch_count": 0,
+  "mismatches": [],
+  "raw": "alfworld-family-disjoint-powered-r12-replayable.raw.json",
+  "raw_content_policy": "environment action sequences only; no prompts or model responses",
+  "raw_sha256": "9ab31606172a0c26c87b1417aab8fc0103b7b6840507778d7fd5521fb20d9946",
+  "receipt": "alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
+  "rows_verified": 32,
+  "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
+  "verifier": "fresh ALFWorld environment replay; no model calls"
+}

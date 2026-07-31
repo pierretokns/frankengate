@@ -87,7 +87,16 @@ def choose_action(response: str, admissible: list[str]) -> tuple[str, bool]:
     return ("look" if "look" in admissible else admissible[0]), False
 
 
-def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: str, max_steps: int, timeout: float) -> dict[str, Any]:
+def run_episode(
+    base_env: Any,
+    task_path: str,
+    arm: str,
+    model: str,
+    endpoint: str,
+    max_steps: int,
+    timeout: float,
+    record_actions: bool = False,
+) -> dict[str, Any]:
     base_env.game_files = [task_path]
     base_env.num_games = 1
     env = base_env.init_env(batch_size=1)
@@ -141,7 +150,7 @@ def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: s
             obs, _, done, infos = env.step([action])
             action_history.append(action)
             steps += 1
-        return {
+        result = {
             "task_hash": sha256_text(task_path),
             "arm": arm,
             "model": model,
@@ -152,6 +161,11 @@ def run_episode(base_env: Any, task_path: str, arm: str, model: str, endpoint: s
             "api_calls": api_calls,
             "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
         }
+        if record_actions:
+            # Environment actions are safe replay evidence; model prompts and
+            # responses are intentionally never retained.
+            result["action_sequence"] = action_history
+        return result
     finally:
         env.close()
 

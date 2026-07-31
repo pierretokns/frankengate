@@ -43,6 +43,13 @@
       "result": "Both arms were 0/8; the trace-mined arm emitted 66 invalid actions versus 0 for no-skill, matching the native-harness direction",
       "causal": false,
       "hard_edge": "Aggregate verifier passed, but independent semantic/security recomputation and larger task power remain open"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
+      "what_was_tested": "Replayable action-sequence capture across both local harnesses on the same eight-task cohort",
+      "result": "All 32 rows independently recomputed in fresh environments with zero mismatches; both harnesses remained 0/8 for baseline and candidate",
+      "causal": false,
+      "hard_edge": "This verifies task outcome replay, not authorization/security behavior or positive skill utility"
     }
   ],
   "model_harness_coverage": {
