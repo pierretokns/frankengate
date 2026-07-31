@@ -59,6 +59,12 @@
       "schema_version": "agenttrace-nl2bash-replay-audit-v1",
       "sha256": "6a7b2c25bdaf5c10e40dedb7c8ac0f2d04e391da4ca1c3ff9058c939b3fbf9f1"
     },
+    "alfworld_intervention_verification": {
+      "filename": "alfworld-intervention-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-intervention-verification-v1",
+      "sha256": "b99d6016173c3489cc4b43c2b2105df1ad00c4dc134254ad9ec7e01beb918fbd"
+    },
     "alfworld_skill_intervention": {
       "filename": "alfworld-trace-skill-intervention-2026-08-02.json",
       "schema_version": "frankengate-alfworld-trace-skill-intervention-v1",
@@ -398,6 +404,7 @@
         "alfworld_family_disjoint_r3_candidate_wins": 0,
         "alfworld_family_disjoint_r3_causal_skill_benefit_confirmed": false,
         "alfworld_family_disjoint_r3_episodes": 16,
+        "alfworld_intervention_verifier_passed": true,
         "alfworld_revision_r2_candidate_invalid_actions": 56,
         "alfworld_revision_r2_candidate_wins": 0,
         "alfworld_revision_r2_episodes": 6,
@@ -489,6 +496,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "1a8a3c508982c2532d0da11672b5aa2b6e89fe52bd03fbf622541821c7287162",
-  "schema_version": "frankengate-combined-evidence-matrix-v12"
+  "result_sha256": "de27e68c92684b96cc1563664b56a9dc0bff1940b0d31b9a8600c5a4905588e9",
+  "schema_version": "frankengate-combined-evidence-matrix-v13"
 }

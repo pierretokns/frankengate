@@ -4,6 +4,13 @@
   "supersedes": "experiments/results/program-completion-audit-2026-08-01.json",
   "overall_status": "active_incomplete",
   "checkpoint": {
+    "alfworld_intervention_verification": {
+      "result": "experiments/results/alfworld-intervention-verification-2026-08-02.json",
+      "status": "raw_projection_and_claim_boundary_verified",
+      "checks": 2,
+      "all_passed": true,
+      "raw_content_committed": false
+    },
     "alfworld_trace_skill_intervention_r4_qwen": {
       "result": "experiments/results/alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
       "summary": "experiments/summaries/alfworld-trace-skill-intervention-r4-qwen-2026-08-02.md",
@@ -111,11 +118,12 @@
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-      "schema_version": "frankengate-combined-evidence-matrix-v12",
+      "schema_version": "frankengate-combined-evidence-matrix-v13",
       "alfworld_semantic_pilot_consumed": true,
       "alfworld_revision_r2_consumed": true,
       "alfworld_family_disjoint_r3_consumed": true,
       "alfworld_cross_model_r4_qwen_consumed": true,
+      "alfworld_intervention_verifier_consumed": true,
       "alfworld_trace_procedure_wins": 0,
       "alfworld_family_disjoint_r3_candidate_wins": 0,
       "causal_skill_benefit_confirmed": false,
