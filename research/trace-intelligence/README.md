@@ -18,6 +18,20 @@ labeled workflow/diagnosis traces. It is discovery only until revisions and
 licenses are frozen; see
 [`huggingface-agent-trace-discovery-2026-07-31.md`](experiments/summaries/huggingface-agent-trace-discovery-2026-07-31.md).
 
+Latest public-OTel and composition checkpoints:
+
+- [`DiscoPosse OTel shard audit`](experiments/summaries/hf-disco-otel-shard-audit-2026-07-31.md)
+  projects a pinned shard through canonical, ATIF, and OpenInference/OTel
+  adapters with explicit loss accounting;
+- [`workload-stratified Signals results`](experiments/summaries/hf-disco-otel-signals-2026-07-31.md)
+  and its [`browsecompplus negative control`](experiments/summaries/hf-disco-otel-signals-browsecomp-2026-07-31.md)
+  show workload-sensitive selector behavior;
+- [`governed hypothesis policy experiment`](experiments/summaries/hypothesis-policy-experiment-2026-07-31.md)
+  and [`resettable intervention replay`](experiments/summaries/hypothesis-intervention-replay-2026-07-31.md)
+  validate controls and isolation without claiming causal utility; and
+- [`public OTel composition gate`](experiments/summaries/public-otel-composition-gate-2026-07-31.md)
+  fails closed and defers automatic promotion.
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
