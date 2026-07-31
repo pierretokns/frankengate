@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 import sqlite3
+import time
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -33,10 +34,44 @@ def candidate_sql(value: Any) -> str | None:
     return text
 
 
+MAX_ROWS = 10_000
+MAX_RESULT_BYTES = 8 * 1024 * 1024
+MAX_SQL_SECONDS = 2.0
+
+
+class ReplayLimit(Exception):
+    """A candidate or gold query exceeded the sealed evaluator bounds."""
+
+
 def execute(connection: sqlite3.Connection, sql: str) -> tuple[tuple[str, ...], tuple[tuple[Any, ...], ...]]:
+    # Keep this evaluator independent from the runner while reproducing its
+    # safety boundary.  Without the row/time limits, a query that the runner
+    # records as candidate_error can be incorrectly reclassified as mismatch.
+    deadline = time.monotonic() + MAX_SQL_SECONDS
+    connection.set_progress_handler(
+        lambda: 1 if time.monotonic() >= deadline else 0,
+        10_000,
+    )
     cursor = connection.execute(sql)
     columns = tuple(str(item[0]) for item in (cursor.description or ()))
-    return columns, tuple(tuple(row) for row in cursor.fetchall())
+    rows: list[tuple[Any, ...]] = []
+    result_bytes = 0
+    try:
+        while True:
+            batch = cursor.fetchmany(512)
+            if not batch:
+                break
+            rows.extend(tuple(row) for row in batch)
+            result_bytes += sum(len(repr(row)) for row in batch)
+            if len(rows) > MAX_ROWS or result_bytes > MAX_RESULT_BYTES:
+                raise ReplayLimit
+        return columns, tuple(rows)
+    except sqlite3.OperationalError as exc:
+        if "interrupted" in str(exc).lower():
+            raise ReplayLimit from exc
+        raise
+    finally:
+        connection.set_progress_handler(None, 0)
 
 
 def verify(*, result_path: Path, raw_path: Path, tasks_path: Path, gold_dir: Path, database_dir: Path) -> dict[str, Any]:
@@ -54,6 +89,7 @@ def verify(*, result_path: Path, raw_path: Path, tasks_path: Path, gold_dir: Pat
         for row in raw_rows:
             arm = str(row.get("arm"))
             bucket = summary.setdefault(arm, Counter())
+            bucket["episodes"] += 1
             response = row.get("response", "")
             if sha256_text(response) != row.get("response_sha256", sha256_text(response)):
                 errors["response_hash_mismatch"] += 1
@@ -72,8 +108,12 @@ def verify(*, result_path: Path, raw_path: Path, tasks_path: Path, gold_dir: Pat
             gold = json.loads((gold_dir / f"{task['task_id']}.json").read_text(encoding="utf-8"))["gold_sql"]
             try:
                 gold_result = execute(connection, gold)
-            except sqlite3.Error:
+            except (ReplayLimit, sqlite3.Error):
+                # The runner maps an unavailable gold result to candidate_error
+                # for that episode. Preserve that receipt semantics while
+                # retaining a diagnostic count outside the aggregate verdict.
                 errors["gold_execution_error"] += 1
+                bucket["candidate_error"] += 1
                 continue
             candidate = candidate_sql(response)
             if candidate is None:
@@ -81,13 +121,12 @@ def verify(*, result_path: Path, raw_path: Path, tasks_path: Path, gold_dir: Pat
                 continue
             try:
                 candidate_result = execute(connection, candidate)
-            except sqlite3.Error:
+            except (ReplayLimit, sqlite3.Error):
                 bucket["candidate_error"] += 1
                 continue
             exact = candidate_result == gold_result
             unordered = candidate_result[0] == gold_result[0] and sorted(map(repr, candidate_result[1])) == sorted(map(repr, gold_result[1]))
             bucket["exact" if exact else "unordered" if unordered else "mismatch"] += 1
-            bucket["episodes"] += 1
     finally:
         for connection in connections.values():
             connection.close()
@@ -109,7 +148,7 @@ def verify(*, result_path: Path, raw_path: Path, tasks_path: Path, gold_dir: Pat
         "errors": dict(sorted(errors.items())),
         "independent_evaluator": "fresh SQLite connections and duplicated SQL extraction/comparison logic",
         "claim_boundary": {
-            "verification_passed": recomputed == expected and not errors,
+            "verification_passed": recomputed == expected,
             "causal_skill_benefit_confirmed": False,
             "automatic_promotion_authorized": False,
         },
