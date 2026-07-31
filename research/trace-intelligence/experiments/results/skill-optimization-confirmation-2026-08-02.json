@@ -85,6 +85,20 @@
       "result": "A candidate was generated and applied cleanly, then rejected because baseline and candidate selection scores both equaled 0.0",
       "causal": false,
       "hard_edge": "The shim ignores task content and makes no model calls; this proves lifecycle/gate mechanics only and cannot establish semantic skill utility"
+    },
+    {
+      "receipt": "experiments/results/skillopt-alfworld-codex-r18-2026-08-02.json",
+      "what_was_tested": "Real SkillOpt optimizer and target paths using gpt-5.6-luna through the Codex subscription harness",
+      "result": "SkillOpt generated a 213-byte candidate, applied one edit, and rejected it at the hard selection gate because baseline and candidate scores were both 0.0",
+      "causal": false,
+      "hard_edge": "The candidate required independent held-out transfer evaluation; no promotion was authorized"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r19-2026-08-02.json",
+      "what_was_tested": "Codex-backed SkillOpt candidate versus no-skill and formatting placebo on two previously held-out ALFWorld tasks",
+      "result": "All three arms were 0/2 wins over the bounded three-step pilot; all six action sequences passed fresh-environment replay with zero mismatches and admissible actions",
+      "causal": false,
+      "hard_edge": "This is a small, short-horizon pilot and not a powered release decision"
     }
   ],
   "model_harness_coverage": {

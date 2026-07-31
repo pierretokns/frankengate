@@ -14,6 +14,7 @@ We have **not** yet confirmed that Frankengate's trace-mined skills improve real
 8. The r14 Qwen 3 4B native-harness replication ran the same three arms on all eight tasks. Every arm was `0/8`, and all 24 action sequences independently replayed with zero mismatches.
 9. A direct SkillOpt retry after installing its dependency stack initialized SkillOpt and ALFWorld and reached baseline rollout, but the configured local model endpoint was unavailable. No SkillOpt model response, candidate skill, or scored episode was counted; this is an infrastructure null, not a quality result.
 10. A deterministic in-process backend then exercised the complete SkillOpt lifecycle. It generated and applied one candidate, evaluated it, and rejected it at the hard gate because baseline and candidate selection scores were both `0.0`. This closes the mechanics smoke only; the shim intentionally ignores task content and makes no model calls.
+11. A real `gpt-5.6-luna` Codex-backed SkillOpt run generated a candidate and rejected it at its own selection gate (`0.0` baseline and candidate). A bounded held-out transfer pilot compared that candidate with no-skill and formatting placebo on two tasks: all three arms were `0/2`, and fresh replay verified all six action sequences with zero mismatches.
 
 Those are prerequisites and a negative causal test, not evidence of a beneficial skill.
 

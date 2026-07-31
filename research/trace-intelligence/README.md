@@ -282,6 +282,15 @@ candidate, then rejected it because baseline and candidate scores were both
 `0.0`. The shim intentionally ignores task content and makes no model calls;
 this validates lifecycle mechanics only, not skill quality.
 
+The [`real Codex-backed SkillOpt run`](experiments/results/skillopt-alfworld-codex-r18-2026-08-02.json)
+then generated a candidate with `gpt-5.6-luna` through the Codex subscription
+harness. SkillOpt rejected it at its own selection gate (`0.0` baseline and
+candidate). A bounded [`Codex transfer pilot`](experiments/summaries/alfworld-codex-skillopt-r19-2026-08-02.md)
+compared the candidate with no-skill and a formatting placebo on two held-out
+tasks: all three arms were `0/2`, and a fresh verifier checked all six action
+sequences with zero mismatches. This is real optimizer evidence, but not a
+positive utility claim or a powered release result.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

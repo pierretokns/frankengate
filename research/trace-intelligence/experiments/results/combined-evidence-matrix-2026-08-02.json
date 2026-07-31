@@ -59,6 +59,18 @@
       "schema_version": "agenttrace-nl2bash-replay-audit-v1",
       "sha256": "6a7b2c25bdaf5c10e40dedb7c8ac0f2d04e391da4ca1c3ff9058c939b3fbf9f1"
     },
+    "alfworld_codex_skillopt_r19": {
+      "filename": "alfworld-codex-skillopt-r19-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "c78e1d7348b39ae1a25f732efb1d9e608ca91744e2812f6954b0d268c8db2a15"
+    },
+    "alfworld_codex_skillopt_r19_verification": {
+      "filename": "alfworld-codex-skillopt-r19-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "3ae7c1329683abc68a002923973c81e52ac545da15f8e552960b0a0123085208"
+    },
     "alfworld_durable_memory_intervention_r7": {
       "filename": "alfworld-durable-memory-intervention-r7-2026-08-02.json",
       "optional": true,
@@ -296,6 +308,12 @@
       "filename": "governed-skill-release-lifecycle-2026-07-30.json",
       "schema_version": "frankengate-governed-skill-release-lifecycle-v1",
       "sha256": "9a3a6e5274461d328f05a6bf75fbdba43645e4cada60cfe3891b3c79c0d221c1"
+    },
+    "skillopt_alfworld_codex_r18": {
+      "filename": "skillopt-alfworld-codex-r18-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-alfworld-codex-v1",
+      "sha256": "dde3cc04414f3b9e56dcd038de1cf1a7c0151d61c57e23912fc417130418faa0"
     },
     "skillopt_deterministic_lifecycle_r17": {
       "filename": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
@@ -685,6 +703,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "df47ae5bfbc735eb3afa06796344b0a2b10db09839435dbb1e5d014bf5f272f2",
+  "result_sha256": "ab42a51464a1efa18603ab11aaaf46b466cb5ef41860866d7c44e3dfcf7a6ee7",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }
