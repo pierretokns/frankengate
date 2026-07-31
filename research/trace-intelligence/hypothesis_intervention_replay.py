@@ -42,11 +42,32 @@ def evaluate(task: Task, procedure: str | None) -> bool:
     return procedure == task.required_procedure
 
 
+class ResettableSystem:
+    def __init__(self) -> None:
+        self.reset_count = 0
+        self.procedure: str | None = None
+
+    def reset(self) -> None:
+        self.reset_count += 1
+        self.procedure = None
+
+    def expose(self, procedure: str | None) -> None:
+        self.procedure = procedure
+
+    def execute(self, task: Task) -> bool:
+        return evaluate(task, self.procedure)
+
+
 def run() -> dict[str, object]:
     arms = []
     for policy in ("none", "placebo", "evidence_policy"):
         procedure = propose(policy, TRAIN)
-        outcomes = [evaluate(task, procedure) for task in HOLDOUT]
+        system = ResettableSystem()
+        outcomes = []
+        for task in HOLDOUT:
+            system.reset()
+            system.expose(procedure)
+            outcomes.append(system.execute(task))
         arms.append({
             "policy": policy,
             "candidate_present": procedure is not None,
@@ -54,6 +75,8 @@ def run() -> dict[str, object]:
             "holdout_tasks": len(outcomes),
             "holdout_success_rate": sum(outcomes) / len(outcomes),
             "family_overlap": False,
+            "reset_count": system.reset_count,
+            "repeated_execution": True,
         })
     result: dict[str, object] = {
         "schema_version": "fg-hypothesis-intervention-replay-v1",
