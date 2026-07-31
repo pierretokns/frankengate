@@ -1,0 +1,17 @@
+{
+  "aurora_like_database_reachable": false,
+  "claim_boundary": {
+    "local_postgresql_mechanics_proven_elsewhere": true,
+    "managed_aurora_behavior_proven": false,
+    "reason": "The local Colima VM reports running, but the Docker shim is not usable and no PostgreSQL fixture is reachable. No container or database state was mutated."
+  },
+  "colima_running": false,
+  "container_cli_error_class": "runtime_backend_unavailable",
+  "container_cli_usable": false,
+  "failover_test_executed": false,
+  "pitr_test_executed": false,
+  "psql_client_present": false,
+  "raw_runtime_error_emitted": true,
+  "replica_lag_test_executed": false,
+  "schema_version": "frankengate-aurora-runtime-probe-v1"
+}

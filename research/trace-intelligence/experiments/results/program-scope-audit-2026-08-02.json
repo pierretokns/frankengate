@@ -112,6 +112,10 @@
         {
           "exists": true,
           "path": "experiments/results/bitemporal-memory-conformance-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/aurora-runtime-probe-2026-08-02.json"
         }
       ],
       "id": "governed_local_stack",
@@ -141,7 +145,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "6727276ea1087dd387896afaf50708849f05174a"
+          "head": "f36192002a3bf41238d7b01442da46deccb29c02"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

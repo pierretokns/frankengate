@@ -98,6 +98,7 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/wisp-share-codex-canonical-bounded-recovery-2026-07-30.json",
                 "experiments/results/codetracebench-e2-postgres-joint-retrieval-2026-07-30.json",
                 "experiments/results/bitemporal-memory-conformance-2026-07-30.json",
+                "experiments/results/aurora-runtime-probe-2026-08-02.json",
             ),
             "decision": levels.get("L4_semantic_candidate_retrieval", {}).get("status"),
             "open_gate": "Aurora failover, replica lag, PITR, extension compatibility, concurrency, and production SLOs are not measured.",

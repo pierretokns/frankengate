@@ -4,6 +4,16 @@
   "supersedes": "experiments/results/program-completion-audit-2026-08-01.json",
   "overall_status": "active_incomplete",
   "checkpoint": {
+    "aurora_runtime_probe": {
+      "result": "experiments/results/aurora-runtime-probe-2026-08-02.json",
+      "status": "container_runtime_unavailable_typed_null",
+      "colima_running": true,
+      "container_cli_usable": false,
+      "aurora_like_database_reachable": false,
+      "failover_test_executed": false,
+      "pitr_test_executed": false,
+      "replica_lag_test_executed": false
+    },
     "program_scope_audit": {
       "result": "experiments/results/program-scope-audit-2026-08-02.json",
       "summary": "experiments/summaries/program-scope-audit-2026-08-02.md",
