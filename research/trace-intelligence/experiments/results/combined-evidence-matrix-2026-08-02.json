@@ -262,6 +262,12 @@
       "schema_version": "frankengate-gepa-native-tool-protocol.v1",
       "sha256": "98f2a13c665a1d210a1768a8add2ed9d24cc9fc896573b79288639cb99b6286c"
     },
+    "h5_concurrency_live_rerun": {
+      "filename": "h5-concurrency-live-rerun-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-h5-concurrency-rerun-check-v2",
+      "sha256": "19646e105b8de962890ef7d8cb98621b6d304c05bccd54e585b72a8b89ea3fd3"
+    },
     "history_discovery": {
       "filename": "public-agent-history-discovery-2026-07-30.json",
       "schema_version": "public-agent-history-discovery-result-v1",
@@ -527,6 +533,9 @@
         "eligible_queries": 99,
         "exact_identifier_no_regression": false,
         "exact_recall_at_20": 0.7323232323232324,
+        "h5_concurrency_live_rerun_known_gaps": 6,
+        "h5_concurrency_live_rerun_passed": true,
+        "h5_concurrency_live_rerun_races": 9,
         "human_label_gate_passed": false,
         "joint_local_postgres_gate_passed": true,
         "lifecycle_oracles_passed": true,
@@ -808,6 +817,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "43678d5d3b56b01008c93967d3db9f9640b0a6902801344122639708b42a3097",
+  "result_sha256": "732382dba040780ee736695f7141ee9662bd1c331f98df5ac97e6336410f4c1f",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

@@ -124,6 +124,7 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/aurora-runtime-probe-2026-08-02.json",
                 "experiments/results/aurora-like-replication-lab-2026-08-02.json",
                 "experiments/results/postgres-pitr-lab-2026-08-02.json",
+                "experiments/results/h5-concurrency-live-rerun-2026-08-02.json",
             ),
             "decision": levels.get("L4_semantic_candidate_retrieval", {}).get("status"),
             "open_gate": "Managed Aurora semantics, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion, RLS, and WAL/PITR mechanics are measured separately.",

@@ -137,6 +137,14 @@
       "target_excluded_after_marker": true,
       "managed_aurora_pitr_proven": false
     },
+    "h5_concurrency_live_rerun": {
+      "result": "experiments/results/h5-concurrency-live-rerun-2026-08-02.json",
+      "status": "live_local_postgresql_concurrency_rerun_passed_with_architecture_gaps",
+      "races": 9,
+      "known_architecture_gaps": 6,
+      "invariant_match_to_prior": true,
+      "managed_aurora_concurrency_proven": false
+    },
     "program_scope_audit": {
       "result": "experiments/results/program-scope-audit-2026-08-02.json",
       "summary": "experiments/summaries/program-scope-audit-2026-08-02.md",

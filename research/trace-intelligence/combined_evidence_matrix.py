@@ -82,6 +82,7 @@ OPTIONAL_RESULTS = {
     "alfworld_codex_skillopt_r21_verification": "alfworld-codex-skillopt-r21-verification-2026-08-02.json",
     "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
     "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
+    "h5_concurrency_live_rerun": "h5-concurrency-live-rerun-2026-08-02.json",
     "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
     "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
@@ -210,6 +211,7 @@ def build_matrix(
     alfworld_codex_skillopt_r21_verification = results.get("alfworld_codex_skillopt_r21_verification")
     natural_released_procedure = results.get("natural_released_procedure")
     natural_released_procedure_verification = results.get("natural_released_procedure_verification")
+    h5_concurrency_live_rerun = results.get("h5_concurrency_live_rerun")
     aurora_like_replication_lab = results.get("aurora_like_replication_lab")
     postgres_pitr_lab = results.get("postgres_pitr_lab")
     codetrace = results["codetracebench"]
@@ -787,6 +789,9 @@ def build_matrix(
                     "postgres_hybrid_rrf_end_to_end",
                     "p50_ms",
                 ),
+                "h5_concurrency_live_rerun_passed": bool(h5_concurrency_live_rerun and h5_concurrency_live_rerun.get("all_passed", False)),
+                "h5_concurrency_live_rerun_races": h5_concurrency_live_rerun.get("live_summary", {}).get("races", 0) if h5_concurrency_live_rerun else 0,
+                "h5_concurrency_live_rerun_known_gaps": h5_concurrency_live_rerun.get("live_summary", {}).get("known_gaps", 0) if h5_concurrency_live_rerun else 0,
                 "aurora_gate_passed": _require(
                     e2_joint, "acceptance", "real_aurora_gate_passed"
                 ),

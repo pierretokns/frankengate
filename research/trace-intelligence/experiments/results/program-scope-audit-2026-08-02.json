@@ -216,6 +216,10 @@
         {
           "exists": true,
           "path": "experiments/results/postgres-pitr-lab-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/h5-concurrency-live-rerun-2026-08-02.json"
         }
       ],
       "id": "governed_local_stack",
@@ -245,7 +249,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "3320119691fcd57e9b2fad12f21b5da22891d058"
+          "head": "462a4a885410be266f34eb66658a3fa12a0f0a46"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"
