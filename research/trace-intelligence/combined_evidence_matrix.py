@@ -89,6 +89,8 @@ OPTIONAL_RESULTS = {
     "alfworld_family_disjoint_powered_r12_replayable": "alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
     "alfworld_family_disjoint_powered_r12_semantic_verification": "alfworld-family-disjoint-powered-r12-semantic-verification-2026-08-02.json",
     "alfworld_family_disjoint_powered_r10_qwen_incomplete": "alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json",
+    "alfworld_family_disjoint_powered_r13_controls": "alfworld-family-disjoint-powered-r13-controls-2026-08-02.json",
+    "alfworld_family_disjoint_powered_r13_controls_verification": "alfworld-family-disjoint-powered-r13-controls-verification-2026-08-02.json",
 }
 
 
@@ -184,6 +186,8 @@ def build_matrix(
     alfworld_family_disjoint_powered_r12_replayable = results.get("alfworld_family_disjoint_powered_r12_replayable")
     alfworld_family_disjoint_powered_r12_semantic_verification = results.get("alfworld_family_disjoint_powered_r12_semantic_verification")
     alfworld_family_disjoint_powered_r10_qwen_incomplete = results.get("alfworld_family_disjoint_powered_r10_qwen_incomplete")
+    alfworld_family_disjoint_powered_r13_controls = results.get("alfworld_family_disjoint_powered_r13_controls")
+    alfworld_family_disjoint_powered_r13_controls_verification = results.get("alfworld_family_disjoint_powered_r13_controls_verification")
     aurora_like_replication_lab = results.get("aurora_like_replication_lab")
     postgres_pitr_lab = results.get("postgres_pitr_lab")
     codetrace = results["codetracebench"]
@@ -279,6 +283,10 @@ def build_matrix(
         "r12_semantic_rows_verified": alfworld_family_disjoint_powered_r12_semantic_verification.get("rows_verified", 0) if alfworld_family_disjoint_powered_r12_semantic_verification else 0,
         "r12_all_executed_actions_admissible": bool(alfworld_family_disjoint_powered_r12_semantic_verification and alfworld_family_disjoint_powered_r12_semantic_verification.get("all_executed_actions_admissible", False)),
         "r10_qwen_incomplete": bool(alfworld_family_disjoint_powered_r10_qwen_incomplete and alfworld_family_disjoint_powered_r10_qwen_incomplete.get("status") == "interrupted_runtime_error"),
+        "r13_control_task_count": alfworld_family_disjoint_powered_r13_controls.get("dataset", {}).get("task_count", 0) if alfworld_family_disjoint_powered_r13_controls else 0,
+        "r13_control_arms": alfworld_family_disjoint_powered_r13_controls.get("protocol", {}).get("arms", []) if alfworld_family_disjoint_powered_r13_controls else [],
+        "r13_control_verifier_passed": bool(alfworld_family_disjoint_powered_r13_controls_verification and alfworld_family_disjoint_powered_r13_controls_verification.get("all_passed", False)),
+        "r13_control_rows_verified": alfworld_family_disjoint_powered_r13_controls_verification.get("rows_verified", 0) if alfworld_family_disjoint_powered_r13_controls_verification else 0,
     }
 
     trace_commons_attestation_passed = bool(
@@ -1168,6 +1176,10 @@ def build_matrix(
                 "alfworld_family_disjoint_powered_r12_semantic_rows_verified": revision_evidence["r12_semantic_rows_verified"],
                 "alfworld_family_disjoint_powered_r12_all_executed_actions_admissible": revision_evidence["r12_all_executed_actions_admissible"],
                 "alfworld_family_disjoint_powered_r10_qwen_incomplete": revision_evidence["r10_qwen_incomplete"],
+                "alfworld_family_disjoint_powered_r13_control_tasks": revision_evidence["r13_control_task_count"],
+                "alfworld_family_disjoint_powered_r13_control_arms": revision_evidence["r13_control_arms"],
+                "alfworld_family_disjoint_powered_r13_control_verifier_passed": revision_evidence["r13_control_verifier_passed"],
+                "alfworld_family_disjoint_powered_r13_control_rows_verified": revision_evidence["r13_control_rows_verified"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1516,7 +1528,11 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{skill['alfworld_family_disjoint_powered_r11_verifier_passed']}. "
             f"The replayable r12 cohort independently recomputed {skill['alfworld_family_disjoint_powered_r12_semantic_rows_verified']} rows "
             f"with zero mismatches: {skill['alfworld_family_disjoint_powered_r12_semantic_verifier_passed']}; all executed actions "
-            f"were admissible: {skill['alfworld_family_disjoint_powered_r12_all_executed_actions_admissible']}.",
+            f"were admissible: {skill['alfworld_family_disjoint_powered_r12_all_executed_actions_admissible']}. "
+            f"The r13 control arm added {skill['alfworld_family_disjoint_powered_r13_control_arms']} across "
+            f"{skill['alfworld_family_disjoint_powered_r13_control_tasks']} tasks, independently verifying "
+            f"{skill['alfworld_family_disjoint_powered_r13_control_rows_verified']} rows: "
+            f"{skill['alfworld_family_disjoint_powered_r13_control_verifier_passed']}; no arm produced a win.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "

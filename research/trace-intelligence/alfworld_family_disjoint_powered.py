@@ -27,7 +27,10 @@ FAMILIES = (
     "pick_clean_then_place_in_recep",
     "pick_heat_then_place_in_recep",
 )
-ARMS = ("no_skill", "trace_mined_procedure_v2")
+# Formatting placebo is a required control for separating a useful procedure
+# from merely changing the output contract. Existing receipts remain
+# two-arm-compatible; new runs may opt into this third arm.
+ARMS = ("no_skill", "formatting_placebo", "trace_mined_procedure_v2")
 
 
 def sha256_text(value: str) -> str:
@@ -105,13 +108,14 @@ def main() -> int:
     parser.add_argument("--tasks-per-family", type=int, default=2)
     parser.add_argument("--task", action="append", default=[], help="Explicit task path(s); bypass deterministic selection")
     parser.add_argument("--exclude-hash", action="append", default=[])
-    parser.add_argument("--arm", action="append", choices=ARMS, default=list(ARMS))
+    parser.add_argument("--arm", action="append", choices=ARMS, default=None)
     parser.add_argument("--max-steps", type=int, default=35)
     parser.add_argument("--timeout", type=float, default=60)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--raw-output", type=Path, required=True)
     parser.add_argument("--record-actions", action="store_true", help="Retain executed environment actions for independent replay")
     args = parser.parse_args()
+    arms = args.arm or list(ARMS)
 
     os.environ["ALFWORLD_DATA"] = str(args.alfworld_data.resolve(strict=True))
     import yaml
@@ -143,7 +147,7 @@ def main() -> int:
     for model in args.model:
         for endpoint in args.endpoint:
             for task in tasks:
-                for arm in args.arm:
+                for arm in arms:
                     rows.append(
                         run_episode(
                             base,
@@ -189,7 +193,7 @@ def main() -> int:
             "excluded_hashes": sorted(set(args.exclude_hash)),
         },
         "protocol": {
-            "arms": list(args.arm),
+            "arms": arms,
             "models": args.model,
             "endpoints": args.endpoint,
             "harnesses": sorted({
@@ -225,6 +229,10 @@ def main() -> int:
         elif parts[-1] == "trace_mined_procedure_v2":
             result["comparison"]["semantic_success_delta_by_model_harness"].setdefault(model_harness, {})[
                 "trace_mined_win_rate"
+            ] = bucket["win_rate"]
+        elif parts[-1] == "formatting_placebo":
+            result["comparison"]["semantic_success_delta_by_model_harness"].setdefault(model_harness, {})[
+                "formatting_placebo_win_rate"
             ] = bucket["win_rate"]
     for values in result["comparison"]["semantic_success_delta_by_model_harness"].values():
         if {"no_skill_win_rate", "trace_mined_win_rate"} <= values.keys():

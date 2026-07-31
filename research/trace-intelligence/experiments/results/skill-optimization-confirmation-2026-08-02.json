@@ -6,7 +6,7 @@
     "skill_optimization_in_general_supported_by_external_evidence": true,
     "real_semantic_skill_intervention_completed": true,
     "automatic_skill_promotion_authorized": false,
-    "reason": "The larger r9 arm is a real family-disjoint held-out semantic intervention with two models and an expert-verified horizon, but it produced no task-success lift. SkillOpt's own benchmark results establish that gated skill-document optimization can improve real tasks, but they are not evidence that Frankengate traces alone produce a beneficial skill."
+    "reason": "The r9 arm is a real family-disjoint held-out semantic intervention with two models and an expert-verified horizon, and the r13 control arm adds a formatting placebo across both harnesses; neither produced task-success lift. SkillOpt's own benchmark results establish that gated skill-document optimization can improve real tasks, but they are not evidence that Frankengate traces alone produce a beneficial skill."
   },
   "local_evidence": [
     {
@@ -50,12 +50,19 @@
       "result": "All 32 rows independently recomputed in fresh environments with zero mismatches; both harnesses remained 0/8 for baseline and candidate",
       "causal": false,
       "hard_edge": "All replayed actions were admissible and outcomes matched, but this verifies task replay only—not authorization/security behavior or positive skill utility"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r13-controls-2026-08-02.json",
+      "what_was_tested": "Eight sealed family-disjoint ALFWorld tasks with no-skill, formatting placebo, and trace-derived procedure arms across Llama 3.2 and both local harnesses",
+      "result": "All six model/harness/arm cells were 0/8 wins with 280 invalid actions per cell; the fresh semantic verifier recomputed all 48 rows with zero mismatches and all actions admissible",
+      "causal": false,
+      "hard_edge": "The prescribed formatting control is now exercised, but this arm has one model, no SkillOpt/SkillGen/RHO candidates, and no positive utility; promotion remains closed"
     }
   ],
   "model_harness_coverage": {
     "models_exercised_locally": ["llama3.2:latest", "qwen3:4b"],
     "harnesses_exercised_locally": ["OpenAI-compatible native-tool loop", "Ollama native API loop"],
-    "what_that_proves": "The candidate protocol can be executed across two local model configurations and two transport/harness paths; the same eight-task family-disjoint semantic intervention has now been replayed through both Ollama-native and OpenAI-compatible harnesses.",
+    "what_that_proves": "The candidate and formatting-control protocols can be executed across two local model configurations and two transport/harness paths; the same eight-task family-disjoint intervention has now been replayed through both Ollama-native and OpenAI-compatible harnesses.",
     "what_that_does_not_prove": "Semantic task improvement, cross-harness transfer, model-quality improvement, or enterprise productivity benefit"
   },
   "external_reference": {

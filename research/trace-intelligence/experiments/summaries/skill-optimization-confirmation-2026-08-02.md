@@ -10,6 +10,7 @@ We have **not** yet confirmed that Frankengate's trace-mined skills improve real
 4. On eight previously unused ALFWorld paths across four families, both Llama 3.2 and Qwen 3 4B achieved 0/8 wins for baseline and candidate. The candidate changed invalid-action rates in opposite directions by model but produced no success lift.
 5. Replaying those identical eight paths through the second Ollama OpenAI-compatible harness produced the same Llama result: 0/8 wins for both arms and 66 candidate invalid actions versus 0 baseline.
 6. A replayable rerun retained only environment actions and independently recomputed all 32 outcomes in fresh environments with zero mismatches.
+7. The r13 control arm added a formatting placebo to the same eight-task cohort across both harnesses. No-skill, placebo, and trace-derived arms were all `0/8` on both harnesses; all 48 action sequences independently replayed with zero mismatches.
 
 Those are prerequisites and a negative causal test, not evidence of a beneficial skill.
 
@@ -27,6 +28,6 @@ Microsoft SkillOpt's published v0.2.0 study is stronger external evidence: six r
 
 ## Required next gate
 
-The sealed task-outcome recomputation gate now passes for this ALFWorld cohort. The remaining gate is security/policy verification plus a larger powered cohort; no skill should be promoted before those pass.
+The sealed task-outcome recomputation gate now passes for this ALFWorld cohort, including the formatting placebo. The remaining gates are security/policy verification, a second-model control-arm replication, SkillOpt/SkillGen/RHO candidate arms, and a larger powered cohort; no skill should be promoted before those pass.
 
 Machine-readable receipt: `experiments/results/skill-optimization-confirmation-2026-08-02.json`.

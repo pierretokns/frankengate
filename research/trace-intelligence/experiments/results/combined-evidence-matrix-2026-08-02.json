@@ -101,6 +101,18 @@
       "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
       "sha256": "3733bd01ba958e8544c7338da1d02c1a88798e905a820c2b22ee191736afdcd1"
     },
+    "alfworld_family_disjoint_powered_r13_controls": {
+      "filename": "alfworld-family-disjoint-powered-r13-controls-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "6032e38654b26b1b916a6b1cc0f8394c5dbf77f30552faadb11af236045c0a70"
+    },
+    "alfworld_family_disjoint_powered_r13_controls_verification": {
+      "filename": "alfworld-family-disjoint-powered-r13-controls-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
+      "sha256": "c5aaad6644ab5b37e5296d06d459142832adf7e48c0746bb745a3f17a225b4a9"
+    },
     "alfworld_family_disjoint_powered_r9": {
       "filename": "alfworld-family-disjoint-powered-r9-2026-08-02.json",
       "optional": true,
@@ -518,6 +530,14 @@
         "alfworld_family_disjoint_powered_r12_semantic_rows_verified": 32,
         "alfworld_family_disjoint_powered_r12_semantic_verifier_passed": true,
         "alfworld_family_disjoint_powered_r12_tasks": 8,
+        "alfworld_family_disjoint_powered_r13_control_arms": [
+          "no_skill",
+          "formatting_placebo",
+          "trace_mined_procedure_v2"
+        ],
+        "alfworld_family_disjoint_powered_r13_control_rows_verified": 48,
+        "alfworld_family_disjoint_powered_r13_control_tasks": 8,
+        "alfworld_family_disjoint_powered_r13_control_verifier_passed": true,
         "alfworld_family_disjoint_powered_r9_candidate_invalid_actions": 206,
         "alfworld_family_disjoint_powered_r9_candidate_wins": 0,
         "alfworld_family_disjoint_powered_r9_causal_skill_benefit_confirmed": false,
@@ -627,6 +647,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "fa2e4fe97e880a13b0747e87cc83d8f8ece720f57a916d0910c9ac6680a74c47",
+  "result_sha256": "3bca5932b70e8e45fd900a80aff122fb8c4c1d98903d3f3cbe5f6b3b0c0e14b0",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

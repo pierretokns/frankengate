@@ -115,6 +115,14 @@
         {
           "exists": true,
           "path": "experiments/results/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r13-controls-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r13-controls-verification-2026-08-02.json"
         }
       ],
       "id": "single_and_composed_mechanisms",
@@ -181,7 +189,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "53e354189de7ac552222278e6724d79041e1a5d2"
+          "head": "9e1783f59ed52f09716424e1ab6ba290100f09a5"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

@@ -93,6 +93,8 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
                 "experiments/results/alfworld-family-disjoint-powered-r12-semantic-verification-2026-08-02.json",
                 "experiments/results/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json",
+                "experiments/results/alfworld-family-disjoint-powered-r13-controls-2026-08-02.json",
+                "experiments/results/alfworld-family-disjoint-powered-r13-controls-verification-2026-08-02.json",
             ),
             "open_gate": "No mechanism has a powered causal lift with independent later-task labels; all learned candidates remain rejected or proposal-only.",
         },

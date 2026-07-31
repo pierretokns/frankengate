@@ -71,6 +71,25 @@
       "all_executed_actions_admissible": true,
       "raw_content_committed": false
     },
+    "alfworld_family_disjoint_powered_r13_controls": {
+      "result": "experiments/results/alfworld-family-disjoint-powered-r13-controls-2026-08-02.json",
+      "status": "formatting_placebo_control_negative",
+      "task_count": 8,
+      "arms": ["no_skill", "formatting_placebo", "trace_mined_procedure_v2"],
+      "models": ["llama3.2:latest"],
+      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
+      "all_arm_win_rates_zero": true,
+      "automatic_promotion_authorized": false
+    },
+    "alfworld_family_disjoint_powered_r13_controls_verification": {
+      "result": "experiments/results/alfworld-family-disjoint-powered-r13-controls-verification-2026-08-02.json",
+      "status": "independent_fresh_environment_replay_passed",
+      "all_passed": true,
+      "rows_verified": 48,
+      "mismatch_count": 0,
+      "all_executed_actions_admissible": true,
+      "raw_content_committed": false
+    },
     "aurora_runtime_probe": {
       "result": "experiments/results/aurora-runtime-probe-2026-08-02.json",
       "status": "colima_vm_container_path_found_no_managed_fixture",

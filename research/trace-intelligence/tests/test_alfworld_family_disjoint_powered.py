@@ -10,6 +10,9 @@ import alfworld_family_disjoint_powered as powered
 
 
 class FamilyDisjointSelectionTest(unittest.TestCase):
+    def test_control_arm_is_registered(self):
+        self.assertIn("formatting_placebo", powered.ARMS)
+
     def test_selection_is_deterministic_and_excludes_prior_paths(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
