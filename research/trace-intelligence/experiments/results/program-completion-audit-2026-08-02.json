@@ -358,7 +358,7 @@
   },
   "requirements_still_open": [
     "CMU publisher approval and trajectory metrics",
-    "family-disjoint semantic skill intervention with independent outcome labels",
+    "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
     "natural released Dream/procedure evaluation",
     "prospective enterprise task outcomes and human labels",
     "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
