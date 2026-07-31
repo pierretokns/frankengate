@@ -340,6 +340,13 @@ submitted one correct candidate (1/6). Independent semantic and raw-security
 verifiers passed. This is transfer evidence against automatic trace-mined
 promotion, but remains small and abstention-heavy.
 
+A Qwen3 4B replication on the same broker fold was intentionally not scored:
+the loopback model produced 14/18 raw episode files before one request exceeded
+the practical wall-time budget, leaving one no-skill episode without a
+task-end receipt. The incomplete run is recorded separately and excluded from
+the meta-analysis; it provides model/harness latency evidence, not a quality or
+skill claim.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,
