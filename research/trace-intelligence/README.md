@@ -214,6 +214,12 @@ car-dealership trace-mined arm had one successful but incorrect query. This
 separates terminal formatting from SQL quality without turning the fallback
 into a skill claim.
 
+The [`Qwen native governed SQL probe`](experiments/summaries/defog-qwen-native-probe-2026-07-31.md)
+ran one car-dealership task through the native Ollama adapter. All arms were
+authorized, but Qwen emitted zero SQL tool calls, so the controller abstained
+and no semantic score was possible. This is a typed runtime null, not a
+quality result.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,

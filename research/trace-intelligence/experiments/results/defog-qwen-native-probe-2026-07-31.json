@@ -1,0 +1,195 @@
+{
+  "arm_artifacts": {
+    "formatting_placebo": {
+      "classification": "placebo",
+      "sha256": "e7085bf6bfdac944b2a551cbbb3c89a4ca765be7a5fdd4dbf58e116261143083"
+    },
+    "no_skill": {
+      "classification": "baseline",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "trace_mined_terminal_discipline": {
+      "classification": "trace_mined_candidate",
+      "sha256": "c481a7742205be0bcaf69d3225ec0c214d27e31266dee0768809a52ad4ff659a"
+    }
+  },
+  "arms": {
+    "formatting_placebo": {
+      "authority_valid": 1,
+      "execution_completed": 0,
+      "missing_terminal_action": 0,
+      "outcomes": {
+        "abstained:tool_budget_exhausted": 1
+      },
+      "policy_accepted": 0,
+      "semantic_correct": 0,
+      "sql_attempts": 0,
+      "strict_answer_shape_correct": 0,
+      "successful_sql_attempts": 0,
+      "tasks": 1,
+      "terminal_fallback_used": 1,
+      "terminal_submissions": 0,
+      "tool_calls": 0,
+      "unauthorized_observation": 0
+    },
+    "no_skill": {
+      "authority_valid": 1,
+      "execution_completed": 0,
+      "missing_terminal_action": 0,
+      "outcomes": {
+        "abstained:tool_budget_exhausted": 1
+      },
+      "policy_accepted": 0,
+      "semantic_correct": 0,
+      "sql_attempts": 0,
+      "strict_answer_shape_correct": 0,
+      "successful_sql_attempts": 0,
+      "tasks": 1,
+      "terminal_fallback_used": 1,
+      "terminal_submissions": 0,
+      "tool_calls": 1,
+      "unauthorized_observation": 0
+    },
+    "trace_mined_terminal_discipline": {
+      "authority_valid": 1,
+      "execution_completed": 0,
+      "missing_terminal_action": 0,
+      "outcomes": {
+        "abstained:tool_budget_exhausted": 1
+      },
+      "policy_accepted": 0,
+      "semantic_correct": 0,
+      "sql_attempts": 0,
+      "strict_answer_shape_correct": 0,
+      "successful_sql_attempts": 0,
+      "tasks": 1,
+      "terminal_fallback_used": 1,
+      "terminal_submissions": 0,
+      "tool_calls": 0,
+      "unauthorized_observation": 0
+    }
+  },
+  "authority": {
+    "binding_sha256": [
+      "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b"
+    ],
+    "epoch_ref_sha256": [
+      "f6d676147c0f1aaa596713dd6e5cceefc6ae29f983ff30bfc9c513f208120bdc"
+    ],
+    "exact_current_epoch_match": true,
+    "snapshot_sha256": [
+      "20e5b847bdfa1d58f18ac1b58a4c61721bb146865c057ec098c5c0b6157f0b8d"
+    ]
+  },
+  "claim_boundary": {
+    "causal_skill_benefit_established": false,
+    "domain_valid_task_executed": true,
+    "governed_postgres_executed": true,
+    "next_required": "Rerun after protocol remediation on a family-disjoint fold with sealed outcomes, independent semantic/security verifier, and paired repair/regression analysis.",
+    "reason": "This is a visible-selection pilot; no family-disjoint held-out quality estimate or independent verifier comparison is claimed.",
+    "three_arms_executed": true
+  },
+  "classification": "domain_valid_visible_selection_pilot",
+  "dataset": {
+    "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "database_family": "car_dealership",
+    "dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
+    "task_count": 1,
+    "task_id_sha256": [
+      "3a332f487cba7abea20960206073c71e500f475b9aa3c1b8195db0e70a4cb9e1"
+    ]
+  },
+  "harness": {
+    "adapter_reused": "ollama_native_tool_harness.OllamaNativeChatAPI",
+    "endpoint_scope": "loopback-only",
+    "id": "ollama-native-api"
+  },
+  "model": {
+    "endpoint_scope": "loopback-only",
+    "provider": "ollama",
+    "request_model_id": "qwen3:4b"
+  },
+  "raw_audit_policy": "external_jsonl_only; raw SQL, prompts, rows, and model messages are not committed",
+  "schema_version": "frankengate-defog-trace-mined-skill-pilot-v1",
+  "task_runs": [
+    {
+      "arm": "no_skill",
+      "attempt_receipt_chain_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 1876,
+      "elapsed_ms": 18702.86,
+      "execution_completed": false,
+      "outcome": "abstained:tool_budget_exhausted",
+      "policy_accepted": null,
+      "prompt_tokens": 2146,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "cf029a45fd3b28d80e749e9c2676ddc449a72a3410e841b84db2a0648305fa53",
+      "schema_calls": 1,
+      "semantic_correct": false,
+      "sql_attempts": 0,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 0,
+      "task_id_sha256": "3a332f487cba7abea20960206073c71e500f475b9aa3c1b8195db0e70a4cb9e1",
+      "terminal_action": "abstain",
+      "terminal_fallback_used": true,
+      "tool_calls": 1,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "attempt_receipt_chain_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 1024,
+      "elapsed_ms": 9351.596,
+      "execution_completed": false,
+      "outcome": "abstained:tool_budget_exhausted",
+      "policy_accepted": null,
+      "prompt_tokens": 531,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "89fd7e541c42c62be9348d8e5ecf00e5e73dd102f9b72f9cf8060720361c7b22",
+      "schema_calls": 0,
+      "semantic_correct": false,
+      "sql_attempts": 0,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 0,
+      "task_id_sha256": "3a332f487cba7abea20960206073c71e500f475b9aa3c1b8195db0e70a4cb9e1",
+      "terminal_action": "abstain",
+      "terminal_fallback_used": true,
+      "tool_calls": 0,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "trace_mined_terminal_discipline",
+      "attempt_receipt_chain_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 1024,
+      "elapsed_ms": 9419.112,
+      "execution_completed": false,
+      "outcome": "abstained:tool_budget_exhausted",
+      "policy_accepted": null,
+      "prompt_tokens": 560,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "69ce5c76a817af725fabaeb7c5b94364ac2be02f71375c3c7601defc5d566f12",
+      "schema_calls": 0,
+      "semantic_correct": false,
+      "sql_attempts": 0,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 0,
+      "task_id_sha256": "3a332f487cba7abea20960206073c71e500f475b9aa3c1b8195db0e70a4cb9e1",
+      "terminal_action": "abstain",
+      "terminal_fallback_used": true,
+      "tool_calls": 0,
+      "unauthorized_observation": false
+    }
+  ],
+  "terminal_fallback_policy": {
+    "applies_identically_across_arms": true,
+    "id": "submit-most-recent-successful-authorized-attempt-or-abstain-v1",
+    "purpose": "Separate SQL generation quality from model terminal-tool formatting.",
+    "reads_gold_or_hidden_outcomes": false,
+    "selection_rule": "most recent successful authorized candidate; abstain when none exists"
+  }
+}
