@@ -32,6 +32,12 @@ Latest public-OTel and composition checkpoints:
 - [`public OTel composition gate`](experiments/summaries/public-otel-composition-gate-2026-07-31.md)
   fails closed and defers automatic promotion.
 
+The current requirement-level status is captured in the
+[`program completion audit`](experiments/summaries/program-completion-audit-2026-08-01.md).
+It records the program as active/incomplete: local mechanics and publication
+are proven, while CMU raw access, Aurora operations, and causal enterprise
+outcomes remain open.
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
