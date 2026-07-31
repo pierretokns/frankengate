@@ -13,3 +13,8 @@ unsupported.
 
 The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
+
+The latest gates also keep enterprise-adapted embedding promotion deferred
+(silver dense gain +1.0 point versus a +5-point threshold) and cross-user
+collaboration at mechanics-only status (no independent labels, reciprocal
+consent, randomized exposure, transfer outcomes, or unwanted-contact measure).
