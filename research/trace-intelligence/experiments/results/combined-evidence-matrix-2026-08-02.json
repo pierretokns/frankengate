@@ -154,6 +154,11 @@
       "schema_version": "content-minimized-real-user-arms-v1",
       "sha256": "34968e9ec27171957f6f8e2e49cdf4b550aefc416c2eb6ca00b8ae8c1ed0aabf"
     },
+    "trace_commons_repro": {
+      "filename": "trace-commons-analysis-reproducibility-2026-08-02.json",
+      "schema_version": "frankengate-trace-commons-reproducibility-v1",
+      "sha256": "98cdeb4a74d064677e7e25b1eabca6124a51fa785d824a72e5fd49410d8706ef"
+    },
     "trace_memory_conformance": {
       "filename": "trace-commons-memory-conformance-2026-07-30.json",
       "schema_version": "trace-commons-memory-conformance-result-v1",
@@ -202,7 +207,9 @@
         "rl_otel_overall_retention": 0.326949,
         "rl_otel_reward_retention": 0.0,
         "rl_otel_termination_retention": 0.0,
-        "rl_trajectory_count": 2130
+        "rl_trajectory_count": 2130,
+        "trace_commons_reproduction_metrics_compared": 19,
+        "trace_commons_reproduction_passed": true
       },
       "status": "real_roundtrip_partial_pass"
     },
@@ -220,6 +227,8 @@
         "proposal_queue_p95_ms": 1.717683,
         "public_history_representations_audited": 7,
         "trace_commons_records": 17991,
+        "trace_commons_reproduction_metrics_compared": 19,
+        "trace_commons_reproduction_passed": true,
         "trace_commons_sessions": 28,
         "trace_commons_source_attested": true
       },
@@ -264,6 +273,8 @@
       },
       "status": "mixed_partial",
       "trace_commons_full_cohort": {
+        "aggregate_reproduction_metrics_compared": 19,
+        "aggregate_reproduction_passed": true,
         "automatic_memory_or_skill_writes": 0,
         "eval_review_records": 269,
         "source_attested": true,
@@ -368,6 +379,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "c3cdd00c17dab3351ec8dc6b0da9de3d86094d1b67ed77597f132fa9f0f61b31",
+  "result_sha256": "5c07af322ee3eca1b78a35dfd93003a2d1d24691c49753a7aa1dacf80d70c4d4",
   "schema_version": "frankengate-combined-evidence-matrix-v6"
 }

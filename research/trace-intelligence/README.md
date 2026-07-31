@@ -363,6 +363,13 @@ reset state, rewards, or termination facts. The source omits memory snapshots
 and authorization fields, so schema fidelity is not evidence of memory utility
 or skill learning.
 
+The full-corpus analysis was subsequently rerun from the local pinned cache;
+the [`reproducibility receipt`](experiments/results/trace-commons-analysis-reproducibility-2026-08-02.json)
+matched 19 aggregate metrics, including the 263 recovery episodes, 269
+eval-review records, and zero automatic memory/skill writes. This confirms the
+analysis pipeline is reproducible, not that the structural signals predict
+correctness or improve skills.
+
 The same matrix now consumes the [`paired skill meta-analysis`](experiments/summaries/skill-optimization-meta-analysis-2026-08-02.md)
 and both model/harness transfer receipts: 22 endpoint strata, Llama 3.2 and
 Qwen 3 4B, and OpenAI-compatible plus Ollama-native loops. The aggregate keeps

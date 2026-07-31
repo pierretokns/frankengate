@@ -15,9 +15,10 @@ The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
 The latest targeted Defog/research suite passed 66 tests (3 skipped); offline reproducibility now
-validates 122 aggregate results, 44 manifests, 12 governed fixtures, and zero
+validates 123 aggregate results, 44 manifests, 12 governed fixtures, and zero
 committed raw corpus files. The full locked-suite count remains the historical
-506-test checkpoint recorded separately.
+506-test checkpoint recorded separately. The additional schema, skill-ledger,
+and Trace Commons reproducibility checks pass 19/19.
 
 The latest gates also keep enterprise-adapted embedding promotion deferred.
 The new public FinanceBench gate is encouraging—BalyasnyAI's

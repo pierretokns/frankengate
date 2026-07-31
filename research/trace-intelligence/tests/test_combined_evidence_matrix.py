@@ -357,6 +357,11 @@ def inputs():
                 {"model_id": "llama3.2:latest", "harness_id": "ollama-native-api"}
             ],
         },
+        "trace_commons_repro": {
+            "schema_version": "trace-commons-repro",
+            "all_passed": True,
+            "metrics_compared": 19,
+        },
         "statebench_sql": {
             "schema_version": "statebench-sql",
             "runner": {
@@ -449,6 +454,11 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
         self.assertIn(
             "memory snapshots",
             matrix["levels"]["L0_evidence_conformance"]["blocking_gap"],
+        )
+        self.assertTrue(
+            matrix["levels"]["L0_evidence_conformance"]["evidence"][
+                "trace_commons_reproduction_passed"
+            ]
         )
         skill = matrix["levels"]["L6_procedural_replay"]["evidence"]
         self.assertEqual(22, skill["skill_meta_study_count"])

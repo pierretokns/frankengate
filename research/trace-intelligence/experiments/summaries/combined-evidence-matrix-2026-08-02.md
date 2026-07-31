@@ -31,7 +31,7 @@ The combined evidence supports a small governed product: personal history, conte
 - The governed skill lifecycle passed 18 PostgreSQL assertions, including hidden-test isolation and a hard security-violation veto. The one-task Trace2Skill smoke established safe tool execution but no skill benefit; the local finance fixture has only four executable gold SQL tasks, so NL2SQL intervention quality remains untested.
 - The ATIF/OTel RL crosswalk covers 2130 MATM trajectories. ATIF retains only 0.067 of measured facts and OTel 0.327; reset-state retention is 0.0, reward retention is 0.0, and termination retention is 0.0. The source also omits memory snapshots and authorization fields, so schema round-trip fidelity cannot be treated as skill-learning evidence.
 - The paired skill meta-analysis contains 22 endpoint strata, including 11 protocol and 9 semantic trace-mined comparisons. The same fixture was exercised across llama3.2:latest, qwen3:4b and ollama-native-api, openai-native; causal benefit and automatic promotion remain false.
-- The attested 28-session Trace Commons cohort produced 263 structural temporal candidates and 269 eval-review records, while automatic memory/skill writes remained zero. This expands proposal mechanics, not outcome or skill evidence.
+- The attested 28-session Trace Commons cohort produced 263 structural temporal candidates and 269 eval-review records, while automatic memory/skill writes remained zero. The full analysis was rerun from the local pinned corpus and matched 19 aggregate metrics. This expands proposal mechanics, not outcome or skill evidence.
 
 ## Original enterprise questions
 

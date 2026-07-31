@@ -56,6 +56,9 @@ REQUIRED_RESULTS = {
     "trace_commons_full": (
         "trace-commons-full-content-minimized-analysis-2026-08-02.json"
     ),
+    "trace_commons_repro": (
+        "trace-commons-analysis-reproducibility-2026-08-02.json"
+    ),
 }
 
 
@@ -135,6 +138,7 @@ def build_matrix(
     skill_release = results["skill_release"]
     trace_commons_attestation = results.get("trace_commons_attestation")
     trace_commons_full = results.get("trace_commons_full")
+    trace_commons_repro = results["trace_commons_repro"]
 
     trace_commons_attestation_passed = bool(
         trace_commons_attestation
@@ -265,6 +269,12 @@ def build_matrix(
                 "collector_negative_controls_passed": _require(
                     otel_roundtrip, "negative_controls_passed"
                 ),
+                "trace_commons_reproduction_passed": _require(
+                    trace_commons_repro, "all_passed"
+                ),
+                "trace_commons_reproduction_metrics_compared": _require(
+                    trace_commons_repro, "metrics_compared"
+                ),
                 "rl_trajectory_count": _require(
                     rl_measurement, "trajectory_count"
                 ),
@@ -382,6 +392,12 @@ def build_matrix(
                 "trace_commons_source_attested": trace_commons_attestation_passed,
                 "trace_commons_sessions": trace_commons_s0.get("sessions"),
                 "trace_commons_records": trace_commons_s0.get("valid_records"),
+                "trace_commons_reproduction_passed": _require(
+                    trace_commons_repro, "all_passed"
+                ),
+                "trace_commons_reproduction_metrics_compared": _require(
+                    trace_commons_repro, "metrics_compared"
+                ),
             },
             "blocking_gap": (
                 "permission-oracle equality across every surface, deletion "
@@ -470,6 +486,12 @@ def build_matrix(
                 },
                 "trace_commons_full_cohort": {
                     "source_attested": trace_commons_attestation_passed,
+                    "aggregate_reproduction_passed": _require(
+                        trace_commons_repro, "all_passed"
+                    ),
+                    "aggregate_reproduction_metrics_compared": _require(
+                        trace_commons_repro, "metrics_compared"
+                    ),
                     "structural_episode_candidates": trace_commons_s4.get(
                         "candidate_episodes"
                     ),
@@ -1064,7 +1086,10 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "structural temporal candidates and "
             f"{l3['trace_commons_full_cohort']['eval_review_records']} "
             "eval-review records, while automatic memory/skill writes remained "
-            "zero. This expands proposal mechanics, not outcome or skill evidence.",
+            "zero. The full analysis was rerun from the local pinned corpus and "
+            f"matched {l3['trace_commons_full_cohort']['aggregate_reproduction_metrics_compared']} "
+            "aggregate metrics. This expands proposal mechanics, not outcome or "
+            "skill evidence.",
             "",
             "## Original enterprise questions",
             "",
