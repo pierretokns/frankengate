@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v21"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v22"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -87,6 +87,8 @@ OPTIONAL_RESULTS = {
     "skillopt_candidate_provenance_audit": "skillopt-candidate-provenance-audit-2026-08-02.json",
     "natural_model_dream_procedure": "natural-model-dream-procedure-2026-08-02.json",
     "natural_model_dream_procedure_verification": "natural-model-dream-procedure-verification-2026-08-02.json",
+    "natural_model_dream_procedure_llama": "natural-model-dream-procedure-llama-2026-08-02.json",
+    "natural_model_dream_procedure_llama_verification": "natural-model-dream-procedure-llama-verification-2026-08-02.json",
     "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
     "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
     "h5_concurrency_live_rerun": "h5-concurrency-live-rerun-2026-08-02.json",
@@ -224,6 +226,8 @@ def build_matrix(
     skillopt_candidate_provenance_audit = results.get("skillopt_candidate_provenance_audit")
     natural_model_dream_procedure = results.get("natural_model_dream_procedure")
     natural_model_dream_procedure_verification = results.get("natural_model_dream_procedure_verification")
+    natural_model_dream_procedure_llama = results.get("natural_model_dream_procedure_llama")
+    natural_model_dream_procedure_llama_verification = results.get("natural_model_dream_procedure_llama_verification")
     natural_released_procedure = results.get("natural_released_procedure")
     natural_released_procedure_verification = results.get("natural_released_procedure_verification")
     h5_concurrency_live_rerun = results.get("h5_concurrency_live_rerun")
@@ -1304,6 +1308,10 @@ def build_matrix(
                 "natural_model_dream_procedure_quality_passed": natural_model_dream_procedure.get("projects_quality_passed", 0) if natural_model_dream_procedure else 0,
                 "natural_model_dream_procedure_verifier_passed": bool(natural_model_dream_procedure_verification and natural_model_dream_procedure_verification.get("all_passed", False)),
                 "natural_model_dream_procedure_utility_confirmed": bool(natural_model_dream_procedure and natural_model_dream_procedure.get("claim_boundary", {}).get("semantic_procedure_quality_confirmed", False)),
+                "natural_model_dream_procedure_llama_projects": natural_model_dream_procedure_llama.get("projects_attempted", 0) if natural_model_dream_procedure_llama else 0,
+                "natural_model_dream_procedure_llama_quality_passed": natural_model_dream_procedure_llama.get("projects_quality_passed", 0) if natural_model_dream_procedure_llama else 0,
+                "natural_model_dream_procedure_llama_verifier_passed": bool(natural_model_dream_procedure_llama_verification and natural_model_dream_procedure_llama_verification.get("all_passed", False)),
+                "natural_model_dream_procedure_model_format_sensitivity_observed": bool(natural_model_dream_procedure and natural_model_dream_procedure_llama and natural_model_dream_procedure.get("projects_quality_passed", 0) != natural_model_dream_procedure_llama.get("projects_quality_passed", 0)),
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "

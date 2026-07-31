@@ -5,7 +5,7 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v21",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v22",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
@@ -126,6 +126,14 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-llama-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-llama-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md"
         },
         {
@@ -138,7 +146,7 @@
         }
       ],
       "id": "public_trace_and_concept_audit",
-      "open_gate": "Natural release lineage is exercised; a local Qwen3 4B generator attempted three content-free structural proposals and passed zero quality gates. Semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
+      "open_gate": "Natural release lineage is exercised; local Qwen3 4B passed zero of three structural proposal gates while Llama 3.2 passed one of three, demonstrating model-format sensitivity. Semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
       "requirement": "Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.",
       "status": "natural_release_mechanics_proven_utility_unproven"
     },
@@ -281,7 +289,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "ad3ea9a4d8d6216585bc4d7cc89fec2daae40964"
+          "head": "38fcaf098bfb97d7b1152c091aa77ec37fd70114"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

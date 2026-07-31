@@ -334,6 +334,18 @@
       "schema_version": "frankengate-natural-model-dream-procedure-v1",
       "sha256": "70a80c0add7d6c695ee7aff8d18af96bac15428838cb9ee59400ae0ebe7328e8"
     },
+    "natural_model_dream_procedure_llama": {
+      "filename": "natural-model-dream-procedure-llama-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-v1",
+      "sha256": "a2956665d78e5ca8f620e387d04701452fcf9722c83a5ddb23f16b44cf90ec79"
+    },
+    "natural_model_dream_procedure_llama_verification": {
+      "filename": "natural-model-dream-procedure-llama-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "sha256": "f194d4ac12e5bb8cd0e5a6724780a2fc49a417d136938a7d7585eeb587b3b629"
+    },
     "natural_model_dream_procedure_verification": {
       "filename": "natural-model-dream-procedure-verification-2026-08-02.json",
       "optional": true,
@@ -874,6 +886,10 @@
           0.16596638655462187
         ],
         "matm_successful_neighbor_top10_rate": 0.7471988795518207,
+        "natural_model_dream_procedure_llama_projects": 3,
+        "natural_model_dream_procedure_llama_quality_passed": 1,
+        "natural_model_dream_procedure_llama_verifier_passed": true,
+        "natural_model_dream_procedure_model_format_sensitivity_observed": true,
         "natural_model_dream_procedure_projects": 3,
         "natural_model_dream_procedure_quality_passed": 0,
         "natural_model_dream_procedure_utility_confirmed": false,
@@ -935,6 +951,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "a57e49d4be5bb4fa15400122fde5111a306f9578dc7b52794a80f00d2dba6d72",
-  "schema_version": "frankengate-combined-evidence-matrix-v21"
+  "result_sha256": "49767f83fa8c277f38be0398aa1f68dc042fdaa89dca8dbc265cda01a09b5176",
+  "schema_version": "frankengate-combined-evidence-matrix-v22"
 }

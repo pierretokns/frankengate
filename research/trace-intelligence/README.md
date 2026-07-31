@@ -326,6 +326,11 @@ the controlled JSON/evidence-grounding rubric; the independent receipt verifier
 passed, and no semantic or utility claim was made. External-model generation
 over trace-derived data was intentionally not used.
 
+The same local protocol with Llama 3.2 produced three parseable proposals and
+one structural-quality pass out of three. The difference is model-format
+sensitivity, not semantic procedure utility: no proposal was executed against
+a changed system or scored against an independent task outcome.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with
