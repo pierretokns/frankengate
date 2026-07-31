@@ -1,0 +1,34 @@
+{
+  "arms": {
+    "formatting_placebo": {
+      "candidate_present": 2,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 1,
+      "stored_semantic_correct": 1,
+      "tasks": 6
+    },
+    "no_skill": {
+      "candidate_present": 2,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 1,
+      "stored_semantic_correct": 1,
+      "tasks": 6
+    },
+    "trace_mined_terminal_discipline": {
+      "candidate_present": 2,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 1,
+      "stored_semantic_correct": 1,
+      "tasks": 6
+    }
+  },
+  "errors": [],
+  "raw_content_committed": false,
+  "schema_version": "frankengate-defog-semantic-independent-verification-v1",
+  "semantic_recomputation": "executed_against_pinned_governed_postgres",
+  "semantic_verification_passed": true,
+  "source_result_sha256": "a8ba91001149fbc494b5f0148ba7b668130e56b89fb8767f95184d518cfc9d4b",
+  "stored_vs_recomputed_mismatches": [],
+  "task_count": 6,
+  "trajectory_count": 18
+}

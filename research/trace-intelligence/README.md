@@ -314,6 +314,25 @@ bindings, policy invariants, terminal scheduling, and unauthorized-observation
 flags all passed. It explicitly leaves semantic recomputation unclaimed because
 the disposable PostgreSQL executor is no longer running.
 
+After restoring the local executor, a second protocol repair injected the
+authorized schema catalog into every arm's system context and retained the
+larger interaction budget. The [`schema-injected replay`](experiments/summaries/defog-trace-mined-skill-heldout-car-schema-injected-2026-08-02.md)
+reached semantic evaluation: no-skill, formatting placebo, and trace-mined
+arms each submitted 2/6 candidates, with 1/6 semantic-correct, 1/6
+semantic-incorrect, and 4/6 abstentions. A fresh governed executor independently
+recomputed every candidate/gold comparison with zero mismatches, and the raw
+security verifier passed. The paired trace-mined contrast is 1/6 versus 1/6
+(risk difference 0.0), so the protocol confound is reduced but no causal skill
+lift is demonstrated.
+
+The two intermediate repairs are also retained: the larger-budget replay
+remained policy-denied because Llama skipped schema discovery, and the
+schema-first instruction alone produced the same zero-schema-call null
+([budget replay](experiments/summaries/defog-trace-mined-skill-heldout-car-repaired-2026-08-02.md),
+[schema-first replay](experiments/summaries/defog-trace-mined-skill-heldout-car-schema-first-2026-08-02.md)).
+The paired meta-analysis includes both nulls and the schema-injected semantic
+tie; it now covers 18 endpoint/study strata and still authorizes no promotion.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,

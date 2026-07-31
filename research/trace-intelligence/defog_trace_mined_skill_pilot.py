@@ -19,7 +19,7 @@ import defog_sql_factorial as factorial
 from defog_factorial_authority import StaticAuthorityEpochStore
 
 
-SCHEMA_VERSION = "frankengate-defog-trace-mined-skill-pilot-v1"
+SCHEMA_VERSION = "frankengate-defog-trace-mined-skill-pilot-v2"
 ARMS = ("no_skill", "formatting_placebo", "trace_mined_terminal_discipline")
 ARM_ADDITIONS = {
     "no_skill": "",
@@ -34,6 +34,12 @@ ARM_ADDITIONS = {
         "never issue another execute_sql after the attempt budget is exhausted."
     ),
 }
+SCHEMA_FIRST_CONTROLLER_PROMPT = (
+    " Protocol controller: before any execute_sql call, call describe_schema "
+    "and use only the returned tables and columns. If a query is rejected, "
+    "repair it from the observed policy error and schema; do not repeat the "
+    "same invalid identifier."
+)
 
 
 def _sha256_file(path: Path) -> str:
@@ -42,6 +48,13 @@ def _sha256_file(path: Path) -> str:
 
 def _sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _arm_prompt_addition(arm: str, require_schema_before_sql: bool) -> str:
+    return (
+        (SCHEMA_FIRST_CONTROLLER_PROMPT if require_schema_before_sql else "")
+        + ARM_ADDITIONS[arm]
+    )
 
 
 def run_pilot(
@@ -56,6 +69,14 @@ def run_pilot(
     model: str,
     raw_audit_dir: Path,
     output: Path,
+    max_model_turns: int | None = None,
+    max_sql_attempts: int | None = None,
+    max_tokens: int | None = None,
+    request_timeout_seconds: int | None = None,
+    max_generated_tokens_per_episode: int | None = None,
+    protocol_remediation_id: str = "frozen-default-v1",
+    require_schema_before_sql: bool = False,
+    inject_authorized_schema: bool = False,
 ) -> dict[str, Any]:
     factorial._require_external_raw_audit_dir(raw_audit_dir)
     if output.exists():
@@ -82,12 +103,46 @@ def run_pilot(
     api = factorial.ChatAPI(
         endpoint=endpoint,
         request_model_id=model,
-        timeout_seconds=factorial.FROZEN_LIMITS["model_wall_seconds"],
-        max_tokens=factorial.FROZEN_LIMITS["max_generated_tokens_per_call"],
+        timeout_seconds=(
+            request_timeout_seconds
+            if request_timeout_seconds is not None
+            else factorial.FROZEN_LIMITS["model_wall_seconds"]
+        ),
+        max_tokens=(
+            max_tokens
+            if max_tokens is not None
+            else factorial.FROZEN_LIMITS["max_generated_tokens_per_call"]
+        ),
     )
-    limits = factorial.AgentLimits()
+    resolved_turns = (
+        max_model_turns
+        if max_model_turns is not None
+        else factorial.FROZEN_LIMITS["max_model_turns"]
+    )
+    resolved_sql_attempts = (
+        max_sql_attempts
+        if max_sql_attempts is not None
+        else factorial.FROZEN_LIMITS["max_sql_attempts"]
+    )
+    resolved_episode_tokens = (
+        max_generated_tokens_per_episode
+        if max_generated_tokens_per_episode is not None
+        else factorial.FROZEN_LIMITS["max_generated_tokens_per_episode"]
+    )
+    limits = factorial.AgentLimits(
+        max_model_turns=resolved_turns,
+        max_sql_attempts=resolved_sql_attempts,
+        max_generated_tokens_per_episode=resolved_episode_tokens,
+        model_wall_seconds=(
+            request_timeout_seconds
+            if request_timeout_seconds is not None
+            else factorial.FROZEN_LIMITS["model_wall_seconds"]
+        ),
+    )
     previous_prompts = dict(factorial.ARM_PROMPTS)
     receipts = []
+    schema_catalog_prompt = ""
+    schema_catalog_sha256 = ""
     try:
         for task in tasks:
             authority_receipt = authority_store.validate(
@@ -100,12 +155,29 @@ def run_pilot(
             )
             task_hash = _sha256_text(task.task_id)[:16]
             for arm in ARMS:
-                factorial.ARM_PROMPTS[arm] = ARM_ADDITIONS[arm]
                 raw_path = raw_audit_dir / f"{task_hash}-{arm}.jsonl"
                 executor = factorial.GovernedPostgresExecutor(
                     dsn=dsn,
                     authority=authority,
                     audit_path=raw_path,
+                )
+                if inject_authorized_schema and not schema_catalog_prompt:
+                    catalog = executor.catalog()
+                    schema_catalog_prompt = (
+                        " Authorized schema catalog (use only these identifiers): "
+                        + json.dumps(
+                            {
+                                table: sorted(columns)
+                                for table, columns in sorted(catalog.items())
+                            },
+                            sort_keys=True,
+                            separators=(",", ":"),
+                        )
+                    )
+                    schema_catalog_sha256 = _sha256_text(schema_catalog_prompt)
+                factorial.ARM_PROMPTS[arm] = (
+                    schema_catalog_prompt
+                    + _arm_prompt_addition(arm, require_schema_before_sql)
                 )
                 receipts.append(
                     (task, authority_receipt, factorial.run_agent(
@@ -185,6 +257,25 @@ def run_pilot(
             "request_model_id": model,
             "endpoint_scope": "loopback-only",
         },
+        "protocol_remediation": {
+            "id": protocol_remediation_id,
+            "max_model_turns": resolved_turns,
+            "max_sql_attempts": resolved_sql_attempts,
+            "max_generated_tokens_per_episode": resolved_episode_tokens,
+            "max_generated_tokens_per_call": api.max_tokens,
+            "request_timeout_seconds": api.timeout_seconds,
+            "applies_identically_across_arms": True,
+            "base_prompt_changed": False,
+            "arm_artifacts_changed": False,
+            "task_selection_changed": False,
+            "authority_contract_changed": False,
+            "require_schema_before_sql": require_schema_before_sql,
+            "schema_first_controller_sha256": _sha256_text(
+                SCHEMA_FIRST_CONTROLLER_PROMPT if require_schema_before_sql else ""
+            ),
+            "inject_authorized_schema": inject_authorized_schema,
+            "schema_catalog_sha256": schema_catalog_sha256,
+        },
         "authority": {
             "binding_sha256": sorted({receipt.binding_sha256 for receipt in authority_receipts}),
             "epoch_ref_sha256": sorted({receipt.epoch_ref_sha256 for receipt in authority_receipts}),
@@ -194,7 +285,10 @@ def run_pilot(
         "arm_artifacts": {
             arm: {
                 "classification": "baseline" if arm == "no_skill" else "placebo" if arm == "formatting_placebo" else "trace_mined_candidate",
-                "sha256": _sha256_text(ARM_ADDITIONS[arm]),
+                "sha256": _sha256_text(
+                    schema_catalog_prompt
+                    + _arm_prompt_addition(arm, require_schema_before_sql)
+                ),
             }
             for arm in ARMS
         },
@@ -234,6 +328,14 @@ def main() -> int:
     parser.add_argument("--model", required=True)
     parser.add_argument("--raw-audit-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--max-model-turns", type=int)
+    parser.add_argument("--max-sql-attempts", type=int)
+    parser.add_argument("--max-tokens", type=int)
+    parser.add_argument("--request-timeout-seconds", type=int)
+    parser.add_argument("--max-generated-tokens-per-episode", type=int)
+    parser.add_argument("--protocol-remediation-id", default="frozen-default-v1")
+    parser.add_argument("--require-schema-before-sql", action="store_true")
+    parser.add_argument("--inject-authorized-schema", action="store_true")
     args = parser.parse_args()
     result = run_pilot(
         source_root=args.source_root.resolve(strict=True),
@@ -246,6 +348,14 @@ def main() -> int:
         model=args.model,
         raw_audit_dir=args.raw_audit_dir,
         output=args.output,
+        max_model_turns=args.max_model_turns,
+        max_sql_attempts=args.max_sql_attempts,
+        max_tokens=args.max_tokens,
+        request_timeout_seconds=args.request_timeout_seconds,
+        max_generated_tokens_per_episode=args.max_generated_tokens_per_episode,
+        protocol_remediation_id=args.protocol_remediation_id,
+        require_schema_before_sql=args.require_schema_before_sql,
+        inject_authorized_schema=args.inject_authorized_schema,
     )
     print(json.dumps({"status": "ok", "arms": result["arms"], "causal_skill_benefit_established": False}, sort_keys=True))
     return 0

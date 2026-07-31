@@ -14,8 +14,8 @@ unsupported.
 The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
-The latest targeted research suite passed 22 tests; offline reproducibility now
-validates 107 aggregate results, 44 manifests, 12 governed fixtures, and zero
+The latest targeted Defog/research suite passed 66 tests (3 skipped); offline reproducibility now
+validates 112 aggregate results, 44 manifests, 12 governed fixtures, and zero
 committed raw corpus files. The full locked-suite count remains the historical
 506-test checkpoint recorded separately.
 
@@ -46,3 +46,9 @@ skill result; independent outcome and security verification after protocol
 remediation remain open. The independent receipt verifier now passes all
 content-free security/protocol checks for the 18 external raw audits, but it
 does not recompute semantic correctness without the PostgreSQL executor.
+
+The restored-executor schema-injected replay reached semantic evaluation and
+was independently recomputed: all three arms tied at 1/6 correct, with four
+abstentions each and zero verifier mismatches. This removes the earlier
+schema-navigation confound from the comparison but does not establish a
+causal trace-mined skill benefit.
