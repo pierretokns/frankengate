@@ -748,6 +748,7 @@ async def _execute_langmem_partial(
                 ),
                 "projected_bytes": selected_case.projected_bytes,
                 "baseline_exact": baseline_exact,
+                "natural_case_completed": langmem_status == "executed",
                 "graphiti_status": graphiti_status,
                 "langmem_status": langmem_status,
                 "combined_status": combined_status,
@@ -859,6 +860,28 @@ def _bounded_partial_evidence(
 
 def _summary_markdown(result: Mapping[str, Any]) -> str:
     aggregate = result["aggregate"]
+    langmem_only = (
+        result.get("faithfulness", {}).get("run_disposition")
+        == "bounded_partial_after_graphiti_full_input_ceiling"
+        and aggregate["langmem_executed_cases"] > 0
+    )
+    langmem_observation = (
+        f"The independent LangMem arm completed "
+        f"{aggregate['langmem_executed_cases']}/{aggregate['cases']} "
+        f"selected cases through the real `MemoryManager.invoke` surface. "
+        f"It produced {aggregate['langmem_memory_count']} durable memory "
+        f"candidates, mean exact-identifier recall "
+        f"{aggregate['langmem_mean_identifier_recall']}, and "
+        f"{aggregate['langmem_updated_existing_cases']} existing-memory "
+        f"updates. These are component mechanics, not a usefulness or "
+        f"quality claim."
+        if langmem_only
+        else (
+            "A natural LangMem result may have existed transiently before "
+            "Graphiti started, but no case-level LangMem output was durably "
+            "captured, so this report records none."
+        )
+    )
     failures = [
         error
         for row in result["execution"]
@@ -876,7 +899,7 @@ def _summary_markdown(result: Mapping[str, Any]) -> str:
 ## Outcome
 
 The preregistered cohort contained {aggregate['cases']} natural Wisp/Fable
-context-artifact cases, but **0/{aggregate['cases']} natural cases completed**
+context-artifact cases, but **0/{aggregate['cases']} full Graphiti+LangMem cases completed**
 within the 600-second run ceiling. Graphiti completed
 {aggregate['graphiti_executed_cases']} natural cases and LangMem had
 {aggregate['langmem_executed_cases']} durably evidenced natural cases; observed
@@ -888,18 +911,17 @@ the natural run: Graphiti returned a structured extraction through its actual
 actual `create_memory_manager`. Those checks establish API compatibility only.
 On the first full natural input, Graphiti's real node-extraction path logged four
 `EmptyResponseError` events and was stopped during the next in-flight request at
-the ceiling. The other two Graphiti cases were not executed. A natural LangMem
-result may have existed transiently before Graphiti started, but no case-level
-LangMem output was durably captured, so this report records none.
+the ceiling. The other two Graphiti cases were not executed. {langmem_observation}
 
 The deterministic exact-artifact baseline would match
 {aggregate['baseline_exact']} of the three later states. Graphiti and combined
 retrieval deltas are `null`, not negative scores, because no natural component
 case completed.
 
-No natural node, edge, temporal, invalidation, identifier-recall, memory-update,
-or combined-retrieval metric is reported. Zero-valued aggregate storage fields
-mean “no completed evidence,” not “the component extracted nothing.”
+No Graphiti node, edge, temporal, invalidation, or combined-retrieval metric is
+reported. In the independent LangMem arm, the explicit zero observations above
+mean that the real manager returned no durable candidates and preserved no
+measured identifiers; they are not missing-data placeholders.
 
 ## Upstream pins and execution surface
 

@@ -107,7 +107,14 @@ The bounded
 uses the real pinned libraries. Both pass small structured smokes, but no
 natural case completes: Graphiti returns empty structured responses on the
 first full document and hits the experiment ceiling. No proxy score is
- substituted, and neither component has earned a production role.
+substituted, and neither component has earned a production role.
+
+The follow-up [`independent LangMem natural arm`](experiments/summaries/langmem-natural-independent-2026-08-01-r2.md)
+removed the Graphiti timeout as a confounder. The real LangMem manager executed
+on all 3/3 selected Wisp/Fable cases, but returned zero durable candidates,
+zero exact-identifier recall, and zero existing-memory updates. This is a
+faithful model/runtime outcome—not a proxy—and still does not establish memory
+quality, utility, or enterprise transfer.
 
 The [`faithful diagnosis-concept audit`](experiments/summaries/faithful-diagnosis-concept-audit-wisp-2026-07-30.md)
 runs deterministic Signals and AgentRx concepts over 104 pinned Wisp histories.
