@@ -116,6 +116,13 @@ the license is `NOASSERTION`, no raw files are local, and no trajectory-level
 metric is claimed. Public cohorts therefore remain the active empirical input;
 CMU admission is a tracked prerequisite rather than silently substituted data.
 
+The embedding gate is equally explicit. E2 provides general dense, structured,
+and lexical baselines, but its silver labels are not human task-similarity gold
+and there is no reviewed hard-negative or user/project/time-held-out adaptation
+split. Enterprise fine-tuning therefore remains a gated null: first create
+governed similar-work labels, then require a preregistered lift without exact-ID,
+subgroup, deletion, latency, memorization, or rollback regressions.
+
 Bulk raw corpora stay outside Git so revisions remain small and reproducible.
 Dataset manifests pin exact source revisions and adapters read explicit local
 paths. Frankengate's governed database may retain full internal trace content
