@@ -7,6 +7,11 @@ import types
 import unittest
 from unittest.mock import patch
 
+try:
+    import sqlglot  # noqa: F401
+except ModuleNotFoundError as exc:  # optional NL2SQL factorial dependency
+    raise unittest.SkipTest("sqlglot is required for Defog SQL factorial") from exc
+
 
 MODULE_PATH = pathlib.Path(__file__).parents[1] / "defog_sql_factorial.py"
 sys.path.insert(0, str(MODULE_PATH.parent))

@@ -6,7 +6,10 @@ import tempfile
 import unittest
 from decimal import Decimal
 
-from sqlglot import parse_one
+try:
+    from sqlglot import parse_one
+except ModuleNotFoundError as exc:  # optional NL2SQL conformance dependency
+    raise unittest.SkipTest("sqlglot is required for Defog SQL conformance") from exc
 
 
 MODULE_PATH = (
