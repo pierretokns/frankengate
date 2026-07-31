@@ -181,6 +181,13 @@ completed the same fixture on Qwen3 4B: no-skill was 6/6, formatting placebo
 Qwen protocol slice; this rejects automatic promotion but is not a semantic or
 enterprise-quality result. A true cross-harness held-out replay remains open.
 
+The [`cross-harness Llama replay`](experiments/summaries/model-harness-transfer-llama-openai-vs-ollama-2026-07-31.md)
+then ran the same fixture through the OpenAI-compatible and Ollama-native
+adapters. All three arms matched exactly (3/6 each) with similar latency,
+indicating no adapter-specific effect on this protocol slice. This validates
+the harness normalization only; held-out domain quality and skill transfer
+remain unproven.
+
 The [`Defog trace-mined skill pilot`](experiments/summaries/defog-trace-mined-skill-pilot-2026-07-30.md)
 is the first domain-valid local-model intervention: four visible-selection
 PostgreSQL tasks, the governed no-BYPASSRLS role, and the same three paired
