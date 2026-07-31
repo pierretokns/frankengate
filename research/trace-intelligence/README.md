@@ -303,6 +303,16 @@ expert in six steps. At eight steps, all three arms were `0/1`; replay passed
 for all rows. This is stronger negative transfer evidence, not a promotion
 result.
 
+The follow-up [`r22 corrected real-candidate pilot`](experiments/results/alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json)
+closed a provenance defect: the r20/r21 receipts referenced an empty candidate
+file, so those rows are not skill-quality evidence. R22 used the actual
+213-byte SkillOpt candidate, on the same sufficient-horizon task, and again
+obtained `0/1` for no-skill, formatting placebo, and candidate; the fresh
+environment verifier passed all three rows. This remains a one-task,
+underpowered negative result, not an impossibility claim or release gate.
+The [`candidate provenance audit`](experiments/results/skillopt-candidate-provenance-audit-2026-08-02.json)
+records the distinction by hash and never emits candidate text.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

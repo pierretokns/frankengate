@@ -1,0 +1,154 @@
+{
+  "all_passed": true,
+  "candidate_length": 213,
+  "candidate_sha256": "253e353d4b027d2f1c8469e14ffdc50baefc413708f0e3d3edd7aa5691c3d378",
+  "checks": {
+    "empty_candidate_rows_explicitly_identified": true,
+    "real_candidate_receipt_present": true
+  },
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "r20_r21_empty_candidate_rows_not_skill_quality_evidence": true,
+    "r22_real_candidate_is_the_corrected_transfer_arm": true
+  },
+  "raw_content_policy": {
+    "candidate_text_emitted": false,
+    "model_responses_emitted": false
+  },
+  "rows": [
+    {
+      "candidate_length": 213,
+      "candidate_sha256": "253e353d4b027d2f1c8469e14ffdc50baefc413708f0e3d3edd7aa5691c3d378",
+      "empty_candidate": false,
+      "matches_real_candidate": true,
+      "receipt": "alfworld-codex-skillopt-r19-2026-08-02.json",
+      "summary": {
+        "formatting_placebo": {
+          "api_calls": 6,
+          "episodes": 2,
+          "invalid_actions": 0,
+          "steps": 6,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "no_skill": {
+          "api_calls": 6,
+          "episodes": 2,
+          "invalid_actions": 0,
+          "steps": 6,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "skillopt_candidate": {
+          "api_calls": 6,
+          "episodes": 2,
+          "invalid_actions": 0,
+          "steps": 6,
+          "win_rate": 0.0,
+          "wins": 0
+        }
+      }
+    },
+    {
+      "candidate_length": null,
+      "candidate_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "empty_candidate": true,
+      "matches_real_candidate": false,
+      "receipt": "alfworld-codex-skillopt-r20-2026-08-02.json",
+      "summary": {
+        "formatting_placebo": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "no_skill": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "skillopt_candidate": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        }
+      }
+    },
+    {
+      "candidate_length": null,
+      "candidate_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "empty_candidate": true,
+      "matches_real_candidate": false,
+      "receipt": "alfworld-codex-skillopt-r21-2026-08-02.json",
+      "summary": {
+        "formatting_placebo": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "no_skill": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "skillopt_candidate": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        }
+      }
+    },
+    {
+      "candidate_length": 213,
+      "candidate_sha256": "253e353d4b027d2f1c8469e14ffdc50baefc413708f0e3d3edd7aa5691c3d378",
+      "empty_candidate": false,
+      "matches_real_candidate": true,
+      "receipt": "alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json",
+      "summary": {
+        "formatting_placebo": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "no_skill": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "skillopt_candidate": {
+          "api_calls": 8,
+          "episodes": 1,
+          "invalid_actions": 0,
+          "steps": 8,
+          "win_rate": 0.0,
+          "wins": 0
+        }
+      }
+    }
+  ],
+  "schema_version": "frankengate-skillopt-candidate-provenance-audit-v1"
+}

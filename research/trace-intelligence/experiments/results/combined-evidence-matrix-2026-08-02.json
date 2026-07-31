@@ -95,6 +95,18 @@
       "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
       "sha256": "0f459ceb460db26e66fcafb2cb335775407d780d92f50716a9e823517e086111"
     },
+    "alfworld_codex_skillopt_r22_real_candidate": {
+      "filename": "alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "e4643f95a41355006c44eef2b75af81b61efb67924ae0f0129178e0c2b6b821a"
+    },
+    "alfworld_codex_skillopt_r22_real_candidate_verification": {
+      "filename": "alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "c4ad49a73cf2067fc94e8e707c658336db892dafcee09ae24485f92442c9f219"
+    },
     "alfworld_durable_memory_intervention_r7": {
       "filename": "alfworld-durable-memory-intervention-r7-2026-08-02.json",
       "optional": true,
@@ -363,6 +375,12 @@
       "schema_version": "frankengate-skillopt-alfworld-codex-v1",
       "sha256": "dde3cc04414f3b9e56dcd038de1cf1a7c0151d61c57e23912fc417130418faa0"
     },
+    "skillopt_candidate_provenance_audit": {
+      "filename": "skillopt-candidate-provenance-audit-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-candidate-provenance-audit-v1",
+      "sha256": "d89d6befe4a4524c648d6a79c80f9e1e000a1fac946a235b52c092630fc4e37b"
+    },
     "skillopt_deterministic_lifecycle_r17": {
       "filename": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
       "optional": true,
@@ -604,7 +622,7 @@
       "status": "real_trace_transition_partial_pass"
     },
     "L6_procedural_replay": {
-      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. The offline MATM leave-one-model-out arm gives a 0.067 top-10 recommendation lift (95% CI -0.020 to 0.166) but a -0.056 mean AUC contrast (95% CI -0.112 to 0.002); this is predictive evidence only, not changed-agent skill benefit. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. A provenance audit found that the r20/r21 receipts referenced an empty candidate; those rows are not skill-quality evidence. The corrected r22 run used the real 213-byte candidate and still produced 0/1 wins for no-skill, placebo, and candidate at an eight-step horizon, with fresh replay verification. The offline MATM leave-one-model-out arm gives a 0.067 top-10 recommendation lift (95% CI -0.020 to 0.166) but a -0.056 mean AUC contrast (95% CI -0.112 to 0.002); this is predictive evidence only, not changed-agent skill benefit. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
       "evidence": {
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
@@ -672,6 +690,37 @@
         "alfworld_codex_skillopt_r21_rows_verified": 3,
         "alfworld_codex_skillopt_r21_tasks": 1,
         "alfworld_codex_skillopt_r21_verifier_passed": true,
+        "alfworld_codex_skillopt_r22_real_candidate_arm_summaries": {
+          "formatting_placebo": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "no_skill": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "skillopt_candidate": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          }
+        },
+        "alfworld_codex_skillopt_r22_real_candidate_episodes": 3,
+        "alfworld_codex_skillopt_r22_real_candidate_rows_verified": 3,
+        "alfworld_codex_skillopt_r22_real_candidate_sha256": "253e353d4b027d2f1c8469e14ffdc50baefc413708f0e3d3edd7aa5691c3d378",
+        "alfworld_codex_skillopt_r22_real_candidate_tasks": 1,
+        "alfworld_codex_skillopt_r22_real_candidate_verifier_passed": true,
         "alfworld_cross_model_r4_qwen_candidate_invalid_actions": 36,
         "alfworld_cross_model_r4_qwen_candidate_wins": 0,
         "alfworld_cross_model_r4_qwen_episodes": 8,
@@ -744,6 +793,7 @@
         "alfworld_skill_memory_composition_r6_invalid_action_delta_per_harness": 16,
         "alfworld_trace_procedure_wins": 0,
         "bounded_pairs_executed": 17,
+        "empty_candidate_rows_explicitly_identified": true,
         "gepa_baseline_holdout_match_rate": 0.6666666666666666,
         "gepa_enterprise_skill_benefit_confirmed": false,
         "gepa_holdout_split_used": true,
@@ -805,6 +855,7 @@
           "qwen3:4b"
         ],
         "skill_transfer_same_fixture_compared": true,
+        "skillopt_candidate_provenance_audit_passed": true,
         "statebench_executable_gold_sql_tasks": 4,
         "statebench_sql_fixture_tasks": 46,
         "stdout_exit_equivalent_pairs": 9,
@@ -826,6 +877,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "e16e959469dafc2c2918f74c4d3568b864ddf988369958c3c565f90f57b5b272",
-  "schema_version": "frankengate-combined-evidence-matrix-v19"
+  "result_sha256": "3b23aa53857b8c961e55d5cee8b482f91531f08a0381a23e5a5980202aac23a7",
+  "schema_version": "frankengate-combined-evidence-matrix-v20"
 }

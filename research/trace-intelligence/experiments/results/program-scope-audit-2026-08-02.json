@@ -5,7 +5,7 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v19",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v20",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
@@ -87,6 +87,18 @@
         {
           "exists": true,
           "path": "experiments/results/alfworld-codex-skillopt-r21-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-candidate-provenance-audit-2026-08-02.json"
         },
         {
           "exists": true,
@@ -253,7 +265,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "b2ed33a43abafd35977c496a4bd4277b0c9a63a6"
+          "head": "15f89b4bf0a4b445f9f1011b15ac164a17bcc563"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

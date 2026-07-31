@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v19"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v20"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -80,6 +80,9 @@ OPTIONAL_RESULTS = {
     "alfworld_codex_skillopt_r20_verification": "alfworld-codex-skillopt-r20-verification-2026-08-02.json",
     "alfworld_codex_skillopt_r21": "alfworld-codex-skillopt-r21-2026-08-02.json",
     "alfworld_codex_skillopt_r21_verification": "alfworld-codex-skillopt-r21-verification-2026-08-02.json",
+    "alfworld_codex_skillopt_r22_real_candidate": "alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json",
+    "alfworld_codex_skillopt_r22_real_candidate_verification": "alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json",
+    "skillopt_candidate_provenance_audit": "skillopt-candidate-provenance-audit-2026-08-02.json",
     "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
     "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
     "h5_concurrency_live_rerun": "h5-concurrency-live-rerun-2026-08-02.json",
@@ -210,6 +213,9 @@ def build_matrix(
     alfworld_codex_skillopt_r20_verification = results.get("alfworld_codex_skillopt_r20_verification")
     alfworld_codex_skillopt_r21 = results.get("alfworld_codex_skillopt_r21")
     alfworld_codex_skillopt_r21_verification = results.get("alfworld_codex_skillopt_r21_verification")
+    alfworld_codex_skillopt_r22_real_candidate = results.get("alfworld_codex_skillopt_r22_real_candidate")
+    alfworld_codex_skillopt_r22_real_candidate_verification = results.get("alfworld_codex_skillopt_r22_real_candidate_verification")
+    skillopt_candidate_provenance_audit = results.get("skillopt_candidate_provenance_audit")
     natural_released_procedure = results.get("natural_released_procedure")
     natural_released_procedure_verification = results.get("natural_released_procedure_verification")
     h5_concurrency_live_rerun = results.get("h5_concurrency_live_rerun")
@@ -328,6 +334,14 @@ def build_matrix(
         "r21_arm_summaries": alfworld_codex_skillopt_r21.get("summary", {}) if alfworld_codex_skillopt_r21 else {},
         "r21_verifier_passed": bool(alfworld_codex_skillopt_r21_verification and alfworld_codex_skillopt_r21_verification.get("all_passed", False)),
         "r21_rows_verified": alfworld_codex_skillopt_r21_verification.get("rows_verified", 0) if alfworld_codex_skillopt_r21_verification else 0,
+        "r22_real_candidate_task_count": len(alfworld_codex_skillopt_r22_real_candidate.get("dataset", {}).get("task_hashes", [])) if alfworld_codex_skillopt_r22_real_candidate else 0,
+        "r22_real_candidate_episodes": sum(v.get("episodes", 0) for v in (alfworld_codex_skillopt_r22_real_candidate.get("summary", {}).values() if alfworld_codex_skillopt_r22_real_candidate else [])),
+        "r22_real_candidate_sha256": alfworld_codex_skillopt_r22_real_candidate.get("candidate_sha256") if alfworld_codex_skillopt_r22_real_candidate else None,
+        "r22_real_candidate_arm_summaries": alfworld_codex_skillopt_r22_real_candidate.get("summary", {}) if alfworld_codex_skillopt_r22_real_candidate else {},
+        "r22_real_candidate_verifier_passed": bool(alfworld_codex_skillopt_r22_real_candidate_verification and alfworld_codex_skillopt_r22_real_candidate_verification.get("all_passed", False)),
+        "r22_real_candidate_rows_verified": alfworld_codex_skillopt_r22_real_candidate_verification.get("rows_verified", 0) if alfworld_codex_skillopt_r22_real_candidate_verification else 0,
+        "candidate_provenance_audit_passed": bool(skillopt_candidate_provenance_audit and skillopt_candidate_provenance_audit.get("all_passed", False)),
+        "empty_candidate_rows_explicitly_identified": bool(skillopt_candidate_provenance_audit and skillopt_candidate_provenance_audit.get("claim_boundary", {}).get("r20_r21_empty_candidate_rows_not_skill_quality_evidence", False)),
     }
 
     trace_commons_attestation_passed = bool(
@@ -1260,6 +1274,14 @@ def build_matrix(
                 "alfworld_codex_skillopt_r21_arm_summaries": revision_evidence["r21_arm_summaries"],
                 "alfworld_codex_skillopt_r21_verifier_passed": revision_evidence["r21_verifier_passed"],
                 "alfworld_codex_skillopt_r21_rows_verified": revision_evidence["r21_rows_verified"],
+                "alfworld_codex_skillopt_r22_real_candidate_tasks": revision_evidence["r22_real_candidate_task_count"],
+                "alfworld_codex_skillopt_r22_real_candidate_episodes": revision_evidence["r22_real_candidate_episodes"],
+                "alfworld_codex_skillopt_r22_real_candidate_sha256": revision_evidence["r22_real_candidate_sha256"],
+                "alfworld_codex_skillopt_r22_real_candidate_arm_summaries": revision_evidence["r22_real_candidate_arm_summaries"],
+                "alfworld_codex_skillopt_r22_real_candidate_verifier_passed": revision_evidence["r22_real_candidate_verifier_passed"],
+                "alfworld_codex_skillopt_r22_real_candidate_rows_verified": revision_evidence["r22_real_candidate_rows_verified"],
+                "skillopt_candidate_provenance_audit_passed": revision_evidence["candidate_provenance_audit_passed"],
+                "empty_candidate_rows_explicitly_identified": revision_evidence["empty_candidate_rows_explicitly_identified"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1272,6 +1294,11 @@ def build_matrix(
                 "promotion is authorized. GEPA v0.1.4 executed 11 metric calls "
                 "on a train/holdout protocol split and retained the empty seed "
                 "at 2/3 holdout matches, so the optimizer arm produced no lift. "
+                "A provenance audit found that the r20/r21 receipts referenced "
+                "an empty candidate; those rows are not skill-quality evidence. "
+                "The corrected r22 run used the real 213-byte candidate and "
+                "still produced 0/1 wins for no-skill, placebo, and candidate "
+                "at an eight-step horizon, with fresh replay verification. "
                 f"The offline MATM leave-one-model-out arm gives a "
                 f"{matm_skill_retrieval['aggregate']['contrast']['successful_minus_all_top_10_percent_success_rate_mean']:.3f} "
                 "top-10 recommendation lift (95% CI -0.020 to 0.166) but a "
