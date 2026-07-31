@@ -64,6 +64,18 @@
       "schema_version": "frankengate-alfworld-trace-skill-intervention-v1",
       "sha256": "e4ecdd6922eb3a094fc262585ac53d80900d9b7e5373f6cf5a8075e4f36b092c"
     },
+    "alfworld_skill_intervention_r2": {
+      "filename": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-r2-v1",
+      "sha256": "b3c2918e92391d29a21854036000d4b917de1b1d527be5e414cf443861cd9876"
+    },
+    "alfworld_skill_intervention_r3": {
+      "filename": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-r3-v1",
+      "sha256": "cb9c70665a0632144a4a833b08f26f4b48b9bcf42c87d30b2b75c33fd30f9898"
+    },
     "atif_rl_roundtrip": {
       "filename": "atif-rl-roundtrip-2026-07-30.json",
       "schema_version": "atif-rl-roundtrip-result-v1",
@@ -372,6 +384,13 @@
         "agenttrace_rows": 1400,
         "alfworld_causal_skill_benefit_confirmed": false,
         "alfworld_expert_control_wins": 2,
+        "alfworld_family_disjoint_r3_candidate_invalid_actions": 168,
+        "alfworld_family_disjoint_r3_candidate_wins": 0,
+        "alfworld_family_disjoint_r3_causal_skill_benefit_confirmed": false,
+        "alfworld_family_disjoint_r3_episodes": 16,
+        "alfworld_revision_r2_candidate_invalid_actions": 56,
+        "alfworld_revision_r2_candidate_wins": 0,
+        "alfworld_revision_r2_episodes": 6,
         "alfworld_semantic_pilot_episodes": 18,
         "alfworld_semantic_pilot_harnesses": [
           "ollama-native-api",
@@ -460,6 +479,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "96e6d016f4ffb84ec69b47f04e91e2fc4c6a1c2f1ce2c54261637b10d89e81af",
-  "schema_version": "frankengate-combined-evidence-matrix-v10"
+  "result_sha256": "074ff5c50f02c1181078de7367d4e1a0e616144f98d35469fb74b58f14112cf8",
+  "schema_version": "frankengate-combined-evidence-matrix-v11"
 }

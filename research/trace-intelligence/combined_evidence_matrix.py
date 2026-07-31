@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v10"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v11"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -69,6 +69,10 @@ REQUIRED_RESULTS = {
         "trace-commons-analysis-reproducibility-2026-08-02.json"
     ),
 }
+OPTIONAL_RESULTS = {
+    "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
+    "alfworld_skill_intervention_r3": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
+}
 
 
 class CombinedEvidenceError(ValueError):
@@ -117,6 +121,24 @@ def load_results(result_dir: Path) -> tuple[dict[str, Any], dict[str, Any]]:
             "schema_version": value["schema_version"],
             "sha256": _sha256_bytes(raw),
         }
+    for name, filename in OPTIONAL_RESULTS.items():
+        path = result_dir / filename
+        if not path.exists():
+            continue
+        try:
+            raw = path.read_bytes()
+            value = json.loads(raw)
+        except (OSError, json.JSONDecodeError) as exc:
+            raise CombinedEvidenceError(f"cannot load {path}: {exc}") from exc
+        if not isinstance(value, dict) or not value.get("schema_version"):
+            raise CombinedEvidenceError(f"{path}: schema_version is required")
+        values[name] = value
+        receipts[name] = {
+            "filename": filename,
+            "schema_version": value["schema_version"],
+            "sha256": _sha256_bytes(raw),
+            "optional": True,
+        }
     return values, receipts
 
 
@@ -128,6 +150,8 @@ def build_matrix(
     atif_rl_roundtrip = results["atif_rl_roundtrip"]
     matm_skill_retrieval = results["matm_skill_retrieval"]
     alfworld_skill_intervention = results.get("alfworld_skill_intervention")
+    alfworld_skill_intervention_r2 = results.get("alfworld_skill_intervention_r2")
+    alfworld_skill_intervention_r3 = results.get("alfworld_skill_intervention_r3")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -177,6 +201,15 @@ def build_matrix(
             ),
             "causal_skill_benefit_confirmed": alfworld_skill_intervention["claim_boundary"]["causal_skill_benefit_confirmed"],
         }
+    revision_evidence = {
+        "r2_episodes": alfworld_skill_intervention_r2.get("intervention", {}).get("episodes", 0) if alfworld_skill_intervention_r2 else 0,
+        "r2_candidate_wins": alfworld_skill_intervention_r2.get("interpretation", {}).get("candidate_wins", 0) if alfworld_skill_intervention_r2 else 0,
+        "r2_candidate_invalid_actions": alfworld_skill_intervention_r2.get("interpretation", {}).get("candidate_invalid_actions", 0) if alfworld_skill_intervention_r2 else 0,
+        "r3_episodes": alfworld_skill_intervention_r3.get("protocol", {}).get("episodes", 0) if alfworld_skill_intervention_r3 else 0,
+        "r3_candidate_wins": sum(v.get("wins", 0) for k, v in (alfworld_skill_intervention_r3.get("aggregate", {}) if alfworld_skill_intervention_r3 else {}).items() if "trace_mined_procedure_v2" in k),
+        "r3_candidate_invalid_actions": sum(v.get("invalid_actions", 0) for k, v in (alfworld_skill_intervention_r3.get("aggregate", {}) if alfworld_skill_intervention_r3 else {}).items() if "trace_mined_procedure_v2" in k),
+        "r3_causal_skill_benefit_confirmed": bool(alfworld_skill_intervention_r3 and alfworld_skill_intervention_r3.get("claim_boundary", {}).get("causal_skill_benefit_confirmed", False)),
+    }
 
     trace_commons_attestation_passed = bool(
         trace_commons_attestation
@@ -974,6 +1007,13 @@ def build_matrix(
                 "alfworld_semantic_pilot_harnesses": alfworld_pilot_evidence["harnesses"],
                 "alfworld_trace_procedure_wins": alfworld_pilot_evidence["trace_procedure_wins"],
                 "alfworld_causal_skill_benefit_confirmed": alfworld_pilot_evidence["causal_skill_benefit_confirmed"],
+                "alfworld_revision_r2_episodes": revision_evidence["r2_episodes"],
+                "alfworld_revision_r2_candidate_wins": revision_evidence["r2_candidate_wins"],
+                "alfworld_revision_r2_candidate_invalid_actions": revision_evidence["r2_candidate_invalid_actions"],
+                "alfworld_family_disjoint_r3_episodes": revision_evidence["r3_episodes"],
+                "alfworld_family_disjoint_r3_candidate_wins": revision_evidence["r3_candidate_wins"],
+                "alfworld_family_disjoint_r3_candidate_invalid_actions": revision_evidence["r3_candidate_invalid_actions"],
+                "alfworld_family_disjoint_r3_causal_skill_benefit_confirmed": revision_evidence["r3_causal_skill_benefit_confirmed"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1287,6 +1327,11 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{skill['alfworld_semantic_pilot_tasks']} held-out tasks. The expert control won "
             f"{skill['alfworld_expert_control_wins']} tasks, while the trace-derived procedure won "
             f"{skill['alfworld_trace_procedure_wins']}; this is a small negative pilot and does not authorize promotion.",
+            f"- The revised ALFWorld contract replay added {skill['alfworld_revision_r2_episodes']} diagnostic episodes "
+            f"({skill['alfworld_revision_r2_candidate_wins']} candidate wins, {skill['alfworld_revision_r2_candidate_invalid_actions']} candidate invalid actions), "
+            f"then added a four-family held-out replay of {skill['alfworld_family_disjoint_r3_episodes']} episodes. "
+            f"The r3 candidate won {skill['alfworld_family_disjoint_r3_candidate_wins']} tasks and emitted "
+            f"{skill['alfworld_family_disjoint_r3_candidate_invalid_actions']} invalid actions; causal skill benefit remains false.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "
