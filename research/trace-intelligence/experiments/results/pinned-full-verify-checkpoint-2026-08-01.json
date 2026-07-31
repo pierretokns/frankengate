@@ -8,7 +8,7 @@
   "nl2sql_tests": 61,
   "nl2sql_failures": 0,
   "nl2sql_skips": 0,
-  "aggregate_results": 95,
+  "aggregate_results": 96,
   "dataset_manifests": 44,
   "governed_fixtures": 12,
   "raw_corpus_files_committed": 0,

@@ -220,6 +220,14 @@ authorized, but Qwen emitted zero SQL tool calls, so the controller abstained
 and no semantic score was possible. This is a typed runtime null, not a
 quality result.
 
+The consolidated [`skill-optimization evidence checkpoint`](experiments/summaries/skill-optimization-evidence-2026-08-01.md)
+is the current decision record: no trace-derived skill has yet produced a
+held-out semantic lift. We have tested two live models (Llama 3.2 and Qwen 3
+4B), two tool-loop harnesses, synthetic intervention controls, and governed
+SQL probes. The pinned Qwen3.5-9B-OptiQ manifest is not a completed run—the
+7.1 GB snapshot is absent locally and no Qwen3.5 listener is running—so it is
+explicitly excluded from the evidence base.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,

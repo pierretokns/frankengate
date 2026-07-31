@@ -1,0 +1,34 @@
+{
+  "schema_version": "frankengate-skill-optimization-evidence-v1",
+  "status": "not_confirmed",
+  "claim": "Trace-mined skills improve task performance",
+  "causal_claim_confirmed": false,
+  "tested_models": ["llama3.2:latest", "qwen3:4b"],
+  "tested_harnesses": ["openai-compatible-chat-completions", "ollama-native-api"],
+  "tested_intervention_arms": ["no_skill", "formatting_placebo", "trace_mined_terminal_discipline"],
+  "evidence": {
+    "llama_synthetic_openai": {"episodes_per_arm": 6, "terminal_matches": {"no_skill": 3, "formatting_placebo": 3, "trace_mined_terminal_discipline": 3}},
+    "qwen3_synthetic_openai": {"episodes_per_arm": 6, "terminal_matches": {"no_skill": 6, "formatting_placebo": 0, "trace_mined_terminal_discipline": 3}},
+    "llama_cross_harness": {"episodes_per_arm": 6, "openai_compatible_matches": {"no_skill": 3, "formatting_placebo": 3, "trace_mined_terminal_discipline": 3}, "ollama_native_matches": {"no_skill": 3, "formatting_placebo": 3, "trace_mined_terminal_discipline": 3}},
+    "llama_car_sql": {"tasks_per_arm": 4, "successful_sql_attempts": {"no_skill": 0, "formatting_placebo": 0, "trace_mined_terminal_discipline": 1}, "semantic_correct": {"no_skill": 0, "formatting_placebo": 0, "trace_mined_terminal_discipline": 0}},
+    "qwen3_car_sql_native": {"tasks_per_arm": 1, "sql_tool_calls": {"no_skill": 0, "formatting_placebo": 0, "trace_mined_terminal_discipline": 0}, "semantic_correct": {"no_skill": 0, "formatting_placebo": 0, "trace_mined_terminal_discipline": 0}}
+  },
+  "runtime_boundary": {
+    "qwen35_manifest_present": true,
+    "qwen35_snapshot_present": false,
+    "qwen35_listener_present": false,
+    "qwen35_snapshot_bytes": 7120886349,
+    "qwen35_revision": "319aed167e31e0bf81ddba0c23f8d218a15be612"
+  },
+  "promotion_state": "proposal_only",
+  "next_required": "family-disjoint held-out governed factorial with independent semantic and security verifiers, then replication across models and harnesses",
+  "source_results": [
+    "experiments/results/model-harness-transfer-native-tool-2026-07-31.json",
+    "experiments/results/model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json",
+    "experiments/results/natural-trace-skill-protocol-intervention-qwen3-4b-2026-07-31.json",
+    "experiments/results/defog-car-fallback-llama-2026-07-31.json",
+    "experiments/results/defog-family-transfer-broker-llama-2026-07-31.json",
+    "experiments/results/defog-qwen-native-probe-2026-07-31.json",
+    "experiments/results/trace2skill-governed-stage0-2026-07-30.json"
+  ]
+}
