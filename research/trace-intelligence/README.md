@@ -300,8 +300,8 @@ underpowered and does not authorize promotion.
 The [`r21 sufficient-horizon pilot`](experiments/summaries/alfworld-codex-skillopt-r21-2026-08-02.md)
 repeated the comparison on a task independently solved by the hand-coded
 expert in six steps. At eight steps, all three arms were `0/1`; replay passed
-for all rows. This is stronger negative transfer evidence, not a promotion
-result.
+for all rows, but the receipt later proved to reference an empty candidate;
+it is retained as protocol/replay evidence only, not negative skill evidence.
 
 The follow-up [`r22 corrected real-candidate pilot`](experiments/results/alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json)
 closed a provenance defect: the r20/r21 receipts referenced an empty candidate
