@@ -1,0 +1,42 @@
+{
+  "schema_version": "frankengate-alfworld-trace-skill-intervention-r5-qwen-v1",
+  "study": "fair-horizon cross-model ALFWorld semantic comparison",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "archive_sha256": "a15b6c4eef2f86ccc39d082ecd2d99a9e022f92289f71f6367906909aa208c59",
+    "task_family_count": 4,
+    "task_families": ["look_at_obj_in_light", "pick_and_place_simple", "pick_clean_then_place_in_recep", "pick_heat_then_place_in_recep"],
+    "task_hashes": [
+      "8c79c8cd40907481f59933f4743a09063ccc2a4600113ca56aa17f7c23b34944",
+      "453f5330dd1fb27ee0a9b525af37524f1d8ea4c9489dd66c68ba8b31faa32da5",
+      "e318b564675a0771882055bd9a01adadf5963553195efbf2dce773737fcb8c3e",
+      "49cdb3fcbf886a316c5760c1b94a8d168cae29d88e9300e1f2a3dffd91d52600"
+    ]
+  },
+  "protocol": {
+    "candidate": "trace_mined_procedure_v2",
+    "controls": ["no_skill"],
+    "model": "qwen3:4b",
+    "harness": "ollama-native-api",
+    "episodes": 8,
+    "max_steps": 35,
+    "family_disjoint_task_paths_match_r3": true,
+    "expert_control_wins": 4,
+    "expert_steps": [7, 20, 8, 11],
+    "expert_horizon_covers_all_tasks": true,
+    "raw_receipt": "/private/tmp/alfworld-r5-qwen-four-families-35.json"
+  },
+  "aggregate": {
+    "qwen3:4b|ollama-native-api|no_skill": {"episodes": 4, "wins": 0, "win_rate": 0.0, "invalid_actions": 140, "mean_steps": 35.0, "mean_elapsed_ms": 32445.273},
+    "qwen3:4b|ollama-native-api|trace_mined_procedure_v2": {"episodes": 4, "wins": 0, "win_rate": 0.0, "invalid_actions": 105, "mean_steps": 35.0, "mean_elapsed_ms": 32575.93625}
+  },
+  "claim_boundary": {
+    "cross_model_semantic_comparison_executed": true,
+    "quality_comparison_valid": true,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "The independent hand-coded expert solved all four tasks within the 35-step budget, so the zero model wins are interpretable. This remains a small one-model/one-harness comparison and does not establish a general causal skill effect."
+  },
+  "raw_model_content_committed": false
+}

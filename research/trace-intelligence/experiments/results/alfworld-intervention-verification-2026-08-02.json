@@ -14,6 +14,13 @@
       "causal_skill_benefit_confirmed": false,
       "raw": "alfworld-r4-qwen-four-families.json",
       "receipt": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json"
+    },
+    {
+      "aggregate_keys_verified": 2,
+      "automatic_promotion_authorized": false,
+      "causal_skill_benefit_confirmed": false,
+      "raw": "alfworld-r5-qwen-four-families-35.json",
+      "receipt": "alfworld-trace-skill-intervention-r5-qwen-2026-08-02.json"
     }
   ],
   "raw_content_committed": false,

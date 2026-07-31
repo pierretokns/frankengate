@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v13"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v14"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -74,6 +74,7 @@ OPTIONAL_RESULTS = {
     "alfworld_skill_intervention_r3": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
     "alfworld_skill_intervention_r4_qwen": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
     "alfworld_intervention_verification": "alfworld-intervention-verification-2026-08-02.json",
+    "alfworld_skill_intervention_r5_qwen": "alfworld-trace-skill-intervention-r5-qwen-2026-08-02.json",
 }
 
 
@@ -156,6 +157,7 @@ def build_matrix(
     alfworld_skill_intervention_r3 = results.get("alfworld_skill_intervention_r3")
     alfworld_skill_intervention_r4_qwen = results.get("alfworld_skill_intervention_r4_qwen")
     alfworld_intervention_verification = results.get("alfworld_intervention_verification")
+    alfworld_skill_intervention_r5_qwen = results.get("alfworld_skill_intervention_r5_qwen")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -218,6 +220,10 @@ def build_matrix(
         "r4_qwen_candidate_invalid_actions": sum(v.get("invalid_actions", 0) for k, v in (alfworld_skill_intervention_r4_qwen.get("aggregate", {}) if alfworld_skill_intervention_r4_qwen else {}).items() if "trace_mined_procedure_v2" in k),
         "r4_qwen_quality_comparison_valid": bool(alfworld_skill_intervention_r4_qwen and alfworld_skill_intervention_r4_qwen.get("claim_boundary", {}).get("quality_comparison_valid", False)),
         "verifier_passed": bool(alfworld_intervention_verification and alfworld_intervention_verification.get("all_passed", False)),
+        "r5_qwen_episodes": alfworld_skill_intervention_r5_qwen.get("protocol", {}).get("episodes", 0) if alfworld_skill_intervention_r5_qwen else 0,
+        "r5_qwen_candidate_wins": sum(v.get("wins", 0) for k, v in (alfworld_skill_intervention_r5_qwen.get("aggregate", {}) if alfworld_skill_intervention_r5_qwen else {}).items() if "trace_mined_procedure_v2" in k),
+        "r5_qwen_candidate_invalid_actions": sum(v.get("invalid_actions", 0) for k, v in (alfworld_skill_intervention_r5_qwen.get("aggregate", {}) if alfworld_skill_intervention_r5_qwen else {}).items() if "trace_mined_procedure_v2" in k),
+        "r5_qwen_quality_comparison_valid": bool(alfworld_skill_intervention_r5_qwen and alfworld_skill_intervention_r5_qwen.get("claim_boundary", {}).get("quality_comparison_valid", False)),
     }
 
     trace_commons_attestation_passed = bool(
@@ -1028,6 +1034,10 @@ def build_matrix(
                 "alfworld_cross_model_r4_qwen_candidate_invalid_actions": revision_evidence["r4_qwen_candidate_invalid_actions"],
                 "alfworld_cross_model_r4_qwen_quality_comparison_valid": revision_evidence["r4_qwen_quality_comparison_valid"],
                 "alfworld_intervention_verifier_passed": revision_evidence["verifier_passed"],
+                "alfworld_cross_model_r5_qwen_episodes": revision_evidence["r5_qwen_episodes"],
+                "alfworld_cross_model_r5_qwen_candidate_wins": revision_evidence["r5_qwen_candidate_wins"],
+                "alfworld_cross_model_r5_qwen_candidate_invalid_actions": revision_evidence["r5_qwen_candidate_invalid_actions"],
+                "alfworld_cross_model_r5_qwen_quality_comparison_valid": revision_evidence["r5_qwen_quality_comparison_valid"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1352,6 +1362,9 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "comparison invalid, so this remains harness evidence rather than skill benefit.",
             f"- An independent projection verifier matched the committed r3/r4 aggregates to the external raw run summaries ({skill['alfworld_intervention_verifier_passed']}); "
             "it verifies receipt integrity and claim boundaries, not causal task success.",
+            f"- The fair-horizon Qwen3 4B replay added {skill['alfworld_cross_model_r5_qwen_episodes']} episodes with an expert-verified sufficient horizon. "
+            f"The candidate won {skill['alfworld_cross_model_r5_qwen_candidate_wins']} and emitted "
+            f"{skill['alfworld_cross_model_r5_qwen_candidate_invalid_actions']} invalid actions; semantic comparison was valid but causal promotion remains false.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "
