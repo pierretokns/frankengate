@@ -50,11 +50,41 @@ def _sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
-def _arm_prompt_addition(arm: str, require_schema_before_sql: bool) -> str:
+def _arm_prompt_addition(
+    arm: str,
+    require_schema_before_sql: bool,
+    trace_mined_text: str | None = None,
+) -> str:
     return (
         (SCHEMA_FIRST_CONTROLLER_PROMPT if require_schema_before_sql else "")
-        + ARM_ADDITIONS[arm]
+        + (
+            trace_mined_text
+            if arm == "trace_mined_terminal_discipline"
+            and trace_mined_text is not None
+            else ARM_ADDITIONS[arm]
+        )
     )
+
+
+def _load_trace_mined_candidate(
+    path: Path | None,
+) -> tuple[str | None, dict[str, Any]]:
+    if path is None:
+        return None, {}
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if value.get("candidate_class") != "trace_mined_hypothesis":
+        raise factorial.FactorialError("candidate artifact is not trace-mined")
+    text = value.get("candidate_text")
+    if not isinstance(text, str) or not text.strip():
+        raise factorial.FactorialError("candidate artifact has no text")
+    if value.get("candidate_text_sha256") != _sha256_text(text):
+        raise factorial.FactorialError("candidate artifact text hash mismatch")
+    return text, {
+        "artifact_sha256": _sha256_file(path),
+        "candidate_text_sha256": value["candidate_text_sha256"],
+        "source_raw_directory_digest": value.get("source_raw_directory_digest"),
+        "source_raw_file_count": value.get("source_raw_file_count"),
+    }
 
 
 def run_pilot(
@@ -77,6 +107,7 @@ def run_pilot(
     protocol_remediation_id: str = "frozen-default-v1",
     require_schema_before_sql: bool = False,
     inject_authorized_schema: bool = False,
+    trace_mined_candidate_file: Path | None = None,
 ) -> dict[str, Any]:
     factorial._require_external_raw_audit_dir(raw_audit_dir)
     if output.exists():
@@ -143,6 +174,9 @@ def run_pilot(
     receipts = []
     schema_catalog_prompt = ""
     schema_catalog_sha256 = ""
+    trace_mined_text, trace_mined_artifact = _load_trace_mined_candidate(
+        trace_mined_candidate_file
+    )
     try:
         for task in tasks:
             authority_receipt = authority_store.validate(
@@ -177,7 +211,9 @@ def run_pilot(
                     schema_catalog_sha256 = _sha256_text(schema_catalog_prompt)
                 factorial.ARM_PROMPTS[arm] = (
                     schema_catalog_prompt
-                    + _arm_prompt_addition(arm, require_schema_before_sql)
+                    + _arm_prompt_addition(
+                        arm, require_schema_before_sql, trace_mined_text
+                    )
                 )
                 receipts.append(
                     (task, authority_receipt, factorial.run_agent(
@@ -279,6 +315,7 @@ def run_pilot(
             ),
             "inject_authorized_schema": inject_authorized_schema,
             "schema_catalog_sha256": schema_catalog_sha256,
+            "trace_mined_candidate": trace_mined_artifact,
         },
         "authority": {
             "binding_sha256": sorted({receipt.binding_sha256 for receipt in authority_receipts}),
@@ -291,7 +328,9 @@ def run_pilot(
                 "classification": "baseline" if arm == "no_skill" else "placebo" if arm == "formatting_placebo" else "trace_mined_candidate",
                 "sha256": _sha256_text(
                     schema_catalog_prompt
-                    + _arm_prompt_addition(arm, require_schema_before_sql)
+                    + _arm_prompt_addition(
+                        arm, require_schema_before_sql, trace_mined_text
+                    )
                 ),
             }
             for arm in ARMS
@@ -340,6 +379,7 @@ def main() -> int:
     parser.add_argument("--protocol-remediation-id", default="frozen-default-v1")
     parser.add_argument("--require-schema-before-sql", action="store_true")
     parser.add_argument("--inject-authorized-schema", action="store_true")
+    parser.add_argument("--trace-mined-candidate-file", type=Path)
     args = parser.parse_args()
     result = run_pilot(
         source_root=args.source_root.resolve(strict=True),
@@ -360,6 +400,11 @@ def main() -> int:
         protocol_remediation_id=args.protocol_remediation_id,
         require_schema_before_sql=args.require_schema_before_sql,
         inject_authorized_schema=args.inject_authorized_schema,
+        trace_mined_candidate_file=(
+            args.trace_mined_candidate_file.resolve(strict=True)
+            if args.trace_mined_candidate_file is not None
+            else None
+        ),
     )
     print(json.dumps({"status": "ok", "arms": result["arms"], "causal_skill_benefit_established": False}, sort_keys=True))
     return 0

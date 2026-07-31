@@ -340,6 +340,13 @@ submitted one correct candidate (1/6). Independent semantic and raw-security
 verifiers passed. This is transfer evidence against automatic trace-mined
 promotion, but remains small and abstention-heavy.
 
+The candidate was then mined from the completed car raw audits rather than
+hand-supplied: the miner sealed an aggregate source digest and procedure hash,
+and the resulting artifact was injected into a fresh broker fold. The true
+train-on-car/test-on-broker trace-mined arm again scored 0/6, while no-skill
+scored 0/6 and the placebo 1/6; independent semantic and security verification
+passed. See [`trace-mined candidate transfer`](experiments/summaries/trace-mined-skill-candidate-car-to-broker-2026-08-02.md).
+
 A Qwen3 4B replication on the same broker fold was intentionally not scored:
 the loopback model produced 14/18 raw episode files before one request exceeded
 the practical wall-time budget, leaving one no-skill episode without a
