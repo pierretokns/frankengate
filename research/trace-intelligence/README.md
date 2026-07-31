@@ -109,6 +109,13 @@ requires frontmatter, and it contains a direct live skill write. These are
 typed nulls and source findings, not evidence that the mechanisms cannot work.
 No SKILL.md or MEMORY.md was activated or written.
 
+The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
+records the exact boundary for the requested CMU corpus: the pinned Hub
+revision is discoverable, but authenticated download is still approval-gated,
+the license is `NOASSERTION`, no raw files are local, and no trajectory-level
+metric is claimed. Public cohorts therefore remain the active empirical input;
+CMU admission is a tracked prerequisite rather than silently substituted data.
+
 Bulk raw corpora stay outside Git so revisions remain small and reproducible.
 Dataset manifests pin exact source revisions and adapters read explicit local
 paths. Frankengate's governed database may retain full internal trace content
