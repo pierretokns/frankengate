@@ -145,6 +145,14 @@ canonical governed fixtures, parses every aggregate result, checks that no raw c
 file is committed, and compiles the Python harness. It performs no network request,
 model call, database mutation, or dataset download.
 
+The latest pinned-environment audit ran 493 research tests with the checked-in
+`.venv` dependencies, plus 61 NL2SQL capability tests; all 61 capability tests
+passed and compilation/reproducibility passed. Two research tests remain
+environment-specific failures on this macOS host: Seatbelt execution returns
+exit 71 and empty stdout for the sandbox conformance commands. They do not
+indicate a trace-analysis result; Linux/container replay remains the required
+authority for that boundary.
+
 The governed Wisp target is intentionally separate because it mutates a disposable
 research schema and requires explicit private inputs:
 
