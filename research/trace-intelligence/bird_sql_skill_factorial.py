@@ -91,13 +91,14 @@ def choose_tasks(tasks: list[dict[str, Any]], heldout: list[str], per_family: in
 
 def run(*, tasks_path: Path, schema_dir: Path, gold_dir: Path, database_dir: Path,
         procedure_path: Path, heldout: list[str], per_family: int, model: str,
-        workdir: Path, timeout: float) -> dict[str, Any]:
+        workdir: Path, timeout: float, raw_output: Path | None = None) -> dict[str, Any]:
     tasks = [json.loads(line) for line in tasks_path.read_text(encoding="utf-8").splitlines() if line.strip()]
     selected = choose_tasks(tasks, heldout, per_family)
     procedure = procedure_path.read_text(encoding="utf-8")
     procedure_hash = sha256_text(procedure)
     connections: dict[str, Any] = {}
     rows: list[dict[str, Any]] = []
+    raw_rows: list[dict[str, Any]] = []
     aggregate: dict[str, Counter[str]] = {arm: Counter() for arm in ARMS}
     for task in selected:
         family = task["data"]["db_name"]
@@ -137,9 +138,15 @@ def run(*, tasks_path: Path, schema_dir: Path, gold_dir: Path, database_dir: Pat
                 "unordered": unordered,
                 "elapsed_ms": round(elapsed_ms, 3),
             })
+            raw_rows.append({
+                "arm": arm,
+                "family": family,
+                "task_hash": sha256_text(task["task_id"]),
+                "response": response,
+            })
     for connection in connections.values():
         connection.close()
-    return {
+    result = {
         "schema_version": "frankengate-bird-sql-skill-factorial-v1",
         "protocol": {
             "arms": list(ARMS),
@@ -150,6 +157,7 @@ def run(*, tasks_path: Path, schema_dir: Path, gold_dir: Path, database_dir: Pat
             "harness": "codex-cli-subscription",
             "procedure_sha256": procedure_hash,
             "gold_hidden_from_proposer": True,
+            "raw_output": str(raw_output) if raw_output else None,
         },
         "summary": {arm: dict(sorted(values.items())) for arm, values in aggregate.items()},
         "episodes": rows,
@@ -157,9 +165,13 @@ def run(*, tasks_path: Path, schema_dir: Path, gold_dir: Path, database_dir: Pat
             "independent_family_disjoint_run": True,
             "causal_skill_benefit_confirmed": False,
             "automatic_promotion_authorized": False,
-            "reason": "Six-task pilot; a powered gate requires at least 20 held-out tasks across four families and paired confidence intervals.",
+            "reason": "This run is an independent family-disjoint factorial; promotion still requires sealed verification, paired confidence intervals, and no unacceptable cost/reliability regression.",
         },
     }
+    if raw_output is not None:
+        raw_output.parent.mkdir(parents=True, exist_ok=True)
+        raw_output.write_text(json.dumps(raw_rows, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return result
 
 
 def main() -> int:
@@ -175,12 +187,14 @@ def main() -> int:
     parser.add_argument("--workdir", type=Path, default=Path("/tmp"))
     parser.add_argument("--timeout", type=float, default=180)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--raw-output", type=Path, default=None)
     args = parser.parse_args()
     result = run(
         tasks_path=args.tasks, schema_dir=args.schema_dir, gold_dir=args.gold_dir,
         database_dir=args.database_dir, procedure_path=args.procedure,
         heldout=args.heldout_family, per_family=args.tasks_per_family,
         model=args.model, workdir=args.workdir, timeout=args.timeout,
+        raw_output=args.raw_output,
     )
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(result["summary"], sort_keys=True))
