@@ -32,6 +32,7 @@ DEFAULT_INPUTS = (
     "experiments/results/defog-trace-mined-skill-heldout-car-schema-injected-2026-08-02.json",
     "experiments/results/defog-trace-mined-skill-heldout-car-repaired-2026-08-02.json",
     "experiments/results/defog-trace-mined-skill-heldout-car-schema-first-2026-08-02.json",
+    "experiments/results/defog-trace-mined-skill-family-broker-schema-injected-2026-08-02.json",
 )
 
 
@@ -220,7 +221,7 @@ def main() -> int:
         )
     lines += [
         "",
-        "The analysis does not pool protocol compliance with semantic correctness and does not authorize skill promotion. The causal claim remains unconfirmed until a larger family-disjoint, held-out semantic replay has independent security and outcome verification.",
+        "The analysis does not pool protocol compliance with semantic correctness and does not authorize skill promotion. The schema-injected car arm has independent security and outcome verification; the family-disjoint broker arm is also independently verified and ties the trace-mined candidate with no-skill at 0/6. The causal claim remains unconfirmed until a larger family-disjoint, held-out replay with sealed outcomes and independent verification.",
     ]
     args.summary.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps({"status": "ok", "study_count": len(studies), "missing_inputs": missing}, sort_keys=True))

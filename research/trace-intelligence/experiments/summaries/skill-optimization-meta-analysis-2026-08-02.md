@@ -1,6 +1,6 @@
 # Skill-optimization paired meta-analysis
 
-Analyzed `18` endpoint/study strata from committed aggregate receipts; raw model and trace content was not read.
+Analyzed `20` endpoint/study strata from committed aggregate receipts; raw model and trace content was not read.
 
 | receipt | class | endpoint | tasks | baseline | candidate | risk difference | exact McNemar p | bootstrap 95% CI |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
@@ -22,5 +22,7 @@ Analyzed `18` endpoint/study strata from committed aggregate receipts; raw model
 | `experiments/results/defog-trace-mined-skill-heldout-car-repaired-2026-08-02.json` | trace_mined_candidate | semantic | 6 | 0 | 0 | 0.0 | 1.0 | [0.0, 0.0] |
 | `experiments/results/defog-trace-mined-skill-heldout-car-schema-first-2026-08-02.json` | trace_mined_candidate | protocol | 6 | 0 | 0 | 0.0 | 1.0 | [0.0, 0.0] |
 | `experiments/results/defog-trace-mined-skill-heldout-car-schema-first-2026-08-02.json` | trace_mined_candidate | semantic | 6 | 0 | 0 | 0.0 | 1.0 | [0.0, 0.0] |
+| `experiments/results/defog-trace-mined-skill-family-broker-schema-injected-2026-08-02.json` | trace_mined_candidate | protocol | 6 | 0 | 0 | 0.0 | 1.0 | [0.0, 0.0] |
+| `experiments/results/defog-trace-mined-skill-family-broker-schema-injected-2026-08-02.json` | trace_mined_candidate | semantic | 6 | 0 | 0 | 0.0 | 1.0 | [0.0, 0.0] |
 
-The analysis does not pool protocol compliance with semantic correctness and does not authorize skill promotion. The schema-injected six-task semantic arm has independent security and outcome verification, but the causal claim remains unconfirmed until a larger family-disjoint, held-out replay with sealed outcomes and independent verification.
+The analysis does not pool protocol compliance with semantic correctness and does not authorize skill promotion. The schema-injected car arm has independent security and outcome verification; the family-disjoint broker arm is also independently verified and ties the trace-mined candidate with no-skill at 0/6. The causal claim remains unconfirmed until a larger family-disjoint, held-out replay with sealed outcomes and independent verification.

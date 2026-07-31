@@ -15,7 +15,7 @@ The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
 The latest targeted Defog/research suite passed 66 tests (3 skipped); offline reproducibility now
-validates 112 aggregate results, 44 manifests, 12 governed fixtures, and zero
+validates 115 aggregate results, 44 manifests, 12 governed fixtures, and zero
 committed raw corpus files. The full locked-suite count remains the historical
 506-test checkpoint recorded separately.
 
@@ -52,3 +52,9 @@ was independently recomputed: all three arms tied at 1/6 correct, with four
 abstentions each and zero verifier mismatches. This removes the earlier
 schema-navigation confound from the comparison but does not establish a
 causal trace-mined skill benefit.
+
+The six-task family-disjoint broker replay then produced 0/6 submitted
+candidates for both no-skill and trace-mined arms, versus one correct placebo
+candidate. Independent security and semantic verification passed; this is
+transfer evidence against automatic trace-mined promotion, not a causal
+enterprise estimate.

@@ -333,6 +333,13 @@ schema-first instruction alone produced the same zero-schema-call null
 The paired meta-analysis includes both nulls and the schema-injected semantic
 tie; it now covers 18 endpoint/study strata and still authorizes no promotion.
 
+The subsequent [`family-disjoint broker replay`](experiments/summaries/defog-trace-mined-skill-family-broker-schema-injected-2026-08-02.md)
+used six previously unused broker tasks under the same schema-injected
+protocol. No-skill and trace-mined arms submitted 0/6 candidates; the placebo
+submitted one correct candidate (1/6). Independent semantic and raw-security
+verifiers passed. This is transfer evidence against automatic trace-mined
+promotion, but remains small and abstention-heavy.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,
