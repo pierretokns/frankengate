@@ -100,6 +100,15 @@ pgContext, TurboVec, and Turbopuffer are explicit nulls rather than invented
 scores. Promotion requires same-corpus relevance, pre-ranking authorization,
 deletion closure, latency, and cost evidence.
 
+The [`skill-learning faithful preflight`](experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md)
+audits pinned Hermes Self-Evolution, GEPA/gskill, ReasoningBank, and
+Trace2Skill implementations. It finds no executable natural-trace candidate
+generation plus held-out outcome path in this checkout. Hermes also has a
+source-contract mismatch: it extracts body-only skill text while the validator
+requires frontmatter, and it contains a direct live skill write. These are
+typed nulls and source findings, not evidence that the mechanisms cannot work.
+No SKILL.md or MEMORY.md was activated or written.
+
 Bulk raw corpora stay outside Git so revisions remain small and reproducible.
 Dataset manifests pin exact source revisions and adapters read explicit local
 paths. Frankengate's governed database may retain full internal trace content
