@@ -42,9 +42,15 @@ larger paired cohort and a task horizon that tests whether a mined procedure
 improves repair, clarification, and multi-step execution rather than only one
 SQL emission.
 
+The paired exact-match comparison is also recorded separately: the mined arm
+had zero wins and zero losses against no skill, and zero wins versus one loss
+against the formatting placebo. These are descriptive paired outcomes, not a
+claim of general causal effect.
+
 Artifacts:
 
 - Aggregate receipt: `../results/bird-sql-skill-factorial-powered-2026-07-31.json`
 - Independent verification: `../results/bird-sql-skill-factorial-powered-verification-2026-07-31.json`
+- Paired analysis: `../results/bird-sql-skill-factorial-powered-paired-2026-07-31.json`
 - Raw responses remain at the local sealed path used by the run and are not
   committed.
