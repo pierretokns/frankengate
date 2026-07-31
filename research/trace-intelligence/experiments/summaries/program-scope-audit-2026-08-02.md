@@ -24,7 +24,7 @@ Open gate: No mechanism has a powered causal lift with independent later-task la
 
 Exercise a local Aurora-like governed stack with PostgreSQL, RLS, vectors, deletion, and tool/eval release controls.
 
-Open gate: Managed Aurora semantics, PITR, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion and RLS mechanics are measured separately.
+Open gate: Managed Aurora semantics, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion, RLS, and WAL/PITR mechanics are measured separately.
 
 ## `cmu_and_enterprise_outcomes` — cmu_approval_gated; enterprise_outcomes_unmeasured
 

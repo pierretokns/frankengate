@@ -71,6 +71,7 @@ REQUIRED_RESULTS = {
 }
 OPTIONAL_RESULTS = {
     "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
+    "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
     "alfworld_skill_intervention_r3": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
     "alfworld_skill_intervention_r4_qwen": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
@@ -184,6 +185,7 @@ def build_matrix(
     alfworld_family_disjoint_powered_r12_semantic_verification = results.get("alfworld_family_disjoint_powered_r12_semantic_verification")
     alfworld_family_disjoint_powered_r10_qwen_incomplete = results.get("alfworld_family_disjoint_powered_r10_qwen_incomplete")
     aurora_like_replication_lab = results.get("aurora_like_replication_lab")
+    postgres_pitr_lab = results.get("postgres_pitr_lab")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -775,6 +777,25 @@ def build_matrix(
                     aurora_like_replication_lab
                     and aurora_like_replication_lab.get("claim_boundary", {}).get(
                         "managed_aurora_behavior_proven", False
+                    )
+                ),
+                "local_pitr_lab_executed": bool(postgres_pitr_lab),
+                "local_pitr_mechanics_proven": bool(
+                    postgres_pitr_lab
+                    and postgres_pitr_lab.get("claim_boundary", {}).get(
+                        "local_postgresql_pitr_mechanics_proven", False
+                    )
+                ),
+                "local_pitr_target_excluded_marker": bool(
+                    postgres_pitr_lab
+                    and postgres_pitr_lab.get("pitr", {}).get(
+                        "target_excluded_after_marker", False
+                    )
+                ),
+                "managed_aurora_pitr_proven": bool(
+                    postgres_pitr_lab
+                    and postgres_pitr_lab.get("claim_boundary", {}).get(
+                        "managed_aurora_pitr_proven", False
                     )
                 ),
             },

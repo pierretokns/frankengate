@@ -917,6 +917,13 @@ unexecuted.
 The machine-readable result is
 [`experiments/results/aurora-like-replication-lab-2026-08-02.json`](experiments/results/aurora-like-replication-lab-2026-08-02.json).
 
+The separate [`postgres_pitr_lab.py`](postgres_pitr_lab.py) receipt also
+completed a local WAL recovery-target check: seven archive files were seen and
+a marker written after the named restore point was absent after recovery. This
+closes local PostgreSQL PITR mechanics only; managed Aurora backup retention,
+cross-region restore, and RDS operational guarantees remain unmeasured. See
+[`experiments/results/postgres-pitr-lab-2026-08-02.json`](experiments/results/postgres-pitr-lab-2026-08-02.json).
+
 ## E2 same-work retrieval factorial
 
 `e2_authorized_retrieval_factorial.py` evaluates a frozen trace-to-trace

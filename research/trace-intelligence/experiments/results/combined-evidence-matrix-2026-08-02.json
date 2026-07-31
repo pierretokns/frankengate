@@ -237,6 +237,12 @@
       "schema_version": "frankengate-otel-collector-roundtrip-v1",
       "sha256": "9c6d0565227e783b1ef2089842112e0cff7828e95897d33b766ed2d030b18729"
     },
+    "postgres_pitr_lab": {
+      "filename": "postgres-pitr-lab-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-local-postgres-pitr-lab-v1",
+      "sha256": "17af9e9b11ef19e945bec8597e4be0a3bfc531d45cfd3f327f9b8df878a05a72"
+    },
     "projection": {
       "filename": "canonical-projection-e0-conformance-2026-07-30.json",
       "schema_version": "canonical-projection-e0-conformance-result-v1",
@@ -429,11 +435,15 @@
         "joint_local_postgres_gate_passed": true,
         "lifecycle_oracles_passed": true,
         "local_failover_promotion_ms": 309.056,
+        "local_pitr_lab_executed": true,
+        "local_pitr_mechanics_proven": true,
+        "local_pitr_target_excluded_marker": true,
         "local_replica_marker_propagation_ms": 293.694,
         "local_replication_lab_executed": true,
         "local_replication_mechanics_proven": true,
         "local_rls_isolation_verified": true,
         "managed_aurora_behavior_proven": false,
+        "managed_aurora_pitr_proven": false,
         "post_rollback_visible_rows": 0,
         "postgres_exact_pgvector_p50_ms": 3.016834,
         "postgres_exact_pgvector_recall_at_20": 0.6666666666666666,
@@ -617,6 +627,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "56e22370905b7ab2035f888b155b9c683817f0da0c3374d88cac97ac88f61576",
+  "result_sha256": "fa2e4fe97e880a13b0747e87cc83d8f8ece720f57a916d0910c9ac6680a74c47",
   "schema_version": "frankengate-combined-evidence-matrix-v18"
 }

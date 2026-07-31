@@ -2,7 +2,7 @@ PYTHON ?= python3
 PYTHONPYCACHEPREFIX ?= /private/tmp/frankengate-trace-intelligence-pycache
 QWEN3_EMBEDDING_DEVICE ?= cpu
 
-.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory longitudinal-memory-expansion longitudinal-memory-local-model longitudinal-memory-local-finalize memory-h5-concurrency aurora-like-replication e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
+.PHONY: verify test validate compile governed-wisp otel-roundtrip history-discovery trace-memory longitudinal-memory-expansion longitudinal-memory-local-model longitudinal-memory-local-finalize memory-h5-concurrency aurora-like-replication postgres-pitr e2-retrieval e2-postgres-joint defog-sql-conformance defog-sql-design defog-sql-mechanics nl2sql-postgres-role-audit nl2sql-linux-oci-conformance
 
 verify: test validate compile
 
@@ -232,6 +232,12 @@ memory-h5-concurrency:
 aurora-like-replication:
 	$(PYTHON) aurora_like_replication_lab.py \
 		--output experiments/results/aurora-like-replication-lab-2026-08-02.json
+
+# Runs a disposable PostgreSQL WAL archive/recovery-target experiment. This is
+# local PITR mechanics only, not managed Aurora backup or restore evidence.
+postgres-pitr:
+	$(PYTHON) postgres_pitr_lab.py \
+		--output experiments/results/postgres-pitr-lab-2026-08-02.json
 
 # Runs the frozen raw CodeTraceBench E2 quality factorial. The archive root and
 # embedding snapshot are intentionally external to Git. PostgreSQL RLS evidence
