@@ -99,6 +99,11 @@
       "schema_version": "mast-multiagent-empirical-result-v1",
       "sha256": "1433bd56431176dd91cfd732c4a0c299690dfa44346137516d24c2d33cfdee7c"
     },
+    "matm_skill_retrieval": {
+      "filename": "matm-trace-skill-retrieval-2026-08-02.json",
+      "schema_version": "frankengate-matm-trace-skill-retrieval.v1",
+      "sha256": "360003c8957b33273d65ed03dffa45fd3b4696209cafc6f86056de54859c3f6c"
+    },
     "memory_conformance": {
       "filename": "bitemporal-memory-conformance-2026-07-30.json",
       "schema_version": "bitemporal-memory-conformance-result-v1",
@@ -356,7 +361,7 @@
       "status": "real_trace_transition_partial_pass"
     },
     "L6_procedural_replay": {
-      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. The offline MATM leave-one-model-out arm gives a 0.067 top-10 recommendation lift (95% CI -0.020 to 0.166) but a -0.056 mean AUC contrast (95% CI -0.112 to 0.002); this is predictive evidence only, not changed-agent skill benefit. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
       "evidence": {
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
@@ -371,6 +376,22 @@
         "governed_release_assertions_failed": 0,
         "governed_release_assertions_passed": 18,
         "hidden_test_boundary_passed": true,
+        "matm_all_neighbor_top10_rate": 0.6806722689075632,
+        "matm_causal_skill_benefit_confirmed": false,
+        "matm_offline_predictive_transfer_measured": true,
+        "matm_skill_retrieval_model_folds": 34,
+        "matm_skill_retrieval_rows": 2130,
+        "matm_successful_neighbor_auc_lift": -0.055740378738362746,
+        "matm_successful_neighbor_auc_lift_ci95": [
+          -0.11190932395096881,
+          0.0015199687228194907
+        ],
+        "matm_successful_neighbor_top10_lift": 0.0665266106442577,
+        "matm_successful_neighbor_top10_lift_ci95": [
+          -0.01960784313725489,
+          0.16596638655462187
+        ],
+        "matm_successful_neighbor_top10_rate": 0.7471988795518207,
         "security_violation_veto_passed": true,
         "share_codex_recovery_review_candidates": 31,
         "skill_cross_harness_same_fixture_compared": true,
@@ -421,6 +442,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "2b3ff603231c1732544150e98a48ec625120e78fc101d9f47efda29c633a7643",
-  "schema_version": "frankengate-combined-evidence-matrix-v8"
+  "result_sha256": "b22f2cb7b75da92bd8f8a66122b43b9d185431586e323191726403079321bba8",
+  "schema_version": "frankengate-combined-evidence-matrix-v9"
 }

@@ -220,6 +220,13 @@ availability, not memory utility: the mechanisms were observationally
 indistinguishable on current-state reads, and Dream/procedure release arms had
 no independently released natural artifacts to evaluate.
 
+The [`MATM outcome-conditioned procedure retrieval study`](experiments/summaries/matm-trace-skill-retrieval-2026-08-02.md)
+adds an offline outcome-labeled transfer arm: 2,130 ALFWorld trajectories
+across 34 leave-one-model-out folds. Successful-trace recommendations improved
+top-10% success precision by 0.067 over all-trace neighbors, but the mean AUC
+contrast was -0.056 and both bootstrap intervals crossed zero. This is useful
+recommendation signal, not evidence that a changed agent performs better.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

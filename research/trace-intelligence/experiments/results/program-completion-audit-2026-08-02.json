@@ -4,6 +4,19 @@
   "supersedes": "experiments/results/program-completion-audit-2026-08-01.json",
   "overall_status": "active_incomplete",
   "checkpoint": {
+    "matm_skill_retrieval": {
+      "summary": "experiments/summaries/matm-trace-skill-retrieval-2026-08-02.md",
+      "status": "offline_predictive_transfer_signal_no_causal_intervention",
+      "rows": 2130,
+      "held_out_model_folds": 34,
+      "successful_neighbor_top10_rate": 0.7471988795518207,
+      "all_neighbor_top10_rate": 0.6806722689075632,
+      "top10_lift": 0.0665266106442577,
+      "top10_lift_ci95": [-0.01960784313725489, 0.16596638655462187],
+      "auc_lift": -0.055740378738362746,
+      "auc_lift_ci95": [-0.11190932395096881, 0.0015199687228194907],
+      "causal_skill_benefit_confirmed": false
+    },
     "gepa_protocol": {
       "summary": "experiments/summaries/gepa-native-tool-protocol-2026-08-02.md",
       "status": "optimizer_plumbing_pass_no_protocol_lift",
@@ -26,7 +39,7 @@
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-      "schema_version": "frankengate-combined-evidence-matrix-v8",
+      "schema_version": "frankengate-combined-evidence-matrix-v9",
       "causal_skill_benefit_confirmed": false,
       "memory_utility_confirmed": false,
       "aurora_scale_confirmed": false,

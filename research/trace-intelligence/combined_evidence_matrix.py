@@ -15,10 +15,11 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v8"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v9"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
+    "matm_skill_retrieval": "matm-trace-skill-retrieval-2026-08-02.json",
     "codetracebench": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
     "codetracebench_raw": "codetracebench-raw-e3-e4-factorial-2026-07-30.json",
     "mast": "mast_multiagent_empirical-2026-07-30.json",
@@ -124,6 +125,7 @@ def build_matrix(
 ) -> dict[str, Any]:
     projection = results["projection"]
     atif_rl_roundtrip = results["atif_rl_roundtrip"]
+    matm_skill_retrieval = results["matm_skill_retrieval"]
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -887,6 +889,58 @@ def build_matrix(
                     "claim_boundary",
                     "enterprise_skill_benefit_confirmed",
                 ),
+                "matm_skill_retrieval_rows": _require(
+                    matm_skill_retrieval, "dataset", "rows"
+                ),
+                "matm_skill_retrieval_model_folds": _require(
+                    matm_skill_retrieval, "protocol", "held_out_models"
+                ),
+                "matm_successful_neighbor_top10_rate": _require(
+                    matm_skill_retrieval,
+                    "aggregate",
+                    "successful_trace_neighbor",
+                    "top_10_percent_success_rate",
+                ),
+                "matm_all_neighbor_top10_rate": _require(
+                    matm_skill_retrieval,
+                    "aggregate",
+                    "all_trace_neighbor",
+                    "top_10_percent_success_rate",
+                ),
+                "matm_successful_neighbor_top10_lift": _require(
+                    matm_skill_retrieval,
+                    "aggregate",
+                    "contrast",
+                    "successful_minus_all_top_10_percent_success_rate_mean",
+                ),
+                "matm_successful_neighbor_top10_lift_ci95": _require(
+                    matm_skill_retrieval,
+                    "aggregate",
+                    "contrast",
+                    "successful_minus_all_top_10_percent_success_rate_ci95",
+                ),
+                "matm_successful_neighbor_auc_lift": _require(
+                    matm_skill_retrieval,
+                    "aggregate",
+                    "contrast",
+                    "successful_minus_all_auc_mean",
+                ),
+                "matm_successful_neighbor_auc_lift_ci95": _require(
+                    matm_skill_retrieval,
+                    "aggregate",
+                    "contrast",
+                    "successful_minus_all_auc_ci95",
+                ),
+                "matm_offline_predictive_transfer_measured": _require(
+                    matm_skill_retrieval,
+                    "claim_boundary",
+                    "offline_predictive_transfer_measured",
+                ),
+                "matm_causal_skill_benefit_confirmed": _require(
+                    matm_skill_retrieval,
+                    "claim_boundary",
+                    "causal_skill_benefit_confirmed",
+                ),
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -899,7 +953,13 @@ def build_matrix(
                 "promotion is authorized. GEPA v0.1.4 executed 11 metric calls "
                 "on a train/holdout protocol split and retained the empty seed "
                 "at 2/3 holdout matches, so the optimizer arm produced no lift. "
-                "Run the preregistered 60–120 task "
+                f"The offline MATM leave-one-model-out arm gives a "
+                f"{matm_skill_retrieval['aggregate']['contrast']['successful_minus_all_top_10_percent_success_rate_mean']:.3f} "
+                "top-10 recommendation lift (95% CI -0.020 to 0.166) but a "
+                f"{matm_skill_retrieval['aggregate']['contrast']['successful_minus_all_auc_mean']:.3f} "
+                "mean AUC contrast (95% CI -0.112 to 0.002); this is predictive "
+                "evidence only, not changed-agent skill benefit. Run the "
+                "preregistered 60–120 task "
                 "schema-family-held-out NL2SQL experiment before releasing any "
                 "learned procedure"
             ),
@@ -1181,6 +1241,15 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"candidate matched the empty seed at {skill['gepa_selected_holdout_match_rate']:.3f} "
             "on holdout, so this optimizer arm produced no protocol lift and "
             "does not support automatic skill promotion.",
+            f"- The MATM outcome-conditioned successful-neighbor arm covered "
+            f"{skill['matm_skill_retrieval_rows']} rows across "
+            f"{skill['matm_skill_retrieval_model_folds']} held-out model folds. "
+            f"Its top-10 recommendation rate was {skill['matm_successful_neighbor_top10_rate']:.3f} "
+            f"versus {skill['matm_all_neighbor_top10_rate']:.3f} for all-trace neighbors "
+            f"(lift {skill['matm_successful_neighbor_top10_lift']:.3f}), but mean AUC "
+            f"fell by {abs(skill['matm_successful_neighbor_auc_lift']):.3f}; the "
+            "bootstrap intervals cross zero, so this is promising recommendation "
+            "signal rather than causal skill evidence.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "

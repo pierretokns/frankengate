@@ -83,6 +83,25 @@ def inputs():
                 },
             },
         },
+        "matm_skill_retrieval": {
+            "schema_version": "frankengate-matm-trace-skill-retrieval.v1",
+            "dataset": {"rows": 2130},
+            "protocol": {"held_out_models": 34},
+            "aggregate": {
+                "all_trace_neighbor": {"top_10_percent_success_rate": 0.681},
+                "successful_trace_neighbor": {"top_10_percent_success_rate": 0.747},
+                "contrast": {
+                    "successful_minus_all_top_10_percent_success_rate_mean": 0.067,
+                    "successful_minus_all_top_10_percent_success_rate_ci95": [-0.02, 0.166],
+                    "successful_minus_all_auc_mean": -0.056,
+                    "successful_minus_all_auc_ci95": [-0.112, 0.002],
+                },
+            },
+            "claim_boundary": {
+                "offline_predictive_transfer_measured": True,
+                "causal_skill_benefit_confirmed": False,
+            },
+        },
         "codetracebench": {
             "schema_version": "codetrace",
             "split_audit": {"verified_counts": {"test": 100}},
@@ -539,6 +558,11 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
         self.assertEqual(2 / 3, skill["gepa_selected_holdout_match_rate"])
         self.assertEqual(11, skill["gepa_metric_calls"])
         self.assertFalse(skill["gepa_enterprise_skill_benefit_confirmed"])
+        self.assertEqual(2130, skill["matm_skill_retrieval_rows"])
+        self.assertEqual(34, skill["matm_skill_retrieval_model_folds"])
+        self.assertAlmostEqual(0.067, skill["matm_successful_neighbor_top10_lift"])
+        self.assertAlmostEqual(-0.056, skill["matm_successful_neighbor_auc_lift"])
+        self.assertFalse(skill["matm_causal_skill_benefit_confirmed"])
 
     def test_level_two_threshold_is_not_redefined_by_observed_result(self):
         source = inputs()
