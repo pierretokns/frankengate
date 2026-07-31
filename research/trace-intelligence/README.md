@@ -161,7 +161,20 @@ against DeepSeek, GLM, Codex, and Gemini same-task outcomes. Three of four
 available transcripts satisfied every predicate, including both timeout runs;
 Codex succeeded while missing a Claude-specific predicate, and Gemini had no
 transcript. This is a useful negative transfer diagnostic, not evidence of
-optimization. The candidate intervention remains unrun.
+optimization. The local synthetic intervention is a separate protocol-only
+null; domain-valid candidate replay remains open.
+
+The [`local natural-trace skill protocol intervention`](experiments/summaries/natural-trace-skill-protocol-intervention-2026-07-30.md)
+is the first real model arm: Ollama `llama3.2:latest`, six paired synthetic
+episodes, no-skill versus formatting placebo versus trace-mined terminal
+discipline. All three arms matched 3/6 and had 3/6 text-without-terminal
+failures. This confirms the real tool-loop path, but is not SQL quality or
+enterprise skill benefit.
+
+The [`Ollama Llama 3.2 native-tool control`](experiments/summaries/native-tool-protocol-ollama-llama32-2026-07-30.md)
+adds an independent local model control: 18 episodes across three protocol
+variants, each at 3/6 terminal matches. A Qwen3 4B attempt timed out under the
+endpoint's reasoning behavior and is retained only as a typed null.
 
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
@@ -201,7 +214,7 @@ model call, database mutation, or dataset download.
 
 The latest pinned audit (`uv run --frozen make verify`) ran 497 research tests
 with 13 explicit environment skips and no failures, plus 61/61 NL2SQL
-capability tests. It validated 81 aggregate results, 44 dataset manifests, 12
+capability tests. It validated 83 aggregate results, 44 dataset manifests, 12
 governed fixtures, zero committed raw corpus files, and Python compilation.
 The Seatbelt skips are host-runtime gates; Linux/container replay remains the
 required authority for sandbox execution. The separate no-install host audit

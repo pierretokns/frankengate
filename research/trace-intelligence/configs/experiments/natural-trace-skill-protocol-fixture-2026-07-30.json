@@ -1,0 +1,40 @@
+{
+  "schema_version": "frankengate-native-tool-protocol-fixture-v1",
+  "experiment_id": "natural-trace-skill-protocol-2026-07-30",
+  "claim_scope": "native_tool_protocol_compliance_only",
+  "claim_exclusions": [
+    "sql_quality",
+    "semantic_correctness",
+    "benchmark_performance",
+    "enterprise_task_generalization",
+    "natural_trace_skill_effect",
+    "long_term_skill_learning"
+  ],
+  "fixture_kind": "synthetic_content_free_skill_intervention",
+  "benchmark_content_used": false,
+  "raw_model_content_committed": false,
+  "tool_contract": {
+    "source": "defog_sql_factorial_contract.TOOLS",
+    "reuse_scope": "native function names and JSON schemas only"
+  },
+  "limits": {
+    "max_model_turns": 6,
+    "max_schema_calls": 1,
+    "max_sql_attempts": 2,
+    "max_generated_tokens_per_call": 256,
+    "model_wall_seconds": 120
+  },
+  "variants": [
+    {"id": "no_skill", "classification": "baseline"},
+    {"id": "formatting_placebo", "classification": "placebo"},
+    {"id": "trace_mined_terminal_discipline", "classification": "trace_mined_candidate"}
+  ],
+  "episodes": [
+    {"fixture_id": "synthetic-submit-01", "executor_mode": "success", "expected_terminal_action": "submit", "seed": 510001, "variant_order": ["no_skill", "formatting_placebo", "trace_mined_terminal_discipline"]},
+    {"fixture_id": "synthetic-abstain-01", "executor_mode": "deny", "expected_terminal_action": "abstain", "seed": 510002, "variant_order": ["formatting_placebo", "trace_mined_terminal_discipline", "no_skill"]},
+    {"fixture_id": "synthetic-submit-02", "executor_mode": "success", "expected_terminal_action": "submit", "seed": 510003, "variant_order": ["trace_mined_terminal_discipline", "no_skill", "formatting_placebo"]},
+    {"fixture_id": "synthetic-abstain-02", "executor_mode": "deny", "expected_terminal_action": "abstain", "seed": 510004, "variant_order": ["no_skill", "formatting_placebo", "trace_mined_terminal_discipline"]},
+    {"fixture_id": "synthetic-submit-03", "executor_mode": "success", "expected_terminal_action": "submit", "seed": 510005, "variant_order": ["formatting_placebo", "trace_mined_terminal_discipline", "no_skill"]},
+    {"fixture_id": "synthetic-abstain-03", "executor_mode": "deny", "expected_terminal_action": "abstain", "seed": 510006, "variant_order": ["trace_mined_terminal_discipline", "no_skill", "formatting_placebo"]}
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "frankengate-native-tool-protocol-external-receipt-v1",
+  "source_experiment": "native-tool-protocol-compliance-2026-07-30",
+  "source_fixture": "experiments/manifests/native-tool-protocol-compliance-2026-07-30.json",
+  "model": {
+    "provider": "ollama",
+    "request_model_id": "llama3.2:latest",
+    "endpoint_scope": "loopback-only",
+    "runtime_receipt": "external-ollama-local-2026-07-30"
+  },
+  "source_aggregate_sha256": "0780af16a156499be7ffdbdc866fd6a947d3bb87cff4e8c99b082407f49724ad",
+  "raw_audit_policy": "external_jsonl_only; raw model/tool records are not committed",
+  "variant_results": {
+    "always_all_tools": {"episodes": 6, "expected_terminal_match_count": 3, "expected_terminal_match_rate": 0.5, "terminal_failure_count": 3, "terminal_failure_rate": 0.5, "terminal_failure_codes": {"text_without_terminal_tool": 3}, "native_tool_calls": 18},
+    "remaining_budget_annotations": {"episodes": 6, "expected_terminal_match_count": 3, "expected_terminal_match_rate": 0.5, "terminal_failure_count": 3, "terminal_failure_rate": 0.5, "terminal_failure_codes": {"text_without_terminal_tool": 3}, "native_tool_calls": 18},
+    "terminal_only_after_sql_budget": {"episodes": 6, "expected_terminal_match_count": 3, "expected_terminal_match_rate": 0.5, "terminal_failure_count": 3, "terminal_failure_rate": 0.5, "terminal_failure_codes": {"text_without_terminal_tool": 3}, "native_tool_calls": 18}
+  },
+  "claim_boundary": {
+    "real_model_tool_loop_executed": true,
+    "protocol_compliance_only": true,
+    "skill_benefit_established": false,
+    "sql_quality_established": false,
+    "enterprise_generalization_established": false
+  }
+}
