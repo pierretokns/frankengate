@@ -1,0 +1,40 @@
+{
+  "schema_version": "frankengate-alfworld-trace-skill-intervention-r4-qwen-v1",
+  "study": "bounded cross-model ALFWorld harness probe",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "archive_sha256": "a15b6c4eef2f86ccc39d082ecd2d99a9e022f92289f71f6367906909aa208c59",
+    "task_family_count": 4,
+    "task_families": ["look_at_obj_in_light", "pick_and_place_simple", "pick_clean_then_place_in_recep", "pick_heat_then_place_in_recep"],
+    "task_hashes": [
+      "8c79c8cd40907481f59933f4743a09063ccc2a4600113ca56aa17f7c23b34944",
+      "453f5330dd1fb27ee0a9b525af37524f1d8ea4c9489dd66c68ba8b31faa32da5",
+      "e318b564675a0771882055bd9a01adadf5963553195efbf2dce773737fcb8c3e",
+      "49cdb3fcbf886a316c5760c1b94a8d168cae29d88e9300e1f2a3dffd91d52600"
+    ]
+  },
+  "protocol": {
+    "candidate": "trace_mined_procedure_v2",
+    "controls": ["no_skill"],
+    "model": "qwen3:4b",
+    "harness": "ollama-native-api",
+    "episodes": 8,
+    "max_steps": 12,
+    "runtime_probe": true,
+    "family_disjoint_task_paths_match_r3": true,
+    "raw_receipt": "/private/tmp/alfworld-r4-qwen-four-families.json"
+  },
+  "aggregate": {
+    "qwen3:4b|ollama-native-api|no_skill": {"episodes": 4, "wins": 0, "win_rate": 0.0, "invalid_actions": 48, "mean_steps": 12.0, "mean_elapsed_ms": 11624.92625},
+    "qwen3:4b|ollama-native-api|trace_mined_procedure_v2": {"episodes": 4, "wins": 0, "win_rate": 0.0, "invalid_actions": 36, "mean_steps": 12.0, "mean_elapsed_ms": 11389.36425}
+  },
+  "claim_boundary": {
+    "cross_model_runtime_probe_executed": true,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "quality_comparison_valid": false,
+    "reason": "The revised candidate reduced invalid actions in this Qwen probe, but the 12-step cap is below the expert solution length for several families; all arms had zero wins. Treat this as harness/model protocol evidence, not semantic skill lift."
+  },
+  "raw_model_content_committed": false
+}

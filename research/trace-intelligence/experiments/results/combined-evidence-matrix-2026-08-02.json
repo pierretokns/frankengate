@@ -76,6 +76,12 @@
       "schema_version": "frankengate-alfworld-trace-skill-intervention-r3-v1",
       "sha256": "cb9c70665a0632144a4a833b08f26f4b48b9bcf42c87d30b2b75c33fd30f9898"
     },
+    "alfworld_skill_intervention_r4_qwen": {
+      "filename": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-r4-qwen-v1",
+      "sha256": "ea1c225d0eda9b1555531f8c69010a941bffc0487151e196fd1710fd5518d847"
+    },
     "atif_rl_roundtrip": {
       "filename": "atif-rl-roundtrip-2026-07-30.json",
       "schema_version": "atif-rl-roundtrip-result-v1",
@@ -383,6 +389,10 @@
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
         "alfworld_causal_skill_benefit_confirmed": false,
+        "alfworld_cross_model_r4_qwen_candidate_invalid_actions": 36,
+        "alfworld_cross_model_r4_qwen_candidate_wins": 0,
+        "alfworld_cross_model_r4_qwen_episodes": 8,
+        "alfworld_cross_model_r4_qwen_quality_comparison_valid": false,
         "alfworld_expert_control_wins": 2,
         "alfworld_family_disjoint_r3_candidate_invalid_actions": 168,
         "alfworld_family_disjoint_r3_candidate_wins": 0,
@@ -479,6 +489,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "074ff5c50f02c1181078de7367d4e1a0e616144f98d35469fb74b58f14112cf8",
-  "schema_version": "frankengate-combined-evidence-matrix-v11"
+  "result_sha256": "1a8a3c508982c2532d0da11672b5aa2b6e89fe52bd03fbf622541821c7287162",
+  "schema_version": "frankengate-combined-evidence-matrix-v12"
 }

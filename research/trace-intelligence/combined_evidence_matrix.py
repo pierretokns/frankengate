@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v11"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v12"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -72,6 +72,7 @@ REQUIRED_RESULTS = {
 OPTIONAL_RESULTS = {
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
     "alfworld_skill_intervention_r3": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
+    "alfworld_skill_intervention_r4_qwen": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
 }
 
 
@@ -152,6 +153,7 @@ def build_matrix(
     alfworld_skill_intervention = results.get("alfworld_skill_intervention")
     alfworld_skill_intervention_r2 = results.get("alfworld_skill_intervention_r2")
     alfworld_skill_intervention_r3 = results.get("alfworld_skill_intervention_r3")
+    alfworld_skill_intervention_r4_qwen = results.get("alfworld_skill_intervention_r4_qwen")
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -209,6 +211,10 @@ def build_matrix(
         "r3_candidate_wins": sum(v.get("wins", 0) for k, v in (alfworld_skill_intervention_r3.get("aggregate", {}) if alfworld_skill_intervention_r3 else {}).items() if "trace_mined_procedure_v2" in k),
         "r3_candidate_invalid_actions": sum(v.get("invalid_actions", 0) for k, v in (alfworld_skill_intervention_r3.get("aggregate", {}) if alfworld_skill_intervention_r3 else {}).items() if "trace_mined_procedure_v2" in k),
         "r3_causal_skill_benefit_confirmed": bool(alfworld_skill_intervention_r3 and alfworld_skill_intervention_r3.get("claim_boundary", {}).get("causal_skill_benefit_confirmed", False)),
+        "r4_qwen_episodes": alfworld_skill_intervention_r4_qwen.get("protocol", {}).get("episodes", 0) if alfworld_skill_intervention_r4_qwen else 0,
+        "r4_qwen_candidate_wins": sum(v.get("wins", 0) for k, v in (alfworld_skill_intervention_r4_qwen.get("aggregate", {}) if alfworld_skill_intervention_r4_qwen else {}).items() if "trace_mined_procedure_v2" in k),
+        "r4_qwen_candidate_invalid_actions": sum(v.get("invalid_actions", 0) for k, v in (alfworld_skill_intervention_r4_qwen.get("aggregate", {}) if alfworld_skill_intervention_r4_qwen else {}).items() if "trace_mined_procedure_v2" in k),
+        "r4_qwen_quality_comparison_valid": bool(alfworld_skill_intervention_r4_qwen and alfworld_skill_intervention_r4_qwen.get("claim_boundary", {}).get("quality_comparison_valid", False)),
     }
 
     trace_commons_attestation_passed = bool(
@@ -1014,6 +1020,10 @@ def build_matrix(
                 "alfworld_family_disjoint_r3_candidate_wins": revision_evidence["r3_candidate_wins"],
                 "alfworld_family_disjoint_r3_candidate_invalid_actions": revision_evidence["r3_candidate_invalid_actions"],
                 "alfworld_family_disjoint_r3_causal_skill_benefit_confirmed": revision_evidence["r3_causal_skill_benefit_confirmed"],
+                "alfworld_cross_model_r4_qwen_episodes": revision_evidence["r4_qwen_episodes"],
+                "alfworld_cross_model_r4_qwen_candidate_wins": revision_evidence["r4_qwen_candidate_wins"],
+                "alfworld_cross_model_r4_qwen_candidate_invalid_actions": revision_evidence["r4_qwen_candidate_invalid_actions"],
+                "alfworld_cross_model_r4_qwen_quality_comparison_valid": revision_evidence["r4_qwen_quality_comparison_valid"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1332,6 +1342,10 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"then added a four-family held-out replay of {skill['alfworld_family_disjoint_r3_episodes']} episodes. "
             f"The r3 candidate won {skill['alfworld_family_disjoint_r3_candidate_wins']} tasks and emitted "
             f"{skill['alfworld_family_disjoint_r3_candidate_invalid_actions']} invalid actions; causal skill benefit remains false.",
+            f"- The Qwen3 4B cross-model probe added {skill['alfworld_cross_model_r4_qwen_episodes']} episodes on the same four paths. "
+            f"Its candidate won {skill['alfworld_cross_model_r4_qwen_candidate_wins']} and emitted "
+            f"{skill['alfworld_cross_model_r4_qwen_candidate_invalid_actions']} invalid actions; the 12-step cap makes semantic quality "
+            "comparison invalid, so this remains harness evidence rather than skill benefit.",
             f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
             f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
             f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "
