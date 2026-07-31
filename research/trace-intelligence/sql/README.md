@@ -77,3 +77,12 @@ source result
 It does not establish memory correctness, utility, failed-job atomicity, skill
 improvement, identity, continuous validity, Aurora operations, or enterprise
 transfer.
+
+`009_skill_release_atomic_lifecycle.sql` adds the narrow procedure contract
+found necessary by H5: exposure creation and release transitions lock the
+release row, re-check authorization and active status after the lock, and
+couple release status, exposure termination, and lifecycle-event insertion.
+`010_skill_release_atomic_lifecycle_assertions.sql` is rollback-only. The
+multi-session race and cleanup are driven by
+`tests/run_skill_release_atomic_lifecycle_race.py` using
+`011_skill_release_atomic_lifecycle_race.sql`.

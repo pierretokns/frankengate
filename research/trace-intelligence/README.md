@@ -135,6 +135,16 @@ requires frontmatter, and it contains a direct live skill write. These are
 typed nulls and source findings, not evidence that the mechanisms cannot work.
 No SKILL.md or MEMORY.md was activated or written.
 
+The [`current SkillOpt / SkillOpt-Sleep / RHO / SkillGen audit`](experiments/summaries/skill-improvement-strategy-audit-2026-07-30.md)
+now pins Microsoft's current SkillOpt source and v0.2.0 release. Its local
+deterministic mock experiment moved held-out score from 0.3333 to 1.0 and
+blocked a harmful edit, proving only the gate plumbing. External SkillOpt
+reports claim 52/52 best-or-tied cells and Sleep replay gains, while RHO and
+SkillGen report promising external results; none is a natural Frankengate
+intervention with independent enterprise outcomes. SkillOpt-style bounded edits,
+independent gates, staged adoption, and rollback are adopted as proposal
+mechanics. Automatic adoption and cross-user skill sharing remain gated.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,
@@ -171,9 +181,9 @@ canonical governed fixtures, parses every aggregate result, checks that no raw c
 file is committed, and compiles the Python harness. It performs no network request,
 model call, database mutation, or dataset download.
 
-The latest pinned audit (`uv run --frozen make verify`) ran 493 research tests
+The latest pinned audit (`uv run --frozen make verify`) ran 497 research tests
 with 13 explicit environment skips and no failures, plus 61/61 NL2SQL
-capability tests. It validated 77 aggregate results, 43 dataset manifests, 12
+capability tests. It validated 79 aggregate results, 43 dataset manifests, 12
 governed fixtures, zero committed raw corpus files, and Python compilation.
 The Seatbelt skips are host-runtime gates; Linux/container replay remains the
 required authority for sandbox execution. The separate no-install host audit
@@ -569,11 +579,26 @@ The mechanics pass, but the run proves four hard edges: exposure metadata can
 commit after withdrawal unless both operations share a lock; REPEATABLE READ
 retains old authorization/deletion snapshots; governance mutation needs a
 narrow persistent non-owner boundary; and provenance FKs require an explicit
-tombstone/redaction policy. It is a local PostgreSQL 16.12 result, not Aurora.
+tombstone/redaction policy. The new atomic lifecycle procedures then passed a
+rollback-only assertion and a two-session race: exposure creation and
+withdrawal serialize on the release row, withdrawal ends the exposure and
+appends one event, and zero active exposure metadata remains. REPEATABLE READ
+and Aurora/RDS Proxy limitations remain. It is a local PostgreSQL 16.12 result,
+not Aurora.
 
 ```sh
 PYTHON=python3 make memory-h5-concurrency
 ```
+
+The corrected lifecycle contract is reproduced with:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  tests/run_skill_release_atomic_lifecycle_race.py
+```
+
+Its procedure contract is [`sql/009_skill_release_atomic_lifecycle.sql`](sql/009_skill_release_atomic_lifecycle.sql),
+with rollback-only assertions in [`sql/010_skill_release_atomic_lifecycle_assertions.sql`](sql/010_skill_release_atomic_lifecycle_assertions.sql).
 
 See
 [`experiments/summaries/trace-commons-memory-h5-concurrency-postgres-2026-07-30.md`](experiments/summaries/trace-commons-memory-h5-concurrency-postgres-2026-07-30.md).
