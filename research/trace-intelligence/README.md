@@ -206,6 +206,14 @@ is valid. The Qwen attempt timed out before its first arm. This is evidence that
 the current SQL protocol must be repaired before any trace-derived skill
 quality claim can be made on held-out families.
 
+The [`terminal-fallback pilot`](experiments/summaries/defog-terminal-fallback-pilot-2026-07-31.md)
+adds an arm-independent controller that submits the latest successful
+authorized candidate or abstains. It makes evaluation reachable, but produced
+zero semantic wins: the held-out broker fold had no successful SQL, and the
+car-dealership trace-mined arm had one successful but incorrect query. This
+separates terminal formatting from SQL quality without turning the fallback
+into a skill claim.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,

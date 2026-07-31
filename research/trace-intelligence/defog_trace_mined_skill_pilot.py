@@ -117,6 +117,7 @@ def run_pilot(
                         limits=limits,
                         raw_audit_path=raw_path,
                         authority_receipt=authority_receipt,
+                        terminal_fallback=True,
                     ))
                 )
     finally:
@@ -134,6 +135,7 @@ def run_pilot(
             "unauthorized_observation": receipt.unauthorized_observation,
             "outcome": receipt.outcome,
             "terminal_action": receipt.terminal_action,
+            "terminal_fallback_used": receipt.terminal_fallback_used,
             "protocol_failure_code": receipt.protocol_failure_code,
             "tool_calls": receipt.tool_calls,
             "schema_calls": receipt.schema_calls,
@@ -160,6 +162,7 @@ def run_pilot(
             "execution_completed": sum(row["execution_completed"] for row in rows),
             "unauthorized_observation": sum(row["unauthorized_observation"] for row in rows),
             "terminal_submissions": sum(row["terminal_action"] == "submit_sql" for row in rows),
+            "terminal_fallback_used": sum(row["terminal_fallback_used"] for row in rows),
             "missing_terminal_action": sum(row["terminal_action"] == "none" for row in rows),
             "successful_sql_attempts": sum(row["successful_sql_attempts"] for row in rows),
             "tool_calls": sum(row["tool_calls"] for row in rows),
@@ -205,6 +208,13 @@ def run_pilot(
             "causal_skill_benefit_established": False,
             "reason": "This is a visible-selection pilot; no family-disjoint held-out quality estimate or independent verifier comparison is claimed.",
             "next_required": "Rerun after protocol remediation on a family-disjoint fold with sealed outcomes, independent semantic/security verifier, and paired repair/regression analysis.",
+        },
+        "terminal_fallback_policy": {
+            "id": "submit-most-recent-successful-authorized-attempt-or-abstain-v1",
+            "applies_identically_across_arms": True,
+            "reads_gold_or_hidden_outcomes": False,
+            "selection_rule": "most recent successful authorized candidate; abstain when none exists",
+            "purpose": "Separate SQL generation quality from model terminal-tool formatting.",
         },
     }
     output.parent.mkdir(parents=True, exist_ok=True)

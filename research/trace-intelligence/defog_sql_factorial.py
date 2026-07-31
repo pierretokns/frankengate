@@ -344,6 +344,7 @@ class RunReceipt:
     elapsed_ms: float
     system_fingerprint: str | None
     raw_audit_sha256: str
+    terminal_fallback_used: bool = False
 
 
 def _task_seed(task_id: str, base_seed: int) -> int:
@@ -493,6 +494,7 @@ def run_agent(
     limits: AgentLimits,
     raw_audit_path: Path,
     authority_receipt: AuthorityReceipt | None = None,
+    terminal_fallback: bool = False,
 ) -> RunReceipt:
     system_prompt = _system_prompt(arm)
     messages: list[dict[str, Any]] = [
@@ -908,6 +910,41 @@ def run_agent(
         if terminal_action != "none":
             break
 
+    terminal_fallback_used = False
+    if terminal_action == "none" and terminal_fallback:
+        successful_records = [
+            record
+            for record in attempt_records.values()
+            if (
+                record.receipt.authority_valid
+                and record.receipt.policy_accepted is True
+                and record.receipt.execution_completed
+                and record.result is not None
+            )
+        ]
+        terminal_fallback_used = True
+        if successful_records:
+            submitted_attempt = successful_records[-1]
+            terminal_action = "submit_sql"
+            final_answer = ""
+        else:
+            terminal_action = "abstain"
+            abstain_reason_code = "tool_budget_exhausted"
+        _append_raw(
+            raw_audit_path,
+            {
+                "event": "terminal_fallback_controller",
+                "policy": "submit_most_recent_successful_authorized_attempt_or_abstain",
+                "used": True,
+                "submitted_attempt_id": (
+                    submitted_attempt.receipt.attempt_id
+                    if submitted_attempt is not None
+                    else None
+                ),
+                "abstain_reason_code": abstain_reason_code,
+            },
+        )
+
     semantic_correct = False
     strict_answer_shape_correct = False
     authority_valid = all(authority_checks)
@@ -1038,6 +1075,7 @@ def run_agent(
         elapsed_ms=round(total_elapsed_ms, 3),
         system_fingerprint=system_fingerprint,
         raw_audit_sha256=raw_hash,
+        terminal_fallback_used=terminal_fallback_used,
     )
 
 
