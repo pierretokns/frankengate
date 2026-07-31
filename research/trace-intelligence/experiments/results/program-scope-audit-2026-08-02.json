@@ -5,7 +5,7 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v18",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v19",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
@@ -220,6 +220,10 @@
         {
           "exists": true,
           "path": "experiments/results/h5-concurrency-live-rerun-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/h5-concurrency-guarded-rerun-2026-08-02.json"
         }
       ],
       "id": "governed_local_stack",
@@ -249,7 +253,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "462a4a885410be266f34eb66658a3fa12a0f0a46"
+          "head": "b2ed33a43abafd35977c496a4bd4277b0c9a63a6"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

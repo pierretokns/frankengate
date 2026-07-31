@@ -515,6 +515,16 @@ def run_suite(lab: Lab) -> dict[str, object]:
                     ),
                 }
             )
+            guarded_rr = lab.run_mode("epoch_reader_rr_guarded")
+            require_expected_failure(
+                guarded_rr,
+                "governed queries require READ COMMITTED; repeatable read rejected",
+            )
+            results["governed_isolation_guard"] = {
+                "repeatable_read_rejected": True,
+                "required_isolation": "read committed",
+                "failure": "governed queries require READ COMMITTED; repeatable read rejected",
+            }
             require_ok(lab.run_mode("epoch_restore"), "H5C_EPOCH_RESTORED")
 
             results["races"].append(

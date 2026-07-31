@@ -26,6 +26,7 @@ select
   :'mode' = 'seed_release_d' as mode_seed_release_d,
   :'mode' = 'epoch_reader_rc' as mode_epoch_reader_rc,
   :'mode' = 'epoch_reader_rr' as mode_epoch_reader_rr,
+  :'mode' = 'epoch_reader_rr_guarded' as mode_epoch_reader_rr_guarded,
   :'mode' = 'epoch_advance' as mode_epoch_advance,
   :'mode' = 'epoch_restore' as mode_epoch_restore,
   :'mode' = 'membership_reader_rc' as mode_membership_reader_rc,
@@ -629,6 +630,20 @@ from trace_research.artifact_releases where id = 'tc-h5c-release-d';
 select pg_advisory_xact_lock(85005);
 select 'H5C_AFTER|' || count(*)
 from trace_research.artifact_releases where id = 'tc-h5c-release-d';
+rollback;
+\endif
+
+\if :mode_epoch_reader_rr_guarded
+-- Governed semantic-cache/trace reads must fail closed if a caller attempts
+-- REPEATABLE READ: the transaction snapshot can retain a revoked epoch.
+begin isolation level repeatable read;
+do $guard$
+begin
+  if current_setting('transaction_isolation') <> 'read committed' then
+    raise exception 'governed queries require READ COMMITTED; repeatable read rejected';
+  end if;
+end
+$guard$;
 rollback;
 \endif
 

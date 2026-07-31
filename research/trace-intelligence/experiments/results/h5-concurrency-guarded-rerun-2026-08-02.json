@@ -1,0 +1,33 @@
+{
+  "all_passed": true,
+  "checks": {
+    "cleanup_zero_residue": true,
+    "content_free_assertions_passed": true,
+    "governed_repeatable_read_rejected": true,
+    "invariant_match_to_prior": true,
+    "known_architecture_gaps_preserved": true,
+    "nine_race_observations": true,
+    "overall_mechanics_passed": true,
+    "raw_trace_content_not_loaded": true
+  },
+  "claim_boundary": "Live local PostgreSQL/pgvector RLS concurrency rerun plus a fail-closed READ COMMITTED guard; no managed Aurora, RDS Proxy, failover, PITR, or scale claim.",
+  "content_policy": {
+    "raw_live_result_embedded": false,
+    "raw_trace_content_emitted": false
+  },
+  "date": "2026-08-02",
+  "live_result_sha256": "16728c31d4c109711437ddd7bb142c4628b2681f956c26c5f41df96932e0e298",
+  "live_summary": {
+    "cleanup_marker": "H5C_ZERO_RESIDUE_OK",
+    "governed_isolation": "read committed",
+    "known_gaps": 6,
+    "overall": "mechanics_passed_with_architecture_gaps",
+    "pgvector": "0.8.1",
+    "postgresql": "16.12 (Debian 16.12-1.pgdg12+1)",
+    "races": 9,
+    "repeatable_read_rejected": true
+  },
+  "prior_result_sha256": "c6a45afd6252cf44cdc5e31805d0537946e77251ca60db08c47a261a93b6ff45",
+  "runner": "research/trace-intelligence/tests/run_trace_commons_memory_h5_concurrency.py --timeout 30",
+  "schema_version": "frankengate-h5-concurrency-guarded-rerun-check-v1"
+}

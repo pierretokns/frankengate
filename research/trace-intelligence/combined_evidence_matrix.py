@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v18"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v19"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -83,6 +83,7 @@ OPTIONAL_RESULTS = {
     "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
     "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
     "h5_concurrency_live_rerun": "h5-concurrency-live-rerun-2026-08-02.json",
+    "h5_concurrency_guarded_rerun": "h5-concurrency-guarded-rerun-2026-08-02.json",
     "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
     "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
@@ -212,6 +213,7 @@ def build_matrix(
     natural_released_procedure = results.get("natural_released_procedure")
     natural_released_procedure_verification = results.get("natural_released_procedure_verification")
     h5_concurrency_live_rerun = results.get("h5_concurrency_live_rerun")
+    h5_concurrency_guarded_rerun = results.get("h5_concurrency_guarded_rerun")
     aurora_like_replication_lab = results.get("aurora_like_replication_lab")
     postgres_pitr_lab = results.get("postgres_pitr_lab")
     codetrace = results["codetracebench"]
@@ -792,6 +794,19 @@ def build_matrix(
                 "h5_concurrency_live_rerun_passed": bool(h5_concurrency_live_rerun and h5_concurrency_live_rerun.get("all_passed", False)),
                 "h5_concurrency_live_rerun_races": h5_concurrency_live_rerun.get("live_summary", {}).get("races", 0) if h5_concurrency_live_rerun else 0,
                 "h5_concurrency_live_rerun_known_gaps": h5_concurrency_live_rerun.get("live_summary", {}).get("known_gaps", 0) if h5_concurrency_live_rerun else 0,
+                "h5_concurrency_guarded_rerun_passed": bool(h5_concurrency_guarded_rerun and h5_concurrency_guarded_rerun.get("all_passed", False)),
+                "h5_concurrency_guard_rejected_rr": bool(
+                    h5_concurrency_guarded_rerun
+                    and h5_concurrency_guarded_rerun.get("checks", {}).get(
+                        "governed_repeatable_read_rejected", False
+                    )
+                ),
+                "h5_concurrency_guarded_invariant_match": bool(
+                    h5_concurrency_guarded_rerun
+                    and h5_concurrency_guarded_rerun.get("checks", {}).get(
+                        "invariant_match_to_prior", False
+                    )
+                ),
                 "aurora_gate_passed": _require(
                     e2_joint, "acceptance", "real_aurora_gate_passed"
                 ),
@@ -854,8 +869,10 @@ def build_matrix(
                 "the pinned general dense lane; reject the tested "
                 "FTS/trigram/vector RRF because its tiny recall lift loses "
                 "ranking quality and adds about two orders of magnitude local "
-                "latency. Human labels, Aurora, concurrency, and scale remain "
-                "open; no custom embedding or database replacement is authorized"
+                "latency. Require READ COMMITTED for governed reads and reject "
+                "repeatable-read snapshots that can retain revoked authorization "
+                "epochs. Human labels, Aurora semantics, and scale remain open; "
+                "no custom embedding or database replacement is authorized"
             ),
         },
         "L5_temporal_memory": {

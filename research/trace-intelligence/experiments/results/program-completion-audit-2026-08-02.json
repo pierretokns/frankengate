@@ -145,6 +145,15 @@
       "invariant_match_to_prior": true,
       "managed_aurora_concurrency_proven": false
     },
+    "h5_concurrency_guarded_rerun": {
+      "result": "experiments/results/h5-concurrency-guarded-rerun-2026-08-02.json",
+      "status": "live_local_postgresql_concurrency_rerun_plus_fail_closed_isolation_guard_passed",
+      "races": 9,
+      "repeatable_read_rejected": true,
+      "required_isolation": "read committed",
+      "invariant_match_to_prior": true,
+      "managed_aurora_concurrency_proven": false
+    },
     "program_scope_audit": {
       "result": "experiments/results/program-scope-audit-2026-08-02.json",
       "summary": "experiments/summaries/program-scope-audit-2026-08-02.md",
