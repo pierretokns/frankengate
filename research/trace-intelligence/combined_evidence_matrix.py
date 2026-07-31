@@ -15,9 +15,10 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v5"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v6"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
+    "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
     "codetracebench": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
     "codetracebench_raw": "codetracebench-raw-e3-e4-factorial-2026-07-30.json",
     "mast": "mast_multiagent_empirical-2026-07-30.json",
@@ -103,6 +104,7 @@ def build_matrix(
     receipts: dict[str, Any],
 ) -> dict[str, Any]:
     projection = results["projection"]
+    atif_rl_roundtrip = results["atif_rl_roundtrip"]
     codetrace = results["codetracebench"]
     codetrace_raw = results["codetracebench_raw"]
     mast = results["mast"]
@@ -144,6 +146,24 @@ def build_matrix(
 
     atif = _require(projection, "ATIF_v1_7")
     otel = _require(projection, "OpenInference_OTel")
+    rl_family = _require(
+        atif_rl_roundtrip, "families", "matm_alfworld_rl_environment"
+    )
+    coding_family = _require(
+        atif_rl_roundtrip, "families", "wisp_claude_code_tool_rich"
+    )
+    rl_measurement = _require(rl_family, "measurement")
+    coding_measurement = _require(coding_family, "measurement")
+    rl_atif = _require(rl_measurement, "formats", "ATIF_v1_7_profiled")
+    rl_otel = _require(
+        rl_measurement, "formats", "OpenInference_OTel_profiled"
+    )
+    coding_atif = _require(
+        coding_measurement, "formats", "ATIF_v1_7_profiled"
+    )
+    coding_otel = _require(
+        coding_measurement, "formats", "OpenInference_OTel_profiled"
+    )
     e1_arms = _require(codetrace, "e1_signal_selection", "arms")
     random_arm = _require(e1_arms, "uniform_random")
     structural_arm = _require(e1_arms, "structural_signal")
@@ -218,12 +238,75 @@ def build_matrix(
                 "collector_negative_controls_passed": _require(
                     otel_roundtrip, "negative_controls_passed"
                 ),
+                "rl_trajectory_count": _require(
+                    rl_measurement, "trajectory_count"
+                ),
+                "rl_atif_overall_retention": _require(
+                    rl_atif, "overall_retention"
+                ),
+                "rl_otel_overall_retention": _require(
+                    rl_otel, "overall_retention"
+                ),
+                "rl_atif_environment_reset_retention": _require(
+                    rl_atif,
+                    "capabilities",
+                    "environment_reset_state",
+                    "retention",
+                ),
+                "rl_otel_environment_reset_retention": _require(
+                    rl_otel,
+                    "capabilities",
+                    "environment_reset_state",
+                    "retention",
+                ),
+                "rl_atif_reward_retention": _require(
+                    rl_atif, "capabilities", "rewards", "retention"
+                ),
+                "rl_otel_reward_retention": _require(
+                    rl_otel, "capabilities", "rewards", "retention"
+                ),
+                "rl_atif_termination_retention": _require(
+                    rl_atif, "capabilities", "termination", "retention"
+                ),
+                "rl_otel_termination_retention": _require(
+                    rl_otel, "capabilities", "termination", "retention"
+                ),
+                "coding_atif_tool_call_retention": _require(
+                    coding_atif, "capabilities", "tool_calls", "retention"
+                ),
+                "coding_otel_tool_call_retention": _require(
+                    coding_otel, "capabilities", "tool_calls", "retention"
+                ),
+                "coding_otel_replay_identity_retention": _require(
+                    coding_otel,
+                    "capabilities",
+                    "replay_identity",
+                    "retention",
+                ),
+                "rl_known_missing_field_count": len(
+                    _require(rl_family, "source_pin", "known_missing_fields")
+                ),
+                "rl_memory_snapshot_fields_missing": all(
+                    field in _require(
+                        rl_family, "source_pin", "known_missing_fields"
+                    )
+                    for field in (
+                        "memory_snapshot_before",
+                        "memory_snapshot_after",
+                        "memory_source_lineage",
+                        "prompt_after_memory_injection",
+                    )
+                ),
             },
             "blocking_gap": (
                 "the pinned real collector path passed, but a wholly upstream-"
                 "dropped trace requires an out-of-band source/export manifest; "
                 "production storage/failover and ATIF's deliberate enterprise-"
-                "event non-reversibility remain"
+                "event non-reversibility remain. The RL round trip is a separate "
+                "loss receipt: coding tool structure is retained better than RL "
+                "reset/reward/termination state, and the pinned RL source omits "
+                "memory snapshots and authorization fields. Neither projection "
+                "is a sufficient memory or skill-learning authority"
             ),
         },
         "L1_personal_authority": {
@@ -811,7 +894,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     ]
     interpretations = {
         "L0_evidence_conformance": (
-            "real OTel round trip passes; whole-trace upstream loss still needs a source manifest"
+            "real OTel round trip passes; RL reset/reward fields are lossy and whole-trace upstream loss still needs a source manifest"
         ),
         "L1_personal_authority": (
             "tested denials are zero before ranking; production authority closure remains"
@@ -847,6 +930,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     l2 = levels["L2_cheap_evidence_finding"]["evidence"]
     l3 = levels["L3_diagnosis_and_eval_proposals"]
     l4 = levels["L4_semantic_candidate_retrieval"]["evidence"]
+    schema = levels["L0_evidence_conformance"]["evidence"]
     lines.extend(
         [
             "",
@@ -889,6 +973,15 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "safe tool execution but no skill benefit; the local finance fixture "
             "has only four executable gold SQL tasks, so NL2SQL intervention "
             "quality remains untested.",
+            f"- The ATIF/OTel RL crosswalk covers {schema['rl_trajectory_count']} "
+            "MATM trajectories. ATIF retains only "
+            f"{schema['rl_atif_overall_retention']:.3f} of measured facts and OTel "
+            f"{schema['rl_otel_overall_retention']:.3f}; reset-state retention is "
+            f"{schema['rl_otel_environment_reset_retention']}, reward retention is "
+            f"{schema['rl_otel_reward_retention']}, and termination retention is "
+            f"{schema['rl_otel_termination_retention']}. The source also omits "
+            "memory snapshots and authorization fields, so schema round-trip "
+            "fidelity cannot be treated as skill-learning evidence.",
             "- The attested 28-session Trace Commons cohort produced "
             f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
             "structural temporal candidates and "

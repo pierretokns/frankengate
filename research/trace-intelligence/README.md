@@ -355,6 +355,14 @@ memory, and skill-release arms. It records the CMU raw-shard requirement as
 approval-gated—not waived—and keeps all enterprise causal and Aurora-scale
 claims closed.
 
+The matrix now also consumes the [`ATIF/RL round-trip receipt`](experiments/results/atif-rl-roundtrip-2026-07-30.json)
+instead of treating the small canonical projection fixture as the whole schema
+story. Across 2,130 MATM ALFWorld trajectories, ATIF retained 0.067 of measured
+capability facts and OpenInference/OTel retained 0.327; neither retained RL
+reset state, rewards, or termination facts. The source omits memory snapshots
+and authorization fields, so schema fidelity is not evidence of memory utility
+or skill learning.
+
 The candidate was then mined from the completed car raw audits rather than
 hand-supplied: the miner sealed an aggregate source digest and procedure hash,
 and the resulting artifact was injected into a fresh broker fold. The true

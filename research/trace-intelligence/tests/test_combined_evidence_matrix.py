@@ -30,6 +30,59 @@ def inputs():
                 "silent_drop_count": 0,
             },
         },
+        "atif_rl_roundtrip": {
+            "schema_version": "atif-rl-roundtrip",
+            "families": {
+                "matm_alfworld_rl_environment": {
+                    "measurement": {
+                        "trajectory_count": 2,
+                        "formats": {
+                            "ATIF_v1_7_profiled": {
+                                "overall_retention": 0.1,
+                                "capabilities": {
+                                    "environment_reset_state": {"retention": 0.0},
+                                    "rewards": {"retention": 0.1},
+                                    "termination": {"retention": 0.2},
+                                },
+                            },
+                            "OpenInference_OTel_profiled": {
+                                "overall_retention": 0.2,
+                                "capabilities": {
+                                    "environment_reset_state": {"retention": 0.0},
+                                    "rewards": {"retention": 0.0},
+                                    "termination": {"retention": 0.0},
+                                },
+                            },
+                        },
+                    },
+                    "source_pin": {
+                        "known_missing_fields": [
+                            "memory_snapshot_before",
+                            "memory_snapshot_after",
+                            "memory_source_lineage",
+                            "prompt_after_memory_injection",
+                        ]
+                    },
+                },
+                "wisp_claude_code_tool_rich": {
+                    "measurement": {
+                        "formats": {
+                            "ATIF_v1_7_profiled": {
+                                "capabilities": {
+                                    "tool_calls": {"retention": 1.0}
+                                }
+                            },
+                            "OpenInference_OTel_profiled": {
+                                "capabilities": {
+                                    "tool_calls": {"retention": 0.8},
+                                    "replay_identity": {"retention": 1.0},
+                                }
+                            },
+                        }
+                    }
+                },
+            },
+        },
         "codetracebench": {
             "schema_version": "codetrace",
             "split_audit": {"verified_counts": {"test": 100}},
@@ -360,6 +413,14 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
             ]
         )
         self.assertIn("CMU", matrix["levels"]["L7_to_L10"]["decision"])
+        schema = matrix["levels"]["L0_evidence_conformance"]["evidence"]
+        self.assertEqual(2, schema["rl_trajectory_count"])
+        self.assertEqual(0.0, schema["rl_otel_environment_reset_retention"])
+        self.assertTrue(schema["rl_memory_snapshot_fields_missing"])
+        self.assertIn(
+            "memory snapshots",
+            matrix["levels"]["L0_evidence_conformance"]["blocking_gap"],
+        )
 
     def test_level_two_threshold_is_not_redefined_by_observed_result(self):
         source = inputs()

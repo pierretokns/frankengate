@@ -59,6 +59,11 @@
       "schema_version": "agenttrace-nl2bash-replay-audit-v1",
       "sha256": "6a7b2c25bdaf5c10e40dedb7c8ac0f2d04e391da4ca1c3ff9058c939b3fbf9f1"
     },
+    "atif_rl_roundtrip": {
+      "filename": "atif-rl-roundtrip-2026-07-30.json",
+      "schema_version": "atif-rl-roundtrip-result-v1",
+      "sha256": "96492638a620da3a7cf4c9d0db52d1398b7e2e27a0017a3c74d418e471ed3b5e"
+    },
     "codetracebench": {
       "filename": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
       "schema_version": "frankengate-trace-empirical-result-v1",
@@ -152,12 +157,15 @@
   },
   "levels": {
     "L0_evidence_conformance": {
-      "blocking_gap": "the pinned real collector path passed, but a wholly upstream-dropped trace requires an out-of-band source/export manifest; production storage/failover and ATIF's deliberate enterprise-event non-reversibility remain",
+      "blocking_gap": "the pinned real collector path passed, but a wholly upstream-dropped trace requires an out-of-band source/export manifest; production storage/failover and ATIF's deliberate enterprise-event non-reversibility remain. The RL round trip is a separate loss receipt: coding tool structure is retained better than RL reset/reward/termination state, and the pinned RL source omits memory snapshots and authorization fields. Neither projection is a sufficient memory or skill-learning authority",
       "decision": "keep one governed canonical DAG; ATIF and OTel remain receipted projections",
       "evidence": {
         "atif_event_identity_retention": 0.0,
         "atif_parent_edge_retention": 0.0,
         "atif_silent_drops": 0,
+        "coding_atif_tool_call_retention": 1.0,
+        "coding_otel_replay_identity_retention": 0.998202,
+        "coding_otel_tool_call_retention": 0.833333,
         "collector_links_retained": 16,
         "collector_negative_controls_passed": true,
         "collector_parent_edges_retained": 34,
@@ -168,7 +176,18 @@
         "mast_source_lines": 897277,
         "otel_event_identity_retention": 1.0,
         "otel_parent_edge_retention": 1.0,
-        "otel_silent_drops": 0
+        "otel_silent_drops": 0,
+        "rl_atif_environment_reset_retention": 0.0,
+        "rl_atif_overall_retention": 0.067259,
+        "rl_atif_reward_retention": 0.076031,
+        "rl_atif_termination_retention": 0.165266,
+        "rl_known_missing_field_count": 11,
+        "rl_memory_snapshot_fields_missing": true,
+        "rl_otel_environment_reset_retention": 0.0,
+        "rl_otel_overall_retention": 0.326949,
+        "rl_otel_reward_retention": 0.0,
+        "rl_otel_termination_retention": 0.0,
+        "rl_trajectory_count": 2130
       },
       "status": "real_roundtrip_partial_pass"
     },
@@ -319,6 +338,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "babe31b316ef880faddf7c59e1b4c63c13bfb3d7f59d864901ac498f0e7c0848",
-  "schema_version": "frankengate-combined-evidence-matrix-v5"
+  "result_sha256": "e4c8efda30c034df220e2df9be00839af754f4c5abe167f3499a6562ec3db12c",
+  "schema_version": "frankengate-combined-evidence-matrix-v6"
 }

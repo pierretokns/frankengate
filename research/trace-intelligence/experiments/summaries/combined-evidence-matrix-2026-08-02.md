@@ -12,7 +12,7 @@ The combined evidence supports a small governed product: personal history, conte
 
 | Level | Status | Decisive interpretation |
 | --- | --- | --- |
-| `L0_evidence_conformance` | `real_roundtrip_partial_pass` | real OTel round trip passes; whole-trace upstream loss still needs a source manifest |
+| `L0_evidence_conformance` | `real_roundtrip_partial_pass` | real OTel round trip passes; RL reset/reward fields are lossy and whole-trace upstream loss still needs a source manifest |
 | `L1_personal_authority` | `local_partial_pass` | tested denials are zero before ranking; production authority closure remains |
 | `L2_cheap_evidence_finding` | `does_not_meet_gate` | structural selection ties length and misses the +15-point gate |
 | `L3_diagnosis_and_eval_proposals` | `mixed_partial` | raw eval mutation is sensitive but brittle; diagnosis and multi-agent gold do not pass |
@@ -29,6 +29,7 @@ The combined evidence supports a small governed product: personal history, conte
 - MAST has 0 finalized human traces overlapping the judge release. Therefore released human-versus-judge accuracy cannot be reproduced; high Hamming accuracy from an always-negative classifier is class imbalance, not competence.
 - Structured plus dense retrieval reached 0.818 Recall@20 versus 0.732 for exact-only on silver task labels. In the same-candidate forced-RLS PostgreSQL run, exact pgvector reached 0.667 at 3.017 ms p50; the tested three-way hybrid reached only 0.672 at 256.843 ms. Keep exact/structured plus conditional dense retrieval and reject that trigram-heavy hybrid.
 - The governed skill lifecycle passed 18 PostgreSQL assertions, including hidden-test isolation and a hard security-violation veto. The one-task Trace2Skill smoke established safe tool execution but no skill benefit; the local finance fixture has only four executable gold SQL tasks, so NL2SQL intervention quality remains untested.
+- The ATIF/OTel RL crosswalk covers 2130 MATM trajectories. ATIF retains only 0.067 of measured facts and OTel 0.327; reset-state retention is 0.0, reward retention is 0.0, and termination retention is 0.0. The source also omits memory snapshots and authorization fields, so schema round-trip fidelity cannot be treated as skill-learning evidence.
 - The attested 28-session Trace Commons cohort produced 263 structural temporal candidates and 269 eval-review records, while automatic memory/skill writes remained zero. This expands proposal mechanics, not outcome or skill evidence.
 
 ## Original enterprise questions
