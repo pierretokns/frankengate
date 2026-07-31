@@ -24,6 +24,11 @@ def _rows(path: Path) -> list[dict[str, Any]]:
     return pq.read_table(path).to_pylist()
 
 
+def _server_rows(path: Path) -> list[dict[str, Any]]:
+    payload = json.loads(path.read_text())
+    return [item["row"] for item in payload["rows"]]
+
+
 def _features(row: dict[str, Any]) -> dict[str, float | bool]:
     spans = row.get("spans") or []
     errors = sum((s.get("status") or {}).get("code") == 2 for s in spans)
@@ -60,8 +65,7 @@ def _metrics(selected: list[int], labels: list[bool], population: int) -> dict[s
     }
 
 
-def study(path: Path, *, dataset_revision: str, seed: int = 20260731) -> dict[str, Any]:
-    rows = _rows(path)
+def study_rows(rows: list[dict[str, Any]], *, source_sha256: str, dataset_revision: str, seed: int = 20260731) -> dict[str, Any]:
     features = [_features(row) for row in rows]
     labels = [bool(item["has_error"]) for item in features]
     budget = max(1, len(rows) // 5)
@@ -92,7 +96,7 @@ def study(path: Path, *, dataset_revision: str, seed: int = 20260731) -> dict[st
         "schema_version": "fg-hf-otel-signals-selector-v1",
         "dataset_id": "DiscoPosse/agent-llm-traces",
         "dataset_revision": dataset_revision,
-        "source_sha256": _sha256(path),
+        "source_sha256": source_sha256,
         "rows": len(rows),
         "budget": budget,
         "label_proxy": "at_least_one_otel_error_status_code_2",
@@ -103,13 +107,23 @@ def study(path: Path, *, dataset_revision: str, seed: int = 20260731) -> dict[st
     }
 
 
+def study(path: Path, *, dataset_revision: str, seed: int = 20260731) -> dict[str, Any]:
+    return study_rows(_rows(path), source_sha256=_sha256(path), dataset_revision=dataset_revision, seed=seed)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--server-json", type=Path)
     parser.add_argument("--dataset-revision", required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    args.output.write_text(json.dumps(study(args.input, dataset_revision=args.dataset_revision), indent=2, sort_keys=True) + "\n")
+    if args.server_json:
+        source_sha256 = _sha256(args.server_json)
+        result = study_rows(_server_rows(args.server_json), source_sha256=source_sha256, dataset_revision=args.dataset_revision)
+    else:
+        result = study(args.input, dataset_revision=args.dataset_revision)
+    args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     return 0
 
 
