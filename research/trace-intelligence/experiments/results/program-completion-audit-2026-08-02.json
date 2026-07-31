@@ -412,6 +412,12 @@
       "alfworld_luna_skillopt_family4_verifier_passed": true,
       "alfworld_luna_skillopt_family4_rows_verified": 12,
       "alfworld_luna_skillopt_family4_causal_benefit_confirmed": false,
+      "alfworld_luna_skillopt_family4_total_api_calls": 144,
+      "alfworld_luna_skillopt_family4_mean_elapsed_ms": {
+        "no_skill": 78415.235,
+        "formatting_placebo": 87050.662,
+        "skillopt_candidate": 103005.202
+      },
       "alfworld_luna_skillopt_long_horizon": "experiments/results/alfworld-luna-skillopt-long-horizon-2026-08-02.json",
       "alfworld_luna_skillopt_long_horizon_verification": "experiments/results/alfworld-luna-skillopt-long-horizon-verification-2026-08-02.json",
       "alfworld_luna_skillopt_long_horizon_steps": 35,
@@ -420,7 +426,13 @@
       "alfworld_luna_skillopt_long_horizon_candidate_wins": 0,
       "alfworld_luna_skillopt_long_horizon_verifier_passed": true,
       "alfworld_luna_skillopt_long_horizon_rows_verified": 3,
-      "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": false
+      "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": false,
+      "alfworld_luna_skillopt_long_horizon_total_api_calls": 105,
+      "alfworld_luna_skillopt_long_horizon_mean_elapsed_ms": {
+        "no_skill": 241000.0,
+        "formatting_placebo": 251100.0,
+        "skillopt_candidate": 326700.0
+      }
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",

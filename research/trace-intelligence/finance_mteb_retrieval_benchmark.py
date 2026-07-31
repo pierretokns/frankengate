@@ -62,9 +62,14 @@ def _metrics(
     method: str,
 ) -> dict[str, Any]:
     """Calculate binary Recall@k and MRR, preserving multi-positive qrels."""
-    import numpy as np
-
-    order = np.argsort(-np.asarray(scores), axis=1)
+    # Keep the metric lane dependency-light.  The benchmark's production
+    # embedding path uses NumPy, but ranking and qrel scoring do not need it;
+    # accepting nested lists and array-like rows also makes the fixture test
+    # runnable in the minimal reproducibility environment.
+    order = [
+        sorted(range(len(row)), key=lambda index: (-float(row[index]), index))
+        for row in scores
+    ]
     reciprocal_ranks: list[float] = []
     recalls: dict[int, list[float]] = {k: [] for k in (1, 5, 10, 20)}
     for row, query_id in enumerate(query_ids):

@@ -882,17 +882,29 @@
           "pick_clean_then_place_in_recep",
           "pick_heat_then_place_in_recep"
         ],
+        "alfworld_luna_skillopt_family4_mean_elapsed_ms": {
+          "formatting_placebo": 87050.662,
+          "no_skill": 78415.235,
+          "skillopt_candidate": 103005.202
+        },
         "alfworld_luna_skillopt_family4_no_skill_wins": 0,
         "alfworld_luna_skillopt_family4_placebo_wins": 0,
         "alfworld_luna_skillopt_family4_rows_verified": 12,
         "alfworld_luna_skillopt_family4_tasks": 4,
+        "alfworld_luna_skillopt_family4_total_api_calls": 144,
         "alfworld_luna_skillopt_family4_verifier_passed": true,
         "alfworld_luna_skillopt_long_horizon_candidate_wins": 0,
         "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": false,
+        "alfworld_luna_skillopt_long_horizon_elapsed_ms": {
+          "formatting_placebo": 251088.872,
+          "no_skill": 241022.026,
+          "skillopt_candidate": 326731.539
+        },
         "alfworld_luna_skillopt_long_horizon_no_skill_wins": 0,
         "alfworld_luna_skillopt_long_horizon_placebo_wins": 0,
         "alfworld_luna_skillopt_long_horizon_rows_verified": 3,
         "alfworld_luna_skillopt_long_horizon_steps": 35,
+        "alfworld_luna_skillopt_long_horizon_total_api_calls": 105,
         "alfworld_luna_skillopt_long_horizon_verifier_passed": true,
         "alfworld_model_generated_memory_r8_episodes": 12,
         "alfworld_model_generated_memory_r8_invalid_action_delta_per_harness": 102,
@@ -1013,6 +1025,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "b31ddf28402ac4dba684540637be1ead09e8b36905e1d3d8cf5cb69403c3a466",
+  "result_sha256": "1c98d969a886b471deeeb3de7e95099fc2303cbfed427d409d18c0d8ec18f239",
   "schema_version": "frankengate-combined-evidence-matrix-v25"
 }

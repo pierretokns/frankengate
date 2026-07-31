@@ -153,6 +153,19 @@ def _require(mapping: dict[str, Any], *path: str) -> Any:
     return value
 
 
+def _mean_episode_metric(
+    result: dict[str, Any] | None,
+    arm: str,
+    field: str,
+) -> float:
+    if not result:
+        return 0.0
+    rows = [row for row in result.get("episodes", []) if row.get("arm") == arm]
+    if not rows:
+        return 0.0
+    return round(sum(float(row.get(field, 0.0)) for row in rows) / len(rows), 3)
+
+
 def load_results(result_dir: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     values: dict[str, Any] = {}
     receipts: dict[str, Any] = {}
@@ -1338,6 +1351,13 @@ def build_matrix(
                 "alfworld_luna_skillopt_family4_verifier_passed": bool(alfworld_luna_skillopt_family4_verification and alfworld_luna_skillopt_family4_verification.get("all_passed", False)),
                 "alfworld_luna_skillopt_family4_rows_verified": alfworld_luna_skillopt_family4_verification.get("rows_verified", 0) if alfworld_luna_skillopt_family4_verification else 0,
                 "alfworld_luna_skillopt_family4_causal_benefit_confirmed": bool(alfworld_luna_skillopt_family4 and alfworld_luna_skillopt_family4.get("claim_boundary", {}).get("causal_skill_benefit_confirmed", False)),
+                "alfworld_luna_skillopt_family4_mean_elapsed_ms": {
+                    arm: _mean_episode_metric(alfworld_luna_skillopt_family4, arm, "elapsed_ms")
+                    for arm in ("no_skill", "formatting_placebo", "skillopt_candidate")
+                },
+                "alfworld_luna_skillopt_family4_total_api_calls": sum(
+                    int(row.get("api_calls", 0)) for row in (alfworld_luna_skillopt_family4.get("episodes", []) if alfworld_luna_skillopt_family4 else [])
+                ),
                 "alfworld_luna_skillopt_long_horizon_steps": alfworld_luna_skillopt_long_horizon.get("episodes", [{}])[0].get("steps", 0) if alfworld_luna_skillopt_long_horizon and alfworld_luna_skillopt_long_horizon.get("episodes") else 0,
                 "alfworld_luna_skillopt_long_horizon_no_skill_wins": alfworld_luna_skillopt_long_horizon.get("summary", {}).get("no_skill", {}).get("wins", 0) if alfworld_luna_skillopt_long_horizon else 0,
                 "alfworld_luna_skillopt_long_horizon_placebo_wins": alfworld_luna_skillopt_long_horizon.get("summary", {}).get("formatting_placebo", {}).get("wins", 0) if alfworld_luna_skillopt_long_horizon else 0,
@@ -1345,6 +1365,13 @@ def build_matrix(
                 "alfworld_luna_skillopt_long_horizon_verifier_passed": bool(alfworld_luna_skillopt_long_horizon_verification and alfworld_luna_skillopt_long_horizon_verification.get("all_passed", False)),
                 "alfworld_luna_skillopt_long_horizon_rows_verified": alfworld_luna_skillopt_long_horizon_verification.get("rows_verified", 0) if alfworld_luna_skillopt_long_horizon_verification else 0,
                 "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": bool(alfworld_luna_skillopt_long_horizon and alfworld_luna_skillopt_long_horizon.get("claim_boundary", {}).get("causal_skill_benefit_confirmed", False)),
+                "alfworld_luna_skillopt_long_horizon_elapsed_ms": {
+                    arm: _mean_episode_metric(alfworld_luna_skillopt_long_horizon, arm, "elapsed_ms")
+                    for arm in ("no_skill", "formatting_placebo", "skillopt_candidate")
+                },
+                "alfworld_luna_skillopt_long_horizon_total_api_calls": sum(
+                    int(row.get("api_calls", 0)) for row in (alfworld_luna_skillopt_long_horizon.get("episodes", []) if alfworld_luna_skillopt_long_horizon else [])
+                ),
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1746,7 +1773,9 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"published SkillOpt checkpoint each won zero tasks; the fresh verifier checked "
             f"{skill['alfworld_luna_skillopt_family4_rows_verified']} rows with pass={skill['alfworld_luna_skillopt_family4_verifier_passed']}. "
             "The 12-step horizon truncated all arms, so this is stronger model/family protocol evidence but not a "
-            "general semantic skill estimate or promotion result.",
+            f"general semantic skill estimate or promotion result. It consumed {skill['alfworld_luna_skillopt_family4_total_api_calls']} "
+            f"frontier calls; mean arm wall times were {skill['alfworld_luna_skillopt_family4_mean_elapsed_ms']} ms, "
+            "which is a measured operating-cost signal rather than a quality result.",
             f"- The fair-horizon Luna follow-up extended one held-out task to {skill['alfworld_luna_skillopt_long_horizon_steps']} steps. "
             f"No-skill, placebo, and SkillOpt each remained at zero wins; the independent verifier checked "
             f"{skill['alfworld_luna_skillopt_long_horizon_rows_verified']} rows with pass={skill['alfworld_luna_skillopt_long_horizon_verifier_passed']}. "
