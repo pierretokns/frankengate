@@ -224,6 +224,23 @@ def inputs():
             "negative_controls": {"all_passed": True},
             "raw_content_emitted": False,
         },
+        "natural_memory_factorial": {
+            "schema_version": "frankengate-natural-trace-memory-factorial-v1",
+            "discovery": {"histories": 217, "source_records": 30496},
+            "design": {"eligible_queries": 23, "arm_count": 16},
+            "composition_summary": {
+                "all_runnable_mechanisms_exact": 16,
+                "strongest_singleton_exact": 16,
+            },
+            "treatment_contrast_gate": {
+                "differential_mechanism_effect_identifiable": False,
+            },
+            "mechanism_gates": {
+                "released_dream": {
+                    "status": "not_runnable_no_natural_independent_release"
+                }
+            },
+        },
         "e2_retrieval": {
             "schema_version": "e2",
             "cohort": {
@@ -460,6 +477,13 @@ class CombinedEvidenceMatrixTests(unittest.TestCase):
         temporal = matrix["levels"]["L5_temporal_memory"]["evidence"]
         self.assertEqual(1, temporal["real_exact_cross_session_continuities"])
         self.assertEqual(1, temporal["real_interval_censored_version_gaps"])
+        self.assertEqual(217, temporal["natural_factorial_histories"])
+        self.assertEqual(23, temporal["natural_factorial_eligible_queries"])
+        self.assertEqual(16, temporal["natural_factorial_arm_count"])
+        self.assertEqual(16, temporal["natural_factorial_all_runnable_exact"])
+        self.assertFalse(
+            temporal["natural_factorial_treatment_contrast_identifiable"]
+        )
         self.assertEqual(
             "not_supported",
             matrix["enterprise_questions"][

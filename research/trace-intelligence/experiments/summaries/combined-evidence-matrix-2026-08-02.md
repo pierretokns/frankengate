@@ -17,7 +17,7 @@ The combined evidence supports a small governed product: personal history, conte
 | `L2_cheap_evidence_finding` | `does_not_meet_gate` | structural selection ties length and misses the +15-point gate |
 | `L3_diagnosis_and_eval_proposals` | `mixed_partial` | raw eval mutation is sensitive but brittle; diagnosis and multi-agent gold do not pass |
 | `L4_semantic_candidate_retrieval` | `offline_silver_and_local_rls_partial_pass` | structured+dense wins the silver cohort; exact pgvector is the smallest local RLS lane and the tested trigram hybrid is rejected |
-| `L5_temporal_memory` | `real_trace_transition_partial_pass` | real transition import and synthetic temporal/authority invariants pass; memory quality and utility do not |
+| `L5_temporal_memory` | `real_trace_transition_partial_pass` | real transition import and synthetic temporal/authority invariants pass; the 217-history natural factorial finds no singleton/composed contrast; memory quality and utility do not |
 | `L6_procedural_replay` | `governed_release_mechanics_partial_pass` | safe tool execution and hidden-test release mechanics pass; causal skill benefit does not |
 | `L7_to_L10` | `gated` | CMU raw access is approval-gated; prospective enterprise labels, privacy, and outcomes remain gated |
 
@@ -33,6 +33,7 @@ The combined evidence supports a small governed product: personal history, conte
 - The paired skill meta-analysis contains 23 endpoint strata, including 12 protocol and 9 semantic trace-mined comparisons. The same fixture was exercised across llama3.2:latest, qwen3:4b and ollama-native-api, openai-native; causal benefit and automatic promotion remain false.
 - A fresh Qwen3 4B native-Ollama replay completed all 18 episodes but produced native tool-call counts {'formatting_placebo': 0, 'no_skill': 0, 'trace_mined_terminal_discipline': 0} and zero terminal matches in every arm. This is a typed harness/model null, not evidence that the trace-mined candidate improves or harms semantic task quality.
 - GEPA v0.1.4 ran 11 metric calls with a three-episode train split and three-episode holdout. The selected candidate matched the empty seed at 0.667 on holdout, so this optimizer arm produced no protocol lift and does not support automatic skill promotion.
+- The natural memory factorial covers 217 histories and 23 eligible reads across 16 arms. Every runnable singleton and the composed arm reached 16/23 exact availability; the differential mechanism gate is not identifiable, and released Dream/procedure arms remain gated because no independently released natural artifacts exist.
 - The attested 28-session Trace Commons cohort produced 263 structural temporal candidates and 269 eval-review records, while automatic memory/skill writes remained zero. The full analysis was rerun from the local pinned corpus and matched 19 aggregate metrics. This expands proposal mechanics, not outcome or skill evidence.
 
 ## Original enterprise questions

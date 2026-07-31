@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v7"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v8"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -28,6 +28,9 @@ REQUIRED_RESULTS = {
     "memory_conformance": "bitemporal-memory-conformance-2026-07-30.json",
     "trace_memory_conformance": (
         "trace-commons-memory-conformance-2026-07-30.json"
+    ),
+    "natural_memory_factorial": (
+        "natural-trace-memory-factorial-2026-08-02-r2.json"
     ),
     "e2_retrieval": (
         "codetracebench-e2-authorized-retrieval-factorial-2026-07-30.json"
@@ -129,6 +132,7 @@ def build_matrix(
     otel_roundtrip = results["otel_roundtrip"]
     memory = results["memory_conformance"]
     trace_memory = results["trace_memory_conformance"]
+    natural_memory = results["natural_memory_factorial"]
     e2_retrieval = results["e2_retrieval"]
     e2_joint = results["e2_postgres_joint"]
     agenttrace = results["agenttrace"]
@@ -703,6 +707,39 @@ def build_matrix(
                         "paired_trace_and_memory_strata",
                     )
                 ),
+                "natural_factorial_histories": _require(
+                    natural_memory, "discovery", "histories"
+                ),
+                "natural_factorial_source_records": _require(
+                    natural_memory, "discovery", "source_records"
+                ),
+                "natural_factorial_eligible_queries": _require(
+                    natural_memory, "design", "eligible_queries"
+                ),
+                "natural_factorial_arm_count": _require(
+                    natural_memory, "design", "arm_count"
+                ),
+                "natural_factorial_all_runnable_exact": _require(
+                    natural_memory,
+                    "composition_summary",
+                    "all_runnable_mechanisms_exact",
+                ),
+                "natural_factorial_singleton_exact": _require(
+                    natural_memory,
+                    "composition_summary",
+                    "strongest_singleton_exact",
+                ),
+                "natural_factorial_treatment_contrast_identifiable": _require(
+                    natural_memory,
+                    "treatment_contrast_gate",
+                    "differential_mechanism_effect_identifiable",
+                ),
+                "natural_factorial_dream_gate": _require(
+                    natural_memory,
+                    "mechanism_gates",
+                    "released_dream",
+                    "status",
+                ),
             },
             "decision": (
                 "copy-on-write correction, authority intersection, rollback, "
@@ -710,8 +747,11 @@ def build_matrix(
                 "pass in a deterministic oracle; one real public two-session "
                 "cohort additionally proves one exact write/read continuity, "
                 "two edit replays, and one correctly quarantined version gap. "
-                "PostgreSQL/RLS execution, memory quality, and memory utility "
-                "remain unproven"
+                "A fresh 217-history, 23-query, 16-arm natural memory factorial "
+                "shows every runnable singleton and the composed arm at 16/23; "
+                "the mechanisms are therefore observationally indistinguishable "
+                "on current-state reads. PostgreSQL/RLS execution, memory quality, "
+                "and memory utility remain unproven"
             ),
         },
         "L6_procedural_replay": {
@@ -1048,6 +1088,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
         ),
         "L5_temporal_memory": (
             "real transition import and synthetic temporal/authority invariants pass; "
+            "the 217-history natural factorial finds no singleton/composed contrast; "
             "memory quality and utility do not"
         ),
         "L6_procedural_replay": (
@@ -1067,6 +1108,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     l2 = levels["L2_cheap_evidence_finding"]["evidence"]
     l3 = levels["L3_diagnosis_and_eval_proposals"]
     l4 = levels["L4_semantic_candidate_retrieval"]["evidence"]
+    memory = levels["L5_temporal_memory"]["evidence"]
     schema = levels["L0_evidence_conformance"]["evidence"]
     skill = levels["L6_procedural_replay"]["evidence"]
     lines.extend(
@@ -1139,6 +1181,13 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"candidate matched the empty seed at {skill['gepa_selected_holdout_match_rate']:.3f} "
             "on holdout, so this optimizer arm produced no protocol lift and "
             "does not support automatic skill promotion.",
+            f"- The natural memory factorial covers {memory['natural_factorial_histories']} histories "
+            f"and {memory['natural_factorial_eligible_queries']} eligible reads across "
+            f"{memory['natural_factorial_arm_count']} arms. Every runnable singleton "
+            f"and the composed arm reached {memory['natural_factorial_singleton_exact']}/"
+            f"{memory['natural_factorial_eligible_queries']} exact availability; the "
+            "differential mechanism gate is not identifiable, and released Dream/procedure "
+            "arms remain gated because no independently released natural artifacts exist.",
             "- The attested 28-session Trace Commons cohort produced "
             f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
             "structural temporal candidates and "

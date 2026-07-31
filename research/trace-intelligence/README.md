@@ -212,6 +212,14 @@ calls, proposed two mutations, rejected both, and retained the empty seed at
 2/3 holdout matches. This validates the adapter, reflection, acceptance, and
 holdout plumbing; it produces no protocol lift and no enterprise skill claim.
 
+The [`natural trace memory factorial`](experiments/summaries/natural-trace-memory-factorial-2026-08-02-r2.md)
+was rerun over 217 public histories and 30,496 source records. Its 16-arm
+factorial had 23 eligible later reads; every runnable singleton and the
+composed arm recovered 16/23 exact states. This validates cutoff-safe evidence
+availability, not memory utility: the mechanisms were observationally
+indistinguishable on current-state reads, and Dream/procedure release arms had
+no independently released natural artifacts to evaluate.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

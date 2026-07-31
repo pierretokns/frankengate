@@ -109,6 +109,11 @@
       "schema_version": "public-native-history-fidelity-result-v1",
       "sha256": "1acef3394cbb0d95389b953cbfb981f3ceb613d47bd1690a4de578718225345e"
     },
+    "natural_memory_factorial": {
+      "filename": "natural-trace-memory-factorial-2026-08-02-r2.json",
+      "schema_version": "frankengate-natural-trace-memory-factorial-v1",
+      "sha256": "8b42e33b5d5f93dd97f5104aafb45b9179e145a7b5811a4ebe2eaed7914f0db4"
+    },
     "otel_roundtrip": {
       "filename": "otel-collector-roundtrip-e0-2026-07-30.json",
       "schema_version": "frankengate-otel-collector-roundtrip-v1",
@@ -320,11 +325,19 @@
       "status": "offline_silver_and_local_rls_partial_pass"
     },
     "L5_temporal_memory": {
-      "decision": "copy-on-write correction, authority intersection, rollback, deletion closure, influence exclusion, and stale-epoch denial pass in a deterministic oracle; one real public two-session cohort additionally proves one exact write/read continuity, two edit replays, and one correctly quarantined version gap. PostgreSQL/RLS execution, memory quality, and memory utility remain unproven",
+      "decision": "copy-on-write correction, authority intersection, rollback, deletion closure, influence exclusion, and stale-epoch denial pass in a deterministic oracle; one real public two-session cohort additionally proves one exact write/read continuity, two edit replays, and one correctly quarantined version gap. A fresh 217-history, 23-query, 16-arm natural memory factorial shows every runnable singleton and the composed arm at 16/23; the mechanisms are therefore observationally indistinguishable on current-state reads. PostgreSQL/RLS execution, memory quality, and memory utility remain unproven",
       "evidence": {
         "bitemporal_assertions_failed": 0,
         "bitemporal_assertions_passed": 15,
         "bitemporal_assertions_total": 15,
+        "natural_factorial_all_runnable_exact": 16,
+        "natural_factorial_arm_count": 16,
+        "natural_factorial_dream_gate": "not_runnable_no_natural_independent_release",
+        "natural_factorial_eligible_queries": 23,
+        "natural_factorial_histories": 217,
+        "natural_factorial_singleton_exact": 16,
+        "natural_factorial_source_records": 30496,
+        "natural_factorial_treatment_contrast_identifiable": false,
         "paired_trace_memory_strata_discovered": 2,
         "real_context_artifact_calls": 8,
         "real_exact_cross_session_continuities": 1,
@@ -408,6 +421,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "c2d3b94165b167fcc6d19f3448512136d75fcc23737f7ff335bab6467eae3b7c",
-  "schema_version": "frankengate-combined-evidence-matrix-v7"
+  "result_sha256": "2b3ff603231c1732544150e98a48ec625120e78fc101d9f47efda29c633a7643",
+  "schema_version": "frankengate-combined-evidence-matrix-v8"
 }
