@@ -58,10 +58,13 @@ def build_audit() -> dict[str, Any]:
             "evidence": file_evidence(
                 "experiments/results/canonical-projection-e0-conformance-2026-07-30.json",
                 "experiments/results/atif-rl-roundtrip-2026-07-30.json",
+                "experiments/results/atif-capability-extension-2026-08-02.json",
+                "experiments/results/atif-capability-extension-luna-review-2026-08-02.json",
                 "experiments/summaries/atif-rl-roundtrip-2026-07-30.md",
+                "experiments/summaries/atif-capability-extension-2026-08-02.md",
             ),
             "decision": levels.get("L0_evidence_conformance", {}).get("status"),
-            "open_gate": "ATIF/OTel projections lose load-bearing RL reset, reward, termination, memory, and authorization facts; canonical DAG remains required.",
+            "open_gate": "Portable ATIF/OTel still lose load-bearing RL reset, reward, termination, memory, and authorization facts. The namespaced capability profile now preserves structural authority/epoch, reset/termination, reward, replay-reference, and memory-lineage facts for profile-aware readers (Wisp and MATM round trips completed); raw payload/state remains intentionally omitted and the canonical DAG remains required.",
         },
         {
             "id": "public_trace_and_concept_audit",

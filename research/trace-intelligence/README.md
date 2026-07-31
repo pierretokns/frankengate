@@ -103,6 +103,18 @@ measures exact capability-fact retention over 88 Wisp coding trajectories and
 especially RL reset/reward/termination state; preserving event identity is not
 the same as preserving a replayable environment.
 
+The follow-up
+[`ATIF capability-extension run`](experiments/summaries/atif-capability-extension-2026-08-02.md)
+adds a versioned `extra.frankengate.capability_extension` v2 profile rather than
+changing portable ATIF. Profile-aware round trips completed for all 88 Wisp and
+2,130 MATM trajectories, retaining structural authority/epoch, reset and
+termination, reward, replay-reference, and memory-lineage facts. A frontier
+Luna schema review required explicit hash/canonicalization, reader-version,
+governed-reference, retention, and reset/termination semantics; those boundaries
+are now in the contract. Prompt/tool payloads and opaque state snapshots remain
+hash-only and receipted; the profile is therefore a compatibility aid, not an
+evidence authority or replay guarantee.
+
 The corrected
 [`Defog NL2SQL terminal-protocol P0`](experiments/summaries/defog-sql-terminal-protocol-repair-p0-2026-07-30.md)
 eliminates all missing terminal actions across twelve real model/PostgreSQL

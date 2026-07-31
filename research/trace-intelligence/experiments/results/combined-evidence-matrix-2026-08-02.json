@@ -274,6 +274,18 @@
       "schema_version": "frankengate-alfworld-trace-skill-memory-composition-r6-v1",
       "sha256": "1ad56335d80a2488ed992aaf34b2ae966af5d678ff9d4ebc503a15bffcaf6fdf"
     },
+    "atif_capability_extension": {
+      "filename": "atif-capability-extension-2026-08-02.json",
+      "optional": true,
+      "schema_version": "atif-capability-extension-empirical-result-v1",
+      "sha256": "f23dc79e633f40db0df49d360dd0540caa528f2804f7dabbaf0215128b1b7a19"
+    },
+    "atif_capability_extension_luna_review": {
+      "filename": "atif-capability-extension-luna-review-2026-08-02.json",
+      "optional": true,
+      "schema_version": "atif-capability-extension-luna-review-v1",
+      "sha256": "95213ce022f589a91ec1c0dd46bd51a4590286c8813d0137cffdc4a0e1fde55b"
+    },
     "atif_rl_roundtrip": {
       "filename": "atif-rl-roundtrip-2026-07-30.json",
       "schema_version": "atif-rl-roundtrip-result-v1",
@@ -538,9 +550,16 @@
   },
   "levels": {
     "L0_evidence_conformance": {
-      "blocking_gap": "the pinned real collector path passed, but a wholly upstream-dropped trace requires an out-of-band source/export manifest; production storage/failover and ATIF's deliberate enterprise-event non-reversibility remain. The RL round trip is a separate loss receipt: coding tool structure is retained better than RL reset/reward/termination state, and the pinned RL source omits memory snapshots and authorization fields. Neither projection is a sufficient memory or skill-learning authority",
+      "blocking_gap": "the pinned real collector path passed, but a wholly upstream-dropped trace requires an out-of-band source/export manifest; production storage/failover and ATIF's deliberate enterprise-event non-reversibility remain. The RL round trip is a separate loss receipt: coding tool structure is retained better than RL reset/reward/termination state, and the pinned RL source omits memory snapshots and authorization fields. The new namespaced capability profile restores structural authority/reset/reward/memory-lineage facts for profile-aware readers, but deliberately omits payloads and opaque state and does not change the portable ATIF result. Neither projection is a sufficient memory or skill-learning authority",
       "decision": "keep one governed canonical DAG; ATIF and OTel remain receipted projections",
       "evidence": {
+        "atif_capability_extension_luna_review_applied_count": 4,
+        "atif_capability_extension_luna_review_verdict": "revise",
+        "atif_capability_extension_matm_retention": 0.877907,
+        "atif_capability_extension_matm_round_trip_passed": true,
+        "atif_capability_extension_present": true,
+        "atif_capability_extension_wisp_retention": 0.916561,
+        "atif_capability_extension_wisp_round_trip_passed": true,
         "atif_event_identity_retention": 0.0,
         "atif_parent_edge_retention": 0.0,
         "atif_silent_drops": 0,
@@ -1068,6 +1087,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "9978695d9f8587e501d98e897796c704d7d3412b82c8eb437a434f4e8c389420",
-  "schema_version": "frankengate-combined-evidence-matrix-v28"
+  "result_sha256": "9a9abdea0647930efce43ffc2f4d844b80ad551aa563ef1e90034890a8dbd389",
+  "schema_version": "frankengate-combined-evidence-matrix-v30"
 }

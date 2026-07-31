@@ -1,0 +1,29 @@
+{
+  "schema_version": "atif-capability-extension-luna-review-v1",
+  "reviewer": {
+    "backend": "codex",
+    "model": "gpt-5.6-luna",
+    "structured_output": true,
+    "raw_response_committed": false
+  },
+  "verdict": "revise",
+  "missing_capabilities": [
+    "governed access references for omitted payloads",
+    "hash algorithm and canonicalization metadata",
+    "snapshot-delta or checkpoint references",
+    "schema/version compatibility metadata",
+    "reference availability and retention guarantees"
+  ],
+  "unsafe_fields": [
+    "hash-only prompt/tool/state representations",
+    "unscoped replay and memory references",
+    "ambiguous reset and termination semantics"
+  ],
+  "applied": [
+    "contract hash algorithm and canonicalization fields",
+    "minimum reader version and explicit reference policy",
+    "reset and termination semantics plus governed reference fields",
+    "hash-only payload/state boundary retained as non-replayable"
+  ],
+  "result_sha256": "b27d32376b1063e9eb3bc180e81dcf9762a01a0a77ec37e447d7d8690d90c666"
+}

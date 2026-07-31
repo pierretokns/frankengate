@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v28"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v30"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -105,6 +105,8 @@ OPTIONAL_RESULTS = {
     "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
     "enterprise_outcome_gate": "enterprise-outcome-gate-conformance-2026-08-02.json",
     "enterprise_outcome_analysis": "enterprise-outcome-analysis-conformance-2026-08-02.json",
+    "atif_capability_extension": "atif-capability-extension-2026-08-02.json",
+    "atif_capability_extension_luna_review": "atif-capability-extension-luna-review-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
     "alfworld_skill_intervention_r3": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
     "alfworld_skill_intervention_r4_qwen": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
@@ -215,6 +217,10 @@ def build_matrix(
 ) -> dict[str, Any]:
     projection = results["projection"]
     atif_rl_roundtrip = results["atif_rl_roundtrip"]
+    atif_capability_extension = results.get("atif_capability_extension")
+    atif_capability_extension_luna_review = results.get(
+        "atif_capability_extension_luna_review"
+    )
     matm_skill_retrieval = results["matm_skill_retrieval"]
     alfworld_skill_intervention = results.get("alfworld_skill_intervention")
     alfworld_skill_intervention_r2 = results.get("alfworld_skill_intervention_r2")
@@ -589,6 +595,51 @@ def build_matrix(
                         "prompt_after_memory_injection",
                     )
                 ),
+                "atif_capability_extension_present": bool(atif_capability_extension),
+                "atif_capability_extension_wisp_round_trip_passed": (
+                    atif_capability_extension.get("families", {})
+                    .get("wisp_claude_code_tool_rich", {})
+                    .get("measurement", {})
+                    .get("round_trip_failure_count", 0)
+                    == 0
+                    if atif_capability_extension
+                    else False
+                ),
+                "atif_capability_extension_matm_round_trip_passed": (
+                    atif_capability_extension.get("families", {})
+                    .get("matm_alfworld_rl_environment", {})
+                    .get("measurement", {})
+                    .get("round_trip_failure_count", 0)
+                    == 0
+                    if atif_capability_extension
+                    else False
+                ),
+                "atif_capability_extension_wisp_retention": (
+                    atif_capability_extension.get("families", {})
+                    .get("wisp_claude_code_tool_rich", {})
+                    .get("measurement", {})
+                    .get("overall_retention")
+                    if atif_capability_extension
+                    else None
+                ),
+                "atif_capability_extension_matm_retention": (
+                    atif_capability_extension.get("families", {})
+                    .get("matm_alfworld_rl_environment", {})
+                    .get("measurement", {})
+                    .get("overall_retention")
+                    if atif_capability_extension
+                    else None
+                ),
+                "atif_capability_extension_luna_review_verdict": (
+                    atif_capability_extension_luna_review.get("verdict")
+                    if atif_capability_extension_luna_review
+                    else "not_run"
+                ),
+                "atif_capability_extension_luna_review_applied_count": len(
+                    atif_capability_extension_luna_review.get("applied", [])
+                    if atif_capability_extension_luna_review
+                    else []
+                ),
             },
             "blocking_gap": (
                 "the pinned real collector path passed, but a wholly upstream-"
@@ -597,8 +648,12 @@ def build_matrix(
                 "event non-reversibility remain. The RL round trip is a separate "
                 "loss receipt: coding tool structure is retained better than RL "
                 "reset/reward/termination state, and the pinned RL source omits "
-                "memory snapshots and authorization fields. Neither projection "
-                "is a sufficient memory or skill-learning authority"
+                "memory snapshots and authorization fields. The new namespaced "
+                "capability profile restores structural authority/reset/reward/"
+                "memory-lineage facts for profile-aware readers, but deliberately "
+                "omits payloads and opaque state and does not change the portable "
+                "ATIF result. Neither projection is a sufficient memory or "
+                "skill-learning authority"
             ),
         },
         "L1_personal_authority": {
@@ -1674,6 +1729,14 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     schema = levels["L0_evidence_conformance"]["evidence"]
     skill = levels["L6_procedural_replay"]["evidence"]
     authority = levels["L1_personal_authority"]["evidence"]
+    extension_wisp_retention = schema["atif_capability_extension_wisp_retention"]
+    extension_matm_retention = schema["atif_capability_extension_matm_retention"]
+    extension_wisp_display = (
+        "not run" if extension_wisp_retention is None else f"{extension_wisp_retention:.3f}"
+    )
+    extension_matm_display = (
+        "not run" if extension_matm_retention is None else f"{extension_matm_retention:.3f}"
+    )
     lines.extend(
         [
             "",
@@ -1739,6 +1802,19 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{schema['rl_otel_termination_retention']}. The source also omits "
             "memory snapshots and authorization fields, so schema round-trip "
             "fidelity cannot be treated as skill-learning evidence.",
+            f"- The explicit namespaced capability extension completed profile-aware "
+            f"round trips for Wisp={schema['atif_capability_extension_wisp_round_trip_passed']} "
+            f"and MATM={schema['atif_capability_extension_matm_round_trip_passed']}; "
+            f"aggregate structural retention was "
+            f"{extension_wisp_display} and {extension_matm_display}. It preserves "
+            "authority/epoch, reset/termination, reward, replay references, and "
+            "memory lineage only for profile-aware readers; omitted payload/state "
+            "manifests remain non-replay evidence.",
+            f"- Frontier Luna's independent schema review returned "
+            f"`{schema['atif_capability_extension_luna_review_verdict']}`; "
+            f"{schema['atif_capability_extension_luna_review_applied_count']} "
+            "boundary changes were applied. This is a structural review receipt, "
+            "not a semantic utility judgment.",
             f"- The paired skill meta-analysis contains "
             f"{skill['skill_meta_study_count']} endpoint strata, including "
             f"{skill['skill_meta_trace_mined_protocol_studies']} protocol and "

@@ -1,486 +1,371 @@
 {
-  "schema_version": "frankengate.program-completion-audit.v2",
-  "date": "2026-08-02",
-  "supersedes": "experiments/results/program-completion-audit-2026-08-01.json",
-  "overall_status": "active_incomplete",
-  "checkpoint": {
-    "alfworld_family_disjoint_powered_r9": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r9-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-family-disjoint-powered-r9-2026-08-02.md",
-      "status": "larger_family_disjoint_cross_model_negative_transfer",
-      "task_count": 8,
-      "models": ["llama3.2:latest", "qwen3:4b"],
-      "harness": "ollama-native-api",
-      "candidate_wins": 0,
-      "candidate_invalid_actions": {"llama3.2:latest": 66, "qwen3:4b": 140},
-      "quality_comparison_valid": true,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_family_disjoint_powered_r9_verification": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r9-verification-2026-08-02.json",
-      "status": "aggregate_projection_verified",
-      "all_passed": true,
-      "rows_verified": 32,
-      "raw_content_committed": false
-    },
-    "alfworld_family_disjoint_powered_r10_qwen_incomplete": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.md",
-      "status": "typed_model_runtime_null",
-      "completed_episode_outcomes": 0,
-      "causal_skill_benefit_confirmed": false
-    },
-    "alfworld_family_disjoint_powered_r11_openai_llama": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.md",
-      "status": "second_harness_family_disjoint_negative_transfer",
-      "task_count": 8,
-      "model": "llama3.2:latest",
-      "harness": "ollama-openai-compatible",
-      "candidate_wins": 0,
-      "candidate_invalid_actions": 66,
-      "quality_comparison_valid": true,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_family_disjoint_powered_r11_openai_llama_verification": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-verification-2026-08-02.json",
-      "status": "aggregate_projection_verified",
-      "all_passed": true,
-      "rows_verified": 16,
-      "raw_content_committed": false
-    },
-    "alfworld_family_disjoint_powered_r12_replayable": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.md",
-      "status": "replayable_two_harness_negative_transfer",
-      "task_count": 8,
-      "models": ["llama3.2:latest"],
-      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
-      "candidate_wins": 0,
-      "action_sequences_recorded": true,
-      "causal_skill_benefit_confirmed": false
-    },
-    "alfworld_family_disjoint_powered_r12_semantic_verification": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r12-semantic-verification-2026-08-02.json",
-      "status": "independent_fresh_environment_replay_passed",
-      "all_passed": true,
-      "rows_verified": 32,
-      "mismatch_count": 0,
-      "all_executed_actions_admissible": true,
-      "raw_content_committed": false
-    },
-    "alfworld_family_disjoint_powered_r13_controls": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r13-controls-2026-08-02.json",
-      "status": "formatting_placebo_control_negative",
-      "task_count": 8,
-      "arms": ["no_skill", "formatting_placebo", "trace_mined_procedure_v2"],
-      "models": ["llama3.2:latest"],
-      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
-      "all_arm_win_rates_zero": true,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_family_disjoint_powered_r13_controls_verification": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r13-controls-verification-2026-08-02.json",
-      "status": "independent_fresh_environment_replay_passed",
-      "all_passed": true,
-      "rows_verified": 48,
-      "mismatch_count": 0,
-      "all_executed_actions_admissible": true,
-      "raw_content_committed": false
-    },
-    "alfworld_family_disjoint_powered_r14_qwen_controls": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r14-qwen-controls-2026-08-02.json",
-      "status": "second_model_control_negative",
-      "task_count": 8,
-      "arms": ["no_skill", "formatting_placebo", "trace_mined_procedure_v2"],
-      "model": "qwen3:4b",
-      "harness": "ollama-native-api",
-      "all_arm_win_rates_zero": true,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_family_disjoint_powered_r14_qwen_controls_verification": {
-      "result": "experiments/results/alfworld-family-disjoint-powered-r14-qwen-controls-verification-2026-08-02.json",
-      "status": "independent_fresh_environment_replay_passed",
-      "all_passed": true,
-      "rows_verified": 24,
-      "mismatch_count": 0,
-      "all_executed_actions_admissible": true,
-      "raw_content_committed": false
-    },
-    "aurora_runtime_probe": {
-      "result": "experiments/results/aurora-runtime-probe-2026-08-02.json",
-      "status": "colima_vm_container_path_found_no_managed_fixture",
-      "colima_running": true,
-      "container_cli_usable": true,
-      "container_cli_source": "colima_ssh",
-      "aurora_like_database_reachable": false,
-      "failover_test_executed": false,
-      "pitr_test_executed": false,
-      "replica_lag_test_executed": false
-    },
-    "aurora_like_replication_lab": {
-      "result": "experiments/results/aurora-like-replication-lab-2026-08-02.json",
-      "status": "local_postgresql_replication_rls_failover_passed",
-      "replica_marker_propagation_ms": 293.694,
-      "promotion_ms": 309.056,
-      "rls_isolation_verified": true,
-      "post_promotion_write_verified": true,
-      "managed_aurora_behavior_proven": false,
-      "pitr_executed": false
-    },
-    "postgres_pitr_lab": {
-      "result": "experiments/results/postgres-pitr-lab-2026-08-02.json",
-      "status": "local_postgresql_wal_pitr_checkpoint_passed",
-      "archive_files_seen": 7,
-      "target_excluded_after_marker": true,
-      "managed_aurora_pitr_proven": false
-    },
-    "h5_concurrency_live_rerun": {
-      "result": "experiments/results/h5-concurrency-live-rerun-2026-08-02.json",
-      "status": "live_local_postgresql_concurrency_rerun_passed_with_architecture_gaps",
-      "races": 9,
-      "known_architecture_gaps": 6,
-      "invariant_match_to_prior": true,
-      "managed_aurora_concurrency_proven": false
-    },
-    "h5_concurrency_guarded_rerun": {
-      "result": "experiments/results/h5-concurrency-guarded-rerun-2026-08-02.json",
-      "status": "live_local_postgresql_concurrency_rerun_plus_fail_closed_isolation_guard_passed",
-      "races": 9,
-      "repeatable_read_rejected": true,
-      "required_isolation": "read committed",
-      "invariant_match_to_prior": true,
-      "managed_aurora_concurrency_proven": false
-    },
-    "program_scope_audit": {
-      "result": "experiments/results/program-scope-audit-2026-08-02.json",
-      "summary": "experiments/summaries/program-scope-audit-2026-08-02.md",
-      "status": "requirement_ledger_active_incomplete",
-      "requirements_checked": 6,
-      "completion_confirmed": false,
-      "raw_content_committed": false
-    },
-    "alfworld_model_generated_memory_r8": {
-      "result": "experiments/results/alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-model-generated-memory-intervention-r8-2026-08-02.md",
-      "status": "model_generated_memory_negative_transfer",
-      "task_count": 3,
-      "episodes": 12,
-      "model": "llama3.2:latest",
-      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
-      "expert_wins": 3,
-      "memory_wins": 0,
-      "invalid_action_delta_per_harness": 102,
-      "quality_comparison_valid": true,
-      "causal_memory_benefit_confirmed": false,
-      "automatic_memory_promotion_authorized": false
-    },
-    "alfworld_model_generated_memory_verification": {
-      "result": "experiments/results/alfworld-model-generated-memory-verification-2026-08-02.json",
-      "status": "raw_projection_verified",
-      "all_passed": true,
-      "raw_content_committed": false
-    },
-    "alfworld_durable_memory_intervention_r7": {
-      "result": "experiments/results/alfworld-durable-memory-intervention-r7-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-durable-memory-intervention-r7-2026-08-02.md",
-      "status": "fair_horizon_durable_memory_null",
-      "task_count": 3,
-      "episodes": 12,
-      "model": "llama3.2:latest",
-      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
-      "expert_wins": 3,
-      "memory_wins": 0,
-      "memory_success_delta": 0,
-      "quality_comparison_valid": true,
-      "causal_memory_benefit_confirmed": false,
-      "automatic_memory_promotion_authorized": false
-    },
-    "alfworld_durable_memory_verification": {
-      "result": "experiments/results/alfworld-durable-memory-verification-2026-08-02.json",
-      "status": "raw_projection_verified",
-      "all_passed": true,
-      "raw_content_committed": false
-    },
-    "alfworld_skill_memory_composition_r6": {
-      "result": "experiments/results/alfworld-trace-skill-memory-composition-r6-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-trace-skill-memory-composition-r6-2026-08-02.md",
-      "status": "combined_skill_memory_negative_transfer",
-      "task_families": 4,
-      "episodes": 8,
-      "model": "llama3.2:latest",
-      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
-      "expert_wins": 4,
-      "candidate_wins": 0,
-      "invalid_action_delta_per_harness": 16,
-      "composition_improved_task_success": false,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_trace_skill_intervention_r5_qwen": {
-      "result": "experiments/results/alfworld-trace-skill-intervention-r5-qwen-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-trace-skill-intervention-r5-qwen-2026-08-02.md",
-      "status": "fair_horizon_cross_model_semantic_null",
-      "task_families": 4,
-      "episodes": 8,
-      "model": "qwen3:4b",
-      "harness": "ollama-native-api",
-      "expert_wins": 4,
-      "candidate_wins": 0,
-      "candidate_invalid_actions": 105,
-      "quality_comparison_valid": true,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_intervention_verification": {
-      "result": "experiments/results/alfworld-intervention-verification-2026-08-02.json",
-      "status": "raw_projection_and_claim_boundary_verified",
-      "checks": 2,
-      "all_passed": true,
-      "raw_content_committed": false
-    },
-    "alfworld_trace_skill_intervention_r4_qwen": {
-      "result": "experiments/results/alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-trace-skill-intervention-r4-qwen-2026-08-02.md",
-      "status": "cross_model_runtime_probe_quality_gated",
-      "task_families": 4,
-      "episodes": 8,
-      "model": "qwen3:4b",
-      "harness": "ollama-native-api",
-      "candidate_wins": 0,
-      "candidate_invalid_actions": 36,
-      "quality_comparison_valid": false,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_trace_skill_intervention_r3": {
-      "result": "experiments/results/alfworld-trace-skill-intervention-r3-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-trace-skill-intervention-r3-2026-08-02.md",
-      "status": "family_disjoint_replay_negative_transfer",
-      "task_families": 4,
-      "episodes": 16,
-      "models": ["llama3.2:latest"],
-      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
-      "candidate_wins": 0,
-      "candidate_invalid_actions": 168,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_trace_skill_intervention_r2": {
-      "result": "experiments/results/alfworld-trace-skill-intervention-r2-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-trace-skill-intervention-r2-2026-08-02.md",
-      "status": "prompt_contract_revision_no_skill_lift",
-      "episodes": 6,
-      "models": ["llama3.2:latest"],
-      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
-      "candidate_wins": 0,
-      "candidate_invalid_actions": 56,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "alfworld_trace_skill_intervention": {
-      "result": "experiments/results/alfworld-trace-skill-intervention-2026-08-02.json",
-      "summary": "experiments/summaries/alfworld-trace-skill-intervention-2026-08-02.md",
-      "status": "environment_backed_semantic_pilot_no_skill_lift",
-      "tasks": 2,
-      "episodes": 18,
-      "expert_wins": 2,
-      "models": ["llama3.2:latest", "qwen3:4b"],
-      "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
-      "trace_procedure_wins": 0,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "skillopt_alfworld_readiness": {
-      "result": "experiments/results/skillopt-alfworld-intervention-readiness-2026-08-02.json",
-      "summary": "experiments/summaries/skillopt-alfworld-intervention-readiness-2026-08-02.md",
-      "status": "typed_data_and_runtime_null_no_semantic_replay",
-      "skillopt_revision": "7da46ae",
-      "path_split_counts": {"train": 39, "val": 18, "test": 134},
-      "game_payload_present": false,
-      "model_runtime_started": false,
-      "latest_attempt": "experiments/results/skillopt-alfworld-local-intervention-r16-2026-08-02.json",
-      "latest_attempt_status": "engine_and_environment_started_model_endpoint_unavailable",
-      "latest_model_runtime_started": true,
-      "latest_model_responses_emitted": false,
-      "lifecycle_smoke": "experiments/results/skillopt-deterministic-lifecycle-r17-2026-08-02.json",
-      "lifecycle_smoke_status": "candidate_generated_and_gate_rejected_with_deterministic_backend",
-      "real_codex_optimizer": "experiments/results/skillopt-alfworld-codex-r18-2026-08-02.json",
-      "codex_transfer_pilot": "experiments/results/alfworld-codex-skillopt-r19-2026-08-02.json",
-      "codex_transfer_verification": "experiments/results/alfworld-codex-skillopt-r19-verification-2026-08-02.json",
-      "codex_horizon_pilot": "experiments/results/alfworld-codex-skillopt-r20-2026-08-02.json",
-      "codex_horizon_verification": "experiments/results/alfworld-codex-skillopt-r20-verification-2026-08-02.json",
-      "codex_horizon_pilot_status": "one_task_eight_step_empty_candidate_provenance_only",
-      "codex_sufficient_horizon_pilot": "experiments/results/alfworld-codex-skillopt-r21-2026-08-02.json",
-      "codex_sufficient_horizon_verification": "experiments/results/alfworld-codex-skillopt-r21-verification-2026-08-02.json",
-      "codex_sufficient_horizon_pilot_status": "one_task_expert_six_step_empty_candidate_provenance_only",
-      "codex_corrected_real_candidate_pilot": "experiments/results/alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json",
-      "codex_corrected_real_candidate_verification": "experiments/results/alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json",
-      "candidate_provenance_audit": "experiments/results/skillopt-candidate-provenance-audit-2026-08-02.json",
-      "codex_corrected_real_candidate_pilot_status": "one_task_eight_step_real_candidate_negative_underpowered",
-      "codex_powered_real_candidate_pilot": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
-      "codex_powered_real_candidate_verification": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json",
-      "codex_powered_real_candidate_pilot_status": "two_task_eight_step_real_candidate_negative_underpowered",
-      "codex_powered_real_candidate_task_count": 2,
-      "codex_powered_real_candidate_episodes": 6,
-      "codex_powered_real_candidate_verifier_rows": 6,
-      "codex_powered_real_candidate_verifier_passed": true,
-      "r20_r21_empty_candidate_not_quality_evidence": true,
-      "causal_skill_benefit_confirmed": false
-    },
-    "skill_optimization_confirmation": {
-      "result": "experiments/results/skill-optimization-confirmation-2026-08-02.json",
-      "summary": "experiments/summaries/skill-optimization-confirmation-2026-08-02.md",
-      "status": "general_method_supported_local_trace_causal_benefit_unconfirmed",
-      "local_models": ["llama3.2:latest", "qwen3:4b"],
-      "local_harnesses": ["openai-compatible-native-tool", "ollama-native-api"],
-      "semantic_intervention_completed": false,
-      "causal_skill_benefit_confirmed": false,
-      "automatic_promotion_authorized": false
-    },
-    "matm_skill_retrieval": {
-      "summary": "experiments/summaries/matm-trace-skill-retrieval-2026-08-02.md",
-      "status": "offline_predictive_transfer_signal_no_causal_intervention",
-      "rows": 2130,
-      "held_out_model_folds": 34,
-      "successful_neighbor_top10_rate": 0.7471988795518207,
-      "all_neighbor_top10_rate": 0.6806722689075632,
-      "top10_lift": 0.0665266106442577,
-      "top10_lift_ci95": [-0.01960784313725489, 0.16596638655462187],
-      "auc_lift": -0.055740378738362746,
-      "auc_lift_ci95": [-0.11190932395096881, 0.0015199687228194907],
-      "causal_skill_benefit_confirmed": false
-    },
-    "gepa_protocol": {
-      "summary": "experiments/summaries/gepa-native-tool-protocol-2026-08-02.md",
-      "status": "optimizer_plumbing_pass_no_protocol_lift",
-      "baseline_holdout_rate": 0.6666666666666666,
-      "selected_holdout_rate": 0.6666666666666666,
-      "metric_calls": 11,
-      "automatic_promotion_authorized": false
-    },
-    "natural_memory_factorial": {
-      "summary": "experiments/summaries/natural-trace-memory-factorial-2026-08-02-r2.md",
-      "status": "natural_evidence_availability_pass_no_mechanism_contrast",
-      "histories": 217,
-      "source_records": 30496,
-      "eligible_queries": 23,
-      "arms": 16,
-      "runnable_singleton_exact": 16,
-      "composed_arm_exact": 16,
-      "differential_mechanism_effect_identifiable": false,
-      "released_dream_or_procedure_natural_gate": "release_mechanics_verified_utility_unproven",
-      "released_procedure": "experiments/results/natural-released-procedure-2026-08-02.json",
-      "released_procedure_verification": "experiments/results/natural-released-procedure-verification-2026-08-02.json",
-      "released_procedure_projects": 3,
-      "released_procedure_visible_queries": 23,
-      "released_procedure_exact_queries": 0,
-      "model_generated_dream_procedure": "experiments/results/natural-model-dream-procedure-2026-08-02.json",
-      "model_generated_dream_procedure_verification": "experiments/results/natural-model-dream-procedure-verification-2026-08-02.json",
-      "model_generated_dream_projects": 3,
-      "model_generated_dream_quality_passed": 0,
-      "model_generated_dream_verifier_passed": true,
-      "model_generated_dream_semantic_utility_confirmed": false,
-      "model_generated_dream_llama": "experiments/results/natural-model-dream-procedure-llama-2026-08-02.json",
-      "model_generated_dream_llama_verification": "experiments/results/natural-model-dream-procedure-llama-verification-2026-08-02.json",
-      "model_generated_dream_llama_projects": 3,
-      "model_generated_dream_llama_quality_passed": 1,
-      "model_generated_dream_llama_verifier_passed": true,
-      "model_generated_dream_model_format_sensitivity_observed": true,
-      "model_generated_dream_luna": "experiments/results/natural-model-dream-procedure-luna-2026-08-02.json",
-      "model_generated_dream_luna_verification": "experiments/results/natural-model-dream-procedure-luna-verification-2026-08-02.json",
-      "model_generated_dream_luna_projects": 3,
-      "model_generated_dream_luna_quality_passed": 1,
-      "model_generated_dream_luna_verifier_passed": true,
-      "model_generated_dream_luna_semantic_utility_confirmed": false,
-      "alfworld_luna_skillopt_family4": "experiments/results/alfworld-luna-skillopt-family4-2026-08-02.json",
-      "alfworld_luna_skillopt_family4_verification": "experiments/results/alfworld-luna-skillopt-family4-verification-2026-08-02.json",
-      "alfworld_luna_skillopt_family4_tasks": 4,
-      "alfworld_luna_skillopt_family4_episodes": 12,
-      "alfworld_luna_skillopt_family4_families": [
-        "look_at_obj_in_light",
-        "pick_and_place_simple",
-        "pick_clean_then_place_in_recep",
-        "pick_heat_then_place_in_recep"
-      ],
-      "alfworld_luna_skillopt_family4_no_skill_wins": 0,
-      "alfworld_luna_skillopt_family4_placebo_wins": 0,
-      "alfworld_luna_skillopt_family4_candidate_wins": 0,
-      "alfworld_luna_skillopt_family4_candidate_invalid_actions": 0,
-      "alfworld_luna_skillopt_family4_verifier_passed": true,
-      "alfworld_luna_skillopt_family4_rows_verified": 12,
-      "alfworld_luna_skillopt_family4_causal_benefit_confirmed": false,
-      "alfworld_luna_skillopt_family4_total_api_calls": 144,
-      "alfworld_luna_skillopt_family4_mean_elapsed_ms": {
-        "no_skill": 78415.235,
-        "formatting_placebo": 87050.662,
-        "skillopt_candidate": 103005.202
-      },
-      "alfworld_luna_skillopt_long_horizon": "experiments/results/alfworld-luna-skillopt-long-horizon-2026-08-02.json",
-      "alfworld_luna_skillopt_long_horizon_verification": "experiments/results/alfworld-luna-skillopt-long-horizon-verification-2026-08-02.json",
-      "alfworld_luna_skillopt_long_horizon_steps": 35,
-      "alfworld_luna_skillopt_long_horizon_no_skill_wins": 0,
-      "alfworld_luna_skillopt_long_horizon_placebo_wins": 0,
-      "alfworld_luna_skillopt_long_horizon_candidate_wins": 0,
-      "alfworld_luna_skillopt_long_horizon_verifier_passed": true,
-      "alfworld_luna_skillopt_long_horizon_rows_verified": 3,
-      "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": false,
-      "alfworld_luna_skillopt_long_horizon_total_api_calls": 105,
-      "alfworld_luna_skillopt_long_horizon_mean_elapsed_ms": {
-        "no_skill": 241000.0,
-        "formatting_placebo": 251100.0,
-        "skillopt_candidate": 326700.0
-      }
-    },
-    "aggregate_matrix": {
-      "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-      "schema_version": "frankengate-combined-evidence-matrix-v28",
-      "enterprise_outcome_analysis": "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json",
-      "enterprise_outcome_analysis_mechanics_passed": true,
-      "enterprise_question_shapes_exercised": ["collaboration", "friction_recovery", "similar_work", "skill_gap"],
-      "natural_model_dream_procedure_luna_meaningful": "experiments/results/natural-model-dream-procedure-luna-meaningful-2026-08-02.json",
-      "natural_model_dream_procedure_luna_meaningful_verification": "experiments/results/natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
-      "natural_model_dream_procedure_luna_meaningful_projects": 4,
-      "natural_model_dream_procedure_luna_meaningful_quality_passed": 3,
-      "natural_model_dream_procedure_luna_meaningful_verifier_passed": true,
-      "enterprise_outcome_gate": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json",
-      "enterprise_outcome_gate_mechanics_passed": true,
-      "enterprise_denials_emit_no_candidate_digests": true,
-      "alfworld_semantic_pilot_consumed": true,
-      "alfworld_revision_r2_consumed": true,
-      "alfworld_family_disjoint_r3_consumed": true,
-      "alfworld_cross_model_r4_qwen_consumed": true,
-      "alfworld_intervention_verifier_consumed": true,
-      "alfworld_cross_model_r5_qwen_consumed": true,
-      "alfworld_skill_memory_composition_r6_consumed": true,
-      "alfworld_durable_memory_r7_consumed": true,
-      "alfworld_durable_memory_verification_consumed": true,
-      "alfworld_model_generated_memory_r8_consumed": true,
-    "alfworld_model_generated_memory_verification_consumed": true,
-    "alfworld_family_disjoint_powered_r9_consumed": true,
-    "alfworld_family_disjoint_powered_r9_verification_consumed": true,
-    "alfworld_family_disjoint_powered_r10_qwen_incomplete_consumed": true,
-    "alfworld_family_disjoint_powered_r9_candidate_wins": 0,
-    "alfworld_family_disjoint_powered_r9_candidate_invalid_actions": 206,
-      "alfworld_trace_procedure_wins": 0,
-      "alfworld_family_disjoint_r3_candidate_wins": 0,
-      "causal_skill_benefit_confirmed": false,
-      "memory_utility_confirmed": false,
-      "aurora_scale_confirmed": false,
-      "cmu_raw_access_confirmed": false
-    }
+  "claim_boundary": {
+    "automatic_skill_or_memory_promotion_authorized": false,
+    "causal_enterprise_utility_confirmed": false,
+    "completion_confirmed": false,
+    "raw_trace_content_committed": false
   },
-  "requirements_still_open": [
-    "CMU publisher approval and trajectory metrics",
-    "positive causal skill utility and release-gated optimizer arms beyond the completed family-disjoint controls",
-    "semantic Dream/procedure utility and changed-system outcome evaluation",
-    "prospective enterprise task outcomes and human labels",
-    "Managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
-    "consented minimum-cohort human outcome labels for cross-user analysis",
-    "cross-user collaboration utility and consent outcomes"
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v30",
+  "open_requirements": [],
+  "overall_status": "active_incomplete",
+  "program_audit_schema_version": "frankengate-program-scope-audit-v1",
+  "requirements": [
+    {
+      "decision": "real_roundtrip_partial_pass",
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/results/canonical-projection-e0-conformance-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/atif-rl-roundtrip-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/atif-capability-extension-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/atif-capability-extension-luna-review-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/atif-rl-roundtrip-2026-07-30.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/atif-capability-extension-2026-08-02.md"
+        }
+      ],
+      "id": "schema_crosswalk",
+      "open_gate": "Portable ATIF/OTel still lose load-bearing RL reset, reward, termination, memory, and authorization facts. The namespaced capability profile now preserves structural authority/epoch, reset/termination, reward, replay-reference, and memory-lineage facts for profile-aware readers (Wisp and MATM round trips completed); raw payload/state remains intentionally omitted and the canonical DAG remains required.",
+      "requirement": "Compare ATIF, OpenInference/OTel, coding traces, and RL-environment traces.",
+      "status": "partial_proven"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/results/public-agent-history-discovery-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-alfworld-intervention-readiness-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-alfworld-local-intervention-r16-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-deterministic-lifecycle-r17-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-alfworld-codex-r18-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r19-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r19-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r20-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r20-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r21-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r21-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillopt-candidate-provenance-audit-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-released-procedure-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-released-procedure-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-llama-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-llama-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-luna-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-luna-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-luna-meaningful-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-luna-skillopt-family4-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-luna-skillopt-family4-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-luna-skillopt-long-horizon-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-luna-skillopt-long-horizon-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/skill-improvement-strategy-audit-2026-07-30.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/natural-trace-memory-factorial-2026-08-02-r2.md"
+        }
+      ],
+      "id": "public_trace_and_concept_audit",
+      "open_gate": "Natural release lineage is exercised; the corrected meaningful-trace Luna sample passed 3/4 structural proposal gates after excluding empty/malformed fixtures, while the earlier mixed sample passed 1/3. The frontier Luna SkillOpt checkpoint also produced zero wins for no-skill, placebo, and candidate across four previously unused ALFWorld families at a 12-step horizon, and a fair-horizon one-task follow-up remained zero-win at 35 steps; independent replay verification passed both. These results establish protocol/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
+      "requirement": "Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.",
+      "status": "natural_release_mechanics_proven_utility_unproven"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/results/memory-mechanism-factorial-fixture-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-trace-skill-intervention-r3-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-trace-skill-memory-composition-r6-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-durable-memory-intervention-r7-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-model-generated-memory-intervention-r8-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r9-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r9-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r12-semantic-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r13-controls-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r13-controls-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r14-qwen-controls-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r14-qwen-controls-verification-2026-08-02.json"
+        }
+      ],
+      "id": "single_and_composed_mechanisms",
+      "open_gate": "No mechanism has a powered causal lift with independent later-task labels; all learned candidates remain rejected or proposal-only.",
+      "requirement": "Test single and combined skill/memory mechanisms against held-out traces and RL environments.",
+      "status": "family_disjoint_intervention_and_composition_proven; utility_unproven"
+    },
+    {
+      "decision": "offline_silver_and_local_rls_partial_pass",
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/results/wisp-governed-postgres-benchmark-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/wisp-share-codex-canonical-bounded-recovery-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/codetracebench-e2-postgres-joint-retrieval-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/bitemporal-memory-conformance-2026-07-30.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/aurora-runtime-probe-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/aurora-like-replication-lab-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/postgres-pitr-lab-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/h5-concurrency-live-rerun-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/h5-concurrency-guarded-rerun-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json"
+        }
+      ],
+      "id": "governed_local_stack",
+      "open_gate": "Managed Aurora semantics, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion, RLS, and WAL/PITR mechanics are measured separately.",
+      "requirement": "Exercise a local Aurora-like governed stack with PostgreSQL, RLS, vectors, deletion, and tool/eval release controls.",
+      "status": "local_replication_rls_failover_proven; aurora_operations_unproven"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/combined-evidence-matrix-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json"
+        }
+      ],
+      "id": "cmu_and_enterprise_outcomes",
+      "open_gate": "The fail-closed consent/epoch/classification/minimum-cohort gate and four answer-shaped content-free analyses now pass mechanics, but CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.",
+      "requirement": "Run public/CMU trace analyses and answer cross-user similarity, skill gaps, collaboration, and enterprise outcome questions.",
+      "status": "cmu_approval_gated; enterprise_outcomes_unmeasured"
+    },
+    {
+      "evidence": [
+        {
+          "branch": "codex/trace-intelligence-academic-program"
+        },
+        {
+          "head": "72b814035075dd97074ae02c712a4d62af65b823"
+        },
+        {
+          "remote": "https://github.com/pierretokns/frankengate.git"
+        },
+        {
+          "github_issue": "https://github.com/pierretokns/frankengate/issues/93"
+        },
+        {
+          "bead": "bif-kyy.17.13.4.4.5.3.2"
+        },
+        {
+          "follow_on_beads": [
+            "bif-kyy.17.13.4.4.5.3.2.1",
+            "bif-kyy.17.13.4.4.5.3.2.2",
+            "bif-kyy.17.13.4.4.5.3.2.3"
+          ]
+        }
+      ],
+      "id": "publication_and_tracking",
+      "open_gate": "The overall program remains active until the research gates above close; publication mechanics themselves are functioning.",
+      "requirement": "Publish reproducible artifacts on a dedicated branch and track work in GitHub issues and beads.",
+      "status": "proven_for_current_checkpoint"
+    }
   ],
-  "raw_content_committed": false,
-  "interpretation": "The checkpoint strengthens reproducibility and bounds what natural traces can establish. Frontier structured extraction and four governed answer-shaped enterprise analyses now have independent mechanics receipts, but Frankengate trace-derived causal skill benefit, memory utility, capability validity, collaboration utility, and enterprise work outcomes remain unconfirmed."
+  "schema_version": "frankengate-program-scope-audit-v1"
 }
