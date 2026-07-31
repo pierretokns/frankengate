@@ -1,0 +1,16 @@
+{
+  "schema_version": "frankengate.program-completion-audit.v1",
+  "date": "2026-08-01",
+  "overall_status": "active_incomplete",
+  "requirements": [
+    {"id":"R1","requirement":"Compare ATIF with OTel/OpenInference and preserve loss receipts","status":"proven_bounded","evidence":["experiments/summaries/atif-rl-roundtrip-2026-07-30.md","experiments/summaries/otel-collector-roundtrip-e0-2026-07-30.md"],"remaining":"Neither projection is the evidence authority; RL/environment semantics remain lossy."},
+    {"id":"R2","requirement":"Audit public Hugging Face trace strata and licenses","status":"proven_bounded","evidence":["experiments/summaries/huggingface-agent-trace-discovery-2026-07-31.md","experiments/summaries/concept-coverage-audit-2026-07-31.md"],"remaining":"Publisher approval and trajectory-level metrics remain missing for CMU."},
+    {"id":"R3","requirement":"Evaluate Dreams, Memory Palace, Hermes, Jeopard/skill-learning, and related memory concepts","status":"proven_bounded","evidence":["experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md","experiments/summaries/faithful-memory-components-2026-07-30.md"],"remaining":"No causal held-out skill or memory benefit is established."},
+    {"id":"R4","requirement":"Test single and composed mechanisms against public traces","status":"proven_bounded","evidence":["experiments/summaries/public-otel-composition-gate-2026-07-31.md","experiments/summaries/signals-diagnosis-evals-test-checkpoint-2026-07-31.md"],"remaining":"Human labels, changed-system task outcomes, and independent outcome verification are incomplete."},
+    {"id":"R5","requirement":"Test governed local Aurora-like storage and authorization","status":"proven_local_only","evidence":["experiments/summaries/h5-forced-rls-rerun-check-2026-07-31.md","experiments/summaries/h5-concurrency-rerun-check-2026-07-31.md","experiments/summaries/postgres-aurora-architecture-gate-2026-07-31.md"],"remaining":"Aurora failover, RDS Proxy, replica lag, PITR, scale, and lifecycle fixes remain unverified."},
+    {"id":"R6","requirement":"Run CMU trajectories","status":"blocked_external_approval","evidence":["experiments/summaries/cmu-access-recheck-2026-08-01.md"],"remaining":"Raw trajectory shard access requires publisher approval; no CMU metrics may be claimed."},
+    {"id":"R7","requirement":"Record reproducible results in GitHub issues, beads, and a pushed branch","status":"proven","evidence":["Git branch codex/trace-intelligence-academic-program","GitHub issues #90, #91, #96, #98, #101",".beads/issues.jsonl"],"remaining":"Open beads remain for incomplete scientific gates."}
+  ],
+  "verification": {"make_verify":"passed","research_tests":451,"research_skips":10,"nl2sql_tests":44,"nl2sql_skips":2,"aggregate_results":72,"dataset_manifests":43,"governed_fixtures":12,"raw_corpus_files_committed":0},
+  "decision": "Keep the goal active. The evidence supports a governed PostgreSQL-first research architecture and bounded mechanics, but does not support completion of enterprise causal, CMU, or Aurora claims."
+}
