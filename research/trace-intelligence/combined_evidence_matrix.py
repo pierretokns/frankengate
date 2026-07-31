@@ -78,6 +78,8 @@ OPTIONAL_RESULTS = {
     "alfworld_codex_skillopt_r19_verification": "alfworld-codex-skillopt-r19-verification-2026-08-02.json",
     "alfworld_codex_skillopt_r20": "alfworld-codex-skillopt-r20-2026-08-02.json",
     "alfworld_codex_skillopt_r20_verification": "alfworld-codex-skillopt-r20-verification-2026-08-02.json",
+    "alfworld_codex_skillopt_r21": "alfworld-codex-skillopt-r21-2026-08-02.json",
+    "alfworld_codex_skillopt_r21_verification": "alfworld-codex-skillopt-r21-verification-2026-08-02.json",
     "aurora_like_replication_lab": "aurora-like-replication-lab-2026-08-02.json",
     "postgres_pitr_lab": "postgres-pitr-lab-2026-08-02.json",
     "alfworld_skill_intervention_r2": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
@@ -202,6 +204,8 @@ def build_matrix(
     alfworld_family_disjoint_powered_r14_qwen_controls_verification = results.get("alfworld_family_disjoint_powered_r14_qwen_controls_verification")
     alfworld_codex_skillopt_r20 = results.get("alfworld_codex_skillopt_r20")
     alfworld_codex_skillopt_r20_verification = results.get("alfworld_codex_skillopt_r20_verification")
+    alfworld_codex_skillopt_r21 = results.get("alfworld_codex_skillopt_r21")
+    alfworld_codex_skillopt_r21_verification = results.get("alfworld_codex_skillopt_r21_verification")
     aurora_like_replication_lab = results.get("aurora_like_replication_lab")
     postgres_pitr_lab = results.get("postgres_pitr_lab")
     codetrace = results["codetracebench"]
@@ -310,6 +314,12 @@ def build_matrix(
         "r20_arm_summaries": alfworld_codex_skillopt_r20.get("summary", {}) if alfworld_codex_skillopt_r20 else {},
         "r20_verifier_passed": bool(alfworld_codex_skillopt_r20_verification and alfworld_codex_skillopt_r20_verification.get("all_passed", False)),
         "r20_rows_verified": alfworld_codex_skillopt_r20_verification.get("rows_verified", 0) if alfworld_codex_skillopt_r20_verification else 0,
+        "r21_task_count": len(alfworld_codex_skillopt_r21.get("dataset", {}).get("task_hashes", [])) if alfworld_codex_skillopt_r21 else 0,
+        "r21_expert_steps": [item.get("expert_steps") for item in (alfworld_codex_skillopt_r21.get("dataset", {}).get("task_metadata", []) if alfworld_codex_skillopt_r21 else [])],
+        "r21_episodes": sum(v.get("episodes", 0) for v in (alfworld_codex_skillopt_r21.get("summary", {}).values() if alfworld_codex_skillopt_r21 else [])),
+        "r21_arm_summaries": alfworld_codex_skillopt_r21.get("summary", {}) if alfworld_codex_skillopt_r21 else {},
+        "r21_verifier_passed": bool(alfworld_codex_skillopt_r21_verification and alfworld_codex_skillopt_r21_verification.get("all_passed", False)),
+        "r21_rows_verified": alfworld_codex_skillopt_r21_verification.get("rows_verified", 0) if alfworld_codex_skillopt_r21_verification else 0,
     }
 
     trace_commons_attestation_passed = bool(
@@ -1212,6 +1222,12 @@ def build_matrix(
                 "alfworld_codex_skillopt_r20_arm_summaries": revision_evidence["r20_arm_summaries"],
                 "alfworld_codex_skillopt_r20_verifier_passed": revision_evidence["r20_verifier_passed"],
                 "alfworld_codex_skillopt_r20_rows_verified": revision_evidence["r20_rows_verified"],
+                "alfworld_codex_skillopt_r21_tasks": revision_evidence["r21_task_count"],
+                "alfworld_codex_skillopt_r21_expert_steps": revision_evidence["r21_expert_steps"],
+                "alfworld_codex_skillopt_r21_episodes": revision_evidence["r21_episodes"],
+                "alfworld_codex_skillopt_r21_arm_summaries": revision_evidence["r21_arm_summaries"],
+                "alfworld_codex_skillopt_r21_verifier_passed": revision_evidence["r21_verifier_passed"],
+                "alfworld_codex_skillopt_r21_rows_verified": revision_evidence["r21_rows_verified"],
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "

@@ -113,6 +113,20 @@
       "result": "Three rows independently recomputed with zero mismatches and all executed actions admissible",
       "causal": false,
       "hard_edge": "Replay integrity is established; it does not establish positive skill utility or enterprise transfer"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r21-2026-08-02.json",
+      "what_was_tested": "The same real Codex-backed SkillOpt candidate versus no-skill and formatting placebo on a sealed task with an independently verified six-step expert horizon",
+      "result": "All three arms were 0/1 wins at an eight-step cap; each made eight admissible actions with zero parser-invalid actions",
+      "causal": false,
+      "hard_edge": "The task was expert-solvable within the cap, but Codex failed all arms; this is a one-task negative transfer result and not a powered release decision"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r21-verification-2026-08-02.json",
+      "what_was_tested": "Fresh-environment replay of every r21 Codex action sequence",
+      "result": "Three rows independently recomputed with zero mismatches and all executed actions admissible",
+      "causal": false,
+      "hard_edge": "Replay integrity is established; it does not establish positive skill utility or enterprise transfer"
     }
   ],
   "model_harness_coverage": {

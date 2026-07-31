@@ -297,6 +297,12 @@ and candidate were each `0/1`; all three sequences replayed cleanly. The
 longer pilot removes the three-step truncation ambiguity, but remains
 underpowered and does not authorize promotion.
 
+The [`r21 sufficient-horizon pilot`](experiments/summaries/alfworld-codex-skillopt-r21-2026-08-02.md)
+repeated the comparison on a task independently solved by the hand-coded
+expert in six steps. At eight steps, all three arms were `0/1`; replay passed
+for all rows. This is stronger negative transfer evidence, not a promotion
+result.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

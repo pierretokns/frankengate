@@ -1,0 +1,11 @@
+{
+  "all_executed_actions_admissible": true,
+  "all_passed": true,
+  "mismatch_count": 0,
+  "mismatches": [],
+  "raw_content_policy": "actions and aggregate outcomes only; no prompts or model responses",
+  "receipt": "alfworld-codex-skillopt-r21-2026-08-02.json",
+  "rows_verified": 3,
+  "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+  "verifier": "fresh ALFWorld environments; no model calls"
+}
