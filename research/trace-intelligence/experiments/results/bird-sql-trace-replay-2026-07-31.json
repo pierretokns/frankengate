@@ -1,0 +1,58 @@
+{
+  "by_reward": {
+    "0": {
+      "candidate_executed": 640,
+      "candidate_result_limit": 1,
+      "candidate_unparseable": 1,
+      "gold_executed": 642,
+      "gold_result_limit": 6,
+      "not_exact_match": 640,
+      "not_unordered_match": 640,
+      "traces": 648
+    },
+    "1": {
+      "candidate_executed": 1336,
+      "exact_match": 811,
+      "gold_executed": 1336,
+      "gold_result_limit": 9,
+      "not_exact_match": 525,
+      "not_unordered_match": 503,
+      "traces": 1345,
+      "unordered_match": 833
+    },
+    "other": {}
+  },
+  "claim_boundary": {
+    "causal_skill_benefit_confirmed": false,
+    "natural_user_behavior_confirmed": false,
+    "reason": "This is retrospective candidate-versus-gold execution matching on SQLite; it does not measure a new intervention or preserve OTel parentage/latency.",
+    "replay_executed": true
+  },
+  "counts": {
+    "candidate_executed": 1976,
+    "candidate_parseable": 1977,
+    "candidate_result_limit": 1,
+    "candidate_unparseable": 1,
+    "exact_match": 811,
+    "gold_executed": 1978,
+    "gold_result_limit": 15,
+    "not_exact_match": 1165,
+    "not_unordered_match": 1143,
+    "traces_with_metadata": 1993,
+    "unordered_match": 833
+  },
+  "models": {
+    "us.anthropic.claude-opus-4-6-v1": 17,
+    "us.anthropic.claude-opus-4-7": 988,
+    "us.anthropic.claude-opus-4-8": 988
+  },
+  "schema_version": "frankengate-bird-sql-trace-replay-v1",
+  "source": {
+    "database_count": 11,
+    "gold_sidecar_count": 242,
+    "task_file": "train.jsonl",
+    "task_file_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "trace_file": "traces.otel.jsonl",
+    "trace_file_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+  }
+}
