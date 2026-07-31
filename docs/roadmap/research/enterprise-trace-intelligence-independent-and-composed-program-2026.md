@@ -176,6 +176,21 @@ work but only a small number of comparative mechanism studies.
 | Public OTel shard projection and selector | Pinned DiscoPosse OTel shards plus one dataset-server mixed sample; canonical, ATIF, and OpenInference adapters | 46-row appworld shard projected with explicit receipts; Signals error/tool precision 1.00 there, zero-positive browsecompplus shard, and Signals tied trace length on mixed sample | OTel is executable for cross-schema mechanics and review triage, but selector behavior is workload-sensitive and not a diagnosis or enterprise label |
 | Governed hypothesis policy and composition | Two deterministic proposal policies, no-proposal control, family-disjoint resettable replay, and public OTel composition gate | Mechanics and deletion closure pass; evidence policy 2/3 synthetic holdout versus 0/3 placebo/no-proposal; composed promotion gate correctly returns defer | Controlled lifecycle is viable; causal utility, human adjudication, and changed-system enterprise outcomes remain unproven |
 
+### Retention metric definition
+
+“Retention” in the ATIF/OTel row is a capability-fact metric, not byte-level
+serialization similarity or model quality. For each source trajectory, the
+adapter inventory defines atomic facts needed by the planned analyses (for
+example message/tool identity, tool result/error, ordering/parentage,
+timestamps, retries, branches, rewards, environment transitions, and replay
+identity). The trace is projected into the target schema and imported back;
+retention is the weighted fraction of those inventory facts that remain
+recoverable. The denominator and fact weights are frozen in the experiment
+manifests. Facts present only in vendor-specific extension fields are reported
+separately and do not count as portable-core retention. The canonical model's
+100% is therefore an adapter-observed upper bound, not a claim of universal
+completeness.
+
 The negative results are part of the architecture decision:
 
 - More diagnosis factors made localization worse.
