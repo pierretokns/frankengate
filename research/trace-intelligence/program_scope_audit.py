@@ -82,6 +82,8 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/alfworld-codex-skillopt-r21-verification-2026-08-02.json",
                 "experiments/results/alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json",
                 "experiments/results/alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json",
+                "experiments/results/alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
+                "experiments/results/alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json",
                 "experiments/results/skillopt-candidate-provenance-audit-2026-08-02.json",
                 "experiments/results/natural-released-procedure-2026-08-02.json",
                 "experiments/results/natural-released-procedure-verification-2026-08-02.json",

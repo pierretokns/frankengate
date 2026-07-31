@@ -313,6 +313,13 @@ underpowered negative result, not an impossibility claim or release gate.
 The [`candidate provenance audit`](experiments/results/skillopt-candidate-provenance-audit-2026-08-02.json)
 records the distinction by hash and never emits candidate text.
 
+The subsequent [`r23 two-task replication`](experiments/results/alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json)
+used that same real candidate on two independently expert-solvable tasks
+(expert horizons six and seven). No-skill, placebo, and candidate were each
+`0/2`; all six rows used eight admissible actions and the fresh verifier
+matched every row. This increases power modestly while leaving the
+pre-registered larger family-disjoint and enterprise-outcome gates open.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

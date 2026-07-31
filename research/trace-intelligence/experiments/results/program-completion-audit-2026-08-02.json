@@ -320,6 +320,13 @@
       "codex_corrected_real_candidate_verification": "experiments/results/alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json",
       "candidate_provenance_audit": "experiments/results/skillopt-candidate-provenance-audit-2026-08-02.json",
       "codex_corrected_real_candidate_pilot_status": "one_task_eight_step_real_candidate_negative_underpowered",
+      "codex_powered_real_candidate_pilot": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
+      "codex_powered_real_candidate_verification": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json",
+      "codex_powered_real_candidate_pilot_status": "two_task_eight_step_real_candidate_negative_underpowered",
+      "codex_powered_real_candidate_task_count": 2,
+      "codex_powered_real_candidate_episodes": 6,
+      "codex_powered_real_candidate_verifier_rows": 6,
+      "codex_powered_real_candidate_verifier_passed": true,
       "r20_r21_empty_candidate_not_quality_evidence": true,
       "causal_skill_benefit_confirmed": false
     },

@@ -98,6 +98,14 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/results/skillopt-candidate-provenance-audit-2026-08-02.json"
         },
         {
@@ -265,7 +273,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "15f89b4bf0a4b445f9f1011b15ac164a17bcc563"
+          "head": "706400c982da79824c20273fbd93082d66f6aa2a"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

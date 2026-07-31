@@ -148,6 +148,39 @@
           "wins": 0
         }
       }
+    },
+    {
+      "candidate_length": 213,
+      "candidate_sha256": "253e353d4b027d2f1c8469e14ffdc50baefc413708f0e3d3edd7aa5691c3d378",
+      "empty_candidate": false,
+      "matches_real_candidate": true,
+      "receipt": "alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
+      "summary": {
+        "formatting_placebo": {
+          "api_calls": 16,
+          "episodes": 2,
+          "invalid_actions": 0,
+          "steps": 16,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "no_skill": {
+          "api_calls": 16,
+          "episodes": 2,
+          "invalid_actions": 0,
+          "steps": 16,
+          "win_rate": 0.0,
+          "wins": 0
+        },
+        "skillopt_candidate": {
+          "api_calls": 16,
+          "episodes": 2,
+          "invalid_actions": 0,
+          "steps": 16,
+          "win_rate": 0.0,
+          "wins": 0
+        }
+      }
     }
   ],
   "schema_version": "frankengate-skillopt-candidate-provenance-audit-v1"

@@ -107,6 +107,18 @@
       "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
       "sha256": "c4ad49a73cf2067fc94e8e707c658336db892dafcee09ae24485f92442c9f219"
     },
+    "alfworld_codex_skillopt_r23_real_candidate": {
+      "filename": "alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "8cd549f926d691a9417711b3aaf0627e92431ae73fc1b6183c4e921cb39a8f5e"
+    },
+    "alfworld_codex_skillopt_r23_real_candidate_verification": {
+      "filename": "alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "89e7f74b71a43a0b847c07a3b5e582a7612fa9a01620abbabc0db2136bb7a3b3"
+    },
     "alfworld_durable_memory_intervention_r7": {
       "filename": "alfworld-durable-memory-intervention-r7-2026-08-02.json",
       "optional": true,
@@ -379,7 +391,7 @@
       "filename": "skillopt-candidate-provenance-audit-2026-08-02.json",
       "optional": true,
       "schema_version": "frankengate-skillopt-candidate-provenance-audit-v1",
-      "sha256": "d89d6befe4a4524c648d6a79c80f9e1e000a1fac946a235b52c092630fc4e37b"
+      "sha256": "fdaa1fb366296f04ca9fc7e77f26f79af2f75c314caf7494096057ec107b1ede"
     },
     "skillopt_deterministic_lifecycle_r17": {
       "filename": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
@@ -721,6 +733,36 @@
         "alfworld_codex_skillopt_r22_real_candidate_sha256": "253e353d4b027d2f1c8469e14ffdc50baefc413708f0e3d3edd7aa5691c3d378",
         "alfworld_codex_skillopt_r22_real_candidate_tasks": 1,
         "alfworld_codex_skillopt_r22_real_candidate_verifier_passed": true,
+        "alfworld_codex_skillopt_r23_real_candidate_arm_summaries": {
+          "formatting_placebo": {
+            "api_calls": 16,
+            "episodes": 2,
+            "invalid_actions": 0,
+            "steps": 16,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "no_skill": {
+            "api_calls": 16,
+            "episodes": 2,
+            "invalid_actions": 0,
+            "steps": 16,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "skillopt_candidate": {
+            "api_calls": 16,
+            "episodes": 2,
+            "invalid_actions": 0,
+            "steps": 16,
+            "win_rate": 0.0,
+            "wins": 0
+          }
+        },
+        "alfworld_codex_skillopt_r23_real_candidate_episodes": 6,
+        "alfworld_codex_skillopt_r23_real_candidate_rows_verified": 6,
+        "alfworld_codex_skillopt_r23_real_candidate_tasks": 2,
+        "alfworld_codex_skillopt_r23_real_candidate_verifier_passed": true,
         "alfworld_cross_model_r4_qwen_candidate_invalid_actions": 36,
         "alfworld_cross_model_r4_qwen_candidate_wins": 0,
         "alfworld_cross_model_r4_qwen_episodes": 8,
@@ -877,6 +919,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "3b23aa53857b8c961e55d5cee8b482f91531f08a0381a23e5a5980202aac23a7",
+  "result_sha256": "5d7b8f1ac2f8bf508b8766630f67b107d17f96388997aa2e9878fc3762c8153f",
   "schema_version": "frankengate-combined-evidence-matrix-v20"
 }

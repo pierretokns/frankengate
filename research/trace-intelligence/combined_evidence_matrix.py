@@ -82,6 +82,8 @@ OPTIONAL_RESULTS = {
     "alfworld_codex_skillopt_r21_verification": "alfworld-codex-skillopt-r21-verification-2026-08-02.json",
     "alfworld_codex_skillopt_r22_real_candidate": "alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json",
     "alfworld_codex_skillopt_r22_real_candidate_verification": "alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json",
+    "alfworld_codex_skillopt_r23_real_candidate": "alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
+    "alfworld_codex_skillopt_r23_real_candidate_verification": "alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json",
     "skillopt_candidate_provenance_audit": "skillopt-candidate-provenance-audit-2026-08-02.json",
     "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
     "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
@@ -215,6 +217,8 @@ def build_matrix(
     alfworld_codex_skillopt_r21_verification = results.get("alfworld_codex_skillopt_r21_verification")
     alfworld_codex_skillopt_r22_real_candidate = results.get("alfworld_codex_skillopt_r22_real_candidate")
     alfworld_codex_skillopt_r22_real_candidate_verification = results.get("alfworld_codex_skillopt_r22_real_candidate_verification")
+    alfworld_codex_skillopt_r23_real_candidate = results.get("alfworld_codex_skillopt_r23_real_candidate")
+    alfworld_codex_skillopt_r23_real_candidate_verification = results.get("alfworld_codex_skillopt_r23_real_candidate_verification")
     skillopt_candidate_provenance_audit = results.get("skillopt_candidate_provenance_audit")
     natural_released_procedure = results.get("natural_released_procedure")
     natural_released_procedure_verification = results.get("natural_released_procedure_verification")
@@ -340,6 +344,11 @@ def build_matrix(
         "r22_real_candidate_arm_summaries": alfworld_codex_skillopt_r22_real_candidate.get("summary", {}) if alfworld_codex_skillopt_r22_real_candidate else {},
         "r22_real_candidate_verifier_passed": bool(alfworld_codex_skillopt_r22_real_candidate_verification and alfworld_codex_skillopt_r22_real_candidate_verification.get("all_passed", False)),
         "r22_real_candidate_rows_verified": alfworld_codex_skillopt_r22_real_candidate_verification.get("rows_verified", 0) if alfworld_codex_skillopt_r22_real_candidate_verification else 0,
+        "r23_real_candidate_task_count": len(alfworld_codex_skillopt_r23_real_candidate.get("dataset", {}).get("task_hashes", [])) if alfworld_codex_skillopt_r23_real_candidate else 0,
+        "r23_real_candidate_episodes": sum(v.get("episodes", 0) for v in (alfworld_codex_skillopt_r23_real_candidate.get("summary", {}).values() if alfworld_codex_skillopt_r23_real_candidate else [])),
+        "r23_real_candidate_arm_summaries": alfworld_codex_skillopt_r23_real_candidate.get("summary", {}) if alfworld_codex_skillopt_r23_real_candidate else {},
+        "r23_real_candidate_verifier_passed": bool(alfworld_codex_skillopt_r23_real_candidate_verification and alfworld_codex_skillopt_r23_real_candidate_verification.get("all_passed", False)),
+        "r23_real_candidate_rows_verified": alfworld_codex_skillopt_r23_real_candidate_verification.get("rows_verified", 0) if alfworld_codex_skillopt_r23_real_candidate_verification else 0,
         "candidate_provenance_audit_passed": bool(skillopt_candidate_provenance_audit and skillopt_candidate_provenance_audit.get("all_passed", False)),
         "empty_candidate_rows_explicitly_identified": bool(skillopt_candidate_provenance_audit and skillopt_candidate_provenance_audit.get("claim_boundary", {}).get("r20_r21_empty_candidate_rows_not_skill_quality_evidence", False)),
     }
@@ -1280,6 +1289,11 @@ def build_matrix(
                 "alfworld_codex_skillopt_r22_real_candidate_arm_summaries": revision_evidence["r22_real_candidate_arm_summaries"],
                 "alfworld_codex_skillopt_r22_real_candidate_verifier_passed": revision_evidence["r22_real_candidate_verifier_passed"],
                 "alfworld_codex_skillopt_r22_real_candidate_rows_verified": revision_evidence["r22_real_candidate_rows_verified"],
+                "alfworld_codex_skillopt_r23_real_candidate_tasks": revision_evidence["r23_real_candidate_task_count"],
+                "alfworld_codex_skillopt_r23_real_candidate_episodes": revision_evidence["r23_real_candidate_episodes"],
+                "alfworld_codex_skillopt_r23_real_candidate_arm_summaries": revision_evidence["r23_real_candidate_arm_summaries"],
+                "alfworld_codex_skillopt_r23_real_candidate_verifier_passed": revision_evidence["r23_real_candidate_verifier_passed"],
+                "alfworld_codex_skillopt_r23_real_candidate_rows_verified": revision_evidence["r23_real_candidate_rows_verified"],
                 "skillopt_candidate_provenance_audit_passed": revision_evidence["candidate_provenance_audit_passed"],
                 "empty_candidate_rows_explicitly_identified": revision_evidence["empty_candidate_rows_explicitly_identified"],
             },
