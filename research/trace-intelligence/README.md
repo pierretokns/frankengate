@@ -300,6 +300,14 @@ negative conclusion: current evidence supports candidate generation and
 diagnosis, not a causal skill lift or automatic release. The runner is
 `skill_optimization_meta_analysis.py`.
 
+An additional six-task car-dealership replay
+(`defog-trace-mined-skill-heldout-car-2026-08-02.md`) ran all three arms.
+Authority validation succeeded for all 18 runs and unauthorized observations
+were zero, but every arm exhausted the SQL protocol: semantic correctness and
+successful SQL were 0/6, with six terminal fallbacks per arm. This is a typed
+model/protocol null, not evidence for or against a skill benefit; protocol
+remediation and independent outcome/security verification remain required.
+
 The [`CMU access audit`](experiments/summaries/cmu-access-and-adapter-readiness-2026-07-30.md)
 records the exact boundary for the requested CMU corpus: the pinned Hub
 revision is discoverable, but authenticated download is still approval-gated,

@@ -15,7 +15,7 @@ The aggregate verification target is green, but green mechanics cannot close
 those missing external or causal requirements.
 
 The latest targeted research suite passed 22 tests; offline reproducibility now
-validates 105 aggregate results, 44 manifests, 12 governed fixtures, and zero
+validates 106 aggregate results, 44 manifests, 12 governed fixtures, and zero
 committed raw corpus files. The full locked-suite count remains the historical
 506-test checkpoint recorded separately.
 
@@ -38,4 +38,9 @@ semantic correctness. It finds no trace-mined lift in the Llama protocol arm,
 a −0.5 risk difference for the Qwen3 4B trace-mined arm (small-sample exact
 test p=0.25), and a 2/4 versus 2/4 tie for the only reachable semantic expert
 seed comparison. This strengthens the proposal-only decision rather than
-closing the causal gate.
+closing the causal gate. A separate six-task car-dealership replay reached the
+governed database in all 18 arm/task runs with zero unauthorized observations,
+but all three arms exhausted the SQL protocol (0/6 semantic correctness and
+0/6 successful SQL each). That is a typed model/protocol null, not a causal
+skill result; independent outcome and security verification after protocol
+remediation remain open.

@@ -28,6 +28,7 @@ DEFAULT_INPUTS = (
     "experiments/results/defog-car-fallback-llama-2026-07-31.json",
     "experiments/results/defog-broker-fallback-openai-llama-2026-07-31.json",
     "experiments/results/defog-trace-mined-skill-broker-fold0-llama-2026-07-31.json",
+    "experiments/results/defog-trace-mined-skill-heldout-car-2026-08-02.json",
 )
 
 
