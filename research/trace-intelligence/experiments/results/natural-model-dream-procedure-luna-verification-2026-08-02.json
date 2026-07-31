@@ -1,0 +1,21 @@
+{
+  "all_passed": true,
+  "checks": {
+    "all_rows_content_free": true,
+    "no_semantic_claim": true,
+    "no_utility_claim": true,
+    "quality_count_matches_rows": true,
+    "row_digests_present": true,
+    "rows_present": true,
+    "schema_present": true
+  },
+  "projects_quality_passed": 1,
+  "projects_verified": 3,
+  "raw_content_policy": {
+    "model_response_emitted": false,
+    "trace_content_emitted": false
+  },
+  "receipt": "natural-model-dream-procedure-luna-2026-08-02.json",
+  "receipt_sha256": "ab45445607cf6210ad92e6bdf2b966ac07afb033188bdea332bce59b9992d6f9",
+  "schema_version": "frankengate-natural-model-dream-procedure-verification-v1"
+}

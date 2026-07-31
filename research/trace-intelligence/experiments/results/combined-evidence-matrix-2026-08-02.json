@@ -346,6 +346,18 @@
       "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
       "sha256": "f194d4ac12e5bb8cd0e5a6724780a2fc49a417d136938a7d7585eeb587b3b629"
     },
+    "natural_model_dream_procedure_luna": {
+      "filename": "natural-model-dream-procedure-luna-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-v1",
+      "sha256": "ab45445607cf6210ad92e6bdf2b966ac07afb033188bdea332bce59b9992d6f9"
+    },
+    "natural_model_dream_procedure_luna_verification": {
+      "filename": "natural-model-dream-procedure-luna-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "sha256": "86ca5027c97332a21e79dbf299aff99683d1e574d3951034a3d8918c4e0f90a8"
+    },
     "natural_model_dream_procedure_verification": {
       "filename": "natural-model-dream-procedure-verification-2026-08-02.json",
       "optional": true,
@@ -658,7 +670,7 @@
       "status": "real_trace_transition_partial_pass"
     },
     "L6_procedural_replay": {
-      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. A provenance audit found that the r20/r21 receipts referenced an empty candidate; those rows are not skill-quality evidence. The corrected r22 run used the real 213-byte candidate and still produced 0/1 wins for no-skill, placebo, and candidate at an eight-step horizon, with fresh replay verification. A local Qwen3 4B model attempted three natural-trace procedure proposals from content-free structural summaries; none passed the controlled JSON/evidence-grounding rubric. The independent verifier passed, so this is a typed model quality null rather than semantic utility evidence. The offline MATM leave-one-model-out arm gives a 0.067 top-10 recommendation lift (95% CI -0.020 to 0.166) but a -0.056 mean AUC contrast (95% CI -0.112 to 0.002); this is predictive evidence only, not changed-agent skill benefit. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. A provenance audit found that the r20/r21 receipts referenced an empty candidate; those rows are not skill-quality evidence. The corrected r22 run used the real 213-byte candidate and still produced 0/1 wins for no-skill, placebo, and candidate at an eight-step horizon, with fresh replay verification. A local Qwen3 4B model attempted three natural-trace procedure proposals from content-free structural summaries; none passed the controlled JSON/evidence-grounding rubric. The independent verifier passed, so this is a typed model quality null rather than semantic utility evidence. The same protocol with Llama 3.2 and frontier Luna produced one structural-quality pass out of three each; their independent verifiers passed, but neither run establishes semantic utility or causal skill benefit. The offline MATM leave-one-model-out arm gives a 0.067 top-10 recommendation lift (95% CI -0.020 to 0.166) but a -0.056 mean AUC contrast (95% CI -0.112 to 0.002); this is predictive evidence only, not changed-agent skill benefit. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
       "evidence": {
         "agenttrace_nl2bash_rows": 400,
         "agenttrace_rows": 1400,
@@ -889,6 +901,10 @@
         "natural_model_dream_procedure_llama_projects": 3,
         "natural_model_dream_procedure_llama_quality_passed": 1,
         "natural_model_dream_procedure_llama_verifier_passed": true,
+        "natural_model_dream_procedure_luna_projects": 3,
+        "natural_model_dream_procedure_luna_quality_passed": 1,
+        "natural_model_dream_procedure_luna_semantic_utility_confirmed": false,
+        "natural_model_dream_procedure_luna_verifier_passed": true,
         "natural_model_dream_procedure_model_format_sensitivity_observed": true,
         "natural_model_dream_procedure_projects": 3,
         "natural_model_dream_procedure_quality_passed": 0,
@@ -951,6 +967,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "49767f83fa8c277f38be0398aa1f68dc042fdaa89dca8dbc265cda01a09b5176",
-  "schema_version": "frankengate-combined-evidence-matrix-v22"
+  "result_sha256": "f4c8e859acbddb30c59b59d74790d016dc478eceb12577dd533a8082b186ddca",
+  "schema_version": "frankengate-combined-evidence-matrix-v23"
 }

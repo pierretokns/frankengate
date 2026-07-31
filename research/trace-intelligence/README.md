@@ -331,6 +331,14 @@ one structural-quality pass out of three. The difference is model-format
 sensitivity, not semantic procedure utility: no proposal was executed against
 a changed system or scored against an independent task outcome.
 
+The explicitly authorized frontier [`Luna natural-trace procedure arm`](experiments/results/natural-model-dream-procedure-luna-2026-08-02.json)
+also produced three parseable, evidence-grounded proposals and one
+structural-quality pass out of three. Its independent verifier passed all three
+receipts. Luna therefore matched Llama on this small structural gate, while
+the run still establishes neither semantic procedure quality nor causal utility;
+the model saw only content-free summaries and no proposal was executed against
+an independent task outcome.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

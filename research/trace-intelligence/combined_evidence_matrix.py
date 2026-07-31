@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v22"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v23"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -89,6 +89,8 @@ OPTIONAL_RESULTS = {
     "natural_model_dream_procedure_verification": "natural-model-dream-procedure-verification-2026-08-02.json",
     "natural_model_dream_procedure_llama": "natural-model-dream-procedure-llama-2026-08-02.json",
     "natural_model_dream_procedure_llama_verification": "natural-model-dream-procedure-llama-verification-2026-08-02.json",
+    "natural_model_dream_procedure_luna": "natural-model-dream-procedure-luna-2026-08-02.json",
+    "natural_model_dream_procedure_luna_verification": "natural-model-dream-procedure-luna-verification-2026-08-02.json",
     "natural_released_procedure": "natural-released-procedure-2026-08-02.json",
     "natural_released_procedure_verification": "natural-released-procedure-verification-2026-08-02.json",
     "h5_concurrency_live_rerun": "h5-concurrency-live-rerun-2026-08-02.json",
@@ -228,6 +230,8 @@ def build_matrix(
     natural_model_dream_procedure_verification = results.get("natural_model_dream_procedure_verification")
     natural_model_dream_procedure_llama = results.get("natural_model_dream_procedure_llama")
     natural_model_dream_procedure_llama_verification = results.get("natural_model_dream_procedure_llama_verification")
+    natural_model_dream_procedure_luna = results.get("natural_model_dream_procedure_luna")
+    natural_model_dream_procedure_luna_verification = results.get("natural_model_dream_procedure_luna_verification")
     natural_released_procedure = results.get("natural_released_procedure")
     natural_released_procedure_verification = results.get("natural_released_procedure_verification")
     h5_concurrency_live_rerun = results.get("h5_concurrency_live_rerun")
@@ -1312,6 +1316,10 @@ def build_matrix(
                 "natural_model_dream_procedure_llama_quality_passed": natural_model_dream_procedure_llama.get("projects_quality_passed", 0) if natural_model_dream_procedure_llama else 0,
                 "natural_model_dream_procedure_llama_verifier_passed": bool(natural_model_dream_procedure_llama_verification and natural_model_dream_procedure_llama_verification.get("all_passed", False)),
                 "natural_model_dream_procedure_model_format_sensitivity_observed": bool(natural_model_dream_procedure and natural_model_dream_procedure_llama and natural_model_dream_procedure.get("projects_quality_passed", 0) != natural_model_dream_procedure_llama.get("projects_quality_passed", 0)),
+                "natural_model_dream_procedure_luna_projects": natural_model_dream_procedure_luna.get("projects_attempted", 0) if natural_model_dream_procedure_luna else 0,
+                "natural_model_dream_procedure_luna_quality_passed": natural_model_dream_procedure_luna.get("projects_quality_passed", 0) if natural_model_dream_procedure_luna else 0,
+                "natural_model_dream_procedure_luna_verifier_passed": bool(natural_model_dream_procedure_luna_verification and natural_model_dream_procedure_luna_verification.get("all_passed", False)),
+                "natural_model_dream_procedure_luna_semantic_utility_confirmed": bool(natural_model_dream_procedure_luna and natural_model_dream_procedure_luna.get("claim_boundary", {}).get("semantic_procedure_quality_confirmed", False)),
             },
             "decision": (
                 "the real tool sandbox and governed proposal/evaluation/release "
@@ -1333,7 +1341,11 @@ def build_matrix(
                 "procedure proposals from content-free structural summaries; "
                 "none passed the controlled JSON/evidence-grounding rubric. "
                 "The independent verifier passed, so this is a typed model "
-                "quality null rather than semantic utility evidence. "
+                "quality null rather than semantic utility evidence. The same "
+                "protocol with Llama 3.2 and frontier Luna produced one "
+                "structural-quality pass out of three each; their independent "
+                "verifiers passed, but neither run establishes semantic utility "
+                "or causal skill benefit. "
                 f"The offline MATM leave-one-model-out arm gives a "
                 f"{matm_skill_retrieval['aggregate']['contrast']['successful_minus_all_top_10_percent_success_rate_mean']:.3f} "
                 "top-10 recommendation lift (95% CI -0.020 to 0.166) but a "
@@ -1697,6 +1709,12 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"projects and it was visible on {skill['natural_released_procedure_visible_queries']} "
             f"queries, but matched {skill['natural_released_procedure_exact_queries']} target states. "
             "This closes the natural release-lineage gate while leaving procedure quality and utility unproven.",
+            f"- The content-free model-generated natural-procedure comparison covered three projects per model: "
+            f"Qwen3 4B passed {skill['natural_model_dream_procedure_quality_passed']}/3 structural gates, "
+            f"Llama 3.2 passed {skill['natural_model_dream_procedure_llama_quality_passed']}/3, and frontier Luna "
+            f"passed {skill['natural_model_dream_procedure_luna_quality_passed']}/3. All independent receipt "
+            "verifiers passed. This measures format/grounding mechanics only; semantic procedure utility and "
+            "changed-system outcomes remain unmeasured.",
             "- The attested 28-session Trace Commons cohort produced "
             f"{l3['trace_commons_full_cohort']['structural_episode_candidates']} "
             "structural temporal candidates and "

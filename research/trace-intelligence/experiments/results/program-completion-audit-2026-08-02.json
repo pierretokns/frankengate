@@ -388,11 +388,17 @@
       "model_generated_dream_llama_projects": 3,
       "model_generated_dream_llama_quality_passed": 1,
       "model_generated_dream_llama_verifier_passed": true,
-      "model_generated_dream_model_format_sensitivity_observed": true
+      "model_generated_dream_model_format_sensitivity_observed": true,
+      "model_generated_dream_luna": "experiments/results/natural-model-dream-procedure-luna-2026-08-02.json",
+      "model_generated_dream_luna_verification": "experiments/results/natural-model-dream-procedure-luna-verification-2026-08-02.json",
+      "model_generated_dream_luna_projects": 3,
+      "model_generated_dream_luna_quality_passed": 1,
+      "model_generated_dream_luna_verifier_passed": true,
+      "model_generated_dream_luna_semantic_utility_confirmed": false
     },
     "aggregate_matrix": {
       "result": "experiments/results/combined-evidence-matrix-2026-08-02.json",
-    "schema_version": "frankengate-combined-evidence-matrix-v22",
+      "schema_version": "frankengate-combined-evidence-matrix-v23",
       "alfworld_semantic_pilot_consumed": true,
       "alfworld_revision_r2_consumed": true,
       "alfworld_family_disjoint_r3_consumed": true,
