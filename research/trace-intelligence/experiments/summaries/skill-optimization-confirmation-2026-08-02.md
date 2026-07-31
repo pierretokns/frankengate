@@ -2,13 +2,14 @@
 
 ## Decision
 
-We have **not** yet confirmed that Frankengate's trace-mined skills improve real task outcomes. We have confirmed only that:
+We have **not** yet confirmed that Frankengate's trace-mined skills improve real task outcomes. We have now completed a real family-disjoint semantic intervention, but it was a negative result. We have confirmed that:
 
 1. Outcome-conditioned traces can recommend a promising procedure offline.
 2. A skill optimizer can run against a held-out split and reject bad edits.
 3. Trace-derived protocol instructions can be executed through more than one local model/harness path.
+4. On eight previously unused ALFWorld paths across four families, both Llama 3.2 and Qwen 3 4B achieved 0/8 wins for baseline and candidate. The candidate changed invalid-action rates in opposite directions by model but produced no success lift.
 
-Those are prerequisites, not a causal skill-utility result.
+Those are prerequisites and a negative causal test, not evidence of a beneficial skill.
 
 ## Evidence
 
@@ -24,6 +25,6 @@ Microsoft SkillOpt's published v0.2.0 study is stronger external evidence: six r
 
 ## Required next gate
 
-Run the same trace-derived candidate and no-skill baseline on family-disjoint held-out tasks, with at least two models and two harnesses, sealed task outcomes, an independent correctness/security verifier, and explicit tool-budget/abstention accounting. No skill should be promoted before that gate passes.
+Repeat the family-disjoint intervention through a second independent harness and add sealed task-outcome recomputation plus security/policy verification. No skill should be promoted before that gate passes; the r9 result itself remains non-promotable.
 
 Machine-readable receipt: `experiments/results/skill-optimization-confirmation-2026-08-02.json`.

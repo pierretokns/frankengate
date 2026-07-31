@@ -79,13 +79,16 @@ def build_audit() -> dict[str, Any]:
         {
             "id": "single_and_composed_mechanisms",
             "requirement": "Test single and combined skill/memory mechanisms against held-out traces and RL environments.",
-            "status": "mechanics_and_small_interventions_proven; utility_unproven",
+            "status": "family_disjoint_intervention_and_composition_proven; utility_unproven",
             "evidence": file_evidence(
                 "experiments/results/memory-mechanism-factorial-fixture-2026-07-30.json",
                 "experiments/results/alfworld-trace-skill-intervention-r3-2026-08-02.json",
                 "experiments/results/alfworld-trace-skill-memory-composition-r6-2026-08-02.json",
                 "experiments/results/alfworld-durable-memory-intervention-r7-2026-08-02.json",
                 "experiments/results/alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
+                "experiments/results/alfworld-family-disjoint-powered-r9-2026-08-02.json",
+                "experiments/results/alfworld-family-disjoint-powered-r9-verification-2026-08-02.json",
+                "experiments/results/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json",
             ),
             "open_gate": "No mechanism has a powered causal lift with independent later-task labels; all learned candidates remain rejected or proposal-only.",
         },

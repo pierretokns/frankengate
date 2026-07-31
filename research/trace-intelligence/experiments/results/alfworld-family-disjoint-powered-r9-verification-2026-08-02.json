@@ -1,0 +1,11 @@
+{
+  "all_passed": true,
+  "raw": "alfworld-family-disjoint-powered-r9.raw.json",
+  "raw_content_policy": "aggregate episode fields only; no model text",
+  "raw_sha256": "165ecaddb12aa8bb73cb54a487f70fe1f5fab5eebb2100d014b56f42c4a74b74",
+  "receipt": "alfworld-family-disjoint-powered-r9-2026-08-02.json",
+  "rows_verified": 32,
+  "schema_version": "frankengate-alfworld-powered-receipt-verification-v1",
+  "summary_keys_verified": 4,
+  "task_count_verified": 8
+}

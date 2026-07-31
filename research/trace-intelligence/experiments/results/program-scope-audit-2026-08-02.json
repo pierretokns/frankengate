@@ -5,7 +5,7 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v17",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v18",
   "open_requirements": [
     "CMU publisher approval and trajectory metrics",
     "family-disjoint semantic skill intervention with independent outcome labels",
@@ -87,12 +87,24 @@
         {
           "exists": true,
           "path": "experiments/results/alfworld-model-generated-memory-intervention-r8-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r9-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r9-verification-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json"
         }
       ],
       "id": "single_and_composed_mechanisms",
       "open_gate": "No mechanism has a powered causal lift with independent later-task labels; all learned candidates remain rejected or proposal-only.",
       "requirement": "Test single and combined skill/memory mechanisms against held-out traces and RL environments.",
-      "status": "mechanics_and_small_interventions_proven; utility_unproven"
+      "status": "family_disjoint_intervention_and_composition_proven; utility_unproven"
     },
     {
       "decision": "offline_silver_and_local_rls_partial_pass",
@@ -145,7 +157,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "f36192002a3bf41238d7b01442da46deccb29c02"
+          "head": "6a010002f74ebb589691fbef0f5631dbadb2b15e"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

@@ -227,6 +227,17 @@ top-10% success precision by 0.067 over all-trace neighbors, but the mean AUC
 contrast was -0.056 and both bootstrap intervals crossed zero. This is useful
 recommendation signal, not evidence that a changed agent performs better.
 
+The [`larger family-disjoint ALFWorld replay`](experiments/summaries/alfworld-family-disjoint-powered-r9-2026-08-02.md)
+closed the next replication slice on eight previously unused task paths. Llama
+3.2 and Qwen 3 4B used the same Ollama-native harness and the same two paths
+from each of four task families, with an expert plan confirming every path fit
+the 35-step horizon. Both models produced `0/8` wins for no-skill and the
+trace-derived procedure. The candidate emitted 66 invalid actions for Llama
+versus 0 baseline, and 140 for Qwen versus 280 baseline. This is model-dependent
+protocol movement without task-success lift; the aggregate projection verifier
+passed, but promotion remains closed. The interrupted duplicate Qwen run is
+recorded as a typed service `unexpected EOF` null rather than scored.
+
 The [`NatureBench natural-trace skill-transfer preflight`](experiments/summaries/naturebench-skill-transfer-preflight-2026-07-30.md)
 adds a bounded, family-disjoint outcome matrix across five public
 harness/model arms. Ten task families were observed for each arm, with

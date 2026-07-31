@@ -14,7 +14,7 @@ Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, Ski
 
 Open gate: Natural released Dream/procedure artifacts and enterprise-labeled concept transfer remain unavailable.
 
-## `single_and_composed_mechanisms` — mechanics_and_small_interventions_proven; utility_unproven
+## `single_and_composed_mechanisms` — family_disjoint_intervention_and_composition_proven; utility_unproven
 
 Test single and combined skill/memory mechanisms against held-out traces and RL environments.
 

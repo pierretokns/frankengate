@@ -4,9 +4,9 @@
   "claim_boundary": {
     "our_trace_mined_skill_causal_benefit_confirmed": false,
     "skill_optimization_in_general_supported_by_external_evidence": true,
-    "real_semantic_skill_intervention_completed": false,
+    "real_semantic_skill_intervention_completed": true,
     "automatic_skill_promotion_authorized": false,
-    "reason": "The local trace-derived arms either measure protocol behavior, offline recommendation quality, or small pilots without a family-disjoint held-out semantic intervention. SkillOpt's own benchmark results establish that gated skill-document optimization can improve real tasks, but they are not evidence that Frankengate traces alone produce a beneficial skill."
+    "reason": "The larger r9 arm is a real family-disjoint held-out semantic intervention with two models and an expert-verified horizon, but it produced no task-success lift. SkillOpt's own benchmark results establish that gated skill-document optimization can improve real tasks, but they are not evidence that Frankengate traces alone produce a beneficial skill."
   },
   "local_evidence": [
     {
@@ -29,13 +29,20 @@
       "result": "No reliable pooled semantic lift; family-disjoint broker arm tied no-skill at 0/6",
       "causal": false,
       "hard_edge": "Small, heterogeneous arms and abstention/tool-budget failures prevent a release claim"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r9-2026-08-02.json",
+      "what_was_tested": "Eight previously unused ALFWorld paths across four task families, replayed with Llama 3.2 and Qwen 3 4B",
+      "result": "Both models produced 0/8 wins for no-skill and trace-mined arms; candidate invalid actions were 66 versus 0 for Llama and 140 versus 280 for Qwen",
+      "causal": false,
+      "hard_edge": "One Ollama-native harness and environment win flags are not an independent correctness/security verifier; no task-success lift was observed"
     }
   ],
   "model_harness_coverage": {
     "models_exercised_locally": ["llama3.2:latest", "qwen3:4b"],
     "harnesses_exercised_locally": ["OpenAI-compatible native-tool loop", "Ollama native API loop"],
-    "what_that_proves": "The candidate skill protocol is observable across two local model configurations and two transport/harness paths on the synthetic terminal fixture.",
-    "what_that_does_not_prove": "Semantic task improvement, transfer across task families, model-quality improvement, or enterprise productivity benefit"
+    "what_that_proves": "The candidate protocol can be executed across two local model configurations and two transport/harness paths; a family-disjoint semantic intervention has now been completed on eight new paths through the Ollama-native harness.",
+    "what_that_does_not_prove": "Semantic task improvement, cross-harness transfer, model-quality improvement, or enterprise productivity benefit"
   },
   "external_reference": {
     "project": "Microsoft SkillOpt v0.2.0",
