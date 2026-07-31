@@ -1,0 +1,105 @@
+{
+  "analysis_revision": "financebench-hf-ollama-parity-v1",
+  "arms": [
+    {
+      "harness": "sentence-transformers-local",
+      "method": "BalyasnyAI/multilingual-e5-base",
+      "model": {
+        "embedding_dimension": 768,
+        "encode_seconds": 10.556831417000001,
+        "input_prefix": "query:/passage:",
+        "license": "apache-2.0",
+        "model_id": "BalyasnyAI/multilingual-e5-base",
+        "snapshot_revision": "be7b4b171bfe2dd9708555023263ab5bbd3e4348"
+      },
+      "mrr": 0.8106190476190476,
+      "queries": 150,
+      "recall@1": 0.7,
+      "recall@10": 1.0,
+      "recall@20": 1.0,
+      "recall@5": 0.96,
+      "relevant_query_count": 150
+    },
+    {
+      "harness": "ollama-native-api-loopback",
+      "method": "ollama:nomic-embed-text:latest",
+      "mrr": 0.16610798751367367,
+      "queries": 150,
+      "recall@1": 0.08,
+      "recall@10": 0.3333333333333333,
+      "recall@20": 0.4533333333333333,
+      "recall@5": 0.25333333333333335,
+      "relevant_query_count": 150
+    }
+  ],
+  "claim_boundary": {
+    "authorization_evaluated": false,
+    "automatic_promotion_authorized": false,
+    "deletion_evaluated": false,
+    "enterprise_transfer_evaluated": false,
+    "multiple_harnesses_compared": true,
+    "reason": "Public relevance parity only; endpoint and model behavior are not a governed production guarantee.",
+    "same_corpus": true,
+    "same_projection": true
+  },
+  "dataset": {
+    "corpus_rows": 189,
+    "corpus_sha256": "813bec7596cf578bab030391ac39fbb5dfc8ab3df04a943cc32fcdf019274a5e",
+    "evaluated_queries": 150,
+    "id": "FinanceMTEB/FinanceBench",
+    "license_declared_by_cached_dataset_info": null,
+    "multi_positive_queries": 35,
+    "projection": {
+      "document_max_characters": 2500,
+      "documents_truncated": 82,
+      "queries_truncated": 0,
+      "query_max_characters": 2000
+    },
+    "qrel_rows": 189,
+    "qrels_sha256": "5a09a2355e8bd3b799c527860c5f29f2f449d734963b19f436c5437924b486aa",
+    "queries_sha256": "5b6364e77a8a358823cca6fd80d4a67a9b18b4ed303c019f61bb08dd3f3ce399",
+    "query_rows": 150,
+    "revision": "4738010357e3dda4b337abbde86d5b36c3118c8f"
+  },
+  "models": {
+    "ollama": {
+      "document_receipt": {
+        "batch_size": 16,
+        "document_prefix": "search_document: ",
+        "embedding_dimension": 768,
+        "encode_seconds": 3.335152542,
+        "endpoint_scope": "loopback-only",
+        "model_id": "nomic-embed-text:latest",
+        "query_prefix": "search_query: ",
+        "request_count": 12
+      },
+      "endpoint": "http://127.0.0.1:11434",
+      "endpoint_scope": "loopback-only",
+      "model_id": "nomic-embed-text:latest",
+      "query_receipt": {
+        "batch_size": 16,
+        "document_prefix": "search_document: ",
+        "embedding_dimension": 768,
+        "encode_seconds": 1.004114084,
+        "endpoint_scope": "loopback-only",
+        "model_id": "nomic-embed-text:latest",
+        "query_prefix": "search_query: ",
+        "request_count": 10
+      }
+    },
+    "sentence_transformers": {
+      "embedding_dimension": 768,
+      "encode_seconds": 10.556831417000001,
+      "input_prefix": "query:/passage:",
+      "license": "apache-2.0",
+      "model_id": "BalyasnyAI/multilingual-e5-base",
+      "snapshot_revision": "be7b4b171bfe2dd9708555023263ab5bbd3e4348"
+    }
+  },
+  "raw_data_committed": false,
+  "relative": {
+    "mrr_delta_hf_minus_ollama": 0.6445110601053738,
+    "recall20_delta_hf_minus_ollama": 0.5466666666666666
+  },
+  "schema_version": "frankengate-finance-mteb-harness-parity-v1"
+}

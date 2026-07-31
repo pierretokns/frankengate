@@ -159,6 +159,19 @@ not evaluate RLS, deletion, Aurora behavior, or cross-domain transfer. Raw
 texts and vectors remain outside Git; the runner is
 `finance_mteb_retrieval_benchmark.py`.
 
+The [`FinanceBench harness-parity gate`](experiments/summaries/finance-mteb-harness-parity-2026-08-02.md)
+replayed the same 2,500-character projection through the loopback Ollama
+`nomic-embed-text:latest` API. The local Ollama arm reached Recall@20 0.453 and
+MRR 0.166, versus Recall@20 1.000 and MRR 0.811 for the local
+SentenceTransformers BalyasnyAI arm. The gap is a real model/harness finding,
+not an authorization result: nomic's bounded projection truncated 82 filings,
+and neither arm exercised RLS or deletion. Frankengate should not silently use
+the existing nomic endpoint for finance trace retrieval; a finance-specialized
+model needs its own governed serving lane and parity test.
+The Ollama arm is implemented by `finance_mteb_ollama_embedding_benchmark.py`
+and joined by `finance_mteb_harness_parity.py`; its loopback endpoint and
+context projection are recorded in the machine-readable receipts.
+
 The [`skill-learning faithful preflight`](experiments/summaries/skill-learning-faithful-preflight-2026-07-30.md)
 audits pinned Hermes Self-Evolution, GEPA/gskill, ReasoningBank, and
 Trace2Skill implementations. It finds no executable natural-trace candidate

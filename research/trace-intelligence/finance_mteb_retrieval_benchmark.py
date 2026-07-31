@@ -126,6 +126,8 @@ def run(
     queries_path: pathlib.Path,
     qrels_path: pathlib.Path,
     model_ids: Iterable[str],
+    max_document_characters: int | None = None,
+    max_query_characters: int | None = None,
 ) -> dict[str, Any]:
     import numpy as np
     from sklearn.feature_extraction.text import TfidfVectorizer
@@ -149,6 +151,12 @@ def run(
     document_ids = list(corpus_by_id)
     documents = [str(corpus_by_id[doc_id].get("title", "")) + "\n" + str(corpus_by_id[doc_id]["text"]) for doc_id in document_ids]
     query_texts = [str(query_by_id[query_id]["text"]) for query_id in query_ids]
+    original_documents = documents
+    original_queries = query_texts
+    if max_document_characters is not None:
+        documents = [value[:max_document_characters] for value in documents]
+    if max_query_characters is not None:
+        query_texts = [value[:max_query_characters] for value in query_texts]
 
     vectorizer = TfidfVectorizer(
         ngram_range=(1, 2),
@@ -177,6 +185,12 @@ def run(
             "id": DATASET_ID,
             "revision": DATASET_REVISION,
             "license_declared_by_cached_dataset_info": None,
+            "projection": {
+                "document_max_characters": max_document_characters,
+                "query_max_characters": max_query_characters,
+                "documents_truncated": sum(len(value) > max_document_characters for value in original_documents) if max_document_characters is not None else 0,
+                "queries_truncated": sum(len(value) > max_query_characters for value in original_queries) if max_query_characters is not None else 0,
+            },
             "corpus_rows": len(corpus),
             "query_rows": len(queries),
             "qrel_rows": len(qrels),
@@ -220,12 +234,16 @@ def main() -> int:
     parser.add_argument("--output", type=pathlib.Path, required=True)
     parser.add_argument("--summary", type=pathlib.Path, required=True)
     parser.add_argument("--model", action="append", dest="models", default=None)
+    parser.add_argument("--max-document-characters", type=int, default=None)
+    parser.add_argument("--max-query-characters", type=int, default=None)
     args = parser.parse_args()
     result = run(
         corpus_path=args.corpus,
         queries_path=args.queries,
         qrels_path=args.qrels,
         model_ids=args.models or DEFAULT_MODELS,
+        max_document_characters=args.max_document_characters,
+        max_query_characters=args.max_query_characters,
     )
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     lines = [
