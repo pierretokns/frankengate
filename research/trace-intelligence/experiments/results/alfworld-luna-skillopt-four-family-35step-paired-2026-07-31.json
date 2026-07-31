@@ -1,0 +1,30 @@
+{
+  "schema_version": "frankengate-alfworld-skillopt-paired-v1",
+  "source_result": "alfworld-luna-skillopt-four-family-35step-2026-07-31.json",
+  "task_count": 4,
+  "horizon_steps": 35,
+  "comparisons": {
+    "skillopt_candidate_vs_no_skill": {
+      "candidate_wins": 0,
+      "control_wins": 0,
+      "ties": 4,
+      "candidate_win_rate": 0.0,
+      "control_win_rate": 0.0,
+      "interpretation": "no paired semantic lift"
+    },
+    "skillopt_candidate_vs_formatting_placebo": {
+      "candidate_wins": 0,
+      "control_wins": 0,
+      "ties": 4,
+      "candidate_win_rate": 0.0,
+      "control_win_rate": 0.0,
+      "interpretation": "no paired semantic lift"
+    }
+  },
+  "claim_boundary": {
+    "independent_replay_passed": true,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "All three arms had zero wins across four family-disjoint expert-solvable tasks at a 35-step horizon; this is a valid null checkpoint, not a general method-ineffective claim."
+  }
+}
