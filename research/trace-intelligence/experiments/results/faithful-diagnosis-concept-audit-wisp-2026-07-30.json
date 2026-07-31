@@ -1,0 +1,86 @@
+{
+  "claim_boundary": [
+    "No upstream Signals, AgentRx, or OpenRCA replication is claimed.",
+    "Queue comparisons are descriptive and have no human or task-outcome labels.",
+    "AgentRx outputs are hypotheses only; OpenRCA cannot run faithfully without multimodal time-aligned inputs.",
+    "No skill, productivity, employee, or causal incident inference is supported."
+  ],
+  "concept_execution": {
+    "agentrx": {
+      "abstentions": 0,
+      "hypotheses": 11,
+      "independent_labels": false,
+      "method": "evidence_linked_invariant_hypothesis",
+      "root_cause_claims": 0,
+      "selected_traces": 11,
+      "status": "executed_local_concept_proxy"
+    },
+    "openrca": {
+      "available_modalities": {
+        "environment_snapshots": 0,
+        "events": 102,
+        "metrics": 0,
+        "timestamps": 0,
+        "tool_errors": 11,
+        "tool_proposals": 88,
+        "tool_results": 88,
+        "topology_edges": 0
+      },
+      "causal_claims": 0,
+      "method": "multimodal_rca_requires_metrics_logs_topology_and_clocks",
+      "reason": "Wisp conversations expose event order and tool outcomes, but no metric, topology, timestamp, or environment-clock records.",
+      "status": "not_executable_on_source"
+    },
+    "signals": {
+      "baselines": {
+        "length": {
+          "selected": 21,
+          "selected_refs_sha256": "62608c566320dce4d45efa31519af45163df46a61cd5938b11b4f53c7f4dca4a",
+          "selected_signal_evidence_traces": 7,
+          "selected_tool_error_traces": 7,
+          "signal_positive": 11
+        },
+        "seeded_random": {
+          "selected": 21,
+          "selected_refs_sha256": "128ead941b21e6169dadba79dad5359ff9764b331267ff39ad1477e47b9eec01",
+          "selected_signal_evidence_traces": 2,
+          "selected_tool_error_traces": 2,
+          "signal_positive": 11
+        }
+      },
+      "method": "cheap_signals_from_trace_signal_diagnosis_eval_chain",
+      "queue": {
+        "selected": 11,
+        "selected_refs_sha256": "b61be35bb06b20a1c2f8f6f9748460680a7392ed0c53d77bf319d7a10cd4737d",
+        "selected_signal_evidence_traces": 11,
+        "selected_tool_error_traces": 11,
+        "signal_positive": 11
+      },
+      "status": "executed_local_concept_proxy"
+    }
+  },
+  "content_free": true,
+  "evidence_profile": {
+    "branch_ids": 0,
+    "conversation_events": 1324,
+    "environment_snapshots": 0,
+    "events": 5742,
+    "metrics": 0,
+    "model_thinking_events": 2,
+    "timestamps": 0,
+    "tool_errors": 103,
+    "tool_proposals": 2209,
+    "tool_results": 2207,
+    "topology_edges": 0
+  },
+  "run_date": "2026-07-30",
+  "schema_version": "faithful-diagnosis-concept-audit-v1",
+  "source": {
+    "canonical_events": 5742,
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+    "source_files": 104,
+    "source_record_set_sha256": "1211043a67291c2a0e75b4430630fb086a246f050e66b908f275d3e66d17d2de",
+    "source_records": 10700
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "frankengate-faithful-diagnosis-concept-audit-input-v1",
+  "dataset_id": "crispwisp/wisp-claude-code-sessions",
+  "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+  "license": "MIT",
+  "review_budget": 21,
+  "raw_content_committed": false,
+  "methods": {
+    "signals": "existing deterministic cheap-signal implementation",
+    "agentrx": "existing evidence-linked invariant hypothesis implementation",
+    "openrca": "input sufficiency audit only; no multimodal proxy"
+  },
+  "baselines": ["descending_event_count", "seeded_random_20260730"],
+  "claim_boundary": "No upstream replication, diagnostic accuracy, causal RCA, or employee-level inference."
+}

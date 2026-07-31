@@ -81,7 +81,24 @@ The bounded
 uses the real pinned libraries. Both pass small structured smokes, but no
 natural case completes: Graphiti returns empty structured responses on the
 first full document and hits the experiment ceiling. No proxy score is
-substituted, and neither component has earned a production role.
+ substituted, and neither component has earned a production role.
+
+The [`faithful diagnosis-concept audit`](experiments/summaries/faithful-diagnosis-concept-audit-wisp-2026-07-30.md)
+runs deterministic Signals and AgentRx concepts over 104 pinned Wisp histories.
+The queue selected 11/21 candidates with tool errors, versus 7 for a length
+baseline and 2 for seeded random. This is descriptive screening, not accuracy:
+there were no independent informative-trace labels. The AgentRx-style layer
+emitted 11 evidence-linked hypotheses, zero abstentions, and zero root-cause
+claims. OpenRCA is not executable on this corpus because aligned timestamps,
+metrics, topology, and environment snapshots are absent.
+
+The [`retrieval backend parity study`](experiments/summaries/retrieval-backend-parity-e2-2026-07-30.md)
+reuses the pinned 145-document/99-query cohort and forced-RLS PostgreSQL
+receipts. PostgreSQL remains the authority. CASS 0.6.22 was capability-probed
+but its installed index is not the same corpus; Frankensearch, pg_textsearch,
+pgContext, TurboVec, and Turbopuffer are explicit nulls rather than invented
+scores. Promotion requires same-corpus relevance, pre-ranking authorization,
+deletion closure, latency, and cost evidence.
 
 Bulk raw corpora stay outside Git so revisions remain small and reproducible.
 Dataset manifests pin exact source revisions and adapters read explicit local
