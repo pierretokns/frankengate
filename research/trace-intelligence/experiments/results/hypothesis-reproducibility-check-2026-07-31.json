@@ -1,0 +1,8 @@
+{
+  "date": "2026-07-31",
+  "checks": [
+    {"name":"hypothesis-policy-experiment","command":"python3 research/trace-intelligence/hypothesis_policy_experiment.py","recorded_result":"experiments/results/hypothesis-policy-experiment-2026-07-31.json","rerun_matches":true,"result_sha256":"9c03514a9af32f5799ca937e3ce1f8db70e1ba9f2ad96dc344c0390ac59c0e63"},
+    {"name":"hypothesis-intervention-replay","command":"python3 research/trace-intelligence/hypothesis_intervention_replay.py","recorded_result":"experiments/results/hypothesis-intervention-replay-2026-07-31.json","rerun_matches":true,"result_sha256":"01cb325436ecc69f580e1f6f19cd6851acfccbb9c53350388a1287bd117d98b3"}
+  ],
+  "interpretation": "Governance mechanics and synthetic resettable replay are deterministic on this branch. This validates reproducibility, not causal enterprise skill improvement."
+}
