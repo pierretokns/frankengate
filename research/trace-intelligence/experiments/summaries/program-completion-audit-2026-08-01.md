@@ -65,3 +65,10 @@ produced 0/6 for no-skill and the mined candidate versus 1/6 for the formatting
 placebo. Independent security and semantic receipts passed with zero semantic
 mismatches. The candidate remains a non-promotable hypothesis, and the result
 does not confirm that traces optimize skills.
+
+The full Trace Commons public cohort was then independently attested against
+its pinned manifest: all 28 files, 57,104,737 bytes, and 17,991 records matched
+their declared SHA-256 and counts. Content-minimized analysis produced 263
+structural temporal candidates and 269 eval-review records, but no automatic
+memory/skill writes or skill-gap/collaboration claims. The cohort still has no
+independent outcomes, so this strengthens ingestion and proposal mechanics only.

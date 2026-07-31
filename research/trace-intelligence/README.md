@@ -340,6 +340,15 @@ submitted one correct candidate (1/6). Independent semantic and raw-security
 verifiers passed. This is transfer evidence against automatic trace-mined
 promotion, but remains small and abstention-heavy.
 
+The [`Trace Commons full-cohort analysis`](experiments/summaries/trace-commons-full-content-minimized-analysis-2026-08-02.md)
+then attested all 28 public native Claude Code histories byte-for-byte against
+the pinned manifest (17,991 records and 4,264 tool calls) before analysis. The
+content-minimized S1→S2→S4→S6 ladder produced 263 structural episode
+candidates and 269 eval-review records, while automatic memory/skill writes,
+skill-gap claims, and cross-user recommendations remained zero. This expands
+the public evidence base, but still contains no outcome labels and therefore
+cannot establish a skill or productivity effect.
+
 The candidate was then mined from the completed car raw audits rather than
 hand-supplied: the miner sealed an aggregate source digest and procedure hash,
 and the resulting artifact was injected into a fresh broker fold. The true
