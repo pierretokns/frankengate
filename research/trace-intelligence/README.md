@@ -85,6 +85,10 @@ The first [`dataset-fit audit`](experiments/summaries/dataset-fit-audit-2026-08-
 checked all 44 manifests: only two are direct-fit for NL2SQL schema retrieval;
 none are direct-fit for cross-user similarity, skill improvement, or reviewed
 enterprise term/alias quality.
+The [`modernized method matrix`](experiments/summaries/modernized-method-reimplementation-matrix-2026-08-04.md)
+separates current-tool mechanics from efficacy evidence for AgentRx, Signals,
+AgentEvals, SkillGen, RHO/ReasoningBank, memory systems, and the vocabulary
+tools.
 
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
