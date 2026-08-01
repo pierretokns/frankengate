@@ -97,6 +97,8 @@ def run_pilot(
     dsn: str,
     endpoint: str,
     model: str,
+    model_provider: str = "ollama",
+    endpoint_scope: str = "loopback-only",
     raw_audit_dir: Path,
     output: Path,
     max_model_turns: int | None = None,
@@ -293,9 +295,9 @@ def run_pilot(
             "database_family": tasks[0].database,
         },
         "model": {
-            "provider": "ollama",
+            "provider": model_provider,
             "request_model_id": model,
-            "endpoint_scope": "loopback-only",
+            "endpoint_scope": endpoint_scope,
         },
         "protocol_remediation": {
             "id": protocol_remediation_id,
@@ -369,6 +371,8 @@ def main() -> int:
     parser.add_argument("--dsn", required=True)
     parser.add_argument("--endpoint", required=True)
     parser.add_argument("--model", required=True)
+    parser.add_argument("--model-provider", default="ollama")
+    parser.add_argument("--endpoint-scope", default="loopback-only")
     parser.add_argument("--raw-audit-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--max-model-turns", type=int)
@@ -390,6 +394,8 @@ def main() -> int:
         dsn=args.dsn,
         endpoint=args.endpoint,
         model=args.model,
+        model_provider=args.model_provider,
+        endpoint_scope=args.endpoint_scope,
         raw_audit_dir=args.raw_audit_dir,
         output=args.output,
         max_model_turns=args.max_model_turns,

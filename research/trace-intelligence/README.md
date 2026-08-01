@@ -690,6 +690,14 @@ submitted one correct candidate (1/6). Independent semantic and raw-security
 verifiers passed. This is transfer evidence against automatic trace-mined
 promotion, but remains small and abstention-heavy.
 
+The first authenticated frontier replay is now recorded in the
+[`Codex/Luna broker family-transfer study`](experiments/summaries/defog-codex-frontier-broker-transfer-2026-08-02.md).
+Across four family-disjoint broker tasks, the car-derived trace candidate was
+3/4 semantic-correct, exactly tying the formatting placebo; no-skill was 0/4.
+An independent governed-PostgreSQL verifier matched all 12 outcomes with zero
+errors. This confirms the frontier replay path and a protocol/scaffolding
+effect, not artifact-specific skill improvement or promotion eligibility.
+
 The [`Trace Commons full-cohort analysis`](experiments/summaries/trace-commons-full-content-minimized-analysis-2026-08-02.md)
 then attested all 28 public native Claude Code histories byte-for-byte against
 the pinned manifest (17,991 records and 4,264 tool calls) before analysis. The
