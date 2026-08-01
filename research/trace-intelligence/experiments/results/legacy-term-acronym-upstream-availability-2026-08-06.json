@@ -1,0 +1,19 @@
+{
+  "schema": "frankengate-legacy-term-acronym-upstream-availability-v1",
+  "term_suite": {
+    "version": "3.0.10",
+    "artifact_sha256": "93a7b05ad423a1db31876baf1fa3fbdb1059f9f73f4cf0f98f6d908222695797",
+    "run_log_sha256": "a0d040ddc7bd4d281085709ca6548c87a19e6b9cbba366ce9db8042d1c4ba907",
+    "result": "setup_blocked",
+    "observed_error": "java.util.NoSuchElementException in CommandLineClient.asPath while resolving the indexed corpus/tagger resource",
+    "requirements": "external POS-tagger/model assets; legacy Java 8-era distribution"
+  },
+  "acronym_expansion": {
+    "source_archive_sha256": "5eaca21c3c1011b5db5ad036877fc5aebb6210bf9ee53c79167892c58c54eb5e",
+    "result": "setup_blocked",
+    "requirements": "2017-era gensim/numpy/scipy/sklearn stack and a trained Doc2Vec model; no usable pretrained model was supplied",
+    "license": "not_discoverable_in_probe_source"
+  },
+  "claim_boundary": "This is typed upstream setup evidence, not a quality failure. The current-Python concept ports remain separate and are the reproducible candidate-generation baselines.",
+  "raw_content_committed": false
+}
