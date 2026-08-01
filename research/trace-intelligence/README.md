@@ -710,6 +710,17 @@ direction changed under isolation, but neither run supports promotion. This
 is stochastic screening evidence, not a universal claim that trace mining is
 harmful.
 
+The decisive [`length-matched neutral control`](experiments/summaries/defog-codex-frontier-neutral-control-2026-08-02.md)
+then replayed the same four broker tasks in a fresh isolated database with a
+fourth arm whose generic text was exactly the trace artifact's 308-character
+length. The neutral arm scored 4/4 semantic-correct, formatting placebo 3/4,
+no-skill 1/4, and trace-mined 1/4 (3/4 submissions). Trace-mined versus the
+neutral control was −0.75 risk difference (exact McNemar p=.25), and it tied
+no-skill (p=1.0). Every trajectory passed independent semantic/security
+verification. This is not a universal claim about neutral text, but it is
+direct evidence that this candidate does not earn promotion over a
+length-matched context control.
+
 The [`Trace Commons full-cohort analysis`](experiments/summaries/trace-commons-full-content-minimized-analysis-2026-08-02.md)
 then attested all 28 public native Claude Code histories byte-for-byte against
 the pinned manifest (17,991 records and 4,264 tool calls) before analysis. The
