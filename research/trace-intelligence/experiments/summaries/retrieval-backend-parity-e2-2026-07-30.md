@@ -2,7 +2,12 @@
 
 Pinned cohort: 145 documents / 99 queries.
 
-Only offline ranking and the local forced-RLS PostgreSQL run have same-corpus evidence. CASS was capability-probed but its indexed corpus is not the pinned cohort. Frankensearch, pg_textsearch, pgContext, TurboVec, and Turbopuffer are explicit nulls, not zero scores.
+Only offline ranking and the local forced-RLS PostgreSQL run were in the
+original parity run. CASS was capability-probed but its indexed corpus is not
+the pinned cohort. Frankensearch, pg_textsearch, pgContext, and Turbopuffer
+remain explicit nulls, not zero scores. TurboVec now has a separate same-corpus
+adapter checkpoint; it is reported as a dense-index mechanics result, not as
+authority or end-to-end parity.
 
 The PostgreSQL receipt carries the existing authorization/deletion oracles. It does not establish Aurora scale, selective-scope concurrency, or managed-service behavior.
 
