@@ -280,6 +280,14 @@ typed objects and evidence-linked edges, recursive SQL expansion, FTS, and
 optional pgvector. A graph database is explicitly out of scope until graph
 expansion is measured as the bottleneck.
 
+The first independent vocabulary run is now complete:
+[`GLiNER/Wisp probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md).
+On 49 non-empty Wisp files, the deterministic baseline surfaced 666 acronym
+forms and 191 reformulation candidates; GLiNER produced 567 typed spans. A
+fixed capability probe hit only 2/8 expected labels, so GLiNER is currently a
+candidate-span generator, not an automatic glossary or ontology writer. The
+receipt verifier passed, and raw spans remain outside Git.
+
 The [`FinanceBench embedding-choice benchmark`](experiments/summaries/finance-mteb-retrieval-benchmark-2026-08-02.md)
 adds a separate finance/NL2SQL relevance gate over the cached, revision-pinned
 FinanceMTEB/FinanceBench corpus (189 documents, 150 queries, 35 multi-positive

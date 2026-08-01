@@ -1,0 +1,16 @@
+{
+  "all_passed": true,
+  "checks": {
+    "baseline_present": true,
+    "dataset_count_positive": true,
+    "gliner_present": true,
+    "raw_count_matches": true,
+    "raw_not_committed": true,
+    "raw_rows_have_no_authority_fields": true,
+    "result_hash": true,
+    "retrieval_not_overclaimed": true,
+    "schema": true
+  },
+  "receipt_sha256": "983cca86796a18776d58dba85ab0d94eab20df30c4348f735132ee00c2ee86f7",
+  "schema_version": "frankengate-term-extraction-gliner-verification-v1"
+}

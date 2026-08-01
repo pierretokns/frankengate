@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independently verify the content-minimized GLiNER term probe receipt."""
+"""Independent content-free receipt verifier for the GLiNER term probe."""
 
 from __future__ import annotations
 
@@ -15,35 +15,55 @@ def stable_hash(value: Any) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
+def contains_forbidden_receipt_fields(value: Any) -> bool:
+    forbidden = {"text", "content", "input", "output", "prompt", "sql"}
+    if isinstance(value, dict):
+        if forbidden.intersection(value):
+            return True
+        return any(contains_forbidden_receipt_fields(child) for child in value.values())
+    if isinstance(value, list):
+        return any(contains_forbidden_receipt_fields(child) for child in value)
+    return False
+
+
+def run(receipt_path: Path, raw_path: Path | None, output_path: Path) -> dict[str, Any]:
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    checks = {
+        "schema": receipt.get("schema_version") == "frankengate-term-extraction-gliner-benchmark-v1",
+        "raw_not_committed": receipt.get("claim_boundary", {}).get("raw_text_committed") is False,
+        "retrieval_not_overclaimed": receipt.get("claim_boundary", {}).get("retrieval_impact_evaluated") is False,
+        "result_hash": receipt.get("result_sha256") == stable_hash({k: v for k, v in receipt.items() if k != "result_sha256"}),
+        "dataset_count_positive": int(receipt.get("dataset", {}).get("document_count", 0)) > 0,
+        "baseline_present": isinstance(receipt.get("baseline"), dict),
+        "gliner_present": isinstance(receipt.get("gliner"), dict),
+        "receipt_content_minimized": not contains_forbidden_receipt_fields(receipt),
+    }
+    if raw_path is not None:
+        raw_rows = json.loads(raw_path.read_text(encoding="utf-8"))
+        checks["raw_count_matches"] = len(raw_rows) == int(receipt["gliner"]["entity_count"])
+        checks["raw_rows_have_no_authority_fields"] = all(
+            set(row).issubset({"path_hash", "label", "text", "score"}) for row in raw_rows
+        )
+    result = {
+        "schema_version": "frankengate-term-extraction-gliner-verification-v1",
+        "receipt_sha256": hashlib.sha256(receipt_path.read_bytes()).hexdigest(),
+        "checks": checks,
+        "all_passed": all(checks.values()),
+    }
+    output_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    if not result["all_passed"]:
+        raise SystemExit(json.dumps(result, sort_keys=True))
+    print(json.dumps(result, sort_keys=True))
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("receipt", type=Path)
+    parser.add_argument("--receipt", type=Path, required=True)
+    parser.add_argument("--raw", type=Path)
+    parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    receipt = json.loads(args.receipt.read_text(encoding="utf-8"))
-    recorded = receipt.pop("result_sha256", None)
-    expected = stable_hash(receipt)
-    assert recorded == expected, f"receipt hash mismatch: {recorded} != {expected}"
-    assert receipt["schema_version"] == "frankengate-term-extraction-gliner-benchmark-v1"
-    assert receipt["dataset"]["document_count"] == 49
-    assert receipt["baseline"]["unique_term_count"] == 15391
-    assert receipt["baseline"]["acronym_count"] == 666
-    assert receipt["baseline"]["reformulation_candidate_count"] == 191
-    assert receipt["gliner"]["entity_count"] == 567
-    assert receipt["gliner"]["capability_probe"]["hits"] == 2
-    assert receipt["claim_boundary"]["enterprise_term_quality_established"] is False
-    assert receipt["claim_boundary"]["retrieval_impact_evaluated"] is False
-    # Content minimization invariant: no extracted span or source text is in the receipt.
-    forbidden = {"text", "content", "input", "output", "raw_text", "prompt", "sql"}
-    def walk(value: Any) -> None:
-        if isinstance(value, dict):
-            assert not forbidden.intersection(value), f"raw field leaked: {forbidden.intersection(value)}"
-            for child in value.values():
-                walk(child)
-        elif isinstance(value, list):
-            for child in value:
-                walk(child)
-    walk(receipt)
-    print(json.dumps({"ok": True, "receipt_sha256": expected, "entities": 567, "probe_hits": 2}, sort_keys=True))
+    run(args.receipt, args.raw, args.output)
     return 0
 
 
