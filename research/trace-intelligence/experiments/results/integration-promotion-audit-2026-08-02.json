@@ -144,10 +144,10 @@
     {
       "disposition": "not_selected",
       "name": "unselected_backend_concepts",
-      "reason": "VectorChord, pg_textsearch, pgContext, TurboVec, and Turbopuffer are documented as not selected for the current architecture; no downstream utility promotion is implied",
+      "reason": "VectorChord, pg_textsearch, pgContext, and Turbopuffer remain not selected; TurboVec has a separate bounded mechanics receipt, but no downstream utility promotion is implied",
       "receipt": "concept-coverage-audit-2026-07-31.json",
       "receipt_schema_version": "frankengate.concept-coverage-audit.v1",
-      "receipt_sha256": "fb6e93a64660aa54eb6018a091870a9792823011aa6807ebb18a5127e9744013"
+      "receipt_sha256": "0ba1baa16d309d86e1e2c367e033df63d28234f3c7355220eafc1e9d230cd403"
     }
   ],
   "schema_version": "frankengate-integration-promotion-audit-v1",
