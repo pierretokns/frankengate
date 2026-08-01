@@ -92,12 +92,25 @@ def audit(result_dir: Path) -> dict[str, Any]:
         rows.append({**requirement, "evidence": evidence})
     if missing:
         raise ValueError(f"missing completion-audit evidence: {sorted(set(missing))}")
+    promotion_path = result_dir / "integration-promotion-audit-2026-08-02.json"
+    promotion = json.loads(promotion_path.read_text(encoding="utf-8"))
+    invalid_receipts: list[str] = []
+    for row in promotion.get("rows", []):
+        receipt_path = result_dir / row["receipt"]
+        if not receipt_path.exists() or sha256(receipt_path) != row.get("receipt_sha256"):
+            invalid_receipts.append(row.get("name", row.get("receipt", "unknown")))
+    if invalid_receipts:
+        raise ValueError(f"promotion receipt hash mismatch: {sorted(invalid_receipts)}")
     incomplete = [row for row in rows if row["status"] not in {"proven_for_admitted_public_slices", "proven_for_measured_formats", "bounded_receipts_complete", "proven_none_authorized"}]
     return {
         "schema_version": SCHEMA_VERSION,
         "status": "active_incomplete",
         "requirements": rows,
         "incomplete_requirement_ids": [row["id"] for row in incomplete],
+        "receipt_integrity": {
+            "promotion_rows": len(promotion.get("rows", [])),
+            "all_embedded_hashes_verified": True,
+        },
         "claim_boundary": {
             "objective_complete": False,
             "automatic_integration_authorized": False,

@@ -9,6 +9,10 @@
     "independent_outcome_evaluation",
     "power_cost_latency_and_null_taxonomy"
   ],
+  "receipt_integrity": {
+    "all_embedded_hashes_verified": true,
+    "promotion_rows": 18
+  },
   "requirements": [
     {
       "evidence": [
