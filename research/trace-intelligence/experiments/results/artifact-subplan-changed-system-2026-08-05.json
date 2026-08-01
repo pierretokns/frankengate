@@ -1,0 +1,107 @@
+{
+  "aggregate": {
+    "name_only_subplan": {
+      "accepted": 5,
+      "semantic_correct": 3,
+      "unsafe_accept": 2
+    },
+    "semantic_subplan": {
+      "accepted": 3,
+      "semantic_correct": 3,
+      "unsafe_accept": 0
+    }
+  },
+  "claim_boundary": "Deterministic changed-system subplan mechanics only; no mined-artifact quality, enterprise prevalence, or causal user benefit is established.",
+  "rows": [
+    {
+      "accepted": true,
+      "case_id": "unchanged",
+      "policy": "name_only_subplan",
+      "reasons": [],
+      "semantic_correct": true,
+      "unsafe_accept": false
+    },
+    {
+      "accepted": true,
+      "case_id": "unchanged",
+      "policy": "semantic_subplan",
+      "reasons": [],
+      "semantic_correct": true,
+      "unsafe_accept": false
+    },
+    {
+      "accepted": true,
+      "case_id": "additive",
+      "policy": "name_only_subplan",
+      "reasons": [],
+      "semantic_correct": true,
+      "unsafe_accept": false
+    },
+    {
+      "accepted": true,
+      "case_id": "additive",
+      "policy": "semantic_subplan",
+      "reasons": [],
+      "semantic_correct": true,
+      "unsafe_accept": false
+    },
+    {
+      "accepted": true,
+      "case_id": "approved_rename",
+      "policy": "name_only_subplan",
+      "reasons": [],
+      "semantic_correct": true,
+      "unsafe_accept": false
+    },
+    {
+      "accepted": true,
+      "case_id": "approved_rename",
+      "policy": "semantic_subplan",
+      "reasons": [],
+      "semantic_correct": true,
+      "unsafe_accept": false
+    },
+    {
+      "accepted": true,
+      "case_id": "semantic_collision",
+      "policy": "name_only_subplan",
+      "reasons": [],
+      "semantic_correct": false,
+      "unsafe_accept": true
+    },
+    {
+      "accepted": false,
+      "case_id": "semantic_collision",
+      "policy": "semantic_subplan",
+      "reasons": [
+        "semantic_input_missing"
+      ],
+      "semantic_correct": false,
+      "unsafe_accept": false
+    },
+    {
+      "accepted": true,
+      "case_id": "same_name_drift",
+      "policy": "name_only_subplan",
+      "reasons": [],
+      "semantic_correct": false,
+      "unsafe_accept": true
+    },
+    {
+      "accepted": false,
+      "case_id": "same_name_drift",
+      "policy": "semantic_subplan",
+      "reasons": [
+        "semantic_input_missing"
+      ],
+      "semantic_correct": false,
+      "unsafe_accept": false
+    }
+  ],
+  "schema": "frankengate-artifact-subplan-changed-system-v1",
+  "source": {
+    "raw_content_committed": false,
+    "subplan_hash": "86af758cca3daf07f1c01d83373f04575dc49bce5a4488665412b6ac9ed708a2",
+    "target_count": 5
+  }
+}
