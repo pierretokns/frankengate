@@ -1,0 +1,20 @@
+{
+  "arms": {
+    "trace2skill_compiled_procedure": {
+      "candidate_present": 2,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 2,
+      "stored_semantic_correct": 2,
+      "tasks": 2
+    }
+  },
+  "errors": [],
+  "raw_content_committed": false,
+  "schema_version": "frankengate-defog-semantic-independent-verification-v1",
+  "semantic_recomputation": "executed_against_pinned_governed_postgres",
+  "semantic_verification_passed": true,
+  "source_result_sha256": "cbd5b2bd512ee47799988fa89c0f123a4f322e036b62c64ce7658d17d8c3b15b",
+  "stored_vs_recomputed_mismatches": [],
+  "task_count": 4,
+  "trajectory_count": 2
+}

@@ -1,0 +1,54 @@
+{
+  "claim_boundary": "Every seed-arm receipt used a fresh database container, role, port, raw audit root, and independent verifier. This controls cross-arm state leakage; it does not establish universal skill utility or promotion eligibility.",
+  "runs": [
+    {
+      "arms": [
+        "no_skill"
+      ],
+      "database_container": "fg-frontier-pg-33138-530000",
+      "database_port": 56040,
+      "harness": "codex-cli-native-json-v1",
+      "isolation": "one-disposable-postgres-container-and-verifier-per-seed-arm",
+      "proxy_port": 18540,
+      "raw_audit_dir": "/private/tmp/defog-codex-docker-audit-seed-530000-33138",
+      "result": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-no_skill-seed-530000-2026-08-02.json",
+      "seed": 530000,
+      "task_mutation": null,
+      "verification": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-no_skill-seed-530000-independent-verification-2026-08-02.json",
+      "verification_audit_dir": "/private/tmp/defog-codex-docker-verify-seed-530000-33138"
+    },
+    {
+      "arms": [
+        "length_matched_neutral"
+      ],
+      "database_container": "fg-frontier-pg-38869-530000",
+      "database_port": 56041,
+      "harness": "codex-cli-native-json-v1",
+      "isolation": "one-disposable-postgres-container-and-verifier-per-seed-arm",
+      "proxy_port": 18541,
+      "raw_audit_dir": "/private/tmp/defog-codex-docker-audit-seed-530000-38869",
+      "result": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-length_matched_neutral-seed-530000-2026-08-02.json",
+      "seed": 530000,
+      "task_mutation": null,
+      "verification": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-length_matched_neutral-seed-530000-independent-verification-2026-08-02.json",
+      "verification_audit_dir": "/private/tmp/defog-codex-docker-verify-seed-530000-38869"
+    },
+    {
+      "arms": [
+        "trace2skill_compiled_procedure"
+      ],
+      "database_container": "fg-frontier-pg-45087-530000",
+      "database_port": 56042,
+      "harness": "codex-cli-native-json-v1",
+      "isolation": "one-disposable-postgres-container-and-verifier-per-seed-arm",
+      "proxy_port": 18542,
+      "raw_audit_dir": "/private/tmp/defog-codex-docker-audit-seed-530000-45087",
+      "result": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-trace2skill_compiled_procedure-seed-530000-2026-08-02.json",
+      "seed": 530000,
+      "task_mutation": null,
+      "verification": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-trace2skill_compiled_procedure-seed-530000-independent-verification-2026-08-02.json",
+      "verification_audit_dir": "/private/tmp/defog-codex-docker-verify-seed-530000-45087"
+    }
+  ],
+  "schema_version": "frankengate-frontier-transfer-docker-arm-isolated-run-v1"
+}

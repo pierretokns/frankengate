@@ -54,7 +54,7 @@ def wait_port(port: int, timeout: float = 90) -> None:
     raise TimeoutError(f"port {port} did not become reachable")
 
 
-def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...], task_mutation: str | None = None, harness: str = "openai-proxy", result_tag: str | None = None, trace_path: Path = TRACE) -> dict[str, str | int | list[str] | str | None]:
+def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...], task_mutation: str | None = None, harness: str = "openai-proxy", result_tag: str | None = None, trace_path: Path = TRACE, tasks: tuple[str, ...] = tuple(TASKS)) -> dict[str, str | int | list[str] | str | None]:
     suffix = f"{os.getpid()}-{seed}"
     container = f"fg-frontier-pg-{suffix}"
     password = f"fg_frontier_pw_{seed}"
@@ -113,7 +113,7 @@ def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str,
             base += ["--arm", arm]
         if task_mutation:
             base += ["--task-mutation", task_mutation]
-        for task in TASKS:
+        for task in tasks:
             base += ["--task-id", task]
         subprocess.run(base, cwd=ROOT, check=True, timeout=1800)
         verify = ["uv", "run", "python", "defog_semantic_outcome_verifier.py", "--result", str(result),
@@ -150,12 +150,17 @@ def main() -> int:
     parser.add_argument("--result-tag", help="suffix used to avoid collisions when running one arm per container")
     parser.add_argument("--trace", type=Path, default=TRACE,
                         help="candidate artifact passed to the mined-skill arm")
+    parser.add_argument("--task-id", action="append",
+                        help="task IDs to replay; defaults to the sealed four-task cohort")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     rows = []
     arms = tuple(args.arm or ("no_skill", "formatting_placebo", "trace_mined_terminal_discipline"))
+    tasks = tuple(args.task_id or TASKS)
+    if not tasks:
+        raise ValueError("at least one task ID is required")
     with ThreadPoolExecutor(max_workers=args.parallel) as pool:
-        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms, args.task_mutation, args.harness, args.result_tag, args.trace.resolve(strict=True)): seed for i, seed in enumerate(args.seed)}
+        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms, args.task_mutation, args.harness, args.result_tag, args.trace.resolve(strict=True), tasks): seed for i, seed in enumerate(args.seed)}
         for future in as_completed(futures):
             rows.append(future.result())
     payload = {"schema_version": "frankengate-frontier-transfer-docker-isolated-run-v1", "runs": sorted(rows, key=lambda x: int(x["seed"])), "claim_boundary": "Container/database isolation is proven for this run; it does not establish universal skill utility or promotion eligibility."}

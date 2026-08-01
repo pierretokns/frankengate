@@ -142,9 +142,21 @@ and database boundaries, and MIT CLEAR/TRAC for reliability and accountability.
 The recommended paper framing is a governed evidence-to-artifact lifecycle,
 not a generic claim that enterprise memory improves agents.
 
+## Sequential prefix transfer
+
+A SkillLearnBench/SkillFlow-style sequential test compiled a procedure from
+six source files covering two task histories, then replayed it on two different
+task IDs. The prefix-compiled arm tied no-skill at 2/2 semantic-correct and
+beat the length-matched neutral at 2/2 versus 1/2 (exact paired p=1.0). All
+six episodes passed independent semantic verification, authority was valid, and
+unauthorized observations were zero. The compiled arm used more SQL attempts,
+so this demonstrates transferability without incremental utility or efficiency
+benefit. Full boundary:
+`experiments/summaries/trace2skill-sequential-prefix-transfer-2026-08-02.md`.
+
 The publication/partner recommendation is now explicit: first reproduce the
 governed continual-skill protocol with CMU LTI/SkillLearnBench and MIT DSAIL;
 then add Harvard CHARM/Variation Lab for human learning and agency outcomes,
 and MIT CLEAR/TRAC for trustworthy feedback and accountability. The shortlist
 and proposed 6–8 week public/sealed reproduction package are recorded in
-`experiments/summaries/publication-partner-shortlist-2026-08-02.md`.
+`experiments/summaries/publication-partner-opportunities-2026-08-02.md`.

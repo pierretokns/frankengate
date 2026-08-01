@@ -1,0 +1,54 @@
+{
+  "analysts": [
+    {
+      "elapsed_ms": 16041.856,
+      "role": "protocol",
+      "text_sha256": "76c25f4ac0c661871da49706db1cfdbd2b507fc8da6e3a01736dbd512de6a163"
+    },
+    {
+      "elapsed_ms": 17364.149,
+      "role": "sql",
+      "text_sha256": "62eaa60c997f3c50acef17f1e490e44c7ca7e820ef4ebdd9c190b435c077afbd"
+    },
+    {
+      "elapsed_ms": 16268.24,
+      "role": "transfer",
+      "text_sha256": "095dd7e14d41acef0c2e3a4c56f9c48900918d4f5212db8b9bef59db3632eeb5"
+    }
+  ],
+  "candidate_class": "trace2skill_style_compiled_hypothesis",
+  "candidate_text": "Invocation conditions: Use when translating or repairing PostgreSQL analytical metrics involving unfamiliar schemas, categorical filters, date windows, joins, aggregates, cohorts, or ratios.\n\nActions: Inspect and preserve observed schema-qualified identifiers. Map business terms to explicit keys, dimensions, statuses, dates, relationships, and population boundaries. Validate categorical values from permitted evidence. Define numerator and denominator populations before writing SQL. For entity-level metrics over one-to-many relationships, deduplicate related-event entities before counting or joining. Use explicit half-open calendar intervals when appropriate, protect division by zero or NULL, and apply requested precision. Check execution-policy constraints and rewrite denied constructs using equivalent permitted relational operations. Execute a diagnostic or candidate query, then verify columns, cardinality, intermediate populations, duplicate handling, and result plausibility. Submit only the validated accepted attempt.\n\nContraindications: Do not guess identifier spelling, schemas, join keys, status capitalization, date semantics, denominator scope, or whether duplicates should count. Do not count joined rows when the metric is entity-level, assume schema names prove business meaning, treat an empty result as proof that a category is absent, expose sensitive rows or authority data, or retry a denied construct unchanged. Do not apply this procedure unchanged to intentionally weighted transaction-level metrics, historical or multi-valued statuses, or event windows with different cohort semantics.\n\nAbstention behavior: If schema meaning, categorical vocabulary, join cardinality, metric grain, denominator, date interpretation, policy allowance, or result interpretation remains materially unresolved after permitted inspection, abstain from submission, state the unresolved uncertainty, and request the necessary evidence or clarification. If no policy-compatible equivalent can be validated, stop without inventing SQL or results.",
+  "candidate_text_sha256": "c00751ae761a7737cdb84bdf5a1d3b5f85576db7a13d87a4d59065eea9453420",
+  "claim_boundary": "Parallel frontier analysis plus consolidation creates a candidate only; no skill utility or promotion is established until held-out governed replay beats no-skill and length-matched neutral controls.",
+  "consolidator_elapsed_ms": 17812.256,
+  "consolidator_text_sha256": "e2913342a20760ac710562d96bf9125adaa90af1e03058f69ae73111c0dbd984",
+  "promotion_authorized": false,
+  "raw_content_emitted": false,
+  "result_sha256": "9428183bc04ac2a49274115f08e68381802b7bdd4dba09a31b10dab7e41389da",
+  "schema_version": "frankengate-trace2skill-defog-compiler-v1",
+  "source": {
+    "event_count": 99,
+    "event_counts": {
+      "agent_tool_result": 21,
+      "candidate_sql_policy_denial": 1,
+      "candidate_sql_result": 8,
+      "factorial_task_end": 6,
+      "factorial_task_start": 6,
+      "model_request": 21,
+      "model_response": 21,
+      "schema_inspection_result": 15
+    },
+    "file_count": 6,
+    "source_directories": [
+      "/private/tmp/defog-codex-broker-audit-seed-310000-69282"
+    ],
+    "source_file_sha256": [
+      "8279872b9d1d7c3bd39700bdff55f7185225c04e38eb87ef649ab7a498289441",
+      "bbc08d4db0813c82a14c2b08187aab671495ca3fdf1aad203727616fcb356420",
+      "7862c821fc4364242de7754b595e6bc8c30610a1e6a63f9f99770a125ac31e37",
+      "c79f3c8a64e846bdaa8167c2e20a844c0c93d31275fa1a774e2e45bf323e249c",
+      "b4f38a8b1102de6833804820ef37ba381b475fcfa856e02e477f320a07830bf5",
+      "33150da0689601b2ebd149f161a554b3ca1cab3389499b4f14820be85e566050"
+    ]
+  }
+}

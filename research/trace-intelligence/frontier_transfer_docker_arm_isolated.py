@@ -33,9 +33,12 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--trace", type=Path,
                         default=ROOT / "experiments/results/trace-mined-skill-candidate-car-schema-injected-2026-08-02.json")
+    parser.add_argument("--task-id", action="append",
+                        help="task IDs to replay; defaults to the sealed four-task cohort")
     args = parser.parse_args()
 
     runs: list[dict[str, object]] = []
+    tasks = tuple(args.task_id or [])
     job_index = 0
     for seed in args.seed:
         for arm in args.arm:
@@ -54,6 +57,8 @@ def main() -> int:
             ]
             if args.task_mutation:
                 cmd += ["--task-mutation", args.task_mutation]
+            for task in tasks:
+                cmd += ["--task-id", task]
             subprocess.run(cmd, cwd=ROOT, check=True, timeout=2400)
             metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
             if len(metadata.get("runs", [])) != 1:

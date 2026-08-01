@@ -157,7 +157,7 @@ human outcomes and data-system boundaries, and MIT CLEAR/TRAC for trustworthy
 agent evaluation. These are fit recommendations, not commitments.
 
 The partner and publication shortlist is in
-`experiments/summaries/publication-partner-shortlist-2026-08-02.md`. It
+`experiments/summaries/publication-partner-opportunities-2026-08-02.md`. It
 recommends CMU LTI/SkillLearnBench and MIT DSAIL for the first methods/data
 systems reproduction, followed by Harvard CHARM/Variation Lab for human
 agency and learning outcomes, with MIT CLEAR/TRAC for accountability and

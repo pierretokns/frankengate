@@ -2,9 +2,12 @@
 
 ## Recommended collaboration order
 
-### 1. CMU SkillLearnBench team — benchmark and continual-learning protocol
+### 1. CMU LTI / SkillLearnBench team — benchmark and continual-learning protocol
 
-The [SkillLearnBench repository](https://github.com/cxcscmu/SkillLearnBench)
+The [CMU Language Technologies Institute](https://www.lti.cs.cmu.edu/about-lti/index.html)
+covers information retrieval, question answering, text mining, knowledge
+representation, and trustworthy language technology. The
+[SkillLearnBench repository](https://github.com/cxcscmu/SkillLearnBench)
 is MIT-licensed and exposes task verifiers, skill generators, and evaluation
 reports. Its public protocol separates task success, skill quality, and
 trajectory quality, and its authors explicitly report that no continual method
@@ -29,12 +32,14 @@ questions more directly than a generic agent-memory group.
 measures artifact reuse, schema drift, query-plan regressions, and retrieval
 latency under controlled authority scopes.
 
-### 3. Harvard CHARM / CRCS / DASlab — human outcomes and data-system boundaries
+### 3. Harvard CHARM / Variation Lab / CRCS / DASlab — human outcomes and data-system boundaries
 
 Harvard's [CHARM](https://charm.seas.harvard.edu/) focuses on whether AI leaves
 people better prepared rather than merely completing the current task. That is
 the right partner for validating “skill-gap” and “user improvement” claims.
-Harvard [CRCS](https://crcs.seas.harvard.edu/publishing-research) contributes
+The [Variation Lab](https://glassmanlab.seas.harvard.edu/) studies AI-resilient
+interfaces and human sensemaking, which fits the review UX for trace-derived
+suggestions. Harvard [CRCS](https://crcs.seas.harvard.edu/publishing-research) contributes
 multi-agent collaboration and goal-recognition design, while
 [DASlab](https://daslab.seas.harvard.edu/) is a strong fit for data-system
 architecture, adaptive indexing, workload behavior, and SQL systems.
@@ -85,6 +90,23 @@ The paper should report three separately held-out outcomes:
   review; and
 * a small, well-powered first study rather than an open-ended request to mine
   employee logs.
+
+## First collaboration package
+
+The first 6–8 week package should use public or synthetic tasks and a sealed
+enterprise replay endpoint:
+
+1. 20–40 sequential SQL/tool tasks across several families;
+2. one-shot, self-feedback, teacher-feedback, and Trace2Skill-style arms;
+3. skill-quality, trajectory-quality, retrieval, and changed-task outcome
+   receipts;
+4. same-surface/wrong-scope hard negatives, schema drift, stale authority,
+   deletion, and negative-transfer cases; and
+5. reproducible manifests, hashes, verifiers, and a publication-ready claim
+   matrix.
+
+The collaboration request should be a methods reproduction, not access to raw
+employee logs or a promise of positive results.
 
 The current evidence supports approaching CMU and MIT DSAIL first, with Harvard
 CHARM/CRCS/DASlab and MIT CLEAR/TRAC as complementary collaborators. This is a
