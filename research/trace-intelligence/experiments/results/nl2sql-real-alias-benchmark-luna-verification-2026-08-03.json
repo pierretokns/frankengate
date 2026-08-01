@@ -1,0 +1,20 @@
+{
+  "cases_verified": 22,
+  "content_minimized": true,
+  "frontier_decisions_by_category": {
+    "explicit_target": {
+      "retrieve": 6
+    },
+    "implicit_target": {
+      "retrieve": 8
+    },
+    "scope_swapped_nil": {
+      "abstain": 8
+    }
+  },
+  "raw_hashes_match": true,
+  "schema_version": "frankengate-nl2sql-real-alias-verification-v1",
+  "scope_swapped_nil_abstention": 1.0,
+  "source_result_sha256": "c8a38c2aac0ce624fc39ab16250395f64b71671837498e73dff8f0d904b9e092",
+  "verification_passed": true
+}

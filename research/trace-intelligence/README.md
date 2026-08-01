@@ -1432,6 +1432,13 @@ wrong-system, NIL, and unclear cases with perfect construction-time accuracy,
 abstention, and agreement. This validates the label contract and verifier only;
 authorized enterprise examples and SME labels remain required.
 
+The [`real Defog alias/NIL benchmark`](experiments/summaries/nl2sql-real-alias-benchmark-2026-08-03.md)
+then ran the same idea against a real public NL2SQL cohort. On 22 frozen cases,
+exact/lexical/dense target MRR was `.893/.806/.690`, while Luna reached `1.0`
+and abstained on all 8 constructed scope-swapped NIL cases. The result supports
+an explicit late-stage abstention gate, not automatic semantic-alias truth or
+artifact utility; enterprise/SME labels and changed-system replay remain open.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,

@@ -38,6 +38,7 @@ promotion-eligible yet.
 | Frontier models can create bounded, evidence-grounded proposals | Luna produced valid, structurally grounded proposals for 3/4 meaningful content-minimized sessions; independent receipt verification passed | Model passes are viable after deterministic projection, but proposal quality and utility still require outcome labels |
 | Frontier reranking adds value after lexical/dense candidate generation | On nine MATM leave-one-model-out queries, lexical and Luna both had MRR/Recall@1/3/5 `1.0`; embedding MRR `.674`; Luna's top-3 success `.704` tied lexical | Do not put a frontier model on every retrieval request; reserve it for ambiguous, high-value, human-reviewed cases |
 | Alias adjudication can represent abstention | Two independent Luna roles scored 23 synthetic exact/semantic/collision/NIL/unclear cases with 1.0 surface, candidate, wrong-system, abstention, and inter-judge agreement | Preserve `nil` and `unclear` as first-class outcomes; this is only a capability gate until enterprise/SME labels exist |
+| Frontier abstention works on a real public NL2SQL cohort | On 22 Defog-derived cases, Luna abstained on 8/8 constructed scope-swapped NILs and retrieved all 14 target-bearing cases; exact/lexical/dense retrieval could not abstain | Add an explicit late-stage abstention decision; this is still public/gold-SQL evidence, not enterprise semantic truth |
 
 ## Nulls and corrections
 
