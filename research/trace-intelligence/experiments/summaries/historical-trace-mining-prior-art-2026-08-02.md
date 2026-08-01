@@ -148,3 +148,17 @@ positive transfer and model/task-dependent failure; SkillFoundry and
 MUSE-Autoskill contribute tested, provenance-carrying, per-skill lifecycle
 ideas. None combines private multi-user traces, corporate alias collisions,
 governed artifact capsules, and changed-system replay.
+
+The partner and publication mapping is in
+`experiments/summaries/publication-partner-opportunities-2026-08-02.md`. It
+prioritizes the CMU SkillLearnBench team for continual-learning protocol work,
+MIT DSAIL for learned enterprise data systems, Harvard CHARM/CRCS/DASlab for
+human outcomes and data-system boundaries, and MIT CLEAR/TRAC for trustworthy
+agent evaluation. These are fit recommendations, not commitments.
+
+The partner and publication shortlist is in
+`experiments/summaries/publication-partner-shortlist-2026-08-02.md`. It
+recommends CMU LTI/SkillLearnBench and MIT DSAIL for the first methods/data
+systems reproduction, followed by Harvard CHARM/Variation Lab for human
+agency and learning outcomes, with MIT CLEAR/TRAC for accountability and
+feedback design.

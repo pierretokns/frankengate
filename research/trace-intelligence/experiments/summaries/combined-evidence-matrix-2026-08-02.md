@@ -133,3 +133,18 @@ therefore they support our neutral-control and negative-transfer gates rather
 than justifying automatic promotion. The exact/adjacent comparison and
 publication gap are recorded in
 `experiments/summaries/skill-library-prior-art-update-2026-08-02.md`.
+
+Publication/partner fit is now recorded separately in
+`experiments/summaries/publication-partner-opportunities-2026-08-02.md`:
+CMU SkillLearnBench for sequential skill-learning benchmarks, MIT DSAIL for
+learned enterprise data systems, Harvard CHARM/CRCS/DASlab for human outcomes
+and database boundaries, and MIT CLEAR/TRAC for reliability and accountability.
+The recommended paper framing is a governed evidence-to-artifact lifecycle,
+not a generic claim that enterprise memory improves agents.
+
+The publication/partner recommendation is now explicit: first reproduce the
+governed continual-skill protocol with CMU LTI/SkillLearnBench and MIT DSAIL;
+then add Harvard CHARM/Variation Lab for human learning and agency outcomes,
+and MIT CLEAR/TRAC for trustworthy feedback and accountability. The shortlist
+and proposed 6–8 week public/sealed reproduction package are recorded in
+`experiments/summaries/publication-partner-shortlist-2026-08-02.md`.
