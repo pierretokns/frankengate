@@ -67,6 +67,15 @@ def build_receipt(candidate_run: Path, baseline_run: Path, *, upstream_commit: s
     baseline_path = baseline_run / "reports/final_val_grades.json"
     candidate = grades(candidate_path)
     baseline = grades(baseline_path)
+    candidate_summary = json.loads((candidate_run / "reports/summary.json").read_text(encoding="utf-8"))
+    baseline_summary_path = baseline_run / "reports/summary.json"
+    baseline_summary = json.loads(baseline_summary_path.read_text(encoding="utf-8"))
+    if candidate_summary.get("initial_harness_id") != baseline_summary.get("initial_harness_id"):
+        raise ValueError(
+            "candidate and baseline initial harnesses differ: "
+            f"candidate={candidate_summary.get('initial_harness_id')!r}, "
+            f"baseline={baseline_summary.get('initial_harness_id')!r}"
+        )
     if set(candidate) != set(baseline):
         raise ValueError(
             "candidate and baseline held-out task sets differ: "
@@ -94,6 +103,8 @@ def build_receipt(candidate_run: Path, baseline_run: Path, *, upstream_commit: s
             "dataset_sha256": sha256_file(dataset),
             "candidate_grades_sha256": sha256_file(candidate_path),
             "baseline_grades_sha256": sha256_file(baseline_path),
+            "candidate_summary_sha256": sha256_file(candidate_run / "reports/summary.json"),
+            "baseline_summary_sha256": sha256_file(baseline_summary_path),
         },
         "protocol": {
             "dataset": "LOCOMO locomo10.json",
@@ -104,6 +115,15 @@ def build_receipt(candidate_run: Path, baseline_run: Path, *, upstream_commit: s
             "independent_heldout_grader": "upstream LOCOMO score_qa",
             "heldout_tasks": len(rows),
             "heldout_task_ids": sorted(candidate),
+            "candidate_initial_harness_id": candidate_summary.get("initial_harness_id"),
+            "candidate_final_harness_id": candidate_summary.get("final_harness_id"),
+            "candidate_rounds": len(candidate_summary.get("rounds", [])),
+            "candidate_round_accepted": [
+                bool(round_info.get("accepted"))
+                for round_info in candidate_summary.get("rounds", [])
+            ],
+            "baseline_initial_harness_id": baseline_summary.get("initial_harness_id"),
+            "baseline_final_harness_id": baseline_summary.get("final_harness_id"),
         },
         "outcome": {
             "baseline_mean_score": baseline_mean,

@@ -18,6 +18,10 @@ def _run(tmp_path: Path, name: str, rows: list[dict[str, object]]) -> Path:
     run = tmp_path / name / "reports"
     run.mkdir(parents=True)
     (run / "final_val_grades.json").write_text(json.dumps(rows), encoding="utf-8")
+    (run / "summary.json").write_text(
+        json.dumps({"initial_harness_id": "h_initial", "final_harness_id": "h_initial", "rounds": []}),
+        encoding="utf-8",
+    )
     return run.parent
 
 
