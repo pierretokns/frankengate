@@ -123,6 +123,11 @@ benchmarks:
   in one simultaneous run, and the host adapter is not the official Docker
   runner. The next matrix must randomize human-only, generated-only, composite,
   placebo, and null arms on task-disjoint families before promotion.
+- A public changed-data proxy renamed `ContentForce` to `ContentHub` in the
+  prompt, product filename, and artifact contents. Null q1 recall fell to
+  `.875`, while reviewed and composite arms stayed exact (`1.000` q1 and q3).
+  This is robustness evidence for a controlled rename, not enterprise causal
+  skill evidence; no user identity or independent outcome is present.
 - A new stratified sample from the 1,013-session, multi-harness
   `zhiyaowang/dataclaw-zhiyaowang` corpus preserved tool outputs, branches,
   explicit errors, and project/model metadata. Hash-only recurrence found 9

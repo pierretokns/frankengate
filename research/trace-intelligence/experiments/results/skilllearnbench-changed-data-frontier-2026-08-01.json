@@ -1,0 +1,152 @@
+{
+  "arms": [
+    {
+      "agent_message_count": 3,
+      "answer": {
+        "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 7,
+            "expected_count": 8,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 0.875
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "json_object": true,
+        "passed": false,
+        "q1_missing": 1,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "arm": "none",
+      "elapsed_seconds": 91.808,
+      "model": "gpt-5.6-luna",
+      "raw_content_retained_outside_repo": true,
+      "returncode": 0,
+      "stderr_sha256": "6b5f8be60759683a97c5d95b41bcba832e192914b5332a41de8ff1134ddcb889",
+      "stdout_sha256": "b8e0c8db6d765be196a2fb0a238028d405420e827b8bfa5e51fa61f484f265fb",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 342528,
+        "input_tokens": 398532,
+        "output_tokens": 4388,
+        "reasoning_output_tokens": 2686
+      }
+    },
+    {
+      "agent_message_count": 5,
+      "answer": {
+        "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 8,
+            "expected_count": 8,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "arm": "human_authored",
+      "elapsed_seconds": 172.846,
+      "model": "gpt-5.6-luna",
+      "raw_content_retained_outside_repo": true,
+      "returncode": 0,
+      "stderr_sha256": "6e293e8e060924270e1b3d0b04f873909259a68e2b5f7d9b0ab871d422c21bd7",
+      "stdout_sha256": "4849bf07e3323e0fce9ae3680d98c00b67ea054713fc8119a333f36a89af0a79",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 976384,
+        "input_tokens": 1048210,
+        "output_tokens": 8189,
+        "reasoning_output_tokens": 3507
+      }
+    },
+    {
+      "agent_message_count": 4,
+      "answer": {
+        "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 8,
+            "expected_count": 8,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "arm": "composite-human-plus-b1",
+      "elapsed_seconds": 145.548,
+      "model": "gpt-5.6-luna",
+      "raw_content_retained_outside_repo": true,
+      "returncode": 0,
+      "stderr_sha256": "12400090ae265f4ed109f59ad4eff63dfb28663bca5e27da869c8c3c7192a661",
+      "stdout_sha256": "f0454bfa0e818334f988da73ea42cfc2b0d91401e4c9f5cc8006f39d173b6266",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 465664,
+        "input_tokens": 522562,
+        "output_tokens": 6932,
+        "reasoning_output_tokens": 3745
+      }
+    }
+  ],
+  "claim_boundary": {
+    "causal_skill_effect_proven": false,
+    "changed_data_proxy_only": true,
+    "enterprise_transfer_proven": false,
+    "reason": "Public deterministic product rename; no user identity, independent outcome, or authorized enterprise cohort.",
+    "verifier_outcomes_measured": true
+  },
+  "harness": {
+    "adaptation": "host-path portability probe; not the benchmark Docker runner",
+    "docker_runner": false,
+    "model": "gpt-5.6-luna",
+    "provider": "Codex subscription"
+  },
+  "schema": "frankengate-skilllearnbench-changed-data-frontier-v1",
+  "source": {
+    "changed_fixture_sha256": "c1f26706bc53ef179ac0fb96a7a5c54a2bd16f5921dad0a396da7d6e74eaa137",
+    "dataset": "cxcscmu/SkillLearnBench",
+    "new_name": "ContentHub",
+    "old_name": "ContentForce",
+    "raw_content_committed": false,
+    "task_id": "enterprise-information-search/enterprise-information-search-1"
+  }
+}
