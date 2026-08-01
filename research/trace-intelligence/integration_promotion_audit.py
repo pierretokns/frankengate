@@ -33,6 +33,12 @@ MECHANISMS: tuple[dict[str, Any], ...] = (
         "reason": "matched no-harness control beat the self-preference-accepted candidate by 0.192",
     },
     {
+        "name": "rho_powered_candidate",
+        "receipt": "rho-candidate-harness-powered-2026-08-02.json",
+        "disposition": "quarantined_negative_bounded_utility",
+        "reason": "rejected candidate trailed exact initial-harness control 0.643 to 0.388; five regressions, one win, two ties",
+    },
+    {
         "name": "reasoningbank_codex",
         "receipt": "reasoningbank-codex-frontier-bounded-2026-08-02.json",
         "disposition": "quarantined_negative_utility",

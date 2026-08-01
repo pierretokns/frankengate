@@ -464,6 +464,12 @@
       "schema_version": "frankengate-reasoningbank-locomo-bounded-v1",
       "sha256": "c3fa243a8bcbcd37999cbef2a476bf1eb85de0cfb43924cd779fdd91eecb31b8"
     },
+    "rho_candidate_harness_powered": {
+      "filename": "rho-candidate-harness-powered-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-rho-powered-receipt-v1",
+      "sha256": "b15846db3bd3e51be93319d506148e60afa95146ea2ffd63e0c8049bbb19b47c"
+    },
     "rho_frontier_locomo_bounded": {
       "filename": "rho-frontier-locomo-bounded-2026-08-02.json",
       "optional": true,
@@ -1077,6 +1083,16 @@
         "rho_locomo_mean_delta": -0.19166666666666654,
         "rho_locomo_receipt_present": true,
         "rho_locomo_self_preference_mean_score": 1.0,
+        "rho_powered_candidate_baseline_mean_score": 0.6431878306878306,
+        "rho_powered_candidate_bootstrap_ci": [
+          -0.5908730158730159,
+          0.024702380952380976
+        ],
+        "rho_powered_candidate_mean_delta": -0.2552579365079364,
+        "rho_powered_candidate_mean_score": 0.3879298941798942,
+        "rho_powered_candidate_receipt_present": true,
+        "rho_powered_candidate_regressed_tasks": 5,
+        "rho_powered_candidate_upstream_accepted": false,
         "security_violation_veto_passed": true,
         "share_codex_recovery_review_candidates": 31,
         "skill_cross_harness_same_fixture_compared": true,
@@ -1140,6 +1156,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "43f0ab99a9d1c812a88461ccda4091424f6716e77a7801f3ec9f5ad444816fc0",
+  "result_sha256": "9eb83e4a867b6ff5b9fe5620337c66d33be3c9dc4ffc29071b599f3a6a07f0e6",
   "schema_version": "frankengate-combined-evidence-matrix-v31"
 }

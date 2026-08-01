@@ -72,6 +72,7 @@ REQUIRED_RESULTS = {
 OPTIONAL_RESULTS = {
     "skillgen_codex_bird_frontier": "skillgen-codex-bird-frontier-2026-08-02.json",
     "rho_frontier_locomo_bounded": "rho-frontier-locomo-bounded-2026-08-02.json",
+    "rho_candidate_harness_powered": "rho-candidate-harness-powered-2026-08-02.json",
     "reasoningbank_locomo_bounded": "reasoningbank-locomo-bounded-2026-08-02.json",
     "reasoningbank_codex_frontier_bounded": "reasoningbank-codex-frontier-bounded-2026-08-02.json",
     "skillopt_local_runtime_attempt_r15": "skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
@@ -304,6 +305,7 @@ def build_matrix(
     trace_commons_repro = results["trace_commons_repro"]
     skillgen_codex_bird_frontier = results.get("skillgen_codex_bird_frontier")
     rho_frontier_locomo_bounded = results.get("rho_frontier_locomo_bounded")
+    rho_candidate_harness_powered = results.get("rho_candidate_harness_powered")
     reasoningbank_locomo_bounded = results.get("reasoningbank_locomo_bounded")
     reasoningbank_codex_frontier_bounded = results.get("reasoningbank_codex_frontier_bounded")
 
@@ -1345,6 +1347,50 @@ def build_matrix(
                     rho_frontier_locomo_bounded
                     and rho_frontier_locomo_bounded.get("claim_boundary", {}).get(
                         "causal_rho_utility_confirmed", False
+                    )
+                ),
+                "rho_powered_candidate_receipt_present": bool(rho_candidate_harness_powered),
+                "rho_powered_candidate_baseline_mean_score": (
+                    rho_candidate_harness_powered.get("outcome", {}).get(
+                        "baseline_mean_score", 0.0
+                    )
+                    if rho_candidate_harness_powered
+                    else 0.0
+                ),
+                "rho_powered_candidate_mean_score": (
+                    rho_candidate_harness_powered.get("outcome", {}).get(
+                        "candidate_mean_score", 0.0
+                    )
+                    if rho_candidate_harness_powered
+                    else 0.0
+                ),
+                "rho_powered_candidate_mean_delta": (
+                    rho_candidate_harness_powered.get("outcome", {}).get(
+                        "mean_delta", 0.0
+                    )
+                    if rho_candidate_harness_powered
+                    else 0.0
+                ),
+                "rho_powered_candidate_bootstrap_ci": (
+                    rho_candidate_harness_powered.get("outcome", {}).get(
+                        "bootstrap_mean_delta_95ci"
+                    )
+                    if rho_candidate_harness_powered
+                    else None
+                ),
+                "rho_powered_candidate_regressed_tasks": (
+                    rho_candidate_harness_powered.get("outcome", {}).get(
+                        "candidate_regressed_tasks", 0
+                    )
+                    if rho_candidate_harness_powered
+                    else 0
+                ),
+                "rho_powered_candidate_upstream_accepted": bool(
+                    rho_candidate_harness_powered
+                    and any(
+                        rho_candidate_harness_powered.get("protocol", {}).get(
+                            "candidate_round_accepted", []
+                        )
                     )
                 ),
                 "reasoningbank_receipt_present": bool(reasoningbank_locomo_bounded),

@@ -62,7 +62,14 @@ def exact_sign_pvalue(deltas: list[float]) -> float:
     return min(1.0, 2.0 * numerator / (2**n))
 
 
-def build_receipt(candidate_run: Path, baseline_run: Path, *, upstream_commit: str, dataset: Path) -> dict[str, Any]:
+def build_receipt(
+    candidate_run: Path,
+    baseline_run: Path,
+    *,
+    upstream_commit: str,
+    dataset: Path,
+    require_matched_initial: bool = True,
+) -> dict[str, Any]:
     candidate_path = candidate_run / "reports/final_val_grades.json"
     baseline_path = baseline_run / "reports/final_val_grades.json"
     candidate = grades(candidate_path)
@@ -70,7 +77,7 @@ def build_receipt(candidate_run: Path, baseline_run: Path, *, upstream_commit: s
     candidate_summary = json.loads((candidate_run / "reports/summary.json").read_text(encoding="utf-8"))
     baseline_summary_path = baseline_run / "reports/summary.json"
     baseline_summary = json.loads(baseline_summary_path.read_text(encoding="utf-8"))
-    if candidate_summary.get("initial_harness_id") != baseline_summary.get("initial_harness_id"):
+    if require_matched_initial and candidate_summary.get("initial_harness_id") != baseline_summary.get("initial_harness_id"):
         raise ValueError(
             "candidate and baseline initial harnesses differ: "
             f"candidate={candidate_summary.get('initial_harness_id')!r}, "
@@ -138,6 +145,7 @@ def build_receipt(candidate_run: Path, baseline_run: Path, *, upstream_commit: s
         },
         "claim_boundary": {
             "matched_no_harness_control": True,
+            "matched_initial_harness_control": candidate_summary.get("initial_harness_id") == baseline_summary.get("initial_harness_id"),
             "independent_heldout_replay": True,
             "candidate_accessed_heldout_gold": False,
             "causal_rho_utility_confirmed": False,
@@ -154,8 +162,15 @@ def main() -> int:
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--upstream-commit", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--allow-initial-mismatch", action="store_true")
     args = parser.parse_args()
-    output = build_receipt(args.candidate_run, args.baseline_run, upstream_commit=args.upstream_commit, dataset=args.dataset)
+    output = build_receipt(
+        args.candidate_run,
+        args.baseline_run,
+        upstream_commit=args.upstream_commit,
+        dataset=args.dataset,
+        require_matched_initial=not args.allow_initial_mismatch,
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(output["outcome"], sort_keys=True))

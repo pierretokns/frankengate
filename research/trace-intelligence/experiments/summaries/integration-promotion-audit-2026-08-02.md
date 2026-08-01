@@ -2,12 +2,12 @@
 
 The machine-readable receipt in `../results/integration-promotion-audit-2026-08-02.json`
 is the release boundary for the current independent research program. It records
-eleven tested mechanisms, their source receipt hashes, and an explicit disposition.
+twelve tested mechanisms, their source receipt hashes, and an explicit disposition.
 
 **Decision: zero mechanisms are eligible for automatic Frankengate integration.**
 
-- SkillGen, RHO, and Codex-adapted ReasoningBank are quarantined after negative
-  matched held-out utility on the bounded slices.
+- SkillGen, RHO, the powered rejected RHO candidate, and Codex-adapted
+  ReasoningBank are quarantined after negative bounded held-out utility.
 - SkillOpt is utility-unproven at the measured horizon; GEPA produced no holdout
   lift.
 - MATM retrieval and governed PostgreSQL are shadow-only: offline retrieval or
