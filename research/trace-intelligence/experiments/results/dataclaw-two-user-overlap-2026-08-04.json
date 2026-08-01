@@ -1,0 +1,35 @@
+{
+  "claim_boundary": "Cross-user lexical/action overlap is descriptive only; no task labels, outputs, or outcome equivalence are available.",
+  "content_policy": "Only counts and hashes are emitted; prompt and tool text are not emitted.",
+  "datasets": {
+    "peteromallet": {
+      "friction_session_rate": 0.7285974499089253,
+      "license": "MIT",
+      "project_count": 14,
+      "sessions": 549,
+      "source_sha256": "dae70421f20da2f1f68fd307a89aedca8c3f5136c21d8604037db124d854093d",
+      "tool_uses": 80409
+    },
+    "vaynelee": {
+      "friction_session_rate": 0.2894736842105263,
+      "license": "MIT",
+      "project_count": 9,
+      "sessions": 38,
+      "source_sha256": "6f740acd793727088dc9a98c5e091d7b89e484b2b9c1904b3cb1b826c6176e9d",
+      "tool_uses": 1192
+    }
+  },
+  "pair": {
+    "owners": [
+      "peteromallet",
+      "vaynelee"
+    ],
+    "prompt_vocabulary_intersection": 2009,
+    "prompt_vocabulary_jaccard": 0.028051215459584746,
+    "prompt_vocabulary_union": 71619,
+    "shared_nontrivial_tool_call_forms": 11,
+    "shared_tool_name_count": 15,
+    "union_nontrivial_tool_call_forms": 38014
+  },
+  "schema": "dataclaw-multi-user-overlap-v1"
+}
