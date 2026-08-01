@@ -321,10 +321,14 @@
         {
           "exists": true,
           "path": "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/mlops-feedback-canary-rollback-2026-08-02.json"
         }
       ],
       "id": "governed_local_stack",
-      "open_gate": "Managed Aurora semantics, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion, RLS, and WAL/PITR mechanics are measured separately.",
+      "open_gate": "Managed Aurora semantics, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion, RLS, and WAL/PITR mechanics are measured separately. The deterministic MLOps canary/rollback lifecycle now passes mechanics, while real candidates remain quarantined because no causal utility lift has been demonstrated.",
       "requirement": "Exercise a local Aurora-like governed stack with PostgreSQL, RLS, vectors, deletion, and tool/eval release controls.",
       "status": "local_replication_rls_failover_proven; aurora_operations_unproven"
     },
@@ -358,7 +362,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "d8ea2cba99bad74dccb2a7daa076327d35bd65e7"
+          "head": "ca133ee6f484401f596820f52251d026e285d46c"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

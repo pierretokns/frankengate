@@ -1,0 +1,77 @@
+{
+  "admission": {
+    "baseline_invalid_actions": 0,
+    "baseline_success": 5,
+    "candidate_invalid_actions": 0,
+    "candidate_success": 8,
+    "placebo_invalid_actions": 0,
+    "placebo_success": 6,
+    "verification_passed": true
+  },
+  "artifacts": {
+    "active_after_rollback": {
+      "artifact_id": "skill-v0",
+      "sha256": "0802a694b3900837d4b20721f05fb03dd0479867951d83edbb41d24828ac4d07"
+    },
+    "candidate": {
+      "artifact_id": "skill-v1",
+      "sha256": "0ebadce85cb372c704466b8ad382863f69b1aac29d1d93389a79e1df75664251"
+    },
+    "previous": {
+      "artifact_id": "skill-v0",
+      "sha256": "0802a694b3900837d4b20721f05fb03dd0479867951d83edbb41d24828ac4d07"
+    }
+  },
+  "claim_boundary": {
+    "causal_model_utility_confirmed": false,
+    "mechanics_passed": true,
+    "production_release_authorized": false,
+    "reason": "Synthetic fixture validates lifecycle state transitions only; no model or user outcome is measured."
+  },
+  "mode": "deterministic_sealed_mechanics_fixture",
+  "monitor": {
+    "all_windows_healthy": false,
+    "rule": "candidate lift >= 0 and candidate invalid-action delta <= 0; any security violation fails",
+    "windows": [
+      {
+        "healthy": true,
+        "invalid_delta": 0,
+        "security_violation": false,
+        "success_lift": 0.1,
+        "window_id": "canary-1"
+      },
+      {
+        "healthy": false,
+        "invalid_delta": 1,
+        "security_violation": false,
+        "success_lift": -0.2,
+        "window_id": "canary-2"
+      }
+    ]
+  },
+  "network_or_model_calls": false,
+  "release": {
+    "canary_percent_initial": 10,
+    "passed": true,
+    "predicate": "verified candidate success > baseline, candidate >= placebo, no validity regression"
+  },
+  "rollback": {
+    "canary_percent_after": 0,
+    "reason": "second_canary_unhealthy",
+    "restored_previous": true,
+    "triggered": true
+  },
+  "schema_version": "frankengate-mlops-feedback-canary-rollback-v1",
+  "stages": {
+    "cluster": "complete",
+    "collect": "complete",
+    "evaluate": "complete",
+    "monitor": "complete",
+    "propose": "complete",
+    "release": "complete",
+    "replay": "complete",
+    "retrieve": "complete",
+    "rollback": "complete",
+    "segment": "complete"
+  }
+}

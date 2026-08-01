@@ -1155,6 +1155,13 @@ memory arms added none. The generic
 [`outcome release gate`](experiments/summaries/outcome-release-gate-memory-retrieval-2026-07-31.md)
 therefore quarantines all three candidates and sets exposure to zero.
 
+The complementary [`canary/rollback lifecycle fixture`](experiments/summaries/mlops-feedback-canary-rollback-2026-08-02.md)
+exercises the opposite operational path: a verified positive candidate is
+released to a 10% canary, passes the first monitoring window, fails the second
+window on success lift and invalid-action delta, and is rolled back to the
+previous artifact with zero exposure. It is deterministic lifecycle evidence
+only; no model or user utility is claimed.
+
 The [`SkillOpt × retrieved-memory interaction factorial`](experiments/summaries/alfworld-luna-interaction-factorial-four-family-35step-2026-07-31.md)
 tested all four combinations on those tasks. Every pair tied, with no main
 effect, positive interaction, or validity regression. Because every arm was
