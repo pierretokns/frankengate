@@ -110,6 +110,11 @@ benchmarks:
   The human arm used `1.76x` input context. This strengthens the directional
   retrieval-skill signal, but still lacks q2 labels, changed-system replay,
   user outcomes, and the official Docker execution path.
+- The published one-shot generated skill on the same six instances reached q1
+  recall `.868`, precision `1.000`, and pass rate `2/6`: better precision and
+  recall than null, but materially weaker than the human procedure (`.925`,
+  `5/6`). Generated artifacts are therefore useful candidates, not automatic
+  replacements for reviewed procedures; composition/review is the next test.
 - A new stratified sample from the 1,013-session, multi-harness
   `zhiyaowang/dataclaw-zhiyaowang` corpus preserved tool outputs, branches,
   explicit errors, and project/model metadata. Hash-only recurrence found 9
