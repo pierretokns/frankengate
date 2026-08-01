@@ -1,0 +1,15 @@
+{
+  "all_passed": true,
+  "checks": {
+    "candidates_positive": true,
+    "dataset_pinned": true,
+    "full_wisp_cohort": true,
+    "hash": true,
+    "not_overclaimed": true,
+    "schema": true,
+    "split_positive": true,
+    "tool_succeeded": true
+  },
+  "receipt_sha256": "da21817ca3be32af5695da953e93d466207009bcfaf41a458c5f28bb06b66e04",
+  "schema_version": "frankengate-termolator-wisp-verification-v1"
+}

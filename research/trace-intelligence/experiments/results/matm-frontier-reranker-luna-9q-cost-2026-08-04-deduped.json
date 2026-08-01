@@ -1,0 +1,139 @@
+{
+  "aggregate": {
+    "embedding": {
+      "mrr": 0.674074,
+      "recall_at_1": 0.555556,
+      "recall_at_3": 0.777778,
+      "recall_at_5": 1.0,
+      "top_3_success_rate": 0.666667
+    },
+    "frontier": {
+      "mrr": 1.0,
+      "recall_at_1": 1.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "top_3_success_rate": 0.703704
+    },
+    "lexical": {
+      "mrr": 1.0,
+      "recall_at_1": 1.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "top_3_success_rate": 0.703704
+    }
+  },
+  "claim_boundary": "Bounded reranking comparison on silver same-work labels. It measures ranking value and cost, not semantic alias truth, changed-agent utility, human insight quality, or skill promotion.",
+  "dataset": {
+    "models": 34,
+    "rows": 2130,
+    "source_sha256": "626e2e6351d763739b0e2695a1bc442e1c851c1153c44301017739e3bd1155aa"
+  },
+  "embedding_cache_sha256": "9b6a254bd26169e0732d952230d7f410a6e5a70ddc006cababd5f3ed80abad12",
+  "frontier_calls": {
+    "completed": 9,
+    "failures": 0,
+    "receipts": [
+      {
+        "candidate_count": 10,
+        "elapsed_ms": 10819.504,
+        "model_tokens_used_diagnostic": 17201,
+        "prompt_sha256": "e641f48f9c0537bfd06c766b20b60140e3a0efcae4d77c6e259c25198a044a75",
+        "query": 0,
+        "raw_sha256": "66944439e6ab1467bdfc9a0bb487258bb6d43f24f122606572f38c5c2837ae97",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "elapsed_ms": 7308.026,
+        "model_tokens_used_diagnostic": 16968,
+        "prompt_sha256": "712ee261f031346120bbe2522e39b105010d7ce5057e26a5ac720953c7a75f68",
+        "query": 1,
+        "raw_sha256": "acee7231a1f8d8ff5c0b046f2524ff895fbf4480ede6b78248a9846557e51748",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "elapsed_ms": 9284.795,
+        "model_tokens_used_diagnostic": 17263,
+        "prompt_sha256": "1f9119c03732e2bc993bd24a227bdf18a35f0365349cfdca88ad798e9d9a0be4",
+        "query": 2,
+        "raw_sha256": "26bbebbafcf0548fdf29bbd6ba9774dd482a868781d605c619040510b447782c",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "elapsed_ms": 11055.933,
+        "model_tokens_used_diagnostic": 17171,
+        "prompt_sha256": "7ac5c67feb1639493c1350ba030fd05011bb7a6b0aefc39bd8b699eb7ea5ffb3",
+        "query": 3,
+        "raw_sha256": "e918226eaa58621ddfe5a5e6904da7ee43d7287e67e4622156ccb118ad3a90a6",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 12,
+        "elapsed_ms": 11662.604,
+        "model_tokens_used_diagnostic": 17311,
+        "prompt_sha256": "558fc581de0689605fe93cbeb4fc6878fd2ae0c54a339fe3f5cc2b405c651596",
+        "query": 4,
+        "raw_sha256": "d4622d62190bbdf78fb0f71909117019d3fe61c1d7ca86437868a5160d36bcbe",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "elapsed_ms": 15659.206,
+        "model_tokens_used_diagnostic": 17586,
+        "prompt_sha256": "222b54e131098c7d1bf598a28017423a8689cf92a7c6d7ed0ac13107e00edbb9",
+        "query": 5,
+        "raw_sha256": "5e253c1013e6b1c6520fe1968a3c2fbe1a706bdb710fbfe9920ac28cffd3ffbd",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 12,
+        "elapsed_ms": 11226.099,
+        "model_tokens_used_diagnostic": 17242,
+        "prompt_sha256": "8ce5aec34707a086befb51b94eaf8d4ccfb777f748caea9beaf39160ddc29b91",
+        "query": 6,
+        "raw_sha256": "5b774d4e1fdb611722e985fbb1bdd6117c6e4237b02dbbd9b3ae7d87dc007a46",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "elapsed_ms": 15692.163,
+        "model_tokens_used_diagnostic": 17692,
+        "prompt_sha256": "6cc99afc7470995b00263eb0d2c38e53b15ec6e3ef18db2edbc6a80f209cd52c",
+        "query": 7,
+        "raw_sha256": "c721e387864e78b88538d704c819b17acf4e26e3ab249cbc0822ef9c96802cac",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 12,
+        "elapsed_ms": 11409.679,
+        "model_tokens_used_diagnostic": 2164,
+        "prompt_sha256": "f1683469c476c832069d9d9e7954d3831272e7e4bfd5a022cdc4faca25f010d2",
+        "query": 8,
+        "raw_sha256": "e3bf9d99b876f9d3223b234349a8b12e577f82379242a8cd535762c7c6230c37",
+        "status": "ok"
+      }
+    ],
+    "requested": 9
+  },
+  "protocol": {
+    "candidate_limit": 10,
+    "candidate_pool": "union of lexical and cached-embedding top candidates plus all relevant same-signature candidates",
+    "model": "gpt-5.6-luna",
+    "outcomes_hidden_from_frontier": true,
+    "query_count_completed": 9,
+    "query_count_requested": 9,
+    "raw_model_outputs_external": true,
+    "relevance_label": "same task_type and normalized goal signature across models"
+  },
+  "receipt_repair": {
+    "aggregate_metrics_changed": false,
+    "duplicate_entries_removed": 18,
+    "reason": "pre-fix harness appended one identical timing receipt per ranking arm",
+    "source_file_sha256": "598e5aa4b4c65c6de902011ddb5c8c958695b8aa4bc917583c94f523db183882",
+    "source_result_sha256": "2c2e8c72b4eaec3f216d9d015a3247dc4cdaf57345d3c2cf4da9dacc9b53fe80"
+  },
+  "result_sha256": "32e61d1f4d6a52c5852a42e77b643c29ae7d453d2c309c399c00188949fce28f",
+  "schema_version": "frankengate-matm-frontier-reranker-benchmark-v1"
+}

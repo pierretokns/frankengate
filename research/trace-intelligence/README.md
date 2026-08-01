@@ -83,14 +83,32 @@ reformulation candidates; GLiNER emitted 567 spans. An initial context-free
 probe hit `2/8`, while a corrected contextual probe hit `7/8`; output still
 over-produced project/tool labels. This supports a review-queue role for
 zero-shot term extraction, not automatic corporate alias or ontology promotion.
-The next comparison is classical termhood plus blinded alias/NIL labels and
-retrieval impact.
+The independent [`Termolator termhood probe`](experiments/summaries/termolator-wisp-2026-08-04.md)
+also completed on the same 49-document cohort: it emitted 3,000 candidates,
+the configured cap, with a 1.61-token mean among the top 100. This establishes
+that a classical foreground/background baseline is runnable, not that its
+terms are correct. Blinded labels, alias/NIL handling, and retrieval impact
+remain open.
+
+The bounded [`query-expansion probe`](experiments/summaries/query-expansion-probe-2026-08-01.md)
+shows why this must remain a search-only projection: approved keyword,
+pseudo-document, entity, and document enrichment improved a six-document toy
+fixture, while corpus-feedback expansion did not. It is a mechanics control,
+not evidence of enterprise semantic generalization.
 
 The first search-impact control is the [`train-only alias enrichment replay`](experiments/summaries/nl2sql-alias-enrichment-2026-08-04.md).
 On 41 held-out Defog rows, aliases covered only 2/260 target objects at
 support-one and 17/260 at support-two; MRR was unchanged at support-one and
 fell slightly at support-two. This is a public-proxy coverage null, not a
 rejection of reviewed enterprise vocabulary mining.
+
+The bounded [`query-expansion mechanics probe`](experiments/summaries/query-expansion-probe-2026-08-01.md)
+then tested transparent proxies for QueryGym, ConvGQR, and SIRA-style arms on
+12 synthetic cases. Approved keyword/pseudo-document/entity/document
+enrichment improved MRR from `.8472` to `.9583`; a history-plus-follow-up
+rewrite improved the two conversational cases from `1/2` to `2/2`; corpus
+feedback was unchanged. These are mechanics results, not replications of the
+named systems or enterprise evidence.
 
 The follow-up [`NL2SQL identifier hard-negative benchmark`](experiments/summaries/nl2sql-identifier-hard-negative-2026-08-02.md)
 made those collisions executable. On 492 conservative links, exact identifier
@@ -295,6 +313,8 @@ corrected contextual probe hit 7/8 expected labels (the initial context-free
 probe hit 2/8), so GLiNER is currently a candidate-span generator, not an
 automatic glossary or ontology writer. The
 receipt verifier passed, and raw spans remain outside Git.
+Termolator independently completed on the same 49 documents and reached its
+3,000-candidate cap; this is a runnable termhood baseline, not a quality result.
 
 The [`FinanceBench embedding-choice benchmark`](experiments/summaries/finance-mteb-retrieval-benchmark-2026-08-02.md)
 adds a separate finance/NL2SQL relevance gate over the cached, revision-pinned
@@ -1451,6 +1471,11 @@ Recall@1/3/5 of `1.0`; embedding MRR was `.674`, and Luna's top-3 success rate
 frontier calls saw no outcomes, so this is a null incremental ranking result,
 not a semantic-insight or skill-utility claim. Keep frontier ranking off the
 hot path and reserve it for ambiguous hard-negative adjudication or human review.
+
+The [`MATM cascade cost replay`](experiments/summaries/matm-embedding-model-cascade-cost-2026-08-04.md)
+reran the same nine calls with wall-clock instrumentation. All calls completed
+in `104.118s` total (`11.569s` mean), without changing the quality metrics. The
+CLI token counter is retained only as a diagnostic, not as provider billing.
 
 The direct [`native Codex paraphrase replication`](experiments/summaries/defog-codex-frontier-native-paraphrase-multiseed-2026-08-02.md)
 completed a balanced three-seed, four-arm transfer test over renamed broker tasks.

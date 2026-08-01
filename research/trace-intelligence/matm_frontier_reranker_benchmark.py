@@ -17,6 +17,7 @@ import math
 import random
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -150,6 +151,19 @@ def _call_frontier(prompt: str, model: str, timeout_seconds: int, raw_path: Path
     return value
 
 
+def _usage_from_raw(raw_path: Path) -> int | None:
+    if not raw_path.exists():
+        return None
+    text = raw_path.read_text(encoding="utf-8", errors="replace")
+    marker = "tokens used"
+    position = text.rfind(marker)
+    if position < 0:
+        return None
+    tail = text[position + len(marker):]
+    match = __import__("re").search(r"(\d[\d,]*)", tail)
+    return int(match.group(1).replace(",", "")) if match else None
+
+
 def _select_queries(rows: Sequence[Mapping[str, Any]], limit: int) -> list[int]:
     by_model: dict[str, list[int]] = {}
     for index, row in enumerate(rows):
@@ -233,7 +247,9 @@ def run(
         try:
             prompt = _prompt(query, candidates)
             raw_path = raw_dir / f"query-{ordinal:03d}.json"
+            call_started = time.perf_counter()
             response = _call_frontier(prompt, model, timeout_seconds, raw_path)
+            elapsed_ms = round((time.perf_counter() - call_started) * 1000.0, 3)
             scores = response["scores"]
             by_index = {int(item["index"]): int(item["relevance"]) for item in scores}
             if set(by_index) != set(range(len(candidates))):
@@ -261,6 +277,8 @@ def run(
             "query": ordinal,
             "status": model_status,
             "candidate_count": len(candidates),
+            "elapsed_ms": elapsed_ms,
+            "model_tokens_used_diagnostic": _usage_from_raw(raw_path),
             "prompt_sha256": _stable_hash(prompt),
             "raw_sha256": file_sha256(raw_path),
         })
