@@ -48,7 +48,7 @@
         {
           "exists": true,
           "path": "integration-promotion-audit-2026-08-02.json",
-          "sha256": "04730219d8fdae0a177343de36c091c865c774feefd30bfa81724821e8472d60"
+          "sha256": "bbe2c243a82804be97047141853910fcf1a6ffe90bbd1c3faf8113c9711b1427"
         }
       ],
       "id": "independent_upstream_reproduction",
@@ -60,7 +60,7 @@
         {
           "exists": true,
           "path": "combined-evidence-matrix-2026-08-02.json",
-          "sha256": "78d2578bf2e982bb52ab062b8f955f68a98bdd9ff35657d0f559fc5772231f0e"
+          "sha256": "2101606bc2f2d600cd86be2780b7b97f27395b893ef8f9265e767a8f4d681da0"
         }
       ],
       "id": "fair_controls_and_disjoint_splits",
@@ -89,7 +89,7 @@
         {
           "exists": true,
           "path": "rho-candidate-harness-powered-2026-08-02.json",
-          "sha256": "b15846db3bd3e51be93319d506148e60afa95146ea2ffd63e0c8049bbb19b47c"
+          "sha256": "f7fb510ed6ec86b704d888551d5701cd896be8d78b760818ff026ac3518669f8"
         },
         {
           "exists": true,
@@ -106,7 +106,7 @@
         {
           "exists": true,
           "path": "integration-promotion-audit-2026-08-02.json",
-          "sha256": "04730219d8fdae0a177343de36c091c865c774feefd30bfa81724821e8472d60"
+          "sha256": "bbe2c243a82804be97047141853910fcf1a6ffe90bbd1c3faf8113c9711b1427"
         }
       ],
       "id": "separate_frankengate_integration",

@@ -12,7 +12,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import random
+import statistics
 from pathlib import Path
 from typing import Any
 
@@ -101,6 +103,13 @@ def build_receipt(
     deltas = [row["delta"] for row in rows]
     baseline_mean = sum(row["baseline_score"] for row in rows) / len(rows)
     candidate_mean = sum(row["candidate_score"] for row in rows) / len(rows)
+    delta_sd = statistics.stdev(deltas) if len(deltas) > 1 else 0.0
+    observed_effect = abs(candidate_mean - baseline_mean)
+    estimated_required_pairs = (
+        math.ceil(((1.96 + 0.84) * delta_sd / observed_effect) ** 2)
+        if observed_effect > 0 and delta_sd > 0
+        else None
+    )
     return {
         "schema_version": SCHEMA_VERSION,
         "experiment": "rho-frontier-locomo-powered",
@@ -142,6 +151,8 @@ def build_receipt(
             "paired_rows": rows,
             "bootstrap_mean_delta_95ci": bootstrap_interval(deltas, seed=20260802),
             "exact_two_sided_sign_pvalue": exact_sign_pvalue(deltas),
+            "paired_delta_sample_sd": delta_sd,
+            "estimated_pairs_for_80pct_normal_power": estimated_required_pairs,
         },
         "claim_boundary": {
             "matched_no_harness_control": True,

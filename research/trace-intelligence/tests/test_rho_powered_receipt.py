@@ -45,6 +45,7 @@ def test_powered_receipt_pairs_tasks_and_reports_interval(tmp_path: Path) -> Non
     assert receipt["outcome"]["candidate_better_tasks"] == 1
     assert receipt["outcome"]["candidate_regressed_tasks"] == 1
     assert len(receipt["outcome"]["bootstrap_mean_delta_95ci"]) == 2
+    assert receipt["outcome"]["estimated_pairs_for_80pct_normal_power"] is not None
     assert receipt["claim_boundary"]["automatic_frankengate_promotion_authorized"] is False
 
 

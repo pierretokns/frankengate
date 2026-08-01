@@ -19,8 +19,10 @@
     "candidate_mean_score": 0.3879298941798942,
     "candidate_regressed_tasks": 5,
     "candidate_tied_tasks": 2,
+    "estimated_pairs_for_80pct_normal_power": 28,
     "exact_two_sided_sign_pvalue": 0.21875,
     "mean_delta": -0.2552579365079364,
+    "paired_delta_sample_sd": 0.4791840780769241,
     "paired_rows": [
       {
         "baseline_score": 0.6666666666666666,

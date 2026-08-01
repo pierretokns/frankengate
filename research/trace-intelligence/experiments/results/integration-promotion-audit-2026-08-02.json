@@ -27,7 +27,7 @@
       "reason": "rejected candidate trailed exact initial-harness control 0.643 to 0.388; five regressions, one win, two ties",
       "receipt": "rho-candidate-harness-powered-2026-08-02.json",
       "receipt_schema_version": "frankengate-rho-powered-receipt-v1",
-      "receipt_sha256": "b15846db3bd3e51be93319d506148e60afa95146ea2ffd63e0c8049bbb19b47c"
+      "receipt_sha256": "f7fb510ed6ec86b704d888551d5701cd896be8d78b760818ff026ac3518669f8"
     },
     {
       "disposition": "quarantined_negative_utility",
