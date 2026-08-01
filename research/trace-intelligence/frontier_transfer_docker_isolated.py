@@ -54,15 +54,16 @@ def wait_port(port: int, timeout: float = 90) -> None:
     raise TimeoutError(f"port {port} did not become reachable")
 
 
-def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...], task_mutation: str | None = None, harness: str = "openai-proxy") -> dict[str, str | int | list[str] | str | None]:
+def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...], task_mutation: str | None = None, harness: str = "openai-proxy", result_tag: str | None = None) -> dict[str, str | int | list[str] | str | None]:
     suffix = f"{os.getpid()}-{seed}"
     container = f"fg-frontier-pg-{suffix}"
     password = f"fg_frontier_pw_{seed}"
     app_user = f"fg_frontier_app_{seed}"
     audit = Path(f"/private/tmp/defog-codex-docker-audit-seed-{seed}-{os.getpid()}")
     verify_audit = Path(f"/private/tmp/defog-codex-docker-verify-seed-{seed}-{os.getpid()}")
-    result = ROOT / f"experiments/results/defog-codex-frontier-broker-transfer-docker-seed-{seed}-2026-08-02.json"
-    verification = ROOT / f"experiments/results/defog-codex-frontier-broker-transfer-docker-seed-{seed}-independent-verification-2026-08-02.json"
+    tag = f"-{result_tag}" if result_tag else ""
+    result = ROOT / f"experiments/results/defog-codex-frontier-broker-transfer-docker-seed-{seed}{tag}-2026-08-02.json"
+    verification = ROOT / f"experiments/results/defog-codex-frontier-broker-transfer-docker-seed-{seed}{tag}-independent-verification-2026-08-02.json"
     audit.mkdir(parents=True, exist_ok=True)
     verify_audit.mkdir(parents=True, exist_ok=True)
     proxy = None
@@ -146,12 +147,13 @@ def main() -> int:
     parser.add_argument("--arm", action="append", choices=("no_skill", "formatting_placebo", "length_matched_neutral", "trace_mined_terminal_discipline"))
     parser.add_argument("--task-mutation", choices=("broker-four-task-renamed-paraphrase-v1",))
     parser.add_argument("--harness", choices=("openai-proxy", "codex-cli-native-json-v1"), default="openai-proxy")
+    parser.add_argument("--result-tag", help="suffix used to avoid collisions when running one arm per container")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     rows = []
     arms = tuple(args.arm or ("no_skill", "formatting_placebo", "trace_mined_terminal_discipline"))
     with ThreadPoolExecutor(max_workers=args.parallel) as pool:
-        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms, args.task_mutation, args.harness): seed for i, seed in enumerate(args.seed)}
+        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms, args.task_mutation, args.harness, args.result_tag): seed for i, seed in enumerate(args.seed)}
         for future in as_completed(futures):
             rows.append(future.result())
     payload = {"schema_version": "frankengate-frontier-transfer-docker-isolated-run-v1", "runs": sorted(rows, key=lambda x: int(x["seed"])), "claim_boundary": "Container/database isolation is proven for this run; it does not establish universal skill utility or promotion eligibility."}

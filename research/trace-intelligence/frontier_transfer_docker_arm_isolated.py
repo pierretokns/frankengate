@@ -46,6 +46,7 @@ def main() -> int:
                 "--base-port", str(args.base_port + job_index),
                 "--base-proxy-port", str(args.base_proxy_port + job_index),
                 "--harness", args.harness, "--arm", arm,
+                "--result-tag", f"arm-{arm}",
                 "--output", str(metadata_path),
             ]
             if args.task_mutation:
