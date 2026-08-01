@@ -123,6 +123,12 @@ benchmarks:
   in one simultaneous run, and the host adapter is not the official Docker
   runner. The next matrix must randomize human-only, generated-only, composite,
   placebo, and null arms on task-disjoint families before promotion.
+- A one-task changed-data proxy renamed `ContentForce` to `ContentHub`. The
+  reviewed procedure retained q1 recall `1.000` and precision `1.000`; the
+  composite retained precision but fell to `.875` recall, while null had
+  `1.000` recall with one false positive. This is not enterprise transfer, but
+  it shows that composition is not automatically more robust under changed
+  names/data than a reviewed procedure alone.
 - A public changed-data proxy renamed `ContentForce` to `ContentHub` in the
   prompt, product filename, and artifact contents. Null q1 recall fell to
   `.875`, while reviewed and composite arms stayed exact (`1.000` q1 and q3).
