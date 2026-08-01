@@ -38,20 +38,25 @@ def category_digest(value: Any) -> str:
     return digest(str(value).strip().lower())
 
 
-def request_row(offset: int, timeout: int) -> tuple[int, dict[str, Any]]:
+def request_rows(offset: int, length: int, timeout: int) -> tuple[int, list[dict[str, Any]]]:
     query = urllib.parse.urlencode(
-        {"dataset": DATASET, "config": "default", "split": "train", "offset": offset, "length": 1}
+        {"dataset": DATASET, "config": "default", "split": "train", "offset": offset, "length": length}
     )
     with urllib.request.urlopen(f"{ROWS_ENDPOINT}?{query}", timeout=timeout) as response:
         payload = json.loads(response.read().decode("utf-8"))
     total = int(payload.get("num_rows_total", 0))
     rows = payload.get("rows")
-    if not isinstance(rows, list) or len(rows) != 1 or not isinstance(rows[0], dict):
+    if not isinstance(rows, list) or not rows or not all(isinstance(item, dict) for item in rows):
         raise ValueError(f"offset {offset}: malformed rows response")
-    row = rows[0].get("row")
-    if not isinstance(row, dict):
+    values = [item.get("row") for item in rows]
+    if not all(isinstance(row, dict) for row in values):
         raise ValueError(f"offset {offset}: missing row object")
-    return total, row
+    return total, values
+
+
+def request_row(offset: int, timeout: int) -> tuple[int, dict[str, Any]]:
+    total, rows = request_rows(offset, 1, timeout)
+    return total, rows[0]
 
 
 def tool_family(name: Any) -> str:
@@ -193,19 +198,22 @@ def run(*, sample_count: int, timeout: int, output: Path) -> dict[str, Any]:
     rows_by_offset: dict[int, dict[str, Any]] = {}
     # Discover total from offset zero, then use evenly spaced row positions.
     total, first = request_row(0, timeout)
-    offsets = sorted({round(index * (total - 1) / (sample_count - 1)) for index in range(sample_count)})
-    rows_by_offset[0] = first
+    # Use eight evenly spaced windows to avoid one HTTP request per row (the
+    # public rows API rate-limits highly fragmented sampling).
+    window_count = min(8, sample_count)
+    window_size = (sample_count + window_count - 1) // window_count
+    starts = sorted({round(index * (total - window_size) / max(1, window_count - 1)) for index in range(window_count)})
     errors: dict[str, int] = collections.Counter()
-    for offset in offsets:
-        if offset == 0:
-            continue
+    for offset in starts:
         try:
-            discovered_total, row = request_row(offset, timeout)
+            discovered_total, batch = request_rows(offset, window_size, timeout)
             if discovered_total != total:
                 errors["row_count_changed"] += 1
-            rows_by_offset[offset] = row
+            for index, row in enumerate(batch):
+                rows_by_offset[offset + index] = row
         except Exception as exc:  # receipt records sampling gaps without leaking content
             errors[type(exc).__name__] += 1
+    offsets = sorted(rows_by_offset)
     inspected = [inspect_row(rows_by_offset[offset]) for offset in sorted(rows_by_offset)]
     role_totals: collections.Counter[str] = collections.Counter()
     family_totals: collections.Counter[str] = collections.Counter()
@@ -222,17 +230,23 @@ def run(*, sample_count: int, timeout: int, output: Path) -> dict[str, Any]:
         model_totals[item["model_digest"]] += 1
         project_totals[item["project_digest"]] += 1
         for fingerprint in item["successful_content_fingerprints"]:
-            entry = artifacts.setdefault(fingerprint, {"sessions": set(), "projects": set(), "successes": 0, "failures": 0})
+            entry = artifacts.setdefault(fingerprint, {"sessions": set(), "projects": set(), "sources": set(), "models": set(), "successes": 0, "failures": 0})
             entry["sessions"].add(item["session_id_digest"])
             entry["projects"].add(item["project_digest"])
+            entry["sources"].add(item["source_digest"])
+            entry["models"].add(item["model_digest"])
             entry["successes"] += 1
         for fingerprint in item["failed_content_fingerprints"]:
-            entry = artifacts.setdefault(fingerprint, {"sessions": set(), "projects": set(), "successes": 0, "failures": 0})
+            entry = artifacts.setdefault(fingerprint, {"sessions": set(), "projects": set(), "sources": set(), "models": set(), "successes": 0, "failures": 0})
             entry["sessions"].add(item["session_id_digest"])
             entry["projects"].add(item["project_digest"])
+            entry["sources"].add(item["source_digest"])
+            entry["models"].add(item["model_digest"])
             entry["failures"] += 1
     recurring = [entry for entry in artifacts.values() if int(entry["successes"]) >= 2 and len(entry["sessions"]) >= 2]
     cross_project = [entry for entry in recurring if len(entry["projects"]) >= 2]
+    cross_harness = [entry for entry in recurring if len(entry["sources"]) >= 2]
+    cross_model = [entry for entry in recurring if len(entry["models"]) >= 2]
     mixed_outcome = [entry for entry in artifacts.values() if int(entry["successes"]) > 0 and int(entry["failures"]) > 0]
     mean = lambda key: round(sum(float(item[key]) for item in inspected) / len(inspected), 3) if inspected else 0.0
     result = {
@@ -262,6 +276,8 @@ def run(*, sample_count: int, timeout: int, output: Path) -> dict[str, Any]:
             "distinct_content_fingerprint_count": len(artifacts),
             "recurring_successful_artifact_candidates": len(recurring),
             "cross_project_recurring_artifact_candidates": len(cross_project),
+            "cross_harness_recurring_artifact_candidates": len(cross_harness),
+            "cross_model_recurring_artifact_candidates": len(cross_model),
             "artifact_fingerprints_with_both_success_and_error": len(mixed_outcome),
             "sessions_with_same_shape_error_to_success": sum(item["same_shape_error_to_success_count"] > 0 for item in inspected),
         },
