@@ -230,6 +230,16 @@ one-regression candidate with net gain zero. This is mechanics evidence only:
 no trajectory sampling, skill induction, replay, or held-out efficacy result
 was produced, so SkillGen remains outside the integration set.
 
+The bounded [`SkillGen Codex frontier reproduction`](experiments/summaries/skillgen-codex-frontier-mini-2026-08-02.md)
+then exercised the pinned pipeline through the Codex subscription-backed
+frontier harness: eight deterministic tasks, one baseline run, serial calls,
+and a 90-second per-call cap. All eight baseline trajectories passed, so the
+upstream pipeline stopped before induction and generated no candidate. This is
+useful negative evidence about the cohort (no failure signal), not evidence that
+SkillGen cannot improve skills. The run also used a deterministic hashed
+embedding substitute because SkillGen hard-codes OpenAI embeddings; it is not an
+OpenRouter-faithful efficacy result and is not eligible for promotion.
+
 The frontier long-horizon SkillOpt replication
 ([summary](experiments/summaries/alfworld-luna-skillopt-four-family-35step-2026-07-31.md))
 closed the earlier horizon gap: four family-disjoint expert-solvable ALFWorld
