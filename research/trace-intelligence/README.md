@@ -1654,6 +1654,12 @@ zero unsafe accepts; name-only admission accepted 5/5 but made two unsafe
 semantic accepts. This is a mechanics result supporting typed subplan capsules,
 not a mined-skill or enterprise-utility claim.
 
+The [`100-target changed-system stress grid`](experiments/summaries/artifact-subplan-changed-system-stress-2026-08-05.md)
+repeated five drift categories 20 times: semantic-ID admission preserved 60/60
+valid transfers and rejected all 40 collisions, while name-only admission
+accepted all 100 and made 40 unsafe accepts. This strengthens the safety
+mechanics result only; it remains synthetic.
+
 The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
 tested whether a frontier model and a local model could be treated as
 interchangeable trace-insight labelers. On six blinded candidates under the
@@ -1726,6 +1732,13 @@ The [`recent dataset-fit audit`](experiments/summaries/recent-dataset-fit-audit-
 maps Recovery-Bench, TRAIL, SkillLearnBench, SkillRL, Trace2Skill, AgentReplay,
 and the enterprise hard-negative paper to the exact labels and outcomes they
 can provide, with a staged acquisition order.
+
+The pinned [`SkillLearnBench fit audit`](experiments/summaries/skilllearnbench-fit-audit-2026-08-05.md)
+confirms 20 tasks, 100 verified instances, four published continual-learning
+baselines, and complete 20-task skill-artifact coverage across 25 method/model
+directories. It is suitable for an independent skill-learning baseline, but
+does not supply enterprise principals, corporate aliases, temporal authority,
+changed-system outcomes, or cross-user transfer labels.
 
 The follow-up [`recent replay/diagnosis dataset-fit audit`](experiments/summaries/recent-replay-dataset-fit-audit-2026-08-05.md)
 audits the pinned local TRAIL and Recovery-Bench checkouts rather than relying

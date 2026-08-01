@@ -1,0 +1,99 @@
+{
+  "aggregate": {
+    "name_only_subplan": {
+      "accepted": 100,
+      "rejected": 0,
+      "semantic_correct": 60,
+      "unsafe_accept": 40
+    },
+    "semantic_subplan": {
+      "accepted": 60,
+      "rejected": 40,
+      "semantic_correct": 60,
+      "unsafe_accept": 0
+    }
+  },
+  "by_category": {
+    "additive": {
+      "name_only_subplan": {
+        "accepted": 20,
+        "rejected": 0,
+        "semantic_correct": 20,
+        "unsafe_accept": 0
+      },
+      "semantic_subplan": {
+        "accepted": 20,
+        "rejected": 0,
+        "semantic_correct": 20,
+        "unsafe_accept": 0
+      }
+    },
+    "approved_semantic_rename": {
+      "name_only_subplan": {
+        "accepted": 20,
+        "rejected": 0,
+        "semantic_correct": 20,
+        "unsafe_accept": 0
+      },
+      "semantic_subplan": {
+        "accepted": 20,
+        "rejected": 0,
+        "semantic_correct": 20,
+        "unsafe_accept": 0
+      }
+    },
+    "renamed_wrong_semantics": {
+      "name_only_subplan": {
+        "accepted": 20,
+        "rejected": 0,
+        "semantic_correct": 0,
+        "unsafe_accept": 20
+      },
+      "semantic_subplan": {
+        "accepted": 0,
+        "rejected": 20,
+        "semantic_correct": 0,
+        "unsafe_accept": 0
+      }
+    },
+    "same_name_semantic_drift": {
+      "name_only_subplan": {
+        "accepted": 20,
+        "rejected": 0,
+        "semantic_correct": 0,
+        "unsafe_accept": 20
+      },
+      "semantic_subplan": {
+        "accepted": 0,
+        "rejected": 20,
+        "semantic_correct": 0,
+        "unsafe_accept": 0
+      }
+    },
+    "unchanged": {
+      "name_only_subplan": {
+        "accepted": 20,
+        "rejected": 0,
+        "semantic_correct": 20,
+        "unsafe_accept": 0
+      },
+      "semantic_subplan": {
+        "accepted": 20,
+        "rejected": 0,
+        "semantic_correct": 20,
+        "unsafe_accept": 0
+      }
+    }
+  },
+  "claim_boundary": "Deterministic synthetic admission and verification mechanics only; no mined-artifact quality, enterprise prevalence, or causal user benefit.",
+  "result_sha256": "fd7bbb3831497cea96765298cd71c4ac371955e219901222e08259ec50636f61",
+  "schema": "frankengate-artifact-subplan-changed-system-stress-v1",
+  "source": {
+    "base_schema": "frankengate-artifact-subplan-changed-system-v1",
+    "category_count": 5,
+    "raw_content_committed": false,
+    "repeats_per_category": 20,
+    "subplan_hash": "86af758cca3daf07f1c01d83373f04575dc49bce5a4488665412b6ac9ed708a2",
+    "target_count": 100
+  }
+}

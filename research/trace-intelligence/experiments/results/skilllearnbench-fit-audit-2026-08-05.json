@@ -1,0 +1,383 @@
+{
+  "benchmark": {
+    "baseline_methods": [
+      "b1-one-shot",
+      "b2-self-feedback",
+      "b3-teacher-feedback",
+      "b4-skill-creator"
+    ],
+    "categories": {
+      "Code Translation": 1,
+      "Data Visualization": 1,
+      "Scheduling": 1,
+      "Security": 1,
+      "code reproduction": 1,
+      "data-science": 1,
+      "devops-analytics": 1,
+      "document-generation": 1,
+      "document-processing": 1,
+      "enterprise-search": 1,
+      "environmental-modeling": 1,
+      "file-management": 1,
+      "finance": 1,
+      "financial-analysis": 1,
+      "geophysics": 1,
+      "image-processing": 1,
+      "security": 1,
+      "travel-planning": 1
+    },
+    "instance_count": 100,
+    "instance_count_distribution": {
+      "2": 1,
+      "3": 2,
+      "5": 10,
+      "6": 7
+    },
+    "keypoint_task_count": 20,
+    "task_count": 20,
+    "task_metadata": {
+      "anthropic-poster-design": {
+        "categories": [],
+        "difficulties": [],
+        "instance_count": 5,
+        "instance_names_hash": "70d4bd107ba6ab7805af476373be1677dc67da7d9e3639ea2a905a96c159a4a7",
+        "solution_file_count": 0,
+        "tag_count": 3,
+        "verifier_file_count": 10
+      },
+      "chinese-poem-generator": {
+        "categories": [],
+        "difficulties": [],
+        "instance_count": 5,
+        "instance_names_hash": "7249ff73dbf1c01f4cdb3450a9a343ef8037c78558510a912d876b2eee6e030c",
+        "solution_file_count": 0,
+        "tag_count": 0,
+        "verifier_file_count": 10
+      },
+      "court-form-filling": {
+        "categories": [
+          "document-processing"
+        ],
+        "difficulties": [
+          "easy"
+        ],
+        "instance_count": 6,
+        "instance_names_hash": "cf817479093f4928f9f54d59a4eff45e79c54e2a48abe1a8f1dae67fadadc34c",
+        "solution_file_count": 6,
+        "tag_count": 4,
+        "verifier_file_count": 12
+      },
+      "dbscan-parameter-tuning": {
+        "categories": [
+          "data-science"
+        ],
+        "difficulties": [
+          "hard"
+        ],
+        "instance_count": 5,
+        "instance_names_hash": "5adb889921176bd750e74de21ba3c3bb804b72f9711209dc9c09ff5ee0958d3b",
+        "solution_file_count": 10,
+        "tag_count": 7,
+        "verifier_file_count": 15
+      },
+      "dependency-vulnerability-check": {
+        "categories": [
+          "security"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 5,
+        "instance_names_hash": "5d8bf64c6dbeddf1bfaad10da629addea3f4972a02a89b3ee58aa966e0996c1d",
+        "solution_file_count": 10,
+        "tag_count": 3,
+        "verifier_file_count": 10
+      },
+      "earthquake-plate-calculation": {
+        "categories": [
+          "geophysics"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 6,
+        "instance_names_hash": "9ffd1dfd378c149c848fdf90e8d428f0b8ab51803549090c33154e2cce845148",
+        "solution_file_count": 12,
+        "tag_count": 4,
+        "verifier_file_count": 12
+      },
+      "enterprise-information-search": {
+        "categories": [
+          "enterprise-search"
+        ],
+        "difficulties": [
+          "hard"
+        ],
+        "instance_count": 6,
+        "instance_names_hash": "212ff5229a627adf498823c8fc1e282432acb8edb947d7fe68333cfcc9c900b0",
+        "solution_file_count": 0,
+        "tag_count": 3,
+        "verifier_file_count": 12
+      },
+      "financial-analysis": {
+        "categories": [
+          "finance"
+        ],
+        "difficulties": [
+          "hard"
+        ],
+        "instance_count": 6,
+        "instance_names_hash": "e67fc8efa9dd83fe7879589acf0d4bdd4a6ad315dd2b2c5c9c583f01d7025df4",
+        "solution_file_count": 6,
+        "tag_count": 2,
+        "verifier_file_count": 18
+      },
+      "fix-security-bug": {
+        "categories": [
+          "Security"
+        ],
+        "difficulties": [
+          "hard"
+        ],
+        "instance_count": 3,
+        "instance_names_hash": "15945ddf84ee6a6e8c302790508b075e1df2c5632704df202734ce9f2dafb21f",
+        "solution_file_count": 3,
+        "tag_count": 4,
+        "verifier_file_count": 6
+      },
+      "github-repo-analytics": {
+        "categories": [
+          "devops-analytics"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 5,
+        "instance_names_hash": "274ab17d26817aee10fa1f4dfcae018c201d284479ed6b1a792fc45e063e6672",
+        "solution_file_count": 10,
+        "tag_count": 5,
+        "verifier_file_count": 15
+      },
+      "nlp-paper-reproduction": {
+        "categories": [
+          "code reproduction"
+        ],
+        "difficulties": [
+          "hard"
+        ],
+        "instance_count": 3,
+        "instance_names_hash": "99c90f44b4cfc508353d1f22f76b9d01b500490ce6e70bd0532fa97a56cc8d9d",
+        "solution_file_count": 3,
+        "tag_count": 4,
+        "verifier_file_count": 12
+      },
+      "offer-letter-generator": {
+        "categories": [
+          "document-generation"
+        ],
+        "difficulties": [
+          "easy"
+        ],
+        "instance_count": 6,
+        "instance_names_hash": "b3467acb9080eca6647732e70b99ae31cb3a049795716d85497aeddd86c17f57",
+        "solution_file_count": 6,
+        "tag_count": 5,
+        "verifier_file_count": 12
+      },
+      "organize-messy-files": {
+        "categories": [
+          "file-management"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 6,
+        "instance_names_hash": "74b352c8a929262aa6a5a82536c8adc8929d4cb562e1b90636d1a84de3703f17",
+        "solution_file_count": 12,
+        "tag_count": 2,
+        "verifier_file_count": 12
+      },
+      "python-scala-translation": {
+        "categories": [
+          "Code Translation"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 2,
+        "instance_names_hash": "21c8f2f3fc76bbb069c43b40e388c8415119d4238ee964036279107372abf2c2",
+        "solution_file_count": 2,
+        "tag_count": 3,
+        "verifier_file_count": 4
+      },
+      "schedule-planning": {
+        "categories": [
+          "Scheduling"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 5,
+        "instance_names_hash": "1db51d2bd188d30553f21b2fbb72e3d74702f538fd34c41e27db836026139c74",
+        "solution_file_count": 0,
+        "tag_count": 2,
+        "verifier_file_count": 10
+      },
+      "stock-data-visualization": {
+        "categories": [
+          "Data Visualization"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 5,
+        "instance_names_hash": "a4b77bbfa2c1c8b9f3c36faf27cc24e65c03c8288d799d5fe9028af977cd866e",
+        "solution_file_count": 5,
+        "tag_count": 3,
+        "verifier_file_count": 10
+      },
+      "temperature-simulation": {
+        "categories": [
+          "environmental-modeling"
+        ],
+        "difficulties": [
+          "hard"
+        ],
+        "instance_count": 5,
+        "instance_names_hash": "d77ea3949349418394d502ea37579ac3b296bd7a079eebe759186cfdf0b4126d",
+        "solution_file_count": 0,
+        "tag_count": 3,
+        "verifier_file_count": 15
+      },
+      "travel-planning": {
+        "categories": [
+          "travel-planning"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 5,
+        "instance_names_hash": "67b2198efd4e518c65bb0fc4cfe797049ca8b50ee142dc75f5501b58c1782bf8",
+        "solution_file_count": 10,
+        "tag_count": 3,
+        "verifier_file_count": 10
+      },
+      "video-object-counting": {
+        "categories": [
+          "image-processing"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 5,
+        "instance_names_hash": "b78cf70d1516e81990599f976bdfb49329cbb2a8efb60c22e58f37eacba33b09",
+        "solution_file_count": 5,
+        "tag_count": 3,
+        "verifier_file_count": 15
+      },
+      "weighted-gdp-calculation": {
+        "categories": [
+          "financial-analysis"
+        ],
+        "difficulties": [
+          "medium"
+        ],
+        "instance_count": 6,
+        "instance_names_hash": "747ba3e0fbd0c1c1f8a6dd9ff53d27bfc4ad85acb6b8a384a77b3003ce069213",
+        "solution_file_count": 5,
+        "tag_count": 6,
+        "verifier_file_count": 11
+      }
+    }
+  },
+  "claim_boundary": {
+    "benchmark_fit_proven": true,
+    "enterprise_skill_transfer_proven": false,
+    "next_step": "Run the published no-skill/one-shot/self-feedback/teacher-feedback/skill-creator matrix on a frozen subset, then port only the surviving representation intervention into the changed-system Frankengate protocol."
+  },
+  "execution_requirements": {
+    "full_evaluation_requires_docker": true,
+    "full_evaluation_requires_model_api": true,
+    "full_evaluation_run_here": false,
+    "static_audit_completed": true
+  },
+  "fit": {
+    "authority_or_deletion_epochs": false,
+    "changed_system_replay": false,
+    "continual_skill_generation": true,
+    "corporate_identity_aliases": false,
+    "cross_user_transfer": false,
+    "reason": "SkillLearnBench is a strong adjacent skill-learning benchmark with explicit verifiers and quality dimensions, but its public task instances do not provide enterprise principals, temporal authority, corporate aliases, changed-system outcomes, or multi-user transfer labels.",
+    "skill_quality_and_trajectory_dimensions": true,
+    "verified_task_outcomes": true
+  },
+  "generated_at": "2026-08-01T22:02:15.119058+00:00",
+  "schema": "frankengate.skilllearnbench_fit_audit.v1",
+  "skill_artifacts": {
+    "human_authored_present": true,
+    "method_directories": [
+      "b1-one-shot-claude-haiku-4-5",
+      "b1-one-shot-claude-opus-4-6",
+      "b1-one-shot-claude-sonnet-4-6",
+      "b1-one-shot-gemini-3-flash-preview",
+      "b1-one-shot-gemini-3.1-flash-lite-preview",
+      "b1-one-shot-gemini-3.1-pro-preview",
+      "b2-self-feedback-claude-haiku-4-5",
+      "b2-self-feedback-claude-opus-4-6",
+      "b2-self-feedback-claude-sonnet-4-6",
+      "b2-self-feedback-gemini-3-flash-preview",
+      "b2-self-feedback-gemini-3.1-flash-lite-preview",
+      "b2-self-feedback-gemini-3.1-pro-preview",
+      "b3-teacher-feedback-claude-haiku-4-5",
+      "b3-teacher-feedback-claude-opus-4-6",
+      "b3-teacher-feedback-claude-sonnet-4-6",
+      "b3-teacher-feedback-gemini-3-flash-preview",
+      "b3-teacher-feedback-gemini-3.1-flash-lite-preview",
+      "b3-teacher-feedback-gemini-3.1-pro-preview",
+      "b4-skill-creator-claude-haiku-4-5",
+      "b4-skill-creator-claude-opus-4-6",
+      "b4-skill-creator-claude-sonnet-4-6",
+      "b4-skill-creator-gemini-3-flash-preview",
+      "b4-skill-creator-gemini-3.1-flash-lite-preview",
+      "b4-skill-creator-gemini-3.1-pro-preview",
+      "human_authored"
+    ],
+    "method_directory_count": 25,
+    "method_task_coverage": {
+      "b1-one-shot-claude-haiku-4-5": 20,
+      "b1-one-shot-claude-opus-4-6": 20,
+      "b1-one-shot-claude-sonnet-4-6": 20,
+      "b1-one-shot-gemini-3-flash-preview": 20,
+      "b1-one-shot-gemini-3.1-flash-lite-preview": 20,
+      "b1-one-shot-gemini-3.1-pro-preview": 20,
+      "b2-self-feedback-claude-haiku-4-5": 20,
+      "b2-self-feedback-claude-opus-4-6": 20,
+      "b2-self-feedback-claude-sonnet-4-6": 20,
+      "b2-self-feedback-gemini-3-flash-preview": 20,
+      "b2-self-feedback-gemini-3.1-flash-lite-preview": 20,
+      "b2-self-feedback-gemini-3.1-pro-preview": 20,
+      "b3-teacher-feedback-claude-haiku-4-5": 20,
+      "b3-teacher-feedback-claude-opus-4-6": 20,
+      "b3-teacher-feedback-claude-sonnet-4-6": 20,
+      "b3-teacher-feedback-gemini-3-flash-preview": 20,
+      "b3-teacher-feedback-gemini-3.1-flash-lite-preview": 20,
+      "b3-teacher-feedback-gemini-3.1-pro-preview": 20,
+      "b4-skill-creator-claude-haiku-4-5": 20,
+      "b4-skill-creator-claude-opus-4-6": 20,
+      "b4-skill-creator-claude-sonnet-4-6": 20,
+      "b4-skill-creator-gemini-3-flash-preview": 20,
+      "b4-skill-creator-gemini-3.1-flash-lite-preview": 20,
+      "b4-skill-creator-gemini-3.1-pro-preview": 20,
+      "human_authored": 20
+    },
+    "no_skill_is_null_baseline": true,
+    "skill_doc_count": 1277
+  },
+  "source": {
+    "git_revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "license": "MIT",
+    "license_sha256": "d4a5e863f521c0fe405a0d94271be34740539f9dfa973c99ab883a771f7fa622",
+    "raw_content_committed": false,
+    "repository": "cxcscmu/SkillLearnBench"
+  }
+}
