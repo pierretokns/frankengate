@@ -292,6 +292,12 @@ an integration authorization.
 The concise decision record is in
 [`integration-promotion-audit-2026-08-02.md`](experiments/summaries/integration-promotion-audit-2026-08-02.md).
 
+The [`independent completion audit`](experiments/results/independent-completion-audit-2026-08-02.json)
+keeps the parent gate explicitly incomplete: fair powered controls, independent
+changed-agent/enterprise outcomes, and cross-method power/cost/null calibration
+remain open. This prevents the receipt inventory itself from being mistaken for
+completion.
+
 The [`powered RHO candidate replay`](experiments/summaries/rho-candidate-harness-powered-2026-08-02.md)
 closed the fairness gap in the earlier slice. The upstream candidate was
 rejected by its own self-preference gate, then independently replayed against

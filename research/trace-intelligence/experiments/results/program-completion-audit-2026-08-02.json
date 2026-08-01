@@ -361,6 +361,10 @@
         {
           "exists": true,
           "path": "experiments/results/integration-promotion-audit-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/independent-completion-audit-2026-08-02.json"
         }
       ],
       "id": "governed_local_stack",
@@ -398,7 +402,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "dd37e73371993af93688d33861fa673313ab4a29"
+          "head": "430dae848a1d95ba7f4e5f450e7d39325076e27a"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"
