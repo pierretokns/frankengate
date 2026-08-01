@@ -1477,6 +1477,14 @@ independent governed-PostgreSQL semantic recomputation. Because each artifact
 was paired with its paraphrase, this is an upper-bound consumption test, not
 evidence of retrieval or causal reuse benefit.
 
+The [`train-only validated-artifact retrieval benchmark`](experiments/summaries/validated-artifact-retrieval-benchmark-2026-08-03.md)
+is the first unpaired reuse screen. A same-database lexical retriever selected
+validated artifacts for ten held-out broker/car questions; all ten were
+authority-authorized and executable, but none matched the target semantics.
+This is a bounded negative result: nearest-question lookup is insufficient,
+not evidence that structured templates, dense retrieval, or frontier
+adjudication cannot help.
+
 The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
 tested whether a frontier model and a local model could be treated as
 interchangeable trace-insight labelers. On six blinded candidates under the

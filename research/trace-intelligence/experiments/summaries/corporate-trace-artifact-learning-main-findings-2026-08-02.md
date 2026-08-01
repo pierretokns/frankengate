@@ -59,6 +59,7 @@ promotion-eligible yet.
 | SkillOpt/memory composition already improves agents | Multiple ALFWorld cohorts were floor-effect or null; the real-candidate Codex replay was `0/2` across no-skill, placebo, and candidate | The methods are not disproven; this fixture does not show a positive transfer effect |
 | A larger changed-agent replay shows trace-mined utility | Sealed BIRD-SQL family-disjoint replay over 20 future tasks produced 20 ties, zero candidate wins/losses, exact delta `0.0`, and latency ratio `.989` | This is a bounded no-lift result, not a universal null or a causal disproof of skill-learning research |
 | A frontier agent can consume a validated SQL artifact under governance | On four paired Defog paraphrases, no-skill, placebo, and validated-artifact arms all reached `4/4`; the artifact arm used 4 versus 6/5 SQL attempts and passed independent PostgreSQL semantic recomputation with zero authority/verifier errors | Consumption mechanics are proven; utility and retrieval benefit remain untested |
+| Nearest-question artifact retrieval transfers to held-out tasks | Ten train-only broker/car retrieval targets executed under authority, but lexical nearest-artifact reuse matched target semantics `0/10` | Successful execution and lexical similarity are not sufficient for artifact relevance; parameterized/structured retrieval remains required |
 
 The source/replay overlap auditor is now an executable gate. A family-disjoint
 aggregate cannot be produced without a zero-overlap receipt:

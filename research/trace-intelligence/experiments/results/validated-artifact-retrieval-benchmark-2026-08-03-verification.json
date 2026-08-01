@@ -1,0 +1,7 @@
+{
+  "schema_version": "frankengate-validated-artifact-retrieval-verification-v1",
+  "stored_result_sha256": "6ec33c9c8103d7b13b187f9c613d6e327938330286bd5f4886d44e9c52c89190",
+  "recomputed_result_sha256": "6ec33c9c8103d7b13b187f9c613d6e327938330286bd5f4886d44e9c52c89190",
+  "checks": {"result_hash_matches": true, "target_count": true, "semantic_matches": true, "all_candidates_authorized": true, "source_artifacts_validated_before_pool": true},
+  "status": "verified"
+}
