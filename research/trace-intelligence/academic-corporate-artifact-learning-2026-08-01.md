@@ -159,6 +159,67 @@ Do not equate repetition with failure or a final answer with satisfaction. Bench
 creation should compare history-only intent inference with targeted clarification and
 measure information gain, replay correctness, and downstream eval yield.
 
+There is now direct precedent, so this is not an empty field:
+
+- [Anthropic’s Claude Code expertise study](https://www.anthropic.com/research/claude-code-expertise)
+  classifies transcripts and cross-checks model labels against telemetry, project
+  context, files, vocabulary, corrections, verification, errors, failed tests, and
+  repeated attempts. This supports transcript-plus-artifact intent inference, but its
+  labels are probabilistic and task-specific.
+- [Cursor’s semantic search work](https://cursor.com/blog/semsearch) retrospectively
+  asks what search result would have helped earlier, uses those judgments to train an
+  embedding, and combines semantic retrieval with grep. This is the closest public
+  recipe for mining agent sessions into a task-specific retrieval model.
+- [CursorBench](https://cursor.com/blog/cursorbench) uses real engineering sessions,
+  short/ambiguous requests, agentic graders, and separate correctness, code quality,
+  efficiency, and interaction measures. It is a useful evaluation design, not proof
+  that all historical intents are recoverable.
+- [SWE-bench](https://arxiv.org/abs/2310.06770) derives task intent from issue text,
+  accepted patches, repository snapshots, and executable tests; [SWE-Gym](https://arxiv.org/abs/2412.21139)
+  turns similar real tasks into resettable environments and trajectories. These make
+  the expected artifact and verifier explicit, which is what raw Claude/Codex logs
+  lack.
+- [OpenAI’s SWE-Bench Pro audit](https://openai.com/index/separating-signal-from-noise-coding-evaluations/)
+  found a material broken/underspecified task rate even in a curated benchmark. Every
+  mined eval therefore needs independent review and a broken-task label.
+- [OpenAI’s eval guidance](https://github.com/openai/evals/blob/main/docs/build-eval.md)
+  recommends thematic consistency, challenge, directional clarity, spot checks, and
+  human-calibrated model judges. Use these as release gates, not as a substitute for
+  replay.
+- [TraceLab](https://tracelab.cs.washington.edu/) provides a public proxy corpus with
+  hundreds of thousands of Claude/Codex steps and tool calls. It is valuable for
+  parser/segmenter preflight, but it does not provide private enterprise intent or
+  satisfaction ground truth.
+
+The practical extraction pipeline is: normalize a session/turn/action DAG; segment
+episodes with uncertain boundaries; infer a candidate goal from the first prompt plus
+loaded artifacts; detect friction from explicit corrections, reprompt similarity,
+error→repair loops, test/build outcomes, denials, timeouts, stagnation, reverts,
+branch abandonment, and escalation; emit a candidate work packet; run deterministic
+checks; use independent frontier judges only for unresolved fields; then replay and
+promote. A work packet should contain the task/persona/source bundle/tool catalog,
+policy boundary, expected artifact, trace expectations, deterministic checks,
+rubric, reviewer, evidence spans, counterfactual negative, and replay result.
+
+Historical logs can produce useful candidate intent/evals without interviewing users.
+They cannot reveal hidden business constraints or satisfaction reliably. A small,
+stratified clarification/adjudication sample is needed to estimate false-friction,
+missing-intent, and broken-eval rates. Preserve an explicit unknown/abstain state.
+
+[Corpus2Skill](https://arxiv.org/abs/2604.14572), found again through CASS, is a useful
+nearby design: it compiles a corpus into hierarchical summaries, embeddings, entity
+indexes, cross-links, and navigable skills. Its gains were strongest on coherent
+single-domain QA/RAG subsets and weaker on open-domain or tabular data, with no
+incremental update path. Use it for candidate taxonomy/navigation experiments, not as
+the evidence or outcome layer.
+
+Classical process mining supplies the missing deterministic front end: event-log
+segmentation, trace variants, conformance, multi-perspective clustering, and
+representative-stratified sampling. It can combine activities, resources, timing,
+errors, and outcomes before semantic modeling. It cannot recover hidden business
+intent or satisfaction on its own, so the result must remain a candidate signal until
+frontier/human calibration and replay.
+
 ## Empirical publication program
 
 The first paper should be a narrow, preregistered systems study:
