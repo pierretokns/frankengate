@@ -1463,6 +1463,12 @@ collision-before-target, while 4x hard-negative weighting added no lift. This
 supports a cheap structured reranking lane before frontier review, not a claim
 that the model learned corporate semantic aliases.
 
+The next enterprise gate is preregistered in the
+[`semantic-label and changed-system replay protocol`](experiments/protocols/enterprise-semantic-label-and-drift-2026-08-03.md).
+It freezes candidate generation before SME labels, requires user/project/system/time
+holdouts, and treats false semantic acceptance during schema/tool drift as a
+release-blocking failure.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,
