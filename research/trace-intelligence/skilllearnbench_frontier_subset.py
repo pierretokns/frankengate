@@ -102,11 +102,11 @@ def _validate_answer(answer_path: Path, expected: dict[str, set[str]] = EXPECTED
     result["json_object"] = isinstance(actual, dict)
     if not isinstance(actual, dict):
         return result
-    result["required_questions_present"] = all(key in actual for key in EXPECTED)
+    result["required_questions_present"] = all(key in actual for key in expected)
     if not result["required_questions_present"]:
         return result
     token_ok = True
-    for key in EXPECTED:
+    for key in expected:
         item = actual.get(key)
         if not isinstance(item, dict) or not isinstance(item.get("answer"), list):
             token_ok = False
@@ -120,18 +120,18 @@ def _validate_answer(answer_path: Path, expected: dict[str, set[str]] = EXPECTED
             except (TypeError, ValueError):
                 token_ok = False
     result["token_fields_numeric"] = token_ok
-    result["q1_missing"] = len(EXPECTED["q1"] - set(actual["q1"]["answer"]))
-    result["q3_missing"] = len(EXPECTED["q3"] - set(actual["q3"]["answer"]))
+    result["q1_missing"] = len(expected["q1"] - set(actual["q1"]["answer"]))
+    result["q3_missing"] = len(expected["q3"] - set(actual["q3"]["answer"]))
     exact_metrics: dict[str, dict[str, float | int]] = {}
-    for key, expected in EXPECTED.items():
+    for key, expected_values in expected.items():
         answers = actual[key]["answer"]
         observed = set(answers)
         exact_metrics[key] = {
             "answer_count": len(answers),
-            "expected_count": len(expected),
-            "extra_count": len(observed - expected),
-            "precision": len(observed & expected) / len(answers) if answers else 0.0,
-            "recall": len(observed & expected) / len(expected),
+            "expected_count": len(expected_values),
+            "extra_count": len(observed - expected_values),
+            "precision": len(observed & expected_values) / len(answers) if answers else 0.0,
+            "recall": len(observed & expected_values) / len(expected_values),
         }
     result["exact_metrics"] = exact_metrics
     result["passed"] = bool(
