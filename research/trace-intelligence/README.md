@@ -1706,6 +1706,11 @@ fails closed on the 42-case public Defog cohort: it lacks stable principals,
 dual labels, changed environments, and independent outcomes. This is why the
 public retrieval results cannot be promoted to causal enterprise claims.
 
+The [`recent dataset-fit audit`](experiments/summaries/recent-dataset-fit-audit-2026-08-05.md)
+maps Recovery-Bench, TRAIL, SkillLearnBench, SkillRL, Trace2Skill, AgentReplay,
+and the enterprise hard-negative paper to the exact labels and outcomes they
+can provide, with a staged acquisition order.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,
