@@ -64,6 +64,24 @@ effect, has no release-blocking false semantic acceptance, and does not regress
 cost or latency beyond the budget. A retrieval hit or valid SQL execution
 alone is not sufficient.
 
+## Recent mechanism additions
+
+The 2026 prior-art review adds three concrete operators to this factorial:
+
+- **Step attribution:** apply a SkillAdaptor-style first-actionable-fault
+  selector before revising a procedure; the selected step and evidence span
+  become part of the artifact receipt.
+- **Executable intervention:** represent the executable arm as a HASP-style
+  program function with a trigger, typed inputs, authority scope, validator,
+  and rollback—not merely prose advice.
+- **Failure-state replay:** use a Recovery-Bench-style replay of the failed or
+  drifted environment before the artifact can enter the changed-system arm.
+
+These are implementation mechanisms, not extra outcome claims. Each must be
+ablated against the original no-skill, prose, retrieval, and executable arms;
+otherwise a positive result cannot distinguish diagnosis, execution, and replay
+effects.
+
 ## Required receipts
 
 Record dataset/source hashes, candidate and split manifests, artifact hashes,
