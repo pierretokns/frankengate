@@ -104,6 +104,12 @@ benchmarks:
   (`1.00`) when the human-authored skill was supplied; Q3 remained `1.00/1.00`
   in both arms. This is one task on a host-path adapter, so it is directional
   feasibility evidence only.
+- The complete six-instance enterprise-search family replay improved q1
+  micro-recall from `.811` to `.925`, precision from `.956` to `1.000`, and
+  published-check pass rate from `3/6` to `5/6`, with no observed regression.
+  The human arm used `1.76x` input context. This strengthens the directional
+  retrieval-skill signal, but still lacks q2 labels, changed-system replay,
+  user outcomes, and the official Docker execution path.
 
 Together these results say that validation, replay isolation, and exact outcome
 measurement are working. They do not yet show that a mined or published skill
