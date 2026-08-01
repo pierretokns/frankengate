@@ -1,0 +1,38 @@
+{
+  "experiment": "skillgen-codex-sql-frontier",
+  "date": "2026-08-02",
+  "status": "passed",
+  "provider": "Codex non-interactive harness (subscription-backed)",
+  "upstream_checkout": "/private/tmp/skillgen-upstream.edLvQw",
+  "dataset": {
+    "train_tasks": 8,
+    "heldout_tasks": 4,
+    "outcome_oracle": "SQLite execution and exact row comparison"
+  },
+  "embedding_substitution": "deterministic hashed-256; not semantic",
+  "caps": {
+    "baseline_runs": 1,
+    "max_workers": 1,
+    "max_refine_rounds": 1,
+    "timeout_seconds": 90
+  },
+  "codex_calls": 8,
+  "adapter_failures": [],
+  "elapsed_seconds": 70.498,
+  "baseline_trajectories": 8,
+  "baseline_successes": 8,
+  "baseline_failures": 0,
+  "generated_skill": false,
+  "heldout": null,
+  "artifacts": [
+    "artifacts/runs/20260801-000003/baseline_failures.jsonl",
+    "artifacts/runs/20260801-000003/baseline_successes.jsonl",
+    "artifacts/runs/20260801-000003/baseline_trajectories.jsonl",
+    "artifacts/runs/20260801-000003/checkpoint_trajectories.jsonl",
+    "artifacts/runs/20260801-000003/run_metadata.json",
+    "config.yaml",
+    "dataset.json",
+    "fixture.sqlite"
+  ],
+  "error": null
+}

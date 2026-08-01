@@ -34,10 +34,24 @@ def _extract_json(text: str) -> dict:
     try:
         value = json.loads(text)
     except json.JSONDecodeError:
-        start, end = text.find("{"), text.rfind("}")
-        if start < 0 or end <= start:
-            raise
-        value = json.loads(text[start : end + 1])
+        # SkillGen's own OpenRouter wrapper uses json-repair when a provider
+        # emits a truncated or lightly malformed object. Keep the same
+        # bounded behavior in the Codex adapter, but retain a strict fallback
+        # so malformed model output is never silently accepted.
+        try:
+            import json_repair  # type: ignore
+            value = json_repair.repair_json(text, return_objects=True)
+        except Exception:
+            start, end = text.find("{"), text.rfind("}")
+            if start < 0 or end <= start:
+                raise
+            candidate = text[start : end + 1].rstrip()
+            # Close the most common truncated object case. This intentionally
+            # does not attempt arbitrary semantic repair.
+            if candidate.count('"') % 2:
+                candidate += '"'
+            candidate += "}" * max(0, candidate.count("{") - candidate.count("}"))
+            value = json.loads(candidate)
     if not isinstance(value, dict):
         raise ValueError(f"expected JSON object, got {type(value).__name__}")
     return value
@@ -92,7 +106,16 @@ class CodexAdapter:
             "markdown or commentary.\n\n"
             f"SYSTEM:\n{system}\n\nUSER:\n{prompt}"
         )
-        return _extract_json(self._call(instruction))
+        raw = self._call(instruction)
+        try:
+            return _extract_json(raw)
+        except Exception as exc:
+            # Preserve a bounded diagnostic artifact so a failed structured
+            # response can be distinguished from a pipeline/evaluator error.
+            diag = Path(tempfile.mktemp(prefix="skillgen-invalid-json-", suffix=".txt"))
+            diag.write_text(raw, encoding="utf-8")
+            self.failures.append(f"json_parse:{type(exc).__name__}:{exc}; raw={diag}")
+            raise
 
 
 def _hash_embed(texts: list[str]) -> list[list[float]]:

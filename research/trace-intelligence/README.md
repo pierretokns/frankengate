@@ -248,6 +248,16 @@ environment replay verified all 12 action sequences. This is a valid null
 checkpoint at a sufficient horizon, not a general method-ineffective claim;
 the candidate remains quarantined.
 
+The executable [`SkillGen BIRD-SQL frontier reproduction`](experiments/summaries/skillgen-codex-bird-frontier-2026-08-02.md)
+finally exercised the upstream pipeline on a failure-bearing real corpus rather
+than a synthetic all-pass cohort. On eight BIRD-SQL training tasks, the Codex
+baseline passed 2/8 exact SQLite execution checks and SkillGen generated a
+candidate. On eight held-out tasks, baseline accuracy was 0.500 and the skill
+arm was 0.375: zero repairs, one regression, net gain -1, and the independent
+release gate rejected the candidate. This is direct negative efficacy evidence
+for this cohort; it does not prove SkillGen ineffective generally, but the
+candidate is not eligible for Frankengate integration.
+
 The [`GEPA v0.1.4 native-tool protocol arm`](experiments/summaries/gepa-native-tool-protocol-2026-08-02.md)
 now runs the actual pinned optimizer against a separate three-episode train and
 three-episode holdout split using the local Llama model. GEPA made 11 metric
