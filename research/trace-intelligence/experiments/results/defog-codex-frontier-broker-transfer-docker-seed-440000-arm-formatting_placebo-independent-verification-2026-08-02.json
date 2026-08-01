@@ -1,0 +1,20 @@
+{
+  "arms": {
+    "formatting_placebo": {
+      "candidate_present": 4,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 4,
+      "stored_semantic_correct": 4,
+      "tasks": 4
+    }
+  },
+  "errors": [],
+  "raw_content_committed": false,
+  "schema_version": "frankengate-defog-semantic-independent-verification-v1",
+  "semantic_recomputation": "executed_against_pinned_governed_postgres",
+  "semantic_verification_passed": true,
+  "source_result_sha256": "054ad341376f48ec485cf896f50f70f7a2384a0eb34b32f2c232f05c287c5204",
+  "stored_vs_recomputed_mismatches": [],
+  "task_count": 4,
+  "trajectory_count": 4
+}
