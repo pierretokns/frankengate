@@ -1,0 +1,192 @@
+{
+  "aggregate": {
+    "cases": 5,
+    "name_compatibility_accepts": 5,
+    "name_compatibility_false_semantic_accepts": 2,
+    "semantic_compatibility_accepts": 3,
+    "semantic_compatibility_false_semantic_accepts": 0,
+    "strict_accepts": 1
+  },
+  "artifact_hash": "cc47b7544d90907235fc54bc4a1b060f2921b4c8c1631d9ac09e8a77614582d7",
+  "cases": [
+    {
+      "case_id": "unchanged",
+      "expected_result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+      "mapping": {},
+      "policies": {
+        "name_compatibility": {
+          "accepted": true,
+          "policy": "name_compatibility",
+          "reasons": [],
+          "result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+          "row_count": 2,
+          "semantic_match": true
+        },
+        "semantic_compatibility": {
+          "accepted": true,
+          "policy": "semantic_compatibility",
+          "reasons": [],
+          "result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+          "row_count": 2,
+          "semantic_match": true
+        },
+        "strict": {
+          "accepted": true,
+          "policy": "strict",
+          "reasons": [],
+          "result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+          "row_count": 2,
+          "semantic_match": true
+        }
+      },
+      "target_schema_fingerprint": "c3910c523cf5f9a83fd233230816c41d04eee85c39c80d908953db82d1ea10df"
+    },
+    {
+      "case_id": "additive_column",
+      "expected_result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+      "mapping": {},
+      "policies": {
+        "name_compatibility": {
+          "accepted": true,
+          "policy": "name_compatibility",
+          "reasons": [],
+          "result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+          "row_count": 2,
+          "semantic_match": true
+        },
+        "semantic_compatibility": {
+          "accepted": true,
+          "policy": "semantic_compatibility",
+          "reasons": [],
+          "result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+          "row_count": 2,
+          "semantic_match": true
+        },
+        "strict": {
+          "accepted": false,
+          "policy": "strict",
+          "reasons": [
+            "schema_fingerprint_mismatch"
+          ]
+        }
+      },
+      "target_schema_fingerprint": "44711f0c79bdb1decf96d90729cb245ab55c4372900839155e1ae041a409e272"
+    },
+    {
+      "case_id": "approved_semantic_rename",
+      "expected_result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+      "mapping": {
+        "amount": "net_total",
+        "customer_id": "account_id",
+        "orders": "sales_orders",
+        "status": "state"
+      },
+      "policies": {
+        "name_compatibility": {
+          "accepted": true,
+          "policy": "name_compatibility",
+          "reasons": [],
+          "result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+          "row_count": 2,
+          "semantic_match": true
+        },
+        "semantic_compatibility": {
+          "accepted": true,
+          "policy": "semantic_compatibility",
+          "reasons": [],
+          "result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+          "row_count": 2,
+          "semantic_match": true
+        },
+        "strict": {
+          "accepted": false,
+          "policy": "strict",
+          "reasons": [
+            "schema_fingerprint_mismatch"
+          ]
+        }
+      },
+      "target_schema_fingerprint": "854cfe11590d1fb7c990e0a822a33ac1165d1e8f459ac37942197f63c4e8a000"
+    },
+    {
+      "case_id": "semantic_collision",
+      "expected_result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+      "mapping": {
+        "amount": "gross_total",
+        "customer_id": "account_id",
+        "orders": "sales_orders",
+        "status": "state"
+      },
+      "policies": {
+        "name_compatibility": {
+          "accepted": true,
+          "policy": "name_compatibility",
+          "reasons": [],
+          "result_digest": "b1f358f643c11090a23c45def025698bb20b3c96b22ab40b846a6ae9450e9b4f",
+          "row_count": 2,
+          "semantic_match": false
+        },
+        "semantic_compatibility": {
+          "accepted": false,
+          "policy": "semantic_compatibility",
+          "reasons": [
+            "column_semantic_mismatch:amount"
+          ]
+        },
+        "strict": {
+          "accepted": false,
+          "policy": "strict",
+          "reasons": [
+            "schema_fingerprint_mismatch"
+          ]
+        }
+      },
+      "target_schema_fingerprint": "bab8175e31a0006657ac0d57797914583c08ac22483c7f3cfddcae40640a69f6"
+    },
+    {
+      "case_id": "same_name_semantic_drift",
+      "expected_result_digest": "17618c9d6557a7c5e81a7398e4873fd33ed43ef29c623640836db4e0ca83f12d",
+      "mapping": {},
+      "policies": {
+        "name_compatibility": {
+          "accepted": true,
+          "policy": "name_compatibility",
+          "reasons": [],
+          "result_digest": "b1f358f643c11090a23c45def025698bb20b3c96b22ab40b846a6ae9450e9b4f",
+          "row_count": 2,
+          "semantic_match": false
+        },
+        "semantic_compatibility": {
+          "accepted": false,
+          "policy": "semantic_compatibility",
+          "reasons": [
+            "column_semantic_mismatch:amount"
+          ]
+        },
+        "strict": {
+          "accepted": false,
+          "policy": "strict",
+          "reasons": [
+            "schema_fingerprint_mismatch"
+          ]
+        }
+      },
+      "target_schema_fingerprint": "5d44247b412c20b8e6c26f3a5e39f467c15844fa1eedd0da0ddb1249449c1599"
+    }
+  ],
+  "claim_boundary": "Deterministic SQLite changed-system artifact replay only; the cases are synthetic and do not establish mined-artifact quality, enterprise prevalence, or production database behavior.",
+  "result_sha256": "701a0684c1f5221b14f9e3989393aa3a93b999f5887c8b1f1181b472c26d3833",
+  "schema_version": "frankengate-artifact-changed-system-replay-v1",
+  "tool_contract_drift": {
+    "adapted": {
+      "state": "paid"
+    },
+    "semantic_match": true,
+    "source": {
+      "status": "column:commerce.order_status"
+    },
+    "target": {
+      "state": "column:commerce.order_status"
+    }
+  }
+}
