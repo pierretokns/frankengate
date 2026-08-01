@@ -1,0 +1,63 @@
+# Corporate trace-intelligence evidence matrix
+
+Date: 2026-08-02
+
+This matrix is the current claim ledger for the program. “Supported” means the
+mechanic or measurement has been independently exercised. It does not mean the
+mechanism has demonstrated enterprise productivity or causal user benefit.
+“Null” means the candidate did not beat its controls in the stated cohort; it
+does not mean the cited academic method is disproven.
+
+## Claim ledger
+
+| Hypothesis | Current evidence | Status | Safe claim | Required before promotion |
+| --- | --- | --- | --- | --- |
+| Preserve a canonical trajectory rather than flattening OTel/ATIF text | Native imports, branch reconstruction, tool/result pairing, malformed-record quarantine, and loss receipts pass on public histories. ATIF/OTel projections still omit reset, reward, memory, termination, and authorization facts. | **Supported mechanic** | Use a provider-neutral trajectory DAG plus explicit loss records. | Cross-harness conformance on more native formats and sealed task outcomes. |
+| Mine friction and recovery candidates from history | Wisp/share-codex common constructor found 89 and 31 bounded error→later-success episodes; the same constructor changed earlier counts materially. | **Supported detector** | Generate review candidates, not “user skill gaps” or causal recoveries. | Human labels for intent, causality, task success, and environment failure. |
+| Generate suggested evals from traces | Full Wisp derivation emitted 11 eval proposals and 7 procedure-review proposals with evidence links; proposal/audit mechanics passed. | **Supported proposal path** | Treat output as an auditable review queue. | A guided harness must execute the proposal against a changed system and retain gold/negative labels. |
+| Reuse validated SQL/tool artifacts safely | Governed PostgreSQL capsules enforce scope, authorization epoch, expiry, schema fingerprint, parameters, result shape, RLS, and audit receipts; invalid cases were denied. | **Supported mechanism** | Build a governed artifact library before attempting autonomous memory promotion. | Multi-tenant concurrency, deletion, failover, Aurora compatibility, and outcome lift. |
+| Structured identifiers and scope resolve corporate collisions | Surface exact + known scope: MRR .4441→.6867, R@1 .1992→.4492, R@5 .8150→.9980; wrong-system-before-target 14.43%→.20%. | **Strongest quality result** | Exact identifiers, aliases, project/database/team scope must be a first retrieval lane. | Blinded SME labels for true aliases, NIL cases, undocumented terms, and family-held-out replay. |
+| Generic embeddings solve identifier/alias ambiguity | `nomic-embed-text` + scope was below exact identifier retrieval on the pinned NL2SQL slice; collision adjudication was deliberately easy and model-only. | **Rejected as default** | Do not replace structured retrieval with dense search. | Hard negative and semantic-alias labels before any corporate model claim. |
+| Domain adaptation automatically improves embeddings | MATM fold-local adapter: Recall@20 .5301→.5331, delta +.0029, CI crosses zero; MRR slightly decreased. | **Null / not promotable** | “Train an adapter” is not evidence of useful adaptation. | Corporate hard negatives, entity/time/project holdouts, and a preregistered absolute-lift gate. |
+| Dense retrieval is still useful in a cascade | CodeTraceBench factorial retained exact IDs and found exact+structured+dense reached R@20 .818; labels are silver and not jointly RLS-tested. | **Promising retrieval component** | Use dense search for candidate recall after exact/structured filters. | Human labels, PostgreSQL execution, selective-RLS latency, deletion, and cost measurements on the same corpus. |
+| Trace-mined skills improve downstream task success | Direct native runs were neutral/inconsistent; proxy paraphrase was 8/12 vs neutral 7/12, balanced native was 9/12 vs neutral 9/12. | **Null / harness-sensitive** | No current skill artifact is promotion-eligible. | Powered multi-seed, family-held-out, changed-environment replay with cost and negative-transfer gates. |
+| A Trace2Skill-style compiler can transfer a procedure | One compiled native pilot scored 4/4 vs 3/4 controls; sequential prefix transfer scored 2/2, tying no-skill and beating neutral once. | **Transferability pilot** | Compilation, hashing, isolation, and replay are feasible. | Demonstrate incremental lift over no-skill and neutral on a larger sequential cohort. |
+| SkillOpt/memory composition helps frontier agents | ALFWorld four-family 35-step factorial: no component, SkillOpt, memory, and composition all 0/4; earlier SkillOpt checkpoint also had zero wins. | **Small null with floor effect** | Do not infer that composition is harmful or universally useless. | Non-floor tasks, fair horizons, larger cohort, and a direct causal comparison. |
+| Graph/memory systems add useful enterprise state | Graphiti/LangMem passed API smoke checks but no natural full case completed within the bound; exact-state retrieval and graph extraction target different objectives. | **Compatibility only** | Keep graph/memory extraction optional and downstream of governed evidence. | Temporal/contradiction benchmark, exact identifier retention, update/rollback, deletion, and later-query utility. |
+| Cross-user trace mining identifies collaborators or missing skills | Structural proposal mechanics pass; public-corpus analysis intentionally emitted zero skill-gap/collaboration recommendations. | **Unproven** | Require opt-in, minimum cohorts, and reviewed taxonomies before recommendations. | Consent-stable identities, human capability labels, prospective outcomes, and privacy/abstention evaluation. |
+| Cheap models can replace embedding/retrieval analysis | No fair head-to-head enterprise insight study has yet passed; tiny local models often failed structured output or tool protocol. | **Untested / capability-gated** | Compare model passes only after retrieval and schema projections are fixed. | Frontier-quality structured extraction baseline, cost/latency budget, and blinded insight-quality labels. |
+| TurboVec/vector acceleration is needed now | CodeTraceBench dense index mechanics passed; 2-bit matched exact dense Recall@20 in a small cohort, 4-bit lost 1.52 points. | **Mechanics only** | Quantization/indexing is an optimization option, not an architectural requirement. | Scale, filtered retrieval, rebuild/failover, RLS interaction, and cost against exact pgvector. |
+| Science One-style evidence chains improve research reliability | Claim-level receipts, isolated branches, raw evaluator retention, and independent audit rules were mapped into the protocol. | **Process adaptation** | Use evidence chains to prevent overclaiming and make experiments reproducible. | A/B test whether the process improves reviewer agreement, error detection, or decision quality. |
+
+## What this means for the architecture
+
+The evidence supports a small core rather than a stack of independent memory,
+graph, vector, and search products:
+
+1. One governed evidence/proposal authority in PostgreSQL.
+2. A canonical trajectory DAG with explicit OTel/ATIF loss receipts.
+3. Exact identifiers, aliases, and structured scope filters.
+4. Optional pgvector/dense candidate recall behind those filters.
+5. Versioned SQL/tool capsules with tests, provenance, expiry, scope, and replay.
+6. A frontier/SME adjudication queue and a no-skill/placebo/neutral experiment
+   harness.
+
+Graph databases, custom embeddings, TurboVec, automatic memory writes, and
+cross-user recommendations remain experimental add-ons. None is justified as a
+mandatory production dependency by the current evidence.
+
+## Completion gates still open
+
+- 20–40+ sequential tasks across multiple families, users/projects, and changed
+  schemas; report paired lift, cost, latency, abstention, and negative transfer.
+- Blinded alias/NIL/wrong-system labeling with at least two independent frontier
+  judgments plus SME adjudication.
+- Corporate hard-negative and entity/time/project holdouts for any embedding
+  adaptation claim.
+- Human labels and prospective outcomes for friction, skill gaps, collaboration,
+  and eval usefulness.
+- Same-corpus quality + RLS + deletion + concurrency + p95/p99 benchmark on the
+  selected PostgreSQL/Aurora deployment surface.
+
+Until those gates close, no skill, memory, embedding adapter, or cross-user
+recommendation should be auto-promoted.
