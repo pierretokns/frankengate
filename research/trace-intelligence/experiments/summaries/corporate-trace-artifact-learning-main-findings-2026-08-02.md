@@ -58,6 +58,7 @@ promotion-eligible yet.
 | Generic embeddings solve corporate aliases | Dense-only retrieval underperformed exact/scope retrieval on the identifier benchmark | Dense search is complementary, not the primary solution |
 | SkillOpt/memory composition already improves agents | Multiple ALFWorld cohorts were floor-effect or null; the real-candidate Codex replay was `0/2` across no-skill, placebo, and candidate | The methods are not disproven; this fixture does not show a positive transfer effect |
 | A larger changed-agent replay shows trace-mined utility | Sealed BIRD-SQL family-disjoint replay over 20 future tasks produced 20 ties, zero candidate wins/losses, exact delta `0.0`, and latency ratio `.989` | This is a bounded no-lift result, not a universal null or a causal disproof of skill-learning research |
+| A frontier agent can consume a validated SQL artifact under governance | On one paired Defog paraphrase, no-skill, placebo, and validated-artifact arms all reached `1/1`; the artifact arm passed independent PostgreSQL semantic recomputation with zero authority/verifier errors | Consumption mechanics are proven; utility and retrieval benefit remain untested |
 
 The source/replay overlap auditor is now an executable gate. A family-disjoint
 aggregate cannot be produced without a zero-overlap receipt:
