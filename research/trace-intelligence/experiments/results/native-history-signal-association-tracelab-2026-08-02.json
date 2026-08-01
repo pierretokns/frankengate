@@ -1,0 +1,28 @@
+{
+  "associations": {
+    "clarification": {
+      "sessions_with_signal": 9,
+      "sessions_with_signal_and_structured_error": 6,
+      "spearman_error_rate_vs_signal_count": -0.442817
+    },
+    "correction": {
+      "sessions_with_signal": 20,
+      "sessions_with_signal_and_structured_error": 16,
+      "spearman_error_rate_vs_signal_count": -0.247674
+    },
+    "dissatisfaction": {
+      "sessions_with_signal": 10,
+      "sessions_with_signal_and_structured_error": 8,
+      "spearman_error_rate_vs_signal_count": -0.26543
+    },
+    "retry_or_repair": {
+      "sessions_with_signal": 21,
+      "sessions_with_signal_and_structured_error": 18,
+      "spearman_error_rate_vs_signal_count": -0.233923
+    }
+  },
+  "claim_boundary": "Descriptive association only; this cohort has no gold friction, satisfaction, task-success, or intent labels. Negative association must not be interpreted as evidence that errors improve outcomes.",
+  "schema_version": "native-history-signal-association-v1",
+  "session_count": 28,
+  "source_schema_version": "native-history-friction-result-v1"
+}
