@@ -11,10 +11,14 @@ not a diagnosis-quality claim.
 from __future__ import annotations
 
 import argparse
+import contextlib
+import copy
 import hashlib
+import io
 import json
 import os
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -54,6 +58,22 @@ def run(agent_root: Path, output: Path) -> dict[str, Any]:
         policy_document_path=str(policy_path),
         client="azure",
     )
+    repaired_static = copy.deepcopy(static)
+    for invariant in repaired_static.get("invariants", []):
+        trigger = invariant.setdefault("event_trigger", {})
+        trigger["step_index"] = "*"
+        trigger["role_name"] = "assistant"
+        lines = invariant.get("python_check", {}).get("code_lines", [])
+        if len(lines) > 1 and lines[1].strip().startswith('""') and lines[1].strip().endswith('""'):
+            value = lines[1].strip()[2:-2]
+            lines[1] = "    \"\"\"" + value + "\"\"\""
+    repaired_path = Path(tempfile.mktemp(prefix="agentrx-repaired-static-", suffix=".json"))
+    repaired_path.write_text(json.dumps(repaired_static), encoding="utf-8")
+    repaired_verifier = AllVerifier(
+        invariants_path=str(repaired_path),
+        policy_document_path=str(policy_path),
+        client="azure",
+    )
     compile_errors: list[dict[str, str]] = []
     for invariant in verifier.invariants:
         if invariant.get("check_type") != "python_check":
@@ -83,7 +103,11 @@ def run(agent_root: Path, output: Path) -> dict[str, Any]:
         failures = gt.get("failures", [])
         failure_steps = [int(f["step_number"]) for f in failures]
         matched_steps: list[int] = []
-        violations = verifier.verify_trajectory(task_id=task_id, traj=trajectory)
+        with contextlib.redirect_stdout(io.StringIO()):
+            violations = verifier.verify_trajectory(task_id=task_id, traj=trajectory)
+            repaired_violations = repaired_verifier.verify_trajectory(
+                task_id=task_id, traj=trajectory
+            )
         for pos, step in enumerate(trajectory.get("steps", [])):
             if any(
                 step_matches(verifier, invariant, trajectory, pos)
@@ -104,6 +128,15 @@ def run(agent_root: Path, output: Path) -> dict[str, Any]:
                 "ground_truth_failure_steps_with_static_coverage": covered_failures,
                 "static_checker_violation_count": len(violations),
                 "static_checker_violation_steps": [int(v.step_index) for v in violations],
+                "repaired_static_checker_violation_count": len(repaired_violations),
+                "repaired_static_checker_violation_steps": [
+                    int(v.step_index) + 1 for v in repaired_violations
+                ],
+                "ground_truth_failure_steps_with_repaired_static_coverage": [
+                    step
+                    for step in failure_steps
+                    if step in {int(v.step_index) + 1 for v in repaired_violations}
+                ],
             }
         )
 
@@ -134,6 +167,13 @@ def run(agent_root: Path, output: Path) -> dict[str, Any]:
                 len(row["ground_truth_failure_steps_with_static_coverage"]) for row in rows
             ),
             "static_checker_violation_count": sum(row["static_checker_violation_count"] for row in rows),
+            "repaired_static_checker_violation_count": sum(
+                row["repaired_static_checker_violation_count"] for row in rows
+            ),
+            "repaired_covered_ground_truth_failure_count": sum(
+                len(row["ground_truth_failure_steps_with_repaired_static_coverage"])
+                for row in rows
+            ),
             "trajectories_with_any_static_trigger": sum(
                 int(bool(row["static_triggered_steps"])) for row in rows
             ),

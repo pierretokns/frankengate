@@ -15,6 +15,8 @@ invariant files loaded.
 | Static checker violations | 0 |
 | Trajectories with any static trigger | 0/7 |
 | Python invariant snippets compiling successfully | 0/8 |
+| Repaired-trigger/static-syntax violations | 26 |
+| Labeled failure steps covered by repaired ablation | 3/10 |
 
 This is a faithful upstream execution, but it is deliberately only a
 static-stage compatibility/coverage audit. It does **not** evaluate AgentRx's
@@ -40,6 +42,15 @@ ablation therefore still produces no violations because the checker catches
 these exceptions and returns no `Violation`. The artifact is unsuitable for
 efficacy scoring until invariant code generation and exception handling are
 repaired and re-verified.
+
+As a diagnostic ablation, the receipt also repairs only those two mechanical
+problems: it wildcard-matches the static triggers and changes the malformed
+docstring delimiters to valid triple quotes. That ablation emits 26 violations
+and covers 3/10 labeled failure steps, with substantial false positives and no
+coverage on the other seven failures. This separates “artifact cannot execute”
+from “static invariants are sufficient”: repairing execution recovers a small
+amount of signal, but is not an AgentRx efficacy result and cannot replace
+dynamic invariants or the judge.
 
 Machine-readable receipt:
 [`agentrx-independent-static-audit-2026-07-31.json`](../results/agentrx-independent-static-audit-2026-07-31.json).

@@ -10,8 +10,11 @@
       "ground_truth_failure_steps": [
         17
       ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [],
       "ground_truth_failure_steps_with_static_coverage": [],
       "ir_valid": true,
+      "repaired_static_checker_violation_count": 0,
+      "repaired_static_checker_violation_steps": [],
       "source_file": "hallucination_doubt.json",
       "static_checker_violation_count": 0,
       "static_checker_violation_steps": [],
@@ -25,8 +28,17 @@
       "ground_truth_failure_steps": [
         19
       ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [
+        19
+      ],
       "ground_truth_failure_steps_with_static_coverage": [],
       "ir_valid": true,
+      "repaired_static_checker_violation_count": 3,
+      "repaired_static_checker_violation_steps": [
+        11,
+        13,
+        19
+      ],
       "source_file": "instruction_adherence_failure.json",
       "static_checker_violation_count": 0,
       "static_checker_violation_steps": [],
@@ -40,8 +52,14 @@
       "ground_truth_failure_steps": [
         17
       ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [],
       "ground_truth_failure_steps_with_static_coverage": [],
       "ir_valid": true,
+      "repaired_static_checker_violation_count": 2,
+      "repaired_static_checker_violation_steps": [
+        9,
+        11
+      ],
       "source_file": "intent_plan_misalignment.json",
       "static_checker_violation_count": 0,
       "static_checker_violation_steps": [],
@@ -57,8 +75,21 @@
         21,
         30
       ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [
+        21
+      ],
       "ground_truth_failure_steps_with_static_coverage": [],
       "ir_valid": true,
+      "repaired_static_checker_violation_count": 7,
+      "repaired_static_checker_violation_steps": [
+        11,
+        19,
+        21,
+        21,
+        21,
+        23,
+        25
+      ],
       "source_file": "invalid_invocation.json",
       "static_checker_violation_count": 0,
       "static_checker_violation_steps": [],
@@ -72,8 +103,16 @@
       "ground_truth_failure_steps": [
         11
       ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [],
       "ground_truth_failure_steps_with_static_coverage": [],
       "ir_valid": true,
+      "repaired_static_checker_violation_count": 4,
+      "repaired_static_checker_violation_steps": [
+        9,
+        15,
+        19,
+        21
+      ],
       "source_file": "invention_new_info.json",
       "static_checker_violation_count": 0,
       "static_checker_violation_steps": [],
@@ -87,8 +126,19 @@
       "ground_truth_failure_steps": [
         15
       ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [],
       "ground_truth_failure_steps_with_static_coverage": [],
       "ir_valid": true,
+      "repaired_static_checker_violation_count": 7,
+      "repaired_static_checker_violation_steps": [
+        17,
+        19,
+        23,
+        25,
+        27,
+        43,
+        45
+      ],
       "source_file": "misinterpretation_tool_output.json",
       "static_checker_violation_count": 0,
       "static_checker_violation_steps": [],
@@ -103,8 +153,17 @@
         24,
         27
       ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [
+        27
+      ],
       "ground_truth_failure_steps_with_static_coverage": [],
       "ir_valid": true,
+      "repaired_static_checker_violation_count": 3,
+      "repaired_static_checker_violation_steps": [
+        15,
+        25,
+        27
+      ],
       "source_file": "underspecified_intent.json",
       "static_checker_violation_count": 0,
       "static_checker_violation_steps": [],
@@ -163,6 +222,8 @@
     "ground_truth_failure_count": 10,
     "ir_valid_count": 7,
     "python_invariant_compile_error_count": 8,
+    "repaired_covered_ground_truth_failure_count": 3,
+    "repaired_static_checker_violation_count": 26,
     "static_checker_violation_count": 0,
     "trajectories_with_any_static_trigger": 0
   },

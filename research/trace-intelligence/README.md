@@ -1111,10 +1111,11 @@ ran the pinned upstream IR converter and `AllVerifier` over seven bundled Tau
 trajectories. All seven IRs validated, but the bundled static artifact covered
 `0/10` labeled failure steps and emitted zero violations because no dynamic
 invariants were loaded. The same artifact's eight Python invariant snippets
-also fail compilation, so even a trigger-repaired ablation cannot score them.
-This is a bounded upstream compatibility result, not a full AgentRx efficacy
-test; dynamic generation, retained judge artifacts, and blinded diagnosis
-scoring remain required.
+also fail compilation. A diagnostic repair of only those syntax and trigger
+defects recovered 3/10 labeled failure steps but emitted 26 violations, so it
+is not sufficient for efficacy scoring. This is a bounded upstream
+compatibility result, not a full AgentRx efficacy test; dynamic generation,
+retained judge artifacts, and blinded diagnosis scoring remain required.
 
 The long-horizon [`Luna SkillOpt factorial`](experiments/summaries/alfworld-luna-skillopt-four-family-35step-2026-07-31.md)
 used four family-disjoint valid-unseen ALFWorld tasks, a 35-step cap, and
