@@ -16,6 +16,7 @@ was not shown success labels or task IDs. Lexical, embedding, and Luna orders
 were scored against the same silver signature labels.
 
 Receipt: [`../results/matm-frontier-reranker-luna-9q-2026-08-02.json`](../results/matm-frontier-reranker-luna-9q-2026-08-02.json).
+Independent verification receipt: [`../results/matm-frontier-reranker-luna-9q-verification-2026-08-02.json`](../results/matm-frontier-reranker-luna-9q-verification-2026-08-02.json).
 Raw prompts and model responses remain external under
 `/private/tmp/matm-frontier-reranker-20260802/`.
 
