@@ -15,6 +15,10 @@ The exact content-free failed-task cohort is pinned in
 
 - 148 OTel-shaped records: 117 GAIA and 31 SWE Bench.
 - 154 spans, four project IDs, and four service names.
+- The nested span tree contains 4,625 nodes. Of the 812 location-bearing
+  annotation errors whose trace IDs align with a data record, 810 resolve to a
+  nested span ID (`0.997537`). A top-level-span-only projection would therefore
+  create a false localization-loss result.
 - 147 annotation files parse, but only 142 unique annotation trace IDs align
   with the 148 data trace IDs; one annotation file is malformed. Effective
   trace-ID coverage is `0.959459`.

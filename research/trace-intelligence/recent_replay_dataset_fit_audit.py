@@ -54,6 +54,18 @@ def _first_present(mapping: Dict[str, Any], names: Iterable[str]) -> bool:
     return any(name in mapping and mapping[name] not in (None, "") for name in names)
 
 
+def _collect_span_ids(span: Any, output: set[str]) -> None:
+    if not isinstance(span, dict):
+        return
+    span_id = span.get("span_id")
+    if span_id:
+        output.add(str(span_id))
+    children = span.get("child_spans")
+    if isinstance(children, list):
+        for child in children:
+            _collect_span_ids(child, output)
+
+
 def audit_trail(root: Path) -> Dict[str, Any]:
     data_root = root / "benchmarking" / "data"
     annotation_roots = {
@@ -75,6 +87,7 @@ def audit_trail(root: Path) -> Dict[str, Any]:
     project_ids: List[str] = []
     services: List[str] = []
     span_counts: List[int] = []
+    span_tree_ids: Dict[str, set[str]] = {}
     body_keys: Counter[str] = Counter()
     status_codes: Counter[str] = Counter()
     has_principal = 0
@@ -91,6 +104,10 @@ def audit_trail(root: Path) -> Dict[str, Any]:
         trace_ids.append(str(value.get("trace_id", "")))
         spans = value.get("spans") if isinstance(value.get("spans"), list) else []
         span_counts.append(len(spans))
+        tree_ids: set[str] = set()
+        for span in spans:
+            _collect_span_ids(span, tree_ids)
+        span_tree_ids[str(value.get("trace_id", ""))] = tree_ids
         for span in spans:
             if not isinstance(span, dict):
                 continue
@@ -129,6 +146,12 @@ def audit_trail(root: Path) -> Dict[str, Any]:
     score_keys: Counter[str] = Counter()
     annotation_ids: List[str] = []
     annotation_errors: List[Dict[str, str]] = []
+    annotation_error_total = 0
+    annotation_error_locations = 0
+    annotation_location_matches = 0
+    annotation_location_trace_matches: set[str] = set()
+    aligned_annotation_error_locations = 0
+    aligned_annotation_location_matches = 0
     for path in annotations:
         value, error = _read_json(path)
         if error:
@@ -140,6 +163,19 @@ def audit_trail(root: Path) -> Dict[str, Any]:
         for item in errors:
             if not isinstance(item, dict):
                 continue
+            annotation_error_total += 1
+            location = item.get("location")
+            if location:
+                annotation_error_locations += 1
+                trace_id = str(value.get("trace_id", ""))
+                aligned = trace_id in span_tree_ids
+                if aligned:
+                    aligned_annotation_error_locations += 1
+                if str(location) in span_tree_ids.get(trace_id, set()):
+                    annotation_location_matches += 1
+                    annotation_location_trace_matches.add(str(value.get("trace_id", "")))
+                    if aligned:
+                        aligned_annotation_location_matches += 1
             categories[str(item.get("category", "missing"))] += 1
             impacts[str(item.get("impact", "missing"))] += 1
         scores = value.get("scores") if isinstance(value.get("scores"), list) else []
@@ -165,6 +201,7 @@ def audit_trail(root: Path) -> Dict[str, Any]:
         "unique_project_ids": len(set(project_ids)),
         "unique_service_names": len(set(services)),
         "spans_total": sum(span_counts),
+        "span_tree_nodes_total": sum(len(ids) for ids in span_tree_ids.values()),
         "span_count_mean": round(sum(span_counts) / len(span_counts), 6) if span_counts else 0.0,
         "principal_identity_span_count": has_principal,
         "tenant_identity_span_count": has_tenant,
@@ -174,6 +211,22 @@ def audit_trail(root: Path) -> Dict[str, Any]:
         "annotation_error_impacts": dict(impacts),
         "annotation_score_fields": sorted(score_keys),
         "observed_log_body_fields": sorted(body_keys),
+        "annotation_error_total": annotation_error_total,
+        "annotation_errors_with_location": annotation_error_locations,
+        "annotation_location_span_tree_matches": annotation_location_matches,
+        "annotation_location_span_tree_match_rate": round(
+            annotation_location_matches / annotation_error_locations, 6
+        )
+        if annotation_error_locations
+        else 0.0,
+        "aligned_annotation_errors_with_location": aligned_annotation_error_locations,
+        "aligned_annotation_location_span_tree_matches": aligned_annotation_location_matches,
+        "aligned_annotation_location_span_tree_match_rate": round(
+            aligned_annotation_location_matches / aligned_annotation_error_locations, 6
+        )
+        if aligned_annotation_error_locations
+        else 0.0,
+        "annotation_location_matched_trace_count": len(annotation_location_trace_matches),
         "fit": {
             "failure_diagnosis_calibration": bool(annotation_ids),
             "cross_user_transfer": False,

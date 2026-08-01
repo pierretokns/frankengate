@@ -1723,7 +1723,8 @@ can provide, with a staged acquisition order.
 The follow-up [`recent replay/diagnosis dataset-fit audit`](experiments/summaries/recent-replay-dataset-fit-audit-2026-08-05.md)
 audits the pinned local TRAIL and Recovery-Bench checkouts rather than relying
 on README counts. TRAIL is ready for independent failure-taxonomy calibration
-but has no principal/tenant identity or independent task outcome. The acquired
+and its nested span tree resolves 810/812 aligned annotation locations; it has
+no principal/tenant identity or independent task outcome. The acquired
 Recovery-Bench LFS checkout contains 62 initial failures, but no recovery-agent
 intervention results; it is ready as a replay fixture, not evidence of skill
 transfer. Its machine-readable receipt is
