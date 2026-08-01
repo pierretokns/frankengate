@@ -740,6 +740,16 @@ neutral 7/12; the native harness was trace 2/4 versus neutral 3/4 and tied
 no-skill at 2/4. This direction reversal closes the “same harness only” gap:
 the artifact is not robust across implementations and remains unpromoted.
 
+An additional audit corrected a separate Trace2Skill-style compiler smoke: the
+430000 compiler source and replay shared the same broker task IDs, so its
+apparent 4/4 result is contaminated development evidence. The authoritative
+disjoint car-to-broker compiler replay (seed 440000) scored 3/4, tying no-skill
+and length-matched neutral; the formatting placebo scored 4/4. All 16 episodes
+passed independent semantic/security/authority verification. Compilation and
+governed replay remain supported mechanics, but no cross-database skill lift
+has been shown. See
+[`Trace2Skill contamination correction`](experiments/summaries/trace2skill-compiled-native-replay-2026-08-02.md).
+
 The [`Trace Commons full-cohort analysis`](experiments/summaries/trace-commons-full-content-minimized-analysis-2026-08-02.md)
 then attested all 28 public native Claude Code histories byte-for-byte against
 the pinned manifest (17,991 records and 4,264 tool calls) before analysis. The
