@@ -62,6 +62,13 @@ artifact and validator exist. See the Claude
 and Codex
 [`summary`](experiments/summaries/codex-history-friction-public-local-2026-08-02.md).
 
+The companion [`signal association analysis`](experiments/summaries/native-history-signal-association-tracelab-2026-08-02.md)
+finds negative session-level rank correlations between structured-error rate
+and dissatisfaction, correction, retry, and clarification counts. This is a
+useful detector failure mode: global error density mistakes long productive
+exploration for friction. Episode ordering, recovery, abandonment, terminal
+outcome, and adjudicated labels are required.
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
