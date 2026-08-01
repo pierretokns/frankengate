@@ -76,6 +76,15 @@ collision classes. This is evidence that alias/collision mining has a measurable
 lexical starting point, not evidence of semantic alias truth. Human/frontier
 adjudication and same-surface/different-system hard negatives remain open.
 
+The follow-up [`NL2SQL identifier hard-negative benchmark`](experiments/summaries/nl2sql-identifier-hard-negative-2026-08-02.md)
+made those collisions executable. On 492 conservative links, exact identifier
+matching with known database scope reached MRR `0.6867` / Recall@5 `0.9980`,
+while `nomic-embed-text` with scope reached MRR `0.4151` / Recall@5 `0.7236`.
+Unfiltered exact matching had a 14.43% same-surface collision-before-target
+rate; scope filtering reduced it to 0.20%. This is a retrieval baseline, not
+semantic alias truth or agent utility, but it establishes that structured
+identifier/scope lanes must remain ahead of generic dense retrieval.
+
 The [`MATM embedding/model cascade audit`](experiments/summaries/matm-embedding-model-cascade-audit-2026-08-02.md)
 joins two same-revision leave-one-model-out receipts without pooling their
 different targets. Action-only embeddings improved candidate Recall@20 by
