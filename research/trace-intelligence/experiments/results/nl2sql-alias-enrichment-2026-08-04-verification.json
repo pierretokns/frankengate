@@ -1,0 +1,28 @@
+{
+  "aggregate": {
+    "alias_support1": {
+      "cases": 41,
+      "mrr": 0.734885,
+      "recall_at_1": 0.634146,
+      "recall_at_5": 0.829268,
+      "wrong_system_before_target": 0.0
+    },
+    "alias_support2": {
+      "cases": 41,
+      "mrr": 0.727542,
+      "recall_at_1": 0.634146,
+      "recall_at_5": 0.829268,
+      "wrong_system_before_target": 0.0
+    },
+    "lexical": {
+      "cases": 41,
+      "mrr": 0.734885,
+      "recall_at_1": 0.634146,
+      "recall_at_5": 0.829268,
+      "wrong_system_before_target": 0.0
+    }
+  },
+  "ok": true,
+  "receipt_sha256": "325d02ce1c09d3657aa2ddf060440e7d05fb7eaedbaeded582a4ef37a6c70809",
+  "schema_version": "frankengate-nl2sql-alias-enrichment-verification-v1"
+}

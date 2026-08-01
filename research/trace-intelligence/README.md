@@ -79,11 +79,18 @@ adjudication and same-surface/different-system hard negatives remain open.
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
 deterministic pass found 15,391 unique terms, 666 acronym forms, and 191
-reformulation candidates; GLiNER emitted 567 spans but hit only `2/8` fixed
-capability probes and over-produced project/tool labels. This supports a
-review-queue role for zero-shot term extraction, not automatic corporate alias
-or ontology promotion. The next comparison is classical termhood plus blinded
-alias/NIL labels and retrieval impact.
+reformulation candidates; GLiNER emitted 567 spans. An initial context-free
+probe hit `2/8`, while a corrected contextual probe hit `7/8`; output still
+over-produced project/tool labels. This supports a review-queue role for
+zero-shot term extraction, not automatic corporate alias or ontology promotion.
+The next comparison is classical termhood plus blinded alias/NIL labels and
+retrieval impact.
+
+The first search-impact control is the [`train-only alias enrichment replay`](experiments/summaries/nl2sql-alias-enrichment-2026-08-04.md).
+On 41 held-out Defog rows, aliases covered only 2/260 target objects at
+support-one and 17/260 at support-two; MRR was unchanged at support-one and
+fell slightly at support-two. This is a public-proxy coverage null, not a
+rejection of reviewed enterprise vocabulary mining.
 
 The follow-up [`NL2SQL identifier hard-negative benchmark`](experiments/summaries/nl2sql-identifier-hard-negative-2026-08-02.md)
 made those collisions executable. On 492 conservative links, exact identifier
@@ -283,9 +290,10 @@ expansion is measured as the bottleneck.
 The first independent vocabulary run is now complete:
 [`GLiNER/Wisp probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md).
 On 49 non-empty Wisp files, the deterministic baseline surfaced 666 acronym
-forms and 191 reformulation candidates; GLiNER produced 567 typed spans. A
-fixed capability probe hit only 2/8 expected labels, so GLiNER is currently a
-candidate-span generator, not an automatic glossary or ontology writer. The
+forms and 191 reformulation candidates; GLiNER produced 567 typed spans. The
+corrected contextual probe hit 7/8 expected labels (the initial context-free
+probe hit 2/8), so GLiNER is currently a candidate-span generator, not an
+automatic glossary or ontology writer. The
 receipt verifier passed, and raw spans remain outside Git.
 
 The [`FinanceBench embedding-choice benchmark`](experiments/summaries/finance-mteb-retrieval-benchmark-2026-08-02.md)

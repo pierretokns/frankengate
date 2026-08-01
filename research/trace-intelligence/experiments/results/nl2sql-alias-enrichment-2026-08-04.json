@@ -1,0 +1,63 @@
+{
+  "aggregate": {
+    "alias_support1": {
+      "cases": 41,
+      "mrr": 0.734885,
+      "recall_at_1": 0.634146,
+      "recall_at_5": 0.829268,
+      "wrong_system_before_target": 0.0
+    },
+    "alias_support2": {
+      "cases": 41,
+      "mrr": 0.727542,
+      "recall_at_1": 0.634146,
+      "recall_at_5": 0.829268,
+      "wrong_system_before_target": 0.0
+    },
+    "lexical": {
+      "cases": 41,
+      "mrr": 0.734885,
+      "recall_at_1": 0.634146,
+      "recall_at_5": 0.829268,
+      "wrong_system_before_target": 0.0
+    }
+  },
+  "alias_learning": {
+    "ambiguous_surface_count": 506,
+    "support1_unique_links": 2,
+    "support2_unique_links": 79,
+    "target_coverage": {
+      "support1": {
+        "covered_targets": 2,
+        "rate": 0.007692,
+        "total_targets": 260
+      },
+      "support2": {
+        "covered_targets": 17,
+        "rate": 0.065385,
+        "total_targets": 260
+      }
+    }
+  },
+  "claim_boundary": "Public Defog gold-SQL target-object proxy. Alias links are train-only exact surface-to-gold-identifier associations; they are not SME semantic aliases. No enterprise utility, changed-schema replay, or human quality label is claimed.",
+  "dataset": {
+    "evaluated_cases": 41,
+    "raw_content_committed": false,
+    "row_count": 124,
+    "source_files_sha256": {
+      "instruct_advanced_postgres.csv": "566f5267119df0eceb32054037280c2fd5bc8c21b27e9ff6b068d11a47011934",
+      "instruct_basic_postgres.csv": "5a4e6112a5c2554c2963939440af6db41dfcaa3697dc131c380e7f9a1b70d5f7",
+      "questions_gen_postgres.csv": "fee829a042766f3e75d1a453cf6ffd7f6830ae9d68967156caa00c647b5efd0d"
+    },
+    "target_count": 260,
+    "test_rows": 41,
+    "train_rows": 83
+  },
+  "result_sha256": "325d02ce1c09d3657aa2ddf060440e7d05fb7eaedbaeded582a4ef37a6c70809",
+  "schema_version": "frankengate-nl2sql-alias-enrichment-v1",
+  "split": {
+    "rule": "stable row hash, first hexadecimal digit bucket modulo 10 < 3",
+    "seed": 20260804,
+    "source_row_overlap": 0
+  }
+}

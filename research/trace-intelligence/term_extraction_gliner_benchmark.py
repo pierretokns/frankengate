@@ -38,14 +38,14 @@ LABELS = [
 ]
 
 PROBES = [
-    ("Aurora", "internal system"),
-    ("Mantle", "internal system"),
-    ("Project Northstar", "project"),
-    ("Recall@20", "metric"),
-    ("RLS", "acronym"),
-    ("legacy Atlas", "legacy term"),
-    ("PostgreSQL", "database"),
-    ("semantic cache", "tool"),
+    ("Aurora is the internal PostgreSQL service used by the analytics team.", "Aurora", "internal system"),
+    ("Mantle is the internal routing system for regional model endpoints.", "Mantle", "internal system"),
+    ("Project Northstar is the name of the migration program.", "Project Northstar", "project"),
+    ("Recall@20 is the retrieval metric used in this benchmark.", "Recall@20", "metric"),
+    ("RLS means row-level security in the warehouse policy.", "RLS", "acronym"),
+    ("Atlas was the legacy name for the current planning service.", "Atlas", "legacy term"),
+    ("PostgreSQL is the database used for the governed trace store.", "PostgreSQL", "database"),
+    ("The semantic cache plugin is the tool that serves reusable responses.", "semantic cache plugin", "tool"),
 ]
 
 
@@ -195,13 +195,14 @@ def run_gliner(docs: list[dict[str, Any]], model_name: str, raw_output: Path | N
         raw_output.write_text(json.dumps(raw_rows, ensure_ascii=False), encoding="utf-8")
     probe_hits: list[bool] = []
     probe_details: list[dict[str, Any]] = []
-    probe_texts = [text for text, _ in PROBES]
-    probe_expected = [label for _, label in PROBES]
+    probe_texts = [sentence for sentence, _, _ in PROBES]
+    probe_targets = [target for _, target, _ in PROBES]
+    probe_expected = [label for _, _, label in PROBES]
     probe_predictions = model.batch_predict_entities(probe_texts, LABELS, threshold=0.35, batch_size=4)
-    for text, expected, entities in zip(probe_texts, probe_expected, probe_predictions):
-        hit = any(entity.get("label") == expected and text.lower() in str(entity.get("text", "")).lower() for entity in entities)
+    for sentence, target, expected, entities in zip(probe_texts, probe_targets, probe_expected, probe_predictions):
+        hit = any(entity.get("label") == expected and target.lower() in str(entity.get("text", "")).lower() for entity in entities)
         probe_hits.append(hit)
-        probe_details.append({"text_hash": stable_hash(text), "expected_label": expected, "hit": hit})
+        probe_details.append({"sentence_hash": stable_hash(sentence), "target_hash": stable_hash(target), "expected_label": expected, "hit": hit})
     return {
         "model": model_name,
         "entity_count": len(raw_rows),
@@ -230,7 +231,7 @@ def main() -> int:
     if not docs:
         raise SystemExit("no documents found")
     result = {
-        "schema_version": "frankengate-term-extraction-gliner-benchmark-v1",
+        "schema_version": "frankengate-term-extraction-gliner-benchmark-v2",
         "dataset": {
             "dataset_id": "crispwisp/wisp-claude-code-sessions",
             "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",

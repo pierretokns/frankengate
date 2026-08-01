@@ -29,7 +29,7 @@ def contains_forbidden_receipt_fields(value: Any) -> bool:
 def run(receipt_path: Path, raw_path: Path | None, output_path: Path) -> dict[str, Any]:
     receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
     checks = {
-        "schema": receipt.get("schema_version") == "frankengate-term-extraction-gliner-benchmark-v1",
+        "schema": receipt.get("schema_version") == "frankengate-term-extraction-gliner-benchmark-v2",
         "raw_not_committed": receipt.get("claim_boundary", {}).get("raw_text_committed") is False,
         "retrieval_not_overclaimed": receipt.get("claim_boundary", {}).get("retrieval_impact_evaluated") is False,
         "result_hash": receipt.get("result_sha256") == stable_hash({k: v for k, v in receipt.items() if k != "result_sha256"}),

@@ -280,45 +280,53 @@
         {
           "expected_label": "internal system",
           "hit": false,
-          "text_hash": "739c37ec275b25a857b8b17c75591620732a60e374d0c19b2854e1246fe21bad"
+          "sentence_hash": "620daed5d747104883881198aba143197e87262aba04cd95ffbbbe5b04c34200",
+          "target_hash": "739c37ec275b25a857b8b17c75591620732a60e374d0c19b2854e1246fe21bad"
         },
         {
           "expected_label": "internal system",
-          "hit": false,
-          "text_hash": "2771c7429d35e87aaf118a9677bc9131714b8122a39d63719413bf50483f7908"
+          "hit": true,
+          "sentence_hash": "ac2660b5dc20d4fe12a45a149bd8c65eedd8a3a2e0fc559274c79cff7db9340f",
+          "target_hash": "2771c7429d35e87aaf118a9677bc9131714b8122a39d63719413bf50483f7908"
         },
         {
           "expected_label": "project",
-          "hit": false,
-          "text_hash": "0b7f5c685f69ec1d4339b2b393553892bcae0ccaad24f44c22b2f5c0230db56c"
+          "hit": true,
+          "sentence_hash": "c3e86ad8e9923541d14cd170b8e6636792412274d6bfaafe0fcadc5c4f7b9a8a",
+          "target_hash": "0b7f5c685f69ec1d4339b2b393553892bcae0ccaad24f44c22b2f5c0230db56c"
         },
         {
           "expected_label": "metric",
-          "hit": false,
-          "text_hash": "11c1490e59351aa9bfc9f75257eeab905ac7f40b6cac1a07a8dfda0b87ef37c0"
+          "hit": true,
+          "sentence_hash": "815fe460be8cdea2b583d150e588dfbb47a8a5f039302e81f71cfa2c401c161e",
+          "target_hash": "11c1490e59351aa9bfc9f75257eeab905ac7f40b6cac1a07a8dfda0b87ef37c0"
         },
         {
           "expected_label": "acronym",
           "hit": true,
-          "text_hash": "4e68405fdb9cc1607748a6f564e00b2ca51104cad2b9679e5eab2958549a0fd2"
+          "sentence_hash": "764f4d20034e4094277acbd1796b8dbaa6d071a1f8664a12b740b31f18774458",
+          "target_hash": "4e68405fdb9cc1607748a6f564e00b2ca51104cad2b9679e5eab2958549a0fd2"
         },
         {
           "expected_label": "legacy term",
-          "hit": false,
-          "text_hash": "12787848196debff1d8b68ec7f30a9186fb73a095bcf3f34db773b6bd83ab260"
+          "hit": true,
+          "sentence_hash": "a587e06c30ed820f6648a83aa452aaa46aaa5c0a6a39c138f9461e817462ce7f",
+          "target_hash": "333884cc8f67429c49d823492361bf7a8050a34b32d2a8f3c9ae064541a80e6b"
         },
         {
           "expected_label": "database",
           "hit": true,
-          "text_hash": "c24b839d02d3fdb82fde5c3b58c5cf9dda6c84bd368a49128f44547d45340105"
+          "sentence_hash": "d9af5735063d896a52b6f456f09b8f57604eb89c5c79ab866325020ddac44aff",
+          "target_hash": "c24b839d02d3fdb82fde5c3b58c5cf9dda6c84bd368a49128f44547d45340105"
         },
         {
           "expected_label": "tool",
-          "hit": false,
-          "text_hash": "541b82f210ddb5bc77b98385f11c620c95be13e5194fc10246d10a6d8d8ebb07"
+          "hit": true,
+          "sentence_hash": "9effb09437e64c38041f4a23b3436f5252d8082f2de218c2b144a7150153b2ea",
+          "target_hash": "66c16f8b7e470c0757c404dc33b0525f4d23494956286a606c9cd1ff28963938"
         }
       ],
-      "hits": 2,
+      "hits": 7,
       "interpretation": "fixed synthetic capability probe, not enterprise quality"
     },
     "entity_count": 567,
@@ -404,6 +412,6 @@
     ],
     "unique_entity_hash_count": 61
   },
-  "result_sha256": "6c039cc92a5685cf2836a936be5a589f8b24405d1f60389bec89574be364bbfd",
-  "schema_version": "frankengate-term-extraction-gliner-benchmark-v1"
+  "result_sha256": "e7427c3576aed38ff4b649b5ba74780fc39019e47558f966e6ef06a0cfc34670",
+  "schema_version": "frankengate-term-extraction-gliner-benchmark-v2"
 }

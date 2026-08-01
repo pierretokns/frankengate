@@ -25,20 +25,27 @@ GLiNER (`urchade/gliner_base`) produced 567 spans:
 | legacy term | 1 |
 | internal system | 1 |
 
-The fixed eight-case synthetic capability probe hit `2/8` expected labels. This
-is not an enterprise precision estimate; it is evidence that an uncalibrated
-zero-/few-shot span model is not ready to populate a glossary. The output is
-also visibly over-inclusive toward project/tool labels, so thresholding,
-label definitions, consensus with a classical extractor, and a blinded
-enterprise vocabulary set are required.
+An initial context-free eight-case probe hit `2/8`, which was confounded by
+testing isolated strings. The corrected contextual probe hit `7/8` expected
+labels. This is still not an enterprise precision estimate: the output is
+over-inclusive toward project/tool labels, and thresholding, label definitions,
+consensus with a classical extractor, and a blinded enterprise vocabulary set
+are required.
 
 Receipt:
 [`term-extraction-gliner-wisp-2026-08-04.json`](../results/term-extraction-gliner-wisp-2026-08-04.json)
+The current receipt is the contextual v2 run; the original context-free v1
+receipt remains auditable in commit
+[`ad5d4cf72`](https://github.com/pierretokns/frankengate/commit/ad5d4cf72).
+The current receipt's independent verification is
+[`term-extraction-gliner-wisp-2026-08-04-verification.json`](../results/term-extraction-gliner-wisp-2026-08-04-verification.json).
 
 ## Decision
 
 GLiNER is useful as a candidate-span generator, not as an automatic ontology
-or alias writer. The next independent comparison should run TermoUD or
+or alias writer. The corrected probe shows the model can follow contextual
+labels, but does not establish corpus precision. The next independent
+comparison should run TermoUD or
 Termolator on the same documents, then measure:
 
 - candidate boundary and termhood precision on blinded labels;
