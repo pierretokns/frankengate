@@ -140,3 +140,11 @@ The 2025–2026 literature update adds a particularly relevant enterprise
 hard-negative precedent and several full skill-lifecycle systems. See
 `experiments/summaries/skill-hard-negative-prior-art-update-2026-08-02.md` for
 the exact/adjacent split and the revised frozen alias/embedding/replay protocol.
+
+The newer lifecycle comparison is recorded in
+`experiments/summaries/skill-library-prior-art-update-2026-08-02.md`. SkillFlow
+and SkillLearnBench are especially useful controls because they report both
+positive transfer and model/task-dependent failure; SkillFoundry and
+MUSE-Autoskill contribute tested, provenance-carrying, per-skill lifecycle
+ideas. None combines private multi-user traces, corporate alias collisions,
+governed artifact capsules, and changed-system replay.

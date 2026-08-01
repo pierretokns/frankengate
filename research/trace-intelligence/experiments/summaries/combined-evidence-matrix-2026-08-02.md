@@ -124,3 +124,12 @@ three ties (exact McNemar p=1.0). This is the strongest positive directional
 skill-mining result so far, but it is still a four-task, one-seed pilot; the
 candidate is not promotion-authorized. Full receipts and boundaries are in
 `experiments/summaries/trace2skill-compiled-native-replay-2026-08-02.md`.
+
+The broader lifecycle comparison now includes SkillLearnBench, SkillFlow,
+SkillFoundry, MUSE-Autoskill, and AutoSkills. These are closer precedents than
+generic memory systems because they evaluate skill quality, reuse, repair, and
+task outcomes. They also report selective transfer, drift, and regression;
+therefore they support our neutral-control and negative-transfer gates rather
+than justifying automatic promotion. The exact/adjacent comparison and
+publication gap are recorded in
+`experiments/summaries/skill-library-prior-art-update-2026-08-02.md`.
