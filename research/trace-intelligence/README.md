@@ -1696,6 +1696,11 @@ SkillLearnBench, SkillRL, Trace2Skill, and AgentReplay to the existing
 Frankengate experiments without treating adjacent benchmark gains as
 enterprise evidence.
 
+The [`enterprise replay cohort readiness audit`](experiments/summaries/enterprise-replay-cohort-readiness-nl2sql-2026-08-05.md)
+fails closed on the 42-case public Defog cohort: it lacks stable principals,
+dual labels, changed environments, and independent outcomes. This is why the
+public retrieval results cannot be promoted to causal enterprise claims.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,
