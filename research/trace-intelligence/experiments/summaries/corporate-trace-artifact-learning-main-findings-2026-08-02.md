@@ -134,6 +134,11 @@ benchmarks:
   `.875`, while reviewed and composite arms stayed exact (`1.000` q1 and q3).
   This is robustness evidence for a controlled rename, not enterprise causal
   skill evidence; no user identity or independent outcome is present.
+- A repeat of the same rename exposed a composition hard edge: the human arm
+  again stayed exact, but the composite missed one q1 ID while null returned
+  all IDs with one false positive. Generated procedures therefore add
+  capability but can also dilute robustness; composition needs repeated seeds,
+  mutation families, and a negative-transfer gate.
 - A new stratified sample from the 1,013-session, multi-harness
   `zhiyaowang/dataclaw-zhiyaowang` corpus preserved tool outputs, branches,
   explicit errors, and project/model metadata. Hash-only recurrence found 9
