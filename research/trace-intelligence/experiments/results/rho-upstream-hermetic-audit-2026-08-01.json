@@ -1,0 +1,53 @@
+{
+  "claim_boundary": {
+    "reason": "Hermetic code paths were exercised without LLM or benchmark calls; full-suite failures are retained as typed upstream/environment compatibility findings.",
+    "rho_efficacy_reproduced": false,
+    "upstream_mechanics_executed": true
+  },
+  "full_hermetic": {
+    "failure_or_error_nodes": [
+      "tests/hermetic/test_azure_auth.py::test_default_base_url_targets_foundry_openai_v1",
+      "tests/hermetic/test_codex_agent_no_subprocess.py::test_codex_agent_with_true_binary",
+      "tests/hermetic/test_gaia2_dataset.py::test_gaia2_task_materialize_writes_prompt_and_runtime_dir",
+      "tests/hermetic/test_gaia2_dataset.py::test_gaia2_task_query_is_scenario_text_without_runtime_protocol",
+      "tests/hermetic/test_gaia2_dataset.py::test_loads_local_gaia2_jsonl_and_uses_empty_harness",
+      "tests/hermetic/test_gaia2_sidecar.py",
+      "tests/hermetic/test_webui.py::test_create_app_serves_api_without_static_bundle"
+    ],
+    "output_bytes": 27297,
+    "output_sha256": "e93c6b105daae78fdf4548f9fc11eca6ee5c722a386749504872ae963bb4940c",
+    "passed_only_lines": [
+      "294"
+    ],
+    "returncode": 1,
+    "summary_lines": [
+      [
+        "6",
+        "294",
+        "1"
+      ]
+    ]
+  },
+  "protocol": {
+    "docker_or_external_benchmarks": false,
+    "full_command": "uv run --project <root> pytest tests/hermetic -q -n 1",
+    "llm_calls": false,
+    "targeted_command": "uv run --project <root> pytest -q -n 1 tests/hermetic/test_dpp_core.py tests/hermetic/test_reasoningbank_store.py tests/hermetic/test_reasoningbank_retrieval.py tests/hermetic/test_loop_no_op_optimize_is_rejected.py tests/hermetic/test_loop_rejects_harmful_optimize.py tests/hermetic/test_evaluate_primitive.py tests/hermetic/test_optimize_primitive.py"
+  },
+  "schema_version": "frankengate-rho-upstream-hermetic-audit-v1",
+  "targeted_core_mechanics": {
+    "failure_or_error_nodes": [],
+    "output_bytes": 143,
+    "output_sha256": "e5d7bf292e4c6738f73cc3b542386bf4e5d3e50ef9d5f3176e85ba6242fe831d",
+    "passed_only_lines": [
+      "29"
+    ],
+    "returncode": 0,
+    "summary_lines": []
+  },
+  "upstream": {
+    "pyproject_sha256": "ad23405b878f7ed1de4aff45d318c98b5721d70c5e419f2b86a419f7a1e1fdd2",
+    "repository": "wbopan/retro-harness",
+    "source_commit": "e5f2d1a8a06ab3523ab42e0042d2fa13d9acb701"
+  }
+}

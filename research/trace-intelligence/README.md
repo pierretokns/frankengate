@@ -1106,6 +1106,14 @@ make e2-postgres-joint
 
 ## Latest frontier intervention and retrieval checkpoints
 
+The pinned upstream [`RHO hermetic audit`](experiments/summaries/rho-upstream-hermetic-audit-2026-08-01.md)
+installed `wbopan/retro-harness` in isolation. Its targeted DPP, ReasoningBank,
+primitive-evaluation, and harmful/no-op promotion mechanics passed `29/29`.
+The full hermetic suite was `294 passed, 6 failed, 1 collection error, 1
+skipped`; failures are typed environment/upstream compatibility issues, not
+silently converted passes. This validates RHO mechanics only, not its reported
+held-out benchmark lift or a Frankengate integration.
+
 The faithful [`AgentRx static-stage audit`](experiments/summaries/agentrx-independent-static-audit-2026-07-31.md)
 ran the pinned upstream IR converter and `AllVerifier` over seven bundled Tau
 trajectories. All seven IRs validated, but the bundled static artifact covered
