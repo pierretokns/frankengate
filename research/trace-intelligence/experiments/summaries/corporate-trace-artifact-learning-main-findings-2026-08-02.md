@@ -110,6 +110,14 @@ benchmarks:
   The human arm used `1.76x` input context. This strengthens the directional
   retrieval-skill signal, but still lacks q2 labels, changed-system replay,
   user outcomes, and the official Docker execution path.
+- A new stratified sample from the 1,013-session, multi-harness
+  `zhiyaowang/dataclaw-zhiyaowang` corpus preserved tool outputs, branches,
+  explicit errors, and project/model metadata. Hash-only recurrence found 13
+  successful multi-session call-input candidates, 10 spanning multiple
+  project labels, and four same-shape error→success sessions. These are the
+  first richer public-history candidate signals in this program, but they are
+  still review queues: the corpus supplies no independent task outcomes,
+  organizational identity, or changed-system validation.
 
 Together these results say that validation, replay isolation, and exact outcome
 measurement are working. They do not yet show that a mined or published skill
