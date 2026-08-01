@@ -116,6 +116,33 @@ This aligns with our empirical results:
 - hard negatives and human labels are the missing ingredient, not simply a
   larger embedding model.
 
+### 2026 domain-representation refresh
+
+Recent industrial-log and schema-retrieval work makes the supervision
+requirement even clearer:
+
+| Work | What it contributes | Transfer boundary |
+|---|---|---|
+| [Semiconductor equipment-log retrieval](https://papers.ssrn.com/sol3/papers.cfm?abstractid=5800425) | Constructs query/positive/negative triplets from event logs plus engineer comments, fine-tunes a dual encoder contrastively, and evaluates with field-engineer judgments. | The expert comments and assessment are the signal; raw logs alone are not shown to recover the domain ontology. |
+| [Graph-embedding contrastive learning for process-industry text](https://aclanthology.org/2025.emnlp-industry.103/) | Derives triplets from sparse process-industry graphs and reports gains over a larger general encoder on a proprietary benchmark. | Graph structure and domain labels are supplied; this does not establish that a generic embedding can infer enterprise aliases from unannotated traces. |
+| [Embedding-Aware Feature Discovery](https://arxiv.org/abs/2603.15713) | Combines latent representations with interpretable event-sequence features and reports gains over embedding-only baselines. | Supports hybrid identifier/event features, but its anomaly/sequence targets differ from semantic alias truth and artifact utility. |
+| [RASL: Retrieval-Augmented Schema Linking](https://arxiv.org/abs/2507.23104) | Treats massive enterprise schema linking as a retrieval problem rather than asking a model to ingest the entire catalog. | Schema linking still needs scope, temporal lineage, and independent query/result validation in Frankengate. |
+
+The convergent pattern is not “train a bigger embedding model on logs.” It is:
+
+1. derive candidate positives from repeated validated artifacts, lineage, and
+   explicit user/SME links;
+2. generate hard negatives from high-similarity wrong-scope, same-surface,
+   stale-version, and tool-contract-conflict objects;
+3. add structured fields and graph/lineage features beside the text vector;
+4. hold out users, systems, projects, and time; and
+5. promote only when retrieval lift also improves changed-system artifact
+   outcomes without false semantic acceptance.
+
+This gives a concrete explanation for our current negative adapter result:
+the adapter was asked to learn corporate semantics from proxy trajectory labels
+without the expert/lineage supervision that these industrial systems use.
+
 ## Revised Frankengate experiment
 
 The next embedding/alias study should be a four-stage, frozen protocol:

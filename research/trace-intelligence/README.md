@@ -1505,6 +1505,10 @@ The representation comparison is now preregistered in
 [`skill-representation-and-replay-2026-08-01.md`](experiments/protocols/skill-representation-and-replay-2026-08-01.md):
 no-skill, length-matched prose, retrieval memory, executable procedure, and
 executable-plus-evidence arms on changed systems.
+The domain-embedding refresh records convergent evidence from semiconductor
+logs, process-industry graph contrastive learning, interpretable event
+features, and retrieval-augmented schema linking:
+[`skill-hard-negative-prior-art-update-2026-08-02.md`](experiments/summaries/skill-hard-negative-prior-art-update-2026-08-02.md).
 
 ## Claim boundary
 

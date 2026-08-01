@@ -120,6 +120,10 @@ claim boundary, and independent verifier where applicable.
 3. **Hard-negative weighting is not enough.** The hard-negative adapter lost to
    deterministic structured scoring and increased collision errors. Better
    labels and representation may matter more than a larger optimizer.
+   Recent industrial-log and process-industry studies similarly construct
+   contrastive examples from expert comments, graph/lineage structure, or
+   interpretable event features; they do not show raw logs alone recovering
+   enterprise semantics.
 4. **Artifacts must carry validation.** A reusable SQL/tool object needs schema
    and semantic IDs, parameter contracts, authority/epoch, result shape,
    provenance, expiry, migration mappings, replay outcomes, and rollback.
