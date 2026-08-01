@@ -85,6 +85,15 @@ neighbors improved the top-10 success rate by `+0.067` but had an AUC delta of
 claim. This supports embeddings as candidate generation and outcome/model
 scoring as review prioritization, not autonomous skill release.
 
+The first [`fold-local domain embedding adapter`](experiments/summaries/matm-domain-embedding-adapter-2026-08-02.md)
+was then trained only on non-held-out MATM models using repeated-work positives
+and high-similarity different-work negatives. Recall@20 changed from `0.5301`
+to `0.5331` (bootstrap CI crosses zero), while MRR changed from `0.3315` to
+`0.3300` (CI crosses zero). This is a neutral adapter result, not a rejection
+of corporate fine-tuning: the silver labels and simple metric learner are not
+enterprise alias truth. It does establish that custom adaptation must earn its
+promotion on adjudicated hard negatives and downstream artifact utility.
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
