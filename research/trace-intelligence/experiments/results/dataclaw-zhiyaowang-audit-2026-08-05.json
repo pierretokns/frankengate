@@ -1,0 +1,91 @@
+{
+  "aggregates": {
+    "mean_content_parts": 0.031,
+    "mean_distinct_call_shapes": 3.719,
+    "mean_error_tools": 2.594,
+    "mean_messages": 170.469,
+    "mean_output_texts": 81.156,
+    "mean_raw_outputs": 81.219,
+    "mean_repeated_call_shapes": 120.812,
+    "mean_tool_uses": 124.531,
+    "mean_user_text_messages": 27.281
+  },
+  "claim_boundary": {
+    "complete_history_structure_verified_on_sample": true,
+    "cross_user_identity_verified": false,
+    "reason": "The corpus supplies richer multi-harness messages and tool outputs than the earlier flattened export, enabling artifact/friction mining pilots; it still has no independent task-success labels or organizational identity, and this is a stratified sample rather than a full-corpus causal study.",
+    "skill_transfer_verified": false,
+    "task_outcome_verified": false
+  },
+  "coverage": {
+    "distinct_model_digest_count": 14,
+    "distinct_project_digest_count": 15,
+    "distinct_source_digest_count": 4,
+    "role_counts": {
+      "assistant": 4582,
+      "user": 873
+    },
+    "sessions_with_branch": 17,
+    "sessions_with_explicit_error": 5,
+    "sessions_with_raw_tool_output": 7,
+    "sessions_with_repeated_call_shapes": 26,
+    "sessions_with_tool_output_text": 11,
+    "tool_family_counts": {
+      "delegation": 193,
+      "external_retrieval": 61,
+      "file_mutation": 405,
+      "other": 87,
+      "read_search": 812,
+      "shell": 2427
+    },
+    "tool_status_counts": {
+      "completed": 208,
+      "error": 76,
+      "success": 3456
+    }
+  },
+  "schema": "frankengate-dataclaw-zhiyaowang-audit-v1",
+  "source": {
+    "dataset": "zhiyaowang/dataclaw-zhiyaowang",
+    "license": "mit",
+    "raw_content_committed": false,
+    "revision": "f5157333cbc22489661122a9bc5347b137144900",
+    "rows_sampled": 32,
+    "rows_total": 1013,
+    "sample_offsets": [
+      0,
+      33,
+      65,
+      98,
+      131,
+      163,
+      196,
+      229,
+      261,
+      294,
+      326,
+      359,
+      392,
+      424,
+      457,
+      490,
+      522,
+      555,
+      588,
+      620,
+      653,
+      686,
+      718,
+      751,
+      783,
+      816,
+      849,
+      881,
+      914,
+      947,
+      979,
+      1012
+    ],
+    "sampling_errors": {}
+  }
+}

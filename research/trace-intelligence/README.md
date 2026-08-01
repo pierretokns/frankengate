@@ -130,6 +130,15 @@ found 100 recurring non-trivial tool-call candidates, 63 spanning multiple
 project labels. All remain review-only; repetition and friction proximity are
 not correctness, safety, or skill evidence.
 
+The [`DataClaw multi-harness corpus audit`](experiments/summaries/dataclaw-zhiyaowang-audit-2026-08-05.md)
+adds a stronger public-history stratum: a stratified sample of the pinned
+`zhiyaowang/dataclaw-zhiyaowang` revision covers 32 of 1,013 sessions across
+multiple Claude/Codex/Cursor/Gemini/OpenCode sources, with tool outputs,
+explicit errors, branches, and repeated call shapes. It is suitable for
+content-bearing artifact/friction-mining pilots, but has no independent task
+outcomes or organizational identities, so it cannot establish cross-user
+enterprise transfer.
+
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
 deterministic pass found 15,391 unique terms, 666 acronym forms, and 191

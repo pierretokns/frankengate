@@ -60,6 +60,10 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/dataclaw-zhiyaowang-audit-2026-08-05.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/results/skillopt-alfworld-intervention-readiness-2026-08-02.json"
         },
         {
@@ -261,6 +265,10 @@
         {
           "exists": true,
           "path": "experiments/summaries/skilllearnbench-frontier-family-2026-08-05.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/dataclaw-zhiyaowang-audit-2026-08-05.md"
         }
       ],
       "id": "public_trace_and_concept_audit",
@@ -435,7 +443,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "7acab124fd5f0c6650778e497cf02e35b27c6127"
+          "head": "8c19a6ba44fb7c55eb8aeb1c9ba5d9012f1511a8"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"
