@@ -1,0 +1,24 @@
+{
+  "candidate_label_counts": {
+    "exact_alias": 22,
+    "wrong_system": 40
+  },
+  "claim_boundary": "Single frontier-model adjudication of a small, generic public collision sample; not independent human truth, semantic alias quality, or changed-agent utility. Use only to calibrate the next stratified SME and held-out replay gate.",
+  "mean_confidence": 0.989545,
+  "model": "gpt-5.6-luna",
+  "other_scope_wrong_system_rate": 1.0,
+  "receipt_sha256": "dbd419b9009b61b81c6083df1c31af648bce07e49eae16b355c7ead530350c7b",
+  "schema_version": "frankengate-nl2sql-alias-adjudication-receipt-v1",
+  "scope_candidate_correct_rate": 1.0,
+  "source": {
+    "adjudication_sha256": "9f37ec7be69b6a6bc89fa2ba717358958b35be93ce038eaedc29e8e92c58e419",
+    "cases": 22,
+    "cases_sha256": "c8e93024472dccb0e12cbc9c09cb26f71bbcc262eceeed65ea9701d3604a3c3c",
+    "raw_content_committed": false
+  },
+  "surface_label_counts": {
+    "exact_alias": 18,
+    "semantic_alias": 4
+  },
+  "unknown_or_unclear_cases": 0
+}

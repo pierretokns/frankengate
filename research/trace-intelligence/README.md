@@ -85,6 +85,13 @@ rate; scope filtering reduced it to 0.20%. This is a retrieval baseline, not
 semantic alias truth or agent utility, but it establishes that structured
 identifier/scope lanes must remain ahead of generic dense retrieval.
 
+A frontier calibration pass ([`NL2SQL collision-sample adjudication`](experiments/summaries/nl2sql-alias-frontier-adjudication-2026-08-02.md))
+then used `gpt-5.6-luna` on 22 public collision cases: 22/22 in-scope
+candidates were accepted as exact/semantic aliases and 40/40 cross-scope
+candidates were labeled wrong-system. This calibrates the hard-negative
+construction only; it is not independent human truth, and its generic sample
+contained no `nil`/`unclear` cases.
+
 The [`MATM embedding/model cascade audit`](experiments/summaries/matm-embedding-model-cascade-audit-2026-08-02.md)
 joins two same-revision leave-one-model-out receipts without pooling their
 different targets. Action-only embeddings improved candidate Recall@20 by
