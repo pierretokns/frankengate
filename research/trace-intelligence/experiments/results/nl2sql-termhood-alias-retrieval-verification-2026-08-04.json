@@ -1,0 +1,13 @@
+{
+  "all_passed": true,
+  "checks": {
+    "both_arms": true,
+    "cases_positive": true,
+    "claim_boundary": true,
+    "hash": true,
+    "metrics_bounded": true,
+    "schema": true
+  },
+  "receipt_sha256": "6f7e608048308122d866e8a2e8a42f8952110ea920fff850ef35cabb085988ce",
+  "schema_version": "frankengate-nl2sql-termhood-alias-verification-v1"
+}

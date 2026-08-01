@@ -98,6 +98,11 @@ tests schema transfer rather than Wisp mechanics: terms are mined from three
 databases and evaluated against gold-SQL targets in the fourth, with a direct
 surface baseline and an explicit non-alias claim boundary.
 
+The [`train-only termhood alias retrieval`](experiments/summaries/nl2sql-termhood-alias-retrieval-2026-08-04.md)
+then tests composition: termhood-selected associations are added as a
+search-only field and compared with lexical retrieval on held-out questions
+within each database.
+
 The [`DataClaw cross-user Luna adjudication pilot`](experiments/summaries/dataclaw-cross-user-luna-adjudication-2026-08-04.md)
 returned valid silver labels for 16/16 calls with 7/8 repeat agreement. It is
 calibration evidence only: shared vocabulary and tools still produced mostly
