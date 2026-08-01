@@ -1739,6 +1739,9 @@ baselines, and complete 20-task skill-artifact coverage across 25 method/model
 directories. It is suitable for an independent skill-learning baseline, but
 does not supply enterprise principals, corporate aliases, temporal authority,
 changed-system outcomes, or cross-user transfer labels.
+The six-arm same-task Sonnet comparison is frozen in
+[`skilllearnbench-method-matrix-2026-08-05.json`](experiments/manifests/skilllearnbench-method-matrix-2026-08-05.json);
+it is a preflight manifest, not an execution result.
 
 The follow-up [`recent replay/diagnosis dataset-fit audit`](experiments/summaries/recent-replay-dataset-fit-audit-2026-08-05.md)
 audits the pinned local TRAIL and Recovery-Bench checkouts rather than relying

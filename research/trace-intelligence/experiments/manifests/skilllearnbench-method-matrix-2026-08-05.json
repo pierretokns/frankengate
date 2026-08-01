@@ -1,0 +1,93 @@
+{
+  "claim_boundary": {
+    "enterprise_transfer_proven": false,
+    "matrix_ready": true,
+    "outcome_measured": false,
+    "reason": "This freezes a same-task method comparison; it does not execute agents or establish skill utility."
+  },
+  "design": {
+    "method_count": 6,
+    "methods": [
+      "none",
+      "human_authored",
+      "b1-one-shot-claude-sonnet-4-6",
+      "b2-self-feedback-claude-sonnet-4-6",
+      "b3-teacher-feedback-claude-sonnet-4-6",
+      "b4-skill-creator-claude-sonnet-4-6"
+    ],
+    "same_solving_model": true,
+    "same_task_set_across_methods": true,
+    "task_count": 20,
+    "task_disjoint_confirmation_required": true,
+    "task_set_sha256": "3f6bfac9a730a191c0643797d5ffb614de60792ae6023685326de3196bf23094"
+  },
+  "execution_requirements": {
+    "preflight_only": true,
+    "requires_anthropic_api": true,
+    "requires_docker": true,
+    "requires_openai_judge_api_for_metrics": true
+  },
+  "generated_at": "2026-08-01T22:04:07.519422+00:00",
+  "methods": [
+    {
+      "artifact_task_count": 0,
+      "artifact_tree_sha256": null,
+      "method": "none",
+      "null_baseline": true,
+      "task_count": 20,
+      "task_set_sha256": "3f6bfac9a730a191c0643797d5ffb614de60792ae6023685326de3196bf23094"
+    },
+    {
+      "artifact_task_count": 20,
+      "artifact_tree_sha256": "4722dda9f9f6e2e5e2d7669ef1987f4afc13f5cf2492fa8db5f4b3f78ce3c407",
+      "method": "human_authored",
+      "null_baseline": false,
+      "task_count": 20,
+      "task_set_sha256": "3f6bfac9a730a191c0643797d5ffb614de60792ae6023685326de3196bf23094"
+    },
+    {
+      "artifact_task_count": 20,
+      "artifact_tree_sha256": "236af8aaf63affd297f4bf0d3d520bab60434abb3e688e7e1560b5a3b1726a4f",
+      "method": "b1-one-shot-claude-sonnet-4-6",
+      "null_baseline": false,
+      "task_count": 20,
+      "task_set_sha256": "3f6bfac9a730a191c0643797d5ffb614de60792ae6023685326de3196bf23094"
+    },
+    {
+      "artifact_task_count": 20,
+      "artifact_tree_sha256": "e77b578d2cef62582bf470b22428397b90f1e7703334c973931e594dd2d1c8e5",
+      "method": "b2-self-feedback-claude-sonnet-4-6",
+      "null_baseline": false,
+      "task_count": 20,
+      "task_set_sha256": "3f6bfac9a730a191c0643797d5ffb614de60792ae6023685326de3196bf23094"
+    },
+    {
+      "artifact_task_count": 20,
+      "artifact_tree_sha256": "9dff8144779bd990acc29ca9dccdaac54bfe2137b6801cdbdccecd488d7b34ec",
+      "method": "b3-teacher-feedback-claude-sonnet-4-6",
+      "null_baseline": false,
+      "task_count": 20,
+      "task_set_sha256": "3f6bfac9a730a191c0643797d5ffb614de60792ae6023685326de3196bf23094"
+    },
+    {
+      "artifact_task_count": 20,
+      "artifact_tree_sha256": "61ebdb35a30aae0d8c829119119aacf4e7c67290994ab807c7eb299dd5e4695e",
+      "method": "b4-skill-creator-claude-sonnet-4-6",
+      "null_baseline": false,
+      "task_count": 20,
+      "task_set_sha256": "3f6bfac9a730a191c0643797d5ffb614de60792ae6023685326de3196bf23094"
+    }
+  ],
+  "missing_task_directories": {
+    "b1-one-shot-claude-sonnet-4-6": [],
+    "b2-self-feedback-claude-sonnet-4-6": [],
+    "b3-teacher-feedback-claude-sonnet-4-6": [],
+    "b4-skill-creator-claude-sonnet-4-6": [],
+    "human_authored": []
+  },
+  "schema": "frankengate.skilllearnbench_method_matrix.v1",
+  "source": {
+    "raw_content_committed": false,
+    "repository": "cxcscmu/SkillLearnBench"
+  }
+}
