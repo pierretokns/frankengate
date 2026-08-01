@@ -90,6 +90,13 @@ separates current-tool mechanics from efficacy evidence for AgentRx, Signals,
 AgentEvals, SkillGen, RHO/ReasoningBank, memory systems, and the vocabulary
 tools.
 
+The licensed [`DataClaw real-user history audit`](experiments/summaries/dataclaw-peteromallet-history-audit-2026-08-04.md)
+is a better-fit longitudinal corpus for friction and candidate-artifact
+research: 549 sessions, 14 projects, 1,498 reprompt/correction candidates,
+and 590 recurring tool-call forms spanning multiple project labels. It still
+omits tool outputs, outcomes, and a second principal, so it cannot validate
+known-good artifacts or cross-user transfer.
+
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
 deterministic pass found 15,391 unique terms, 666 acronym forms, and 191
