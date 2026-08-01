@@ -167,6 +167,9 @@ The [enterprise semantic-label and changed-system replay protocol](../experiment
 requires two independent SME labels, frozen candidate generation, user/
 project/system/time holdouts, true NIL/unclear cases, migration/tool drift,
 independent outcome oracles, and release-blocking false semantic acceptance.
+The complementary [skill-representation and replay protocol](../experiments/protocols/skill-representation-and-replay-2026-08-01.md)
+isolates executable control-flow from prose and retrieval memory with
+length-matched controls before any positive skill claim is made.
 
 ## Publication and collaboration
 

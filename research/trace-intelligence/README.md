@@ -1469,6 +1469,14 @@ is the largest current future-task replay: 20 family-disjoint tasks produced
 ratio of `.989`. It is bounded no-lift evidence, not a disproof of skill-learning
 research or a universal enterprise null.
 
+The [`validated-artifact consumption pilot`](experiments/summaries/artifact-reuse-visible-task11-2026-08-03.md)
+closes a narrower missing mechanics gate. On one paired Defog paraphrase,
+no-skill, placebo, and a previously validated SQL artifact all reached `1/1`;
+the artifact arm executed and submitted through governed PostgreSQL and passed
+independent semantic recomputation with zero authority/verifier errors. Because
+the artifact was paired with the paraphrase, this is an upper-bound consumption
+test, not evidence of retrieval or causal reuse benefit.
+
 The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
 tested whether a frontier model and a local model could be treated as
 interchangeable trace-insight labelers. On six blinded candidates under the
@@ -1493,6 +1501,10 @@ provenance/identity packet for semantic and governance checks. They do not
 close the enterprise changed-system or causal-utility gates. The exact/adjacent
 classification is recorded in
 [`skill-library-prior-art-update-2026-08-02.md`](experiments/summaries/skill-library-prior-art-update-2026-08-02.md).
+The representation comparison is now preregistered in
+[`skill-representation-and-replay-2026-08-01.md`](experiments/protocols/skill-representation-and-replay-2026-08-01.md):
+no-skill, length-matched prose, retrieval memory, executable procedure, and
+executable-plus-evidence arms on changed systems.
 
 ## Claim boundary
 
