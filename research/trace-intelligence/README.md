@@ -81,6 +81,10 @@ now makes the boundary explicit: NL2SQL corpora support schema/identifier and
 SQL-execution claims, while Wisp and agent-trajectory corpora support trace
 structure and replay mechanics. Neither alone supports enterprise skill gaps,
 cross-user collaboration, or causal skill improvement.
+The first [`dataset-fit audit`](experiments/summaries/dataset-fit-audit-2026-08-04.md)
+checked all 44 manifests: only two are direct-fit for NL2SQL schema retrieval;
+none are direct-fit for cross-user similarity, skill improvement, or reviewed
+enterprise term/alias quality.
 
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A

@@ -1,0 +1,6481 @@
+{
+  "aggregate": {
+    "cross_user_similarity": {
+      "direct": 0,
+      "mechanics_only": 44,
+      "proxy_only": 0
+    },
+    "friction_recovery": {
+      "direct": 0,
+      "mechanics_only": 44,
+      "proxy_only": 0
+    },
+    "nl2sql_schema_retrieval": {
+      "direct": 2,
+      "mechanics_only": 41,
+      "proxy_only": 1
+    },
+    "skill_improvement": {
+      "direct": 0,
+      "mechanics_only": 44,
+      "proxy_only": 0
+    },
+    "term_alias_quality": {
+      "direct": 0,
+      "mechanics_only": 44,
+      "proxy_only": 0
+    },
+    "trace_structure": {
+      "direct": 3,
+      "mechanics_only": 27,
+      "proxy_only": 14
+    }
+  },
+  "claim_profiles": {
+    "cross_user_similarity": [
+      "holdout",
+      "outcome",
+      "session_or_trajectory",
+      "task",
+      "user_identity"
+    ],
+    "friction_recovery": [
+      "corrections",
+      "outcome",
+      "session_or_trajectory",
+      "tool_calls"
+    ],
+    "nl2sql_schema_retrieval": [
+      "database_fixture",
+      "gold_sql",
+      "task"
+    ],
+    "skill_improvement": [
+      "environment_state",
+      "holdout",
+      "intervention",
+      "outcome",
+      "session_or_trajectory",
+      "task"
+    ],
+    "term_alias_quality": [
+      "alias_labels",
+      "scope",
+      "term_labels",
+      "text_or_messages"
+    ],
+    "trace_structure": [
+      "messages_or_spans",
+      "session_or_trajectory",
+      "tool_calls"
+    ]
+  },
+  "manifest_count": 44,
+  "result_sha256": "594c307b482c324448a3cfbb80d23c022f29f7a41cac9abfd4dc5a050a6cba05",
+  "rows": [
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "pagarsky/agent-trace",
+      "dataset_revision": "4b05b2f00eea267a5bb4d841c228059d1bf9ac0c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/agenttrace-nl2bash.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "pagarsky/agent-trace",
+      "dataset_revision": "4b05b2f00eea267a5bb4d841c228059d1bf9ac0c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/agenttrace-nl2bash.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "pagarsky/agent-trace",
+      "dataset_revision": "4b05b2f00eea267a5bb4d841c228059d1bf9ac0c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/agenttrace-nl2bash.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "pagarsky/agent-trace",
+      "dataset_revision": "4b05b2f00eea267a5bb4d841c228059d1bf9ac0c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/agenttrace-nl2bash.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "pagarsky/agent-trace",
+      "dataset_revision": "4b05b2f00eea267a5bb4d841c228059d1bf9ac0c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/agenttrace-nl2bash.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "pagarsky/agent-trace",
+      "dataset_revision": "4b05b2f00eea267a5bb4d841c228059d1bf9ac0c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/agenttrace-nl2bash.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "AlinCiocan/fable-5-claude-code-traces",
+      "dataset_revision": "e33ebbca230ae258b2c28aeee9fe3429e7fbeab6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/alin-fable5-claude-code-traces.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "AlinCiocan/fable-5-claude-code-traces",
+      "dataset_revision": "e33ebbca230ae258b2c28aeee9fe3429e7fbeab6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/alin-fable5-claude-code-traces.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "AlinCiocan/fable-5-claude-code-traces",
+      "dataset_revision": "e33ebbca230ae258b2c28aeee9fe3429e7fbeab6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/alin-fable5-claude-code-traces.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "AlinCiocan/fable-5-claude-code-traces",
+      "dataset_revision": "e33ebbca230ae258b2c28aeee9fe3429e7fbeab6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/alin-fable5-claude-code-traces.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "AlinCiocan/fable-5-claude-code-traces",
+      "dataset_revision": "e33ebbca230ae258b2c28aeee9fe3429e7fbeab6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/alin-fable5-claude-code-traces.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "AlinCiocan/fable-5-claude-code-traces",
+      "dataset_revision": "e33ebbca230ae258b2c28aeee9fe3429e7fbeab6",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/alin-fable5-claude-code-traces.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "hjerpe/analyst-buddy-traces",
+      "dataset_revision": "d6dee846a92e16381ebd9dafa78bdfcb7dd4bc1d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/analyst-buddy-text-to-sql-traces.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "statistical skill benefit",
+        "cross-schema transfer",
+        "enterprise representativeness",
+        "causal attribution to fine-tuning"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "hjerpe/analyst-buddy-traces",
+      "dataset_revision": "d6dee846a92e16381ebd9dafa78bdfcb7dd4bc1d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/analyst-buddy-text-to-sql-traces.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "statistical skill benefit",
+        "cross-schema transfer",
+        "enterprise representativeness",
+        "causal attribution to fine-tuning"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "hjerpe/analyst-buddy-traces",
+      "dataset_revision": "d6dee846a92e16381ebd9dafa78bdfcb7dd4bc1d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/analyst-buddy-text-to-sql-traces.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "statistical skill benefit",
+        "cross-schema transfer",
+        "enterprise representativeness",
+        "causal attribution to fine-tuning"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "hjerpe/analyst-buddy-traces",
+      "dataset_revision": "d6dee846a92e16381ebd9dafa78bdfcb7dd4bc1d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/analyst-buddy-text-to-sql-traces.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "statistical skill benefit",
+        "cross-schema transfer",
+        "enterprise representativeness",
+        "causal attribution to fine-tuning"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "hjerpe/analyst-buddy-traces",
+      "dataset_revision": "d6dee846a92e16381ebd9dafa78bdfcb7dd4bc1d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/analyst-buddy-text-to-sql-traces.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "statistical skill benefit",
+        "cross-schema transfer",
+        "enterprise representativeness",
+        "causal attribution to fine-tuning"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "hjerpe/analyst-buddy-traces",
+      "dataset_revision": "d6dee846a92e16381ebd9dafa78bdfcb7dd4bc1d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/analyst-buddy-text-to-sql-traces.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "statistical skill benefit",
+        "cross-schema transfer",
+        "enterprise representativeness",
+        "causal attribution to fine-tuning"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "github/biaslab/RAL2026-CPG-ActInf/.claude/memory",
+      "dataset_revision": "cfea3ecc32869e1cada14c875a8d72468b5338c6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/biaslab-research-memory.json",
+      "missing": [
+        "holdout",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "github/biaslab/RAL2026-CPG-ActInf/.claude/memory",
+      "dataset_revision": "cfea3ecc32869e1cada14c875a8d72468b5338c6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/biaslab-research-memory.json",
+      "missing": [
+        "corrections",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "github/biaslab/RAL2026-CPG-ActInf/.claude/memory",
+      "dataset_revision": "cfea3ecc32869e1cada14c875a8d72468b5338c6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/biaslab-research-memory.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "github/biaslab/RAL2026-CPG-ActInf/.claude/memory",
+      "dataset_revision": "cfea3ecc32869e1cada14c875a8d72468b5338c6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/biaslab-research-memory.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "github/biaslab/RAL2026-CPG-ActInf/.claude/memory",
+      "dataset_revision": "cfea3ecc32869e1cada14c875a8d72468b5338c6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/biaslab-research-memory.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "github/biaslab/RAL2026-CPG-ActInf/.claude/memory",
+      "dataset_revision": "cfea3ecc32869e1cada14c875a8d72468b5338c6",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/biaslab-research-memory.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "birdsql/bird-interact-full",
+      "dataset_revision": "5d78b0722433c3821e1ebda5d8c39d24070049d7",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/bird-interact-enterprise-sql.json",
+      "missing": [
+        "holdout",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "the public task JSONL is a corpus of natural human interaction histories",
+        "all ground truth and executable tests are included in the public Hugging Face files",
+        "user-simulator behavior establishes natural enterprise prevalence",
+        "a benchmark interaction is an observed employee skill deficit"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "birdsql/bird-interact-full",
+      "dataset_revision": "5d78b0722433c3821e1ebda5d8c39d24070049d7",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/bird-interact-enterprise-sql.json",
+      "missing": [
+        "corrections",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "the public task JSONL is a corpus of natural human interaction histories",
+        "all ground truth and executable tests are included in the public Hugging Face files",
+        "user-simulator behavior establishes natural enterprise prevalence",
+        "a benchmark interaction is an observed employee skill deficit"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "birdsql/bird-interact-full",
+      "dataset_revision": "5d78b0722433c3821e1ebda5d8c39d24070049d7",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/bird-interact-enterprise-sql.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "the public task JSONL is a corpus of natural human interaction histories",
+        "all ground truth and executable tests are included in the public Hugging Face files",
+        "user-simulator behavior establishes natural enterprise prevalence",
+        "a benchmark interaction is an observed employee skill deficit"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "birdsql/bird-interact-full",
+      "dataset_revision": "5d78b0722433c3821e1ebda5d8c39d24070049d7",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/bird-interact-enterprise-sql.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "the public task JSONL is a corpus of natural human interaction histories",
+        "all ground truth and executable tests are included in the public Hugging Face files",
+        "user-simulator behavior establishes natural enterprise prevalence",
+        "a benchmark interaction is an observed employee skill deficit"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "birdsql/bird-interact-full",
+      "dataset_revision": "5d78b0722433c3821e1ebda5d8c39d24070049d7",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/bird-interact-enterprise-sql.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "the public task JSONL is a corpus of natural human interaction histories",
+        "all ground truth and executable tests are included in the public Hugging Face files",
+        "user-simulator behavior establishes natural enterprise prevalence",
+        "a benchmark interaction is an observed employee skill deficit"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "birdsql/bird-interact-full",
+      "dataset_revision": "5d78b0722433c3821e1ebda5d8c39d24070049d7",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/bird-interact-enterprise-sql.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "the public task JSONL is a corpus of natural human interaction histories",
+        "all ground truth and executable tests are included in the public Hugging Face files",
+        "user-simulator behavior establishes natural enterprise prevalence",
+        "a benchmark interaction is an observed employee skill deficit"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "cfahlgren1/codex-sessions",
+      "dataset_revision": "87dcc5b0df77f94b8750772dce7078866d3e6877",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cfahlgren-codex-sessions.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "cfahlgren1/codex-sessions",
+      "dataset_revision": "87dcc5b0df77f94b8750772dce7078866d3e6877",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cfahlgren-codex-sessions.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "cfahlgren1/codex-sessions",
+      "dataset_revision": "87dcc5b0df77f94b8750772dce7078866d3e6877",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cfahlgren-codex-sessions.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "cfahlgren1/codex-sessions",
+      "dataset_revision": "87dcc5b0df77f94b8750772dce7078866d3e6877",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cfahlgren-codex-sessions.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "cfahlgren1/codex-sessions",
+      "dataset_revision": "87dcc5b0df77f94b8750772dce7078866d3e6877",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cfahlgren-codex-sessions.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "cfahlgren1/codex-sessions",
+      "dataset_revision": "87dcc5b0df77f94b8750772dce7078866d3e6877",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/cfahlgren-codex-sessions.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "cx-cmu/agent_trajectories",
+      "dataset_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cmu-agent-trajectories.json",
+      "missing": [
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "holdout"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "cx-cmu/agent_trajectories",
+      "dataset_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cmu-agent-trajectories.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "holdout"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "cx-cmu/agent_trajectories",
+      "dataset_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cmu-agent-trajectories.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "holdout"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "cx-cmu/agent_trajectories",
+      "dataset_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cmu-agent-trajectories.json",
+      "missing": [
+        "environment_state",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "holdout"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "cx-cmu/agent_trajectories",
+      "dataset_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cmu-agent-trajectories.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "holdout"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "cx-cmu/agent_trajectories",
+      "dataset_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/cmu-agent-trajectories.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "holdout"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "NJU-LINK/CodeTraceBench",
+      "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/codetracebench.json",
+      "missing": [
+        "user_identity"
+      ],
+      "observed": [
+        "holdout",
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "enterprise transfer",
+        "person-level skill",
+        "authorization correctness",
+        "causal intervention utility"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "NJU-LINK/CodeTraceBench",
+      "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/codetracebench.json",
+      "missing": [
+        "corrections"
+      ],
+      "observed": [
+        "holdout",
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "enterprise transfer",
+        "person-level skill",
+        "authorization correctness",
+        "causal intervention utility"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "NJU-LINK/CodeTraceBench",
+      "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/codetracebench.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql"
+      ],
+      "observed": [
+        "holdout",
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "enterprise transfer",
+        "person-level skill",
+        "authorization correctness",
+        "causal intervention utility"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "NJU-LINK/CodeTraceBench",
+      "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/codetracebench.json",
+      "missing": [
+        "environment_state",
+        "intervention"
+      ],
+      "observed": [
+        "holdout",
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "enterprise transfer",
+        "person-level skill",
+        "authorization correctness",
+        "causal intervention utility"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "NJU-LINK/CodeTraceBench",
+      "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/codetracebench.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "holdout",
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "enterprise transfer",
+        "person-level skill",
+        "authorization correctness",
+        "causal intervention utility"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "NJU-LINK/CodeTraceBench",
+      "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+      "level": "direct",
+      "manifest": "configs/datasets/codetracebench.json",
+      "missing": [],
+      "observed": [
+        "holdout",
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "enterprise transfer",
+        "person-level skill",
+        "authorization correctness",
+        "causal intervention utility"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "Edmon02/dataclaw-peteromallet",
+      "dataset_revision": "96e52d19e236676f323cc41916daab006a6ac2e2",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/dataclaw-peteromallet-mirror.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "Edmon02/dataclaw-peteromallet",
+      "dataset_revision": "96e52d19e236676f323cc41916daab006a6ac2e2",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/dataclaw-peteromallet-mirror.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "Edmon02/dataclaw-peteromallet",
+      "dataset_revision": "96e52d19e236676f323cc41916daab006a6ac2e2",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/dataclaw-peteromallet-mirror.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "Edmon02/dataclaw-peteromallet",
+      "dataset_revision": "96e52d19e236676f323cc41916daab006a6ac2e2",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/dataclaw-peteromallet-mirror.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "Edmon02/dataclaw-peteromallet",
+      "dataset_revision": "96e52d19e236676f323cc41916daab006a6ac2e2",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/dataclaw-peteromallet-mirror.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "Edmon02/dataclaw-peteromallet",
+      "dataset_revision": "96e52d19e236676f323cc41916daab006a6ac2e2",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/dataclaw-peteromallet-mirror.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
+      "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/defog-sql-eval-enterprise.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "enterprise-scale database performance",
+        "natural user behavior",
+        "causal skill benefit before the factorial runs",
+        "Aurora operations or failover",
+        "stock Defog verifier security"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
+      "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/defog-sql-eval-enterprise.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "enterprise-scale database performance",
+        "natural user behavior",
+        "causal skill benefit before the factorial runs",
+        "Aurora operations or failover",
+        "stock Defog verifier security"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
+      "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+      "level": "direct",
+      "manifest": "configs/datasets/defog-sql-eval-enterprise.json",
+      "missing": [],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "enterprise-scale database performance",
+        "natural user behavior",
+        "causal skill benefit before the factorial runs",
+        "Aurora operations or failover",
+        "stock Defog verifier security"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
+      "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/defog-sql-eval-enterprise.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "enterprise-scale database performance",
+        "natural user behavior",
+        "causal skill benefit before the factorial runs",
+        "Aurora operations or failover",
+        "stock Defog verifier security"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
+      "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/defog-sql-eval-enterprise.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "enterprise-scale database performance",
+        "natural user behavior",
+        "causal skill benefit before the factorial runs",
+        "Aurora operations or failover",
+        "stock Defog verifier security"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "defog-ai/sql-eval:enterprise-postgresql-96",
+      "dataset_revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/defog-sql-eval-enterprise.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "enterprise-scale database performance",
+        "natural user behavior",
+        "causal skill benefit before the factorial runs",
+        "Aurora operations or failover",
+        "stock Defog verifier security"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "DiscoPosse/agent-llm-traces",
+      "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoposse-agent-llm-traces.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "DiscoPosse/agent-llm-traces",
+      "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoposse-agent-llm-traces.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "DiscoPosse/agent-llm-traces",
+      "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoposse-agent-llm-traces.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "DiscoPosse/agent-llm-traces",
+      "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoposse-agent-llm-traces.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "DiscoPosse/agent-llm-traces",
+      "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoposse-agent-llm-traces.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "DiscoPosse/agent-llm-traces",
+      "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoposse-agent-llm-traces.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara",
+      "dataset_revision": "9be6e9264220e922fa7fc18399e2f9187a7a880a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoverphysics-research-traces.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara",
+      "dataset_revision": "9be6e9264220e922fa7fc18399e2f9187a7a880a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoverphysics-research-traces.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara",
+      "dataset_revision": "9be6e9264220e922fa7fc18399e2f9187a7a880a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoverphysics-research-traces.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara",
+      "dataset_revision": "9be6e9264220e922fa7fc18399e2f9187a7a880a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoverphysics-research-traces.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara",
+      "dataset_revision": "9be6e9264220e922fa7fc18399e2f9187a7a880a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoverphysics-research-traces.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara",
+      "dataset_revision": "9be6e9264220e922fa7fc18399e2f9187a7a880a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/discoverphysics-research-traces.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "evalstate/model-toolcall-research",
+      "dataset_revision": "061ca7c19cf3333df71b6d119fd78aee16dc3227",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/evalstate-model-toolcall-research.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "evalstate/model-toolcall-research",
+      "dataset_revision": "061ca7c19cf3333df71b6d119fd78aee16dc3227",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/evalstate-model-toolcall-research.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "evalstate/model-toolcall-research",
+      "dataset_revision": "061ca7c19cf3333df71b6d119fd78aee16dc3227",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/evalstate-model-toolcall-research.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "evalstate/model-toolcall-research",
+      "dataset_revision": "061ca7c19cf3333df71b6d119fd78aee16dc3227",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/evalstate-model-toolcall-research.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "evalstate/model-toolcall-research",
+      "dataset_revision": "061ca7c19cf3333df71b6d119fd78aee16dc3227",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/evalstate-model-toolcall-research.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "evalstate/model-toolcall-research",
+      "dataset_revision": "061ca7c19cf3333df71b6d119fd78aee16dc3227",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/evalstate-model-toolcall-research.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/fable5-top-level-memory-cohort.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/fable5-top-level-memory-cohort.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/fable5-top-level-memory-cohort.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/fable5-top-level-memory-cohort.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/fable5-top-level-memory-cohort.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/fable5-top-level-memory-cohort.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "domyn/FINCH",
+      "dataset_revision": "bb92e53ba0fdd0c5a2804667bad47f9d0c1b65ad",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/finch-financial-nl2sql.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "natural enterprise employee behavior",
+        "observed multi-turn correction or tool-use behavior",
+        "private business-definition grounding",
+        "commercial fine-tuning rights",
+        "causal benefit from any Frankengate skill"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "domyn/FINCH",
+      "dataset_revision": "bb92e53ba0fdd0c5a2804667bad47f9d0c1b65ad",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/finch-financial-nl2sql.json",
+      "missing": [
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "natural enterprise employee behavior",
+        "observed multi-turn correction or tool-use behavior",
+        "private business-definition grounding",
+        "commercial fine-tuning rights",
+        "causal benefit from any Frankengate skill"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "domyn/FINCH",
+      "dataset_revision": "bb92e53ba0fdd0c5a2804667bad47f9d0c1b65ad",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/finch-financial-nl2sql.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "natural enterprise employee behavior",
+        "observed multi-turn correction or tool-use behavior",
+        "private business-definition grounding",
+        "commercial fine-tuning rights",
+        "causal benefit from any Frankengate skill"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "domyn/FINCH",
+      "dataset_revision": "bb92e53ba0fdd0c5a2804667bad47f9d0c1b65ad",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/finch-financial-nl2sql.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "natural enterprise employee behavior",
+        "observed multi-turn correction or tool-use behavior",
+        "private business-definition grounding",
+        "commercial fine-tuning rights",
+        "causal benefit from any Frankengate skill"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "domyn/FINCH",
+      "dataset_revision": "bb92e53ba0fdd0c5a2804667bad47f9d0c1b65ad",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/finch-financial-nl2sql.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "natural enterprise employee behavior",
+        "observed multi-turn correction or tool-use behavior",
+        "private business-definition grounding",
+        "commercial fine-tuning rights",
+        "causal benefit from any Frankengate skill"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "domyn/FINCH",
+      "dataset_revision": "bb92e53ba0fdd0c5a2804667bad47f9d0c1b65ad",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/finch-financial-nl2sql.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "natural enterprise employee behavior",
+        "observed multi-turn correction or tool-use behavior",
+        "private business-definition grounding",
+        "commercial fine-tuning rights",
+        "causal benefit from any Frankengate skill"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "github/jimmc414/cctrace/phase0-investigation",
+      "dataset_revision": "4b4d4add0bb3a65359ccf50501c6792e2fc13ba5",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-cctrace-portable-claude-session.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "github/jimmc414/cctrace/phase0-investigation",
+      "dataset_revision": "4b4d4add0bb3a65359ccf50501c6792e2fc13ba5",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-cctrace-portable-claude-session.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "github/jimmc414/cctrace/phase0-investigation",
+      "dataset_revision": "4b4d4add0bb3a65359ccf50501c6792e2fc13ba5",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-cctrace-portable-claude-session.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "github/jimmc414/cctrace/phase0-investigation",
+      "dataset_revision": "4b4d4add0bb3a65359ccf50501c6792e2fc13ba5",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-cctrace-portable-claude-session.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "github/jimmc414/cctrace/phase0-investigation",
+      "dataset_revision": "4b4d4add0bb3a65359ccf50501c6792e2fc13ba5",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-cctrace-portable-claude-session.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "github/jimmc414/cctrace/phase0-investigation",
+      "dataset_revision": "4b4d4add0bb3a65359ccf50501c6792e2fc13ba5",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/github-cctrace-portable-claude-session.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "github/jkim0731/2p-hcr-autocoreg/.claude",
+      "dataset_revision": "b5a4615cdb0ffad81650a9c72a54209a202f6337",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-jkim-near-complete-claude-home.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "github/jkim0731/2p-hcr-autocoreg/.claude",
+      "dataset_revision": "b5a4615cdb0ffad81650a9c72a54209a202f6337",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-jkim-near-complete-claude-home.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "github/jkim0731/2p-hcr-autocoreg/.claude",
+      "dataset_revision": "b5a4615cdb0ffad81650a9c72a54209a202f6337",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-jkim-near-complete-claude-home.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "github/jkim0731/2p-hcr-autocoreg/.claude",
+      "dataset_revision": "b5a4615cdb0ffad81650a9c72a54209a202f6337",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-jkim-near-complete-claude-home.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "github/jkim0731/2p-hcr-autocoreg/.claude",
+      "dataset_revision": "b5a4615cdb0ffad81650a9c72a54209a202f6337",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-jkim-near-complete-claude-home.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "github/jkim0731/2p-hcr-autocoreg/.claude",
+      "dataset_revision": "b5a4615cdb0ffad81650a9c72a54209a202f6337",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-jkim-near-complete-claude-home.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "github/byesngmin/KGA-codex-sessions",
+      "dataset_revision": "fe6ce9d6287c48adce3714e47dc561bf4887dde8",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-kga-codex-sessions.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "github/byesngmin/KGA-codex-sessions",
+      "dataset_revision": "fe6ce9d6287c48adce3714e47dc561bf4887dde8",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-kga-codex-sessions.json",
+      "missing": [
+        "corrections",
+        "outcome"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "github/byesngmin/KGA-codex-sessions",
+      "dataset_revision": "fe6ce9d6287c48adce3714e47dc561bf4887dde8",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-kga-codex-sessions.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "github/byesngmin/KGA-codex-sessions",
+      "dataset_revision": "fe6ce9d6287c48adce3714e47dc561bf4887dde8",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-kga-codex-sessions.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "github/byesngmin/KGA-codex-sessions",
+      "dataset_revision": "fe6ce9d6287c48adce3714e47dc561bf4887dde8",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-kga-codex-sessions.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "github/byesngmin/KGA-codex-sessions",
+      "dataset_revision": "fe6ce9d6287c48adce3714e47dc561bf4887dde8",
+      "level": "direct",
+      "manifest": "configs/datasets/github-kga-codex-sessions.json",
+      "missing": [],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "github/wjmlong/Codex_Sessions",
+      "dataset_revision": "1eceee0784f155e6cb994210cfc7b02cbc458298",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-wjmlong-codex-sessions.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "tool_calls"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "github/wjmlong/Codex_Sessions",
+      "dataset_revision": "1eceee0784f155e6cb994210cfc7b02cbc458298",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-wjmlong-codex-sessions.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "tool_calls"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "github/wjmlong/Codex_Sessions",
+      "dataset_revision": "1eceee0784f155e6cb994210cfc7b02cbc458298",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-wjmlong-codex-sessions.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "tool_calls"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "github/wjmlong/Codex_Sessions",
+      "dataset_revision": "1eceee0784f155e6cb994210cfc7b02cbc458298",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-wjmlong-codex-sessions.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "tool_calls"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "github/wjmlong/Codex_Sessions",
+      "dataset_revision": "1eceee0784f155e6cb994210cfc7b02cbc458298",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/github-wjmlong-codex-sessions.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "tool_calls"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "github/wjmlong/Codex_Sessions",
+      "dataset_revision": "1eceee0784f155e6cb994210cfc7b02cbc458298",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/github-wjmlong-codex-sessions.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "tool_calls"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/glint-fable5-partial-claude-home.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/glint-fable5-partial-claude-home.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/glint-fable5-partial-claude-home.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/glint-fable5-partial-claude-home.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/glint-fable5-partial-claude-home.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/glint-fable5-partial-claude-home.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "viktor-shcherb/jobseek-agent-traces",
+      "dataset_revision": "5aae997225724606da9f7d23ada9cd49e81ff177",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/jobseek-agent-traces-sample.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "viktor-shcherb/jobseek-agent-traces",
+      "dataset_revision": "5aae997225724606da9f7d23ada9cd49e81ff177",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/jobseek-agent-traces-sample.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "viktor-shcherb/jobseek-agent-traces",
+      "dataset_revision": "5aae997225724606da9f7d23ada9cd49e81ff177",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/jobseek-agent-traces-sample.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "viktor-shcherb/jobseek-agent-traces",
+      "dataset_revision": "5aae997225724606da9f7d23ada9cd49e81ff177",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/jobseek-agent-traces-sample.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "viktor-shcherb/jobseek-agent-traces",
+      "dataset_revision": "5aae997225724606da9f7d23ada9cd49e81ff177",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/jobseek-agent-traces-sample.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "viktor-shcherb/jobseek-agent-traces",
+      "dataset_revision": "5aae997225724606da9f7d23ada9cd49e81ff177",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/jobseek-agent-traces-sample.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "microsoft/MAGIC",
+      "dataset_revision": "9b8da842fcb82ac750ca1a025af7645f5ba95a30",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/magic-text-to-sql-trajectories.json",
+      "missing": [
+        "holdout",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state",
+        "messages_or_spans",
+        "outcome",
+        "text_or_messages",
+        "tool_calls"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "causal skill benefit",
+        "tool-use behavior",
+        "environment replay",
+        "2026 frontier-agent representativeness"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "microsoft/MAGIC",
+      "dataset_revision": "9b8da842fcb82ac750ca1a025af7645f5ba95a30",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/magic-text-to-sql-trajectories.json",
+      "missing": [
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state",
+        "messages_or_spans",
+        "outcome",
+        "text_or_messages",
+        "tool_calls"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "causal skill benefit",
+        "tool-use behavior",
+        "environment replay",
+        "2026 frontier-agent representativeness"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "microsoft/MAGIC",
+      "dataset_revision": "9b8da842fcb82ac750ca1a025af7645f5ba95a30",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/magic-text-to-sql-trajectories.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state",
+        "messages_or_spans",
+        "outcome",
+        "text_or_messages",
+        "tool_calls"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "causal skill benefit",
+        "tool-use behavior",
+        "environment replay",
+        "2026 frontier-agent representativeness"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "microsoft/MAGIC",
+      "dataset_revision": "9b8da842fcb82ac750ca1a025af7645f5ba95a30",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/magic-text-to-sql-trajectories.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state",
+        "messages_or_spans",
+        "outcome",
+        "text_or_messages",
+        "tool_calls"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "causal skill benefit",
+        "tool-use behavior",
+        "environment replay",
+        "2026 frontier-agent representativeness"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "microsoft/MAGIC",
+      "dataset_revision": "9b8da842fcb82ac750ca1a025af7645f5ba95a30",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/magic-text-to-sql-trajectories.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state",
+        "messages_or_spans",
+        "outcome",
+        "text_or_messages",
+        "tool_calls"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "causal skill benefit",
+        "tool-use behavior",
+        "environment replay",
+        "2026 frontier-agent representativeness"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "microsoft/MAGIC",
+      "dataset_revision": "9b8da842fcb82ac750ca1a025af7645f5ba95a30",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/magic-text-to-sql-trajectories.json",
+      "missing": [
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "corrections",
+        "environment_state",
+        "messages_or_spans",
+        "outcome",
+        "text_or_messages",
+        "tool_calls"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "causal skill benefit",
+        "tool-use behavior",
+        "environment replay",
+        "2026 frontier-agent representativeness"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "mcemri/MAST-Data",
+      "dataset_revision": "5a82e32347f70a701a3c68637de12f8a0be3de3c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mast_data.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "mcemri/MAST-Data",
+      "dataset_revision": "5a82e32347f70a701a3c68637de12f8a0be3de3c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mast_data.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "mcemri/MAST-Data",
+      "dataset_revision": "5a82e32347f70a701a3c68637de12f8a0be3de3c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mast_data.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "mcemri/MAST-Data",
+      "dataset_revision": "5a82e32347f70a701a3c68637de12f8a0be3de3c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mast_data.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "mcemri/MAST-Data",
+      "dataset_revision": "5a82e32347f70a701a3c68637de12f8a0be3de3c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mast_data.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "mcemri/MAST-Data",
+      "dataset_revision": "5a82e32347f70a701a3c68637de12f8a0be3de3c",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mast_data.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "toeunkim/matm-trajectories",
+      "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/matm-alfworld-population-runs.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "toeunkim/matm-trajectories",
+      "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/matm-alfworld-population-runs.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "toeunkim/matm-trajectories",
+      "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/matm-alfworld-population-runs.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "toeunkim/matm-trajectories",
+      "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/matm-alfworld-population-runs.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "toeunkim/matm-trajectories",
+      "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/matm-alfworld-population-runs.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "toeunkim/matm-trajectories",
+      "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/matm-alfworld-population-runs.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "Mike0021/codex-sessions",
+      "dataset_revision": "29b52c15654087c5c5d0adcd062bfe40f6464d6b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mike-codex-sessions.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "environment_state",
+        "user_identity"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "Mike0021/codex-sessions",
+      "dataset_revision": "29b52c15654087c5c5d0adcd062bfe40f6464d6b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mike-codex-sessions.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state",
+        "user_identity"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "Mike0021/codex-sessions",
+      "dataset_revision": "29b52c15654087c5c5d0adcd062bfe40f6464d6b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mike-codex-sessions.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "environment_state",
+        "user_identity"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "Mike0021/codex-sessions",
+      "dataset_revision": "29b52c15654087c5c5d0adcd062bfe40f6464d6b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mike-codex-sessions.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "environment_state",
+        "user_identity"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "Mike0021/codex-sessions",
+      "dataset_revision": "29b52c15654087c5c5d0adcd062bfe40f6464d6b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mike-codex-sessions.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "environment_state",
+        "user_identity"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "Mike0021/codex-sessions",
+      "dataset_revision": "29b52c15654087c5c5d0adcd062bfe40f6464d6b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/mike-codex-sessions.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state",
+        "user_identity"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "clem/ml-intern-sessions",
+      "dataset_revision": "f87189d9674394472755896350df0661154bbe0a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/ml-intern-research-sessions.json",
+      "missing": [
+        "holdout",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "outcome",
+        "tool_calls"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "clem/ml-intern-sessions",
+      "dataset_revision": "f87189d9674394472755896350df0661154bbe0a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/ml-intern-research-sessions.json",
+      "missing": [
+        "corrections",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "outcome",
+        "tool_calls"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "clem/ml-intern-sessions",
+      "dataset_revision": "f87189d9674394472755896350df0661154bbe0a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/ml-intern-research-sessions.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "outcome",
+        "tool_calls"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "clem/ml-intern-sessions",
+      "dataset_revision": "f87189d9674394472755896350df0661154bbe0a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/ml-intern-research-sessions.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "outcome",
+        "tool_calls"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "clem/ml-intern-sessions",
+      "dataset_revision": "f87189d9674394472755896350df0661154bbe0a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/ml-intern-research-sessions.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "outcome",
+        "tool_calls"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "clem/ml-intern-sessions",
+      "dataset_revision": "f87189d9674394472755896350df0661154bbe0a",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/ml-intern-research-sessions.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "outcome",
+        "tool_calls"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-scientific-traces.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-scientific-traces.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-scientific-traces.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-scientific-traces.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-scientific-traces.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-scientific-traces.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-skill-transfer-v1-2026.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-skill-transfer-v1-2026.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-skill-transfer-v1-2026.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-skill-transfer-v1-2026.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-skill-transfer-v1-2026.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "FrontisAI/NatureBench-traces",
+      "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/naturebench-skill-transfer-v1-2026.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "nebius/SWE-agent-trajectories",
+      "dataset_revision": "68195a1450865274106246d0d0296a1d6807b88e",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/nebius-swe-agent-trajectories.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "nebius/SWE-agent-trajectories",
+      "dataset_revision": "68195a1450865274106246d0d0296a1d6807b88e",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/nebius-swe-agent-trajectories.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "nebius/SWE-agent-trajectories",
+      "dataset_revision": "68195a1450865274106246d0d0296a1d6807b88e",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/nebius-swe-agent-trajectories.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "nebius/SWE-agent-trajectories",
+      "dataset_revision": "68195a1450865274106246d0d0296a1d6807b88e",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/nebius-swe-agent-trajectories.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "nebius/SWE-agent-trajectories",
+      "dataset_revision": "68195a1450865274106246d0d0296a1d6807b88e",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/nebius-swe-agent-trajectories.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "nebius/SWE-agent-trajectories",
+      "dataset_revision": "68195a1450865274106246d0d0296a1d6807b88e",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/nebius-swe-agent-trajectories.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "YnJhY2lzMjAyNnRleHQyc3Fs/pt-br-agentic-text-to-sql-distilled-trajectories",
+      "dataset_revision": "790158a2bdbd5ee5007dbf0b4e88bb665fd67675",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/pt-br-agentic-text-to-sql-trajectories.json",
+      "missing": [
+        "holdout",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "environment_state",
+        "outcome"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "natural production behavior",
+        "independent correctness",
+        "causal skill benefit",
+        "English-language enterprise transfer"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "YnJhY2lzMjAyNnRleHQyc3Fs/pt-br-agentic-text-to-sql-distilled-trajectories",
+      "dataset_revision": "790158a2bdbd5ee5007dbf0b4e88bb665fd67675",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/pt-br-agentic-text-to-sql-trajectories.json",
+      "missing": [
+        "corrections",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state",
+        "outcome"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "natural production behavior",
+        "independent correctness",
+        "causal skill benefit",
+        "English-language enterprise transfer"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "YnJhY2lzMjAyNnRleHQyc3Fs/pt-br-agentic-text-to-sql-distilled-trajectories",
+      "dataset_revision": "790158a2bdbd5ee5007dbf0b4e88bb665fd67675",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/pt-br-agentic-text-to-sql-trajectories.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "environment_state",
+        "outcome"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "natural production behavior",
+        "independent correctness",
+        "causal skill benefit",
+        "English-language enterprise transfer"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "YnJhY2lzMjAyNnRleHQyc3Fs/pt-br-agentic-text-to-sql-distilled-trajectories",
+      "dataset_revision": "790158a2bdbd5ee5007dbf0b4e88bb665fd67675",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/pt-br-agentic-text-to-sql-trajectories.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "environment_state",
+        "outcome"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "natural production behavior",
+        "independent correctness",
+        "causal skill benefit",
+        "English-language enterprise transfer"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "YnJhY2lzMjAyNnRleHQyc3Fs/pt-br-agentic-text-to-sql-distilled-trajectories",
+      "dataset_revision": "790158a2bdbd5ee5007dbf0b4e88bb665fd67675",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/pt-br-agentic-text-to-sql-trajectories.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "environment_state",
+        "outcome"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "natural production behavior",
+        "independent correctness",
+        "causal skill benefit",
+        "English-language enterprise transfer"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "YnJhY2lzMjAyNnRleHQyc3Fs/pt-br-agentic-text-to-sql-distilled-trajectories",
+      "dataset_revision": "790158a2bdbd5ee5007dbf0b4e88bb665fd67675",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/pt-br-agentic-text-to-sql-trajectories.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state",
+        "outcome"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "natural production behavior",
+        "independent correctness",
+        "causal skill benefit",
+        "English-language enterprise transfer"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "RangaPrasath/coding-sessions",
+      "dataset_revision": "9745612dbb84733bd9da15544e7ca8cebaa82c2a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/rangaprasath-coding-sessions.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "RangaPrasath/coding-sessions",
+      "dataset_revision": "9745612dbb84733bd9da15544e7ca8cebaa82c2a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/rangaprasath-coding-sessions.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "RangaPrasath/coding-sessions",
+      "dataset_revision": "9745612dbb84733bd9da15544e7ca8cebaa82c2a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/rangaprasath-coding-sessions.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "RangaPrasath/coding-sessions",
+      "dataset_revision": "9745612dbb84733bd9da15544e7ca8cebaa82c2a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/rangaprasath-coding-sessions.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "RangaPrasath/coding-sessions",
+      "dataset_revision": "9745612dbb84733bd9da15544e7ca8cebaa82c2a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/rangaprasath-coding-sessions.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "RangaPrasath/coding-sessions",
+      "dataset_revision": "9745612dbb84733bd9da15544e7ca8cebaa82c2a",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/rangaprasath-coding-sessions.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "nmuendler/share-codex",
+      "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/share-codex-sparse.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "nmuendler/share-codex",
+      "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/share-codex-sparse.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "nmuendler/share-codex",
+      "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/share-codex-sparse.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "nmuendler/share-codex",
+      "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/share-codex-sparse.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "nmuendler/share-codex",
+      "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/share-codex-sparse.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "nmuendler/share-codex",
+      "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/share-codex-sparse.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "user_identity"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "xlang-ai/Spider2:local-lite-and-dbt-audit",
+      "dataset_revision": "01a4c67c1e3f6ab9032716b050a927abbb245f65",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/spider2-local-enterprise-sql.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "all 135 Lite tasks have trustworthy gold SQL",
+        "all 68 DBT tasks are reproducible",
+        "upstream application transcripts are OTel or ATIF",
+        "current-runtime dbt parse failure means a task is invalid",
+        "Spider2 has a stable tagged release"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "xlang-ai/Spider2:local-lite-and-dbt-audit",
+      "dataset_revision": "01a4c67c1e3f6ab9032716b050a927abbb245f65",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/spider2-local-enterprise-sql.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "all 135 Lite tasks have trustworthy gold SQL",
+        "all 68 DBT tasks are reproducible",
+        "upstream application transcripts are OTel or ATIF",
+        "current-runtime dbt parse failure means a task is invalid",
+        "Spider2 has a stable tagged release"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "xlang-ai/Spider2:local-lite-and-dbt-audit",
+      "dataset_revision": "01a4c67c1e3f6ab9032716b050a927abbb245f65",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/spider2-local-enterprise-sql.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "all 135 Lite tasks have trustworthy gold SQL",
+        "all 68 DBT tasks are reproducible",
+        "upstream application transcripts are OTel or ATIF",
+        "current-runtime dbt parse failure means a task is invalid",
+        "Spider2 has a stable tagged release"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "xlang-ai/Spider2:local-lite-and-dbt-audit",
+      "dataset_revision": "01a4c67c1e3f6ab9032716b050a927abbb245f65",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/spider2-local-enterprise-sql.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "all 135 Lite tasks have trustworthy gold SQL",
+        "all 68 DBT tasks are reproducible",
+        "upstream application transcripts are OTel or ATIF",
+        "current-runtime dbt parse failure means a task is invalid",
+        "Spider2 has a stable tagged release"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "xlang-ai/Spider2:local-lite-and-dbt-audit",
+      "dataset_revision": "01a4c67c1e3f6ab9032716b050a927abbb245f65",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/spider2-local-enterprise-sql.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "all 135 Lite tasks have trustworthy gold SQL",
+        "all 68 DBT tasks are reproducible",
+        "upstream application transcripts are OTel or ATIF",
+        "current-runtime dbt parse failure means a task is invalid",
+        "Spider2 has a stable tagged release"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "xlang-ai/Spider2:local-lite-and-dbt-audit",
+      "dataset_revision": "01a4c67c1e3f6ab9032716b050a927abbb245f65",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/spider2-local-enterprise-sql.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "all 135 Lite tasks have trustworthy gold SQL",
+        "all 68 DBT tasks are reproducible",
+        "upstream application transcripts are OTel or ATIF",
+        "current-runtime dbt parse failure means a task is invalid",
+        "Spider2 has a stable tagged release"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "stateofai/statebench:finance-retrieval-sql-v0",
+      "dataset_revision": "0e91f3bb588767e999cfdb720fc5e369384dddf4",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/statebench-finance-retrieval-sql-v0.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "statistically adequate SQL skill learning",
+        "Postgres RLS correctness from the SQLite smoke runner",
+        "Aurora behavior",
+        "enterprise transfer"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "stateofai/statebench:finance-retrieval-sql-v0",
+      "dataset_revision": "0e91f3bb588767e999cfdb720fc5e369384dddf4",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/statebench-finance-retrieval-sql-v0.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "statistically adequate SQL skill learning",
+        "Postgres RLS correctness from the SQLite smoke runner",
+        "Aurora behavior",
+        "enterprise transfer"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "stateofai/statebench:finance-retrieval-sql-v0",
+      "dataset_revision": "0e91f3bb588767e999cfdb720fc5e369384dddf4",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/statebench-finance-retrieval-sql-v0.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "statistically adequate SQL skill learning",
+        "Postgres RLS correctness from the SQLite smoke runner",
+        "Aurora behavior",
+        "enterprise transfer"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "stateofai/statebench:finance-retrieval-sql-v0",
+      "dataset_revision": "0e91f3bb588767e999cfdb720fc5e369384dddf4",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/statebench-finance-retrieval-sql-v0.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "statistically adequate SQL skill learning",
+        "Postgres RLS correctness from the SQLite smoke runner",
+        "Aurora behavior",
+        "enterprise transfer"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "stateofai/statebench:finance-retrieval-sql-v0",
+      "dataset_revision": "0e91f3bb588767e999cfdb720fc5e369384dddf4",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/statebench-finance-retrieval-sql-v0.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "statistically adequate SQL skill learning",
+        "Postgres RLS correctness from the SQLite smoke runner",
+        "Aurora behavior",
+        "enterprise transfer"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "stateofai/statebench:finance-retrieval-sql-v0",
+      "dataset_revision": "0e91f3bb588767e999cfdb720fc5e369384dddf4",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/statebench-finance-retrieval-sql-v0.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "environment_state"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "statistically adequate SQL skill learning",
+        "Postgres RLS correctness from the SQLite smoke runner",
+        "Aurora behavior",
+        "enterprise transfer"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "thoughtworks/agentic-coding-trajectories",
+      "dataset_revision": "cef72d1f4d0caabf85937adf8337a14b7522c782",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/thoughtworks-agentic-coding-trajectories.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "thoughtworks/agentic-coding-trajectories",
+      "dataset_revision": "cef72d1f4d0caabf85937adf8337a14b7522c782",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/thoughtworks-agentic-coding-trajectories.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "thoughtworks/agentic-coding-trajectories",
+      "dataset_revision": "cef72d1f4d0caabf85937adf8337a14b7522c782",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/thoughtworks-agentic-coding-trajectories.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "thoughtworks/agentic-coding-trajectories",
+      "dataset_revision": "cef72d1f4d0caabf85937adf8337a14b7522c782",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/thoughtworks-agentic-coding-trajectories.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "thoughtworks/agentic-coding-trajectories",
+      "dataset_revision": "cef72d1f4d0caabf85937adf8337a14b7522c782",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/thoughtworks-agentic-coding-trajectories.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "thoughtworks/agentic-coding-trajectories",
+      "dataset_revision": "cef72d1f4d0caabf85937adf8337a14b7522c782",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/thoughtworks-agentic-coding-trajectories.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "trace-commons/agent-traces-epilog-memory-lifecycle",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-epilog-memory-lifecycle.json",
+      "missing": [
+        "holdout",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "trace-commons/agent-traces-epilog-memory-lifecycle",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-epilog-memory-lifecycle.json",
+      "missing": [
+        "corrections"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "trace-commons/agent-traces-epilog-memory-lifecycle",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-epilog-memory-lifecycle.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "trace-commons/agent-traces-epilog-memory-lifecycle",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-epilog-memory-lifecycle.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "trace-commons/agent-traces-epilog-memory-lifecycle",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-epilog-memory-lifecycle.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "trace-commons/agent-traces-epilog-memory-lifecycle",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "direct",
+      "manifest": "configs/datasets/trace-commons-epilog-memory-lifecycle.json",
+      "missing": [],
+      "observed": [
+        "messages_or_spans",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "trace-commons/agent-traces-full-claude-memory-composition",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-full-cohort.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "trace-commons/agent-traces-full-claude-memory-composition",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-full-cohort.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "trace-commons/agent-traces-full-claude-memory-composition",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-full-cohort.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "trace-commons/agent-traces-full-claude-memory-composition",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-full-cohort.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "trace-commons/agent-traces-full-claude-memory-composition",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-full-cohort.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "trace-commons/agent-traces-full-claude-memory-composition",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/trace-commons-memory-full-cohort.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "trace-commons/agent-traces-memory-pairing",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-pairing.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "trace-commons/agent-traces-memory-pairing",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-pairing.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "trace-commons/agent-traces-memory-pairing",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-pairing.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "trace-commons/agent-traces-memory-pairing",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-pairing.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "trace-commons/agent-traces-memory-pairing",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace-commons-memory-pairing.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "trace-commons/agent-traces-memory-pairing",
+      "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/trace-commons-memory-pairing.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "Qwen-Applications/Trace2Skill:spreadsheetbench_verified_400",
+      "dataset_revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace2skill-spreadsheetbench-verified.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": [
+        "enterprise SQL transfer",
+        "person-level skill inference",
+        "cross-user recommendation benefit",
+        "production-scale Aurora performance"
+      ]
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "Qwen-Applications/Trace2Skill:spreadsheetbench_verified_400",
+      "dataset_revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace2skill-spreadsheetbench-verified.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "enterprise SQL transfer",
+        "person-level skill inference",
+        "cross-user recommendation benefit",
+        "production-scale Aurora performance"
+      ]
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "Qwen-Applications/Trace2Skill:spreadsheetbench_verified_400",
+      "dataset_revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace2skill-spreadsheetbench-verified.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": [
+        "enterprise SQL transfer",
+        "person-level skill inference",
+        "cross-user recommendation benefit",
+        "production-scale Aurora performance"
+      ]
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "Qwen-Applications/Trace2Skill:spreadsheetbench_verified_400",
+      "dataset_revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace2skill-spreadsheetbench-verified.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": [
+        "enterprise SQL transfer",
+        "person-level skill inference",
+        "cross-user recommendation benefit",
+        "production-scale Aurora performance"
+      ]
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "Qwen-Applications/Trace2Skill:spreadsheetbench_verified_400",
+      "dataset_revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace2skill-spreadsheetbench-verified.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": [
+        "enterprise SQL transfer",
+        "person-level skill inference",
+        "cross-user recommendation benefit",
+        "production-scale Aurora performance"
+      ]
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "Qwen-Applications/Trace2Skill:spreadsheetbench_verified_400",
+      "dataset_revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/trace2skill-spreadsheetbench-verified.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": [
+        "enterprise SQL transfer",
+        "person-level skill inference",
+        "cross-user recommendation benefit",
+        "production-scale Aurora performance"
+      ]
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "github/seokhawn01/wineLab-research/.claude",
+      "dataset_revision": "c48d48a4787ada6ea4e08e211bd7477ff3dd9409",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/winelab-research-log-memory.json",
+      "missing": [
+        "holdout",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "github/seokhawn01/wineLab-research/.claude",
+      "dataset_revision": "c48d48a4787ada6ea4e08e211bd7477ff3dd9409",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/winelab-research-log-memory.json",
+      "missing": [
+        "corrections",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "github/seokhawn01/wineLab-research/.claude",
+      "dataset_revision": "c48d48a4787ada6ea4e08e211bd7477ff3dd9409",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/winelab-research-log-memory.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "github/seokhawn01/wineLab-research/.claude",
+      "dataset_revision": "c48d48a4787ada6ea4e08e211bd7477ff3dd9409",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/winelab-research-log-memory.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "github/seokhawn01/wineLab-research/.claude",
+      "dataset_revision": "c48d48a4787ada6ea4e08e211bd7477ff3dd9409",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/winelab-research-log-memory.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "github/seokhawn01/wineLab-research/.claude",
+      "dataset_revision": "c48d48a4787ada6ea4e08e211bd7477ff3dd9409",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/winelab-research-log-memory.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "observed": [
+        "outcome"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wisp-claude-code-sessions.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wisp-claude-code-sessions.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wisp-claude-code-sessions.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wisp-claude-code-sessions.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wisp-claude-code-sessions.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/wisp-claude-code-sessions.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+      "dataset_revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-bird-sql-traces.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "user_identity"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+      "dataset_revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-bird-sql-traces.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+      "dataset_revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+      "level": "direct",
+      "manifest": "configs/datasets/wmh-bird-sql-traces.json",
+      "missing": [],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+      "dataset_revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-bird-sql-traces.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+      "dataset_revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-bird-sql-traces.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "experiential-labs/wmh-bird-sql-traces",
+      "dataset_revision": "26e54b84ec94bcb0bfb153f664c9d150b64dd0e3",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/wmh-bird-sql-traces.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "database_fixture",
+        "environment_state",
+        "gold_sql",
+        "task",
+        "tool_calls"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "experiential-labs/wmh-crmarena-traces",
+      "dataset_revision": "9a70e127f6dce74110a17092f62696f25a3a526b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-crmarena-traces.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "environment_state",
+        "tool_calls"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "experiential-labs/wmh-crmarena-traces",
+      "dataset_revision": "9a70e127f6dce74110a17092f62696f25a3a526b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-crmarena-traces.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "environment_state",
+        "tool_calls"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "experiential-labs/wmh-crmarena-traces",
+      "dataset_revision": "9a70e127f6dce74110a17092f62696f25a3a526b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-crmarena-traces.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "environment_state",
+        "tool_calls"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "experiential-labs/wmh-crmarena-traces",
+      "dataset_revision": "9a70e127f6dce74110a17092f62696f25a3a526b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-crmarena-traces.json",
+      "missing": [
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "observed": [
+        "environment_state",
+        "tool_calls"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "experiential-labs/wmh-crmarena-traces",
+      "dataset_revision": "9a70e127f6dce74110a17092f62696f25a3a526b",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/wmh-crmarena-traces.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "environment_state",
+        "tool_calls"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "experiential-labs/wmh-crmarena-traces",
+      "dataset_revision": "9a70e127f6dce74110a17092f62696f25a3a526b",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/wmh-crmarena-traces.json",
+      "missing": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "observed": [
+        "environment_state",
+        "tool_calls"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "cross_user_similarity",
+      "dataset_id": "zenlm/zen-agentic-dataset",
+      "dataset_revision": "cdc75caa622c76b86d040a3423c58c9b4aa335b1",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/zen-agentic-card-only.json",
+      "missing": [
+        "holdout",
+        "outcome",
+        "task",
+        "user_identity"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "holdout",
+        "outcome",
+        "session_or_trajectory",
+        "task",
+        "user_identity"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "friction_recovery",
+      "dataset_id": "zenlm/zen-agentic-dataset",
+      "dataset_revision": "cdc75caa622c76b86d040a3423c58c9b4aa335b1",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/zen-agentic-card-only.json",
+      "missing": [
+        "corrections",
+        "outcome",
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "corrections",
+        "outcome",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "nl2sql_schema_retrieval",
+      "dataset_id": "zenlm/zen-agentic-dataset",
+      "dataset_revision": "cdc75caa622c76b86d040a3423c58c9b4aa335b1",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/zen-agentic-card-only.json",
+      "missing": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "database_fixture",
+        "gold_sql",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "skill_improvement",
+      "dataset_id": "zenlm/zen-agentic-dataset",
+      "dataset_revision": "cdc75caa622c76b86d040a3423c58c9b4aa335b1",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/zen-agentic-card-only.json",
+      "missing": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "task"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "environment_state",
+        "holdout",
+        "intervention",
+        "outcome",
+        "session_or_trajectory",
+        "task"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "term_alias_quality",
+      "dataset_id": "zenlm/zen-agentic-dataset",
+      "dataset_revision": "cdc75caa622c76b86d040a3423c58c9b4aa335b1",
+      "level": "mechanics_only",
+      "manifest": "configs/datasets/zen-agentic-card-only.json",
+      "missing": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "alias_labels",
+        "scope",
+        "term_labels",
+        "text_or_messages"
+      ],
+      "unsupported_claims": []
+    },
+    {
+      "claim": "trace_structure",
+      "dataset_id": "zenlm/zen-agentic-dataset",
+      "dataset_revision": "cdc75caa622c76b86d040a3423c58c9b4aa335b1",
+      "level": "proxy_only",
+      "manifest": "configs/datasets/zen-agentic-card-only.json",
+      "missing": [
+        "tool_calls"
+      ],
+      "observed": [
+        "messages_or_spans",
+        "session_or_trajectory"
+      ],
+      "required": [
+        "messages_or_spans",
+        "session_or_trajectory",
+        "tool_calls"
+      ],
+      "unsupported_claims": []
+    }
+  ],
+  "rule": "required observations must be present; missing observations lower the claim level",
+  "schema_version": "frankengate-dataset-fit-audit-v1"
+}
