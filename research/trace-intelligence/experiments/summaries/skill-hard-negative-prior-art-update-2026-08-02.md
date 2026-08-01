@@ -29,7 +29,51 @@ skill transfer. Our existing NL2SQL benchmark already shows why known database
 scope and exact identifiers must remain a first lane: scope filtering beats
 generic dense retrieval on the measured collision task.
 
+### Newly confirmed production-shaped precedent
+
+[Scaling and Stabilizing Large-Scale Embedding-Based Retrieval](https://arxiv.org/abs/2607.10096)
+is a useful second precedent because it reports a deployed Walmart pipeline,
+not only a static benchmark. Its method combines online cross-batch hard
+negatives, offline cross-encoder plus metadata hard-negative mining, and
+legacy-aware warm-start distillation when replacing an embedding backbone. The
+paper reports +7.34% NDCG@5 and +0.50% gross revenue in its production setting.
+
+The transferable idea is **model evolution with a continuity constraint**: a
+new encoder must retain the old model's domain behavior while learning from
+new hard negatives. This is stronger than our MATM adapter experiment, which
+only measured a small fold-local Recall@20 change. It still does not solve
+corporate trace authorization, alias truth, or artifact utility. Our version
+must add user/project/time holdouts, deletion and scope checks, and a changed
+tool/database replay before claiming a production benefit.
+
+The ACL Industry paper's concrete selection rule is also directly useful. It
+selects a negative only when it is closer to the query than the positive and
+farther from the positive than from the query, reducing near-duplicate false
+negatives. Its internal corpus contained 36,871 documents and 5,250 annotated
+query-positive pairs; the reported in-house reranker reached MRR@3 `.57` and
+MRR@10 `.64` versus `.42` and `.45` without fine-tuning. Those are enterprise
+retrieval results, not trace or skill results, and the proprietary corpus and
+labeling process are not independently reproducible from the paper.
+
 ## Closest skill-lifecycle precedents
+
+[SAGE](https://arxiv.org/abs/2512.17102), the 2025/2026 “Reinforcement Learning
+for Self-Improving Agent with Skill Library” paper, is especially informative
+about our null transfer. It reports an 8.9-point Scenario Goal Completion gain
+on AppWorld, but its idealized sequential rollout retains skills within the
+same scenario and therefore does not require retrieval. The paper explicitly
+notes that the base prompt-only skill-library agent underperformed until expert
+SFT and RL were added; practical retrieval variants (query n-gram, query
+embedding, and skill embedding) are a later ablation. This means its headline
+result is not a counterexample to our cross-database null: it benefits from
+scenario-local continuity, expert trajectories, reward shaping, and a trained
+policy, while our replay tested a frozen frontier model with a mined procedure
+and no task-specific training.
+
+This yields a sharper hypothesis for the next study: **artifact reuse may need
+sequential task chains and an outcome-trained consumer**, not just a good text
+procedure inserted into an unrelated task. The design must compare same-family
+sequential chains, family-held-out transfer, and retrieval/no-retrieval arms.
 
 [Trace2Skill](https://arxiv.org/abs/2603.25158) (with an
 [official implementation](https://github.com/Qwen-Applications/Trace2Skill)) distills trajectory-local lessons

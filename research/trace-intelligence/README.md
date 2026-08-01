@@ -1405,6 +1405,15 @@ retrieval improved same-work Recall@20 by 12.3 points over lexical action-only
 3.1 points with a CI crossing zero. This supports semantic review retrieval,
 not skill utility, custom-model promotion, or similarity-based employee claims.
 
+The [`frontier MATM reranker checkpoint`](experiments/summaries/matm-frontier-reranker-2026-08-02.md)
+then compared nine leave-one-model-out candidate pools using lexical ranking,
+cached embeddings, and `gpt-5.6-luna`. Lexical and Luna both reached MRR and
+Recall@1/3/5 of `1.0`; embedding MRR was `.674`, and Luna's top-3 success rate
+`.704` tied lexical. The candidate pool and same-goal labels were silver and
+frontier calls saw no outcomes, so this is a null incremental ranking result,
+not a semantic-insight or skill-utility claim. Keep frontier ranking off the
+hot path and reserve it for ambiguous hard-negative adjudication or human review.
+
 The direct [`native Codex paraphrase replication`](experiments/summaries/defog-codex-frontier-native-paraphrase-multiseed-2026-08-02.md)
 completed a balanced three-seed, four-arm transfer test over renamed broker tasks.
 No-skill scored `8/12`, formatting placebo `10/12`, length-matched neutral `9/12`,

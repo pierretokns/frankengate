@@ -36,6 +36,7 @@ promotion-eligible yet.
 | Structured corporate identity is the highest-value retrieval intervention measured | Exact identifier + known scope: MRR `.4441 -> .6867`, R@1 `.1992 -> .4492`, R@5 `.8150 -> .9980`; wrong-system-before-target `14.43% -> .20%` | Exact identifiers, aliases, database/project/team scope must be the first retrieval lane |
 | Dense retrieval is useful after structured filtering | CodeTraceBench exact+structured+dense reached R@20 `.818`; a separate MATM cascade found action-only embedding Recall@20 lift `+.123` over lexical | Treat vectors as candidate recall, not authority or replacement for identifiers |
 | Frontier models can create bounded, evidence-grounded proposals | Luna produced valid, structurally grounded proposals for 3/4 meaningful content-minimized sessions; independent receipt verification passed | Model passes are viable after deterministic projection, but proposal quality and utility still require outcome labels |
+| Frontier reranking adds value after lexical/dense candidate generation | On nine MATM leave-one-model-out queries, lexical and Luna both had MRR/Recall@1/3/5 `1.0`; embedding MRR `.674`; Luna's top-3 success `.704` tied lexical | Do not put a frontier model on every retrieval request; reserve it for ambiguous, high-value, human-reviewed cases |
 
 ## Nulls and corrections
 
@@ -69,6 +70,29 @@ Therefore the correct interpretation is **boundary finding**, not paper
 disproof. A null on our four-task or eight-task cohort can mean the candidate,
 task family, horizon, harness, or outcome oracle was insufficient. It cannot
 refute a paper's result on its own benchmark.
+
+Two newer results sharpen the next experiment rather than overturning this
+boundary:
+
+- [SAGE](https://arxiv.org/abs/2512.17102) reports a strong AppWorld gain, but
+  its main sequential rollout keeps skills inside the same scenario and uses
+  expert SFT plus RL and a skill-integrated reward. Its practical retrieval
+  ablation is therefore not equivalent to dropping a mined procedure into a
+  different database family. Our null is a test of frozen-procedure transfer,
+  not a refutation of outcome-trained sequential skill learning.
+- [Walmart's retrieval-evolution pipeline](https://arxiv.org/abs/2607.10096)
+  combines cross-batch and metadata-aware hard negatives with warm-start
+  distillation when changing embedding backbones, reporting production lift.
+  This supports testing continuity-preserving adapter updates, not blindly
+  replacing the current encoder. It still lacks our authority, deletion, and
+  changed-tool replay requirements.
+
+The closest enterprise hard-negative study, [ACL Industry
+2025](https://aclanthology.org/2025.acl-industry.72/), selects negatives that
+are closer to the query than the positive but farther from the positive than
+the query. It reports internal reranker MRR@3 `.57`/MRR@10 `.64` versus
+`.42`/`.45` without fine-tuning. This is a strong recipe for our alias and
+wrong-system corpus, but not proof of trace or skill utility.
 
 ## Architecture decision
 
