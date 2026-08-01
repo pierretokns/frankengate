@@ -1,0 +1,927 @@
+{
+  "adapter": "codex_rollout_jsonl_v1",
+  "aggregate": {
+    "explicit_signal_counts": {
+      "correction": 4,
+      "retry_or_repair": 13
+    },
+    "session_count": 34,
+    "sessions_with_any_structured_error": 32,
+    "sessions_with_repeated_tool": 29,
+    "sessions_with_rephrase": 0,
+    "totals": {
+      "assistant_turn_count": 2310,
+      "close_prompt_pair_count": 17,
+      "function_call_count": 3182,
+      "function_call_output_count": 3175,
+      "keyword_error_marker_count": 535,
+      "repeated_prompt_count": 17,
+      "repeated_tool_use_count": 563,
+      "rephrase_pair_count": 0,
+      "structured_executor_error_count": 255,
+      "success_marker_count": 65,
+      "user_prompt_count": 49
+    }
+  },
+  "claim_boundary": "Content-free screening only; exit codes are executor outcomes, not user satisfaction or intent labels.",
+  "schema_version": "codex-history-friction-result-v1",
+  "sessions": [
+    {
+      "assistant_turn_count": 0,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 0,
+      "explicit_signal_counts": {},
+      "function_call_count": 0,
+      "function_call_output_count": 0,
+      "keyword_error_marker_count": 0,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "019d2fac-0b38-70f0-baff-a394265d8291",
+      "structured_executor_error_count": 0,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-03-27T14:21:42.391Z",
+        "2026-03-27T14:21:42.391Z"
+      ],
+      "top_tools": [],
+      "user_prompt_count": 0
+    },
+    {
+      "assistant_turn_count": 0,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 0,
+      "explicit_signal_counts": {},
+      "function_call_count": 0,
+      "function_call_output_count": 0,
+      "keyword_error_marker_count": 0,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "019d2fc2-f328-73d3-ba2e-f3ea3dc838c3",
+      "structured_executor_error_count": 0,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-03-27T14:46:44.276Z",
+        "2026-03-27T14:46:44.276Z"
+      ],
+      "top_tools": [],
+      "user_prompt_count": 0
+    },
+    {
+      "assistant_turn_count": 19,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "correction": 1
+      },
+      "function_call_count": 108,
+      "function_call_output_count": 108,
+      "keyword_error_marker_count": 23,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 11,
+      "rephrase_pair_count": 0,
+      "session_id": "019e7dfa-c0b6-7f30-9475-0ffcb13a24c2",
+      "structured_executor_error_count": 20,
+      "success_marker_count": 1,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.317641+00:00",
+        "2026-07-08T09:12:50.324667+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          108
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 19,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 27,
+      "function_call_output_count": 27,
+      "keyword_error_marker_count": 0,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "019e7e9e-06e1-7813-afda-bb70ece50d93",
+      "structured_executor_error_count": 1,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.348037+00:00",
+        "2026-07-08T09:12:50.349699+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          27
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 17,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 89,
+      "function_call_output_count": 89,
+      "keyword_error_marker_count": 33,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 11,
+      "rephrase_pair_count": 0,
+      "session_id": "019e7ecf-0694-7980-b0d7-5e9d1f27e8bf",
+      "structured_executor_error_count": 7,
+      "success_marker_count": 1,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.441952+00:00",
+        "2026-07-08T09:12:50.445311+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          89
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 9,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 34,
+      "function_call_output_count": 34,
+      "keyword_error_marker_count": 6,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 1,
+      "rephrase_pair_count": 0,
+      "session_id": "019e7fd4-6c2d-7ee3-80b3-e400eeea7b6f",
+      "structured_executor_error_count": 3,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.334518+00:00",
+        "2026-07-08T09:12:50.340959+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          34
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 32,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 76,
+      "function_call_output_count": 76,
+      "keyword_error_marker_count": 15,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 17,
+      "rephrase_pair_count": 0,
+      "session_id": "019ef0ae-a41f-72a2-af2c-eebb4a2c56f6",
+      "structured_executor_error_count": 9,
+      "success_marker_count": 2,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.372037+00:00",
+        "2026-07-08T09:12:50.377733+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          76
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 114,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 135,
+      "function_call_output_count": 135,
+      "keyword_error_marker_count": 27,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 25,
+      "rephrase_pair_count": 0,
+      "session_id": "019eff91-592c-7a73-9ffc-6559841c514f",
+      "structured_executor_error_count": 11,
+      "success_marker_count": 3,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.654220+00:00",
+        "2026-07-08T09:12:50.666887+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          135
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 75,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "retry_or_repair": 1
+      },
+      "function_call_count": 107,
+      "function_call_output_count": 107,
+      "keyword_error_marker_count": 31,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 12,
+      "rephrase_pair_count": 0,
+      "session_id": "019f100a-2d0c-7242-9d77-35d43506c21a",
+      "structured_executor_error_count": 15,
+      "success_marker_count": 5,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.102115+00:00",
+        "2026-07-08T09:12:50.127986+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          107
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 41,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "retry_or_repair": 1
+      },
+      "function_call_count": 70,
+      "function_call_output_count": 70,
+      "keyword_error_marker_count": 9,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 1,
+      "rephrase_pair_count": 0,
+      "session_id": "019f102d-3cfd-7881-a964-3076158e0912",
+      "structured_executor_error_count": 7,
+      "success_marker_count": 2,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.128090+00:00",
+        "2026-07-08T09:12:50.132871+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          70
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 46,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "retry_or_repair": 1
+      },
+      "function_call_count": 82,
+      "function_call_output_count": 82,
+      "keyword_error_marker_count": 12,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 3,
+      "rephrase_pair_count": 0,
+      "session_id": "019f1039-f32c-7210-986a-0860137a55b2",
+      "structured_executor_error_count": 6,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.132912+00:00",
+        "2026-07-08T09:12:50.154662+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          82
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 46,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "retry_or_repair": 1
+      },
+      "function_call_count": 34,
+      "function_call_output_count": 34,
+      "keyword_error_marker_count": 6,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 6,
+      "rephrase_pair_count": 0,
+      "session_id": "019f1050-4150-7d61-9cc4-5bc8a0a2a772",
+      "structured_executor_error_count": 2,
+      "success_marker_count": 2,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.154695+00:00",
+        "2026-07-08T09:12:50.186055+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          34
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 199,
+      "close_prompt_pair_count": 1,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "retry_or_repair": 2
+      },
+      "function_call_count": 171,
+      "function_call_output_count": 171,
+      "keyword_error_marker_count": 36,
+      "repeated_prompt_count": 1,
+      "repeated_tool_use_count": 54,
+      "rephrase_pair_count": 0,
+      "session_id": "019f1062-83e7-7f91-addf-6fe4b69ba1ec",
+      "structured_executor_error_count": 7,
+      "success_marker_count": 1,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.186091+00:00",
+        "2026-07-08T09:12:50.197182+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          171
+        ]
+      ],
+      "user_prompt_count": 2
+    },
+    {
+      "assistant_turn_count": 197,
+      "close_prompt_pair_count": 4,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "retry_or_repair": 5
+      },
+      "function_call_count": 261,
+      "function_call_output_count": 261,
+      "keyword_error_marker_count": 37,
+      "repeated_prompt_count": 4,
+      "repeated_tool_use_count": 99,
+      "rephrase_pair_count": 0,
+      "session_id": "019f125a-6d51-76d1-af24-6642c27f6f23",
+      "structured_executor_error_count": 10,
+      "success_marker_count": 2,
+      "timestamp_range": [
+        "2026-07-08T09:12:49.998424+00:00",
+        "2026-07-08T09:12:50.043556+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          261
+        ]
+      ],
+      "user_prompt_count": 5
+    },
+    {
+      "assistant_turn_count": 64,
+      "close_prompt_pair_count": 2,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 79,
+      "function_call_output_count": 79,
+      "keyword_error_marker_count": 12,
+      "repeated_prompt_count": 2,
+      "repeated_tool_use_count": 11,
+      "rephrase_pair_count": 0,
+      "session_id": "019f1295-07af-7a11-b0f4-087041f8ed31",
+      "structured_executor_error_count": 7,
+      "success_marker_count": 1,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.385408+00:00",
+        "2026-07-08T09:12:50.390464+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          79
+        ]
+      ],
+      "user_prompt_count": 3
+    },
+    {
+      "assistant_turn_count": 28,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 61,
+      "function_call_output_count": 61,
+      "keyword_error_marker_count": 20,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 4,
+      "rephrase_pair_count": 0,
+      "session_id": "019f12c2-68fa-72f3-9cea-f9413fbe8ed8",
+      "structured_executor_error_count": 6,
+      "success_marker_count": 1,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.302080+00:00",
+        "2026-07-08T09:12:50.308201+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          61
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 33,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 93,
+      "function_call_output_count": 92,
+      "keyword_error_marker_count": 9,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 5,
+      "rephrase_pair_count": 0,
+      "session_id": "019f1435-f25c-7843-b00d-37f0b8a94a52",
+      "structured_executor_error_count": 4,
+      "success_marker_count": 3,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.420919+00:00",
+        "2026-07-08T09:12:50.427640+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          93
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 52,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 116,
+      "function_call_output_count": 116,
+      "keyword_error_marker_count": 15,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "019f14fd-811f-7be2-a669-e07da46ba555",
+      "structured_executor_error_count": 6,
+      "success_marker_count": 1,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.624107+00:00",
+        "2026-07-08T09:12:50.636272+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          116
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 32,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 53,
+      "function_call_output_count": 53,
+      "keyword_error_marker_count": 7,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 6,
+      "rephrase_pair_count": 0,
+      "session_id": "019f18b6-bbf8-7682-b555-f92545d2cf88",
+      "structured_executor_error_count": 3,
+      "success_marker_count": 1,
+      "timestamp_range": [
+        "2026-07-08T09:12:49.845365+00:00",
+        "2026-07-08T09:12:49.848336+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          53
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 71,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 83,
+      "function_call_output_count": 83,
+      "keyword_error_marker_count": 16,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 16,
+      "rephrase_pair_count": 0,
+      "session_id": "019f18b8-e88d-7103-abda-df6f5dd46f0a",
+      "structured_executor_error_count": 5,
+      "success_marker_count": 2,
+      "timestamp_range": [
+        "2026-07-08T09:12:49.853354+00:00",
+        "2026-07-08T09:12:49.865153+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          83
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 75,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 72,
+      "function_call_output_count": 71,
+      "keyword_error_marker_count": 9,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 10,
+      "rephrase_pair_count": 0,
+      "session_id": "019f1a3a-45d6-7a80-8580-9152038e85a7",
+      "structured_executor_error_count": 3,
+      "success_marker_count": 2,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.686383+00:00",
+        "2026-07-08T09:12:50.692311+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          72
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 45,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 68,
+      "function_call_output_count": 68,
+      "keyword_error_marker_count": 12,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 4,
+      "rephrase_pair_count": 0,
+      "session_id": "019f1cef-888d-7f62-9339-8b3540b1a541",
+      "structured_executor_error_count": 4,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-07-08T09:12:49.966232+00:00",
+        "2026-07-08T09:12:49.971851+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          68
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 25,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 77,
+      "function_call_output_count": 77,
+      "keyword_error_marker_count": 22,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 3,
+      "rephrase_pair_count": 0,
+      "session_id": "019f1d48-f9d8-77a1-bd11-75a2335108df",
+      "structured_executor_error_count": 2,
+      "success_marker_count": 1,
+      "timestamp_range": [
+        "2026-07-08T09:12:49.971916+00:00",
+        "2026-07-08T09:12:49.979870+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          77
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 11,
+      "close_prompt_pair_count": 1,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 33,
+      "function_call_output_count": 33,
+      "keyword_error_marker_count": 5,
+      "repeated_prompt_count": 1,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "019f2307-808c-7773-b881-1d2b667895f6",
+      "structured_executor_error_count": 3,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.615649+00:00",
+        "2026-07-08T09:12:50.618595+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          33
+        ]
+      ],
+      "user_prompt_count": 2
+    },
+    {
+      "assistant_turn_count": 386,
+      "close_prompt_pair_count": 7,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 378,
+      "function_call_output_count": 376,
+      "keyword_error_marker_count": 55,
+      "repeated_prompt_count": 7,
+      "repeated_tool_use_count": 129,
+      "rephrase_pair_count": 0,
+      "session_id": "019f2768-08f9-7c53-a8a6-c587d3f4c63b",
+      "structured_executor_error_count": 31,
+      "success_marker_count": 8,
+      "timestamp_range": [
+        "2026-07-08T09:12:49.880428+00:00",
+        "2026-07-08T09:12:49.903923+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          378
+        ]
+      ],
+      "user_prompt_count": 8
+    },
+    {
+      "assistant_turn_count": 47,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 121,
+      "function_call_output_count": 121,
+      "keyword_error_marker_count": 14,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 6,
+      "rephrase_pair_count": 0,
+      "session_id": "019f2848-1f1d-7302-b553-bf3b10d50ba5",
+      "structured_executor_error_count": 15,
+      "success_marker_count": 6,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.397326+00:00",
+        "2026-07-08T09:12:50.405066+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          121
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 16,
+      "close_prompt_pair_count": 1,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "correction": 2,
+        "retry_or_repair": 2
+      },
+      "function_call_count": 35,
+      "function_call_output_count": 35,
+      "keyword_error_marker_count": 6,
+      "repeated_prompt_count": 1,
+      "repeated_tool_use_count": 1,
+      "rephrase_pair_count": 0,
+      "session_id": "019f3397-5026-7bd0-85fb-e850f6fa7dc6",
+      "structured_executor_error_count": 5,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-07-08T09:12:49.835474+00:00",
+        "2026-07-08T09:12:49.839802+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          35
+        ]
+      ],
+      "user_prompt_count": 2
+    },
+    {
+      "assistant_turn_count": 109,
+      "close_prompt_pair_count": 1,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 123,
+      "function_call_output_count": 123,
+      "keyword_error_marker_count": 17,
+      "repeated_prompt_count": 1,
+      "repeated_tool_use_count": 39,
+      "rephrase_pair_count": 0,
+      "session_id": "019f3863-72b8-7f83-9380-79faf675473c",
+      "structured_executor_error_count": 10,
+      "success_marker_count": 5,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.450299+00:00",
+        "2026-07-08T09:12:50.458105+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          123
+        ]
+      ],
+      "user_prompt_count": 2
+    },
+    {
+      "assistant_turn_count": 48,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 77,
+      "function_call_output_count": 77,
+      "keyword_error_marker_count": 8,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 5,
+      "rephrase_pair_count": 0,
+      "session_id": "019f38f9-6d30-7082-89bf-6c8501db7425",
+      "structured_executor_error_count": 5,
+      "success_marker_count": 2,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.576549+00:00",
+        "2026-07-08T09:12:50.583697+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          77
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 42,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 79,
+      "function_call_output_count": 79,
+      "keyword_error_marker_count": 18,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 2,
+      "rephrase_pair_count": 0,
+      "session_id": "019f3924-0d2d-72d3-87e1-6abe2cc4fada",
+      "structured_executor_error_count": 6,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.593580+00:00",
+        "2026-07-08T09:12:50.602087+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          79
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 147,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {
+        "correction": 1
+      },
+      "function_call_count": 142,
+      "function_call_output_count": 142,
+      "keyword_error_marker_count": 27,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 3,
+      "rephrase_pair_count": 0,
+      "session_id": "019f3bea-7ccf-7e23-9b40-6f6fb567147b",
+      "structured_executor_error_count": 21,
+      "success_marker_count": 5,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.470713+00:00",
+        "2026-07-08T09:12:50.519380+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          142
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 68,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 87,
+      "function_call_output_count": 87,
+      "keyword_error_marker_count": 8,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 1,
+      "rephrase_pair_count": 0,
+      "session_id": "019f3c7c-a419-73a1-b27c-10fc791cb7de",
+      "structured_executor_error_count": 9,
+      "success_marker_count": 0,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.562623+00:00",
+        "2026-07-08T09:12:50.567993+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          87
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 104,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 96,
+      "function_call_output_count": 95,
+      "keyword_error_marker_count": 8,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 42,
+      "rephrase_pair_count": 0,
+      "session_id": "019f40d8-e3f1-7a80-82c3-98280e090a01",
+      "structured_executor_error_count": 7,
+      "success_marker_count": 4,
+      "timestamp_range": [
+        "2026-07-08T09:12:50.353575+00:00",
+        "2026-07-08T09:12:50.360430+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          96
+        ]
+      ],
+      "user_prompt_count": 1
+    },
+    {
+      "assistant_turn_count": 93,
+      "close_prompt_pair_count": 0,
+      "distinct_tool_names": 1,
+      "explicit_signal_counts": {},
+      "function_call_count": 115,
+      "function_call_output_count": 113,
+      "keyword_error_marker_count": 12,
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 36,
+      "rephrase_pair_count": 0,
+      "session_id": "019f40da-9a63-7483-aef2-2f1412f61b23",
+      "structured_executor_error_count": 5,
+      "success_marker_count": 4,
+      "timestamp_range": [
+        "2026-07-08T09:12:49.942980+00:00",
+        "2026-07-08T09:12:49.952521+00:00"
+      ],
+      "top_tools": [
+        [
+          "shell",
+          115
+        ]
+      ],
+      "user_prompt_count": 1
+    }
+  ],
+  "source": {
+    "path_count": 29,
+    "raw_content_committed": false
+  }
+}
