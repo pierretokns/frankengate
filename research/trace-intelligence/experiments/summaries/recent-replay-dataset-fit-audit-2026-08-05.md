@@ -6,6 +6,8 @@ This audit uses pinned local checkouts of
 counts and field availability only; no prompts, commands, tool arguments, or
 raw trace content is copied into this repository. The machine-readable receipt
 is [`recent-replay-dataset-fit-audit-2026-08-05.json`](../results/recent-replay-dataset-fit-audit-2026-08-05.json).
+The exact content-free failed-task cohort is pinned in
+[`recovery-bench-initial-failure-set-2026-08-05.json`](../manifests/recovery-bench-initial-failure-set-2026-08-05.json).
 
 ## What the datasets actually contain
 
