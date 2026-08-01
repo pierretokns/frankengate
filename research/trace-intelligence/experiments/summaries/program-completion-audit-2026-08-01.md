@@ -74,6 +74,12 @@ structural temporal candidates and 269 eval-review records, but no automatic
 memory/skill writes or skill-gap/collaboration claims. The cohort still has no
 independent outcomes, so this strengthens ingestion and proposal mechanics only.
 
+The real Defog alias/NIL benchmark added 22 public cases with 8 constructed
+scope-swapped NILs. Exact, lexical, dense, and Luna target MRR was .893, .806,
+.690, and 1.000 respectively; Luna abstained on all 8 NILs while retrieval
+arms could not abstain. This validates a late-stage refusal contract, not
+enterprise semantic truth or downstream artifact utility.
+
 The combined evidence matrix was regenerated with the new attestation and
 full-cohort receipts. It now explicitly records CMU as approval-gated rather
 than waived: no raw CMU shard or CMU metric is claimed. The matrix still
