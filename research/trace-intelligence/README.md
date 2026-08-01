@@ -113,6 +113,9 @@ mechanics proof; it does not establish mined-artifact utility or semantic
 equivalence. See
 [`experiments/summaries/artifact-capsule-postgresql-reuse-2026-08-02.md`](experiments/summaries/artifact-capsule-postgresql-reuse-2026-08-02.md).
 
+The historical-log research contract and prior-art survey are recorded in
+[`experiments/summaries/historical-trace-mining-prior-art-2026-08-02.md`](experiments/summaries/historical-trace-mining-prior-art-2026-08-02.md).
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),

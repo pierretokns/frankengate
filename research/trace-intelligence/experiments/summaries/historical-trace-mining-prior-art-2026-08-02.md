@@ -1,0 +1,72 @@
+# Historical Claude/Codex trace mining: prior art and research contract
+
+This note records the sub-agent survey that complements the executable native
+Claude/Codex screens. The exact integrated system is still an open empirical
+question.
+
+## Closest adjacent work
+
+- [Anthropic Claude Code expertise analysis](https://www.anthropic.com/research/claude-code-expertise)
+  and [Anthropic internal usage analysis](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic)
+  infer task expertise/modes and trouble from transcript structure, prompts,
+  files, errors, failed tests, repeated attempts, and frustration signals.
+- [Cursor semantic search](https://cursor.com/blog/semsearch) and
+  [CursorBench](https://cursor.com/blog/cursorbench) use historical sessions
+  to label what should have been retrieved earlier, then train a custom
+  embedding model from those labels.
+- [Follow-up/reformulation mining](https://arxiv.org/abs/2407.13166) defines
+  18 reformulation/friction categories and finds dissatisfaction-correlated
+  clarifying, excluding-condition, and substituting-condition follow-ups.
+- [IBM weak supervision](https://research.ibm.com/publications/bootstrapping-conversational-agents-with-weak-supervision),
+  [intent mining](https://arxiv.org/abs/2005.11014), and
+  [NAACL intent discovery](https://aclanthology.org/2022.naacl-main.134/)
+  support clustering and weak labels, with SME sampling needed for naming and
+  calibration.
+- [SWE-bench](https://arxiv.org/abs/2310.06770) and
+  [SWE-Gym](https://arxiv.org/abs/2412.21139) show how descriptions, repository
+  state, patches, tests, and trajectories become replayable eval packets.
+- [OpenAI’s benchmark audit](https://openai.com/index/separating-signal-from-noise-coding-evaluations/)
+  demonstrates why generated cases need automatic and human validity gates.
+- [TraceLab](https://tracelab.cs.washington.edu/) is a useful public proxy
+  corpus: 665k Claude/Codex steps, 8,058 sessions, and 743k tool calls.
+- Process-mining work ([discovery](https://arxiv.org/abs/1705.02288),
+  [trace encoding](https://arxiv.org/abs/2301.02167),
+  [multi-perspective clustering](https://emisa-journal.org/emisa/article/view/204))
+  contributes deterministic segmentation, workflow variants, conformance, and
+  anomaly detection, but cannot recover hidden business intent by itself.
+
+## Research contract
+
+1. Normalize provider-specific JSONL/events into session → turn → action DAGs,
+   preserving tool calls, outputs, files, diffs, tests, branches, timestamps,
+   and provenance.
+2. Segment episodes with deterministic process-mining boundaries plus frontier
+   adjudication; expose boundary confidence and an explicit
+   `unknown/needs-user` state.
+3. Infer intent, constraints, target systems, expected artifacts, and missing
+   information with evidence spans and confidence.
+4. Separate productive iteration (scope refinement, clarification,
+   exploration) from friction (repair loops, failed assertions, denials,
+   stagnation, overrides, reverts, abandonment, latency, and dissatisfaction).
+   Repeated prompts alone are not failure truth.
+5. Produce eval work packets with an evidence slice, normalized intent,
+   expected artifact, deterministic validators, counterfactual/negative cases,
+   replay inputs, and source provenance.
+6. Use weak labels and small-model screening for triage only; use frontier
+   adjudication and stratified SME review for intent naming, ambiguity, and
+   benchmark validity.
+7. Replay failure/recovery/benign pairs under user, repository, time, and
+   task-family holdouts. Measure friction precision, intent agreement, eval
+   validity, replay determinism, and improvement over baseline.
+8. Promote only validated evals or validated repairs/skills. Do not auto-release
+   raw summaries or uncertain inferred intent.
+9. Measure what logs cannot establish without the user: hidden business
+   objective, acceptable trade-offs, undocumented success criteria, and whether
+   a repeated prompt reflects dissatisfaction or deliberate refinement.
+
+Every inferred intent/eval must carry `intent_basis`, confidence, evidence
+references, source hashes, episode-boundary confidence, validator type, reviewer
+provenance, and an `unknown/needs-user` reason when evidence is insufficient.
+
+This note is linked to issues #125–#129 and is a research design, not a claim
+that any one detector, embedding model, or memory system solves intent mining.
