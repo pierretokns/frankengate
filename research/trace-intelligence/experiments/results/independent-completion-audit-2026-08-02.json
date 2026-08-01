@@ -95,10 +95,15 @@
           "exists": true,
           "path": "mlops-feedback-canary-rollback-2026-08-02.json",
           "sha256": "6e5ae51a24bfe7341b6e6ac0dd7cca00c0b03d52649c7754bb48d6c8eb9d2dd2"
+        },
+        {
+          "exists": true,
+          "path": "cross-method-calibration-2026-08-02.json",
+          "sha256": "2a62ff6bbaf85bb3cb18e49aaebcd30430a531a85ea0c0b5708613df4b42adc9"
         }
       ],
       "id": "power_cost_latency_and_null_taxonomy",
-      "remaining": "The RHO powered slice has uncertainty but is not repeated-seed powered; cross-method cost/latency and calibrated null taxonomy remain incomplete.",
+      "remaining": "Calibration now covers all 18 receipts and reports two paired effects plus typed nulls, but repeated-seed power, comparable token/currency cost, same-budget latency, and independent changed-agent/enterprise outcomes remain incomplete.",
       "status": "partial"
     },
     {

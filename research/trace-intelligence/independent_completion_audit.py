@@ -61,8 +61,9 @@ REQUIREMENTS: tuple[dict[str, Any], ...] = (
         "evidence": (
             "rho-candidate-harness-powered-2026-08-02.json",
             "mlops-feedback-canary-rollback-2026-08-02.json",
+            "cross-method-calibration-2026-08-02.json",
         ),
-        "remaining": "The RHO powered slice has uncertainty but is not repeated-seed powered; cross-method cost/latency and calibrated null taxonomy remain incomplete.",
+        "remaining": "Calibration now covers all 18 receipts and reports two paired effects plus typed nulls, but repeated-seed power, comparable token/currency cost, same-budget latency, and independent changed-agent/enterprise outcomes remain incomplete.",
     },
     {
         "id": "separate_frankengate_integration",
