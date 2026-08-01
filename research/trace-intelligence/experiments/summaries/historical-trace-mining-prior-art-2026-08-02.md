@@ -135,3 +135,8 @@ derived, license-cleared corpus.
 
 This note is linked to issues #125–#129 and is a research design, not a claim
 that any one detector, embedding model, or memory system solves intent mining.
+
+The 2025–2026 literature update adds a particularly relevant enterprise
+hard-negative precedent and several full skill-lifecycle systems. See
+`experiments/summaries/skill-hard-negative-prior-art-update-2026-08-02.md` for
+the exact/adjacent split and the revised frozen alias/embedding/replay protocol.

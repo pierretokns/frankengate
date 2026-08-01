@@ -102,3 +102,11 @@ alignment. The Frankengate mapping is recorded in
 `experiments/summaries/science-one-chain-of-evidence-adaptation-2026-08-02.md`;
 it strengthens the release/evidence contract but does not close any enterprise
 utility gate.
+
+The 2025 ACL Industry Track hard-negative paper and 2026 Trace2Skill,
+Anything2Skill, SkillAdaptor, and Microsoft lifecycle studies provide closer
+component precedents than generic memory systems. They still do not test our
+exact combination of private multi-user traces, identifier collisions,
+governed artifact capsules, consent, and changed-system replay. The revised
+four-stage hard-negative/embedding protocol is documented in
+`experiments/summaries/skill-hard-negative-prior-art-update-2026-08-02.md`.
