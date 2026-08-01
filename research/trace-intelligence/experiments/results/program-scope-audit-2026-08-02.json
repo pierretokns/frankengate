@@ -172,6 +172,14 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/skilllearnbench-frontier-subset-2026-08-01.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skilllearnbench-frontier-family-2026-08-05.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/results/natural-released-procedure-2026-08-02.json"
         },
         {
@@ -237,6 +245,14 @@
         {
           "exists": true,
           "path": "experiments/summaries/natural-trace-memory-factorial-2026-08-02-r2.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/skilllearnbench-frontier-subset-2026-08-01.md"
+        },
+        {
+          "exists": true,
+          "path": "experiments/summaries/skilllearnbench-frontier-family-2026-08-05.md"
         }
       ],
       "id": "public_trace_and_concept_audit",
@@ -411,7 +427,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "da3f7c8df5a78e14f0642217be22e90a319bcd9c"
+          "head": "8c16470baca24e5d10dbcbe778082370754679c4"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

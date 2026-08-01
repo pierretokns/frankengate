@@ -1742,6 +1742,11 @@ changed-system outcomes, or cross-user transfer labels.
 The six-arm same-task Sonnet comparison is frozen in
 [`skilllearnbench-method-matrix-2026-08-05.json`](experiments/manifests/skilllearnbench-method-matrix-2026-08-05.json);
 it is a preflight manifest, not an execution result.
+The Codex host-harness [`frontier family probe`](experiments/summaries/skilllearnbench-frontier-family-2026-08-05.md)
+then ran three held-out enterprise-search instances: macro Q1 recall tied at
+`.806` for no-skill and human-authored arms, while individual task deltas were
+`-.250`, `+.125`, and `+.125`. Exact precision was `1.00` throughout; this is a
+bounded no-lift result, not a causal or enterprise-transfer claim.
 
 The follow-up [`recent replay/diagnosis dataset-fit audit`](experiments/summaries/recent-replay-dataset-fit-audit-2026-08-05.md)
 audits the pinned local TRAIL and Recovery-Bench checkouts rather than relying
