@@ -102,6 +102,17 @@ parameter mismatch, and schema drift all failed closed. Bound injection-shaped
 parameters were never interpreted as SQL. This is a SQLite mechanics proof,
 not PostgreSQL/Aurora semantic equivalence or artifact utility.
 
+The follow-up [`artifact_capsule_postgres_reuse.py`](artifact_capsule_postgres_reuse.py)
+binds the same capsule contract to the real governed executor against a
+disposable PostgreSQL 16.12 instance. It creates a temporary RLS-enabled table
+and least-privilege role, then verifies valid bound reuse, stale epoch/scope,
+expiry, parameter mismatch, schema drift, and injection-shaped values. The
+receipt shows all five denial cases fail closed and that the injection-shaped
+value is bound (zero rows), never interpreted as SQL. This is still a
+mechanics proof; it does not establish mined-artifact utility or semantic
+equivalence. See
+[`experiments/summaries/artifact-capsule-postgresql-reuse-2026-08-02.md`](experiments/summaries/artifact-capsule-postgresql-reuse-2026-08-02.md).
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),

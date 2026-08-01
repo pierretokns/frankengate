@@ -1182,6 +1182,87 @@ class GovernedPostgresExecutor:
         )
         return validated, result
 
+    def execute_bound_candidate(
+        self, sql: str, parameters: Sequence[Any]
+    ) -> tuple[ValidatedSQL, QueryResult]:
+        """Validate and execute a read-only candidate with bound parameters.
+
+        This is deliberately separate from ``execute_candidate`` so callers can
+        reuse a validated artifact without interpolating values into SQL. The
+        same catalog/policy and transaction guards are applied; psycopg2 owns
+        parameter adaptation and never receives an interpolated statement.
+        """
+        policy = SQLPolicy(
+            catalog=self.catalog(),
+            allowed_schemas=self.allowed_schemas,
+            allowed_sensitive_columns=self.allowed_sensitive_columns,
+            allowed_sensitive_projections=self.allowed_sensitive_projections,
+        )
+        validated = validate_candidate_sql(sql, policy)
+        import time as time_module
+
+        connection = self._connect()
+        started = time_module.perf_counter()
+        try:
+            self._begin(connection)
+            with connection.cursor() as cursor:
+                cursor.execute(sql, tuple(parameters))
+                if cursor.description is None:
+                    raise SQLPolicyError(
+                        "no_result_set", "query did not return a result set"
+                    )
+                columns = tuple(
+                    descriptor.name for descriptor in cursor.description
+                )
+                rows = tuple(cursor.fetchmany(self.limits.max_rows + 1))
+                if len(rows) > self.limits.max_rows:
+                    raise ResultLimitError(
+                        f"result exceeded {self.limits.max_rows} rows"
+                    )
+                result_bytes = len(
+                    canonical_json_bytes(
+                        [
+                            [_canonical_cell(value) for value in row]
+                            for row in rows
+                        ]
+                    )
+                )
+                if result_bytes > self.limits.max_result_bytes:
+                    raise ResultLimitError(
+                        "result exceeded configured byte limit"
+                    )
+            elapsed_ms = (time_module.perf_counter() - started) * 1_000
+            connection.rollback()
+            result = QueryResult(
+                columns=columns,
+                rows=rows,
+                elapsed_ms=elapsed_ms,
+                result_bytes=result_bytes,
+            )
+            _append_jsonl(
+                self.audit_path,
+                {
+                    "event": "bound_candidate_sql_result",
+                    "schema_version": SCHEMA_VERSION,
+                    "authority": self.authority.content_free_receipt(),
+                    "candidate_sql_sha256": sha256_text(sql),
+                    "parameter_count": len(parameters),
+                    "referenced_tables": list(validated.referenced_tables),
+                    "referenced_columns": list(validated.referenced_columns),
+                    "result_sha256": result_content_hash(result),
+                    "row_count": len(result.rows),
+                    "column_count": len(result.columns),
+                    "elapsed_ms": result.elapsed_ms,
+                    "result_bytes": result.result_bytes,
+                },
+            )
+            return validated, result
+        except Exception:
+            connection.rollback()
+            raise
+        finally:
+            connection.close()
+
     def execute_gold_alternatives(
         self, gold_sql: str
     ) -> list[tuple[exp.Query, QueryResult]]:
