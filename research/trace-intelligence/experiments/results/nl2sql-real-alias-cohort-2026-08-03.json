@@ -1,0 +1,31 @@
+{
+  "cases": {
+    "candidate_count": {"max": 20, "min": 11},
+    "categories": {"explicit_target": 12, "implicit_target": 14, "scope_swapped_nil": 16},
+    "count": 42,
+    "scope_swapped_nil_cases": 16,
+    "targeted_cases": 26
+  },
+  "claim_boundary": "Real public NL2SQL retrieval cohort with gold-SQL target objects and constructed scope-swapped NILs. It is not SME semantic-alias truth or evidence of downstream agent utility.",
+  "raw_sha256": "6ff69ae8fe3a59b34602efbb2a82ef2d2a4930517408c398eca019a931756de3",
+  "schema_version": "frankengate-nl2sql-real-alias-cohort-v1",
+  "seed": 20260803,
+  "selection": {
+    "candidate_pool": "target objects + lexical same-scope candidates + exact-morphology cross-scope collisions; scope-swapped NILs exclude source targets",
+    "per_db_per_target_category": 4
+  },
+  "sources": {
+    "csv_sha256": {
+      "instruct_advanced_postgres.csv": "566f5267119df0eceb32054037280c2fd5bc8c21b27e9ff6b068d11a47011934",
+      "instruct_basic_postgres.csv": "5a4e6112a5c2554c2963939440af6db41dfcaa3697dc131c380e7f9a1b70d5f7",
+      "questions_gen_postgres.csv": "fee829a042766f3e75d1a453cf6ffd7f6830ae9d68967156caa00c647b5efd0d"
+    },
+    "ddl_sha256": {
+      "broker": "c68ec1740238880aeff7426040f5a486f1af9e0f5d16e6db6f9ff80d1bbbf158",
+      "car_dealership": "c9b89f31478729fc3e85d5765a78e967dabe61570efcfedd0c7dff89b0cbe0c3",
+      "derm_treatment": "4ef82c763a045ebcb4b152f19dd8dc810a05021a52816feab97e90c491d79316",
+      "ewallet": "0633eb0baa077b9cc585499ccc43f430eae73ba0a77fddb52b585a75f249c249"
+    },
+    "enterprise_rows": 124
+  }
+}

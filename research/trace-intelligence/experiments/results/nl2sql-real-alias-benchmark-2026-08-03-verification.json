@@ -1,0 +1,16 @@
+{
+  "cases_verified": 22,
+  "checks": {
+    "aggregate_metrics_recomputed": true,
+    "candidate_fingerprints_match": true,
+    "frontier_orders_match_structured_outputs": true,
+    "frontier_decisions_match_structured_outputs": true,
+    "raw_cohort_hash_match": true,
+    "result_hash_match": true,
+    "target_fingerprints_match": true
+  },
+  "raw_sha256": "3aa25a29f47cfa78a75820cb3c2ee1897e873127e8d7dfc9855202d9326261cd",
+  "result_sha256": "5bd03846d6db2932f1a4ceb1072668e3794d603430ec6734f61cd90fc5be0250",
+  "schema_version": "frankengate-nl2sql-real-alias-verification-v2",
+  "status": "verified"
+}

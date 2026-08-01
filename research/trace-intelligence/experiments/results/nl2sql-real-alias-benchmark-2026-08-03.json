@@ -1,0 +1,15 @@
+{
+  "aggregate": {
+    "dense_scope": {"nil_cases": 8, "targeted_cases": 14, "targeted_mrr": 0.689966, "targeted_recall_at_1": 0.571429, "targeted_recall_at_5": 0.857143, "targeted_wrong_system_before_target": 0.0},
+    "exact_scope": {"nil_cases": 8, "targeted_cases": 14, "targeted_mrr": 0.892857, "targeted_recall_at_1": 0.785714, "targeted_recall_at_5": 1.0, "targeted_wrong_system_before_target": 0.0},
+    "frontier_scope": {"nil_cases": 8, "targeted_cases": 14, "targeted_mrr": 1.0, "targeted_recall_at_1": 1.0, "targeted_recall_at_5": 1.0, "targeted_wrong_system_before_target": 0.0},
+    "lexical_scope": {"nil_cases": 8, "targeted_cases": 14, "targeted_mrr": 0.805844, "targeted_recall_at_1": 0.785714, "targeted_recall_at_5": 0.785714, "targeted_wrong_system_before_target": 0.0}
+  },
+  "claim_boundary": "Gold-SQL target retrieval and constructed scope-swapped NIL benchmark on public NL2SQL data. It does not establish semantic-alias truth, human agreement, changed-agent utility, or enterprise production performance.",
+  "dataset": {"categories": {"explicit_target": 6, "implicit_target": 8, "scope_swapped_nil": 8}, "raw_content_committed": false, "raw_sha256": "3aa25a29f47cfa78a75820cb3c2ee1897e873127e8d7dfc9855202d9326261cd", "selected_cases": 22},
+  "frontier_calls": {"completed": 22, "failures": 0, "requested": 22},
+  "frontier_decision": {"accuracy": 1.0, "nil_abstention_rate": 1.0, "targeted_retrieve_rate": 1.0},
+  "protocol": {"candidate_generation": "frozen by real alias cohort manifest", "embedding_model": "nomic-embed-text:latest", "endpoint": "http://127.0.0.1:11434", "frontier_sees_gold_targets": false, "frontier_sees_source_row_ids": false, "model": "gpt-5.6-luna", "per_group": 2, "raw_model_outputs_external": true},
+  "result_sha256": "5bd03846d6db2932f1a4ceb1072668e3794d603430ec6734f61cd90fc5be0250",
+  "schema_version": "frankengate-nl2sql-real-alias-benchmark-v1"
+}
