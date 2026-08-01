@@ -1,0 +1,136 @@
+{
+  "arm_artifacts": {
+    "trace2skill_compiled_procedure": {
+      "char_length": 11042,
+      "classification": "trace2skill_compiled_candidate",
+      "sha256": "5fd71fb908eba40db4a52c60e0bc65db95c52d6fc42131d601073fcbaec4f511",
+      "word_count": 1320
+    }
+  },
+  "arms": {
+    "trace2skill_compiled_procedure": {
+      "authority_valid": 1,
+      "execution_completed": 1,
+      "missing_terminal_action": 0,
+      "outcomes": {
+        "semantic_correct": 1
+      },
+      "policy_accepted": 1,
+      "semantic_correct": 1,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": 0,
+      "successful_sql_attempts": 1,
+      "tasks": 1,
+      "terminal_fallback_used": 0,
+      "terminal_submissions": 1,
+      "tool_calls": 3,
+      "unauthorized_observation": 0
+    }
+  },
+  "authority": {
+    "binding_sha256": [
+      "e0308132582a085c476760125585d9dbcb23f4e2f0f7cf0111ecf29b241b154a"
+    ],
+    "epoch_ref_sha256": [
+      "f6d676147c0f1aaa596713dd6e5cceefc6ae29f983ff30bfc9c513f208120bdc"
+    ],
+    "exact_current_epoch_match": true,
+    "snapshot_sha256": [
+      "20e5b847bdfa1d58f18ac1b58a4c61721bb146865c057ec098c5c0b6157f0b8d"
+    ]
+  },
+  "claim_boundary": {
+    "all_arms_executed": true,
+    "arms_executed": [
+      "trace2skill_compiled_procedure"
+    ],
+    "causal_skill_benefit_established": false,
+    "domain_valid_task_executed": true,
+    "governed_postgres_executed": true,
+    "next_required": "Rerun after protocol remediation on a family-disjoint fold with sealed outcomes, independent semantic/security verifier, and paired repair/regression analysis.",
+    "reason": "This is a visible-selection pilot; no family-disjoint held-out quality estimate or independent verifier comparison is claimed."
+  },
+  "classification": "domain_valid_visible_selection_pilot",
+  "dataset": {
+    "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "database_family": "broker",
+    "dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
+    "task_count": 1,
+    "task_id_sha256": [
+      "afc02964d89fa6d08c15bf833f8cbb7f02d1f60cb5dc27a306c17d08b439af06"
+    ]
+  },
+  "model": {
+    "endpoint_scope": "codex-subscription-direct-cli",
+    "harness": "codex-cli-native-json-v1",
+    "provider": "codex-cli",
+    "request_model_id": "gpt-5.6-luna"
+  },
+  "protocol_remediation": {
+    "applies_identically_across_arms": true,
+    "arm_artifacts_changed": false,
+    "authority_contract_changed": false,
+    "base_prompt_changed": false,
+    "id": "composable-artifact-frontier-replay-2026-08-04-single-arm",
+    "inject_authorized_schema": true,
+    "max_generated_tokens_per_call": 800,
+    "max_generated_tokens_per_episode": 4800,
+    "max_model_turns": 8,
+    "max_sql_attempts": 4,
+    "request_timeout_seconds": 120,
+    "require_schema_before_sql": false,
+    "schema_catalog_sha256": "a5de29a3d04f5032b8e21fff4f7608757b7c0a81c291a1a158c5d212a3da58d5",
+    "schema_first_controller_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "seed_base": 841191,
+    "task_mutation": {
+      "changed_count": 0,
+      "id": null,
+      "mapping_sha256": null
+    },
+    "task_selection_changed": false,
+    "trace_mined_candidate": {
+      "artifact_sha256": "af063cd2fd0abbc878605a34be3fe03662a26ed9853535aec3be4259e91dcf15",
+      "candidate_class": "trace2skill_style_compiled_hypothesis",
+      "candidate_text_sha256": "400115bd469d4d39da6c85c8924f0f3a90e7cfc9eb0724997139e93faf019019",
+      "promotion_authorized": false,
+      "schema_version": "frankengate-composable-artifact-candidate-v1",
+      "source_raw_directory_digest": null,
+      "source_raw_file_count": null
+    }
+  },
+  "raw_audit_policy": "external_jsonl_only; raw SQL, prompts, rows, and model messages are not committed",
+  "schema_version": "frankengate-defog-trace-mined-skill-pilot-v2",
+  "task_runs": [
+    {
+      "arm": "trace2skill_compiled_procedure",
+      "attempt_receipt_chain_sha256": "c892c0155fee21db7ce152429034dd225865e58bdbc0a0441ecbcd15b497c6c5",
+      "authority_binding_sha256": "e0308132582a085c476760125585d9dbcb23f4e2f0f7cf0111ecf29b241b154a",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 27407.491,
+      "execution_completed": true,
+      "outcome": "semantic_correct",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "e6871ee61c6019e2bc2213e207bdedeb242583736c6f22dd87a4bd0aeb383fa1",
+      "schema_calls": 1,
+      "semantic_correct": true,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "afc02964d89fa6d08c15bf833f8cbb7f02d1f60cb5dc27a306c17d08b439af06",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 3,
+      "unauthorized_observation": false
+    }
+  ],
+  "terminal_fallback_policy": {
+    "applies_identically_across_arms": true,
+    "id": "submit-most-recent-successful-authorized-attempt-or-abstain-v1",
+    "purpose": "Separate SQL generation quality from model terminal-tool formatting.",
+    "reads_gold_or_hidden_outcomes": false,
+    "selection_rule": "most recent successful authorized candidate; abstain when none exists"
+  }
+}
