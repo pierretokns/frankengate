@@ -31,11 +31,14 @@ generic dense retrieval on the measured collision task.
 
 ## Closest skill-lifecycle precedents
 
-[Trace2Skill](https://arxiv.org/abs/2603.25158) distills trajectory-local lessons
+[Trace2Skill](https://arxiv.org/abs/2603.25158) (with an
+[official implementation](https://github.com/Qwen-Applications/Trace2Skill)) distills trajectory-local lessons
 into portable skills and reports cross-model/OOD transfer. [Anything2Skill](https://arxiv.org/abs/2606.09316)
 compiles heterogeneous external knowledge into retrievable and executable
 skills. [SkillAdaptor](https://arxiv.org/abs/2606.01311) focuses on attributing a
-failure to the specific step or skill that caused it before adaptation.
+failure to the specific step or skill that caused it before adaptation. Its
+paper says the implementation is forthcoming, so it is a method reference,
+not yet a directly reproducible dependency for our benchmark.
 
 These are much closer to our artifact-learning hypothesis than plain vector
 memory. Their hard edge for corporate use is evaluation: a paper-level skill
