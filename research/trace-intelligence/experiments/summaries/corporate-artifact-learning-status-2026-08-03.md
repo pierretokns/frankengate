@@ -4,6 +4,11 @@ This ledger is a requirement-level status report. “Proven” means proven only
 at the scope stated in the evidence column; it never means production-ready or
 enterprise-general.
 
+The current independent completion audit remains `active_incomplete`; its open
+requirements are fair powered controls, independent prospective outcomes, and
+comparable power/cost/latency accounting. This is an intentional result of the
+audit, not a missing receipt.
+
 | Requirement | Current evidence | Status | What is still required |
 |---|---|---|---|
 | Reusable validated SQL/tool artifacts | PostgreSQL capsule replay accepts valid bound SQL and rejects stale authority, wrong scope, expiry, parameter mismatch, schema drift, and unsafe interpolation. Changed-system replay shows semantic-ID mappings avoid false semantic acceptance. | **Mechanics proven** | Real mined artifacts, changed production-like systems, independent outcome oracles, and prospective success. |
