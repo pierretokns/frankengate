@@ -22,7 +22,11 @@ def test_composite_fails_closed_for_missing_skill_root(tmp_path):
         )
 
 
-def test_existing_only_records_unfinished_task_without_launching(tmp_path):
+def test_existing_only_records_unfinished_task_without_launching(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "skilllearnbench_frontier_composite.subprocess.check_output",
+        lambda *args, **kwargs: "dataset-revision\n",
+    )
     dataset = tmp_path / "dataset"
     task = dataset / "tasks" / "family" / "task-1"
     (task / "tests").mkdir(parents=True)
