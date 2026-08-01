@@ -1439,6 +1439,15 @@ and abstained on all 8 constructed scope-swapped NIL cases. The result supports
 an explicit late-stage abstention gate, not automatic semantic-alias truth or
 artifact utility; enterprise/SME labels and changed-system replay remain open.
 
+The [`same-scope collision benchmark`](experiments/summaries/nl2sql-same-scope-collision-2026-08-03.md)
+isolated the failure mode hidden by broad gold-object labels. Across 17
+deterministic focus-object proxies with same-normalized-name siblings in one
+database, Nomic dense retrieval put a sibling before the proxy target in 23.5%
+of cases, versus 5.9% for lexical retrieval and 0% for exact matching; Luna
+reached `.941` Recall@1 with 0% collision-before-target. This is not semantic
+alias truth, but it empirically supports table/column identity preservation and
+selective frontier adjudication for ambiguous same-scope candidates.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,

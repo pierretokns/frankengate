@@ -33,10 +33,12 @@ promotion-eligible yet.
 | Canonical trajectories outperform lossy projections as evidence | Native imports preserve branches, tool/result pairing, malformed records, and explicit OTel/ATIF loss receipts | Use one trajectory DAG and versioned projections; do not make OTel or ATIF a second authority |
 | Deterministic mining can produce review queues | Wisp analysis reconstructed 92 structural recovery candidates, 103 eval proposals, and 7 procedure-review candidates; automatic writes were zero | Signals and reconstruction are useful proposal selectors, not skill or intent labels |
 | Reusable artifacts can be governed safely | PostgreSQL capsule lab accepted a bound query and denied stale epoch, wrong scope, expiry, parameter mismatch, schema drift, and unsafe SQL interpolation | Build validation-carrying SQL/tool capsules before autonomous memory promotion |
+| Artifact reuse across system changes needs semantic compatibility, not names alone | A five-case changed-system replay accepted 3/5 cases with semantic IDs and zero false semantic accepts; name-only compatibility accepted 5/5 but falsely accepted 2 semantic changes; strict fingerprints accepted only 1/5 | Store stable concept IDs and explicit, reviewable rename/parameter mappings; keep exact fingerprints as the default safety gate |
 | Structured corporate identity is the highest-value retrieval intervention measured | Exact identifier + known scope: MRR `.4441 -> .6867`, R@1 `.1992 -> .4492`, R@5 `.8150 -> .9980`; wrong-system-before-target `14.43% -> .20%` | Exact identifiers, aliases, database/project/team scope must be the first retrieval lane |
 | Dense retrieval is useful after structured filtering | CodeTraceBench exact+structured+dense reached R@20 `.818`; a separate MATM cascade found action-only embedding Recall@20 lift `+.123` over lexical | Treat vectors as candidate recall, not authority or replacement for identifiers |
 | Frontier models can create bounded, evidence-grounded proposals | Luna produced valid, structurally grounded proposals for 3/4 meaningful content-minimized sessions; independent receipt verification passed | Model passes are viable after deterministic projection, but proposal quality and utility still require outcome labels |
 | Frontier reranking adds value after lexical/dense candidate generation | On nine MATM leave-one-model-out queries, lexical and Luna both had MRR/Recall@1/3/5 `1.0`; embedding MRR `.674`; Luna's top-3 success `.704` tied lexical | Do not put a frontier model on every retrieval request; reserve it for ambiguous, high-value, human-reviewed cases |
+| Same-scope schema collisions expose dense retrieval errors | On 17 deterministic gold-SQL focus proxies with same-normalized-name siblings in one database, Nomic Recall@1 `.471` and sibling-before-target `.235`; lexical `.353`/`.059`; Luna `.941`/`.0` | Preserve table/column identity; use frontier review selectively for ambiguous same-scope candidates |
 | Alias adjudication can represent abstention | Two independent Luna roles scored 23 synthetic exact/semantic/collision/NIL/unclear cases with 1.0 surface, candidate, wrong-system, abstention, and inter-judge agreement | Preserve `nil` and `unclear` as first-class outcomes; this is only a capability gate until enterprise/SME labels exist |
 | Frontier abstention works on a real public NL2SQL cohort | On 22 Defog-derived cases, Luna abstained on 8/8 constructed scope-swapped NILs and retrieved all 14 target-bearing cases; exact/lexical/dense retrieval could not abstain | Add an explicit late-stage abstention decision; this is still public/gold-SQL evidence, not enterprise semantic truth |
 
@@ -121,12 +123,15 @@ current evidence does not justify making any of them a mandatory dependency.
 2. Use a changed database or tool environment, sealed outcome labels, independent
    semantic/security verification, paired repair/regression metrics, and cost and
    latency accounting.
-3. Build a corporate alias/hard-negative set with SME adjudication, including
+3. Replay validated artifacts across real or public schema migrations and tool
+   contract versions, comparing exact fingerprints, name-only adaptation, and
+   semantic-ID mappings before measuring downstream task success.
+4. Build a corporate alias/hard-negative set with SME adjudication, including
    same token/different system, undocumented aliases, NIL cases, and temporal
    renames; hold out users, projects, tenants, and time.
-4. Compare exact/lexical/structured, dense, reranking, and frontier-model passes
+5. Compare exact/lexical/structured, dense, reranking, and frontier-model passes
    on the same candidate set with blinded quality labels and a fixed cost budget.
-5. Measure prospective human usefulness and skill-gap recommendations only in a
+6. Measure prospective human usefulness and skill-gap recommendations only in a
    consented, privacy-reviewed cohort; public traces cannot establish employee
    capability or collaboration claims.
 
