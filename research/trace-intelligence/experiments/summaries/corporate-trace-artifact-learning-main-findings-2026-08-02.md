@@ -119,6 +119,11 @@ benchmarks:
   public-history candidate signals in this program, but they are still review
   queues: the corpus supplies no independent task outcomes, organizational
   identity, or changed-system validation.
+- Frontier review of eight of those candidates produced only `5/8` repeat
+  agreements. The two cross-project candidates split between reusable and
+  unsafe labels, while single-project candidates were mostly context-specific.
+  Frequency plus a frontier judgment is therefore a useful review queue, not
+  a release decision.
 
 Together these results say that validation, replay isolation, and exact outcome
 measurement are working. They do not yet show that a mined or published skill

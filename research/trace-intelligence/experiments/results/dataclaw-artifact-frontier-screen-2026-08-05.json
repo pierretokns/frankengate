@@ -1,0 +1,219 @@
+{
+  "agreement_count": 5,
+  "candidate_count": 8,
+  "claim_boundary": "Frontier silver screening of recurrence candidates; no independent task-success labels, correctness proof, safety certification, or automatic promotion.",
+  "content_policy": "Prompts are credential-scrubbed and bounded; raw candidate examples and model reasons are not committed.",
+  "labels": {
+    "context_specific": 6,
+    "insufficient_evidence": 1,
+    "reusable_procedure": 7,
+    "unsafe_or_sensitive": 2
+  },
+  "labels_by_coverage": {
+    "cross_project": {
+      "reusable_procedure": 2,
+      "unsafe_or_sensitive": 2
+    },
+    "single_project": {
+      "context_specific": 6,
+      "insufficient_evidence": 1,
+      "reusable_procedure": 5
+    }
+  },
+  "model": "gpt-5.6-luna",
+  "repeats_per_candidate": 2,
+  "rows": [
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 7115.978958085179,
+          "label": "unsafe_or_sensitive",
+          "output_sha256": "357995448eed0a8bcc294f830259e4f4a51677f8f99cdce4f906d11df70a0c16"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 7262.610916048288,
+          "label": "unsafe_or_sensitive",
+          "output_sha256": "979a54a7b27b818021a7c8c4fb4aaf1e705ea6e7070b44509666631cb3d301db"
+        }
+      ],
+      "candidate_hash": "2e67c1338238067a",
+      "model_count": 3,
+      "project_count": 3,
+      "session_count": 3,
+      "source_count": 1,
+      "successes": 8
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 8342.29312511161,
+          "label": "reusable_procedure",
+          "output_sha256": "b4ed95e04a6ae21a2b7c279a984332eae9a44d84a7b9b979a49942d422d05018"
+        },
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 10158.385167014785,
+          "label": "reusable_procedure",
+          "output_sha256": "865f23989796a8411c1f17ddef83fe0b5ec6b11ea2cde3d3ecc3689eb100e7a4"
+        }
+      ],
+      "candidate_hash": "704922ddd7014054",
+      "model_count": 2,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 3
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 6460.101208998822,
+          "label": "reusable_procedure",
+          "output_sha256": "694b5655ad53dd54485fb9ed791ef972d44625ba08c49f909f26383e62f15b7e"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 9839.369207969867,
+          "label": "reusable_procedure",
+          "output_sha256": "2e492dfb234322477b7d2663fd9a2d39b3b1d1b279bbd14549e00fee20850646"
+        }
+      ],
+      "candidate_hash": "9645a399fba65e8e",
+      "model_count": 1,
+      "project_count": 1,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 599
+    },
+    {
+      "agreement": false,
+      "calls": [
+        {
+          "confidence": 0.9,
+          "elapsed_ms": 12126.175416982733,
+          "label": "insufficient_evidence",
+          "output_sha256": "affa62c486bebb330c0dc0d739bc6a17533873803597eb942cd31039846b39bf"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 7840.933334082365,
+          "label": "reusable_procedure",
+          "output_sha256": "f85541b1284aa17318d8740abac77efded62e55a4c39eaa47c8e30e5b3e440cb"
+        }
+      ],
+      "candidate_hash": "3b312b0ac11b4740",
+      "model_count": 1,
+      "project_count": 1,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 22
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 9115.486750029959,
+          "label": "context_specific",
+          "output_sha256": "0747eaabc40af54914d43a85f9bfcf05f1cf3e78291bca88d3c2d96746a09c55"
+        },
+        {
+          "confidence": 0.95,
+          "elapsed_ms": 11822.000415995717,
+          "label": "context_specific",
+          "output_sha256": "4e6c844466f1bfae3ab17b1d614b326fafd58a9e630dd30745d1f45e83db948b"
+        }
+      ],
+      "candidate_hash": "f5894ac99f643d6a",
+      "model_count": 2,
+      "project_count": 1,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 13
+    },
+    {
+      "agreement": false,
+      "calls": [
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 8374.336958047934,
+          "label": "context_specific",
+          "output_sha256": "b240a9a593e04d9432dee26a21ec25d690adbd6bf35ca4c57f3ba882ae766e55"
+        },
+        {
+          "confidence": 0.97,
+          "elapsed_ms": 8641.382083995268,
+          "label": "reusable_procedure",
+          "output_sha256": "889e85f25f0e112e91c5de307d0ea048c68ad84fa5daae297f8ab79c0c105a43"
+        }
+      ],
+      "candidate_hash": "f53a4ef98e125cbb",
+      "model_count": 2,
+      "project_count": 1,
+      "session_count": 3,
+      "source_count": 1,
+      "successes": 10
+    },
+    {
+      "agreement": false,
+      "calls": [
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 10356.239791028202,
+          "label": "reusable_procedure",
+          "output_sha256": "002bfb1285654da881c09d122d42d646e410250d64789440504ab4d3da3bc7df"
+        },
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 9129.401166923344,
+          "label": "context_specific",
+          "output_sha256": "133f682b6498b798012885511bb9ff7efc0f5491f2190c4d35bf109750baab69"
+        }
+      ],
+      "candidate_hash": "d2bd4a6126fb1f3f",
+      "model_count": 1,
+      "project_count": 1,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 3
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 8314.56445902586,
+          "label": "context_specific",
+          "output_sha256": "6ea5208d5102fb83ba28a45c8fe12aee773f5739a1e539f44a80ee76a1f545a9"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 7665.470040985383,
+          "label": "context_specific",
+          "output_sha256": "3b95c7723284f23ccfbb6fbbf27602013389db9ac7167e18746da5cd8f9b49f2"
+        }
+      ],
+      "candidate_hash": "1916108e3d558b9c",
+      "model_count": 1,
+      "project_count": 1,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 2
+    }
+  ],
+  "schema": "frankengate-dataclaw-artifact-frontier-screen-v1",
+  "source": {
+    "dataset": "zhiyaowang/dataclaw-zhiyaowang",
+    "raw_content_committed": false,
+    "revision": "f5157333cbc22489661122a9bc5347b137144900",
+    "sample_count": 32
+  },
+  "valid_call_count": 16
+}

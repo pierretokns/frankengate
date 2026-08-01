@@ -142,6 +142,12 @@ multi-session candidates (2 spanning multiple project labels and 4 model
 labels); none crossed harness-source labels in this sample. All remain
 review-only because frequency is not correctness or transfer evidence.
 
+The [`frontier artifact screen`](experiments/summaries/dataclaw-artifact-frontier-screen-2026-08-05.md)
+sent eight recurring candidates through two Luna reviews each. Only 5/8
+candidates received the same label twice; the two cross-project candidates
+split between reusable and unsafe judgments. This supports frontier review as
+a candidate-ranking layer, never autonomous artifact release.
+
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
 deterministic pass found 15,391 unique terms, 666 acronym forms, and 191
