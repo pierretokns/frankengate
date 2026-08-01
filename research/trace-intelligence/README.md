@@ -1690,6 +1690,12 @@ pooled-corpus metrics remain `.182393` versus `.157347`. The v2 result and
 independent verifier are linked from
 [`nl2sql-schema-adaptive-retrieval-2026-08-01.md`](experiments/summaries/nl2sql-schema-adaptive-retrieval-2026-08-01.md).
 
+The [`recent skill/replay/hard-negative prior-art update`](experiments/summaries/recent-skill-replay-and-hard-negative-prior-art-2026-08-05.md)
+maps SkillAdaptor, HASP, Recovery-Bench, enterprise hard-negative mining,
+SkillLearnBench, SkillRL, Trace2Skill, and AgentReplay to the existing
+Frankengate experiments without treating adjacent benchmark gains as
+enterprise evidence.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,
