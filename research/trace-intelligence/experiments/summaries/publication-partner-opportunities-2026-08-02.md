@@ -111,3 +111,20 @@ employee logs or a promise of positive results.
 The current evidence supports approaching CMU and MIT DSAIL first, with Harvard
 CHARM/CRCS/DASlab and MIT CLEAR/TRAC as complementary collaborators. This is a
 fit assessment, not a claim that any group has agreed to participate.
+
+## Empirical update for a paper/partner packet
+
+The vocabulary ports now have a sharper result to share: on the public Defog
+proxy, termhood recall was `.015` on unseen schemas versus `.358` in a
+within-schema control. A train-only termhood alias field widened Recall@5
+`.846→.923` but lowered MRR `.860→.815` and Recall@1 `.846→.769` on 13 held-out
+cases, while removing the observed same-scope collision. This supports a
+candidate-recall/search-enrichment hypothesis, not automatic alias or ontology
+promotion.
+
+The publishable next experiment is therefore a larger, sealed enterprise
+reformulation benchmark with: (a) same-enterprise train/test splits; (b)
+same-surface/different-system, temporal-renaming, and NIL hard negatives; (c)
+human/SME alias labels; and (d) changed-system replay and reviewer-acceptance
+outcomes. This separates vocabulary discovery from retrieval rank and from
+actual user benefit—the distinction a partner can reproduce and extend.
