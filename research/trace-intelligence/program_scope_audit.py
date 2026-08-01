@@ -159,6 +159,7 @@ def build_audit() -> dict[str, Any]:
                 "experiments/results/enterprise-outcome-gate-conformance-2026-08-02.json",
                 "experiments/results/enterprise-outcome-analysis-conformance-2026-08-02.json",
                 "experiments/results/mlops-feedback-canary-rollback-2026-08-02.json",
+                "experiments/results/integration-promotion-audit-2026-08-02.json",
             ),
             "decision": levels.get("L4_semantic_candidate_retrieval", {}).get("status"),
             "open_gate": "Managed Aurora semantics, extension compatibility, concurrency, and production SLOs are not measured; local PostgreSQL promotion, RLS, and WAL/PITR mechanics are measured separately. The deterministic MLOps canary/rollback lifecycle now passes mechanics, while real candidates remain quarantined because no causal utility lift has been demonstrated.",

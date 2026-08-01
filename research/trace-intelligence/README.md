@@ -281,6 +281,16 @@ frozen held-out score was 0.593 versus 0.703 for the matched no-harness control
 (delta -0.110, one regression). This bounded negative slice keeps ReasoningBank
 out of the integration set; it is not a universal method rejection.
 
+The [`integration promotion audit`](experiments/results/integration-promotion-audit-2026-08-02.json)
+now makes the downstream boundary explicit across eleven tested mechanisms:
+zero are eligible for automatic Frankengate integration. Skill/memory methods
+are quarantined on negative or unproven utility; retrieval and PostgreSQL are
+shadow-only; MLOps is mechanics-only; and provider/artifact failures remain
+typed unavailable or blocked. A passing protocol or backend benchmark is not
+an integration authorization.
+The concise decision record is in
+[`integration-promotion-audit-2026-08-02.md`](experiments/summaries/integration-promotion-audit-2026-08-02.md).
+
 The [`GEPA v0.1.4 native-tool protocol arm`](experiments/summaries/gepa-native-tool-protocol-2026-08-02.md)
 now runs the actual pinned optimizer against a separate three-episode train and
 three-episode holdout split using the local Llama model. GEPA made 11 metric

@@ -1,0 +1,99 @@
+{
+  "claim_boundary": {
+    "automatic_integration_authorized": false,
+    "independent_utility_gate_required": true,
+    "reason": "No tested skill or memory mechanism has beaten a matched control on an adequately powered, independently graded held-out outcome. Backend and lifecycle mechanics remain shadow-only until downstream utility is measured."
+  },
+  "rows": [
+    {
+      "disposition": "quarantined_negative_utility",
+      "name": "skillgen_bird",
+      "reason": "held-out exact SQLite accuracy regressed 0.500 to 0.375; release gate rejected",
+      "receipt": "skillgen-codex-bird-frontier-2026-08-02.json",
+      "receipt_schema_version": "skillgen-codex-bird-frontier-v1",
+      "receipt_sha256": "794885120d85c25e7794b6e76d6d369633e4dabff60b0b2b22793b0b3951f26c"
+    },
+    {
+      "disposition": "quarantined_negative_utility",
+      "name": "rho_locomo",
+      "reason": "matched no-harness control beat the self-preference-accepted candidate by 0.192",
+      "receipt": "rho-frontier-locomo-bounded-2026-08-02.json",
+      "receipt_schema_version": "frankengate-rho-frontier-reproduction-v1",
+      "receipt_sha256": "7fc61c8bf9bacf62e5484cfdb4587077123dba2922703b1b33e16b7b9eb0d5bf"
+    },
+    {
+      "disposition": "quarantined_negative_utility",
+      "name": "reasoningbank_codex",
+      "reason": "frozen held-out score trailed no-harness control by 0.110",
+      "receipt": "reasoningbank-codex-frontier-bounded-2026-08-02.json",
+      "receipt_schema_version": "frankengate-reasoningbank-codex-frontier-reproduction-v1",
+      "receipt_sha256": "9d5bb125fd89daa0dd83de2cb45d0df79b946c6bfdba3a44b6cecf8605f29dd2"
+    },
+    {
+      "disposition": "quarantined_utility_unproven",
+      "name": "skillopt_alfworld",
+      "reason": "sufficient-horizon one-task replay had zero wins for no-skill, placebo, and SkillOpt",
+      "receipt": "alfworld-luna-skillopt-long-horizon-2026-08-02.json",
+      "receipt_schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "receipt_sha256": "9c78849c112e9d67cb4c08eac4a681a71998b667d474711098c676b3edee9b22"
+    },
+    {
+      "disposition": "quarantined_no_lift",
+      "name": "gepa",
+      "reason": "selected candidate matched the empty seed on holdout; no protocol lift",
+      "receipt": "gepa-native-tool-protocol-2026-08-02-r2.json",
+      "receipt_schema_version": "frankengate-gepa-native-tool-protocol.v1",
+      "receipt_sha256": "98f2a13c665a1d210a1768a8add2ed9d24cc9fc896573b79288639cb99b6286c"
+    },
+    {
+      "disposition": "shadow_review_only",
+      "name": "matm_embedding_retrieval",
+      "reason": "offline Recall@20 signal has no changed-agent utility or enterprise outcome label",
+      "receipt": "matm-embedding-similarity-benchmark-2026-08-02.json",
+      "receipt_schema_version": "frankengate-matm-embedding-similarity-benchmark-v1",
+      "receipt_sha256": "1786215ed7500014aafe641f00b3e1ade3a94e7c72487a6b89e42e87aa70b1aa"
+    },
+    {
+      "disposition": "shadow_backend_only",
+      "name": "governed_postgres_retrieval",
+      "reason": "RLS/deletion/retrieval mechanics pass locally; Aurora operations and downstream utility remain open",
+      "receipt": "finance-governed-retrieval-2026-08-02.json",
+      "receipt_schema_version": "frankengate-finance-governed-retrieval-v1",
+      "receipt_sha256": "7ca82ff24e1905ca9f26ce78052709aa54e4a8893c938424890919d219b7add8"
+    },
+    {
+      "disposition": "mechanics_only",
+      "name": "mlops_release_loop",
+      "reason": "canary and rollback state machine passes a deterministic fixture; no real candidate has passed utility",
+      "receipt": "mlops-feedback-canary-rollback-2026-08-02.json",
+      "receipt_schema_version": "frankengate-mlops-feedback-canary-rollback-v1",
+      "receipt_sha256": "6e5ae51a24bfe7341b6e6ac0dd7cca00c0b03d52649c7754bb48d6c8eb9d2dd2"
+    },
+    {
+      "disposition": "provider_unavailable",
+      "name": "reasoningbank_azure_path",
+      "reason": "documented Azure memory judge requires unavailable az executable",
+      "receipt": "reasoningbank-locomo-bounded-2026-08-02.json",
+      "receipt_schema_version": "frankengate-reasoningbank-locomo-bounded-v1",
+      "receipt_sha256": "c3fa243a8bcbcd37999cbef2a476bf1eb85de0cfb43924cd779fdd91eecb31b8"
+    },
+    {
+      "disposition": "incompatible_or_incomplete",
+      "name": "graphiti_langmem_natural",
+      "reason": "natural component run produced no completed Graphiti path and typed LangMem failures",
+      "receipt": "faithful-memory-components-llama32-natural-2026-08-02.json",
+      "receipt_schema_version": "frankengate.faithful-memory-components-result.v1",
+      "receipt_sha256": "77425b46d144540efcc574b088773885b4074731907427f1c06b91eae0541aa2"
+    },
+    {
+      "disposition": "blocked_artifact",
+      "name": "agentrx_static",
+      "reason": "bundled triggers and invariant snippets were not executable; diagnostic ablation covered only 3/10 failures",
+      "receipt": "agentrx-independent-static-audit-2026-07-31.json",
+      "receipt_schema_version": "frankengate-agentrx-independent-static-audit-v1",
+      "receipt_sha256": "95eee065328d49107b0f0e8145059a18804442b4d7ad004642bf19ee250895ef"
+    }
+  ],
+  "schema_version": "frankengate-integration-promotion-audit-v1",
+  "status": "no_mechanism_eligible_for_automatic_integration"
+}

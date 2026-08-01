@@ -349,6 +349,10 @@
         {
           "exists": true,
           "path": "experiments/results/mlops-feedback-canary-rollback-2026-08-02.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/integration-promotion-audit-2026-08-02.json"
         }
       ],
       "id": "governed_local_stack",
@@ -386,7 +390,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "80df61be75e0a4443c8511f6de830c36611ef3df"
+          "head": "2ba85822e0917d24e13f89b00fd02aa5f6278590"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"
