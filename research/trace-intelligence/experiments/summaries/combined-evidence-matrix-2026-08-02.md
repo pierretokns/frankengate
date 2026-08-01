@@ -110,3 +110,17 @@ exact combination of private multi-user traces, identifier collisions,
 governed artifact capsules, consent, and changed-system replay. The revised
 four-stage hard-negative/embedding protocol is documented in
 `experiments/summaries/skill-hard-negative-prior-art-update-2026-08-02.md`.
+
+## Trace2Skill-style compiled procedure replay
+
+A new bounded native replay compiled a candidate from 18 governed Defog JSONL
+files using three independent frontier analyst roles and a separate
+consolidator. On one fresh seed with a new database/verifier per arm, the
+compiled procedure scored 4/4 semantic-correct versus 3/4 for no-skill,
+formatting placebo, and length-matched neutral. All 16 episodes passed
+independent semantic recomputation, authority was valid, and unauthorized
+observations were zero. Each paired comparison had one compiled-arm win and
+three ties (exact McNemar p=1.0). This is the strongest positive directional
+skill-mining result so far, but it is still a four-task, one-seed pilot; the
+candidate is not promotion-authorized. Full receipts and boundaries are in
+`experiments/summaries/trace2skill-compiled-native-replay-2026-08-02.md`.

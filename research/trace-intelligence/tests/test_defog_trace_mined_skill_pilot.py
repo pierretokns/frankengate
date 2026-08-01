@@ -13,7 +13,12 @@ class DefogTraceMinedSkillPilotTest(unittest.TestCase):
     def test_pilot_has_baseline_placebo_and_trace_mined_arms(self) -> None:
         self.assertEqual(
             ARMS,
-            ("no_skill", "formatting_placebo", "trace_mined_terminal_discipline"),
+            (
+                "no_skill",
+                "formatting_placebo",
+                "trace_mined_terminal_discipline",
+                "trace2skill_compiled_procedure",
+            ),
         )
         self.assertEqual(ARM_ADDITIONS["no_skill"], "")
         self.assertNotEqual(

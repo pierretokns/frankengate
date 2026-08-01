@@ -1,0 +1,212 @@
+{
+  "arm_artifacts": {
+    "no_skill": {
+      "char_length": 756,
+      "classification": "baseline",
+      "sha256": "a5de29a3d04f5032b8e21fff4f7608757b7c0a81c291a1a158c5d212a3da58d5",
+      "word_count": 8
+    }
+  },
+  "arms": {
+    "no_skill": {
+      "authority_valid": 4,
+      "execution_completed": 4,
+      "missing_terminal_action": 0,
+      "outcomes": {
+        "semantic_correct": 3,
+        "semantic_incorrect": 1
+      },
+      "policy_accepted": 4,
+      "semantic_correct": 3,
+      "sql_attempts": 6,
+      "strict_answer_shape_correct": 0,
+      "successful_sql_attempts": 6,
+      "tasks": 4,
+      "terminal_fallback_used": 0,
+      "terminal_submissions": 4,
+      "tool_calls": 14,
+      "unauthorized_observation": 0
+    }
+  },
+  "authority": {
+    "binding_sha256": [
+      "e0308132582a085c476760125585d9dbcb23f4e2f0f7cf0111ecf29b241b154a"
+    ],
+    "epoch_ref_sha256": [
+      "f6d676147c0f1aaa596713dd6e5cceefc6ae29f983ff30bfc9c513f208120bdc"
+    ],
+    "exact_current_epoch_match": true,
+    "snapshot_sha256": [
+      "20e5b847bdfa1d58f18ac1b58a4c61721bb146865c057ec098c5c0b6157f0b8d"
+    ]
+  },
+  "claim_boundary": {
+    "all_arms_executed": true,
+    "arms_executed": [
+      "no_skill"
+    ],
+    "causal_skill_benefit_established": false,
+    "domain_valid_task_executed": true,
+    "governed_postgres_executed": true,
+    "next_required": "Rerun after protocol remediation on a family-disjoint fold with sealed outcomes, independent semantic/security verifier, and paired repair/regression analysis.",
+    "reason": "This is a visible-selection pilot; no family-disjoint held-out quality estimate or independent verifier comparison is claimed."
+  },
+  "classification": "domain_valid_visible_selection_pilot",
+  "dataset": {
+    "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "database_family": "broker",
+    "dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
+    "task_count": 4,
+    "task_id_sha256": [
+      "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58",
+      "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b",
+      "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60",
+      "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+    ]
+  },
+  "model": {
+    "endpoint_scope": "codex-subscription-direct-cli",
+    "harness": "codex-cli-native-json-v1",
+    "provider": "codex-cli",
+    "request_model_id": "gpt-5.6-luna"
+  },
+  "protocol_remediation": {
+    "applies_identically_across_arms": true,
+    "arm_artifacts_changed": false,
+    "authority_contract_changed": false,
+    "base_prompt_changed": false,
+    "id": "frontier-codex-family-disjoint-schema-injected-docker-db-multiseed-v1",
+    "inject_authorized_schema": true,
+    "max_generated_tokens_per_call": 800,
+    "max_generated_tokens_per_episode": 4800,
+    "max_model_turns": 8,
+    "max_sql_attempts": 4,
+    "request_timeout_seconds": 120,
+    "require_schema_before_sql": false,
+    "schema_catalog_sha256": "a5de29a3d04f5032b8e21fff4f7608757b7c0a81c291a1a158c5d212a3da58d5",
+    "schema_first_controller_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "seed_base": 430000,
+    "task_mutation": {
+      "changed_count": 0,
+      "id": null,
+      "mapping_sha256": null
+    },
+    "task_selection_changed": false,
+    "trace_mined_candidate": {
+      "artifact_sha256": "7a6d1554651f72a77959c838eeae96b68a7bd58c6f1ca5d51565e9035bff9b08",
+      "candidate_class": "trace2skill_style_compiled_hypothesis",
+      "candidate_text_sha256": "79ce1f6cb98cf55acc79eb17b96b0d7f3649c1f752aa3fff2543163928363716",
+      "promotion_authorized": false,
+      "schema_version": "frankengate-trace2skill-defog-compiler-v1",
+      "source_raw_directory_digest": null,
+      "source_raw_file_count": null
+    }
+  },
+  "raw_audit_policy": "external_jsonl_only; raw SQL, prompts, rows, and model messages are not committed",
+  "schema_version": "frankengate-defog-trace-mined-skill-pilot-v2",
+  "task_runs": [
+    {
+      "arm": "no_skill",
+      "attempt_receipt_chain_sha256": "c34285c257a76a8f13aa3cba34a10d7e339191f14fc54c46860eba66502429c2",
+      "authority_binding_sha256": "e0308132582a085c476760125585d9dbcb23f4e2f0f7cf0111ecf29b241b154a",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 26146.457,
+      "execution_completed": true,
+      "outcome": "semantic_correct",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "8685df298887a08171c22a17295162ac5a232fde28f9228ec0b1c69109e43e39",
+      "schema_calls": 1,
+      "semantic_correct": true,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 3,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "no_skill",
+      "attempt_receipt_chain_sha256": "fe21f820556ce28e2e3bc69bf6d707c2696e0887aa286da6001eafb6564b2dde",
+      "authority_binding_sha256": "e0308132582a085c476760125585d9dbcb23f4e2f0f7cf0111ecf29b241b154a",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 41231.965,
+      "execution_completed": true,
+      "outcome": "semantic_correct",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "a88668e2822279cfd19a34c80a524d1ac050d72e75201c5b2a3ad77829e0460d",
+      "schema_calls": 1,
+      "semantic_correct": true,
+      "sql_attempts": 3,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 3,
+      "task_id_sha256": "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 5,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "no_skill",
+      "attempt_receipt_chain_sha256": "53340ab0593400c8dcd4f244142eae143f30c17975d796cd518303d6674cd8c0",
+      "authority_binding_sha256": "e0308132582a085c476760125585d9dbcb23f4e2f0f7cf0111ecf29b241b154a",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 32746.88,
+      "execution_completed": true,
+      "outcome": "semantic_correct",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "33da1a357d73fc73be71b4c078993b0d16c28b7fab8534faf25b0b31b9d26a9c",
+      "schema_calls": 1,
+      "semantic_correct": true,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 3,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "no_skill",
+      "attempt_receipt_chain_sha256": "81fbbd100cf987a865bf79e259f8ae565b2a99ed03dd3f2898405153fc4fc60c",
+      "authority_binding_sha256": "e0308132582a085c476760125585d9dbcb23f4e2f0f7cf0111ecf29b241b154a",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 24792.147,
+      "execution_completed": true,
+      "outcome": "semantic_incorrect",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "840acfb33eba072d11a3558a04fd14cbb00c7efe13784f5795716dc726d8d4d7",
+      "schema_calls": 1,
+      "semantic_correct": false,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 3,
+      "unauthorized_observation": false
+    }
+  ],
+  "terminal_fallback_policy": {
+    "applies_identically_across_arms": true,
+    "id": "submit-most-recent-successful-authorized-attempt-or-abstain-v1",
+    "purpose": "Separate SQL generation quality from model terminal-tool formatting.",
+    "reads_gold_or_hidden_outcomes": false,
+    "selection_rule": "most recent successful authorized candidate; abstain when none exists"
+  }
+}

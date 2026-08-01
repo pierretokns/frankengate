@@ -22,7 +22,12 @@ from codex_native_cli_api import NativeCodexCLIAPI
 
 
 SCHEMA_VERSION = "frankengate-defog-trace-mined-skill-pilot-v2"
-ARMS = ("no_skill", "formatting_placebo", "trace_mined_terminal_discipline")
+ARMS = (
+    "no_skill",
+    "formatting_placebo",
+    "trace_mined_terminal_discipline",
+    "trace2skill_compiled_procedure",
+)
 ARM_ADDITIONS = {
     "no_skill": "",
     "formatting_placebo": (
@@ -34,6 +39,13 @@ ARM_ADDITIONS = {
         "acting; preserve the successful attempt identifier; after a successful "
         "query, submit that exact attempt; never emit a prose-only response and "
         "never issue another execute_sql after the attempt budget is exhausted."
+    ),
+    # The actual compiled candidate is supplied through --trace-mined-candidate-file;
+    # keep a deterministic fallback so the arm remains well-defined if the file
+    # is omitted in a unit-level invocation.
+    "trace2skill_compiled_procedure": (
+        " Compiled procedure arm: follow the supplied invocation conditions, "
+        "validation steps, contraindications, and abstention rules."
     ),
     "length_matched_neutral": "",
 }
@@ -92,7 +104,7 @@ def _arm_prompt_addition(
         (SCHEMA_FIRST_CONTROLLER_PROMPT if require_schema_before_sql else "")
         + (
             trace_mined_text
-            if arm == "trace_mined_terminal_discipline"
+            if arm in ("trace_mined_terminal_discipline", "trace2skill_compiled_procedure")
             and trace_mined_text is not None
             else ARM_ADDITIONS[arm]
         )
@@ -104,8 +116,8 @@ def _arm_classification(arm: str) -> str:
         return "baseline"
     if arm == "formatting_placebo" or arm.endswith("neutral"):
         return "placebo"
-    if arm == "trace_mined_terminal_discipline":
-        return "trace_mined_candidate"
+    if arm in ("trace_mined_terminal_discipline", "trace2skill_compiled_procedure"):
+        return "trace_mined_candidate" if arm == "trace_mined_terminal_discipline" else "trace2skill_compiled_candidate"
     return "additional_control"
 
 
@@ -139,7 +151,8 @@ def _load_trace_mined_candidate(
     if path is None:
         return None, {}
     value = json.loads(path.read_text(encoding="utf-8"))
-    if value.get("candidate_class") != "trace_mined_hypothesis":
+    accepted_classes = {"trace_mined_hypothesis", "trace2skill_style_compiled_hypothesis"}
+    if value.get("candidate_class") not in accepted_classes:
         raise factorial.FactorialError("candidate artifact is not trace-mined")
     text = value.get("candidate_text")
     if not isinstance(text, str) or not text.strip():
@@ -149,6 +162,9 @@ def _load_trace_mined_candidate(
     return text, {
         "artifact_sha256": _sha256_file(path),
         "candidate_text_sha256": value["candidate_text_sha256"],
+        "candidate_class": value.get("candidate_class"),
+        "schema_version": value.get("schema_version"),
+        "promotion_authorized": value.get("promotion_authorized", False),
         "source_raw_directory_digest": value.get("source_raw_directory_digest"),
         "source_raw_file_count": value.get("source_raw_file_count"),
     }

@@ -27,10 +27,12 @@ def main() -> int:
     parser.add_argument("--base-port", type=int, default=55740)
     parser.add_argument("--base-proxy-port", type=int, default=18240)
     parser.add_argument("--arm", action="append", required=True,
-                        choices=("no_skill", "formatting_placebo", "length_matched_neutral", "trace_mined_terminal_discipline"))
+                        choices=("no_skill", "formatting_placebo", "length_matched_neutral", "trace_mined_terminal_discipline", "trace2skill_compiled_procedure"))
     parser.add_argument("--task-mutation", choices=("broker-four-task-renamed-paraphrase-v1",))
     parser.add_argument("--harness", choices=("openai-proxy", "codex-cli-native-json-v1"), default="openai-proxy")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--trace", type=Path,
+                        default=ROOT / "experiments/results/trace-mined-skill-candidate-car-schema-injected-2026-08-02.json")
     args = parser.parse_args()
 
     runs: list[dict[str, object]] = []
@@ -46,6 +48,7 @@ def main() -> int:
                 "--base-port", str(args.base_port + job_index),
                 "--base-proxy-port", str(args.base_proxy_port + job_index),
                 "--harness", args.harness, "--arm", arm,
+                "--trace", str(args.trace.resolve(strict=True)),
                 "--result-tag", f"arm-{arm}",
                 "--output", str(metadata_path),
             ]

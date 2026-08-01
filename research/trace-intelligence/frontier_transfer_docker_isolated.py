@@ -54,7 +54,7 @@ def wait_port(port: int, timeout: float = 90) -> None:
     raise TimeoutError(f"port {port} did not become reachable")
 
 
-def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...], task_mutation: str | None = None, harness: str = "openai-proxy", result_tag: str | None = None) -> dict[str, str | int | list[str] | str | None]:
+def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...], task_mutation: str | None = None, harness: str = "openai-proxy", result_tag: str | None = None, trace_path: Path = TRACE) -> dict[str, str | int | list[str] | str | None]:
     suffix = f"{os.getpid()}-{seed}"
     container = f"fg-frontier-pg-{suffix}"
     password = f"fg_frontier_pw_{seed}"
@@ -108,7 +108,7 @@ def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str,
                 "--max-model-turns", "8", "--max-sql-attempts", "4", "--max-tokens", "800",
                 "--request-timeout-seconds", "120", "--max-generated-tokens-per-episode", "4800",
                 "--protocol-remediation-id", "frontier-codex-family-disjoint-schema-injected-docker-db-multiseed-v1",
-                "--inject-authorized-schema", "--trace-mined-candidate-file", str(TRACE)]
+                "--inject-authorized-schema", "--trace-mined-candidate-file", str(trace_path)]
         for arm in arms:
             base += ["--arm", arm]
         if task_mutation:
@@ -144,16 +144,18 @@ def main() -> int:
     parser.add_argument("--base-proxy-port", type=int, default=18140)
     parser.add_argument("--parallel", type=int, default=2)
     parser.add_argument("--keep-containers", action="store_true")
-    parser.add_argument("--arm", action="append", choices=("no_skill", "formatting_placebo", "length_matched_neutral", "trace_mined_terminal_discipline"))
+    parser.add_argument("--arm", action="append", choices=("no_skill", "formatting_placebo", "length_matched_neutral", "trace_mined_terminal_discipline", "trace2skill_compiled_procedure"))
     parser.add_argument("--task-mutation", choices=("broker-four-task-renamed-paraphrase-v1",))
     parser.add_argument("--harness", choices=("openai-proxy", "codex-cli-native-json-v1"), default="openai-proxy")
     parser.add_argument("--result-tag", help="suffix used to avoid collisions when running one arm per container")
+    parser.add_argument("--trace", type=Path, default=TRACE,
+                        help="candidate artifact passed to the mined-skill arm")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     rows = []
     arms = tuple(args.arm or ("no_skill", "formatting_placebo", "trace_mined_terminal_discipline"))
     with ThreadPoolExecutor(max_workers=args.parallel) as pool:
-        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms, args.task_mutation, args.harness, args.result_tag): seed for i, seed in enumerate(args.seed)}
+        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms, args.task_mutation, args.harness, args.result_tag, args.trace.resolve(strict=True)): seed for i, seed in enumerate(args.seed)}
         for future in as_completed(futures):
             rows.append(future.result())
     payload = {"schema_version": "frankengate-frontier-transfer-docker-isolated-run-v1", "runs": sorted(rows, key=lambda x: int(x["seed"])), "claim_boundary": "Container/database isolation is proven for this run; it does not establish universal skill utility or promotion eligibility."}
