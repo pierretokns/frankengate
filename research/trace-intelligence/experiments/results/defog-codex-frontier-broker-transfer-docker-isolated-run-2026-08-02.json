@@ -1,0 +1,22 @@
+{
+  "claim_boundary": "Container/database isolation is proven for this run; it does not establish universal skill utility or promotion eligibility.",
+  "runs": [
+    {
+      "database_container": "fg-frontier-pg-37584-340000",
+      "database_port": 55640,
+      "proxy_port": 18140,
+      "result": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-seed-340000-2026-08-02.json",
+      "seed": 340000,
+      "verification": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-seed-340000-independent-verification-2026-08-02.json"
+    },
+    {
+      "database_container": "fg-frontier-pg-37584-350000",
+      "database_port": 55641,
+      "proxy_port": 18141,
+      "result": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-seed-350000-2026-08-02.json",
+      "seed": 350000,
+      "verification": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-seed-350000-independent-verification-2026-08-02.json"
+    }
+  ],
+  "schema_version": "frankengate-frontier-transfer-docker-isolated-run-v1"
+}

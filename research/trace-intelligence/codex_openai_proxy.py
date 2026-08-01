@@ -54,6 +54,7 @@ def _message_text(message: Mapping[str, Any]) -> str:
 def build_prompt(payload: Mapping[str, Any]) -> str:
     messages = payload.get("messages") or []
     tools = payload.get("tools") or []
+    seed = payload.get("seed")
     transcript: list[str] = []
     for message in messages:
         role = str(message.get("role", "unknown"))
@@ -78,6 +79,8 @@ def build_prompt(payload: Mapping[str, Any]) -> str:
         "or claim a query executed unless the transcript shows it.\n\n"
         "TOOL SCHEMAS:\n"
         + json.dumps(tools, sort_keys=True, ensure_ascii=False)
+        + "\n\nREPLAY SEED (use as a deterministic run identifier):\n"
+        + str(seed)
         + "\n\nCONVERSATION:\n"
         + "\n".join(transcript)
     )

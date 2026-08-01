@@ -1,0 +1,91 @@
+{
+  "aggregate_by_arm": {
+    "formatting_placebo": {
+      "authority_valid": 12,
+      "episodes": 12,
+      "semantic_correct": 10,
+      "semantic_correct_rate": 0.833333,
+      "sql_attempts": 17,
+      "submission_rate": 1.0,
+      "submitted": 12,
+      "tool_calls": 41,
+      "unauthorized_observation": 0
+    },
+    "no_skill": {
+      "authority_valid": 12,
+      "episodes": 12,
+      "semantic_correct": 6,
+      "semantic_correct_rate": 0.5,
+      "sql_attempts": 13,
+      "submission_rate": 1.0,
+      "submitted": 12,
+      "tool_calls": 36,
+      "unauthorized_observation": 0
+    },
+    "trace_mined_terminal_discipline": {
+      "authority_valid": 12,
+      "episodes": 12,
+      "semantic_correct": 5,
+      "semantic_correct_rate": 0.416667,
+      "sql_attempts": 12,
+      "submission_rate": 1.0,
+      "submitted": 12,
+      "tool_calls": 36,
+      "unauthorized_observation": 0
+    }
+  },
+  "aggregate_sha256": "c41dc84d9f0ba189c4af0f18e653fad07b297404347ad38319f6549f393c3c78",
+  "claim_boundary": "Matched frontier family-transfer aggregate with independent semantic verification. It estimates this protocol/sample only; it does not establish universal skill utility, embedding benefit, or promotion eligibility without larger preregistered samples and artifact adjudication.",
+  "dataset_task_hashes": [
+    "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58",
+    "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b",
+    "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60",
+    "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+  ],
+  "episodes": 12,
+  "independent_verifications": 3,
+  "paired_comparisons": [
+    {
+      "left": "trace_mined_terminal_discipline",
+      "left_wins": 1,
+      "mcnemar_exact_two_sided_p": 0.125,
+      "paired_episodes": 12,
+      "right": "formatting_placebo",
+      "right_wins": 6,
+      "risk_difference": -0.416667,
+      "ties": 5
+    },
+    {
+      "left": "trace_mined_terminal_discipline",
+      "left_wins": 1,
+      "mcnemar_exact_two_sided_p": 1.0,
+      "paired_episodes": 12,
+      "right": "no_skill",
+      "right_wins": 2,
+      "risk_difference": -0.083333,
+      "ties": 9
+    },
+    {
+      "left": "formatting_placebo",
+      "left_wins": 5,
+      "mcnemar_exact_two_sided_p": 0.21875,
+      "paired_episodes": 12,
+      "right": "no_skill",
+      "right_wins": 1,
+      "risk_difference": 0.333333,
+      "ties": 6
+    }
+  ],
+  "schema_version": "frankengate-frontier-transfer-multiseed-aggregate-v1",
+  "seeds": [
+    310000,
+    320000,
+    330000
+  ],
+  "source_result_sha256": [
+    "8e2523e8bbbd811b0bc5743ed6ac08962f24d935bc50101962011e6517c0f8fe",
+    "3b2dfbbd6e91711cb01359967152367c8890a2d0bbf63ad2a5968b578f341fca",
+    "b9c35f09c831a736827ef07d0419af2bf5e3e7b693fbbdc76c100ce30da5597e"
+  ],
+  "tasks_per_seed": 4
+}

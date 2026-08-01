@@ -101,6 +101,7 @@ def run_pilot(
     endpoint_scope: str = "loopback-only",
     raw_audit_dir: Path,
     output: Path,
+    seed_base: int = 310000,
     max_model_turns: int | None = None,
     max_sql_attempts: int | None = None,
     max_tokens: int | None = None,
@@ -221,7 +222,7 @@ def run_pilot(
                     (task, authority_receipt, factorial.run_agent(
                         task=task,
                         arm=arm,
-                        seed=factorial._task_seed(task.task_id, 310000),
+                        seed=factorial._task_seed(task.task_id, seed_base),
                         api=api,
                         executor=executor,
                         limits=limits,
@@ -310,6 +311,7 @@ def run_pilot(
             "base_prompt_changed": False,
             "arm_artifacts_changed": False,
             "task_selection_changed": False,
+            "seed_base": seed_base,
             "authority_contract_changed": False,
             "require_schema_before_sql": require_schema_before_sql,
             "schema_first_controller_sha256": _sha256_text(
@@ -375,6 +377,7 @@ def main() -> int:
     parser.add_argument("--endpoint-scope", default="loopback-only")
     parser.add_argument("--raw-audit-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--seed-base", type=int, default=310000)
     parser.add_argument("--max-model-turns", type=int)
     parser.add_argument("--max-sql-attempts", type=int)
     parser.add_argument("--max-tokens", type=int)
@@ -398,6 +401,7 @@ def main() -> int:
         endpoint_scope=args.endpoint_scope,
         raw_audit_dir=args.raw_audit_dir,
         output=args.output,
+        seed_base=args.seed_base,
         max_model_turns=args.max_model_turns,
         max_sql_attempts=args.max_sql_attempts,
         max_tokens=args.max_tokens,

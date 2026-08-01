@@ -698,6 +698,18 @@ An independent governed-PostgreSQL verifier matched all 12 outcomes with zero
 errors. This confirms the frontier replay path and a protocol/scaffolding
 effect, not artifact-specific skill improvement or promotion eligibility.
 
+The follow-up [`frontier transfer multiseed screen`](experiments/summaries/defog-codex-frontier-transfer-multiseed-2026-08-02.md)
+made the seed explicit and independently verified three matched seeds (36
+arm episodes). The shared-cluster aggregate was no-skill 6/12, formatting
+placebo 10/12, and trace-mined 5/12; trace-mined vs placebo had risk
+difference −0.417 and exact McNemar p=.125, while trace-mined vs no-skill was
+−.083 (p=1.0). A separate two-seed run placed each seed in its own disposable
+PostgreSQL container, governed role, Codex proxy, and audit roots; it yielded
+no-skill 5/8, placebo 3/8, and trace-mined 4/8 (both paired p=1.0). The
+direction changed under isolation, but neither run supports promotion. This
+is stochastic screening evidence, not a universal claim that trace mining is
+harmful.
+
 The [`Trace Commons full-cohort analysis`](experiments/summaries/trace-commons-full-content-minimized-analysis-2026-08-02.md)
 then attested all 28 public native Claude Code histories byte-for-byte against
 the pinned manifest (17,991 records and 4,264 tool calls) before analysis. The
