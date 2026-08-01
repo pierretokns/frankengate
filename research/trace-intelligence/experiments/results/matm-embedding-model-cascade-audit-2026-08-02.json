@@ -1,0 +1,62 @@
+{
+  "claim_boundary": "Both receipts use the same MATM revision and leave-one-model-out folds, but relevance retrieval and outcome prediction are different targets. This audit does not claim a model reranker gain or causal skill utility.",
+  "dataset": {
+    "embedding_result_sha256": "1786215ed7500014aafe641f00b3e1ade3a94e7c72487a6b89e42e87aa70b1aa",
+    "id": "toeunkim/matm-trajectories",
+    "outcome_result_sha256": "360003c8957b33273d65ed03dffa45fd3b4696209cafc6f86056de54859c3f6c",
+    "revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+    "rows": 2130
+  },
+  "decision": {
+    "embedding_role": "candidate_generation",
+    "frontier_or_human_role": "adjudicate ambiguity and expected artifacts",
+    "outcome_model_role": "review_prioritization_only",
+    "pooled_metric_claim": false,
+    "skill_release_authorized": false
+  },
+  "embedding_candidate_recall": {
+    "action_only_vs_lexical_action_only": {
+      "mrr": {
+        "bootstrap_ci95": [
+          -0.002225,
+          0.100379
+        ],
+        "folds": 33,
+        "mean_delta": 0.048058
+      },
+      "recall_at_k.20": {
+        "bootstrap_ci95": [
+          0.05303,
+          0.206397
+        ],
+        "folds": 33,
+        "mean_delta": 0.122643
+      },
+      "top_10_percent_success_rate": {
+        "bootstrap_ci95": [
+          -0.005415,
+          0.068468
+        ],
+        "folds": 33,
+        "mean_delta": 0.03089
+      }
+    },
+    "eligible_models": 33,
+    "eligible_queries": 636
+  },
+  "outcome_conditioned_prioritization": {
+    "all_neighbor_auc": 0.7210853162880019,
+    "successful_minus_all_auc": -0.055740378738362746,
+    "successful_minus_all_auc_ci95": [
+      -0.11190932395096881,
+      0.0015199687228194907
+    ],
+    "successful_minus_all_top10_success_rate": 0.0665266106442577,
+    "successful_minus_all_top10_success_rate_ci95": [
+      -0.01960784313725489,
+      0.16596638655462187
+    ],
+    "successful_neighbor_auc": 0.6653449375496392
+  },
+  "schema_version": "matm-embedding-model-cascade-audit-v1"
+}

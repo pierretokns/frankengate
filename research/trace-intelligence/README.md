@@ -76,6 +76,15 @@ collision classes. This is evidence that alias/collision mining has a measurable
 lexical starting point, not evidence of semantic alias truth. Human/frontier
 adjudication and same-surface/different-system hard negatives remain open.
 
+The [`MATM embedding/model cascade audit`](experiments/summaries/matm-embedding-model-cascade-audit-2026-08-02.md)
+joins two same-revision leave-one-model-out receipts without pooling their
+different targets. Action-only embeddings improved candidate Recall@20 by
+`+0.123` over lexical action retrieval, while outcome-conditioned successful
+neighbors improved the top-10 success rate by `+0.067` but had an AUC delta of
+`-0.056`; both confidence intervals cross zero for the outcome prioritization
+claim. This supports embeddings as candidate generation and outcome/model
+scoring as review prioritization, not autonomous skill release.
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
