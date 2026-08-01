@@ -54,7 +54,7 @@ def wait_port(port: int, timeout: float = 90) -> None:
     raise TimeoutError(f"port {port} did not become reachable")
 
 
-def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...], task_mutation: str | None = None) -> dict[str, str | int | list[str] | str | None]:
+def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...], task_mutation: str | None = None, harness: str = "openai-proxy") -> dict[str, str | int | list[str] | str | None]:
     suffix = f"{os.getpid()}-{seed}"
     container = f"fg-frontier-pg-{suffix}"
     password = f"fg_frontier_pw_{seed}"
@@ -85,16 +85,24 @@ def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str,
         # otherwise the executor correctly rejects a BYPASSRLS role.
         colima("docker", "exec", container, "psql", "-U", "research", "-d", "broker", "-v", "ON_ERROR_STOP=1", "-c",
                f"CREATE ROLE {app_user} LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD '{password}'; GRANT CONNECT ON DATABASE broker TO {app_user}; GRANT USAGE ON SCHEMA public TO {app_user}; GRANT SELECT ON ALL TABLES IN SCHEMA public TO {app_user};")
-        proxy = subprocess.Popen(["uv", "run", "python", str(ROOT / "codex_openai_proxy.py"),
-                                  "--port", str(proxy_port), "--timeout", "120"], cwd=ROOT,
-                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        wait_port(proxy_port)
+        endpoint = f"http://127.0.0.1:{proxy_port}"
+        if harness == "openai-proxy":
+            proxy = subprocess.Popen(["uv", "run", "python", str(ROOT / "codex_openai_proxy.py"),
+                                      "--port", str(proxy_port), "--timeout", "120"], cwd=ROOT,
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            wait_port(proxy_port)
+        elif harness == "codex-cli-native-json-v1":
+            endpoint = "native://codex-cli"
+        else:
+            raise ValueError(f"unsupported harness: {harness}")
+        endpoint_scope = "codex-subscription-loopback-proxy" if harness == "openai-proxy" else "codex-subscription-direct-cli"
         base = ["uv", "run", "python", "defog_trace_mined_skill_pilot.py",
                 "--source-root", str(SOURCE_ROOT), "--cohort-manifest", str(COHORT),
                 "--dataset-manifest", str(DATASET), "--authority-manifest", str(AUTHORITY),
                 "--dsn", f"host=127.0.0.1 port={port} user={app_user} password={password} dbname=broker",
-                "--endpoint", f"http://127.0.0.1:{proxy_port}", "--model", "gpt-5.6-luna",
-                "--model-provider", "codex-cli", "--endpoint-scope", "codex-subscription-loopback-proxy",
+                "--endpoint", endpoint, "--model", "gpt-5.6-luna",
+                "--model-provider", "codex-cli", "--endpoint-scope", endpoint_scope,
+                "--harness", harness,
                 "--raw-audit-dir", str(audit), "--output", str(result), "--seed-base", str(seed),
                 "--max-model-turns", "8", "--max-sql-attempts", "4", "--max-tokens", "800",
                 "--request-timeout-seconds", "120", "--max-generated-tokens-per-episode", "4800",
@@ -116,7 +124,7 @@ def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str,
         for task in TASKS:
             verify += ["--task-id", task]
         subprocess.run(verify, cwd=ROOT, check=True, timeout=600)
-        return {"seed": seed, "result": str(result), "verification": str(verification), "database_container": container, "database_port": port, "proxy_port": proxy_port, "arms": list(arms), "task_mutation": task_mutation}
+        return {"seed": seed, "result": str(result), "verification": str(verification), "database_container": container, "database_port": port, "proxy_port": proxy_port, "arms": list(arms), "task_mutation": task_mutation, "harness": harness}
     finally:
         if proxy is not None:
             proxy.terminate()
@@ -137,12 +145,13 @@ def main() -> int:
     parser.add_argument("--keep-containers", action="store_true")
     parser.add_argument("--arm", action="append", choices=("no_skill", "formatting_placebo", "length_matched_neutral", "trace_mined_terminal_discipline"))
     parser.add_argument("--task-mutation", choices=("broker-four-task-renamed-paraphrase-v1",))
+    parser.add_argument("--harness", choices=("openai-proxy", "codex-cli-native-json-v1"), default="openai-proxy")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     rows = []
     arms = tuple(args.arm or ("no_skill", "formatting_placebo", "trace_mined_terminal_discipline"))
     with ThreadPoolExecutor(max_workers=args.parallel) as pool:
-        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms, args.task_mutation): seed for i, seed in enumerate(args.seed)}
+        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms, args.task_mutation, args.harness): seed for i, seed in enumerate(args.seed)}
         for future in as_completed(futures):
             rows.append(future.result())
     payload = {"schema_version": "frankengate-frontier-transfer-docker-isolated-run-v1", "runs": sorted(rows, key=lambda x: int(x["seed"])), "claim_boundary": "Container/database isolation is proven for this run; it does not establish universal skill utility or promotion eligibility."}

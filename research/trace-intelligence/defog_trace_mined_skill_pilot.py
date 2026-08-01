@@ -18,6 +18,7 @@ from typing import Any
 
 import defog_sql_factorial as factorial
 from defog_factorial_authority import StaticAuthorityEpochStore
+from codex_native_cli_api import NativeCodexCLIAPI
 
 
 SCHEMA_VERSION = "frankengate-defog-trace-mined-skill-pilot-v2"
@@ -179,6 +180,7 @@ def run_pilot(
     trace_mined_candidate_file: Path | None = None,
     arms: tuple[str, ...] | None = None,
     task_mutation: str | None = None,
+    harness: str = "openai-proxy",
 ) -> dict[str, Any]:
     factorial._require_external_raw_audit_dir(raw_audit_dir)
     if output.exists():
@@ -209,7 +211,10 @@ def run_pilot(
         virtual_key_id=factorial.AUTHORITY_VIRTUAL_KEY_ID,
     )
     authority_store = StaticAuthorityEpochStore.from_path(authority_manifest)
-    api = factorial.ChatAPI(
+    api_class = NativeCodexCLIAPI if harness == "codex-cli-native-json-v1" else factorial.ChatAPI
+    if harness not in {"openai-proxy", "codex-cli-native-json-v1"}:
+        raise factorial.FactorialError(f"unknown harness: {harness}")
+    api = api_class(
         endpoint=endpoint,
         request_model_id=model,
         timeout_seconds=(
@@ -374,6 +379,7 @@ def run_pilot(
             "provider": model_provider,
             "request_model_id": model,
             "endpoint_scope": endpoint_scope,
+            "harness": harness,
         },
         "protocol_remediation": {
             "id": protocol_remediation_id,
@@ -489,6 +495,11 @@ def main() -> int:
         choices=(PARAPHRASE_MUTATION_ID,),
         help="Apply a sealed prompt-only mutation while preserving task gold SQL.",
     )
+    parser.add_argument(
+        "--harness",
+        choices=("openai-proxy", "codex-cli-native-json-v1"),
+        default="openai-proxy",
+    )
     args = parser.parse_args()
     result = run_pilot(
         source_root=args.source_root.resolve(strict=True),
@@ -519,6 +530,7 @@ def main() -> int:
         ),
         arms=tuple(args.arm) if args.arm else None,
         task_mutation=args.task_mutation,
+        harness=args.harness,
     )
     print(json.dumps({"status": "ok", "arms": result["arms"], "causal_skill_benefit_established": False}, sort_keys=True))
     return 0
