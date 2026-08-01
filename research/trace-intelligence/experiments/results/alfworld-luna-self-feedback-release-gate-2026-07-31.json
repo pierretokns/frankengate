@@ -1,0 +1,51 @@
+{
+  "candidate": {
+    "arm": "self_feedback",
+    "result_sha256": "8cd47b31768a8a6a242f7bb3d2ba4912515ae424f23adad4c93b0495d31a7ff2",
+    "status": "quarantined"
+  },
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "candidate_released": false,
+    "causal_benefit_confirmed": false,
+    "reason": "Candidate did not exceed the baseline with no worse validity while matching or beating placebo; it remains quarantined."
+  },
+  "controls": {
+    "baseline_arm": "no_feedback",
+    "placebo_arm": "formatting_placebo"
+  },
+  "evidence": {
+    "result": "alfworld-luna-self-feedback-four-family-35step-2026-07-31.json",
+    "verification": "alfworld-luna-self-feedback-four-family-35step-verification-2026-07-31.json",
+    "verification_sha256": "0bc0851696b5b4f7f62c12cc958d53e7979949eb915faa56fc3d11bc5b419a8d"
+  },
+  "exposure": {
+    "canary_percent": 0,
+    "eligible_tasks": 0,
+    "eligible_users": 0,
+    "rollback_available": false
+  },
+  "outcomes": {
+    "baseline_invalid_actions": 0,
+    "baseline_wins": 0,
+    "candidate_invalid_actions": 2,
+    "candidate_wins": 0,
+    "placebo_invalid_actions": 0,
+    "placebo_wins": 0,
+    "positive_lift": false,
+    "verification_passed": true
+  },
+  "schema_version": "frankengate-outcome-release-gate-v1",
+  "stages": {
+    "cluster": "complete",
+    "collect": "complete",
+    "evaluate": "complete",
+    "monitor": "not_started",
+    "propose": "complete",
+    "release": "blocked_by_gate",
+    "replay": "complete",
+    "retrieve": "complete",
+    "rollback": "not_required",
+    "segment": "complete"
+  }
+}
