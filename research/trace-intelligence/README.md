@@ -721,6 +721,15 @@ verification. This is not a universal claim about neutral text, but it is
 direct evidence that this candidate does not earn promotion over a
 length-matched context control.
 
+The [`sealed paraphrase transfer`](experiments/summaries/defog-codex-frontier-paraphrase-transfer-2026-08-02.md)
+run then changed only the four user questions while preserving task IDs, gold
+SQL, database state, and authority. On one fresh seed, trace-mined scored 4/4
+versus 3/4 for both no-skill and the length-matched neutral (each exact
+McNemar p=1.0 because only one discordant block existed). This is suggestive
+transfer compatibility, not a causal result: the unmutated run scored the
+same trace artifact 1/4 while its neutral control scored 4/4. Three-seed,
+second-harness replication is required before interpreting the direction.
+
 The [`Trace Commons full-cohort analysis`](experiments/summaries/trace-commons-full-content-minimized-analysis-2026-08-02.md)
 then attested all 28 public native Claude Code histories byte-for-byte against
 the pinned manifest (17,991 records and 4,264 tool calls) before analysis. The
