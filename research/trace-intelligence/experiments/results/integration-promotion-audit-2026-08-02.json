@@ -70,6 +70,30 @@
       "receipt_sha256": "7ca82ff24e1905ca9f26ce78052709aa54e4a8893c938424890919d219b7add8"
     },
     {
+      "disposition": "shadow_backend_only",
+      "name": "turbovec_dense_index",
+      "reason": "same-corpus dense index mechanics pass, but authority, scale, failover, and downstream skill utility remain untested",
+      "receipt": "turbovec-codetracebench-2026-07-31.json",
+      "receipt_schema_version": "frankengate-turbovec-codetracebench-v1",
+      "receipt_sha256": "c2ec382952202938e690aea7908b48cac1d52674681568781ded49fc3e79f3db"
+    },
+    {
+      "disposition": "mechanics_only",
+      "name": "changed_system_subplan",
+      "reason": "semantic-ID subplan adaptation passes synthetic drift cases; mined quality and independent task lift remain unmeasured",
+      "receipt": "artifact-subplan-changed-system-replay-2026-08-05.json",
+      "receipt_schema_version": null,
+      "receipt_sha256": "46189f49c4dea428a9ef9e50b7bb71895ad9b89161966948407226f96993332f"
+    },
+    {
+      "disposition": "triage_only",
+      "name": "recovery_failure_signals",
+      "reason": "signals beat random recurrence concentration but lost to length and have no recovery-treatment outcome",
+      "receipt": "recovery-bench-failure-signals-2026-08-05.json",
+      "receipt_schema_version": null,
+      "receipt_sha256": "805cc3fae36359ba3b38395d692c742986326293f00e0ed480f8b59e6f7764fb"
+    },
+    {
       "disposition": "mechanics_only",
       "name": "mlops_release_loop",
       "reason": "canary and rollback state machine passes a deterministic fixture; no real candidate has passed utility",
@@ -144,7 +168,7 @@
     {
       "disposition": "not_selected",
       "name": "unselected_backend_concepts",
-      "reason": "VectorChord, pg_textsearch, pgContext, and Turbopuffer remain not selected; TurboVec has a separate bounded mechanics receipt, but no downstream utility promotion is implied",
+      "reason": "VectorChord, pg_textsearch, pgContext, and Turbopuffer remain conditional backend concepts; no downstream utility promotion is implied",
       "receipt": "concept-coverage-audit-2026-07-31.json",
       "receipt_schema_version": "frankengate.concept-coverage-audit.v1",
       "receipt_sha256": "0ba1baa16d309d86e1e2c367e033df63d28234f3c7355220eafc1e9d230cd403"

@@ -69,6 +69,24 @@ MECHANISMS: tuple[dict[str, Any], ...] = (
         "reason": "RLS/deletion/retrieval mechanics pass locally; Aurora operations and downstream utility remain open",
     },
     {
+        "name": "turbovec_dense_index",
+        "receipt": "turbovec-codetracebench-2026-07-31.json",
+        "disposition": "shadow_backend_only",
+        "reason": "same-corpus dense index mechanics pass, but authority, scale, failover, and downstream skill utility remain untested",
+    },
+    {
+        "name": "changed_system_subplan",
+        "receipt": "artifact-subplan-changed-system-replay-2026-08-05.json",
+        "disposition": "mechanics_only",
+        "reason": "semantic-ID subplan adaptation passes synthetic drift cases; mined quality and independent task lift remain unmeasured",
+    },
+    {
+        "name": "recovery_failure_signals",
+        "receipt": "recovery-bench-failure-signals-2026-08-05.json",
+        "disposition": "triage_only",
+        "reason": "signals beat random recurrence concentration but lost to length and have no recovery-treatment outcome",
+    },
+    {
         "name": "mlops_release_loop",
         "receipt": "mlops-feedback-canary-rollback-2026-08-02.json",
         "disposition": "mechanics_only",
@@ -126,7 +144,7 @@ MECHANISMS: tuple[dict[str, Any], ...] = (
         "name": "unselected_backend_concepts",
         "receipt": "concept-coverage-audit-2026-07-31.json",
         "disposition": "not_selected",
-        "reason": "VectorChord, pg_textsearch, pgContext, TurboVec, and Turbopuffer are documented as not selected for the current architecture; no downstream utility promotion is implied",
+        "reason": "VectorChord, pg_textsearch, pgContext, and Turbopuffer remain conditional backend concepts; no downstream utility promotion is implied",
     },
 )
 
