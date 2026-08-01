@@ -90,6 +90,11 @@ that a classical foreground/background baseline is runnable, not that its
 terms are correct. Blinded labels, alias/NIL handling, and retrieval impact
 remain open.
 
+The [`TermSuite/AcronymExpansion feasibility check`](experiments/summaries/termsuite-acronymexp-blockers-2026-08-04.md)
+did not score either tool: TermSuite needs a pinned TreeTagger model, while
+the cited AcronymExpansion code needs a legacy dependency stack and trained
+Doc2Vec model. These are setup blockers, not negative quality results.
+
 The bounded [`query-expansion probe`](experiments/summaries/query-expansion-probe-2026-08-01.md)
 shows why this must remain a search-only projection: approved keyword,
 pseudo-document, entity, and document enrichment improved a six-document toy
