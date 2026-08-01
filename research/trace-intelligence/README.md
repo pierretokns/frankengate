@@ -104,7 +104,8 @@ search-only field and compared with lexical retrieval on held-out questions
 within each database.
 
 The [`DataClaw cross-user Luna adjudication pilot`](experiments/summaries/dataclaw-cross-user-luna-adjudication-2026-08-04.md)
-returned valid silver labels for 16/16 calls with 7/8 repeat agreement. It is
+returned valid silver labels for 16/16 calls with 8/8 repeat agreement after
+harness-boilerplate normalization. It is
 calibration evidence only: shared vocabulary and tools still produced mostly
 `different`/`unclear` judgments, and no cross-user transfer claim is made.
 
