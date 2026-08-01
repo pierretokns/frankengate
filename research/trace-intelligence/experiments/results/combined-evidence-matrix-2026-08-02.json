@@ -477,6 +477,12 @@
       "schema_version": "frankengate-governed-skill-release-lifecycle-v1",
       "sha256": "9a3a6e5274461d328f05a6bf75fbdba43645e4cada60cfe3891b3c79c0d221c1"
     },
+    "skillgen_codex_bird_frontier": {
+      "filename": "skillgen-codex-bird-frontier-2026-08-02.json",
+      "optional": true,
+      "schema_version": "skillgen-codex-bird-frontier-v1",
+      "sha256": "794885120d85c25e7794b6e76d6d369633e4dabff60b0b2b22793b0b3951f26c"
+    },
     "skillopt_alfworld_codex_r18": {
       "filename": "skillopt-alfworld-codex-r18-2026-08-02.json",
       "optional": true,
@@ -1065,6 +1071,18 @@
           "qwen3:4b"
         ],
         "skill_transfer_same_fixture_compared": true,
+        "skillgen_bird_candidate_generated": true,
+        "skillgen_bird_heldout_baseline_accuracy": 0.5,
+        "skillgen_bird_heldout_net_gain": -1,
+        "skillgen_bird_heldout_regressions": 1,
+        "skillgen_bird_heldout_repairs": 0,
+        "skillgen_bird_heldout_skill_accuracy": 0.375,
+        "skillgen_bird_heldout_tasks": 8,
+        "skillgen_bird_receipt_present": true,
+        "skillgen_bird_release_gate_passed": false,
+        "skillgen_bird_train_baseline_failures": 6,
+        "skillgen_bird_train_baseline_successes": 2,
+        "skillgen_bird_train_tasks": 8,
         "skillopt_candidate_provenance_audit_passed": true,
         "statebench_executable_gold_sql_tasks": 4,
         "statebench_sql_fixture_tasks": 46,
@@ -1087,6 +1105,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "9a9abdea0647930efce43ffc2f4d844b80ad551aa563ef1e90034890a8dbd389",
-  "schema_version": "frankengate-combined-evidence-matrix-v30"
+  "result_sha256": "875668888e9c55b171b5ecb0bf793cc944d235e4e9476b6c6d7e32cdfb7ed627",
+  "schema_version": "frankengate-combined-evidence-matrix-v31"
 }

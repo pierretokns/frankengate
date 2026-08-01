@@ -5,7 +5,7 @@
     "completion_confirmed": false,
     "raw_trace_content_committed": false
   },
-  "matrix_schema_version": "frankengate-combined-evidence-matrix-v30",
+  "matrix_schema_version": "frankengate-combined-evidence-matrix-v31",
   "open_requirements": [],
   "overall_status": "active_incomplete",
   "program_audit_schema_version": "frankengate-program-scope-audit-v1",
@@ -374,7 +374,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "1b009bb2b9f87291180f00734dfd2f0510a10035"
+          "head": "fd5beb22492e99b9f5a4cdc0c904c27a98852e40"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"

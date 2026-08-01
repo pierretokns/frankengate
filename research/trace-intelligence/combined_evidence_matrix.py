@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v30"
+SCHEMA_VERSION = "frankengate-combined-evidence-matrix-v31"
 REQUIRED_RESULTS = {
     "projection": "canonical-projection-e0-conformance-2026-07-30.json",
     "atif_rl_roundtrip": "atif-rl-roundtrip-2026-07-30.json",
@@ -70,6 +70,7 @@ REQUIRED_RESULTS = {
     ),
 }
 OPTIONAL_RESULTS = {
+    "skillgen_codex_bird_frontier": "skillgen-codex-bird-frontier-2026-08-02.json",
     "skillopt_local_runtime_attempt_r15": "skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
     "skillopt_local_intervention_r16": "skillopt-alfworld-local-intervention-r16-2026-08-02.json",
     "skillopt_deterministic_lifecycle_r17": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
@@ -298,6 +299,7 @@ def build_matrix(
     trace_commons_attestation = results.get("trace_commons_attestation")
     trace_commons_full = results.get("trace_commons_full")
     trace_commons_repro = results["trace_commons_repro"]
+    skillgen_codex_bird_frontier = results.get("skillgen_codex_bird_frontier")
 
     alfworld_pilot_evidence = {
         "tasks": 0,
@@ -1230,6 +1232,60 @@ def build_matrix(
                     "claim_boundary",
                     "automatic_promotion_authorized",
                 ),
+                "skillgen_bird_train_tasks": (
+                    skillgen_codex_bird_frontier.get("caps", {}).get("train_tasks", 0)
+                    if skillgen_codex_bird_frontier
+                    else 0
+                ),
+                "skillgen_bird_train_baseline_successes": (
+                    skillgen_codex_bird_frontier.get("baseline_successes", 0)
+                    if skillgen_codex_bird_frontier
+                    else 0
+                ),
+                "skillgen_bird_train_baseline_failures": (
+                    skillgen_codex_bird_frontier.get("baseline_failures", 0)
+                    if skillgen_codex_bird_frontier
+                    else 0
+                ),
+                "skillgen_bird_candidate_generated": bool(
+                    skillgen_codex_bird_frontier
+                    and skillgen_codex_bird_frontier.get("generated_skill", False)
+                ),
+                "skillgen_bird_heldout_tasks": (
+                    skillgen_codex_bird_frontier.get("heldout", {}).get("n", 0)
+                    if skillgen_codex_bird_frontier
+                    else 0
+                ),
+                "skillgen_bird_heldout_baseline_accuracy": (
+                    skillgen_codex_bird_frontier.get("heldout", {}).get("baseline_acc")
+                    if skillgen_codex_bird_frontier
+                    else 0.0
+                ),
+                "skillgen_bird_heldout_skill_accuracy": (
+                    skillgen_codex_bird_frontier.get("heldout", {}).get("skill_acc")
+                    if skillgen_codex_bird_frontier
+                    else 0.0
+                ),
+                "skillgen_bird_receipt_present": bool(skillgen_codex_bird_frontier),
+                "skillgen_bird_heldout_repairs": (
+                    skillgen_codex_bird_frontier.get("heldout", {}).get("repair", 0)
+                    if skillgen_codex_bird_frontier
+                    else 0
+                ),
+                "skillgen_bird_heldout_regressions": (
+                    skillgen_codex_bird_frontier.get("heldout", {}).get("regression", 0)
+                    if skillgen_codex_bird_frontier
+                    else 0
+                ),
+                "skillgen_bird_heldout_net_gain": (
+                    skillgen_codex_bird_frontier.get("heldout", {}).get("net_gain", 0)
+                    if skillgen_codex_bird_frontier
+                    else 0
+                ),
+                "skillgen_bird_release_gate_passed": bool(
+                    skillgen_codex_bird_frontier
+                    and skillgen_codex_bird_frontier.get("heldout", {}).get("passed", False)
+                ),
                 "skill_transfer_models": skill_transfer_models,
                 "skill_transfer_harnesses": skill_transfer_harnesses,
                 "skill_transfer_same_fixture_compared": _require(
@@ -1823,6 +1879,19 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{', '.join(skill['skill_transfer_models'])} and "
             f"{', '.join(skill['skill_transfer_harnesses'])}; causal benefit and "
             "automatic promotion remain false.",
+            *([f"- A failure-bearing real BIRD-SQL SkillGen reproduction gave the "
+            f"frontier adapter {skill['skillgen_bird_train_baseline_successes']}/"
+            f"{skill['skillgen_bird_train_tasks']} training successes and generated "
+            f"a candidate from {skill['skillgen_bird_train_baseline_failures']} failures. "
+            f"On {skill['skillgen_bird_heldout_tasks']} held-out questions, exact SQLite "
+            f"replay moved from {skill['skillgen_bird_heldout_baseline_accuracy']:.3f} "
+            f"to {skill['skillgen_bird_heldout_skill_accuracy']:.3f}: repairs="
+            f"{skill['skillgen_bird_heldout_repairs']}, regressions="
+            f"{skill['skillgen_bird_heldout_regressions']}, net gain="
+            f"{skill['skillgen_bird_heldout_net_gain']}. The release gate passed="
+            f"{skill['skillgen_bird_release_gate_passed']}; this is direct negative "
+            "cohort-specific efficacy evidence, not a reason to discard the independent "
+            "replay and proposal mechanics."] if skill["skillgen_bird_receipt_present"] else []),
             f"- A fresh Qwen3 4B native-Ollama replay completed all 18 episodes "
             f"but produced native tool-call counts "
             f"{skill['skill_qwen_native_native_tool_call_counts']} and zero "

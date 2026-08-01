@@ -1,4 +1,5 @@
 {
+  "schema_version": "skillgen-codex-bird-frontier-v1",
   "experiment": "skillgen-codex-bird-frontier",
   "date": "2026-08-02",
   "status": "passed",
