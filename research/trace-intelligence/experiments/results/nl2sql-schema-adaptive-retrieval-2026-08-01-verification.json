@@ -1,0 +1,6 @@
+{
+  "schema_version": "frankengate-nl2sql-schema-adaptive-retrieval-verification-v1",
+  "result_sha256": "8c50326388a309a4846073d59b10d1140bcbb7c00452891c0f4071d3e1e89f4b",
+  "checks": {"cases": 601, "folds": 4, "raw_content_committed": false, "schema_adaptive_present": true, "all_arms_have_metrics": true},
+  "status": "verified"
+}

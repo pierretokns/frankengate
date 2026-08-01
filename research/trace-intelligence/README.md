@@ -1523,6 +1523,13 @@ granularity-aware hard negatives, so our MATM adapter null is not a blanket
 negative result for domain adaptation.
 The matched follow-up is preregistered in
 [`schema-adaptive-embedding-2026-08-01.md`](experiments/protocols/schema-adaptive-embedding-2026-08-01.md).
+Its first run covers 601 schema-grounded cases across four leave-one-database-
+family-out folds. Frozen Nomic beat the regularized schema-adaptive pair scorer
+on MRR (`.1824` vs `.1573`), Recall@1 (`.0933` vs `.0761`), and Recall@10
+(`.3760` vs `.3214`); the scorer also had slightly more same-scope collisions
+before the target (`.1094` vs `.1013`). This is a stronger public-proxy null,
+not a disproof of corporate embedding adaptation: generated labels, no SME
+aliases/NILs, and no downstream artifact utility were measured.
 
 ## Claim boundary
 
