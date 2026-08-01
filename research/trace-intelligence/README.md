@@ -1656,6 +1656,10 @@ eval.
 
 The next enterprise gate is preregistered in the
 [`semantic-label and changed-system replay protocol`](experiments/protocols/enterprise-semantic-label-and-drift-2026-08-03.md).
+
+The [`replay protocol self-test`](experiments/summaries/enterprise-replay-protocol-selftest-2026-08-05.md)
+confirms that the admission checker accepts a properly shaped synthetic cohort
+and rejects the public proxy; this validates the gate, not enterprise outcomes.
 It freezes candidate generation before SME labels, requires user/project/system/time
 holdouts, and treats false semantic acceptance during schema/tool drift as a
 release-blocking failure.
