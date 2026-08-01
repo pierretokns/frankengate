@@ -76,6 +76,15 @@ collision classes. This is evidence that alias/collision mining has a measurable
 lexical starting point, not evidence of semantic alias truth. Human/frontier
 adjudication and same-surface/different-system hard negatives remain open.
 
+The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
+tested a typed-span candidate generator on 49 admitted Wisp documents. A
+deterministic pass found 15,391 unique terms, 666 acronym forms, and 191
+reformulation candidates; GLiNER emitted 567 spans but hit only `2/8` fixed
+capability probes and over-produced project/tool labels. This supports a
+review-queue role for zero-shot term extraction, not automatic corporate alias
+or ontology promotion. The next comparison is classical termhood plus blinded
+alias/NIL labels and retrieval impact.
+
 The follow-up [`NL2SQL identifier hard-negative benchmark`](experiments/summaries/nl2sql-identifier-hard-negative-2026-08-02.md)
 made those collisions executable. On 492 conservative links, exact identifier
 matching with known database scope reached MRR `0.6867` / Recall@5 `0.9980`,
