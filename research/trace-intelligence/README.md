@@ -1495,6 +1495,16 @@ bounded null: the problem is not only lexical ranking, and database/project
 scope must be a hard boundary. No structural NIL cases were available in this
 two-database cohort, so NIL abstention and regeneration remain open gates.
 
+The [`artifact-pool coverage ceiling`](experiments/summaries/validated-artifact-pool-coverage-2026-08-04.md)
+then executed every one of the 33 admitted source artifacts against every one
+of the ten targets: all 165 executions were authorized, but zero targets had
+any semantically equivalent source artifact. Even an evaluation-only
+target-gold structural oracle found `0/10` top-one and top-three matches. This
+classifies the current null primarily as missing library coverage: better
+ranking cannot recover query plans that are not present. The next artifact
+test must therefore include parameterized/composable templates and frontier
+regeneration, not only more nearest-neighbor tuning.
+
 The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
 tested whether a frontier model and a local model could be treated as
 interchangeable trace-insight labelers. On six blinded candidates under the
