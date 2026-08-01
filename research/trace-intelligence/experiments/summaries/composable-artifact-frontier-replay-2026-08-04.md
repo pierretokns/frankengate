@@ -1,41 +1,55 @@
-# Composable validated-artifact frontier replay
+# Composable validated-artifact frontier replay — 2026-08-04
 
-**Status:** promising bounded signal; not a promotion result
-**Cohort:** five source-disjoint broker tasks, replayed with two seeds
-**Model/harness:** direct Codex native JSON frontier harness
-**Authority:** governed PostgreSQL, current epoch, independent semantic verifier
+## Design
 
-## Result
+The natural held-out artifact pool contained no semantically reusable whole
+query. This replay instead exposed a frontier agent to an external library of
+18 governed-success broker examples and instructed it to reuse compatible
+tables, joins, filters, and aggregation patterns as **subplans**, while
+inspecting the current schema and generating a new query. The target questions
+were the five broker `questions_gen` tasks excluded from the source files.
 
-The trace-mined arm supplied validated source-query subplans and composition
-instructions, but was not allowed to copy a whole source query. Across the two
-seeds (10 episode runs total):
+Two direct Codex/Luna seeds used the identical source/target split, candidate
+text, authority, tool contract, and limits. Each seed had no-skill,
+formatting-placebo, and composable-subplan arms. The first receipt path was
+quarantined after a concurrent writer overwrote it; the results below use the
+unique seed-840000 rerun and the unique seed-850000 receipt.
 
-| Arm | Semantically correct | SQL attempts | Tool calls | Unauthorized observations |
-|---|---:|---:|---:|---:|
-| No skill | 7/10 | 13 | 33 | 0 |
-| Formatting placebo | 6/10 | 14 | 34 | 0 |
-| Composable trace-mined procedure | **10/10** | **10** | **30** | 0 |
+## Aggregate result
 
-The independent verifier passed both seeded receipts. The candidate had stable
-wins on three of five unique tasks against each control, no stable losses, and
-two ties-or-mixed tasks. Both seeds used the same five target tasks, so they are
-replications, not ten independent tasks.
+| Arm | Semantic correctness | SQL attempts | Tool calls | Authority-valid | Unauthorized observations |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| No skill / fresh generation | 5/10 | 15 | 35 | 10/10 | 0 |
+| Formatting placebo | 5/10 | 16 | 36 | 10/10 | 0 |
+| Composable subplan library | **10/10** | **10** | **30** | 10/10 | 0 |
 
-Machine-readable aggregate:
-[`composable-artifact-frontier-replay-2026-08-04-aggregate.json`](../results/composable-artifact-frontier-replay-2026-08-04-aggregate.json)
+At the five unique task level, the composable arm had three stable wins, zero
+stable losses, and two ties against each control. Repeated seeds are not
+independent tasks and are reported as a variance check, not as a powered
+significance test. Both independent PostgreSQL semantic verifiers passed with
+no stored/recomputed mismatches or errors.
 
 ## Interpretation
 
-This is the first positive signal for **composable** artifact reuse after the
-whole-query retrieval and library-coverage nulls. It suggests that a validated
-artifact library can help a frontier agent compose a new answer even when no
-single stored query is semantically reusable. It does not prove causal skill
-improvement, cross-family transfer, enterprise utility, or that the procedure
-would help a different model.
+This is the first positive result after the library-coverage null: validated
+examples that are decomposed and composed by a frontier agent can improve
+future-task outcomes when complete-query retrieval has no exact answer. The
+result supports storing reusable artifacts at multiple granularities—whole
+query, parameterized template, and typed subplan—rather than only storing
+finished SQL strings.
 
-The result is consistent with the Palantir/Semantica action/ontology direction:
-the useful unit may be a typed, provenance-bearing subplan or relation rather
-than a nearest-neighbor whole-query memory. The next test must vary database
-family, project, time, and schema; compare a parameterized artifact library and
-frontier regeneration; and include negative-transfer, stale-edge, and NIL cases.
+It is not yet an enterprise skill-learning claim. The cohort is five tasks in
+one database family, the examples include source SQL, the prompt is a designed
+candidate rather than a naturally mined skill, and the controls are not a
+changed-schema or cross-family replay. The candidate remains promotion-
+ineligible until it beats fresh generation on larger family/time/project
+holdouts, with SME-labeled relevance, explicit NILs, cost/latency accounting,
+and changed-system replay.
+
+Receipts:
+
+- [aggregate](../results/composable-artifact-frontier-replay-2026-08-04-aggregate-rerun.json)
+- [seed 840000](../results/composable-artifact-frontier-replay-2026-08-04-seed840000-rerun.json)
+- [seed 850000](../results/composable-artifact-frontier-replay-2026-08-04-seed850000.json)
+- [seed 840000 semantic verification](../results/composable-artifact-frontier-replay-2026-08-04-seed840000-rerun-verification.json)
+- [seed 850000 semantic verification](../results/composable-artifact-frontier-replay-2026-08-04-seed850000-verification.json)

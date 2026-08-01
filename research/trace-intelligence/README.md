@@ -1529,12 +1529,14 @@ system outcomes.
 
 The [`composable artifact frontier replay`](experiments/summaries/composable-artifact-frontier-replay-2026-08-04.md)
 then tested validated source-query subplans rather than whole-query nearest
-neighbors. On two seeded replays of five source-disjoint broker tasks, the
-composable procedure reached `10/10` semantic correctness versus `7/10` for
-no-skill and `6/10` for a formatting placebo, with independent verification,
-zero unauthorized observations, and fewer SQL/tool calls. This is a promising
-composability signal, not a powered causal or cross-family result; changed
-schemas, regeneration, NILs, and negative transfer remain required.
+neighbors. In the authoritative unique seed-840000 rerun and seed-850000
+receipt, the composable procedure reached `10/10` semantic correctness versus
+`5/10` for no-skill and `5/10` for a formatting placebo, with independent
+verification, zero unauthorized observations, and fewer SQL/tool calls. The
+original default receipt path was overwritten by a concurrent worker and is
+quarantined; it is not used in these counts. This is a promising composability
+signal, not a powered causal or cross-family result; changed schemas,
+regeneration, NILs, and negative transfer remain required.
 
 The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
 tested whether a frontier model and a local model could be treated as
