@@ -1175,6 +1175,14 @@ and top-1 (`0.6364`) versus exact vectors, with `0.1125 ms` mean query time,
 It does not establish lexical search, authorization, deletion-ledger, or skill
 utility, so no backend promotion follows.
 
+The [`MATM local embedding similarity benchmark`](experiments/summaries/matm-embedding-similarity-benchmark-2026-08-02.md)
+adds a loopback Ollama `nomic-embed-text` arm over 2,130 public trajectories.
+On 33 leave-one-model-out folds with the goal hidden, embedding action-only
+retrieval improved same-work Recall@20 by 12.3 points over lexical action-only
+(bootstrap CI +5.3 to +20.6), while successful-neighbor precision improved only
+3.1 points with a CI crossing zero. This supports semantic review retrieval,
+not skill utility, custom-model promotion, or similarity-based employee claims.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,
