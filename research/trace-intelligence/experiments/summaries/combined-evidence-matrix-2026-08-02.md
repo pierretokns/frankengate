@@ -78,3 +78,27 @@ The combined evidence supports a small governed product: personal history, conte
 Keep one governed PostgreSQL evidence/proposal authority. Export selected ATIF tasks and content-minimized OTel topology with loss receipts. Do not add a database or custom embedding model. Exact pgvector satisfies the current local correctness lane; the measured bottlenecks are human labels, Aurora/selective-scope scale, evidence validity, calibration, privacy, and prospective outcomes.
 
 Every input result is content-addressed in the aggregate JSON. No raw trace, identifier, prompt, tool argument/result, path, or authority value is emitted by this composition.
+
+## Latest native transfer gate
+
+The balanced direct-native Codex paraphrase replication covered 12 matched
+episodes per arm across seeds 400000/410000/420000. No-skill scored 8/12,
+formatting placebo 10/12, length-matched neutral 9/12, and trace-mined terminal
+discipline 9/12. The trace arm tied neutral (one win each, ten ties; exact
+McNemar p=1.0), while all 48 native trajectories passed independent
+semantic/security/authority verification. Seed 420000 used one disposable
+database and verifier per arm. The proxy paraphrase aggregate was mildly
+positive (trace 8/12 versus neutral 7/12), so the cross-harness direction is
+inconsistent and the artifact is not promotion-eligible.
+
+## Science One adaptation
+
+Google Science One / ScientistOne is an evidence-chain architecture, not
+evidence that corporate trace mining or skill optimization works. Its
+transferable ideas are claim-level provenance, isolated explore/exploit
+branches, raw evaluator retention, and independent audits for score
+reproducibility, specification violations, reference validity, and method-code
+alignment. The Frankengate mapping is recorded in
+`experiments/summaries/science-one-chain-of-evidence-adaptation-2026-08-02.md`;
+it strengthens the release/evidence contract but does not close any enterprise
+utility gate.
