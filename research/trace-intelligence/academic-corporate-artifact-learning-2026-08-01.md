@@ -220,6 +220,19 @@ errors, and outcomes before semantic modeling. It cannot recover hidden business
 intent or satisfaction on its own, so the result must remain a candidate signal until
 frontier/human calibration and replay.
 
+For friction specifically, [Naver Cue's conversational-search study](https://arxiv.org/abs/2407.13166)
+derived follow-up patterns from real conversations and linked clarifying,
+excluding-condition, and substituting-condition follow-ups to dissatisfaction. Their
+classifier was not perfect, which is precisely why the detector should expose
+confidence and retain a sampled satisfaction reference. [Chatterjee and Sengupta](https://arxiv.org/abs/2005.11014)
+and IBM's weak-supervision work show a scalable pattern: extract dialog acts, cluster
+examples, have SMEs label representative exemplars, and propagate labels rather than
+interview every user. Semi-supervised contrastive intent clustering and older query
+reformulation graphs provide additional baselines for prompt→reprompt transition
+types. This answers the user-facing question directly: history-only mining is
+possible for candidate friction and intent, but a small representative label set is
+needed to name clusters and calibrate utility.
+
 ## Empirical publication program
 
 The first paper should be a narrow, preregistered systems study:
