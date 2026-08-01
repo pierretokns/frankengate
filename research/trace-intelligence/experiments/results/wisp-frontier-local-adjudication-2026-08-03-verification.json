@@ -1,0 +1,7 @@
+{
+  "candidates": 6,
+  "raw_sha256": "0dfd714066c46e5feed041c731cb81a1a13811bb4063aca54a2c9552c669d02a",
+  "result_sha256": "4ac779123a3396ca01ed070bd54eb53fc1c7783ddfe4e26f9e5a2cc129069cfc",
+  "schema_version": "frankengate-wisp-frontier-local-adjudication-verification-v1",
+  "status": "verified"
+}

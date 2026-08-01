@@ -45,6 +45,8 @@ promotion-eligible yet.
 | Frontier abstention works on a real public NL2SQL cohort | On 22 Defog-derived cases, Luna abstained on 8/8 constructed scope-swapped NILs and retrieved all 14 target-bearing cases; exact/lexical/dense retrieval could not abstain | Add an explicit late-stage abstention decision; this is still public/gold-SQL evidence, not enterprise semantic truth |
 | Same-scope collisions are a distinct retrieval failure mode | On 17 Defog-derived collision cases, dense retrieval put a same-scope sibling before the focus proxy 23.5% of the time, lexical 5.9%, exact 0%; Luna reduced the proxy miss rate to 1/17 | Preserve full table/column identity and reserve frontier adjudication for ambiguous same-scope candidates; cross-database scope alone is insufficient |
 
+| Local and frontier models agree on trace-insight labels | Six blinded Wisp recovery candidates under the same contract had 0% all-field agreement; field agreement ranged from 0% for usefulness to 33.3% for cause | Cheap models may triage or draft proposals, but high-impact memory, skill, and eval labels require independent model/human agreement |
+
 ## Nulls and corrections
 
 | Hypothesis | Correct result | Interpretation |
