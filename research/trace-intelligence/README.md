@@ -1395,6 +1395,17 @@ retrieval improved same-work Recall@20 by 12.3 points over lexical action-only
 3.1 points with a CI crossing zero. This supports semantic review retrieval,
 not skill utility, custom-model promotion, or similarity-based employee claims.
 
+The direct [`native Codex paraphrase replication`](experiments/summaries/defog-codex-frontier-native-paraphrase-multiseed-2026-08-02.md)
+completed a balanced three-seed, four-arm transfer test over renamed broker tasks.
+No-skill scored `8/12`, formatting placebo `10/12`, length-matched neutral `9/12`,
+and trace-mined terminal discipline `9/12`; all 48 trajectories passed authority
+and independent semantic verification. Trace-mined versus neutral tied exactly
+(`1–1`, ten ties, exact McNemar `p=1.0`) and versus no-skill was only `+0.083`
+(`p=1.0`). The trace arm used fewer SQL attempts/tool calls, but did not improve
+semantic correctness. Its direction also reversed relative to the loopback-proxy
+paraphrase aggregate, so the current artifact is not promotion-eligible and the
+transport/harness effect is itself a required replication variable.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,

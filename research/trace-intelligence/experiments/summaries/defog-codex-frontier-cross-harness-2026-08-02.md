@@ -35,11 +35,28 @@ The native harness's independent four-task seed scored:
 | length-matched neutral | 3 / 4 |
 | trace-mined | 2 / 4 |
 
+The balanced native three-seed replication (400000, 410000, 420000) scored:
+
+| arm | correct |
+| --- | ---: |
+| no skill | 8 / 12 |
+| formatting placebo | 10 / 12 |
+| length-matched neutral | 9 / 12 |
+| trace-mined | 9 / 12 |
+
+Seed 420000 in this replication used one fresh database and independent
+verifier per arm; its arm-level receipts all passed. The trace arm tied the
+neutral control (1 win each, 10 ties; exact McNemar p=1.0), so the earlier
+one-seed native reversal was not a fluke but also does not produce a positive
+native effect.
+
 The trace artifact therefore does not reproduce a positive advantage across
 harnesses: it is directionally above neutral in the proxy aggregate but below
 neutral in the native run. The native run also ties no-skill (2/4 vs 2/4).
-This is a descriptive cross-harness screen, not a harness ranking or causal
-skill estimate because the native arm has one seed and the proxy arm has three.
+The proxy aggregate is mildly positive for trace (8/12 vs neutral 7/12), while
+the balanced native aggregate is neutral-tied (9/12 vs 9/12). This is a
+descriptive cross-harness screen, not a harness ranking or causal skill
+estimate; it rejects promotion of this artifact under the current protocol.
 
 ## Decision
 

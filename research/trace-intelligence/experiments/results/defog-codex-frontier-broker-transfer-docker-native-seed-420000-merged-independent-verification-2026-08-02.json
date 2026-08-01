@@ -1,0 +1,64 @@
+{
+  "arms": {
+    "formatting_placebo": {
+      "candidate_present": 4,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 4,
+      "stored_semantic_correct": 4,
+      "tasks": 4
+    },
+    "length_matched_neutral": {
+      "candidate_present": 4,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 4,
+      "stored_semantic_correct": 4,
+      "tasks": 4
+    },
+    "no_skill": {
+      "candidate_present": 4,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 3,
+      "stored_semantic_correct": 3,
+      "tasks": 4
+    },
+    "trace_mined_terminal_discipline": {
+      "candidate_present": 4,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 4,
+      "stored_semantic_correct": 4,
+      "tasks": 4
+    }
+  },
+  "errors": [],
+  "isolation": "one-disposable-postgres-container-and-independent-verifier-per-seed-arm",
+  "raw_content_committed": false,
+  "schema_version": "frankengate-defog-semantic-independent-verification-arm-isolated-v1",
+  "semantic_recomputation": "each_arm_executed_against_pinned_governed_postgres_in_disposable_container",
+  "semantic_verification_passed": true,
+  "source_arm_verifications": [
+    {
+      "arm": "no_skill",
+      "path": "experiments/results/defog-codex-frontier-broker-transfer-docker-arm-no_skill-seed-420000-independent-verification-2026-08-02.json",
+      "sha256": "1ffc2804f81071c88c1d8ef9fdbb5fd70a111be7fb6f67c66559965241f65972"
+    },
+    {
+      "arm": "formatting_placebo",
+      "path": "experiments/results/defog-codex-frontier-broker-transfer-docker-seed-420000-arm-formatting-placebo-independent-verification-2026-08-02.json",
+      "sha256": "ba55f25d5a47fa5ad96d1a67a00f4fd9a56ab55dbf644ed124c8a4256b1dfc03"
+    },
+    {
+      "arm": "length_matched_neutral",
+      "path": "experiments/results/defog-codex-frontier-broker-transfer-docker-seed-420000-arm-length-matched-neutral-independent-verification-2026-08-02.json",
+      "sha256": "7c9207f4119fc7ef0d5877c60f20132ef9a897116b1f9141377116671a214c1b"
+    },
+    {
+      "arm": "trace_mined_terminal_discipline",
+      "path": "experiments/results/defog-codex-frontier-broker-transfer-docker-seed-420000-arm-trace-mined-terminal-discipline-independent-verification-2026-08-02.json",
+      "sha256": "f6abec46cf6272796d5c17e6f6a9315465dafa57c8ebff0b1a2179a9b093d130"
+    }
+  ],
+  "source_result_sha256": "abfcbafd40060f0fe33ae7d27b312167674fd3b8d8ca7d33f1ffcd213c616c87",
+  "stored_vs_recomputed_mismatches": [],
+  "task_count": 4,
+  "trajectory_count": 16
+}
