@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -41,6 +42,27 @@ SCHEMA_FIRST_CONTROLLER_PROMPT = (
     "repair it from the observed policy error and schema; do not repeat the "
     "same invalid identifier."
 )
+
+PARAPHRASE_MUTATIONS = {
+    "defog-sql-eval:instruct_advanced_postgres:broker:11:9c7b2337a36d": (
+        "How many customers have names beginning with J or ending in 'ez', "
+        "and reside in states whose names end with 'a'?"
+    ),
+    "defog-sql-eval:instruct_advanced_postgres:broker:12:9e137a09d497": (
+        "For customers joining on or after January 1, 2023, report each "
+        "country's TAC and its count."
+    ),
+    "defog-sql-eval:instruct_advanced_postgres:broker:14:e4d51056245a": (
+        "For customers who joined during 2022, report the AR for every "
+        "country, including country and AR."
+    ),
+    "defog-sql-eval:instruct_advanced_postgres:broker:2:fcfd29423477": (
+        "Among customers with at least five total transactions, report each "
+        "customer's transaction success rate and name, ordered from lowest "
+        "to highest success rate."
+    ),
+}
+PARAPHRASE_MUTATION_ID = "broker-four-task-renamed-paraphrase-v1"
 
 
 def _sha256_file(path: Path) -> str:
@@ -84,6 +106,30 @@ def _arm_classification(arm: str) -> str:
     if arm == "trace_mined_terminal_discipline":
         return "trace_mined_candidate"
     return "additional_control"
+
+
+def _apply_task_mutation(tasks: list[Any], mutation: str | None) -> tuple[list[Any], dict[str, Any]]:
+    if mutation is None:
+        return tasks, {"id": None, "changed_count": 0, "mapping_sha256": None}
+    if mutation != PARAPHRASE_MUTATION_ID:
+        raise factorial.FactorialError(f"unknown task mutation: {mutation}")
+    mutated = []
+    mapping: dict[str, str] = {}
+    for task in tasks:
+        question = PARAPHRASE_MUTATIONS.get(task.task_id)
+        if question is None:
+            raise factorial.FactorialError(
+                f"{mutation}: task has no sealed paraphrase: {task.task_id}"
+            )
+        mutated.append(replace(task, question=question))
+        mapping[task.task_id] = _sha256_text(question)
+    return mutated, {
+        "id": mutation,
+        "changed_count": len(mutated),
+        "mapping_sha256": _sha256_text(
+            json.dumps(mapping, sort_keys=True, separators=(",", ":"))
+        ),
+    }
 
 
 def _load_trace_mined_candidate(
@@ -132,6 +178,7 @@ def run_pilot(
     inject_authorized_schema: bool = False,
     trace_mined_candidate_file: Path | None = None,
     arms: tuple[str, ...] | None = None,
+    task_mutation: str | None = None,
 ) -> dict[str, Any]:
     factorial._require_external_raw_audit_dir(raw_audit_dir)
     if output.exists():
@@ -144,6 +191,7 @@ def run_pilot(
     tasks = [resolver.resolve(task_id) for task_id in task_ids]
     if not tasks:
         raise factorial.FactorialError("at least one task is required")
+    tasks, mutation_receipt = _apply_task_mutation(tasks, task_mutation)
     selected_arms = tuple(arms or ARMS)
     if not selected_arms or len(set(selected_arms)) != len(selected_arms):
         raise factorial.FactorialError("arms must be non-empty and unique")
@@ -347,6 +395,7 @@ def run_pilot(
             "inject_authorized_schema": inject_authorized_schema,
             "schema_catalog_sha256": schema_catalog_sha256,
             "trace_mined_candidate": trace_mined_artifact,
+            "task_mutation": mutation_receipt,
         },
         "authority": {
             "binding_sha256": sorted({receipt.binding_sha256 for receipt in authority_receipts}),
@@ -435,6 +484,11 @@ def main() -> int:
         choices=sorted(ARM_ADDITIONS),
         help="Override the default arms; repeat once per arm.",
     )
+    parser.add_argument(
+        "--task-mutation",
+        choices=(PARAPHRASE_MUTATION_ID,),
+        help="Apply a sealed prompt-only mutation while preserving task gold SQL.",
+    )
     args = parser.parse_args()
     result = run_pilot(
         source_root=args.source_root.resolve(strict=True),
@@ -464,6 +518,7 @@ def main() -> int:
             else None
         ),
         arms=tuple(args.arm) if args.arm else None,
+        task_mutation=args.task_mutation,
     )
     print(json.dumps({"status": "ok", "arms": result["arms"], "causal_skill_benefit_established": False}, sort_keys=True))
     return 0
