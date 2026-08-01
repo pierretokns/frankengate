@@ -12,13 +12,16 @@ The no-skill and human-authored arms both produced verifier-valid answers:
 
 | arm | required-key verifier | Q1 exact precision/recall | Q3 exact precision/recall |
 | --- | --- | --- | --- |
-| no skill | pass | 8/8, 8/8 | 3/3, 3/3 |
+| no skill | pass | 8/10, 8/8 | 3/3, 3/3 |
 | human-authored skill | pass | 8/8, 8/8 | 3/3, 3/3 |
 
-The two arms therefore tie on this task. The skill arm consumed about 171
-seconds of wall time; the reused control receipt retained Codex usage but not a
-new wall-time measurement. The raw event streams and answer files remain
-outside the repository; only hashes and structural receipts are committed.
+The skill arm removed two extra Q1 identifiers while preserving full recall on
+this task. It therefore improved exact precision from `.80` to `1.00`, but this
+is a one-instance directional signal rather than a causal result. The skill arm
+consumed about 171 seconds of wall time; the reused control receipt retained
+Codex usage but not a new wall-time measurement. The raw event streams and
+answer files remain outside the repository; only hashes and structural receipts
+are committed.
 
 ## Interpretation
 

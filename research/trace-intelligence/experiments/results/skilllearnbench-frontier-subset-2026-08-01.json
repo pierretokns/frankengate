@@ -4,6 +4,22 @@
       "agent_message_count": 3,
       "answer": {
         "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 10,
+            "expected_count": 8,
+            "extra_count": 2,
+            "precision": 0.8,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
         "json_object": true,
         "passed": true,
         "q1_missing": 0,
@@ -31,6 +47,22 @@
       "agent_message_count": 4,
       "answer": {
         "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 8,
+            "expected_count": 8,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
         "json_object": true,
         "passed": true,
         "q1_missing": 0,
@@ -39,11 +71,12 @@
         "token_fields_numeric": true
       },
       "arm": "human_authored",
-      "elapsed_seconds": 170.87,
+      "elapsed_seconds": null,
       "model": "gpt-5.6-luna",
       "raw_content_retained_outside_repo": true,
       "returncode": 0,
-      "stderr_sha256": "b67111ae70ef2d5665df9ee906c04481e0ba53c9558a8d4565a59ede86a1395b",
+      "reused_existing_run": true,
+      "stderr_sha256": null,
       "stdout_sha256": "b0e838541fd2b888b385dc0adb86718297bc37d0d02633f50a66eaf58cfd4b01",
       "usage": {
         "cache_write_input_tokens": 0,
