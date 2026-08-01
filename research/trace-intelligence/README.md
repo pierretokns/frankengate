@@ -274,6 +274,13 @@ upstream documented Azure Foundry provider invokes `az`, which is unavailable
 on this machine. It is recorded as a typed provider-unavailable result—not as
 evidence for or against ReasoningBank memory quality.
 
+The follow-up [`ReasoningBank Codex frontier reproduction`](experiments/summaries/reasoningbank-codex-frontier-bounded-2026-08-02.md)
+kept the upstream runner unchanged and substituted only the unavailable memory
+client with Codex subscription calls. Two train memories were created and the
+frozen held-out score was 0.593 versus 0.703 for the matched no-harness control
+(delta -0.110, one regression). This bounded negative slice keeps ReasoningBank
+out of the integration set; it is not a universal method rejection.
+
 The [`GEPA v0.1.4 native-tool protocol arm`](experiments/summaries/gepa-native-tool-protocol-2026-08-02.md)
 now runs the actual pinned optimizer against a separate three-episode train and
 three-episode holdout split using the local Llama model. GEPA made 11 metric

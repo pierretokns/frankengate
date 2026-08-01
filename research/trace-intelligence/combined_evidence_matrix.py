@@ -73,6 +73,7 @@ OPTIONAL_RESULTS = {
     "skillgen_codex_bird_frontier": "skillgen-codex-bird-frontier-2026-08-02.json",
     "rho_frontier_locomo_bounded": "rho-frontier-locomo-bounded-2026-08-02.json",
     "reasoningbank_locomo_bounded": "reasoningbank-locomo-bounded-2026-08-02.json",
+    "reasoningbank_codex_frontier_bounded": "reasoningbank-codex-frontier-bounded-2026-08-02.json",
     "skillopt_local_runtime_attempt_r15": "skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
     "skillopt_local_intervention_r16": "skillopt-alfworld-local-intervention-r16-2026-08-02.json",
     "skillopt_deterministic_lifecycle_r17": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
@@ -304,6 +305,7 @@ def build_matrix(
     skillgen_codex_bird_frontier = results.get("skillgen_codex_bird_frontier")
     rho_frontier_locomo_bounded = results.get("rho_frontier_locomo_bounded")
     reasoningbank_locomo_bounded = results.get("reasoningbank_locomo_bounded")
+    reasoningbank_codex_frontier_bounded = results.get("reasoningbank_codex_frontier_bounded")
 
     alfworld_pilot_evidence = {
         "tasks": 0,
@@ -1357,6 +1359,35 @@ def build_matrix(
                         "memory_quality_evaluated", False
                     )
                 ),
+                "reasoningbank_codex_receipt_present": bool(reasoningbank_codex_frontier_bounded),
+                "reasoningbank_codex_baseline_mean_score": (
+                    reasoningbank_codex_frontier_bounded.get("outcome", {}).get(
+                        "baseline_mean_score", 0.0
+                    )
+                    if reasoningbank_codex_frontier_bounded
+                    else 0.0
+                ),
+                "reasoningbank_codex_mean_score": (
+                    reasoningbank_codex_frontier_bounded.get("outcome", {}).get(
+                        "reasoningbank_mean_score", 0.0
+                    )
+                    if reasoningbank_codex_frontier_bounded
+                    else 0.0
+                ),
+                "reasoningbank_codex_mean_delta": (
+                    reasoningbank_codex_frontier_bounded.get("outcome", {}).get(
+                        "mean_delta", 0.0
+                    )
+                    if reasoningbank_codex_frontier_bounded
+                    else 0.0
+                ),
+                "reasoningbank_codex_regressed_tasks": (
+                    reasoningbank_codex_frontier_bounded.get("outcome", {}).get(
+                        "candidate_regressed_tasks", 0
+                    )
+                    if reasoningbank_codex_frontier_bounded
+                    else 0
+                ),
                 "skill_transfer_models": skill_transfer_models,
                 "skill_transfer_harnesses": skill_transfer_harnesses,
                 "skill_transfer_same_fixture_compared": _require(
@@ -1978,6 +2009,15 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "Azure Foundry path requires the unavailable `az` executable. It is typed "
             "provider-unavailable evidence, not a memory-quality or utility result."]
             if skill["reasoningbank_receipt_present"] else []),
+            *([f"- With the upstream runner preserved and only the memory client "
+            f"substituted, ReasoningBank + Codex scored "
+            f"{skill['reasoningbank_codex_mean_score']:.3f} versus the matched "
+            f"no-harness {skill['reasoningbank_codex_baseline_mean_score']:.3f} "
+            f"on two held-out LOCOMO questions (delta="
+            f"{skill['reasoningbank_codex_mean_delta']:.3f}; "
+            f"{skill['reasoningbank_codex_regressed_tasks']} regression). "
+            "This bounded negative slice does not authorize memory promotion."]
+            if skill["reasoningbank_codex_receipt_present"] else []),
             f"- A fresh Qwen3 4B native-Ollama replay completed all 18 episodes "
             f"but produced native tool-call counts "
             f"{skill['skill_qwen_native_native_tool_call_counts']} and zero "
