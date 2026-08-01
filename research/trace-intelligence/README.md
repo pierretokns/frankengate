@@ -1509,6 +1509,12 @@ The domain-embedding refresh records convergent evidence from semiconductor
 logs, process-industry graph contrastive learning, interpretable event
 features, and retrieval-augmented schema linking:
 [`skill-hard-negative-prior-art-update-2026-08-02.md`](experiments/summaries/skill-hard-negative-prior-art-update-2026-08-02.md).
+It also records the important positive schema-retrieval precedent: a
+leave-one-corpus-out study uses schema-generated queries and
+granularity-aware hard negatives, so our MATM adapter null is not a blanket
+negative result for domain adaptation.
+The matched follow-up is preregistered in
+[`schema-adaptive-embedding-2026-08-01.md`](experiments/protocols/schema-adaptive-embedding-2026-08-01.md).
 
 ## Claim boundary
 

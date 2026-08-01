@@ -53,7 +53,7 @@ The program combines adjacent ideas rather than claiming to rediscover them:
 | [NVIDIA ASPIRE](https://research.nvidia.com/labs/gear/aspire/) and [ENPIRE](https://research.nvidia.com/labs/gear/enpire/) | Reset, execute, verify, repair, and admit reusable skills | Replace robotics state/action assumptions with SQL/tool authority, schema drift, and result-equivalence oracles |
 | [SKILL-DISCO](https://arxiv.org/abs/2606.26669) | Distills repeated successful traces into parameterized control-flow subgraphs and compiles executable, verifiable skills | Preserve the executable subgraph, but add hidden-intent, authority-epoch, schema/tool-drift, and semantic-ID gates |
 | [Enterprise hard-negative mining](https://aclanthology.org/2025.acl-industry.72/) | Contextually irrelevant but semantically close negatives | Add same-scope aliases, stale versions, tenant authority, and executable replay |
-| [Schema retrieval](https://arxiv.org/abs/2607.13311) | Corpus adaptation and granularity-aware hard negatives | Preserve raw trace branches, tool results, and temporal provenance |
+| [Schema retrieval](https://arxiv.org/abs/2607.13311) | Corpus adaptation, schema-generated queries, and granularity-aware hard negatives for table/column retrieval | Reproduce on enterprise schemas with user/project/time/system holdouts, then add raw trace branches, tool results, and temporal provenance |
 | [TRACE](https://arxiv.org/abs/2607.22639) | Rule-grounded enterprise tool retrieval | Add artifact lifecycle, authorization epochs, and changed-system outcomes |
 | Memo-SQL / Query Capsules / workload mining | Typed SQL fragments, failure memory, and workload reuse | Add tenant-safe governance, migration mappings, and rollback |
 | Graph/process-memory systems | Temporal entities, event graphs, and provenance | Do not treat graph or embedding proximity as semantic truth |
@@ -103,7 +103,7 @@ claim boundary, and independent verifier where applicable.
 | Public alias/NIL retrieval | Exact/lexical/dense target MRR `.893/.806/.690`; Luna `1.000`; Luna abstained on all 8 constructed NILs | Frontier abstention is useful after candidate generation; public gold-derived candidate pools are not enterprise semantic truth |
 | Same-scope identity | Dense sibling-before-target `.235`; lexical `.059`; exact `.0`; Luna `.0` with Recall@1 `.941` | Cross-database scope is insufficient; preserve table/column identity |
 | Identifier-aware ranker | Leave-one-database-out MRR `.737`, Recall@1 `.647`, Recall@5 `.882`, collision-before-target `.0` | A cheap structured lane is promising before frontier review |
-| Embedding adaptation | Table-aware embedding Recall@1 `.373`; structured `.337`; learned hard-negative adapter `.302` and collision-before-target `.512` | No adapter promotion; structured identity is safer on this proxy cohort |
+| Embedding adaptation | Table-aware embedding Recall@1 `.373`; structured `.337`; learned hard-negative adapter `.302` and collision-before-target `.512`; a separate schema-grounded 2026 study reports large leave-one-corpus-out gains from synthesized schema queries and granularity-aware hard negatives | No promotion on the MATM proxy; the matched schema recipe remains open |
 | Embedding/model cascade | MATM action embeddings improve Recall@20 by `+.123`; outcome-neighbor AUC delta `-.056`; Luna proposal grounding `3/4` | Separate candidate recall, review prioritization, and proposal quality; never pool unlike labels |
 | Local/frontier label agreement | Six Wisp candidates: all-field agreement `0%`; usefulness agreement `0%`; cause agreement `33.3%` | Cheap models are not interchangeable with frontier/human adjudicators |
 | Changed-agent utility | BIRD 20-task replay: 20 ties, zero wins/losses, exact delta `0.0`, latency ratio `.989` | No measured trace-mined utility yet; this is a bounded no-lift result |
@@ -174,6 +174,9 @@ independent outcome oracles, and release-blocking false semantic acceptance.
 The complementary [skill-representation and replay protocol](../experiments/protocols/skill-representation-and-replay-2026-08-01.md)
 isolates executable control-flow from prose and retrieval memory with
 length-matched controls before any positive skill claim is made.
+The [schema-adaptive embedding protocol](../experiments/protocols/schema-adaptive-embedding-2026-08-01.md)
+separately reproduces schema-generated positives and granularity-aware hard
+negatives, avoiding the task mismatch in the MATM adapter null.
 
 ## Publication and collaboration
 

@@ -128,6 +128,25 @@ requirement even clearer:
 | [Embedding-Aware Feature Discovery](https://arxiv.org/abs/2603.15713) | Combines latent representations with interpretable event-sequence features and reports gains over embedding-only baselines. | Supports hybrid identifier/event features, but its anomaly/sequence targets differ from semantic alias truth and artifact utility. |
 | [RASL: Retrieval-Augmented Schema Linking](https://arxiv.org/abs/2507.23104) | Treats massive enterprise schema linking as a retrieval problem rather than asking a model to ingest the entire catalog. | Schema linking still needs scope, temporal lineage, and independent query/result validation in Frankengate. |
 
+The strongest positive precedent for a *properly matched* embedding experiment
+is [Finding the Right Tables and Columns](https://arxiv.org/abs/2607.13311).
+It recasts schema linking as its own table/column retrieval task, synthesizes
+natural-language queries from the target schema corpus, mines
+granularity-aware hard negatives, and reports leave-one-corpus-out gains in
+Recall@10 from `60.4` to `75.6` (nDCG@10 from `51.9` to `68.0`). This is
+materially different from our MATM adapter, which used trajectory similarity
+proxies rather than schema-grounded query/column labels. Our MATM result is
+therefore a **negative promotion result for that proxy recipe**, not evidence
+against corpus-adaptive schema embeddings.
+
+[TRACE](https://arxiv.org/abs/2607.22639) is a complementary, more parametric
+tool-retrieval direction: it trains on business-rule-curated queries and
+reports large gains over an embedding baseline on an 8,300-tool enterprise
+catalog. It is not a drop-in Frankengate component because it requires model
+training, curated business rules, and a closed tool vocabulary; however, it
+supports testing structured business-rule features alongside vectors rather
+than assuming nearest-neighbor similarity is enough.
+
 The convergent pattern is not “train a bigger embedding model on logs.” It is:
 
 1. derive candidate positives from repeated validated artifacts, lineage, and
@@ -142,6 +161,12 @@ The convergent pattern is not “train a bigger embedding model on logs.” It i
 This gives a concrete explanation for our current negative adapter result:
 the adapter was asked to learn corporate semantics from proxy trajectory labels
 without the expert/lineage supervision that these industrial systems use.
+
+The revised schema experiment must therefore use the Defog/BIRD schemas as the
+corpus, synthesize question-like positives from table/column metadata, mine
+same-scope and granularity-conflict negatives, and evaluate leave-one-database-
+family-out. Only after that should we compare an adapted embedder with the
+identifier-aware ranker and replay its top candidates in changed systems.
 
 ## Revised Frankengate experiment
 
