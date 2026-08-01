@@ -452,6 +452,12 @@
       "schema_version": "canonical-projection-e0-conformance-result-v1",
       "sha256": "8801a8a520db47215ffe3f799f152d3d5c72947f3c3b6bd8d191cc2876499f02"
     },
+    "rho_frontier_locomo_bounded": {
+      "filename": "rho-frontier-locomo-bounded-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-rho-frontier-reproduction-v1",
+      "sha256": "7fc61c8bf9bacf62e5484cfdb4587077123dba2922703b1b33e16b7b9eb0d5bf"
+    },
     "skill_cross_harness_transfer": {
       "filename": "model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json",
       "schema_version": "frankengate-model-harness-transfer-matrix-v1",
@@ -1042,6 +1048,15 @@
         "natural_released_procedure_verifier_passed": true,
         "natural_released_procedure_verifier_projects": 3,
         "natural_released_procedure_visible_queries": 23,
+        "rho_locomo_baseline_mean_score": 0.7027777777777777,
+        "rho_locomo_candidate_mean_score": 0.5111111111111112,
+        "rho_locomo_candidate_regressed_tasks": 1,
+        "rho_locomo_candidate_self_preference_accepted": true,
+        "rho_locomo_causal_utility_confirmed": false,
+        "rho_locomo_heldout_tasks": 2,
+        "rho_locomo_mean_delta": -0.19166666666666654,
+        "rho_locomo_receipt_present": true,
+        "rho_locomo_self_preference_mean_score": 1.0,
         "security_violation_veto_passed": true,
         "share_codex_recovery_review_candidates": 31,
         "skill_cross_harness_same_fixture_compared": true,
@@ -1105,6 +1120,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "875668888e9c55b171b5ecb0bf793cc944d235e4e9476b6c6d7e32cdfb7ed627",
+  "result_sha256": "64ffbc4edca8a0fd4d25ad4e05ffa6e4f7d4583efa1cea0aeafbe2c55f5646cf",
   "schema_version": "frankengate-combined-evidence-matrix-v31"
 }

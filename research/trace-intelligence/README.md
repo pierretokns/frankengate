@@ -258,6 +258,16 @@ release gate rejected the candidate. This is direct negative efficacy evidence
 for this cohort; it does not prove SkillGen ineffective generally, but the
 candidate is not eligible for Frankengate integration.
 
+The independent [`RHO frontier LOCOMO reproduction`](experiments/results/rho-frontier-locomo-bounded-2026-08-02.json)
+ran the pinned upstream RHO diagnosis strategy through the Codex subscription
+on its own LOCOMO benchmark. One candidate was accepted by RHO's self-preference
+gate (mean preference score 1.0). A matched no-harness control on the same two
+held-out questions scored 0.703 mean versus 0.511 for the accepted candidate,
+for a -0.192 delta and one regression. This is a deliberately small, bounded
+negative slice—not a universal RHO rejection—but it demonstrates why RHO's
+self-preference acceptance cannot be used as Frankengate utility evidence or a
+promotion authority.
+
 The [`GEPA v0.1.4 native-tool protocol arm`](experiments/summaries/gepa-native-tool-protocol-2026-08-02.md)
 now runs the actual pinned optimizer against a separate three-episode train and
 three-episode holdout split using the local Llama model. GEPA made 11 metric

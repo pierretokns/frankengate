@@ -71,6 +71,7 @@ REQUIRED_RESULTS = {
 }
 OPTIONAL_RESULTS = {
     "skillgen_codex_bird_frontier": "skillgen-codex-bird-frontier-2026-08-02.json",
+    "rho_frontier_locomo_bounded": "rho-frontier-locomo-bounded-2026-08-02.json",
     "skillopt_local_runtime_attempt_r15": "skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
     "skillopt_local_intervention_r16": "skillopt-alfworld-local-intervention-r16-2026-08-02.json",
     "skillopt_deterministic_lifecycle_r17": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
@@ -300,6 +301,7 @@ def build_matrix(
     trace_commons_full = results.get("trace_commons_full")
     trace_commons_repro = results["trace_commons_repro"]
     skillgen_codex_bird_frontier = results.get("skillgen_codex_bird_frontier")
+    rho_frontier_locomo_bounded = results.get("rho_frontier_locomo_bounded")
 
     alfworld_pilot_evidence = {
         "tasks": 0,
@@ -1286,6 +1288,61 @@ def build_matrix(
                     skillgen_codex_bird_frontier
                     and skillgen_codex_bird_frontier.get("heldout", {}).get("passed", False)
                 ),
+                "rho_locomo_receipt_present": bool(rho_frontier_locomo_bounded),
+                "rho_locomo_candidate_self_preference_accepted": bool(
+                    rho_frontier_locomo_bounded
+                    and rho_frontier_locomo_bounded.get("protocol", {}).get(
+                        "candidate_accepted_by_self_preference", False
+                    )
+                ),
+                "rho_locomo_self_preference_mean_score": (
+                    rho_frontier_locomo_bounded.get("protocol", {}).get(
+                        "self_preference_mean_score", 0.0
+                    )
+                    if rho_frontier_locomo_bounded
+                    else 0.0
+                ),
+                "rho_locomo_heldout_tasks": (
+                    rho_frontier_locomo_bounded.get("protocol", {}).get(
+                        "heldout_tasks", 0
+                    )
+                    if rho_frontier_locomo_bounded
+                    else 0
+                ),
+                "rho_locomo_baseline_mean_score": (
+                    rho_frontier_locomo_bounded.get("outcome", {}).get(
+                        "baseline_mean_score", 0.0
+                    )
+                    if rho_frontier_locomo_bounded
+                    else 0.0
+                ),
+                "rho_locomo_candidate_mean_score": (
+                    rho_frontier_locomo_bounded.get("outcome", {}).get(
+                        "candidate_mean_score", 0.0
+                    )
+                    if rho_frontier_locomo_bounded
+                    else 0.0
+                ),
+                "rho_locomo_mean_delta": (
+                    rho_frontier_locomo_bounded.get("outcome", {}).get(
+                        "mean_delta", 0.0
+                    )
+                    if rho_frontier_locomo_bounded
+                    else 0.0
+                ),
+                "rho_locomo_candidate_regressed_tasks": (
+                    rho_frontier_locomo_bounded.get("outcome", {}).get(
+                        "candidate_regressed_tasks", 0
+                    )
+                    if rho_frontier_locomo_bounded
+                    else 0
+                ),
+                "rho_locomo_causal_utility_confirmed": bool(
+                    rho_frontier_locomo_bounded
+                    and rho_frontier_locomo_bounded.get("claim_boundary", {}).get(
+                        "causal_rho_utility_confirmed", False
+                    )
+                ),
                 "skill_transfer_models": skill_transfer_models,
                 "skill_transfer_harnesses": skill_transfer_harnesses,
                 "skill_transfer_same_fixture_compared": _require(
@@ -1892,6 +1949,16 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             f"{skill['skillgen_bird_release_gate_passed']}; this is direct negative "
             "cohort-specific efficacy evidence, not a reason to discard the independent "
             "replay and proposal mechanics."] if skill["skillgen_bird_receipt_present"] else []),
+            *([f"- An independent upstream RHO round accepted its harness edit by "
+            f"self-preference (mean={skill['rho_locomo_self_preference_mean_score']:.3f}), "
+            f"but matched no-harness LOCOMO replay on {skill['rho_locomo_heldout_tasks']} "
+            f"held-out questions moved from {skill['rho_locomo_baseline_mean_score']:.3f} "
+            f"to {skill['rho_locomo_candidate_mean_score']:.3f} "
+            f"(delta={skill['rho_locomo_mean_delta']:.3f}; "
+            f"{skill['rho_locomo_candidate_regressed_tasks']} regressions). "
+            "RHO's self-preference signal therefore did not predict independent utility "
+            "on this slice and the candidate is not eligible for promotion."]
+            if skill["rho_locomo_receipt_present"] else []),
             f"- A fresh Qwen3 4B native-Ollama replay completed all 18 episodes "
             f"but produced native tool-call counts "
             f"{skill['skill_qwen_native_native_tool_call_counts']} and zero "
