@@ -1463,6 +1463,16 @@ collision-before-target, while 4x hard-negative weighting added no lift. This
 supports a cheap structured reranking lane before frontier review, not a claim
 that the model learned corporate semantic aliases.
 
+The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
+tested whether a frontier model and a local model could be treated as
+interchangeable trace-insight labelers. On six blinded candidates under the
+same contract, all-field agreement was `0%`; field agreement ranged from `0%`
+for usefulness to `33.3%` for cause. Luna's output was schema-valid and every
+evidence reference was candidate-local, but agreement is not correctness. The
+result supports using inexpensive models for triage/drafting only, with
+independent model or human adjudication before promoting a memory, skill, or
+eval.
+
 The next enterprise gate is preregistered in the
 [`semantic-label and changed-system replay protocol`](experiments/protocols/enterprise-semantic-label-and-drift-2026-08-03.md).
 It freezes candidate generation before SME labels, requires user/project/system/time
