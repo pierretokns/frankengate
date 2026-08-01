@@ -34,11 +34,13 @@ similarity, skill gaps, enterprise intent, or causal skill improvement.
 
 ### Recovery-Bench
 
-- The acquired LFS checkout contains 89 trial result files and 89 ATIF-v1.6
-  trajectories for 89 unique Terminal-Bench tasks.
-- Verifier rewards are 62 failures, 25 successes, and 2 records without a
-  readable reward file. The 62 failures are the usable initial failure set for
-  a recovery intervention.
+- The acquired LFS checkout contains 89 task-trial result files and 89
+  ATIF-v1.6 trajectories for 89 unique Terminal-Bench tasks (90 JSON result
+  files if the aggregate root result is included).
+- Trial verifier rewards are 62 failures, 25 successes, and 2 records without
+  a readable reward file; the aggregate root result is a third missing-reward
+  JSON record. The 62 failures are the usable initial failure set for a
+  recovery intervention.
 - The trajectories contain 4,348 agent steps, 89 user task steps, and 5,148
   tool-call records. The model/agent is single-condition in this checkout
   (`claude-haiku-4-5-20251001` / `terminus-2`) and the environment is Modal.
@@ -53,6 +55,17 @@ similarity, skill gaps, enterprise intent, or causal skill improvement.
 ready for a separately funded baseline that runs no-context/full-context/
 summary recovery agents on the 62 failed tasks. It is not yet evidence that a
 mined skill improves recovery.
+
+### Cheap failure-signal screen
+
+The content-free structural screen found 47 signature modes across the 62
+failed trajectories, with 11 repeated modes and 3 supported by at least three
+episodes. Selecting the top signal quartile produced a repeated-mode rate of
+`0.60`, above the 32-seed random mean of `0.414583`; selecting by trajectory
+length produced `0.733333`. This supports using cheap signals to prioritize
+diagnosis/review, but not treating a repeated signature as a reusable recovery
+skill. The receipt is
+[`recovery-bench-failure-signals-2026-08-05.json`](../results/recovery-bench-failure-signals-2026-08-05.json).
 
 ## Claim boundary
 
