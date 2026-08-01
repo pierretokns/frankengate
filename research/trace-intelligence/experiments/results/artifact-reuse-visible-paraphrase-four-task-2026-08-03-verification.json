@@ -1,0 +1,10 @@
+{
+  "schema_version": "frankengate-validated-artifact-reuse-visible-paraphrase-verification-v1",
+  "source_result_receipts": 4,
+  "trajectories": 12,
+  "semantic_recomputation_errors": 0,
+  "stored_vs_recomputed_mismatches": 0,
+  "authority_or_policy_failures": 0,
+  "raw_content_committed": false,
+  "status": "verified"
+}

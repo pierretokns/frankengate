@@ -1,0 +1,24 @@
+{
+  "schema_version": "frankengate-validated-artifact-reuse-visible-paraphrase-v1",
+  "classification": "domain_valid_visible_selection_upper_bound",
+  "dataset": {"database_family": "broker", "task_count": 4, "mutation": "broker-four-task-renamed-paraphrase-v1", "independent_verifier": "governed PostgreSQL semantic recomputation"},
+  "source_receipts": {
+    "task11": {"result_sha256": "5ba8dfd8bf8ea20ed299a826b8dab86f41f01937ffe49a10ae1113512e0bb559", "verification_sha256": "26891862ac9ed01a5f28a20322783293195af57602a4f3dc736f4821646c9bc6"},
+    "task12": {"result_sha256": "a489001f756dba81578e30ec965e28468be98a451924f22cafca732ef0effb57", "verification_sha256": "2f7d0abd213947a3aa6816a7d8f4d55bffac08bc7f8d9f1bc12386341af4c4a7"},
+    "task14": {"result_sha256": "2431f46c632fc76f397c79b6d98f5fae97782811d51d9b674ac0e11001a9a180", "verification_sha256": "3ac92f8896d2f4ec58105a5f671c4fbde501f537f866c99b3ce4b0e9ee5eb83b"},
+    "task2": {"result_sha256": "de7510e5528c32e5694d5c77229d1be237d29d722854789c01e703ed87ff64e1", "verification_sha256": "15a4b21735c86815c98c69ad4e0761729c870ae6f05a12df383c61090b96c9d9"}
+  },
+  "arms": {
+    "no_skill": {"semantic_correct": "4/4", "sql_attempts": 6, "tool_calls": 14, "unauthorized_observation": 0},
+    "formatting_placebo": {"semantic_correct": "4/4", "sql_attempts": 5, "tool_calls": 13, "unauthorized_observation": 0},
+    "validated_artifact": {"semantic_correct": "4/4", "sql_attempts": 4, "tool_calls": 12, "unauthorized_observation": 0}
+  },
+  "independent_verification": {"tasks": 4, "trajectories": 12, "semantic_recomputation_errors": 0, "stored_vs_recomputed_mismatches": 0, "authority_or_policy_failures": 0},
+  "claim_boundary": {
+    "artifact_consumption_exercised": true,
+    "causal_benefit_established": false,
+    "retrieval_benefit_established": false,
+    "upper_bound_and_underpowered": true,
+    "reason": "Each validated artifact was deliberately paired with its paraphrase target; controls also reached 4/4. The lower attempt count is descriptive and not a powered cost or success claim."
+  }
+}
