@@ -1647,7 +1647,7 @@ quarantined; it is not used in these counts. This is a promising composability
 signal, not a powered causal or cross-family result; changed schemas,
 regeneration, NILs, and negative transfer remain required.
 
-The deterministic [`subplan changed-system replay`](experiments/summaries/artifact-subplan-changed-system-replay-2026-08-05.md)
+The deterministic [`subplan changed-system replay`](experiments/summaries/artifact-subplan-changed-system-2026-08-05.md)
 then isolated a validated filter subplan and composed it into a new task. A
 semantic-ID policy accepted 3/5 evolved systems with 3/3 correct transfers and
 zero unsafe accepts; name-only admission accepted 5/5 but made two unsafe
