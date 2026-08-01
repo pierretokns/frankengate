@@ -1,0 +1,6 @@
+{
+  "cases_verified": 17,
+  "result_sha256": "a0552d372b586646db1acc43bcb740283612ac2743e6e9060c82f38c777cbcbd",
+  "schema_version": "frankengate-nl2sql-identifier-reranker-verification-v1",
+  "verification_passed": true
+}

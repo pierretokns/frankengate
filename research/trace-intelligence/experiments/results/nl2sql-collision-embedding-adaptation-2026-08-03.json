@@ -1,0 +1,159 @@
+{
+  "aggregate": {
+    "hard_negative_adapter": {
+      "folds": 3,
+      "mean_mrr": 0.498894,
+      "mean_recall_at_1": 0.301587,
+      "mean_recall_at_5": 0.738095,
+      "mean_same_scope_collision_before_target": 0.511905
+    },
+    "identifier_embedding": {
+      "folds": 3,
+      "mean_mrr": 0.352417,
+      "mean_recall_at_1": 0.198413,
+      "mean_recall_at_5": 0.634921,
+      "mean_same_scope_collision_before_target": 0.0
+    },
+    "structured": {
+      "folds": 3,
+      "mean_mrr": 0.517791,
+      "mean_recall_at_1": 0.337301,
+      "mean_recall_at_5": 0.888889,
+      "mean_same_scope_collision_before_target": 0.055556
+    },
+    "table_embedding": {
+      "folds": 3,
+      "mean_mrr": 0.510906,
+      "mean_recall_at_1": 0.373016,
+      "mean_recall_at_5": 0.738095,
+      "mean_same_scope_collision_before_target": 0.297619
+    }
+  },
+  "claim_boundary": "Small database-family-held-out hard-negative diagnostic on deterministic gold-SQL focus proxies. It does not establish a generally useful corporate embedding model or downstream agent utility.",
+  "dataset": {
+    "cases": 17,
+    "databases": [
+      "car_dealership",
+      "derm_treatment",
+      "ewallet"
+    ],
+    "raw_content_committed": false,
+    "raw_sha256": "a3a1b361328ebb68ecddfc2b5cb16754888e946dfde349b66f59ad5a4afb5673"
+  },
+  "folds": [
+    {
+      "arms": {
+        "hard_negative_adapter": {
+          "cases": 7,
+          "mrr": 0.654762,
+          "recall_at_1": 0.571429,
+          "recall_at_5": 0.714286,
+          "same_scope_collision_before_target": 0.285714
+        },
+        "identifier_embedding": {
+          "cases": 7,
+          "mrr": 0.492332,
+          "recall_at_1": 0.428571,
+          "recall_at_5": 0.571429,
+          "same_scope_collision_before_target": 0.0
+        },
+        "structured": {
+          "cases": 7,
+          "mrr": 0.588095,
+          "recall_at_1": 0.428571,
+          "recall_at_5": 1.0,
+          "same_scope_collision_before_target": 0.0
+        },
+        "table_embedding": {
+          "cases": 7,
+          "mrr": 0.490476,
+          "recall_at_1": 0.285714,
+          "recall_at_5": 0.714286,
+          "same_scope_collision_before_target": 0.142857
+        }
+      },
+      "held_out_database": "car_dealership",
+      "test_cases": 7,
+      "train_cases": 10
+    },
+    {
+      "arms": {
+        "hard_negative_adapter": {
+          "cases": 4,
+          "mrr": 0.20303,
+          "recall_at_1": 0.0,
+          "recall_at_5": 0.5,
+          "same_scope_collision_before_target": 0.75
+        },
+        "identifier_embedding": {
+          "cases": 4,
+          "mrr": 0.216227,
+          "recall_at_1": 0.0,
+          "recall_at_5": 0.5,
+          "same_scope_collision_before_target": 0.0
+        },
+        "structured": {
+          "cases": 4,
+          "mrr": 0.520833,
+          "recall_at_1": 0.25,
+          "recall_at_5": 1.0,
+          "same_scope_collision_before_target": 0.0
+        },
+        "table_embedding": {
+          "cases": 4,
+          "mrr": 0.125576,
+          "recall_at_1": 0.0,
+          "recall_at_5": 0.5,
+          "same_scope_collision_before_target": 0.75
+        }
+      },
+      "held_out_database": "derm_treatment",
+      "test_cases": 4,
+      "train_cases": 13
+    },
+    {
+      "arms": {
+        "hard_negative_adapter": {
+          "cases": 6,
+          "mrr": 0.638889,
+          "recall_at_1": 0.333333,
+          "recall_at_5": 1.0,
+          "same_scope_collision_before_target": 0.5
+        },
+        "identifier_embedding": {
+          "cases": 6,
+          "mrr": 0.348693,
+          "recall_at_1": 0.166667,
+          "recall_at_5": 0.833333,
+          "same_scope_collision_before_target": 0.0
+        },
+        "structured": {
+          "cases": 6,
+          "mrr": 0.444445,
+          "recall_at_1": 0.333333,
+          "recall_at_5": 0.666667,
+          "same_scope_collision_before_target": 0.166667
+        },
+        "table_embedding": {
+          "cases": 6,
+          "mrr": 0.916667,
+          "recall_at_1": 0.833333,
+          "recall_at_5": 1.0,
+          "same_scope_collision_before_target": 0.0
+        }
+      },
+      "held_out_database": "ewallet",
+      "test_cases": 6,
+      "train_cases": 11
+    }
+  ],
+  "protocol": {
+    "C": 0.1,
+    "adapter": "regularized logistic pair scorer over query/candidate table-aware Nomic product+difference features",
+    "embedding_model": "nomic-embed-text:latest",
+    "hard_negative_labels": "focus target positive; same-table or same-normalized-name candidates negative",
+    "split": "leave-one-database-family-out"
+  },
+  "result_sha256": "7e09e5c6f736f28b9c43a23dacf28a4b02ba9b81ba098b87ca038f2c96a487e6",
+  "schema_version": "frankengate-nl2sql-collision-embedding-adaptation-v1"
+}

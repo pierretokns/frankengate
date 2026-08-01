@@ -1448,6 +1448,21 @@ reached `.941` Recall@1 with 0% collision-before-target. This is not semantic
 alias truth, but it empirically supports table/column identity preservation and
 selective frontier adjudication for ambiguous same-scope candidates.
 
+The [`database-family-held-out adaptation benchmark`](experiments/summaries/nl2sql-collision-embedding-adaptation-2026-08-03.md)
+then trained a small hard-negative pair adapter on two schema families and
+tested on the third. It underperformed deterministic structured scoring and
+raised collision-before-target to 51.2%. Table-aware embeddings improved
+identifier-only Recall@1 but still had 29.8% collision-before-target. This is a
+negative promotion result, not a disproof of custom-embedding research.
+
+The [`identifier-aware held-out reranker`](experiments/summaries/nl2sql-identifier-reranker-2026-08-03.md)
+tested a cheaper alternative: a leave-one-database-out logistic ranker over
+scope, table/identifier surfaces, token overlap, lexical score, and collision
+features. It reached `.647` Recall@1 and `.882` Recall@5 with 0% observed
+collision-before-target, while 4x hard-negative weighting added no lift. This
+supports a cheap structured reranking lane before frontier review, not a claim
+that the model learned corporate semantic aliases.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,
