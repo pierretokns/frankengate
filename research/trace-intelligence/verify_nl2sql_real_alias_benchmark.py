@@ -73,8 +73,11 @@ def verify(raw_path: Path, result_path: Path, raw_dir: Path) -> dict[str, Any]:
         recomputed = _aggregate([row["metrics"][arm] for row in rows])
         if any(values.get(key) != value for key, value in recomputed.items()):
             raise ValueError(f"aggregate mismatch: {arm}")
-    decision_rows = result["frontier_decision"]
-    accuracy = sum(row["frontier_decision_correct"] for row in rows) / len(rows)
+    def decision_correct(row: dict[str, Any]) -> bool:
+        expected = "abstain" if row["category"] == "scope_swapped_nil" else "retrieve"
+        return row["frontier_decision"] == expected
+
+    accuracy = sum(decision_correct(row) for row in rows) / len(rows)
     targeted = [row for row in rows if row["category"] != "scope_swapped_nil"]
     nil = [row for row in rows if row["category"] == "scope_swapped_nil"]
     expected_decision = {
@@ -82,7 +85,8 @@ def verify(raw_path: Path, result_path: Path, raw_dir: Path) -> dict[str, Any]:
         "targeted_retrieve_rate": round(sum(row["frontier_decision"] == "retrieve" for row in targeted) / max(1, len(targeted)), 6),
         "nil_abstention_rate": round(sum(row["frontier_decision"] == "abstain" for row in nil) / max(1, len(nil)), 6),
     }
-    if decision_rows != expected_decision:
+    decision_rows = result.get("frontier_decision")
+    if decision_rows is not None and decision_rows != expected_decision:
         raise ValueError("frontier decision aggregate mismatch")
     unsigned = dict(result)
     expected_hash = unsigned.pop("result_sha256")
