@@ -51,11 +51,13 @@ The program combines adjacent ideas rather than claiming to rediscover them:
 | Prior family | Exact contribution | Adaptation needed here |
 |---|---|---|
 | [NVIDIA ASPIRE](https://research.nvidia.com/labs/gear/aspire/) and [ENPIRE](https://research.nvidia.com/labs/gear/enpire/) | Reset, execute, verify, repair, and admit reusable skills | Replace robotics state/action assumptions with SQL/tool authority, schema drift, and result-equivalence oracles |
+| [SKILL-DISCO](https://arxiv.org/abs/2606.26669) | Distills repeated successful traces into parameterized control-flow subgraphs and compiles executable, verifiable skills | Preserve the executable subgraph, but add hidden-intent, authority-epoch, schema/tool-drift, and semantic-ID gates |
 | [Enterprise hard-negative mining](https://aclanthology.org/2025.acl-industry.72/) | Contextually irrelevant but semantically close negatives | Add same-scope aliases, stale versions, tenant authority, and executable replay |
 | [Schema retrieval](https://arxiv.org/abs/2607.13311) | Corpus adaptation and granularity-aware hard negatives | Preserve raw trace branches, tool results, and temporal provenance |
 | [TRACE](https://arxiv.org/abs/2607.22639) | Rule-grounded enterprise tool retrieval | Add artifact lifecycle, authorization epochs, and changed-system outcomes |
 | Memo-SQL / Query Capsules / workload mining | Typed SQL fragments, failure memory, and workload reuse | Add tenant-safe governance, migration mappings, and rollback |
 | Graph/process-memory systems | Temporal entities, event graphs, and provenance | Do not treat graph or embedding proximity as semantic truth |
+| [RESOURCE2SKILL](https://arxiv.org/abs/2606.29538) and [SoK: Agentic Skills](https://arxiv.org/abs/2602.20867) | Multimodal/provenance-rich skill libraries and a full skill lifecycle/security taxonomy | Add source diversity, trust tiers, and lifecycle receipts without making raw trace summaries promotion-eligible |
 | Generic RAG and episodic memory | Candidate recall and evidence previews | Insufficient for authority, freshness, execution, deletion, or utility on their own |
 
 The complete intersection—private tool-rich histories, identity collisions,

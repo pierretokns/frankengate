@@ -1485,6 +1485,15 @@ It freezes candidate generation before SME labels, requires user/project/system/
 holdouts, and treats false semantic acceptance during schema/tool drift as a
 release-blocking failure.
 
+The 2026 skill-lifecycle refresh adds [SKILL-DISCO](https://arxiv.org/abs/2606.26669),
+[RESOURCE2SKILL](https://arxiv.org/abs/2606.29538), and the [SoK on agentic
+skills](https://arxiv.org/abs/2602.20867). They reinforce the two-layer
+artifact design: an executable, parameterized procedure for replay plus a
+provenance/identity packet for semantic and governance checks. They do not
+close the enterprise changed-system or causal-utility gates. The exact/adjacent
+classification is recorded in
+[`skill-library-prior-art-update-2026-08-02.md`](experiments/summaries/skill-library-prior-art-update-2026-08-02.md).
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,

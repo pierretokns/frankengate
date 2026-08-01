@@ -25,6 +25,27 @@ feedback helps. These findings are consistent with our native/proxy split and
 our requirement for a neutral control, family/time holdout, and changed-system
 replay.
 
+## 2026 literature refresh
+
+Three newer papers clarify the boundary between a reusable skill and a trace
+summary:
+
+| Work | Classification | Transferable idea | Hard edge for Frankengate |
+|---|---|---|---|
+| [SKILL-DISCO](https://arxiv.org/abs/2606.26669) | Adaptable, closest executable precedent | Treat repeated successful traces as parameterized control-flow subgraphs, then compile them into callable, executable, verifiable skills. It reports gains on ALFWorld and WebArena. | Its FSM-defined environments provide explicit transition structure and verification. Enterprise traces have hidden intent, authority epochs, schema/tool drift, and ambiguous aliases; the subgraph is not a semantic or authorization proof. |
+| [Trace2Skill v5](https://arxiv.org/abs/2603.25158) | Adaptable, positive transfer claim | Parallel inductive consolidation of trajectories can produce portable procedures rather than a retrieval-only memory. The latest abstract reports transfer across model scales/families and OOD settings. | Our corrected car→broker and BIRD replays did not reproduce causal lift. The difference may be task-family continuity, verifier strength, model training, or trace quality; it is not a refutation. |
+| [RESOURCE2SKILL](https://arxiv.org/abs/2606.29538) | Adjacent but valuable | Combine traces with tutorials, repositories, articles, code, visual examples, metadata, and provenance in a hierarchical Skill Wiki. The paper reports +11.9 points over no-skill across seven authoring domains. | Frankengate currently has mostly event traces and artifacts. The result does not show that raw corporate logs alone are sufficient, nor does it solve tenant scope, deletion, or changed-system replay. |
+| [SoK: Agentic Skills](https://arxiv.org/abs/2602.20867) | Taxonomy/governance reference | Separates discovery, practice, distillation, storage, composition, evaluation, and update, and treats skills as governed executable dependencies with trust tiers. | It is a survey and security framing, not evidence that a particular mining or embedding strategy improves enterprise outcomes. |
+
+The refresh changes the next experiment in one important way: skill candidates
+should be represented in two layers. First, preserve an executable,
+parameterized control-flow graph with preconditions, postconditions, and
+verifiers. Second, preserve a semantic evidence packet with identifiers,
+scope, temporal validity, provenance, and explicit unknown/NIL outcomes. The
+first layer supports replay; the second protects against false semantic
+transfer. Neither layer should be replaced by a free-form memory paragraph or
+an embedding nearest neighbor.
+
 ## Exact Frankengate gap
 
 None of these works combines all of the following:
