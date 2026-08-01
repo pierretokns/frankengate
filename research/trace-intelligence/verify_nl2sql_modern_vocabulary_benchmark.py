@@ -23,8 +23,8 @@ def main() -> int:
     checks = {
         "schema": receipt.get("schema_version") == "frankengate-nl2sql-modern-vocabulary-benchmark-v1",
         "database_folds": len(receipt.get("folds", [])) >= 2,
-        "targets_positive": receipt.get("aggregate", {}).get("target_count", 0) > 0,
-        "counts_consistent": receipt.get("aggregate", {}).get("termhood_targets", 0) <= receipt.get("aggregate", {}).get("target_count", 0),
+        "targets_positive": receipt.get("aggregate", {}).get("combined", {}).get("target_count", 0) > 0,
+        "counts_consistent": receipt.get("aggregate", {}).get("combined", {}).get("termhood_targets", 0) <= receipt.get("aggregate", {}).get("combined", {}).get("target_count", 0),
         "claim_boundary": receipt.get("claim_boundary", {}).get("semantic_alias_truth_established") is False,
         "hash": receipt.get("result_sha256") == stable_hash({key: value for key, value in receipt.items() if key != "result_sha256"}),
     }

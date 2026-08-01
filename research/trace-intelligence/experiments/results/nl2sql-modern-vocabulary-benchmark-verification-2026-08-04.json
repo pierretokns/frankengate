@@ -8,6 +8,6 @@
     "schema": true,
     "targets_positive": true
   },
-  "receipt_sha256": "4c0b7d178adf1ed5645b1a9f774e826c6e561564f5b5d2685cf0fef192e0891c",
+  "receipt_sha256": "ffe95345c102a25fbf4f9cfa089f12a82bd4e80e3bf4ee384c394e84afb276d3",
   "schema_version": "frankengate-nl2sql-modern-vocabulary-verification-v1"
 }

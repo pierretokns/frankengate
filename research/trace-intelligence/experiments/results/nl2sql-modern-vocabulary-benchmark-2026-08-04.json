@@ -1,10 +1,26 @@
 {
   "aggregate": {
-    "direct_surface_recall": 0.489051,
-    "direct_surface_targets": 67,
-    "target_count": 137,
-    "termhood_recall": 0.014599,
-    "termhood_targets": 2
+    "combined": {
+      "direct_surface_recall": 0.455882,
+      "direct_surface_targets": 93,
+      "target_count": 204,
+      "termhood_recall": 0.127451,
+      "termhood_targets": 26
+    },
+    "cross_schema": {
+      "direct_surface_recall": 0.489051,
+      "direct_surface_targets": 67,
+      "target_count": 137,
+      "termhood_recall": 0.014599,
+      "termhood_targets": 2
+    },
+    "within_schema_control": {
+      "direct_surface_recall": 0.38806,
+      "direct_surface_targets": 26,
+      "target_count": 67,
+      "termhood_recall": 0.358209,
+      "termhood_targets": 24
+    }
   },
   "claim_boundary": {
     "cross_schema_transfer_established": false,
@@ -23,6 +39,7 @@
     {
       "background_count": 11,
       "candidate_count": 637,
+      "condition": "cross_schema",
       "direct_surface_targets": 0,
       "foreground_count": 22,
       "held_out_db": "broker",
@@ -31,8 +48,20 @@
       "termhood_targets": 0
     },
     {
+      "background_count": 5,
+      "candidate_count": 48,
+      "condition": "within_schema_control",
+      "direct_surface_targets": 0,
+      "foreground_count": 2,
+      "held_out_db": "broker",
+      "positive_candidate_count": 47,
+      "target_count": 14,
+      "termhood_targets": 0
+    },
+    {
       "background_count": 12,
       "candidate_count": 462,
+      "condition": "cross_schema",
       "direct_surface_targets": 38,
       "foreground_count": 18,
       "held_out_db": "car_dealership",
@@ -41,8 +70,20 @@
       "termhood_targets": 0
     },
     {
+      "background_count": 4,
+      "candidate_count": 140,
+      "condition": "within_schema_control",
+      "direct_surface_targets": 19,
+      "foreground_count": 4,
+      "held_out_db": "car_dealership",
+      "positive_candidate_count": 138,
+      "target_count": 25,
+      "termhood_targets": 14
+    },
+    {
       "background_count": 12,
       "candidate_count": 590,
+      "condition": "cross_schema",
       "direct_surface_targets": 18,
       "foreground_count": 20,
       "held_out_db": "derm_treatment",
@@ -51,13 +92,36 @@
       "termhood_targets": 0
     },
     {
+      "background_count": 4,
+      "candidate_count": 110,
+      "condition": "within_schema_control",
+      "direct_surface_targets": 4,
+      "foreground_count": 3,
+      "held_out_db": "derm_treatment",
+      "positive_candidate_count": 109,
+      "target_count": 13,
+      "termhood_targets": 8
+    },
+    {
       "background_count": 13,
       "candidate_count": 500,
+      "condition": "cross_schema",
       "direct_surface_targets": 11,
       "foreground_count": 18,
       "held_out_db": "ewallet",
       "positive_candidate_count": 413,
       "target_count": 32,
+      "termhood_targets": 2
+    },
+    {
+      "background_count": 3,
+      "candidate_count": 105,
+      "condition": "within_schema_control",
+      "direct_surface_targets": 3,
+      "foreground_count": 4,
+      "held_out_db": "ewallet",
+      "positive_candidate_count": 98,
+      "target_count": 15,
       "termhood_targets": 2
     }
   ],
@@ -68,6 +132,6 @@
     "split": "database-held-out",
     "target_definition": "gold-SQL objects in the external cohort"
   },
-  "result_sha256": "6cf016cbe4d0ab9df33a05e530ff438ef8944288940c80989874f606fdef96c4",
+  "result_sha256": "d6ee40588f334d00894545f0f008e0e62f6197a5fef5138394f42fd150d1f409",
   "schema_version": "frankengate-nl2sql-modern-vocabulary-benchmark-v1"
 }
