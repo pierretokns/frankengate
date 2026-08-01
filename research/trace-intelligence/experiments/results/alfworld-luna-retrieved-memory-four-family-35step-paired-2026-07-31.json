@@ -1,0 +1,33 @@
+{
+  "schema_version": "frankengate-alfworld-codex-retrieved-memory-paired-v1",
+  "receipt": "alfworld-luna-retrieved-memory-four-family-35step-2026-07-31.json",
+  "receipt_sha256": "c765053e623f1e7748577f914760d668061b0044e72da1eecf6f9d7062c5b4ec",
+  "verification": "alfworld-luna-retrieved-memory-four-family-35step-verification-2026-07-31.json",
+  "verification_sha256": "58e980c2265349ec08b7c9f803875c5df58787eb4bddd92f4c2c031a2ab144b2",
+  "verification_passed": true,
+  "pairs": {
+    "retrieved_memory_vs_no_memory": {
+      "tasks": 4,
+      "wins": 0,
+      "losses": 0,
+      "ties": 4,
+      "candidate_invalid_actions": 0,
+      "control_invalid_actions": 0
+    },
+    "retrieved_memory_vs_formatting_placebo": {
+      "tasks": 4,
+      "wins": 0,
+      "losses": 0,
+      "ties": 4,
+      "candidate_invalid_actions": 0,
+      "control_invalid_actions": 0
+    }
+  },
+  "interpretation": {
+    "valid_small_null": true,
+    "causal_retrieval_memory_benefit_confirmed": false,
+    "general_retrieval_ineffectiveness_claim": false,
+    "promotion_authorized": false,
+    "reason": "Family-matched retrieved memories tied both controls on success and protocol validity across all four target tasks."
+  }
+}
