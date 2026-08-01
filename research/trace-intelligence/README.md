@@ -222,6 +222,14 @@ intervention with independent enterprise outcomes. SkillOpt-style bounded edits,
 independent gates, staged adoption, and rollback are adopted as proposal
 mechanics. Automatic adoption and cross-user skill sharing remain gated.
 
+The bounded [`SkillGen upstream mechanics audit`](experiments/summaries/skillgen-upstream-mechanics-audit-2026-08-01.md)
+pins `yccm/SkillGen` at `3c4537bb`. Compile/import, candidate persistence,
+fail-closed routing, and paired repair/regression accounting all pass a
+deterministic offline check. The fixture correctly rejects a one-repair/
+one-regression candidate with net gain zero. This is mechanics evidence only:
+no trajectory sampling, skill induction, replay, or held-out efficacy result
+was produced, so SkillGen remains outside the integration set.
+
 The frontier long-horizon SkillOpt replication
 ([summary](experiments/summaries/alfworld-luna-skillopt-four-family-35step-2026-07-31.md))
 closed the earlier horizon gap: four family-disjoint expert-solvable ALFWorld

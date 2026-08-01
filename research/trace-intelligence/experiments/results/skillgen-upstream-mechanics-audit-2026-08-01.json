@@ -1,0 +1,82 @@
+{
+  "commands": {
+    "compileall": {
+      "command": [
+        "/private/tmp/rho-upstream.bTsclF/.venv/bin/python",
+        "-m",
+        "compileall",
+        "-q",
+        "/private/tmp/skillgen-upstream.edLvQw"
+      ],
+      "returncode": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "imports": {
+    "effectiveness": {
+      "file": "/private/tmp/skillgen-upstream.edLvQw/effectiveness.py",
+      "sha256": "f4cef0e0fdf3d48f608eecd0ff3d040dd5f65c8378a8235c1910cef686c1fe55"
+    },
+    "models": {
+      "file": "/private/tmp/skillgen-upstream.edLvQw/models.py",
+      "sha256": "8418af61d4a8154b7daa30c23cb98e2dff9e0b4cb25ce7729c1ccd938658d222"
+    },
+    "router": {
+      "file": "/private/tmp/skillgen-upstream.edLvQw/router.py",
+      "sha256": "6131a702dba82308f689b8df72f476baeaae42636cd166799e80cebc8f7230e3"
+    },
+    "skill_store": {
+      "file": "/private/tmp/skillgen-upstream.edLvQw/skill_store.py",
+      "sha256": "6782e15d9a8b447d574ad81f908cb892c86a990b7498c473242ed43ed307713e"
+    }
+  },
+  "limitations": [
+    "No benchmark task execution or LLM generation was performed.",
+    "The paired result is a deterministic accounting fixture, not a skill efficacy result.",
+    "Upstream has no bundled unit-test suite in the checked-out root; compile/import checks are the bounded reproduction."
+  ],
+  "network_or_model_calls": false,
+  "paired_effectiveness_accounting": {
+    "expected": {
+      "net_gain": 0,
+      "paired_n": 4,
+      "passed": false,
+      "regression_count": 1,
+      "repair_count": 1
+    },
+    "matches_expected": true,
+    "net_gain": 0,
+    "paired_n": 4,
+    "passed": false,
+    "regression_count": 1,
+    "repair_count": 1
+  },
+  "persistence_contract": {
+    "candidate_promoted": true,
+    "helper_emitted": true,
+    "helper_sha256": "e3c92b992012d98e601a43af98bc30770afa9179de53279b409243d0fff7a310",
+    "round_trip_body_equal": true,
+    "round_trip_id_equal": true,
+    "round_trip_scripts_equal": true
+  },
+  "router_fail_closed_contract": {
+    "apply": false,
+    "fails_closed": true,
+    "reason": "router_error: RuntimeError"
+  },
+  "schema_version": 1,
+  "upstream": {
+    "files": {
+      "effectiveness": "f4cef0e0fdf3d48f608eecd0ff3d040dd5f65c8378a8235c1910cef686c1fe55",
+      "models": "8418af61d4a8154b7daa30c23cb98e2dff9e0b4cb25ce7729c1ccd938658d222",
+      "router": "6131a702dba82308f689b8df72f476baeaae42636cd166799e80cebc8f7230e3",
+      "skill_store": "6782e15d9a8b447d574ad81f908cb892c86a990b7498c473242ed43ed307713e"
+    },
+    "repo": "yccm/SkillGen",
+    "source_commit": "3c4537bb12ac287ceb1b5d410b491206089fdcb7",
+    "source_root": "/private/tmp/skillgen-upstream.edLvQw"
+  }
+}
