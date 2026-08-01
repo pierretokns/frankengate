@@ -32,9 +32,17 @@ Run public/CMU trace analyses and answer cross-user similarity, skill gaps, coll
 
 Open gate: The fail-closed consent/epoch/classification/minimum-cohort gate and four answer-shaped content-free analyses now pass mechanics, but CMU publisher approval, stable user/consent labels, prospective human outcomes, and cross-user utility are still required.
 
+The new native Claude/Codex history screens add schema-level evidence for the
+historical mining lane: tool lifecycle, structured executor outcomes,
+retries/rephrases, and repeated calls can be counted without treating prose
+keywords as failure truth. They do not close the outcome gate. The public
+Claude screen covers 28 histories and the small Codex screen 34 sessions;
+neither provides gold friction, hidden business intent, skill-gap, or
+replayable-eval labels. The next gate is blinded stratified adjudication and a
+family/time/user-held-out replay study.
+
 ## `publication_and_tracking` — proven_for_current_checkpoint
 
 Publish reproducible artifacts on a dedicated branch and track work in GitHub issues and beads.
 
 Open gate: The overall program remains active until the research gates above close; publication mechanics themselves are functioning.
-
