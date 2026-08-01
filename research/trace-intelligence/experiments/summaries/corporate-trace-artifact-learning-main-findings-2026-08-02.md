@@ -139,6 +139,12 @@ benchmarks:
   all IDs with one false positive. Generated procedures therefore add
   capability but can also dilute robustness; composition needs repeated seeds,
   mutation families, and a negative-transfer gate.
+- A transparent query-expansion probe found keyword, pseudo-document, entity,
+  and document-enrichment proxies improving synthetic MRR from `.847222` to
+  `.958333`, while corpus feedback produced no lift. Conversation rewriting
+  improved the two conversational cases. This supports approved search-only
+  expansion and explicit history rewriting as candidates, not semantic
+  enterprise alias discovery.
 - A new stratified sample from the 1,013-session, multi-harness
   `zhiyaowang/dataclaw-zhiyaowang` corpus preserved tool outputs, branches,
   explicit errors, and project/model metadata. Hash-only recurrence found 9
