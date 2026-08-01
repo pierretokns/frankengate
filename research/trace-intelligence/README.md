@@ -1748,6 +1748,10 @@ The exact 62-failure intervention cohort is captured without raw trace content
 in [`recovery-bench-initial-failure-set-2026-08-05.json`](experiments/manifests/recovery-bench-initial-failure-set-2026-08-05.json)
 and can be regenerated with
 [`recovery_bench_failure_manifest.py`](recovery_bench_failure_manifest.py).
+The paired five-arm preflight is frozen in
+[`recovery-bench-intervention-matrix-2026-08-05.json`](experiments/manifests/recovery-bench-intervention-matrix-2026-08-05.json);
+it verifies task-set identity before any Harbor/model run and makes no outcome
+claim.
 The follow-up [`recovery-bench failure-signal screen`](experiments/results/recovery-bench-failure-signals-2026-08-05.json)
 found repeated structural modes useful for review prioritization, but no
 recovery outcome or reusable-skill evidence.

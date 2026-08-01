@@ -1,0 +1,77 @@
+{
+  "arms": [
+    {
+      "arm": "no_context",
+      "paired": true,
+      "task_checksum_set_sha256": "431cf783acde75ad074e6483e136421e62f1128367eb0de26b459666745b5ae1",
+      "task_count": 62,
+      "task_set_sha256": "3fd3ac7d2760af3c5ac2b3fd93dca2315be02b604e70b24e51a4912f3dc8fd39"
+    },
+    {
+      "arm": "full_context",
+      "paired": true,
+      "task_checksum_set_sha256": "431cf783acde75ad074e6483e136421e62f1128367eb0de26b459666745b5ae1",
+      "task_count": 62,
+      "task_set_sha256": "3fd3ac7d2760af3c5ac2b3fd93dca2315be02b604e70b24e51a4912f3dc8fd39"
+    },
+    {
+      "arm": "summary_context",
+      "paired": true,
+      "task_checksum_set_sha256": "431cf783acde75ad074e6483e136421e62f1128367eb0de26b459666745b5ae1",
+      "task_count": 62,
+      "task_set_sha256": "3fd3ac7d2760af3c5ac2b3fd93dca2315be02b604e70b24e51a4912f3dc8fd39"
+    },
+    {
+      "arm": "reviewed_skill",
+      "paired": true,
+      "task_checksum_set_sha256": "431cf783acde75ad074e6483e136421e62f1128367eb0de26b459666745b5ae1",
+      "task_count": 62,
+      "task_set_sha256": "3fd3ac7d2760af3c5ac2b3fd93dca2315be02b604e70b24e51a4912f3dc8fd39"
+    },
+    {
+      "arm": "formatting_placebo",
+      "paired": true,
+      "task_checksum_set_sha256": "431cf783acde75ad074e6483e136421e62f1128367eb0de26b459666745b5ae1",
+      "task_count": 62,
+      "task_set_sha256": "3fd3ac7d2760af3c5ac2b3fd93dca2315be02b604e70b24e51a4912f3dc8fd39"
+    }
+  ],
+  "claim_boundary": {
+    "preflight_only": true,
+    "reason": "This freezes a fair paired design; Harbor/model runs and independent verifier outcomes are still required.",
+    "recovery_outcome_measured": false,
+    "skill_transfer_confirmed": false
+  },
+  "design": {
+    "arm_count": 5,
+    "arms": [
+      "no_context",
+      "full_context",
+      "summary_context",
+      "reviewed_skill",
+      "formatting_placebo"
+    ],
+    "cross_arm_task_leakage": false,
+    "paired": true,
+    "task_checksum_set_sha256": "431cf783acde75ad074e6483e136421e62f1128367eb0de26b459666745b5ae1",
+    "task_count": 62,
+    "task_disjoint_final_confirmation_required": true,
+    "task_set_sha256": "3fd3ac7d2760af3c5ac2b3fd93dca2315be02b604e70b24e51a4912f3dc8fd39"
+  },
+  "generated_at": "2026-08-01T21:56:10.800981+00:00",
+  "outcomes_required": [
+    "verifier_reward",
+    "repair_regression",
+    "first_attempt_success",
+    "tool_calls",
+    "latency_ms",
+    "model_cost_usd",
+    "false_semantic_acceptance"
+  ],
+  "schema": "frankengate.recovery_intervention_matrix.v1",
+  "source": {
+    "failure_manifest": "/private/tmp/frankengate-trace-research/research/trace-intelligence/experiments/manifests/recovery-bench-initial-failure-set-2026-08-05.json",
+    "failure_manifest_sha256": "1c239c6ade1ff84df2d8346b3e8c6e2468dbda624a103ab344a80398c69788aa",
+    "raw_trace_content_committed": false
+  }
+}
