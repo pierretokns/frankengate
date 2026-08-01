@@ -282,7 +282,8 @@ frozen held-out score was 0.593 versus 0.703 for the matched no-harness control
 out of the integration set; it is not a universal method rejection.
 
 The [`integration promotion audit`](experiments/results/integration-promotion-audit-2026-08-02.json)
-now makes the downstream boundary explicit across twelve tested mechanisms:
+now makes the downstream boundary explicit across eighteen tested mechanisms and
+named concepts:
 zero are eligible for automatic Frankengate integration. Skill/memory methods
 are quarantined on negative or unproven utility; retrieval and PostgreSQL are
 shadow-only; MLOps is mechanics-only; and provider/artifact failures remain

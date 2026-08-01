@@ -16,7 +16,7 @@ class IntegrationPromotionAuditTests(unittest.TestCase):
             "no_mechanism_eligible_for_automatic_integration", result["status"]
         )
         self.assertFalse(result["claim_boundary"]["automatic_integration_authorized"])
-        self.assertEqual(12, len(result["rows"]))
+        self.assertEqual(18, len(result["rows"]))
         self.assertTrue(all(row["receipt_sha256"] for row in result["rows"]))
 
 

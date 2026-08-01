@@ -100,6 +100,54 @@
       "receipt": "agentrx-independent-static-audit-2026-07-31.json",
       "receipt_schema_version": "frankengate-agentrx-independent-static-audit-v1",
       "receipt_sha256": "95eee065328d49107b0f0e8145059a18804442b4d7ad004642bf19ee250895ef"
+    },
+    {
+      "disposition": "mechanics_only",
+      "name": "trace2skill_stage0",
+      "reason": "two-arm execution/verifier smoke test explicitly establishes mechanics, not skill utility or enterprise transfer",
+      "receipt": "trace2skill-governed-stage0-2026-07-30.json",
+      "receipt_schema_version": "frankengate-trace2skill-stage0-v1",
+      "receipt_sha256": "f8a3b22a9ae2fccfc1eb54132738277664a562c827bdade906be9d5bd879c312"
+    },
+    {
+      "disposition": "stored_trace_assertion_only",
+      "name": "agentevals_stored_trace",
+      "reason": "stored-trace assertions and mutation accounting ran, but no changed-system replay or downstream outcome was measured",
+      "receipt": "agentevals-upstream-wisp-2026-07-30.json",
+      "receipt_schema_version": "frankengate-agentevals-upstream-aggregate-v1",
+      "receipt_sha256": "5d60fb268ea240724cf0353655dd22e4ffd15f6a3bb23f5ce69a59bfc21ed1e0"
+    },
+    {
+      "disposition": "mechanics_only",
+      "name": "signals_diagnosis_chain",
+      "reason": "18/21 local chain tests passed with three skips; no blinded labels or prospective enterprise outcome was measured",
+      "receipt": "signals-diagnosis-evals-test-checkpoint-2026-07-31.json",
+      "receipt_schema_version": "frankengate.signals-diagnosis-evals-test-checkpoint.v1",
+      "receipt_sha256": "9763ea141d96f60400bda02bebfd541a7abf3e70bcdfe32ab833026048c2e27d"
+    },
+    {
+      "disposition": "structural_only",
+      "name": "dreaming_procedure",
+      "reason": "three of four meaningful structural projects verified; no changed-agent downstream utility outcome",
+      "receipt": "natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
+      "receipt_schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "receipt_sha256": "c63565f74563ea2cd1a343958defd10a84528018a8b44a1cda61b8ae2493e124"
+    },
+    {
+      "disposition": "fixture_only",
+      "name": "memory_palace_meminsight_fixture",
+      "reason": "memory component factorial is a fixture/conformance arm and does not establish later-task utility",
+      "receipt": "memory-mechanism-factorial-fixture-2026-07-30.json",
+      "receipt_schema_version": "frankengate-memory-mechanism-factorial-v1",
+      "receipt_sha256": "a172e7ab9a338b1b3648f89db3b8cfa4c0c68c6513ec9e0aa260118ac20f15ee"
+    },
+    {
+      "disposition": "not_selected",
+      "name": "unselected_backend_concepts",
+      "reason": "VectorChord, pg_textsearch, pgContext, TurboVec, and Turbopuffer are documented as not selected for the current architecture; no downstream utility promotion is implied",
+      "receipt": "concept-coverage-audit-2026-07-31.json",
+      "receipt_schema_version": "frankengate.concept-coverage-audit.v1",
+      "receipt_sha256": "fb6e93a64660aa54eb6018a091870a9792823011aa6807ebb18a5127e9744013"
     }
   ],
   "schema_version": "frankengate-integration-promotion-audit-v1",

@@ -92,6 +92,42 @@ MECHANISMS: tuple[dict[str, Any], ...] = (
         "disposition": "blocked_artifact",
         "reason": "bundled triggers and invariant snippets were not executable; diagnostic ablation covered only 3/10 failures",
     },
+    {
+        "name": "trace2skill_stage0",
+        "receipt": "trace2skill-governed-stage0-2026-07-30.json",
+        "disposition": "mechanics_only",
+        "reason": "two-arm execution/verifier smoke test explicitly establishes mechanics, not skill utility or enterprise transfer",
+    },
+    {
+        "name": "agentevals_stored_trace",
+        "receipt": "agentevals-upstream-wisp-2026-07-30.json",
+        "disposition": "stored_trace_assertion_only",
+        "reason": "stored-trace assertions and mutation accounting ran, but no changed-system replay or downstream outcome was measured",
+    },
+    {
+        "name": "signals_diagnosis_chain",
+        "receipt": "signals-diagnosis-evals-test-checkpoint-2026-07-31.json",
+        "disposition": "mechanics_only",
+        "reason": "18/21 local chain tests passed with three skips; no blinded labels or prospective enterprise outcome was measured",
+    },
+    {
+        "name": "dreaming_procedure",
+        "receipt": "natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
+        "disposition": "structural_only",
+        "reason": "three of four meaningful structural projects verified; no changed-agent downstream utility outcome",
+    },
+    {
+        "name": "memory_palace_meminsight_fixture",
+        "receipt": "memory-mechanism-factorial-fixture-2026-07-30.json",
+        "disposition": "fixture_only",
+        "reason": "memory component factorial is a fixture/conformance arm and does not establish later-task utility",
+    },
+    {
+        "name": "unselected_backend_concepts",
+        "receipt": "concept-coverage-audit-2026-07-31.json",
+        "disposition": "not_selected",
+        "reason": "VectorChord, pg_textsearch, pgContext, TurboVec, and Turbopuffer are documented as not selected for the current architecture; no downstream utility promotion is implied",
+    },
 )
 
 
