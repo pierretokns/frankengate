@@ -1,8 +1,7 @@
 # Train-only alias enrichment replay
 
 **Status:** bounded negative retrieval result
-**Corpus:** pinned Defog PostgreSQL public proxy; 83 train rows and 41 held-out
-rows, with zero source-row overlap
+**Corpus:** pinned Defog PostgreSQL public proxy; 83 train rows and 41 held-out rows, with zero source-row overlap
 **Authority:** target-object proxy from gold SQL; not semantic enterprise alias
 ground truth
 
