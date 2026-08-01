@@ -76,6 +76,12 @@ collision classes. This is evidence that alias/collision mining has a measurable
 lexical starting point, not evidence of semantic alias truth. Human/frontier
 adjudication and same-surface/different-system hard negatives remain open.
 
+The [`dataset-task fit and modernization protocol`](experiments/protocols/dataset-task-fit-and-modernization-2026-08-04.md)
+now makes the boundary explicit: NL2SQL corpora support schema/identifier and
+SQL-execution claims, while Wisp and agent-trajectory corpora support trace
+structure and replay mechanics. Neither alone supports enterprise skill gaps,
+cross-user collaboration, or causal skill improvement.
+
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
 deterministic pass found 15,391 unique terms, 666 acronym forms, and 191
