@@ -89,6 +89,14 @@ The [`modernized method matrix`](experiments/summaries/modernized-method-reimple
 separates current-tool mechanics from efficacy evidence for AgentRx, Signals,
 AgentEvals, SkillGen, RHO/ReasoningBank, memory systems, and the vocabulary
 tools.
+The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
+is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
+capability probe including ambiguity abstention.
+
+The [`DataClaw cross-user Luna adjudication pilot`](experiments/summaries/dataclaw-cross-user-luna-adjudication-2026-08-04.md)
+returned valid silver labels for 16/16 calls with 7/8 repeat agreement. It is
+calibration evidence only: shared vocabulary and tools still produced mostly
+`different`/`unclear` judgments, and no cross-user transfer claim is made.
 
 The licensed [`DataClaw real-user history audit`](experiments/summaries/dataclaw-peteromallet-history-audit-2026-08-04.md)
 is a better-fit longitudinal corpus for friction and candidate-artifact
