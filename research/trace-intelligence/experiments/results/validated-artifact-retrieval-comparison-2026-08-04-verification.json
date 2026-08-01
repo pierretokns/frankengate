@@ -1,0 +1,17 @@
+{
+  "checks": {
+    "claim_boundary_present": true,
+    "pooled_scope_contamination_measured": true,
+    "result_hash_matches": true,
+    "scoped_dense_top3_authorized": true,
+    "scoped_identifier_top3_authorized": true,
+    "scoped_lexical_top3_authorized": true,
+    "scoped_semantic_top3_zero": true,
+    "target_count": true,
+    "validated_artifacts_present": true
+  },
+  "recomputed_result_sha256": "58a78a95aa08b468d86fdd619bfe1c9ba9d6023819eedc2be38835c92ed17b83",
+  "schema_version": "frankengate-validated-artifact-retrieval-comparison-verification-v1",
+  "status": "verified",
+  "stored_result_sha256": "58a78a95aa08b468d86fdd619bfe1c9ba9d6023819eedc2be38835c92ed17b83"
+}

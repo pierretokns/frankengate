@@ -56,3 +56,8 @@ not executed against the target database.
 The result is a retrieval-and-execution diagnostic. It does not establish
 causal agent utility, enterprise alias truth, or that a stored artifact should
 replace regeneration.
+
+The first execution of this protocol produced zero eligible structural NIL
+cases because the two selected databases shared table-surface tokens across the
+available validated source artifacts. NIL abstention is therefore an open gate,
+not a result of this run.

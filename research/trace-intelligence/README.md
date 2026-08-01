@@ -1485,6 +1485,16 @@ This is a bounded negative result: nearest-question lookup is insufficient,
 not evidence that structured templates, dense retrieval, or frontier
 adjudication cannot help.
 
+The follow-up [`retrieval-family comparison`](experiments/summaries/validated-artifact-retrieval-comparison-2026-08-04.md)
+tested lexical, frozen Nomic dense, SQL-identifier-aware, and lexical+dense
+hybrid selectors on the identical cohort, including top-three governed
+execution. Every scope-filtered arm remained `0/10` on semantic transfer. With
+scope removed, lexical and dense selected the correct database `7/10` times,
+while identifier and hybrid selected it `5/10` times. This strengthens the
+bounded null: the problem is not only lexical ranking, and database/project
+scope must be a hard boundary. No structural NIL cases were available in this
+two-database cohort, so NIL abstention and regeneration remain open gates.
+
 The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
 tested whether a frontier model and a local model could be treated as
 interchangeable trace-insight labelers. On six blinded candidates under the
