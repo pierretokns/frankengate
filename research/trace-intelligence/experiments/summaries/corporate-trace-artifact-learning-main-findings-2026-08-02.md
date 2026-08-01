@@ -115,14 +115,14 @@ benchmarks:
   recall than null, but materially weaker than the human procedure (`.925`,
   `5/6`). Generated artifacts are therefore useful candidates, not automatic
   replacements for reviewed procedures; composition/review is the next test.
-- A partial five-instance composite of the reviewed procedure plus two
-  generated data-navigation skills reached q1 `45/45`, precision `1.000`, and
-  published-check pass rate `5/5`; the sixth instance was explicitly not
-  completed. This is a promising composition signal, not a causal result: it
-  is one public family, q2 is unlabeled, and the host adapter is not the
-  official Docker runner. The next matrix must randomize human-only,
-  generated-only, composite, placebo, and null arms on task-disjoint families
-  before promotion.
+- An isolated retry completed the sixth task and a non-imputing receipt merge
+  now gives the reviewed-procedure plus two generated data-navigation skills
+  q1 `53/53`, precision `1.000`, published-check pass rate `6/6`, and exact q3
+  on all six instances. This is a stronger composition signal, not a causal
+  result: it is one public family, q2 is unlabeled, arms were not randomized
+  in one simultaneous run, and the host adapter is not the official Docker
+  runner. The next matrix must randomize human-only, generated-only, composite,
+  placebo, and null arms on task-disjoint families before promotion.
 - A new stratified sample from the 1,013-session, multi-harness
   `zhiyaowang/dataclaw-zhiyaowang` corpus preserved tool outputs, branches,
   explicit errors, and project/model metadata. Hash-only recurrence found 9

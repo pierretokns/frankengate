@@ -7,7 +7,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from skilllearnbench_frontier_composite import run_composite, summarize_existing
+from skilllearnbench_frontier_composite import merge_receipts, run_composite, summarize_existing
 
 
 def test_composite_fails_closed_for_missing_skill_root(tmp_path):
@@ -74,3 +74,21 @@ def test_summarize_existing_marks_missing_answer_as_incomplete(tmp_path, monkeyp
         "full_paired_run": False,
     }
     assert result["tasks"][0]["status"] == "timeout_or_missing_answer"
+
+
+def test_merge_receipts_rejects_duplicate_tasks_and_computes_completion():
+    first = {"tasks": [{"task_id": "family/task-1", "arms": [{"answer": {}}]}]}
+    second = {"tasks": [{"task_id": "family/task-2", "arms": [{"answer": {}}]}]}
+    result = merge_receipts([first, second])
+    assert result["execution"] == {
+        "completed_tasks": 2,
+        "incomplete_tasks": 0,
+        "full_paired_run": True,
+        "receipt_count": 2,
+    }
+    with pytest.raises(ValueError, match="duplicate completed task"):
+        merge_receipts([first, first])
+
+    incomplete = {"tasks": [{"task_id": "family/task-1", "status": "timeout_or_missing_answer"}]}
+    replaced = merge_receipts([incomplete, first])
+    assert replaced["execution"]["completed_tasks"] == 1

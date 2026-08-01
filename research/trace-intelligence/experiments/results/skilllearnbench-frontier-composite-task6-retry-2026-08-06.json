@@ -1,0 +1,73 @@
+{
+  "claim_boundary": {
+    "composite_utility_proven": false,
+    "enterprise_transfer_proven": false,
+    "reason": "Composite of two public skill artifacts on one family; no causal or changed-system outcome.",
+    "verifier_outcomes_measured": true
+  },
+  "harness": {
+    "adaptation": "host-path portability probe; not the benchmark's Docker runner",
+    "docker_runner": false,
+    "model": "gpt-5.6-luna",
+    "provider": "Codex subscription"
+  },
+  "schema": "frankengate-skilllearnbench-frontier-composite-v1",
+  "source": {
+    "composite_skill_root_sha256": "9547906271c7bb869c30b09521c47fe135e0e162c1f1c5016ef992c97bdfacee",
+    "dataset": "cxcscmu/SkillLearnBench",
+    "dataset_revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "raw_content_committed": false,
+    "task_ids": [
+      "enterprise-information-search/enterprise-information-search-6"
+    ]
+  },
+  "tasks": [
+    {
+      "arms": [
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "composite-human-plus-b1",
+          "elapsed_seconds": 155.927,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "stderr_sha256": "fb988852544b78d829b0b88aa025773d8b7dbe6473b9656afdfb216d2425a677",
+          "stdout_sha256": "5f7726fc32a94e1361455db1ffad217245f4bc36475f33d5c10778fd2a80f6ba",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 593408,
+            "input_tokens": 664107,
+            "output_tokens": 7308,
+            "reasoning_output_tokens": 3411
+          }
+        }
+      ],
+      "task_id": "enterprise-information-search/enterprise-information-search-6"
+    }
+  ]
+}

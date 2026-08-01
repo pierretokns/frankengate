@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import subprocess
@@ -105,6 +106,47 @@ def summarize_existing(
     }
 
 
+def merge_receipts(receipts: list[dict[str, Any]]) -> dict[str, Any]:
+    """Merge non-overlapping receipts without recomputing or imputing tasks."""
+    if not receipts:
+        raise ValueError("at least one receipt is required")
+    merged = copy.deepcopy(receipts[0])
+    tasks_by_id: dict[str, dict[str, Any]] = {}
+    for receipt in receipts:
+        for task in receipt.get("tasks", []):
+            task_id = task["task_id"]
+            if task_id in tasks_by_id:
+                previous = tasks_by_id[task_id]
+                previous_status = previous.get("status", "completed")
+                current_status = task.get("status", "completed")
+                if previous_status != "completed" and current_status == "completed":
+                    tasks_by_id[task_id] = task
+                    continue
+                raise ValueError(f"duplicate completed task in receipts: {task_id}")
+            tasks_by_id[task_id] = task
+    merged["tasks"] = [tasks_by_id[task_id] for task_id in sorted(tasks_by_id)]
+    source = merged.setdefault("source", {})
+    source["task_ids"] = [task["task_id"] for task in merged["tasks"]]
+    statuses = [task.get("status", "completed") for task in merged["tasks"]]
+    merged["execution"] = {
+        "completed_tasks": sum(status == "completed" for status in statuses),
+        "incomplete_tasks": sum(status != "completed" for status in statuses),
+        "full_paired_run": all(status == "completed" for status in statuses),
+        "receipt_count": len(receipts),
+    }
+    boundary = merged.setdefault("claim_boundary", {})
+    boundary["verifier_outcomes_measured"] = any(
+        task.get("arms") or task.get("answer") for task in merged["tasks"]
+    )
+    boundary["composite_utility_proven"] = False
+    boundary["enterprise_transfer_proven"] = False
+    boundary["reason"] = (
+        "Merged non-overlapping receipts from one public task family; "
+        "no causal or changed-system outcome."
+    )
+    return merged
+
+
 def _tree_hash(root: Path) -> str:
     entries: list[str] = []
     for path in sorted(path for path in root.rglob("*") if path.is_file()):
@@ -129,8 +171,18 @@ def main() -> None:
     )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--summarize-existing", action="store_true")
+    parser.add_argument(
+        "--merge-receipt",
+        action="append",
+        type=Path,
+        default=[],
+        help="Merge one or more existing JSON receipts without rerunning frontier calls.",
+    )
     args = parser.parse_args()
-    if args.summarize_existing:
+    if args.merge_receipt:
+        receipts = [json.loads(path.read_text(encoding="utf-8")) for path in args.merge_receipt]
+        result = merge_receipts(receipts)
+    elif args.summarize_existing:
         result = summarize_existing(dataset_root=args.dataset_root.resolve(), work_root=args.work_root.resolve(), task_ids=args.task_ids, model=args.model)
     else:
         result = run_composite(
