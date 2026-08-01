@@ -38,6 +38,7 @@ def audit(path: Path) -> dict:
         if isinstance(row, dict):
             labels.extend([row.get("annotator_a_label"), row.get("annotator_b_label")])
     label_counts = {str(label): labels.count(label) for label in sorted(set(labels), key=str) if label is not None}
+    hard_negative_count = sum(1 for row in rows if isinstance(row, dict) and (row.get("hard_negative") is True or row.get("negative_kind") not in (None, "")))
     principal_count = len({row.get("principal_id") for row in rows if isinstance(row, dict) and row.get("principal_id") is not None})
     project_count = len({row.get("project_id") for row in rows if isinstance(row, dict) and row.get("project_id") is not None})
     system_count = len({row.get("system_id") for row in rows if isinstance(row, dict) and row.get("system_id") is not None})
@@ -52,9 +53,10 @@ def audit(path: Path) -> dict:
         "project_count": project_count,
         "system_count": system_count,
         "label_counts": label_counts,
+        "hard_negative_count": hard_negative_count,
         "minimum_gate": {
             "100_labeled_targets": len(rows) >= 100,
-            "50_hard_negatives": False,
+            "50_hard_negatives": hard_negative_count >= 50,
             "25_nil_or_unclear": label_counts.get("nil", 0) + label_counts.get("unclear", 0) >= 25,
             "two_annotators": "annotator_a_label" in keys and "annotator_b_label" in keys,
             "principal_project_system_time_splits": all(field in keys for field in ("principal_id", "project_id", "system_id", "effective_time")),

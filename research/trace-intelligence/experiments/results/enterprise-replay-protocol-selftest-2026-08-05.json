@@ -1,0 +1,40 @@
+{
+  "claim_boundary": "A readiness pass does not establish semantic labels, artifact validity, changed-system utility, or enterprise outcomes.",
+  "content_policy": "No prompt, SQL, tool argument, row, or identifier value is emitted; only aggregate field names, counts, and a source hash.",
+  "field_names": [
+    "annotator_a_label",
+    "annotator_b_label",
+    "changed_environment_id",
+    "effective_time",
+    "independent_outcome",
+    "negative_kind",
+    "principal_id",
+    "project_id",
+    "system_id",
+    "task_id",
+    "team_id"
+  ],
+  "hard_negative_count": 50,
+  "label_counts": {
+    "exact": 150,
+    "nil": 26,
+    "unclear": 24
+  },
+  "minimum_gate": {
+    "100_labeled_targets": true,
+    "25_nil_or_unclear": true,
+    "50_hard_negatives": true,
+    "changed_environment": true,
+    "independent_outcome": true,
+    "principal_project_system_time_splits": true,
+    "two_annotators": true
+  },
+  "missing_required_record_fields": [],
+  "principal_count": 4,
+  "project_count": 5,
+  "ready_for_causal_replay": true,
+  "record_count": 100,
+  "schema": "frankengate-enterprise-replay-cohort-readiness-v1",
+  "source_sha256": "165b28041d48743f6a5bbf95156f8f19f6418ebbbc2b593eeb3e91f2b51e028f",
+  "system_count": 3
+}
