@@ -94,5 +94,29 @@ Every inferred intent/eval must carry `intent_basis`, confidence, evidence
 references, source hashes, episode-boundary confidence, validator type, reviewer
 provenance, and an `unknown/needs-user` reason when evidence is insufficient.
 
+## Publication and partnership path
+
+The work is best split across established communities rather than pitched as
+one generic “agent memory” paper:
+
+1. **ICPM/BPM or ACM TMIS:** event abstraction, resource/skill profiles,
+   process variants, conformance, and friction detection. The primary result
+   should be trace-to-competence and friction precision with SME validation.
+2. **ACL/EMNLP Industry Track or SIGDIAL:** intent discovery, corporate alias
+   and hard-negative mining, domain-specific embeddings, and the
+   embedding-versus-model cascade. Report human agreement, transfer recall,
+   calibration, and deletion/tenant-stratified checks.
+3. **MSR or CHI/CSCW:** developer/worker trace interpretation, friction
+   dashboards, user agency, and whether suggested skills/evals actually help
+   people. Include interviews or controlled human review rather than inferring
+   competence from activity volume.
+
+The collaboration ask should be a reproducible benchmark and methods study,
+not access to private employee logs: publish content-minimized receipts,
+synthetic or licensed traces, task/family holdouts, mutation generators,
+independent verifiers, and a schema/lineage contract. Keep raw enterprise
+content private and offer partner researchers a sealed evaluation API or
+derived, license-cleared corpus.
+
 This note is linked to issues #125–#129 and is a research design, not a claim
 that any one detector, embedding model, or memory system solves intent mining.

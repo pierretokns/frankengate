@@ -728,7 +728,10 @@ versus 3/4 for both no-skill and the length-matched neutral (each exact
 McNemar p=1.0 because only one discordant block existed). This is suggestive
 transfer compatibility, not a causal result: the unmutated run scored the
 same trace artifact 1/4 while its neutral control scored 4/4. Three-seed,
-second-harness replication is required before interpreting the direction.
+second-harness replication is required before interpreting the direction. The
+completed three-seed aggregate is trace-mined 8/12, no-skill 6/12, and
+length-matched neutral 7/12; trace-versus-neutral risk difference is +.083
+(exact McNemar p=1.0), so the direction is still not promotion evidence.
 
 The [`Trace Commons full-cohort analysis`](experiments/summaries/trace-commons-full-content-minimized-analysis-2026-08-02.md)
 then attested all 28 public native Claude Code histories byte-for-byte against

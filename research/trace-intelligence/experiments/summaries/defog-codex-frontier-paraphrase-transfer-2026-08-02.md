@@ -28,8 +28,18 @@ mutations are necessary but not sufficient.
 
 ## Required follow-up
 
-Repeat the mutation across at least three seeds and a second harness/model,
-pre-register the task/family-clustered analysis, and include source-literal
-redaction plus renamed identifiers. Promotion requires a consistent content
-arm advantage over both no-skill and length-matched neutral; this single seed
-does not meet that gate.
+The three-seed aggregate (12 task×seed blocks) is:
+
+| arm | semantic correct | rate | submitted |
+| --- | ---: | ---: | ---: |
+| no skill | 6 / 12 | 0.50 | 12 / 12 |
+| formatting placebo | 7 / 12 | 0.583 | 9 / 12 |
+| length-matched neutral | 7 / 12 | 0.583 | 11 / 12 |
+| trace-mined terminal discipline | 8 / 12 | 0.667 | 12 / 12 |
+
+Trace-mined versus neutral has risk difference +0.083 (three trace wins versus
+two neutral wins; exact McNemar p=1.0),
+and versus no-skill +0.167 (p=0.5). The trace arm is directionally higher but
+not statistically persuasive and the absolute lift is only two correct blocks
+over baseline. This does not meet the promotion gate. A second harness/model,
+larger family-held-out sample, and source-literal redaction remain required.
