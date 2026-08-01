@@ -14,6 +14,7 @@ invariant files loaded.
 | Failure steps covered by a static trigger | 0/10 |
 | Static checker violations | 0 |
 | Trajectories with any static trigger | 0/7 |
+| Python invariant snippets compiling successfully | 0/8 |
 
 This is a faithful upstream execution, but it is deliberately only a
 static-stage compatibility/coverage audit. It does **not** evaluate AgentRx's
@@ -31,6 +32,14 @@ assistant/tool events later. The checker therefore skips every static
 invariant before evaluating any Python check. This is an upstream artifact/
 representation compatibility issue to resolve before interpreting static
 checker scores.
+
+There is a second independent failure mode: all eight bundled Python invariant
+snippets fail Python compilation (`SyntaxError` at line 2, generally from a
+malformed doubled quote in the generated docstring). A trigger-repaired
+ablation therefore still produces no violations because the checker catches
+these exceptions and returns no `Violation`. The artifact is unsuitable for
+efficacy scoring until invariant code generation and exception handling are
+repaired and re-verified.
 
 Machine-readable receipt:
 [`agentrx-independent-static-audit-2026-07-31.json`](../results/agentrx-independent-static-audit-2026-07-31.json).

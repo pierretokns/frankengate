@@ -124,10 +124,45 @@
     "trajectory_count": 7
   },
   "schema_version": "frankengate-agentrx-independent-static-audit-v1",
+  "static_invariant_compile_errors": [
+    {
+      "assertion_name": "authentication_before_order_actions",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "single_tool_call_per_assistant_message",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "user_confirmation_before_consequential_action",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "order_status_preconditions",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "refund_destination_compliance_for_returns",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "single_use_actions_only_once_per_order",
+      "error": "invalid syntax. Is this intended to be part of the string? at line 2"
+    },
+    {
+      "assertion_name": "one_user_per_conversation_consistency",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "tool_invocation_schema_parseable",
+      "error": "invalid syntax at line 2"
+    }
+  ],
   "summary": {
     "covered_ground_truth_failure_count": 0,
     "ground_truth_failure_count": 10,
     "ir_valid_count": 7,
+    "python_invariant_compile_error_count": 8,
     "static_checker_violation_count": 0,
     "trajectories_with_any_static_trigger": 0
   },

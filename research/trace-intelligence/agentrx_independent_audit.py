@@ -54,6 +54,20 @@ def run(agent_root: Path, output: Path) -> dict[str, Any]:
         policy_document_path=str(policy_path),
         client="azure",
     )
+    compile_errors: list[dict[str, str]] = []
+    for invariant in verifier.invariants:
+        if invariant.get("check_type") != "python_check":
+            continue
+        code = "\n".join(invariant.get("python_check", {}).get("code_lines", []))
+        try:
+            compile(code, f"<AgentRx:{invariant.get('assertion_name', '?')}>", "exec")
+        except SyntaxError as exc:
+            compile_errors.append(
+                {
+                    "assertion_name": str(invariant.get("assertion_name")),
+                    "error": f"{exc.msg} at line {exc.lineno}",
+                }
+            )
 
     rows: list[dict[str, Any]] = []
     for raw_path in sorted(trajectory_dir.glob("*.json")):
@@ -123,7 +137,9 @@ def run(agent_root: Path, output: Path) -> dict[str, Any]:
             "trajectories_with_any_static_trigger": sum(
                 int(bool(row["static_triggered_steps"])) for row in rows
             ),
+            "python_invariant_compile_error_count": len(compile_errors),
         },
+        "static_invariant_compile_errors": compile_errors,
         "episodes": rows,
         "claim_boundary": {
             "faithful_upstream_ir_and_static_checker_executed": True,
