@@ -24,5 +24,13 @@ failure steps in this bundled Tau cohort. A full efficacy test therefore must
 run static and dynamic generation, retain the generated artifacts, and compare
 the judge's step/category output against blinded ground truth.
 
+The immediate mechanical cause is observable in the receipt: all eight bundled
+static invariants use `event_trigger.step_index = 1` and `role_name = assistant`,
+while the normalized Tau IR begins with a system step at index 1 and places
+assistant/tool events later. The checker therefore skips every static
+invariant before evaluating any Python check. This is an upstream artifact/
+representation compatibility issue to resolve before interpreting static
+checker scores.
+
 Machine-readable receipt:
 [`agentrx-independent-static-audit-2026-07-31.json`](../results/agentrx-independent-static-audit-2026-07-31.json).
