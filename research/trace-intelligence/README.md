@@ -122,6 +122,11 @@ repeat, and neutral controls were consistently productive. Broad friction
 keywords still over-flagged some productive or ambiguous messages, so this is
 a review-queue signal rather than a friction label or causal outcome.
 
+The [`DataClaw candidate artifact miner`](experiments/summaries/dataclaw-candidate-artifact-miner-2026-08-05.md)
+found 100 recurring non-trivial tool-call candidates, 63 spanning multiple
+project labels. All remain review-only; repetition and friction proximity are
+not correctness, safety, or skill evidence.
+
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
 deterministic pass found 15,391 unique terms, 666 acronym forms, and 191

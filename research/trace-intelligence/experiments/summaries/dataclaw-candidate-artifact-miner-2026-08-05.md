@@ -1,23 +1,18 @@
-# Real-user candidate artifact miner (2026-08-05)
+# DataClaw candidate artifact mining (2026-08-05)
 
-The licensed 549-session DataClaw history was mined into a content-free review
-registry. Harness-management tools (`TaskUpdate`, `TodoWrite`, plan controls,
-and similar orchestration calls) were excluded so they could not masquerade as
-reusable work artifacts.
+The content-free miner scanned 549 MIT-licensed DataClaw sessions and emitted
+the top 100 recurring non-trivial tool-call forms. It found 63 candidates with
+support across at least two project labels; every candidate also had at least
+one broad friction-language context. Commands, prompts, paths, arguments, and
+identifiers remain outside the receipt.
 
-- 100 hashed non-management tool/action candidates were retained.
-- 63/100 recur across at least two project labels.
-- The candidates are primarily `Bash`, `Read`, and `Edit` actions.
-- Every candidate has `review_required=true` and `promotion_eligible=false`.
-- Nearby broad friction-language counts are attached as review prioritization,
-  not correctness or failure labels.
+This is exactly the right input shape for a review queue, not an automatic
+skill library: every candidate is marked `review_required=true` and
+`promotion_eligible=false`. Repetition and proximity to friction do not prove
+that a command is correct, safe, reusable, or desired by the user. The next
+step is frontier/SME review plus independent replay in a clean environment,
+then a changed-system outcome gate.
 
-This makes trace-to-artifact mining operationally concrete while preserving the
-critical boundary: repetition is not validation. The next review step must
-sample candidates, reconstruct task and authority context, execute them in a
-sealed changed environment, and attach independent semantic/security outcomes.
+Receipt: [`dataclaw-candidate-artifact-miner-2026-08-05.json`](../results/dataclaw-candidate-artifact-miner-2026-08-05.json)
 
-Receipt and verifier:
-`experiments/results/dataclaw-candidate-artifact-miner-2026-08-05.json`.
-No command, prompt, path, argument, or identifier value is emitted; candidate
-IDs are content hashes.
+Verifier: [`verify_dataclaw_candidate_artifact_miner.py`](../../verify_dataclaw_candidate_artifact_miner.py)
