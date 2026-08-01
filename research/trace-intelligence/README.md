@@ -1530,6 +1530,11 @@ on MRR (`.1824` vs `.1573`), Recall@1 (`.0933` vs `.0761`), and Recall@10
 before the target (`.1094` vs `.1013`). This is a stronger public-proxy null,
 not a disproof of corporate embedding adaptation: generated labels, no SME
 aliases/NILs, and no downstream artifact utility were measured.
+The corrected v2 receipt adds known-scope scoring: frozen Nomic MRR `.217356`
+versus the pair scorer `.201527`, with Recall@10 `.447275` versus `.425539`;
+pooled-corpus metrics remain `.182393` versus `.157347`. The v2 result and
+independent verifier are linked from
+[`nl2sql-schema-adaptive-retrieval-2026-08-01.md`](experiments/summaries/nl2sql-schema-adaptive-retrieval-2026-08-01.md).
 
 ## Claim boundary
 

@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "case_count": true,
+    "cohort_hash": true,
+    "ddl_hashes": true,
+    "document_count": true,
+    "fold_case_counts": true,
+    "fold_coverage": true,
+    "metric_bounds_and_case_totals": true,
+    "mode_and_arm_coverage": true,
+    "raw_not_committed": true,
+    "result_hash": true
+  },
+  "claim_boundary": "Receipt, source-hash, split, and metric-conformance verification only; no semantic-alias or downstream-agent claim.",
+  "schema_version": "frankengate-nl2sql-schema-adaptive-retrieval-verification-v1",
+  "source_result_sha256": "e8c613871f69978ee344c68b2dd6ba5e555e04d64858ceef8c35a03e877bf058",
+  "status": "verified"
+}
