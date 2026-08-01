@@ -1104,6 +1104,37 @@ PYTHON=python3 \
 make e2-postgres-joint
 ```
 
+## Latest frontier intervention and retrieval checkpoints
+
+The long-horizon [`Luna SkillOpt factorial`](experiments/summaries/alfworld-luna-skillopt-four-family-35step-2026-07-31.md)
+used four family-disjoint valid-unseen ALFWorld tasks, a 35-step cap, and
+no-skill, formatting-placebo, and the pinned Microsoft SkillOpt candidate. All
+three arms were `0/4` with zero invalid actions and independent replay passed.
+This is a valid null on a zero-headroom cohort, not a general claim that
+SkillOpt is ineffective.
+
+The frontier [`self-feedback loop`](experiments/summaries/alfworld-luna-self-feedback-four-family-35step-2026-07-31.md),
+[`generated durable memory`](experiments/summaries/alfworld-luna-generated-memory-four-family-35step-2026-07-31.md),
+and [`family-matched retrieved memory`](experiments/summaries/alfworld-luna-retrieved-memory-four-family-35step-2026-07-31.md)
+interventions were also independently replayed. Each had `0/4` wins on the
+same four held-out families; self-feedback added two invalid actions while the
+memory arms added none. The generic
+[`outcome release gate`](experiments/summaries/outcome-release-gate-memory-retrieval-2026-07-31.md)
+therefore quarantines all three candidates and sets exposure to zero.
+
+The [`SkillOpt × retrieved-memory interaction factorial`](experiments/summaries/alfworld-luna-interaction-factorial-four-family-35step-2026-07-31.md)
+tested all four combinations on those tasks. Every pair tied, with no main
+effect, positive interaction, or validity regression. Because every arm was
+also `0/4`, this is a mechanics-complete interaction null with no success
+headroom; a powered cohort with baseline wins is still required.
+
+The same-corpus [`TurboVec retrieval benchmark`](experiments/summaries/turbovec-codetracebench-2026-07-31.md)
+is a component result only: 2-bit compression preserved Recall@20 (`0.6667`)
+and top-1 (`0.6364`) versus exact vectors, with `0.1125 ms` mean query time,
+`0.9483` filtered exact-top-k overlap, and deletion/allowlist checks passing.
+It does not establish lexical search, authorization, deletion-ledger, or skill
+utility, so no backend promotion follows.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,
