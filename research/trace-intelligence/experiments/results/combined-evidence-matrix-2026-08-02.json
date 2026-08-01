@@ -452,6 +452,12 @@
       "schema_version": "canonical-projection-e0-conformance-result-v1",
       "sha256": "8801a8a520db47215ffe3f799f152d3d5c72947f3c3b6bd8d191cc2876499f02"
     },
+    "reasoningbank_locomo_bounded": {
+      "filename": "reasoningbank-locomo-bounded-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-reasoningbank-locomo-bounded-v1",
+      "sha256": "c3fa243a8bcbcd37999cbef2a476bf1eb85de0cfb43924cd779fdd91eecb31b8"
+    },
     "rho_frontier_locomo_bounded": {
       "filename": "rho-frontier-locomo-bounded-2026-08-02.json",
       "optional": true,
@@ -1048,6 +1054,9 @@
         "natural_released_procedure_verifier_passed": true,
         "natural_released_procedure_verifier_projects": 3,
         "natural_released_procedure_visible_queries": 23,
+        "reasoningbank_attempt_status": "unavailable_typed",
+        "reasoningbank_memory_quality_evaluated": false,
+        "reasoningbank_receipt_present": true,
         "rho_locomo_baseline_mean_score": 0.7027777777777777,
         "rho_locomo_candidate_mean_score": 0.5111111111111112,
         "rho_locomo_candidate_regressed_tasks": 1,
@@ -1120,6 +1129,6 @@
     }
   },
   "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
-  "result_sha256": "64ffbc4edca8a0fd4d25ad4e05ffa6e4f7d4583efa1cea0aeafbe2c55f5646cf",
+  "result_sha256": "7c6fb4a0182079bd3b08d2c3cdecbb153d83a7f160329a9a62e57db873378703",
   "schema_version": "frankengate-combined-evidence-matrix-v31"
 }

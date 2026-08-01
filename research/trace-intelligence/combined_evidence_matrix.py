@@ -72,6 +72,7 @@ REQUIRED_RESULTS = {
 OPTIONAL_RESULTS = {
     "skillgen_codex_bird_frontier": "skillgen-codex-bird-frontier-2026-08-02.json",
     "rho_frontier_locomo_bounded": "rho-frontier-locomo-bounded-2026-08-02.json",
+    "reasoningbank_locomo_bounded": "reasoningbank-locomo-bounded-2026-08-02.json",
     "skillopt_local_runtime_attempt_r15": "skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
     "skillopt_local_intervention_r16": "skillopt-alfworld-local-intervention-r16-2026-08-02.json",
     "skillopt_deterministic_lifecycle_r17": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
@@ -302,6 +303,7 @@ def build_matrix(
     trace_commons_repro = results["trace_commons_repro"]
     skillgen_codex_bird_frontier = results.get("skillgen_codex_bird_frontier")
     rho_frontier_locomo_bounded = results.get("rho_frontier_locomo_bounded")
+    reasoningbank_locomo_bounded = results.get("reasoningbank_locomo_bounded")
 
     alfworld_pilot_evidence = {
         "tasks": 0,
@@ -1343,6 +1345,18 @@ def build_matrix(
                         "causal_rho_utility_confirmed", False
                     )
                 ),
+                "reasoningbank_receipt_present": bool(reasoningbank_locomo_bounded),
+                "reasoningbank_attempt_status": (
+                    reasoningbank_locomo_bounded.get("status")
+                    if reasoningbank_locomo_bounded
+                    else "not_run"
+                ),
+                "reasoningbank_memory_quality_evaluated": bool(
+                    reasoningbank_locomo_bounded
+                    and reasoningbank_locomo_bounded.get("claim_boundary", {}).get(
+                        "memory_quality_evaluated", False
+                    )
+                ),
                 "skill_transfer_models": skill_transfer_models,
                 "skill_transfer_harnesses": skill_transfer_harnesses,
                 "skill_transfer_same_fixture_compared": _require(
@@ -1959,6 +1973,11 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             "RHO's self-preference signal therefore did not predict independent utility "
             "on this slice and the candidate is not eligible for promotion."]
             if skill["rho_locomo_receipt_present"] else []),
+            *([f"- The pinned upstream ReasoningBank LOCOMO attempt reached local "
+            "embedding setup but stopped at its memory judge because the documented "
+            "Azure Foundry path requires the unavailable `az` executable. It is typed "
+            "provider-unavailable evidence, not a memory-quality or utility result."]
+            if skill["reasoningbank_receipt_present"] else []),
             f"- A fresh Qwen3 4B native-Ollama replay completed all 18 episodes "
             f"but produced native tool-call counts "
             f"{skill['skill_qwen_native_native_tool_call_counts']} and zero "

@@ -268,6 +268,12 @@ negative slice—not a universal RHO rejection—but it demonstrates why RHO's
 self-preference acceptance cannot be used as Frankengate utility evidence or a
 promotion authority.
 
+The separate [`ReasoningBank LOCOMO bounded attempt`](experiments/summaries/reasoningbank-locomo-bounded-2026-08-02.md)
+reached local embedding setup but stopped before memory extraction because the
+upstream documented Azure Foundry provider invokes `az`, which is unavailable
+on this machine. It is recorded as a typed provider-unavailable result—not as
+evidence for or against ReasoningBank memory quality.
+
 The [`GEPA v0.1.4 native-tool protocol arm`](experiments/summaries/gepa-native-tool-protocol-2026-08-02.md)
 now runs the actual pinned optimizer against a separate three-episode train and
 three-episode holdout split using the local Llama model. GEPA made 11 metric
