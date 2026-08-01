@@ -92,6 +92,9 @@ tools.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.
+Its machine-readable [fork manifest](ports/fork-manifest.json) records source
+commits, license/provenance status, fork branches, and claim boundaries; verify
+it with `uv run --no-sync python verify_fork_manifest.py ports/fork-manifest.json`.
 
 The follow-up [`held-out NL2SQL vocabulary benchmark`](experiments/summaries/nl2sql-modern-vocabulary-benchmark-2026-08-04.md)
 tests schema transfer rather than Wisp mechanics: terms are mined from three
