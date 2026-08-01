@@ -1,0 +1,73 @@
+{
+  "aggregate": {
+    "direct_surface_recall": 0.489051,
+    "direct_surface_targets": 67,
+    "target_count": 137,
+    "termhood_recall": 0.014599,
+    "termhood_targets": 2
+  },
+  "claim_boundary": {
+    "cross_schema_transfer_established": false,
+    "enterprise_alias_quality_established": false,
+    "reason": "Gold-SQL target objects are retrieval targets, not reviewed aliases; this is a public schema-transfer diagnostic.",
+    "semantic_alias_truth_established": false
+  },
+  "dataset": {
+    "case_count": 42,
+    "cohort_schema": "frankengate-nl2sql-real-alias-cohort-v1",
+    "database_count": 4,
+    "raw_sha256": "3aa25a29f47cfa78a75820cb3c2ee1897e873127e8d7dfc9855202d9326261cd",
+    "targeted_case_count": 26
+  },
+  "folds": [
+    {
+      "background_count": 11,
+      "candidate_count": 637,
+      "direct_surface_targets": 0,
+      "foreground_count": 22,
+      "held_out_db": "broker",
+      "positive_candidate_count": 541,
+      "target_count": 28,
+      "termhood_targets": 0
+    },
+    {
+      "background_count": 12,
+      "candidate_count": 462,
+      "direct_surface_targets": 38,
+      "foreground_count": 18,
+      "held_out_db": "car_dealership",
+      "positive_candidate_count": 329,
+      "target_count": 48,
+      "termhood_targets": 0
+    },
+    {
+      "background_count": 12,
+      "candidate_count": 590,
+      "direct_surface_targets": 18,
+      "foreground_count": 20,
+      "held_out_db": "derm_treatment",
+      "positive_candidate_count": 471,
+      "target_count": 29,
+      "termhood_targets": 0
+    },
+    {
+      "background_count": 13,
+      "candidate_count": 500,
+      "direct_surface_targets": 11,
+      "foreground_count": 18,
+      "held_out_db": "ewallet",
+      "positive_candidate_count": 413,
+      "target_count": 32,
+      "termhood_targets": 2
+    }
+  ],
+  "protocol": {
+    "background": "scope-swapped NIL questions from the other databases",
+    "candidate_limit": 3000,
+    "foreground": "targeted questions from the other databases",
+    "split": "database-held-out",
+    "target_definition": "gold-SQL objects in the external cohort"
+  },
+  "result_sha256": "6cf016cbe4d0ab9df33a05e530ff438ef8944288940c80989874f606fdef96c4",
+  "schema_version": "frankengate-nl2sql-modern-vocabulary-benchmark-v1"
+}

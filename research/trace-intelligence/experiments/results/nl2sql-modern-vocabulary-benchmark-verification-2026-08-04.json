@@ -1,0 +1,13 @@
+{
+  "all_passed": true,
+  "checks": {
+    "claim_boundary": true,
+    "counts_consistent": true,
+    "database_folds": true,
+    "hash": true,
+    "schema": true,
+    "targets_positive": true
+  },
+  "receipt_sha256": "4c0b7d178adf1ed5645b1a9f774e826c6e561564f5b5d2685cf0fef192e0891c",
+  "schema_version": "frankengate-nl2sql-modern-vocabulary-verification-v1"
+}

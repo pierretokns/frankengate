@@ -93,6 +93,11 @@ The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/mod
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.
 
+The follow-up [`held-out NL2SQL vocabulary benchmark`](experiments/summaries/nl2sql-modern-vocabulary-benchmark-2026-08-04.md)
+tests schema transfer rather than Wisp mechanics: terms are mined from three
+databases and evaluated against gold-SQL targets in the fourth, with a direct
+surface baseline and an explicit non-alias claim boundary.
+
 The [`DataClaw cross-user Luna adjudication pilot`](experiments/summaries/dataclaw-cross-user-luna-adjudication-2026-08-04.md)
 returned valid silver labels for 16/16 calls with 7/8 repeat agreement. It is
 calibration evidence only: shared vocabulary and tools still produced mostly
