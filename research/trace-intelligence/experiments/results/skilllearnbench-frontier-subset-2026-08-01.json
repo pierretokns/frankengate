@@ -1,0 +1,76 @@
+{
+  "arms": [
+    {
+      "agent_message_count": 3,
+      "answer": {
+        "answer_exists": true,
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "arm": "none",
+      "elapsed_seconds": null,
+      "model": "gpt-5.6-luna",
+      "raw_content_retained_outside_repo": true,
+      "returncode": 0,
+      "reused_existing_run": true,
+      "stderr_sha256": null,
+      "stdout_sha256": "8436c4a34b87a22c3e6df822dc24e01a2da69f0801088e7aae674fa6e05ca75a",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 558080,
+        "input_tokens": 616320,
+        "output_tokens": 6333,
+        "reasoning_output_tokens": 3938
+      }
+    },
+    {
+      "agent_message_count": 4,
+      "answer": {
+        "answer_exists": true,
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "arm": "human_authored",
+      "elapsed_seconds": 170.87,
+      "model": "gpt-5.6-luna",
+      "raw_content_retained_outside_repo": true,
+      "returncode": 0,
+      "stderr_sha256": "b67111ae70ef2d5665df9ee906c04481e0ba53c9558a8d4565a59ede86a1395b",
+      "stdout_sha256": "b0e838541fd2b888b385dc0adb86718297bc37d0d02633f50a66eaf58cfd4b01",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 1037568,
+        "input_tokens": 1136471,
+        "output_tokens": 8123,
+        "reasoning_output_tokens": 4367
+      }
+    }
+  ],
+  "claim_boundary": {
+    "enterprise_transfer_proven": false,
+    "reason": "One public task instance and a host-harness adaptation; use only as feasibility and directional evidence.",
+    "skill_learning_causal_effect_proven": false,
+    "verifier_outcome_measured": true
+  },
+  "harness": {
+    "adaptation": "host-path portability probe; not the benchmark's Docker runner",
+    "docker_runner": false,
+    "model": "gpt-5.6-luna",
+    "provider": "Codex subscription"
+  },
+  "schema": "frankengate-skilllearnbench-frontier-subset-v1",
+  "source": {
+    "dataset": "cxcscmu/SkillLearnBench",
+    "dataset_revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "raw_content_committed": false,
+    "task_id": "enterprise-information-search/enterprise-information-search-1"
+  }
+}
