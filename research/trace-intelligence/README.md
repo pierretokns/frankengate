@@ -258,6 +258,19 @@ component—not an authority, lexical engine, or skill system. Promotion require
 same-corpus relevance, pre-ranking authorization, deletion closure, latency,
 and cost evidence.
 
+The CASS recovery pass found a genuinely new architecture question: whether a
+Palantir/Semantica-style typed, temporal context graph adds value above the
+canonical trajectory DAG. The recovered work also describes TypeGraph-style
+BM25 + vector + graph traversal compiled into one SQL query, and schema-first
+ontology bootstrapping before frontier refinement. These are now captured as
+an empirical projection protocol, not adopted dependencies:
+[`CASS architecture refresh`](experiments/summaries/cass-prior-research-architecture-refresh-2026-08-04.md)
+and [`ontology/action replay protocol`](experiments/protocols/ontology-action-trace-architecture-2026-08-04.md).
+The initial implementation target is the existing governed PostgreSQL fixture:
+typed objects and evidence-linked edges, recursive SQL expansion, FTS, and
+optional pgvector. A graph database is explicitly out of scope until graph
+expansion is measured as the bottleneck.
+
 The [`FinanceBench embedding-choice benchmark`](experiments/summaries/finance-mteb-retrieval-benchmark-2026-08-02.md)
 adds a separate finance/NL2SQL relevance gate over the cached, revision-pinned
 FinanceMTEB/FinanceBench corpus (189 documents, 150 queries, 35 multi-positive
@@ -1504,6 +1517,24 @@ classifies the current null primarily as missing library coverage: better
 ranking cannot recover query plans that are not present. The next artifact
 test must therefore include parameterized/composable templates and frontier
 regeneration, not only more nearest-neighbor tuning.
+
+The controlled [`shared-intent artifact benchmark`](experiments/summaries/validated-artifact-shared-intent-2026-08-04.md)
+provides that missing positive control. Twenty deterministic prompt-only
+paraphrases each had a known reusable source artifact; lexical, frozen Nomic,
+and hybrid retrieval recovered it top-one `20/20`, with all `60/60` top-three
+governed executions authorized and semantically correct. This is an upper-bound
+mechanics result, not natural enterprise utility: the next test needs
+SME-labeled paraphrases, parameterized variation, regeneration, and changed
+system outcomes.
+
+The [`composable artifact frontier replay`](experiments/summaries/composable-artifact-frontier-replay-2026-08-04.md)
+then tested validated source-query subplans rather than whole-query nearest
+neighbors. On two seeded replays of five source-disjoint broker tasks, the
+composable procedure reached `10/10` semantic correctness versus `7/10` for
+no-skill and `6/10` for a formatting placebo, with independent verification,
+zero unauthorized observations, and fewer SQL/tool calls. This is a promising
+composability signal, not a powered causal or cross-family result; changed
+schemas, regeneration, NILs, and negative transfer remain required.
 
 The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
 tested whether a frontier model and a local model could be treated as
