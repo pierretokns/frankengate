@@ -1,0 +1,27 @@
+{
+  "schema_version": "frankengate-alfworld-codex-skillopt-interrupted-v1",
+  "status": "interrupted_runtime_attempt",
+  "model": "gpt-5.6-luna",
+  "harness": "codex-cli-subscription",
+  "candidate_source": "Microsoft SkillOpt published ALFWorld checkpoint",
+  "candidate_sha256": "c8219398bf587dae9c33f832f97ed749ea0de978ef8627840df139e0fc3fff20",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "task_hashes": [
+      "df568ad3df3b6d0c55f505855198a83fe3678c22a1b277a0dd8bd0ce9e6c8ece",
+      "d2f5a4140a466dee28d031cb65823f5499641c01084148ed510f11152f5426ba",
+      "d53e3f83b848b2a5f6be9ef01f93d54353e6932f57450539c144e8869e6cd374",
+      "8219d78070aec8e0d37afc9d58b8b6808303ea47dce2d3286f7ce38285f0932b"
+    ],
+    "family_count": 4,
+    "task_count": 4
+  },
+  "planned_arms": ["no_skill", "formatting_placebo", "skillopt_candidate"],
+  "planned_max_steps": 35,
+  "planned_episode_count": 12,
+  "completed_episode_count": null,
+  "result_counted": false,
+  "raw_prompts_or_responses_committed": false,
+  "reason": "The sequential Codex subscription run was interrupted after the per-episode runtime made completion unbounded for this session. No partial rows are scored or used as efficacy evidence. A fresh complete run with a bounded wall-clock budget remains required."
+}

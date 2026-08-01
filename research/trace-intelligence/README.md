@@ -297,6 +297,12 @@ replication gate, not the overall skill-release gate: SkillOpt/SkillGen/RHO
 candidate arms, security/policy verification, larger power, and enterprise
 outcomes remain open.
 
+An attempted additional frontier four-family, 35-step cohort was stopped after
+the sequential Codex subscription runtime became unbounded. It has a typed
+interrupted receipt ([summary](experiments/summaries/alfworld-codex-four-family-35step-interrupted-2026-08-02.md));
+no partial episode is counted. This is an operational gap, not a quality
+result, and does not alter the completed r9/r11/r12/r13/r14 evidence.
+
 A direct attempt to run SkillOpt's own ALFWorld optimizer is recorded as a
 typed runtime null. After installing the dependency stack and applying a
 disposable modern-Python TextWorld compatibility patch, SkillOpt and ALFWorld
