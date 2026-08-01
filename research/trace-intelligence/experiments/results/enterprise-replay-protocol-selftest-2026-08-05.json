@@ -1,6 +1,8 @@
 {
+  "changed_environment_count": 2,
   "claim_boundary": "A readiness pass does not establish semantic labels, artifact validity, changed-system utility, or enterprise outcomes.",
   "content_policy": "No prompt, SQL, tool argument, row, or identifier value is emitted; only aggregate field names, counts, and a source hash.",
+  "duplicate_task_id_count": 0,
   "field_names": [
     "annotator_a_label",
     "annotator_b_label",
@@ -15,6 +17,7 @@
     "team_id"
   ],
   "hard_negative_count": 50,
+  "invalid_required_values": {},
   "label_counts": {
     "exact": 150,
     "nil": 26,
@@ -26,8 +29,11 @@
     "50_hard_negatives": true,
     "changed_environment": true,
     "independent_outcome": true,
+    "multiple_changed_environments": true,
     "principal_project_system_time_splits": true,
-    "two_annotators": true
+    "required_values_present": true,
+    "two_annotators": true,
+    "unique_task_ids": true
   },
   "missing_required_record_fields": [],
   "principal_count": 4,

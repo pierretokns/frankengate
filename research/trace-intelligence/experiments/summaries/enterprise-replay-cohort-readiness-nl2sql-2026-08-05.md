@@ -9,6 +9,7 @@ causal enterprise replay:
 - no changed-environment identifiers;
 - no independent outcome field;
 - below the minimum 100-target / 50-hard-negative / 25-NIL-or-unclear gate.
+- required values and unique task/change-environment gates also fail.
 
 `ready_for_causal_replay` is therefore **false**. This is a positive audit
 result because it prevents a public gold-SQL proxy from being reported as

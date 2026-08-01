@@ -1662,7 +1662,9 @@ The next enterprise gate is preregistered in the
 
 The [`replay protocol self-test`](experiments/summaries/enterprise-replay-protocol-selftest-2026-08-05.md)
 confirms that the admission checker accepts a properly shaped synthetic cohort
-and rejects the public proxy; this validates the gate, not enterprise outcomes.
+and rejects the public proxy. It also rejects duplicate task IDs and a
+single-environment shape-only control; this validates the gate, not enterprise
+outcomes.
 It freezes candidate generation before SME labels, requires user/project/system/time
 holdouts, and treats false semantic acceptance during schema/tool drift as a
 release-blocking failure.
