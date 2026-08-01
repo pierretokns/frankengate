@@ -128,3 +128,12 @@ same-surface/different-system, temporal-renaming, and NIL hard negatives; (c)
 human/SME alias labels; and (d) changed-system replay and reviewer-acceptance
 outcomes. This separates vocabulary discovery from retrieval rank and from
 actual user benefit—the distinction a partner can reproduce and extend.
+
+The newer prior-art review sharpens the methods contribution for outreach:
+[SkillAdaptor](https://arxiv.org/abs/2606.01311) supplies step-attributed
+revision, [HASP](https://arxiv.org/abs/2605.17734) supplies executable skill
+guards, and [Recovery-Bench](https://github.com/letta-ai/recovery-bench) supplies
+failure-state replay. Combined with the enterprise hard-negative framework
+([arXiv:2505.18366](https://arxiv.org/abs/2505.18366)), these support a paper
+framing around **diagnose → compile → replay → promote**, while corporate
+labels and changed-system outcomes remain the novel contribution.
