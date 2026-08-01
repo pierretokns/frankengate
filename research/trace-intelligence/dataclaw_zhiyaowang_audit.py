@@ -24,6 +24,9 @@ DATASET = "zhiyaowang/dataclaw-zhiyaowang"
 REVISION = "f5157333cbc22489661122a9bc5347b137144900"
 ROWS_ENDPOINT = "https://datasets-server.huggingface.co/rows"
 TOKEN_RE = re.compile(r"[^a-z0-9]+", re.I)
+PATH_RE = re.compile(r"(?:/|[A-Za-z]:[\\/])[^\s'\"]+")
+UUID_RE = re.compile(r"\b[0-9a-f]{8}-[0-9a-f-]{27,}\b", re.I)
+NUMBER_RE = re.compile(r"\b\d{2,}\b")
 
 
 def digest(value: Any) -> str:
@@ -77,12 +80,36 @@ def normalized_call(call: dict[str, Any]) -> str:
     return digest({"tool": tool, "input_keys": keys})
 
 
+def _normalize_value(value: Any) -> Any:
+    """Canonicalize command inputs before hashing; never emit the value."""
+    if isinstance(value, str):
+        text = PATH_RE.sub("<path>", value)
+        text = UUID_RE.sub("<uuid>", text)
+        text = NUMBER_RE.sub("<n>", text)
+        return " ".join(text.lower().split())
+    if isinstance(value, dict):
+        return {str(key).lower(): _normalize_value(value[key]) for key in sorted(value, key=str)}
+    if isinstance(value, list):
+        return [_normalize_value(item) for item in value]
+    return value
+
+
+def content_fingerprint(call: dict[str, Any]) -> str:
+    return digest(
+        {
+            "tool": str(call.get("tool") or call.get("name") or "").lower(),
+            "input": _normalize_value(call.get("input")),
+        }
+    )
+
+
 def inspect_row(row: dict[str, Any]) -> dict[str, Any]:
     messages = row.get("messages") if isinstance(row.get("messages"), list) else []
     message_roles = collections.Counter()
     tools = collections.Counter()
     tool_status = collections.Counter()
     call_keys: list[str] = []
+    content_keys: list[tuple[str, str]] = []
     user_text_count = 0
     content_parts = 0
     output_text_count = 0
@@ -119,7 +146,19 @@ def inspect_row(row: dict[str, Any]) -> dict[str, Any]:
                 raw_stderr = raw.get("stderr") if isinstance(raw, dict) else None
                 if status in {"error", "failed", "failure", "interrupted"} or raw_stderr:
                     error_tool_count += 1
+                content_keys.append((content_fingerprint(call), status))
+            else:
+                content_keys.append((content_fingerprint(call), str(call.get("status") or "unknown").lower()))
     repeats = len(call_keys) - len(set(call_keys))
+    good_statuses = {"success", "completed"}
+    error_statuses = {"error", "failed", "failure", "interrupted"}
+    prior_errors: set[str] = set()
+    recovery_shapes = 0
+    for fingerprint, status in content_keys:
+        if status in error_statuses:
+            prior_errors.add(fingerprint)
+        elif status in good_statuses and fingerprint in prior_errors:
+            recovery_shapes += 1
     return {
         "session_id_digest": category_digest(row.get("session_id")),
         "project_digest": category_digest(row.get("project")),
@@ -134,6 +173,10 @@ def inspect_row(row: dict[str, Any]) -> dict[str, Any]:
         "error_tool_count": error_tool_count,
         "tool_call_repeat_count": repeats,
         "distinct_call_shape_count": len(set(call_keys)),
+        "content_fingerprint_count": len(set(key for key, _ in content_keys)),
+        "successful_content_fingerprints": [key for key, status in content_keys if status in good_statuses],
+        "failed_content_fingerprints": [key for key, status in content_keys if status in error_statuses],
+        "same_shape_error_to_success_count": recovery_shapes,
         "output_text_count": output_text_count,
         "output_raw_count": output_raw_count,
         "content_part_count": content_parts,
@@ -170,6 +213,7 @@ def run(*, sample_count: int, timeout: int, output: Path) -> dict[str, Any]:
     source_totals: collections.Counter[str] = collections.Counter()
     model_totals: collections.Counter[str] = collections.Counter()
     project_totals: collections.Counter[str] = collections.Counter()
+    artifacts: dict[str, dict[str, set[str] | int]] = {}
     for item in inspected:
         role_totals.update(item["message_roles"])
         family_totals.update(item["tool_family_counts"])
@@ -177,6 +221,19 @@ def run(*, sample_count: int, timeout: int, output: Path) -> dict[str, Any]:
         source_totals[item["source_digest"]] += 1
         model_totals[item["model_digest"]] += 1
         project_totals[item["project_digest"]] += 1
+        for fingerprint in item["successful_content_fingerprints"]:
+            entry = artifacts.setdefault(fingerprint, {"sessions": set(), "projects": set(), "successes": 0, "failures": 0})
+            entry["sessions"].add(item["session_id_digest"])
+            entry["projects"].add(item["project_digest"])
+            entry["successes"] += 1
+        for fingerprint in item["failed_content_fingerprints"]:
+            entry = artifacts.setdefault(fingerprint, {"sessions": set(), "projects": set(), "successes": 0, "failures": 0})
+            entry["sessions"].add(item["session_id_digest"])
+            entry["projects"].add(item["project_digest"])
+            entry["failures"] += 1
+    recurring = [entry for entry in artifacts.values() if int(entry["successes"]) >= 2 and len(entry["sessions"]) >= 2]
+    cross_project = [entry for entry in recurring if len(entry["projects"]) >= 2]
+    mixed_outcome = [entry for entry in artifacts.values() if int(entry["successes"]) > 0 and int(entry["failures"]) > 0]
     mean = lambda key: round(sum(float(item[key]) for item in inspected) / len(inspected), 3) if inspected else 0.0
     result = {
         "schema": "frankengate-dataclaw-zhiyaowang-audit-v1",
@@ -202,6 +259,11 @@ def run(*, sample_count: int, timeout: int, output: Path) -> dict[str, Any]:
             "distinct_source_digest_count": len(source_totals),
             "distinct_model_digest_count": len(model_totals),
             "distinct_project_digest_count": len(project_totals),
+            "distinct_content_fingerprint_count": len(artifacts),
+            "recurring_successful_artifact_candidates": len(recurring),
+            "cross_project_recurring_artifact_candidates": len(cross_project),
+            "artifact_fingerprints_with_both_success_and_error": len(mixed_outcome),
+            "sessions_with_same_shape_error_to_success": sum(item["same_shape_error_to_success_count"] > 0 for item in inspected),
         },
         "aggregates": {
             "mean_messages": mean("message_count"),

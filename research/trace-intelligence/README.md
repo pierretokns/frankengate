@@ -137,7 +137,9 @@ multiple Claude/Codex/Cursor/Gemini/OpenCode sources, with tool outputs,
 explicit errors, branches, and repeated call shapes. It is suitable for
 content-bearing artifact/friction-mining pilots, but has no independent task
 outcomes or organizational identities, so it cannot establish cross-user
-enterprise transfer.
+enterprise transfer. A hash-only recurrence screen found 13 successful
+multi-session candidates (10 spanning multiple project labels), but all remain
+review-only because frequency is not correctness or transfer evidence.
 
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A

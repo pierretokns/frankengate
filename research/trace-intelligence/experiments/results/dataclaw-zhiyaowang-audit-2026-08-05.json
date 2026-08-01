@@ -18,9 +18,13 @@
     "task_outcome_verified": false
   },
   "coverage": {
+    "artifact_fingerprints_with_both_success_and_error": 4,
+    "cross_project_recurring_artifact_candidates": 10,
+    "distinct_content_fingerprint_count": 3332,
     "distinct_model_digest_count": 14,
     "distinct_project_digest_count": 15,
     "distinct_source_digest_count": 4,
+    "recurring_successful_artifact_candidates": 13,
     "role_counts": {
       "assistant": 4582,
       "user": 873
@@ -29,6 +33,7 @@
     "sessions_with_explicit_error": 5,
     "sessions_with_raw_tool_output": 7,
     "sessions_with_repeated_call_shapes": 26,
+    "sessions_with_same_shape_error_to_success": 4,
     "sessions_with_tool_output_text": 11,
     "tool_family_counts": {
       "delegation": 193,
