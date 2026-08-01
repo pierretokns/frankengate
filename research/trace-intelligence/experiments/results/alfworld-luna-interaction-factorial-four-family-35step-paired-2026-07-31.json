@@ -1,0 +1,28 @@
+{
+  "schema_version": "frankengate-alfworld-codex-interaction-factorial-paired-v1",
+  "receipt": "alfworld-luna-interaction-factorial-four-family-35step-2026-07-31.json",
+  "receipt_sha256": "fafdf5ef3fcc46f3531c422d2211fc1b95b05b7db8c505ac15605fb1c029f743",
+  "verification": "alfworld-luna-interaction-factorial-four-family-35step-verification-2026-07-31.json",
+  "verification_sha256": "2f48a70900ac6482e4ece9f69edd234b8f88f558012bacc75dcdd235e13fe646",
+  "verification_passed": true,
+  "pairs": {
+    "skillopt_vs_no_component": {"tasks": 4, "wins": 0, "losses": 0, "ties": 4},
+    "retrieved_memory_vs_no_component": {"tasks": 4, "wins": 0, "losses": 0, "ties": 4},
+    "combined_vs_no_component": {"tasks": 4, "wins": 0, "losses": 0, "ties": 4},
+    "combined_vs_skillopt": {"tasks": 4, "wins": 0, "losses": 0, "ties": 4},
+    "combined_vs_retrieved_memory": {"tasks": 4, "wins": 0, "losses": 0, "ties": 4}
+  },
+  "interaction": {
+    "skillopt_main_effect_observed": false,
+    "retrieved_memory_main_effect_observed": false,
+    "skillopt_memory_positive_interaction_observed": false,
+    "validity_regressions": false
+  },
+  "interpretation": {
+    "valid_small_null": true,
+    "causal_interaction_benefit_confirmed": false,
+    "general_composition_ineffectiveness_claim": false,
+    "promotion_authorized": false,
+    "reason": "All four arms tied on success and protocol validity across the four held-out tasks."
+  }
+}

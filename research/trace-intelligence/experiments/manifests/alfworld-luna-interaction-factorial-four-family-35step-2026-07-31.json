@@ -1,0 +1,38 @@
+{
+  "schema_version": "frankengate-alfworld-codex-interaction-factorial-protocol-v1",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "source_split": "valid_seen",
+    "target_split": "valid_unseen",
+    "families": [
+      "look_at_obj_in_light",
+      "pick_and_place_simple",
+      "pick_clean_then_place_in_recep",
+      "pick_heat_then_place_in_recep"
+    ],
+    "target_task_hashes": [
+      "ecae0849e112587d84963051cdf5a7d88b46ad171671ff11cb43ac60f1944564",
+      "11518b29282fa3f2953184a7b6d663dc854dc51a40433e53568b73ae79af4af3",
+      "ca244f59c2cea8df0725e69670af01b7da6331f06cc0af93e77853286a241957",
+      "4520b3827efc89c9c199d4e63610edec574a6969d1be9addeebf8b8c7d804213"
+    ]
+  },
+  "protocol": {
+    "arms": ["no_component", "skillopt", "retrieved_memory", "skillopt_plus_retrieved_memory"],
+    "model": "gpt-5.6-luna",
+    "harness": "codex-cli-subscription",
+    "max_steps": 35,
+    "episodes_per_arm": 4,
+    "source_expert_preflight_required": true,
+    "source_and_target_disjoint": true,
+    "expert_and_future_outcomes_hidden_from_heldout_agent": true,
+    "independent_replay_required": true,
+    "raw_model_text_committed": false
+  },
+  "claim_boundary": {
+    "interaction_factorial_executed": true,
+    "causal_interaction_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "Four-family frontier interaction factorial; no Frankengate integration is implied."
+  }
+}
