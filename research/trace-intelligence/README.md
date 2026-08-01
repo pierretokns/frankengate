@@ -1425,6 +1425,13 @@ semantic correctness. Its direction also reversed relative to the loopback-proxy
 paraphrase aggregate, so the current artifact is not promotion-eligible and the
 transport/harness effect is itself a required replication variable.
 
+The [`stratified alias adjudication gate`](experiments/summaries/nl2sql-stratified-alias-adjudication-2026-08-02.md)
+adds the missing NIL and ambiguous cases to the earlier collision sample. Two
+independent Luna roles scored 23 synthetic exact-alias, semantic-alias,
+wrong-system, NIL, and unclear cases with perfect construction-time accuracy,
+abstention, and agreement. This validates the label contract and verifier only;
+authorized enterprise examples and SME labels remain required.
+
 ## Claim boundary
 
 The committed experiments currently establish representation, authorization,

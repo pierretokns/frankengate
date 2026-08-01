@@ -1,0 +1,55 @@
+{
+  "arms": [
+    {
+      "role": "independent primary",
+      "score": {
+        "candidate_accuracy": 1.0,
+        "mean_confidence": 0.989565,
+        "nil_unclear_abstention": 1.0,
+        "surface_accuracy": 1.0,
+        "wrong_system_accuracy": 1.0
+      }
+    },
+    {
+      "role": "independent skeptical",
+      "score": {
+        "candidate_accuracy": 1.0,
+        "mean_confidence": 0.993478,
+        "nil_unclear_abstention": 1.0,
+        "surface_accuracy": 1.0,
+        "wrong_system_accuracy": 1.0
+      }
+    }
+  ],
+  "cases": {
+    "categories": {
+      "exact_alias": 11,
+      "nil": 4,
+      "semantic_alias": 6,
+      "unclear": 2
+    },
+    "count": 23,
+    "ground_truth": "public synthetic construction-time labels; not SME truth"
+  },
+  "claim_boundary": "Synthetic capability gate only. It measures frontier structured-adjudication accuracy and abstention on constructed aliases, collisions, NILs, and ambiguities; it does not establish corporate semantic truth, SME agreement, downstream retrieval, or artifact utility.",
+  "inter_judge": {
+    "candidate_agreement": 1.0,
+    "prompt_hashes_distinct": true,
+    "raw_receipts": [
+      {
+        "prompt_sha256": "f2857c60c153dfc89bfa3bb27ae895dfd40492d82fba1f293ea3131b7ba4e46f",
+        "raw_sha256": "3b267c9889974f1093156743510e6541125994143d2a6d096be60da9bcc98109",
+        "role": "independent primary"
+      },
+      {
+        "prompt_sha256": "e1541f3964096cfd8f6040c39b276a49a10c8b1c98e76300ad7d47a3bafda7ea",
+        "raw_sha256": "8e48ca110524329c8d10fea35932830f06e270933289eb73be4f538c5f5052fb",
+        "role": "independent skeptical"
+      }
+    ],
+    "surface_agreement": 1.0
+  },
+  "model": "gpt-5.6-luna",
+  "receipt_sha256": "c0cf438cf46bacbd67d1d4c89763531fc703e113a2b29fe8069ddbab9cb68576",
+  "schema_version": "frankengate-nl2sql-stratified-alias-adjudication-v1"
+}
