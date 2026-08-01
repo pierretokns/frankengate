@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from skilllearnbench_frontier_subset import _validate_answer
+from skilllearnbench_frontier_subset import _validate_answer, load_expected
 
 
 def test_validate_answer_requires_published_q1_q3_and_numeric_tokens(tmp_path):
@@ -76,3 +76,13 @@ def test_validate_answer_records_precision_not_only_required_inclusion(tmp_path)
     assert result["passed"] is True
     assert result["exact_metrics"]["q1"]["precision"] == 8 / 9
     assert result["exact_metrics"]["q1"]["recall"] == 1.0
+
+
+def test_load_expected_reads_pinned_task_verifier_without_execution(tmp_path):
+    verifier = tmp_path / "tests" / "test_outputs.py"
+    verifier.parent.mkdir()
+    verifier.write_text(
+        "EXPECTED_ANSWER_Q1 = ['a']\nEXPECTED_ANSWER_Q3 = ['b']\n",
+        encoding="utf-8",
+    )
+    assert load_expected(tmp_path) == {"q1": {"a"}, "q3": {"b"}}

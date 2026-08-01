@@ -82,6 +82,35 @@ aggregate cannot be produced without a zero-overlap receipt:
 - contaminated sequential prefix: 2 overlapping task IDs;
 - authoritative car-to-broker replay: 0 overlapping task IDs.
 
+## Independent skill-learning reality checks
+
+The broader intervention set sharpens the claim boundary beyond the retrieval
+benchmarks:
+
+- The published SkillOpt checkpoint produced zero wins for no-skill, placebo, and
+  candidate on four previously unused ALFWorld families at a 12-step horizon;
+  one fair-horizon 35-step task also produced zero wins for all three arms.
+  These are bounded negative slices, not a disproof of SkillOpt.
+- A BIRD-SQL SkillGen reproduction generated a candidate from 6/8 failures, but
+  held-out exact execution fell from `0.500` to `0.375` (zero repairs, one
+  regression); the release gate rejected it.
+- An independently replayed RHO candidate fell from `0.643` to `0.388` on
+  eight held-out LOCOMO tasks. The self-preference signal did not predict
+  independent utility on this slice. A Codex-adapted ReasoningBank run scored
+  `0.593` versus `0.703` for its matched no-memory control on two held-out
+  questions, so it remains quarantined.
+- The first Codex portability probe over SkillLearnBench's enterprise-search
+  task improved exact Q1 precision from `.80` to `1.00` with unchanged recall
+  (`1.00`) when the human-authored skill was supplied; Q3 remained `1.00/1.00`
+  in both arms. This is one task on a host-path adapter, so it is directional
+  feasibility evidence only.
+
+Together these results say that validation, replay isolation, and exact outcome
+measurement are working. They do not yet show that a mined or published skill
+improves future enterprise work. The decisive next test remains a powered,
+task/user/project/time-disjoint factorial with no-skill, placebo, human,
+trace-mined, SkillOpt, SkillGen, RHO, and regeneration arms.
+
 ## What the academic literature does and does not show
 
 SkillLearnBench, SkillFlow, SkillFoundry, MUSE-Autoskill, SkillOpt, ReasoningBank,

@@ -9,6 +9,7 @@ skills change verifier outcomes before investing in the full benchmark stack.
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import shutil
@@ -61,7 +62,27 @@ def _parse_events(stdout: str) -> tuple[dict[str, Any], int]:
     return usage, message_count
 
 
-def _validate_answer(answer_path: Path) -> dict[str, Any]:
+def load_expected(task_root: Path) -> dict[str, set[str]]:
+    """Read the task's published expected IDs without executing its tests."""
+    verifier = task_root / "tests" / "test_outputs.py"
+    tree = ast.parse(verifier.read_text(encoding="utf-8"), filename=str(verifier))
+    values: dict[str, set[str]] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name) or target.id not in {"EXPECTED_ANSWER_Q1", "EXPECTED_ANSWER_Q3"}:
+            continue
+        value = ast.literal_eval(node.value)
+        if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+            raise ValueError(f"{verifier}: {target.id} is not a string list")
+        values[target.id[-2:].lower()] = set(value)
+    if set(values) != {"q1", "q3"}:
+        raise ValueError(f"{verifier}: expected q1/q3 gold lists")
+    return values
+
+
+def _validate_answer(answer_path: Path, expected: dict[str, set[str]] = EXPECTED) -> dict[str, Any]:
     result: dict[str, Any] = {
         "answer_exists": answer_path.exists(),
         "json_object": False,
@@ -162,6 +183,7 @@ def run_arm(
     skill_root: Path | None,
     model: str,
     timeout: int,
+    expected: dict[str, set[str]] = EXPECTED,
 ) -> dict[str, Any]:
     source_environment = task_root / "environment"
     arm_root = work_root / arm.replace("/", "_")
@@ -178,7 +200,7 @@ def run_arm(
             "agent_message_count": message_count,
             "stdout_sha256": _sha256(existing_events),
             "stderr_sha256": None,
-            "answer": _validate_answer(existing_answer),
+            "answer": _validate_answer(existing_answer, expected),
             "raw_content_retained_outside_repo": True,
             "reused_existing_run": True,
         }
@@ -211,7 +233,7 @@ def run_arm(
     )
     output_path.write_text(completed.stdout, encoding="utf-8")
     usage, message_count = _parse_events(completed.stdout)
-    answer = _validate_answer(arm_root / "answer.json")
+    answer = _validate_answer(arm_root / "answer.json", expected)
     return {
         "arm": arm,
         "model": model,
@@ -239,6 +261,7 @@ def run(
     if not task_root.is_dir():
         raise ValueError(f"task not found: {task_root}")
     skill_base = dataset_root / "skills"
+    expected = load_expected(task_root)
     arm_results = []
     for arm in arms:
         # SkillLearnBench stores skills under the task *family* directory
@@ -257,6 +280,7 @@ def run(
                 skill_root=skill_root,
                 model=model,
                 timeout=timeout,
+                expected=expected,
             )
         )
     return {
