@@ -57,6 +57,7 @@ promotion-eligible yet.
 | A small domain embedding adapter is enough | MATM Recall@20 `.5301 -> .5331`; confidence interval crosses zero and MRR slightly decreased | No adapter promotion; corporate hard-negative labels and stronger splits are required |
 | Generic embeddings solve corporate aliases | Dense-only retrieval underperformed exact/scope retrieval on the identifier benchmark | Dense search is complementary, not the primary solution |
 | SkillOpt/memory composition already improves agents | Multiple ALFWorld cohorts were floor-effect or null; the real-candidate Codex replay was `0/2` across no-skill, placebo, and candidate | The methods are not disproven; this fixture does not show a positive transfer effect |
+| A larger changed-agent replay shows trace-mined utility | Sealed BIRD-SQL family-disjoint replay over 20 future tasks produced 20 ties, zero candidate wins/losses, exact delta `0.0`, and latency ratio `.989` | This is a bounded no-lift result, not a universal null or a causal disproof of skill-learning research |
 
 The source/replay overlap auditor is now an executable gate. A family-disjoint
 aggregate cannot be produced without a zero-overlap receipt:

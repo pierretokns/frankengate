@@ -1463,6 +1463,12 @@ collision-before-target, while 4x hard-negative weighting added no lift. This
 supports a cheap structured reranking lane before frontier review, not a claim
 that the model learned corporate semantic aliases.
 
+The sealed [`BIRD changed-agent outcome checkpoint`](experiments/summaries/changed-agent-outcome-bird-2026-08-02.md)
+is the largest current future-task replay: 20 family-disjoint tasks produced
+20 candidate/control ties, zero exact-outcome wins or losses, and a latency
+ratio of `.989`. It is bounded no-lift evidence, not a disproof of skill-learning
+research or a universal enterprise null.
+
 The [`frontier-versus-local Wisp adjudication`](experiments/summaries/wisp-frontier-local-adjudication-2026-08-03.md)
 tested whether a frontier model and a local model could be treated as
 interchangeable trace-insight labelers. On six blinded candidates under the
