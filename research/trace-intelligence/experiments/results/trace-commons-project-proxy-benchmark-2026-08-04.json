@@ -1,0 +1,48 @@
+{
+  "arms": {
+    "combined": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 0.3979965467968564,
+      "same_project_top1": 3,
+      "top1_rate": 0.23076923076923078
+    },
+    "prompt": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 0.33710110166228086,
+      "same_project_top1": 3,
+      "top1_rate": 0.23076923076923078
+    },
+    "structure": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 0.2761932511932512,
+      "same_project_top1": 1,
+      "top1_rate": 0.07692307692307693
+    }
+  },
+  "content_policy": "Prompts are processed locally; no transcript text or token is emitted.",
+  "eligible_repeated_project_sessions": 13,
+  "interpretation": "Project/workstream proxy only; no user identity or cross-user claim is valid.",
+  "project_proxy_counts": {
+    "bentofolio": 2,
+    "cfml": 1,
+    "code": 1,
+    "codsoft": 1,
+    "comparia": 3,
+    "desktop": 1,
+    "dmls": 2,
+    "epilog": 2,
+    "frostcore": 1,
+    "iceberg": 1,
+    "linux-3.0.1": 1,
+    "neongpt": 1,
+    "nephilimos": 2,
+    "prettify-reddit": 1,
+    "pseudo-os": 1,
+    "slopinator3000": 1,
+    "undertaledeb": 1,
+    "users": 3,
+    "yggdrasil": 2
+  },
+  "schema": "trace-commons-project-proxy-benchmark-v1",
+  "session_count": 28
+}
