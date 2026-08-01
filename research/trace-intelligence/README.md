@@ -1106,6 +1106,14 @@ make e2-postgres-joint
 
 ## Latest frontier intervention and retrieval checkpoints
 
+The faithful [`AgentRx static-stage audit`](experiments/summaries/agentrx-independent-static-audit-2026-07-31.md)
+ran the pinned upstream IR converter and `AllVerifier` over seven bundled Tau
+trajectories. All seven IRs validated, but the bundled static artifact covered
+`0/10` labeled failure steps and emitted zero violations because no dynamic
+invariants were loaded. This is a bounded upstream compatibility result, not a
+full AgentRx efficacy test; dynamic generation, retained judge artifacts, and
+blinded diagnosis scoring remain required.
+
 The long-horizon [`Luna SkillOpt factorial`](experiments/summaries/alfworld-luna-skillopt-four-family-35step-2026-07-31.md)
 used four family-disjoint valid-unseen ALFWorld tasks, a 35-step cap, and
 no-skill, formatting-placebo, and the pinned Microsoft SkillOpt candidate. All
