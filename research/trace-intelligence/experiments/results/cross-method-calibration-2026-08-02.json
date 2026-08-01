@@ -1,4 +1,13 @@
 {
+  "additional_outcomes": {
+    "changed_agent": {
+      "changed_agent_future_task_outcome_measured": true,
+      "cross_user_enterprise_transfer_measured": false,
+      "exact_mean_delta": 0.0,
+      "receipt": "changed-agent-outcome-bird-2026-08-02.json",
+      "receipt_sha256": "a44923385fc144873d746bf4ae418c110792b518e7ee556e61f8b3a9f63a4d5c"
+    }
+  },
   "claim_boundary": {
     "automatic_integration_authorized": false,
     "cross_method_efficacy_pooling": false,
@@ -11,6 +20,7 @@
     ]
   },
   "coverage": {
+    "changed_agent_outcome_receipts": 1,
     "comparable_cost_measured": 0,
     "latency_measured": 0,
     "methods": 18,

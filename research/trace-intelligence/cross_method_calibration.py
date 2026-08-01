@@ -181,6 +181,27 @@ def calibrate(result_dir: Path, promotion_path: Path) -> dict[str, Any]:
         taxonomy[key] = taxonomy.get(key, 0) + 1
     with_pairs = [method for method in methods if method["paired_effect"] and method["paired_effect"]["pairs"]]
     with_latency = [method for method in methods if method["latency"] is not None]
+    changed_agent_path = result_dir / "changed-agent-outcome-bird-2026-08-02.json"
+    changed_agent = None
+    if changed_agent_path.exists():
+        changed_agent_receipt = json.loads(changed_agent_path.read_text(encoding="utf-8"))
+        changed_agent = {
+            "receipt": changed_agent_path.name,
+            "receipt_sha256": sha256(changed_agent_path),
+            "changed_agent_future_task_outcome_measured": bool(
+                changed_agent_receipt.get("claim_boundary", {}).get(
+                    "changed_agent_future_task_outcome_measured"
+                )
+            ),
+            "exact_mean_delta": changed_agent_receipt.get("outcome", {})
+            .get("exact_execution", {})
+            .get("mean_delta"),
+            "cross_user_enterprise_transfer_measured": bool(
+                changed_agent_receipt.get("claim_boundary", {}).get(
+                    "cross_user_enterprise_transfer_measured"
+                )
+            ),
+        }
     return {
         "schema_version": SCHEMA_VERSION,
         "inputs": {
@@ -195,7 +216,11 @@ def calibrate(result_dir: Path, promotion_path: Path) -> dict[str, Any]:
             "latency_measured": len(with_latency),
             "comparable_cost_measured": 0,
             "typed_null_taxonomy": len(methods),
+            "changed_agent_outcome_receipts": 1 if changed_agent else 0,
             "power_estimate_is_planning_only": True,
+        },
+        "additional_outcomes": {
+            "changed_agent": changed_agent,
         },
         "null_taxonomy_counts": dict(sorted(taxonomy.items())),
         "claim_boundary": {

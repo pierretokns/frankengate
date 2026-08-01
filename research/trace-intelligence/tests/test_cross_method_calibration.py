@@ -23,6 +23,7 @@ def test_calibration_reports_measured_and_missing_dimensions() -> None:
     result = MODULE.calibrate(result_dir, promotion)
     assert result["coverage"]["methods"] == 18
     assert result["coverage"]["paired_effect_measured"] >= 2
+    assert result["coverage"]["changed_agent_outcome_receipts"] == 1
     assert result["coverage"]["comparable_cost_measured"] == 0
     assert result["claim_boundary"]["automatic_integration_authorized"] is False
     assert sum(result["null_taxonomy_counts"].values()) == 18

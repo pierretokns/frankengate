@@ -78,10 +78,15 @@
           "exists": true,
           "path": "enterprise-outcome-analysis-conformance-2026-08-02.json",
           "sha256": "54870ccc0d943d6ab68563247ea0bafccebc8f4f59d0f43c0bddc9cd843da9c3"
+        },
+        {
+          "exists": true,
+          "path": "changed-agent-outcome-bird-2026-08-02.json",
+          "sha256": "a44923385fc144873d746bf4ae418c110792b518e7ee556e61f8b3a9f63a4d5c"
         }
       ],
       "id": "independent_outcome_evaluation",
-      "remaining": "Changed-agent future-task uplift, friction reduction, and cross-user transfer with human/adjudicated outcomes are unmeasured.",
+      "remaining": "A family-disjoint changed-agent future-task outcome is now independently recomputed for BIRD (20 pairs, exact-match delta 0.0, latency recorded), but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
       "status": "partial_mechanics_only"
     },
     {
@@ -99,7 +104,7 @@
         {
           "exists": true,
           "path": "cross-method-calibration-2026-08-02.json",
-          "sha256": "2a62ff6bbaf85bb3cb18e49aaebcd30430a531a85ea0c0b5708613df4b42adc9"
+          "sha256": "43623ec817a27fac0a2b1a61bfd9b9356657e682f13246be6c84b9540f511801"
         }
       ],
       "id": "power_cost_latency_and_null_taxonomy",
