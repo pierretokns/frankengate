@@ -1,0 +1,1717 @@
+{
+  "adapter": "claude_code_native_jsonl_v1",
+  "aggregate": {
+    "explicit_signal_counts": {
+      "clarification": 11,
+      "correction": 51,
+      "dissatisfaction": 22,
+      "retry_or_repair": 89
+    },
+    "session_count": 28,
+    "sessions_with_any_interruption": 0,
+    "sessions_with_any_stderr": 2,
+    "sessions_with_any_structured_error": 24,
+    "sessions_with_explicit_dissatisfaction": 10,
+    "sessions_with_repeated_tool": 17,
+    "sessions_with_rephrase": 8,
+    "totals": {
+      "assistant_turn_count": 7499,
+      "close_prompt_pair_count": 8,
+      "repeated_prompt_count": 2,
+      "repeated_tool_use_count": 153,
+      "rephrase_pair_count": 12,
+      "tool_result_count": 4262,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 762,
+      "tool_result_stderr_count": 56,
+      "tool_result_structured_error_count": 269,
+      "tool_result_success_marker_count": 1854,
+      "tool_use_count": 4264,
+      "user_prompt_count": 413,
+      "user_turns_with_tool_result": 4262
+    }
+  },
+  "claim_boundary": "Screening signals only; no satisfaction, correctness, or user-intent gold labels. Keyword error markers are intentionally separate from structured executor errors; prompt repetition, stderr, and interruption still require adjudication.",
+  "schema_version": "native-history-friction-result-v1",
+  "sessions": [
+    {
+      "assistant_turn_count": 286,
+      "bytes": 1556737,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 9,
+      "explicit_signal_counts": {
+        "clarification": 1,
+        "correction": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "07b57159-218e-4330-a64e-0ec4b4355056",
+      "source_sha256": "f0f3711cd1cd6b683007b70ac071b18a64c158956d3863631b834bee8471fa70",
+      "timestamp_range": [
+        "2026-06-12T00:40:15.077Z",
+        "2026-06-12T01:27:58.044Z"
+      ],
+      "tool_result_count": 178,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 16,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 13,
+      "tool_result_success_marker_count": 99,
+      "tool_use_count": 178,
+      "top_tools": [
+        [
+          "PowerShell",
+          55
+        ],
+        [
+          "Edit",
+          46
+        ],
+        [
+          "Write",
+          35
+        ],
+        [
+          "Read",
+          19
+        ],
+        [
+          "TodoWrite",
+          16
+        ],
+        [
+          "Grep",
+          4
+        ],
+        [
+          "ToolSearch",
+          1
+        ],
+        [
+          "Bash",
+          1
+        ],
+        [
+          "Agent",
+          1
+        ]
+      ],
+      "user_prompt_count": 15,
+      "user_turns_with_tool_result": 178
+    },
+    {
+      "assistant_turn_count": 258,
+      "bytes": 1896625,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 6,
+      "explicit_signal_counts": {
+        "retry_or_repair": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 11,
+      "rephrase_pair_count": 0,
+      "session_id": "09d9abe9-0a02-4bd1-8129-3b864695079d",
+      "source_sha256": "b6e6e542f351c4889c692304bd3819b4df7ac936c5b54ddc99fd00708c934eb0",
+      "timestamp_range": [
+        "2026-06-12T15:21:06.747Z",
+        "2026-06-12T15:50:41.495Z"
+      ],
+      "tool_result_count": 151,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 24,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 2,
+      "tool_result_success_marker_count": 68,
+      "tool_use_count": 151,
+      "top_tools": [
+        [
+          "Edit",
+          45
+        ],
+        [
+          "Read",
+          38
+        ],
+        [
+          "Write",
+          24
+        ],
+        [
+          "Glob",
+          22
+        ],
+        [
+          "Grep",
+          18
+        ],
+        [
+          "PowerShell",
+          4
+        ]
+      ],
+      "user_prompt_count": 19,
+      "user_turns_with_tool_result": 151
+    },
+    {
+      "assistant_turn_count": 40,
+      "bytes": 200514,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 8,
+      "explicit_signal_counts": {},
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "0ca72c0c-ac42-400a-8ca6-cc31a787225f",
+      "source_sha256": "5780bf4aaa8af2af35e58e1f25360c669cc07af751a16b8c6bdb1cdd23c40dee",
+      "timestamp_range": [
+        "2026-05-27T04:23:47.203Z",
+        "2026-05-27T04:31:11.485Z"
+      ],
+      "tool_result_count": 24,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 1,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 6,
+      "tool_result_success_marker_count": 8,
+      "tool_use_count": 24,
+      "top_tools": [
+        [
+          "Bash",
+          5
+        ],
+        [
+          "Read",
+          4
+        ],
+        [
+          "PowerShell",
+          4
+        ],
+        [
+          "Write",
+          4
+        ],
+        [
+          "Edit",
+          4
+        ],
+        [
+          "ToolSearch",
+          1
+        ],
+        [
+          "WebFetch",
+          1
+        ],
+        [
+          "Grep",
+          1
+        ]
+      ],
+      "user_prompt_count": 2,
+      "user_turns_with_tool_result": 24
+    },
+    {
+      "assistant_turn_count": 24,
+      "bytes": 132969,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 1,
+      "distinct_tool_names": 5,
+      "explicit_signal_counts": {
+        "retry_or_repair": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "11ef2190-67e2-4707-8212-ab12ebffdbc2",
+      "source_sha256": "98a1ff2f95f84fac563e6e55689a7fbb7eb9a6e1e19598dd8dffa54f3332d1b1",
+      "timestamp_range": [
+        "2026-06-11T21:34:12.707Z",
+        "2026-06-11T21:40:31.535Z"
+      ],
+      "tool_result_count": 10,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 0,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 1,
+      "tool_result_success_marker_count": 1,
+      "tool_use_count": 10,
+      "top_tools": [
+        [
+          "Read",
+          5
+        ],
+        [
+          "Bash",
+          2
+        ],
+        [
+          "Glob",
+          1
+        ],
+        [
+          "Edit",
+          1
+        ],
+        [
+          "Skill",
+          1
+        ]
+      ],
+      "user_prompt_count": 6,
+      "user_turns_with_tool_result": 10
+    },
+    {
+      "assistant_turn_count": 346,
+      "bytes": 2902788,
+      "close_prompt_pair_count": 2,
+      "cwd_count": 2,
+      "distinct_tool_names": 8,
+      "explicit_signal_counts": {
+        "correction": 3,
+        "dissatisfaction": 3,
+        "retry_or_repair": 12
+      },
+      "repeated_prompt_count": 1,
+      "repeated_tool_use_count": 8,
+      "rephrase_pair_count": 1,
+      "session_id": "17c2cf98-e64a-43c6-932e-fa7efcade358",
+      "source_sha256": "8e0e53bff1924520fba62fb6b34c66bfea877c6690d718d1997ac8ecd27834a2",
+      "timestamp_range": [
+        "2026-05-07T23:38:23.709Z",
+        "2026-05-08T13:42:56.595Z"
+      ],
+      "tool_result_count": 200,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 33,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 8,
+      "tool_result_success_marker_count": 103,
+      "tool_use_count": 200,
+      "top_tools": [
+        [
+          "Edit",
+          73
+        ],
+        [
+          "Read",
+          64
+        ],
+        [
+          "Bash",
+          21
+        ],
+        [
+          "Write",
+          18
+        ],
+        [
+          "TodoWrite",
+          13
+        ],
+        [
+          "Grep",
+          6
+        ],
+        [
+          "Glob",
+          4
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 25,
+      "user_turns_with_tool_result": 200
+    },
+    {
+      "assistant_turn_count": 119,
+      "bytes": 619546,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 1,
+      "distinct_tool_names": 7,
+      "explicit_signal_counts": {
+        "clarification": 1,
+        "correction": 3,
+        "dissatisfaction": 1,
+        "retry_or_repair": 2
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 1,
+      "session_id": "2965219c-42ad-45af-889c-4581ecbe0103",
+      "source_sha256": "b20e95e3cce26a940f2b6d77d087aacf8a97227d5bde68bd772c8d6196296db2",
+      "timestamp_range": [
+        "2026-06-15T12:23:03.592Z",
+        "2026-06-15T13:22:32.069Z"
+      ],
+      "tool_result_count": 54,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 1,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 0,
+      "tool_result_success_marker_count": 12,
+      "tool_use_count": 54,
+      "top_tools": [
+        [
+          "Bash",
+          30
+        ],
+        [
+          "Read",
+          8
+        ],
+        [
+          "WebFetch",
+          6
+        ],
+        [
+          "Edit",
+          5
+        ],
+        [
+          "WebSearch",
+          3
+        ],
+        [
+          "ToolSearch",
+          1
+        ],
+        [
+          "Skill",
+          1
+        ]
+      ],
+      "user_prompt_count": 11,
+      "user_turns_with_tool_result": 54
+    },
+    {
+      "assistant_turn_count": 547,
+      "bytes": 4155633,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 9,
+      "explicit_signal_counts": {
+        "correction": 2,
+        "dissatisfaction": 1,
+        "retry_or_repair": 8
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 16,
+      "rephrase_pair_count": 0,
+      "session_id": "39082932-131c-40a9-872d-1d3ac8ed1fd6",
+      "source_sha256": "3f6126a16ab30d0ed5a28682dc60c4ac08141dc5c2fd76216170e72faac910c1",
+      "timestamp_range": [
+        "2026-05-24T08:05:05.976Z",
+        "2026-05-24T09:26:48.613Z"
+      ],
+      "tool_result_count": 377,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 60,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 25,
+      "tool_result_success_marker_count": 231,
+      "tool_use_count": 377,
+      "top_tools": [
+        [
+          "Write",
+          146
+        ],
+        [
+          "Edit",
+          62
+        ],
+        [
+          "PowerShell",
+          50
+        ],
+        [
+          "Read",
+          49
+        ],
+        [
+          "Bash",
+          42
+        ],
+        [
+          "TodoWrite",
+          19
+        ],
+        [
+          "Grep",
+          5
+        ],
+        [
+          "ToolSearch",
+          3
+        ],
+        [
+          "Agent",
+          1
+        ]
+      ],
+      "user_prompt_count": 12,
+      "user_turns_with_tool_result": 377
+    },
+    {
+      "assistant_turn_count": 614,
+      "bytes": 4069981,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 5,
+      "explicit_signal_counts": {
+        "clarification": 1,
+        "correction": 5,
+        "dissatisfaction": 3,
+        "retry_or_repair": 5
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 7,
+      "rephrase_pair_count": 1,
+      "session_id": "3be5ba0c-62b2-4645-8589-9216be0c10d8",
+      "source_sha256": "ce767846c255c90d3c1a98984cf0fc1064eee65e735727dc5f1dd49aec0e935e",
+      "timestamp_range": [
+        "2026-06-14T12:19:30.531Z",
+        "2026-06-16T11:19:13.072Z"
+      ],
+      "tool_result_count": 274,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 76,
+      "tool_result_stderr_count": 10,
+      "tool_result_structured_error_count": 8,
+      "tool_result_success_marker_count": 83,
+      "tool_use_count": 274,
+      "top_tools": [
+        [
+          "Bash",
+          141
+        ],
+        [
+          "Edit",
+          63
+        ],
+        [
+          "Read",
+          44
+        ],
+        [
+          "Write",
+          23
+        ],
+        [
+          "AskUserQuestion",
+          3
+        ]
+      ],
+      "user_prompt_count": 19,
+      "user_turns_with_tool_result": 274
+    },
+    {
+      "assistant_turn_count": 95,
+      "bytes": 846853,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 4,
+      "distinct_tool_names": 7,
+      "explicit_signal_counts": {
+        "clarification": 1,
+        "correction": 2,
+        "dissatisfaction": 1,
+        "retry_or_repair": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "4130c9a7-ee88-443a-91b5-224accd13629",
+      "source_sha256": "121df6bb227cc659adc8af758b4a3d70c55dea0885a700b96b721c2db5ceb61c",
+      "timestamp_range": [
+        "2026-06-14T09:36:45.050Z",
+        "2026-06-14T09:53:02.025Z"
+      ],
+      "tool_result_count": 75,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 22,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 1,
+      "tool_result_success_marker_count": 54,
+      "tool_use_count": 75,
+      "top_tools": [
+        [
+          "Write",
+          34
+        ],
+        [
+          "Bash",
+          17
+        ],
+        [
+          "Edit",
+          12
+        ],
+        [
+          "TodoWrite",
+          7
+        ],
+        [
+          "Skill",
+          2
+        ],
+        [
+          "Read",
+          2
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 3,
+      "user_turns_with_tool_result": 75
+    },
+    {
+      "assistant_turn_count": 513,
+      "bytes": 3000902,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 5,
+      "distinct_tool_names": 10,
+      "explicit_signal_counts": {
+        "correction": 4,
+        "dissatisfaction": 2,
+        "retry_or_repair": 2
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 18,
+      "rephrase_pair_count": 0,
+      "session_id": "4222016d-1932-4abb-94b3-463203bd8876",
+      "source_sha256": "851d25e9b9f75252a1b7f2b71dc77ed2e74d38148e0a912483f0bedd36a7cff5",
+      "timestamp_range": [
+        "2026-06-07T09:24:11.179Z",
+        "2026-06-07T11:06:17.958Z"
+      ],
+      "tool_result_count": 333,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 39,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 28,
+      "tool_result_success_marker_count": 121,
+      "tool_use_count": 334,
+      "top_tools": [
+        [
+          "Read",
+          93
+        ],
+        [
+          "Edit",
+          81
+        ],
+        [
+          "Bash",
+          64
+        ],
+        [
+          "PowerShell",
+          42
+        ],
+        [
+          "Write",
+          27
+        ],
+        [
+          "TodoWrite",
+          12
+        ],
+        [
+          "Grep",
+          11
+        ],
+        [
+          "AskUserQuestion",
+          2
+        ],
+        [
+          "ToolSearch",
+          1
+        ],
+        [
+          "Glob",
+          1
+        ]
+      ],
+      "user_prompt_count": 16,
+      "user_turns_with_tool_result": 333
+    },
+    {
+      "assistant_turn_count": 167,
+      "bytes": 1149336,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 9,
+      "explicit_signal_counts": {},
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 1,
+      "rephrase_pair_count": 0,
+      "session_id": "479c5e9f-a299-457f-8459-5948adf8aa8e",
+      "source_sha256": "8efd5bceea8a840fd7a528e18d62251946b0c883c04883f2515b90b9133d05a9",
+      "timestamp_range": [
+        "2026-06-07T08:44:28.037Z",
+        "2026-06-07T09:14:01.085Z"
+      ],
+      "tool_result_count": 106,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 32,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 12,
+      "tool_result_success_marker_count": 61,
+      "tool_use_count": 106,
+      "top_tools": [
+        [
+          "Read",
+          29
+        ],
+        [
+          "PowerShell",
+          27
+        ],
+        [
+          "Write",
+          16
+        ],
+        [
+          "Edit",
+          15
+        ],
+        [
+          "TodoWrite",
+          9
+        ],
+        [
+          "Bash",
+          4
+        ],
+        [
+          "Grep",
+          3
+        ],
+        [
+          "Glob",
+          2
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 2,
+      "user_turns_with_tool_result": 106
+    },
+    {
+      "assistant_turn_count": 523,
+      "bytes": 3394140,
+      "close_prompt_pair_count": 2,
+      "cwd_count": 2,
+      "distinct_tool_names": 8,
+      "explicit_signal_counts": {
+        "correction": 6,
+        "dissatisfaction": 5,
+        "retry_or_repair": 23
+      },
+      "repeated_prompt_count": 1,
+      "repeated_tool_use_count": 5,
+      "rephrase_pair_count": 3,
+      "session_id": "47d9fc04-420c-47bb-8ac0-85780af22632",
+      "source_sha256": "3c5f5c167249e3ec502ef0e068490ddeb49472cd3d5a05a1e646e43e43b73dc7",
+      "timestamp_range": [
+        "2026-05-16T12:04:48.272Z",
+        "2026-05-16T23:35:17.524Z"
+      ],
+      "tool_result_count": 251,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 53,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 16,
+      "tool_result_success_marker_count": 112,
+      "tool_use_count": 251,
+      "top_tools": [
+        [
+          "Write",
+          60
+        ],
+        [
+          "PowerShell",
+          58
+        ],
+        [
+          "Edit",
+          54
+        ],
+        [
+          "Read",
+          43
+        ],
+        [
+          "Grep",
+          13
+        ],
+        [
+          "Glob",
+          11
+        ],
+        [
+          "Bash",
+          11
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 75,
+      "user_turns_with_tool_result": 251
+    },
+    {
+      "assistant_turn_count": 1,
+      "bytes": 39347,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 1,
+      "distinct_tool_names": 0,
+      "explicit_signal_counts": {
+        "correction": 1,
+        "retry_or_repair": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "4c09dfa9-ff25-4b4c-a2d0-d2fd702c64ee",
+      "source_sha256": "137dd4872992c3a1b4d6460962a6d5b2578141511af97bc291039dd6e3b5ea6f",
+      "timestamp_range": [
+        "2026-06-04T03:22:47.310Z",
+        "2026-06-04T03:23:05.382Z"
+      ],
+      "tool_result_count": 0,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 0,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 0,
+      "tool_result_success_marker_count": 0,
+      "tool_use_count": 0,
+      "top_tools": [],
+      "user_prompt_count": 1,
+      "user_turns_with_tool_result": 0
+    },
+    {
+      "assistant_turn_count": 15,
+      "bytes": 74956,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 3,
+      "explicit_signal_counts": {},
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 1,
+      "rephrase_pair_count": 0,
+      "session_id": "674e0f5c-c481-4830-b2ef-3e1e069a2b7f",
+      "source_sha256": "a75a42565e266910d87aa637001b2ac0a523c22db09811865a849ab2da7f9197",
+      "timestamp_range": [
+        "2026-06-15T19:34:10.546Z",
+        "2026-06-15T19:38:21.086Z"
+      ],
+      "tool_result_count": 9,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 3,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 2,
+      "tool_result_success_marker_count": 2,
+      "tool_use_count": 9,
+      "top_tools": [
+        [
+          "Bash",
+          5
+        ],
+        [
+          "Write",
+          2
+        ],
+        [
+          "Read",
+          2
+        ]
+      ],
+      "user_prompt_count": 5,
+      "user_turns_with_tool_result": 9
+    },
+    {
+      "assistant_turn_count": 244,
+      "bytes": 1636028,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 3,
+      "distinct_tool_names": 10,
+      "explicit_signal_counts": {
+        "correction": 2,
+        "retry_or_repair": 2
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 1,
+      "rephrase_pair_count": 0,
+      "session_id": "6a7964ed-6f92-4eee-ae5e-3f91a6445833",
+      "source_sha256": "900dc7c921ee9ec588d61f109e24eba780e240a6fc22056372676a6710bf98e4",
+      "timestamp_range": [
+        "2026-05-24T10:03:07.671Z",
+        "2026-05-24T16:56:12.449Z"
+      ],
+      "tool_result_count": 164,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 50,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 18,
+      "tool_result_success_marker_count": 88,
+      "tool_use_count": 164,
+      "top_tools": [
+        [
+          "Bash",
+          41
+        ],
+        [
+          "Write",
+          25
+        ],
+        [
+          "Grep",
+          23
+        ],
+        [
+          "TodoWrite",
+          23
+        ],
+        [
+          "Read",
+          22
+        ],
+        [
+          "Edit",
+          22
+        ],
+        [
+          "PowerShell",
+          5
+        ],
+        [
+          "ToolSearch",
+          1
+        ],
+        [
+          "AskUserQuestion",
+          1
+        ],
+        [
+          "Agent",
+          1
+        ]
+      ],
+      "user_prompt_count": 7,
+      "user_turns_with_tool_result": 164
+    },
+    {
+      "assistant_turn_count": 370,
+      "bytes": 1979243,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 10,
+      "explicit_signal_counts": {
+        "correction": 2,
+        "retry_or_repair": 4
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 17,
+      "rephrase_pair_count": 0,
+      "session_id": "7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+      "source_sha256": "113f92342fbb0cea1dafe2660d3cfeff24129f8d4c8c7257b5a6836a2820f666",
+      "timestamp_range": [
+        "2026-06-04T15:53:52.956Z",
+        "2026-06-04T18:05:17.071Z"
+      ],
+      "tool_result_count": 239,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 52,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 18,
+      "tool_result_success_marker_count": 75,
+      "tool_use_count": 239,
+      "top_tools": [
+        [
+          "Read",
+          79
+        ],
+        [
+          "PowerShell",
+          53
+        ],
+        [
+          "Edit",
+          43
+        ],
+        [
+          "Write",
+          27
+        ],
+        [
+          "Glob",
+          12
+        ],
+        [
+          "Bash",
+          9
+        ],
+        [
+          "Grep",
+          8
+        ],
+        [
+          "TodoWrite",
+          6
+        ],
+        [
+          "Skill",
+          1
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 12,
+      "user_turns_with_tool_result": 239
+    },
+    {
+      "assistant_turn_count": 398,
+      "bytes": 2698750,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 12,
+      "explicit_signal_counts": {
+        "clarification": 2,
+        "correction": 5,
+        "dissatisfaction": 4,
+        "retry_or_repair": 6
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 12,
+      "rephrase_pair_count": 1,
+      "session_id": "860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "source_sha256": "905ddb1d8d7f6ada5898a5085d0a190fbcb491bb66600c1561f64ad26164ce47",
+      "timestamp_range": [
+        "2026-05-20T14:04:53.887Z",
+        "2026-05-20T16:06:05.321Z"
+      ],
+      "tool_result_count": 259,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 35,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 16,
+      "tool_result_success_marker_count": 136,
+      "tool_use_count": 259,
+      "top_tools": [
+        [
+          "Edit",
+          82
+        ],
+        [
+          "Read",
+          44
+        ],
+        [
+          "PowerShell",
+          36
+        ],
+        [
+          "Write",
+          32
+        ],
+        [
+          "Bash",
+          23
+        ],
+        [
+          "TodoWrite",
+          18
+        ],
+        [
+          "Grep",
+          13
+        ],
+        [
+          "AskUserQuestion",
+          4
+        ],
+        [
+          "Glob",
+          3
+        ],
+        [
+          "ToolSearch",
+          2
+        ]
+      ],
+      "user_prompt_count": 40,
+      "user_turns_with_tool_result": 259
+    },
+    {
+      "assistant_turn_count": 105,
+      "bytes": 442344,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 3,
+      "distinct_tool_names": 4,
+      "explicit_signal_counts": {
+        "clarification": 1,
+        "correction": 1,
+        "dissatisfaction": 1,
+        "retry_or_repair": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "89cf9e13-a4bd-4cf9-9486-7c89737bec1b",
+      "source_sha256": "05f2c2f7f5677998414b7cfc357afa650fd67c8b837911e29022eecfc98ec3d6",
+      "timestamp_range": [
+        "2026-06-15T16:32:18.030Z",
+        "2026-06-16T06:02:27.397Z"
+      ],
+      "tool_result_count": 48,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 15,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 0,
+      "tool_result_success_marker_count": 5,
+      "tool_use_count": 48,
+      "top_tools": [
+        [
+          "Bash",
+          40
+        ],
+        [
+          "Read",
+          4
+        ],
+        [
+          "Edit",
+          3
+        ],
+        [
+          "Agent",
+          1
+        ]
+      ],
+      "user_prompt_count": 9,
+      "user_turns_with_tool_result": 48
+    },
+    {
+      "assistant_turn_count": 97,
+      "bytes": 649441,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 8,
+      "explicit_signal_counts": {
+        "retry_or_repair": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "92833a43-c30d-4b44-8447-c32ee17d6e6e",
+      "source_sha256": "1b1fcf6f893134237d1a0f6a2150c0e3d998e61fe1d670f532fd66c549b1690d",
+      "timestamp_range": [
+        "2026-05-24T09:38:26.383Z",
+        "2026-05-24T10:00:20.523Z"
+      ],
+      "tool_result_count": 64,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 20,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 3,
+      "tool_result_success_marker_count": 30,
+      "tool_use_count": 64,
+      "top_tools": [
+        [
+          "Bash",
+          14
+        ],
+        [
+          "Read",
+          12
+        ],
+        [
+          "Edit",
+          11
+        ],
+        [
+          "TodoWrite",
+          10
+        ],
+        [
+          "Write",
+          10
+        ],
+        [
+          "Glob",
+          4
+        ],
+        [
+          "PowerShell",
+          2
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 2,
+      "user_turns_with_tool_result": 64
+    },
+    {
+      "assistant_turn_count": 456,
+      "bytes": 2944308,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 3,
+      "distinct_tool_names": 11,
+      "explicit_signal_counts": {
+        "correction": 3,
+        "dissatisfaction": 1,
+        "retry_or_repair": 6
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 9,
+      "rephrase_pair_count": 0,
+      "session_id": "a20a4070-6246-4e9e-adf6-f38b0c1dc3fa",
+      "source_sha256": "04e26ca61648f0020270366e726124de1fd955bb00d0b1409702f84df12c6e53",
+      "timestamp_range": [
+        "2026-06-07T11:06:52.907Z",
+        "2026-06-07T18:35:16.095Z"
+      ],
+      "tool_result_count": 275,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 43,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 29,
+      "tool_result_success_marker_count": 125,
+      "tool_use_count": 275,
+      "top_tools": [
+        [
+          "Edit",
+          102
+        ],
+        [
+          "Read",
+          50
+        ],
+        [
+          "Bash",
+          38
+        ],
+        [
+          "PowerShell",
+          38
+        ],
+        [
+          "Grep",
+          20
+        ],
+        [
+          "TodoWrite",
+          11
+        ],
+        [
+          "Write",
+          10
+        ],
+        [
+          "Glob",
+          3
+        ],
+        [
+          "Agent",
+          1
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 12,
+      "user_turns_with_tool_result": 275
+    },
+    {
+      "assistant_turn_count": 66,
+      "bytes": 641419,
+      "close_prompt_pair_count": 1,
+      "cwd_count": 2,
+      "distinct_tool_names": 6,
+      "explicit_signal_counts": {
+        "correction": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 1,
+      "rephrase_pair_count": 1,
+      "session_id": "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a",
+      "source_sha256": "3d5971c8fc3b07fffcd7a23a350c74d576d5052ded23b2d8686a07cb0c93073b",
+      "timestamp_range": [
+        "2026-05-22T04:53:10.946Z",
+        "2026-05-22T05:25:11.261Z"
+      ],
+      "tool_result_count": 37,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 8,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 4,
+      "tool_result_success_marker_count": 15,
+      "tool_use_count": 37,
+      "top_tools": [
+        [
+          "Write",
+          10
+        ],
+        [
+          "PowerShell",
+          9
+        ],
+        [
+          "Read",
+          8
+        ],
+        [
+          "Edit",
+          5
+        ],
+        [
+          "Glob",
+          4
+        ],
+        [
+          "Bash",
+          1
+        ]
+      ],
+      "user_prompt_count": 18,
+      "user_turns_with_tool_result": 37
+    },
+    {
+      "assistant_turn_count": 199,
+      "bytes": 1713621,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 4,
+      "distinct_tool_names": 9,
+      "explicit_signal_counts": {
+        "clarification": 2,
+        "correction": 3,
+        "retry_or_repair": 2
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 6,
+      "rephrase_pair_count": 0,
+      "session_id": "c84c0ad3-c368-40df-87b1-5ef9effe237a",
+      "source_sha256": "893ec7fdb53b50796262d1d12d5695cf17acab70fbc0821a9dfdef3d7d21e423",
+      "timestamp_range": [
+        "2026-05-31T09:26:31.079Z",
+        "2026-05-31T10:35:29.648Z"
+      ],
+      "tool_result_count": 131,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 18,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 11,
+      "tool_result_success_marker_count": 52,
+      "tool_use_count": 131,
+      "top_tools": [
+        [
+          "PowerShell",
+          55
+        ],
+        [
+          "Write",
+          27
+        ],
+        [
+          "Edit",
+          18
+        ],
+        [
+          "Read",
+          17
+        ],
+        [
+          "TodoWrite",
+          8
+        ],
+        [
+          "Glob",
+          3
+        ],
+        [
+          "Bash",
+          1
+        ],
+        [
+          "AskUserQuestion",
+          1
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 11,
+      "user_turns_with_tool_result": 131
+    },
+    {
+      "assistant_turn_count": 528,
+      "bytes": 3405732,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 10,
+      "explicit_signal_counts": {
+        "correction": 1,
+        "retry_or_repair": 2
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 35,
+      "rephrase_pair_count": 0,
+      "session_id": "c99032e9-377b-4ae9-a9a9-ec7752b059cd",
+      "source_sha256": "d320ab80b06a019d279df1f3f3f70fad0ee12b08d1eea2339e7633acbcc80f4d",
+      "timestamp_range": [
+        "2026-06-05T16:00:11.400Z",
+        "2026-06-06T07:04:06.163Z"
+      ],
+      "tool_result_count": 353,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 90,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 25,
+      "tool_result_success_marker_count": 189,
+      "tool_use_count": 354,
+      "top_tools": [
+        [
+          "Read",
+          89
+        ],
+        [
+          "Edit",
+          84
+        ],
+        [
+          "PowerShell",
+          75
+        ],
+        [
+          "Write",
+          72
+        ],
+        [
+          "TodoWrite",
+          19
+        ],
+        [
+          "Grep",
+          7
+        ],
+        [
+          "ToolSearch",
+          4
+        ],
+        [
+          "WebSearch",
+          2
+        ],
+        [
+          "Bash",
+          1
+        ],
+        [
+          "Agent",
+          1
+        ]
+      ],
+      "user_prompt_count": 9,
+      "user_turns_with_tool_result": 353
+    },
+    {
+      "assistant_turn_count": 11,
+      "bytes": 104971,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 1,
+      "distinct_tool_names": 2,
+      "explicit_signal_counts": {
+        "clarification": 1,
+        "correction": 1
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "comparia-voting-fields-anon",
+      "source_sha256": "abb8c2299775633c0d53dbe8218c276594f324bb71d3bfba65944a865107daf4",
+      "timestamp_range": [
+        "2026-06-02T13:56:30.414Z",
+        "2026-06-02T14:01:21.043Z"
+      ],
+      "tool_result_count": 3,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 0,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 0,
+      "tool_result_success_marker_count": 0,
+      "tool_use_count": 3,
+      "top_tools": [
+        [
+          "Agent",
+          2
+        ],
+        [
+          "Read",
+          1
+        ]
+      ],
+      "user_prompt_count": 1,
+      "user_turns_with_tool_result": 3
+    },
+    {
+      "assistant_turn_count": 234,
+      "bytes": 2376876,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 2,
+      "distinct_tool_names": 8,
+      "explicit_signal_counts": {
+        "correction": 4,
+        "retry_or_repair": 5
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 2,
+      "rephrase_pair_count": 0,
+      "session_id": "d4c4d47d-642c-4c26-a866-51ab85587896",
+      "source_sha256": "74cfbf8b46d125aaecb04a2023cde8c927867cb441e2e87ed4269e27c886f7d5",
+      "timestamp_range": [
+        "2026-06-11T20:54:58.439Z",
+        "2026-06-11T23:30:04.416Z"
+      ],
+      "tool_result_count": 135,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 3,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 4,
+      "tool_result_success_marker_count": 70,
+      "tool_use_count": 135,
+      "top_tools": [
+        [
+          "Edit",
+          61
+        ],
+        [
+          "Read",
+          38
+        ],
+        [
+          "Grep",
+          17
+        ],
+        [
+          "Write",
+          11
+        ],
+        [
+          "PowerShell",
+          4
+        ],
+        [
+          "WebFetch",
+          2
+        ],
+        [
+          "Bash",
+          1
+        ],
+        [
+          "ToolSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 30,
+      "user_turns_with_tool_result": 135
+    },
+    {
+      "assistant_turn_count": 1132,
+      "bytes": 13701935,
+      "close_prompt_pair_count": 2,
+      "cwd_count": 4,
+      "distinct_tool_names": 12,
+      "explicit_signal_counts": {
+        "clarification": 1,
+        "correction": 1,
+        "retry_or_repair": 2
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 3,
+      "rephrase_pair_count": 3,
+      "session_id": "da5d32d6-547f-45ae-a5b5-4747ed06542f",
+      "source_sha256": "5765ca688f358d66235f3ac97f7df8eabca23a7c3ea393fd9f877ed82f1533f0",
+      "timestamp_range": [
+        "2026-06-16T23:40:54.268Z",
+        "2026-06-17T21:22:47.027Z"
+      ],
+      "tool_result_count": 447,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 55,
+      "tool_result_stderr_count": 46,
+      "tool_result_structured_error_count": 15,
+      "tool_result_success_marker_count": 93,
+      "tool_use_count": 447,
+      "top_tools": [
+        [
+          "Bash",
+          272
+        ],
+        [
+          "Edit",
+          63
+        ],
+        [
+          "Read",
+          62
+        ],
+        [
+          "Write",
+          26
+        ],
+        [
+          "AskUserQuestion",
+          5
+        ],
+        [
+          "mcp__claude-in-chrome__computer",
+          5
+        ],
+        [
+          "ToolSearch",
+          4
+        ],
+        [
+          "WebFetch",
+          4
+        ],
+        [
+          "mcp__claude-in-chrome__navigate",
+          3
+        ],
+        [
+          "mcp__claude-in-chrome__tabs_context_mcp",
+          1
+        ]
+      ],
+      "user_prompt_count": 46,
+      "user_turns_with_tool_result": 447
+    },
+    {
+      "assistant_turn_count": 24,
+      "bytes": 122727,
+      "close_prompt_pair_count": 0,
+      "cwd_count": 1,
+      "distinct_tool_names": 4,
+      "explicit_signal_counts": {},
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 0,
+      "session_id": "da6566ff-0116-4424-bb59-660623f9eb31",
+      "source_sha256": "78a3becc8ffcd5a655f7c48cd4ba62d104cea1693e075f2b2685a0661dbb9955",
+      "timestamp_range": [
+        "2026-06-14T09:29:13.252Z",
+        "2026-06-14T09:33:17.960Z"
+      ],
+      "tool_result_count": 11,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 3,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 2,
+      "tool_result_success_marker_count": 2,
+      "tool_use_count": 11,
+      "top_tools": [
+        [
+          "Bash",
+          6
+        ],
+        [
+          "PowerShell",
+          3
+        ],
+        [
+          "ToolSearch",
+          1
+        ],
+        [
+          "WebSearch",
+          1
+        ]
+      ],
+      "user_prompt_count": 1,
+      "user_turns_with_tool_result": 11
+    },
+    {
+      "assistant_turn_count": 87,
+      "bytes": 647015,
+      "close_prompt_pair_count": 1,
+      "cwd_count": 2,
+      "distinct_tool_names": 7,
+      "explicit_signal_counts": {
+        "retry_or_repair": 2
+      },
+      "repeated_prompt_count": 0,
+      "repeated_tool_use_count": 0,
+      "rephrase_pair_count": 1,
+      "session_id": "f93127ef-dec9-4d58-964b-ee660964ec4d",
+      "source_sha256": "b52d6e9b7384b68e0ff2d1d6a43a2effeb17f98c313787da1c191cedc5fda05a",
+      "timestamp_range": [
+        "2026-05-24T20:49:22.531Z",
+        "2026-05-24T21:17:06.735Z"
+      ],
+      "tool_result_count": 54,
+      "tool_result_interrupted_count": 0,
+      "tool_result_keyword_error_marker_count": 10,
+      "tool_result_stderr_count": 0,
+      "tool_result_structured_error_count": 2,
+      "tool_result_success_marker_count": 19,
+      "tool_use_count": 54,
+      "top_tools": [
+        [
+          "Read",
+          21
+        ],
+        [
+          "Edit",
+          17
+        ],
+        [
+          "Grep",
+          7
+        ],
+        [
+          "Bash",
+          4
+        ],
+        [
+          "Glob",
+          2
+        ],
+        [
+          "Write",
+          2
+        ],
+        [
+          "PowerShell",
+          1
+        ]
+      ],
+      "user_prompt_count": 4,
+      "user_turns_with_tool_result": 54
+    }
+  ],
+  "source": {
+    "path_count": 28,
+    "raw_content_committed": false
+  }
+}
