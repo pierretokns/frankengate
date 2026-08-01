@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Any, Iterable
 from itertools import combinations
 
+from trace2skill_source_replay_overlap_audit import validate_zero_overlap_receipt
+
 
 SCHEMA_VERSION = "frankengate-frontier-transfer-multiseed-aggregate-v1"
 
@@ -50,13 +52,37 @@ def _pairwise(rows: dict[tuple[int, str], dict[str, bool]], left: str, right: st
     }
 
 
-def run(result_paths: list[Path], verification_paths: list[Path]) -> dict[str, Any]:
+def run(
+    result_paths: list[Path],
+    verification_paths: list[Path],
+    overlap_audit_paths: list[Path] | None = None,
+) -> dict[str, Any]:
     if not result_paths:
         raise ValueError("at least one result is required")
     if len(result_paths) != len(verification_paths):
         raise ValueError("each result needs one independent verification receipt")
     results = [json.loads(path.read_text(encoding="utf-8")) for path in result_paths]
     verifications = [json.loads(path.read_text(encoding="utf-8")) for path in verification_paths]
+    family_disjoint = any(
+        "family-disjoint" in str(result.get("protocol_remediation", {}).get("id", ""))
+        or result.get("classification") == "family_disjoint_transfer"
+        for result in results
+    )
+    if family_disjoint:
+        if overlap_audit_paths is None or len(overlap_audit_paths) != len(results):
+            raise ValueError(
+                "family-disjoint aggregation requires one zero-overlap audit per result"
+            )
+        overlap_audits = [
+            validate_zero_overlap_receipt(
+                json.loads(path.read_text(encoding="utf-8"))
+            )
+            for path in overlap_audit_paths
+        ]
+    else:
+        if overlap_audit_paths:
+            raise ValueError("overlap audits supplied for a non-family-disjoint aggregate")
+        overlap_audits = []
     for verification in verifications:
         if not verification.get("semantic_verification_passed"):
             raise ValueError("independent verification did not pass")
@@ -104,6 +130,11 @@ def run(result_paths: list[Path], verification_paths: list[Path]) -> dict[str, A
         "dataset_task_hashes": list(expected_tasks),
         "source_result_sha256": source_receipts,
         "independent_verifications": len(verifications),
+        "source_replay_overlap_audit_sha256": [
+            hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in (overlap_audit_paths or [])
+        ],
+        "source_replay_disjoint_verified": bool(family_disjoint and overlap_audits),
         "aggregate_by_arm": {arm: dict(values) for arm, values in sorted(aggregate.items())},
         "paired_comparisons": [
             _pairwise(rows, left, right)
@@ -119,9 +150,15 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--result", type=Path, action="append", required=True)
     parser.add_argument("--verification", type=Path, action="append", required=True)
+    parser.add_argument(
+        "--overlap-audit",
+        type=Path,
+        action="append",
+        help="One zero-overlap source/replay receipt per family-disjoint result.",
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = run(args.result, args.verification)
+    result = run(args.result, args.verification, args.overlap_audit)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"status": "ok", "seeds": result["seeds"], "episodes": result["episodes"]}, sort_keys=True))

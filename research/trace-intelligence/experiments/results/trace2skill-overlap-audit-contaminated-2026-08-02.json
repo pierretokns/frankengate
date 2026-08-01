@@ -1,0 +1,267 @@
+{
+  "claim_boundary": "A zero-overlap receipt is necessary but not sufficient for held-out transfer; it does not establish semantic utility, causal benefit, or promotion eligibility.",
+  "contaminated": true,
+  "overlap_task_count": 4,
+  "overlap_task_id_hashes": [
+    "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b",
+    "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60",
+    "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58",
+    "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+  ],
+  "replay": {
+    "directories": [
+      "/private/tmp/defog-codex-docker-audit-seed-430000-93755",
+      "/private/tmp/defog-codex-docker-audit-seed-430000-2790",
+      "/private/tmp/defog-codex-docker-audit-seed-430000-12301",
+      "/private/tmp/defog-codex-docker-audit-seed-430000-18925"
+    ],
+    "files": [
+      {
+        "event_count": 24,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-93755/6e2f83b47df6c644-no_skill.jsonl",
+        "sha256": "a88668e2822279cfd19a34c80a524d1ac050d72e75201c5b2a3ad77829e0460d",
+        "task_id_hashes": [
+          "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-93755/9e5a44ef3b69a7be-no_skill.jsonl",
+        "sha256": "33da1a357d73fc73be71b4c078993b0d16c28b7fab8534faf25b0b31b9d26a9c",
+        "task_id_hashes": [
+          "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60"
+        ]
+      },
+      {
+        "event_count": 15,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-93755/a0889339d18f5e7e-no_skill.jsonl",
+        "sha256": "8685df298887a08171c22a17295162ac5a232fde28f9228ec0b1c69109e43e39",
+        "task_id_hashes": [
+          "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-93755/c42b73747fd65b13-no_skill.jsonl",
+        "sha256": "840acfb33eba072d11a3558a04fd14cbb00c7efe13784f5795716dc726d8d4d7",
+        "task_id_hashes": [
+          "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+        ]
+      },
+      {
+        "event_count": 24,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-2790/6e2f83b47df6c644-formatting_placebo.jsonl",
+        "sha256": "fb8cc0121df4a87130f254b11928939ce7aa787d4cb769f2f3c3c4283dc65252",
+        "task_id_hashes": [
+          "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-2790/9e5a44ef3b69a7be-formatting_placebo.jsonl",
+        "sha256": "e3b5a8e03077cf3a832684990ab4b40b1cd67a6133b580a6a64b59eb3556b698",
+        "task_id_hashes": [
+          "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60"
+        ]
+      },
+      {
+        "event_count": 20,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-2790/a0889339d18f5e7e-formatting_placebo.jsonl",
+        "sha256": "d74b029429bd232b3da03079a2b3aaff73abd4321ac96393a8884b94f3103367",
+        "task_id_hashes": [
+          "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58"
+        ]
+      },
+      {
+        "event_count": 19,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-2790/c42b73747fd65b13-formatting_placebo.jsonl",
+        "sha256": "410b0cff01d57e5289f600d5d8f986ce24a4d4fe20733265a29df0a04d7bbc9e",
+        "task_id_hashes": [
+          "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-12301/6e2f83b47df6c644-length_matched_neutral.jsonl",
+        "sha256": "73478dda465514f1b01ddef935b372505b20466e2e8af655f5628b3b3735a346",
+        "task_id_hashes": [
+          "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b"
+        ]
+      },
+      {
+        "event_count": 24,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-12301/9e5a44ef3b69a7be-length_matched_neutral.jsonl",
+        "sha256": "c1e2b735ddd18eed63cd2d2964f0d9c3ebce03cdbf0899c6d1666892656f4495",
+        "task_id_hashes": [
+          "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60"
+        ]
+      },
+      {
+        "event_count": 15,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-12301/a0889339d18f5e7e-length_matched_neutral.jsonl",
+        "sha256": "02ee7a312d810641940c583962343a217c1209e60f23be9acb65031f912a2350",
+        "task_id_hashes": [
+          "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-12301/c42b73747fd65b13-length_matched_neutral.jsonl",
+        "sha256": "df4555af248f1f1863eca5d549b064c33c7c9647f27f50bfd22a2e751b286580",
+        "task_id_hashes": [
+          "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+        ]
+      },
+      {
+        "event_count": 19,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-18925/6e2f83b47df6c644-trace2skill_compiled_procedure.jsonl",
+        "sha256": "d4ea83c7a20aa566de240e11d0150c1d523c02ff78f41aec4a56437e85f36b30",
+        "task_id_hashes": [
+          "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b"
+        ]
+      },
+      {
+        "event_count": 19,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-18925/9e5a44ef3b69a7be-trace2skill_compiled_procedure.jsonl",
+        "sha256": "3a0e8346483fd8debfded2fa724ee94d9eb44cbc843856e68c592b3e6cf4c7fd",
+        "task_id_hashes": [
+          "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60"
+        ]
+      },
+      {
+        "event_count": 15,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-18925/a0889339d18f5e7e-trace2skill_compiled_procedure.jsonl",
+        "sha256": "7726d80772245db3f9bec56a965c94cd9c3f5d62ea12e1275d8636c4b53f1640",
+        "task_id_hashes": [
+          "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58"
+        ]
+      },
+      {
+        "event_count": 19,
+        "path": "/private/tmp/defog-codex-docker-audit-seed-430000-18925/c42b73747fd65b13-trace2skill_compiled_procedure.jsonl",
+        "sha256": "b6df1b474305382c07002d99e263179b399435ff2a43616eb23db4fd7c5f8efb",
+        "task_id_hashes": [
+          "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+        ]
+      }
+    ],
+    "task_count": 4,
+    "task_id_hashes": [
+      "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b",
+      "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60",
+      "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58",
+      "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+    ]
+  },
+  "schema_version": "frankengate-trace2skill-source-replay-overlap-v1",
+  "source": {
+    "directories": [
+      "/private/tmp/defog-codex-broker-audit-seed-310000-69282"
+    ],
+    "files": [
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/6e2f83b47df6c644-formatting_placebo.jsonl",
+        "sha256": "8279872b9d1d7c3bd39700bdff55f7185225c04e38eb87ef649ab7a498289441",
+        "task_id_hashes": [
+          "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/6e2f83b47df6c644-no_skill.jsonl",
+        "sha256": "bbc08d4db0813c82a14c2b08187aab671495ca3fdf1aad203727616fcb356420",
+        "task_id_hashes": [
+          "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/6e2f83b47df6c644-trace_mined_terminal_discipline.jsonl",
+        "sha256": "7862c821fc4364242de7754b595e6bc8c30610a1e6a63f9f99770a125ac31e37",
+        "task_id_hashes": [
+          "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b"
+        ]
+      },
+      {
+        "event_count": 24,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/9e5a44ef3b69a7be-formatting_placebo.jsonl",
+        "sha256": "c79f3c8a64e846bdaa8167c2e20a844c0c93d31275fa1a774e2e45bf323e249c",
+        "task_id_hashes": [
+          "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60"
+        ]
+      },
+      {
+        "event_count": 19,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/9e5a44ef3b69a7be-no_skill.jsonl",
+        "sha256": "b4f38a8b1102de6833804820ef37ba381b475fcfa856e02e477f320a07830bf5",
+        "task_id_hashes": [
+          "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/9e5a44ef3b69a7be-trace_mined_terminal_discipline.jsonl",
+        "sha256": "33150da0689601b2ebd149f161a554b3ca1cab3389499b4f14820be85e566050",
+        "task_id_hashes": [
+          "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/a0889339d18f5e7e-formatting_placebo.jsonl",
+        "sha256": "8e1566b64eb1797e0a18dde713e6979b7b21c02dffa974cdd57e0a7f902e2891",
+        "task_id_hashes": [
+          "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58"
+        ]
+      },
+      {
+        "event_count": 11,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/a0889339d18f5e7e-no_skill.jsonl",
+        "sha256": "0127bf53e5a99633ffcb11a7c09a242e60106592028e7e73d005e3cbafa561ab",
+        "task_id_hashes": [
+          "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/a0889339d18f5e7e-trace_mined_terminal_discipline.jsonl",
+        "sha256": "16432396f03751d81d342957f7f43b779b6efcc8be86a0a216fff79cb9fa7947",
+        "task_id_hashes": [
+          "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/c42b73747fd65b13-formatting_placebo.jsonl",
+        "sha256": "0bd38cca241f035800979ae61daf5bd19850785732917ca5f7c9475ef2f9d8ff",
+        "task_id_hashes": [
+          "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/c42b73747fd65b13-no_skill.jsonl",
+        "sha256": "88fd7acb836872e23c99bd4e9aa4551f6e66c8d96e0d418ef2e99c44fcf3e061",
+        "task_id_hashes": [
+          "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+        ]
+      },
+      {
+        "event_count": 14,
+        "path": "/private/tmp/defog-codex-broker-audit-seed-310000-69282/c42b73747fd65b13-trace_mined_terminal_discipline.jsonl",
+        "sha256": "a728d3000c81f1f3d27d166df2ba439c1dae59c7f7c00d002fbecbcab212e182",
+        "task_id_hashes": [
+          "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+        ]
+      }
+    ],
+    "task_count": 4,
+    "task_id_hashes": [
+      "6e2f83b47df6c644372b9e680d629df59ec74648dd58420a0679f9150b5aae5b",
+      "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60",
+      "a0889339d18f5e7ed88526ff0235591580040fa86d1d6dbfe8e9aa1f7958fa58",
+      "c42b73747fd65b139f8a837e84af57b3a344d637a83d539178247e2147017c7a"
+    ]
+  }
+}

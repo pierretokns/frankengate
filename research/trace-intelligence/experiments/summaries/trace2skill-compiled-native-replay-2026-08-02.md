@@ -66,5 +66,8 @@ The useful boundary is therefore:
 * Merged isolated receipt: `experiments/results/defog-codex-frontier-native-trace2skill-car-to-broker-seed-440000-merged-2026-08-02.json`
 * Independent verification: `experiments/results/defog-codex-frontier-native-trace2skill-car-to-broker-seed-440000-merged-independent-verification-2026-08-02.json`
 * Aggregate: `experiments/results/trace2skill-car-to-broker-native-seed-440000-aggregate-2026-08-02.json`
+* Overlap gate (contaminated 430000): `experiments/results/trace2skill-overlap-audit-contaminated-2026-08-02.json`
+* Overlap gate (contaminated sequential prefix): `experiments/results/trace2skill-overlap-audit-sequential-prefix-2026-08-02.json`
+* Overlap gate (authoritative disjoint replay): `experiments/results/trace2skill-overlap-audit-car-to-broker-2026-08-02.json`
 
 All raw trajectories remain outside the repository.

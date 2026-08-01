@@ -381,7 +381,7 @@ def run_pilot(
         "schema_version": SCHEMA_VERSION,
         "classification": (
             "family_disjoint_transfer"
-            if protocol_remediation_id.startswith("family-disjoint")
+            if "family-disjoint" in protocol_remediation_id
             else "domain_valid_visible_selection_pilot"
         ),
         "dataset": {

@@ -15,6 +15,9 @@ from pathlib import Path
 from typing import Any
 
 
+SCHEMA_VERSION = "frankengate-trace2skill-source-replay-overlap-v1"
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -25,6 +28,27 @@ def sha256_file(path: Path) -> str:
 
 def sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def validate_zero_overlap_receipt(value: dict[str, Any]) -> dict[str, Any]:
+    """Validate a sidecar receipt before a result may claim disjoint transfer.
+
+    The receipt is intentionally aggregate-only. A zero-overlap verdict is a
+    leakage prerequisite, not a quality or causal-success claim.
+    """
+    if value.get("schema_version") != SCHEMA_VERSION:
+        raise ValueError("unexpected source/replay overlap receipt schema")
+    if value.get("contaminated") is not False:
+        raise ValueError("source/replay task overlap contaminates transfer")
+    if value.get("overlap_task_count") != 0:
+        raise ValueError("source/replay overlap count must be zero")
+    for side in ("source", "replay"):
+        section = value.get(side)
+        if not isinstance(section, dict) or not isinstance(section.get("task_count"), int):
+            raise ValueError(f"{side} overlap receipt is missing task count")
+        if section["task_count"] <= 0:
+            raise ValueError(f"{side} overlap receipt has no task IDs")
+    return value
 
 
 def scan(paths: list[Path]) -> tuple[set[str], list[dict[str, Any]]]:
@@ -58,7 +82,7 @@ def run(source_dirs: list[Path], replay_dirs: list[Path]) -> dict[str, Any]:
     replay_ids, replay_files = scan(replay_dirs)
     overlap = sorted(source_ids & replay_ids)
     return {
-        "schema_version": "frankengate-trace2skill-source-replay-overlap-v1",
+        "schema_version": SCHEMA_VERSION,
         "source": {
             "directories": [str(path.resolve()) for path in source_dirs],
             "files": source_files,
