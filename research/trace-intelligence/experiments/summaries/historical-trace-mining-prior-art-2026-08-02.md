@@ -32,6 +32,21 @@ loop that aligns heterogeneous agent traces, artifacts, latent intent and
 friction, temporal skill updates, domain-specific retrieval, and replayable
 evaluation with human/SME adjudication.
 
+### New adjacent system: Google Science One / ScientistOne
+
+[Science One](https://research.google/blog/science-one-framework-a-verifiable-autonomous-research-framework-via-chain-of-evidence/)
+and its [ScientistOne paper](https://arxiv.org/abs/2605.26340) are the closest
+recent reference for the *evidence layer*, not for corporate trace mining. They
+make every research claim point to a concrete source artifact, retain raw
+evaluator outputs from isolated explore/exploit branches, and audit score
+reproducibility, specification violations, reference validity, and
+method–code alignment. We should adapt that contract to trace-derived insights,
+skill candidates, and eval candidates. It does not solve latent enterprise
+intent, corporate alias discovery, embedding adaptation, or prove that a
+trace-mined skill transfers; those remain our empirical questions. The detailed
+mapping and required receipt fields are in
+`experiments/summaries/science-one-chain-of-evidence-adaptation-2026-08-02.md`.
+
 - [Anthropic Claude Code expertise analysis](https://www.anthropic.com/research/claude-code-expertise)
   and [Anthropic internal usage analysis](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic)
   infer task expertise/modes and trouble from transcript structure, prompts,

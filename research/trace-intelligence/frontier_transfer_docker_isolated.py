@@ -124,7 +124,7 @@ def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str,
         for task in TASKS:
             verify += ["--task-id", task]
         subprocess.run(verify, cwd=ROOT, check=True, timeout=600)
-        return {"seed": seed, "result": str(result), "verification": str(verification), "database_container": container, "database_port": port, "proxy_port": proxy_port, "arms": list(arms), "task_mutation": task_mutation, "harness": harness}
+        return {"seed": seed, "result": str(result), "verification": str(verification), "raw_audit_dir": str(audit), "verification_audit_dir": str(verify_audit), "database_container": container, "database_port": port, "proxy_port": proxy_port, "arms": list(arms), "task_mutation": task_mutation, "harness": harness}
     finally:
         if proxy is not None:
             proxy.terminate()
