@@ -198,13 +198,27 @@ def build_audit() -> dict[str, Any]:
             "open_gate": "The overall program remains active until the research gates above close; publication mechanics themselves are functioning.",
         },
     ]
+    # Keep the unresolved program gates explicit even when the upstream
+    # combined-evidence matrix has no legacy ``requirements_still_open``
+    # field.  An empty list here would contradict ``active_incomplete`` and
+    # make a machine-readable audit appear complete by accident.
+    open_requirements = [
+        "CMU publisher approval and trajectory metrics",
+        "positive causal skill utility and release-gated optimizer arms beyond completed controls",
+        "semantic Dream/procedure utility and changed-system outcome evaluation",
+        "prospective enterprise task outcomes and human labels",
+        "managed Aurora semantics, extension compatibility, concurrency, and scale behavior",
+        "consented minimum-cohort human outcome labels for cross-user analysis",
+        "cross-user collaboration utility and consent outcomes",
+        "matched SkillLearnBench and Recovery-Bench intervention outcomes",
+    ]
     return {
         "schema_version": "frankengate-program-scope-audit-v1",
         "overall_status": "active_incomplete",
         "matrix_schema_version": matrix.get("schema_version"),
         "program_audit_schema_version": program.get("schema_version"),
         "requirements": requirements,
-        "open_requirements": program.get("requirements_still_open", []),
+        "open_requirements": open_requirements,
         "claim_boundary": {
             "completion_confirmed": False,
             "causal_enterprise_utility_confirmed": False,

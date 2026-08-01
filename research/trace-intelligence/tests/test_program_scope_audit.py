@@ -13,6 +13,7 @@ class ProgramScopeAuditTests(unittest.TestCase):
         self.assertEqual(result["overall_status"], "active_incomplete")
         self.assertFalse(result["claim_boundary"]["completion_confirmed"])
         self.assertGreaterEqual(len(result["requirements"]), 6)
+        self.assertGreater(len(result["open_requirements"]), 0)
 
     def test_cmU_and_aurora_gates_are_not_silently_closed(self):
         result = audit.build_audit()
