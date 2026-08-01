@@ -115,6 +115,22 @@
         },
         {
           "exists": true,
+          "path": "experiments/results/rho-upstream-hermetic-audit-2026-08-01.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/agentrx-independent-static-audit-2026-07-31.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/skillgen-upstream-mechanics-audit-2026-08-01.json"
+        },
+        {
+          "exists": true,
+          "path": "experiments/results/alfworld-codex-four-family-35step-interrupted-2026-08-02.json"
+        },
+        {
+          "exists": true,
           "path": "experiments/results/natural-released-procedure-2026-08-02.json"
         },
         {
@@ -183,7 +199,7 @@
         }
       ],
       "id": "public_trace_and_concept_audit",
-      "open_gate": "Natural release lineage is exercised; the corrected meaningful-trace Luna sample passed 3/4 structural proposal gates after excluding empty/malformed fixtures, while the earlier mixed sample passed 1/3. The frontier Luna SkillOpt checkpoint also produced zero wins for no-skill, placebo, and candidate across four previously unused ALFWorld families at a 12-step horizon, and a fair-horizon one-task follow-up remained zero-win at 35 steps; independent replay verification passed both. These results establish protocol/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
+      "open_gate": "Natural release lineage is exercised; the corrected meaningful-trace Luna sample passed 3/4 structural proposal gates after excluding empty/malformed fixtures, while the earlier mixed sample passed 1/3. RHO targeted mechanics passed 29/29 while its full hermetic suite has typed failures; AgentRx static artifacts have trigger/compile defects; SkillGen compile/import, persistence, routing, and paired accounting mechanics pass but efficacy is unverified. The frontier Luna SkillOpt checkpoint also produced zero wins for no-skill, placebo, and candidate across four previously unused ALFWorld families at a 12-step horizon, and a fair-horizon one-task follow-up remained zero-win at 35 steps; independent replay verification passed both. A further 35-step four-family Codex attempt was interrupted and explicitly unscored. These results establish protocol/grounding mechanics only; semantic task utility and enterprise-labeled concept transfer remain unmeasured.",
       "requirement": "Audit public Hugging Face traces and Dreams, Memory Palace, Hermes, Jeopard, SkillOpt, ReasoningBank, and RL concepts.",
       "status": "natural_release_mechanics_proven_utility_unproven"
     },
@@ -342,7 +358,7 @@
           "branch": "codex/trace-intelligence-academic-program"
         },
         {
-          "head": "72b814035075dd97074ae02c712a4d62af65b823"
+          "head": "d8ea2cba99bad74dccb2a7daa076327d35bd65e7"
         },
         {
           "remote": "https://github.com/pierretokns/frankengate.git"
