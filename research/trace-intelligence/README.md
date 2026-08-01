@@ -38,6 +38,30 @@ It records the program as active/incomplete: local mechanics and publication
 are proven, while CMU raw access, managed Aurora operations, and causal
 enterprise outcomes remain open.
 
+## Historical Claude/Codex mining
+
+The historical-log work is tracked in GitHub epic
+[#125](https://github.com/pierretokns/frankengate/issues/125) and its
+friction, intent, benchmark, and review subissues. The native Claude adapter
+([`native_history_friction_mining.py`](native_history_friction_mining.py))
+and Codex rollout adapter
+([`codex_history_friction_mining.py`](codex_history_friction_mining.py)) keep
+structured executor outcomes separate from text-level error markers, preserve
+native provenance, and emit content-free aggregate receipts.
+
+The Claude screen covers 28 public histories, 413 user prompts, 4,264 tool
+calls, and 269 structured tool-result errors (6.31%); the text scanner would
+have called 762 results errors. The Codex screen covers 34 small public
+sessions, 3,182 function calls, and 255 non-zero exit-code outputs versus 535
+keyword markers. These are detector screens, not friction, satisfaction,
+intent, or skill labels. The next required gate is blinded episode
+adjudication stratified by executor outcome, correction/retry/rephrase, and
+clean controls, followed by replayable-eval promotion only when an expected
+artifact and validator exist. See the Claude
+[`summary`](experiments/summaries/native-history-friction-tracelab-2026-08-02.md)
+and Codex
+[`summary`](experiments/summaries/codex-history-friction-public-local-2026-08-02.md).
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
