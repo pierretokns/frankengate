@@ -115,6 +115,12 @@ and 590 recurring tool-call forms spanning multiple project labels. It still
 omits tool outputs, outcomes, and a second principal, so it cannot validate
 known-good artifacts or cross-user transfer.
 
+The [`DataClaw friction Luna calibration`](experiments/summaries/dataclaw-friction-luna-calibration-2026-08-04.md)
+adds a small silver-label check: 16/16 calls were valid, 7/8 rows agreed on
+repeat, and neutral controls were consistently productive. Broad friction
+keywords still over-flagged some productive or ambiguous messages, so this is
+a review-queue signal rather than a friction label or causal outcome.
+
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
 deterministic pass found 15,391 unique terms, 666 acronym forms, and 191
