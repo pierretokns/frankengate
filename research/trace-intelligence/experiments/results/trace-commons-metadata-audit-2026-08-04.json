@@ -1,0 +1,139 @@
+{
+  "branch_count": 9,
+  "content_policy": "No transcript, prompt, tool argument, or response content is emitted.",
+  "event_type_counts": {
+    "ai-title": 1168,
+    "assistant": 7499,
+    "attachment": 1138,
+    "file-history-snapshot": 953,
+    "last-prompt": 1124,
+    "mode": 338,
+    "permission-mode": 264,
+    "pr-link": 2,
+    "queue-operation": 642,
+    "system": 188,
+    "user": 4675
+  },
+  "explicit_identity_key_counts": {},
+  "file_count": 28,
+  "key_presence_counts": {
+    "aiTitle": 1168,
+    "apiErrorStatus": 3,
+    "attachment": 1138,
+    "attributionMcpServer": 157,
+    "attributionMcpTool": 157,
+    "attributionSkill": 354,
+    "cause": 14,
+    "compactMetadata": 11,
+    "content": 73,
+    "cwd": 13500,
+    "durationMs": 131,
+    "entrypoint": 13500,
+    "error": 47,
+    "errorDetails": 1,
+    "gitBranch": 13500,
+    "healsDistinctCarrier": 1,
+    "interruptedMessageId": 2,
+    "isApiErrorMessage": 8,
+    "isCompactSummary": 11,
+    "isMeta": 163,
+    "isSidechain": 13500,
+    "isSnapshotUpdate": 953,
+    "isVisibleInTranscriptOnly": 11,
+    "lastPrompt": 1121,
+    "leafUuid": 1124,
+    "level": 54,
+    "logicalParentUuid": 11,
+    "maxRetries": 40,
+    "mcpMeta": 1,
+    "message": 12174,
+    "messageCount": 131,
+    "messageId": 953,
+    "mode": 338,
+    "operation": 642,
+    "origin": 13,
+    "parentUuid": 13500,
+    "permissionMode": 618,
+    "prNumber": 2,
+    "prRepository": 2,
+    "prUrl": 2,
+    "promptId": 4675,
+    "promptSource": 176,
+    "requestId": 7496,
+    "retryAttempt": 40,
+    "retryInMs": 40,
+    "sessionId": 17038,
+    "slug": 3856,
+    "snapshot": 953,
+    "sourceToolAssistantUUID": 4262,
+    "sourceToolUseID": 5,
+    "subtype": 188,
+    "timestamp": 14144,
+    "toolUseResult": 4262,
+    "type": 17991,
+    "userType": 13500,
+    "uuid": 13500,
+    "version": 13500
+  },
+  "line_count": 17991,
+  "normalized_project_count": 50,
+  "projects_with_multiple_sessions": {
+    "/Users/USER/ComparIA": [
+      "2965219c-42ad-45af-889c-4581ecbe0103",
+      "89cf9e13-a4bd-4cf9-9486-7c89737bec1b",
+      "af5c09fc-1011-4f39-b0f5-980abacbabfc"
+    ],
+    "D:/BentoFolio": [
+      "11ef2190-67e2-4707-8212-ab12ebffdbc2",
+      "d4c4d47d-642c-4c26-a866-51ab85587896"
+    ],
+    "D:/DMLS": [
+      "4222016d-1932-4abb-94b3-463203bd8876",
+      "a20a4070-6246-4e9e-adf6-f38b0c1dc3fa"
+    ],
+    "D:/DMLS/build": [
+      "4222016d-1932-4abb-94b3-463203bd8876",
+      "a20a4070-6246-4e9e-adf6-f38b0c1dc3fa"
+    ],
+    "D:/Epilog": [
+      "479c5e9f-a299-457f-8459-5948adf8aa8e",
+      "c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+    ],
+    "D:/NephilimOS": [
+      "17c2cf98-e64a-43c6-932e-fa7efcade358",
+      "f93127ef-dec9-4d58-964b-ee660964ec4d"
+    ],
+    "D:/Yggdrasil": [
+      "39082932-131c-40a9-872d-1d3ac8ed1fd6",
+      "92833a43-c30d-4b44-8447-c32ee17d6e6e"
+    ],
+    "d:/DMLS": [
+      "4222016d-1932-4abb-94b3-463203bd8876",
+      "a20a4070-6246-4e9e-adf6-f38b0c1dc3fa"
+    ],
+    "d:/Epilog": [
+      "479c5e9f-a299-457f-8459-5948adf8aa8e",
+      "c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+    ],
+    "d:/NephilimOS": [
+      "17c2cf98-e64a-43c6-932e-fa7efcade358",
+      "f93127ef-dec9-4d58-964b-ee660964ec4d"
+    ],
+    "d:/Yggdrasil": [
+      "39082932-131c-40a9-872d-1d3ac8ed1fd6",
+      "92833a43-c30d-4b44-8447-c32ee17d6e6e"
+    ]
+  },
+  "readiness": {
+    "has_explicit_user_identity": false,
+    "has_project_proxy": true,
+    "has_session_identity": true,
+    "reason": "The export contains session IDs and cwd/gitBranch proxies but no explicit user, tenant, organization, or author identity. A cross-user result would therefore be an unsupported inference; only a session/project-proxy study is admissible.",
+    "supports_cross_user_clustering": false
+  },
+  "schema": "trace-commons-metadata-audit-v1",
+  "session_count": 28,
+  "source_root_name": "trace-commons-full-r1",
+  "tool_event_count": 4262,
+  "user_message_count": 4675
+}

@@ -24,7 +24,7 @@ underpowered, silver-labeled, or missing a downstream outcome.
 | Identifier-aware representations | Structured identifiers/scope are the strongest retrieval lane on the tested public proxy; dense remains useful for candidate recall after filtering. | **Strong diagnostic; not semantic proof** | Blinded SME alias/NIL labels and changed-system replay. | [#124](https://github.com/pierretokns/frankengate/issues/124) |
 | Embedding versus model-based insight mining | MATM action embeddings improved candidate Recall@20 in the separate study; on the identical nine-query reranker pool, lexical and Luna tied while cached embeddings were weaker. The timing rerun took 104.118s total / 11.569s mean for nine frontier calls. | **Cascade mechanics and cost checkpoint** | Use frontier calls selectively; do not put them on the hot path. | SME labels, provider billing, adversarial NILs, and downstream artifact/skill replay. | [#122](https://github.com/pierretokns/frankengate/issues/122) |
 | Trace-mined skill improvement | Disjoint car→broker and 20-task BIRD replays produced null/tie results; the new composable-subplan replay is the first bounded positive signal. | **Causal benefit unproven** | Powered family/time/project holdouts, changed environments, teacher/no-skill/placebo arms, negative transfer, and prospective human outcomes. | [#111](https://github.com/pierretokns/frankengate/issues/111) |
-| Cross-user enterprise insights | No evidence yet that the system can reliably identify who is doing the same work, missing skills, or collaboration opportunities. | **Unproven** | Consent-stable identities, minimum cohorts, human capability labels, outcome studies, and abstention/negative-transfer gates. | [#84](https://github.com/pierretokns/frankengate/issues/84) |
+| Cross-user enterprise insights | No evidence yet that the system can reliably identify who is doing the same work, missing skills, or collaboration opportunities. The 28-session Trace Commons export has session IDs plus `cwd`/`gitBranch` proxies but no explicit user, tenant, organization, author, or account identity; its content-free audit therefore cannot support a cross-user claim. | **Unproven; dataset boundary confirmed** | Consent-stable identities, minimum cohorts, human capability labels, outcome studies, and abstention/negative-transfer gates. | [#84](https://github.com/pierretokns/frankengate/issues/84) |
 | Canonical trace and evidence layer | Native trajectory DAG preserves facts that OTel/ATIF projections omit; Science One contributes a useful chain-of-evidence process. | **Representation/process supported** | More harness conformance and an A/B test of evidence-chain review quality. | [#97](https://github.com/pierretokns/frankengate/issues/97), [#100](https://github.com/pierretokns/frankengate/issues/100) |
 | Publication and partnerships | A defensible contribution is a governed evidence-to-artifact lifecycle, not a claim that generic memory improves agents. CMU, MIT DSAIL, Harvard human-outcome groups, and MIT CLEAR/TRAC are mapped by fit. | **Ready for reproduction outreach** | License-cleared/sealed cohort, preregistration, and partner acceptance. | [#118](https://github.com/pierretokns/frankengate/issues/118) |
 
@@ -40,7 +40,11 @@ underpowered, silver-labeled, or missing a downstream outcome.
    changed-system, cross-user outcome data: whether a mined artifact or skill
    improves the next task without causing wrong-system, stale, unsafe, or
    unauthorized behavior.
-5. The next experiment should therefore hold the database and verifier fixed,
+5. The Trace Commons export does not close the cross-user gap: session and
+   project proxies are present, but principal identity is absent. Treating
+   sessions as people would be an unsupported inference, not an empirical
+   result.
+6. The next experiment should therefore hold the database and verifier fixed,
    compare exact/structured, dense, graph/ontology, frontier, and composable
    arms on a larger family/time/project holdout, and measure both quality and
    operational cost. Adding another database before that comparison would not
