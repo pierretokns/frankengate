@@ -54,7 +54,7 @@ def wait_port(port: int, timeout: float = 90) -> None:
     raise TimeoutError(f"port {port} did not become reachable")
 
 
-def run_seed(seed: int, port: int, proxy_port: int, keep: bool) -> dict[str, str | int]:
+def run_seed(seed: int, port: int, proxy_port: int, keep: bool, arms: tuple[str, ...]) -> dict[str, str | int | list[str]]:
     suffix = f"{os.getpid()}-{seed}"
     container = f"fg-frontier-pg-{suffix}"
     password = f"fg_frontier_pw_{seed}"
@@ -100,6 +100,8 @@ def run_seed(seed: int, port: int, proxy_port: int, keep: bool) -> dict[str, str
                 "--request-timeout-seconds", "120", "--max-generated-tokens-per-episode", "4800",
                 "--protocol-remediation-id", "frontier-codex-family-disjoint-schema-injected-docker-db-multiseed-v1",
                 "--inject-authorized-schema", "--trace-mined-candidate-file", str(TRACE)]
+        for arm in arms:
+            base += ["--arm", arm]
         for task in TASKS:
             base += ["--task-id", task]
         subprocess.run(base, cwd=ROOT, check=True, timeout=1800)
@@ -112,7 +114,7 @@ def run_seed(seed: int, port: int, proxy_port: int, keep: bool) -> dict[str, str
         for task in TASKS:
             verify += ["--task-id", task]
         subprocess.run(verify, cwd=ROOT, check=True, timeout=600)
-        return {"seed": seed, "result": str(result), "verification": str(verification), "database_container": container, "database_port": port, "proxy_port": proxy_port}
+        return {"seed": seed, "result": str(result), "verification": str(verification), "database_container": container, "database_port": port, "proxy_port": proxy_port, "arms": list(arms)}
     finally:
         if proxy is not None:
             proxy.terminate()
@@ -131,11 +133,13 @@ def main() -> int:
     parser.add_argument("--base-proxy-port", type=int, default=18140)
     parser.add_argument("--parallel", type=int, default=2)
     parser.add_argument("--keep-containers", action="store_true")
+    parser.add_argument("--arm", action="append", choices=("no_skill", "formatting_placebo", "length_matched_neutral", "trace_mined_terminal_discipline"))
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     rows = []
+    arms = tuple(args.arm or ("no_skill", "formatting_placebo", "trace_mined_terminal_discipline"))
     with ThreadPoolExecutor(max_workers=args.parallel) as pool:
-        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers): seed for i, seed in enumerate(args.seed)}
+        futures = {pool.submit(run_seed, seed, args.base_port + i, args.base_proxy_port + i, args.keep_containers, arms): seed for i, seed in enumerate(args.seed)}
         for future in as_completed(futures):
             rows.append(future.result())
     payload = {"schema_version": "frankengate-frontier-transfer-docker-isolated-run-v1", "runs": sorted(rows, key=lambda x: int(x["seed"])), "claim_boundary": "Container/database isolation is proven for this run; it does not establish universal skill utility or promotion eligibility."}

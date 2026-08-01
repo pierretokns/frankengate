@@ -6,6 +6,32 @@ question.
 
 ## Closest adjacent work
 
+The closest direct precedents found in the independent survey are older
+enterprise skill-mining and process-mining systems rather than modern agent
+memory libraries:
+
+- [IBM Cross-training and its application to skill mining](https://research.ibm.com/publications/cross-training-and-its-application-to-skill-mining)
+  learns organization skills from electronic communications under train/test
+  distribution shift and explicitly requires a continuously maintained skill
+  catalog.
+- [Mining resource profiles from event logs](https://research.tue.nl/en/publications/mining-resource-profiles-from-event-logs/)
+  mines employee skills, preferences, productivity, and collaboration from
+  event logs and validates the profiles against an industrial organization.
+- [From digital traces to competences](https://www.sciencedirect.com/science/article/pii/S2405896322020018)
+  maps industrial activity traces to mobilized competences. It is direct
+  precedent for trace-to-skill inference, but not for agent trajectories or
+  replayable evals.
+- [Nalanda: a socio-technical graph for enterprise software analytics](https://arxiv.org/abs/2110.08403)
+  links artifacts, repositories, and experts at enterprise scale and reports
+  top-three recommendation accuracy. It is a strong artifact/expert graph
+  building block, not a cross-source chat-trace learning loop.
+
+These works mean Frankengate should not claim first corporate skill mining.
+The plausible gap is narrower and more defensible: a provenance-preserving
+loop that aligns heterogeneous agent traces, artifacts, latent intent and
+friction, temporal skill updates, domain-specific retrieval, and replayable
+evaluation with human/SME adjudication.
+
 - [Anthropic Claude Code expertise analysis](https://www.anthropic.com/research/claude-code-expertise)
   and [Anthropic internal usage analysis](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic)
   infer task expertise/modes and trouble from transcript structure, prompts,

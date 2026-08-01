@@ -10,6 +10,7 @@ import math
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
+from itertools import combinations
 
 
 SCHEMA_VERSION = "frankengate-frontier-transfer-multiseed-aggregate-v1"
@@ -60,7 +61,9 @@ def run(result_paths: list[Path], verification_paths: list[Path]) -> dict[str, A
         if not verification.get("semantic_verification_passed"):
             raise ValueError("independent verification did not pass")
     expected_tasks = tuple(results[0]["dataset"]["task_id_sha256"])
-    expected_arms = {"no_skill", "formatting_placebo", "trace_mined_terminal_discipline"}
+    expected_arms = set(results[0].get("arms", {}))
+    if not expected_arms:
+        raise ValueError("result has no arms")
     rows: dict[tuple[int, str], dict[str, bool]] = {}
     aggregate: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
     seed_bases: list[int] = []
@@ -103,9 +106,8 @@ def run(result_paths: list[Path], verification_paths: list[Path]) -> dict[str, A
         "independent_verifications": len(verifications),
         "aggregate_by_arm": {arm: dict(values) for arm, values in sorted(aggregate.items())},
         "paired_comparisons": [
-            _pairwise(rows, "trace_mined_terminal_discipline", "formatting_placebo"),
-            _pairwise(rows, "trace_mined_terminal_discipline", "no_skill"),
-            _pairwise(rows, "formatting_placebo", "no_skill"),
+            _pairwise(rows, left, right)
+            for left, right in combinations(sorted(expected_arms), 2)
         ],
         "claim_boundary": "Matched frontier family-transfer aggregate with independent semantic verification. It estimates this protocol/sample only; it does not establish universal skill utility, embedding benefit, or promotion eligibility without larger preregistered samples and artifact adjudication.",
     }

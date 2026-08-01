@@ -33,6 +33,7 @@ ARM_ADDITIONS = {
         "query, submit that exact attempt; never emit a prose-only response and "
         "never issue another execute_sql after the attempt budget is exhausted."
     ),
+    "length_matched_neutral": "",
 }
 SCHEMA_FIRST_CONTROLLER_PROMPT = (
     " Protocol controller: before any execute_sql call, call describe_schema "
@@ -55,6 +56,15 @@ def _arm_prompt_addition(
     require_schema_before_sql: bool,
     trace_mined_text: str | None = None,
 ) -> str:
+    if arm == "length_matched_neutral":
+        target = len(trace_mined_text or "") or 308
+        sentence = (
+            "For this experiment, keep the response organized, follow the "
+            "stated interaction protocol, and use the supplied interface "
+            "consistently. "
+        )
+        neutral = (sentence * ((target // len(sentence)) + 1))[:target]
+        return (SCHEMA_FIRST_CONTROLLER_PROMPT if require_schema_before_sql else "") + neutral
     return (
         (SCHEMA_FIRST_CONTROLLER_PROMPT if require_schema_before_sql else "")
         + (
@@ -64,6 +74,16 @@ def _arm_prompt_addition(
             else ARM_ADDITIONS[arm]
         )
     )
+
+
+def _arm_classification(arm: str) -> str:
+    if arm == "no_skill":
+        return "baseline"
+    if arm == "formatting_placebo" or arm.endswith("neutral"):
+        return "placebo"
+    if arm == "trace_mined_terminal_discipline":
+        return "trace_mined_candidate"
+    return "additional_control"
 
 
 def _load_trace_mined_candidate(
@@ -111,6 +131,7 @@ def run_pilot(
     require_schema_before_sql: bool = False,
     inject_authorized_schema: bool = False,
     trace_mined_candidate_file: Path | None = None,
+    arms: tuple[str, ...] | None = None,
 ) -> dict[str, Any]:
     factorial._require_external_raw_audit_dir(raw_audit_dir)
     if output.exists():
@@ -123,6 +144,12 @@ def run_pilot(
     tasks = [resolver.resolve(task_id) for task_id in task_ids]
     if not tasks:
         raise factorial.FactorialError("at least one task is required")
+    selected_arms = tuple(arms or ARMS)
+    if not selected_arms or len(set(selected_arms)) != len(selected_arms):
+        raise factorial.FactorialError("arms must be non-empty and unique")
+    unknown_arms = set(selected_arms) - set(ARM_ADDITIONS)
+    if unknown_arms:
+        raise factorial.FactorialError(f"unknown pilot arms: {sorted(unknown_arms)}")
     database_families = {task.database for task in tasks}
     if len(database_families) != 1:
         raise factorial.FactorialError("pilot tasks must share one database family")
@@ -191,7 +218,7 @@ def run_pilot(
                 virtual_key_id=authority.virtual_key_id,
             )
             task_hash = _sha256_text(task.task_id)[:16]
-            for arm in ARMS:
+            for arm in selected_arms:
                 raw_path = raw_audit_dir / f"{task_hash}-{arm}.jsonl"
                 executor = factorial.GovernedPostgresExecutor(
                     dsn=dsn,
@@ -262,7 +289,7 @@ def run_pilot(
 
     runs = [content_free(task, authority_receipt, receipt) for task, authority_receipt, receipt in receipts]
     by_arm: dict[str, Any] = {}
-    for arm in ARMS:
+    for arm in selected_arms:
         rows = [row for row in runs if row["arm"] == arm]
         by_arm[arm] = {
             "tasks": len(rows),
@@ -329,15 +356,29 @@ def run_pilot(
         },
         "arm_artifacts": {
             arm: {
-                "classification": "baseline" if arm == "no_skill" else "placebo" if arm == "formatting_placebo" else "trace_mined_candidate",
+                "classification": _arm_classification(arm),
                 "sha256": _sha256_text(
                     schema_catalog_prompt
                     + _arm_prompt_addition(
                         arm, require_schema_before_sql, trace_mined_text
                     )
                 ),
+                "char_length": len(
+                    schema_catalog_prompt
+                    + _arm_prompt_addition(
+                        arm, require_schema_before_sql, trace_mined_text
+                    )
+                ),
+                "word_count": len(
+                    (
+                        schema_catalog_prompt
+                        + _arm_prompt_addition(
+                            arm, require_schema_before_sql, trace_mined_text
+                        )
+                    ).split()
+                ),
             }
-            for arm in ARMS
+            for arm in selected_arms
         },
         "arms": by_arm,
         "task_runs": runs,
@@ -345,7 +386,8 @@ def run_pilot(
         "claim_boundary": {
             "governed_postgres_executed": True,
             "domain_valid_task_executed": True,
-            "three_arms_executed": len(receipts) == 3 * len(tasks),
+            "arms_executed": list(selected_arms),
+            "all_arms_executed": len(receipts) == len(selected_arms) * len(tasks),
             "causal_skill_benefit_established": False,
             "reason": "This is a visible-selection pilot; no family-disjoint held-out quality estimate or independent verifier comparison is claimed.",
             "next_required": "Rerun after protocol remediation on a family-disjoint fold with sealed outcomes, independent semantic/security verifier, and paired repair/regression analysis.",
@@ -387,6 +429,12 @@ def main() -> int:
     parser.add_argument("--require-schema-before-sql", action="store_true")
     parser.add_argument("--inject-authorized-schema", action="store_true")
     parser.add_argument("--trace-mined-candidate-file", type=Path)
+    parser.add_argument(
+        "--arm",
+        action="append",
+        choices=sorted(ARM_ADDITIONS),
+        help="Override the default arms; repeat once per arm.",
+    )
     args = parser.parse_args()
     result = run_pilot(
         source_root=args.source_root.resolve(strict=True),
@@ -415,6 +463,7 @@ def main() -> int:
             if args.trace_mined_candidate_file is not None
             else None
         ),
+        arms=tuple(args.arm) if args.arm else None,
     )
     print(json.dumps({"status": "ok", "arms": result["arms"], "causal_skill_benefit_established": False}, sort_keys=True))
     return 0
