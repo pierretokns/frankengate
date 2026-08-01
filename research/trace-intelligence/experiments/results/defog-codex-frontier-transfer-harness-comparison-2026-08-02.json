@@ -1,0 +1,195 @@
+{
+  "arms": [
+    "formatting_placebo",
+    "length_matched_neutral",
+    "no_skill",
+    "trace_mined_terminal_discipline"
+  ],
+  "claim_boundary": "Descriptive same-task/arm harness comparison with independent semantic verification. Different seeds and sample size prevent a causal harness ranking or universal skill claim.",
+  "harnesses": [
+    {
+      "arms": {
+        "formatting_placebo": {
+          "authority_valid": 4,
+          "execution_completed": 3,
+          "missing_terminal_action": 0,
+          "outcomes": {
+            "abstained:cannot_answer_with_authorized_data": 1,
+            "semantic_correct": 2,
+            "semantic_incorrect": 1
+          },
+          "policy_accepted": 3,
+          "semantic_correct": 2,
+          "sql_attempts": 4,
+          "strict_answer_shape_correct": 0,
+          "successful_sql_attempts": 4,
+          "tasks": 4,
+          "terminal_fallback_used": 0,
+          "terminal_submissions": 3,
+          "tool_calls": 11,
+          "unauthorized_observation": 0
+        },
+        "length_matched_neutral": {
+          "authority_valid": 4,
+          "execution_completed": 4,
+          "missing_terminal_action": 0,
+          "outcomes": {
+            "semantic_correct": 3,
+            "semantic_incorrect": 1
+          },
+          "policy_accepted": 4,
+          "semantic_correct": 3,
+          "sql_attempts": 4,
+          "strict_answer_shape_correct": 0,
+          "successful_sql_attempts": 4,
+          "tasks": 4,
+          "terminal_fallback_used": 0,
+          "terminal_submissions": 4,
+          "tool_calls": 12,
+          "unauthorized_observation": 0
+        },
+        "no_skill": {
+          "authority_valid": 4,
+          "execution_completed": 4,
+          "missing_terminal_action": 0,
+          "outcomes": {
+            "semantic_correct": 3,
+            "semantic_incorrect": 1
+          },
+          "policy_accepted": 4,
+          "semantic_correct": 3,
+          "sql_attempts": 6,
+          "strict_answer_shape_correct": 0,
+          "successful_sql_attempts": 6,
+          "tasks": 4,
+          "terminal_fallback_used": 0,
+          "terminal_submissions": 4,
+          "tool_calls": 14,
+          "unauthorized_observation": 0
+        },
+        "trace_mined_terminal_discipline": {
+          "authority_valid": 4,
+          "execution_completed": 4,
+          "missing_terminal_action": 0,
+          "outcomes": {
+            "semantic_correct": 4
+          },
+          "policy_accepted": 4,
+          "semantic_correct": 4,
+          "sql_attempts": 4,
+          "strict_answer_shape_correct": 0,
+          "successful_sql_attempts": 4,
+          "tasks": 4,
+          "terminal_fallback_used": 0,
+          "terminal_submissions": 4,
+          "tool_calls": 12,
+          "unauthorized_observation": 0
+        }
+      },
+      "endpoint_scope": "codex-subscription-loopback-proxy",
+      "harness": null,
+      "label": "proxy",
+      "seed_base": 370000,
+      "source_result_sha256": "a08ea52965dfcbfbfd24fdf3f01f705b961134a00615ca95d94fe51dfcb8f20d",
+      "source_verification_sha256": "8c540faeb98a1880724949d22486cbaf0355723aebdcc6eb3e45205b47cb8be8",
+      "task_mutation": {
+        "changed_count": 4,
+        "id": "broker-four-task-renamed-paraphrase-v1",
+        "mapping_sha256": "58f66daff772661ca87b66f4a336e1e2d0b8ebbcd50c0c9999fd969df709bede"
+      }
+    },
+    {
+      "arms": {
+        "formatting_placebo": {
+          "authority_valid": 4,
+          "execution_completed": 4,
+          "missing_terminal_action": 0,
+          "outcomes": {
+            "semantic_correct": 3,
+            "semantic_incorrect": 1
+          },
+          "policy_accepted": 4,
+          "semantic_correct": 3,
+          "sql_attempts": 6,
+          "strict_answer_shape_correct": 0,
+          "successful_sql_attempts": 5,
+          "tasks": 4,
+          "terminal_fallback_used": 0,
+          "terminal_submissions": 4,
+          "tool_calls": 14,
+          "unauthorized_observation": 0
+        },
+        "length_matched_neutral": {
+          "authority_valid": 4,
+          "execution_completed": 4,
+          "missing_terminal_action": 0,
+          "outcomes": {
+            "semantic_correct": 3,
+            "semantic_incorrect": 1
+          },
+          "policy_accepted": 4,
+          "semantic_correct": 3,
+          "sql_attempts": 6,
+          "strict_answer_shape_correct": 1,
+          "successful_sql_attempts": 5,
+          "tasks": 4,
+          "terminal_fallback_used": 0,
+          "terminal_submissions": 4,
+          "tool_calls": 14,
+          "unauthorized_observation": 0
+        },
+        "no_skill": {
+          "authority_valid": 4,
+          "execution_completed": 4,
+          "missing_terminal_action": 0,
+          "outcomes": {
+            "semantic_correct": 2,
+            "semantic_incorrect": 2
+          },
+          "policy_accepted": 4,
+          "semantic_correct": 2,
+          "sql_attempts": 5,
+          "strict_answer_shape_correct": 0,
+          "successful_sql_attempts": 5,
+          "tasks": 4,
+          "terminal_fallback_used": 0,
+          "terminal_submissions": 4,
+          "tool_calls": 13,
+          "unauthorized_observation": 0
+        },
+        "trace_mined_terminal_discipline": {
+          "authority_valid": 4,
+          "execution_completed": 4,
+          "missing_terminal_action": 0,
+          "outcomes": {
+            "semantic_correct": 2,
+            "semantic_incorrect": 2
+          },
+          "policy_accepted": 4,
+          "semantic_correct": 2,
+          "sql_attempts": 4,
+          "strict_answer_shape_correct": 1,
+          "successful_sql_attempts": 4,
+          "tasks": 4,
+          "terminal_fallback_used": 0,
+          "terminal_submissions": 4,
+          "tool_calls": 12,
+          "unauthorized_observation": 0
+        }
+      },
+      "endpoint_scope": "codex-subscription-direct-cli",
+      "harness": "codex-cli-native-json-v1",
+      "label": "native",
+      "seed_base": 400000,
+      "source_result_sha256": "57c75a5da859fa7212a8d6c2ef197219ac96f4fbcef478ba32b264f758505d2e",
+      "source_verification_sha256": "ad866e905f15d0f0a84791fec6bad7eae585f2347a23099b96e84a598f6117b2",
+      "task_mutation": {
+        "changed_count": 4,
+        "id": "broker-four-task-renamed-paraphrase-v1",
+        "mapping_sha256": "58f66daff772661ca87b66f4a336e1e2d0b8ebbcd50c0c9999fd969df709bede"
+      }
+    }
+  ],
+  "schema_version": "frankengate-frontier-transfer-harness-comparison-v1",
+  "task_count": 4
+}

@@ -733,6 +733,13 @@ completed three-seed aggregate is trace-mined 8/12, no-skill 6/12, and
 length-matched neutral 7/12; trace-versus-neutral risk difference is +.083
 (exact McNemar p=1.0), so the direction is still not promotion evidence.
 
+The [`cross-harness screen`](experiments/summaries/defog-codex-frontier-cross-harness-2026-08-02.md)
+ran the same paraphrase matrix through the HTTP proxy and a direct native
+Codex CLI harness. The proxy's three-seed aggregate was trace 8/12 versus
+neutral 7/12; the native harness was trace 2/4 versus neutral 3/4 and tied
+no-skill at 2/4. This direction reversal closes the “same harness only” gap:
+the artifact is not robust across implementations and remains unpromoted.
+
 The [`Trace Commons full-cohort analysis`](experiments/summaries/trace-commons-full-content-minimized-analysis-2026-08-02.md)
 then attested all 28 public native Claude Code histories byte-for-byte against
 the pinned manifest (17,991 records and 4,264 tool calls) before analysis. The
