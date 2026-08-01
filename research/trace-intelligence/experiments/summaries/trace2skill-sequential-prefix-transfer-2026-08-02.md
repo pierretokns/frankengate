@@ -1,12 +1,13 @@
-# Sequential Trace2Skill-style prefix transfer
+# Sequential Trace2Skill-style prefix transfer: contamination correction
 
 ## Protocol
 
-This run adapts the sequential spirit of SkillLearnBench and SkillFlow. A
-Trace2Skill-style compiler saw only six source JSONL files: two task histories,
-each represented by no-skill, placebo, and trace-mined arms. It then compiled a
-candidate procedure without seeing the two replay task IDs. The candidate was
-replayed on those different task IDs under a fresh native Codex/Postgres run.
+This run was intended to adapt the sequential spirit of SkillLearnBench and
+SkillFlow. A later raw-audit check showed that the six source JSONL files and
+the two replay task IDs were not disjoint: both source and replay included
+broker tasks `2` and `11`. The apparent 2/2 prefix result is therefore
+**contaminated** and cannot support held-out transfer. It remains a useful
+receipt of sequential/compiler plumbing only.
 
 Each arm received a fresh Postgres container, governed role, port, raw-audit
 root, and independent semantic verifier. The controls were no-skill and a
@@ -20,24 +21,24 @@ length-matched neutral prompt.
 | length-matched neutral | 1/2 | 0.50 | 2 | 0 |
 | prefix-compiled procedure | 2/2 | 1.00 | 4 | 0 |
 
-The compiled procedure tied no-skill on both held-out tasks and beat the
-neutral control on one of two paired episodes. Exact paired McNemar p=1.0.
+The contaminated compiled procedure tied no-skill on both episodes and beat the
+neutral control on one. Exact paired McNemar p=1.0.
 Independent semantic recomputation passed for all six episodes; authority was
 valid for all six and unauthorized observations were zero.
 
 ## Interpretation
 
-This is evidence of **transferability**, not evidence of incremental utility:
-the procedure compiled from a small prefix did not collapse on new tasks, but
-it did not beat the no-skill agent. It also used more SQL attempts/tool calls
-than no-skill (4 versus 3), so the current sample does not support an
-efficiency claim.
+This is not evidence of transferability because of source/replay overlap. It
+does not support incremental utility or efficiency: the compiled arm used more
+SQL attempts/tool calls than no-skill (4 versus 3).
 
 The result reinforces the literature's distinction between skill quality,
 trajectory quality, and changed-task outcome. A candidate can be well-grounded
 and transferable while adding no measurable success benefit. Promotion remains
-false until a larger sequential cohort shows lift over both no-skill and
-neutral controls, including negative-transfer families and cost/latency gates.
+false until a genuinely disjoint sequential cohort shows lift over both
+no-skill and neutral controls, including negative-transfer families and
+cost/latency gates. The corrected disjoint car-to-broker replay is the
+authoritative null result for this compiler family.
 
 ## Receipts
 

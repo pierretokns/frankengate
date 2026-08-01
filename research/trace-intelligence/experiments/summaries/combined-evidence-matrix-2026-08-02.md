@@ -113,16 +113,17 @@ four-stage hard-negative/embedding protocol is documented in
 
 ## Trace2Skill-style compiled procedure replay
 
-A new bounded native replay compiled a candidate from 18 governed Defog JSONL
-files using three independent frontier analyst roles and a separate
-consolidator. On one fresh seed with a new database/verifier per arm, the
-compiled procedure scored 4/4 semantic-correct versus 3/4 for no-skill,
-formatting placebo, and length-matched neutral. All 16 episodes passed
+An audit corrected the first apparent positive: the 430000 compiler source and
+replay shared the same four broker task IDs, so that result is contaminated
+development smoke and cannot support transfer. The authoritative disjoint
+replay compiled from six car-dealership traces and evaluated on four different
+broker tasks. No-skill and the compiled procedure both scored 3/4; the neutral
+control scored 3/4 and the formatting placebo 4/4. All 16 episodes passed
 independent semantic recomputation, authority was valid, and unauthorized
-observations were zero. Each paired comparison had one compiled-arm win and
-three ties (exact McNemar p=1.0). This is the strongest positive directional
-skill-mining result so far, but it is still a four-task, one-seed pilot; the
-candidate is not promotion-authorized. Full receipts and boundaries are in
+observations were zero. The compiled arm tied no-skill and neutral on every
+paired episode (exact McNemar p=1.0). Compilation and governed replay are
+supported mechanics; cross-database skill utility is not. Full correction and
+receipts are in
 `experiments/summaries/trace2skill-compiled-native-replay-2026-08-02.md`.
 
 The broader lifecycle comparison now includes SkillLearnBench, SkillFlow,
@@ -144,14 +145,12 @@ not a generic claim that enterprise memory improves agents.
 
 ## Sequential prefix transfer
 
-A SkillLearnBench/SkillFlow-style sequential test compiled a procedure from
-six source files covering two task histories, then replayed it on two different
-task IDs. The prefix-compiled arm tied no-skill at 2/2 semantic-correct and
-beat the length-matched neutral at 2/2 versus 1/2 (exact paired p=1.0). All
-six episodes passed independent semantic verification, authority was valid, and
-unauthorized observations were zero. The compiled arm used more SQL attempts,
-so this demonstrates transferability without incremental utility or efficiency
-benefit. Full boundary:
+A raw-audit correction found that the earlier sequential-prefix source and
+replay shared broker task IDs `2` and `11`; its apparent 2/2 result is
+contaminated and cannot support held-out transfer. The disjoint car-to-broker
+replay is the authoritative null: the compiled procedure tied no-skill and
+length-matched neutral at 3/4 while the formatting placebo scored 4/4. Full
+boundary and correction:
 `experiments/summaries/trace2skill-sequential-prefix-transfer-2026-08-02.md`.
 
 The publication/partner recommendation is now explicit: first reproduce the
