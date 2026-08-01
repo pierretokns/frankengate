@@ -69,6 +69,13 @@ useful detector failure mode: global error density mistakes long productive
 exploration for friction. Episode ordering, recovery, abandonment, terminal
 outcome, and adjudicated labels are required.
 
+The [`NL2SQL alias baseline`](experiments/summaries/nl2sql-alias-mining-cohort-2026-08-02.md)
+uses 314 pinned Defog PostgreSQL rows and links only exact morphological surface
+variants to identifiers in gold SQL. It found 492 links and 13 cross-database
+collision classes. This is evidence that alias/collision mining has a measurable
+lexical starting point, not evidence of semantic alias truth. Human/frontier
+adjudication and same-surface/different-system hard negatives remain open.
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),

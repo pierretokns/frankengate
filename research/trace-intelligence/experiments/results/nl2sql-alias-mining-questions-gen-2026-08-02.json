@@ -1,0 +1,97 @@
+{
+  "ambiguous_surface_hashes": 12,
+  "claim_boundary": "Conservative exact-morphology lower bound only. Hashes identify collision classes without exposing questions or schema identifiers; semantic aliases, NIL mentions, and business meaning require review.",
+  "cross_db_ambiguity_hashes": 12,
+  "rows": 210,
+  "rows_with_qualified_or_table_sql": 210,
+  "same_db_ambiguity_hashes": 0,
+  "schema_version": "nl2sql-alias-mining-v1",
+  "source": {
+    "path": "questions_gen_postgres.csv",
+    "raw_content_committed": false
+  },
+  "surface_to_identifier_links": 325,
+  "top_surface_hashes_by_distinct_canonical": [
+    {
+      "distinct_canonical": 4,
+      "surface_hash": "4cb4ea25583c2564"
+    },
+    {
+      "distinct_canonical": 4,
+      "surface_hash": "82a3537ff0dbce7e"
+    },
+    {
+      "distinct_canonical": 3,
+      "surface_hash": "4ba69735ca53765e"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "112895d7af6c1253"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "11a62c23412b7747"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "6e8e9fd7a26ff87b"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "7dfb4cf67742cb06"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "81dd6b775afcccb6"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "8409421872147ea8"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "a5c7d1719e284f2c"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "aaf2320646108059"
+    },
+    {
+      "distinct_canonical": 2,
+      "surface_hash": "fb0fbab404806456"
+    },
+    {
+      "distinct_canonical": 1,
+      "surface_hash": "013f54400c82da08"
+    },
+    {
+      "distinct_canonical": 1,
+      "surface_hash": "03b6b3e9163de296"
+    },
+    {
+      "distinct_canonical": 1,
+      "surface_hash": "06f8382071a4109d"
+    },
+    {
+      "distinct_canonical": 1,
+      "surface_hash": "0dbdc4fb0fbb8e19"
+    },
+    {
+      "distinct_canonical": 1,
+      "surface_hash": "0f82aca66af91493"
+    },
+    {
+      "distinct_canonical": 1,
+      "surface_hash": "11d40417959631d3"
+    },
+    {
+      "distinct_canonical": 1,
+      "surface_hash": "1242ab99f6773a84"
+    },
+    {
+      "distinct_canonical": 1,
+      "surface_hash": "12886f9d00055adf"
+    }
+  ],
+  "unique_surface_hashes": 107
+}
