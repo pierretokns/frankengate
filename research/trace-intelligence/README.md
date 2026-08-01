@@ -1730,6 +1730,12 @@ transfer. Its machine-readable receipt is
 [`recent-replay-dataset-fit-audit-2026-08-05.json`](experiments/results/recent-replay-dataset-fit-audit-2026-08-05.json),
 and the audit is executable with
 [`recent_replay_dataset_fit_audit.py`](recent_replay_dataset_fit_audit.py).
+
+The [`Recovery-Bench failure-signal mining`](experiments/summaries/recovery-bench-failure-signals-2026-08-05.md)
+experiment is the first direct test of the “cheap signals select reusable
+recovery candidates” hypothesis on that failure set. Signals beat random
+selection on recurring-mode concentration, but a simple trajectory-length
+baseline did better; no recovery skill or repair utility is claimed.
 The exact 62-failure intervention cohort is captured without raw trace content
 in [`recovery-bench-initial-failure-set-2026-08-05.json`](experiments/manifests/recovery-bench-initial-failure-set-2026-08-05.json)
 and can be regenerated with
