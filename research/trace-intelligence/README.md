@@ -94,6 +94,14 @@ of corporate fine-tuning: the silver labels and simple metric learner are not
 enterprise alias truth. It does establish that custom adaptation must earn its
 promotion on adjudicated hard negatives and downstream artifact utility.
 
+The [`artifact capsule reuse lab`](experiments/summaries/artifact-capsule-reuse-2026-08-02.md)
+adds the missing executable-capsule mechanic. A parameterized SQL capsule was
+accepted only under its recorded scope, epoch, schema fingerprint, parameter
+contract, freshness, and result shape; stale epoch, wrong scope, expiry,
+parameter mismatch, and schema drift all failed closed. Bound injection-shaped
+parameters were never interpreted as SQL. This is a SQLite mechanics proof,
+not PostgreSQL/Aurora semantic equivalence or artifact utility.
+
 The first independent/composed checkpoint is available in:
 
 - [`trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md`](experiments/summaries/trace-signal-diagnosis-eval-chain-wisp-2026-07-30.md),
