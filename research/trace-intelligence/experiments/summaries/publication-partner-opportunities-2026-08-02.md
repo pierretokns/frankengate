@@ -138,6 +138,26 @@ failure-state replay. Combined with the enterprise hard-negative framework
 framing around **diagnose → compile → replay → promote**, while corporate
 labels and changed-system outcomes remain the novel contribution.
 
+The latest corpus-fit evidence should be included in every outreach packet.
+Across 242 parse-valid BIRD gold queries and 314 parse-valid Defog queries,
+there were zero shared exact normalized templates, one shared typed
+schema-agnostic template, and two shared coarse operator shapes. Every shared
+shape had multiple exact variants, so both structural collision rates were
+`1.0`. This is a dataset-fit result, not a universal negative about artifact
+learning: these public SQL corpora do not contain a compatible cross-system
+artifact library.
+
+The vocabulary ports show the same boundary. Across four independent Claude
+trace cohorts, 217/293 frequent term hashes were unique to one cohort and only
+5 appeared in all four. The contextual acronym port found 40 valid acronym
+hashes and 56 valid acronym/full-form pairs, with no cross-cohort overlap.
+TermSuite/Termolator and AcronymExpansion therefore contribute deterministic,
+auditable review candidates and abstention behavior, not global enterprise
+ontology or embedding-training data. The corresponding receipts are the
+[cross-corpus SQL artifact study](cross-corpus-sql-artifact-signatures-2026-08-09.md),
+[termhood stability study](termhood-cross-cohort-stability-2026-08-09.md), and
+[acronym stability study](acronym-cross-cohort-stability-2026-08-09.md).
+
 ## Latest empirical packet for outreach
 
 The WMH-BIRD bridge now gives the packet a stronger hard-negative story than
@@ -156,6 +176,14 @@ joint study should deliberately add result-preserving alternatives,
 same-surface/different-system pairs, temporal replacements, and NILs. Those
 labels are what distinguish a real enterprise hard-negative contribution from
 ordinary table-surface classification.
+
+The partner-facing claim matrix should keep three questions separate: (1) is a
+candidate representation stable across cohorts, (2) is the candidate
+compatible and independently replayable, and (3) does presenting or compiling
+it improve the next task? The new cross-corpus result is negative on (1) for
+public SQL artifacts; the BIRD replay results are bounded evidence for (2);
+and (3) remains open. A collaboration should not pool these datasets or treat
+structural overlap as a substitute for a consented changed-system cohort.
 
 Tracking remains split by research obligation: [#118](https://github.com/pierretokns/frankengate/issues/118)
 for the authorized changed-system cohort, [#121](https://github.com/pierretokns/frankengate/issues/121)
