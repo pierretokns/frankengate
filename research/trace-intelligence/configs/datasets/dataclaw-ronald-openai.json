@@ -1,0 +1,27 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+  "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+  "license": "MIT (dataset card claim)",
+  "source_url": "https://huggingface.co/datasets/ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+  "source_format": "OpenAI-format JSONL with Claude coding sessions, tool calls, tool definitions, and metadata",
+  "adapter": "dataclaw_openai_artifact_audit_v1",
+  "publication_basis": "Public DataClaw export with a pinned dataset revision and parseable JSONL",
+  "privacy_review": "Local-only analysis; raw transcript content and command arguments are not committed or sent to external models",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "sessions": 436,
+    "projects": 46,
+    "tool_calls": 48779,
+    "complete_home_directory": false,
+    "openai_projection": true,
+    "independent_user": true,
+    "terminal_outcomes_present": false
+  },
+  "admission": "admit_for_local_candidate_generation_and_mechanics_only",
+  "enterprise_transfer": "Requires reviewed same-work/NIL labels, temporal/project-held-out splits, and independent task or artifact outcomes"
+}

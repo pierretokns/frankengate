@@ -348,6 +348,13 @@ review queue, not that either queue is semantically correct. It also avoids
 transmitting user summaries to external models; external adjudication remains
 approval-gated.
 
+The parseable [Ronald OpenAI-format DataClaw audit](dataclaw-ronald-openai-artifact-audit-2026-08-02.md)
+adds a local mechanics result on 436 sessions and 46 projects: prompt lexical
+retrieval reached a `.637` same-project top-1 proxy rate, while tool-signature
+overlap reached `.308`; 342 normalized command shapes recurred across projects.
+This supports using command shapes as review candidates and hard negatives, not
+as same-work labels or reusable artifacts.
+
 ### 8. Friction mining needs structural review, not keyword labels
 
 The corrected native Codex importer found 47,122 user episodes, 228 adjacent
@@ -535,6 +542,7 @@ project, principal, and changed-system holdouts.
 - [DataClaw cross-user artifact transfer](dataclaw-cross-user-artifact-transfer-2026-08-09.md)
 - [DataClaw same-user artifact support](dataclaw-same-user-artifact-support-2026-08-09.md)
 - [DataClaw project adapter](dataclaw-project-adapter-2026-08-09.md)
+- [Ronald OpenAI-format DataClaw artifact audit](dataclaw-ronald-openai-artifact-audit-2026-08-02.md)
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)

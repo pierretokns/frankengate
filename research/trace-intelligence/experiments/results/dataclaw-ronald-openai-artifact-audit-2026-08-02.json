@@ -1,0 +1,59 @@
+{
+  "schema_version": "frankengate-dataclaw-openai-artifact-audit-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "license_claimed": "MIT",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "bytes": 56996260,
+    "raw_content_committed": false,
+    "external_model_calls": false
+  },
+  "cohort": {
+    "sessions": 436,
+    "projects": 46,
+    "total_tool_calls": 48779,
+    "prompt_term_vocabulary": 8053,
+    "prompt_terms_cross_project": 2282
+  },
+  "recurring_artifacts": {
+    "tool_signature": {
+      "unique": 59,
+      "repeated": 40,
+      "cross_project": 37,
+      "max_session_support": 392,
+      "max_project_support": 45
+    },
+    "command_shape": {
+      "unique": 4297,
+      "repeated": 622,
+      "cross_project": 342,
+      "max_session_support": 100,
+      "max_project_support": 19
+    }
+  },
+  "retrieval_proxy": {
+    "lexical_prompt_terms": {
+      "eligible_queries": 420,
+      "positive_queries": 416,
+      "same_project_top1_rate": 0.6370192307692307,
+      "same_project_top1_count": 265
+    },
+    "tool_signature_overlap": {
+      "eligible_queries": 420,
+      "positive_queries": 412,
+      "same_project_top1_rate": 0.308252427184466,
+      "same_project_top1_count": 127
+    }
+  },
+  "claim_boundary": {
+    "content_free_artifact_recurrence_measured": true,
+    "project_labels_used_as_silver_proxies": true,
+    "same_work_established": false,
+    "artifact_correctness_established": false,
+    "skill_gap_or_collaboration_established": false,
+    "promotion_authorized": false,
+    "reason": "Project recurrence and tool-shape overlap are provenance signals, not semantic intent or terminal-outcome labels."
+  },
+  "decision": "Use recurring tool signatures and command shapes only as review-queue candidates. Require semantic labels, authority/schema contracts, and independent replay before artifact promotion."
+}
