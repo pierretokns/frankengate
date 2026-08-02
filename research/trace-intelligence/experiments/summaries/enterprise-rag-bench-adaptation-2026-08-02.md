@@ -33,6 +33,17 @@ The generation recipe is unusually useful for our purposes:
 3. Add realistic distractors: misfiled documents, stale or conflicting
    near-duplicates, drafts, and off-topic material.
 
+The repository's methodology exposes a useful *data-generation* result that
+is easy to miss when only looking at the leaderboard: a naive high-volume
+generation run produced close siblings for more than 40% of documents. The
+authors reduce this collapse with source-specific scaffolds, topic leaves,
+document-count targets, and visibility of nearby filenames. The released
+corpus then applies 5% random shuffling, 3% LLM-guided local misfiling, and a
+separate near-duplicate/update process. These are not measurements of a real
+company's noise rate; they are controllable perturbations we can reuse in a
+Frankengate fixture. See the [generation methodology](https://github.com/onyx-dot-app/EnterpriseRAG-Bench/blob/main/methodology.md)
+for the exact construction stages.
+
 This is a good *controlled world generator*. It is not a sample of real
 employee behavior: the corpus is synthetic, the questions are authored, and it
 has no user principals, correction histories, tool-call trajectories, or
@@ -75,6 +86,13 @@ evidence as reviewable rather than immutable. We should copy that discipline:
 store answer facts, evidence IDs, contradiction/temporal status, and reviewer
 decisions separately. A changed gold set must create a new evaluation version;
 it must never silently rewrite historical trace results.
+
+The benchmark's answer records also separate `expected_doc_ids`, `gold_answer`,
+and atomic `answer_facts`. Its evaluator can revise a gold answer when reviewed
+candidate evidence demonstrates that the original answer is incomplete or
+incorrect. We should borrow the separation, but make revisions append-only and
+reviewer-attributed in Frankengate; an LLM-generated correction is not a
+promotion decision by itself.
 
 ### 4. Metadata-aware retrieval as a first-class arm
 
@@ -176,4 +194,3 @@ cascade finds the right evidence under enterprise-like clutter. It cannot tell
 us whether Frankengate makes people or agents better. That claim remains gated
 on the authorized changed-system replay study already captured in
 `enterprise-trace-learning-pilot-v1.json`.
-
