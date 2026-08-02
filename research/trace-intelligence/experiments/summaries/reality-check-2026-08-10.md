@@ -18,6 +18,7 @@ silver labels, synthetic fixtures, and enterprise outcomes separate.
 | Subplan composition | Two seeds on five broker tasks reached `10/10` versus `5/10` controls | Keep composable subplans as a quarantined/reviewed arm |
 | Older terminology ports | Termhood/acronym ports provide interpretable candidate generation and review signals | Offline scoped term/acronym queues only |
 | Local supervised adaptation | Task-disjoint adapter improved Nomic MRR `.940152→.947917` and Recall@1 `.909091→.931818`, but lowered Recall@5 and did not reduce invalid candidates | Labelled shadow reranker with rollback, not a universal custom embedding |
+| Finance-specialized embedding | On pinned FinanceBench, BalyasnyAI/multilingual-e5-base reached Recall@20 `1.000` / MRR `.8087` versus Qwen3-Embedding `.9933/.7164` and TF-IDF `.6867/.3005`; the same projection through Ollama Nomic fell to `.4533/.1661` | Strong domain-model and serving-identity signal; keep as a governed shadow lane, not proof of corporate trace transfer |
 
 ## What is not proven
 
