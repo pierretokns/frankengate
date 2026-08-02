@@ -1,0 +1,73 @@
+{
+  "arm_summary": {
+    "formatting_placebo": {
+      "candidate_error": 1,
+      "episodes": 40,
+      "exact": 5,
+      "exact_rate": 0.125,
+      "mean_elapsed_ms": 10589.744
+    },
+    "no_skill": {
+      "candidate_error": 1,
+      "episodes": 40,
+      "exact": 8,
+      "exact_rate": 0.2,
+      "mean_elapsed_ms": 10306.155
+    },
+    "trace_mined_procedure": {
+      "candidate_error": 2,
+      "episodes": 40,
+      "exact": 8,
+      "exact_rate": 0.2,
+      "mean_elapsed_ms": 11102.229
+    }
+  },
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "paired_effect_estimates_descriptive": true,
+    "reason": "Forty held-out tasks and independent verification improve power, but the trace-mined procedure has no significant paired lift and remains a single public proxy cohort."
+  },
+  "comparisons": {
+    "trace_mined_procedure_vs_formatting_placebo": {
+      "control_exact": 5,
+      "control_unordered": 5,
+      "control_wins": 0,
+      "exact_two_sided_sign_p": 0.25,
+      "interpretation": "descriptive; no powered causal lift established",
+      "task_count": 40,
+      "ties": 37,
+      "trace_exact": 8,
+      "trace_unordered": 8,
+      "trace_wins": 3,
+      "unordered_control_wins": 0,
+      "unordered_ties": 37,
+      "unordered_trace_wins": 3
+    },
+    "trace_mined_procedure_vs_no_skill": {
+      "control_exact": 8,
+      "control_unordered": 8,
+      "control_wins": 1,
+      "exact_two_sided_sign_p": 1.0,
+      "interpretation": "descriptive; no powered causal lift established",
+      "task_count": 40,
+      "ties": 38,
+      "trace_exact": 8,
+      "trace_unordered": 8,
+      "trace_wins": 1,
+      "unordered_control_wins": 1,
+      "unordered_ties": 38,
+      "unordered_trace_wins": 1
+    }
+  },
+  "heldout_families": [
+    "card_games",
+    "formula_1",
+    "financial",
+    "debit_card_specializing"
+  ],
+  "schema_version": "frankengate-bird-sql-skill-factorial-paired-v2",
+  "source_result": "bird-sql-skill-factorial-40-2026-08-06.json",
+  "source_result_sha256": "b999ebf161e735f7d808ab1be6a3c88ae9e0006bdc76bb268eb7ca8c57080e54",
+  "task_count": 40
+}

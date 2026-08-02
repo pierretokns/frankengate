@@ -51,6 +51,9 @@ alias mining, hard negatives, embeddings, model cascades, and skill replay.
 The [`enterprise replay readiness status`](experiments/summaries/enterprise-replay-readiness-status-2026-08-06.md)
 shows why the public SQL proxy cannot be promoted to a causal enterprise
 cohort, and records the exact authorized-data handoff required next.
+The expanded [`40-task BIRD-SQL skill factorial`](experiments/summaries/bird-sql-skill-factorial-40-2026-08-06.md)
+is the latest independent skill-utility checkpoint: the trace-mined procedure
+matched no-skill and was slower, so it remains quarantined.
 
 ## Historical Claude/Codex mining
 

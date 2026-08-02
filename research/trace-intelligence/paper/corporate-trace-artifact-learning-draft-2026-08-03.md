@@ -117,7 +117,7 @@ claim boundary, and independent verifier where applicable.
 | Embedding adaptation | Table-aware embedding Recall@1 `.373`; structured `.337`; learned hard-negative adapter `.302` and collision-before-target `.512`; a separate schema-grounded 2026 study reports large leave-one-corpus-out gains from synthesized schema queries and granularity-aware hard negatives | No promotion on the MATM proxy; the matched schema recipe remains open |
 | Embedding/model cascade | MATM action embeddings improve Recall@20 by `+.123`; outcome-neighbor AUC delta `-.056`; Luna proposal grounding `3/4` | Separate candidate recall, review prioritization, and proposal quality; never pool unlike labels |
 | Local/frontier label agreement | Six Wisp candidates: all-field agreement `0%`; usefulness agreement `0%`; cause agreement `33.3%` | Cheap models are not interchangeable with frontier/human adjudicators |
-| Changed-agent utility | BIRD 20-task replay: 20 ties, zero wins/losses, exact delta `0.0`, latency ratio `.989` | No measured trace-mined utility yet; this is a bounded no-lift result |
+| Changed-agent utility | Expanded BIRD 40-task replay: trace procedure `8/40` exact, equal to no-skill `8/40`; paired trace-vs-no-skill `1–1` with 38 ties; mean latency `11.102s` vs `10.306s` | No measured trace-mined utility lift; the larger checkpoint remains a bounded no-lift result |
 | Changed-system artifact safety | Strict fingerprints accept `1/5`; name-only adaptation `5/5` with 2 false semantic accepts; semantic IDs `3/5` with 0 false accepts | Use explicit semantic mappings plus result/outcome validation |
 
 ## Main conclusions
