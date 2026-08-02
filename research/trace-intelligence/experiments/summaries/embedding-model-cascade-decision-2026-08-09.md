@@ -33,6 +33,12 @@ selection unchanged. Adaptation is therefore useful only as a labelled shadow
 reranker with family-stratified monitoring; it is not a reason to train a
 universal embedding from raw traces.
 
+The FinanceBench receipts add an operational constraint: E5 reached Recall@20
+`1.0` with `9.61s` corpus encoding, versus Qwen3-Embedding's `.9933` with
+`111.15s`; governed E5 query latency was p50 `2.02ms` / p95 `2.96ms`. Model
+snapshot, prefix, dimension, and serving path must therefore be part of index
+identity and promotion criteria.
+
 ## Smallest useful cascade
 
 ```text
