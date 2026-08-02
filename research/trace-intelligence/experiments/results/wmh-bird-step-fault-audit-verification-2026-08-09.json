@@ -1,0 +1,8 @@
+{
+  "claim_boundary_verified": true,
+  "schema_version": "frankengate-wmh-bird-step-fault-verification-v1",
+  "source_result_sha256": "88ea1e9697935cf769438d6f0a42ffbc725b3cf0b336cc7f0c11f810eb0689c3",
+  "sql_steps_verified": 289,
+  "traces_verified": 247,
+  "verification_passed": true
+}

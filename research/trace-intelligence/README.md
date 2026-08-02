@@ -205,6 +205,11 @@ The [`embedding/model cascade decision`](experiments/summaries/embedding-model-c
 combines these results with the MATM cost and adapter receipts: structured
 retrieval stays first, embeddings remain optional candidate recall, and
 frontier calls are reserved for ambiguous review rather than the hot path.
+The [`WMH-BIRD step-fault audit`](experiments/summaries/wmh-bird-step-fault-audit-2026-08-09.md)
+grounds the newer SkillAdaptor/HASP-style idea: 59 first faults were table
+selection, 36 predicate, and 26 projection/column discrepancies; 20 traces
+recovered after an initial fault. This supports a diagnosis/revision
+intervention design, not a causal skill claim.
 The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-structural-audit-2026-08-09.md)
 now records the public benchmark's 5,910 records and 38,094 described tool
 invocations, and separates its useful trajectory-metric coverage from the

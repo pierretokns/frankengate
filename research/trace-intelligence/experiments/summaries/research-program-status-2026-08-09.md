@@ -132,6 +132,10 @@ therefore keeps structured retrieval first, embeddings optional for broad
 recall, and frontier models selective for ambiguity/review. It explicitly
 rejects hot-path frontier scoring and universal custom-embedding promotion
 until a consented enterprise cohort supplies semantic and downstream labels.
+The [`WMH-BIRD step-fault audit`](wmh-bird-step-fault-audit-2026-08-09.md)
+adds a bounded SkillAdaptor/HASP-style diagnosis substrate: first-fault
+categories and later recovery are observable, but reward and replay disagree
+on some traces. Targeted revision remains an untested intervention.
 
 ## Architecture decision
 
@@ -183,4 +187,5 @@ project, principal, and changed-system holdouts.
 - [WMH-BIRD exposure counterfactual](wmh-bird-exposure-counterfactual-2026-08-09.md)
 - [WMH-BIRD replay-negative reranker](wmh-bird-replay-negative-reranker-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)
+- [WMH-BIRD step-fault audit](wmh-bird-step-fault-audit-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)

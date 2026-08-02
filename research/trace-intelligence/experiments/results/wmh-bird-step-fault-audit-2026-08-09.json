@@ -1,0 +1,2531 @@
+{
+  "aggregate": {
+    "correct_step_1": 53,
+    "correct_step_2": 15,
+    "correct_step_3": 5,
+    "first_aggregation": 1,
+    "first_correct": 53,
+    "first_execution_error": 12,
+    "first_literal_or_other": 5,
+    "first_no_sql": 53,
+    "first_ordering_or_limit": 2,
+    "first_predicate": 36,
+    "first_projection_or_column": 26,
+    "first_table_selection": 59,
+    "has_correct_sql": 73,
+    "recovered_after_first_fault": 20,
+    "reward_0": 93,
+    "reward_1": 154,
+    "selected_trace_count": 247,
+    "source_trace_count": 1993,
+    "sql_steps": 289,
+    "sql_traces": 194,
+    "traces": 247
+  },
+  "category_by_reward": {
+    "reward_0:correct": 2,
+    "reward_0:execution_error": 5,
+    "reward_0:literal_or_other": 2,
+    "reward_0:no_sql": 19,
+    "reward_0:ordering_or_limit": 1,
+    "reward_0:predicate": 14,
+    "reward_0:projection_or_column": 16,
+    "reward_0:table_selection": 34,
+    "reward_1:aggregation": 1,
+    "reward_1:correct": 51,
+    "reward_1:execution_error": 7,
+    "reward_1:literal_or_other": 3,
+    "reward_1:no_sql": 34,
+    "reward_1:ordering_or_limit": 1,
+    "reward_1:predicate": 22,
+    "reward_1:projection_or_column": 10,
+    "reward_1:table_selection": 25
+  },
+  "claim_boundary": {
+    "causal_fault_attribution_established": false,
+    "enterprise_transfer_established": false,
+    "gold_diff_step_proxy_measured": true,
+    "reason": "Gold-result and AST differences identify a replay discrepancy, not the true first human/model cause. No targeted revision was applied and no skill utility intervention was run.",
+    "skill_revision_utility_measured": false
+  },
+  "result_sha256": "7703e68b13506de7dd922716225446c2fe1c54cda9c2891663bf94d5ea3fb65d",
+  "rows": [
+    {
+      "base_task_hash": "fb93c118a696eb93e4f61603723baf7a3fa17fd82c8cdf0837ff1f029a6d3110",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "1792e11c71a07ffa9e09a45b3a58c79ab40de1ee8b6347c5f4a89631f9c2a2b2"
+    },
+    {
+      "base_task_hash": "3330258b90060b8832cb9034012302e691c822f9cccd64590856a5eaa09e3f56",
+      "correct_step": 1,
+      "db_name": "superhero",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "95a390046e65bbef5df99d2a26b2676ac18e59330aa867732e37f9bbaad2b0fc"
+    },
+    {
+      "base_task_hash": "b315094062918ecff6516248e88f3110e2fac42e8490ce3c047a09b1a25a0fdb",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "bb0f8f3225311dbeb1d8bae26d4a9956e9106321aa813724a9f2262de886e6e2"
+    },
+    {
+      "base_task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "d1fc73099f4c6f3684e48aba5f562342259f168241253833f0e941adbe7a318c"
+    },
+    {
+      "base_task_hash": "650265883cd13f15ee43c06ef78c7e6eda849c105acccca4fb340a808275132a",
+      "correct_step": 2,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "aeed57ce10158aec0986755e594b937a784b6daf2f37e7ca2401da7c4cb6df5d"
+    },
+    {
+      "base_task_hash": "fdaf580e30f71131f88f943fea5940a6aa14728b3b356e9f44b9ff5548675504",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "6a397581972dbf0e6d0585647812787a60a3423acc5ffa07e9104ec6cbd39637"
+    },
+    {
+      "base_task_hash": "c3910acbc0f93532ab90626f5147a40406fc7639049ca7b19d61119ee395e6ed",
+      "correct_step": 1,
+      "db_name": "toxicology",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "f892055991a15b539ac36ce8f8786f10fbffe3a774660bbd854c70b2c628876c"
+    },
+    {
+      "base_task_hash": "bae6f12ae7294f8d84109ec4738e36a871d05e30389ea3ab63c295eb966f8609",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "09cf18a5efaf954c9c3cf36f184f4175f7a3d0c8798ea91e7605acd76f048912"
+    },
+    {
+      "base_task_hash": "8b33503d9be91dcc6941b1c4c73b36c171b238ca8822ad4e97eb618c0ce40249",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "7fe80625cac0e352d8834425484458af1d62f19ce4bf78255381528bada2ea67"
+    },
+    {
+      "base_task_hash": "5ae07a247661fa3528c32c2456f02394e698597853bf0ef4f6b00e61bff782d7",
+      "correct_step": 1,
+      "db_name": "card_games",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "0938023d953e88bf838222132820ca343df436dfdde77c379affc6b7fa550437"
+    },
+    {
+      "base_task_hash": "85b1686155b3e50c7dd38822be4f52ef40689e8e71f01f909a90655d559a6c92",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "13a0318e6a66975567fde81342949b9a7321c0c27e99174bc496092196cddcdf"
+    },
+    {
+      "base_task_hash": "4193d86dcd73cf109d81c20d5128519ffff91129fc3c0dc935978ea2f48736c1",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "b8388813207ee5af71efd3cfc69ba9ccb2c37e76ad6775295552d898cdddc48f"
+    },
+    {
+      "base_task_hash": "ff5a06540db078b74caa91dec806d35932535412e39c91e674b9d8050a4b486c",
+      "correct_step": 1,
+      "db_name": "card_games",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "c97cd4ccb7dbab13ceb4ce43e72967455102bc911ce2110b20205d3f6dc6f6e4"
+    },
+    {
+      "base_task_hash": "a565fb32072c4fb3288ab7fd4505758ac28191d35cd86bdc07248409767c5520",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "3f131a041380ec0d16f6be3e2e12d5754c25f6e81ff8e81cc4fdee4a720423b7"
+    },
+    {
+      "base_task_hash": "7725b11e704ed929aea979c5e502a5e612ee3ddbce3858b9a78dd45a22504c55",
+      "correct_step": 1,
+      "db_name": "toxicology",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "5100c4a2b9c08e21df457b95c8698593a1ba952bbb795c2e275bb11fe89d4595"
+    },
+    {
+      "base_task_hash": "ebf1928f31d5a90dc012dc195e006f4605ff9440b2b8cb50a801c7cf2359049b",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "06e890b4536dd503f9b77b5aec8938d94128826c1a8eb260ce5cd6b7e7286db3"
+    },
+    {
+      "base_task_hash": "d075a18e447bd652a1783b46aa71892a899f08a641e4fea43f2992bd92a9d457",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "3c3fb6aeef21403a3c6699798b5db3ab5b749acbea2694025f4d7700e9cfb2ae"
+    },
+    {
+      "base_task_hash": "eaf9c058dc2ccd8285796bc07645758b2c5d4408d1356e74e26692f92dff8e4f",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "literal_or_other",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "d48db1ac91f95b9a6a45056910b1f7557460628e1d248b91c69e5e22f258762b"
+    },
+    {
+      "base_task_hash": "95912126efa0b055bc2a9af1cfb2e5205381a908d6fecc5c93492200ef054983",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "f2789a45bbd621f99da377674277ca2753fe0deb3981702f7b28c33234aa5ed9"
+    },
+    {
+      "base_task_hash": "d235e8d1da53f9fe5e358ca5b0f37bcc4fcaa69eaa5e49b262b48c8e063c2e17",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "8bba7273d7905d5d262ef9978262c024f5d156c9f4617f2b77461f2694a609c9"
+    },
+    {
+      "base_task_hash": "78eb70cbe9908c59a90fdb7ba5f0279aaefab9de9a6a7b53b2687602a6efb086",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "4af6358a18015296d11df69c9b800c00ec7bf31798dff261bd543026a853c835"
+    },
+    {
+      "base_task_hash": "fca78c7d05214846f4f508b47c4d626e0a6a574cc7c0319568771d208bcbf45d",
+      "correct_step": 3,
+      "db_name": "student_club",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 3,
+      "trace_hash": "7ae15c341d584683a7d97464c0ee144d30b97a860588bef806c7322f36fddd3c"
+    },
+    {
+      "base_task_hash": "cb683235c50dac56352ada7c34b0121bb99a05832414239fddfc5bf600651b19",
+      "correct_step": 1,
+      "db_name": "codebase_community",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "61b26165a6cf5a607d7afd3b6930c6db3be191d0af2f055a7ef1c0d263aae1c4"
+    },
+    {
+      "base_task_hash": "b4a65968ac0d4062333f01846dc330fc7b39ebfd2f4661863badfcec9e55ca04",
+      "correct_step": 1,
+      "db_name": "codebase_community",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "b098c519261e3155ec5e22a526c24c227bb0cbea943c241a3365348f1fb536fa"
+    },
+    {
+      "base_task_hash": "035c1c3b1288643bcf12234171414f59bd8d08a3a2b094aca481ea5eb7e2703a",
+      "correct_step": 1,
+      "db_name": "formula_1",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "9fa64db9c4a719af56b2d4797c975d7575e713b97d219489f39122e67ae3d20d"
+    },
+    {
+      "base_task_hash": "dd5392eff2089f24310678ce633e3c470b1e0f5101698f6965ea1b10ca239ac6",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "7f11de6d406c3b18edc068ed77067f43839ba549631ebea7dd0c33ee0884b838"
+    },
+    {
+      "base_task_hash": "f1b965be6056ff8bed078642a8a02d56acd98a18e77896cbc5f0ecffd102db93",
+      "correct_step": 1,
+      "db_name": "codebase_community",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "bdc89a9e07e73462c89bcd385be9fbdbd0ba1062c4b58f4cdb986b68e5daed2a"
+    },
+    {
+      "base_task_hash": "bfed9d1782c0dfec30da264e4566f0c2dc3dc0af4e5114230d8d0ceee0a9a893",
+      "correct_step": 2,
+      "db_name": "california_schools",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "530aa039eeaef562749766b1edcb4b26a39734d00a2c8b9347fb1f9af73ec255"
+    },
+    {
+      "base_task_hash": "802cbab51a94c3c2eca33c39baaed39456c145cee05aa250172fc499a3b9535b",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "03e76af5ef7dee185beb75dec4eecc8849a38839778f2df28a01039ffd1e661f"
+    },
+    {
+      "base_task_hash": "5f7e630a18b2aa225cc02e59aa3e9f3cbd3ed8a62b64e9c8181a8b93c58e658d",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "060ea8af542e476229d67c11e49e149634aa2a0e6e5289bd9fa77cde15163111"
+    },
+    {
+      "base_task_hash": "61384180d2496d84f6d47f3867de51a2d42112933d6ddeeb1404f3002e469bae",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "2f878166929ee5fc44ddf30ef9a5696c3b205ce4b76b1ce8a47114f49c83ae4c"
+    },
+    {
+      "base_task_hash": "ebbbb61e3739dc6f99f552ceb40e1ee563d8577d5f4334f4f300f7e5b2290bcf",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "d7afc7ec07935c5427ac6682141ea859a374a3aa5515d6b91627ccfe0fb19d46"
+    },
+    {
+      "base_task_hash": "6789e1003fcee3019c35a038023ff00826ff0657020976e30bc6a2895f68fc9e",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "508fc43d1a86a1f74aee99fdaa41854960180a5383526b556ebcc6ce5587a609"
+    },
+    {
+      "base_task_hash": "3cfa4c7abad3c16420de299bd1ea9d0f9293bd919d505fe427a88d87fc7849f4",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "b62cc9ea6df47ed6db911cf99b966cfb66099b55c72ad0743e87d54a3f22b9bc"
+    },
+    {
+      "base_task_hash": "199af1a57dc862a213f6c19757323dfa22b31454ead9261e3e1f4d8d1c97e33a",
+      "correct_step": 1,
+      "db_name": "toxicology",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "8458667bb95a74b638fbb6faaedc4c696fd72dbd8e0a1c0be35742e8862758fa"
+    },
+    {
+      "base_task_hash": "2b6e19de94903771343de98b1e9e1a874ff97ed99aad5b3a3df7464b5781ed78",
+      "correct_step": 1,
+      "db_name": "codebase_community",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "462e80608ac6346e072d4b9c3075f7b01d8a10b8896e15efe0b4a18717cebb0e"
+    },
+    {
+      "base_task_hash": "ef7c23f2de49bf18e1e32153c610f1417fb79ed5d27d989083ad0811f93504a7",
+      "correct_step": 1,
+      "db_name": "european_football_2",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "81c1c1e32465fca205057a214e9041edba37b56ce82efdf89aeb6fc8ea9b4fca"
+    },
+    {
+      "base_task_hash": "f61f7f4a11f7c354da449025ed1b5956fc6891ba029ec1eee3748b9495cca71b",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "a425e4482951d2109bcbb1bd2001abd0d069d896d38f3f3da50a12c20efa5253"
+    },
+    {
+      "base_task_hash": "42c47dd8fb8f598cbbef617fa52b68e5803b2d95b67ba289cd1d981ac05f1843",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "literal_or_other",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "f5219f365eb756a96c314e3ee1672b204aac5cad2098bf468af7dd8bf08dc18e"
+    },
+    {
+      "base_task_hash": "a77fbc3fad0e5ddd96b139ae8e650f35ac4e537f9ed8714db3e3eb276beeca03",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "ef4f74643544d634e27630d479d70418aa20b328f10fc6d6a60256036eecedde"
+    },
+    {
+      "base_task_hash": "2628a9214eb023ecb6e0db6e1ee7e2c5c886a78cd799d7c66d084c7ade1809fd",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "1822faafbc2efba9feacec25892938b5a10788a8189a97291e993a1d1fc624ed"
+    },
+    {
+      "base_task_hash": "62d914ab88da7e466e89c7e63e5bbb1f39abaa71404040a061e5b2bec82b1756",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "cd4d2e7c54b5c7e041a8a447ec91225524a7877d04dc01b99f742d08192108e1"
+    },
+    {
+      "base_task_hash": "591de2a528cd775aadca91bbf5e31bd4a7b0445e02a336404fe0cd19e1e202c5",
+      "correct_step": 1,
+      "db_name": "california_schools",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "f87f973c65c7f24ab5ee65108e0401ac77342bf865941b26fce3d2862c0d437d"
+    },
+    {
+      "base_task_hash": "51904c3500892c32978af12ff1a723c2f11487379ec4d3a571facfc172548d9e",
+      "correct_step": 2,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "16eb15c6f1618e015387d4626833a67931ca19d611b2c03711faecc21ab8912e"
+    },
+    {
+      "base_task_hash": "be4ce4a965533ae737e248baefdee2a1205829fd6cfbcfe87f2c75f85fa95ccc",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "aa3253b9d9b70fe4d7433ae89c768ecf12ad89a46c4d962da17623f6efaae523"
+    },
+    {
+      "base_task_hash": "75a2bec5240503d5e19fe2fcbe1f5b7a2669cca3b7d229a9ac64d394ba367ad2",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "a9b9907c977027ac6c6440a5a6a5837935d37e4f83110eb9a90800f2e7a232e5"
+    },
+    {
+      "base_task_hash": "2a6cd86515bfb400d9a7be8d07a57dd585534d6e66cd32d7187ea3d7e02950f6",
+      "correct_step": 1,
+      "db_name": "superhero",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "2f36b85dfc4d20d5b2b7a32b72c9b2d9000f4b33617ab55ef480e021454a5239"
+    },
+    {
+      "base_task_hash": "46412a665b11060c994ba29e6753270f963e9f79369f17c3b4759db86d3c32e5",
+      "correct_step": 1,
+      "db_name": "financial",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "01ce6322bb06b79ba520bba63eb318e4313d8e99fba218df7891d2cee5d72276"
+    },
+    {
+      "base_task_hash": "c8387c788b41bf35b5dd71dab2fae33d0a55e8091f8a9a57f7a41a81dc3eb0af",
+      "correct_step": 1,
+      "db_name": "superhero",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "926d0df96dff94a82dfd90e5d70d60d0204f253a8dd2d55726d9739bdbb33c7f"
+    },
+    {
+      "base_task_hash": "9d79f46aefad93690b0435b9fbe205a3999a8910d4457ab6111987311cf03fc9",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "3a8c4d258aa5f950f5f3bd8638124755219386fb9e91464f97e900c5291aed72"
+    },
+    {
+      "base_task_hash": "008e0a73044440c6b483693b46d29f174a17ffa991ea1068224ceb30b7748b0c",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "083857c3bdd8d99c65ed585e72d5119a36a5fa11976c098e637be3b17f12eac4"
+    },
+    {
+      "base_task_hash": "6a11d188d08528f8283150ab1bf6985976eb55b91f5a9fda06cdf1044c2ae70d",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "16e310a821f0650db2c2453efc3387a0d0df66f55ce283f2c103ca961e5ff04b"
+    },
+    {
+      "base_task_hash": "5e7b5ccb75b3a58f8db412490f93132adb04121dac1885a4e258f7b732a5acb2",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "115a144a2451929ca4d61033534d53faf0453af65f9b3703b78a49bd8facc207"
+    },
+    {
+      "base_task_hash": "c556c1adf946d7759da6208dc788782ee55e9d66edb257d8ea2ad42a02ada4e3",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "687d8516ac847c1722e57106c03e7fa5250d8f42094a6e5be4bd3237a0a7845b"
+    },
+    {
+      "base_task_hash": "4193d86dcd73cf109d81c20d5128519ffff91129fc3c0dc935978ea2f48736c1",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "4fc4793079487f01b174eb6c092903f86c0b9809efae46374630b10d447feda7"
+    },
+    {
+      "base_task_hash": "026ffa08732877bac4f70dbf77431e22636daceaff763b80762a6b8106226150",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "ec1b9a1f44f5c086efbb50f240ee1c46ba5448589b9acdb68376b73309d69e0c"
+    },
+    {
+      "base_task_hash": "c57cc7a9a582dbc19073b90e8558e359128b1c326170595292d94126d56dd017",
+      "correct_step": 2,
+      "db_name": "california_schools",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "4191dac0096c026776c1e909dce9fd23ef9098750812be97c08b2341cd46c69c"
+    },
+    {
+      "base_task_hash": "379be2da7fbddb56fd2b556d35e9eabdd8674f13cf50667fba9a7f8c4e788742",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "0b42265108e6d2d542147b4492192fb35cc3a679c97452fdda16585abf0f5189"
+    },
+    {
+      "base_task_hash": "f74e7ea83300b7624d95de5c623518787136ab6cdb68a142d35eb78e89023c91",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 9,
+      "trace_hash": "c18526ed9d869a0db4edb10aa22178ae8b2b2667701e66a89fa6b6960ee95d52"
+    },
+    {
+      "base_task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "441c0a588c2259e9dde1f3deea67e62accba5aae4d5331b872b954c85f751d97"
+    },
+    {
+      "base_task_hash": "58ec8e21133b59bce6c02b844582c0597defed9b1a41492d8745fa5242c3275e",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "06039a0d9ee00226d24c58c9c9bb8d46b7c172bf08258ed2b69c0479bfdc961f"
+    },
+    {
+      "base_task_hash": "b89d8dedbcda9b590ef230ca7ccd3d60e8af48ebedcc445da16b47dcdfa58f74",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "c0f7fbcfec86e0f9741e226287d616aec99c56457ff540a8fe6df62c51118b0a"
+    },
+    {
+      "base_task_hash": "ced6cf1e064a0f80893b41e090e8146acff0eba356f5749559e049a91d7bdf14",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "literal_or_other",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "55383acc5135b3ba7f8466ee96045b31ebedaa552f14bcd53ff1dbbeebee33ad"
+    },
+    {
+      "base_task_hash": "9f3c0c68790e6d0cbe9609023d27fc63172a895ddd0ec97ef26444d9769d407e",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "0679ed563e4c0ef61175b36c5ea9329ef255cbfd0e565cc6d615af294d4487f6"
+    },
+    {
+      "base_task_hash": "d7411c21af9d87cf5d74e90bfbcee8622b752bc9a34a63cfabb115128bccf254",
+      "correct_step": 1,
+      "db_name": "toxicology",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "ac8510a67e3a4cbfaa3f3d41a10d90cc8011109ada8513ef23319b0824ce179c"
+    },
+    {
+      "base_task_hash": "76c3d52b2fc24df2c759f0efd040d19283bb2de0c70c316bce6ad1c98d174b25",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "21e9493662cc0998d0e79fc6897393d06b9d055cb9189e9c0b47a0a8d65338a7"
+    },
+    {
+      "base_task_hash": "815b30fa3cce832eb0177043bf9d288bb618a0a715a2230ac1ae205fec172de7",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "ceb32f391a880d3985de19a7de8b67ecb61edbc47884353769a821bdaf7c0d73"
+    },
+    {
+      "base_task_hash": "3e11ce912291501da5721336f6235bd33dcc73774a45bdc6341b46403ff73868",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "433698fd273e73576acff783a74e8efcd870061d758cd3badc852422c5fd446b"
+    },
+    {
+      "base_task_hash": "4b94c09bd1ecfb50928cf7f8e151dda971d2872b267c6c714e3cf7f70555b4a6",
+      "correct_step": 1,
+      "db_name": "formula_1",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "438b1ce9f8b82d7b2f3970a17dd0a326aeb58ecc9e4786c2475e16f4a5f2e3b5"
+    },
+    {
+      "base_task_hash": "51b057187a2e302e49818e25b465079df17ac51bbaa0f85c74dae3926c5f2b30",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "e3755c1bd2d50574060c99f15015562f1969953899d9918bc0db5e9c883379c8"
+    },
+    {
+      "base_task_hash": "d728e7f586a9c1fe198e5b661650f9a53a4ad0c38511c8d2c2947b9e2b5fb6b4",
+      "correct_step": 1,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "1a0e58b428dfc78a99a38c98a52d6ac41ae1f9166707e36b1a7e7e14a4b87d02"
+    },
+    {
+      "base_task_hash": "680a1d14e47f259f251bbc9f1c31c0374d73ae772cd4c253984a441ebec93391",
+      "correct_step": 1,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "f1610c3c218e4c334b026e45ce7b0c1091b5564bbf707513c6a2506b767b54dd"
+    },
+    {
+      "base_task_hash": "c788444c31b8d702953b577084ea2221e7e3002cde323b3b1c3ae25221bcb8d5",
+      "correct_step": 1,
+      "db_name": "card_games",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "16644ba796f3443c3bdc18be269299e2a8ce739ee05e2be671d31ccc87bd9282"
+    },
+    {
+      "base_task_hash": "5d03dcfc63206e942e4ae297eb8df90edf750d0a9ea63de310b72b7a1927f0de",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "4edd273f6b637446a3e9134558bb133ca2e5d3446f97581e6877e13bcf2008cf"
+    },
+    {
+      "base_task_hash": "49469994c44c3e849d10d036e3370b839b4709a8f8052a09d6a5fc62ea9193e7",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "d1c7d00474e1183d79b0023f334e33177a76fce2f7d6cc0371d5c4b20f8abd54"
+    },
+    {
+      "base_task_hash": "5fa7843cb107c6503f612dc646fdb704762f0e196782e6eab3e6e41bd32a8ab7",
+      "correct_step": 1,
+      "db_name": "student_club",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "106dc0e845060568f9a8456dcf9253833f5ed386c0ae2d913488fa65755ff8be"
+    },
+    {
+      "base_task_hash": "51c145a180e0abcbb13e3b6e266d413318b8a7435bfa80afc5deffbaa4fb2518",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "72e2867709e7eb32e987a46fca641ae3190520c8f2ecad280bbb88af1783fe41"
+    },
+    {
+      "base_task_hash": "bbeaeaaa621293911e4641b44e65167863993e8323e2810346bdbf305658bb6b",
+      "correct_step": 1,
+      "db_name": "superhero",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "412ee625e3efbc0e45e50c225d8c56bbb1c8019b689313920e2b27e773fedb61"
+    },
+    {
+      "base_task_hash": "bddd410f83fb0651655d64bc9ae29bf48870abd6de1bfd7c69272930258c7d06",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "6bf1f6230b12171782cc3edb5ca495955bf38b46337dcd15e82d7f9b1a03a1fb"
+    },
+    {
+      "base_task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "010d58fe8d4cdb44446d9805dabcae7920418f6111cf42f31ca07974765c3ce6"
+    },
+    {
+      "base_task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "correct_step": 2,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "dad492a3110a6681158267d81aab8289f52a06ccec7e5376c97526c610e0dff8"
+    },
+    {
+      "base_task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "correct_step": 1,
+      "db_name": "formula_1",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "bf8c8932bb15caa73a3cd004c4bbcbb1d912fd4ac3eb7d4eef13f51052c85037"
+    },
+    {
+      "base_task_hash": "d223961aee04f68b03204a175fe0e60c23ceaab5655bc5e1e48d6833dac7dbdd",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "b64535efa86023ba3b83ec70fd98decee650d5750387d5daf22f15e0496625ce"
+    },
+    {
+      "base_task_hash": "b5d32c982668b781a014a042b0ebf9cd09fffaa1c70d5bf5e98a7eafababb891",
+      "correct_step": 2,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "f8b7b082df75f9b3350d930c1ce7a024d635f9b4ee99402f9d5e0cabcf3aa2de"
+    },
+    {
+      "base_task_hash": "308ba7821512338f7182af21d9282903fa64db10551208ab26b7d82330b2d391",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "b48051581f5f1e6d53b11391f87d3bee1296e8e442138fef4328b348003f9623"
+    },
+    {
+      "base_task_hash": "2e69bb61ee8bf717aa1f40c6cc098fcd8ee75948d4c97eca82f1136409dfe449",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "0d76bf3ab80496c6dc22c3b21e39cd7eb6685c6c21fa5866cb2bacc3bcd57b75"
+    },
+    {
+      "base_task_hash": "e4d71843cc84dad05dec1050e14bac0d2e970eca604a100fc4e59b7d45469f18",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "8604c36788ce1594831612920404bb329feec5ccb164b97a5231cdc051a4856c"
+    },
+    {
+      "base_task_hash": "13c10b58d70ff9dff13833fe6cdaacbfc9e252db8ebaf56e9238c1efaddcdaf9",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "93f59eadf5e867e6700b3bde4d4a86a286c48ef0964922f78df3c31cdd2e0888"
+    },
+    {
+      "base_task_hash": "119120d8c217287ddbe362074b64a056f3f74ae806339f38c0019cdfd7910954",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "b40871d8d4d49c6b3d0096f2c1037abd0939c5dd7784a0b949c8723a85288d9f"
+    },
+    {
+      "base_task_hash": "a30227b687dbce34c342edf396fc6b3e3352aeb9c71facf77433d8b51f2af61f",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "6b609f793bf1de6b993cc70d972a8d7fa10ad7a089ef517322c67490e084cd7c"
+    },
+    {
+      "base_task_hash": "4d89c963c89aae43c162f287d48f9b01371f0eeb50d24af0874367078b6e2938",
+      "correct_step": 1,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "36d18bad9247df5a9db6f401a46acef3a581fde3f8bea0076e48a4666d121112"
+    },
+    {
+      "base_task_hash": "79fa2742251d10a8cb0dd00791c051bcd38b139b3da5b5c9ed4adb5d736b858c",
+      "correct_step": 1,
+      "db_name": "card_games",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "78546c78dacc9002aa59fdd415e63199d59f9bf59258ea63510b56e369492ccb"
+    },
+    {
+      "base_task_hash": "25b4e213732b29e41d29bae0daf063f2c25a7b98847ddfdfb74a5636c5410bda",
+      "correct_step": 2,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "a75b41ee81fffcea86e8d37e3fee26522d95994a874fb4275b0d0f29415b4b02"
+    },
+    {
+      "base_task_hash": "bb7fe8ef412d894e0ea064758a936b7ac7cc4a5b578874e327d258fe7daddbc6",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "00ae47e4fa2e5b8d194fa1b6b3198c09367a3b513f32e38161d426c81da33b42"
+    },
+    {
+      "base_task_hash": "01b569dd26be7de1a8880b8cf5a44a2184581a395ed3a2774bc96c6cf9031e39",
+      "correct_step": 1,
+      "db_name": "financial",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "f7445d2d52b1b8587da3fd887c171c2e5ba847422dbf589dab738eb57baecad3"
+    },
+    {
+      "base_task_hash": "6146ecc2451dcab3a0bac3d4049289ca912595def12dd941efb200c6d5ca25fc",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "8ad70dc89f2b98af64ae984230cee01b04c22a4a42468f53ca701e3de0cfe045"
+    },
+    {
+      "base_task_hash": "3188fa56f993aba139effc47aa9c1e1c6aff03237b4f0a827d37c80ab12754f7",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "c3bf18ef19efda5497bdc5964755d9c2804c9f79a0ac4c4409b1d24707894cfb"
+    },
+    {
+      "base_task_hash": "aeb6b26166246c997547f7d180190fab92aaf898fdb1b3ef5e472d2fd651e5a7",
+      "correct_step": 1,
+      "db_name": "formula_1",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "010bb665d4222836d806be26ff51c5847d21f0999e103e3462ba9bd721b36ada"
+    },
+    {
+      "base_task_hash": "6f35a41d88c49c51a2c4deec82c4d5a560a96bcf615a76bb47c94e95efdd6054",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "33d249e50ae532f50c004edf13c85a72ac7dbb36961280f15b6b1ad51aa047ef"
+    },
+    {
+      "base_task_hash": "51744e50831c59c473a7f72f0801434c871ff988213dcd1bcb96481c4b4b3f18",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "e1314aa5a04fd2c857e8eb3e77396e3cb6b4be1f779741a47b9c871580173042"
+    },
+    {
+      "base_task_hash": "ea7f75f8accbb4905cbfeb73a9d3f3fe32963bec7c20c168cdd98bd1ccf7812f",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "e21a35c04c0ea2e6b43728847aa8b86034a96f6d0b1037b622f342202994e907"
+    },
+    {
+      "base_task_hash": "e9ae0ba0a4b70aed4674b178c39ed6c5392aa4dcafe6d2fabcef7568a9108f0d",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "f67ce47d7a27c80860dd6c92d4e5366e5bd2bd2ff7615feefec1184767d849c9"
+    },
+    {
+      "base_task_hash": "2cd9f568f45cabf8f551aaa92c36b73cd647f3504df676ed64d2140378920891",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "2fa28961e9e1d935242c3bed784036685031de61bcd9dd73d06dda32c108c3da"
+    },
+    {
+      "base_task_hash": "c519d08012b7fa2d5048f0d678895a37330529c1122dbc544d6f6914d44b11d3",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "95a7ff2ff530005d36d46c79281de1eee38dcc181d27880127206718d456668f"
+    },
+    {
+      "base_task_hash": "af020292f779a3776e36ef6d6d4a1653a0aeb44ac2653025726383f9ebcb9276",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "429253767a1368aababca989152ad1451b02499f40f2a23403f82f73860e83e9"
+    },
+    {
+      "base_task_hash": "55d5160b8c9c9a7cf33ce342717181ebc982d35a5c37e776ef956bf0edd3e5c0",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "95a50974c90eb29c19010640b76d986f73b68154cd0ee318e1cae86d87648aa7"
+    },
+    {
+      "base_task_hash": "9b5fdc300b8b53017c64ac74d6c7ee99b0bc9d8e26bc714c21d6a39eb9c9692c",
+      "correct_step": 2,
+      "db_name": "superhero",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "db4e6bc06b8d1cf1a5d9b838597b1d0902d2ca301332200e996b59233b7ae8d5"
+    },
+    {
+      "base_task_hash": "2e63b2c8c842016b10e91c22cfc7cbcb071bc533d9f713c795da5fa2efaa2df1",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "268b13228632a949759ec6fabdfd819d6bd66660c8bf8df80e515e4b2291414e"
+    },
+    {
+      "base_task_hash": "11d3c84c04d0570de9030af52ca34f463b36f6eff0ce65bb0e4c0a6eb1b555a2",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "11202aad0dc99c1c5151c7912411a3ede8989aa207e908f1aefb1d516411f9d1"
+    },
+    {
+      "base_task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "c197c1cb2ed242061f9ca37a6a3b8b78d506ec7d8d3f5853fdb8b90c81112c44"
+    },
+    {
+      "base_task_hash": "f61f7f4a11f7c354da449025ed1b5956fc6891ba029ec1eee3748b9495cca71b",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "8d1bf92a78cc66b77342a675a6ad4dbf346ec3da414acae97825cb87883840fa"
+    },
+    {
+      "base_task_hash": "817a29e438273cbedb0f6f519062e040521a4e63e89fb8428a87bada5bf83fd3",
+      "correct_step": 1,
+      "db_name": "superhero",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "6579757e7c6c34de12fe68a71651c34cda57a8388919113c98f4e5662a547156"
+    },
+    {
+      "base_task_hash": "be466606c36fee7d9e9c9fa298e68baad2b38a6632794861249b5baa293cbcfa",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "7f5ccbc52bbebd424ab67282483fff26d12894398c019d1414a8a4c88e2a4daf"
+    },
+    {
+      "base_task_hash": "c53c9cac97d643aa4d171e8a77b083fad878118801697d9322758020a9859b4d",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "abd93230be001c5b4a181b34f85d025d6c4684478e727d83dc2f11b0851ddc15"
+    },
+    {
+      "base_task_hash": "8d17d3a051fbb3aa80162d3dc05034ffb9ea63d5650698da51e26adf3c66d6be",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "6036fa6d37327fecdb3326e982b7b4460e03a0ac5dad508c456241b876f9d1ef"
+    },
+    {
+      "base_task_hash": "650265883cd13f15ee43c06ef78c7e6eda849c105acccca4fb340a808275132a",
+      "correct_step": 2,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "ae1d36b0b4c7526c496f9375881f70f89d8ab37266b4f4fc6255683ec8528c45"
+    },
+    {
+      "base_task_hash": "69b7596e8321801ded7a57a75b436f98c5f484d99db08fe009b03483667aeb39",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "050b8979e5dd123429d828480dfd24d23df19f57c4f6da7cf92a370214fd3310"
+    },
+    {
+      "base_task_hash": "ae2030843e4429de2d5e2afc715a545374b588d9ad1cb6f3c6c625388337dd9e",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "d1f1ab1fa1afd012d5c5fb1fe1feb186b42b36d333d816fd605f5cefebb22187"
+    },
+    {
+      "base_task_hash": "5ff83a834a66643a10df573a9970e8062dacc8a637315f47a1cb9b767d899d3c",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "41f18c3f3a78db01c6731af7e17f4b6ae6a63a35b100acdaa612936e1136fdb5"
+    },
+    {
+      "base_task_hash": "e298e4e1f8c2d0dbcb8267c6cdcd2b3a84124e6952485bd8365faea2069b8377",
+      "correct_step": 2,
+      "db_name": "codebase_community",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "de375a1a5ffb5f86e621d12dfaea901d5e4d537a3fcecd6b75bad0fe82d18e6c"
+    },
+    {
+      "base_task_hash": "b0b26b8cac8dbd5e08e75d4382ac7db7708b0d56fd512c76897e203d6eb0e974",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "d1ed3524e7cc192e18d4294cfd8a592fc805e63810fb4a93ced81502e357c9ea"
+    },
+    {
+      "base_task_hash": "5f48897d0a2cad30a2743c54547cb43670b521b89d9719a2de87b0befd79c580",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "8b17a212cdadbf2a9360455fe6384a51c98b3dba86e6da1a289e416d8800b451"
+    },
+    {
+      "base_task_hash": "eee21194691a024be489cb529a17b2c5d1d63b68401a1dfa6ede5620c111fbe7",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "0dd2aec3cd252bb3a13bbfbbdb9398d428f8dc7ba8f7849642750ea383fa6de9"
+    },
+    {
+      "base_task_hash": "9e7c78a327d40b87fe68734617d4506410903e4bf773f6a50b5351fead695283",
+      "correct_step": 1,
+      "db_name": "european_football_2",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "6771683088a3ef1158e5bb7d8cdb54a64cab4b88a87ea684c62726cd16f5fea0"
+    },
+    {
+      "base_task_hash": "af647678d061aac7ad89fd997b6c7d581179a407478a0905e4cbda887267702d",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "6d6b41d98eede7092fe252b831a72255ff1ccc1a1a0905ef8d68a0056ec9e86f"
+    },
+    {
+      "base_task_hash": "5458197d141a45c22afe08cd3e62e7105dd7e0663ddc35965caeb53db78b73d1",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "ffdd23edc4f7895f6355d91846a364968b4c7df60c94144712d44bc64cae4bca"
+    },
+    {
+      "base_task_hash": "1f414faf0850bc0f97faf6e70790503b42e10de3e0425ad8f9656b8668ad924e",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "dbd429e23807ad7442f3ffd9afee7342f458212ee6ff582392b25ea3d64615b0"
+    },
+    {
+      "base_task_hash": "d1dc59a698e7408a6321df8a86e869ed7b0b0acdd84c821c6e784e0f435fb64c",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "1f4d8f9fba1ea55abe73828deb691f14878a42d818f3e805efe99a692e881d35"
+    },
+    {
+      "base_task_hash": "7af678b07cb69888b9eb1a77c08b8e51db2d3802074481e66277ca5ee7c40c66",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "e351df808a31f1a9524c4addc74877935980416a1293f3a451a67a43208a975b"
+    },
+    {
+      "base_task_hash": "b82e9f476694cedd1bf54fde3aff38bc7dae9b072efdc2ca3483e5185ab99e5d",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "94ea95d8bd4778ab807bc28b93c4fe9961a6ac316e8a1ebc7ec77d9145e34695"
+    },
+    {
+      "base_task_hash": "2d4508291cb2efd76e7f5ba54d9d25e8f6b2d5b930d0f197dda1b9f2c530c4f2",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "ad12863dbeb4d4e65235391a117d5d46182642b9e7d678463f438c0601ebb943"
+    },
+    {
+      "base_task_hash": "8b33503d9be91dcc6941b1c4c73b36c171b238ca8822ad4e97eb618c0ce40249",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "02def186f8111f61d89c44ab3bc86701a56ea3a6332edaa86293f09ddcfd8142"
+    },
+    {
+      "base_task_hash": "ff913c25a7c8bd6149fe84a2dbaaed28abb30b28a77e223dc18b9138fd7d87ad",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "b99123907448e0fd4c2dc8a3ff32427632cbc38a918081b9dd082551ff8038d3"
+    },
+    {
+      "base_task_hash": "8271b20d3fff39f423c8290f7b5f7c53a2e5b53dacc16217838e95eb226c34d6",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "6e24b063ed41d1ec767081412b7b7f89666d922282688be0f89b98b79e28c93b"
+    },
+    {
+      "base_task_hash": "61f738b25940b6063fc4acb9f317dd336a1488510779cf00dca0f07657423948",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "a4330dc14ab4086d4547f8cbd681a59f00456fe8f12ad4e0e4753b816799d3d4"
+    },
+    {
+      "base_task_hash": "7da48a903f13e5915190fd6271977e6ec91fad84d10e2da4f9b646d0320b4e6e",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "f62cc8baab8bb001c3636fb689d21c11e8ec97ea6aa7e78f5cbeef3097097d15"
+    },
+    {
+      "base_task_hash": "dfbd736dfae09764578d0c05b895cf06513c8fbaae04e84edf28ff3ff455955c",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "b74ac10ad36b38b6d9fe2e52040afe8896ac3c02d06e2d0288ae06705d7f0a2a"
+    },
+    {
+      "base_task_hash": "293bb80ee8101b7f8c0ae782f528af8004efa7c83a48a8b590e757e104dc3b96",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "828aff0ec09fa48d72bacecb57a8a70372409337c77d5f7a5c07f60e27b4aef4"
+    },
+    {
+      "base_task_hash": "e8462117c1cab59cda38642ca4cb90a8718e7cf70261037ddae304b14adbfac7",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "9ec5b700991040a536c03542222af7ff5767d0b0e00aedd32ff7caf1805d15ce"
+    },
+    {
+      "base_task_hash": "a375ff6ebda3d04f1d005a5930cae3c96f1fe7a1b303de96eaeec168287f9091",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "ordering_or_limit",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "827c2bf49a333f96c4290bee2e63100225d4f755a0f8d45fa600437963723d04"
+    },
+    {
+      "base_task_hash": "cad96f3a203bd40dcd45c40e19f78b5e276432821a9c580c12b13e75fb665d3c",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "dbc8e31dcf7d964fe25a890d611edc0da008e8b4d66cba7a5380a9e4136512f9"
+    },
+    {
+      "base_task_hash": "7559792fb94ab4f90040aeee0a1d4e243f00334a5fe9c2c5b1b19dbbc1fedca4",
+      "correct_step": 3,
+      "db_name": "card_games",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 3,
+      "trace_hash": "7cb1ae6fba0b7e5faa146a26d7e2c269c74dd137992249c5df7fdda499dc0f9b"
+    },
+    {
+      "base_task_hash": "8eb3d4483f952cf81e0e2bdfb1c04fd59142f9e36b1fddb18ef92f3ed9fe100f",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "9705d3af3d848b78a65fd716fe29c9695a881d82985e1a0e0857953adf6a31a7"
+    },
+    {
+      "base_task_hash": "82fb703b00552c1241a02ce5513d208127bf8b631d2f8f2441bd6d3610513ab4",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "225ca689aa1813a954dacf09fd53aab4ef08ca8116db7460d99ab95900f229b6"
+    },
+    {
+      "base_task_hash": "bd5d86412280961081cf3b545c25a49a2aba56224a323803ba6895cf78640daa",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "02d09e54eef55c18822fba2f9c7062fe12a4f93c45dcfe52a168faa611cadedd"
+    },
+    {
+      "base_task_hash": "e9b7667cb61aaa3013091083fbceba60b8fe42d820c0fa297a6de5e5781079ec",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "e3b0cfa22b1dc2844621ebbc6b383b0b89fa228d5091a20cd1e8260edba8fe48"
+    },
+    {
+      "base_task_hash": "45f722a3e6fc6b86c8dae638b9c0b8ac6fc5b40f4e2080601f150f014f8cd5ec",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "0f678cb10a568dac694f0b0b02d190d2fc869e764f376ea19255d937d8bc2b39"
+    },
+    {
+      "base_task_hash": "6c32ebb67e9280f5663223c3dacfbd1eb02a888d626d5fc0567b2fc4aa89796d",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "d2bae4862628b33d3600dde10ce6ddb06ef38d9e3665f0e6d074d5d38e23b722"
+    },
+    {
+      "base_task_hash": "f60b248cc71d500e3c539f23d4f93087b62eded3c2ac7b443236a42f59e86804",
+      "correct_step": 1,
+      "db_name": "card_games",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "6edd2bc17522de1902dc338ad7cca179570e2466384a0adab34d59553809d665"
+    },
+    {
+      "base_task_hash": "3bff9cf8e1906a2ce28a5fd7de0158faa05ee52e95191753aaff32835b1bb139",
+      "correct_step": 1,
+      "db_name": "student_club",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "dc2920b5aa224a33faa43681748e6de000a58df7b584fdbacd35a9f8d2e4bbeb"
+    },
+    {
+      "base_task_hash": "21be379428e44711a17cdbecc51aaa368dd6ce6547038d1efb4d06bc84d890be",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "ordering_or_limit",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "78b490ec162a4041f3efe1b9e02b871f1c2afe3bd25e76c88b86ff4c85e45351"
+    },
+    {
+      "base_task_hash": "ec120c0ef54d5b1ee74f1c99a2917607d5c87af99e6a02e15b287d950b9079d9",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "b1d4c32307e1084005c50bf2d224f775c75413c5a87f182232d23e05dc4a6a90"
+    },
+    {
+      "base_task_hash": "51b057187a2e302e49818e25b465079df17ac51bbaa0f85c74dae3926c5f2b30",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "5403f301101c5a2bcd55cd187723b0a288893cd9649fbc83b972282db42e6eb8"
+    },
+    {
+      "base_task_hash": "c62b913b5ad5168601d4b996be0269a39e0ae5d40a2d9d5aa1753d984a01d103",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "6fe8fc84f88e8fc87b8d4fd786d75675bed319d748adcdbc0d6287f75fc57818"
+    },
+    {
+      "base_task_hash": "967925a14d0c21b09d5b557ff4e2ba1fd5f867469f26554a73b90a1c3426b2ed",
+      "correct_step": 1,
+      "db_name": "european_football_2",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "e6a1cd24e3ca4d87c926082a29dbab6d2e8fb657c78556ab470f87a987f88565"
+    },
+    {
+      "base_task_hash": "fd4023e3f6ae2be583274951694ac868287ab8efb216b750297c6a9a6619643c",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "8468852aeaf8f6ba7c4d6e266e733f610407572758c7a1e407425686e9f3fa1b"
+    },
+    {
+      "base_task_hash": "68f6fc88d836531ffa7cae7d4fa7d760afdc5534d28e2190e5302ad3221e56bd",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "63231ca6d1d14f72598ea4f7c90412c91e07bb746be1a537a25b596283443f1e"
+    },
+    {
+      "base_task_hash": "a9a81fa7b9cb98d68d4f863346df2aa7825b0884712d34d4baa4121677c918b1",
+      "correct_step": 1,
+      "db_name": "financial",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "dbefa9beaf75b234246477092a6d69506c12077bbfad95a5e5463835cd31b24e"
+    },
+    {
+      "base_task_hash": "2b43aa7595c5c51326906c8e7111a0ec74a797b31f67a3fa1dda91f5dee92fc8",
+      "correct_step": 1,
+      "db_name": "financial",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "0d9a1939a493413fb468bcd903a66857ced7926571e136fabe457274793432cb"
+    },
+    {
+      "base_task_hash": "2dc63a6cd5e25c96f34a137f1195da78f2a54103f68e6dedf5f3b33f93f38812",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "1653876e42b7bec4f2ef1f38c3155e16e4bc4bab34bac408c2bfa523ceb0d643"
+    },
+    {
+      "base_task_hash": "dfbd736dfae09764578d0c05b895cf06513c8fbaae04e84edf28ff3ff455955c",
+      "correct_step": 3,
+      "db_name": "formula_1",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 3,
+      "trace_hash": "9047f4e5db519dc3c0124c2ba283bb5a4c77ba775ec3fbfc5478482f43d6f3c1"
+    },
+    {
+      "base_task_hash": "e9c5a91728fc0f9b7479809ddf628cdcbd2792b8d83eb5001c11d11fa3a8751e",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "82a3f5cd3193b3a01ff44f5d431bfcc6a78909a5f7d0b875b7452bbf8456fd73"
+    },
+    {
+      "base_task_hash": "f6a6e72e83d254307837c69e553ee24cd1b2ad720fa22962439b551c5e56f1cd",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "17f6d341013177a327f0f03636df2633a0c6aa9fa1918a14e3c09d560396adfb"
+    },
+    {
+      "base_task_hash": "3d477a75b8de21eeca8a50292bdc2770e6880ba436f22e8924a7593f8f1212ba",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "dd3e04b9e0cc3a15f87e510bae2b0ea926558baac138f7e38c6599ae598e11dc"
+    },
+    {
+      "base_task_hash": "bf5c37375e4cf999efee879561d70e4218f8671c88d8fb8ccb03e88b8f56b0a2",
+      "correct_step": 1,
+      "db_name": "california_schools",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "9c54b981826d64d163a0114e08c746fc3351a5b7b5f2114138212845c00bfabb"
+    },
+    {
+      "base_task_hash": "6e044d7a411f09aba55f8aea7b949228ac4781bd1d7b35085e6312d0f75dce78",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "8c7b69701470808d8adc340ea6a34cc69f89e04cf1593a2a97760950e1c5c461"
+    },
+    {
+      "base_task_hash": "ea95f99ab85deb898dafaffa4194daa809f35f4093792f6cb747b9bbe7ca7e13",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "f3ae0b966a17ad8b969323591af0533047f09127e0b68f6e19c6a18862c8228d"
+    },
+    {
+      "base_task_hash": "1642446f4719dcc2734b7bb7557377c80145ab15c00b807600a8bd96f56192b5",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "e77a1b91bc3ce94eb029ef28e79a5a8924d926d8abf54d89c4d2abee71b8fa83"
+    },
+    {
+      "base_task_hash": "378275f2b50838a2b30c410cd1165196d044e21207b318d23859d44590b0899a",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "f10a3e58e05c8e1a886b445afe09c22e8564f0d6513c96dafbedbea0ded9c83b"
+    },
+    {
+      "base_task_hash": "125a5a97fbdadf2cb1f8f99e1ca4d28895d5e9e2ef90320d709a277c4b57025b",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "literal_or_other",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "e017df071a09bf1e7929154b081e5b1e89248e0360d9d1f39771544bef047fb3"
+    },
+    {
+      "base_task_hash": "1405bfbc1bef659268a670894d91bbe7908e18d917ebdc8db2ef13b9738c9fa8",
+      "correct_step": 1,
+      "db_name": "card_games",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "9fff9d02403851879da2424e6acc6278bcd898ebb8a34b96c2f01252f705f2b2"
+    },
+    {
+      "base_task_hash": "822882577e765f2b03f51851b0aa427fd6350eddb98386593b936ce183c5f432",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "1f51bab0384eb65aa9ceb683e363ccb64ec4c312feafa8c7abf93cc91cde4020"
+    },
+    {
+      "base_task_hash": "4beaf29a128fa987143cf49f9f54ba6f222023a8860c198ba1263627196f1812",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "3abbb98f784ae66dfaafd54927fe53fb449c0587b3403d312afe50c4f7509a18"
+    },
+    {
+      "base_task_hash": "bc58786ec6296be1f0a071b4b0c9db075fca47edcec1a6c292e80fbc1e41a4b8",
+      "correct_step": 2,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "d5b1f8ddc24bfa650c0f0a3f4ea9cd523ab6a73789fed0de68d6cc8f96dfbcc3"
+    },
+    {
+      "base_task_hash": "b489c03b5067c6fbab5045181c851a808e83acf723900cd410f0501b6726b413",
+      "correct_step": 3,
+      "db_name": "codebase_community",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 3,
+      "trace_hash": "b2797569ec59312390da8abc2e86702113df3515fa6a5b38c488d9d1e692cfe6"
+    },
+    {
+      "base_task_hash": "42c47dd8fb8f598cbbef617fa52b68e5803b2d95b67ba289cd1d981ac05f1843",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 6,
+      "trace_hash": "ab41f8c07510c350aea304ab1f372da99c789505f89e9d97b16612f235af6b6a"
+    },
+    {
+      "base_task_hash": "15637621f2cad0bd6dc623aa777dc90b9f9a792973fd527835b526e1cb07a0ee",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "47ffdafe0a5e5821059cdf8410617f64b3a80121c708074c39ada08a5234e1e9"
+    },
+    {
+      "base_task_hash": "0d3226c997b12c1026e532b377bef9d254909832f4d01605f029ae418562458e",
+      "correct_step": 1,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "fd152a3d76db2f0018c55bba2142fe4586e87a46192003be6f3ace68b723a06e"
+    },
+    {
+      "base_task_hash": "802cbab51a94c3c2eca33c39baaed39456c145cee05aa250172fc499a3b9535b",
+      "correct_step": null,
+      "db_name": "student_club",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 3,
+      "trace_hash": "e24bccdee1f560c0dc9bb5e229058dd2c862d4c2e7f4cc096bfdc484cc384d6c"
+    },
+    {
+      "base_task_hash": "d7c3b342dbddeb6910f4312f6650e7c497aec0b504c23343e5a0915a8b51b454",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "da0b7cad4415e6e01a38c72630e41f39528992a4309857f3fe9cee651f50f0c2"
+    },
+    {
+      "base_task_hash": "40f6b9218a8da457f02d2290ca487d36ee9f0b54662ea803c145126358d665de",
+      "correct_step": 1,
+      "db_name": "student_club",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "0386018a3991121093c8f473904ad6cd02866042d2c6f7efb0ff545930dc838f"
+    },
+    {
+      "base_task_hash": "2db0d998a077159d77a2393ef7962aa7ad53a8adefadb6552378193dd2d25b31",
+      "correct_step": 1,
+      "db_name": "card_games",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "d421419d56ed0913fccd33fcddaf7f65c2e080424ec1e7b1d7447ff68f21dc3a"
+    },
+    {
+      "base_task_hash": "b0b26b8cac8dbd5e08e75d4382ac7db7708b0d56fd512c76897e203d6eb0e974",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "5410da4f83ff4e41b4c6fa9041bf03314c700d5c6b8bdfda0a2ae04525b1700c"
+    },
+    {
+      "base_task_hash": "e0d59c1e203e683c0cb4e2299909b9261fc284d6f57e4473c2755426e3aa351c",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "9a9e22fd7a07175f4e02295e05dcf4d91e85a790c0d4ad18d36fcc9d751d36e2"
+    },
+    {
+      "base_task_hash": "03f2cafcb3887ad4be16601a8373525ebeda40c2024130dc7c2aa2456c135795",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "8d5931a59ae1b2c6dbc89ab9c0baa2c9e189450204c2ea93543a60bdf3d4e69b"
+    },
+    {
+      "base_task_hash": "6a1caa3ad1f8279f52d453caa395fa521774cec17eed89ac32c4b1a85cc0c08a",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "8fea9c6f02a69a1d72311b3315ebbf0efca30eb9c3226fe46b4deb95ffad1a72"
+    },
+    {
+      "base_task_hash": "808dcbfd21160786b5064272feba013a68a9ac5bce6744a6261c9ef7df5a04d1",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "54fff53fb320254e1a5177fd028ee199e4b25b2dea547a8b1044e7d21c61a987"
+    },
+    {
+      "base_task_hash": "006e709d5f74ae3459f06fc90840acdc089ba670362cc8ec3048b23c068f117a",
+      "correct_step": 1,
+      "db_name": "codebase_community",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "6be4f6ae46e6c40af41c286611dfcb8739b9cd8227702871b333996a947f91ea"
+    },
+    {
+      "base_task_hash": "250e9cc51a51ea55c1b8ad516ef7b0fb91b94041e6a9775e53f3cf71bd01ade3",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "d9570739e3f6c6f5df8ba7ea4e6120a6886dac4e1f5b645d4dd612e669a3c731"
+    },
+    {
+      "base_task_hash": "e2335bfa39a97a000b66ca1483bb63ef807a4284b44a009a94965c2d5e22fec2",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "aggregation",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "5ea34fc8396970179432722b5d2f8b9f5374b7f28f27313e6259d6dd84e23cc5"
+    },
+    {
+      "base_task_hash": "dfc609c044f904814cc116d5e80f50130050e1860d41519887464d6f499467c4",
+      "correct_step": 2,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "8851b2e3b707a05a5c5396310834f23e0b1bafae6123e9c35f9dd8b921f154cd"
+    },
+    {
+      "base_task_hash": "8a645d2ea7e3531115eea334848af90ee9f0e53289bd05161e761b59b1926de8",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "f2843a749cf76b4348c7a1368941d3f4116ed9622e3a85bfbfadc0611b14fdd6"
+    },
+    {
+      "base_task_hash": "494535484091f1800fb0fd15553e0cd1700e55e3096b0146b0d85b893fb18472",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "15a0da90527d08340313b03108da52ec8e2c63ea563c795274b97a2f838a0ba7"
+    },
+    {
+      "base_task_hash": "be4ce4a965533ae737e248baefdee2a1205829fd6cfbcfe87f2c75f85fa95ccc",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "2d8aa9f737a94cb7d598df86c7b286a32b232987bf470851a74c88d7f2844141"
+    },
+    {
+      "base_task_hash": "e86b4866f6a7f40b9d9dbd666b0580a67645bdd565a40eb3d37d6ef898c99a27",
+      "correct_step": 1,
+      "db_name": "formula_1",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "a685e3a3680c3933527d77db7d2140fdbb78037bb9ae0d6ff1c7fa1c12bae0f3"
+    },
+    {
+      "base_task_hash": "ed67355c2fe5d23275aee21611f4f94d8c624152b629cc84e59bca06ec0e9f79",
+      "correct_step": 1,
+      "db_name": "formula_1",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "43114e89154485a0f0d5bf3d478d3972e47610184f226a1a7de1dc6012e80e23"
+    },
+    {
+      "base_task_hash": "e16b1c4635e2134b94cc08d549adbc061ef365615b5220dcebdff1225e890025",
+      "correct_step": 1,
+      "db_name": "financial",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "e999e5082ab5a060a2a1c924a4462a9632e3c65aa13c4ac230c6a9c0ef5b4d78"
+    },
+    {
+      "base_task_hash": "97cf8d88b340ffb212158069b5256d07f7e34e5fa4d4d14ec98e8a63f3cc1938",
+      "correct_step": 2,
+      "db_name": "financial",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "907d270079564da7c20badb5be8cf61ca038e74282847cac186d9cce0140c004"
+    },
+    {
+      "base_task_hash": "c44c99d9bd451791923711388f544b90f2dc6d13e345c134915ba9d26669b604",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "9f3f43537ad75b2515c11f9e4665368de5f9b0459f9ba57b1cc1e61934cf4d9b"
+    },
+    {
+      "base_task_hash": "daa01964141473a0da3273ce0746eeadeff95e4c425ad9310b0fa3595a9c7bd6",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "06187c91f661a5c811e0de00de343d0d8bccb233e73256e4b8990dec2ac04234"
+    },
+    {
+      "base_task_hash": "88e8008bba0e1bfdbed6f3a2b80e3f2da7d1f5722e9b1a327152fa42be9384a4",
+      "correct_step": 1,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "ca905eabe9988217c9c605c5171621047caad861a85a40c0892e9193da0d1ea2"
+    },
+    {
+      "base_task_hash": "a89f044de3cbdb95bb49c938be5fbfe2503df0252859ec419aca4936f5bf7df8",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "e88ff37400adc3efb6d02b6b31a7bdb0432c21bd27293fb3f80b65935207fd14"
+    },
+    {
+      "base_task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "7a23f1136462de57c0f76410c152a73978ac7e116cd0ae12dc71c377561a7450"
+    },
+    {
+      "base_task_hash": "d9cf8a492227927b1db48d54a165e6226b84d0e2af17a7961e7fc4736a5dfa36",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "12b518e12d9a1f39979677d9b046ae1ff1c0703e650a20a938e571b3611e9bbc"
+    },
+    {
+      "base_task_hash": "f7fab4ab2c91ade09ba6b5cea35eb1a7d833b85d354e915fbb5ce10a1a17f889",
+      "correct_step": 1,
+      "db_name": "financial",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "4ca042fd29c29792a6748a174a9848c33e0682c571dffd6becff7b45ecea9dc2"
+    },
+    {
+      "base_task_hash": "c680dd83e8d6e09b5dc1047945b90b6d00b88d5cfd771c6eb88734544ef41847",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "81d4e38c71394a7ba07cadd168fada45c0b6733ad53e5a7165bafac4bbce0ab9"
+    },
+    {
+      "base_task_hash": "ee197d66a1254d57ab5a79c7d36289539e2bbbd448701e378753b8460dd999b1",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "96e1d50514f3f4aa6177e6b8ad316f7416a4794fe1b89a81338e2185574b7751"
+    },
+    {
+      "base_task_hash": "9ed381a0a44be0fe9638e05629f3a05ff738e8815d154b325b37827b026de256",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "d0b5984e847e2590ea2bd7e5259289ea5fce989f5adce8311e4a89dcb4fcca19"
+    },
+    {
+      "base_task_hash": "6de9874e9fb19669643d984f207a2a88a8cf9d36022b73c19b6baf129d334376",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "1c0758f6861b307afabadf6e920e91ccabdc00464ac808acd5bc1dfa1d036a2a"
+    },
+    {
+      "base_task_hash": "0e45ad80569e6fc49f3da5a0bbc2303c43d56cf2ed266aa840958199480acad4",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "3626d5c9b6c62ab4216bddfa84d1a005cec18c3c7905df6cfce258ef3844d5cc"
+    },
+    {
+      "base_task_hash": "d7c0da6b18a56880b6a3183333247034ff2b14abe963d8bd1df6282bc3f66881",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "f14e4d811de74399418ab82a258e06a19b4e5ddf4364eadfaa381d6c88c23c36"
+    },
+    {
+      "base_task_hash": "2fd21fd616b5a5e7a76fa6bb3c07e5cf20565248cee0071684fd4cb466438f54",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "literal_or_other",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "f842b764c60e5700b19e8a3b73fbc8e013ba696441d43e183ff236c47a72848e"
+    },
+    {
+      "base_task_hash": "3200d0f305d5d1170384052eceb78e365d1c3734162a81270b72b376d19ce00f",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "fd8851473abfbb535369342a87a59be3e7bf3d11f6a5876405245e750532d0f3"
+    },
+    {
+      "base_task_hash": "5d03dcfc63206e942e4ae297eb8df90edf750d0a9ea63de310b72b7a1927f0de",
+      "correct_step": 3,
+      "db_name": "codebase_community",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 3,
+      "trace_hash": "845d036f1feb9f4637cb8e3b63a24fb1c12f9359690920a950b28f8fc6fd5730"
+    },
+    {
+      "base_task_hash": "780882073fec2bbd4b00edd64b8e83dbe92ab0c53fd9dd664e82c9267780042c",
+      "correct_step": 2,
+      "db_name": "card_games",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "8bc2b037ded8fd68f79675fd6d59c6bb22a79f6a79bcf70a1fe0298e0acb6cc4"
+    },
+    {
+      "base_task_hash": "788396e80cca150ef16f8b0735e2a91de42636bf027f2808d6e3392ede0299ad",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "3bdcbcd0220d43001a3a16fd68b9514f1b0789279534035875ef9069d2bf3274"
+    },
+    {
+      "base_task_hash": "3cfa4c7abad3c16420de299bd1ea9d0f9293bd919d505fe427a88d87fc7849f4",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "b99105e17dd581940002fec043056b0d643e14c47117c10ea36a841a1a2af5a2"
+    },
+    {
+      "base_task_hash": "8c9024fe049715203db51c57f0f7b2cb02496d302a159ba7c3cc91e7dfcc0142",
+      "correct_step": null,
+      "db_name": "superhero",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 0,
+      "trace_hash": "a08e5cb52bf6d695037a7c8d2690a2e775f56aa342b81978061f29c83dad615e"
+    },
+    {
+      "base_task_hash": "51cd99276bbf68693c2a2bdf2cfc25429e2ffff51268d7c33c0a5d3fc57e9a45",
+      "correct_step": null,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "2fcb2fde620bd6770dce1874e3672d46649d11130b3caee14394313429af9fc0"
+    },
+    {
+      "base_task_hash": "254f54adc3bb4ce1e964a0525468d4777839a8238547a8846940ca19d526754c",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "no_sql",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 0,
+      "trace_hash": "a0c85cb3e7661fff74dff948dd10e4427552aa2ca69827da1da7d5af31834e5d"
+    },
+    {
+      "base_task_hash": "cd7a457dd51e84c016399f2b55f94f9fc3f9545db4b19f688aad554d95cbcf4d",
+      "correct_step": null,
+      "db_name": "financial",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "56896884040b349ff43e9b12e6a8909d727c289ecdb8ec2baec5ace1094bd175"
+    },
+    {
+      "base_task_hash": "3d3fdc721b2a84c5ff29d00d576996f061c0f4ccbb498a04d854b0858a46082a",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 4,
+      "trace_hash": "23ad28f08b87e880e0adbf62d4577c99d92fee65addaa68f34c1d8b6564f320d"
+    },
+    {
+      "base_task_hash": "3cdbf808242920659fffe46bc894fa55a60b404b7e28bae02a00144e5f5e1f34",
+      "correct_step": 2,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": true,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "0fd200428e9d7664460e20f4a1b39879b847af5ad35383f2994046446e428f3b"
+    },
+    {
+      "base_task_hash": "a8398457a5a4bd4dfb449e3b902160753cc01cd56cf9cf8d66ecefccc5c4a0b4",
+      "correct_step": 1,
+      "db_name": "codebase_community",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "b788c093a58515236fe903ce644f12968b056005256792bdb9690667cc6623c6"
+    },
+    {
+      "base_task_hash": "503c80e98f281bcb6c67bbe2f67380a98f19654844a51caf6388529b3127eb5e",
+      "correct_step": 1,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "274c2223f9c8802e838309e59ff956327a700f35fe196899bef38f795c406a74"
+    },
+    {
+      "base_task_hash": "6e52c081e7648c38acc81f3c9b863badcf223c6274498cef14eee2899b6d361c",
+      "correct_step": null,
+      "db_name": "formula_1",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "c7e628e20deff5c73a0259d5c1e94e55d7598bbc6011571f8c48a13f3b17d376"
+    },
+    {
+      "base_task_hash": "0207bb8ff57ea55538b5c3a0fe89576e6512be725c9677223a32cab3918f3ccd",
+      "correct_step": 1,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "a4b2651d3280a8d8185bd974bb17e9dcce4cb383756abd49cdaac9b53d207da7"
+    },
+    {
+      "base_task_hash": "3e264e663d85acf75c85a75f82cff02fd9c28c0e4a548127702149b0077b3b26",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "514c4ec774c9a3279d62981a8c7f05d4fb7f245ea080b88116eba84c276b69c2"
+    },
+    {
+      "base_task_hash": "90fb8e2c0cf5df386955efb6908cfa64d1b0e6935a4cb53e3afc968d85b2c613",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "3b52375b339bd10966d62affa8074aed7cabc7bd69385c1b05a415a60db02485"
+    },
+    {
+      "base_task_hash": "76341b5d825e982b12502c5860e110dc34b379491fb7a5291a20a59af4f41e1d",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "66c7efa208adadc0b98f76c531a834eaab3d056b101ff8510240a7f9ebd92296"
+    },
+    {
+      "base_task_hash": "4c222be9636b6e07a8ee2a9d1b1733add2c9782d8c49ab6c6d1f38921b63ba80",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "aeeec050e03bc5312b2cff4d95c8bcecad49bf14f033811da07f49dcdf05f58b"
+    },
+    {
+      "base_task_hash": "76341b5d825e982b12502c5860e110dc34b379491fb7a5291a20a59af4f41e1d",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 2,
+      "trace_hash": "85fa04fabff67c52a94840f8f250258de2357df2f038d87c7ce5fd1a27409fae"
+    },
+    {
+      "base_task_hash": "92e8a7602fda0cc325f76e328d123395ebc0db93309de71ded0646306daed429",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "5aa4981dbf5aea94fba039c2902fc0771d6357d1fd2aba427bfa8d3fa4b7d219"
+    },
+    {
+      "base_task_hash": "b84cd2ee22e9c8e038a805951d527d1dc5971bdbcd305e52c712858a7ecd0989",
+      "correct_step": 1,
+      "db_name": "card_games",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "6a82621e31eec37a81654b8a81befc304f627b0be9dffb020d230e2406e127a8"
+    },
+    {
+      "base_task_hash": "c8387c788b41bf35b5dd71dab2fae33d0a55e8091f8a9a57f7a41a81dc3eb0af",
+      "correct_step": 1,
+      "db_name": "superhero",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "6bae0b3937ebdc798f1e89dadce6e44032ee690e2e48cff29c2f42c414cf5c25"
+    },
+    {
+      "base_task_hash": "2628a9214eb023ecb6e0db6e1ee7e2c5c886a78cd799d7c66d084c7ade1809fd",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "a0127c66b07090488ee49c79273bfe8934fe8abb0c8219f88a8aff2dfaf5bfb0"
+    },
+    {
+      "base_task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552",
+      "correct_step": 1,
+      "db_name": "debit_card_specializing",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "43c7ab0a629bb6dd8122530abefe9b7637921163ceabdb7cfc93da9ab4474389"
+    },
+    {
+      "base_task_hash": "2335584725a45253584a7df3a739024ef5a9461e3126d1fa2d31106bc21d853b",
+      "correct_step": null,
+      "db_name": "european_football_2",
+      "first_outcome": "projection_or_column",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "01f49cc8e738115d6d8297e665515c2fd75e7104978a402ebb91afbfae797101"
+    },
+    {
+      "base_task_hash": "e2335bfa39a97a000b66ca1483bb63ef807a4284b44a009a94965c2d5e22fec2",
+      "correct_step": null,
+      "db_name": "thrombosis_prediction",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "6e7973a7675076038c59f9aecef4898eeeab7ea2c3fbeb7648dc2aca50b081b3"
+    },
+    {
+      "base_task_hash": "c788444c31b8d702953b577084ea2221e7e3002cde323b3b1c3ae25221bcb8d5",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "fd0d06bfe7862b30f6b708ee5d7e3622e573f0bfdab2fd039ae133402f1134a7"
+    },
+    {
+      "base_task_hash": "b474ce34a9bb45cd8751d607f33a4ef41330788f359493a72a082b5caf898da6",
+      "correct_step": 1,
+      "db_name": "codebase_community",
+      "first_outcome": "correct",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "7000b3179b425d281cc1e5be6888054c6a431ab79a2d2c38fc93429775d04246"
+    },
+    {
+      "base_task_hash": "e298e4e1f8c2d0dbcb8267c6cdcd2b3a84124e6952485bd8365faea2069b8377",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 3,
+      "trace_hash": "c7dde6031340f0d4230afdffb417d480bd0b4145ca66aefd1bc9ac49251b8409"
+    },
+    {
+      "base_task_hash": "026ffa08732877bac4f70dbf77431e22636daceaff763b80762a6b8106226150",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "1cff637e263a191dcc54d9d3ab7b10e6e287aada01fed92fe13ea8f66488cf92"
+    },
+    {
+      "base_task_hash": "293bb80ee8101b7f8c0ae782f528af8004efa7c83a48a8b590e757e104dc3b96",
+      "correct_step": null,
+      "db_name": "card_games",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 2,
+      "trace_hash": "54be06213e34719fefe4b4f234d259fde7644ae5b1c4b8376ad9587d7f0a55dd"
+    },
+    {
+      "base_task_hash": "92e8a7602fda0cc325f76e328d123395ebc0db93309de71ded0646306daed429",
+      "correct_step": null,
+      "db_name": "codebase_community",
+      "first_outcome": "predicate",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 1,
+      "trace_hash": "0c0e78d3aaa7698a3eb77da16e456429faa165e953211c43abb8cc40edfb958e"
+    },
+    {
+      "base_task_hash": "d7411c21af9d87cf5d74e90bfbcee8622b752bc9a34a63cfabb115128bccf254",
+      "correct_step": null,
+      "db_name": "toxicology",
+      "first_outcome": "table_selection",
+      "recovered_after_first_fault": false,
+      "reward": 0.0,
+      "sql_steps": 6,
+      "trace_hash": "35ad4fccaee62017868350bd54540f2a7d5142010bd456d08458a9bc83d23b9f"
+    },
+    {
+      "base_task_hash": "5f48897d0a2cad30a2743c54547cb43670b521b89d9719a2de87b0befd79c580",
+      "correct_step": null,
+      "db_name": "california_schools",
+      "first_outcome": "execution_error",
+      "recovered_after_first_fault": false,
+      "reward": 1.0,
+      "sql_steps": 1,
+      "trace_hash": "b497082ab43b866bd21bc28ac7aabd17290062046745cbcc84c104da356b21f1"
+    }
+  ],
+  "schema_version": "frankengate-wmh-bird-step-fault-audit-v1",
+  "source": {
+    "gold_sha256": "b0920b2e8917a120b469aab9f592b040df168067899f58b11148f4928363f58e",
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "raw_content_committed": false,
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+  }
+}
