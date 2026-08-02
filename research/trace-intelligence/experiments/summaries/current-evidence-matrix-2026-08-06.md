@@ -1,4 +1,4 @@
-# Current corporate trace-artifact evidence matrix (updated 2026-08-08)
+# Current corporate trace-artifact evidence matrix (updated 2026-08-10)
 
 This matrix is a decision aid, not a claim that public proxy results transfer
 to an enterprise. Each row links to the receipt-backed experiment and states
@@ -27,6 +27,9 @@ the strongest conclusion that the current data supports.
 | Can lexical context separation mine hard negatives for recurring terms? | Among 778 shared top-term hashes, 543 (69.79%) had at least one project pair below `.05` context Jaccard; pair-level low-context candidates were 13,915/37,390 (37.22%). | Add context separation as a review/reranking feature; do not call it semantic collision. | Adjudicated wrong-system/temporal labels, identifier joins, time-held-out replay, and outcome impact. |
 | Does a frontier model gain useful signal from context for recurring terms? | In a paired 12-pair Luna probe, term-only calls were `24/24 unclear`; term-plus-context calls labeled all high-context pairs `same_concept`, while low-context pairs were `5 different` and `7 related_context` with `3/6` repeat agreement. | Context is a useful review input and abstention mechanism; keep model labels silver and never auto-promote aliases. | Independent SME alias/NIL labels, temporal/wrong-system pairs, embedding comparison on the same cohort, and replay impact. |
 | What is the same-cohort alias cascade tradeoff? | On 14 target and 8 NIL Defog cases, exact structured MRR `.892857`, dense `.689966`, lexical `.805844`, and frontier `1.000000`; every retrieval arm still returned a candidate on all NILs (`1.0`). The frontier advantage is concentrated in 8 implicit-target cases (`1.000000` MRR vs exact `.812500`, dense `.603274`); explicit 6 cases were already `1.000000` for lexical/exact/frontier. | Keep refusal separate from retrieval: structured first, dense optional recall, frontier review/abstention, then replay. | Independently reviewed aliases/NILs, temporal renames, human agreement, and changed-system replay. |
+| Does enterprise source scope remove wrong-system candidates at scale? | On all 500 EnterpriseRAG questions, oracle `source_type` filtering improved target-bearing MRR `.511064→.593602`, evidence Recall@10 `.584935→.690904`, and wrong-source extras `4.851064→0`; same-source non-targets rose to `8.963830`, and all 30 targetless cases still returned candidates. | Put source/system scope before alias-aware ranking; it is a candidate and safety feature, not semantic identity, authorization, or abstention. | Reviewed same-source/wrong-system labels, temporal versions, NILs, and changed-system replay. |
+| Do frequency-derived aliases improve retrieval? | The deterministic train-only Defog reproduction matched its earlier receipt exactly: lexical MRR `.734885`, support-1 `.734885`, support-2 `.727542`; support-2 links covered only `.065385` of targets and 506 surfaces were ambiguous. | Frequency links remain sparse review candidates; do not promote them into a corporate ontology or embedding target. | Independent SME alias/NIL labels, temporal/wrong-system negatives, and downstream utility. |
+| Does the next enterprise cohort contract cover the hard edges? | The revised contract requires at least 100 targets, 50 hard negatives, 25 NIL/unclear cases, dual labels, all principal/team/project/system/time holdouts, and five tasks in each no-change/additive/rename/same-surface/changed-meaning/stale-authority/changed-tool stratum. The valid fixture remains promotion-blocked and the invalid fixture fails closed. | Use the contract as the admission gate for any embedding, alias, artifact, or skill claim. | Authorized data, independent labels, sealed changed-system replay, deletion/rollback, and cost/latency outcomes. |
 | Are exact identifiers and scope important hard negatives? | Unfiltered same-surface collisions preceded the target in `14.43%` of links; known scope reduced this to `0.20%`. | Preserve identifiers and scope as first-class fields and filters. | Multi-tenant, temporal, and authorization-scoped production traces. |
 | Can a cheap identifier-aware ranker improve retrieval? | Leave-one-database-out ranker: MRR `.737`, Recall@1 `.647`, collision-before-target `0.0`; dense baseline MRR `.586`, Recall@1 `.471`, collision `0.235`. | Use structured/lexical reranking before dense or frontier calls. | SME semantic labels, larger families, and changed-system replay. |
 | Can an SSL-shaped representation be grounded from traces? | On 19 public parallel/sequential multi-tool trajectories, Luna preserved exact tool/action order `19/19`, emitted `2.63` scenes and `.63` transitions per trace, and grounded `.937` of evidence substrings; only `.684` of records had every evidence quote grounded. On 20 isolated tool records, scenes were `0` and evidence grounding was `.9875`. | Preserve scheduling/structural/logical views, but keep scene/effect normalization review-only and replay-backed. | Multi-step enterprise traces with retries, authority/effect labels, temporal changes, human grounding adjudication, and downstream artifact utility. |
@@ -81,6 +84,9 @@ independent semantic labels and terminal outcomes.
 - [`Claude frozen artifact-drift holdout`](claude-history-tool-artifact-drift-2026-08-09.md)
 - [`Claude term-context model probe`](claude-history-term-context-model-probe-2026-08-09.md)
 - [`NL2SQL same-cohort alias cascade`](nl2sql-alias-cascade-audit-2026-08-09.md)
+- [`EnterpriseRAG source-filter ceiling`](enterprise-rag-source-filter-ceiling-full-2026-08-10.md)
+- [`NL2SQL alias-enrichment reproduction`](nl2sql-alias-enrichment-reproduction-2026-08-10.md)
+- [`semantic cohort contract addendum`](enterprise-semantic-cohort-contract-conformance-2026-08-10.md)
 - [`Skill and artifact replay synthesis`](skill-replay-evidence-synthesis-2026-08-09.md)
 - [`Termhood cross-cohort stability`](termhood-cross-cohort-stability-2026-08-09.md)
 - [`Acronym cross-cohort stability`](acronym-cross-cohort-stability-2026-08-09.md)
@@ -90,6 +96,8 @@ independent semantic labels and terminal outcomes.
 - [`DataClaw project adapter`](dataclaw-project-adapter-2026-08-09.md)
 - [`NL2SQL identifier cross-domain transfer`](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [`embedding/model cascade decision`](embedding-model-cascade-decision-2026-08-09.md)
+- [`objective closure audit`](objective-closure-audit-2026-08-10.md)
+- [`publication/partner evidence packet`](publication-partner-evidence-packet-2026-08-10.md)
 - [`termhood alias retrieval`](nl2sql-termhood-alias-retrieval-2026-08-04.md)
 - [`identifier hard-negative benchmark`](nl2sql-identifier-hard-negative-2026-08-02.md)
 - [`identifier-aware reranker`](nl2sql-identifier-reranker-2026-08-03.md)
