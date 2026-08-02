@@ -51,6 +51,15 @@ is unavailable. We retain the separation-of-exploration hypothesis as a future
 experiment only; none of its numerical claims enter the evidence matrix. See
 [the audit](fastcontext-withdrawn-method-audit-2026-08-09.md).
 
+The independent [separate-explorer probe](traject-bench-separate-explorer-probe-2026-08-09.md)
+tested that surviving hypothesis on two eight-case Luna runs. On the public
+tool-selection proxy, a full-pool explorer raised candidate coverage to `.750`
+and `.708333` versus `.500` for both lexical baselines, while returning about
+`3.8` tools instead of `16`. This is candidate-generation evidence, not
+validated artifact utility; the full-pool prompt averaged about 45.9k
+characters and per-call cost/latency were not recorded. Keep the explorer
+optional and replay-gated.
+
 ### 4. Structured tool fields are useful metadata, not a retrieval replacement
 
 The field-aware TRAJECT-Bench probe evaluated 5,297 domain-scoped records with
@@ -415,6 +424,7 @@ project, principal, and changed-system holdouts.
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [Cursor historical retrieval supervision](cursor-historical-retrieval-supervision-2026-08-09.md)
 - [FastContext withdrawn-method audit](fastcontext-withdrawn-method-audit-2026-08-09.md)
+- [TRAJECT-Bench separate explorer](traject-bench-separate-explorer-probe-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
 - [SkillLearnBench changed-data multi-seed synthesis](skilllearnbench-changed-data-multiseed-2026-08-09.md)

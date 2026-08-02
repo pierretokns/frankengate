@@ -1,0 +1,51 @@
+{
+  "cases_per_run": 8,
+  "claim_boundary": {
+    "enterprise_skill_transfer_measured": false,
+    "reason": "Repeated public tool-selection proxy; no tool endpoints, authority, principal, changed-system replay, or enterprise utility labels.",
+    "repeated_explorer_measured": true,
+    "validated_artifact_utility_measured": false
+  },
+  "explorer_mean": {
+    "candidate_coverage": 0.729167,
+    "mrr": 0.78125,
+    "recall_at_1": 0.25,
+    "recall_at_10": 0.729167,
+    "recall_at_5": 0.729167,
+    "selected_count": 3.8125
+  },
+  "lexical_control": {
+    "candidate_count": 126.375,
+    "candidate_coverage": 0.5,
+    "mrr": 0.322917,
+    "recall_at_1": 0.041667,
+    "recall_at_10": 0.458333,
+    "recall_at_5": 0.25,
+    "records": 8,
+    "selected_count": 16.0
+  },
+  "result_sha256": "074ca395eb896bc483aca818c9f9ffae2150d4692f7f3316f18149575bab3599",
+  "runs": 2,
+  "schema_version": "frankengate-traject-bench-explorer-probe-aggregate-v1",
+  "source": {
+    "raw_content_committed": false,
+    "result_sha256": [
+      "932618f34c8e28cbf394871ea15ed2abb6fbee77bf930f8991c2ac74e5a3a0b0",
+      "cd739b2fa35813504629b754b6ec379ac720320042c82a7418e333deeeca2474"
+    ]
+  },
+  "stability": {
+    "case_jaccards": [
+      1.0,
+      0.666667,
+      1.0,
+      0.75,
+      0.333333,
+      1.0,
+      0.8,
+      0.714286
+    ],
+    "exact_selected_set_agreements": 3,
+    "selected_set_jaccard_mean": 0.783036
+  }
+}

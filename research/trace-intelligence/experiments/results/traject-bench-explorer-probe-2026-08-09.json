@@ -1,0 +1,385 @@
+{
+  "arms": {
+    "explorer": {
+      "candidate_count": 126.375,
+      "candidate_coverage": 0.75,
+      "mrr": 0.8125,
+      "recall_at_1": 0.25,
+      "recall_at_10": 0.75,
+      "recall_at_5": 0.75,
+      "records": 8,
+      "selected_count": 3.75
+    },
+    "lexical_description": {
+      "candidate_count": 126.375,
+      "candidate_coverage": 0.5,
+      "mrr": 0.373512,
+      "recall_at_1": 0.083333,
+      "recall_at_10": 0.375,
+      "recall_at_5": 0.125,
+      "records": 8,
+      "selected_count": 16.0
+    },
+    "lexical_name": {
+      "candidate_count": 126.375,
+      "candidate_coverage": 0.5,
+      "mrr": 0.322917,
+      "recall_at_1": 0.041667,
+      "recall_at_10": 0.458333,
+      "recall_at_5": 0.25,
+      "records": 8,
+      "selected_count": 16.0
+    }
+  },
+  "claim_boundary": {
+    "enterprise_skill_transfer_measured": false,
+    "reason": "Public TRAJECT-Bench target tool lists measure candidate coverage/ranking only. No tool endpoints, authority, principal, or changed-system replay was used.",
+    "separate_explorer_measured": true,
+    "validated_artifact_utility_measured": false
+  },
+  "dataset": {
+    "domains": [
+      "Education",
+      "Email",
+      "Finance",
+      "Gaming",
+      "Mapping",
+      "Music",
+      "News_Media",
+      "Travel"
+    ],
+    "selected_cases": 8,
+    "selection": "one hard public case per domain, stable order"
+  },
+  "failures": 0,
+  "protocol": {
+    "explorer_sees_gold_targets": false,
+    "explorer_sees_tool_outputs": false,
+    "full_domain_pool": true,
+    "max_shortlist": 16,
+    "model": "gpt-5.6-luna",
+    "raw_model_outputs_external": true,
+    "tool_endpoints_invoked": false
+  },
+  "result_sha256": "bedb3eef92a24df143c33e7078939a2f32c394a0c3e2df4016469d8b430711e6",
+  "rows": [
+    {
+      "candidate_count": 89,
+      "case_id": "Education/hard_ver/0",
+      "explorer": {
+        "candidate_count": 89,
+        "candidate_coverage": 0.6666666666666666,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 0.6666666666666666,
+        "recall_at_5": 0.6666666666666666,
+        "selected_count": 4,
+        "target_count": 3
+      },
+      "explorer_response_chars": 447,
+      "lexical_description": {
+        "candidate_count": 89,
+        "candidate_coverage": 0.3333333333333333,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 0.3333333333333333,
+        "recall_at_5": 0.3333333333333333,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "lexical_name": {
+        "candidate_count": 89,
+        "candidate_coverage": 0.6666666666666666,
+        "first_target_rank": 3,
+        "mrr": 0.3333333333333333,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.6666666666666666,
+        "recall_at_5": 0.3333333333333333,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "prompt_chars": 33171
+    },
+    {
+      "candidate_count": 70,
+      "case_id": "Email/hard_ver/1",
+      "explorer": {
+        "candidate_count": 70,
+        "candidate_coverage": 0.0,
+        "first_target_rank": 0,
+        "mrr": 0.0,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_5": 0.0,
+        "selected_count": 3,
+        "target_count": 3
+      },
+      "explorer_response_chars": 325,
+      "lexical_description": {
+        "candidate_count": 70,
+        "candidate_coverage": 1.0,
+        "first_target_rank": 2,
+        "mrr": 0.5,
+        "recall_at_1": 0.0,
+        "recall_at_10": 1.0,
+        "recall_at_5": 0.3333333333333333,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "lexical_name": {
+        "candidate_count": 70,
+        "candidate_coverage": 1.0,
+        "first_target_rank": 6,
+        "mrr": 0.16666666666666666,
+        "recall_at_1": 0.0,
+        "recall_at_10": 1.0,
+        "recall_at_5": 0.0,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "prompt_chars": 26252
+    },
+    {
+      "candidate_count": 258,
+      "case_id": "Finance/hard_ver/2",
+      "explorer": {
+        "candidate_count": 258,
+        "candidate_coverage": 1.0,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 1.0,
+        "recall_at_5": 1.0,
+        "selected_count": 3,
+        "target_count": 3
+      },
+      "explorer_response_chars": 371,
+      "lexical_description": {
+        "candidate_count": 258,
+        "candidate_coverage": 0.3333333333333333,
+        "first_target_rank": 6,
+        "mrr": 0.16666666666666666,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.3333333333333333,
+        "recall_at_5": 0.0,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "lexical_name": {
+        "candidate_count": 258,
+        "candidate_coverage": 0.3333333333333333,
+        "first_target_rank": 3,
+        "mrr": 0.3333333333333333,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.3333333333333333,
+        "recall_at_5": 0.3333333333333333,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "prompt_chars": 89962
+    },
+    {
+      "candidate_count": 84,
+      "case_id": "Gaming/hard_ver/3",
+      "explorer": {
+        "candidate_count": 84,
+        "candidate_coverage": 1.0,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 1.0,
+        "recall_at_5": 1.0,
+        "selected_count": 3,
+        "target_count": 3
+      },
+      "explorer_response_chars": 444,
+      "lexical_description": {
+        "candidate_count": 84,
+        "candidate_coverage": 0.6666666666666666,
+        "first_target_rank": 8,
+        "mrr": 0.125,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.3333333333333333,
+        "recall_at_5": 0.0,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "lexical_name": {
+        "candidate_count": 84,
+        "candidate_coverage": 0.6666666666666666,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 0.6666666666666666,
+        "recall_at_5": 0.3333333333333333,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "prompt_chars": 30549
+    },
+    {
+      "candidate_count": 124,
+      "case_id": "Mapping/hard_ver/4",
+      "explorer": {
+        "candidate_count": 124,
+        "candidate_coverage": 0.3333333333333333,
+        "first_target_rank": 2,
+        "mrr": 0.5,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.3333333333333333,
+        "recall_at_5": 0.3333333333333333,
+        "selected_count": 4,
+        "target_count": 3
+      },
+      "explorer_response_chars": 451,
+      "lexical_description": {
+        "candidate_count": 124,
+        "candidate_coverage": 0.0,
+        "first_target_rank": 0,
+        "mrr": 0.0,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_5": 0.0,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "lexical_name": {
+        "candidate_count": 124,
+        "candidate_coverage": 0.0,
+        "first_target_rank": 0,
+        "mrr": 0.0,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_5": 0.0,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "prompt_chars": 45986
+    },
+    {
+      "candidate_count": 137,
+      "case_id": "Music/hard_ver/5",
+      "explorer": {
+        "candidate_count": 137,
+        "candidate_coverage": 1.0,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 1.0,
+        "recall_at_5": 1.0,
+        "selected_count": 3,
+        "target_count": 3
+      },
+      "explorer_response_chars": 382,
+      "lexical_description": {
+        "candidate_count": 137,
+        "candidate_coverage": 0.6666666666666666,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 0.6666666666666666,
+        "recall_at_5": 0.3333333333333333,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "lexical_name": {
+        "candidate_count": 137,
+        "candidate_coverage": 1.0,
+        "first_target_rank": 2,
+        "mrr": 0.5,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.6666666666666666,
+        "recall_at_5": 0.6666666666666666,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "prompt_chars": 49902
+    },
+    {
+      "candidate_count": 118,
+      "case_id": "News_Media/hard_ver/6",
+      "explorer": {
+        "candidate_count": 118,
+        "candidate_coverage": 1.0,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 1.0,
+        "recall_at_5": 1.0,
+        "selected_count": 4,
+        "target_count": 3
+      },
+      "explorer_response_chars": 563,
+      "lexical_description": {
+        "candidate_count": 118,
+        "candidate_coverage": 0.3333333333333333,
+        "first_target_rank": 14,
+        "mrr": 0.07142857142857142,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_5": 0.0,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "lexical_name": {
+        "candidate_count": 118,
+        "candidate_coverage": 0.3333333333333333,
+        "first_target_rank": 4,
+        "mrr": 0.25,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.3333333333333333,
+        "recall_at_5": 0.3333333333333333,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "prompt_chars": 43445
+    },
+    {
+      "candidate_count": 131,
+      "case_id": "Travel/hard_ver/7",
+      "explorer": {
+        "candidate_count": 131,
+        "candidate_coverage": 1.0,
+        "first_target_rank": 1,
+        "mrr": 1.0,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_10": 1.0,
+        "recall_at_5": 1.0,
+        "selected_count": 6,
+        "target_count": 3
+      },
+      "explorer_response_chars": 655,
+      "lexical_description": {
+        "candidate_count": 131,
+        "candidate_coverage": 0.6666666666666666,
+        "first_target_rank": 8,
+        "mrr": 0.125,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.3333333333333333,
+        "recall_at_5": 0.0,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "lexical_name": {
+        "candidate_count": 131,
+        "candidate_coverage": 0.0,
+        "first_target_rank": 0,
+        "mrr": 0.0,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_5": 0.0,
+        "selected_count": 16,
+        "target_count": 3
+      },
+      "prompt_chars": 47948
+    }
+  ],
+  "schema_version": "frankengate-traject-bench-explorer-probe-v1",
+  "source": {
+    "data_root": "/private/tmp/traject-bench-master/public_data",
+    "raw_content_committed": false,
+    "root_name": "public_data"
+  }
+}

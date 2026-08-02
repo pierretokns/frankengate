@@ -88,6 +88,15 @@ frontier reasoning—and validate it with our own exposure-complete traces and
 changed-system replay. See
 [`fastcontext-withdrawn-method-audit-2026-08-09.md`](fastcontext-withdrawn-method-audit-2026-08-09.md).
 
+Our independent [TRAJECT-Bench separate-explorer probe](traject-bench-separate-explorer-probe-2026-08-09.md)
+tests this concept without FastContext. Across two eight-case Luna runs,
+full-pool exploration improved public target coverage from `.500` for lexical
+top-16 to `.750` and `.708333`, while emitting only about four candidates. The
+prompt was large (about 45.9k characters on average), cost/latency were not
+recorded, and no replay or authority labels existed. This supports a separate
+explorer as a candidate-generation arm, not as proof of skill or artifact
+promotion.
+
 ### Trajectory-aware tool evaluation
 
 [TRAJECT-Bench](https://arxiv.org/abs/2510.04550) evaluates tool selection,
