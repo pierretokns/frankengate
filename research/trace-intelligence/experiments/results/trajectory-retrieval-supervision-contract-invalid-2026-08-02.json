@@ -1,0 +1,53 @@
+{
+  "schema_version": "frankengate-trajectory-retrieval-supervision-conformance-v1",
+  "contract_sha256": "45acab75aa9096ebac66845944f46563230f5a67654e37b468afc2b2c9c37fa8",
+  "manifest_sha256": "fb2d39a00d102a53952080cf14c888803d8910f28a17655dc564c7f39696cb08",
+  "raw_content_committed": false,
+  "structural_valid": false,
+  "promotion_ready": false,
+  "episode_counts": {
+  },
+  "promotion_blockers": [
+    "target count 0 < 100",
+    "hard_negative count 0 < 50",
+    "nil_or_unclear count 0 < 25"
+  ],
+  "errors": [
+    {
+      "path": "candidate_pool_frozen_before_labels",
+      "message": "must be true"
+    },
+    {
+      "path": "exposure_log_complete",
+      "message": "must be true"
+    },
+    {
+      "path": "holdouts.team",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm lexical_identifier"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm frozen_dense"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm trajectory_distilled_ranker"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm frontier_review"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm regeneration_control"
+    },
+    {
+      "path": "episodes",
+      "message": "at least one episode is required"
+    }
+  ]
+}

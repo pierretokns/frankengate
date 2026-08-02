@@ -246,4 +246,5 @@ outcome.
 - [Changed-system replay bridge](changed-system-authority-replay-bridge-2026-08-09.md)
 - [Task-disjoint adapter](wmh-bird-sql-embedding-adapter-cohort-2026-08-09.md)
 - [Cross-user candidate generation](dataclaw-cross-user-dense-candidates-2026-08-09.md)
+- [Exposure-aware trajectory supervision contract](trajectory-retrieval-supervision-contract-2026-08-02.md)
 - [Next experiments and promotion gates](corporate-trace-artifact-learning-next-experiments-2026-08-06.md)

@@ -1,0 +1,12 @@
+{
+  "schema_version": "frankengate-trajectory-retrieval-supervision-v1",
+  "study_id": "invalid-exposure-example",
+  "consent_scope_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "source_license_or_authorization": "example-license-receipt",
+  "candidate_pool_frozen_before_labels": false,
+  "exposure_log_complete": false,
+  "holdouts": {"principal": true, "team": false, "project": true, "system": true, "effective_time": true},
+  "arms": ["structured_scope"],
+  "minimum_promotion_counts": {"target": 100, "hard_negative": 50, "nil_or_unclear": 25, "annotators_per_episode": 2},
+  "episodes": []
+}
