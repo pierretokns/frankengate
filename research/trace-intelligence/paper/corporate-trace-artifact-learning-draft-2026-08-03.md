@@ -132,6 +132,7 @@ claim boundary, and independent verifier where applicable.
 | Family-disjoint composition transfer | Two BIRD replays: library `8/40` versus `6/40` for both controls; one stable win and zero stable losses | Aggregate signal is stable but low-headroom; insufficient for a causal or enterprise claim |
 | Trace-validated artifact library transfer | One family-disjoint frontier replay: 16 validated trace artifacts; library `4/20` exact versus `3/20` no-skill and `3/20` placebo; one paired win, zero losses, 19 ties | Directionally positive but underpowered; keep artifacts scope-bound and replayable, not auto-promoted |
 | Local Codex archive friction screen | Corrected current-schema import: 622 sessions, 47,122 prompt episodes, 2,060 structured executor errors, 33 error→repair follow-ups | Useful for blinded candidate sampling; markers are not intent, satisfaction, or terminal-outcome labels |
+| Lexical friction detector reality check | Explicit friction markers: precision `.79%`, recall `18.93%`, F1 `.015` against the structured process-exit proxy | Do not use lexical markers as eval labels; combine ordering, tool contracts, repeated attempts, and adjudication |
 
 ## Main conclusions
 

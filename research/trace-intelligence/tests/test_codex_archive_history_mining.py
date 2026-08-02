@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from codex_archive_history_mining import parse_session  # noqa: E402
+from codex_archive_history_mining import aggregate, parse_session  # noqa: E402
 
 
 def test_current_archive_schema_is_one_session_per_file(tmp_path: Path) -> None:
@@ -30,3 +30,14 @@ def test_current_archive_schema_is_one_session_per_file(tmp_path: Path) -> None:
     assert result["episodes_with_structured_error"] == 1
     assert result["episodes_with_unresolved_structured_error"] == 1
     assert result["friction_episode_count"] == 1
+    assert result["predicted_friction_count"] == 1
+    assert result["friction_error_true_positive_count"] == 1
+    assert result["friction_false_positive_count"] == 0
+    assert result["friction_false_negative_count"] == 0
+    assert aggregate([result])["friction_detector_confusion"] == {
+        "predicted_friction": 1,
+        "structured_error": 1,
+        "true_positive": 1,
+        "false_positive": 0,
+        "false_negative": 0,
+    }

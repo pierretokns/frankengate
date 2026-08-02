@@ -111,7 +111,9 @@ The current local Codex archive importer fixes the newer `payload` schema and
 processes 622 rollout files without treating each event as a session. Its
 content-free baseline has 47,122 prompt episodes, 53,684 function calls, 2,060
 structured executor errors, 16,349 repeated tool calls, and 33 error-to-repair
-follow-up pairs. The result is still a screening cohort rather than an
+follow-up pairs. Explicit friction words have only 0.79% precision and 18.93%
+recall against the structured process-exit proxy. The result is still a
+screening cohort rather than an
 independent outcome dataset; see the [`current archive import`](experiments/summaries/codex-archive-history-import-2026-08-08.md),
 [`adapter`](codex_archive_history_mining.py), and [receipt](experiments/results/codex-archive-history-2026-08-08.json).
 

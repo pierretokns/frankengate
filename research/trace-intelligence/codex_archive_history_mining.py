@@ -232,6 +232,19 @@ def parse_session(path: Path) -> dict[str, Any]:
         episode["structured_error_count"] > 0 and episode["success_marker_count"] > 0
         for episode in episodes
     )
+    predicted_friction_count = sum(bool(episode["explicit_signal_counts"]) for episode in episodes)
+    friction_error_true_positive_count = sum(
+        bool(episode["explicit_signal_counts"]) and episode["structured_error_count"] > 0
+        for episode in episodes
+    )
+    friction_false_positive_count = sum(
+        bool(episode["explicit_signal_counts"]) and episode["structured_error_count"] == 0
+        for episode in episodes
+    )
+    friction_false_negative_count = sum(
+        not bool(episode["explicit_signal_counts"]) and episode["structured_error_count"] > 0
+        for episode in episodes
+    )
 
     return {
         "session_id": path.stem,
@@ -266,6 +279,10 @@ def parse_session(path: Path) -> dict[str, Any]:
             or episode["structured_error_count"] > 0
             for episode in episodes
         ),
+        "predicted_friction_count": predicted_friction_count,
+        "friction_error_true_positive_count": friction_error_true_positive_count,
+        "friction_false_positive_count": friction_false_positive_count,
+        "friction_false_negative_count": friction_false_negative_count,
         "distinct_tool_names": len(tool_names),
         "top_tools": tool_names.most_common(10),
         "cwd_count": len(cwd_values),
@@ -288,6 +305,8 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "episodes_with_success_marker", "episodes_error_then_success",
         "episodes_with_unresolved_structured_error", "recovery_after_error_prompt_count",
         "friction_episode_count",
+        "predicted_friction_count", "friction_error_true_positive_count",
+        "friction_false_positive_count", "friction_false_negative_count",
     )
     for row in rows:
         explicit.update(row["explicit_signal_counts"])
@@ -301,6 +320,13 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "sessions_with_rephrase": sum(row["rephrase_pair_count"] > 0 for row in rows),
         "sessions_with_repeated_prompt": sum(row["repeated_prompt_count"] > 0 for row in rows),
         "sessions_with_repeated_tool": sum(row["repeated_tool_use_count"] > 0 for row in rows),
+        "friction_detector_confusion": {
+            "predicted_friction": totals["predicted_friction_count"],
+            "structured_error": totals["episodes_with_structured_error"],
+            "true_positive": totals["friction_error_true_positive_count"],
+            "false_positive": totals["friction_false_positive_count"],
+            "false_negative": totals["friction_false_negative_count"],
+        },
     }
 
 
