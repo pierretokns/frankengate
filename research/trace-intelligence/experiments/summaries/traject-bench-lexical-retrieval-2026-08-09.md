@@ -13,11 +13,12 @@ Two candidate-pool policies were measured:
 - **Domain pool:** the domain's published `*_tool.json` file.
 - **All pool:** the deduplicated 674-name union from `all_tools.json`.
 
-Only records whose reference names existed in the selected candidate pool were
-scored. The domain pool excluded 613/5,910 records because published
-sequential/reference tool names were absent from the corresponding pool; the
-all pool did not recover those names either. This is a dataset-coverage issue,
-not a retrieval failure, and is itself important for benchmark ingestion.
+Only records with non-empty reference names that existed in the selected
+candidate pool were scored. The run excluded 613/5,910 records: 573 had
+missing reference names in the global manifest and 40 had no usable target list.
+The domain pool has additional scope-specific omissions. This is a
+dataset-coverage issue, not a retrieval failure, and is itself important for
+benchmark ingestion.
 
 ## Results on the eligible records
 

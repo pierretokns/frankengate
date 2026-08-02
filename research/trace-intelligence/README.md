@@ -166,6 +166,10 @@ The [`TRAJECT-Bench lexical retrieval baseline`](experiments/summaries/traject-b
 measures domain-scoped versus global candidate pools: cheap name retrieval
 beats naive name-plus-description expansion, and global pooling loses recall,
 supporting scope-first retrieval before embeddings or frontier review.
+The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
+found 735 missing reference-name occurrences; only 18 are uniquely repairable
+by normalization, so fuzzy mapping is explicitly disallowed before the next
+model comparison.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.

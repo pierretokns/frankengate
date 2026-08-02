@@ -1,0 +1,39 @@
+{
+  "claim_boundary": {
+    "automatic_fuzzy_repair_authorized": false,
+    "benchmark_labels_changed": false,
+    "reason": "Only unique normalized matches are identified; unresolved or ambiguous names remain excluded until the source manifest is repaired or adjudicated."
+  },
+  "exact_candidate_manifest_rows": 5337,
+  "missing_name_frequency_histogram": {
+    "2": 12,
+    "4": 1,
+    "5": 18,
+    "10": 4,
+    "12": 1,
+    "15": 5,
+    "20": 1,
+    "25": 5,
+    "30": 3,
+    "35": 2,
+    "40": 1,
+    "45": 2,
+    "55": 1
+  },
+  "missing_name_occurrences": 735,
+  "partially_repairable_rows": 0,
+  "rows": 5910,
+  "schema_version": "frankengate-traject-bench-manifest-repair-audit-v1",
+  "source": {
+    "data_files_sha256": "ff02973a630966c56fcdb30877c1af73d82fc5deee04dc3a5cab1e3cc71b84d7",
+    "file_count": 31,
+    "raw_content_committed": false,
+    "root_name": "public_data"
+  },
+  "unique_missing_name_count": 56,
+  "unique_normalized_name_occurrences_repaired": 18,
+  "unique_repair_pair_count": 4,
+  "uniquely_normalized_repair_rows": 18,
+  "unresolved_name_occurrences": 717,
+  "unresolved_rows": 555
+}
