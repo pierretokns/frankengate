@@ -66,10 +66,15 @@
           "exists": true,
           "path": "bird-sql-skill-factorial-40-2026-08-06-paired.json",
           "sha256": "173241a091dfe83efc598e8f70ac63c27962c7a9838066e76fe118bce687fab6"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
+          "sha256": "0847fa3d9f03ff358e953fd2d1bea57c76825a1978b3eafcbb6d0b487b6c3692"
         }
       ],
       "id": "fair_controls_and_disjoint_splits",
-      "remaining": "The 40-task family-disjoint checkpoint improves power, but repeated seeds, broader user/time-disjoint cohorts, and a different task horizon remain open.",
+      "remaining": "The 40-task skill checkpoint and repeated composition replays improve power, but broader user/time-disjoint cohorts, irrelevant-library NILs, and a different task horizon remain open.",
       "status": "partial"
     },
     {
@@ -98,10 +103,15 @@
           "exists": true,
           "path": "bird-sql-skill-factorial-40-2026-08-06-paired.json",
           "sha256": "173241a091dfe83efc598e8f70ac63c27962c7a9838066e76fe118bce687fab6"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
+          "sha256": "0847fa3d9f03ff358e953fd2d1bea57c76825a1978b3eafcbb6d0b487b6c3692"
         }
       ],
       "id": "independent_outcome_evaluation",
-      "remaining": "A family-disjoint changed-agent future-task outcome is now independently recomputed for BIRD (40 pairs, trace procedure equal to no-skill, latency recorded), but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
+      "remaining": "Family-disjoint BIRD outcomes are independently recomputed for one-shot procedure and composed subplans, but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
       "status": "partial_mechanics_only"
     },
     {
