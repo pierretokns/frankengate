@@ -39,11 +39,12 @@ the content-minimized candidate metadata:
 - replay target rows: `5`, matching the manifest task hashes;
 - source/target task-hash intersection: `0`.
 
-Therefore the underlying data split is verified, while the seed-level claim
-metadata remains stale and must be regenerated before calling the receipt
-self-consistent.  The seed protocol-remediation fields carry the same
-family-disjoint study ID and candidate hash, so replay mechanics are coherent;
-the remaining issue is provenance metadata, not evidence of data overlap.
+Therefore the underlying data split is verified.  The seed-level claim text is
+stale, so an append-only correction receipt now supersedes that wording without
+rewriting historical evidence.  The seed protocol-remediation fields carry the
+same family-disjoint study ID and candidate hash, so replay mechanics are
+coherent; the remaining issue is historical metadata hygiene, not evidence of
+data overlap.
 
 ## What is proven
 
@@ -55,7 +56,6 @@ the remaining issue is provenance metadata, not evidence of data overlap.
 
 ## What remains open
 
-- reconcile the seed-level claim boundaries and regenerate the aggregate receipt;
 - replay the same candidate under changed schemas/systems;
 - obtain independent SME semantic labels;
 - test cross-family and cross-project transfer;
@@ -69,6 +69,8 @@ causal enterprise skill-learning result.
 
 - [lineage audit](../results/composable-candidate-lineage-audit-2026-08-02.json)
 - [independent verification](../results/composable-candidate-lineage-audit-verification-2026-08-02.json)
+- [append-only claim correction](../results/composable-replay-claim-correction-2026-08-02.json)
+- [claim correction verification](../results/composable-replay-claim-correction-verification-2026-08-02.json)
 - [authoritative replay summary](composable-artifact-frontier-replay-2026-08-04.md)
 - [runner](../../composable_candidate_lineage_audit.py)
 - [verifier](../../verify_composable_candidate_lineage_audit.py)
