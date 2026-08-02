@@ -77,6 +77,9 @@ artifact exists in the library.
 The dated [`objective completion audit`](experiments/summaries/objective-completion-audit-2026-08-06.md)
 maps every requested research area to its strongest evidence, open proof
 obligation, and current disposition.
+The [`corporate trace-learning closure audit`](experiments/summaries/corporate-trace-objective-closure-audit-2026-08-02.md)
+rechecks the full objective requirement by requirement and separates
+demonstrated mechanics from the still-missing enterprise semantic cohort.
 The [`headline receipt-consistency audit`](experiments/summaries/headline-receipt-consistency-audit-2026-08-02.md)
 recomputes 19 selected high-impact claims against their receipts; all checks
 pass, while preserving the separately documented SkillLearnBench missing-answer
