@@ -153,6 +153,11 @@ The [`modernized method matrix`](experiments/summaries/modernized-method-reimple
 separates current-tool mechanics from efficacy evidence for AgentRx, Signals,
 AgentEvals, SkillGen, RHO/ReasoningBank, memory systems, and the vocabulary
 tools.
+The current [`adaptable-method and partner screen`](experiments/summaries/research-partners-and-adaptable-methods-2026-08-09.md)
+maps trajectory-supervised retrieval, enterprise hard-negative mining,
+trajectory-aware tool evaluation, and staged tool retrieval to Frankengate's
+remaining causal cohort and identifies MIT DSAIL/Everest and CLEAR as the
+strongest potential research collaborators.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.
