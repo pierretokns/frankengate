@@ -355,6 +355,14 @@ overlap reached `.308`; 342 normalized command shapes recurred across projects.
 This supports using command shapes as review candidates and hard negatives, not
 as same-work labels or reusable artifacts.
 
+The [path-identifier collision audit](dataclaw-ronald-path-identifier-collision-2026-08-02.md)
+adds a content-free identifier signal: 2,462 basename surfaces mapped to 4,025
+full-path digests; 281 surfaces crossed projects, and 245 cross-project surfaces
+also had multiple path digests. Collision-bearing surface events were 13.3% of
+path events. This is useful for constructing reviewed same-surface/different-
+system NIL and alias candidates, but it does not establish semantic identity,
+same work, or artifact correctness.
+
 ### 8. Friction mining needs structural review, not keyword labels
 
 The corrected native Codex importer found 47,122 user episodes, 228 adjacent
