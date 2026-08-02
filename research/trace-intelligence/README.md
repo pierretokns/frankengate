@@ -278,6 +278,10 @@ Tool/action order remained exact `10/10`; the model emitted `1.9` scenes and
 `.9` transitions per episode, with `.800` fully grounded episodes. This is
 direct ingestion evidence for coding traces, not evidence of skill or user
 outcomes.
+The companion [normalized-output quality audit](experiments/summaries/cctrace-ssl-normalizer-quality-audit-2026-08-02.md)
+found complete action/scene coverage and valid transition references on all 10
+episodes. This makes the projection structurally usable for review, while
+leaving semantic effects and downstream utility behind independent gates.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next

@@ -1,0 +1,7 @@
+{
+  "claim_boundary_verified": true,
+  "records_verified": 10,
+  "schema_version": "frankengate-cctrace-ssl-quality-verification-v1",
+  "source_result_sha256": "ac6c9bfcfbf8b7de4a1376d6f882bda0a682d17c002218130dafb85d4eed72bb",
+  "verification_passed": true
+}

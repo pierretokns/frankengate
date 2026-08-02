@@ -84,6 +84,12 @@ per episode, and fully grounded `.800` of episodes (`.922619` of evidence
 items). This validates the ingestion/normalization path on coding traces, but
 one publisher and no independent terminal labels are insufficient for skill,
 alias, or cross-user claims.
+The companion [cctrace quality audit](cctrace-ssl-normalizer-quality-audit-2026-08-02.md)
+checked the external model outputs against source invariants: action order,
+scene coverage, and transition references all passed `1.000`, while the
+conservative tool-name action-type reference reached `.983607`. This supports
+using the projection as a structurally complete review artifact, not as a
+semantic correctness or skill-utility label.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -242,6 +248,7 @@ project, principal, and changed-system holdouts.
 - [frontier SSL normalizer probe](traject-bench-ssl-normalizer-probe-2026-08-02.md)
 - [multi-tool SSL trajectory probe](traject-bench-ssl-trace-normalizer-probe-2026-08-02.md)
 - [real cctrace SSL normalization probe](cctrace-ssl-normalizer-probe-2026-08-02.md)
+- [cctrace normalized-output quality audit](cctrace-ssl-normalizer-quality-audit-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)

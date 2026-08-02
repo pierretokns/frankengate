@@ -1,0 +1,166 @@
+{
+  "aggregate": {
+    "action_order_exact_rate": 1.0,
+    "action_type_accuracy": 0.983607,
+    "all_actions_in_scene_rate": 1.0,
+    "mean_scene_action_coverage": 1.0,
+    "mean_scene_duplicate_order_count": 0.0,
+    "records_audited": 10,
+    "transition_refs_valid_rate": 1.0
+  },
+  "claim_boundary": {
+    "deterministic_structure_quality_measured": true,
+    "human_semantic_quality_measured": false,
+    "reason": "Source invariants and conservative tool-name mapping only; no human labels or independent task outcome.",
+    "skill_or_artifact_utility_measured": false,
+    "task_correctness_measured": false
+  },
+  "protocol": {
+    "checks": [
+      "action order",
+      "tool-effect type",
+      "scene coverage",
+      "transition references"
+    ],
+    "expected_act_type_mapping": "Read/Grep/Glob/LS/Search=READ; Edit/Write/NotebookEdit/MultiEdit=WRITE; other observed tool names=CALL"
+  },
+  "records": [
+    {
+      "action_count": 4,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 0,
+      "scene_action_coverage": 1.0,
+      "scene_count": 2,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 4,
+      "transition_count": 1,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 11,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 1,
+      "scene_action_coverage": 1.0,
+      "scene_count": 4,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 11,
+      "transition_count": 3,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 4,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 2,
+      "scene_action_coverage": 1.0,
+      "scene_count": 1,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 4,
+      "transition_count": 0,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 3,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 3,
+      "scene_action_coverage": 1.0,
+      "scene_count": 2,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 3,
+      "transition_count": 1,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 4,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 4,
+      "scene_action_coverage": 1.0,
+      "scene_count": 1,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 4,
+      "transition_count": 0,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 4,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 5,
+      "scene_action_coverage": 1.0,
+      "scene_count": 1,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 4,
+      "transition_count": 0,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 9,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 6,
+      "scene_action_coverage": 1.0,
+      "scene_count": 3,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 9,
+      "transition_count": 2,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 5,
+      "action_order_exact": true,
+      "action_type_accuracy": 0.8,
+      "all_actions_in_scene": true,
+      "index": 7,
+      "scene_action_coverage": 1.0,
+      "scene_count": 3,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 5,
+      "transition_count": 2,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 12,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 8,
+      "scene_action_coverage": 1.0,
+      "scene_count": 1,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 12,
+      "transition_count": 0,
+      "transition_refs_valid": true
+    },
+    {
+      "action_count": 5,
+      "action_order_exact": true,
+      "action_type_accuracy": 1.0,
+      "all_actions_in_scene": true,
+      "index": 9,
+      "scene_action_coverage": 1.0,
+      "scene_count": 1,
+      "scene_duplicate_order_count": 0,
+      "tool_count": 5,
+      "transition_count": 0,
+      "transition_refs_valid": true
+    }
+  ],
+  "schema_version": "frankengate-cctrace-ssl-normalizer-quality-audit-v1",
+  "source": {
+    "normalizer_receipt_sha256": "7f1110c10c5df0913ff92f5693e7845dfe8ef1f0f74f02004f9d0f7257471a47",
+    "raw_content_committed": false,
+    "raw_dir_external": true,
+    "trace_source_sha256": "106c5d5931cf3ccc45eba003e47a790efc92bc22dad6f31548b214307c210b6c"
+  }
+}
