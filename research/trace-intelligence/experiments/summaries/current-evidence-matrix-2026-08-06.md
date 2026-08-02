@@ -19,7 +19,7 @@ the strongest conclusion that the current data supports.
 | Can model/frontier adjudication replace retrieval? | Luna was strongest on a tiny gold-proxy reranking cohort but materially more expensive/latent; model-vs-lexical evidence remains small and task-specific. | Reserve frontier models for ambiguous candidate review, intent extraction, and synthesis. | Fixed-budget trials with independent labels and replay outcomes. |
 | Do mined skills improve agents? | Expanded BIRD-SQL replay: trace-mined procedure `8/40`, equal to no-skill `8/40`, versus formatting placebo `5/40`; paired trace-vs-no-skill was `1–1` with 38 ties, while trace latency was `11.102s` vs `10.306s` for no-skill. | No skill was promoted; require no-skill, placebo, reviewed, generated, and composed controls. | Sequential task chains, outcome-trained consumers, and changed-system evaluation. |
 | Can public clarification traces answer friction questions? | BIRD-Interact has `600` labeled ambiguity/follow-up tasks; 20 public samples expose trajectory/reward schema but are not a benchmark. | Use it to stratify clarification experiments, not to claim user-friction or skill gains. | Public gold/test bundle or an authorized natural-user cohort. |
-| Can we infer cross-user skill gaps or collaboration? | No current public cohort has stable multi-principal identity plus outcomes sufficient for this claim. | Keep recommendations opt-in and review-only. | Reciprocal consent, blinded labels, negative-transfer and unwanted-contact measures. |
+| Can we infer cross-user skill gaps or collaboration? | Trace Commons workstream-proxy retrieval reached prompt `13/13` and identifier `12/13` same-project top-1, while structure alone was `1/13`; the proxy has no stable principals or outcomes. | Preserve prompt and durable identifiers for candidate discovery, but keep recommendations opt-in and review-only. | Reciprocal consent, principal/time-disjoint labels, same-surface negatives, negative-transfer, unwanted-contact, and next-task outcomes. |
 
 ## Architecture implied by the evidence
 
@@ -43,6 +43,7 @@ independent semantic labels and terminal outcomes.
 - [`parameterized artifact retrieval`](parameterized-artifact-retrieval-2026-08-06.md)
 - [`trace-derived artifact reuse`](bird-trace-artifact-reuse-2026-08-07.md)
 - [`trace retrieval cascade`](bird-trace-retrieval-cascade-2026-08-07.md)
+- [`Trace Commons feature ablation`](trace-commons-feature-ablation-2026-08-07.md)
 - [`older-tool modernization audit`](older-tool-modernization-value-audit-2026-08-05.md)
 - [`termhood alias retrieval`](nl2sql-termhood-alias-retrieval-2026-08-04.md)
 - [`identifier hard-negative benchmark`](nl2sql-identifier-hard-negative-2026-08-02.md)

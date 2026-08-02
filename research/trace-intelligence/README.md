@@ -70,6 +70,10 @@ The companion [`trace retrieval cascade`](experiments/summaries/bird-trace-retri
 replays lexical, identifier, dense state/action, and hybrid rankers against the
 same execution oracle; all four tied at 0/76 top-1 matches because the cohort
 contained no repeated normalized templates.
+The [`Trace Commons feature ablation`](experiments/summaries/trace-commons-feature-ablation-2026-08-07.md)
+is a separate workstream-proxy result: prompt retrieval was 13/13 and durable
+identifier retrieval 12/13, but it does not establish cross-user identity or
+skill-gap outcomes.
 
 ## Historical Claude/Codex mining
 

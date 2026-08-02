@@ -1,0 +1,13 @@
+{
+  "all_passed": true,
+  "checks": {
+    "arms_present": true,
+    "bounds": true,
+    "masked_arms_present": true,
+    "proxy_boundary": true,
+    "raw_content_external": true,
+    "schema": true
+  },
+  "receipt_sha256": "9968dc43875b990cc0d99640246eacfea3dab1b329c7252c826ac206dbbcd22b",
+  "schema_version": "frankengate-trace-commons-feature-ablation-verification-v1"
+}
