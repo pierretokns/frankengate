@@ -150,6 +150,11 @@ found 2,012 normalized identities recurring across sessions, 1,105 across
 projects, 431 mixed-outcome identities, and 3,866 error→success recoveries.
 This supplies a much larger candidate/recovery queue, while confirming that
 observed tool success is not an independent correctness or safety label.
+The [temporal prior-success benchmark](claude-history-tool-artifact-temporal-2026-08-09.md)
+then measured `88.7216%` success with no prior identity success versus
+`96.8268%` after same-project prior success and `97.1615%` after prior success
+in another project, with session-boundary leakage prevented. This supports a
+ranked prior feature, not automatic reuse or causal skill improvement.
 The [DataClaw project adapter probe](dataclaw-project-adapter-2026-08-09.md)
 improved Peter's full-cohort combined project-held-out MRR `.769341→.854452`, but left
 Vaynelee's combined MRR unchanged at `.978495` because that cohort was near

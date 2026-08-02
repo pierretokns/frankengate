@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "claim_boundary_present": true,
+    "nonempty_calls": true,
+    "raw_content_not_committed": true,
+    "required_buckets_present": true,
+    "result_hash": true,
+    "schema_version": true
+  },
+  "passed": true,
+  "result_sha256": "cb0a741bbfc3d8f53e68d554b2d4357a3592e5e8f642167746417b4d065b3f56",
+  "schema_version": "frankengate-claude-history-tool-artifact-temporal-verification-v1"
+}

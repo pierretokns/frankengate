@@ -262,6 +262,11 @@ The [`Claude-history strict tool-artifact miner`](experiments/summaries/claude-h
 found 2,012 strict normalized identities recurring across sessions, 1,105
 crossing projects, and 3,866 error-to-success recovery transitions. This is a
 strong candidate/recovery queue signal, not validated artifact correctness.
+The [`Claude-history temporal artifact benchmark`](experiments/summaries/claude-history-tool-artifact-temporal-2026-08-09.md)
+then found an observed success rate of 88.7216% with no prior success versus
+96.8268% after same-project prior success and 97.1615% after prior success in
+another project. This supports a prior-success ranking feature, not automatic
+reuse or causal skill improvement.
 The [`DataClaw project adapter`](experiments/summaries/dataclaw-project-adapter-2026-08-09.md)
 probe improved full-cohort combined project-held-out MRR for Peter (`.769341→.854452`) but
 was neutral for Vaynelee, supporting scoped experimentation rather than a
