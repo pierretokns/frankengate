@@ -96,6 +96,12 @@ repair burden. Otherwise it remains quarantined with a typed reason.
 
 ## Relation to current evidence
 
+- The existing [enterprise outcome gate](../../enterprise_outcome_gate.py) and
+  its conformance runner already implement current-epoch, scope, consent,
+  cohort, and reviewed-label fail-closed mechanics.
+- The [dream release pipeline](../../dream_release_pipeline_v2.py) already
+  enforces independent verification, copy-on-write release, provenance, and
+  deletion-aware visibility for generated proposals.
 - Changed-system typed replay already demonstrates the authority/compatibility
   portion of this contract; it does not establish skill utility.
 - BIRD and ALFWorld runs demonstrate why replay outcomes and task-family splits
