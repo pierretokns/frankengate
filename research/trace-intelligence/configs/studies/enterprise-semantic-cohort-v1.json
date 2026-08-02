@@ -1,0 +1,88 @@
+{
+  "schema_version": "frankengate-enterprise-semantic-cohort-v1",
+  "purpose": "Content-free contract for an authorized changed-system SQL/tool trace cohort.",
+  "raw_content_policy": {
+    "raw_prompts_sql_tool_arguments_and_rows_external_only": true,
+    "raw_content_committed": false,
+    "receipts_require_sha256": true,
+    "deletion_and_retention_receipts_required": true
+  },
+  "required_study_fields": [
+    "study_id",
+    "consent_scope_hash",
+    "source_license_or_authorization",
+    "candidate_pool_frozen_before_labels",
+    "holdouts",
+    "arms",
+    "minimum_promotion_counts"
+  ],
+  "required_holdouts": [
+    "principal",
+    "team",
+    "project",
+    "system",
+    "effective_time"
+  ],
+  "required_task_fields": [
+    "task_id",
+    "case_class",
+    "principal_hash",
+    "team_hash",
+    "project_hash",
+    "source_system_hash",
+    "source_environment_hash",
+    "changed_environment_hash",
+    "effective_at",
+    "source_authority_epoch",
+    "changed_authority_epoch",
+    "mutation_class",
+    "candidate_pool_hash",
+    "trajectory_receipt",
+    "outcome_receipt",
+    "labels",
+    "adjudication",
+    "deletion_receipt",
+    "retention"
+  ],
+  "required_receipt_fields": [
+    "uri",
+    "sha256"
+  ],
+  "case_classes": [
+    "target",
+    "hard_negative",
+    "nil",
+    "unclear"
+  ],
+  "label_values": [
+    "exact",
+    "alias",
+    "semantic",
+    "wrong_scope",
+    "stale",
+    "nil",
+    "unclear"
+  ],
+  "mutation_classes": [
+    "no_change",
+    "additive_field_or_parameter",
+    "approved_rename",
+    "same_surface_collision",
+    "changed_join_grain_or_result_meaning",
+    "stale_or_revoked_authority",
+    "changed_tool_contract"
+  ],
+  "minimum_promotion_counts": {
+    "target": 100,
+    "hard_negative": 50,
+    "nil_or_unclear": 25,
+    "annotators_per_task": 2
+  },
+  "required_arms": [
+    "no_artifact_regenerate",
+    "strict_fingerprint",
+    "name_only_negative_control",
+    "reviewed_semantic_mapping",
+    "reviewed_mapping_plus_result_validation"
+  ]
+}

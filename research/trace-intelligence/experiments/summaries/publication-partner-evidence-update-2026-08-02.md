@@ -38,6 +38,14 @@ separate strata—exact identity, same basename/different path, cross-project
 basename, and cross-project exact path—before comparing lexical, dense,
 identifier-aware, and frontier-review arms.
 
+The partner handoff now includes a machine-checkable [enterprise semantic-cohort
+contract](../../configs/studies/enterprise-semantic-cohort-v1.json) and
+[validator](../../enterprise_semantic_cohort_validator.rb). A structurally valid
+fixture is deliberately still promotion-ineligible until it reaches the target,
+hard-negative, NIL/unclear, dual-label, authority, deletion, and independent
+outcome gates. This turns the missing cohort into an explicit ingestion and
+study-design requirement rather than an informal promise.
+
 ## Partner-specific study asks
 
 ### CMU LTI / SkillLearnBench

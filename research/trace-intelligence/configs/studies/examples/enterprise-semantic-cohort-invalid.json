@@ -1,0 +1,8 @@
+{
+  "schema_version": "frankengate-enterprise-semantic-cohort-v1",
+  "study_id": "invalid-conformance-fixture",
+  "candidate_pool_frozen_before_labels": false,
+  "holdouts": {"principal": true},
+  "arms": [],
+  "tasks": []
+}

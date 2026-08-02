@@ -81,6 +81,13 @@ blocker is an outcome-bearing cohort, not another vector database or model:
 Without that cohort, further public-proxy model swaps mostly measure benchmark
 headroom, not enterprise learning.
 
+The missing-cohort requirement is now machine-gated by the [enterprise
+semantic-cohort contract](../configs/studies/enterprise-semantic-cohort-v1.json)
+and [validator](../enterprise_semantic_cohort_validator.rb). A two-task fixture
+passes structural conformance but remains promotion-ineligible; an incomplete
+fixture fails closed on missing consent, holdouts, arms, and tasks. This is a
+partner handoff gate, not evidence that the required internal cohort exists.
+
 ## Research and publication path
 
 The publishable claim is narrow and defensible:

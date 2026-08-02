@@ -1,0 +1,141 @@
+{
+  "schema_version": "frankengate-enterprise-semantic-cohort-v1",
+  "study_id": "example-sealed-cohort",
+  "consent_scope_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "source_license_or_authorization": "sealed-authorized-internal-study",
+  "candidate_pool_frozen_before_labels": true,
+  "holdouts": {
+    "principal": true,
+    "team": true,
+    "project": true,
+    "system": true,
+    "effective_time": true
+  },
+  "arms": [
+    "no_artifact_regenerate",
+    "strict_fingerprint",
+    "name_only_negative_control",
+    "reviewed_semantic_mapping",
+    "reviewed_mapping_plus_result_validation"
+  ],
+  "minimum_promotion_counts": {
+    "target": 100,
+    "hard_negative": 50,
+    "nil_or_unclear": 25,
+    "annotators_per_task": 2
+  },
+  "tasks": [
+    {
+      "task_id": "task-001",
+      "case_class": "target",
+      "principal_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "team_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "project_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "source_system_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+      "source_environment_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+      "changed_environment_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+      "effective_at": "2026-01-01T00:00:00Z",
+      "source_authority_epoch": 7,
+      "changed_authority_epoch": 8,
+      "mutation_class": "approved_rename",
+      "candidate_pool_hash": "7777777777777777777777777777777777777777777777777777777777777777",
+      "trajectory_receipt": {
+        "uri": "sealed://trajectory/task-001",
+        "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+        "tool_result_edges_present": true,
+        "complete": true
+      },
+      "outcome_receipt": {
+        "uri": "sealed://outcome/task-001",
+        "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+        "independent_verifier": true,
+        "terminal_outcome_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "labels": [
+        {
+          "annotator_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "label": "alias",
+          "concept_id_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "evidence_span_hashes": ["dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"],
+          "temporal_validity": {"valid_from": "2026-01-01T00:00:00Z", "valid_to": null},
+          "executable": true
+        },
+        {
+          "annotator_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "label": "alias",
+          "concept_id_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "evidence_span_hashes": ["dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"],
+          "temporal_validity": {"valid_from": "2026-01-01T00:00:00Z", "valid_to": null},
+          "executable": true
+        }
+      ],
+      "adjudication": {"required": false},
+      "deletion_receipt": {
+        "uri": "sealed://deletion/task-001",
+        "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "retention": {
+        "raw_content_external_only": true,
+        "deletion_policy_hash": "1212121212121212121212121212121212121212121212121212121212121212"
+      }
+    },
+    {
+      "task_id": "task-002",
+      "case_class": "hard_negative",
+      "principal_hash": "1313131313131313131313131313131313131313131313131313131313131313",
+      "team_hash": "1414141414141414141414141414141414141414141414141414141414141414",
+      "project_hash": "1515151515151515151515151515151515151515151515151515151515151515",
+      "source_system_hash": "1616161616161616161616161616161616161616161616161616161616161616",
+      "source_environment_hash": "1717171717171717171717171717171717171717171717171717171717171717",
+      "changed_environment_hash": "1818181818181818181818181818181818181818181818181818181818181818",
+      "effective_at": "2026-02-01T00:00:00Z",
+      "source_authority_epoch": 9,
+      "changed_authority_epoch": 10,
+      "mutation_class": "same_surface_collision",
+      "candidate_pool_hash": "1919191919191919191919191919191919191919191919191919191919191919",
+      "trajectory_receipt": {
+        "uri": "sealed://trajectory/task-002",
+        "sha256": "2020202020202020202020202020202020202020202020202020202020202020",
+        "tool_result_edges_present": true,
+        "complete": true
+      },
+      "outcome_receipt": {
+        "uri": "sealed://outcome/task-002",
+        "sha256": "2121212121212121212121212121212121212121212121212121212121212121",
+        "independent_verifier": true,
+        "terminal_outcome_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "labels": [
+        {
+          "annotator_hash": "2323232323232323232323232323232323232323232323232323232323232323",
+          "label": "wrong_scope",
+          "concept_id_hash": "2424242424242424242424242424242424242424242424242424242424242424",
+          "evidence_span_hashes": ["2525252525252525252525252525252525252525252525252525252525252525"],
+          "temporal_validity": {"valid_from": "2026-02-01T00:00:00Z", "valid_to": null},
+          "executable": false
+        },
+        {
+          "annotator_hash": "2626262626262626262626262626262626262626262626262626262626262626",
+          "label": "alias",
+          "concept_id_hash": "2727272727272727272727272727272727272727272727272727272727272727",
+          "evidence_span_hashes": ["2828282828282828282828282828282828282828282828282828282828282828"],
+          "temporal_validity": {"valid_from": "2026-02-01T00:00:00Z", "valid_to": null},
+          "executable": true
+        }
+      ],
+      "adjudication": {
+        "required": true,
+        "annotator_hash": "2929292929292929292929292929292929292929292929292929292929292929",
+        "label": "wrong_scope"
+      },
+      "deletion_receipt": {
+        "uri": "sealed://deletion/task-002",
+        "sha256": "3030303030303030303030303030303030303030303030303030303030303030"
+      },
+      "retention": {
+        "raw_content_external_only": true,
+        "deletion_policy_hash": "3131313131313131313131313131313131313131313131313131313131313131"
+      }
+    }
+  ]
+}

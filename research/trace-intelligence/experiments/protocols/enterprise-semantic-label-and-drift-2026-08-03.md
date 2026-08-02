@@ -3,6 +3,13 @@
 **Status:** preregistration for the next authorized study; no production
 promotion is authorized by this document.
 
+The machine-checkable handoff for this protocol is the
+[enterprise semantic-cohort contract](../configs/studies/enterprise-semantic-cohort-v1.json)
+and its [validator](../enterprise_semantic_cohort_validator.rb). The validator
+rejects manifests that omit consent/holdout/authority metadata, dual labels,
+independent outcomes, deletion receipts, or frozen candidate pools; a
+structurally valid but under-sized cohort remains promotion-ineligible.
+
 ## Purpose
 
 Close the two largest evidence gaps in the current trace-artifact program:
