@@ -363,6 +363,14 @@ path events. This is useful for constructing reviewed same-surface/different-
 system NIL and alias candidates, but it does not establish semantic identity,
 same work, or artifact correctness.
 
+The [identifier-aware retrieval audit](dataclaw-ronald-identifier-aware-retrieval-2026-08-02.md)
+then ran a per-project chronological 70/30 proxy. Prompt-only same-project MRR
+was `.551`; adding path identifiers raised it to `.598`, adding command shapes
+to `.590`, and combining prompt, shapes, and identifiers to `.657` (Recall@1
+`.567` versus `.461`). This is evidence for retaining exact identifiers as a
+separate retrieval lane, not for semantic same-work, alias quality, or artifact
+correctness. The next gate is reviewed task/NIL labels plus replay.
+
 ### 8. Friction mining needs structural review, not keyword labels
 
 The corrected native Codex importer found 47,122 user episodes, 228 adjacent
