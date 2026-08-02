@@ -41,6 +41,15 @@ exact definition pair. This strengthens the review-only decision: the
 extractor can surface local candidates, but raw parenthetical definitions do
 not support a global dictionary. See [acronym stability](acronym-cross-cohort-stability-2026-08-09.md).
 
+On a larger public Claude Code history export spanning 432 sessions and 65
+project directories, the same ports found 2,249 unique top-term hashes: 777
+appeared in at least two projects, while none appeared in all projects. The
+acronym extractor found 170 valid acronym hashes, of which 36 crossed a project
+boundary; no exact definition pair appeared in every project. This is the
+strongest evidence so far that the ports can supply a useful scoped candidate
+queue, while still failing to justify a global ontology or alias table. See
+[legacy candidate stability on Claude history](claude-history-legacy-candidate-stability-2026-08-09.md).
+
 ## Value that was *not* established
 
 These runs did not establish byte-for-byte upstream equivalence, enterprise

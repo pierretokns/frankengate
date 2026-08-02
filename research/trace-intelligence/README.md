@@ -372,6 +372,11 @@ The [`older-tool modernization value audit`](experiments/summaries/older-tool-mo
 records the measured contribution of those ports: interpretable candidate
 generation and conservative acronym review queues, but no evidence of
 enterprise alias quality, embedding lift, or skill improvement.
+The follow-up [`real Claude history stability study`](experiments/summaries/claude-history-legacy-candidate-stability-2026-08-09.md)
+found 777 of 2,249 top-term hashes crossing at least two project histories and
+36 of 170 valid acronym hashes crossing a project boundary, with no candidate
+appearing in all 65 projects. This strengthens scoped candidate mining, not a
+global alias or ontology claim.
 
 The follow-up [`held-out NL2SQL vocabulary benchmark`](experiments/summaries/nl2sql-modern-vocabulary-benchmark-2026-08-04.md)
 tests schema transfer rather than Wisp mechanics: terms are mined from three

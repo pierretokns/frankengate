@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "claim_boundary_present": true,
+    "nonempty_projects": true,
+    "raw_content_not_committed": true,
+    "result_hash": true,
+    "schema_version": true
+  },
+  "passed": true,
+  "result_sha256": "ceca0d3b702c7832589fca3922b652e969c801ab65f4a392ab2e669ee9f94751",
+  "schema_version": "frankengate-claude-history-legacy-candidate-stability-verification-v1"
+}

@@ -158,6 +158,11 @@ termhood recall was `.358` when the schema vocabulary was represented but only
 `.015` on held-out transfer. The AcronymExpansion-style port passed `8/8`
 synthetic ambiguity/NIL probes. Both remain offline review primitives; neither
 has shown enterprise alias precision, embedding lift, or skill improvement.
+On a separate 432-session, 65-project public Claude history export, 777/2,249
+top-term hashes and 36/170 valid acronym hashes crossed project boundaries,
+but no candidate appeared in every project. This is the strongest evidence for
+scoped candidate mining so far, while still ruling out frequency-only global
+alias promotion.
 
 ### 6. Custom embedding evidence is not yet promotion-positive
 

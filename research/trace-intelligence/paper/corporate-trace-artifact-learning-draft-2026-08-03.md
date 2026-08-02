@@ -152,7 +152,7 @@ claim boundary, and independent verifier where applicable.
 | Local Codex archive friction screen | Corrected current-schema import: 622 sessions, 47,122 prompt episodes, 2,060 structured executor errors, 33 error→repair follow-ups | Useful for blinded candidate sampling; markers are not intent, satisfaction, or terminal-outcome labels |
 | Lexical friction detector reality check | Explicit friction markers: precision `.79%`, recall `18.93%`, F1 `.015` against the structured process-exit proxy | Do not use lexical markers as eval labels; combine ordering, tool contracts, repeated attempts, and adjudication |
 | Trajectory context versus prompt-only model extraction | On 16 public BIRD cases, prompt-only Luna abstained `16/16`; trajectory-aware Luna achieved `7/8` recall and `7/13` precision, with six false positives | Tool context helps candidate judgment, but independent replay is still the release gate |
-| Legacy vocabulary ports on independent cohorts | Termhood top hashes were mostly cohort-local (`217/293` unique to one cohort; `5` shared by all four); contextual acronym extraction found `40` valid hashes with no cross-cohort overlap | Term and acronym ports are reproducible scoped review primitives, not global alias or embedding-training systems |
+| Legacy vocabulary ports on independent cohorts | Four public cohorts yielded mostly local termhood candidates (`217/293` unique to one cohort; `5` shared by all four) and 40 valid acronym hashes with no cross-cohort overlap. A larger 432-session/65-project Claude history export had `777/2,249` top-term hashes and `36/170` valid acronym hashes cross a project boundary, but none appeared in all projects. | Term and acronym ports are reproducible scoped review primitives, not global alias or embedding-training systems; recurrence is a candidate-generation signal, not semantic truth |
 
 ## Main conclusions
 
@@ -261,6 +261,7 @@ contains the proposed 6–8 week reproduction plan.
 - [Cross-corpus SQL artifact signature study](../experiments/summaries/cross-corpus-sql-artifact-signatures-2026-08-09.md)
 - [Cross-cohort acronym stability study](../experiments/summaries/acronym-cross-cohort-stability-2026-08-09.md)
 - [Cross-cohort termhood stability study](../experiments/summaries/termhood-cross-cohort-stability-2026-08-09.md)
+- [Real Claude history legacy-candidate stability study](../experiments/summaries/claude-history-legacy-candidate-stability-2026-08-09.md)
 - [DataClaw cross-user artifact transfer study](../experiments/summaries/dataclaw-cross-user-artifact-transfer-2026-08-09.md)
 - [DataClaw same-user artifact support study](../experiments/summaries/dataclaw-same-user-artifact-support-2026-08-09.md)
 - [DataClaw project adapter study](../experiments/summaries/dataclaw-project-adapter-2026-08-09.md)
