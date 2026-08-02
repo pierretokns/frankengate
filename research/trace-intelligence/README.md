@@ -245,6 +245,11 @@ The [`acronym cross-cohort stability`](experiments/summaries/acronym-cross-cohor
 probe found 40 valid acronym hashes and 56 valid acronym/full-form pairs, all
 local to one cohort, with no shared valid acronym across the four cohorts.
 This keeps acronym expansion scoped and review-gated.
+The [`cross-corpus SQL artifact signatures`](experiments/summaries/cross-corpus-sql-artifact-signatures-2026-08-09.md)
+probe found zero shared exact templates across BIRD and Defog, one shared typed
+schema-agnostic template, and two shared coarse operator shapes; every shared
+shape had multiple exact variants. Structural retrieval is therefore only a
+candidate signal until schema, authority, and replay validation succeed.
 The [`NL2SQL identifier cross-domain transfer`](experiments/summaries/nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 probe found asymmetric generalization: Defog-trained ranking improved BIRD MRR
 `.731684→.760996`, while BIRD-trained ranking reduced Defog MRR

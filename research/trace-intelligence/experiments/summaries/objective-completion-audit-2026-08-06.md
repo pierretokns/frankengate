@@ -38,6 +38,8 @@ The cross-cohort termhood stability probe is documented in
 [termhood-cross-cohort-stability-2026-08-09.md](termhood-cross-cohort-stability-2026-08-09.md).
 The cross-cohort acronym stability probe is documented in
 [acronym-cross-cohort-stability-2026-08-09.md](acronym-cross-cohort-stability-2026-08-09.md).
+The cross-corpus SQL artifact signature probe is documented in
+[cross-corpus-sql-artifact-signatures-2026-08-09.md](cross-corpus-sql-artifact-signatures-2026-08-09.md).
 
 ## Overall conclusion
 

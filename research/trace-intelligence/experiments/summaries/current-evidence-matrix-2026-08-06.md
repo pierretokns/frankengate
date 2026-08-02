@@ -67,6 +67,7 @@ independent semantic labels and terminal outcomes.
 - [`Claude cross-cohort command transfer`](claude-cross-cohort-command-transfer-2026-08-09.md)
 - [`Termhood cross-cohort stability`](termhood-cross-cohort-stability-2026-08-09.md)
 - [`Acronym cross-cohort stability`](acronym-cross-cohort-stability-2026-08-09.md)
+- [`Cross-corpus SQL artifact signatures`](cross-corpus-sql-artifact-signatures-2026-08-09.md)
 - [`NL2SQL identifier cross-domain transfer`](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [`embedding/model cascade decision`](embedding-model-cascade-decision-2026-08-09.md)
 - [`termhood alias retrieval`](nl2sql-termhood-alias-retrieval-2026-08-04.md)

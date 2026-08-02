@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "claim_boundary": true,
+    "collision_rate_bounded": true,
+    "corpus_count": true,
+    "counts_present": true,
+    "raw_content_absent": true,
+    "result_hash": true,
+    "schema": true
+  },
+  "passed": true,
+  "result_sha256": "829ac71ce29f20e3ef53024505d301b1f89b6d1980b3fe05dd8eb6a96d090a4e",
+  "schema_version": "frankengate-cross-corpus-sql-artifact-signatures-verification-v1"
+}
