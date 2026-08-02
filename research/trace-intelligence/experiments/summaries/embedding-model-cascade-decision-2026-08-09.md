@@ -15,6 +15,15 @@ claim that any public proxy represents enterprise semantics.
 | Frontier/model review | On the identical nine-query MATM shortlist, Luna tied lexical at MRR/Recall@1 and cost 104.118 seconds total. On a richer public reranking probe, frontier review improved ordering only when the target was already covered. | Use selectively for ambiguity, intent extraction, and synthesis—not routine retrieval or authority. |
 | Replay validation | WMH-BIRD exposure substitutions yielded 1,232/1,236 execution errors or result mismatches. Replay-negative training tied naive exposed-negative training because the training split had no ambiguous substitutions. | Replay is the acceptance/data-quality gate; it is not yet a demonstrated representation-learning objective. |
 
+The matched [44-case dense/frontier cohort](wmh-bird-sql-dense-frontier-cohort-2026-08-09.md)
+is the strongest current cascade receipt. Local Nomic reached strict
+MRR/Recall@1 `.940152/.909091`, while frontier reached `.954545/.909091`.
+Their Recall@1 was tied, but dense retrieval selected about `5.545` tables with
+`3.591` invalid selections on average, versus frontier's two tables and only
+`.205` invalid selections. The measured frontier contribution is therefore
+shortlist precision/noise reduction, not additional target discovery. This
+reinforces the late-stage frontier role and the need for replay/authority gates.
+
 ## Smallest useful cascade
 
 ```text

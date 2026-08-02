@@ -84,6 +84,12 @@ completed the synthetic end-to-end checkpoint: typed-gated selections produced
 `10/10` safe/correct executions, while a naive name-first control made `7`
 unsafe accepts. The real P0 cohort must repeat this with independent terminal
 outcomes and authority receipts; row equality alone is insufficient.
+The [matched dense/frontier cohort](wmh-bird-sql-dense-frontier-cohort-2026-08-09.md)
+completed the embedding/model cascade checkpoint: Nomic nearly matched
+frontier Recall@1 but retained far more incompatible tables, while frontier
+compressed the shortlist with much higher replay-compatible selection. The next
+P1 run should move this comparison to reviewed enterprise hard negatives rather
+than add another embedding model.
 
 ## Partner/publication package
 

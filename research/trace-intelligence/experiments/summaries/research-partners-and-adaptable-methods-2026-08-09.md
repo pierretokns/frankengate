@@ -130,6 +130,15 @@ required partner-study endpoint: report semantic correctness and authority
 validity separately, because a successful query can still be unauthorized or
 semantically wrong.
 
+The matched [dense/frontier WMH-BIRD cohort](wmh-bird-sql-dense-frontier-cohort-2026-08-09.md)
+adds a useful cascade result for data-systems partners: local Nomic reached
+`.940152` MRR and `.909091` Recall@1, while Luna reached `.954545` and the same
+Recall@1. Frontier's replay-compatible selected rate was `.928030` versus
+`.408198` for dense, with a much smaller shortlist. This separates candidate
+recall from noise reduction, but still needs reviewed enterprise aliases,
+authority labels, and changed-system outcomes before it can support a custom
+embedding or production collaboration claim.
+
 ### Trajectory-aware tool evaluation
 
 [TRAJECT-Bench](https://arxiv.org/abs/2510.04550) evaluates tool selection,

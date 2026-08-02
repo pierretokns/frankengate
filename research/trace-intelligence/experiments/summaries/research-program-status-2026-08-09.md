@@ -78,6 +78,15 @@ versus `5.545`. The effect is not universal—Debit Card Specializing and
 Thrombosis Prediction were weaker—so family-stratified failures remain part of
 the gate. This is still a hinted public proxy without authority, human intent,
 or changed-system outcomes.
+The matched [dense-versus-frontier cohort](wmh-bird-sql-dense-frontier-cohort-2026-08-09.md)
+adds the missing embedding arm: local Nomic reached strict MRR/Recall@1
+`.940152/.909091`, matching frontier Recall@1 and approaching its MRR, but its
+replay-compatible selected rate was only `.408198` with `3.591` invalid
+selections on average. Frontier reached `.928030` compatible selection with
+only `.205` invalid selections and a two-table shortlist. On this proxy,
+embeddings supply broad recall while frontier review mostly compresses noise;
+it does not demonstrate custom enterprise embedding value or semantic alias
+quality.
 
 ### 4. Structured tool fields are useful metadata, not a retrieval replacement
 
