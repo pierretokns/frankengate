@@ -266,3 +266,9 @@ The tracking epic is [#118](https://github.com/pierretokns/frankengate/issues/11
 
 All current receipts and code are on the pushed branch
 `codex/trace-intelligence-academic-program`.
+
+The [publication/partner evidence update](publication-partner-evidence-update-2026-08-02.md)
+incorporates the exact-vs-shape, memory-lifecycle, friction-format, and
+dataset-integrity results. It keeps the paper framing on a governed
+evidence-to-artifact lifecycle and identifies causal changed-system replay as
+the missing experiment.
