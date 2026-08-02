@@ -48,4 +48,5 @@ Use the strengthened [enterprise semantic-cohort contract](../../configs/studies
 - [SRA-Bench TheoremQA lexical/dense comparison](sra-bench-theoremqa-lexical-dense-comparison-2026-08-02.md)
 - [SRA-Bench ToolQA incorporation control](sra-bench-toolqa-incorporation-control-2026-08-02.md)
 - [SRA-Bench ToolQA candidate breadth and progressive disclosure](sra-bench-toolqa-candidate-breadth-2026-08-02.md)
+- [SRA-Bench ToolQA terminal-format audit](sra-bench-toolqa-format-audit-2026-08-02.md)
 - [Current objective audit](objective-completion-audit-2026-08-06.md)
