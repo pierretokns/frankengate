@@ -88,6 +88,13 @@ and grounding remained nearly unchanged (`7.2/4.2`, `.775`). This suggests
 starter schemas improve structural stability more reliably than semantic
 faithfulness, but the result still has no independent truth labels.
 
+A second Luna pass judged the emitted graph items against their source excerpts:
+GOI-style items were marked supported `.867`, unsupported `.013`, unclear
+`.120`; starter-schema items were supported `.807`, unsupported `.035`, unclear
+`.158`. These are silver model judgments, not ontology precision. They quantify
+review burden and unsupported-edge risk, but cannot authorize promotion. See
+the [silver judge summary](ontology-induction-frontier-judge-proxy-2026-08-02.md).
+
 Public enterprise tuning guidance follows the same pattern. Databricks puts
 hybrid retrieval, metadata, query reformulation, reranking, and evaluation
 before embedding tuning and calls tuning a last resort ([retrieval quality
