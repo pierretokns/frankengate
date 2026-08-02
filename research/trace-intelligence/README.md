@@ -181,6 +181,11 @@ implementation: 280 ordered steps and 130/130 non-empty tool outputs, but no
 explicit correctness, failure, friction, or enterprise artifact fields. LRAT
 is therefore a strong candidate-coverage method to adapt, not evidence that
 trajectory supervision alone solves corporate skill or artifact learning.
+The companion [`LRAT exposure-negative audit`](experiments/summaries/lrat-exposure-negative-audit-2026-08-09.md)
+measured 624 exposed documents, 26 browsed documents, and 598 exposed-but-
+unbrowsed candidates across those samples. Exposure-aware negatives exist, but
+they are not true irrelevance labels; authority, cost, redundancy, and user
+choice must be represented before using them for corporate hard-negative mining.
 The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-structural-audit-2026-08-09.md)
 now records the public benchmark's 5,910 records and 38,094 described tool
 invocations, and separates its useful trajectory-metric coverage from the

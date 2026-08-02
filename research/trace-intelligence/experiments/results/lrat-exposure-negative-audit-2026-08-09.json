@@ -1,0 +1,116 @@
+{
+  "aggregate": {
+    "browse_calls": 28,
+    "browsed_documents": 26,
+    "exposed_documents": 624,
+    "exposed_unbrowsed_documents": 598,
+    "exposed_unbrowsed_fraction": 0.958333,
+    "search_calls": 102,
+    "trajectories": 10,
+    "trajectories_with_exposed_unbrowsed_candidates": 10
+  },
+  "claim_boundary": {
+    "correctness_established": false,
+    "exposure_negative_availability_measured": true,
+    "negative_labels_established": false,
+    "reason": "An exposed-but-unbrowsed document is a candidate negative under LRAT's construction, not an independently irrelevant or incorrect item."
+  },
+  "rows": [
+    {
+      "browse_calls": 2,
+      "browsed_documents": 1,
+      "exposed_documents": 223,
+      "exposed_unbrowsed_documents": 222,
+      "file": "0.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 46
+    },
+    {
+      "browse_calls": 1,
+      "browsed_documents": 1,
+      "exposed_documents": 10,
+      "exposed_unbrowsed_documents": 9,
+      "file": "1.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 1
+    },
+    {
+      "browse_calls": 4,
+      "browsed_documents": 4,
+      "exposed_documents": 57,
+      "exposed_unbrowsed_documents": 53,
+      "file": "10.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 8
+    },
+    {
+      "browse_calls": 1,
+      "browsed_documents": 1,
+      "exposed_documents": 26,
+      "exposed_unbrowsed_documents": 25,
+      "file": "11.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 3
+    },
+    {
+      "browse_calls": 3,
+      "browsed_documents": 3,
+      "exposed_documents": 26,
+      "exposed_unbrowsed_documents": 23,
+      "file": "14.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 4
+    },
+    {
+      "browse_calls": 3,
+      "browsed_documents": 2,
+      "exposed_documents": 32,
+      "exposed_unbrowsed_documents": 30,
+      "file": "15.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 4
+    },
+    {
+      "browse_calls": 3,
+      "browsed_documents": 3,
+      "exposed_documents": 34,
+      "exposed_unbrowsed_documents": 31,
+      "file": "17.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 4
+    },
+    {
+      "browse_calls": 3,
+      "browsed_documents": 3,
+      "exposed_documents": 73,
+      "exposed_unbrowsed_documents": 70,
+      "file": "4.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 10
+    },
+    {
+      "browse_calls": 3,
+      "browsed_documents": 3,
+      "exposed_documents": 28,
+      "exposed_unbrowsed_documents": 25,
+      "file": "5.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 3
+    },
+    {
+      "browse_calls": 5,
+      "browsed_documents": 5,
+      "exposed_documents": 115,
+      "exposed_unbrowsed_documents": 110,
+      "file": "6.json",
+      "has_exposed_negative_candidates": true,
+      "search_calls": 19
+    }
+  ],
+  "schema_version": "frankengate-lrat-exposure-negative-audit-v1",
+  "source": {
+    "file_count": 10,
+    "files_sha256": "a959cd3c66c6b340811a3e7797fdae20292b5bc25225107706b433d2ad075a13",
+    "raw_content_committed": false
+  }
+}

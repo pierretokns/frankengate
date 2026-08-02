@@ -1,0 +1,7 @@
+{
+  "claim_boundary_verified": true,
+  "schema_version": "frankengate-lrat-exposure-negative-verification-v1",
+  "source_result_sha256": "d2ab05d28a2e06ef68b792505f7ee1dfca666c2dbe46b504b25e42d779ceb7aa",
+  "trajectories_verified": 10,
+  "verification_passed": true
+}

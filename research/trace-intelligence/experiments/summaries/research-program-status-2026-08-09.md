@@ -105,6 +105,12 @@ query union. This is not a contradiction of the paper; it shows that Frankengate
 must measure planner quality, retriever coverage, and aggregation independently
 before adopting a trained planner or claiming enterprise artifact value.
 
+The LRAT exposure audit adds a parallel boundary: 598/624 exposed documents in
+the public samples were not browsed, so exposure-aware candidate negatives are
+available. They are not independently irrelevant labels. Frankengate must
+record refusal/authority/cost reasons and require replay or SME outcomes before
+turning exposure gaps into hard-negative training data.
+
 ## Architecture decision
 
 Keep the smallest governed architecture:
@@ -150,4 +156,5 @@ project, principal, and changed-system holdouts.
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
 - [ToolQP peak-rank reproduction](traject-bench-toolqp-peak-rank-2026-08-09.md)
+- [LRAT exposure-negative audit](lrat-exposure-negative-audit-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)
