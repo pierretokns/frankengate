@@ -60,6 +60,11 @@ cross-user recommendations.
 The [`SkillLearnBench changed-data multi-seed synthesis`](experiments/summaries/skilllearnbench-changed-data-multiseed-2026-08-09.md)
 separates seed stability from task generalization: reviewed guidance stayed
 perfect on the repeated task, while generated composition did not.
+The six-task [`SkillLearnBench three-arm replay`](experiments/summaries/skilllearnbench-frontier-three-arm-2026-08-01.md)
+found q1 recall of `43/53` null, `46/53` generated, and `49/53` reviewed;
+the later [`composite replay`](experiments/summaries/skilllearnbench-frontier-composite-six-task-2026-08-06.md)
+reached `53/53`, but remains a non-randomized, single-family replication
+hypothesis rather than a causal skill result.
 The dated [`research program status update`](experiments/summaries/research-program-status-2026-08-09.md)
 adds the LRAT trajectory audit, ToolQP-inspired public-tool probe, and
 outcome-backed SQL artifact query-planning result. Its central boundary is

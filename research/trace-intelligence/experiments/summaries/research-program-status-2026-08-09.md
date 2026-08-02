@@ -150,6 +150,12 @@ claim. A two-seed synthesis of that same task is now recorded separately:
 reviewed guidance stayed `16/16`, while the composite was `15/16` and the null
 was `15/16` with one false positive. Repeated seeds improve stability evidence
 but are not independent task evidence.
+The broader six-task enterprise-search family is stronger directional evidence:
+null/generated/reviewed scored `43/53`, `46/53`, and `49/53` q1 IDs, while a
+later reviewed+generated composite scored `53/53`; all q3 answers were exact.
+The arms were not randomized in one simultaneous run, all tasks share one
+public family, and the composite has a different context footprint, so this
+supports a replication hypothesis—not skill promotion.
 
 ## Architecture decision
 
@@ -195,6 +201,8 @@ project, principal, and changed-system holdouts.
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
 - [SkillLearnBench changed-data multi-seed synthesis](skilllearnbench-changed-data-multiseed-2026-08-09.md)
+- [SkillLearnBench three-arm family replay](skilllearnbench-frontier-three-arm-2026-08-01.md)
+- [SkillLearnBench composite six-task replay](skilllearnbench-frontier-composite-six-task-2026-08-06.md)
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
