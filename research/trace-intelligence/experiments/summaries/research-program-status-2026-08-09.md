@@ -544,6 +544,7 @@ project, principal, and changed-system holdouts.
 - [DataClaw project adapter](dataclaw-project-adapter-2026-08-09.md)
 - [Ronald OpenAI-format DataClaw artifact audit](dataclaw-ronald-openai-artifact-audit-2026-08-02.md)
 - [Ronald DataClaw temporal artifact audit](dataclaw-ronald-temporal-artifact-audit-2026-08-02.md)
+- [Ronald DataClaw command-shape variants](dataclaw-ronald-command-shape-variants-2026-08-02.md)
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)
