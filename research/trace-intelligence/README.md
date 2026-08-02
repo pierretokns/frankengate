@@ -233,6 +233,10 @@ The cross-harness [`Claude command-artifact normalization audit`](experiments/su
 found 140 extra exact-command collisions in 29 normalized buckets and 3
 mixed-outcome buckets. Normalized keys therefore assist candidate recall but
 cannot serve as replay authorization.
+The [`Claude cross-cohort command transfer`](experiments/summaries/claude-cross-cohort-command-transfer-2026-08-09.md)
+found only one exact artifact shared across four public cohorts, versus nine
+normalized artifacts covering 72 occurrences with one failure. Scope-bound
+identity remains mandatory for any reusable artifact proposal.
 The [`embedding/model cascade decision`](experiments/summaries/embedding-model-cascade-decision-2026-08-09.md)
 combines these results with the MATM cost and adapter receipts: structured
 retrieval stays first, embeddings remain optional candidate recall, and

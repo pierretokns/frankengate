@@ -30,6 +30,8 @@ The exact-versus-execution-equivalent artifact probe is documented in
 
 The cross-harness normalization audit is documented in
 [claude-command-artifact-normalization-2026-08-09.md](claude-command-artifact-normalization-2026-08-09.md).
+The four-cohort transfer audit is documented in
+[claude-cross-cohort-command-transfer-2026-08-09.md](claude-cross-cohort-command-transfer-2026-08-09.md).
 
 ## Overall conclusion
 
