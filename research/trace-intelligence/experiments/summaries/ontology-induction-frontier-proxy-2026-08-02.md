@@ -34,6 +34,14 @@ The first sandbox attempt failed before model execution because nested Codex
 calls could not open the harness state database; the elevated retry succeeded.
 That failure is recorded as an environment issue, not a quality result.
 
+We also repeated the five-case run with identical inputs and model settings.
+The GOI-style arm changed from 14.2 to 10.2 mean entities and 7.0 to 4.8 mean
+relations, while grounding changed only `.951784 → .968421`. The population arm
+remained close in size (7.0 → 7.2 entities; 4.2 → 4.2 relations) and grounding
+(`.780952 → .775000`). This is a run-stability diagnostic, not semantic
+agreement: the receipts do not contain canonical entity IDs or independent
+labels, and the first run's raw structured outputs were not retained.
+
 **Decision:** both approaches are viable proposal/population components. GOI
 should remain a schema-draft arm; OntoGPT-style constrained population should
 be preferred when a reviewed starter schema exists. Neither may write canonical
@@ -41,6 +49,8 @@ ontology edges or aliases without independent identity, temporal, authority,
 and replay gates.
 
 Primary receipt: [`ontology-induction-frontier-proxy-2026-08-02-r3.json`](../results/ontology-induction-frontier-proxy-2026-08-02-r3.json)
+
+Repeat receipt: [`ontology-induction-frontier-proxy-2026-08-02-r4.json`](../results/ontology-induction-frontier-proxy-2026-08-02-r4.json)
 
 Pilot receipt: [`ontology-induction-frontier-proxy-2026-08-02-r2.json`](../results/ontology-induction-frontier-proxy-2026-08-02-r2.json)
 

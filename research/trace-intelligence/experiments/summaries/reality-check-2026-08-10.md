@@ -82,6 +82,12 @@ restriction is not automatically a faithfulness improvement. Neither arm has
 ontology, alias, authority, temporal, or replay labels. See the
 [frontier proxy summary](ontology-induction-frontier-proxy-2026-08-02.md).
 
+An identical five-case repeat changed GOI output size to 10.2 entities/4.8
+relations while grounding stayed close (`.968`); starter-schema output size
+and grounding remained nearly unchanged (`7.2/4.2`, `.775`). This suggests
+starter schemas improve structural stability more reliably than semantic
+faithfulness, but the result still has no independent truth labels.
+
 Public enterprise tuning guidance follows the same pattern. Databricks puts
 hybrid retrieval, metadata, query reformulation, reranking, and evaluation
 before embedding tuning and calls tuning a last resort ([retrieval quality

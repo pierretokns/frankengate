@@ -108,10 +108,16 @@ def call_frontier(prompt: str, raw_path: Path, arm: str, timeout: int) -> tuple[
         started = time.perf_counter()
         completed = subprocess.run(command, input=prompt, text=True, capture_output=True, timeout=timeout, cwd="/private/tmp", check=False)
         elapsed_ms = round((time.perf_counter() - started) * 1000.0, 3)
-        raw_path.write_text(json.dumps({"returncode": completed.returncode, "stdout": completed.stdout, "stderr": completed.stderr}, ensure_ascii=False), encoding="utf-8")
+        raw_payload = {"returncode": completed.returncode, "stdout": completed.stdout, "stderr": completed.stderr}
+        raw_path.write_text(json.dumps(raw_payload, ensure_ascii=False), encoding="utf-8")
         if completed.returncode != 0 or not output_path.exists():
             raise RuntimeError("frontier call failed")
         value = json.loads(output_path.read_text(encoding="utf-8"))
+        # Structured responses remain in the caller-selected external scratch
+        # directory for repeatability/consistency analysis; receipts never
+        # include raw entities, relations, evidence, or source text.
+        raw_payload["structured_output"] = value
+        raw_path.write_text(json.dumps(raw_payload, ensure_ascii=False), encoding="utf-8")
     return value, elapsed_ms
 
 
