@@ -116,6 +116,12 @@ identifiers and consume 3,850, leaving 7,857 exposure candidates. This is a
 usable bridge from trajectory supervision to SQL artifact mining, but unused
 tables still require independent database replay and wrong-system/temporal
 negative labels before embedding or reranker training.
+The follow-up counterfactual replay selected 149 successful task traces and
+tested 1,236 exposed-table substitutions: 1,210 errored, 22 changed the result,
+and only 4 preserved it. On 71 held-out table-retrieval cases, the termhood
+field raised Recall@5 from `.887` to `.930` while leaving Recall@1 unchanged.
+These are compatibility negatives and candidate-recall evidence, not semantic
+wrong-system labels or enterprise alias truth.
 
 ## Architecture decision
 
@@ -164,4 +170,5 @@ project, principal, and changed-system holdouts.
 - [ToolQP peak-rank reproduction](traject-bench-toolqp-peak-rank-2026-08-09.md)
 - [LRAT exposure-negative audit](lrat-exposure-negative-audit-2026-08-09.md)
 - [WMH-BIRD schema exposure audit](wmh-bird-schema-exposure-audit-2026-08-09.md)
+- [WMH-BIRD exposure counterfactual](wmh-bird-exposure-counterfactual-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)

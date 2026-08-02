@@ -191,6 +191,11 @@ is the closer SQL analogue: 1,993 traces exposed 11,707 schema tables, of
 which 7,857 were not referenced by the recorded SQL. This supplies a real
 exposure/consumption candidate pool, but independent database replay is still
 required before treating unused tables as negatives.
+The follow-up [`WMH-BIRD exposure counterfactual`](experiments/summaries/wmh-bird-exposure-counterfactual-2026-08-09.md)
+performed that replay for 149 independently successful task traces: 1,232/1,236
+exposed-table substitutions were execution errors or result mismatches. The
+termhood field improved held-out Recall@5 from `.887` to `.930` without changing
+Recall@1, so it is a candidate-recall aid rather than semantic alias truth.
 The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-structural-audit-2026-08-09.md)
 now records the public benchmark's 5,910 records and 38,094 described tool
 invocations, and separates its useful trajectory-metric coverage from the
