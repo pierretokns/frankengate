@@ -48,6 +48,11 @@ lack identity, outcomes, or gold evaluators.
 The [`current evidence matrix`](experiments/summaries/current-evidence-matrix-2026-08-06.md)
 is the compact, receipt-linked decision map across artifact reuse, concept and
 alias mining, hard negatives, embeddings, model cascades, and skill replay.
+The [`retrieval → replay composition decision`](experiments/summaries/retrieval-to-replay-composition-decision-2026-08-09.md)
+joins the PostgreSQL/RLS retrieval, semantic-ID changed-system, and replay
+receipts without incorrectly pooling their cohorts. Its operational rule is
+that retrieval may expand candidates, but PostgreSQL authority, compatibility,
+and independent replay remain the acceptance gates.
 The dated [`research program status update`](experiments/summaries/research-program-status-2026-08-09.md)
 adds the LRAT trajectory audit, ToolQP-inspired public-tool probe, and
 outcome-backed SQL artifact query-planning result. Its central boundary is
