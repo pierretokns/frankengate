@@ -1,4 +1,4 @@
-# Corporate trace artifact-learning status update (2026-08-09)
+# Corporate trace artifact-learning status update (2026-08-09; addendum 2026-08-10)
 
 This update consolidates the latest independent runs. It is a status ledger,
 not a claim that the full enterprise research objective is complete.
@@ -499,6 +499,59 @@ and exact recurrence; the fixed-project-count permutation p-values were `.0042`
 and `.0186`. This strengthens memory/skill writes as a sampling signal, but it
 does not control temporal trend, user choice, task phase, or terminal outcomes,
 so it remains non-causal and promotion-ineligible.
+
+### 11. EnterpriseRAG-Bench is a document-side fixture, not a trace-learning result
+
+The [EnterpriseRAG-Bench adaptation](enterprise-rag-bench-adaptation-2026-08-02.md)
+now closes the document-retrieval side of the program. Its 511,962 synthetic
+documents and 500 questions cover nine enterprise source types plus semantic,
+project, completeness, conflict, constrained, and not-found slices. The
+question audit records 2,427 atomic answer facts, 742 expected-document
+references, and 93 multi-document cases, but no principals, exposure/rejection
+events, tool outcomes, authority epochs, or changed-system replay.
+
+The deterministic full-corpus baseline is strongly slice-dependent: target-
+bearing MRR is `.4459`, semantic MRR/R@10 are `.1137/.208`, and completeness
+MRR/R@10 are `.5954/.75`. All 30 targetless questions received a non-empty
+retrieval result. Generic MiniLM dense retrieval reached only R@20 `.12`
+(title/snippet) or `.064` (title-only), below the lexical top-20 target pool
+recall of `.224`. Luna reranking improved semantic MRR `.1137 -> .1947` and
+R@1 `.08 -> .184`, but could not recover targets absent from the candidate
+pool.
+
+This gives us a hard, reproducible retrieval fixture and a negative result for
+generic vector-only retrieval. It does **not** establish ontology quality,
+enterprise alias resolution, skill utility, or cross-user learning. Keep its
+semantic/conflict/completeness/NIL slices separate and use its generated noise
+as a candidate-hard-negative fixture; do not pool its scores with trace or
+artifact outcomes.
+
+### 12. One-shot ontology proposals are review inputs, not canonical knowledge
+
+The [ontology-induction matrix contract](ontology-induction-matrix-contract-2026-08-02.md)
+now machine-gates schema-free GOI-style extraction, starter-schema population,
+OntoGPT-style population, GraphRAG-style extraction, and a staged governed
+pipeline. The first frontier mechanics study and identical five-case repeat
+returned valid structured output for `5/5` cases in both arms, but output size
+varied (GOI entities `14.2 -> 10.2`; starter-schema `7.0 -> 7.2`) and grounding
+was not a semantic truth label. A second Luna pass marked GOI items supported
+`.866667`, unsupported `.013333`, unclear `.120000`; starter-schema items were
+supported `.807018`, unsupported `.035088`, unclear `.157895`. These are silver
+review-prioritization measurements, not ontology precision or authority.
+
+The defensible combination is therefore:
+
+```text
+typed trace -> scoped term/alias candidates -> reviewed entity/NIL links
+  -> schema-grounded relations -> evidence/temporal/authority checks
+  -> changed-system replay -> versioned artifact/eval/skill proposal
+```
+
+No one-shot generator, generic embedding, or model judge is allowed to write a
+canonical enterprise ontology or reusable artifact without independent labels
+and replay. The missing evidence remains a consented, outcome-bearing cohort
+with same-surface/wrong-system negatives, temporal replacements, and changed
+authority/schema holdouts.
 
 ## Architecture decision
 
