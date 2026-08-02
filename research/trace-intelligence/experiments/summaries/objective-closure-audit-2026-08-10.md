@@ -51,4 +51,5 @@ Use the strengthened [enterprise semantic-cohort contract](../../configs/studies
 - [SRA-Bench ToolQA terminal-format audit](sra-bench-toolqa-format-audit-2026-08-02.md)
 - [SRA-Bench ToolQA observation-grounding audit](sra-bench-toolqa-grounding-audit-2026-08-02.md)
 - [SRA-Bench ToolQA semantic adjudication](sra-bench-toolqa-semantic-adjudication-2026-08-02.md)
+- [SRA-Bench ToolQA two-per-family incorporation control](sra-bench-toolqa-two-per-family-2026-08-02.md)
 - [Current objective audit](objective-completion-audit-2026-08-06.md)
