@@ -474,11 +474,13 @@ reviewed guidance stayed `16/16`, while the composite was `15/16` and the null
 was `15/16` with one false positive. Repeated seeds improve stability evidence
 but are not independent task evidence.
 The broader six-task enterprise-search family is stronger directional evidence:
-null/generated/reviewed scored `43/53`, `46/53`, and `49/53` q1 IDs, while a
-later reviewed+generated composite scored `53/53`; all q3 answers were exact.
-The arms were not randomized in one simultaneous run, all tasks share one
-public family, and the composite has a different context footprint, so this
-supports a replication hypothesis—not skill promotion.
+null/generated/reviewed scored `43/53`, `46/53`, and `49/53` q1 IDs. The later
+reviewed+generated composite receipt was then integrity-audited: only five
+tasks contain verifier answers (`45/45` q1 and `5/5` q3), while task 6 is marked
+complete without an answer. The unsupported `53/53` claim is withdrawn. The
+arms were not randomized in one simultaneous run, all tasks share one public
+family, and the composite has a different context footprint, so the corrected
+result is an incomplete replication hypothesis—not skill promotion.
 The [skill/artifact replay synthesis](skill-replay-evidence-synthesis-2026-08-09.md)
 keeps the causal evidence in one decision map: typed semantic-ID admission
 prevented `2` unsafe accepts in the changed-system fixture; reviewed guidance

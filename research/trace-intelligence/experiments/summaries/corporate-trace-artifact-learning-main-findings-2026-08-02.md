@@ -134,14 +134,15 @@ benchmarks:
   recall than null, but materially weaker than the human procedure (`.925`,
   `5/6`). Generated artifacts are therefore useful candidates, not automatic
   replacements for reviewed procedures; composition/review is the next test.
-- An isolated retry completed the sixth task and a non-imputing receipt merge
-  now gives the reviewed-procedure plus two generated data-navigation skills
-  q1 `53/53`, precision `1.000`, published-check pass rate `6/6`, and exact q3
-  on all six instances. This is a stronger composition signal, not a causal
-  result: it is one public family, q2 is unlabeled, arms were not randomized
-  in one simultaneous run, and the host adapter is not the official Docker
-  runner. The next matrix must randomize human-only, generated-only, composite,
-  placebo, and null arms on task-disjoint families before promotion.
+- The later composite receipt is internally inconsistent: its orchestration
+  metadata marks six tasks complete, but task 6 has no answer or q1/q3 verifier
+  metrics. Only five tasks are verified (`45/45`, precision `1.000`, published
+  check `5/5`); the unsupported `53/53` and `6/6` claims are withdrawn. This
+  is a bounded operational signal, not a causal result: it is one public
+  family, q2 is unlabeled, arms were not randomized in one simultaneous run,
+  and the host adapter is not the official Docker runner. The next matrix must
+  fail closed on missing verifier output and randomize human-only,
+  generated-only, composite, placebo, and null arms on task-disjoint families.
 - A one-task changed-data proxy renamed `ContentForce` to `ContentHub`. The
   reviewed procedure retained q1 recall `1.000` and precision `1.000`; the
   composite retained precision but fell to `.875` recall, while null had

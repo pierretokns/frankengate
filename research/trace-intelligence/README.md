@@ -63,8 +63,12 @@ perfect on the repeated task, while generated composition did not.
 The six-task [`SkillLearnBench three-arm replay`](experiments/summaries/skilllearnbench-frontier-three-arm-2026-08-01.md)
 found q1 recall of `43/53` null, `46/53` generated, and `49/53` reviewed;
 the later [`composite replay`](experiments/summaries/skilllearnbench-frontier-composite-six-task-2026-08-06.md)
-reached `53/53`, but remains a non-randomized, single-family replication
-hypothesis rather than a causal skill result.
+verified `45/45` on five answer-bearing tasks, while task 6 had no verifier
+answer despite completion metadata. The resulting `5/6` signal is a
+non-randomized, single-family hypothesis rather than a causal skill result.
+The [paired-statistics audit](experiments/summaries/skilllearnbench-paired-statistics-2026-08-02.md)
+withdraws the unsupported `53/53` claim and records the receipt-integrity
+mismatch.
 The dated [`research program status update`](experiments/summaries/research-program-status-2026-08-09.md)
 adds the LRAT trajectory audit, ToolQP-inspired public-tool probe, and
 outcome-backed SQL artifact query-planning result. Its central boundary is
