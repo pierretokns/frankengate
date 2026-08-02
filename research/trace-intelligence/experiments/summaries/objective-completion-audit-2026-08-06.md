@@ -44,6 +44,8 @@ The strict DataClaw cross-user artifact transfer probe is documented in
 [dataclaw-cross-user-artifact-transfer-2026-08-09.md](dataclaw-cross-user-artifact-transfer-2026-08-09.md).
 The complementary same-user support distribution is documented in
 [dataclaw-same-user-artifact-support-2026-08-09.md](dataclaw-same-user-artifact-support-2026-08-09.md).
+The project-held-out DataClaw representation adapter is documented in
+[dataclaw-project-adapter-2026-08-09.md](dataclaw-project-adapter-2026-08-09.md).
 
 ## Overall conclusion
 

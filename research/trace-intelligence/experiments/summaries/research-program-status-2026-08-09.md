@@ -145,6 +145,11 @@ and 460 that were both cross-project and friction-adjacent. This is the first
 bounded positive for a scoped personal/project library, still requiring replay
 and changed-system gates. Its recurrence/friction relationship reversed in the
 small Vaynelee cohort, so recurrence is not a universal friction label.
+The [DataClaw project adapter probe](dataclaw-project-adapter-2026-08-09.md)
+improved Peter's combined project-held-out MRR `.654946→.751659`, but left
+Vaynelee's combined MRR unchanged at `.978495` because that cohort was near
+ceiling. This is scoped adaptation evidence, not a universal custom-embedding
+promotion result.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -333,6 +338,7 @@ project, principal, and changed-system holdouts.
 - [Cross-corpus SQL artifact signatures](cross-corpus-sql-artifact-signatures-2026-08-09.md)
 - [DataClaw cross-user artifact transfer](dataclaw-cross-user-artifact-transfer-2026-08-09.md)
 - [DataClaw same-user artifact support](dataclaw-same-user-artifact-support-2026-08-09.md)
+- [DataClaw project adapter](dataclaw-project-adapter-2026-08-09.md)
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)

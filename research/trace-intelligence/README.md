@@ -258,6 +258,10 @@ The complementary [`same-user artifact support`](experiments/summaries/dataclaw-
 probe found 3,158 Peter candidates repeated across sessions and 518 across
 projects, supporting scoped personal/project libraries as the first positive
 reuse lane.
+The [`DataClaw project adapter`](experiments/summaries/dataclaw-project-adapter-2026-08-09.md)
+probe improved combined project-held-out MRR for Peter (`.654946→.751659`) but
+was neutral for Vaynelee, supporting scoped experimentation rather than a
+universal custom embedding claim.
 The [`NL2SQL identifier cross-domain transfer`](experiments/summaries/nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 probe found asymmetric generalization: Defog-trained ranking improved BIRD MRR
 `.731684→.760996`, while BIRD-trained ranking reduced Defog MRR

@@ -204,6 +204,13 @@ context rate versus `.436807` for single-session candidates, while Vaynelee's
 small repeated sample was lower than its single-session rate. A partner study
 must therefore measure this relationship rather than hard-code it.
 
+The project-held-out adapter probe supplies a useful adaptation result for a
+partner conversation: Peter's combined prompt/tool MRR rose `.654946→.751659`,
+while Vaynelee's combined MRR remained `.978495` at ceiling and Peter's
+tool-only arm slightly declined. This is the right shape of evidence for a
+custom-representation study—an improvement with a matched null and a weak
+feature-only arm—not a reason to promote an embedding trained on raw logs.
+
 Tracking remains split by research obligation: [#118](https://github.com/pierretokns/frankengate/issues/118)
 for the authorized changed-system cohort, [#121](https://github.com/pierretokns/frankengate/issues/121)
 for domain-adaptive embeddings, [#122](https://github.com/pierretokns/frankengate/issues/122)
