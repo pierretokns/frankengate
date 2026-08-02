@@ -209,6 +209,13 @@ agreement. This supports context-bearing review prompts and explicit
 `unclear`/related outcomes, but remains a silver calibration study because the
 cohorts were selected by the same lexical statistic and lack SME alias/NIL
 labels.
+The [same-cohort alias cascade audit](nl2sql-alias-cascade-audit-2026-08-09.md)
+now makes the retrieval/refusal boundary explicit: on 14 target and 8 NIL
+cases, exact structured MRR was `.892857`, dense `.689966`, lexical `.805844`,
+and frontier `1.0`; every retrieval arm still proposed a candidate for every
+NIL. The frontier decision layer can abstain, but ranking quality and refusal
+must be measured separately. This is gold-SQL/synthetic proxy evidence, not
+independent corporate alias truth.
 
 ### 6. Custom embedding evidence is not yet promotion-positive
 

@@ -1,0 +1,15 @@
+{
+  "checks": {
+    "all_same_cohort_arms": true,
+    "claim_boundary_present": true,
+    "interpretation_present": true,
+    "raw_content_not_committed": true,
+    "result_hash": true,
+    "same_cohort_nonempty": true,
+    "schema_version": true,
+    "synthetic_gate_present": true
+  },
+  "passed": true,
+  "result_sha256": "1c346517199fc7866164a890b3df82648cbe21ea696e3ee98b9c4d3e0472013b",
+  "schema_version": "frankengate-nl2sql-alias-cascade-audit-verification-v1"
+}

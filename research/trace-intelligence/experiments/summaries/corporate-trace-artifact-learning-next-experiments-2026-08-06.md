@@ -64,6 +64,13 @@ were negative by −6.25 and −9.01 points. The P0 cohort must therefore includ
 time-held-out evaluation and artifact expiry/versioning, and must not use
 parameterized templates as authorization or reuse evidence.
 
+The [same-cohort alias cascade audit](nl2sql-alias-cascade-audit-2026-08-09.md)
+is the completed retrieval/refusal checkpoint for the alias lane. Exact
+structured retrieval beat dense retrieval on the public proxy, while all
+retrieval arms proposed candidates on constructed NILs. The next P1 run must
+therefore supply independent NIL labels and evaluate refusal separately from
+candidate ranking before claiming embedding or frontier value.
+
 ## Partner/publication package
 
 The strongest paper is **a governed evidence-to-artifact lifecycle for

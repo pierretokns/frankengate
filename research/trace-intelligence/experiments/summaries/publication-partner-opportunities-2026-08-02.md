@@ -167,6 +167,15 @@ outcomes. It is deliberately not presented as alias accuracy because the
 cohort selection and model input share the lexical-context statistic and no
 independent SME labels exist.
 
+The [same-cohort alias cascade audit](nl2sql-alias-cascade-audit-2026-08-09.md)
+provides the cleanest current comparison of retrieval stages: exact structured
+MRR `.892857`, lexical `.805844`, dense `.689966`, and frontier `1.0` on the
+same 14 target cases. All four retrieval arms proposed a candidate on all 8
+constructed NIL cases, demonstrating that ranking and refusal are separate
+problems. The partner-facing claim should therefore be “structured retrieval
+plus explicit frontier/human refusal,” not “embeddings or frontier ranking
+solve alias discovery.”
+
 ## Latest empirical packet for outreach
 
 The WMH-BIRD bridge now gives the packet a stronger hard-negative story than
