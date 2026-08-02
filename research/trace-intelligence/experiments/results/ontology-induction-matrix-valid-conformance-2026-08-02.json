@@ -1,0 +1,21 @@
+{
+  "schema_version": "frankengate-ontology-induction-matrix-conformance-v1",
+  "contract_sha256": "14fe333ea38588e86a8acc01f6a616e3f3463c1fcfdff0c8907d4217e901cab5",
+  "manifest_sha256": "8d6df860a0156793c634d1bfc7385c52a450a36078a6832fa20290bb6d1bdaef",
+  "raw_content_committed": false,
+  "structural_valid": true,
+  "promotion_ready": false,
+  "case_counts": {
+    "alias": 1,
+    "nil": 1
+  },
+  "promotion_blockers": [
+    "entity_or_alias target count 1 < 100",
+    "hard_negative count 0 < 50",
+    "nil_or_unclear count 1 < 25",
+    "changed-system replay count 0 < 20"
+  ],
+  "errors": [
+
+  ]
+}

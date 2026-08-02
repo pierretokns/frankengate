@@ -67,6 +67,12 @@ starter ontology or template and is therefore a population arm rather than a
 discovery oracle. The staged comparison and claim boundaries are recorded in
 the [prior-art refresh](ontology-induction-prior-art-refresh-2026-08-02.md).
 
+The comparison is now machine-gated by the [ontology-induction matrix
+contract](ontology-induction-matrix-contract-2026-08-02.md). Its structural
+fixture passes but remains promotion-blocked; the invalid fixture fails closed
+on missing holdouts, arms, receipts, and raw-content fields. This is a fair
+study handoff, not an efficacy result.
+
 Public enterprise tuning guidance follows the same pattern. Databricks puts
 hybrid retrieval, metadata, query reformulation, reranking, and evaluation
 before embedding tuning and calls tuning a last resort ([retrieval quality
