@@ -20,6 +20,63 @@ silver labels, synthetic fixtures, and enterprise outcomes separate.
 | Local supervised adaptation | Task-disjoint adapter improved Nomic MRR `.940152→.947917` and Recall@1 `.909091→.931818`, but lowered Recall@5 and did not reduce invalid candidates | Labelled shadow reranker with rollback, not a universal custom embedding |
 | Finance-specialized embedding | On pinned FinanceBench, BalyasnyAI/multilingual-e5-base reached Recall@20 `1.000` / MRR `.8087` versus Qwen3-Embedding `.9933/.7164` and TF-IDF `.6867/.3005`; the same projection through Ollama Nomic fell to `.4533/.1661` | Strong domain-model and serving-identity signal; keep as a governed shadow lane, not proof of corporate trace transfer |
 
+## One-shot ontology generation: current reality check
+
+The strong social-media claim—“give one tool or document to an ontology
+generator and receive the enterprise model”—is not supported by either the
+recent literature or our controls. A recent enterprise ontology paper,
+[OntoEKG](https://arxiv.org/abs/2602.01276), separates class/property
+extraction from hierarchy/entailment and reports exact-match F1 of `.102` for
+Data, `0` for Finance, and `.048` for Logistics. Its embedding-based fuzzy F1
+looks better (`.724`, `.121`, and `.431` respectively), but the authors still
+identify scope and hierarchical-reasoning limitations. Fuzzy string agreement
+is therefore not a sufficient ontology-quality metric.
+
+Our own measurements line up with that boundary:
+
+- GLiNER produced useful candidate spans (`7/8` on a corrected contextual
+  probe), but its output was dominated by project/tool labels and was not safe
+  for automatic glossary promotion.
+- Termhood improved a narrow within-schema retrieval slice while transferring
+  poorly to held-out schemas (`.015` direct termhood recall); acronym and term
+  candidates were cohort-local rather than a global corporate dictionary.
+- Full-corpus generic MiniLM retrieval on the 125-question EnterpriseRAG
+  semantic slice reached only R@20 `.12` with title/snippet views and `.064`
+  with title-only, below lexical top-20 pool recall `.224`.
+- A task-disjoint supervised Nomic adapter improved MRR `.940152 → .947917`
+  and R@1 `.909091 → .931818`, but reduced R@5 and did not reduce incompatible
+  shortlist selections. This is a narrow labelled reranking signal, not a
+  universal corporate embedding result.
+
+The correct interpretation is that the tools are complementary stages:
+terminology miners find candidates; entity-resolution methods propose
+same/different/NIL decisions; frontier models extract schema-constrained
+proposals with evidence; SHACL-like checks reject malformed graphs; and
+replay/authority gates decide whether anything becomes an artifact or skill.
+No stage can infer canonical identity, temporal validity, authority, or task
+utility from an isolated tool description. Those are missing variables, not
+merely missing model capacity.
+
+Public enterprise tuning guidance follows the same pattern. Databricks puts
+hybrid retrieval, metadata, query reformulation, reranking, and evaluation
+before embedding tuning and calls tuning a last resort ([retrieval quality
+guide](https://docs.databricks.com/gcp/en/ai-search/retrieval-quality)). Its
+Genie knowledge store uses curated synonyms, joins, SQL expressions, verified
+queries, and feedback-derived updates ([Genie quality tuning](https://docs.databricks.com/aws/en/genie/tune-quality)). Google requires
+supervised corpus/query/relevance labels for embedding tuning
+([embedding tuning](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning/embeddings?hl=en)); Cohere exposes explicit relevant passages and hard negatives for reranker tuning
+([rerank tuning](https://docs.cohere.com/v1/docs/rerank-starting-the-training)).
+This is evidence for converting traces into reviewed labels and reusable
+artifacts first—not pretraining directly on raw logs.
+
+**Decision:** keep ontology generation as a review-queue capability, not a
+canonical write path. The smallest defensible implementation is
+`typed trace → scoped terms/aliases → reviewed entity links → schema-grounded
+relations → evidence/constraint checks → changed-system replay`. A new vector
+database or another one-shot generator is not justified until a consented,
+entity/time/project-held-out cohort shows downstream utility and lower
+wrong-system/NIL error.
+
 ## What is not proven
 
 The following enterprise claims remain unproven because no current receipt has
