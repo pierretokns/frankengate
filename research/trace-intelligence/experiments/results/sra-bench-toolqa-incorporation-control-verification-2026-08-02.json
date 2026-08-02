@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "all_arms_finished": true,
+    "all_arms_have_14_records": true,
+    "claim_boundary": true,
+    "dense_lift_reconciles": true,
+    "oracle_tie_reconciles": true,
+    "promotion_blocked": true,
+    "raw_outputs_external": true,
+    "retrieval_hits_reconcile": true,
+    "schema": true,
+    "strict_metrics_reconcile": true,
+    "task_count": true
+  },
+  "schema_version": "frankengate-sra-bench-toolqa-incorporation-verification-v1",
+  "source_receipt_sha256": "3dc26acb7cd1fb6550748d3f3de0f92d7f6a9b393942eef95c04c0e73aadc852",
+  "verification_passed": true
+}
