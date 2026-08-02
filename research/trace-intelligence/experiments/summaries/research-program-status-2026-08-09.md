@@ -60,6 +60,16 @@ validated artifact utility; the full-pool prompt averaged about 45.9k
 characters and per-call cost/latency were not recorded. Keep the explorer
 optional and replay-gated.
 
+The [WMH-BIRD SQL explorer bridge](wmh-bird-sql-separate-explorer-probe-2026-08-09.md)
+then tested the same pattern against exposed tables and independent SQLite
+replay. Across two eight-case runs, strict target MRR/Recall@1 were `1.0` for
+the explorer versus `.8375/.75` for lexical top-8; replay-compatible selected
+rate was `.979167` versus `.418006`, with a mean shortlist of `2.5` versus
+`6.375`. This is a promising candidate-generation and noise-reduction result,
+but the cases are a tiny public proxy with BIRD hints and no enterprise
+authority or changed-system labels. It does not authorize alias or artifact
+promotion.
+
 ### 4. Structured tool fields are useful metadata, not a retrieval replacement
 
 The field-aware TRAJECT-Bench probe evaluated 5,297 domain-scoped records with
@@ -425,6 +435,7 @@ project, principal, and changed-system holdouts.
 - [Cursor historical retrieval supervision](cursor-historical-retrieval-supervision-2026-08-09.md)
 - [FastContext withdrawn-method audit](fastcontext-withdrawn-method-audit-2026-08-09.md)
 - [TRAJECT-Bench separate explorer](traject-bench-separate-explorer-probe-2026-08-09.md)
+- [WMH-BIRD SQL separate explorer](wmh-bird-sql-separate-explorer-probe-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
 - [SkillLearnBench changed-data multi-seed synthesis](skilllearnbench-changed-data-multiseed-2026-08-09.md)

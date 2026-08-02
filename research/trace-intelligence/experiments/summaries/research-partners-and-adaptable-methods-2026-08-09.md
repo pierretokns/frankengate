@@ -97,6 +97,15 @@ recorded, and no replay or authority labels existed. This supports a separate
 explorer as a candidate-generation arm, not as proof of skill or artifact
 promotion.
 
+The follow-up [WMH-BIRD SQL explorer bridge](wmh-bird-sql-separate-explorer-probe-2026-08-09.md)
+is the first replay-backed adaptation. On two eight-case Luna runs, it found
+all recorded SQL tables at rank one, selected `2.5` tables on average instead
+of `6.375`, and had `.979167` replay-compatible selection versus `.418006` for
+lexical top-8. This is still a small hinted public proxy; it supports the
+explorer/noise-reduction hypothesis, not semantic alias quality or enterprise
+artifact reuse. The next partner study must use task-disjoint, authority-aware
+and changed-system traces.
+
 ### Trajectory-aware tool evaluation
 
 [TRAJECT-Bench](https://arxiv.org/abs/2510.04550) evaluates tool selection,

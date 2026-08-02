@@ -1,0 +1,62 @@
+{
+  "cases_per_run": 8,
+  "claim_boundary": {
+    "enterprise_skill_transfer_measured": false,
+    "reason": "Two repeated public WMH-BIRD cases with independent SQLite compatibility labels; no enterprise authorization, human intent, or changed-system outcome labels.",
+    "repeated_sql_explorer_measured": true,
+    "replay_compatibility_measured": true,
+    "semantic_alias_quality_established": false,
+    "validated_artifact_utility_established": false
+  },
+  "explorer_mean": {
+    "compatible_mrr": 1.0,
+    "compatible_recall_at_1": 1.0,
+    "compatible_recall_at_10": 1.0,
+    "compatible_recall_at_5": 1.0,
+    "compatible_selected_rate": 0.979167,
+    "invalid_selected_count": 0.0625,
+    "selected_count": 2.5,
+    "strict_mrr": 1.0,
+    "strict_recall_at_1": 1.0,
+    "strict_recall_at_10": 1.0,
+    "strict_recall_at_5": 1.0
+  },
+  "lexical_control": {
+    "compatible_mrr": 0.8375,
+    "compatible_recall_at_1": 0.75,
+    "compatible_recall_at_10": 1.0,
+    "compatible_recall_at_5": 1.0,
+    "compatible_selected_rate": 0.418006,
+    "invalid_selected_count": 3.875,
+    "records": 8,
+    "selected_count": 6.375,
+    "strict_mrr": 0.8375,
+    "strict_recall_at_1": 0.75,
+    "strict_recall_at_10": 1.0,
+    "strict_recall_at_5": 1.0
+  },
+  "result_sha256": "c0dd8973f8973654c7da28b6e84113a3a24a981bd16c73ab2f7a37eecf986238",
+  "runs": 2,
+  "schema_version": "frankengate-wmh-bird-sql-explorer-probe-aggregate-v1",
+  "source": {
+    "raw_content_committed": false,
+    "result_sha256": [
+      "ab28792f948357a5cec7c42249fed846b617c91d9f6115052bbb03e8413954fa",
+      "8095977d0812b21e0efb0917663df1806efb364cca05f3426bec2b7d5070c280"
+    ]
+  },
+  "stability": {
+    "case_jaccards": [
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.666667
+    ],
+    "exact_selected_set_agreements": 6,
+    "selected_set_jaccard_mean": 0.895833
+  }
+}
