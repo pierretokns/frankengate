@@ -89,6 +89,9 @@ cross-scope transfer before any artifact can be considered promotable.
 The [`external skill-learning refresh`](experiments/summaries/external-skill-learning-refresh-2026-08-02.md)
 maps SkillGen, Trace2Skill, SkillOpt, SkillLearnBench, AgentRx, and trajectory
 artifact methods to the governed SQL/tool experiment we still need to run.
+The [`enterprise trace-learning pilot contract`](experiments/summaries/enterprise-trace-learning-pilot-contract-2026-08-02.md)
+turns that missing paired changed-system study into a machine-checkable partner
+manifest with retrieval, artifact, skill, safety, and outcome gates.
 The [`headline receipt-consistency audit`](experiments/summaries/headline-receipt-consistency-audit-2026-08-02.md)
 recomputes 19 selected high-impact claims against their receipts; all checks
 pass, while preserving the separately documented SkillLearnBench missing-answer
