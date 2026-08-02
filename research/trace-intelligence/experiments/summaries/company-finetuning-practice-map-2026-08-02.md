@@ -38,3 +38,34 @@ held-out data with changed-system replay. A custom embedding should be treated
 as an optional compressed retrieval component, not the source of truth.
 
 Primary sources: [Databricks retrieval quality guide](https://docs.databricks.com/gcp/en/ai-search/retrieval-quality), [Databricks Genie knowledge store](https://docs.databricks.com/aws/en/genie-agents/tune-quality), [Google embedding tuning](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning/embeddings), [AWS SageMaker fine-tuning](https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-fine-tune.html), [Cohere platform](https://docs.cohere.com/v1/docs/the-cohere-platform), [Databricks LLMOps](https://docs.databricks.com/aws/en/machine-learning/mlops/llmops).
+
+## Primary-document refresh
+
+The current vendor documentation makes the supervision requirement more
+explicit than the older practice map:
+
+- Databricks recommends comparing full-text, hybrid, ANN, and reranked
+  retrieval first. It interprets “full-text significantly better than ANN” as
+  an embedding/domain-fit problem and says fine-tuning should follow the
+  preceding retrieval-quality steps, not replace them. See the [retrieval
+  evaluation guide](https://docs.databricks.com/gcp/en/ai-search/retrieval-quality-eval).
+- Google’s embedding tuning contract requires separate corpus, query, and
+  relevance-label files. It permits graded relevance scores and recommends
+  explicit validation and test labels; its documented dataset bounds are
+  9–10,000 queries and up to 500,000 corpus documents. See [Tune text
+  embeddings](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning/embeddings?hl=en).
+- Cohere’s reranker training format explicitly contains `query`,
+  `relevant_passages`, and `hard_negatives`; its documentation says that about
+  five hard negatives per query can provide meaningful improvement and
+  requires a relevant passage for every query. See [Starting the Rerank
+  Fine-Tuning](https://docs.cohere.com/v1/docs/rerank-starting-the-training).
+- AWS keeps the knowledge library and its asynchronously refreshed embeddings
+  separate from model fine-tuning and deployment. This supports versioned
+  index/model artifacts with rollback rather than treating every new log as a
+  weight update. See [RAG with enterprise data](https://docs.aws.amazon.com/solutions/text-generation-using-embeddings-from-enterprise-data-on-aws/index.html)
+  and [fine-tuning domain adaptation](https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models-fine-tuning-domain-adaptation.html).
+
+These documents strengthen, but do not overturn, our conclusion: companies
+customize a retrieval or reranking component after constructing supervised
+query–corpus evidence. They do not present one-shot ontology induction from
+raw corporate traces as a solved production primitive.
