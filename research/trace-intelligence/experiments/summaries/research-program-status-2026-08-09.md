@@ -413,6 +413,12 @@ therefore keeps structured retrieval first, embeddings optional for broad
 recall, and frontier models selective for ambiguity/review. It explicitly
 rejects hot-path frontier scoring and universal custom-embedding promotion
 until a consented enterprise cohort supplies semantic and downstream labels.
+The new [embedding-versus-model cascade evidence boundary](embedding-vs-model-cascade-evidence-2026-08-02.md)
+shows why the current public receipts cannot be multiplied into a combined
+result: retrieval was a 76-case natural-reuse null, while model judgment was a
+16-case trajectory-context probe with six false positives. A same-cohort,
+fixed-candidate factorial is now required before claiming interaction or
+cost-normalized cascade utility.
 The [`WMH-BIRD step-fault audit`](wmh-bird-step-fault-audit-2026-08-09.md)
 adds a bounded SkillAdaptor/HASP-style diagnosis substrate: first-fault
 categories and later recovery are observable, but reward and replay disagree
@@ -526,5 +532,6 @@ project, principal, and changed-system holdouts.
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)
+- [Embedding versus model cascade evidence boundary](embedding-vs-model-cascade-evidence-2026-08-02.md)
 - [WMH-BIRD step-fault audit](wmh-bird-step-fault-audit-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)
