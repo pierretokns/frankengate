@@ -72,6 +72,17 @@ real corporate reformulation labels nor wrong-system/temporal hard negatives.
 The 3,000-candidate count is a configured cap, not a quality score. The `8/8`
 acronym result is a synthetic capability probe, not an enterprise benchmark.
 
+## Current-worktree verification recheck
+
+The current checkout was rechecked after the downstream retrieval work. The
+fork manifest verifier passed for both attributed forks; the modern-port
+receipt verifier passed every check; the four-cohort acronym-stability verifier
+passed its hash, cohort, pairwise-completeness, content-free, and claim-boundary
+checks; the WMH-BIRD exposure/counterfactual verifier reconciled all `149`
+selected traces and `1,236` substitution pairs; and the NL2SQL termhood-alias
+verifier passed its hash, bounds, and claim-boundary checks. These are integrity
+and reproducibility checks, not new evidence of enterprise semantic quality.
+
 ## Integration decision
 
 Keep both ports offline and behind review. They may produce candidate terms,
