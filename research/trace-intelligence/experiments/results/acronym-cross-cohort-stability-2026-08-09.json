@@ -1,0 +1,112 @@
+{
+  "claim_boundary": {
+    "alias_quality": false,
+    "enterprise_concept_quality": false,
+    "reason": "Parenthetical acronym extraction measures candidate stability only; exact shared strings may be boilerplate, and absent definitions do not prove an acronym is invalid.",
+    "semantic_equivalence": false
+  },
+  "cohorts": {
+    "alin": {
+      "ambiguous_acronym_count": 0,
+      "candidate_acronym_count": 45,
+      "document_count": 18,
+      "documents_with_parenthetical_candidates": 13,
+      "raw_content_committed": false,
+      "root_name": "alin-claude-traces-e33ebbca",
+      "unambiguous_acronym_count": 2,
+      "valid_acronym_count": 2,
+      "valid_definition_pair_count": 2
+    },
+    "fable": {
+      "ambiguous_acronym_count": 10,
+      "candidate_acronym_count": 134,
+      "document_count": 115,
+      "documents_with_parenthetical_candidates": 47,
+      "raw_content_committed": false,
+      "root_name": "fable-5-traces-e05c4178",
+      "unambiguous_acronym_count": 19,
+      "valid_acronym_count": 29,
+      "valid_definition_pair_count": 41
+    },
+    "jobseek": {
+      "ambiguous_acronym_count": 2,
+      "candidate_acronym_count": 17,
+      "document_count": 5,
+      "documents_with_parenthetical_candidates": 5,
+      "raw_content_committed": false,
+      "root_name": "jobseek-agent-traces-sample-5aae9972",
+      "unambiguous_acronym_count": 2,
+      "valid_acronym_count": 4,
+      "valid_definition_pair_count": 8
+    },
+    "wisp": {
+      "ambiguous_acronym_count": 0,
+      "candidate_acronym_count": 38,
+      "document_count": 102,
+      "documents_with_parenthetical_candidates": 28,
+      "raw_content_committed": false,
+      "root_name": "wisp-claude-code-sessions",
+      "unambiguous_acronym_count": 5,
+      "valid_acronym_count": 5,
+      "valid_definition_pair_count": 5
+    }
+  },
+  "exact_definition_pair_cohort_frequency": {
+    "all_cohorts": 0,
+    "one_cohort": 56,
+    "two_or_more_cohorts": 0,
+    "unique_pairs": 56
+  },
+  "pairwise": {
+    "alin__fable": {
+      "definition_agreement_given_shared_acronym": null,
+      "left": "alin",
+      "right": "fable",
+      "shared_exact_definition_pairs": 0,
+      "shared_valid_acronyms": 0
+    },
+    "alin__jobseek": {
+      "definition_agreement_given_shared_acronym": null,
+      "left": "alin",
+      "right": "jobseek",
+      "shared_exact_definition_pairs": 0,
+      "shared_valid_acronyms": 0
+    },
+    "alin__wisp": {
+      "definition_agreement_given_shared_acronym": null,
+      "left": "alin",
+      "right": "wisp",
+      "shared_exact_definition_pairs": 0,
+      "shared_valid_acronyms": 0
+    },
+    "fable__jobseek": {
+      "definition_agreement_given_shared_acronym": null,
+      "left": "fable",
+      "right": "jobseek",
+      "shared_exact_definition_pairs": 0,
+      "shared_valid_acronyms": 0
+    },
+    "fable__wisp": {
+      "definition_agreement_given_shared_acronym": null,
+      "left": "fable",
+      "right": "wisp",
+      "shared_exact_definition_pairs": 0,
+      "shared_valid_acronyms": 0
+    },
+    "jobseek__wisp": {
+      "definition_agreement_given_shared_acronym": null,
+      "left": "jobseek",
+      "right": "wisp",
+      "shared_exact_definition_pairs": 0,
+      "shared_valid_acronyms": 0
+    }
+  },
+  "result_sha256": "0d4dfa120b5b2f8f65a6fbb1e98b6115e639ddc7217a4842be430d83b8d314a0",
+  "schema_version": "frankengate-acronym-cross-cohort-stability-v1",
+  "valid_acronym_cohort_frequency": {
+    "all_cohorts": 0,
+    "one_cohort": 40,
+    "two_or_more_cohorts": 0,
+    "unique_acronyms": 40
+  }
+}

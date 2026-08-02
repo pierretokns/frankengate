@@ -241,6 +241,10 @@ The [`termhood cross-cohort stability`](experiments/summaries/termhood-cross-coh
 probe found 217/293 top-term hashes unique to one cohort and only 5 shared by
 all four. This supports tenant/project-scoped concept mining and reviewed
 linking, not a global alias table built from raw trace frequency.
+The [`acronym cross-cohort stability`](experiments/summaries/acronym-cross-cohort-stability-2026-08-09.md)
+probe found 40 valid acronym hashes and 56 valid acronym/full-form pairs, all
+local to one cohort, with no shared valid acronym across the four cohorts.
+This keeps acronym expansion scoped and review-gated.
 The [`NL2SQL identifier cross-domain transfer`](experiments/summaries/nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 probe found asymmetric generalization: Defog-trained ranking improved BIRD MRR
 `.731684→.760996`, while BIRD-trained ranking reduced Defog MRR

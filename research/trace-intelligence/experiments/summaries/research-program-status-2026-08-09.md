@@ -123,6 +123,11 @@ The [cross-cohort termhood stability probe](termhood-cross-cohort-stability-2026
 found 217/293 top-term hashes unique to one cohort and only 5 shared by all
 four. This supports tenant/project-scoped concept mining and reviewed linking,
 not a global alias table or embedding trained from raw frequency.
+The [cross-cohort acronym stability probe](acronym-cross-cohort-stability-2026-08-09.md)
+found 40 valid acronym hashes and 56 valid acronym/full-form pairs, all local
+to one cohort, with no shared valid acronym across the four cohorts. This keeps
+the acronym port in a scoped review queue and provides no support for a global
+dictionary from public traces alone.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -307,6 +312,7 @@ project, principal, and changed-system holdouts.
 - [WMH-BIRD exact versus execution-equivalent retrieval](wmh-bird-equivalence-aware-retrieval-2026-08-09.md)
 - [Claude command-artifact normalization audit](claude-command-artifact-normalization-2026-08-09.md)
 - [Claude cross-cohort command transfer](claude-cross-cohort-command-transfer-2026-08-09.md)
+- [Acronym cross-cohort stability](acronym-cross-cohort-stability-2026-08-09.md)
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)
