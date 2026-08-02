@@ -80,6 +80,9 @@ obligation, and current disposition.
 The [`corporate trace-learning closure audit`](experiments/summaries/corporate-trace-objective-closure-audit-2026-08-02.md)
 rechecks the full objective requirement by requirement and separates
 demonstrated mechanics from the still-missing enterprise semantic cohort.
+The [`cross-cohort cascade receipt audit`](experiments/summaries/cascade-receipt-audit-2026-08-02.md)
+recomputes dense, frontier, adapter, trajectory-context, and identifier-stage
+deltas from their independent receipts and records where each stage fails.
 The [`headline receipt-consistency audit`](experiments/summaries/headline-receipt-consistency-audit-2026-08-02.md)
 recomputes 19 selected high-impact claims against their receipts; all checks
 pass, while preserving the separately documented SkillLearnBench missing-answer
