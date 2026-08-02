@@ -24,9 +24,19 @@ This is stronger and more falsifiable than “enterprise memory improves agents.
 | Longitudinal memory-write association | Post-write shape/exact reuse `.397/.124` versus `.027/.008` without prior writes | Strong observational signal, but project age/task mix confound it; requires randomized replay |
 | Friction signals | 121 rephrase pairs and 19 exact repeats, but zero typed tool-result messages | Preserve tool-result edges before claiming failure recovery or friction labels |
 | Dataset integrity | A second scrubbed DataClaw export had 9/775 valid rows; a parseable OpenAI projection had 436 sessions | Ingestion integrity and loss accounting are part of the benchmark, not housekeeping |
+| Identifier-aware retrieval | On 141 chronological held-out sessions, prompt-only project MRR `.551`; prompt + identifiers `.598`; prompt + shapes + identifiers `.657` | Preserve exact identifiers as a separate candidate lane; this is a project-recurrence proxy, not same-work or alias truth |
+| Exact-path versus basename drift | Same-project basename reuse `.303` of path events versus exact-path `.167`; only `.553` of same-project basename hits were exact; 60 exact digests crossed projects in training | Exact identity is a high-precision exposure feature, while basename matching supplies recall and hard negatives; neither is an authority key |
+| Within-project memory-write permutation | Prior-write minus no-prior differences `.366` (shape) and `.114` (exact), fixed-project-count permutation p-values `.0042` and `.0186` | Memory/skill writes are a useful sampling stratum for replay, but temporal/user-choice confounding still blocks causal promotion |
 
 All numbers are content-free, local-only receipts; no employee transcripts or
 raw commands are in the branch.
+
+The newest identifier results make the partner benchmark more precise. A
+same-surface/different-path collision is common enough to supply hard negatives,
+but exact paths also cross projects. The benchmark should therefore label four
+separate strata—exact identity, same basename/different path, cross-project
+basename, and cross-project exact path—before comparing lexical, dense,
+identifier-aware, and frontier-review arms.
 
 ## Partner-specific study asks
 
@@ -108,5 +118,8 @@ Receipts referenced by this update:
 - [Command-shape variants](dataclaw-ronald-command-shape-variants-2026-08-02.md)
 - [Memory/skill artifacts](dataclaw-ronald-memory-skill-artifact-audit-2026-08-02.md)
 - [Memory-write association](dataclaw-memory-write-longitudinal-2026-08-02.md)
+- [Identifier-aware retrieval](dataclaw-ronald-identifier-aware-retrieval-2026-08-02.md)
+- [Temporal identifier reuse](dataclaw-ronald-identifier-temporal-reuse-2026-08-02.md)
+- [Within-project memory-write permutation](dataclaw-memory-write-within-project-permutation-2026-08-02.md)
 - [Structural friction](dataclaw-ronald-structural-friction-audit-2026-08-02.md)
 - [Malformed export integrity](dataclaw-mriabov-export-integrity-2026-08-02.md)
