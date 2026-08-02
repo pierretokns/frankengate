@@ -1,0 +1,36 @@
+{
+  "claim_boundary": {
+    "automatic_replay_authorized": false,
+    "semantic_reuse_confirmed": false,
+    "verification_passed": true
+  },
+  "independent_evaluator": "separate streaming parser and outcome correlator",
+  "path_count": 622,
+  "receipt_aggregate": {
+    "distinct_command_artifacts": 22247,
+    "distinct_scopes": 4,
+    "failure_occurrences": 1944,
+    "labeled_command_occurrences": 36549,
+    "other_scope_prior_success_later_failure": 17,
+    "other_scope_prior_success_later_success": 114,
+    "repeated_occurrences_after_same_scope_success": 13797,
+    "same_scope_prior_success_later_failure": 402,
+    "same_scope_prior_success_later_success": 13395,
+    "success_occurrences": 34605
+  },
+  "receipt_matches": true,
+  "recomputed_aggregate": {
+    "distinct_command_artifacts": 22247,
+    "distinct_scopes": 4,
+    "failure_occurrences": 1944,
+    "labeled_command_occurrences": 36549,
+    "other_scope_prior_success_later_failure": 17,
+    "other_scope_prior_success_later_success": 114,
+    "repeated_occurrences_after_same_scope_success": 13797,
+    "same_scope_prior_success_later_failure": 402,
+    "same_scope_prior_success_later_success": 13395,
+    "success_occurrences": 34605
+  },
+  "rows_replayed": 36549,
+  "schema_version": "codex-command-artifact-replay-verification-v1"
+}

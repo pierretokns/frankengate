@@ -60,6 +60,13 @@ intent labels and changed-environment outcomes.
 ## Receipt and code
 
 - [content-free receipt](../results/codex-command-artifact-replay-2026-08-08.json)
+- [independent aggregate verification](../results/codex-command-artifact-replay-2026-08-08-verification.json)
 - [`codex_command_artifact_replay_audit.py`](../../codex_command_artifact_replay_audit.py)
+- [`verify_codex_command_artifact_replay_audit.py`](../../verify_codex_command_artifact_replay_audit.py)
 - [`test_codex_command_artifact_replay_audit.py`](../../tests/test_codex_command_artifact_replay_audit.py)
 
+The verifier reproduced all aggregate counts. The parser preserves ordinary
+LF JSONL boundaries because some archived tool outputs contain U+2028 inside a
+valid JSON record; treating that character as a record boundary would silently
+drop one event. This is a parser-integrity check, not evidence that replay is
+authorized.
