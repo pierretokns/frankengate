@@ -6,6 +6,11 @@ not a claim that the full enterprise research objective is complete.
 For the requirement-level steering summary, see the [2026-08-10 reality
 check](reality-check-2026-08-10.md).
 
+The [2026-08-02 literature refresh](agent-skill-domain-retrieval-literature-refresh-2026-08-02.md)
+adds recent skill-lifecycle, verifier-guided evolution, skill-in-use,
+cross-trajectory state, and domain log-entity work to the adaptable-methods
+ledger.
+
 ## What is now supported by evidence
 
 ### 1. Validated artifact mechanics
