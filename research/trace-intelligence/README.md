@@ -48,6 +48,9 @@ lack identity, outcomes, or gold evaluators.
 The [`current evidence matrix`](experiments/summaries/current-evidence-matrix-2026-08-06.md)
 is the compact, receipt-linked decision map across artifact reuse, concept and
 alias mining, hard negatives, embeddings, model cascades, and skill replay.
+The dated [`objective completion audit`](experiments/summaries/objective-completion-audit-2026-08-06.md)
+maps every requested research area to its strongest evidence, open proof
+obligation, and current disposition.
 The [`enterprise replay readiness status`](experiments/summaries/enterprise-replay-readiness-status-2026-08-06.md)
 shows why the public SQL proxy cannot be promoted to a causal enterprise
 cohort, and records the exact authorized-data handoff required next.

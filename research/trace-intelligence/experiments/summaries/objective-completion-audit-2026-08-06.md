@@ -1,0 +1,37 @@
+# Corporate trace-artifact learning objective audit
+
+**Audit date:** 2026-08-06  
+**Branch:** `codex/trace-intelligence-academic-program`  
+**Status:** active/incomplete. “Supported” means exercised under a recorded
+fixture and verifier; it does not mean enterprise readiness or causal benefit.
+
+| Objective | Strongest current evidence | Status | Required next proof |
+|---|---|---|---|
+| Reusable validated SQL/tool artifacts | Governed capsules reject stale authority, wrong scope, expiry, schema drift, unsafe interpolation, and parameter errors. Parameterized retrieval recovers `52/52` known mutations and rejects `10/10` template-absence NIL proxies with a strict compatibility gate. | Mechanics supported | Changed-system semantic outcomes, real tool contracts, deletion/failover, and user utility. |
+| Whole-query retrieval | Natural library coverage is `0/10`; nearest wording is not a safe reuse mechanism. | Negative boundary established | Larger real artifact libraries and independent intent labels. |
+| Composable subplans | Same-family broker replay was `10/10` versus `5/10` controls. Two family-disjoint BIRD replays were `8/40` versus `6/40` for both controls, with one stable win and zero stable losses. | Repeatable but low-headroom positive signal | More families/seeds, irrelevant-library NILs, schema mutation, and changed-system outcomes. |
+| Corporate concept/alias discovery | Modernized termhood produced 3,000 candidates; within-schema recall `.358`, held-out transfer `.015`. Acronym probe passed `8/8` synthetic cases with ambiguity abstention. Alias enrichment lowered MRR (`.860→.815`) on a small holdout. | Candidate mining only | Reviewed internal aliases, temporal replacements, NILs, same-scope wrong-system labels, and downstream utility. |
+| Hard-negative mining | Scope-aware identifier retrieval reduced collision-before-target from `14.43%` to `.20%`; identifier-aware reranker reached MRR `.737` and collision rate `0.0` on a held-out public proxy. | Useful bounded method | Larger expert-labeled hard-negative families and changed-system replay. |
+| Domain-specific embeddings | MATM fold-local adapter delta was only `+.0029` Recall@20 with negative/neutral MRR change; schema-adaptive pair scorer lost to frozen Nomic; dense retrieval helps candidate recall in a separate task. | No adapter promotion | Expert triplets, entity/project/time holdouts, and absolute downstream-lift gates. |
+| Embedding-vs-model insight mining | Action embeddings improved candidate Recall@20 by `+.123`; Luna tied lexical on nine reranker queries at `11.569s` mean per call. | Cascade mechanics supported | Common human/SME insight labels, fixed cost budgets, adversarial NILs, and artifact replay. |
+| Identifier-aware representations | Exact identifiers, database scope, semantic IDs, and authority are consistently safer than generic dense similarity. | Strong design rule | Enterprise semantic alias labels and temporal/tenant tests. |
+| Skill improvement | One-shot trace-mined procedure was `8/40`, equal to no-skill and slower. This is a verified negative checkpoint, not a universal disproof of sequential skill learning. | Current procedure quarantined | Sequential repair/clarification consumers with independent outcomes. |
+| Cross-user insights | Public traces lack stable multi-principal identity plus outcome labels; current overlap results are silver/mechanics only. | Unproven | Consent-stable identities, task labels, human capability labels, and negative-transfer gates. |
+| Publication/partners | Evidence packet maps CMU LTI, MIT DSAIL, Harvard human-outcome/data-systems groups, MIT CLEAR/TRAC, and NVIDIA GEAR to specific reproduction questions. | Outreach-ready, cohort absent | Authorized/sealed cohort, preregistration, and independent reproduction. |
+| Older modernized tools | TermSuite/Termolator and AcronymExpansion ports are reproducible under `uv`; upstream legacy stacks are setup-blocked. | Offline review-only value | Enterprise labels before any ontology or embedding promotion. |
+
+## Overall conclusion
+
+No academic method has been disproven. The current evidence supports a minimal
+cascade of structured identity → exact/lexical retrieval → dense candidate
+recall → frontier/human ambiguity review → independent replay → release or
+abstention. The strongest positive is validated subplan composition; the
+strongest negative is one-shot prose/procedure transfer. The missing decisive
+evidence remains a consented changed-system cohort with independent semantic
+labels and terminal outcomes.
+
+Sources: [current evidence matrix](current-evidence-matrix-2026-08-06.md),
+[cross-method calibration](cross-method-calibration-2026-08-06.md), [replay
+readiness status](enterprise-replay-readiness-status-2026-08-06.md), and
+[publication/partner packet](publication-partner-evidence-packet-2026-08-06.md).
+
