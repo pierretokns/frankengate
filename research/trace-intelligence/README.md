@@ -749,6 +749,9 @@ The [`ontology/action trace preflight`](experiments/summaries/ontology-action-tr
 now freezes A0–A8, the object/edge/action contract, holdouts, replay and safety
 gates, and the content-free validator before implementation or frontier
 extraction begins.
+The [`authority-gate fault probe`](experiments/summaries/ontology-authority-fault-probe-2026-08-02.md)
+then exercises the fail-closed policy filter with injected unauthorized edges;
+it measures gate mechanics only, not real enterprise authorization.
 
 The first independent vocabulary run is now complete:
 [`GLiNER/Wisp probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md).
