@@ -240,6 +240,14 @@ mechanics proof; it does not establish mined-artifact utility or semantic
 equivalence. See
 [`experiments/summaries/artifact-capsule-postgresql-reuse-2026-08-02.md`](experiments/summaries/artifact-capsule-postgresql-reuse-2026-08-02.md).
 
+The [`parameterized artifact retrieval probe`](experiments/summaries/parameterized-artifact-retrieval-2026-08-06.md)
+tests the missing middle case: 52 deterministic Defog parameter mutations
+recover their normalized SQL templates, while a strict template gate abstains
+on 10 template-absence NIL proxies. Lexical retrieval falsely accepts all 10
+NILs. This is structural public-proxy evidence only, but it supports storing
+validated artifacts as typed parameterized templates and refusing nearest-
+question reuse when no compatible template exists.
+
 The historical-log research contract and prior-art survey are recorded in
 [`experiments/summaries/historical-trace-mining-prior-art-2026-08-02.md`](experiments/summaries/historical-trace-mining-prior-art-2026-08-02.md).
 

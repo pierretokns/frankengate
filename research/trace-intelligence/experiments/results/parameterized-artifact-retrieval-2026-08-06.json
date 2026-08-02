@@ -1,0 +1,1929 @@
+{
+  "aggregate": {
+    "lexical": {
+      "abstained_nil": 0,
+      "false_accept_nil": 10,
+      "mrr": 1.0,
+      "nil_targets": 10,
+      "targets": 52,
+      "template_available": 52,
+      "top1_correct": 52,
+      "top5_correct": 52
+    },
+    "template": {
+      "abstained_nil": 0,
+      "false_accept_nil": 10,
+      "mrr": 1.0,
+      "nil_targets": 10,
+      "targets": 52,
+      "template_available": 52,
+      "top1_correct": 52,
+      "top5_correct": 52
+    },
+    "template_gate": {
+      "abstained_nil": 10,
+      "false_accept_nil": 0,
+      "mrr": 1.0,
+      "nil_targets": 10,
+      "targets": 52,
+      "template_available": 52,
+      "top1_correct": 52,
+      "top5_correct": 52
+    }
+  },
+  "claim_boundary": {
+    "enterprise_semantic_quality_established": false,
+    "explicit_proxy_nil_abstention_measured": true,
+    "parameterized_retrieval_measured": true,
+    "reason": "Public Defog structural retrieval probe; parameter mutations inherit source intent and NILs are template-absence proxies, not SME labels.",
+    "sql_execution_oracle_used": false
+  },
+  "result_sha256": "626419c94f9fe46526575f6afe515a0e7b4072304d565f5645a919402a0c8592",
+  "retrieval": {
+    "arms": [
+      "lexical",
+      "template",
+      "template_gate"
+    ],
+    "nil_definition": "held-out target normalized SQL template absent from same-database source pool",
+    "scope_filter": true,
+    "template": "SQL AST literals replaced with placeholders"
+  },
+  "rows": [
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "5d731b2a62d835d7661ed4df23eed2c9448157b052c85fbe766e0c4cd847b12a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "5d731b2a62d835d7661ed4df23eed2c9448157b052c85fbe766e0c4cd847b12a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "5d731b2a62d835d7661ed4df23eed2c9448157b052c85fbe766e0c4cd847b12a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "872c1b00dfceace381a73c267fbfeee04489b112c8132c1d0360c70271a87dcd",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "872c1b00dfceace381a73c267fbfeee04489b112c8132c1d0360c70271a87dcd",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "872c1b00dfceace381a73c267fbfeee04489b112c8132c1d0360c70271a87dcd",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "99322539ec7f5c194ca0d4c6f232065362991b8eca44f7fe0996ca86a4d053f2",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "99322539ec7f5c194ca0d4c6f232065362991b8eca44f7fe0996ca86a4d053f2",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "99322539ec7f5c194ca0d4c6f232065362991b8eca44f7fe0996ca86a4d053f2",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "8304abf764e523b6e26edd22e60e3c67cd2aba7d55c084acb08c77c8db0ae091",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "8304abf764e523b6e26edd22e60e3c67cd2aba7d55c084acb08c77c8db0ae091",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "8304abf764e523b6e26edd22e60e3c67cd2aba7d55c084acb08c77c8db0ae091",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "99f87dab849bac80795098b9ac88b8a576d0c88ad2fc5b5ffaadde01433c6314",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "99f87dab849bac80795098b9ac88b8a576d0c88ad2fc5b5ffaadde01433c6314",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "99f87dab849bac80795098b9ac88b8a576d0c88ad2fc5b5ffaadde01433c6314",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "d0e55ab2ccd15342fa56a33a89d0bff303d6f22e979c2d00e3fabe74f8d2d675",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "d0e55ab2ccd15342fa56a33a89d0bff303d6f22e979c2d00e3fabe74f8d2d675",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "d0e55ab2ccd15342fa56a33a89d0bff303d6f22e979c2d00e3fabe74f8d2d675",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "afc6b8a2b92f87e67ef24557a743c0bb9e6a496d5d1fef695e6a694211378bc8",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "afc6b8a2b92f87e67ef24557a743c0bb9e6a496d5d1fef695e6a694211378bc8",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "afc6b8a2b92f87e67ef24557a743c0bb9e6a496d5d1fef695e6a694211378bc8",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "802d47006cb31b41c49a49ed9c9a309a20fd3a67dbac30e795569cd183c02b70",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "802d47006cb31b41c49a49ed9c9a309a20fd3a67dbac30e795569cd183c02b70",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "802d47006cb31b41c49a49ed9c9a309a20fd3a67dbac30e795569cd183c02b70",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "365a7daa6f25b6f159d77ee28b2c174fe035b2e06e2145e8b2295c36a42a8acb",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "365a7daa6f25b6f159d77ee28b2c174fe035b2e06e2145e8b2295c36a42a8acb",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "365a7daa6f25b6f159d77ee28b2c174fe035b2e06e2145e8b2295c36a42a8acb",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "4c24a25ed3f17596a7d844623eb05184aa19b9accc381b9e725f41447f24a3ca",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "4c24a25ed3f17596a7d844623eb05184aa19b9accc381b9e725f41447f24a3ca",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "4c24a25ed3f17596a7d844623eb05184aa19b9accc381b9e725f41447f24a3ca",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "339b983873d61d036754f746dc9fae8dc28f6a24646d5de26490f61152d7c690",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "339b983873d61d036754f746dc9fae8dc28f6a24646d5de26490f61152d7c690",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "339b983873d61d036754f746dc9fae8dc28f6a24646d5de26490f61152d7c690",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "710dc9a70c55f08264e84070d57c7a493f37ddaea0db1cc8809b7326d786368b",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "710dc9a70c55f08264e84070d57c7a493f37ddaea0db1cc8809b7326d786368b",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "710dc9a70c55f08264e84070d57c7a493f37ddaea0db1cc8809b7326d786368b",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "268f3c9b387a3bb14c1147bf418344abe2524d44a201e8ab5435c83f88179be6",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "268f3c9b387a3bb14c1147bf418344abe2524d44a201e8ab5435c83f88179be6",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "268f3c9b387a3bb14c1147bf418344abe2524d44a201e8ab5435c83f88179be6",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "275ec025d4d5460f476866a9105aa20c2ec30ebf071e3f2358330aa40630ca2a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "275ec025d4d5460f476866a9105aa20c2ec30ebf071e3f2358330aa40630ca2a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "275ec025d4d5460f476866a9105aa20c2ec30ebf071e3f2358330aa40630ca2a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "ca3f464aaeb4949f504d6fd793d65d54e9439e93d4a0e39acba14b1dc394ac92",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "ca3f464aaeb4949f504d6fd793d65d54e9439e93d4a0e39acba14b1dc394ac92",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "ca3f464aaeb4949f504d6fd793d65d54e9439e93d4a0e39acba14b1dc394ac92",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "371a90f05283f3bc9f05aca2418737a6d7fdcbd5d9ccf2de3fb05e3dd109d11b",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "371a90f05283f3bc9f05aca2418737a6d7fdcbd5d9ccf2de3fb05e3dd109d11b",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "371a90f05283f3bc9f05aca2418737a6d7fdcbd5d9ccf2de3fb05e3dd109d11b",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "01aa73ff031f4477d1061001318fc13141cfa410d13c069c075a04ede2a9e68e",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "01aa73ff031f4477d1061001318fc13141cfa410d13c069c075a04ede2a9e68e",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "01aa73ff031f4477d1061001318fc13141cfa410d13c069c075a04ede2a9e68e",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "82fbbcea4806c1b57805aa0d0275eb1aa2deb308e802ea430f70eed9a6adffa8",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "82fbbcea4806c1b57805aa0d0275eb1aa2deb308e802ea430f70eed9a6adffa8",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "82fbbcea4806c1b57805aa0d0275eb1aa2deb308e802ea430f70eed9a6adffa8",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "155db1806265fd8cb778af6e484a5661aa26bfd6301494d70ac31214e5738415",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "155db1806265fd8cb778af6e484a5661aa26bfd6301494d70ac31214e5738415",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "155db1806265fd8cb778af6e484a5661aa26bfd6301494d70ac31214e5738415",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "9cbefb6172848959986f89fc9e99aaf5cc77a3190380dc447a68269f15fc4519",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "9cbefb6172848959986f89fc9e99aaf5cc77a3190380dc447a68269f15fc4519",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "9cbefb6172848959986f89fc9e99aaf5cc77a3190380dc447a68269f15fc4519",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "c609bf68ed9a4d9fad94ad9e1ab24c6cf0b8d1b8d50f88b3189781b88b7b678a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "c609bf68ed9a4d9fad94ad9e1ab24c6cf0b8d1b8d50f88b3189781b88b7b678a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "c609bf68ed9a4d9fad94ad9e1ab24c6cf0b8d1b8d50f88b3189781b88b7b678a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "12ba1638ae9baf13415d3228a3fac3694a6cdf664e64000627472f03bdc5f6cf",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "12ba1638ae9baf13415d3228a3fac3694a6cdf664e64000627472f03bdc5f6cf",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "12ba1638ae9baf13415d3228a3fac3694a6cdf664e64000627472f03bdc5f6cf",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "52ed1aeb5c3dd10de20777507c3df6bc37434338897bb9cfd349f52b7f1914de",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "52ed1aeb5c3dd10de20777507c3df6bc37434338897bb9cfd349f52b7f1914de",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "52ed1aeb5c3dd10de20777507c3df6bc37434338897bb9cfd349f52b7f1914de",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "b090331a3fafd3e2fa1c2f0f78ab09be64412f0d9915dbe680ddac422ea498cc",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "b090331a3fafd3e2fa1c2f0f78ab09be64412f0d9915dbe680ddac422ea498cc",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "b090331a3fafd3e2fa1c2f0f78ab09be64412f0d9915dbe680ddac422ea498cc",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "16a957c171ac3602950ba3033ab0eee632be816840bbb9321695ddba63141520",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "16a957c171ac3602950ba3033ab0eee632be816840bbb9321695ddba63141520",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "16a957c171ac3602950ba3033ab0eee632be816840bbb9321695ddba63141520",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "e0b5c31682dd4bc2e1ddef5210579e4c8ae76f202e05d25712a9168656678c08",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "e0b5c31682dd4bc2e1ddef5210579e4c8ae76f202e05d25712a9168656678c08",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "e0b5c31682dd4bc2e1ddef5210579e4c8ae76f202e05d25712a9168656678c08",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "1864c4afe9840bbe965ade595fc708dc87e68a50814df22c37f8d88c01b4601a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "1864c4afe9840bbe965ade595fc708dc87e68a50814df22c37f8d88c01b4601a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "1864c4afe9840bbe965ade595fc708dc87e68a50814df22c37f8d88c01b4601a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "592011d504be5ad3086024cb1311d54966177153c1598eb697b437894db913a1",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "592011d504be5ad3086024cb1311d54966177153c1598eb697b437894db913a1",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "592011d504be5ad3086024cb1311d54966177153c1598eb697b437894db913a1",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "0b18f5eeeb77a615efd69bab5c97e4fc105428e99f5630bbc4da6c2995e95c4a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "0b18f5eeeb77a615efd69bab5c97e4fc105428e99f5630bbc4da6c2995e95c4a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "0b18f5eeeb77a615efd69bab5c97e4fc105428e99f5630bbc4da6c2995e95c4a",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "1d18e81c98edc3a19cba6f649f8c33f1ba6ca85a675e9791f6902472a17de162",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "1d18e81c98edc3a19cba6f649f8c33f1ba6ca85a675e9791f6902472a17de162",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "1d18e81c98edc3a19cba6f649f8c33f1ba6ca85a675e9791f6902472a17de162",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "d28866735f840e1d572333951d691e1d0b13c5922adc9151ae5842344d4618a5",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "d28866735f840e1d572333951d691e1d0b13c5922adc9151ae5842344d4618a5",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "d28866735f840e1d572333951d691e1d0b13c5922adc9151ae5842344d4618a5",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "57ae494b1a58c209603eef1062ba71ad4142adfd5ed7c4c5dc6502b8b703fe84",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "57ae494b1a58c209603eef1062ba71ad4142adfd5ed7c4c5dc6502b8b703fe84",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "57ae494b1a58c209603eef1062ba71ad4142adfd5ed7c4c5dc6502b8b703fe84",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "e95b0cb731cded05814a6a451278ca09e47d2ad4166a2130959f19fb37556dde",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "e95b0cb731cded05814a6a451278ca09e47d2ad4166a2130959f19fb37556dde",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "e95b0cb731cded05814a6a451278ca09e47d2ad4166a2130959f19fb37556dde",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "bf34e4725a8bbac7c737a04dd063697baf24ac541c745d5b961ef5fdea3f9dc2",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "bf34e4725a8bbac7c737a04dd063697baf24ac541c745d5b961ef5fdea3f9dc2",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "bf34e4725a8bbac7c737a04dd063697baf24ac541c745d5b961ef5fdea3f9dc2",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "bd8bfc6492819d54e99ff973947576f677b9ac76600eb5373b4ecc23a35aabea",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "bd8bfc6492819d54e99ff973947576f677b9ac76600eb5373b4ecc23a35aabea",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "bd8bfc6492819d54e99ff973947576f677b9ac76600eb5373b4ecc23a35aabea",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "a2ff32511456f3aa5e7899c5aacbf307c5424662d294eafae7773465fb593a06",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "a2ff32511456f3aa5e7899c5aacbf307c5424662d294eafae7773465fb593a06",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "a2ff32511456f3aa5e7899c5aacbf307c5424662d294eafae7773465fb593a06",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "2f13e41203b9902b03e4377ef775b720ac3db3d2bb8b668908a44d34f18301f4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "2f13e41203b9902b03e4377ef775b720ac3db3d2bb8b668908a44d34f18301f4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "2f13e41203b9902b03e4377ef775b720ac3db3d2bb8b668908a44d34f18301f4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "4f7c0a591d5fe8a3bacc4c39bc780b7ae4795d955b06251a998f0d2df2cf1aba",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "4f7c0a591d5fe8a3bacc4c39bc780b7ae4795d955b06251a998f0d2df2cf1aba",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "4f7c0a591d5fe8a3bacc4c39bc780b7ae4795d955b06251a998f0d2df2cf1aba",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "3d547ac378fbf1e918183d1d0dcf535a2536e9f26821a1578508e1cd603210da",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "3d547ac378fbf1e918183d1d0dcf535a2536e9f26821a1578508e1cd603210da",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "3d547ac378fbf1e918183d1d0dcf535a2536e9f26821a1578508e1cd603210da",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "f79348ef84ac95668183e5a520bdf6d9a8b493dec7a99ee74cf51fb4c7996af4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "f79348ef84ac95668183e5a520bdf6d9a8b493dec7a99ee74cf51fb4c7996af4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "f79348ef84ac95668183e5a520bdf6d9a8b493dec7a99ee74cf51fb4c7996af4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "3098afab786d3cfd5417bde3059865ed238b2174f2beb873a57c3fd710e19e7c",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "3098afab786d3cfd5417bde3059865ed238b2174f2beb873a57c3fd710e19e7c",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "3098afab786d3cfd5417bde3059865ed238b2174f2beb873a57c3fd710e19e7c",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "2c4ef30b58d607a627d0426a6c46b6572186e42d0531860ff2557b9ad5379722",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "2c4ef30b58d607a627d0426a6c46b6572186e42d0531860ff2557b9ad5379722",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "2c4ef30b58d607a627d0426a6c46b6572186e42d0531860ff2557b9ad5379722",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "0db92c6ae6dfee3c54b693b91018f068f4cd862bde9701cf18d388da4f31eac7",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "0db92c6ae6dfee3c54b693b91018f068f4cd862bde9701cf18d388da4f31eac7",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "0db92c6ae6dfee3c54b693b91018f068f4cd862bde9701cf18d388da4f31eac7",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "a3308139170a74c74ba1bdd8cc243a14b2776711f0c2ade127dca6e90ddc5b28",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "a3308139170a74c74ba1bdd8cc243a14b2776711f0c2ade127dca6e90ddc5b28",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "a3308139170a74c74ba1bdd8cc243a14b2776711f0c2ade127dca6e90ddc5b28",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "483af423b9092ebe710b1cd3c78bfcacd6913b37cccd78003453d9d0a3f28e0f",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "483af423b9092ebe710b1cd3c78bfcacd6913b37cccd78003453d9d0a3f28e0f",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "483af423b9092ebe710b1cd3c78bfcacd6913b37cccd78003453d9d0a3f28e0f",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "fd4c2ed9168aeefa4d9c98c33d7a23d141b1838ff7cc67f68843b9d6713e0e4e",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "fd4c2ed9168aeefa4d9c98c33d7a23d141b1838ff7cc67f68843b9d6713e0e4e",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "fd4c2ed9168aeefa4d9c98c33d7a23d141b1838ff7cc67f68843b9d6713e0e4e",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "82ee937d76474effc5473e5b14d17dc74c834983c6f2621cd4a7f6ec7448d8c0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "82ee937d76474effc5473e5b14d17dc74c834983c6f2621cd4a7f6ec7448d8c0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "82ee937d76474effc5473e5b14d17dc74c834983c6f2621cd4a7f6ec7448d8c0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "3e370e71bfa0db5a2f581cdda339cebb6018923d253037128127aab486ae44ce",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "3e370e71bfa0db5a2f581cdda339cebb6018923d253037128127aab486ae44ce",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "3e370e71bfa0db5a2f581cdda339cebb6018923d253037128127aab486ae44ce",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "ea0be696cd09092ade1749765996696cc2733fb1e2380fba41bcbd95336cdaa4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "ea0be696cd09092ade1749765996696cc2733fb1e2380fba41bcbd95336cdaa4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "ea0be696cd09092ade1749765996696cc2733fb1e2380fba41bcbd95336cdaa4",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "d734fba8655e5c2d65c0f4d3ebb17f086cd2092e5022b1e39cb22bdf815e23c0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "d734fba8655e5c2d65c0f4d3ebb17f086cd2092e5022b1e39cb22bdf815e23c0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "d734fba8655e5c2d65c0f4d3ebb17f086cd2092e5022b1e39cb22bdf815e23c0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "690193b6fafb413d0279c46a546d79cf95e40689a946c9120512775c847ee753",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "690193b6fafb413d0279c46a546d79cf95e40689a946c9120512775c847ee753",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "690193b6fafb413d0279c46a546d79cf95e40689a946c9120512775c847ee753",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "110642736e33a3f4796649d1fe5feb1e485c0192aba686fca8d8e31027af90d0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 26,
+      "target_id_sha256": "110642736e33a3f4796649d1fe5feb1e485c0192aba686fca8d8e31027af90d0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "parameter_mutation",
+      "ranked_count": 1,
+      "target_id_sha256": "110642736e33a3f4796649d1fe5feb1e485c0192aba686fca8d8e31027af90d0",
+      "template_available": true,
+      "top1_correct": true
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "fe87f9a2c677167397ea94cd2dde9b36ea3b46b0fa3216d1345030b5b91fd37f",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "fe87f9a2c677167397ea94cd2dde9b36ea3b46b0fa3216d1345030b5b91fd37f",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "fe87f9a2c677167397ea94cd2dde9b36ea3b46b0fa3216d1345030b5b91fd37f",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "e97d22ab694caf76ede6587034e5d1b5f1b6ff80c31bf92c03b9b9f099171664",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "e97d22ab694caf76ede6587034e5d1b5f1b6ff80c31bf92c03b9b9f099171664",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "e97d22ab694caf76ede6587034e5d1b5f1b6ff80c31bf92c03b9b9f099171664",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "69a4695b852bced73d0f06cf0042d28fc29561572ef390a801b4d56b84b58ef3",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "69a4695b852bced73d0f06cf0042d28fc29561572ef390a801b4d56b84b58ef3",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "69a4695b852bced73d0f06cf0042d28fc29561572ef390a801b4d56b84b58ef3",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "0eab8273166cca33086558e0892391fbf35f3cf6561bbc5c6915e5d72d07b595",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "0eab8273166cca33086558e0892391fbf35f3cf6561bbc5c6915e5d72d07b595",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "0eab8273166cca33086558e0892391fbf35f3cf6561bbc5c6915e5d72d07b595",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "4676edc339b71ac8168c96c80c5da775f5a482c7eb30675d67537f68f4fa2076",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "4676edc339b71ac8168c96c80c5da775f5a482c7eb30675d67537f68f4fa2076",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "broker",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "4676edc339b71ac8168c96c80c5da775f5a482c7eb30675d67537f68f4fa2076",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "8aad979f83bd93a151b89eed1bccbafeaf5a19d79466f7a6fd534fc366d748a8",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "8aad979f83bd93a151b89eed1bccbafeaf5a19d79466f7a6fd534fc366d748a8",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "8aad979f83bd93a151b89eed1bccbafeaf5a19d79466f7a6fd534fc366d748a8",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "b15de64196a7bed52f2a827189359f718a874e28285371611f15ca94c370c28e",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "b15de64196a7bed52f2a827189359f718a874e28285371611f15ca94c370c28e",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "b15de64196a7bed52f2a827189359f718a874e28285371611f15ca94c370c28e",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "5192564eca52abff58a435aa252c6493ee6f7b66f4aed343c7dc25a5a7511d09",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "5192564eca52abff58a435aa252c6493ee6f7b66f4aed343c7dc25a5a7511d09",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "5192564eca52abff58a435aa252c6493ee6f7b66f4aed343c7dc25a5a7511d09",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "62c92556e0b9c6006b1cde2adebab9c5126d5d41ae99fd6b2dca1ccc976a6ee8",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "62c92556e0b9c6006b1cde2adebab9c5126d5d41ae99fd6b2dca1ccc976a6ee8",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "62c92556e0b9c6006b1cde2adebab9c5126d5d41ae99fd6b2dca1ccc976a6ee8",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "lexical",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "94c9670583a9ce6c8bf2c8e60927f9d54e9e80bf1d300241606898eaf50b4c5a",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": false,
+      "arm": "template",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 26,
+      "target_id_sha256": "94c9670583a9ce6c8bf2c8e60927f9d54e9e80bf1d300241606898eaf50b4c5a",
+      "template_available": false,
+      "top1_correct": false
+    },
+    {
+      "abstained": true,
+      "arm": "template_gate",
+      "database": "car_dealership",
+      "kind": "template_nil",
+      "ranked_count": 0,
+      "target_id_sha256": "94c9670583a9ce6c8bf2c8e60927f9d54e9e80bf1d300241606898eaf50b4c5a",
+      "template_available": false,
+      "top1_correct": false
+    }
+  ],
+  "schema_version": "frankengate-parameterized-artifact-retrieval-v1",
+  "source": {
+    "advanced_sha256": "566f5267119df0eceb32054037280c2fd5bc8c21b27e9ff6b068d11a47011934",
+    "basic_sha256": "5a4e6112a5c2554c2963939440af6db41dfcaa3697dc131c380e7f9a1b70d5f7",
+    "candidate_count": 52,
+    "databases": [
+      "broker",
+      "car_dealership"
+    ],
+    "parameter_mutation_count": 52,
+    "parse_failures": {},
+    "raw_content_committed": false,
+    "target_sha256": "fee829a042766f3e75d1a453cf6ffd7f6830ae9d68967156caa00c647b5efd0d",
+    "template_nil_count": 10
+  }
+}
