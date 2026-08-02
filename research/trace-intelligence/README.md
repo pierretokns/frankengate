@@ -110,6 +110,10 @@ The [`aligned ontology/dense/frontier result`](experiments/summaries/wmh-bird-al
 now runs the typed/schema arms on that same 44-case identity and verifies the
 existing dense/frontier receipt with the cohort guard; it still does not claim
 sequential cascade utility.
+The [`sequential ontology → frontier cascade`](experiments/summaries/wmh-bird-sequential-cascade-2026-08-02.md)
+now measures that interaction on the same 44 cases: schema-first → Luna improves
+MRR/R@1 over full-pool Luna with the same safety-selection rates, while the
+receipt explicitly excludes enterprise-semantic or skill-transfer claims.
 The [`corporate ontology and fine-tuning reality check`](experiments/summaries/corporate-ontology-tools-and-finetuning-reality-check-2026-08-02.md)
 separates ontology induction, schema-guided extraction, entity resolution,
 graph retrieval, validation, and model adaptation. It records why one-pass

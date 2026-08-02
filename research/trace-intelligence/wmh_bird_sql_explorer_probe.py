@@ -138,7 +138,9 @@ def prompt_for(trace: Trace, candidates: list[str], run_label: str) -> str:
 def call_frontier(prompt: str, model: str, raw_path: Path, *, attempts: int = 3) -> dict[str, Any]:
     with tempfile.TemporaryDirectory(prefix="frankengate-sql-explorer-") as directory:
         output_path = Path(directory) / "output.json"
-        command = ["codex", "exec", "--json", "--ephemeral", "--skip-git-repo-check", "--sandbox", "read-only", "--cd", "/private/tmp", "--model", model, "--output-last-message", str(output_path), "-"]
+        # The nested harness must be able to update its own local state DB;
+        # the prompt itself remains read-only and raw outputs stay external.
+        command = ["codex", "exec", "--json", "--ephemeral", "--skip-git-repo-check", "--sandbox", "workspace-write", "--cd", "/private/tmp", "--model", model, "--output-last-message", str(output_path), "-"]
         raw: dict[str, Any] = {"prompt_sha256": stable_hash(prompt), "attempts": []}
         completed = None
         for attempt in range(1, attempts + 1):
