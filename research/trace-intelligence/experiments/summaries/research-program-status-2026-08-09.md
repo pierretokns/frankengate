@@ -540,6 +540,14 @@ raised MRR `.629 -> .750`, but same-source non-targets increased (`5.375 ->
 shows why source scope cannot substitute for alias, temporal, or task-identity
 labels. The next hard-negative cohort should preserve same-source/wrong-system
 and NIL cases rather than merely adding more source filters.
+The subsequent [full 500-question ceiling run](enterprise-rag-source-filter-ceiling-full-2026-08-10.md)
+confirms the pattern at scale: MRR `.511064 -> .593602`, Recall@1
+`.444681 -> .527660`, and evidence Recall@10 `.584935 -> .690904`, with
+wrong-source extras falling to zero but same-source non-targets rising to
+`8.963830` per top-10 list. All 30 targetless questions still returned a
+candidate. This is the strongest current evidence that structured source
+scope is a high-value first stage while same-source semantic identity and
+abstention remain unsolved.
 
 ### 12. One-shot ontology proposals are review inputs, not canonical knowledge
 

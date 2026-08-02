@@ -1,0 +1,8 @@
+{
+  "claim_boundary_verified": true,
+  "oracle_boundary_verified": true,
+  "questions_verified": 500,
+  "schema_version": "frankengate-enterprise-rag-source-filter-ceiling-verification-v1",
+  "source_result_sha256": "ddbfb0487d60b472a12c54a574f27f69dd5300de66253980090e64eaa53c00de",
+  "verification_passed": true
+}

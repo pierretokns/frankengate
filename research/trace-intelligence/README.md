@@ -117,6 +117,10 @@ then measured the oracle source-type restriction on one question per category:
 it removed wrong-source candidates but left a large same-source hard-negative
 tail. This is a diagnostic ceiling, not a production metadata or authorization
 result.
+The [`full source-filter ceiling`](experiments/summaries/enterprise-rag-source-filter-ceiling-full-2026-08-10.md)
+now repeats that comparison across all 500 questions: MRR improved `.511064 ->
+.593602`, but same-source non-targets rose to `8.963830` per top-10 list and
+all 30 targetless cases still returned candidates.
 The [`company fine-tuning practice map`](experiments/summaries/company-finetuning-practice-map-2026-08-02.md)
 compares the documented Databricks, Google, AWS, and Cohere patterns: metadata
 and retrieval first, labeled hard negatives second, model tuning only after a

@@ -212,6 +212,15 @@ lexical top-20 pool recall `.224`. That makes EnterpriseRAG-Bench valuable as
 a reproducible retrieval stress test and hard-negative generator—not evidence
 for a universal corporate embedding, ontology generator, or trace-mined skill.
 
+The full 500-question oracle source-filter run adds the missing scale check:
+source metadata raised target-bearing MRR `.511064 -> .593602` and evidence
+Recall@10 `.584935 -> .690904`, while wrong-source extras fell from `4.851064`
+to zero. Same-source non-targets rose to `8.963830` per top-10 list, and all 30
+targetless questions still returned candidates. The practical rule is now
+empirical rather than architectural intuition: scope/source metadata belongs
+before alias-aware ranking, but it cannot provide semantic identity or
+abstention. See the [full ceiling receipt](enterprise-rag-source-filter-ceiling-full-2026-08-10.md).
+
 ## What is not proven
 
 The following enterprise claims remain unproven because no current receipt has
