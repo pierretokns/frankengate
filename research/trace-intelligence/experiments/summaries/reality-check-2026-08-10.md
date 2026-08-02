@@ -248,4 +248,5 @@ outcome.
 - [Cross-user candidate generation](dataclaw-cross-user-dense-candidates-2026-08-09.md)
 - [Exposure-aware trajectory supervision contract](trajectory-retrieval-supervision-contract-2026-08-02.md)
 - [WMH-BIRD trajectory-supervision fit audit](bird-trajectory-retrieval-fit-2026-08-02.md)
+- [LRAT exposure-aware retrieval proxy](lrat-trajectory-retrieval-proxy-2026-08-02.md)
 - [Next experiments and promotion gates](corporate-trace-artifact-learning-next-experiments-2026-08-06.md)
