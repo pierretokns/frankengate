@@ -68,6 +68,8 @@ REQUIREMENTS: tuple[dict[str, Any], ...] = (
             "bird-trace-retrieval-cascade-2026-08-07-verification.json",
             "bird-sql-trace-mined-factorial-20-2026-08-08.json",
             "bird-sql-trace-mined-factorial-20-2026-08-08-verification.json",
+            "bird-trace-model-cascade-16-2026-08-08.json",
+            "bird-trace-model-cascade-16-2026-08-08-verification.json",
         ),
         "remaining": "Family-disjoint BIRD outcomes and recorded-trace artifact validation are independently recomputed, but natural repeated-intent reuse, prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
     },

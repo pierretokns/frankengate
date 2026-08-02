@@ -86,6 +86,11 @@ The [`scope-bound command artifact audit`](experiments/summaries/codex-command-a
 is the first local outcome-backed artifact result: prior success predicted
 97.09% same-scope success but only 87.02% cross-scope success, establishing a
 negative-transfer boundary for reuse.
+The public [`BIRD trace model cascade`](experiments/summaries/bird-trace-model-cascade-16-2026-08-08.md)
+then tested frontier extraction with and without recorded SQL context: prompt
+only abstained safely, while trajectory context added recall but produced six
+false positives. Models therefore suggest candidates and validators; replay
+still decides acceptance.
 
 ## Historical Claude/Codex mining
 

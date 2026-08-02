@@ -1,0 +1,58 @@
+{
+  "claim_boundary": {
+    "automatic_artifact_promotion_authorized": false,
+    "semantic_model_utility_confirmed": false,
+    "verification_passed": true
+  },
+  "errors": {},
+  "raw_sha256": "157135b9b36b247b9e7bf89c5c733a1b4e25b2eb426d97c4419d683854ad184f",
+  "receipt_summary_matches": true,
+  "receipt_summary_without_latency": {
+    "prompt_only": {
+      "abstain": 16,
+      "episodes": 16,
+      "replayability_unclear": 16,
+      "valid_json": 16,
+      "validator_unclear": 16
+    },
+    "trajectory": {
+      "abstain": 2,
+      "correct_false_positive": 6,
+      "correct_true_negative": 1,
+      "correct_true_positive": 7,
+      "episodes": 16,
+      "predicted_false": 1,
+      "predicted_true": 13,
+      "replayability_replayable": 9,
+      "replayability_unclear": 7,
+      "valid_json": 16,
+      "validator_query_result": 2,
+      "validator_unclear": 14
+    }
+  },
+  "recomputed_summary": {
+    "prompt_only": {
+      "abstain": 16,
+      "episodes": 16,
+      "replayability_unclear": 16,
+      "valid_json": 16,
+      "validator_unclear": 16
+    },
+    "trajectory": {
+      "abstain": 2,
+      "correct_false_positive": 6,
+      "correct_true_negative": 1,
+      "correct_true_positive": 7,
+      "episodes": 16,
+      "predicted_false": 1,
+      "predicted_true": 13,
+      "replayability_replayable": 9,
+      "replayability_unclear": 7,
+      "valid_json": 16,
+      "validator_query_result": 2,
+      "validator_unclear": 14
+    }
+  },
+  "rows_verified": 32,
+  "schema_version": "frankengate-bird-trace-model-cascade-verification-v1"
+}

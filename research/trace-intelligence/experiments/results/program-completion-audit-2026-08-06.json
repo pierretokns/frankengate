@@ -148,6 +148,16 @@
           "exists": true,
           "path": "bird-sql-trace-mined-factorial-20-2026-08-08-verification.json",
           "sha256": "295dd10ef4d325da4157ca73f42f4c57534bbacf4ef836cdedd1440ea21cdc78"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-model-cascade-16-2026-08-08.json",
+          "sha256": "4e9f72be4ae48e867f9a66700a51685ae0ffa8ec602ff96094f3fb13adfddbda"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-model-cascade-16-2026-08-08-verification.json",
+          "sha256": "efe04e5876c6ee0cdfb65d8ffb49553e05339bd2e95fbcb4c9f1c8421150e1b3"
         }
       ],
       "id": "independent_outcome_evaluation",

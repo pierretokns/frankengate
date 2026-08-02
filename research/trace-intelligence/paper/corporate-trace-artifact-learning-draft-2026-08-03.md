@@ -134,6 +134,7 @@ claim boundary, and independent verifier where applicable.
 | Scope-bound command artifact reuse | 36,549 local command occurrences: same-scope repeats after prior success `97.09%` successful versus `94.68%` overall; cross-scope reuse `87.02%` | Operational reuse signal with measurable negative transfer; semantic intent and changed-environment gates remain mandatory |
 | Local Codex archive friction screen | Corrected current-schema import: 622 sessions, 47,122 prompt episodes, 2,060 structured executor errors, 33 error→repair follow-ups | Useful for blinded candidate sampling; markers are not intent, satisfaction, or terminal-outcome labels |
 | Lexical friction detector reality check | Explicit friction markers: precision `.79%`, recall `18.93%`, F1 `.015` against the structured process-exit proxy | Do not use lexical markers as eval labels; combine ordering, tool contracts, repeated attempts, and adjudication |
+| Trajectory context versus prompt-only model extraction | On 16 public BIRD cases, prompt-only Luna abstained `16/16`; trajectory-aware Luna achieved `7/8` recall and `7/13` precision, with six false positives | Tool context helps candidate judgment, but independent replay is still the release gate |
 
 ## Main conclusions
 
