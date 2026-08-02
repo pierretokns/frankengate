@@ -45,6 +45,8 @@ promotion-eligible yet.
 | Alias adjudication can represent abstention | Two independent Luna roles scored 23 synthetic exact/semantic/collision/NIL/unclear cases with 1.0 surface, candidate, wrong-system, abstention, and inter-judge agreement | Preserve `nil` and `unclear` as first-class outcomes; this is only a capability gate until enterprise/SME labels exist |
 | Frontier abstention works on a real public NL2SQL cohort | On 22 Defog-derived cases, Luna abstained on 8/8 constructed scope-swapped NILs and retrieved all 14 target-bearing cases; exact/lexical/dense retrieval could not abstain | Add an explicit late-stage abstention decision; this is still public/gold-SQL evidence, not enterprise semantic truth |
 | Same-scope collisions are a distinct retrieval failure mode | On 17 Defog-derived collision cases, dense retrieval put a same-scope sibling before the focus proxy 23.5% of the time, lexical 5.9%, exact 0%; Luna reduced the proxy miss rate to 1/17 | Preserve full table/column identity and reserve frontier adjudication for ambiguous same-scope candidates; cross-database scope alone is insufficient |
+| Domain embedding quality is inseparable from serving identity | On pinned FinanceBench, E5 reached Recall@20 `1.0` / MRR `.8087` in `9.61s` corpus encoding, while Qwen3 reached `.9933/.7164` in `111.15s`; loopback Nomic reached `.4533/.1661`; governed E5 queries were p50 `2.02ms` / p95 `2.96ms` | Bind model snapshot, prefix, dimension, endpoint, and rebuild lineage to the index; keep domain models in a governed shadow lane |
+| Skill proposals need a run-level contract | Existing outcome/release gates prove scope, consent, independent verification, deletion, and rollback mechanics; the new skill-in-use protocol separates activation, binding, consumption, verifier observation, replay, and release | Evaluate extraction, binding, consumption, and outcome independently; do not promote a valid proposal without held-out downstream utility |
 
 | Local and frontier models agree on trace-insight labels | Six blinded Wisp recovery candidates under the same contract had 0% all-field agreement; field agreement ranged from 0% for usefulness to 33.3% for cause | Cheap models may triage or draft proposals, but high-impact memory, skill, and eval labels require independent model/human agreement |
 
@@ -248,6 +250,9 @@ The publishable contribution is a governed evidence-to-artifact lifecycle with
 leakage gates and explicit claim boundaries, not “enterprise memory improves
 agents.” The proposed public/sealed reproduction package and partner shortlist
 are in [`publication-partner-opportunities-2026-08-02.md`](publication-partner-opportunities-2026-08-02.md).
+The concrete run-level evaluation bridge is the
+[`skill-in-use-verifier-contract-2026-08-02.md`](../protocols/skill-in-use-verifier-contract-2026-08-02.md)
+protocol.
 The tracking epic is [#118](https://github.com/pierretokns/frankengate/issues/118).
 
 All current receipts and code are on the pushed branch
