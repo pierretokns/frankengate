@@ -60,8 +60,10 @@ REQUIREMENTS: tuple[dict[str, Any], ...] = (
             "bird-sql-skill-factorial-40-2026-08-06-verification.json",
             "bird-sql-skill-factorial-40-2026-08-06-paired.json",
             "bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
+            "bird-trace-artifact-reuse-2026-08-07.json",
+            "bird-trace-artifact-reuse-2026-08-07-verification.json",
         ),
-        "remaining": "Family-disjoint BIRD outcomes are independently recomputed for one-shot procedure and composed subplans, but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
+        "remaining": "Family-disjoint BIRD outcomes and recorded-trace artifact validation are independently recomputed, but natural repeated-intent reuse, prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
     },
     {
         "id": "power_cost_latency_and_null_taxonomy",

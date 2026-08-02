@@ -1,4 +1,4 @@
-# Current corporate trace-artifact evidence matrix (2026-08-06)
+# Current corporate trace-artifact evidence matrix (updated 2026-08-07)
 
 This matrix is a decision aid, not a claim that public proxy results transfer
 to an enterprise. Each row links to the receipt-backed experiment and states
@@ -6,7 +6,7 @@ the strongest conclusion that the current data supports.
 
 | Question | Measured result | Decision | Still missing |
 |---|---|---|---|
-| Can validated SQL/tool artifacts be reused safely? | Parameterized retrieval recovered `52/52` known value mutations and abstained on `10/10` template-absence NIL proxies when the compatibility gate was enabled. | Keep parameterized artifacts with scope, schema version, authority, and explicit refusal. | Changed-system semantic outcomes, real tool contracts, latency/cost, and independent user labels. |
+| Can validated SQL/tool artifacts be reused safely? | On 222 recorded BIRD trace tasks, only `76/193` executable trace queries matched independent gold results. Natural leave-one-out lexical reuse matched `1/76`; a controlled typed-template replay matched `75/75` mutated targets. | Treat tool success as unvalidated until independently checked; keep parameterized artifacts with scope, schema version, authority, and explicit refusal. | Natural repeated intents, real tool contracts, changed-system outcomes, latency/cost, and independent user labels. |
 | Does validated subplan composition transfer across families? | Two BIRD replays: library `8/40` exact versus `6/40` for both no-skill and placebo; one stable library win and zero stable losses. | Keep subplans as a separate experimental artifact granularity; the aggregate signal is stable but low-headroom and underpowered. | More families/seeds, irrelevant-library NILs, changed-schema replay, and enterprise outcomes. |
 | Does whole-query semantic retrieval solve artifact reuse? | Natural whole-query retrieval had `0/10` library-coverage NILs; nearest wording is not a safe reuse signal. | Do not reuse by text similarity alone; retrieve inside a compatible template family or regenerate. | Larger artifact libraries and real production intents. |
 | Do the modernized TermSuite/Termolator ideas discover corporate concepts? | `3,000` candidates; termhood recall `0.358` within represented schema and `0.015` cross-schema transfer. A termhood alias boost raised Recall@5 but lowered MRR (`.815` vs `.860`) on a 13-case held-out proxy. | Candidate generation/search enrichment only; no automatic ontology or embedding updates. | Reviewed aliases, NILs, temporal renames, wrong-system pairs, and enterprise outcomes. |
@@ -40,6 +40,7 @@ independent semantic labels and terminal outcomes.
 ## Source summaries
 
 - [`parameterized artifact retrieval`](parameterized-artifact-retrieval-2026-08-06.md)
+- [`trace-derived artifact reuse`](bird-trace-artifact-reuse-2026-08-07.md)
 - [`older-tool modernization audit`](older-tool-modernization-value-audit-2026-08-05.md)
 - [`termhood alias retrieval`](nl2sql-termhood-alias-retrieval-2026-08-04.md)
 - [`identifier hard-negative benchmark`](nl2sql-identifier-hard-negative-2026-08-02.md)

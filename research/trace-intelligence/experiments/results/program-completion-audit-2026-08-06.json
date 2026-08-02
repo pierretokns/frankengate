@@ -108,10 +108,20 @@
           "exists": true,
           "path": "bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
           "sha256": "0847fa3d9f03ff358e953fd2d1bea57c76825a1978b3eafcbb6d0b487b6c3692"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-artifact-reuse-2026-08-07.json",
+          "sha256": "e52e4457dff91ed091cf2b94ed5b341f9b98c6a67e7363318c5620acd09fad07"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-artifact-reuse-2026-08-07-verification.json",
+          "sha256": "640b071fa559507650eac4ae7c378dcbe6229bf830db68dbdd51b24391e7b547"
         }
       ],
       "id": "independent_outcome_evaluation",
-      "remaining": "Family-disjoint BIRD outcomes are independently recomputed for one-shot procedure and composed subplans, but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
+      "remaining": "Family-disjoint BIRD outcomes and recorded-trace artifact validation are independently recomputed, but natural repeated-intent reuse, prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
       "status": "partial_mechanics_only"
     },
     {

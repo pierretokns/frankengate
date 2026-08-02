@@ -62,6 +62,10 @@ keeps that null separate from the positive but small validated-subplan
 composition result.
 The family-disjoint [`BIRD composition factorial`](experiments/summaries/bird-sql-composable-factorial-20-2026-08-06.md)
 is the current transfer check for that positive signal.
+The new [`trace-derived artifact reuse`](experiments/summaries/bird-trace-artifact-reuse-2026-08-07.md)
+study validates recorded BIRD tool calls independently before admission: only
+76/193 executable candidates matched gold, natural lexical reuse matched 1/76,
+and controlled typed-template parameter replay matched 75/75.
 
 ## Historical Claude/Codex mining
 

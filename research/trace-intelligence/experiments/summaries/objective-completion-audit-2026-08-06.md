@@ -1,13 +1,13 @@
 # Corporate trace-artifact learning objective audit
 
-**Audit date:** 2026-08-06  
+**Audit date:** 2026-08-07
 **Branch:** `codex/trace-intelligence-academic-program`  
 **Status:** active/incomplete. “Supported” means exercised under a recorded
 fixture and verifier; it does not mean enterprise readiness or causal benefit.
 
 | Objective | Strongest current evidence | Status | Required next proof |
 |---|---|---|---|
-| Reusable validated SQL/tool artifacts | Governed capsules reject stale authority, wrong scope, expiry, schema drift, unsafe interpolation, and parameter errors. Parameterized retrieval recovers `52/52` known mutations and rejects `10/10` template-absence NIL proxies with a strict compatibility gate. | Mechanics supported | Changed-system semantic outcomes, real tool contracts, deletion/failover, and user utility. |
+| Reusable validated SQL/tool artifacts | On recorded BIRD traces, only `76/193` executable tool queries matched independent gold results; natural lexical reuse matched `1/76`, while controlled typed-template replay matched `75/75` mutated targets. Governed capsules reject stale authority, wrong scope, expiry, schema drift, unsafe interpolation, and parameter errors. | Validation gate and controlled parameter mechanics supported; natural reuse unproven | Repeated natural intents, changed-system semantic outcomes, real tool contracts, deletion/failover, and user utility. |
 | Whole-query retrieval | Natural library coverage is `0/10`; nearest wording is not a safe reuse mechanism. | Negative boundary established | Larger real artifact libraries and independent intent labels. |
 | Composable subplans | Same-family broker replay was `10/10` versus `5/10` controls. Two family-disjoint BIRD replays were `8/40` versus `6/40` for both controls, with one stable win and zero stable losses. | Repeatable but low-headroom positive signal | More families/seeds, irrelevant-library NILs, schema mutation, and changed-system outcomes. |
 | Corporate concept/alias discovery | Modernized termhood produced 3,000 candidates; within-schema recall `.358`, held-out transfer `.015`. Acronym probe passed `8/8` synthetic cases with ambiguity abstention. Alias enrichment lowered MRR (`.860→.815`) on a small holdout. | Candidate mining only | Reviewed internal aliases, temporal replacements, NILs, same-scope wrong-system labels, and downstream utility. |
@@ -31,7 +31,7 @@ evidence remains a consented changed-system cohort with independent semantic
 labels and terminal outcomes.
 
 Sources: [current evidence matrix](current-evidence-matrix-2026-08-06.md),
+[trace-derived artifact reuse](bird-trace-artifact-reuse-2026-08-07.md),
 [cross-method calibration](cross-method-calibration-2026-08-06.md), [replay
 readiness status](enterprise-replay-readiness-status-2026-08-06.md), and
 [publication/partner packet](publication-partner-evidence-packet-2026-08-06.md).
-
