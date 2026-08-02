@@ -211,6 +211,26 @@ tool-only arm slightly declined. This is the right shape of evidence for a
 custom-representation study—an improvement with a matched null and a weak
 feature-only arm—not a reason to promote an embedding trained on raw logs.
 
+The paired Claude tool-history benchmark gives the artifact-learning paper a
+stronger temporal result. Across 70,949 calls, no-prior strict identities
+succeeded `88.7216%` of the time, versus `96.8268%` after same-project prior
+success and `97.1615%` after prior success in another project. The tempting
+input-key-only template prior was negative (`90.5514%` same-project and
+`90.7613%` cross-project versus `92.3108%` with no prior key shape). The
+tool-class split explains why a single aggregate policy is unsafe: exact
+same-project priors lifted shell success `.697511→.938326` and mutation
+`.941272→.993243`, while read/search was already `.993934`.
+
+This supports a publishable, falsifiable methods claim: **exact, scoped,
+tool-class-aware prior artifacts can rank candidates; coarse templates cannot
+authorize reuse**. Same-session error→success transitions add a second paper
+contribution: 3,866/4,506 retries recovered, but shell recovery was only
+`.335766` and mutation `.762500`. These transitions should seed targeted evals
+and repair studies. They are not independent correctness labels, so a partner
+study still needs semantic intent, safety contracts, and changed-system replay.
+Receipts: [strict artifact miner](claude-history-tool-artifact-miner-2026-08-09.md)
+and [temporal prior benchmark](claude-history-tool-artifact-temporal-2026-08-09.md).
+
 Tracking remains split by research obligation: [#118](https://github.com/pierretokns/frankengate/issues/118)
 for the authorized changed-system cohort, [#121](https://github.com/pierretokns/frankengate/issues/121)
 for domain-adaptive embeddings, [#122](https://github.com/pierretokns/frankengate/issues/122)
