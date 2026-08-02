@@ -1,0 +1,87 @@
+{
+  "aggregate": {
+    "categories": {
+      "Management": 190,
+      "Query": 410
+    },
+    "critical_ambiguity_annotations": 1307,
+    "critical_ambiguity_types": {
+      "intent_ambiguity": 236,
+      "knowledge_linking_ambiguity": 573,
+      "lexical_ambiguity": 40,
+      "schema_linking_ambiguity": 203,
+      "semantic_ambiguity": 248,
+      "syntactic_ambiguity": 7
+    },
+    "databases": {
+      "archeology_scan": 13,
+      "cold_chain_pharma_compliance": 28,
+      "cross_border": 29,
+      "crypto_exchange": 30,
+      "cybermarket_pattern": 30,
+      "disaster_relief": 15,
+      "exchange_traded_funds": 28,
+      "fake_account": 30,
+      "households": 29,
+      "hulushows": 30,
+      "insider_trading": 30,
+      "labor_certification_applications": 29,
+      "mental_health": 26,
+      "museum_artifact": 30,
+      "organ_transplant": 32,
+      "planets_data": 29,
+      "polar_equipment": 30,
+      "reverse_logistics": 28,
+      "robot_fault_prediction": 17,
+      "solar_panel": 30,
+      "sports_events": 29,
+      "virtual_idol": 28
+    },
+    "follow_up_types": {
+      "aggregation": 120,
+      "attribute_change": 114,
+      "constraint_change": 49,
+      "result_based": 266,
+      "topic_pivot": 51
+    },
+    "knowledge_ambiguity_annotations": 451,
+    "knowledge_ambiguity_types": {
+      "knowledge_ambiguity": 451
+    },
+    "noncritical_ambiguity_annotations": 574,
+    "noncritical_ambiguity_types": {
+      "date_format_ambiguity": 5,
+      "decimal_ambiguity": 160,
+      "distinct_ambiguity": 17,
+      "divide_zero_ambiguity": 14,
+      "join_ambiguity": 38,
+      "null_ambiguity": 146,
+      "rank_ambiguity": 8,
+      "sort_ambiguity": 186
+    },
+    "output_types": {
+      "None": 152,
+      "scalar": 145,
+      "table": 303
+    },
+    "records_with_critical_ambiguity": 588,
+    "records_with_follow_up": 600
+  },
+  "claim_boundary": {
+    "clarification_cohort_profiled": true,
+    "friction_or_agent_quality_measured": false,
+    "independent_outcome_measured": false,
+    "natural_human_interaction_established": false,
+    "reason": "Public BIRD-Interact labels describe injected ambiguity and follow-up structure; gold SQL, tests, and simulator outcomes are not present in the released task file."
+  },
+  "result_sha256": "2b02423e4d267fb49af940f4f522f8da52d42123b69ee0e5536bc23f80d5303b",
+  "schema_version": "frankengate-bird-interact-ambiguity-profile-v1",
+  "source": {
+    "dataset_id": "birdsql/bird-interact-full",
+    "file_sha256": "614e737e3601be6434d2937b6d1b5c5775d9c035a3d189187be94422d7959b4a",
+    "gold_sql_and_test_cases_available": false,
+    "raw_content_committed": false,
+    "records": 600,
+    "revision": "5d78b0722433c3821e1ebda5d8c39d24070049d7"
+  }
+}
