@@ -97,6 +97,14 @@ recorded, and no replay or authority labels existed. This supports a separate
 explorer as a candidate-generation arm, not as proof of skill or artifact
 promotion.
 
+The follow-on [44-case task-disjoint WMH-BIRD cohort](wmh-bird-sql-explorer-cohort-2026-08-09.md)
+is the stronger current retrieval receipt: explorer strict MRR/Recall@1
+`.965909/.931818` versus lexical `.796266/.704545`, with replay-compatible
+selection `.924242` versus `.391153`. The family breakdown includes two weaker
+families, so the result supports a stratified explorer arm rather than a pooled
+automatic policy. Enterprise authority, changed-system, and human-utility
+labels remain the required partner contribution.
+
 The follow-up [WMH-BIRD SQL explorer bridge](wmh-bird-sql-separate-explorer-probe-2026-08-09.md)
 is the first replay-backed adaptation. On two eight-case Luna runs, it found
 all recorded SQL tables at rank one, selected `2.5` tables on average instead
