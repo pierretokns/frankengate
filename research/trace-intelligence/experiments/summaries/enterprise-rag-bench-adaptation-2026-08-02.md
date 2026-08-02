@@ -155,6 +155,19 @@ add tool/API artifacts, session IDs, source exposure states, schema/authority
 epochs, and known-good versus rejected actions while retaining the original
 question categories.
 
+The first executable trace-side bridge is now recorded in the
+[`ontology/action projection receipt`](../results/ontology-action-trace-projection-cohort-2026-08-02.json).
+On the pinned WMH-BIRD proxy, schema-first typed identifiers (A1/A7) raised
+strict table MRR from 0.8050 (A0 lexical) to 0.9525 and recall@1 from 0.7083 to
+0.9167 over 72 held-out tasks. Provenance/alias edges alone (A2) reached only
+0.8472 MRR; combining them with typed identifiers (A3) reached 0.9464. The
+result is encouraging for schema-first projections, but it is *not* evidence
+of corporate ontology quality: all labels are SQL table references from one
+public task family, and the receipt explicitly marks authority safety, human
+intent, semantic skill transfer, and corporate alias quality as unestablished.
+The vector, authority-constrained, and frontier arms remain unavailable rather
+than being inferred from this proxy.
+
 ## Minimal empirical sequence
 
 1. **Retrieval baseline:** run BM25/lexical, pgvector dense, identifier-aware

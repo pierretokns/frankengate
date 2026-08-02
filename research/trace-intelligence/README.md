@@ -96,6 +96,10 @@ The [`EnterpriseRAG-Bench adaptation`](experiments/summaries/enterprise-rag-benc
 adds the document-side companion: its enterprise source mix, question taxonomy,
 noise model, metadata slice, and the exact boundary between retrieval evidence
 and trace/skill-learning claims.
+The [`ontology/action projection receipt`](experiments/results/ontology-action-trace-projection-cohort-2026-08-02.json)
+is the first runnable WMH-BIRD bridge: schema-first typed projections and
+replay-backed action edges are measured, while vector, authority, and frontier
+arms remain explicitly unavailable.
 The [`corporate ontology and fine-tuning reality check`](experiments/summaries/corporate-ontology-tools-and-finetuning-reality-check-2026-08-02.md)
 separates ontology induction, schema-guided extraction, entity resolution,
 graph retrieval, validation, and model adaptation. It records why one-pass

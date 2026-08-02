@@ -1,0 +1,65 @@
+{
+  "schema_version": "frankengate-ontology-action-trace-projection-cohort-v1",
+  "source": {
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630",
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "raw_content_committed": false,
+    "sqlite_root": "external-pinned-bird-minidev"
+  },
+  "cohort": {
+    "selected_successful_tasks": 149,
+    "train_tasks": 77,
+    "evaluation_tasks": 72,
+    "database_families": 11,
+    "split": "within-database deterministic even/odd task split",
+    "candidate_pool": "exposed schema tables per trace",
+    "strict_target": "recorded SQL table references",
+    "compatible_target": "recorded references plus SQLite result-preserving substitutions"
+  },
+  "projection": {
+    "objects": {
+      "task": 149,
+      "trace": 149,
+      "system": 11,
+      "schema": 75,
+      "schema_column": 776,
+      "artifact": 148,
+      "action": 149,
+      "outcome": 149
+    },
+    "edges": {
+      "task_contains_trace": 149,
+      "trace_uses_system": 149,
+      "trace_exposes_schema": 904,
+      "trace_uses_artifact": 290,
+      "action_targets_artifact": 149,
+      "action_has_outcome": 149
+    }
+  },
+  "arms": {
+    "A0": {"status": "measured", "strict_mrr": 0.805010, "strict_recall_at_1": 0.708333, "strict_recall_at_3": 0.902778, "strict_recall_at_10": 1.0},
+    "A1": {"status": "measured", "strict_mrr": 0.952546, "strict_recall_at_1": 0.916667, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
+    "A2": {"status": "measured", "strict_mrr": 0.847239, "strict_recall_at_1": 0.750000, "strict_recall_at_3": 0.930556, "strict_recall_at_10": 1.0},
+    "A3": {"status": "measured", "strict_mrr": 0.946429, "strict_recall_at_1": 0.902778, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
+    "A6": {"status": "measured", "strict_mrr": 0.946429, "strict_recall_at_1": 0.902778, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
+    "A7": {"status": "measured", "strict_mrr": 0.952546, "strict_recall_at_1": 0.916667, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0}
+  },
+  "unmeasured_arms": {
+    "A4": {"status": "unavailable", "reason": "no embedding endpoint supplied; no dense claim"},
+    "A5": {"status": "unidentifiable", "reason": "proxy has no principal, policy epoch, or authority labels"},
+    "A8": {"status": "unavailable", "reason": "no independent frontier adjudication fixture supplied"}
+  },
+  "action_states": {"proposed": 72, "approved": 77, "replayed": 149, "promoted": 0, "rejected": 0, "deprecated": 0},
+  "claim_boundary": {
+    "schema_first_projection_measured": true,
+    "typed_identifier_retrieval_measured": true,
+    "replay_compatible_retrieval_measured": true,
+    "corporate_alias_quality_established": false,
+    "ontology_quality_established": false,
+    "authority_safety_established": false,
+    "semantic_execution_success_established": false,
+    "skill_transfer_established": false,
+    "reason": "WMH-BIRD supplies SQL table references and SQLite outcomes, but no reviewed enterprise ontology, principal scopes, authority epochs, or human intent labels."
+  },
+  "result_sha256": "56d30be3aec1319cb93c04e33712d4a24d87b833c5a39f71a45eebf4cf27e664"
+}
