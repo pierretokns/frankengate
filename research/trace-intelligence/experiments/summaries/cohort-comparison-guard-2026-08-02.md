@@ -14,7 +14,14 @@ The guard therefore reports `aligned=false` and rejects pooled metrics and any
 claim that the two receipts demonstrate a combined cascade. Running with
 `--require-aligned` exits non-zero as a deliberate fail-closed check.
 
-Receipt: [`cohort-comparison-ontology-vs-dense-frontier-2026-08-02.json`](../results/cohort-comparison-ontology-vs-dense-frontier-2026-08-02.json)  
+The positive control compares a receipt with itself: it reports `aligned=true`
+and exits zero with `--require-aligned`. This verifies that the guard is not
+simply rejecting every comparison.
+
+Receipt: [`cohort-comparison-ontology-vs-dense-frontier-2026-08-02.json`](../results/cohort-comparison-ontology-vs-dense-frontier-2026-08-02.json)
+
+Positive control: [`cohort-comparison-guard-self-test-2026-08-02.json`](../results/cohort-comparison-guard-self-test-2026-08-02.json)
+
 Runner: [`cohort_comparison_guard.py`](../../cohort_comparison_guard.py)
 
 The next valid cascade study must freeze one candidate pool, one task subset,

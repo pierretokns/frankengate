@@ -1,0 +1,22 @@
+{
+  "schema_version": "frankengate-cohort-comparison-guard-v1",
+  "inputs": {
+    "left": {
+      "path": "experiments/results/ontology-action-trace-projection-cohort-2026-08-02.json",
+      "receipt_sha256": "d3fbc6d1c106ce641597cca0cabb42bf30f6a4025ae260a4bdf4c61735d7178d"
+    },
+    "right": {
+      "path": "experiments/results/ontology-action-trace-projection-cohort-2026-08-02.json",
+      "receipt_sha256": "d3fbc6d1c106ce641597cca0cabb42bf30f6a4025ae260a4bdf4c61735d7178d"
+    }
+  },
+  "source_hashes_shared": true,
+  "aligned": true,
+  "differences": [],
+  "claim_boundary": {
+    "pooled_metric_permitted": true,
+    "cascade_claim_permitted": true,
+    "reason": "Identical receipt identity is the required positive control for the comparison guard."
+  },
+  "result_sha256": "2a2e4952a23545cb2b03ba27dccd08d112e22eb959b986831e5e5c7fbce1d4ae"
+}
