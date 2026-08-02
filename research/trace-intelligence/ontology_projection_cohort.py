@@ -79,8 +79,13 @@ def normalize_terms(value: str) -> set[str]:
     return {item for item in tokens(value.replace("_", " ")) if item not in STOP}
 
 
+def query_terms(value: str) -> set[str]:
+    """Match the existing evaluator: preserve identifier underscores in prompts."""
+    return {item for item in tokens(value) if item not in STOP}
+
+
 def lexical_score(prompt: str, table: str) -> float:
-    query = normalize_terms(prompt)
+    query = query_terms(prompt)
     candidate = normalize_terms(table)
     exact = 10.0 if table.casefold() in query else 0.0
     return exact + float(len(query & candidate))
@@ -142,7 +147,7 @@ def recorded_schema_terms(traces_path: Path) -> dict[str, dict[str, set[str]]]:
 
 
 def typed_score(prompt: str, db_root: Path, db_name: str, table: str, terms_override: set[str] | None = None) -> float:
-    query = normalize_terms(prompt)
+    query = query_terms(prompt)
     terms = terms_override if terms_override is not None else schema_terms(db_root, db_name, table)
     return lexical_score(prompt, table) + 2.0 * len(query & terms - normalize_terms(table))
 

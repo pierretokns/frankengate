@@ -106,6 +106,10 @@ now fails closed when that 72-case projection is compared with the separate
 The [`WMH-BIRD aligned cascade cohort`](experiments/summaries/wmh-bird-aligned-cascade-cohort-2026-08-02.md)
 freezes a single 44-case candidate pool and hash-only case set for the next
 properly aligned lexical/typed/dense/frontier/replay comparison.
+The [`aligned ontology/dense/frontier result`](experiments/summaries/wmh-bird-aligned-ontology-cascade-2026-08-02.md)
+now runs the typed/schema arms on that same 44-case identity and verifies the
+existing dense/frontier receipt with the cohort guard; it still does not claim
+sequential cascade utility.
 The [`corporate ontology and fine-tuning reality check`](experiments/summaries/corporate-ontology-tools-and-finetuning-reality-check-2026-08-02.md)
 separates ontology induction, schema-guided extraction, entity resolution,
 graph retrieval, validation, and model adaptation. It records why one-pass
