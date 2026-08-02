@@ -96,6 +96,12 @@ The [`EnterpriseRAG-Bench adaptation`](experiments/summaries/enterprise-rag-benc
 adds the document-side companion: its enterprise source mix, question taxonomy,
 noise model, metadata slice, and the exact boundary between retrieval evidence
 and trace/skill-learning claims.
+The [`corporate ontology and fine-tuning reality check`](experiments/summaries/corporate-ontology-tools-and-finetuning-reality-check-2026-08-02.md)
+separates ontology induction, schema-guided extraction, entity resolution,
+graph retrieval, validation, and model adaptation. It records why one-pass
+corporate ontology generation remains unsolved, what OntoEKG/GraphRAG/OntoGPT/
+Zingg/Text2KGBench/SHACL each contribute, and the fair combined experiment and
+company-practice patterns to test next.
 The [`headline receipt-consistency audit`](experiments/summaries/headline-receipt-consistency-audit-2026-08-02.md)
 recomputes 19 selected high-impact claims against their receipts; all checks
 pass, while preserving the separately documented SkillLearnBench missing-answer
