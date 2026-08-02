@@ -159,6 +159,10 @@ The parameterized key-shape control was negative: key-only priors reached
 `90.5514%` same-project and `90.7613%` cross-project success versus `92.3108%`
 with no prior key-shape. Exact parameter bindings and resource identity are
 therefore load-bearing; coarse templates remain recall-only until replayed.
+The tool-class split is operationally important: same-project exact priors lifted
+shell success from `69.7511%` to `93.8326%` and mutation from `94.1272%` to
+`99.3243%`, while read/search was near ceiling and slightly lower after prior
+reuse. Prior policies must be tool-class-specific and safety-gated.
 The [DataClaw project adapter probe](dataclaw-project-adapter-2026-08-09.md)
 improved Peter's full-cohort combined project-held-out MRR `.769341→.854452`, but left
 Vaynelee's combined MRR unchanged at `.978495` because that cohort was near

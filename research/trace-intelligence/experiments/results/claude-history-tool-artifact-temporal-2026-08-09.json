@@ -19,6 +19,217 @@
       "uses": 11282
     }
   },
+  "category_buckets": {
+    "mutation": {
+      "call_count": 27458,
+      "exact": {
+        "no_prior_success": {
+          "errors": 1585,
+          "success_rate": 0.941272,
+          "successes": 25404,
+          "uses": 26989
+        },
+        "prior_other_project_success_only": {
+          "errors": 1,
+          "success_rate": 0.96,
+          "successes": 24,
+          "uses": 25
+        },
+        "prior_same_project_success": {
+          "errors": 3,
+          "success_rate": 0.993243,
+          "successes": 441,
+          "uses": 444
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 94,
+          "success_rate": 0.93955,
+          "successes": 1461,
+          "uses": 1555
+        },
+        "parameter_other_project_success_only": {
+          "errors": 389,
+          "success_rate": 0.942853,
+          "successes": 6418,
+          "uses": 6807
+        },
+        "parameter_same_project_success": {
+          "errors": 1106,
+          "success_rate": 0.942082,
+          "successes": 17990,
+          "uses": 19096
+        }
+      }
+    },
+    "orchestration": {
+      "call_count": 534,
+      "exact": {
+        "no_prior_success": {
+          "errors": 71,
+          "success_rate": 0.864504,
+          "successes": 453,
+          "uses": 524
+        },
+        "prior_same_project_success": {
+          "errors": 0,
+          "success_rate": 1.0,
+          "successes": 10,
+          "uses": 10
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 1,
+          "success_rate": 0.916667,
+          "successes": 11,
+          "uses": 12
+        },
+        "parameter_other_project_success_only": {
+          "errors": 16,
+          "success_rate": 0.888889,
+          "successes": 128,
+          "uses": 144
+        },
+        "parameter_same_project_success": {
+          "errors": 54,
+          "success_rate": 0.857143,
+          "successes": 324,
+          "uses": 378
+        }
+      }
+    },
+    "other": {
+      "call_count": 1851,
+      "exact": {
+        "no_prior_success": {
+          "errors": 153,
+          "success_rate": 0.914668,
+          "successes": 1640,
+          "uses": 1793
+        },
+        "prior_other_project_success_only": {
+          "errors": 2,
+          "success_rate": 0.955556,
+          "successes": 43,
+          "uses": 45
+        },
+        "prior_same_project_success": {
+          "errors": 0,
+          "success_rate": 1.0,
+          "successes": 13,
+          "uses": 13
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 30,
+          "success_rate": 0.929245,
+          "successes": 394,
+          "uses": 424
+        },
+        "parameter_other_project_success_only": {
+          "errors": 30,
+          "success_rate": 0.934066,
+          "successes": 425,
+          "uses": 455
+        },
+        "parameter_same_project_success": {
+          "errors": 95,
+          "success_rate": 0.902263,
+          "successes": 877,
+          "uses": 972
+        }
+      }
+    },
+    "read_search": {
+      "call_count": 26945,
+      "exact": {
+        "no_prior_success": {
+          "errors": 64,
+          "success_rate": 0.993934,
+          "successes": 10486,
+          "uses": 10550
+        },
+        "prior_other_project_success_only": {
+          "errors": 135,
+          "success_rate": 0.976752,
+          "successes": 5672,
+          "uses": 5807
+        },
+        "prior_same_project_success": {
+          "errors": 341,
+          "success_rate": 0.967794,
+          "successes": 10247,
+          "uses": 10588
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 26,
+          "success_rate": 0.986029,
+          "successes": 1835,
+          "uses": 1861
+        },
+        "parameter_other_project_success_only": {
+          "errors": 142,
+          "success_rate": 0.97592,
+          "successes": 5755,
+          "uses": 5897
+        },
+        "parameter_same_project_success": {
+          "errors": 372,
+          "success_rate": 0.980612,
+          "successes": 18815,
+          "uses": 19187
+        }
+      }
+    },
+    "shell": {
+      "call_count": 14161,
+      "exact": {
+        "no_prior_success": {
+          "errors": 4181,
+          "success_rate": 0.697511,
+          "successes": 9641,
+          "uses": 13822
+        },
+        "prior_other_project_success_only": {
+          "errors": 32,
+          "success_rate": 0.714286,
+          "successes": 80,
+          "uses": 112
+        },
+        "prior_same_project_success": {
+          "errors": 14,
+          "success_rate": 0.938326,
+          "successes": 213,
+          "uses": 227
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 225,
+          "success_rate": 0.783237,
+          "successes": 813,
+          "uses": 1038
+        },
+        "parameter_other_project_success_only": {
+          "errors": 992,
+          "success_rate": 0.730435,
+          "successes": 2688,
+          "uses": 3680
+        },
+        "parameter_same_project_success": {
+          "errors": 3010,
+          "success_rate": 0.681245,
+          "successes": 6433,
+          "uses": 9443
+        }
+      }
+    }
+  },
   "claim_boundary": {
     "causal_user_benefit": false,
     "reason": "Observed tool success is a process outcome only; this temporal association does not establish semantic intent, safety, optimality, or causal artifact utility.",
@@ -65,7 +276,7 @@
     "outcome": "explicit tool_result is_error flag",
     "prior_freeze": "prior success sets updated only after each session completes"
   },
-  "result_sha256": "b9c8ca55266c52705e0616c66b22bfcd47a7a19c19bd6e91ac6c971c6205554d",
+  "result_sha256": "7ea3e52949641d64335386ad81a104867e191b9f1d32ae215fca9915c2e2a72e",
   "schema_version": "frankengate-claude-history-tool-artifact-temporal-v1",
   "source": {
     "byte_count": 998165678,

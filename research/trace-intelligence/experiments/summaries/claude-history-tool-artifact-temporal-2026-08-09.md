@@ -82,6 +82,30 @@ select common, failure-prone tool patterns. Preserve exact parameter bindings,
 scope, resource identity, and independent replay; treat key-shape matches only
 as candidate recall.
 
+## Tool-class stratification
+
+The same exact-identity prior was stratified using deterministic coarse classes
+(read/search, mutation, shell, orchestration, and other). The classes are
+heuristics, not security policies.
+
+| Class | No prior | Same-project exact prior | Other-project exact prior |
+|---|---:|---:|---:|
+| Read/search | 99.3934% (10,550) | 96.7794% (10,588) | 97.6752% (5,807) |
+| Mutation | 94.1272% (26,989) | 99.3243% (444) | 96.0000% (25) |
+| Shell | 69.7511% (13,822) | 93.8326% (227) | 71.4286% (112) |
+| Orchestration | 86.4504% (524) | 100.0000% (10) | — |
+| Other | 91.4668% (1,793) | 100.0000% (13) | 95.5556% (45) |
+
+The largest practical effect is shell: an exact same-project prior is about
+24 percentage points above its no-prior baseline. Mutation also benefits
+strongly. Read/search is already near ceiling and the prior association is
+lower, so Frankengate should not assume that a prior-success boost is uniform
+across tool classes. Small other-project cells are descriptive only.
+
+Parameterized key-shape priors remain unsafe in these strata, especially shell
+(78.3237% with no prior key-shape versus 68.1245% after same-project key-shape
+history). Exact bindings and a tool-class-specific policy are required.
+
 ## Receipts
 
 - [content-free result](../results/claude-history-tool-artifact-temporal-2026-08-09.json)

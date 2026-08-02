@@ -271,6 +271,10 @@ The same benchmark found that input-key-only templates were worse than their
 no-prior control (`92.3108%` versus `90.5514%` same-project and `90.7613%`
 cross-project). Parameterized tool shapes are therefore recall candidates,
 not reusable artifacts without bindings and replay.
+Tool-class stratification shows the prior is not uniform: exact same-project
+priors lifted shell success from `69.7511%` to `93.8326%` and mutation success
+from `94.1272%` to `99.3243%`, while read/search was already at `99.3934%`.
+Reuse gates should therefore be tool-class-specific.
 The [`DataClaw project adapter`](experiments/summaries/dataclaw-project-adapter-2026-08-09.md)
 probe improved full-cohort combined project-held-out MRR for Peter (`.769341→.854452`) but
 was neutral for Vaynelee, supporting scoped experimentation rather than a

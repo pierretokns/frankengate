@@ -22,13 +22,26 @@ from claude_history_tool_artifact_miner import digest, manifest, normalize
 SCHEMA_VERSION = "frankengate-claude-history-tool-artifact-temporal-v1"
 
 
+def tool_category(name: str) -> str:
+    value = name.lower()
+    if value in {"read", "glob", "grep", "ls", "search", "find", "cat", "listfiles"} or any(token in value for token in ("read", "search", "list", "glob")):
+        return "read_search"
+    if value in {"edit", "write", "notebookedit", "multiedit", "patch"} or any(token in value for token in ("edit", "write", "patch", "delete", "move", "copy", "mkdir")):
+        return "mutation"
+    if value in {"bash", "shell", "terminal", "exec", "computer"} or any(token in value for token in ("bash", "shell", "terminal", "exec")):
+        return "shell"
+    if value in {"task", "agent", "delegate", "askuserquestion"} or any(token in value for token in ("task", "agent", "delegate")):
+        return "orchestration"
+    return "other"
+
+
 def parse_sessions(root: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
     sessions: list[dict[str, Any]] = []
     parse_errors = 0
     missing_timestamps = 0
     for path in sorted(root.rglob("*.jsonl")):
         project = path.parent.name
-        uses: list[tuple[str, str, bool]] = []
+        uses: list[tuple[str, str, str, str]] = []
         timestamps: list[str] = []
         statuses: dict[str, bool] = {}
         try:
@@ -53,12 +66,12 @@ def parse_sessions(root: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
                             normalized_input = normalize(item.get("input"))
                             fingerprint = digest({"tool": tool_name, "input": normalized_input})
                             keyshape = digest({"tool": tool_name, "input_keys": sorted(normalized_input) if isinstance(normalized_input, dict) else []})
-                            uses.append((str(item["id"]), fingerprint, keyshape))
+                            uses.append((str(item["id"]), fingerprint, keyshape, tool_category(tool_name)))
                         elif item.get("type") == "tool_result" and item.get("tool_use_id"):
                             statuses[str(item["tool_use_id"])] = bool(item.get("is_error", False))
         except OSError:
             continue
-        paired = [(fingerprint, keyshape, failed) for tool_id, fingerprint, keyshape in uses if (tool_id in statuses) for failed in (statuses[tool_id],)]
+        paired = [(fingerprint, keyshape, failed, category) for tool_id, fingerprint, keyshape, category in uses if (tool_id in statuses) for failed in (statuses[tool_id],)]
         if not paired:
             continue
         start = min(timestamps) if timestamps else ""
@@ -103,6 +116,9 @@ def run(root: Path, output: Path) -> dict[str, Any]:
     project_keyshape_success: dict[str, set[str]] = defaultdict(set)
     buckets: dict[str, dict[str, int]] = defaultdict(bucket)
     parameter_buckets: dict[str, dict[str, int]] = defaultdict(bucket)
+    category_buckets: dict[str, dict[str, dict[str, int]]] = defaultdict(lambda: defaultdict(bucket))
+    category_parameter_buckets: dict[str, dict[str, dict[str, int]]] = defaultdict(lambda: defaultdict(bucket))
+    category_counts: Counter[str] = Counter()
     session_artifacts: Counter[str] = Counter()
     first_success_rank: dict[str, int] = {}
     call_index = 0
@@ -110,17 +126,17 @@ def run(root: Path, output: Path) -> dict[str, Any]:
     for session in sessions:
         project = session["project"]
         project_seen = project_success[project]
-        for fingerprint, keyshape, failed in session["calls"]:
+        for fingerprint, keyshape, failed, tool_class in session["calls"]:
             call_index += 1
             same_prior = fingerprint in project_seen
             any_prior = fingerprint in global_success
             if same_prior:
-                category = "prior_same_project_success"
+                prior_category = "prior_same_project_success"
             elif any_prior:
-                category = "prior_other_project_success_only"
+                prior_category = "prior_other_project_success_only"
             else:
-                category = "no_prior_success"
-            add(buckets[category], failed)
+                prior_category = "no_prior_success"
+            add(buckets[prior_category], failed)
             if keyshape in project_keyshape_success[project]:
                 parameter_category = "parameter_same_project_success"
             elif keyshape in global_keyshape_success:
@@ -128,11 +144,16 @@ def run(root: Path, output: Path) -> dict[str, Any]:
             else:
                 parameter_category = "no_prior_keyshape_success"
             add(parameter_buckets[parameter_category], failed)
+            # Category-stratified views use the same frozen global priors; they
+            # only ask whether the association differs by coarse tool class.
+            category_counts[tool_class] += 1
+            add(category_buckets[tool_class][prior_category], failed)
+            add(category_parameter_buckets[tool_class][parameter_category], failed)
             session_artifacts[fingerprint] += 1
             if not failed and fingerprint not in first_success_rank:
                 first_success_rank[fingerprint] = call_index
         # Freeze priors at the session boundary; no within-session leakage.
-        for fingerprint, keyshape, failed in session["calls"]:
+        for fingerprint, keyshape, failed, _category in session["calls"]:
             if not failed:
                 global_success.add(fingerprint)
                 project_seen.add(fingerprint)
@@ -164,6 +185,14 @@ def run(root: Path, output: Path) -> dict[str, Any]:
         },
         "buckets": {name: summarize(value) for name, value in sorted(buckets.items())},
         "parameter_buckets": {name: summarize(value) for name, value in sorted(parameter_buckets.items())},
+        "category_buckets": {
+            category: {
+                "call_count": category_counts[category],
+                "exact": {name: summarize(value) for name, value in sorted(values.items())},
+                "parameterized": {name: summarize(value) for name, value in sorted(category_parameter_buckets[category].items())},
+            }
+            for category, values in sorted(category_buckets.items())
+        },
         "comparison": {
             "same_project_lift_vs_no_prior": round(
                 (buckets["prior_same_project_success"]["successes"] / buckets["prior_same_project_success"]["uses"])
