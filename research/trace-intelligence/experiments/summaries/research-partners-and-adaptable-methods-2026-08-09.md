@@ -1,0 +1,159 @@
+# Corporate trace learning: adjacent methods and partner targets (2026-08-09)
+
+This memo is a current literature/partner screen, not a claim that any cited
+method has been validated on Frankengate data. The evidence matrix remains the
+authority for our empirical results.
+
+## Methods that are genuinely adaptable
+
+### Learning to Retrieve from Agent Trajectories (LRAT)
+
+LRAT is the closest recent match to the proposed trace-to-retriever flywheel.
+It derives positives from documents an agent browses, negatives from exposed
+but unbrowsed candidates, and relevance intensity from post-browse reasoning.
+The authors report gains in evidence recall, task success, and interaction
+steps across in-domain and out-of-domain research benchmarks. See the
+[paper](https://arxiv.org/abs/2604.04949), especially its trajectory-signal and
+negative-sampling sections.
+
+**Frankengate adaptation:** treat a retrieved tool/schema/artifact as exposed
+only when it was actually offered to the agent; treat execution, inspection,
+and post-tool state change as progressively stronger positive signals. A
+candidate absent from a trace is not a negative unless exposure is recorded.
+For artifacts, explicit replay success should outrank “the model mentioned it”
+and post-tool repair should be a negative or uncertainty signal. This directly
+fixes a weakness in naive mining from raw logs.
+
+**Hard edge:** LRAT's browse-success assumption does not automatically transfer
+to governed tools. A tool can be correct but intentionally not executed because
+of authority, cost, or user choice. We need exposure and refusal reasons in the
+trace schema.
+
+### Enterprise hard-negative mining
+
+The paper [Hard Negative Mining for Domain-Specific Retrieval in Enterprise
+Systems](https://arxiv.org/abs/2505.18366) is directly adjacent to corporate
+concept discovery. It selects semantically close but contextually irrelevant
+documents and reports improvements on a proprietary cloud-services corpus plus
+public domain datasets.
+
+**Frankengate adaptation:** generate negatives from the same surface in a
+different system, same system but different table/tool, temporal replacements,
+and near-identical identifiers with different authority. Preserve the negative
+type instead of collapsing all negatives into one class. Our existing public
+reranker result already shows that identifier-aware features beat dense
+retrieval, while extra hard-negative weighting did not improve the small proxy;
+the next test must use reviewed labels and larger strata.
+
+**Hard edge:** the paper's proprietary corpus and headline gains are not
+reproducible from the abstract. Treat its method as a sampling hypothesis, not
+as an expected uplift.
+
+### Trajectory-aware tool evaluation
+
+[TRAJECT-Bench](https://arxiv.org/abs/2510.04550) evaluates tool selection,
+argument correctness, ordering, and dependency satisfaction—not merely final
+answers. Its production-style APIs are synthetic, so it is an evaluation
+decomposition rather than an enterprise-data match.
+
+**Frankengate adaptation:** add these dimensions to every artifact replay:
+selection correctness, parameter binding, authority compatibility, order/dependency
+correctness, independent execution outcome, and post-execution recovery. This
+lets us distinguish “wrong tool” from “right tool, wrong argument” and from
+“correct artifact rejected by governance.”
+
+### Multi-step tool retrieval (ToolQP)
+
+MIT CSAIL work on [Tool Query Planning](https://people.csail.mit.edu/weifang/)
+frames tool retrieval as iterative subtask planning rather than one-shot query
+embedding. The thesis describes dynamic retrieval, inter-tool dependencies,
+and using the retrieval trajectory as downstream context.
+
+**Frankengate adaptation:** retrieve a typed subplan in stages: identify the
+system/scope, retrieve a compatible tool or SQL artifact, bind parameters,
+then validate the expected observation. This is a better fit for our failed
+whole-query dense retrieval result than simply training a larger embedding
+model.
+
+**Hard edge:** planning can amplify an early wrong system choice. Every stage
+needs a scope/authority filter and an abstention path; the final replay oracle
+remains mandatory.
+
+## Best research partners
+
+1. **MIT DSAIL / Data Systems Group.** Its stated agenda explicitly combines
+   learned components with indexes, query optimization, schema design, data
+   integration, and enterprise applications, and emphasizes industry
+   collaboration and technology transfer. This is the strongest fit for the
+   validated-SQL-artifact and data-system portion of the project. See the
+   [DSAIL research page](https://dsg.csail.mit.edu/dsail/).
+
+2. **MIT Everest Lab.** Everest focuses on engineering principles for
+   AI-driven data systems, including large-scale retrieval, data analytics,
+   code generation, and agent operations; its page cites deployed technical
+   assistance and data-processing systems. It is a strong fit for a retrieval
+   and operations benchmark with real systems constraints. See
+   [Everest](https://everest.csail.mit.edu/).
+
+3. **MIT CLEAR Lab.** CLEAR studies agents learning with and around people,
+   including human expectations and user studies. It is the best fit for
+   consented feedback loops, skill-gap recommendations, and measuring whether
+   recommendations help rather than merely correlate with traces. See
+   [CLEAR](https://clear.csail.mit.edu/).
+
+4. **Harvard MTERMS Lab** is an adjacent, domain-specific terminology and
+   information-extraction partner. Its work covers extraction, normalization,
+   retrieval, relation identification, and deployment in clinical systems. It
+   is useful for ontology/alias methodology, but the clinical domain and
+   terminology standards make it a weaker fit than MIT for agent artifacts.
+   See [MTERMS](https://mterms.bwh.harvard.edu/mterms/).
+
+## What we should propose as a publishable study
+
+The strongest paper is not “memory improves agents.” It is:
+
+> **From agent traces to governed enterprise artifacts: exposure-aware
+> supervision, identifier-aware hard negatives, and replay-validated reuse.**
+
+Preregister one authorized cohort and compare, under principal/project/system/
+time-held-out splits:
+
+1. exact + scope filters;
+2. lexical and identifier-aware reranking;
+3. dense retrieval;
+4. LRAT-style exposure/post-tool supervision;
+5. ToolQP-style staged retrieval;
+6. frontier adjudication without replay;
+7. frontier adjudication followed by independent replay;
+8. no-artifact regeneration and reviewed-artifact controls.
+
+Primary measures should be semantic-label agreement, Recall@K/MRR,
+wrong-system-before-target, NIL abstention, changed-system execution success,
+unsafe/stale acceptance rate, latency, and cost. Secondary measures should be
+skill transfer, repeat-task time, and whether a recommendation changes the
+next task outcome. Report results separately for exact identifiers, aliases,
+temporal replacements, and unresolved/NIL cases.
+
+The minimum cohort gate already recorded in the readiness checker remains:
+100 labeled targets, 50 hard negatives, 25 NIL/unclear examples, at least two
+principals/projects/systems, two changed environments, two blinded labels, and
+independent terminal outcomes. Public BIRD/Defog/Trace Commons data can test
+mechanics, but cannot substitute for this cohort.
+
+## Bottom line
+
+The new literature strengthens—not overturns—the current architecture:
+
+```text
+exposure + scope/authority
+  -> exact/identifier/lexical retrieval
+  -> embedding candidate recall
+  -> trajectory-aware or frontier review
+  -> independent replay and changed-system validation
+  -> versioned artifact/skill with expiry and rollback
+```
+
+The most credible partnership is MIT DSAIL/Everest for the data-system and
+retrieval study, with CLEAR for human-feedback and skill-impact evaluation.
+Harvard MTERMS is a useful terminology-method collaborator, but not the lead
+for the full agent-artifact program.
