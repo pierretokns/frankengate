@@ -237,6 +237,11 @@ The [`Claude cross-cohort command transfer`](experiments/summaries/claude-cross-
 found only one exact artifact shared across four public cohorts, versus nine
 normalized artifacts covering 72 occurrences with one failure. Scope-bound
 identity remains mandatory for any reusable artifact proposal.
+The [`NL2SQL identifier cross-domain transfer`](experiments/summaries/nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
+probe found asymmetric generalization: Defog-trained ranking improved BIRD MRR
+`.731684→.760996`, while BIRD-trained ranking reduced Defog MRR
+`.682284→.622864`. Identifier-aware ranking is useful, but not a universal
+domain-independent model.
 The [`embedding/model cascade decision`](experiments/summaries/embedding-model-cascade-decision-2026-08-09.md)
 combines these results with the MATM cost and adapter receipts: structured
 retrieval stays first, embeddings remain optional candidate recall, and

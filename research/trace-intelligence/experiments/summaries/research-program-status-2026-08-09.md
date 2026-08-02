@@ -113,6 +113,12 @@ artifacts covering 72 occurrences with one failure. Jobseek normalized
 cross-scope reuse was `72.22%`, below its `96.67%` same-scope rate. This is
 direct evidence for scope-bound retrieval and against cross-user automatic
 artifact reuse.
+The [cross-domain identifier transfer probe](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
+found asymmetric generalization: Defog→BIRD improved MRR from `.731684` to
+`.760996`, while BIRD→Defog fell from `.682284` to `.622864`. Hard-negative
+weighting was not portable. Preserve the identifier-aware lane, but train and
+validate it with domain-specific collision families rather than assuming one
+universal ranker.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -297,6 +303,7 @@ project, principal, and changed-system holdouts.
 - [WMH-BIRD exact versus execution-equivalent retrieval](wmh-bird-equivalence-aware-retrieval-2026-08-09.md)
 - [Claude command-artifact normalization audit](claude-command-artifact-normalization-2026-08-09.md)
 - [Claude cross-cohort command transfer](claude-cross-cohort-command-transfer-2026-08-09.md)
+- [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)
 - [WMH-BIRD step-fault audit](wmh-bird-step-fault-audit-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)

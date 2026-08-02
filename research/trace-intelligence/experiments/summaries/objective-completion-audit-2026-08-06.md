@@ -32,6 +32,8 @@ The cross-harness normalization audit is documented in
 [claude-command-artifact-normalization-2026-08-09.md](claude-command-artifact-normalization-2026-08-09.md).
 The four-cohort transfer audit is documented in
 [claude-cross-cohort-command-transfer-2026-08-09.md](claude-cross-cohort-command-transfer-2026-08-09.md).
+The cross-domain identifier transfer probe is documented in
+[nl2sql-identifier-cross-domain-transfer-2026-08-09.md](nl2sql-identifier-cross-domain-transfer-2026-08-09.md).
 
 ## Overall conclusion
 
