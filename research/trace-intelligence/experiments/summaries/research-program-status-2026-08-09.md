@@ -328,6 +328,14 @@ adjudication can produce a review queue, but there are no independent labels
 for business intent, employee capability, satisfaction, collaboration value,
 or negative transfer. We cannot yet claim that the system identifies who is
 doing the same work or which skills a person is missing.
+The local-only [dense candidate study](dataclaw-cross-user-dense-candidates-2026-08-09.md)
+extends the candidate-generation evidence across 549 Peter and 38 Vaynelee
+sessions: lexical and dense top-1 candidates agreed only `6.01%` of the time,
+with mean top-5 Jaccard `.238796` and mean tool-name Jaccard below `.28` for
+both arms. This demonstrates that embeddings create a materially different
+review queue, not that either queue is semantically correct. It also avoids
+transmitting user summaries to external models; external adjudication remains
+approval-gated.
 
 ### 8. Friction mining needs structural review, not keyword labels
 
