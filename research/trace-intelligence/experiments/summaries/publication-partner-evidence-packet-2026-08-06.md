@@ -32,6 +32,12 @@ Evidence already measured:
   below the formatting placebo on latency, so no skill was promoted;
 - BIRD-Interact provides 600 ambiguity/follow-up tasks, while its 20 public
   ADK samples expose the trajectory/reward schema but are not a benchmark.
+- FinanceBench provides a clean systems-side result: a pinned finance model
+  reached Recall@20 `1.0` / MRR `.8087`, while a different loopback serving path
+  using Nomic reached `.4533/.1661` on the same projection. Governed pgvector
+  query latency was p50 `2.02ms` / p95 `2.96ms`. This supports treating model
+  snapshot, prefix, dimension, serving path, and rebuild lineage as part of the
+  retrieval artifact—not as deployment trivia.
 
 The leading positive hypothesis is now **validated subplan composition**, not
 generic memory or one-shot procedural skill transfer. Two independent
