@@ -115,7 +115,10 @@ class WikiIndex:
         self.texts = [self._document_text(page) for page in pages]
         self._vectorizer = TfidfVectorizer(token_pattern=r"(?u)\b[\w./:-]+\b", lowercase=True)
         self._matrix = self._vectorizer.fit_transform(self.texts) if pages else None
-        self._fts = sqlite3.connect(":memory:")
+        # The frontier runner may share a read-only index across worker
+        # threads. SQLite serializes the small FTS reads for this benchmark;
+        # production adapters should use a connection pool instead.
+        self._fts = sqlite3.connect(":memory:", check_same_thread=False)
         self._fts.execute("CREATE VIRTUAL TABLE pages USING fts5(page_id UNINDEXED, wiki_id UNINDEXED, title, body)")
         self._fts.executemany("INSERT INTO pages(page_id,wiki_id,title,body) VALUES(?,?,?,?)", [(p["page_id"], p["wiki_id"], p["title"], text) for p, text in zip(pages, self.texts)])
         self._fts.commit()
