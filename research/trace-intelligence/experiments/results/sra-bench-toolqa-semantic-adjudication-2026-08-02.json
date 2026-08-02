@@ -1,0 +1,76 @@
+{
+  "arms": {
+    "bge_progressive": {
+      "accepted_consensus_on_strict_failures": 2,
+      "adjudication_accepted_upper_bound": 10,
+      "conservative_accepted_lower_bound": 9,
+      "failed_tasks_adjudicated": 7,
+      "incorrect_consensus_on_strict_failures": 4,
+      "judge_disagreements_on_strict_failures": 1,
+      "strict_terminal_correct": 7,
+      "tasks": 14
+    },
+    "bge_top1": {
+      "accepted_consensus_on_strict_failures": 3,
+      "adjudication_accepted_upper_bound": 10,
+      "conservative_accepted_lower_bound": 10,
+      "failed_tasks_adjudicated": 7,
+      "incorrect_consensus_on_strict_failures": 4,
+      "judge_disagreements_on_strict_failures": 0,
+      "strict_terminal_correct": 7,
+      "tasks": 14
+    },
+    "bge_top5": {
+      "accepted_consensus_on_strict_failures": 1,
+      "adjudication_accepted_upper_bound": 7,
+      "conservative_accepted_lower_bound": 7,
+      "failed_tasks_adjudicated": 8,
+      "incorrect_consensus_on_strict_failures": 7,
+      "judge_disagreements_on_strict_failures": 0,
+      "strict_terminal_correct": 6,
+      "tasks": 14
+    },
+    "gold_oracle": {
+      "accepted_consensus_on_strict_failures": 1,
+      "adjudication_accepted_upper_bound": 8,
+      "conservative_accepted_lower_bound": 8,
+      "failed_tasks_adjudicated": 7,
+      "incorrect_consensus_on_strict_failures": 6,
+      "judge_disagreements_on_strict_failures": 0,
+      "strict_terminal_correct": 7,
+      "tasks": 14
+    },
+    "no_skill": {
+      "accepted_consensus_on_strict_failures": 2,
+      "adjudication_accepted_upper_bound": 7,
+      "conservative_accepted_lower_bound": 6,
+      "failed_tasks_adjudicated": 10,
+      "incorrect_consensus_on_strict_failures": 7,
+      "judge_disagreements_on_strict_failures": 1,
+      "strict_terminal_correct": 4,
+      "tasks": 14
+    }
+  },
+  "claim_boundary": "Two frontier adjudication passes over strict ToolQA failures. Accepted lower/upper bounds are evaluator diagnostics, not human labels, causal skill utility, changed-system outcomes, or enterprise transfer.",
+  "dataset": {
+    "external_corpus_zip_sha256": "ddfde273990adab701e4a6df88081660dc982fa60d31640a6011f7253dbddf24",
+    "instances_sha256": "8dbe29d8f0ac29f6f355d7f459f6ec1181985f3a5989bb52cba28b17f38a0059",
+    "name": "toolqa",
+    "tasks": 14
+  },
+  "protocol": {
+    "failed_tasks_only": true,
+    "model": "gpt-5.6-luna",
+    "passes": [
+      "default rubric",
+      "skeptical rubric"
+    ],
+    "promotion_authorized": false,
+    "raw_judgments_committed": false
+  },
+  "schema_version": "frankengate-sra-bench-toolqa-semantic-adjudication-v1",
+  "source_hashes": {
+    "pass_one": "219b0266af25aa8a1e3ab1a06e4a46d34c0c2c1c812a0a68f70f6c515fb5db46",
+    "pass_two": "e52f38f71e127e05b79ecd3be090fc591c33d88d307dc11c864ef47869eb5229"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "checks": {
+    "arms_present": true,
+    "bounds_ordered": true,
+    "claim_boundary": true,
+    "counts_reconcile": true,
+    "promotion_blocked": true,
+    "raw_external": true,
+    "schema": true,
+    "task_count": true
+  },
+  "schema_version": "frankengate-sra-bench-toolqa-semantic-adjudication-verification-v1",
+  "source_receipt_sha256": "80be2d559563b58241947d5b568255dc2b6ffc3453dc60f5eff4c0fa709c3c06",
+  "verification_passed": true
+}
