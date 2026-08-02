@@ -145,6 +145,11 @@ and 460 that were both cross-project and friction-adjacent. This is the first
 bounded positive for a scoped personal/project library, still requiring replay
 and changed-system gates. Its recurrence/friction relationship reversed in the
 small Vaynelee cohort, so recurrence is not a universal friction label.
+The [strict Claude tool-artifact miner](claude-history-tool-artifact-miner-2026-08-09.md)
+found 2,012 normalized identities recurring across sessions, 1,105 across
+projects, 431 mixed-outcome identities, and 3,866 error→success recoveries.
+This supplies a much larger candidate/recovery queue, while confirming that
+observed tool success is not an independent correctness or safety label.
 The [DataClaw project adapter probe](dataclaw-project-adapter-2026-08-09.md)
 improved Peter's full-cohort combined project-held-out MRR `.769341→.854452`, but left
 Vaynelee's combined MRR unchanged at `.978495` because that cohort was near

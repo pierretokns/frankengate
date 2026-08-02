@@ -258,6 +258,10 @@ The complementary [`same-user artifact support`](experiments/summaries/dataclaw-
 probe found 3,158 Peter candidates repeated across sessions and 518 across
 projects, supporting scoped personal/project libraries as the first positive
 reuse lane.
+The [`Claude-history strict tool-artifact miner`](experiments/summaries/claude-history-tool-artifact-miner-2026-08-09.md)
+found 2,012 strict normalized identities recurring across sessions, 1,105
+crossing projects, and 3,866 error-to-success recovery transitions. This is a
+strong candidate/recovery queue signal, not validated artifact correctness.
 The [`DataClaw project adapter`](experiments/summaries/dataclaw-project-adapter-2026-08-09.md)
 probe improved full-cohort combined project-held-out MRR for Peter (`.769341→.854452`) but
 was neutral for Vaynelee, supporting scoped experimentation rather than a
