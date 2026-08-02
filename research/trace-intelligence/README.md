@@ -80,6 +80,10 @@ artifact exists in the library.
 The dated [`objective completion audit`](experiments/summaries/objective-completion-audit-2026-08-06.md)
 maps every requested research area to its strongest evidence, open proof
 obligation, and current disposition.
+The [`2026-08-10 objective closure audit`](experiments/summaries/objective-closure-audit-2026-08-10.md)
+is the current requirement-level handoff: it records the full EnterpriseRAG
+ceiling, alias reproduction, mutation-stratified cohort gate, publication
+packet, and the unresolved semantic/outcome obligations.
 The [`corporate trace-learning closure audit`](experiments/summaries/corporate-trace-objective-closure-audit-2026-08-02.md)
 rechecks the full objective requirement by requirement and separates
 demonstrated mechanics from the still-missing enterprise semantic cohort.
