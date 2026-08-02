@@ -75,6 +75,19 @@ frontier-review arms under principal/project/system/time holdouts. It does not
 justify training on raw traces or promoting a custom embedding without
 changed-system artifact outcomes.
 
+### FastContext: promising but withdrawn
+
+[FastContext](https://arxiv.org/abs/2606.14066) describes a separate repository
+explorer trained from reference-model trajectories and task-grounded rewards.
+That separation is a useful design hypothesis for our artifact explorer, but
+the arXiv record marks the paper withdrawn over product-IP issues, provides no
+license, and its linked `microsoft/fastcontext` repository is unavailable. Its
+reported benchmark gains therefore cannot be treated as evidence or a fork
+target. Preserve only the experiment idea—cheap evidence/path discovery before
+frontier reasoning—and validate it with our own exposure-complete traces and
+changed-system replay. See
+[`fastcontext-withdrawn-method-audit-2026-08-09.md`](fastcontext-withdrawn-method-audit-2026-08-09.md).
+
 ### Trajectory-aware tool evaluation
 
 [TRAJECT-Bench](https://arxiv.org/abs/2510.04550) evaluates tool selection,

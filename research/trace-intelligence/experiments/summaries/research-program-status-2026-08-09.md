@@ -44,6 +44,13 @@ SQL/tools. Our adaptation must add exposure sets, authority/refusal reasons,
 replay outcomes, changed-system holdouts, and explicit NIL/wrong-system labels.
 See [Cursor historical retrieval supervision](cursor-historical-retrieval-supervision-2026-08-09.md).
 
+FastContext is a related but non-admissible source: its withdrawn arXiv record
+describes a separate trajectory-trained repository explorer and reports strong
+token/resolution gains, but the paper has no license and its linked repository
+is unavailable. We retain the separation-of-exploration hypothesis as a future
+experiment only; none of its numerical claims enter the evidence matrix. See
+[the audit](fastcontext-withdrawn-method-audit-2026-08-09.md).
+
 ### 4. Structured tool fields are useful metadata, not a retrieval replacement
 
 The field-aware TRAJECT-Bench probe evaluated 5,297 domain-scoped records with
@@ -407,6 +414,7 @@ project, principal, and changed-system holdouts.
 - [deterministic cctrace capsule round-trip](cctrace-deterministic-capsule-roundtrip-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [Cursor historical retrieval supervision](cursor-historical-retrieval-supervision-2026-08-09.md)
+- [FastContext withdrawn-method audit](fastcontext-withdrawn-method-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
 - [SkillLearnBench changed-data multi-seed synthesis](skilllearnbench-changed-data-multiseed-2026-08-09.md)
