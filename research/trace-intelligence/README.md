@@ -170,6 +170,13 @@ The companion [`candidate-manifest repair audit`](experiments/summaries/traject-
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next
 model comparison.
+The bounded [`TRAJECT-Bench frontier reranking probe`](experiments/summaries/traject-bench-frontier-reranker-2026-08-09.md)
+then measured Luna after domain-scoped lexical shortlisting: MRR rose from
+`.360` to `1.000` and Recall@10 from `.385` to `.969` on eight public cases.
+Because the shortlist appended target names when necessary, this is an
+oracle-coverage reranking result—not full retrieval or artifact discovery.
+The independent receipt verifier passed all eight cases, with raw model output
+kept outside the repository.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.
