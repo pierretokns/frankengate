@@ -43,6 +43,20 @@ compiled representation explicitly adds identifiers and metadata that raw
 documents omit. The correct conclusion is that representation and metadata
 must be ablated independently from backend choice.
 
+The query-slice audit makes the identifier effect explicit at 25 domains:
+
+| slice | raw FTS R@1 | compiled FTS R@1 | raw hybrid R@1 | compiled hybrid R@1 |
+|---|---:|---:|---:|---:|
+| exact title | `.900` | `.890` | `.910` | `.910` |
+| issuer + title | `.930` | `.950` | `.910` | `.920` |
+| exact source identifier | `.000` | `1.000` | `.000` | `1.000` |
+
+The identifier query is intentionally a hard negative/control: raw documents
+do not contain the stable source ID in their indexed text, while the compiled
+representation does. It therefore demonstrates an information-preservation
+requirement, not a free embedding win. A production system should retain exact
+IDs and scope fields before invoking semantic retrieval.
+
 ## Limits
 
 - Queries are generated from titles and metadata; no human questions or answer
