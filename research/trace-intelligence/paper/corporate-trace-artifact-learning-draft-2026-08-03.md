@@ -1,6 +1,6 @@
 # Corporate trace-artifact learning: a governed path from agent histories to reusable tools
 
-**Draft status:** empirical systems paper outline, updated 2026-08-06;
+**Draft status:** empirical systems paper outline, updated 2026-08-08;
 enterprise outcome gates remain open.
 
 The receipt-linked [current evidence matrix](../experiments/summaries/current-evidence-matrix-2026-08-06.md)
@@ -35,6 +35,12 @@ and abstained on `10/10` template-absence NIL proxies only when compatibility
 gates were enforced. The modernized TermSuite/Termolator and AcronymExpansion
 ports remain candidate-generation baselines, not enterprise ontology or
 embedding-training systems.
+
+The latest frontier replay uses 16 independently validated SQL artifacts mined
+from recorded tool calls, with source and target database families disjoint.
+The artifact-library arm reached `4/20` exact results versus `3/20` for both
+no-skill and formatting placebo; the paired contrast was one win, zero losses,
+and 19 ties. This is a small transfer signal, not a skill-promotion result.
 
 ## Research questions
 
@@ -121,6 +127,7 @@ claim boundary, and independent verifier where applicable.
 | Changed-system artifact safety | Strict fingerprints accept `1/5`; name-only adaptation `5/5` with 2 false semantic accepts; semantic IDs `3/5` with 0 false accepts | Use explicit semantic mappings plus result/outcome validation |
 | Validated subplan composition | Two seeded frontier replays on five broker tasks: composed library `10/10`, fresh generation and placebo `5/10` each; three stable wins and no stable losses | Decompose validated examples into typed subplans; promising but small, single-family, and not yet a promotion result |
 | Family-disjoint composition transfer | Two BIRD replays: library `8/40` versus `6/40` for both controls; one stable win and zero stable losses | Aggregate signal is stable but low-headroom; insufficient for a causal or enterprise claim |
+| Trace-validated artifact library transfer | One family-disjoint frontier replay: 16 validated trace artifacts; library `4/20` exact versus `3/20` no-skill and `3/20` placebo; one paired win, zero losses, 19 ties | Directionally positive but underpowered; keep artifacts scope-bound and replayable, not auto-promoted |
 
 ## Main conclusions
 

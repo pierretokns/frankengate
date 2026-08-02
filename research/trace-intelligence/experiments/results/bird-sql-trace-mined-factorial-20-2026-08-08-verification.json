@@ -1,0 +1,50 @@
+{
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "reason": "Verification confirms accounting and replay only; one family-disjoint frontier run is not a promotion claim.",
+    "verification_passed": true
+  },
+  "errors": {},
+  "independent_evaluator": "fresh immutable SQLite connections with duplicated SQL extraction, execution, and result comparison",
+  "normalized_receipt_summary": {
+    "formatting_placebo": {
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 17
+    },
+    "no_skill": {
+      "candidate_execution_error": 1,
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 16
+    },
+    "trace_validated_artifact_library": {
+      "episodes": 20,
+      "exact": 4,
+      "mismatch": 16
+    }
+  },
+  "raw_sha256": "dec9ad678ff1962b5ea45b1abe1be97db7908a133ec51cc87456dfaa8326a25e",
+  "receipt_summary_matches": true,
+  "recomputed_summary": {
+    "formatting_placebo": {
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 17
+    },
+    "no_skill": {
+      "candidate_execution_error": 1,
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 16
+    },
+    "trace_validated_artifact_library": {
+      "episodes": 20,
+      "exact": 4,
+      "mismatch": 16
+    }
+  },
+  "rows_verified": 60,
+  "schema_version": "frankengate-bird-sql-trace-mined-factorial-verification-v1"
+}

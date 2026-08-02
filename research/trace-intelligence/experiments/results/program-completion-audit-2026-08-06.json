@@ -71,6 +71,16 @@
           "exists": true,
           "path": "bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
           "sha256": "0847fa3d9f03ff358e953fd2d1bea57c76825a1978b3eafcbb6d0b487b6c3692"
+        },
+        {
+          "exists": true,
+          "path": "trace-commons-domain-adapter-2026-08-07.json",
+          "sha256": "fee3b5dcb4e7434afb874079a8bb367b7d0c1bd886096bb1e9264fa4ab9eb078"
+        },
+        {
+          "exists": true,
+          "path": "trace-commons-domain-adapter-2026-08-07-verification.json",
+          "sha256": "618598014dc3b8a0f6b3b65c8d41cfa04e5b40d0456c2f97a3cf2a4cd66b027d"
         }
       ],
       "id": "fair_controls_and_disjoint_splits",
@@ -128,6 +138,16 @@
           "exists": true,
           "path": "bird-trace-retrieval-cascade-2026-08-07-verification.json",
           "sha256": "3fc13665f93e16675e52662899e0f4ae33b0da6a8ac9c771b6b2d8b47efdcdff"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-trace-mined-factorial-20-2026-08-08.json",
+          "sha256": "1e5ab3d4846a5a7ef76b8b65e649a376fbe11d9e92e938efc7c036c43544f0a5"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-trace-mined-factorial-20-2026-08-08-verification.json",
+          "sha256": "295dd10ef4d325da4157ca73f42f4c57534bbacf4ef836cdedd1440ea21cdc78"
         }
       ],
       "id": "independent_outcome_evaluation",
