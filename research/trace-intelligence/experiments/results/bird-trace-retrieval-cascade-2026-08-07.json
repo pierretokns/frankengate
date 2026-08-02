@@ -1,0 +1,59 @@
+{
+  "aggregate": {
+    "dense": {
+      "result_match_at_1": 0,
+      "result_match_at_10": 2,
+      "result_match_at_5": 1,
+      "same_template_at_1": 0,
+      "same_template_at_5": 0,
+      "targets": 76
+    },
+    "hybrid": {
+      "result_match_at_1": 0,
+      "result_match_at_10": 2,
+      "result_match_at_5": 1,
+      "same_template_at_1": 0,
+      "same_template_at_5": 0,
+      "targets": 76
+    },
+    "identifier": {
+      "result_match_at_1": 0,
+      "result_match_at_10": 2,
+      "result_match_at_5": 1,
+      "same_template_at_1": 0,
+      "same_template_at_5": 0,
+      "targets": 76
+    },
+    "lexical": {
+      "result_match_at_1": 0,
+      "result_match_at_10": 2,
+      "result_match_at_5": 1,
+      "same_template_at_1": 0,
+      "same_template_at_5": 0,
+      "targets": 76
+    }
+  },
+  "claim_boundary": {
+    "dense_authority_established": false,
+    "enterprise_quality_established": false,
+    "human_intent_quality_established": false,
+    "outcome_backed_candidate_retrieval_measured": true,
+    "reason": "Public BIRD traces provide gold execution outcomes but no natural intent labels, enterprise identities, or prospective utility outcomes; result-set matches can collide.",
+    "skill_release_authorized": false
+  },
+  "cohort": {
+    "candidate_scope": "same database family; leave-one-out",
+    "database_families": 11,
+    "validated_artifacts": 76
+  },
+  "result_sha256": "cec766ea3bf7a2b4fea99e103b3a30425c114035cc4bce256156105a127290d4",
+  "schema_version": "frankengate-bird-trace-retrieval-cascade-v1",
+  "source": {
+    "embedding_dimension": 512,
+    "embedding_index_sha256": "fcb4d139725d1caa04c6eb996419a5dad7278ccf3d079944e124a04252a37119",
+    "embedding_key_mode": "state_action",
+    "harness_root": "world-model-harness-v0.2.2",
+    "raw_content_committed": false,
+    "trace_index_sha256": "e9fabdfd0f5c546f2a6a5153ad9aa2c2478c5e6507e310c273c8221593469055"
+  }
+}

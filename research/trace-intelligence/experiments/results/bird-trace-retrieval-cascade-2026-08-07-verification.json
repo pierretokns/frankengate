@@ -1,0 +1,13 @@
+{
+  "all_passed": true,
+  "checks": {
+    "all_arms_present": true,
+    "claim_boundary": true,
+    "metric_bounds": true,
+    "raw_content_external": true,
+    "schema": true,
+    "target_counts": true
+  },
+  "receipt_sha256": "0a77090e8cdfa166d1726e3a68093f6fb9a613d09e9c8c340cb74a309cffb22b",
+  "schema_version": "frankengate-bird-trace-retrieval-cascade-verification-v1"
+}

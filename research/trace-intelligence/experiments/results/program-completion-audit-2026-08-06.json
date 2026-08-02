@@ -118,6 +118,16 @@
           "exists": true,
           "path": "bird-trace-artifact-reuse-2026-08-07-verification.json",
           "sha256": "640b071fa559507650eac4ae7c378dcbe6229bf830db68dbdd51b24391e7b547"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-retrieval-cascade-2026-08-07.json",
+          "sha256": "0a77090e8cdfa166d1726e3a68093f6fb9a613d09e9c8c340cb74a309cffb22b"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-retrieval-cascade-2026-08-07-verification.json",
+          "sha256": "3fc13665f93e16675e52662899e0f4ae33b0da6a8ac9c771b6b2d8b47efdcdff"
         }
       ],
       "id": "independent_outcome_evaluation",

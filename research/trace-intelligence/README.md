@@ -66,6 +66,10 @@ The new [`trace-derived artifact reuse`](experiments/summaries/bird-trace-artifa
 study validates recorded BIRD tool calls independently before admission: only
 76/193 executable candidates matched gold, natural lexical reuse matched 1/76,
 and controlled typed-template parameter replay matched 75/75.
+The companion [`trace retrieval cascade`](experiments/summaries/bird-trace-retrieval-cascade-2026-08-07.md)
+replays lexical, identifier, dense state/action, and hybrid rankers against the
+same execution oracle; all four tied at 0/76 top-1 matches because the cohort
+contained no repeated normalized templates.
 
 ## Historical Claude/Codex mining
 
