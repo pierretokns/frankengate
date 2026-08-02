@@ -233,6 +233,12 @@ The strongest partner split remains:
 The current branch is ready for a reproduction packet, but not for a claim that
 Frankengate already learns enterprise skills or identifies collaborators.
 
+The [objective closure audit](corporate-trace-objective-closure-audit-2026-08-02.md)
+is the requirement-by-requirement ledger behind this status. It marks each
+requested capability as demonstrated, partial, or open and names the missing
+evidence, preventing a public proxy from silently standing in for an enterprise
+outcome.
+
 ## Authoritative receipts
 
 - [Research program status](research-program-status-2026-08-09.md)
