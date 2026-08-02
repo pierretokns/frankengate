@@ -82,6 +82,19 @@ select common, failure-prone tool patterns. Preserve exact parameter bindings,
 scope, resource identity, and independent replay; treat key-shape matches only
 as candidate recall.
 
+## Recovery and friction signal
+
+Among calls whose strict identity had already errored earlier in the same
+session, **3,866/4,506** later calls succeeded (85.7967%). Calls with no prior
+same-session error succeeded **60,501/66,443** times (91.0570%). Recovery is
+therefore common but still materially less reliable than ordinary calls; it is
+an excellent source of repair/eval candidates, not a promotion signal.
+
+The recovery success rates were especially low for shell (`33.5766%`, 184/548)
+and mutation (`76.2500%`, 183/240), compared with read/search (`94.1319%`,
+3,497/3,715). This supports sampling recovery traces for targeted evaluation,
+with tool-class-specific safety and replay gates.
+
 ## Tool-class stratification
 
 The same exact-identity prior was stratified using deterministic coarse classes

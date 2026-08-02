@@ -119,6 +119,8 @@ def run(root: Path, output: Path) -> dict[str, Any]:
     category_buckets: dict[str, dict[str, dict[str, int]]] = defaultdict(lambda: defaultdict(bucket))
     category_parameter_buckets: dict[str, dict[str, dict[str, int]]] = defaultdict(lambda: defaultdict(bucket))
     category_counts: Counter[str] = Counter()
+    recovery_buckets: dict[str, dict[str, int]] = defaultdict(bucket)
+    category_recovery_buckets: dict[str, dict[str, dict[str, int]]] = defaultdict(lambda: defaultdict(bucket))
     session_artifacts: Counter[str] = Counter()
     first_success_rank: dict[str, int] = {}
     call_index = 0
@@ -126,6 +128,7 @@ def run(root: Path, output: Path) -> dict[str, Any]:
     for session in sessions:
         project = session["project"]
         project_seen = project_success[project]
+        session_error_seen: set[str] = set()
         for fingerprint, keyshape, failed, tool_class in session["calls"]:
             call_index += 1
             same_prior = fingerprint in project_seen
@@ -149,6 +152,11 @@ def run(root: Path, output: Path) -> dict[str, Any]:
             category_counts[tool_class] += 1
             add(category_buckets[tool_class][prior_category], failed)
             add(category_parameter_buckets[tool_class][parameter_category], failed)
+            recovery_category = "after_same_session_error" if fingerprint in session_error_seen else "no_same_session_error"
+            add(recovery_buckets[recovery_category], failed)
+            add(category_recovery_buckets[tool_class][recovery_category], failed)
+            if failed:
+                session_error_seen.add(fingerprint)
             session_artifacts[fingerprint] += 1
             if not failed and fingerprint not in first_success_rank:
                 first_success_rank[fingerprint] = call_index
@@ -185,6 +193,7 @@ def run(root: Path, output: Path) -> dict[str, Any]:
         },
         "buckets": {name: summarize(value) for name, value in sorted(buckets.items())},
         "parameter_buckets": {name: summarize(value) for name, value in sorted(parameter_buckets.items())},
+        "recovery_buckets": {name: summarize(value) for name, value in sorted(recovery_buckets.items())},
         "category_buckets": {
             category: {
                 "call_count": category_counts[category],
@@ -192,6 +201,10 @@ def run(root: Path, output: Path) -> dict[str, Any]:
                 "parameterized": {name: summarize(value) for name, value in sorted(category_parameter_buckets[category].items())},
             }
             for category, values in sorted(category_buckets.items())
+        },
+        "category_recovery_buckets": {
+            category: {name: summarize(value) for name, value in sorted(values.items())}
+            for category, values in sorted(category_recovery_buckets.items())
         },
         "comparison": {
             "same_project_lift_vs_no_prior": round(

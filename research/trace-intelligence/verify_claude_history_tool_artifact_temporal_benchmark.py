@@ -32,6 +32,7 @@ def verify(input_path: Path, output_path: Path) -> dict[str, object]:
         "required_buckets_present": {"no_prior_success", "prior_same_project_success", "prior_other_project_success_only"}.issubset(buckets),
         "required_parameter_buckets_present": {"no_prior_keyshape_success", "parameter_same_project_success", "parameter_other_project_success_only"}.issubset(parameter_buckets),
         "category_buckets_present": len(result.get("category_buckets", {})) >= 3,
+        "recovery_buckets_present": {"no_same_session_error", "after_same_session_error"}.issubset(result.get("recovery_buckets", {})),
         "nonempty_calls": result.get("coverage", {}).get("paired_call_count", 0) > 0,
     }
     receipt = {"schema_version": "frankengate-claude-history-tool-artifact-temporal-verification-v1", "passed": all(checks.values()), "checks": checks, "result_sha256": expected}

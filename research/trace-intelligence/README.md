@@ -275,6 +275,10 @@ Tool-class stratification shows the prior is not uniform: exact same-project
 priors lifted shell success from `69.7511%` to `93.8326%` and mutation success
 from `94.1272%` to `99.3243%`, while read/search was already at `99.3934%`.
 Reuse gates should therefore be tool-class-specific.
+Same-session recovery calls are a useful eval-mining lane: 3,866/4,506 calls
+after a prior error succeeded, but shell recovery was only `33.5766%` and
+mutation recovery `76.2500%`. Recovery is a friction signal, not a skill or
+artifact-promotion label.
 The [`DataClaw project adapter`](experiments/summaries/dataclaw-project-adapter-2026-08-09.md)
 probe improved full-cohort combined project-held-out MRR for Peter (`.769341→.854452`) but
 was neutral for Vaynelee, supporting scoped experimentation rather than a

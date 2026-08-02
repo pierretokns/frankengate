@@ -230,6 +230,72 @@
       }
     }
   },
+  "category_recovery_buckets": {
+    "mutation": {
+      "after_same_session_error": {
+        "errors": 57,
+        "success_rate": 0.7625,
+        "successes": 183,
+        "uses": 240
+      },
+      "no_same_session_error": {
+        "errors": 1532,
+        "success_rate": 0.943714,
+        "successes": 25686,
+        "uses": 27218
+      }
+    },
+    "orchestration": {
+      "no_same_session_error": {
+        "errors": 71,
+        "success_rate": 0.867041,
+        "successes": 463,
+        "uses": 534
+      }
+    },
+    "other": {
+      "after_same_session_error": {
+        "errors": 1,
+        "success_rate": 0.666667,
+        "successes": 2,
+        "uses": 3
+      },
+      "no_same_session_error": {
+        "errors": 154,
+        "success_rate": 0.916667,
+        "successes": 1694,
+        "uses": 1848
+      }
+    },
+    "read_search": {
+      "after_same_session_error": {
+        "errors": 218,
+        "success_rate": 0.941319,
+        "successes": 3497,
+        "uses": 3715
+      },
+      "no_same_session_error": {
+        "errors": 322,
+        "success_rate": 0.986139,
+        "successes": 22908,
+        "uses": 23230
+      }
+    },
+    "shell": {
+      "after_same_session_error": {
+        "errors": 364,
+        "success_rate": 0.335766,
+        "successes": 184,
+        "uses": 548
+      },
+      "no_same_session_error": {
+        "errors": 3863,
+        "success_rate": 0.716227,
+        "successes": 9750,
+        "uses": 13613
+      }
+    }
+  },
   "claim_boundary": {
     "causal_user_benefit": false,
     "reason": "Observed tool success is a process outcome only; this temporal association does not establish semantic intent, safety, optimality, or causal artifact utility.",
@@ -276,7 +342,21 @@
     "outcome": "explicit tool_result is_error flag",
     "prior_freeze": "prior success sets updated only after each session completes"
   },
-  "result_sha256": "7ea3e52949641d64335386ad81a104867e191b9f1d32ae215fca9915c2e2a72e",
+  "recovery_buckets": {
+    "after_same_session_error": {
+      "errors": 640,
+      "success_rate": 0.857967,
+      "successes": 3866,
+      "uses": 4506
+    },
+    "no_same_session_error": {
+      "errors": 5942,
+      "success_rate": 0.91057,
+      "successes": 60501,
+      "uses": 66443
+    }
+  },
+  "result_sha256": "d23ebbaa3f3b6e423729adc87b2b71626b2e368214106bb7d1c95fc755823973",
   "schema_version": "frankengate-claude-history-tool-artifact-temporal-v1",
   "source": {
     "byte_count": 998165678,

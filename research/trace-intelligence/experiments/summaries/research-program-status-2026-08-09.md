@@ -163,6 +163,10 @@ The tool-class split is operationally important: same-project exact priors lifte
 shell success from `69.7511%` to `93.8326%` and mutation from `94.1272%` to
 `99.3243%`, while read/search was near ceiling and slightly lower after prior
 reuse. Prior policies must be tool-class-specific and safety-gated.
+Same-session recovery calls provide a targeted eval/friction lane: 3,866/4,506
+later calls succeeded after an earlier identity error, but shell recovery was
+only `33.5766%` and mutation `76.2500%`. Recovery should be sampled for repair
+analysis and replay, not treated as automatic skill evidence.
 The [DataClaw project adapter probe](dataclaw-project-adapter-2026-08-09.md)
 improved Peter's full-cohort combined project-held-out MRR `.769341→.854452`, but left
 Vaynelee's combined MRR unchanged at `.978495` because that cohort was near
