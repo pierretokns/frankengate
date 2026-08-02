@@ -1,0 +1,554 @@
+{
+  "aggregate": [
+    {
+      "backend": "fts",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.8194444444444445,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.310917,
+        "p95_latency_ms": 0.376458,
+        "recall_at_1": 0.75,
+        "recall_at_k": 0.9166666666666666,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 13,
+      "size": 1
+    },
+    {
+      "backend": "tfidf",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6666666666666666,
+        "nil_false_positive_rate": 0.0,
+        "p50_latency_ms": 0.287083,
+        "p95_latency_ms": 0.317959,
+        "recall_at_1": 0.6666666666666666,
+        "recall_at_k": 0.6666666666666666,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 13,
+      "size": 1
+    },
+    {
+      "backend": "hybrid",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.8194444444444445,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.309042,
+        "p95_latency_ms": 0.386958,
+        "recall_at_1": 0.75,
+        "recall_at_k": 0.9166666666666666,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 13,
+      "size": 1
+    },
+    {
+      "backend": "fts",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 1.0,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.305125,
+        "p95_latency_ms": 0.343416,
+        "recall_at_1": 1.0,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 13,
+      "size": 1
+    },
+    {
+      "backend": "tfidf",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 1.0,
+        "nil_false_positive_rate": 0.0,
+        "p50_latency_ms": 0.290292,
+        "p95_latency_ms": 0.350916,
+        "recall_at_1": 1.0,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 13,
+      "size": 1
+    },
+    {
+      "backend": "hybrid",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 1.0,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.360791,
+        "p95_latency_ms": 0.481208,
+        "recall_at_1": 1.0,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 13,
+      "size": 1
+    },
+    {
+      "backend": "fts",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6972222222222223,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.598125,
+        "p95_latency_ms": 0.763791,
+        "recall_at_1": 0.6833333333333333,
+        "recall_at_k": 0.7166666666666667,
+        "wrong_wiki_at_1": 0.26666666666666666
+      },
+      "records": 61,
+      "size": 5
+    },
+    {
+      "backend": "tfidf",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6666666666666666,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.580083,
+        "p95_latency_ms": 0.716333,
+        "recall_at_1": 0.6666666666666666,
+        "recall_at_k": 0.6666666666666666,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 61,
+      "size": 5
+    },
+    {
+      "backend": "hybrid",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6972222222222223,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.616917,
+        "p95_latency_ms": 0.718125,
+        "recall_at_1": 0.6833333333333333,
+        "recall_at_k": 0.7166666666666667,
+        "wrong_wiki_at_1": 0.26666666666666666
+      },
+      "records": 61,
+      "size": 5
+    },
+    {
+      "backend": "fts",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 1.0,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.644458,
+        "p95_latency_ms": 0.776709,
+        "recall_at_1": 1.0,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 61,
+      "size": 5
+    },
+    {
+      "backend": "tfidf",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 1.0,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.604542,
+        "p95_latency_ms": 0.705542,
+        "recall_at_1": 1.0,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 61,
+      "size": 5
+    },
+    {
+      "backend": "hybrid",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 1.0,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.651834,
+        "p95_latency_ms": 0.816875,
+        "recall_at_1": 1.0,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 61,
+      "size": 5
+    },
+    {
+      "backend": "fts",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6627777777777778,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 1.435084,
+        "p95_latency_ms": 1.714625,
+        "recall_at_1": 0.65,
+        "recall_at_k": 0.6916666666666667,
+        "wrong_wiki_at_1": 0.3
+      },
+      "records": 121,
+      "size": 10
+    },
+    {
+      "backend": "tfidf",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6541666666666667,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 1.349458,
+        "p95_latency_ms": 1.565125,
+        "recall_at_1": 0.6416666666666667,
+        "recall_at_k": 0.6666666666666666,
+        "wrong_wiki_at_1": 0.3
+      },
+      "records": 121,
+      "size": 10
+    },
+    {
+      "backend": "hybrid",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6613888888888888,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 1.547792,
+        "p95_latency_ms": 1.896667,
+        "recall_at_1": 0.65,
+        "recall_at_k": 0.6916666666666667,
+        "wrong_wiki_at_1": 0.3
+      },
+      "records": 121,
+      "size": 10
+    },
+    {
+      "backend": "fts",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.955787037037037,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 1.485083,
+        "p95_latency_ms": 1.807958,
+        "recall_at_1": 0.9333333333333333,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.05
+      },
+      "records": 121,
+      "size": 10
+    },
+    {
+      "backend": "tfidf",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.9833333333333333,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 1.46,
+        "p95_latency_ms": 1.795542,
+        "recall_at_1": 0.9666666666666667,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 121,
+      "size": 10
+    },
+    {
+      "backend": "hybrid",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.9648611111111111,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 1.560125,
+        "p95_latency_ms": 1.833875,
+        "recall_at_1": 0.95,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.03333333333333333
+      },
+      "records": 121,
+      "size": 10
+    },
+    {
+      "backend": "fts",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6188412698412699,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 4.351916,
+        "p95_latency_ms": 6.31375,
+        "recall_at_1": 0.61,
+        "recall_at_k": 0.64,
+        "wrong_wiki_at_1": 0.32
+      },
+      "records": 301,
+      "size": 25
+    },
+    {
+      "backend": "tfidf",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.5913446969696969,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 4.210041,
+        "p95_latency_ms": 6.412125,
+        "recall_at_1": 0.5666666666666667,
+        "recall_at_k": 0.63,
+        "wrong_wiki_at_1": 0.32
+      },
+      "records": 301,
+      "size": 25
+    },
+    {
+      "backend": "hybrid",
+      "compiled": false,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.6161111111111112,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 4.666459,
+        "p95_latency_ms": 6.794375,
+        "recall_at_1": 0.6066666666666667,
+        "recall_at_k": 0.6333333333333333,
+        "wrong_wiki_at_1": 0.32
+      },
+      "records": 301,
+      "size": 25
+    },
+    {
+      "backend": "fts",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.9517301587301588,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 4.70125,
+        "p95_latency_ms": 6.901916,
+        "recall_at_1": 0.9466666666666667,
+        "recall_at_k": 0.9666666666666667,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 301,
+      "size": 25
+    },
+    {
+      "backend": "tfidf",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.9029935064935065,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 4.585708,
+        "p95_latency_ms": 6.847458,
+        "recall_at_1": 0.8633333333333333,
+        "recall_at_k": 0.9633333333333334,
+        "wrong_wiki_at_1": 0.016666666666666666
+      },
+      "records": 301,
+      "size": 25
+    },
+    {
+      "backend": "hybrid",
+      "compiled": true,
+      "family": "local",
+      "metrics": {
+        "mrr": 0.9526111111111112,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 4.96175,
+        "p95_latency_ms": 7.205084,
+        "recall_at_1": 0.9433333333333334,
+        "recall_at_k": 0.9666666666666667,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 301,
+      "size": 25
+    },
+    {
+      "backend": "dense",
+      "compiled": false,
+      "embedding_build_ms": 29248.829957912676,
+      "family": "BAAI/bge-base-en-v1.5",
+      "metrics": {
+        "mrr": 0.7966269841269842,
+        "nil_false_positive_rate": 1.0,
+        "p50_search_ms": 0.012709,
+        "p95_search_ms": 0.022458,
+        "recall_at_1": 0.75,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "query_encoding_ms": 61.75237498246133,
+      "records": 13,
+      "size": 1
+    },
+    {
+      "backend": "dense",
+      "compiled": false,
+      "embedding_build_ms": 29248.829957912676,
+      "family": "BAAI/bge-base-en-v1.5",
+      "metrics": {
+        "mrr": 0.7778130039894745,
+        "nil_false_positive_rate": 1.0,
+        "p50_search_ms": 0.049625,
+        "p95_search_ms": 0.0685,
+        "recall_at_1": 0.7,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.016666666666666666
+      },
+      "query_encoding_ms": 246.5147910406813,
+      "records": 61,
+      "size": 5
+    },
+    {
+      "backend": "dense",
+      "compiled": false,
+      "embedding_build_ms": 29248.829957912676,
+      "family": "BAAI/bge-base-en-v1.5",
+      "metrics": {
+        "mrr": 0.8080731686614039,
+        "nil_false_positive_rate": 1.0,
+        "p50_search_ms": 0.134542,
+        "p95_search_ms": 0.152792,
+        "recall_at_1": 0.75,
+        "recall_at_k": 0.9666666666666667,
+        "wrong_wiki_at_1": 0.016666666666666666
+      },
+      "query_encoding_ms": 367.39666701760143,
+      "records": 121,
+      "size": 10
+    },
+    {
+      "backend": "dense",
+      "compiled": false,
+      "embedding_build_ms": 29248.829957912676,
+      "family": "BAAI/bge-base-en-v1.5",
+      "metrics": {
+        "mrr": 0.6115703846806788,
+        "nil_false_positive_rate": 1.0,
+        "p50_search_ms": 0.420625,
+        "p95_search_ms": 0.425417,
+        "recall_at_1": 0.52,
+        "recall_at_k": 0.8733333333333333,
+        "wrong_wiki_at_1": 0.09333333333333334
+      },
+      "query_encoding_ms": 1019.8428749572486,
+      "records": 301,
+      "size": 25
+    },
+    {
+      "backend": "dense",
+      "compiled": true,
+      "embedding_build_ms": 34716.39475005213,
+      "family": "BAAI/bge-base-en-v1.5",
+      "metrics": {
+        "mrr": 0.8361111111111111,
+        "nil_false_positive_rate": 1.0,
+        "p50_search_ms": 0.014458,
+        "p95_search_ms": 0.024666,
+        "recall_at_1": 0.75,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "query_encoding_ms": 70.67895797081292,
+      "records": 13,
+      "size": 1
+    },
+    {
+      "backend": "dense",
+      "compiled": true,
+      "embedding_build_ms": 34716.39475005213,
+      "family": "BAAI/bge-base-en-v1.5",
+      "metrics": {
+        "mrr": 0.8213161375661375,
+        "nil_false_positive_rate": 1.0,
+        "p50_search_ms": 0.053333,
+        "p95_search_ms": 0.084083,
+        "recall_at_1": 0.7333333333333333,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "query_encoding_ms": 204.15216602850705,
+      "records": 61,
+      "size": 5
+    },
+    {
+      "backend": "dense",
+      "compiled": true,
+      "embedding_build_ms": 34716.39475005213,
+      "family": "BAAI/bge-base-en-v1.5",
+      "metrics": {
+        "mrr": 0.8462070105820106,
+        "nil_false_positive_rate": 1.0,
+        "p50_search_ms": 0.1375,
+        "p95_search_ms": 0.153042,
+        "recall_at_1": 0.775,
+        "recall_at_k": 0.9916666666666667,
+        "wrong_wiki_at_1": 0.008333333333333333
+      },
+      "query_encoding_ms": 405.6319589726627,
+      "records": 121,
+      "size": 10
+    },
+    {
+      "backend": "dense",
+      "compiled": true,
+      "embedding_build_ms": 34716.39475005213,
+      "family": "BAAI/bge-base-en-v1.5",
+      "metrics": {
+        "mrr": 0.6656314328373152,
+        "nil_false_positive_rate": 1.0,
+        "p50_search_ms": 0.422166,
+        "p95_search_ms": 0.426,
+        "recall_at_1": 0.5733333333333334,
+        "recall_at_k": 0.92,
+        "wrong_wiki_at_1": 0.07
+      },
+      "query_encoding_ms": 1045.8927500294521,
+      "records": 301,
+      "size": 25
+    }
+  ],
+  "claim_boundary": "Real local wiki-export retrieval evidence only. Source-title identity labels do not establish answer correctness, enterprise user utility, domain-specific embedding superiority, MCP behavior, or safe NIL handling.",
+  "protocol": {
+    "answer_quality": false,
+    "corpus": "local State of AI wiki export adapted by source domain",
+    "frontier_agent": false,
+    "gold": "source-record identity from adapted manifest",
+    "k": 20,
+    "sizes": [
+      1,
+      5,
+      10,
+      25
+    ]
+  },
+  "schema_version": "frankengate-stateofai-wiki-receipt-v1",
+  "source": {
+    "corpus_bytes": 2112324,
+    "corpus_sha256": "7e2beb2a13d98bf8dbc7595e7a0a13e403457bb0c58e37d90c16cb4722405833",
+    "dense_compiled_sha256": "a4489051663cde45d3f8b40a59249261589760000cd72c0dd78d3a28468769d4",
+    "dense_raw_sha256": "f4f9831a63d7b514155167bdca68c503bc0c4a8e0cf7888ce8d4fdd8582cc7bf",
+    "generic_run_sha256": "ea610b99e96814bc360a2b23ccc67783ce164e088b843b1f732f4c87dd2de852"
+  }
+}
