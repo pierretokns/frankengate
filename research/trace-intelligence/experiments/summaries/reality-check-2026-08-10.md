@@ -77,6 +77,38 @@ database or another one-shot generator is not justified until a consented,
 entity/time/project-held-out cohort shows downstream utility and lower
 wrong-system/NIL error.
 
+## Embedding versus model-based insight mining
+
+The two approaches answer different questions and should not be collapsed into
+one score. On a 16-case BIRD trace probe, a frontier model given only the user
+question abstained on all cases. Adding the recorded SQL trajectory raised
+artifact recall to `87.5%`, but positive precision was only `53.8%` with six
+false positives. Tool context adds signal; it does not make model judgment a
+release gate. The authoritative check remained independent SQLite replay.
+
+On six blinded Wisp recovery candidates, frontier/local model agreement was
+`33.3%` for cause, `16.7%` for outcome, and `0%` for usefulness; all-six-field
+agreement was `0%`. This means a structured model pass is a review proposal,
+not a stable insight label. On the nine-query MATM cascade, Luna tied lexical
+ranking while adding `104.118s` total wall time, whereas embeddings were weaker
+on that already-rich candidate pool but had improved candidate recall in a
+separate study.
+
+The evidence-backed cascade is therefore:
+
+```text
+exact identifiers + scope
+  -> lexical/termhood/dense candidate recall
+  -> trajectory-aware frontier proposal (only when ambiguous/high-value)
+  -> independent replay, authority, and schema checks
+  -> human or multi-model adjudication for insight labels
+```
+
+Do not use a model to label usefulness, skill gaps, or enterprise patterns from
+raw traces without an outcome-bearing rubric. Do not use embeddings to infer
+those labels. They are retrieval and prioritization components; the truth
+source must be a reviewer, a deterministic verifier, or a prospective outcome.
+
 ## What is not proven
 
 The following enterprise claims remain unproven because no current receipt has
