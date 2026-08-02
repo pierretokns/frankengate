@@ -96,11 +96,20 @@ def train_adapter(examples: list[tuple[list[float], list[float]]], *, epochs: in
     return weights, pair_count
 
 
-def run(traces_path: Path, manifest: Path, db_root: Path, output: Path, *, endpoint: str, per_db: int) -> dict[str, Any]:
+def run(
+    traces_path: Path,
+    manifest: Path,
+    db_root: Path,
+    output: Path,
+    *,
+    endpoint: str,
+    per_db: int,
+    expected_evaluation_tasks: int | None = 44,
+) -> dict[str, Any]:
     traces = load_traces(traces_path, manifest)
     train, evaluation = cohort(traces, db_root, per_db)
-    if len(evaluation) != 44:
-        raise ValueError(f"expected 44 evaluation tasks, got {len(evaluation)}")
+    if expected_evaluation_tasks is not None and len(evaluation) != expected_evaluation_tasks:
+        raise ValueError(f"expected {expected_evaluation_tasks} evaluation tasks, got {len(evaluation)}")
     candidate_tables = sorted({table for trace in train + evaluation for table in trace.exposed_tables})
     # Embed each question and each database/table object once.
     texts: list[str] = []
@@ -171,7 +180,7 @@ def run(traces_path: Path, manifest: Path, db_root: Path, output: Path, *, endpo
         "schema_version": SCHEMA_VERSION,
         "source": {"traces_sha256": file_hash(traces_path), "manifest_sha256": file_hash(manifest), "raw_content_committed": False, "sqlite_root": "external-pinned-bird-minidev"},
         "dataset": {"train_tasks": len(train), "evaluation_tasks": len(evaluation), "database_families": sorted({row["db_name"] for row in rows}), "split": "within-database deterministic even/odd task split; adapter trains on even and evaluates on odd", "positive_label": "recorded SQL tables plus independently replay-confirmed compatible substitutions"},
-        "protocol": {"embedding_endpoint": endpoint, "embedding_model": EMBED_MODEL, "adapter": "pairwise hinge over absolute-difference and interaction features", "epochs": 20, "seed": 7, "training_pair_count": pair_count, "candidate_pool": "all tables exposed in each trace", "raw_content_committed": False},
+        "protocol": {"embedding_endpoint": endpoint, "embedding_model": EMBED_MODEL, "adapter": "pairwise hinge over absolute-difference and interaction features", "epochs": 20, "seed": 7, "training_pair_count": pair_count, "candidate_pool": "all tables exposed in each trace", "per_db": per_db, "expected_evaluation_tasks": expected_evaluation_tasks, "raw_content_committed": False},
         "arms": arms,
         "rows": rows,
         "claim_boundary": {"task_disjoint_adapter_measured": True, "custom_enterprise_embedding_established": False, "semantic_alias_quality_established": False, "validated_artifact_utility_established": False, "enterprise_skill_transfer_measured": False, "reason": "Public WMH-BIRD proxy with SQL-table labels and independent SQLite compatibility. This is a fold-local reranking diagnostic, not an enterprise embedding or causal utility result."},
@@ -191,8 +200,9 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--endpoint", default="http://127.0.0.1:11434")
     parser.add_argument("--per-db", type=int, default=4)
+    parser.add_argument("--expected-evaluation-tasks", type=int, default=44, help="Expected evaluation rows; use 0 to allow a variable full odd-half cohort.")
     args = parser.parse_args()
-    run(args.traces, args.manifest, args.db_root, args.output, endpoint=args.endpoint, per_db=args.per_db)
+    run(args.traces, args.manifest, args.db_root, args.output, endpoint=args.endpoint, per_db=args.per_db, expected_evaluation_tasks=None if args.expected_evaluation_tasks == 0 else args.expected_evaluation_tasks)
     return 0
 
 
