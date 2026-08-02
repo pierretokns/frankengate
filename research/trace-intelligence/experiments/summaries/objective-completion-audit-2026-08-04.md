@@ -10,6 +10,12 @@ This audit maps the research objective to the strongest current evidence. A
 claim remains open when the evidence is synthetic, public-proxy-only,
 underpowered, silver-labeled, or missing a downstream outcome.
 
+**Current superseding reality check:** [2026-08-10 reality check](reality-check-2026-08-10.md)
+incorporates the later changed-system replay, dense/frontier cascade,
+task-disjoint adapter, and local cross-user candidate studies. This file is
+retained as the original requirement ledger; the newer audit is the current
+steering summary.
+
 | Objective area | Current result | Confidence | What is still missing | Tracking |
 | --- | --- | --- | --- | --- |
 | Reusable validated SQL/tool artifacts | Governed capsules accept valid bound artifacts and reject stale authority, wrong scope, expiry, schema drift, unsafe interpolation, and parameter errors. Independent PostgreSQL recomputation passes. | **Mechanics supported** | Larger multi-tenant/concurrent replay, deletion/failover, and prospective task lift. | [#119](https://github.com/pierretokns/frankengate/issues/119) |

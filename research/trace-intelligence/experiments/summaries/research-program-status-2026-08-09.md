@@ -3,6 +3,9 @@
 This update consolidates the latest independent runs. It is a status ledger,
 not a claim that the full enterprise research objective is complete.
 
+For the requirement-level steering summary, see the [2026-08-10 reality
+check](reality-check-2026-08-10.md).
+
 ## What is now supported by evidence
 
 ### 1. Validated artifact mechanics
