@@ -29,6 +29,15 @@ paths, and messages are never written to the receipt.
 | Shared terms with at least one pair below `.05` | 543/778 (69.79%) |
 | Pairs at or above `.50` | 1,060 |
 
+The result is not dependent on one arbitrary cutoff:
+
+| Context-Jaccard threshold | Pair rate below | Term rate with any pair below |
+|---:|---:|---:|
+| `.01` | 5.43% | 34.32% |
+| `.05` | 37.22% | 69.79% |
+| `.10` | 72.13% | 84.32% |
+| `.20` | 92.70% | 93.70% |
+
 ## Interpretation
 
 This gives Frankengate a practical hard-negative mining primitive: repeated

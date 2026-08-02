@@ -15,7 +15,39 @@
     "pairs_below_0.05": 13915,
     "shared_terms_with_context": 778,
     "term_collision_rate": 0.697943,
-    "terms_with_any_pair_below_0.05": 543
+    "terms_with_any_pair_below_0.05": 543,
+    "threshold_sweep": {
+      "0.01": {
+        "pair_count_below": 2030,
+        "pair_rate_below": 0.054293,
+        "term_count_with_any_pair_below": 267,
+        "term_rate_with_any_pair_below": 0.343188
+      },
+      "0.05": {
+        "pair_count_below": 13915,
+        "pair_rate_below": 0.372158,
+        "term_count_with_any_pair_below": 543,
+        "term_rate_with_any_pair_below": 0.697943
+      },
+      "0.10": {
+        "pair_count_below": 26968,
+        "pair_rate_below": 0.721262,
+        "term_count_with_any_pair_below": 656,
+        "term_rate_with_any_pair_below": 0.843188
+      },
+      "0.20": {
+        "pair_count_below": 34659,
+        "pair_rate_below": 0.926959,
+        "term_count_with_any_pair_below": 729,
+        "term_rate_with_any_pair_below": 0.937018
+      },
+      "0.50": {
+        "pair_count_below": 36330,
+        "pair_rate_below": 0.97165,
+        "term_count_with_any_pair_below": 772,
+        "term_rate_with_any_pair_below": 0.992288
+      }
+    }
   },
   "coverage": {
     "context_pair_count": 37390,
@@ -33,7 +65,7 @@
     "term_selection": "project-local document-frequency top terms",
     "top_terms_per_project": 100
   },
-  "result_sha256": "a9f26ce039903f90766f749afea1a457a36a61f73d2018dbcb8d765c5e44753e",
+  "result_sha256": "374f87da55ff74e79ece0d4bc726f1b33f73de3817f225e8c8cccd4f25f5e330",
   "schema_version": "frankengate-claude-history-term-context-collisions-v1",
   "source": {
     "byte_count": 998165678,

@@ -169,6 +169,7 @@ def run(root: Path, output: Path) -> dict[str, Any]:
         context_sets[(project, term)] = {digest(value) for value in counter}
 
     pair_values: list[float] = []
+    term_pair_values: dict[str, list[float]] = defaultdict(list)
     collision_terms = 0
     ambiguous_terms = 0
     pairs_with_context = 0
@@ -187,9 +188,20 @@ def run(root: Path, output: Path) -> dict[str, Any]:
                 value = jaccard(left_context, right_context)
                 term_values.append(value)
                 pair_values.append(value)
+                term_pair_values[term].append(value)
                 pairs_with_context += 1
         if term_values and min(term_values) < 0.05:
             collision_terms += 1
+
+    threshold_sweep = {}
+    for threshold in (0.01, 0.05, 0.10, 0.20, 0.50):
+        key = f"{threshold:.2f}"
+        threshold_sweep[key] = {
+            "pair_count_below": sum(value < threshold for value in pair_values),
+            "pair_rate_below": round(sum(value < threshold for value in pair_values) / len(pair_values), 6) if pair_values else 0.0,
+            "term_count_with_any_pair_below": sum(any(value < threshold for value in values) for values in term_pair_values.values()),
+            "term_rate_with_any_pair_below": round(sum(any(value < threshold for value in values) for values in term_pair_values.values()) / len(term_pair_values), 6) if term_pair_values else 0.0,
+        }
 
     result: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
@@ -227,6 +239,7 @@ def run(root: Path, output: Path) -> dict[str, Any]:
             "pair_jaccard_max": quantile(pair_values, 1.0),
             "pairs_below_0.05": sum(value < 0.05 for value in pair_values),
             "pairs_at_least_0.50": sum(value >= 0.50 for value in pair_values),
+            "threshold_sweep": threshold_sweep,
         },
         "claim_boundary": {
             "semantic_collision": False,
