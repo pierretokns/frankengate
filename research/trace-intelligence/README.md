@@ -145,6 +145,10 @@ graph retrieval, validation, and model adaptation. It records why one-pass
 corporate ontology generation remains unsolved, what OntoEKG/GraphRAG/OntoGPT/
 Zingg/Text2KGBench/SHACL each contribute, and the fair combined experiment and
 company-practice patterns to test next.
+The newer [`ontology-generation reality check`](experiments/summaries/reality-check-2026-08-10.md)
+adds the full-corpus MiniLM control, the task-disjoint Nomic adapter result,
+recent OntoEKG exact/fuzzy metrics, and the current decision to keep ontology
+proposals in a reviewed queue rather than a canonical write path.
 The [`headline receipt-consistency audit`](experiments/summaries/headline-receipt-consistency-audit-2026-08-02.md)
 recomputes 19 selected high-impact claims against their receipts; all checks
 pass, while preserving the separately documented SkillLearnBench missing-answer
