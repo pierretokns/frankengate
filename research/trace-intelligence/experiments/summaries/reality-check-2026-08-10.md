@@ -109,6 +109,37 @@ raw traces without an outcome-bearing rubric. Do not use embeddings to infer
 those labels. They are retrieval and prioritization components; the truth
 source must be a reviewer, a deterministic verifier, or a prospective outcome.
 
+## Historical retrieval supervision: the strongest adjacent production method
+
+[Cursor's semantic-search report](https://cursor.com/blog/semsearch) describes a
+useful method that is adjacent to, but not identical with, governed SQL/tool
+learning: later search/open behavior is reviewed by an LLM to create relevance
+targets, then distilled into a custom retriever. Its benchmark work also mines
+real sessions and pairs them with committed changes before running offline and
+online checks ([CursorBench](https://cursor.com/blog/cursorbench)). This is much
+stronger supervision than raw term frequency, but it still does not establish
+enterprise authority, user intent, or safe artifact reuse.
+
+The adaptable Frankengate version is now specified as a separate method arm:
+
+```text
+episode query + exposed candidate set
+  -> later inspection/search/open/repair evidence
+  -> frontier relevance proposal (positive / negative / unclear)
+  -> replay and authority validation
+  -> fold-local ranker or embedding adapter
+  -> project/time/system-held-out evaluation
+```
+
+Important controls are exposure-aware negatives (a candidate not shown is
+missing data, not a negative), same-surface/wrong-system pairs, temporal
+replacements, stale authority, and a regeneration arm when the artifact pool
+has no compatible item. The model-generated relevance label remains silver;
+only independent replay, human adjudication, or a prospective outcome can
+promote it. This is the next credible route to a corporate retriever trained
+from traces, but it must not be described as reproducing Cursor's private model
+or internal benchmark.
+
 ## What is not proven
 
 The following enterprise claims remain unproven because no current receipt has
