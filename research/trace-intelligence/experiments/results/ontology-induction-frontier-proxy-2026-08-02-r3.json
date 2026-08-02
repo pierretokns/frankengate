@@ -1,0 +1,216 @@
+{
+  "arms": {
+    "goi_proposal": {
+      "completed": 5,
+      "failures": 0,
+      "mean_elapsed_ms": 23252.439,
+      "mean_entities": 14.2,
+      "mean_evidence_grounding_rate": 0.951784,
+      "mean_relations": 7.0
+    },
+    "ontogpt_population": {
+      "completed": 5,
+      "failures": 0,
+      "mean_elapsed_ms": 17736.831,
+      "mean_entities": 7.0,
+      "mean_evidence_grounding_rate": 0.780952,
+      "mean_relations": 4.2
+    }
+  },
+  "claim_boundary": {
+    "alias_quality_established": false,
+    "authority_or_temporal_validity_established": false,
+    "ontology_correctness_established": false,
+    "reason": "Public trace excerpts and model-proposed structures have no independent ontology labels, principal/authority labels, temporal ground truth, or changed-system outcomes.",
+    "replay_utility_established": false,
+    "structured_extraction_measured": true
+  },
+  "dataset": {
+    "documents": 5,
+    "raw_content_committed": false,
+    "root_uri": "external://fable-5-traces",
+    "source_hashes_only": true
+  },
+  "protocol": {
+    "arms": [
+      "goi_proposal",
+      "ontogpt_population"
+    ],
+    "model": "gpt-5.6-luna",
+    "raw_prompts_responses_external": true,
+    "starter_schema_relations": [
+      "owns",
+      "uses",
+      "depends_on",
+      "produces",
+      "located_in",
+      "measures",
+      "part_of",
+      "replaces"
+    ],
+    "starter_schema_types": [
+      "system",
+      "repository",
+      "tool",
+      "file",
+      "metric",
+      "task",
+      "person",
+      "service"
+    ]
+  },
+  "records": [
+    {
+      "arm": "goi_proposal",
+      "case": 0,
+      "constraint_count": 5,
+      "elapsed_ms": 23794.465,
+      "entity_count": 20,
+      "evidence_count": 25,
+      "evidence_grounding_rate": 0.84,
+      "grounded_evidence_count": 21,
+      "prompt_sha256": "030efb74203fad0a45fa5a564cc0143a47cf7d001118b41e02d1b09ca6e72930",
+      "relation_count": 5,
+      "response_sha256": "2f430d13620aabf473430dfc9040ef60d242617d01357d8073cf029f6c5335e8",
+      "source_sha256": "487da70e2f271674558666d70e9d3841e579460f312db77b572478a90ce03bb5",
+      "status": "ok"
+    },
+    {
+      "arm": "ontogpt_population",
+      "case": 0,
+      "constraint_count": 2,
+      "elapsed_ms": 26104.947,
+      "entity_count": 13,
+      "evidence_count": 21,
+      "evidence_grounding_rate": 0.904762,
+      "grounded_evidence_count": 19,
+      "prompt_sha256": "cf6a8d95acd5ee458d42e7d01d07504edb3158c80a0e34adc0f14ed92d02885e",
+      "relation_count": 8,
+      "response_sha256": "67d489c7632cadede75da8696487a25c0f7a1de5e707ad5e692357ab15f02d9d",
+      "source_sha256": "487da70e2f271674558666d70e9d3841e579460f312db77b572478a90ce03bb5",
+      "status": "ok"
+    },
+    {
+      "arm": "goi_proposal",
+      "case": 1,
+      "constraint_count": 4,
+      "elapsed_ms": 31769.73,
+      "entity_count": 22,
+      "evidence_count": 37,
+      "evidence_grounding_rate": 0.918919,
+      "grounded_evidence_count": 34,
+      "prompt_sha256": "5d2503e6742eb3010b85797d56e6bd50a943ad21a2e6d7cdc8041d7ebf3a6171",
+      "relation_count": 15,
+      "response_sha256": "5487d48fed8cb6fd5d5e85cb6fb817ad1c725cace60b1e867eed368490ee6764",
+      "source_sha256": "e5a13a2e8d425717c956867d766c07c703108d8ae1e2cd3145a6ed414c98ea78",
+      "status": "ok"
+    },
+    {
+      "arm": "ontogpt_population",
+      "case": 1,
+      "constraint_count": 0,
+      "elapsed_ms": 17577.33,
+      "entity_count": 6,
+      "evidence_count": 9,
+      "evidence_grounding_rate": 1.0,
+      "grounded_evidence_count": 9,
+      "prompt_sha256": "120a4386af6c3fa28cce78c4679da5f36f2646ffb239b8a147fa39b5de53cf35",
+      "relation_count": 3,
+      "response_sha256": "7f6cb15b56cf36d30a2c0f64e758ae4285f72bfe6370d81ca9b91ab97c39dde3",
+      "source_sha256": "e5a13a2e8d425717c956867d766c07c703108d8ae1e2cd3145a6ed414c98ea78",
+      "status": "ok"
+    },
+    {
+      "arm": "goi_proposal",
+      "case": 2,
+      "constraint_count": 3,
+      "elapsed_ms": 31302.248,
+      "entity_count": 19,
+      "evidence_count": 31,
+      "evidence_grounding_rate": 1.0,
+      "grounded_evidence_count": 31,
+      "prompt_sha256": "53cb38592d633bdb59c9f8b51159dc955c07291134ac62fbdef82749de67e281",
+      "relation_count": 12,
+      "response_sha256": "fb04fd9b3c66d1aeb704a08ec69696f64feda50ac74e271adf960f0ff2c8e050",
+      "source_sha256": "713ae17c0816a45cb1fdf7d5540f2fe8d74aa40c4b4a5bbfbfa178c715992a46",
+      "status": "ok"
+    },
+    {
+      "arm": "ontogpt_population",
+      "case": 2,
+      "constraint_count": 4,
+      "elapsed_ms": 24997.761,
+      "entity_count": 12,
+      "evidence_count": 23,
+      "evidence_grounding_rate": 1.0,
+      "grounded_evidence_count": 23,
+      "prompt_sha256": "627d077f4883fad59c99342262252938f76e9361cfac0469963dcb100f27b37f",
+      "relation_count": 9,
+      "response_sha256": "3fc67b4b1dfd50b4480eb8b868a58b7c36ebbd6fcc06c1292312534f7c35a19b",
+      "source_sha256": "713ae17c0816a45cb1fdf7d5540f2fe8d74aa40c4b4a5bbfbfa178c715992a46",
+      "status": "ok"
+    },
+    {
+      "arm": "goi_proposal",
+      "case": 3,
+      "constraint_count": 1,
+      "elapsed_ms": 11789.943,
+      "entity_count": 1,
+      "evidence_count": 1,
+      "evidence_grounding_rate": 1.0,
+      "grounded_evidence_count": 1,
+      "prompt_sha256": "551d0518312c30fe2fc6d2b694d2fe321cd002d7ae19e9246c9fc5358bb36421",
+      "relation_count": 0,
+      "response_sha256": "c8f5b2b9a1b9105c0c5542aa321cabbd9035127eb905d79752dd58cd9112d1ef",
+      "source_sha256": "265da4940df46091d230bbd404e8e2fd2f607d2bfb123250647cdf5ac858d70f",
+      "status": "ok"
+    },
+    {
+      "arm": "ontogpt_population",
+      "case": 3,
+      "constraint_count": 0,
+      "elapsed_ms": 8909.605,
+      "entity_count": 0,
+      "evidence_count": 0,
+      "evidence_grounding_rate": 0.0,
+      "grounded_evidence_count": 0,
+      "prompt_sha256": "14905d4c92e187a37f4a4840a1f4e8351cf32e9525111136ae583995cf9c5ff1",
+      "relation_count": 0,
+      "response_sha256": "023b767b5310a0c372940f49181294c5e4ed6b0ea139a0e88aa4e5e0fb47dcbc",
+      "source_sha256": "265da4940df46091d230bbd404e8e2fd2f607d2bfb123250647cdf5ac858d70f",
+      "status": "ok"
+    },
+    {
+      "arm": "goi_proposal",
+      "case": 4,
+      "constraint_count": 3,
+      "elapsed_ms": 17605.807,
+      "entity_count": 9,
+      "evidence_count": 12,
+      "evidence_grounding_rate": 1.0,
+      "grounded_evidence_count": 12,
+      "prompt_sha256": "34a93195a48eecff84f7e74a83afdde5fef3947765bc8c79236ec11113e3d98d",
+      "relation_count": 3,
+      "response_sha256": "b06b749dbbc619d555b90b001abae37b243515eaad920ab1c667a766900470f4",
+      "source_sha256": "32eb46525bf789578c906c0b90ac34bddd244ebe5635230bbbfe3a2e37e0be23",
+      "status": "ok"
+    },
+    {
+      "arm": "ontogpt_population",
+      "case": 4,
+      "constraint_count": 1,
+      "elapsed_ms": 11094.514,
+      "entity_count": 4,
+      "evidence_count": 5,
+      "evidence_grounding_rate": 1.0,
+      "grounded_evidence_count": 5,
+      "prompt_sha256": "adf75f2fd3a7da7a2533c413694b2d6cba35927c5e93af41fe989c79e021fc87",
+      "relation_count": 1,
+      "response_sha256": "69d34df31932d3dc66d21650ca93564761c70ddf66b408e8501c78612f844251",
+      "source_sha256": "32eb46525bf789578c906c0b90ac34bddd244ebe5635230bbbfe3a2e37e0be23",
+      "status": "ok"
+    }
+  ],
+  "result_sha256": "c1b47698203143c05bc313016f8f0574bb007a0514afa6436065200e314ecd28",
+  "schema_version": "frankengate-ontology-induction-frontier-proxy-v1"
+}

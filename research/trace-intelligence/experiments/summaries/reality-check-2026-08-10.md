@@ -73,10 +73,12 @@ fixture passes but remains promotion-blocked; the invalid fixture fails closed
 on missing holdouts, arms, receipts, and raw-content fields. This is a fair
 study handoff, not an efficacy result.
 
-The first frontier mechanics probe is now complete on two public trace
+The first frontier mechanics probe is now repeated on five public trace
 excerpts: both the GOI-style and starter-schema population arms returned valid
-JSON for 2/2 cases. The constrained arm emitted fewer entities/relations and
-slightly higher evidence grounding (`.900` vs `.889`), but neither arm has
+JSON for `5/5` cases. GOI-style output averaged 14.2 entities/7.0 relations
+with evidence grounding `.952`; starter-schema output averaged 7.0/4.2 with
+grounding `.781`. The reversal from the two-case pilot shows that schema
+restriction is not automatically a faithfulness improvement. Neither arm has
 ontology, alias, authority, temporal, or replay labels. See the
 [frontier proxy summary](ontology-induction-frontier-proxy-2026-08-02.md).
 

@@ -20,7 +20,7 @@ def scan(value: object) -> bool:
     return False
 
 
-def verify(path: Path) -> dict[str, object]:
+def verify(path: Path, expected_documents: int = 2) -> dict[str, object]:
     result = json.loads(path.read_text(encoding="utf-8"))
     recorded = result.pop("result_sha256", None)
     actual = hashlib.sha256(json.dumps(result, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
@@ -31,13 +31,13 @@ def verify(path: Path) -> dict[str, object]:
         errors.append("schema version mismatch")
     if scan(result):
         errors.append("raw content field present")
-    if result.get("dataset", {}).get("documents") != 2:
+    if result.get("dataset", {}).get("documents") != expected_documents:
         errors.append("unexpected document count")
     for arm in ("goi_proposal", "ontogpt_population"):
         summary = result.get("arms", {}).get(arm, {})
-        if summary.get("completed") != 2 or summary.get("failures") != 0:
+        if summary.get("completed") != expected_documents or summary.get("failures") != 0:
             errors.append(f"incomplete arm: {arm}")
-    if len(result.get("records", [])) != 4:
+    if len(result.get("records", [])) != expected_documents * 2:
         errors.append("unexpected record count")
     if result.get("claim_boundary", {}).get("ontology_correctness_established") is not False:
         errors.append("ontology claim boundary widened")
@@ -47,6 +47,7 @@ def verify(path: Path) -> dict[str, object]:
 
 
 if __name__ == "__main__":
-    verification = verify(Path(sys.argv[1]))
+    expected_documents = int(sys.argv[2]) if len(sys.argv) > 2 else 2
+    verification = verify(Path(sys.argv[1]), expected_documents)
     print(json.dumps(verification, sort_keys=True))
     raise SystemExit(0 if verification["valid"] else 1)
