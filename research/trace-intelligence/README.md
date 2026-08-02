@@ -188,6 +188,12 @@ removed that oracle coverage: target coverage stayed `.458` for both arms,
 while Luna improved MRR from `.360` to `.886` only within the candidates the
 lexical stage had already found. This separates reranking value from the
 unresolved candidate-generation/alias/embedding problem.
+The [`ToolQP-inspired query-planning probe`](experiments/summaries/traject-bench-query-planning-probe-2026-08-09.md)
+then generated three subtask queries from the request and initial shortlist.
+Across eight round-robin public cases, top-16 target coverage rose from `.667`
+to `.750` and MRR from `.348` to `.563`. This is a promising candidate-coverage
+mechanism, but it is not a reproduction of ToolQP's trained RLVR policy or an
+enterprise artifact result.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.
