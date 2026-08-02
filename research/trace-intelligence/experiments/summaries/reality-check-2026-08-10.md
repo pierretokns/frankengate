@@ -73,6 +73,13 @@ fixture passes but remains promotion-blocked; the invalid fixture fails closed
 on missing holdouts, arms, receipts, and raw-content fields. This is a fair
 study handoff, not an efficacy result.
 
+The first frontier mechanics probe is now complete on two public trace
+excerpts: both the GOI-style and starter-schema population arms returned valid
+JSON for 2/2 cases. The constrained arm emitted fewer entities/relations and
+slightly higher evidence grounding (`.900` vs `.889`), but neither arm has
+ontology, alias, authority, temporal, or replay labels. See the
+[frontier proxy summary](ontology-induction-frontier-proxy-2026-08-02.md).
+
 Public enterprise tuning guidance follows the same pattern. Databricks puts
 hybrid retrieval, metadata, query reformulation, reranking, and evaluation
 before embedding tuning and calls tuning a last resort ([retrieval quality
