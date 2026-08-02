@@ -16,6 +16,11 @@ upstream forks.
 
 ## Value that was actually measured
 
+The pinned modernization receipt was independently revalidated on 2026-08-10:
+canonical JSON hashing reproduced its recorded `result_sha256`, the verifier's
+recorded receipt hash matched the file, and every published verifier check was
+true. This validates receipt integrity; it is not a new corpus execution.
+
 | Port | Measured result | Value for Frankengate |
 |---|---|---|
 | Termolator/TermSuite-style termhood | Ran under the current `uv` environment on 49 Wisp documents and emitted the configured 3,000 candidates with normalized variants. Termhood recall was `0.358` within a represented schema and `0.015` on the database-held-out transfer diagnostic. | A reproducible, interpretable candidate generator and search-enrichment baseline. It detects vocabulary repeated in an observed corpus; it is not a portable corporate-alias detector. |
