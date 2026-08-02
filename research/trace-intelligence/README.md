@@ -45,6 +45,10 @@ and [`BIRD-Interact ambiguity profile`](experiments/summaries/bird-interact-ambi
 record which public datasets can support replay mechanics versus which still
 lack identity, outcomes, or gold evaluators.
 
+The [`current evidence matrix`](experiments/summaries/current-evidence-matrix-2026-08-06.md)
+is the compact, receipt-linked decision map across artifact reuse, concept and
+alias mining, hard negatives, embeddings, model cascades, and skill replay.
+
 ## Historical Claude/Codex mining
 
 The historical-log work is tracked in GitHub epic
