@@ -88,6 +88,14 @@ passes structural conformance but remains promotion-ineligible; an incomplete
 fixture fails closed on missing consent, holdouts, arms, and tasks. This is a
 partner handoff gate, not evidence that the required internal cohort exists.
 
+The [hard-negative strata supply audit](dataclaw-hard-negative-strata-2026-08-02.md)
+shows that the parseable public DataClaw export can supply a frozen review pool:
+the chronological train half contains 2,610 same-surface/different-path,
+1,601 cross-project same-surface/different-path, 306 cross-project exact-path,
+and 2,125 same-project exact-identity candidate pairs. This closes the public
+candidate-capacity question, but not the semantic-label, consent, changed-system,
+or outcome requirements.
+
 ## Research and publication path
 
 The publishable claim is narrow and defensible:

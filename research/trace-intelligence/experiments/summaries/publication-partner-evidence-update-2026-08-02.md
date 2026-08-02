@@ -46,6 +46,14 @@ hard-negative, NIL/unclear, dual-label, authority, deletion, and independent
 outcome gates. This turns the missing cohort into an explicit ingestion and
 study-design requirement rather than an informal promise.
 
+The [hard-negative strata supply audit](dataclaw-hard-negative-strata-2026-08-02.md)
+shows that the chronological train half of the public export contains 2,610
+same-surface/different-path, 1,601 cross-project same-surface/different-path,
+306 cross-project exact-path, and 2,125 same-project exact-identity candidate
+pairs. This is enough candidate capacity for a partner annotation exercise;
+the export still cannot supply semantic labels, consent, changed-system
+outcomes, or causal user evidence.
+
 ## Partner-specific study asks
 
 ### CMU LTI / SkillLearnBench
@@ -129,5 +137,6 @@ Receipts referenced by this update:
 - [Identifier-aware retrieval](dataclaw-ronald-identifier-aware-retrieval-2026-08-02.md)
 - [Temporal identifier reuse](dataclaw-ronald-identifier-temporal-reuse-2026-08-02.md)
 - [Within-project memory-write permutation](dataclaw-memory-write-within-project-permutation-2026-08-02.md)
+- [Hard-negative strata supply](dataclaw-hard-negative-strata-2026-08-02.md)
 - [Structural friction](dataclaw-ronald-structural-friction-audit-2026-08-02.md)
 - [Malformed export integrity](dataclaw-mriabov-export-integrity-2026-08-02.md)

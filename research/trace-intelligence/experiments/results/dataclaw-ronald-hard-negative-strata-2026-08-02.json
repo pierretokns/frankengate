@@ -1,0 +1,79 @@
+{
+  "schema_version": "frankengate-dataclaw-hard-negative-strata-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false,
+    "raw_identifiers_emitted": false
+  },
+  "cohort": {
+    "sessions": 436,
+    "projects": 46,
+    "projects_excluded_for_single_session": 16,
+    "chronological_train_sessions": 279,
+    "chronological_evaluation_sessions": 141
+  },
+  "full_cohort": {
+    "sessions": 436,
+    "path_events": 5252,
+    "unique_project_surface_digest_units": 4295,
+    "same_project_exact_identity_units_repeated": 491,
+    "same_project_surface_units_with_multiple_paths": 715,
+    "cross_project_surface_project_pairs": 1372,
+    "cross_project_exact_path_project_pairs": 834,
+    "candidate_strata": {
+      "same_project_exact_identity": 3781,
+      "same_project_same_surface_different_path": 4062,
+      "cross_project_same_surface_exact_path": 834,
+      "cross_project_same_surface_different_path": 4061
+    }
+  },
+  "chronological_train_only": {
+    "sessions": 279,
+    "path_events": 3325,
+    "unique_project_surface_digest_units": 2730,
+    "same_project_exact_identity_units_repeated": 311,
+    "same_project_surface_units_with_multiple_paths": 434,
+    "cross_project_surface_project_pairs": 520,
+    "cross_project_exact_path_project_pairs": 306,
+    "candidate_strata": {
+      "same_project_exact_identity": 2125,
+      "same_project_same_surface_different_path": 2610,
+      "cross_project_same_surface_exact_path": 306,
+      "cross_project_same_surface_different_path": 1601
+    }
+  },
+  "chronological_evaluation_only": {
+    "sessions": 141,
+    "path_events": 1632,
+    "unique_project_surface_digest_units": 1476,
+    "same_project_exact_identity_units_repeated": 88,
+    "same_project_surface_units_with_multiple_paths": 220,
+    "cross_project_surface_project_pairs": 438,
+    "cross_project_exact_path_project_pairs": 319,
+    "candidate_strata": {
+      "same_project_exact_identity": 353,
+      "same_project_same_surface_different_path": 647,
+      "cross_project_same_surface_exact_path": 319,
+      "cross_project_same_surface_different_path": 601
+    }
+  },
+  "partner_gate_capacity": {
+    "minimum_target_cases": 100,
+    "minimum_hard_negative_cases": 50,
+    "minimum_nil_or_unclear_cases": 25,
+    "train_has_at_least_minimum_hard_negative_candidates": true,
+    "train_has_four_strata": true
+  },
+  "claim_boundary": {
+    "candidate_supply_measured": true,
+    "same_work_labels_established": false,
+    "semantic_alias_quality_established": false,
+    "artifact_correctness_established": false,
+    "promotion_authorized": false,
+    "reason": "These are content-free identity/surface strata. Same-surface or exact-path recurrence is not a semantic label and cannot substitute for dual annotation or independent replay."
+  },
+  "decision": "Use the chronological train-only strata to construct a frozen review pool, then label target, alias, wrong-scope, stale, NIL, and unclear outcomes before training or promoting any reranker or embedding."
+}
