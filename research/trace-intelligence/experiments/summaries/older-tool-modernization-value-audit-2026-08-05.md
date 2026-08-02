@@ -50,6 +50,13 @@ strongest evidence so far that the ports can supply a useful scoped candidate
 queue, while still failing to justify a global ontology or alias table. See
 [legacy candidate stability on Claude history](claude-history-legacy-candidate-stability-2026-08-09.md).
 
+The follow-up [term-context collision diagnostic](claude-history-term-context-collisions-2026-08-09.md)
+found that 543/778 shared top-term hashes had at least one project pair with
+less than `.05` lexical-context Jaccard. This turns the old ports into a useful
+input to hard-negative mining: recurrence proposes a candidate, while context
+separation prevents frequency alone from creating a global alias. It remains a
+lexical review signal, not a semantic collision label.
+
 ## Value that was *not* established
 
 These runs did not establish byte-for-byte upstream equivalence, enterprise

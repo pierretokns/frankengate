@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "claim_boundary_present": true,
+    "nonempty_context_pairs": true,
+    "protocol_present": true,
+    "raw_content_not_committed": true,
+    "result_hash": true,
+    "schema_version": true
+  },
+  "passed": true,
+  "result_sha256": "a9f26ce039903f90766f749afea1a457a36a61f73d2018dbcb8d765c5e44753e",
+  "schema_version": "frankengate-claude-history-term-context-collisions-verification-v1"
+}

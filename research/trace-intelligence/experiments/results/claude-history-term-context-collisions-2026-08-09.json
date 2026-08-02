@@ -1,0 +1,45 @@
+{
+  "claim_boundary": {
+    "alias_quality": false,
+    "enterprise_concept_quality": false,
+    "reason": "Low lexical context overlap is a hard-negative candidate signal, not proof that a repeated surface term names different systems; shared context can still be boilerplate.",
+    "semantic_collision": false
+  },
+  "collision_summary": {
+    "pair_jaccard_max": 1.0,
+    "pair_jaccard_median": 0.065844,
+    "pair_jaccard_min": 0.0,
+    "pair_jaccard_p10": 0.017301,
+    "pair_jaccard_p90": 0.166287,
+    "pairs_at_least_0.50": 1060,
+    "pairs_below_0.05": 13915,
+    "shared_terms_with_context": 778,
+    "term_collision_rate": 0.697943,
+    "terms_with_any_pair_below_0.05": 543
+  },
+  "coverage": {
+    "context_pair_count": 37390,
+    "message_count_first_pass": 130798,
+    "project_count": 65,
+    "selected_term_hash_count": 2249,
+    "shared_term_count_with_context_pairs": 778,
+    "shared_term_hash_count": 778
+  },
+  "protocol": {
+    "collision_threshold_jaccard": 0.05,
+    "context_cap": 256,
+    "context_similarity": "Jaccard over hashed top lexical neighbor tokens",
+    "context_window_tokens": 4,
+    "term_selection": "project-local document-frequency top terms",
+    "top_terms_per_project": 100
+  },
+  "result_sha256": "a9f26ce039903f90766f749afea1a457a36a61f73d2018dbcb8d765c5e44753e",
+  "schema_version": "frankengate-claude-history-term-context-collisions-v1",
+  "source": {
+    "byte_count": 998165678,
+    "file_count": 442,
+    "manifest_sha256": "afdc68a06f7a570840d489d57be9dac2e667252cf24470b3b8b66bc1412f0b50",
+    "raw_content_committed": false,
+    "root_name": "projects"
+  }
+}

@@ -163,6 +163,10 @@ top-term hashes and 36/170 valid acronym hashes crossed project boundaries,
 but no candidate appeared in every project. This is the strongest evidence for
 scoped candidate mining so far, while still ruling out frequency-only global
 alias promotion.
+The term-context collision follow-up found 543/778 shared terms with at least
+one cross-project pair below `.05` lexical-context Jaccard, so recurrence can
+feed a cheap hard-negative queue before identifier and human review. This is a
+lexical diagnostic, not a semantic collision label.
 
 ### 6. Custom embedding evidence is not yet promotion-positive
 
