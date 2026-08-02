@@ -77,6 +77,10 @@ artifact exists in the library.
 The dated [`objective completion audit`](experiments/summaries/objective-completion-audit-2026-08-06.md)
 maps every requested research area to its strongest evidence, open proof
 obligation, and current disposition.
+The [`headline receipt-consistency audit`](experiments/summaries/headline-receipt-consistency-audit-2026-08-02.md)
+recomputes 19 selected high-impact claims against their receipts; all checks
+pass, while preserving the separately documented SkillLearnBench missing-answer
+mismatch.
 The [`enterprise replay readiness status`](experiments/summaries/enterprise-replay-readiness-status-2026-08-06.md)
 shows why the public SQL proxy cannot be promoted to a causal enterprise
 cohort, and records the exact authorized-data handoff required next.

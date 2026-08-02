@@ -559,6 +559,8 @@ project, principal, and changed-system holdouts.
 - [SkillLearnBench changed-data multi-seed synthesis](skilllearnbench-changed-data-multiseed-2026-08-09.md)
 - [SkillLearnBench three-arm family replay](skilllearnbench-frontier-three-arm-2026-08-01.md)
 - [SkillLearnBench composite six-task replay](skilllearnbench-frontier-composite-six-task-2026-08-06.md)
+- [SkillLearnBench paired statistics and receipt audit](skilllearnbench-paired-statistics-2026-08-02.md)
+- [Headline receipt-consistency audit](headline-receipt-consistency-audit-2026-08-02.md)
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
