@@ -1,0 +1,8 @@
+{
+  "claim_boundary_verified": true,
+  "reconciliation_verified": true,
+  "schema_version": "frankengate-wmh-bird-schema-exposure-verification-v1",
+  "source_result_sha256": "8f42e2044e28303a9928b45a6c0c3367ad9de1609bc546546b0672cc49d605d1",
+  "traces_verified": 1993,
+  "verification_passed": true
+}

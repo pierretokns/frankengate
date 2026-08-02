@@ -111,6 +111,12 @@ available. They are not independently irrelevant labels. Frankengate must
 record refusal/authority/cost reasons and require replay or SME outcomes before
 turning exposure gaps into hard-negative training data.
 
+The WMH-BIRD SQL analogue is stronger: 1,993 traces expose 11,707 schema table
+identifiers and consume 3,850, leaving 7,857 exposure candidates. This is a
+usable bridge from trajectory supervision to SQL artifact mining, but unused
+tables still require independent database replay and wrong-system/temporal
+negative labels before embedding or reranker training.
+
 ## Architecture decision
 
 Keep the smallest governed architecture:
@@ -157,4 +163,5 @@ project, principal, and changed-system holdouts.
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
 - [ToolQP peak-rank reproduction](traject-bench-toolqp-peak-rank-2026-08-09.md)
 - [LRAT exposure-negative audit](lrat-exposure-negative-audit-2026-08-09.md)
+- [WMH-BIRD schema exposure audit](wmh-bird-schema-exposure-audit-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)

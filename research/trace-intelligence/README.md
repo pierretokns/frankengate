@@ -186,6 +186,11 @@ measured 624 exposed documents, 26 browsed documents, and 598 exposed-but-
 unbrowsed candidates across those samples. Exposure-aware negatives exist, but
 they are not true irrelevance labels; authority, cost, redundancy, and user
 choice must be represented before using them for corporate hard-negative mining.
+The [`WMH-BIRD schema-exposure audit`](experiments/summaries/wmh-bird-schema-exposure-audit-2026-08-09.md)
+is the closer SQL analogue: 1,993 traces exposed 11,707 schema tables, of
+which 7,857 were not referenced by the recorded SQL. This supplies a real
+exposure/consumption candidate pool, but independent database replay is still
+required before treating unused tables as negatives.
 The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-structural-audit-2026-08-09.md)
 now records the public benchmark's 5,910 records and 38,094 described tool
 invocations, and separates its useful trajectory-metric coverage from the
