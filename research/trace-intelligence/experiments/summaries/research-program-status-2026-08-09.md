@@ -200,6 +200,15 @@ The term-context collision follow-up found 543/778 shared terms with at least
 one cross-project pair below `.05` lexical-context Jaccard, so recurrence can
 feed a cheap hard-negative queue before identifier and human review. This is a
 lexical diagnostic, not a semantic collision label.
+The [term-context model probe](claude-history-term-context-model-probe-2026-08-09.md)
+then tested whether frontier review needs that context. Term-only Luna calls
+abstained `24/24`; term-plus-context calls labeled all six high-overlap pairs
+`same_concept`, while the six low-overlap pairs split into five `different`
+and seven `related_context` labels across repeats, with only `3/6` pair
+agreement. This supports context-bearing review prompts and explicit
+`unclear`/related outcomes, but remains a silver calibration study because the
+cohorts were selected by the same lexical statistic and lack SME alias/NIL
+labels.
 
 ### 6. Custom embedding evidence is not yet promotion-positive
 

@@ -158,6 +158,15 @@ ontology or embedding-training data. The corresponding receipts are the
 [termhood stability study](termhood-cross-cohort-stability-2026-08-09.md), and
 [acronym stability study](acronym-cross-cohort-stability-2026-08-09.md).
 
+The new [term-context model probe](claude-history-term-context-model-probe-2026-08-09.md)
+adds a small mechanism result: term-only frontier calls abstained on all 24
+checks, while context-bearing calls resolved all high-overlap pairs and
+remained cautious/less stable on low-overlap pairs. This supports a
+context-bearing review interface with explicit `unclear` and `related`
+outcomes. It is deliberately not presented as alias accuracy because the
+cohort selection and model input share the lexical-context statistic and no
+independent SME labels exist.
+
 ## Latest empirical packet for outreach
 
 The WMH-BIRD bridge now gives the packet a stronger hard-negative story than

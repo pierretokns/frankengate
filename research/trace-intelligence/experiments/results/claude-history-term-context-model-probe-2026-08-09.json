@@ -1,0 +1,537 @@
+{
+  "claim_boundary": {
+    "embedding_quality_established": false,
+    "enterprise_ontology_promotion_authorized": false,
+    "independent_alias_ground_truth": false,
+    "reason": "The lexical context cohorts and Luna labels are diagnostic silver signals; no adjudicated corporate alias/NIL ground truth or downstream replay outcome is available.",
+    "silver_model_labels": true
+  },
+  "coverage": {
+    "candidate_count": 29837,
+    "high_context_selected": 6,
+    "low_context_selected": 6,
+    "pair_count": 12
+  },
+  "protocol": {
+    "arms": [
+      "term_only",
+      "term_plus_context"
+    ],
+    "candidate_cohorts": "low context Jaccard < 0.05 versus high context Jaccard >= 0.20",
+    "context": "top local lexical neighbor tokens, paths/URLs/long hex/numeric runs removed",
+    "harness": "codex-cli subscription",
+    "model": "gpt-5.6-luna",
+    "repeats_per_arm": 2
+  },
+  "result_sha256": "1d4b49d377a8a37aa579ba983b7552997ca21ca6cf5c116f7766a5f42dac6e3b",
+  "rows": [
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6444.562,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6096.173,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.93,
+            "elapsed_ms": 5867.398,
+            "label": "related_context",
+            "response_sha256": "0f7ce7591e4cef613f7df598f2fc06d9c2941b3e29e66fe0798b14ca5865781b"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6489.513,
+            "label": "different",
+            "response_sha256": "9e5e3ed01b12274b474caa9e656c085ef53603a2263bfcf57b0528e103f8d5cc"
+          }
+        ]
+      },
+      "cohort": "low_context",
+      "context_jaccard": 0.037037,
+      "left_project_hash": "5ad5f6f130d3109cad13e5983105562fc74287a08f15b1613439d16e0e673a56",
+      "pair_index": 0,
+      "right_project_hash": "76174c31ccd4b117f5c502330995254af0b82ea5ef18a9860151243791a61876",
+      "term_hash": "00091aa568cb13873d1e8b761941b4ab506f6fc56867b6d5a6f4fc8c8539d810"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6438.981,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 9673.262,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.86,
+            "elapsed_ms": 11288.807,
+            "label": "related_context",
+            "response_sha256": "fc78d8b19383f9c1c3cbb99ba9567661fc11e9cb8c88d5fbdfe3175fff7558e3"
+          },
+          {
+            "confidence": 0.94,
+            "elapsed_ms": 5468.101,
+            "label": "related_context",
+            "response_sha256": "20b2c6ddddaadf9459d7387819c7fe164eb05235cd6548efa31856f279bd5282"
+          }
+        ]
+      },
+      "cohort": "low_context",
+      "context_jaccard": 0.010676,
+      "left_project_hash": "76174c31ccd4b117f5c502330995254af0b82ea5ef18a9860151243791a61876",
+      "pair_index": 1,
+      "right_project_hash": "2b34a9100358e7679c8973f9ee82cb6ebc2fe3dd71f462d28c75760ddbcd6036",
+      "term_hash": "00091aa568cb13873d1e8b761941b4ab506f6fc56867b6d5a6f4fc8c8539d810"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 9429.039,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 7220.251,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.93,
+            "elapsed_ms": 7088.463,
+            "label": "related_context",
+            "response_sha256": "0f7ce7591e4cef613f7df598f2fc06d9c2941b3e29e66fe0798b14ca5865781b"
+          },
+          {
+            "confidence": 0.93,
+            "elapsed_ms": 6297.62,
+            "label": "related_context",
+            "response_sha256": "0f7ce7591e4cef613f7df598f2fc06d9c2941b3e29e66fe0798b14ca5865781b"
+          }
+        ]
+      },
+      "cohort": "low_context",
+      "context_jaccard": 0.0,
+      "left_project_hash": "7f2aa21acb9f5ae8d180089759e69592169c6b35a30adc4ab6d5aec39e370be0",
+      "pair_index": 2,
+      "right_project_hash": "52305213d2839193e1aca68cd827fe4da31e053f671609b8dadc09a9e88632cf",
+      "term_hash": "007e01e5e287a15e8b2d7da7913e682b12115a2ef797e10aa535cd03f60cc0c3"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 5680.156,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 8161.999,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.93,
+            "elapsed_ms": 8756.368,
+            "label": "related_context",
+            "response_sha256": "0f7ce7591e4cef613f7df598f2fc06d9c2941b3e29e66fe0798b14ca5865781b"
+          },
+          {
+            "confidence": 0.93,
+            "elapsed_ms": 10112.42,
+            "label": "different",
+            "response_sha256": "d573dcbba6f7ade4da215086115671ac1e6291bf388d9b43cb1c0d377d5651ef"
+          }
+        ]
+      },
+      "cohort": "low_context",
+      "context_jaccard": 0.012821,
+      "left_project_hash": "7f2aa21acb9f5ae8d180089759e69592169c6b35a30adc4ab6d5aec39e370be0",
+      "pair_index": 3,
+      "right_project_hash": "91414ada052bebd23d872ff8d774a16435ce06f49e17d3c41011d887a0c5925c",
+      "term_hash": "007e01e5e287a15e8b2d7da7913e682b12115a2ef797e10aa535cd03f60cc0c3"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 5513.223,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6127.464,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.83,
+            "elapsed_ms": 8520.464,
+            "label": "different",
+            "response_sha256": "948033c2c5c85cdf97271da8e8db662090606128744c0559a4fd7212df95b4d4"
+          },
+          {
+            "confidence": 0.86,
+            "elapsed_ms": 6641.194,
+            "label": "different",
+            "response_sha256": "4bbc3327806a9bdb744b39aa460206705066d9aae68b2abf207574f5f4accc39"
+          }
+        ]
+      },
+      "cohort": "low_context",
+      "context_jaccard": 0.021739,
+      "left_project_hash": "7f2aa21acb9f5ae8d180089759e69592169c6b35a30adc4ab6d5aec39e370be0",
+      "pair_index": 4,
+      "right_project_hash": "b7a0545e728621c495b5d75d9c251357311eaa9da03793fdba4761444d16c6d6",
+      "term_hash": "015216f42e276406f362ac2893a1fd98d9b1793bd6c8b349be9374cbf3c0b5cb"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 5829.36,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.98,
+            "elapsed_ms": 7049.628,
+            "label": "unclear",
+            "response_sha256": "c96324ae4576f8d55379ec4d5c6e8ebb817edeaf002bb304b622230269f4a05f"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.98,
+            "elapsed_ms": 10215.485,
+            "label": "different",
+            "response_sha256": "37bb9c9d4c1cf9ddc5769ac36abf7c2257c3b45395e95af89f428ac0ff91a18d"
+          },
+          {
+            "confidence": 0.78,
+            "elapsed_ms": 8902.639,
+            "label": "related_context",
+            "response_sha256": "f9160620366108f0c4555797736370fd63ef0c22588f94ad6857d9ea60ab1574"
+          }
+        ]
+      },
+      "cohort": "low_context",
+      "context_jaccard": 0.016461,
+      "left_project_hash": "7f2aa21acb9f5ae8d180089759e69592169c6b35a30adc4ab6d5aec39e370be0",
+      "pair_index": 5,
+      "right_project_hash": "f155fe2d462cf5997fb25c2158bb97c426c6f99f912f04c07e9bb9990ab53658",
+      "term_hash": "015216f42e276406f362ac2893a1fd98d9b1793bd6c8b349be9374cbf3c0b5cb"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 11957.67,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 10223.552,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 8451.735,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6047.59,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          }
+        ]
+      },
+      "cohort": "high_context",
+      "context_jaccard": 1.0,
+      "left_project_hash": "04928363c6e008e4702a33cf9d67c972534ec48f06b976b8526b55faa1b87125",
+      "pair_index": 6,
+      "right_project_hash": "0adfaad1252f44d46183b31cdc4a313544145079655fbf86ae405485060e7d10",
+      "term_hash": "005b17c005ba971145a01a331d44393b2c6e29b68913d66449b2dd264867c410"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.93,
+            "elapsed_ms": 6139.608,
+            "label": "unclear",
+            "response_sha256": "b61db1d6a589b1f2d45d87e22a86d5314293f92cce14884858d27f6170ba2c8e"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 9368.296,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6014.3,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 9767.987,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          }
+        ]
+      },
+      "cohort": "high_context",
+      "context_jaccard": 1.0,
+      "left_project_hash": "04928363c6e008e4702a33cf9d67c972534ec48f06b976b8526b55faa1b87125",
+      "pair_index": 7,
+      "right_project_hash": "175d8f0fd1d428c919553dd584dc3676b7ca056a8109d5c0c641732bf01c0fdc",
+      "term_hash": "005b17c005ba971145a01a331d44393b2c6e29b68913d66449b2dd264867c410"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6111.948,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 12267.013,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 5323.752,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6767.645,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          }
+        ]
+      },
+      "cohort": "high_context",
+      "context_jaccard": 1.0,
+      "left_project_hash": "04928363c6e008e4702a33cf9d67c972534ec48f06b976b8526b55faa1b87125",
+      "pair_index": 8,
+      "right_project_hash": "1a22602b8bcd609a63fc91d76054604489143d4629a0165ec66240d719351e90",
+      "term_hash": "005b17c005ba971145a01a331d44393b2c6e29b68913d66449b2dd264867c410"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 5726.833,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 7301.482,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.98,
+            "elapsed_ms": 8918.458,
+            "label": "same_concept",
+            "response_sha256": "235a067df8749a841e73a4744146beedffee633ad3c25ef17c820fd38897bcf8"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 5706.367,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          }
+        ]
+      },
+      "cohort": "high_context",
+      "context_jaccard": 1.0,
+      "left_project_hash": "04928363c6e008e4702a33cf9d67c972534ec48f06b976b8526b55faa1b87125",
+      "pair_index": 9,
+      "right_project_hash": "1c0b1d25f67c7f21f8b9636c642eca93fe571104079c19436370339753f2edaa",
+      "term_hash": "005b17c005ba971145a01a331d44393b2c6e29b68913d66449b2dd264867c410"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6444.558,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.98,
+            "elapsed_ms": 8623.432,
+            "label": "unclear",
+            "response_sha256": "c96324ae4576f8d55379ec4d5c6e8ebb817edeaf002bb304b622230269f4a05f"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.93,
+            "elapsed_ms": 6773.729,
+            "label": "same_concept",
+            "response_sha256": "7ba5c503cb281f9c1b6bba0d1e1cf3f4f4de895b24ea7bfe97656681f6801a42"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 9110.694,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          }
+        ]
+      },
+      "cohort": "high_context",
+      "context_jaccard": 1.0,
+      "left_project_hash": "04928363c6e008e4702a33cf9d67c972534ec48f06b976b8526b55faa1b87125",
+      "pair_index": 10,
+      "right_project_hash": "260204c23aa18c1e19dc77ec6e917c2b68fcd4d4001e9720c58bd9935231b36a",
+      "term_hash": "005b17c005ba971145a01a331d44393b2c6e29b68913d66449b2dd264867c410"
+    },
+    {
+      "calls": {
+        "term_only": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 5324.649,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6202.719,
+            "label": "unclear",
+            "response_sha256": "1c485e88eaf13b6f3750b5aa69d0ffdebf1457f4ba96fed5e7a6e011718b3b91"
+          }
+        ],
+        "term_plus_context": [
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 5982.898,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          },
+          {
+            "confidence": 0.99,
+            "elapsed_ms": 6035.421,
+            "label": "same_concept",
+            "response_sha256": "974deabcb85cdb9dea17783e094b65f1fee80d522d7c2844a1228ffeefa0d110"
+          }
+        ]
+      },
+      "cohort": "high_context",
+      "context_jaccard": 1.0,
+      "left_project_hash": "04928363c6e008e4702a33cf9d67c972534ec48f06b976b8526b55faa1b87125",
+      "pair_index": 11,
+      "right_project_hash": "35507b4a3f61ab54723303b93e6a479d6f9c786c76f0bcdf922dbff3785cfc2f",
+      "term_hash": "005b17c005ba971145a01a331d44393b2c6e29b68913d66449b2dd264867c410"
+    }
+  ],
+  "schema_version": "frankengate-claude-history-term-context-model-probe-v1",
+  "source": {
+    "byte_count": 998165678,
+    "file_count": 442,
+    "manifest_sha256": "afdc68a06f7a570840d489d57be9dac2e667252cf24470b3b8b66bc1412f0b50",
+    "message_count": 130491,
+    "raw_content_committed": false,
+    "root_name": "projects"
+  },
+  "summary": {
+    "term_only": {
+      "high_context": {
+        "decisive_rate": 0.0,
+        "label_counts": {
+          "unclear": 12
+        },
+        "pair_agreement_count": 6,
+        "pair_count": 6,
+        "valid_call_count": 12
+      },
+      "low_context": {
+        "decisive_rate": 0.0,
+        "label_counts": {
+          "unclear": 12
+        },
+        "pair_agreement_count": 6,
+        "pair_count": 6,
+        "valid_call_count": 12
+      }
+    },
+    "term_plus_context": {
+      "high_context": {
+        "decisive_rate": 1.0,
+        "label_counts": {
+          "same_concept": 12
+        },
+        "pair_agreement_count": 6,
+        "pair_count": 6,
+        "valid_call_count": 12
+      },
+      "low_context": {
+        "decisive_rate": 0.416667,
+        "label_counts": {
+          "different": 5,
+          "related_context": 7
+        },
+        "pair_agreement_count": 3,
+        "pair_count": 6,
+        "valid_call_count": 12
+      }
+    }
+  }
+}
