@@ -159,6 +159,10 @@ capability probe including ambiguity abstention.
 Its machine-readable [fork manifest](ports/fork-manifest.json) records source
 commits, license/provenance status, fork branches, and claim boundaries; verify
 it with `uv run --no-sync python verify_fork_manifest.py ports/fork-manifest.json`.
+The [`older-tool modernization value audit`](experiments/summaries/older-tool-modernization-value-audit-2026-08-05.md)
+records the measured contribution of those ports: interpretable candidate
+generation and conservative acronym review queues, but no evidence of
+enterprise alias quality, embedding lift, or skill improvement.
 
 The follow-up [`held-out NL2SQL vocabulary benchmark`](experiments/summaries/nl2sql-modern-vocabulary-benchmark-2026-08-04.md)
 tests schema transfer rather than Wisp mechanics: terms are mined from three
