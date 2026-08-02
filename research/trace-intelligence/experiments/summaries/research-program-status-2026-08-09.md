@@ -337,6 +337,16 @@ later reviewed+generated composite scored `53/53`; all q3 answers were exact.
 The arms were not randomized in one simultaneous run, all tasks share one
 public family, and the composite has a different context footprint, so this
 supports a replication hypothesis—not skill promotion.
+The [skill/artifact replay synthesis](skill-replay-evidence-synthesis-2026-08-09.md)
+keeps the causal evidence in one decision map: typed semantic-ID admission
+prevented `2` unsafe accepts in the changed-system fixture; reviewed guidance
+was the only stable full-recall arm on the changed-data proxy; validated
+subplans produced one stable win and no stable losses across 20 held-out BIRD
+tasks; generic trace-mined prose tied no-skill at `8/40`; and the bounded
+SkillOpt candidate tied both controls at `0/2` on ALFWorld. These are separate
+protocols, so they do not justify a pooled effect estimate. The current
+adoption boundary is typed admission plus replay-gated reviewed candidates,
+not automatic skill composition or raw-log promotion.
 
 ## Architecture decision
 

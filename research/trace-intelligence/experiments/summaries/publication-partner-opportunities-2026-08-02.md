@@ -182,6 +182,16 @@ dense, and `1.0` frontier. The frontier arm is therefore an ambiguity-review
 candidate, not a replacement for structured retrieval or a reason to train a
 custom embedding on raw logs.
 
+The [skill/artifact replay synthesis](skill-replay-evidence-synthesis-2026-08-09.md)
+is the current partner-facing causal map. It separates the positive control
+(typed semantic-ID admission and reviewed guidance), the bounded signal
+(validated subplans: one stable win across 20 held-out BIRD tasks), and the
+negative replications (generic trace-mined prose tied no-skill at `8/40`; a
+SkillOpt candidate tied controls at `0/2`). This makes the proposed paper
+falsifiable: the contribution is governed admission, replay, and changed-system
+evaluation—not a claim that any one optimizer or memory layer universally
+improves agents.
+
 ## Latest empirical packet for outreach
 
 The WMH-BIRD bridge now gives the packet a stronger hard-negative story than
