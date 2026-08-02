@@ -49,6 +49,32 @@ the next test must use reviewed labels and larger strata.
 reproducible from the abstract. Treat its method as a sampling hypothesis, not
 as an expected uplift.
 
+### Cursor-style historical retrieval supervision
+
+[Cursor's semantic-search report](https://cursor.com/blog/semsearch) is the
+closest production precedent found so far for learning a retriever from agent
+trajectories. Cursor describes using later search/open behavior in a session,
+having an LLM rank what would have been useful earlier, and distilling those
+rankings into a custom embedding model. Its companion
+[CursorBench report](https://cursor.com/blog/cursorbench) pairs real internal
+agent requests with committed changes through Cursor Blame and checks offline
+scores against controlled online experiments.
+
+This is directly adaptable as a **labeling and evaluation protocol**, not as a
+drop-in enterprise embedding. Cursor's objects are repository code chunks; the
+posts do not establish governed tool exposure, authority, changed-system
+replay, NIL/refusal labels, or skill transfer. The Frankengate adaptation must
+log the exposed candidate set, distinguish unexposed from rejected candidates,
+and require authorized replay before treating a candidate as useful. The full
+method-transfer contract is in
+[`cursor-historical-retrieval-supervision-2026-08-09.md`](cursor-historical-retrieval-supervision-2026-08-09.md).
+
+This strengthens the proposed study: compare a Cursor-style
+trajectory-distilled ranker with exact/identifier, lexical, frozen-dense, and
+frontier-review arms under principal/project/system/time holdouts. It does not
+justify training on raw traces or promoting a custom embedding without
+changed-system artifact outcomes.
+
 ### Trajectory-aware tool evaluation
 
 [TRAJECT-Bench](https://arxiv.org/abs/2510.04550) evaluates tool selection,

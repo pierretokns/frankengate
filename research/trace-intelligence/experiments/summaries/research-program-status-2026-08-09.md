@@ -35,6 +35,15 @@ explicit correctness, failure, friction, reward, or enterprise-artifact
 fields. LRAT is therefore a good candidate-coverage method to adapt, not a
 complete corporate skill-learning dataset.
 
+Cursor provides the closest production precedent for the next retrieval arm:
+its published method uses later search/open behavior plus frontier ranking to
+distill a custom retriever, then checks it with both an internal session-derived
+benchmark and controlled online ablations. This validates the *protocol* we
+should reproduce, not a claim that Cursor's private model transfers to governed
+SQL/tools. Our adaptation must add exposure sets, authority/refusal reasons,
+replay outcomes, changed-system holdouts, and explicit NIL/wrong-system labels.
+See [Cursor historical retrieval supervision](cursor-historical-retrieval-supervision-2026-08-09.md).
+
 ### 4. Structured tool fields are useful metadata, not a retrieval replacement
 
 The field-aware TRAJECT-Bench probe evaluated 5,297 domain-scoped records with
@@ -397,6 +406,7 @@ project, principal, and changed-system holdouts.
 - [cctrace artifact-capsule probe](cctrace-artifact-capsule-probe-2026-08-02.md)
 - [deterministic cctrace capsule round-trip](cctrace-deterministic-capsule-roundtrip-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
+- [Cursor historical retrieval supervision](cursor-historical-retrieval-supervision-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
 - [SkillLearnBench changed-data multi-seed synthesis](skilllearnbench-changed-data-multiseed-2026-08-09.md)
