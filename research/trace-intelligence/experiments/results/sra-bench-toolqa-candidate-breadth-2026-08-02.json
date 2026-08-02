@@ -1,0 +1,119 @@
+{
+  "arms": {
+    "bge_progressive_disclosure": {
+      "evaluation_sha256": "157b1dac2cf4743cc3a021ab5fc8851c1bf66f59650f7f82222765860e8cc99e",
+      "exact_gold_skill_loaded": 10,
+      "finished": 14,
+      "halted": 0,
+      "loaded_skill_count_mean": 0.7142857142857143,
+      "loaded_skill_count_total": 10,
+      "metrics": {
+        "accuracy": 0.5,
+        "correct": 7,
+        "total": 14
+      },
+      "observations": 50,
+      "raw_sha256": "587c120687e763d8b00cb58c7eead08162571c061064ec5643c09cc26327b2da",
+      "records": 14
+    },
+    "bge_top1": {
+      "evaluation_sha256": "24423139cba17257a184fbac921eb69d597786d91cd8f012371b62e21bd398d3",
+      "exact_gold_skill_loaded": 6,
+      "finished": 14,
+      "halted": 0,
+      "loaded_skill_count_mean": 1.0,
+      "loaded_skill_count_total": 14,
+      "metrics": {
+        "accuracy": 0.5,
+        "correct": 7,
+        "total": 14
+      },
+      "observations": 43,
+      "raw_sha256": "6cadecd81fd5e83c4191f678a260f5bad290ce90f8c9769902f6f1c5f89174e5",
+      "records": 14
+    },
+    "bge_top5_full_injection": {
+      "evaluation_sha256": "851770a8417623a4abba2bdfb34d1a96644bf1f345e978eb09142b2eb84f150b",
+      "exact_gold_skill_loaded": 10,
+      "finished": 14,
+      "halted": 0,
+      "loaded_skill_count_mean": 5.0,
+      "loaded_skill_count_total": 70,
+      "metrics": {
+        "accuracy": 0.42857142857142855,
+        "correct": 6,
+        "total": 14
+      },
+      "observations": 43,
+      "raw_sha256": "73b35c415f4ab4640bd964991988a2213df7e22a4d3f94e648144b8543f2087d",
+      "records": 14
+    },
+    "gold_skill_oracle": {
+      "evaluation_sha256": "58f4555c874e9ad48de5b7c9cc562c8d57de1502601a8842af0338c262fdb795",
+      "exact_gold_skill_loaded": 14,
+      "finished": 14,
+      "halted": 0,
+      "loaded_skill_count_mean": 1.0,
+      "loaded_skill_count_total": 14,
+      "metrics": {
+        "accuracy": 0.5,
+        "correct": 7,
+        "total": 14
+      },
+      "observations": 46,
+      "raw_sha256": "2d6ab0875cb91f88a5b3a7092595b9b4648af8684012733f9bc25e9c62849b26",
+      "records": 14
+    },
+    "no_skill": {
+      "evaluation_sha256": "ec43f7cfe575a89becd2f1eaacccbcefbd5879600d32aa9068baeec6811db763",
+      "exact_gold_skill_loaded": 0,
+      "finished": 14,
+      "halted": 0,
+      "loaded_skill_count_mean": 0.0,
+      "loaded_skill_count_total": 0,
+      "metrics": {
+        "accuracy": 0.2857142857142857,
+        "correct": 4,
+        "total": 14
+      },
+      "observations": 46,
+      "raw_sha256": "cd4a6c6d5aff21c24ab5e34ce55f0e0078497ee7c120fc25fd112379ffdc5cc0",
+      "records": 14
+    }
+  },
+  "claim_boundary": "A 14-task one-per-family public ToolQA pilot using a frontier Codex subscription model. Strict benchmark scoring only; no enterprise principals, authority epochs, changed-system outcomes, human labels, or prospective user benefit.",
+  "dataset": {
+    "external_corpus_zip_sha256": "ddfde273990adab701e4a6df88081660dc982fa60d31640a6011f7253dbddf24",
+    "instances_sha256": "8dbe29d8f0ac29f6f355d7f459f6ec1181985f3a5989bb52cba28b17f38a0059",
+    "name": "toolqa",
+    "retrieval_sha256": "4cfa35ade858c69c7a449ddd9c9be5a9345ad938b21617e75e5813cbf29fb60e",
+    "stratification": "one fixed instance per each of 14 skill families",
+    "tasks": 14
+  },
+  "decision": {
+    "changed_system_replay_measured": false,
+    "dense_retrieval_improves_over_no_skill": true,
+    "progressive_matches_top1": true,
+    "skill_release_authorized": false,
+    "top1_matches_gold_oracle": true,
+    "top5_full_injection_hurts_vs_top1": true
+  },
+  "protocol": {
+    "endpoint": "loopback Codex subscription proxy",
+    "engine": "react; progressive arm uses react_progressive_disclosure",
+    "max_steps": 15,
+    "max_tokens": 512,
+    "model": "gpt-5.6-luna",
+    "raw_outputs_committed": false,
+    "temperature": 0.0,
+    "tool_corpus_provisioned": true
+  },
+  "retrieval": {
+    "bge_top1_gold_hit_rate": 0.42857142857142855,
+    "bge_top1_gold_skill_hits": 6,
+    "bge_top5_candidate_gold_hit_rate": 0.7142857142857143,
+    "bge_top5_candidate_gold_skill_hits": 10,
+    "tasks": 14
+  },
+  "schema_version": "frankengate-sra-bench-toolqa-candidate-breadth-v1"
+}
