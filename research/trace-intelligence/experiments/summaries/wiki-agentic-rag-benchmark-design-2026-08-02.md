@@ -129,3 +129,12 @@ the same `search`, `get_page`, and `expand_links` contract over FTS and vector
 backends. Reuse the existing frontier harness and receipt verifier, and keep
 raw pages/transcripts outside Git; commit only manifests, hashes, metrics, and
 verifiers.
+
+## Harness availability check
+
+The Codex CLI is available and the ToolQA receipts use the authenticated
+`gpt-5.6-luna` Codex-subscription path. Claude Code 2.1.220 is installed on the
+machine, but a non-interactive smoke test returned `Not logged in`; therefore
+this branch does not claim Claude Code benchmark scores. Once an Anthropic
+session is authenticated, the same matrix can run through Claude Code's
+`--print`/MCP path with the model and permissions recorded in the receipt.
