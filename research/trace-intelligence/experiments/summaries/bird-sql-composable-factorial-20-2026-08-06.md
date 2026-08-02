@@ -20,18 +20,23 @@ to compose compatible patterns rather than copy whole queries.
 | Formatting placebo | 3/20 | 2 | 12.112s |
 | Composable subplan library | 4/20 | 2 | 11.446s |
 
-The independent evaluator recomputed all 60 episodes and matched the receipt.
-The composable arm had **one paired win and zero losses** against each control,
-with 19 ties in each comparison. The exact paired sign test is `p=1.0` because
-there was only one discordant task.
+Two independent replays used the identical split and library hash. The
+independent evaluator recomputed all `120` episodes and both receipts matched.
+Across the two runs, the composable arm was `8/40`, no-skill `6/40`, and
+placebo `6/40`. The same single task was a stable library win with zero stable
+losses against either control; the other 19 tasks were ties or mixed across
+replays. The exact paired sign test remains `p=1.0` because there was only one
+discordant task.
 
 ## Interpretation
 
-This is a **directionally encouraging but underpowered transfer signal**. It
-does not reproduce the dramatic 10/10 same-family broker result, but it also
-does not collapse to the one-shot procedure null. The result supports testing
-validated subplans as a separate artifact granularity, not promoting a generic
-memory or embedding layer. No skill or library was promoted.
+This is a **directionally encouraging but underpowered and low-headroom transfer
+signal**. It does not reproduce the dramatic 10/10 same-family broker result,
+but it also does not collapse to the one-shot procedure null. The second replay
+shows the aggregate count is stable, while task-level wins are sparse. The
+result supports testing validated subplans as a separate artifact granularity,
+not promoting a generic memory or embedding layer. No skill or library was
+promoted.
 
 The next gate is a larger multi-family composition study with multiple frozen
 libraries, repeated seeds, explicit NIL/irrelevant-library cases, and changed-
@@ -43,5 +48,7 @@ examples from an unrelated system cannot be treated as semantic aliases.
 - [aggregate result](../results/bird-sql-composable-factorial-20-2026-08-06.json)
 - [independent verification](../results/bird-sql-composable-factorial-20-2026-08-06-verification.json)
 - [paired analysis](../results/bird-sql-composable-factorial-20-2026-08-06-paired.json)
+- [second replay](../results/bird-sql-composable-factorial-20-seed2-2026-08-06.json)
+- [second replay verification](../results/bird-sql-composable-factorial-20-seed2-2026-08-06-verification.json)
+- [two-replay aggregate](../results/bird-sql-composable-factorial-20-aggregate-2026-08-06.json)
 - [runner](../../bird_sql_composable_factorial.py)
-

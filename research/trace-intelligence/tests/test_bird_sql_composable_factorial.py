@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 
 from bird_sql_composable_factorial import build_library, prompt_for
+from bird_sql_composable_factorial_aggregate import run as aggregate_replays
 
 
 def test_library_uses_only_source_families(tmp_path):
@@ -29,3 +30,18 @@ def test_composable_prompt_preserves_target_and_library_boundary():
     assert "Validated SQL: SELECT 1" in prompt
     assert "do not copy a whole source query" in prompt.lower()
 
+
+def test_aggregate_replays_requires_same_library(tmp_path):
+    base = {
+        "protocol": {"task_count": 1, "library_sha256": "same", "arms": ["no_skill", "formatting_placebo", "composable_subplan_library"]},
+        "episodes": [
+            {"task_hash": "task", "arm": "no_skill", "exact": False, "outcome": "mismatch"},
+            {"task_hash": "task", "arm": "formatting_placebo", "exact": False, "outcome": "mismatch"},
+            {"task_hash": "task", "arm": "composable_subplan_library", "exact": True, "outcome": "exact"},
+        ],
+    }
+    first = tmp_path / "first.json"; second = tmp_path / "second.json"
+    verify = tmp_path / "verify.json"; out = tmp_path / "out.json"
+    first.write_text(json.dumps(base)); second.write_text(json.dumps(base)); verify.write_text(json.dumps({"claim_boundary": {"verification_passed": True}}))
+    result = aggregate_replays((first, second), (verify, verify), out)
+    assert result["stable_comparisons"]["no_skill"]["stable_library_wins"] == 1

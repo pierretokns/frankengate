@@ -1,0 +1,58 @@
+{
+  "arms": {
+    "composable_subplan_library": {
+      "candidate_error": 3,
+      "episodes": 40,
+      "exact": 8
+    },
+    "formatting_placebo": {
+      "candidate_error": 4,
+      "episodes": 40,
+      "exact": 6
+    },
+    "no_skill": {
+      "candidate_error": 2,
+      "episodes": 40,
+      "exact": 6
+    }
+  },
+  "checks": {
+    "same_arms": true,
+    "same_library": true,
+    "same_task_count": true,
+    "two_replays": true,
+    "verifiers_passed": true
+  },
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_subplan_benefit_confirmed": false,
+    "reason": "The same one-run stable win is encouraging but remains a public proxy result without changed-system or enterprise outcome evidence.",
+    "repeated_replays_are_not_independent_tasks": true
+  },
+  "library_sha256": "7f0e7e753de6a4b03a8a153ad273754389cb93445e08e8f3a7afd5257918b56a",
+  "result_sha256": "3cf0c5ce392537695d03846f60144bee580fd7ccc9629b2929d07f8fb1314824",
+  "schema_version": "frankengate-bird-sql-composable-factorial-aggregate-v1",
+  "source_result_sha256": [
+    "eee44c3670a1e9257e19dc227dc7043bd9ae8f8048e7d5ffa49512d8ef9e9600",
+    "39f5b421fdd2299fb7765c321c6c95c6e70b862b06b89b89e402e7cc462a8d0e"
+  ],
+  "source_verification_sha256": [
+    "698f611ae3f99f993f32c81a5f904bdbbd1e0e5c77e87d4efbdeaa8903f0114f",
+    "f7c78fefc5d37f4c4e120bb6d80acc622608cbf006c5fc5b4bb943675033fa12"
+  ],
+  "stable_comparisons": {
+    "formatting_placebo": {
+      "stable_library_losses": 0,
+      "stable_library_wins": 1,
+      "stable_ties_or_mixed": 19,
+      "unique_tasks": 20
+    },
+    "no_skill": {
+      "stable_library_losses": 0,
+      "stable_library_wins": 1,
+      "stable_ties_or_mixed": 19,
+      "unique_tasks": 20
+    }
+  },
+  "unique_task_count": 20
+}

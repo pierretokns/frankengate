@@ -1,0 +1,721 @@
+{
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_subplan_benefit_confirmed": false,
+    "independent_family_disjoint_run": true,
+    "reason": "Validated source examples are tested as a composition arm on held-out BIRD families; promotion still requires independent verification, more families/seeds, changed-system replay, and cost/negative-transfer gates."
+  },
+  "episodes": [
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8342.085,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "candidate_error",
+      "response_sha256": "d0cd602231792e0751a9bb65ecf767e020f83c645af83021782a39852731092a",
+      "task_hash": "d9cf8a492227927b1db48d54a165e6226b84d0e2af17a7961e7fc4736a5dfa36",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 7474.064,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "candidate_error",
+      "response_sha256": "856dfd4531cd5fd3366747104e56b47539cf091d7284eefec606ac189b0437d5",
+      "task_hash": "d9cf8a492227927b1db48d54a165e6226b84d0e2af17a7961e7fc4736a5dfa36",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 9190.638,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "candidate_error",
+      "response_sha256": "997e99b5d20627b66511060dba886061df8c968563c96acd52329a8105973619",
+      "task_hash": "d9cf8a492227927b1db48d54a165e6226b84d0e2af17a7961e7fc4736a5dfa36",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 15374.788,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "afa70d66a8b946095a3e296b719adeceac4a526a082d89607cc29701898a77eb",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 13911.174,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "75565854970d5356bf12644182684b49f859004297d44557c9a79601b8b87bdb",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 13439.793,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "0e04c355f20ac1c900da7315a0caef57dbf9bb7e1dae58dad1d7f43175d87ccc",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8158.819,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9df7d9afc4172e94c2dbc53ed741a393976d2aced823c43bd9e3f3ca80c6b9ca",
+      "task_hash": "21be379428e44711a17cdbecc51aaa368dd6ce6547038d1efb4d06bc84d890be",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 15270.445,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "5b346d264c94eb0c8630add7bb6b42ac4b0537cbaf5e0856c301a579cfc4a75b",
+      "task_hash": "21be379428e44711a17cdbecc51aaa368dd6ce6547038d1efb4d06bc84d890be",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 6327.841,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9df7d9afc4172e94c2dbc53ed741a393976d2aced823c43bd9e3f3ca80c6b9ca",
+      "task_hash": "21be379428e44711a17cdbecc51aaa368dd6ce6547038d1efb4d06bc84d890be",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 15383.797,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "7740e6f6844544b3c5feded570732602c0404ad053bc57783385c9f6ac872c36",
+      "task_hash": "308ba7821512338f7182af21d9282903fa64db10551208ab26b7d82330b2d391",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 11672.714,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "f9476b1b0a5958989451d0d9286d20ae5e7483a65909a820c63ceed2aebf01e8",
+      "task_hash": "308ba7821512338f7182af21d9282903fa64db10551208ab26b7d82330b2d391",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 16143.717,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "37d2d1c2494f1ff2a0dd40349ba0aa73e6707a89100a14be895a33ba89aa6856",
+      "task_hash": "308ba7821512338f7182af21d9282903fa64db10551208ab26b7d82330b2d391",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 7198.164,
+      "exact": true,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "495b4438a097ef21b6d1510cd7e002fd87c88a81bce3715597cd25a2339d8722",
+      "task_hash": "5ae07a247661fa3528c32c2456f02394e698597853bf0ef4f6b00e61bff782d7",
+      "unordered": true
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 6840.802,
+      "exact": true,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "0bb8e449c15c496cd7eb5c790143ba0b51e70bcf9d7f6281537410c1c4fb8687",
+      "task_hash": "5ae07a247661fa3528c32c2456f02394e698597853bf0ef4f6b00e61bff782d7",
+      "unordered": true
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 6809.46,
+      "exact": true,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "495b4438a097ef21b6d1510cd7e002fd87c88a81bce3715597cd25a2339d8722",
+      "task_hash": "5ae07a247661fa3528c32c2456f02394e698597853bf0ef4f6b00e61bff782d7",
+      "unordered": true
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 7850.507,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "fedf889ded077dd4e3dd30625614d0ea82bc207b0bf8e0d69489e74ad1b1342e",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 7995.459,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "71fdc222c42abdcd6a613697c54c3d669a60e3ca5cef54fbfd19bbef323fe016",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 9535.32,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "274aae414b5799b021108fd5b753ae528b993efc20648a6b6fb1f0ddb764c3b8",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 12053.554,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "8e1bb9421179fc2a26d5c1acef6d74bc6c105ba9c0018bb5e423b3cb57345ded",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 11652.785,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "871b0ea161fd7e35beb417f0756f0e7a3e7dac6e9059be6a08779269bd6d0864",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 10518.558,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "cc4900e3fd66174630c03b0e558e094af64f4a6df762ad700577eddc6c7a286b",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 11527.174,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "100f17a290ea3e4ac427956cd3124650aca5ffc78a1445943b235129a0c3893b",
+      "task_hash": "fd4023e3f6ae2be583274951694ac868287ab8efb216b750297c6a9a6619643c",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 18158.924,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9c8106574fa213b12a8ff0449ede09b414e2c9dd30181c74f16edfdef2a34bb7",
+      "task_hash": "fd4023e3f6ae2be583274951694ac868287ab8efb216b750297c6a9a6619643c",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 11561.813,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "800d5ef67a59aa49d18dc5bd46d9ae15b2d279219e274cdf478a2e114bfc9412",
+      "task_hash": "fd4023e3f6ae2be583274951694ac868287ab8efb216b750297c6a9a6619643c",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 9339.937,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "237499007dffe44068fc211a4047e7d37d3ab27b7d291503b12ae38fd2ca501e",
+      "task_hash": "035c1c3b1288643bcf12234171414f59bd8d08a3a2b094aca481ea5eb7e2703a",
+      "unordered": true
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 7476.223,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "7156693ea8c498ddf8dff09cff1328c2dd4f3a0f72e38f105ef27968dee3bf77",
+      "task_hash": "035c1c3b1288643bcf12234171414f59bd8d08a3a2b094aca481ea5eb7e2703a",
+      "unordered": true
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 8396.197,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "237499007dffe44068fc211a4047e7d37d3ab27b7d291503b12ae38fd2ca501e",
+      "task_hash": "035c1c3b1288643bcf12234171414f59bd8d08a3a2b094aca481ea5eb7e2703a",
+      "unordered": true
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 9068.899,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "48e767b7f4130ef8f7d60bad5b4b705204785f37eea30b7781912731fd789d56",
+      "task_hash": "378275f2b50838a2b30c410cd1165196d044e21207b318d23859d44590b0899a",
+      "unordered": true
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 8254.319,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "3b6b453be047350943e8bac295d9eaddb71b45dacf9f715dab82fc445f5cde38",
+      "task_hash": "378275f2b50838a2b30c410cd1165196d044e21207b318d23859d44590b0899a",
+      "unordered": true
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 12472.902,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "042672c02219a287e17aa951d0dda45530fcc586fc6b4e4d34b60826893053ac",
+      "task_hash": "378275f2b50838a2b30c410cd1165196d044e21207b318d23859d44590b0899a",
+      "unordered": true
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 14376.57,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "cce54feab0e36d3899510ec3c68663a3e218b973bbef990c44e24cdda22a0443",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 14299.856,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "2e191cbc4d23daf19cc5fe2e1fb02d2b1251a46866ab70fd7559fd3f6a067ae5",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 15293.429,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "604ce256328c5d1e5947cc9e2b783db948fc20f410dfbe5e55c114638107e9ab",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8900.681,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "819af03ac835df693803a9e40191c75f51feff705e83d04d35995b0b63b9f46a",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 10822.49,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9e76feaf2c4bbc12a3e283a0c4f88cf3d1d99918be1abe4ac7835706d98785d3",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 14252.792,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "6138284445aef20c695b538e77330199eee60760a17124f7de9e91c19824782c",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 7100.48,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "531197e3173195aa93d552a945d30803ca271fca0238f9d3a56887e702568848",
+      "task_hash": "46412a665b11060c994ba29e6753270f963e9f79369f17c3b4759db86d3c32e5",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 7022.086,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "34ec0618322a4e548190efd59f6c90f8cc7fb09780b9509b9f5d2123bd347d78",
+      "task_hash": "46412a665b11060c994ba29e6753270f963e9f79369f17c3b4759db86d3c32e5",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 7101.598,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "237d515c1b8d560181d4201196ab787596cbb405e7365c87f194b7c51d7f9a9d",
+      "task_hash": "46412a665b11060c994ba29e6753270f963e9f79369f17c3b4759db86d3c32e5",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 10652.069,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "66a741d461e33c91a87d7471e88282ee92fe931ddfff4044a9369090d7965433",
+      "task_hash": "bd5d86412280961081cf3b545c25a49a2aba56224a323803ba6895cf78640daa",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 17355.079,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "ce6eb7d8fbe018ac8c58ff953fb0b8c31b28d6a83157ca3833580e726094b7e1",
+      "task_hash": "bd5d86412280961081cf3b545c25a49a2aba56224a323803ba6895cf78640daa",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 15949.917,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "eb9d92ff0fee42f14354427b77f9e911824c47e4041dc1ba720d2a28ec178d5f",
+      "task_hash": "bd5d86412280961081cf3b545c25a49a2aba56224a323803ba6895cf78640daa",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 11202.749,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "b2ec39b712f3655040110dbd558ffc60d17c423ce998c3d7be2c5464fe23744e",
+      "task_hash": "97cf8d88b340ffb212158069b5256d07f7e34e5fa4d4d14ec98e8a63f3cc1938",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 10764.184,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "8e0e901f3b7e9339ecd8e75358ec85ae61c9699fe6397c3e81b611e795c4a18d",
+      "task_hash": "97cf8d88b340ffb212158069b5256d07f7e34e5fa4d4d14ec98e8a63f3cc1938",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 11507.738,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "ade9febb640e426d261bb2e9b3c5fed6591f2e38c94c4be2e64d45490b76d9da",
+      "task_hash": "97cf8d88b340ffb212158069b5256d07f7e34e5fa4d4d14ec98e8a63f3cc1938",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 10446.231,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "558372e0170bbe88981a7ad2e5635f6c0c32e596919663323e67637fa7a0aca3",
+      "task_hash": "3cdbf808242920659fffe46bc894fa55a60b404b7e28bae02a00144e5f5e1f34",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 11704.744,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "ff664c6c358e2ff2d3bc97fec471e3b434829afee1d23ce0cfab06842ef02f27",
+      "task_hash": "3cdbf808242920659fffe46bc894fa55a60b404b7e28bae02a00144e5f5e1f34",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 9367.451,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "03f150872474e6cea4725ddd86db55093b61f30ae7f24b3458a59e78b87f1005",
+      "task_hash": "3cdbf808242920659fffe46bc894fa55a60b404b7e28bae02a00144e5f5e1f34",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 10471.451,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "a118e4fdf489ee2b18d9516e5d8b28b87e72f6b130c63ddee03d0f70e33f500f",
+      "task_hash": "13c10b58d70ff9dff13833fe6cdaacbfc9e252db8ebaf56e9238c1efaddcdaf9",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 11845.162,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "candidate_error",
+      "response_sha256": "ea47a7c211fa5680a82afbc261cffcb5c71adb9ee52643ce1ad9f69664507936",
+      "task_hash": "13c10b58d70ff9dff13833fe6cdaacbfc9e252db8ebaf56e9238c1efaddcdaf9",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 12763.764,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "7c1f0d9ed24d45a20c30492d700cec3b089c4ca29eb85c1ea62a121abd2e2e1a",
+      "task_hash": "13c10b58d70ff9dff13833fe6cdaacbfc9e252db8ebaf56e9238c1efaddcdaf9",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8306.609,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "3d6214dc2a400400cb0ae36c7e0a60faa58f23edd2158c849ccbc681f6437147",
+      "task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9152.606,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "63ccb444052b0e5820bfb3db9a0d9871d51691552f2fb65a0255f28996ca3e99",
+      "task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 7357.572,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "e3189397bc8d41dbd3bcd5d0fce0ceaec8fef3a9dfd16f2fdfa0f4819b8ac02c",
+      "task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 12069.589,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "f699fc0619ce99bdb88c344d517ac07dd6fade5490893874a2c554efae7f1ca0",
+      "task_hash": "03f2cafcb3887ad4be16601a8373525ebeda40c2024130dc7c2aa2456c135795",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 10290.142,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "33e0e9d908a6b9bfe8dfd9389f1c8081b44e2bb03640dc4c8ea72b2d1fc6f2e1",
+      "task_hash": "03f2cafcb3887ad4be16601a8373525ebeda40c2024130dc7c2aa2456c135795",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 14238.172,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9046d94de603be2651b0384fb8bf2e53d99c26b790b263652ef78423ff55e4ac",
+      "task_hash": "03f2cafcb3887ad4be16601a8373525ebeda40c2024130dc7c2aa2456c135795",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 13880.088,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "da4d56031b4067fddee8d5b456227c4b73c2e823332a0d69f4bf84610bfee005",
+      "task_hash": "8271b20d3fff39f423c8290f7b5f7c53a2e5b53dacc16217838e95eb226c34d6",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9996.382,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "1dacbf1c8cefde913a73cfd599a151e2656feb72265caa254f300b7880991266",
+      "task_hash": "8271b20d3fff39f423c8290f7b5f7c53a2e5b53dacc16217838e95eb226c34d6",
+      "unordered": false
+    },
+    {
+      "arm": "composable_subplan_library",
+      "elapsed_ms": 16240.231,
+      "exact": true,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "6dff2dc5b9a564995225a28bd095f4369232873cf36ac10f69f6741e7897abba",
+      "task_hash": "8271b20d3fff39f423c8290f7b5f7c53a2e5b53dacc16217838e95eb226c34d6",
+      "unordered": true
+    }
+  ],
+  "protocol": {
+    "arms": [
+      "no_skill",
+      "formatting_placebo",
+      "composable_subplan_library"
+    ],
+    "gold_hidden_from_proposer": true,
+    "harness": "codex-cli-subscription",
+    "heldout_families": [
+      "card_games",
+      "formula_1",
+      "financial",
+      "debit_card_specializing"
+    ],
+    "library_sha256": "7f0e7e753de6a4b03a8a153ad273754389cb93445e08e8f3a7afd5257918b56a",
+    "model": "gpt-5.6-luna",
+    "source_examples_per_family": 4,
+    "source_families": [
+      "superhero",
+      "toxicology",
+      "student_club",
+      "california_schools"
+    ],
+    "source_target_families_disjoint": true,
+    "task_count": 20,
+    "tasks_per_heldout_family": 5
+  },
+  "schema_version": "frankengate-bird-sql-composable-factorial-v1",
+  "summary": {
+    "composable_subplan_library": {
+      "candidate_error": 1,
+      "elapsed_ms_total": 228468.903,
+      "episodes": 20,
+      "exact": 4,
+      "mismatch": 15
+    },
+    "formatting_placebo": {
+      "candidate_error": 2,
+      "elapsed_ms_total": 221959.64000000004,
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 15
+    },
+    "no_skill": {
+      "candidate_error": 1,
+      "elapsed_ms_total": 211704.24099999998,
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 16
+    }
+  }
+}
