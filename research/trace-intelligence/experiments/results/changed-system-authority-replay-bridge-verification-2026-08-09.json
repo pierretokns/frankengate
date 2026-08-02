@@ -1,0 +1,8 @@
+{
+  "claim_boundary_verified": true,
+  "independent_execution_verified": true,
+  "rows_verified": 30,
+  "schema_version": "frankengate-changed-system-authority-replay-bridge-verification-v1",
+  "source_result_sha256": "4337f6b6069d07231d448045e0a7891a7ca979c67c9aac2f6c8751243f2e060f",
+  "verification_passed": true
+}

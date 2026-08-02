@@ -122,6 +122,13 @@ with zero unsafe selections and correctly abstained on the NIL case. This
 supports typed artifact projections and deterministic admission gates as a
 research requirement. It does not show that frontier selection can enforce
 governance, nor does it substitute for an authorized changed-system cohort.
+The [replay bridge](changed-system-authority-replay-bridge-2026-08-09.md)
+connects that metadata result to independent execution: typed-gated selections
+were `10/10` safe/correct, while a name-first control produced seven unsafe
+accepts, including cases whose output happened to match. This should be a
+required partner-study endpoint: report semantic correctness and authority
+validity separately, because a successful query can still be unauthorized or
+semantically wrong.
 
 ### Trajectory-aware tool evaluation
 

@@ -281,6 +281,13 @@ it is not evidence that a model can replace the admission gate. The production
 shape remains typed retrieval followed by deterministic scope/epoch/schema and
 status checks, then independent replay. The fixture is synthetic and does not
 establish enterprise alias quality, artifact utility, or skill transfer.
+The companion [replay bridge](changed-system-authority-replay-bridge-2026-08-09.md)
+executed the selected artifacts independently: the typed arm produced `10/10`
+safe/correct executions (two valid artifacts occurred in one case), while the
+naive name-first control made `7` unsafe accepts despite `7` matching the
+expected row digest. This is the concrete reason output equality cannot replace
+authority and semantic validation. It remains a synthetic SQLite result, not a
+production utility or skill-improvement claim.
 
 ### 6. Custom embedding evidence is not yet promotion-positive
 

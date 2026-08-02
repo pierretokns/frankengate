@@ -79,6 +79,11 @@ the NIL case. The authorized P0 cohort must now repeat this comparison with
 real semantic labels, wrong-system and temporal negatives, authority receipts,
 and independent changed-system replay. Typed metadata retrieval is a useful
 front end; it is not an admission or authorization mechanism.
+The [replay bridge](changed-system-authority-replay-bridge-2026-08-09.md)
+completed the synthetic end-to-end checkpoint: typed-gated selections produced
+`10/10` safe/correct executions, while a naive name-first control made `7`
+unsafe accepts. The real P0 cohort must repeat this with independent terminal
+outcomes and authority receipts; row equality alone is insufficient.
 
 ## Partner/publication package
 
