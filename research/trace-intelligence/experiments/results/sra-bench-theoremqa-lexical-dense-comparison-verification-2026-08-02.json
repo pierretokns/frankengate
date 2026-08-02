@@ -1,0 +1,16 @@
+{
+  "checks": {
+    "all_arms": true,
+    "claim_boundary": true,
+    "dataset": true,
+    "dense_beats_bm25_at_r1": true,
+    "dense_beats_bm25_at_r10": true,
+    "dense_beats_tfidf_at_r10": true,
+    "promotion_blocked": true,
+    "raw_outputs_external": true,
+    "schema": true
+  },
+  "schema_version": "frankengate-sra-bench-theoremqa-dense-retrieval-verification-v1",
+  "source_receipt_sha256": "e91d201dd348747a8e160bfd50f296dfb7a7af83f9849c796aa31a2cda8e7c56",
+  "verification_passed": true
+}

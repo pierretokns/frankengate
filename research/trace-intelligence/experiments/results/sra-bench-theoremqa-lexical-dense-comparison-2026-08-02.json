@@ -1,0 +1,65 @@
+{
+  "claim_boundary": "This is a public capability-retrieval measurement. It does not establish enterprise alias quality, tool compatibility, incorporation, causal skill utility, authority safety, or prospective user benefit.",
+  "dataset": {
+    "corpus_skills": 26262,
+    "gold_skill_annotations": 636,
+    "name": "theoremqa",
+    "queries": 747
+  },
+  "decision": {
+    "changed_system_replay_measured": false,
+    "dense_role": "candidate_generation",
+    "execution_or_incorporation_measured": false,
+    "skill_release_authorized": false
+  },
+  "delta_vs_bm25": {
+    "Recall@1": 0.09638554216867468,
+    "Recall@10": 0.0535475234270415,
+    "Recall@5": 0.04953145917001334,
+    "Recall@50": 0.04283801874163318,
+    "nDCG@10": 0.06725860134813355
+  },
+  "delta_vs_tfidf": {
+    "Recall@1": 0.2543507362784471,
+    "Recall@10": 0.17269076305220887,
+    "Recall@5": 0.19009370816599735,
+    "Recall@50": 0.08299866131191436,
+    "nDCG@10": 0.2157705438858838
+  },
+  "inputs": {
+    "bm25_sha256": "d32ad52a5cf819467ca8075f1edefbc178fd8678f318207dfe304cc6f5d7df93",
+    "dense_sha256": "ae51b9dd4236579ab167a0b04352603c278c6fb914f96fcb212b631dcee572c3",
+    "tfidf_sha256": "e32083d9747f928893244bf0c4b15b6f36dac7914c43364daf9243e79cd3e681"
+  },
+  "metrics": {
+    "bge": {
+      "Recall@1": 0.6680053547523427,
+      "Recall@10": 0.8607764390896921,
+      "Recall@5": 0.8125836680053548,
+      "Recall@50": 0.9384203480589023,
+      "nDCG@10": 0.7594724845279243
+    },
+    "bm25": {
+      "Recall@1": 0.571619812583668,
+      "Recall@10": 0.8072289156626506,
+      "Recall@5": 0.7630522088353414,
+      "Recall@50": 0.8955823293172691,
+      "nDCG@10": 0.6922138831797907
+    },
+    "tfidf": {
+      "Recall@1": 0.41365461847389556,
+      "Recall@10": 0.6880856760374833,
+      "Recall@5": 0.6224899598393574,
+      "Recall@50": 0.8554216867469879,
+      "nDCG@10": 0.5437019406420405
+    }
+  },
+  "protocol": {
+    "dense_model": "BAAI/bge-base-en-v1.5",
+    "query_prefix": "Represent this sentence for searching relevant passages:",
+    "raw_outputs_committed": false,
+    "source": "SRA-Bench/SR-Agents pinned public corpus",
+    "top_k": 50
+  },
+  "schema_version": "frankengate-sra-bench-theoremqa-dense-retrieval-v1"
+}

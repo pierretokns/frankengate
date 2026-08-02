@@ -45,4 +45,5 @@ Use the strengthened [enterprise semantic-cohort contract](../../configs/studies
 - [SRA-Bench BM25 retrieval control](sra-bench-bm25-retrieval-control-2026-08-02.md)
 - [SRA-Bench BM25/TF-IDF comparison](sra-bench-bm25-tfidf-comparison-2026-08-02.md)
 - [SRA-Bench ToolQA lexical/dense comparison](sra-bench-toolqa-lexical-dense-comparison-2026-08-02.md)
+- [SRA-Bench TheoremQA lexical/dense comparison](sra-bench-theoremqa-lexical-dense-comparison-2026-08-02.md)
 - [Current objective audit](objective-completion-audit-2026-08-06.md)
