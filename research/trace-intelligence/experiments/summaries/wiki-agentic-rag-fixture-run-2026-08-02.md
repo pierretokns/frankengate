@@ -54,9 +54,18 @@ benchmark cohort and a consented enterprise-like wiki with exact identifiers,
 aliases, stale facts, and cross-wiki collisions. This is the next phase of
 [issue #131](https://github.com/pierretokns/frankengate/issues/131).
 
+## MCP-shaped transport probe
+
+The same hybrid backend was called 100 times directly and through the minimal
+stdio JSON-RPC MCP surface. Ranking parity was `1.000`; direct p50/p95 was
+`0.562/.784 ms`, while the transport path was `.668/.929 ms`. This isolates a
+small local protocol cost, but is deliberately not presented as network MCP or
+agent tool-selection evidence.
+
 ## Receipts
 
 - [content-minimized result](../results/wiki-agentic-rag-fixture-2026-08-02.json)
 - [benchmark implementation](../../wiki_agentic_rag_benchmark.py)
 - [receipt generator](../../wiki_agentic_rag_receipt.py)
 - [unit tests](../../tests/test_wiki_agentic_rag_benchmark.py)
+- [MCP-shaped transport benchmark](../../wiki_mcp_transport_benchmark.py)
