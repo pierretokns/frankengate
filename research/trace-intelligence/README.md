@@ -459,6 +459,14 @@ candidates received the same label twice; the two cross-project candidates
 split between reusable and unsafe judgments. This supports frontier review as
 a candidate-ranking layer, never autonomous artifact release.
 
+The [`expanded frontier artifact screen`](experiments/summaries/dataclaw-artifact-frontier-screen-extended-2026-08-02.md)
+replicated that result with 16 recurring cross-project candidates and three
+reviews per candidate: 48/48 structured calls were valid, but only 11/16
+candidates were unanimous. The labels included reusable, context-specific,
+unsafe, and insufficient-evidence cases. Recurrence therefore remains a
+proposal prior; authority, parameter, outcome, and changed-system replay gates
+are still required before promotion.
+
 The [`GLiNER term-extraction probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md)
 tested a typed-span candidate generator on 49 admitted Wisp documents. A
 deterministic pass found 15,391 unique terms, 666 acronym forms, and 191
