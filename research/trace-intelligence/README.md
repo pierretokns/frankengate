@@ -74,6 +74,9 @@ The [`Trace Commons feature ablation`](experiments/summaries/trace-commons-featu
 is a separate workstream-proxy result: prompt retrieval was 13/13 and durable
 identifier retrieval 12/13, but it does not establish cross-user identity or
 skill-gap outcomes.
+The [`Trace Commons domain-adapter probe`](experiments/summaries/trace-commons-domain-adapter-2026-08-07.md)
+was tied with its baseline at 13/13 and MRR 1.0 under leave-one-project-out;
+the proxy is too easy to measure embedding-transfer lift.
 
 ## Historical Claude/Codex mining
 

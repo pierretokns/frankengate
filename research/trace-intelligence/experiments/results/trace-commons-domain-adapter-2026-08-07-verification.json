@@ -1,0 +1,13 @@
+{
+  "all_passed": true,
+  "checks": {
+    "arms_present": true,
+    "bounds": true,
+    "claim_boundary": true,
+    "leave_one_project_out": true,
+    "raw_content_external": true,
+    "schema": true
+  },
+  "receipt_sha256": "fee3b5dcb4e7434afb874079a8bb367b7d0c1bd886096bb1e9264fa4ab9eb078",
+  "schema_version": "frankengate-trace-commons-domain-adapter-verification-v1"
+}

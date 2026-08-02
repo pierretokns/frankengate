@@ -47,6 +47,8 @@ REQUIREMENTS: tuple[dict[str, Any], ...] = (
             "combined-evidence-matrix-2026-08-02.json",
             "bird-sql-skill-factorial-40-2026-08-06-paired.json",
             "bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
+            "trace-commons-domain-adapter-2026-08-07.json",
+            "trace-commons-domain-adapter-2026-08-07-verification.json",
         ),
         "remaining": "The 40-task skill checkpoint and repeated composition replays improve power, but broader user/time-disjoint cohorts, irrelevant-library NILs, and a different task horizon remain open.",
     },

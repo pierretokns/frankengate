@@ -25,6 +25,9 @@ Evidence already measured:
   identifier `12/13` same-project top-1, while event structure was `1/13`;
   this is candidate-discovery evidence only because the cohort has no stable
   principal or outcome labels;
+- A leave-one-project-out token-weight adapter tied its baseline at `13/13`
+  top-1 and MRR `1.0`, demonstrating that this public proxy is too easy to
+  measure domain-adaptation lift rather than proving adaptation unnecessary;
 - BIRD-SQL trace-mined procedure replay reached `8/40`, equal to no-skill and
   below the formatting placebo on latency, so no skill was promoted;
 - BIRD-Interact provides 600 ambiguity/follow-up tasks, while its 20 public
