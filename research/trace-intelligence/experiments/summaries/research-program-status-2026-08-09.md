@@ -96,6 +96,11 @@ top-level tool order was `0.0`, per-action resource identity was only `.300`,
 and `.918` of actions were conservatively literal-only. This requires separate
 immutable tool identity, resource reference, parameter bindings, and template
 fields; a model-proposed template is never a replay authorization.
+The [deterministic capsule round-trip](cctrace-deterministic-capsule-roundtrip-2026-08-02.md)
+then compiled the same 10 episodes without a model and preserved tool order,
+input keys, action order, invocation uniqueness, and source provenance at
+`1.000`. This is the correct artifact identity baseline; model enrichment must
+attach to it rather than replace it.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -256,6 +261,7 @@ project, principal, and changed-system holdouts.
 - [real cctrace SSL normalization probe](cctrace-ssl-normalizer-probe-2026-08-02.md)
 - [cctrace normalized-output quality audit](cctrace-ssl-normalizer-quality-audit-2026-08-02.md)
 - [cctrace artifact-capsule probe](cctrace-artifact-capsule-probe-2026-08-02.md)
+- [deterministic cctrace capsule round-trip](cctrace-deterministic-capsule-roundtrip-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)

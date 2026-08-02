@@ -1,0 +1,7 @@
+{
+  "claim_boundary_verified": true,
+  "records_verified": 10,
+  "schema_version": "frankengate-cctrace-capsule-roundtrip-verification-v1",
+  "source_result_sha256": "fb33eec079a2c52a031e1775c02269e3e0f389252f7762c5b7b7a7350dc0ae33",
+  "verification_passed": true
+}

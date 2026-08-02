@@ -287,6 +287,10 @@ found perfect input-key fidelity but only `.300` per-action resource identity
 and no repeated top-level tool-sequence fidelity. This is why artifact capsules
 must separate immutable tool identity, resource references, parameter bindings,
 and templates before any replay gate.
+The [deterministic capsule round-trip](experiments/summaries/cctrace-deterministic-capsule-roundtrip-2026-08-02.md)
+preserved tool identity, order, input keys, invocation uniqueness, and source
+provenance at `1.000` on the same episodes. This should be the immutable
+artifact baseline; model-derived aliases/templates remain annotations.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next
