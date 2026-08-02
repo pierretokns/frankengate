@@ -741,6 +741,10 @@ The initial implementation target is the existing governed PostgreSQL fixture:
 typed objects and evidence-linked edges, recursive SQL expansion, FTS, and
 optional pgvector. A graph database is explicitly out of scope until graph
 expansion is measured as the bottleneck.
+The [`ontology/action trace preflight`](experiments/summaries/ontology-action-trace-preflight-2026-08-02.md)
+now freezes A0–A8, the object/edge/action contract, holdouts, replay and safety
+gates, and the content-free validator before implementation or frontier
+extraction begins.
 
 The first independent vocabulary run is now complete:
 [`GLiNER/Wisp probe`](experiments/summaries/term-extraction-gliner-wisp-2026-08-04.md).

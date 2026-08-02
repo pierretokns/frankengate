@@ -1,0 +1,235 @@
+{
+  "schema_version": "frankengate-ontology-action-trace-preflight-conformance-v1",
+  "contract_sha256": "5b7068b2f835494d7912b1d15d975af93ad335bf0123afceef6c6cb182ad389a",
+  "manifest_sha256": "c2ebd380198d085af09f7e97101a914aafa1e179eb7762891e9caa5a76c3275a",
+  "raw_content_committed": false,
+  "structural_valid": false,
+  "promotion_ready": false,
+  "promotion_note": "Preflight conformance does not prove ontology quality, replay outcomes, or enterprise utility.",
+  "errors": [
+    {
+      "path": "$.authorization.consent_scope_uri",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.minimum_hard_negatives",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.minimum_nil_or_unclear",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.maximum_unsafe_actions",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.maximum_stale_accept_rate",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.maximum_regression_rate",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.must_beat_no_skill_and_placebo",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.same_harness_across_arms",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.same_candidate_pool_across_arms",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.candidate_pool_frozen_before_labels",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.same_authority_epoch",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.independent_evaluator",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.proposer_excluded_from_evaluator",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.raw_content_external_only",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.storage_contract.projection_store",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.storage_contract.graph_database_required",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.storage_contract.edge_evidence_required",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.storage_contract.validity_interval_required",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.storage_contract.policy_epoch_required",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.publication_policy.deletion_receipt_required",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.publication_policy.publication_review_required",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.protocol_uri",
+      "message": "must be sealed:// or partner://"
+    },
+    {
+      "path": "$.cohort_contract_uri",
+      "message": "must be sealed:// or partner://"
+    },
+    {
+      "path": "$.authorization.raw_content_committed",
+      "message": "must be false"
+    },
+    {
+      "path": "$.publication_policy.promotion_ready",
+      "message": "must be false before outcomes"
+    },
+    {
+      "path": "$.representation_arms",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.required_holdouts",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.required_case_classes",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.required_mutation_classes",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.required_object_types",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.required_edge_statuses",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.required_action_states",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.required_metrics",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.promotion_gates.minimum_targets",
+      "message": "must be a positive integer"
+    },
+    {
+      "path": "$.promotion_gates.minimum_hard_negatives",
+      "message": "must be a positive integer"
+    },
+    {
+      "path": "$.promotion_gates.minimum_nil_or_unclear",
+      "message": "must be a positive integer"
+    },
+    {
+      "path": "$.promotion_gates.maximum_stale_accept_rate",
+      "message": "must be in [0,1]"
+    },
+    {
+      "path": "$.promotion_gates.maximum_regression_rate",
+      "message": "must be in [0,1]"
+    },
+    {
+      "path": "$.promotion_gates.maximum_unauthorized_edges",
+      "message": "must be zero"
+    },
+    {
+      "path": "$.promotion_gates.maximum_unsafe_actions",
+      "message": "must be zero"
+    },
+    {
+      "path": "$.promotion_gates.must_beat_A0_on_sealed_holdout",
+      "message": "must be true"
+    },
+    {
+      "path": "$.promotion_gates.must_beat_no_skill_and_placebo",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.same_model_across_arms",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.same_harness_across_arms",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.same_candidate_pool_across_arms",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.candidate_pool_frozen_before_labels",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.same_authority_epoch",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.independent_evaluator",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.proposer_excluded_from_evaluator",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.changed_system_replay_required",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.raw_content_external_only",
+      "message": "must be true"
+    },
+    {
+      "path": "$.storage_contract.canonical_evidence_authority",
+      "message": "must be trajectory_dag"
+    },
+    {
+      "path": "$.storage_contract.projection_store",
+      "message": "must be postgresql_jsonb_fts_pgvector"
+    },
+    {
+      "path": "$.storage_contract.edge_evidence_required",
+      "message": "must be true"
+    },
+    {
+      "path": "$.storage_contract.validity_interval_required",
+      "message": "must be true"
+    },
+    {
+      "path": "$.storage_contract.policy_epoch_required",
+      "message": "must be true"
+    }
+  ]
+}
