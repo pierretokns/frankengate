@@ -41,4 +41,5 @@ Use the strengthened [enterprise semantic-cohort contract](../../configs/studies
 - [Alias enrichment reproduction](nl2sql-alias-enrichment-reproduction-2026-08-10.md)
 - [Semantic cohort contract addendum](enterprise-semantic-cohort-contract-conformance-2026-08-10.md)
 - [Publication/partner packet](publication-partner-evidence-packet-2026-08-10.md)
+- [New skill/provenance/retrieval prior-art map](latest-skill-provenance-retrieval-prior-art-2026-08-02.md)
 - [Current objective audit](objective-completion-audit-2026-08-06.md)

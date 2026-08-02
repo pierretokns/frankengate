@@ -103,6 +103,7 @@ independent semantic labels and terminal outcomes.
 - [`embedding/model cascade decision`](embedding-model-cascade-decision-2026-08-09.md)
 - [`objective closure audit`](objective-closure-audit-2026-08-10.md)
 - [`publication/partner evidence packet`](publication-partner-evidence-packet-2026-08-10.md)
+- [`latest skill/provenance/retrieval prior-art map`](latest-skill-provenance-retrieval-prior-art-2026-08-02.md)
 - [`termhood alias retrieval`](nl2sql-termhood-alias-retrieval-2026-08-04.md)
 - [`identifier hard-negative benchmark`](nl2sql-identifier-hard-negative-2026-08-02.md)
 - [`identifier-aware reranker`](nl2sql-identifier-reranker-2026-08-03.md)
