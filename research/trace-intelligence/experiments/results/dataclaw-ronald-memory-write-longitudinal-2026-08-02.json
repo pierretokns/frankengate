@@ -1,0 +1,62 @@
+{
+  "schema_version": "frankengate-dataclaw-memory-write-longitudinal-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false
+  },
+  "split": {
+    "method": "per-project chronology; each session compared with all earlier sessions",
+    "projects": 46,
+    "observed_sessions_after_first": 390,
+    "sessions_with_prior_artifact_write": 305,
+    "sessions_without_prior_artifact_write": 85,
+    "sessions_directly_after_artifact_write": 130
+  },
+  "groups": {
+    "prior_artifact_write": {
+      "sessions": 305,
+      "feature_events": 7320,
+      "shape_hit_events": 2905,
+      "digest_hit_events": 911,
+      "shape_hit_rate": 0.3968579234972678,
+      "digest_hit_rate": 0.12445355191256831,
+      "sessions_with_shape_hit": 213,
+      "sessions_with_digest_hit": 181,
+      "sessions_with_rephrase": 31
+    },
+    "no_prior_artifact_write": {
+      "sessions": 85,
+      "feature_events": 1367,
+      "shape_hit_events": 37,
+      "digest_hit_events": 11,
+      "shape_hit_rate": 0.027066569129480616,
+      "digest_hit_rate": 0.008046817849305048,
+      "sessions_with_shape_hit": 11,
+      "sessions_with_digest_hit": 5,
+      "sessions_with_rephrase": 4
+    },
+    "directly_after_artifact_write": {
+      "sessions": 130,
+      "feature_events": 2945,
+      "shape_hit_events": 1157,
+      "digest_hit_events": 279,
+      "shape_hit_rate": 0.39286926994906624,
+      "digest_hit_rate": 0.09473684210526316,
+      "sessions_with_shape_hit": 74,
+      "sessions_with_digest_hit": 63,
+      "sessions_with_rephrase": 14
+    }
+  },
+  "claim_boundary": {
+    "observational_association_measured": true,
+    "memory_or_skill_causal_effect_established": false,
+    "artifact_correctness_established": false,
+    "user_outcome_established": false,
+    "promotion_authorized": false,
+    "reason": "Artifact writes are inferred from path markers and write-like tool names. Projects, task mix, and user behavior confound all longitudinal comparisons."
+  },
+  "decision": "Use post-write associations to prioritize a controlled memory/skill replay study, not to claim that durable files improve later work."
+}
