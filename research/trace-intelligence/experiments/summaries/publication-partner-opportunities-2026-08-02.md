@@ -137,3 +137,29 @@ failure-state replay. Combined with the enterprise hard-negative framework
 ([arXiv:2505.18366](https://arxiv.org/abs/2505.18366)), these support a paper
 framing around **diagnose → compile → replay → promote**, while corporate
 labels and changed-system outcomes remain the novel contribution.
+
+## Latest empirical packet for outreach
+
+The WMH-BIRD bridge now gives the packet a stronger hard-negative story than
+the earlier 13-case vocabulary proxy. Across 149 independently replayable task
+traces, 1,236 exposed-table substitutions produced 1,210 execution errors, 22
+result mismatches, and only 4 result-preserving substitutions. A small learned
+ranker reached Recall@1 `.704` and Recall@5 `.958` on 71 held-out cases,
+improving over lexical `.676/.887`; the termhood field alone reached
+`.676/.930`. Replay-filtered and naive exposed-negative training tied because
+the training split contained no ambiguous substitutions.
+
+This is a useful partner-facing result precisely because it contains both a
+positive and a null: structured/identifier-aware retrieval is promising, while
+replay-derived negative filtering is not yet an optimization gain. The next
+joint study should deliberately add result-preserving alternatives,
+same-surface/different-system pairs, temporal replacements, and NILs. Those
+labels are what distinguish a real enterprise hard-negative contribution from
+ordinary table-surface classification.
+
+Tracking remains split by research obligation: [#118](https://github.com/pierretokns/frankengate/issues/118)
+for the authorized changed-system cohort, [#121](https://github.com/pierretokns/frankengate/issues/121)
+for domain-adaptive embeddings, [#122](https://github.com/pierretokns/frankengate/issues/122)
+for the embedding/model cascade, and [#123](https://github.com/pierretokns/frankengate/issues/123)
+for hard-negative mining. This avoids presenting the public proxy as a
+completed enterprise study.
