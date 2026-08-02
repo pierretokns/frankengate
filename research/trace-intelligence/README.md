@@ -272,6 +272,12 @@ action order were preserved `19/19`, with `2.63` scenes and `.63` transitions
 per trace, while fully grounded records fell to `.684`. This supports
 review-only structural extraction plus replay/evidence gates, not automatic
 skill publication.
+The [real cctrace session probe](experiments/summaries/cctrace-ssl-normalizer-probe-2026-08-02.md)
+then ran on 10 bounded episodes from one MIT-licensed Claude Code session.
+Tool/action order remained exact `10/10`; the model emitted `1.9` scenes and
+`.9` transitions per episode, with `.800` fully grounded episodes. This is
+direct ingestion evidence for coding traces, not evidence of skill or user
+outcomes.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next

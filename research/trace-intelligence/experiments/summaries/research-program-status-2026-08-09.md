@@ -77,6 +77,13 @@ transitions per trajectory, but fully grounded every evidence quote on only
 `.684` of records (sequential `.556`). This confirms that real trajectories
 unlock the structural signal while showing why scene/effect normalization must
 remain review-only and replay-backed.
+The [real cctrace session probe](cctrace-ssl-normalizer-probe-2026-08-02.md)
+extends this to one MIT-licensed Claude Code session: 10 bounded episodes
+preserved tool/action order `10/10`, emitted `1.9` scenes and `.9` transitions
+per episode, and fully grounded `.800` of episodes (`.922619` of evidence
+items). This validates the ingestion/normalization path on coding traces, but
+one publisher and no independent terminal labels are insufficient for skill,
+alias, or cross-user claims.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -234,6 +241,7 @@ project, principal, and changed-system holdouts.
 - [SSL-shaped TRAJECT proxy](traject-bench-ssl-proxy-2026-08-02.md)
 - [frontier SSL normalizer probe](traject-bench-ssl-normalizer-probe-2026-08-02.md)
 - [multi-tool SSL trajectory probe](traject-bench-ssl-trace-normalizer-probe-2026-08-02.md)
+- [real cctrace SSL normalization probe](cctrace-ssl-normalizer-probe-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
