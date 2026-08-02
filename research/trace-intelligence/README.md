@@ -116,6 +116,11 @@ The [`company fine-tuning practice map`](experiments/summaries/company-finetunin
 compares the documented Databricks, Google, AWS, and Cohere patterns: metadata
 and retrieval first, labeled hard negatives second, model tuning only after a
 measured embedding gap, and versioned deployment/rollback throughout.
+The [`NL2SQL alias-enrichment reproduction`](experiments/summaries/nl2sql-alias-enrichment-reproduction-2026-08-10.md)
+re-runs the train-only frequency-link experiment bit-for-bit: support-two
+aliases covered only `.065385` of target objects and slightly reduced MRR.
+This keeps raw trace-derived alias links in the candidate/review lane rather
+than treating them as corporate ontology truth.
 The [`EnterpriseRAG-Bench semantic frontier rerank`](experiments/summaries/enterprise-rag-frontier-rerank-2026-08-02.md)
 ran all 125 semantic questions through Luna over lexical top-20 candidates:
 MRR improved `.1137 -> .1947` and R@1 `.08 -> .184`, but the candidate pool

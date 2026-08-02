@@ -1,0 +1,37 @@
+{
+  "schema_version": "frankengate-nl2sql-alias-enrichment-reproduction-v1",
+  "original_receipt": {
+    "path": "experiments/results/nl2sql-alias-enrichment-2026-08-04.json",
+    "result_sha256": "325d02ce1c09d3657aa2ddf060440e7d05fb7eaedbaeded582a4ef37a6c70809"
+  },
+  "rerun": {
+    "date": "2026-08-10",
+    "result_sha256": "325d02ce1c09d3657aa2ddf060440e7d05fb7eaedbaeded582a4ef37a6c70809",
+    "source_root_external": true,
+    "ddl_root_external": true,
+    "raw_content_committed": false
+  },
+  "aggregate": {
+    "cases": 41,
+    "lexical_mrr": 0.734885,
+    "alias_support1_mrr": 0.734885,
+    "alias_support2_mrr": 0.727542,
+    "lexical_recall_at_1": 0.634146,
+    "alias_support1_recall_at_1": 0.634146,
+    "alias_support2_recall_at_1": 0.634146,
+    "support1_target_coverage": 0.007692,
+    "support2_target_coverage": 0.065385,
+    "ambiguous_surface_count": 506
+  },
+  "reproduction": {
+    "bitwise_result_hash_match": true,
+    "source_hashes_and_split_reused": true,
+    "interpretation": "Train-only surface-to-gold links did not improve lexical retrieval; support-two links lowered MRR slightly. This is a public gold-SQL proxy, not semantic alias truth."
+  },
+  "claim_boundary": {
+    "semantic_alias_quality_established": false,
+    "domain_embedding_promotion": false,
+    "enterprise_utility_measured": false,
+    "changed_system_replay": false
+  }
+}

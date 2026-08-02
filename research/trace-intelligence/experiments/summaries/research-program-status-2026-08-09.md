@@ -292,6 +292,12 @@ cases scored lexical `.660227`, exact `.812500`, dense `.603274`, and frontier
 `1.0`. Thus frontier review's apparent gain is concentrated in ambiguity, not
 routine identifier lookup; it needs independently reviewed aliases and NILs
 before any semantic claim.
+The deterministic [alias-enrichment reproduction](nl2sql-alias-enrichment-reproduction-2026-08-10.md)
+reached the same result as the earlier run: train-only surface-to-gold links
+covered only `.065385` of target objects at support two and lowered MRR
+`.734885 -> .727542`. This is a reproducibility negative: frequency links from
+SQL traces are too sparse and ambiguous to stand in for reviewed corporate
+aliases.
 
 ### 5a. Typed metadata is necessary for safe artifact exploration
 
