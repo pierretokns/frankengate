@@ -1,0 +1,137 @@
+{
+  "aggregate": {
+    "action_count_exact_rate": 1.0,
+    "input_keys_exact_rate": 1.0,
+    "literal_only_rate": 0.918033,
+    "not_replayable_rate": 0.0,
+    "per_action_resource_order_exact_rate": 0.3,
+    "records_audited": 10,
+    "safe_template_rate": 0.081967,
+    "top_level_tool_order_exact_rate": 0.0
+  },
+  "claim_boundary": {
+    "artifact_correctness_measured": false,
+    "parameter_roundtrip_measured": true,
+    "reason": "Per-action key/resource round-trip and model classifications only; no command replay or user outcome.",
+    "replay_executed": false
+  },
+  "records": [
+    {
+      "action_count_exact": true,
+      "index": 0,
+      "input_keys_exact": true,
+      "literal_only_count": 4,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": true,
+      "safe_template_count": 0,
+      "tool_count": 4,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 1,
+      "input_keys_exact": true,
+      "literal_only_count": 11,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": false,
+      "safe_template_count": 0,
+      "tool_count": 11,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 2,
+      "input_keys_exact": true,
+      "literal_only_count": 4,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": true,
+      "safe_template_count": 0,
+      "tool_count": 4,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 3,
+      "input_keys_exact": true,
+      "literal_only_count": 3,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": true,
+      "safe_template_count": 0,
+      "tool_count": 3,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 4,
+      "input_keys_exact": true,
+      "literal_only_count": 4,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": false,
+      "safe_template_count": 0,
+      "tool_count": 4,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 5,
+      "input_keys_exact": true,
+      "literal_only_count": 4,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": false,
+      "safe_template_count": 0,
+      "tool_count": 4,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 6,
+      "input_keys_exact": true,
+      "literal_only_count": 9,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": false,
+      "safe_template_count": 0,
+      "tool_count": 9,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 7,
+      "input_keys_exact": true,
+      "literal_only_count": 1,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": false,
+      "safe_template_count": 4,
+      "tool_count": 5,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 8,
+      "input_keys_exact": true,
+      "literal_only_count": 12,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": false,
+      "safe_template_count": 0,
+      "tool_count": 12,
+      "top_level_tool_order_exact": false
+    },
+    {
+      "action_count_exact": true,
+      "index": 9,
+      "input_keys_exact": true,
+      "literal_only_count": 4,
+      "not_replayable_count": 0,
+      "per_action_resource_order_exact": false,
+      "safe_template_count": 1,
+      "tool_count": 5,
+      "top_level_tool_order_exact": false
+    }
+  ],
+  "schema_version": "frankengate-cctrace-artifact-capsule-quality-audit-v1",
+  "source": {
+    "capsule_receipt_sha256": "00bd1d6afc9728eeeb37c24f2cc7490357e75b1af087a5f478b9a27b82edf554",
+    "raw_content_committed": false,
+    "raw_dir_external": true,
+    "trace_source_sha256": "106c5d5931cf3ccc45eba003e47a790efc92bc22dad6f31548b214307c210b6c"
+  }
+}

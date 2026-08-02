@@ -1,0 +1,9 @@
+{
+  "claim_boundary_verified": true,
+  "completed_verified": 10,
+  "failures_verified": 0,
+  "schema_version": "frankengate-cctrace-artifact-capsule-verification-v1",
+  "selected_verified": 10,
+  "source_result_sha256": "00bd1d6afc9728eeeb37c24f2cc7490357e75b1af087a5f478b9a27b82edf554",
+  "verification_passed": true
+}

@@ -282,6 +282,11 @@ The companion [normalized-output quality audit](experiments/summaries/cctrace-ss
 found complete action/scene coverage and valid transition references on all 10
 episodes. This makes the projection structurally usable for review, while
 leaving semantic effects and downstream utility behind independent gates.
+The [parameter-aware artifact-capsule probe](experiments/summaries/cctrace-artifact-capsule-probe-2026-08-02.md)
+found perfect input-key fidelity but only `.300` per-action resource identity
+and no repeated top-level tool-sequence fidelity. This is why artifact capsules
+must separate immutable tool identity, resource references, parameter bindings,
+and templates before any replay gate.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next
