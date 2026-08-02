@@ -1,0 +1,29 @@
+{
+  "schema_version": "frankengate-cohort-comparison-guard-v1",
+  "inputs": {
+    "left": {
+      "path": "experiments/results/ontology-action-trace-projection-cohort-2026-08-02.json",
+      "receipt_sha256": "d3fbc6d1c106ce641597cca0cabb42bf30f6a4025ae260a4bdf4c61735d7178d"
+    },
+    "right": {
+      "path": "experiments/results/wmh-bird-sql-dense-frontier-cohort-2026-08-09.json",
+      "receipt_sha256": "62e7a34d6501b031eea8fbe88c411f317078801b542d6fb7db676d379f7a8db3"
+    }
+  },
+  "source_hashes_shared": true,
+  "aligned": false,
+  "differences": [
+    "evaluation_tasks",
+    "database_families",
+    "split",
+    "candidate_pool",
+    "strict_target",
+    "compatible_target"
+  ],
+  "claim_boundary": {
+    "pooled_metric_permitted": false,
+    "cascade_claim_permitted": false,
+    "reason": "Shared source files do not make different task subsets, candidate pools, or split protocols one cohort; require exact cohort identity before aggregation."
+  },
+  "result_sha256": "4822b51a79a5f10df3935fc4b103ced7f6e1444963ea8bbae821564b020fe2e4"
+}

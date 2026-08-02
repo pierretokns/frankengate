@@ -100,6 +100,9 @@ The [`ontology/action projection receipt`](experiments/results/ontology-action-t
 is the first runnable WMH-BIRD bridge: schema-first typed projections and
 replay-backed action edges are measured, while vector, authority, and frontier
 arms remain explicitly unavailable.
+The [`cohort comparison guard`](experiments/summaries/cohort-comparison-guard-2026-08-02.md)
+now fails closed when that 72-case projection is compared with the separate
+44-case dense/frontier receipt, preventing an invalid pooled cascade claim.
 The [`corporate ontology and fine-tuning reality check`](experiments/summaries/corporate-ontology-tools-and-finetuning-reality-check-2026-08-02.md)
 separates ontology induction, schema-guided extraction, entity resolution,
 graph retrieval, validation, and model adaptation. It records why one-pass
