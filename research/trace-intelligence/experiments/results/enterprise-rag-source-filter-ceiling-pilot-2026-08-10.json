@@ -305,9 +305,10 @@
     "filter_is_oracle": true,
     "filtered_arm": "source_type IN question.source_types",
     "query": "same rare-term OR FTS5 query as lexical baseline",
+    "source_map_acceleration": true,
     "unfiltered_arm": "full-corpus lexical retrieval"
   },
-  "result_sha256": "c931c9c971f671ab7814523bb69e03f4c03438db4c73ee6aa0113332029504ba",
+  "result_sha256": "800308171937521464df7ee79c00403e1ad7f58f9b044b187e16397f8ebb0d0b",
   "rows": [
     {
       "oracle_filter_available": true,
@@ -595,6 +596,7 @@
     "database_sha256": "71fec02bbf45030f5cc9d608dd3516fc1e94803d10d5292409eaf022130b90a4",
     "questions_sha256": "e25066f4eff3843dd0f3df0d1348113471e072e75007ffe390a0aa83f2a80af2",
     "raw_document_content_committed": false,
-    "raw_question_text_committed": false
+    "raw_question_text_committed": false,
+    "source_map_sha256": "baf1d59fd0e0cb527288f4f77dded17f8daf34309fac2580fce302b7b6e9dcc6"
   }
 }

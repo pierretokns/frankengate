@@ -3,6 +3,6 @@
   "oracle_boundary_verified": true,
   "questions_verified": 10,
   "schema_version": "frankengate-enterprise-rag-source-filter-ceiling-verification-v1",
-  "source_result_sha256": "31974d326009ad0582771f531b7d8e74f4c448245c34a49f3dad4820cefbddfc",
+  "source_result_sha256": "c58b64c8b83363f24bfa1310b42fbd482096dbb3ad46b68af46c42b0164b7ea7",
   "verification_passed": true
 }

@@ -23,7 +23,8 @@ The second arm is an **oracle ceiling** because the benchmark publishes
 `source_types` as answer metadata. It is not a learned alias detector, an
 authorization filter, or a fair production comparison. Raw documents and
 question text remain external; the receipt stores only aggregate metrics and
-question IDs.
+question IDs. The source predicate was evaluated through a small indexed
+row-id/source-type side map; the map contains no document content.
 
 ## Result (10-question stratified pilot)
 
@@ -65,5 +66,7 @@ as the answer to corporate concept discovery.
 ## Receipts
 
 - Runner: [`enterprise_rag_source_filter_ceiling.py`](../../enterprise_rag_source_filter_ceiling.py)
+- Source-map builder: [`enterprise_rag_source_map.py`](../../enterprise_rag_source_map.py)
+- Source-map receipt: [`enterprise-rag-source-map-build-2026-08-10.json`](../results/enterprise-rag-source-map-build-2026-08-10.json)
 - Receipt: [`enterprise-rag-source-filter-ceiling-pilot-2026-08-10.json`](../results/enterprise-rag-source-filter-ceiling-pilot-2026-08-10.json)
 - Verification: [`enterprise-rag-source-filter-ceiling-pilot-verification-2026-08-10.json`](../results/enterprise-rag-source-filter-ceiling-pilot-verification-2026-08-10.json)

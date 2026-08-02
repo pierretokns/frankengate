@@ -51,7 +51,7 @@ def query_terms(question: str) -> list[str]:
     return terms
 
 
-def ranked_rows(connection: sqlite3.Connection, question: dict[str, Any], top_k: int, term_limit: int, source_types: list[str] | None) -> list[tuple[str, str]]:
+def ranked_rows(connection: sqlite3.Connection, question: dict[str, Any], top_k: int, term_limit: int, source_types: list[str] | None, source_map_attached: bool) -> list[tuple[str, str]]:
     terms = query_terms(str(question["question"]))
     if not terms:
         return []
@@ -66,7 +66,10 @@ def ranked_rows(connection: sqlite3.Connection, question: dict[str, Any], top_k:
     match = " OR ".join(f'"{term}"' for term in (selected or terms[:term_limit]))
     if source_types:
         placeholders = ",".join("?" for _ in source_types)
-        sql = f"SELECT doc_id, source_type FROM docs WHERE docs MATCH ? AND source_type IN ({placeholders}) ORDER BY rank LIMIT ?"
+        if source_map_attached:
+            sql = f"SELECT docs.doc_id, source_map.doc_sources.source_type FROM docs JOIN source_map.doc_sources ON source_map.doc_sources.doc_rowid = docs.rowid WHERE docs MATCH ? AND source_map.doc_sources.source_type IN ({placeholders}) ORDER BY docs.rank LIMIT ?"
+        else:
+            sql = f"SELECT doc_id, source_type FROM docs WHERE docs MATCH ? AND source_type IN ({placeholders}) ORDER BY rank LIMIT ?"
         params: list[Any] = [match, *source_types, top_k]
     else:
         sql = "SELECT doc_id, source_type FROM docs WHERE docs MATCH ? ORDER BY rank LIMIT ?"
@@ -105,7 +108,7 @@ def aggregate(rows: list[dict[str, Any]], metric_name: str) -> dict[str, Any]:
     return result
 
 
-def run(database: Path, questions: Path, output: Path, top_k: int = 10, term_limit: int = 12, max_questions: int | None = None, per_question_type: int | None = None) -> dict[str, Any]:
+def run(database: Path, questions: Path, output: Path, top_k: int = 10, term_limit: int = 12, max_questions: int | None = None, per_question_type: int | None = None, source_map: Path | None = None) -> dict[str, Any]:
     question_rows = pq.read_table(questions).to_pylist()
     if per_question_type is not None:
         grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -116,14 +119,18 @@ def run(database: Path, questions: Path, output: Path, top_k: int = 10, term_lim
         question_rows = question_rows[:max_questions]
     connection = sqlite3.connect(f"file:{database}?mode=ro", uri=True)
     connection.row_factory = sqlite3.Row
+    source_map_attached = False
+    if source_map is not None:
+        connection.execute("ATTACH DATABASE ? AS source_map", (str(source_map),))
+        source_map_attached = True
     rows: list[dict[str, Any]] = []
     try:
         for question in question_rows:
             expected = {str(item) for item in (question.get("expected_doc_ids") or [])}
             expected_sources = {str(item) for item in (question.get("source_types") or [])}
             filtered_sources = sorted(expected_sources) if expected_sources else None
-            unfiltered = ranked_rows(connection, question, top_k, term_limit, None)
-            filtered = ranked_rows(connection, question, top_k, term_limit, filtered_sources)
+            unfiltered = ranked_rows(connection, question, top_k, term_limit, None, source_map_attached)
+            filtered = ranked_rows(connection, question, top_k, term_limit, filtered_sources, source_map_attached)
             rows.append({
                 "question_id": str(question["question_id"]),
                 "question_type": str(question["question_type"]),
@@ -142,6 +149,7 @@ def run(database: Path, questions: Path, output: Path, top_k: int = 10, term_lim
         "schema_version": SCHEMA_VERSION,
         "source": {
             "database_sha256": file_sha256(database),
+            "source_map_sha256": file_sha256(source_map) if source_map is not None else None,
             "questions_sha256": file_sha256(questions),
             "raw_document_content_committed": False,
             "raw_question_text_committed": False,
@@ -153,6 +161,7 @@ def run(database: Path, questions: Path, output: Path, top_k: int = 10, term_lim
             "filtered_arm": "source_type IN question.source_types",
             "filter_is_oracle": True,
             "filter_is_not_authorization": True,
+            "source_map_acceleration": source_map is not None,
         },
         "arms": {
             "overall": {
@@ -194,8 +203,9 @@ def main() -> int:
     parser.add_argument("--term-limit", type=int, default=12)
     parser.add_argument("--max-questions", type=int, default=None)
     parser.add_argument("--per-question-type", type=int, default=None)
+    parser.add_argument("--source-map", type=Path, default=None)
     args = parser.parse_args()
-    run(args.database, args.questions, args.output, args.top_k, args.term_limit, args.max_questions, args.per_question_type)
+    run(args.database, args.questions, args.output, args.top_k, args.term_limit, args.max_questions, args.per_question_type, args.source_map)
     return 0
 
 

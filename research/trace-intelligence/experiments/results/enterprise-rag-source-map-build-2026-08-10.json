@@ -1,0 +1,18 @@
+{
+  "claim_boundary": {
+    "authorization_measured": false,
+    "semantic_labels_established": false,
+    "source_map_built": true
+  },
+  "map": {
+    "rows": 511962,
+    "source_database_read_only": true,
+    "source_types_indexed": true
+  },
+  "result_sha256": "082debaee74999d7a224226965ce48d57cb8d3150fca8ee550bb34a5032745fb",
+  "schema_version": "frankengate-enterprise-rag-source-map-v1",
+  "source": {
+    "raw_document_content_committed": false,
+    "source_database_sha256": "71fec02bbf45030f5cc9d608dd3516fc1e94803d10d5292409eaf022130b90a4"
+  }
+}
