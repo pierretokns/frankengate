@@ -165,6 +165,8 @@ def main() -> int:
     parser.add_argument("--timeout", type=int, default=180)
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--model", default="gpt-5.6-luna")
+    parser.add_argument("--backend", choices=("fts", "tfidf", "hybrid"), default="hybrid")
+    parser.add_argument("--compiled", action="store_true")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     data = json.loads(args.corpus.read_text(encoding="utf-8"))
@@ -173,7 +175,7 @@ def main() -> int:
     for size in sizes:
         selected = {f"wiki-{number:02d}" for number in range(size)}
         pages = [page for page in data["pages"] if page["wiki_id"] in selected]
-        index = WikiIndex(pages, backend="hybrid", compiled=False)
+        index = WikiIndex(pages, backend=args.backend, compiled=args.compiled)
         candidates = [question for question in data["questions"] if (not question["gold_page_ids"] or question["wiki_id"] in selected)]
         chosen = [dict(question, _corpus_size=size) for question in candidates[: args.per_size]]
         nil = next((question for question in candidates if question["slice"] == "nil"), None)
@@ -185,7 +187,7 @@ def main() -> int:
         records = [future.result() for future in futures]
     result = {
         "schema_version": "frankengate-wiki-frontier-codex-structured-loop-v1",
-        "protocol": {"model": args.model, "harness": "Codex CLI structured JSON action loop", "backend": "hybrid raw", "max_steps": args.max_steps, "workers": args.workers, "native_mcp": False, "raw_traces_committed": False},
+        "protocol": {"model": args.model, "harness": "Codex CLI structured JSON action loop", "backend": args.backend, "compiled": args.compiled, "max_steps": args.max_steps, "workers": args.workers, "native_mcp": False, "raw_traces_committed": False},
         "corpus": {"sha256": sha256(args.corpus), "pages": len(data["pages"]), "wikis": len({page["wiki_id"] for page in data["pages"]})},
         "records": records,
         "claim_boundary": "Frontier-agent structured-action loop over a synthetic fixture. It measures retrieval incorporation and answer handling, not native MCP approval behavior, Wikipedia quality, or enterprise transfer.",
