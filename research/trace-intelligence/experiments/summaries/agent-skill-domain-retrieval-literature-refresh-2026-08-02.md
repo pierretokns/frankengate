@@ -66,6 +66,8 @@ utility, or causal improvement on changed systems.
 
 ## Tracking
 
+The concrete bridge contract is [skill-in-use and bounded verifier protocol](../protocols/skill-in-use-verifier-contract-2026-08-02.md).
+
 - Skill lifecycle and transfer: [#111](https://github.com/pierretokns/frankengate/issues/111)
 - Validated artifact reuse: [#119](https://github.com/pierretokns/frankengate/issues/119)
 - Embedding adaptation: [#121](https://github.com/pierretokns/frankengate/issues/121)

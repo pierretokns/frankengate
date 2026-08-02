@@ -10,6 +10,9 @@ The [2026-08-02 literature refresh](agent-skill-domain-retrieval-literature-refr
 adds recent skill-lifecycle, verifier-guided evolution, skill-in-use,
 cross-trajectory state, and domain log-entity work to the adaptable-methods
 ledger.
+The accompanying [skill-in-use verifier protocol](../protocols/skill-in-use-verifier-contract-2026-08-02.md)
+defines the smallest run-level contract for testing those mechanisms without
+confusing proposal quality with downstream utility.
 
 ## What is now supported by evidence
 
