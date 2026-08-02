@@ -85,6 +85,16 @@ This supports a review queue built from event ordering and correction/retry
 structure, with independent tool/result outcomes required before eval or skill
 promotion. It does not establish satisfaction, intent, or employee skill.
 
+### 9. Dataset fit is a hard gate
+
+The current manifest audit covers 44 pinned public datasets. Only **2/44**
+are direct-fit for NL2SQL schema retrieval and **3/44** are direct-fit for
+basic trace structure. None are direct-fit for friction recovery, causal skill
+improvement, cross-user similarity, or reviewed term/alias quality. The rest
+are mechanics or proxy corpora. This is why results from WMH-BIRD, BIRD-Interact,
+Trace Commons, DataClaw, CodeTraceBench, and MAGIC must remain separate arms;
+pooling them would manufacture labels and invalidate the enterprise claims.
+
 ## Architecture decision
 
 Keep the smallest governed architecture:
@@ -128,4 +138,5 @@ project, principal, and changed-system holdouts.
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
+- [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)
