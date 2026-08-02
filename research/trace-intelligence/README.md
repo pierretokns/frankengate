@@ -86,6 +86,9 @@ deltas from their independent receipts and records where each stage fails.
 The [`real-history artifact-promotion audit`](experiments/summaries/artifact-promotion-audit-2026-08-02.md)
 recomputes recurrence, temporal drift, normalization collisions, and
 cross-scope transfer before any artifact can be considered promotable.
+The [`external skill-learning refresh`](experiments/summaries/external-skill-learning-refresh-2026-08-02.md)
+maps SkillGen, Trace2Skill, SkillOpt, SkillLearnBench, AgentRx, and trajectory
+artifact methods to the governed SQL/tool experiment we still need to run.
 The [`headline receipt-consistency audit`](experiments/summaries/headline-receipt-consistency-audit-2026-08-02.md)
 recomputes 19 selected high-impact claims against their receipts; all checks
 pass, while preserving the separately documented SkillLearnBench missing-answer
