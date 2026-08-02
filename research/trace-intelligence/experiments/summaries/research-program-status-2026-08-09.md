@@ -141,6 +141,12 @@ is now a verified four-task, family-disjoint Luna factorial: all three arms
 scored `0/4` exact. This is an underpowered null and a useful evaluator
 diagnostic, not evidence that fault-category procedures cannot help. The next
 run must stratify by fault category and include projection, tie, and NULL cases.
+The independent SkillLearnBench changed-data proxy adds a complementary hard
+edge: on a deterministic product rename, reviewed human guidance preserved
+`1.000` precision/recall, the null retained recall but had one false positive,
+and a generated composite missed one expected ID. This is one public task, so
+it supports testing reviewed guidance before composition, not a causal skill
+claim.
 
 ## Architecture decision
 
@@ -184,6 +190,7 @@ project, principal, and changed-system holdouts.
 - [TRAJECT-Bench field-aware retrieval](traject-bench-field-retrieval-2026-08-09.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
+- [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
