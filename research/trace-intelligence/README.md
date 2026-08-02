@@ -82,6 +82,10 @@ skill-gap outcomes.
 The [`Trace Commons domain-adapter probe`](experiments/summaries/trace-commons-domain-adapter-2026-08-07.md)
 was tied with its baseline at 13/13 and MRR 1.0 under leave-one-project-out;
 the proxy is too easy to measure embedding-transfer lift.
+The [`scope-bound command artifact audit`](experiments/summaries/codex-command-artifact-replay-2026-08-08.md)
+is the first local outcome-backed artifact result: prior success predicted
+97.09% same-scope success but only 87.02% cross-scope success, establishing a
+negative-transfer boundary for reuse.
 
 ## Historical Claude/Codex mining
 

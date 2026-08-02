@@ -1,0 +1,21 @@
+{
+  "aggregate": {
+    "distinct_command_artifacts": 22247,
+    "distinct_scopes": 4,
+    "failure_occurrences": 1944,
+    "labeled_command_occurrences": 36549,
+    "other_scope_prior_success_later_failure": 17,
+    "other_scope_prior_success_later_success": 114,
+    "repeated_occurrences_after_same_scope_success": 13797,
+    "same_scope_prior_success_later_failure": 402,
+    "same_scope_prior_success_later_success": 13395,
+    "success_occurrences": 34605
+  },
+  "claim_boundary": "Retrospective command-template/outcome association only; no intent, semantic equivalence, user satisfaction, or safe automatic reuse claim. No logged command is executed.",
+  "schema_version": "codex-command-artifact-replay-audit-v1",
+  "source": {
+    "path_count": 622,
+    "path_sha256": "39ea093eaee65e4a6937f1d4d3759cd46c6ed0e171f1bc28514cb00e43dc79b6",
+    "raw_content_committed": false
+  }
+}
