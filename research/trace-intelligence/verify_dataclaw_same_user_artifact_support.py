@@ -42,6 +42,11 @@ def main() -> int:
             for row in result.get("users", {}).values()
         ),
         "rate_bounded": all(0 <= row.get("occurrence_totals", {}).get("friction_context_rate", -1) <= 1 for row in result.get("users", {}).values()),
+        "tier_rate_bounded": all(
+            0 <= group.get("friction_context_rate", -1) <= 1
+            for row in result.get("users", {}).values()
+            for group in row.get("tier_friction_rates", {}).values()
+        ),
         "raw_content_absent": result.get("raw_content_committed") is False and all(row.get("raw_content_committed") is False for row in result.get("users", {}).values()),
         "claim_boundary": result.get("claim_boundary", {}).get("promotion_authorized") is False,
     }

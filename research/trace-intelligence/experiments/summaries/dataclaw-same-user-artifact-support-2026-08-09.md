@@ -24,9 +24,13 @@ projects, and 1 cross-project/friction-adjacent candidate.
 
 The candidate occurrence friction-context rate was `.459924` for Peter and
 `.097630` for Vaynelee. This is a prioritization signal, not an error or
-quality label. Combined with the strict cross-user result (zero shared
-identities), the evidence favors per-user/project candidate libraries with
-replay and review gates, not a global crowdsourced artifact pool.
+quality label. Within Peter, repeated-session candidates had a `.480813` rate
+versus `.436807` for single-session candidates; in the much smaller Vaynelee
+sample, repeated candidates were lower (`.073171` versus `.098619`). The
+direction is therefore cohort-dependent and cannot justify a universal
+recurrence→friction rule. Combined with the strict cross-user result (zero
+shared identities), the evidence favors per-user/project candidate libraries
+with replay and review gates, not a global crowdsourced artifact pool.
 
 ## Claim boundary
 

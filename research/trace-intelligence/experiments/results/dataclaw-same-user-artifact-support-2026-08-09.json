@@ -7,7 +7,7 @@
     "same_user_recurrence_measured": true
   },
   "raw_content_committed": false,
-  "result_sha256": "8ca08b94f8a48a6057377474efd6664ab1cd054d82e9341f66262e7bf0eb614a",
+  "result_sha256": "1374f9930e77d3ee8b135d856b1c5fea2ac8d187c9871974139a2c0e8a1b7912",
   "schema_version": "frankengate-dataclaw-same-user-artifact-support-v1",
   "users": {
     "peter": {
@@ -28,6 +28,26 @@
         "support_at_least_three_projects": 67,
         "support_at_least_two_projects": 518,
         "support_at_least_two_sessions": 3158
+      },
+      "tier_friction_rates": {
+        "cross_project": {
+          "candidate_count": 518,
+          "friction_context_occurrences": 5776,
+          "friction_context_rate": 0.460129,
+          "occurrences": 12553
+        },
+        "repeated_session": {
+          "candidate_count": 3158,
+          "friction_context_occurrences": 18469,
+          "friction_context_rate": 0.480813,
+          "occurrences": 38412
+        },
+        "single_session": {
+          "candidate_count": 30878,
+          "friction_context_occurrences": 15162,
+          "friction_context_rate": 0.436807,
+          "occurrences": 34711
+        }
       },
       "top_support": {
         "max_occurrences": 618,
@@ -53,6 +73,26 @@
         "support_at_least_three_projects": 0,
         "support_at_least_two_projects": 4,
         "support_at_least_two_sessions": 14
+      },
+      "tier_friction_rates": {
+        "cross_project": {
+          "candidate_count": 4,
+          "friction_context_occurrences": 1,
+          "friction_context_rate": 0.090909,
+          "occurrences": 11
+        },
+        "repeated_session": {
+          "candidate_count": 14,
+          "friction_context_occurrences": 3,
+          "friction_context_rate": 0.073171,
+          "occurrences": 41
+        },
+        "single_session": {
+          "candidate_count": 957,
+          "friction_context_occurrences": 100,
+          "friction_context_rate": 0.098619,
+          "occurrences": 1014
+        }
       },
       "top_support": {
         "max_occurrences": 8,

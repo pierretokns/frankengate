@@ -143,7 +143,8 @@ The complementary [same-user support probe](dataclaw-same-user-artifact-support-
 found 3,158 Peter candidates repeated across sessions, 518 across projects,
 and 460 that were both cross-project and friction-adjacent. This is the first
 bounded positive for a scoped personal/project library, still requiring replay
-and changed-system gates.
+and changed-system gates. Its recurrence/friction relationship reversed in the
+small Vaynelee cohort, so recurrence is not a universal friction label.
 
 ### 5. Older vocabulary ports remain narrow
 

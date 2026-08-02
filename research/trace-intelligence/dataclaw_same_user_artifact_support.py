@@ -35,6 +35,17 @@ def summarize(path: Path, limit: int) -> dict[str, Any]:
     def count(predicate: Any) -> int:
         return sum(1 for row in rows if predicate(row))
 
+    def group_rate(predicate: Any) -> dict[str, Any]:
+        group = [row for row in rows if predicate(row)]
+        occurrences = sum(int(row["occurrences"]) for row in group)
+        friction = sum(int(row["friction_context_occurrences"]) for row in group)
+        return {
+            "candidate_count": len(group),
+            "occurrences": occurrences,
+            "friction_context_occurrences": friction,
+            "friction_context_rate": round(friction / occurrences, 6) if occurrences else 0.0,
+        }
+
     return {
         "session_count": receipt["session_count"],
         "candidate_count": len(rows),
@@ -52,6 +63,11 @@ def summarize(path: Path, limit: int) -> dict[str, Any]:
             "candidate_occurrences": total_occurrences,
             "friction_context_occurrences": total_friction,
             "friction_context_rate": round(total_friction / total_occurrences, 6) if total_occurrences else 0.0,
+        },
+        "tier_friction_rates": {
+            "cross_project": group_rate(lambda row: row["cross_project"]),
+            "repeated_session": group_rate(lambda row: row["support_sessions"] >= 2),
+            "single_session": group_rate(lambda row: row["support_sessions"] == 1),
         },
         "top_support": {
             "max_sessions": max((int(row["support_sessions"]) for row in rows), default=0),

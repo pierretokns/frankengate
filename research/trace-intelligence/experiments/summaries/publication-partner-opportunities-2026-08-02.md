@@ -198,7 +198,11 @@ repeated across sessions, 518 across projects, and 460 cross-project candidates
 near broad friction signals. This gives the partner program a more credible
 first intervention: validate and replay a user's own scoped candidates before
 testing cross-user transfer. It is a positive candidate-supply result, not a
-correctness or user-benefit claim.
+correctness or user-benefit claim. Recurrence was only a cohort-dependent
+prioritization signal: Peter's repeated candidates had a `.480813` friction
+context rate versus `.436807` for single-session candidates, while Vaynelee's
+small repeated sample was lower than its single-session rate. A partner study
+must therefore measure this relationship rather than hard-code it.
 
 Tracking remains split by research obligation: [#118](https://github.com/pierretokns/frankengate/issues/118)
 for the authorized changed-system cohort, [#121](https://github.com/pierretokns/frankengate/issues/121)
