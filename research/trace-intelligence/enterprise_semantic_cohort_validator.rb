@@ -147,6 +147,13 @@ promotion_blockers << "target count #{counts["target"]} < #{minimums["target"]}"
 promotion_blockers << "hard_negative count #{counts["hard_negative"]} < #{minimums["hard_negative"]}" if counts["hard_negative"] < minimums["hard_negative"]
 promotion_blockers << "nil_or_unclear count #{counts["nil"].to_i + counts["unclear"].to_i} < #{minimums["nil_or_unclear"]}" if counts["nil"].to_i + counts["unclear"].to_i < minimums["nil_or_unclear"]
 
+mutation_counts = Hash.new(0)
+tasks.each { |task| mutation_counts[task["mutation_class"]] += 1 if task.is_a?(Hash) && task["mutation_class"] }
+contract.fetch("minimum_mutation_counts", {}).each do |mutation_class, minimum|
+  actual = mutation_counts[mutation_class].to_i
+  promotion_blockers << "#{mutation_class} count #{actual} < #{minimum}" if actual < minimum
+end
+
 result = {
   "schema_version" => "frankengate-enterprise-semantic-cohort-conformance-v1",
   "contract_sha256" => Digest::SHA256.file(contract_path).hexdigest,
@@ -155,6 +162,7 @@ result = {
   "structural_valid" => errors.empty?,
   "promotion_ready" => errors.empty? && promotion_blockers.empty?,
   "task_counts" => counts,
+  "mutation_counts" => mutation_counts,
   "promotion_blockers" => promotion_blockers,
   "errors" => errors
 }

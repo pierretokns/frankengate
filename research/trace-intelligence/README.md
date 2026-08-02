@@ -96,6 +96,11 @@ The [`EnterpriseRAG-Bench adaptation`](experiments/summaries/enterprise-rag-benc
 adds the document-side companion: its enterprise source mix, question taxonomy,
 noise model, metadata slice, and the exact boundary between retrieval evidence
 and trace/skill-learning claims.
+The [`enterprise semantic-cohort contract addendum`](experiments/summaries/enterprise-semantic-cohort-contract-conformance-2026-08-10.md)
+now requires explicit no-change, additive-drift, rename, same-surface,
+changed-meaning, stale-authority, and changed-tool-contract strata, preventing
+aggregate counts from hiding the hard cases needed for alias and artifact
+evaluation.
 The [`EnterpriseRAG-Bench question audit`](experiments/summaries/enterprise-rag-question-audit-2026-08-02.md)
 now verifies the downloaded question parquet independently: 500 questions,
 2,427 atomic facts, 742 expected document references, 93 multi-document cases,

@@ -1,0 +1,82 @@
+{
+  "schema_version": "frankengate-enterprise-semantic-cohort-conformance-v1",
+  "contract_sha256": "077a7249fe3b525d258cb15a0f3b698112a805168b2353f1d0043e7652124aa4",
+  "manifest_sha256": "0d3d2ccce7d852ab525e232fdc246741f60fb775391c12a0b02ef25e89018505",
+  "raw_content_committed": false,
+  "structural_valid": false,
+  "promotion_ready": false,
+  "task_counts": {
+  },
+  "mutation_counts": {
+  },
+  "promotion_blockers": [
+    "target count 0 < 100",
+    "hard_negative count 0 < 50",
+    "nil_or_unclear count 0 < 25",
+    "no_change count 0 < 5",
+    "additive_field_or_parameter count 0 < 5",
+    "approved_rename count 0 < 5",
+    "same_surface_collision count 0 < 5",
+    "changed_join_grain_or_result_meaning count 0 < 5",
+    "stale_or_revoked_authority count 0 < 5",
+    "changed_tool_contract count 0 < 5"
+  ],
+  "errors": [
+    {
+      "path": "$.consent_scope_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.source_license_or_authorization",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.minimum_promotion_counts",
+      "message": "required field is missing"
+    },
+    {
+      "path": "candidate_pool_frozen_before_labels",
+      "message": "must be true"
+    },
+    {
+      "path": "holdouts.team",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "holdouts.project",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "holdouts.system",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "holdouts.effective_time",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm no_artifact_regenerate"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm strict_fingerprint"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm name_only_negative_control"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm reviewed_semantic_mapping"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm reviewed_mapping_plus_result_validation"
+    },
+    {
+      "path": "tasks",
+      "message": "at least one task is required for structural conformance"
+    }
+  ]
+}

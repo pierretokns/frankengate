@@ -78,6 +78,15 @@
     "nil_or_unclear": 25,
     "annotators_per_task": 2
   },
+  "minimum_mutation_counts": {
+    "no_change": 5,
+    "additive_field_or_parameter": 5,
+    "approved_rename": 5,
+    "same_surface_collision": 5,
+    "changed_join_grain_or_result_meaning": 5,
+    "stale_or_revoked_authority": 5,
+    "changed_tool_contract": 5
+  },
   "required_arms": [
     "no_artifact_regenerate",
     "strict_fingerprint",

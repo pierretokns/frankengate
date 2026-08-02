@@ -9,6 +9,12 @@ and its [validator](../enterprise_semantic_cohort_validator.rb). The validator
 rejects manifests that omit consent/holdout/authority metadata, dual labels,
 independent outcomes, deletion receipts, or frozen candidate pools; a
 structurally valid but under-sized cohort remains promotion-ineligible.
+The 2026-08-10 contract revision additionally requires at least five tasks in
+each mutation stratum (`no_change`, additive drift, approved rename,
+same-surface collision, changed join/result meaning, stale/revoked authority,
+and changed tool contract). This prevents a cohort from satisfying aggregate
+target counts while omitting the exact hard edges that distinguish alias
+retrieval from safe artifact reuse.
 
 ## Purpose
 
@@ -120,6 +126,8 @@ An artifact or embedding adapter remains proposal-only unless all gates pass:
 
 - at least 100 labeled target cases, 50 hard negatives, and 25 NIL/unclear
   cases in the minimum study slice;
+- at least five tasks in every required mutation stratum, including explicit
+  no-change controls;
 - two independent annotators and reported agreement/adjudication;
 - user/project/system/time-held-out evaluation;
 - no statistically material increase in wrong-scope, stale, or collision
