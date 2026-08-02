@@ -546,6 +546,7 @@ project, principal, and changed-system holdouts.
 - [Ronald DataClaw temporal artifact audit](dataclaw-ronald-temporal-artifact-audit-2026-08-02.md)
 - [Ronald DataClaw command-shape variants](dataclaw-ronald-command-shape-variants-2026-08-02.md)
 - [Ronald DataClaw exact-versus-shape temporal audit](dataclaw-ronald-exact-vs-shape-temporal-2026-08-02.md)
+- [Ronald DataClaw structural friction audit](dataclaw-ronald-structural-friction-audit-2026-08-02.md)
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)
