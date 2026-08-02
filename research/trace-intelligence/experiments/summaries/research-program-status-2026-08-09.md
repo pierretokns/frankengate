@@ -136,6 +136,11 @@ The [`WMH-BIRD step-fault audit`](wmh-bird-step-fault-audit-2026-08-09.md)
 adds a bounded SkillAdaptor/HASP-style diagnosis substrate: first-fault
 categories and later recovery are observable, but reward and replay disagree
 on some traces. Targeted revision remains an untested intervention.
+The follow-up [`fault-category checklist intervention`](wmh-bird-fault-category-intervention-2026-08-09.md)
+is now a verified four-task, family-disjoint Luna factorial: all three arms
+scored `0/4` exact. This is an underpowered null and a useful evaluator
+diagnostic, not evidence that fault-category procedures cannot help. The next
+run must stratify by fault category and include projection, tie, and NULL cases.
 
 ## Architecture decision
 
@@ -178,6 +183,7 @@ project, principal, and changed-system holdouts.
 - [TRAJECT-Bench query planning](traject-bench-query-planning-probe-2026-08-09.md)
 - [TRAJECT-Bench field-aware retrieval](traject-bench-field-retrieval-2026-08-09.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
+- [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)

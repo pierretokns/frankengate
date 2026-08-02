@@ -72,6 +72,11 @@ uses only independently validated SQL found in recorded tool calls; it scored
 4/20 exact versus 3/20 for both no-skill and formatting placebo, with one
 paired win and no losses. It is directionally positive but remains too small
 for promotion.
+The [`fault-category checklist intervention`](experiments/summaries/wmh-bird-fault-category-intervention-2026-08-09.md)
+then tested a SkillAdaptor/HASP-style diagnosis-derived checklist on four
+family-disjoint tasks. All three arms scored 0/4 exact; the receipt was
+independently verified, and the result is retained as an underpowered null and
+protocol diagnostic rather than a claim that skill revision is ineffective.
 The new [`trace-derived artifact reuse`](experiments/summaries/bird-trace-artifact-reuse-2026-08-07.md)
 study validates recorded BIRD tool calls independently before admission: only
 76/193 executable candidates matched gold, natural lexical reuse matched 1/76,
