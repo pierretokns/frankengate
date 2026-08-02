@@ -102,6 +102,11 @@ now verifies the downloaded question parquet independently: 500 questions,
 and explicit conflict, completeness, abstention, and constrained slices. It
 also records that the benchmark contains no principals, tool outcomes, exposure
 events, authority epochs, or changed-system replay.
+The [`EnterpriseRAG-Bench lexical baseline`](experiments/summaries/enterprise-rag-lexical-baseline-2026-08-02.md)
+then indexed all 511,962 documents: target-bearing MRR `.4459`, R@1 `.3787`,
+and R@10 `.5787`; semantic R@1 was only `.08`, and lexical retrieval returned
+non-empty results for all 30 targetless questions. This is the concrete case
+for semantic candidate recall plus an explicit abstention gate.
 The [`ontology/action projection receipt`](experiments/results/ontology-action-trace-projection-cohort-2026-08-02.json)
 is the first runnable WMH-BIRD bridge: schema-first typed projections and
 replay-backed action edges are measured, while vector, authority, and frontier

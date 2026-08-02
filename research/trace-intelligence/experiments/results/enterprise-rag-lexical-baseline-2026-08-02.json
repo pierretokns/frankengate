@@ -1,0 +1,51 @@
+{
+  "schema_version": "frankengate-enterprise-rag-lexical-baseline-v1",
+  "source": {
+    "documents_sha256": "6b0747bf160af9427b12101537d53056ac592ada9831c1a98ae01fa50a8d2a9f",
+    "questions_sha256": "e25066f4eff3843dd0f3df0d1348113471e072e75007ffe390a0aa83f2a80af2",
+    "raw_document_content_committed": false
+  },
+  "dataset": {
+    "documents": 511962,
+    "questions": 500,
+    "max_results": 10,
+    "query_term_limit": 8,
+    "query": "lowercase alphanumeric terms, stopword removal, rarest observed terms, OR matching",
+    "ranking": "SQLite FTS5 default rank (bm25)"
+  },
+  "arms": {
+    "overall": {
+      "records": 500,
+      "target_bearing_records": 470,
+      "targetless_records": 30,
+      "mrr": 0.445928,
+      "recall_at_1": 0.378723,
+      "recall_at_5": 0.534043,
+      "recall_at_10": 0.578723,
+      "evidence_recall_at_10": 0.517914,
+      "targetless_nonempty_result_rate": 1.0
+    },
+    "by_question_type": {
+      "basic": {"records": 175, "target_bearing_records": 175, "targetless_records": 0, "mrr": 0.488272, "recall_at_1": 0.405714, "recall_at_5": 0.594286, "recall_at_10": 0.64, "evidence_recall_at_10": 0.64},
+      "semantic": {"records": 125, "target_bearing_records": 125, "targetless_records": 0, "mrr": 0.113667, "recall_at_1": 0.08, "recall_at_5": 0.16, "recall_at_10": 0.208, "evidence_recall_at_10": 0.208},
+      "intra_document_reasoning": {"records": 40, "target_bearing_records": 40, "targetless_records": 0, "mrr": 0.654861, "recall_at_1": 0.625, "recall_at_5": 0.7, "recall_at_10": 0.725, "evidence_recall_at_10": 0.725},
+      "project_related": {"records": 40, "target_bearing_records": 40, "targetless_records": 0, "mrr": 0.673363, "recall_at_1": 0.55, "recall_at_5": 0.825, "recall_at_10": 0.9, "evidence_recall_at_10": 0.491319},
+      "constrained": {"records": 30, "target_bearing_records": 30, "targetless_records": 0, "mrr": 0.476984, "recall_at_1": 0.366667, "recall_at_5": 0.6, "recall_at_10": 0.666667, "evidence_recall_at_10": 0.6},
+      "conflicting_info": {"records": 20, "target_bearing_records": 20, "targetless_records": 0, "mrr": 0.804167, "recall_at_1": 0.75, "recall_at_5": 0.9, "recall_at_10": 0.9, "evidence_recall_at_10": 0.75},
+      "completeness": {"records": 20, "target_bearing_records": 20, "targetless_records": 0, "mrr": 0.595417, "recall_at_1": 0.55, "recall_at_5": 0.7, "recall_at_10": 0.75, "evidence_recall_at_10": 0.388333},
+      "miscellaneous": {"records": 20, "target_bearing_records": 20, "targetless_records": 0, "mrr": 0.725, "recall_at_1": 0.65, "recall_at_5": 0.8, "recall_at_10": 0.8, "evidence_recall_at_10": 0.8},
+      "info_not_found": {"records": 20, "target_bearing_records": 0, "targetless_records": 20, "targetless_nonempty_result_rate": 1.0},
+      "high_level": {"records": 10, "target_bearing_records": 0, "targetless_records": 10, "targetless_nonempty_result_rate": 1.0}
+    }
+  },
+  "failures": [],
+  "claim_boundary": {
+    "lexical_retrieval_measured": true,
+    "dense_retrieval_measured": false,
+    "frontier_reranking_measured": false,
+    "ontology_quality_measured": false,
+    "trace_learning_measured": false,
+    "reason": "Document retrieval only; no traces, principals, exposure decisions, tool outcomes, or changed-system replay."
+  },
+  "result_sha256": "3751a66fc25b1817ad26ffcafb8ccc074a0630d58a8b37606ba8c6d15580abc3"
+}
