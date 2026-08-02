@@ -112,6 +112,9 @@ claim boundary, and independent verifier where applicable.
   on 20 future tasks.
 - Disjoint car→broker and other sequential replays test trace-mined procedure
   transfer with no-skill, neutral, placebo, and mined arms.
+- A schema-correct content-free import of 622 local Codex rollouts provides a
+  friction/recovery screening cohort; it is not treated as an independent
+  outcome dataset.
 
 ## Results
 
@@ -128,6 +131,7 @@ claim boundary, and independent verifier where applicable.
 | Validated subplan composition | Two seeded frontier replays on five broker tasks: composed library `10/10`, fresh generation and placebo `5/10` each; three stable wins and no stable losses | Decompose validated examples into typed subplans; promising but small, single-family, and not yet a promotion result |
 | Family-disjoint composition transfer | Two BIRD replays: library `8/40` versus `6/40` for both controls; one stable win and zero stable losses | Aggregate signal is stable but low-headroom; insufficient for a causal or enterprise claim |
 | Trace-validated artifact library transfer | One family-disjoint frontier replay: 16 validated trace artifacts; library `4/20` exact versus `3/20` no-skill and `3/20` placebo; one paired win, zero losses, 19 ties | Directionally positive but underpowered; keep artifacts scope-bound and replayable, not auto-promoted |
+| Local Codex archive friction screen | Corrected current-schema import: 622 sessions, 47,122 prompt episodes, 2,060 structured executor errors, 33 error→repair follow-ups | Useful for blinded candidate sampling; markers are not intent, satisfaction, or terminal-outcome labels |
 
 ## Main conclusions
 

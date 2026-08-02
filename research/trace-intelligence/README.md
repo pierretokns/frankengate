@@ -107,6 +107,14 @@ artifact and validator exist. See the Claude
 and Codex
 [`summary`](experiments/summaries/codex-history-friction-public-local-2026-08-02.md).
 
+The current local Codex archive importer fixes the newer `payload` schema and
+processes 622 rollout files without treating each event as a session. Its
+content-free baseline has 47,122 prompt episodes, 53,684 function calls, 2,060
+structured executor errors, 16,349 repeated tool calls, and 33 error-to-repair
+follow-up pairs. The result is still a screening cohort rather than an
+independent outcome dataset; see the [`current archive import`](experiments/summaries/codex-archive-history-import-2026-08-08.md),
+[`adapter`](codex_archive_history_mining.py), and [receipt](experiments/results/codex-archive-history-2026-08-08.json).
+
 The companion [`signal association analysis`](experiments/summaries/native-history-signal-association-tracelab-2026-08-02.md)
 finds negative session-level rank correlations between structured-error rate
 and dissatisfaction, correction, retry, and clarification counts. This is a
