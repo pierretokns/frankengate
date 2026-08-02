@@ -369,6 +369,11 @@ improvement, cross-user similarity, or reviewed term/alias quality. The rest
 are mechanics or proxy corpora. This is why results from WMH-BIRD, BIRD-Interact,
 Trace Commons, DataClaw, CodeTraceBench, and MAGIC must remain separate arms;
 pooling them would manufacture labels and invalidate the enterprise claims.
+The new [MRiabov DataClaw export integrity audit](dataclaw-mriabov-export-integrity-2026-08-02.md)
+adds an earlier gate: its card claims 775 scrubbed sessions, but only 9 rows
+are valid JSON as released and only 104 parse after deleting the redaction
+marker. The dataset is therefore inventory-only; ingestion must reject it until
+the publisher provides a loss-aware, parseable format.
 
 ### 10. ToolQP's planning and aggregation effects are separable
 
@@ -516,6 +521,7 @@ project, principal, and changed-system holdouts.
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
+- [MRiabov DataClaw export integrity](dataclaw-mriabov-export-integrity-2026-08-02.md)
 - [ToolQP peak-rank reproduction](traject-bench-toolqp-peak-rank-2026-08-09.md)
 - [LRAT exposure-negative audit](lrat-exposure-negative-audit-2026-08-09.md)
 - [WMH-BIRD schema exposure audit](wmh-bird-schema-exposure-audit-2026-08-09.md)
