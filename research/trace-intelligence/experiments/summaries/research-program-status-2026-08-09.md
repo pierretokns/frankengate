@@ -178,6 +178,11 @@ finance corpus, but that does not establish corporate trace transfer. The
 current evidence supports testing domain adapters in a shadow lane only after
 SME-labelled aliases, NILs, wrong-system negatives, and downstream utility
 labels exist.
+An independent Claude-history project-held-out adapter reproduced a smaller
+positive (user-message MRR `.885892→.915765` across 37 folds), so the scoped
+lexical adaptation lane is repeatable on two public history corpora. It remains
+a silver project-similarity result, not evidence for a deployable corporate
+embedding.
 
 ### 7. Cross-user insight and skill-gap claims remain unproven
 

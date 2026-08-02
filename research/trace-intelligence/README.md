@@ -262,6 +262,10 @@ The [`DataClaw project adapter`](experiments/summaries/dataclaw-project-adapter-
 probe improved full-cohort combined project-held-out MRR for Peter (`.769341→.854452`) but
 was neutral for Vaynelee, supporting scoped experimentation rather than a
 universal custom embedding claim.
+The independent [`Claude-history project adapter`](experiments/summaries/claude-history-project-adapter-2026-08-09.md)
+replicated a smaller positive: user-message MRR `.885892→.915765` across 37
+project-held-out folds. Both results support a cheap scoped adaptation lane,
+not a promoted corporate embedding or artifact-utility claim.
 The [`NL2SQL identifier cross-domain transfer`](experiments/summaries/nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 probe found asymmetric generalization: Defog-trained ranking improved BIRD MRR
 `.731684→.760996`, while BIRD-trained ranking reduced Defog MRR
