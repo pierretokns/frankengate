@@ -1,0 +1,82 @@
+{
+  "claim_boundary": {
+    "dense_retrieval_measured": true,
+    "enterprise_alias_quality_established": false,
+    "reason": "public ToolQA gold-skill/web-distractor corpus; retrieval-only comparison",
+    "skill_utility_established": false
+  },
+  "methods": {
+    "bge_base_en_v1_5": {
+      "corpus_size": 26262,
+      "metrics": {
+        "Recall@1": 0.32167832,
+        "Recall@10": 0.83356643,
+        "Recall@5": 0.73776224,
+        "Recall@50": 0.96713287,
+        "nDCG@1": 0.32167832,
+        "nDCG@10": 0.58593833,
+        "nDCG@5": 0.55471419,
+        "nDCG@50": 0.61690826
+      },
+      "queries": 1430,
+      "result_sha256": "4cfa35ade858c69c7a449ddd9c9be5a9345ad938b21617e75e5813cbf29fb60e",
+      "top_k": 50
+    },
+    "bm25": {
+      "corpus_size": 26262,
+      "metrics": {
+        "Recall@1": 0.06993007,
+        "Recall@10": 0.55104895,
+        "Recall@5": 0.34965035,
+        "Recall@50": 0.78531469,
+        "nDCG@1": 0.06993007,
+        "nDCG@10": 0.27020045,
+        "nDCG@5": 0.20521639,
+        "nDCG@50": 0.3251579
+      },
+      "queries": 1430,
+      "result_sha256": "e6659d37044db6b3413c5854000ac48a5a129c58402010eb5636da930466b097",
+      "top_k": 50
+    },
+    "tfidf": {
+      "corpus_size": 26262,
+      "metrics": {
+        "Recall@1": 0.06993007,
+        "Recall@10": 0.34965035,
+        "Recall@5": 0.20979021,
+        "Recall@50": 0.55944056,
+        "nDCG@1": 0.06993007,
+        "nDCG@10": 0.18873515,
+        "nDCG@5": 0.14176507,
+        "nDCG@50": 0.23072097
+      },
+      "queries": 1430,
+      "result_sha256": "d83c2c1e5503da8eed3bea1c443a405d0df5ea31671fb3095f9a63c81300d82d",
+      "top_k": 50
+    }
+  },
+  "protocol": {
+    "bge_query_prefix": "Represent this sentence for searching relevant passages: ",
+    "corpus_size": 26262,
+    "dataset": "toolqa",
+    "end_task_execution_measured": false,
+    "incorporation_measured": false,
+    "methods": [
+      "bm25",
+      "tfidf",
+      "BAAI/bge-base-en-v1.5"
+    ],
+    "queries": 1430,
+    "stage": "skill retrieval only",
+    "top_k": 50
+  },
+  "receipt_sha256": "d5579c947f71d47f581c8f293094bc2cbce7cba1701bfc44b7eaecdbe45be87c",
+  "schema_version": "frankengate-sra-bench-toolqa-lexical-dense-comparison-v1",
+  "source": {
+    "corpus_sha256": "16ee509ae5bea8c2e17167dffecd89100a7d8dfa31256c3742426758c7169b5e",
+    "instances_sha256": "e41eb4d4b67c1dd8e1178c88e9e8ff15525b31803694e9459d115c274fb04f0e",
+    "raw_rankings_committed": false,
+    "raw_skill_content_committed": false,
+    "repository": "https://github.com/oneal2000/SR-Agents"
+  }
+}
