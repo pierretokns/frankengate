@@ -38,6 +38,13 @@ It records the program as active/incomplete: local mechanics and publication
 are proven, while CMU raw access, managed Aurora operations, and causal
 enterprise outcomes remain open.
 
+The current [`publication/partner evidence packet`](experiments/summaries/publication-partner-evidence-packet-2026-08-06.md)
+packages the defensible contribution and a sealed 20–40-task reproduction
+design. The [`public proxy cohort selection`](experiments/summaries/public-proxy-cohort-selection-2026-08-06.md)
+and [`BIRD-Interact ambiguity profile`](experiments/summaries/bird-interact-ambiguity-profile-2026-08-06.md)
+record which public datasets can support replay mechanics versus which still
+lack identity, outcomes, or gold evaluators.
+
 ## Historical Claude/Codex mining
 
 The historical-log work is tracked in GitHub epic
