@@ -64,7 +64,7 @@
     "same_cohort_frontier_vs_dense": "Frontier ranking improves target ordering on this small public proxy but does not establish semantic alias truth; the retrieval benchmark's gold targets come from SQL.",
     "synthetic_gate": "The 23-case structured adjudication result is a capability/abstention gate, not enterprise ground truth."
   },
-  "result_sha256": "1c346517199fc7866164a890b3df82648cbe21ea696e3ee98b9c4d3e0472013b",
+  "result_sha256": "1afcf7a0a33015c7ac9d63345342bf958d049af6bfe31dcec37d550b083f1780",
   "same_cohort": {
     "frontier_calls_completed": 22,
     "frontier_decision_accuracy": null,
@@ -73,6 +73,98 @@
     "targeted_cases": 14
   },
   "schema_version": "frankengate-nl2sql-alias-cascade-audit-v1",
+  "stratified": {
+    "explicit_target": {
+      "dense_scope": {
+        "mrr": 0.805556,
+        "recall_at_1": 0.666667,
+        "recall_at_5": 1.0,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": 0.0
+      },
+      "exact_scope": {
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_5": 1.0,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": 0.0
+      },
+      "frontier_scope": {
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_5": 1.0,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": 0.0
+      },
+      "lexical_scope": {
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_5": 1.0,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": 0.0
+      }
+    },
+    "implicit_target": {
+      "dense_scope": {
+        "mrr": 0.603274,
+        "recall_at_1": 0.5,
+        "recall_at_5": 0.75,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": 0.0
+      },
+      "exact_scope": {
+        "mrr": 0.8125,
+        "recall_at_1": 0.625,
+        "recall_at_5": 1.0,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": 0.0
+      },
+      "frontier_scope": {
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_5": 1.0,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": 0.0
+      },
+      "lexical_scope": {
+        "mrr": 0.660227,
+        "recall_at_1": 0.625,
+        "recall_at_5": 0.625,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": 0.0
+      }
+    },
+    "scope_swapped_nil": {
+      "dense_scope": {
+        "mrr": null,
+        "recall_at_1": null,
+        "recall_at_5": null,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": null
+      },
+      "exact_scope": {
+        "mrr": null,
+        "recall_at_1": null,
+        "recall_at_5": null,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": null
+      },
+      "frontier_scope": {
+        "mrr": null,
+        "recall_at_1": null,
+        "recall_at_5": null,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": null
+      },
+      "lexical_scope": {
+        "mrr": null,
+        "recall_at_1": null,
+        "recall_at_5": null,
+        "top1_is_any_candidate": 1.0,
+        "wrong_system_before_target": null
+      }
+    }
+  },
   "synthetic_gate": {
     "candidate_accuracy_primary": 1.0,
     "cases": 23,

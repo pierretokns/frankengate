@@ -7,9 +7,10 @@
     "result_hash": true,
     "same_cohort_nonempty": true,
     "schema_version": true,
+    "stratified_categories_present": true,
     "synthetic_gate_present": true
   },
   "passed": true,
-  "result_sha256": "1c346517199fc7866164a890b3df82648cbe21ea696e3ee98b9c4d3e0472013b",
+  "result_sha256": "1afcf7a0a33015c7ac9d63345342bf958d049af6bfe31dcec37d550b083f1780",
   "schema_version": "frankengate-nl2sql-alias-cascade-audit-verification-v1"
 }

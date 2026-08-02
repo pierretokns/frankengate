@@ -28,6 +28,22 @@ Recall@1 on this small public proxy. These are gold-SQL target-object labels,
 not human semantic-alias labels. The frontier arm had 22 completed calls in the
 source receipt.
 
+## Ambiguity strata
+
+The category split explains where the apparent gains come from:
+
+| Category | Lexical MRR | Exact MRR | Dense MRR | Frontier MRR |
+|---|---:|---:|---:|---:|
+| Explicit target surface (6) | `1.000000` | `1.000000` | `.805556` | `1.000000` |
+| Implicit target / alias proxy (8) | `.660227` | `.812500` | `.603274` | `1.000000` |
+| Scope-swapped NIL (8) | — | — | — | — |
+
+All retrieval arms still returned a candidate on every NIL case. The frontier
+advantage is concentrated in the implicit-target proxy, where model review can
+use the question and candidate context; it is not evidence that a frontier
+model discovered a corporate alias. The explicit cases are already solved by
+surface/structured signals, and dense retrieval is weaker in both strata.
+
 ## Separate synthetic capability gate
 
 The 23-case stratified Luna adjudication receipt (11 exact, 6 semantic, 4 NIL,

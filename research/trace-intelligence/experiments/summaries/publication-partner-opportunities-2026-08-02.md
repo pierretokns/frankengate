@@ -175,6 +175,12 @@ constructed NIL cases, demonstrating that ranking and refusal are separate
 problems. The partner-facing claim should therefore be “structured retrieval
 plus explicit frontier/human refusal,” not “embeddings or frontier ranking
 solve alias discovery.”
+The category split makes the proposed partner study more precise: explicit
+identifier cases were already perfect for lexical/exact/frontier, whereas the
+implicit-target proxy produced MRR `.660227` lexical, `.812500` exact, `.603274`
+dense, and `1.0` frontier. The frontier arm is therefore an ambiguity-review
+candidate, not a replacement for structured retrieval or a reason to train a
+custom embedding on raw logs.
 
 ## Latest empirical packet for outreach
 

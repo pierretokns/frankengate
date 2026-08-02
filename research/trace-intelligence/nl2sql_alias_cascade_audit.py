@@ -52,6 +52,16 @@ def run(real_path: Path, synthetic_path: Path, output: Path) -> dict[str, Any]:
         }
     def delta(left: str, right: str, field: str) -> float:
         return round(arms[left][field] - arms[right][field], 6)
+    stratified: dict[str, dict[str, dict[str, float | None]]] = {}
+    for category in sorted({item.get("category") for item in per_case}):
+        stratified[category] = {}
+        category_rows = [item for item in per_case if item.get("category") == category]
+        for arm in sorted(required):
+            stratified[category][arm] = {}
+            for field in ("mrr", "recall_at_1", "recall_at_5", "wrong_system_before_target", "top1_is_any_candidate"):
+                values = [item.get("metrics", {}).get(arm, {}).get(field) for item in category_rows]
+                values = [float(value) for value in values if value is not None]
+                stratified[category][arm][field] = round(sum(values) / len(values), 6) if values else None
     result: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "inputs": {
@@ -69,6 +79,7 @@ def run(real_path: Path, synthetic_path: Path, output: Path) -> dict[str, Any]:
             "frontier_decision_accuracy": real.get("frontier_decision", {}).get("accuracy"),
         },
         "arms": arms,
+        "stratified": stratified,
         "deltas_vs_dense": {
             "lexical_mrr": delta("lexical_scope", "dense_scope", "targeted_mrr"),
             "exact_mrr": delta("exact_scope", "dense_scope", "targeted_mrr"),

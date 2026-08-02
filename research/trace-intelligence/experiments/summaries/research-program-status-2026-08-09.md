@@ -216,6 +216,12 @@ and frontier `1.0`; every retrieval arm still proposed a candidate for every
 NIL. The frontier decision layer can abstain, but ranking quality and refusal
 must be measured separately. This is gold-SQL/synthetic proxy evidence, not
 independent corporate alias truth.
+The category split is important: explicit surface cases were already perfect
+for lexical/exact/frontier (`1.0` MRR), while the eight implicit-target proxy
+cases scored lexical `.660227`, exact `.812500`, dense `.603274`, and frontier
+`1.0`. Thus frontier review's apparent gain is concentrated in ambiguity, not
+routine identifier lookup; it needs independently reviewed aliases and NILs
+before any semantic claim.
 
 ### 6. Custom embedding evidence is not yet promotion-positive
 

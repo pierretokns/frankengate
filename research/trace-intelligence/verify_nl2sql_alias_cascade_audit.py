@@ -29,6 +29,7 @@ def verify(input_path: Path, output_path: Path) -> dict[str, object]:
         "raw_content_not_committed": result.get("inputs", {}).get("raw_content_committed") is False,
         "all_same_cohort_arms": set(arms) == required,
         "same_cohort_nonempty": result.get("same_cohort", {}).get("selected_cases", 0) > 0,
+        "stratified_categories_present": {"explicit_target", "implicit_target", "scope_swapped_nil"}.issubset(result.get("stratified", {})),
         "synthetic_gate_present": isinstance(result.get("synthetic_gate"), dict),
         "claim_boundary_present": isinstance(result.get("claim_boundary"), dict),
         "interpretation_present": len(result.get("interpretation", {})) >= 3,
