@@ -267,6 +267,21 @@ cases scored lexical `.660227`, exact `.812500`, dense `.603274`, and frontier
 routine identifier lookup; it needs independently reviewed aliases and NILs
 before any semantic claim.
 
+### 5a. Typed metadata is necessary for safe artifact exploration
+
+The [changed-system authority explorer probe](changed-system-authority-explorer-2026-08-09.md)
+isolated ten cases covering approved renames, wrong-system collisions, schema
+drift, revoked artifacts, temporal replacement, same-surface ambiguity, and a
+NIL case. With names only, Luna abstained on all ten cases: safe, but it found
+none of the nine valid artifacts. With semantic inputs, system ID, authority
+epoch, schema version, and active status exposed, it found a valid candidate in
+`9/9` non-NIL cases and abstained on the NIL case, with zero unsafe selections.
+This is evidence that typed metadata supplies the information retrieval needs;
+it is not evidence that a model can replace the admission gate. The production
+shape remains typed retrieval followed by deterministic scope/epoch/schema and
+status checks, then independent replay. The fixture is synthetic and does not
+establish enterprise alias quality, artifact utility, or skill transfer.
+
 ### 6. Custom embedding evidence is not yet promotion-positive
 
 The fold-local MATM adapter was effectively neutral (`Recall@20 .5301 → .5331`,

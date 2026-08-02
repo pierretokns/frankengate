@@ -114,6 +114,15 @@ explorer/noise-reduction hypothesis, not semantic alias quality or enterprise
 artifact reuse. The next partner study must use task-disjoint, authority-aware
 and changed-system traces.
 
+The [changed-system authority explorer probe](changed-system-authority-explorer-2026-08-09.md)
+now supplies that missing safety control in a synthetic fixture. Names-only
+input produced complete abstention, while typed semantic inputs, system ID,
+authority epoch, schema version, and active status found `9/9` non-NIL targets
+with zero unsafe selections and correctly abstained on the NIL case. This
+supports typed artifact projections and deterministic admission gates as a
+research requirement. It does not show that frontier selection can enforce
+governance, nor does it substitute for an authorized changed-system cohort.
+
 ### Trajectory-aware tool evaluation
 
 [TRAJECT-Bench](https://arxiv.org/abs/2510.04550) evaluates tool selection,

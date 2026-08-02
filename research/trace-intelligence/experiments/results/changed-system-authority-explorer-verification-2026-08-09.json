@@ -1,0 +1,9 @@
+{
+  "claim_boundary_verified": true,
+  "protocol_flags_verified": true,
+  "raw_receipts_verified": 20,
+  "rows_verified": 20,
+  "schema_version": "frankengate-changed-system-authority-explorer-verification-v1",
+  "source_result_sha256": "18e36c23d29cf8f359db972e2434f18a7a751f059c5dce75889910c4f4cb19fa",
+  "verification_passed": true
+}

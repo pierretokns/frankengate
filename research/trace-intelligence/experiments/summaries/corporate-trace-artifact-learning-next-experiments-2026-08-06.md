@@ -71,6 +71,15 @@ retrieval arms proposed candidates on constructed NILs. The next P1 run must
 therefore supply independent NIL labels and evaluate refusal separately from
 candidate ranking before claiming embedding or frontier value.
 
+The [changed-system authority explorer probe](changed-system-authority-explorer-2026-08-09.md)
+is the completed synthetic metadata-sufficiency checkpoint for the P0 gate.
+Names-only exploration abstained on all ten cases, while typed metadata found
+`9/9` non-NIL candidates with zero unsafe selections and correctly abstained on
+the NIL case. The authorized P0 cohort must now repeat this comparison with
+real semantic labels, wrong-system and temporal negatives, authority receipts,
+and independent changed-system replay. Typed metadata retrieval is a useful
+front end; it is not an admission or authorization mechanism.
+
 ## Partner/publication package
 
 The strongest paper is **a governed evidence-to-artifact lifecycle for
