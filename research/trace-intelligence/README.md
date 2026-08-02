@@ -158,6 +158,12 @@ maps trajectory-supervised retrieval, enterprise hard-negative mining,
 trajectory-aware tool evaluation, and staged tool retrieval to Frankengate's
 remaining causal cohort and identifies MIT DSAIL/Everest and CLEAR as the
 strongest potential research collaborators.
+The [`LRAT public trajectory audit`](experiments/summaries/lrat-trajectory-audit-2026-08-09.md)
+audited the ten Apache-licensed sample trajectories from the published
+implementation: 280 ordered steps and 130/130 non-empty tool outputs, but no
+explicit correctness, failure, friction, or enterprise artifact fields. LRAT
+is therefore a strong candidate-coverage method to adapt, not evidence that
+trajectory supervision alone solves corporate skill or artifact learning.
 The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-structural-audit-2026-08-09.md)
 now records the public benchmark's 5,910 records and 38,094 described tool
 invocations, and separates its useful trajectory-metric coverage from the

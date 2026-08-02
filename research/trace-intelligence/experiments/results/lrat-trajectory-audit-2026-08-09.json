@@ -1,0 +1,105 @@
+{
+  "claim_boundary": {
+    "correctness_outcome_field_present_in_samples": false,
+    "enterprise_alias_or_artifact_learning_measured": false,
+    "natural_friction_measured": false,
+    "trajectory_mechanics_audited": true,
+    "trajectory_supervised_retrieval_training_measured": false
+  },
+  "dataset": {
+    "malformed_records_or_steps": 0,
+    "raw_content_committed": false,
+    "root_name": "trajectory",
+    "trajectory_files": 10
+  },
+  "field_presence": {
+    "explicit_outcome_fields": {},
+    "metadata_keys": {
+      "k": 10,
+      "model": 10,
+      "presence_penalty": 10,
+      "searcher_type": 10,
+      "snippet_max_tokens": 10,
+      "temperature": 10,
+      "top_p": 10
+    },
+    "step_keys": {
+      "arguments": 280,
+      "output": 280,
+      "tool_name": 280,
+      "type": 280
+    }
+  },
+  "raw_receipts": [
+    {
+      "relative_path": "bm25/0.json",
+      "sha256": "387402d5b193b52a03d2826ebd37399af2f20ba7abdf63d6be7aba0aa81247be"
+    },
+    {
+      "relative_path": "bm25/1.json",
+      "sha256": "ec5a2fb1716d774d983bfa72ce6026f6ab237d0b62f40976a19722cd29bb756a"
+    },
+    {
+      "relative_path": "bm25/10.json",
+      "sha256": "7f3657aefa460c0467e40b44c5b53f9e18da5ae8b7a1026ec2310f1f016ff1fe"
+    },
+    {
+      "relative_path": "bm25/11.json",
+      "sha256": "7e93b8f60d49d7ef636c0be7618fa7ee5fbd184639c5c313a465880bc97afa41"
+    },
+    {
+      "relative_path": "bm25/14.json",
+      "sha256": "7f9a5cf10362ead8c8745a9dd735e3c56b835be2852cdfb1ab931617906fbf01"
+    },
+    {
+      "relative_path": "bm25/15.json",
+      "sha256": "4e81a5e8e73399c3eb6546b3c081b8aef2c28d6e7618abe36314e7ac0857abb3"
+    },
+    {
+      "relative_path": "bm25/17.json",
+      "sha256": "af0edb12dfede3a499ddd08d6748ba69f0126d106216f1040f78739f1b6de5b8"
+    },
+    {
+      "relative_path": "bm25/4.json",
+      "sha256": "895d83fa2aac76570fc33724e3d63ec3cb6c46bbc72bc6931ae074c78b8699ee"
+    },
+    {
+      "relative_path": "bm25/5.json",
+      "sha256": "ca9ccffc2ef75161c76971317b5385e7bf8093177263a6537ed9eab9ed0cfcef"
+    },
+    {
+      "relative_path": "bm25/6.json",
+      "sha256": "dc466e9f85deef10016840e8c2c0e0ba160dc72bb2f40e6184a698353a3b396d"
+    }
+  ],
+  "records": {
+    "answer_characters": {
+      "max": 31,
+      "mean": 16.7,
+      "min": 6
+    },
+    "browse_calls": 28,
+    "nonempty_tool_outputs": 130,
+    "retrieved_docids": {
+      "max": 223,
+      "mean": 62.4,
+      "min": 10
+    },
+    "search_calls": 102,
+    "status_counts": {
+      "completed": 10
+    },
+    "step_type_counts": {
+      "output_text": 10,
+      "reasoning": 140,
+      "tool_call": 130
+    },
+    "tool_calls": 130,
+    "tool_name_counts": {
+      "get_document": 18,
+      "search": 102,
+      "visit": 10
+    }
+  },
+  "schema_version": "frankengate-lrat-trajectory-audit-v1"
+}

@@ -1,0 +1,7 @@
+{
+  "raw_hashes_match": true,
+  "schema_version": "lrat-trajectory-audit-verification-v1",
+  "source_result_sha256": "21491e9d4a41cf6c1d7fe7dd74c366f7d322a611ce678b477bbdf8c06abe4c3a",
+  "trajectory_files_verified": 10,
+  "verification_passed": true
+}
