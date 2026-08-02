@@ -116,6 +116,11 @@ ran all 125 semantic questions through Luna over lexical top-20 candidates:
 MRR improved `.1137 -> .1947` and R@1 `.08 -> .184`, but the candidate pool
 contained a target only `.224` of the time. This is a measured model-ordering
 gain and a measured candidate-generation bottleneck, not an embedding result.
+The [`EnterpriseRAG-Bench dense baseline`](experiments/summaries/enterprise-rag-dense-baseline-2026-08-02.md)
+then encoded the entire corpus with MiniLM: R@20 was `.12` with title/snippet
+views and `.064` with title-only, both below the lexical pool. This is a
+generic-model negative, not a disproof of a hard-negative-trained corporate
+embedding.
 The [`ontology/action projection receipt`](experiments/results/ontology-action-trace-projection-cohort-2026-08-02.json)
 is the first runnable WMH-BIRD bridge: schema-first typed projections and
 replay-backed action edges are measured, while vector, authority, and frontier
