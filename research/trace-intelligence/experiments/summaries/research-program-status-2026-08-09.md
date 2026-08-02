@@ -73,6 +73,18 @@ for business intent, employee capability, satisfaction, collaboration value,
 or negative transfer. We cannot yet claim that the system identifies who is
 doing the same work or which skills a person is missing.
 
+### 8. Friction mining needs structural review, not keyword labels
+
+The corrected native Codex importer found 47,122 user episodes, 228 adjacent
+rephrase pairs, and 273 marker-based error-to-success episodes, but lexical
+friction markers had only `.79%` precision against a structured process-exit
+proxy. A separate public DataClaw Luna calibration (12 stratified messages,
+two calls each) reached 11/12 repeat-label agreement; re-prompt overlap was
+friction on 4/6 calls, while lexical markers over-flagged productive work.
+This supports a review queue built from event ordering and correction/retry
+structure, with independent tool/result outcomes required before eval or skill
+promotion. It does not establish satisfaction, intent, or employee skill.
+
 ## Architecture decision
 
 Keep the smallest governed architecture:
@@ -115,4 +127,5 @@ project, principal, and changed-system holdouts.
 - [TRAJECT-Bench field-aware retrieval](traject-bench-field-retrieval-2026-08-09.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
+- [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)

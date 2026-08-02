@@ -114,6 +114,12 @@ and Codex rollout adapter
 structured executor outcomes separate from text-level error markers, preserve
 native provenance, and emit content-free aggregate receipts.
 
+The follow-up [`public DataClaw frontier calibration`](experiments/summaries/dataclaw-friction-luna-calibration-2026-08-09.md)
+used 12 stratified messages and two Luna labels per message: 11/12 rows had
+repeat-label agreement. Re-prompt overlap was labeled friction on 4/6 calls,
+while lexical friction markers over-flagged productive iteration. This is a
+silver-label review-queue result, not a user-satisfaction or outcome label.
+
 The Claude screen covers 28 public histories, 413 user prompts, 4,264 tool
 calls, and 269 structured tool-result errors (6.31%); the text scanner would
 have called 762 results errors. The Codex screen covers 34 small public
