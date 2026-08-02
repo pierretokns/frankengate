@@ -185,6 +185,14 @@ public SQL artifacts; the BIRD replay results are bounded evidence for (2);
 and (3) remains open. A collaboration should not pool these datasets or treat
 structural overlap as a substitute for a consented changed-system cohort.
 
+The same distinction appears in the two-user DataClaw study: a permissive audit
+found 11 shared non-trivial tool-call forms, but strict tool-plus-input
+identities had zero overlap between Peter and Vaynelee. This is a useful
+partner-facing negative because it separates candidate recall from artifact
+identity. The [strict cross-user receipt](dataclaw-cross-user-artifact-transfer-2026-08-09.md)
+supports a study design with broad-recall, strict-scope, intent-adjudication,
+and replay stages rather than direct crowdsourced skill transfer.
+
 Tracking remains split by research obligation: [#118](https://github.com/pierretokns/frankengate/issues/118)
 for the authorized changed-system cohort, [#121](https://github.com/pierretokns/frankengate/issues/121)
 for domain-adaptive embeddings, [#122](https://github.com/pierretokns/frankengate/issues/122)

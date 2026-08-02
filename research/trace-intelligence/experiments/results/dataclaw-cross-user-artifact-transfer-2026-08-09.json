@@ -1,0 +1,43 @@
+{
+  "claim_boundary": {
+    "artifact_correctness_established": false,
+    "cross_user_promotion_authorized": false,
+    "reason": "Strict candidate identity measures reusable-call candidates only; it does not establish task equivalence, safety, authority, outcome quality, or user benefit.",
+    "shared_task_intent_established": false,
+    "strict_identity_overlap_measured": true
+  },
+  "pairwise": {
+    "peter__vaynelee": {
+      "left": "peter",
+      "left_candidate_count": 34036,
+      "right": "vaynelee",
+      "right_candidate_count": 971,
+      "shared_strict_artifact_identities": 0,
+      "strict_identity_jaccard": 0.0,
+      "union_strict_artifact_identities": 35007
+    }
+  },
+  "raw_content_committed": false,
+  "result_sha256": "2853b4af8eecdaf2f41770f49cab6132964e03d431265c329b3d1a13dbb628ca",
+  "schema_version": "frankengate-dataclaw-cross-user-artifact-transfer-v1",
+  "users": {
+    "peter": {
+      "candidate_count": 34036,
+      "candidate_limit": 100000,
+      "candidate_with_friction_context_count": 16414,
+      "cross_project_candidate_count": 518,
+      "raw_content_committed": false,
+      "session_count": 549,
+      "source_sha256": "dae70421f20da2f1f68fd307a89aedca8c3f5136c21d8604037db124d854093d"
+    },
+    "vaynelee": {
+      "candidate_count": 971,
+      "candidate_limit": 100000,
+      "candidate_with_friction_context_count": 101,
+      "cross_project_candidate_count": 4,
+      "raw_content_committed": false,
+      "session_count": 38,
+      "source_sha256": "6f740acd793727088dc9a98c5e091d7b89e484b2b9c1904b3cb1b826c6176e9d"
+    }
+  }
+}

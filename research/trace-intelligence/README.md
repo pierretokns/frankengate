@@ -250,6 +250,10 @@ probe found zero shared exact templates across BIRD and Defog, one shared typed
 schema-agnostic template, and two shared coarse operator shapes; every shared
 shape had multiple exact variants. Structural retrieval is therefore only a
 candidate signal until schema, authority, and replay validation succeed.
+The [`DataClaw cross-user artifact transfer`](experiments/summaries/dataclaw-cross-user-artifact-transfer-2026-08-09.md)
+probe found zero shared strict artifact identities between two real-user
+exports, despite 11 shared forms under permissive normalization. Cross-user
+reuse therefore requires strict identity, scope, review, and replay.
 The [`NL2SQL identifier cross-domain transfer`](experiments/summaries/nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 probe found asymmetric generalization: Defog-trained ranking improved BIRD MRR
 `.731684→.760996`, while BIRD-trained ranking reduced Defog MRR

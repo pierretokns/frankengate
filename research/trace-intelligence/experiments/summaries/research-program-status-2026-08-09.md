@@ -134,6 +134,11 @@ and two shared coarse operator shapes across BIRD and Defog. Every shared
 shape had multiple exact variants, so both structural collision rates were
 `1.0`. This is a dataset-fit boundary: schema-free retrieval cannot replace
 identifiers, authority, compatibility checks, or replay validation.
+The [strict DataClaw cross-user artifact transfer probe](dataclaw-cross-user-artifact-transfer-2026-08-09.md)
+found zero shared strict artifact identities between Peter and Vaynelee, even
+though the earlier permissive overlap audit found 11 shared non-trivial forms.
+Broad overlap is therefore a candidate-recall signal, not evidence for
+cross-user artifact promotion.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -320,6 +325,7 @@ project, principal, and changed-system holdouts.
 - [Claude cross-cohort command transfer](claude-cross-cohort-command-transfer-2026-08-09.md)
 - [Acronym cross-cohort stability](acronym-cross-cohort-stability-2026-08-09.md)
 - [Cross-corpus SQL artifact signatures](cross-corpus-sql-artifact-signatures-2026-08-09.md)
+- [DataClaw cross-user artifact transfer](dataclaw-cross-user-artifact-transfer-2026-08-09.md)
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)

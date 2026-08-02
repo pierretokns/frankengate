@@ -40,6 +40,8 @@ The cross-cohort acronym stability probe is documented in
 [acronym-cross-cohort-stability-2026-08-09.md](acronym-cross-cohort-stability-2026-08-09.md).
 The cross-corpus SQL artifact signature probe is documented in
 [cross-corpus-sql-artifact-signatures-2026-08-09.md](cross-corpus-sql-artifact-signatures-2026-08-09.md).
+The strict DataClaw cross-user artifact transfer probe is documented in
+[dataclaw-cross-user-artifact-transfer-2026-08-09.md](dataclaw-cross-user-artifact-transfer-2026-08-09.md).
 
 ## Overall conclusion
 

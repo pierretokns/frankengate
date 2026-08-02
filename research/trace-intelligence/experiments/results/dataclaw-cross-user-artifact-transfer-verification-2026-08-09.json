@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "at_least_two_users": true,
+    "claim_boundary": true,
+    "pairwise_complete": true,
+    "raw_content_absent": true,
+    "result_hash": true,
+    "schema": true
+  },
+  "passed": true,
+  "result_sha256": "2853b4af8eecdaf2f41770f49cab6132964e03d431265c329b3d1a13dbb628ca",
+  "schema_version": "frankengate-dataclaw-cross-user-artifact-transfer-verification-v1"
+}
