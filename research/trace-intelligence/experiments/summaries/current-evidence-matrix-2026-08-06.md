@@ -69,6 +69,7 @@ independent semantic labels and terminal outcomes.
 
 ## Source summaries
 
+- [`ontology-tool corporate-fit matrix`](ontology-tool-corporate-fit-matrix-2026-08-02.md)
 - [`parameterized artifact retrieval`](parameterized-artifact-retrieval-2026-08-06.md)
 - [`trace-derived artifact reuse`](bird-trace-artifact-reuse-2026-08-07.md)
 - [`trace retrieval cascade`](bird-trace-retrieval-cascade-2026-08-07.md)
