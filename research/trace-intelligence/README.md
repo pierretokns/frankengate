@@ -218,6 +218,11 @@ Across eight round-robin public cases, top-16 target coverage rose from `.667`
 to `.750` and MRR from `.348` to `.563`. This is a promising candidate-coverage
 mechanism, but it is not a reproduction of ToolQP's trained RLVR policy or an
 enterprise artifact result.
+The follow-up [`ToolQP peak-rank reproduction`](experiments/summaries/traject-bench-toolqp-peak-rank-2026-08-09.md)
+replayed the paper's best-rank aggregation over the same planner outputs. Peak
+rank preserved `.750` candidate coverage but reached MRR `.419`, below the
+simpler union ranker's `.563`; aggregation is therefore a separate hypothesis,
+not a free benefit of query planning.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.

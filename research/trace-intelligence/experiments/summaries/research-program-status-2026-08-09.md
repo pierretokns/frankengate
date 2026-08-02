@@ -95,6 +95,16 @@ are mechanics or proxy corpora. This is why results from WMH-BIRD, BIRD-Interact
 Trace Commons, DataClaw, CodeTraceBench, and MAGIC must remain separate arms;
 pooling them would manufacture labels and invalidate the enterprise claims.
 
+### 10. ToolQP's planning and aggregation effects are separable
+
+The official ToolQP method combines iterative query planning, synthetic-trace
+SFT, RLVR/GRPO, and peak-rank aggregation. Our bounded inference-stage replay
+held the planner outputs fixed and compared aggregation only: peak rank kept
+top-16 coverage at `.750` but scored MRR `.419`, versus `.563` for the simpler
+query union. This is not a contradiction of the paper; it shows that Frankengate
+must measure planner quality, retriever coverage, and aggregation independently
+before adopting a trained planner or claiming enterprise artifact value.
+
 ## Architecture decision
 
 Keep the smallest governed architecture:
@@ -139,4 +149,5 @@ project, principal, and changed-system holdouts.
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
+- [ToolQP peak-rank reproduction](traject-bench-toolqp-peak-rank-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)

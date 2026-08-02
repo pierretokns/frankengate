@@ -1,0 +1,8 @@
+{
+  "cases_verified": 8,
+  "raw_hashes_match": true,
+  "schema_version": "traject-bench-toolqp-peak-rank-verification-v1",
+  "source_result_sha256": "bd807bd9986aa63642e5d43f50fa1bba48862e9d126d40a95a2ebfdc9b6af55d",
+  "training_boundary_verified": true,
+  "verification_passed": true
+}
