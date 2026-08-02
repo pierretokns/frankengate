@@ -1,0 +1,14 @@
+{
+  "arms_verified": [
+    "name",
+    "ssl_logical",
+    "ssl_rich",
+    "ssl_scheduling",
+    "ssl_structural"
+  ],
+  "claim_boundary_verified": true,
+  "records_verified": 5297,
+  "schema_version": "traject-bench-ssl-proxy-verification-v1",
+  "source_result_sha256": "241908948f692cb7251470b8eb9ecbbbe0ca54976ed15518ba01f2a49a897f36",
+  "verification_passed": true
+}

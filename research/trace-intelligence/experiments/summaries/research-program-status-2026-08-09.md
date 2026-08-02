@@ -54,6 +54,14 @@ part is the projection model: derive interface, execution-DAG, and typed
 effect views from the same trace IDs while keeping LLM normalization
 review-only. This is a representation-design hypothesis, not yet a corporate
 skill-learning result.
+The follow-up [SSL-shaped TRAJECT proxy](traject-bench-ssl-proxy-2026-08-02.md)
+held domain-local candidate pools fixed across 5,297 records. Scheduling-only
+metadata tied name retrieval, while structural/logical proxies reduced hard
+Recall@10 (`.405251` name versus `.291558` structural and `.346664` logical);
+the rich combination recovered only simple-query Recall@10 by `.004527` and
+lost hard-query Recall@10. This is a proxy null caused by missing grounded
+scene/effect labels, not a disproof of SSL, and it reinforces that metadata
+concatenation is not enough.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -208,6 +216,7 @@ project, principal, and changed-system holdouts.
 - [TRAJECT-Bench query planning](traject-bench-query-planning-probe-2026-08-09.md)
 - [TRAJECT-Bench field-aware retrieval](traject-bench-field-retrieval-2026-08-09.md)
 - [SSL representation crosswalk](ssl-representation-crosswalk-2026-08-02.md)
+- [SSL-shaped TRAJECT proxy](traject-bench-ssl-proxy-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)

@@ -254,6 +254,12 @@ disentangling interface, execution structure, and resource effects, but the
 public tool benchmark lacks grounded scene graphs, authority outcomes, and
 replay labels; Frankengate should adopt the projections as reviewable trace
 views, not import an unvalidated normalizer or claim enterprise skill lift.
+The [SSL-shaped TRAJECT proxy](experiments/summaries/traject-bench-ssl-proxy-2026-08-02.md)
+then held candidate pools fixed across 5,297 records. Scheduling metadata tied
+name retrieval, while structural/logical metadata reduced hard-query recall;
+the rich combination did not reproduce the paper's gain. This is a missing-
+labels diagnostic, not a disproof, and keeps grounded scene/effect extraction
+behind a reviewed shadow lane.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next
