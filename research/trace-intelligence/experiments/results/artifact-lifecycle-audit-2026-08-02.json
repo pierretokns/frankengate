@@ -1,0 +1,115 @@
+{
+  "claim_boundary": {
+    "frontier_review_is_promotion": false,
+    "interpretation": "The safe product boundary is a provenance-aware candidate and review/replay queue; no automatic skill or artifact promotion is established.",
+    "recurrence_is_correctness": false,
+    "replay_receipts_share_candidate_ids_with_frontier": false,
+    "skill_or_artifact_user_benefit_established": false
+  },
+  "frontier_lifecycle": {
+    "candidate_count": 8,
+    "promotion_ready_count": 0,
+    "promotion_ready_definition": "unanimous reusable label + authorized semantic replay + changed-system result check + versioned release",
+    "states": {
+      "blocked_disagreement": 2,
+      "blocked_evidence": 1,
+      "blocked_safety": 1,
+      "replay_pending": 2,
+      "scope_bound": 2
+    }
+  },
+  "gates": {
+    "changed_system_replay": {
+      "cases": 5,
+      "interpretation": "Semantic-ID compatibility prevented the tested false accepts; name-only compatibility did not.",
+      "name_false_accepts": 2,
+      "semantic_accepts": 3,
+      "semantic_false_accepts": 0,
+      "status": "compatibility_gate_supported",
+      "strict_accepts": 1
+    },
+    "frontier_semantic_review": {
+      "agreement_count": 5,
+      "candidate_count": 8,
+      "disagreement_count": 3,
+      "interpretation": "Unanimous labels still require replay; disagreement, unsafe, and insufficient-evidence labels block promotion.",
+      "states": {
+        "blocked_disagreement": 2,
+        "blocked_evidence": 1,
+        "blocked_safety": 1,
+        "replay_pending": 2,
+        "scope_bound": 2
+      },
+      "status": "review_queue_only"
+    },
+    "recurrence_candidate_generation": {
+      "interpretation": "Exact, scoped recurrence is a ranking feature; coarse key-shape recurrence is a negative control.",
+      "same_project_exact_lift": 0.063798,
+      "same_project_keyshape_lift": -0.062541,
+      "status": "supported_as_candidate_signal"
+    },
+    "stress_replay": {
+      "interpretation": "Name-only transfer accepted unsafe cases in the stress fixture; semantic compatibility was conservative and safe there.",
+      "name_accepted": 100,
+      "name_semantic_correct": 60,
+      "name_unsafe_accept": 40,
+      "semantic_accepted": 60,
+      "semantic_semantic_correct": 60,
+      "semantic_unsafe_accept": 0,
+      "status": "name_only_policy_rejected"
+    },
+    "versioned_release_ledger": {
+      "interpretation": "Versioning, rollback, and withdrawal are representable; extraction quality and user benefit remain unmeasured.",
+      "promotions": 3,
+      "release_rows": 5,
+      "rollbacks": 1,
+      "status": "state_machine_conformance_only",
+      "withdrawals": 1
+    }
+  },
+  "invariants": {
+    "causal_user_benefit_established": false,
+    "cross_user_intent_equivalence_established": false,
+    "disagreement_blocks_promotion": true,
+    "insufficient_evidence_blocks_promotion": true,
+    "name_only_false_accepts_observed": true,
+    "semantic_false_accepts_absent": true,
+    "stress_name_only_unsafe_accepts_observed": true,
+    "stress_semantic_unsafe_accepts_observed": true,
+    "unsafe_label_blocks_promotion": true
+  },
+  "protocol": {
+    "cohort_joined_by_candidate_id": false,
+    "frontier_and_replay_are_independent_receipts": true,
+    "promotion_requires_all_gates": true,
+    "raw_candidate_content_committed": false
+  },
+  "result_sha256": "3d835dcc64618476820f005c54e23d358548a323ec9cb49f78be35afeed8678a",
+  "schema_version": "frankengate-artifact-lifecycle-audit-v1",
+  "source_receipts": {
+    "drift": {
+      "raw_content_committed": false,
+      "sha256": "88f7c1154fb22107e8a448bf4ec75c5638f670383d06f9f1d9427eb9d38080c8"
+    },
+    "frontier": {
+      "raw_content_committed": false,
+      "sha256": "a0af7c5a0e322fa2b8664cb595810c23f78a6b041ee303abde57a8306996a7c7"
+    },
+    "memory": {
+      "raw_content_committed": false,
+      "sha256": "79d2759824c7c442ca8efc7c08f2e211125a970b9da65b50c8cc5bd1b0b209a5"
+    },
+    "promotion": {
+      "raw_content_committed": false,
+      "sha256": "121d3371eb77d0fdbe546c9a802e5d69fe8a4531637c9d38b0ad0ee3df10752e"
+    },
+    "replay": {
+      "raw_content_committed": false,
+      "sha256": "f5029839493bce9a18293f48e91f95cf7bf34c505430db6c4e2c8a3022f0f48f"
+    },
+    "stress": {
+      "raw_content_committed": false,
+      "sha256": "284c1d4aadc3edbd5d30f8f056b071cb59877578d58b8b838c1ce5348806d52f"
+    }
+  }
+}
