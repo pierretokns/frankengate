@@ -119,6 +119,7 @@ claim boundary, and independent verifier where applicable.
 | Local/frontier label agreement | Six Wisp candidates: all-field agreement `0%`; usefulness agreement `0%`; cause agreement `33.3%` | Cheap models are not interchangeable with frontier/human adjudicators |
 | Changed-agent utility | Expanded BIRD 40-task replay: trace procedure `8/40` exact, equal to no-skill `8/40`; paired trace-vs-no-skill `1–1` with 38 ties; mean latency `11.102s` vs `10.306s` | No measured trace-mined utility lift; the larger checkpoint remains a bounded no-lift result |
 | Changed-system artifact safety | Strict fingerprints accept `1/5`; name-only adaptation `5/5` with 2 false semantic accepts; semantic IDs `3/5` with 0 false accepts | Use explicit semantic mappings plus result/outcome validation |
+| Validated subplan composition | Two seeded frontier replays on five broker tasks: composed library `10/10`, fresh generation and placebo `5/10` each; three stable wins and no stable losses | Decompose validated examples into typed subplans; promising but small, single-family, and not yet a promotion result |
 
 ## Main conclusions
 

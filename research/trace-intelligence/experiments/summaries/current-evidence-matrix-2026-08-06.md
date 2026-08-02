@@ -47,5 +47,6 @@ independent semantic labels and terminal outcomes.
 - [`embedding/model cascade`](matm-embedding-model-cascade-audit-2026-08-02.md)
 - [`schema-adaptive retrieval`](nl2sql-schema-adaptive-retrieval-2026-08-01.md)
 - [`40-task skill factorial`](bird-sql-skill-factorial-40-2026-08-06.md)
+- [`cross-method calibration`](cross-method-calibration-2026-08-06.md)
 - [`enterprise replay readiness`](enterprise-replay-readiness-status-2026-08-06.md)
 - [`next experiments and promotion gates`](corporate-trace-artifact-learning-next-experiments-2026-08-06.md)

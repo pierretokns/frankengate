@@ -54,6 +54,9 @@ cohort, and records the exact authorized-data handoff required next.
 The expanded [`40-task BIRD-SQL skill factorial`](experiments/summaries/bird-sql-skill-factorial-40-2026-08-06.md)
 is the latest independent skill-utility checkpoint: the trace-mined procedure
 matched no-skill and was slower, so it remains quarantined.
+The [`cross-method calibration`](experiments/summaries/cross-method-calibration-2026-08-06.md)
+keeps that null separate from the positive but small validated-subplan
+composition result.
 
 ## Historical Claude/Codex mining
 
