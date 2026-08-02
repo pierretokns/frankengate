@@ -1,0 +1,200 @@
+{
+  "backend": "hybrid raw",
+  "claim_boundary": "Synthetic-fixture abstention diagnostic only; no frontier model, human labels, or enterprise NIL labels.",
+  "fixture_sha256": "9a48b266dfc5b7260a1800b01ec6e5f84be948a9e690f1860b5c868fed1f8311",
+  "rows": [
+    {
+      "accepted_gold_recall_at_1": 0.75,
+      "entity_gate": false,
+      "gold_coverage": 1.0,
+      "nil_false_positive_rate": 1.0,
+      "size": 1,
+      "threshold": null
+    },
+    {
+      "accepted_gold_recall_at_1": 0.75,
+      "entity_gate": false,
+      "gold_coverage": 1.0,
+      "nil_false_positive_rate": 1.0,
+      "size": 5,
+      "threshold": null
+    },
+    {
+      "accepted_gold_recall_at_1": 0.625,
+      "entity_gate": false,
+      "gold_coverage": 1.0,
+      "nil_false_positive_rate": 1.0,
+      "size": 10,
+      "threshold": null
+    },
+    {
+      "accepted_gold_recall_at_1": 0.55,
+      "entity_gate": false,
+      "gold_coverage": 1.0,
+      "nil_false_positive_rate": 1.0,
+      "size": 25,
+      "threshold": null
+    },
+    {
+      "accepted_gold_recall_at_1": 1.0,
+      "entity_gate": false,
+      "gold_coverage": 0.5,
+      "nil_false_positive_rate": 1.0,
+      "size": 1,
+      "threshold": 0.65
+    },
+    {
+      "accepted_gold_recall_at_1": 0.75,
+      "entity_gate": false,
+      "gold_coverage": 1.0,
+      "nil_false_positive_rate": 0.0,
+      "size": 5,
+      "threshold": 0.65
+    },
+    {
+      "accepted_gold_recall_at_1": 0.6666666666666666,
+      "entity_gate": false,
+      "gold_coverage": 0.75,
+      "nil_false_positive_rate": 0.0,
+      "size": 10,
+      "threshold": 0.65
+    },
+    {
+      "accepted_gold_recall_at_1": 0.6666666666666666,
+      "entity_gate": false,
+      "gold_coverage": 0.75,
+      "nil_false_positive_rate": 0.0,
+      "size": 25,
+      "threshold": 0.65
+    },
+    {
+      "accepted_gold_recall_at_1": 1.0,
+      "entity_gate": false,
+      "gold_coverage": 0.25,
+      "nil_false_positive_rate": 0.0,
+      "size": 1,
+      "threshold": 0.7
+    },
+    {
+      "accepted_gold_recall_at_1": 0.5,
+      "entity_gate": false,
+      "gold_coverage": 0.5,
+      "nil_false_positive_rate": 0.0,
+      "size": 5,
+      "threshold": 0.7
+    },
+    {
+      "accepted_gold_recall_at_1": 0.5,
+      "entity_gate": false,
+      "gold_coverage": 0.5,
+      "nil_false_positive_rate": 0.0,
+      "size": 10,
+      "threshold": 0.7
+    },
+    {
+      "accepted_gold_recall_at_1": 0.5,
+      "entity_gate": false,
+      "gold_coverage": 0.5,
+      "nil_false_positive_rate": 0.0,
+      "size": 25,
+      "threshold": 0.7
+    },
+    {
+      "accepted_gold_recall_at_1": 0.0,
+      "entity_gate": false,
+      "gold_coverage": 0.0,
+      "nil_false_positive_rate": 0.0,
+      "size": 1,
+      "threshold": 0.75
+    },
+    {
+      "accepted_gold_recall_at_1": 1.0,
+      "entity_gate": false,
+      "gold_coverage": 0.25,
+      "nil_false_positive_rate": 0.0,
+      "size": 5,
+      "threshold": 0.75
+    },
+    {
+      "accepted_gold_recall_at_1": 0.5,
+      "entity_gate": false,
+      "gold_coverage": 0.5,
+      "nil_false_positive_rate": 0.0,
+      "size": 10,
+      "threshold": 0.75
+    },
+    {
+      "accepted_gold_recall_at_1": 0.5,
+      "entity_gate": false,
+      "gold_coverage": 0.5,
+      "nil_false_positive_rate": 0.0,
+      "size": 25,
+      "threshold": 0.75
+    },
+    {
+      "accepted_gold_recall_at_1": 0.0,
+      "entity_gate": false,
+      "gold_coverage": 0.0,
+      "nil_false_positive_rate": 0.0,
+      "size": 1,
+      "threshold": 0.8
+    },
+    {
+      "accepted_gold_recall_at_1": 0.0,
+      "entity_gate": false,
+      "gold_coverage": 0.0,
+      "nil_false_positive_rate": 0.0,
+      "size": 5,
+      "threshold": 0.8
+    },
+    {
+      "accepted_gold_recall_at_1": 0.0,
+      "entity_gate": false,
+      "gold_coverage": 0.0,
+      "nil_false_positive_rate": 0.0,
+      "size": 10,
+      "threshold": 0.8
+    },
+    {
+      "accepted_gold_recall_at_1": 0.5,
+      "entity_gate": false,
+      "gold_coverage": 0.5,
+      "nil_false_positive_rate": 0.0,
+      "size": 25,
+      "threshold": 0.8
+    },
+    {
+      "accepted_gold_recall_at_1": 0.6666666666666666,
+      "entity_gate": true,
+      "gold_coverage": 0.75,
+      "nil_false_positive_rate": 0.0,
+      "size": 1,
+      "threshold": null
+    },
+    {
+      "accepted_gold_recall_at_1": 0.6666666666666666,
+      "entity_gate": true,
+      "gold_coverage": 0.75,
+      "nil_false_positive_rate": 0.0,
+      "size": 5,
+      "threshold": null
+    },
+    {
+      "accepted_gold_recall_at_1": 0.6666666666666666,
+      "entity_gate": true,
+      "gold_coverage": 0.75,
+      "nil_false_positive_rate": 0.0,
+      "size": 10,
+      "threshold": null
+    },
+    {
+      "accepted_gold_recall_at_1": 0.6666666666666666,
+      "entity_gate": true,
+      "gold_coverage": 0.75,
+      "nil_false_positive_rate": 0.0,
+      "size": 25,
+      "threshold": null
+    }
+  ],
+  "schema_version": "frankengate-wiki-abstention-probe-v1"
+}
