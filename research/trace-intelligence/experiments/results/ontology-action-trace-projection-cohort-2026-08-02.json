@@ -13,6 +13,7 @@
     "database_families": 11,
     "split": "within-database deterministic even/odd task split",
     "candidate_pool": "exposed schema tables per trace",
+    "typed_identifiers": "table and column names parsed from recorded gen_ai.tool.message DDL",
     "strict_target": "recorded SQL table references",
     "compatible_target": "recorded references plus SQLite result-preserving substitutions"
   },
@@ -22,7 +23,7 @@
       "trace": 149,
       "system": 11,
       "schema": 75,
-      "schema_column": 776,
+      "schema_column": 785,
       "artifact": 148,
       "action": 149,
       "outcome": 149
@@ -38,11 +39,11 @@
   },
   "arms": {
     "A0": {"status": "measured", "strict_mrr": 0.805010, "strict_recall_at_1": 0.708333, "strict_recall_at_3": 0.902778, "strict_recall_at_10": 1.0},
-    "A1": {"status": "measured", "strict_mrr": 0.952546, "strict_recall_at_1": 0.916667, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
+    "A1": {"status": "measured", "strict_mrr": 0.959491, "strict_recall_at_1": 0.930556, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
     "A2": {"status": "measured", "strict_mrr": 0.847239, "strict_recall_at_1": 0.750000, "strict_recall_at_3": 0.930556, "strict_recall_at_10": 1.0},
-    "A3": {"status": "measured", "strict_mrr": 0.946429, "strict_recall_at_1": 0.902778, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
-    "A6": {"status": "measured", "strict_mrr": 0.946429, "strict_recall_at_1": 0.902778, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
-    "A7": {"status": "measured", "strict_mrr": 0.952546, "strict_recall_at_1": 0.916667, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0}
+    "A3": {"status": "measured", "strict_mrr": 0.953373, "strict_recall_at_1": 0.916667, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
+    "A6": {"status": "measured", "strict_mrr": 0.953373, "strict_recall_at_1": 0.916667, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0},
+    "A7": {"status": "measured", "strict_mrr": 0.959491, "strict_recall_at_1": 0.930556, "strict_recall_at_3": 0.986111, "strict_recall_at_10": 1.0}
   },
   "unmeasured_arms": {
     "A4": {"status": "unavailable", "reason": "no embedding endpoint supplied; no dense claim"},
@@ -61,5 +62,5 @@
     "skill_transfer_established": false,
     "reason": "WMH-BIRD supplies SQL table references and SQLite outcomes, but no reviewed enterprise ontology, principal scopes, authority epochs, or human intent labels."
   },
-  "result_sha256": "56d30be3aec1319cb93c04e33712d4a24d87b833c5a39f71a45eebf4cf27e664"
+  "result_sha256": "d3fbc6d1c106ce641597cca0cabb42bf30f6a4025ae260a4bdf4c61735d7178d"
 }

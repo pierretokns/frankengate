@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sqlite3
 from collections import defaultdict
 from pathlib import Path
@@ -106,9 +107,43 @@ def schema_terms(db_root: Path, db_name: str, table: str) -> set[str]:
     return normalize_terms(table) | {term for column in columns for term in normalize_terms(column)}
 
 
-def typed_score(prompt: str, db_root: Path, db_name: str, table: str) -> float:
+def recorded_schema_terms(traces_path: Path) -> dict[str, dict[str, set[str]]]:
+    """Extract only table/column identifiers present in recorded tool DDL."""
+    create_block = re.compile(
+        r"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?[\"`\[]?"
+        r"([A-Za-z_][A-Za-z0-9_]*)[\"`\]]?\s*\((.*?)\)\s*;",
+        re.IGNORECASE | re.DOTALL,
+    )
+    column_line = re.compile(r"^\s*[\"`\[]?([A-Za-z_][A-Za-z0-9_]*)[\"`\]]?\s+", re.MULTILINE)
+    output: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
+    for line in traces_path.open(encoding="utf-8", errors="replace"):
+        try:
+            span = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        trace_id = span.get("traceId")
+        if not isinstance(trace_id, str):
+            continue
+        trace_hash = hashlib.sha256(trace_id.encode()).hexdigest()
+        for item in span.get("attributes", []):
+            if not isinstance(item, dict) or item.get("key") != "gen_ai.tool.message":
+                continue
+            value = item.get("value")
+            if not isinstance(value, dict) or not isinstance(value.get("stringValue"), str):
+                continue
+            for match in create_block.finditer(value["stringValue"]):
+                table = match.group(1).casefold()
+                terms = output[trace_hash][table]
+                terms.update(normalize_terms(table))
+                for column in column_line.findall(match.group(2)):
+                    if column.casefold() not in {"primary", "foreign", "unique", "constraint", "check"}:
+                        terms.update(normalize_terms(column))
+    return {trace_hash: dict(tables) for trace_hash, tables in output.items()}
+
+
+def typed_score(prompt: str, db_root: Path, db_name: str, table: str, terms_override: set[str] | None = None) -> float:
     query = normalize_terms(prompt)
-    terms = schema_terms(db_root, db_name, table)
+    terms = terms_override if terms_override is not None else schema_terms(db_root, db_name, table)
     return lexical_score(prompt, table) + 2.0 * len(query & terms - normalize_terms(table))
 
 
@@ -147,25 +182,27 @@ def rank_arm(
     db_root: Path,
     alias_edges: dict[tuple[str, str], set[str]],
     action_edges: dict[tuple[str, str], set[str]],
+    schema_terms_by_trace: dict[str, dict[str, set[str]]] | None = None,
 ) -> list[str]:
     prompt_terms = ngrams(trace.prompt)
     aliases = set().union(*(alias_edges.get((trace.db_name, key), set()) for key in prompt_terms))
     actions = set().union(*(action_edges.get((trace.db_name, key), set()) for key in prompt_terms))
+    trace_schema = (schema_terms_by_trace or {}).get(trace.trace_hash, {})
 
     if arm == "A0":
         return sorted(candidates, key=lambda item: (-lexical_score(trace.prompt, item), item))
     if arm in {"A1", "A7"}:
-        return sorted(candidates, key=lambda item: (-typed_score(trace.prompt, db_root, trace.db_name, item), item))
+        return sorted(candidates, key=lambda item: (-typed_score(trace.prompt, db_root, trace.db_name, item, trace_schema.get(item.casefold())), item))
     if arm == "A2":
         return sorted(candidates, key=lambda item: (-lexical_score(trace.prompt, item) - (20.0 if item in aliases else 0.0), item))
     if arm == "A3":
-        return sorted(candidates, key=lambda item: (-typed_score(trace.prompt, db_root, trace.db_name, item) - (20.0 if item in aliases else 0.0), item))
+        return sorted(candidates, key=lambda item: (-typed_score(trace.prompt, db_root, trace.db_name, item, trace_schema.get(item.casefold())) - (20.0 if item in aliases else 0.0), item))
     if arm == "A6":
-        return sorted(candidates, key=lambda item: (-typed_score(trace.prompt, db_root, trace.db_name, item) - (20.0 if item in actions else 0.0), item))
+        return sorted(candidates, key=lambda item: (-typed_score(trace.prompt, db_root, trace.db_name, item, trace_schema.get(item.casefold())) - (20.0 if item in actions else 0.0), item))
     raise ValueError(f"unsupported runnable arm: {arm}")
 
 
-def object_edge_counts(traces: list[Trace], db_root: Path) -> dict[str, Any]:
+def object_edge_counts(traces: list[Trace], schema_terms_by_trace: dict[str, dict[str, set[str]]]) -> dict[str, Any]:
     objects: defaultdict[str, set[str]] = defaultdict(set)
     edges: defaultdict[str, int] = defaultdict(int)
     for trace in traces:
@@ -187,8 +224,8 @@ def object_edge_counts(traces: list[Trace], db_root: Path) -> dict[str, Any]:
         for table in trace.exposed_tables:
             objects["schema"].add(stable_hash(f"schema:{trace.db_name}:{table}"))
             # Columns are not stored in the receipt; only a stable object count
-            # is emitted after reading the pinned schema.
-            for _ in schema_terms(db_root, trace.db_name, table) - normalize_terms(table):
+            # is emitted from DDL present in the recorded tool message.
+            for _ in schema_terms_by_trace.get(trace.trace_hash, {}).get(table, set()) - normalize_terms(table):
                 objects["schema_column"].add(stable_hash(f"column:{trace.db_name}:{table}:{_}"))
     return {"objects": {key: len(value) for key, value in sorted(objects.items())}, "edges": dict(sorted(edges.items()))}
 
@@ -196,6 +233,7 @@ def object_edge_counts(traces: list[Trace], db_root: Path) -> dict[str, Any]:
 def run(traces_path: Path, manifest: Path, db_root: Path, output: Path) -> dict[str, Any]:
     traces = load_traces(traces_path, manifest)
     train, evaluation = split_by_db(traces)
+    schema_terms_by_trace = recorded_schema_terms(traces_path)
     alias_edges = build_alias_edges(train)
     action_edges = build_alias_edges(train, replay_only=True, db_root=db_root)
     arms = ("A0", "A1", "A2", "A3", "A6", "A7")
@@ -206,7 +244,7 @@ def run(traces_path: Path, manifest: Path, db_root: Path, output: Path) -> dict[
         equivalents, _, _ = equivalent_candidates(trace, db_root)
         compatible = exact | equivalents
         for arm in arms:
-            order = rank_arm(arm, trace, candidates, db_root, alias_edges, action_edges)
+            order = rank_arm(arm, trace, candidates, db_root, alias_edges, action_edges, schema_terms_by_trace)
             metrics[arm].append(rank_metrics(order, exact, compatible))
 
     result: dict[str, Any] = {
@@ -224,10 +262,11 @@ def run(traces_path: Path, manifest: Path, db_root: Path, output: Path) -> dict[
             "database_families": len({trace.db_name for trace in traces}),
             "split": "within-database deterministic even/odd task split",
             "candidate_pool": "exposed schema tables per trace",
+            "typed_identifiers": "table and column names parsed from recorded gen_ai.tool.message DDL",
             "strict_target": "recorded SQL table references",
             "compatible_target": "recorded references plus SQLite result-preserving substitutions",
         },
-        "projection": object_edge_counts(traces, db_root),
+        "projection": object_edge_counts(traces, schema_terms_by_trace),
         "arms": {arm: {"status": "measured", "metrics": aggregate(rows)} for arm, rows in sorted(metrics.items())},
         "unmeasured_arms": {
             "A4": {"status": "unavailable", "reason": "no embedding endpoint supplied; no dense claim"},
