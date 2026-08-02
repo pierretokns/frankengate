@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,23 @@ def file_sha256(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def aggregate(rows: list[dict[str, Any]], arm: str) -> dict[str, Any]:
+    target = [row for row in rows if not row["targetless"]]
+    targetless = [row for row in rows if row["targetless"]]
+    result: dict[str, Any] = {"records": len(rows), "target_bearing_records": len(target), "targetless_records": len(targetless)}
+    if target:
+        fields = ("mrr", "recall_at_1", "recall_at_5", "recall_at_10", "evidence_recall_at_10", "invalid_extra_at_10", "wrong_source_extra_at_10", "same_source_non_target_at_10")
+        result.update({field: round(sum(float(row[arm][field]) for row in target) / len(target), 6) for field in fields})
+    if targetless:
+        result["targetless_nonempty_result_rate"] = round(sum(bool(row[arm]["ranked_count"]) for row in targetless) / len(targetless), 6)
+    return result
+
+
+def assert_equal(expected: Any, actual: Any, path: str) -> None:
+    if expected != actual:
+        raise ValueError(f"aggregate mismatch at {path}: expected {expected!r}, recomputed {actual!r}")
 
 
 def verify(result_path: Path) -> dict[str, Any]:
@@ -36,7 +54,11 @@ def verify(result_path: Path) -> dict[str, Any]:
     expected_rows = result.get("dataset", {}).get("questions")
     if not isinstance(rows, list) or not isinstance(expected_rows, int) or len(rows) != expected_rows or not rows:
         raise ValueError("row count mismatch")
+    by_type: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
+        if not isinstance(row.get("question_type"), str):
+            raise ValueError("question_type missing")
+        by_type[row["question_type"]].append(row)
         for arm in ("unfiltered", "oracle_source_filtered"):
             metrics = row.get(arm)
             if not isinstance(metrics, dict):
@@ -49,12 +71,20 @@ def verify(result_path: Path) -> dict[str, Any]:
                 value = metrics.get(field)
                 if not isinstance(value, int) or value < 0:
                     raise ValueError(f"invalid {arm}.{field}")
+    for arm in ("unfiltered", "oracle_source_filtered"):
+        assert_equal(result["arms"]["overall"][arm], aggregate(rows, arm), f"arms.overall.{arm}")
+        expected_by_type = result["arms"].get("by_question_type", {})
+        if set(expected_by_type) != set(by_type):
+            raise ValueError("question-type aggregate keys do not reconcile")
+        for question_type, group in by_type.items():
+            assert_equal(expected_by_type[question_type][arm], aggregate(group, arm), f"arms.by_question_type.{question_type}.{arm}")
     verification = {
         "schema_version": "frankengate-enterprise-rag-source-filter-ceiling-verification-v1",
         "source_result_sha256": file_sha256(result_path),
         "questions_verified": len(rows),
         "oracle_boundary_verified": True,
         "claim_boundary_verified": True,
+        "aggregate_reconciliation_verified": True,
         "verification_passed": True,
     }
     return verification

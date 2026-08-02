@@ -1,4 +1,5 @@
 {
+  "aggregate_reconciliation_verified": true,
   "claim_boundary_verified": true,
   "oracle_boundary_verified": true,
   "questions_verified": 10,
