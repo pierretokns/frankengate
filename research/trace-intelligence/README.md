@@ -96,6 +96,12 @@ The [`EnterpriseRAG-Bench adaptation`](experiments/summaries/enterprise-rag-benc
 adds the document-side companion: its enterprise source mix, question taxonomy,
 noise model, metadata slice, and the exact boundary between retrieval evidence
 and trace/skill-learning claims.
+The [`EnterpriseRAG-Bench question audit`](experiments/summaries/enterprise-rag-question-audit-2026-08-02.md)
+now verifies the downloaded question parquet independently: 500 questions,
+2,427 atomic facts, 742 expected document references, 93 multi-document cases,
+and explicit conflict, completeness, abstention, and constrained slices. It
+also records that the benchmark contains no principals, tool outcomes, exposure
+events, authority epochs, or changed-system replay.
 The [`ontology/action projection receipt`](experiments/results/ontology-action-trace-projection-cohort-2026-08-02.json)
 is the first runnable WMH-BIRD bridge: schema-first typed projections and
 replay-backed action edges are measured, while vector, authority, and frontier
