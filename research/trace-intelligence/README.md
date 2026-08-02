@@ -107,6 +107,11 @@ then indexed all 511,962 documents: target-bearing MRR `.4459`, R@1 `.3787`,
 and R@10 `.5787`; semantic R@1 was only `.08`, and lexical retrieval returned
 non-empty results for all 30 targetless questions. This is the concrete case
 for semantic candidate recall plus an explicit abstention gate.
+The [`EnterpriseRAG-Bench source-filter ceiling pilot`](experiments/summaries/enterprise-rag-source-filter-ceiling-2026-08-10.md)
+then measured the oracle source-type restriction on one question per category:
+it removed wrong-source candidates but left a large same-source hard-negative
+tail. This is a diagnostic ceiling, not a production metadata or authorization
+result.
 The [`company fine-tuning practice map`](experiments/summaries/company-finetuning-practice-map-2026-08-02.md)
 compares the documented Databricks, Google, AWS, and Cohere patterns: metadata
 and retrieval first, labeled hard negatives second, model tuning only after a

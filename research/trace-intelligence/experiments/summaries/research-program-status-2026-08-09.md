@@ -526,6 +526,15 @@ semantic/conflict/completeness/NIL slices separate and use its generated noise
 as a candidate-hard-negative fixture; do not pool its scores with trace or
 artifact outcomes.
 
+The stratified [source-filter ceiling pilot](enterprise-rag-source-filter-ceiling-2026-08-10.md)
+adds one controlled diagnostic: on one question per category, an oracle
+`source_type` restriction removed wrong-source extras (`3.375 -> 0.0`) and
+raised MRR `.629 -> .750`, but same-source non-targets increased (`5.375 ->
+8.625`). This is not a production gain—the filter uses answer metadata—but it
+shows why source scope cannot substitute for alias, temporal, or task-identity
+labels. The next hard-negative cohort should preserve same-source/wrong-system
+and NIL cases rather than merely adding more source filters.
+
 ### 12. One-shot ontology proposals are review inputs, not canonical knowledge
 
 The [ontology-induction matrix contract](ontology-induction-matrix-contract-2026-08-02.md)
