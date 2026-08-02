@@ -1,0 +1,55 @@
+{
+  "schema_version": "frankengate-dataclaw-identifier-temporal-reuse-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false,
+    "raw_identifiers_emitted": false
+  },
+  "split": {
+    "method": "per-project chronological 70/30",
+    "projects_with_train_and_eval": 30,
+    "projects_excluded_for_single_session": 16,
+    "train_sessions": 279,
+    "evaluation_sessions": 141,
+    "evaluation_sessions_with_paths": 96,
+    "evaluation_path_events": 1632
+  },
+  "training_surface_collisions": {
+    "cross_project_basenames": 146,
+    "cross_project_full_path_digests": 60,
+    "basename_surface_count": 1677,
+    "full_path_digest_count": 2629
+  },
+  "reuse": {
+    "same_project_basename_events": 494,
+    "same_project_exact_path_events": 273,
+    "any_project_basename_events": 787,
+    "any_project_exact_path_events": 411,
+    "same_project_basename_event_rate": 0.30269607843137253,
+    "same_project_exact_path_event_rate": 0.16727941176470587,
+    "any_project_basename_event_rate": 0.48223039215686275,
+    "any_project_exact_path_event_rate": 0.25183823529411764,
+    "exact_within_same_project_basename_hit_rate": 0.5526315789473685,
+    "same_project_basename_sessions": 75,
+    "same_project_exact_path_sessions": 72,
+    "any_project_basename_sessions": 84,
+    "any_project_exact_path_sessions": 80,
+    "same_project_basename_session_rate": 0.78125,
+    "same_project_exact_path_session_rate": 0.75,
+    "any_project_basename_session_rate": 0.875,
+    "any_project_exact_path_session_rate": 0.8333333333333334
+  },
+  "claim_boundary": {
+    "temporal_identifier_recurrence_measured": true,
+    "same_task_established": false,
+    "same_work_established": false,
+    "semantic_alias_quality_established": false,
+    "artifact_correctness_established": false,
+    "promotion_authorized": false,
+    "reason": "Exact path recurrence is an identity/exposure signal. A basename recurrence can represent unrelated files, renamed systems, repository conventions, or true aliases; neither recurrence measure establishes task intent or correctness."
+  },
+  "decision": "Use exact path identity as a high-precision feature and basename surfaces as a lower-precision recall/hard-negative feature. Require scope, authority, reviewed semantics, and independent replay before artifact or alias promotion."
+}

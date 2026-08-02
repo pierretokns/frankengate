@@ -371,6 +371,14 @@ to `.590`, and combining prompt, shapes, and identifiers to `.657` (Recall@1
 separate retrieval lane, not for semantic same-work, alias quality, or artifact
 correctness. The next gate is reviewed task/NIL labels plus replay.
 
+The [temporal identifier-reuse audit](dataclaw-ronald-identifier-temporal-reuse-2026-08-02.md)
+separates precision from recall. On the same split, basename reuse was `.303`
+of evaluation path events within project versus `.167` for exact full-path
+digests; only `.553` of same-project basename hits were exact, and 60 exact
+digests crossed projects in training. Exact paths are therefore a useful
+high-precision exposure feature, not an authority key; basename surfaces are a
+broader candidate/hard-negative feature that must remain scoped and reviewed.
+
 ### 8. Friction mining needs structural review, not keyword labels
 
 The corrected native Codex importer found 47,122 user episodes, 228 adjacent
