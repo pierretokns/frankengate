@@ -21,10 +21,18 @@ Evidence already measured:
 - parameterized-template retrieval recovers `52/52` known mutations, while a
   strict template gate abstains on `10/10` template-absence NIL proxies;
 - structured identifiers beat the tested dense adapter on collision safety;
-- BIRD-SQL trace-mined procedure replay reached `3/20`, equal to no-skill and
-  below the formatting placebo (`4/20`), so no skill was promoted;
+- BIRD-SQL trace-mined procedure replay reached `8/40`, equal to no-skill and
+  below the formatting placebo on latency, so no skill was promoted;
 - BIRD-Interact provides 600 ambiguity/follow-up tasks, while its 20 public
   ADK samples expose the trajectory/reward schema but are not a benchmark.
+
+The leading positive hypothesis is now **validated subplan composition**, not
+generic memory or one-shot procedural skill transfer. Two independent
+family-disjoint BIRD replays used the same 16-example source-family library:
+the composed arm achieved `8/40` exact outcomes versus `6/40` for both no-skill
+and formatting placebo. The stable task comparison was one win and zero losses,
+so this is repeatable but low-headroom and underpowered. The same cohort's
+one-shot trace-mined procedure was equal to no-skill and slower.
 
 These are bounded mechanics and negative/diagnostic results, not proof that a
 generic memory layer improves agents.
@@ -48,14 +56,21 @@ changed-system split. Pre-register:
 2. exact/structured retrieval;
 3. dense candidate retrieval;
 4. reviewed parameterized artifact;
-5. generated/composed artifact; and
-6. frontier regeneration when the compatibility set is empty.
+5. reviewed typed-subplan composition;
+6. generated/prose procedure (negative control); and
+7. frontier regeneration when the compatibility set is empty.
 
 Measure semantic outcome, wrong-system-before-target, authority/deletion safety,
 abstention, reviewer agreement, tool calls, latency, and cost. Separately run
 the BIRD-Interact clarification cohort with no-procedure, clarification,
 over-questioning placebo, and regeneration arms once the evaluator/test bundle
 is available. Do not merge the two datasets into one statistical estimate.
+
+The composition arm should be evaluated on at least four database families,
+two source-library variants, irrelevant-library/NIL tasks, one schema-change
+family, and repeated frontier seeds. A paper should report library granularity,
+source/target splits, and stable task wins rather than treating repeated seeds
+as independent samples.
 
 ## Publication lanes
 
