@@ -79,6 +79,28 @@ model.
 needs a scope/authority filter and an abstention path; the final replay oracle
 remains mandatory.
 
+## Open-source implementations worth testing
+
+- [LRAT](https://github.com/Yuqi-Zhou/LRAT) provides the authors' trajectory-
+  supervision implementation. It is a direct candidate for a forked
+  experiment, but its search/browse data model must be adapted to governed
+  tool exposure and execution outcomes.
+- [TRAJECT-Bench](https://github.com/PengfeiHePower/TRAJECT-Bench) publishes
+  executable tool definitions, parallel and sequential trajectory data, and
+  evaluation scripts. Its README describes 10 domains, 50 task types, and
+  trajectory-aware metrics, making it the best public harness for validating
+  selection/argument/order metrics before using private enterprise traces.
+- [TOOLQP](https://arxiv.org/abs/2601.07782) is the current research target for
+  staged retrieval. The paper reports a lightweight 1.7B planner and explicit
+  query/retrieval feedback loops; its claims still need an independent
+  Frankengate reproduction.
+
+The immediate test sequence is therefore: run the unmodified public
+TRAJECT-Bench evaluator; add Frankengate's authority/scope and replay metrics;
+then compare static dense retrieval, LRAT-style exposed-candidate training,
+and ToolQP-style staged retrieval on the same tool pools. No method should be
+ported into production based on the paper numbers alone.
+
 ## Best research partners
 
 1. **MIT DSAIL / Data Systems Group.** Its stated agenda explicitly combines
