@@ -103,6 +103,9 @@ arms remain explicitly unavailable.
 The [`cohort comparison guard`](experiments/summaries/cohort-comparison-guard-2026-08-02.md)
 now fails closed when that 72-case projection is compared with the separate
 44-case dense/frontier receipt, preventing an invalid pooled cascade claim.
+The [`WMH-BIRD aligned cascade cohort`](experiments/summaries/wmh-bird-aligned-cascade-cohort-2026-08-02.md)
+freezes a single 44-case candidate pool and hash-only case set for the next
+properly aligned lexical/typed/dense/frontier/replay comparison.
 The [`corporate ontology and fine-tuning reality check`](experiments/summaries/corporate-ontology-tools-and-finetuning-reality-check-2026-08-02.md)
 separates ontology induction, schema-guided extraction, entity resolution,
 graph retrieval, validation, and model adaptation. It records why one-pass
