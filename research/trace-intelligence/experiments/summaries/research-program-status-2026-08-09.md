@@ -163,6 +163,17 @@ The tool-class split is operationally important: same-project exact priors lifte
 shell success from `69.7511%` to `93.8326%` and mutation from `94.1272%` to
 `99.3243%`, while read/search was near ceiling and slightly lower after prior
 reuse. Prior policies must be tool-class-specific and safety-gated.
+The stricter [frozen artifact-drift holdout](claude-history-tool-artifact-drift-2026-08-09.md)
+used the first 216 sessions only to build priors and scored the later 216
+without updating them. Exact same-project priors still reached `97.0973%`
+versus `90.7174%` with no early prior (+6.3798 points), and exact
+other-project priors reached `96.0253%` (+5.3078 points). The smaller late
+period lift supports time-aware expiration/versioning rather than assuming
+stationarity. The key-shape negative became stronger: same-project
+key-shapes were `92.1738%` versus `98.4278%` with no early key-shape (−6.2541
+points), and other-project key-shapes were `89.4219%` (−9.0060). This is
+evidence for exact, scoped candidate priors only; it is not semantic or causal
+skill evidence.
 Same-session recovery calls provide a targeted eval/friction lane: 3,866/4,506
 later calls succeeded after an earlier identity error, but shell recovery was
 only `33.5766%` and mutation `76.2500%`. Recovery should be sampled for repair

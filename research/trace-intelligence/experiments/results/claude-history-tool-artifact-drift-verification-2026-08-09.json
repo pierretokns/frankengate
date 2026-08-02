@@ -1,0 +1,16 @@
+{
+  "checks": {
+    "category_buckets_present": true,
+    "claim_boundary_present": true,
+    "frozen_protocol": true,
+    "nonempty_early_and_late": true,
+    "raw_content_not_committed": true,
+    "required_exact_buckets": true,
+    "required_parameterized_buckets": true,
+    "result_hash": true,
+    "schema_version": true
+  },
+  "passed": true,
+  "result_sha256": "4613b340a97f018bf39c37f48760b50fc3944389f2215715fe245a3fe171e16a",
+  "schema_version": "frankengate-claude-history-tool-artifact-drift-verification-v1"
+}

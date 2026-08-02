@@ -1,0 +1,271 @@
+{
+  "category_buckets": {
+    "mutation": {
+      "call_count": 11694,
+      "exact": {
+        "early_other_project_success_only": {
+          "errors": 1,
+          "success_rate": 0.8,
+          "successes": 4,
+          "uses": 5
+        },
+        "early_same_project_success": {
+          "errors": 0,
+          "success_rate": 1.0,
+          "successes": 5,
+          "uses": 5
+        },
+        "no_early_prior_success": {
+          "errors": 616,
+          "success_rate": 0.947278,
+          "successes": 11068,
+          "uses": 11684
+        }
+      },
+      "parameterized": {
+        "early_other_project_keyshape_success_only": {
+          "errors": 226,
+          "success_rate": 0.941872,
+          "successes": 3662,
+          "uses": 3888
+        },
+        "early_same_project_keyshape_success": {
+          "errors": 389,
+          "success_rate": 0.950154,
+          "successes": 7415,
+          "uses": 7804
+        },
+        "no_early_prior_keyshape_success": {
+          "errors": 2,
+          "success_rate": 0.0,
+          "successes": 0,
+          "uses": 2
+        }
+      }
+    },
+    "orchestration": {
+      "call_count": 219,
+      "exact": {
+        "no_early_prior_success": {
+          "errors": 52,
+          "success_rate": 0.762557,
+          "successes": 167,
+          "uses": 219
+        }
+      },
+      "parameterized": {
+        "early_other_project_keyshape_success_only": {
+          "errors": 8,
+          "success_rate": 0.893333,
+          "successes": 67,
+          "uses": 75
+        },
+        "early_same_project_keyshape_success": {
+          "errors": 42,
+          "success_rate": 0.658537,
+          "successes": 81,
+          "uses": 123
+        },
+        "no_early_prior_keyshape_success": {
+          "errors": 2,
+          "success_rate": 0.904762,
+          "successes": 19,
+          "uses": 21
+        }
+      }
+    },
+    "other": {
+      "call_count": 1034,
+      "exact": {
+        "no_early_prior_success": {
+          "errors": 110,
+          "success_rate": 0.893617,
+          "successes": 924,
+          "uses": 1034
+        }
+      },
+      "parameterized": {
+        "early_other_project_keyshape_success_only": {
+          "errors": 26,
+          "success_rate": 0.908772,
+          "successes": 259,
+          "uses": 285
+        },
+        "early_same_project_keyshape_success": {
+          "errors": 40,
+          "success_rate": 0.900249,
+          "successes": 361,
+          "uses": 401
+        },
+        "no_early_prior_keyshape_success": {
+          "errors": 44,
+          "success_rate": 0.873563,
+          "successes": 304,
+          "uses": 348
+        }
+      }
+    },
+    "read_search": {
+      "call_count": 12392,
+      "exact": {
+        "early_other_project_success_only": {
+          "errors": 96,
+          "success_rate": 0.96376,
+          "successes": 2553,
+          "uses": 2649
+        },
+        "early_same_project_success": {
+          "errors": 126,
+          "success_rate": 0.97185,
+          "successes": 4350,
+          "uses": 4476
+        },
+        "no_early_prior_success": {
+          "errors": 16,
+          "success_rate": 0.996962,
+          "successes": 5251,
+          "uses": 5267
+        }
+      },
+      "parameterized": {
+        "early_other_project_keyshape_success_only": {
+          "errors": 91,
+          "success_rate": 0.95873,
+          "successes": 2114,
+          "uses": 2205
+        },
+        "early_same_project_keyshape_success": {
+          "errors": 139,
+          "success_rate": 0.980132,
+          "successes": 6857,
+          "uses": 6996
+        },
+        "no_early_prior_keyshape_success": {
+          "errors": 8,
+          "success_rate": 0.997493,
+          "successes": 3183,
+          "uses": 3191
+        }
+      }
+    },
+    "shell": {
+      "call_count": 4112,
+      "exact": {
+        "early_other_project_success_only": {
+          "errors": 10,
+          "success_rate": 0.736842,
+          "successes": 28,
+          "uses": 38
+        },
+        "early_same_project_success": {
+          "errors": 5,
+          "success_rate": 0.84375,
+          "successes": 27,
+          "uses": 32
+        },
+        "no_early_prior_success": {
+          "errors": 1271,
+          "success_rate": 0.685552,
+          "successes": 2771,
+          "uses": 4042
+        }
+      },
+      "parameterized": {
+        "early_other_project_keyshape_success_only": {
+          "errors": 498,
+          "success_rate": 0.683408,
+          "successes": 1075,
+          "uses": 1573
+        },
+        "early_same_project_keyshape_success": {
+          "errors": 788,
+          "success_rate": 0.689642,
+          "successes": 1751,
+          "uses": 2539
+        }
+      }
+    }
+  },
+  "claim_boundary": {
+    "causal_user_benefit": false,
+    "reason": "A frozen chronological association measures drift and transfer of observed process success, not semantic intent, safety, optimality, or causal artifact utility.",
+    "safety": false,
+    "semantic_correctness": false
+  },
+  "comparison": {
+    "early_other_project_keyshape_lift_vs_no_early_prior_keyshape": -0.09006,
+    "early_other_project_lift_vs_no_early_prior": 0.053078,
+    "early_same_project_keyshape_lift_vs_no_early_prior_keyshape": -0.062541,
+    "early_same_project_lift_vs_no_early_prior": 0.063798
+  },
+  "coverage": {
+    "early_paired_call_count": 41498,
+    "early_successful_exact_count": 26829,
+    "early_successful_keyshape_count": 192,
+    "late_paired_call_count": 29451,
+    "missing_timestamp_session_count": 0,
+    "parse_error_count": 0
+  },
+  "exact_buckets": {
+    "early_other_project_success_only": {
+      "errors": 107,
+      "success_rate": 0.960253,
+      "successes": 2585,
+      "uses": 2692
+    },
+    "early_same_project_success": {
+      "errors": 131,
+      "success_rate": 0.970973,
+      "successes": 4382,
+      "uses": 4513
+    },
+    "no_early_prior_success": {
+      "errors": 2065,
+      "success_rate": 0.907174,
+      "successes": 20181,
+      "uses": 22246
+    }
+  },
+  "parameterized_buckets": {
+    "early_other_project_keyshape_success_only": {
+      "errors": 849,
+      "success_rate": 0.894219,
+      "successes": 7177,
+      "uses": 8026
+    },
+    "early_same_project_keyshape_success": {
+      "errors": 1398,
+      "success_rate": 0.921738,
+      "successes": 16465,
+      "uses": 17863
+    },
+    "no_early_prior_keyshape_success": {
+      "errors": 56,
+      "success_rate": 0.984278,
+      "successes": 3506,
+      "uses": 3562
+    }
+  },
+  "protocol": {
+    "identity": "strict tool name plus normalized input; parameterized control uses tool name plus input-key set",
+    "late_priors_updated": false,
+    "ordering": "recorded session timestamp, then path",
+    "outcome": "explicit tool_result is_error flag",
+    "split": "chronological session half; early sessions build priors, late sessions are frozen evaluation"
+  },
+  "result_sha256": "4613b340a97f018bf39c37f48760b50fc3944389f2215715fe245a3fe171e16a",
+  "schema_version": "frankengate-claude-history-tool-artifact-drift-v1",
+  "source": {
+    "byte_count": 998165678,
+    "cutoff_start": "2025-07-09T02:07:49.616Z",
+    "early_session_count": 202,
+    "early_start": "2025-06-25T19:44:05.807Z",
+    "file_count": 442,
+    "late_end": "2025-07-27T00:51:22.366Z",
+    "late_session_count": 203,
+    "manifest_sha256": "afdc68a06f7a570840d489d57be9dac2e667252cf24470b3b8b66bc1412f0b50",
+    "raw_content_committed": false,
+    "root_name": "projects",
+    "session_count": 405
+  }
+}

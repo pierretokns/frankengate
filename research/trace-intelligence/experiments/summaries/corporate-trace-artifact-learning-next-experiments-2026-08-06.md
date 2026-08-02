@@ -56,6 +56,14 @@ AcronymExpansion is a safe contextual acronym/NIL candidate miner. Neither
 has enterprise-quality or downstream utility evidence. They belong in the P1
 candidate-generation arm, not in the gateway hot path.
 
+The [frozen artifact-drift holdout](claude-history-tool-artifact-drift-2026-08-09.md)
+is now a completed pre-P0 gate for the artifact lane. Exact priors built from
+the first chronological half retained a +6.38-point same-project and
++5.31-point other-project late success association; coarse key-shape priors
+were negative by −6.25 and −9.01 points. The P0 cohort must therefore include
+time-held-out evaluation and artifact expiry/versioning, and must not use
+parameterized templates as authorization or reuse evidence.
+
 ## Partner/publication package
 
 The strongest paper is **a governed evidence-to-artifact lifecycle for
