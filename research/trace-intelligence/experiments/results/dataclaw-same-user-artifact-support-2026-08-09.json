@@ -1,0 +1,64 @@
+{
+  "claim_boundary": {
+    "artifact_correctness_established": false,
+    "friction_causality_established": false,
+    "promotion_authorized": false,
+    "reason": "Recurrence and friction proximity identify scoped review candidates only; correctness, safety, task intent, and user benefit require replay and labels.",
+    "same_user_recurrence_measured": true
+  },
+  "raw_content_committed": false,
+  "result_sha256": "8ca08b94f8a48a6057377474efd6664ab1cd054d82e9341f66262e7bf0eb614a",
+  "schema_version": "frankengate-dataclaw-same-user-artifact-support-v1",
+  "users": {
+    "peter": {
+      "candidate_count": 34036,
+      "candidate_limit": 100000,
+      "occurrence_totals": {
+        "candidate_occurrences": 73123,
+        "friction_context_occurrences": 33631,
+        "friction_context_rate": 0.459924
+      },
+      "raw_content_committed": false,
+      "session_count": 549,
+      "source_sha256": "dae70421f20da2f1f68fd307a89aedca8c3f5136c21d8604037db124d854093d",
+      "support_tiers": {
+        "cross_project_and_friction_adjacent": 460,
+        "repeated_and_friction_adjacent": 2717,
+        "support_at_least_five_sessions": 780,
+        "support_at_least_three_projects": 67,
+        "support_at_least_two_projects": 518,
+        "support_at_least_two_sessions": 3158
+      },
+      "top_support": {
+        "max_occurrences": 618,
+        "max_projects": 9,
+        "max_sessions": 131
+      }
+    },
+    "vaynelee": {
+      "candidate_count": 971,
+      "candidate_limit": 100000,
+      "occurrence_totals": {
+        "candidate_occurrences": 1055,
+        "friction_context_occurrences": 103,
+        "friction_context_rate": 0.09763
+      },
+      "raw_content_committed": false,
+      "session_count": 38,
+      "source_sha256": "6f740acd793727088dc9a98c5e091d7b89e484b2b9c1904b3cb1b826c6176e9d",
+      "support_tiers": {
+        "cross_project_and_friction_adjacent": 1,
+        "repeated_and_friction_adjacent": 3,
+        "support_at_least_five_sessions": 0,
+        "support_at_least_three_projects": 0,
+        "support_at_least_two_projects": 4,
+        "support_at_least_two_sessions": 14
+      },
+      "top_support": {
+        "max_occurrences": 8,
+        "max_projects": 2,
+        "max_sessions": 3
+      }
+    }
+  }
+}

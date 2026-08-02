@@ -147,6 +147,7 @@ claim boundary, and independent verifier where applicable.
 | Cross-corpus artifact fit | Across 242 BIRD and 314 Defog queries, exact-template overlap `0`; typed schema-agnostic overlap `1` with collision rate `1.0`; coarse operator-shape overlap `2`, also collision rate `1.0` | Public SQL corpora contain almost no compatible reusable artifacts; schema-free matches are candidate signals only |
 | Scope-bound command artifact reuse | 36,549 local command occurrences: same-scope repeats after prior success `97.09%` successful versus `94.68%` overall; cross-scope reuse `87.02%` | Operational reuse signal with measurable negative transfer; semantic intent and changed-environment gates remain mandatory |
 | Strict cross-user artifact identity | Peter and Vaynelee DataClaw exports produced zero shared strict normalized artifact identities, despite 11 shared forms under permissive normalization | Broad cross-user overlap is candidate recall only; strict identity, scope, review, and replay are required |
+| Same-user scoped artifact support | Peter yielded 3,158 candidates repeated across sessions, 518 across projects, and 460 cross-project/friction-adjacent candidates | A scoped personal/project library is the first positive reuse lane; recurrence is not correctness or promotion evidence |
 | Local Codex archive friction screen | Corrected current-schema import: 622 sessions, 47,122 prompt episodes, 2,060 structured executor errors, 33 error→repair follow-ups | Useful for blinded candidate sampling; markers are not intent, satisfaction, or terminal-outcome labels |
 | Lexical friction detector reality check | Explicit friction markers: precision `.79%`, recall `18.93%`, F1 `.015` against the structured process-exit proxy | Do not use lexical markers as eval labels; combine ordering, tool contracts, repeated attempts, and adjudication |
 | Trajectory context versus prompt-only model extraction | On 16 public BIRD cases, prompt-only Luna abstained `16/16`; trajectory-aware Luna achieved `7/8` recall and `7/13` precision, with six false positives | Tool context helps candidate judgment, but independent replay is still the release gate |
@@ -183,6 +184,11 @@ claim boundary, and independent verifier where applicable.
    can recur across users, while strict tool-plus-input identities do not. The
    right system uses broad overlap to find review candidates, then enforces
    scope, intent, authority, and replay gates before any transfer.
+8. **Scoped libraries are the first credible positive lane.** A large
+   longitudinal user history contains repeated, cross-project candidates even
+   when a second user's strict identities do not overlap. The initial system
+   should therefore optimize personal/project reuse and replay before attempting
+   enterprise-wide crowdsourcing.
 
 ## Proposed Frankengate architecture
 
@@ -250,3 +256,4 @@ contains the proposed 6–8 week reproduction plan.
 - [Cross-cohort acronym stability study](../experiments/summaries/acronym-cross-cohort-stability-2026-08-09.md)
 - [Cross-cohort termhood stability study](../experiments/summaries/termhood-cross-cohort-stability-2026-08-09.md)
 - [DataClaw cross-user artifact transfer study](../experiments/summaries/dataclaw-cross-user-artifact-transfer-2026-08-09.md)
+- [DataClaw same-user artifact support study](../experiments/summaries/dataclaw-same-user-artifact-support-2026-08-09.md)

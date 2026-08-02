@@ -139,6 +139,11 @@ found zero shared strict artifact identities between Peter and Vaynelee, even
 though the earlier permissive overlap audit found 11 shared non-trivial forms.
 Broad overlap is therefore a candidate-recall signal, not evidence for
 cross-user artifact promotion.
+The complementary [same-user support probe](dataclaw-same-user-artifact-support-2026-08-09.md)
+found 3,158 Peter candidates repeated across sessions, 518 across projects,
+and 460 that were both cross-project and friction-adjacent. This is the first
+bounded positive for a scoped personal/project library, still requiring replay
+and changed-system gates.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -326,6 +331,7 @@ project, principal, and changed-system holdouts.
 - [Acronym cross-cohort stability](acronym-cross-cohort-stability-2026-08-09.md)
 - [Cross-corpus SQL artifact signatures](cross-corpus-sql-artifact-signatures-2026-08-09.md)
 - [DataClaw cross-user artifact transfer](dataclaw-cross-user-artifact-transfer-2026-08-09.md)
+- [DataClaw same-user artifact support](dataclaw-same-user-artifact-support-2026-08-09.md)
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)

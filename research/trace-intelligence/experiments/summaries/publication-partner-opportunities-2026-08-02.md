@@ -193,6 +193,13 @@ identity. The [strict cross-user receipt](dataclaw-cross-user-artifact-transfer-
 supports a study design with broad-recall, strict-scope, intent-adjudication,
 and replay stages rather than direct crowdsourced skill transfer.
 
+The complementary same-user support study found 3,158 Peter candidates
+repeated across sessions, 518 across projects, and 460 cross-project candidates
+near broad friction signals. This gives the partner program a more credible
+first intervention: validate and replay a user's own scoped candidates before
+testing cross-user transfer. It is a positive candidate-supply result, not a
+correctness or user-benefit claim.
+
 Tracking remains split by research obligation: [#118](https://github.com/pierretokns/frankengate/issues/118)
 for the authorized changed-system cohort, [#121](https://github.com/pierretokns/frankengate/issues/121)
 for domain-adaptive embeddings, [#122](https://github.com/pierretokns/frankengate/issues/122)

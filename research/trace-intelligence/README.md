@@ -254,6 +254,10 @@ The [`DataClaw cross-user artifact transfer`](experiments/summaries/dataclaw-cro
 probe found zero shared strict artifact identities between two real-user
 exports, despite 11 shared forms under permissive normalization. Cross-user
 reuse therefore requires strict identity, scope, review, and replay.
+The complementary [`same-user artifact support`](experiments/summaries/dataclaw-same-user-artifact-support-2026-08-09.md)
+probe found 3,158 Peter candidates repeated across sessions and 518 across
+projects, supporting scoped personal/project libraries as the first positive
+reuse lane.
 The [`NL2SQL identifier cross-domain transfer`](experiments/summaries/nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 probe found asymmetric generalization: Defog-trained ranking improved BIRD MRR
 `.731684→.760996`, while BIRD-trained ranking reduced Defog MRR

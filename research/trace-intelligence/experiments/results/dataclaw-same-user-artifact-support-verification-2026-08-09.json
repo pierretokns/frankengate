@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "claim_boundary": true,
+    "rate_bounded": true,
+    "raw_content_absent": true,
+    "result_hash": true,
+    "schema": true,
+    "tier_fields_present": true,
+    "users_present": true
+  },
+  "passed": true,
+  "result_sha256": "8ca08b94f8a48a6057377474efd6664ab1cd054d82e9341f66262e7bf0eb614a",
+  "schema_version": "frankengate-dataclaw-same-user-artifact-support-verification-v1"
+}
