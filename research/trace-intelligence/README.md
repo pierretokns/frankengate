@@ -57,6 +57,9 @@ The [`cross-user insight and skill-gap protocol`](experiments/summaries/cross-us
 records what Trace Commons and DataClaw can actually support and the principal,
 time, capability-label, and next-task outcome contract required before making
 cross-user recommendations.
+The [`SkillLearnBench changed-data multi-seed synthesis`](experiments/summaries/skilllearnbench-changed-data-multiseed-2026-08-09.md)
+separates seed stability from task generalization: reviewed guidance stayed
+perfect on the repeated task, while generated composition did not.
 The dated [`research program status update`](experiments/summaries/research-program-status-2026-08-09.md)
 adds the LRAT trajectory audit, ToolQP-inspired public-tool probe, and
 outcome-backed SQL artifact query-planning result. Its central boundary is

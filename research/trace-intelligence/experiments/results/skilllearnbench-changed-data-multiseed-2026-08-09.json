@@ -1,0 +1,26 @@
+{
+  "schema_version": "frankengate-skilllearnbench-changed-data-multiseed-v1",
+  "source_receipts": [
+    "experiments/results/skilllearnbench-changed-data-frontier-2026-08-01.json",
+    "experiments/results/skilllearnbench-changed-data-frontier-2026-08-06.json"
+  ],
+  "source_fixture": {
+    "dataset": "cxcscmu/SkillLearnBench",
+    "task_id": "enterprise-information-search/enterprise-information-search-1",
+    "mutation": "ContentForce -> ContentHub",
+    "seed_runs": 2,
+    "task_count": 1
+  },
+  "aggregate_q1": {
+    "none": {"true_positive": 15, "expected": 16, "false_positive": 1, "recall": 0.9375, "precision": 0.9375},
+    "human_authored": {"true_positive": 16, "expected": 16, "false_positive": 0, "recall": 1.0, "precision": 1.0},
+    "composite-human-plus-b1": {"true_positive": 15, "expected": 16, "false_positive": 0, "recall": 0.9375, "precision": 1.0}
+  },
+  "aggregate_q3_exact": {"none": {"passed": 2, "total": 2}, "human_authored": {"passed": 2, "total": 2}, "composite-human-plus-b1": {"passed": 2, "total": 2}},
+  "claim_boundary": {
+    "same_task_repeated_seed_only": true,
+    "causal_skill_effect_proven": false,
+    "enterprise_transfer_proven": false,
+    "reason": "Two stochastic frontier runs on one public changed-data task; this is a seed-stability diagnostic, not an independent task estimate."
+  }
+}

@@ -146,7 +146,10 @@ edge: on a deterministic product rename, reviewed human guidance preserved
 `1.000` precision/recall, the null retained recall but had one false positive,
 and a generated composite missed one expected ID. This is one public task, so
 it supports testing reviewed guidance before composition, not a causal skill
-claim.
+claim. A two-seed synthesis of that same task is now recorded separately:
+reviewed guidance stayed `16/16`, while the composite was `15/16` and the null
+was `15/16` with one false positive. Repeated seeds improve stability evidence
+but are not independent task evidence.
 
 ## Architecture decision
 
@@ -191,6 +194,7 @@ project, principal, and changed-system holdouts.
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
+- [SkillLearnBench changed-data multi-seed synthesis](skilllearnbench-changed-data-multiseed-2026-08-09.md)
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Public DataClaw friction calibration](dataclaw-friction-luna-calibration-2026-08-09.md)
 - [Dataset-fit audit](../results/dataset-fit-audit-2026-08-04.json)
