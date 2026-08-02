@@ -96,6 +96,13 @@ rank-one gain but no precision gain and a Recall@5 tradeoff. The next adapter
 test must use reviewed enterprise aliases, wrong-system/NIL strata, and changed
 artifact outcomes; further zero-shot model swaps are not justified yet.
 
+The BIRD-Interact arm is now frozen in the [clarification replay protocol](../protocols/bird-interact-clarification-replay-2026-08-02.md).
+That protocol makes the over-questioning placebo mandatory, separates the
+public ambiguity labels from terminal outcome labels, and blocks a causal claim
+until the upstream evaluator/test bundle is available. The public cohort is
+therefore a valid sampling frame and friction taxonomy, not yet an executable
+intervention benchmark.
+
 ## Partner/publication package
 
 The strongest paper is **a governed evidence-to-artifact lifecycle for
