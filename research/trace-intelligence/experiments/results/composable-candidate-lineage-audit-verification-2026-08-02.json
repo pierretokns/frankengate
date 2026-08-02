@@ -1,6 +1,6 @@
 {
   "artifact_id_sha256": "400115bd469d4d39da6c85c8924f0f3a90e7cfc9eb0724997139e93faf019019",
-  "receipt_sha256": "deacf9817442311a965c86dd5c3f30e9fdff26811e8d24a333552a211f8d0d01",
+  "receipt_sha256": "bfbb7d1493f9ef695dcaa5eb38d67dd95a8529e0fb4002008257d93d09952f08",
   "schema_version": "frankengate-composable-candidate-lineage-verification-v1",
   "seeds": [
     840000,

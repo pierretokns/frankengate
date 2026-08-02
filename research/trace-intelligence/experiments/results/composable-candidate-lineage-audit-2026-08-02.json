@@ -13,26 +13,42 @@
     "candidate_stable_semantic_success": true,
     "formatting_placebo_control_present": true,
     "independent_semantic_verifiers_passed": true,
+    "manifest_source_target_split_verified": true,
     "no_skill_control_present": true,
     "no_unauthorized_candidate_observations": true,
     "seed_source_target_split_boundaries_reconciled": false,
-    "source_target_split_receipt_reconciled": false,
+    "source_target_split_receipt_reconciled": true,
     "task_set_stable": true
   },
   "claim_boundary": {
     "aggregate_declares_source_target_disjoint": true,
     "causal_skill_benefit_established": false,
     "interpretation": "One immutable compiled candidate reproduced across two seeds with independent semantic verification and zero unauthorized observations; this is a same-family replay result, not a release or causal enterprise-learning claim.",
+    "manifest_source_target_split_verified": true,
     "production_promotion_established": false,
     "same_candidate_replay_verified": true,
     "seed_claim_boundaries_reconciled": false
+  },
+  "cohort_reconstruction": {
+    "candidate_source_artifacts": 18,
+    "manifest_database_family": "broker",
+    "replay_target_rows": 5,
+    "source_files": [
+      "data/instruct_advanced_postgres.csv",
+      "data/instruct_basic_postgres.csv"
+    ],
+    "source_manifest_rows": 19,
+    "source_target_hash_overlap": 0,
+    "source_validation_failures": 1,
+    "target_file": "data/questions_gen_postgres.csv",
+    "target_manifest_rows": 5
   },
   "gates_closed": {
     "authority_and_unauthorized_observation_checks": true,
     "immutable_candidate_identity_across_replays": true,
     "independent_semantic_recomputation": true,
     "same_family_seed_replay": true,
-    "source_target_disjointness": false
+    "source_target_disjointness": true
   },
   "gates_open": {
     "aggregate_vs_seed_claim_boundary_reconciliation": true,
@@ -70,12 +86,20 @@
     ],
     "unique_task_count": 5
   },
-  "result_sha256": "53ae305a64a4c4e74fc6ebb1f036d63e1d4659cd1a24a9fdb407b79d97b7fcae",
+  "result_sha256": "6760d07def7f535901b99a74a96fc4261c46933a72e9db521cdaef4aa7c4dbd9",
   "schema_version": "frankengate-composable-candidate-lineage-audit-v1",
   "source_receipts": {
     "aggregate": {
       "raw_content_committed": false,
       "sha256": "5ef3f17f9c8309af16bb85939fc0177fa4fa2e952e2d4c6bb916dd9841956ebd"
+    },
+    "candidate": {
+      "raw_content_committed": false,
+      "sha256": "5e89637061eeb0264fa1dae01bdf181724b617dd49908838377cff3e1725cb74"
+    },
+    "cohort_manifest": {
+      "raw_content_committed": false,
+      "sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767"
     },
     "seed_a": {
       "raw_content_committed": false,

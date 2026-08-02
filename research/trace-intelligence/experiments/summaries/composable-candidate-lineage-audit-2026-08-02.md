@@ -23,19 +23,27 @@ The candidate hash, task set, database family, and arm set are identical across
 seeds.  This is stronger than an aggregate count: the same immutable candidate
 was replayed twice and independently recomputed against governed PostgreSQL.
 
-## Integrity finding
+## Integrity finding and manifest reconstruction
 
 The aggregate receipt declares the source and target task families disjoint,
 but both underlying seed receipts retain an older “visible-selection pilot”
-claim boundary and do not independently carry the disjointness field.  The
-audit therefore marks source/target disjointness as **not reconciled**, rather
-than silently accepting the aggregate assertion.  This is a receipt-contract
-issue that must be corrected before using the result as a clean family-disjoint
-transfer claim.
+claim boundary and do not independently carry the disjointness field.
 
-The seed protocol-remediation fields do carry the same family-disjoint study ID
-and the same candidate hash, so the replay mechanics are coherent; the claim
-boundary metadata is not yet self-consistent.
+I independently reconstructed the split from the pinned cohort manifest and
+the content-minimized candidate metadata:
+
+- source rows: `19` (`instruct_basic_postgres.csv` + `instruct_advanced_postgres.csv`);
+- source validation failures: `1` (`SQLPolicyError`);
+- candidate artifacts: `18` (exactly `19 − 1`);
+- target rows: `5` (`questions_gen_postgres.csv`);
+- replay target rows: `5`, matching the manifest task hashes;
+- source/target task-hash intersection: `0`.
+
+Therefore the underlying data split is verified, while the seed-level claim
+metadata remains stale and must be regenerated before calling the receipt
+self-consistent.  The seed protocol-remediation fields carry the same
+family-disjoint study ID and candidate hash, so replay mechanics are coherent;
+the remaining issue is provenance metadata, not evidence of data overlap.
 
 ## What is proven
 

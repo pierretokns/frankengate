@@ -1,0 +1,23 @@
+{
+  "schema_version": "frankengate-composable-artifact-candidate-metadata-v1",
+  "candidate_text_sha256": "400115bd469d4d39da6c85c8924f0f3a90e7cfc9eb0724997139e93faf019019",
+  "candidate_class": "trace2skill_style_compiled_hypothesis",
+  "database": "broker",
+  "source_artifact_count": 18,
+  "source_validation_failures": {
+    "SQLPolicyError": 1
+  },
+  "source_selection": {
+    "source_files": [
+      "data/instruct_basic_postgres.csv",
+      "data/instruct_advanced_postgres.csv"
+    ],
+    "target_file": "data/questions_gen_postgres.csv",
+    "selection_rule_source": "build_composable_artifact_candidate.py",
+    "raw_candidate_text_committed": false
+  },
+  "source_cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+  "source_dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
+  "promotion_authorized": false,
+  "claim_boundary": "Content-minimized candidate metadata; source questions, SQL, prompts, and model messages remain external."
+}

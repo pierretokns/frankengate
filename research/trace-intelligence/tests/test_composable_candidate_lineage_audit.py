@@ -16,6 +16,8 @@ class ComposableCandidateLineageAuditTest(unittest.TestCase):
         self.seed_b = load(ROOT / "experiments/results/composable-artifact-frontier-replay-2026-08-04-seed850000.json")
         self.verify_a = load(ROOT / "experiments/results/composable-artifact-frontier-replay-2026-08-04-seed840000-rerun-verification.json")
         self.verify_b = load(ROOT / "experiments/results/composable-artifact-frontier-replay-2026-08-04-seed850000-verification.json")
+        self.candidate = load(ROOT / "experiments/results/composable-artifact-candidate-2026-08-04.json")
+        self.cohort_manifest = load(ROOT / "experiments/manifests/defog-sql-eval-enterprise-96-2026-07-30.json")
 
     def build(self) -> dict:
         return build_audit(
@@ -24,6 +26,8 @@ class ComposableCandidateLineageAuditTest(unittest.TestCase):
             seed_b=self.seed_b,
             verify_a=self.verify_a,
             verify_b=self.verify_b,
+            candidate=self.candidate,
+            cohort_manifest=self.cohort_manifest,
         )
 
     def test_same_candidate_identity_and_replay_are_verified(self) -> None:
@@ -38,7 +42,8 @@ class ComposableCandidateLineageAuditTest(unittest.TestCase):
         result = self.build()
         self.assertTrue(result["checks"]["aggregate_source_target_split_declared"])
         self.assertFalse(result["checks"]["seed_source_target_split_boundaries_reconciled"])
-        self.assertFalse(result["gates_closed"]["source_target_disjointness"])
+        self.assertTrue(result["checks"]["manifest_source_target_split_verified"])
+        self.assertTrue(result["gates_closed"]["source_target_disjointness"])
         self.assertTrue(result["gates_open"]["aggregate_vs_seed_claim_boundary_reconciliation"])
         self.assertFalse(result["claim_boundary"]["production_promotion_established"])
 
