@@ -196,6 +196,11 @@ performed that replay for 149 independently successful task traces: 1,232/1,236
 exposed-table substitutions were execution errors or result mismatches. The
 termhood field improved held-out Recall@5 from `.887` to `.930` without changing
 Recall@1, so it is a candidate-recall aid rather than semantic alias truth.
+The [`replay-negative reranker`](experiments/summaries/wmh-bird-replay-negative-reranker-2026-08-09.md)
+then compared naive exposed-table negatives with replay-confirmed negatives:
+the learned ranker improved Recall@1 to `.704` and Recall@5 to `.958`, but
+replay filtering added no lift because the training split contained no
+result-preserving ambiguities.
 The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-structural-audit-2026-08-09.md)
 now records the public benchmark's 5,910 records and 38,094 described tool
 invocations, and separates its useful trajectory-metric coverage from the

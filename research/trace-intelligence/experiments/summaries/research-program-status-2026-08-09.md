@@ -122,6 +122,11 @@ and only 4 preserved it. On 71 held-out table-retrieval cases, the termhood
 field raised Recall@5 from `.887` to `.930` while leaving Recall@1 unchanged.
 These are compatibility negatives and candidate-recall evidence, not semantic
 wrong-system labels or enterprise alias truth.
+The replay-negative ranker comparison reached Recall@1 `.704` and Recall@5
+`.958` for both naive and replay-filtered training, above lexical `.676/.887`.
+Replay filtering added no lift because the training split contained no
+result-preserving ambiguities; an enterprise cohort must include those hard
+edges before a hard-negative objective or custom embedding can be justified.
 
 ## Architecture decision
 
@@ -171,4 +176,5 @@ project, principal, and changed-system holdouts.
 - [LRAT exposure-negative audit](lrat-exposure-negative-audit-2026-08-09.md)
 - [WMH-BIRD schema exposure audit](wmh-bird-schema-exposure-audit-2026-08-09.md)
 - [WMH-BIRD exposure counterfactual](wmh-bird-exposure-counterfactual-2026-08-09.md)
+- [WMH-BIRD replay-negative reranker](wmh-bird-replay-negative-reranker-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)
