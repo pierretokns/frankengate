@@ -162,6 +162,10 @@ The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-struc
 now records the public benchmark's 5,910 records and 38,094 described tool
 invocations, and separates its useful trajectory-metric coverage from the
 enterprise claims it cannot support.
+The [`TRAJECT-Bench lexical retrieval baseline`](experiments/summaries/traject-bench-lexical-retrieval-2026-08-09.md)
+measures domain-scoped versus global candidate pools: cheap name retrieval
+beats naive name-plus-description expansion, and global pooling loses recall,
+supporting scope-first retrieval before embeddings or frontier review.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.
