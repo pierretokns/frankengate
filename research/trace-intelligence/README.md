@@ -53,6 +53,10 @@ joins the PostgreSQL/RLS retrieval, semantic-ID changed-system, and replay
 receipts without incorrectly pooling their cohorts. Its operational rule is
 that retrieval may expand candidates, but PostgreSQL authority, compatibility,
 and independent replay remain the acceptance gates.
+The [`cross-user insight and skill-gap protocol`](experiments/summaries/cross-user-insight-skill-gap-protocol-2026-08-09.md)
+records what Trace Commons and DataClaw can actually support and the principal,
+time, capability-label, and next-task outcome contract required before making
+cross-user recommendations.
 The dated [`research program status update`](experiments/summaries/research-program-status-2026-08-09.md)
 adds the LRAT trajectory audit, ToolQP-inspired public-tool probe, and
 outcome-backed SQL artifact query-planning result. Its central boundary is
