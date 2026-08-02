@@ -266,6 +266,12 @@ preserved `20/20` and evidence grounding was `.9875`, but no structural scenes
 were emitted. This makes the boundary concrete: frontier normalization can
 create a grounded skeleton, but rich skill/trace structure requires actual
 multi-step trajectories and independent effect labels.
+The follow-up [multi-tool trajectory probe](experiments/summaries/traject-bench-ssl-trace-normalizer-probe-2026-08-02.md)
+confirmed that distinction: on 19 parallel/sequential trajectories, tool and
+action order were preserved `19/19`, with `2.63` scenes and `.63` transitions
+per trace, while fully grounded records fell to `.684`. This supports
+review-only structural extraction plus replay/evidence gates, not automatic
+skill publication.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next

@@ -70,6 +70,13 @@ conservative logical action per record. This shows that a frontier model can
 produce a grounded skeleton, while single-tool descriptions lack the
 trajectory structure needed for rich SSL scenes/effects; normalization remains
 review-only until tested on multi-step traces.
+The follow-up [multi-tool trajectory probe](traject-bench-ssl-trace-normalizer-probe-2026-08-02.md)
+used 19 eligible parallel/sequential records. Tool order and logical action
+order were preserved `19/19`; the model emitted `2.63` scenes and `.63`
+transitions per trajectory, but fully grounded every evidence quote on only
+`.684` of records (sequential `.556`). This confirms that real trajectories
+unlock the structural signal while showing why scene/effect normalization must
+remain review-only and replay-backed.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -226,6 +233,7 @@ project, principal, and changed-system holdouts.
 - [SSL representation crosswalk](ssl-representation-crosswalk-2026-08-02.md)
 - [SSL-shaped TRAJECT proxy](traject-bench-ssl-proxy-2026-08-02.md)
 - [frontier SSL normalizer probe](traject-bench-ssl-normalizer-probe-2026-08-02.md)
+- [multi-tool SSL trajectory probe](traject-bench-ssl-trace-normalizer-probe-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
