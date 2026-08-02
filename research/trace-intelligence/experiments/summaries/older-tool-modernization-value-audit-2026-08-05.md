@@ -22,6 +22,25 @@ upstream forks.
 | AcronymExpansion-style extraction | A deterministic contextual extractor passed all `8/8` synthetic cases, including undefined and conflicting expansions by abstaining. | A safe candidate-mining primitive with explicit ambiguity/NIL behavior. It is useful for review queues and query expansion after approval. |
 | Fork/provenance layer | Both branches preserve upstream attribution and record the source commit, implementation boundary, and `uv` reproducibility status. | Shareable, auditable research artifacts without making obsolete Java/Python stacks gateway dependencies. |
 
+## Follow-up validation on a retrieval task
+
+The port was later used as a **search-only** feature on the WMH-BIRD trace
+cohort. On 71 held-out table-retrieval cases, adding train-only termhood
+associations changed MRR from `.775660` to `.788514` and Recall@5 from
+`.887324` to `.929577`; Recall@1 stayed at `.676056`. This is the clearest
+positive downstream result for the modernization, but it is a deeper-recall
+effect on a schema/table proxy—not proof of enterprise alias quality. The
+replay-negative ranker reached `.812693` MRR, while replay filtering added no
+incremental lift because every exposed training negative in that split already
+failed the counterfactual. Receipts: [WMH-BIRD termhood retrieval](wmh-bird-exposure-counterfactual-2026-08-09.md)
+and [replay-negative reranker](wmh-bird-replay-negative-reranker-2026-08-09.md).
+
+The acronym port's cross-cohort stability probe found 40 valid acronym hashes
+across four public trace cohorts, all confined to one cohort, with no shared
+exact definition pair. This strengthens the review-only decision: the
+extractor can surface local candidates, but raw parenthetical definitions do
+not support a global dictionary. See [acronym stability](acronym-cross-cohort-stability-2026-08-09.md).
+
 ## Value that was *not* established
 
 These runs did not establish byte-for-byte upstream equivalence, enterprise
