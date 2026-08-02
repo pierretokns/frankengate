@@ -1,0 +1,487 @@
+{
+  "arms": {
+    "bge_progressive": {
+      "evaluation_sha256": "157b1dac2cf4743cc3a021ab5fc8851c1bf66f59650f7f82222765860e8cc99e",
+      "gold_in_observation": 9,
+      "gold_observed_but_terminal_wrong": 2,
+      "per_task": [
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00100",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00000",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00300",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00200",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00400",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00500",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00630",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00730",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00930",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01030",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00830",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01130",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01330",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01230",
+          "terminal_correct": true
+        }
+      ],
+      "raw_sha256": "587c120687e763d8b00cb58c7eead08162571c061064ec5643c09cc26327b2da",
+      "records": 14,
+      "terminal_correct": 7
+    },
+    "bge_top1": {
+      "evaluation_sha256": "24423139cba17257a184fbac921eb69d597786d91cd8f012371b62e21bd398d3",
+      "gold_in_observation": 10,
+      "gold_observed_but_terminal_wrong": 3,
+      "per_task": [
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00100",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00200",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00000",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00300",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00500",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00400",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00630",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00730",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00830",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00930",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01130",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01030",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01230",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01330",
+          "terminal_correct": true
+        }
+      ],
+      "raw_sha256": "6cadecd81fd5e83c4191f678a260f5bad290ce90f8c9769902f6f1c5f89174e5",
+      "records": 14,
+      "terminal_correct": 7
+    },
+    "bge_top5": {
+      "evaluation_sha256": "851770a8417623a4abba2bdfb34d1a96644bf1f345e978eb09142b2eb84f150b",
+      "gold_in_observation": 8,
+      "gold_observed_but_terminal_wrong": 2,
+      "per_task": [
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00100",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00000",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00200",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00300",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00400",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00500",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00630",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00730",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00930",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00830",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01130",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01030",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01330",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01230",
+          "terminal_correct": true
+        }
+      ],
+      "raw_sha256": "73b35c415f4ab4640bd964991988a2213df7e22a4d3f94e648144b8543f2087d",
+      "records": 14,
+      "terminal_correct": 6
+    },
+    "gold_oracle": {
+      "evaluation_sha256": "58f4555c874e9ad48de5b7c9cc562c8d57de1502601a8842af0338c262fdb795",
+      "gold_in_observation": 10,
+      "gold_observed_but_terminal_wrong": 3,
+      "per_task": [
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00100",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00000",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00200",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00300",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00400",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00500",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00630",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00730",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00930",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01030",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01130",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00830",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01230",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_01330",
+          "terminal_correct": false
+        }
+      ],
+      "raw_sha256": "2d6ab0875cb91f88a5b3a7092595b9b4648af8684012733f9bc25e9c62849b26",
+      "records": 14,
+      "terminal_correct": 7
+    },
+    "no_skill": {
+      "evaluation_sha256": "ec43f7cfe575a89becd2f1eaacccbcefbd5879600d32aa9068baeec6811db763",
+      "gold_in_observation": 7,
+      "gold_observed_but_terminal_wrong": 3,
+      "per_task": [
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00100",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00200",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00000",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00300",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00400",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00500",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00630",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_00730",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00830",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": true,
+          "instance_id": "toolqa_00930",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01130",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01230",
+          "terminal_correct": true
+        },
+        {
+          "gold_in_observation": false,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01030",
+          "terminal_correct": false
+        },
+        {
+          "gold_in_observation": true,
+          "gold_observed_but_terminal_wrong": false,
+          "instance_id": "toolqa_01330",
+          "terminal_correct": true
+        }
+      ],
+      "raw_sha256": "cd4a6c6d5aff21c24ab5e34ce55f0e0078497ee7c120fc25fd112379ffdc5cc0",
+      "records": 14,
+      "terminal_correct": 4
+    }
+  },
+  "claim_boundary": "Observation-grounding diagnostic over the completed 14-task public ToolQA arms. A gold substring in an observation is a candidate evidence signal, not a semantic label or independent terminal outcome.",
+  "dataset": {
+    "external_corpus_zip_sha256": "ddfde273990adab701e4a6df88081660dc982fa60d31640a6011f7253dbddf24",
+    "instances_sha256": "8dbe29d8f0ac29f6f355d7f459f6ec1181985f3a5989bb52cba28b17f38a0059",
+    "name": "toolqa",
+    "tasks": 14
+  },
+  "protocol": {
+    "grounding_rule": "normalized gold answer substring in parsed Observation sections",
+    "promotion_authorized": false,
+    "semantic_inference": false
+  },
+  "schema_version": "frankengate-sra-bench-toolqa-grounding-audit-v1"
+}
