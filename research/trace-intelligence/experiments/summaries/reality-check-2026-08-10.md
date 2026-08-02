@@ -140,6 +140,40 @@ promote it. This is the next credible route to a corporate retriever trained
 from traces, but it must not be described as reproducing Cursor's private model
 or internal benchmark.
 
+The first exposure-only implementation is now measured on ten LRAT
+trajectories. A leave-one-trajectory-out TF–IDF/logistic ranker reached MRR
+`.594490`, below lexical overlap at `.766667` (R@10 `.700` versus `1.000`).
+This is a controlled negative for this tiny silver-label proxy, not a
+disproof of trajectory supervision. Browsing is not correctness, and the
+experiment has no independent enterprise outcome labels; promotion remains
+blocked. See the [receipt summary](lrat-trajectory-distilled-ranker-proxy-2026-08-02.md).
+
+## What EnterpriseRAG-Bench contributes
+
+[EnterpriseRAG-Bench](https://github.com/onyx-dot-app/EnterpriseRAG-Bench) is a
+useful retrieval and evaluation scaffold: roughly 511,962 synthetic documents
+across nine enterprise source types and 500 questions across ten categories,
+including semantic paraphrase, project-level multi-document retrieval,
+completeness, conflicting/temporal information, constrained answers, and
+info-not-found cases ([paper](https://arxiv.org/abs/2605.05253)). Its strongest
+transferable ideas are: generate cross-document coherence before questions,
+inject misfiling/near-duplicate/conflict noise, keep atomic answer facts, pool
+multiple retrievers to correct candidate gold sets, and report retrieval and
+answer completeness separately.
+
+It is not a real-user trace or ontology benchmark. The corpus is synthetic,
+its gold sets are explicitly revisable hypotheses, and its scaffolding produces
+more uniform clusters than a real company corpus. It therefore answers
+“which retrieval/control strategy handles enterprise-shaped distractors?” but
+not “did a user intend this?”, “is this system authorized/current?”, “did a
+reused artifact improve work?”, or “which employees do equivalent work?”.
+
+Our pinned semantic slice confirms the distinction: generic MiniLM dense
+retrieval reached only R@20 `.12` (title+snippet) and `.064` (title-only), below
+lexical top-20 pool recall `.224`. That makes EnterpriseRAG-Bench valuable as
+a reproducible retrieval stress test and hard-negative generator—not evidence
+for a universal corporate embedding, ontology generator, or trace-mined skill.
+
 ## What is not proven
 
 The following enterprise claims remain unproven because no current receipt has

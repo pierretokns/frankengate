@@ -1,0 +1,128 @@
+{
+  "arms": {
+    "lexical": {
+      "mrr": 0.766667,
+      "positive_pool_recall": 1.0,
+      "recall_at_1": 0.6,
+      "recall_at_10": 1.0,
+      "recall_at_5": 1.0
+    },
+    "search_order": {
+      "mrr": 0.630682,
+      "positive_pool_recall": 1.0,
+      "recall_at_1": 0.5,
+      "recall_at_10": 0.8,
+      "recall_at_5": 0.7
+    },
+    "trajectory_distilled_ranker": {
+      "mrr": 0.59449,
+      "positive_pool_recall": 1.0,
+      "recall_at_1": 0.5,
+      "recall_at_10": 0.7,
+      "recall_at_5": 0.7
+    }
+  },
+  "claim_boundary": {
+    "document_correctness_established": false,
+    "enterprise_artifact_utility_established": false,
+    "independent_correctness_established": false,
+    "promotion_authorized": false,
+    "reason": "Browsing is a weak relevance signal; the public samples have no independent correctness, principal, authority, or changed-system outcome labels.",
+    "silver_relevance_only": true,
+    "trajectory_distillation_measured": true
+  },
+  "cohort": {
+    "exposed_documents": 624,
+    "folds": 10,
+    "positive_documents": 26,
+    "trajectories": 10
+  },
+  "folds": [
+    {
+      "candidate_count": 223,
+      "fold": 0,
+      "held_out_trajectory_hash": "387402d5b193b52a03d2826ebd37399af2f20ba7abdf63d6be7aba0aa81247be",
+      "positive_count": 1,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 10,
+      "fold": 1,
+      "held_out_trajectory_hash": "ec5a2fb1716d774d983bfa72ce6026f6ab237d0b62f40976a19722cd29bb756a",
+      "positive_count": 1,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 57,
+      "fold": 2,
+      "held_out_trajectory_hash": "7f3657aefa460c0467e40b44c5b53f9e18da5ae8b7a1026ec2310f1f016ff1fe",
+      "positive_count": 4,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 26,
+      "fold": 3,
+      "held_out_trajectory_hash": "7e93b8f60d49d7ef636c0be7618fa7ee5fbd184639c5c313a465880bc97afa41",
+      "positive_count": 1,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 26,
+      "fold": 4,
+      "held_out_trajectory_hash": "7f9a5cf10362ead8c8745a9dd735e3c56b835be2852cdfb1ab931617906fbf01",
+      "positive_count": 3,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 32,
+      "fold": 5,
+      "held_out_trajectory_hash": "4e81a5e8e73399c3eb6546b3c081b8aef2c28d6e7618abe36314e7ac0857abb3",
+      "positive_count": 2,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 34,
+      "fold": 6,
+      "held_out_trajectory_hash": "af0edb12dfede3a499ddd08d6748ba69f0126d106216f1040f78739f1b6de5b8",
+      "positive_count": 3,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 73,
+      "fold": 7,
+      "held_out_trajectory_hash": "895d83fa2aac76570fc33724e3d63ec3cb6c46bbc72bc6931ae074c78b8699ee",
+      "positive_count": 3,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 28,
+      "fold": 8,
+      "held_out_trajectory_hash": "ca9ccffc2ef75161c76971317b5385e7bf8093177263a6537ed9eab9ed0cfcef",
+      "positive_count": 3,
+      "train_trajectories": 9
+    },
+    {
+      "candidate_count": 115,
+      "fold": 9,
+      "held_out_trajectory_hash": "dc466e9f85deef10016840e8c2c0e0ba160dc72bb2f40e6184a698353a3b396d",
+      "positive_count": 5,
+      "train_trajectories": 9
+    }
+  ],
+  "protocol": {
+    "candidate_pool": "within-trajectory exposed documents",
+    "document_ids_in_model_text": false,
+    "model": "tfidf(word_1_2grams)+balanced_logistic_regression",
+    "negative_definition": "search-exposed but unbrowsed document",
+    "positive_definition": "browsed document intersected with search-exposed document",
+    "positive_labels_are_silver": true,
+    "split": "leave-one-trajectory-out"
+  },
+  "result_sha256": "5f6622ff1c185644f7656679777b6ab6b12a6f7097c844075136ef360dac8b0e",
+  "schema_version": "frankengate-lrat-trajectory-distilled-ranker-proxy-v1",
+  "source": {
+    "raw_content_committed": false,
+    "root_uri": "external://lrat-repro/trajectory",
+    "trajectory_hashes_only": true
+  }
+}
