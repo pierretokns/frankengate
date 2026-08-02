@@ -247,6 +247,13 @@ records, the field-aware arm reached Recall@10 `.423` versus `.421` for names
 alone, but lost on MRR and Recall@1; name-plus-description fell to MRR `.574`.
 This supports preserving structured metadata and testing it in a shadow lane,
 not replacing exact/name retrieval with a universal field-weighted ranker.
+The [SSL representation crosswalk](experiments/summaries/ssl-representation-crosswalk-2026-08-02.md)
+compares this trace proxy with the Scheduling--Structural--Logical skill
+representation paper. Its reported skill-registry gain is a useful prior for
+disentangling interface, execution structure, and resource effects, but the
+public tool benchmark lacks grounded scene graphs, authority outcomes, and
+replay labels; Frankengate should adopt the projections as reviewable trace
+views, not import an unvalidated normalizer or claim enterprise skill lift.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next

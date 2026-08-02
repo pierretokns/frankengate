@@ -45,6 +45,16 @@ This is enough reason to preserve parameter/API/output fields for later
 compatibility checks, but not enough reason to promote field-weighted lexical
 ranking or claim semantic alias resolution.
 
+The [SSL Scheduling--Structural--Logical crosswalk](ssl-representation-crosswalk-2026-08-02.md)
+places that result against the recent skill-registry paper: SSL reports a
+positive `.649 -> .729` MRR@50 change on 6,184 public skills, but our trace
+probe is not an SSL reproduction because it lacks grounded scene graphs,
+logical effects, authority decisions, and verified outcomes. The adaptable
+part is the projection model: derive interface, execution-DAG, and typed
+effect views from the same trace IDs while keeping LLM normalization
+review-only. This is a representation-design hypothesis, not yet a corporate
+skill-learning result.
+
 ### 5. Older vocabulary ports remain narrow
 
 The TermSuite/Termolator-style port provides interpretable candidate terms:
@@ -197,6 +207,7 @@ project, principal, and changed-system holdouts.
 - [SQL query-planning probe](bird-artifact-query-planning-probe-2026-08-09.md)
 - [TRAJECT-Bench query planning](traject-bench-query-planning-probe-2026-08-09.md)
 - [TRAJECT-Bench field-aware retrieval](traject-bench-field-retrieval-2026-08-09.md)
+- [SSL representation crosswalk](ssl-representation-crosswalk-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)
