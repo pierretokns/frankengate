@@ -23,12 +23,14 @@ def verify(input_path: Path, output_path: Path) -> dict[str, object]:
     copy = dict(result)
     copy.pop("result_sha256", None)
     buckets = result.get("buckets", {})
+    parameter_buckets = result.get("parameter_buckets", {})
     checks = {
         "schema_version": result.get("schema_version") == SCHEMA_VERSION,
         "result_hash": expected == digest(copy),
         "raw_content_not_committed": result.get("source", {}).get("raw_content_committed") is False,
         "claim_boundary_present": isinstance(result.get("claim_boundary"), dict),
         "required_buckets_present": {"no_prior_success", "prior_same_project_success", "prior_other_project_success_only"}.issubset(buckets),
+        "required_parameter_buckets_present": {"no_prior_keyshape_success", "parameter_same_project_success", "parameter_other_project_success_only"}.issubset(parameter_buckets),
         "nonempty_calls": result.get("coverage", {}).get("paired_call_count", 0) > 0,
     }
     receipt = {"schema_version": "frankengate-claude-history-tool-artifact-temporal-verification-v1", "passed": all(checks.values()), "checks": checks, "result_sha256": expected}

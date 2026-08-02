@@ -155,6 +155,10 @@ then measured `88.7216%` success with no prior identity success versus
 `96.8268%` after same-project prior success and `97.1615%` after prior success
 in another project, with session-boundary leakage prevented. This supports a
 ranked prior feature, not automatic reuse or causal skill improvement.
+The parameterized key-shape control was negative: key-only priors reached
+`90.5514%` same-project and `90.7613%` cross-project success versus `92.3108%`
+with no prior key-shape. Exact parameter bindings and resource identity are
+therefore load-bearing; coarse templates remain recall-only until replayed.
 The [DataClaw project adapter probe](dataclaw-project-adapter-2026-08-09.md)
 improved Peter's full-cohort combined project-held-out MRR `.769341→.854452`, but left
 Vaynelee's combined MRR unchanged at `.978495` because that cohort was near

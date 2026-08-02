@@ -28,7 +28,7 @@ def parse_sessions(root: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
     missing_timestamps = 0
     for path in sorted(root.rglob("*.jsonl")):
         project = path.parent.name
-        uses: list[tuple[str, bool]] = []
+        uses: list[tuple[str, str, bool]] = []
         timestamps: list[str] = []
         statuses: dict[str, bool] = {}
         try:
@@ -50,13 +50,15 @@ def parse_sessions(root: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
                             continue
                         if item.get("type") == "tool_use" and item.get("id"):
                             tool_name = str(item.get("name") or "<missing>").lower()
-                            fingerprint = digest({"tool": tool_name, "input": normalize(item.get("input"))})
-                            uses.append((str(item["id"]), fingerprint))
+                            normalized_input = normalize(item.get("input"))
+                            fingerprint = digest({"tool": tool_name, "input": normalized_input})
+                            keyshape = digest({"tool": tool_name, "input_keys": sorted(normalized_input) if isinstance(normalized_input, dict) else []})
+                            uses.append((str(item["id"]), fingerprint, keyshape))
                         elif item.get("type") == "tool_result" and item.get("tool_use_id"):
                             statuses[str(item["tool_use_id"])] = bool(item.get("is_error", False))
         except OSError:
             continue
-        paired = [(fingerprint, failed) for tool_id, fingerprint in uses if (tool_id in statuses) for failed in (statuses[tool_id],)]
+        paired = [(fingerprint, keyshape, failed) for tool_id, fingerprint, keyshape in uses if (tool_id in statuses) for failed in (statuses[tool_id],)]
         if not paired:
             continue
         start = min(timestamps) if timestamps else ""
@@ -97,7 +99,10 @@ def run(root: Path, output: Path) -> dict[str, Any]:
     sessions, parse_stats = parse_sessions(root)
     global_success: set[str] = set()
     project_success: dict[str, set[str]] = defaultdict(set)
+    global_keyshape_success: set[str] = set()
+    project_keyshape_success: dict[str, set[str]] = defaultdict(set)
     buckets: dict[str, dict[str, int]] = defaultdict(bucket)
+    parameter_buckets: dict[str, dict[str, int]] = defaultdict(bucket)
     session_artifacts: Counter[str] = Counter()
     first_success_rank: dict[str, int] = {}
     call_index = 0
@@ -105,7 +110,7 @@ def run(root: Path, output: Path) -> dict[str, Any]:
     for session in sessions:
         project = session["project"]
         project_seen = project_success[project]
-        for fingerprint, failed in session["calls"]:
+        for fingerprint, keyshape, failed in session["calls"]:
             call_index += 1
             same_prior = fingerprint in project_seen
             any_prior = fingerprint in global_success
@@ -116,14 +121,23 @@ def run(root: Path, output: Path) -> dict[str, Any]:
             else:
                 category = "no_prior_success"
             add(buckets[category], failed)
+            if keyshape in project_keyshape_success[project]:
+                parameter_category = "parameter_same_project_success"
+            elif keyshape in global_keyshape_success:
+                parameter_category = "parameter_other_project_success_only"
+            else:
+                parameter_category = "no_prior_keyshape_success"
+            add(parameter_buckets[parameter_category], failed)
             session_artifacts[fingerprint] += 1
             if not failed and fingerprint not in first_success_rank:
                 first_success_rank[fingerprint] = call_index
         # Freeze priors at the session boundary; no within-session leakage.
-        for fingerprint, failed in session["calls"]:
+        for fingerprint, keyshape, failed in session["calls"]:
             if not failed:
                 global_success.add(fingerprint)
                 project_seen.add(fingerprint)
+                global_keyshape_success.add(keyshape)
+                project_keyshape_success[project].add(keyshape)
 
     result: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
@@ -146,8 +160,10 @@ def run(root: Path, output: Path) -> dict[str, Any]:
             "paired_call_count": sum(value["uses"] for value in buckets.values()),
             "distinct_artifact_count": len(session_artifacts),
             "distinct_successful_artifact_count": len(global_success),
+            "distinct_keyshape_count": len(global_keyshape_success),
         },
         "buckets": {name: summarize(value) for name, value in sorted(buckets.items())},
+        "parameter_buckets": {name: summarize(value) for name, value in sorted(parameter_buckets.items())},
         "comparison": {
             "same_project_lift_vs_no_prior": round(
                 (buckets["prior_same_project_success"]["successes"] / buckets["prior_same_project_success"]["uses"])
@@ -159,6 +175,16 @@ def run(root: Path, output: Path) -> dict[str, Any]:
                 - (buckets["no_prior_success"]["successes"] / buckets["no_prior_success"]["uses"]),
                 6,
             ) if buckets["prior_other_project_success_only"]["uses"] and buckets["no_prior_success"]["uses"] else 0.0,
+            "parameter_same_project_lift_vs_no_prior_keyshape": round(
+                (parameter_buckets["parameter_same_project_success"]["successes"] / parameter_buckets["parameter_same_project_success"]["uses"])
+                - (parameter_buckets["no_prior_keyshape_success"]["successes"] / parameter_buckets["no_prior_keyshape_success"]["uses"]),
+                6,
+            ) if parameter_buckets["parameter_same_project_success"]["uses"] and parameter_buckets["no_prior_keyshape_success"]["uses"] else 0.0,
+            "parameter_other_project_lift_vs_no_prior_keyshape": round(
+                (parameter_buckets["parameter_other_project_success_only"]["successes"] / parameter_buckets["parameter_other_project_success_only"]["uses"])
+                - (parameter_buckets["no_prior_keyshape_success"]["successes"] / parameter_buckets["no_prior_keyshape_success"]["uses"]),
+                6,
+            ) if parameter_buckets["parameter_other_project_success_only"]["uses"] and parameter_buckets["no_prior_keyshape_success"]["uses"] else 0.0,
         },
         "claim_boundary": {
             "semantic_correctness": False,

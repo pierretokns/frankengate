@@ -27,14 +27,37 @@
   },
   "comparison": {
     "other_project_lift_vs_no_prior": 0.084398,
+    "parameter_other_project_lift_vs_no_prior_keyshape": -0.015495,
+    "parameter_same_project_lift_vs_no_prior_keyshape": -0.017594,
     "same_project_lift_vs_no_prior": 0.081052
   },
   "coverage": {
     "distinct_artifact_count": 51424,
+    "distinct_keyshape_count": 370,
     "distinct_successful_artifact_count": 46270,
     "missing_timestamp_session_count": 0,
     "paired_call_count": 70949,
     "parse_error_count": 0
+  },
+  "parameter_buckets": {
+    "no_prior_keyshape_success": {
+      "errors": 376,
+      "success_rate": 0.923108,
+      "successes": 4514,
+      "uses": 4890
+    },
+    "parameter_other_project_success_only": {
+      "errors": 1569,
+      "success_rate": 0.907613,
+      "successes": 15414,
+      "uses": 16983
+    },
+    "parameter_same_project_success": {
+      "errors": 4637,
+      "success_rate": 0.905514,
+      "successes": 44439,
+      "uses": 49076
+    }
   },
   "protocol": {
     "identity": "strict tool name plus normalized input; paths, UUIDs, and multi-digit numbers canonicalized",
@@ -42,7 +65,7 @@
     "outcome": "explicit tool_result is_error flag",
     "prior_freeze": "prior success sets updated only after each session completes"
   },
-  "result_sha256": "cb0a741bbfc3d8f53e68d554b2d4357a3592e5e8f642167746417b4d065b3f56",
+  "result_sha256": "b9c8ca55266c52705e0616c66b22bfcd47a7a19c19bd6e91ac6c971c6205554d",
   "schema_version": "frankengate-claude-history-tool-artifact-temporal-v1",
   "source": {
     "byte_count": 998165678,

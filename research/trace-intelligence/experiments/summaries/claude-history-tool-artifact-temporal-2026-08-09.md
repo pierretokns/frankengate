@@ -63,6 +63,25 @@ tool family, project age, harness boilerplate, or repeated setup work. It is
 evidence for a governed candidate-prior lane, not causal skill improvement or
 cross-user artifact correctness.
 
+## Parameterized key-shape control
+
+The same run also tested a much coarser template identity: tool name plus
+input-key set, ignoring all input values. This is the tempting “reuse the
+known-good tool template” strategy.
+
+| Prior key-shape condition | Uses | Success rate |
+|---|---:|---:|
+| No prior key-shape success | 4,890 | 92.3108% |
+| Prior same-project key-shape success | 49,076 | 90.5514% |
+| Prior other-project key-shape success only | 16,983 | 90.7613% |
+
+The coarse key-shape prior was **worse** than its no-prior control by 1.7594
+points within a project and 1.5495 points across projects. This is a valuable
+negative result: input-key shape alone is too coarse to authorize reuse and can
+select common, failure-prone tool patterns. Preserve exact parameter bindings,
+scope, resource identity, and independent replay; treat key-shape matches only
+as candidate recall.
+
 ## Receipts
 
 - [content-free result](../results/claude-history-tool-artifact-temporal-2026-08-09.json)
