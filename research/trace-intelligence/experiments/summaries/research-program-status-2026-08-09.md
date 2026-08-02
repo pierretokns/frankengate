@@ -62,6 +62,14 @@ the rich combination recovered only simple-query Recall@10 by `.004527` and
 lost hard-query Recall@10. This is a proxy null caused by missing grounded
 scene/effect labels, not a disproof of SSL, and it reinforces that metadata
 concatenation is not enough.
+The [frontier SSL normalizer probe](traject-bench-ssl-normalizer-probe-2026-08-02.md)
+then tested grounded extraction on 20 public tool records. Luna preserved
+exact tool/API/domain identifiers on `20/20` and achieved `0.9875` evidence
+substring grounding, but emitted zero structural scenes and only one
+conservative logical action per record. This shows that a frontier model can
+produce a grounded skeleton, while single-tool descriptions lack the
+trajectory structure needed for rich SSL scenes/effects; normalization remains
+review-only until tested on multi-step traces.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -217,6 +225,7 @@ project, principal, and changed-system holdouts.
 - [TRAJECT-Bench field-aware retrieval](traject-bench-field-retrieval-2026-08-09.md)
 - [SSL representation crosswalk](ssl-representation-crosswalk-2026-08-02.md)
 - [SSL-shaped TRAJECT proxy](traject-bench-ssl-proxy-2026-08-02.md)
+- [frontier SSL normalizer probe](traject-bench-ssl-normalizer-probe-2026-08-02.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [fault-category checklist intervention](wmh-bird-fault-category-intervention-2026-08-09.md)
 - [SkillLearnBench changed-data frontier](skilllearnbench-changed-data-frontier-2026-08-06.md)

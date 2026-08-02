@@ -260,6 +260,12 @@ name retrieval, while structural/logical metadata reduced hard-query recall;
 the rich combination did not reproduce the paper's gain. This is a missing-
 labels diagnostic, not a disproof, and keeps grounded scene/effect extraction
 behind a reviewed shadow lane.
+The [frontier SSL normalizer probe](experiments/summaries/traject-bench-ssl-normalizer-probe-2026-08-02.md)
+tested that extraction path on 20 public tool records: exact identifiers were
+preserved `20/20` and evidence grounding was `.9875`, but no structural scenes
+were emitted. This makes the boundary concrete: frontier normalization can
+create a grounded skeleton, but rich skill/trace structure requires actual
+multi-step trajectories and independent effect labels.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next
