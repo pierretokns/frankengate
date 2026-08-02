@@ -184,6 +184,12 @@ The replay-negative ranker comparison reached Recall@1 `.704` and Recall@5
 Replay filtering added no lift because the training split contained no
 result-preserving ambiguities; an enterprise cohort must include those hard
 edges before a hard-negative objective or custom embedding can be justified.
+The follow-up [exact versus execution-equivalent retrieval](wmh-bird-equivalence-aware-retrieval-2026-08-09.md)
+made that boundary explicit: only four of 1,236 substitutions preserved result
+rows, and the held-out lexical/termhood metrics were unchanged. Alternate-only
+Recall@10 was `.028169`, so this public cohort is too sparse to train or
+validate semantic aliasing, but the benchmark now records both exact and
+replay-equivalent target sets.
 The combined [`embedding/model cascade decision`](embedding-model-cascade-decision-2026-08-09.md)
 therefore keeps structured retrieval first, embeddings optional for broad
 recall, and frontier models selective for ambiguity/review. It explicitly
@@ -276,6 +282,7 @@ project, principal, and changed-system holdouts.
 - [WMH-BIRD schema exposure audit](wmh-bird-schema-exposure-audit-2026-08-09.md)
 - [WMH-BIRD exposure counterfactual](wmh-bird-exposure-counterfactual-2026-08-09.md)
 - [WMH-BIRD replay-negative reranker](wmh-bird-replay-negative-reranker-2026-08-09.md)
+- [WMH-BIRD exact versus execution-equivalent retrieval](wmh-bird-equivalence-aware-retrieval-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)
 - [WMH-BIRD step-fault audit](wmh-bird-step-fault-audit-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)
