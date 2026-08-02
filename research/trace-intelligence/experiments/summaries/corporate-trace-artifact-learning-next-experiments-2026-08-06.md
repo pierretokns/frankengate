@@ -90,6 +90,11 @@ frontier Recall@1 but retained far more incompatible tables, while frontier
 compressed the shortlist with much higher replay-compatible selection. The next
 P1 run should move this comparison to reviewed enterprise hard negatives rather
 than add another embedding model.
+The [fold-local adapter cohort](wmh-bird-sql-embedding-adapter-cohort-2026-08-09.md)
+is the supervised-adaptation checkpoint: task-disjoint labels produced a small
+rank-one gain but no precision gain and a Recall@5 tradeoff. The next adapter
+test must use reviewed enterprise aliases, wrong-system/NIL strata, and changed
+artifact outcomes; further zero-shot model swaps are not justified yet.
 
 ## Partner/publication package
 

@@ -24,6 +24,14 @@ Their Recall@1 was tied, but dense retrieval selected about `5.545` tables with
 shortlist precision/noise reduction, not additional target discovery. This
 reinforces the late-stage frontier role and the need for replay/authority gates.
 
+The [fold-local adapter study](wmh-bird-sql-embedding-adapter-cohort-2026-08-09.md)
+trained a small pairwise adapter on the even task split and evaluated the odd
+split. It improved Nomic MRR `.940152 → .947917` and Recall@1
+`.909091 → .931818`, but reduced Recall@5 and left incompatible shortlist
+selection unchanged. Adaptation is therefore useful only as a labelled shadow
+reranker with family-stratified monitoring; it is not a reason to train a
+universal embedding from raw traces.
+
 ## Smallest useful cascade
 
 ```text

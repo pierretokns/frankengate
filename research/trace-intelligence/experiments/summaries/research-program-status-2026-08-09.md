@@ -87,6 +87,12 @@ only `.205` invalid selections and a two-table shortlist. On this proxy,
 embeddings supply broad recall while frontier review mostly compresses noise;
 it does not demonstrate custom enterprise embedding value or semantic alias
 quality.
+The [fold-local adapter cohort](wmh-bird-sql-embedding-adapter-cohort-2026-08-09.md)
+adds a task-disjoint supervised adaptation arm: Nomic MRR/Recall@1 moved from
+`.940152/.909091` to `.947917/.931818`, but Recall@5 fell to `.977273` and
+invalid selection remained `3.591` per case. The pooled gain came mainly from
+Formula 1, with a small Student Club regression. This is a narrow positive for
+labelled reranking, not evidence for a universal custom enterprise embedding.
 
 ### 4. Structured tool fields are useful metadata, not a retrieval replacement
 
