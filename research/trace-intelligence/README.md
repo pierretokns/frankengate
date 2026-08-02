@@ -183,6 +183,13 @@ The [`TRAJECT-Bench lexical retrieval baseline`](experiments/summaries/traject-b
 measures domain-scoped versus global candidate pools: cheap name retrieval
 beats naive name-plus-description expansion, and global pooling loses recall,
 supporting scope-first retrieval before embeddings or frontier review.
+The follow-up [`field-aware retrieval probe`](experiments/summaries/traject-bench-field-retrieval-2026-08-09.md)
+tested tool names, descriptions, API/domain identifiers, parameter schemas,
+output metadata, and connected-tool fields separately. On 1,975 hard-query
+records, the field-aware arm reached Recall@10 `.423` versus `.421` for names
+alone, but lost on MRR and Recall@1; name-plus-description fell to MRR `.574`.
+This supports preserving structured metadata and testing it in a shadow lane,
+not replacing exact/name retrieval with a universal field-weighted ranker.
 The companion [`candidate-manifest repair audit`](experiments/summaries/traject-bench-manifest-repair-audit-2026-08-09.md)
 found 735 missing reference-name occurrences; only 18 are uniquely repairable
 by normalization, so fuzzy mapping is explicitly disallowed before the next

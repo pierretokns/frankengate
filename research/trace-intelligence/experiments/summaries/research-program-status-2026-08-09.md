@@ -35,7 +35,17 @@ explicit correctness, failure, friction, reward, or enterprise-artifact
 fields. LRAT is therefore a good candidate-coverage method to adapt, not a
 complete corporate skill-learning dataset.
 
-### 4. Older vocabulary ports remain narrow
+### 4. Structured tool fields are useful metadata, not a retrieval replacement
+
+The field-aware TRAJECT-Bench probe evaluated 5,297 domain-scoped records with
+name-only, name-plus-description, field-aware, and identifier/schema arms. On
+1,975 hard records, field-aware Recall@10 was `.423` versus `.421` for name-only,
+but MRR was lower (`.631` versus `.671`) and descriptions reduced MRR to `.574`.
+This is enough reason to preserve parameter/API/output fields for later
+compatibility checks, but not enough reason to promote field-weighted lexical
+ranking or claim semantic alias resolution.
+
+### 5. Older vocabulary ports remain narrow
 
 The TermSuite/Termolator-style port provides interpretable candidate terms:
 termhood recall was `.358` when the schema vocabulary was represented but only
@@ -43,7 +53,7 @@ termhood recall was `.358` when the schema vocabulary was represented but only
 synthetic ambiguity/NIL probes. Both remain offline review primitives; neither
 has shown enterprise alias precision, embedding lift, or skill improvement.
 
-### 5. Custom embedding evidence is not yet promotion-positive
+### 6. Custom embedding evidence is not yet promotion-positive
 
 The fold-local MATM adapter was effectively neutral (`Recall@20 .5301 → .5331`,
 MRR `.3315 → .3300`, intervals crossing zero). The database-family-held-out
@@ -54,7 +64,7 @@ current evidence supports testing domain adapters in a shadow lane only after
 SME-labelled aliases, NILs, wrong-system negatives, and downstream utility
 labels exist.
 
-### 6. Cross-user insight and skill-gap claims remain unproven
+### 7. Cross-user insight and skill-gap claims remain unproven
 
 Trace Commons and two-user DataClaw audits show that exact prompt/tool overlap
 is low and that harness boilerplate can dominate similarity. Frontier
@@ -102,6 +112,7 @@ project, principal, and changed-system holdouts.
 - [SQL artifact reuse](bird-trace-artifact-reuse-2026-08-07.md)
 - [SQL query-planning probe](bird-artifact-query-planning-probe-2026-08-09.md)
 - [TRAJECT-Bench query planning](traject-bench-query-planning-probe-2026-08-09.md)
+- [TRAJECT-Bench field-aware retrieval](traject-bench-field-retrieval-2026-08-09.md)
 - [LRAT trajectory audit](lrat-trajectory-audit-2026-08-09.md)
 - [Older-tool modernization audit](older-tool-modernization-value-audit-2026-08-05.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)

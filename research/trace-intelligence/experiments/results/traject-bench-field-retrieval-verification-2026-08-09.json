@@ -1,0 +1,13 @@
+{
+  "arms_verified": [
+    "field_aware",
+    "identifier_schema",
+    "name",
+    "name_description"
+  ],
+  "claim_boundary_verified": true,
+  "records_verified": 5297,
+  "schema_version": "traject-bench-field-retrieval-verification-v1",
+  "source_result_sha256": "60d5559c9c3988b0c1cfa6f9e634efdb85386e03c5891e115e3fdd1dac95d489",
+  "verification_passed": true
+}
