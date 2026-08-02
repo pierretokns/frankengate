@@ -490,6 +490,14 @@ protocols, so they do not justify a pooled effect estimate. The current
 adoption boundary is typed admission plus replay-gated reviewed candidates,
 not automatic skill composition or raw-log promotion.
 
+The [within-project memory-write permutation audit](dataclaw-memory-write-within-project-permutation-2026-08-02.md)
+tests the earlier observational association without pooling project mix. Across
+13 projects with both write states, prior-write sessions still had higher shape
+and exact recurrence; the fixed-project-count permutation p-values were `.0042`
+and `.0186`. This strengthens memory/skill writes as a sampling signal, but it
+does not control temporal trend, user choice, task phase, or terminal outcomes,
+so it remains non-causal and promotion-ineligible.
+
 ## Architecture decision
 
 Keep the smallest governed architecture:

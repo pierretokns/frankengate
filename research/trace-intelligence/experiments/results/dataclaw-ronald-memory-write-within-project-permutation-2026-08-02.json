@@ -1,0 +1,66 @@
+{
+  "schema_version": "frankengate-dataclaw-memory-write-within-project-permutation-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false
+  },
+  "split": {
+    "method": "within-project chronology with first-session exclusion",
+    "projects": 46,
+    "projects_with_both_write_states": 13,
+    "observed_sessions_after_first": 390,
+    "observed_sessions_in_paired_projects": 334,
+    "sessions_with_prior_write": 305,
+    "sessions_without_prior_write": 29
+  },
+  "observed": {
+    "pooled_difference_prior_minus_no_prior": {
+      "shape": 0.36556135121708894,
+      "digest": 0.11402136115250869
+    },
+    "macro_project_rates": {
+      "shape_hits": {
+        "prior_write_mean_rate": 0.1689265478207965,
+        "no_prior_write_mean_rate": 0.02491118077324974,
+        "mean_project_difference": 0.14401536704754675
+      },
+      "digest_hits": {
+        "prior_write_mean_rate": 0.05634571668478205,
+        "no_prior_write_mean_rate": 0.011870428422152562,
+        "mean_project_difference": 0.04447528826262949
+      }
+    }
+  },
+  "permutation": {
+    "shape": {
+      "iterations": 5000,
+      "seed": 420000,
+      "observed_pooled_difference": 0.36556135121708894,
+      "null_mean_difference": 0.2512566166061502,
+      "null_p95_difference": 0.33605033423961084,
+      "one_sided_p_value": 0.004199160167966407
+    },
+    "digest": {
+      "iterations": 5000,
+      "seed": 420000,
+      "observed_pooled_difference": 0.11402136115250869,
+      "null_mean_difference": 0.08880932501736773,
+      "null_p95_difference": 0.10967160641094281,
+      "one_sided_p_value": 0.01859628074385123
+    }
+  },
+  "claim_boundary": {
+    "within_project_association_tested": true,
+    "permutation_null_tested": true,
+    "causal_memory_or_skill_effect_established": false,
+    "temporal_trend_controlled": false,
+    "artifact_correctness_established": false,
+    "user_outcome_established": false,
+    "promotion_authorized": false,
+    "reason": "Stratification removes pooled project mix and permutation tests whether the observed association is unusual under fixed per-project write counts. Writes still occur at a time chosen by users and may mark a transition to harder or more active work; no intervention or terminal outcome is observed."
+  },
+  "decision": "Treat post-write recurrence as a prioritization signal only. Run randomized no-memory/placebo/reviewed/generated memory replay on matched changed-system tasks before claiming memory or skill benefit."
+}
