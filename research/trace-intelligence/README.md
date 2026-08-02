@@ -57,6 +57,8 @@ matched no-skill and was slower, so it remains quarantined.
 The [`cross-method calibration`](experiments/summaries/cross-method-calibration-2026-08-06.md)
 keeps that null separate from the positive but small validated-subplan
 composition result.
+The family-disjoint [`BIRD composition factorial`](experiments/summaries/bird-sql-composable-factorial-20-2026-08-06.md)
+is the current transfer check for that positive signal.
 
 ## Historical Claude/Codex mining
 

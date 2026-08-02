@@ -9,6 +9,7 @@ expanded 40-task skill factorial and the earlier composable-subplan replay.
 | Parameterized artifact gate | `52/52` known mutations; `10/10` template-absence NILs rejected | Compatibility-gated template reuse with explicit refusal. | Mined enterprise artifact quality or causal user benefit. |
 | Semantic-ID subplan adaptation | `3/5` accepted and correct; `0` unsafe accepts; name-only had `2` unsafe accepts | Typed semantic IDs and post-composition verification. | Automatic migration mapping or enterprise prevalence. |
 | Frontier composable subplans | `10/10` on two seeded runs over five broker tasks; controls `5/10` | Validated examples can be decomposed and composed when whole-query retrieval has no exact answer. | Powered, cross-family, changed-system, or natural skill-transfer utility. |
+| Family-disjoint BIRD composition | Library `4/20`; no-skill `3/20`; placebo `3/20`; one library win and zero losses against each control | The composition signal survives one cross-family proxy screen, but with only one discordant task. | Statistical lift, changed schemas, irrelevant-library abstention, or enterprise transfer. |
 | One-shot trace-mined procedure | `8/40`, equal to no-skill `8/40`; trace-vs-no-skill `1–1` paired | The tested procedure is not promotable; the null is independently verified. | A universal rejection of sequential skill learning. |
 | Identifier-aware retrieval | MRR `.737`, Recall@1 `.647`, collision-before-target `0.0` on held-out proxy | Cheap structured reranking before dense/frontier stages. | Semantic alias truth. |
 | Domain embedding adapter | MATM Recall@20 delta `+.0029`, MRR delta `-.0015`; schema adapter below frozen Nomic | Raw repeated-work traces alone do not justify an adapter. | Properly supervised schema/alias embedding research. |
@@ -26,7 +27,7 @@ scope/semantic IDs -> exact/lexical -> dense candidate recall
 
 The 40-task factorial improves power for one-shot skill transfer but remains a
 single public SQL proxy cohort. Its no-lift result should not be pooled with the
-five-task composable-subplan success. The next positive test must use a clean,
+five-task same-family or 20-task family-disjoint composition screens. The next positive test must use a clean,
 larger multi-step or repair-oriented consumer and preserve no-skill, placebo,
 fresh-generation, and composed-subplan controls.
 
@@ -37,4 +38,3 @@ Receipts:
 - [`parameterized retrieval`](parameterized-artifact-retrieval-2026-08-06.md)
 - [`identifier reranker`](nl2sql-identifier-reranker-2026-08-03.md)
 - [`MATM cascade cost`](matm-embedding-model-cascade-cost-2026-08-04.md)
-
