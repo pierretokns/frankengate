@@ -83,6 +83,9 @@ demonstrated mechanics from the still-missing enterprise semantic cohort.
 The [`cross-cohort cascade receipt audit`](experiments/summaries/cascade-receipt-audit-2026-08-02.md)
 recomputes dense, frontier, adapter, trajectory-context, and identifier-stage
 deltas from their independent receipts and records where each stage fails.
+The [`real-history artifact-promotion audit`](experiments/summaries/artifact-promotion-audit-2026-08-02.md)
+recomputes recurrence, temporal drift, normalization collisions, and
+cross-scope transfer before any artifact can be considered promotable.
 The [`headline receipt-consistency audit`](experiments/summaries/headline-receipt-consistency-audit-2026-08-02.md)
 recomputes 19 selected high-impact claims against their receipts; all checks
 pass, while preserving the separately documented SkillLearnBench missing-answer

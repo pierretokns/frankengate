@@ -1,0 +1,78 @@
+{
+  "schema_version": "frankengate-artifact-promotion-audit-v1",
+  "input_receipts": {
+    "miner": {
+      "sha256": "7def370c89922d010bc3ddec03c74ba42456971d0fbd70347edef2dbac7ee090",
+      "raw_content_committed": false
+    },
+    "temporal": {
+      "sha256": "b09fd1886edc01f2824bb44188b1bc5927efdd3dc004b62757381259b6abb392",
+      "raw_content_committed": false
+    },
+    "drift": {
+      "sha256": "88f7c1154fb22107e8a448bf4ec75c5638f670383d06f9f1d9427eb9d38080c8",
+      "raw_content_committed": false
+    },
+    "normalization": {
+      "sha256": "433d654cb0031436883c66a4bb483d2663c15e047198e14db9d6fd0469f2eba9",
+      "raw_content_committed": false
+    },
+    "cross_cohort": {
+      "sha256": "835f598a1cd1c794cbd2884e4b77850036a1a9caa63904ba7d13ba175191e610",
+      "raw_content_committed": false
+    },
+    "codex": {
+      "sha256": "96f9fd015001a0bf229e7e149ab877237e6f03083065975343cc97b535b777ce",
+      "raw_content_committed": false
+    }
+  },
+  "observations": {
+    "claude_recurrence": {
+      "paired_calls": 70949,
+      "successful_recurring_artifacts": 2012,
+      "cross_project_successful_artifacts": 1105,
+      "mixed_outcome_artifacts": 431,
+      "error_to_success_recoveries": 3866
+    },
+    "claude_temporal_exact": {
+      "same_project_lift": 0.081052,
+      "other_project_lift": 0.084398,
+      "same_project_keyshape_lift": -0.017594,
+      "other_project_keyshape_lift": -0.015495
+    },
+    "claude_frozen_drift": {
+      "same_project_exact_lift": 0.063798,
+      "other_project_exact_lift": 0.053078,
+      "same_project_keyshape_lift": -0.062541,
+      "other_project_keyshape_lift": -0.09006
+    },
+    "normalization_collision": {
+      "extra_exact_command_collisions": 140,
+      "multi_exact_buckets": 29,
+      "mixed_outcome_buckets": 3,
+      "exact_mixed_outcome_buckets": 0
+    },
+    "cross_cohort_transfer": {
+      "exact_artifacts": 1,
+      "exact_occurrences": 3,
+      "exact_success_rate": 1.0,
+      "normalized_artifacts": 9,
+      "normalized_occurrences": 72,
+      "normalized_success_rate": 0.986111
+    },
+    "codex_scope_transfer": {
+      "same_scope_success_rate": 0.970863,
+      "other_scope_success_rate": 0.870229,
+      "overall_success_rate": 0.946811,
+      "same_scope_repeats": 13797,
+      "other_scope_reuses": 131
+    }
+  },
+  "claim_boundary": {
+    "semantic_correctness_established": false,
+    "safe_replay_established": false,
+    "causal_user_benefit_established": false,
+    "interpretation": "Exact scoped recurrence is an operational candidate prior; normalization, cross-scope transfer, process exit, and is_error are not semantic correctness or authorization labels."
+  },
+  "result_sha256": "5b904c544ac0747380a6ecd0ff2fbc0a09c15d80d920d3c58e0da7834a5959c3"
+}
