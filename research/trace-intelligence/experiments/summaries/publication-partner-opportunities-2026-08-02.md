@@ -231,6 +231,16 @@ study still needs semantic intent, safety contracts, and changed-system replay.
 Receipts: [strict artifact miner](claude-history-tool-artifact-miner-2026-08-09.md)
 and [temporal prior benchmark](claude-history-tool-artifact-temporal-2026-08-09.md).
 
+The follow-up [frozen artifact-drift holdout](claude-history-tool-artifact-drift-2026-08-09.md)
+used only the first half of the history to build priors and evaluated the
+second half without updating them. Exact same-project priors retained a
+`+6.3798` percentage-point success association and other-project priors
+`+5.3078` points, while key-shape priors were negative by `−6.2541` and
+`−9.0060` points. This gives the paper a time-aware falsification result:
+artifact priors can remain useful under drift, but coarse templates degrade
+and require expiry/versioning. It also motivates a partner study with explicit
+time-held-out splits rather than random trace splits.
+
 Tracking remains split by research obligation: [#118](https://github.com/pierretokns/frankengate/issues/118)
 for the authorized changed-system cohort, [#121](https://github.com/pierretokns/frankengate/issues/121)
 for domain-adaptive embeddings, [#122](https://github.com/pierretokns/frankengate/issues/122)
