@@ -44,6 +44,9 @@ design. The [`public proxy cohort selection`](experiments/summaries/public-proxy
 and [`BIRD-Interact ambiguity profile`](experiments/summaries/bird-interact-ambiguity-profile-2026-08-06.md)
 record which public datasets can support replay mechanics versus which still
 lack identity, outcomes, or gold evaluators.
+The current [`publication/partner packet`](experiments/summaries/publication-partner-evidence-packet-2026-08-10.md)
+folds in the full EnterpriseRAG ceiling, alias-enrichment reproduction, and
+the strengthened mutation-stratified cohort contract.
 
 The [`current evidence matrix`](experiments/summaries/current-evidence-matrix-2026-08-06.md)
 is the compact, receipt-linked decision map across artifact reuse, concept and
