@@ -28,6 +28,9 @@ fixture and verifier; it does not mean enterprise readiness or causal benefit.
 The exact-versus-execution-equivalent artifact probe is documented in
 [wmh-bird-equivalence-aware-retrieval-2026-08-09.md](wmh-bird-equivalence-aware-retrieval-2026-08-09.md).
 
+The cross-harness normalization audit is documented in
+[claude-command-artifact-normalization-2026-08-09.md](claude-command-artifact-normalization-2026-08-09.md).
+
 ## Overall conclusion
 
 No academic method has been disproven. The current evidence supports a minimal

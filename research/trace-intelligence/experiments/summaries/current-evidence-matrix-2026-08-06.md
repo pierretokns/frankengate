@@ -63,6 +63,7 @@ independent semantic labels and terminal outcomes.
 - [`WMH-BIRD exposure counterfactual`](wmh-bird-exposure-counterfactual-2026-08-09.md)
 - [`WMH-BIRD replay-negative reranker`](wmh-bird-replay-negative-reranker-2026-08-09.md)
 - [`WMH-BIRD exact versus execution-equivalent retrieval`](wmh-bird-equivalence-aware-retrieval-2026-08-09.md)
+- [`Claude command-artifact normalization audit`](claude-command-artifact-normalization-2026-08-09.md)
 - [`embedding/model cascade decision`](embedding-model-cascade-decision-2026-08-09.md)
 - [`termhood alias retrieval`](nl2sql-termhood-alias-retrieval-2026-08-04.md)
 - [`identifier hard-negative benchmark`](nl2sql-identifier-hard-negative-2026-08-02.md)

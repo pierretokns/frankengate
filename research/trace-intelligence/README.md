@@ -229,6 +229,10 @@ probe made the target distinction explicit: only four of 1,236 substitutions
 preserved result rows, and alternate-only held-out Recall@10 was `.028169`.
 This is enough to retain an execution-equivalence label in the benchmark, not
 enough to train a semantic alias model.
+The cross-harness [`Claude command-artifact normalization audit`](experiments/summaries/claude-command-artifact-normalization-2026-08-09.md)
+found 140 extra exact-command collisions in 29 normalized buckets and 3
+mixed-outcome buckets. Normalized keys therefore assist candidate recall but
+cannot serve as replay authorization.
 The [`embedding/model cascade decision`](experiments/summaries/embedding-model-cascade-decision-2026-08-09.md)
 combines these results with the MATM cost and adapter receipts: structured
 retrieval stays first, embeddings remain optional candidate recall, and
