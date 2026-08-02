@@ -107,6 +107,15 @@ then indexed all 511,962 documents: target-bearing MRR `.4459`, R@1 `.3787`,
 and R@10 `.5787`; semantic R@1 was only `.08`, and lexical retrieval returned
 non-empty results for all 30 targetless questions. This is the concrete case
 for semantic candidate recall plus an explicit abstention gate.
+The [`company fine-tuning practice map`](experiments/summaries/company-finetuning-practice-map-2026-08-02.md)
+compares the documented Databricks, Google, AWS, and Cohere patterns: metadata
+and retrieval first, labeled hard negatives second, model tuning only after a
+measured embedding gap, and versioned deployment/rollback throughout.
+The [`EnterpriseRAG-Bench semantic frontier rerank`](experiments/summaries/enterprise-rag-frontier-rerank-2026-08-02.md)
+ran all 125 semantic questions through Luna over lexical top-20 candidates:
+MRR improved `.1137 -> .1947` and R@1 `.08 -> .184`, but the candidate pool
+contained a target only `.224` of the time. This is a measured model-ordering
+gain and a measured candidate-generation bottleneck, not an embedding result.
 The [`ontology/action projection receipt`](experiments/results/ontology-action-trace-projection-cohort-2026-08-02.json)
 is the first runnable WMH-BIRD bridge: schema-first typed projections and
 replay-backed action edges are measured, while vector, authority, and frontier
