@@ -237,6 +237,10 @@ The [`Claude cross-cohort command transfer`](experiments/summaries/claude-cross-
 found only one exact artifact shared across four public cohorts, versus nine
 normalized artifacts covering 72 occurrences with one failure. Scope-bound
 identity remains mandatory for any reusable artifact proposal.
+The [`termhood cross-cohort stability`](experiments/summaries/termhood-cross-cohort-stability-2026-08-09.md)
+probe found 217/293 top-term hashes unique to one cohort and only 5 shared by
+all four. This supports tenant/project-scoped concept mining and reviewed
+linking, not a global alias table built from raw trace frequency.
 The [`NL2SQL identifier cross-domain transfer`](experiments/summaries/nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 probe found asymmetric generalization: Defog-trained ranking improved BIRD MRR
 `.731684→.760996`, while BIRD-trained ranking reduced Defog MRR

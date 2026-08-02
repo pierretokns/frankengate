@@ -34,6 +34,8 @@ The four-cohort transfer audit is documented in
 [claude-cross-cohort-command-transfer-2026-08-09.md](claude-cross-cohort-command-transfer-2026-08-09.md).
 The cross-domain identifier transfer probe is documented in
 [nl2sql-identifier-cross-domain-transfer-2026-08-09.md](nl2sql-identifier-cross-domain-transfer-2026-08-09.md).
+The cross-cohort termhood stability probe is documented in
+[termhood-cross-cohort-stability-2026-08-09.md](termhood-cross-cohort-stability-2026-08-09.md).
 
 ## Overall conclusion
 

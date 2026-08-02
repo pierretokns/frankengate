@@ -119,6 +119,10 @@ found asymmetric generalization: Defog→BIRD improved MRR from `.731684` to
 weighting was not portable. Preserve the identifier-aware lane, but train and
 validate it with domain-specific collision families rather than assuming one
 universal ranker.
+The [cross-cohort termhood stability probe](termhood-cross-cohort-stability-2026-08-09.md)
+found 217/293 top-term hashes unique to one cohort and only 5 shared by all
+four. This supports tenant/project-scoped concept mining and reviewed linking,
+not a global alias table or embedding trained from raw frequency.
 
 ### 5. Older vocabulary ports remain narrow
 
@@ -304,6 +308,7 @@ project, principal, and changed-system holdouts.
 - [Claude command-artifact normalization audit](claude-command-artifact-normalization-2026-08-09.md)
 - [Claude cross-cohort command transfer](claude-cross-cohort-command-transfer-2026-08-09.md)
 - [NL2SQL identifier cross-domain transfer](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
+- [Termhood cross-cohort stability](termhood-cross-cohort-stability-2026-08-09.md)
 - [Embedding/model cascade decision](embedding-model-cascade-decision-2026-08-09.md)
 - [WMH-BIRD step-fault audit](wmh-bird-step-fault-audit-2026-08-09.md)
 - [Current evidence matrix](current-evidence-matrix-2026-08-06.md)
