@@ -158,6 +158,10 @@ maps trajectory-supervised retrieval, enterprise hard-negative mining,
 trajectory-aware tool evaluation, and staged tool retrieval to Frankengate's
 remaining causal cohort and identifies MIT DSAIL/Everest and CLEAR as the
 strongest potential research collaborators.
+The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-structural-audit-2026-08-09.md)
+now records the public benchmark's 5,910 records and 38,094 described tool
+invocations, and separates its useful trajectory-metric coverage from the
+enterprise claims it cannot support.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.
