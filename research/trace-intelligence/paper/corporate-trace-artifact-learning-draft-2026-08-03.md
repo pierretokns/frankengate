@@ -1,7 +1,11 @@
 # Corporate trace-artifact learning: a governed path from agent histories to reusable tools
 
-**Draft status:** empirical systems paper outline; enterprise outcome gates remain
-open.
+**Draft status:** empirical systems paper outline, updated 2026-08-06;
+enterprise outcome gates remain open.
+
+The receipt-linked [current evidence matrix](../experiments/summaries/current-evidence-matrix-2026-08-06.md)
+is the authoritative result index. This draft is intentionally narrower than
+the full research program and does not claim enterprise transfer.
 
 ## Abstract
 
@@ -24,6 +28,13 @@ papers. The paper's main contribution is a claim-disciplined artifact
 admission protocol: a retrieval hit is not a semantic label, a valid SQL
 execution is not semantic equivalence, and a model-generated procedure is not
 a released skill without changed-system replay.
+
+The latest artifact probe adds a positive mechanics result with an explicit
+negative control: parameterized retrieval recovered `52/52` value mutations
+and abstained on `10/10` template-absence NIL proxies only when compatibility
+gates were enforced. The modernized TermSuite/Termolator and AcronymExpansion
+ports remain candidate-generation baselines, not enterprise ontology or
+embedding-training systems.
 
 ## Research questions
 
