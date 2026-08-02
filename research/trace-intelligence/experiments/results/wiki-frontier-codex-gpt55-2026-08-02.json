@@ -1,0 +1,13 @@
+{
+  "aggregates": [
+    {"size": 1, "records": 5, "errors": 0, "searched_gold": 1.0, "loaded_gold": 1.0, "finished": 1.0, "target_answer_accuracy": 1.0, "nil_abstention_accuracy": 1.0, "avg_steps": 3.4, "p95_latency_ms": 33597.90425},
+    {"size": 5, "records": 5, "errors": 0, "searched_gold": 1.0, "loaded_gold": 1.0, "finished": 1.0, "target_answer_accuracy": 1.0, "nil_abstention_accuracy": 1.0, "avg_steps": 3.4, "p95_latency_ms": 38118.590709},
+    {"size": 10, "records": 5, "errors": 0, "searched_gold": 1.0, "loaded_gold": 1.0, "finished": 1.0, "target_answer_accuracy": 1.0, "nil_abstention_accuracy": 1.0, "avg_steps": 3.4, "p95_latency_ms": 36778.308667},
+    {"size": 25, "records": 5, "errors": 0, "searched_gold": 1.0, "loaded_gold": 1.0, "finished": 1.0, "target_answer_accuracy": 1.0, "nil_abstention_accuracy": 1.0, "avg_steps": 3.6, "p95_latency_ms": 41754.88725}
+  ],
+  "corpus": {"pages": 100, "sha256": "9a48b266dfc5b7260a1800b01ec6e5f84be948a9e690f1860b5c868fed1f8311", "wikis": 25},
+  "protocol": {"model": "gpt-5.5", "harness": "Codex CLI structured JSON action loop", "backend": "hybrid raw", "max_steps": 5, "workers": 2, "native_mcp": false, "raw_traces_committed": false},
+  "run_sha256": "a8eebd131e8c0f795db15c8853b6554689067eace5dded8fbe9d9a09df218ebb",
+  "schema_version": "frankengate-wiki-frontier-codex-gpt55-v1",
+  "claim_boundary": "Frontier-agent structured-action loop over a synthetic fixture. Native MCP was not used; this is not a Claude Code result or enterprise transfer claim."
+}

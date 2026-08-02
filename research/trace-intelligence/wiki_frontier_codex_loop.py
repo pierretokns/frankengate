@@ -52,8 +52,8 @@ Prior trace:
 """
 
 
-def invoke(prompt_text: str, schema_path: Path, output_path: Path, timeout: int) -> dict[str, Any]:
-    command = ["codex", "exec", "--ephemeral", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "-s", "read-only", "-m", "gpt-5.6-luna", "--output-schema", str(schema_path), "--output-last-message", str(output_path)]
+def invoke(prompt_text: str, schema_path: Path, output_path: Path, timeout: int, model: str) -> dict[str, Any]:
+    command = ["codex", "exec", "--ephemeral", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "-s", "read-only", "-m", model, "--output-schema", str(schema_path), "--output-last-message", str(output_path)]
     completed = subprocess.run(command, input=prompt_text, text=True, capture_output=True, timeout=timeout, cwd="/private/tmp", check=False)
     if completed.returncode:
         raise RuntimeError(completed.stderr[-2000:] or completed.stdout[-2000:])
@@ -79,7 +79,7 @@ def answer_matches(question: dict[str, Any], answer: str, target_page: dict[str,
     return False
 
 
-def run_case(index: WikiIndex, question: dict[str, Any], max_steps: int, timeout: int) -> dict[str, Any]:
+def run_case(index: WikiIndex, question: dict[str, Any], max_steps: int, timeout: int, model: str) -> dict[str, Any]:
     transcript: list[dict[str, Any]] = []
     searched: list[str] = []
     loaded: list[str] = []
@@ -93,7 +93,7 @@ def run_case(index: WikiIndex, question: dict[str, Any], max_steps: int, timeout
         for step in range(1, max_steps + 1):
             output_path = root / f"output-{step}.json"
             try:
-                action = invoke(prompt(question, transcript), schema_path, output_path, timeout)
+                action = invoke(prompt(question, transcript), schema_path, output_path, timeout, model)
             except Exception as exc:
                 error = str(exc)
                 break
@@ -164,6 +164,7 @@ def main() -> int:
     parser.add_argument("--max-steps", type=int, default=5)
     parser.add_argument("--timeout", type=int, default=180)
     parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--model", default="gpt-5.6-luna")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     data = json.loads(args.corpus.read_text(encoding="utf-8"))
@@ -180,11 +181,11 @@ def main() -> int:
             chosen.append(dict(nil, _corpus_size=size))
         cases.extend((index, question) for question in chosen)
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = [pool.submit(run_case, index, question, args.max_steps, args.timeout) for index, question in cases]
+        futures = [pool.submit(run_case, index, question, args.max_steps, args.timeout, args.model) for index, question in cases]
         records = [future.result() for future in futures]
     result = {
         "schema_version": "frankengate-wiki-frontier-codex-structured-loop-v1",
-        "protocol": {"model": "gpt-5.6-luna", "harness": "Codex CLI structured JSON action loop", "backend": "hybrid raw", "max_steps": args.max_steps, "workers": args.workers, "native_mcp": False, "raw_traces_committed": False},
+        "protocol": {"model": args.model, "harness": "Codex CLI structured JSON action loop", "backend": "hybrid raw", "max_steps": args.max_steps, "workers": args.workers, "native_mcp": False, "raw_traces_committed": False},
         "corpus": {"sha256": sha256(args.corpus), "pages": len(data["pages"]), "wikis": len({page["wiki_id"] for page in data["pages"]})},
         "records": records,
         "claim_boundary": "Frontier-agent structured-action loop over a synthetic fixture. It measures retrieval incorporation and answer handling, not native MCP approval behavior, Wikipedia quality, or enterprise transfer.",
