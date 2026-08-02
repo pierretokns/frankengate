@@ -146,7 +146,7 @@ bounded positive for a scoped personal/project library, still requiring replay
 and changed-system gates. Its recurrence/friction relationship reversed in the
 small Vaynelee cohort, so recurrence is not a universal friction label.
 The [DataClaw project adapter probe](dataclaw-project-adapter-2026-08-09.md)
-improved Peter's combined project-held-out MRR `.654946→.751659`, but left
+improved Peter's full-cohort combined project-held-out MRR `.769341→.854452`, but left
 Vaynelee's combined MRR unchanged at `.978495` because that cohort was near
 ceiling. This is scoped adaptation evidence, not a universal custom-embedding
 promotion result.

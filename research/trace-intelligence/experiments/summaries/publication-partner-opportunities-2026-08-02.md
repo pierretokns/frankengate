@@ -205,7 +205,7 @@ small repeated sample was lower than its single-session rate. A partner study
 must therefore measure this relationship rather than hard-code it.
 
 The project-held-out adapter probe supplies a useful adaptation result for a
-partner conversation: Peter's combined prompt/tool MRR rose `.654946→.751659`,
+partner conversation: the full Peter cohort's combined prompt/tool MRR rose `.769341→.854452`,
 while Vaynelee's combined MRR remained `.978495` at ceiling and Peter's
 tool-only arm slightly declined. This is the right shape of evidence for a
 custom-representation study—an improvement with a matched null and a weak

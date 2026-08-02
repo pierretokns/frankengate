@@ -84,7 +84,7 @@ def cosine(a: dict[str, float], b: dict[str, float]) -> float:
     return sum(a[k] * b[k] for k in shared) / den if den else 0.0
 
 
-def weights(docs: list[Counter[str]], labels: list[str], train: list[int]) -> dict[str, float]:
+def weights(docs: list[Counter[str]], labels: list[str], train: list[int], pair_cap: int) -> dict[str, float]:
     pos, neg = Counter(), Counter()
     postings: dict[str, list[int]] = defaultdict(list)
     for index in train:
@@ -94,7 +94,7 @@ def weights(docs: list[Counter[str]], labels: list[str], train: list[int]) -> di
         for pair_index, (left, right) in enumerate(combinations(members, 2)):
             # Common prompt tokens can create a quadratic pair explosion. The
             # deterministic prefix cap keeps this silver baseline bounded.
-            if pair_index >= 5000:
+            if pair_index >= pair_cap:
                 break
             bucket = pos if labels[left] == labels[right] else neg
             bucket[token] += 1
@@ -111,7 +111,7 @@ def metric(order: list[int], target: int, labels: list[str]) -> dict[str, float]
     return {"recall_at_1": float(first == 1), "recall_at_5": float(first is not None and first <= 5), "mrr": 1.0 / first if first else 0.0}
 
 
-def evaluate(rows: list[dict[str, Any]], mode: str) -> dict[str, Any]:
+def evaluate(rows: list[dict[str, Any]], mode: str, pair_cap: int) -> dict[str, Any]:
     labels = [row["label"] for row in rows]
     eligible = sorted(label for label, count in Counter(labels).items() if count >= 2)
     eligible_indices = [i for i, label in enumerate(labels) if label in eligible]
@@ -121,7 +121,7 @@ def evaluate(rows: list[dict[str, Any]], mode: str) -> dict[str, Any]:
         train = [i for i in eligible_indices if labels[i] != heldout]
         test = [i for i in eligible_indices if labels[i] == heldout]
         base = vectors(docs, train)
-        fold_weights = weights(docs, labels, train)
+        fold_weights = weights(docs, labels, train, pair_cap)
         adapted = [adapt(x, fold_weights) for x in base]
         fold_base, fold_adapted = [], []
         for target in test:
@@ -135,7 +135,7 @@ def evaluate(rows: list[dict[str, Any]], mode: str) -> dict[str, Any]:
     return {"eligible_projects": len(eligible), "eligible_sessions": len(eligible_indices), "folds": len(folds), "baseline_mrr": mean(all_base, "mrr"), "adapted_mrr": mean(all_adapted, "mrr"), "baseline_recall_at_1": mean(all_base, "recall_at_1"), "adapted_recall_at_1": mean(all_adapted, "recall_at_1"), "baseline_recall_at_5": mean(all_base, "recall_at_5"), "adapted_recall_at_5": mean(all_adapted, "recall_at_5"), "folds_detail": folds}
 
 
-def run(path: Path, output: Path, max_sessions: int | None = None) -> dict[str, Any]:
+def run(path: Path, output: Path, max_sessions: int | None = None, pair_cap: int = 5000, modes: tuple[str, ...] = ("prompt", "tool", "combined")) -> dict[str, Any]:
     rows = load(path.resolve(strict=True))
     if max_sessions is not None:
         groups: dict[str, list[dict[str, Any]]] = {}
@@ -154,8 +154,8 @@ def run(path: Path, output: Path, max_sessions: int | None = None) -> dict[str, 
                 if not bucket:
                     groups.pop(label, None)
         rows = selected
-    aggregate = {mode: evaluate(rows, mode) for mode in ("prompt", "tool", "combined")}
-    result = {"schema_version": SCHEMA_VERSION, "source": {"path_sha256": file_digest(path), "session_count": len(rows), "sample_limit": max_sessions, "raw_content_committed": False}, "protocol": {"split": "leave-one-project-out", "representations": "user prompts, tool names, or both; project names excluded", "adapter": "fold-local same-project versus cross-project token log-ratio weights", "pair_cap_per_token": 5000, "labels": "DataClaw project labels as silver workstream proxies"}, "aggregate": aggregate, "claim_boundary": {"project_heldout_adaptation_measured": True, "neural_embedding_established": False, "enterprise_semantics_established": False, "artifact_utility_established": False, "promotion_authorized": False, "reason": "Project labels are silver workstream proxies; retrieval similarity does not establish task intent, artifact correctness, or user benefit."}}
+    aggregate = {mode: evaluate(rows, mode, pair_cap) for mode in modes}
+    result = {"schema_version": SCHEMA_VERSION, "source": {"path_sha256": file_digest(path), "session_count": len(rows), "sample_limit": max_sessions, "raw_content_committed": False}, "protocol": {"split": "leave-one-project-out", "representations": "user prompts, tool names, or both; project names excluded", "adapter": "fold-local same-project versus cross-project token log-ratio weights", "pair_cap_per_token": pair_cap, "labels": "DataClaw project labels as silver workstream proxies"}, "aggregate": aggregate, "claim_boundary": {"project_heldout_adaptation_measured": True, "neural_embedding_established": False, "enterprise_semantics_established": False, "artifact_utility_established": False, "promotion_authorized": False, "reason": "Project labels are silver workstream proxies; retrieval similarity does not establish task intent, artifact correctness, or user benefit."}}
     result["result_sha256"] = digest(result)
     output.parent.mkdir(parents=True, exist_ok=True); output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({mode: {k: v for k, v in stats.items() if k != "folds_detail"} for mode, stats in aggregate.items()}, sort_keys=True))
@@ -163,4 +163,4 @@ def run(path: Path, output: Path, max_sessions: int | None = None) -> dict[str, 
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(); parser.add_argument("--input", type=Path, required=True); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--max-sessions", type=int); args = parser.parse_args(); run(args.input, args.output, args.max_sessions)
+    parser = argparse.ArgumentParser(); parser.add_argument("--input", type=Path, required=True); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--max-sessions", type=int); parser.add_argument("--pair-cap", type=int, default=5000); parser.add_argument("--mode", choices=("prompt", "tool", "combined"), action="append"); args = parser.parse_args(); run(args.input, args.output, args.max_sessions, args.pair_cap, tuple(args.mode) if args.mode else ("prompt", "tool", "combined"))
