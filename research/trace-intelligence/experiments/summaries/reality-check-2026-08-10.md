@@ -57,6 +57,16 @@ No stage can infer canonical identity, temporal validity, authority, or task
 utility from an isolated tool description. Those are missing variables, not
 merely missing model capacity.
 
+A prior-art refresh adds two useful boundaries. [Generative Ontology
+Induction](https://arxiv.org/abs/2607.16201) reports strong structural-backbone
+coverage in controlled ontology-shaped evaluations, but its generic-template
+baseline drops sharply on unfamiliar schemas; this supports typed decomposition,
+not one-shot corporate correctness. [OntoGPT/SPIRES](https://github.com/monarch-initiative/ontogpt)
+is a practical open-source ontology-grounded extractor, but it assumes a
+starter ontology or template and is therefore a population arm rather than a
+discovery oracle. The staged comparison and claim boundaries are recorded in
+the [prior-art refresh](ontology-induction-prior-art-refresh-2026-08-02.md).
+
 Public enterprise tuning guidance follows the same pattern. Databricks puts
 hybrid retrieval, metadata, query reformulation, reranking, and evaluation
 before embedding tuning and calls tuning a last resort ([retrieval quality
