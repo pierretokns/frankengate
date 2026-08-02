@@ -61,10 +61,15 @@
           "exists": true,
           "path": "combined-evidence-matrix-2026-08-02.json",
           "sha256": "2101606bc2f2d600cd86be2780b7b97f27395b893ef8f9265e767a8f4d681da0"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06-paired.json",
+          "sha256": "173241a091dfe83efc598e8f70ac63c27962c7a9838066e76fe118bce687fab6"
         }
       ],
       "id": "fair_controls_and_disjoint_splits",
-      "remaining": "Powered repeated-seed controls and broader task-family/user/time-disjoint cohorts remain open.",
+      "remaining": "The 40-task family-disjoint checkpoint improves power, but repeated seeds, broader user/time-disjoint cohorts, and a different task horizon remain open.",
       "status": "partial"
     },
     {
@@ -83,10 +88,20 @@
           "exists": true,
           "path": "changed-agent-outcome-bird-2026-08-02.json",
           "sha256": "a44923385fc144873d746bf4ae418c110792b518e7ee556e61f8b3a9f63a4d5c"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06-verification.json",
+          "sha256": "d381bbb6b9224659c116390ef8714b1f652377e00afccc51d4068910c3e1ddb0"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06-paired.json",
+          "sha256": "173241a091dfe83efc598e8f70ac63c27962c7a9838066e76fe118bce687fab6"
         }
       ],
       "id": "independent_outcome_evaluation",
-      "remaining": "A family-disjoint changed-agent future-task outcome is now independently recomputed for BIRD (20 pairs, exact-match delta 0.0, latency recorded), but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
+      "remaining": "A family-disjoint changed-agent future-task outcome is now independently recomputed for BIRD (40 pairs, trace procedure equal to no-skill, latency recorded), but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
       "status": "partial_mechanics_only"
     },
     {
@@ -105,10 +120,20 @@
           "exists": true,
           "path": "cross-method-calibration-2026-08-02.json",
           "sha256": "43623ec817a27fac0a2b1a61bfd9b9356657e682f13246be6c84b9540f511801"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06.json",
+          "sha256": "b999ebf161e735f7d808ab1be6a3c88ae9e0006bdc76bb268eb7ca8c57080e54"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06-paired.json",
+          "sha256": "173241a091dfe83efc598e8f70ac63c27962c7a9838066e76fe118bce687fab6"
         }
       ],
       "id": "power_cost_latency_and_null_taxonomy",
-      "remaining": "Calibration now covers all 18 receipts and reports two paired effects plus typed nulls, but repeated-seed power, comparable token/currency cost, same-budget latency, and independent changed-agent/enterprise outcomes remain incomplete.",
+      "remaining": "Calibration now includes a 40-task paired skill checkpoint and comparable episode latency for that study, but repeated-seed power, comparable token/currency cost, same-budget cross-method latency, and independent enterprise outcomes remain incomplete.",
       "status": "partial"
     },
     {

@@ -43,8 +43,11 @@ REQUIREMENTS: tuple[dict[str, Any], ...] = (
     {
         "id": "fair_controls_and_disjoint_splits",
         "status": "partial",
-        "evidence": ("combined-evidence-matrix-2026-08-02.json",),
-        "remaining": "Powered repeated-seed controls and broader task-family/user/time-disjoint cohorts remain open.",
+        "evidence": (
+            "combined-evidence-matrix-2026-08-02.json",
+            "bird-sql-skill-factorial-40-2026-08-06-paired.json",
+        ),
+        "remaining": "The 40-task family-disjoint checkpoint improves power, but repeated seeds, broader user/time-disjoint cohorts, and a different task horizon remain open.",
     },
     {
         "id": "independent_outcome_evaluation",
@@ -53,8 +56,10 @@ REQUIREMENTS: tuple[dict[str, Any], ...] = (
             "enterprise-outcome-gate-conformance-2026-08-02.json",
             "enterprise-outcome-analysis-conformance-2026-08-02.json",
             "changed-agent-outcome-bird-2026-08-02.json",
+            "bird-sql-skill-factorial-40-2026-08-06-verification.json",
+            "bird-sql-skill-factorial-40-2026-08-06-paired.json",
         ),
-        "remaining": "A family-disjoint changed-agent future-task outcome is now independently recomputed for BIRD (20 pairs, exact-match delta 0.0, latency recorded), but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
+        "remaining": "A family-disjoint changed-agent future-task outcome is now independently recomputed for BIRD (40 pairs, trace procedure equal to no-skill, latency recorded), but prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
     },
     {
         "id": "power_cost_latency_and_null_taxonomy",
@@ -63,8 +68,10 @@ REQUIREMENTS: tuple[dict[str, Any], ...] = (
             "rho-candidate-harness-powered-2026-08-02.json",
             "mlops-feedback-canary-rollback-2026-08-02.json",
             "cross-method-calibration-2026-08-02.json",
+            "bird-sql-skill-factorial-40-2026-08-06.json",
+            "bird-sql-skill-factorial-40-2026-08-06-paired.json",
         ),
-        "remaining": "Calibration now covers all 18 receipts and reports two paired effects plus typed nulls, but repeated-seed power, comparable token/currency cost, same-budget latency, and independent changed-agent/enterprise outcomes remain incomplete.",
+        "remaining": "Calibration now includes a 40-task paired skill checkpoint and comparable episode latency for that study, but repeated-seed power, comparable token/currency cost, same-budget cross-method latency, and independent enterprise outcomes remain incomplete.",
     },
     {
         "id": "separate_frankengate_integration",
