@@ -201,6 +201,10 @@ then compared naive exposed-table negatives with replay-confirmed negatives:
 the learned ranker improved Recall@1 to `.704` and Recall@5 to `.958`, but
 replay filtering added no lift because the training split contained no
 result-preserving ambiguities.
+The [`embedding/model cascade decision`](experiments/summaries/embedding-model-cascade-decision-2026-08-09.md)
+combines these results with the MATM cost and adapter receipts: structured
+retrieval stays first, embeddings remain optional candidate recall, and
+frontier calls are reserved for ambiguous review rather than the hot path.
 The [`TRAJECT-Bench structural audit`](experiments/summaries/traject-bench-structural-audit-2026-08-09.md)
 now records the public benchmark's 5,910 records and 38,094 described tool
 invocations, and separates its useful trajectory-metric coverage from the

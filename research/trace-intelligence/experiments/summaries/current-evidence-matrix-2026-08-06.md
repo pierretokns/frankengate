@@ -54,6 +54,8 @@ independent semantic labels and terminal outcomes.
 - [`Trace Commons domain adapter`](trace-commons-domain-adapter-2026-08-07.md)
 - [`older-tool modernization audit`](older-tool-modernization-value-audit-2026-08-05.md)
 - [`WMH-BIRD exposure counterfactual`](wmh-bird-exposure-counterfactual-2026-08-09.md)
+- [`WMH-BIRD replay-negative reranker`](wmh-bird-replay-negative-reranker-2026-08-09.md)
+- [`embedding/model cascade decision`](embedding-model-cascade-decision-2026-08-09.md)
 - [`termhood alias retrieval`](nl2sql-termhood-alias-retrieval-2026-08-04.md)
 - [`identifier hard-negative benchmark`](nl2sql-identifier-hard-negative-2026-08-02.md)
 - [`identifier-aware reranker`](nl2sql-identifier-reranker-2026-08-03.md)
