@@ -19,8 +19,8 @@ def test_verify_checks_external_raw_hashes(tmp_path: Path) -> None:
                 "failures": 0,
                 "raw_receipts": [{"case_index": 0, "raw_sha256": file_hash(raw)}],
                 "arms": {
-                    "lexical": {"records": 1, "mrr": 0.0, "recall_at_1": 0.0, "recall_at_5": 0.0, "recall_at_10": 0.0},
-                    "frontier": {"records": 1, "mrr": 1.0, "recall_at_1": 1.0, "recall_at_5": 1.0, "recall_at_10": 1.0},
+                    "lexical": {"records": 1, "mrr": 0.0, "recall_at_1": 0.0, "recall_at_5": 0.0, "recall_at_10": 0.0, "candidate_coverage": 0.0},
+                    "frontier": {"records": 1, "mrr": 1.0, "recall_at_1": 1.0, "recall_at_5": 1.0, "recall_at_10": 1.0, "candidate_coverage": 1.0},
                 },
             }
         ),

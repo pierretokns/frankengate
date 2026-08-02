@@ -46,7 +46,7 @@ def verify(result_path: Path, raw_dir: Path) -> dict[str, Any]:
             raise ValueError(f"unexpected arm: {arm_name}")
         if int(arm.get("records", 0)) != selected:
             raise ValueError(f"incomplete arm: {arm_name}")
-        for metric in ("mrr", "recall_at_1", "recall_at_5", "recall_at_10"):
+        for metric in ("mrr", "recall_at_1", "recall_at_5", "recall_at_10", "candidate_coverage"):
             value = arm.get(metric)
             if not isinstance(value, (float, int)) or not 0.0 <= float(value) <= 1.0:
                 raise ValueError(f"invalid metric {arm_name}.{metric}")

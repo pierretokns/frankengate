@@ -1,0 +1,75 @@
+{
+  "arms": {
+    "frontier": {
+      "candidate_coverage": 0.458333,
+      "mrr": 0.886364,
+      "recall_at_1": 0.270833,
+      "recall_at_10": 0.427083,
+      "recall_at_5": 0.427083,
+      "records": 8
+    },
+    "lexical": {
+      "candidate_coverage": 0.458333,
+      "mrr": 0.360417,
+      "recall_at_1": 0.041667,
+      "recall_at_10": 0.385417,
+      "recall_at_5": 0.270833,
+      "records": 8
+    }
+  },
+  "claim_boundary": {
+    "agent_intervention_measured": false,
+    "automatic_artifact_acceptance_authorized": false,
+    "frontier_reranking_measured": true,
+    "full_pool_retrieval_measured": true
+  },
+  "dataset": {
+    "raw_content_committed": false,
+    "root_name": "public_data",
+    "selected_cases": 8
+  },
+  "failures": 0,
+  "protocol": {
+    "candidate_selection": "domain lexical top-16",
+    "frontier_sees_gold_targets": false,
+    "frontier_sees_tool_outputs": false,
+    "model": "gpt-5.6-luna",
+    "raw_model_outputs_external": true,
+    "target_names_appended": false
+  },
+  "raw_receipts": [
+    {
+      "case_index": 0,
+      "raw_sha256": "e5556f271469547c4c2c0a9ae49f8d47a61e4dbdc91ae8e7a3ce743ea37604f6"
+    },
+    {
+      "case_index": 1,
+      "raw_sha256": "4e2e366c6ff20c5ab7163d4741cbbab892d1238f65aeaee9a9216d74ccc37233"
+    },
+    {
+      "case_index": 2,
+      "raw_sha256": "dad227e880ce15f5522f6ca19df210d715c5619103b91b671be7fc77c927b8dd"
+    },
+    {
+      "case_index": 3,
+      "raw_sha256": "82baab04357c6c149e8bd3601936522f8d2ac55b15d7611cb3b4ac472411fe43"
+    },
+    {
+      "case_index": 4,
+      "raw_sha256": "f46a4eb813532f9d8a87cdbf91c9988ca2263538c7db0c6d02fc3d1bdce9797e"
+    },
+    {
+      "case_index": 5,
+      "raw_sha256": "e10ac9a202a4caaab615163eada000df385dbdf42d56937498cd5ef8afc8c49c"
+    },
+    {
+      "case_index": 6,
+      "raw_sha256": "1611d1386006074a31a2f972f29e1e3bf19bb1bcd994759788de136a6553a3dd"
+    },
+    {
+      "case_index": 7,
+      "raw_sha256": "309204639a9450f3daf5346b99784ca58c2fb7a075bae1f37fb92a203faa8221"
+    }
+  ],
+  "schema_version": "frankengate-traject-bench-frontier-reranker-v1"
+}

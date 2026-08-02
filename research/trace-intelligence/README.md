@@ -177,6 +177,11 @@ Because the shortlist appended target names when necessary, this is an
 oracle-coverage reranking result—not full retrieval or artifact discovery.
 The independent receipt verifier passed all eight cases, with raw model output
 kept outside the repository.
+The companion [`no-target-append control`](experiments/summaries/traject-bench-frontier-reranker-no-target-append-2026-08-09.md)
+removed that oracle coverage: target coverage stayed `.458` for both arms,
+while Luna improved MRR from `.360` to `.886` only within the candidates the
+lexical stage had already found. This separates reranking value from the
+unresolved candidate-generation/alias/embedding problem.
 The [`modern TermSuite/AcronymExpansion concept port`](experiments/summaries/modern-term-acronym-port-wisp-2026-08-04.md)
 is now run under `uv`, with attributed GitHub forks and an 8/8 acronym
 capability probe including ambiguity abstention.

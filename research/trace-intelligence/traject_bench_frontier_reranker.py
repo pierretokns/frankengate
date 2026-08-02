@@ -51,7 +51,7 @@ def lexical_score(query: str, tool: dict[str, Any]) -> float:
     return len(q & c) / len(q | c) if q and c else 0.0
 
 
-def select_cases(root: Path, limit: int) -> list[tuple[str, dict[str, Any], list[dict[str, Any]]]]:
+def select_cases(root: Path, limit: int, *, append_targets: bool = True) -> list[tuple[str, dict[str, Any], list[dict[str, Any]]]]:
     selected: list[tuple[str, dict[str, Any], list[dict[str, Any]]]] = []
     for path in sorted(root.glob("parallel/*/hard_ver.json")) + sorted(root.glob("parallel/*/simple_ver.json")):
         domain = path.parent.name
@@ -67,7 +67,8 @@ def select_cases(root: Path, limit: int) -> list[tuple[str, dict[str, Any], list
             lexical_order = sorted(range(len(candidates)), key=lambda index: (-lexical_score(str(row.get("query", "")), candidates[index]), index))
             selected_candidates: list[dict[str, Any]] = [candidates[index] for index in lexical_order[:16]]
             present = {str(item.get("tool name")) for item in selected_candidates}
-            selected_candidates.extend(item for item in candidates if str(item.get("tool name")) in target_names - present)
+            if append_targets:
+                selected_candidates.extend(item for item in candidates if str(item.get("tool name")) in target_names - present)
             selected.append((f"{domain}/{path.stem}", row, selected_candidates))
             if len(selected) >= limit:
                 return selected
@@ -132,14 +133,15 @@ def metrics(row: dict[str, Any], candidates: list[dict[str, Any]], ranking: list
     positions = [position for position, index in enumerate(ranking, 1) if 0 <= index < len(candidates) and str(candidates[index].get("tool name")) in targets]
     first = min(positions) if positions else None
     values: dict[str, float | int] = {"target_count": len(targets), "first_target_rank": first or 0, "mrr": 1.0 / first if first else 0.0}
+    values["candidate_coverage"] = len({str(candidates[index].get("tool name")) for index in ranking if 0 <= index < len(candidates)} & targets) / max(1, len(targets))
     for k in (1, 5, 10):
         found = {str(candidates[index].get("tool name")) for index in ranking[:k] if 0 <= index < len(candidates)}
         values[f"recall_at_{k}"] = len(found & targets) / max(1, len(targets))
     return values
 
 
-def run(root: Path, output: Path, raw_dir: Path, *, limit: int, model: str, reuse_raw: bool = False) -> dict[str, Any]:
-    cases = select_cases(root, limit)
+def run(root: Path, output: Path, raw_dir: Path, *, limit: int, model: str, reuse_raw: bool = False, append_targets: bool = True) -> dict[str, Any]:
+    cases = select_cases(root, limit, append_targets=append_targets)
     raw_dir.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, Any]] = []
     failures = 0
@@ -168,14 +170,14 @@ def run(root: Path, output: Path, raw_dir: Path, *, limit: int, model: str, reus
         values = [row[arm] for row in rows if arm in row]
         summary = {"records": len(values)}
         if values:
-            summary.update({key: round(sum(float(value[key]) for value in values) / len(values), 6) for key in ("mrr", "recall_at_1", "recall_at_5", "recall_at_10")})
+            summary.update({key: round(sum(float(value[key]) for value in values) / len(values), 6) for key in ("mrr", "recall_at_1", "recall_at_5", "recall_at_10", "candidate_coverage")})
         arms[arm] = summary
     raw_receipts = []
     for index, row in enumerate(rows):
         raw_path = raw_dir / f"case-{index:03d}.json"
         if raw_path.exists():
             raw_receipts.append({"case_index": index, "raw_sha256": file_hash(raw_path)})
-    result = {"schema_version": SCHEMA_VERSION, "dataset": {"root_name": root.name, "selected_cases": len(cases), "raw_content_committed": False}, "protocol": {"model": model, "candidate_selection": "domain lexical top-16 plus target names", "frontier_sees_gold_targets": False, "frontier_sees_tool_outputs": False, "raw_model_outputs_external": True}, "arms": arms, "failures": failures, "raw_receipts": raw_receipts, "claim_boundary": {"frontier_reranking_measured": failures < len(cases), "full_pool_retrieval_measured": False, "agent_intervention_measured": False, "automatic_artifact_acceptance_authorized": False}}
+    result = {"schema_version": SCHEMA_VERSION, "dataset": {"root_name": root.name, "selected_cases": len(cases), "raw_content_committed": False}, "protocol": {"model": model, "candidate_selection": "domain lexical top-16 plus target names" if append_targets else "domain lexical top-16", "target_names_appended": append_targets, "frontier_sees_gold_targets": False, "frontier_sees_tool_outputs": False, "raw_model_outputs_external": True}, "arms": arms, "failures": failures, "raw_receipts": raw_receipts, "claim_boundary": {"frontier_reranking_measured": failures < len(cases), "full_pool_retrieval_measured": not append_targets and failures < len(cases), "agent_intervention_measured": False, "automatic_artifact_acceptance_authorized": False}}
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(result["arms"], sort_keys=True))
@@ -190,8 +192,9 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=8)
     parser.add_argument("--model", default=MODEL)
     parser.add_argument("--reuse-raw", action="store_true", help="recompute the receipt from existing external raw outputs")
+    parser.add_argument("--no-target-append", action="store_true", help="do not add benchmark target names to the lexical shortlist")
     args = parser.parse_args()
-    run(args.root, args.output, args.raw_dir, limit=args.limit, model=args.model, reuse_raw=args.reuse_raw)
+    run(args.root, args.output, args.raw_dir, limit=args.limit, model=args.model, reuse_raw=args.reuse_raw, append_targets=not args.no_target_append)
     return 0
 
 
