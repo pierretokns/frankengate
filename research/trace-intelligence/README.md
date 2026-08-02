@@ -48,6 +48,11 @@ lack identity, outcomes, or gold evaluators.
 The [`current evidence matrix`](experiments/summaries/current-evidence-matrix-2026-08-06.md)
 is the compact, receipt-linked decision map across artifact reuse, concept and
 alias mining, hard negatives, embeddings, model cascades, and skill replay.
+The dated [`research program status update`](experiments/summaries/research-program-status-2026-08-09.md)
+adds the LRAT trajectory audit, ToolQP-inspired public-tool probe, and
+outcome-backed SQL artifact query-planning result. Its central boundary is
+that ranking and query expansion help only after a compatible validated
+artifact exists in the library.
 The dated [`objective completion audit`](experiments/summaries/objective-completion-audit-2026-08-06.md)
 maps every requested research area to its strongest evidence, open proof
 obligation, and current disposition.
