@@ -221,7 +221,7 @@ def evaluate(data: dict[str, Any], sizes: Iterable[int], k: int = 5) -> dict[str
                         "recall_at_1": bool(ranked and ranked[0]["page_id"] in gold) if gold else None,
                         "recall_at_k": bool(top_ids & gold) if gold else None,
                         "mrr": reciprocal_rank(ranked, gold) if gold else None,
-                        "wrong_wiki_at_1": bool(ranked and ranked[0]["wiki_id"] != question["wiki_id"]) if ranked and gold else None,
+                        "wrong_wiki_at_1": bool(ranked and ranked[0]["wiki_id"] != question["wiki_id"]) if gold else None,
                         "nil_false_positive": bool(ranked) if nil else None,
                         "latency_ms": latency_ms,
                     })
