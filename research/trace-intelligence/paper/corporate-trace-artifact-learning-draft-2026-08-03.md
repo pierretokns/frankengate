@@ -1,6 +1,6 @@
 # Corporate trace-artifact learning: a governed path from agent histories to reusable tools
 
-**Draft status:** empirical systems paper outline, updated 2026-08-08;
+**Draft status:** empirical systems paper outline, updated 2026-08-09;
 enterprise outcome gates remain open.
 
 The receipt-linked [current evidence matrix](../experiments/summaries/current-evidence-matrix-2026-08-06.md)
@@ -41,6 +41,15 @@ from recorded tool calls, with source and target database families disjoint.
 The artifact-library arm reached `4/20` exact results versus `3/20` for both
 no-skill and formatting placebo; the paired contrast was one win, zero losses,
 and 19 ties. This is a small transfer signal, not a skill-promotion result.
+
+The newest corpus-fit study parsed 242 BIRD and 314 Defog SQL queries and found
+zero shared exact normalized templates, one shared typed schema-agnostic
+template, and two shared coarse operator shapes. Every shared shape had
+multiple exact variants. A companion four-cohort acronym probe found 40 valid
+acronym hashes and 56 valid acronym/full-form pairs, all local to one cohort.
+These results explain why schema-free retrieval and legacy vocabulary ports can
+generate review candidates but cannot create a portable enterprise artifact or
+ontology library from public traces alone.
 
 ## Research questions
 
@@ -101,6 +110,10 @@ claim boundary, and independent verifier where applicable.
   embedding candidate recall and outcome-neighbor prioritization.
 - **Wisp:** blinded structural recovery candidates for model agreement and
   evidence-grounded procedure proposals.
+- **Cross-corpus artifact fit:** 242 parse-valid BIRD gold queries and 314
+  parse-valid Defog queries for exact, typed schema-agnostic, and coarse
+  operator-shape overlap; this is a structural study, not cross-database
+  execution.
 
 ### Artifact and utility cohorts
 
@@ -131,10 +144,12 @@ claim boundary, and independent verifier where applicable.
 | Validated subplan composition | Two seeded frontier replays on five broker tasks: composed library `10/10`, fresh generation and placebo `5/10` each; three stable wins and no stable losses | Decompose validated examples into typed subplans; promising but small, single-family, and not yet a promotion result |
 | Family-disjoint composition transfer | Two BIRD replays: library `8/40` versus `6/40` for both controls; one stable win and zero stable losses | Aggregate signal is stable but low-headroom; insufficient for a causal or enterprise claim |
 | Trace-validated artifact library transfer | One family-disjoint frontier replay: 16 validated trace artifacts; library `4/20` exact versus `3/20` no-skill and `3/20` placebo; one paired win, zero losses, 19 ties | Directionally positive but underpowered; keep artifacts scope-bound and replayable, not auto-promoted |
+| Cross-corpus artifact fit | Across 242 BIRD and 314 Defog queries, exact-template overlap `0`; typed schema-agnostic overlap `1` with collision rate `1.0`; coarse operator-shape overlap `2`, also collision rate `1.0` | Public SQL corpora contain almost no compatible reusable artifacts; schema-free matches are candidate signals only |
 | Scope-bound command artifact reuse | 36,549 local command occurrences: same-scope repeats after prior success `97.09%` successful versus `94.68%` overall; cross-scope reuse `87.02%` | Operational reuse signal with measurable negative transfer; semantic intent and changed-environment gates remain mandatory |
 | Local Codex archive friction screen | Corrected current-schema import: 622 sessions, 47,122 prompt episodes, 2,060 structured executor errors, 33 error→repair follow-ups | Useful for blinded candidate sampling; markers are not intent, satisfaction, or terminal-outcome labels |
 | Lexical friction detector reality check | Explicit friction markers: precision `.79%`, recall `18.93%`, F1 `.015` against the structured process-exit proxy | Do not use lexical markers as eval labels; combine ordering, tool contracts, repeated attempts, and adjudication |
 | Trajectory context versus prompt-only model extraction | On 16 public BIRD cases, prompt-only Luna abstained `16/16`; trajectory-aware Luna achieved `7/8` recall and `7/13` precision, with six false positives | Tool context helps candidate judgment, but independent replay is still the release gate |
+| Legacy vocabulary ports on independent cohorts | Termhood top hashes were mostly cohort-local (`217/293` unique to one cohort; `5` shared by all four); contextual acronym extraction found `40` valid hashes with no cross-cohort overlap | Term and acronym ports are reproducible scoped review primitives, not global alias or embedding-training systems |
 
 ## Main conclusions
 
@@ -157,6 +172,12 @@ claim boundary, and independent verifier where applicable.
 5. **Skill utility is not established.** The largest changed-agent replay is a
    no-lift result. Nulls are not paper disproof because the protocols differ
    from same-environment skill-learning benchmarks.
+6. **Dataset fit is part of the method.** Even deliberately schema-agnostic
+   signatures almost never match across BIRD and Defog, and legacy acronym
+   candidates do not recur across public trace cohorts. A retrieval system must
+   first establish a compatible, validated artifact stream; representation
+   sophistication cannot substitute for missing repeated intent and outcome
+   labels.
 
 ## Proposed Frankengate architecture
 
@@ -220,3 +241,6 @@ contains the proposed 6–8 week reproduction plan.
 - [Requirement-level status ledger](../experiments/summaries/corporate-artifact-learning-status-2026-08-03.md)
 - [Research epic #118](https://github.com/pierretokns/frankengate/issues/118)
 - [Research branch](https://github.com/pierretokns/frankengate/tree/codex/trace-intelligence-academic-program)
+- [Cross-corpus SQL artifact signature study](../experiments/summaries/cross-corpus-sql-artifact-signatures-2026-08-09.md)
+- [Cross-cohort acronym stability study](../experiments/summaries/acronym-cross-cohort-stability-2026-08-09.md)
+- [Cross-cohort termhood stability study](../experiments/summaries/termhood-cross-cohort-stability-2026-08-09.md)
