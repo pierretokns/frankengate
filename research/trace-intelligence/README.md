@@ -75,6 +75,12 @@ The companion [`trace retrieval cascade`](experiments/summaries/bird-trace-retri
 replays lexical, identifier, dense state/action, and hybrid rankers against the
 same execution oracle; all four tied at 0/76 top-1 matches because the cohort
 contained no repeated normalized templates.
+The outcome-backed [`BIRD artifact query-planning probe`](experiments/summaries/bird-artifact-query-planning-probe-2026-08-09.md)
+then generated three subtask queries per target. On 16 family-stratified
+targets, both lexical and planned retrieval produced 0 result matches at @1,
+@5, and @10. Query planning cannot recover a compatible artifact that the
+trace corpus never contained; it becomes worthwhile only after repeated,
+validated intents or subplans exist.
 The [`Trace Commons feature ablation`](experiments/summaries/trace-commons-feature-ablation-2026-08-07.md)
 is a separate workstream-proxy result: prompt retrieval was 13/13 and durable
 identifier retrieval 12/13, but it does not establish cross-user identity or

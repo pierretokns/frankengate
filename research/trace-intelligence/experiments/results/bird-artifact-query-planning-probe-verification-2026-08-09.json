@@ -1,0 +1,8 @@
+{
+  "outcomes_hidden_from_planner": true,
+  "raw_hashes_match": true,
+  "schema_version": "bird-artifact-query-planning-verification-v1",
+  "source_result_sha256": "4b9ff3214ae142456754d4dc89958c436183bc3c350996ac7ac7f30530480127",
+  "targets_verified": 16,
+  "verification_passed": true
+}
