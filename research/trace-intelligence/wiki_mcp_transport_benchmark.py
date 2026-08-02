@@ -48,7 +48,7 @@ def main() -> int:
         for request_id, query in enumerate(queries, start=2):
             started = time.perf_counter_ns()
             response = rpc(process, request_id, "tools/call", {"name": "search", "arguments": {"query": query, "k": 5}})
-            value = response["result"]["structuredContent"]["value"]
+            value = json.loads(response["result"]["content"][0]["text"])
             transport_results.append([row["page_id"] for row in value])
             transport_latencies.append((time.perf_counter_ns() - started) / 1_000_000)
     finally:

@@ -89,7 +89,11 @@ def main() -> int:
                 error(request_id, -32602, str(exc))
                 continue
             text = json.dumps(value, separators=(",", ":"))
-            reply(request_id, {"content": [{"type": "text", "text": text}], "structuredContent": {"value": value}, "isError": False})
+            # Keep the response within the baseline MCP tool-result shape. A
+            # structuredContent object requires a declared outputSchema in
+            # clients that validate tool results strictly; the JSON text is
+            # sufficient for this benchmark and maximizes client parity.
+            reply(request_id, {"content": [{"type": "text", "text": text}], "isError": False})
             continue
         if request_id is not None:
             error(request_id, -32601, f"method not found: {method}")
