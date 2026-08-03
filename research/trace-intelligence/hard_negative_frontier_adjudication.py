@@ -21,6 +21,8 @@ import time
 from pathlib import Path
 from typing import Any, Sequence
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 from enterprise_hard_negative_paper_reproduction import (
     PAPER_EMBEDDING_MODELS,
     bounded_pages,
@@ -194,7 +196,72 @@ def choose_packets(
             "candidate_hash": sha256_text(negative_id),
             "question_id_hash": sha256_text(str(question.get("question_id") or query)),
         })
-    candidates.sort(key=lambda item: stable_key(seed, item["query_hash"] + item["candidate_hash"]))
+    # Select the same query cohort for every arm; candidate identity must not
+    # change which questions enter the comparison.
+    candidates.sort(key=lambda item: stable_key(seed, item["query_hash"]))
+    return candidates[:limit]
+
+
+def choose_control_packets(
+    data: dict[str, Any],
+    *,
+    control: str,
+    candidate_limit: int,
+    train_limit: int,
+    test_limit: int,
+    seed: int,
+    limit: int,
+) -> list[dict[str, Any]]:
+    """Build random or lexical controls without loading a neural encoder."""
+    if control not in {"random", "lexical"}:
+        raise ValueError(f"unknown control: {control}")
+    all_questions = [question for question in data["questions"] if question.get("gold_page_ids")]
+    train = all_questions[:train_limit]
+    test = all_questions[train_limit : train_limit + test_limit]
+    required = {str(page_id) for question in train + test for page_id in question["gold_page_ids"]}
+    pages = bounded_pages(list(data["pages"]), required, candidate_limit, seed)
+    pages_by_id = {str(page["page_id"]): page for page in pages}
+    texts = [
+        " ".join(
+            [
+                str(page.get("title") or ""),
+                " ".join(str(value) for value in (page.get("aliases") or [])),
+                str(page.get("text") or ""),
+            ]
+        )
+        for page in pages
+    ]
+    matrix = None
+    if control == "lexical":
+        vectorizer = TfidfVectorizer(lowercase=True, ngram_range=(1, 2), max_features=100_000)
+        matrix = vectorizer.fit_transform(texts)
+    candidates: list[dict[str, Any]] = []
+    for question in train:
+        query = str(question["question"])
+        gold_ids = [str(value) for value in (question.get("gold_page_ids") or [])]
+        gold = set(gold_ids)
+        allowed = [index for index, page in enumerate(pages) if str(page["page_id"]) not in gold]
+        if not allowed:
+            continue
+        if control == "random":
+            index = min(allowed, key=lambda value: stable_key(seed, f"{question.get('question_id')}:{pages[value]['page_id']}"))
+        else:
+            assert matrix is not None
+            query_vector = vectorizer.transform([query])
+            similarities = (matrix @ query_vector.T).toarray().reshape(-1)
+            index = max(allowed, key=lambda value: (float(similarities[value]), stable_key(seed, str(pages[value]["page_id"]))))
+        positive_id = gold_ids[0]
+        candidate_page = pages[index]
+        candidates.append({
+            "query": query,
+            "positive": page_packet(pages_by_id[positive_id]),
+            "candidate": page_packet(candidate_page),
+            "query_hash": sha256_text(query),
+            "positive_hash": sha256_text(positive_id),
+            "candidate_hash": sha256_text(str(candidate_page["page_id"])),
+            "question_id_hash": sha256_text(str(question.get("question_id") or query)),
+        })
+    candidates.sort(key=lambda item: stable_key(seed, item["query_hash"]))
     return candidates[:limit]
 
 
@@ -203,6 +270,7 @@ def main() -> int:
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--arm", action="append", nargs="+", metavar="MODEL", help="Arm name followed by one or more model IDs.")
+    parser.add_argument("--control", action="append", choices=["random", "lexical"], help="Add a deterministic non-neural control arm.")
     parser.add_argument("--model", default="gpt-5.6-luna")
     parser.add_argument("--candidate-limit", type=int, default=500)
     parser.add_argument("--train-limit", type=int, default=100)
@@ -237,6 +305,20 @@ def main() -> int:
             limit=args.limit_per_arm,
         )
         arms.append({"name": name, "model_ids": model_ids, "packets": packets})
+    for control in args.control or []:
+        arms.append({
+            "name": control,
+            "model_ids": [f"deterministic:{control}"],
+            "packets": choose_control_packets(
+                data,
+                control=control,
+                candidate_limit=args.candidate_limit,
+                train_limit=args.train_limit,
+                test_limit=args.test_limit,
+                seed=args.seed,
+                limit=args.limit_per_arm,
+            ),
+        })
 
     jobs: list[tuple[str, int, int, dict[str, Any]]] = []
     for arm in arms:
