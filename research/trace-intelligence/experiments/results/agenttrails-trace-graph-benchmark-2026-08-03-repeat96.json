@@ -1,0 +1,66 @@
+{
+  "arms": {
+    "family": {
+      "mean_similarity": 0.9652777777777777,
+      "next_action_shape_accuracy": 0.08333333333333333,
+      "next_artifact_schema_accuracy": 0.125,
+      "next_family_accuracy": 0.2916666666666667,
+      "test_cases": 24
+    },
+    "graph": {
+      "mean_similarity": 0.4548908322972522,
+      "next_action_shape_accuracy": 0.375,
+      "next_artifact_schema_accuracy": 0.7083333333333334,
+      "next_family_accuracy": 0.5416666666666666,
+      "test_cases": 24
+    },
+    "graph_shape": {
+      "mean_similarity": 0.5396001473823046,
+      "next_action_shape_accuracy": 0.375,
+      "next_artifact_schema_accuracy": 0.75,
+      "next_family_accuracy": 0.5833333333333334,
+      "test_cases": 24
+    },
+    "shape": {
+      "mean_similarity": 0.6615918803418803,
+      "next_action_shape_accuracy": 0.4166666666666667,
+      "next_artifact_schema_accuracy": 0.7916666666666666,
+      "next_family_accuracy": 0.625,
+      "test_cases": 24
+    }
+  },
+  "claim_boundary": {
+    "artifact_utility_measured": false,
+    "cross_user_identity_verified": false,
+    "provenance_structure_measured": true,
+    "reason": "The public corpus exposes tool trajectories and output schemas but no independent task outcomes or authorized enterprise identities. The target is structural next-event prediction, so this is an AgentTrails mechanism probe rather than evidence that graph retrieval improves user work.",
+    "semantic_task_success_measured": false
+  },
+  "cohort": {
+    "minimum_tool_events": 4,
+    "test_episodes": 24,
+    "train_episodes": 53
+  },
+  "protocol": {
+    "controls": [
+      "tool-family Jaccard",
+      "action-shape Jaccard",
+      "equal-weight graph+shape"
+    ],
+    "graph": "action -> output-schema/status artifact -> next action",
+    "identities": "hashed only",
+    "query": "all but final tool event",
+    "split": "chronological 70/30 by start_time",
+    "target": "final tool event"
+  },
+  "schema_version": "frankengate-agenttrails-graph-benchmark-v1",
+  "source": {
+    "dataset": "zhiyaowang/dataclaw-zhiyaowang",
+    "episodes_eligible": 77,
+    "raw_content_committed": false,
+    "revision": "f5157333cbc22489661122a9bc5347b137144900",
+    "rows_sampled": 96,
+    "rows_total": 1013,
+    "sampling_errors": {}
+  }
+}

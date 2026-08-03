@@ -100,3 +100,17 @@ this identifier-heavy fixture**, not a disproof of A-RAG. The next test must
 use balanced paraphrase, multi-hop, temporal, and NIL cohorts with a fixed
 question/model-seed comparison and an oracle tool-choice upper bound. See
 [`wiki-arag-frontier-reproduction-2026-08-03.md`](wiki-arag-frontier-reproduction-2026-08-03.md).
+
+## AgentTrails structural probe result
+
+The first AgentTrails-style graph probe is also complete. On chronological
+public-trace holdouts, action→output-schema/status→next-action graph similarity
+predicted the next tool family at `.583` versus `.250` for tool-family-only on
+the 48-row sample, and `.542` versus `.292` on the 96-row repeat. Action-shape
+similarity remained better for exact next-action and output-schema prediction
+on the larger sample (`.417/.792` versus graph `.375/.708`); an equal-weight
+graph+shape arm reached `.375/.750`. This supports graph structure as a
+reranking/explanation feature alongside exact input-shape and scope features,
+not as a replacement for them. The probe has no semantic outcome or changed
+system labels; the next gate is graph-retrieved subplan replay on an
+outcome-labelled cohort. See [`agenttrails-trace-graph-benchmark-2026-08-03.md`](agenttrails-trace-graph-benchmark-2026-08-03.md).
