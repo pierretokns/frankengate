@@ -60,6 +60,8 @@ the strongest conclusion that the current data supports.
 | Can public clarification traces answer friction questions? | BIRD-Interact has `600` labeled ambiguity/follow-up tasks; 20 public samples expose trajectory/reward schema but are not a benchmark. | Use it to stratify clarification experiments, not to claim user-friction or skill gains. | Public gold/test bundle or an authorized natural-user cohort. |
 | Can current Codex archives screen for eval/friction candidates? | Schema-correct import of 622 local rollouts found 47,122 prompt episodes, 2,060 structured executor errors, 16,349 repeated tool calls, and 33 error→repair follow-up pairs. Explicit friction markers had only `0.79%` precision and `18.93%` recall against the structured process-exit proxy (F1 `.015`). | Use event-order and tool-contract signals to sample blinded episodes; lexical markers alone are unusable as labels. | Consent-scoped principal/project joins, independent terminal outcomes, human labels, and replayable expected artifacts. |
 | Can we infer cross-user skill gaps or collaboration? | Trace Commons workstream-proxy retrieval reached prompt `13/13` and identifier `12/13` same-project top-1, while structure alone was `1/13`; the proxy has no stable principals or outcomes. | Preserve prompt and durable identifiers for candidate discovery, but keep recommendations opt-in and review-only. | Reciprocal consent, principal/time-disjoint labels, same-surface negatives, negative-transfer, unwanted-contact, and next-task outcomes. |
+| Does A-RAG-style hierarchical tool choice improve retrieval? | On the same 1/5/10/25-wiki Luna fixture, A-RAG keyword/semantic/chunk tools matched fixed hybrid answer accuracy `1.00/1.00/1.00/0.75`; at 25 wikis p95 wall time was `50.7s` versus `39.4s` for the prior fixed run. | Keep adaptive retrieval conditional and budgeted; exact/scope retrieval remains the default spine. | Balanced paraphrase, alias, multi-hop, temporal, and NIL cohorts with fixed model/question seeds and an oracle tool-choice arm. |
+| Do provenance graphs complement identifier-aware retrieval? | AgentTrails-style action→artifact-schema/status→action graphs predicted next tool family `.542` on a 96-row public trace holdout versus `.292` for tool-family-only; action-shape retrieval reached `.625` family and `.792` artifact-schema accuracy, while graph+shape reached `.583/.750`. | Use provenance graphs for workflow grouping, explanation, and reranking beside exact action/input shape; never use graph recurrence as artifact authority. | Outcome-labelled subplan replay, changed tools/schemas, authority/epoch edges, and human task-equivalence labels. |
 
 ## Architecture implied by the evidence
 
@@ -110,6 +112,8 @@ independent semantic labels and terminal outcomes.
 - [`DataClaw project adapter`](dataclaw-project-adapter-2026-08-09.md)
 - [`NL2SQL identifier cross-domain transfer`](nl2sql-identifier-cross-domain-transfer-2026-08-09.md)
 - [`embedding/model cascade decision`](embedding-model-cascade-decision-2026-08-09.md)
+- [`A-RAG hierarchical retrieval reproduction`](wiki-arag-frontier-reproduction-2026-08-03.md)
+- [`AgentTrails provenance graph probe`](agenttrails-trace-graph-benchmark-2026-08-03.md)
 - [`objective closure audit`](objective-closure-audit-2026-08-10.md)
 - [`publication/partner evidence packet`](publication-partner-evidence-packet-2026-08-10.md)
 - [`latest skill/provenance/retrieval prior-art map`](latest-skill-provenance-retrieval-prior-art-2026-08-02.md)

@@ -51,6 +51,15 @@ These results explain why schema-free retrieval and legacy vocabulary ports can
 generate review candidates but cannot create a portable enterprise artifact or
 ontology library from public traces alone.
 
+The two latest mechanism probes sharpen the retrieval boundary. An A-RAG-style
+frontier loop exposing keyword, semantic, and chunk-read tools matched the
+fixed-hybrid wiki baseline at every tested scale and was slower at 25 wikis;
+tool-mediated retrieval is therefore conditional, not a default replacement.
+An AgentTrails-style action→artifact-schema/status→action graph improved
+next-tool-family prediction over a tool-family-only control, while exact
+action-shape features remained stronger for artifact-schema prediction. Graphs
+belong in reranking and workflow explanation, not in the authority gate.
+
 ## Research questions
 
 **RQ1 — Identity and retrieval.** Can exact, lexical, dense, or
@@ -83,6 +92,8 @@ The program combines adjacent ideas rather than claiming to rediscover them:
 | [TRACE](https://arxiv.org/abs/2607.22639) | Rule-grounded enterprise tool retrieval | Add artifact lifecycle, authorization epochs, and changed-system outcomes |
 | Memo-SQL / Query Capsules / workload mining | Typed SQL fragments, failure memory, and workload reuse | Add tenant-safe governance, migration mappings, and rollback |
 | Graph/process-memory systems | Temporal entities, event graphs, and provenance | Do not treat graph or embedding proximity as semantic truth |
+| [AgentTrails](https://arxiv.org/abs/2607.18816) | Provenance graphs expose action/artifact dependencies and recurring workflows | Add stable tool/artifact identity, scope, deletion, and replay before graph-retrieved subplans can be reused |
+| [A-RAG](https://arxiv.org/abs/2602.03442) | Agent-controlled keyword, semantic, and chunk-level retrieval | Keep as a selective retrieval policy; exact identifiers, NIL handling, and latency budgets remain mandatory |
 | [RESOURCE2SKILL](https://arxiv.org/abs/2606.29538) and [SoK: Agentic Skills](https://arxiv.org/abs/2602.20867) | Multimodal/provenance-rich skill libraries and a full skill lifecycle/security taxonomy | Add source diversity, trust tiers, and lifecycle receipts without making raw trace summaries promotion-eligible |
 | Generic RAG and episodic memory | Candidate recall and evidence previews | Insufficient for authority, freshness, execution, deletion, or utility on their own |
 
@@ -159,6 +170,8 @@ claim boundary, and independent verifier where applicable.
 | Trajectory context versus prompt-only model extraction | On 16 public BIRD cases, prompt-only Luna abstained `16/16`; trajectory-aware Luna achieved `7/8` recall and `7/13` precision, with six false positives | Tool context helps candidate judgment, but independent replay is still the release gate |
 | Legacy vocabulary ports on independent cohorts | Four public cohorts yielded mostly local termhood candidates (`217/293` unique to one cohort; `5` shared by all four) and 40 valid acronym hashes with no cross-cohort overlap. A larger 432-session/65-project Claude history export had `777/2,249` top-term hashes and `36/170` valid acronym hashes cross a project boundary, but none appeared in all projects. | Term and acronym ports are reproducible scoped review primitives, not global alias or embedding-training systems; recurrence is a candidate-generation signal, not semantic truth |
 | Lexical hard-negative mining for recurring terms | Among 778 shared top-term hashes in the larger history export, 543 had at least one project pair below `.05` context Jaccard; 13,915/37,390 context pairs were below the threshold. | Context separation is a cheap review/reranking feature; it is not a semantic collision label without adjudication |
+| A-RAG hierarchical retrieval reproduction | Luna tool-choice answer accuracy matched fixed hybrid at `1.00/1.00/1.00/0.75` across 1/5/10/25 wikis; the 25-wiki A-RAG p95 was `50.7s` versus `39.4s` for the prior fixed run | Hierarchical retrieval is a conditional policy, not a universal replacement; the fixture is identifier-heavy and synthetic |
+| AgentTrails provenance graph probe | On 96 public-trace rows, graph next-family accuracy was `.542` versus `.292` tool-family-only; action-shape reached `.625` family and `.792` artifact-schema accuracy; graph+shape reached `.583/.750` | Graph structure adds workflow signal, but exact call shape remains stronger for artifact identity; use both before replay |
 
 ## Main conclusions
 
