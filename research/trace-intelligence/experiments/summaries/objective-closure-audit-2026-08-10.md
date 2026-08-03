@@ -11,8 +11,8 @@ ready, but enterprise semantic and prospective outcome gates remain open.
 | Corporate concepts and aliases | Full EnterpriseRAG source filtering improves MRR but leaves a same-source tail; train-only Defog alias links reproduce exactly but cover only `.065385` of targets and slightly lower MRR | Candidate generation only |
 | Hard negatives | Full 500-question source ceiling removes wrong-source candidates but leaves same-source distractors; identifier-aware public proxies reduce collision-before-target | Compatibility/representation signal demonstrated; semantic labels open |
 | Domain embedding adaptation | Fold-local Nomic adapter gives a small rank-one gain but no invalid-selection precision gain; project-held-out lexical adaptation is silver | Shadow adaptation only |
-| Embedding/model cascade | Dense retrieval broadens candidates; frontier review improves ordering when targets are already covered; NIL proposal rate remains `1.0` on tested retrieval arms | Candidate/ranking/review stages demonstrated; release safety open |
-| Identifier-aware representations | Exact identifiers, scope, semantic IDs, authority epochs, and resource identity repeatedly outperform name-only or generic dense controls on safety/compatibility proxies | Strong architectural rule |
+| Embedding/model cascade | Dense retrieval broadens candidates; frontier review improves ordering when targets are already covered; NIL proposal rate remains `1.0` on tested retrieval arms; the A-RAG tool-choice reproduction matched fixed hybrid and was slower at 25 wikis | Candidate/ranking/review stages demonstrated; adaptive retrieval is conditional and release safety remains open |
+| Identifier-aware representations | Exact identifiers, scope, semantic IDs, authority epochs, and resource identity repeatedly outperform name-only or generic dense controls on safety/compatibility proxies; AgentTrails graphs improve next-tool-family prediction but action-shape metadata remains stronger for exact artifact schemas | Strong architectural rule plus graph reranking/explanation feature |
 | Skill/memory improvement | Reviewed guidance and typed/subplan arms show bounded positive signals; generic prose and SkillOpt replications are null or negative | No causal promotion evidence |
 | Cross-user patterns and skill gaps | Similarity/retrieval queues are reproducible, but no independent task-equivalence, capability, human-outcome, or negative-transfer labels exist | Open |
 | Publication/partners | Current packet defines a falsifiable lifecycle paper, partner-specific study, sealed replay API, and content-free receipts | Outreach-ready; no collaboration commitment |
@@ -30,6 +30,9 @@ inferring completion from infrastructure or proxy results:
 - consented minimum-cohort labels for cross-user analysis;
 - collaboration utility, unwanted-contact, and negative-transfer outcomes; and
 - matched SkillLearnBench/Recovery-Bench intervention outcomes.
+
+The AgentTrails graph and A-RAG follow-up probes are structural/mechanism
+results; they do not close the semantic outcome gate.
 
 ## Decisive next study
 
@@ -53,3 +56,5 @@ Use the strengthened [enterprise semantic-cohort contract](../../configs/studies
 - [SRA-Bench ToolQA semantic adjudication](sra-bench-toolqa-semantic-adjudication-2026-08-02.md)
 - [SRA-Bench ToolQA two-per-family incorporation control](sra-bench-toolqa-two-per-family-2026-08-02.md)
 - [Current objective audit](objective-completion-audit-2026-08-06.md)
+- [A-RAG hierarchical retrieval reproduction](wiki-arag-frontier-reproduction-2026-08-03.md)
+- [AgentTrails provenance graph probe](agenttrails-trace-graph-benchmark-2026-08-03.md)
