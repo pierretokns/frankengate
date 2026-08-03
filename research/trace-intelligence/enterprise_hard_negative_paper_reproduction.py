@@ -216,6 +216,53 @@ def mine_triplets(ensemble: Ensemble, questions: Sequence[dict[str, Any]], train
     return triplets, missing
 
 
+def false_negative_audit(
+    triplets: Sequence[tuple[str, str, str]],
+    questions: Sequence[dict[str, Any]],
+) -> dict[str, Any]:
+    """Check whether a selected negative is annotated as another gold page.
+
+    This is deliberately a narrow public-fixture audit: a selected page not in
+    ``gold_page_ids`` is not thereby a true negative, and a page in that list
+    is only a proxy for a false negative when the dataset has multiple relevant
+    pages.  Keeping the distinction explicit prevents selection coverage from
+    being mistaken for negative quality.
+    """
+    gold_by_query = {
+        str(question["question"]): {str(value) for value in (question.get("gold_page_ids") or [])}
+        for question in questions
+        if question.get("gold_page_ids")
+    }
+    annotated_false_negatives: list[dict[str, Any]] = []
+    unknown_queries: list[str] = []
+    for query, positive_id, negative_id in triplets:
+        gold = gold_by_query.get(query)
+        if gold is None:
+            unknown_queries.append(query)
+            continue
+        if negative_id in gold:
+            annotated_false_negatives.append({
+                "query": query,
+                "positive_page_id": positive_id,
+                "selected_negative_page_id": negative_id,
+                "gold_page_ids": sorted(gold),
+            })
+    selected = len(triplets)
+    return {
+        "selected_triplets": selected,
+        "annotated_false_negatives": len(annotated_false_negatives),
+        "annotated_false_negative_rate": (
+            len(annotated_false_negatives) / selected if selected else None
+        ),
+        "unknown_query_count": len(unknown_queries),
+        "cases": annotated_false_negatives,
+        "interpretation": (
+            "Gold-page membership is only a false-negative proxy; an unmarked "
+            "page may still be relevant and requires adjudication."
+        ),
+    }
+
+
 def train_triplet_reranker(triplets: Sequence[tuple[str, str, str]], pages_by_id: dict[str, dict[str, Any]], model_id: str, *, device: str, epochs: int, batch_size: int, margin: float, max_length: int, seed: int) -> CrossEncoder:
     """Fine-tune a CrossEncoder with the paper's margin triplet objective."""
     import torch
@@ -282,7 +329,7 @@ def run(data: dict[str, Any], *, candidate_limit: int, train_limit: int, test_li
         "paper": {"title": "Hard Negative Mining for Domain-Specific Retrieval in Enterprise Systems", "arxiv": "2505.18366"},
         "dataset": {"pages": len(pages), "train_questions": len(train), "test_questions": len(test), "candidate_selection": "all positives plus stable-hash distractors", "seed": seed},
         "ensemble": {"models": list(model_ids), "model_receipts": model_receipts, "normalization": "per-model unit norm, then concatenated unit norm", "pca": "full PCA retaining 95% variance fit on bounded candidate corpus", "pca_components": int(ensemble.pca.n_components_)},
-        "hard_negative_mining": {"inequalities": ["d(Q,D) < d(Q,PD)", "d(Q,D) < d(PD,D)"], "triplets_selected": len(triplets), "triplets_available_before_limit": triplets_available, "triplets_unavailable": missing_triplets, "triplet_limit": triplet_limit},
+        "hard_negative_mining": {"inequalities": ["d(Q,D) < d(Q,PD)", "d(Q,D) < d(PD,D)"], "triplets_selected": len(triplets), "triplets_available_before_limit": triplets_available, "triplets_unavailable": missing_triplets, "triplet_limit": triplet_limit, "false_negative_audit": false_negative_audit(triplets, train)},
         "claim_boundary": ["Faithful neural implementation of the published selection contract on a bounded public-style corpus.", "Exact paper reproduction remains unavailable without Oracle's private corpus, exact checkpoints/configuration, and original reranker training setup."],
     }
     if reranker_model:

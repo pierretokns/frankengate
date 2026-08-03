@@ -14,8 +14,13 @@ inequalities hold for 10/10 training questions. On the larger 500-page,
 composite. This means LaBSE's geometry provides broader candidate coverage
 under the selector. It does **not** show that LaBSE retrieves better answers or
 that its negatives are safer; it may simply produce more false negatives. The
-next gate must adjudicate the selected candidates and train the same reranker
-for every arm.
+An annotated false-negative audit found zero selected negatives that appeared
+in the fixture's published `gold_page_ids` for both LaBSE (0/56) and the
+six-model composite (0/23). That is only a weak public-label check: unmarked
+pages can still be relevant. The full receipt is
+[`hard-negative-paper-annotated-false-negative-audit-2026-08-03.json`](../results/hard-negative-paper-annotated-false-negative-audit-2026-08-03.json).
+The next gate must adjudicate unmarked selected candidates and train the same
+reranker for every arm.
 
 Likely reasons for the transfer behavior:
 

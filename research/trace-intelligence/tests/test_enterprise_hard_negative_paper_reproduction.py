@@ -5,6 +5,7 @@ from enterprise_hard_negative_paper_reproduction import (
     PAPER_EMBEDDING_REVISIONS,
     bounded_pages,
     encode,
+    false_negative_audit,
     select_hard_negative,
 )
 
@@ -51,3 +52,17 @@ def test_jina_style_task_adapters_use_retrieval_roles():
 
     values = encode(Model(), ["document"], "document", 2, 128)
     assert values.shape == (1, 3)
+
+
+def test_false_negative_audit_marks_secondary_gold_pages_without_calling_unmarked_pages_true_negatives():
+    questions = [
+        {"question": "q", "gold_page_ids": ["positive", "also-relevant"]},
+    ]
+    receipt = false_negative_audit(
+        [("q", "positive", "also-relevant"), ("q", "positive", "unmarked")],
+        questions,
+    )
+    assert receipt["selected_triplets"] == 2
+    assert receipt["annotated_false_negatives"] == 1
+    assert receipt["annotated_false_negative_rate"] == 0.5
+    assert "requires adjudication" in receipt["interpretation"]
