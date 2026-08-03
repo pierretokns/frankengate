@@ -1,0 +1,84 @@
+{
+  "receipt_type": "hard_negative_public_model_vintage_bakeoff",
+  "paper": {
+    "title": "Hard Negative Mining for Domain-Specific Retrieval in Enterprise Systems",
+    "arxiv": "https://arxiv.org/abs/2505.18366",
+    "reproduction_issue": "https://github.com/pierretokns/frankengate/issues/132"
+  },
+  "dataset": {
+    "name": "NVIDIA TechQA-RAG-Eval",
+    "license": "Apache-2.0",
+    "split": "deterministic answerable train sample",
+    "queries": 96,
+    "candidate_documents": 1115,
+    "positive_links": 96,
+    "candidate_doc_ids_sha256": "6c181b807c2b96362f74bc1a145756757a603c41683eef848d6c03a184e3ddf0",
+    "qrels_sha256": "caf60ff6a206e3185509ab93e66e6e076ae2c59f5e455d40207ac1f3552caba2",
+    "seed": 20260802
+  },
+  "protocol": {
+    "candidate_pool": "required positive contexts plus deterministic distractors",
+    "metrics": ["MRR@10", "NDCG@10", "Recall@10", "Recall@20"],
+    "raw_text_committed": false,
+    "scope_boundary": "bounded transfer probe; not a full BEIR/TechQA leaderboard reproduction"
+  },
+  "models": [
+    {
+      "model_id": "sklearn:TfidfVectorizer(word,1-2gram,max_features=120000)",
+      "vintage": "paper-era CPU surrogate",
+      "license": "BSD-3-Clause code; no model weights",
+      "mrr_at_10": 0.708825,
+      "ndcg_at_10": 0.752387,
+      "recall_at_10": 0.885417,
+      "recall_at_20": 0.9375
+    },
+    {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "vintage": "older dense baseline",
+      "license": "Apache-2.0",
+      "mrr_at_10": 0.764335,
+      "ndcg_at_10": 0.794044,
+      "recall_at_10": 0.885417,
+      "recall_at_20": 0.947917,
+      "source": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2"
+    },
+    {
+      "model_id": "Snowflake/snowflake-arctic-embed-s",
+      "vintage": "newer open embedding checkpoint",
+      "license": "Apache-2.0",
+      "license_source": "https://huggingface.co/Snowflake/snowflake-arctic-embed-s",
+      "mrr_at_10": 0.816348,
+      "ndcg_at_10": 0.840203,
+      "recall_at_10": 0.916667,
+      "recall_at_20": 0.947917,
+      "delta_mrr_at_10_vs_minilm": 0.052013
+    },
+    {
+      "model_id": "Qwen/Qwen3-Embedding-0.6B",
+      "vintage": "newer open embedding checkpoint",
+      "license": "Apache-2.0",
+      "license_source": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+      "mrr_at_10": 0.853993,
+      "ndcg_at_10": 0.877108,
+      "recall_at_10": 0.947917,
+      "recall_at_20": 0.958333,
+      "delta_mrr_at_10_vs_minilm": 0.089658
+    }
+  ],
+  "interpretation": [
+    "On this bounded TechQA transfer probe, both current checkpoints improved MRR@10 and NDCG@10 over the older dense baseline.",
+    "Qwen3-Embedding-0.6B was strongest on this slice; this is not evidence of universal enterprise superiority.",
+    "The comparison tests retrieval-model vintage, not the Oracle paper's private six-encoder ensemble or triplet-trained reranker.",
+    "Promotion still requires family-disjoint enterprise traces, hard-negative false-negative adjudication, and fixed reranker training across all model arms."
+  ],
+  "environment": {
+    "platform": "macOS arm64",
+    "device": "MPS",
+    "sentence_transformers": "5.1.2",
+    "transformers": "4.56.2",
+    "torch": "2.8.0",
+    "sklearn": "1.6.1"
+  },
+  "source_receipt": "/private/tmp/ntm-new-embedding-track.json",
+  "generated_by": "NTM pane 6; content-minimized aggregate receipt"
+}

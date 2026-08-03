@@ -83,6 +83,19 @@ matter.
 7. Report compute cost, latency, index rebuild/update cost, long-document
    degradation, and regression slices—not only average MRR.
 
+### Model-vintage companion
+
+The public transfer gate now has a parallel model-vintage probe rather than
+freezing the experiment at the paper-era surrogate. The companion runs the
+same bounded TechQA candidate pool with TF-IDF, `all-MiniLM-L6-v2`,
+`Snowflake/snowflake-arctic-embed-s`, and `Qwen/Qwen3-Embedding-0.6B`; see
+[`hard-negative-public-model-vintage-2026-08-03.md`](hard-negative-public-model-vintage-2026-08-03.md).
+This is intentionally a separate retrieval-model comparison: it does not
+pretend to reproduce Oracle's private six-encoder ensemble or its
+triplet-trained reranker. The model manifest and aggregate receipt make the
+model ID, license, dataset hash, seed, and metric deltas independently
+auditable.
+
 ## Promotion rule
 
 Do not promote the method into Frankengate because it improves a single MRR

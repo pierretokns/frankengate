@@ -73,7 +73,7 @@ class FeatureBank:
     lexical_vectorizer: TfidfVectorizer = None  # type: ignore[assignment]
 
 
-def fit_feature_bank(pages: list[dict[str, Any]]) -> FeatureBank:
+def fit_feature_bank(pages: list[dict[str, Any]], max_features: int = 2048, pca_components: int | None = None) -> FeatureBank:
     texts = [page_text(page) for page in pages]
     vectorizers: list[TfidfVectorizer] = []
     matrices: list[np.ndarray] = []
@@ -85,7 +85,7 @@ def fit_feature_bank(pages: list[dict[str, Any]]) -> FeatureBank:
             ngram_range=spec["ngram_range"],
             lowercase=True,
             min_df=1,
-            max_features=2048,
+            max_features=max_features,
             sublinear_tf=True,
         )
         matrix = vectorizer.fit_transform(texts)
@@ -95,7 +95,10 @@ def fit_feature_bank(pages: list[dict[str, Any]]) -> FeatureBank:
         slices.append(slice(offset, offset + dense.shape[1]))
         offset += dense.shape[1]
     vectors = normalize(np.concatenate(matrices, axis=1))
-    pca = PCA(n_components=0.95, svd_solver="full", random_state=0)
+    if pca_components is None:
+        pca = PCA(n_components=0.95, svd_solver="full", random_state=0)
+    else:
+        pca = PCA(n_components=min(pca_components, vectors.shape[1], max(1, vectors.shape[0] - 1)), svd_solver="randomized", random_state=0)
     pca_vectors = normalize(pca.fit_transform(vectors))
     lexical_vectorizer = vectorizers[1]
     lexical = normalize(lexical_vectorizer.transform(texts)).toarray()
@@ -172,14 +175,7 @@ def choose_negative(bank: FeatureBank, query: str, positive_index: int, strategy
     return max(candidates, key=lambda index: (float(scores[index]), -index))
 
 
-def run(data: dict[str, Any], limit: int = 0, seed: int = 7) -> dict[str, Any]:
-    pages = list(data["pages"])
-    bank = fit_feature_bank(pages)
-    questions = [question for question in data["questions"] if question.get("gold_page_ids")]
-    if limit:
-        questions = questions[:limit]
-    train = [question for index, question in enumerate(questions) if index % 5 != 0]
-    test = [question for index, question in enumerate(questions) if index % 5 == 0]
+def _run_split(bank: FeatureBank, pages: list[dict[str, Any]], train: list[dict[str, Any]], test: list[dict[str, Any]], seed: int, split_label: str) -> dict[str, Any]:
     rng = random.Random(seed)
     methods = {strategy: {"x": [], "selected": 0, "known_hard_matches": 0} for strategy in ("random", "lexical", "proposed")}
     for question in train:
@@ -230,13 +226,32 @@ def run(data: dict[str, Any], limit: int = 0, seed: int = 7) -> dict[str, Any]:
         "protocol": {
             "algorithm": "six-view TF-IDF surrogate for six bi-encoders + PCA(95%) + d(Q,D)<d(Q,PD) and d(Q,D)<d(PD,D)",
             "reranker": "linear logistic pair scorer (cross-encoder surrogate)",
-            "split": "deterministic every fifth question held out",
+            "split": split_label,
             "seed": seed,
         },
-        "corpus": {"pages": len(pages), "questions": len(questions), "train": len(train), "test": len(test)},
+        "corpus": {"pages": len(pages), "train": len(train), "test": len(test)},
         "metrics": metrics,
         "claim_boundary": "CPU clean-room surrogate; not a reproduction of the paper's private six encoders or cross-encoder. Results test whether the selection logic transfers to this corpus.",
     }
+
+
+def run(data: dict[str, Any], limit: int = 0, seed: int = 7, max_features: int = 2048, pca_components: int | None = None) -> dict[str, Any]:
+    pages = list(data["pages"])
+    bank = fit_feature_bank(pages, max_features=max_features, pca_components=pca_components)
+    questions = [question for question in data["questions"] if question.get("gold_page_ids")]
+    if limit:
+        questions = questions[:limit]
+    train = [question for index, question in enumerate(questions) if index % 5 != 0]
+    test = [question for index, question in enumerate(questions) if index % 5 == 0]
+    result = _run_split(bank, pages, train, test, seed, "deterministic every fifth question held out")
+    result["corpus"]["questions"] = len(questions)
+    return result
+
+
+def run_explicit_split(data: dict[str, Any], train: list[dict[str, Any]], test: list[dict[str, Any]], seed: int = 7, split_label: str = "explicit train/test", max_features: int = 2048, pca_components: int | None = None) -> dict[str, Any]:
+    pages = list(data["pages"])
+    bank = fit_feature_bank(pages, max_features=max_features, pca_components=pca_components)
+    return _run_split(bank, pages, train, test, seed, split_label)
 
 
 def main() -> int:
@@ -244,9 +259,11 @@ def main() -> int:
     parser.add_argument("--corpus", type=Path, required=True)
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--seed", type=int, default=7)
+    parser.add_argument("--max-features", type=int, default=2048)
+    parser.add_argument("--pca-components", type=int, default=0, help="Use a bounded randomized PCA dimension; 0 preserves the 95%% variance protocol")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = run(json.loads(args.corpus.read_text(encoding="utf-8")), limit=args.limit, seed=args.seed)
+    result = run(json.loads(args.corpus.read_text(encoding="utf-8")), limit=args.limit, seed=args.seed, max_features=args.max_features, pca_components=args.pca_components or None)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"schema_version": result["schema_version"], "metrics": result["metrics"]}, sort_keys=True))

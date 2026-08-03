@@ -1,4 +1,4 @@
-from enterprise_hard_negative_mining import fit_feature_bank, mine_hard_negative, run
+from enterprise_hard_negative_mining import fit_feature_bank, mine_hard_negative, run, run_explicit_split
 
 
 def test_miner_returns_semantic_candidate_and_receipt_metrics():
@@ -26,3 +26,22 @@ def test_miner_returns_semantic_candidate_and_receipt_metrics():
     result = run(data)
     assert result["schema_version"].endswith("-v1")
     assert {"random", "lexical"}.issubset(result["metrics"])
+
+
+def test_explicit_split_supports_bounded_public_probe_dimensions():
+    pages = [
+        {"page_id": "a", "title": "Alpha system", "aliases": ["A"], "text": "alpha system configuration"},
+        {"page_id": "b", "title": "Beta system", "aliases": ["B"], "text": "beta system configuration"},
+        {"page_id": "c", "title": "Gamma system", "aliases": ["C"], "text": "gamma system configuration"},
+    ]
+    train = [{"question_id": "train-1", "question": "How is alpha configured?", "gold_page_ids": ["a"]}]
+    test = [{"question_id": "test-1", "question": "How is beta configured?", "gold_page_ids": ["b"]}]
+    result = run_explicit_split(
+        {"pages": pages, "questions": train + test},
+        train,
+        test,
+        max_features=16,
+        pca_components=2,
+    )
+    assert result["protocol"]["split"] == "explicit train/test"
+    assert result["corpus"] == {"pages": 3, "train": 1, "test": 1}
