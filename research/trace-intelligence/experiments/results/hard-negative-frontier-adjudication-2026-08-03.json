@@ -1,0 +1,342 @@
+{
+  "arms": {
+    "composite": {
+      "agreement_count": 9,
+      "candidate_count": 12,
+      "label_counts": {
+        "indeterminate": 0,
+        "near_miss_hard_negative": 19,
+        "relevant_false_negative": 0,
+        "unrelated": 5
+      },
+      "models": [
+        "dunzhang/stella_en_400M_v5",
+        "jinaai/jina-embeddings-v3",
+        "mixedbread-ai/mxbai-embed-large-v1",
+        "BAAI/bge-large-en-v1.5",
+        "sentence-transformers/LaBSE",
+        "sentence-transformers/all-mpnet-base-v2"
+      ],
+      "relevant_false_negative_rate": 0.0,
+      "valid_call_count": 24
+    },
+    "labse": {
+      "agreement_count": 9,
+      "candidate_count": 12,
+      "label_counts": {
+        "indeterminate": 0,
+        "near_miss_hard_negative": 9,
+        "relevant_false_negative": 0,
+        "unrelated": 15
+      },
+      "models": [
+        "sentence-transformers/LaBSE"
+      ],
+      "relevant_false_negative_rate": 0.0,
+      "valid_call_count": 24
+    }
+  },
+  "claim_boundary": "Silver frontier labels only; raw page text is not emitted, and labels do not establish enterprise relevance or causality.",
+  "dataset": {
+    "fixture_sha256": "ca2d648b62ac0e245f1a4dd1f408b1949bb939844308cde031eb6a4a2e95d0f8",
+    "max_seq_length": 256,
+    "pages": 500,
+    "seed": 7,
+    "test_questions": 100,
+    "train_questions": 100
+  },
+  "model": "gpt-5.6-luna",
+  "next_gate": "Repeat with blinded SME labels and random/lexical controls on identifier, alias, NIL, and changed-system slices.",
+  "rows": [
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "9ae2637fdad86e20ce5e4609ca73008bab3a671e72be6e32f05cf596bb1f7794",
+      "candidate_index": 0,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "2b7f6f287ecf1c6311809ee777b126c936ae3eeec0d8e05d19e1c4c0238db788",
+      "query_hash": "83b9e53b04b1f8be3485e8e2a1ed011e0ed2c4c13417bdf602053a05b20648d1"
+    },
+    {
+      "agreement": false,
+      "arm": "composite",
+      "candidate_hash": "46bd2d16b8d70df6861eddee93fb2bc8d0cc1123ef58330d5485cf220e241b8c",
+      "candidate_index": 1,
+      "labels": [
+        "unrelated",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "5fe3d7b3f20c747f5d3ca2ff02efe4d448ca94ebae613c57b9d5fec971443add",
+      "query_hash": "b9449a6883827aa065b4ed708514bd83e0a1ab19669416dc2db88905346ef8f4"
+    },
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "25d4e5f59f04bc842f6ff5b0498ad80af9a4bcc900a95685a378a258b62ee936",
+      "candidate_index": 2,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "2ae34ed6f3f0c1436750bf46398767c8f67a18c9e6a98b0488efb09eb1306239",
+      "query_hash": "9dc512d981ad00abc197b21d880af8cf5f97ca984086d83bba4ac56fbeb805b7"
+    },
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "b9cae31ad2918bb38ec1a9728cc9e43906ba6ca18ac9d26b8db306d48c3c3bb8",
+      "candidate_index": 3,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "f85e91c1fe8d14a6ea38763bd611a8f670f19bb4e7f6b1bdb89d40eea1a5f58b",
+      "query_hash": "c4ad323dbd6d71a99a561b0a229038b2edf40e4920af6f9ac1088e088e7a0eda"
+    },
+    {
+      "agreement": false,
+      "arm": "composite",
+      "candidate_hash": "b3dd006462ade80bd56878a8ae2f5124ccaa1d423b2b45c9cdb89557098bd2ff",
+      "candidate_index": 4,
+      "labels": [
+        "unrelated",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "46e9c8652d863330571dc9d18cdb2a308fc6e683c6a39920a90faefde95208e4",
+      "query_hash": "5f5d4e25ee87056f8e448e71b31427a944ae73e92e4ad6f1e6b443963a5891ef"
+    },
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "b3dd006462ade80bd56878a8ae2f5124ccaa1d423b2b45c9cdb89557098bd2ff",
+      "candidate_index": 5,
+      "labels": [
+        "unrelated",
+        "unrelated"
+      ],
+      "positive_hash": "46e9c8652d863330571dc9d18cdb2a308fc6e683c6a39920a90faefde95208e4",
+      "query_hash": "e7ed44daf0a108a54efe40ef9bc61f4eb91bf0f9d2b13ae9fdf4faeb0caeb4eb"
+    },
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "56b188a973cbe6a73b0b0fb0ce54377618236e80391d453a34962c5591f50471",
+      "candidate_index": 6,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "a647bdbc713cedfec39419a49a6cdf342c55d3f146978f7f38397e8af2495ac8",
+      "query_hash": "5347d9cff2d92cf0db019b7b9981b585106357a30a7f334dc467bdf127902928"
+    },
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "2b7f6f287ecf1c6311809ee777b126c936ae3eeec0d8e05d19e1c4c0238db788",
+      "candidate_index": 7,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "59928f33ec9ca0fc0db07e334963a2d2966d0936d35a4b23f48ddde48b0ffaca",
+      "query_hash": "ba06cbfcf7148e77031a06716150181a575be29aff120c70d70aaf3209a25d34"
+    },
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "a11d953947cbaa28000e574be18b6a19203692222dc71e5017ab6d57fab902cd",
+      "candidate_index": 8,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "ec9a621ef971c81d85428e66a9a02436865f193f462f5ad101dcee9a8a4fbf7d",
+      "query_hash": "2d5e6173125a4adb7ee2c6cd54e4dccb57456d836bf67d67157d4fcaff9c3d35"
+    },
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "a95678758d036f0267069393860805af569e410c22a608ffb32c145ee689c8e7",
+      "candidate_index": 9,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "f0cd29d2ffbb76ecb8e0e4b03c984f8a5e4aae005c7e4275713a9ea7438578f7",
+      "query_hash": "37bed1a940d557e85fce0260a34077c1059ad35bc6e281ae14bc77949cb187b0"
+    },
+    {
+      "agreement": true,
+      "arm": "composite",
+      "candidate_hash": "bad65617743df91e17bced2da12aeffd483c9aaff554856ec58f5febbf65216d",
+      "candidate_index": 10,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "88b016ed2194a7691c10a229088253a63de2476fe45772bdbcc8208094a9f4c8",
+      "query_hash": "9abca1128c7ee613ef86c5f5de1bc7d3ba63ddd78313c3c208aa125a76d18b19"
+    },
+    {
+      "agreement": false,
+      "arm": "composite",
+      "candidate_hash": "b3dd006462ade80bd56878a8ae2f5124ccaa1d423b2b45c9cdb89557098bd2ff",
+      "candidate_index": 11,
+      "labels": [
+        "near_miss_hard_negative",
+        "unrelated"
+      ],
+      "positive_hash": "46e9c8652d863330571dc9d18cdb2a308fc6e683c6a39920a90faefde95208e4",
+      "query_hash": "cb1e9f3b844dc353452ff2e8ad7ff36ca94ddba9c5e8059707c28da0366378e9"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "b9cae31ad2918bb38ec1a9728cc9e43906ba6ca18ac9d26b8db306d48c3c3bb8",
+      "candidate_index": 0,
+      "labels": [
+        "unrelated",
+        "unrelated"
+      ],
+      "positive_hash": "4b9e0b6ead447d5c71d175db56f248731e323002301e19c347cabcf2d6899775",
+      "query_hash": "1b496b87393a1d45ab0501bb6d9f1b350bdc437631f9a79b4da07144a7481274"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "e6d37d4d0f212d4a18637b0ac87e8b2edaed192965640e80e630da5dd227ad70",
+      "candidate_index": 1,
+      "labels": [
+        "unrelated",
+        "unrelated"
+      ],
+      "positive_hash": "7d3b3873621e176ee70811f24ef3dc0f2e17b1f9aa082a037a066b342abf2aa2",
+      "query_hash": "0463014115caceb2c4cc721fe7db4b98fa2a293e7d259861541090694708b51c"
+    },
+    {
+      "agreement": false,
+      "arm": "labse",
+      "candidate_hash": "983568a86f025e5ebb434daa982339de4598a9739d0d6ff10167164d640b5590",
+      "candidate_index": 2,
+      "labels": [
+        "near_miss_hard_negative",
+        "unrelated"
+      ],
+      "positive_hash": "0ee71ede2798a78cf88691a3ef4b7630ccb5316a1b5dc725046d49ec0b3b8f0e",
+      "query_hash": "f7e04ee1be978a910c4d6fabe3df9b206995b3b6d6aa28efcfbf95f2403df0bd"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "a64d8f01c10056ea1bf22ae9bf0a32a8a06c33e4506698a8351369bdedd13f9a",
+      "candidate_index": 3,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "fc22599c05f65d1e7914cfadc1b0a78fe821001954018a33dfee9883b19844ab",
+      "query_hash": "261934132f8cebb8400d5ce6f5dc7f0561ef38db4c28cf4567d2910994caf31c"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "9bd64eddb58a0b0cb52465b31f0ab7cd25b5601591a306e556a724678dc0a7f1",
+      "candidate_index": 4,
+      "labels": [
+        "unrelated",
+        "unrelated"
+      ],
+      "positive_hash": "a647bdbc713cedfec39419a49a6cdf342c55d3f146978f7f38397e8af2495ac8",
+      "query_hash": "5347d9cff2d92cf0db019b7b9981b585106357a30a7f334dc467bdf127902928"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "be008ae9063439f579ae2dd9578d3d84448e8a77fd925d4490795582bacca4a0",
+      "candidate_index": 5,
+      "labels": [
+        "unrelated",
+        "unrelated"
+      ],
+      "positive_hash": "2b7f6f287ecf1c6311809ee777b126c936ae3eeec0d8e05d19e1c4c0238db788",
+      "query_hash": "d8d50c63db7e1504d6b4b095f4330d3402ec4f3f5f9c3ff5e2f4fc7a50ef76ba"
+    },
+    {
+      "agreement": false,
+      "arm": "labse",
+      "candidate_hash": "ed756fd17a0ec63a1e846b5efc8c5e164f303c4e7c5f88d95a3c4f86a8746aea",
+      "candidate_index": 6,
+      "labels": [
+        "unrelated",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "157647bb550684941e383985ebfc4732c784d209b4a2776d1c1717409af7fc28",
+      "query_hash": "4b057b0bd478f9bf04176def5a034b838651b4162970309cf40ceaf9a2f484ab"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "d16f4f84d572262fd00b325389900d812a49e69fa6f5f8b12b37d07bd2d44ac9",
+      "candidate_index": 7,
+      "labels": [
+        "unrelated",
+        "unrelated"
+      ],
+      "positive_hash": "072c592e7e1901957957dd70a3442fe63640c6339975f4c0b80debd201a2767d",
+      "query_hash": "9887e8289cb99759754bdaa650949ee20f449a7a054de41b92cf04727cabfa46"
+    },
+    {
+      "agreement": false,
+      "arm": "labse",
+      "candidate_hash": "983568a86f025e5ebb434daa982339de4598a9739d0d6ff10167164d640b5590",
+      "candidate_index": 8,
+      "labels": [
+        "unrelated",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "0ee71ede2798a78cf88691a3ef4b7630ccb5316a1b5dc725046d49ec0b3b8f0e",
+      "query_hash": "08a58fa5de9e5f7ce2b37dab34d294aa529c75a6b71c7291cb1df7ae1ff0753b"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "157647bb550684941e383985ebfc4732c784d209b4a2776d1c1717409af7fc28",
+      "candidate_index": 9,
+      "labels": [
+        "unrelated",
+        "unrelated"
+      ],
+      "positive_hash": "4d46088528f948f205b6cd79593c7ad3c5d4a7477c00d25e8107c8c4e83ee246",
+      "query_hash": "de5422b3d9d072a488f1f4a01578d215da595b9e1b2b51d7078a0c4da873a987"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "46bd2d16b8d70df6861eddee93fb2bc8d0cc1123ef58330d5485cf220e241b8c",
+      "candidate_index": 10,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "5fe3d7b3f20c747f5d3ca2ff02efe4d448ca94ebae613c57b9d5fec971443add",
+      "query_hash": "b9449a6883827aa065b4ed708514bd83e0a1ab19669416dc2db88905346ef8f4"
+    },
+    {
+      "agreement": true,
+      "arm": "labse",
+      "candidate_hash": "8ddd0fe2e1fc002fc1aa0cdf6a3038bd03ad63361107c8fda892372112996ae8",
+      "candidate_index": 11,
+      "labels": [
+        "near_miss_hard_negative",
+        "near_miss_hard_negative"
+      ],
+      "positive_hash": "2b7f6f287ecf1c6311809ee777b126c936ae3eeec0d8e05d19e1c4c0238db788",
+      "query_hash": "83b9e53b04b1f8be3485e8e2a1ed011e0ed2c4c13417bdf602053a05b20648d1"
+    }
+  ],
+  "schema_version": "frankengate-hard-negative-frontier-adjudication-summary-v1",
+  "source_receipt_sha256": "036cafb07f3fadb4b32dca2ad9dc54a6a953bbf562b22a48d68b884837c5eb64"
+}

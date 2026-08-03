@@ -22,6 +22,14 @@ pages can still be relevant. The full receipt is
 The next gate must adjudicate unmarked selected candidates and train the same
 reranker for every arm.
 
+A 12-candidate-per-arm, two-repeat frontier adjudication explained the
+difference: the composite produced 19/24 near-miss labels and 5/24 unrelated
+labels, while LaBSE produced 9/24 near-miss and 15/24 unrelated labels. Neither
+arm produced a judged relevant false negative (`0/24`), but repeat agreement
+was only `9/12` per arm. This supports the composite as a better hard-negative
+source on this public sample, while retaining LaBSE as a diversity/control arm.
+See [`hard-negative-frontier-adjudication-2026-08-03.md`](hard-negative-frontier-adjudication-2026-08-03.md).
+
 Likely reasons for the transfer behavior:
 
 - LaBSE's multilingual translation-ranking objective can make short technical
