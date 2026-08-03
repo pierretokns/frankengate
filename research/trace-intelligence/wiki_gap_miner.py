@@ -426,8 +426,32 @@ def mine_gap_candidates(
     for candidate in candidates:
         identity = (candidate.gap_type, candidate.key)
         previous = best.get(identity)
-        if previous is None or candidate.score > previous.score:
+        if previous is None:
             best[identity] = candidate
+            continue
+        # Do not discard query lineage merely because two users produced the
+        # same normalized key.  The old strongest-only reduction made a
+        # legitimate incomplete-procedure signal from one query disappear when
+        # an equally-scored absent-content signal arrived first.  Enterprise
+        # review needs the full set of triggering queries for replay and
+        # cross-user demand analysis.
+        query_ids = tuple(dict.fromkeys((*previous.query_ids, *candidate.query_ids)))
+        query_texts = tuple(dict.fromkeys((*previous.query_texts, *candidate.query_texts)))
+        evidence_event_ids = tuple(dict.fromkeys((*previous.evidence_event_ids, *candidate.evidence_event_ids)))
+        page_ids = tuple(dict.fromkeys((*previous.page_ids, *candidate.page_ids)))
+        best[identity] = GapCandidate(
+            gap_type=candidate.gap_type,
+            key=candidate.key,
+            score=max(previous.score, candidate.score),
+            demand_count=max(len(query_ids), previous.demand_count, candidate.demand_count),
+            session_count=max(previous.session_count, candidate.session_count),
+            user_count=max(previous.user_count, candidate.user_count),
+            query_ids=query_ids,
+            query_texts=query_texts,
+            evidence_event_ids=evidence_event_ids,
+            page_ids=page_ids,
+            explanation=previous.explanation if previous.score >= candidate.score else candidate.explanation,
+        )
     return sorted(best.values(), key=lambda item: (-item.score, item.gap_type, item.key))
 
 

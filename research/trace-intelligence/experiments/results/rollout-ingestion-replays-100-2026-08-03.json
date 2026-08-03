@@ -1,0 +1,68 @@
+{
+  "schema_version": "frankengate-rollout-ingestion-experiment-v1",
+  "cohort": {
+    "source_stats": {
+      "claude_rollouts": 3,
+      "malformed_records": 1,
+      "codex_rollouts": 3
+    },
+    "spec_count": 6
+  },
+  "raw_canonical_event_count": 20,
+  "replay_batches": 100,
+  "delivered_event_count": 2000,
+  "deduped_event_count": 20,
+  "duplicate_delivery_count": 1980,
+  "out_of_order_delivery": true,
+  "replay_safe": true,
+  "candidate_types_by_query": {
+    "q-absent": [
+      "absent_or_undiscoverable",
+      "incomplete_procedure",
+      "recurring_enterprise_demand"
+    ],
+    "q-external": [
+      "absent_or_undiscoverable",
+      "incomplete_procedure",
+      "missing_operational_knowledge",
+      "recurring_enterprise_demand"
+    ],
+    "q-incomplete": [
+      "incomplete_procedure",
+      "recurring_enterprise_demand"
+    ],
+    "q-stale": [
+      "incorrect_or_stale",
+      "recurring_enterprise_demand"
+    ]
+  },
+  "expected_positive_queries": [
+    "q-absent",
+    "q-external",
+    "q-incomplete",
+    "q-stale"
+  ],
+  "true_positive_queries": 4,
+  "false_positive_query_count": 0,
+  "positive_recall": 1.0,
+  "ablation": {
+    "without_retrieval_events": {
+      "candidate_count": 0
+    },
+    "without_outcome_feedback_events": {
+      "candidate_types": {
+        "q-absent": [
+          "absent_or_undiscoverable",
+          "recurring_enterprise_demand"
+        ],
+        "q-external": [
+          "absent_or_undiscoverable",
+          "missing_operational_knowledge",
+          "recurring_enterprise_demand"
+        ]
+      }
+    }
+  },
+  "elapsed_seconds": 0.001595,
+  "interpretation": "Native-shaped Claude/Codex records retain enough evidence for deterministic gap mining only when wiki retrieval, tool fallback, and outcome/feedback events are emitted. Replay deduplication is required before ClickHouse projection; MergeTree append alone is not idempotent."
+}
