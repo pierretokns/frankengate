@@ -1,0 +1,56 @@
+{
+  "schema_version": "frankengate-rollout-clickhouse-projection-benchmark-v1",
+  "cohort": {
+    "source_stats": {
+      "claude_rollouts": 3,
+      "malformed_records": 1,
+      "codex_rollouts": 3
+    },
+    "spec_count": 6
+  },
+  "base_event_count": 20,
+  "delivered_event_count": 20000,
+  "expected_replay_count": 20000,
+  "postgres": {
+    "deduped_row_count": 20,
+    "load_seconds": 0.42069575,
+    "query_p95_seconds": 0.0007946669999999711
+  },
+  "clickhouse": {
+    "raw_append_row_count": 20000,
+    "final_deduped_row_count": 20,
+    "load_seconds": 0.22193649999999998,
+    "query_p95_seconds": 0.002577583999999966
+  },
+  "replay_invariants": {
+    "postgres_on_conflict_deduped": true,
+    "clickhouse_final_deduped": true,
+    "clickhouse_raw_append_matches_delivery": true,
+    "postgres_clickhouse_rows_equal": true,
+    "postgres_clickhouse_candidate_outputs_equal": true,
+    "replay_safe_projection": true
+  },
+  "candidate_types_by_query": {
+    "q-absent": [
+      "absent_or_undiscoverable",
+      "incomplete_procedure",
+      "recurring_enterprise_demand"
+    ],
+    "q-external": [
+      "absent_or_undiscoverable",
+      "incomplete_procedure",
+      "missing_operational_knowledge",
+      "recurring_enterprise_demand"
+    ],
+    "q-incomplete": [
+      "incomplete_procedure",
+      "recurring_enterprise_demand"
+    ],
+    "q-stale": [
+      "incorrect_or_stale",
+      "recurring_enterprise_demand"
+    ]
+  },
+  "elapsed_seconds": 0.740192,
+  "interpretation": "ClickHouse append storage is not idempotent by itself; FINAL is required for replay-safe reads with ReplacingMergeTree. PostgreSQL primary-key ON CONFLICT deduplicates at write time. Both stores produced the same canonical rows and gap findings after deduplication."
+}
