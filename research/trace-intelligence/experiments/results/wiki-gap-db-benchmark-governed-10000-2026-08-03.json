@@ -1,0 +1,32 @@
+{
+  "schema_version": "frankengate-wiki-gap-db-benchmark-v1",
+  "source": "fixtures/governed-v1",
+  "base_event_count": 19,
+  "expanded_event_count": 190000,
+  "scale": 10000,
+  "runs": 5,
+  "rollup_rows": {
+    "postgres": 120000,
+    "clickhouse": 120000
+  },
+  "rollup_outputs_equal": true,
+  "postgres": {
+    "load_seconds": 3.2187884579999997,
+    "query": {
+      "runs": 5,
+      "p50_seconds": 0.538165834,
+      "p95_seconds": 0.5678629169999994,
+      "max_seconds": 0.5678629169999994
+    }
+  },
+  "clickhouse": {
+    "load_seconds": 0.8350946250000009,
+    "query": {
+      "runs": 5,
+      "p50_seconds": 0.11210737500000079,
+      "p95_seconds": 0.12707729199999918,
+      "max_seconds": 0.12707729199999918
+    }
+  },
+  "interpretation": "This measures analytical rollup mechanics on governed fixtures; it does not establish production-scale cost or wiki-gap prevalence."
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "frankengate-governed-wiki-gap-observation-v1",
+  "trace_count": 12,
+  "question_count": 4,
+  "wiki_observed_trace_count": 0,
+  "wiki_observation_coverage": 0.0,
+  "candidate_count": 0,
+  "candidates": [],
+  "interpretation": "No wiki gap claims are admissible until wiki retrieval/search events are emitted."
+}

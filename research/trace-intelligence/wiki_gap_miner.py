@@ -210,11 +210,18 @@ def mine_gap_candidates(
         outcomes = [event for event in query_events if event.get("event_type") == "outcome"]
         evidence = [str(event.get("event_id")) for event in query_events if event.get("event_id")]
 
-        no_evidence = not retrieved_pages or any(
+        wiki_observed = any(
+            event.get("event_type") in {"retrieval", "answer", "wiki_search"}
+            or event.get("wiki_search_attempted") is True
+            for event in query_events
+        )
+        if not wiki_observed:
+            continue
+        no_evidence = wiki_observed and (not retrieved_pages or any(
             event.get("answerable") is False
             or (isinstance(event.get("confidence"), (int, float)) and event["confidence"] < 0.4)
             for event in answer_events
-        )
+        ))
         if no_evidence:
             score = 0.55 + (0.15 if not retrieved_pages else 0.0)
             candidates.append(
@@ -312,18 +319,28 @@ def mine_gap_candidates(
     for cluster in clusters:
         if len(cluster) < 2 or len({str(q.get("user_id", "")) for q in cluster}) < 2:
             continue
+        cluster_query_ids = {str(q.get("query_id")) for q in cluster}
+        if not any(
+            str(event.get("query_id")) in cluster_query_ids
+            and (
+                event.get("event_type") in {"retrieval", "answer", "wiki_search"}
+                or event.get("wiki_search_attempted") is True
+            )
+            for event in events
+        ):
+            continue
         evidence = [
             str(event.get("event_id"))
             for event in events
             if event.get("query_id") is not None
-            and any(str(event.get("query_id")) == str(q.get("query_id")) for q in cluster)
+            and str(event.get("query_id")) in cluster_query_ids
             and event.get("event_id")
         ]
         pages_seen = [
             page_id
             for event in events
             if event.get("event_type") == "retrieval"
-            and any(str(event.get("query_id")) == str(q.get("query_id")) for q in cluster)
+            and str(event.get("query_id")) in cluster_query_ids
             for page_id in _page_ids(event)
         ]
         demand = min(1.0, 0.45 + 0.1 * len(cluster) + 0.15 * len({str(q.get("user_id", "")) for q in cluster}))
