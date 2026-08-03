@@ -37,6 +37,13 @@ new mechanisms from work already represented in the Frankengate receipts.
   artifact replay, and frontier review are already implemented in this branch;
   the new value is the specific diagnostic/provenance/lifecycle variants above.
 
+The first independent ComRAG-style trace benchmark is now complete. On 40
+chronologically sampled public sessions, centroid memory matched full-history
+shape/project recurrence at 11–12 clusters, but lost `.083` shape and project
+hit at a four-cluster budget. High/low quality routing added no lift. This is a
+proxy memory-compression result, not evidence for answer or artifact utility;
+see [`comrag-centroid-trace-benchmark-2026-08-03.md`](comrag-centroid-trace-benchmark-2026-08-03.md).
+
 ## Cross-cutting factorial
 
 The highest-value next experiment is one fixed, consented, outcome-labelled
