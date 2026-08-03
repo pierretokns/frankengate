@@ -8,7 +8,10 @@ import hashlib
 import json
 import re
 import subprocess
-import tomllib
+try:  # Python 3.11+ ships tomllib; the research venv also supports 3.9.
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - exercised on Python 3.9.
+    import tomli as tomllib
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path

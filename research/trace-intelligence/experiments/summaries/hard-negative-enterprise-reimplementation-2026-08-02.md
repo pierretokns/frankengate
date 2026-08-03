@@ -41,6 +41,20 @@ implements:
 The code explicitly labels the missing neural encoders and cross-encoder so a
 surrogate result cannot be mistaken for a paper reproduction.
 
+## Faithful neural implementation path
+
+[`enterprise_hard_negative_paper_reproduction.py`](../../enterprise_hard_negative_paper_reproduction.py)
+now implements the paper's actual model contract behind a bounded, aggregate-
+only runner: the six Table 7 encoder IDs, per-model normalized embeddings,
+concatenation, PCA(95%), both hard-negative inequalities, and an optional
+cross-encoder trained with the published margin triplet objective. It is
+covered by pure-mechanics tests and records all modeling choices in its
+receipt. It has **not** yet been run end-to-end with all six checkpoints and a
+trained reranker in this environment; missing Oracle data/configuration and
+model availability prevent calling that a full reproduction. The original
+TF-IDF implementation remains the fast control, not a substitute for this
+neural path.
+
 ## First transfer test
 
 The run uses the 400-page quality-filtered State of AI wiki corpus and the
