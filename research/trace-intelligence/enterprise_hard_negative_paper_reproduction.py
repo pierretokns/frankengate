@@ -40,6 +40,18 @@ PAPER_EMBEDDING_MODELS: tuple[str, ...] = (
     "sentence-transformers/all-mpnet-base-v2",
 )
 
+# Snapshot pins captured from Hugging Face for the current reproduction run.
+# The paper did not publish checkpoint revisions, so this manifest makes our
+# transfer results repeatable without changing the paper's model identities.
+PAPER_EMBEDDING_REVISIONS: dict[str, str] = {
+    "dunzhang/stella_en_400M_v5": "ffeb2b7ee715c226d4ffe5e4619f7dbb48624c20",
+    "jinaai/jina-embeddings-v3": "ab036b023d30b4d1138c4c3bfa9f0c445ab455d6",
+    "mixedbread-ai/mxbai-embed-large-v1": "b33106f585b9ce46904ad7443a3b52b7a63e231c",
+    "BAAI/bge-large-en-v1.5": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "sentence-transformers/LaBSE": "836121a0533e5664b21c7aacc5d22951f2b8b25b",
+    "sentence-transformers/all-mpnet-base-v2": "e8c3b32edf5434bc2275fc9bab85f82640a19130",
+}
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -93,6 +105,29 @@ def select_hard_negative(query: np.ndarray, positive: np.ndarray, candidates: np
 def encode(model: SentenceTransformer, texts: Sequence[str], role: str, batch_size: int, max_seq_length: int | None) -> np.ndarray:
     if max_seq_length is not None:
         model.max_seq_length = max_seq_length
+    # Jina v3 exposes task-qualified LoRA adapters rather than the generic
+    # encode_query/encode_document helpers.  Use the paper-relevant retrieval
+    # adapters when the loaded custom module advertises them.
+    adaptations = getattr(model, "_lora_adaptations", None)
+    if adaptations is None:
+        adaptations = next(
+            (
+                getattr(module, "_lora_adaptations", None)
+                for module in getattr(model, "_modules", {}).values()
+                if getattr(module, "_lora_adaptations", None) is not None
+            ),
+            None,
+        )
+    if adaptations and "retrieval.query" in adaptations and "retrieval.passage" in adaptations:
+        task = "retrieval.query" if role == "query" else "retrieval.passage"
+        values = model.encode(
+            list(texts),
+            task=task,
+            batch_size=batch_size,
+            normalize_embeddings=True,
+            show_progress_bar=False,
+        )
+        return np.asarray(values, dtype=np.float32)
     method = getattr(model, f"encode_{role}", None)
     if callable(method):
         values = method(list(texts), batch_size=batch_size, normalize_embeddings=True, show_progress_bar=False)
@@ -129,6 +164,7 @@ def fit_ensemble(pages: Sequence[dict[str, Any]], queries: Sequence[str], model_
             device=device,
             local_files_only=local_files_only,
             trust_remote_code=trust_remote_code,
+            revision=PAPER_EMBEDDING_REVISIONS.get(model_id),
             config_kwargs=config_kwargs,
         )
         doc_vectors = encode(model, documents, "document", batch_size, max_seq_length)
@@ -138,6 +174,7 @@ def fit_ensemble(pages: Sequence[dict[str, Any]], queries: Sequence[str], model_
             query_parts[query].append(vector)
         model_receipts.append({
             "model_id": model_id,
+            "revision": PAPER_EMBEDDING_REVISIONS.get(model_id),
             "embedding_dimension": int(doc_vectors.shape[1]),
             "elapsed_seconds": round(time.perf_counter() - started, 3),
             "device": device,
@@ -179,14 +216,14 @@ def mine_triplets(ensemble: Ensemble, questions: Sequence[dict[str, Any]], train
     return triplets, missing
 
 
-def train_triplet_reranker(triplets: Sequence[tuple[str, str, str]], pages_by_id: dict[str, dict[str, Any]], model_id: str, *, device: str, epochs: int, batch_size: int, margin: float, max_length: int) -> CrossEncoder:
+def train_triplet_reranker(triplets: Sequence[tuple[str, str, str]], pages_by_id: dict[str, dict[str, Any]], model_id: str, *, device: str, epochs: int, batch_size: int, margin: float, max_length: int, seed: int) -> CrossEncoder:
     """Fine-tune a CrossEncoder with the paper's margin triplet objective."""
     import torch
     from torch.utils.data import DataLoader
 
     reranker = CrossEncoder(model_id, num_labels=1, max_length=max_length, device=device)
     optimizer = torch.optim.AdamW(reranker.model.parameters(), lr=2e-5)
-    rng = random.Random(7)
+    rng = random.Random(seed)
     examples = list(triplets)
     for _ in range(epochs):
         rng.shuffle(examples)
@@ -228,7 +265,7 @@ def mrr(scores: Sequence[np.ndarray], questions: Sequence[dict[str, Any]], page_
     return float(np.mean(values)) if values else 0.0
 
 
-def run(data: dict[str, Any], *, candidate_limit: int, train_limit: int, test_limit: int, seed: int, device: str, batch_size: int, max_seq_length: int | None, model_ids: Sequence[str], reranker_model: str | None, reranker_epochs: int, local_files_only: bool, trust_remote_code: bool) -> dict[str, Any]:
+def run(data: dict[str, Any], *, candidate_limit: int, train_limit: int, test_limit: int, seed: int, device: str, batch_size: int, max_seq_length: int | None, model_ids: Sequence[str], reranker_model: str | None, reranker_epochs: int, local_files_only: bool, trust_remote_code: bool, triplet_limit: int | None = None) -> dict[str, Any]:
     all_questions = [question for question in data["questions"] if question.get("gold_page_ids")]
     train = all_questions[:train_limit]
     test = all_questions[train_limit : train_limit + test_limit]
@@ -237,17 +274,20 @@ def run(data: dict[str, Any], *, candidate_limit: int, train_limit: int, test_li
     queries = [str(question["question"]) for question in train + test]
     ensemble, model_receipts = fit_ensemble(pages, queries, model_ids, device=device, batch_size=batch_size, max_seq_length=max_seq_length, local_files_only=local_files_only, trust_remote_code=trust_remote_code)
     triplets, missing_triplets = mine_triplets(ensemble, train + test, range(len(train)))
+    triplets_available = len(triplets)
+    if triplet_limit is not None:
+        triplets = triplets[:triplet_limit]
     result: dict[str, Any] = {
         "schema_version": "frankengate-oracle-hard-negative-paper-reproduction-v1",
         "paper": {"title": "Hard Negative Mining for Domain-Specific Retrieval in Enterprise Systems", "arxiv": "2505.18366"},
         "dataset": {"pages": len(pages), "train_questions": len(train), "test_questions": len(test), "candidate_selection": "all positives plus stable-hash distractors", "seed": seed},
         "ensemble": {"models": list(model_ids), "model_receipts": model_receipts, "normalization": "per-model unit norm, then concatenated unit norm", "pca": "full PCA retaining 95% variance fit on bounded candidate corpus", "pca_components": int(ensemble.pca.n_components_)},
-        "hard_negative_mining": {"inequalities": ["d(Q,D) < d(Q,PD)", "d(Q,D) < d(PD,D)"], "triplets_selected": len(triplets), "triplets_unavailable": missing_triplets},
+        "hard_negative_mining": {"inequalities": ["d(Q,D) < d(Q,PD)", "d(Q,D) < d(PD,D)"], "triplets_selected": len(triplets), "triplets_available_before_limit": triplets_available, "triplets_unavailable": missing_triplets, "triplet_limit": triplet_limit},
         "claim_boundary": ["Faithful neural implementation of the published selection contract on a bounded public-style corpus.", "Exact paper reproduction remains unavailable without Oracle's private corpus, exact checkpoints/configuration, and original reranker training setup."],
     }
     if reranker_model:
         pages_by_id = {str(page.get("page_id")): page for page in pages}
-        reranker = train_triplet_reranker(triplets, pages_by_id, reranker_model, device=device, epochs=reranker_epochs, batch_size=batch_size, margin=0.2, max_length=max_seq_length or 512)
+        reranker = train_triplet_reranker(triplets, pages_by_id, reranker_model, device=device, epochs=reranker_epochs, batch_size=batch_size, margin=0.2, max_length=max_seq_length or 512, seed=seed)
         scores = rerank_scores(reranker, test, pages, batch_size=batch_size, max_length=max_seq_length or 512)
         result["reranker"] = {"model_id": reranker_model, "objective": "relu(margin - score(Q,PD) + score(Q,D_HN))", "margin": 0.2, "epochs": reranker_epochs, "mrr_at_3": mrr(scores, test, ensemble.document_ids, 3), "mrr_at_10": mrr(scores, test, ensemble.document_ids, 10)}
     else:
@@ -271,10 +311,11 @@ def main() -> int:
     parser.add_argument("--reranker-epochs", type=int, default=1)
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--trust-remote-code", action="store_true", help="Allow model repositories with custom modeling code (required by Stella).")
+    parser.add_argument("--triplet-limit", type=int, help="Use at most this many mined triplets for a controlled reranker comparison.")
     args = parser.parse_args()
     model_ids = tuple(args.models) if args.models else PAPER_EMBEDDING_MODELS
     data = json.loads(args.dataset.read_text(encoding="utf-8"))
-    result = run(data, candidate_limit=args.candidate_limit, train_limit=args.train_limit, test_limit=args.test_limit, seed=args.seed, device=args.device, batch_size=args.batch_size, max_seq_length=args.max_seq_length, model_ids=model_ids, reranker_model=args.reranker_model, reranker_epochs=args.reranker_epochs, local_files_only=args.local_files_only, trust_remote_code=args.trust_remote_code)
+    result = run(data, candidate_limit=args.candidate_limit, train_limit=args.train_limit, test_limit=args.test_limit, seed=args.seed, device=args.device, batch_size=args.batch_size, max_seq_length=args.max_seq_length, model_ids=model_ids, reranker_model=args.reranker_model, reranker_epochs=args.reranker_epochs, local_files_only=args.local_files_only, trust_remote_code=args.trust_remote_code, triplet_limit=args.triplet_limit)
     result["dataset"]["input_sha256"] = sha256(args.dataset)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")

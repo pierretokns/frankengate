@@ -1,0 +1,48 @@
+{
+  "schema_version": "frankengate-oracle-hard-negative-reranker-equal-triplets-v1",
+  "paper": "2505.18366",
+  "dataset": {
+    "source": "nvidia/TechQA-RAG-Eval",
+    "fixture_sha256": "e90f42eea14c1c3fb3769b9b892c18c773f05c82efc26acc292c45e2c18e1abb",
+    "pages": 500,
+    "train_questions": 100,
+    "test_questions": 100,
+    "candidate_limit": 500,
+    "seed": 7,
+    "max_seq_length": 256
+  },
+  "fixed_reranker": {
+    "model_id": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "objective": "relu(margin - score(Q,PD) + score(Q,D_HN))",
+    "margin": 0.2,
+    "epochs": 1,
+    "batch_size": 32,
+    "triplet_limit": 23
+  },
+  "arms": [
+    {
+      "name": "paper_six_encoder_composite",
+      "triplets_available_before_limit": 23,
+      "triplets_used": 23,
+      "mrr_at_3": 0.6766666666666665,
+      "mrr_at_10": 0.6949801587301587
+    },
+    {
+      "name": "single_labse",
+      "triplets_available_before_limit": 56,
+      "triplets_used": 23,
+      "mrr_at_3": 0.6733333333333333,
+      "mrr_at_10": 0.6928849206349206
+    }
+  ],
+  "deltas_composite_minus_labse": {
+    "mrr_at_3": 0.0033333333333331883,
+    "mrr_at_10": 0.002095238095238062
+  },
+  "claim_boundary": [
+    "This equalizes the number of triplets but uses one seed and one epoch.",
+    "The MRR difference is not statistically meaningful without repeated seeds and reviewed labels.",
+    "No random or lexical negative arm and no zero-shot baseline are included."
+  ],
+  "next_gate": "Run three seeds and random/lexical controls, then evaluate false-negative rates on identifier and schema-collision slices."
+}

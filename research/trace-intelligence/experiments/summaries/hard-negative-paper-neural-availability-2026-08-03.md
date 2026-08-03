@@ -7,12 +7,13 @@ CPU fixture from NVIDIA's public TechQA-RAG-Eval data: 50 candidate pages and
 2 train/2 test questions. It tests that the checkpoint can load and that the
 two published inequalities select triplets; it is not a quality benchmark.
 
-Five exact checkpoints completed on CPU. Stella initially failed because its
-custom code defaults to `xformers`; the model card documents a CPU path with
+All six exact checkpoints now complete on CPU. Stella initially failed because
+its custom code defaults to `xformers`; the model card documents a CPU path with
 `use_memory_efficient_attention=False` and `unpad_inputs=False`, which is now
-implemented and succeeds. Jina remains blocked only by a missing relative
-module in the local dynamic-code cache; a clean local snapshot is being
-retried. No checkpoint was silently replaced with a newer model.
+implemented and succeeds. Jina required fetching its external
+`xlm-roberta-flash-implementation` code and using its `retrieval.query` and
+`retrieval.passage` adapters; it now succeeds as well. No checkpoint was
+silently replaced with a newer model.
 
 On this Apple Silicon host, `mlx-embedding-models` loaded BGE-large and mxbai,
 but does not support MPNet. That is a backend compatibility result, not a

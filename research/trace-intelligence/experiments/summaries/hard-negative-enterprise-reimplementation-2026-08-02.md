@@ -55,13 +55,14 @@ model availability prevent calling that a full reproduction. The original
 TF-IDF implementation remains the fast control, not a substitute for this
 neural path.
 
-The bounded availability receipt now shows five of the six exact public
+The bounded availability receipt first showed five of the six exact public
 checkpoint IDs loading and executing the selector on CPU. Stella required its
-documented CPU configuration to disable xformers; Jina's remote-code cache is
-missing a relative module and is being retried from a clean snapshot. This is
-an implementation/environment boundary, not evidence that either model should
-be dropped. See
-[`hard-negative-paper-neural-availability-2026-08-03.md`](hard-negative-paper-neural-availability-2026-08-03.md).
+documented CPU configuration to disable xformers. Jina required its external
+remote-code repository and its task-qualified retrieval adapters; those are now
+handled by the implementation. The full six-model composite executes on the
+300-page transfer fixture. See
+[`hard-negative-paper-neural-availability-2026-08-03.md`](hard-negative-paper-neural-availability-2026-08-03.md)
+and the composite comparison receipt.
 
 ## First transfer test
 

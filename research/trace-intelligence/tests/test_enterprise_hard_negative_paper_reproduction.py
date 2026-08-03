@@ -2,7 +2,9 @@ import numpy as np
 
 from enterprise_hard_negative_paper_reproduction import (
     PAPER_EMBEDDING_MODELS,
+    PAPER_EMBEDDING_REVISIONS,
     bounded_pages,
+    encode,
     select_hard_negative,
 )
 
@@ -10,6 +12,8 @@ from enterprise_hard_negative_paper_reproduction import (
 def test_paper_encoder_manifest_has_six_distinct_models():
     assert len(PAPER_EMBEDDING_MODELS) == 6
     assert len(set(PAPER_EMBEDDING_MODELS)) == 6
+    assert set(PAPER_EMBEDDING_MODELS) == set(PAPER_EMBEDDING_REVISIONS)
+    assert all(len(revision) == 40 for revision in PAPER_EMBEDDING_REVISIONS.values())
 
 
 def test_published_inequalities_select_close_but_positive_dissimilar_candidate():
@@ -28,3 +32,22 @@ def test_bounded_pages_keeps_required_positive_ids():
     selected = bounded_pages(pages, {"3", "11"}, 5, seed=7)
     assert {"3", "11"}.issubset({str(page["page_id"]) for page in selected})
     assert len(selected) == 5
+
+
+def test_jina_style_task_adapters_use_retrieval_roles():
+    class Transformer:
+        _lora_adaptations = ["retrieval.query", "retrieval.passage"]
+
+    class Model:
+        _modules = {"transformer": Transformer()}
+        max_seq_length = 512
+
+        def encode(self, texts, *, task, batch_size, normalize_embeddings, show_progress_bar):
+            assert task == "retrieval.passage"
+            assert batch_size == 2
+            assert normalize_embeddings is True
+            assert show_progress_bar is False
+            return np.ones((len(texts), 3), dtype=np.float32)
+
+    values = encode(Model(), ["document"], "document", 2, 128)
+    assert values.shape == (1, 3)

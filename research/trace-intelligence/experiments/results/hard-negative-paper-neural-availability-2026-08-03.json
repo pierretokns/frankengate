@@ -7,9 +7,10 @@
   "fixture": {
     "source": "nvidia/TechQA-RAG-Eval",
     "fixture_path": "techqa-small.json",
-    "pages": 50,
-    "train_questions": 2,
-    "test_questions": 2,
+    "smoke_variants": [
+      {"candidate_limit": 50, "train_questions": 5, "test_questions": 5, "models": ["mixedbread-ai/mxbai-embed-large-v1", "BAAI/bge-large-en-v1.5", "sentence-transformers/LaBSE", "sentence-transformers/all-mpnet-base-v2"]},
+      {"candidate_limit": 20, "train_questions": 2, "test_questions": 2, "models": ["dunzhang/stella_en_400M_v5", "jinaai/jina-embeddings-v3"]}
+    ],
     "seed": 7,
     "candidate_selection": "all positives plus stable-hash distractors",
     "raw_text_published": false
@@ -24,10 +25,10 @@
     },
     {
       "model_id": "jinaai/jina-embeddings-v3",
-      "status": "blocked",
-      "notes": "Sentence-Transformers dynamic-module cache lacked jina's relative rotary.py file; a clean local snapshot was requested for a retry.",
-      "triplets_selected": null,
-      "triplets_unavailable": null
+      "status": "succeeded",
+      "notes": "Loaded after fetching the external xlm-roberta-flash-implementation code repository and using retrieval.query/retrieval.passage adapters.",
+      "triplets_selected": 0,
+      "triplets_unavailable": 2
     },
     {
       "model_id": "mixedbread-ai/mxbai-embed-large-v1",
