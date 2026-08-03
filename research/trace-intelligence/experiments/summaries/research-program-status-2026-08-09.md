@@ -14,6 +14,30 @@ The accompanying [skill-in-use verifier protocol](../protocols/skill-in-use-veri
 defines the smallest run-level contract for testing those mechanisms without
 confusing proposal quality with downstream utility.
 
+## New independent follow-ups (2026-08-03)
+
+Two additional mechanisms have now been run under the same evidence discipline:
+
+- The [A-RAG frontier reproduction](wiki-arag-frontier-reproduction-2026-08-03.md)
+  exposed keyword, semantic, and chunk-read tools to Luna over the existing
+  1/5/10/25-wiki fixture. It matched the fixed-hybrid baseline at
+  `1.00/1.00/1.00/0.75` answer accuracy and had higher p95 latency at 25 wikis.
+  Hierarchical tool choice is therefore conditional future work, not a default
+  replacement for exact/scope retrieval.
+- The [AgentTrails provenance probe](agenttrails-trace-graph-benchmark-2026-08-03.md)
+  represented public trajectories as action→artifact-schema/status→action
+  graphs. Graph retrieval improved next-tool-family prediction over a
+  tool-family-only control, while action-shape retrieval remained stronger for
+  exact artifact-schema prediction. The production implication is to use graph
+  structure as a reranking/explanation feature alongside exact identity,
+  scope, and replay gates.
+
+These results narrow the architecture: do not stack every new RAG or memory
+idea by default. Preserve deterministic identity/scope/authority and
+validated-artifact replay as the spine; add graph, dense, adaptive retrieval,
+and frontier review only as separately measured candidate-generation or
+diagnostic layers.
+
 ## What is now supported by evidence
 
 ### 1. Validated artifact mechanics
