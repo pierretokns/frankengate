@@ -28,6 +28,21 @@ cross-user demand, missing operational knowledge, failed procedure, and
 absent/undiscoverable evidence. The successful-lookup control produced no
 candidate.
 
+The expanded labeled cohort contained 182 queries across six positive strata
+and three controls (successful lookup, no wiki observation, and explicit
+out-of-scope). The miner achieved deterministic precision `1.00`, recall
+`1.00`, and F1 `1.00` on that cohort. This is a mechanics result, not a claim
+about production prevalence: the labels are generated from controlled event
+patterns. Hard-negative tests also found and fixed two real detector errors:
+successful repeated demand was being promoted as a gap, and provider failures
+after good wiki evidence were being misclassified as incomplete procedures.
+Stale-page age now requires correction or failed-outcome corroboration.
+
+A cohort-size sweep from 11 to 902 queries remained at precision `1.00`,
+recall `1.00`, and F1 `1.00`. Because the cohort is deterministic, this is a
+stability check for implementation regressions—not independent evidence of
+generalization.
+
 The 12-file governed Frankengate conformance cohort was then adapted through
 `canonical_governed_to_wiki_gap.py`. It contains four user requests and
 outcomes, but **zero explicit wiki-search or retrieval events**. The miner
@@ -48,6 +63,12 @@ observations, so it cannot estimate real gap prevalence. It does show that the
 ClickHouse projection is materially faster for repeated analytical rollups at
 this expanded volume, while PostgreSQL remains sufficient for the tiny source
 cohort and authoritative workflow state.
+
+The labeled 724,000-event workload exercised four query patterns—query rollup,
+cross-user session demand, failure windows, and keyword search—with identical
+PostgreSQL and ClickHouse outputs. At this size, ClickHouse p95 was 0.138s,
+0.032s, 0.016s, and 0.006s respectively; PostgreSQL was 0.590s, 0.288s,
+0.305s, and 0.083s.
 
 ## Verification
 

@@ -11,21 +11,89 @@
   },
   "rollup_outputs_equal": true,
   "postgres": {
-    "load_seconds": 16.004009416000002,
-    "query": {
-      "runs": 3,
-      "p50_seconds": 1.9193679159999988,
-      "p95_seconds": 2.0950852500000003,
-      "max_seconds": 2.0950852500000003
+    "load_seconds": 16.489768124999998,
+    "queries": {
+      "query_rollup": {
+        "rows": 600000,
+        "equal_to_clickhouse": true,
+        "timing": {
+          "runs": 3,
+          "p50_seconds": 1.7947182089999991,
+          "p95_seconds": 1.9202456249999997,
+          "max_seconds": 1.9202456249999997
+        }
+      },
+      "session_demand": {
+        "rows": 0,
+        "equal_to_clickhouse": true,
+        "timing": {
+          "runs": 3,
+          "p50_seconds": 0.4550221669999992,
+          "p95_seconds": 0.4570387079999989,
+          "max_seconds": 0.4570387079999989
+        }
+      },
+      "failure_window": {
+        "rows": 224,
+        "equal_to_clickhouse": true,
+        "timing": {
+          "runs": 3,
+          "p50_seconds": 0.45723320800000167,
+          "p95_seconds": 0.4630522500000005,
+          "max_seconds": 0.4630522500000005
+        }
+      },
+      "keyword_search": {
+        "rows": 0,
+        "equal_to_clickhouse": true,
+        "timing": {
+          "runs": 3,
+          "p50_seconds": 0.10336962499999913,
+          "p95_seconds": 0.1034146249999992,
+          "max_seconds": 0.1034146249999992
+        }
+      }
     }
   },
   "clickhouse": {
-    "load_seconds": 4.196330332999999,
-    "query": {
-      "runs": 3,
-      "p50_seconds": 0.42805874999999816,
-      "p95_seconds": 0.44008187499999707,
-      "max_seconds": 0.44008187499999707
+    "load_seconds": 4.115553624999997,
+    "queries": {
+      "query_rollup": {
+        "rows": 600000,
+        "timing": {
+          "runs": 3,
+          "p50_seconds": 0.42790379200000217,
+          "p95_seconds": 0.4379060840000051,
+          "max_seconds": 0.4379060840000051
+        }
+      },
+      "session_demand": {
+        "rows": 0,
+        "timing": {
+          "runs": 3,
+          "p50_seconds": 0.021390582999998742,
+          "p95_seconds": 0.023042625000002204,
+          "max_seconds": 0.023042625000002204
+        }
+      },
+      "failure_window": {
+        "rows": 224,
+        "timing": {
+          "runs": 3,
+          "p50_seconds": 0.017427666999999758,
+          "p95_seconds": 0.018071374999998113,
+          "max_seconds": 0.018071374999998113
+        }
+      },
+      "keyword_search": {
+        "rows": 0,
+        "timing": {
+          "runs": 3,
+          "p50_seconds": 0.0031256250000026853,
+          "p95_seconds": 0.010258958999997958,
+          "max_seconds": 0.010258958999997958
+        }
+      }
     }
   },
   "interpretation": "This measures analytical rollup mechanics on governed fixtures; it does not establish production-scale cost or wiki-gap prevalence."

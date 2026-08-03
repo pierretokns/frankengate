@@ -48,12 +48,7 @@ COLUMNS = (
 )
 
 
-def fixture_rows(root: Path, scale: int) -> list[tuple[Any, ...]]:
-    base: list[dict[str, Any]] = []
-    for path in sorted(root.glob("*.json")):
-        trace = json.loads(path.read_text(encoding="utf-8"))
-        events, _ = adapt_trace(trace)
-        base.extend(events)
+def events_to_rows(base: Sequence[dict[str, Any]], scale: int) -> list[tuple[Any, ...]]:
     rows: list[tuple[Any, ...]] = []
     for repeat in range(scale):
         tenant = f"governed-fixture-{repeat % 16:02d}"
@@ -81,6 +76,15 @@ def fixture_rows(root: Path, scale: int) -> list[tuple[Any, ...]]:
                 )
             )
     return rows
+
+
+def fixture_rows(root: Path, scale: int) -> list[tuple[Any, ...]]:
+    base: list[dict[str, Any]] = []
+    for path in sorted(root.glob("*.json")):
+        trace = json.loads(path.read_text(encoding="utf-8"))
+        events, _ = adapt_trace(trace)
+        base.extend(events)
+    return events_to_rows(base, scale)
 
 
 def percentile(values: Sequence[float], fraction: float) -> float:
@@ -132,6 +136,88 @@ def clickhouse_query(client: Any) -> list[tuple[Any, ...]]:
     return [tuple(row) for row in client.query(query).result_rows]
 
 
+def postgres_session_query(connection: Any) -> list[tuple[Any, ...]]:
+    query = f"""
+        SELECT tenant_id, lower(text) AS normalized_text,
+               COUNT(DISTINCT user_id) AS distinct_users,
+               COUNT(DISTINCT session_id) AS distinct_sessions,
+               COUNT(*) AS demand_count
+        FROM {PG_TABLE}
+        WHERE text <> ''
+        GROUP BY tenant_id, normalized_text
+        HAVING COUNT(DISTINCT user_id) >= 2
+        ORDER BY tenant_id, normalized_text
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+def clickhouse_session_query(client: Any) -> list[tuple[Any, ...]]:
+    query = f"""
+        SELECT tenant_id, lowerUTF8(text) AS normalized_text,
+               uniqExact(user_id) AS distinct_users,
+               uniqExact(session_id) AS distinct_sessions,
+               count() AS demand_count
+        FROM {CH_TABLE}
+        WHERE text != ''
+        GROUP BY tenant_id, normalized_text
+        HAVING distinct_users >= 2
+        ORDER BY tenant_id, normalized_text
+    """
+    return [tuple(row) for row in client.query(query).result_rows]
+
+
+def postgres_failure_query(connection: Any) -> list[tuple[Any, ...]]:
+    query = f"""
+        SELECT tenant_id, to_char(date_trunc('hour', event_time), 'YYYY-MM-DD HH24:MI:SS') AS event_hour,
+               COUNT(*) FILTER (WHERE outcome_status IN ('failure', 'failed', 'rollback')) AS failed,
+               COUNT(*) FILTER (WHERE feedback_kind IN ('correction', 'wrong', 'stale')) AS corrected
+        FROM {PG_TABLE}
+        GROUP BY tenant_id, event_hour
+        ORDER BY tenant_id, event_hour
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+def clickhouse_failure_query(client: Any) -> list[tuple[Any, ...]]:
+    query = f"""
+        SELECT tenant_id, formatDateTime(toStartOfHour(event_time), '%Y-%m-%d %H:%i:%S') AS event_hour,
+               countIf(outcome_status IN ('failure', 'failed', 'rollback')) AS failed,
+               countIf(feedback_kind IN ('correction', 'wrong', 'stale')) AS corrected
+        FROM {CH_TABLE}
+        GROUP BY tenant_id, event_hour
+        ORDER BY tenant_id, event_hour
+    """
+    return [tuple(row) for row in client.query(query).result_rows]
+
+
+def postgres_keyword_query(connection: Any) -> list[tuple[Any, ...]]:
+    query = f"""
+        SELECT tenant_id, COUNT(*) AS keyword_hits
+        FROM {PG_TABLE}
+        WHERE text ILIKE '%mantle%'
+        GROUP BY tenant_id
+        ORDER BY tenant_id
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+def clickhouse_keyword_query(client: Any) -> list[tuple[Any, ...]]:
+    query = f"""
+        SELECT tenant_id, count() AS keyword_hits
+        FROM {CH_TABLE}
+        WHERE positionCaseInsensitive(text, 'mantle') > 0
+        GROUP BY tenant_id
+        ORDER BY tenant_id
+    """
+    return [tuple(row) for row in client.query(query).result_rows]
+
+
 def run_repeated(fn: Any, runs: int) -> tuple[list[tuple[Any, ...]], list[float]]:
     times: list[float] = []
     result: list[tuple[Any, ...]] = []
@@ -145,6 +231,7 @@ def run_repeated(fn: Any, runs: int) -> tuple[list[tuple[Any, ...]], list[float]
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--fixture-root", type=Path, required=True)
+    parser.add_argument("--cohort", choices=("governed", "labeled"), default="governed")
     parser.add_argument("--scale", type=int, default=1000)
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--postgres-dsn", default="postgresql://postgres:fgtest@127.0.0.1:55432/postgres")
@@ -160,7 +247,19 @@ def main() -> int:
     import clickhouse_connect
     import psycopg
 
-    rows = fixture_rows(args.fixture_root, args.scale)
+    if args.cohort == "labeled":
+        from wiki_gap_labeled_experiment import build_cohort
+
+        base_events, _, _ = build_cohort(20)
+        source_name = "wiki-gap-labeled-experiment-v1"
+    else:
+        base_events = []
+        for path in sorted(args.fixture_root.glob("*.json")):
+            trace = json.loads(path.read_text(encoding="utf-8"))
+            adapted, _ = adapt_trace(trace)
+            base_events.extend(adapted)
+        source_name = "fixtures/governed-v1"
+    rows = events_to_rows(base_events, args.scale)
     with psycopg.connect(args.postgres_dsn) as pg:
         with pg.cursor() as cursor:
             cursor.execute(f"DROP TABLE IF EXISTS {PG_TABLE}")
@@ -183,6 +282,9 @@ def main() -> int:
             pg.commit()
             pg_load_seconds = time.perf_counter() - started
         pg_result, pg_times = run_repeated(lambda: postgres_query(pg), args.runs)
+        pg_session_result, pg_session_times = run_repeated(lambda: postgres_session_query(pg), args.runs)
+        pg_failure_result, pg_failure_times = run_repeated(lambda: postgres_failure_query(pg), args.runs)
+        pg_keyword_result, pg_keyword_times = run_repeated(lambda: postgres_keyword_query(pg), args.runs)
 
     ch = clickhouse_connect.get_client(
         host=args.clickhouse_host,
@@ -208,19 +310,38 @@ def main() -> int:
     ch.insert(CH_TABLE, ch_rows, column_names=list(COLUMNS))
     ch_load_seconds = time.perf_counter() - started
     ch_result, ch_times = run_repeated(lambda: clickhouse_query(ch), args.runs)
+    ch_session_result, ch_session_times = run_repeated(lambda: clickhouse_session_query(ch), args.runs)
+    ch_failure_result, ch_failure_times = run_repeated(lambda: clickhouse_failure_query(ch), args.runs)
+    ch_keyword_result, ch_keyword_times = run_repeated(lambda: clickhouse_keyword_query(ch), args.runs)
     ch.close()
 
     receipt = {
         "schema_version": "frankengate-wiki-gap-db-benchmark-v1",
-        "source": "fixtures/governed-v1",
-        "base_event_count": len(fixture_rows(args.fixture_root, 1)),
+        "source": source_name,
+        "base_event_count": len(base_events),
         "expanded_event_count": len(rows),
         "scale": args.scale,
         "runs": args.runs,
         "rollup_rows": {"postgres": len(pg_result), "clickhouse": len(ch_result)},
         "rollup_outputs_equal": [list(row) for row in pg_result] == [list(row) for row in ch_result],
-        "postgres": {"load_seconds": pg_load_seconds, "query": summarize_times(pg_times)},
-        "clickhouse": {"load_seconds": ch_load_seconds, "query": summarize_times(ch_times)},
+        "postgres": {
+            "load_seconds": pg_load_seconds,
+            "queries": {
+                "query_rollup": {"rows": len(pg_result), "equal_to_clickhouse": [list(row) for row in pg_result] == [list(row) for row in ch_result], "timing": summarize_times(pg_times)},
+                "session_demand": {"rows": len(pg_session_result), "equal_to_clickhouse": [list(row) for row in pg_session_result] == [list(row) for row in ch_session_result], "timing": summarize_times(pg_session_times)},
+                "failure_window": {"rows": len(pg_failure_result), "equal_to_clickhouse": [list(row) for row in pg_failure_result] == [list(row) for row in ch_failure_result], "timing": summarize_times(pg_failure_times)},
+                "keyword_search": {"rows": len(pg_keyword_result), "equal_to_clickhouse": [list(row) for row in pg_keyword_result] == [list(row) for row in ch_keyword_result], "timing": summarize_times(pg_keyword_times)},
+            },
+        },
+        "clickhouse": {
+            "load_seconds": ch_load_seconds,
+            "queries": {
+                "query_rollup": {"rows": len(ch_result), "timing": summarize_times(ch_times)},
+                "session_demand": {"rows": len(ch_session_result), "timing": summarize_times(ch_session_times)},
+                "failure_window": {"rows": len(ch_failure_result), "timing": summarize_times(ch_failure_times)},
+                "keyword_search": {"rows": len(ch_keyword_result), "timing": summarize_times(ch_keyword_times)},
+            },
+        },
         "interpretation": "This measures analytical rollup mechanics on governed fixtures; it does not establish production-scale cost or wiki-gap prevalence.",
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

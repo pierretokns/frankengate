@@ -1,0 +1,66 @@
+{
+  "schema_version": "frankengate-wiki-gap-labeled-sweep-v1",
+  "sizes": [
+    {
+      "per_stratum": 1,
+      "events": 40,
+      "queries": 11,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_count": 0,
+      "false_negative_count": 0
+    },
+    {
+      "per_stratum": 3,
+      "events": 112,
+      "queries": 29,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_count": 0,
+      "false_negative_count": 0
+    },
+    {
+      "per_stratum": 10,
+      "events": 364,
+      "queries": 92,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_count": 0,
+      "false_negative_count": 0
+    },
+    {
+      "per_stratum": 20,
+      "events": 724,
+      "queries": 182,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_count": 0,
+      "false_negative_count": 0
+    },
+    {
+      "per_stratum": 50,
+      "events": 1804,
+      "queries": 452,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_count": 0,
+      "false_negative_count": 0
+    },
+    {
+      "per_stratum": 100,
+      "events": 3604,
+      "queries": 902,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_count": 0,
+      "false_negative_count": 0
+    }
+  ],
+  "interpretation": "Controlled cohort-size stability only; not evidence of production prevalence or human-label agreement."
+}

@@ -64,6 +64,7 @@ class GapCandidate:
     demand_count: int
     session_count: int
     user_count: int
+    query_ids: tuple[str, ...]
     query_texts: tuple[str, ...]
     evidence_event_ids: tuple[str, ...]
     page_ids: tuple[str, ...]
@@ -77,6 +78,7 @@ class GapCandidate:
             "demand_count": self.demand_count,
             "session_count": self.session_count,
             "user_count": self.user_count,
+            "query_ids": list(self.query_ids),
             "query_texts": list(self.query_texts),
             "evidence_event_ids": list(self.evidence_event_ids),
             "page_ids": list(self.page_ids),
@@ -151,6 +153,13 @@ def _candidate(
         demand_count=len(questions),
         session_count=len({str(q.get("session_id", "")) for q in questions}),
         user_count=len({str(q.get("user_id", "")) for q in questions}),
+        query_ids=tuple(
+            dict.fromkeys(
+                str(q.get("query_id"))
+                for q in questions
+                if q.get("query_id") is not None
+            )
+        ),
         query_texts=tuple(
             str(q.get("text", "")).strip()
             for q in questions
@@ -197,6 +206,12 @@ def mine_gap_candidates(
             if str(question.get("query_id")) == query_id
         ]
         if not query_questions:
+            continue
+        if any(
+            event.get("event_type") == "wiki_scope"
+            and str(event.get("scope_status", "")).casefold() == "out_of_scope"
+            for event in query_events
+        ):
             continue
         question = query_questions[0]
         query_text = str(question["text"])
@@ -262,7 +277,20 @@ def mine_gap_candidates(
                 )
             )
 
-        if any(str(event.get("status", "")).casefold() in {"failure", "failed", "rollback"} for event in outcomes):
+        failed_outcomes = [
+            event
+            for event in outcomes
+            if str(event.get("status", "")).casefold() in {"failure", "failed", "rollback"}
+        ]
+        non_wiki_failure_domains = {
+            str(event.get("failure_domain", "")).casefold()
+            for event in failed_outcomes
+            if event.get("failure_domain") is not None
+        }
+        wiki_relevant_failure = not non_wiki_failure_domains or not non_wiki_failure_domains.intersection(
+            {"provider", "authorization", "quota", "network", "tool_runtime", "user_cancelled"}
+        )
+        if failed_outcomes and wiki_relevant_failure:
             candidates.append(
                 _candidate(
                     "incomplete_procedure",
@@ -292,7 +320,11 @@ def mine_gap_candidates(
                 and event_time is not None
                 and (event_time - page_by_id[page_id].updated_at).days >= stale_after_days
             ]
-            if stale_pages and (feedback or outcomes):
+            corroborated_staleness = bool(feedback) or any(
+                str(event.get("status", "")).casefold() in {"failure", "failed", "rollback"}
+                for event in outcomes
+            )
+            if stale_pages and corroborated_staleness:
                 candidates.append(
                     _candidate(
                         "stale_documentation",
@@ -319,16 +351,49 @@ def mine_gap_candidates(
     for cluster in clusters:
         if len(cluster) < 2 or len({str(q.get("user_id", "")) for q in cluster}) < 2:
             continue
-        cluster_query_ids = {str(q.get("query_id")) for q in cluster}
-        if not any(
-            str(event.get("query_id")) in cluster_query_ids
-            and (
+        eligible_questions: list[Mapping[str, Any]] = []
+        for question in cluster:
+            question_query_id = str(question.get("query_id"))
+            question_events = by_query.get(question_query_id, [])
+            if any(
+                event.get("event_type") == "wiki_scope"
+                and str(event.get("scope_status", "")).casefold() == "out_of_scope"
+                for event in question_events
+            ):
+                continue
+            wiki_observed = any(
                 event.get("event_type") in {"retrieval", "answer", "wiki_search"}
                 or event.get("wiki_search_attempted") is True
+                for event in question_events
             )
-            for event in events
-        ):
+            if not wiki_observed:
+                continue
+            retrieved = tuple(
+                page_id
+                for event in question_events
+                if event.get("event_type") == "retrieval"
+                for page_id in _page_ids(event)
+            )
+            failed = any(
+                str(event.get("status", "")).casefold() in {"failure", "failed", "rollback"}
+                for event in question_events
+            )
+            corrected = any(
+                str(event.get("kind", "")).casefold() in {"correction", "wrong", "stale"}
+                for event in question_events
+            )
+            weak_answer = any(
+                event.get("answerable") is False
+                or (isinstance(event.get("confidence"), (int, float)) and event["confidence"] < 0.4)
+                for event in question_events
+                if event.get("event_type") == "answer"
+            )
+            if not retrieved or failed or corrected or weak_answer:
+                eligible_questions.append(question)
+        if len(eligible_questions) < 2 or len({str(q.get("user_id", "")) for q in eligible_questions}) < 2:
             continue
+        cluster = eligible_questions
+        cluster_query_ids = {str(q.get("query_id")) for q in cluster}
         evidence = [
             str(event.get("event_id"))
             for event in events

@@ -1,0 +1,48 @@
+{
+  "schema_version": "frankengate-wiki-gap-labeled-experiment-v1",
+  "seed": 20260803,
+  "gold_query_count": 182,
+  "candidate_count": 17,
+  "predicted_positive_count": 122,
+  "actual_positive_count": 122,
+  "true_positive_count": 122,
+  "false_positive_count": 0,
+  "false_negative_count": 0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "category_recall": {
+    "absent": 1.0,
+    "discoverability": 1.0,
+    "external_fallback": 1.0,
+    "incomplete": 1.0,
+    "stale": 1.0,
+    "contradiction": 1.0,
+    "success_control": 0.0,
+    "no_wiki_observation": 0.0,
+    "out_of_scope": 0.0
+  },
+  "predicted_types": {
+    "recurring_enterprise_demand": 6,
+    "incorrect_or_stale": 2,
+    "missing_operational_knowledge": 1,
+    "incomplete_procedure": 4,
+    "absent_or_undiscoverable": 3,
+    "stale_documentation": 1
+  },
+  "false_positive_query_ids": [],
+  "false_negative_query_ids": [],
+  "interpretation": "This is a deterministic detector evaluation; frontier adjudication and human labels remain required for production promotion.",
+  "event_count": 724,
+  "strata": [
+    "absent",
+    "discoverability",
+    "external_fallback",
+    "incomplete",
+    "stale",
+    "contradiction",
+    "success_control",
+    "no_wiki_observation",
+    "out_of_scope"
+  ]
+}
