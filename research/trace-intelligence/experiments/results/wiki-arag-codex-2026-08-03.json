@@ -1,0 +1,2068 @@
+{
+  "claim_boundary": "A-RAG-style hierarchical tool-choice loop over a synthetic fixture. It measures adaptive retrieval and answer handling, not native MCP approval behavior, Wikipedia quality, or enterprise transfer.",
+  "corpus": {
+    "pages": 100,
+    "sha256": "9a48b266dfc5b7260a1800b01ec6e5f84be948a9e690f1860b5c868fed1f8311",
+    "wikis": 25
+  },
+  "protocol": {
+    "backend": "fts+tfidf",
+    "harness": "Codex CLI structured JSON action loop",
+    "max_steps": 5,
+    "model": "gpt-5.6-luna",
+    "native_mcp": false,
+    "raw_traces_committed": false,
+    "retrieval_tools": [
+      "keyword_search",
+      "semantic_search",
+      "read_chunk"
+    ],
+    "workers": 2
+  },
+  "records": [
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 1,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 26423.76775,
+      "loaded_gold": true,
+      "question_id": "wiki-00-exact",
+      "searched_gold": true,
+      "slice": "exact_identifier",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 1.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.6077919078285904,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.5399701279303867,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "The preferred endpoint for Atlas-00 is atlas-00.us-east-1.internal.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 1,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 28222.33575,
+      "loaded_gold": true,
+      "question_id": "wiki-00-semantic",
+      "searched_gold": true,
+      "slice": "semantic_paraphrase",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 1.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.6077919078285904,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.5399701279303867,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "Atlas-00 normally deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 1,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/overview"
+      ],
+      "latency_ms": 31653.066417,
+      "loaded_gold": true,
+      "question_id": "wiki-00-alias",
+      "searched_gold": true,
+      "slice": "alias",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "bluebird-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 1.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/overview",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/overview",
+            "text": "Atlas-00 system overview\nAtlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "bluebird-00 is owned by team-1 and runs in us-east-1.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 1,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 23098.544417,
+      "loaded_gold": true,
+      "question_id": "wiki-00-cross",
+      "searched_gold": true,
+      "slice": "cross_wiki_disambiguation",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas us-east-1 deployment window"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 0.4503964640921341,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.40938351329862976,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.0,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "Atlas deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 1,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [],
+      "latency_ms": 28004.341916,
+      "loaded_gold": false,
+      "question_id": "nil-nonexistent-system",
+      "searched_gold": false,
+      "slice": "nil",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "semantic_search": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Zeta-99 deployment window"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 0.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "semantic_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "deployment window for the Zeta-99 system"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.21777838715166842,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.14938778893939592,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 0.1438404529827005,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.04762488561989344,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "No deployment window is documented for the nonexistent Zeta-99 system. Abstention: the retrieved records concern Atlas-00, not Zeta-99.",
+          "step": 3
+        }
+      ],
+      "wiki_id": null
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 5,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 26808.367875,
+      "loaded_gold": true,
+      "question_id": "wiki-00-exact",
+      "searched_gold": true,
+      "slice": "exact_identifier",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 1.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.6077919078285894,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.5399701279303867,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "atlas-00.us-east-1.internal",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 5,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 23576.467041,
+      "loaded_gold": true,
+      "question_id": "wiki-00-semantic",
+      "searched_gold": true,
+      "slice": "semantic_paraphrase",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 1.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.6077919078285894,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.5399701279303867,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "Atlas-00 normally deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 5,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/overview"
+      ],
+      "latency_ms": 25553.890833,
+      "loaded_gold": true,
+      "question_id": "wiki-00-alias",
+      "searched_gold": true,
+      "slice": "alias",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "bluebird-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 1.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/overview",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/overview",
+            "text": "Atlas-00 system overview\nAtlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "bluebird-00 is owned by team-1 and runs in us-east-1.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 5,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 24233.945625,
+      "loaded_gold": true,
+      "question_id": "wiki-00-cross",
+      "searched_gold": true,
+      "slice": "cross_wiki_disambiguation",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas us-east-1 deployment window"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.7669744017573453,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-01/operations",
+              "score": 5.023109277911662e-07,
+              "snippet": "Atlas-01 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-2. The preferred endpoint is atlas-01.us-east-2.internal. Rollbacks are owned by team-2.",
+              "title": "Atlas-01 deployment operations",
+              "wiki_id": "wiki-01"
+            },
+            {
+              "page_id": "wiki-02/operations",
+              "score": 5.023109277911662e-07,
+              "snippet": "Atlas-02 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-3. The preferred endpoint is atlas-02.us-east-3.internal. Rollbacks are owned by team-3.",
+              "title": "Atlas-02 deployment operations",
+              "wiki_id": "wiki-02"
+            },
+            {
+              "page_id": "wiki-03/operations",
+              "score": 5.023109277911662e-07,
+              "snippet": "Atlas-03 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-4. The preferred endpoint is atlas-03.us-east-4.internal. Rollbacks are owned by team-4.",
+              "title": "Atlas-03 deployment operations",
+              "wiki_id": "wiki-03"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "Every Tuesday from 02:00 to 03:00 UTC.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 5,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [],
+      "latency_ms": 28702.839083,
+      "loaded_gold": false,
+      "question_id": "nil-nonexistent-system",
+      "searched_gold": false,
+      "slice": "nil",
+      "steps": 4,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 2,
+        "semantic_search": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Zeta-99 deployment window"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-01/operations",
+              "score": 1.0,
+              "snippet": "Atlas-01 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-2. The preferred endpoint is atlas-01.us-east-2.internal. Rollbacks are owned by team-2.",
+              "title": "Atlas-01 deployment operations",
+              "wiki_id": "wiki-01"
+            },
+            {
+              "page_id": "wiki-02/operations",
+              "score": 1.0,
+              "snippet": "Atlas-02 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-3. The preferred endpoint is atlas-02.us-east-3.internal. Rollbacks are owned by team-3.",
+              "title": "Atlas-02 deployment operations",
+              "wiki_id": "wiki-02"
+            },
+            {
+              "page_id": "wiki-03/operations",
+              "score": 1.0,
+              "snippet": "Atlas-03 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-4. The preferred endpoint is atlas-03.us-east-4.internal. Rollbacks are owned by team-4.",
+              "title": "Atlas-03 deployment operations",
+              "wiki_id": "wiki-03"
+            },
+            {
+              "page_id": "wiki-04/operations",
+              "score": 1.0,
+              "snippet": "Atlas-04 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-5. The preferred endpoint is atlas-04.us-east-5.internal. Rollbacks are owned by team-5.",
+              "title": "Atlas-04 deployment operations",
+              "wiki_id": "wiki-04"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 10,
+            "page_id": null,
+            "query": "Zeta-99"
+          },
+          "observation": [],
+          "step": 2
+        },
+        {
+          "action": "semantic_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 10,
+            "page_id": null,
+            "query": "deployment schedule or maintenance window for the Zeta-99 system"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.18731459768758005,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-01/overview",
+              "score": 0.18731459768758005,
+              "snippet": "Atlas-01 is also called bluebird-01. The Atlas service is owned by team-2 and runs in us-east-2. See operations and security.",
+              "title": "Atlas-01 system overview",
+              "wiki_id": "wiki-01"
+            },
+            {
+              "page_id": "wiki-02/overview",
+              "score": 0.18731459768758005,
+              "snippet": "Atlas-02 is also called bluebird-02. The Atlas service is owned by team-3 and runs in us-east-3. See operations and security.",
+              "title": "Atlas-02 system overview",
+              "wiki_id": "wiki-02"
+            },
+            {
+              "page_id": "wiki-03/overview",
+              "score": 0.18731459768758005,
+              "snippet": "Atlas-03 is also called bluebird-03. The Atlas service is owned by team-4 and runs in us-east-4. See operations and security.",
+              "title": "Atlas-03 system overview",
+              "wiki_id": "wiki-03"
+            },
+            {
+              "page_id": "wiki-04/overview",
+              "score": 0.18731459768758005,
+              "snippet": "Atlas-04 is also called bluebird-04. The Atlas service is owned by team-5 and runs in us-east-5. See operations and security.",
+              "title": "Atlas-04 system overview",
+              "wiki_id": "wiki-04"
+            },
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 0.1162690837703148,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-01/glossary",
+              "score": 0.1162690837703148,
+              "snippet": "In Atlas-01 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-01 glossary",
+              "wiki_id": "wiki-01"
+            },
+            {
+              "page_id": "wiki-02/glossary",
+              "score": 0.1162690837703148,
+              "snippet": "In Atlas-02 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-02 glossary",
+              "wiki_id": "wiki-02"
+            },
+            {
+              "page_id": "wiki-03/glossary",
+              "score": 0.1162690837703148,
+              "snippet": "In Atlas-03 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-03 glossary",
+              "wiki_id": "wiki-03"
+            },
+            {
+              "page_id": "wiki-04/glossary",
+              "score": 0.1162690837703148,
+              "snippet": "In Atlas-04 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-04 glossary",
+              "wiki_id": "wiki-04"
+            }
+          ],
+          "step": 3
+        },
+        {
+          "action": "finish",
+          "answer": "NIL \u2014 No deployment window is documented for the nonexistent Zeta-99 system.",
+          "step": 4
+        }
+      ],
+      "wiki_id": null
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 10,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 24282.150625,
+      "loaded_gold": true,
+      "question_id": "wiki-00-exact",
+      "searched_gold": true,
+      "slice": "exact_identifier",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 1.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.6077919078285912,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.5399701279303866,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "atlas-00.us-east-1.internal",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 10,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 34705.339375,
+      "loaded_gold": true,
+      "question_id": "wiki-00-semantic",
+      "searched_gold": true,
+      "slice": "semantic_paraphrase",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 1.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.6077919078285912,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.5399701279303866,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "Atlas-00 normally deploys every Tuesday from 02:00 to 03:00 UTC.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 10,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/overview"
+      ],
+      "latency_ms": 23958.487375,
+      "loaded_gold": true,
+      "question_id": "wiki-00-alias",
+      "searched_gold": true,
+      "slice": "alias",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "bluebird-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 1.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/overview",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/overview",
+            "text": "Atlas-00 system overview\nAtlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "bluebird-00 is owned by team-1 and runs in us-east-1.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 10,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 37148.925,
+      "loaded_gold": true,
+      "question_id": "wiki-00-cross",
+      "searched_gold": true,
+      "slice": "cross_wiki_disambiguation",
+      "steps": 4,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1,
+        "semantic_search": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas us-east-1 deployment window"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-05/operations",
+              "score": 1.0,
+              "snippet": "Atlas-05 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-05.us-east-1.internal. Rollbacks are owned by team-6.",
+              "title": "Atlas-05 deployment operations",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.7669744174624175,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-05/overview",
+              "score": 0.7669744174624175,
+              "snippet": "Atlas-05 is also called bluebird-05. The Atlas service is owned by team-6 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-05 system overview",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-01/operations",
+              "score": 4.802926395781917e-07,
+              "snippet": "Atlas-01 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-2. The preferred endpoint is atlas-01.us-east-2.internal. Rollbacks are owned by team-2.",
+              "title": "Atlas-01 deployment operations",
+              "wiki_id": "wiki-01"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "semantic_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "deployment window for the Atlas service running in us-east-1"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.35350566564134855,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-05/overview",
+              "score": 0.34938627103510067,
+              "snippet": "Atlas-05 is also called bluebird-05. The Atlas service is owned by team-6 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-05 system overview",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.25278619828755955,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-05/operations",
+              "score": 0.2500132807961517,
+              "snippet": "Atlas-05 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-05.us-east-1.internal. Rollbacks are owned by team-6.",
+              "title": "Atlas-05 deployment operations",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-01/overview",
+              "score": 0.1867046050044844,
+              "snippet": "Atlas-01 is also called bluebird-01. The Atlas service is owned by team-2 and runs in us-east-2. See operations and security.",
+              "title": "Atlas-01 system overview",
+              "wiki_id": "wiki-01"
+            }
+          ],
+          "step": 2
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 3
+        },
+        {
+          "action": "finish",
+          "answer": "Ambiguous: both Atlas-00 and Atlas-05 in us-east-1 deploy every Tuesday from 02:00 to 03:00 UTC.",
+          "step": 4
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 10,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [],
+      "latency_ms": 21874.48125,
+      "loaded_gold": false,
+      "question_id": "nil-nonexistent-system",
+      "searched_gold": false,
+      "slice": "nil",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "semantic_search": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Zeta-99"
+          },
+          "observation": [],
+          "step": 1
+        },
+        {
+          "action": "semantic_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "deployment window for the Zeta-99 system"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.17541976303047974,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-01/overview",
+              "score": 0.17541976303047974,
+              "snippet": "Atlas-01 is also called bluebird-01. The Atlas service is owned by team-2 and runs in us-east-2. See operations and security.",
+              "title": "Atlas-01 system overview",
+              "wiki_id": "wiki-01"
+            },
+            {
+              "page_id": "wiki-02/overview",
+              "score": 0.17541976303047974,
+              "snippet": "Atlas-02 is also called bluebird-02. The Atlas service is owned by team-3 and runs in us-east-3. See operations and security.",
+              "title": "Atlas-02 system overview",
+              "wiki_id": "wiki-02"
+            },
+            {
+              "page_id": "wiki-07/overview",
+              "score": 0.17541976303047974,
+              "snippet": "Atlas-07 is also called bluebird-07. The Atlas service is owned by team-1 and runs in us-east-3. See operations and security.",
+              "title": "Atlas-07 system overview",
+              "wiki_id": "wiki-07"
+            },
+            {
+              "page_id": "wiki-08/overview",
+              "score": 0.17541976303047974,
+              "snippet": "Atlas-08 is also called bluebird-08. The Atlas service is owned by team-2 and runs in us-east-4. See operations and security.",
+              "title": "Atlas-08 system overview",
+              "wiki_id": "wiki-08"
+            }
+          ],
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "NIL \u2014 No deployment window is documented for the nonexistent Zeta-99 system.",
+          "step": 3
+        }
+      ],
+      "wiki_id": null
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 25,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 22412.846209,
+      "loaded_gold": true,
+      "question_id": "wiki-00-exact",
+      "searched_gold": true,
+      "slice": "exact_identifier",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 1.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.6077919078285896,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.5399701279303852,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "atlas-00.us-east-1.internal",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 25,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 25056.763791,
+      "loaded_gold": true,
+      "question_id": "wiki-00-semantic",
+      "searched_gold": true,
+      "slice": "semantic_paraphrase",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas-00 deploy"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/glossary",
+              "score": 1.0,
+              "snippet": "In Atlas-00 documentation, a rollout means a production deployment and a rollback means restoring the previous version.",
+              "title": "Atlas-00 glossary",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/operations",
+              "score": 0.6077919078285896,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/security",
+              "score": 0.5399701279303852,
+              "snippet": "Atlas-00 requires workforce SSO and a short-lived service token. The team-1 team reviews access quarterly.",
+              "title": "Atlas-00 access and security",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "Atlas-00 normally deploys every Tuesday from 02:00 to 03:00 UTC.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 25,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [
+        "wiki-00/overview"
+      ],
+      "latency_ms": 20735.532375,
+      "loaded_gold": true,
+      "question_id": "wiki-00-alias",
+      "searched_gold": true,
+      "slice": "alias",
+      "steps": 3,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 1,
+        "read_chunk": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "bluebird-00"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 1.0,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/overview",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/overview",
+            "text": "Atlas-00 system overview\nAtlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security."
+          },
+          "step": 2
+        },
+        {
+          "action": "finish",
+          "answer": "bluebird-00 is owned by team-1 and runs in us-east-1.",
+          "step": 3
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": false,
+      "corpus_size": 25,
+      "error": "step_limit",
+      "finished": false,
+      "gold_page_ids": [
+        "wiki-00/operations"
+      ],
+      "latency_ms": 50739.18175,
+      "loaded_gold": true,
+      "question_id": "wiki-00-cross",
+      "searched_gold": true,
+      "slice": "cross_wiki_disambiguation",
+      "steps": 5,
+      "tool_counts": {
+        "keyword_search": 3,
+        "read_chunk": 1,
+        "semantic_search": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Atlas us-east-1 deployment window"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-05/operations",
+              "score": 1.0,
+              "snippet": "Atlas-05 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-05.us-east-1.internal. Rollbacks are owned by team-6.",
+              "title": "Atlas-05 deployment operations",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-10/operations",
+              "score": 1.0,
+              "snippet": "Atlas-10 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-10.us-east-1.internal. Rollbacks are owned by team-4.",
+              "title": "Atlas-10 deployment operations",
+              "wiki_id": "wiki-10"
+            },
+            {
+              "page_id": "wiki-15/operations",
+              "score": 1.0,
+              "snippet": "Atlas-15 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-15.us-east-1.internal. Rollbacks are owned by team-2.",
+              "title": "Atlas-15 deployment operations",
+              "wiki_id": "wiki-15"
+            },
+            {
+              "page_id": "wiki-20/operations",
+              "score": 1.0,
+              "snippet": "Atlas-20 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-20.us-east-1.internal. Rollbacks are owned by team-7.",
+              "title": "Atlas-20 deployment operations",
+              "wiki_id": "wiki-20"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 10,
+            "page_id": null,
+            "query": "Atlas deployment window"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-01/operations",
+              "score": 1.0,
+              "snippet": "Atlas-01 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-2. The preferred endpoint is atlas-01.us-east-2.internal. Rollbacks are owned by team-2.",
+              "title": "Atlas-01 deployment operations",
+              "wiki_id": "wiki-01"
+            },
+            {
+              "page_id": "wiki-02/operations",
+              "score": 1.0,
+              "snippet": "Atlas-02 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-3. The preferred endpoint is atlas-02.us-east-3.internal. Rollbacks are owned by team-3.",
+              "title": "Atlas-02 deployment operations",
+              "wiki_id": "wiki-02"
+            },
+            {
+              "page_id": "wiki-03/operations",
+              "score": 1.0,
+              "snippet": "Atlas-03 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-4. The preferred endpoint is atlas-03.us-east-4.internal. Rollbacks are owned by team-4.",
+              "title": "Atlas-03 deployment operations",
+              "wiki_id": "wiki-03"
+            },
+            {
+              "page_id": "wiki-04/operations",
+              "score": 1.0,
+              "snippet": "Atlas-04 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-5. The preferred endpoint is atlas-04.us-east-5.internal. Rollbacks are owned by team-5.",
+              "title": "Atlas-04 deployment operations",
+              "wiki_id": "wiki-04"
+            },
+            {
+              "page_id": "wiki-05/operations",
+              "score": 1.0,
+              "snippet": "Atlas-05 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-05.us-east-1.internal. Rollbacks are owned by team-6.",
+              "title": "Atlas-05 deployment operations",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-06/operations",
+              "score": 1.0,
+              "snippet": "Atlas-06 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-2. The preferred endpoint is atlas-06.us-east-2.internal. Rollbacks are owned by team-7.",
+              "title": "Atlas-06 deployment operations",
+              "wiki_id": "wiki-06"
+            },
+            {
+              "page_id": "wiki-07/operations",
+              "score": 1.0,
+              "snippet": "Atlas-07 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-3. The preferred endpoint is atlas-07.us-east-3.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-07 deployment operations",
+              "wiki_id": "wiki-07"
+            },
+            {
+              "page_id": "wiki-08/operations",
+              "score": 1.0,
+              "snippet": "Atlas-08 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-4. The preferred endpoint is atlas-08.us-east-4.internal. Rollbacks are owned by team-2.",
+              "title": "Atlas-08 deployment operations",
+              "wiki_id": "wiki-08"
+            },
+            {
+              "page_id": "wiki-09/operations",
+              "score": 1.0,
+              "snippet": "Atlas-09 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-5. The preferred endpoint is atlas-09.us-east-5.internal. Rollbacks are owned by team-3.",
+              "title": "Atlas-09 deployment operations",
+              "wiki_id": "wiki-09"
+            }
+          ],
+          "step": 2
+        },
+        {
+          "action": "semantic_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "What is the deployment window for Atlas in the us-east-1 region?"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.3586312804028063,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-10/overview",
+              "score": 0.35863128040280623,
+              "snippet": "Atlas-10 is also called bluebird-10. The Atlas service is owned by team-4 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-10 system overview",
+              "wiki_id": "wiki-10"
+            },
+            {
+              "page_id": "wiki-15/overview",
+              "score": 0.35863128040280623,
+              "snippet": "Atlas-15 is also called bluebird-15. The Atlas service is owned by team-2 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-15 system overview",
+              "wiki_id": "wiki-15"
+            },
+            {
+              "page_id": "wiki-05/overview",
+              "score": 0.356995108675479,
+              "snippet": "Atlas-05 is also called bluebird-05. The Atlas service is owned by team-6 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-05 system overview",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-20/overview",
+              "score": 0.356995108675479,
+              "snippet": "Atlas-20 is also called bluebird-20. The Atlas service is owned by team-7 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-20 system overview",
+              "wiki_id": "wiki-20"
+            }
+          ],
+          "step": 3
+        },
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 10,
+            "page_id": null,
+            "query": "Atlas us-east-1"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-05/operations",
+              "score": 1.0,
+              "snippet": "Atlas-05 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-05.us-east-1.internal. Rollbacks are owned by team-6.",
+              "title": "Atlas-05 deployment operations",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-10/operations",
+              "score": 1.0,
+              "snippet": "Atlas-10 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-10.us-east-1.internal. Rollbacks are owned by team-4.",
+              "title": "Atlas-10 deployment operations",
+              "wiki_id": "wiki-10"
+            },
+            {
+              "page_id": "wiki-15/operations",
+              "score": 1.0,
+              "snippet": "Atlas-15 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-15.us-east-1.internal. Rollbacks are owned by team-2.",
+              "title": "Atlas-15 deployment operations",
+              "wiki_id": "wiki-15"
+            },
+            {
+              "page_id": "wiki-20/operations",
+              "score": 1.0,
+              "snippet": "Atlas-20 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-20.us-east-1.internal. Rollbacks are owned by team-7.",
+              "title": "Atlas-20 deployment operations",
+              "wiki_id": "wiki-20"
+            },
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.7669747831968367,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-05/overview",
+              "score": 0.7669747831968367,
+              "snippet": "Atlas-05 is also called bluebird-05. The Atlas service is owned by team-6 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-05 system overview",
+              "wiki_id": "wiki-05"
+            },
+            {
+              "page_id": "wiki-10/overview",
+              "score": 0.7669747831968367,
+              "snippet": "Atlas-10 is also called bluebird-10. The Atlas service is owned by team-4 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-10 system overview",
+              "wiki_id": "wiki-10"
+            },
+            {
+              "page_id": "wiki-15/overview",
+              "score": 0.7669747831968367,
+              "snippet": "Atlas-15 is also called bluebird-15. The Atlas service is owned by team-2 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-15 system overview",
+              "wiki_id": "wiki-15"
+            },
+            {
+              "page_id": "wiki-20/overview",
+              "score": 0.7669747831968367,
+              "snippet": "Atlas-20 is also called bluebird-20. The Atlas service is owned by team-7 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-20 system overview",
+              "wiki_id": "wiki-20"
+            }
+          ],
+          "step": 4
+        },
+        {
+          "action": "read_chunk",
+          "arguments": {
+            "chunk_index": 0,
+            "k": null,
+            "page_id": "wiki-00/operations",
+            "query": null
+          },
+          "observation": {
+            "chunk_count": 1,
+            "chunk_index": 0,
+            "page_id": "wiki-00/operations",
+            "text": "Atlas-00 deployment operations\nAtlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1."
+          },
+          "step": 5
+        }
+      ],
+      "wiki_id": "wiki-00"
+    },
+    {
+      "answer_matches_gold": true,
+      "corpus_size": 25,
+      "error": null,
+      "finished": true,
+      "gold_page_ids": [],
+      "latency_ms": 32169.536167,
+      "loaded_gold": false,
+      "question_id": "nil-nonexistent-system",
+      "searched_gold": false,
+      "slice": "nil",
+      "steps": 4,
+      "tool_counts": {
+        "finish": 1,
+        "keyword_search": 2,
+        "semantic_search": 1
+      },
+      "trace": [
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 5,
+            "page_id": null,
+            "query": "Zeta-99 deployment window"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/operations",
+              "score": 1.0,
+              "snippet": "Atlas-00 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-1. The preferred endpoint is atlas-00.us-east-1.internal. Rollbacks are owned by team-1.",
+              "title": "Atlas-00 deployment operations",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-01/operations",
+              "score": 1.0,
+              "snippet": "Atlas-01 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-2. The preferred endpoint is atlas-01.us-east-2.internal. Rollbacks are owned by team-2.",
+              "title": "Atlas-01 deployment operations",
+              "wiki_id": "wiki-01"
+            },
+            {
+              "page_id": "wiki-02/operations",
+              "score": 1.0,
+              "snippet": "Atlas-02 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-3. The preferred endpoint is atlas-02.us-east-3.internal. Rollbacks are owned by team-3.",
+              "title": "Atlas-02 deployment operations",
+              "wiki_id": "wiki-02"
+            },
+            {
+              "page_id": "wiki-03/operations",
+              "score": 1.0,
+              "snippet": "Atlas-03 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-4. The preferred endpoint is atlas-03.us-east-4.internal. Rollbacks are owned by team-4.",
+              "title": "Atlas-03 deployment operations",
+              "wiki_id": "wiki-03"
+            },
+            {
+              "page_id": "wiki-04/operations",
+              "score": 1.0,
+              "snippet": "Atlas-04 deploys every Tuesday from 02:00 to 03:00 UTC in us-east-5. The preferred endpoint is atlas-04.us-east-5.internal. Rollbacks are owned by team-5.",
+              "title": "Atlas-04 deployment operations",
+              "wiki_id": "wiki-04"
+            }
+          ],
+          "step": 1
+        },
+        {
+          "action": "keyword_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 10,
+            "page_id": null,
+            "query": "Zeta-99"
+          },
+          "observation": [],
+          "step": 2
+        },
+        {
+          "action": "semantic_search",
+          "arguments": {
+            "chunk_index": null,
+            "k": 10,
+            "page_id": null,
+            "query": "deployment schedule or maintenance window for Zeta-99 system"
+          },
+          "observation": [
+            {
+              "page_id": "wiki-00/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-00 is also called bluebird-00. The Atlas service is owned by team-1 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-00 system overview",
+              "wiki_id": "wiki-00"
+            },
+            {
+              "page_id": "wiki-01/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-01 is also called bluebird-01. The Atlas service is owned by team-2 and runs in us-east-2. See operations and security.",
+              "title": "Atlas-01 system overview",
+              "wiki_id": "wiki-01"
+            },
+            {
+              "page_id": "wiki-02/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-02 is also called bluebird-02. The Atlas service is owned by team-3 and runs in us-east-3. See operations and security.",
+              "title": "Atlas-02 system overview",
+              "wiki_id": "wiki-02"
+            },
+            {
+              "page_id": "wiki-03/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-03 is also called bluebird-03. The Atlas service is owned by team-4 and runs in us-east-4. See operations and security.",
+              "title": "Atlas-03 system overview",
+              "wiki_id": "wiki-03"
+            },
+            {
+              "page_id": "wiki-07/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-07 is also called bluebird-07. The Atlas service is owned by team-1 and runs in us-east-3. See operations and security.",
+              "title": "Atlas-07 system overview",
+              "wiki_id": "wiki-07"
+            },
+            {
+              "page_id": "wiki-08/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-08 is also called bluebird-08. The Atlas service is owned by team-2 and runs in us-east-4. See operations and security.",
+              "title": "Atlas-08 system overview",
+              "wiki_id": "wiki-08"
+            },
+            {
+              "page_id": "wiki-09/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-09 is also called bluebird-09. The Atlas service is owned by team-3 and runs in us-east-5. See operations and security.",
+              "title": "Atlas-09 system overview",
+              "wiki_id": "wiki-09"
+            },
+            {
+              "page_id": "wiki-10/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-10 is also called bluebird-10. The Atlas service is owned by team-4 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-10 system overview",
+              "wiki_id": "wiki-10"
+            },
+            {
+              "page_id": "wiki-14/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-14 is also called bluebird-14. The Atlas service is owned by team-1 and runs in us-east-5. See operations and security.",
+              "title": "Atlas-14 system overview",
+              "wiki_id": "wiki-14"
+            },
+            {
+              "page_id": "wiki-15/overview",
+              "score": 0.14229637418454172,
+              "snippet": "Atlas-15 is also called bluebird-15. The Atlas service is owned by team-2 and runs in us-east-1. See operations and security.",
+              "title": "Atlas-15 system overview",
+              "wiki_id": "wiki-15"
+            }
+          ],
+          "step": 3
+        },
+        {
+          "action": "finish",
+          "answer": "No deployment window is documented for Zeta-99; the system appears to be nonexistent.",
+          "step": 4
+        }
+      ],
+      "wiki_id": null
+    }
+  ],
+  "schema_version": "frankengate-wiki-arag-codex-structured-loop-v1"
+}

@@ -83,3 +83,20 @@ evidence. LRAT, SWE-ContextBench, SkillAxe, AgentTrails, and SAGE graph/retrieva
 are preprints or prototypes. UNO is currently repository/README evidence. The
 reported headline numbers therefore guide experiment design, not Frankengate
 promotion decisions.
+
+## A-RAG reproduction result
+
+The first bounded A-RAG-style frontier run is complete. On the same synthetic
+1/5/10/25-wiki fixture and `gpt-5.6-luna` harness used by the fixed-hybrid
+baseline, exposing `keyword_search`, `semantic_search`, and `read_chunk` did
+not improve target answer accuracy: both arms were `1.00/1.00/1.00/0.75` at
+1/5/10/25 wikis. The 25-wiki A-RAG arm again had one step-limit failure and had
+higher p95 wall time (`50.7s` versus `39.4s` in the earlier run). The agent
+used keyword search 24 times, semantic search 6 times, and chunk reads 16
+times across 20 cases.
+
+This is a negative result for the **unconditioned tool-interface change on
+this identifier-heavy fixture**, not a disproof of A-RAG. The next test must
+use balanced paraphrase, multi-hop, temporal, and NIL cohorts with a fixed
+question/model-seed comparison and an oracle tool-choice upper bound. See
+[`wiki-arag-frontier-reproduction-2026-08-03.md`](wiki-arag-frontier-reproduction-2026-08-03.md).

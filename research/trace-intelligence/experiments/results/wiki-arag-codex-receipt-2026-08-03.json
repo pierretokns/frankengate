@@ -1,0 +1,98 @@
+{
+  "aggregates": [
+    {
+      "avg_steps": 3.0,
+      "errors": 0,
+      "finished": 1.0,
+      "loaded_gold": 1.0,
+      "nil_abstention_accuracy": 1.0,
+      "p95_latency_ms": 31653.066417,
+      "records": 5,
+      "searched_gold": 1.0,
+      "size": 1,
+      "target_answer_accuracy": 1.0,
+      "tool_counts": {
+        "finish": 5,
+        "keyword_search": 5,
+        "read_chunk": 4,
+        "semantic_search": 1
+      }
+    },
+    {
+      "avg_steps": 3.2,
+      "errors": 0,
+      "finished": 1.0,
+      "loaded_gold": 1.0,
+      "nil_abstention_accuracy": 1.0,
+      "p95_latency_ms": 28702.839083,
+      "records": 5,
+      "searched_gold": 1.0,
+      "size": 5,
+      "target_answer_accuracy": 1.0,
+      "tool_counts": {
+        "finish": 5,
+        "keyword_search": 6,
+        "read_chunk": 4,
+        "semantic_search": 1
+      }
+    },
+    {
+      "avg_steps": 3.2,
+      "errors": 0,
+      "finished": 1.0,
+      "loaded_gold": 1.0,
+      "nil_abstention_accuracy": 1.0,
+      "p95_latency_ms": 37148.925,
+      "records": 5,
+      "searched_gold": 1.0,
+      "size": 10,
+      "target_answer_accuracy": 1.0,
+      "tool_counts": {
+        "finish": 5,
+        "keyword_search": 5,
+        "read_chunk": 4,
+        "semantic_search": 2
+      }
+    },
+    {
+      "avg_steps": 3.6,
+      "errors": 1,
+      "finished": 0.8,
+      "loaded_gold": 1.0,
+      "nil_abstention_accuracy": 1.0,
+      "p95_latency_ms": 50739.18175,
+      "records": 5,
+      "searched_gold": 1.0,
+      "size": 25,
+      "target_answer_accuracy": 0.75,
+      "tool_counts": {
+        "finish": 4,
+        "keyword_search": 8,
+        "read_chunk": 4,
+        "semantic_search": 2
+      }
+    }
+  ],
+  "claim_boundary": "A-RAG-style hierarchical tool-choice frontier loop over a synthetic fixture. Native MCP was not used; this is not evidence of enterprise transfer or a claim about Claude Code.",
+  "corpus": {
+    "pages": 100,
+    "sha256": "9a48b266dfc5b7260a1800b01ec6e5f84be948a9e690f1860b5c868fed1f8311",
+    "wikis": 25
+  },
+  "protocol": {
+    "backend": "fts+tfidf",
+    "harness": "Codex CLI structured JSON action loop",
+    "max_steps": 5,
+    "model": "gpt-5.6-luna",
+    "native_mcp": false,
+    "raw_traces_committed": false,
+    "retrieval_tools": [
+      "keyword_search",
+      "semantic_search",
+      "read_chunk"
+    ],
+    "workers": 2
+  },
+  "run_sha256": "6259cfefef95942790c67f057807f697e32655d4d8cc99c1fa01026d4d1a05ce",
+  "schema_version": "frankengate-wiki-arag-codex-receipt-v1"
+}
