@@ -1,0 +1,102 @@
+{
+  "schema_version": "frankengate-wiki-gap-candidates-v1",
+  "candidate_count": 5,
+  "candidates": [
+    {
+      "gap_type": "recurring_enterprise_demand",
+      "key": "key mantle rotate",
+      "score": 0.95,
+      "demand_count": 2,
+      "session_count": 2,
+      "user_count": 2,
+      "query_texts": [
+        "How do I rotate the mantle key?",
+        "What is the process to rotate a mantle key?"
+      ],
+      "evidence_event_ids": [
+        "q1",
+        "r1",
+        "t1",
+        "o1",
+        "q2",
+        "r2"
+      ],
+      "page_ids": [],
+      "explanation": "Close paraphrases recur across users; review whether one canonical wiki concept, alias, or cross-system page is missing."
+    },
+    {
+      "gap_type": "missing_operational_knowledge",
+      "key": "key mantle rotate",
+      "score": 0.78,
+      "demand_count": 1,
+      "session_count": 1,
+      "user_count": 1,
+      "query_texts": [
+        "How do I rotate the mantle key?"
+      ],
+      "evidence_event_ids": [
+        "q1",
+        "r1",
+        "t1",
+        "o1"
+      ],
+      "page_ids": [],
+      "explanation": "An external tool was needed after wiki evidence failed, indicating a likely missing operational procedure or runbook."
+    },
+    {
+      "gap_type": "incomplete_procedure",
+      "key": "key mantle rotate",
+      "score": 0.72,
+      "demand_count": 1,
+      "session_count": 1,
+      "user_count": 1,
+      "query_texts": [
+        "How do I rotate the mantle key?"
+      ],
+      "evidence_event_ids": [
+        "q1",
+        "r1",
+        "t1",
+        "o1"
+      ],
+      "page_ids": [],
+      "explanation": "The task outcome failed or rolled back; inspect whether the wiki omitted prerequisites, failure handling, or scope constraints."
+    },
+    {
+      "gap_type": "absent_or_undiscoverable",
+      "key": "key mantle process rotate",
+      "score": 0.7,
+      "demand_count": 1,
+      "session_count": 1,
+      "user_count": 1,
+      "query_texts": [
+        "What is the process to rotate a mantle key?"
+      ],
+      "evidence_event_ids": [
+        "q2",
+        "r2"
+      ],
+      "page_ids": [],
+      "explanation": "The question produced no sufficiently useful wiki evidence; distinguish missing content from vocabulary mismatch during review."
+    },
+    {
+      "gap_type": "absent_or_undiscoverable",
+      "key": "key mantle rotate",
+      "score": 0.7,
+      "demand_count": 1,
+      "session_count": 1,
+      "user_count": 1,
+      "query_texts": [
+        "How do I rotate the mantle key?"
+      ],
+      "evidence_event_ids": [
+        "q1",
+        "r1",
+        "t1",
+        "o1"
+      ],
+      "page_ids": [],
+      "explanation": "The question produced no sufficiently useful wiki evidence; distinguish missing content from vocabulary mismatch during review."
+    }
+  ]
+}

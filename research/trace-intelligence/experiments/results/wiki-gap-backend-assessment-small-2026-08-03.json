@@ -1,0 +1,17 @@
+{
+  "schema_version": "frankengate-wiki-gap-backend-assessment-v1",
+  "decision": "postgres_first",
+  "reasons": [],
+  "metrics": {
+    "event_count": 10000,
+    "source_bytes": 2000000,
+    "p95_scan_seconds": 0.4,
+    "daily_gap_scans": 12
+  },
+  "thresholds": {
+    "max_p95_scan_seconds": 10.0,
+    "max_source_bytes": 500000000000,
+    "max_daily_scans": 100
+  },
+  "next_step": "continue with PostgreSQL and collect the same metrics in production"
+}
