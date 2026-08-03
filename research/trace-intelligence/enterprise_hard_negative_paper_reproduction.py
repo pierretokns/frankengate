@@ -110,14 +110,27 @@ class Ensemble:
     document_ids: list[str]
 
 
-def fit_ensemble(pages: Sequence[dict[str, Any]], queries: Sequence[str], model_ids: Sequence[str], *, device: str, batch_size: int, max_seq_length: int | None, local_files_only: bool) -> tuple[Ensemble, list[dict[str, Any]]]:
+def fit_ensemble(pages: Sequence[dict[str, Any]], queries: Sequence[str], model_ids: Sequence[str], *, device: str, batch_size: int, max_seq_length: int | None, local_files_only: bool, trust_remote_code: bool) -> tuple[Ensemble, list[dict[str, Any]]]:
     documents = [page_text(page) for page in pages]
     document_parts: list[np.ndarray] = []
     query_parts: dict[str, list[np.ndarray]] = {query: [] for query in queries}
     model_receipts: list[dict[str, Any]] = []
     for model_id in model_ids:
         started = time.perf_counter()
-        model = SentenceTransformer(model_id, device=device, local_files_only=local_files_only)
+        # Stella's custom implementation defaults to xformers-backed memory
+        # efficient attention.  The model card documents a CPU-compatible path
+        # that disables those two optimizations; use it only for Stella so the
+        # faithful checkpoint is not silently dropped on a CPU host.
+        config_kwargs = None
+        if "stella_en_400M_v5" in model_id and device == "cpu":
+            config_kwargs = {"use_memory_efficient_attention": False, "unpad_inputs": False}
+        model = SentenceTransformer(
+            model_id,
+            device=device,
+            local_files_only=local_files_only,
+            trust_remote_code=trust_remote_code,
+            config_kwargs=config_kwargs,
+        )
         doc_vectors = encode(model, documents, "document", batch_size, max_seq_length)
         query_vectors = encode(model, list(query_parts), "query", batch_size, max_seq_length)
         document_parts.append(doc_vectors)
@@ -215,14 +228,14 @@ def mrr(scores: Sequence[np.ndarray], questions: Sequence[dict[str, Any]], page_
     return float(np.mean(values)) if values else 0.0
 
 
-def run(data: dict[str, Any], *, candidate_limit: int, train_limit: int, test_limit: int, seed: int, device: str, batch_size: int, max_seq_length: int | None, model_ids: Sequence[str], reranker_model: str | None, reranker_epochs: int, local_files_only: bool) -> dict[str, Any]:
+def run(data: dict[str, Any], *, candidate_limit: int, train_limit: int, test_limit: int, seed: int, device: str, batch_size: int, max_seq_length: int | None, model_ids: Sequence[str], reranker_model: str | None, reranker_epochs: int, local_files_only: bool, trust_remote_code: bool) -> dict[str, Any]:
     all_questions = [question for question in data["questions"] if question.get("gold_page_ids")]
     train = all_questions[:train_limit]
     test = all_questions[train_limit : train_limit + test_limit]
     required = {str(page_id) for question in train + test for page_id in question["gold_page_ids"]}
     pages = bounded_pages(list(data["pages"]), required, candidate_limit, seed)
     queries = [str(question["question"]) for question in train + test]
-    ensemble, model_receipts = fit_ensemble(pages, queries, model_ids, device=device, batch_size=batch_size, max_seq_length=max_seq_length, local_files_only=local_files_only)
+    ensemble, model_receipts = fit_ensemble(pages, queries, model_ids, device=device, batch_size=batch_size, max_seq_length=max_seq_length, local_files_only=local_files_only, trust_remote_code=trust_remote_code)
     triplets, missing_triplets = mine_triplets(ensemble, train + test, range(len(train)))
     result: dict[str, Any] = {
         "schema_version": "frankengate-oracle-hard-negative-paper-reproduction-v1",
@@ -257,10 +270,11 @@ def main() -> int:
     parser.add_argument("--reranker-model")
     parser.add_argument("--reranker-epochs", type=int, default=1)
     parser.add_argument("--local-files-only", action="store_true")
+    parser.add_argument("--trust-remote-code", action="store_true", help="Allow model repositories with custom modeling code (required by Stella).")
     args = parser.parse_args()
     model_ids = tuple(args.models) if args.models else PAPER_EMBEDDING_MODELS
     data = json.loads(args.dataset.read_text(encoding="utf-8"))
-    result = run(data, candidate_limit=args.candidate_limit, train_limit=args.train_limit, test_limit=args.test_limit, seed=args.seed, device=args.device, batch_size=args.batch_size, max_seq_length=args.max_seq_length, model_ids=model_ids, reranker_model=args.reranker_model, reranker_epochs=args.reranker_epochs, local_files_only=args.local_files_only)
+    result = run(data, candidate_limit=args.candidate_limit, train_limit=args.train_limit, test_limit=args.test_limit, seed=args.seed, device=args.device, batch_size=args.batch_size, max_seq_length=args.max_seq_length, model_ids=model_ids, reranker_model=args.reranker_model, reranker_epochs=args.reranker_epochs, local_files_only=args.local_files_only, trust_remote_code=args.trust_remote_code)
     result["dataset"]["input_sha256"] = sha256(args.dataset)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")

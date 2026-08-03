@@ -1,0 +1,88 @@
+{
+  "schema_version": "frankengate-oracle-hard-negative-neural-availability-v1",
+  "paper": {
+    "arxiv": "2505.18366",
+    "claim": "Six encoder embeddings are concatenated, reduced with PCA retaining 95% variance, and used with two distance inequalities to mine hard negatives; a separate cross-encoder is then triplet-trained."
+  },
+  "fixture": {
+    "source": "nvidia/TechQA-RAG-Eval",
+    "fixture_path": "techqa-small.json",
+    "pages": 50,
+    "train_questions": 2,
+    "test_questions": 2,
+    "seed": 7,
+    "candidate_selection": "all positives plus stable-hash distractors",
+    "raw_text_published": false
+  },
+  "cpu_checkpoint_smokes": [
+    {
+      "model_id": "dunzhang/stella_en_400M_v5",
+      "status": "succeeded",
+      "notes": "CPU config disables use_memory_efficient_attention and unpad_inputs as documented by the model card.",
+      "triplets_selected": 0,
+      "triplets_unavailable": 2
+    },
+    {
+      "model_id": "jinaai/jina-embeddings-v3",
+      "status": "blocked",
+      "notes": "Sentence-Transformers dynamic-module cache lacked jina's relative rotary.py file; a clean local snapshot was requested for a retry.",
+      "triplets_selected": null,
+      "triplets_unavailable": null
+    },
+    {
+      "model_id": "mixedbread-ai/mxbai-embed-large-v1",
+      "status": "succeeded",
+      "notes": "Exact paper-listed checkpoint loaded on CPU.",
+      "triplets_selected": 0,
+      "triplets_unavailable": 2
+    },
+    {
+      "model_id": "BAAI/bge-large-en-v1.5",
+      "status": "succeeded",
+      "notes": "Exact paper-listed checkpoint loaded on CPU.",
+      "triplets_selected": 0,
+      "triplets_unavailable": 2
+    },
+    {
+      "model_id": "sentence-transformers/LaBSE",
+      "status": "succeeded",
+      "notes": "Exact paper-listed checkpoint loaded on CPU.",
+      "triplets_selected": 4,
+      "triplets_unavailable": 1
+    },
+    {
+      "model_id": "sentence-transformers/all-mpnet-base-v2",
+      "status": "succeeded",
+      "notes": "Exact paper-listed checkpoint loaded on CPU.",
+      "triplets_selected": 0,
+      "triplets_unavailable": 2
+    }
+  ],
+  "mlx_probe": {
+    "host": "Apple Silicon arm64",
+    "implementation": "mlx-embedding-models 0.0.9 via uv run --with",
+    "BAAI/bge-large-en-v1.5": "succeeded, shape [1, 1024]",
+    "mixedbread-ai/mxbai-embed-large-v1": "succeeded, shape [1, 1024]",
+    "sentence-transformers/all-mpnet-base-v2": "blocked, MPNetConfig unsupported by mlx-embedding-models",
+    "sentence-transformers/LaBSE": "not completed; model snapshot download was interrupted",
+    "stella_en_400M_v5": "not attempted",
+    "jina-embeddings-v3": "not attempted",
+    "numerical_agreement": {
+      "BAAI/bge-large-en-v1.5": {
+        "texts": 2,
+        "cosine_pt_vs_mlx": [1.0, 1.0],
+        "max_abs_difference": 2.1e-7
+      },
+      "mixedbread-ai/mxbai-embed-large-v1": {
+        "texts": 2,
+        "cosine_pt_vs_mlx": [1.0, 1.0],
+        "max_abs_difference": 2.7e-7
+      }
+    }
+  },
+  "claim_boundary": [
+    "This is an algorithmic and checkpoint-availability smoke test, not the paper's numerical reproduction.",
+    "The Oracle private corpus, exact pooling/normalization/PCA scope, private training configuration, and triplet-trained reranker results are still unavailable.",
+    "The tiny fixture is too small to infer retrieval quality or prove that the ensemble is better than a single encoder."
+  ]
+}
