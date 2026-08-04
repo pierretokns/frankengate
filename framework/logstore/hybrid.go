@@ -847,6 +847,22 @@ func applyMCPToolLogUpdateMap(target *MCPToolLog, updates map[string]interface{}
 			if v, ok := value.(string); ok {
 				target.VirtualKeyName = &v
 			}
+		case "device_id":
+			if v, ok := value.(string); ok {
+				target.DeviceID = &v
+			}
+		case "app_key":
+			if v, ok := value.(string); ok {
+				target.AppKey = &v
+			}
+		case "decision":
+			if v, ok := value.(string); ok {
+				target.Decision = &v
+			}
+		case "source":
+			if v, ok := value.(string); ok {
+				target.Source = &v
+			}
 		case "arguments":
 			if v, ok := value.(string); ok {
 				target.Arguments = v
@@ -906,6 +922,18 @@ func applyMCPToolLogUpdateStruct(target *MCPToolLog, update *MCPToolLog) error {
 	}
 	if update.VirtualKeyName != nil {
 		target.VirtualKeyName = update.VirtualKeyName
+	}
+	if update.DeviceID != nil {
+		target.DeviceID = update.DeviceID
+	}
+	if update.AppKey != nil {
+		target.AppKey = update.AppKey
+	}
+	if update.Decision != nil {
+		target.Decision = update.Decision
+	}
+	if update.Source != nil {
+		target.Source = update.Source
 	}
 	if update.Arguments != "" {
 		target.Arguments = update.Arguments
@@ -997,6 +1025,18 @@ func prepareMCPToolLogDBUpdatesFromStruct(update MCPToolLog) (map[string]any, er
 	}
 	if update.VirtualKeyName != nil {
 		out["virtual_key_name"] = *update.VirtualKeyName
+	}
+	if update.DeviceID != nil {
+		out["device_id"] = *update.DeviceID
+	}
+	if update.AppKey != nil {
+		out["app_key"] = *update.AppKey
+	}
+	if update.Decision != nil {
+		out["decision"] = *update.Decision
+	}
+	if update.Source != nil {
+		out["source"] = *update.Source
 	}
 	if update.Arguments != "" {
 		out["arguments"] = update.Arguments

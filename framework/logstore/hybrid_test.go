@@ -54,6 +54,38 @@ func waitForUploads(t *testing.T, done func() bool) {
 	t.Fatal("timed out waiting for upload state")
 }
 
+func TestMCPToolLogEndpointFieldsRoundTripThroughHybridUpdates(t *testing.T) {
+	deviceID := "device-1"
+	appKey := "claude-code"
+	decision := "allow"
+	source := "endpoint"
+
+	target := &MCPToolLog{}
+	err := applyMCPToolLogUpdate(target, map[string]interface{}{
+		"device_id": deviceID,
+		"app_key":   appKey,
+		"decision":  decision,
+		"source":    source,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, &deviceID, target.DeviceID)
+	assert.Equal(t, &appKey, target.AppKey)
+	assert.Equal(t, &decision, target.Decision)
+	assert.Equal(t, &source, target.Source)
+
+	updates, err := prepareMCPToolLogDBUpdates(&MCPToolLog{
+		DeviceID: &deviceID,
+		AppKey:   &appKey,
+		Decision: &decision,
+		Source:   &source,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, deviceID, updates["device_id"])
+	assert.Equal(t, appKey, updates["app_key"])
+	assert.Equal(t, decision, updates["decision"])
+	assert.Equal(t, source, updates["source"])
+}
+
 func TestHybridScopedDBDelegatesToInnerRDBStore(t *testing.T) {
 	hybrid, _, _ := newTestHybrid(t)
 	defer hybrid.Close(context.Background())

@@ -281,9 +281,6 @@ var logstoreMigrationSteps = []migrationStep{
 	{IDs: []string{"logs_add_canonical_model_columns_v2"}, run: migrationAddCanonicalModelColumns},
 	{IDs: []string{"logs_add_redaction_mapping_column"}, run: migrationAddRedactionMappingColumn},
 	{IDs: []string{"logs_add_integration_user_agent_column"}, run: migrationAddIntegrationUserAgentColumn},
-	{IDs: []string{"logs_add_user_agent_column"}, run: migrationAddUserAgentColumn},
-	{IDs: []string{"mcp_tool_logs_add_user_agent_column"}, run: migrationAddUserAgentColumnToMCPToolLogs},
-	{IDs: []string{"logs_recreate_matviews_with_app_column"}, run: migrationRecreateMatViewsWithAppColumn},
 	{IDs: []string{"mcp_tool_logs_add_endpoint_columns"}, run: migrationAddEndpointColumnsToMCPToolLogs},
 }
 
