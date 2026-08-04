@@ -2,7 +2,7 @@
   "schema": "sealed-cli-cell-scenario/v1",
   "run_id": "codex-version-smoke",
   "client": "codex",
-  "binary": "/opt/client/bin/codex",
+  "binary": "/opt/client/node_modules/.bin/codex",
   "args": ["--version"],
   "env": {},
   "expected_version": "0.144.5",

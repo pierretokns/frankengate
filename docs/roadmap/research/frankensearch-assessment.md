@@ -24,6 +24,15 @@ bounded reranking, explicit fast-only mode, and a clear adapter seam. This compl
 our finance/jargon benchmark and gives us a concrete p50/p95 comparison against the
 current vector-store adapters.
 
+If a prototype is approved, it must use FrankenSearch's canonical
+`TwoTierSearcher` and `EmbedderStack` abstractions (including its built-in lexical/
+semantic fusion and `Initial`/`Refined`/`RefinementFailed` lifecycle). We must not
+duplicate RRF score blending, progressive orchestration, SIMD distance code, or
+embedder registries in FrankenGate. Any Rust prototype must also align its
+`asupersync` crate source/version with the pinned FrankenSearch revision; a Tokio
+bridge is an explicit integration cost, not an excuse to add a second search
+runtime to the gateway.
+
 **Open questions:** the published crate docs describe document IDs and search metrics,
 but do not establish our required tenant/team ACL-before-retrieval semantics,
 deletion/tombstone propagation, encrypted metadata, or multi-tenant cache isolation.

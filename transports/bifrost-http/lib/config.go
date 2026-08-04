@@ -35,6 +35,7 @@ import (
 	"github.com/maximhq/bifrost/framework/mcp_headers"
 	"github.com/maximhq/bifrost/framework/mcpcatalog"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
+	"github.com/maximhq/bifrost/framework/modelcatalog/datasheet"
 	"github.com/maximhq/bifrost/framework/oauth2"
 	"github.com/maximhq/bifrost/framework/objectstore"
 	plugins "github.com/maximhq/bifrost/framework/plugins"
@@ -3846,8 +3847,12 @@ func ResolveFrameworkPricingConfig(
 	dbConfig *configstoreTables.TableFrameworkConfig,
 	fileConfig *framework.FrameworkConfig,
 ) (*configstoreTables.TableFrameworkConfig, *modelcatalog.Config, bool) {
-	defaultPricingURL := modelcatalog.DefaultPricingURL
-	defaultModelParametersURL := modelcatalog.DefaultModelParametersURL
+	// Preserve deployment-level mirror overrides when neither the DB nor
+	// config.json has an explicit value. Using the built-in constants here
+	// made the HTTP composer overwrite datasheet.Effective*URL and silently
+	// attempt public egress in sealed/private deployments.
+	defaultPricingURL := datasheet.EffectiveURL()
+	defaultModelParametersURL := datasheet.EffectiveModelParametersURL()
 	defaultSyncSeconds := int64(modelcatalog.DefaultSyncInterval.Seconds())
 
 	filePricingURL := (*string)(nil)

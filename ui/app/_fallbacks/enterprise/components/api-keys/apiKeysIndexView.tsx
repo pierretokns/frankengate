@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useGetCoreConfigQuery } from "@/lib/store";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { Link } from "@tanstack/react-router";
-import { Copy, InfoIcon, KeyRound } from "lucide-react";
+import { Copy, InfoIcon } from "lucide-react";
 import { useMemo } from "react";
-import ContactUsView from "../views/contactUsView";
 
 export default function APIKeysView() {
 	const { data: bifrostConfig, isLoading } = useGetCoreConfigQuery({ fromDB: true });
@@ -91,14 +90,6 @@ curl --location 'http://localhost:8080/v1/chat/completions'
 					)}
 				</AlertDescription>
 			</Alert>
-
-			<ContactUsView
-				className="mt-4 rounded-md border px-3 py-8"
-				icon={<KeyRound size={48} />}
-				title="Scope Based API Keys"
-				description="Need granular access control with scope-based API keys? Enterprise customers can create multiple API keys with specific permissions for different services, teams, or environments."
-				readmeLink="https://docs.getbifrost.io/enterprise/api-keys"
-			/>
 		</div>
 	);
 }

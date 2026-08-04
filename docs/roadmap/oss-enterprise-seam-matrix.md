@@ -56,7 +56,7 @@ E18 OpenAPI stubs and security schemes: `docs/openapi/openapi.yaml:813-871`, `do
 
 E19 OSS UI working surfaces: `ui/app/workspace/virtual-keys/views/virtualKeySheet.tsx:247-248`, `ui/app/workspace/virtual-keys/views/virtualKeysTable.tsx:340-342`, `ui/app/workspace/governance/views/teamSheet.tsx:102-103`, `ui/app/workspace/governance/views/teamsTable.tsx:172-174`, `ui/app/workspace/governance/views/customerSheet.tsx:73-74`, `ui/app/workspace/governance/views/customerTable.tsx:148-150`, `ui/app/workspace/routing-rules/views/routingRuleSheet.tsx:92-93`, `ui/app/workspace/logs/page.tsx:38-39`, `ui/app/workspace/dashboard/components/exportPopover.tsx:17`, `ui/app/workspace/observability/views/observabilityView.tsx:86`.
 
-E20 UI RBAC and enterprise fallbacks: `ui/app/_fallbacks/enterprise/lib/contexts/rbacContext.tsx:59-78`, `ui/app/_fallbacks/enterprise/components/views/contactUsView.tsx:15-43`, `ui/app/_fallbacks/enterprise/components/cluster/clusterView.tsx:4-15`, `ui/app/_fallbacks/enterprise/components/circuit-breaker/circuitBreakerView.tsx:4-15`, `ui/app/_fallbacks/enterprise/components/audit-logs/auditLogsView.tsx:4-15`, `ui/app/_fallbacks/enterprise/components/access-profiles/accessProfilesIndexView.tsx:4-16`, `ui/app/workspace/governance/layout.tsx:7-26`, `ui/app/workspace/cluster/layout.tsx:7-14`, `ui/app/workspace/audit-logs/layout.tsx:7-14`, `ui/app/workspace/circuit-breaker/layout.tsx:7-15`.
+E20 UI RBAC and enterprise fallbacks: `ui/app/_fallbacks/enterprise/lib/contexts/rbacContext.tsx:59-78`, `ui/app/_fallbacks/enterprise/components/views/contactUsView.tsx:15-43`, `ui/app/_fallbacks/enterprise/components/cluster/clusterView.tsx:4-15`, `ui/app/_fallbacks/enterprise/components/failover handling/failover handlingView.tsx:4-15`, `ui/app/_fallbacks/enterprise/components/audit-logs/auditLogsView.tsx:4-15`, `ui/app/_fallbacks/enterprise/components/access-profiles/accessProfilesIndexView.tsx:4-16`, `ui/app/workspace/governance/layout.tsx:7-26`, `ui/app/workspace/cluster/layout.tsx:7-14`, `ui/app/workspace/audit-logs/layout.tsx:7-14`, `ui/app/workspace/failover handling/layout.tsx:7-15`.
 
 E21 Helm/Kubernetes runtime chart: `helm-charts/bifrost/values.yaml:37-44`, `helm-charts/bifrost/values.yaml:133-164`, `helm-charts/bifrost/values.yaml:241-323`, `helm-charts/bifrost/values.yaml:867-905`, `helm-charts/bifrost/templates/deployment.yaml:1-8`, `helm-charts/bifrost/templates/deployment.yaml:23-88`, `helm-charts/bifrost/templates/deployment.yaml:220-275`, `helm-charts/bifrost/templates/hpa.yaml:1-38`, `helm-charts/bifrost/templates/service-headless.yaml:1-35`, `helm-charts/bifrost/templates/rbac.yaml:1-38`.
 
@@ -73,7 +73,7 @@ E26 packaging/release: `transports/Dockerfile:2-20`, `transports/Dockerfile:53-6
 Negative evidence:
 
 - N01 multi-pod acceptance tests: `rg -n --glob '!docs/openapi/**' --glob '!ui/out/**' "three pods|3 pods|multi-pod|multipod|multi pod|kind|k3d|chaos|partition|failover.*pod|shared budget|governance_startup_reset|NodeUsage|cluster" tests framework plugins transports/bifrost-http docs/roadmap docs/deployment-guides helm-charts` found roadmap/chart/logging/dlock/node-usage surfaces, but no three-pod create/use/revoke/rotate or shared-budget acceptance test outside roadmap text.
-- N02 runtime enterprise handlers: `rg -n --glob '!docs/openapi/**' --glob '!ui/out/**' "AccessProfileHandler|access-profiles|TableAccessProfile|AuditLogsHandler|audit-logs|TableAudit|CircuitBreakerHandler|circuit-breaker|TableCircuit|SCIMHandler|scim|Canary|Shadow|Replay|EvaluationJob|TopUp|Overdraft|Reservation|rotation_family|policy_version|not_before" transports/bifrost-http/handlers plugins framework ui/app tests docs/roadmap helm-charts` found Helm/config/OpenAPI/UI fallback/docs references and stream gate replay internals, but no OSS runtime handler/store/service for access profiles, audit logs, circuit breaker, SCIM users/groups, top-up, overdraft, budget reservation, route canary/shadow, or replay/eval jobs.
+- N02 runtime enterprise handlers: `rg -n --glob '!docs/openapi/**' --glob '!ui/out/**' "AccessProfileHandler|access-profiles|TableAccessProfile|AuditLogsHandler|audit-logs|TableAudit|failover handlingHandler|failover handling|TableCircuit|SCIMHandler|scim|Canary|Shadow|Replay|EvaluationJob|TopUp|Overdraft|Reservation|rotation_family|policy_version|not_before" transports/bifrost-http/handlers plugins framework ui/app tests docs/roadmap helm-charts` found Helm/config/OpenAPI/UI fallback/docs references and stream gate replay internals, but no OSS runtime handler/store/service for access profiles, audit logs, failover handling, SCIM users/groups, top-up, overdraft, budget reservation, route canary/shadow, or replay/eval jobs.
 
 ## Matrix
 
@@ -157,14 +157,14 @@ Negative evidence:
 
 | Layer | OSS status | Enterprise seam |
 |---|---|---|
-| Schema | partial [V: E03, E22] | Routing rules/targets exist. Circuit breaker schema exists as config/Helm surface; canary/shadow policy schemas are not present. |
+| Schema | partial [V: E03, E22] | Routing rules/targets exist. failover handling schema exists as config/Helm surface; canary/shadow policy schemas are not present. |
 | Migration | partial [V: E06] | Routing rules/targets migrate. No circuit state, canary cohort, shadow job, or promotion-history migration is visible. |
 | Store | partial [V: E07, E11] | Routing-rule CRUD and in-memory rule snapshots exist. There is no reviewed store for circuit state, deterministic rollout assignment, shadow receipts, or promotion decisions. |
 | Service | partial [V: E10, E13] | CEL rule matching, scope precedence, chain depth, weighted target selection, and governance pruning exist. Health/circuit filtering, deterministic canaries, separate shadow budgets, and rollback gates are absent. |
-| API | partial [V: E14, E18, N02] | Routing-rule APIs exist. OpenAPI advertises circuit breaker APIs, but scoped search found no OSS runtime circuit handler. |
+| API | partial [V: E14, E18, N02] | Routing-rule APIs exist. OpenAPI advertises failover handling APIs, but scoped search found no OSS runtime circuit handler. |
 | Authz | partial [V: E20] | Routing UI gates exist; OSS fallback permits all, and no server-side routing-rule RBAC was verified. |
-| UI | partial [V: E19, E20] | Routing rules UI/tree is real. Circuit breaker and adaptive routing are fallback placeholders. |
-| Helm/config | stub [V: E22] | Circuit breaker config schema exists; no runtime binding was verified. |
+| UI | partial [V: E19, E20] | Routing rules UI/tree is real. failover handling and adaptive routing are fallback placeholders. |
+| Helm/config | stub [V: E22] | failover handling config schema exists; no runtime binding was verified. |
 | Telemetry | partial [V: E05, E23] | Routing rule ID/name are logged. Missing circuit state transitions, canary cohort IDs, shadow run IDs, and promotion gate telemetry. |
 | Unit | partial [V: E24] | Routing tests exist; no circuit/canary/shadow determinism tests were found. |
 | Integration | partial [V: E24] | Routing API/E2E collections exist; no circuit/canary/shadow acceptance flow. |

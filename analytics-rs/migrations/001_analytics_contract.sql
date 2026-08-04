@@ -61,6 +61,32 @@ create table if not exists frankengate_analytics.jobs (
 create index if not exists jobs_tenant_state_created_idx
   on frankengate_analytics.jobs (tenant_id, state, created_at, id);
 
+-- Stable aggregate surface for worker scaling and dashboards. Consumers can
+-- query one bounded projection instead of repeatedly scanning jobs and
+-- reimplementing state aggregation in each adapter.
+create or replace view frankengate_analytics.job_queue_stats as
+select tenant_id, state, count(*)::bigint as job_count
+from frankengate_analytics.jobs
+group by tenant_id, state;
+
+-- Lease, heartbeat, checkpoint, and terminal transitions must advance the
+-- timestamp used by recovery and operational dashboards.  Keep this trigger
+-- idempotent so rolling migration retries do not fail.
+create or replace function frankengate_analytics.touch_job_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists jobs_touch_updated_at on frankengate_analytics.jobs;
+create trigger jobs_touch_updated_at
+before update on frankengate_analytics.jobs
+for each row execute function frankengate_analytics.touch_job_updated_at();
+
 create table if not exists frankengate_analytics.run_attempts (
   id text primary key,
   tenant_id text not null,
@@ -82,6 +108,34 @@ create index if not exists run_attempts_tenant_run_idx
 alter table frankengate_analytics.jobs
   add column if not exists replay_of text references frankengate_analytics.jobs(id);
 
+-- Reject impossible lease projections at the database boundary. These
+-- constraints are added idempotently so rolling migration retries are safe.
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'jobs_lease_projection_consistency'
+      and conrelid = 'frankengate_analytics.jobs'::regclass
+  ) then
+    alter table frankengate_analytics.jobs
+      add constraint jobs_lease_projection_consistency check (
+        (state = 'leased' and worker_id is not null and lease_until is not null)
+        or (state <> 'leased' and worker_id is null and lease_until is null)
+      );
+  end if;
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'jobs_terminal_error_consistency'
+      and conrelid = 'frankengate_analytics.jobs'::regclass
+  ) then
+    alter table frankengate_analytics.jobs
+      add constraint jobs_terminal_error_consistency check (
+        (state = 'failed' and error_code is not null and length(error_code) between 1 and 256)
+        or (state <> 'failed' and error_code is null)
+      );
+  end if;
+end $$;
+
 -- Re-running this migration must be safe during rolling deploys.  PostgreSQL
 -- has no CREATE POLICY IF NOT EXISTS, so replace policies deterministically.
 drop policy if exists experiments_tenant_isolation on frankengate_analytics.experiments;
@@ -92,11 +146,17 @@ drop policy if exists artifacts_tenant_isolation on frankengate_analytics.artifa
 drop policy if exists jobs_tenant_isolation on frankengate_analytics.jobs;
 
 alter table frankengate_analytics.experiments enable row level security;
+alter table frankengate_analytics.experiments force row level security;
 alter table frankengate_analytics.runs enable row level security;
+alter table frankengate_analytics.runs force row level security;
 alter table frankengate_analytics.run_attempts enable row level security;
+alter table frankengate_analytics.run_attempts force row level security;
 alter table frankengate_analytics.evaluation_results enable row level security;
+alter table frankengate_analytics.evaluation_results force row level security;
 alter table frankengate_analytics.artifact_manifests enable row level security;
+alter table frankengate_analytics.artifact_manifests force row level security;
 alter table frankengate_analytics.jobs enable row level security;
+alter table frankengate_analytics.jobs force row level security;
 
 -- The connection pool must set app.tenant_id for every transaction. Missing
 -- tenant context fails closed rather than exposing cross-tenant analytics.

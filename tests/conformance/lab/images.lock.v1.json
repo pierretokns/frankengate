@@ -27,6 +27,10 @@
       "platforms": ["linux/amd64", "linux/arm64"]
     }
   ],
+  "native_cli_packages": [
+    {"id":"claude-linux-amd64-musl","package":"@anthropic-ai/claude-code-linux-x64-musl","platform":"linux/amd64","version":"2.1.214","tarball":"https://registry.npmjs.org/@anthropic-ai/claude-code-linux-x64-musl/-/claude-code-linux-x64-musl-2.1.214.tgz","integrity":"sha512-mpImiNlou+uQax/ZY8ktacgTbtsP9r7V8vQ5xzD36hTu3U+rKi3IisUPDUfyNs2mxdLq51xt27Oc9+k7ONN/YQ=="},
+    {"id":"claude-linux-arm64-musl","package":"@anthropic-ai/claude-code-linux-arm64-musl","platform":"linux/arm64","version":"2.1.214","tarball":"https://registry.npmjs.org/@anthropic-ai/claude-code-linux-arm64-musl/-/claude-code-linux-arm64-musl-2.1.214.tgz","integrity":"sha512-UNWeKtEqB2J8m2Eb33LjhMmghjtLr4zg1b1U09xp9/3f/QQlj1lJdvka2PjtQWzr1zt0rgh6JbKKAgLSiggIrg=="}
+  ],
   "cli_packages": [
     {
       "id": "claude-code-production",

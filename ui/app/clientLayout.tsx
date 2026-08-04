@@ -3,7 +3,6 @@ import NotAvailableBanner from "@/components/notAvailableBanner";
 import ProgressProvider from "@/components/progressBar";
 import Sidebar from "@/components/sidebar";
 import { ThemeProvider } from "@/components/themeProvider";
-import TrialExpiryBanner from "@/components/trialExpiryBanner";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useStoreSync } from "@/hooks/useStoreSync";
 import { WebSocketProvider } from "@/hooks/useWebSocket";
@@ -126,7 +125,6 @@ function AppContent({ children }: { children: React.ReactNode }) {
 				<SidebarProvider>
 					<Sidebar />
 					<div className="dark:bg-card custom-scrollbar content-container my-[0.5rem] mr-[0.5rem] h-[calc(100dvh-1rem)] w-full min-w-xl overflow-auto rounded-md border border-gray-200 bg-white px-10 dark:border-zinc-800">
-						<TrialExpiryBanner />
 						<main className="custom-scrollbar content-container-inner relative mx-auto flex h-full min-h-0 flex-col overflow-y-hidden p-4">
 							{isLoading ? <FullPageLoader /> : <FullPage config={bifrostConfig}>{children}</FullPage>}
 						</main>

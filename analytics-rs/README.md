@@ -1,9 +1,9 @@
 # FrankenGate analytics control plane
 
-This is an isolated Rust control plane for the analytics plane. The in-memory
-`JobStore` remains the protocol reference, while the SQLx/PostgreSQL boundary
-in `src/database.rs` provides the first durable projections and worker queue
-operations. It is deliberately separate from Go inference workers.
+This is the first isolated Rust vertical slice for the analytics plane. It
+keeps the `JobStore` protocol and its durable PostgreSQL boundary separate from
+the Go gateway hot path. SQLx is used only by the independently deployed
+control-plane process.
 
 ## Adoption gates
 
@@ -17,7 +17,7 @@ dependencies yet. Each candidate must provide:
    tests; and
 4. an explicit stop decision if the candidate does not close a named gap.
 
-The production direction is a separately deployed Rust control plane with
+The production direction remains a separately deployed Rust control plane with
 PostgreSQL as the authoritative contract store. It must never execute analytics
 jobs inside gateway inference workers.
 
@@ -31,20 +31,10 @@ The current in-memory contract already covers:
 - tenant-scoped cancellation/retry plus reproducible experiment lineage; and
 - terminal, same-tenant replay jobs with explicit `replay_of` lineage.
 
-The protocol tests are complemented by durable SQLx methods for experiments,
-runs, evaluations, artifact manifests, replay lineage, job submission/leasing,
-renewal, checkpoints, completion/failure, cancellation, worker draining, and
-bounded listings/statistics. An HTTP API and gateway event adapter remain
-separate implementation gates.
-
-PostgreSQL transactions set `app.tenant_id` with `set_config(..., true)` before
-queries. The migration uses forced row-level security, so missing tenant
-context fails closed. Set `DATABASE_URL` for the service deployment; the
-Helm chart can inject it from `analyticsControlPlane.databaseUrl.existingSecret`.
-Set `ANALYTICS_WORKER_TOKEN` to require `Bearer` authentication for governed
-worker endpoints; the Helm chart injects it from
-`analyticsControlPlane.workerTokenSecret`. An unset token intentionally leaves
-local contract mode open, but production deployments should configure it.
+These are protocol and test guarantees. The SQLx migration and tenant-scoped
+database operations now provide the first durable persistence gate; the HTTP
+job API, supervision runtime, and independent Helm deployments remain separate
+implementation gates.
 
 `migrations/001_analytics_contract.sql` is the first durable schema contract.
 It enables tenant RLS across experiments, runs, run attempts, evaluations,
@@ -60,7 +50,7 @@ Run the current contract tests with:
 cargo test --manifest-path analytics-rs/Cargo.toml
 ```
 
-The dependency-free operator smoke check exercises submit → lease → complete
+The operator smoke check exercises submit → lease → complete
 and verifies the typed terminal outcome:
 
 ```bash
@@ -69,53 +59,12 @@ cargo run --manifest-path analytics-rs/Cargo.toml -- --check
 
 For a minimal independently deployable process, run `--serve` (default port
 8081). It runs the contract self-check as a boot fence before accepting
-traffic, then exposes `/healthz`, `/readyz`, and `/version` (the protocol
-version). When `DATABASE_URL` is set, `/readyz` fails closed until the
-PostgreSQL endpoint is reachable; without it, dependency-free local contract
-mode remains available.
-
-The governed worker HTTP surface is intentionally small and tenant-scoped. All
-`/v1/jobs/*` requests require the configured bearer token and `X-Tenant-ID`.
-Workers use:
-
-```text
-POST /v1/jobs             X-Job-ID, X-Job-Kind       -> 201 (submit)
-GET  /v1/jobs                                      -> 200 (list)
-GET  /v1/jobs/stats                                -> 200 (counts)
-POST /v1/jobs/lease        X-Worker-ID, X-Lease-Seconds
-POST /v1/jobs/renew        X-Job-ID, X-Worker-ID, X-Lease-Seconds
-POST /v1/jobs/checkpoint   X-Job-ID, X-Worker-ID, X-Checkpoint
-POST /v1/jobs/complete     X-Job-ID, X-Worker-ID
-POST /v1/jobs/fail         X-Job-ID, X-Worker-ID, X-Error-Code
-POST /v1/jobs/cancel       X-Job-ID
-POST /v1/jobs/replay       X-Replay-ID, X-Source-Job-ID
-POST /v1/jobs/drain        X-Worker-ID
-```
-
-The durable lineage read surface is also tenant-scoped and bearer-protected:
-
-```text
-GET  /v1/experiments       X-Limit (optional, 1..100) -> 200 JSON array
-GET  /v1/runs              X-Limit (optional, 1..100) -> 200 JSON array
-POST /v1/runs/outcome      X-Run-ID, X-Outcome            -> 200
-GET  /v1/evaluations       X-Run-ID, X-Limit             -> 200 JSON array
-GET  /v1/artifacts         X-Run-ID, X-Limit             -> 200 JSON array
-```
-
-Creation uses the same routes with `POST`: experiments require `X-Job-ID`,
-`X-Actor-ID`, and `X-Revision`; runs require `X-Job-ID`, `X-Experiment-ID`,
-`X-Dataset-Revision`, `X-Evaluator-Revision`, `X-Model-Revision`, and
-`X-Prompt-Revision`. All identities are tenant-scoped and idempotency conflicts
-return `409`.
-
-These endpoints expose only revision metadata; prompts, inputs, outputs, and
-artifact bytes remain outside this control plane. Tenant fencing is enforced by
-the same PostgreSQL RLS transaction boundary used by worker operations.
-
-Lease, renewal, checkpoint, and terminal transitions are owner-scoped in
-PostgreSQL. `drain` releases a worker's leases for recovery; `replay` requires
-a terminal same-tenant source job. Empty queues return `204` from lease, and
-conflicting or unauthorized transitions return `409`.
+traffic, then exposes `/healthz`, `/readyz`, `/version` (the protocol
+version), and `/metrics`. The metrics endpoint emits Prometheus gauges named
+`frankengate_analytics_jobs` with `state` labels for `queued`, `leased`,
+`cancelled`, `completed`, and `failed`; the optional Helm `ServiceMonitor`
+scrapes this endpoint. This is still only a process/readiness contract: the production
+queue/database service remains a subsequent implementation gate.
 
 The control-plane contract also has a standalone image build, which is kept
 separate from the Go gateway image:
@@ -123,3 +72,8 @@ separate from the Go gateway image:
 ```bash
 docker build -f analytics-rs/Dockerfile -t frankengate-analytics-control:dev analytics-rs
 ```
+
+The current HTTP surface is an internal worker/control-plane contract, not a
+public unauthenticated API. Put it behind cluster network policy and an
+identity-aware service boundary before exposing it outside the namespace; the
+tenant and worker query parameters are partitioning inputs, not credentials.

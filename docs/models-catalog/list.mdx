@@ -102,7 +102,7 @@ export const ModelsCatalog = () => {
   useEffect(() => {
     async function fetchModels () {
       try {
-        const paths = ['/data/pricing/latest.json', 'data/pricing/latest.json', 'https://getbifrost.ai/datasheet']
+        const paths = ['/data/pricing/latest.json', 'data/pricing/latest.json', 'https://pierretokns.github.io/frankengate/data/pricing/latest-upstream.json']
         let data
         let lastError
         for (const path of paths) {

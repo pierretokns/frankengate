@@ -33,7 +33,6 @@ export enum RbacResource {
 	Inference = "Inference",
 	Metrics = "Metrics",
 	FeatureFlags = "FeatureFlags",
-	CircuitBreaker = "CircuitBreaker",
 }
 
 // RBAC Operation Names (must match backend definitions)

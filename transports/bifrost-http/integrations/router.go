@@ -509,6 +509,7 @@ type PassthroughConfig struct {
 	Provider         schemas.ModelProvider                                              // which provider's key pool to draw from
 	ProviderDetector func(ctx *fasthttp.RequestCtx, model string) schemas.ModelProvider // optional: dynamic provider detection
 	StripPrefix      []string                                                           // e.g. "/openai" — stripped before forwarding
+	UpstreamURL      string                                                             // optional upstream base URL override
 }
 
 // LargePayloadHook is called before body parsing to detect and set up large payload streaming.
@@ -625,22 +626,22 @@ func (g *GenericRouter) RegisterRoutes(r *router.Router, middlewares ...schemas.
 		// This ensures each route only has its own middleware plus the originally passed middlewares
 		routeMiddlewares := append([]schemas.BifrostHTTPMiddleware{registerRequestTypeMiddleware}, middlewares...)
 
-		handler := g.createHandler(route)
+		handler := lib.ChainMiddlewares(g.createHandler(route), routeMiddlewares...)
 		switch method {
 		case fasthttp.MethodPost:
-			r.POST(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.POST(route.Path, handler)
 		case fasthttp.MethodGet:
-			r.GET(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.GET(route.Path, handler)
 		case fasthttp.MethodPut:
-			r.PUT(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.PUT(route.Path, handler)
 		case fasthttp.MethodDelete:
-			r.DELETE(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.DELETE(route.Path, handler)
 		case fasthttp.MethodPatch:
-			r.PATCH(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.PATCH(route.Path, handler)
 		case fasthttp.MethodHead:
-			r.HEAD(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...))
+			r.HEAD(route.Path, handler)
 		default:
-			r.POST(route.Path, lib.ChainMiddlewares(handler, routeMiddlewares...)) // Default to POST
+			r.POST(route.Path, handler) // Default to POST
 		}
 	}
 
@@ -3177,6 +3178,7 @@ func (g *GenericRouter) handlePassthrough(ctx *fasthttp.RequestCtx) {
 		Method:      string(ctx.Method()),
 		Path:        path,
 		RawQuery:    string(ctx.URI().QueryString()),
+		UpstreamURL: cfg.UpstreamURL,
 		Body:        body,
 		SafeHeaders: safeHeaders,
 		Provider:    provider,

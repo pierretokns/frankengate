@@ -4,11 +4,51 @@ Artifact Hub publication is not yet configured for the FrankenGate fork.
 
 Compatibility chart for deploying [FrankenGate](https://github.com/pierretokns/frankengate), an enterprise AI gateway derived from Bifrost OSS. The chart path and `bifrost.*` values remain compatibility identifiers.
 
-**Latest Version:** 2.1.35
+## External data services
+
+The chart supports first-class external PostgreSQL configuration for production
+deployments. Set `storage.mode=postgres`, disable the bundled PostgreSQL chart,
+and configure `postgresql.external.host`, `database`, `user`, and `sslMode`.
+Use `postgresql.external.existingSecret` for the password; the chart does not
+create or expose a plaintext password in that mode. Redis remains optional
+acceleration/vector storage and is never required as the governance authority.
+
+For OTEL replay, use the chart's `extraEnv` map. Set
+`FRANKENGATE_REPLAY_S3_BUCKET` for object storage (and optionally
+`FRANKENGATE_REPLAY_S3_PREFIX`/`AWS_REGION`), or set `FRANKENGATE_REPLAY_DIR`
+for a mounted JSONL fallback. Do not enable both in the same deployment.
+
+**Latest FrankenGate Chart:** 0.3.19
+
+The inherited upstream chart history below is retained only as compatibility
+context; it is not a FrankenGate release catalog. The fork-owned chart index
+is intentionally empty until the first signed FrankenGate chart is published.
+
+### FrankenGate analytics control plane
+
+Set `analyticsControlPlane.enabled=true` to deploy the separately scaled Rust
+analytics service. Configure `databaseUrlSecret` for durable Postgres/Aurora
+state; `databaseMaxConnections`, autoscaling, termination grace, and the
+optional disruption budget bound worker replicas independently of inference.
+Set `workerTokenSecret` to require an `Authorization: Bearer` token on
+control-plane `/v1/*` requests; mount it from a Kubernetes Secret and leave it
+unset only when an equivalent network boundary protects the service.
+Set `analyticsControlPlane.image.digest` to pin the control-plane OCI image to
+the exact tested artifact; when set, it is appended after the selected tag.
+When `databaseUrlSecret` is configured and `serviceMonitor.enabled=true`, set
+`analyticsControlPlane.serviceMonitor.tenant` to scrape durable tenant-scoped
+queue gauges. An empty tenant intentionally reports only the local protocol
+store and must not be used as a durable production metric.
+The optional analytics HPA uses bounded scale-up and a five-minute scale-down
+stabilization window by default; tune `analyticsControlPlane.autoscaling.behavior`
+only after accounting for database connection and worker-lease capacity.
 
 ## Changelog
 
 ### Upcoming
+
+- The default gateway image tag is aligned with the chart/app version at
+  `v0.3.19`; override it explicitly for a pinned beta or digest deployment.
 
 ### 2.1.35
 
@@ -78,7 +118,7 @@ Compatibility chart for deploying [FrankenGate](https://github.com/pierretokns/f
 
 ### 2.1.25
 
-- Added `bifrost.circuitBreakerConfig`. Renders into `circuit_breaker_config` in the generated config JSON.
+- Added `bifrost.failover handlingConfig`. Renders into `failover handling_config` in the generated config JSON.
 - Extended `bifrost.loadBalancer` with four new behavioural flags: `directionSelectionEnabled`, `routeSelectionEnabled`, `rerouteFailedDirections`, and `pruneFailedFallbacks`. All are optional booleans; omitting a flag preserves the server default rather than forcing a value. Renders into the corresponding config.json fields inside `load_balancer_config`.
 - Added `evaluation_mode` to guardrail rules. Accepts `bundled` (default, evaluate all turns together) or `per_turn` (evaluate each turn independently). Set under `bifrost.guardrails.rules[].evaluation_mode`.
 - Added `group_traces_by_session` to the OTEL and Datadog plugin configs. When `true`, requests sharing the same `x-bf-session-id` header are grouped into a single trace. An inbound W3C `traceparent` always takes priority. Defaults to `false`.
@@ -440,7 +480,7 @@ Since Kubernetes doesn't allow in-place conversion from Deployment to StatefulSe
 1. Back up your data (if needed)
 2. Uninstall the existing release: `helm uninstall bifrost`
 3. Delete the old PVC: `kubectl delete pvc bifrost-data`
-4. Install with the new chart version: `helm install bifrost bifrost/bifrost --set image.tag=<latest-image>`
+4. Install with the new chart version: `helm install frankengate frankengate/bifrost --set image.tag=<latest-image>`
 
 **Note:** For production high-availability setups, we recommend using PostgreSQL mode which scales horizontally without these concerns.
 
@@ -457,8 +497,8 @@ helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 # Update your local Helm chart repository cache
 helm repo update
 
-# Install Bifrost with default configuration (SQLite storage)
-helm install frankengate frankengate/bifrost --set image.tag=v0.3.14
+# Install FrankenGate with default configuration (SQLite storage)
+helm install frankengate frankengate/bifrost --set image.tag=v0.3.19
 ```
 
 ## Prerequisites
@@ -477,7 +517,7 @@ helm repo add frankengate https://pierretokns.github.io/frankengate/helm-charts
 helm repo update
 
 # Install with default values
-helm install frankengate frankengate/bifrost --set image.tag=v0.3.14
+helm install frankengate frankengate/bifrost --set image.tag=v0.3.19
 
 # Or install with custom values
 helm install frankengate frankengate/bifrost -f my-values.yaml
@@ -488,10 +528,10 @@ helm install frankengate frankengate/bifrost -f my-values.yaml
 ```bash
 # Clone the repository
 git clone https://github.com/pierretokns/frankengate.git
-cd frankengate/helm-charts
+cd bifrost/helm-charts
 
 # Install from local chart
-helm install frankengate ./bifrost --set image.tag=v0.3.14
+helm install frankengate ./bifrost --set image.tag=v0.3.19
 ```
 
 ### Interactive Installation
@@ -540,7 +580,7 @@ securityContext:
 Or equivalently on the command line:
 
 ```bash
-helm install bifrost bifrost/bifrost \
+helm install frankengate frankengate/bifrost \
   --set image.tag=v1.6.4 \
   --set podSecurityContext.runAsUser=null \
   --set podSecurityContext.fsGroup=null \
@@ -572,10 +612,10 @@ needed.
 | Parameter          | Description                    | Default                     |
 | ------------------ | ------------------------------ | --------------------------- |
 | `image.repository` | Container image repository     | `ghcr.io/pierretokns/frankengate` |
-| `image.tag`        | Container image tag (required) | `""`                        |
+| `image.tag`        | Container image tag (defaults to the chart app version) | `"v0.3.19"` |
 | `image.pullPolicy` | Image pull policy              | `IfNotPresent`              |
 
-> **Important:** You must specify the `image.tag`. See available tags at [GitHub Container Registry](https://github.com/pierretokns/frankengate/pkgs/container/frankengate).
+> **Tip:** Pin `image.tag` or `image.digest` explicitly for reproducible deployments. See available tags at the fork-owned [GHCR package](https://github.com/pierretokns/frankengate/pkgs/container/frankengate).
 
 ### Enterprise Private Registry
 
@@ -943,12 +983,12 @@ The chart includes pre-configured examples in `values-examples/`:
 
 ```bash
 # From Helm repository
-helm install bifrost bifrost/bifrost \
-  -f https://raw.githubusercontent.com/maximhq/bifrost/main/helm-charts/bifrost/values-examples/postgres-only.yaml \
+helm install frankengate frankengate/bifrost \
+  -f https://raw.githubusercontent.com/pierretokns/frankengate/dev/helm-charts/bifrost/values-examples/postgres-only.yaml \
   --set image.tag=v1.5.2
 
 # From local source
-helm install bifrost ./bifrost -f ./bifrost/values-examples/postgres-only.yaml
+helm install frankengate ./bifrost -f ./bifrost/values-examples/postgres-only.yaml
 ```
 
 ## Production Deployment
@@ -1135,10 +1175,11 @@ kubectl get secret bifrost -o yaml
 
 - [FrankenGate Documentation](https://github.com/pierretokns/frankengate/tree/dev/docs)
 - [GitHub Repository](https://github.com/pierretokns/frankengate)
-- [GitHub Container Registry](https://github.com/pierretokns/frankengate/pkgs/container/frankengate)
+- [GHCR](https://github.com/pierretokns/frankengate/pkgs/container/frankengate)
+- [Discord Community](https://discord.gg/exN5KAydbU)
 
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](../LICENSE) file for details.
 
-Built and maintained by the FrankenGate contributors.
+Maintained by the FrankenGate project; see the repository [license and notices](https://github.com/pierretokns/frankengate).

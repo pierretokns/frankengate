@@ -56,7 +56,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { PAGE_SIZE, formatDateShort, useDebouncedValue } from "./helpers";
 
-const SKILLS_REPOSITORY_DOCS_URL = "https://docs.getbifrost.ai/features/skills-repository";
+const SKILLS_REPOSITORY_DOCS_URL = "/features/skills-repository";
 
 // ---------- MarketplacePopover ----------
 

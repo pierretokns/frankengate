@@ -1,0 +1,14 @@
+{
+  "schema": "sealed-cli-cell-scenario/v2",
+  "operation": "codex-inference-boundary",
+  "run_id": "codex-inference-boundary",
+  "client": "codex",
+  "binary": "/opt/client/node_modules/.bin/codex",
+  "args": [],
+  "env": {
+    "OPENAI_API_KEY": "sealed-lab-not-a-real-credential",
+    "OPENAI_BASE_URL": "http://bifrost-1:8080/openai/v1"
+  },
+  "expected_version": "0.144.5",
+  "timeout_ms": 30000
+}

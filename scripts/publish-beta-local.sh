@@ -2,9 +2,10 @@
 set -euo pipefail
 
 usage() {
-  echo "usage: $0 --binary PATH --tests PATH [--tag beta-TAG] [--prepare-only DIR]" >&2
+  echo "usage: $0 --binary PATH --tests PATH [--tag beta-TAG] [--source-sha SHA] [--prepare-only DIR]" >&2
   echo "  PATH to a test report is required so local publication is explicit." >&2
   echo "  --prepare-only packages and verifies locally without GitHub auth." >&2
+  echo "  --source-sha pins the tested source commit when publishing from another worktree." >&2
   exit 2
 }
 
@@ -12,12 +13,14 @@ BINARY=""
 TEST_REPORT=""
 TAG=""
 PREPARE_ONLY=""
+SOURCE_SHA=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --binary) BINARY="${2:-}"; shift 2 ;;
     --tests) TEST_REPORT="${2:-}"; shift 2 ;;
     --tag) TAG="${2:-}"; shift 2 ;;
     --prepare-only) PREPARE_ONLY="${2:-}"; shift 2 ;;
+    --source-sha) SOURCE_SHA="${2:-}"; shift 2 ;;
     -h|--help) usage ;;
     *) echo "unknown argument: $1" >&2; usage ;;
   esac
@@ -45,7 +48,16 @@ if [[ -z "$PREPARE_ONLY" ]]; then
 fi
 
 ROOT="$(git rev-parse --show-toplevel)"
-SHA="$(git -C "$ROOT" rev-parse 'HEAD^{commit}')"
+if [[ -n "$SOURCE_SHA" ]]; then
+  [[ "$SOURCE_SHA" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "--source-sha must be a 40-character commit SHA" >&2; exit 1; }
+  git -C "$ROOT" cat-file -e "$SOURCE_SHA^{commit}" 2>/dev/null || {
+    echo "--source-sha is not present in the source worktree" >&2
+    exit 1
+  }
+  SHA="$(git -C "$ROOT" rev-parse "$SOURCE_SHA^{commit}")"
+else
+  SHA="$(git -C "$ROOT" rev-parse 'HEAD^{commit}')"
+fi
 SHORT_SHA="${SHA:0:12}"
 TAG="${TAG:-beta-${SHORT_SHA}}"
 [[ "$TAG" == beta-* ]] || { echo "local beta tags must begin with beta-" >&2; exit 1; }

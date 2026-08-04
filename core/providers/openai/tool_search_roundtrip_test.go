@@ -104,7 +104,7 @@ func TestResponsesInputRoundTripsAdditionalToolsItems(t *testing.T) {
 	t.Logf("round-trip OK:\n%s", out)
 }
 
-func TestToOpenAIResponsesRequestLiftsAdditionalToolsForMantle(t *testing.T) {
+func TestUnlightifyMantleResponsesRequestHoistsAdditionalTools(t *testing.T) {
 	input := []byte(`[
 		{"type":"additional_tools","role":"developer","tools":[{"type":"custom","name":"apply_patch"},{"type":"namespace","name":"repo_tools","tools":[{"type":"function","name":"open_file","parameters":{"type":"object"}}]}]},
 		{"role":"user","content":[{"type":"input_text","text":"Reply exactly with OK."}]}
@@ -113,20 +113,36 @@ func TestToOpenAIResponsesRequestLiftsAdditionalToolsForMantle(t *testing.T) {
 	if err := sonic.Unmarshal(input, &messages); err != nil {
 		t.Fatalf("unmarshal Bifrost input: %v", err)
 	}
-	converted := ToOpenAIResponsesRequest(nil, &schemas.BifrostResponsesRequest{
+	request := &schemas.BifrostResponsesRequest{
 		Provider: schemas.BedrockMantle,
 		Model:    "Claude-GPT-soul",
 		Input:    messages,
-	})
+		Params: &schemas.ResponsesParameters{Tools: []schemas.ResponsesTool{{
+			Type:                  schemas.ResponsesToolTypeFunction,
+			Name:                  schemas.Ptr("existing"),
+			ResponsesToolFunction: &schemas.ResponsesToolFunction{},
+		}}},
+	}
+	unlightified := UnlightifyMantleResponsesRequest(request)
+	converted := ToOpenAIResponsesRequest(nil, unlightified)
 	body, err := sonic.Marshal(converted)
 	if err != nil {
 		t.Fatalf("marshal converted request: %v", err)
 	}
-	if gjson.GetBytes(body, "input.0.type").String() == "additional_tools" {
+	if gjson.GetBytes(body, "input.#(type==\"additional_tools\")").Exists() {
 		t.Fatalf("additional_tools leaked into Mantle input: %s", body)
 	}
-	if got := gjson.GetBytes(body, "tools.1.tools.0.type").String(); got != "function" {
-		t.Fatalf("nested lifted tool type lost during conversion: %s", body)
+	if got := gjson.GetBytes(body, "tools.0.name").String(); got != "existing" {
+		t.Fatalf("existing top-level tool order changed: %s", body)
+	}
+	if got := gjson.GetBytes(body, "tools.2.tools.0.type").String(); got != "function" {
+		t.Fatalf("nested lifted tool type lost during unlightify: %s", body)
+	}
+	if got := gjson.GetBytes(body, "input.0.role").String(); got != "user" {
+		t.Fatalf("ordinary input item was not preserved: %s", body)
+	}
+	if len(request.Input) != 2 || len(request.Params.Tools) != 1 {
+		t.Fatal("unlightify mutated its caller")
 	}
 }
 

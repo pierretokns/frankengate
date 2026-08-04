@@ -45,6 +45,24 @@ if [[ "${FORK_RELEASE:-0}" == "1" ]]; then
   MODULES=("${RELEASE_MODULES[@]}")
 fi
 
+# The required PR lane validates code that can ship in the gateway. Examples,
+# test harnesses, migration utilities, and CI-only tools have their own jobs
+# (or are not packaged at all); including them here duplicates compilation and
+# was the main source of 20+ minute timeouts. Keep the full discovered list for
+# the explicit release/vulnerability lanes, but make the default test-vet lane
+# deterministic and bounded.
+if [[ "$MODE" == "test-vet" && "${FORK_RELEASE:-0}" != "1" ]]; then
+  SHIPPED_MODULES=()
+  for module in "${MODULES[@]}"; do
+    case "$module" in
+      cli|core|framework|plugins/*|transports)
+        SHIPPED_MODULES+=("$module")
+        ;;
+    esac
+  done
+  MODULES=("${SHIPPED_MODULES[@]}")
+fi
+
 # Every module still uses the upstream-compatible
 # github.com/maximhq/bifrost/... namespace. Running a module in isolation can
 # therefore download a published upstream sibling instead of testing the local
@@ -116,7 +134,7 @@ run_in_modules() {
 	# Module-wide compile/vet jobs are memory-heavy. Eight concurrent Go
 	# workspaces can starve the runner and present as a silent hang; keep the
 	# default conservative while allowing larger runners to opt in.
-	local max_parallel="${MODULE_CHECK_MAX_PARALLEL:-2}" failed=0
+	local max_parallel="${MODULE_CHECK_MAX_PARALLEL:-4}" failed=0
   local module_timeout="${MODULE_TIMEOUT_SECONDS:-900}"
   local -a pids=()
   run_one() {
@@ -200,6 +218,13 @@ run_focused_race_tests() {
       ./reservations \
       ./schemas \
       ./vkcrypto
+  )
+  echo "::endgroup::"
+
+  echo "::group::sealed lab recorder Docker artifact contract"
+  (
+    cd "$ROOT/tests/conformance/lab"
+    GOWORK=off FRANKENGATE_DOCKER_ARTIFACT_TEST=1 go test -count=1 ./cmd/lab-runner -run '^TestDockerRecorderCopyContract$'
   )
   echo "::endgroup::"
 

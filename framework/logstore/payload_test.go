@@ -176,6 +176,10 @@ func TestMCPToolObjectKey(t *testing.T) {
 
 func TestMCPToolLogPayload_RoundTripFullLog(t *testing.T) {
 	vkID := "vk_123"
+	deviceID := "device_123"
+	appKey := "claude-code"
+	decision := "allow"
+	source := "endpoint"
 	cost := 0.01
 	latency := 42.5
 	entry := &MCPToolLog{
@@ -187,6 +191,10 @@ func TestMCPToolLogPayload_RoundTripFullLog(t *testing.T) {
 		ServerLabel:    "docs",
 		VirtualKeyID:   &vkID,
 		VirtualKeyName: strPtr("prod-key"),
+		DeviceID:       &deviceID,
+		AppKey:         &appKey,
+		Decision:       &decision,
+		Source:         &source,
 		Latency:        &latency,
 		Cost:           &cost,
 		Status:         "success",
@@ -220,6 +228,10 @@ func TestMCPToolLogPayload_RoundTripFullLog(t *testing.T) {
 	assert.Equal(t, entry.RequestID, dbEntry.RequestID)
 	assert.Equal(t, entry.ToolName, dbEntry.ToolName)
 	assert.Equal(t, entry.ServerLabel, dbEntry.ServerLabel)
+	assert.Equal(t, entry.DeviceID, dbEntry.DeviceID)
+	assert.Equal(t, entry.AppKey, dbEntry.AppKey)
+	assert.Equal(t, entry.Decision, dbEntry.Decision)
+	assert.Equal(t, entry.Source, dbEntry.Source)
 	assert.Equal(t, entry.Status, dbEntry.Status)
 	assert.Equal(t, "full input", dbEntry.ArgumentsParsed.(map[string]interface{})["query"])
 	assert.Equal(t, true, dbEntry.ResultParsed.(map[string]interface{})["ok"])

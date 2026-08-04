@@ -17,6 +17,7 @@ import (
 	"github.com/maximhq/bifrost/core/reservations"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
+	"github.com/maximhq/bifrost/framework/objectstore"
 	"go.opentelemetry.io/otel/attribute"
 	commonpb "go.opentelemetry.io/proto/otlp/common/v1"
 )
@@ -418,10 +419,25 @@ func Init(ctx context.Context, config *Config, _logger schemas.Logger, pricingMa
 		instanceAttrs:             instanceAttrs,
 		pluginSpanFilter:          config.PluginSpanFilter,
 	}
-	// Durable replay is opt-in and asynchronous with collector export. The
-	// tenant boundary is enforced by JSONLReplayStore; traces without a tenant
-	// are rejected rather than persisted into a shared bucket.
-	if dir := strings.TrimSpace(os.Getenv("FRANKENGATE_REPLAY_DIR")); dir != "" {
+	// Durable replay is opt-in and asynchronous with collector export. An S3
+	// bucket is preferred when configured; JSONL remains the local fallback.
+	// Both stores enforce tenant boundaries and reject traces without a tenant.
+	if bucket := strings.TrimSpace(os.Getenv("FRANKENGATE_REPLAY_S3_BUCKET")); bucket != "" {
+		storeConfig := &objectstore.Config{Type: objectstore.StoreTypeS3, Bucket: schemas.SecretVar{Val: bucket}, Prefix: os.Getenv("FRANKENGATE_REPLAY_S3_PREFIX"), Compress: true}
+		if region := strings.TrimSpace(os.Getenv("AWS_REGION")); region != "" {
+			storeConfig.Region = &schemas.SecretVar{Val: region}
+		}
+		blobStore, err := objectstore.NewObjectStore(ctx, storeConfig, _logger)
+		if err != nil {
+			return nil, fmt.Errorf("initialize replay object store: %w", err)
+		}
+		store, err := NewObjectReplayStore(blobStore, storeConfig.GetPrefix())
+		if err != nil {
+			_ = blobStore.Close()
+			return nil, fmt.Errorf("initialize object replay store: %w", err)
+		}
+		p.replayStore = store
+	} else if dir := strings.TrimSpace(os.Getenv("FRANKENGATE_REPLAY_DIR")); dir != "" {
 		includeContent := strings.EqualFold(os.Getenv("FRANKENGATE_REPLAY_INCLUDE_CONTENT"), "true")
 		store, err := NewJSONLReplayStore(dir, includeContent)
 		if err != nil {

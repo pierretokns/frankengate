@@ -11,20 +11,21 @@ import (
 )
 
 const (
-	pcapngSectionHeaderBlock   = uint32(0x0a0d0d0a)
-	pcapngInterfaceDescription = uint32(0x00000001)
-	pcapngEnhancedPacket       = uint32(0x00000006)
-	pcapngInterfaceStatistics  = uint32(0x00000005)
-	pcapngByteOrderMagic       = uint32(0x1a2b3c4d)
-	pcapngEthernetLinkType     = uint16(1)
-	pcapngIfNameOption         = uint16(2)
-	pcapngIfDescriptionOption  = uint16(3)
-	pcapngISBStartTimeOption   = uint16(2)
-	pcapngISBEndTimeOption     = uint16(3)
-	pcapngISBIfRecvOption      = uint16(4)
-	pcapngISBIfDropOption      = uint16(5)
-	pcapngISBOSDropOption      = uint16(7)
-	maxRecorderPacketBytes     = 1 << 20
+	pcapngSectionHeaderBlock    = uint32(0x0a0d0d0a)
+	pcapngInterfaceDescription  = uint32(0x00000001)
+	pcapngEnhancedPacket        = uint32(0x00000006)
+	pcapngInterfaceStatistics   = uint32(0x00000005)
+	pcapngByteOrderMagic        = uint32(0x1a2b3c4d)
+	pcapngEthernetLinkType      = uint16(1)
+	pcapngIfNameOption          = uint16(2)
+	pcapngIfDescriptionOption   = uint16(3)
+	pcapngIfTimestampResolution = uint16(9)
+	pcapngISBStartTimeOption    = uint16(2)
+	pcapngISBEndTimeOption      = uint16(3)
+	pcapngISBIfRecvOption       = uint16(4)
+	pcapngISBIfDropOption       = uint16(5)
+	pcapngISBOSDropOption       = uint16(7)
+	maxRecorderPacketBytes      = 1 << 20
 
 	RecorderCalibrationStart = "start"
 	RecorderCalibrationEnd   = "end"
@@ -369,7 +370,7 @@ func recorderPCAPNGBlock(data []byte, offset int, order binary.ByteOrder) ([]byt
 }
 
 func recorderPCAPNGInterfaceOptions(options []byte, order binary.ByteOrder) (string, string, error) {
-	values, err := recorderPCAPNGExactOptions(options, order, []uint16{pcapngIfNameOption, pcapngIfDescriptionOption})
+	values, err := recorderPCAPNGExactOptions(options, order, []uint16{pcapngIfNameOption, pcapngIfDescriptionOption, pcapngIfTimestampResolution})
 	if err != nil {
 		return "", "", err
 	}
@@ -379,6 +380,12 @@ func recorderPCAPNGInterfaceOptions(options []byte, order binary.ByteOrder) (str
 	}
 	if err := validateASCIIStrings(name, description); err != nil {
 		return "", "", err
+	}
+	// PCAPNG defaults to microseconds when if_tsresol is absent. Recorder v1
+	// compares capture timestamps with CLOCK_MONOTONIC nanoseconds, so the
+	// resolution must be explicit and exactly decimal 10^-9 seconds.
+	if len(values[2]) != 1 || values[2][0] != 9 {
+		return "", "", fmt.Errorf("IDB if_tsresol must be decimal nanoseconds")
 	}
 	return name, description, nil
 }

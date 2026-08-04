@@ -720,6 +720,10 @@ paths:
   /api/pricing/force-sync:
     $ref: './paths/management/config.yaml#/force-sync-pricing'
 
+  # Durable OTEL replay metadata (content is never returned)
+  /api/replays:
+    $ref: './paths/management/replays.yaml#/replays'
+
   # Alerting
   /api/alerting/channels:
     $ref: './paths/management/alerting.yaml#/channels'
@@ -986,13 +990,6 @@ paths:
   /api/mcp/tool-groups/{id}:
     $ref: './paths/management/mcptoolgroups.yaml#/mcp-tool-groups-by-id'
 
-  # Circuit Breaker
-  /api/circuit-breaker/policies:
-    $ref: './paths/management/circuitbreaker.yaml#/circuit-breaker-policies'
-  /api/circuit-breaker/policies/{name}:
-    $ref: './paths/management/circuitbreaker.yaml#/circuit-breaker-policy-by-name'
-  /api/circuit-breaker/state:
-    $ref: './paths/management/circuitbreaker.yaml#/circuit-breaker-state'
 
   # Governance - Complexity Analyzer Config
   /api/governance/complexity-analyzer-config:

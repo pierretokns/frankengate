@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an idea or enhancement for Bifrost
+description: Suggest an idea or enhancement for FrankenGate
 title: "[Feature]: <short summary>"
 labels: [enhancement]
 assignees: []
@@ -65,5 +65,4 @@ body:
       description: Add any other context, sketches, or references here.
     validations:
       required: false
-
 

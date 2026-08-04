@@ -13,7 +13,6 @@ import { useGetAllKeysQuery, useGetProvidersQuery } from "@/lib/store/apis/provi
 import { ModelProviderName } from "@/lib/types/config";
 import { ModelParams } from "@/lib/types/prompts";
 import { cn } from "@/lib/utils";
-import { PromptDeploymentsAccordionItem } from "@enterprise/components/prompt-deployments/promptDeploymentsAccordionItem";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApiKeySelectorView } from "../components/apiKeySelectorView";
 import { VariablesTableView } from "../components/variablesTableView";
@@ -34,7 +33,6 @@ export function SettingsPanel() {
 		customHeaders,
 		setCustomHeaders,
 		requiredHeaders,
-		selectedPromptId,
 	} = usePromptContext();
 
 	const onProviderChange = useCallback(
@@ -268,7 +266,6 @@ export function SettingsPanel() {
 							</div>
 						</AccordionContent>
 					</AccordionItem>
-					{selectedPromptId && <PromptDeploymentsAccordionItem activeSection={openSection} />}
 				</Accordion>
 			</div>
 		</div>

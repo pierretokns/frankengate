@@ -12,8 +12,7 @@ import { SecretVar } from "@/lib/types/schemas";
 import { parseArrayFromText } from "@/lib/utils/array";
 import { validateOrigins } from "@/lib/utils/validation";
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
-import { useGetAuthTypeQuery } from "@enterprise/lib/store/apis/scimApi";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -33,11 +32,9 @@ const getPasswordPolicyFailures = (password?: string) => {
 export default function SecurityView() {
 	const hasSettingsUpdateAccess = useRbac(RbacResource.Settings, RbacOperation.Update);
 	const { data: bifrostConfig } = useGetCoreConfigQuery({ fromDB: true });
-	const { data: authType, isLoading: authTypeLoading, error: authTypeError } = useGetAuthTypeQuery(undefined, { skip: !IS_ENTERPRISE });
 	const config = bifrostConfig?.client_config;
 	const [updateCoreConfig, { isLoading }] = useUpdateCoreConfigMutation();
 	const [localConfig, setLocalConfig] = useState<CoreConfig>(DefaultCoreConfig);
-	const showPasswordSection = !IS_ENTERPRISE || (!authTypeLoading && !authTypeError && authType?.type !== "sso");
 	const passwordInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
 	const [localValues, setLocalValues] = useState<{
@@ -92,9 +89,7 @@ export default function SecurityView() {
 			authConfig.admin_password?.value !== bifrostConfig?.auth_config?.admin_password?.value ||
 			authConfig.admin_password?.ref !== bifrostConfig?.auth_config?.admin_password?.ref ||
 			authConfig.admin_password?.type !== bifrostConfig?.auth_config?.admin_password?.type;
-		const authChanged = showPasswordSection
-			? authConfig.is_enabled !== bifrostConfig?.auth_config?.is_enabled || usernameChanged || passwordChanged
-			: false;
+		const authChanged = authConfig.is_enabled !== bifrostConfig?.auth_config?.is_enabled || usernameChanged || passwordChanged;
 
 		const localRequired = localConfig.required_headers?.slice().sort().join(",");
 		const serverRequired = config.required_headers?.slice().sort().join(",");
@@ -116,7 +111,7 @@ export default function SecurityView() {
 			enforceAuthOnInferenceChanged ||
 			allowDirectKeysChanged
 		);
-	}, [config, localConfig, authConfig, bifrostConfig, showPasswordSection]);
+	}, [config, localConfig, authConfig, bifrostConfig]);
 
 	const needsRestart = useMemo(() => {
 		if (!config) return false;
@@ -183,7 +178,7 @@ export default function SecurityView() {
 			const hasUsername = authConfig.admin_username?.value || authConfig.admin_username?.ref;
 			const hasPassword = authConfig.admin_password?.value || authConfig.admin_password?.ref;
 			const passwordPolicyFailures =
-				showPasswordSection && authConfig.is_enabled && !authConfig.admin_password?.ref && authConfig.admin_password?.value
+				authConfig.is_enabled && !authConfig.admin_password?.ref && authConfig.admin_password?.value
 					? getPasswordPolicyFailures(authConfig.admin_password.value)
 					: [];
 
@@ -198,17 +193,13 @@ export default function SecurityView() {
 			await updateCoreConfig({
 				...bifrostConfig!,
 				client_config: localConfig,
-				...(showPasswordSection
-					? {
-							auth_config: authConfig.is_enabled && hasUsername && hasPassword ? authConfig : { ...authConfig, is_enabled: false },
-						}
-					: {}),
+				auth_config: authConfig.is_enabled && hasUsername && hasPassword ? authConfig : { ...authConfig, is_enabled: false },
 			}).unwrap();
 			toast.success("Security settings updated successfully.");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
 		}
-	}, [bifrostConfig, localConfig, authConfig, showPasswordSection, updateCoreConfig]);
+	}, [bifrostConfig, localConfig, authConfig, updateCoreConfig]);
 
 	return (
 		<div className="mx-auto h-[calc(100vh-50px)] w-full max-w-4xl space-y-4 overflow-y-auto">
@@ -219,22 +210,6 @@ export default function SecurityView() {
 
 			<div className="space-y-4">
 				{/* Password Protect the Dashboard */}
-				{IS_ENTERPRISE && authTypeLoading ? (
-					<div className="flex items-center justify-center rounded-sm border p-8" data-testid="security-auth-type-loading">
-						<Loader2 className="text-muted-foreground h-5 w-5 animate-spin" aria-hidden />
-						<span className="sr-only">Loading authentication settings</span>
-					</div>
-				) : null}
-				{IS_ENTERPRISE && !authTypeLoading && authTypeError ? (
-					<Alert variant="destructive" data-testid="security-auth-type-error">
-						<AlertTriangle className="h-4 w-4" />
-						<AlertDescription>
-							Could not load authentication type. Dashboard password settings are hidden until this request succeeds.{" "}
-							{getErrorMessage(authTypeError)}
-						</AlertDescription>
-					</Alert>
-				) : null}
-				{showPasswordSection && (
 					<div>
 						<div className="space-y-4 rounded-sm border p-4">
 							<div className="flex items-center justify-between">
@@ -286,7 +261,6 @@ export default function SecurityView() {
 							</div>
 						</div>
 					</div>
-				)}
 				{/* Enable Auth on Inference */}
 				<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 					<div className="space-y-0.5">

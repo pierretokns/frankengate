@@ -197,7 +197,27 @@ jobs:
           package="frankengate-${VERSION}-${ARTIFACT}"
           mkdir -p "dist/${package}"
           cp tmp/bifrost-http "dist/${package}/frankengate"
+          if [[ "${ARTIFACT}" == "linux-amd64" ]]; then
+            timeout --foreground --signal=TERM --kill-after=30s 12m \
+              cargo build --release --manifest-path analytics-rs/Cargo.toml
+            analytics-rs/target/release/frankengate-analytics-control --check
+            cp analytics-rs/target/release/frankengate-analytics-control \
+              "dist/${package}/frankengate-analytics-control"
+          fi
           cp LICENSE NOTICE "dist/${package}/"
+
+      - name: Generate release SPDX manifest
+        env:
+          ARTIFACT: ${{ matrix.artifact }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          package="frankengate-${VERSION}-${ARTIFACT}"
+          digest="$(sha256sum "dist/${package}/frankengate" | awk '{print $1}')"
+          created="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          jq -n --arg version "${VERSION#v}" --arg digest "$digest" --arg created "$created" \
+            '{spdxVersion:"SPDX-2.3", dataLicense:"CC0-1.0", SPDXID:"SPDXRef-DOCUMENT", name:"FrankenGate release", documentNamespace:("https://frankengate.dev/spdx/" + $version), creationInfo:{creators:["Tool: FrankenGate release workflow"], created:$created}, packages:[{SPDXID:"SPDXRef-Package-FrankenGate", name:"frankengate", versionInfo:$version, downloadLocation:"NOASSERTION", filesAnalyzed:true, checksums:[{algorithm:"SHA256", checksumValue:$digest}], licenseConcluded:"Apache-2.0", licenseDeclared:"Apache-2.0", copyrightText:"NOASSERTION"}]}' \
+            > "dist/${package}/frankengate.spdx.json"
 
       - name: Generate platform binary SPDX SBOM
         if: ${{ false }} # deferred P10 provenance lane
@@ -260,7 +280,10 @@ jobs:
       - name: Download platform packages
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          pattern: frankengate-linux-amd64,frankengate-darwin-arm64,frankengate-darwin-amd64
+          # download-artifact accepts one glob, not a comma-separated list.
+          # The previous value matched nothing, leaving the publish workspace
+          # without dist/*.tar.gz and failing the checksum step.
+          pattern: frankengate-*
           path: dist
           merge-multiple: true
 
@@ -269,14 +292,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # download-artifact preserves each uploaded artifact's directory
-          # unless the files are flattened explicitly. The publish and inspect
-          # steps consume a single dist/*.tar.gz namespace.
+          # download-artifact layout can vary between action versions and
+          # merge-multiple settings. Flatten every nested archive into the
+          # publish namespace instead of assuming exactly one directory level.
+          while IFS= read -r -d '' package; do
+            target="./$(basename "$package")"
+            test "$package" != "$target"
+            test ! -e "$target"
+            mv "$package" "$target"
+          done < <(find . -mindepth 2 -type f -name '*.tar.gz' -print0)
           shopt -s nullglob
-          packages=( */*.tar.gz )
-          for package in "${packages[@]}"; do
-            mv "$package" "$(basename "$package")"
-          done
           archives=( ./*.tar.gz )
           test "${#archives[@]}" -gt 0
           sha256sum "${archives[@]}" > SHA256SUMS
@@ -295,6 +320,10 @@ jobs:
             mkdir -p "$inspect/$name"
             tar -xzf "$archive" -C "$inspect/$name"
             test -x "$inspect/$name/$name/frankengate"
+            if [[ "$name" == *-linux-amd64 ]]; then
+              test -x "$inspect/$name/$name/frankengate-analytics-control"
+              "$inspect/$name/$name/frankengate-analytics-control" --check
+            fi
             cmp LICENSE "$inspect/$name/$name/LICENSE"
             cmp NOTICE "$inspect/$name/$name/NOTICE"
             jq -e '.spdxVersion == "SPDX-2.3" and (.packages | length > 0)' \

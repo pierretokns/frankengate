@@ -17146,7 +17146,6 @@ var enterpriseSchemaPaths = map[string]bool{
 	"access_profiles":            true,
 	"alerting":                   true,
 	"audit_logs":                 true,
-	"circuit_breaker_config":     true,
 	"cluster_config":             true,
 	"scim_config":                true,
 	"load_balancer_config":       true,
@@ -17543,7 +17542,6 @@ func TestConfigSchemaSyncTopLevel(t *testing.T) {
 		"access_profiles":            true,
 		"alerting":                   true,
 		"audit_logs":                 true,
-		"circuit_breaker_config":     true,
 		"cluster_config":             true,
 		"scim_config":                true,
 		"load_balancer_config":       true,
@@ -17609,6 +17607,17 @@ func TestResolveFrameworkPricingConfig(t *testing.T) {
 	fileSyncSeconds := int64((12 * time.Hour).Seconds())
 	dbURL := "https://db.example.com/pricing.json"
 	dbSyncSeconds := int64((6 * time.Hour).Seconds())
+
+	t.Run("environment mirror overrides built-in defaults", func(t *testing.T) {
+		t.Setenv("FRANKENGATE_PRICING_URL", "file:///fixtures/pricing.json")
+		t.Setenv("FRANKENGATE_MODEL_PARAMETERS_URL", "file:///fixtures/model-parameters.json")
+
+		normalizedTable, normalizedModelCatalog, _ := ResolveFrameworkPricingConfig(nil, nil)
+		require.Equal(t, "file:///fixtures/pricing.json", *normalizedTable.PricingURL)
+		require.Equal(t, "file:///fixtures/model-parameters.json", *normalizedTable.ModelParametersURL)
+		require.Equal(t, "file:///fixtures/pricing.json", *normalizedModelCatalog.PricingURL)
+		require.Equal(t, "file:///fixtures/model-parameters.json", *normalizedModelCatalog.ModelParametersURL)
+	})
 
 	t.Run("file values override db when no stored hash exists", func(t *testing.T) {
 		// DB has values but no ConfigHash — first time file is applied; file wins.

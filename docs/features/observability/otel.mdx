@@ -1128,19 +1128,27 @@ Use [Built-in Observability](./default) for:
 - No external dependencies
 - Direct database access to logs
 
-### vs. Maxim Plugin
+### Choosing an observability backend
 
-Use the [Maxim Plugin](./maxim) for:
-
-- Advanced LLM evaluation and testing
-- Prompt engineering and experimentation
-- Team collaboration and governance
-- Production monitoring with alerts
-- Dataset management and curation
+Use OTEL when you want provider-neutral traces and metrics in Grafana,
+Datadog, Honeycomb, New Relic, or a self-hosted collector. Evaluation,
+experimentation, and governance consumers should read the fork's redacted
+replay and analytics contracts rather than relying on a vendor-specific plugin.
 
 ---
 
 ## Troubleshooting
+
+### Durable replay storage
+
+Replay capture is opt-in and runs asynchronously after the response is
+written. Set `FRANKENGATE_REPLAY_S3_BUCKET` to use the shared S3-compatible
+object-store path (the pod's IAM role supplies credentials); optionally set
+`FRANKENGATE_REPLAY_S3_PREFIX` and `AWS_REGION`. Without that variable, set
+`FRANKENGATE_REPLAY_DIR` to use tenant-partitioned JSONL on a mounted volume.
+Both paths redact content and identity headers before persistence and reject
+records without a tenant. S3/object-store failure is surfaced to the
+observability metrics and never blocks inference.
 
 ### Connection Issues
 
@@ -1176,5 +1184,5 @@ echo $OTEL_API_KEY
 ## Next Steps
 
 - **[Built-in Observability](./default)** - Local logging for development
-- **[Maxim Plugin](./maxim)** - Advanced LLM evaluation and monitoring
+- **[Analytics and replay contract](/roadmap/architecture/otel-storage-plane)** - Governed trace storage and replay
 - **[Telemetry](../telemetry)** - Prometheus metrics and dashboards

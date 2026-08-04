@@ -50,7 +50,6 @@ import (
 	"github.com/maximhq/bifrost/core/providers/vertex"
 	"github.com/maximhq/bifrost/core/providers/vllm"
 	"github.com/maximhq/bifrost/core/providers/xai"
-	"github.com/maximhq/bifrost/core/routing"
 	schemas "github.com/maximhq/bifrost/core/schemas"
 	"github.com/valyala/fasthttp"
 )
@@ -95,7 +94,6 @@ type Bifrost struct {
 	keySelector         schemas.KeySelector                 // Custom key selector function
 	keyPoolFilter       schemas.KeyPoolFilter               // optional hook to veto keys before selection (nil = all eligible)
 	kvStore             schemas.KVStore                     // optional KV store for session stickiness (nil = disabled)
-	providerCircuit     *routing.ProviderCircuit            // bounded per-process provider admission gate
 }
 
 // ProviderQueue wraps a provider's request channel with lifecycle management
@@ -234,19 +232,18 @@ func Init(ctx context.Context, config schemas.BifrostConfig) (*Bifrost, error) {
 
 	bifrostCtx, cancel := schemas.NewBifrostContextWithCancel(ctx)
 	bifrost := &Bifrost{
-		ctx:             bifrostCtx,
-		cancel:          cancel,
-		account:         config.Account,
-		llmPlugins:      atomic.Pointer[[]schemas.LLMPlugin]{},
-		mcpPlugins:      atomic.Pointer[[]schemas.MCPPlugin]{},
-		requestQueues:   sync.Map{},
-		waitGroups:      sync.Map{},
-		keySelector:     config.KeySelector,
-		keyPoolFilter:   config.KeyPoolFilter,
-		mcpCredStore:    credstore.NewCredStore(config.OAuth2Provider, config.MCPHeadersProvider, config.Logger),
-		logger:          config.Logger,
-		kvStore:         config.KVStore,
-		providerCircuit: routing.NewProviderCircuit(routing.ProviderCircuitConfig{}),
+		ctx:           bifrostCtx,
+		cancel:        cancel,
+		account:       config.Account,
+		llmPlugins:    atomic.Pointer[[]schemas.LLMPlugin]{},
+		mcpPlugins:    atomic.Pointer[[]schemas.MCPPlugin]{},
+		requestQueues: sync.Map{},
+		waitGroups:    sync.Map{},
+		keySelector:   config.KeySelector,
+		keyPoolFilter: config.KeyPoolFilter,
+		mcpCredStore:  credstore.NewCredStore(config.OAuth2Provider, config.MCPHeadersProvider, config.Logger),
+		logger:        config.Logger,
+		kvStore:       config.KVStore,
 	}
 	bifrost.tracer.Store(&tracerWrapper{tracer: tracer})
 	if config.LLMPlugins == nil {
@@ -4833,55 +4830,6 @@ func (bifrost *Bifrost) shouldTryFallbacks(req *schemas.BifrostRequest, primaryE
 	return true
 }
 
-// admitProvider applies the local circuit gate immediately before an upstream
-// attempt. A rejected attempt is represented as a fallback-eligible error so
-// configured alternatives can still serve the request.
-func (bifrost *Bifrost) admitProvider(ctx *schemas.BifrostContext, req *schemas.BifrostRequest, provider schemas.ModelProvider, model string) *schemas.BifrostError {
-	if bifrost.providerCircuit == nil {
-		return nil
-	}
-	decision := bifrost.providerCircuit.Allow(string(provider))
-	// Attach only the bounded circuit outcome to the active attempt span. The
-	// circuit reason is from a fixed vocabulary (healthy/probe/cooldown/etc.),
-	// and provider is already a low-cardinality routing dimension; no payload,
-	// key, or user-controlled value is exported here.
-	if ctx != nil {
-		tracer := bifrost.getTracer()
-		traceID, _ := ctx.Value(schemas.BifrostContextKeyTraceID).(string)
-		spanID, _ := ctx.Value(schemas.BifrostContextKeySpanID).(string)
-		if traceID != "" {
-			handle := tracer.GetSpanHandleByID(traceID, func() *string {
-				if spanID == "" {
-					return nil
-				}
-				return &spanID
-			}())
-			tracer.SetAttribute(handle, schemas.AttrBifrostCircuitAllowed, decision.Allowed)
-			tracer.SetAttribute(handle, schemas.AttrBifrostCircuitState, decision.State)
-			tracer.SetAttribute(handle, schemas.AttrBifrostCircuitReason, decision.Reason)
-		}
-	}
-	if decision.Allowed {
-		return nil
-	}
-	err := newBifrostErrorFromMsg(fmt.Sprintf("provider circuit open for %s: %s", provider, decision.Reason))
-	err.PopulateExtraFields(req.RequestType, provider, model, model)
-	allow := true
-	err.AllowFallbacks = &allow
-	return err
-}
-
-func (bifrost *Bifrost) recordProviderOutcome(provider schemas.ModelProvider, err *schemas.BifrostError) {
-	if bifrost.providerCircuit == nil {
-		return
-	}
-	if err == nil {
-		bifrost.providerCircuit.RecordSuccess(string(provider))
-	} else {
-		bifrost.providerCircuit.RecordFailure(string(provider))
-	}
-}
-
 // prepareFallbackRequest creates a fallback request and validates the provider config
 // Returns the fallback request or nil if this fallback should be skipped
 func (bifrost *Bifrost) prepareFallbackRequest(req *schemas.BifrostRequest, fallback schemas.Fallback) *schemas.BifrostRequest {
@@ -5163,12 +5111,7 @@ func (bifrost *Bifrost) handleRequest(ctx *schemas.BifrostContext, req *schemas.
 
 	bifrost.logger.Debug(fmt.Sprintf("primary provider %s with model %s and %d fallbacks", provider, model, len(fallbacks)))
 
-	primaryErr := bifrost.admitProvider(ctx, req, provider, model)
-	var primaryResult *schemas.BifrostResponse
-	if primaryErr == nil {
-		primaryResult, primaryErr = bifrost.tryRequest(ctx, req)
-		bifrost.recordProviderOutcome(provider, primaryErr)
-	}
+	primaryResult, primaryErr := bifrost.tryRequest(ctx, req)
 	if primaryErr != nil {
 		if primaryErr.Error != nil {
 			bifrost.logger.Debug(fmt.Sprintf("primary provider %s with model %s returned error: %s", provider, model, primaryErr.Error.Message))
@@ -5226,12 +5169,7 @@ func (bifrost *Bifrost) handleRequest(ctx *schemas.BifrostContext, req *schemas.
 		}
 
 		// Try the fallback provider
-		fallbackErr := bifrost.admitProvider(ctx, fallbackReq, fallback.Provider, fallback.Model)
-		var result *schemas.BifrostResponse
-		if fallbackErr == nil {
-			result, fallbackErr = bifrost.tryRequest(ctx, fallbackReq)
-			bifrost.recordProviderOutcome(fallback.Provider, fallbackErr)
-		}
+		result, fallbackErr := bifrost.tryRequest(ctx, fallbackReq)
 		// Layer on Primary/IsFallback — the per-attempt code populates only
 		// attempt-level RoutingInfo (Provider/Model/Key/ResolvedKeyAlias);
 		// fallback-relative signals belong to the orchestrator scope.
@@ -5311,12 +5249,7 @@ func (bifrost *Bifrost) handleStreamRequest(ctx *schemas.BifrostContext, req *sc
 
 	bifrost.logger.Debug(fmt.Sprintf("primary provider %s with model %s and %d fallbacks", provider, model, len(fallbacks)))
 
-	primaryErr := bifrost.admitProvider(ctx, req, provider, model)
-	var primaryResult chan *schemas.BifrostStreamChunk
-	if primaryErr == nil {
-		primaryResult, primaryErr = bifrost.tryStreamRequest(ctx, req)
-		bifrost.recordProviderOutcome(provider, primaryErr)
-	}
+	primaryResult, primaryErr := bifrost.tryStreamRequest(ctx, req)
 	if primaryErr != nil {
 		if primaryErr.Error != nil {
 			bifrost.logger.Debug(fmt.Sprintf("primary provider %s with model %s returned error: %s", provider, model, primaryErr.Error.Message))
@@ -5369,12 +5302,7 @@ func (bifrost *Bifrost) handleStreamRequest(ctx *schemas.BifrostContext, req *sc
 		// Try the fallback provider.  Annotate chunks as they cross the
 		// orchestrator boundary so streaming consumers receive the same
 		// fallback provenance as unary responses.
-		fallbackErr := bifrost.admitProvider(ctx, fallbackReq, fallback.Provider, fallback.Model)
-		var result chan *schemas.BifrostStreamChunk
-		if fallbackErr == nil {
-			result, fallbackErr = bifrost.tryStreamRequest(ctx, fallbackReq)
-			bifrost.recordProviderOutcome(fallback.Provider, fallbackErr)
-		}
+		result, fallbackErr := bifrost.tryStreamRequest(ctx, fallbackReq)
 		if result != nil {
 			result = annotateFallbackStream(result, provider, model)
 		}
@@ -5978,7 +5906,7 @@ var errAllKeysDead = errors.New("all configured keys returned permanent per-key 
 
 // errAllKeysFiltered is returned by a keyProvider closure when healthy (non-dead) keys exist but
 // the KeyPoolFilter hook suppressed all of them. Unlike errAllKeysDead this is a transient
-// condition (the filter/circuit breaker self-heals), so it surfaces as a 503 rather than a 502.
+// condition (the filter state can change), so it surfaces as a 503 rather than a 502.
 var errAllKeysFiltered = errors.New("all eligible keys are temporarily suppressed by the key pool filter")
 
 // errDestinationRegionMismatch prevents a region-pinned fallback from
@@ -6589,10 +6517,14 @@ func clearAnthropicPassthroughForNonNativeProvider(ctx *schemas.BifrostContext, 
 	if integrationType, _ := ctx.Value(schemas.BifrostContextKeyIntegrationType).(string); integrationType != "anthropic" {
 		return
 	}
-	if baseProvider == schemas.Anthropic ||
-		baseProvider == schemas.Vertex ||
-		baseProvider == schemas.Azure ||
-		baseProvider == schemas.BedrockMantle {
+	if baseProvider == schemas.Anthropic || baseProvider == schemas.Vertex || baseProvider == schemas.Azure {
+		return
+	}
+	// Bedrock Mantle supports both Anthropic and OpenAI surfaces. The
+	// pre-callback runs before key alias resolution and may conservatively mark
+	// a Claude-looking alias for passthrough; once the alias is attached, use its
+	// family to make the final decision rather than the provider name alone.
+	if baseProvider == schemas.BedrockMantle && schemas.ResolveFamily(ctx, "") == schemas.ModelFamilyAnthropic {
 		return
 	}
 	ctx.SetValue(schemas.BifrostContextKeyUseRawRequestBody, false)

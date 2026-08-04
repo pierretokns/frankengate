@@ -63,7 +63,7 @@ func TestReplayHandlerRequiresTenantAndRedactsTrace(t *testing.T) {
 func TestReplayHandlerSummaryShape(t *testing.T) {
 	// Keep the authorization invariant at the store boundary as well: a custom
 	// implementation may return mixed tenants, but the HTTP response filters it.
-	fake := &replayListFake{rows: []otel.ReplayRecord{{SchemaVersion: 1, TraceID: "a", TenantID: "acme", CapturedAt: time.Unix(1, 0), Trace: &schemas.Trace{TraceID: "secret"}}, {TraceID: "x", TenantID: "other"}}}
+	fake := &replayListFake{rows: []otel.ReplayRecord{{SchemaVersion: 1, TraceID: "a", TenantID: "acme", ContentSHA256: strings.Repeat("a", 64), CapturedAt: time.Unix(1, 0), Trace: &schemas.Trace{TraceID: "secret"}}, {TraceID: "x", TenantID: "other"}}}
 	if _, err := fake.List(context.Background(), "acme", 2); err != nil {
 		t.Fatal(err)
 	}

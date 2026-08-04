@@ -72,6 +72,8 @@ func TestMantleOpenAIURL(t *testing.T) {
 			"https://bedrock-mantle.us-west-2.api.aws/v1/chat/completions"},
 		{"gpt-5.x uses openai/v1", "us-east-2", "openai.gpt-5.5", "responses",
 			"https://bedrock-mantle.us-east-2.api.aws/openai/v1/responses"},
+		{"undocumented gpt-5 name stays on generic v1", "us-east-2", "openai.gpt-5.3", "responses",
+			"https://bedrock-mantle.us-east-2.api.aws/v1/responses"},
 		{"gemma-4 uses openai/v1", "us-east-1", "google.gemma-4-31b", "responses",
 			"https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses"},
 		{"gemma-3 uses bare v1", "us-east-1", "google.gemma-3-12b-it", "chat/completions",
@@ -93,11 +95,11 @@ func TestMantleOpenAIURL(t *testing.T) {
 	}
 }
 
-func TestMantleOpenAIURLHonorsExplicitFamily(t *testing.T) {
+func TestMantleOpenAIURLDoesNotUseConversionFamilyAsPathAuthority(t *testing.T) {
 	got := mantleOpenAIURLForFamily("us-east-1", "claude-gpt-soul", schemas.ModelFamilyOpenAI, "responses")
-	want := "https://bedrock-mantle.us-east-1.api.aws/openai/v1/responses"
+	want := "https://bedrock-mantle.us-east-1.api.aws/v1/responses"
 	if got != want {
-		t.Fatalf("explicit OpenAI family selected %q, want %q", got, want)
+		t.Fatalf("conversion family must not select an exceptional AWS path: got %q, want %q", got, want)
 	}
 }
 

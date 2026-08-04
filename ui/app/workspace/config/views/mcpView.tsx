@@ -9,8 +9,6 @@ import { getErrorMessage, useGetCoreConfigQuery, useUpdateCoreConfigMutation } f
 import { CoreConfig, DefaultCoreConfig } from "@/lib/types/config";
 import { SecretVar } from "@/lib/types/schemas";
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
-import { useGetSCIMProvidersQuery } from "@enterprise/lib/store/apis/scimApi";
-import { IS_ENTERPRISE } from "@/lib/constants/config";
 import { AlertTriangle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -23,12 +21,6 @@ export default function MCPView() {
 	const { data: bifrostConfig } = useGetCoreConfigQuery({ fromDB: true });
 	const config = bifrostConfig?.client_config;
 
-	// The "require identity-provider login" toggle is enterprise-only and only
-	// meaningful when an identity provider is configured — the backend ignores
-	// disable_vk_identity otherwise, so surfacing it would be a no-op. The SCIM
-	// query is skipped (and stubbed to []) in OSS builds.
-	const { data: scimProviders } = useGetSCIMProvidersQuery(undefined, { skip: !IS_ENTERPRISE });
-	const idpConfigured = !!scimProviders?.some((p) => (p as { enabled?: boolean }).enabled);
 	const [updateCoreConfig, { isLoading }] = useUpdateCoreConfigMutation();
 	const [localConfig, setLocalConfig] = useState<CoreConfig>(DefaultCoreConfig);
 
@@ -89,9 +81,7 @@ export default function MCPView() {
       (localConfig.oauth2_server_config?.auth_code_ttl ?? 300) !==
         (config.oauth2_server_config?.auth_code_ttl ?? 300) ||
       (localConfig.oauth2_server_config?.access_token_ttl ?? 600) !==
-        (config.oauth2_server_config?.access_token_ttl ?? 600) ||
-      (localConfig.oauth2_server_config?.disable_vk_identity ?? false) !==
-        (config.oauth2_server_config?.disable_vk_identity ?? false)
+        (config.oauth2_server_config?.access_token_ttl ?? 600)
 		);
 	}, [config, localConfig]);
 
@@ -155,13 +145,6 @@ export default function MCPView() {
       setLocalConfig((prev) => ({
         ...prev,
         mcp_server_auth_mode: value,
-        // disable_vk_identity is oauth-only and its toggle is hidden outside oauth
-        // mode; clear it on the way out so a hidden-stale value can't be saved and
-        // rejected by the backend (400) on the next save.
-        oauth2_server_config:
-          value === "oauth"
-            ? prev.oauth2_server_config
-            : { ...prev.oauth2_server_config, disable_vk_identity: false },
       }));
     }
   }, []);
@@ -195,12 +178,6 @@ export default function MCPView() {
     }
   }, []);
 
-  const handleDisableVKIdentityChange = useCallback((checked: boolean) => {
-    setLocalConfig((prev) => ({
-      ...prev,
-      oauth2_server_config: { ...prev.oauth2_server_config, disable_vk_identity: checked },
-    }));
-  }, []);
 
 	const handleSave = useCallback(async () => {
 		try {
@@ -635,56 +612,6 @@ export default function MCPView() {
                     </div>
                   </div>
 
-                  {/* Require identity-provider login. Enterprise-only and only
-                      meaningful in oauth mode with an IdP configured. Stays visible
-                      when the setting is already enabled so it is never silently lost. */}
-                  {localConfig.mcp_server_auth_mode === "oauth" &&
-                    (idpConfigured ||
-                      localConfig.oauth2_server_config?.disable_vk_identity) && (
-                    <div className="mt-4 space-y-2 border-t pt-4">
-                      <div className="flex items-center justify-between space-x-2">
-                        <div className="space-y-0.5">
-                          <label
-                            htmlFor="oauth2-disable-vk-identity"
-                            className="text-sm font-medium"
-                          >
-                            Require identity-provider login
-                          </label>
-                          <p className="text-muted-foreground text-sm">
-                            When enabled, the OAuth consent flow only offers
-                            identity-provider login. Virtual keys can no longer be
-                            used to obtain an MCP token, and existing virtual-key
-                            OAuth sessions lose access immediately. Anonymous session
-                            access is unaffected (controlled by Enforce Authentication
-                            on Inference).
-                          </p>
-                        </div>
-                        <Switch
-                          id="oauth2-disable-vk-identity"
-                          data-testid="oauth2-disable-vk-identity-switch"
-                          size="md"
-                          checked={
-                            localConfig.oauth2_server_config?.disable_vk_identity ?? false
-                          }
-                          onCheckedChange={handleDisableVKIdentityChange}
-                          disabled={!hasSettingsUpdateAccess}
-                        />
-                      </div>
-                      {localConfig.oauth2_server_config?.disable_vk_identity && (
-                        <Alert variant="warning">
-                          <AlertTriangle className="size-4" />
-                          <AlertTitle>
-                            Virtual-key MCP access via OAuth will stop
-                          </AlertTitle>
-                          <AlertDescription>
-                            MCP clients that authenticated with a virtual key will
-                            lose access immediately and must sign in through your
-                            identity provider to reconnect.
-                          </AlertDescription>
-                        </Alert>
-                      )}
-                    </div>
-                  )}
                 </div>
               )}
 						</AccordionContent>

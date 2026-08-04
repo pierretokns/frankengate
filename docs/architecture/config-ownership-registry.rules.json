@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "registry_id": "config-ownership-registry",
+  "target_source_of_truth": "database",
+  "authority_classes": {
+    "bootstrap_only": "Deployment, environment, or process bootstrap owns this field. It is not mutable control-plane state and is read before or outside the database authority path.",
+    "db_authoritative_hot_reload": "PostgreSQL is the durable authority and running pods must converge through an API reload path or the config changefeed without a process restart.",
+    "db_authoritative_restart_required": "PostgreSQL is the durable authority, but the field changes process wiring or external store/client construction and takes effect only after a pod restart."
+  },
+  "rules": [
+    {
+      "id": "config-data-bootstrap",
+      "surface": "config_data",
+      "include": [
+        "version",
+        "env_label",
+        "source_of_truth",
+        "encryption_key",
+        "config_store"
+      ],
+      "authority": "bootstrap_only",
+      "reload_contract": "Read during process bootstrap before the durable control-plane state can be trusted. Runtime updates require redeploy or a dedicated migration.",
+      "schema_semantics": "Go ConfigData JSON tag is the field identity; nested schema semantics are recorded under config_schema.",
+      "default_semantics": "Zero value means omitted unless the loader supplies a documented fallback.",
+      "nil_semantics": "Nil or missing field means the bootstrap loader uses environment/default behavior.",
+      "secret_semantics": "Derived per field by verifier heuristics.",
+      "identity_semantics": "Derived per field by verifier heuristics.",
+      "evidence": [
+        "transports/bifrost-http/lib/config.go: ConfigData, UnmarshalJSON, LoadConfig, initEncryption, initStores"
+      ]
+    },
+    {
+      "id": "config-data-db-restart",
+      "surface": "config_data",
+      "include": [
+        "server",
+        "logs_store",
+        "vector_store",
+        "websocket"
+      ],
+      "authority": "db_authoritative_restart_required",
+      "reload_contract": "Database value is durable, but the running process must recreate server/store/runtime clients to observe it.",
+      "schema_semantics": "Go ConfigData JSON tag is the section identity; nested schema semantics are recorded under config_schema.",
+      "default_semantics": "If absent, loader falls back to built-in defaults or stored DB values where implemented.",
+      "nil_semantics": "Nil leaves the current boot/default path in place.",
+      "secret_semantics": "Derived per field by verifier heuristics.",
+      "identity_semantics": "Derived per field by verifier heuristics.",
+      "evidence": [
+        "transports/bifrost-http/lib/config.go: initStores, WebSocket defaults, ServerConfig defaults"
+      ]
+    },
+    {
+      "id": "config-data-db-hot",
+      "surface": "config_data",
+      "include": [
+        "client",
+        "auth_config",
+        "providers",
+        "framework",
+        "mcp",
+        "governance",
+        "plugins",
+        "feature_flags",
+        "alerting",
+        "skills_registry"
+      ],
+      "authority": "db_authoritative_hot_reload",
+      "reload_contract": "Database is authoritative and pod-local state must refresh through the relevant reload path or config changefeed.",
+      "schema_semantics": "Go ConfigData JSON tag is the section identity; nested schema semantics are recorded under config_schema.",
+      "default_semantics": "Defaults are filled by the loader or owning subsystem before persistence.",
+      "nil_semantics": "Missing section leaves existing DB state untouched during import; present empty sections prune only where the owning reconciler documents that behavior.",
+      "secret_semantics": "Derived per field by verifier heuristics.",
+      "identity_semantics": "Derived per field by verifier heuristics.",
+      "evidence": [
+        "transports/bifrost-http/lib/config.go: loadClientConfig, loadProviders, loadMCPConfig, loadGovernanceConfig, loadPlugins, initFeatureFlags, syncAlertingConfig"
+      ]
+    },
+    {
+      "id": "config-schema-bootstrap",
+      "surface": "config_schema",
+      "include": [
+        "$schema",
+        "version",
+        "env_label",
+        "source_of_truth",
+        "encryption_key",
+        "config_store.**"
+      ],
+      "authority": "bootstrap_only",
+      "reload_contract": "Only the importer or process bootstrap reads this field. It is outside the DB changefeed contract.",
+      "schema_semantics": "Resolved from transports/config.schema.json.",
+      "default_semantics": "Use the schema default when present; otherwise use loader defaults.",
+      "nil_semantics": "Optional unless schema-required; omitted values are boot/import defaults.",
+      "secret_semantics": "Derived per field by verifier heuristics.",
+      "identity_semantics": "Derived per field by verifier heuristics.",
+      "evidence": [
+        "transports/config.schema.json",
+        "transports/bifrost-http/lib/config.go: LoadConfig, initEncryption, initStores"
+      ]
+    },
+    {
+      "id": "config-schema-client-restart",
+      "surface": "config_schema",
+      "include": [
+        "client.initial_pool_size",
+        "client.prometheus_labels[]",
+        "client.allowed_origins[]",
+        "client.allowed_headers[]",
+        "client.enable_logging",
+        "client.max_request_body_size_mb"
+      ],
+      "authority": "db_authoritative_restart_required",
+      "reload_contract": "Database persists the value and the API sets the restart-required flag because current runtime wiring cannot fully observe the change live.",
+      "schema_semantics": "Resolved from transports/config.schema.json.",
+      "default_semantics": "Use the schema or DefaultClientConfig default when omitted.",
+      "nil_semantics": "Optional unless schema-required; missing means preserve current DB/default value.",
+      "secret_semantics": "Derived per field by verifier heuristics.",
+      "identity_semantics": "Derived per field by verifier heuristics.",
+      "evidence": [
+        "transports/bifrost-http/handlers/config.go: restartReasons for initial_pool_size, prometheus_labels, allowed_origins, allowed_headers, enable_logging, max_request_body_size_mb"
+      ]
+    },
+    {
+      "id": "config-schema-db-hot",
+      "surface": "config_schema",
+      "include": [
+        "client.**",
+        "auth_config.**",
+        "providers.**",
+        "framework.**",
+        "mcp.**",
+        "governance.**",
+        "plugins.**",
+        "plugins[].**",
+        "feature_flags.**",
+        "alerting.**",
+        "skills_registry.**",
+        "access_profiles.**",
+        "access_profiles[].**"
+      ],
+      "exclude": [
+        "client.initial_pool_size",
+        "client.prometheus_labels[]",
+        "client.allowed_origins[]",
+        "client.allowed_headers[]",
+        "client.enable_logging",
+        "client.max_request_body_size_mb"
+      ],
+      "authority": "db_authoritative_hot_reload",
+      "reload_contract": "Database is durable authority and live pods must converge through existing reload APIs or the commit-ordered changefeed.",
+      "schema_semantics": "Resolved from transports/config.schema.json.",
+      "default_semantics": "Use schema defaults and owning subsystem defaults before persistence.",
+      "nil_semantics": "Optional unless schema-required; missing preserves DB state, present empty collections reconcile as documented by their owner.",
+      "secret_semantics": "Derived per field by verifier heuristics.",
+      "identity_semantics": "Derived per field by verifier heuristics.",
+      "evidence": [
+        "transports/bifrost-http/lib/config.go: loadClientConfig, loadProviders, loadMCPConfig, loadGovernanceConfig, loadPlugins, initFrameworkConfig, initFeatureFlags",
+        "transports/bifrost-http/handlers/config.go, providers.go, mcp.go, governance.go, plugins.go, alerting.go"
+      ]
+    },
+    {
+      "id": "helm-client-restart",
+      "surface": "helm_values",
+      "include": [
+        "bifrost.client.initialPoolSize",
+        "bifrost.client.prometheusLabels[]",
+        "bifrost.client.allowedOrigins[]",
+        "bifrost.client.allowedHeaders[]",
+        "bifrost.client.enableLogging",
+        "bifrost.client.maxRequestBodySizeMb"
+      ],
+      "authority": "db_authoritative_restart_required",
+      "reload_contract": "Helm may seed the field, but PostgreSQL is the target authority and existing API behavior marks changes restart-required.",
+      "schema_semantics": "Resolved from helm-charts/bifrost/values.schema.json and rendered to client.* config.json fields.",
+      "default_semantics": "Use chart defaults, then client config defaults.",
+      "nil_semantics": "Omitted value means preserve DB/default value after import.",
+      "secret_semantics": "Derived per field by verifier heuristics.",
+      "identity_semantics": "Derived per field by verifier heuristics.",
+      "evidence": [
+        "helm-charts/bifrost/templates/_helpers.tpl: bifrost.config client rendering",
+        "transports/bifrost-http/handlers/config.go: restartReasons"
+      ]
+    },
+    {
+      "id": "helm-db-hot",
+      "surface": "helm_values",
+      "include": [
+        "bifrost.client.**",
+        "bifrost.authConfig.**",
+        "bifrost.framework.**",
+        "bifrost.providers.*",
+        "bifrost.providers.*.**",
+        "bifrost.mcp.**",
+        "bifrost.governance.**",
+        "bifrost.plugins.**",
+        "bifrost.featureFlags.*.enabled",
+        "bifrost.alerting.**",
+        "bifrost.skillsRegistry.**",
+        "bifrost.accessProfiles[].**"
+      ],
+      "exclude": [
+        "bifrost.client.initialPoolSize",
+        "bifrost.client.prometheusLabels[]",
+        "bifrost.client.allowedOrigins[]",
+        "bifrost.client.allowedHeaders[]",
+        "bifrost.client.enableLogging",
+        "bifrost.client.maxRequestBodySizeMb"
+      ],
+      "authority": "db_authoritative_hot_reload",
+      "reload_contract": "Helm may seed the field, but PostgreSQL is the target authority and live pods must converge through reload APIs or the config changefeed.",
+      "schema_semantics": "Resolved from helm-charts/bifrost/values.schema.json and rendered into config.json control-plane sections.",
+      "default_semantics": "Use chart defaults and owning subsystem defaults before persistence.",
+      "nil_semantics": "Omitted values preserve DB/default state; present empty collections reconcile according to the owning config section.",
+      "secret_semantics": "Derived per field by verifier heuristics.",
+      "identity_semantics": "Derived per field by verifier heuristics.",
+      "evidence": [
+        "helm-charts/bifrost/templates/_helpers.tpl: bifrost.config rendering",
+        "transports/bifrost-http/lib/config.go: DB-backed load and reload functions"
+      ]
+    }
+  ]
+}

@@ -13,24 +13,60 @@ analyticsControlPlane:
   image:
     repository: ghcr.io/pierretokns/frankengate-analytics-control
     tag: "dev"
+    digest: ""
     pullPolicy: IfNotPresent
   replicas: 1
   command: ["frankengate-analytics-control", "--serve"]
-  # Optional Secret-backed Postgres URL. When set, /readyz fences on reachability.
-  databaseUrl:
-    existingSecret: ""
-    existingSecretKey: DATABASE_URL
+  terminationGracePeriodSeconds: 60
+  # Secret containing the PostgreSQL URL. When unset, the control plane uses
+  # its local protocol store and does not advertise durable persistence.
+  databaseUrlSecret:
+    name: ""
+    key: DATABASE_URL
+  # Optional Secret containing the bearer token required for /v1 control-plane
+  # requests. Leave unset only behind an equivalent network boundary.
   workerTokenSecret:
     name: ""
-    key: WORKER_TOKEN
+    key: ANALYTICS_WORKER_TOKEN
+  # Bound each replica's pool so HPA growth cannot exhaust Postgres/Aurora.
+  # Set this to the per-pod connection budget after accounting for all other
+  # clients of the database.
+  databaseMaxConnections: 10
+  # The service binds its port only after migrations and the DB fence pass.
+  # Give that one-time boot work a bounded window without weakening steady-state probes.
+  startupProbe:
+    periodSeconds: 2
+    failureThreshold: 150
+  livenessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  readinessProbe:
+    periodSeconds: 5
   resources: {}
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+    labels: {}
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
   autoscaling:
     enabled: false
     minReplicas: 1
     maxReplicas: 10
     targetCPUUtilizationPercentage: 70
-  disruptionBudget:
-    enabled: true
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 0
+        maxReplicasPerPeriod: 2
+        periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        maxReplicasPerPeriod: 1
+        periodSeconds: 60
+  podDisruptionBudget:
+    enabled: false
     minAvailable: 1
 
 image:
@@ -43,7 +79,7 @@ image:
   repository: ghcr.io/pierretokns/frankengate
   pullPolicy: IfNotPresent
   # Defaults to the release matching this chart's appVersion.
-  tag: "v0.3.4"
+  tag: "v0.3.19"
   # Optional immutable sha256 digest. When set, it takes precedence over tag.
   # digest: "sha256:3eac7c45e52ad5ca6cab5a4217828a1f8954637872ba3eab9016b4dcb67f9c43"
   digest: ""
@@ -406,9 +442,9 @@ bifrost:
   framework:
     pricing:
       # Custom pricing URL for model cost data
-      pricingUrl: "https://github.com/pierretokns/frankengate"
+      pricingUrl: "https://pierretokns.github.io/frankengate/data/pricing/latest-upstream.json"
       # Custom model parameters URL
-      modelParametersUrl: "https://github.com/pierretokns/frankengate"
+      modelParametersUrl: "https://pierretokns.github.io/frankengate/data/pricing/latest-upstream.json"
       # Sync interval in seconds (default: 86400 = 24 hours, minimum: 3600)
       pricingSyncInterval: 86400
       # Custom MCP server catalog URL (optional, leave empty to use the default Bifrost catalog)
@@ -1252,27 +1288,6 @@ bifrost:
   #     maxTotalConnections: 1000
   #     idleTimeoutSeconds: 600
   #     maxConnectionLifetimeSeconds: 7200
-
-  # Circuit breaker configuration: automatic failover when a provider endpoint degrades.
-  # Each policy monitors a primary provider+model and redirects traffic to a fallback
-  # when the circuit opens based on response header signals.
-  # circuitBreakerConfig:
-  #   policies:
-  #     - name: "azure-gpt4-ptu-failover"
-  #       enabled: true
-  #       primary_provider: "azure"
-  #       primary_model: "gpt-4-ptu"
-  #       primary_key_ids: []          # leave empty for a single shared circuit
-  #       fallback_provider: "openai"
-  #       fallback_model: "gpt-4o"
-  #       condition:
-  #         operator: "OR"             # OR (default) | AND
-  #         signals:
-  #           - source: "response_header"
-  #             header_name: "x-ms-throttle-reason"
-  #             header_value: "ModelCapacityExceeded"
-  #       default_cooldown: "30s"      # Go duration; used when no header-based cooldown
-  #       cooldown_header: "retry-after-ms"  # header whose value (ms) overrides default_cooldown
 
 # Storage configuration
 storage:

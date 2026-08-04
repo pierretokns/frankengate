@@ -48,7 +48,7 @@ Rationale: FrankenSearch's Rust/asupersync/model stack is attractive for progres
 
 Failure mode: model downloads, refinement stalls, Rust worker crashes, index rebuilds, or FrankenSQLite durability issues take down inference, block rollout readiness, or force operators to debug an optional retrieval service as part of every gateway incident.
 
-Implementation boundary: Helm values should default it off. Aurora remains authoritative for ownership, policy, retention, tombstones, and manifests. FrankenSearch stores only encrypted/authenticated derived indexes. Go integration should be a narrow client with timeouts, circuit breaker, and metadata-only failure receipts.
+Implementation boundary: Helm values should default it off. Aurora remains authoritative for ownership, policy, retention, tombstones, and manifests. FrankenSearch stores only encrypted/authenticated derived indexes. Go integration should be a narrow client with timeouts, failover handling, and metadata-only failure receipts.
 
 Bead: no new bead unless the prototype is approved. Existing `bif-kyy.17.12.4` already asks whether to embed, sidecar, or defer; update its acceptance criteria with this boundary.
 

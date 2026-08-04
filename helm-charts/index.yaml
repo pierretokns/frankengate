@@ -1,22 +1,7 @@
 apiVersion: v1
-entries:
-  bifrost:
-    - apiVersion: v2
-      appVersion: "0.3.20-beta.4"
-      description: FrankenGate enterprise AI gateway, packaged as a drop-in Bifrost-compatible Helm deployment
-      home: https://github.com/pierretokns/frankengate
-      keywords:
-        - ai
-        - gateway
-        - llm
-        - openai
-        - anthropic
-      maintainers:
-        - name: FrankenGate maintainers
-      name: bifrost
-      sources:
-        - https://github.com/pierretokns/frankengate
-      type: application
-      urls:
-        - https://github.com/pierretokns/frankengate/releases/download/helm-chart-v0.3.20-beta.4/bifrost-0.3.20-beta.4.tgz
-      version: 0.3.20-beta.4
+generated: "2026-07-20T00:00:00Z"
+entries: {}
+# This index is intentionally empty until the fork publishes its first
+# FrankenGate-owned chart archive. Do not reintroduce inherited upstream
+# entries: they point at Maxim/Bifrost domains and are not release artifacts
+# of this repository.

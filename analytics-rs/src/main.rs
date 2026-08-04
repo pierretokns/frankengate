@@ -24,46 +24,29 @@ fn serve() {
     frankengate_analytics_control::contract_self_check()
         .expect("analytics control-plane boot fence failed");
 
-    let config = frankengate_analytics_control::config::Config::from_env()
-        .unwrap_or_else(|error| panic!("analytics control-plane configuration failed: {error}"));
-    let runtime = Arc::new(
-        tokio::runtime::Builder::new_multi_thread()
-            .enable_all()
-            .build()
-            .expect("analytics control-plane runtime failed to start"),
-    );
-    let database = config.database_url.as_deref().map(|url| {
-        let database = runtime
-            .block_on(frankengate_analytics_control::database::Database::connect(
-                url,
-                config.pool_max_connections,
-            ))
-            .unwrap_or_else(|error| panic!("analytics database connection failed: {error}"));
-        runtime
-            .block_on(database.migrate())
-            .unwrap_or_else(|error| panic!("analytics database migration failed: {error}"));
-        database
-    });
-    let database = Arc::new(database);
-    let listener = TcpListener::bind(("0.0.0.0", config.port))
+    // When configured, Postgres is part of the readiness fence. This avoids
+    // advertising a healthy pod that cannot persist or consume jobs.
+    let runtime = tokio::runtime::Runtime::new().expect("tokio runtime failed");
+    let database = runtime
+        .block_on(frankengate_analytics_control::db::connect_from_env())
+        .expect("analytics control-plane database boot fence failed");
+
+    let port = std::env::var("PORT").unwrap_or_else(|_| "8081".into());
+    let listener = TcpListener::bind(("0.0.0.0", port.parse::<u16>().expect("PORT must be a u16")))
         .expect("analytics control-plane listener failed to bind");
-    println!(
-        "FrankenGate analytics control plane listening on 0.0.0.0:{}",
-        config.port
-    );
+    let store = Arc::new(frankengate_analytics_control::JobStore::default());
+    println!("FrankenGate analytics control plane listening on 0.0.0.0:{port}");
     for stream in listener.incoming().flatten() {
-        let auth = config.worker_auth.clone();
+        let store = Arc::clone(&store);
         let database = database.clone();
-        let runtime = runtime.clone();
-        std::thread::spawn(move || handle_connection(stream, &auth, database, runtime));
+        std::thread::spawn(|| handle_connection(stream, store, database));
     }
 }
 
 fn handle_connection(
     mut stream: std::net::TcpStream,
-    auth: &frankengate_analytics_control::auth::WorkerAuth,
-    database: std::sync::Arc<Option<frankengate_analytics_control::database::Database>>,
-    runtime: std::sync::Arc<tokio::runtime::Runtime>,
+    store: std::sync::Arc<frankengate_analytics_control::JobStore>,
+    database: Option<sqlx::PgPool>,
 ) {
     use std::io::{Read, Write};
     // Health probes are tiny and bounded.  Do not let an accepted but idle
@@ -72,24 +55,47 @@ fn handle_connection(
     let _ = stream.set_write_timeout(Some(std::time::Duration::from_secs(2)));
     let mut request = [0_u8; 1024];
     let size = stream.read(&mut request).unwrap_or(0);
-    let parsed = frankengate_analytics_control::http::parse_request(&request[..size]);
-    let path = parsed.as_ref().map(|request| request.path).unwrap_or("/");
-    let route = frankengate_analytics_control::http::route_for(path);
-    let authorized = parsed.as_ref().is_some_and(|request| {
-        frankengate_analytics_control::http::authorize_route(route, auth, request.authorization)
-    });
-    if !authorized {
-        let body = "unauthorized\n";
-        let response = format!(
-            "HTTP/1.1 401 Unauthorized\r\nContent-Type: text/plain\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
-            body.len()
-        );
+    let request_line = std::str::from_utf8(&request[..size]).unwrap_or("");
+    let method = request_line.split_whitespace().next().unwrap_or("");
+    let target = request_line.split_whitespace().nth(1).unwrap_or("/");
+    let (path, query) = target.split_once('?').unwrap_or((target, ""));
+    if path.starts_with("/v1/") && !worker_authorized(request_line) {
+        let response = "HTTP/1.1 401 Unauthorized\r\nContent-Type: text/plain\r\nContent-Length: 13\r\nConnection: close\r\n\r\nunauthorized\n";
         let _ = stream.write_all(response.as_bytes());
         return;
     }
     let (status, content_type, body) = match path {
         "/healthz" => ("200 OK", "text/plain", "ok\n".to_string()),
-        "/readyz" => readiness_response(&database, &runtime),
+        "/readyz" => {
+            // Liveness only proves that the process is accepting sockets. Readiness
+            // must also prove that the durable control-plane store is reachable;
+            // otherwise Kubernetes can route jobs to a pod that cannot persist
+            // leases, completions, or checkpoints after a database outage.
+            match database.as_ref() {
+                Some(pool) => {
+                    let reachable = tokio::runtime::Runtime::new()
+                        .ok()
+                        .and_then(|runtime| {
+                            runtime.block_on(sqlx::query("SELECT 1").execute(pool)).ok()
+                        })
+                        .is_some();
+                    if reachable {
+                        ("200 OK", "text/plain", "ok\n".to_string())
+                    } else {
+                        (
+                            "503 Service Unavailable",
+                            "text/plain",
+                            "database unavailable\n".to_string(),
+                        )
+                    }
+                }
+                None => (
+                    "503 Service Unavailable",
+                    "text/plain",
+                    "database unavailable\n".to_string(),
+                ),
+            }
+        }
         "/version" => (
             "200 OK",
             "text/plain",
@@ -98,21 +104,21 @@ fn handle_connection(
                 frankengate_analytics_control::PROTOCOL_VERSION
             ),
         ),
-        "/v1/jobs"
-        | "/v1/experiments"
-        | "/v1/runs"
-        | "/v1/runs/outcome"
-        | "/v1/evaluations"
-        | "/v1/artifacts"
-        | "/v1/jobs/stats"
-        | "/v1/jobs/lease"
-        | "/v1/jobs/renew"
-        | "/v1/jobs/complete"
-        | "/v1/jobs/fail"
-        | "/v1/jobs/cancel"
-        | "/v1/jobs/checkpoint"
-        | "/v1/jobs/replay"
-        | "/v1/jobs/drain" => governed_response(parsed.as_ref(), &database, &runtime),
+        "/metrics" => {
+            let stats = store.stats();
+            (
+                "200 OK",
+                "text/plain; version=0.0.4",
+                format!(
+                    "# HELP frankengate_analytics_jobs Number of analytics jobs by state.\n# TYPE frankengate_analytics_jobs gauge\nfrankengate_analytics_jobs{{state=\"queued\"}} {}\nfrankengate_analytics_jobs{{state=\"leased\"}} {}\nfrankengate_analytics_jobs{{state=\"cancelled\"}} {}\nfrankengate_analytics_jobs{{state=\"completed\"}} {}\nfrankengate_analytics_jobs{{state=\"failed\"}} {}\n",
+                    stats.queued,
+                    stats.leased,
+                    stats.cancelled,
+                    stats.completed,
+                    stats.failed
+                ),
+            )
+        }
         _ => ("404 Not Found", "text/plain", "not found\n".to_string()),
     };
     let response = format!(
@@ -122,639 +128,69 @@ fn handle_connection(
     let _ = stream.write_all(response.as_bytes());
 }
 
-fn governed_response(
-    request: Option<&frankengate_analytics_control::http::Request<'_>>,
-    database: &std::sync::Arc<Option<frankengate_analytics_control::database::Database>>,
-    runtime: &std::sync::Arc<tokio::runtime::Runtime>,
-) -> (&'static str, &'static str, String) {
-    let Some(request) = request else {
-        return (
-            "400 Bad Request",
-            "text/plain",
-            "malformed request\n".into(),
-        );
-    };
-    let Some(tenant) = request.tenant.filter(|tenant| !tenant.is_empty()) else {
-        return (
-            "400 Bad Request",
-            "text/plain",
-            "x-tenant-id is required\n".into(),
-        );
-    };
-    let Some(database) = database.as_ref() else {
-        return (
-            "503 Service Unavailable",
-            "text/plain",
-            "database is not configured\n".into(),
-        );
-    };
-    if request.path == "/v1/jobs/stats" {
-        return match runtime.block_on(database.job_stats(tenant)) {
-            Ok(stats) => (
-                "200 OK",
-                "application/json",
-                serde_json::json!({
-                    "queued": stats.queued, "leased": stats.leased, "completed": stats.completed,
-                    "failed": stats.failed, "cancelled": stats.cancelled,
-                })
-                .to_string(),
-            ),
-            Err(_) => (
-                "500 Internal Server Error",
-                "text/plain",
-                "job stats failed\n".into(),
-            ),
-        };
-    }
-    if matches!(request.path, "/v1/experiments" | "/v1/runs") {
-        if request.method == "POST" {
-            if request.path == "/v1/experiments" {
-                let (Some(id), Some(actor), Some(revision)) =
-                    (request.job_id, request.actor_id, request.revision)
-                else {
-                    return (
-                        "400 Bad Request",
-                        "text/plain",
-                        "x-job-id, x-actor-id, and x-revision are required\n".into(),
-                    );
-                };
-                return match runtime.block_on(database.create_experiment(tenant, id, actor, revision)) {
-                    Ok(row) => ("201 Created", "application/json", serde_json::json!({
-                        "id": row.id, "tenant_id": row.tenant_id, "actor_id": row.actor_id, "revision": row.revision,
-                    }).to_string()),
-                    Err(_) => ("409 Conflict", "text/plain", "experiment creation rejected\n".into()),
-                };
-            }
-            let (
-                Some(id),
-                Some(experiment_id),
-                Some(dataset),
-                Some(evaluator),
-                Some(model),
-                Some(prompt),
-            ) = (
-                request.job_id,
-                request.experiment_id,
-                request.dataset_revision,
-                request.evaluator_revision,
-                request.model_revision,
-                request.prompt_revision,
-            )
-            else {
-                return (
-                    "400 Bad Request",
-                    "text/plain",
-                    "run identity and revision headers are required\n".into(),
-                );
-            };
-            return match runtime.block_on(database.create_run(tenant, id, experiment_id, dataset, evaluator, model, prompt)) {
-                Ok(row) => ("201 Created", "application/json", serde_json::json!({
-                    "id": row.id, "tenant_id": row.tenant_id, "experiment_id": row.experiment_id,
-                    "dataset_revision": row.dataset_revision, "evaluator_revision": row.evaluator_revision,
-                    "model_revision": row.model_revision, "prompt_revision": row.prompt_revision,
-                }).to_string()),
-                Err(_) => ("409 Conflict", "text/plain", "run creation rejected\n".into()),
-            };
-        }
-        if request.method != "GET" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only GET is supported\n".into(),
-            );
-        }
-        let limit = request
-            .limit
-            .and_then(|value| value.parse::<i64>().ok())
-            .unwrap_or(100)
-            .clamp(1, 100);
-        if request.path == "/v1/experiments" {
-            return match runtime.block_on(database.list_experiments(tenant, limit)) {
-                Ok(rows) => (
-                    "200 OK",
-                    "application/json",
-                    serde_json::to_string(
-                        &rows
-                            .into_iter()
-                            .map(|row| {
-                                serde_json::json!({
-                                    "id": row.id, "tenant_id": row.tenant_id,
-                                    "actor_id": row.actor_id, "revision": row.revision,
-                                })
-                            })
-                            .collect::<Vec<_>>(),
-                    )
-                    .unwrap_or_else(|_| "[]".into()),
-                ),
-                Err(_) => (
-                    "500 Internal Server Error",
-                    "text/plain",
-                    "experiment listing failed\n".into(),
-                ),
-            };
-        }
-        return match runtime.block_on(database.list_runs(tenant, limit)) {
-            Ok(rows) => (
-                "200 OK",
-                "application/json",
-                serde_json::to_string(
-                    &rows
-                        .into_iter()
-                        .map(|row| {
-                            serde_json::json!({
-                                "id": row.id, "tenant_id": row.tenant_id,
-                                "experiment_id": row.experiment_id,
-                                "dataset_revision": row.dataset_revision,
-                                "evaluator_revision": row.evaluator_revision,
-                                "model_revision": row.model_revision,
-                                "prompt_revision": row.prompt_revision,
-                            })
-                        })
-                        .collect::<Vec<_>>(),
-                )
-                .unwrap_or_else(|_| "[]".into()),
-            ),
-            Err(_) => (
-                "500 Internal Server Error",
-                "text/plain",
-                "run listing failed\n".into(),
-            ),
-        };
-    }
-    if request.path == "/v1/runs/outcome" {
-        if request.method != "POST" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only POST is supported\n".into(),
-            );
-        }
-        let (Some(run_id), Some(outcome)) = (request.run_id, request.outcome) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-run-id and x-outcome are required\n".into(),
-            );
-        };
-        if outcome.is_empty() || outcome.len() > 128 {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-outcome must be 1..128 bytes\n".into(),
-            );
-        }
-        return match runtime.block_on(database.set_run_outcome(tenant, run_id, outcome)) {
-            Ok(true) => (
-                "200 OK",
-                "application/json",
-                serde_json::json!({"run_id": run_id, "terminal_outcome": outcome}).to_string(),
-            ),
-            Ok(false) => (
-                "409 Conflict",
-                "text/plain",
-                "run outcome already set or run not found\n".into(),
-            ),
-            Err(_) => (
-                "500 Internal Server Error",
-                "text/plain",
-                "run outcome update failed\n".into(),
-            ),
-        };
-    }
-    if matches!(request.path, "/v1/evaluations" | "/v1/artifacts") {
-        if request.method != "GET" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only GET is supported\n".into(),
-            );
-        }
-        let Some(run_id) = request.run_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-run-id is required\n".into(),
-            );
-        };
-        let limit = request
-            .limit
-            .and_then(|value| value.parse::<i64>().ok())
-            .unwrap_or(100)
-            .clamp(1, 100);
-        if request.path == "/v1/evaluations" {
-            return match runtime.block_on(database.list_evaluations(tenant, run_id, limit)) {
-                Ok(rows) => (
-                    "200 OK",
-                    "application/json",
-                    serde_json::to_string(&rows.into_iter().map(|row| serde_json::json!({
-                        "run_id": row.run_id, "example_id": row.example_id,
-                        "evaluator_revision": row.evaluator_revision, "score": row.score,
-                    })).collect::<Vec<_>>()).unwrap_or_else(|_| "[]".into()),
-                ),
-                Err(_) => ("500 Internal Server Error", "text/plain", "evaluation listing failed\n".into()),
-            };
-        }
-        return match runtime.block_on(database.list_artifacts(tenant, run_id, limit)) {
-            Ok(rows) => (
-                "200 OK",
-                "application/json",
-                serde_json::to_string(
-                    &rows
-                        .into_iter()
-                        .map(|row| {
-                            serde_json::json!({
-                                "run_id": row.run_id, "digest": row.digest,
-                                "media_type": row.media_type, "object_uri": row.object_uri,
-                            })
-                        })
-                        .collect::<Vec<_>>(),
-                )
-                .unwrap_or_else(|_| "[]".into()),
-            ),
-            Err(_) => (
-                "500 Internal Server Error",
-                "text/plain",
-                "artifact listing failed\n".into(),
-            ),
-        };
-    }
-    if request.path == "/v1/jobs/lease" {
-        if request.method != "POST" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only POST is supported\n".into(),
-            );
-        }
-        let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-worker-id is required\n".into(),
-            );
-        };
-        let lease_seconds = request
-            .lease_seconds
-            .and_then(|value| value.parse::<i64>().ok())
-            .unwrap_or(30)
-            .clamp(1, 3600);
-        return match runtime.block_on(database.lease_next_job(tenant, worker_id, lease_seconds)) {
-            Ok(Some(job)) => (
-                "200 OK",
-                "application/json",
-                serde_json::json!({
-                    "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
-                    "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
-                })
-                .to_string(),
-            ),
-            Ok(None) => ("204 No Content", "application/json", String::new()),
-            Err(_) => ("409 Conflict", "text/plain", "job lease rejected\n".into()),
-        };
-    }
-    if request.path == "/v1/jobs/renew" {
-        if request.method != "POST" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only POST is supported\n".into(),
-            );
-        }
-        let Some(job_id) = request.job_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-job-id is required\n".into(),
-            );
-        };
-        let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-worker-id is required\n".into(),
-            );
-        };
-        let lease_seconds = request
-            .lease_seconds
-            .and_then(|value| value.parse::<i64>().ok())
-            .unwrap_or(30)
-            .clamp(1, 3600);
-        return match runtime.block_on(database.renew_job(tenant, job_id, worker_id, lease_seconds))
-        {
-            Ok(Some(job)) => (
-                "200 OK",
-                "application/json",
-                serde_json::json!({
-                    "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
-                    "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
-                })
-                .to_string(),
-            ),
-            Ok(None) => (
-                "409 Conflict",
-                "text/plain",
-                "lease renewal rejected\n".into(),
-            ),
-            Err(_) => (
-                "500 Internal Server Error",
-                "text/plain",
-                "lease renewal failed\n".into(),
-            ),
-        };
-    }
-    if matches!(
-        request.path,
-        "/v1/jobs/complete" | "/v1/jobs/fail" | "/v1/jobs/cancel"
-    ) {
-        if request.method != "POST" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only POST is supported\n".into(),
-            );
-        }
-        let Some(job_id) = request.job_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-job-id is required\n".into(),
-            );
-        };
-        let result = match request.path {
-            "/v1/jobs/complete" => {
-                let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
-                    return (
-                        "400 Bad Request",
-                        "text/plain",
-                        "x-worker-id is required\n".into(),
-                    );
-                };
-                runtime.block_on(database.complete_job(tenant, job_id, worker_id))
-            }
-            "/v1/jobs/fail" => {
-                let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
-                    return (
-                        "400 Bad Request",
-                        "text/plain",
-                        "x-worker-id is required\n".into(),
-                    );
-                };
-                let error_code = request.error_code.unwrap_or("worker_failure");
-                runtime.block_on(database.fail_job(tenant, job_id, worker_id, error_code))
-            }
-            _ => runtime.block_on(database.cancel_job(tenant, job_id)),
-        };
-        return match result {
-            Ok(Some(job)) => (
-                "200 OK",
-                "application/json",
-                serde_json::json!({
-                    "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
-                    "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
-                })
-                .to_string(),
-            ),
-            Ok(None) => (
-                "409 Conflict",
-                "text/plain",
-                "job transition rejected\n".into(),
-            ),
-            Err(_) => (
-                "500 Internal Server Error",
-                "text/plain",
-                "job transition failed\n".into(),
-            ),
-        };
-    }
-    if request.path == "/v1/jobs/checkpoint" {
-        if request.method != "POST" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only POST is supported\n".into(),
-            );
-        }
-        let Some(job_id) = request.job_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-job-id is required\n".into(),
-            );
-        };
-        let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-worker-id is required\n".into(),
-            );
-        };
-        let Some(checkpoint) = request.checkpoint.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-checkpoint is required\n".into(),
-            );
-        };
-        let checkpoint = &checkpoint[..checkpoint.len().min(4096)];
-        return match runtime
-            .block_on(database.save_checkpoint(tenant, job_id, worker_id, checkpoint))
-        {
-            Ok(true) => ("204 No Content", "text/plain", String::new()),
-            Ok(false) => ("409 Conflict", "text/plain", "checkpoint rejected\n".into()),
-            Err(_) => (
-                "500 Internal Server Error",
-                "text/plain",
-                "checkpoint failed\n".into(),
-            ),
-        };
-    }
-    if request.path == "/v1/jobs/replay" {
-        if request.method != "POST" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only POST is supported\n".into(),
-            );
-        }
-        let Some(replay_id) = request.replay_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-replay-id is required\n".into(),
-            );
-        };
-        let Some(source_id) = request.source_job_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-source-job-id is required\n".into(),
-            );
-        };
-        return match runtime.block_on(database.replay_job(tenant, replay_id, source_id)) {
-            Ok(job) => (
-                "201 Created",
-                "application/json",
-                serde_json::json!({
-                    "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
-                    "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
-                })
-                .to_string(),
-            ),
-            Err(_) => ("409 Conflict", "text/plain", "replay rejected\n".into()),
-        };
-    }
-    if request.path == "/v1/jobs/drain" {
-        if request.method != "POST" {
-            return (
-                "405 Method Not Allowed",
-                "text/plain",
-                "only POST is supported\n".into(),
-            );
-        }
-        let Some(worker_id) = request.worker_id.filter(|value| !value.is_empty()) else {
-            return (
-                "400 Bad Request",
-                "text/plain",
-                "x-worker-id is required\n".into(),
-            );
-        };
-        return match runtime.block_on(database.drain_worker(tenant, worker_id)) {
-            Ok(released) => (
-                "200 OK",
-                "application/json",
-                serde_json::json!({ "worker_id": worker_id, "released": released }).to_string(),
-            ),
-            Err(_) => (
-                "500 Internal Server Error",
-                "text/plain",
-                "worker drain failed\n".into(),
-            ),
-        };
-    }
-    match request.method {
-        "POST" => {
-            let Some(id) = request.job_id.filter(|value| !value.is_empty()) else {
-                return ("400 Bad Request", "text/plain", "x-job-id is required\n".into());
-            };
-            let Some(kind) = request.job_kind.filter(|value| !value.is_empty()) else {
-                return (
-                    "400 Bad Request",
-                    "text/plain",
-                    "x-job-kind is required\n".into(),
-                );
-            };
-            match runtime.block_on(database.submit_job(tenant, id, kind)) {
-                Ok(job) => (
-                    "201 Created",
-                    "application/json",
-                    serde_json::json!({
-                        "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind,
-                        "state": job.state, "attempt": job.attempt, "replay_of": job.replay_of,
-                    })
-                    .to_string(),
-                ),
-                Err(_) => ("409 Conflict", "text/plain", "job submission rejected\n".into()),
-            }
-        }
-        "GET" => match runtime.block_on(database.list_jobs(tenant, 100)) {
-            Ok(jobs) => ("200 OK", "application/json", serde_json::to_string(&jobs.iter().map(|job| serde_json::json!({
-                "id": job.id, "tenant_id": job.tenant_id, "kind": job.kind, "state": job.state,
-                "attempt": job.attempt, "replay_of": job.replay_of,
-            })).collect::<Vec<_>>()).unwrap_or_else(|_| "[]".into())),
-            Err(_) => ("500 Internal Server Error", "text/plain", "job listing failed\n".into()),
-        },
-        _ => ("405 Method Not Allowed", "text/plain", "only GET is supported\n".into()),
-    }
+fn query_param<'a>(query: &'a str, name: &str) -> Option<&'a str> {
+    query
+        .split('&')
+        .find_map(|pair| {
+            pair.strip_prefix(name)
+                .and_then(|value| value.strip_prefix('='))
+        })
+        .filter(|value| !value.is_empty())
 }
 
-/// Readiness is a boot fence, not liveness.  When a database is configured,
-/// refuse readiness until its TCP endpoint is reachable.  The contract crate
-/// remains usable without a database for local protocol tests and `--check`.
-fn readiness_response(
-    database: &std::sync::Arc<Option<frankengate_analytics_control::database::Database>>,
-    runtime: &std::sync::Arc<tokio::runtime::Runtime>,
-) -> (&'static str, &'static str, String) {
-    if let Some(database) = database.as_ref() {
-        return match runtime.block_on(database.ready()) {
-            Ok(()) => ("200 OK", "text/plain", "ok\n".to_string()),
-            Err(_) => (
-                "503 Service Unavailable",
-                "text/plain",
-                "database unavailable\n".to_string(),
-            ),
-        };
-    }
-    use std::net::ToSocketAddrs;
-    let Some(database_url) = std::env::var_os("DATABASE_URL") else {
-        return ("200 OK", "text/plain", "ok\n".to_string());
+/// If ANALYTICS_WORKER_TOKEN is configured, require a matching bearer token
+/// on every control-plane API request. Leaving it unset is intentionally
+/// development-friendly; production Helm deployments should provide it via a
+/// Secret and still enforce network/service-account policy at the cluster edge.
+fn worker_authorized(request: &str) -> bool {
+    let Some(expected) = std::env::var_os("ANALYTICS_WORKER_TOKEN") else {
+        return true;
     };
-    let database_url = database_url.to_string_lossy();
-    let Some(endpoint) = postgres_endpoint(&database_url) else {
-        return (
-            "503 Service Unavailable",
-            "text/plain",
-            "database endpoint is invalid\n".to_string(),
-        );
+    let expected = expected.to_string_lossy();
+    let supplied = request.lines().find_map(|line| {
+        line.strip_prefix("Authorization:")
+            .or_else(|| line.strip_prefix("authorization:"))
+            .map(str::trim)
+            .and_then(|value| value.strip_prefix("Bearer "))
+    });
+    let Some(supplied) = supplied else {
+        return false;
     };
-    let address = endpoint
-        .to_socket_addrs()
-        .ok()
-        .and_then(|mut addresses| addresses.next());
-    let Some(address) = address else {
-        return (
-            "503 Service Unavailable",
-            "text/plain",
-            "database unavailable\n".to_string(),
-        );
-    };
-    match std::net::TcpStream::connect_timeout(&address, std::time::Duration::from_millis(250)) {
-        Ok(_) => ("200 OK", "text/plain", "ok\n".to_string()),
-        Err(_) => (
-            "503 Service Unavailable",
-            "text/plain",
-            "database unavailable\n".to_string(),
-        ),
+    // Compare every byte to avoid an early-exit timing signal. Length is
+    // included in the accumulator so short tokens are not accepted.
+    let mut diff = expected.len() ^ supplied.len();
+    for index in 0..expected.len().max(supplied.len()) {
+        diff |= expected.as_bytes().get(index).copied().unwrap_or(0) as usize
+            ^ supplied.as_bytes().get(index).copied().unwrap_or(0) as usize;
     }
-}
-
-fn postgres_endpoint(url: &str) -> Option<String> {
-    let authority = url.split("://").nth(1)?.split('/').next()?;
-    let authority = authority.rsplit('@').next()?;
-    let (host, port) = authority.rsplit_once(':').unwrap_or((authority, "5432"));
-    let host = host.trim_matches(['[', ']']);
-    let port = port.parse::<u16>().ok()?;
-    if host.contains(':') {
-        Some(format!("[{host}]:{port}"))
-    } else {
-        Some(format!("{host}:{port}"))
-    }
+    diff == 0
 }
 
 #[cfg(test)]
 mod tests {
-    use super::postgres_endpoint;
+    use super::{query_param, worker_authorized};
 
     #[test]
-    fn parses_postgres_ipv4_url() {
-        assert_eq!(
-            postgres_endpoint("postgres://user:pass@127.0.0.1:5433/db"),
-            Some("127.0.0.1:5433".into())
-        );
+    fn query_params_are_exact_and_empty_values_fail_closed() {
+        let query = "tenant=team-a&worker=pod-1&job_id=j-7&tenant_extra=wrong";
+        assert_eq!(query_param(query, "tenant"), Some("team-a"));
+        assert_eq!(query_param(query, "worker"), Some("pod-1"));
+        assert_eq!(query_param(query, "job_id"), Some("j-7"));
+        assert_eq!(query_param(query, "tenant_extra"), Some("wrong"));
+        assert_eq!(query_param("tenant=&worker=pod-1", "tenant"), None);
+        assert_eq!(query_param(query, "missing"), None);
     }
 
     #[test]
-    fn preserves_kubernetes_dns_hosts_for_resolution() {
-        assert_eq!(
-            postgres_endpoint("postgres://db.internal:5432/db"),
-            Some("db.internal:5432".into())
-        );
-    }
-
-    #[test]
-    fn preserves_brackets_for_ipv6_endpoints() {
-        assert_eq!(
-            postgres_endpoint("postgres://[::1]:5432/db"),
-            Some("[::1]:5432".into())
-        );
+    fn worker_authorization_requires_bearer_when_configured() {
+        std::env::set_var("ANALYTICS_WORKER_TOKEN", "test-token");
+        assert!(!worker_authorized("GET /v1/jobs HTTP/1.1\r\n"));
+        assert!(!worker_authorized(
+            "GET /v1/jobs HTTP/1.1\r\nAuthorization: Bearer wrong\r\n"
+        ));
+        assert!(worker_authorized(
+            "GET /v1/jobs HTTP/1.1\r\nAuthorization: Bearer test-token\r\n"
+        ));
+        std::env::remove_var("ANALYTICS_WORKER_TOKEN");
     }
 }

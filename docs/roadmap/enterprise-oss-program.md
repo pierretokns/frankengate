@@ -119,7 +119,7 @@ Known baseline evidence includes:
 - `helm-charts/bifrost`: HPA, cluster ports/config, SCIM fields, and access-profile
   schema entries; presence does not prove runtime implementations.
 - `ui/app/_fallbacks/enterprise`: explicit OSS placeholders for cluster, SCIM, RBAC,
-  access profiles, adaptive routing, circuit breaker, audit, guardrails, and exports.
+  access profiles, adaptive routing, failover handling, audit, guardrails, and exports.
 - `docs/enterprise`: detailed public behavior descriptions that can seed clean-room
   requirements and tests.
 
@@ -242,7 +242,7 @@ retry/fallback -> reconcile -> observe`.
 
 No later stage may reintroduce a candidate removed by entitlement. Adaptive weights
 use bounded, explainable error-rate, latency, throughput, saturation, and cost signals.
-Health samples have decay and minimum-sample protection. Circuit breakers operate per
+Health samples have decay and minimum-sample protection. failover handlings operate per
 provider key and model, use closed/open/half-open states, and avoid synchronized probes.
 
 Canary policies support stable hashing by tenant/user/key/session/trace, percentage or

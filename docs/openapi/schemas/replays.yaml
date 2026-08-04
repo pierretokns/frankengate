@@ -1,0 +1,49 @@
+ReplaySummaryList:
+  type: object
+  required:
+    - tenant_id
+    - records
+    - content_redacted
+  properties:
+    tenant_id:
+      type: string
+    content_redacted:
+      type: boolean
+      const: true
+      description: The API never returns replay content.
+    records:
+      type: array
+      items:
+        $ref: '#/ReplaySummary'
+
+ReplaySummary:
+  type: object
+  required:
+    - schema_version
+    - trace_id
+    - tenant_id
+    - captured_at
+    - content_sha256
+    - content_redacted
+  properties:
+    schema_version:
+      type: integer
+    trace_id:
+      type: string
+    request_id:
+      type: string
+    tenant_id:
+      type: string
+    captured_at:
+      type: string
+      format: date-time
+    content_sha256:
+      type: string
+      pattern: '^[a-f0-9]{64}$'
+      description: SHA-256 digest of the sanitized replay payload.
+    content_redacted:
+      type: boolean
+      const: true
+    retrieval_quality:
+      type: object
+      additionalProperties: true

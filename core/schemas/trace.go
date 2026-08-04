@@ -756,12 +756,7 @@ const (
 	// AttrBifrostModelFamily is the bounded, explicit model-family selected by
 	// alias resolution (for example anthropic, openai, or nova).  It is useful
 	// for auditing provider-shape decisions without exporting request content.
-	AttrBifrostModelFamily = "bifrost.model_family"
-	// Circuit attributes are bounded admission metadata. They intentionally
-	// contain no model payloads, credentials, or unbounded identifiers.
-	AttrBifrostCircuitAllowed      = "bifrost.circuit.allowed"
-	AttrBifrostCircuitState        = "bifrost.circuit.state"
-	AttrBifrostCircuitReason       = "bifrost.circuit.reason"
+	AttrBifrostModelFamily         = "bifrost.model_family"
 	AttrBifrostRoutingEngineUsed   = "bifrost.routing_engine_used" // comma-joined routing engines that handled the request
 	AttrBifrostStopSequencesJoined = "bifrost.request.stop_sequences"
 

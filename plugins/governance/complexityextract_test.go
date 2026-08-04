@@ -93,7 +93,7 @@ func TestBuildComplexityInput_ResponsesInputTextBlocks(t *testing.T) {
 				{
 					Role: &userRole,
 					Content: complexityResponsesBlocks(
-						complexityResponsesTextBlock("I changed the retry policy and circuit breaker thresholds."),
+						complexityResponsesTextBlock("I changed the retry policy and timeout thresholds."),
 					),
 				},
 				{
@@ -115,7 +115,7 @@ func TestBuildComplexityInput_ResponsesInputTextBlocks(t *testing.T) {
 	input, ok := buildComplexityInput(req)
 	require.True(t, ok)
 	assert.Equal(t, "Can you explain the changes?", input.LastUserText)
-	assert.Equal(t, []string{"I changed the retry policy and circuit breaker thresholds."}, input.PriorUserTexts)
+	assert.Equal(t, []string{"I changed the retry policy and timeout thresholds."}, input.PriorUserTexts)
 	assert.Equal(t, "Review carefully Be concise", input.SystemText)
 }
 

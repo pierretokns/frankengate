@@ -85,10 +85,11 @@ func mantleOpenAIURL(region, model, path string) string {
 	return mantleOpenAIURLForFamily(region, model, "", path)
 }
 
-// mantleOpenAIURLForFamily uses explicit alias family metadata before falling
-// back to model-name detection. This matters for Claude-visible aliases whose
-// wire model is opaque: the request may correctly use OpenAI conversion while
-// still needing Mantle's /openai/v1 surface.
+// mantleOpenAIURLForFamily selects the URL from the resolved canonical model.
+// Explicit OpenAI/Gemma alias families retain the legacy /openai/v1 route even
+// when the wire deployment ID is opaque. Claude Code uses Claude-visible
+// aliases for OpenAI-shaped Mantle deployments, so dropping this metadata
+// silently turns working aliases into 400s on the bare /v1 surface.
 func mantleOpenAIURLForFamily(region, model string, family schemas.ModelFamily, path string) string {
 	base := "v1"
 	// Mantle's newer OpenAI frontier models (including GPT-5.6 Sol, Terra,
@@ -96,19 +97,27 @@ func mantleOpenAIURLForFamily(region, model string, family schemas.ModelFamily, 
 	// decision centralized so Responses and Chat Completions cannot drift.
 	canonical := strings.ToLower(model)
 	// gpt-oss is an OpenAI-shaped model but Mantle exposes it on the bare
-	// /v1 surface.  ResolveFamily commonly classifies it as ModelFamilyOpenAI,
-	// so the model-name exception must win over the family hint; otherwise
-	// aliased gpt-oss deployments are sent to the nonexistent /openai/v1 path.
+	// /v1 surface. Keep that model contract explicit.
 	isGPTOSS := strings.Contains(canonical, "gpt-oss")
 	if !isGPTOSS && (family == schemas.ModelFamilyOpenAI || family == schemas.ModelFamilyGemma ||
-		strings.Contains(canonical, "gpt-5") ||
-		strings.Contains(canonical, "gpt-5.6-sol") ||
-		strings.Contains(canonical, "gpt-5.6-terra") ||
-		strings.Contains(canonical, "gpt-5.6-luna") ||
+		isExactMantleModelID(canonical, "gpt-5.4") ||
+		isExactMantleModelID(canonical, "gpt-5.5") ||
+		isExactMantleModelID(canonical, "gpt-5.6-sol") ||
+		isExactMantleModelID(canonical, "gpt-5.6-terra") ||
+		isExactMantleModelID(canonical, "gpt-5.6-luna") ||
 		strings.Contains(canonical, "gemma-4")) {
 		base = "openai/v1"
 	}
 	return fmt.Sprintf("https://bedrock-mantle.%s.api.aws/%s/%s", region, base, path)
+}
+
+func isExactMantleModelID(model, id string) bool {
+	return model == id || strings.HasSuffix(model, "."+id)
+}
+
+func mantleModelSupportsChat(model string) bool {
+	canonical := strings.ToLower(model)
+	return !isExactMantleModelID(canonical, "gpt-5.4") && !isExactMantleModelID(canonical, "gpt-5.5")
 }
 
 // mantleAnthropicURL builds the Bedrock Mantle native-Anthropic Messages endpoint URL.
@@ -215,7 +224,11 @@ func (provider *BedrockMantleProvider) ChatCompletion(ctx *schemas.BifrostContex
 		)
 	}
 
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	canonical := schemas.ResolveCanonicalModel(ctx, bareModel)
+	if !mantleModelSupportsChat(canonical) {
+		return nil, providerUtils.NewConfigurationError(fmt.Sprintf("model %s supports Responses API only on Bedrock Mantle", canonical))
+	}
+	url := mantleOpenAIURLForFamily(region, canonical, schemas.ResolveFamily(ctx, request.Model), "chat/completions")
 	// A region prefix is gateway routing metadata, not part of the Mantle model ID.
 	// Keep the caller's request immutable while stripping it from the provider payload.
 	openAIRequest := *request
@@ -281,7 +294,11 @@ func (provider *BedrockMantleProvider) ChatCompletionStream(ctx *schemas.Bifrost
 		)
 	}
 
-	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "chat/completions")
+	canonical := schemas.ResolveCanonicalModel(ctx, bareModel)
+	if !mantleModelSupportsChat(canonical) {
+		return nil, providerUtils.NewConfigurationError(fmt.Sprintf("model %s supports Responses API only on Bedrock Mantle", canonical))
+	}
+	url := mantleOpenAIURLForFamily(region, canonical, schemas.ResolveFamily(ctx, request.Model), "chat/completions")
 	openAIRequest := *request
 	openAIRequest.Model = bareModel
 	return openai.HandleOpenAIChatCompletionStreaming(
@@ -332,11 +349,15 @@ func (provider *BedrockMantleProvider) Responses(ctx *schemas.BifrostContext, ke
 	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
 	openAIRequest := *request
 	openAIRequest.Model = bareModel
+	requestForUpstream := &openAIRequest
+	if strings.Contains(url, "/openai/v1/") {
+		requestForUpstream = openai.UnlightifyMantleResponsesRequest(requestForUpstream)
+	}
 	return openai.HandleOpenAIResponsesRequest(
 		ctx,
 		provider.mantleClient,
 		url,
-		&openAIRequest,
+		requestForUpstream,
 		openai.BearerAuthHeader(key),
 		bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),
@@ -396,8 +417,12 @@ func (provider *BedrockMantleProvider) ResponsesStream(ctx *schemas.BifrostConte
 	url := mantleOpenAIURLForFamily(region, schemas.ResolveCanonicalModel(ctx, bareModel), schemas.ResolveFamily(ctx, request.Model), "responses")
 	openAIRequest := *request
 	openAIRequest.Model = bareModel
+	requestForUpstream := &openAIRequest
+	if strings.Contains(url, "/openai/v1/") {
+		requestForUpstream = openai.UnlightifyMantleResponsesRequest(requestForUpstream)
+	}
 	return openai.HandleOpenAIResponsesStreaming(
-		ctx, provider.mantleStreamingClient, url, &openAIRequest,
+		ctx, provider.mantleStreamingClient, url, requestForUpstream,
 		openai.BearerAuthHeader(key), bedrock.WithMantleProject(provider.networkConfig.ExtraHeaders, bedrock.MantleOpenAIProjectHeader, resolveProjectID(ctx, key)),
 		provider.networkConfig.StreamIdleTimeoutInSeconds,
 		providerUtils.ShouldSendBackRawRequest(ctx, provider.sendBackRawRequest),

@@ -5,7 +5,7 @@ icon: "file-code"
 ---
 
 <Note>
-**Full schema reference:** [`https://www.getbifrost.ai/schema`](https://www.getbifrost.ai/schema)
+**Full schema reference:** [`FrankenGate config schema`](https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json)
 </Note>
 
 `config.json` lets you configure every aspect of Bifrost through a single declarative file. It is the right choice for GitOps workflows, CI/CD pipelines, headless deployments, and multinode OSS setups where a central configuration file is shared across all replicas.
@@ -34,7 +34,7 @@ This example uses file-only configuration for the smallest self-contained setup.
 
 ```json
 {
-  "$schema": "https://www.getbifrost.ai/schema",
+  "$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json",
   "encryption_key": "env.BIFROST_ENCRYPTION_KEY",
   "client": {
     "drop_excess_requests": false,
@@ -118,7 +118,7 @@ Add `$schema` to every `config.json` for IDE autocomplete and inline validation:
 
 ```json
 {
-  "$schema": "https://www.getbifrost.ai/schema"
+  "$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json"
 }
 ```
 
@@ -132,7 +132,7 @@ A production-ready file with PostgreSQL storage, multi-provider setup, governanc
 
 ```json
 {
-  "$schema": "https://www.getbifrost.ai/schema",
+  "$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json",
   "encryption_key": "env.BIFROST_ENCRYPTION_KEY",
 
   "client": {
@@ -207,7 +207,7 @@ Use this pattern when you want enterprise access-profile configuration to be see
 
 ```json
 {
-  "$schema": "https://www.getbifrost.ai/schema",
+  "$schema": "https://raw.githubusercontent.com/pierretokns/frankengate/dev/transports/config.schema.json",
   "cluster_config": {
     "enabled": true,
     "discovery": {

@@ -9,6 +9,26 @@ fail() {
   exit 1
 }
 
+if [ "${LAB_NETWORK_PROBE_MODE:-negatives}" = "preflight" ]; then
+  : "${LAB_BIFROST_1_CLIENT_IPV4:?missing Bifrost client address}"
+  dns_exact=0
+  tcp_reachable=0
+  health_ok=0
+  answers="$(nslookup bifrost-1 "$LAB_DNS_IPV4" 2>/dev/null | awk '$1 == "Name:" { answer = 1; next } answer && $1 == "Address:" && $2 ~ /^[0-9]+\./ { print $2 }' | sort -u)"
+  if [ "$answers" = "$LAB_BIFROST_1_CLIENT_IPV4" ]; then
+    dns_exact=1
+  fi
+  if nc -z -w 2 "$LAB_BIFROST_1_CLIENT_IPV4" 8080 >/dev/null 2>&1; then
+    tcp_reachable=1
+  fi
+  if wget -T 2 -q -O /dev/null http://bifrost-1:8080/health; then
+    health_ok=1
+  fi
+  printf '{"schema":"sealed-lab-client-preflight/v1","dns_exact":%s,"tcp_reachable":%s,"health_ok":%s}\n' \
+    "$dns_exact" "$tcp_reachable" "$health_ok"
+  exit 0
+fi
+
 test -z "$(ip route | awk '$1 == "default"')" || fail "IPv4 default route exists"
 test -z "$(ip -6 route | awk '$1 == "default"')" || fail "IPv6 default route exists"
 

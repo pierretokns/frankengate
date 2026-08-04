@@ -51,3 +51,24 @@ jobs:
           fi
           git commit -m "chore(pricing): refresh model catalog snapshot"
           git push
+
+      - name: Publish snapshot to GitHub Pages
+        run: |
+          set -euo pipefail
+          # Keep dev/docs/data/pricing as the canonical source while copying
+          # the validated public files to the branch served by Pages.
+          git fetch origin gh-pages
+          git worktree add --detach "$RUNNER_TEMP/frankengate-gh-pages" origin/gh-pages
+          trap 'git worktree remove --force "$RUNNER_TEMP/frankengate-gh-pages"' EXIT
+          mkdir -p "$RUNNER_TEMP/frankengate-gh-pages/pricing"
+          cp -R docs/data/pricing/. "$RUNNER_TEMP/frankengate-gh-pages/pricing/"
+          cd "$RUNNER_TEMP/frankengate-gh-pages"
+          git config user.name "frankengate-pricing[bot]"
+          git config user.email "frankengate-pricing[bot]@users.noreply.github.com"
+          git add pricing
+          if git diff --cached --quiet; then
+            echo "Pages pricing snapshot unchanged"
+            exit 0
+          fi
+          git commit -m "chore(pricing): publish Pages snapshot"
+          git push origin HEAD:gh-pages
