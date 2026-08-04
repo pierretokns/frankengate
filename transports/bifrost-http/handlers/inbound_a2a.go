@@ -309,6 +309,9 @@ func inboundBaseURL(ctx *fasthttp.RequestCtx) string {
 		return ""
 	}
 	scheme := strings.TrimSpace(string(ctx.Request.Header.Peek("X-Forwarded-Proto")))
+	if scheme == "" && ctx.IsTLS() {
+		scheme = "https"
+	}
 	if scheme != "https" {
 		// Agent Cards are published as HTTPS interfaces. TLS termination may set
 		// X-Forwarded-Proto; a plain local listener must be fronted by TLS.
