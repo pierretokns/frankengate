@@ -7,13 +7,21 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { PRODUCT_NAME } from "@/lib/constants/brand";
 import { RenderProviderIcon } from "@/lib/constants/icons";
 import { ProviderLabels, ProviderName } from "@/lib/constants/logs";
-import { getErrorMessage, useGetAgentModelCardQuery, useGetAgentModelCardsQuery } from "@/lib/store";
+import {
+	getErrorMessage,
+	useGetAgentModelCardEvidenceQuery,
+	useGetAgentModelCardQuery,
+	useGetAgentModelCardVersionsQuery,
+	useGetAgentModelCardsQuery,
+} from "@/lib/store";
 import {
 	AgentModelCard,
+	AgentModelCardEvidenceResponse,
 	AgentModelCardFreshnessState,
 	AgentModelCardSource,
 	AgentModelCardSourceKind,
 	AgentModelCardsListResponse,
+	AgentModelCardVersionsResponse,
 } from "@/lib/types/agentModelCards";
 import { KnownProvider } from "@/lib/types/config";
 import { cn } from "@/lib/utils";
@@ -324,10 +332,14 @@ function DetailView({
 	card,
 	sourceMap,
 	response,
+	versions,
+	evidence,
 }: {
 	card: AgentModelCard;
 	sourceMap: Map<AgentModelCardSourceKind, AgentModelCardSource>;
 	response: AgentModelCardsListResponse | undefined;
+	versions: AgentModelCardVersionsResponse | undefined;
+	evidence: AgentModelCardEvidenceResponse | undefined;
 }) {
 	const pricing = card.pricing;
 	const sourceDetails = card.sources.map((source) => sourceMap.get(source)).filter(Boolean) as AgentModelCardSource[];
@@ -415,6 +427,32 @@ function DetailView({
 					</div>
 				</section>
 
+				<section className="mt-6" data-testid="agent-model-card-detail-evidence">
+					<h3 className="text-sm font-semibold">History &amp; Evidence</h3>
+					<div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+						<MetricBlock
+							label="History"
+							value={versions?.history_available ? `${versions.versions.length} versions` : "Current revision only"}
+							testId="agent-model-card-detail-history"
+						/>
+						<MetricBlock
+							label="Evidence"
+							value={evidence?.evidence_available ? "Available" : "Unavailable"}
+							testId="agent-model-card-detail-evidence-state"
+						/>
+						<MetricBlock
+							label="Health"
+							value={labelize(evidence?.health_state ?? "unknown")}
+							testId="agent-model-card-detail-health-state"
+						/>
+					</div>
+					{(versions?.reason_codes?.length ?? 0) > 0 || (evidence?.reason_codes?.length ?? 0) > 0 ? (
+						<p className="text-muted-foreground mt-3 text-xs" data-testid="agent-model-card-detail-evidence-reasons">
+							{[...(versions?.reason_codes ?? []), ...(evidence?.reason_codes ?? [])].join(" · ")}
+						</p>
+					) : null}
+				</section>
+
 				{(card.aliases ?? []).length > 0 && (
 					<section className="mt-6" data-testid="agent-model-card-detail-aliases">
 						<h3 className="text-sm font-semibold">Aliases</h3>
@@ -465,6 +503,14 @@ function AgentModelCardsWorkspaceView() {
 
 	const detailQuery = useGetAgentModelCardQuery(
 		{ provider: selected?.provider ?? "", model: selected?.model ?? "", unfiltered: true },
+		{ skip: !selected },
+	);
+	const versionsQuery = useGetAgentModelCardVersionsQuery(
+		{ provider: selected?.provider ?? "", model: selected?.model ?? "" },
+		{ skip: !selected },
+	);
+	const evidenceQuery = useGetAgentModelCardEvidenceQuery(
+		{ provider: selected?.provider ?? "", model: selected?.model ?? "" },
 		{ skip: !selected },
 	);
 
@@ -563,7 +609,13 @@ function AgentModelCardsWorkspaceView() {
 					) : detailQuery.error ? (
 						<ErrorState message={getErrorMessage(detailQuery.error)} onRetry={detailQuery.refetch} testId="agent-model-card-detail-error" />
 					) : selectedCard ? (
-						<DetailView card={selectedCard} sourceMap={sourceMap} response={listQuery.data} />
+						<DetailView
+							card={selectedCard}
+							sourceMap={sourceMap}
+							response={listQuery.data}
+							versions={versionsQuery.data}
+							evidence={evidenceQuery.data}
+						/>
 					) : (
 						<DetailEmptyState />
 					)}
