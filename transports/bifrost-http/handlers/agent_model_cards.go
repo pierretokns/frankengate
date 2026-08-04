@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
@@ -58,6 +59,18 @@ type agentModelCardDetailResponse struct {
 	CardSchemaVersion string                              `json:"card_schema_version"`
 	Revision          modelcatalog.AgentModelCardRevision `json:"revision"`
 	Card              modelcatalog.AgentModelCard         `json:"card"`
+}
+
+type agentModelCardExportResponse struct {
+	SchemaVersion      string                                        `json:"schema_version"`
+	CardSchemaVersion  string                                        `json:"card_schema_version"`
+	Revision           modelcatalog.AgentModelCardRevision           `json:"revision"`
+	GeneratedAt        string                                        `json:"generated_at"`
+	SourcePrecedence   []modelcatalog.AgentModelCardSourceKind       `json:"source_precedence"`
+	Sources            []modelcatalog.AgentModelCardSource           `json:"sources"`
+	UnknownBehavior    modelcatalog.AgentModelCardUnknownBehavior    `json:"unknown_behavior"`
+	DeprecatedBehavior modelcatalog.AgentModelCardDeprecatedBehavior `json:"deprecated_behavior"`
+	Cards              []modelcatalog.AgentModelCard                 `json:"cards"`
 }
 
 type agentModelCardValidateResponse struct {
@@ -146,6 +159,36 @@ func (h *ProviderHandler) getAgentModelCardV1(ctx *fasthttp.RequestCtx) {
 	}
 
 	sendAgentModelCardError(ctx, fasthttp.StatusNotFound, agentModelCardReasonNotFound, "agent model card not found")
+}
+
+// exportAgentModelCardsV1 returns the complete visible snapshot for offline
+// review/export. It is still read-only and applies the same model visibility
+// intersection as the paginated list endpoint.
+func (h *ProviderHandler) exportAgentModelCardsV1(ctx *fasthttp.RequestCtx) {
+	query, ok := h.parseModelListQuery(ctx, 0)
+	if !ok {
+		return
+	}
+	query.Limit = 0
+	query.Offset = 0
+	snapshot, cards, err := h.visibleAgentModelCards(query)
+	if err != nil {
+		h.sendAgentModelCardReadError(ctx, err)
+		return
+	}
+	response := agentModelCardExportResponse{
+		SchemaVersion:      agentModelCardAPIResponseSchemaVersion,
+		CardSchemaVersion:  snapshot.SchemaVersion,
+		Revision:           snapshot.Revision,
+		GeneratedAt:        snapshot.GeneratedAt.UTC().Format(time.RFC3339Nano),
+		SourcePrecedence:   snapshot.SourcePrecedence,
+		Sources:            snapshot.Sources,
+		UnknownBehavior:    snapshot.UnknownBehavior,
+		DeprecatedBehavior: snapshot.DeprecatedBehavior,
+		Cards:              cards,
+	}
+	ctx.Response.Header.Set("Content-Disposition", `attachment; filename="agent-model-cards.json"`)
+	sendAgentModelCardJSONWithETag(ctx, response)
 }
 
 // validateAgentModelCardV1 handles POST /api/v1/agent-model-cards/validate.
