@@ -644,6 +644,14 @@ export default function AppSidebar() {
 						hasAccess: hasModelProvidersAccess,
 					},
 					{
+						title: "Agent Model Cards",
+						url: "/workspace/agent-model-cards",
+						icon: ShieldCheck,
+						description: "Trust and freshness metadata for routable models",
+						hasAccess: hasModelProvidersAccess,
+						new: true,
+					},
+					{
 						title: "Model Providers",
 						url: "/workspace/providers",
 						icon: Boxes,

@@ -1,0 +1,28 @@
+A2AJSONRPCRequest:
+  type: object
+  required: [jsonrpc, id, method, params]
+  properties:
+    jsonrpc: { type: string, enum: ['2.0'] }
+    id: { oneOf: [{ type: string }, { type: integer }] }
+    method: { type: string, enum: [message/send] }
+    params:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: object
+          required: [messageId, role, parts]
+          properties:
+            messageId: { type: string, maxLength: 128 }
+            role: { type: string }
+            parts: { type: array, items: { type: object, additionalProperties: true } }
+        configuration: { type: object, additionalProperties: true }
+
+A2AJSONRPCResponse:
+  type: object
+  required: [jsonrpc, id]
+  properties:
+    jsonrpc: { type: string, enum: ['2.0'] }
+    id: { oneOf: [{ type: string }, { type: integer }, { type: 'null' }] }
+    result: { type: object, additionalProperties: true }
+    error: { type: object, additionalProperties: true }

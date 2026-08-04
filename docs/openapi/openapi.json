@@ -42,6 +42,14 @@
       "description": "Model listing and information"
     },
     {
+      "name": "Agent Model Cards",
+      "description": "Read-only model, provider, capability, provenance, and A2A catalog views"
+    },
+    {
+      "name": "A2A",
+      "description": "Governed Agent-to-Agent discovery and task interfaces"
+    },
+    {
       "name": "Chat Completions",
       "description": "Chat-based text generation"
     },
@@ -34027,6 +34035,471 @@
         }
       }
     },
+    "/.well-known/agent-card.json": {
+      "get": {
+        "operationId": "getInboundAgentCard",
+        "summary": "Get the FrankenGate inbound A2A Agent Card",
+        "tags": [
+          "A2A"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Public Agent Card",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/agent.json": {
+      "get": {
+        "operationId": "getInboundAgentCard",
+        "summary": "Get the FrankenGate inbound A2A Agent Card",
+        "tags": [
+          "A2A"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Public Agent Card",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/a2a": {
+      "post": {
+        "operationId": "sendInboundA2AMessage",
+        "summary": "Submit a governed A2A message/send task",
+        "tags": [
+          "A2A"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      }
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "message/send"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "required": [
+                      "message"
+                    ],
+                    "properties": {
+                      "message": {
+                        "type": "object",
+                        "required": [
+                          "messageId",
+                          "role",
+                          "parts"
+                        ],
+                        "properties": {
+                          "messageId": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "parts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          }
+                        }
+                      },
+                      "configuration": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Completed or idempotently replayed A2A task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "jsonrpc",
+                    "id"
+                  ],
+                  "properties": {
+                    "jsonrpc": {
+                      "type": "string",
+                      "enum": [
+                        "2.0"
+                      ]
+                    },
+                    "id": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "result": {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller authority is invalid or denied by policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/a2a/jsonrpc": {
+      "post": {
+        "operationId": "sendInboundA2AMessage",
+        "summary": "Submit a governed A2A message/send task",
+        "tags": [
+          "A2A"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "enum": [
+                      "2.0"
+                    ]
+                  },
+                  "id": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      }
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "message/send"
+                    ]
+                  },
+                  "params": {
+                    "type": "object",
+                    "required": [
+                      "message"
+                    ],
+                    "properties": {
+                      "message": {
+                        "type": "object",
+                        "required": [
+                          "messageId",
+                          "role",
+                          "parts"
+                        ],
+                        "properties": {
+                          "messageId": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "parts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          }
+                        }
+                      },
+                      "configuration": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Completed or idempotently replayed A2A task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "jsonrpc",
+                    "id"
+                  ],
+                  "properties": {
+                    "jsonrpc": {
+                      "type": "string",
+                      "enum": [
+                        "2.0"
+                      ]
+                    },
+                    "id": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "result": {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller authority is invalid or denied by policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/a2a/tasks/{task_id}": {
+      "get": {
+        "operationId": "getInboundA2ATask",
+        "summary": "Retrieve a caller-scoped inbound A2A task",
+        "tags": [
+          "A2A"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A2A task state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller authority is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/config": {
       "get": {
         "operationId": "getConfig",
@@ -37971,6 +38444,864 @@
         }
       }
     },
+    "/api/v1/agent-model-cards": {
+      "get": {
+        "operationId": "listAgentModelCards",
+        "summary": "List visible Agent Model Cards",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Visible Agent Model Card snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "revision",
+                    "cards",
+                    "total",
+                    "limit",
+                    "offset",
+                    "has_more"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "card_count"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "card_count": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "cards": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "required": [
+                          "provider",
+                          "model",
+                          "base_model",
+                          "capability_state",
+                          "provider_mapping"
+                        ],
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "model": {
+                            "type": "string"
+                          },
+                          "base_model": {
+                            "type": "string"
+                          },
+                          "capability_state": {
+                            "type": "string",
+                            "enum": [
+                              "known",
+                              "unknown"
+                            ]
+                          },
+                          "provider_mapping": {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Model catalog is unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/metadata": {
+      "get": {
+        "operationId": "getAgentModelCardMetadata",
+        "summary": "Get Agent Model Card snapshot metadata",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Snapshot metadata without card bodies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "revision",
+                    "visible_card_count",
+                    "export"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "card_count"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "card_count": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "visible_card_count": {
+                      "type": "integer"
+                    },
+                    "export": {
+                      "type": "object",
+                      "required": [
+                        "path",
+                        "content_type",
+                        "filename"
+                      ],
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "content_type": {
+                          "type": "string"
+                        },
+                        "filename": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Model catalog is unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/versions": {
+      "get": {
+        "operationId": "getAgentModelCardVersions",
+        "summary": "Get current Agent Model Card revision and history availability",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current revision and explicit history availability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "current",
+                    "history_available",
+                    "versions"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "current": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "generated_at",
+                        "card_count"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "generated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "card_count": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "history_available": {
+                      "type": "boolean"
+                    },
+                    "versions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "generated_at",
+                          "card_count"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "generated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "card_count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "reason_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/diff": {
+      "get": {
+        "operationId": "diffAgentModelCard",
+        "summary": "Compare a card revision when history is available",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from_revision",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Safe diff or explicit unavailable-history result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "from_revision",
+                    "to_revision",
+                    "history_available",
+                    "changes"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "from_revision": {
+                      "type": "string"
+                    },
+                    "to_revision": {
+                      "type": "string"
+                    },
+                    "history_available": {
+                      "type": "boolean"
+                    },
+                    "changes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "reason_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/evidence": {
+      "get": {
+        "operationId": "getAgentModelCardEvidence",
+        "summary": "Get evaluation and health evidence availability for a card",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence availability without a false safety claim",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "provider",
+                    "model",
+                    "revision",
+                    "evidence_available",
+                    "health_state"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "provider": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "card_count"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "card_count": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "evidence_available": {
+                      "type": "boolean"
+                    },
+                    "evaluation_sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "health_state": {
+                      "type": "string"
+                    },
+                    "reason_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/detail": {
+      "get": {
+        "operationId": "getAgentModelCard",
+        "summary": "Get one visible Agent Model Card",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent Model Card detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "revision",
+                    "card"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "card_count"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "card_count": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "card": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "required": [
+                        "provider",
+                        "model",
+                        "base_model",
+                        "capability_state",
+                        "provider_mapping"
+                      ],
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "model": {
+                          "type": "string"
+                        },
+                        "base_model": {
+                          "type": "string"
+                        },
+                        "capability_state": {
+                          "type": "string",
+                          "enum": [
+                            "known",
+                            "unknown"
+                          ]
+                        },
+                        "provider_mapping": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/export": {
+      "get": {
+        "operationId": "exportAgentModelCards",
+        "summary": "Export the complete visible Agent Model Card snapshot",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Downloadable read-only Agent Model Card snapshot",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "schema_version",
+                        "card_schema_version",
+                        "revision",
+                        "cards",
+                        "total",
+                        "limit",
+                        "offset",
+                        "has_more"
+                      ],
+                      "properties": {
+                        "schema_version": {
+                          "type": "string"
+                        },
+                        "card_schema_version": {
+                          "type": "string"
+                        },
+                        "revision": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "card_count"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "card_count": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "cards": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": true,
+                            "required": [
+                              "provider",
+                              "model",
+                              "base_model",
+                              "capability_state",
+                              "provider_mapping"
+                            ],
+                            "properties": {
+                              "provider": {
+                                "type": "string"
+                              },
+                              "model": {
+                                "type": "string"
+                              },
+                              "base_model": {
+                                "type": "string"
+                              },
+                              "capability_state": {
+                                "type": "string",
+                                "enum": [
+                                  "known",
+                                  "unknown"
+                                ]
+                              },
+                              "provider_mapping": {
+                                "type": "object",
+                                "additionalProperties": true
+                              }
+                            }
+                          }
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "offset": {
+                          "type": "integer"
+                        },
+                        "has_more": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "generated_at"
+                      ],
+                      "properties": {
+                        "generated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/validate": {
+      "post": {
+        "operationId": "validateAgentModelCard",
+        "summary": "Validate an Agent Model Card without persisting it",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Agent Model Card payload validated as a read-only admission preflight."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validation result with stable reason codes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "valid"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "reason_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "reasons": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/plugins": {
       "get": {
         "operationId": "listPlugins",
@@ -40475,22 +41806,22 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BifrostError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "OAuth provider not configured",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ManagementErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
                 }
               }
             }
@@ -56221,16 +57552,6 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BifrostError"
-                }
-              }
-            }
-          },
           "409": {
             "description": "A recalculation job is already running",
             "content": {
@@ -56241,8 +57562,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error",
+          "400": {
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -56257,6 +57578,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ManagementErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
                 }
               }
             }
@@ -56308,22 +57639,22 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BifrostError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Background job runner is not available",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ManagementErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BifrostError"
                 }
               }
             }
@@ -62532,8 +63863,8 @@
           },
           "frequency_penalty": {
             "type": "number",
-            "minimum": -2,
-            "maximum": 2
+            "minimum": -2.0,
+            "maximum": 2.0
           },
           "logit_bias": {
             "type": "object",
@@ -62562,8 +63893,8 @@
           },
           "presence_penalty": {
             "type": "number",
-            "minimum": -2,
-            "maximum": 2
+            "minimum": -2.0,
+            "maximum": 2.0
           },
           "prompt_cache_key": {
             "type": "string"
@@ -65544,7 +66875,7 @@
           "speed": {
             "type": "number",
             "minimum": 0.25,
-            "maximum": 4
+            "maximum": 4.0
           },
           "language_code": {
             "type": "string"
@@ -67319,13 +68650,13 @@
           },
           "frequency_penalty": {
             "type": "number",
-            "minimum": -2,
-            "maximum": 2
+            "minimum": -2.0,
+            "maximum": 2.0
           },
           "presence_penalty": {
             "type": "number",
-            "minimum": -2,
-            "maximum": 2
+            "minimum": -2.0,
+            "maximum": 2.0
           },
           "logit_bias": {
             "type": "object",
@@ -67812,13 +69143,13 @@
           },
           "frequency_penalty": {
             "type": "number",
-            "minimum": -2,
-            "maximum": 2
+            "minimum": -2.0,
+            "maximum": 2.0
           },
           "presence_penalty": {
             "type": "number",
-            "minimum": -2,
-            "maximum": 2
+            "minimum": -2.0,
+            "maximum": 2.0
           },
           "logit_bias": {
             "type": "object",
@@ -68606,7 +69937,7 @@
           "speed": {
             "type": "number",
             "minimum": 0.25,
-            "maximum": 4
+            "maximum": 4.0
           },
           "stream_format": {
             "type": "string",

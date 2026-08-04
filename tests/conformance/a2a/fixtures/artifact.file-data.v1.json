@@ -1,0 +1,29 @@
+{
+  "artifactId": "artifact-mixed-001",
+  "description": "Artifact fixture covering text, structured data, and base64 raw content parts.",
+  "extensions": [
+    "https://example.invalid/a2a/extensions/audit-log"
+  ],
+  "metadata": {
+    "fixture": "artifact.file-data.v1"
+  },
+  "name": "mixed-output",
+  "parts": [
+    {
+      "mediaType": "text/plain",
+      "text": "Human-readable summary."
+    },
+    {
+      "data": {
+        "confidence": 0.99,
+        "result": "ok"
+      },
+      "mediaType": "application/json"
+    },
+    {
+      "filename": "result.bin",
+      "mediaType": "application/octet-stream",
+      "raw": "YmluYXJ5LXJlc3VsdA=="
+    }
+  ]
+}

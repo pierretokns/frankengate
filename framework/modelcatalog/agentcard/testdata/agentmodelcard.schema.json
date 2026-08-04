@@ -1,0 +1,392 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.maxim.ai/bifrost/agent-model-card/v1/schema.json",
+  "title": "Bifrost Agent Model Card",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "entity"],
+  "properties": {
+    "schema_version": {
+      "const": "bifrost.agent_model_card.v1"
+    },
+    "entity": {
+      "$ref": "#/$defs/catalogEntity"
+    },
+    "narrative": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display_name": { "type": "string", "maxLength": 256 },
+        "summary": { "type": "string", "maxLength": 1024 },
+        "description": { "type": "string", "maxLength": 8192 },
+        "details_ref": { "$ref": "#/$defs/contentRef" }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "maxItems": 32,
+      "items": { "$ref": "#/$defs/interface" }
+    },
+    "skills": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/skill" }
+    },
+    "security": {
+      "type": "array",
+      "maxItems": 16,
+      "items": { "$ref": "#/$defs/securityScheme" }
+    },
+    "signatures": {
+      "type": "array",
+      "maxItems": 16,
+      "items": { "$ref": "#/$defs/signature" }
+    },
+    "pricing": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/pricingEntry" }
+    },
+    "evaluations": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/evaluationEvidence" }
+    },
+    "health": {
+      "$ref": "#/$defs/health"
+    },
+    "policy": {
+      "$ref": "#/$defs/policy"
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    }
+  },
+  "$defs": {
+    "entityKind": {
+      "enum": ["MODEL", "A2A_AGENT", "A2A_CAPABILITY", "MCP_SERVER", "MCP_TOOL", "PROCEDURAL_SKILL"]
+    },
+    "provenanceStatus": {
+      "enum": ["verified", "self-reported", "inferred", "stale", "unknown", "quarantined"]
+    },
+    "sourceType": {
+      "enum": ["provider_api", "a2a_card", "mcp_library", "user", "benchmark", "import"]
+    },
+    "modality": {
+      "enum": ["text", "image", "audio", "video", "embedding", "file", "tool", "code"]
+    },
+    "operation": {
+      "enum": [
+        "chat",
+        "responses",
+        "text_completion",
+        "embedding",
+        "image_generation",
+        "image_edit",
+        "image_variation",
+        "speech",
+        "transcription",
+        "tool_call",
+        "mcp_tool",
+        "a2a_message",
+        "a2a_task",
+        "skill_execute",
+        "token_count"
+      ]
+    },
+    "relationshipType": {
+      "enum": ["provides", "requires", "hosted_by", "exposes", "implements", "equivalent_to", "supersedes", "derived_from"]
+    },
+    "catalogEntity": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["schema_version", "kind", "identity", "version", "source", "publisher", "provenance"],
+      "properties": {
+        "schema_version": { "const": "bifrost.agent_model_card.v1" },
+        "kind": { "$ref": "#/$defs/entityKind" },
+        "identity": { "$ref": "#/$defs/identity" },
+        "version": { "$ref": "#/$defs/versionInfo" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "source": { "$ref": "#/$defs/source" },
+        "publisher": { "$ref": "#/$defs/publisher" },
+        "capabilities": { "$ref": "#/$defs/capabilitySet" },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "relationships": {
+          "type": "array",
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/relationship" }
+        },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "namespace": { "type": "string", "maxLength": 256 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "provider": { "type": "string", "maxLength": 128 },
+        "labels": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "maxLength": 512 },
+          "maxProperties": 64
+        }
+      }
+    },
+    "versionInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "revision": { "type": "string", "maxLength": 128 },
+        "released_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "digest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "value": { "type": "string", "minLength": 1, "maxLength": 256 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "$ref": "#/$defs/sourceType" },
+        "uri": { "type": "string", "maxLength": 2048 },
+        "retrieved_at": { "type": "string", "format": "date-time" },
+        "etag": { "type": "string", "maxLength": 256 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "publisher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "url": { "type": "string", "maxLength": 2048 },
+        "contact": { "type": "string", "maxLength": 512 }
+      }
+    },
+    "capabilitySet": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "modalities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/modality" }
+        },
+        "operations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/operation" }
+        },
+        "features": {
+          "type": "array",
+          "maxItems": 128,
+          "items": { "type": "string", "maxLength": 128 }
+        },
+        "limits": { "$ref": "#/$defs/limits" }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "context_tokens": { "type": "integer", "minimum": 0 },
+        "max_input_tokens": { "type": "integer", "minimum": 0 },
+        "max_output_tokens": { "type": "integer", "minimum": 0 },
+        "max_tool_calls": { "type": "integer", "minimum": 0 },
+        "requests_per_minute": { "type": "integer", "minimum": 0 },
+        "tokens_per_minute": { "type": "integer", "minimum": 0 },
+        "payload_bytes": { "type": "integer", "minimum": 0 },
+        "timeout_millis": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "$ref": "#/$defs/provenanceStatus" },
+        "method": { "type": "string", "maxLength": 256 },
+        "observed_at": { "type": "string", "format": "date-time" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/contentRef" }
+        }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "target_kind", "target_id"],
+      "properties": {
+        "type": { "$ref": "#/$defs/relationshipType" },
+        "target_kind": { "$ref": "#/$defs/entityKind" },
+        "target_id": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "status": { "$ref": "#/$defs/provenanceStatus" }
+      }
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["openai_compatible", "a2a", "mcp", "http"] },
+        "url": { "type": "string", "maxLength": 2048 },
+        "protocol_version": { "type": "string", "maxLength": 128 },
+        "operations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/operation" }
+        }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "description": { "type": "string", "maxLength": 4096 },
+        "input_modalities": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/modality" }
+        },
+        "output_modalities": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/modality" }
+        },
+        "operations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/operation" }
+        },
+        "limits": { "$ref": "#/$defs/limits" }
+      }
+    },
+    "securityScheme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "description": { "type": "string", "maxLength": 1024 },
+        "scopes": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "type": "string", "maxLength": 128 }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key_id", "algorithm", "digest", "value"],
+      "properties": {
+        "key_id": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "algorithm": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "digest": { "$ref": "#/$defs/digest" },
+        "value": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "signed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "pricingEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit"],
+      "properties": {
+        "unit": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "currency": { "type": "string", "maxLength": 8 },
+        "amount": { "type": "number", "minimum": 0 },
+        "input_rate": { "type": "number", "minimum": 0 },
+        "output_rate": { "type": "number", "minimum": 0 }
+      }
+    },
+    "evaluationEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "metric": { "type": "string", "maxLength": 256 },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "status": { "$ref": "#/$defs/provenanceStatus" },
+        "dataset_ref": { "$ref": "#/$defs/contentRef" },
+        "dataset_revision": { "type": "string", "maxLength": 256 },
+        "report_ref": { "$ref": "#/$defs/contentRef" },
+        "methodology": { "type": "string", "maxLength": 4096 },
+        "source": { "$ref": "#/$defs/contentRef" },
+        "verifier": { "type": "string", "maxLength": 256 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "run_revision": { "type": "string", "maxLength": 256 },
+        "reproducible": { "type": "boolean" },
+        "slice": {
+          "type": "object",
+          "maxProperties": 32,
+          "additionalProperties": { "type": "string", "maxLength": 256 }
+        },
+        "stale": { "type": "boolean" },
+        "observed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["unknown", "healthy", "degraded", "down"] },
+        "last_checked_at": { "type": "string", "format": "date-time" },
+        "latency_p50_millis": { "type": "integer", "minimum": 0 },
+        "latency_p95_millis": { "type": "integer", "minimum": 0 },
+        "error_rate": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "license": { "type": "string", "maxLength": 128 },
+        "terms_url": { "type": "string", "maxLength": 2048 },
+        "data_retention": { "type": "string", "maxLength": 256 },
+        "usage_restrictions": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "type": "string", "maxLength": 512 }
+        },
+        "safety": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "type": "string", "maxLength": 512 }
+        }
+      }
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri"],
+      "properties": {
+        "uri": { "type": "string", "minLength": 1, "maxLength": 2048 },
+        "digest": { "$ref": "#/$defs/digest" },
+        "media_type": { "type": "string", "maxLength": 128 },
+        "bytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "maxProperties": 16
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "clientSupportedInterfaces": [
+    {
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0"
+    },
+    {
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "expectedSelection": {
+    "protocolBinding": "JSONRPC",
+    "protocolVersion": "1.0",
+    "reason": "Prefer the highest compatible version for the first mutually supported binding.",
+    "url": "https://example.invalid/a2a/jsonrpc-v1"
+  },
+  "serverSupportedInterfaces": [
+    {
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "0.3",
+      "url": "https://example.invalid/a2a/jsonrpc-v03"
+    },
+    {
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0",
+      "url": "https://example.invalid/a2a/jsonrpc-v1"
+    },
+    {
+      "protocolBinding": "GRPC",
+      "protocolVersion": "1.0",
+      "url": "https://example.invalid/a2a/grpc-v1"
+    }
+  ]
+}

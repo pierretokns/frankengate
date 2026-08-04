@@ -1,0 +1,187 @@
+# Read-only Agent Model Card APIs. Card bodies are visibility-filtered by the
+# authenticated management scope; review/quarantine/kill mutations are not
+# exposed by this surface.
+
+agent-model-cards:
+  get:
+    operationId: listAgentModelCards
+    summary: List visible Agent Model Cards
+    tags:
+      - Agent Model Cards
+    security:
+      - ManagementBearerAuth: []
+    parameters:
+      - name: provider
+        in: query
+        schema: { type: string }
+      - name: query
+        in: query
+        schema: { type: string }
+      - name: limit
+        in: query
+        schema: { type: integer, minimum: 1, maximum: 100 }
+      - name: offset
+        in: query
+        schema: { type: integer, minimum: 0 }
+    responses:
+      '200':
+        description: Visible Agent Model Card snapshot
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardsListResponse'
+      '503':
+        description: Model catalog is unavailable
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+
+metadata:
+  get:
+    operationId: getAgentModelCardMetadata
+    summary: Get Agent Model Card snapshot metadata
+    tags:
+      - Agent Model Cards
+    security:
+      - ManagementBearerAuth: []
+    responses:
+      '200':
+        description: Snapshot metadata without card bodies
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardMetadataResponse'
+      '503':
+        description: Model catalog is unavailable
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+
+versions:
+  get:
+    operationId: getAgentModelCardVersions
+    summary: Get current Agent Model Card revision and history availability
+    tags: [Agent Model Cards]
+    security:
+      - ManagementBearerAuth: []
+    parameters:
+      - { name: provider, in: query, required: true, schema: { type: string } }
+      - { name: model, in: query, required: true, schema: { type: string } }
+    responses:
+      '200':
+        description: Current revision and explicit history availability
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardVersionsResponse'
+
+diff:
+  get:
+    operationId: diffAgentModelCard
+    summary: Compare a card revision when history is available
+    tags: [Agent Model Cards]
+    security:
+      - ManagementBearerAuth: []
+    parameters:
+      - { name: provider, in: query, required: true, schema: { type: string } }
+      - { name: model, in: query, required: true, schema: { type: string } }
+      - { name: from_revision, in: query, required: true, schema: { type: string } }
+    responses:
+      '200':
+        description: Safe diff or explicit unavailable-history result
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardDiffResponse'
+
+evidence:
+  get:
+    operationId: getAgentModelCardEvidence
+    summary: Get evaluation and health evidence availability for a card
+    tags: [Agent Model Cards]
+    security:
+      - ManagementBearerAuth: []
+    parameters:
+      - { name: provider, in: query, required: true, schema: { type: string } }
+      - { name: model, in: query, required: true, schema: { type: string } }
+    responses:
+      '200':
+        description: Evidence availability without a false safety claim
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardEvidenceResponse'
+
+detail:
+  get:
+    operationId: getAgentModelCard
+    summary: Get one visible Agent Model Card
+    tags:
+      - Agent Model Cards
+    security:
+      - ManagementBearerAuth: []
+    parameters:
+      - name: provider
+        in: query
+        required: true
+        schema: { type: string }
+      - name: model
+        in: query
+        required: true
+        schema: { type: string }
+    responses:
+      '200':
+        description: Agent Model Card detail
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardDetailResponse'
+      '404':
+        $ref: '../../openapi.yaml#/components/responses/NotFound'
+
+export:
+  get:
+    operationId: exportAgentModelCards
+    summary: Export the complete visible Agent Model Card snapshot
+    tags:
+      - Agent Model Cards
+    security:
+      - ManagementBearerAuth: []
+    responses:
+      '200':
+        description: Downloadable read-only Agent Model Card snapshot
+        headers:
+          ETag:
+            schema: { type: string }
+          Content-Disposition:
+            schema: { type: string }
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardsExportResponse'
+
+validate:
+  post:
+    operationId: validateAgentModelCard
+    summary: Validate an Agent Model Card without persisting it
+    tags:
+      - Agent Model Cards
+    security:
+      - ManagementBearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardInput'
+    responses:
+      '200':
+        description: Validation result with stable reason codes
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardValidationResponse'

@@ -72,6 +72,10 @@ tags:
   # Unified Inference API
   - name: Models
     description: Model listing and information
+  - name: Agent Model Cards
+    description: Read-only model, provider, capability, provenance, and A2A catalog views
+  - name: A2A
+    description: Governed Agent-to-Agent discovery and task interfaces
   - name: Chat Completions
     description: Chat-based text generation
   - name: Text Completions
@@ -695,6 +699,16 @@ paths:
   # Health
   /health:
     $ref: './paths/management/health.yaml#/health'
+  /.well-known/agent-card.json:
+    $ref: './paths/management/a2a.yaml#/agent-card'
+  /.well-known/agent.json:
+    $ref: './paths/management/a2a.yaml#/agent-card'
+  /a2a:
+    $ref: './paths/management/a2a.yaml#/message-send'
+  /a2a/jsonrpc:
+    $ref: './paths/management/a2a.yaml#/message-send'
+  /a2a/tasks/{task_id}:
+    $ref: './paths/management/a2a.yaml#/task'
 
   # Configuration
   /api/config:
@@ -775,6 +789,24 @@ paths:
     $ref: './paths/management/providers.yaml#/models-parameters'
   /api/models/base:
     $ref: './paths/management/providers.yaml#/models-base'
+
+  # Agent Model Cards (read-only catalog views)
+  /api/v1/agent-model-cards:
+    $ref: './paths/management/agent-model-cards.yaml#/agent-model-cards'
+  /api/v1/agent-model-cards/metadata:
+    $ref: './paths/management/agent-model-cards.yaml#/metadata'
+  /api/v1/agent-model-cards/versions:
+    $ref: './paths/management/agent-model-cards.yaml#/versions'
+  /api/v1/agent-model-cards/diff:
+    $ref: './paths/management/agent-model-cards.yaml#/diff'
+  /api/v1/agent-model-cards/evidence:
+    $ref: './paths/management/agent-model-cards.yaml#/evidence'
+  /api/v1/agent-model-cards/detail:
+    $ref: './paths/management/agent-model-cards.yaml#/detail'
+  /api/v1/agent-model-cards/export:
+    $ref: './paths/management/agent-model-cards.yaml#/export'
+  /api/v1/agent-model-cards/validate:
+    $ref: './paths/management/agent-model-cards.yaml#/validate'
 
   # Plugins
   /api/plugins:
