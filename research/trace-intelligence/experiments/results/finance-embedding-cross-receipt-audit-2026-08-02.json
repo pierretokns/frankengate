@@ -1,0 +1,39 @@
+{
+  "schema_version": "frankengate-finance-embedding-cross-receipt-audit-v1",
+  "inputs": {
+    "dataset": "FinanceMTEB/FinanceBench",
+    "revision": "4738010357e3dda4b337abbde86d5b36c3118c8f",
+    "corpus_sha256": "813bec7596cf578bab030391ac39fbb5dfc8ab3df04a943cc32fcdf019274a5e",
+    "query_sha256": "5b6364e77a8a358823cca6fd80d4a67a9b18b4ed303c019f61bb08dd3f3ce399",
+    "qrels_sha256": "5a09a2355e8bd3b799c527860c5f29f2f449d734963b19f436c5437924b486aa",
+    "raw_content_committed": false,
+    "vectors_committed": false
+  },
+  "checks": {
+    "pinned_dataset_matches_all_four_receipts": true,
+    "e5_model_snapshot_matches_baseline_and_parity": true,
+    "finance_benchmark_e5_recall20_is_one": true,
+    "finance_benchmark_e5_mrr_is_0_808730": true,
+    "harness_parity_e5_recall20_is_one": true,
+    "ollama_nomic_recall20_is_0_453333": true,
+    "governed_denials_zero": true,
+    "deletion_filtered_before_ranking": true,
+    "rollback_rows_zero": true,
+    "production_promotion_authorized": false
+  },
+  "observed": {
+    "baseline_e5": {"recall_at_20": 1.0, "mrr": 0.808730159},
+    "parity_e5": {"recall_at_20": 1.0, "mrr": 0.810619048},
+    "ollama_nomic": {"recall_at_20": 0.453333333, "mrr": 0.166107988},
+    "governed_e5": {"recall_at_20": 1.0, "mrr": 0.802063492, "latency_p50_ms": 2.023271}
+  },
+  "all_passed": true,
+  "claim_boundary": {
+    "public_relevance_and_serving_identity_checked": true,
+    "local_rls_deletion_rollback_mechanics_checked": true,
+    "enterprise_hard_negative_quality": false,
+    "held_out_corporate_transfer": false,
+    "causal_artifact_or_skill_utility": false,
+    "promotion_authorized": false
+  }
+}

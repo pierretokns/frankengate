@@ -6,7 +6,8 @@ port="${2:-18080}"
 
 size="$(wc -c < "$binary" | tr -d ' ')"
 
-# Keep the dependency surface to the tools present in postgres:16-alpine.
+# Keep the dependency surface to the tools present in the pinned PostgreSQL
+# test image.
 # Clients use bounded retries because this intentionally tiny server accepts
 # one connection at a time; the retry budget makes concurrent pod bootstrap
 # deterministic without adding a second image or a host-side dependency.

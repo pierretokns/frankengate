@@ -1,0 +1,217 @@
+{
+  "claim_boundary": {
+    "automatic_frankengate_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "changed_agent_future_task_outcome_measured": true,
+    "cross_user_enterprise_transfer_measured": false,
+    "independent_replay_and_evaluator": true,
+    "reason": "This is a family-disjoint changed-agent outcome receipt. The 20-task cohort is descriptive and requires broader powered replication before causal or enterprise claims."
+  },
+  "experiment": "bird-sql-trace-derived-procedure-changed-agent",
+  "outcome": {
+    "candidate_mean_elapsed_ms": 10355.63725,
+    "control_mean_elapsed_ms": 10467.7481,
+    "exact_execution": {
+      "bootstrap_95ci": [
+        0.0,
+        0.0
+      ],
+      "candidate_losses": 0,
+      "candidate_wins": 0,
+      "estimated_pairs_for_80pct_normal_power": null,
+      "exact_two_sided_sign_pvalue": 1.0,
+      "mean_delta": 0.0,
+      "paired_sd": 0.0,
+      "pairs": 20,
+      "ties": 20
+    },
+    "latency_delta_ms": -112.11085000000094,
+    "latency_ratio": 0.9892898788804442,
+    "paired_rows": [
+      {
+        "candidate_elapsed_ms": 8357.139,
+        "candidate_score": 1.0,
+        "control_elapsed_ms": 7965.35,
+        "control_score": 1.0,
+        "delta": 0.0,
+        "task_hash": "035c1c3b1288643bcf12234171414f59bd8d08a3a2b094aca481ea5eb7e2703a"
+      },
+      {
+        "candidate_elapsed_ms": 12918.93,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 10103.623,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "03f2cafcb3887ad4be16601a8373525ebeda40c2024130dc7c2aa2456c135795"
+      },
+      {
+        "candidate_elapsed_ms": 10471.642,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 11302.451,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "13c10b58d70ff9dff13833fe6cdaacbfc9e252db8ebaf56e9238c1efaddcdaf9"
+      },
+      {
+        "candidate_elapsed_ms": 6474.859,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 8909.892,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "21be379428e44711a17cdbecc51aaa368dd6ce6547038d1efb4d06bc84d890be"
+      },
+      {
+        "candidate_elapsed_ms": 11257.716,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 11923.167,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "308ba7821512338f7182af21d9282903fa64db10551208ab26b7d82330b2d391"
+      },
+      {
+        "candidate_elapsed_ms": 8839.122,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 7175.475,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2"
+      },
+      {
+        "candidate_elapsed_ms": 8474.133,
+        "candidate_score": 1.0,
+        "control_elapsed_ms": 8846.635,
+        "control_score": 1.0,
+        "delta": 0.0,
+        "task_hash": "378275f2b50838a2b30c410cd1165196d044e21207b318d23859d44590b0899a"
+      },
+      {
+        "candidate_elapsed_ms": 13218.499,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 11409.173,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "3cdbf808242920659fffe46bc894fa55a60b404b7e28bae02a00144e5f5e1f34"
+      },
+      {
+        "candidate_elapsed_ms": 7692.152,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 9792.675,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "46412a665b11060c994ba29e6753270f963e9f79369f17c3b4759db86d3c32e5"
+      },
+      {
+        "candidate_elapsed_ms": 9376.179,
+        "candidate_score": 1.0,
+        "control_elapsed_ms": 6402.843,
+        "control_score": 1.0,
+        "delta": 0.0,
+        "task_hash": "5ae07a247661fa3528c32c2456f02394e698597853bf0ef4f6b00e61bff782d7"
+      },
+      {
+        "candidate_elapsed_ms": 12678.085,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 11358.247,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7"
+      },
+      {
+        "candidate_elapsed_ms": 10929.389,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 10917.942,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "8271b20d3fff39f423c8290f7b5f7c53a2e5b53dacc16217838e95eb226c34d6"
+      },
+      {
+        "candidate_elapsed_ms": 10657.867,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 11196.314,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e"
+      },
+      {
+        "candidate_elapsed_ms": 13586.183,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 14870.899,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "97cf8d88b340ffb212158069b5256d07f7e34e5fa4d4d14ec98e8a63f3cc1938"
+      },
+      {
+        "candidate_elapsed_ms": 8567.264,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 9039.817,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "bd5d86412280961081cf3b545c25a49a2aba56224a323803ba6895cf78640daa"
+      },
+      {
+        "candidate_elapsed_ms": 11336.2,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 13176.699,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62"
+      },
+      {
+        "candidate_elapsed_ms": 8576.619,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 8331.861,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552"
+      },
+      {
+        "candidate_elapsed_ms": 7483.543,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 9982.943,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "d9cf8a492227927b1db48d54a165e6226b84d0e2af17a7961e7fc4736a5dfa36"
+      },
+      {
+        "candidate_elapsed_ms": 16698.727,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 17209.133,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea"
+      },
+      {
+        "candidate_elapsed_ms": 9518.497,
+        "candidate_score": 0.0,
+        "control_elapsed_ms": 9439.823,
+        "control_score": 0.0,
+        "delta": 0.0,
+        "task_hash": "fd4023e3f6ae2be583274951694ac868287ab8efb216b750297c6a9a6619643c"
+      }
+    ]
+  },
+  "protocol": {
+    "candidate_arm": "trace_mined_procedure",
+    "control_arm": "no_skill",
+    "dataset": [
+      "card_games",
+      "formula_1",
+      "financial",
+      "debit_card_specializing"
+    ],
+    "family_disjoint": true,
+    "gold_hidden_from_proposer": true,
+    "harness": "codex-cli-subscription",
+    "heldout_task_count": 20,
+    "independent_evaluator": "fresh SQLite connections and duplicated SQL extraction/comparison logic",
+    "model": "gpt-5.6-luna"
+  },
+  "schema_version": "frankengate-changed-agent-outcome-receipt-v1",
+  "source": {
+    "factorial_receipt": "bird-sql-skill-factorial-powered-2026-07-31.json",
+    "factorial_receipt_sha256": "3e55739d3d9998be670297abce85c89999578613dbf54e80553135cfcdafa35b",
+    "independent_verifier": "bird-sql-skill-factorial-powered-verification-2026-07-31.json",
+    "independent_verifier_sha256": "51200231f57e5a82a53c14286c2bbce7eb895fcc620b728d5c1bb9b99c6f05c9",
+    "raw_model_content_committed": false
+  }
+}

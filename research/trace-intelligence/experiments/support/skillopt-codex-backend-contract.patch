@@ -1,0 +1,29 @@
+--- a/skillopt/model/codex_backend.py
++++ b/skillopt/model/codex_backend.py
+@@
+             prompt, attachments = _build_prompt_from_messages(
+                 messages,
+                 tools=tools,
+                 tool_choice=tool_choice,
+                 structured_output=structured_output,
+             )
++            # ALFWorld parses an explicit action tag; analyst/merge consume JSON.
++            if stage == "rollout":
++                prompt += (
++                    "\n\nBenchmark output contract: return exactly one action in this form "
++                    "<think>brief reason</think><action>admissible action</action>. "
++                    "Do not add prose, Markdown, or code fences."
++                )
++            elif stage == "analyst":
++                prompt += (
++                    "\n\nBenchmark output contract: return only a JSON object with a nested "
++                    "`patch` object containing `reasoning` and an `edits` array. "
++                    "Each edit must have `op`, `target`, and `content`. Do not add "
++                    "Markdown fences or commentary."
++                )
++            elif stage == "merge":
++                prompt += (
++                    "\n\nBenchmark output contract: return only a JSON object with `reasoning` "
++                    "and an `edits` array. Each edit must have `op`, `target`, and "
++                    "`content`. Do not add Markdown fences or commentary."
++                )

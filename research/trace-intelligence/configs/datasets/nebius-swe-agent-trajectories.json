@@ -1,0 +1,31 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "nebius/SWE-agent-trajectories",
+  "dataset_revision": "68195a1450865274106246d0d0296a1d6807b88e",
+  "license": "CC-BY-4.0",
+  "source_url": "https://huggingface.co/datasets/nebius/SWE-agent-trajectories",
+  "source_format": "parquet",
+  "adapter": "nebius_swe_agent_v1",
+  "outcome": {
+    "field": "target",
+    "semantics": "external SWE task evaluation",
+    "used_by_signal_generation": false
+  },
+  "known_missing_fields": [
+    "timestamps",
+    "explicit_tool_call_ids",
+    "authorization_decisions",
+    "tool_latency",
+    "provider_request_ids",
+    "branch_edges"
+  ],
+  "pilot_sample": {
+    "source_shard": "default/train/0000.parquet",
+    "selection": "30 deterministically hashed task IDs with at least five successes and five failures; five attempts per outcome",
+    "records": 300,
+    "task_ids": 30,
+    "successes": 150,
+    "failures": 150,
+    "raw_data_committed": false
+  }
+}

@@ -1,0 +1,365 @@
+{
+  "arms": {
+    "baseline": {
+      "result_match_at_1": 0,
+      "result_match_at_10": 0,
+      "result_match_at_5": 0,
+      "targets": 16
+    },
+    "planned": {
+      "result_match_at_1": 0,
+      "result_match_at_10": 0,
+      "result_match_at_5": 0,
+      "targets": 16
+    }
+  },
+  "claim_boundary": {
+    "natural_intent_transfer_established": false,
+    "outcome_backed_query_planning_measured": true,
+    "skill_release_authorized": false,
+    "toolqp_training_reproduced": false
+  },
+  "cohort": {
+    "candidate_scope": "same database family; leave-one-out",
+    "database_families": 11,
+    "targets": 16,
+    "validated_artifacts": 76
+  },
+  "failures": 0,
+  "protocol": {
+    "model": "gpt-5.6-luna",
+    "planner_queries": 3,
+    "planner_sees_result_labels": false,
+    "planner_sees_target_sql": false,
+    "raw_model_outputs_external": true
+  },
+  "raw_receipts": [
+    {
+      "case_index": 0,
+      "raw_sha256": "36a7acb4f5ae8d54e171580781159b47ee6113f4b59de41094f91e16189266ba"
+    },
+    {
+      "case_index": 1,
+      "raw_sha256": "0a76c5d0c03f11dda55d099fae12b5bcd390b6256721228b1ac40cc4aace67b4"
+    },
+    {
+      "case_index": 2,
+      "raw_sha256": "e2b2343b1e16b23dd230d057530e98154ae6fd94863c3194c96e393a8dc7216e"
+    },
+    {
+      "case_index": 3,
+      "raw_sha256": "885a32562844e04b7d8a964c9e617e5fc8d328864d47473158bf5722c7122dff"
+    },
+    {
+      "case_index": 4,
+      "raw_sha256": "b6adb9439bb1e1b52a42a3b067978f2fe00cc4780b3e818ebdfb6ba8c678c70d"
+    },
+    {
+      "case_index": 5,
+      "raw_sha256": "e3a4cdf550a5a1d8cd94012cf86e9c471ae167151be3e2e10f19264f5ee0d7cc"
+    },
+    {
+      "case_index": 6,
+      "raw_sha256": "da8ea9a167245874a5a69e0c5a2d071787c4218e0073560a96f1d0f5fa71c141"
+    },
+    {
+      "case_index": 7,
+      "raw_sha256": "abc9d8bc3f7f34d333ffc11bd3168d536a2a17cadff131e8d5e4d0f99f5f66d8"
+    },
+    {
+      "case_index": 8,
+      "raw_sha256": "373d4d0e1609b466bf3cc9ca1a2e8b6e03dfebf404788e025550faf8e773b3d0"
+    },
+    {
+      "case_index": 9,
+      "raw_sha256": "afb4b186aa47b29f5dafa6dc49eb55c8a05869babbbeec153e9e10141d582eab"
+    },
+    {
+      "case_index": 10,
+      "raw_sha256": "8c4215ca83647742444459da0244ee6c77b9b21872c31ede51766163c1cb1104"
+    },
+    {
+      "case_index": 11,
+      "raw_sha256": "06530e8f11dc5de4cac2c709ce7ffa9cf2313029bdb6cb04de28d3a0fe87b1fb"
+    },
+    {
+      "case_index": 12,
+      "raw_sha256": "77d045e0c5dfce72e7f5b2ad54dcaf4187701711887804c2e9b7c163baa747cd"
+    },
+    {
+      "case_index": 13,
+      "raw_sha256": "a8f468652cb83e10855c2c455d9d450a6b568de508cdc305702695ea67c74846"
+    },
+    {
+      "case_index": 14,
+      "raw_sha256": "c6b15faabacbf63a78b6f23cf8de61db5b16d3f453e1ef26bcbdc4f519a5d330"
+    },
+    {
+      "case_index": 15,
+      "raw_sha256": "c9b5dbc8a033b7fe0865af13581e39db4e6c016e068834dfda530a5746cdbf36"
+    }
+  ],
+  "rows": [
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 2,
+      "database": "california_schools",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-51"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 7,
+      "database": "card_games",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-90"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 7,
+      "database": "codebase_community",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-158"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 7,
+      "database": "debit_card_specializing",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-200"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 4,
+      "database": "european_football_2",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-112"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 8,
+      "database": "financial",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-178"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 6,
+      "database": "formula_1",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-68"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 8,
+      "database": "student_club",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-27"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 7,
+      "database": "superhero",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-6"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 4,
+      "database": "thrombosis_prediction",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-148"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 5,
+      "database": "toxicology",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-21"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 2,
+      "database": "california_schools",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-46"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 7,
+      "database": "card_games",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-92"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 7,
+      "database": "codebase_community",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-164"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 7,
+      "database": "debit_card_specializing",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-208"
+    },
+    {
+      "baseline": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "candidate_count": 4,
+      "database": "european_football_2",
+      "planned": {
+        "result_match_at_1": 0,
+        "result_match_at_10": 0,
+        "result_match_at_5": 0
+      },
+      "query_count": 3,
+      "target_task_id": "bird-train-126"
+    }
+  ],
+  "schema_version": "frankengate-bird-artifact-query-planning-probe-v1",
+  "source": {
+    "harness_root": "world-model-harness-v0.2.2",
+    "raw_content_committed": false
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "github/wjmlong/Codex_Sessions",
+  "dataset_revision": "1eceee0784f155e6cb994210cfc7b02cbc458298",
+  "license": "NOASSERTION",
+  "source_url": "https://github.com/wjmlong/Codex_Sessions",
+  "source_format": "Validated Codex Desktop session bundles from one real Windows device",
+  "adapter": "codex_desktop_bundle_v1",
+  "publication_basis": "Intentional public repository and README provenance statement",
+  "rights_assertion": "No repository license found; analysis does not establish redistribution or training rights",
+  "privacy_review": "Quarantine required; aggregate scan found no AWS, GitHub, or PEM key patterns and found 12 distinct unvalidated sk-prefixed token shapes",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "bundles": 33,
+    "rollout_jsonl_files": 33,
+    "rollout_bytes": 77101303,
+    "records": 24086,
+    "tool_calls": 4252,
+    "tool_outputs": 4251,
+    "primary_session_ids": 33,
+    "distinct_cwd_values": 4,
+    "zero_length_history_jsonl_files": 33,
+    "complete_home_directory": false
+  },
+  "admission": "quarantine_then_admit_as_primary_real_codex_bundle_corpus",
+  "enterprise_transfer": "Strong multi-session import and topology corpus; one publisher/device and no task correctness labels"
+}

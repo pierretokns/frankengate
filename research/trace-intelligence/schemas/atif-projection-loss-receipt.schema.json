@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.dev/schemas/research/atif-projection-loss-receipt-v1.json",
+  "title": "Frankengate ATIF projection loss receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "direction",
+    "source_format",
+    "target_format",
+    "source_event_count",
+    "accounted_source_event_count",
+    "silently_dropped_event_count",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "atif-projection-loss-receipt-v1"
+    },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "direction": {
+      "enum": ["canonical-to-atif", "atif-to-canonical"]
+    },
+    "source_format": {
+      "type": "string"
+    },
+    "target_format": {
+      "type": "string"
+    },
+    "source_trace_id": {
+      "type": ["string", "null"]
+    },
+    "source_event_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "accounted_source_event_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "silently_dropped_event_count": {
+      "const": 0
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "path", "reason"],
+        "properties": {
+          "category": {
+            "enum": [
+              "exact",
+              "normalized",
+              "reconstructed",
+              "aggregated",
+              "redacted",
+              "unsupported",
+              "dropped"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": ["string", "null"]
+          },
+          "target_path": {
+            "type": ["string", "null"]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "unprojected_event_manifests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["event_id", "kind", "content_sha256"],
+        "properties": {
+          "event_id": {"type": "string"},
+          "kind": {"type": "string"},
+          "content_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,48 @@
+{
+  "candidate": {
+    "artifact": "bird-sql-trace-mined-procedure-v1.md",
+    "sha256": "e97b9b198615316dcf619b674618c366d9550ff7b9a05cda7425b022c4c4ed6d",
+    "status": "quarantined"
+  },
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "candidate_released": false,
+    "causal_skill_benefit_confirmed": false,
+    "reason": "The candidate did not exceed the no-skill control and did not match the placebo control, so it remains quarantined."
+  },
+  "evidence": {
+    "paired_analysis": "bird-sql-skill-factorial-powered-paired-2026-07-31.json",
+    "paired_analysis_sha256": "e64ee8df54e9e58a8caae4319fd16c5c10ba1539470128177a144093849141f2",
+    "result": "bird-sql-skill-factorial-powered-2026-07-31.json",
+    "result_sha256": "3e55739d3d9998be670297abce85c89999578613dbf54e80553135cfcdafa35b",
+    "verification": "bird-sql-skill-factorial-powered-verification-2026-07-31.json",
+    "verification_sha256": "51200231f57e5a82a53c14286c2bbce7eb895fcc620b728d5c1bb9b99c6f05c9"
+  },
+  "exposure": {
+    "canary_percent": 0,
+    "eligible_tasks": 0,
+    "eligible_users": 0,
+    "rollback_available": false
+  },
+  "outcomes": {
+    "candidate_episodes": 20,
+    "candidate_exact": 3,
+    "formatting_placebo_exact": 4,
+    "no_skill_exact": 3,
+    "positive_lift": false,
+    "verification_passed": true
+  },
+  "schema_version": "frankengate-skill-release-gate-v1",
+  "stages": {
+    "cluster": "complete",
+    "collect": "complete",
+    "evaluate": "complete",
+    "monitor": "not_started",
+    "propose": "complete",
+    "release": "blocked_by_gate",
+    "replay": "complete",
+    "retrieve": "complete",
+    "rollback": "not_required",
+    "segment": "complete"
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "arms": {
+    "2bit": {
+      "deletion_roundtrip_passed": true,
+      "dimensions": 1024,
+      "documents": 145,
+      "eligible_task_queries": 99,
+      "exact_float_recall_at_20": 0.66666667,
+      "exact_float_top1": 0.63636364,
+      "filter_query_mean_ms": 0.107788,
+      "filter_query_p95_ms": 0.112492,
+      "filtered_exact_topk_overlap": 0.94827586,
+      "ingest_ms": 85.137,
+      "mean_allowed_count": 67.662,
+      "persistent_index_bytes": 47070,
+      "query_mean_ms": 0.112503,
+      "query_p95_ms": 0.1123,
+      "turbovec_recall_at_20": 0.66666667,
+      "turbovec_recall_delta_vs_exact": 0.0,
+      "turbovec_top1": 0.63636364
+    },
+    "4bit": {
+      "deletion_roundtrip_passed": true,
+      "dimensions": 1024,
+      "documents": 145,
+      "eligible_task_queries": 99,
+      "exact_float_recall_at_20": 0.66666667,
+      "exact_float_top1": 0.63636364,
+      "filter_query_mean_ms": 0.12083,
+      "filter_query_p95_ms": 0.125649,
+      "filtered_exact_topk_overlap": 0.98344828,
+      "ingest_ms": 128.971,
+      "mean_allowed_count": 67.662,
+      "persistent_index_bytes": 84190,
+      "query_mean_ms": 0.127872,
+      "query_p95_ms": 0.128862,
+      "turbovec_recall_at_20": 0.65151515,
+      "turbovec_recall_delta_vs_exact": -0.01515152,
+      "turbovec_top1": 0.63636364
+    }
+  },
+  "claim_boundary": {
+    "authorization_evaluated": false,
+    "automatic_backend_promotion_authorized": false,
+    "downstream_skill_uplift_confirmed": false,
+    "enterprise_cross_user_utility_confirmed": false,
+    "reason": "This is a same-corpus dense-index and filtered-kernel benchmark; it does not establish RLS authority, enterprise utility, or skill uplift.",
+    "silver_task_identity_only": true
+  },
+  "embedding": {
+    "contract_file_sha256": {
+      "config.json": "b5bf1f51fc45be473a54718cef92448d90a1be001bf9b9a44b8c7f10a19feaa9",
+      "config_sentence_transformers.json": "10667c72ddb772627bf1780cb7f86af8e2ae0032b8c243c731172064105c6961",
+      "modules.json": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+      "tokenizer_config.json": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0"
+    },
+    "dimension": 1024,
+    "distance": "cosine_on_l2_normalized_vectors",
+    "document_prompt": null,
+    "max_sequence_length": 512,
+    "model_id": "Qwen/Qwen3-Embedding-0.6B",
+    "query_instruction": "Given an agent trajectory, retrieve other trajectories attempting the same task",
+    "query_template": "Instruct: {instruction}\nQuery: {trajectory}",
+    "requested_device": "auto",
+    "resolved_device": "mps",
+    "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "separate_query_and_document_embeddings": true,
+    "vectors_emitted": false,
+    "weights_emitted": false
+  },
+  "schema_version": "frankengate-turbovec-codetracebench-v1",
+  "source": {
+    "alignment": {
+      "count_or_identity_mismatch": 67,
+      "exact": 78
+    },
+    "allowlist_identity_digest": "23a7a3b70280ad14c2da13431831e9f6e824ff1a854a918188ddb55d17d6b016",
+    "allowlist_sha256": "83c5b8852ec0dd2144de59fd0deb88fbd29f5d947fe63459fd62f17b4ff0cc86",
+    "archives": 145,
+    "compressed_bytes": 28241363,
+    "dataset_id": "NJU-LINK/CodeTraceBench",
+    "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+    "embeddings_committed": false,
+    "full_manifest_sha256": "0c25108022f518d09505d66cee7a8baeaa2d64708c98e8a66a061819c0b3da6d",
+    "parser_variants": {
+      "miniswe_traj_json_bash_v1": 18,
+      "miniswe_unparsed": 4,
+      "openhands_event_cause_v1": 25,
+      "openhands_tensorblock_v1:drop_initial_planning_and_terminal_finish": 24,
+      "openhands_tensorblock_v1:exclude_terminal_finish": 8,
+      "openhands_tensorblock_v1:unmapped": 17,
+      "sweagent_trajectory_v1": 15,
+      "terminus2_episode_pair_v2": 34
+    },
+    "projected_text_committed": false,
+    "raw_data_committed": false,
+    "relevant_member_count": 9341,
+    "relevant_uncompressed_bytes": 772648115
+  },
+  "turbovec": {
+    "algorithm": "TurboQuant",
+    "filtered_search": "IdMapIndex allowlist inside SIMD search",
+    "package": "turbovec",
+    "version": "0.8.0"
+  }
+}

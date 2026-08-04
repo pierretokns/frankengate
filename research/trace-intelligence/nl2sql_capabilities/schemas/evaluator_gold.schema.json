@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.invalid/schemas/fg-evaluator-gold-v1.json",
+  "title": "Frankengate resolver-signed evaluator-only gold envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["payload", "resolver_signature"],
+  "properties": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "request_nonce",
+        "experiment_id",
+        "fold_id",
+        "stage_role",
+        "stage_episode_ref",
+        "source_task_id",
+        "source_locator",
+        "question_sha256",
+        "official_instructions_sha256",
+        "gold_sql_alternatives",
+        "gold_sql_sha256",
+        "database_snapshot_sha256",
+        "evaluator_database_handle",
+        "adjudication",
+        "cohort_manifest_sha256",
+        "dataset_manifest_sha256",
+        "stage_manifest_sha256",
+        "resolver_capability_expires_at_unix_ms"
+      ],
+      "properties": {
+        "schema_version": {"const": "fg-evaluator-gold-v1"},
+        "request_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{22}$"
+        },
+        "experiment_id": {"$ref": "#/$defs/id"},
+        "fold_id": {"$ref": "#/$defs/id"},
+        "stage_role": {
+          "enum": ["evidence", "visible_selection", "hidden_test"]
+        },
+        "stage_episode_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "source_task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "source_locator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_file_sha256", "source_row_0based"],
+          "properties": {
+            "source_file_sha256": {"$ref": "#/$defs/sha256"},
+            "source_row_0based": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "question_sha256": {"$ref": "#/$defs/sha256"},
+        "official_instructions_sha256": {"$ref": "#/$defs/sha256"},
+        "gold_sql_alternatives": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4194304
+          }
+        },
+        "gold_sql_sha256": {"$ref": "#/$defs/sha256"},
+        "database_snapshot_sha256": {"$ref": "#/$defs/sha256"},
+        "evaluator_database_handle": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "adjudication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "classification",
+            "primary_quality_eligible",
+            "required_sensitive_entitlements"
+          ],
+          "properties": {
+            "classification": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,127}$"
+            },
+            "primary_quality_eligible": {"type": "boolean"},
+            "required_sensitive_entitlements": {
+              "type": "array",
+              "maxItems": 1024,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/id"}
+            }
+          }
+        },
+        "cohort_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "dataset_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "stage_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "resolver_capability_expires_at_unix_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "resolver_signature": {"$ref": "#/$defs/signature"}
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "key_id",
+        "payload_sha256",
+        "signature_base64url"
+      ],
+      "properties": {
+        "algorithm": {"const": "Ed25519"},
+        "key_id": {"$ref": "#/$defs/id"},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "signature_base64url": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        }
+      }
+    }
+  }
+}

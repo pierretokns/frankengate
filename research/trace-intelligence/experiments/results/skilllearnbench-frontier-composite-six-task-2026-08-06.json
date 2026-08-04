@@ -1,0 +1,273 @@
+{
+  "claim_boundary": {
+    "composite_utility_proven": false,
+    "enterprise_transfer_proven": false,
+    "reason": "Merged non-overlapping receipts from one public task family; no causal or changed-system outcome.",
+    "verifier_outcomes_measured": true
+  },
+  "execution": {
+    "completed_tasks": 6,
+    "full_paired_run": true,
+    "incomplete_tasks": 0,
+    "receipt_count": 2
+  },
+  "harness": {
+    "adaptation": "host-path portability probe; not the benchmark's Docker runner",
+    "docker_runner": false,
+    "model": "gpt-5.6-luna",
+    "provider": "Codex subscription"
+  },
+  "schema": "frankengate-skilllearnbench-frontier-composite-v1",
+  "source": {
+    "dataset": "cxcscmu/SkillLearnBench",
+    "dataset_revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "raw_content_committed": false,
+    "task_ids": [
+      "enterprise-information-search/enterprise-information-search-1",
+      "enterprise-information-search/enterprise-information-search-2",
+      "enterprise-information-search/enterprise-information-search-3",
+      "enterprise-information-search/enterprise-information-search-4",
+      "enterprise-information-search/enterprise-information-search-5",
+      "enterprise-information-search/enterprise-information-search-6"
+    ]
+  },
+  "tasks": [
+    {
+      "agent_message_count": 5,
+      "answer": {
+        "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 8,
+            "expected_count": 8,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "events_sha256": "090f2d137320b003fa297f1d572bf63111af3e97414f1f93d8a26cf6f5e59f9d",
+      "status": "completed",
+      "task_id": "enterprise-information-search/enterprise-information-search-1",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 500480,
+        "input_tokens": 565077,
+        "output_tokens": 7543,
+        "reasoning_output_tokens": 4307
+      }
+    },
+    {
+      "agent_message_count": 5,
+      "answer": {
+        "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 12,
+            "expected_count": 12,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "events_sha256": "c9571a8f2921ccd276a7988e08f9f03963899eddf8d24144d72db20d92faf822",
+      "status": "completed",
+      "task_id": "enterprise-information-search/enterprise-information-search-2",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 1322496,
+        "input_tokens": 1427958,
+        "output_tokens": 9665,
+        "reasoning_output_tokens": 4795
+      }
+    },
+    {
+      "agent_message_count": 5,
+      "answer": {
+        "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 8,
+            "expected_count": 8,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "events_sha256": "a747ccdb3a123b3e591aece6812698b30eeafce1790d446ca9a48a21e4be9583",
+      "status": "completed",
+      "task_id": "enterprise-information-search/enterprise-information-search-3",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 686080,
+        "input_tokens": 747971,
+        "output_tokens": 8341,
+        "reasoning_output_tokens": 4222
+      }
+    },
+    {
+      "agent_message_count": 5,
+      "answer": {
+        "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 8,
+            "expected_count": 8,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "events_sha256": "8e5be297f394d5de741fa4bb3a7be2155188b291bd6b3f8c0ec644ba20950021",
+      "status": "completed",
+      "task_id": "enterprise-information-search/enterprise-information-search-4",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 524800,
+        "input_tokens": 582291,
+        "output_tokens": 7624,
+        "reasoning_output_tokens": 4252
+      }
+    },
+    {
+      "agent_message_count": 5,
+      "answer": {
+        "answer_exists": true,
+        "exact_metrics": {
+          "q1": {
+            "answer_count": 9,
+            "expected_count": 9,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "q3": {
+            "answer_count": 3,
+            "expected_count": 3,
+            "extra_count": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "json_object": true,
+        "passed": true,
+        "q1_missing": 0,
+        "q3_missing": 0,
+        "required_questions_present": true,
+        "token_fields_numeric": true
+      },
+      "events_sha256": "75baa6d54d8dc7882d8e695402a1ebfca1d8076ee2024790e55f4fa7c531bda0",
+      "status": "completed",
+      "task_id": "enterprise-information-search/enterprise-information-search-5",
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 456448,
+        "input_tokens": 514544,
+        "output_tokens": 6563,
+        "reasoning_output_tokens": 3120
+      }
+    },
+    {
+      "arms": [
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "composite-human-plus-b1",
+          "elapsed_seconds": 155.927,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "stderr_sha256": "fb988852544b78d829b0b88aa025773d8b7dbe6473b9656afdfb216d2425a677",
+          "stdout_sha256": "5f7726fc32a94e1361455db1ffad217245f4bc36475f33d5c10778fd2a80f6ba",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 593408,
+            "input_tokens": 664107,
+            "output_tokens": 7308,
+            "reasoning_output_tokens": 3411
+          }
+        }
+      ],
+      "task_id": "enterprise-information-search/enterprise-information-search-6"
+    }
+  ]
+}

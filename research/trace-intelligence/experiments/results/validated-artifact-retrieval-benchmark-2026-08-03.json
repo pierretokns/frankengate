@@ -1,0 +1,25 @@
+{
+  "schema_version": "frankengate-validated-artifact-retrieval-benchmark-v1",
+  "source": {
+    "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
+    "databases": ["broker", "car_dealership"],
+    "target_source_file": "data/questions_gen_postgres.csv",
+    "source_artifact_files": ["data/instruct_advanced_postgres.csv", "data/instruct_basic_postgres.csv"],
+    "validated_artifact_counts": {"broker": 18, "car_dealership": 15},
+    "source_validation_failures": {"SQLPolicyError": 5}
+  },
+  "retrieval": {
+    "method": "same-database lexical token overlap",
+    "target_task_pairing": false,
+    "candidate_pool": "validated successful source SQL only"
+  },
+  "aggregate": {"targets": 10, "retrieval_executed": 10, "security_authorized": 10, "semantic_correct": 0},
+  "result_sha256": "6ec33c9c8103d7b13b187f9c613d6e327938330286bd5f4886d44e9c52c89190",
+  "claim_boundary": {
+    "train_only_artifact_retrieval_tested": true,
+    "causal_agent_benefit_established": false,
+    "semantic_alias_truth_established": false,
+    "reason": "Deterministic retrieval-plus-execution screen only; no model regeneration control, SME labels, or changed-system replay."
+  }
+}

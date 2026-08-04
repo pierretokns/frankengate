@@ -1,0 +1,42 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "YnJhY2lzMjAyNnRleHQyc3Fs/pt-br-agentic-text-to-sql-distilled-trajectories",
+  "dataset_revision": "790158a2bdbd5ee5007dbf0b4e88bb665fd67675",
+  "source_url": "https://huggingface.co/datasets/YnJhY2lzMjAyNnRleHQyc3Fs/pt-br-agentic-text-to-sql-distilled-trajectories",
+  "license": "Apache-2.0",
+  "source_format": "7,442 Portuguese message-only distilled trajectories",
+  "adapter": "not_implemented_inventory_only",
+  "admission_status": "candidate_for_multilingual_procedure_mining_only",
+  "observed_tools": [
+    "get_table_schema",
+    "execute_sql",
+    "final_answer"
+  ],
+  "represented_conditions": [
+    "environmental registry",
+    "noisy and misleading documentation",
+    "synthetic public procurement",
+    "clarification",
+    "unanswerable questions"
+  ],
+  "replay_classification": {
+    "tool_call_protocol_preserved": true,
+    "message_only_distillation": true,
+    "selected_by_llm_judged_correctness": true,
+    "database_snapshot_included": false,
+    "independently_replayable_from_dataset": false,
+    "suitable_for_candidate_skill_mining": true,
+    "suitable_as_independent_outcome_oracle": false
+  },
+  "unsupported_claims": [
+    "natural production behavior",
+    "independent correctness",
+    "causal skill benefit",
+    "English-language enterprise transfer"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "download_full_json_for_frozen_mining_arm_only": true,
+    "commit_aggregate_results_only": true
+  }
+}

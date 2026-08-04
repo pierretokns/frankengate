@@ -1,0 +1,296 @@
+{
+  "acceptance": {
+    "all_eight_core_arms_ran": true,
+    "aurora_replacement_authorized": false,
+    "custom_embedding_authorized": false,
+    "exact_identifier_no_regression": false,
+    "human_label_gate_passed": false,
+    "joint_quality_rls_gate_passed": false
+  },
+  "analysis_revision": "e2-raw-codetracebench-retrieval-v1",
+  "claim_limits": [
+    "task identity is a silver positive, not a blinded human task-family label",
+    "hard negatives are metadata-derived candidates, not adjudicated negatives",
+    "publisher category and tags are available only to structured-on arms",
+    "the raw user objective/prompt is not consistently projected across agents",
+    "offline BM25 is not PostgreSQL FTS or pg_trgm",
+    "offline dense ranking is not pgvector execution",
+    "the independent RLS proof used a different public corpus and deterministic vectors",
+    "no deletion, selective-RLS latency, concurrency, or real-Aurora test ran jointly with quality",
+    "same benchmark work does not imply cross-user collaboration value",
+    "no person-level skill, productivity, enterprise transfer, or causal utility claim is supported"
+  ],
+  "cohort": {
+    "documents": 145,
+    "eligible_queries": 99,
+    "metadata_derived_hard_negative_pairs": 301,
+    "repeated_task_identities": 37,
+    "silver_positive_pairs": 87,
+    "sources": {
+      "multi-swe-bench": 6,
+      "swe-bench-pro": 12,
+      "swe-bench-verified": 32,
+      "swe-polybench": 22,
+      "terminal-bench": 73
+    },
+    "task_identities": 83
+  },
+  "dense_contract": {
+    "contract_file_sha256": {
+      "config.json": "b5bf1f51fc45be473a54718cef92448d90a1be001bf9b9a44b8c7f10a19feaa9",
+      "config_sentence_transformers.json": "10667c72ddb772627bf1780cb7f86af8e2ae0032b8c243c731172064105c6961",
+      "modules.json": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+      "tokenizer_config.json": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0"
+    },
+    "dimension": 1024,
+    "distance": "cosine_on_l2_normalized_vectors",
+    "document_prompt": null,
+    "max_sequence_length": 512,
+    "model_id": "Qwen/Qwen3-Embedding-0.6B",
+    "query_instruction": "Given an agent trajectory, retrieve other trajectories attempting the same task",
+    "query_template": "Instruct: {instruction}\nQuery: {trajectory}",
+    "requested_device": "auto",
+    "resolved_device": "cpu",
+    "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "separate_query_and_document_embeddings": true,
+    "vectors_emitted": false,
+    "weights_emitted": false
+  },
+  "factorial": {
+    "arms": {
+      "S0L0D0": {
+        "exact_id_recall_at_20": 0.8,
+        "exact_id_recall_at_20_delta_vs_exact": 0.0,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.3333333333333333,
+        "hard_negative_top1": 0.21212121212121213,
+        "mrr": 0.5775808355733972,
+        "ndcg_at_20": 0.5486314635261696,
+        "queries": 99,
+        "recall_at_1": 0.2676767676767677,
+        "recall_at_20": 0.7323232323232324,
+        "recall_at_20_delta_95ci": [
+          0.0,
+          0.0
+        ],
+        "recall_at_20_delta_vs_exact": 0.0,
+        "recall_at_5": 0.4797979797979798
+      },
+      "S0L0D1": {
+        "exact_id_recall_at_20": 0.8055555555555556,
+        "exact_id_recall_at_20_delta_vs_exact": 0.005555555555555536,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.2727272727272727,
+        "hard_negative_top1": 0.15151515151515152,
+        "mrr": 0.6297658050944539,
+        "ndcg_at_20": 0.5911387744529831,
+        "queries": 99,
+        "recall_at_1": 0.30808080808080807,
+        "recall_at_20": 0.7373737373737373,
+        "recall_at_20_delta_95ci": [
+          -0.050505050505050504,
+          0.06060606060606061
+        ],
+        "recall_at_20_delta_vs_exact": 0.005050505050504972,
+        "recall_at_5": 0.5353535353535354
+      },
+      "S0L1D0": {
+        "exact_id_recall_at_20": 0.7388888888888889,
+        "exact_id_recall_at_20_delta_vs_exact": -0.061111111111111116,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.30303030303030304,
+        "hard_negative_top1": 0.1919191919191919,
+        "mrr": 0.5928921230041522,
+        "ndcg_at_20": 0.5514354071471909,
+        "queries": 99,
+        "recall_at_1": 0.2777777777777778,
+        "recall_at_20": 0.6767676767676768,
+        "recall_at_20_delta_95ci": [
+          -0.1111111111111111,
+          -0.005050505050505051
+        ],
+        "recall_at_20_delta_vs_exact": -0.05555555555555558,
+        "recall_at_5": 0.5151515151515151
+      },
+      "S0L1D1": {
+        "exact_id_recall_at_20": 0.7666666666666667,
+        "exact_id_recall_at_20_delta_vs_exact": -0.033333333333333326,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.2828282828282828,
+        "hard_negative_top1": 0.1919191919191919,
+        "mrr": 0.6208487174810019,
+        "ndcg_at_20": 0.5837773709150359,
+        "queries": 99,
+        "recall_at_1": 0.29292929292929293,
+        "recall_at_20": 0.702020202020202,
+        "recall_at_20_delta_95ci": [
+          -0.09595959595959595,
+          0.030303030303030304
+        ],
+        "recall_at_20_delta_vs_exact": -0.030303030303030387,
+        "recall_at_5": 0.5707070707070707
+      },
+      "S1L0D0": {
+        "exact_id_recall_at_20": 0.8666666666666667,
+        "exact_id_recall_at_20_delta_vs_exact": 0.06666666666666665,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.2828282828282828,
+        "hard_negative_top1": 0.2222222222222222,
+        "mrr": 0.6605946126935488,
+        "ndcg_at_20": 0.6439684934348356,
+        "queries": 99,
+        "recall_at_1": 0.2878787878787879,
+        "recall_at_20": 0.8080808080808081,
+        "recall_at_20_delta_95ci": [
+          0.04040404040404041,
+          0.11616161616161616
+        ],
+        "recall_at_20_delta_vs_exact": 0.07575757575757569,
+        "recall_at_5": 0.6717171717171717
+      },
+      "S1L0D1": {
+        "exact_id_recall_at_20": 0.8944444444444445,
+        "exact_id_recall_at_20_delta_vs_exact": 0.09444444444444444,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.26262626262626265,
+        "hard_negative_top1": 0.2222222222222222,
+        "mrr": 0.6872695943748793,
+        "ndcg_at_20": 0.666332913950871,
+        "queries": 99,
+        "recall_at_1": 0.3333333333333333,
+        "recall_at_20": 0.8181818181818182,
+        "recall_at_20_delta_95ci": [
+          0.03535353535353535,
+          0.13636363636363635
+        ],
+        "recall_at_20_delta_vs_exact": 0.08585858585858586,
+        "recall_at_5": 0.6414141414141414
+      },
+      "S1L1D0": {
+        "exact_id_recall_at_20": 0.8222222222222222,
+        "exact_id_recall_at_20_delta_vs_exact": 0.022222222222222143,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.2828282828282828,
+        "hard_negative_top1": 0.2222222222222222,
+        "mrr": 0.654196173450773,
+        "ndcg_at_20": 0.6214997394862333,
+        "queries": 99,
+        "recall_at_1": 0.30808080808080807,
+        "recall_at_20": 0.7575757575757576,
+        "recall_at_20_delta_95ci": [
+          -0.015151515151515152,
+          0.06565656565656566
+        ],
+        "recall_at_20_delta_vs_exact": 0.025252525252525193,
+        "recall_at_5": 0.6363636363636364
+      },
+      "S1L1D1": {
+        "exact_id_recall_at_20": 0.8555555555555555,
+        "exact_id_recall_at_20_delta_vs_exact": 0.05555555555555547,
+        "exact_id_slice_queries": 90,
+        "hard_negative_above_first_positive": 0.26262626262626265,
+        "hard_negative_top1": 0.21212121212121213,
+        "mrr": 0.6688730492345212,
+        "ndcg_at_20": 0.6459190246571537,
+        "queries": 99,
+        "recall_at_1": 0.3282828282828283,
+        "recall_at_20": 0.7828282828282829,
+        "recall_at_20_delta_95ci": [
+          0.005050505050505051,
+          0.10101010101010101
+        ],
+        "recall_at_20_delta_vs_exact": 0.0505050505050505,
+        "recall_at_5": 0.6161616161616161
+      }
+    },
+    "factors": {
+      "dense": [
+        false,
+        true
+      ],
+      "exact_identifier_channel_always_on": true,
+      "lexical": [
+        false,
+        true
+      ],
+      "structured": [
+        false,
+        true
+      ]
+    }
+  },
+  "label_contract": {
+    "gold_fields_forbidden_from_features": [
+      "task_name",
+      "task_slug",
+      "solved",
+      "incorrect_stages",
+      "incorrect_step_ids",
+      "unuseful_step_ids"
+    ],
+    "hard_negative": "different task with same repository, category+tag overlap, or >=0.50 trace-structure Jaccard",
+    "hard_negative_authority": "metadata-derived candidate only; not human adjudication",
+    "positive": "same public benchmark task_name across distinct trajectories",
+    "positive_authority": "publisher identity; silver, not human adjudication"
+  },
+  "next_gates": [
+    "blind and independently adjudicate task-family positives and hard negatives",
+    "project provider-neutral objective/environment/failure/recovery views",
+    "load the same candidates and 1024-dimensional vectors into forced-RLS PostgreSQL",
+    "run deletion, stale/missing epoch, purpose, classification, and selective-scope oracles per arm",
+    "measure PostgreSQL FTS, pg_trgm, exact pgvector, p50/p95/p99, bytes, rebuild time, and cost",
+    "test a reranker only after freezing the best dense and non-dense candidate generators",
+    "test domain adaptation only on a named hard slice and require +5 absolute Recall@20"
+  ],
+  "result_content_sha256": "3c6d316ed890e8de40882234e66e57a70679cdaf0bbf13d16677ce510600d6aa",
+  "run_date": "2026-07-30",
+  "runtime_authorization_evidence": {
+    "all_denied_pre_ranking_candidates_zero": true,
+    "claim": "independent local PostgreSQL forced-RLS composition proof; not evidence that the offline E2 ranks were produced by PostgreSQL",
+    "denied_scenarios": 5,
+    "joint_quality_and_rls_run": false,
+    "result_path": "experiments/results/wisp-governed-postgres-benchmark-2026-07-30.json",
+    "result_sha256": "8dc153c0728637e5b58de8a247ee090ca6bf7c196a1d2ab9b456725bd769b1cb",
+    "same_corpus_as_quality_factorial": false,
+    "schema_version": "governed-wisp-postgres-benchmark-v1"
+  },
+  "schema_version": "frankengate-e2-authorized-retrieval-factorial-v1",
+  "seed": 20260730,
+  "source": {
+    "alignment": {
+      "count_or_identity_mismatch": 67,
+      "exact": 78
+    },
+    "allowlist_identity_digest": "23a7a3b70280ad14c2da13431831e9f6e824ff1a854a918188ddb55d17d6b016",
+    "allowlist_sha256": "83c5b8852ec0dd2144de59fd0deb88fbd29f5d947fe63459fd62f17b4ff0cc86",
+    "archives": 145,
+    "compressed_bytes": 28241363,
+    "dataset_id": "NJU-LINK/CodeTraceBench",
+    "dataset_license": "MIT",
+    "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+    "embeddings_committed": false,
+    "full_manifest_sha256": "0c25108022f518d09505d66cee7a8baeaa2d64708c98e8a66a061819c0b3da6d",
+    "parser_variants": {
+      "miniswe_traj_json_bash_v1": 18,
+      "miniswe_unparsed": 4,
+      "openhands_event_cause_v1": 25,
+      "openhands_tensorblock_v1:drop_initial_planning_and_terminal_finish": 24,
+      "openhands_tensorblock_v1:exclude_terminal_finish": 8,
+      "openhands_tensorblock_v1:unmapped": 17,
+      "sweagent_trajectory_v1": 15,
+      "terminus2_episode_pair_v2": 34
+    },
+    "projected_text_committed": false,
+    "raw_data_committed": false,
+    "relevant_member_count": 9341,
+    "relevant_uncompressed_bytes": 772648115
+  },
+  "views": {
+    "dense": "one normalized general embedding of bounded action/observation text",
+    "exact": "trace-derived identifier overlap",
+    "fusion": "fixed equal-channel reciprocal-rank fusion k=60",
+    "lexical": "dependency-free BM25 over bounded raw action/observation text",
+    "raw_prompt_or_objective_projection": false,
+    "structured": "tool family/name, error class, file extension, publisher category/tags"
+  }
+}

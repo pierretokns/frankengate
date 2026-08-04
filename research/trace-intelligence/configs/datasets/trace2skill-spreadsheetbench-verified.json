@@ -1,0 +1,64 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "Qwen-Applications/Trace2Skill:spreadsheetbench_verified_400",
+  "dataset_revision": "3d0b52a140f002a512930252b613c49048f7d5ac",
+  "source_url": "https://github.com/Qwen-Applications/Trace2Skill",
+  "paper_url": "https://arxiv.org/abs/2603.25158",
+  "license": "Apache-2.0 declared by upstream README",
+  "license_file_observed_in_snapshot": false,
+  "source_format": "400 task JSON manifest plus initial and golden XLSX workbooks",
+  "adapter": "trace2skill_governed_replay_v1",
+  "admission_status": "admitted_for_sandboxed_causal_pilot",
+  "source_archive_sha256": "8dd0eb3a31b60714f3f903900191ced31dd5eae3a2e90f066a9d8741f81b959f",
+  "dataset_manifest": {
+    "relative_path": "data/spreadsheetbench_verified/spreadsheetbench_verified_400/dataset.json",
+    "sha256": "bcecaa89a005bd4e3bbe98da150a86e8062c27f262e575d5e47bd9861b3525e7",
+    "rows": 400,
+    "rows_with_local_initial_workbook": 400,
+    "rows_with_local_golden_workbook": 400
+  },
+  "released_skill_arms": [
+    "no skill",
+    "upstream human-written xlsx skill",
+    "Trace2Skill 35B combined skill",
+    "Trace2Skill 122B combined skill",
+    "plausible unrelated placebo skill"
+  ],
+  "execution_policy": {
+    "model_calls_execute_outside_task_sandbox": true,
+    "every_model_generated_tool_call_is_sandboxed": true,
+    "sandbox_network": "denied",
+    "sandbox_read_scope": "task directory, declared skill resources, and runtime files",
+    "sandbox_write_scope": "task directory only",
+    "api_credentials_in_tool_environment": false,
+    "raw_commands_and_outputs_committed": false,
+    "sandbox_violations_are_recorded_as_harms": true
+  },
+  "outcome": {
+    "verifier": "SpreadsheetBench answer-position workbook comparison",
+    "deterministic": true,
+    "known_limitations": [
+      "formula cells may require an external recalculation engine before data-only comparison",
+      "a passing answer-position comparison does not establish workbook-wide correctness",
+      "spreadsheet work is a controlled tool-use domain, not the primary enterprise-value domain"
+    ]
+  },
+  "pilot_claims": [
+    "tool-execution sandbox conformance",
+    "same-model paired skill-arm outcome comparison",
+    "skill regression and sandbox-harm detection",
+    "governed candidate-to-release workflow"
+  ],
+  "unsupported_claims": [
+    "enterprise SQL transfer",
+    "person-level skill inference",
+    "cross-user recommendation benefit",
+    "production-scale Aurora performance"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "reuse_only_hash_verified_external_snapshot": true,
+    "commit_aggregate_results_only": true
+  },
+  "raw_data_committed": false
+}

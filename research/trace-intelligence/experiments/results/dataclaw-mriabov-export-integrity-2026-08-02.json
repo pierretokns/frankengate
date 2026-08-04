@@ -1,0 +1,34 @@
+{
+  "schema_version": "frankengate-dataclaw-export-integrity-v1",
+  "source": {
+    "dataset_id": "MRiabov/dataclaw-march-26",
+    "dataset_revision": "3fcd9d92ca9eaf2d5b8377a7c505626880249171",
+    "license_claimed": "MIT",
+    "path_sha256": "418205bef913c09093847b3f8efda7ef063f7ad4b2f424538b23c52245199dcf",
+    "bytes": 759676668,
+    "raw_content_committed": false
+  },
+  "observed": {
+    "physical_lines": 775,
+    "raw_valid_json_lines": 9,
+    "raw_valid_session_ids": 9,
+    "redaction_token_occurrences": 14239183,
+    "token_removal_salvaged_json_lines": 104,
+    "token_removal_salvaged_session_ids": 104,
+    "token_removal_salvaged_required_fields": {
+      "session_id": 104,
+      "model": 104,
+      "project": 104,
+      "messages": 104,
+      "stats": 104
+    }
+  },
+  "claim_boundary": {
+    "dataset_inventory_verified": true,
+    "trace_mining_executed": false,
+    "raw_json_usable_as_released": false,
+    "salvaged_rows_usable_as_ground_truth": false,
+    "reason": "The scrubber replaces content inside JSON numbers, timestamps, and tool/code strings. Token removal restores syntax for only a minority of rows and cannot recover redacted values."
+  },
+  "decision": "Inventory-only until the publisher supplies a parseable export or a loss-aware structured format. Do not train embeddings, mine aliases, infer skills, or benchmark cross-user retrieval from this file."
+}

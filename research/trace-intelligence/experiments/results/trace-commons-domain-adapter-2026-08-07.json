@@ -1,0 +1,214 @@
+{
+  "aggregate": {
+    "combined": {
+      "adapter_mrr": 1.0,
+      "adapter_top1": 13,
+      "adapter_top1_rate": 1.0,
+      "baseline_mrr": 1.0,
+      "baseline_top1": 13,
+      "baseline_top1_rate": 1.0,
+      "evaluated_sessions": 13,
+      "folds": [
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "bentofolio",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 3.0,
+          "adapter_top1": 3,
+          "baseline_mrr_sum": 3.0,
+          "baseline_top1": 3,
+          "heldout_project": "comparia",
+          "test_sessions": 3,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "dmls",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "epilog",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "nephilimos",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "yggdrasil",
+          "test_sessions": 2,
+          "train_projects": 5
+        }
+      ]
+    },
+    "identifier": {
+      "adapter_mrr": 1.0,
+      "adapter_top1": 13,
+      "adapter_top1_rate": 1.0,
+      "baseline_mrr": 1.0,
+      "baseline_top1": 13,
+      "baseline_top1_rate": 1.0,
+      "evaluated_sessions": 13,
+      "folds": [
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "bentofolio",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 3.0,
+          "adapter_top1": 3,
+          "baseline_mrr_sum": 3.0,
+          "baseline_top1": 3,
+          "heldout_project": "comparia",
+          "test_sessions": 3,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "dmls",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "epilog",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "nephilimos",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "yggdrasil",
+          "test_sessions": 2,
+          "train_projects": 5
+        }
+      ]
+    },
+    "prompt": {
+      "adapter_mrr": 1.0,
+      "adapter_top1": 13,
+      "adapter_top1_rate": 1.0,
+      "baseline_mrr": 1.0,
+      "baseline_top1": 13,
+      "baseline_top1_rate": 1.0,
+      "evaluated_sessions": 13,
+      "folds": [
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "bentofolio",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 3.0,
+          "adapter_top1": 3,
+          "baseline_mrr_sum": 3.0,
+          "baseline_top1": 3,
+          "heldout_project": "comparia",
+          "test_sessions": 3,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "dmls",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "epilog",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "nephilimos",
+          "test_sessions": 2,
+          "train_projects": 5
+        },
+        {
+          "adapter_mrr_sum": 2.0,
+          "adapter_top1": 2,
+          "baseline_mrr_sum": 2.0,
+          "baseline_top1": 2,
+          "heldout_project": "yggdrasil",
+          "test_sessions": 2,
+          "train_projects": 5
+        }
+      ]
+    }
+  },
+  "claim_boundary": {
+    "cross_user_skill_gain_established": false,
+    "domain_adapter_measured": true,
+    "enterprise_quality_established": false,
+    "leave_one_project_out": true,
+    "neural_embedding_established": false,
+    "reason": "Trace Commons project labels are workstream proxies without stable principal identity, semantic labels, or prospective outcomes."
+  },
+  "result_sha256": "3f0df84faabdb7d787ebbf769e2c593622a1c6b317a5ae988f9d86b6c262a067",
+  "schema_version": "frankengate-trace-commons-domain-adapter-v1",
+  "source": {
+    "adapter": "same-project versus cross-project token co-occurrence, clipped log-ratio weights",
+    "raw_content_committed": false,
+    "session_count": 28
+  }
+}

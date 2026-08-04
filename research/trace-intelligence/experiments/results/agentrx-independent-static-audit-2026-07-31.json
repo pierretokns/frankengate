@@ -1,0 +1,237 @@
+{
+  "claim_boundary": {
+    "diagnosis_quality_established": false,
+    "faithful_upstream_ir_and_static_checker_executed": true,
+    "reason": "This is a bounded static-stage compatibility/coverage audit. Dynamic invariant generation, LLM judging, and blinded diagnosis labels were not run."
+  },
+  "episodes": [
+    {
+      "ground_truth_failure_count": 1,
+      "ground_truth_failure_steps": [
+        17
+      ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [],
+      "ground_truth_failure_steps_with_static_coverage": [],
+      "ir_valid": true,
+      "repaired_static_checker_violation_count": 0,
+      "repaired_static_checker_violation_steps": [],
+      "source_file": "hallucination_doubt.json",
+      "static_checker_violation_count": 0,
+      "static_checker_violation_steps": [],
+      "static_triggered_step_count": 0,
+      "static_triggered_steps": [],
+      "step_count": 26,
+      "task_id": "39"
+    },
+    {
+      "ground_truth_failure_count": 1,
+      "ground_truth_failure_steps": [
+        19
+      ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [
+        19
+      ],
+      "ground_truth_failure_steps_with_static_coverage": [],
+      "ir_valid": true,
+      "repaired_static_checker_violation_count": 3,
+      "repaired_static_checker_violation_steps": [
+        11,
+        13,
+        19
+      ],
+      "source_file": "instruction_adherence_failure.json",
+      "static_checker_violation_count": 0,
+      "static_checker_violation_steps": [],
+      "static_triggered_step_count": 0,
+      "static_triggered_steps": [],
+      "step_count": 26,
+      "task_id": "12"
+    },
+    {
+      "ground_truth_failure_count": 1,
+      "ground_truth_failure_steps": [
+        17
+      ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [],
+      "ground_truth_failure_steps_with_static_coverage": [],
+      "ir_valid": true,
+      "repaired_static_checker_violation_count": 2,
+      "repaired_static_checker_violation_steps": [
+        9,
+        11
+      ],
+      "source_file": "intent_plan_misalignment.json",
+      "static_checker_violation_count": 0,
+      "static_checker_violation_steps": [],
+      "static_triggered_step_count": 0,
+      "static_triggered_steps": [],
+      "step_count": 24,
+      "task_id": "41"
+    },
+    {
+      "ground_truth_failure_count": 3,
+      "ground_truth_failure_steps": [
+        17,
+        21,
+        30
+      ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [
+        21
+      ],
+      "ground_truth_failure_steps_with_static_coverage": [],
+      "ir_valid": true,
+      "repaired_static_checker_violation_count": 7,
+      "repaired_static_checker_violation_steps": [
+        11,
+        19,
+        21,
+        21,
+        21,
+        23,
+        25
+      ],
+      "source_file": "invalid_invocation.json",
+      "static_checker_violation_count": 0,
+      "static_checker_violation_steps": [],
+      "static_triggered_step_count": 0,
+      "static_triggered_steps": [],
+      "step_count": 30,
+      "task_id": "34"
+    },
+    {
+      "ground_truth_failure_count": 1,
+      "ground_truth_failure_steps": [
+        11
+      ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [],
+      "ground_truth_failure_steps_with_static_coverage": [],
+      "ir_valid": true,
+      "repaired_static_checker_violation_count": 4,
+      "repaired_static_checker_violation_steps": [
+        9,
+        15,
+        19,
+        21
+      ],
+      "source_file": "invention_new_info.json",
+      "static_checker_violation_count": 0,
+      "static_checker_violation_steps": [],
+      "static_triggered_step_count": 0,
+      "static_triggered_steps": [],
+      "step_count": 42,
+      "task_id": "32"
+    },
+    {
+      "ground_truth_failure_count": 1,
+      "ground_truth_failure_steps": [
+        15
+      ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [],
+      "ground_truth_failure_steps_with_static_coverage": [],
+      "ir_valid": true,
+      "repaired_static_checker_violation_count": 7,
+      "repaired_static_checker_violation_steps": [
+        17,
+        19,
+        23,
+        25,
+        27,
+        43,
+        45
+      ],
+      "source_file": "misinterpretation_tool_output.json",
+      "static_checker_violation_count": 0,
+      "static_checker_violation_steps": [],
+      "static_triggered_step_count": 0,
+      "static_triggered_steps": [],
+      "step_count": 48,
+      "task_id": "4"
+    },
+    {
+      "ground_truth_failure_count": 2,
+      "ground_truth_failure_steps": [
+        24,
+        27
+      ],
+      "ground_truth_failure_steps_with_repaired_static_coverage": [
+        27
+      ],
+      "ground_truth_failure_steps_with_static_coverage": [],
+      "ir_valid": true,
+      "repaired_static_checker_violation_count": 3,
+      "repaired_static_checker_violation_steps": [
+        15,
+        25,
+        27
+      ],
+      "source_file": "underspecified_intent.json",
+      "static_checker_violation_count": 0,
+      "static_checker_violation_steps": [],
+      "static_triggered_step_count": 0,
+      "static_triggered_steps": [],
+      "step_count": 36,
+      "task_id": "71"
+    }
+  ],
+  "protocol": {
+    "checker": "pinned AgentRx AllVerifier.verify_trajectory",
+    "domain": "tau",
+    "dynamic_invariants_loaded": false,
+    "llm_generation_called": false,
+    "llm_judge_called": false,
+    "nl_checks_disabled": true,
+    "trajectory_count": 7
+  },
+  "schema_version": "frankengate-agentrx-independent-static-audit-v1",
+  "static_invariant_compile_errors": [
+    {
+      "assertion_name": "authentication_before_order_actions",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "single_tool_call_per_assistant_message",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "user_confirmation_before_consequential_action",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "order_status_preconditions",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "refund_destination_compliance_for_returns",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "single_use_actions_only_once_per_order",
+      "error": "invalid syntax. Is this intended to be part of the string? at line 2"
+    },
+    {
+      "assertion_name": "one_user_per_conversation_consistency",
+      "error": "invalid syntax at line 2"
+    },
+    {
+      "assertion_name": "tool_invocation_schema_parseable",
+      "error": "invalid syntax at line 2"
+    }
+  ],
+  "summary": {
+    "covered_ground_truth_failure_count": 0,
+    "ground_truth_failure_count": 10,
+    "ir_valid_count": 7,
+    "python_invariant_compile_error_count": 8,
+    "repaired_covered_ground_truth_failure_count": 3,
+    "repaired_static_checker_violation_count": 26,
+    "static_checker_violation_count": 0,
+    "trajectories_with_any_static_trigger": 0
+  },
+  "upstream": {
+    "ground_truth_sha256": "58067689b2ec42f9cbfec2a84ec08d39cea4d8270617b55d0185862753642d16",
+    "repository": "microsoft/AgentRx",
+    "source_commit": "f228165bfec60a801fd5fedd9d8ffe0f9de0c69d",
+    "source_path": "/private/tmp/agentrx-upstream.iSAw6Z",
+    "static_invariants_sha256": "685951f33b01b88c994b01b99ce8cea7208ec9f99557f9aa2f96fa3064b0bf55"
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "schema_version": "frankengate-dataclaw-identifier-aware-retrieval-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false,
+    "raw_identifiers_emitted": false
+  },
+  "split": {
+    "method": "per-project chronological 70/30",
+    "projects_with_train_and_eval": 30,
+    "projects_excluded_for_single_session": 16,
+    "train_sessions": 279,
+    "evaluation_sessions": 141
+  },
+  "feature_coverage": {
+    "train_sessions_with_terms": 277,
+    "train_sessions_with_shapes": 210,
+    "train_sessions_with_identifiers": 191,
+    "evaluation_sessions_with_terms": 139,
+    "evaluation_sessions_with_shapes": 105,
+    "evaluation_sessions_with_identifiers": 96
+  },
+  "arms": {
+    "prompt_terms": {
+      "eligible_queries": 141,
+      "queries_with_any_candidate": 139,
+      "candidate_coverage": 0.9858156028368794,
+      "same_project_recall_at_1": 0.46099290780141844,
+      "same_project_recall_at_5": 0.6524822695035462,
+      "same_project_mrr": 0.5509978945495866,
+      "top1_same_project_precision_when_covered": 0.4676258992805755,
+      "top1_wrong_project_rate_when_covered": 0.5323741007194245,
+      "mean_candidates_when_covered": 167.68345323741008
+    },
+    "command_shapes": {
+      "eligible_queries": 141,
+      "queries_with_any_candidate": 97,
+      "candidate_coverage": 0.6879432624113475,
+      "same_project_recall_at_1": 0.3404255319148936,
+      "same_project_recall_at_5": 0.4326241134751773,
+      "same_project_mrr": 0.392302420593028,
+      "top1_same_project_precision_when_covered": 0.4948453608247423,
+      "top1_wrong_project_rate_when_covered": 0.5051546391752577,
+      "mean_candidates_when_covered": 54.896907216494846
+    },
+    "path_identifiers": {
+      "eligible_queries": 141,
+      "queries_with_any_candidate": 84,
+      "candidate_coverage": 0.5957446808510638,
+      "same_project_recall_at_1": 0.3333333333333333,
+      "same_project_recall_at_5": 0.425531914893617,
+      "same_project_mrr": 0.3772505001536762,
+      "top1_same_project_precision_when_covered": 0.5595238095238095,
+      "top1_wrong_project_rate_when_covered": 0.44047619047619047,
+      "mean_candidates_when_covered": 65.71428571428571
+    },
+    "prompt_plus_identifiers": {
+      "eligible_queries": 141,
+      "queries_with_any_candidate": 141,
+      "candidate_coverage": 1.0,
+      "same_project_recall_at_1": 0.49645390070921985,
+      "same_project_recall_at_5": 0.7375886524822695,
+      "same_project_mrr": 0.5975462900041606,
+      "top1_same_project_precision_when_covered": 0.49645390070921985,
+      "top1_wrong_project_rate_when_covered": 0.5035460992907801,
+      "mean_candidates_when_covered": 181.2836879432624
+    },
+    "prompt_plus_shapes": {
+      "eligible_queries": 141,
+      "queries_with_any_candidate": 141,
+      "candidate_coverage": 1.0,
+      "same_project_recall_at_1": 0.5106382978723404,
+      "same_project_recall_at_5": 0.6737588652482269,
+      "same_project_mrr": 0.5903042363091959,
+      "top1_same_project_precision_when_covered": 0.5106382978723404,
+      "top1_wrong_project_rate_when_covered": 0.48936170212765956,
+      "mean_candidates_when_covered": 177.1631205673759
+    },
+    "hybrid": {
+      "eligible_queries": 141,
+      "queries_with_any_candidate": 141,
+      "candidate_coverage": 1.0,
+      "same_project_recall_at_1": 0.5673758865248227,
+      "same_project_recall_at_5": 0.7659574468085106,
+      "same_project_mrr": 0.6574496019841088,
+      "top1_same_project_precision_when_covered": 0.5673758865248227,
+      "top1_wrong_project_rate_when_covered": 0.4326241134751773,
+      "mean_candidates_when_covered": 188.43971631205673
+    }
+  },
+  "claim_boundary": {
+    "temporal_project_similarity_proxy_measured": true,
+    "same_work_established": false,
+    "same_task_established": false,
+    "semantic_alias_quality_established": false,
+    "artifact_correctness_established": false,
+    "cross_user_collaboration_value_established": false,
+    "promotion_authorized": false,
+    "reason": "Project recurrence is a silver label. Filename/path surfaces are identifier features, not semantic identity; the split measures related-project retrieval, not task equivalence or artifact reuse."
+  },
+  "decision": "Retain exact identifiers and project/scope metadata as a retrieval lane beside prompt and shape features. Promote identifier-aware ranking only after reviewed same-work/NIL labels and replay outcomes replace the project proxy."
+}

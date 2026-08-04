@@ -1,0 +1,15 @@
+{
+  "all_passed": true,
+  "checks": {
+    "acronym_probe_complete": true,
+    "acronym_probe_passes": true,
+    "dataset_pinned": true,
+    "full_cohort": true,
+    "hash": true,
+    "not_overclaimed": true,
+    "schema": true,
+    "term_candidates_positive": true
+  },
+  "receipt_sha256": "2a14021ec77d1d22e555492ee72cab0175df77bf5313c36773b330c1cf96f4db",
+  "schema_version": "frankengate-modern-term-acronym-verification-v1"
+}

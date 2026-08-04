@@ -1,0 +1,51 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "toeunkim/matm-trajectories",
+  "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+  "license": "Apache-2.0",
+  "source_url": "https://huggingface.co/datasets/toeunkim/matm-trajectories",
+  "source_format": "parquet",
+  "adapter": "matm_alfworld_population_v1",
+  "dataset_card_sha256": "0d7fef0a97505a5fe9fb777d48324f50c9992c6e1ff024faf86ea080826e3634",
+  "outcome": {
+    "field": "success",
+    "semantics": "binary ALFWorld environment outcome",
+    "used_by_signal_generation": false
+  },
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true
+  },
+  "admitted_shard": {
+    "source_file": "alfworld/population_runs.parquet",
+    "source_sha256": "626e2e6351d763739b0e2695a1bc442e1c851c1153c44301017739e3bd1155aa",
+    "source_size_bytes": 4237969,
+    "records": 2130,
+    "pair_key": [
+      "task_id",
+      "model"
+    ],
+    "pair_count": 355,
+    "conditions": [
+      "no_retrieval",
+      "rerank_1",
+      "rerank_5",
+      "rerank_10",
+      "rerank_15",
+      "rerank_20"
+    ]
+  },
+  "known_missing_fields": [
+    "retrieved_item_ids",
+    "retrieved_item_content",
+    "retrieval_scores_and_ranks",
+    "memory_snapshot_before",
+    "memory_snapshot_after",
+    "memory_source_lineage",
+    "prompt_after_memory_injection",
+    "environment_seed",
+    "environment_replay_snapshot",
+    "timestamps",
+    "authorization_decisions"
+  ]
+}

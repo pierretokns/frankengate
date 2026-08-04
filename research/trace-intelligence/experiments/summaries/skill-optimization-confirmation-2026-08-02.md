@@ -1,0 +1,39 @@
+# Skill optimization: what the trace evidence actually establishes
+
+## Decision
+
+We have **not** yet confirmed that Frankengate's trace-mined skills improve real task outcomes. We have now completed a real family-disjoint semantic intervention, but it was a negative result. We have confirmed that:
+
+1. Outcome-conditioned traces can recommend a promising procedure offline.
+2. A skill optimizer can run against a held-out split and reject bad edits.
+3. Trace-derived protocol instructions can be executed through more than one local model/harness path.
+4. On eight previously unused ALFWorld paths across four families, both Llama 3.2 and Qwen 3 4B achieved 0/8 wins for baseline and candidate. The candidate changed invalid-action rates in opposite directions by model but produced no success lift.
+5. Replaying those identical eight paths through the second Ollama OpenAI-compatible harness produced the same Llama result: 0/8 wins for both arms and 66 candidate invalid actions versus 0 baseline.
+6. A replayable rerun retained only environment actions and independently recomputed all 32 outcomes in fresh environments with zero mismatches.
+7. The r13 control arm added a formatting placebo to the same eight-task cohort across both harnesses. No-skill, placebo, and trace-derived arms were all `0/8` on both harnesses; all 48 action sequences independently replayed with zero mismatches.
+8. The r14 Qwen 3 4B native-harness replication ran the same three arms on all eight tasks. Every arm was `0/8`, and all 24 action sequences independently replayed with zero mismatches.
+9. A direct SkillOpt retry after installing its dependency stack initialized SkillOpt and ALFWorld and reached baseline rollout, but the configured local model endpoint was unavailable. No SkillOpt model response, candidate skill, or scored episode was counted; this is an infrastructure null, not a quality result.
+10. A deterministic in-process backend then exercised the complete SkillOpt lifecycle. It generated and applied one candidate, evaluated it, and rejected it at the hard gate because baseline and candidate selection scores were both `0.0`. This closes the mechanics smoke only; the shim intentionally ignores task content and makes no model calls.
+11. A real `gpt-5.6-luna` Codex-backed SkillOpt run generated a candidate and rejected it at its own selection gate (`0.0` baseline and candidate). A bounded held-out transfer pilot compared that candidate with no-skill and formatting placebo on two tasks: all three arms were `0/2`, and fresh replay verified all six action sequences with zero mismatches.
+12. The same Codex candidate was then tested at an eight-step horizon on one held-out task. No-skill, formatting placebo, and candidate were each `0/1`; all three eight-action sequences were admissible and independently replayed with zero mismatches. This removes the shortest-horizon ambiguity but remains underpowered and negative.
+13. A second one-task Codex transfer used a task whose independent hand-coded expert solved it in six steps, under the same eight-step cap. No-skill, formatting placebo, and candidate were again each `0/1`, with three fresh replays passing exactly. This rules out “the task was necessarily beyond the horizon” for this micro-test, but remains a one-task negative transfer result.
+
+Those are prerequisites and a negative causal test, not evidence of a beneficial skill.
+
+## Evidence
+
+- MATM retrieval: successful-neighbor top-10 rate `0.747` vs `0.681` for all-trace neighbors, lift `+0.0665`, bootstrap 95% CI `[-0.0196, +0.1660]`. The model was **not rerun** with the retrieved procedure.
+- GEPA: train/holdout optimizer plumbing executed; two mutations were rejected and the selected protocol skill did not improve the three-item holdout. The fixture measured terminal tool protocol, not semantic quality.
+- The paired meta-analysis covers 23 protocol/semantic strata. It found no releasable semantic lift; the family-disjoint broker arm tied no-skill at `0/6`.
+
+## Models and harnesses
+
+We have exercised `llama3.2:latest` and `qwen3:4b` through an OpenAI-compatible native-tool path and an Ollama-native API path, and `gpt-5.6-luna` through the Codex subscription harness. This establishes protocol portability only. It is not yet a valid semantic comparison because the shared fixture has no domain task correctness oracle.
+
+Microsoft SkillOpt's published v0.2.0 study is stronger external evidence: six real benchmarks, seven target models, and three harnesses with validation-gated gains. It validates the general method, not sufficiency of Frankengate traces.
+
+## Required next gate
+
+The sealed task-outcome recomputation gate now passes for this ALFWorld cohort, including the formatting placebo and second-model replication. The remaining gates are security/policy verification, SkillOpt/SkillGen/RHO candidate arms, a larger powered cohort, and prospective enterprise outcomes; no skill should be promoted before those pass.
+
+Machine-readable receipt: `experiments/results/skill-optimization-confirmation-2026-08-02.json`.

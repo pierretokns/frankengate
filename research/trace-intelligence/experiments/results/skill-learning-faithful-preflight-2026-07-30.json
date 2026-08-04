@@ -1,0 +1,67 @@
+{
+  "claim_boundary": [
+    "A typed null is not evidence that a mechanism cannot work.",
+    "Passing upstream unit tests does not establish skill benefit.",
+    "No SKILL.md or MEMORY.md was activated or written by this preflight.",
+    "The existing Trace2Skill Stage-0 result remains a separate one-task execution-safety smoke test."
+  ],
+  "dataset": {
+    "independent_outcome_split_executed": false,
+    "natural_trace_manifest": "configs/datasets/wisp-claude-code-sessions.json",
+    "trace_content_committed": false
+  },
+  "experiment_class": "faithful source-and-executable-preflight",
+  "experiment_date": "2026-07-30",
+  "mechanisms": {
+    "gepa_gskill": {
+      "pin": {
+        "observed": "8b0ce6cd99a234f6b74daf37558a2ac0ce18f975",
+        "revision": "8b0ce6cd99a234f6b74daf37558a2ac0ce18f975"
+      },
+      "reason": "Source is pinned, but this checkout/run has no independent natural-trace candidate-generation plus held-out outcome harness for this mechanism.",
+      "status": "source_available_no_faithful_natural_intervention"
+    },
+    "hermes_self_evolution": {
+      "pin": {
+        "observed": null,
+        "revision": "0a929e3aa20e15cf04dc7c28492a7d41a5139125"
+      },
+      "reason": "The pinned runner exposes GEPA and holdout plumbing, but the reviewed source optimizes a DSPy module while extracting optimized_module.skill_text; the production validator is called on body-only text despite requiring frontmatter. No candidate was released or independently replayed from a natural trace in this run.",
+      "source_contract": {
+        "constraints_sha256": "d1b60fd178210a7906c8eaaa984838b9159af886971c80cfc7c3a3fab7d0cb12",
+        "direct_live_skill_write_present": true,
+        "evolve_sha256": "54067fff8d78592918593067f15b5c490b1acef8c036a3ab482c9d190b83dc79",
+        "extracts_module_skill_text": true,
+        "holdout_evaluation_present": true,
+        "independent_trace_loader_present": true,
+        "uses_dspy_gepa": true,
+        "uses_fitness_metric": true,
+        "validates_body_without_frontmatter": true,
+        "validator_requires_frontmatter": true
+      },
+      "status": "typed_null_no_faithful_intervention",
+      "tests": {
+        "returncode": 2,
+        "status": "fail",
+        "tail": [
+          "ERROR tests/core/test_external_importers.py",
+          "ERROR tests/skills/test_skill_module.py",
+          "!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!!",
+          "3 errors in 0.07s"
+        ]
+      }
+    },
+    "reasoning_bank": {
+      "status": "unavailable_pinned_source"
+    },
+    "trace2skill": {
+      "pin": {
+        "observed": null,
+        "revision": "3d0b52a140f002a512930252b613c49048f7d5ac"
+      },
+      "reason": "Source is pinned, but this checkout/run has no independent natural-trace candidate-generation plus held-out outcome harness for this mechanism.",
+      "status": "source_available_no_faithful_natural_intervention"
+    }
+  },
+  "schema_version": "frankengate.skill-learning-faithful-preflight.v1"
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "trace-commons-memory-h5-postgres-result-v1",
+  "experiment_id": "trace-commons-memory-h5-postgres-2026-07-30",
+  "run_date": "2026-07-30",
+  "source_result": {
+    "analysis_version": "deterministic-full-cohort-composition-preflight-v4",
+    "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+    "internal_result_sha256": "3084635035e330948861c763c015cf4f6394361f7fb3960b29928fb70a1a2af5"
+  },
+  "database": {
+    "image": "docker.io/pgvector/pgvector:0.8.1-pg16@sha256:33198da2828a14c30348d2ccb4750833d5ed9a44c88d840a0e523d7417120337",
+    "postgresql_version": "16.12",
+    "pgvector_version": "0.8.1",
+    "deployment": "disposable_local_kubernetes_single_writer"
+  },
+  "execution": {
+    "assert_count_checks": 20,
+    "assert_raises_checks": 6,
+    "assertions_failed": 0,
+    "assertions_passed": 26,
+    "transaction_rolled_back": true,
+    "fixture_rows_after_rollback": {
+      "artifact_candidates": 0,
+      "artifact_releases": 0,
+      "evaluation_runs": 0,
+      "release_exposures": 0,
+      "replay_manifests": 0,
+      "trajectories": 0
+    }
+  },
+  "coverage": {
+    "authorized_team_scope_visible": true,
+    "cross_subject_exposure_denied": true,
+    "evaluator_hidden_test_separated": true,
+    "forged_hidden_test_denied": true,
+    "missing_authority_denied": true,
+    "release_before_independent_gates_denied": true,
+    "rolled_back_release_hidden": true,
+    "runtime_roles_bypass_rls": false,
+    "runtime_roles_own_protected_tables": false,
+    "stale_epoch_denied": true,
+    "wrong_team_denied": true,
+    "wrong_tenant_denied": true
+  },
+  "content_policy": {
+    "aggregate_only": true,
+    "artifact_paths_stored": false,
+    "memory_text_stored": false,
+    "prompts_or_responses_stored": false,
+    "raw_payload": {},
+    "source_trace_events_stored": 0,
+    "tool_identifiers_stored": false
+  },
+  "claim_boundary": "This proves rollback-only PostgreSQL role, forced-RLS, release, exposure, influence, and withdrawal mechanics for a content-free aggregate. It does not prove Aurora operations, concurrent races, memory quality, failed-job atomicity, skill benefit, identity, or enterprise transfer."
+}

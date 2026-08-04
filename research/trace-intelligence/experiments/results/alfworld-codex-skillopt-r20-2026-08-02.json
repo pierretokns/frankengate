@@ -1,0 +1,116 @@
+{
+  "arms": [
+    "no_skill",
+    "formatting_placebo",
+    "skillopt_candidate"
+  ],
+  "candidate_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "candidate_source": "Microsoft SkillOpt r18 Codex optimizer",
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "real_model_intervention_executed": true,
+    "reason": "Small bounded Codex replication; candidate and controls are compared, but this is not the preregistered powered release gate."
+  },
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "task_hashes": [
+      "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200"
+    ]
+  },
+  "episodes": [
+    {
+      "action_sequence": [
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look"
+      ],
+      "api_calls": 8,
+      "arm": "no_skill",
+      "elapsed_ms": 48229.402,
+      "harness": "codex-cli-subscription",
+      "invalid_action_count": 0,
+      "model": "gpt-5.6-luna",
+      "steps": 8,
+      "task_hash": "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+      "won": false
+    },
+    {
+      "action_sequence": [
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look"
+      ],
+      "api_calls": 8,
+      "arm": "formatting_placebo",
+      "elapsed_ms": 50633.296,
+      "harness": "codex-cli-subscription",
+      "invalid_action_count": 0,
+      "model": "gpt-5.6-luna",
+      "steps": 8,
+      "task_hash": "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+      "won": false
+    },
+    {
+      "action_sequence": [
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look",
+        "look"
+      ],
+      "api_calls": 8,
+      "arm": "skillopt_candidate",
+      "elapsed_ms": 45235.636,
+      "harness": "codex-cli-subscription",
+      "invalid_action_count": 0,
+      "model": "gpt-5.6-luna",
+      "steps": 8,
+      "task_hash": "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+      "won": false
+    }
+  ],
+  "harness": "codex-cli-subscription",
+  "model": "gpt-5.6-luna",
+  "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+  "summary": {
+    "formatting_placebo": {
+      "api_calls": 8,
+      "episodes": 1,
+      "invalid_actions": 0,
+      "steps": 8,
+      "win_rate": 0.0,
+      "wins": 0
+    },
+    "no_skill": {
+      "api_calls": 8,
+      "episodes": 1,
+      "invalid_actions": 0,
+      "steps": 8,
+      "win_rate": 0.0,
+      "wins": 0
+    },
+    "skillopt_candidate": {
+      "api_calls": 8,
+      "episodes": 1,
+      "invalid_actions": 0,
+      "steps": 8,
+      "win_rate": 0.0,
+      "wins": 0
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "frankengate-static-authority-epoch-v1",
+  "classification": "local_research_authority_snapshot_not_production_authorization",
+  "bindings": [
+    {
+      "database": "broker",
+      "governance_scope": "enterprise",
+      "user_id": "factorial-pilot-user",
+      "team_id": "factorial-pilot-team",
+      "virtual_key_id": "factorial-pilot-vk",
+      "current_authorization_epoch_ref": "defog-factorial-authority-v1"
+    },
+    {
+      "database": "car_dealership",
+      "governance_scope": "enterprise",
+      "user_id": "factorial-pilot-user",
+      "team_id": "factorial-pilot-team",
+      "virtual_key_id": "factorial-pilot-vk",
+      "current_authorization_epoch_ref": "defog-factorial-authority-v1"
+    },
+    {
+      "database": "derm_treatment",
+      "governance_scope": "enterprise",
+      "user_id": "factorial-pilot-user",
+      "team_id": "factorial-pilot-team",
+      "virtual_key_id": "factorial-pilot-vk",
+      "current_authorization_epoch_ref": "defog-factorial-authority-v1"
+    },
+    {
+      "database": "ewallet",
+      "governance_scope": "enterprise",
+      "user_id": "factorial-pilot-user",
+      "team_id": "factorial-pilot-team",
+      "virtual_key_id": "factorial-pilot-vk",
+      "current_authorization_epoch_ref": "defog-factorial-authority-v1"
+    }
+  ],
+  "claim_boundary": {
+    "exact_current_epoch_match_enforced": true,
+    "database_scope_and_subject_binding_enforced": true,
+    "cryptographically_signed": false,
+    "production_authority_store": false,
+    "aurora_or_distributed_revocation_tested": false
+  }
+}

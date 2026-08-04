@@ -1,0 +1,82 @@
+{
+  "adoption": {
+    "do_not_promote_now": [
+      "generic trace-mined prose",
+      "automatic skill composition",
+      "name-only artifact reuse",
+      "raw-log-derived skill or embedding updates"
+    ],
+    "next_causal_gate": "A powered, task-disjoint changed-system cohort with no-skill, placebo, reviewed, mined, generated, and composed arms plus independent outcomes.",
+    "promote_now": [
+      "typed semantic-ID admission",
+      "reviewed human guidance as a candidate arm",
+      "validated subplans behind replay and scope gates"
+    ]
+  },
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_enterprise_skill_benefit": false,
+    "datasets_pooled": false,
+    "reason": "These are separate proxy protocols; synthesis is a decision map, not a pooled effect estimate."
+  },
+  "comparisons": {
+    "alfworld_skillopt": {
+      "candidate_wins": 0,
+      "claim": "The real SkillOpt candidate did not improve this bounded task outcome; this is a negative replication, not a disproof of SkillOpt generally.",
+      "dataset": "two unseen ALFWorld tasks, Codex/Luna",
+      "no_skill_wins": 0,
+      "placebo_wins": 0
+    },
+    "bird_family_disjoint": {
+      "claim": "Validated subplans show one stable win and no stable losses, but the aggregate is underpowered and low-headroom.",
+      "composable_exact": 8,
+      "dataset": "40 family-disjoint BIRD tasks, two replays",
+      "no_skill_exact": 6,
+      "placebo_exact": 6,
+      "stable_library_losses": 0,
+      "stable_library_wins": 1,
+      "unique_tasks": 20
+    },
+    "changed_system_subplan": {
+      "claim": "Typed semantic admission prevents the two unsafe name-only accepts in this controlled replay.",
+      "dataset": "five deterministic changed-system fixtures",
+      "name_only_correct": 3,
+      "name_only_unsafe_accepts": 2,
+      "semantic_id_correct": 3,
+      "semantic_id_unsafe_accepts": 0
+    },
+    "skilllearn_changed_data": {
+      "claim": "Reviewed human guidance was stable on this mutation; generated composition added no demonstrated value.",
+      "composite_precision": 1.0,
+      "composite_recall": 0.9375,
+      "dataset": "one public changed-data task, two stochastic runs",
+      "null_recall": 0.9375,
+      "reviewed_precision": 1.0,
+      "reviewed_recall": 1.0
+    }
+  },
+  "result_sha256": "3820aa4fc744c04e63cb7403e293be5a266db9bc336d2ce63d4c9e7b755086c7",
+  "schema_version": "frankengate-skill-replay-evidence-synthesis-v1",
+  "source_receipts": {
+    "alfworld_skillopt": {
+      "path": "experiments/results/alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "a4677b3fc9b71e886e54aabc11a49fcc9434eb30135c78092232e1a83fc4a71a"
+    },
+    "bird_family_disjoint": {
+      "path": "experiments/results/bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
+      "schema_version": "frankengate-bird-sql-composable-factorial-aggregate-v1",
+      "sha256": "de2610572567ba22f5a000926bea89725ea2e640a81934effbabb467e1f248b6"
+    },
+    "changed_system_subplan": {
+      "path": "experiments/results/artifact-subplan-changed-system-replay-2026-08-05.json",
+      "schema_version": "frankengate-artifact-subplan-changed-system-v1",
+      "sha256": "b9ba105a538c956c0812f6d5668dc7627877952eeeecdfc8fd6bc7a2f53e9aa3"
+    },
+    "skilllearn_changed_data": {
+      "path": "experiments/results/skilllearnbench-changed-data-multiseed-2026-08-09.json",
+      "schema_version": "frankengate-skilllearnbench-changed-data-multiseed-v1",
+      "sha256": "dba6df219727ef78c993f9700efbc66a05e0c3450e54c749098170fb3baf18c0"
+    }
+  }
+}

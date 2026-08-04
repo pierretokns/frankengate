@@ -1,0 +1,19 @@
+{
+  "schema_version": "frankengate-ontology-action-trace-architecture-v1",
+  "study_id": "invalid-ontology-action-study",
+  "protocol_uri": "file:///tmp/raw-protocol",
+  "cohort_contract_uri": "local://raw-cohort",
+  "authorization": {"raw_content_access": "committed", "raw_content_committed": true},
+  "representation_arms": ["A0", "A8"],
+  "required_holdouts": ["system"],
+  "required_case_classes": ["target"],
+  "required_mutation_classes": ["no_change"],
+  "required_object_types": ["task"],
+  "required_edge_statuses": ["asserted"],
+  "required_action_states": ["proposed"],
+  "required_metrics": ["retrieval_mrr"],
+  "promotion_gates": {"minimum_targets": 0, "minimum_replay_pass_rate": 0.2, "maximum_unauthorized_edges": 1, "must_beat_A0_on_sealed_holdout": false},
+  "run_contract": {"same_model_across_arms": false, "changed_system_replay_required": false},
+  "storage_contract": {"canonical_evidence_authority": "prompt"},
+  "publication_policy": {"receipts_content_free": false, "promotion_ready": true}
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "frankengate-alfworld-model-generated-memory-intervention-r8-v1",
+  "study": "model-generated durable memory on held-out look-at-light tasks",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "source_task_hash": "8c79c8cd40907481f59933f4743a09063ccc2a4600113ca56aa17f7c23b34944",
+    "target_task_hashes": ["309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200", "a298cda16d9de5a542a9ab3242a1823b2fa45b485981027870b2bee4648b2db7", "e7c445469fe146151a6b747d7d7f030c6f5c8bdfa721ecb98696495b6948136f"],
+    "task_count": 3
+  },
+  "memory_release": {
+    "memory_kind": "model-generated procedural summary",
+    "memory_sha256": "a7f73e118d5660eef629fe9ee641ff0ff5b48a2a856d42f39d5d4f179eeded3f",
+    "future_outcomes_in_memory": false,
+    "source_expert_won": true,
+    "source_expert_steps": 7
+  },
+  "protocol": {
+    "arms": ["no_memory", "generated_memory"],
+    "model": "llama3.2:latest",
+    "harnesses": ["ollama-native-api", "ollama-openai-compatible"],
+    "episodes": 12,
+    "max_steps": 35,
+    "expert_target_steps": [10, 29, 7],
+    "expert_horizon_covers_all_tasks": true,
+    "raw_receipt": "/private/tmp/alfworld-r8-model-generated-memory-llama.raw.json"
+  },
+  "summary": {
+    "llama3.2:latest|ollama-native-api|generated_memory": {"episodes": 3, "invalid_actions": 102, "mean_steps": 35.0, "steps": 105, "win_rate": 0.0, "wins": 0},
+    "llama3.2:latest|ollama-native-api|no_memory": {"episodes": 3, "invalid_actions": 0, "mean_steps": 35.0, "steps": 105, "win_rate": 0.0, "wins": 0},
+    "llama3.2:latest|ollama-openai-compatible|generated_memory": {"episodes": 3, "invalid_actions": 102, "mean_steps": 35.0, "steps": 105, "win_rate": 0.0, "wins": 0},
+    "llama3.2:latest|ollama-openai-compatible|no_memory": {"episodes": 3, "invalid_actions": 0, "mean_steps": 35.0, "steps": 105, "win_rate": 0.0, "wins": 0}
+  },
+  "comparison": {"generated_memory_wins": 0, "no_memory_wins": 0, "invalid_action_delta_per_harness": 102, "memory_improved_task_success": false, "memory_improved_protocol_validity": false},
+  "claim_boundary": {
+    "model_generated_memory_intervention_executed": true,
+    "quality_comparison_valid": true,
+    "causal_memory_benefit_confirmed": false,
+    "automatic_memory_promotion_authorized": false,
+    "reason": "The model-generated memory was extracted from a separate successful expert trace and evaluated on disjoint tasks with a sufficient horizon. It caused 102 additional invalid actions per harness and produced no wins; the candidate is rejected."
+  },
+  "raw_model_content_committed": false
+}

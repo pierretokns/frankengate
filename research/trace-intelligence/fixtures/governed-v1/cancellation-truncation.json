@@ -1,0 +1,76 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "34d569da6401931733d4929acaa396cadea40ff13b6044247e6e3a2456a1b759",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "cancellation-truncation"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "user_request",
+      "observation_status": "observed",
+      "source_role": "user",
+      "content": "Generate a long report."
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "stream_chunk",
+      "observation_status": "observed",
+      "source_role": "assistant",
+      "content": "Partial report..."
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "cancellation",
+      "observation_status": "observed",
+      "source_role": "transport",
+      "content": "Client disconnected.",
+      "parent_event_id": "e000",
+      "reason": "client_disconnect"
+    },
+    {
+      "event_id": "e003",
+      "sequence": 3,
+      "kind": "trace_terminal",
+      "observation_status": "observed",
+      "source_role": "gateway",
+      "content": null,
+      "parent_event_id": "e002",
+      "terminal_status": "truncated",
+      "last_complete_event_id": "e001"
+    }
+  ],
+  "outcome": {
+    "value": "cancelled_truncated",
+    "source": "transport",
+    "evidence_event_ids": ["e001", "e002", "e003"]
+  },
+  "loss_receipt": {
+    "source_event_count": 4,
+    "canonical_event_count": 4,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": ["unobserved_stream_suffix"],
+    "expected_invariants": [
+      {
+        "type": "cancellation_is_terminal",
+        "cancellation_event_id": "e002",
+        "terminal_event_id": "e003"
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "transport_cancellation_and_truncation",
+        "disposition": "degraded",
+        "reason": "An incomplete final message does not identify cancellation source or the trustworthy prefix."
+      }
+    ]
+  }
+}

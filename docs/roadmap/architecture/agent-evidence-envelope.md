@@ -8,7 +8,9 @@ Package: `github.com/maximhq/bifrost/core/evidence`
 
 ## Decision
 
-Define `AgentEvidenceEnvelope` version `agent-evidence-envelope/v1` as the canonical, raw-content-free evidence contract for the managed agent evidence plane.
+Define `AgentEvidenceEnvelope` version `agent-evidence-envelope/v1` as the canonical,
+compact join-and-receipt contract for the managed agent evidence plane. It is not the
+authoritative trace-content record.
 
 The contract separates observation facts from policy and privacy authority. Every envelope carries tenant, subject, purpose, residency, ACL, privacy receipt, sampling, missingness, deletion lineage, and immutable revision join keys. Evidence consumers must reject envelopes that lack privacy or authority fields, use unknown enum-like values, contain raw inline content, contain an unsupported content tier, mismatch privacy disposition and content tier, exceed bounded collections, use unsafe free-form strings, duplicate JSON keys, or present an ambiguous observation body.
 
@@ -18,7 +20,11 @@ The schema is intentionally metadata- and receipt-first. It can reference redact
 
 The managed evidence roadmap says the gateway observes model requests, routing, tool calls, latency, cost, and policy revisions, while endpoint collectors observe local edits, terminal results, tests, user cancellations, and final task success. It requires terminal task result, deterministic tests, user feedback, behavioral friction, perceived friction, and judge output to be distinct observation types with sampling and missingness recorded.
 
-The privacy roadmap sets the default to metadata-only and requires every capture/reuse path to have purpose, retention, region, subject/tenant policy, privacy receipt, and deletion lineage. It also warns that raw or derived content cannot enter a new sink without a privacy receipt.
+The privacy roadmap permits full-fidelity PII and classified content inside an
+authorized same-scope internal source while excluding credentials everywhere. Every
+capture/reuse path still needs purpose, retention, region, subject/tenant policy,
+content disposition, authority revision, and deletion lineage. A new destination must
+make an independent disclosure decision.
 
 The new `core/evidence` package provides only the schema contract and validation surface. It does not implement ingestion, storage, indexing, redaction, authorization, collector sync, or proposal generation.
 
@@ -67,7 +73,12 @@ Allowed `ContentReference` tiers:
 - `derived_digest`: digest required.
 - `vault_ref`: digest and vault URI required.
 
-Raw content is not an allowed tier. Unknown JSON fields are rejected by `DecodeStrict`, so fields such as `raw_content`, inline transcripts, prompt text, tool output, and judge explanations are not silently accepted.
+Raw content is not embedded in this compact envelope. A `vault_ref` may resolve to the
+authorized full-fidelity internal source only after the caller's current identity,
+purpose, tenant/team/user scope, policy epoch, and deletion epoch pass. It must not be
+treated as a globally readable sanitized-object pointer. Unknown JSON fields are
+rejected by `DecodeStrict`, so fields such as `raw_content`, inline transcripts, prompt
+text, tool output, and judge explanations are not silently accepted.
 
 Privacy disposition constrains content tiers:
 
@@ -82,7 +93,9 @@ The envelope may describe missing or sampled-out evidence through `missingness` 
 
 Known string fields use bounded safe formats instead of arbitrary text. Identifiers, revisions, principals, model names, request types, artifact names, and URI-like references are limited to a small ASCII token alphabet and length. Reason codes and score names use a stricter lowercase code alphabet. Digest references must be `sha256:` references. Vault references must use a `vault://` URI form. Slices and maps have explicit maximum sizes.
 
-This is not a semantic secret detector. It is a construction rule: this package refuses fields that look like free-form/raw content and leaves richer privacy transformation to the privacy boundary.
+This is not a semantic secret detector. It is a construction rule for a compact
+receipt. Credential stripping occurs before the source enters durable storage or any
+model/index path; PII transformation is destination- and scope-specific.
 
 ## Revision Join Keys
 

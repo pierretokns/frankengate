@@ -1,0 +1,85 @@
+{
+  "schema_version": "frankengate-model-runtime-manifest-v1",
+  "model_id": "mlx-community/Qwen3.5-9B-OptiQ-4bit",
+  "request_model_id": "default_model",
+  "source_url": "https://huggingface.co/mlx-community/Qwen3.5-9B-OptiQ-4bit",
+  "revision": "319aed167e31e0bf81ddba0c23f8d218a15be612",
+  "snapshot_identity_sha256": "7174d7cb2996ec7e22831448c055d3339640f7a43d81d606a875c8728dc0a638",
+  "snapshot_bytes": 7120886349,
+  "weight_files": [
+    {
+      "name": "model-00001-of-00002.safetensors",
+      "bytes": 5349382977,
+      "lfs_sha256": "ac85c6ecdcd12ab778d44a9d6f90f1080498173c7fa6da2f335f3c42b716d85c"
+    },
+    {
+      "name": "model-00002-of-00002.safetensors",
+      "bytes": 1751328661,
+      "lfs_sha256": "9d3a23b2307c705af2e86bbf2af791f0d63eae8c24042c5f362ad7586caa0062"
+    }
+  ],
+  "runtime": {
+    "name": "mlx-lm",
+    "version": "0.31.2",
+    "revision": null,
+    "revision_status": "installed_distribution_has_no_git_direct_url",
+    "python_version": "3.14.2",
+    "mlx_version": "0.31.1",
+    "transformers_version": "5.5.4",
+    "huggingface_hub_version": "1.10.2",
+    "api": "openai-compatible-chat-completions",
+    "temperature": 0,
+    "top_p": 1,
+    "top_k": 0,
+    "min_p": 0,
+    "thinking_enabled": false,
+    "native_tool_calling": true,
+    "tool_parser_type": "qwen3_coder",
+    "stream": false,
+    "decode_concurrency": 1,
+    "prompt_concurrency": 1,
+    "prompt_cache_size": 0,
+    "seeded_requests_batchable": false,
+    "server_binding": "127.0.0.1",
+    "production_server": false
+  },
+  "runtime_source_receipts": {
+    "mlx_lm_server_py_sha256": "b21c6c29cd9d4695105c511be9cccbb023a58861154c9c1a67314d6164e82b45",
+    "mlx_lm_tokenizer_utils_py_sha256": "a6bbbedcd4d117b51b7b32c776ec483d30ed672625b4185bf316a1ba141c98f0",
+    "mlx_lm_qwen3_coder_parser_py_sha256": "32de6d9f7472a1f00a2acfaac13e0e0864cfc19adebbff688ac5004b8ecc25"
+  },
+  "content_receipts": {
+    "config_sha256": "c26624f7afaf690c4e79d00726853abfa37f06620be303a33df679209e4bc0c1",
+    "tokenizer_config_sha256": "b2bed5e033438f09f22b0ce9522115b4807d9bbcc3b82bf23372cb74d93ed081",
+    "chat_template_sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+    "generation_config_sha256": "f2130efdf66df1834aa4f7a6e48752e88a8dff41965739c6ffb2bb26c841615e",
+    "weight_index_sha256": "cbce930c725bf5066038c09ed16fbb755dae6e595013c75475235bc682a565f6",
+    "optiq_metadata_sha256": "ee34e7aec78859db7f3473e1b3c75170de0985b71aabd971aa6344c9f792dec8"
+  },
+  "selection_rationale": [
+    "already-pinned local snapshot prevents third-party disclosure",
+    "smallest cached general model suitable for the bounded memory protocol pilot",
+    "not treated as the final model-quality estimate"
+  ],
+  "server_contract": {
+    "request_model_repository_id_allowed": false,
+    "request_model_repository_id_failure_mode": "may dynamically resolve mutable main and invalidate the snapshot pin",
+    "request_model_id": "default_model",
+    "request_side_tool_choice_enforced": false,
+    "request_side_response_format_enforced": false,
+    "request_authentication_supported": false,
+    "unknown_request_fields_rejected": false,
+    "loopback_only_required": true,
+    "cross_episode_prompt_cache_disabled": true,
+    "native_tool_calls_must_be_validated_by_runner": true,
+    "tool_finish_reason_without_tool_calls_is_protocol_failure": true,
+    "generated_completion_and_tool_call_ids_must_be_normalized_for_reproducibility": true,
+    "system_fingerprint_identifies_model_snapshot": false
+  },
+  "claim_boundary": {
+    "frontier_model": false,
+    "production_model": false,
+    "custom_enterprise_embedding": false,
+    "pilot_only": true
+  }
+}

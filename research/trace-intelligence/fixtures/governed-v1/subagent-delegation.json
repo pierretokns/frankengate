@@ -1,0 +1,95 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "da50a36c16b9ec54200b7b961bf646ce39111934815d269718cfdb7567511a70",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "subagent-delegation"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "agent_request",
+      "observation_status": "observed",
+      "source_role": "agent",
+      "content": "Diagnose the release regression.",
+      "actor_id": "agent:parent"
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "delegation",
+      "observation_status": "observed",
+      "source_role": "orchestrator",
+      "content": "Delegate log analysis.",
+      "parent_event_id": "e000",
+      "delegation_id": "delegation-001",
+      "parent_agent_id": "agent:parent",
+      "child_agent_id": "agent:log-specialist",
+      "delegated_scope": ["logs:read"]
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "agent_activity",
+      "observation_status": "observed",
+      "source_role": "agent",
+      "content": "Queried error-rate histogram.",
+      "parent_event_id": "e001",
+      "delegation_id": "delegation-001",
+      "actor_id": "agent:log-specialist"
+    },
+    {
+      "event_id": "e003",
+      "sequence": 3,
+      "kind": "delegation_result",
+      "observation_status": "observed",
+      "source_role": "agent",
+      "content": "Missing-column errors began after migration.",
+      "parent_event_id": "e002",
+      "delegation_id": "delegation-001",
+      "actor_id": "agent:log-specialist"
+    },
+    {
+      "event_id": "e004",
+      "sequence": 4,
+      "kind": "agent_synthesis",
+      "observation_status": "observed",
+      "source_role": "agent",
+      "content": "The incomplete migration caused the regression.",
+      "parent_event_id": "e000",
+      "actor_id": "agent:parent",
+      "evidence_event_ids": ["e003"]
+    }
+  ],
+  "outcome": {
+    "value": "delegated_result_synthesized",
+    "source": "agent:parent",
+    "evidence_event_ids": ["e001", "e003", "e004"]
+  },
+  "loss_receipt": {
+    "source_event_count": 5,
+    "canonical_event_count": 5,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": [],
+    "expected_invariants": [
+      {
+        "type": "delegation_child_scoped",
+        "delegation_event_id": "e001",
+        "child_event_ids": ["e002", "e003"],
+        "synthesis_event_id": "e004"
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "delegation_actor_and_scope",
+        "disposition": "degraded",
+        "reason": "Agent identity can be metadata, but delegated authority and child scope are not first-class."
+      }
+    ]
+  }
+}

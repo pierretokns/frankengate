@@ -1,0 +1,11 @@
+{
+  "schema_version": "frankengate-wiki-frontier-gpt55-backend-factorial-v1",
+  "corpus": {"pages": 100, "wikis": 25, "sha256": "9a48b266dfc5b7260a1800b01ec6e5f84be948a9e690f1860b5c868fed1f8311"},
+  "protocol": {"model": "gpt-5.5", "harness": "Codex CLI structured JSON action loop", "questions": 20, "sizes": [1, 5, 10, 25], "cases_per_size": 5, "max_steps": 5, "native_mcp": false, "raw_backend": true},
+  "runs": {
+    "fts": {"run_sha256": "88be40b42e08fb8eda08fd1adf64590243450cb7f8fc35a33d41f3287ea62daf", "receipt_sha256": "12440f7db25fd62c75ea64e9619e12b06d6df78b3074f95aea538e8825c003e9", "targets": 16, "target_answer_accuracy": 1.0, "gold_loaded": 1.0, "nil_abstention_accuracy": 0.25, "errors": 1, "finished": 0.95, "p95_latency_ms_by_size": {"1": 32243.745417, "5": 34209.867958, "10": 36290.555667, "25": 34918.755042}},
+    "tfidf": {"run_sha256": "0d9d5a44e75ad47caee9cde2ba07f971ff9c7460391d644d6f88451f709bc670", "receipt_sha256": "4de6a1629b285bb8999b930ae10c2509ba5b8243a77f206c876a893373c815bf", "targets": 16, "target_answer_accuracy": 1.0, "gold_loaded": 0.95, "nil_abstention_accuracy": 1.0, "errors": 0, "finished": 1.0, "p95_latency_ms_by_size": {"1": 46843.694708, "5": 30067.270625, "10": 37174.4785, "25": 33372.787667}},
+    "hybrid": {"run_sha256": "a8eebd131e8c0f795db15c8853b6554689067eace5dded8fbe9d9a09df218ebb", "receipt_sha256": "4a7e38b21f9597a2b08d049878c63e0fdec574a691d57fbe1280288d33227780", "targets": 16, "target_answer_accuracy": 1.0, "gold_loaded": 1.0, "nil_abstention_accuracy": 1.0, "errors": 0, "finished": 1.0, "p95_latency_ms_by_size": {"1": 33597.90425, "5": 38118.590709, "10": 36778.308667, "25": 41754.88725}}
+  },
+  "claim_boundary": "Same-model backend factorial over a small synthetic wiki fixture. It measures frontier incorporation and abstention, not native MCP, enterprise transfer, or general backend superiority."
+}

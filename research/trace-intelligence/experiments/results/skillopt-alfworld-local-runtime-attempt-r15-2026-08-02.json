@@ -1,0 +1,31 @@
+{
+  "schema_version": "frankengate-skillopt-alfworld-local-runtime-attempt-v1",
+  "study": "Attempt SkillOpt's own ALFWorld optimizer against the pinned local environment",
+  "source": {
+    "repository": "microsoft/SkillOpt",
+    "checkout": "/private/tmp/skillopt-latest",
+    "revision": "7da46ae",
+    "local_alfworld_payload": "/private/tmp/cache/alfworld-zhangdw/extracted/alfworld",
+    "skillopt_path_manifest": "/private/tmp/skillopt-latest/data/alfworld_path_split"
+  },
+  "attempt": {
+    "command_scope": "one epoch, four training items, local Qwen 3 4B OpenAI-compatible endpoint, no external model calls",
+    "python_3_9_failure": "SkillOpt import failed because dataclasses(slots=True) is unsupported",
+    "python_3_14_failure": "SkillOpt import failed because the openai package is not installed in the available Python 3.14 environment",
+    "model_responses_emitted": false,
+    "episodes_emitted": false
+  },
+  "claim_boundary": {
+    "skillopt_causal_intervention_executed": false,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "typed_runtime_null": true,
+    "reason": "The local ALFWorld runner and Qwen endpoint are executable, but SkillOpt's own training engine cannot start in the available Python environments without installing its Python 3.10+ dependency set. The independent Frankengate runner remains the scored intervention.",
+    "next_required": [
+      "Provide a Python 3.10+ environment with SkillOpt's declared dependencies",
+      "Pin the same ALFWorld payload and held-out family split",
+      "Run SkillOpt-generated candidates beside no-skill, formatting placebo, and trace-derived controls",
+      "Use the existing fresh-environment outcome/security verifiers before any promotion"
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schema_version": "frankengate-dataclaw-path-identifier-collision-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false,
+    "raw_paths_emitted": false
+  },
+  "cohort": {
+    "sessions": 436,
+    "projects": 46,
+    "command_events": 12237,
+    "path_events": 11122,
+    "malformed_argument_events": 0,
+    "unique_basename_surfaces": 2462,
+    "unique_full_path_digests": 4025
+  },
+  "collisions": {
+    "cross_project_basename_surfaces": 281,
+    "cross_project_basename_surface_rate": 0.1141348497156783,
+    "cross_project_collision_session_events": 1481,
+    "cross_project_collision_event_rate": 0.13315950368638735,
+    "basename_surfaces_with_multiple_full_path_digests": 661,
+    "cross_project_surfaces_with_multiple_full_path_digests": 245,
+    "median_projects_per_basename": 1,
+    "max_projects_per_basename": 32,
+    "median_full_path_digests_per_basename": 1,
+    "max_full_path_digests_per_basename": 46
+  },
+  "surface_distribution": {
+    "extension_event_counts": {
+      ".c": 155,
+      ".cpp": 28,
+      ".css": 4,
+      ".csv": 51,
+      ".go": 4,
+      ".h": 135,
+      ".html": 49,
+      ".java": 1,
+      ".js": 45,
+      ".json": 655,
+      ".md": 235,
+      ".py": 1113,
+      ".rb": 1,
+      ".rs": 1,
+      ".sh": 211,
+      ".sql": 12,
+      ".toml": 19,
+      ".ts": 901,
+      ".tsx": 1199,
+      ".txt": 135,
+      ".xml": 5,
+      ".yaml": 41,
+      ".yml": 19
+    }
+  },
+  "claim_boundary": {
+    "identifier_collision_proxy_measured": true,
+    "same_basename_means_same_system": false,
+    "same_basename_means_same_task": false,
+    "enterprise_alias_quality_established": false,
+    "artifact_correctness_established": false,
+    "semantic_hard_negative_label_established": false,
+    "promotion_authorized": false,
+    "reason": "A repeated basename can be a generic filename, a shared repository convention, or a true cross-project identifier. Full-path digests distinguish surfaces but do not establish semantic identity or correctness."
+  },
+  "decision": "Use same-basename/different-path/project cases as hard-negative candidates for reviewed alias and identifier datasets. Require task labels, scope, temporal validity, and independent replay before promoting any alias, embedding edge, or artifact."
+}

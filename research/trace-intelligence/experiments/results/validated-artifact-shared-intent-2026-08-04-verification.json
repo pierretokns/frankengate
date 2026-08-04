@@ -1,0 +1,16 @@
+{
+  "checks": {
+    "all_dense_top1_recovered": true,
+    "all_hybrid_top1_recovered": true,
+    "all_lexical_top1_recovered": true,
+    "claim_boundary_present": true,
+    "known_shared_intent_declared": true,
+    "result_hash_matches": true,
+    "scoped_execution_authorized": true,
+    "target_count": true
+  },
+  "recomputed_result_sha256": "985011c3b8b7e4d7a7a03d93e3b0056ef3cb226f8283c43abd15ad33d305fe71",
+  "schema_version": "frankengate-validated-artifact-shared-intent-verification-v1",
+  "status": "verified",
+  "stored_result_sha256": "985011c3b8b7e4d7a7a03d93e3b0056ef3cb226f8283c43abd15ad33d305fe71"
+}

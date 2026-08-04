@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.local/schemas/evaluation_receipt.schema.json",
+  "title": "Frankengate NL2SQL evaluation receipt payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "stage_episode_ref",
+    "submission_receipt_sha256",
+    "attempt_blob_sha256",
+    "candidate_result_sha256",
+    "gold_result_sha256",
+    "matched_gold_alternative",
+    "semantic_correct",
+    "strict_answer_shape_correct",
+    "security_authorized",
+    "authority_current_at_evaluation",
+    "candidate_execution_count_before_evaluation",
+    "candidate_execution_count_after_evaluation",
+    "gold_execution_count",
+    "reason_code",
+    "adjudication_classification",
+    "comparator",
+    "model_manifest_sha256",
+    "prompt_contract_sha256",
+    "artifact_sha256",
+    "tool_contract_sha256",
+    "evaluator_build_sha256",
+    "broker_build_sha256",
+    "database_snapshot_sha256",
+    "policy_version_sha256",
+    "authority_snapshot_sha256",
+    "stage_manifest_sha256",
+    "raw_audit_chain_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "fg-evaluation-receipt-v1"},
+    "stage_episode_ref": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{8,256}$"
+    },
+    "submission_receipt_sha256": {"$ref": "#/$defs/sha256"},
+    "attempt_blob_sha256": {"$ref": "#/$defs/sha256"},
+    "candidate_result_sha256": {"$ref": "#/$defs/sha256"},
+    "gold_result_sha256": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "items": {"$ref": "#/$defs/sha256"}
+    },
+    "matched_gold_alternative": {
+      "oneOf": [
+        {"type": "integer", "minimum": 0, "maximum": 127},
+        {"type": "null"}
+      ]
+    },
+    "semantic_correct": {"type": "boolean"},
+    "strict_answer_shape_correct": {"type": "boolean"},
+    "security_authorized": {"type": "boolean"},
+    "authority_current_at_evaluation": {"type": "boolean"},
+    "candidate_execution_count_before_evaluation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "candidate_execution_count_after_evaluation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "gold_execution_count": {"type": "integer", "minimum": 1},
+    "reason_code": {
+      "enum": [
+        "correct",
+        "result_mismatch",
+        "strict_shape_mismatch",
+        "adjudication_ineligible",
+        "security_not_authorized",
+        "authority_not_current",
+        "candidate_execution_count_invalid"
+      ]
+    },
+    "adjudication_classification": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "comparator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version_sha256",
+        "numeric_relative_tolerance",
+        "numeric_absolute_tolerance",
+        "order_rule"
+      ],
+      "properties": {
+        "name": {"const": "frankengate-typed-result-equivalence"},
+        "version_sha256": {"$ref": "#/$defs/sha256"},
+        "numeric_relative_tolerance": {"type": "string"},
+        "numeric_absolute_tolerance": {"type": "string"},
+        "order_rule": {
+          "enum": [
+            "none",
+            "gold-order-sensitive",
+            "gold-order-insensitive"
+          ]
+        }
+      }
+    },
+    "model_manifest_sha256": {"$ref": "#/$defs/sha256"},
+    "prompt_contract_sha256": {"$ref": "#/$defs/sha256"},
+    "artifact_sha256": {"$ref": "#/$defs/sha256"},
+    "tool_contract_sha256": {"$ref": "#/$defs/sha256"},
+    "evaluator_build_sha256": {"$ref": "#/$defs/sha256"},
+    "broker_build_sha256": {"$ref": "#/$defs/sha256"},
+    "database_snapshot_sha256": {"$ref": "#/$defs/sha256"},
+    "policy_version_sha256": {"$ref": "#/$defs/sha256"},
+    "authority_snapshot_sha256": {"$ref": "#/$defs/sha256"},
+    "stage_manifest_sha256": {"$ref": "#/$defs/sha256"},
+    "raw_audit_chain_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

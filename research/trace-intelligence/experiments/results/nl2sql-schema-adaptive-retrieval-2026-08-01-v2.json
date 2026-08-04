@@ -1,0 +1,452 @@
+{
+  "aggregate": {
+    "pooled": {
+      "exact_scope": {
+        "cases": 601,
+        "folds": 4,
+        "mrr": 0.177071,
+        "recall_at_1": 0.086127,
+        "recall_at_10": 0.319787,
+        "recall_at_5": 0.240039,
+        "same_scope_collision_before_target": 0.131148,
+        "wrong_scope_collision_before_target": 0.00176
+      },
+      "frozen_embedding": {
+        "cases": 601,
+        "folds": 4,
+        "mrr": 0.182393,
+        "recall_at_1": 0.093345,
+        "recall_at_10": 0.376003,
+        "recall_at_5": 0.249854,
+        "same_scope_collision_before_target": 0.101321,
+        "wrong_scope_collision_before_target": 0.003416
+      },
+      "lexical": {
+        "cases": 601,
+        "folds": 4,
+        "mrr": 0.168784,
+        "recall_at_1": 0.080066,
+        "recall_at_10": 0.306544,
+        "recall_at_5": 0.226936,
+        "same_scope_collision_before_target": 0.131148,
+        "wrong_scope_collision_before_target": 0.00176
+      },
+      "schema_adaptive_pair_scorer": {
+        "cases": 601,
+        "folds": 4,
+        "mrr": 0.157347,
+        "recall_at_1": 0.07609,
+        "recall_at_10": 0.321425,
+        "recall_at_5": 0.231716,
+        "same_scope_collision_before_target": 0.109423,
+        "wrong_scope_collision_before_target": 0.008698
+      }
+    },
+    "scope_filtered": {
+      "exact_scope": {
+        "cases": 601,
+        "folds": 4,
+        "mrr": 0.212903,
+        "recall_at_1": 0.112351,
+        "recall_at_10": 0.411319,
+        "recall_at_5": 0.279807,
+        "same_scope_collision_before_target": 0.131148,
+        "wrong_scope_collision_before_target": 0.0
+      },
+      "frozen_embedding": {
+        "cases": 601,
+        "folds": 4,
+        "mrr": 0.217356,
+        "recall_at_1": 0.105583,
+        "recall_at_10": 0.447275,
+        "recall_at_5": 0.305847,
+        "same_scope_collision_before_target": 0.101321,
+        "wrong_scope_collision_before_target": 0.0
+      },
+      "lexical": {
+        "cases": 601,
+        "folds": 4,
+        "mrr": 0.212903,
+        "recall_at_1": 0.112351,
+        "recall_at_10": 0.411319,
+        "recall_at_5": 0.279807,
+        "same_scope_collision_before_target": 0.131148,
+        "wrong_scope_collision_before_target": 0.0
+      },
+      "schema_adaptive_pair_scorer": {
+        "cases": 601,
+        "folds": 4,
+        "mrr": 0.201527,
+        "recall_at_1": 0.093609,
+        "recall_at_10": 0.425539,
+        "recall_at_5": 0.296131,
+        "same_scope_collision_before_target": 0.109423,
+        "wrong_scope_collision_before_target": 0.0
+      }
+    }
+  },
+  "claim_boundary": "Schema-grounded public retrieval diagnostic; no SME semantic-alias truth, agent utility, or production embedding claim.",
+  "dataset": {
+    "cases": 601,
+    "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "ddl_sha256": {
+      "broker": "c68ec1740238880aeff7426040f5a486f1af9e0f5d16e6db6f9ff80d1bbbf158",
+      "car_dealership": "c9b89f31478729fc3e85d5765a78e967dabe61570efcfedd0c7dff89b0cbe0c3",
+      "derm_treatment": "4ef82c763a045ebcb4b152f19dd8dc810a05021a52816feab97e90c491d79316",
+      "ewallet": "0633eb0baa077b9cc585499ccc43f430eae73ba0a77fddb52b585a75f249c249"
+    },
+    "documents": 304,
+    "raw_content_committed": false,
+    "source_file_sha256": {
+      "data/instruct_advanced_postgres.csv": "566f5267119df0eceb32054037280c2fd5bc8c21b27e9ff6b068d11a47011934",
+      "data/instruct_basic_postgres.csv": "5a4e6112a5c2554c2963939440af6db41dfcaa3697dc131c380e7f9a1b70d5f7",
+      "data/questions_gen_postgres.csv": "fee829a042766f3e75d1a453cf6ffd7f6830ae9d68967156caa00c647b5efd0d"
+    },
+    "source_root": "external-pinned-defog-checkout"
+  },
+  "folds": [
+    {
+      "held_out_database": "broker",
+      "modes": {
+        "pooled": {
+          "exact_scope": {
+            "cases": 143,
+            "mrr": 0.040073,
+            "recall_at_1": 0.0,
+            "recall_at_10": 0.013986,
+            "recall_at_5": 0.006993,
+            "same_scope_collision_before_target": 0.0,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "frozen_embedding": {
+            "cases": 143,
+            "mrr": 0.015202,
+            "recall_at_1": 0.0,
+            "recall_at_10": 0.034965,
+            "recall_at_5": 0.0,
+            "same_scope_collision_before_target": 0.0,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "lexical": {
+            "cases": 143,
+            "mrr": 0.040073,
+            "recall_at_1": 0.0,
+            "recall_at_10": 0.013986,
+            "recall_at_5": 0.006993,
+            "same_scope_collision_before_target": 0.0,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "schema_adaptive_pair_scorer": {
+            "cases": 143,
+            "mrr": 0.008066,
+            "recall_at_1": 0.0,
+            "recall_at_10": 0.006993,
+            "recall_at_5": 0.0,
+            "same_scope_collision_before_target": 0.0,
+            "wrong_scope_collision_before_target": 0.0
+          }
+        },
+        "scope_filtered": {
+          "exact_scope": {
+            "cases": 143,
+            "mrr": 0.159869,
+            "recall_at_1": 0.104895,
+            "recall_at_10": 0.307692,
+            "recall_at_5": 0.13986,
+            "same_scope_collision_before_target": 0.0,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "frozen_embedding": {
+            "cases": 143,
+            "mrr": 0.142678,
+            "recall_at_1": 0.048951,
+            "recall_at_10": 0.293706,
+            "recall_at_5": 0.195804,
+            "same_scope_collision_before_target": 0.0,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "lexical": {
+            "cases": 143,
+            "mrr": 0.159869,
+            "recall_at_1": 0.104895,
+            "recall_at_10": 0.307692,
+            "recall_at_5": 0.13986,
+            "same_scope_collision_before_target": 0.0,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "schema_adaptive_pair_scorer": {
+            "cases": 143,
+            "mrr": 0.127738,
+            "recall_at_1": 0.048951,
+            "recall_at_10": 0.272727,
+            "recall_at_5": 0.153846,
+            "same_scope_collision_before_target": 0.0,
+            "wrong_scope_collision_before_target": 0.0
+          }
+        }
+      },
+      "test_cases": 143,
+      "train_synthetic_queries": 771
+    },
+    {
+      "held_out_database": "car_dealership",
+      "modes": {
+        "pooled": {
+          "exact_scope": {
+            "cases": 151,
+            "mrr": 0.233326,
+            "recall_at_1": 0.112583,
+            "recall_at_10": 0.509934,
+            "recall_at_5": 0.344371,
+            "same_scope_collision_before_target": 0.165563,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "frozen_embedding": {
+            "cases": 151,
+            "mrr": 0.278048,
+            "recall_at_1": 0.13245,
+            "recall_at_10": 0.629139,
+            "recall_at_5": 0.410596,
+            "same_scope_collision_before_target": 0.112583,
+            "wrong_scope_collision_before_target": 0.006623
+          },
+          "lexical": {
+            "cases": 151,
+            "mrr": 0.228942,
+            "recall_at_1": 0.112583,
+            "recall_at_10": 0.503311,
+            "recall_at_5": 0.344371,
+            "same_scope_collision_before_target": 0.165563,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "schema_adaptive_pair_scorer": {
+            "cases": 151,
+            "mrr": 0.273795,
+            "recall_at_1": 0.125828,
+            "recall_at_10": 0.642384,
+            "recall_at_5": 0.456954,
+            "same_scope_collision_before_target": 0.125828,
+            "wrong_scope_collision_before_target": 0.006623
+          }
+        },
+        "scope_filtered": {
+          "exact_scope": {
+            "cases": 151,
+            "mrr": 0.241358,
+            "recall_at_1": 0.112583,
+            "recall_at_10": 0.543046,
+            "recall_at_5": 0.344371,
+            "same_scope_collision_before_target": 0.165563,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "frozen_embedding": {
+            "cases": 151,
+            "mrr": 0.280457,
+            "recall_at_1": 0.13245,
+            "recall_at_10": 0.642384,
+            "recall_at_5": 0.410596,
+            "same_scope_collision_before_target": 0.112583,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "lexical": {
+            "cases": 151,
+            "mrr": 0.241358,
+            "recall_at_1": 0.112583,
+            "recall_at_10": 0.543046,
+            "recall_at_5": 0.344371,
+            "same_scope_collision_before_target": 0.165563,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "schema_adaptive_pair_scorer": {
+            "cases": 151,
+            "mrr": 0.279228,
+            "recall_at_1": 0.125828,
+            "recall_at_10": 0.662252,
+            "recall_at_5": 0.470199,
+            "same_scope_collision_before_target": 0.125828,
+            "wrong_scope_collision_before_target": 0.0
+          }
+        }
+      },
+      "test_cases": 151,
+      "train_synthetic_queries": 726
+    },
+    {
+      "held_out_database": "derm_treatment",
+      "modes": {
+        "pooled": {
+          "exact_scope": {
+            "cases": 165,
+            "mrr": 0.232178,
+            "recall_at_1": 0.133333,
+            "recall_at_10": 0.424242,
+            "recall_at_5": 0.284848,
+            "same_scope_collision_before_target": 0.218182,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "frozen_embedding": {
+            "cases": 165,
+            "mrr": 0.22861,
+            "recall_at_1": 0.121212,
+            "recall_at_10": 0.466667,
+            "recall_at_5": 0.321212,
+            "same_scope_collision_before_target": 0.236364,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "lexical": {
+            "cases": 165,
+            "mrr": 0.21333,
+            "recall_at_1": 0.109091,
+            "recall_at_10": 0.406061,
+            "recall_at_5": 0.260606,
+            "same_scope_collision_before_target": 0.218182,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "schema_adaptive_pair_scorer": {
+            "cases": 165,
+            "mrr": 0.20542,
+            "recall_at_1": 0.115152,
+            "recall_at_10": 0.375758,
+            "recall_at_5": 0.272727,
+            "same_scope_collision_before_target": 0.248485,
+            "wrong_scope_collision_before_target": 0.0
+          }
+        },
+        "scope_filtered": {
+          "exact_scope": {
+            "cases": 165,
+            "mrr": 0.239841,
+            "recall_at_1": 0.133333,
+            "recall_at_10": 0.442424,
+            "recall_at_5": 0.29697,
+            "same_scope_collision_before_target": 0.218182,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "frozen_embedding": {
+            "cases": 165,
+            "mrr": 0.228896,
+            "recall_at_1": 0.121212,
+            "recall_at_10": 0.472727,
+            "recall_at_5": 0.321212,
+            "same_scope_collision_before_target": 0.236364,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "lexical": {
+            "cases": 165,
+            "mrr": 0.239841,
+            "recall_at_1": 0.133333,
+            "recall_at_10": 0.442424,
+            "recall_at_5": 0.29697,
+            "same_scope_collision_before_target": 0.218182,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "schema_adaptive_pair_scorer": {
+            "cases": 165,
+            "mrr": 0.208965,
+            "recall_at_1": 0.115152,
+            "recall_at_10": 0.393939,
+            "recall_at_5": 0.278788,
+            "same_scope_collision_before_target": 0.248485,
+            "wrong_scope_collision_before_target": 0.0
+          }
+        }
+      },
+      "test_cases": 165,
+      "train_synthetic_queries": 645
+    },
+    {
+      "held_out_database": "ewallet",
+      "modes": {
+        "pooled": {
+          "exact_scope": {
+            "cases": 142,
+            "mrr": 0.202707,
+            "recall_at_1": 0.098592,
+            "recall_at_10": 0.330986,
+            "recall_at_5": 0.323944,
+            "same_scope_collision_before_target": 0.140845,
+            "wrong_scope_collision_before_target": 0.007042
+          },
+          "frozen_embedding": {
+            "cases": 142,
+            "mrr": 0.20771,
+            "recall_at_1": 0.119718,
+            "recall_at_10": 0.373239,
+            "recall_at_5": 0.267606,
+            "same_scope_collision_before_target": 0.056338,
+            "wrong_scope_collision_before_target": 0.007042
+          },
+          "lexical": {
+            "cases": 142,
+            "mrr": 0.192792,
+            "recall_at_1": 0.098592,
+            "recall_at_10": 0.302817,
+            "recall_at_5": 0.295775,
+            "same_scope_collision_before_target": 0.140845,
+            "wrong_scope_collision_before_target": 0.007042
+          },
+          "schema_adaptive_pair_scorer": {
+            "cases": 142,
+            "mrr": 0.142106,
+            "recall_at_1": 0.06338,
+            "recall_at_10": 0.260563,
+            "recall_at_5": 0.197183,
+            "same_scope_collision_before_target": 0.06338,
+            "wrong_scope_collision_before_target": 0.028169
+          }
+        },
+        "scope_filtered": {
+          "exact_scope": {
+            "cases": 142,
+            "mrr": 0.210546,
+            "recall_at_1": 0.098592,
+            "recall_at_10": 0.352113,
+            "recall_at_5": 0.338028,
+            "same_scope_collision_before_target": 0.140845,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "frozen_embedding": {
+            "cases": 142,
+            "mrr": 0.217394,
+            "recall_at_1": 0.119718,
+            "recall_at_10": 0.380282,
+            "recall_at_5": 0.295775,
+            "same_scope_collision_before_target": 0.056338,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "lexical": {
+            "cases": 142,
+            "mrr": 0.210546,
+            "recall_at_1": 0.098592,
+            "recall_at_10": 0.352113,
+            "recall_at_5": 0.338028,
+            "same_scope_collision_before_target": 0.140845,
+            "wrong_scope_collision_before_target": 0.0
+          },
+          "schema_adaptive_pair_scorer": {
+            "cases": 142,
+            "mrr": 0.190177,
+            "recall_at_1": 0.084507,
+            "recall_at_10": 0.373239,
+            "recall_at_5": 0.28169,
+            "same_scope_collision_before_target": 0.06338,
+            "wrong_scope_collision_before_target": 0.0
+          }
+        }
+      },
+      "test_cases": 142,
+      "train_synthetic_queries": 594
+    }
+  ],
+  "protocol": {
+    "C": 0.1,
+    "adapter": "regularized logistic pair scorer over schema-grounded query/document product+difference features",
+    "candidate_pool": "scope-filtered and all public schema objects across four databases",
+    "embedding_model": "nomic-embed-text:latest",
+    "hard_negatives": "same-surface, same-table, high-cosine, and granularity-conflict objects",
+    "split": "leave-one-database-family-out",
+    "training_positives": "schema-generated table/column queries"
+  },
+  "result_sha256": "e8c613871f69978ee344c68b2dd6ba5e555e04d64858ceef8c35a03e877bf058",
+  "schema_version": "frankengate-nl2sql-schema-adaptive-retrieval-v2"
+}

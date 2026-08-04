@@ -1,0 +1,12 @@
+{
+  "schema_version": "frankengate-enterprise-trace-learning-pilot-conformance-v1",
+  "contract_sha256": "0e488fd166aa31763f67d0364531107830b80602697cf02e59b80b044ee6c2f0",
+  "manifest_sha256": "39112a935680352e4fe31bde68cc85375ff615ef78215f3e901b41c2d127b673",
+  "raw_content_committed": false,
+  "structural_valid": true,
+  "promotion_ready": false,
+  "promotion_note": "Plan conformance does not prove that an authorized cohort, labels, replay outcomes, or user outcomes exist.",
+  "errors": [
+
+  ]
+}

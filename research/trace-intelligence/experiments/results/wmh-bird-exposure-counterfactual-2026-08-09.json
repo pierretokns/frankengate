@@ -1,0 +1,1496 @@
+{
+  "aggregate": {
+    "base_replay_counts": {
+      "base_ok": 149
+    },
+    "counterfactual_execution_errors": 1210,
+    "counterfactual_pairs": 1236,
+    "counterfactual_result_matches": 4,
+    "counterfactual_result_mismatches": 22,
+    "database_families": 11,
+    "selected_successful_tasks": 149
+  },
+  "claim_boundary": {
+    "counterfactual_interchangeability_negatives_measured": true,
+    "enterprise_alias_quality_established": false,
+    "reason": "Replay failures and result mismatches show that exposed tables are not interchangeable with the recorded table under this SQL. They do not prove that a table is semantically irrelevant to the user's intent.",
+    "semantic_negative_labels_established": false,
+    "validated_artifact_utility_measured": false
+  },
+  "cohort": {
+    "candidate_pool": "schema tables exposed by the trace",
+    "counterfactual": "replace each used table with each exposed-but-unused table and replay on SQLite",
+    "database_families": 11,
+    "selection": "one deterministic reward=1 trace per base task",
+    "task_count": 149
+  },
+  "result_sha256": "586304c768f74534807765e592129f025b3b3c261703c1e36e2a4507962be6a8",
+  "retrieval": {
+    "arms": {
+      "lexical": {
+        "cases": 71,
+        "mrr": 0.77566,
+        "recall_at_1": 0.676056,
+        "recall_at_10": 1.0,
+        "recall_at_5": 0.887324
+      },
+      "lexical_plus_termhood_alias": {
+        "cases": 71,
+        "mrr": 0.788514,
+        "recall_at_1": 0.676056,
+        "recall_at_10": 1.0,
+        "recall_at_5": 0.929577
+      }
+    },
+    "folds": [
+      {
+        "db_name": "california_schools",
+        "evaluation_tasks": 6,
+        "mapped_term_count": 202,
+        "term_candidate_count": 282,
+        "train_tasks": 7
+      },
+      {
+        "db_name": "card_games",
+        "evaluation_tasks": 6,
+        "mapped_term_count": 216,
+        "term_candidate_count": 316,
+        "train_tasks": 6
+      },
+      {
+        "db_name": "codebase_community",
+        "evaluation_tasks": 6,
+        "mapped_term_count": 233,
+        "term_candidate_count": 322,
+        "train_tasks": 7
+      },
+      {
+        "db_name": "debit_card_specializing",
+        "evaluation_tasks": 8,
+        "mapped_term_count": 181,
+        "term_candidate_count": 294,
+        "train_tasks": 8
+      },
+      {
+        "db_name": "european_football_2",
+        "evaluation_tasks": 7,
+        "mapped_term_count": 240,
+        "term_candidate_count": 332,
+        "train_tasks": 7
+      },
+      {
+        "db_name": "financial",
+        "evaluation_tasks": 7,
+        "mapped_term_count": 314,
+        "term_candidate_count": 409,
+        "train_tasks": 7
+      },
+      {
+        "db_name": "formula_1",
+        "evaluation_tasks": 6,
+        "mapped_term_count": 316,
+        "term_candidate_count": 409,
+        "train_tasks": 7
+      },
+      {
+        "db_name": "student_club",
+        "evaluation_tasks": 7,
+        "mapped_term_count": 303,
+        "term_candidate_count": 412,
+        "train_tasks": 8
+      },
+      {
+        "db_name": "superhero",
+        "evaluation_tasks": 7,
+        "mapped_term_count": 248,
+        "term_candidate_count": 341,
+        "train_tasks": 8
+      },
+      {
+        "db_name": "thrombosis_prediction",
+        "evaluation_tasks": 7,
+        "mapped_term_count": 374,
+        "term_candidate_count": 487,
+        "train_tasks": 7
+      },
+      {
+        "db_name": "toxicology",
+        "evaluation_tasks": 4,
+        "mapped_term_count": 188,
+        "term_candidate_count": 252,
+        "train_tasks": 5
+      }
+    ]
+  },
+  "rows": [
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 21,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "006e135c04af6e6a22a33fcaf6f3f5468b94a740d9df41036d7e52d325250064",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 21,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "083857c3bdd8d99c65ed585e72d5119a36a5fa11976c098e637be3b17f12eac4",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 9,
+      "counterfactual_error": 9,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "104ea3b5698436c9cf695d43a1b46b47b5fb89288bc9114e29ce6790ebf3447d",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 5,
+      "db_name": "card_games",
+      "exposed_tables": 6,
+      "trace_hash": "0938023d953e88bf838222132820ca343df436dfdde77c379affc6b7fa550437",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "card_games",
+      "exposed_tables": 4,
+      "trace_hash": "261b90c90014d46c381f1c897cba63abd52369ed4531c7d567f7ad07bae2d52b",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "card_games",
+      "exposed_tables": 3,
+      "trace_hash": "2bf85530248f2fc5d833d4f3ede7f3881fc40ba71bd8d938a509a8568b2bdde4",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "card_games",
+      "exposed_tables": 3,
+      "trace_hash": "5c5b44d9d48d2104ccfe2ba6ee9e0720902a51fbd39f461eb6fd2604948ec10a",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 8,
+      "counterfactual_error": 16,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "09cf18a5efaf954c9c3cf36f184f4175f7a3d0c8798ea91e7605acd76f048912",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 1,
+      "db_name": "european_football_2",
+      "exposed_tables": 2,
+      "trace_hash": "0c87fc95e803c9165b6448d8e7493d155d022e6812c0193f66e823945d7dbe0f",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "european_football_2",
+      "exposed_tables": 6,
+      "trace_hash": "0322a51476bf261d17fe5ac0ee22b657f1a17c0d92ff6f68a9587fc8556e95d4",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "european_football_2",
+      "exposed_tables": 2,
+      "trace_hash": "489f51346d1a73230ee106bdd929e2b9a424bcdb1e61975eb914948ca938c880",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "european_football_2",
+      "exposed_tables": 6,
+      "trace_hash": "63231ca6d1d14f72598ea4f7c90412c91e07bb746be1a537a25b596283443f1e",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "european_football_2",
+      "exposed_tables": 6,
+      "trace_hash": "69dbc29b86c4495af1f892b6def40b60d62c0bbca9351dc30bb2965bb2bc0a42",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 8,
+      "counterfactual_error": 16,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "07c616108489b6626219b654e8ca66e76b7607a3d9d8440d54692f40ebd70813",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 5,
+      "db_name": "european_football_2",
+      "exposed_tables": 6,
+      "trace_hash": "601b32b2945a2350b4a935ec9d8401ddaddd5f2a2cef6bbce19732ffeb00dd09",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 1,
+      "db_name": "european_football_2",
+      "exposed_tables": 2,
+      "trace_hash": "12d3489e3a04def989305a4ee4be4f21a097ffefcf2c2b85b555bf20a0e7d032",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "european_football_2",
+      "exposed_tables": 2,
+      "trace_hash": "6239f4ed7e7f1d9cc8a29c5f2b2b9cd7d026b3cdec10b693c41676f32287189b",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "european_football_2",
+      "exposed_tables": 6,
+      "trace_hash": "268b13228632a949759ec6fabdfd819d6bd66660c8bf8df80e515e4b2291414e",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 0,
+      "db_name": "european_football_2",
+      "exposed_tables": 2,
+      "trace_hash": "73e9f5c4fcacb2d5ae4bde5da0153f6883d618de0e57e1f231a6e5d77fdd6a06",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 5,
+      "db_name": "european_football_2",
+      "exposed_tables": 6,
+      "trace_hash": "0e5e0741cdcffb2971fa73efe80686c7ac7367a5b50cd0d428076b77cddd4d1b",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 10,
+      "db_name": "european_football_2",
+      "exposed_tables": 7,
+      "trace_hash": "8bd260c8c32964ff468f11c46edbb475fbe41f8c99ad1c440ae483adada96970",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "european_football_2",
+      "exposed_tables": 6,
+      "trace_hash": "1d1c312d796c95d01ce2dc4fe55ffc72957530e31d25395e4d3557deb29964c4",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "european_football_2",
+      "exposed_tables": 6,
+      "trace_hash": "58474f6c0b565c0ca9c1448f76683b7b9b54ca27c19bb56f345832388cf7288e",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "0f85090dd265b1563c4b73b74029f3e022e01339f8317eae4915a8d2c7d782d8",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "805bb251ad5e458b2b8724e7ff2db97bd8752c127ff1bed9ee5dc68cc859eef2",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "7fe80625cac0e352d8834425484458af1d62f19ce4bf78255381528bada2ea67",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "274c2223f9c8802e838309e59ff956327a700f35fe196899bef38f795c406a74",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "toxicology",
+      "exposed_tables": 4,
+      "trace_hash": "0d108bbe97f2a16e56b607c1b09f99d59d1b86450b29664e6942fa78c039718b",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "b2f2faeb6fa689aba866c5b7ce137cda1f0e2f6d0e678799f3949ee50159fa9b",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "77eb6af8cb2ec29858e9277ed7071f69f7a9cf141bcd7effa87379f8cc0f545d",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "70fbe74d4b359879d7a6a16a14564cbad473c05b9a2eefe4703d2e476cb727e8",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "1385d8c96db767adb13fc0d45dfb59c48708067dbcf78a4644ea444a19786d04",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "30a2c96e4a2e6a0902bf95db43b47299245f1c41ae793f379d10505a221fa49d",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "158bc7b85a14c84f88d4a3c8128c0a7ecbcc8ef268889c1c6e18cfff441f2e88",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "7ccb12a4f6a4eb76c81cf6e048c04a88046cb384ca74588ffbf527c97ff37e89",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "toxicology",
+      "exposed_tables": 4,
+      "trace_hash": "10297ca173febe1f7ba2e404f873534ab7adf25a95e76326e5e3e64c8f01fbcf",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "55beb487d7d14beace1719f85035e51120f265c4f34f271be55f02c92cdeb64e",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "42bc968e91f2889ab80e1967699e48772480278624618d8ce004aac35b28cc89",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 2,
+      "db_name": "thrombosis_prediction",
+      "exposed_tables": 3,
+      "trace_hash": "14c9d451400d3d94f40df00231436b1b670654e47792cb2eab49d5544b0ffe5d",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 10,
+      "counterfactual_mismatch": 2,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "1851e381aceafe25f46fc4fcdb345d46ca8cc719eb5fa9d40beebcdaa8c17843",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 11,
+      "counterfactual_mismatch": 1,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "25ccb2a2bc649d9de9004a728ed5bef8bd1d561b8ca234b921bccad3a1d134b5",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "2886b47da879312afe07cfebb25a5d390fd8de20beb18a536d955cc5e9de770c",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "toxicology",
+      "exposed_tables": 3,
+      "trace_hash": "0140dd957e53222ce1b6e2e19e17eb8be90e900392352e2acd2cadabb972ad2b",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "313cb1e577fcb38548e6786bd192c41f127c3f97a60da60d209990979ba91567",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 4,
+      "db_name": "codebase_community",
+      "exposed_tables": 4,
+      "trace_hash": "e50ed71261da7c1ae0028db761b20e5ed7d792b14698e58186a86ee9971f66d4",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 10,
+      "counterfactual_mismatch": 2,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "58ffcd901391822f07ebcd7d0b60ecee36ae4831ded047cdcb6f8d6415884a3e",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 7,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "1d9ed697663fcc8c6836310b2a6ff55c8d84e9bc3fe501d75860bb69c6b17bb3",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 9,
+      "counterfactual_mismatch": 1,
+      "db_name": "codebase_community",
+      "exposed_tables": 7,
+      "trace_hash": "5aa4981dbf5aea94fba039c2902fc0771d6357d1fd2aba427bfa8d3fa4b7d219",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "3a83f36d0ab95dc5557e6117b9345545d9d9c57178ce0589e18fd9b0255dfdd3",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "1dd848c572f58ab967fa5b6ff1ff2cb79b2d71c9cd2e44411344e66e63dc72a9",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 0,
+      "db_name": "codebase_community",
+      "exposed_tables": 1,
+      "trace_hash": "187222ab1a19d8dfe9778a683f401205d29a000e077ff79c4a5da707157018e2",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "2f3e91b31aadc1526db8b0d00cba342eb4bc9b473efd651cf127266ac9386e49",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 14,
+      "counterfactual_mismatch": 1,
+      "db_name": "codebase_community",
+      "exposed_tables": 8,
+      "trace_hash": "845d036f1feb9f4637cb8e3b63a24fb1c12f9359690920a950b28f8fc6fd5730",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 10,
+      "db_name": "codebase_community",
+      "exposed_tables": 7,
+      "trace_hash": "174b54bb1f1941ced298a1e8ea4bd7d5e16bf9a4f81682483369064f9403fb9b",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "3e6999f175fa7537347927f0308b787b374193c73939c1d02819195f0a9cf2cf",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "toxicology",
+      "exposed_tables": 4,
+      "trace_hash": "0e42ffb93547a6d8e9f4334cdd0aadb5a95df99fb5b69947ed69e5cd10f7f966",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 1,
+      "db_name": "financial",
+      "exposed_tables": 2,
+      "trace_hash": "01ce6322bb06b79ba520bba63eb318e4313d8e99fba218df7891d2cee5d72276",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "82e21449b4cf06c04777baae559c08f64522660c0651edaf20d6d516f5b82539",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 14,
+      "counterfactual_match": 1,
+      "counterfactual_mismatch": 1,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "04f8192498fb4d135557d0a0762b9ed5be8c29a35995d09d3960bd2d97bd5076",
+      "used_tables": 4
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "4ca042fd29c29792a6748a174a9848c33e0682c571dffd6becff7b45ecea9dc2",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 11,
+      "counterfactual_mismatch": 1,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "2ca00a52204c03e755609f1ca53abd2a297b2dc7bc13c965c0018fa51ead4860",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "00feba51b8526f5936bef13807620ecafa6aa754480591b1ff6330af0d611d40",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 11,
+      "counterfactual_match": 1,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "7f5ccbc52bbebd424ab67282483fff26d12894398c019d1414a8a4c88e2a4daf",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 14,
+      "counterfactual_match": 1,
+      "counterfactual_mismatch": 1,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "2502d9dbf56dfd9de181ddfdb4e1717d1c477a2452da631728800124d95c4c8b",
+      "used_tables": 4
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "financial",
+      "exposed_tables": 4,
+      "trace_hash": "194fc95d45b029aa08b234303a3be4f7ed68ad5cd2f2d9d13ec82ced2464bd19",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 11,
+      "counterfactual_mismatch": 1,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "56896884040b349ff43e9b12e6a8909d727c289ecdb8ec2baec5ace1094bd175",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "0b8e58c38435a15dd3151f63a30bf9eb35200aad09a2e2da7950642a87e6c5fa",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 16,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "25d0ef5139855740eccec693aab933365612c64b6411310b9ed5a6e0c945ce4b",
+      "used_tables": 4
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 11,
+      "counterfactual_mismatch": 1,
+      "db_name": "financial",
+      "exposed_tables": 8,
+      "trace_hash": "0546dc59bad1aab664fce5826ec1435715b8e5e14024120153aa464c8c08585a",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 24,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "001763b62d326666335ed6d252d07738430df94e61066b3dd622bdd56c4d6252",
+      "used_tables": 4
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 4,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "064a22f9e22261a587dea910479dc4f96cfab72b7f2de74cf098198dfe806d73",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "2960a91086157607165bcabcf62e79e7389d07b5b5dea56416607597a8b5fb52",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "43c7ab0a629bb6dd8122530abefe9b7637921163ceabdb7cfc93da9ab4474389",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 5,
+      "counterfactual_mismatch": 1,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "0b9ae19e31d12837ff4cabab0beefa4c355e78aa1fe6a3f31e7463f07e4c5cb9",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "0e19d122ccd12b578b97b1b6a97f244eba96a00e7e252c903920a9884897975e",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 4,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "16eb15c6f1618e015387d4626833a67931ca19d611b2c03711faecc21ab8912e",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "00327d8bddc1a3658a13dd94419a8762c8b38e0198da4d82c94d16253b36869e",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "05fc21ab0fd4b883f67c1255d532ce2d43ede7f656687d1bac08924eabedc1b0",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 4,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "89e3734c746d94f9c158dccc20a4cc91f214724fcf7b7619c8ee93bbff42311b",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "toxicology",
+      "exposed_tables": 4,
+      "trace_hash": "4355feb4d58fef6076e2660760403d546295d93ced04ee545d9cea63e0e35050",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "26f789ae99d6d96b0e0e096475a68a3886351e867f74fb24c92b14fbc5ce9cc1",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "036ea2da07b9ae1807cd7dc63891f9530cf0b1b9993141d6cbfcefb5c8a06d93",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "aeed57ce10158aec0986755e594b937a784b6daf2f37e7ca2401da7c4cb6df5d",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "0373f5947348f642e75c055bf2bf0bddb07394d2d1ee728b56389bcad6bed776",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "47400173e8f53cdc9323aea219de8e119bcccf95e31b7d7882a8266d5aa572c1",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "toxicology",
+      "exposed_tables": 4,
+      "trace_hash": "02bce047f5c0fb73f3c32e440b03d02ff9ec0a6b00eeb414bb7451879a6243fd",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "0a43096399d3f3a6ca23c4b689b42d6132307c2f8581b5b078e11e1e254c2870",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "debit_card_specializing",
+      "exposed_tables": 5,
+      "trace_hash": "81f97e9c4302071a3abe06c14816cacae70ad34190c385d2500086f06da57206",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 3,
+      "db_name": "toxicology",
+      "exposed_tables": 4,
+      "trace_hash": "0c9c47eb7daf6bb52544fd988833428a97c1f59ca1227a71361c292b288a25a8",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 15,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "00ae47e4fa2e5b8d194fa1b6b3198c09367a3b513f32e38161d426c81da33b42",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "00faa6d38157a4b1a23deeb490d7718a419e653d2c4a8b43c23e9d721e85d0db",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 7,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "2f878166929ee5fc44ddf30ef9a5696c3b205ce4b76b1ce8a47114f49c83ae4c",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 21,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "06039a0d9ee00226d24c58c9c9bb8d46b7c172bf08258ed2b69c0479bfdc961f",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 7,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "089dbadfa52abab3045cdaeed58d5625c41ea72a5852db7939a921ba413d92c2",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "005cf091b44cf8ca0e1a5bc8abf2fed60d1bc4cf710a9825f6b04206f2d6cb86",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "065d9796ed7c6af62d14947814be687b232d273376a8d661815ffb37d89196bc",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "1225fcbad93735ea60b77f2395f40c1713d665a0bc77bc58da7bed8e634c65cf",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "4fc4793079487f01b174eb6c092903f86c0b9809efae46374630b10d447feda7",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 7,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "0546de27536834d5b2de9b000fd39246b82f21571be9414fb7dbec7a6c4c373e",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "student_club",
+      "exposed_tables": 6,
+      "trace_hash": "0a0a95d02b4461d3f99889cb3694250b2e7725d5dc136f9c8b8f068ea223758c",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "09253cde00b2e8bc43be77c7d8f59a27f1f77ef3bff5e5c8260e42b823c57c5d",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 15,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "10153c1c26acda37bd7dc3fb281e1069233f28373dba29afbe9f3e3a4b1622a8",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "2d8aa9f737a94cb7d598df86c7b286a32b232987bf470851a74c88d7f2844141",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 24,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "0cf9da8b0fa14a248667df5f2144a1318bf2fec2639801d3dba15ea2d5023c86",
+      "used_tables": 4
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 1,
+      "counterfactual_mismatch": 1,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "1cff637e263a191dcc54d9d3ab7b10e6e287aada01fed92fe13ea8f66488cf92",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "116f4915b6038699dd6461c5c7a35eba244bdce8305c7e27f0028f63196211a9",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "1029b2b50f624627856ce47cff24cfa181ea039eb4eaed290382227d59706717",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "09f06c87ac92bb292662dcfa5105eb32db479bb0cb773c440144e76770856165",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "001845aa6d219cac6437410c0163045b7c4fcd38ecee2beed693b383b2a94143",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "005069b878a57bae45869857a343b636a928e7ade68d7320ca1461739330dbc7",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "1b9e5ea6acd544b6239780fa731cb3b3d28bee059592d458b3ba71f6c05ab04f",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 9,
+      "counterfactual_error": 9,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "03d046f4304114628dc26547e277ea9ffcedb5e404fbda70ca10bca59874170f",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "012b467cc36ea50bf68442c01030551bef56ec8a08fbcab7edcce734666ea7d7",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "04674e0af1da00555671ad8975843736653e6bd0646be6f7972b7be206280980",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 8,
+      "counterfactual_error": 16,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "1852e06cfc5379debc3d688608c9fdca6eba114af7e8792d2af121240546327a",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 21,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "4d693d18157b678939be2054a852db1dc701ea28178dcb9f10cf6dd8cff5eda5",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 3,
+      "db_name": "toxicology",
+      "exposed_tables": 4,
+      "trace_hash": "173c27c2c791eeda8873e976902e876dcab392d4438845bf370c90ab0da4e22e",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "toxicology",
+      "exposed_tables": 4,
+      "trace_hash": "d1c284f6a60692f0309734f0446ada04660c92903dd0da9718de7717892921e9",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 21,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "07af2671fc79c9617ede227cd97e40743b69bde5289ec3523e7cd79d19669e55",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 15,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "0386018a3991121093c8f473904ad6cd02866042d2c6f7efb0ff545930dc838f",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 12,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "05f5f55280c4ad5a9bcd78aee5cf3c9d031fc869a328360b03523458efab858a",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 5,
+      "counterfactual_error": 15,
+      "db_name": "student_club",
+      "exposed_tables": 8,
+      "trace_hash": "0ee202cefeeba2c0ab8abf49695a94d321433020df514b7950590ed24b31bdbd",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "2461a9a9f98179c90eec22972fefebfd4781dd302c131f534c1b9e00a4572179",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "03f27ca3b44f5779833f24192410df72e918ad81c6ba4ea55ba0ea7f19f6978e",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "california_schools",
+      "exposed_tables": 3,
+      "trace_hash": "b497082ab43b866bd21bc28ac7aabd17290062046745cbcc84c104da356b21f1",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "formula_1",
+      "exposed_tables": 4,
+      "trace_hash": "537b2d1ea21bb2d801a9e50b5233a0b563c577335747baffce9ecfe1a733936b",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 10,
+      "counterfactual_error": 28,
+      "counterfactual_match": 1,
+      "counterfactual_mismatch": 1,
+      "db_name": "formula_1",
+      "exposed_tables": 13,
+      "trace_hash": "17795643538dabb92f3761aa3a8ebeabe3f9b0a1c37a5a01710661875caa9634",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 6,
+      "counterfactual_error": 6,
+      "db_name": "superhero",
+      "exposed_tables": 7,
+      "trace_hash": "1187443c425bf19b5476c73d428c4694765be1cbac9faf485fe0e38b8de57252",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 5,
+      "counterfactual_mismatch": 1,
+      "db_name": "formula_1",
+      "exposed_tables": 5,
+      "trace_hash": "5331bcc9ff38579d283074586b82452c15d54a839507d9975871f1e74d7616d9",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 3,
+      "counterfactual_error": 6,
+      "db_name": "formula_1",
+      "exposed_tables": 5,
+      "trace_hash": "0d76bf3ab80496c6dc22c3b21e39cd7eb6685c6c21fa5866cb2bacc3bcd57b75",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 10,
+      "counterfactual_error": 28,
+      "counterfactual_mismatch": 2,
+      "db_name": "formula_1",
+      "exposed_tables": 13,
+      "trace_hash": "264dea2cbad8c254cf450aaf04f031dea0d12ff3e5c1ac63ef6e06c721b07c5e",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 12,
+      "counterfactual_error": 12,
+      "db_name": "formula_1",
+      "exposed_tables": 13,
+      "trace_hash": "7aed4d0af9b7374f1b75542585558489cdbe87974f45e798376e23b4183a2b6f",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 11,
+      "counterfactual_error": 22,
+      "db_name": "formula_1",
+      "exposed_tables": 13,
+      "trace_hash": "7d470cce9774387ec8b44ef6df42af2a12000a9321741d02403a6978a1bec034",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 9,
+      "counterfactual_error": 9,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "0dc21f7d714a4e8b5dbe467ea8f65c72aa08e3faa312f443674ee6c6c1955a56",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 8,
+      "counterfactual_error": 15,
+      "counterfactual_mismatch": 1,
+      "db_name": "formula_1",
+      "exposed_tables": 10,
+      "trace_hash": "04dc5aa21e3eb2aa1253429b0f05878369a9d62a8d63f11f2b7bc7b25de567d9",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 14,
+      "db_name": "formula_1",
+      "exposed_tables": 9,
+      "trace_hash": "031025dddcd72f7f39f8f0dd4e533d7dd91220c98ddd2d2ceff561f761adc2ee",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 8,
+      "counterfactual_error": 16,
+      "db_name": "formula_1",
+      "exposed_tables": 10,
+      "trace_hash": "0dd2aec3cd252bb3a13bbfbbdb9398d428f8dc7ba8f7849642750ea383fa6de9",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 9,
+      "counterfactual_error": 18,
+      "db_name": "formula_1",
+      "exposed_tables": 11,
+      "trace_hash": "3912ab1de5d9953966837f91689f3d85e96d044facb1a9cc56675dbabc3a95f8",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 7,
+      "counterfactual_error": 21,
+      "db_name": "formula_1",
+      "exposed_tables": 10,
+      "trace_hash": "5bd44c1371bb347ecc29464c1f57b632be7a6a8af6b931b665d64a70bee7cf93",
+      "used_tables": 3
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 8,
+      "counterfactual_error": 8,
+      "db_name": "formula_1",
+      "exposed_tables": 9,
+      "trace_hash": "5bc2aaaf93324c86ca4f39a563a639e04e520c6581a88f2ec4301f8306002f7c",
+      "used_tables": 1
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 8,
+      "counterfactual_error": 16,
+      "db_name": "superhero",
+      "exposed_tables": 10,
+      "trace_hash": "04d59371fe583a6199e4f6bf1408d0180fe478147859aefbeb6a8cd1ed1c0213",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 2,
+      "db_name": "card_games",
+      "exposed_tables": 3,
+      "trace_hash": "22d1bc550a6ea972f3836a4ffff4bc0d4fc343cb50bd6b97978c645b3d72a0a4",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "card_games",
+      "exposed_tables": 6,
+      "trace_hash": "05c78a53429eecf178459b01adeb878e7d11e118d747d3c1098fe5876e5abc1b",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 4,
+      "db_name": "card_games",
+      "exposed_tables": 3,
+      "trace_hash": "0af8c9413a62e0197a500b90fbb63c3630dec6b9095be987b941a93831dc0921",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 7,
+      "counterfactual_mismatch": 1,
+      "db_name": "card_games",
+      "exposed_tables": 6,
+      "trace_hash": "09f7b27e50944b4ff6faf45625bf9c00e8c4dd92a8dcb7d2eb39be9d8deb2c3f",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 1,
+      "counterfactual_error": 1,
+      "counterfactual_mismatch": 1,
+      "db_name": "card_games",
+      "exposed_tables": 3,
+      "trace_hash": "2efddc88317dffec05a7e0f7dfabcc8710045459e114c148374aab9f7d7d47fc",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 8,
+      "db_name": "card_games",
+      "exposed_tables": 6,
+      "trace_hash": "357f49b9ba5f47f5fdfe12094da0a1c0a83b50da9c7a78793eca33c9bad09ac6",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 4,
+      "counterfactual_error": 7,
+      "counterfactual_mismatch": 1,
+      "db_name": "card_games",
+      "exposed_tables": 6,
+      "trace_hash": "451f2bb6dbce99b1bbe17312e06d454c2852bd4c6d17e35ca9b26256532a267c",
+      "used_tables": 2
+    },
+    {
+      "base_replay": "ok",
+      "candidate_tables": 2,
+      "counterfactual_error": 2,
+      "db_name": "card_games",
+      "exposed_tables": 3,
+      "trace_hash": "56911418e846736233962334a87759b7c3cc360f6a2f0c94b70c92eb2abaae6e",
+      "used_tables": 1
+    }
+  ],
+  "schema_version": "frankengate-wmh-bird-exposure-counterfactual-v1",
+  "source": {
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "raw_content_committed": false,
+    "sqlite_root": "external-pinned-bird-minidev",
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+  }
+}

@@ -1,0 +1,437 @@
+{
+  "arms": {
+    "explorer": {
+      "compatible_mrr": 1.0,
+      "compatible_recall_at_1": 1.0,
+      "compatible_recall_at_10": 1.0,
+      "compatible_recall_at_5": 1.0,
+      "compatible_selected_rate": 0.958333,
+      "invalid_selected_count": 0.125,
+      "records": 8,
+      "selected_count": 2.625,
+      "strict_mrr": 1.0,
+      "strict_recall_at_1": 1.0,
+      "strict_recall_at_10": 1.0,
+      "strict_recall_at_5": 1.0
+    },
+    "lexical": {
+      "compatible_mrr": 0.8375,
+      "compatible_recall_at_1": 0.75,
+      "compatible_recall_at_10": 1.0,
+      "compatible_recall_at_5": 1.0,
+      "compatible_selected_rate": 0.418006,
+      "invalid_selected_count": 3.875,
+      "records": 8,
+      "selected_count": 6.375,
+      "strict_mrr": 0.8375,
+      "strict_recall_at_1": 0.75,
+      "strict_recall_at_10": 1.0,
+      "strict_recall_at_5": 1.0
+    }
+  },
+  "claim_boundary": {
+    "enterprise_skill_transfer_measured": false,
+    "reason": "The evaluator uses independent SQLite replay on a public BIRD proxy. Result-preserving substitutions are query-local compatibility labels, not enterprise intent or authorization truth.",
+    "replay_compatibility_measured": true,
+    "semantic_alias_quality_established": false,
+    "separate_sql_explorer_measured": true,
+    "validated_artifact_utility_established": false
+  },
+  "dataset": {
+    "candidate_pool": "all tables exposed in that trace",
+    "database_families": [
+      "california_schools",
+      "card_games",
+      "codebase_community",
+      "debit_card_specializing",
+      "european_football_2",
+      "financial",
+      "formula_1",
+      "student_club"
+    ],
+    "selected_cases": 8,
+    "selection": "first replayable successful trace by database name",
+    "target": "recorded SQL table references; compatibility adds result-preserving substitutions"
+  },
+  "failures": 0,
+  "protocol": {
+    "explorer_sees_gold_targets": false,
+    "explorer_sees_replay_outcomes": false,
+    "explorer_sees_sql": false,
+    "max_shortlist": 8,
+    "model": "gpt-5.6-luna",
+    "raw_model_outputs_external": true,
+    "run_label": "r1",
+    "tool_endpoints_invoked": false
+  },
+  "result_sha256": "58b0ab3606c3abc45193f7850e13ee112bb9968e05fdfc8a3989b8fed01529a0",
+  "rows": [
+    {
+      "candidate_count": 3,
+      "case_index": 0,
+      "db_name": "california_schools",
+      "explorer": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 1.0,
+        "invalid_selected_count": 0,
+        "pool_size": 3,
+        "selected_count": 2,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "lexical": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.6666666666666666,
+        "invalid_selected_count": 1,
+        "pool_size": 3,
+        "selected_count": 3,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "prompt_chars": 858,
+      "replay_equivalent_tables": [],
+      "target_tables": [
+        "satscores",
+        "schools"
+      ],
+      "trace_hash": "001845aa6d219cac6437410c0163045b7c4fcd38ecee2beed693b383b2a94143"
+    },
+    {
+      "candidate_count": 6,
+      "case_index": 1,
+      "db_name": "card_games",
+      "explorer": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 1.0,
+        "invalid_selected_count": 0,
+        "pool_size": 6,
+        "selected_count": 2,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "lexical": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.3333333333333333,
+        "invalid_selected_count": 4,
+        "pool_size": 6,
+        "selected_count": 6,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "prompt_chars": 1145,
+      "replay_equivalent_tables": [],
+      "target_tables": [
+        "cards",
+        "sets"
+      ],
+      "trace_hash": "05c78a53429eecf178459b01adeb878e7d11e118d747d3c1098fe5876e5abc1b"
+    },
+    {
+      "candidate_count": 7,
+      "case_index": 2,
+      "db_name": "codebase_community",
+      "explorer": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 1.0,
+        "invalid_selected_count": 0,
+        "pool_size": 7,
+        "selected_count": 2,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "lexical": {
+        "compatible_count": 2,
+        "compatible_mrr": 0.2,
+        "compatible_recall_at_1": 0.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.2857142857142857,
+        "invalid_selected_count": 5,
+        "pool_size": 7,
+        "selected_count": 7,
+        "strict_mrr": 0.2,
+        "strict_recall_at_1": 0.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "prompt_chars": 1072,
+      "replay_equivalent_tables": [],
+      "target_tables": [
+        "posts",
+        "users"
+      ],
+      "trace_hash": "174b54bb1f1941ced298a1e8ea4bd7d5e16bf9a4f81682483369064f9403fb9b"
+    },
+    {
+      "candidate_count": 5,
+      "case_index": 3,
+      "db_name": "debit_card_specializing",
+      "explorer": {
+        "compatible_count": 3,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 1.0,
+        "invalid_selected_count": 0,
+        "pool_size": 5,
+        "selected_count": 3,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 3
+      },
+      "lexical": {
+        "compatible_count": 3,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.6,
+        "invalid_selected_count": 2,
+        "pool_size": 5,
+        "selected_count": 5,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 3
+      },
+      "prompt_chars": 1033,
+      "replay_equivalent_tables": [],
+      "target_tables": [
+        "gasstations",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "trace_hash": "00327d8bddc1a3658a13dd94419a8762c8b38e0198da4d82c94d16253b36869e"
+    },
+    {
+      "candidate_count": 6,
+      "case_index": 4,
+      "db_name": "european_football_2",
+      "explorer": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 1.0,
+        "invalid_selected_count": 0,
+        "pool_size": 6,
+        "selected_count": 2,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "lexical": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.3333333333333333,
+        "invalid_selected_count": 4,
+        "pool_size": 6,
+        "selected_count": 6,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "prompt_chars": 927,
+      "replay_equivalent_tables": [],
+      "target_tables": [
+        "player",
+        "player_attributes"
+      ],
+      "trace_hash": "0322a51476bf261d17fe5ac0ee22b657f1a17c0d92ff6f68a9587fc8556e95d4"
+    },
+    {
+      "candidate_count": 8,
+      "case_index": 5,
+      "db_name": "financial",
+      "explorer": {
+        "compatible_count": 5,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 1.0,
+        "invalid_selected_count": 0,
+        "pool_size": 8,
+        "selected_count": 4,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 4
+      },
+      "lexical": {
+        "compatible_count": 5,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.625,
+        "invalid_selected_count": 3,
+        "pool_size": 8,
+        "selected_count": 8,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 4
+      },
+      "prompt_chars": 1007,
+      "replay_equivalent_tables": [
+        "trans"
+      ],
+      "target_tables": [
+        "account",
+        "client",
+        "disp",
+        "district"
+      ],
+      "trace_hash": "04f8192498fb4d135557d0a0762b9ed5be8c29a35995d09d3960bd2d97bd5076"
+    },
+    {
+      "candidate_count": 13,
+      "case_index": 6,
+      "db_name": "formula_1",
+      "explorer": {
+        "compatible_count": 4,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 1.0,
+        "invalid_selected_count": 0,
+        "pool_size": 13,
+        "selected_count": 3,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 3
+      },
+      "lexical": {
+        "compatible_count": 4,
+        "compatible_mrr": 0.5,
+        "compatible_recall_at_1": 0.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.25,
+        "invalid_selected_count": 6,
+        "pool_size": 13,
+        "selected_count": 8,
+        "strict_mrr": 0.5,
+        "strict_recall_at_1": 0.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 3
+      },
+      "prompt_chars": 1248,
+      "replay_equivalent_tables": [
+        "results"
+      ],
+      "target_tables": [
+        "constructorresults",
+        "constructors",
+        "races"
+      ],
+      "trace_hash": "17795643538dabb92f3761aa3a8ebeabe3f9b0a1c37a5a01710661875caa9634"
+    },
+    {
+      "candidate_count": 8,
+      "case_index": 7,
+      "db_name": "student_club",
+      "explorer": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.6666666666666666,
+        "invalid_selected_count": 1,
+        "pool_size": 8,
+        "selected_count": 3,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "lexical": {
+        "compatible_count": 2,
+        "compatible_mrr": 1.0,
+        "compatible_recall_at_1": 1.0,
+        "compatible_recall_at_10": 1.0,
+        "compatible_recall_at_5": 1.0,
+        "compatible_selected_rate": 0.25,
+        "invalid_selected_count": 6,
+        "pool_size": 8,
+        "selected_count": 8,
+        "strict_mrr": 1.0,
+        "strict_recall_at_1": 1.0,
+        "strict_recall_at_10": 1.0,
+        "strict_recall_at_5": 1.0,
+        "target_count": 2
+      },
+      "prompt_chars": 1194,
+      "replay_equivalent_tables": [],
+      "target_tables": [
+        "expense",
+        "member"
+      ],
+      "trace_hash": "005cf091b44cf8ca0e1a5bc8abf2fed60d1bc4cf710a9825f6b04206f2d6cb86"
+    }
+  ],
+  "schema_version": "frankengate-wmh-bird-sql-explorer-probe-v1",
+  "source": {
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "raw_content_committed": false,
+    "sqlite_root": "external-pinned-bird-minidev",
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+  }
+}

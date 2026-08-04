@@ -1,0 +1,8 @@
+{
+  "cases_verified": 17,
+  "checks": {"aggregate_metrics_recomputed": true, "candidate_fingerprints_match": true, "frontier_orders_match_structured_outputs": true, "frontier_decisions_match_structured_outputs": true, "raw_cohort_hash_match": true, "result_hash_match": true, "target_fingerprints_match": true},
+  "raw_sha256": "a3a1b361328ebb68ecddfc2b5cb16754888e946dfde349b66f59ad5a4afb5673",
+  "result_sha256": "5d4cdbe7480018df0dd5f456b16912d7f9fea2f83d0d52c0abdbc14461198e2a",
+  "schema_version": "frankengate-nl2sql-same-scope-collision-verification-v1",
+  "status": "verified"
+}

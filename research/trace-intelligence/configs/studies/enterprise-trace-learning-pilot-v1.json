@@ -1,0 +1,99 @@
+{
+  "schema_version": "frankengate-enterprise-trace-learning-pilot-v1",
+  "purpose": "Pre-registered paired study for governed trace-to-artifact and skill learning.",
+  "required_top_level_fields": [
+    "schema_version",
+    "study_id",
+    "cohort_contract_uri",
+    "authorization",
+    "design",
+    "required_case_classes",
+    "required_metrics",
+    "promotion_gates",
+    "run_contract",
+    "output_policy"
+  ],
+  "required_holdouts": [
+    "principal",
+    "team",
+    "project",
+    "system",
+    "effective_time",
+    "changed_schema_or_authority"
+  ],
+  "required_retrieval_arms": [
+    "strict_fingerprint",
+    "lexical_termhood",
+    "dense",
+    "learned_reranker",
+    "frontier_review",
+    "frontier_review_plus_replay"
+  ],
+  "required_artifact_arms": [
+    "no_artifact_regenerate",
+    "strict_fingerprint",
+    "name_only_negative_control",
+    "reviewed_semantic_mapping",
+    "reviewed_mapping_plus_result_validation"
+  ],
+  "required_skill_arms": [
+    "no_skill",
+    "formatting_placebo",
+    "reviewed_skill",
+    "generated_skill"
+  ],
+  "required_environment_splits": [
+    "same_family",
+    "project_held_out",
+    "changed_schema_or_authority"
+  ],
+  "required_case_classes": [
+    "target",
+    "hard_negative",
+    "nil",
+    "unclear"
+  ],
+  "required_metrics": [
+    "semantic_success",
+    "authority_safe",
+    "independent_replay_success",
+    "unsafe_accept_rate",
+    "nil_abstention_rate",
+    "regression_rate",
+    "repair_burden",
+    "user_correction_burden",
+    "recommendation_acceptance",
+    "recall_at_k",
+    "mrr",
+    "latency_ms",
+    "token_cost",
+    "reviewer_agreement"
+  ],
+  "required_promotion_gate_fields": [
+    "minimum_targets",
+    "minimum_hard_negatives",
+    "minimum_nil_or_unclear",
+    "minimum_replay_pass_rate",
+    "maximum_unsafe_accepts",
+    "maximum_regression_rate",
+    "maximum_cost_multiplier",
+    "maximum_latency_multiplier",
+    "minimum_reviewer_agreement"
+  ],
+  "required_run_contract_fields": [
+    "same_model_across_arms",
+    "same_harness_across_arms",
+    "same_tool_budget_across_arms",
+    "same_timeout_budget_across_arms",
+    "paired_task_ids",
+    "candidate_pool_frozen_before_labels",
+    "independent_evaluator",
+    "proposer_excluded_from_evaluator"
+  ],
+  "required_output_policy_fields": [
+    "raw_content_external_only",
+    "receipts_content_free",
+    "deletion_receipt_required",
+    "provenance_required"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "thoughtworks/agentic-coding-trajectories",
+  "dataset_revision": "cef72d1f4d0caabf85937adf8337a14b7522c782",
+  "license": "derivative-multi-source",
+  "source_url": "https://huggingface.co/datasets/thoughtworks/agentic-coding-trajectories/tree/cef72d1f4d0caabf85937adf8337a14b7522c782",
+  "source_format": "Parquet rows with messages_json and source/ground-truth metadata",
+  "adapter": "messages_json_agent_trajectory_v1",
+  "publication_basis": "Dataset card identifies a reproducible derivative of three public upstream datasets",
+  "rights_assertion": "Upstream license and Anthropic usage-policy review required per source_dataset before any content-bearing analysis",
+  "privacy_review": "Synthetic/replay trajectories; no live tools and no human-authored behavior claim",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "declared_sessions": 15000,
+    "declared_live_tools": false,
+    "declared_human_authored": false,
+    "source_dataset_field": true,
+    "ground_truth_metadata": true
+  },
+  "admission": "admit_for_context_growth_and_schema_stress_only",
+  "enterprise_transfer": "Synthetic benchmark workload; cannot establish real-user patterns, skill, intent, or collaboration"
+}

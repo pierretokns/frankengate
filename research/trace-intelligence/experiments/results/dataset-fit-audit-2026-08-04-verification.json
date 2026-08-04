@@ -1,0 +1,17 @@
+{
+  "all_passed": true,
+  "checks": {
+    "bird_direct_nl2sql": true,
+    "defog_direct_nl2sql": true,
+    "hash": true,
+    "manifest_count": true,
+    "no_cross_user_direct": true,
+    "no_skill_direct": true,
+    "no_term_alias_direct": true,
+    "profiles_present": true,
+    "rows_present": true,
+    "schema": true
+  },
+  "receipt_sha256": "b2ff4cbce8bba44e056a13831e98488804ed68cd01d234f6fdf20b032fc02846",
+  "schema_version": "frankengate-dataset-fit-verification-v1"
+}

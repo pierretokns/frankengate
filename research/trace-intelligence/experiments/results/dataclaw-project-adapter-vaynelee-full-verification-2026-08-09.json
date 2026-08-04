@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "bounded": true,
+    "claim_boundary": true,
+    "folds": true,
+    "modes": true,
+    "raw_absent": true,
+    "result_hash": true,
+    "schema": true
+  },
+  "passed": true,
+  "result_sha256": "c4566e9aca44a6f4453929bfb5ce55ae7a979ec4ef2a0412bbaf1328b8f91a24",
+  "schema_version": "frankengate-dataclaw-project-adapter-verification-v1"
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "frankengate-bird-sql-skill-factorial-v1",
+  "protocol": {
+    "arms": ["no_skill", "formatting_placebo", "trace_mined_procedure"],
+    "heldout_families": ["financial", "student_club"],
+    "tasks_per_family": 2,
+    "task_count": 4,
+    "model": "gpt-5.6-luna",
+    "harness": "codex-cli-subscription",
+    "procedure_sha256": "bab5a6de1119925a4e17619cf6df38a20c900e5deef5ff34e2fbaf1d9808b8e5",
+    "gold_hidden_from_proposer": true
+  },
+  "summary": {
+    "no_skill": {"episodes": 4, "mismatch": 4, "elapsed_ms_total": 45432.963},
+    "formatting_placebo": {"episodes": 4, "mismatch": 4, "elapsed_ms_total": 43473.128},
+    "trace_mined_procedure": {"episodes": 4, "mismatch": 4, "elapsed_ms_total": 38164.126}
+  },
+  "episodes": [
+    {"arm":"no_skill","family":"financial","task_hash":"f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea","response_sha256":"8c5ea93e69b6b89850c996c976714da6d18d23efa5a443677d16c4d4258b367c","outcome":"mismatch","elapsed_ms":17058.437},
+    {"arm":"formatting_placebo","family":"financial","task_hash":"f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea","response_sha256":"92234ed14850d8389b69991e54abe1f8de8dfe60bccf2d2df3cccad92c63df93","outcome":"mismatch","elapsed_ms":12179.364},
+    {"arm":"trace_mined_procedure","family":"financial","task_hash":"f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea","response_sha256":"eed829291be54d6a9f49217562e7b08558b268a62d77d1096b3860873f30a760","outcome":"mismatch","elapsed_ms":13408.877},
+    {"arm":"no_skill","family":"financial","task_hash":"c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62","response_sha256":"819af03ac835df693803a9e40191c75f51feff705e83d04d35995b0b63b9f46a","outcome":"mismatch","elapsed_ms":8159.944},
+    {"arm":"formatting_placebo","family":"financial","task_hash":"c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62","response_sha256":"9e76feaf2c4bbc12a3e283a0c4f88cf3d1d99918be1abe4ac7835706d98785d3","outcome":"mismatch","elapsed_ms":8493.505},
+    {"arm":"trace_mined_procedure","family":"financial","task_hash":"c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62","response_sha256":"819af03ac835df693803a9e40191c75f51feff705e83d04d35995b0b63b9f46a","outcome":"mismatch","elapsed_ms":8093.08},
+    {"arm":"no_skill","family":"student_club","task_hash":"bb7fe8ef412d894e0ea064758a936b7ac7cc4a5b578874e327d258fe7daddbc6","response_sha256":"47aa4ae43022a3c6213d0891fcc233081cc5ee787969921d8dfd08d9a4647c7c","outcome":"mismatch","elapsed_ms":8857.351},
+    {"arm":"formatting_placebo","family":"student_club","task_hash":"bb7fe8ef412d894e0ea064758a936b7ac7cc4a5b578874e327d258fe7daddbc6","response_sha256":"7d3e5b5fb28363c7ea382c22556e3392fda64c5b4b0b4a62a631639709e3a134","outcome":"mismatch","elapsed_ms":10677.002},
+    {"arm":"trace_mined_procedure","family":"student_club","task_hash":"bb7fe8ef412d894e0ea064758a936b7ac7cc4a5b578874e327d258fe7daddbc6","response_sha256":"55b4bb2e4c1e01f0d661ce7efd47ade81bbb5cac07c955b4b2d8f5552e445f8c","outcome":"mismatch","elapsed_ms":9675.196},
+    {"arm":"no_skill","family":"student_club","task_hash":"b89d8dedbcda9b590ef230ca7ccd3d60e8af48ebedcc445da16b47dcdfa58f74","response_sha256":"9e83af630785bc36e9ad6ca8571b914a6ebdf7719552338a3e27312f4f572ef1","outcome":"mismatch","elapsed_ms":11357.231},
+    {"arm":"formatting_placebo","family":"student_club","task_hash":"b89d8dedbcda9b590ef230ca7ccd3d60e8af48ebedcc445da16b47dcdfa58f74","response_sha256":"84a5e29f6c5fe78942b2c5e382603f75b234df0183dcf11b9e0d23ec900307f9","outcome":"mismatch","elapsed_ms":12123.257},
+    {"arm":"trace_mined_procedure","family":"student_club","task_hash":"b89d8dedbcda9b590ef230ca7ccd3d60e8af48ebedcc445da16b47dcdfa58f74","response_sha256":"303eaf7d0ca51668a430fb188fe0ca1e2f7843f715e77735c185c26d0d011d30","outcome":"mismatch","elapsed_ms":6986.973}
+  ],
+  "claim_boundary": {
+    "independent_family_disjoint_run": true,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false
+  }
+}

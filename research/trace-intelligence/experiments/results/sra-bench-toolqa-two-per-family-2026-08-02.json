@@ -1,0 +1,122 @@
+{
+  "arms": {
+    "bge_top1_28": {
+      "evaluation_sha256": "d22e3363175891e567ec580a334878cf5aba84020a3f820ccdc7a7aa14b822aa",
+      "metrics": {
+        "accuracy": 0.42857142857142855,
+        "correct": 12,
+        "total": 28
+      },
+      "raw_sha256": "19d4f373c3f0e6a1faa910c8c38a565207f72e97a9611c389adea4a17da5be49",
+      "records": 28
+    },
+    "no_skill_28": {
+      "evaluation_sha256": "3aecef845941fca87faeaa9785af41f9ef6112906439041dc660d658dcdea990",
+      "metrics": {
+        "accuracy": 0.35714285714285715,
+        "correct": 10,
+        "total": 28
+      },
+      "raw_sha256": "6deb86dbfb3df611cb8fcab9fb5312459011ef452dd69b8de2617cb8a790e727",
+      "records": 28
+    },
+    "oracle_28": {
+      "evaluation_sha256": "e57a86b5c919d25951ab55c83e98bf82934755cf7c4da7bfe3d4c75d75e94205",
+      "metrics": {
+        "accuracy": 0.5,
+        "correct": 14,
+        "total": 28
+      },
+      "raw_sha256": "d8a0d7250a073a587a1d6fc5b787a71c08f862310dc31e4e6f4bf94927328e7b",
+      "records": 28
+    }
+  },
+  "claim_boundary": "A 28-task, family-disjoint public ToolQA cohort using one frontier Codex subscription model. Strict scoring and deterministic execution diagnostics are not enterprise transfer, causal skill utility, human productivity, or changed-system replay evidence. The 12-case semantic probes are bounded diagnostics, not a full semantic relabeling.",
+  "dataset": {
+    "external_corpus_zip_sha256": "ddfde273990adab701e4a6df88081660dc982fa60d31640a6011f7253dbddf24",
+    "instances_sha256": "88ff69ffd8b512f2b09ca95b196e03da89ad6c2417b97f1934f629b737bce3b6",
+    "name": "toolqa",
+    "stratification": "two held-out instances per each of 14 skill families; pilot first instance excluded",
+    "tasks": 28
+  },
+  "decision": {
+    "changed_system_replay_measured": false,
+    "dense_retrieval_improves_strict_terminal_accuracy_over_no_skill": true,
+    "gold_skill_oracle_beats_bge_top1_strict_accuracy": true,
+    "retrieval_and_execution_metrics_must_be_reported_separately": true,
+    "skill_release_authorized": false
+  },
+  "execution_audit": {
+    "arms": {
+      "bge_top1_28": {
+        "actions": 102,
+        "avg_steps": 3.642857142857143,
+        "empty_actions": 0,
+        "finished": 28,
+        "halted": 0,
+        "invalid_or_error_observations": 16,
+        "observations": 102,
+        "raw_sha256": "19d4f373c3f0e6a1faa910c8c38a565207f72e97a9611c389adea4a17da5be49",
+        "records": 28
+      },
+      "no_skill_28": {
+        "actions": 111,
+        "avg_steps": 3.9642857142857144,
+        "empty_actions": 0,
+        "finished": 28,
+        "halted": 0,
+        "invalid_or_error_observations": 26,
+        "observations": 111,
+        "raw_sha256": "6deb86dbfb3df611cb8fcab9fb5312459011ef452dd69b8de2617cb8a790e727",
+        "records": 28
+      },
+      "oracle_28": {
+        "actions": 85,
+        "avg_steps": 3.0357142857142856,
+        "empty_actions": 0,
+        "finished": 28,
+        "halted": 0,
+        "invalid_or_error_observations": 3,
+        "observations": 85,
+        "raw_sha256": "d8a0d7250a073a587a1d6fc5b787a71c08f862310dc31e4e6f4bf94927328e7b",
+        "records": 28
+      }
+    },
+    "schema_version": "frankengate-sra-bench-toolqa-execution-audit-v1",
+    "sha256": "7d92cc16eeb29365c1555138b1d6f8589ea524f139e83a99711697b9198040d5"
+  },
+  "protocol": {
+    "endpoint": "loopback Codex subscription proxy",
+    "engine": "react",
+    "max_steps": 15,
+    "max_tokens": 512,
+    "model": "gpt-5.6-luna",
+    "raw_outputs_committed": false,
+    "temperature": 0.0,
+    "tool_corpus_provisioned": true
+  },
+  "schema_version": "frankengate-sra-bench-toolqa-two-per-family-v1",
+  "semantic_probe": {
+    "normal": {
+      "cases_requested": 12,
+      "failures": 0,
+      "labels": {
+        "no_skill_28:correct_semantic": 1,
+        "no_skill_28:format_only": 1,
+        "no_skill_28:incorrect": 10
+      },
+      "results": 12,
+      "sha256": "ef41e22391f8bd2944ab82599ee791c0905df11601a573ce5fc602cea67d8b3c"
+    },
+    "skeptical": {
+      "cases_requested": 12,
+      "failures": 0,
+      "labels": {
+        "no_skill_28:correct_semantic": 1,
+        "no_skill_28:incorrect": 11
+      },
+      "results": 12,
+      "sha256": "95f3d3a126652b83ad4e478b41c2f8e5503d1f6171e1eaf70498184ca644b6a0"
+    }
+  }
+}

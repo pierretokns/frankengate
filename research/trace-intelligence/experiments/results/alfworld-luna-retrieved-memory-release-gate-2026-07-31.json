@@ -1,0 +1,51 @@
+{
+  "candidate": {
+    "arm": "generated_memory",
+    "result_sha256": "c765053e623f1e7748577f914760d668061b0044e72da1eecf6f9d7062c5b4ec",
+    "status": "quarantined"
+  },
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "candidate_released": false,
+    "causal_benefit_confirmed": false,
+    "reason": "Candidate did not exceed the baseline with no worse validity while matching or beating placebo; it remains quarantined."
+  },
+  "controls": {
+    "baseline_arm": "no_memory",
+    "placebo_arm": "formatting_placebo"
+  },
+  "evidence": {
+    "result": "alfworld-luna-retrieved-memory-four-family-35step-2026-07-31.json",
+    "verification": "alfworld-luna-retrieved-memory-four-family-35step-verification-2026-07-31.json",
+    "verification_sha256": "58e980c2265349ec08b7c9f803875c5df58787eb4bddd92f4c2c031a2ab144b2"
+  },
+  "exposure": {
+    "canary_percent": 0,
+    "eligible_tasks": 0,
+    "eligible_users": 0,
+    "rollback_available": false
+  },
+  "outcomes": {
+    "baseline_invalid_actions": 0,
+    "baseline_wins": 0,
+    "candidate_invalid_actions": 0,
+    "candidate_wins": 0,
+    "placebo_invalid_actions": 0,
+    "placebo_wins": 0,
+    "positive_lift": false,
+    "verification_passed": true
+  },
+  "schema_version": "frankengate-outcome-release-gate-v1",
+  "stages": {
+    "cluster": "complete",
+    "collect": "complete",
+    "evaluate": "complete",
+    "monitor": "not_started",
+    "propose": "complete",
+    "release": "blocked_by_gate",
+    "replay": "complete",
+    "retrieve": "complete",
+    "rollback": "not_required",
+    "segment": "complete"
+  }
+}

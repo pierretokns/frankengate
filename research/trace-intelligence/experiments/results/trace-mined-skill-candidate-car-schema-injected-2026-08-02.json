@@ -1,0 +1,34 @@
+{
+  "candidate_class": "trace_mined_hypothesis",
+  "candidate_text": " Trace-mined candidate: after repeated identifier or policy failures, inspect the authorized schema catalog before any execute_sql call; use only exact returned table and column identifiers; preserve a successful attempt identifier, submit that exact attempt, and abstain when no authorized attempt succeeds.",
+  "candidate_text_sha256": "83166cca6f1df890cc22aeadb6f63873455a437010ee36cf3eac30fdb2be837a",
+  "promotion_authorized": false,
+  "raw_content_emitted": false,
+  "result_sha256": "c328f1fcb44db0b38116f3685ca38939193d8ef2b9503baf18ce00fa02505c6d",
+  "schema_version": "frankengate-trace-mined-skill-candidate-v1",
+  "source_raw_directory_digest": "2019df6f5179b7e6c824d82843a79a3d789fc2e45a2da8efa84bf2b765939e52",
+  "source_raw_file_count": 18,
+  "source_signature": {
+    "event_counts": {
+      "agent_tool_result": 85,
+      "candidate_sql_error": 20,
+      "candidate_sql_policy_denial": 35,
+      "candidate_sql_result": 9,
+      "factorial_task_end": 18,
+      "factorial_task_start": 18,
+      "model_request": 101,
+      "model_response": 101,
+      "schema_inspection_result": 65,
+      "terminal_fallback_controller": 18
+    },
+    "files_with_policy_denial": 14,
+    "files_without_describe_schema": 18,
+    "protocol_error_codes": {
+      "column_not_allowed": 16,
+      "function_not_allowed": 14,
+      "parse_error": 2,
+      "table_not_allowed": 3,
+      "unknown_attempt_id": 13
+    }
+  }
+}

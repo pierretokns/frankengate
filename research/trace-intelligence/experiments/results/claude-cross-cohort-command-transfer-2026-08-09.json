@@ -1,0 +1,255 @@
+{
+  "claim_boundary": {
+    "authority_labels": false,
+    "causal_transfer": false,
+    "reason": "Cross-cohort overlap and native tool outcomes measure operational association only; identical commands do not establish shared intent, authorization, or safe reuse.",
+    "semantic_equivalence": false,
+    "user_intent_labels": false
+  },
+  "cohorts": {
+    "alin": {
+      "exact": {
+        "distinct_artifacts": 656,
+        "failure_occurrences": 37,
+        "labeled_occurrences": 661,
+        "mixed_outcome_artifact_buckets": 0,
+        "other_scope_later_failure": 0,
+        "other_scope_later_success": 5,
+        "other_scope_success_rate": 1.0,
+        "overall_success_rate": 0.944024,
+        "parameterized_buckets_with_multiple_exact_commands": 0,
+        "parameterized_extra_exact_command_collisions": 0,
+        "repeated_after_same_scope_success": 0,
+        "same_scope_later_failure": 0,
+        "same_scope_later_success": 0,
+        "same_scope_success_rate": 0.0,
+        "success_occurrences": 624
+      },
+      "normalized": {
+        "distinct_artifacts": 647,
+        "failure_occurrences": 37,
+        "labeled_occurrences": 661,
+        "mixed_outcome_artifact_buckets": 0,
+        "other_scope_later_failure": 0,
+        "other_scope_later_success": 14,
+        "other_scope_success_rate": 1.0,
+        "overall_success_rate": 0.944024,
+        "parameterized_buckets_with_multiple_exact_commands": 7,
+        "parameterized_extra_exact_command_collisions": 9,
+        "repeated_after_same_scope_success": 0,
+        "same_scope_later_failure": 0,
+        "same_scope_later_success": 0,
+        "same_scope_success_rate": 0.0,
+        "success_occurrences": 624
+      }
+    },
+    "fable": {
+      "exact": {
+        "distinct_artifacts": 1954,
+        "failure_occurrences": 131,
+        "labeled_occurrences": 1987,
+        "mixed_outcome_artifact_buckets": 2,
+        "other_scope_later_failure": 0,
+        "other_scope_later_success": 2,
+        "other_scope_success_rate": 1.0,
+        "overall_success_rate": 0.934071,
+        "parameterized_buckets_with_multiple_exact_commands": 0,
+        "parameterized_extra_exact_command_collisions": 0,
+        "repeated_after_same_scope_success": 28,
+        "same_scope_later_failure": 0,
+        "same_scope_later_success": 28,
+        "same_scope_success_rate": 1.0,
+        "success_occurrences": 1856
+      },
+      "normalized": {
+        "distinct_artifacts": 1855,
+        "failure_occurrences": 131,
+        "labeled_occurrences": 1987,
+        "mixed_outcome_artifact_buckets": 10,
+        "other_scope_later_failure": 0,
+        "other_scope_later_success": 17,
+        "other_scope_success_rate": 1.0,
+        "overall_success_rate": 0.934071,
+        "parameterized_buckets_with_multiple_exact_commands": 52,
+        "parameterized_extra_exact_command_collisions": 99,
+        "repeated_after_same_scope_success": 104,
+        "same_scope_later_failure": 5,
+        "same_scope_later_success": 99,
+        "same_scope_success_rate": 0.951923,
+        "success_occurrences": 1856
+      }
+    },
+    "jobseek": {
+      "exact": {
+        "distinct_artifacts": 288,
+        "failure_occurrences": 36,
+        "labeled_occurrences": 332,
+        "mixed_outcome_artifact_buckets": 5,
+        "other_scope_later_failure": 5,
+        "other_scope_later_success": 9,
+        "other_scope_success_rate": 0.642857,
+        "overall_success_rate": 0.891566,
+        "parameterized_buckets_with_multiple_exact_commands": 0,
+        "parameterized_extra_exact_command_collisions": 0,
+        "repeated_after_same_scope_success": 26,
+        "same_scope_later_failure": 1,
+        "same_scope_later_success": 25,
+        "same_scope_success_rate": 0.961538,
+        "success_occurrences": 296
+      },
+      "normalized": {
+        "distinct_artifacts": 249,
+        "failure_occurrences": 36,
+        "labeled_occurrences": 332,
+        "mixed_outcome_artifact_buckets": 5,
+        "other_scope_later_failure": 5,
+        "other_scope_later_success": 13,
+        "other_scope_success_rate": 0.722222,
+        "overall_success_rate": 0.891566,
+        "parameterized_buckets_with_multiple_exact_commands": 14,
+        "parameterized_extra_exact_command_collisions": 39,
+        "repeated_after_same_scope_success": 60,
+        "same_scope_later_failure": 2,
+        "same_scope_later_success": 58,
+        "same_scope_success_rate": 0.966667,
+        "success_occurrences": 296
+      }
+    },
+    "wisp": {
+      "exact": {
+        "distinct_artifacts": 1301,
+        "failure_occurrences": 63,
+        "labeled_occurrences": 1352,
+        "mixed_outcome_artifact_buckets": 0,
+        "other_scope_later_failure": 0,
+        "other_scope_later_success": 28,
+        "other_scope_success_rate": 1.0,
+        "overall_success_rate": 0.953402,
+        "parameterized_buckets_with_multiple_exact_commands": 0,
+        "parameterized_extra_exact_command_collisions": 0,
+        "repeated_after_same_scope_success": 23,
+        "same_scope_later_failure": 0,
+        "same_scope_later_success": 23,
+        "same_scope_success_rate": 1.0,
+        "success_occurrences": 1289
+      },
+      "normalized": {
+        "distinct_artifacts": 1161,
+        "failure_occurrences": 63,
+        "labeled_occurrences": 1352,
+        "mixed_outcome_artifact_buckets": 3,
+        "other_scope_later_failure": 0,
+        "other_scope_later_success": 48,
+        "other_scope_success_rate": 1.0,
+        "overall_success_rate": 0.953402,
+        "parameterized_buckets_with_multiple_exact_commands": 29,
+        "parameterized_extra_exact_command_collisions": 140,
+        "repeated_after_same_scope_success": 139,
+        "same_scope_later_failure": 0,
+        "same_scope_later_success": 139,
+        "same_scope_success_rate": 1.0,
+        "success_occurrences": 1289
+      }
+    }
+  },
+  "combined": {
+    "cohort_count": 4,
+    "exact": {
+      "distinct_artifacts": 4198,
+      "failure_occurrences": 267,
+      "labeled_occurrences": 4332,
+      "mixed_outcome_artifact_buckets": 7,
+      "other_scope_later_failure": 5,
+      "other_scope_later_success": 45,
+      "other_scope_success_rate": 0.9,
+      "overall_success_rate": 0.938366,
+      "parameterized_buckets_with_multiple_exact_commands": 0,
+      "parameterized_extra_exact_command_collisions": 0,
+      "repeated_after_same_scope_success": 77,
+      "same_scope_later_failure": 1,
+      "same_scope_later_success": 76,
+      "same_scope_success_rate": 0.987013,
+      "success_occurrences": 4065
+    },
+    "labeled_occurrences": 4332,
+    "normalized": {
+      "distinct_artifacts": 3898,
+      "failure_occurrences": 267,
+      "labeled_occurrences": 4332,
+      "mixed_outcome_artifact_buckets": 18,
+      "other_scope_later_failure": 6,
+      "other_scope_later_success": 106,
+      "other_scope_success_rate": 0.946429,
+      "overall_success_rate": 0.938366,
+      "parameterized_buckets_with_multiple_exact_commands": 98,
+      "parameterized_extra_exact_command_collisions": 300,
+      "repeated_after_same_scope_success": 303,
+      "same_scope_later_failure": 7,
+      "same_scope_later_success": 296,
+      "same_scope_success_rate": 0.976898,
+      "success_occurrences": 4065
+    }
+  },
+  "cross_cohort_transfer": {
+    "exact": {
+      "cohort_count_distribution": [
+        2
+      ],
+      "cross_cohort_artifact_count": 1,
+      "cross_cohort_success_rate": 1.0,
+      "eligible_failures": 0,
+      "eligible_occurrences": 3,
+      "eligible_successes": 3
+    },
+    "normalized": {
+      "cohort_count_distribution": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        4,
+        4
+      ],
+      "cross_cohort_artifact_count": 9,
+      "cross_cohort_success_rate": 0.986111,
+      "eligible_failures": 1,
+      "eligible_occurrences": 72,
+      "eligible_successes": 71
+    }
+  },
+  "result_sha256": "59f521ac63723cd2767e14717e6c0e3c1b7f650bd1aa13aeb6fb139d4a36887a",
+  "schema_version": "frankengate-claude-cross-cohort-command-transfer-v1",
+  "sources": [
+    {
+      "cohort": "alin",
+      "labeled_occurrences": 661,
+      "path_count": 18,
+      "path_sha256": "0881852f7a99fa696aea6330f49ec0e500bad7a37c4068e15a83c00921d478c1",
+      "root_name": "alin-claude-traces-e33ebbca"
+    },
+    {
+      "cohort": "fable",
+      "labeled_occurrences": 1987,
+      "path_count": 116,
+      "path_sha256": "b8181280319001b1829f2a3a6c2e7652b4bb8c5e5c156e01d91313bd480dc32d",
+      "root_name": "fable-5-traces-e05c4178"
+    },
+    {
+      "cohort": "jobseek",
+      "labeled_occurrences": 332,
+      "path_count": 8,
+      "path_sha256": "1aa7b9269a8388f8ba17bd68f354d70a551da9de1b429f701471804b16ab9040",
+      "root_name": "jobseek-agent-traces-sample-5aae9972"
+    },
+    {
+      "cohort": "wisp",
+      "labeled_occurrences": 1352,
+      "path_count": 104,
+      "path_sha256": "8a393ba78edf0d82cebe789426c885194cfbe48b1070649443fab1f89d0d2f70",
+      "root_name": "wisp-claude-code-sessions"
+    }
+  ]
+}

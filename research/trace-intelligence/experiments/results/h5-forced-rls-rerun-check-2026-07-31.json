@@ -1,0 +1,11 @@
+{
+  "schema_version": "frankengate.h5-forced-rls-rerun-check.v1",
+  "date": "2026-07-31",
+  "runner": "kubectl exec -i -n frankengate-test postgres-0 -- psql -X -U frankengate -d frankengate -v ON_ERROR_STOP=1 < sql/007_trace_commons_memory_h5_assertions.sql",
+  "kubernetes_context": "colima",
+  "fixture": "PostgreSQL 16.12 + pgvector 0.8.1",
+  "assertions_passed": true,
+  "transaction_rolled_back": true,
+  "raw_trace_content_loaded": false,
+  "claim_boundary": "Content-free forced-RLS, lifecycle, rollback, and authority mechanics only; no Aurora, failover, scale, memory utility, identity, or enterprise-transfer claim."
+}

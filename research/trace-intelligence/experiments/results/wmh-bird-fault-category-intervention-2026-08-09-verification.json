@@ -1,0 +1,14 @@
+{
+  "schema_version": "frankengate-bird-sql-skill-factorial-verification-v1",
+  "verification_passed": true,
+  "independent_evaluator": "fresh SQLite connections and duplicated SQL extraction/comparison logic",
+  "rows_verified": 12,
+  "receipt_summary_matches": true,
+  "raw_sha256": "ef0fe4d87b8b609115a976c8e9b739c9b4fe21949ca21dbc839e5c0624308f82",
+  "recomputed_summary": {
+    "no_skill": {"episodes": 4, "mismatch": 4},
+    "formatting_placebo": {"episodes": 4, "mismatch": 4},
+    "trace_mined_procedure": {"episodes": 4, "mismatch": 4}
+  },
+  "claim_boundary": {"causal_skill_benefit_confirmed": false, "automatic_promotion_authorized": false}
+}

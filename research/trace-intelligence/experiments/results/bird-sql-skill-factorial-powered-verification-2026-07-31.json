@@ -1,0 +1,35 @@
+{
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "verification_passed": true
+  },
+  "errors": {
+    "gold_execution_error": 3
+  },
+  "independent_evaluator": "fresh SQLite connections and duplicated SQL extraction/comparison logic",
+  "raw_sha256": "75a6f625fb33e6cc6e61bf791720834ebc7032465f29c0f735aee311ff501e3a",
+  "receipt_summary_matches": true,
+  "recomputed_summary": {
+    "formatting_placebo": {
+      "candidate_error": 1,
+      "episodes": 20,
+      "exact": 4,
+      "mismatch": 15
+    },
+    "no_skill": {
+      "candidate_error": 1,
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 16
+    },
+    "trace_mined_procedure": {
+      "candidate_error": 1,
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 16
+    }
+  },
+  "rows_verified": 60,
+  "schema_version": "frankengate-bird-sql-skill-factorial-verification-v1"
+}

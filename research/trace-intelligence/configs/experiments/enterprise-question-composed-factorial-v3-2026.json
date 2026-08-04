@@ -1,0 +1,492 @@
+{
+  "schema_version": "frankengate.enterprise-question-composed-factorial.v3",
+  "experiment_id": "enterprise-question-composed-factorial-v3-2026-07-30",
+  "status": "preregistered_before_v3_runs",
+  "research_question": "Which smallest independently useful and safely composable mechanisms turn governed full-fidelity traces into evidence-backed individual, team, and enterprise assistance?",
+  "claim_boundary": {
+    "public_trace_mechanism_validation_is_enterprise_validity": false,
+    "retrieval_similarity_is_identity": false,
+    "prediction_is_causation": false,
+    "model_judgment_is_human_or_executable_outcome": false,
+    "repeat_invocations_are_independent_samples": false,
+    "negative_and_null_results_are_publishable": true
+  },
+  "canonical_input": {
+    "representation": "governed_event_dag_with_receipted_atif_and_openinference_otel_projections",
+    "required_fidelity": [
+      "messages_by_role",
+      "tool_proposal_approval_execution_result_and_side_effect",
+      "parent_child_links_branches_retries_and_fallbacks",
+      "task_session_trace_and_project_boundaries",
+      "user_team_tenant_scope_purpose_classification_and_authorization_epoch",
+      "model_prompt_skill_memory_tool_schema_environment_and_policy_versions",
+      "outcome_value_source_and_verifier_version",
+      "influence_and_derivative_lineage"
+    ],
+    "credential_material_allowed": false,
+    "authorized_internal_pii_and_classified_content_allowed": true,
+    "reduced_arm_output_may_replace_source_evidence": false
+  },
+  "persistent_architecture_baseline": {
+    "systems": [
+      "frankengate_gateway_and_governance",
+      "aurora_postgresql_canonical_evidence_candidate_release_and_experiment_store",
+      "existing_object_storage_for_large_immutable_artifacts",
+      "existing_async_worker"
+    ],
+    "postgres_capabilities": [
+      "relational_identity_and_lineage",
+      "jsonb_provider_specific_payloads",
+      "row_level_security",
+      "exact_and_structured_sql",
+      "full_text_search",
+      "bounded_pgvector_lane",
+      "bitemporal_revision_and_release_tables"
+    ],
+    "permanent_additional_database_allowed_before_gate": false,
+    "experimental_ephemeral_services": [
+      "graphiti_with_ephemeral_graph_backend",
+      "upstream_agent_tool_parity_containers",
+      "alternative_search_or_vector_bakeoff"
+    ]
+  },
+  "mechanisms": [
+    {
+      "id": "M0",
+      "name": "exact_and_structured_sql",
+      "source_concepts": ["CASS", "claude-history", "Frankensearch", "JSONB"],
+      "standalone": true
+    },
+    {
+      "id": "M1",
+      "name": "postgres_full_text_search",
+      "source_concepts": ["PostgreSQL FTS", "pg_textsearch comparison"],
+      "standalone": true
+    },
+    {
+      "id": "M2",
+      "name": "generic_dense_retrieval",
+      "source_concepts": ["pgvector", "Turbopuffer search concepts", "Turbovec comparison"],
+      "standalone": true
+    },
+    {
+      "id": "M3",
+      "name": "structured_multi_view_retrieval",
+      "source_concepts": ["CASS", "Frankensearch", "MemInsight"],
+      "standalone": true
+    },
+    {
+      "id": "M4",
+      "name": "cheap_trace_signals",
+      "source_concepts": ["Signals paper"],
+      "standalone": true
+    },
+    {
+      "id": "M5",
+      "name": "deterministic_trajectory_invariants",
+      "source_concepts": ["AgentRx"],
+      "standalone": true
+    },
+    {
+      "id": "M6",
+      "name": "failure_localization_reasoner",
+      "source_concepts": ["AgentRx", "OpenRCA"],
+      "standalone": true
+    },
+    {
+      "id": "M7",
+      "name": "stored_trace_assertions",
+      "source_concepts": ["AgentEvals", "Phoenix dataset lifecycle"],
+      "standalone": true
+    },
+    {
+      "id": "M8",
+      "name": "schema_constrained_memory_candidates",
+      "source_concepts": ["LangMem", "MemInsight"],
+      "standalone": true
+    },
+    {
+      "id": "M9",
+      "name": "relational_bitemporal_ledger",
+      "source_concepts": ["Graphiti temporal facts", "Frankengate temporal oracle"],
+      "standalone": true
+    },
+    {
+      "id": "M10",
+      "name": "ephemeral_temporal_graph_hybrid",
+      "source_concepts": ["Graphiti", "Memory Palace centrality"],
+      "standalone": true
+    },
+    {
+      "id": "M11",
+      "name": "copy_on_write_dream_consolidation",
+      "source_concepts": ["managed dreaming", "Memory Palace reflection"],
+      "standalone": true
+    },
+    {
+      "id": "M12",
+      "name": "outcome_conditioned_lessons",
+      "source_concepts": ["ReasoningBank", "Trace2Skill"],
+      "standalone": true
+    },
+    {
+      "id": "M13",
+      "name": "single_trace_background_reflection",
+      "source_concepts": ["Hermes stable"],
+      "standalone": true
+    },
+    {
+      "id": "M14",
+      "name": "bounded_candidate_search",
+      "source_concepts": ["GEPA", "SkillOpt", "EvoSkill"],
+      "standalone": true
+    },
+    {
+      "id": "M15",
+      "name": "governed_candidate_evaluation_release_and_rollback",
+      "source_concepts": ["Phoenix", "Opik", "Langfuse", "Hermes lifecycle"],
+      "standalone": false,
+      "role": "shared_lifecycle_not_an_intelligence_algorithm"
+    },
+    {
+      "id": "M16",
+      "name": "enterprise_adapted_embedding",
+      "source_concepts": ["contrastive_fine_tuning", "hard_negative_mining"],
+      "standalone": true,
+      "eligible_only_after_baseline_error_gate": true
+    }
+  ],
+  "benchmarks": [
+    {
+      "id": "Q1",
+      "question": "Which authorized users are doing materially similar work?",
+      "corpora": ["public_multi_user_agent_histories", "agentic_coding", "research_traces", "NL2SQL"],
+      "unit": "user_scoped_task_episode",
+      "gold": "independent_task_family_objective_environment_and_tool_labels",
+      "standalone_arms": [
+        ["M0"],
+        ["M1"],
+        ["M2"],
+        ["M3"]
+      ],
+      "composed_arms": [
+        ["M0", "M1"],
+        ["M0", "M3"],
+        ["M0", "M2"],
+        ["M0", "M1", "M2", "M3"],
+        ["M0", "M1", "M2", "M3", "M16"]
+      ],
+      "negative_controls": [
+        "same_vocabulary_different_objective",
+        "same_objective_different_privilege_or_environment",
+        "same_repo_unrelated_task",
+        "unauthorized_nearest_neighbor"
+      ],
+      "metrics": [
+        "Recall_at_k",
+        "nDCG",
+        "MRR",
+        "exact_identifier_recall",
+        "hard_negative_error",
+        "RLS_leakage",
+        "latency",
+        "cost"
+      ],
+      "claim_limit": "task_similarity_only_not_person_identity_capability_or_collaboration_utility"
+    },
+    {
+      "id": "Q2",
+      "question": "Where do users repeat friction three or four times before success?",
+      "corpora": ["CodeTraceBench", "Wisp", "share_codex", "NL2SQL_replay"],
+      "unit": "source_scoped_task_episode",
+      "gold": "executable_or_human_verified_failure_to_success_transition",
+      "standalone_arms": [
+        ["M4"],
+        ["M5"],
+        ["M6"]
+      ],
+      "composed_arms": [
+        ["M4", "M5"],
+        ["M4", "M6"],
+        ["M5", "M6"],
+        ["M4", "M5", "M6"]
+      ],
+      "signal_ablations": [
+        "rephrasing",
+        "identical_tool_loop",
+        "state_stagnation",
+        "tool_failure_and_retry",
+        "assistant_self_correction",
+        "permission_denial",
+        "disengagement",
+        "latency_or_token_growth_without_progress"
+      ],
+      "confounders": [
+        "infrastructure_failure",
+        "missing_permission",
+        "tool_unavailability",
+        "ambiguous_requirement",
+        "model_or_harness_defect"
+      ],
+      "metrics": [
+        "episode_precision",
+        "episode_recall",
+        "time_to_detection",
+        "cause_category_calibration",
+        "review_minutes_per_true_case"
+      ],
+      "claim_limit": "friction_pattern_not_human_skill_deficit"
+    },
+    {
+      "id": "Q3",
+      "question": "Which stored traces should become regression evals and what should they assert?",
+      "corpora": ["OTel_roundtrip", "CodeTraceBench", "MAST", "NL2SQL_replay"],
+      "unit": "versioned_trace_with_independent_outcome",
+      "standalone_arms": [
+        ["M4"],
+        ["M5"],
+        ["M6"],
+        ["M7"]
+      ],
+      "composed_arms": [
+        ["M4", "M6"],
+        ["M5", "M6"],
+        ["M5", "M7"],
+        ["M5", "M6", "M7"]
+      ],
+      "assertion_types": [
+        "exact",
+        "ordered",
+        "unordered",
+        "semantic"
+      ],
+      "changed_system_requirement": true,
+      "metrics": [
+        "harmful_mutant_kill_rate",
+        "allowed_variation_false_positive_rate",
+        "critical_step_accuracy",
+        "assertion_replayability",
+        "evidence_citation_precision",
+        "construction_time"
+      ],
+      "claim_limit": "proposal_until_changed_system_replay_and_review_pass"
+    },
+    {
+      "id": "Q4",
+      "question": "What should become personal, team, or enterprise memory?",
+      "corpora": ["longitudinal_native_histories", "LongMemEval_control", "adversarial_temporal_fixtures"],
+      "unit": "pre_cutoff_context_artifact_query",
+      "standalone_arms": [
+        ["M0"],
+        ["M8"],
+        ["M9"],
+        ["M10"],
+        ["M11"]
+      ],
+      "composed_arms": [
+        ["M8", "M9"],
+        ["M8", "M11"],
+        ["M9", "M11"],
+        ["M8", "M9", "M11"],
+        ["M8", "M10", "M11"]
+      ],
+      "negative_controls": [
+        "latest_wins",
+        "direct_background_write",
+        "cross_project_similar_text",
+        "future_observation",
+        "deleted_support",
+        "failed_or_partial_dream"
+      ],
+      "metrics": [
+        "online_state_correctness",
+        "harmful_selection",
+        "supported_information_retained",
+        "unsupported_novelty",
+        "contradiction_accuracy",
+        "deletion_and_scope_closure",
+        "later_task_utility",
+        "review_time"
+      ],
+      "claim_limit": "no_automatic_scope_widening_or_identity_claims"
+    },
+    {
+      "id": "Q5",
+      "question": "Which learned prompt or skill improves future work?",
+      "corpora": ["family_split_NL2SQL", "coding_or_terminal_replay", "research_tool_tasks"],
+      "unit": "held_out_task_family",
+      "gold": "independent_environment_verifier",
+      "standalone_arms": [
+        [],
+        ["M12"],
+        ["M13"],
+        ["M14"]
+      ],
+      "composed_arms": [
+        ["M12", "M15"],
+        ["M13", "M15"],
+        ["M12", "M14", "M15"]
+      ],
+      "required_controls": [
+        "human_authored_baseline",
+        "length_and_vocabulary_matched_placebo",
+        "success_only",
+        "failure_only",
+        "paired_success_failure_contrast",
+        "same_model_tools_environment_and_budget"
+      ],
+      "metrics": [
+        "environment_verified_task_success",
+        "family_level_regression",
+        "tool_error_rate",
+        "unsafe_or_privileged_action",
+        "turns",
+        "latency",
+        "tokens",
+        "cost",
+        "candidate_reproducibility"
+      ],
+      "claim_limit": "skill_artifact_effect_not_user_capability"
+    },
+    {
+      "id": "Q6",
+      "question": "Which cloud or domain skill might a user benefit from?",
+      "corpora": ["prospective_consenting_enterprise_pilot", "NL2SQL_domain_control"],
+      "unit": "user_task_opportunity",
+      "required_evidence": [
+        "task_required_capability",
+        "capability_was_available_or_teachable",
+        "observed_failure_not_explained_by_environment_or_permission",
+        "suggestion_was_shown",
+        "objective_later_outcome"
+      ],
+      "interventions": [
+        "no_suggestion",
+        "generic_tip",
+        "evidence_matched_skill",
+        "unrelated_placebo"
+      ],
+      "metrics": [
+        "later_objective_task_success",
+        "time_to_success",
+        "user_acceptance",
+        "false_deficit_rate",
+        "abstention_calibration"
+      ],
+      "claim_limit": "no_employee_ranking_performance_or_trait_inference"
+    },
+    {
+      "id": "Q7",
+      "question": "Should two users working on similar tasks be introduced?",
+      "corpora": ["prospective_reciprocal_opt_in_pilot"],
+      "unit": "eligible_user_pair",
+      "retrieval_dependency": "Q1_passes",
+      "interventions": [
+        "no_introduction",
+        "task_similarity_only",
+        "task_similarity_plus_reciprocal_need_and_availability"
+      ],
+      "metrics": [
+        "reciprocal_acceptance",
+        "time_saved",
+        "verified_task_outcome",
+        "unwanted_contact",
+        "cross_scope_disclosure"
+      ],
+      "claim_limit": "similarity_is_candidate_generation_not_collaboration_utility"
+    },
+    {
+      "id": "Q8",
+      "question": "Should an enterprise-specific embedding be trained?",
+      "unit": "frozen_labeled_retrieval_query",
+      "eligibility_gates": [
+        "Q1_generic_hybrid_has_stable_semantic_error_slice",
+        "human_or_objective_labels_exist",
+        "exact_identifier_lane_is_protected",
+        "train_validation_test_split_by_source_project_task_family_and_time",
+        "training_rights_and_deletion_policy_are_approved"
+      ],
+      "arms": [
+        "generic_embedding",
+        "generic_embedding_plus_structured_views",
+        "generic_embedding_plus_reranker",
+        "enterprise_contrastive_embedding",
+        "enterprise_embedding_plus_structured_views"
+      ],
+      "promotion_gate": {
+        "minimum_absolute_Recall_at_20_gain": 0.05,
+        "exact_identifier_regression_allowed": 0.0,
+        "RLS_or_deletion_regression_allowed": 0.0,
+        "must_transfer_to_held_out_private_terminology": true
+      },
+      "claim_limit": "retrieval_representation_only_not_general_model_fine_tuning"
+    }
+  ],
+  "composition_rules": {
+    "allowed": [
+      "cheap_signals_select_expensive_review_without_changing_gold",
+      "deterministic_invariants_supply_evidence_to_blinded_reasoner",
+      "retrieval_supplies_candidates_to_reasoning_with_separate_component_metrics",
+      "schema_candidates_feed_temporal_validation_as_hypotheses",
+      "dream_consolidation_consumes_only_verified_pre_query_candidates",
+      "bounded_candidate_search_feeds_independent_release_lifecycle"
+    ],
+    "forbidden": [
+      "one_arm_reduced_representation_used_as_source_truth_for_another",
+      "several_independent_writers_mutate_the_same_live_memory_or_skill",
+      "generated_eval_from_trace_T_evaluates_skill_induced_from_T",
+      "memory_or_skill_influenced_trace_validates_its_own_release",
+      "graph_or_vector_namespace_substitutes_for_RLS_authority",
+      "similarity_widens_user_team_or_enterprise_scope",
+      "same_outcome_label_is_counted_as_independent_evidence_by_multiple_components",
+      "model_generated_gold_is_pooled_with_executable_or_human_gold",
+      "hidden_test_examples_or_outcomes_reach_proposal_or_selection_workers"
+    ]
+  },
+  "analysis": {
+    "primary_unit": "query_or_task_not_model_invocation",
+    "source_family_fixed_strata": true,
+    "project_or_task_family_clustered": true,
+    "paired_comparisons": true,
+    "interaction_estimands_required_for_composed_arms": true,
+    "paired_bootstrap_intervals": true,
+    "paired_binary_test_when_applicable": true,
+    "holm_correction_within_each_benchmark_family": true,
+    "pooled_score_across_benchmarks": false,
+    "per_domain_and_tail_reporting": true
+  },
+  "architecture_replacement_gates": {
+    "leave_aurora_only_if": [
+      "frozen_correctness_requirement_fails",
+      "selective_RLS_top_k_requirement_fails_after_measured_tuning",
+      "p95_latency_or_concurrency_SLO_fails_at_projected_scale",
+      "required_extension_is_unavailable_and_its_measured_gain_exceeds_operational_cost",
+      "storage_or_write_amplification_exceeds_budget"
+    ],
+    "alternative_must_include": [
+      "same_authorized_candidate_set",
+      "RLS_or_equivalent_pre_ranking_authority",
+      "churn_VACUUM_crash_failover_corruption_and_repair",
+      "deletion_and_derivative_closure",
+      "HA_PITR_upgrade_and_day_two_cost"
+    ],
+    "no_decision_from_feature_checklist_alone": true
+  },
+  "execution_order": [
+    "Q2_cheap_signals_and_friction_labels",
+    "Q1_same_work_retrieval",
+    "Q3_eval_and_diagnosis",
+    "Q4_memory_and_dream",
+    "Q5_NL2SQL_and_replay_skill_transfer",
+    "Q6_prospective_skill_suggestion",
+    "Q7_reciprocal_collaboration",
+    "Q8_embedding_adaptation_only_if_Q1_gate_passes"
+  ],
+  "durable_output": {
+    "raw_trace_content_committed": false,
+    "raw_paths_or_identifiers_in_aggregate": false,
+    "aggregate_results_content_addressed": true,
+    "per_arm_null_and_negative_results_required": true,
+    "cost_per_true_reviewed_finding_and_successful_replay_required": true
+  }
+}

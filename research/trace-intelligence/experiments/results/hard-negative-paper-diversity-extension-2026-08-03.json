@@ -1,0 +1,36 @@
+{
+  "schema_version": "frankengate-oracle-hard-negative-diversity-extension-v1",
+  "paper": "2505.18366",
+  "dataset": {
+    "source": "nvidia/TechQA-RAG-Eval",
+    "fixture_sha256": "e90f42eea14c1c3fb3769b9b892c18c773f05c82efc26acc292c45e2c18e1abb",
+    "pages": 500,
+    "train_questions": 100,
+    "test_questions": 100,
+    "candidate_limit": 500,
+    "seed": 7,
+    "max_seq_length": 256,
+    "raw_text_published": false
+  },
+  "arms": [
+    {
+      "name": "paper_six_encoder_composite",
+      "models": ["dunzhang/stella_en_400M_v5", "jinaai/jina-embeddings-v3", "mixedbread-ai/mxbai-embed-large-v1", "BAAI/bge-large-en-v1.5", "sentence-transformers/LaBSE", "sentence-transformers/all-mpnet-base-v2"],
+      "triplets_selected": 23,
+      "triplets_unavailable": 77,
+      "selection_rate": 0.23,
+      "pca_components": 330
+    },
+    {"name": "single_labse", "models": ["sentence-transformers/LaBSE"], "triplets_selected": 56, "triplets_unavailable": 44, "selection_rate": 0.56},
+    {"name": "single_qwen3", "models": ["Qwen/Qwen3-Embedding-0.6B"], "triplets_selected": 23, "triplets_unavailable": 77, "selection_rate": 0.23},
+    {"name": "single_bge_m3", "models": ["BAAI/bge-m3"], "triplets_selected": 27, "triplets_unavailable": 73, "selection_rate": 0.27},
+    {"name": "single_nomic_v2_moe", "models": ["nomic-ai/nomic-embed-text-v2-moe"], "triplets_selected": 26, "triplets_unavailable": 74, "selection_rate": 0.26},
+    {"name": "single_arctic_l", "models": ["Snowflake/snowflake-arctic-embed-l"], "triplets_selected": 26, "triplets_unavailable": 74, "selection_rate": 0.26}
+  ],
+  "interpretation": [
+    "LaBSE has substantially higher inequality-valid coverage on this fixture than the paper composite and modern extension arms.",
+    "Coverage is not quality: no selected-negative relevance adjudication, reranker comparison, or false-negative rate is included.",
+    "The result is evidence to test LaBSE as a diversity/control arm and to audit the composite's conservative geometry, not evidence to promote LaBSE or reject the paper."
+  ],
+  "next_gate": "Reuse the exact 100/100 split for fixed-reranker training with three seeds, random/lexical/single/composite arms, and audited collision labels."
+}

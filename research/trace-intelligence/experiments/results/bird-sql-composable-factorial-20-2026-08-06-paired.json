@@ -1,0 +1,35 @@
+{
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_subplan_benefit_confirmed": false,
+    "independent_verification_required": true,
+    "reason": "One library win with no losses on a 20-task public family-disjoint proxy is encouraging but underpowered and not an enterprise outcome."
+  },
+  "comparisons": {
+    "composable_subplan_library_vs_formatting_placebo": {
+      "control_exact": 3,
+      "control_wins": 0,
+      "exact_two_sided_sign_p": 1.0,
+      "interpretation": "descriptive; one discordant task is insufficient for a powered claim",
+      "library_exact": 4,
+      "library_wins": 1,
+      "task_count": 20,
+      "ties": 19
+    },
+    "composable_subplan_library_vs_no_skill": {
+      "control_exact": 3,
+      "control_wins": 0,
+      "exact_two_sided_sign_p": 1.0,
+      "interpretation": "descriptive; one discordant task is insufficient for a powered claim",
+      "library_exact": 4,
+      "library_wins": 1,
+      "task_count": 20,
+      "ties": 19
+    }
+  },
+  "library_sha256": "7f0e7e753de6a4b03a8a153ad273754389cb93445e08e8f3a7afd5257918b56a",
+  "schema_version": "frankengate-bird-sql-composable-factorial-paired-v1",
+  "source_result": "bird-sql-composable-factorial-20-2026-08-06.json",
+  "source_result_sha256": "eee44c3670a1e9257e19dc227dc7043bd9ae8f8048e7d5ffa49512d8ef9e9600",
+  "task_count": 20
+}

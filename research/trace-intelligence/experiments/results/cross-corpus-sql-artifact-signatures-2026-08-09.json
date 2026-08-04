@@ -1,0 +1,51 @@
+{
+  "claim_boundary": {
+    "cross_corpus_executable_reuse_established": false,
+    "reason": "Schema-agnostic signatures are structural candidate-generation signals; they do not carry identifiers, authority, dialect, schema compatibility, or result validators.",
+    "schema_agnostic_overlap_measured": true,
+    "semantic_intent_transfer_established": false
+  },
+  "cross_corpus_overlap": {
+    "coarse_collision_rate": 1.0,
+    "defog_rows_with_bird_coarse_match": 2,
+    "defog_rows_with_bird_structural_match": 1,
+    "shared_coarse_operator_shapes": 2,
+    "shared_coarse_with_multiple_exact_variants": 2,
+    "shared_exact_templates": 0,
+    "shared_structural_templates": 1,
+    "shared_structural_with_multiple_exact_variants": 1,
+    "structural_collision_rate": 1.0
+  },
+  "parse_or_execution_failures_during_signature": 0,
+  "parse_valid_rows": {
+    "bird": 242,
+    "defog": 314
+  },
+  "raw_content_committed": false,
+  "result_sha256": "829ac71ce29f20e3ef53024505d301b1f89b6d1980b3fe05dd8eb6a96d090a4e",
+  "schema_version": "frankengate-cross-corpus-sql-artifact-signatures-v1",
+  "sources": {
+    "bird": {
+      "parse_failures": 0,
+      "root": "world-model-harness-bird-sql",
+      "rows": 242
+    },
+    "defog": {
+      "parse_failures": 0,
+      "root": "defog-sql-eval-research",
+      "rows": 314
+    }
+  },
+  "template_counts": {
+    "bird": {
+      "unique_coarse_operator_shapes": 213,
+      "unique_exact_templates": 240,
+      "unique_structural_templates": 229
+    },
+    "defog": {
+      "unique_coarse_operator_shapes": 286,
+      "unique_exact_templates": 313,
+      "unique_structural_templates": 304
+    }
+  }
+}

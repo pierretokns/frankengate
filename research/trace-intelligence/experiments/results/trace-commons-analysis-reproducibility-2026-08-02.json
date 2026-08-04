@@ -1,0 +1,137 @@
+{
+  "actual_aggregate_sha256": "f9d950fe6fe5796e8e86644729dd2e376fd260422031933b40a6564a00879910",
+  "all_passed": true,
+  "checks": [
+    {
+      "expected": 28,
+      "matched": true,
+      "metric": "S0_metadata.sessions",
+      "observed": 28
+    },
+    {
+      "expected": 17991,
+      "matched": true,
+      "metric": "S0_metadata.valid_records",
+      "observed": 17991
+    },
+    {
+      "expected": 0,
+      "matched": true,
+      "metric": "S0_metadata.malformed_records",
+      "observed": 0
+    },
+    {
+      "expected": 26,
+      "matched": true,
+      "metric": "S1_deterministic_signals.candidate_sessions",
+      "observed": 26
+    },
+    {
+      "expected": 10,
+      "matched": true,
+      "metric": "S1_deterministic_signals.review_selected_sessions",
+      "observed": 10
+    },
+    {
+      "expected": 27,
+      "matched": true,
+      "metric": "S2_exact_structured_fts_ready.candidate_sessions",
+      "observed": 27
+    },
+    {
+      "expected": 263,
+      "matched": true,
+      "metric": "S4_temporal_episode_candidates.candidate_episodes",
+      "observed": 263
+    },
+    {
+      "expected": 107,
+      "matched": true,
+      "metric": "S4_temporal_episode_candidates.candidate_tiers.high",
+      "observed": 107
+    },
+    {
+      "expected": 73,
+      "matched": true,
+      "metric": "S4_temporal_episode_candidates.candidate_tiers.medium",
+      "observed": 73
+    },
+    {
+      "expected": 83,
+      "matched": true,
+      "metric": "S4_temporal_episode_candidates.candidate_tiers.low",
+      "observed": 83
+    },
+    {
+      "expected": 269,
+      "matched": true,
+      "metric": "S6_proposal_records.candidate_records.eval_review",
+      "observed": 269
+    },
+    {
+      "expected": 16,
+      "matched": true,
+      "metric": "S6_proposal_records.candidate_records.memory_review_motifs",
+      "observed": 16
+    },
+    {
+      "expected": 179,
+      "matched": true,
+      "metric": "S6_proposal_records.candidate_records.procedure_review_episodes",
+      "observed": 179
+    },
+    {
+      "expected": 0,
+      "matched": true,
+      "metric": "S6_proposal_records.candidate_records.skill_gap_recommendations",
+      "observed": 0
+    },
+    {
+      "expected": 0,
+      "matched": true,
+      "metric": "S6_proposal_records.candidate_records.cross_user_collaboration_recommendations",
+      "observed": 0
+    },
+    {
+      "expected": 0,
+      "matched": true,
+      "metric": "S6_proposal_records.candidate_records.automatic_memory_or_skill_writes",
+      "observed": 0
+    },
+    {
+      "expected": 0,
+      "matched": true,
+      "metric": "observed_failure_modes.outcome_labels_available",
+      "observed": 0
+    },
+    {
+      "expected": 0,
+      "matched": true,
+      "metric": "observed_failure_modes.environment_state_snapshots_available",
+      "observed": 0
+    },
+    {
+      "expected": 0,
+      "matched": true,
+      "metric": "observed_failure_modes.authorization_and_classification_labels_available",
+      "observed": 0
+    }
+  ],
+  "claim_boundary": {
+    "causal_skill_benefit_confirmed": false,
+    "outcome_labels_available": 0,
+    "reason": "This verifies deterministic aggregate replay only. The corpus has no task outcomes, environment snapshots, or authorization labels, so it cannot establish memory utility, skill benefit, or enterprise generalization.",
+    "structural_reproduction_confirmed": true
+  },
+  "dataset_manifest": {
+    "path": "configs/datasets/trace-commons-memory-full-cohort.json",
+    "sha256": "2af3b791b0a259968620c6654a722f86f786a4570caab3c1f90e73f85c2afaeb"
+  },
+  "expected_result": {
+    "path": "experiments/results/trace-commons-full-content-minimized-analysis-2026-08-02.json",
+    "sha256": "34968e9ec27171957f6f8e2e49cdf4b550aefc416c2eb6ca00b8ae8c1ed0aabf"
+  },
+  "metrics_compared": 19,
+  "raw_content_emitted": false,
+  "schema_version": "frankengate-trace-commons-reproducibility-v1"
+}

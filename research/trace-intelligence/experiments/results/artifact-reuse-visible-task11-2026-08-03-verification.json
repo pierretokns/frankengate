@@ -1,0 +1,10 @@
+{
+  "schema_version": "frankengate-validated-artifact-reuse-visible-pilot-verification-v1",
+  "source_result_sha256": "5ba8dfd8bf8ea20ed299a826b8dab86f41f01937ffe49a10ae1113512e0bb559",
+  "source_verification_sha256": "26891862ac9ed01a5f28a20322783293195af57602a4f3dc736f4821646c9bc6",
+  "semantic_verification_passed": true,
+  "authority_valid": true,
+  "unauthorized_observations": 0,
+  "stored_vs_recomputed_mismatches": 0,
+  "status": "verified"
+}

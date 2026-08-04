@@ -1,0 +1,37 @@
+{
+  "schema_version": "frankengate-enterprise-rag-frontier-rerank-v1",
+  "source": {
+    "documents_sha256": "6b0747bf160af9427b12101537d53056ac592ada9831c1a98ae01fa50a8d2a9f",
+    "questions_sha256": "e25066f4eff3843dd0f3df0d1348113471e072e75007ffe390a0aa83f2a80af2",
+    "raw_model_outputs_committed": false
+  },
+  "dataset": {
+    "question_type": "semantic",
+    "questions": 125,
+    "candidate_pool": "top 20 rare-term FTS5 candidates",
+    "candidate_limit": 20
+  },
+  "protocol": {
+    "model": "gpt-5.6-luna",
+    "frontier_calls": 125,
+    "frontier_sees_question": true,
+    "frontier_sees_candidate_titles_and_snippets": true,
+    "frontier_sees_gold_targets": false,
+    "frontier_sees_gold_answers": false,
+    "max_selected": 10
+  },
+  "arms": {
+    "candidate_pool_recall_at_20": 0.224,
+    "lexical_top10": {"mrr": 0.113667, "recall_at_1": 0.08, "recall_at_5": 0.16, "recall_at_10": 0.208},
+    "frontier_rerank": {"mrr": 0.194667, "recall_at_1": 0.184, "recall_at_5": 0.208, "recall_at_10": 0.208}
+  },
+  "failures": [],
+  "claim_boundary": {
+    "semantic_frontier_reranking_measured": true,
+    "dense_embedding_measured": false,
+    "ontology_quality_measured": false,
+    "trace_learning_measured": false,
+    "reason": "Semantic document slice only; frontier can rerank lexical candidates but cannot recover documents absent from the candidate pool."
+  },
+  "result_sha256": "4a7a7ccb582d738912e4cef0474b5cffc54da3537f9854ba5a41b1372c0497a8"
+}

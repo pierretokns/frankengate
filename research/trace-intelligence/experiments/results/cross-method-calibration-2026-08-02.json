@@ -1,0 +1,307 @@
+{
+  "additional_outcomes": {
+    "changed_agent": {
+      "changed_agent_future_task_outcome_measured": true,
+      "cross_user_enterprise_transfer_measured": false,
+      "exact_mean_delta": 0.0,
+      "receipt": "changed-agent-outcome-bird-2026-08-02.json",
+      "receipt_sha256": "a44923385fc144873d746bf4ae418c110792b518e7ee556e61f8b3a9f63a4d5c"
+    }
+  },
+  "claim_boundary": {
+    "automatic_integration_authorized": false,
+    "cross_method_efficacy_pooling": false,
+    "no_cost_fabrication": true,
+    "reason": "Receipts use incompatible tasks, metrics, models, and horizons; this audit reports coverage and typed nulls, not a pooled effect or universal ranking.",
+    "remaining": [
+      "repeat-seed powered cohorts with predeclared outcomes",
+      "comparable token/currency accounting and latency under the same harness budget",
+      "independent changed-agent and enterprise-level prospective outcomes"
+    ]
+  },
+  "coverage": {
+    "changed_agent_outcome_receipts": 1,
+    "comparable_cost_measured": 0,
+    "latency_measured": 0,
+    "methods": 18,
+    "paired_effect_measured": 2,
+    "power_estimate_is_planning_only": true,
+    "typed_null_taxonomy": 18
+  },
+  "inputs": {
+    "promotion_audit": "integration-promotion-audit-2026-08-02.json",
+    "promotion_audit_sha256": "bbe2c243a82804be97047141853910fcf1a6ffe90bbd1c3faf8113c9711b1427",
+    "promotion_rows": 18
+  },
+  "methods": [
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "stored_trace_assertion_only",
+      "latency": null,
+      "name": "agentevals_stored_trace",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "agentevals-upstream-wisp-2026-07-30.json",
+      "receipt_sha256": "5d60fb268ea240724cf0353655dd22e4ffd15f6a3bb23f5ce69a59bfc21ed1e0",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "blocked_artifact",
+      "latency": null,
+      "name": "agentrx_static",
+      "null_taxonomy": "protocol_or_provider_failure",
+      "paired_effect": null,
+      "receipt": "agentrx-independent-static-audit-2026-07-31.json",
+      "receipt_sha256": "95eee065328d49107b0f0e8145059a18804442b4d7ad004642bf19ee250895ef",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "structural_only",
+      "latency": null,
+      "name": "dreaming_procedure",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
+      "receipt_sha256": "c63565f74563ea2cd1a343958defd10a84528018a8b44a1cda61b8ae2493e124",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "quarantined_no_lift",
+      "latency": null,
+      "name": "gepa",
+      "null_taxonomy": "underpowered_or_unproven",
+      "paired_effect": null,
+      "receipt": "gepa-native-tool-protocol-2026-08-02-r2.json",
+      "receipt_sha256": "98f2a13c665a1d210a1768a8add2ed9d24cc9fc896573b79288639cb99b6286c",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "shadow_backend_only",
+      "latency": null,
+      "name": "governed_postgres_retrieval",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "finance-governed-retrieval-2026-08-02.json",
+      "receipt_sha256": "7ca82ff24e1905ca9f26ce78052709aa54e4a8893c938424890919d219b7add8",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "incompatible_or_incomplete",
+      "latency": null,
+      "name": "graphiti_langmem_natural",
+      "null_taxonomy": "protocol_or_provider_failure",
+      "paired_effect": null,
+      "receipt": "faithful-memory-components-llama32-natural-2026-08-02.json",
+      "receipt_sha256": "77425b46d144540efcc574b088773885b4074731907427f1c06b91eae0541aa2",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "shadow_review_only",
+      "latency": null,
+      "name": "matm_embedding_retrieval",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "matm-embedding-similarity-benchmark-2026-08-02.json",
+      "receipt_sha256": "1786215ed7500014aafe641f00b3e1ade3a94e7c72487a6b89e42e87aa70b1aa",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "fixture_only",
+      "latency": null,
+      "name": "memory_palace_meminsight_fixture",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "memory-mechanism-factorial-fixture-2026-07-30.json",
+      "receipt_sha256": "a172e7ab9a338b1b3648f89db3b8cfa4c0c68c6513ec9e0aa260118ac20f15ee",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "mechanics_only",
+      "latency": null,
+      "name": "mlops_release_loop",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "mlops-feedback-canary-rollback-2026-08-02.json",
+      "receipt_sha256": "6e5ae51a24bfe7341b6e6ac0dd7cca00c0b03d52649c7754bb48d6c8eb9d2dd2",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "provider_unavailable",
+      "latency": null,
+      "name": "reasoningbank_azure_path",
+      "null_taxonomy": "protocol_or_provider_failure",
+      "paired_effect": null,
+      "receipt": "reasoningbank-locomo-bounded-2026-08-02.json",
+      "receipt_sha256": "c3fa243a8bcbcd37999cbef2a476bf1eb85de0cfb43924cd779fdd91eecb31b8",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "quarantined_negative_utility",
+      "latency": null,
+      "name": "reasoningbank_codex",
+      "null_taxonomy": "negative_utility",
+      "paired_effect": null,
+      "receipt": "reasoningbank-codex-frontier-bounded-2026-08-02.json",
+      "receipt_sha256": "9d5bb125fd89daa0dd83de2cb45d0df79b946c6bfdba3a44b6cecf8605f29dd2",
+      "sample_size": 2
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "quarantined_negative_utility",
+      "latency": null,
+      "name": "rho_locomo",
+      "null_taxonomy": "negative_utility",
+      "paired_effect": null,
+      "receipt": "rho-frontier-locomo-bounded-2026-08-02.json",
+      "receipt_sha256": "7fc61c8bf9bacf62e5484cfdb4587077123dba2922703b1b33e16b7b9eb0d5bf",
+      "sample_size": 2
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "quarantined_negative_bounded_utility",
+      "latency": null,
+      "name": "rho_powered_candidate",
+      "null_taxonomy": "negative_utility",
+      "paired_effect": {
+        "estimated_pairs_for_80pct_normal_power": 28,
+        "observed_mean_delta": -0.2552579365079365,
+        "paired_sd": 0.4791840780769241,
+        "pairs": 8
+      },
+      "receipt": "rho-candidate-harness-powered-2026-08-02.json",
+      "receipt_sha256": "f7fb510ed6ec86b704d888551d5701cd896be8d78b760818ff026ac3518669f8",
+      "sample_size": 8
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "mechanics_only",
+      "latency": null,
+      "name": "signals_diagnosis_chain",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "signals-diagnosis-evals-test-checkpoint-2026-07-31.json",
+      "receipt_sha256": "9763ea141d96f60400bda02bebfd541a7abf3e70bcdfe32ab833026048c2e27d",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "quarantined_negative_utility",
+      "latency": null,
+      "name": "skillgen_bird",
+      "null_taxonomy": "negative_utility",
+      "paired_effect": {
+        "estimated_pairs_for_80pct_normal_power": null,
+        "observed_mean_delta": 0.0,
+        "paired_sd": 0.0,
+        "pairs": 20
+      },
+      "receipt": "skillgen-codex-bird-frontier-2026-08-02.json",
+      "receipt_sha256": "794885120d85c25e7794b6e76d6d369633e4dabff60b0b2b22793b0b3951f26c",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "quarantined_utility_unproven",
+      "latency": null,
+      "name": "skillopt_alfworld",
+      "null_taxonomy": "underpowered_or_unproven",
+      "paired_effect": null,
+      "receipt": "alfworld-luna-skillopt-long-horizon-2026-08-02.json",
+      "receipt_sha256": "9c78849c112e9d67cb4c08eac4a681a71998b667d474711098c676b3edee9b22",
+      "sample_size": 1
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "mechanics_only",
+      "latency": null,
+      "name": "trace2skill_stage0",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "trace2skill-governed-stage0-2026-07-30.json",
+      "receipt_sha256": "f8a3b22a9ae2fccfc1eb54132738277664a562c827bdade906be9d5bd879c312",
+      "sample_size": null
+    },
+    {
+      "cost": {
+        "reason": "No comparable token/currency accounting is present in the committed receipt.",
+        "status": "not_measured"
+      },
+      "disposition": "not_selected",
+      "latency": null,
+      "name": "unselected_backend_concepts",
+      "null_taxonomy": "mechanics_or_infrastructure_only",
+      "paired_effect": null,
+      "receipt": "concept-coverage-audit-2026-07-31.json",
+      "receipt_sha256": "fb6e93a64660aa54eb6018a091870a9792823011aa6807ebb18a5127e9744013",
+      "sample_size": null
+    }
+  ],
+  "null_taxonomy_counts": {
+    "mechanics_or_infrastructure_only": 9,
+    "negative_utility": 4,
+    "protocol_or_provider_failure": 3,
+    "underpowered_or_unproven": 2
+  },
+  "schema_version": "frankengate-cross-method-calibration-v1"
+}

@@ -1,0 +1,99 @@
+{
+  "blinding_contract": {
+    "deterministic_blind_ids": true,
+    "deterministic_seeded_order": true,
+    "native_call_ids_emitted": false,
+    "source_locators_emitted": false
+  },
+  "candidate_count": 87,
+  "context_contract": {
+    "context_events_each_side": 4,
+    "max_context_bytes": 196608,
+    "max_context_events": 64,
+    "tool_complete": true,
+    "whole_event_only": true
+  },
+  "controlled_tool_family_counts": {
+    "file_change": 32,
+    "file_read": 2,
+    "shell": 53
+  },
+  "credential_transform": {
+    "authorized_classified_content_retained": true,
+    "authorized_internal_pii_retained": true,
+    "counts_by_class": {},
+    "disposition": "pass",
+    "rule_set_sha256": "2c36bf91aff46c1d428aca36de6906cd002c89f6b01e5273a62ae327076f7d6e",
+    "transformed_values": 0
+  },
+  "dataset_id": "crispwisp/wisp-claude-code-sessions",
+  "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+  "excluded_candidate_counts": {
+    "incomplete_tool_context": 2
+  },
+  "labels": {
+    "cause": [
+      "tool_or_environment",
+      "permission_or_policy",
+      "invalid_argument_or_command",
+      "dependency_or_configuration",
+      "model_or_harness",
+      "ambiguous_requirement",
+      "unknown",
+      "insufficient_evidence"
+    ],
+    "evidence_strength": [
+      "direct_executable",
+      "direct_trace",
+      "corroborated",
+      "circumstantial",
+      "insufficient_evidence"
+    ],
+    "outcome": [
+      "recovered_verified",
+      "later_tool_succeeded_task_unverified",
+      "not_recovered",
+      "regressed",
+      "insufficient_evidence"
+    ],
+    "productive_exploration": [
+      "productive",
+      "mixed",
+      "unproductive",
+      "not_applicable",
+      "insufficient_evidence"
+    ],
+    "relation": [
+      "same_task_retry",
+      "same_goal_changed_method",
+      "related_subtask",
+      "unrelated",
+      "insufficient_evidence"
+    ],
+    "usefulness": [
+      "eval_candidate",
+      "support_candidate",
+      "workflow_pattern_candidate",
+      "memory_candidate",
+      "not_useful",
+      "insufficient_evidence"
+    ]
+  },
+  "packet_schema_version": "frankengate.wisp-recovery-adjudication-packet.v1",
+  "raw_packet_bytes": 1966782,
+  "raw_packet_committed": false,
+  "raw_packet_path_policy": "/private/tmp only",
+  "raw_packet_sha256": "7a519a7f5666eb50dcc4cbba4f2d5d9568b8481168ad01680ae688fdd517fec4",
+  "rubric_contract": {
+    "evidence_refs_required_for_every_label": true,
+    "later_tool_success_proves_task_recovery": false,
+    "person_level_skill_gap_inference_allowed": false,
+    "unit_of_judgment": "bounded_trace_episode"
+  },
+  "schema_version": "frankengate.wisp-recovery-adjudication-manifest.v1",
+  "source_loss_counts": {
+    "malformed_json_record": 2
+  },
+  "source_session_count": 104,
+  "structural_candidate_count": 89
+}

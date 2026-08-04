@@ -1,0 +1,8 @@
+{
+  "cases_verified": 8,
+  "outcomes_hidden_from_frontier": true,
+  "raw_hashes_match": true,
+  "schema_version": "traject-bench-frontier-reranker-verification-v1",
+  "source_result_sha256": "10e8bdc794e1378c0beb3364760aaee70f7e55e3259ac6f22a2f2335f93ca0ad",
+  "verification_passed": true
+}

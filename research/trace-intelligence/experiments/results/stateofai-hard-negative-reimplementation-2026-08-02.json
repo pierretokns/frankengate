@@ -1,0 +1,42 @@
+{
+  "claim_boundary": "CPU clean-room surrogate; not a reproduction of the paper's private six encoders or cross-encoder. Results test whether the selection logic transfers to this corpus.",
+  "corpus": {
+    "pages": 400,
+    "questions": 200,
+    "test": 40,
+    "train": 160
+  },
+  "metrics": {
+    "lexical": {
+      "known_hard_match_rate": 0.11875,
+      "mrr_at_10": 0.639890873015873,
+      "mrr_at_3": 0.6125,
+      "selection_rate": 1.0,
+      "test_queries": 40,
+      "train_examples": 160
+    },
+    "proposed": {
+      "known_hard_match_rate": 0.02857142857142857,
+      "mrr_at_10": 0.0,
+      "mrr_at_3": 0.0,
+      "selection_rate": 0.21875,
+      "test_queries": 40,
+      "train_examples": 35
+    },
+    "random": {
+      "known_hard_match_rate": 0.0,
+      "mrr_at_10": 0.6565575396825396,
+      "mrr_at_3": 0.6291666666666667,
+      "selection_rate": 1.0,
+      "test_queries": 40,
+      "train_examples": 160
+    }
+  },
+  "protocol": {
+    "algorithm": "six-view TF-IDF surrogate for six bi-encoders + PCA(95%) + d(Q,D)<d(Q,PD) and d(Q,D)<d(PD,D)",
+    "reranker": "linear logistic pair scorer (cross-encoder surrogate)",
+    "seed": 7,
+    "split": "deterministic every fifth question held out"
+  },
+  "schema_version": "frankengate-enterprise-hard-negative-mining-v1"
+}

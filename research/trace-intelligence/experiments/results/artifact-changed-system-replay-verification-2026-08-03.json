@@ -1,0 +1,7 @@
+{
+  "cases_verified": 5,
+  "receipt_sha256": "f5029839493bce9a18293f48e91f95cf7bf34c505430db6c4e2c8a3022f0f48f",
+  "schema_version": "frankengate-artifact-changed-system-replay-verification-v1",
+  "semantic_compatibility_false_accepts": 0,
+  "verification_passed": true
+}

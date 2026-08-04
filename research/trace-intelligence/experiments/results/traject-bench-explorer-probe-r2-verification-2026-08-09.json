@@ -1,0 +1,10 @@
+{
+  "claim_boundary_verified": true,
+  "completed_cases_verified": 8,
+  "metrics_reconciled": true,
+  "protocol_flags_verified": true,
+  "schema_version": "frankengate-traject-bench-explorer-verification-v1",
+  "selected_cases_verified": 8,
+  "source_result_sha256": "cd739b2fa35813504629b754b6ec379ac720320042c82a7418e333deeeca2474",
+  "verification_passed": true
+}

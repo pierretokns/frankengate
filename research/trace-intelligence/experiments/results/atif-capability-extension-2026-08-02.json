@@ -1,0 +1,252 @@
+{
+  "claim_limits": [
+    "A profile-aware round trip is not a portable ATIF guarantee.",
+    "Retention is exact structural fact equality, not task utility or replay equivalence.",
+    "MATM does not contain environment seed/replay snapshots, so no format can create that evidence.",
+    "Wisp and MATM are not enterprise traces; consented multi-user validation remains open."
+  ],
+  "experiment": {
+    "aggregate_only": true,
+    "name": "ATIF v1.7 Frankengate capability extension empirical round trip",
+    "portable_atif_claim": "none; extension requires a Frankengate-aware reader",
+    "raw_content_or_trace_identifiers_emitted": false,
+    "unit": "profile-retained structural fact observed by the canonical adapter"
+  },
+  "families": {
+    "matm_alfworld_rl_environment": {
+      "measurement": {
+        "capabilities": {
+          "authorization": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "branches": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "environment_reset_state": {
+            "retained_fact_count": 25885,
+            "retention": 0.802014,
+            "source_fact_count": 32275,
+            "source_status": "observed"
+          },
+          "observations": {
+            "retained_fact_count": 51770,
+            "retention": 0.666667,
+            "source_fact_count": 77655,
+            "source_status": "observed"
+          },
+          "provenance": {
+            "retained_fact_count": 34405,
+            "retention": 1.0,
+            "source_fact_count": 34405,
+            "source_status": "observed"
+          },
+          "replay_identity": {
+            "retained_fact_count": 77655,
+            "retention": 1.0,
+            "source_fact_count": 77655,
+            "source_status": "observed"
+          },
+          "retries": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "rewards": {
+            "retained_fact_count": 56030,
+            "retention": 1.0,
+            "source_fact_count": 56030,
+            "source_status": "observed"
+          },
+          "termination": {
+            "retained_fact_count": 32275,
+            "retention": 0.834734,
+            "source_fact_count": 38665,
+            "source_status": "observed"
+          },
+          "time": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "tool_calls": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "tool_results": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          }
+        },
+        "omitted_field_count": 66680,
+        "overall_retention": 0.877907,
+        "retained_event_field_count": 181195,
+        "retained_root_field_count": 2130,
+        "round_trip_failure_count": 0,
+        "round_trip_pass_count": 2130,
+        "source_event_count": 25885,
+        "trajectory_count": 2130
+      },
+      "source_pin": {
+        "adapter": "matm_alfworld_population_v1",
+        "dataset_id": "toeunkim/matm-trajectories",
+        "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+        "known_missing_fields": [
+          "retrieved_item_ids",
+          "retrieved_item_content",
+          "retrieval_scores_and_ranks",
+          "memory_snapshot_before",
+          "memory_snapshot_after",
+          "memory_source_lineage",
+          "prompt_after_memory_injection",
+          "environment_seed",
+          "environment_replay_snapshot",
+          "timestamps",
+          "authorization_decisions"
+        ],
+        "license": "Apache-2.0",
+        "manifest_sha256": "e9a269b14da99aadfefefb94efde35b9aeb154865ba1d88c2324e03d5a24baa5",
+        "pyarrow_version": "21.0.0",
+        "source_file": "alfworld/population_runs.parquet",
+        "source_format": "parquet",
+        "source_sha256": "626e2e6351d763739b0e2695a1bc442e1c851c1153c44301017739e3bd1155aa",
+        "source_size_bytes": 4237969,
+        "source_url": "https://huggingface.co/datasets/toeunkim/matm-trajectories",
+        "trajectory_count": 2130
+      }
+    },
+    "wisp_claude_code_tool_rich": {
+      "measurement": {
+        "capabilities": {
+          "authorization": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "branches": {
+            "retained_fact_count": 4821,
+            "retention": 0.877183,
+            "source_fact_count": 5496,
+            "source_status": "observed"
+          },
+          "environment_reset_state": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "observations": {
+            "retained_fact_count": 11035,
+            "retention": 1.0,
+            "source_fact_count": 11035,
+            "source_status": "observed"
+          },
+          "provenance": {
+            "retained_fact_count": 42635,
+            "retention": 0.874708,
+            "source_fact_count": 48742,
+            "source_status": "observed"
+          },
+          "replay_identity": {
+            "retained_fact_count": 42952,
+            "retention": 0.877485,
+            "source_fact_count": 48949,
+            "source_status": "observed"
+          },
+          "retries": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "rewards": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "termination": {
+            "retained_fact_count": 0,
+            "retention": null,
+            "source_fact_count": 0,
+            "source_status": "not_observed"
+          },
+          "time": {
+            "retained_fact_count": 14643,
+            "retention": 1.0,
+            "source_fact_count": 14643,
+            "source_status": "observed"
+          },
+          "tool_calls": {
+            "retained_fact_count": 13254,
+            "retention": 1.0,
+            "source_fact_count": 13254,
+            "source_status": "observed"
+          },
+          "tool_results": {
+            "retained_fact_count": 11035,
+            "retention": 1.0,
+            "source_fact_count": 11035,
+            "source_status": "observed"
+          }
+        },
+        "omitted_field_count": 105173,
+        "overall_retention": 0.916561,
+        "retained_event_field_count": 155857,
+        "retained_root_field_count": 88,
+        "round_trip_failure_count": 0,
+        "round_trip_pass_count": 88,
+        "source_event_count": 17293,
+        "trajectory_count": 88
+      },
+      "source_pin": {
+        "adapter": "wisp-claude-code-canonical-v1",
+        "cache_file_count": 104,
+        "cache_inventory_sha256": "6e633b0a3e2fed9e856f9b9c7765fc8ca1b150ecf8ab626f7082e5edc3e2758f",
+        "dataset_id": "crispwisp/wisp-claude-code-sessions",
+        "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+        "excluded_without_complete_tool_lifecycle": 16,
+        "license": "MIT",
+        "manifest_sha256": "d5a6541a2177180f9ee32065d268169889487f04980f693155bfec25de0b0737",
+        "selected_tool_rich_trajectories": 88,
+        "selection_rule": "canonical trajectory contains at least one tool.proposed and at least one tool.completed or tool.failed event",
+        "source_format": "Claude Code JSONL under a mirror of ~/.claude/projects/",
+        "source_url": "https://huggingface.co/datasets/crispwisp/wisp-claude-code-sessions"
+      }
+    }
+  },
+  "profile": {
+    "canonicalization": "json-sort-keys-separators-utf8",
+    "hash_algorithm": "sha256",
+    "omits": [
+      "prompt and tool payload content",
+      "tool arguments",
+      "opaque environment state deltas and memory snapshots",
+      "replay or evaluation access without a governed reference"
+    ],
+    "preserves": [
+      "authorization and authorization epoch facts",
+      "environment reset/termination facts and replay references",
+      "reward/evaluation attribution",
+      "memory reference, revision, scope, epoch, and lineage facts",
+      "explicit reset/termination semantics and reader compatibility",
+      "event identity, causal edges, branches, retries, and provenance"
+    ],
+    "reference_policy": "governed-reference-required;hash-only-is-not-replayable",
+    "schema_version": "frankengate-atif-capability-extension-v2"
+  },
+  "result_sha256": "9fecb6eac4a3a3452428a49c8d21225bb3d7ce414f315d84fd6d2d4583fe3bd9",
+  "schema_version": "atif-capability-extension-empirical-result-v1"
+}

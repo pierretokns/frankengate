@@ -1,0 +1,1161 @@
+{
+  "architecture_decision": {
+    "custom_embedding_model_justified": false,
+    "new_database_justified": false,
+    "persistent_systems": [
+      "one governed PostgreSQL canonical evidence and proposal store"
+    ],
+    "projections": [
+      "ATIF v1.7 for explicitly mapped portable tasks/evals",
+      "OpenInference/OTLP for content-minimized operational topology"
+    ],
+    "reason": "the real OTel path, relational memory oracle, real native memory-transition adapter, and same-candidate forced-RLS PostgreSQL retrieval plus governed skill-release lifecycle pass without a second authority; the full Trace Commons cohort adds attested proposal mechanics without outcome labels. Exact pgvector is fast on the correctness cohort while the tested trigram-heavy fusion is rejected; current failures are labels, scale, outcome validity, calibration, and prospective causality\u2014not a demonstrated need for another database"
+  },
+  "enterprise_questions": {
+    "find_people_doing_similar_work": {
+      "basis": "the audited public histories have no stable user field and cannot be treated as an independent cross-user enterprise cohort; the gate and answer-shaped cohort analysis now abstain without consent and a minimum cohort",
+      "next_gate": "authorized SWE-chat or consented enterprise same-task labels with cohort privacy",
+      "status": "analysis_mechanics_only"
+    },
+    "find_repeated_friction_and_later_recovery": {
+      "basis": "one canonical constructor on Wisp and share-codex",
+      "next_gate": "human outcome labels and prospective validation",
+      "status": "review_candidates_supported"
+    },
+    "fine_tune_enterprise_embeddings": {
+      "basis": "a general structured+dense arm already improved silver-label Recall@20 by 0.0859 while dense alone added only 0.0051; the remaining gates are human labels, exact-identifier protection, Aurora/selective-scope scale, and prospective utility",
+      "next_gate": "at least +5 absolute Recall@20 over the general hybrid baseline without RLS/deletion/latency regression",
+      "status": "premature"
+    },
+    "identify_missing_cloud_or_domain_skills": {
+      "basis": "CodeTrace/MAST labels describe trajectory events, not human capability; the gate and reviewed-label analysis now require human outcome labels before skill-gap aggregation",
+      "next_gate": "reviewed capability taxonomy, environmental-availability labels, abstention, and prospective task uplift",
+      "status": "analysis_mechanics_only"
+    },
+    "recommend_collaboration": {
+      "basis": "trace similarity is not collaboration utility; cross-user consent, minimum cohorts, outcome labels, and reciprocal opt-in are now a fail-closed prerequisite",
+      "next_gate": "reciprocal opt-in introductions and independently measured outcomes under minimum cohorts",
+      "status": "analysis_mechanics_only"
+    },
+    "show_each_user_all_currently_authorized_history": {
+      "basis": "Wisp governed PostgreSQL pagination/denial plus seven public native-or-derived history fidelity audits",
+      "next_gate": "complete permission-oracle/deletion/failover gauntlet",
+      "status": "local_mechanics_supported"
+    },
+    "suggest_evals_from_traces": {
+      "basis": "Wisp evidence-linked proposals, CodeTraceBench mutation mechanics, and an 18-assertion governed hidden-test/release lifecycle",
+      "next_gate": "guided harness/environment/verifier construction and changed-system execution",
+      "status": "proposal_and_audit_mechanics_supported"
+    },
+    "write_memory_or_memory_md": {
+      "basis": "real native transition import is loss-aware, but Wisp correctly emitted zero fact proposals and no intervention tested whether memory improved later work",
+      "next_gate": "bitemporal contradiction benchmark, citations, review, rollback, and later-query utility",
+      "status": "not_supported"
+    }
+  },
+  "input_receipts": {
+    "agenttrace": {
+      "filename": "agenttrace-nl2bash-replay-audit-2026-07-30.json",
+      "schema_version": "agenttrace-nl2bash-replay-audit-v1",
+      "sha256": "6a7b2c25bdaf5c10e40dedb7c8ac0f2d04e391da4ca1c3ff9058c939b3fbf9f1"
+    },
+    "alfworld_codex_skillopt_r19": {
+      "filename": "alfworld-codex-skillopt-r19-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "8cc1d71cb11ef2a7f6c1d0ec13bf787123678e76ba67c91928ed91b77f44e0d8"
+    },
+    "alfworld_codex_skillopt_r19_verification": {
+      "filename": "alfworld-codex-skillopt-r19-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "3ae7c1329683abc68a002923973c81e52ac545da15f8e552960b0a0123085208"
+    },
+    "alfworld_codex_skillopt_r20": {
+      "filename": "alfworld-codex-skillopt-r20-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "7cf0e3fd8163590d65ea2f69a61f583040512520af51849b9d8b0356a0095cbb"
+    },
+    "alfworld_codex_skillopt_r20_verification": {
+      "filename": "alfworld-codex-skillopt-r20-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "63487ed47386bf388cbbf361f56e8d9f6189b35ebf8c727876f5f7a6ba229fff"
+    },
+    "alfworld_codex_skillopt_r21": {
+      "filename": "alfworld-codex-skillopt-r21-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "986e4d94414595f59826718b2abcda969b6287b010957fa504d9cd555453f3b2"
+    },
+    "alfworld_codex_skillopt_r21_verification": {
+      "filename": "alfworld-codex-skillopt-r21-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "0f459ceb460db26e66fcafb2cb335775407d780d92f50716a9e823517e086111"
+    },
+    "alfworld_codex_skillopt_r22_real_candidate": {
+      "filename": "alfworld-codex-skillopt-r22-real-candidate-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "e4643f95a41355006c44eef2b75af81b61efb67924ae0f0129178e0c2b6b821a"
+    },
+    "alfworld_codex_skillopt_r22_real_candidate_verification": {
+      "filename": "alfworld-codex-skillopt-r22-real-candidate-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "c4ad49a73cf2067fc94e8e707c658336db892dafcee09ae24485f92442c9f219"
+    },
+    "alfworld_codex_skillopt_r23_real_candidate": {
+      "filename": "alfworld-codex-skillopt-r23-real-candidate-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "8cd549f926d691a9417711b3aaf0627e92431ae73fc1b6183c4e921cb39a8f5e"
+    },
+    "alfworld_codex_skillopt_r23_real_candidate_verification": {
+      "filename": "alfworld-codex-skillopt-r23-real-candidate-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "89e7f74b71a43a0b847c07a3b5e582a7612fa9a01620abbabc0db2136bb7a3b3"
+    },
+    "alfworld_durable_memory_intervention_r7": {
+      "filename": "alfworld-durable-memory-intervention-r7-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-durable-memory-intervention-r7-v1",
+      "sha256": "736cbc6f08496b6fe6beb0eff505946ead17565ed4d501f2ffe3502e9efbad17"
+    },
+    "alfworld_durable_memory_verification": {
+      "filename": "alfworld-durable-memory-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-durable-memory-verification-v1",
+      "sha256": "46adc13c46d34c27ffd307f1770c9676baf98b78b39ec3cb37d9feed78ef7d48"
+    },
+    "alfworld_family_disjoint_powered_r10_qwen_incomplete": {
+      "filename": "alfworld-family-disjoint-powered-r10-qwen-incomplete-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "ee7fd63bab4c75f1283a7c307f841013427490d44449ae1fe9dd9da81fb7c270"
+    },
+    "alfworld_family_disjoint_powered_r11_openai_llama": {
+      "filename": "alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "936cfd8268846e117d9b064b41523d28c57113cfd885eed213da268395811b4e"
+    },
+    "alfworld_family_disjoint_powered_r11_openai_llama_verification": {
+      "filename": "alfworld-family-disjoint-powered-r11-openai-llama-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-powered-receipt-verification-v1",
+      "sha256": "66196affd42afc23dd384b114106966a06db60d3a9a987909333add701b6cf82"
+    },
+    "alfworld_family_disjoint_powered_r12_replayable": {
+      "filename": "alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "351daa8bdb1dbdcdd7002bfcb39cb425fc31975a3932e3f017892643027175aa"
+    },
+    "alfworld_family_disjoint_powered_r12_semantic_verification": {
+      "filename": "alfworld-family-disjoint-powered-r12-semantic-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
+      "sha256": "3733bd01ba958e8544c7338da1d02c1a88798e905a820c2b22ee191736afdcd1"
+    },
+    "alfworld_family_disjoint_powered_r13_controls": {
+      "filename": "alfworld-family-disjoint-powered-r13-controls-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "6032e38654b26b1b916a6b1cc0f8394c5dbf77f30552faadb11af236045c0a70"
+    },
+    "alfworld_family_disjoint_powered_r13_controls_verification": {
+      "filename": "alfworld-family-disjoint-powered-r13-controls-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
+      "sha256": "c5aaad6644ab5b37e5296d06d459142832adf7e48c0746bb745a3f17a225b4a9"
+    },
+    "alfworld_family_disjoint_powered_r14_qwen_controls": {
+      "filename": "alfworld-family-disjoint-powered-r14-qwen-controls-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "4d140ba124b522d3b8c197c4cccf0627b49bfd1bb370efc88b6b03ebab437ea8"
+    },
+    "alfworld_family_disjoint_powered_r14_qwen_controls_verification": {
+      "filename": "alfworld-family-disjoint-powered-r14-qwen-controls-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
+      "sha256": "9cbfba7ccd002ef692daffc8d3f67104bc9d2d17e84fc50bab3c2b66238bf6b8"
+    },
+    "alfworld_family_disjoint_powered_r9": {
+      "filename": "alfworld-family-disjoint-powered-r9-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+      "sha256": "a396dfcab3744d0b84bcc926aa3d90025bc141bfc8c2603b0fc91315a0522cc9"
+    },
+    "alfworld_family_disjoint_powered_r9_verification": {
+      "filename": "alfworld-family-disjoint-powered-r9-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-powered-receipt-verification-v1",
+      "sha256": "88f44087e7e46a73484a3aba1c49210097fcfe4a7c219b6928acd80db8304392"
+    },
+    "alfworld_intervention_verification": {
+      "filename": "alfworld-intervention-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-intervention-verification-v1",
+      "sha256": "2c68665099ab254ccea64b04c36056e52306a401cc69bbd421ef84bdb0e7326c"
+    },
+    "alfworld_luna_skillopt_family4": {
+      "filename": "alfworld-luna-skillopt-family4-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "49218177bb0eed77c3ebd3092c46ab0844c07b333a5b2018956d4f3ab317f7f6"
+    },
+    "alfworld_luna_skillopt_family4_verification": {
+      "filename": "alfworld-luna-skillopt-family4-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "f70455b16759ca17c9324d57bd8caebc283a8ab6457afef6423fd773201c25fa"
+    },
+    "alfworld_luna_skillopt_long_horizon": {
+      "filename": "alfworld-luna-skillopt-long-horizon-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+      "sha256": "9c78849c112e9d67cb4c08eac4a681a71998b667d474711098c676b3edee9b22"
+    },
+    "alfworld_luna_skillopt_long_horizon_verification": {
+      "filename": "alfworld-luna-skillopt-long-horizon-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-codex-skillopt-verification-v1",
+      "sha256": "38107abf6bfe4be4ce807b6cfeac7133e029df06a71b58df3103a7d3573d5e11"
+    },
+    "alfworld_model_generated_memory_r8": {
+      "filename": "alfworld-model-generated-memory-intervention-r8-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-model-generated-memory-intervention-r8-v1",
+      "sha256": "3dc1571e0b5aa6d828fcb70a058b80bab7e13e121636584e91ea0c5893c4af2d"
+    },
+    "alfworld_model_generated_memory_verification": {
+      "filename": "alfworld-model-generated-memory-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-durable-memory-verification-v1",
+      "sha256": "47e5ac5def0bd1697d7da81ed6846997617badb795800e0ab7189384ae9d123b"
+    },
+    "alfworld_skill_intervention": {
+      "filename": "alfworld-trace-skill-intervention-2026-08-02.json",
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-v1",
+      "sha256": "e4ecdd6922eb3a094fc262585ac53d80900d9b7e5373f6cf5a8075e4f36b092c"
+    },
+    "alfworld_skill_intervention_r2": {
+      "filename": "alfworld-trace-skill-intervention-r2-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-r2-v1",
+      "sha256": "b3c2918e92391d29a21854036000d4b917de1b1d527be5e414cf443861cd9876"
+    },
+    "alfworld_skill_intervention_r3": {
+      "filename": "alfworld-trace-skill-intervention-r3-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-r3-v1",
+      "sha256": "cb9c70665a0632144a4a833b08f26f4b48b9bcf42c87d30b2b75c33fd30f9898"
+    },
+    "alfworld_skill_intervention_r4_qwen": {
+      "filename": "alfworld-trace-skill-intervention-r4-qwen-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-r4-qwen-v1",
+      "sha256": "ea1c225d0eda9b1555531f8c69010a941bffc0487151e196fd1710fd5518d847"
+    },
+    "alfworld_skill_intervention_r5_qwen": {
+      "filename": "alfworld-trace-skill-intervention-r5-qwen-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-trace-skill-intervention-r5-qwen-v1",
+      "sha256": "79238eee69b8311adc7116b4899dbd86d6934cd26bd46cb4fc9c2047282a4e20"
+    },
+    "alfworld_skill_memory_composition_r6": {
+      "filename": "alfworld-trace-skill-memory-composition-r6-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-alfworld-trace-skill-memory-composition-r6-v1",
+      "sha256": "1ad56335d80a2488ed992aaf34b2ae966af5d678ff9d4ebc503a15bffcaf6fdf"
+    },
+    "atif_capability_extension": {
+      "filename": "atif-capability-extension-2026-08-02.json",
+      "optional": true,
+      "schema_version": "atif-capability-extension-empirical-result-v1",
+      "sha256": "f23dc79e633f40db0df49d360dd0540caa528f2804f7dabbaf0215128b1b7a19"
+    },
+    "atif_capability_extension_luna_review": {
+      "filename": "atif-capability-extension-luna-review-2026-08-02.json",
+      "optional": true,
+      "schema_version": "atif-capability-extension-luna-review-v1",
+      "sha256": "95213ce022f589a91ec1c0dd46bd51a4590286c8813d0137cffdc4a0e1fde55b"
+    },
+    "atif_rl_roundtrip": {
+      "filename": "atif-rl-roundtrip-2026-07-30.json",
+      "schema_version": "atif-rl-roundtrip-result-v1",
+      "sha256": "96492638a620da3a7cf4c9d0db52d1398b7e2e27a0017a3c74d418e471ed3b5e"
+    },
+    "aurora_like_replication_lab": {
+      "filename": "aurora-like-replication-lab-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-local-postgres-replication-lab-v1",
+      "sha256": "807b8b11d33d12dbcaad35d158430e5d390ed8d82a36bc2c52e46cc5efb72ac0"
+    },
+    "codetracebench": {
+      "filename": "codetracebench-manifest-e1-e3-e4-2026-07-30.json",
+      "schema_version": "frankengate-trace-empirical-result-v1",
+      "sha256": "63fed0b30f6c7e617a86d6ef754e5266614299beea61da93f86b378e15419e3f"
+    },
+    "codetracebench_raw": {
+      "filename": "codetracebench-raw-e3-e4-factorial-2026-07-30.json",
+      "schema_version": "frankengate-trace-empirical-result-v1",
+      "sha256": "d96c4127550b301f15ac05db34ef5d997392e592ce227086d2b6603b133ee3d9"
+    },
+    "e2_postgres_joint": {
+      "filename": "codetracebench-e2-postgres-joint-retrieval-2026-07-30.json",
+      "schema_version": "frankengate-e2-postgres-joint-retrieval-v1",
+      "sha256": "cf3189c6ba409d4ce634ff9e1b96fce3af0cb75c767758b68183a9903ff84562"
+    },
+    "e2_retrieval": {
+      "filename": "codetracebench-e2-authorized-retrieval-factorial-2026-07-30.json",
+      "schema_version": "frankengate-e2-authorized-retrieval-factorial-v1",
+      "sha256": "8822eaece26a3a97f2523ed583d1c6154e598c4877e78e424176562fc767a650"
+    },
+    "enterprise_outcome_analysis": {
+      "filename": "enterprise-outcome-analysis-conformance-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-enterprise-outcome-analysis-conformance-v1",
+      "sha256": "54870ccc0d943d6ab68563247ea0bafccebc8f4f59d0f43c0bddc9cd843da9c3"
+    },
+    "enterprise_outcome_gate": {
+      "filename": "enterprise-outcome-gate-conformance-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-enterprise-outcome-gate-conformance-v1",
+      "sha256": "59a5d5618aa55bd051ec05089b3e2455fed077cca90e3f9170c219033fbf351c"
+    },
+    "gepa_protocol": {
+      "filename": "gepa-native-tool-protocol-2026-08-02-r2.json",
+      "schema_version": "frankengate-gepa-native-tool-protocol.v1",
+      "sha256": "98f2a13c665a1d210a1768a8add2ed9d24cc9fc896573b79288639cb99b6286c"
+    },
+    "h5_concurrency_guarded_rerun": {
+      "filename": "h5-concurrency-guarded-rerun-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-h5-concurrency-guarded-rerun-check-v1",
+      "sha256": "6d6af03fcb86fb0a1d5e2f6003842785c7c587fc5729e8c734fdefeb09ee7625"
+    },
+    "h5_concurrency_live_rerun": {
+      "filename": "h5-concurrency-live-rerun-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-h5-concurrency-rerun-check-v2",
+      "sha256": "19646e105b8de962890ef7d8cb98621b6d304c05bccd54e585b72a8b89ea3fd3"
+    },
+    "history_discovery": {
+      "filename": "public-agent-history-discovery-2026-07-30.json",
+      "schema_version": "public-agent-history-discovery-result-v1",
+      "sha256": "a2160c1a8a5223439c27c66e48c1f528e000d247c1ed17f22f47367070acd0ee"
+    },
+    "mast": {
+      "filename": "mast_multiagent_empirical-2026-07-30.json",
+      "schema_version": "mast-multiagent-empirical-result-v1",
+      "sha256": "1433bd56431176dd91cfd732c4a0c299690dfa44346137516d24c2d33cfdee7c"
+    },
+    "matm_skill_retrieval": {
+      "filename": "matm-trace-skill-retrieval-2026-08-02.json",
+      "schema_version": "frankengate-matm-trace-skill-retrieval.v1",
+      "sha256": "360003c8957b33273d65ed03dffa45fd3b4696209cafc6f86056de54859c3f6c"
+    },
+    "memory_conformance": {
+      "filename": "bitemporal-memory-conformance-2026-07-30.json",
+      "schema_version": "bitemporal-memory-conformance-result-v1",
+      "sha256": "79d2759824c7c442ca8efc7c08f2e211125a970b9da65b50c8cc5bd1b0b209a5"
+    },
+    "native_history": {
+      "filename": "public-native-history-fidelity-2026-07-30.json",
+      "schema_version": "public-native-history-fidelity-result-v1",
+      "sha256": "1acef3394cbb0d95389b953cbfb981f3ceb613d47bd1690a4de578718225345e"
+    },
+    "natural_memory_factorial": {
+      "filename": "natural-trace-memory-factorial-2026-08-02-r2.json",
+      "schema_version": "frankengate-natural-trace-memory-factorial-v1",
+      "sha256": "8b42e33b5d5f93dd97f5104aafb45b9179e145a7b5811a4ebe2eaed7914f0db4"
+    },
+    "natural_model_dream_procedure": {
+      "filename": "natural-model-dream-procedure-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-v1",
+      "sha256": "70a80c0add7d6c695ee7aff8d18af96bac15428838cb9ee59400ae0ebe7328e8"
+    },
+    "natural_model_dream_procedure_llama": {
+      "filename": "natural-model-dream-procedure-llama-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-v1",
+      "sha256": "a2956665d78e5ca8f620e387d04701452fcf9722c83a5ddb23f16b44cf90ec79"
+    },
+    "natural_model_dream_procedure_llama_verification": {
+      "filename": "natural-model-dream-procedure-llama-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "sha256": "f194d4ac12e5bb8cd0e5a6724780a2fc49a417d136938a7d7585eeb587b3b629"
+    },
+    "natural_model_dream_procedure_luna": {
+      "filename": "natural-model-dream-procedure-luna-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-v1",
+      "sha256": "ab45445607cf6210ad92e6bdf2b966ac07afb033188bdea332bce59b9992d6f9"
+    },
+    "natural_model_dream_procedure_luna_meaningful": {
+      "filename": "natural-model-dream-procedure-luna-meaningful-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-v1",
+      "sha256": "788986c3d7b678201210edf8fbb4bd6979cda860bc4c90aaa61749964435aa73"
+    },
+    "natural_model_dream_procedure_luna_meaningful_verification": {
+      "filename": "natural-model-dream-procedure-luna-meaningful-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "sha256": "c63565f74563ea2cd1a343958defd10a84528018a8b44a1cda61b8ae2493e124"
+    },
+    "natural_model_dream_procedure_luna_verification": {
+      "filename": "natural-model-dream-procedure-luna-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "sha256": "86ca5027c97332a21e79dbf299aff99683d1e574d3951034a3d8918c4e0f90a8"
+    },
+    "natural_model_dream_procedure_verification": {
+      "filename": "natural-model-dream-procedure-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-model-dream-procedure-verification-v1",
+      "sha256": "605dd338463f36ee69d7d7156aa8ab2c64aa97af5badbb0dbbcad0a27318b67e"
+    },
+    "natural_released_procedure": {
+      "filename": "natural-released-procedure-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-released-procedure-v1",
+      "sha256": "2dda6cf64627aa225a363f41038c51aeb6d67ec675d470922aeea5b752e02d67"
+    },
+    "natural_released_procedure_verification": {
+      "filename": "natural-released-procedure-verification-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-natural-released-procedure-verification-v1",
+      "sha256": "7fd99f666fcffaf45b7e178d4df41075af3deae4d37e2a0ea33f1aa277a5b873"
+    },
+    "otel_roundtrip": {
+      "filename": "otel-collector-roundtrip-e0-2026-07-30.json",
+      "schema_version": "frankengate-otel-collector-roundtrip-v1",
+      "sha256": "9c6d0565227e783b1ef2089842112e0cff7828e95897d33b766ed2d030b18729"
+    },
+    "postgres_pitr_lab": {
+      "filename": "postgres-pitr-lab-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-local-postgres-pitr-lab-v1",
+      "sha256": "17af9e9b11ef19e945bec8597e4be0a3bfc531d45cfd3f327f9b8df878a05a72"
+    },
+    "projection": {
+      "filename": "canonical-projection-e0-conformance-2026-07-30.json",
+      "schema_version": "canonical-projection-e0-conformance-result-v1",
+      "sha256": "8801a8a520db47215ffe3f799f152d3d5c72947f3c3b6bd8d191cc2876499f02"
+    },
+    "reasoningbank_codex_frontier_bounded": {
+      "filename": "reasoningbank-codex-frontier-bounded-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-reasoningbank-codex-frontier-reproduction-v1",
+      "sha256": "9d5bb125fd89daa0dd83de2cb45d0df79b946c6bfdba3a44b6cecf8605f29dd2"
+    },
+    "reasoningbank_locomo_bounded": {
+      "filename": "reasoningbank-locomo-bounded-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-reasoningbank-locomo-bounded-v1",
+      "sha256": "c3fa243a8bcbcd37999cbef2a476bf1eb85de0cfb43924cd779fdd91eecb31b8"
+    },
+    "rho_candidate_harness_powered": {
+      "filename": "rho-candidate-harness-powered-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-rho-powered-receipt-v1",
+      "sha256": "f7fb510ed6ec86b704d888551d5701cd896be8d78b760818ff026ac3518669f8"
+    },
+    "rho_frontier_locomo_bounded": {
+      "filename": "rho-frontier-locomo-bounded-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-rho-frontier-reproduction-v1",
+      "sha256": "7fc61c8bf9bacf62e5484cfdb4587077123dba2922703b1b33e16b7b9eb0d5bf"
+    },
+    "skill_cross_harness_transfer": {
+      "filename": "model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json",
+      "schema_version": "frankengate-model-harness-transfer-matrix-v1",
+      "sha256": "f5c18197d7953c2c4d7e6e89cfdf17a9993eb134c0f3e6e90bef7dd068181cc6"
+    },
+    "skill_harness_transfer": {
+      "filename": "model-harness-transfer-native-tool-2026-07-31.json",
+      "schema_version": "frankengate-model-harness-transfer-matrix-v1",
+      "sha256": "c68c29705c07646e97720c9d9f347d75d55dc835d906a0846ed6333e4b026c29"
+    },
+    "skill_optimization_meta": {
+      "filename": "skill-optimization-meta-analysis-2026-08-02.json",
+      "schema_version": "frankengate-skill-optimization-meta-analysis-v1",
+      "sha256": "d5910e77960bf329c08254b10f3116c80b00aae1b0eb01e68c3c60955af74f3b"
+    },
+    "skill_qwen_native": {
+      "filename": "natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json",
+      "schema_version": "frankengate-ollama-native-tool-harness-v1",
+      "sha256": "21eb8526efb2a87afe5bf2782ffdc4472377f0952cb2765e7c0160313e686cd6"
+    },
+    "skill_release": {
+      "filename": "governed-skill-release-lifecycle-2026-07-30.json",
+      "schema_version": "frankengate-governed-skill-release-lifecycle-v1",
+      "sha256": "9a3a6e5274461d328f05a6bf75fbdba43645e4cada60cfe3891b3c79c0d221c1"
+    },
+    "skillgen_codex_bird_frontier": {
+      "filename": "skillgen-codex-bird-frontier-2026-08-02.json",
+      "optional": true,
+      "schema_version": "skillgen-codex-bird-frontier-v1",
+      "sha256": "794885120d85c25e7794b6e76d6d369633e4dabff60b0b2b22793b0b3951f26c"
+    },
+    "skillopt_alfworld_codex_r18": {
+      "filename": "skillopt-alfworld-codex-r18-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-alfworld-codex-v1",
+      "sha256": "dde3cc04414f3b9e56dcd038de1cf1a7c0151d61c57e23912fc417130418faa0"
+    },
+    "skillopt_candidate_provenance_audit": {
+      "filename": "skillopt-candidate-provenance-audit-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-candidate-provenance-audit-v1",
+      "sha256": "fdaa1fb366296f04ca9fc7e77f26f79af2f75c314caf7494096057ec107b1ede"
+    },
+    "skillopt_deterministic_lifecycle_r17": {
+      "filename": "skillopt-deterministic-lifecycle-r17-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-deterministic-lifecycle-v1",
+      "sha256": "1eb732c7c88b221bc482a7d7ff272fd655980cc04ef1384c9ebd37ac418e22c7"
+    },
+    "skillopt_local_intervention_r16": {
+      "filename": "skillopt-alfworld-local-intervention-r16-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-alfworld-local-intervention-v1",
+      "sha256": "d748f26ec77cfe814601865e686f9484d714e6848fb7b00ea1dbbd3442366956"
+    },
+    "skillopt_local_runtime_attempt_r15": {
+      "filename": "skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
+      "optional": true,
+      "schema_version": "frankengate-skillopt-alfworld-local-runtime-attempt-v1",
+      "sha256": "a29abcf3e137dd808b7e98272f686d9a9a4e3466ac56704ba75bfc098bec0a79"
+    },
+    "statebench_sql": {
+      "filename": "statebench-finance-sql-fixture-smoke-2026-07-30.json",
+      "schema_version": "frankengate-statebench-finance-sql-smoke-v1",
+      "sha256": "fc96c57fc35eedc9a7caa9f6bf9746663eaa721199bca80a81f01445cf144de6"
+    },
+    "trace2skill_stage0": {
+      "filename": "trace2skill-governed-stage0-2026-07-30.json",
+      "schema_version": "frankengate-trace2skill-stage0-v1",
+      "sha256": "f8a3b22a9ae2fccfc1eb54132738277664a562c827bdade906be9d5bd879c312"
+    },
+    "trace_commons_attestation": {
+      "filename": "trace-commons-source-attestation-2026-08-02.json",
+      "schema_version": "frankengate.trace-commons-source-attestation.v1",
+      "sha256": "a6f15df92a470330f3fe869dfdbaa892879027e1818a8c3f64880410951c772d"
+    },
+    "trace_commons_full": {
+      "filename": "trace-commons-full-content-minimized-analysis-2026-08-02.json",
+      "schema_version": "content-minimized-real-user-arms-v1",
+      "sha256": "34968e9ec27171957f6f8e2e49cdf4b550aefc416c2eb6ca00b8ae8c1ed0aabf"
+    },
+    "trace_commons_repro": {
+      "filename": "trace-commons-analysis-reproducibility-2026-08-02.json",
+      "schema_version": "frankengate-trace-commons-reproducibility-v1",
+      "sha256": "98cdeb4a74d064677e7e25b1eabca6124a51fa785d824a72e5fd49410d8706ef"
+    },
+    "trace_memory_conformance": {
+      "filename": "trace-commons-memory-conformance-2026-07-30.json",
+      "schema_version": "trace-commons-memory-conformance-result-v1",
+      "sha256": "7f923714866b3b7103e59bcee31bff193cedc784ef9108d4abb6cd6a37129482"
+    },
+    "wisp_governed": {
+      "filename": "wisp-governed-postgres-benchmark-2026-07-30.json",
+      "schema_version": "governed-wisp-postgres-benchmark-v1",
+      "sha256": "8dc153c0728637e5b58de8a247ee090ca6bf7c196a1d2ab9b456725bd769b1cb"
+    },
+    "wisp_recovery": {
+      "filename": "wisp-share-codex-canonical-bounded-recovery-2026-07-30.json",
+      "schema_version": "canonical-bounded-recovery-episode-v1",
+      "sha256": "16b8d54b7cc7d00e17c55ccfb13e186e1868f5e6f8c03a38473577c58a7875d2"
+    }
+  },
+  "levels": {
+    "L0_evidence_conformance": {
+      "blocking_gap": "the pinned real collector path passed, but a wholly upstream-dropped trace requires an out-of-band source/export manifest; production storage/failover and ATIF's deliberate enterprise-event non-reversibility remain. The RL round trip is a separate loss receipt: coding tool structure is retained better than RL reset/reward/termination state, and the pinned RL source omits memory snapshots and authorization fields. The new namespaced capability profile restores structural authority/reset/reward/memory-lineage facts for profile-aware readers, but deliberately omits payloads and opaque state and does not change the portable ATIF result. Neither projection is a sufficient memory or skill-learning authority",
+      "decision": "keep one governed canonical DAG; ATIF and OTel remain receipted projections",
+      "evidence": {
+        "atif_capability_extension_luna_review_applied_count": 4,
+        "atif_capability_extension_luna_review_verdict": "revise",
+        "atif_capability_extension_matm_retention": 0.877907,
+        "atif_capability_extension_matm_round_trip_passed": true,
+        "atif_capability_extension_present": true,
+        "atif_capability_extension_wisp_retention": 0.916561,
+        "atif_capability_extension_wisp_round_trip_passed": true,
+        "atif_event_identity_retention": 0.0,
+        "atif_parent_edge_retention": 0.0,
+        "atif_silent_drops": 0,
+        "coding_atif_tool_call_retention": 1.0,
+        "coding_otel_replay_identity_retention": 0.998202,
+        "coding_otel_tool_call_retention": 0.833333,
+        "collector_links_retained": 16,
+        "collector_negative_controls_passed": true,
+        "collector_parent_edges_retained": 34,
+        "collector_spans_retained": 48,
+        "collector_trace_ids_retained": 12,
+        "governed_fixture_events": 48,
+        "mast_silent_line_drops": 0,
+        "mast_source_lines": 897277,
+        "otel_event_identity_retention": 1.0,
+        "otel_parent_edge_retention": 1.0,
+        "otel_silent_drops": 0,
+        "rl_atif_environment_reset_retention": 0.0,
+        "rl_atif_overall_retention": 0.067259,
+        "rl_atif_reward_retention": 0.076031,
+        "rl_atif_termination_retention": 0.165266,
+        "rl_known_missing_field_count": 11,
+        "rl_memory_snapshot_fields_missing": true,
+        "rl_otel_environment_reset_retention": 0.0,
+        "rl_otel_overall_retention": 0.326949,
+        "rl_otel_reward_retention": 0.0,
+        "rl_otel_termination_retention": 0.0,
+        "rl_trajectory_count": 2130,
+        "trace_commons_reproduction_metrics_compared": 19,
+        "trace_commons_reproduction_passed": true
+      },
+      "status": "real_roundtrip_partial_pass"
+    },
+    "L1_personal_authority": {
+      "blocking_gap": "permission-oracle equality across every surface, deletion closure, concurrent policy churn, restart, replica, and failover remain untested; cross-user utility additionally requires explicit consent, minimum cohorts, and reviewed human outcomes",
+      "evidence": {
+        "all_tested_denials_zero_before_ranking": true,
+        "codex_repositories_with_auth_adjacent": 9,
+        "complete_public_harness_homes_found": 0,
+        "enterprise_denials_emit_no_candidates": true,
+        "enterprise_outcome_analysis_mechanics_passed": true,
+        "enterprise_outcome_gate_mechanics_passed": true,
+        "enterprise_question_shapes_exercised": [
+          "collaboration",
+          "friction_recovery",
+          "similar_work",
+          "skill_gap"
+        ],
+        "github_native_claude_files_in_top_repos": 2362,
+        "github_native_codex_files_in_top_repos": 329,
+        "history_page_p95_ms": 1.67599,
+        "near_complete_public_harness_home_states_found": 1,
+        "private_trajectories": 104,
+        "proposal_queue_p95_ms": 1.717683,
+        "public_history_representations_audited": 7,
+        "trace_commons_records": 17991,
+        "trace_commons_reproduction_metrics_compared": 19,
+        "trace_commons_reproduction_passed": true,
+        "trace_commons_sessions": 28,
+        "trace_commons_source_attested": true
+      },
+      "status": "local_partial_pass"
+    },
+    "L2_cheap_evidence_finding": {
+      "decision": "retain deterministic signals as review filters plus a random audit stratum; do not claim enrichment gate success",
+      "evidence": {
+        "codetrace_test_rows": 148,
+        "exceeds_random_95_interval": false,
+        "random_precision_mean": 0.426,
+        "required_absolute_lift": 0.15,
+        "structural_precision": 0.5666666666666667,
+        "structural_precision_lift": 0.14066666666666666,
+        "ties_trace_length": true
+      },
+      "status": "does_not_meet_gate"
+    },
+    "L3_diagnosis_and_eval_proposals": {
+      "diagnosis": {
+        "best_blind_method": "reverse_chronology",
+        "best_blind_top1": 0.2857142857142857,
+        "best_blind_top3": 0.5428571428571428,
+        "combined_top1": 0.17142857142857143,
+        "eligible_raw_traces": 35,
+        "pass": false,
+        "reason": "the full deterministic factorial ran, but no evidence arm beat reverse chronology and irrelevant errors changed rankings; no calibrated judge or step-level causal verifier"
+      },
+      "multi_agent_taxonomy": {
+        "finalized_human_judge_overlap": 0,
+        "human_judge_scoring_status": "not_run_no_finalized_taxonomy_trace_overlap",
+        "pass": false,
+        "reason": "released human and judge partitions cannot reproduce finalized human-vs-judge accuracy",
+        "released_judge_traces": 1242
+      },
+      "retrospective_eval": {
+        "allowed_variation_false_positive_rate": 0.4857142857142857,
+        "combined_harmful_mutants": 191,
+        "combined_kill_rate": 0.9685863874345549,
+        "pass": false,
+        "reason": "high harmful-mutant sensitivity came with 48.6% benign false positives; no changed-system rerun or step-level causal verifier exists"
+      },
+      "status": "mixed_partial",
+      "trace_commons_full_cohort": {
+        "aggregate_reproduction_metrics_compared": 19,
+        "aggregate_reproduction_passed": true,
+        "automatic_memory_or_skill_writes": 0,
+        "eval_review_records": 269,
+        "source_attested": true,
+        "structural_episode_candidates": 263
+      }
+    },
+    "L4_semantic_candidate_retrieval": {
+      "decision": "retain exact and structured retrieval and conditionally add the pinned general dense lane; reject the tested FTS/trigram/vector RRF because its tiny recall lift loses ranking quality and adds about two orders of magnitude local latency. Require READ COMMITTED for governed reads and reject repeatable-read snapshots that can retain revoked authorization epochs. Human labels, Aurora semantics, and scale remain open; no custom embedding or database replacement is authorized",
+      "evidence": {
+        "all_denied_pre_ranking_candidates_zero": true,
+        "aurora_gate_passed": false,
+        "best_offline_arm": "S1L0D1",
+        "concurrency_or_scale_gate_passed": false,
+        "documents": 145,
+        "eligible_queries": 99,
+        "exact_identifier_no_regression": false,
+        "exact_recall_at_20": 0.7323232323232324,
+        "h5_concurrency_guard_rejected_rr": true,
+        "h5_concurrency_guarded_invariant_match": true,
+        "h5_concurrency_guarded_rerun_passed": true,
+        "h5_concurrency_live_rerun_known_gaps": 6,
+        "h5_concurrency_live_rerun_passed": true,
+        "h5_concurrency_live_rerun_races": 9,
+        "human_label_gate_passed": false,
+        "joint_local_postgres_gate_passed": true,
+        "lifecycle_oracles_passed": true,
+        "local_failover_promotion_ms": 309.056,
+        "local_pitr_lab_executed": true,
+        "local_pitr_mechanics_proven": true,
+        "local_pitr_target_excluded_marker": true,
+        "local_replica_marker_propagation_ms": 293.694,
+        "local_replication_lab_executed": true,
+        "local_replication_mechanics_proven": true,
+        "local_rls_isolation_verified": true,
+        "managed_aurora_behavior_proven": false,
+        "managed_aurora_pitr_proven": false,
+        "post_rollback_visible_rows": 0,
+        "postgres_exact_pgvector_p50_ms": 3.016834,
+        "postgres_exact_pgvector_recall_at_20": 0.6666666666666666,
+        "postgres_hybrid_p50_ms": 256.842792,
+        "postgres_hybrid_recall_at_20": 0.6717171717171717,
+        "recall_at_20_lift_95ci": [
+          0.03535353535353535,
+          0.13636363636363635
+        ],
+        "recall_at_20_lift_over_exact": 0.08585858585858586,
+        "structured_dense_recall_at_20": 0.8181818181818182
+      },
+      "status": "offline_silver_and_local_rls_partial_pass"
+    },
+    "L5_temporal_memory": {
+      "decision": "copy-on-write correction, authority intersection, rollback, deletion closure, influence exclusion, and stale-epoch denial pass in a deterministic oracle; one real public two-session cohort additionally proves one exact write/read continuity, two edit replays, and one correctly quarantined version gap. A fresh 217-history, 23-query, 16-arm natural memory factorial shows every runnable singleton and the composed arm at 16/23; the mechanisms are therefore observationally indistinguishable on current-state reads. PostgreSQL/RLS execution, memory quality, and memory utility remain unproven",
+      "evidence": {
+        "bitemporal_assertions_failed": 0,
+        "bitemporal_assertions_passed": 15,
+        "bitemporal_assertions_total": 15,
+        "natural_factorial_all_runnable_exact": 16,
+        "natural_factorial_arm_count": 16,
+        "natural_factorial_dream_gate": "not_runnable_no_natural_independent_release",
+        "natural_factorial_eligible_queries": 23,
+        "natural_factorial_histories": 217,
+        "natural_factorial_singleton_exact": 16,
+        "natural_factorial_source_records": 30496,
+        "natural_factorial_treatment_contrast_identifiable": false,
+        "paired_trace_memory_strata_discovered": 2,
+        "real_context_artifact_calls": 8,
+        "real_exact_cross_session_continuities": 1,
+        "real_interval_censored_version_gaps": 1,
+        "real_joined_context_artifact_results": 8,
+        "real_negative_controls_passed": true,
+        "real_raw_content_emitted": false,
+        "real_reconstructable_edits": 2,
+        "real_research_trace_strata_discovered": 2,
+        "real_resolved_parent_edges": 1266,
+        "real_trace_records": 1602,
+        "real_unreconstructable_edits": 0,
+        "real_unresolved_parent_edges": 0,
+        "wisp_fact_proposals": 0
+      },
+      "status": "real_trace_transition_partial_pass"
+    },
+    "L6_procedural_replay": {
+      "decision": "the real tool sandbox and governed proposal/evaluation/release state machine pass, but neither establishes causal skill benefit. AgentTrace lacks task verdicts and intervention arms; the finance SQL fixture has only four executable gold queries. The paired skill meta-analysis covers 23 endpoint strata across two live local models and two tool-loop harnesses, but its protocol and semantic endpoints remain heterogeneous and no promotion is authorized. GEPA v0.1.4 executed 11 metric calls on a train/holdout protocol split and retained the empty seed at 2/3 holdout matches, so the optimizer arm produced no lift. A provenance audit found that the r20/r21 receipts referenced an empty candidate; those rows are not skill-quality evidence. The corrected r22 run used the real 213-byte candidate and still produced 0/1 wins for no-skill, placebo, and candidate at an eight-step horizon, with fresh replay verification. A local Qwen3 4B model attempted three natural-trace procedure proposals from content-free structural summaries; none passed the controlled JSON/evidence-grounding rubric. The independent verifier passed, so this is a typed model quality null rather than semantic utility evidence. The same protocol with Llama 3.2 and frontier Luna produced one structural-quality pass out of three each; their independent verifiers passed, but neither run establishes semantic utility or causal skill benefit. The offline MATM leave-one-model-out arm gives a 0.067 top-10 recommendation lift (95% CI -0.020 to 0.166) but a -0.056 mean AUC contrast (95% CI -0.112 to 0.002); this is predictive evidence only, not changed-agent skill benefit. Run the preregistered 60\u2013120 task schema-family-held-out NL2SQL experiment before releasing any learned procedure",
+      "evidence": {
+        "agenttrace_nl2bash_rows": 400,
+        "agenttrace_rows": 1400,
+        "alfworld_causal_skill_benefit_confirmed": false,
+        "alfworld_codex_skillopt_r20_arm_summaries": {
+          "formatting_placebo": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "no_skill": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "skillopt_candidate": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          }
+        },
+        "alfworld_codex_skillopt_r20_episodes": 3,
+        "alfworld_codex_skillopt_r20_rows_verified": 3,
+        "alfworld_codex_skillopt_r20_tasks": 1,
+        "alfworld_codex_skillopt_r20_verifier_passed": true,
+        "alfworld_codex_skillopt_r21_arm_summaries": {
+          "formatting_placebo": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "no_skill": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "skillopt_candidate": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          }
+        },
+        "alfworld_codex_skillopt_r21_episodes": 3,
+        "alfworld_codex_skillopt_r21_expert_steps": [
+          6
+        ],
+        "alfworld_codex_skillopt_r21_rows_verified": 3,
+        "alfworld_codex_skillopt_r21_tasks": 1,
+        "alfworld_codex_skillopt_r21_verifier_passed": true,
+        "alfworld_codex_skillopt_r22_real_candidate_arm_summaries": {
+          "formatting_placebo": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "no_skill": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "skillopt_candidate": {
+            "api_calls": 8,
+            "episodes": 1,
+            "invalid_actions": 0,
+            "steps": 8,
+            "win_rate": 0.0,
+            "wins": 0
+          }
+        },
+        "alfworld_codex_skillopt_r22_real_candidate_episodes": 3,
+        "alfworld_codex_skillopt_r22_real_candidate_rows_verified": 3,
+        "alfworld_codex_skillopt_r22_real_candidate_sha256": "253e353d4b027d2f1c8469e14ffdc50baefc413708f0e3d3edd7aa5691c3d378",
+        "alfworld_codex_skillopt_r22_real_candidate_tasks": 1,
+        "alfworld_codex_skillopt_r22_real_candidate_verifier_passed": true,
+        "alfworld_codex_skillopt_r23_real_candidate_arm_summaries": {
+          "formatting_placebo": {
+            "api_calls": 16,
+            "episodes": 2,
+            "invalid_actions": 0,
+            "steps": 16,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "no_skill": {
+            "api_calls": 16,
+            "episodes": 2,
+            "invalid_actions": 0,
+            "steps": 16,
+            "win_rate": 0.0,
+            "wins": 0
+          },
+          "skillopt_candidate": {
+            "api_calls": 16,
+            "episodes": 2,
+            "invalid_actions": 0,
+            "steps": 16,
+            "win_rate": 0.0,
+            "wins": 0
+          }
+        },
+        "alfworld_codex_skillopt_r23_real_candidate_episodes": 6,
+        "alfworld_codex_skillopt_r23_real_candidate_rows_verified": 6,
+        "alfworld_codex_skillopt_r23_real_candidate_tasks": 2,
+        "alfworld_codex_skillopt_r23_real_candidate_verifier_passed": true,
+        "alfworld_cross_model_r4_qwen_candidate_invalid_actions": 36,
+        "alfworld_cross_model_r4_qwen_candidate_wins": 0,
+        "alfworld_cross_model_r4_qwen_episodes": 8,
+        "alfworld_cross_model_r4_qwen_quality_comparison_valid": false,
+        "alfworld_cross_model_r5_qwen_candidate_invalid_actions": 105,
+        "alfworld_cross_model_r5_qwen_candidate_wins": 0,
+        "alfworld_cross_model_r5_qwen_episodes": 8,
+        "alfworld_cross_model_r5_qwen_quality_comparison_valid": true,
+        "alfworld_durable_memory_r7_episodes": 12,
+        "alfworld_durable_memory_r7_success_delta": 0,
+        "alfworld_durable_memory_r7_verifier_passed": true,
+        "alfworld_durable_memory_r7_wins": 0,
+        "alfworld_expert_control_wins": 2,
+        "alfworld_family_disjoint_powered_r10_qwen_incomplete": true,
+        "alfworld_family_disjoint_powered_r11_candidate_invalid_actions": 66,
+        "alfworld_family_disjoint_powered_r11_candidate_wins": 0,
+        "alfworld_family_disjoint_powered_r11_tasks": 8,
+        "alfworld_family_disjoint_powered_r11_verifier_passed": true,
+        "alfworld_family_disjoint_powered_r12_all_executed_actions_admissible": true,
+        "alfworld_family_disjoint_powered_r12_candidate_wins": 0,
+        "alfworld_family_disjoint_powered_r12_semantic_rows_verified": 32,
+        "alfworld_family_disjoint_powered_r12_semantic_verifier_passed": true,
+        "alfworld_family_disjoint_powered_r12_tasks": 8,
+        "alfworld_family_disjoint_powered_r13_control_arms": [
+          "no_skill",
+          "formatting_placebo",
+          "trace_mined_procedure_v2"
+        ],
+        "alfworld_family_disjoint_powered_r13_control_rows_verified": 48,
+        "alfworld_family_disjoint_powered_r13_control_tasks": 8,
+        "alfworld_family_disjoint_powered_r13_control_verifier_passed": true,
+        "alfworld_family_disjoint_powered_r14_qwen_control_arms": [
+          "no_skill",
+          "formatting_placebo",
+          "trace_mined_procedure_v2"
+        ],
+        "alfworld_family_disjoint_powered_r14_qwen_control_rows_verified": 24,
+        "alfworld_family_disjoint_powered_r14_qwen_control_tasks": 8,
+        "alfworld_family_disjoint_powered_r14_qwen_control_verifier_passed": true,
+        "alfworld_family_disjoint_powered_r9_candidate_invalid_actions": 206,
+        "alfworld_family_disjoint_powered_r9_candidate_wins": 0,
+        "alfworld_family_disjoint_powered_r9_causal_skill_benefit_confirmed": false,
+        "alfworld_family_disjoint_powered_r9_tasks": 8,
+        "alfworld_family_disjoint_powered_r9_verifier_passed": true,
+        "alfworld_family_disjoint_r3_candidate_invalid_actions": 168,
+        "alfworld_family_disjoint_r3_candidate_wins": 0,
+        "alfworld_family_disjoint_r3_causal_skill_benefit_confirmed": false,
+        "alfworld_family_disjoint_r3_episodes": 16,
+        "alfworld_intervention_verifier_passed": true,
+        "alfworld_luna_skillopt_family4_candidate_invalid_actions": 0,
+        "alfworld_luna_skillopt_family4_candidate_wins": 0,
+        "alfworld_luna_skillopt_family4_causal_benefit_confirmed": false,
+        "alfworld_luna_skillopt_family4_episodes": 12,
+        "alfworld_luna_skillopt_family4_families": [
+          "look_at_obj_in_light",
+          "pick_and_place_simple",
+          "pick_clean_then_place_in_recep",
+          "pick_heat_then_place_in_recep"
+        ],
+        "alfworld_luna_skillopt_family4_mean_elapsed_ms": {
+          "formatting_placebo": 87050.662,
+          "no_skill": 78415.235,
+          "skillopt_candidate": 103005.202
+        },
+        "alfworld_luna_skillopt_family4_no_skill_wins": 0,
+        "alfworld_luna_skillopt_family4_placebo_wins": 0,
+        "alfworld_luna_skillopt_family4_rows_verified": 12,
+        "alfworld_luna_skillopt_family4_tasks": 4,
+        "alfworld_luna_skillopt_family4_total_api_calls": 144,
+        "alfworld_luna_skillopt_family4_verifier_passed": true,
+        "alfworld_luna_skillopt_long_horizon_candidate_wins": 0,
+        "alfworld_luna_skillopt_long_horizon_causal_benefit_confirmed": false,
+        "alfworld_luna_skillopt_long_horizon_elapsed_ms": {
+          "formatting_placebo": 251088.872,
+          "no_skill": 241022.026,
+          "skillopt_candidate": 326731.539
+        },
+        "alfworld_luna_skillopt_long_horizon_no_skill_wins": 0,
+        "alfworld_luna_skillopt_long_horizon_placebo_wins": 0,
+        "alfworld_luna_skillopt_long_horizon_rows_verified": 3,
+        "alfworld_luna_skillopt_long_horizon_steps": 35,
+        "alfworld_luna_skillopt_long_horizon_total_api_calls": 105,
+        "alfworld_luna_skillopt_long_horizon_verifier_passed": true,
+        "alfworld_model_generated_memory_r8_episodes": 12,
+        "alfworld_model_generated_memory_r8_invalid_action_delta_per_harness": 102,
+        "alfworld_model_generated_memory_r8_verifier_passed": true,
+        "alfworld_model_generated_memory_r8_wins": 0,
+        "alfworld_revision_r2_candidate_invalid_actions": 56,
+        "alfworld_revision_r2_candidate_wins": 0,
+        "alfworld_revision_r2_episodes": 6,
+        "alfworld_semantic_pilot_episodes": 18,
+        "alfworld_semantic_pilot_harnesses": [
+          "ollama-native-api",
+          "ollama-openai-compatible"
+        ],
+        "alfworld_semantic_pilot_models": [
+          "llama3.2:latest",
+          "qwen3:4b"
+        ],
+        "alfworld_semantic_pilot_tasks": 2,
+        "alfworld_skill_memory_composition_r6_candidate_wins": 0,
+        "alfworld_skill_memory_composition_r6_episodes": 8,
+        "alfworld_skill_memory_composition_r6_improved_task_success": false,
+        "alfworld_skill_memory_composition_r6_invalid_action_delta_per_harness": 16,
+        "alfworld_trace_procedure_wins": 0,
+        "bounded_pairs_executed": 17,
+        "empty_candidate_rows_explicitly_identified": true,
+        "gepa_baseline_holdout_match_rate": 0.6666666666666666,
+        "gepa_enterprise_skill_benefit_confirmed": false,
+        "gepa_holdout_split_used": true,
+        "gepa_metric_calls": 11,
+        "gepa_optimizer_executed": true,
+        "gepa_selected_candidate_characters": 0,
+        "gepa_selected_holdout_match_rate": 0.6666666666666666,
+        "governed_release_assertions_failed": 0,
+        "governed_release_assertions_passed": 18,
+        "hidden_test_boundary_passed": true,
+        "matm_all_neighbor_top10_rate": 0.6806722689075632,
+        "matm_causal_skill_benefit_confirmed": false,
+        "matm_offline_predictive_transfer_measured": true,
+        "matm_skill_retrieval_model_folds": 34,
+        "matm_skill_retrieval_rows": 2130,
+        "matm_successful_neighbor_auc_lift": -0.055740378738362746,
+        "matm_successful_neighbor_auc_lift_ci95": [
+          -0.11190932395096881,
+          0.0015199687228194907
+        ],
+        "matm_successful_neighbor_top10_lift": 0.0665266106442577,
+        "matm_successful_neighbor_top10_lift_ci95": [
+          -0.01960784313725489,
+          0.16596638655462187
+        ],
+        "matm_successful_neighbor_top10_rate": 0.7471988795518207,
+        "natural_model_dream_procedure_llama_projects": 3,
+        "natural_model_dream_procedure_llama_quality_passed": 1,
+        "natural_model_dream_procedure_llama_verifier_passed": true,
+        "natural_model_dream_procedure_luna_meaningful_projects": 4,
+        "natural_model_dream_procedure_luna_meaningful_quality_passed": 3,
+        "natural_model_dream_procedure_luna_meaningful_selection": {
+          "admitted_by_sorted_content_path": true,
+          "max_projects": 4,
+          "min_recovery_candidates": 1,
+          "min_tool_calls": 20
+        },
+        "natural_model_dream_procedure_luna_meaningful_valid_json": 4,
+        "natural_model_dream_procedure_luna_meaningful_verifier_passed": true,
+        "natural_model_dream_procedure_luna_projects": 3,
+        "natural_model_dream_procedure_luna_quality_passed": 1,
+        "natural_model_dream_procedure_luna_semantic_utility_confirmed": false,
+        "natural_model_dream_procedure_luna_verifier_passed": true,
+        "natural_model_dream_procedure_model_format_sensitivity_observed": true,
+        "natural_model_dream_procedure_projects": 3,
+        "natural_model_dream_procedure_quality_passed": 0,
+        "natural_model_dream_procedure_utility_confirmed": false,
+        "natural_model_dream_procedure_verifier_passed": true,
+        "natural_released_procedure_exact_queries": 0,
+        "natural_released_procedure_projects": 3,
+        "natural_released_procedure_queries": 23,
+        "natural_released_procedure_verifier_passed": true,
+        "natural_released_procedure_verifier_projects": 3,
+        "natural_released_procedure_visible_queries": 23,
+        "reasoningbank_attempt_status": "unavailable_typed",
+        "reasoningbank_codex_baseline_mean_score": 0.7027777777777777,
+        "reasoningbank_codex_mean_delta": -0.10972222222222205,
+        "reasoningbank_codex_mean_score": 0.5930555555555557,
+        "reasoningbank_codex_receipt_present": true,
+        "reasoningbank_codex_regressed_tasks": 1,
+        "reasoningbank_memory_quality_evaluated": false,
+        "reasoningbank_receipt_present": true,
+        "rho_locomo_baseline_mean_score": 0.7027777777777777,
+        "rho_locomo_candidate_mean_score": 0.5111111111111112,
+        "rho_locomo_candidate_regressed_tasks": 1,
+        "rho_locomo_candidate_self_preference_accepted": true,
+        "rho_locomo_causal_utility_confirmed": false,
+        "rho_locomo_heldout_tasks": 2,
+        "rho_locomo_mean_delta": -0.19166666666666654,
+        "rho_locomo_receipt_present": true,
+        "rho_locomo_self_preference_mean_score": 1.0,
+        "rho_powered_candidate_baseline_mean_score": 0.6431878306878306,
+        "rho_powered_candidate_bootstrap_ci": [
+          -0.5908730158730159,
+          0.024702380952380976
+        ],
+        "rho_powered_candidate_mean_delta": -0.2552579365079364,
+        "rho_powered_candidate_mean_score": 0.3879298941798942,
+        "rho_powered_candidate_receipt_present": true,
+        "rho_powered_candidate_regressed_tasks": 5,
+        "rho_powered_candidate_upstream_accepted": false,
+        "security_violation_veto_passed": true,
+        "share_codex_recovery_review_candidates": 31,
+        "skill_cross_harness_same_fixture_compared": true,
+        "skill_meta_automatic_promotion_authorized": false,
+        "skill_meta_causal_benefit_confirmed": false,
+        "skill_meta_study_count": 23,
+        "skill_meta_trace_mined_protocol_studies": 12,
+        "skill_meta_trace_mined_semantic_studies": 9,
+        "skill_qwen_native_harness": "ollama-native-api",
+        "skill_qwen_native_model": "qwen3:4b",
+        "skill_qwen_native_native_tool_call_counts": {
+          "formatting_placebo": 0,
+          "no_skill": 0,
+          "trace_mined_terminal_discipline": 0
+        },
+        "skill_qwen_native_terminal_match_rates": {
+          "formatting_placebo": 0.0,
+          "no_skill": 0.0,
+          "trace_mined_terminal_discipline": 0.0
+        },
+        "skill_transfer_harnesses": [
+          "ollama-native-api",
+          "openai-native"
+        ],
+        "skill_transfer_models": [
+          "llama3.2:latest",
+          "qwen3:4b"
+        ],
+        "skill_transfer_same_fixture_compared": true,
+        "skillgen_bird_candidate_generated": true,
+        "skillgen_bird_heldout_baseline_accuracy": 0.5,
+        "skillgen_bird_heldout_net_gain": -1,
+        "skillgen_bird_heldout_regressions": 1,
+        "skillgen_bird_heldout_repairs": 0,
+        "skillgen_bird_heldout_skill_accuracy": 0.375,
+        "skillgen_bird_heldout_tasks": 8,
+        "skillgen_bird_receipt_present": true,
+        "skillgen_bird_release_gate_passed": false,
+        "skillgen_bird_train_baseline_failures": 6,
+        "skillgen_bird_train_baseline_successes": 2,
+        "skillgen_bird_train_tasks": 8,
+        "skillopt_candidate_provenance_audit_passed": true,
+        "statebench_executable_gold_sql_tasks": 4,
+        "statebench_sql_fixture_tasks": 46,
+        "stdout_exit_equivalent_pairs": 9,
+        "trace2skill_real_tool_boundary_passed": true,
+        "trace2skill_stage0_skill_benefit_established": false,
+        "wisp_recovery_review_candidates": 89
+      },
+      "status": "governed_release_mechanics_partial_pass"
+    },
+    "L7_to_L10": {
+      "decision": "A natural public-trace procedure release now passes its independent lineage/authority verifier across three anonymous projects and 23 queries, but the digest-backed proposal matched zero target states; this closes release mechanics only, not procedure utility. There is no utility routing, enterprise release, domain embedding adaptation, or generator fine-tuning claim is authorized; the pinned CMU raw shard remains approval-gated, and prospective labels and outcomes remain blocking evidence",
+      "evidence": {
+        "cmu_metrics_run": false,
+        "cmu_raw_access_approved": false,
+        "cmu_requirement_waived": false,
+        "public_corpora_sufficient_for_current_gates": false
+      },
+      "status": "gated"
+    }
+  },
+  "overall_status": "real OTel conformance, governed history mechanics, synthetic memory invariants, and one loss-aware real memory transition cohort pass; silver-label retrieval, same-candidate local PostgreSQL RLS, and governed skill-release mechanics pass partially; memory utility, diagnosis, causal skill benefit, cross-user learning, Aurora scale, and prospective enterprise utility do not",
+  "result_sha256": "77f353e1d1dee887c5e0cd3d95fdd5648c10d380ec906e2372979be9556def8d",
+  "schema_version": "frankengate-combined-evidence-matrix-v31"
+}

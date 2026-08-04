@@ -1,0 +1,27 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "Edmon02/dataclaw-peteromallet",
+  "dataset_revision": "96e52d19e236676f323cc41916daab006a6ac2e2",
+  "license": "MIT",
+  "source_url": "https://huggingface.co/datasets/Edmon02/dataclaw-peteromallet",
+  "source_format": "DataClaw flattened Claude Code conversation rows with thinking and tool inputs but no tool outputs",
+  "adapter": "public_native_history_fidelity_v1",
+  "publication_basis": "Public mirror whose card points loaders to peteromallet/dataclaw-peteromallet",
+  "rights_assertion": "MIT dataset metadata does not override rights in embedded third-party code or outputs",
+  "privacy_review": "Exporter reports path anonymization, username hashing, redactions, and skipped sessions",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "declared_session_rows": 549,
+    "declared_projects": 14,
+    "complete_home_directory": false,
+    "byte_native": false,
+    "flattened_messages": true,
+    "independent_user": false
+  },
+  "admission": "admit_for_single_user_longitudinal_flattening_analysis",
+  "enterprise_transfer": "Treat as a mirror of Peter O'Malley's source, not another independent user"
+}

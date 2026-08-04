@@ -1,0 +1,734 @@
+{
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_artifact_utility_confirmed": false,
+    "independent_family_disjoint_run": true,
+    "reason": "This is a public BIRD family-disjoint frontier replay using trace-mined artifacts; promotion still requires independent verification, repeated seeds, changed-system replay, cost/negative-transfer gates, and enterprise labels.",
+    "trace_artifacts_independently_validated": true
+  },
+  "episodes": [
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 17575.715,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "candidate_error",
+      "response_sha256": "10eceaee97295e5d4cbac93fbb94e683cf9909b67bf22ed6a5f5353e00c152ef",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 28560.11,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "dd7023fa5fd0dfede9c8d4af692aa1a5c9b373ef6eb0850faebf5ddcec213eec",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 16598.762,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "e9fd5c59b7173a66aeb83f2f93fc5f07be60cfc3117ec6a5c63370808f781656",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8738.503,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9df7d9afc4172e94c2dbc53ed741a393976d2aced823c43bd9e3f3ca80c6b9ca",
+      "task_hash": "21be379428e44711a17cdbecc51aaa368dd6ce6547038d1efb4d06bc84d890be",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 7417.516,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "5b346d264c94eb0c8630add7bb6b42ac4b0537cbaf5e0856c301a579cfc4a75b",
+      "task_hash": "21be379428e44711a17cdbecc51aaa368dd6ce6547038d1efb4d06bc84d890be",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 8178.885,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9df7d9afc4172e94c2dbc53ed741a393976d2aced823c43bd9e3f3ca80c6b9ca",
+      "task_hash": "21be379428e44711a17cdbecc51aaa368dd6ce6547038d1efb4d06bc84d890be",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 12652.145,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "0ec108abca8eda6173a41f6e12c6ea3c745a2be928f47eca081d57f924162e3a",
+      "task_hash": "308ba7821512338f7182af21d9282903fa64db10551208ab26b7d82330b2d391",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 14150.853,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9ad4a6d2f8a8cf4ddfa1deceb33160c0a7d51ca1e04dadc760bc8ded156d60d4",
+      "task_hash": "308ba7821512338f7182af21d9282903fa64db10551208ab26b7d82330b2d391",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 14228.288,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "cfd7918de30fa38f89e1e49a7681ed946a55bcff96848853f95fc72cce4c8a73",
+      "task_hash": "308ba7821512338f7182af21d9282903fa64db10551208ab26b7d82330b2d391",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 10833.848,
+      "exact": true,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "495b4438a097ef21b6d1510cd7e002fd87c88a81bce3715597cd25a2339d8722",
+      "task_hash": "5ae07a247661fa3528c32c2456f02394e698597853bf0ef4f6b00e61bff782d7",
+      "unordered": true
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 7308.918,
+      "exact": true,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "0bb8e449c15c496cd7eb5c790143ba0b51e70bcf9d7f6281537410c1c4fb8687",
+      "task_hash": "5ae07a247661fa3528c32c2456f02394e698597853bf0ef4f6b00e61bff782d7",
+      "unordered": true
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 6872.415,
+      "exact": true,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "495b4438a097ef21b6d1510cd7e002fd87c88a81bce3715597cd25a2339d8722",
+      "task_hash": "5ae07a247661fa3528c32c2456f02394e698597853bf0ef4f6b00e61bff782d7",
+      "unordered": true
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 7359.565,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "f403a9527f8397ed5f3b83105cdd62368be813d6bb9580874a776d83d07e013f",
+      "task_hash": "6a11d188d08528f8283150ab1bf6985976eb55b91f5a9fda06cdf1044c2ae70d",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 8508.796,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "624ad9d00057e0398cd10955e4b120fad7bc8df864b5f91665bd61f82d96f951",
+      "task_hash": "6a11d188d08528f8283150ab1bf6985976eb55b91f5a9fda06cdf1044c2ae70d",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 7538.707,
+      "exact": true,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "60a425115e7c67795a2f9ebd1a04410653503ac33fdba01d70a972c5dde77c52",
+      "task_hash": "6a11d188d08528f8283150ab1bf6985976eb55b91f5a9fda06cdf1044c2ae70d",
+      "unordered": true
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8826.199,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "2cf852d8f04b4cf7651ed5e6a6effc6d4da606e6dc47c5ab62bcfc2dbd8eff24",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 10256.916,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "6632a5153b92b79b492b632657a0cca4267836cb649874d23c2dad3e7bc30f9d",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 7248.363,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "2cd0a486796d4231dd2e01be5c283fd8286c1b14e05913b38dbaf683c35fb620",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 9505.25,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "ce3a4b72d8b94ca85ef8ffea4f3521d7e8407bbee5675a59315f4b0926f393eb",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 12503.745,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9a6c8453ffe1aeca1538c0ca339a061a1c282e40c00bda7ffafd22a193b9b391",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 9583.588,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "6eea84b7522977a5630de922740e26a558bc280a9d7df76950e43fb5cea646b3",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8933.971,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "100f17a290ea3e4ac427956cd3124650aca5ffc78a1445943b235129a0c3893b",
+      "task_hash": "fd4023e3f6ae2be583274951694ac868287ab8efb216b750297c6a9a6619643c",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 8554.759,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "3448bdbb1ce0838d7cb372748ae72e5da65b964a969c786d1ac38c4641fc2955",
+      "task_hash": "fd4023e3f6ae2be583274951694ac868287ab8efb216b750297c6a9a6619643c",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 9396.879,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "120481c7eeafc158d322eadec698f9fd75434eecf46ab44d29d5b731e97b9837",
+      "task_hash": "fd4023e3f6ae2be583274951694ac868287ab8efb216b750297c6a9a6619643c",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 11955.071,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "237499007dffe44068fc211a4047e7d37d3ab27b7d291503b12ae38fd2ca501e",
+      "task_hash": "035c1c3b1288643bcf12234171414f59bd8d08a3a2b094aca481ea5eb7e2703a",
+      "unordered": true
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 5344.833,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "7156693ea8c498ddf8dff09cff1328c2dd4f3a0f72e38f105ef27968dee3bf77",
+      "task_hash": "035c1c3b1288643bcf12234171414f59bd8d08a3a2b094aca481ea5eb7e2703a",
+      "unordered": true
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 6228.544,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "237499007dffe44068fc211a4047e7d37d3ab27b7d291503b12ae38fd2ca501e",
+      "task_hash": "035c1c3b1288643bcf12234171414f59bd8d08a3a2b094aca481ea5eb7e2703a",
+      "unordered": true
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8777.671,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "2581a850dce12888b3a385ace35e3524fe85f899f10f2059e344ec19a08f2a81",
+      "task_hash": "378275f2b50838a2b30c410cd1165196d044e21207b318d23859d44590b0899a",
+      "unordered": true
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9067.315,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "56394e75e65928dd68d889fcda1cdb71fe736b1eb446495d517dbd0f6e21b7db",
+      "task_hash": "378275f2b50838a2b30c410cd1165196d044e21207b318d23859d44590b0899a",
+      "unordered": true
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 12458.408,
+      "exact": true,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "exact",
+      "response_sha256": "391cb1bd7409381a2ea6fe7a3f9f6efde53e6dd8bba56b8cbedaa7d54658552e",
+      "task_hash": "378275f2b50838a2b30c410cd1165196d044e21207b318d23859d44590b0899a",
+      "unordered": true
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 11755.985,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "1c952fd040097b09fb74e423a2ad67924a9b04e1acb91e47d2fedfadf70a0a56",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 13463.88,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "79b4a0090d1f8388dbe74bf95f63d4d9d9ff840caaa7f3c580839256e00ba066",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 13198.623,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "56132741e6b13eda84abeb19adf048dcac1b44b7e7786c4954712a1724ee778c",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 12677.756,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "819af03ac835df693803a9e40191c75f51feff705e83d04d35995b0b63b9f46a",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 10210.322,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "a007ad9077da6536f3acc86a9c1e2d88daa1147605140df02013f33845e614bf",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 11975.745,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "a5c6fba2c0217f3f53ddc43203c99e9cb78f6955396f9a07e62df949f73e5458",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 8264.46,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "e788db9805ab5e2a294e9f743550f5d7fa07fa625c9271eb288eab6c2e9598e3",
+      "task_hash": "46412a665b11060c994ba29e6753270f963e9f79369f17c3b4759db86d3c32e5",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 8695.607,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "f993addce63451003f4ae4e8cc68395520e460821036199031cfdcff8d759e36",
+      "task_hash": "46412a665b11060c994ba29e6753270f963e9f79369f17c3b4759db86d3c32e5",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 6559.445,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "c8d424314a7fbec692bf7f1b04938aa39a4567b1381f0355cac25e3bd094befd",
+      "task_hash": "46412a665b11060c994ba29e6753270f963e9f79369f17c3b4759db86d3c32e5",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 9108.977,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "d1061862b96a17c10ff6a8b9df5d79ef5fe2b1c932008bfad32690850d52882c",
+      "task_hash": "bd5d86412280961081cf3b545c25a49a2aba56224a323803ba6895cf78640daa",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9182.095,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "3cdd4e00d6d6769a31dc306800caf088d5be4e7a255d94f48d89b1bd2dac3c58",
+      "task_hash": "bd5d86412280961081cf3b545c25a49a2aba56224a323803ba6895cf78640daa",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 8526.212,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "b2fd741816106306b2f1fa1c1b46eaf75fc4ca27271dc42189467324a86be38e",
+      "task_hash": "bd5d86412280961081cf3b545c25a49a2aba56224a323803ba6895cf78640daa",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 10698.125,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "74afbea3d59bea8deb09c343b0daf56c816869c754897cfd25af4d9d2867b00c",
+      "task_hash": "97cf8d88b340ffb212158069b5256d07f7e34e5fa4d4d14ec98e8a63f3cc1938",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9291.626,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "c2b14c6783ade13b9c794077dd0c6757e7a7de63ea1e14eb79274f29f14533a0",
+      "task_hash": "97cf8d88b340ffb212158069b5256d07f7e34e5fa4d4d14ec98e8a63f3cc1938",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 12400.487,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "08684653101c04ba6c5191623ea7178152a1cfdb85b58eeb9555a0314ee7dd41",
+      "task_hash": "97cf8d88b340ffb212158069b5256d07f7e34e5fa4d4d14ec98e8a63f3cc1938",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 10127.967,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "556c5476853ad95dac7673cfe02ddb54f5d6e8e4d65a6ef3b9aff1f4ac9fa871",
+      "task_hash": "3cdbf808242920659fffe46bc894fa55a60b404b7e28bae02a00144e5f5e1f34",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 8480.568,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "4f626aa7a8ea9b1fff9f93fbcfc58b7723df0ccafb666e5af028e09f5d78815b",
+      "task_hash": "3cdbf808242920659fffe46bc894fa55a60b404b7e28bae02a00144e5f5e1f34",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 11249.18,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "83fee31ec6f648cc1d034a8f8f9b4c2965cc4615bd966b7d8a19b616f4b4b0b4",
+      "task_hash": "3cdbf808242920659fffe46bc894fa55a60b404b7e28bae02a00144e5f5e1f34",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 15305.839,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "5d5a82c8fb0ac9fcd121885336d36fad2bbac7963454f2804608c58cba7f9c03",
+      "task_hash": "13c10b58d70ff9dff13833fe6cdaacbfc9e252db8ebaf56e9238c1efaddcdaf9",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 15452.266,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "278b5838455ba1ae8423a1240c4bf6f84dc96cfe8291fb7167f351128bb849bd",
+      "task_hash": "13c10b58d70ff9dff13833fe6cdaacbfc9e252db8ebaf56e9238c1efaddcdaf9",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 14774.127,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "02902003885cb36c506782d05b6acea0da9e9505ed3560634c3b2fc0edfe0cf3",
+      "task_hash": "13c10b58d70ff9dff13833fe6cdaacbfc9e252db8ebaf56e9238c1efaddcdaf9",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 9542.562,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "3eebf5c682d9f021c9bc8b481adfd19147edaad89960dc69c08d2bfad1db945e",
+      "task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9063.562,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "63ccb444052b0e5820bfb3db9a0d9871d51691552f2fb65a0255f28996ca3e99",
+      "task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 10051.678,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "ac33c46aa78cc952736bcd26fc64f9c68ffd95ce6908237031f6598fed2e50b8",
+      "task_hash": "d4ca3c02874d1a28ab8842abf4779a9729aa8a3442591dbe14999a41e2fde552",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 14266.156,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "17f982c4d13723f77078c3303feb0cceef56f8c90dfbea9dd4d863d8a53bb12e",
+      "task_hash": "03f2cafcb3887ad4be16601a8373525ebeda40c2024130dc7c2aa2456c135795",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 13676.649,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "a50d430984562c8655bda5881259bc1896db43f883fa7dc07139ea0dcff53c1a",
+      "task_hash": "03f2cafcb3887ad4be16601a8373525ebeda40c2024130dc7c2aa2456c135795",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 10537.664,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "677bf563a09433de3bac5f8ffc1946e68f405dadd0a4e1041275632f5f1580fb",
+      "task_hash": "03f2cafcb3887ad4be16601a8373525ebeda40c2024130dc7c2aa2456c135795",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 11723.424,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "da4d56031b4067fddee8d5b456227c4b73c2e823332a0d69f4bf84610bfee005",
+      "task_hash": "8271b20d3fff39f423c8290f7b5f7c53a2e5b53dacc16217838e95eb226c34d6",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 11539.263,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "911b56f94a2c9850c3211f3117cb75f533137b690af94f1a1ad95dd46a08a636",
+      "task_hash": "8271b20d3fff39f423c8290f7b5f7c53a2e5b53dacc16217838e95eb226c34d6",
+      "unordered": false
+    },
+    {
+      "arm": "trace_validated_artifact_library",
+      "elapsed_ms": 10665.268,
+      "exact": false,
+      "family": "debit_card_specializing",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "1575e15cde7e34792f520a00393069631abcc2e347ab078a137435a2c4a9a49e",
+      "task_hash": "8271b20d3fff39f423c8290f7b5f7c53a2e5b53dacc16217838e95eb226c34d6",
+      "unordered": false
+    }
+  ],
+  "protocol": {
+    "arms": [
+      "no_skill",
+      "formatting_placebo",
+      "trace_validated_artifact_library"
+    ],
+    "excluded_gold_ineligible_tasks": {
+      "card_games": 1,
+      "debit_card_specializing": 0,
+      "financial": 0,
+      "formula_1": 0
+    },
+    "gold_hidden_from_proposer": true,
+    "harness": "codex-cli-subscription",
+    "heldout_families": [
+      "card_games",
+      "formula_1",
+      "financial",
+      "debit_card_specializing"
+    ],
+    "library_sha256": "2582010b0af27e8585b19eadc0c71a120d7de6b8a85294c9ce4a54ba11dfce40",
+    "model": "gpt-5.6-luna",
+    "raw_output": "/private/tmp/bird-sql-trace-mined-factorial-20-2026-08-08-raw.json",
+    "source_artifact_counts": {
+      "european_football_2": 4,
+      "student_club": 4,
+      "superhero": 4,
+      "toxicology": 4
+    },
+    "source_artifacts_per_family": 4,
+    "source_families": [
+      "superhero",
+      "toxicology",
+      "student_club",
+      "european_football_2"
+    ],
+    "source_target_families_disjoint": true,
+    "task_count": 20,
+    "tasks_per_family": 5,
+    "validated_trace_artifact_count": 16
+  },
+  "schema_version": "frankengate-bird-sql-trace-mined-factorial-v1",
+  "summary": {
+    "formatting_placebo": {
+      "elapsed_ms_total": 220729.599,
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 17
+    },
+    "no_skill": {
+      "candidate_error": 1,
+      "elapsed_ms_total": 218629.189,
+      "episodes": 20,
+      "exact": 3,
+      "mismatch": 16
+    },
+    "trace_validated_artifact_library": {
+      "elapsed_ms_total": 208271.268,
+      "episodes": 20,
+      "exact": 4,
+      "mismatch": 16
+    }
+  }
+}

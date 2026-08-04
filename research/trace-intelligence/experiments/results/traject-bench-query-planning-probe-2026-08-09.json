@@ -1,0 +1,151 @@
+{
+  "arms": {
+    "baseline": {
+      "candidate_coverage": 0.666667,
+      "mrr": 0.348333,
+      "recall_at_1": 0.041667,
+      "recall_at_10": 0.541667,
+      "recall_at_5": 0.25,
+      "records": 8
+    },
+    "planned": {
+      "candidate_coverage": 0.75,
+      "mrr": 0.5625,
+      "recall_at_1": 0.083333,
+      "recall_at_10": 0.625,
+      "recall_at_5": 0.458333,
+      "records": 8
+    }
+  },
+  "claim_boundary": {
+    "automatic_artifact_acceptance_authorized": false,
+    "full_agent_execution_measured": false,
+    "query_planning_probe_measured": true,
+    "toolqp_training_reproduced": false
+  },
+  "dataset": {
+    "raw_content_committed": false,
+    "root_name": "public_data",
+    "selected_cases": 8
+  },
+  "failures": 0,
+  "protocol": {
+    "candidate_pool": "domain catalog",
+    "case_selection": "round-robin across domains",
+    "initial_shortlist": "domain lexical top-16, no target append",
+    "model": "gpt-5.6-luna",
+    "planner_queries": 3,
+    "planner_sees_gold_targets": false,
+    "planner_sees_tool_outputs": false,
+    "raw_model_outputs_external": true
+  },
+  "raw_receipts": [
+    {
+      "case_index": 0,
+      "raw_sha256": "876c6e4f1531bc72d7da9a99e4bdcc91017bcfcf5e1c82dfa029f30e6d39ecb2"
+    },
+    {
+      "case_index": 1,
+      "raw_sha256": "211079733833fd499dcb7ce00047e7208c19ae84d468bb1d5abd19bf1b0b0f08"
+    },
+    {
+      "case_index": 2,
+      "raw_sha256": "6ab0ebeee016ffe8d57ab4746fa150a85b9a3a5bc5d46ffb16765297e9f9c8ed"
+    },
+    {
+      "case_index": 3,
+      "raw_sha256": "122ce693827a87e41365d30020a30680eb0df8785a576f8048489363b1a03c06"
+    },
+    {
+      "case_index": 4,
+      "raw_sha256": "cc7b14ace17fa5b25e4ab0b7ffa007f39451eb8e1e01f23bbba061c8d4e1445c"
+    },
+    {
+      "case_index": 5,
+      "raw_sha256": "1d5795a55919b74cd3e33747eedeebdfab17a13fd279dbb048b2702cc5e8d18e"
+    },
+    {
+      "case_index": 6,
+      "raw_sha256": "1dd423b960fe947b4eb7daa27e8a3987b8040557c629e2a42de8f4b55a371ec0"
+    },
+    {
+      "case_index": 7,
+      "raw_sha256": "0eb9f34ac185d16ee8f9e8f2b03b8be2bf3e78db1600eb930c35b94daf134111"
+    }
+  ],
+  "rows": [
+    {
+      "baseline_coverage": 0.6666666666666666,
+      "candidate_count": 89,
+      "case_id": "Education/hard_ver",
+      "nonzero_query_matches": 67,
+      "planned_coverage": 0.6666666666666666,
+      "query_count": 3,
+      "target_count": 3
+    },
+    {
+      "baseline_coverage": 1.0,
+      "candidate_count": 70,
+      "case_id": "Email/hard_ver",
+      "nonzero_query_matches": 64,
+      "planned_coverage": 0.6666666666666666,
+      "query_count": 3,
+      "target_count": 3
+    },
+    {
+      "baseline_coverage": 0.3333333333333333,
+      "candidate_count": 258,
+      "case_id": "Finance/hard_ver",
+      "nonzero_query_matches": 257,
+      "planned_coverage": 0.3333333333333333,
+      "query_count": 3,
+      "target_count": 3
+    },
+    {
+      "baseline_coverage": 0.6666666666666666,
+      "candidate_count": 84,
+      "case_id": "Gaming/hard_ver",
+      "nonzero_query_matches": 77,
+      "planned_coverage": 0.6666666666666666,
+      "query_count": 3,
+      "target_count": 3
+    },
+    {
+      "baseline_coverage": 0.0,
+      "candidate_count": 124,
+      "case_id": "Mapping/hard_ver",
+      "nonzero_query_matches": 91,
+      "planned_coverage": 0.6666666666666666,
+      "query_count": 3,
+      "target_count": 3
+    },
+    {
+      "baseline_coverage": 1.0,
+      "candidate_count": 137,
+      "case_id": "Music/hard_ver",
+      "nonzero_query_matches": 132,
+      "planned_coverage": 1.0,
+      "query_count": 3,
+      "target_count": 3
+    },
+    {
+      "baseline_coverage": 0.6666666666666666,
+      "candidate_count": 89,
+      "case_id": "Education/hard_ver",
+      "nonzero_query_matches": 75,
+      "planned_coverage": 1.0,
+      "query_count": 3,
+      "target_count": 3
+    },
+    {
+      "baseline_coverage": 1.0,
+      "candidate_count": 70,
+      "case_id": "Email/hard_ver",
+      "nonzero_query_matches": 62,
+      "planned_coverage": 1.0,
+      "query_count": 3,
+      "target_count": 3
+    }
+  ],
+  "schema_version": "frankengate-traject-bench-query-planning-probe-v1"
+}

@@ -1,0 +1,45 @@
+{
+  "aggregate": {
+    "controlled_exact_artifact_result_matches": 1,
+    "controlled_parameter_targets": 75,
+    "controlled_parameterized_artifact_result_matches": 75,
+    "database_family_count": 11,
+    "natural_leave_one_out_result_matches": 1,
+    "natural_leave_one_out_selected_same_template": 0,
+    "natural_leave_one_out_targets": 76,
+    "parameter_transfer_result_matches": 0,
+    "parameter_transfer_targets": 0,
+    "repeated_template_groups": 0,
+    "trace_sql_executed": 193,
+    "trace_sql_execution_failed": 12,
+    "trace_sql_gold_result_match": 76,
+    "trace_sql_semantic_mismatch": 117,
+    "trace_tasks_seen": 242,
+    "trace_tasks_with_sql_candidate": 205,
+    "validated_artifacts": 76
+  },
+  "claim_boundary": {
+    "controlled_parameterized_reuse_measured": true,
+    "enterprise_quality_established": false,
+    "natural_cross_task_reuse_established": false,
+    "natural_parameterized_reuse_measured": false,
+    "reason": "Public BIRD traces provide execution and gold oracles but no natural user intent labels, enterprise identities, or prospective outcomes.",
+    "trace_artifacts_independently_validated": true
+  },
+  "protocol": {
+    "candidate": "last parseable successful sqlite3 SELECT/WITH command per trace task",
+    "controlled_parameter_reuse": "each validated artifact replayed with deterministic literal mutations; target SQL is independently executed",
+    "natural_reuse": "leave-one-out lexical top-1 within database family",
+    "parameter_reuse": "earliest validated artifact in an exact normalized-template group, target literals injected",
+    "template": "SQLGlot SQLite AST with literal nodes replaced by placeholders",
+    "validation": "trace result equals independently executed gold result"
+  },
+  "result_sha256": "0d31d32f2e4d7d0a51acca5c6f4f35be83fb0854f73ec6117c889c10b5a00691",
+  "schema_version": "frankengate-bird-trace-artifact-reuse-v1",
+  "source": {
+    "harness_root": "world-model-harness-v0.2.2",
+    "independent_oracle": "SQLite execution of trace SQL and gold sidecar SQL; canonicalized rows",
+    "raw_content_committed": false,
+    "trace_index_sha256": "e9fabdfd0f5c546f2a6a5153ad9aa2c2478c5e6507e310c273c8221593469055"
+  }
+}

@@ -1,0 +1,470 @@
+{
+  "arms": {
+    "name_only": {
+      "correct_abstention_rate": 0.1,
+      "invalid_selected_count": 0.0,
+      "records": 10,
+      "selected_count": 0.0,
+      "selected_valid_rate": 1.0,
+      "target_found_rate": 0.0,
+      "unsafe_accept_rate": 0.0,
+      "unsafe_first_rate": 0.0
+    },
+    "typed_metadata": {
+      "correct_abstention_rate": 0.1,
+      "invalid_selected_count": 0.0,
+      "records": 10,
+      "selected_count": 1.0,
+      "selected_valid_rate": 1.0,
+      "target_found_rate": 0.9,
+      "unsafe_accept_rate": 0.0,
+      "unsafe_first_rate": 0.0
+    }
+  },
+  "claim_boundary": {
+    "authority_safety_measured": true,
+    "causal_artifact_utility_established": false,
+    "enterprise_semantic_alias_quality_established": false,
+    "reason": "Synthetic frontier selection fixture; it isolates metadata sufficiency and admission safety, not enterprise prevalence or production outcomes.",
+    "skill_transfer_measured": false,
+    "typed_admission_contract_measured": true
+  },
+  "dataset": {
+    "candidate_metadata_arms": [
+      "name_only",
+      "typed_metadata"
+    ],
+    "case_count": 10,
+    "cases": [
+      "unchanged",
+      "approved_rename",
+      "wrong_system",
+      "schema_drift",
+      "inactive",
+      "same_surface_ambiguity",
+      "temporal_replacement",
+      "no_safe_candidate",
+      "multiple_valid",
+      "mixed_drift"
+    ],
+    "typed_admission_contract": "semantic_inputs + system_id + authority_epoch + schema_version + active status"
+  },
+  "failures": 0,
+  "protocol": {
+    "explorer_sees_gold_validity": false,
+    "explorer_sees_hidden_expected_indices": false,
+    "max_shortlist": 5,
+    "model": "gpt-5.6-luna",
+    "raw_model_outputs_external": true,
+    "run_label": "authority-v1",
+    "tool_endpoints_invoked": false
+  },
+  "result_sha256": "7e96d1be6aed54698c8cfaba3f4d1ffe4152567a10da64a7c487a0cc60c0018a",
+  "rows": [
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "9efe877fbf3ab4b5ef4ba5d30edfd3e9fbd99dd8a2d4a413b146fa2de51b17a6",
+      "case_id": "unchanged",
+      "case_index": 0,
+      "prompt_chars": 970,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "9efe877fbf3ab4b5ef4ba5d30edfd3e9fbd99dd8a2d4a413b146fa2de51b17a6",
+      "case_id": "unchanged",
+      "case_index": 0,
+      "prompt_chars": 1632,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 1,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 1
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "119c899416abcb5b603225f4965d2faae0abf589e1cffd393bd4152abf6e797f",
+      "case_id": "approved_rename",
+      "case_index": 1,
+      "prompt_chars": 968,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "119c899416abcb5b603225f4965d2faae0abf589e1cffd393bd4152abf6e797f",
+      "case_id": "approved_rename",
+      "case_index": 1,
+      "prompt_chars": 1634,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 1,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 1
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "d9bf53fbc398d1595375e4b6eda24adaa7aa59687ea47d06b4f590272665a382",
+      "case_id": "wrong_system",
+      "case_index": 2,
+      "prompt_chars": 978,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "d9bf53fbc398d1595375e4b6eda24adaa7aa59687ea47d06b4f590272665a382",
+      "case_id": "wrong_system",
+      "case_index": 2,
+      "prompt_chars": 1641,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 1,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 1
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "192bcf1a1fe97ba795386f789be32a6cde66c98ca549cfe5425174e3d7af7ae2",
+      "case_id": "schema_drift",
+      "case_index": 3,
+      "prompt_chars": 973,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "192bcf1a1fe97ba795386f789be32a6cde66c98ca549cfe5425174e3d7af7ae2",
+      "case_id": "schema_drift",
+      "case_index": 3,
+      "prompt_chars": 1633,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 1,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 1
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "9c07f2b47dae5cd82b59ce27ebdca6992b4c6c3583c1bde64c7ea8c879969366",
+      "case_id": "inactive",
+      "case_index": 4,
+      "prompt_chars": 973,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "9c07f2b47dae5cd82b59ce27ebdca6992b4c6c3583c1bde64c7ea8c879969366",
+      "case_id": "inactive",
+      "case_index": 4,
+      "prompt_chars": 1642,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 1,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 1
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "b78ba6afdef8b02e800b48cc8f7346474ee86bad16d1c8014e23f93b5d752696",
+      "case_id": "same_surface_ambiguity",
+      "case_index": 5,
+      "prompt_chars": 970,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "b78ba6afdef8b02e800b48cc8f7346474ee86bad16d1c8014e23f93b5d752696",
+      "case_id": "same_surface_ambiguity",
+      "case_index": 5,
+      "prompt_chars": 1631,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 1,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 1
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "a26ac895c08068038d31de2de08053294275227dcd07a1f4fd00f07cc7e1203e",
+      "case_id": "temporal_replacement",
+      "case_index": 6,
+      "prompt_chars": 969,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "a26ac895c08068038d31de2de08053294275227dcd07a1f4fd00f07cc7e1203e",
+      "case_id": "temporal_replacement",
+      "case_index": 6,
+      "prompt_chars": 1634,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 1,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 1
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "09986dbd09cd93b78ad4ec6aea760a63a5770e12df8f1c6f51ff85caafb63e55",
+      "case_id": "no_safe_candidate",
+      "case_index": 7,
+      "prompt_chars": 973,
+      "selection": {
+        "correct_abstention": true,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 0,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "09986dbd09cd93b78ad4ec6aea760a63a5770e12df8f1c6f51ff85caafb63e55",
+      "case_id": "no_safe_candidate",
+      "case_index": 7,
+      "prompt_chars": 1638,
+      "selection": {
+        "correct_abstention": true,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 0,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 3,
+      "candidate_ids_hash": "798ca089266809a1ca4045c27218b4fb18b6d97733b79c13f1a37bb03cba3eb2",
+      "case_id": "multiple_valid",
+      "case_index": 8,
+      "prompt_chars": 973,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 2,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 3,
+      "candidate_ids_hash": "798ca089266809a1ca4045c27218b4fb18b6d97733b79c13f1a37bb03cba3eb2",
+      "case_id": "multiple_valid",
+      "case_index": 8,
+      "prompt_chars": 1639,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 2,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 2,
+        "valid_selected_count": 2
+      }
+    },
+    {
+      "arm": "name_only",
+      "candidate_count": 4,
+      "candidate_ids_hash": "6cf651a2e11ae2dcd0835203302311b190ba52d877c6e69b3f3bc482f9d30d36",
+      "case_id": "mixed_drift",
+      "case_index": 9,
+      "prompt_chars": 1015,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": null,
+        "invalid_selected_count": 0,
+        "selected_count": 0,
+        "selected_valid_rate": 1.0,
+        "target_found": false,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 0
+      }
+    },
+    {
+      "arm": "typed_metadata",
+      "candidate_count": 4,
+      "candidate_ids_hash": "6cf651a2e11ae2dcd0835203302311b190ba52d877c6e69b3f3bc482f9d30d36",
+      "case_id": "mixed_drift",
+      "case_index": 9,
+      "prompt_chars": 1911,
+      "selection": {
+        "correct_abstention": false,
+        "first_valid_rank": 1,
+        "invalid_selected_count": 0,
+        "selected_count": 1,
+        "selected_valid_rate": 1.0,
+        "target_found": true,
+        "unsafe_accept": false,
+        "unsafe_first": false,
+        "valid_candidate_count": 1,
+        "valid_selected_count": 1
+      }
+    }
+  ],
+  "schema_version": "frankengate-changed-system-authority-explorer-v1",
+  "source": {
+    "case_fixture_sha256": "8f5bdca64911f3e7fbd340bc6ea0e18a59fa9a3a4f1bed5121634fd0e3695aaf",
+    "raw_content_committed": false
+  }
+}

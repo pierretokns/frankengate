@@ -1,0 +1,27 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "evalstate/model-toolcall-research",
+  "dataset_revision": "061ca7c19cf3333df71b6d119fd78aee16dc3227",
+  "license": "NOASSERTION",
+  "source_url": "https://huggingface.co/datasets/evalstate/model-toolcall-research",
+  "source_format": "Native Codex traces from a repeated model-tooling research campaign",
+  "adapter": "codex_native_rollout_v1",
+  "publication_basis": "Intentional public research dataset release",
+  "rights_assertion": "No declared dataset license found; analysis does not establish redistribution or training rights",
+  "privacy_review": "Quarantine and content-minimized aggregate scan required",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "indexed_research_traces": 15,
+    "bytes": 5470000,
+    "provenance_session": true,
+    "model_repository_commits": true,
+    "commands_file_reads_tool_outputs": true,
+    "render_and_test_results": true
+  },
+  "admission": "admit_as_bounded_repeated_enterprise_like_research_campaign",
+  "enterprise_transfer": "Strong repeated-method evidence; bounded researcher-directed campaign is not a passive longitudinal workforce sample"
+}

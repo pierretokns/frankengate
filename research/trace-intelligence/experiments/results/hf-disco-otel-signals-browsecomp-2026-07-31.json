@@ -1,0 +1,18 @@
+{
+  "arms": {
+    "signals_error_and_tools": {"population": 46, "population_prevalence": 0.0, "precision": 0.0, "recall": 0.0, "selected": 9, "selected_positive": 0},
+    "trace_length": {"population": 46, "population_prevalence": 0.0, "precision": 0.0, "recall": 0.0, "selected": 9, "selected_positive": 0},
+    "uniform_random_seeded": {"population": 46, "population_prevalence": 0.0, "precision": 0.0, "precision_mean_1000": 0.0, "precision_min_1000": 0.0, "precision_max_1000": 0.0, "recall": 0.0, "selected": 9, "selected_positive": 0}
+  },
+  "benchmark": "browsecompplus",
+  "budget": 9,
+  "dataset_id": "DiscoPosse/agent-llm-traces",
+  "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+  "enterprise_behavior_claim": false,
+  "label_is_human_informative": false,
+  "label_proxy": "at_least_one_otel_error_status_code_2",
+  "raw_content_emitted": false,
+  "rows": 46,
+  "schema_version": "fg-hf-otel-signals-selector-v1",
+  "source_sha256": "9bad5701e6c779d897103561d4010d8e4470736f5d9a6d457e5f6eb86af9615e"
+}

@@ -1,0 +1,18 @@
+{
+  "aurora_like_database_reachable": false,
+  "claim_boundary": {
+    "local_postgresql_mechanics_proven_elsewhere": true,
+    "managed_aurora_behavior_proven": false,
+    "reason": "A container command path is available through Colima's VM shell, but no Aurora-like database fixture was exercised. Managed Aurora behavior remains untested; the probe itself did not mutate container or database state."
+  },
+  "colima_running": true,
+  "container_cli_error_class": "direct_shim_unusable",
+  "container_cli_source": "colima_ssh",
+  "container_cli_usable": true,
+  "failover_test_executed": false,
+  "pitr_test_executed": false,
+  "psql_client_present": false,
+  "raw_runtime_error_emitted": false,
+  "replica_lag_test_executed": false,
+  "schema_version": "frankengate-aurora-runtime-probe-v2"
+}

@@ -1,0 +1,9 @@
+{
+  "adapter_protocol_verified": true,
+  "claim_boundary_verified": true,
+  "evaluation_rows_verified": 44,
+  "schema_version": "frankengate-wmh-bird-sql-embedding-adapter-cohort-verification-v1",
+  "source_result_sha256": "0bfc46ab9bc72270ae8737735ecfe17cb4c433652b04987338ce3842c5ca6f86",
+  "train_evaluation_split_verified": true,
+  "verification_passed": true
+}

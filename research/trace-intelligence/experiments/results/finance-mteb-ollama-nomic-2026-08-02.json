@@ -1,0 +1,67 @@
+{
+  "analysis_revision": "financebench-ollama-embedding-choice-v1",
+  "arm": {
+    "method": "ollama:nomic-embed-text:latest",
+    "mrr": 0.16610798751367367,
+    "queries": 150,
+    "recall@1": 0.08,
+    "recall@10": 0.3333333333333333,
+    "recall@20": 0.4533333333333333,
+    "recall@5": 0.25333333333333335,
+    "relevant_query_count": 150
+  },
+  "dataset": {
+    "corpus_rows": 189,
+    "corpus_sha256": "813bec7596cf578bab030391ac39fbb5dfc8ab3df04a943cc32fcdf019274a5e",
+    "evaluated_queries": 150,
+    "id": "FinanceMTEB/FinanceBench",
+    "multi_positive_queries": 35,
+    "projection": {
+      "document_max_characters": 2500,
+      "documents_truncated": 82,
+      "queries_truncated": 0,
+      "query_max_characters": 2000
+    },
+    "qrel_rows": 189,
+    "qrels_sha256": "5a09a2355e8bd3b799c527860c5f29f2f449d734963b19f436c5437924b486aa",
+    "queries_sha256": "5b6364e77a8a358823cca6fd80d4a67a9b18b4ed303c019f61bb08dd3f3ce399",
+    "query_rows": 150,
+    "revision": "4738010357e3dda4b337abbde86d5b36c3118c8f"
+  },
+  "model": {
+    "document_receipt": {
+      "batch_size": 16,
+      "document_prefix": "search_document: ",
+      "embedding_dimension": 768,
+      "encode_seconds": 3.335152542,
+      "endpoint_scope": "loopback-only",
+      "model_id": "nomic-embed-text:latest",
+      "query_prefix": "search_query: ",
+      "request_count": 12
+    },
+    "endpoint": "http://127.0.0.1:11434",
+    "endpoint_scope": "loopback-only",
+    "model_id": "nomic-embed-text:latest",
+    "query_receipt": {
+      "batch_size": 16,
+      "document_prefix": "search_document: ",
+      "embedding_dimension": 768,
+      "encode_seconds": 1.004114084,
+      "endpoint_scope": "loopback-only",
+      "model_id": "nomic-embed-text:latest",
+      "query_prefix": "search_query: ",
+      "request_count": 10
+    }
+  },
+  "policy": {
+    "authorization_evaluated": false,
+    "promotion_requires": [
+      "same-corpus governed RLS/deletion replay",
+      "independent enterprise hard-negative labels",
+      "held-out transfer and latency/cost receipts"
+    ],
+    "raw_text_committed": false,
+    "vectors_committed": false
+  },
+  "schema_version": "frankengate-finance-mteb-ollama-retrieval-v1"
+}

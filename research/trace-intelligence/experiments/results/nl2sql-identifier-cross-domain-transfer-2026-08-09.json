@@ -1,0 +1,79 @@
+{
+  "claim_boundary": {
+    "changed_system_replay": false,
+    "embedding_promotion": false,
+    "enterprise_transfer": false,
+    "reason": "This tests feature/ranker transfer between two public SQL proxies; database/table focus labels are not SME intent labels and the domains have different candidate constructions.",
+    "semantic_alias_labels": false
+  },
+  "datasets": {
+    "defog": {
+      "cases": 26,
+      "raw_content_committed": false,
+      "raw_sha256": "3aa25a29f47cfa78a75820cb3c2ee1897e873127e8d7dfc9855202d9326261cd"
+    },
+    "wmh_bird": {
+      "cases": 148,
+      "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+      "raw_content_committed": false,
+      "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+    }
+  },
+  "directions": {
+    "bird_to_defog": {
+      "hard_negative_reranker": {
+        "cases": 26,
+        "mrr": 0.622864,
+        "recall_at_1": 0.5,
+        "recall_at_5": 0.769231,
+        "same_scope_collision_before_target": 0.038462
+      },
+      "identifier_reranker": {
+        "cases": 26,
+        "mrr": 0.622864,
+        "recall_at_1": 0.5,
+        "recall_at_5": 0.769231,
+        "same_scope_collision_before_target": 0.038462
+      },
+      "lexical": {
+        "cases": 26,
+        "mrr": 0.682284,
+        "recall_at_1": 0.576923,
+        "recall_at_5": 0.846154,
+        "same_scope_collision_before_target": 0.038462
+      }
+    },
+    "defog_to_bird": {
+      "hard_negative_reranker": {
+        "cases": 148,
+        "mrr": 0.685674,
+        "recall_at_1": 0.540541,
+        "recall_at_5": 0.864865,
+        "same_scope_collision_before_target": 0.0
+      },
+      "identifier_reranker": {
+        "cases": 148,
+        "mrr": 0.760996,
+        "recall_at_1": 0.621622,
+        "recall_at_5": 0.952703,
+        "same_scope_collision_before_target": 0.0
+      },
+      "lexical": {
+        "cases": 148,
+        "mrr": 0.731684,
+        "recall_at_1": 0.581081,
+        "recall_at_5": 0.932432,
+        "same_scope_collision_before_target": 0.0
+      }
+    }
+  },
+  "protocol": {
+    "cross_domain_split": "train on all source cases, test on all target cases",
+    "features": "Defog identifier-aware surface/scope/collision features",
+    "hard_negative_weight": 4.0,
+    "model": "sklearn LogisticRegression C=1 max_iter=1000 random_state=0",
+    "positive": "first target object from recorded gold SQL focus proxy"
+  },
+  "result_sha256": "c023b1b677a7c7a6edd5b0fbc36990c5080c2961fdc1cd7176de0166faaccf13",
+  "schema_version": "frankengate-nl2sql-identifier-cross-domain-transfer-v1"
+}

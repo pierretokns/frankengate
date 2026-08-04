@@ -1,0 +1,1114 @@
+{
+  "arms": [
+    {
+      "arm_id": "arm-f9194e73f9e9459e",
+      "decision_status_counts": {
+        "insufficient": 4
+      },
+      "exact_decision_rate": 0.0,
+      "exact_decisions": 0,
+      "mechanism_count": 0,
+      "mechanisms": []
+    },
+    {
+      "arm_id": "arm-a7f3a60b75eeeb61",
+      "decision_status_counts": {
+        "insufficient": 1,
+        "last_observed_only": 3
+      },
+      "exact_decision_rate": 0.5,
+      "exact_decisions": 2,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "latest_snapshot"
+      ]
+    },
+    {
+      "arm_id": "arm-708ec40cf3705c58",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "bitemporal_ledger"
+      ]
+    },
+    {
+      "arm_id": "arm-45825af359f9665d",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "evidence_retrieval"
+      ]
+    },
+    {
+      "arm_id": "arm-cafab63af13646b3",
+      "decision_status_counts": {
+        "insufficient": 3,
+        "last_observed_only": 1
+      },
+      "exact_decision_rate": 0.25,
+      "exact_decisions": 1,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "released_dream"
+      ]
+    },
+    {
+      "arm_id": "arm-64028b60fcc3797e",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-6d5eed49d33f68a3",
+      "decision_status_counts": {
+        "insufficient": 3,
+        "last_observed_only": 1
+      },
+      "exact_decision_rate": 0.25,
+      "exact_decisions": 1,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-141198c9fd1d7b9d",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger"
+      ]
+    },
+    {
+      "arm_id": "arm-c61b17c7876d5435",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval"
+      ]
+    },
+    {
+      "arm_id": "arm-26277a9b72e7b6fd",
+      "decision_status_counts": {
+        "insufficient": 1,
+        "last_observed_only": 3
+      },
+      "exact_decision_rate": 0.5,
+      "exact_decisions": 2,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "latest_snapshot",
+        "released_dream"
+      ]
+    },
+    {
+      "arm_id": "arm-80a42d4508ce376e",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "latest_snapshot",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-9df87559a5e1ca1c",
+      "decision_status_counts": {
+        "insufficient": 1,
+        "last_observed_only": 3
+      },
+      "exact_decision_rate": 0.5,
+      "exact_decisions": 2,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "latest_snapshot",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-d20d7ff771bf502b",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval"
+      ]
+    },
+    {
+      "arm_id": "arm-25ca8d1be152ee3c",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "released_dream"
+      ]
+    },
+    {
+      "arm_id": "arm-05f49f58126e4052",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-0b33a0cf7124f25d",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-f03cf7a2d4e821f9",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "evidence_retrieval",
+        "released_dream"
+      ]
+    },
+    {
+      "arm_id": "arm-d24ea90323eda2b6",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "evidence_retrieval",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-933bd47d5700c2ae",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "evidence_retrieval",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-cbeef7f5c82ff16e",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "released_dream",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-c8be295ec50e67e1",
+      "decision_status_counts": {
+        "insufficient": 2,
+        "last_observed_only": 2
+      },
+      "exact_decision_rate": 0.5,
+      "exact_decisions": 2,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "released_dream",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-4f57f1b27c249a8e",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-03ccadd4c44124f8",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval"
+      ]
+    },
+    {
+      "arm_id": "arm-25e7306d3661c18c",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "released_dream"
+      ]
+    },
+    {
+      "arm_id": "arm-8c3a40c09ed9c147",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-ee20ff681727cb09",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-727c6cf77dabe432",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval",
+        "released_dream"
+      ]
+    },
+    {
+      "arm_id": "arm-d797fec0f2d54c5e",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-7b51d918fa56768d",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-4d16a6e76067422b",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "released_dream",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-d2f052cabd63ae4c",
+      "decision_status_counts": {
+        "insufficient": 1,
+        "last_observed_only": 3
+      },
+      "exact_decision_rate": 0.5,
+      "exact_decisions": 2,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "released_dream",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-d3ae0f16f2247f54",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-7aa5169ff44e1667",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_dream"
+      ]
+    },
+    {
+      "arm_id": "arm-bd3eefb40864dc6d",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-2eb586d97bfe2eda",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-dc4d2be411e2a8e1",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "released_dream",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-e8ac4adea6ce025f",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "released_dream",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-cabc3614a87efc3e",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-9174e534a27900f5",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "evidence_retrieval",
+        "released_dream",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-6d79f6668a49062b",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "evidence_retrieval",
+        "released_dream",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-fc8fb2e1ba6b867c",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "evidence_retrieval",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-e2774220d88e2bc7",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "released_dream",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-15577cdaeabbb16a",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_dream"
+      ]
+    },
+    {
+      "arm_id": "arm-10592089d5bd5b57",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-ec43d19d9fe5eb80",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-b6fb2b55816be941",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "released_dream",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-f468acadfd9d248a",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "released_dream",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-5e58042007a3e73c",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-100e202d9263e846",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval",
+        "released_dream",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-f7bc6435b4c56237",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval",
+        "released_dream",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-4b5e721e1489906a",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-efacb99a7217dd84",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "released_dream",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-e091c1e6c59b2183",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_dream",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-aa1451927f79e1cf",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_dream",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-d929029d2a3b02f5",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-6e2c770613e40cf1",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "released_dream",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-da29c1402d1460a3",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "evidence_retrieval",
+        "released_dream",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-d8ca1d2f74ac124c",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 5,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_dream",
+        "verbatim_state"
+      ]
+    },
+    {
+      "arm_id": "arm-7625c29f5cd57f5c",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 5,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_dream",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-25899ad0909be5f7",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 5,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-99466366a4b59e6d",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 5,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "released_dream",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-ea7432f43c8719dc",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 5,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval",
+        "released_dream",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-33640a6bb180f0b4",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 5,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_dream",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    },
+    {
+      "arm_id": "arm-d36574778986b9fe",
+      "decision_status_counts": {
+        "conflict": 1,
+        "last_observed_only": 2,
+        "resolved": 1
+      },
+      "exact_decision_rate": 1.0,
+      "exact_decisions": 4,
+      "mechanism_count": 6,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval",
+        "released_dream",
+        "verbatim_state",
+        "released_procedure"
+      ]
+    }
+  ],
+  "catalog_item_counts": {
+    "bitemporal_ledger": 6,
+    "evidence_retrieval": 6,
+    "latest_snapshot": 3,
+    "released_dream": 1,
+    "released_procedure": 1,
+    "verbatim_state": 6
+  },
+  "claim_boundary": {
+    "empirical_utility": "not_established",
+    "mechanics_established": [
+      "six_mechanism_full_factorial_enumeration",
+      "pre_query_release_enforcement",
+      "query_independent_generation_interface",
+      "independent_verifier_and_immutable_release_path",
+      "arm_and_gold_blinded_resolver_payload",
+      "post_decision_independent_scoring",
+      "bitemporal_gold_rederivation",
+      "content_uniform_cross_mechanism_composition"
+    ],
+    "required_utility_falsifiers": [
+      "latest_snapshot_must_lose_to_bitemporal_on_predeclared_historical_or_conflict_queries",
+      "released_dream_must_improve_held_out_task_outcomes_without_increasing_stale_or_contradicted_selections",
+      "released_procedure_must_improve_project_and_time_held_out_verified_outcomes_versus_no_procedure_and_placebo",
+      "composed_arms_must_outperform their strongest component without authority, latency, or evidence-budget regression",
+      "benefit_must_replicate_on_natural_traces_and_consented_enterprise_users"
+    ]
+  },
+  "composition_summary": {
+    "all_mechanisms_exact": 4,
+    "all_minus_strongest_singleton": 0,
+    "interpretation": "fixture_redundancy_not_empirical_equivalence",
+    "perfect_composed_arm_count": 53,
+    "perfect_single_mechanism_arms": [
+      "bitemporal_ledger",
+      "evidence_retrieval",
+      "verbatim_state"
+    ],
+    "strongest_singleton_exact": 4
+  },
+  "design": {
+    "all_blind_payloads_passed": true,
+    "arm_count": 64,
+    "blinded_decision_fields": [
+      "decision",
+      "memory_ref",
+      "epistemic_status"
+    ],
+    "case_count": 256,
+    "composed_arms": 57,
+    "forbidden_blind_payload_fields_observed": [],
+    "query_count": 4,
+    "scoring_interface_fields": [
+      "decision",
+      "gold_status",
+      "gold_value",
+      "pack"
+    ],
+    "single_mechanism_arms": 6,
+    "zero_mechanism_arms": 1
+  },
+  "empirical_scope": {
+    "causal_effect_estimated": false,
+    "enterprise_users": 0,
+    "fixture_queries": 4,
+    "interpretation": "Authored deterministic fixtures test mechanics and composition only; their exact-decision rates are not memory utility estimates.",
+    "model_calls": 0,
+    "natural_trace_units": 0
+  },
+  "experiment_date": "2026-07-30",
+  "fixture_revision": "memory-mechanism-authored-fixture-v1",
+  "mechanisms": [
+    "latest_snapshot",
+    "bitemporal_ledger",
+    "evidence_retrieval",
+    "released_dream",
+    "verbatim_state",
+    "released_procedure"
+  ],
+  "oracle": {
+    "all_query_gold_agreements": 4,
+    "gold_labels_seen_by_resolver": false,
+    "procedure_supported_by_successful_episode": true,
+    "temporal_gold_agreements": 3,
+    "temporal_queries_rederived": 3
+  },
+  "release_protocol": {
+    "all_released_before_queries": true,
+    "dream_independently_verified": true,
+    "dream_query_independent": true,
+    "post_query_source_count": 0,
+    "procedure_independently_verified": true,
+    "procedure_query_independent": true
+  },
+  "result_sha256": "7e3065e721a3b7bae02bf743b2d11e496bc68a3b2ec73a81296caf7a6fefb3da",
+  "schema_version": "frankengate-memory-mechanism-factorial-v1"
+}

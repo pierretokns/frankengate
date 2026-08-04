@@ -1,0 +1,87 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "xlang-ai/Spider2:local-lite-and-dbt-audit",
+  "dataset_revision": "01a4c67c1e3f6ab9032716b050a927abbb245f65",
+  "source_url": "https://github.com/xlang-ai/Spider2",
+  "license": "MIT",
+  "source_format": "Spider2-Lite SQLite tasks/results plus Spider2-DBT DuckDB projects and application transcripts",
+  "adapter": "frankengate_spider2_governed_replay_pending_v1",
+  "admission_status": "source_audited_requires_curated_cohort_and_hardened_verifier",
+  "source_pin": {
+    "revision_date": "2026-01-30",
+    "tags_observed": 0,
+    "releases_observed": 0,
+    "license_sha256": "fc8aef2000733079c37d42876179d928ae1634dbe088b81bf54e0f14c68aa1a3"
+  },
+  "artifacts": {
+    "lite_metadata_sha256": "4ba48916576fbd60311a2478c6d4550b5d8cf3fcbc512457ea493b5941ca009d",
+    "lite_evaluation_metadata_sha256": "5113ddaea6107492c08a898241a9f69ec99b03bc60d014e9f0b12ec59fa28970",
+    "lite_sqlite_archive_bytes": 456643204,
+    "lite_sqlite_archive_sha256": "d56acf7c9d89be4bdf1f4f1281f4a03d91735f1858f6d6d0cfe0f9d562e3a94f",
+    "dbt_metadata_sha256": "a9c3e872df37749ffefcb16f66bc2e5450ceaa3de691c984d67e139f81b3fe76",
+    "dbt_start_archive_bytes": 377819033,
+    "dbt_start_archive_sha256": "143d0d4f6410f233a8969a27b4295695a4d7f3f7381143922bbc4486381c4375",
+    "dbt_gold_archive_bytes": 683874645,
+    "dbt_gold_archive_sha256": "0e351c524f7b8619881171d2ede80be274e7bbbe329566ed2775d8b6cd443fdc"
+  },
+  "source_audit": {
+    "spider2_lite": {
+      "local_tasks": 135,
+      "local_database_families": 30,
+      "local_evaluation_records": 135,
+      "published_local_gold_sql_files": 24,
+      "published_gold_sql_self_check_pass": 16,
+      "published_gold_sql_self_check_fail": 8,
+      "external_knowledge_files_present": 8
+    },
+    "spider2_dbt": {
+      "declared_tasks": 68,
+      "strict_self_consistent_tasks": 59,
+      "alias_repaired_self_consistent_tasks": 62,
+      "recommended_curated_cohort": 60,
+      "missing_gold_tasks": 4,
+      "invalid_gold_schema_tasks": 1,
+      "non_reflexive_comparator_tasks": 1,
+      "current_runtime_parse_pass": 18,
+      "current_runtime_parse_fail": 50
+    }
+  },
+  "stock_verifier_rejections": [
+    "Lite timeout argument is ignored",
+    "Lite comparator ignores column names and permits extra columns",
+    "Lite comparator sorts column vectors independently and can destroy row relationships",
+    "Lite missing-value normalization can equate NaN with numeric zero",
+    "DBT evaluator catches broad failures and assigns zero",
+    "DBT comparator is non-reflexive for one NaN-bearing gold case",
+    "agent runner executes ordinary tool actions twice"
+  ],
+  "trajectory_classification": {
+    "pre_generated_trajectories_included": false,
+    "agent_can_save_thought_action_observation_transcripts": true,
+    "otel_or_atif_native": false,
+    "stable_tool_call_ids": false,
+    "structured_exit_codes": false,
+    "parent_child_spans": false,
+    "token_cost_accounting": false
+  },
+  "required_frankengate_hardening": [
+    "curate strictly by database or schema family",
+    "replace stock comparators with multiplicity- and row-preserving semantic checks",
+    "enforce database, process, row, byte, network, and wall-clock limits",
+    "repair the double env.step execution before agent replay",
+    "capture typed tool calls, observations, errors, timings, release exposure, and authority in canonical trajectories",
+    "keep benchmark task content out of indexes used to mine candidate skills"
+  ],
+  "unsupported_claims": [
+    "all 135 Lite tasks have trustworthy gold SQL",
+    "all 68 DBT tasks are reproducible",
+    "upstream application transcripts are OTel or ATIF",
+    "current-runtime dbt parse failure means a task is invalid",
+    "Spider2 has a stable tagged release"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "verify_all_archives_before_extraction": true,
+    "commit_only_metadata_hashes_and_aggregate_results": true
+  }
+}

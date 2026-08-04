@@ -1,0 +1,11 @@
+{
+  "all_passed": true,
+  "check": {
+    "all_passed": true,
+    "raw": "alfworld-r7b-durable-memory-llama.json",
+    "raw_content_committed": false,
+    "receipt": "alfworld-durable-memory-intervention-r7-2026-08-02.json",
+    "summary_keys_verified": 4
+  },
+  "schema_version": "frankengate-durable-memory-verification-v1"
+}

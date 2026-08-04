@@ -1,0 +1,87 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "8b29e1d0b47f5b4bb09b64a28474fdb8cb11be53f1bbfcd15953890beb6858b0",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "provider-retry"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "user_request",
+      "observation_status": "observed",
+      "source_role": "user",
+      "content": "Summarize the incident.",
+      "user_attempt_id": "ua-001"
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "provider_attempt",
+      "observation_status": "observed",
+      "source_role": "gateway",
+      "content": "provider timeout",
+      "parent_event_id": "e000",
+      "user_attempt_id": "ua-001",
+      "inference_attempt_id": "ia-001",
+      "provider": "bedrock",
+      "attempt_status": "failed"
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "retry_decision",
+      "observation_status": "observed",
+      "source_role": "gateway",
+      "content": "Retry same provider after backoff.",
+      "parent_event_id": "e001",
+      "from_attempt_id": "ia-001",
+      "to_attempt_id": "ia-002",
+      "reason": "timeout"
+    },
+    {
+      "event_id": "e003",
+      "sequence": 3,
+      "kind": "provider_attempt",
+      "observation_status": "observed",
+      "source_role": "gateway",
+      "content": "provider response",
+      "parent_event_id": "e002",
+      "user_attempt_id": "ua-001",
+      "inference_attempt_id": "ia-002",
+      "provider": "bedrock",
+      "attempt_status": "succeeded"
+    }
+  ],
+  "outcome": {
+    "value": "succeeded_after_retry",
+    "source": "gateway",
+    "evidence_event_ids": ["e001", "e002", "e003"]
+  },
+  "loss_receipt": {
+    "source_event_count": 4,
+    "canonical_event_count": 4,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": [],
+    "expected_invariants": [
+      {
+        "type": "retry_within_user_attempt",
+        "first_attempt_event_id": "e001",
+        "retry_event_id": "e002",
+        "second_attempt_event_id": "e003"
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "retry_attempt_identity",
+        "disposition": "degraded",
+        "reason": "A linear step list does not distinguish the user attempt from gateway inference attempts."
+      }
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": "frankengate-oracle-hard-negative-annotated-false-negative-audit-v1",
+  "paper": "2505.18366",
+  "dataset": {
+    "source": "nvidia/TechQA-RAG-Eval",
+    "fixture": "techqa-500x100x100.json",
+    "fixture_sha256": "ca2d648b62ac0e245f1a4dd1f408b1949bb939844308cde031eb6a4a2e95d0f8",
+    "pages": 500,
+    "train_questions": 100,
+    "test_questions": 100,
+    "candidate_limit": 500,
+    "seed": 7,
+    "max_seq_length": 256
+  },
+  "arms": [
+    {
+      "name": "single_labse",
+      "models": ["sentence-transformers/LaBSE"],
+      "triplets_selected": 56,
+      "triplets_unavailable": 44,
+      "annotated_false_negatives": 0,
+      "annotated_false_negative_rate": 0.0
+    },
+    {
+      "name": "paper_six_encoder_composite",
+      "models": [
+        "dunzhang/stella_en_400M_v5",
+        "jinaai/jina-embeddings-v3",
+        "mixedbread-ai/mxbai-embed-large-v1",
+        "BAAI/bge-large-en-v1.5",
+        "sentence-transformers/LaBSE",
+        "sentence-transformers/all-mpnet-base-v2"
+      ],
+      "triplets_selected": 23,
+      "triplets_unavailable": 77,
+      "annotated_false_negatives": 0,
+      "annotated_false_negative_rate": 0.0
+    }
+  ],
+  "interpretation": [
+    "Neither arm selected a page that the fixture explicitly marked as another gold page.",
+    "This does not prove the selected pages are true negatives: TechQA gold annotations can be incomplete and only a human or independent relevance judge can audit unmarked pages.",
+    "LaBSE therefore has higher inequality-valid candidate coverage on this fixture, not demonstrated higher negative quality or retrieval quality.",
+    "The audit is a public-document proxy and does not test corporate aliases, identifier collisions, schema versions, or tool outcomes."
+  ],
+  "next_gate": "Blinded adjudication of selected negatives plus random and lexical controls on family-, project-, and time-disjoint enterprise-like cohorts; report false-negative rate, reranker utility, and cost together."
+}

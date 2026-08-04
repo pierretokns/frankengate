@@ -1,0 +1,648 @@
+{
+  "aggregate": {
+    "all": {
+      "adapted_mrr": 0.921237,
+      "adapted_recall_at_1": 0.891089,
+      "adapted_recall_at_5": 0.957921,
+      "baseline_mrr": 0.899585,
+      "baseline_recall_at_1": 0.866337,
+      "baseline_recall_at_5": 0.940594,
+      "eligible_projects": 37,
+      "eligible_sessions": 404,
+      "folds": 37,
+      "folds_detail": [
+        {
+          "adapted_mrr": 0.7037037037037037,
+          "baseline_mrr": 0.4277777777777778,
+          "held_out_project_hash": "7f2aa21acb9f5ae8d180089759e69592169c6b35a30adc4ab6d5aec39e370be0",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 127446
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "ea5527a7934b37a5fd0a640d54feb16fa1fb39e48bec29390fa81425db799af5",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 125705
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "13e75c4236579ab7c1cf242710ca80ed935db6b6923e18355f6fa12d83997e10",
+          "test_sessions": 16,
+          "train_sessions": 388,
+          "training_feature_count": 124967
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "0bc2cbfc7f0328ab216cbe85fba8b36a566503493754b84c3559a27d3897ca6c",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 125148
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "3e5a0630c40b215eb8fa3ed3b637d97c231aaf64fcec86921c96e55c8c055f50",
+          "test_sessions": 8,
+          "train_sessions": 396,
+          "training_feature_count": 127241
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "349e8958bd143f38da848ef833e7c71ab669e8ac13f934f2d0fa74ba01d45338",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 127403
+        },
+        {
+          "adapted_mrr": 0.75,
+          "baseline_mrr": 0.41666666666666663,
+          "held_out_project_hash": "df322e56433d72ff8c9eb7188749bba0fe2225fb9637f1daf20f2240b5a7738d",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 127216
+        },
+        {
+          "adapted_mrr": 0.41666666666666663,
+          "baseline_mrr": 0.046296296296296294,
+          "held_out_project_hash": "76174c31ccd4b117f5c502330995254af0b82ea5ef18a9860151243791a61876",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 127253
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "17d03b293b6c50a76ebafcca6608fe9866d0812e02a2ad94455210ff65b2ede5",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 127544
+        },
+        {
+          "adapted_mrr": 0.8811050061050061,
+          "baseline_mrr": 0.9189814814814815,
+          "held_out_project_hash": "8dbbb5b0b26ce3708676013c9514060e55b5f3beb09a6d54f2e7ffaf38979f56",
+          "test_sessions": 36,
+          "train_sessions": 368,
+          "training_feature_count": 100388
+        },
+        {
+          "adapted_mrr": 0.7338455476753349,
+          "baseline_mrr": 0.5876543209876544,
+          "held_out_project_hash": "5fad1f73116dbd173a19bff449414262233258e1f3445399b1f347fcbfb0f664",
+          "test_sessions": 9,
+          "train_sessions": 395,
+          "training_feature_count": 123929
+        },
+        {
+          "adapted_mrr": 0.8,
+          "baseline_mrr": 0.6,
+          "held_out_project_hash": "3963f973c353b28c5f3a1f955d975d07ccc79a5f625c0a8ca5e66ff684efcd9b",
+          "test_sessions": 5,
+          "train_sessions": 399,
+          "training_feature_count": 126870
+        },
+        {
+          "adapted_mrr": 0.8888888888888888,
+          "baseline_mrr": 0.875,
+          "held_out_project_hash": "da2a6ad8fd134507db2221c650a1ba3a4fe98b4bcd1ecfbe39fbb1898f7b288a",
+          "test_sessions": 6,
+          "train_sessions": 398,
+          "training_feature_count": 126121
+        },
+        {
+          "adapted_mrr": 0.5277777777777778,
+          "baseline_mrr": 0.5476190476190476,
+          "held_out_project_hash": "eea71b3c5f2942b1035d0ae958397d2d9e1b5225c13c316c7ed398617d76d0a5",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 126426
+        },
+        {
+          "adapted_mrr": 0.75,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "4b90818d274ee840d0e81779e2893c3b00ee5b7dfa134fa2a2296f3aa0b26e46",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 127022
+        },
+        {
+          "adapted_mrr": 0.8357843137254902,
+          "baseline_mrr": 0.8341968911917098,
+          "held_out_project_hash": "e750de07ed4ca00087f33112b0d5a6f0fd8117e65f95ce85bc119c9846c041db",
+          "test_sessions": 6,
+          "train_sessions": 398,
+          "training_feature_count": 121122
+        },
+        {
+          "adapted_mrr": 0.5555555555555555,
+          "baseline_mrr": 0.11127946127946127,
+          "held_out_project_hash": "fa7d0eb0cd52f880dd40c6a8a5cfec23819af24168f7e72dc42a12be2875ac8e",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 127155
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "42344780a3a7cbce3b86cf43032ec5eee30a90bc475652bead1db0adf0ec8e46",
+          "test_sessions": 77,
+          "train_sessions": 327,
+          "training_feature_count": 115097
+        },
+        {
+          "adapted_mrr": 0.75,
+          "baseline_mrr": 0.7083333333333334,
+          "held_out_project_hash": "5bc672db5362c7cea4c4e5cba72a0f33ba46a427d8037f8fb469319af870be84",
+          "test_sessions": 4,
+          "train_sessions": 400,
+          "training_feature_count": 124822
+        },
+        {
+          "adapted_mrr": 0.8888888888888888,
+          "baseline_mrr": 0.7222222222222222,
+          "held_out_project_hash": "093eff817e5f1f1c12b0e06b7611c4cdbbbb2eca76afe3564a31680199a37827",
+          "test_sessions": 6,
+          "train_sessions": 398,
+          "training_feature_count": 126372
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "e6efcec05db063902322e61bc28d07c051937a3abee756c80e1f56cddc8141cb",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 126664
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 0.9166666666666666,
+          "held_out_project_hash": "341688096b95e447cb18a273106ac8abc230f4a81644333646d6a261c017f26b",
+          "test_sessions": 9,
+          "train_sessions": 395,
+          "training_feature_count": 122577
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "2467a15e62322ec752318e2f388b6c800f82a9a9da4505d6afffd0fe5f191734",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 126251
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "6a8f8bb54343ee3203821144a3d8b2fbb4f2da6d62db0eea95612c40ac53857a",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 125438
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "fb361914690172478b9d2554bf2a374c0cb210e8dcaee60e23eda4cb95c0ce36",
+          "test_sessions": 14,
+          "train_sessions": 390,
+          "training_feature_count": 124079
+        },
+        {
+          "adapted_mrr": 0.9,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "cbe2e9cfcb46df932895b1a73b4736e32ff2f0033b526f7021c6e5f5c2cb41fc",
+          "test_sessions": 5,
+          "train_sessions": 399,
+          "training_feature_count": 121780
+        },
+        {
+          "adapted_mrr": 0.67003367003367,
+          "baseline_mrr": 0.36241830065359476,
+          "held_out_project_hash": "58a2541c39d77a421597de684bf9f30d072cfbaed9b4d95f2cf4edd09bf5a963",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 126459
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "0adfaad1252f44d46183b31cdc4a313544145079655fbf86ae405485060e7d10",
+          "test_sessions": 27,
+          "train_sessions": 377,
+          "training_feature_count": 125361
+        },
+        {
+          "adapted_mrr": 0.8046511627906977,
+          "baseline_mrr": 0.5012903225806451,
+          "held_out_project_hash": "51b3c297acad31a65728cc4404ce763ee3d62998ae6a981628f9d0b1fb52d3b8",
+          "test_sessions": 5,
+          "train_sessions": 399,
+          "training_feature_count": 125420
+        },
+        {
+          "adapted_mrr": 0.671957671957672,
+          "baseline_mrr": 0.672514619883041,
+          "held_out_project_hash": "1a22602b8bcd609a63fc91d76054604489143d4629a0165ec66240d719351e90",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 127190
+        },
+        {
+          "adapted_mrr": 0.977859477124183,
+          "baseline_mrr": 0.9677259409510931,
+          "held_out_project_hash": "4653876af9045f8ddfb6297b8e8e61706378f34e4c3a427f97cdf080c78405ba",
+          "test_sessions": 85,
+          "train_sessions": 319,
+          "training_feature_count": 120435
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "cd93e7af79c7fedf6dbc934a69f00f37f825e5c700a5408587e1d176ce5e8a6e",
+          "test_sessions": 19,
+          "train_sessions": 385,
+          "training_feature_count": 126132
+        },
+        {
+          "adapted_mrr": 0.8145593869731801,
+          "baseline_mrr": 0.8163742690058479,
+          "held_out_project_hash": "1c0b1d25f67c7f21f8b9636c642eca93fe571104079c19436370339753f2edaa",
+          "test_sessions": 10,
+          "train_sessions": 394,
+          "training_feature_count": 127106
+        },
+        {
+          "adapted_mrr": 0.04816017316017316,
+          "baseline_mrr": 0.011567398119122257,
+          "held_out_project_hash": "175d8f0fd1d428c919553dd584dc3676b7ca056a8109d5c0c641732bf01c0fdc",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 127449
+        },
+        {
+          "adapted_mrr": 0.5256410256410257,
+          "baseline_mrr": 0.5745502645502646,
+          "held_out_project_hash": "be1816156158fb43742822abcf18c62041965d8e5e9e724f67ba2b3e5199feef",
+          "test_sessions": 6,
+          "train_sessions": 398,
+          "training_feature_count": 127310
+        },
+        {
+          "adapted_mrr": 0.71875,
+          "baseline_mrr": 0.5875,
+          "held_out_project_hash": "77f6622bc87448d734be77f18e6636275b369bc02620ffb24415df07e41dec5b",
+          "test_sessions": 8,
+          "train_sessions": 396,
+          "training_feature_count": 127227
+        },
+        {
+          "adapted_mrr": 0.8333333333333334,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "fb7dfa72a07dbb9d1c7b9349d3fbc3981db1df4d1e4cfdd87174d6c61d6403fc",
+          "test_sessions": 5,
+          "train_sessions": 399,
+          "training_feature_count": 126093
+        }
+      ]
+    },
+    "prompt": {
+      "adapted_mrr": 0.915765,
+      "adapted_recall_at_1": 0.883663,
+      "adapted_recall_at_5": 0.95297,
+      "baseline_mrr": 0.885892,
+      "baseline_recall_at_1": 0.851485,
+      "baseline_recall_at_5": 0.933168,
+      "eligible_projects": 37,
+      "eligible_sessions": 404,
+      "folds": 37,
+      "folds_detail": [
+        {
+          "adapted_mrr": 0.6716417910447761,
+          "baseline_mrr": 0.4051282051282052,
+          "held_out_project_hash": "7f2aa21acb9f5ae8d180089759e69592169c6b35a30adc4ab6d5aec39e370be0",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 110512
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "ea5527a7934b37a5fd0a640d54feb16fa1fb39e48bec29390fa81425db799af5",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 109282
+        },
+        {
+          "adapted_mrr": 0.9383445945945946,
+          "baseline_mrr": 0.9382352941176471,
+          "held_out_project_hash": "13e75c4236579ab7c1cf242710ca80ed935db6b6923e18355f6fa12d83997e10",
+          "test_sessions": 16,
+          "train_sessions": 388,
+          "training_feature_count": 108918
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "0bc2cbfc7f0328ab216cbe85fba8b36a566503493754b84c3559a27d3897ca6c",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 108430
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "3e5a0630c40b215eb8fa3ed3b637d97c231aaf64fcec86921c96e55c8c055f50",
+          "test_sessions": 8,
+          "train_sessions": 396,
+          "training_feature_count": 110308
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "349e8958bd143f38da848ef833e7c71ab669e8ac13f934f2d0fa74ba01d45338",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 110476
+        },
+        {
+          "adapted_mrr": 0.5,
+          "baseline_mrr": 0.41666666666666663,
+          "held_out_project_hash": "df322e56433d72ff8c9eb7188749bba0fe2225fb9637f1daf20f2240b5a7738d",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 110296
+        },
+        {
+          "adapted_mrr": 0.41666666666666663,
+          "baseline_mrr": 0.038980509745127435,
+          "held_out_project_hash": "76174c31ccd4b117f5c502330995254af0b82ea5ef18a9860151243791a61876",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 110339
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "17d03b293b6c50a76ebafcca6608fe9866d0812e02a2ad94455210ff65b2ede5",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 110614
+        },
+        {
+          "adapted_mrr": 0.9279100529100529,
+          "baseline_mrr": 0.9050925925925927,
+          "held_out_project_hash": "8dbbb5b0b26ce3708676013c9514060e55b5f3beb09a6d54f2e7ffaf38979f56",
+          "test_sessions": 36,
+          "train_sessions": 368,
+          "training_feature_count": 85814
+        },
+        {
+          "adapted_mrr": 0.7337962962962963,
+          "baseline_mrr": 0.5855379188712522,
+          "held_out_project_hash": "5fad1f73116dbd173a19bff449414262233258e1f3445399b1f347fcbfb0f664",
+          "test_sessions": 9,
+          "train_sessions": 395,
+          "training_feature_count": 107369
+        },
+        {
+          "adapted_mrr": 0.532051282051282,
+          "baseline_mrr": 0.3784313725490196,
+          "held_out_project_hash": "3963f973c353b28c5f3a1f955d975d07ccc79a5f625c0a8ca5e66ff684efcd9b",
+          "test_sessions": 5,
+          "train_sessions": 399,
+          "training_feature_count": 110043
+        },
+        {
+          "adapted_mrr": 0.8888888888888888,
+          "baseline_mrr": 0.875,
+          "held_out_project_hash": "da2a6ad8fd134507db2221c650a1ba3a4fe98b4bcd1ecfbe39fbb1898f7b288a",
+          "test_sessions": 6,
+          "train_sessions": 398,
+          "training_feature_count": 109732
+        },
+        {
+          "adapted_mrr": 0.5277777777777778,
+          "baseline_mrr": 0.5476190476190476,
+          "held_out_project_hash": "eea71b3c5f2942b1035d0ae958397d2d9e1b5225c13c316c7ed398617d76d0a5",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 109543
+        },
+        {
+          "adapted_mrr": 0.75,
+          "baseline_mrr": 0.75,
+          "held_out_project_hash": "4b90818d274ee840d0e81779e2893c3b00ee5b7dfa134fa2a2296f3aa0b26e46",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 110096
+        },
+        {
+          "adapted_mrr": 0.8354700854700855,
+          "baseline_mrr": 0.8344370860927152,
+          "held_out_project_hash": "e750de07ed4ca00087f33112b0d5a6f0fd8117e65f95ce85bc119c9846c041db",
+          "test_sessions": 6,
+          "train_sessions": 398,
+          "training_feature_count": 104860
+        },
+        {
+          "adapted_mrr": 0.5555555555555555,
+          "baseline_mrr": 0.09566250742721331,
+          "held_out_project_hash": "fa7d0eb0cd52f880dd40c6a8a5cfec23819af24168f7e72dc42a12be2875ac8e",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 110230
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "42344780a3a7cbce3b86cf43032ec5eee30a90bc475652bead1db0adf0ec8e46",
+          "test_sessions": 77,
+          "train_sessions": 327,
+          "training_feature_count": 101592
+        },
+        {
+          "adapted_mrr": 0.75,
+          "baseline_mrr": 0.6125,
+          "held_out_project_hash": "5bc672db5362c7cea4c4e5cba72a0f33ba46a427d8037f8fb469319af870be84",
+          "test_sessions": 4,
+          "train_sessions": 400,
+          "training_feature_count": 108574
+        },
+        {
+          "adapted_mrr": 0.75,
+          "baseline_mrr": 0.6722222222222222,
+          "held_out_project_hash": "093eff817e5f1f1c12b0e06b7611c4cdbbbb2eca76afe3564a31680199a37827",
+          "test_sessions": 6,
+          "train_sessions": 398,
+          "training_feature_count": 109740
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "e6efcec05db063902322e61bc28d07c051937a3abee756c80e1f56cddc8141cb",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 109958
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 0.925925925925926,
+          "held_out_project_hash": "341688096b95e447cb18a273106ac8abc230f4a81644333646d6a261c017f26b",
+          "test_sessions": 9,
+          "train_sessions": 395,
+          "training_feature_count": 106485
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "2467a15e62322ec752318e2f388b6c800f82a9a9da4505d6afffd0fe5f191734",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 109894
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "6a8f8bb54343ee3203821144a3d8b2fbb4f2da6d62db0eea95612c40ac53857a",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 108964
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "fb361914690172478b9d2554bf2a374c0cb210e8dcaee60e23eda4cb95c0ce36",
+          "test_sessions": 14,
+          "train_sessions": 390,
+          "training_feature_count": 107710
+        },
+        {
+          "adapted_mrr": 0.9,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "cbe2e9cfcb46df932895b1a73b4736e32ff2f0033b526f7021c6e5f5c2cb41fc",
+          "test_sessions": 5,
+          "train_sessions": 399,
+          "training_feature_count": 105382
+        },
+        {
+          "adapted_mrr": 0.6706349206349206,
+          "baseline_mrr": 0.3626984126984127,
+          "held_out_project_hash": "58a2541c39d77a421597de684bf9f30d072cfbaed9b4d95f2cf4edd09bf5a963",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 109661
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 0.9753086419753086,
+          "held_out_project_hash": "0adfaad1252f44d46183b31cdc4a313544145079655fbf86ae405485060e7d10",
+          "test_sessions": 27,
+          "train_sessions": 377,
+          "training_feature_count": 108729
+        },
+        {
+          "adapted_mrr": 0.8055555555555556,
+          "baseline_mrr": 0.5013986013986014,
+          "held_out_project_hash": "51b3c297acad31a65728cc4404ce763ee3d62998ae6a981628f9d0b1fb52d3b8",
+          "test_sessions": 5,
+          "train_sessions": 399,
+          "training_feature_count": 108722
+        },
+        {
+          "adapted_mrr": 0.6729559748427674,
+          "baseline_mrr": 0.6747967479674797,
+          "held_out_project_hash": "1a22602b8bcd609a63fc91d76054604489143d4629a0165ec66240d719351e90",
+          "test_sessions": 3,
+          "train_sessions": 401,
+          "training_feature_count": 110319
+        },
+        {
+          "adapted_mrr": 0.9779457864650561,
+          "baseline_mrr": 0.9700429904582154,
+          "held_out_project_hash": "4653876af9045f8ddfb6297b8e8e61706378f34e4c3a427f97cdf080c78405ba",
+          "test_sessions": 85,
+          "train_sessions": 319,
+          "training_feature_count": 103754
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "cd93e7af79c7fedf6dbc934a69f00f37f825e5c700a5408587e1d176ce5e8a6e",
+          "test_sessions": 19,
+          "train_sessions": 385,
+          "training_feature_count": 109453
+        },
+        {
+          "adapted_mrr": 0.7207440476190476,
+          "baseline_mrr": 0.7335964912280701,
+          "held_out_project_hash": "1c0b1d25f67c7f21f8b9636c642eca93fe571104079c19436370339753f2edaa",
+          "test_sessions": 10,
+          "train_sessions": 394,
+          "training_feature_count": 110307
+        },
+        {
+          "adapted_mrr": 0.02235023041474654,
+          "baseline_mrr": 0.007621951219512195,
+          "held_out_project_hash": "175d8f0fd1d428c919553dd584dc3676b7ca056a8109d5c0c641732bf01c0fdc",
+          "test_sessions": 2,
+          "train_sessions": 402,
+          "training_feature_count": 110516
+        },
+        {
+          "adapted_mrr": 0.525974025974026,
+          "baseline_mrr": 0.5370968900380665,
+          "held_out_project_hash": "be1816156158fb43742822abcf18c62041965d8e5e9e724f67ba2b3e5199feef",
+          "test_sessions": 6,
+          "train_sessions": 398,
+          "training_feature_count": 110387
+        },
+        {
+          "adapted_mrr": 0.71875,
+          "baseline_mrr": 0.5666666666666667,
+          "held_out_project_hash": "77f6622bc87448d734be77f18e6636275b369bc02620ffb24415df07e41dec5b",
+          "test_sessions": 8,
+          "train_sessions": 396,
+          "training_feature_count": 110276
+        },
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "fb7dfa72a07dbb9d1c7b9349d3fbc3981db1df4d1e4cfdd87174d6c61d6403fc",
+          "test_sessions": 5,
+          "train_sessions": 399,
+          "training_feature_count": 109483
+        }
+      ]
+    }
+  },
+  "claim_boundary": {
+    "artifact_utility_established": false,
+    "enterprise_semantics_established": false,
+    "neural_embedding_established": false,
+    "project_heldout_adaptation_measured": true,
+    "promotion_authorized": false,
+    "reason": "Project labels are silver workstream proxies; retrieval similarity does not establish task intent, artifact correctness, or user benefit."
+  },
+  "eligible_project_count": 37,
+  "protocol": {
+    "adapter": "fold-local same-project versus cross-project token log-ratio weights",
+    "labels": "project directory labels as silver workstream proxies",
+    "pair_cap_per_token": 500,
+    "representations": "user-message tokens versus all textual message tokens; project names excluded",
+    "split": "leave-one-project-out"
+  },
+  "result_sha256": "2f19adf0b4de2d881b202b4acc86b0e3ddb3d57530889330e792c170241df413",
+  "schema_version": "frankengate-claude-history-project-adapter-v1",
+  "source": {
+    "byte_count": 998165678,
+    "file_count": 442,
+    "manifest_sha256": "afdc68a06f7a570840d489d57be9dac2e667252cf24470b3b8b66bc1412f0b50",
+    "raw_content_committed": false,
+    "root_name": "projects",
+    "session_count": 432
+  }
+}

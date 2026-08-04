@@ -1,0 +1,223 @@
+{
+  "schema_version": "frankengate-ontology-induction-matrix-conformance-v1",
+  "contract_sha256": "14fe333ea38588e86a8acc01f6a616e3f3463c1fcfdff0c8907d4217e901cab5",
+  "manifest_sha256": "a40de26340039197837a1eacb4592825fe1d8d5644e427a466844ceec64c1921",
+  "raw_content_committed": false,
+  "structural_valid": false,
+  "promotion_ready": false,
+  "case_counts": {
+    "entity": 1
+  },
+  "promotion_blockers": [
+    "entity_or_alias target count 1 < 100",
+    "hard_negative count 0 < 50",
+    "nil_or_unclear count 0 < 25",
+    "changed-system replay count 0 < 20"
+  ],
+  "errors": [
+    {
+      "path": "$.cases[0].prompt",
+      "message": "raw content field is forbidden"
+    },
+    {
+      "path": "$.consent_scope_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.corpus_receipts",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.replay_contract",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.minimum_promotion_counts",
+      "message": "required field is missing"
+    },
+    {
+      "path": "candidate_pool_frozen_before_labels",
+      "message": "must be true"
+    },
+    {
+      "path": "holdouts.team",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "holdouts.project",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "holdouts.source_system",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "holdouts.effective_time",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "holdouts.ontology_template",
+      "message": "required holdout is not enabled"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm deterministic_schema_terms"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm ontogpt_population"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm graphrag_extraction"
+    },
+    {
+      "path": "arms",
+      "message": "missing required arm staged_governed_pipeline"
+    },
+    {
+      "path": "corpus_receipts",
+      "message": "at least one receipt is required"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric entity_precision"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric entity_recall"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric alias_f1"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric relation_evidence_precision"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric nil_abstention_rate"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric temporal_accuracy"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric authority_accuracy"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric replay_success"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric wrong_system_rate"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric reviewer_correction_burden"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric latency_ms"
+    },
+    {
+      "path": "metrics",
+      "message": "missing required metric cost_usd"
+    },
+    {
+      "path": "cases[0].principal_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].team_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].project_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].source_system_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].source_environment_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].changed_environment_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].effective_at",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].candidate_pool_hash",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].source_receipt",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].label_receipt",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].replay_receipt",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].labels",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].retention",
+      "message": "required field is missing"
+    },
+    {
+      "path": "cases[0].principal_hash",
+      "message": "expected a SHA-256 hex digest"
+    },
+    {
+      "path": "cases[0].team_hash",
+      "message": "expected a SHA-256 hex digest"
+    },
+    {
+      "path": "cases[0].project_hash",
+      "message": "expected a SHA-256 hex digest"
+    },
+    {
+      "path": "cases[0].source_system_hash",
+      "message": "expected a SHA-256 hex digest"
+    },
+    {
+      "path": "cases[0].source_environment_hash",
+      "message": "expected a SHA-256 hex digest"
+    },
+    {
+      "path": "cases[0].changed_environment_hash",
+      "message": "expected a SHA-256 hex digest"
+    },
+    {
+      "path": "cases[0].candidate_pool_hash",
+      "message": "expected a SHA-256 hex digest"
+    },
+    {
+      "path": "cases[0].effective_at",
+      "message": "must be an ISO-8601 timestamp"
+    },
+    {
+      "path": "cases[0].labels",
+      "message": "must contain exactly two independent labels"
+    },
+    {
+      "path": "cases[0].retention",
+      "message": "must declare external-only raw content"
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "aggregates": {
+    "parallel/hard/name": {
+      "candidate_count": 674.0,
+      "exact_target_set_at_target_count": 0.007595,
+      "first_target_rank": 20.165063,
+      "mrr": 0.558514,
+      "recall_at_1": 0.071324,
+      "recall_at_10": 0.324511,
+      "recall_at_20": 0.421924,
+      "recall_at_3": 0.170348,
+      "recall_at_5": 0.230169,
+      "records": 1975,
+      "target_count": 6.342785
+    },
+    "parallel/hard/name_description": {
+      "candidate_count": 674.0,
+      "exact_target_set_at_target_count": 0.0,
+      "first_target_rank": 18.223797,
+      "mrr": 0.429834,
+      "recall_at_1": 0.046818,
+      "recall_at_10": 0.222556,
+      "recall_at_20": 0.322001,
+      "recall_at_3": 0.105641,
+      "recall_at_5": 0.149392,
+      "records": 1975,
+      "target_count": 6.342785
+    },
+    "parallel/simple/name": {
+      "candidate_count": 674.0,
+      "exact_target_set_at_target_count": 0.020131,
+      "first_target_rank": 4.169099,
+      "mrr": 0.831966,
+      "recall_at_1": 0.131588,
+      "recall_at_10": 0.568346,
+      "recall_at_20": 0.691884,
+      "recall_at_3": 0.303067,
+      "recall_at_5": 0.411393,
+      "records": 1987,
+      "target_count": 6.340211
+    },
+    "parallel/simple/name_description": {
+      "candidate_count": 674.0,
+      "exact_target_set_at_target_count": 0.002013,
+      "first_target_rank": 4.596376,
+      "mrr": 0.659244,
+      "recall_at_1": 0.089692,
+      "recall_at_10": 0.450259,
+      "recall_at_20": 0.618579,
+      "recall_at_3": 0.213819,
+      "recall_at_5": 0.302008,
+      "records": 1987,
+      "target_count": 6.340211
+    },
+    "sequential/simple/name": {
+      "candidate_count": 674.0,
+      "exact_target_set_at_target_count": 0.0,
+      "first_target_rank": 9.4125,
+      "mrr": 0.717114,
+      "recall_at_1": 0.110685,
+      "recall_at_10": 0.415387,
+      "recall_at_20": 0.558631,
+      "recall_at_3": 0.196935,
+      "recall_at_5": 0.282009,
+      "records": 80,
+      "target_count": 6.125
+    },
+    "sequential/simple/name_description": {
+      "candidate_count": 674.0,
+      "exact_target_set_at_target_count": 0.0,
+      "first_target_rank": 4.525,
+      "mrr": 0.700609,
+      "recall_at_1": 0.102857,
+      "recall_at_10": 0.413854,
+      "recall_at_20": 0.538214,
+      "recall_at_3": 0.221592,
+      "recall_at_5": 0.29006,
+      "records": 80,
+      "target_count": 6.125
+    },
+    "sequential/unspecified/name": {
+      "candidate_count": 674.0,
+      "exact_target_set_at_target_count": 0.015139,
+      "first_target_rank": 4.142629,
+      "mrr": 0.698307,
+      "recall_at_1": 0.112202,
+      "recall_at_10": 0.475641,
+      "recall_at_20": 0.595375,
+      "recall_at_3": 0.252068,
+      "recall_at_5": 0.3415,
+      "records": 1255,
+      "target_count": 5.940239
+    },
+    "sequential/unspecified/name_description": {
+      "candidate_count": 674.0,
+      "exact_target_set_at_target_count": 0.011155,
+      "first_target_rank": 4.206375,
+      "mrr": 0.614128,
+      "recall_at_1": 0.083236,
+      "recall_at_10": 0.408435,
+      "recall_at_20": 0.556486,
+      "recall_at_3": 0.193751,
+      "recall_at_5": 0.272194,
+      "records": 1255,
+      "target_count": 5.940239
+    }
+  },
+  "arm_record_counts": {
+    "name": 5297,
+    "name_description": 5297
+  },
+  "candidate_pool": {
+    "domain_counts": {
+      "Education": {
+        "count": 89,
+        "file": "Education_tool.json"
+      },
+      "Email": {
+        "count": 70,
+        "file": "Email_tool.json"
+      },
+      "Finance": {
+        "count": 258,
+        "file": "Finance_tool.json"
+      },
+      "Gaming": {
+        "count": 84,
+        "file": "Gaming_tool.json"
+      },
+      "Mapping": {
+        "count": 124,
+        "file": "Mapping_tool.json"
+      },
+      "Music": {
+        "count": 137,
+        "file": "Music_tool.json"
+      },
+      "News_Media": {
+        "count": 118,
+        "file": "News_Media_tool.json"
+      },
+      "Travel": {
+        "count": 131,
+        "file": "Travel_tool.json"
+      },
+      "Weather": {
+        "count": 135,
+        "file": "Weather_tool.json"
+      },
+      "eCommerce": {
+        "count": 82,
+        "file": "eCommerce_tool.json"
+      }
+    },
+    "global_count": 674,
+    "mode": "all"
+  },
+  "claim_boundary": {
+    "agent_intervention_measured": false,
+    "embedding_retrieval_measured": false,
+    "enterprise_user_behavior_measured": false,
+    "lexical_retrieval_measured": true,
+    "model_quality_measured": false,
+    "reason": "Public benchmark reference tool lists and domain pools; no model, tool endpoint, principal, production outcome, or changed-system replay."
+  },
+  "records_evaluated": 5297,
+  "schema_version": "frankengate-traject-bench-lexical-retrieval-v1",
+  "skipped": {
+    "missing_target_parallel": 38,
+    "missing_target_sequential": 575
+  },
+  "source": {
+    "data_files_sha256": "ff02973a630966c56fcdb30877c1af73d82fc5deee04dc3a5cab1e3cc71b84d7",
+    "file_count": 31,
+    "raw_content_committed": false,
+    "root_name": "public_data"
+  }
+}

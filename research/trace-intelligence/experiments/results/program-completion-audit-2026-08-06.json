@@ -1,0 +1,214 @@
+{
+  "claim_boundary": {
+    "automatic_integration_authorized": false,
+    "objective_complete": false,
+    "reason": "Protocol, storage, and lifecycle evidence does not prove causal skill, memory, retrieval, or enterprise outcome utility."
+  },
+  "incomplete_requirement_ids": [
+    "fair_controls_and_disjoint_splits",
+    "independent_outcome_evaluation",
+    "power_cost_latency_and_null_taxonomy"
+  ],
+  "receipt_integrity": {
+    "all_embedded_hashes_verified": true,
+    "promotion_rows": 21
+  },
+  "requirements": [
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "independent-corpus-admission-2026-07-31.json",
+          "sha256": "cd1fb3565342eaaf71fde99ffd73284768babf68fffbe2f9dbf860bba15c162d"
+        },
+        {
+          "exists": true,
+          "path": "corpus-admission-conformance-checkpoint-2026-07-31.json",
+          "sha256": "9b07391113995ec0d74c802616dfcb9f2f82de06ca77fc5199ba9b86b8c38a21"
+        }
+      ],
+      "id": "complete_trace_admission",
+      "remaining": "Real enterprise traces with complete state/checkpoint/reward labels remain unadmitted or unavailable.",
+      "status": "proven_for_admitted_public_slices"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "canonical-projection-e0-conformance-2026-07-30.json",
+          "sha256": "8801a8a520db47215ffe3f799f152d3d5c72947f3c3b6bd8d191cc2876499f02"
+        }
+      ],
+      "id": "canonical_trace_loss_audit",
+      "remaining": "Format-specific loss outside the measured fixtures still requires source-format coverage.",
+      "status": "proven_for_measured_formats"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "integration-promotion-audit-2026-08-02.json",
+          "sha256": "3cee63dee85dae53d6649316790462763ffcd890b809e95bf38ec9dc630430ad"
+        }
+      ],
+      "id": "independent_upstream_reproduction",
+      "remaining": "Some upstream paths are typed unavailable, structural-only, or fixture-only; no automatic promotion follows.",
+      "status": "bounded_receipts_complete"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "combined-evidence-matrix-2026-08-02.json",
+          "sha256": "2101606bc2f2d600cd86be2780b7b97f27395b893ef8f9265e767a8f4d681da0"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06-paired.json",
+          "sha256": "173241a091dfe83efc598e8f70ac63c27962c7a9838066e76fe118bce687fab6"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
+          "sha256": "0847fa3d9f03ff358e953fd2d1bea57c76825a1978b3eafcbb6d0b487b6c3692"
+        },
+        {
+          "exists": true,
+          "path": "trace-commons-domain-adapter-2026-08-07.json",
+          "sha256": "fee3b5dcb4e7434afb874079a8bb367b7d0c1bd886096bb1e9264fa4ab9eb078"
+        },
+        {
+          "exists": true,
+          "path": "trace-commons-domain-adapter-2026-08-07-verification.json",
+          "sha256": "618598014dc3b8a0f6b3b65c8d41cfa04e5b40d0456c2f97a3cf2a4cd66b027d"
+        }
+      ],
+      "id": "fair_controls_and_disjoint_splits",
+      "remaining": "The 40-task skill checkpoint and repeated composition replays improve power, but broader user/time-disjoint cohorts, irrelevant-library NILs, and a different task horizon remain open.",
+      "status": "partial"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "enterprise-outcome-gate-conformance-2026-08-02.json",
+          "sha256": "59a5d5618aa55bd051ec05089b3e2455fed077cca90e3f9170c219033fbf351c"
+        },
+        {
+          "exists": true,
+          "path": "enterprise-outcome-analysis-conformance-2026-08-02.json",
+          "sha256": "54870ccc0d943d6ab68563247ea0bafccebc8f4f59d0f43c0bddc9cd843da9c3"
+        },
+        {
+          "exists": true,
+          "path": "changed-agent-outcome-bird-2026-08-02.json",
+          "sha256": "a44923385fc144873d746bf4ae418c110792b518e7ee556e61f8b3a9f63a4d5c"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06-verification.json",
+          "sha256": "d381bbb6b9224659c116390ef8714b1f652377e00afccc51d4068910c3e1ddb0"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06-paired.json",
+          "sha256": "173241a091dfe83efc598e8f70ac63c27962c7a9838066e76fe118bce687fab6"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-composable-factorial-20-aggregate-2026-08-06.json",
+          "sha256": "0847fa3d9f03ff358e953fd2d1bea57c76825a1978b3eafcbb6d0b487b6c3692"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-artifact-reuse-2026-08-07.json",
+          "sha256": "e52e4457dff91ed091cf2b94ed5b341f9b98c6a67e7363318c5620acd09fad07"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-artifact-reuse-2026-08-07-verification.json",
+          "sha256": "640b071fa559507650eac4ae7c378dcbe6229bf830db68dbdd51b24391e7b547"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-retrieval-cascade-2026-08-07.json",
+          "sha256": "0a77090e8cdfa166d1726e3a68093f6fb9a613d09e9c8c340cb74a309cffb22b"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-retrieval-cascade-2026-08-07-verification.json",
+          "sha256": "3fc13665f93e16675e52662899e0f4ae33b0da6a8ac9c771b6b2d8b47efdcdff"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-trace-mined-factorial-20-2026-08-08.json",
+          "sha256": "1e5ab3d4846a5a7ef76b8b65e649a376fbe11d9e92e938efc7c036c43544f0a5"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-trace-mined-factorial-20-2026-08-08-verification.json",
+          "sha256": "295dd10ef4d325da4157ca73f42f4c57534bbacf4ef836cdedd1440ea21cdc78"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-model-cascade-16-2026-08-08.json",
+          "sha256": "4e9f72be4ae48e867f9a66700a51685ae0ffa8ec602ff96094f3fb13adfddbda"
+        },
+        {
+          "exists": true,
+          "path": "bird-trace-model-cascade-16-2026-08-08-verification.json",
+          "sha256": "efe04e5876c6ee0cdfb65d8ffb49553e05339bd2e95fbcb4c9f1c8421150e1b3"
+        }
+      ],
+      "id": "independent_outcome_evaluation",
+      "remaining": "Family-disjoint BIRD outcomes and recorded-trace artifact validation are independently recomputed, but natural repeated-intent reuse, prospective friction reduction, cross-user transfer, human/adjudicated enterprise outcomes, and causal uplift remain unmeasured.",
+      "status": "partial_mechanics_only"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "rho-candidate-harness-powered-2026-08-02.json",
+          "sha256": "f7fb510ed6ec86b704d888551d5701cd896be8d78b760818ff026ac3518669f8"
+        },
+        {
+          "exists": true,
+          "path": "mlops-feedback-canary-rollback-2026-08-02.json",
+          "sha256": "6e5ae51a24bfe7341b6e6ac0dd7cca00c0b03d52649c7754bb48d6c8eb9d2dd2"
+        },
+        {
+          "exists": true,
+          "path": "cross-method-calibration-2026-08-02.json",
+          "sha256": "43623ec817a27fac0a2b1a61bfd9b9356657e682f13246be6c84b9540f511801"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06.json",
+          "sha256": "b999ebf161e735f7d808ab1be6a3c88ae9e0006bdc76bb268eb7ca8c57080e54"
+        },
+        {
+          "exists": true,
+          "path": "bird-sql-skill-factorial-40-2026-08-06-paired.json",
+          "sha256": "173241a091dfe83efc598e8f70ac63c27962c7a9838066e76fe118bce687fab6"
+        }
+      ],
+      "id": "power_cost_latency_and_null_taxonomy",
+      "remaining": "Calibration now includes a 40-task paired skill checkpoint and comparable episode latency for that study, but repeated-seed power, comparable token/currency cost, same-budget cross-method latency, and independent enterprise outcomes remain incomplete.",
+      "status": "partial"
+    },
+    {
+      "evidence": [
+        {
+          "exists": true,
+          "path": "integration-promotion-audit-2026-08-02.json",
+          "sha256": "3cee63dee85dae53d6649316790462763ffcd890b809e95bf38ec9dc630430ad"
+        }
+      ],
+      "id": "separate_frankengate_integration",
+      "remaining": "A separate integration experiment can begin only after an independent positive utility gate.",
+      "status": "proven_none_authorized"
+    }
+  ],
+  "schema_version": "frankengate-independent-completion-audit-v1",
+  "status": "active_incomplete"
+}

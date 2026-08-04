@@ -1,0 +1,49 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "domyn/FINCH",
+  "dataset_revision": "bb92e53ba0fdd0c5a2804667bad47f9d0c1b65ad",
+  "source_url": "https://huggingface.co/datasets/domyn/FINCH",
+  "paper_url": "https://arxiv.org/abs/2510.01887",
+  "license": "CC-BY-NC-4.0",
+  "source_format": "75,725 financial natural-language/SQL pairs with schemas and 33 SQLite databases",
+  "adapter": "not_implemented_inventory_only",
+  "admission_status": "candidate_for_finance_domain_screen_and_materiality_aware_scoring_only",
+  "represented_domains": [
+    "banking",
+    "insurance",
+    "funds",
+    "stocks",
+    "accounting",
+    "retail",
+    "e-commerce",
+    "marketing"
+  ],
+  "replay_classification": {
+    "published_agent_trajectories": false,
+    "question_sql_pairs": true,
+    "database_files_included": true,
+    "schema_files_included": true,
+    "suitable_for_generating_new_governed_trajectories": true,
+    "suitable_for_learning_natural_user_retry_behavior": false,
+    "commercial_training_allowed": false
+  },
+  "frankengate_role": [
+    "screen finance-specific schema and clause failure families",
+    "generate governed traces for banking, insurance, funds, stocks, and accounting tasks",
+    "test clause- and materiality-aware evaluation in addition to exact execution",
+    "compare generic versus SQL-specialist models without treating model size as skill evidence"
+  ],
+  "unsupported_claims": [
+    "natural enterprise employee behavior",
+    "observed multi-turn correction or tool-use behavior",
+    "private business-definition grounding",
+    "commercial fine-tuning rights",
+    "causal benefit from any Frankengate skill"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "noncommercial_research_only": true,
+    "gold_sql_and_database_content_kept_evaluator_only": true,
+    "commit_aggregate_results_only": true
+  }
+}

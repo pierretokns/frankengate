@@ -1,0 +1,114 @@
+{
+  "aggregate": {
+    "embedding": {
+      "mrr": 0.674074,
+      "recall_at_1": 0.555556,
+      "recall_at_3": 0.777778,
+      "recall_at_5": 1.0,
+      "top_3_success_rate": 0.666667
+    },
+    "frontier": {
+      "mrr": 1.0,
+      "recall_at_1": 1.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "top_3_success_rate": 0.703704
+    },
+    "lexical": {
+      "mrr": 1.0,
+      "recall_at_1": 1.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "top_3_success_rate": 0.703704
+    }
+  },
+  "claim_boundary": "Bounded reranking comparison on silver same-work labels. It measures ranking value and cost, not semantic alias truth, changed-agent utility, human insight quality, or skill promotion.",
+  "dataset": {
+    "models": 34,
+    "rows": 2130,
+    "source_sha256": "626e2e6351d763739b0e2695a1bc442e1c851c1153c44301017739e3bd1155aa"
+  },
+  "embedding_cache_sha256": "9b6a254bd26169e0732d952230d7f410a6e5a70ddc006cababd5f3ed80abad12",
+  "frontier_calls": {
+    "completed": 9,
+    "failures": 0,
+    "receipts": [
+      {
+        "candidate_count": 10,
+        "prompt_sha256": "e641f48f9c0537bfd06c766b20b60140e3a0efcae4d77c6e259c25198a044a75",
+        "query": 0,
+        "raw_sha256": "40a1117d793ae7466b227d91b82671dc2dbcd37ca5afc5e96ca33392a1c3f55d",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "prompt_sha256": "712ee261f031346120bbe2522e39b105010d7ce5057e26a5ac720953c7a75f68",
+        "query": 1,
+        "raw_sha256": "8a64d5b67228bf5c9017eacc6b9c689be48e56e0e935d4730e6b3a1866146971",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "prompt_sha256": "1f9119c03732e2bc993bd24a227bdf18a35f0365349cfdca88ad798e9d9a0be4",
+        "query": 2,
+        "raw_sha256": "224dd949c3c6f32de215d13286b30428793c24bf54d38a41d1dea650b2e79dba",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "prompt_sha256": "7ac5c67feb1639493c1350ba030fd05011bb7a6b0aefc39bd8b699eb7ea5ffb3",
+        "query": 3,
+        "raw_sha256": "157459d256a7cd26fdedda5e96d2a29fef72185fdfb4a357f02f51801e8aecec",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 12,
+        "prompt_sha256": "558fc581de0689605fe93cbeb4fc6878fd2ae0c54a339fe3f5cc2b405c651596",
+        "query": 4,
+        "raw_sha256": "d494406fa07b1c7388c0f19f958c02ed809504053f2cb65b526303c24835db72",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "prompt_sha256": "222b54e131098c7d1bf598a28017423a8689cf92a7c6d7ed0ac13107e00edbb9",
+        "query": 5,
+        "raw_sha256": "390f9df6337851cc202c4a71b09d07bbe6e735f5b9b05c364ec5492625b32aa0",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 12,
+        "prompt_sha256": "8ce5aec34707a086befb51b94eaf8d4ccfb777f748caea9beaf39160ddc29b91",
+        "query": 6,
+        "raw_sha256": "9f01e5241a3f7581ee64a16683f7d198d5508329211ecd75d803861ec3fd1e31",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 10,
+        "prompt_sha256": "6cc99afc7470995b00263eb0d2c38e53b15ec6e3ef18db2edbc6a80f209cd52c",
+        "query": 7,
+        "raw_sha256": "1a641f6d1d300a8bb54e6cd92b192774081c33f3f8d6ab00472f5e5280f21e7f",
+        "status": "ok"
+      },
+      {
+        "candidate_count": 12,
+        "prompt_sha256": "f1683469c476c832069d9d9e7954d3831272e7e4bfd5a022cdc4faca25f010d2",
+        "query": 8,
+        "raw_sha256": "080257384a29370efcdc6e06b065923a6c8ae6d0d112468281a75e07cbe04897",
+        "status": "ok"
+      }
+    ],
+    "requested": 9
+  },
+  "protocol": {
+    "candidate_limit": 10,
+    "candidate_pool": "union of lexical and cached-embedding top candidates plus all relevant same-signature candidates",
+    "model": "gpt-5.6-luna",
+    "outcomes_hidden_from_frontier": true,
+    "query_count_completed": 9,
+    "query_count_requested": 9,
+    "raw_model_outputs_external": true,
+    "relevance_label": "same task_type and normalized goal signature across models"
+  },
+  "result_sha256": "a912c0acf4281904bcff4edb9ecc99efa5cae84c829d8609d88a8be4dccace8b",
+  "schema_version": "frankengate-matm-frontier-reranker-benchmark-v1"
+}

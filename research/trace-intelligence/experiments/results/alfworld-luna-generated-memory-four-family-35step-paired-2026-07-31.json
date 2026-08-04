@@ -1,0 +1,33 @@
+{
+  "schema_version": "frankengate-alfworld-codex-generated-memory-paired-v1",
+  "receipt": "alfworld-luna-generated-memory-four-family-35step-2026-07-31.json",
+  "receipt_sha256": "1ef4ee43ecc4ab41299380fb596478907941ec80881746e5f418ef0453b33d5d",
+  "verification": "alfworld-luna-generated-memory-four-family-35step-verification-2026-07-31.json",
+  "verification_sha256": "b506c95823ec58404d35b97d179ffe5688bc67f5c3335658d6a6d57d778dc6a8",
+  "verification_passed": true,
+  "pairs": {
+    "generated_memory_vs_no_memory": {
+      "tasks": 4,
+      "wins": 0,
+      "losses": 0,
+      "ties": 4,
+      "candidate_invalid_actions": 0,
+      "control_invalid_actions": 1
+    },
+    "generated_memory_vs_formatting_placebo": {
+      "tasks": 4,
+      "wins": 0,
+      "losses": 0,
+      "ties": 4,
+      "candidate_invalid_actions": 0,
+      "control_invalid_actions": 0
+    }
+  },
+  "interpretation": {
+    "valid_small_null": true,
+    "causal_memory_benefit_confirmed": false,
+    "general_memory_ineffectiveness_claim": false,
+    "promotion_authorized": false,
+    "reason": "Generated memory tied both controls on success and did not worsen action validity; the no-memory invalid action came from one failed frontier call."
+  }
+}

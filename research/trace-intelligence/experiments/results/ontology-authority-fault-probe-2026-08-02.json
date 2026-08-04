@@ -1,0 +1,33 @@
+{
+  "schema_version": "frankengate-ontology-authority-fault-probe-v1",
+  "source": {
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630",
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "raw_content_committed": false
+  },
+  "cohort": {
+    "selected_successful_tasks": 149,
+    "train_tasks": 77,
+    "evaluation_tasks": 72,
+    "evaluated_fault_cases": 68,
+    "split": "within-database deterministic even/odd task split"
+  },
+  "fault_fixture": {
+    "mutation": "unauthorized_edge",
+    "policy": "synthetic scope always permits recorded target tables and deterministic distractor subset",
+    "injected_edges": 68,
+    "unconstrained_unsafe_top1": 16,
+    "constrained_unsafe_top1": 0,
+    "filtered_candidates": 243,
+    "target_recall_at_1_before": 0.735294,
+    "target_recall_at_1_after": 0.867647
+  },
+  "claim_boundary": {
+    "authority_gate_mechanics_measured": true,
+    "unauthorized_edge_count_zero_after_filter": true,
+    "real_enterprise_authorization_established": false,
+    "rls_or_policy_epoch_established": false,
+    "reason": "The public trace proxy has no principal, team, tenant, or policy-epoch labels; this fixture only tests fail-closed filtering mechanics."
+  },
+  "result_sha256": "a6ae81ad9a09a740b4d0d016dcec0c946b37367a2253464b3e6b8fc8e6fdbcfc"
+}

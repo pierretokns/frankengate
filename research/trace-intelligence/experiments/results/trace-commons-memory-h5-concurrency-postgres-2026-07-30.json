@@ -1,0 +1,155 @@
+{
+  "artifacts": {
+    "sql_path": "research/trace-intelligence/sql/008_trace_commons_memory_h5_concurrency.sql",
+    "sql_sha256": "ebf1064faef1466df973eb693cd4d2ffe1f0033e04b0371f25ffdbafca619ebc"
+  },
+  "claim_boundary": "Local PostgreSQL 16.12/pgvector 0.8.1 concurrency mechanics only; not Aurora, RDS Proxy, failover, replica lag, durability, scale, memory correctness, utility, identity, or enterprise transfer.",
+  "cleanup": {
+    "fixture_rows": 0,
+    "marker": "H5C_ZERO_RESIDUE_OK",
+    "temporary_helpers": 0,
+    "temporary_roles": 0
+  },
+  "content_free_and_role_assertions": "passed",
+  "failed_job_atomicity": {
+    "failure": "evaluation_runs_cost_microunits_check",
+    "partial_rows_after_disconnect": 0,
+    "worker_returncode": 3
+  },
+  "fixture_prefix": "tc-h5c-",
+  "known_gaps": [
+    {
+      "detail": "The checked-in schema has no non-owner role allowed to advance authority epochs or revoke memberships. The suite creates a temporary NOSUPERUSER NOBYPASSRLS NOINHERIT role with fixture-prefix-restricted SECURITY DEFINER helpers, then drops it.",
+      "name": "no_persistent_governance_writer_boundary_in_research_schema",
+      "severity": "schema_boundary"
+    },
+    {
+      "detail": "The schema permits a release status update without a matching release event. The test actor writes both in one transaction, but the database does not force every caller to do so.",
+      "name": "release_status_and_event_are_not_database_coupled",
+      "severity": "schema_boundary"
+    },
+    {
+      "detail": "An exposure inserted before withdrawal but committed after withdrawal remains status=active in storage. RLS hides it from runtime reads because the parent release is inactive.",
+      "name": "active_exposure_metadata_survives_withdrawal",
+      "severity": "architecture_gate"
+    },
+    {
+      "detail": "A REPEATABLE READ transaction retains the authority row snapshot after a committed epoch advance; old-epoch reads remain visible until the transaction ends.",
+      "name": "repeatable_read_epoch_snapshot_stays_authorized",
+      "severity": "transaction_contract"
+    },
+    {
+      "detail": "A REPEATABLE READ transaction retains team membership visibility after a committed membership revocation.",
+      "name": "repeatable_read_membership_snapshot_stays_authorized",
+      "severity": "transaction_contract"
+    },
+    {
+      "detail": "A REPEATABLE READ transaction retains an authorized trajectory snapshot after a committed hard deletion.",
+      "name": "repeatable_read_deleted_trajectory_stays_visible",
+      "severity": "transaction_contract"
+    }
+  ],
+  "lab": {
+    "kubernetes_context": "colima",
+    "pgvector_version": "0.8.1",
+    "postgresql_version": "16.12 (Debian 16.12-1.pgdg12+1)"
+  },
+  "overall": "mechanics_passed_with_architecture_gaps",
+  "provenance_delete": {
+    "blocked_by": "candidate_sources_source_trajectory_id_fkey",
+    "source_preserved": true
+  },
+  "races": [
+    {
+      "barrier": 85001,
+      "loser_persisted": false,
+      "name": "concurrent_promotion",
+      "schedule": [
+        "A inserts active release and blocks on advisory barrier",
+        "B attempts same-candidate active release and waits on transactionid",
+        "A commits",
+        "B fails unique active-release index"
+      ],
+      "winner": "tc-h5c-release-a"
+    },
+    {
+      "active_release": "tc-h5c-release-c",
+      "barrier": 85002,
+      "name": "withdraw_then_promote",
+      "schedule": [
+        "A marks current release withdrawn and blocks before commit",
+        "C promotion waits on the partial unique-index transaction",
+        "A commits withdrawal",
+        "C commits as the sole active release"
+      ]
+    },
+    {
+      "active_exposure_metadata_rows": 1,
+      "barrier": 85003,
+      "name": "exposure_commit_after_withdrawal",
+      "runtime_visible_after_withdrawal": 0
+    },
+    {
+      "after": 0,
+      "barrier": 85004,
+      "before": 1,
+      "isolation": "read_committed",
+      "mutation_elapsed_ms": 113,
+      "mutation_mode": "epoch_advance",
+      "reader_elapsed_ms": 383,
+      "reader_mode": "epoch_reader_rc"
+    },
+    {
+      "after": 1,
+      "barrier": 85005,
+      "before": 1,
+      "isolation": "repeatable_read",
+      "mutation_elapsed_ms": 96,
+      "mutation_mode": "epoch_advance",
+      "reader_elapsed_ms": 359,
+      "reader_mode": "epoch_reader_rr"
+    },
+    {
+      "after": 0,
+      "barrier": 85006,
+      "before": 1,
+      "isolation": "read_committed",
+      "mutation_elapsed_ms": 92,
+      "mutation_mode": "membership_revoke",
+      "reader_elapsed_ms": 362,
+      "reader_mode": "membership_reader_rc"
+    },
+    {
+      "after": 1,
+      "barrier": 85007,
+      "before": 1,
+      "isolation": "repeatable_read",
+      "mutation_elapsed_ms": 97,
+      "mutation_mode": "membership_revoke",
+      "reader_elapsed_ms": 361,
+      "reader_mode": "membership_reader_rr"
+    },
+    {
+      "after": 0,
+      "barrier": 85008,
+      "before": 1,
+      "isolation": "read_committed",
+      "mutation_elapsed_ms": 96,
+      "mutation_mode": "delete_target",
+      "reader_elapsed_ms": 360,
+      "reader_mode": "deletion_reader_rc"
+    },
+    {
+      "after": 1,
+      "barrier": 85009,
+      "before": 1,
+      "isolation": "repeatable_read",
+      "mutation_elapsed_ms": 94,
+      "mutation_mode": "delete_target",
+      "reader_elapsed_ms": 351,
+      "reader_mode": "deletion_reader_rr"
+    }
+  ],
+  "raw_trace_content_loaded": false,
+  "schema_version": "trace-commons-memory-h5-concurrency-result-v1"
+}

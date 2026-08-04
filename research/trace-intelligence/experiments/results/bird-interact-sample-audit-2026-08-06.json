@@ -1,0 +1,53 @@
+{
+  "aggregate": {
+    "modes": {
+      "a-interact": {
+        "budget_used_present": 10,
+        "follow_up_samples": 10,
+        "phase1_passes": 5,
+        "phase1_rate": 0.5,
+        "phase2_passes": 3,
+        "phase2_rate": 0.3,
+        "reward_mean": 0.44,
+        "reward_sum": 4.4,
+        "samples": 10,
+        "source_sha256": "0ed12e0ca5727597949c680c51a7c78fdcc98c16015aeb729182b57369635d2d",
+        "trajectory_count_max": 17,
+        "trajectory_count_min": 12
+      },
+      "c-interact": {
+        "budget_used_present": 0,
+        "follow_up_samples": 10,
+        "phase1_passes": 5,
+        "phase1_rate": 0.5,
+        "phase2_passes": 4,
+        "phase2_rate": 0.4,
+        "reward_mean": 0.52,
+        "reward_sum": 5.2,
+        "samples": 10,
+        "source_sha256": "fa3b64e433f2974a4fe3e660bcf3954c278e4f99f8432e4d1b1add38bbee1f16",
+        "trajectory_count_max": 6,
+        "trajectory_count_min": 3
+      }
+    },
+    "samples": 20
+  },
+  "claim_boundary": {
+    "clarification_causal_effect_established": false,
+    "enterprise_user_behavior_established": false,
+    "full_benchmark_quality_established": false,
+    "public_trajectory_schema_audited": true,
+    "reason": "Twenty public ADK examples expose trajectories and rewards, but they are a tiny curated sample and do not substitute for the withheld 600-task evaluator bundle."
+  },
+  "result_sha256": "055ab84bfa363c5b26d92abec740482fe29a79d04e707a73a7580a2910ad5db5",
+  "schema_version": "frankengate-bird-interact-sample-audit-v1",
+  "source": {
+    "raw_content_committed": false,
+    "repository": "bird-bench/BIRD-Interact",
+    "revision": "451fe2c3518ee1cf908d8139e2913483bd519381",
+    "sample_files": [
+      "/private/tmp/bird-interact-repo/BIRD-Interact-ADK/examples/a_interact_samples.json",
+      "/private/tmp/bird-interact-repo/BIRD-Interact-ADK/examples/c_interact_samples.json"
+    ]
+  }
+}

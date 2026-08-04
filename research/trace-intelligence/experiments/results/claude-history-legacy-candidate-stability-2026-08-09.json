@@ -1,0 +1,697 @@
+{
+  "acronym_cohort_frequency": {
+    "all_projects": 0,
+    "one_project": 134,
+    "two_or_more_projects": 36,
+    "unique_valid_acronyms": 170
+  },
+  "claim_boundary": {
+    "alias_quality": false,
+    "enterprise_concept_quality": false,
+    "reason": "Top-term and parenthetical-definition recurrence measures stability only; shared candidates can be boilerplate and local candidates can be valid private concepts.",
+    "semantic_equivalence": false,
+    "user_outcome": false
+  },
+  "coverage": {
+    "bad_json_lines": 0,
+    "message_count": 202393,
+    "project_count": 65,
+    "session_count": 432
+  },
+  "definition_pair_cohort_frequency": {
+    "all_projects": 0,
+    "one_project": 284,
+    "two_or_more_projects": 57,
+    "unique_pairs": 341
+  },
+  "projects": [
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "7f2aa21acb9f5ae8d180089759e69592169c6b35a30adc4ab6d5aec39e370be0",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 3,
+      "session_count": 3,
+      "top_term_count": 100,
+      "unique_term_count": 1997,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 1,
+      "project_hash": "b7a0545e728621c495b5d75d9c251357311eaa9da03793fdba4761444d16c6d6",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 6,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 965,
+      "valid_acronym_count": 1
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "138a0ae0bfcd971bb08e4df213663569b70a30be678597f78a8ae9e7c18758c0",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 1,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 1007,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "a3a9e58f1e5d32ecd42cadc599f6f50b5aba0f91fe5db5594459aa6c474c2314",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 20,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 1711,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "923f1678db555db0099be60f3d20a3ebcb6fc292eb2d7ee21c8863e906f16fc5",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 522,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "ea5527a7934b37a5fd0a640d54feb16fa1fb39e48bec29390fa81425db799af5",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 19,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 9608,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 3,
+      "project_hash": "13e75c4236579ab7c1cf242710ca80ed935db6b6923e18355f6fa12d83997e10",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 182,
+      "session_count": 16,
+      "top_term_count": 100,
+      "unique_term_count": 10181,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 3,
+      "project_hash": "0bc2cbfc7f0328ab216cbe85fba8b36a566503493754b84c3559a27d3897ca6c",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 54,
+      "session_count": 3,
+      "top_term_count": 100,
+      "unique_term_count": 9621,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 12,
+      "project_hash": "3e5a0630c40b215eb8fa3ed3b637d97c231aaf64fcec86921c96e55c8c055f50",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 8,
+      "session_count": 8,
+      "top_term_count": 100,
+      "unique_term_count": 3573,
+      "valid_acronym_count": 7
+    },
+    {
+      "acronym_pair_count": 5,
+      "project_hash": "349e8958bd143f38da848ef833e7c71ab669e8ac13f934f2d0fa74ba01d45338",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 2379,
+      "valid_acronym_count": 4
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "5aae86386ed7a790b7d3ed6b34fe46ff79c1c675a5e08092b2d09df52cb7b8e6",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 309,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 3,
+      "project_hash": "5ad5f6f130d3109cad13e5983105562fc74287a08f15b1613439d16e0e673a56",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 883,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 12,
+      "project_hash": "df322e56433d72ff8c9eb7188749bba0fe2225fb9637f1daf20f2240b5a7738d",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 10,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 4436,
+      "valid_acronym_count": 12
+    },
+    {
+      "acronym_pair_count": 1,
+      "project_hash": "777f3651127845fe37103dd22b85edb531517fed9bba976bc3f7e946dd3e26ef",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 14,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 2135,
+      "valid_acronym_count": 1
+    },
+    {
+      "acronym_pair_count": 12,
+      "project_hash": "76174c31ccd4b117f5c502330995254af0b82ea5ef18a9860151243791a61876",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 30,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 5012,
+      "valid_acronym_count": 7
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "17d03b293b6c50a76ebafcca6608fe9866d0812e02a2ad94455210ff65b2ede5",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 3,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 396,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "018258a9e216b12ace30cce237d6fe3c964b04cb3c306745ce6c7becc502899f",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 8,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 3864,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 42,
+      "project_hash": "8dbbb5b0b26ce3708676013c9514060e55b5f3beb09a6d54f2e7ffaf38979f56",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 4096,
+      "session_count": 36,
+      "top_term_count": 100,
+      "unique_term_count": 80937,
+      "valid_acronym_count": 21
+    },
+    {
+      "acronym_pair_count": 9,
+      "project_hash": "5fad1f73116dbd173a19bff449414262233258e1f3445399b1f347fcbfb0f664",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 515,
+      "session_count": 9,
+      "top_term_count": 100,
+      "unique_term_count": 23209,
+      "valid_acronym_count": 7
+    },
+    {
+      "acronym_pair_count": 1,
+      "project_hash": "bbd1fb54ac9dc7413f4c17032297cab539f6c514cf54e9fa973ed0c508e3921a",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 5,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 766,
+      "valid_acronym_count": 1
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "f155fe2d462cf5997fb25c2158bb97c426c6f99f912f04c07e9bb9990ab53658",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 1,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 1807,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 3,
+      "project_hash": "987993a308c13edd824ced201ff42f6680776aea371cab6403b626abdd9639bc",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 358,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 13644,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 4,
+      "project_hash": "3963f973c353b28c5f3a1f955d975d07ccc79a5f625c0a8ca5e66ff684efcd9b",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 95,
+      "session_count": 5,
+      "top_term_count": 100,
+      "unique_term_count": 5700,
+      "valid_acronym_count": 2
+    },
+    {
+      "acronym_pair_count": 20,
+      "project_hash": "da2a6ad8fd134507db2221c650a1ba3a4fe98b4bcd1ecfbe39fbb1898f7b288a",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 220,
+      "session_count": 6,
+      "top_term_count": 100,
+      "unique_term_count": 9015,
+      "valid_acronym_count": 4
+    },
+    {
+      "acronym_pair_count": 18,
+      "project_hash": "eea71b3c5f2942b1035d0ae958397d2d9e1b5225c13c316c7ed398617d76d0a5",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 276,
+      "session_count": 3,
+      "top_term_count": 100,
+      "unique_term_count": 9765,
+      "valid_acronym_count": 11
+    },
+    {
+      "acronym_pair_count": 2,
+      "project_hash": "4b90818d274ee840d0e81779e2893c3b00ee5b7dfa134fa2a2296f3aa0b26e46",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 103,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 6064,
+      "valid_acronym_count": 1
+    },
+    {
+      "acronym_pair_count": 3,
+      "project_hash": "b6984d4dd8beb428a8a7edaeef99f6a883c325f8b6f12ef908d7ae6d5252ed28",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 26,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 3244,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 3,
+      "project_hash": "e750de07ed4ca00087f33112b0d5a6f0fd8117e65f95ce85bc119c9846c041db",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 783,
+      "session_count": 6,
+      "top_term_count": 100,
+      "unique_term_count": 23649,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "2f11d8bf5781e83c6bb3d43b676ed9324eeb0d03e703080ea18b7e87469e5b53",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 24,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 3479,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "2223d49789ef186ae59d539ae90a7f1000ff0b0177addda5744df0c95d506a52",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 17,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 1139,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "fa7d0eb0cd52f880dd40c6a8a5cfec23819af24168f7e72dc42a12be2875ac8e",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 71,
+      "session_count": 3,
+      "top_term_count": 100,
+      "unique_term_count": 5053,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 36,
+      "project_hash": "42344780a3a7cbce3b86cf43032ec5eee30a90bc475652bead1db0adf0ec8e46",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 749,
+      "session_count": 77,
+      "top_term_count": 100,
+      "unique_term_count": 32070,
+      "valid_acronym_count": 22
+    },
+    {
+      "acronym_pair_count": 29,
+      "project_hash": "5bc672db5362c7cea4c4e5cba72a0f33ba46a427d8037f8fb469319af870be84",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 356,
+      "session_count": 4,
+      "top_term_count": 100,
+      "unique_term_count": 18019,
+      "valid_acronym_count": 11
+    },
+    {
+      "acronym_pair_count": 28,
+      "project_hash": "093eff817e5f1f1c12b0e06b7611c4cdbbbb2eca76afe3564a31680199a37827",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 158,
+      "session_count": 6,
+      "top_term_count": 100,
+      "unique_term_count": 8932,
+      "valid_acronym_count": 7
+    },
+    {
+      "acronym_pair_count": 6,
+      "project_hash": "4a18fd2a447a2faaa9094504e491b4301e311811947a48c383413c9e0a7459be",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 94,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 6579,
+      "valid_acronym_count": 4
+    },
+    {
+      "acronym_pair_count": 3,
+      "project_hash": "e6efcec05db063902322e61bc28d07c051937a3abee756c80e1f56cddc8141cb",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 78,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 6745,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 3,
+      "project_hash": "341688096b95e447cb18a273106ac8abc230f4a81644333646d6a261c017f26b",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 587,
+      "session_count": 9,
+      "top_term_count": 100,
+      "unique_term_count": 18140,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 2,
+      "project_hash": "2467a15e62322ec752318e2f388b6c800f82a9a9da4505d6afffd0fe5f191734",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 276,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 11887,
+      "valid_acronym_count": 2
+    },
+    {
+      "acronym_pair_count": 36,
+      "project_hash": "6a8f8bb54343ee3203821144a3d8b2fbb4f2da6d62db0eea95612c40ac53857a",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 230,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 13395,
+      "valid_acronym_count": 19
+    },
+    {
+      "acronym_pair_count": 6,
+      "project_hash": "e1cfd3842b0cdcbf1661fbbaeb1e64de468b886fa24a2b8ee6a49013bb5e0888",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 12,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 3645,
+      "valid_acronym_count": 5
+    },
+    {
+      "acronym_pair_count": 10,
+      "project_hash": "04928363c6e008e4702a33cf9d67c972534ec48f06b976b8526b55faa1b87125",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 300,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 10116,
+      "valid_acronym_count": 6
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "903d0fa95c3d53e050c596878d4930436455a69c9d107500bb722ca5415bc800",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 751,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 4,
+      "project_hash": "fb361914690172478b9d2554bf2a374c0cb210e8dcaee60e23eda4cb95c0ce36",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 256,
+      "session_count": 14,
+      "top_term_count": 100,
+      "unique_term_count": 10755,
+      "valid_acronym_count": 2
+    },
+    {
+      "acronym_pair_count": 20,
+      "project_hash": "cbe2e9cfcb46df932895b1a73b4736e32ff2f0033b526f7021c6e5f5c2cb41fc",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 755,
+      "session_count": 5,
+      "top_term_count": 100,
+      "unique_term_count": 19909,
+      "valid_acronym_count": 13
+    },
+    {
+      "acronym_pair_count": 11,
+      "project_hash": "58a2541c39d77a421597de684bf9f30d072cfbaed9b4d95f2cf4edd09bf5a963",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 203,
+      "session_count": 3,
+      "top_term_count": 100,
+      "unique_term_count": 8266,
+      "valid_acronym_count": 3
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "7eebaca9856af2710b3e9cb5c9231e57fff523cc9af713b7c577c98e87fde7c4",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 64,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 3544,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 1,
+      "project_hash": "35507b4a3f61ab54723303b93e6a479d6f9c786c76f0bcdf922dbff3785cfc2f",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 989,
+      "valid_acronym_count": 1
+    },
+    {
+      "acronym_pair_count": 11,
+      "project_hash": "0adfaad1252f44d46183b31cdc4a313544145079655fbf86ae405485060e7d10",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 235,
+      "session_count": 27,
+      "top_term_count": 100,
+      "unique_term_count": 8273,
+      "valid_acronym_count": 7
+    },
+    {
+      "acronym_pair_count": 2,
+      "project_hash": "51b3c297acad31a65728cc4404ce763ee3d62998ae6a981628f9d0b1fb52d3b8",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 523,
+      "session_count": 5,
+      "top_term_count": 100,
+      "unique_term_count": 13691,
+      "valid_acronym_count": 2
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "51b5c338de50b353f5e435b702866e3bcb17c04e43430d149e3614beaaff44a6",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 1,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 525,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "260204c23aa18c1e19dc77ec6e917c2b68fcd4d4001e9720c58bd9935231b36a",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 55,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 3850,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "1a22602b8bcd609a63fc91d76054604489143d4629a0165ec66240d719351e90",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 130,
+      "session_count": 3,
+      "top_term_count": 100,
+      "unique_term_count": 4290,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 59,
+      "project_hash": "4653876af9045f8ddfb6297b8e8e61706378f34e4c3a427f97cdf080c78405ba",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 532,
+      "session_count": 85,
+      "top_term_count": 100,
+      "unique_term_count": 23369,
+      "valid_acronym_count": 28
+    },
+    {
+      "acronym_pair_count": 5,
+      "project_hash": "cd93e7af79c7fedf6dbc934a69f00f37f825e5c700a5408587e1d176ce5e8a6e",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 162,
+      "session_count": 19,
+      "top_term_count": 100,
+      "unique_term_count": 6425,
+      "valid_acronym_count": 2
+    },
+    {
+      "acronym_pair_count": 1,
+      "project_hash": "1c0b1d25f67c7f21f8b9636c642eca93fe571104079c19436370339753f2edaa",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 50,
+      "session_count": 10,
+      "top_term_count": 100,
+      "unique_term_count": 3163,
+      "valid_acronym_count": 1
+    },
+    {
+      "acronym_pair_count": 1,
+      "project_hash": "175d8f0fd1d428c919553dd584dc3676b7ca056a8109d5c0c641732bf01c0fdc",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 32,
+      "session_count": 2,
+      "top_term_count": 100,
+      "unique_term_count": 3103,
+      "valid_acronym_count": 1
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "b94613faaf8bc8ea323b14ba57a0dbb48377869286e2cb5cc6144d3df619285c",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 944,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "91414ada052bebd23d872ff8d774a16435ce06f49e17d3c41011d887a0c5925c",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 1028,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "20d1fc081b6e5a7bf9cb9f7a7dad7aa09131165bdc9841fb7c3ff9949dae8fa5",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 729,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "52305213d2839193e1aca68cd827fe4da31e053f671609b8dadc09a9e88632cf",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 761,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 2,
+      "project_hash": "ab79343b5fe2b6874831c03f9a15bf8d941643d1654c3789322f2be9ffa5ce22",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 2,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 4020,
+      "valid_acronym_count": 2
+    },
+    {
+      "acronym_pair_count": 1,
+      "project_hash": "be1816156158fb43742822abcf18c62041965d8e5e9e724f67ba2b3e5199feef",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 11,
+      "session_count": 6,
+      "top_term_count": 100,
+      "unique_term_count": 1289,
+      "valid_acronym_count": 1
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "77f6622bc87448d734be77f18e6636275b369bc02620ffb24415df07e41dec5b",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 3,
+      "session_count": 8,
+      "top_term_count": 100,
+      "unique_term_count": 2755,
+      "valid_acronym_count": 0
+    },
+    {
+      "acronym_pair_count": 7,
+      "project_hash": "fb7dfa72a07dbb9d1c7b9349d3fbc3981db1df4d1e4cfdd87174d6c61d6403fc",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 136,
+      "session_count": 5,
+      "top_term_count": 100,
+      "unique_term_count": 6805,
+      "valid_acronym_count": 4
+    },
+    {
+      "acronym_pair_count": 0,
+      "project_hash": "2b34a9100358e7679c8973f9ee82cb6ebc2fe3dd71f462d28c75760ddbcd6036",
+      "raw_content_committed": false,
+      "reformulation_candidate_count": 0,
+      "session_count": 1,
+      "top_term_count": 100,
+      "unique_term_count": 326,
+      "valid_acronym_count": 0
+    }
+  ],
+  "result_sha256": "ceca0d3b702c7832589fca3922b652e969c801ab65f4a392ab2e669ee9f94751",
+  "schema_version": "frankengate-claude-history-legacy-candidate-stability-v1",
+  "source": {
+    "byte_count": 998165678,
+    "file_count": 442,
+    "manifest_sha256": "afdc68a06f7a570840d489d57be9dac2e667252cf24470b3b8b66bc1412f0b50",
+    "raw_content_committed": false,
+    "root_name": "projects"
+  },
+  "top_term_cohort_frequency": {
+    "all_projects": 0,
+    "one_project": 1472,
+    "pairwise_jaccard_max": 0.449275,
+    "pairwise_jaccard_median": 0.092896,
+    "pairwise_jaccard_min": 0.005025,
+    "two_or_more_projects": 777,
+    "unique_top_hashes": 2249
+  }
+}

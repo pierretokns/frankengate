@@ -1,0 +1,19 @@
+{
+  "schema_version": "frankengate-trajectory-retrieval-supervision-conformance-v1",
+  "contract_sha256": "45acab75aa9096ebac66845944f46563230f5a67654e37b468afc2b2c9c37fa8",
+  "manifest_sha256": "b80f4841245a0b78753be3c67f0e82e5f8ae380943e39afb8d5c86b5ce0b0840",
+  "raw_content_committed": false,
+  "structural_valid": true,
+  "promotion_ready": false,
+  "episode_counts": {
+    "target": 1
+  },
+  "promotion_blockers": [
+    "target count 1 < 100",
+    "hard_negative count 0 < 50",
+    "nil_or_unclear count 0 < 25"
+  ],
+  "errors": [
+
+  ]
+}

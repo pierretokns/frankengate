@@ -1,0 +1,16 @@
+{
+  "checks": {
+    "both_arms_present": true,
+    "both_cohorts_present": true,
+    "claim_boundary_present": true,
+    "no_snippets_emitted": true,
+    "nonempty_probe": true,
+    "raw_content_not_committed": true,
+    "result_hash": true,
+    "schema_version": true,
+    "summary_present": true
+  },
+  "passed": true,
+  "result_sha256": "1d4b49d377a8a37aa579ba983b7552997ca21ca6cf5c116f7766a5f42dac6e3b",
+  "schema_version": "frankengate-claude-history-term-context-model-probe-verification-v1"
+}

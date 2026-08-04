@@ -1,0 +1,20 @@
+{
+  "defer_reasons": [
+    "selector workload strata disagree or have zero-positive prevalence",
+    "no independent human outcome or changed-system causal result"
+  ],
+  "enterprise_claim": false,
+  "held_out_causal_outcome": false,
+  "input_sha256": {
+    "appworld": "23ee132389b3212b52600667812509c128bb2d4db283b62c28c2eaaadfd3c909",
+    "browsecomp": "3ebc7818042fc0a27a7ac009b0f8bf6006a89762ab1dccfacc43cf3b0a8e9e58",
+    "lifecycle": "3a144efdfb5abd44267c9f3ebcb2f2bf224f4dd1ca5844f9364e803a85b2e6c1"
+  },
+  "lifecycle_mechanics_present": true,
+  "promotion": "defer",
+  "raw_content_emitted": false,
+  "result_sha256": "aea920e306074d9957108608336d8abc30d297a2739b87906e035052643887a5",
+  "schema_version": "fg-public-otel-composition-gate-v1",
+  "selector_arms": ["appworld", "browsecompplus"],
+  "selector_generalizes": false
+}

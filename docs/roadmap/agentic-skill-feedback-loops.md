@@ -143,7 +143,9 @@ Use the loop, but strengthen its governance:
 2. Capture objective terminal results, deterministic checks, user report, behavioral
    friction and model-judge evidence as separate typed observations.
 3. Sample successes as well as failures and publish missingness/inclusion probabilities.
-4. Mine only privacy-eligible, tenant-authorized sanitized traces.
+4. Mine tenant-authorized same-scope traces at full fidelity when permitted; create a
+   destination-specific transformed copy only for third-party, cross-scope, public, or
+   lower-privilege consumers.
 5. Generate multiple candidate revisions; never let the proposing model approve itself.
 6. Replay historical failures plus untouched holdouts and critical slices.
 7. Require two evidence methods for a kernel finding; run a kill-thesis counter-search.

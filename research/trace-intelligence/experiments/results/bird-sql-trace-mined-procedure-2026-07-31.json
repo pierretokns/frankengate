@@ -1,0 +1,30 @@
+{
+  "claim_boundary": {
+    "candidate_frozen_before_heldout": true,
+    "causal_skill_benefit_confirmed": false,
+    "model_synthesis_used": false,
+    "reason": "Transparent structural baseline; utility requires the separate family-disjoint factorial."
+  },
+  "evidence": {
+    "admitted_traces": 1223,
+    "operation_sequence_observed": "chat -> execute_tool repeated",
+    "rewards": {
+      "solved": 868,
+      "unsolved": 355
+    },
+    "tool_cycles": 2369
+  },
+  "procedure": "Before answering a database question:\n1. Inspect the available schema and use the exact table and column names.\n2. Map the requested entities and relationships through declared foreign keys.\n3. Translate every filter and comparison from the question into an explicit SQL predicate.\n4. Use joins or EXISTS only where the relationship requires them; preserve the requested output columns and order.\n5. Produce one read-only SELECT or WITH query and stop after the query is complete.\n",
+  "procedure_sha256": "e97b9b198615316dcf619b674618c366d9550ff7b9a05cda7425b022c4c4ed6d",
+  "schema_version": "frankengate-bird-sql-trace-miner-v1",
+  "source": {
+    "evidence_families": [
+      "california_schools",
+      "student_club",
+      "superhero",
+      "toxicology"
+    ],
+    "task_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "trace_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+  }
+}

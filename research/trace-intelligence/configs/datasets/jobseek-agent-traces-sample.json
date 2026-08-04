@@ -1,0 +1,27 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "viktor-shcherb/jobseek-agent-traces",
+  "dataset_revision": "5aae997225724606da9f7d23ada9cd49e81ff177",
+  "license": "MIT",
+  "source_url": "https://huggingface.co/datasets/viktor-shcherb/jobseek-agent-traces",
+  "source_format": "Complete Claude workflows with a synthetic header and main/subagent records merged chronologically",
+  "adapter": "public_native_history_fidelity_v1",
+  "publication_basis": "Deterministic eight-workflow sample from a public dataset",
+  "rights_assertion": "Publisher also tags the corpus not-for-AI-training; no training-right claim",
+  "privacy_review": "Complete workflows may contain company and tool content; aggregate-only analysis",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "sample_trace_files": 8,
+    "full_repository_bytes_approximate": 5155000000,
+    "complete_home_directory": false,
+    "byte_native": false,
+    "main_subagent_merged": true,
+    "independent_user_cohort": false
+  },
+  "admission": "admit_sample_for_complete_workflow_and_merge_fidelity",
+  "enterprise_transfer": "Highly repetitive workflow corpus; not independent-user or broad-population evidence"
+}

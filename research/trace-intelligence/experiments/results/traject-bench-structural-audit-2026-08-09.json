@@ -1,0 +1,56 @@
+{
+  "claim_boundary": {
+    "agent_intervention_measured": false,
+    "deterministic_structure_audited": true,
+    "enterprise_user_behavior_measured": false,
+    "model_quality_measured": false,
+    "reason": "TRAJECT-Bench records are benchmark trajectories with tool definitions and reference paths; they do not provide consented principals, production outcomes, or changed-system replay."
+  },
+  "domain_counts": {
+    "Education": 600,
+    "Email": 400,
+    "Finance": 535,
+    "Gaming": 585,
+    "Mapping": 600,
+    "Music": 600,
+    "News_Media": 580,
+    "Travel": 810,
+    "Weather": 600,
+    "eCommerce": 600
+  },
+  "duplicate_tool_list_records": 681,
+  "file_record_counts": {
+    "parallel": 4000,
+    "sequential": 1910
+  },
+  "parallel_records": 4000,
+  "parameter_values_present": 70426,
+  "parameter_values_total": 71789,
+  "query_variant_counts": {
+    "hard": 2000,
+    "simple": 2200,
+    "unspecified": 1710
+  },
+  "records": 5910,
+  "schema_version": "frankengate-traject-bench-structural-audit-v1",
+  "sequential_executable_counts": {
+    "False": 40,
+    "True": 1870
+  },
+  "sequential_records": 1910,
+  "sequential_records_with_connected_tools": 0,
+  "source": {
+    "file_count": 31,
+    "files_sha256": "ff02973a630966c56fcdb30877c1af73d82fc5deee04dc3a5cab1e3cc71b84d7",
+    "raw_content_committed": false,
+    "root_name": "public_data"
+  },
+  "successful_tool_count_mismatches": 0,
+  "tool_count_mismatches": 0,
+  "tool_invocations_described": 38094,
+  "tools_with_nonempty_executed_output": 37313,
+  "trajectory_type_counts": {
+    "parallel": 4000,
+    "sequential": 1910
+  }
+}

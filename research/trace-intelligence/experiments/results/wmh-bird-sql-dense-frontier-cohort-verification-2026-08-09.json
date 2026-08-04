@@ -1,0 +1,9 @@
+{
+  "claim_boundary_verified": true,
+  "protocol_flags_verified": true,
+  "raw_receipts_verified": 44,
+  "schema_version": "frankengate-wmh-bird-sql-dense-frontier-cohort-verification-v1",
+  "selected_cases_verified": 44,
+  "source_result_sha256": "b318a03725828a683c0ec8ac344e287560295e1f419f80dc80029cafd9e83cba",
+  "verification_passed": true
+}

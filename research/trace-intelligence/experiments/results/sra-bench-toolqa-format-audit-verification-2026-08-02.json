@@ -1,0 +1,15 @@
+{
+  "checks": {
+    "arms_present": true,
+    "claim_boundary": true,
+    "metrics_and_recovery_counts": true,
+    "only_conservative_rules": true,
+    "promotion_blocked": true,
+    "records": true,
+    "schema": true,
+    "task_count": true
+  },
+  "schema_version": "frankengate-sra-bench-toolqa-format-audit-verification-v1",
+  "source_receipt_sha256": "92d74b1f5ad165fbf207f98d6b1f494e21bafb8f777207b5e4ed7a0673b7e453",
+  "verification_passed": true
+}

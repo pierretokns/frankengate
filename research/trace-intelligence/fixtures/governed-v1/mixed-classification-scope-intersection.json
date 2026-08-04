@@ -1,0 +1,75 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "535d6dcfed653df7ed5e6a99add488a97ccdc5db0864a6822fc3f9f9c9ff42e9",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "mixed-classification-scope-intersection"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "evidence_chunk",
+      "observation_status": "observed",
+      "source_role": "retrieval",
+      "content": "Team-level deployment evidence.",
+      "classification": "confidential",
+      "authorized_principals": ["team:red", "user:alice"],
+      "chunk_id": "chunk:team-evidence"
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "evidence_chunk",
+      "observation_status": "observed",
+      "source_role": "retrieval",
+      "content": "User-restricted incident note.",
+      "classification": "restricted",
+      "authorized_principals": ["user:alice"],
+      "chunk_id": "chunk:user-note"
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "derived_insight",
+      "observation_status": "observed",
+      "source_role": "analysis",
+      "content": "The deployment and incident are temporally correlated.",
+      "parent_event_id": "e000",
+      "evidence_event_ids": ["e000", "e001"],
+      "classification": "restricted",
+      "authorized_principals": ["user:alice"],
+      "artifact_id": "artifact:insight-001"
+    }
+  ],
+  "outcome": {
+    "value": "derived_scope_intersection_enforced",
+    "source": "analysis",
+    "evidence_event_ids": ["e000", "e001", "e002"]
+  },
+  "loss_receipt": {
+    "source_event_count": 3,
+    "canonical_event_count": 3,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": [],
+    "expected_invariants": [
+      {
+        "type": "derived_scope_is_intersection",
+        "input_event_ids": ["e000", "e001"],
+        "derived_event_id": "e002",
+        "classification_order": ["public", "internal", "confidential", "restricted"]
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "derived_authority_scope_intersection",
+        "disposition": "lost",
+        "reason": "Trajectory metadata has no normative rule for intersecting source visibility on derived artifacts."
+      }
+    ]
+  }
+}

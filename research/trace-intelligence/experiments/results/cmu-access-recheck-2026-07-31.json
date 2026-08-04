@@ -1,0 +1,11 @@
+{
+  "schema_version": "fg-cmu-access-recheck-v1",
+  "dataset_id": "cx-cmu/agent_trajectories",
+  "operation": "hf_auth_whoami",
+  "network_reachable": false,
+  "authenticated_identity_observed": false,
+  "approval_observed": false,
+  "trajectory_download_attempted": false,
+  "raw_data_emitted": false,
+  "disposition": "remain_deferred_until_network_and_authenticated_approval"
+}

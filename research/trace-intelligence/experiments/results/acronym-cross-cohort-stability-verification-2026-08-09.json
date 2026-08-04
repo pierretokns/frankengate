@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "claim_boundary": true,
+    "cohort_count": true,
+    "content_free": true,
+    "pairwise_complete": true,
+    "result_hash": true,
+    "schema": true
+  },
+  "passed": true,
+  "result_sha256": "0d4dfa120b5b2f8f65a6fbb1e98b6115e639ddc7217a4842be430d83b8d314a0",
+  "schema_version": "frankengate-acronym-cross-cohort-stability-verification-v1"
+}

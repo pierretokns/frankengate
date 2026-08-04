@@ -1,0 +1,84 @@
+{
+  "analysis_revision": "financebench-embedding-choice-v1",
+  "arms": [
+    {
+      "method": "tfidf_unigram_bigram",
+      "mrr": 0.2922131538174076,
+      "queries": 150,
+      "recall@1": 0.16666666666666666,
+      "recall@10": 0.58,
+      "recall@20": 0.6866666666666666,
+      "recall@5": 0.43333333333333335,
+      "relevant_query_count": 150
+    },
+    {
+      "method": "BalyasnyAI/multilingual-e5-base",
+      "model": {
+        "embedding_dimension": 768,
+        "encode_seconds": 10.556831417000001,
+        "input_prefix": "query:/passage:",
+        "license": "apache-2.0",
+        "model_id": "BalyasnyAI/multilingual-e5-base",
+        "snapshot_revision": "be7b4b171bfe2dd9708555023263ab5bbd3e4348"
+      },
+      "mrr": 0.8106190476190476,
+      "queries": 150,
+      "recall@1": 0.7,
+      "recall@10": 1.0,
+      "recall@20": 1.0,
+      "recall@5": 0.96,
+      "relevant_query_count": 150
+    }
+  ],
+  "dataset": {
+    "corpus_rows": 189,
+    "corpus_sha256": "813bec7596cf578bab030391ac39fbb5dfc8ab3df04a943cc32fcdf019274a5e",
+    "evaluated_queries": 150,
+    "id": "FinanceMTEB/FinanceBench",
+    "license_declared_by_cached_dataset_info": null,
+    "multi_positive_queries": 35,
+    "projection": {
+      "document_max_characters": 2500,
+      "documents_truncated": 82,
+      "queries_truncated": 0,
+      "query_max_characters": 2000
+    },
+    "qrel_rows": 189,
+    "qrels_sha256": "5a09a2355e8bd3b799c527860c5f29f2f449d734963b19f436c5437924b486aa",
+    "queries_sha256": "5b6364e77a8a358823cca6fd80d4a67a9b18b4ed303c019f61bb08dd3f3ce399",
+    "query_rows": 150,
+    "revision": "4738010357e3dda4b337abbde86d5b36c3118c8f"
+  },
+  "model_receipts": [
+    {
+      "embedding_dimension": 768,
+      "encode_seconds": 10.556831417000001,
+      "input_prefix": "query:/passage:",
+      "license": "apache-2.0",
+      "model_id": "BalyasnyAI/multilingual-e5-base",
+      "snapshot_revision": "be7b4b171bfe2dd9708555023263ab5bbd3e4348"
+    }
+  ],
+  "policy": {
+    "authorization_evaluated": false,
+    "local_files_only": true,
+    "promotion_requires": [
+      "same-corpus governed RLS/deletion replay",
+      "independent enterprise hard-negative labels",
+      "held-out transfer and latency/cost receipts"
+    ],
+    "raw_text_committed": false,
+    "vectors_committed": false
+  },
+  "runtime": {
+    "numpy": "2.0.2",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "pyarrow": "21.0.0",
+    "python": "3.9.6",
+    "scikit_learn": "1.6.1",
+    "sentence_transformers": "5.1.2",
+    "torch": "2.8.0",
+    "transformers": "4.56.2"
+  },
+  "schema_version": "frankengate-finance-mteb-retrieval-v1"
+}

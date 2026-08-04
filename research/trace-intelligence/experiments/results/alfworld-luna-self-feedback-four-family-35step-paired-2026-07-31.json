@@ -1,0 +1,39 @@
+{
+  "schema_version": "frankengate-alfworld-codex-self-feedback-paired-v1",
+  "receipt": "alfworld-luna-self-feedback-four-family-35step-2026-07-31.json",
+  "receipt_sha256": "8cd47b31768a8a6a242f7bb3d2ba4912515ae424f23adad4c93b0495d31a7ff2",
+  "verification": "alfworld-luna-self-feedback-four-family-35step-verification-2026-07-31.json",
+  "verification_sha256": "0bc0851696b5b4f7f62c12cc958d53e7979949eb915faa56fc3d11bc5b419a8d",
+  "verification_passed": true,
+  "pairs": {
+    "self_feedback_vs_no_feedback": {
+      "tasks": 4,
+      "wins": 0,
+      "losses": 0,
+      "ties": 4,
+      "candidate_invalid_actions": 2,
+      "control_invalid_actions": 0
+    },
+    "self_feedback_vs_formatting_placebo": {
+      "tasks": 4,
+      "wins": 0,
+      "losses": 0,
+      "ties": 4,
+      "candidate_invalid_actions": 2,
+      "control_invalid_actions": 0
+    }
+  },
+  "candidate_generation": {
+    "tasks": 4,
+    "candidate_calls_succeeded": 4,
+    "candidate_calls_failed": 0,
+    "expert_or_future_information_exposed": false
+  },
+  "interpretation": {
+    "valid_small_negative_signal": true,
+    "causal_self_feedback_benefit_confirmed": false,
+    "general_method_ineffectiveness_claim": false,
+    "promotion_authorized": false,
+    "reason": "Self-feedback tied both controls on success and worsened parser validity on one task; all arms were 0/4 because the frontier agent did not solve this cohort within 35 steps."
+  }
+}

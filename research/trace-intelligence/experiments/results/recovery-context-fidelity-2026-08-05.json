@@ -1,0 +1,36 @@
+{
+  "aggregate": {
+    "mean_fact_retention": 1.0,
+    "mean_full_bytes": 122619.23,
+    "mean_summary_bytes": 149.06,
+    "median_compression_ratio": 0.001585,
+    "p95_compression_ratio": 0.007577,
+    "rows": 62
+  },
+  "claim_boundary": {
+    "reason": "The summary preserves deterministic structural signals while intentionally dropping command-level repair evidence; only Harbor recovery runs can measure utility.",
+    "recovery_outcome_measured": false,
+    "skill_transfer_confirmed": false,
+    "summary_fidelity_measured": true
+  },
+  "schema": "frankengate-recovery-context-fidelity-v1",
+  "source": {
+    "manifest_sha256": "5ff72e5e9f1e480bdd108c6c31d1fea65920022fb8f64419a73c492952a6cdfa",
+    "missing_trajectory_count": 0,
+    "raw_content_committed": false,
+    "trajectory_count": 62
+  },
+  "summary_contract": {
+    "command_text_preserved": false,
+    "facts": [
+      "steps",
+      "tool_calls",
+      "observation_events",
+      "dominant_tool_family",
+      "error_flags",
+      "task_complete"
+    ],
+    "purpose": "candidate triage and bounded context, not full repair replay",
+    "structural_fact_retention": 1.0
+  }
+}

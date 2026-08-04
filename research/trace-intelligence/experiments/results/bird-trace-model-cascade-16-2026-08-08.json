@@ -1,0 +1,529 @@
+{
+  "claim_boundary": {
+    "automatic_artifact_promotion_authorized": false,
+    "public_trace_probe_only": true,
+    "reason": "Paired prompt-only versus recorded-SQL trajectory input on a small public corpus; no human intent labels or changed-system outcomes.",
+    "semantic_model_utility_confirmed": false
+  },
+  "episodes": [
+    {
+      "arm": "prompt_only",
+      "case_hash": "ad0de9f9a53a94f63d6e0b75375ada02d1bea1a1367c7074b850e0881a362dc1",
+      "elapsed_ms": 10816.054,
+      "family": "california_schools",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "ad0de9f9a53a94f63d6e0b75375ada02d1bea1a1367c7074b850e0881a362dc1",
+      "elapsed_ms": 12562.929,
+      "family": "california_schools",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "high",
+        "replayability": "replayable",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "ff4f3a8c20a9aedb0f0a9ec8bd4a833c73b10fcbb6dec5816c696f5b86a4b820",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "da0b0342f7db90485d2d8f9f00fc005f065938c3707e97dee4dfa6cbc0e3b2cf",
+      "elapsed_ms": 8591.334,
+      "family": "card_games",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "da0b0342f7db90485d2d8f9f00fc005f065938c3707e97dee4dfa6cbc0e3b2cf",
+      "elapsed_ms": 14529.482,
+      "family": "card_games",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "0eacee11e4e2638624b15c5094240dddcc6e82b0c1d2406ee147ed7eb1e5f03a",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "6ad59fbc5c5629976ad3979fe4764b922e717af7dfc348df8dfc719790bbae51",
+      "elapsed_ms": 11630.838,
+      "family": "codebase_community",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "6ad59fbc5c5629976ad3979fe4764b922e717af7dfc348df8dfc719790bbae51",
+      "elapsed_ms": 9990.957,
+      "family": "codebase_community",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "query_result"
+      },
+      "response_sha256": "b26dcff69e44099163147b25f0cc5b75fc45e74e5535062c4863b8b237c6055c",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "36124d8877595a559da8400e316f8355da247f85051fd5f572423748c8d7cd91",
+      "elapsed_ms": 13122.695,
+      "family": "debit_card_specializing",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "b6f275a1b88c9811ae153e1b04b66ef29e25922fd1dd3f578ef6a6f16aa25c75",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "36124d8877595a559da8400e316f8355da247f85051fd5f572423748c8d7cd91",
+      "elapsed_ms": 14240.195,
+      "family": "debit_card_specializing",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "medium",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e8c43df19353c5fae5ee06a3be5aab53e02310d969a636de5feafafb43ff4853",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "9beaa6c5e48cd983a3c5527df026fe17ddabc4559384c802de0b8650887a4a5e",
+      "elapsed_ms": 11239.198,
+      "family": "european_football_2",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "b6f275a1b88c9811ae153e1b04b66ef29e25922fd1dd3f578ef6a6f16aa25c75",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "9beaa6c5e48cd983a3c5527df026fe17ddabc4559384c802de0b8650887a4a5e",
+      "elapsed_ms": 12930.479,
+      "family": "european_football_2",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "high",
+        "replayability": "replayable",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "ff4f3a8c20a9aedb0f0a9ec8bd4a833c73b10fcbb6dec5816c696f5b86a4b820",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "7261be8cbc63891fd5ff95abf72d10380fa2fc8b3adf4bce24524736cc5979e2",
+      "elapsed_ms": 8542.351,
+      "family": "financial",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "7261be8cbc63891fd5ff95abf72d10380fa2fc8b3adf4bce24524736cc5979e2",
+      "elapsed_ms": 16283.103,
+      "family": "financial",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "high",
+        "replayability": "replayable",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "a77e0e158b50f206ae99f74d7ce6df8e0416b241e900f98785f9ec48b8a42077",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "69fa0763ef4a9f4cd0c39c0b31ff88da6748c1aaf4c8d5990ba3d219a048f6a6",
+      "elapsed_ms": 9662.321,
+      "family": "formula_1",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "69fa0763ef4a9f4cd0c39c0b31ff88da6748c1aaf4c8d5990ba3d219a048f6a6",
+      "elapsed_ms": 16076.493,
+      "family": "formula_1",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "medium",
+        "replayability": "replayable",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "9f4f830a4ff0ee50c0b5b42a3b82c8084073359ba2ba0d40834efd168d50145a",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "2782e07b55383ec56fda7cded6942d8755eec6b363cb2d25b2fea056a866d1f4",
+      "elapsed_ms": 12371.715,
+      "family": "student_club",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "2782e07b55383ec56fda7cded6942d8755eec6b363cb2d25b2fea056a866d1f4",
+      "elapsed_ms": 11805.389,
+      "family": "student_club",
+      "gold_correctness_hidden_truth": true,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "high",
+        "replayability": "replayable",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "ff4f3a8c20a9aedb0f0a9ec8bd4a833c73b10fcbb6dec5816c696f5b86a4b820",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "8ee9e5d31795444e89effe2d96bcc6dcaf4c81f378cc73b3e90b3db3de39e715",
+      "elapsed_ms": 7134.988,
+      "family": "california_schools",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "8ee9e5d31795444e89effe2d96bcc6dcaf4c81f378cc73b3e90b3db3de39e715",
+      "elapsed_ms": 15018.03,
+      "family": "california_schools",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "medium",
+        "replayability": "replayable",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "5a9df06b75b6175948e5e32afcc339c6b0f4fef6b64943b98f01dc3f711ab6b8",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "fca552a8679156cf7718271be56bfe12a0d63b0b0b0248c0c32c27c8354577ae",
+      "elapsed_ms": 9448.59,
+      "family": "card_games",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "b6f275a1b88c9811ae153e1b04b66ef29e25922fd1dd3f578ef6a6f16aa25c75",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "fca552a8679156cf7718271be56bfe12a0d63b0b0b0248c0c32c27c8354577ae",
+      "elapsed_ms": 7875.589,
+      "family": "card_games",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": false,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "bf31e1597018bb54165a87fcb3b1d23e76b0ca82c09de79332133169d85ea622",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "c8b72eaaccec275b2e73ee2374432f60594b73ba69d8e622ed0f1a25d761f284",
+      "elapsed_ms": 8486.347,
+      "family": "codebase_community",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "b6f275a1b88c9811ae153e1b04b66ef29e25922fd1dd3f578ef6a6f16aa25c75",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "c8b72eaaccec275b2e73ee2374432f60594b73ba69d8e622ed0f1a25d761f284",
+      "elapsed_ms": 9243.825,
+      "family": "codebase_community",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "0eacee11e4e2638624b15c5094240dddcc6e82b0c1d2406ee147ed7eb1e5f03a",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "4ad6279b3c124c8ed7ec1d2e14d1161e983f4d2bce68748a11c66b274cbc02f3",
+      "elapsed_ms": 10181.897,
+      "family": "debit_card_specializing",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "4ad6279b3c124c8ed7ec1d2e14d1161e983f4d2bce68748a11c66b274cbc02f3",
+      "elapsed_ms": 13409.461,
+      "family": "debit_card_specializing",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "medium",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e8c43df19353c5fae5ee06a3be5aab53e02310d969a636de5feafafb43ff4853",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "36853840cc7b12af52f82bba81624289b56e9bab52db2b677ce3cd85bd0d1ef3",
+      "elapsed_ms": 11225.183,
+      "family": "european_football_2",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "36853840cc7b12af52f82bba81624289b56e9bab52db2b677ce3cd85bd0d1ef3",
+      "elapsed_ms": 16852.944,
+      "family": "european_football_2",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "high",
+        "replayability": "replayable",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "ff4f3a8c20a9aedb0f0a9ec8bd4a833c73b10fcbb6dec5816c696f5b86a4b820",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "62ee15a4c047b4efd1aac905ff93f03bf133fbcdcdfbc57be589c435e5582a81",
+      "elapsed_ms": 7010.343,
+      "family": "financial",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "low",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e57505df32aca53a8389861bf3457de024fc9c8c60a04ff256ad87631f84227d",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "62ee15a4c047b4efd1aac905ff93f03bf133fbcdcdfbc57be589c435e5582a81",
+      "elapsed_ms": 15322.493,
+      "family": "financial",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "medium",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "e8c43df19353c5fae5ee06a3be5aab53e02310d969a636de5feafafb43ff4853",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "9a8948292a87b5dde262071a90632d916e1b76d0a93b4542f69c8f909d8b7a0a",
+      "elapsed_ms": 7263.587,
+      "family": "formula_1",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "b6f275a1b88c9811ae153e1b04b66ef29e25922fd1dd3f578ef6a6f16aa25c75",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "9a8948292a87b5dde262071a90632d916e1b76d0a93b4542f69c8f909d8b7a0a",
+      "elapsed_ms": 14225.044,
+      "family": "formula_1",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "high",
+        "replayability": "replayable",
+        "validator_type": "query_result"
+      },
+      "response_sha256": "ea1a787c352a363bf11ffbef5d0dc9ce0a2df260c2898a94da5505e7f488f8dc",
+      "valid_json": true
+    },
+    {
+      "arm": "prompt_only",
+      "case_hash": "c9be6fadc0ced96c61221a259b3b0c9d2e37b6a19278a1844e8946b31aed8517",
+      "elapsed_ms": 7395.427,
+      "family": "student_club",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": null,
+        "confidence": "high",
+        "replayability": "unclear",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "b6f275a1b88c9811ae153e1b04b66ef29e25922fd1dd3f578ef6a6f16aa25c75",
+      "valid_json": true
+    },
+    {
+      "arm": "trajectory",
+      "case_hash": "c9be6fadc0ced96c61221a259b3b0c9d2e37b6a19278a1844e8946b31aed8517",
+      "elapsed_ms": 13765.096,
+      "family": "student_club",
+      "gold_correctness_hidden_truth": false,
+      "prediction": {
+        "artifact_matches_task": true,
+        "confidence": "medium",
+        "replayability": "replayable",
+        "validator_type": "unclear"
+      },
+      "response_sha256": "9f4f830a4ff0ee50c0b5b42a3b82c8084073359ba2ba0d40834efd168d50145a",
+      "valid_json": true
+    }
+  ],
+  "protocol": {
+    "arms": [
+      "prompt_only",
+      "trajectory"
+    ],
+    "case_count": 16,
+    "gold_hidden_from_model": true,
+    "harness": "codex-cli-subscription",
+    "model": "gpt-5.6-luna",
+    "per_outcome_class": 8,
+    "public_dataset": "World Model Harness BIRD-SQL",
+    "raw_output": "/private/tmp/bird-trace-model-cascade-16-2026-08-08-raw.json"
+  },
+  "schema_version": "frankengate-bird-trace-model-cascade-v1",
+  "summary": {
+    "prompt_only": {
+      "abstain": 16,
+      "elapsed_ms_total": 154122.868,
+      "episodes": 16,
+      "replayability_unclear": 16,
+      "valid_json": 16,
+      "validator_unclear": 16
+    },
+    "trajectory": {
+      "abstain": 2,
+      "correct_false_positive": 6,
+      "correct_true_negative": 1,
+      "correct_true_positive": 7,
+      "elapsed_ms_total": 214131.509,
+      "episodes": 16,
+      "predicted_false": 1,
+      "predicted_true": 13,
+      "replayability_replayable": 9,
+      "replayability_unclear": 7,
+      "valid_json": 16,
+      "validator_query_result": 2,
+      "validator_unclear": 14
+    }
+  }
+}

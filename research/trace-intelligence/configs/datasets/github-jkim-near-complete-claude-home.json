@@ -1,0 +1,50 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "github/jkim0731/2p-hcr-autocoreg/.claude",
+  "dataset_revision": "b5a4615cdb0ffad81650a9c72a54209a202f6337",
+  "license": "NOASSERTION",
+  "source_url": "https://github.com/jkim0731/2p-hcr-autocoreg/tree/b5a4615cdb0ffad81650a9c72a54209a202f6337/.claude",
+  "source_format": "Near-complete public Claude home-state tree",
+  "adapter": "claude_home_area_inventory_v1",
+  "publication_basis": "Intentional public Git repository",
+  "rights_assertion": "No repository license found; analysis does not establish redistribution or training rights",
+  "privacy_review": "High-risk and apparently unredacted. Auth-adjacent state, settings, plugin data, caches, shell snapshots, pasted content, paths, and file history require deny-by-default quarantine. Never ingest settings/auth-like content into training.",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "claude_blobs": 2067,
+    "claude_bytes": 76385165,
+    "native_project_transcripts": 1,
+    "file_history_files": 1477,
+    "plugin_files": 397,
+    "task_records": 98,
+    "shell_snapshots": 43,
+    "paste_cache_files": 11,
+    "plans": 8,
+    "agents": 6,
+    "backups": 5,
+    "jobs": 3,
+    "history_index_and_backups": 3,
+    "present_sensitive_or_policy_areas": [
+      "settings.json",
+      "settings.local.json",
+      ".claude.json",
+      "remote-settings",
+      "mcp-needs-auth-cache",
+      "policy-limits"
+    ],
+    "missing_observed_areas": [
+      "debug",
+      "session-env",
+      "todos",
+      "skills"
+    ],
+    "complete_global_home_directory": false,
+    "near_complete_home_state": true
+  },
+  "admission": "manifest_only_then_lane_specific_quarantine_review",
+  "enterprise_transfer": "Best public whole-home threat model and completeness-receipt fixture; only independently authorized trace/context lanes may be promoted"
+}

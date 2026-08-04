@@ -1,0 +1,29 @@
+{
+  "schema_version": "frankengate-bird-sql-skill-factorial-paired-v1",
+  "source_result": "bird-sql-skill-factorial-powered-2026-07-31.json",
+  "task_count": 20,
+  "comparisons": {
+    "trace_mined_procedure_vs_no_skill": {
+      "trace_exact": 3,
+      "control_exact": 3,
+      "trace_wins": 0,
+      "control_wins": 0,
+      "ties": 20,
+      "interpretation": "no paired exact-match lift"
+    },
+    "trace_mined_procedure_vs_formatting_placebo": {
+      "trace_exact": 3,
+      "control_exact": 4,
+      "trace_wins": 0,
+      "control_wins": 1,
+      "ties": 19,
+      "interpretation": "one paired exact-match loss"
+    }
+  },
+  "claim_boundary": {
+    "paired_effect_estimate_is_descriptive": true,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "Twenty paired tasks are informative for this checkpoint but are not a general claim about skill mining or transfer."
+  }
+}

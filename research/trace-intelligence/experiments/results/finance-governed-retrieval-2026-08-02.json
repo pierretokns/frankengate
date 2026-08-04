@@ -1,0 +1,85 @@
+{
+  "analysis_revision": "financebench-r1-forced-rls-pgvector-v1",
+  "authorization_oracles": {
+    "all_denials_zero": true,
+    "denied_candidate_counts": {
+      "insufficient_clearance": 0,
+      "missing_epoch": 0,
+      "stale_epoch": 0,
+      "wrong_purpose": 0,
+      "wrong_subject": 0,
+      "wrong_tenant": 0
+    }
+  },
+  "authorized_candidate_count": 189,
+  "claim_boundary": {
+    "aurora_scale_or_failover_evaluated": false,
+    "deletion_exercised": true,
+    "governed_rls_exercised": true,
+    "production_promotion_authorized": false
+  },
+  "cleanup": {
+    "raw_data_committed": false,
+    "rows_after_transaction_rollback": 0,
+    "table_after_cleanup": null
+  },
+  "database": {
+    "application_role_superuser_or_bypassrls": false,
+    "aurora_emulation": false,
+    "database": "local_disposable_postgresql_pgvector",
+    "embedding_type": "vector(768)",
+    "forced_rls": true,
+    "hnsw_index_present": true,
+    "pgvector_version": "0.8.1",
+    "server_version": "16.12 (Debian 16.12-1.pgdg12+1)"
+  },
+  "dataset": {
+    "corpus_rows": 189,
+    "corpus_sha256": "813bec7596cf578bab030391ac39fbb5dfc8ab3df04a943cc32fcdf019274a5e",
+    "evaluated_queries": 150,
+    "id": "FinanceMTEB/FinanceBench",
+    "multi_positive_queries": 35,
+    "projection": {
+      "document_max_characters": 2500,
+      "documents_truncated": 82,
+      "queries_truncated": 0,
+      "query_max_characters": 2000
+    },
+    "qrels_sha256": "5a09a2355e8bd3b799c527860c5f29f2f449d734963b19f436c5437924b486aa",
+    "queries_sha256": "5b6364e77a8a358823cca6fd80d4a67a9b18b4ed303c019f61bb08dd3f3ce399",
+    "query_rows": 150,
+    "revision": "4738010357e3dda4b337abbde86d5b36c3118c8f"
+  },
+  "deletion_oracle": {
+    "deleted_id_present_in_pre_delete_rankings": true,
+    "deleted_row_visible_after_update": false,
+    "deleted_source_document_id": "133",
+    "deletion_filtered_before_ranking": true,
+    "post_delete_authorized_count": 188
+  },
+  "inserted_rows": 189,
+  "model": {
+    "embedding_dimension": 768,
+    "encode_seconds": 2.4216335420000004,
+    "input_prefix": "query:/passage:",
+    "license": "apache-2.0",
+    "model_id": "BalyasnyAI/multilingual-e5-base",
+    "snapshot_revision": "be7b4b171bfe2dd9708555023263ab5bbd3e4348"
+  },
+  "quality": {
+    "mrr": 0.802063492063492,
+    "queries": 150,
+    "query_latency_ms": {
+      "max_ms": 3.196541999999525,
+      "mean_ms": 2.2217133666666675,
+      "p50_ms": 2.023271000000104,
+      "p95_ms": 2.959873249999666,
+      "samples": 150
+    },
+    "recall@1": 0.68,
+    "recall@10": 1.0,
+    "recall@20": 1.0,
+    "recall@5": 0.96
+  },
+  "schema_version": "frankengate-finance-governed-retrieval-v1"
+}

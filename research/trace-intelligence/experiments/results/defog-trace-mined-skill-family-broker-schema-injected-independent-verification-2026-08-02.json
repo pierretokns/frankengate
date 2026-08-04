@@ -1,0 +1,23 @@
+{
+  "checks": {
+    "attempt_chain_matches_result": true,
+    "authority_and_epoch_invariants": true,
+    "no_unauthorized_observations": true,
+    "policy_receipt_invariants": true,
+    "raw_files_found": true,
+    "raw_hash_matches_result": true,
+    "result_json_valid": true,
+    "task_arm_identity": true,
+    "terminal_outcome_consistency": true,
+    "terminal_tool_schedule": true
+  },
+  "expected_task_arm_count": 18,
+  "failures": [],
+  "raw_audit_file_count": 18,
+  "raw_content_committed": false,
+  "result_sha256": "8e575e56e225d0c88609dab53048dcc44f58bb1da0440c9861f1f9ac473cdbc4",
+  "schema_version": "frankengate-defog-independent-verification-v1",
+  "security_and_protocol_verification": true,
+  "semantic_claim_authorized": false,
+  "semantic_recomputation": "not_run_without_pinned_database_executor"
+}

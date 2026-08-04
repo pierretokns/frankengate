@@ -1,0 +1,159 @@
+{
+  "schema": "frankengate-headline-receipt-consistency-audit-v1",
+  "receipts": {
+    "frontier": {
+      "sha256": "8082436274bd4cb2b2c2d1b03f7a5e551a3a9bd3a226b885215cba14e71838d9",
+      "raw_content_committed": false
+    },
+    "parameterized": {
+      "sha256": "19a4347feab18b9d2ed50830b0bb915ab2f8346070d79f181493a797c8b08a96",
+      "raw_content_committed": false
+    },
+    "adapter": {
+      "sha256": "0bfc46ab9bc72270ae8737735ecfe17cb4c433652b04987338ce3842c5ca6f86",
+      "raw_content_committed": false
+    },
+    "reranker": {
+      "sha256": "7334523b932e70887b64451f50e05065c0aa7f79cca6657eb353d2417c476a4d",
+      "raw_content_committed": false
+    },
+    "acronym": {
+      "sha256": "aef12b5dc3d288b36f62e452e0a3760017e04d39b70986039bd63ff227c97ac9",
+      "raw_content_committed": false
+    },
+    "context": {
+      "sha256": "914d66e7976ccf8d00e5fe25dcaf60049f936eda7397afb3aa9474d037fd0a6e",
+      "raw_content_committed": false
+    },
+    "recurrence": {
+      "sha256": "da5515e3ba7bf62d6572db046ce24acb4bb025f26580c0722be743e12c3d5397",
+      "raw_content_committed": false
+    },
+    "hard_negative": {
+      "sha256": "0e720186ea8667b00783690711b0fb3bb2dc232781ae7e920152533923c8ab4e",
+      "raw_content_committed": false
+    },
+    "composite": {
+      "sha256": "4156aeb2e169de97a3d10cd8a8625e4bddbba0597f54fbfed354299d79f4465f",
+      "raw_content_committed": false
+    }
+  },
+  "checks": [
+    {
+      "name": "frontier_valid_calls",
+      "expected": 48,
+      "actual": 48,
+      "pass": true
+    },
+    {
+      "name": "frontier_unanimous_candidates",
+      "expected": 11,
+      "actual": 11,
+      "pass": true
+    },
+    {
+      "name": "parameterized_positive_targets",
+      "expected": 52,
+      "actual": 52,
+      "pass": true
+    },
+    {
+      "name": "parameterized_positive_top1",
+      "expected": 52,
+      "actual": 52,
+      "pass": true
+    },
+    {
+      "name": "parameterized_nil_abstentions",
+      "expected": 10,
+      "actual": 10,
+      "pass": true
+    },
+    {
+      "name": "adapter_records",
+      "expected": 44,
+      "actual": 44,
+      "pass": true
+    },
+    {
+      "name": "adapter_mrr",
+      "expected": 0.947917,
+      "actual": 0.947917,
+      "pass": true
+    },
+    {
+      "name": "identifier_reranker_cases",
+      "expected": 17,
+      "actual": 17,
+      "pass": true
+    },
+    {
+      "name": "identifier_reranker_mrr",
+      "expected": 0.736567,
+      "actual": 0.736567,
+      "pass": true
+    },
+    {
+      "name": "acronym_unique",
+      "expected": 40,
+      "actual": 40,
+      "pass": true
+    },
+    {
+      "name": "acronym_cross_cohort",
+      "expected": 0,
+      "actual": 0,
+      "pass": true
+    },
+    {
+      "name": "context_term_only_valid",
+      "expected": 24,
+      "actual": 24,
+      "pass": true
+    },
+    {
+      "name": "context_low_overlap_agreement",
+      "expected": 3,
+      "actual": 3,
+      "pass": true
+    },
+    {
+      "name": "recurrence_shape_same_project_rate",
+      "expected": 0.15870746354017728,
+      "actual": 0.15870746354017728,
+      "pass": true
+    },
+    {
+      "name": "recurrence_digest_same_project_rate",
+      "expected": 0.06405490420360309,
+      "actual": 0.06405490420360309,
+      "pass": true
+    },
+    {
+      "name": "hard_negative_train_same_surface_diff_path",
+      "expected": 2610,
+      "actual": 2610,
+      "pass": true
+    },
+    {
+      "name": "hard_negative_train_cross_project_diff_path",
+      "expected": 1601,
+      "actual": 1601,
+      "pass": true
+    },
+    {
+      "name": "composite_answer_presence",
+      "expected": 5,
+      "actual": 5,
+      "pass": true
+    },
+    {
+      "name": "composite_metadata_mismatch",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    }
+  ],
+  "passed": true,
+  "claim_boundary": "This verifies published aggregate arithmetic and receipt consistency only; it does not upgrade proxy labels into enterprise semantic truth or causal utility."
+}

@@ -1,0 +1,16 @@
+{
+  "arms": [
+    {"candidate_present": false, "family_overlap": false, "holdout_success_rate": 0.0, "holdout_successes": 0, "holdout_tasks": 3, "policy": "none", "repeated_execution": true, "reset_count": 3},
+    {"candidate_present": true, "family_overlap": false, "holdout_success_rate": 0.0, "holdout_successes": 0, "holdout_tasks": 3, "policy": "placebo", "repeated_execution": true, "reset_count": 3},
+    {"candidate_present": true, "family_overlap": false, "holdout_success_rate": 0.6666666666666666, "holdout_successes": 2, "holdout_tasks": 3, "policy": "evidence_policy", "repeated_execution": true, "reset_count": 3}
+  ],
+  "causal_enterprise_claim": false,
+  "family_disjoint": true,
+  "holdout_families": ["beta"],
+  "human_adjudication": false,
+  "raw_content_emitted": false,
+  "real_trace_outcome": false,
+  "result_sha256": "01cb325436ecc69f580e1f6f19cd6851acfccbb9c53350388a1287bd117d98b3",
+  "schema_version": "fg-hypothesis-intervention-replay-v1",
+  "training_families": ["alpha"]
+}

@@ -1,0 +1,50 @@
+{
+  "arms": {
+    "dense": {
+      "mrr": 0.456591,
+      "positive_pool_recall": 1.0,
+      "recall_at_1": 0.3,
+      "recall_at_10": 0.9,
+      "recall_at_5": 0.5
+    },
+    "lexical": {
+      "mrr": 0.766667,
+      "positive_pool_recall": 1.0,
+      "recall_at_1": 0.6,
+      "recall_at_10": 1.0,
+      "recall_at_5": 1.0
+    },
+    "search_order": {
+      "mrr": 0.630682,
+      "positive_pool_recall": 1.0,
+      "recall_at_1": 0.5,
+      "recall_at_10": 0.8,
+      "recall_at_5": 0.7
+    }
+  },
+  "claim_boundary": {
+    "document_correctness_established": false,
+    "enterprise_artifact_utility_established": false,
+    "exposure_candidate_retrieval_measured": true,
+    "reason": "Browsing is a weak relevance signal; the samples have no independent correctness, principal, authority, or changed-system outcome labels.",
+    "trajectory_distilled_training_performed": false
+  },
+  "cohort": {
+    "exposed_documents": 624,
+    "positive_documents": 26,
+    "trajectories_with_exposure_and_browse_positive": 10
+  },
+  "protocol": {
+    "candidate_pool": "within-trajectory exposed documents",
+    "dense_model": "all-MiniLM-L6-v2-full",
+    "positive_definition": "browsed document intersected with search-exposed document",
+    "positive_labels_are_silver": true
+  },
+  "result_sha256": "5b424c234c9c585ea650ee0dd3dcc4a1a92a2a17b5e4c264700bd2bb4d030d89",
+  "schema_version": "frankengate-lrat-trajectory-retrieval-proxy-v1",
+  "source": {
+    "file_count": 10,
+    "raw_content_committed": false,
+    "root_uri": "external://lrat-repro/trajectory"
+  }
+}

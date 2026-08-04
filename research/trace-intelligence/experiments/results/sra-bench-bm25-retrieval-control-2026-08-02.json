@@ -1,0 +1,136 @@
+{
+  "claim_boundary": {
+    "artifact_correctness_established": false,
+    "enterprise_alias_quality_established": false,
+    "reason": "public gold-skill and web-distractor corpus; receipt intentionally excludes raw skills and rankings",
+    "retrieval_control_verified": true,
+    "skill_utility_established": false
+  },
+  "datasets": {
+    "bigcodebench": {
+      "corpus_size": 26262,
+      "instances_sha256": "0ed01363e2c93134cf8696fea47b6d640f32f0d7ae9d7b478a05595c3f5ae788",
+      "metrics": {
+        "Recall@1": 0.23580409,
+        "Recall@10": 0.61146199,
+        "Recall@5": 0.50181287,
+        "Recall@50": 0.83381579,
+        "nDCG@1": 0.61666667,
+        "nDCG@10": 0.55424661,
+        "nDCG@5": 0.5060571,
+        "nDCG@50": 0.62232205
+      },
+      "queries": 1140,
+      "raw_rankings_committed": false,
+      "result_sha256": "be126ccc8b35ecfe1eb06588672b1fc0f05eae536ffe06a539a6ee297e30edb9",
+      "top_k": 50
+    },
+    "champ": {
+      "corpus_size": 26262,
+      "instances_sha256": "d61346716cede953afb352e739e170b96d2bfb98824edd91b8783dc3526c7cec",
+      "metrics": {
+        "Recall@1": 0.132287,
+        "Recall@10": 0.36098655,
+        "Recall@5": 0.30792227,
+        "Recall@50": 0.54304933,
+        "nDCG@1": 0.20627803,
+        "nDCG@10": 0.27204268,
+        "nDCG@5": 0.25219153,
+        "nDCG@50": 0.32143272
+      },
+      "queries": 223,
+      "raw_rankings_committed": false,
+      "result_sha256": "7192efc8967e7b5171eb8c1aa27b7cd2612ed641a83c994ca600fadae0bdb3ad",
+      "top_k": 50
+    },
+    "logicbench": {
+      "corpus_size": 26262,
+      "instances_sha256": "af5055caac041ea08cee47622f5d922b47b2ba0a8e3a60b87349599eeff1bdfe",
+      "metrics": {
+        "Recall@1": 0.11973684,
+        "Recall@10": 0.36052632,
+        "Recall@5": 0.27368421,
+        "Recall@50": 0.58026316,
+        "nDCG@1": 0.11973684,
+        "nDCG@10": 0.22575246,
+        "nDCG@5": 0.1975898,
+        "nDCG@50": 0.27376484
+      },
+      "queries": 760,
+      "raw_rankings_committed": false,
+      "result_sha256": "d0d520426bf3f61de16769ff8a14b6d807eef4c46c5a0a85dae82d7591cc3b65",
+      "top_k": 50
+    },
+    "medcalcbench": {
+      "corpus_size": 26262,
+      "instances_sha256": "814f6b082f56cf89dd9c50be7ab87b5bcb0e41633138951e42b38d6923c3244e",
+      "metrics": {
+        "Recall@1": 0.29272727,
+        "Recall@10": 0.69181818,
+        "Recall@5": 0.48727273,
+        "Recall@50": 0.92454545,
+        "nDCG@1": 0.29272727,
+        "nDCG@10": 0.44671304,
+        "nDCG@5": 0.38065291,
+        "nDCG@50": 0.50147627
+      },
+      "queries": 1100,
+      "raw_rankings_committed": false,
+      "result_sha256": "60fddbc2bdea6b39367d843cad5b829839b5ed2f24964864be00d5d484ef1678",
+      "top_k": 50
+    },
+    "theoremqa": {
+      "corpus_size": 26262,
+      "instances_sha256": "c969a7291e23361ba9f377e464be76093804deb628b964fb846c6eff6b28deeb",
+      "metrics": {
+        "Recall@1": 0.57161981,
+        "Recall@10": 0.80722892,
+        "Recall@5": 0.76305221,
+        "Recall@50": 0.89558233,
+        "nDCG@1": 0.57161981,
+        "nDCG@10": 0.69221388,
+        "nDCG@5": 0.67758113,
+        "nDCG@50": 0.71163721
+      },
+      "queries": 747,
+      "raw_rankings_committed": false,
+      "result_sha256": "d32ad52a5cf819467ca8075f1edefbc178fd8678f318207dfe304cc6f5d7df93",
+      "top_k": 50
+    },
+    "toolqa": {
+      "corpus_size": 26262,
+      "instances_sha256": "e41eb4d4b67c1dd8e1178c88e9e8ff15525b31803694e9459d115c274fb04f0e",
+      "metrics": {
+        "Recall@1": 0.06993007,
+        "Recall@10": 0.55104895,
+        "Recall@5": 0.34965035,
+        "Recall@50": 0.78531469,
+        "nDCG@1": 0.06993007,
+        "nDCG@10": 0.27020045,
+        "nDCG@5": 0.20521639,
+        "nDCG@50": 0.3251579
+      },
+      "queries": 1430,
+      "raw_rankings_committed": false,
+      "result_sha256": "e6659d37044db6b3413c5854000ac48a5a129c58402010eb5636da930466b097",
+      "top_k": 50
+    }
+  },
+  "protocol": {
+    "authority_or_consent_measured": false,
+    "changed_system_replay_measured": false,
+    "end_task_execution_measured": false,
+    "incorporation_measured": false,
+    "retriever": "BM25",
+    "stage": "skill retrieval only",
+    "top_k": 50
+  },
+  "receipt_sha256": "d9e3d4f6528292851292c8068827dbf550e75629202ad624b909e2c117c28f16",
+  "schema_version": "frankengate-sra-bench-bm25-retrieval-control-v1",
+  "source": {
+    "corpus_sha256": "16ee509ae5bea8c2e17167dffecd89100a7d8dfa31256c3742426758c7169b5e",
+    "raw_skill_content_committed": false,
+    "repository": "https://github.com/oneal2000/SR-Agents",
+    "repository_head": "277fd8d2bbd7d3b81a5cf4ffa6e87e18c7906e4f"
+  }
+}

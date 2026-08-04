@@ -1,0 +1,31 @@
+# Integration promotion audit (2026-08-02)
+
+The machine-readable receipt in `../results/integration-promotion-audit-2026-08-02.json`
+is the release boundary for the current independent research program. It records
+twelve tested mechanisms plus six explicitly tracked named concepts, with source
+receipt hashes and an explicit disposition for each.
+
+**Decision: zero mechanisms are eligible for automatic Frankengate integration.**
+
+- SkillGen, RHO, the powered rejected RHO candidate, and Codex-adapted
+  ReasoningBank are quarantined after negative bounded held-out utility.
+- Trace2Skill, AgentEvals, Signals, dreaming, and Memory Palace/MemInsight have
+  mechanics, stored-trace, structural, or fixture-only evidence; none has a
+  changed-agent utility result.
+- Vector/search concepts documented as unselected remain explicitly excluded,
+  not silently treated as tested efficacy arms.
+- SkillOpt is utility-unproven at the measured horizon; GEPA produced no holdout
+  lift.
+- MATM retrieval and governed PostgreSQL are shadow-only: offline retrieval or
+  RLS/backend mechanics do not establish changed-agent or enterprise utility.
+- The MLOps canary/rollback loop is mechanics-only until a real candidate passes
+  an independent outcome gate.
+- The Azure ReasoningBank path is provider-unavailable; Graphiti/LangMem is
+  incomplete in the natural run; the AgentRx artifact is blocked by static
+  trigger/compile defects.
+
+This is not a universal rejection of the methods. It is a promotion rule: a
+mechanism must first beat a matched control on an adequately powered, independently
+graded held-out outcome before it can affect production traces, memory, skills, or
+user-facing recommendations. Passing infrastructure tests or a self-preference
+judge is insufficient.

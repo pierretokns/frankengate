@@ -1,0 +1,1610 @@
+{
+  "analysis_version": "natural-read-prequery-release-factorial-v1",
+  "arms": [
+    {
+      "abstention": 23,
+      "arm_id": "arm-49734385caa78934",
+      "exact": 0,
+      "exact_rate": 0.0,
+      "mean_supplied_items": 0.0,
+      "mechanism_count": 0,
+      "mechanisms": [],
+      "queries": 23,
+      "stale": 0
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-a7f3a60b75eeeb61",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 1.0,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "latest_snapshot"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-64028b60fcc3797e",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "verbatim_state"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-708ec40cf3705c58",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "bitemporal_ledger"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-45825af359f9665d",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 1,
+      "mechanisms": [
+        "evidence_retrieval"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-80a42d4508ce376e",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "latest_snapshot",
+        "verbatim_state"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-141198c9fd1d7b9d",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-c61b17c7876d5435",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "latest_snapshot",
+        "evidence_retrieval"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-509d1f1d44743b68",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "verbatim_state",
+        "bitemporal_ledger"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-1d622191f15e7a9b",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "verbatim_state",
+        "evidence_retrieval"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-d20d7ff771bf502b",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 2,
+      "mechanisms": [
+        "bitemporal_ledger",
+        "evidence_retrieval"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-431578a84e810a1e",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "verbatim_state",
+        "bitemporal_ledger"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-14af5bb84d7a46df",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "verbatim_state",
+        "evidence_retrieval"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-03ccadd4c44124f8",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "latest_snapshot",
+        "bitemporal_ledger",
+        "evidence_retrieval"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-6e3189ee63c53fdf",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 3,
+      "mechanisms": [
+        "verbatim_state",
+        "bitemporal_ledger",
+        "evidence_retrieval"
+      ],
+      "queries": 23,
+      "stale": 7
+    },
+    {
+      "abstention": 0,
+      "arm_id": "arm-5c3f6451756fa30c",
+      "exact": 16,
+      "exact_rate": 0.695652173913,
+      "mean_supplied_items": 12.260869565217,
+      "mechanism_count": 4,
+      "mechanisms": [
+        "latest_snapshot",
+        "verbatim_state",
+        "bitemporal_ledger",
+        "evidence_retrieval"
+      ],
+      "queries": 23,
+      "stale": 7
+    }
+  ],
+  "audit": {
+    "cross_project_items_supplied": 0,
+    "failed_operations_promoted": 0,
+    "gold_content_used_only_after_decision": true,
+    "post_query_items_supplied": 0,
+    "target_results_used_by_resolver": 0
+  },
+  "claim_boundary": {
+    "established": [
+      "natural_prequery_evidence_availability",
+      "strict_temporal_cutoff_enforcement",
+      "cutoff_safe_project_scoping",
+      "same_branch_or_serial_session_eligibility",
+      "supported_mechanism_composition_redundancy_or_difference"
+    ],
+    "natural_outcome_semantics": "later_successful_explicit_read_content_digest",
+    "not_established": [
+      "memory_correctness",
+      "model_or_user_task_utility",
+      "causal_effect",
+      "dream_quality",
+      "procedure_quality",
+      "person_identity",
+      "skill_inference",
+      "enterprise_transfer",
+      "differential_effect_between_runnable_mechanisms"
+    ]
+  },
+  "composition_summary": {
+    "all_minus_strongest_singleton": 0,
+    "all_runnable_mechanisms_exact": 16,
+    "interpretation": "natural_evidence_availability_not_memory_utility",
+    "singleton_exact": {
+      "bitemporal_ledger": 16,
+      "evidence_retrieval": 16,
+      "latest_snapshot": 16,
+      "verbatim_state": 16
+    },
+    "strongest_singleton_exact": 16
+  },
+  "content_policy": {
+    "aggregate_source_receipts_emitted": true,
+    "artifact_paths_emitted": false,
+    "native_identifiers_emitted": false,
+    "per_item_content_hashes_emitted": false,
+    "project_identifiers_emitted": false,
+    "raw_content_emitted": false
+  },
+  "design": {
+    "arm_count": 16,
+    "composed_arms": 11,
+    "eligible_queries": 23,
+    "factorial_scope": "complete_2_to_k_lattice_over_observed_runnable_mechanisms",
+    "model_calls": 0,
+    "natural_trace_units": 23,
+    "requested_but_gated_mechanisms": [
+      "released_dream",
+      "released_procedure"
+    ],
+    "runnable_mechanisms": [
+      "latest_snapshot",
+      "verbatim_state",
+      "bitemporal_ledger",
+      "evidence_retrieval"
+    ],
+    "single_mechanism_arms": 4,
+    "source_project_time_splits_are_descriptive": true,
+    "trained_parameters": 0,
+    "zero_mechanism_arms": 1
+  },
+  "discovery": {
+    "canonical_events": 50289,
+    "context_artifact_calls": 180,
+    "context_artifact_failures": 7,
+    "cross_session_queries": 18,
+    "histories": 217,
+    "histories_missing_timestamps": 2,
+    "silently_dropped_records": 0,
+    "source_projects": 4,
+    "source_records": 30496,
+    "successful_context_edit": 42,
+    "successful_context_read": 29,
+    "successful_context_write": 102,
+    "successful_state_interactions": 173,
+    "supported_state_observations": 168,
+    "unresolved_or_ambiguous_tool_results": 7
+  },
+  "gates": {
+    "excluded_reads_without_prequery_evidence": 6,
+    "supported_observations": 168,
+    "unreconstructable_edits": 5
+  },
+  "input_receipts": [
+    {
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "label": "wisp",
+      "license": "MIT",
+      "manifest_sha256": "d5a6541a2177180f9ee32065d268169889487f04980f693155bfec25de0b0737",
+      "source_bytes": 25280300,
+      "source_files": 104,
+      "source_records": 10700,
+      "source_set_sha256": "b6778fb505147108b1c36cd0fc2e99ef79bac1dbcd97b26feae46495077fec26"
+    },
+    {
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "label": "fable5",
+      "license": "AGPL-3.0",
+      "manifest_sha256": "79acf75816e4040e23e1e87b555779120d57825b8070354148a18dff8d18ac64",
+      "source_bytes": 62071158,
+      "source_files": 115,
+      "source_records": 19796,
+      "source_set_sha256": "69ec76bb96e41c5bcf06994ee43b05f4533ea92f72b804d40b4db9352e8e27b0"
+    }
+  ],
+  "mechanism_gates": {
+    "released_dream": {
+      "candidate_artifact_writes_or_edits": 0,
+      "eligible_prequery_target_links": 0,
+      "independently_released_items": 0,
+      "required_but_absent": [
+        "query_independent_derived_item",
+        "source_evidence_references",
+        "independent_verifier_identity",
+        "immutable_release_decision_strictly_before_query",
+        "explicit_target_scope"
+      ],
+      "status": "not_runnable_no_natural_independent_release"
+    },
+    "released_procedure": {
+      "candidate_artifact_writes_or_edits": 0,
+      "eligible_prequery_target_links": 0,
+      "independently_released_items": 0,
+      "required_but_absent": [
+        "query_independent_derived_item",
+        "source_evidence_references",
+        "independent_verifier_identity",
+        "immutable_release_decision_strictly_before_query",
+        "explicit_target_scope"
+      ],
+      "status": "not_runnable_no_natural_independent_release"
+    }
+  },
+  "protocol_receipt": {
+    "expected_arms": 16,
+    "identity_seed_sha256": "e0972ed6c9e24a9f015dad2b1ea6f912f5662a362a956461d868d5ac3622cc17",
+    "inherited_protocol_sha256": "b4f3643a9439481e3e10ede38c9c3ac420a3f5112bb893b9910e470bca67ef0c",
+    "protocol_config_sha256": "0835cf13a06c57bca552f5f67b563a57d1bfdc4fb477580403aea532150ecdde",
+    "source_bindings": [
+      {
+        "dataset_id": "crispwisp/wisp-claude-code-sessions",
+        "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+        "label": "wisp",
+        "manifest_sha256": "d5a6541a2177180f9ee32065d268169889487f04980f693155bfec25de0b0737"
+      },
+      {
+        "dataset_id": "Glint-Research/Fable-5-traces",
+        "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+        "label": "fable5",
+        "manifest_sha256": "79acf75816e4040e23e1e87b555779120d57825b8070354148a18dff8d18ac64"
+      }
+    ]
+  },
+  "release_protocol": {
+    "cross_session_strict_nonoverlap_required": true,
+    "cutoff_safe_project_identity": "source_label_plus_pretrace_corpus_project_directory",
+    "derived_release_mechanisms_without_observed_release": "not_run",
+    "query_outcome_excluded_from_catalogs": true,
+    "same_project_required": true,
+    "same_session_branch_ancestor_required": true,
+    "source_state_release": "successful_tool_result_observation_time",
+    "strictly_before_query_required": true
+  },
+  "result_sha256": "bb939fc66b96dbec958b9bd0d41142ec6be453eb0f6a3aa27fc6c76bbe216c6d",
+  "schema_version": "frankengate-natural-trace-memory-factorial-v1",
+  "splits": {
+    "project": {
+      "arm_exact_rate_distributions": [
+        {
+          "arm_id": "arm-49734385caa78934",
+          "exact_rates_desc": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mechanisms": []
+        },
+        {
+          "arm_id": "arm-a7f3a60b75eeeb61",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "latest_snapshot"
+          ]
+        },
+        {
+          "arm_id": "arm-64028b60fcc3797e",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "verbatim_state"
+          ]
+        },
+        {
+          "arm_id": "arm-708ec40cf3705c58",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "bitemporal_ledger"
+          ]
+        },
+        {
+          "arm_id": "arm-45825af359f9665d",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "evidence_retrieval"
+          ]
+        },
+        {
+          "arm_id": "arm-80a42d4508ce376e",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "latest_snapshot",
+            "verbatim_state"
+          ]
+        },
+        {
+          "arm_id": "arm-141198c9fd1d7b9d",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "latest_snapshot",
+            "bitemporal_ledger"
+          ]
+        },
+        {
+          "arm_id": "arm-c61b17c7876d5435",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "latest_snapshot",
+            "evidence_retrieval"
+          ]
+        },
+        {
+          "arm_id": "arm-509d1f1d44743b68",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "verbatim_state",
+            "bitemporal_ledger"
+          ]
+        },
+        {
+          "arm_id": "arm-1d622191f15e7a9b",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "verbatim_state",
+            "evidence_retrieval"
+          ]
+        },
+        {
+          "arm_id": "arm-d20d7ff771bf502b",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "bitemporal_ledger",
+            "evidence_retrieval"
+          ]
+        },
+        {
+          "arm_id": "arm-431578a84e810a1e",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "latest_snapshot",
+            "verbatim_state",
+            "bitemporal_ledger"
+          ]
+        },
+        {
+          "arm_id": "arm-14af5bb84d7a46df",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "latest_snapshot",
+            "verbatim_state",
+            "evidence_retrieval"
+          ]
+        },
+        {
+          "arm_id": "arm-03ccadd4c44124f8",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "latest_snapshot",
+            "bitemporal_ledger",
+            "evidence_retrieval"
+          ]
+        },
+        {
+          "arm_id": "arm-6e3189ee63c53fdf",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "verbatim_state",
+            "bitemporal_ledger",
+            "evidence_retrieval"
+          ]
+        },
+        {
+          "arm_id": "arm-5c3f6451756fa30c",
+          "exact_rates_desc": [
+            1.0,
+            0.75,
+            0.0
+          ],
+          "mechanisms": [
+            "latest_snapshot",
+            "verbatim_state",
+            "bitemporal_ledger",
+            "evidence_retrieval"
+          ]
+        }
+      ],
+      "eligible_queries_per_project_desc": [
+        12,
+        7,
+        4
+      ],
+      "project_contexts": 3,
+      "project_identifiers_emitted": false
+    },
+    "source": [
+      {
+        "arms": [
+          {
+            "abstention": 19,
+            "arm_id": "arm-49734385caa78934",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [],
+            "queries": 19,
+            "stale": 0
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-a7f3a60b75eeeb61",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "latest_snapshot"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-64028b60fcc3797e",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "verbatim_state"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-708ec40cf3705c58",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "bitemporal_ledger"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-45825af359f9665d",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "evidence_retrieval"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-80a42d4508ce376e",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-141198c9fd1d7b9d",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-c61b17c7876d5435",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "latest_snapshot",
+              "evidence_retrieval"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-509d1f1d44743b68",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-1d622191f15e7a9b",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-d20d7ff771bf502b",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-431578a84e810a1e",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-14af5bb84d7a46df",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-03ccadd4c44124f8",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-6e3189ee63c53fdf",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 19,
+            "stale": 3
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-5c3f6451756fa30c",
+            "exact": 16,
+            "exact_rate": 0.842105263158,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 19,
+            "stale": 3
+          }
+        ],
+        "eligible_queries": 19,
+        "source": "fable5"
+      },
+      {
+        "arms": [
+          {
+            "abstention": 4,
+            "arm_id": "arm-49734385caa78934",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [],
+            "queries": 4,
+            "stale": 0
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-a7f3a60b75eeeb61",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "latest_snapshot"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-64028b60fcc3797e",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "verbatim_state"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-708ec40cf3705c58",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "bitemporal_ledger"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-45825af359f9665d",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "evidence_retrieval"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-80a42d4508ce376e",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-141198c9fd1d7b9d",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-c61b17c7876d5435",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "latest_snapshot",
+              "evidence_retrieval"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-509d1f1d44743b68",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-1d622191f15e7a9b",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-d20d7ff771bf502b",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-431578a84e810a1e",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-14af5bb84d7a46df",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-03ccadd4c44124f8",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-6e3189ee63c53fdf",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 4,
+            "stale": 4
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-5c3f6451756fa30c",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 4,
+            "stale": 4
+          }
+        ],
+        "eligible_queries": 4,
+        "source": "wisp"
+      }
+    ],
+    "target_time": [
+      {
+        "arms": [
+          {
+            "abstention": 9,
+            "arm_id": "arm-49734385caa78934",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [],
+            "queries": 9,
+            "stale": 0
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-a7f3a60b75eeeb61",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "latest_snapshot"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-64028b60fcc3797e",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "verbatim_state"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-708ec40cf3705c58",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "bitemporal_ledger"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-45825af359f9665d",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "evidence_retrieval"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-80a42d4508ce376e",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-141198c9fd1d7b9d",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-c61b17c7876d5435",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "latest_snapshot",
+              "evidence_retrieval"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-509d1f1d44743b68",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-1d622191f15e7a9b",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-d20d7ff771bf502b",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-431578a84e810a1e",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-14af5bb84d7a46df",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-03ccadd4c44124f8",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-6e3189ee63c53fdf",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 9,
+            "stale": 5
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-5c3f6451756fa30c",
+            "exact": 4,
+            "exact_rate": 0.444444444444,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 9,
+            "stale": 5
+          }
+        ],
+        "bucket": "early",
+        "eligible_queries": 9
+      },
+      {
+        "arms": [
+          {
+            "abstention": 7,
+            "arm_id": "arm-49734385caa78934",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [],
+            "queries": 7,
+            "stale": 0
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-a7f3a60b75eeeb61",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-64028b60fcc3797e",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "verbatim_state"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-708ec40cf3705c58",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "bitemporal_ledger"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-45825af359f9665d",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-80a42d4508ce376e",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-141198c9fd1d7b9d",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-c61b17c7876d5435",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-509d1f1d44743b68",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-1d622191f15e7a9b",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-d20d7ff771bf502b",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-431578a84e810a1e",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-14af5bb84d7a46df",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-03ccadd4c44124f8",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-6e3189ee63c53fdf",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-5c3f6451756fa30c",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          }
+        ],
+        "bucket": "middle",
+        "eligible_queries": 7
+      },
+      {
+        "arms": [
+          {
+            "abstention": 7,
+            "arm_id": "arm-49734385caa78934",
+            "exact": 0,
+            "exact_rate": 0.0,
+            "mechanisms": [],
+            "queries": 7,
+            "stale": 0
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-a7f3a60b75eeeb61",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-64028b60fcc3797e",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "verbatim_state"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-708ec40cf3705c58",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "bitemporal_ledger"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-45825af359f9665d",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-80a42d4508ce376e",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-141198c9fd1d7b9d",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-c61b17c7876d5435",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-509d1f1d44743b68",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-1d622191f15e7a9b",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-d20d7ff771bf502b",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-431578a84e810a1e",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-14af5bb84d7a46df",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-03ccadd4c44124f8",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-6e3189ee63c53fdf",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          },
+          {
+            "abstention": 0,
+            "arm_id": "arm-5c3f6451756fa30c",
+            "exact": 6,
+            "exact_rate": 0.857142857143,
+            "mechanisms": [
+              "latest_snapshot",
+              "verbatim_state",
+              "bitemporal_ledger",
+              "evidence_retrieval"
+            ],
+            "queries": 7,
+            "stale": 1
+          }
+        ],
+        "bucket": "late",
+        "eligible_queries": 7
+      }
+    ]
+  },
+  "study": "natural_trace_memory_evidence_availability_factorial",
+  "treatment_contrast_gate": {
+    "bitemporal_incremental_value_testable": false,
+    "catalog_exposure_still_differs": true,
+    "differential_mechanism_effect_identifiable": false,
+    "distinct_runnable_singleton_outcome_vectors": 1,
+    "historical_or_valid_time_target_queries": 0,
+    "latest_snapshot_items_per_query": 1,
+    "reason_when_not_identifiable": "all runnable mechanisms select the same latest eligible state for every observed explicit current-state read",
+    "runnable_singleton_pairwise_decision_differences": 0,
+    "semantic_free_text_target_queries": 0,
+    "semantic_retrieval_incremental_value_testable": false
+  }
+}

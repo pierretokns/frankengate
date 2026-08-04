@@ -1,0 +1,72 @@
+{
+  "arms": {
+    "frontier": {
+      "mrr": 1.0,
+      "recall_at_1": 0.302083,
+      "recall_at_10": 0.9375,
+      "recall_at_5": 0.854167,
+      "records": 8
+    },
+    "lexical": {
+      "mrr": 0.360417,
+      "recall_at_1": 0.041667,
+      "recall_at_10": 0.385417,
+      "recall_at_5": 0.270833,
+      "records": 8
+    }
+  },
+  "claim_boundary": {
+    "agent_intervention_measured": false,
+    "automatic_artifact_acceptance_authorized": false,
+    "frontier_reranking_measured": true,
+    "full_pool_retrieval_measured": false
+  },
+  "dataset": {
+    "raw_content_committed": false,
+    "root_name": "public_data",
+    "selected_cases": 8
+  },
+  "failures": 0,
+  "protocol": {
+    "candidate_selection": "domain lexical top-16 plus target names",
+    "frontier_sees_gold_targets": false,
+    "frontier_sees_tool_outputs": false,
+    "model": "gpt-5.6-luna",
+    "raw_model_outputs_external": true
+  },
+  "raw_receipts": [
+    {
+      "case_index": 0,
+      "raw_sha256": "b55931db6dc3b2e085ae9081bb6418e2f2c827d9bd2cb0745bcf27f39f8bbd25"
+    },
+    {
+      "case_index": 1,
+      "raw_sha256": "236a5d41a1ce3ccb98f026f58226464615a833fcd20fffa725b7af266f4cde1c"
+    },
+    {
+      "case_index": 2,
+      "raw_sha256": "a5bd70ccad1ff2718f1fb30a19bee5a8080780d32e6e859209e779fbcfa44ccf"
+    },
+    {
+      "case_index": 3,
+      "raw_sha256": "9816bede89afd0a33a849686337df2e8c34211aaf1de0aae19326c92cf492f40"
+    },
+    {
+      "case_index": 4,
+      "raw_sha256": "ff7b126940af081f654019499d59c33527b1f30d09ffd9f4bc32dc72e58ddee8"
+    },
+    {
+      "case_index": 5,
+      "raw_sha256": "2b20a3c367909983f6c6ff11ab9de461f1e5a19f8559f4b9356122cca47f7fe4"
+    },
+    {
+      "case_index": 6,
+      "raw_sha256": "5a4fae0a459372829d7c3e827fd284c91960b98c0ddb5b4bccdc69ac4f6130cb"
+    },
+    {
+      "case_index": 7,
+      "raw_sha256": "b21028d0eb8eb17589a2be076c9d815b1c84ef1c3cf6ba06c459a12b515489ac"
+    }
+  ],
+  "schema_version": "frankengate-traject-bench-frontier-reranker-v1"
+}

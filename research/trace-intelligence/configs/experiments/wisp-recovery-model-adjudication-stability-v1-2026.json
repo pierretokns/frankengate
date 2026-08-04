@@ -1,0 +1,42 @@
+{
+  "schema_version": "frankengate.wisp-recovery-model-stability-config.v1",
+  "study_id": "wisp-recovery-model-adjudication-stability-2026-07-30",
+  "packet": {
+    "path_policy": "/private/tmp only",
+    "sha256": "7a519a7f5666eb50dcc4cbba4f2d5d9568b8481168ad01680ae688fdd517fec4"
+  },
+  "dataset": {
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce"
+  },
+  "model_manifest": {
+    "path": "configs/models/qwen3.5-9b-optiq-4bit-mlx-runtime-v2.json",
+    "sha256": "3c26a8b2efffa88f45004e067246bc31d7fc6c193e7540a402e05c4f5e22a88d"
+  },
+  "selection": {
+    "seed": "wisp-recovery-model-stability-v1",
+    "stratified_quota": {
+      "file_change": 2,
+      "file_read": 1,
+      "shell": 3
+    }
+  },
+  "passes": [
+    "rubric_first",
+    "evidence_first",
+    "skeptical"
+  ],
+  "runtime": {
+    "endpoint_location": "loopback",
+    "request_model": "mlx-community/Qwen3.5-9B-OptiQ-4bit",
+    "temperature": 0,
+    "top_p": 1,
+    "max_completion_tokens": 768,
+    "timeout_seconds": 120
+  },
+  "raw_output_policy": {
+    "candidate_level_rows_committed": false,
+    "mode": "0600"
+  },
+  "claim_boundary": "Same-model prompt-perturbation stability only; not human gold, independent-model agreement, causal diagnosis, or prospective enterprise evidence."
+}

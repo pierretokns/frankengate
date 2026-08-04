@@ -1,0 +1,16 @@
+{
+  "ambiguous_surface_hashes_sum": 13,
+  "claim_boundary": "Conservative exact-morphology lower bound only. Source receipts contain hashes and counts, not questions, SQL, or identifier strings.",
+  "cross_db_ambiguity_hashes_sum": 13,
+  "rows": 314,
+  "rows_with_qualified_or_table_sql": 314,
+  "same_db_ambiguity_hashes_sum": 1,
+  "schema_version": "nl2sql-alias-mining-cohort-v1",
+  "source_files": [
+    "instruct_basic_postgres.csv",
+    "instruct_advanced_postgres.csv",
+    "questions_gen_postgres.csv"
+  ],
+  "surface_to_identifier_links": 492,
+  "unique_surface_hashes_sum_by_file": 186
+}

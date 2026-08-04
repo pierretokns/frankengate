@@ -1,0 +1,114 @@
+{
+  "schema_version": "frankengate-native-tool-protocol-fixture-v1",
+  "experiment_id": "native-tool-protocol-compliance-2026-07-30",
+  "claim_scope": "native_tool_protocol_compliance_only",
+  "claim_exclusions": [
+    "sql_quality",
+    "semantic_correctness",
+    "benchmark_performance",
+    "trace_mined_skill_effect",
+    "enterprise_task_generalization"
+  ],
+  "fixture_kind": "synthetic_content_free_control",
+  "benchmark_content_used": false,
+  "raw_model_content_committed": false,
+  "tool_contract": {
+    "source": "defog_sql_factorial_contract.TOOLS",
+    "reuse_scope": "native function names and JSON schemas only"
+  },
+  "limits": {
+    "max_model_turns": 6,
+    "max_schema_calls": 1,
+    "max_sql_attempts": 2,
+    "max_generated_tokens_per_call": 512,
+    "model_wall_seconds": 60
+  },
+  "variants": [
+    {
+      "id": "always_all_tools",
+      "budget_annotation": false,
+      "terminal_only_after_sql_budget": false,
+      "classification": "current_protocol_control"
+    },
+    {
+      "id": "remaining_budget_annotations",
+      "budget_annotation": true,
+      "terminal_only_after_sql_budget": false,
+      "classification": "annotation_only_intervention"
+    },
+    {
+      "id": "terminal_only_after_sql_budget",
+      "budget_annotation": false,
+      "terminal_only_after_sql_budget": true,
+      "classification": "availability_only_intervention"
+    }
+  ],
+  "episodes": [
+    {
+      "fixture_id": "synthetic-submit-01",
+      "executor_mode": "success",
+      "expected_terminal_action": "submit",
+      "seed": 310001,
+      "variant_order": [
+        "always_all_tools",
+        "remaining_budget_annotations",
+        "terminal_only_after_sql_budget"
+      ]
+    },
+    {
+      "fixture_id": "synthetic-abstain-01",
+      "executor_mode": "deny",
+      "expected_terminal_action": "abstain",
+      "seed": 310002,
+      "variant_order": [
+        "remaining_budget_annotations",
+        "terminal_only_after_sql_budget",
+        "always_all_tools"
+      ]
+    },
+    {
+      "fixture_id": "synthetic-submit-02",
+      "executor_mode": "success",
+      "expected_terminal_action": "submit",
+      "seed": 310003,
+      "variant_order": [
+        "terminal_only_after_sql_budget",
+        "always_all_tools",
+        "remaining_budget_annotations"
+      ]
+    },
+    {
+      "fixture_id": "synthetic-abstain-02",
+      "executor_mode": "deny",
+      "expected_terminal_action": "abstain",
+      "seed": 310004,
+      "variant_order": [
+        "always_all_tools",
+        "remaining_budget_annotations",
+        "terminal_only_after_sql_budget"
+      ]
+    },
+    {
+      "fixture_id": "synthetic-submit-03",
+      "executor_mode": "success",
+      "expected_terminal_action": "submit",
+      "seed": 310005,
+      "variant_order": [
+        "remaining_budget_annotations",
+        "terminal_only_after_sql_budget",
+        "always_all_tools"
+      ]
+    },
+    {
+      "fixture_id": "synthetic-abstain-03",
+      "executor_mode": "deny",
+      "expected_terminal_action": "abstain",
+      "seed": 310006,
+      "variant_order": [
+        "terminal_only_after_sql_budget",
+        "always_all_tools",
+        "remaining_budget_annotations"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,408 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.invalid/schemas/fg-tool-response-v1.json",
+  "title": "Frankengate governed NL2SQL broker tool response",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/describeSuccess"
+    },
+    {
+      "$ref": "#/$defs/executeSuccess"
+    },
+    {
+      "$ref": "#/$defs/submissionAccepted"
+    },
+    {
+      "$ref": "#/$defs/abstentionAccepted"
+    },
+    {
+      "$ref": "#/$defs/errorResponse"
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{22}$"
+    },
+    "remaining": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_calls",
+        "sql_attempts",
+        "model_turns"
+      ],
+      "properties": {
+        "schema_calls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "sql_attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "model_turns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        }
+      }
+    },
+    "typedCell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "null",
+            "bool",
+            "int",
+            "decimal",
+            "float",
+            "text",
+            "date",
+            "time",
+            "timestamp",
+            "timestamptz",
+            "bytes",
+            "uuid",
+            "json",
+            "array"
+          ]
+        },
+        "value": {}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "null"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "bool"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "int",
+                  "decimal",
+                  "float",
+                  "text",
+                  "date",
+                  "time",
+                  "timestamp",
+                  "timestamptz",
+                  "bytes",
+                  "uuid",
+                  "json"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "array"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "array",
+                "maxItems": 10000,
+                "items": {
+                  "$ref": "#/$defs/typedCell"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "describeObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tables",
+        "catalog_sha256"
+      ],
+      "properties": {
+        "tables": {
+          "type": "object",
+          "maxProperties": 1024,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "array",
+            "maxItems": 2048,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "catalog_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "executeObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "columns",
+        "rows",
+        "row_count",
+        "preview_truncated",
+        "result_sha256"
+      ],
+      "properties": {
+        "columns": {
+          "type": "array",
+          "maxItems": 2048,
+          "items": {
+            "type": "string"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "array",
+            "maxItems": 2048,
+            "items": {
+              "$ref": "#/$defs/typedCell"
+            }
+          }
+        },
+        "row_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "preview_truncated": {
+          "type": "boolean"
+        },
+        "result_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "describeSuccess": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "request_nonce",
+        "status",
+        "observation",
+        "authority_receipt_sha256",
+        "remaining"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "fg-tool-response-v1"
+        },
+        "request_nonce": {
+          "$ref": "#/$defs/nonce"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "observation": {
+          "$ref": "#/$defs/describeObservation"
+        },
+        "authority_receipt_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "remaining": {
+          "$ref": "#/$defs/remaining"
+        }
+      }
+    },
+    "executeSuccess": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "request_nonce",
+        "status",
+        "attempt_id",
+        "observation",
+        "authority_receipt_sha256",
+        "policy_receipt_sha256",
+        "remaining"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "fg-tool-response-v1"
+        },
+        "request_nonce": {
+          "$ref": "#/$defs/nonce"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{32}$"
+        },
+        "observation": {
+          "$ref": "#/$defs/executeObservation"
+        },
+        "authority_receipt_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "policy_receipt_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "remaining": {
+          "$ref": "#/$defs/remaining"
+        }
+      }
+    },
+    "submissionAccepted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "request_nonce",
+        "status",
+        "terminal",
+        "submission_receipt_sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "fg-tool-response-v1"
+        },
+        "request_nonce": {
+          "$ref": "#/$defs/nonce"
+        },
+        "status": {
+          "const": "accepted"
+        },
+        "terminal": {
+          "const": true
+        },
+        "submission_receipt_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "abstentionAccepted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "request_nonce",
+        "status",
+        "terminal",
+        "abstention_receipt_sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "fg-tool-response-v1"
+        },
+        "request_nonce": {
+          "$ref": "#/$defs/nonce"
+        },
+        "status": {
+          "const": "accepted"
+        },
+        "terminal": {
+          "const": true
+        },
+        "abstention_receipt_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "errorResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "request_nonce",
+        "status",
+        "code",
+        "message_sha256",
+        "remaining"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "fg-tool-response-v1"
+        },
+        "request_nonce": {
+          "$ref": "#/$defs/nonce"
+        },
+        "status": {
+          "enum": [
+            "authority_denied",
+            "policy_denied",
+            "database_error",
+            "resource_limit",
+            "invalid_arguments"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,127}$"
+        },
+        "message_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "remaining": {
+          "$ref": "#/$defs/remaining"
+        }
+      }
+    }
+  }
+}

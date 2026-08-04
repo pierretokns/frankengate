@@ -1,0 +1,57 @@
+{
+  "claim_boundary": {
+    "automatic_frankengate_promotion_authorized": false,
+    "causal_memory_utility_confirmed": false,
+    "codex_provider_substitution_explicit": true,
+    "independent_heldout_replay": true,
+    "matched_no_harness_control": true,
+    "reason": "The Codex-adapted ReasoningBank arm scored below the matched no-harness control on this two-task slice. This is a bounded negative result under explicit provider substitutions, not a universal claim about ReasoningBank.",
+    "upstream_runner_unchanged": true
+  },
+  "experiment": "reasoningbank-locomo-codex-frontier-bounded",
+  "outcome": {
+    "baseline_mean_score": 0.7027777777777777,
+    "candidate_regressed_tasks": 1,
+    "candidate_tied_tasks": 1,
+    "mean_delta": -0.10972222222222205,
+    "reasoningbank_mean_score": 0.5930555555555557,
+    "task_scores": [
+      {
+        "score": 0.36388888888888893,
+        "task_id": "conv-48/qa_0008"
+      },
+      {
+        "score": 0.8222222222222223,
+        "task_id": "conv-48/qa_0001"
+      }
+    ]
+  },
+  "protocol": {
+    "dataset": "LOCOMO locomo10.json",
+    "embedding_dimensions": 384,
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_provider": "local FastEmbed ONNX",
+    "eval_variant": "frozen",
+    "heldout_task_ids": [
+      "conv-48/qa_0001",
+      "conv-48/qa_0008"
+    ],
+    "heldout_tasks": 2,
+    "memory_entries": 2,
+    "memory_extraction_calls": 4,
+    "memory_judge": "Codex subscription adapter",
+    "memory_judge_calls": 4,
+    "model": "gpt-5.6-luna",
+    "train_tasks": 2
+  },
+  "schema_version": "frankengate-reasoningbank-codex-frontier-reproduction-v1",
+  "source": {
+    "baseline_receipt_sha256": "7fc61c8bf9bacf62e5484cfdb4587077123dba2922703b1b33e16b7b9eb0d5bf",
+    "dataset_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+    "eval_grades_sha256": "cb22d050983a66f869bb6013a8e06cf9f5593fd44728cab089377862fa0ac8fc",
+    "memory_store_sha256": "8dec5e65a29b8308f620d366ec7a03ebf104ee537d9b97826362c6c80a09ec78",
+    "run_summary_sha256": "f4e303e4d04d3953cb6fe7992eb9a9e6f0b6e810172fb9c8ef39f5432c24d0a7",
+    "upstream_commit": "e5f2d1a8a06ab3523ab42e0042d2fa13d9acb701",
+    "upstream_repository": "wbopan/retro-harness"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "arms": {
+    "lexical": {
+      "cases": 13,
+      "mrr": 0.86014,
+      "recall_at_1": 0.846154,
+      "recall_at_5": 0.846154,
+      "same_scope_collision_before_target": 0.076923,
+      "wrong_scope_collision_before_target": 0.0
+    },
+    "lexical_plus_termhood_alias": {
+      "cases": 13,
+      "mrr": 0.814685,
+      "recall_at_1": 0.769231,
+      "recall_at_5": 0.923077,
+      "same_scope_collision_before_target": 0.0,
+      "wrong_scope_collision_before_target": 0.0
+    }
+  },
+  "claim_boundary": {
+    "downstream_agent_utility_established": false,
+    "enterprise_quality_established": false,
+    "reason": "Gold-SQL objects are public retrieval targets; the experiment does not contain reviewed aliases, user outcomes, or changed-system replay.",
+    "semantic_alias_truth_established": false
+  },
+  "dataset": {
+    "cohort_schema": "frankengate-nl2sql-real-alias-cohort-v1",
+    "database_count": 4,
+    "raw_sha256": "3aa25a29f47cfa78a75820cb3c2ee1897e873127e8d7dfc9855202d9326261cd",
+    "targeted_case_count": 26
+  },
+  "folds": [
+    {
+      "candidate_count": 48,
+      "db": "broker",
+      "eval_cases": 2,
+      "mapped_term_count": 28,
+      "positive_candidate_count": 48,
+      "term_target_association_count": 226,
+      "train_cases": 2
+    },
+    {
+      "candidate_count": 140,
+      "db": "car_dealership",
+      "eval_cases": 4,
+      "mapped_term_count": 103,
+      "positive_candidate_count": 140,
+      "term_target_association_count": 760,
+      "train_cases": 4
+    },
+    {
+      "candidate_count": 110,
+      "db": "derm_treatment",
+      "eval_cases": 3,
+      "mapped_term_count": 77,
+      "positive_candidate_count": 110,
+      "term_target_association_count": 478,
+      "train_cases": 3
+    },
+    {
+      "candidate_count": 105,
+      "db": "ewallet",
+      "eval_cases": 4,
+      "mapped_term_count": 70,
+      "positive_candidate_count": 105,
+      "term_target_association_count": 366,
+      "train_cases": 4
+    }
+  ],
+  "protocol": {
+    "alias_field": "search-only; no ontology, memory, or skill promotion",
+    "candidate_limit": 3000,
+    "evaluation": "held-out candidate pools from the public cohort",
+    "mapping": "termhood-selected question n-grams associated only with training gold-SQL targets",
+    "split": "within-schema deterministic case split"
+  },
+  "result_sha256": "2a72c7de80c0931810df6ec7658e9eb3791d07d9c31e10dbd3639f4786ac23e7",
+  "schema_version": "frankengate-nl2sql-termhood-alias-retrieval-v1"
+}

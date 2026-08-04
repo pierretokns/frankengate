@@ -1,0 +1,8 @@
+{
+  "databases": ["car_dealership", "derm_treatment", "ewallet"],
+  "folds": 3,
+  "raw_sha256": "a3a1b361328ebb68ecddfc2b5cb16754888e946dfde349b66f59ad5a4afb5673",
+  "result_sha256": "7e09e5c6f736f28b9c43a23dacf28a4b02ba9b81ba098b87ca038f2c96a487e6",
+  "schema_version": "frankengate-nl2sql-collision-embedding-adaptation-verification-v1",
+  "status": "verified"
+}

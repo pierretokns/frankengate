@@ -1,0 +1,160 @@
+{
+  "generated_at": "2026-08-01T21:48:57.275383+00:00",
+  "inputs": {
+    "recovery_root": "/private/tmp/recovery-bench/runs",
+    "trail_root": "/private/tmp/trail-benchmark"
+  },
+  "recovery_bench": {
+    "agent_names": [
+      "terminus-2"
+    ],
+    "agent_steps_total": 4348,
+    "environment_types": [
+      "modal"
+    ],
+    "fit": {
+      "cross_user_transfer": false,
+      "enterprise_causal_replay": false,
+      "failure_replay_fixture": true,
+      "reason": "The checkout contains initial Terminal-Bench trajectories and verifier rewards, but no recovery-agent intervention/results, principal identity, or enterprise task labels. It is a recovery fixture, not evidence of skill transfer.",
+      "recovery_outcome_present": false
+    },
+    "initial_failure_count": 62,
+    "initial_result_files": 89,
+    "initial_success_count": 25,
+    "invalid_records": [],
+    "model_names": [
+      "claude-haiku-4-5-20251001"
+    ],
+    "recovery_result_files": 0,
+    "repository": "letta-ai/recovery-bench",
+    "result_files": 89,
+    "reward_counts": {
+      "0": 62,
+      "1": 25,
+      "missing": 2
+    },
+    "source_revision": "7c04b6a36a53e48e6595dd57fc62aacd31e6d13f2ee134c0176e65248c2205ef",
+    "task_names_hash": "5c7ed05c61e6768b71bebb5ffd05d9ce07e185b3cf519b06ca2ae5d476f99638",
+    "tool_calls_total": 5148,
+    "trajectory_files": 89,
+    "trajectory_schema_versions": [
+      "ATIF-v1.6"
+    ],
+    "unique_tasks": 89,
+    "user_steps_total": 89,
+    "valid_result_or_trajectory_files": 178
+  },
+  "release_decision": {
+    "ready_for_enterprise_causal_skill_claim": false,
+    "ready_for_independent_failure_diagnosis_calibration": true,
+    "ready_for_recovery_replay_baseline": true,
+    "required_next_step": "Run paired no-context/full-context/summary recovery agents on the 62 failed tasks, preserve task-disjoint episodes, and score verifier reward plus repair regressions before comparing mined skills."
+  },
+  "schema": "frankengate.recent_replay_dataset_fit_audit.v1",
+  "trail": {
+    "aligned_annotation_errors_with_location": 812,
+    "aligned_annotation_location_span_tree_match_rate": 0.997537,
+    "aligned_annotation_location_span_tree_matches": 810,
+    "annotation_coverage": 0.959459,
+    "annotation_error_categories": {
+      " Incorrect Problem Identification": 1,
+      "Authentication Errors": 5,
+      "Context Handling Failure": 5,
+      "Context Handling Failures": 42,
+      "Environment Setup Errors": 8,
+      "Formatting Error": 1,
+      "Formatting Errors": 196,
+      "Goal Deviation": 63,
+      "Goal deviation": 1,
+      "Incorrect Memory Usage": 2,
+      "Incorrect Problem Identification": 27,
+      "Instruction Non-Compliance": 2,
+      "Instruction Non-compliance": 152,
+      "Instruction non complience": 1,
+      "Language-Only": 3,
+      "Language-only": 49,
+      "Poor Information Retrieval": 39,
+      "Poor Information retrieval": 1,
+      "Resource Abuse": 57,
+      "Resource Exhaustion": 3,
+      "Resource Not Found": 7,
+      "Service Errors": 2,
+      "Task Orchestration": 46,
+      "Task Orchestration Error": 1,
+      "Task Orchestration Errors": 2,
+      "Timeout Issues": 2,
+      "Tool Definition Issues": 3,
+      "Tool Output Misinterpretation": 17,
+      "Tool Selection": 1,
+      "Tool Selection Errors": 44,
+      "Tool-related": 53
+    },
+    "annotation_error_impacts": {
+      "HIGH": 301,
+      "LOW": 173,
+      "MEDIUM": 362
+    },
+    "annotation_error_total": 836,
+    "annotation_errors_with_location": 836,
+    "annotation_files": 148,
+    "annotation_location_matched_trace_count": 138,
+    "annotation_location_span_tree_match_rate": 0.9689,
+    "annotation_location_span_tree_matches": 810,
+    "annotation_score_fields": [
+      "instruction_adherence_reasoning",
+      "instruction_adherence_score",
+      "overall",
+      "plan_opt_reasoning",
+      "plan_opt_score",
+      "reliability_reasoning",
+      "reliability_score",
+      "security_reasoning",
+      "security_score"
+    ],
+    "data_files": 148,
+    "data_files_by_split": {
+      "GAIA": 117,
+      "SWE Bench": 31
+    },
+    "fit": {
+      "cross_user_transfer": false,
+      "enterprise_causal_replay": false,
+      "failure_diagnosis_calibration": true,
+      "reason": "Annotated trace errors and scores exist, but principal identity, enterprise task intent, changed-system outcomes, and independent replay outcomes are absent."
+    },
+    "invalid_annotation_records": [
+      {
+        "error": "JSONDecodeError",
+        "file": "benchmarking/processed_annotations_gaia/a96c6811716c0473b86a23321db79c34.json"
+      }
+    ],
+    "invalid_data_records": [],
+    "observed_log_body_fields": [
+      "exception.message",
+      "exception.type",
+      "function.arguments",
+      "function.name",
+      "function.output"
+    ],
+    "principal_identity_span_count": 0,
+    "project_metadata_span_count": 154,
+    "repository": "patronus-ai/trail-benchmark",
+    "source_revision": "cac4ad2f1642bf9392df919f5cb74aa36f7b91bd5988979044cc6dbcc1757d58",
+    "span_count_mean": 1.040541,
+    "span_status_codes": {
+      "Error": 5,
+      "Ok": 6,
+      "Unset": 143
+    },
+    "span_tree_nodes_total": 4625,
+    "spans_total": 154,
+    "tenant_identity_span_count": 0,
+    "unique_annotation_trace_ids": 142,
+    "unique_project_ids": 4,
+    "unique_service_names": 4,
+    "unique_trace_ids": 148,
+    "valid_annotation_records": 147,
+    "valid_data_records": 148
+  }
+}

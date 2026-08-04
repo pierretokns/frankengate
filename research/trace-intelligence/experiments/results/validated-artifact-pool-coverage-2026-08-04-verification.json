@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "all_source_pool_executions_authorized": true,
+    "claim_boundary_present": true,
+    "oracle_structured_ceiling_zero": true,
+    "result_hash_matches": true,
+    "semantic_pool_ceiling_zero": true,
+    "target_count": true
+  },
+  "recomputed_result_sha256": "51922e221abbb50054e37207dbcd6f1fb793a443960d007227d7a0641f5ebcea",
+  "schema_version": "frankengate-validated-artifact-pool-coverage-verification-v1",
+  "status": "verified",
+  "stored_result_sha256": "51922e221abbb50054e37207dbcd6f1fb793a443960d007227d7a0641f5ebcea"
+}

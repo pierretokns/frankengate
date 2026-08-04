@@ -1,0 +1,26 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "FrontisAI/NatureBench-traces",
+  "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+  "license": "CC-BY-4.0",
+  "source_url": "https://huggingface.co/datasets/FrontisAI/NatureBench-traces",
+  "source_format": "Controlled scientific-work benchmark with native Claude, Codex, and Gemini transcripts plus sidecars",
+  "adapter": "naturebench_trace_v1",
+  "publication_basis": "Intentional public benchmark release",
+  "privacy_review": "Benchmark corpus; raw content stays outside this repository",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "runs": 1080,
+    "paper_derived_tasks": 90,
+    "runs_with_transcript_submission_judge_result": 1041,
+    "per_attempt_metric_improvements": true,
+    "validity_judgments": true,
+    "resume_history": true
+  },
+  "admission": "admit_as_controlled_scientific_agent_validity_benchmark",
+  "enterprise_transfer": "Controlled agent benchmark, not a longitudinal human researcher history; transfer must be measured on real research traces"
+}

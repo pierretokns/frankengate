@@ -1,0 +1,21 @@
+{
+  "all_passed": true,
+  "checks": {
+    "all_rows_content_free": true,
+    "no_semantic_claim": true,
+    "no_utility_claim": true,
+    "quality_count_matches_rows": true,
+    "row_digests_present": true,
+    "rows_present": true,
+    "schema_present": true
+  },
+  "projects_quality_passed": 1,
+  "projects_verified": 3,
+  "raw_content_policy": {
+    "model_response_emitted": false,
+    "trace_content_emitted": false
+  },
+  "receipt": "natural-model-dream-procedure-llama-2026-08-02.json",
+  "receipt_sha256": "a2956665d78e5ca8f620e387d04701452fcf9722c83a5ddb23f16b44cf90ec79",
+  "schema_version": "frankengate-natural-model-dream-procedure-verification-v1"
+}

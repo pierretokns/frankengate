@@ -1,0 +1,112 @@
+{
+  "claim_boundary": {
+    "automatic_frankengate_promotion_authorized": false,
+    "candidate_accessed_heldout_gold": false,
+    "causal_rho_utility_confirmed": false,
+    "independent_heldout_replay": true,
+    "matched_initial_harness_control": false,
+    "matched_no_harness_control": true,
+    "reason": "This receipt strengthens the powered paired estimate; promotion still requires a positive, independently graded outcome and a separate integration replay."
+  },
+  "experiment": "rho-frontier-locomo-powered",
+  "outcome": {
+    "baseline_mean_score": 0.6431878306878306,
+    "bootstrap_mean_delta_95ci": [
+      -0.5908730158730159,
+      0.024702380952380976
+    ],
+    "candidate_better_tasks": 1,
+    "candidate_mean_score": 0.3879298941798942,
+    "candidate_regressed_tasks": 5,
+    "candidate_tied_tasks": 2,
+    "estimated_pairs_for_80pct_normal_power": 28,
+    "exact_two_sided_sign_pvalue": 0.21875,
+    "mean_delta": -0.2552579365079364,
+    "paired_delta_sample_sd": 0.4791840780769241,
+    "paired_rows": [
+      {
+        "baseline_score": 0.6666666666666666,
+        "candidate_score": 0.6666666666666666,
+        "delta": 0.0,
+        "task_id": "conv-26/qa_0004"
+      },
+      {
+        "baseline_score": 0.5333333333333333,
+        "candidate_score": 0.5,
+        "delta": -0.033333333333333326,
+        "task_id": "conv-30/qa_0003"
+      },
+      {
+        "baseline_score": 0.5185185185185185,
+        "candidate_score": 0.29629629629629634,
+        "delta": -0.22222222222222215,
+        "task_id": "conv-41/qa_0044"
+      },
+      {
+        "baseline_score": 1.0,
+        "candidate_score": 0.0,
+        "delta": -1.0,
+        "task_id": "conv-43/qa_0011"
+      },
+      {
+        "baseline_score": 1.0,
+        "candidate_score": 0.0,
+        "delta": -1.0,
+        "task_id": "conv-43/qa_0050"
+      },
+      {
+        "baseline_score": 0.3333333333333333,
+        "candidate_score": 0.27380952380952384,
+        "delta": -0.05952380952380948,
+        "task_id": "conv-47/qa_0002"
+      },
+      {
+        "baseline_score": 0.8222222222222223,
+        "candidate_score": 0.8222222222222223,
+        "delta": 0.0,
+        "task_id": "conv-48/qa_0001"
+      },
+      {
+        "baseline_score": 0.27142857142857146,
+        "candidate_score": 0.5444444444444445,
+        "delta": 0.27301587301587305,
+        "task_id": "conv-48/qa_0008"
+      }
+    ]
+  },
+  "protocol": {
+    "baseline": "upstream empty harness with zero evolution rounds",
+    "baseline_final_harness_id": "h_c8c03d6d0938",
+    "baseline_initial_harness_id": "h_c8c03d6d0938",
+    "candidate": "one upstream RHO diagnosis round, one optimizer sample",
+    "candidate_final_harness_id": "h_174d495ed2af",
+    "candidate_initial_harness_id": "h_174d495ed2af",
+    "candidate_round_accepted": [],
+    "candidate_rounds": 0,
+    "dataset": "LOCOMO locomo10.json",
+    "heldout_task_ids": [
+      "conv-26/qa_0004",
+      "conv-30/qa_0003",
+      "conv-41/qa_0044",
+      "conv-43/qa_0011",
+      "conv-43/qa_0050",
+      "conv-47/qa_0002",
+      "conv-48/qa_0001",
+      "conv-48/qa_0008"
+    ],
+    "heldout_tasks": 8,
+    "independent_heldout_grader": "upstream LOCOMO score_qa",
+    "model": "gpt-5.6-luna",
+    "reasoning_effort": "high"
+  },
+  "schema_version": "frankengate-rho-powered-receipt-v1",
+  "source": {
+    "baseline_grades_sha256": "a7dff4e68a0832a7915aad21e681083ddbcf2223bdaa7df070df146e512d90b2",
+    "baseline_summary_sha256": "1a1c4f81c46edfa4bbf15c9231ea251a63de6692a9973e1ce44fa63fb442dfe6",
+    "candidate_grades_sha256": "de6675e2ae187f8cc8fa252d359d1eac03ab138c723afb2239c58dcca04adc6d",
+    "candidate_summary_sha256": "1f0295f502a5953e67b36018c4c5f8f1d3bb0e21273d1323d4b405d7d5f187bd",
+    "dataset_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+    "upstream_commit": "e5f2d1a8a06ab3523ab42e0042d2fa13d9acb701",
+    "upstream_repository": "wbopan/retro-harness"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "arms_verified": [
+    "lexical",
+    "naive_exposed_negative_ranker",
+    "replay_negative_ranker",
+    "termhood_alias"
+  ],
+  "cases_verified": 71,
+  "claim_boundary_verified": true,
+  "folds_verified": 11,
+  "schema_version": "frankengate-wmh-bird-replay-negative-reranker-verification-v1",
+  "source_result_sha256": "0c2ee7d6754e3cfe5defdcc898c0ed5596db95fa5d6ba01d374d8f2ea8777f9b",
+  "verification_passed": true
+}

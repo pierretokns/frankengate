@@ -1,0 +1,129 @@
+{
+  "comparability": {
+    "aligned": [
+      "lifecycle event vocabulary",
+      "explicit error requirement",
+      "unique call-result linkage",
+      "post-error recovery proposal requirement",
+      "controlled tool-family equality",
+      "lifecycle-event distance",
+      "greedy one-to-one matching"
+    ],
+    "not_aligned": [
+      "corpus sampling frame",
+      "harness exporter error semantics",
+      "task mix and user population",
+      "task correctness and outcome labels"
+    ],
+    "permitted_claim": "constructor portability and structural candidate prevalence within each analyzed sample",
+    "prohibited_claim": "behavioral difference, productivity, skill, or causal improvement between corpora"
+  },
+  "constructor_contract": {
+    "event_vocabulary": [
+      "tool.proposed",
+      "tool.result.error",
+      "tool.result.success"
+    ],
+    "interpretation": "structural review candidate; not correctness, task success, causal recovery, user skill, or productivity",
+    "matching": "chronological_greedy_one_to_one",
+    "max_lifecycle_distance": 12,
+    "requires_exporter_typed_error": true,
+    "requires_recovery_proposal_after_error": true,
+    "requires_same_controlled_tool_family": true,
+    "requires_unique_prior_proposal_and_unique_result": true
+  },
+  "corpora": {
+    "share_codex_sparse": {
+      "constructor": {
+        "eligible_error_results": 47,
+        "excluded_in_flight_candidate_pairs": 0,
+        "excluded_out_of_window_candidate_pairs": 1250,
+        "excluded_unlinked_error_results": 0,
+        "excluded_unmapped_error_results": 0,
+        "matched_episodes": 31,
+        "unmatched_eligible_error_results": 16
+      },
+      "lifecycle": {
+        "error_results": 47,
+        "lifecycle_events": 12511,
+        "linked_error_results": 47,
+        "linked_success_results": 6191,
+        "proposals": 6272,
+        "success_results": 6192
+      },
+      "lifecycle_distance": {
+        "maximum": 12,
+        "mean": 3.612903,
+        "minimum": 2
+      },
+      "matched_episode_family_counts": {
+        "file_change": 14,
+        "shell": 17
+      },
+      "matched_episode_share_of_eligible_errors": 0.659574,
+      "source_response_files": 8,
+      "units": {
+        "sessions": 128,
+        "sessions_with_explicit_error": 6,
+        "sessions_with_matched_episode": 6
+      }
+    },
+    "wisp": {
+      "constructor": {
+        "eligible_error_results": 103,
+        "excluded_in_flight_candidate_pairs": 0,
+        "excluded_out_of_window_candidate_pairs": 18182,
+        "excluded_unlinked_error_results": 0,
+        "excluded_unmapped_error_results": 0,
+        "matched_episodes": 89,
+        "unmatched_eligible_error_results": 14
+      },
+      "lifecycle": {
+        "error_results": 103,
+        "lifecycle_events": 4416,
+        "linked_error_results": 103,
+        "linked_success_results": 2103,
+        "proposals": 2209,
+        "success_results": 2104
+      },
+      "lifecycle_distance": {
+        "maximum": 12,
+        "mean": 3.775281,
+        "minimum": 2
+      },
+      "matched_episode_family_counts": {
+        "file_change": 32,
+        "file_read": 2,
+        "shell": 55
+      },
+      "matched_episode_share_of_eligible_errors": 0.864078,
+      "source_files": 104,
+      "units": {
+        "sessions": 104,
+        "sessions_with_explicit_error": 11,
+        "sessions_with_matched_episode": 7
+      }
+    }
+  },
+  "privacy": {
+    "controlled_vocabulary_aggregates_only": true,
+    "native_identifiers_emitted": false,
+    "native_tool_names_emitted": false,
+    "per_session_records_emitted": false,
+    "raw_data_committed": false,
+    "transcript_content_emitted": false
+  },
+  "schema_version": "canonical-bounded-recovery-episode-v1",
+  "sources": {
+    "share_codex_sparse": {
+      "dataset_id": "nmuendler/share-codex",
+      "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+      "sampling": "eight_position_strata_with_sixteen_consecutive_rows_each"
+    },
+    "wisp": {
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "sampling": "released corpus snapshot"
+    }
+  }
+}

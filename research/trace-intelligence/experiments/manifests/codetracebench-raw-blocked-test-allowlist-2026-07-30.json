@@ -1,0 +1,1191 @@
+{
+  "bead": "bif-kyy.17.13.4.2.1",
+  "compressed_bytes": 28241363,
+  "dataset_id": "NJU-LINK/CodeTraceBench",
+  "dataset_revision": "aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+  "dataset_url": "https://huggingface.co/datasets/NJU-LINK/CodeTraceBench/tree/aa213b84ffb6690fc37ca15766d6ca174ec36d4d",
+  "file_count": 145,
+  "file_identity_digest": "23a7a3b70280ad14c2da13431831e9f6e824ff1a854a918188ddb55d17d6b016",
+  "files": [
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-attention-mil-5da3063a.tar.zst",
+      "bytes": 91411,
+      "sha256": "8b185c7781ee3ea0da5517bef5d3f767a08428d346b7e3f41518cb842e71c075",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-attention-mil-5da3063a"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-dna-insert-3d3baf3a.tar.zst",
+      "bytes": 79375,
+      "sha256": "bf612c71b7ef3be8902f6b889ee061d301756e04cbd3d3e534908503e57e5637",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-dna-insert-3d3baf3a"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-fix-code-vulnerability-c2cb504b.tar.zst",
+      "bytes": 124498,
+      "sha256": "182757b711d3d8c745203de87f30df39e416c8adf2cbd729b0b8285ec1aa2a6c",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-fix-code-vulnerability-c2cb504b"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-gpt2-codegolf-cf06bae2.tar.zst",
+      "bytes": 112194,
+      "sha256": "d75488cd9e2e2edc9b8f37d543f7a266fc049e5f773db67b585ed4a073287df7",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-gpt2-codegolf-cf06bae2"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-hf-model-inference-f200d460.tar.zst",
+      "bytes": 103149,
+      "sha256": "42bb0ea3ee401162ca6011a3b58c3e098480f0711527cfe84e9e70256eb94151",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-hf-model-inference-f200d460"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-parallelize-graph-41ae5c93.tar.zst",
+      "bytes": 132122,
+      "sha256": "bb3c631ccbbb10fe411a62740aea544d0cd17b7f6df85ad8edcab0b6d7fc24eb",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-parallelize-graph-41ae5c93"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-reshard-c4-data-f4ff7301.tar.zst",
+      "bytes": 130558,
+      "sha256": "62743ea54ed55447daa1f3bf2d45c4a8120648f9980d729a7d725f77661233d7",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-reshard-c4-data-f4ff7301"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-schemelike-metacircular-eval-1494da6d.tar.zst",
+      "bytes": 22904,
+      "sha256": "a3b66dbbe0c05dee02087305284c29c2b8454396c5ee8a92368ebf4e3e05bfcf",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-schemelike-metacircular-eval-1494da6d"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-speech-to-text-52bfba5b.tar.zst",
+      "bytes": 87322,
+      "sha256": "0c27144b35d0dc9cd3c38c6abff866c9ee4593e8aa5351f767216464408fca02",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-speech-to-text-52bfba5b"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-stable-parallel-kmeans-a1318efd.tar.zst",
+      "bytes": 52909,
+      "sha256": "1f10748ff0879263af832241bb7952e1caca6f7f0f2a38d78a601b91b39daffd",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-Anthropic__Claude-Sonnet-4-20250514-Thinking-stable-parallel-kmeans-a1318efd"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-DeepSeek__DeepSeek-V3.2-interactive-maze-game-40d2a8b0.tar.zst",
+      "bytes": 152530,
+      "sha256": "e3e2067a35fd6fa412469df600962e6cb3d50290480c190f83c1bea79ba796d2",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-DeepSeek__DeepSeek-V3.2-interactive-maze-game-40d2a8b0"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-DeepSeek__DeepSeek-V3.2-play-zork-c1cce947.tar.zst",
+      "bytes": 69835,
+      "sha256": "344297e86a0c895ebd11bf5568afbf397ea42c114dd334414e19eb025da1bade",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-DeepSeek__DeepSeek-V3.2-play-zork-c1cce947"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-DeepSeek__DeepSeek-V3.2-portfolio-optimization-c32c1a67.tar.zst",
+      "bytes": 73816,
+      "sha256": "20f687caabd2c47cf880768e8c9deb5f1b75e156aca74301d7fc587771333023",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-DeepSeek__DeepSeek-V3.2-portfolio-optimization-c32c1a67"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-DeepSeek__DeepSeek-V3.2-schemelike-metacircular-eval-e73a741e.tar.zst",
+      "bytes": 168256,
+      "sha256": "fe4856d5867430886585bac59d68986576dce6cd39b33ac33a45be3a74d5ac19",
+      "source_family": "terminal-bench",
+      "traj_id": "miniswe-DeepSeek__DeepSeek-V3.2-schemelike-metacircular-eval-e73a741e"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-OpenAI__GPT-5-fasterxml__jackson-databind-4641-989d1554.tar.zst",
+      "bytes": 36266,
+      "sha256": "92971b4d64eb54270d0607f5625d63d883e4ada12f1c989728cc5f43033e937c",
+      "source_family": "multi-swe-bench",
+      "traj_id": "miniswe-OpenAI__GPT-5-fasterxml__jackson-databind-4641-989d1554"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-OpenAI__GPT-5-fasterxml__jackson-dataformat-xml-638-5311424b.tar.zst",
+      "bytes": 30400,
+      "sha256": "9bd8bf1d5b8c7c0f43a08652af4b2dfc2a8e9c0d4fdd6112b9d325e27391f1bc",
+      "source_family": "multi-swe-bench",
+      "traj_id": "miniswe-OpenAI__GPT-5-fasterxml__jackson-dataformat-xml-638-5311424b"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-2dd8966fdcf11972062c540b7a787e4d0de8d372-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-f8adf46a.tar.zst",
+      "bytes": 29013,
+      "sha256": "8415b0ededeecc5d5ea1be91a584964f8a194f2858fc07b4331cfe771f8e1920",
+      "source_family": "swe-bench-pro",
+      "traj_id": "miniswe-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-2dd8966fdcf11972062c540b7a787e4d0de8d372-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-f8adf46a"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-473a15f7908f2bb6d670b0e908ab34a28d8cf7e2-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-442534db.tar.zst",
+      "bytes": 31732,
+      "sha256": "e7107fa99c895c05d42bc9c74be61555681803963f88532ac92b6d047bb78bb4",
+      "source_family": "swe-bench-pro",
+      "traj_id": "miniswe-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-473a15f7908f2bb6d670b0e908ab34a28d8cf7e2-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-442534db"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-f8e7fea0becae25ae20606f1422068137189fe9e-b08f9fd3.tar.zst",
+      "bytes": 27158,
+      "sha256": "6ef58104c2ebbef1c1797f922bb774c65222751cb8a3096d1ebd71bbce6f84c1",
+      "source_family": "swe-bench-pro",
+      "traj_id": "miniswe-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-f8e7fea0becae25ae20606f1422068137189fe9e-b08f9fd3"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-OpenAI__GPT-5-mockito__mockito-3220-ce8a6968.tar.zst",
+      "bytes": 21636,
+      "sha256": "eabd3a18117e023d588f878a05bb28cbc6a95b6bc214fb5e0cb98ea89d8bfbed",
+      "source_family": "multi-swe-bench",
+      "traj_id": "miniswe-OpenAI__GPT-5-mockito__mockito-3220-ce8a6968"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-OpenAI__GPT-5-nushell__nushell-13357-4bd10bdc.tar.zst",
+      "bytes": 89677,
+      "sha256": "6307c0275403d3b2d839c38f46ff6681a96220877a30768c48032e38b766f494",
+      "source_family": "multi-swe-bench",
+      "traj_id": "miniswe-OpenAI__GPT-5-nushell__nushell-13357-4bd10bdc"
+    },
+    {
+      "agent": "mini-SWE-agent",
+      "artifact_path": "bench_artifacts/full/miniswe-OpenAI__GPT-5-pydata__xarray-6599-7db3a931.tar.zst",
+      "bytes": 30515,
+      "sha256": "f6f6299987c8ea9e809473b07de070bc51a963f0f132d6362967e2037711f5dc",
+      "source_family": "swe-bench-verified",
+      "traj_id": "miniswe-OpenAI__GPT-5-pydata__xarray-6599-7db3a931"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-attention-mil-5bba2487.tar.zst",
+      "bytes": 74887,
+      "sha256": "e7862fab6f7c0f31be1434ca8b51db81786b43443c3d6548dbd66c0c764d1897",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-attention-mil-5bba2487"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-break-filter-js-from-html-05ef5f96.tar.zst",
+      "bytes": 107189,
+      "sha256": "51aec13887692d6f94ab222c4a1b8079c624ec18fd88a4ee08a2bc037448e569",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-break-filter-js-from-html-05ef5f96"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-fibonacci-server-89ec6d06.tar.zst",
+      "bytes": 169335,
+      "sha256": "917e5cb7c67abe4a6dedb6f0d60bb39ed26ac046e7104551d0e5c3a0644488d5",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-fibonacci-server-89ec6d06"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-fix-pandas-version-f8e90ad6.tar.zst",
+      "bytes": 62574,
+      "sha256": "c05a8671184ad86895cc7f7088d48c8cdde258d3bd1e8f351800b37ad613ed45",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-fix-pandas-version-f8e90ad6"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-magsac-install-67eb3320.tar.zst",
+      "bytes": 127517,
+      "sha256": "b72b0ca467fd2b8f3ff9f61af526f701ca13d452729bd6e57e84d074738a48b0",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-magsac-install-67eb3320"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-multi-source-data-merger-aaaf1d1f.tar.zst",
+      "bytes": 181152,
+      "sha256": "b1555465756447ac24bd1dc4bd43b46d318c4de0d9f5cba5f4de3b92bd275f9a",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-multi-source-data-merger-aaaf1d1f"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-parallelize-graph-b2e64469.tar.zst",
+      "bytes": 183057,
+      "sha256": "2f117b5710807b4a929b27220b951a206749c9ed3dc5e5b0b930c2a89c94d391",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-parallelize-graph-b2e64469"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-password-recovery-fc298505.tar.zst",
+      "bytes": 195617,
+      "sha256": "b655b695aa953a64cf0305a0c73d3a1a3002e2d293c413f80e3694264f446201",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-password-recovery-fc298505"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-play-zork-8f01e62d.tar.zst",
+      "bytes": 196342,
+      "sha256": "621c3756fa9bafc5d251e3c26f5fc50f8ff68d5b88bc78300aaf70e5263f8c0b",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-play-zork-8f01e62d"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-portfolio-optimization-ce11b5df.tar.zst",
+      "bytes": 67719,
+      "sha256": "04c8d951d8259f18ffc4ba4f4b917a2e2c5db39ef4734da50fa20315264c6459",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-portfolio-optimization-ce11b5df"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-predicate-pushdown-bench-d779a890.tar.zst",
+      "bytes": 180330,
+      "sha256": "86909ec626ea6f08aceb4c029b250255672110ea1712fe974f28a2f6bc13cd89",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-predicate-pushdown-bench-d779a890"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-pypi-server-b0e415c9.tar.zst",
+      "bytes": 70886,
+      "sha256": "58fdda3d59907327b020f2b65219c37b0b71dda8c3e19c8f8c53c05da5d31eeb",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-pypi-server-b0e415c9"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-reshard-c4-data-7e4ba322.tar.zst",
+      "bytes": 91747,
+      "sha256": "71a1568744fe2fc73b6933cd2da50692c66d5c841b4d451dda029de4de818c97",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-reshard-c4-data-7e4ba322"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-speech-to-text-2c3cbfec.tar.zst",
+      "bytes": 62927,
+      "sha256": "4be9f7de8eeb20a332fc5799d17745ddd9db9bacbf617f7a6f6c298a7c031830",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-speech-to-text-2c3cbfec"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-stable-parallel-kmeans-e1b5afd5.tar.zst",
+      "bytes": 79476,
+      "sha256": "9e9810912d76edf912594b2f01beb35d0b1e36adaa28035e43ef0dcf78241ac6",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-Anthropic__Claude-Sonnet-4-20250514-Thinking-stable-parallel-kmeans-e1b5afd5"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-attention-mil-85c42ee5.tar.zst",
+      "bytes": 94122,
+      "sha256": "76e407661acf191593df19cd96fac0156d68d02b6219be44df4830e347d246eb",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-attention-mil-85c42ee5"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-catch-me-if-you-can-1fed6f6f.tar.zst",
+      "bytes": 125943,
+      "sha256": "96c6547ada1c9b483a4f5b856f00253d065c9aee0dcd8132f24d71a5d715b5a5",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-catch-me-if-you-can-1fed6f6f"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-conda-env-conflict-resolution-1e3d7b6a.tar.zst",
+      "bytes": 66060,
+      "sha256": "6a093f2351b958701f23372fefdbcebba513646c3cecf0a2bdf8c99f201059d8",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-conda-env-conflict-resolution-1e3d7b6a"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-dna-insert-61172a8a.tar.zst",
+      "bytes": 94329,
+      "sha256": "f1ad05240b9911cc5c1ff88c85bd84c3c66358d9a1f7f7a30f66ae7b25a62572",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-dna-insert-61172a8a"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-fix-code-vulnerability-10de86e2.tar.zst",
+      "bytes": 102985,
+      "sha256": "4b19efc6dd63fb18622017408574bac644453b177016e050a0d4541a14f318d3",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-fix-code-vulnerability-10de86e2"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-fix-pandas-version-d18fcc58.tar.zst",
+      "bytes": 80272,
+      "sha256": "4f1b94222499317785ed2edfceffba5aea4326585653e91ef2ed855d6cf68a0b",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-fix-pandas-version-d18fcc58"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-hf-model-inference-a01a8182.tar.zst",
+      "bytes": 73563,
+      "sha256": "5bbd6178711cd7031210b356f9d394b7ee46cef5b1d3e34a7ad84a3708823d63",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-hf-model-inference-a01a8182"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-hf-train-lora-adapter-4d4034d9.tar.zst",
+      "bytes": 491919,
+      "sha256": "e6d4d5fc4b97d07e3313f1d867acdb6e1c3da9d53330d8cc139bdb11a6f3c35e",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-hf-train-lora-adapter-4d4034d9"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-interactive-maze-game-bd99931a.tar.zst",
+      "bytes": 102525,
+      "sha256": "41b896b8b2bff8ac88ca8647174e360254a50d4fb7df57932bb694583e776d1c",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-interactive-maze-game-bd99931a"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-DeepSeek__DeepSeek-V3.2-multi-source-data-merger-250e898f.tar.zst",
+      "bytes": 88304,
+      "sha256": "37fc6ca976d86f84d9fcb88d2ba0837608db5a42628fbe5c540b3b3fb49e138c",
+      "source_family": "terminal-bench",
+      "traj_id": "openhands-DeepSeek__DeepSeek-V3.2-multi-source-data-merger-250e898f"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-2dd8966fdcf11972062c540b7a787e4d0de8d372-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-a9fc6e37.tar.zst",
+      "bytes": 104170,
+      "sha256": "0a2290dc0166bab881cc84a44260f7889157d5c5f6e98541febc57ee645c7f04",
+      "source_family": "swe-bench-pro",
+      "traj_id": "openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-2dd8966fdcf11972062c540b7a787e4d0de8d372-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-a9fc6e37"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-473a15f7908f2bb6d670b0e908ab34a28d8cf7e2-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-3f5c4067.tar.zst",
+      "bytes": 107526,
+      "sha256": "cd65087e06d31fd209cc45e27bf7edf2f25f3eabab9dfbd39759e15d86004b75",
+      "source_family": "swe-bench-pro",
+      "traj_id": "openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-473a15f7908f2bb6d670b0e908ab34a28d8cf7e2-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-3f5c4067"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-bedc9f7fadf93f83d8dee95feeecb9922b6f063f-v2ef375ac784985212b1805e1d0431dc8f1b3c171-974761f6.tar.zst",
+      "bytes": 54779,
+      "sha256": "199acb5c82d9b3eed48a4f6f1656ca3fbb7d68f12e77db454a477ea92a8d218d",
+      "source_family": "swe-bench-pro",
+      "traj_id": "openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-bedc9f7fadf93f83d8dee95feeecb9922b6f063f-v2ef375ac784985212b1805e1d0431dc8f1b3c171-974761f6"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-de4a1c1a2839b5b49c3d4ce21d39de48d24e2091-v2ef375ac784985212b1805e1d0431dc8f1b3c171-6735e9d7.tar.zst",
+      "bytes": 65651,
+      "sha256": "ec8813a64a399a7318de40bfa25cbba1fb9397a239666ade7fc761f4f467f672",
+      "source_family": "swe-bench-pro",
+      "traj_id": "openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-de4a1c1a2839b5b49c3d4ce21d39de48d24e2091-v2ef375ac784985212b1805e1d0431dc8f1b3c171-6735e9d7"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-f8e7fea0becae25ae20606f1422068137189fe9e-7348b67b.tar.zst",
+      "bytes": 51523,
+      "sha256": "157078c8339c4d7532bab7d3c13fdbb518fa7d21dc1ebc2c43cef2611ed0c9a3",
+      "source_family": "swe-bench-pro",
+      "traj_id": "openhands-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-f8e7fea0becae25ae20606f1422068137189fe9e-7348b67b"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-microsoft__vscode-109750-0071ea66.tar.zst",
+      "bytes": 55666,
+      "sha256": "1edb83550438c3a7bf63e6b826308d9fb64a2ee31c6c51554955a28d7b725c77",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-microsoft__vscode-109750-0071ea66"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-microsoft__vscode-110094-a10dde1e.tar.zst",
+      "bytes": 64778,
+      "sha256": "eb2edfc4b742ce8989c3a7997a56ac716a89c9828f29953359b54cf96d83d866",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-microsoft__vscode-110094-a10dde1e"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-microsoft__vscode-135197-309ff193.tar.zst",
+      "bytes": 69083,
+      "sha256": "554c93c641e05329752f26cb314d1bf1c17c16a89529523b4e04017ca6e60c1f",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-microsoft__vscode-135197-309ff193"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-microsoft__vscode-153121-9abfbc86.tar.zst",
+      "bytes": 39060,
+      "sha256": "844c868f3b1df42547f5a0f6445ff7b8fe2416421411f0de6d782472714d7621",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-microsoft__vscode-153121-9abfbc86"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-microsoft__vscode-153857-2ba91a64.tar.zst",
+      "bytes": 168461,
+      "sha256": "9bebe0b90c5fdeb0c945eefd1479ab03c48dbf5c4d4b1d2a30f63bdbc5f96b54",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-microsoft__vscode-153857-2ba91a64"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-microsoft__vscode-160342-be2f227f.tar.zst",
+      "bytes": 54997,
+      "sha256": "525e8b22db149f9b7145d2914cc56d3f1c508f6fb4fc64b64694f2f229c2001f",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-microsoft__vscode-160342-be2f227f"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-microsoft__vscode-177084-3281322c.tar.zst",
+      "bytes": 54227,
+      "sha256": "ec9bb72d0c3de06feb0a289b5e88dee1d78a572e962967294c03e5c79106dbd0",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-microsoft__vscode-177084-3281322c"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-psf__requests-6028-1508a463.tar.zst",
+      "bytes": 58555,
+      "sha256": "122722614b7173cb371e6e81ae550c970f52d78daf70de0bbe436f4b1f91449c",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-psf__requests-6028-1508a463"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pydata__xarray-2905-6eb6cd67.tar.zst",
+      "bytes": 46508,
+      "sha256": "13eb154ed479a8745c3cb74a5631820e37b57eb9f7aeee7b87fe448566633b7d",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pydata__xarray-2905-6eb6cd67"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pydata__xarray-4075-6aab4c69.tar.zst",
+      "bytes": 61311,
+      "sha256": "21336aab885b9c387b847cbf1e4cd7e5aa9aa8626dc1cdc1e514c51860c79a0f",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pydata__xarray-4075-6aab4c69"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pydata__xarray-4695-759c8995.tar.zst",
+      "bytes": 55649,
+      "sha256": "c004c801f6dfc438426633cce4973f4c94796dc146bef914d4244e3d9fd194f6",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pydata__xarray-4695-759c8995"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pydata__xarray-4966-a48c05ba.tar.zst",
+      "bytes": 48547,
+      "sha256": "cc9c4b891f1fd7e880b78eba452680baeefae52f109b1c363767e42384475a7c",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pydata__xarray-4966-a48c05ba"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pydata__xarray-6461-050b4d36.tar.zst",
+      "bytes": 63316,
+      "sha256": "3f7fa0667da531e26d81965e0ad75d962522206842fe5e0578b56959e29c8a85",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pydata__xarray-6461-050b4d36"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pydata__xarray-6599-8f177c3f.tar.zst",
+      "bytes": 46049,
+      "sha256": "dac7f1d8de33b39c39d4750992830ff71a17a06a7da0e8076ef22c7f07c3034d",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pydata__xarray-6599-8f177c3f"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pydata__xarray-6721-6c1f0e24.tar.zst",
+      "bytes": 65375,
+      "sha256": "d36d4d577ad92f5dc14d8c72de87f73793d35f6f35645200ac57fc83364cf870",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pydata__xarray-6721-6c1f0e24"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pydata__xarray-7229-fd493310.tar.zst",
+      "bytes": 72593,
+      "sha256": "1bf19c26a8d886bb752df4aa98bc13cd4ab46390d477e26597ed0e8060393555",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pydata__xarray-7229-fd493310"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pylint-dev__pylint-4604-4102688b.tar.zst",
+      "bytes": 128687,
+      "sha256": "f7f29ba4e07301fb12d2b1168a36ad9dc6956b71aea9e3bf01c46def644216f4",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pylint-dev__pylint-4604-4102688b"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pylint-dev__pylint-4970-a70c1ebe.tar.zst",
+      "bytes": 44784,
+      "sha256": "1fb7ac50a532cc9de92d8c24fbfd9814393ddd9f75872ab0cb0dc65f96ccf47f",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pylint-dev__pylint-4970-a70c1ebe"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pylint-dev__pylint-8898-2e57fc74.tar.zst",
+      "bytes": 62724,
+      "sha256": "1a0b3a59162ee2dae27862995b014d3945d809d22fed47aee1e31ca886a6bd0d",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pylint-dev__pylint-8898-2e57fc74"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-10081-e80cbf24.tar.zst",
+      "bytes": 44956,
+      "sha256": "b9898875a81d43625a174e5df538411fa0c4ab2da93c659645804fe15b49fe18",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-10081-e80cbf24"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-10356-178189eb.tar.zst",
+      "bytes": 78729,
+      "sha256": "2e15c37f8134200b5e23502db654a6fc634b28c0773732d15bc06e1947ca93c4",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-10356-178189eb"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-5262-96194eee.tar.zst",
+      "bytes": 46426,
+      "sha256": "8515968312f1ef23eed713906ab331427eeedccd36fcf69249a9b46254fe4b60",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-5262-96194eee"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-5631-b90dbe02.tar.zst",
+      "bytes": 30738,
+      "sha256": "27dc2cf82f20c6252b5177963a718ee5ec9a46b0f943dd9a82e98bce042fb6aa",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-5631-b90dbe02"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-5809-af0c5e4a.tar.zst",
+      "bytes": 29273,
+      "sha256": "713d7df230bb9a60905e3ad490b252644b48c27bea9baa9e1a74f1ff88b966ee",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-5809-af0c5e4a"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-7205-282aadca.tar.zst",
+      "bytes": 42605,
+      "sha256": "560812ae6c558ae3d2bd1b0a5b67ffcd6209d244d1a740f50e3d2e5e10030233",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-7205-282aadca"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-7236-8ee7fd31.tar.zst",
+      "bytes": 41631,
+      "sha256": "70ed946b2f0f917c9ea65ffbe9e734022b662fbdefc61c81f31e1d03b2a2d111",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-7236-8ee7fd31"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-7324-b33c996d.tar.zst",
+      "bytes": 38557,
+      "sha256": "110e1251c6aced13229b9fca8cd344dcc9e04b946ba4d11d1801e035c5e0678e",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-7324-b33c996d"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-pytest-dev__pytest-7432-e4da5e95.tar.zst",
+      "bytes": 46121,
+      "sha256": "8ddae66419cb6d9b04034d81014f8b575e8884eb7caba10389ee9dede887ad59",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-pytest-dev__pytest-7432-e4da5e95"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-11310-952013b4.tar.zst",
+      "bytes": 2591658,
+      "sha256": "562c16e70ee01d94e539e11a239c36e264e0a21f6d015d3bd15c8718faada1c7",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-11310-952013b4"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-12973-35ea9547.tar.zst",
+      "bytes": 52049,
+      "sha256": "d2432111dffa0ee3d46a3f75b059467f1d8b7f689d8cb5518bb407beffb5af96",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-12973-35ea9547"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-13142-ff36aa97.tar.zst",
+      "bytes": 54385,
+      "sha256": "c689ea0bfdce28b97f1912f043effa3a44e2202227dd8f804fb325b6c04ab155",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-13142-ff36aa97"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-14894-70e56c10.tar.zst",
+      "bytes": 48342,
+      "sha256": "72fbe4540985f2ee66f3102a93cefd86762964efd7e6211cd4252b4a97bba3f0",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-14894-70e56c10"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-14983-00a17867.tar.zst",
+      "bytes": 57223,
+      "sha256": "ff7f3ece2ee030a5ac23789807d73292bd98d33e9c7ce69e9c53a84ba92ea15a",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-14983-00a17867"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-25232-3a0749ba.tar.zst",
+      "bytes": 52913,
+      "sha256": "161ab06319d007999eb5a0fe8f073169cb7ec9bae7242c273d7b75edb5a4a93a",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-25232-3a0749ba"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-25747-66b09602.tar.zst",
+      "bytes": 54420,
+      "sha256": "34900203bdc8ed3ab79741eb2170d7581ecf8dd83e1754695fbc2c2c600faba0",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-25747-66b09602"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-25931-cdaff695.tar.zst",
+      "bytes": 41746,
+      "sha256": "d17e5fe28d9e5c4e173bcdae76d15cd283d733191d35e8bcacb6bc00bd2c4cdc",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-25931-cdaff695"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-25973-f3c53bd1.tar.zst",
+      "bytes": 45968,
+      "sha256": "3318d05481bccd0b0e5db7e997e8268ba93998fb6405c2aa487e8220fd961ab3",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-25973-f3c53bd1"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-26323-2c2c571b.tar.zst",
+      "bytes": 44934,
+      "sha256": "4aac72a6c09906e061c3cc6c226403a40facfc406e8c93d987faadee203b6692",
+      "source_family": "swe-bench-verified",
+      "traj_id": "openhands-OpenAI__GPT-5-scikit-learn__scikit-learn-26323-2c2c571b"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-serverless__serverless-2576-370c7644.tar.zst",
+      "bytes": 35295,
+      "sha256": "ededc0f8107163d28785dce1507bad2f13fce3431f6019517ae732c2dd210d4f",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-serverless__serverless-2576-370c7644"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-serverless__serverless-2945-1c469acc.tar.zst",
+      "bytes": 44944,
+      "sha256": "fa2520fc7d437ab35292482e63ad67da18a4949f90a26af01803f8951740ae5d",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-serverless__serverless-2945-1c469acc"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-serverless__serverless-3457-9fc6d45a.tar.zst",
+      "bytes": 38984,
+      "sha256": "db4072fb8f072399c2769ec9b080e7eaef417cb1fedea3c42b3f6dce74c3da5c",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-serverless__serverless-3457-9fc6d45a"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-serverless__serverless-7374-19778028.tar.zst",
+      "bytes": 46299,
+      "sha256": "833f19f94fb255e3588f925c9178995b451a338e91d0e06f170619013d057f56",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-serverless__serverless-7374-19778028"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-yt-dlp__yt-dlp-5933-e15ee7cf.tar.zst",
+      "bytes": 88918,
+      "sha256": "80a88ed47fc9148067f9ff4e7ed5892dcb6025823646e83a04368e88ba2b2f2a",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-yt-dlp__yt-dlp-5933-e15ee7cf"
+    },
+    {
+      "agent": "OpenHands",
+      "artifact_path": "bench_artifacts/full/openhands-OpenAI__GPT-5-yt-dlp__yt-dlp-9862-378895f4.tar.zst",
+      "bytes": 49686,
+      "sha256": "08be4666efb3b3269c96437a602f4bb7cab33ee140c079b4d86a2b39336c68d6",
+      "source_family": "swe-polybench",
+      "traj_id": "openhands-OpenAI__GPT-5-yt-dlp__yt-dlp-9862-378895f4"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-Significant-Gravitas__AutoGPT-4652-b968024b.tar.zst",
+      "bytes": 93253,
+      "sha256": "279190669b1c841e5ede4a3ccfb83665af53cdcd22b262fc4b326b1505e1aa86",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-Significant-Gravitas__AutoGPT-4652-b968024b"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-fasterxml__jackson-core-964-ab40902f.tar.zst",
+      "bytes": 34636,
+      "sha256": "83f38cf096a20609410471629ab3e687d6ff0c544b46bfa205f4a4a40d78b446",
+      "source_family": "multi-swe-bench",
+      "traj_id": "sweagent-OpenAI__GPT-5-fasterxml__jackson-core-964-ab40902f"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-instance_future-architect__vuls-b8db2e0b74f60cb7d45f710f255e061f054b6afc-e3bc6a2f.tar.zst",
+      "bytes": 115260,
+      "sha256": "438ee5f09c66f4bbb0140369acc896d6af51f17c56d8a17112148fc5dc33e254",
+      "source_family": "swe-bench-pro",
+      "traj_id": "sweagent-OpenAI__GPT-5-instance_future-architect__vuls-b8db2e0b74f60cb7d45f710f255e061f054b6afc-e3bc6a2f"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-2dd8966fdcf11972062c540b7a787e4d0de8d372-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-9d1c92b0.tar.zst",
+      "bytes": 184020,
+      "sha256": "b6975f71d1accb677c7b500ddf8b638d03023e217a5f346435bc7f8d44e17ef5",
+      "source_family": "swe-bench-pro",
+      "traj_id": "sweagent-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-2dd8966fdcf11972062c540b7a787e4d0de8d372-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-9d1c92b0"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-473a15f7908f2bb6d670b0e908ab34a28d8cf7e2-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-d3f257e7.tar.zst",
+      "bytes": 118062,
+      "sha256": "55a4bb23c1a489505b44db43aebe5b46eded702cd98ce35c01d1d5f9b6f1120b",
+      "source_family": "swe-bench-pro",
+      "traj_id": "sweagent-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-473a15f7908f2bb6d670b0e908ab34a28d8cf7e2-v363c8a7e5ccdf6968fc7ab84a2053ac78036691d-d3f257e7"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-f8e7fea0becae25ae20606f1422068137189fe9e-f1d1d09d.tar.zst",
+      "bytes": 135612,
+      "sha256": "de2ce9e696e99a93985c29edfd7a451bb8e4ca871953be5a6524bd71ad6b5607",
+      "source_family": "swe-bench-pro",
+      "traj_id": "sweagent-OpenAI__GPT-5-instance_qutebrowser__qutebrowser-f8e7fea0becae25ae20606f1422068137189fe9e-f1d1d09d"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-microsoft__vscode-135197-4a0fddee.tar.zst",
+      "bytes": 335994,
+      "sha256": "38b1b8e040a488dbe9772deb54625cbd35c42d9acea32b7da539d8e9a7b5867b",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-microsoft__vscode-135197-4a0fddee"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-microsoft__vscode-160342-b846798e.tar.zst",
+      "bytes": 100362,
+      "sha256": "9659bbe7f6b31abd1007be6053750af0b48e6613b24499519f1ae0ac6180bbb1",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-microsoft__vscode-160342-b846798e"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-microsoft__vscode-177084-ddcf304b.tar.zst",
+      "bytes": 100746,
+      "sha256": "ab5394b77cd57046f887316b21eb6d07053d5e758044fa70499e84b5331caf3c",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-microsoft__vscode-177084-ddcf304b"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-nlohmann__json-2989-de7a03b5.tar.zst",
+      "bytes": 31053,
+      "sha256": "ad0e6efbc568e2bc050f170221a0375e19456b65f7e0d49b0e11b7124dba6424",
+      "source_family": "multi-swe-bench",
+      "traj_id": "sweagent-OpenAI__GPT-5-nlohmann__json-2989-de7a03b5"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-serverless__serverless-2576-80a1d381.tar.zst",
+      "bytes": 65235,
+      "sha256": "13bf67ce32424ce95271d159dc3f25a93c0ded32295166c3ac304597dd30619f",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-serverless__serverless-2576-80a1d381"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-serverless__serverless-3457-5ad91382.tar.zst",
+      "bytes": 69185,
+      "sha256": "e3dab4cd9a9244633a0c85f670c5848a5a5d137840a937e5a7cc1772d5c04133",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-serverless__serverless-3457-5ad91382"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-serverless__serverless-7374-2a246c8b.tar.zst",
+      "bytes": 66848,
+      "sha256": "17489f5d40a72257ce971bd570f1f12f5d56d84b95d367fe6f77be75fe773a00",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-serverless__serverless-7374-2a246c8b"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-yt-dlp__yt-dlp-5933-2584b464.tar.zst",
+      "bytes": 112544,
+      "sha256": "438598aaac3f2e5870bf5236da9c190d73d2795df59c0733ab91c9c09ca832a2",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-yt-dlp__yt-dlp-5933-2584b464"
+    },
+    {
+      "agent": "SWE-agent",
+      "artifact_path": "bench_artifacts/full/sweagent-OpenAI__GPT-5-yt-dlp__yt-dlp-9862-841baea5.tar.zst",
+      "bytes": 69786,
+      "sha256": "c739cfb373681f8c0ab0a494b3f6206f632573893d234a06dde5b12cdd21acf7",
+      "source_family": "swe-polybench",
+      "traj_id": "sweagent-OpenAI__GPT-5-yt-dlp__yt-dlp-9862-841baea5"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-catch-me-if-you-can-d89cfe9a.tar.zst",
+      "bytes": 126503,
+      "sha256": "34ed3bdcc66bda7ddab6dc3c276218bba931d139163bec90ba84187ccd071d94",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-catch-me-if-you-can-d89cfe9a"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-conda-env-conflict-resolution-a9c17f07.tar.zst",
+      "bytes": 104237,
+      "sha256": "cefc25bd3b3957a81d40905844e4fbe5c4d8ce31a5f5490ab3a0bae3e70421ae",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-conda-env-conflict-resolution-a9c17f07"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-fix-code-vulnerability-3a3bc00e.tar.zst",
+      "bytes": 296662,
+      "sha256": "d7ef19a6105fd79bee3f22b54a93244ebe133a39cc7d5f70ccf742e7224a6b37",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-fix-code-vulnerability-3a3bc00e"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-gpt2-codegolf-a0d3636a.tar.zst",
+      "bytes": 33813,
+      "sha256": "fb047f4888dcd981745ebafa72b2e2e67506e5f8847d5dbda079e510c1d31bde",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-gpt2-codegolf-a0d3636a"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-hf-train-lora-adapter-0f6aa9d1.tar.zst",
+      "bytes": 504829,
+      "sha256": "617d4bfe3f628aeef04801af429c417906799a43fd5fdcfe6909e5c437850407",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-hf-train-lora-adapter-0f6aa9d1"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-largest-eigenval-eb9cc4f2.tar.zst",
+      "bytes": 93817,
+      "sha256": "b215fd45ef761bb028a4816f87b5f11caac24a6f4a952419534bcb09ef470a99",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-largest-eigenval-eb9cc4f2"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-magsac-install-4c7fd435.tar.zst",
+      "bytes": 668327,
+      "sha256": "41b62d0459ebaeca657224dd483db49ba67cd180f108ea9d95178f6afa5871b0",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-magsac-install-4c7fd435"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-parallelize-graph-619aaf8f.tar.zst",
+      "bytes": 86220,
+      "sha256": "686b4d3211cb3b6f2ef1ede9fa5cfa888f2dd09656386a77acfb45b64f6d27eb",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-parallelize-graph-619aaf8f"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-password-recovery-0d7e8446.tar.zst",
+      "bytes": 52521,
+      "sha256": "216795c91efe6b9e6583ab234eaa7178255c19dd1c9e4056eeb99ebc5a7d943c",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-password-recovery-0d7e8446"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-play-zork-c2eb2245.tar.zst",
+      "bytes": 188346,
+      "sha256": "da2029f5551cdd68cf2a5b8fbfca63b23db69a5fb35657588db7c7d102bca9f6",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-play-zork-c2eb2245"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-predicate-pushdown-bench-ce270ec8.tar.zst",
+      "bytes": 56358,
+      "sha256": "8f807efb7c4b884d9527bf622a50ffb2a09a19c083cac5037fc0622060193b94",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-predicate-pushdown-bench-ce270ec8"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-pypi-server-302bbb1f.tar.zst",
+      "bytes": 33007,
+      "sha256": "0022f24a6639f033730174a85f3b9f26bc8e06922f483d36365767bc0aaed843",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-pypi-server-302bbb1f"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-reshard-c4-data-14835550.tar.zst",
+      "bytes": 82911,
+      "sha256": "9f4e252bfe4bbeccf1a3f6c84f4275a3670c4abe500b13c5ae164750c31315ab",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-reshard-c4-data-14835550"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-schemelike-metacircular-eval-ea12ff59.tar.zst",
+      "bytes": 145811,
+      "sha256": "05a3e644de272c713d4debb58ec727176c4699d8c1a01ba6fe04a48ac4965e76",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-schemelike-metacircular-eval-ea12ff59"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-speech-to-text-6c0c82dd.tar.zst",
+      "bytes": 216931,
+      "sha256": "1e1d310bfd58a00cd899c6ddb852273a0800e2dfffaffd52c927208ab0ff7181",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-speech-to-text-6c0c82dd"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-stable-parallel-kmeans-9f16d721.tar.zst",
+      "bytes": 69789,
+      "sha256": "450890f3b46759989c1b0fcdf3ba356fe24f19706e2586cd895f7bd3bcafb506",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-Anthropic__Claude-Sonnet-4-20250514-Thinking-stable-parallel-kmeans-9f16d721"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-break-filter-js-from-html-99b435eb.tar.zst",
+      "bytes": 92285,
+      "sha256": "a6eb6b3455d0e39e98991e8090c498ab7fb046bc827c851d7c8bcc04493072a3",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-break-filter-js-from-html-99b435eb"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-catch-me-if-you-can-7f73ac9f.tar.zst",
+      "bytes": 258213,
+      "sha256": "e2b90c24c410432a43f85aa6b5b61ec80c71da7733603fe5b0efd2447d68788b",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-catch-me-if-you-can-7f73ac9f"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-conda-env-conflict-resolution-c8664885.tar.zst",
+      "bytes": 114182,
+      "sha256": "6fd1cd653435c1ec422a18077946b7b0eec3fae829ded9a0f5aac30f41119eb2",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-conda-env-conflict-resolution-c8664885"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-dna-insert-520c18b9.tar.zst",
+      "bytes": 126761,
+      "sha256": "49fcf72048f86207e7773f4a4522793e82e8fc7286ec37c29f0acd8fca5db162",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-dna-insert-520c18b9"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-fibonacci-server-b27e6f1b.tar.zst",
+      "bytes": 60706,
+      "sha256": "d684146420a2a787d6e1a6232a6c49be0e1faa70a765f811938004b7db95e71d",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-fibonacci-server-b27e6f1b"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-fix-pandas-version-fff0e20c.tar.zst",
+      "bytes": 25724,
+      "sha256": "4e31cd5520b228445dbdc13fb746a315f3330c1d904e52b89ed1944fc4cd3c78",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-fix-pandas-version-fff0e20c"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-gpt2-codegolf-9bbae1e0.tar.zst",
+      "bytes": 124053,
+      "sha256": "1e48b5f03e5d3184ad4f5044e744e708e9b35c13d397ee1ab470124f35a35213",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-gpt2-codegolf-9bbae1e0"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-hf-model-inference-ddf6d620.tar.zst",
+      "bytes": 62758,
+      "sha256": "e98eb3d290241616f260aa2dd8f71e85aad354522df192788c19c3d0bfd324bd",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-hf-model-inference-ddf6d620"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-hf-train-lora-adapter-629e2817.tar.zst",
+      "bytes": 129206,
+      "sha256": "be88cbd50657f49aae74d88366455cac87ec59051723a76f8d8b83a525b9a462",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-hf-train-lora-adapter-629e2817"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-interactive-maze-game-117358f3.tar.zst",
+      "bytes": 1236110,
+      "sha256": "817d4f00d875e4ad7e1462bea650128c00dd26ead6121d16f44d19f5735af83d",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-interactive-maze-game-117358f3"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-largest-eigenval-e3f6e113.tar.zst",
+      "bytes": 122780,
+      "sha256": "02168ff025e1645f6d1cd6f3da4faa917305e6da247882ff832a7ab07769add9",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-largest-eigenval-e3f6e113"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-magsac-install-d45062d7.tar.zst",
+      "bytes": 227225,
+      "sha256": "d0f97cdfd87d7c2c7d2706c5d22c271d1e79bdeffb626c2e98e27aba6995c0c9",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-magsac-install-d45062d7"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-multi-source-data-merger-5ac42476.tar.zst",
+      "bytes": 45400,
+      "sha256": "0aab0a80e56162c19c4a9d7bbadf54e1f5037264278f033a1867811462f5c59d",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-multi-source-data-merger-5ac42476"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-parallelize-compute-squares-fb90f58e.tar.zst",
+      "bytes": 40345,
+      "sha256": "12c35e309dbc085aedf2d862b85891c7a922c31232fc4a347e63b0af5265bf82",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-parallelize-compute-squares-fb90f58e"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-password-recovery-cbec8a16.tar.zst",
+      "bytes": 10713279,
+      "sha256": "e23707035bf3e6664fe012a1eca24b76a5a014eb313bb702cb32be58c6601fc9",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-password-recovery-cbec8a16"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-portfolio-optimization-50bb4503.tar.zst",
+      "bytes": 70884,
+      "sha256": "ff59983d352a6cdc611bcbfb5c9883ed912be34206d5427d94e4662986043acb",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-portfolio-optimization-50bb4503"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-predicate-pushdown-bench-0225294a.tar.zst",
+      "bytes": 71426,
+      "sha256": "f42197ddfec0f5db11f709c5396eb265b7c4d2277b12cdeaa558cd30957301c0",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-predicate-pushdown-bench-0225294a"
+    },
+    {
+      "agent": "Terminus2",
+      "artifact_path": "bench_artifacts/full/terminus2-DeepSeek__DeepSeek-V3.2-pypi-server-d98b6803.tar.zst",
+      "bytes": 68476,
+      "sha256": "2374763971668d803acb2331178f8329c6bfe76dd3b75a7f0bdba792b3af4ab7",
+      "source_family": "terminal-bench",
+      "traj_id": "terminus2-DeepSeek__DeepSeek-V3.2-pypi-server-d98b6803"
+    }
+  ],
+  "issue": "https://github.com/pierretokns/frankengate/issues/104",
+  "license": "MIT",
+  "missing_artifact_row_count": 3,
+  "missing_artifact_traj_ids": [
+    "openhands-DeepSeek__DeepSeek-V3.2-break-filter-js-from-html-eb19b6bc",
+    "openhands-DeepSeek__DeepSeek-V3.2-fibonacci-server-b246383b",
+    "openhands-DeepSeek__DeepSeek-V3.2-largest-eigenval-d5360284"
+  ],
+  "raw_data_committed": false,
+  "schema_version": "codetracebench-raw-blocked-test-allowlist-v1",
+  "split_derivation": {
+    "analysis_revision": "codetracebench-manifest-e1-e3-e4-v1",
+    "blocked_test_rows": 148,
+    "full_rows": 3316,
+    "full_sha256": "0c25108022f518d09505d66cee7a8baeaa2d64708c98e8a66a061819c0b3da6d",
+    "repository_or_task_blocked": true,
+    "seed": 20260730,
+    "verified_rows": 1000,
+    "verified_sha256": "ae5926b496f2f7f4c3f6337c0ad6150311d3650c5f3bd00660556b3e41739505"
+  }
+}

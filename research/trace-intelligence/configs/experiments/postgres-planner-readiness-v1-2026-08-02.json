@@ -1,0 +1,24 @@
+{
+  "schema_version": "frankengate.postgres-planner-readiness-policy.v1",
+  "policy_id": "local-trace-query-readiness-v1",
+  "claim_boundary": "local_postgresql_readiness_policy_not_an_aurora_slo",
+  "required_queries": [
+    "controlled_fts",
+    "proposal_queue",
+    "personal_history_page",
+    "structural_tool_events"
+  ],
+  "required_redacted_plan_queries": [
+    "controlled_fts",
+    "personal_history_page",
+    "structural_tool_events"
+  ],
+  "p50_ms_budget": {
+    "controlled_fts": 5.0,
+    "proposal_queue": 2.0,
+    "personal_history_page": 5.0,
+    "structural_tool_events": 30.0
+  },
+  "required_denied_pre_ranking_candidates": 0,
+  "statistics_intervention": "statistics_refresh"
+}

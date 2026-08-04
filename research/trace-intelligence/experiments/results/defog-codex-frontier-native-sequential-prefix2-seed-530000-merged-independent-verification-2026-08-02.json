@@ -1,0 +1,80 @@
+{
+  "arm_verifications": [
+    {
+      "path": "research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-no_skill-seed-530000-independent-verification-2026-08-02.json",
+      "receipt": {
+        "arms": {
+          "no_skill": {
+            "candidate_present": 2,
+            "error_rows": 0,
+            "recomputed_semantic_correct": 2,
+            "stored_semantic_correct": 2,
+            "tasks": 2
+          }
+        },
+        "errors": [],
+        "raw_content_committed": false,
+        "schema_version": "frankengate-defog-semantic-independent-verification-v1",
+        "semantic_recomputation": "executed_against_pinned_governed_postgres",
+        "semantic_verification_passed": true,
+        "source_result_sha256": "0ae3aa8dfb12569072a294cb3c4aba4d215ca836e18c41326fd47a670e65de0a",
+        "stored_vs_recomputed_mismatches": [],
+        "task_count": 4,
+        "trajectory_count": 2
+      },
+      "sha256": "d05aa6348f02be6ad615ec41f2d4c3e452254b04e827f84edacc3008647e5543"
+    },
+    {
+      "path": "research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-length_matched_neutral-seed-530000-independent-verification-2026-08-02.json",
+      "receipt": {
+        "arms": {
+          "length_matched_neutral": {
+            "candidate_present": 2,
+            "error_rows": 0,
+            "recomputed_semantic_correct": 1,
+            "stored_semantic_correct": 1,
+            "tasks": 2
+          }
+        },
+        "errors": [],
+        "raw_content_committed": false,
+        "schema_version": "frankengate-defog-semantic-independent-verification-v1",
+        "semantic_recomputation": "executed_against_pinned_governed_postgres",
+        "semantic_verification_passed": true,
+        "source_result_sha256": "70f5a425b2aaf6b1440c3d775c65878aeb354a2c66780fcb2840425ea125f638",
+        "stored_vs_recomputed_mismatches": [],
+        "task_count": 4,
+        "trajectory_count": 2
+      },
+      "sha256": "9730bd18e9dbdc9338a9f647a4d819ec0f5654a6ab6a1e4dfa9d9d08592a5952"
+    },
+    {
+      "path": "research/trace-intelligence/experiments/results/defog-codex-frontier-broker-transfer-docker-arm-trace2skill_compiled_procedure-seed-530000-independent-verification-2026-08-02.json",
+      "receipt": {
+        "arms": {
+          "trace2skill_compiled_procedure": {
+            "candidate_present": 2,
+            "error_rows": 0,
+            "recomputed_semantic_correct": 2,
+            "stored_semantic_correct": 2,
+            "tasks": 2
+          }
+        },
+        "errors": [],
+        "raw_content_committed": false,
+        "schema_version": "frankengate-defog-semantic-independent-verification-v1",
+        "semantic_recomputation": "executed_against_pinned_governed_postgres",
+        "semantic_verification_passed": true,
+        "source_result_sha256": "cbd5b2bd512ee47799988fa89c0f123a4f322e036b62c64ce7658d17d8c3b15b",
+        "stored_vs_recomputed_mismatches": [],
+        "task_count": 4,
+        "trajectory_count": 2
+      },
+      "sha256": "a91cead6e7d44693c99e016894a770e0040b7bc2e06b9db4f0714245bc8ed3ac"
+    }
+  ],
+  "claim_boundary": "All listed arm receipts passed independent semantic recomputation; this aggregate does not establish universal skill utility or promotion eligibility.",
+  "schema_version": "frankengate-defog-semantic-independent-verification-arm-aggregate-v1",
+  "semantic_recomputation": "all isolated arm receipts independently recomputed against pinned governed Postgres",
+  "semantic_verification_passed": true
+}

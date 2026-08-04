@@ -1,0 +1,34 @@
+# Negative-control configuration: deliberately drops every root span.
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: ${env:FRANKENGATE_OTEL_LISTEN}
+
+processors:
+  filter/drop_roots:
+    error_mode: propagate
+    traces:
+      span:
+        - 'attributes["frankengate.canonical.sequence"] == 0'
+  batch:
+    timeout: 100ms
+    send_batch_size: 512
+
+exporters:
+  file/roundtrip:
+    path: ${env:FRANKENGATE_OTEL_OUTPUT}
+    format: json
+    append: false
+    flush_interval: 100ms
+    create_directory: true
+
+service:
+  telemetry:
+    logs:
+      level: info
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [filter/drop_roots, batch]
+      exporters: [file/roundtrip]

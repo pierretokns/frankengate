@@ -1,0 +1,145 @@
+{
+  "claim_boundary": {
+    "enterprise_intent_labels_established": false,
+    "execution_equivalence_is_semantic_alias": false,
+    "reason": "Result preservation is a deterministic compatibility label for this SQL/database pair, not human intent or a general replacement guarantee.",
+    "validated_artifact_utility_established": false
+  },
+  "cohort": {
+    "database_families": 11,
+    "exact_target": "recorded SQL table references",
+    "execution_equivalent_target": "recorded references plus exposed tables with at least one result-preserving substitution",
+    "selected_successful_tasks": 149,
+    "split": "within-database deterministic odd/even task split"
+  },
+  "folds": [
+    {
+      "db_name": "california_schools",
+      "evaluation_tasks": 6,
+      "mapped_terms": 202,
+      "train_tasks": 7
+    },
+    {
+      "db_name": "card_games",
+      "evaluation_tasks": 6,
+      "mapped_terms": 216,
+      "train_tasks": 6
+    },
+    {
+      "db_name": "codebase_community",
+      "evaluation_tasks": 6,
+      "mapped_terms": 233,
+      "train_tasks": 7
+    },
+    {
+      "db_name": "debit_card_specializing",
+      "evaluation_tasks": 8,
+      "mapped_terms": 181,
+      "train_tasks": 8
+    },
+    {
+      "db_name": "european_football_2",
+      "evaluation_tasks": 7,
+      "mapped_terms": 240,
+      "train_tasks": 7
+    },
+    {
+      "db_name": "financial",
+      "evaluation_tasks": 7,
+      "mapped_terms": 314,
+      "train_tasks": 7
+    },
+    {
+      "db_name": "formula_1",
+      "evaluation_tasks": 6,
+      "mapped_terms": 316,
+      "train_tasks": 7
+    },
+    {
+      "db_name": "student_club",
+      "evaluation_tasks": 7,
+      "mapped_terms": 303,
+      "train_tasks": 8
+    },
+    {
+      "db_name": "superhero",
+      "evaluation_tasks": 7,
+      "mapped_terms": 248,
+      "train_tasks": 8
+    },
+    {
+      "db_name": "thrombosis_prediction",
+      "evaluation_tasks": 7,
+      "mapped_terms": 374,
+      "train_tasks": 7
+    },
+    {
+      "db_name": "toxicology",
+      "evaluation_tasks": 4,
+      "mapped_terms": 188,
+      "train_tasks": 5
+    }
+  ],
+  "metrics": {
+    "lexical": {
+      "exact": {
+        "cases": 71,
+        "mrr": 0.775659,
+        "recall_at_1": 0.676056,
+        "recall_at_10": 1.0,
+        "recall_at_5": 0.887324
+      },
+      "execution_equivalent": {
+        "cases": 71,
+        "mrr": 0.775659,
+        "recall_at_1": 0.676056,
+        "recall_at_10": 1.0,
+        "recall_at_5": 0.887324
+      },
+      "execution_equivalent_only": {
+        "cases": 71,
+        "mrr": 0.003521,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.028169,
+        "recall_at_5": 0.0
+      }
+    },
+    "termhood_alias": {
+      "exact": {
+        "cases": 71,
+        "mrr": 0.788514,
+        "recall_at_1": 0.676056,
+        "recall_at_10": 1.0,
+        "recall_at_5": 0.929577
+      },
+      "execution_equivalent": {
+        "cases": 71,
+        "mrr": 0.788514,
+        "recall_at_1": 0.676056,
+        "recall_at_10": 1.0,
+        "recall_at_5": 0.929577
+      },
+      "execution_equivalent_only": {
+        "cases": 71,
+        "mrr": 0.003521,
+        "recall_at_1": 0.0,
+        "recall_at_10": 0.028169,
+        "recall_at_5": 0.0
+      }
+    }
+  },
+  "replay": {
+    "counterfactual_pairs": 1236,
+    "execution_errors": 1210,
+    "result_mismatches": 22,
+    "result_preserving_candidates": 4
+  },
+  "result_sha256": "ae4eeed129bd43e8217833a7894f1c24c7e9f5c9c4257193bc21ea61af04615e",
+  "schema_version": "frankengate-wmh-bird-equivalence-aware-retrieval-v1",
+  "source": {
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "raw_content_committed": false,
+    "sqlite_root": "external-pinned-bird-minidev",
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630"
+  }
+}

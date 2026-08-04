@@ -1,0 +1,48 @@
+{
+  "schema_version": "frankengate-skillopt-alfworld-intervention-readiness-v1",
+  "study": "Determine whether the local SkillOpt/ALFWorld assets support a causal trace-derived skill replay",
+  "source": {
+    "repository": "microsoft/SkillOpt",
+    "checkout": "/private/tmp/skillopt-latest",
+    "revision": "7da46ae",
+    "license": "MIT",
+    "alfworld_manifest_sha256": "9a6e0e267e5ac24a53a70c312ee62c20b85afc30c8635c138b164ec91bca3978",
+    "train_items_sha256": "76dc1f738fafc9c3c0dae606eb9434b1e1a34b814874e4d791242f9ec90e6378",
+    "val_items_sha256": "1533c56bd98577314a2ed12daffb9be4c1e1de2b052b61d0093b865b753da3f9",
+    "test_items_sha256": "34fc9439b0555e9bea76e2a7d1947953250e5a0cd9363d75ea64c2605ac0c33e"
+  },
+  "asset_audit": {
+    "path_split_present": true,
+    "path_split_counts": {"train": 39, "val": 18, "test": 134},
+    "alfworld_game_payload_present_in_checkout": false,
+    "independent_environment_seed_present_in_matm": false,
+    "environment_replay_snapshot_present_in_matm": false,
+    "skillopt_skill_artifacts_present": true,
+    "interpretation": "The checkout contains task paths, adapters, prompts, and skills, but not the ALFWorld game payload required to replay an environment deterministically. MATM supplies trajectories and outcomes but not a replayable environment state."
+  },
+  "runtime_attempt": {
+    "target_model": "mlx-community/Qwen3.5-9B-OptiQ-4bit",
+    "target_snapshot_manifest": "research/trace-intelligence/configs/models/qwen3.5-9b-optiq-4bit-mlx-runtime-v2.json",
+    "snapshot_revision": "319aed167e31e0bf81ddba0c23f8d218a15be612",
+    "snapshot_bytes": 7120886349,
+    "server_binary": "/opt/homebrew/bin/mlx_lm.server",
+    "attempted": true,
+    "started": false,
+    "failure_class": "runtime_device_initialization",
+    "failure_summary": "MLX server initialization terminated while importing the Metal device backend in the current execution environment; no model response or task episode was emitted.",
+    "raw_model_content_committed": false
+  },
+  "claim_boundary": {
+    "semantic_intervention_executed": false,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "typed_null": true,
+    "reason": "The local task payload and executable model runtime are not jointly available, so a causal ALFWorld replay would be an unsupported counterfactual."
+  },
+  "next_required": [
+    "Materialize the exact ALFWorld game payload matching the path manifest and record its revision/hash",
+    "Run a supervised local model runtime with an attested listener or use an approved remote model endpoint",
+    "Evaluate no-skill, formatting placebo, trace-derived, SkillOpt, SkillGen, and RHO arms on family-disjoint held-out tasks",
+    "Keep sealed outcome verification, tool-budget accounting, and release gating independent of the proposer"
+  ]
+}

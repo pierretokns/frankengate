@@ -1,0 +1,104 @@
+{
+  "schema_version": "frankengate-model-runtime-manifest-v2",
+  "model_id": "mlx-community/Qwen3.5-9B-OptiQ-4bit",
+  "request_model_id": "default_model",
+  "source_url": "https://huggingface.co/mlx-community/Qwen3.5-9B-OptiQ-4bit",
+  "revision": "319aed167e31e0bf81ddba0c23f8d218a15be612",
+  "snapshot": {
+    "files": 9,
+    "bytes": 7120886349,
+    "snapshot_tree_sha256": "05bd897df63d1e0cc0b1946dd65b7e6f156fec8f122ff9bd2b0d4710748f73e9",
+    "file_receipts": [
+      {
+        "relative_path": "chat_template.jinja",
+        "bytes": 7756,
+        "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715"
+      },
+      {
+        "relative_path": "config.json",
+        "bytes": 54997,
+        "sha256": "c26624f7afaf690c4e79d00726853abfa37f06620be303a33df679209e4bc0c1"
+      },
+      {
+        "relative_path": "generation_config.json",
+        "bytes": 148,
+        "sha256": "f2130efdf66df1834aa4f7a6e48752e88a8dff41965739c6ffb2bb26c841615e"
+      },
+      {
+        "relative_path": "model-00001-of-00002.safetensors",
+        "bytes": 5349382977,
+        "sha256": "ac85c6ecdcd12ab778d44a9d6f90f1080498173c7fa6da2f335f3c42b716d85c"
+      },
+      {
+        "relative_path": "model-00002-of-00002.safetensors",
+        "bytes": 1751328661,
+        "sha256": "9d3a23b2307c705af2e86bbf2af791f0d63eae8c24042c5f362ad7586caa0062"
+      },
+      {
+        "relative_path": "model.safetensors.index.json",
+        "bytes": 95099,
+        "sha256": "cbce930c725bf5066038c09ed16fbb755dae6e595013c75475235bc682a565f6"
+      },
+      {
+        "relative_path": "optiq_metadata.json",
+        "bytes": 26233,
+        "sha256": "ee34e7aec78859db7f3473e1b3c75170de0985b71aabd971aa6344c9f792dec8"
+      },
+      {
+        "relative_path": "tokenizer.json",
+        "bytes": 19989343,
+        "sha256": "87a7830d63fcf43bf241c3c5242e96e62dd3fdc29224ca26fed8ea333db72de4"
+      },
+      {
+        "relative_path": "tokenizer_config.json",
+        "bytes": 1135,
+        "sha256": "b2bed5e033438f09f22b0ce9522115b4807d9bbcc3b82bf23372cb74d93ed081"
+      }
+    ]
+  },
+  "runtime": {
+    "python_version": "3.14.2",
+    "python_executable_sha256": "332c0783571fe1260d5f1832321d7691109ccaf3e9b6ee1fa41ce08194b57ce6",
+    "mlx_lm_console_script_sha256": "37a2cfe7f828c7cbc6c09c73d16481aeda60d08c3b2e1eddd7f4c5cf87171160",
+    "distributions": {
+      "mlx-lm": "0.31.2",
+      "mlx": "0.31.1",
+      "transformers": "5.5.4",
+      "huggingface-hub": "1.10.2",
+      "safetensors": "0.7.0",
+      "tokenizers": "0.22.2"
+    },
+    "critical_source_sha256": {
+      "mlx_lm_server_py": "b21c6c29cd9d4695105c511be9cccbb023a58861154c9c1a67314d6164e82b45",
+      "mlx_lm_tokenizer_utils_py": "a6bbbedcd4d117b51b7b32c776ec483d30ed672625b4185bf316a1ba141c98f0",
+      "mlx_lm_qwen3_coder_parser_py": "32de6d9f7472a1f00a2acfaacaf13e0e0864cfc19adebbff688ac5004b8ecc25"
+    }
+  },
+  "server_contract": {
+    "supervisor_owns_process": true,
+    "arbitrary_endpoint_allowed": false,
+    "listener_pid_must_match_owned_child": true,
+    "host": "127.0.0.1",
+    "port": "ephemeral",
+    "request_model_id": "default_model",
+    "temperature": 0,
+    "top_p": 1,
+    "top_k": 0,
+    "min_p": 0,
+    "max_completion_tokens": 256,
+    "thinking_enabled": false,
+    "native_tool_calling_required": true,
+    "tool_choice": "required",
+    "stream": false,
+    "decode_concurrency": 1,
+    "prompt_concurrency": 1,
+    "prompt_cache_size": 0,
+    "offline_only": true,
+    "snapshot_pre_and_post_hash_required": true
+  },
+  "claim_boundary": {
+    "frontier_model": false,
+    "production_model": false,
+    "paper_grade_only_after_full_runtime_tree_and_listener_attestation": true
+  }
+}

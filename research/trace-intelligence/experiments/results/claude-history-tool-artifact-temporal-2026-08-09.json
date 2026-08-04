@@ -1,0 +1,369 @@
+{
+  "buckets": {
+    "no_prior_success": {
+      "errors": 6054,
+      "success_rate": 0.887216,
+      "successes": 47624,
+      "uses": 53678
+    },
+    "prior_other_project_success_only": {
+      "errors": 170,
+      "success_rate": 0.971615,
+      "successes": 5819,
+      "uses": 5989
+    },
+    "prior_same_project_success": {
+      "errors": 358,
+      "success_rate": 0.968268,
+      "successes": 10924,
+      "uses": 11282
+    }
+  },
+  "category_buckets": {
+    "mutation": {
+      "call_count": 27458,
+      "exact": {
+        "no_prior_success": {
+          "errors": 1585,
+          "success_rate": 0.941272,
+          "successes": 25404,
+          "uses": 26989
+        },
+        "prior_other_project_success_only": {
+          "errors": 1,
+          "success_rate": 0.96,
+          "successes": 24,
+          "uses": 25
+        },
+        "prior_same_project_success": {
+          "errors": 3,
+          "success_rate": 0.993243,
+          "successes": 441,
+          "uses": 444
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 94,
+          "success_rate": 0.93955,
+          "successes": 1461,
+          "uses": 1555
+        },
+        "parameter_other_project_success_only": {
+          "errors": 389,
+          "success_rate": 0.942853,
+          "successes": 6418,
+          "uses": 6807
+        },
+        "parameter_same_project_success": {
+          "errors": 1106,
+          "success_rate": 0.942082,
+          "successes": 17990,
+          "uses": 19096
+        }
+      }
+    },
+    "orchestration": {
+      "call_count": 534,
+      "exact": {
+        "no_prior_success": {
+          "errors": 71,
+          "success_rate": 0.864504,
+          "successes": 453,
+          "uses": 524
+        },
+        "prior_same_project_success": {
+          "errors": 0,
+          "success_rate": 1.0,
+          "successes": 10,
+          "uses": 10
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 1,
+          "success_rate": 0.916667,
+          "successes": 11,
+          "uses": 12
+        },
+        "parameter_other_project_success_only": {
+          "errors": 16,
+          "success_rate": 0.888889,
+          "successes": 128,
+          "uses": 144
+        },
+        "parameter_same_project_success": {
+          "errors": 54,
+          "success_rate": 0.857143,
+          "successes": 324,
+          "uses": 378
+        }
+      }
+    },
+    "other": {
+      "call_count": 1851,
+      "exact": {
+        "no_prior_success": {
+          "errors": 153,
+          "success_rate": 0.914668,
+          "successes": 1640,
+          "uses": 1793
+        },
+        "prior_other_project_success_only": {
+          "errors": 2,
+          "success_rate": 0.955556,
+          "successes": 43,
+          "uses": 45
+        },
+        "prior_same_project_success": {
+          "errors": 0,
+          "success_rate": 1.0,
+          "successes": 13,
+          "uses": 13
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 30,
+          "success_rate": 0.929245,
+          "successes": 394,
+          "uses": 424
+        },
+        "parameter_other_project_success_only": {
+          "errors": 30,
+          "success_rate": 0.934066,
+          "successes": 425,
+          "uses": 455
+        },
+        "parameter_same_project_success": {
+          "errors": 95,
+          "success_rate": 0.902263,
+          "successes": 877,
+          "uses": 972
+        }
+      }
+    },
+    "read_search": {
+      "call_count": 26945,
+      "exact": {
+        "no_prior_success": {
+          "errors": 64,
+          "success_rate": 0.993934,
+          "successes": 10486,
+          "uses": 10550
+        },
+        "prior_other_project_success_only": {
+          "errors": 135,
+          "success_rate": 0.976752,
+          "successes": 5672,
+          "uses": 5807
+        },
+        "prior_same_project_success": {
+          "errors": 341,
+          "success_rate": 0.967794,
+          "successes": 10247,
+          "uses": 10588
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 26,
+          "success_rate": 0.986029,
+          "successes": 1835,
+          "uses": 1861
+        },
+        "parameter_other_project_success_only": {
+          "errors": 142,
+          "success_rate": 0.97592,
+          "successes": 5755,
+          "uses": 5897
+        },
+        "parameter_same_project_success": {
+          "errors": 372,
+          "success_rate": 0.980612,
+          "successes": 18815,
+          "uses": 19187
+        }
+      }
+    },
+    "shell": {
+      "call_count": 14161,
+      "exact": {
+        "no_prior_success": {
+          "errors": 4181,
+          "success_rate": 0.697511,
+          "successes": 9641,
+          "uses": 13822
+        },
+        "prior_other_project_success_only": {
+          "errors": 32,
+          "success_rate": 0.714286,
+          "successes": 80,
+          "uses": 112
+        },
+        "prior_same_project_success": {
+          "errors": 14,
+          "success_rate": 0.938326,
+          "successes": 213,
+          "uses": 227
+        }
+      },
+      "parameterized": {
+        "no_prior_keyshape_success": {
+          "errors": 225,
+          "success_rate": 0.783237,
+          "successes": 813,
+          "uses": 1038
+        },
+        "parameter_other_project_success_only": {
+          "errors": 992,
+          "success_rate": 0.730435,
+          "successes": 2688,
+          "uses": 3680
+        },
+        "parameter_same_project_success": {
+          "errors": 3010,
+          "success_rate": 0.681245,
+          "successes": 6433,
+          "uses": 9443
+        }
+      }
+    }
+  },
+  "category_recovery_buckets": {
+    "mutation": {
+      "after_same_session_error": {
+        "errors": 57,
+        "success_rate": 0.7625,
+        "successes": 183,
+        "uses": 240
+      },
+      "no_same_session_error": {
+        "errors": 1532,
+        "success_rate": 0.943714,
+        "successes": 25686,
+        "uses": 27218
+      }
+    },
+    "orchestration": {
+      "no_same_session_error": {
+        "errors": 71,
+        "success_rate": 0.867041,
+        "successes": 463,
+        "uses": 534
+      }
+    },
+    "other": {
+      "after_same_session_error": {
+        "errors": 1,
+        "success_rate": 0.666667,
+        "successes": 2,
+        "uses": 3
+      },
+      "no_same_session_error": {
+        "errors": 154,
+        "success_rate": 0.916667,
+        "successes": 1694,
+        "uses": 1848
+      }
+    },
+    "read_search": {
+      "after_same_session_error": {
+        "errors": 218,
+        "success_rate": 0.941319,
+        "successes": 3497,
+        "uses": 3715
+      },
+      "no_same_session_error": {
+        "errors": 322,
+        "success_rate": 0.986139,
+        "successes": 22908,
+        "uses": 23230
+      }
+    },
+    "shell": {
+      "after_same_session_error": {
+        "errors": 364,
+        "success_rate": 0.335766,
+        "successes": 184,
+        "uses": 548
+      },
+      "no_same_session_error": {
+        "errors": 3863,
+        "success_rate": 0.716227,
+        "successes": 9750,
+        "uses": 13613
+      }
+    }
+  },
+  "claim_boundary": {
+    "causal_user_benefit": false,
+    "reason": "Observed tool success is a process outcome only; this temporal association does not establish semantic intent, safety, optimality, or causal artifact utility.",
+    "safety": false,
+    "semantic_correctness": false
+  },
+  "comparison": {
+    "other_project_lift_vs_no_prior": 0.084398,
+    "parameter_other_project_lift_vs_no_prior_keyshape": -0.015495,
+    "parameter_same_project_lift_vs_no_prior_keyshape": -0.017594,
+    "same_project_lift_vs_no_prior": 0.081052
+  },
+  "coverage": {
+    "distinct_artifact_count": 51424,
+    "distinct_keyshape_count": 370,
+    "distinct_successful_artifact_count": 46270,
+    "missing_timestamp_session_count": 0,
+    "paired_call_count": 70949,
+    "parse_error_count": 0
+  },
+  "parameter_buckets": {
+    "no_prior_keyshape_success": {
+      "errors": 376,
+      "success_rate": 0.923108,
+      "successes": 4514,
+      "uses": 4890
+    },
+    "parameter_other_project_success_only": {
+      "errors": 1569,
+      "success_rate": 0.907613,
+      "successes": 15414,
+      "uses": 16983
+    },
+    "parameter_same_project_success": {
+      "errors": 4637,
+      "success_rate": 0.905514,
+      "successes": 44439,
+      "uses": 49076
+    }
+  },
+  "protocol": {
+    "identity": "strict tool name plus normalized input; paths, UUIDs, and multi-digit numbers canonicalized",
+    "ordering": "session start timestamp, then path; missing timestamps use deterministic path order",
+    "outcome": "explicit tool_result is_error flag",
+    "prior_freeze": "prior success sets updated only after each session completes"
+  },
+  "recovery_buckets": {
+    "after_same_session_error": {
+      "errors": 640,
+      "success_rate": 0.857967,
+      "successes": 3866,
+      "uses": 4506
+    },
+    "no_same_session_error": {
+      "errors": 5942,
+      "success_rate": 0.91057,
+      "successes": 60501,
+      "uses": 66443
+    }
+  },
+  "result_sha256": "d23ebbaa3f3b6e423729adc87b2b71626b2e368214106bb7d1c95fc755823973",
+  "schema_version": "frankengate-claude-history-tool-artifact-temporal-v1",
+  "source": {
+    "byte_count": 998165678,
+    "file_count": 442,
+    "manifest_sha256": "afdc68a06f7a570840d489d57be9dac2e667252cf24470b3b8b66bc1412f0b50",
+    "raw_content_committed": false,
+    "root_name": "projects",
+    "session_count": 405
+  }
+}

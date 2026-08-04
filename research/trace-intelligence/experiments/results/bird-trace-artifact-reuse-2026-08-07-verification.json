@@ -1,0 +1,14 @@
+{
+  "all_passed": true,
+  "checks": {
+    "claim_boundary": true,
+    "controlled_bounds": true,
+    "natural_bounds": true,
+    "raw_content_external": true,
+    "schema": true,
+    "trace_counts": true,
+    "validated_count": true
+  },
+  "receipt_sha256": "e52e4457dff91ed091cf2b94ed5b341f9b98c6a67e7363318c5620acd09fad07",
+  "schema_version": "frankengate-bird-trace-artifact-reuse-verification-v1"
+}

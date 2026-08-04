@@ -1,0 +1,126 @@
+{
+  "arms": {
+    "goi_proposal": {
+      "completed": 2,
+      "failures": 0,
+      "mean_elapsed_ms": 26420.745,
+      "mean_entities": 16.0,
+      "mean_evidence_grounding_rate": 0.888889,
+      "mean_relations": 7.5
+    },
+    "ontogpt_population": {
+      "completed": 2,
+      "failures": 0,
+      "mean_elapsed_ms": 20952.433,
+      "mean_entities": 11.0,
+      "mean_evidence_grounding_rate": 0.9,
+      "mean_relations": 4.5
+    }
+  },
+  "claim_boundary": {
+    "alias_quality_established": false,
+    "authority_or_temporal_validity_established": false,
+    "ontology_correctness_established": false,
+    "reason": "Public trace excerpts and model-proposed structures have no independent ontology labels, principal/authority labels, temporal ground truth, or changed-system outcomes.",
+    "replay_utility_established": false,
+    "structured_extraction_measured": true
+  },
+  "dataset": {
+    "documents": 2,
+    "raw_content_committed": false,
+    "root_uri": "external://fable-5-traces",
+    "source_hashes_only": true
+  },
+  "protocol": {
+    "arms": [
+      "goi_proposal",
+      "ontogpt_population"
+    ],
+    "model": "gpt-5.6-luna",
+    "raw_prompts_responses_external": true,
+    "starter_schema_relations": [
+      "owns",
+      "uses",
+      "depends_on",
+      "produces",
+      "located_in",
+      "measures",
+      "part_of",
+      "replaces"
+    ],
+    "starter_schema_types": [
+      "system",
+      "repository",
+      "tool",
+      "file",
+      "metric",
+      "task",
+      "person",
+      "service"
+    ]
+  },
+  "records": [
+    {
+      "arm": "goi_proposal",
+      "case": 0,
+      "constraint_count": 4,
+      "elapsed_ms": 23758.774,
+      "entity_count": 17,
+      "evidence_count": 27,
+      "evidence_grounding_rate": 0.851852,
+      "grounded_evidence_count": 23,
+      "prompt_sha256": "030efb74203fad0a45fa5a564cc0143a47cf7d001118b41e02d1b09ca6e72930",
+      "relation_count": 7,
+      "response_sha256": "6660d477351186a71d67264afe69666ff258b89d51bf8e14ad471f49940d477c",
+      "source_sha256": "487da70e2f271674558666d70e9d3841e579460f312db77b572478a90ce03bb5",
+      "status": "ok"
+    },
+    {
+      "arm": "ontogpt_population",
+      "case": 0,
+      "constraint_count": 3,
+      "elapsed_ms": 23614.276,
+      "entity_count": 14,
+      "evidence_count": 20,
+      "evidence_grounding_rate": 0.8,
+      "grounded_evidence_count": 16,
+      "prompt_sha256": "cf6a8d95acd5ee458d42e7d01d07504edb3158c80a0e34adc0f14ed92d02885e",
+      "relation_count": 4,
+      "response_sha256": "2dd252ecff96937f97c695e24bdfbee1434514af4c6ef26fe846ca1fdbf104c7",
+      "source_sha256": "487da70e2f271674558666d70e9d3841e579460f312db77b572478a90ce03bb5",
+      "status": "ok"
+    },
+    {
+      "arm": "goi_proposal",
+      "case": 1,
+      "constraint_count": 3,
+      "elapsed_ms": 29082.716,
+      "entity_count": 15,
+      "evidence_count": 27,
+      "evidence_grounding_rate": 0.925926,
+      "grounded_evidence_count": 25,
+      "prompt_sha256": "5d2503e6742eb3010b85797d56e6bd50a943ad21a2e6d7cdc8041d7ebf3a6171",
+      "relation_count": 8,
+      "response_sha256": "c1786f6af820aa29abd5f0f06e8a0bbfafb1b2649470b9085a47c18753909821",
+      "source_sha256": "e5a13a2e8d425717c956867d766c07c703108d8ae1e2cd3145a6ed414c98ea78",
+      "status": "ok"
+    },
+    {
+      "arm": "ontogpt_population",
+      "case": 1,
+      "constraint_count": 2,
+      "elapsed_ms": 18290.591,
+      "entity_count": 8,
+      "evidence_count": 13,
+      "evidence_grounding_rate": 1.0,
+      "grounded_evidence_count": 13,
+      "prompt_sha256": "120a4386af6c3fa28cce78c4679da5f36f2646ffb239b8a147fa39b5de53cf35",
+      "relation_count": 5,
+      "response_sha256": "b5e67648cc384e3dc49a5b96c5fe8e6eec528032d2824d956232d12bc0bd19d5",
+      "source_sha256": "e5a13a2e8d425717c956867d766c07c703108d8ae1e2cd3145a6ed414c98ea78",
+      "status": "ok"
+    }
+  ],
+  "result_sha256": "77b28073d66effec45d6b444d3c1ea61dc6c580c49334273276b6b748c794625",
+  "schema_version": "frankengate-ontology-induction-frontier-proxy-v1"
+}

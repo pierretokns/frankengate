@@ -1,0 +1,63 @@
+{
+  "aggregate": {
+    "denial_cases": 5,
+    "fail_closed": true,
+    "injection_interpreted_as_sql": false,
+    "valid_accepted": true
+  },
+  "capsule_hash": "2447355abae19099a4d61319c6daddf2a0efed2c71c09be0b3d5cf4ea4c6b15b",
+  "cases": {
+    "bound_parameter_injection": {
+      "accepted": true,
+      "capsule_hash": "2447355abae19099a4d61319c6daddf2a0efed2c71c09be0b3d5cf4ea4c6b15b",
+      "reasons": [],
+      "result_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "row_count": 0
+    },
+    "expired": {
+      "accepted": false,
+      "capsule_hash": "2447355abae19099a4d61319c6daddf2a0efed2c71c09be0b3d5cf4ea4c6b15b",
+      "reasons": [
+        "expired"
+      ]
+    },
+    "schema_drift": {
+      "accepted": false,
+      "capsule_hash": "2447355abae19099a4d61319c6daddf2a0efed2c71c09be0b3d5cf4ea4c6b15b",
+      "reasons": [
+        "schema_fingerprint_mismatch"
+      ]
+    },
+    "stale_epoch": {
+      "accepted": false,
+      "capsule_hash": "2447355abae19099a4d61319c6daddf2a0efed2c71c09be0b3d5cf4ea4c6b15b",
+      "reasons": [
+        "authorization_epoch_mismatch"
+      ]
+    },
+    "valid": {
+      "accepted": true,
+      "capsule_hash": "2447355abae19099a4d61319c6daddf2a0efed2c71c09be0b3d5cf4ea4c6b15b",
+      "reasons": [],
+      "result_digest": "d4cfd3119e35e0cda1df7c40f635954078f9a180af4f4ac9984dd43a6718ed35",
+      "row_count": 2
+    },
+    "wrong_parameters": {
+      "accepted": false,
+      "capsule_hash": "2447355abae19099a4d61319c6daddf2a0efed2c71c09be0b3d5cf4ea4c6b15b",
+      "reasons": [
+        "parameter_contract_mismatch"
+      ]
+    },
+    "wrong_scope": {
+      "accepted": false,
+      "capsule_hash": "2447355abae19099a4d61319c6daddf2a0efed2c71c09be0b3d5cf4ea4c6b15b",
+      "reasons": [
+        "authority_scope_mismatch"
+      ]
+    }
+  },
+  "claim_boundary": "SQLite capsule mechanics only. This does not prove PostgreSQL/Aurora compatibility, artifact quality, semantic equivalence, or user utility.",
+  "lab": "sqlite-in-memory",
+  "schema_version": "frankengate-artifact-capsule-reuse-v1"
+}

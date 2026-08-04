@@ -1,0 +1,13 @@
+{
+  "claim_boundary_verified": true,
+  "counterfactual_pairs_verified": 1236,
+  "reconciliation_verified": true,
+  "retrieval_arms_verified": [
+    "lexical",
+    "lexical_plus_termhood_alias"
+  ],
+  "schema_version": "frankengate-wmh-bird-exposure-counterfactual-verification-v1",
+  "selected_tasks_verified": 149,
+  "source_result_sha256": "8d52cb403f4e667558940b0b3ebc9b4db8f6587e71bb326dba0ac5655bb34c2f",
+  "verification_passed": true
+}

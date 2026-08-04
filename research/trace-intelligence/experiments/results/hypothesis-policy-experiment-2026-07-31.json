@@ -1,0 +1,14 @@
+{
+  "causal_claim": false,
+  "held_out_outcome": false,
+  "no_proposal_control_run": true,
+  "policies": [
+    {"policy": "conservative", "proposals": 1, "visible_before_delete": 1, "visible_after_delete": 0},
+    {"policy": "pooled", "proposals": 1, "visible_before_delete": 1, "visible_after_delete": 0},
+    {"policy": "none", "proposals": 0, "visible_before_delete": 0, "visible_after_delete": 0}
+  ],
+  "proposal_policies_run": 2,
+  "raw_content_emitted": false,
+  "result_sha256": "9c03514a9af32f5799ca937e3ce1f8db70e1ba9f2ad96dc344c0390ac59c0e63",
+  "schema_version": "fg-hypothesis-policy-experiment-v1"
+}

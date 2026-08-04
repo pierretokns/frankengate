@@ -1,0 +1,104 @@
+{
+  "claim_boundary": {
+    "artifact_correctness_established": false,
+    "friction_causality_established": false,
+    "promotion_authorized": false,
+    "reason": "Recurrence and friction proximity identify scoped review candidates only; correctness, safety, task intent, and user benefit require replay and labels.",
+    "same_user_recurrence_measured": true
+  },
+  "raw_content_committed": false,
+  "result_sha256": "1374f9930e77d3ee8b135d856b1c5fea2ac8d187c9871974139a2c0e8a1b7912",
+  "schema_version": "frankengate-dataclaw-same-user-artifact-support-v1",
+  "users": {
+    "peter": {
+      "candidate_count": 34036,
+      "candidate_limit": 100000,
+      "occurrence_totals": {
+        "candidate_occurrences": 73123,
+        "friction_context_occurrences": 33631,
+        "friction_context_rate": 0.459924
+      },
+      "raw_content_committed": false,
+      "session_count": 549,
+      "source_sha256": "dae70421f20da2f1f68fd307a89aedca8c3f5136c21d8604037db124d854093d",
+      "support_tiers": {
+        "cross_project_and_friction_adjacent": 460,
+        "repeated_and_friction_adjacent": 2717,
+        "support_at_least_five_sessions": 780,
+        "support_at_least_three_projects": 67,
+        "support_at_least_two_projects": 518,
+        "support_at_least_two_sessions": 3158
+      },
+      "tier_friction_rates": {
+        "cross_project": {
+          "candidate_count": 518,
+          "friction_context_occurrences": 5776,
+          "friction_context_rate": 0.460129,
+          "occurrences": 12553
+        },
+        "repeated_session": {
+          "candidate_count": 3158,
+          "friction_context_occurrences": 18469,
+          "friction_context_rate": 0.480813,
+          "occurrences": 38412
+        },
+        "single_session": {
+          "candidate_count": 30878,
+          "friction_context_occurrences": 15162,
+          "friction_context_rate": 0.436807,
+          "occurrences": 34711
+        }
+      },
+      "top_support": {
+        "max_occurrences": 618,
+        "max_projects": 9,
+        "max_sessions": 131
+      }
+    },
+    "vaynelee": {
+      "candidate_count": 971,
+      "candidate_limit": 100000,
+      "occurrence_totals": {
+        "candidate_occurrences": 1055,
+        "friction_context_occurrences": 103,
+        "friction_context_rate": 0.09763
+      },
+      "raw_content_committed": false,
+      "session_count": 38,
+      "source_sha256": "6f740acd793727088dc9a98c5e091d7b89e484b2b9c1904b3cb1b826c6176e9d",
+      "support_tiers": {
+        "cross_project_and_friction_adjacent": 1,
+        "repeated_and_friction_adjacent": 3,
+        "support_at_least_five_sessions": 0,
+        "support_at_least_three_projects": 0,
+        "support_at_least_two_projects": 4,
+        "support_at_least_two_sessions": 14
+      },
+      "tier_friction_rates": {
+        "cross_project": {
+          "candidate_count": 4,
+          "friction_context_occurrences": 1,
+          "friction_context_rate": 0.090909,
+          "occurrences": 11
+        },
+        "repeated_session": {
+          "candidate_count": 14,
+          "friction_context_occurrences": 3,
+          "friction_context_rate": 0.073171,
+          "occurrences": 41
+        },
+        "single_session": {
+          "candidate_count": 957,
+          "friction_context_occurrences": 100,
+          "friction_context_rate": 0.098619,
+          "occurrences": 1014
+        }
+      },
+      "top_support": {
+        "max_occurrences": 8,
+        "max_projects": 2,
+        "max_sessions": 3
+      }
+    }
+  }
+}

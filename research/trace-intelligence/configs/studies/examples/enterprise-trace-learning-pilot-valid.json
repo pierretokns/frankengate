@@ -1,0 +1,106 @@
+{
+  "schema_version": "frankengate-enterprise-trace-learning-pilot-v1",
+  "study_id": "example-enterprise-trace-learning-pilot",
+  "cohort_contract_uri": "sealed://study/enterprise-semantic-cohort-v1",
+  "authorization": {
+    "consent_scope_uri": "sealed://authorization/trace-learning-pilot",
+    "source_license_or_authorization": "sealed-authorized-internal-study",
+    "raw_content_access": "sealed-research-service-only"
+  },
+  "design": {
+    "holdouts": {
+      "principal": true,
+      "team": true,
+      "project": true,
+      "system": true,
+      "effective_time": true,
+      "changed_schema_or_authority": true
+    },
+    "retrieval_arms": [
+      "strict_fingerprint",
+      "lexical_termhood",
+      "dense",
+      "learned_reranker",
+      "frontier_review",
+      "frontier_review_plus_replay"
+    ],
+    "artifact_arms": [
+      "no_artifact_regenerate",
+      "strict_fingerprint",
+      "name_only_negative_control",
+      "reviewed_semantic_mapping",
+      "reviewed_mapping_plus_result_validation"
+    ],
+    "skill_arms": [
+      "no_skill",
+      "formatting_placebo",
+      "reviewed_skill",
+      "generated_skill"
+    ],
+    "environment_splits": [
+      "same_family",
+      "project_held_out",
+      "changed_schema_or_authority"
+    ],
+    "paired_factorial": true,
+    "same_task_set_across_arms": true
+  },
+  "required_case_classes": [
+    "target",
+    "hard_negative",
+    "nil",
+    "unclear"
+  ],
+  "required_metrics": [
+    "semantic_success",
+    "authority_safe",
+    "independent_replay_success",
+    "unsafe_accept_rate",
+    "nil_abstention_rate",
+    "regression_rate",
+    "repair_burden",
+    "user_correction_burden",
+    "recommendation_acceptance",
+    "recall_at_k",
+    "mrr",
+    "latency_ms",
+    "token_cost",
+    "reviewer_agreement"
+  ],
+  "promotion_gates": {
+    "minimum_targets": 100,
+    "minimum_hard_negatives": 50,
+    "minimum_nil_or_unclear": 25,
+    "minimum_replay_pass_rate": 0.95,
+    "maximum_unsafe_accepts": 0,
+    "maximum_regression_rate": 0.05,
+    "maximum_cost_multiplier": 1.5,
+    "maximum_latency_multiplier": 1.5,
+    "minimum_reviewer_agreement": 0.8,
+    "must_beat_no_skill_and_placebo_on_held_out": true
+  },
+  "run_contract": {
+    "same_model_across_arms": true,
+    "same_harness_across_arms": true,
+    "same_tool_budget_across_arms": true,
+    "same_timeout_budget_across_arms": true,
+    "paired_task_ids": true,
+    "candidate_pool_frozen_before_labels": true,
+    "independent_evaluator": true,
+    "proposer_excluded_from_evaluator": true,
+    "skill_generated_from_evaluation_task": false
+  },
+  "output_policy": {
+    "raw_content_external_only": true,
+    "receipts_content_free": true,
+    "deletion_receipt_required": true,
+    "provenance_required": true,
+    "sealed_uri_prefixes": ["sealed://", "partner://"]
+  },
+  "partner_packet": {
+    "manifest_uri": "sealed://study/enterprise-trace-learning-pilot/manifest",
+    "receipt_uri": "sealed://study/enterprise-trace-learning-pilot/receipts",
+    "publication_review_required": true,
+    "raw_trace_export": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "content_minimized": true,
+  "outcomes_hidden_from_frontier": true,
+  "queries_verified": 9,
+  "raw_hashes_match": true,
+  "schema_version": "matm-frontier-reranker-verification-v1",
+  "source_result_sha256": "3724f3a71276404d7ae99732d55e09667c76bc4c8c71df0e00d50f42ec6504ef",
+  "verification_passed": true
+}

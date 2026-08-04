@@ -1,0 +1,47 @@
+{
+  "schema_version": "frankengate-enterprise-rag-question-audit-v1",
+  "source": {
+    "questions_sha256": "e25066f4eff3843dd0f3df0d1348113471e072e75007ffe390a0aa83f2a80af2",
+    "raw_question_text_committed": false
+  },
+  "dataset": {
+    "rows": 500,
+    "question_types": {
+      "basic": 175,
+      "semantic": 125,
+      "intra_document_reasoning": 40,
+      "project_related": 40,
+      "constrained": 30,
+      "conflicting_info": 20,
+      "completeness": 20,
+      "miscellaneous": 20,
+      "info_not_found": 20,
+      "high_level": 10
+    },
+    "source_type_question_counts": {
+      "confluence": 114,
+      "fireflies": 25,
+      "github": 60,
+      "gmail": 55,
+      "google_drive": 60,
+      "hubspot": 34,
+      "jira": 100,
+      "linear": 58,
+      "slack": 79
+    },
+    "expected_document_references": 742,
+    "multi_document_questions": 93,
+    "answer_facts": 2427,
+    "questions_without_source_types": 30,
+    "required_field_errors": 0
+  },
+  "claim_boundary": {
+    "document_retrieval_fixture_characterized": true,
+    "trace_learning_measured": false,
+    "ontology_quality_measured": false,
+    "skill_improvement_measured": false,
+    "authority_leakage_measured": false,
+    "reason": "Question parquet contains authored questions, expected document IDs, answers, and facts, but no user trajectories, tool outcomes, exposure decisions, principals, or changed-system replay."
+  },
+  "audit_sha256": "0ecf5fcda410123393f9fcc7143eea19070533a033ef89e4f3c24ea784abd0db"
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "frankengate-ontology-action-trace-preflight-conformance-v1",
+  "contract_sha256": "5b7068b2f835494d7912b1d15d975af93ad335bf0123afceef6c6cb182ad389a",
+  "manifest_sha256": "ed5dd71a0c68b1ddc0161b9ed259401d0e74a61841e581b558234df5eebd70fa",
+  "raw_content_committed": false,
+  "structural_valid": true,
+  "promotion_ready": false,
+  "promotion_note": "Preflight conformance does not prove ontology quality, replay outcomes, or enterprise utility.",
+  "errors": [
+
+  ]
+}

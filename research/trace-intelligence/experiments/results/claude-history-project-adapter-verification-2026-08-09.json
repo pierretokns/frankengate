@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "aggregate_modes_present": true,
+    "claim_boundary_present": true,
+    "nonempty_sessions": true,
+    "raw_content_not_committed": true,
+    "result_hash": true,
+    "schema_version": true
+  },
+  "passed": true,
+  "result_sha256": "2f19adf0b4de2d881b202b4acc86b0e3ddb3d57530889330e792c170241df413",
+  "schema_version": "frankengate-claude-history-project-adapter-verification-v1"
+}

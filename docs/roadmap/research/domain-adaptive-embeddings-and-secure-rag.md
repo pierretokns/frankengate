@@ -15,7 +15,9 @@ jargon cohort, document age, query intent, and authorization boundary.
 - Start with a strong general embedding baseline and hybrid lexical+dense retrieval.
   Finance jargon and identifiers are often exact-match signals; dense retrieval alone
   can hide ticker symbols, version strings, SQL names, and policy IDs.
-- Adapt only after collecting sanitized query-document judgments. Useful supervision is
+- Adapt only after collecting governed query-document judgments. Same-scope internal
+  training may use authorized full-fidelity text; third-party or cross-scope training
+  receives a destination-approved transformed snapshot. Useful supervision is
   accepted/rejected retrieval, clicked or cited passages, resolved friction cases,
   human pairwise labels, and hard negatives that are lexically similar but unauthorized
   or semantically wrong.
@@ -31,10 +33,11 @@ jargon cohort, document age, query intent, and authorization boundary.
 
 ## Curation and adaptation loop
 
-1. Capture a privacy-filtered evidence envelope: tenant/team/document IDs, purpose,
-   policy revision, redacted query, retrieval candidates, scores, selected citations,
-   outcome/evaluator labels, and model/index revisions. Do not store raw prompts,
-   outputs, or tokens by default.
+1. Capture a governed evidence envelope: tenant/team/document IDs, purpose, policy
+   revision, authorized query and candidate references, scores, selected citations,
+   outcome/evaluator labels, and model/index revisions. Keep full text in the
+   access-controlled source or authorized same-scope dataset instead of proliferating
+   copies. Transform only the copy sent across an egress or privilege boundary.
 2. Build query-document positives and hard negatives from approved sources. Keep user,
    team, document sensitivity, and retention metadata attached to every example.
 3. Run lexical, dense, hybrid, and reranker baselines on frozen cohorts. Report slices
@@ -82,7 +85,9 @@ is stale or provenance is unknown.
 ## Initial experiment matrix
 
 Compare (1) lexical BM25, (2) baseline dense, (3) hybrid, (4) hybrid+rereanker, and
-(5) hybrid with a small domain adapter. Use sanitized finance and enterprise cohorts,
+(5) hybrid with a small domain adapter. Use governed finance and enterprise cohorts,
 hard negatives, ACL boundary cases, deleted documents, jargon/OOV cases, and stale-index
-cases. Record quality, p50/p95 latency, memory, storage, and embedding cost. Only the
-experiment bundle—not the production gateway—may call training or large-model judges.
+cases. Local same-scope experiments may retain full fidelity; external model calls use
+transformed copies. Record quality, p50/p95 latency, memory, storage, and embedding
+cost. Only the experiment bundle—not the production gateway—may call training or
+large-model judges.

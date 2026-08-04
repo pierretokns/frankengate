@@ -1,0 +1,92 @@
+{
+  "arms": {
+    "combined": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 1.0,
+      "same_project_top1": 13,
+      "top1_rate": 1.0
+    },
+    "combined_masked": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 1.0,
+      "same_project_top1": 13,
+      "top1_rate": 1.0
+    },
+    "identifier": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 0.9384615384615385,
+      "same_project_top1": 12,
+      "top1_rate": 0.9230769230769231
+    },
+    "identifier_masked": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 0.9384615384615385,
+      "same_project_top1": 12,
+      "top1_rate": 0.9230769230769231
+    },
+    "prompt": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 1.0,
+      "same_project_top1": 13,
+      "top1_rate": 1.0
+    },
+    "prompt_masked": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 1.0,
+      "same_project_top1": 13,
+      "top1_rate": 1.0
+    },
+    "structure": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 0.2147888436349975,
+      "same_project_top1": 1,
+      "top1_rate": 0.07692307692307693
+    },
+    "structure_masked": {
+      "evaluated_sessions": 13,
+      "same_project_mrr": 0.2147888436349975,
+      "same_project_top1": 1,
+      "top1_rate": 0.07692307692307693
+    }
+  },
+  "claim_boundary": {
+    "cross_user_identity_established": false,
+    "enterprise_outcome_established": false,
+    "reason": "Trace Commons has project/workspace proxies but no stable principal identity, semantic task labels, or prospective outcomes.",
+    "skill_gap_established": false,
+    "workstream_proxy_measured": true
+  },
+  "cohort": {
+    "eligible_repeated_project_sessions": 13,
+    "project_proxy_counts": {
+      "<none>": 1,
+      "bentofolio": 2,
+      "cfml": 1,
+      "code": 1,
+      "codsoft": 1,
+      "comparia": 3,
+      "desktop": 1,
+      "dmls": 2,
+      "documents": 2,
+      "epilog": 2,
+      "frostcore": 1,
+      "iceberg": 1,
+      "linux-3.0.1": 1,
+      "neongpt": 1,
+      "nephilimos": 2,
+      "prettify-reddit": 1,
+      "pseudo-os": 1,
+      "slopinator3000": 1,
+      "undertaledeb": 1,
+      "yggdrasil": 2
+    }
+  },
+  "result_sha256": "dd6b623c65046d0847ccef04d3d6882265d881e56426c86ab3427fd3097a9e46",
+  "schema_version": "frankengate-trace-commons-feature-ablation-v1",
+  "source": {
+    "manifest_sha256": "0370db49e7b024d21dd93ed9ab76c850d5a56fc9097e7dae1beb67a2d2184661",
+    "raw_content_committed": false,
+    "session_count": 28,
+    "session_file_count": 28
+  }
+}

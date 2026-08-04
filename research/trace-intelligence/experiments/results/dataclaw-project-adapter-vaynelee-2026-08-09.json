@@ -1,0 +1,114 @@
+{
+  "aggregate": {
+    "combined": {
+      "adapted_mrr": 0.978495,
+      "adapted_recall_at_1": 0.967742,
+      "adapted_recall_at_5": 1.0,
+      "baseline_mrr": 0.978495,
+      "baseline_recall_at_1": 0.967742,
+      "baseline_recall_at_5": 1.0,
+      "eligible_projects": 2,
+      "eligible_sessions": 31,
+      "folds": 2,
+      "folds_detail": [
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "4eae792613f5abfcb89eca5bf65b3e6ace601369b775b2eb55e5f5028977f78f",
+          "test_sessions": 2,
+          "train_sessions": 29,
+          "training_feature_count": 1320
+        },
+        {
+          "adapted_mrr": 0.9770114942528735,
+          "baseline_mrr": 0.9770114942528735,
+          "held_out_project_hash": "96b49dee8bc8b2e56889c95886656070e51065d3f794d4cf53a7d2a59891c016",
+          "test_sessions": 29,
+          "train_sessions": 2,
+          "training_feature_count": 1044
+        }
+      ]
+    },
+    "prompt": {
+      "adapted_mrr": 0.978495,
+      "adapted_recall_at_1": 0.967742,
+      "adapted_recall_at_5": 1.0,
+      "baseline_mrr": 0.978495,
+      "baseline_recall_at_1": 0.967742,
+      "baseline_recall_at_5": 1.0,
+      "eligible_projects": 2,
+      "eligible_sessions": 31,
+      "folds": 2,
+      "folds_detail": [
+        {
+          "adapted_mrr": 1.0,
+          "baseline_mrr": 1.0,
+          "held_out_project_hash": "4eae792613f5abfcb89eca5bf65b3e6ace601369b775b2eb55e5f5028977f78f",
+          "test_sessions": 2,
+          "train_sessions": 29,
+          "training_feature_count": 1306
+        },
+        {
+          "adapted_mrr": 0.9770114942528735,
+          "baseline_mrr": 0.9770114942528735,
+          "held_out_project_hash": "96b49dee8bc8b2e56889c95886656070e51065d3f794d4cf53a7d2a59891c016",
+          "test_sessions": 29,
+          "train_sessions": 2,
+          "training_feature_count": 1040
+        }
+      ]
+    },
+    "tool": {
+      "adapted_mrr": 0.924637,
+      "adapted_recall_at_1": 0.903226,
+      "adapted_recall_at_5": 0.935484,
+      "baseline_mrr": 0.908468,
+      "baseline_recall_at_1": 0.870968,
+      "baseline_recall_at_5": 0.935484,
+      "eligible_projects": 2,
+      "eligible_sessions": 31,
+      "folds": 2,
+      "folds_detail": [
+        {
+          "adapted_mrr": 0.08187134502923976,
+          "baseline_mrr": 0.08125,
+          "held_out_project_hash": "4eae792613f5abfcb89eca5bf65b3e6ace601369b775b2eb55e5f5028977f78f",
+          "test_sessions": 2,
+          "train_sessions": 29,
+          "training_feature_count": 14
+        },
+        {
+          "adapted_mrr": 0.9827586206896551,
+          "baseline_mrr": 0.9655172413793104,
+          "held_out_project_hash": "96b49dee8bc8b2e56889c95886656070e51065d3f794d4cf53a7d2a59891c016",
+          "test_sessions": 29,
+          "train_sessions": 2,
+          "training_feature_count": 4
+        }
+      ]
+    }
+  },
+  "claim_boundary": {
+    "artifact_utility_established": false,
+    "enterprise_semantics_established": false,
+    "neural_embedding_established": false,
+    "project_heldout_adaptation_measured": true,
+    "promotion_authorized": false,
+    "reason": "Project labels are silver workstream proxies; retrieval similarity does not establish task intent, artifact correctness, or user benefit."
+  },
+  "protocol": {
+    "adapter": "fold-local same-project versus cross-project token log-ratio weights",
+    "labels": "DataClaw project labels as silver workstream proxies",
+    "pair_cap_per_token": 5000,
+    "representations": "user prompts, tool names, or both; project names excluded",
+    "split": "leave-one-project-out"
+  },
+  "result_sha256": "164c30f845f6ad4212a7bc31b811d9991bfb8a06cce39a694ae7cc8fc52429ec",
+  "schema_version": "frankengate-dataclaw-project-adapter-v1",
+  "source": {
+    "path_sha256": "6f740acd793727088dc9a98c5e091d7b89e484b2b9c1904b3cb1b826c6176e9d",
+    "raw_content_committed": false,
+    "sample_limit": null,
+    "session_count": 38
+  }
+}

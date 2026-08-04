@@ -1,0 +1,199 @@
+{
+  "schema_version": "frankengate.longitudinal-memory-corrected-replication.v2",
+  "experiment_id": "longitudinal-memory-corrected-replication-v2-2026-07-30",
+  "status": "implementation_preregistration_before_corrected_model_run",
+  "claim_boundary": {
+    "completed_pilot_is_immutable": true,
+    "pilot_outputs_were_seen": true,
+    "this_protocol_was_designed_after_pilot": true,
+    "current_17_unit_cohort_is_mechanics_only": true,
+    "confirmatory_or_paper_grade_claim_allowed": false
+  },
+  "source_strata": [
+    {
+      "label": "trace_commons",
+      "source_family": "trace_commons",
+      "manifest": "../datasets/trace-commons-memory-full-cohort.json",
+      "project_identity": "source_scoped_and_derived_only_from_records_observable_at_or_before_each_call"
+    },
+    {
+      "label": "fable5_top_level",
+      "source_family": "fable5_teichai_ecosystem",
+      "manifest": "../datasets/fable5-top-level-memory-cohort.json",
+      "known_mirrors_are_one_source_family": true
+    }
+  ],
+  "experimental_unit": {
+    "definition": "one_pre_cutoff_online_state_query",
+    "current_census": 17,
+    "pairing": "all_primary_interventions_on_the_same_query",
+    "source_stratified": true,
+    "project_clustered": true,
+    "repeat_invocations_are_not_independent_units": true
+  },
+  "primary_interventions": [
+    {
+      "name": "latest_snapshot",
+      "retrieval": "one_global_latest_strictly_pre_cutoff_matching_normalized_artifact_basename",
+      "project_filter": false,
+      "transmitted_context": [],
+      "transmitted_valid_time": null,
+      "transmitted_recorded_at": null,
+      "equal_boundary_incompatible_values": "retrieval_conflict_with_no_candidate"
+    },
+    {
+      "name": "temporal_ledger",
+      "retrieval": "exact_authority_project_artifact_and_eligible_lineage_at_valid_at_and_known_at",
+      "open_observation_gap": "last_observed_only",
+      "overlapping_equal_precedence_incompatible_values": "conflict",
+      "failed_mutations_create_state": false
+    },
+    {
+      "name": "temporal_plus_released_dream",
+      "base_pack": "byte_and_reference_equivalent_temporal_ledger_base_before_rekeying",
+      "proposal_generation": "query_independent_and_completed_before_target_query_release",
+      "verification": "independent_evidence_only_verifier_without_generator_rationale",
+      "activation": "atomic_copy_on_write_release_only",
+      "deletion": "supporting_evidence_deletion_invalidates_release"
+    }
+  ],
+  "diagnostics_not_primary_interventions": [
+    "deterministic_temporal_policy",
+    "oracle_retrieval",
+    "proposal_only",
+    "empty_evidence_negative_control",
+    "injected_conflict_negative_control"
+  ],
+  "primary_contrasts": [
+    "temporal_ledger_minus_latest_snapshot",
+    "temporal_plus_released_dream_minus_temporal_ledger"
+  ],
+  "online_gold_oracle": {
+    "later_target_observation_defines_primary_correctness": false,
+    "states": [
+      "resolved",
+      "last_observed_only",
+      "conflict",
+      "insufficient"
+    ],
+    "derived_from": "independent_reconstruction_of_authorized_pre_cutoff_source_events",
+    "future_events_or_descendants_allowed": false,
+    "later_observation_agreement": "secondary_predictive_utility_only"
+  },
+  "blinding": {
+    "explicit_intervention_label_transmitted": false,
+    "source_family_transmitted": false,
+    "unit_identifier_transmitted": false,
+    "retrieval_rank_transmitted": false,
+    "gold_label_transmitted": false,
+    "future_result_transmitted": false,
+    "memory_references_rekeyed_per_unit_intervention_repeat": true,
+    "intervention_order": {
+      "method": "sha256_sorted_unit_specific_frozen_order",
+      "seed": 20260730
+    }
+  },
+  "credential_boundary": {
+    "canonical_internal_trace": "pii_full_classified_full_credential_free",
+    "credentials_removed_before_memory_composition": true,
+    "credentials_removed_before_model_evaluator_index_replay_or_export": true,
+    "generic_entropy_is_a_mutation_rule": false,
+    "blanket_internal_pii_redaction": false,
+    "authorized_user_team_admin_full_fidelity_visibility": true,
+    "receipt": "purpose_and_scope_bound_keyed_hmac_content_free",
+    "final_serialized_pack_rescan": "fail_closed",
+    "model_response_rescan": "fail_closed",
+    "external_or_cross_scope_copy": "requires_separate_destination_specific_transform"
+  },
+  "model_runtime": {
+    "manifest": "../models/qwen3.5-9b-optiq-4bit-mlx-runtime-v2.json",
+    "request_model_id": "default_model",
+    "supervisor_owned_loopback_child_required": true,
+    "arbitrary_endpoint_allowed": false,
+    "offline_only": true,
+    "native_tool_call_required": true,
+    "plain_json_fallback_allowed": false,
+    "temperature": 0,
+    "top_p": 1,
+    "top_k": 0,
+    "min_p": 0,
+    "thinking_enabled": false,
+    "max_completion_tokens": 256,
+    "state_repeat_invocations": 5,
+    "primary_repeat_index": 0
+  },
+  "budget": {
+    "pack_token_ceiling": 8192,
+    "whole_items_only": true,
+    "partial_content_truncation_allowed": false,
+    "base_temporal_items_packed_before_proposals": true,
+    "required_base_over_budget": "abort_unit_before_inference",
+    "budget_receipt_model_visible": false
+  },
+  "outcomes": {
+    "primary": [
+      "end_to_end_online_state_correctness",
+      "harmful_selection_rate"
+    ],
+    "retrieval": [
+      "acceptable_gold_recall",
+      "context_leakage",
+      "future_or_lineage_leakage",
+      "conflict_coverage",
+      "whole_item_budget_loss"
+    ],
+    "reasoning_conditional_on_retrieval": [
+      "acceptable_reference_selection",
+      "epistemic_status_accuracy",
+      "citation_validity",
+      "harmful_selection_from_conflicting_or_insufficient_pack"
+    ],
+    "secondary": [
+      "later_observation_agreement",
+      "protocol_valid_output_rate",
+      "repeatability_without_n_inflation",
+      "actual_input_tokens",
+      "correctness_per_1000_input_tokens",
+      "latency_milliseconds"
+    ]
+  },
+  "analysis": {
+    "primary_output": "repeat_index_0",
+    "paired_risk_difference": true,
+    "exact_mcnemar_on_discordant_pairs": true,
+    "holm_adjustment_primary_contrasts": 2,
+    "source_family_fixed_strata": true,
+    "project_cluster_bootstrap": true,
+    "leave_one_project_out_sensitivity": true,
+    "minimum_confirmatory_independent_source_families": 3,
+    "minimum_confirmatory_source_scoped_projects": 5,
+    "prospective_paired_power_required": true,
+    "whole_source_family_external_validation_required": true
+  },
+  "hard_failure_gates": [
+    "credential_survives_any_ordinary_boundary",
+    "target_descendant_future_sibling_or_unauthorized_evidence_leaks",
+    "explicit_intervention_source_unit_rank_or_gold_field_reaches_model",
+    "dream_generation_is_target_query_influenced",
+    "proposal_activates_without_independent_atomic_release",
+    "partial_content_truncation_or_digest_mismatch",
+    "gold_or_candidates_cannot_be_rederived_from_frozen_sources",
+    "missing_unit_intervention_primary_cell",
+    "runtime_or_snapshot_launch_attestation_missing_or_changed",
+    "source_or_project_identity_is_improperly_pooled",
+    "post_smoke_protocol_accommodation_is_unregistered"
+  ],
+  "downgrade_to_exploratory_gates": [
+    "protocol_valid_output_rate_below_0_99",
+    "diversity_or_power_gate_fails",
+    "blinded_reviewer_agreement_below_preregistered_threshold",
+    "source_stratified_effect_materially_reverses",
+    "too_few_discordant_pairs_for_exact_paired_inference"
+  ],
+  "durable_outputs": {
+    "raw_internal_audit_committed": false,
+    "raw_content_or_paths_in_aggregate": false,
+    "raw_identifiers_in_aggregate": false,
+    "aggregate_counts_rates_hashes_latency_and_attestation_roots_allowed": true
+  }
+}

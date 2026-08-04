@@ -1,0 +1,46 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "FrontisAI/NatureBench-traces",
+  "dataset_revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+  "license": "CC-BY-4.0",
+  "source_url": "https://huggingface.co/datasets/FrontisAI/NatureBench-traces/tree/caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "dataset": {
+    "id": "FrontisAI/NatureBench-traces",
+    "revision": "caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+    "license": "CC-BY-4.0",
+    "manifest_url": "https://huggingface.co/datasets/FrontisAI/NatureBench-traces/tree/caa1c5e1473ac8876e5a0c6ede0141e768e0b163",
+    "task_count_in_source": 90
+  },
+  "protocol": {
+    "family_split": "paper_id_disjoint",
+    "source_arms": [
+      "claude-code__deepseek-v4-pro",
+      "claude-code__glm-5.1",
+      "claude-code__opus-4.7",
+      "codex__gpt-5.5",
+      "gemini-cli__gemini-3.5-flash"
+    ],
+    "candidate_skill": "inspect_task_and_data; establish_resource_and_evaluation_baseline; train_with_validation; verify_artifact",
+    "intervention_required_for_benefit_claim": true,
+    "independent_outcome_required": true
+  },
+  "bounded_tasks": [
+    "s41467-025-63412-3",
+    "s41467-025-63418-x",
+    "s41467-025-64512-w",
+    "s41467-025-65557-7",
+    "s41551-024-01257-9",
+    "s41551-024-01312-5",
+    "s41587-024-02414-w",
+    "s41587-024-02428-4",
+    "s41587-025-02585-0",
+    "s41587-025-02654-4"
+  ],
+  "result_file_template": "trajectories/{arm}/{task}/result.json",
+  "raw_trace_policy": "raw transcripts remain outside Git; committed receipt contains hashes and aggregate statuses only"
+}

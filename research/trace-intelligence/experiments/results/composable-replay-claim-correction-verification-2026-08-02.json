@@ -1,0 +1,7 @@
+{
+  "historical_receipts_unchanged": true,
+  "receipt_sha256": "ca4a9027aeb6d98195d22a624adccd28eca4088812b04f063a07ef15d4d20cf7",
+  "schema_version": "frankengate-composable-replay-claim-correction-verification-v1",
+  "source_target_disjointness_verified": true,
+  "verification_passed": true
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "frankengate-dataclaw-structural-friction-audit-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false
+  },
+  "cohort": {
+    "sessions": 436,
+    "user_messages": 5785,
+    "tool_outputs": 0,
+    "explicit_tool_output_messages": 0,
+    "tool_call_messages": 47863,
+    "role_counts": {
+      "user": 5785,
+      "assistant": 52292
+    },
+    "sessions_with_multiple_user_messages": 354,
+    "median_user_messages_per_session": 5
+  },
+  "signals": {
+    "tool_error_outputs": 0,
+    "sessions_with_tool_error": 0,
+    "error_followed_by_non_error_tool_output": 0,
+    "adjacent_exact_repeat_pairs": 19,
+    "adjacent_rephrase_pairs": 121,
+    "sessions_with_rephrase_or_repeat": 49,
+    "user_messages_with_friction_markers": 1131,
+    "structural_friction_candidate_sessions": 0,
+    "resolution_candidate_sessions": 0
+  },
+  "claim_boundary": {
+    "structural_signals_measured": true,
+    "explicit_tool_error_sequence_measured": false,
+    "human_friction_established": false,
+    "satisfaction_or_intent_established": false,
+    "skill_gap_established": false,
+    "causal_intervention_effect_established": false,
+    "promotion_authorized": false,
+    "reason": "The projection exposes user and assistant messages plus tool calls but no explicit tool-result messages, so rephrase/retry candidates are measurable while error-to-success sequences are not. All signals can represent productive iteration and have no independent human labels here."
+  },
+  "decision": "Use structural ordering and error-to-follow-up sequences to prioritize review; do not label friction, evals, skills, or memories automatically without independent adjudication and terminal outcomes."
+}

@@ -1,0 +1,121 @@
+{
+  "candidate": {
+    "artifact_id_sha256": "400115bd469d4d39da6c85c8924f0f3a90e7cfc9eb0724997139e93faf019019",
+    "char_length": 10286,
+    "classification": "trace2skill_compiled_candidate",
+    "word_count": 1313
+  },
+  "checks": {
+    "aggregate_candidate_matches_seeds": true,
+    "aggregate_source_target_split_declared": true,
+    "authority_valid_all_candidate_runs": true,
+    "candidate_identity_stable": true,
+    "candidate_stable_semantic_success": true,
+    "formatting_placebo_control_present": true,
+    "independent_semantic_verifiers_passed": true,
+    "manifest_source_target_split_verified": true,
+    "no_skill_control_present": true,
+    "no_unauthorized_candidate_observations": true,
+    "seed_source_target_split_boundaries_reconciled": false,
+    "source_target_split_receipt_reconciled": true,
+    "task_set_stable": true
+  },
+  "claim_boundary": {
+    "aggregate_declares_source_target_disjoint": true,
+    "causal_skill_benefit_established": false,
+    "interpretation": "One immutable compiled candidate reproduced across two seeds with independent semantic verification and zero unauthorized observations; this is a same-family replay result, not a release or causal enterprise-learning claim.",
+    "manifest_source_target_split_verified": true,
+    "production_promotion_established": false,
+    "same_candidate_replay_verified": true,
+    "seed_claim_boundaries_reconciled": false
+  },
+  "cohort_reconstruction": {
+    "candidate_source_artifacts": 18,
+    "manifest_database_family": "broker",
+    "replay_target_rows": 5,
+    "source_files": [
+      "data/instruct_advanced_postgres.csv",
+      "data/instruct_basic_postgres.csv"
+    ],
+    "source_manifest_rows": 19,
+    "source_target_hash_overlap": 0,
+    "source_validation_failures": 1,
+    "target_file": "data/questions_gen_postgres.csv",
+    "target_manifest_rows": 5
+  },
+  "gates_closed": {
+    "authority_and_unauthorized_observation_checks": true,
+    "immutable_candidate_identity_across_replays": true,
+    "independent_semantic_recomputation": true,
+    "same_family_seed_replay": true,
+    "source_target_disjointness": true
+  },
+  "gates_open": {
+    "aggregate_vs_seed_claim_boundary_reconciliation": true,
+    "changed_schema_or_changed_system_replay": true,
+    "cross_family_and_cross_project_transfer": true,
+    "human_or_sme_semantic_label": true,
+    "prospective_next_task_user_utility": true,
+    "versioned_release_and_rollback_event_for_this_candidate": true
+  },
+  "replay": {
+    "candidate_authority_valid": [
+      5,
+      5
+    ],
+    "candidate_semantic_correct": [
+      5,
+      5
+    ],
+    "candidate_unauthorized_observations": [
+      0,
+      0
+    ],
+    "database_family": "broker",
+    "formatting_placebo_semantic_correct": [
+      3,
+      2
+    ],
+    "no_skill_semantic_correct": [
+      3,
+      2
+    ],
+    "seeds": [
+      840000,
+      850000
+    ],
+    "unique_task_count": 5
+  },
+  "result_sha256": "6760d07def7f535901b99a74a96fc4261c46933a72e9db521cdaef4aa7c4dbd9",
+  "schema_version": "frankengate-composable-candidate-lineage-audit-v1",
+  "source_receipts": {
+    "aggregate": {
+      "raw_content_committed": false,
+      "sha256": "5ef3f17f9c8309af16bb85939fc0177fa4fa2e952e2d4c6bb916dd9841956ebd"
+    },
+    "candidate": {
+      "raw_content_committed": false,
+      "sha256": "5e89637061eeb0264fa1dae01bdf181724b617dd49908838377cff3e1725cb74"
+    },
+    "cohort_manifest": {
+      "raw_content_committed": false,
+      "sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767"
+    },
+    "seed_a": {
+      "raw_content_committed": false,
+      "sha256": "1f4fde983c63357731201e28d3bc3e31f664c0ad4c9d68a963b9f160d4cef54e"
+    },
+    "seed_b": {
+      "raw_content_committed": false,
+      "sha256": "3f944c8e49f0c163158c1cc68b1f53af5d5e4b3214e26f4afadd9877528bf17d"
+    },
+    "verify_a": {
+      "raw_content_committed": false,
+      "sha256": "f35ca9940c5eb70432e2d686f129140a5334be9ec2266f21926d6befc9b984e9"
+    },
+    "verify_b": {
+      "raw_content_committed": false,
+      "sha256": "c02e078f65ee220eb082b673d39c92c44e82dd80d9d7aab9a81aa5f8e8038516"
+    }
+  }
+}

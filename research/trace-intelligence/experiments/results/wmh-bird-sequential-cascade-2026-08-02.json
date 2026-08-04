@@ -1,0 +1,42 @@
+{
+  "schema_version": "frankengate-wmh-bird-sequential-cascade-v1",
+  "source": {
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630",
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "sqlite_root": "external-pinned-bird-minidev",
+    "raw_content_committed": false
+  },
+  "dataset": {
+    "selected_cases": 44,
+    "database_families": ["california_schools", "card_games", "codebase_community", "debit_card_specializing", "european_football_2", "financial", "formula_1", "student_club", "superhero", "thrombosis_prediction", "toxicology"],
+    "per_database_limit": 4,
+    "split": "within-database deterministic odd/even task split; evaluation uses odd half",
+    "candidate_pool": "all tables exposed in each trace",
+    "target": "recorded SQL tables; compatibility adds independently result-preserving substitutions"
+  },
+  "protocol": {
+    "model": "gpt-5.6-luna",
+    "frontier_calls": 88,
+    "max_shortlist": 8,
+    "frontier_sees_sql": false,
+    "frontier_sees_replay_outcomes": false,
+    "frontier_sees_gold_targets": false,
+    "typed_shortlist_before_review": true,
+    "raw_model_outputs_external": true,
+    "run_label": "typed-sequential-cascade-v1"
+  },
+  "arms": {
+    "typed_schema": {"records": 44, "strict_mrr": 0.948864, "strict_recall_at_1": 0.909091, "strict_recall_at_5": 1.0, "strict_recall_at_10": 1.0, "compatible_mrr": 0.948864, "compatible_recall_at_1": 0.909091, "compatible_recall_at_5": 1.0, "compatible_recall_at_10": 1.0, "compatible_selected_rate": 0.405357, "invalid_selected_count": 3.613636, "selected_count": 5.545455},
+    "frontier_full_pool": {"records": 44, "strict_mrr": 0.965909, "strict_recall_at_1": 0.931818, "strict_recall_at_5": 1.0, "strict_recall_at_10": 1.0, "compatible_mrr": 0.965909, "compatible_recall_at_1": 0.931818, "compatible_recall_at_5": 1.0, "compatible_recall_at_10": 1.0, "compatible_selected_rate": 0.916667, "invalid_selected_count": 0.25, "selected_count": 2.090909},
+    "typed_then_frontier": {"records": 44, "strict_mrr": 0.977273, "strict_recall_at_1": 0.954545, "strict_recall_at_5": 1.0, "strict_recall_at_10": 1.0, "compatible_mrr": 0.977273, "compatible_recall_at_1": 0.954545, "compatible_recall_at_5": 1.0, "compatible_recall_at_10": 1.0, "compatible_selected_rate": 0.916667, "invalid_selected_count": 0.25, "selected_count": 2.045455}
+  },
+  "failures": [],
+  "claim_boundary": {
+    "aligned_sequential_cascade_measured": true,
+    "semantic_alias_quality_established": false,
+    "validated_artifact_utility_established": false,
+    "enterprise_skill_transfer_measured": false,
+    "reason": "Frozen public WMH-BIRD proxy with SQLite replay; no human alias labels, principal scopes, authority epochs, or changed-system outcomes."
+  },
+  "result_sha256": "9836493afd5ef5844d56c576b0a623f3dce46877796c508494e366847bbc0670"
+}

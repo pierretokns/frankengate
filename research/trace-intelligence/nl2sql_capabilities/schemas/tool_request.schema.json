@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.invalid/schemas/fg-tool-request-v1.json",
+  "title": "Frankengate governed NL2SQL broker tool request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_nonce",
+    "database_handle",
+    "operation",
+    "arguments"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "fg-tool-request-v1"
+    },
+    "request_nonce": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{22}$"
+    },
+    "database_handle": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{43}$"
+    },
+    "operation": {
+      "enum": [
+        "describe_schema",
+        "execute_sql",
+        "submit_sql",
+        "abstain"
+      ]
+    },
+    "arguments": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "describe_schema"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/$defs/describeArguments"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "execute_sql"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/$defs/executeArguments"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "submit_sql"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/$defs/submitArguments"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "abstain"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/$defs/abstainArguments"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "describeArguments": {
+      "type": "object",
+      "additionalProperties": false,
+      "maxProperties": 0
+    },
+    "executeArguments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sql"
+      ],
+      "properties": {
+        "sql": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "submitArguments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempt_id"
+      ],
+      "properties": {
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{32}$"
+        }
+      }
+    },
+    "abstainArguments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason_code"
+      ],
+      "properties": {
+        "reason_code": {
+          "enum": [
+            "cannot_answer_with_authorized_data",
+            "insufficient_schema",
+            "tool_budget_exhausted",
+            "unsafe_request",
+            "other"
+          ]
+        }
+      }
+    }
+  }
+}

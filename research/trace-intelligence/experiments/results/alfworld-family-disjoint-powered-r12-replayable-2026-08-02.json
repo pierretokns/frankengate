@@ -1,0 +1,161 @@
+{
+  "claim_boundary": {
+    "family_disjoint_semantic_intervention_executed": true,
+    "independent_outcome_verifier": "environment won flag plus expert horizon preflight; independent verifier still required",
+    "reason": "This receipt expands the held-out task count but remains a bounded local study; promotion requires sealed outcome recomputation and a preregistered powered threshold."
+  },
+  "comparison": {
+    "automatic_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "semantic_success_delta_by_model_harness": {
+      "llama3.2:latest|ollama-native-api": {
+        "no_skill_win_rate": 0.0,
+        "trace_mined_win_rate": 0.0,
+        "win_rate_delta": 0.0
+      },
+      "llama3.2:latest|ollama-openai-compatible": {
+        "no_skill_win_rate": 0.0,
+        "trace_mined_win_rate": 0.0,
+        "win_rate_delta": 0.0
+      }
+    }
+  },
+  "dataset": {
+    "excluded_hashes": [],
+    "families": [
+      "look_at_obj_in_light",
+      "pick_and_place_simple",
+      "pick_clean_then_place_in_recep",
+      "pick_heat_then_place_in_recep"
+    ],
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "task_count": 8,
+    "task_hashes": [
+      "67004ec55af32ab6ffca4d1c3aa874c5293249719bb11713c4eaa847457f26a0",
+      "abdc3f574d5d158f934a47278eae6883975892d9cbaedffb86c5224808a14360",
+      "f220f5e57430380bab7584912ff957efd13af320876a26f8ac6dc3359f7aca8f",
+      "d280ee0af78ff56e94121326313b5ebe513e774ebf858756b013accdd6b5a5d7",
+      "a25ec5e6d2486f3c407dc2a46499ceaac8783f66730ea91ff6bc66a9b120e2a5",
+      "9c4476a740f90ec2c7d203376d138e180a6a0e5c9439e15c043a3c9dfe6379e3",
+      "4ba7cfc3d48b93dcf5ccb4d664acc5cf3e89a4db474c0ccca588cfeb6dd758f1",
+      "318242dca1f84ccd9062f46e6fca115cb556ba573e82f341d8b41f61116a7f35"
+    ]
+  },
+  "protocol": {
+    "action_sequences_recorded": true,
+    "arms": [
+      "no_skill",
+      "trace_mined_procedure_v2"
+    ],
+    "controls": [
+      {
+        "expert_steps": 12,
+        "expert_won": true,
+        "family": "look_at_obj_in_light",
+        "task_hash": "67004ec55af32ab6ffca4d1c3aa874c5293249719bb11713c4eaa847457f26a0"
+      },
+      {
+        "expert_steps": 12,
+        "expert_won": true,
+        "family": "look_at_obj_in_light",
+        "task_hash": "abdc3f574d5d158f934a47278eae6883975892d9cbaedffb86c5224808a14360"
+      },
+      {
+        "expert_steps": 6,
+        "expert_won": true,
+        "family": "pick_and_place_simple",
+        "task_hash": "f220f5e57430380bab7584912ff957efd13af320876a26f8ac6dc3359f7aca8f"
+      },
+      {
+        "expert_steps": 5,
+        "expert_won": true,
+        "family": "pick_and_place_simple",
+        "task_hash": "d280ee0af78ff56e94121326313b5ebe513e774ebf858756b013accdd6b5a5d7"
+      },
+      {
+        "expert_steps": 34,
+        "expert_won": true,
+        "family": "pick_clean_then_place_in_recep",
+        "task_hash": "a25ec5e6d2486f3c407dc2a46499ceaac8783f66730ea91ff6bc66a9b120e2a5"
+      },
+      {
+        "expert_steps": 14,
+        "expert_won": true,
+        "family": "pick_clean_then_place_in_recep",
+        "task_hash": "9c4476a740f90ec2c7d203376d138e180a6a0e5c9439e15c043a3c9dfe6379e3"
+      },
+      {
+        "expert_steps": 8,
+        "expert_won": true,
+        "family": "pick_heat_then_place_in_recep",
+        "task_hash": "4ba7cfc3d48b93dcf5ccb4d664acc5cf3e89a4db474c0ccca588cfeb6dd758f1"
+      },
+      {
+        "expert_steps": 12,
+        "expert_won": true,
+        "family": "pick_heat_then_place_in_recep",
+        "task_hash": "318242dca1f84ccd9062f46e6fca115cb556ba573e82f341d8b41f61116a7f35"
+      }
+    ],
+    "endpoints": [
+      "http://127.0.0.1:11434/api/chat",
+      "http://127.0.0.1:11434/v1/chat/completions"
+    ],
+    "expert_horizon_covers_all_tasks": true,
+    "harnesses": [
+      "ollama-native-api",
+      "ollama-openai-compatible"
+    ],
+    "max_steps": 35,
+    "models": [
+      "llama3.2:latest"
+    ],
+    "raw_receipt": "/private/tmp/alfworld-family-disjoint-powered-r12-replayable.raw.json",
+    "tasks_per_family": 2
+  },
+  "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+  "study": "larger family-disjoint trace-derived skill comparison",
+  "summary": {
+    "llama3.2:latest|ollama-native-api|no_skill": {
+      "elapsed_ms": 36547.631,
+      "episodes": 8,
+      "invalid_actions": 0,
+      "mean_elapsed_ms": 4568.453875,
+      "mean_steps": 35.0,
+      "steps": 280,
+      "win_rate": 0.0,
+      "wins": 0
+    },
+    "llama3.2:latest|ollama-native-api|trace_mined_procedure_v2": {
+      "elapsed_ms": 68222.031,
+      "episodes": 8,
+      "invalid_actions": 66,
+      "mean_elapsed_ms": 8527.753875,
+      "mean_steps": 35.0,
+      "steps": 280,
+      "win_rate": 0.0,
+      "wins": 0
+    },
+    "llama3.2:latest|ollama-openai-compatible|no_skill": {
+      "elapsed_ms": 36110.396,
+      "episodes": 8,
+      "invalid_actions": 0,
+      "mean_elapsed_ms": 4513.7995,
+      "mean_steps": 35.0,
+      "steps": 280,
+      "win_rate": 0.0,
+      "wins": 0
+    },
+    "llama3.2:latest|ollama-openai-compatible|trace_mined_procedure_v2": {
+      "elapsed_ms": 68306.585,
+      "episodes": 8,
+      "invalid_actions": 66,
+      "mean_elapsed_ms": 8538.323125,
+      "mean_steps": 35.0,
+      "steps": 280,
+      "win_rate": 0.0,
+      "wins": 0
+    }
+  }
+}

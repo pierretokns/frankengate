@@ -1,0 +1,889 @@
+{
+  "capability_definitions": {
+    "authorization": "governance authorization, epoch, classification, purpose, tenant, owner, and team facts; UI/harness permission mode is deliberately excluded",
+    "branches": "affirmative branch, parallel, delegation, subagent, and workflow-lineage facts; false flags are excluded",
+    "environment_reset_state": "explicit environment identity/configuration/state, seed, snapshot, checkpoint, delta, inventory, and side-effect facts",
+    "observations": "tool-result payload/lifecycle and explicit environment observation facts",
+    "provenance": "dataset/revision/adapter/file provenance plus source record, step, block, and workflow lineage",
+    "replay_identity": "trace/event identity, sequence, causal edges, and source file identity; this is not reset-equivalent replay sufficiency",
+    "retries": "explicit attempt, retry, fallback, or provider-attempt facts; failures or repeated names are not guessed to be retries",
+    "rewards": "source-attributed root outcome values/scores and explicit step reward, score, evaluation, or outcome facts",
+    "termination": "explicit done, success, final score, completion, truncation, termination reason, and source-attributed outcome facts",
+    "time": "start/observation and end instants normalized to Unix nanoseconds before exact comparison",
+    "tool_calls": "tool.proposed identity, call correlation, name, arguments, command, and parent facts",
+    "tool_results": "tool.completed/tool.failed identity, call correlation, payload, status/error, and parent facts"
+  },
+  "claim_limits": [
+    "Retention is exact equality of adapter-observed canonical facts; it is not downstream task utility.",
+    "The profiled round trips use Frankengate extensions or attributes; portable third-party readers may discard them.",
+    "The Wisp family is one public contributor and the MATM family is benchmark-generated ALFWorld, not enterprise prevalence.",
+    "MATM lacks environment seed and replay snapshot, so no format can prove reset-equivalent replay from this source.",
+    "Authorization facts absent from these sources cannot validate authorization preservation; synthetic governed fixtures cover that construct separately."
+  ],
+  "experiment": {
+    "aggregate_only": true,
+    "canonical_is_evidence_authority": true,
+    "measurement_unit": "exact canonical capability fact observed in the source adapter",
+    "name": "ATIF, OpenInference/OTel, coding, and RL schema intersection",
+    "raw_content_or_trace_identifiers_emitted": false,
+    "round_trip_mode": "Frankengate-profiled projection and deterministic reimport"
+  },
+  "families": {
+    "matm_alfworld_rl_environment": {
+      "measurement": {
+        "canonical_event_count": 25885,
+        "formats": {
+          "ATIF_v1_7_profiled": {
+            "capabilities": {
+              "authorization": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "branches": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "environment_reset_state": {
+                "retained_fact_count": 0,
+                "retention": 0.0,
+                "source_fact_count": 32275,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "observations": {
+                "retained_fact_count": 0,
+                "retention": 0.0,
+                "source_fact_count": 77655,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "provenance": {
+                "retained_fact_count": 8520,
+                "retention": 0.247638,
+                "source_fact_count": 34405,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "replay_identity": {
+                "retained_fact_count": 2130,
+                "retention": 0.027429,
+                "source_fact_count": 77655,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "retries": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "rewards": {
+                "retained_fact_count": 4260,
+                "retention": 0.076031,
+                "source_fact_count": 56030,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "termination": {
+                "retained_fact_count": 6390,
+                "retention": 0.165266,
+                "source_fact_count": 38665,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "time": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "tool_calls": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "tool_results": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              }
+            },
+            "export_loss_categories": {
+              "unsupported": 53900
+            },
+            "macro_capability_retention": 0.086061,
+            "overall_retention": 0.067259,
+            "silent_drop_count": 0
+          },
+          "OpenInference_OTel_profiled": {
+            "capabilities": {
+              "authorization": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "branches": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "environment_reset_state": {
+                "retained_fact_count": 0,
+                "retention": 0.0,
+                "source_fact_count": 32275,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "observations": {
+                "retained_fact_count": 25885,
+                "retention": 0.333333,
+                "source_fact_count": 77655,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "provenance": {
+                "retained_fact_count": 0,
+                "retention": 0.0,
+                "source_fact_count": 34405,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "replay_identity": {
+                "retained_fact_count": 77655,
+                "retention": 1.0,
+                "source_fact_count": 77655,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 2130,
+                "trajectories_with_source_facts": 2130
+              },
+              "retries": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "rewards": {
+                "retained_fact_count": 0,
+                "retention": 0.0,
+                "source_fact_count": 56030,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "termination": {
+                "retained_fact_count": 0,
+                "retention": 0.0,
+                "source_fact_count": 38665,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 2130
+              },
+              "time": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "tool_calls": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "tool_results": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              }
+            },
+            "export_loss_categories": {
+              "normalized": 53900,
+              "reconstructed": 51770,
+              "redacted": 51770
+            },
+            "macro_capability_retention": 0.222222,
+            "overall_retention": 0.326949,
+            "silent_drop_count": 0
+          },
+          "canonical": {
+            "capabilities": {
+              "authorization": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "branches": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "environment_reset_state": {
+                "retained_fact_count": 32275,
+                "retention": 1.0,
+                "source_fact_count": 32275,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 2130,
+                "trajectories_with_source_facts": 2130
+              },
+              "observations": {
+                "retained_fact_count": 77655,
+                "retention": 1.0,
+                "source_fact_count": 77655,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 2130,
+                "trajectories_with_source_facts": 2130
+              },
+              "provenance": {
+                "retained_fact_count": 34405,
+                "retention": 1.0,
+                "source_fact_count": 34405,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 2130,
+                "trajectories_with_source_facts": 2130
+              },
+              "replay_identity": {
+                "retained_fact_count": 77655,
+                "retention": 1.0,
+                "source_fact_count": 77655,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 2130,
+                "trajectories_with_source_facts": 2130
+              },
+              "retries": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "rewards": {
+                "retained_fact_count": 56030,
+                "retention": 1.0,
+                "source_fact_count": 56030,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 2130,
+                "trajectories_with_source_facts": 2130
+              },
+              "termination": {
+                "retained_fact_count": 38665,
+                "retention": 1.0,
+                "source_fact_count": 38665,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 2130,
+                "trajectories_with_source_facts": 2130
+              },
+              "time": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "tool_calls": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "tool_results": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              }
+            },
+            "macro_capability_retention": 1.0,
+            "overall_retention": 1.0,
+            "silent_drop_count": 0
+          }
+        },
+        "source_capabilities": {
+          "authorization": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "branches": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "environment_reset_state": {
+            "source_fact_count": 32275,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 2130
+          },
+          "observations": {
+            "source_fact_count": 77655,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 2130
+          },
+          "provenance": {
+            "source_fact_count": 34405,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 2130
+          },
+          "replay_identity": {
+            "source_fact_count": 77655,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 2130
+          },
+          "retries": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "rewards": {
+            "source_fact_count": 56030,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 2130
+          },
+          "termination": {
+            "source_fact_count": 38665,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 2130
+          },
+          "time": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "tool_calls": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "tool_results": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          }
+        },
+        "trajectory_count": 2130
+      },
+      "source_pin": {
+        "adapter": "matm_alfworld_population_v1",
+        "dataset_id": "toeunkim/matm-trajectories",
+        "dataset_revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+        "known_missing_fields": [
+          "retrieved_item_ids",
+          "retrieved_item_content",
+          "retrieval_scores_and_ranks",
+          "memory_snapshot_before",
+          "memory_snapshot_after",
+          "memory_source_lineage",
+          "prompt_after_memory_injection",
+          "environment_seed",
+          "environment_replay_snapshot",
+          "timestamps",
+          "authorization_decisions"
+        ],
+        "license": "Apache-2.0",
+        "manifest_sha256": "e9a269b14da99aadfefefb94efde35b9aeb154865ba1d88c2324e03d5a24baa5",
+        "pyarrow_version": "21.0.0",
+        "source_file": "alfworld/population_runs.parquet",
+        "source_format": "parquet",
+        "source_sha256": "626e2e6351d763739b0e2695a1bc442e1c851c1153c44301017739e3bd1155aa",
+        "source_size_bytes": 4237969,
+        "source_url": "https://huggingface.co/datasets/toeunkim/matm-trajectories",
+        "trajectory_count": 2130
+      }
+    },
+    "wisp_claude_code_tool_rich": {
+      "measurement": {
+        "canonical_event_count": 17293,
+        "formats": {
+          "ATIF_v1_7_profiled": {
+            "capabilities": {
+              "authorization": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "branches": {
+                "retained_fact_count": 4821,
+                "retention": 0.877183,
+                "source_fact_count": 5496,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 37
+              },
+              "environment_reset_state": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "observations": {
+                "retained_fact_count": 11034,
+                "retention": 0.999909,
+                "source_fact_count": 11035,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 87,
+                "trajectories_with_source_facts": 88
+              },
+              "provenance": {
+                "retained_fact_count": 31820,
+                "retention": 0.652825,
+                "source_fact_count": 48742,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 88
+              },
+              "replay_identity": {
+                "retained_fact_count": 15814,
+                "retention": 0.323071,
+                "source_fact_count": 48949,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 88
+              },
+              "retries": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "rewards": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "termination": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "time": {
+                "retained_fact_count": 6770,
+                "retention": 0.462337,
+                "source_fact_count": 14643,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 88
+              },
+              "tool_calls": {
+                "retained_fact_count": 13254,
+                "retention": 1.0,
+                "source_fact_count": 13254,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 88,
+                "trajectories_with_source_facts": 88
+              },
+              "tool_results": {
+                "retained_fact_count": 11034,
+                "retention": 0.999909,
+                "source_fact_count": 11035,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 87,
+                "trajectories_with_source_facts": 88
+              }
+            },
+            "export_loss_categories": {
+              "unsupported": 17681
+            },
+            "macro_capability_retention": 0.759319,
+            "overall_retention": 0.617333,
+            "silent_drop_count": 0
+          },
+          "OpenInference_OTel_profiled": {
+            "capabilities": {
+              "authorization": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "branches": {
+                "retained_fact_count": 0,
+                "retention": 0.0,
+                "source_fact_count": 5496,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 37
+              },
+              "environment_reset_state": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "observations": {
+                "retained_fact_count": 8828,
+                "retention": 0.8,
+                "source_fact_count": 11035,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 88
+              },
+              "provenance": {
+                "retained_fact_count": 6770,
+                "retention": 0.138895,
+                "source_fact_count": 48742,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 88
+              },
+              "replay_identity": {
+                "retained_fact_count": 48861,
+                "retention": 0.998202,
+                "source_fact_count": 48949,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 88
+              },
+              "retries": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "rewards": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "termination": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "time": {
+                "retained_fact_count": 14643,
+                "retention": 1.0,
+                "source_fact_count": 14643,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 88,
+                "trajectories_with_source_facts": 88
+              },
+              "tool_calls": {
+                "retained_fact_count": 11045,
+                "retention": 0.833333,
+                "source_fact_count": 13254,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 88
+              },
+              "tool_results": {
+                "retained_fact_count": 8828,
+                "retention": 0.8,
+                "source_fact_count": 11035,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 88
+              }
+            },
+            "export_loss_categories": {
+              "normalized": 17681,
+              "reconstructed": 19943,
+              "redacted": 7738
+            },
+            "macro_capability_retention": 0.652919,
+            "overall_retention": 0.646245,
+            "silent_drop_count": 0
+          },
+          "canonical": {
+            "capabilities": {
+              "authorization": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "branches": {
+                "retained_fact_count": 5496,
+                "retention": 1.0,
+                "source_fact_count": 5496,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 37,
+                "trajectories_with_source_facts": 37
+              },
+              "environment_reset_state": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "observations": {
+                "retained_fact_count": 11035,
+                "retention": 1.0,
+                "source_fact_count": 11035,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 88,
+                "trajectories_with_source_facts": 88
+              },
+              "provenance": {
+                "retained_fact_count": 48742,
+                "retention": 1.0,
+                "source_fact_count": 48742,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 88,
+                "trajectories_with_source_facts": 88
+              },
+              "replay_identity": {
+                "retained_fact_count": 48949,
+                "retention": 1.0,
+                "source_fact_count": 48949,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 88,
+                "trajectories_with_source_facts": 88
+              },
+              "retries": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "rewards": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "termination": {
+                "retained_fact_count": 0,
+                "retention": null,
+                "source_fact_count": 0,
+                "source_status": "not_observed",
+                "trajectories_with_complete_retention": 0,
+                "trajectories_with_source_facts": 0
+              },
+              "time": {
+                "retained_fact_count": 14643,
+                "retention": 1.0,
+                "source_fact_count": 14643,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 88,
+                "trajectories_with_source_facts": 88
+              },
+              "tool_calls": {
+                "retained_fact_count": 13254,
+                "retention": 1.0,
+                "source_fact_count": 13254,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 88,
+                "trajectories_with_source_facts": 88
+              },
+              "tool_results": {
+                "retained_fact_count": 11035,
+                "retention": 1.0,
+                "source_fact_count": 11035,
+                "source_status": "observed",
+                "trajectories_with_complete_retention": 88,
+                "trajectories_with_source_facts": 88
+              }
+            },
+            "macro_capability_retention": 1.0,
+            "overall_retention": 1.0,
+            "silent_drop_count": 0
+          }
+        },
+        "source_capabilities": {
+          "authorization": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "branches": {
+            "source_fact_count": 5496,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 37
+          },
+          "environment_reset_state": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "observations": {
+            "source_fact_count": 11035,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 88
+          },
+          "provenance": {
+            "source_fact_count": 48742,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 88
+          },
+          "replay_identity": {
+            "source_fact_count": 48949,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 88
+          },
+          "retries": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "rewards": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "termination": {
+            "source_fact_count": 0,
+            "source_status": "not_observed",
+            "trajectories_with_source_facts": 0
+          },
+          "time": {
+            "source_fact_count": 14643,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 88
+          },
+          "tool_calls": {
+            "source_fact_count": 13254,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 88
+          },
+          "tool_results": {
+            "source_fact_count": 11035,
+            "source_status": "observed",
+            "trajectories_with_source_facts": 88
+          }
+        },
+        "trajectory_count": 88
+      },
+      "source_pin": {
+        "adapter": "wisp-claude-code-canonical-v1",
+        "cache_file_count": 104,
+        "cache_inventory_sha256": "6e633b0a3e2fed9e856f9b9c7765fc8ca1b150ecf8ab626f7082e5edc3e2758f",
+        "dataset_id": "crispwisp/wisp-claude-code-sessions",
+        "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+        "excluded_without_complete_tool_lifecycle": 16,
+        "license": "MIT",
+        "manifest_sha256": "d5a6541a2177180f9ee32065d268169889487f04980f693155bfec25de0b0737",
+        "selected_tool_rich_trajectories": 88,
+        "selection_rule": "canonical trajectory contains at least one tool.proposed and at least one tool.completed or tool.failed event",
+        "source_format": "Claude Code JSONL under a mirror of ~/.claude/projects/",
+        "source_url": "https://huggingface.co/datasets/crispwisp/wisp-claude-code-sessions"
+      }
+    }
+  },
+  "format_pins": {
+    "ATIF_v1_7": {
+      "profile_dependency": "event identity and non-ATIF metadata depend on extra.frankengate and are not portable ATIF guarantees",
+      "repository": "https://github.com/harbor-framework/harbor",
+      "revision": "f5e9d0b71ac4493a4f0620653e2913aee7fc0767",
+      "source": "Harbor RFC ATIF v1.7"
+    },
+    "OpenInference": {
+      "repository": "https://github.com/Arize-ai/openinference",
+      "revision": "789d41974c08a9a13147977f28ef4142a07e2106",
+      "version": "0.1.30"
+    },
+    "OpenTelemetry_GenAI": {
+      "release_status": "pre-release",
+      "repository": "https://github.com/open-telemetry/semantic-conventions-genai",
+      "revision": "434c91dcc34ed038e3048c07720ddfed2c6bddfc"
+    },
+    "OpenTelemetry_semantic_conventions": {
+      "repository": "https://github.com/open-telemetry/semantic-conventions",
+      "revision": "89aae438b3b3b0a8dd33003c9d70592baf7dbd0d",
+      "version": "1.43.0"
+    }
+  },
+  "implementation_sha256": {
+    "atif_adapter.py": "6b84c99610707993e90fb525e0f7fc2a35edcbf7a925a47f599bf574b500676d",
+    "atif_rl_roundtrip.py": "6ffd9a64ec97746a9f4abab079c6cecbc8b7ec530c1415c36c53d1f23c4e4916",
+    "canonical_projection_e0.py": "91e4ee4a13184a305626e05f543524e2246e0d4e855edf815782e648f727e291",
+    "matm_pilot.py": "e92949186c3fcfadef21207a4856f45efe05c662f0221f4b5ce7a1ad3a4a9e48",
+    "wisp_claude_code_adapter.py": "7e4700b42ec40ab4862e5f0488e2ae618545267432cd4b71c59e6758a7dd4583"
+  },
+  "interpretation_contract": {
+    "event_identity_is_not_environment_replay_sufficiency": true,
+    "not_observed_is_not_zero_retention": true,
+    "overall_retention_is_fact_weighted_microaverage": true,
+    "permission_mode_is_not_governance_authorization": true,
+    "projection_loss_receipt_is_not_recovered_evidence": true,
+    "reward_is_not_authorization": true,
+    "tool_proposal_is_not_tool_execution": true
+  },
+  "result_sha256": "db31727656dabd793b7464083a9c9fc29434dfb82f495e9bcffd5fba88163b50",
+  "schema_version": "atif-rl-roundtrip-result-v1"
+}

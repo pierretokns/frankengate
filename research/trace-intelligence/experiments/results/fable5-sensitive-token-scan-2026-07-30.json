@@ -1,0 +1,51 @@
+{
+  "aggregate_scan": {
+    "candidate_interpretation": "regex candidates only; no values emitted and no validity asserted",
+    "possible_secret_regex_candidate_total": 11,
+    "possible_secret_regex_candidates": {
+      "bearer_token_candidate": 11
+    },
+    "redaction_evidence": {
+      "literal_redacted": 7,
+      "numbered_typed_placeholder": 0,
+      "scrubbed_typed_placeholder": 58
+    },
+    "redaction_evidence_total": 65,
+    "strings_scanned": 338210
+  },
+  "candidate_values_emitted": false,
+  "input_receipts": {
+    "manifest_sha256": "2dd19f36a62fb35db1d77d453dff725aa30158113b3a5fcc9ee55f50a0707049",
+    "source_bytes": 58416137,
+    "source_file_count": 79,
+    "source_receipt_root_sha256": "842a4bf7a25dbd602c69713e9b05e103b01a1ab4598626086ed151a0aebd2766",
+    "source_records": 18770
+  },
+  "raw_content_emitted": false,
+  "result_sha256": "561f71287fcc1f9e67d071482a261f60f519dd49076127a2c13bf5629e3f5fd2",
+  "scanner_contract": {
+    "candidate_validity_asserted": false,
+    "candidate_values_emitted": false,
+    "candidate_values_retained": false,
+    "malformed_or_unverified_source_behavior": "fail_closed_no_result",
+    "redact_literal_secret_candidates_suppressed": true,
+    "redaction_classes": [
+      "literal_redacted",
+      "numbered_typed_placeholder",
+      "scrubbed_typed_placeholder"
+    ],
+    "secret_candidate_classes": [
+      "aws_access_key_candidate",
+      "bearer_token_candidate",
+      "github_token_candidate",
+      "huggingface_token_candidate",
+      "jwt_candidate",
+      "openai_or_openrouter_key_candidate",
+      "private_key_header_candidate"
+    ],
+    "traversal": "all_nested_dict_and_list_string_leaves"
+  },
+  "scanner_version": "aggregate-sensitive-token-regex-v1",
+  "schema_version": "aggregate-sensitive-token-scan-result-v1",
+  "source_paths_emitted": false
+}

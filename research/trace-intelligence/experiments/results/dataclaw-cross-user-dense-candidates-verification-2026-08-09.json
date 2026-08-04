@@ -1,0 +1,8 @@
+{
+  "claim_boundary_verified": true,
+  "local_only_protocol_verified": true,
+  "queries_verified": 549,
+  "schema_version": "frankengate-dataclaw-cross-user-dense-candidates-verification-v1",
+  "source_result_sha256": "ceec95e7f40b1b3b3f4d762f1edc11fabd1bf5a87fff9dfec4e3771e0c2b51db",
+  "verification_passed": true
+}

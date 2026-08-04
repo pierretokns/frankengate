@@ -1,0 +1,31 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "AgentNativeResearchLab/discoverphysics-opus4.8-max-ara",
+  "dataset_revision": "9be6e9264220e922fa7fc18399e2f9187a7a880a",
+  "license": "MIT",
+  "source_url": "https://huggingface.co/datasets/AgentNativeResearchLab/discoverphysics-opus4.8-max-ara",
+  "source_format": "Scientific-discovery benchmark with native transcripts, judge streams, reasoning/evidence/source artifacts, and final papers",
+  "adapter": "discoverphysics_research_bundle_v1",
+  "publication_basis": "Intentional public benchmark release",
+  "privacy_review": "Benchmark corpus; raw content stays outside this repository",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "scientific_worlds": 11,
+    "files": 267,
+    "bytes": 26900000,
+    "native_agent_transcripts": 11,
+    "judge_jsonl_files": 11,
+    "trace_artifacts": 44,
+    "logic_artifacts": 38,
+    "evidence_artifacts": 37,
+    "source_artifacts": 24,
+    "staging_observation_files": 11,
+    "final_papers": 11
+  },
+  "admission": "admit_as_hypothesis_experiment_observation_claim_paper_control",
+  "enterprise_transfer": "Agent benchmark, not natural human research; final artifacts must not leak backward unless trace events establish availability"
+}

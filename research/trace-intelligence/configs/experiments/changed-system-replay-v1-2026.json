@@ -1,0 +1,74 @@
+{
+  "schema_version": "frankengate-changed-system-replay-config-v1",
+  "study_id": "changed-system-replay-wisp-2026-07-30",
+  "preregistered_claim": "A source-derived assertion can distinguish an implementation that omits a required transition from a resettable original and from a benign implementation that adds only an audit call.",
+  "dataset": {
+    "manifest": "configs/datasets/wisp-claude-code-sessions.json",
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+    "selection": "first 3 by source-content hash among complete single-turn histories with at least two paired tool calls and a final response",
+    "max_cases": 3
+  },
+  "systems": [
+    {
+      "name": "original",
+      "intervention": "execute every source-derived transition",
+      "outcome_label": "completed"
+    },
+    {
+      "name": "benign_audit",
+      "intervention": "execute every source-derived transition and append one audit-only tool call",
+      "outcome_label": "completed"
+    },
+    {
+      "name": "harmful_drop",
+      "intervention": "omit the final required source-derived transition",
+      "outcome_label": "incomplete"
+    }
+  ],
+  "assertions": [
+    "EXACT",
+    "IN_ORDER",
+    "ANY_ORDER"
+  ],
+  "primary_metrics": [
+    "original_false_positive_rate",
+    "benign_false_positive_rate",
+    "harmful_regression_recall"
+  ],
+  "upstream": {
+    "repository": "https://github.com/agentevals-dev/agentevals",
+    "release": "v0.9.7",
+    "commit": "221febbe05927923242a5edc12e68a2b70fd5ae9",
+    "package": "agentevals-cli==0.9.7",
+    "license": "Apache-2.0",
+    "trajectory_matcher_dependency": {
+      "package": "google-adk==2.1.0",
+      "source_tag_commit": "6d15e19f057ee4035960ba5984499cb1eaf943ca"
+    }
+  },
+  "claim_boundary": {
+    "changed_system_executed": true,
+    "source_environment_executed": false,
+    "runtime": "resettable opaque transition replay",
+    "excluded_claims": [
+      "The original Wisp desktop or shell environment was reproduced.",
+      "The recorded final response proves the real user task succeeded.",
+      "A three-case, single-user mechanics cohort estimates enterprise regression accuracy.",
+      "The harmful intervention represents every real software regression."
+    ]
+  },
+  "raw_artifact_policy": {
+    "committed": false,
+    "external_only": [
+      "source JSONL",
+      "OTLP traces",
+      "ADK eval sets",
+      "per-case AgentEvals output",
+      "prompts",
+      "responses",
+      "tool arguments",
+      "tool results"
+    ]
+  }
+}

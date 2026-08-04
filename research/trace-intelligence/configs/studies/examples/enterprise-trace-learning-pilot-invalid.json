@@ -1,0 +1,26 @@
+{
+  "schema_version": "frankengate-enterprise-trace-learning-pilot-v1",
+  "study_id": "invalid-pilot",
+  "cohort_contract_uri": "/private/raw/cohort.json",
+  "authorization": {
+    "consent_scope_uri": "sealed://authorization/invalid",
+    "source_license_or_authorization": "missing",
+    "raw_content_access": "sealed-research-service-only"
+  },
+  "prompt": "raw content must never be committed",
+  "design": {
+    "holdouts": {"principal": true},
+    "retrieval_arms": ["dense"],
+    "artifact_arms": [],
+    "skill_arms": ["no_skill"],
+    "environment_splits": ["same_family"],
+    "paired_factorial": false,
+    "same_task_set_across_arms": false
+  },
+  "required_case_classes": ["target"],
+  "required_metrics": ["mrr"],
+  "promotion_gates": {"maximum_unsafe_accepts": 1},
+  "run_contract": {},
+  "output_policy": {"raw_content_external_only": false},
+  "partner_packet": {"manifest_uri": "file:///tmp/manifest", "receipt_uri": "file:///tmp/receipt", "publication_review_required": false, "raw_trace_export": true}
+}

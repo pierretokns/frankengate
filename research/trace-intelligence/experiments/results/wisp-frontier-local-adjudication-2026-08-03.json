@@ -1,0 +1,61 @@
+{
+  "agreement": {
+    "all_fields_per_candidate": 0.0,
+    "field": {
+      "cause": 0.333333,
+      "evidence_strength": 0.333333,
+      "outcome": 0.166667,
+      "productive_exploration": 0.166667,
+      "relation": 0.166667,
+      "usefulness": 0.0
+    }
+  },
+  "candidates": [
+    {
+      "blind_id": "C-261fac0feaddce141316c02e",
+      "candidate_context_sha256": "79aa189e1c82f34b1aa920c8590e8e3532cfb8d213c13b3501ff0eb82a809127"
+    },
+    {
+      "blind_id": "C-eb51192e4c5e26490fafdc6d",
+      "candidate_context_sha256": "2cd30893e3d790f97169c8e1b44edb3438e9ac5844d78a7201bef03b53dfa36b"
+    },
+    {
+      "blind_id": "C-ece4f7725bf5bae01411d3e1",
+      "candidate_context_sha256": "31ce59baf8571ef11bd99b58e5192dc057d5b04f64ff08ae56ea91f994266709"
+    },
+    {
+      "blind_id": "C-0196a6472157457c3168717b",
+      "candidate_context_sha256": "8c20c95c1ad82d3ea99b8252b627b2d61cc0b897fc1dc632bbba750f28b4e2a5"
+    },
+    {
+      "blind_id": "C-7739984224cca26d2f25f698",
+      "candidate_context_sha256": "32081be44cbfd203e70fb1385685878529af469c38b7b5bb112c9ba63f42591d"
+    },
+    {
+      "blind_id": "C-8feae0a11daea28a2a4af4d4",
+      "candidate_context_sha256": "57b5f6f7c066205bf2b57d8f7a59ce081a23cbf0b54c458792abb1afacfd80c0"
+    }
+  ],
+  "claim_boundary": "Frontier-vs-local model agreement and structured-output study on six public Wisp recovery candidates. Neither model is ground truth; it does not establish insight correctness, human agreement, causal diagnosis, or enterprise utility.",
+  "frontier_output": {
+    "evidence_refs_candidate_local": true,
+    "prompt_sha256": "8b37b876505937282634e53799774c9d73c8acc9e0223d15199dea642b858153",
+    "raw_sha256": "0dfd714066c46e5feed041c731cb81a1a13811bb4063aca54a2c9552c669d02a",
+    "valid": true
+  },
+  "protocol": {
+    "frontier_sees_local_labels": false,
+    "local_label_pass": "rubric_first",
+    "model": "gpt-5.6-luna",
+    "raw_model_output_external": true,
+    "same_label_contract": true
+  },
+  "result_sha256": "4ac779123a3396ca01ed070bd54eb53fc1c7783ddfe4e26f9e5a2cc129069cfc",
+  "schema_version": "frankengate-wisp-frontier-local-adjudication-v1",
+  "source": {
+    "candidate_count": 6,
+    "local_raw_sha256": "cca85a278ead09639da6f7f0078387abb2dd1108258b6567a16a77183a511638",
+    "packet_sha256": "7a519a7f5666eb50dcc4cbba4f2d5d9568b8481168ad01680ae688fdd517fec4",
+    "raw_content_committed": false
+  }
+}

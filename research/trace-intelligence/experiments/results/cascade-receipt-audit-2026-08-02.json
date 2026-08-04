@@ -1,0 +1,101 @@
+{
+  "schema_version": "frankengate-cascade-receipt-audit-v1",
+  "input_receipts": {
+    "wmh": {
+      "sha256": "b318a03725828a683c0ec8ac344e287560295e1f419f80dc80029cafd9e83cba",
+      "raw_content_committed": false
+    },
+    "alias": {
+      "sha256": "2cce6e7472abc10f6c3b8e7481588ca34d99a2528d0648490c3f46775cc80d92",
+      "raw_content_committed": false
+    },
+    "adapter": {
+      "sha256": "0bfc46ab9bc72270ae8737735ecfe17cb4c433652b04987338ce3842c5ca6f86",
+      "raw_content_committed": false
+    },
+    "claude_adapter": {
+      "sha256": "a2cba3e37bf82675ca89febb620760d545b8f3e43edba6e1d2708487ee35e45e",
+      "raw_content_committed": false
+    },
+    "dataclaw": {
+      "sha256": "bb36b27caea239e658dded26a8da0815fa23214441c2d22e9c1621b499ceaebf",
+      "raw_content_committed": false
+    },
+    "identifier": {
+      "sha256": "7334523b932e70887b64451f50e05065c0aa7f79cca6657eb353d2417c476a4d",
+      "raw_content_committed": false
+    },
+    "trajectory": {
+      "sha256": "4e9f72be4ae48e867f9a66700a51685ae0ffa8ec602ff96094f3fb13adfddbda",
+      "raw_content_committed": false
+    }
+  },
+  "observations": {
+    "wmh_bird_dense_vs_lexical": {
+      "mrr_delta": 0.143886,
+      "recall_at_1_delta": 0.204546,
+      "compatible_selection_delta": 0.017045,
+      "invalid_selection_delta": -0.136364,
+      "records": 44
+    },
+    "wmh_bird_frontier_vs_dense": {
+      "mrr_delta": 0.014393,
+      "recall_at_1_delta": 0.0,
+      "compatible_selection_delta": 0.519832,
+      "invalid_selection_delta": -3.386364,
+      "records": 44
+    },
+    "alias_frontier_vs_exact": {
+      "mrr_delta": 0.107143,
+      "recall_at_1_delta": 0.214286,
+      "nil_candidate_rate_frontier": 1.0,
+      "nil_candidate_rate_exact": 1.0,
+      "targeted_cases": 14
+    },
+    "adapter_vs_dense": {
+      "mrr_delta": 0.007765,
+      "recall_at_1_delta": 0.022727,
+      "recall_at_5_delta": -0.022727,
+      "invalid_selection_delta": 0.0,
+      "records": 44
+    },
+    "claude_project_adaptation": {
+      "prompt_mrr_delta": 0.029873,
+      "all_mrr_delta": 0.021652,
+      "prompt_recall_at_1_delta": 0.032178,
+      "all_recall_at_1_delta": 0.024752,
+      "prompt_projects": 37,
+      "all_sessions": 404
+    },
+    "dataclaw_project_adaptation": {
+      "combined_mrr_delta": 0.085111,
+      "combined_recall_at_1_delta": 0.121101,
+      "tool_mrr_delta": -0.00931,
+      "tool_recall_at_1_delta": -0.022018,
+      "projects": 10,
+      "sessions": 545
+    },
+    "trajectory_context_vs_prompt": {
+      "prompt_abstain": 16,
+      "trajectory_abstain": 2,
+      "trajectory_correct_predictions": 8,
+      "trajectory_false_positives": 6,
+      "trajectory_replayable": 9,
+      "trajectory_elapsed_ms": 214131.509,
+      "prompt_elapsed_ms": 154122.868
+    },
+    "identifier_safety": {
+      "mrr": 0.736567,
+      "recall_at_1": 0.647059,
+      "same_scope_collision_before_target": 0.0,
+      "cases": 17
+    }
+  },
+  "claim_boundary": {
+    "new_task_outcome_measured": false,
+    "enterprise_semantic_quality_established": false,
+    "custom_embedding_promotion_established": false,
+    "interpretation": "This is a cross-receipt arithmetic and stage-comparison audit. It does not pool examples, create independent labels, or establish causal utility."
+  },
+  "result_sha256": "89897736291f69a20ad0877461be54dd7333bc6e55bbb2b6e29457f500515b59"
+}

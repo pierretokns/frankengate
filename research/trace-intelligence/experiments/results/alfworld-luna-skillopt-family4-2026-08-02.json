@@ -1,0 +1,362 @@
+{
+    "arms": [
+        "no_skill",
+        "formatting_placebo",
+        "skillopt_candidate"
+    ],
+    "candidate_sha256": "c8219398bf587dae9c33f832f97ed749ea0de978ef8627840df139e0fc3fff20",
+    "candidate_source": "Microsoft SkillOpt published ALFWorld checkpoint (gpt5.5_skill.md)",
+    "claim_boundary": {
+        "automatic_promotion_authorized": false,
+        "causal_skill_benefit_confirmed": false,
+        "real_model_intervention_executed": true,
+        "reason": "Small bounded Codex replication; candidate and controls are compared, but this is not the preregistered powered release gate."
+    },
+    "dataset": {
+        "family_labels": {
+            "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200": "look_at_obj_in_light",
+            "6346e21a83da428833518eec426a06af7ed8489bb05d3ad8c88f78fed63d4317": "pick_and_place_simple",
+            "702c4a487634c1c3a4b3ad407d83e96a3ee529958a2156f94b33404822e1f1fb": "pick_clean_then_place_in_recep",
+            "797b0decf1fc5fd1008bb963619e2513985e6a970c37237685b599e0ab94eb7a": "pick_heat_then_place_in_recep"
+        },
+        "source": "zhangdw/alfworld",
+        "split": "valid_unseen",
+        "task_hashes": [
+            "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+            "6346e21a83da428833518eec426a06af7ed8489bb05d3ad8c88f78fed63d4317",
+            "702c4a487634c1c3a4b3ad407d83e96a3ee529958a2156f94b33404822e1f1fb",
+            "797b0decf1fc5fd1008bb963619e2513985e6a970c37237685b599e0ab94eb7a"
+        ]
+    },
+    "episodes": [
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look"
+            ],
+            "api_calls": 12,
+            "arm": "no_skill",
+            "elapsed_ms": 79878.216,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look"
+            ],
+            "api_calls": 12,
+            "arm": "formatting_placebo",
+            "elapsed_ms": 90742.789,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "go to desk 1",
+                "examine desk 1",
+                "examine desk 1",
+                "examine desk 1",
+                "examine desk 1",
+                "examine desk 1",
+                "examine desk 1",
+                "examine desk 1",
+                "examine desk 1",
+                "examine desk 1",
+                "examine desk 1"
+            ],
+            "api_calls": 12,
+            "arm": "skillopt_candidate",
+            "elapsed_ms": 102221.178,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look"
+            ],
+            "api_calls": 12,
+            "arm": "no_skill",
+            "elapsed_ms": 79201.354,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "6346e21a83da428833518eec426a06af7ed8489bb05d3ad8c88f78fed63d4317",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look"
+            ],
+            "api_calls": 12,
+            "arm": "formatting_placebo",
+            "elapsed_ms": 79111.347,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "6346e21a83da428833518eec426a06af7ed8489bb05d3ad8c88f78fed63d4317",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "go to desk 1",
+                "examine desk 1",
+                "take laptop 2 from desk 1",
+                "move laptop 2 to desk 1",
+                "examine desk 1",
+                "take bowl 1 from desk 1",
+                "use desklamp 1",
+                "examine bowl 1"
+            ],
+            "api_calls": 12,
+            "arm": "skillopt_candidate",
+            "elapsed_ms": 112601.616,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "6346e21a83da428833518eec426a06af7ed8489bb05d3ad8c88f78fed63d4317",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look"
+            ],
+            "api_calls": 12,
+            "arm": "no_skill",
+            "elapsed_ms": 81252.386,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "702c4a487634c1c3a4b3ad407d83e96a3ee529958a2156f94b33404822e1f1fb",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look"
+            ],
+            "api_calls": 12,
+            "arm": "formatting_placebo",
+            "elapsed_ms": 100281.061,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "702c4a487634c1c3a4b3ad407d83e96a3ee529958a2156f94b33404822e1f1fb",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "go to countertop 1",
+                "look",
+                "take egg 3 from countertop 1",
+                "move egg 3 to countertop 1",
+                "look",
+                "examine countertop 1",
+                "take egg 3 from countertop 1",
+                "move egg 3 to countertop 1",
+                "take egg 3 from countertop 1",
+                "move egg 3 to countertop 1",
+                "go to cabinet 1",
+                "take bowl 1 from cabinet 1"
+            ],
+            "api_calls": 12,
+            "arm": "skillopt_candidate",
+            "elapsed_ms": 100518.627,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "702c4a487634c1c3a4b3ad407d83e96a3ee529958a2156f94b33404822e1f1fb",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look"
+            ],
+            "api_calls": 12,
+            "arm": "no_skill",
+            "elapsed_ms": 73328.985,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "797b0decf1fc5fd1008bb963619e2513985e6a970c37237685b599e0ab94eb7a",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look"
+            ],
+            "api_calls": 12,
+            "arm": "formatting_placebo",
+            "elapsed_ms": 78067.45,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "797b0decf1fc5fd1008bb963619e2513985e6a970c37237685b599e0ab94eb7a",
+            "won": false
+        },
+        {
+            "action_sequence": [
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "look",
+                "go to countertop 1",
+                "take pan 1 from countertop 1",
+                "move pan 1 to countertop 1",
+                "take pan 1 from countertop 1",
+                "move pan 1 to countertop 1"
+            ],
+            "api_calls": 12,
+            "arm": "skillopt_candidate",
+            "elapsed_ms": 96679.388,
+            "harness": "codex-cli-subscription",
+            "invalid_action_count": 0,
+            "model": "gpt-5.6-luna",
+            "steps": 12,
+            "task_hash": "797b0decf1fc5fd1008bb963619e2513985e6a970c37237685b599e0ab94eb7a",
+            "won": false
+        }
+    ],
+    "harness": "codex-cli-subscription",
+    "model": "gpt-5.6-luna",
+    "schema_version": "frankengate-alfworld-codex-skillopt-v1",
+    "summary": {
+        "formatting_placebo": {
+            "api_calls": 48,
+            "episodes": 4,
+            "invalid_actions": 0,
+            "steps": 48,
+            "win_rate": 0.0,
+            "wins": 0
+        },
+        "no_skill": {
+            "api_calls": 48,
+            "episodes": 4,
+            "invalid_actions": 0,
+            "steps": 48,
+            "win_rate": 0.0,
+            "wins": 0
+        },
+        "skillopt_candidate": {
+            "api_calls": 48,
+            "episodes": 4,
+            "invalid_actions": 0,
+            "steps": 48,
+            "win_rate": 0.0,
+            "wins": 0
+        }
+    }
+}

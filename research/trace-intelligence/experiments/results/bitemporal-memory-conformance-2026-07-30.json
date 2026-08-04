@@ -1,0 +1,87 @@
+{
+  "assertions": {
+    "failed": 0,
+    "names": [
+      "cross_tenant_candidate_rejected",
+      "deletion_invalidates_candidate_release_and_export",
+      "different_context_not_invalidated",
+      "empty_purpose_intersection_rejected",
+      "failed_dream_cannot_promote",
+      "historical_valid_time_retained",
+      "influenced_trace_not_independent_validation",
+      "new_value_active_after_correction",
+      "old_known_before_correction",
+      "prior_release_immutable",
+      "rollback_is_new_copy_on_write_release",
+      "rollback_restores_parent_view",
+      "scope_intersection_uses_common_purpose",
+      "scope_intersection_uses_max_classification",
+      "stale_authorization_epoch_returns_zero"
+    ],
+    "passed": 15,
+    "total": 15
+  },
+  "engine_version": "governed-bitemporal-release-oracle-v1",
+  "ledger_aggregate": {
+    "candidate_rows": 4,
+    "deletion_invalid_candidate_count": 1,
+    "evidence_rows": 6,
+    "invalidated_exports": 1,
+    "invalidated_releases": 1,
+    "release_kinds": {
+      "deletion_withdrawal": 1,
+      "promotion": 3,
+      "rollback": 1
+    },
+    "release_rows": 5
+  },
+  "not_proven": [
+    "PostgreSQL transaction, RLS, concurrency, or performance behavior",
+    "LLM extraction accuracy, entailment, consolidation quality, or stability",
+    "Graphiti, LangMem, MemPalace, or Anthropic Dreams implementation equivalence",
+    "memory benefit on held-out tasks or natural enterprise traces",
+    "single-user, team, or enterprise release product validity"
+  ],
+  "proven_invariants": [
+    "copy-on-write release preserves prior system-time view",
+    "valid-time correction closes only the matching contextual fact",
+    "partial or failed dream jobs cannot promote",
+    "derived authority is the intersection of evidence authority",
+    "empty-purpose and cross-tenant compositions fail closed",
+    "rollback creates a new release instead of mutating history",
+    "source deletion reaches dependent candidate, release, and export",
+    "memory-influenced traces are excluded from independent validation",
+    "stale authorization epoch yields zero results"
+  ],
+  "result_sha256": "e5380cd58fcc90a5270b7ea1e30df79e2e55e3e24361cc950c6ed8a13982be59",
+  "schema_version": "bitemporal-memory-conformance-result-v1",
+  "source_pins": {
+    "anthropic_dreams": {
+      "mechanism": "asynchronous copy-on-write memory-store output",
+      "revision": "dreaming-2026-04-21",
+      "source": "https://platform.claude.com/docs/en/managed-agents/dreams"
+    },
+    "graphiti": {
+      "mechanism": "episode provenance and temporal fact invalidation",
+      "revision": "v0.29.3@021d3a57d511f21b10adaf7fa923bd5c1fce5e9d",
+      "source": "https://github.com/getzep/graphiti"
+    },
+    "langmem": {
+      "mechanism": "typed create/update/delete memory candidates",
+      "revision": "56d85939d80bb731bd5e237567148d817d7bfd16",
+      "source": "https://github.com/langchain-ai/langmem"
+    },
+    "mempalace": {
+      "mechanism": "verbatim evidence and valid-time provenance",
+      "revision": "v3.6.0@8ab251c452c43f2b07a76a28f2433e258307f571",
+      "source": "https://github.com/MemPalace/mempalace"
+    }
+  },
+  "study_scope": {
+    "architecture_model": "relational copy-on-write ledger",
+    "database_or_rls_executed": false,
+    "input": "deterministic synthetic fact/evidence fixtures",
+    "model_extractor_executed": false,
+    "natural_trace_memory_quality_measured": false
+  }
+}

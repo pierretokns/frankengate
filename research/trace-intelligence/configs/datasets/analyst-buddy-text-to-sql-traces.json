@@ -1,0 +1,36 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "hjerpe/analyst-buddy-traces",
+  "dataset_revision": "d6dee846a92e16381ebd9dafa78bdfcb7dd4bc1d",
+  "source_url": "https://huggingface.co/datasets/hjerpe/analyst-buddy-traces",
+  "license": "CC-BY-SA-4.0",
+  "source_format": "six paired base and fine-tuned SQL-agent trajectories",
+  "adapter": "not_implemented_inventory_only",
+  "admission_status": "qualitative_paired_recovery_control_only",
+  "observed_actions": [
+    "DESCRIBE",
+    "SAMPLE",
+    "QUERY",
+    "ANSWER"
+  ],
+  "replay_classification": {
+    "paired_base_and_finetuned_trajectories": true,
+    "tool_results_preserved": true,
+    "database_families": 1,
+    "tasks": 6,
+    "independently_replayable_from_dataset": false,
+    "suitable_for_qualitative_error_recovery_analysis": true,
+    "suitable_for_statistical_or_cross_schema_claims": false
+  },
+  "unsupported_claims": [
+    "statistical skill benefit",
+    "cross-schema transfer",
+    "enterprise representativeness",
+    "causal attribution to fine-tuning"
+  ],
+  "download_policy": {
+    "raw_data_committed": false,
+    "download_small_json_for_qualitative_arm_only": true,
+    "commit_aggregate_results_only": true
+  }
+}

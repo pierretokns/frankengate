@@ -1,0 +1,9 @@
+{
+  "claim_boundary_verified": true,
+  "completed_verified": 10,
+  "failures_verified": 0,
+  "schema_version": "traject-bench-ssl-trace-normalizer-probe-verification-v1",
+  "selected_verified": 10,
+  "source_result_sha256": "c527bcee6f99afcf8dcc9de5c0df1e6c7f5e36daeb8897a7eac4a382ea01ee14",
+  "verification_passed": true
+}

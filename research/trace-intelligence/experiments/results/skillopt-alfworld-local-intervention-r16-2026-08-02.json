@@ -1,0 +1,50 @@
+{
+  "schema_version": "frankengate-skillopt-alfworld-local-intervention-v1",
+  "study": "Attempt a direct SkillOpt ALFWorld intervention after completing the local dependency stack",
+  "source": {
+    "repository": "microsoft/SkillOpt",
+    "checkout": "/private/tmp/skillopt-latest",
+    "revision": "7da46ae",
+    "alfworld_payload": "/private/tmp/cache/alfworld-zhangdw/extracted/alfworld",
+    "split_manifest": "/private/tmp/skillopt-latest/data/alfworld_path_split",
+    "dataset_sha256": "a15b6c4eef2f86ccc39d082ecd2d99a9e022f92289f71f6367906909aa208c59"
+  },
+  "configuration": {
+    "python": "3.14.2",
+    "optimizer_model": "qwen3:4b",
+    "target_model": "qwen3:4b",
+    "backend": "OpenAI-compatible local endpoint",
+    "train_size": 4,
+    "selection_size": 4,
+    "test_size": 4,
+    "epochs": 1,
+    "max_steps": 12,
+    "workers": 1,
+    "worker_start_method": "fork",
+    "raw_model_content_committed": false
+  },
+  "runtime_findings": {
+    "dependency_stack_completed": true,
+    "engine_started": true,
+    "alfworld_environment_initialized": true,
+    "modern_python_compatibility_patch": "TextWorld 1.7.0 EvalSymbol now passes grammar bindings explicitly to eval; locals().update() is not reliable in optimized Python 3.13+ frames. Patch was applied only in the disposable venv.",
+    "failure_class": "local_model_endpoint_unavailable",
+    "failure_summary": "SkillOpt reached baseline selection rollout, but the configured local Ollama endpoint was not listening (connection refused). The process was stopped before any model response, candidate skill, training update, or scored episode was emitted.",
+    "model_responses_emitted": false,
+    "candidate_skill_emitted": false,
+    "scored_episodes_emitted": false
+  },
+  "claim_boundary": {
+    "skillopt_causal_intervention_executed": false,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "typed_runtime_null": true,
+    "reason": "This is an infrastructure null after the SkillOpt engine and ALFWorld environment became executable; it is not a quality result and cannot support either a positive or negative SkillOpt utility claim.",
+    "next_required": [
+      "Run the same command with an attested, reachable model endpoint",
+      "Save only aggregate SkillOpt metrics and candidate hashes",
+      "Replay the generated candidate on the sealed r13/r14 task cohort beside no-skill, formatting placebo, and trace-derived controls",
+      "Apply the independent outcome, security/policy, and tool-budget verifiers before any promotion"
+    ]
+  }
+}

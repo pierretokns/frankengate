@@ -1,0 +1,10 @@
+{
+  "claim_boundary_verified": true,
+  "metrics_reconciled": true,
+  "protocol_flags_verified": true,
+  "raw_receipts_verified": 8,
+  "schema_version": "frankengate-wmh-bird-sql-explorer-verification-v1",
+  "selected_cases_verified": 8,
+  "source_result_sha256": "8095977d0812b21e0efb0917663df1806efb364cca05f3426bec2b7d5070c280",
+  "verification_passed": true
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "frankengate-trajectory-retrieval-supervision-v1",
+  "study_id": "example-trajectory-retrieval",
+  "consent_scope_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "source_license_or_authorization": "example-license-receipt",
+  "candidate_pool_frozen_before_labels": true,
+  "exposure_log_complete": true,
+  "holdouts": {"principal": true, "team": true, "project": true, "system": true, "effective_time": true},
+  "arms": ["structured_scope", "lexical_identifier", "frozen_dense", "trajectory_distilled_ranker", "frontier_review", "regeneration_control"],
+  "minimum_promotion_counts": {"target": 100, "hard_negative": 50, "nil_or_unclear": 25, "annotators_per_episode": 2},
+  "episodes": [
+    {
+      "episode_id": "example-episode-1",
+      "case_class": "target",
+      "principal_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "team_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "project_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "system_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+      "source_environment_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+      "changed_environment_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+      "effective_at": "2026-08-01T00:00:00Z",
+      "source_authority_epoch": 1,
+      "changed_authority_epoch": 2,
+      "split": "train",
+      "candidate_pool_hash": "7777777777777777777777777777777777777777777777777777777777777777",
+      "exposure_receipt": {"uri": "sha256://exposure/example-episode-1", "sha256": "8888888888888888888888888888888888888888888888888888888888888888", "candidate_set_complete": true, "before_selection": true},
+      "trajectory_receipt": {"uri": "sha256://trajectory/example-episode-1", "sha256": "9999999999999999999999999999999999999999999999999999999999999999", "tool_result_edges_present": true, "complete": true},
+      "outcome_receipt": {"uri": "sha256://outcome/example-episode-1", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "independent_verifier": true},
+      "labels": [
+        {"annotator_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "label": "useful", "concept_id_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "evidence_span_hashes": ["dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"], "temporal_validity": {"valid_from": "2026-08-01T00:00:00Z"}},
+        {"annotator_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "label": "useful", "concept_id_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "evidence_span_hashes": ["ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"], "temporal_validity": {"valid_from": "2026-08-01T00:00:00Z"}}
+      ],
+      "adjudication": {"required": false},
+      "deletion_receipt": {"uri": "sha256://deletion/example-episode-1", "sha256": "1212121212121212121212121212121212121212121212121212121212121212"},
+      "retention": {"raw_content_external_only": true, "deletion_policy_hash": "1313131313131313131313131313131313131313131313131313131313131313"}
+    }
+  ]
+}

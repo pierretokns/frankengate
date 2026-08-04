@@ -1,0 +1,27 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "MRiabov/dataclaw-march-26",
+  "dataset_revision": "3fcd9d92ca9eaf2d5b8377a7c505626880249171",
+  "license": "MIT (dataset card claim)",
+  "source_url": "https://huggingface.co/datasets/MRiabov/dataclaw-march-26",
+  "source_format": "DataClaw envfullscrub JSONL with Codex/Gemini sessions, tool calls, and project metadata",
+  "adapter": "dataclaw_export_integrity_audit_v1",
+  "publication_basis": "Public dataset card reports 775 sessions across 8 projects and a scrubbed export",
+  "privacy_review": "Dataset card reports environment-value scrubbing; local integrity audit found the released JSONL is mostly unparsable",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "declared_sessions": 775,
+    "declared_projects": 8,
+    "complete_home_directory": false,
+    "tool_calls_declared": true,
+    "environment_scrubbed": true,
+    "raw_valid_rows_observed": 9,
+    "token_removal_salvaged_rows_observed": 104
+  },
+  "admission": "inventory_only_reject_at_ingestion",
+  "enterprise_transfer": "No trace mining or semantic evaluation until a parseable, loss-aware export is supplied"
+}

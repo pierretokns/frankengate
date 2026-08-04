@@ -1,0 +1,80 @@
+{
+  "schema_version": "frankengate-oracle-hard-negative-composite-vs-single-v1",
+  "paper": "2505.18366",
+  "dataset": {
+    "source": "nvidia/TechQA-RAG-Eval",
+    "fixture_sha256": "e90f42eea14c1c3fb3769b9b892c18c773f05c82efc26acc292c45e2c18e1abb",
+    "pages": 300,
+    "train_questions": 10,
+    "test_questions": 10,
+    "candidate_limit": 300,
+    "seed": 7,
+    "max_seq_length": 128
+  },
+  "arms": [
+    {
+      "name": "paper_six_encoder_composite",
+      "models": [
+        "dunzhang/stella_en_400M_v5",
+        "jinaai/jina-embeddings-v3",
+        "mixedbread-ai/mxbai-embed-large-v1",
+        "BAAI/bge-large-en-v1.5",
+        "sentence-transformers/LaBSE",
+        "sentence-transformers/all-mpnet-base-v2"
+      ],
+      "triplets_selected": 6,
+      "triplets_unavailable": 4,
+      "selection_rate": 0.6,
+      "pca_components": 211,
+      "backend": "PyTorch CPU"
+    },
+    {
+      "name": "single_stella",
+      "models": ["dunzhang/stella_en_400M_v5"],
+      "triplets_selected": 6,
+      "triplets_unavailable": 4,
+      "selection_rate": 0.6
+    },
+    {
+      "name": "single_jina_v3",
+      "models": ["jinaai/jina-embeddings-v3"],
+      "triplets_selected": 6,
+      "triplets_unavailable": 4,
+      "selection_rate": 0.6
+    },
+    {
+      "name": "single_mxbai",
+      "models": ["mixedbread-ai/mxbai-embed-large-v1"],
+      "triplets_selected": 7,
+      "triplets_unavailable": 3,
+      "selection_rate": 0.7
+    },
+    {
+      "name": "single_bge_large",
+      "models": ["BAAI/bge-large-en-v1.5"],
+      "triplets_selected": 6,
+      "triplets_unavailable": 4,
+      "selection_rate": 0.6
+    },
+    {
+      "name": "single_labse",
+      "models": ["sentence-transformers/LaBSE"],
+      "triplets_selected": 10,
+      "triplets_unavailable": 0,
+      "selection_rate": 1.0
+    },
+    {
+      "name": "single_mpnet",
+      "models": ["sentence-transformers/all-mpnet-base-v2"],
+      "triplets_selected": 7,
+      "triplets_unavailable": 3,
+      "selection_rate": 0.7
+    }
+  ],
+  "interpretation": [
+    "The six-model composite did not increase inequality-valid negative coverage on this fixture; LaBSE alone selected more candidates.",
+    "Selection coverage is not negative quality. No reranker was trained and no false-negative audit was performed in this receipt.",
+    "This is a transfer smoke test, not evidence against the paper's reported MRR gains or for LaBSE as the enterprise model."
+  ],
+  "next_gate": "Run fixed reranker training with audited relevance labels and compare random, lexical, single-model, and six-model negatives on family-disjoint enterprise-like slices."
+}

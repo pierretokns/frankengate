@@ -1,0 +1,20 @@
+{
+  "arms": {
+    "trace_mined_terminal_discipline": {
+      "candidate_present": 4,
+      "error_rows": 0,
+      "recomputed_semantic_correct": 4,
+      "stored_semantic_correct": 4,
+      "tasks": 4
+    }
+  },
+  "errors": [],
+  "raw_content_committed": false,
+  "schema_version": "frankengate-defog-semantic-independent-verification-v1",
+  "semantic_recomputation": "executed_against_pinned_governed_postgres",
+  "semantic_verification_passed": true,
+  "source_result_sha256": "7bae6c923dc251075c7b7e8157ca6f1b882a09b45726c9a8fd65c2c15560b7d1",
+  "stored_vs_recomputed_mismatches": [],
+  "task_count": 4,
+  "trajectory_count": 4
+}

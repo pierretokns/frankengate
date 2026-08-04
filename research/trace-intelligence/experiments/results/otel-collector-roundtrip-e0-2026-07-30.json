@@ -1,0 +1,140 @@
+{
+  "all_acceptance_checks_passed": true,
+  "claim_limits": [
+    "The run proves retention through the pinned local SDK, Collector, batch processor, and alpha file exporter; it does not prove every Collector processor or production backend.",
+    "The carried loss-receipt identity and source event count detect partial per-trace drops, but not a wholly missing trace without an out-of-band source/export manifest.",
+    "Authority event types remain useful for topology, while authority values and content remain suppressed; telemetry is not an authorization evidence store.",
+    "All fixture timestamps are deterministic reconstructions and must not be interpreted as observed latency.",
+    "The governed fixtures are synthetic conformance cases, not evidence of production prevalence or enterprise outcomes."
+  ],
+  "fixture_corpus": {
+    "canonical_events": 48,
+    "canonical_parent_edges": 34,
+    "fixtures": 12,
+    "projected_links": 16,
+    "raw_fixtures_or_identifiers_emitted": false
+  },
+  "main_roundtrip": {
+    "all_main_invariants_passed": true,
+    "authority_attribute_keys_found": 0,
+    "authority_event_types_projected": 7,
+    "authority_event_types_retained": 7,
+    "canonical_attributes_retained": 48,
+    "collector_batches": 1,
+    "content_attribute_keys_found": 0,
+    "duplicate_span_ids": 0,
+    "instrumentation_scope_retained": true,
+    "links_projected": 16,
+    "links_retained": 16,
+    "missing_span_ids": 0,
+    "parent_edges_projected": 34,
+    "parent_edges_retained": 34,
+    "projected_spans": 48,
+    "receipt_documents_entering_telemetry": 0,
+    "receipt_identities_retained": 12,
+    "receipt_identity_matches": 48,
+    "receipt_identity_pointers_retained": 48,
+    "reimport_receipt_silent_drop_count": 0,
+    "reimported_canonical_identities": 48,
+    "reimported_events": 48,
+    "reimported_parent_edges": 34,
+    "resource_attributes_retained": true,
+    "source_authority_fields_suppressed": 30,
+    "source_content_fields_suppressed": 48,
+    "source_loss_receipts": 12,
+    "source_manifest_drop_count": 0,
+    "span_attribute_allowlist_violations": 0,
+    "span_ids_retained": 48,
+    "statuses_retained": 48,
+    "stored_spans": 48,
+    "timestamps_retained_exactly": 48,
+    "tool_lifecycle_semantics_retained": 8,
+    "tool_lifecycle_spans_projected": 8,
+    "trace_event_count_mismatches": 0,
+    "trace_ids_projected": 12,
+    "trace_ids_retained": 12,
+    "unexpected_links": 0,
+    "unexpected_receipt_identities": 0,
+    "unexpected_span_ids": 0,
+    "unexpected_trace_ids": 0
+  },
+  "negative_controls": {
+    "collector_filter_drop_roots": {
+      "collector_exit_code": 0,
+      "collector_storage_created": true,
+      "expected_dropped_spans": 12,
+      "important_limitation": "the storage-to-canonical receipt accounts only for spans it receives; a source manifest or carried expected count is required to detect Collector-side drops",
+      "observed_dropped_spans": 12,
+      "per_trace_source_count_detected_drop": true,
+      "reimport_receipt_alone_detected_upstream_drop": false,
+      "sdk_sender": {
+        "go_toolchain": "go1.25.0",
+        "sdk": "go.opentelemetry.io/otel",
+        "sdk_version": "1.43.0",
+        "spans_ended": 48
+      },
+      "sdk_sender_exit_code": 0,
+      "source_manifest_detected_drop": true
+    },
+    "corrupt_storage_missing_canonical_identity": {
+      "failure_detected": true
+    },
+    "unreachable_collector": {
+      "failure_detected": true,
+      "sdk_sender_exit_code": 1
+    }
+  },
+  "negative_controls_passed": true,
+  "privacy": {
+    "aggregate_output_contains_no_fixture_ids_or_content": true,
+    "raw_manifest_storage_and_logs_disposable": true,
+    "raw_runtime_paths_absent_after_cleanup": true,
+    "raw_runtime_paths_emitted": false,
+    "sdk_manifest_content_minimized": true
+  },
+  "run_date": "2026-07-30",
+  "runtime": {
+    "collector": {
+      "archive_sha256": "3371b4100c56f853e236b8efa4a134516c5ac09183a07e397a2265f4ab61d63f",
+      "artifact": "otelcol-contrib_0.153.0_darwin_arm64.tar.gz",
+      "distribution": "otelcol-contrib",
+      "extracted_binary_sha256": "e7e443f18b50ee12f03aaa1ca3bbd8269007e089abffca7fa387835b44c62afc",
+      "file_exporter_url": "https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.153.0/exporter/fileexporter/README.md",
+      "release_url": "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.153.0",
+      "version": "0.153.0"
+    },
+    "configs": {
+      "drop_control_sha256": "7e39369e330ba870b5bf9bb1878277316ed85b0d041e883b8910b7e92d14d511",
+      "main_sha256": "2761b2bb838bad8844ac3f80492a4fc3832d486aee1ae7aa27b25e9046108d36"
+    },
+    "main_process": {
+      "collector_exit_code": 0,
+      "collector_storage_created": true,
+      "sdk_sender": {
+        "go_toolchain": "go1.25.0",
+        "sdk": "go.opentelemetry.io/otel",
+        "sdk_version": "1.43.0",
+        "spans_ended": 48
+      },
+      "sdk_sender_exit_code": 0
+    },
+    "pipeline": "OpenTelemetry Go SDK -> OTLP/HTTP receiver -> batch processor -> file exporter -> canonical reimport",
+    "sdk": {
+      "exporter": "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp",
+      "go_mod_sha256": "170bd0394325bab681bded24af41e8cdc3154b7ea3a3a6f77ce8a9e899b0dea5",
+      "go_sum_sha256": "5298b4a927c927df00187e35ad3028783adb0ccf32c83f56fae73cbf827747e2",
+      "go_toolchain": "go1.25.0",
+      "name": "go.opentelemetry.io/otel",
+      "release_url": "https://github.com/open-telemetry/opentelemetry-go/releases/tag/v1.43.0",
+      "transport": "OTLP/HTTP protobuf over loopback",
+      "version": "1.43.0"
+    },
+    "storage": {
+      "exporter": "file",
+      "format": "OTLP JSON, one export batch per line",
+      "persistence": "disposable local file"
+    }
+  },
+  "schema_version": "frankengate-otel-collector-roundtrip-v1",
+  "status": "completed-real-roundtrip"
+}

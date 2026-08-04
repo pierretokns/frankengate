@@ -1,0 +1,214 @@
+{
+  "S0_metadata": {
+    "branch_points": 51,
+    "dangling_parent_references": 0,
+    "linked_result_share": 1.0,
+    "malformed_records": 0,
+    "observed_span_days": 40,
+    "orphan_tool_calls": 2,
+    "sessions": 28,
+    "sessions_by_stratum": {
+      "other": 28
+    },
+    "tool_calls": 4264,
+    "tool_results": 4262,
+    "unlinked_tool_results": 0,
+    "valid_records": 17991
+  },
+  "S1_deterministic_signals": {
+    "candidate_sessions": 26,
+    "candidate_sessions_by_stratum": {
+      "other": 26
+    },
+    "interpretation": "selection signals for review, not failure or skill labels",
+    "review_selected_by_stratum": {
+      "other": 10
+    },
+    "review_selected_sessions": 10,
+    "signal_events": {
+      "api_error_records": 7,
+      "explicit_tool_errors": 269,
+      "repeated_tool_family_runs_length_at_least_three": 420,
+      "sessions_with_branch_points": 21,
+      "sessions_with_dangling_parents": 0,
+      "sessions_with_malformed_records": 0
+    }
+  },
+  "S2_exact_structured_fts_ready": {
+    "candidate_sessions": 27,
+    "candidate_sessions_by_stratum": {
+      "other": 27
+    },
+    "controlled_vocabulary_terms": 13,
+    "fts_boundary": "only controlled structural terms; no transcript text",
+    "mean_terms_per_session": 9.2143,
+    "query_candidate_counts": {
+      "branch_and_error": 19,
+      "explicit_error": 24,
+      "recovery_candidate": 24,
+      "repeated_family_and_error": 23,
+      "subagent_and_error": 0
+    },
+    "review_selected_by_stratum": {
+      "other": 10
+    },
+    "review_selected_sessions": 10,
+    "structured_feature_rows": 28
+  },
+  "S4_temporal_episode_candidates": {
+    "ambiguous_parallel_successes_excluded": 0,
+    "candidate_episodes": 263,
+    "candidate_sessions": 24,
+    "candidate_sessions_by_stratum": {
+      "other": 24
+    },
+    "candidate_tiers": {
+      "high": 107,
+      "low": 83,
+      "medium": 73
+    },
+    "definition": {
+      "high": "linked explicit error followed by a newly proposed, linked non-error result in the same tool family within 8 records",
+      "low": "linked explicit error followed by a newly proposed, linked non-error result in another tool family within 24 records",
+      "medium": "same as high but within 24 records"
+    },
+    "interpretation": "structural specificity proxies, not measured precision or causal recovery",
+    "precision_proxies": {
+      "error_to_candidate_episode_share": 0.9777,
+      "high_specificity_share": 0.4068,
+      "linked_error_evidence_share": 1.0,
+      "same_family_share": 0.6844
+    },
+    "review_selected_by_stratum": {
+      "other": 10
+    },
+    "review_selected_sessions": 10
+  },
+  "S6_proposal_records": {
+    "abstentions": {
+      "automatic_memory_write": "structural recurrence is insufficient for a durable fact or procedure",
+      "cross_user_collaboration": "single contributor and no reciprocal enterprise consent",
+      "skill_gap": "no validated capability taxonomy or outcomes"
+    },
+    "candidate_records": {
+      "automatic_memory_or_skill_writes": 0,
+      "cross_user_collaboration_recommendations": 0,
+      "eval_review": 269,
+      "memory_review_motifs": 16,
+      "memory_review_supporting_episodes": 255,
+      "procedure_review_episodes": 179,
+      "skill_gap_recommendations": 0
+    },
+    "candidate_sessions": 24,
+    "candidate_sessions_by_stratum": {
+      "other": 24
+    },
+    "release_boundary": "records are review proposals; promotion requires scoped evidence, independent outcomes, provenance, and approval",
+    "review_selected_by_stratum": {
+      "other": 10
+    },
+    "review_selected_sessions": 10
+  },
+  "arm_overlap": {
+    "eligible": {
+      "S1_vs_S2": {
+        "intersection": 26,
+        "jaccard": 0.963,
+        "union": 27
+      },
+      "S1_vs_S4": {
+        "intersection": 24,
+        "jaccard": 0.9231,
+        "union": 26
+      },
+      "S4_vs_S6": {
+        "intersection": 24,
+        "jaccard": 1.0,
+        "union": 24
+      },
+      "all_four_intersection": 24
+    },
+    "review_budget": {
+      "S1_vs_S2": {
+        "intersection": 9,
+        "jaccard": 0.8182,
+        "union": 11
+      },
+      "S1_vs_S4": {
+        "intersection": 9,
+        "jaccard": 0.8182,
+        "union": 11
+      },
+      "S2_vs_S6": {
+        "intersection": 9,
+        "jaccard": 0.8182,
+        "union": 11
+      },
+      "all_four_intersection": 8
+    }
+  },
+  "claim_boundaries": {
+    "not_identifiable": [
+      "task_success_or_correctness",
+      "causal_recovery",
+      "user_skill_or_productivity",
+      "best_prompt_model_memory_or_procedure",
+      "cross_user_similarity_or_collaboration_value",
+      "enterprise_population_effects"
+    ],
+    "required_next_evidence": [
+      "independent_task_outcomes",
+      "environment_access_and_tool_availability_labels",
+      "human_review_labels",
+      "multi_user_consent_and_governance",
+      "prospective_randomized_or_stepped_wedge_interventions"
+    ],
+    "supported": [
+      "ingestion_and_schema_quality",
+      "deterministic_candidate_selection",
+      "controlled_structural_retrieval",
+      "proposal_only_error_retry_episode_reconstruction",
+      "bounded_human_review_queue_design"
+    ]
+  },
+  "observed_failure_modes": {
+    "authorization_and_classification_labels_available": 0,
+    "dangling_parent_references": 0,
+    "environment_state_snapshots_available": 0,
+    "malformed_records": 0,
+    "orphan_tool_calls": 2,
+    "outcome_labels_available": 0,
+    "parallel_successes_not_valid_retries": 0,
+    "stable_multi_user_organizational_relationships_available": 0,
+    "unlinked_tool_results": 0
+  },
+  "privacy_contract": {
+    "content_fields_read_for_analysis": false,
+    "identity_scope": "one_intentionally_public_contributor",
+    "prohibited_output": [
+      "prompts",
+      "reasoning",
+      "tool_arguments",
+      "tool_results",
+      "filesystem_paths",
+      "native_or_synthetic_session_or_event_identifiers",
+      "exact_timestamps",
+      "per-session_rows"
+    ],
+    "serialized_granularity": "aggregate_counts_only"
+  },
+  "review_policy": {
+    "fraction": 0.2,
+    "maximum": 25,
+    "minimum": 10,
+    "ranking_tie_break": "stable_source_order_not_serialized",
+    "selected_session_budget": 10
+  },
+  "schema_version": "content-minimized-real-user-arms-v1",
+  "source": {
+    "dataset": "trace-commons/agent-traces-full-claude-memory-composition",
+    "license": "CC-BY-4.0",
+    "raw_corpus_committed": false,
+    "revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf"
+  }
+}

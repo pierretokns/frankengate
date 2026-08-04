@@ -1,0 +1,85 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "8fcc26ed94f8a494245105d0904174633d9efa891222e00c25b0edeec5e7ea94",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "deletion-lineage"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "source_fact",
+      "observation_status": "observed",
+      "source_role": "user",
+      "content": "The service owner is Alice.",
+      "artifact_id": "artifact:fact-001"
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "derived_memory",
+      "observation_status": "observed",
+      "source_role": "memory_pipeline",
+      "content": "Alice owns the service.",
+      "parent_event_id": "e000",
+      "artifact_id": "artifact:memory-001",
+      "source_artifact_ids": ["artifact:fact-001"],
+      "derivation_status": "active"
+    },
+    {
+      "event_id": "e002",
+      "sequence": 2,
+      "kind": "deletion_tombstone",
+      "observation_status": "observed",
+      "source_role": "governance",
+      "content": "Source fact deleted.",
+      "parent_event_id": "e000",
+      "deleted_artifact_id": "artifact:fact-001",
+      "deletion_request_id": "delete-001"
+    },
+    {
+      "event_id": "e003",
+      "sequence": 3,
+      "kind": "derived_invalidation",
+      "observation_status": "observed",
+      "source_role": "memory_pipeline",
+      "content": "Derived memory invalidated by source deletion.",
+      "parent_event_id": "e002",
+      "invalidated_artifact_id": "artifact:memory-001",
+      "source_tombstone_event_id": "e002",
+      "derivation_status": "invalidated"
+    }
+  ],
+  "outcome": {
+    "value": "source_and_descendant_invalidated",
+    "source": "governance",
+    "evidence_event_ids": ["e002", "e003"]
+  },
+  "loss_receipt": {
+    "source_event_count": 4,
+    "canonical_event_count": 4,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": [],
+    "expected_invariants": [
+      {
+        "type": "deletion_invalidates_descendants",
+        "source_event_id": "e000",
+        "derived_event_id": "e001",
+        "tombstone_event_id": "e002",
+        "invalidation_event_id": "e003"
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "deletion_and_derived_lineage",
+        "disposition": "lost",
+        "reason": "Portable trajectory messages do not provide artifact tombstones or transitive invalidation."
+      }
+    ]
+  }
+}

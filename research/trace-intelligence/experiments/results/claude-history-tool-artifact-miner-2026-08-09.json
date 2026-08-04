@@ -1,0 +1,40 @@
+{
+  "claim_boundary": {
+    "artifact_correctness": false,
+    "artifact_safety": false,
+    "cross_user_transfer": false,
+    "reason": "Strict normalized tool recurrence and explicit result status are candidate signals; tool success is not an independent semantic, security, or user-outcome label.",
+    "skill_improvement": false
+  },
+  "coverage": {
+    "distinct_strict_artifact_count": 51424,
+    "distinct_tool_name_hash_count": 49,
+    "error_result_count": 6582,
+    "paired_tool_call_count": 70949,
+    "parse_error_count": 0,
+    "project_count": 65,
+    "session_count": 442,
+    "success_result_count": 64367,
+    "tool_result_count": 70949,
+    "tool_use_count": 70969,
+    "unobserved_tool_use_count": 20
+  },
+  "recurrence": {
+    "artifacts_recurring_as_failures": 137,
+    "artifacts_recurring_with_mixed_outcomes": 431,
+    "cross_project_success_rate": 0.549205,
+    "error_to_success_recovery_count": 3866,
+    "success_recurrence_rate": 0.039126,
+    "successful_artifacts_recurring_across_projects": 1105,
+    "successful_artifacts_recurring_across_sessions": 2012
+  },
+  "result_sha256": "5bb2922ca528387b4f2dda091f6e2c416f0fd485d5a34485f31b69e66d8d7b6a",
+  "schema_version": "frankengate-claude-history-tool-artifact-miner-v1",
+  "source": {
+    "byte_count": 998165678,
+    "file_count": 442,
+    "manifest_sha256": "afdc68a06f7a570840d489d57be9dac2e667252cf24470b3b8b66bc1412f0b50",
+    "raw_content_committed": false,
+    "root_name": "projects"
+  }
+}

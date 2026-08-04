@@ -1,0 +1,15 @@
+{
+  "claim_boundary_verified": true,
+  "metric_checks": {
+    "cases": true,
+    "lexical_mrr": true,
+    "semantic_alias_false": true,
+    "support1_mrr": true,
+    "support2_mrr": true
+  },
+  "original_receipt_sha256": "8a12fa3a595f4abf231dd04316cb5bee70d5e8dddf8c72f47ac4191bdc2a5f56",
+  "reproduction_sha256": "672a3c4e377dfd1c6f740d5428e443e0a7155998c1548a6deab7facc8626944f",
+  "result_hash_match": true,
+  "schema_version": "frankengate-nl2sql-alias-enrichment-reproduction-verification-v1",
+  "verification_passed": true
+}

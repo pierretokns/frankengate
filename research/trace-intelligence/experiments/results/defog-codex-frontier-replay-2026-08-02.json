@@ -1,0 +1,289 @@
+{
+  "arm_artifacts": {
+    "formatting_placebo": {
+      "classification": "placebo",
+      "sha256": "cd6c7189a321e4ed2207f6b1368d6fd5b1bef06d8c920074fc1b7bb4d5f0ecf2"
+    },
+    "no_skill": {
+      "classification": "baseline",
+      "sha256": "5f074464c7025192af7610132d1693e414aac02eb762bc049f73dc1ad143f506"
+    },
+    "trace_mined_terminal_discipline": {
+      "classification": "trace_mined_candidate",
+      "sha256": "40d2a7ac1d29d078029ca4ded7fd3a3326256a6f5fb8057423623f6ca8909b2b"
+    }
+  },
+  "arms": {
+    "formatting_placebo": {
+      "authority_valid": 2,
+      "execution_completed": 2,
+      "missing_terminal_action": 0,
+      "outcomes": {
+        "semantic_correct": 1,
+        "semantic_incorrect": 1
+      },
+      "policy_accepted": 2,
+      "semantic_correct": 1,
+      "sql_attempts": 3,
+      "strict_answer_shape_correct": 0,
+      "successful_sql_attempts": 2,
+      "tasks": 2,
+      "terminal_fallback_used": 0,
+      "terminal_submissions": 2,
+      "tool_calls": 7,
+      "unauthorized_observation": 0
+    },
+    "no_skill": {
+      "authority_valid": 2,
+      "execution_completed": 2,
+      "missing_terminal_action": 0,
+      "outcomes": {
+        "semantic_correct": 1,
+        "semantic_incorrect": 1
+      },
+      "policy_accepted": 2,
+      "semantic_correct": 1,
+      "sql_attempts": 2,
+      "strict_answer_shape_correct": 0,
+      "successful_sql_attempts": 2,
+      "tasks": 2,
+      "terminal_fallback_used": 0,
+      "terminal_submissions": 2,
+      "tool_calls": 6,
+      "unauthorized_observation": 0
+    },
+    "trace_mined_terminal_discipline": {
+      "authority_valid": 2,
+      "execution_completed": 2,
+      "missing_terminal_action": 0,
+      "outcomes": {
+        "semantic_correct": 1,
+        "semantic_incorrect": 1
+      },
+      "policy_accepted": 2,
+      "semantic_correct": 1,
+      "sql_attempts": 3,
+      "strict_answer_shape_correct": 0,
+      "successful_sql_attempts": 2,
+      "tasks": 2,
+      "terminal_fallback_used": 0,
+      "terminal_submissions": 2,
+      "tool_calls": 7,
+      "unauthorized_observation": 0
+    }
+  },
+  "authority": {
+    "binding_sha256": [
+      "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b"
+    ],
+    "epoch_ref_sha256": [
+      "f6d676147c0f1aaa596713dd6e5cceefc6ae29f983ff30bfc9c513f208120bdc"
+    ],
+    "exact_current_epoch_match": true,
+    "snapshot_sha256": [
+      "20e5b847bdfa1d58f18ac1b58a4c61721bb146865c057ec098c5c0b6157f0b8d"
+    ]
+  },
+  "claim_boundary": {
+    "causal_skill_benefit_established": false,
+    "domain_valid_task_executed": true,
+    "governed_postgres_executed": true,
+    "next_required": "Rerun after protocol remediation on a family-disjoint fold with sealed outcomes, independent semantic/security verifier, and paired repair/regression analysis.",
+    "reason": "This is a visible-selection pilot; no family-disjoint held-out quality estimate or independent verifier comparison is claimed.",
+    "three_arms_executed": true
+  },
+  "classification": "domain_valid_visible_selection_pilot",
+  "dataset": {
+    "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "database_family": "car_dealership",
+    "dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
+    "task_count": 2,
+    "task_id_sha256": [
+      "78c7607d3c0a85d588595ab275f125aacaecb5b5704c5b8c83fdf05b6afcf393",
+      "d69c9f2c2966a0555d98b55698663c5fba3a2b441f35deec35cabae6cea5b4c3"
+    ]
+  },
+  "model": {
+    "endpoint_scope": "codex-subscription-loopback-proxy",
+    "provider": "codex-cli",
+    "request_model_id": "gpt-5.6-luna"
+  },
+  "protocol_remediation": {
+    "applies_identically_across_arms": true,
+    "arm_artifacts_changed": false,
+    "authority_contract_changed": false,
+    "base_prompt_changed": false,
+    "id": "frontier-codex-schema-injected-v1",
+    "inject_authorized_schema": true,
+    "max_generated_tokens_per_call": 800,
+    "max_generated_tokens_per_episode": 4800,
+    "max_model_turns": 8,
+    "max_sql_attempts": 4,
+    "request_timeout_seconds": 120,
+    "require_schema_before_sql": false,
+    "schema_catalog_sha256": "5f074464c7025192af7610132d1693e414aac02eb762bc049f73dc1ad143f506",
+    "schema_first_controller_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "task_selection_changed": false,
+    "trace_mined_candidate": {
+      "artifact_sha256": "b499accc5ee7faa66c3109908508f1ce326af25cc923811de435e4952d86fb69",
+      "candidate_text_sha256": "83166cca6f1df890cc22aeadb6f63873455a437010ee36cf3eac30fdb2be837a",
+      "source_raw_directory_digest": "2019df6f5179b7e6c824d82843a79a3d789fc2e45a2da8efa84bf2b765939e52",
+      "source_raw_file_count": 18
+    }
+  },
+  "raw_audit_policy": "external_jsonl_only; raw SQL, prompts, rows, and model messages are not committed",
+  "schema_version": "frankengate-defog-trace-mined-skill-pilot-v2",
+  "task_runs": [
+    {
+      "arm": "no_skill",
+      "attempt_receipt_chain_sha256": "f7a067a4cde15b1db7dbaabd559c8c2d7a39f42f1d11ffcb0e87fc28ade78ab4",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 34316.15,
+      "execution_completed": true,
+      "outcome": "semantic_correct",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "b25105a52f09f433a3573dfd495749011c1e278b3f8c996a37503e7873ac86b7",
+      "schema_calls": 1,
+      "semantic_correct": true,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "78c7607d3c0a85d588595ab275f125aacaecb5b5704c5b8c83fdf05b6afcf393",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 3,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "attempt_receipt_chain_sha256": "387085b222379dded3d3ec42feb800e3e68d1c6df7157d8b95cf6206acde5b40",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 40128.801,
+      "execution_completed": true,
+      "outcome": "semantic_correct",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "4254a03c58c57dc094de82399da7647a66c81eec3189ff509e47fc06cc1596b8",
+      "schema_calls": 1,
+      "semantic_correct": true,
+      "sql_attempts": 2,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "78c7607d3c0a85d588595ab275f125aacaecb5b5704c5b8c83fdf05b6afcf393",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 4,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "trace_mined_terminal_discipline",
+      "attempt_receipt_chain_sha256": "784a9400c4998d8e041c4da513257720788fce7356a00b6e0b90e18c7ae39c1f",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 51114.28,
+      "execution_completed": true,
+      "outcome": "semantic_correct",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "782e5d66a16fca88c4164a2e71e6e12cf17d3284bf845f13c9925165b237756b",
+      "schema_calls": 1,
+      "semantic_correct": true,
+      "sql_attempts": 2,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "78c7607d3c0a85d588595ab275f125aacaecb5b5704c5b8c83fdf05b6afcf393",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 4,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "no_skill",
+      "attempt_receipt_chain_sha256": "13438b5bbb42dea8f0d1d77eb42d9419feff57ec20cae1b97732642f6b60467c",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 32138.264,
+      "execution_completed": true,
+      "outcome": "semantic_incorrect",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "99fb4019f27661c1c5e9045d5a5f6d3570baa25f092f599a78e59bb2f47f7f74",
+      "schema_calls": 1,
+      "semantic_correct": false,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "d69c9f2c2966a0555d98b55698663c5fba3a2b441f35deec35cabae6cea5b4c3",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 3,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "attempt_receipt_chain_sha256": "13438b5bbb42dea8f0d1d77eb42d9419feff57ec20cae1b97732642f6b60467c",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 29736.751,
+      "execution_completed": true,
+      "outcome": "semantic_incorrect",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "b04db068c013222c2c645498b6d2140525396db2e802d3a5290b142638388fce",
+      "schema_calls": 1,
+      "semantic_correct": false,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "d69c9f2c2966a0555d98b55698663c5fba3a2b441f35deec35cabae6cea5b4c3",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 3,
+      "unauthorized_observation": false
+    },
+    {
+      "arm": "trace_mined_terminal_discipline",
+      "attempt_receipt_chain_sha256": "1edcfc1478961e73bf5d24a5db3a4aa7a632cfcb3c9378845ce31df536ce05f2",
+      "authority_binding_sha256": "54556333de14ae1d3f726050386aef9054228ba4f9bd326966308fc2fac8654b",
+      "authority_valid": true,
+      "completion_tokens": 0,
+      "elapsed_ms": 36476.286,
+      "execution_completed": true,
+      "outcome": "semantic_incorrect",
+      "policy_accepted": true,
+      "prompt_tokens": 0,
+      "protocol_failure_code": null,
+      "raw_audit_sha256": "e6ed36f21fda6159bac7a8f88e910af23bd5492756f58c3528805fd56590699d",
+      "schema_calls": 1,
+      "semantic_correct": false,
+      "sql_attempts": 1,
+      "strict_answer_shape_correct": false,
+      "successful_sql_attempts": 1,
+      "task_id_sha256": "d69c9f2c2966a0555d98b55698663c5fba3a2b441f35deec35cabae6cea5b4c3",
+      "terminal_action": "submit_sql",
+      "terminal_fallback_used": false,
+      "tool_calls": 3,
+      "unauthorized_observation": false
+    }
+  ],
+  "terminal_fallback_policy": {
+    "applies_identically_across_arms": true,
+    "id": "submit-most-recent-successful-authorized-attempt-or-abstain-v1",
+    "purpose": "Separate SQL generation quality from model terminal-tool formatting.",
+    "reads_gold_or_hidden_outcomes": false,
+    "selection_rule": "most recent successful authorized candidate; abstain when none exists"
+  }
+}

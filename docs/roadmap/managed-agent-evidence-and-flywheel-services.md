@@ -14,9 +14,10 @@ license rider and stable revision are approved in the provenance ledger.
 The gateway is uniquely positioned to observe model requests, routing, tool calls,
 latency, cost and policy revisions, but it cannot see local edits, terminal results,
 tests, user cancellations or whether the task ultimately succeeded. A small local/IDE
-collector supplies those endpoint facts after privacy transformation. The managed plane
-joins them through opaque trace/session IDs and turns eligible evidence into search,
-evaluation and improvement inputs asynchronously.
+collector supplies those endpoint facts after credential stripping and a
+destination-specific eligibility decision. The managed plane joins them through opaque
+trace/session IDs and turns eligible evidence into search, evaluation and improvement
+inputs asynchronously.
 
 ## Placement and failure isolation
 
@@ -48,8 +49,10 @@ preserving explicit loss/degraded-evidence counters.
 - Personal feedback, corrections, successful recovery patterns and private draft memory.
 - User-controlled retention, export, deletion, visibility and opt-out.
 - Tenant/purpose-scoped pseudonyms; no manager-facing individual productivity scoring.
-- Default raw history stays local. Upload only explicitly eligible sanitized evidence or
-  encrypted user-controlled objects with narrow access.
+- A user may opt into governed full-fidelity managed storage and search for their own
+  history. Credential material is removed first; tenant/user scope, encryption,
+  retention, deletion, and audit remain mandatory. Promotion to a team or external
+  destination is a separate disclosure decision.
 
 ### Per team/project: curated working knowledge
 
@@ -97,13 +100,15 @@ properties, but the managed form needs additional contracts:
 - parser sandboxing for hostile or malformed local logs;
 - idempotent ingest with source cursor, content digest and deletion tombstones;
 - policy-filter-before-index/search, including embeddings and snippets;
-- no global embedding/vector corpus or raw query analytics;
+- no global cross-scope embedding/vector corpus or raw query analytics; same-scope
+  derived indexes may contain full-fidelity authorized content references;
 - immutable snapshot/index generations with atomic publish and rollback;
 - quotas for bytes, documents, embeddings, queries and retention;
 - legal hold and deletion behavior that distinguishes content from minimized audit proof;
 - explicit exact, transformed, summarized and inferred evidence types;
 - compromised collector/device revocation and signed collector manifests;
-- zero-trust support bundles and no credentials/tool outputs by default.
+- zero-trust support bundles and no credentials; tool outputs follow the same
+  destination/scope rule as other trace content.
 
 ## Feedback and learning contract
 
@@ -120,9 +125,11 @@ regression and downstream blast radius feed subsequent proposal selection.
 
 ## Launch sequence
 
-1. Define the canonical `AgentEvidenceEnvelope`, content tiers and deletion lineage.
+1. Define `AgentEvidenceEnvelope` as the compact join/receipt contract, plus governed
+   source references, content dispositions and deletion lineage.
 2. Build endpoint collector SDK plus gateway join contract using synthetic data first.
-3. Ship per-user private lexical recall with metadata-only gateway traces.
+3. Ship per-user private lexical recall over the user's governed gateway history,
+   supporting full text when content logging is enabled.
 4. Add explicit team curation and validated case promotion.
 5. Add offline skill/eval/KB proposal generation and scorecards.
 6. Add optional tenant-local semantic search only after leakage and retrieval tests.

@@ -1,0 +1,28 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "github/seokhawn01/wineLab-research/.claude",
+  "dataset_revision": "c48d48a4787ada6ea4e08e211bd7477ff3dd9409",
+  "license": "NOASSERTION",
+  "source_url": "https://github.com/seokhawn01/wineLab-research/tree/c48d48a4787ada6ea4e08e211bd7477ff3dd9409/.claude",
+  "source_format": "Dated research tool-lifecycle log plus paper-fact-verifier memory documents",
+  "adapter": "claude_hook_log_and_memory_v1",
+  "publication_basis": "Intentional public Git repository",
+  "rights_assertion": "No repository license found; analysis does not establish redistribution or training rights",
+  "privacy_review": "Content remains outside Git; quarantine before any semantic analysis",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "tool_log_lines": 230,
+    "memory_documents": 4,
+    "pre_and_post_tool_events": true,
+    "web_search_and_fetch_events": true,
+    "failed_and_successful_events": true,
+    "complete_assistant_messages": false,
+    "normalized_outcome_scores": false
+  },
+  "admission": "admit_as_partial_research_workflow_and_friction_stratum",
+  "enterprise_transfer": "Useful paired tool/memory evidence; incomplete message and outcome semantics require explicit loss receipts"
+}

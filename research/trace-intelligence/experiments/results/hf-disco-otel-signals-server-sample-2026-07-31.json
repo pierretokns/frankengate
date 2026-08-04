@@ -1,0 +1,18 @@
+{
+  "arms": {
+    "signals_error_and_tools": {"population": 20, "population_prevalence": 0.55, "precision": 1.0, "recall": 0.36363636363636365, "selected": 4, "selected_positive": 4},
+    "trace_length": {"population": 20, "population_prevalence": 0.55, "precision": 1.0, "recall": 0.36363636363636365, "selected": 4, "selected_positive": 4},
+    "uniform_random_seeded": {"population": 20, "population_prevalence": 0.55, "precision": 0.5, "precision_mean_1000": 0.551, "precision_min_1000": 0.0, "precision_max_1000": 1.0, "recall": 0.18181818181818182, "selected": 4, "selected_positive": 2}
+  },
+  "benchmark_harness_strata": {"swebench/tool_calling": 19, "tau2_airline/claude_code": 1},
+  "budget": 4,
+  "dataset_id": "DiscoPosse/agent-llm-traces",
+  "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+  "enterprise_behavior_claim": false,
+  "label_is_human_informative": false,
+  "label_proxy": "at_least_one_otel_error_status_code_2",
+  "raw_content_emitted": false,
+  "rows": 20,
+  "schema_version": "fg-hf-otel-signals-via-server-rows-v1",
+  "source_sha256": "6dcdf004382e465915d38f4f29b454586ed14c09ee4caf02607461f7ec501bcf"
+}

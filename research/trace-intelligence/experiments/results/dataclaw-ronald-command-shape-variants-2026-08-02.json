@@ -1,0 +1,37 @@
+{
+  "schema_version": "frankengate-dataclaw-command-shape-variants-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false
+  },
+  "cohort": {
+    "sessions": 436,
+    "projects": 46,
+    "command_events": 12237,
+    "malformed_argument_events": 0,
+    "unique_shapes": 4297,
+    "unique_exact_command_digests": 9387
+  },
+  "shape_variants": {
+    "median_exact_variants_per_shape": 1,
+    "max_exact_variants_per_shape": 141,
+    "shapes_with_multiple_exact_variants": 1092,
+    "shapes_with_at_least_five_exact_variants": 312,
+    "recurrent_shapes": 1092,
+    "cross_project_shapes": 342,
+    "recurrent_cross_project_shapes": 342,
+    "exact_variants_per_shape_ratio": 2.1845473586222948
+  },
+  "claim_boundary": {
+    "parameter_diversity_measured": true,
+    "shape_is_semantic_template": false,
+    "artifact_correctness_established": false,
+    "safe_parameter_binding_established": false,
+    "promotion_authorized": false,
+    "reason": "A normalized prefix/shape can collapse distinct command arguments, projects, and outcomes. Shape recurrence is a candidate-template signal only."
+  },
+  "decision": "Represent mined commands as parameterized proposals with explicit argument schemas, scope, authority, expiry, and independent replay. Never promote a normalized shape by recurrence alone."
+}

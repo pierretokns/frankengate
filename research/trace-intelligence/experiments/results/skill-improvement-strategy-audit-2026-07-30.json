@@ -1,0 +1,88 @@
+{
+  "schema_version": "skill-improvement-strategy-audit-v1",
+  "run_date": "2026-07-30",
+  "status": "external_evidence_plus_local_plumbing; natural_enterprise_effect_unproven",
+  "sources": [
+    {
+      "name": "SkillOpt",
+      "repository": "https://github.com/microsoft/SkillOpt",
+      "source_revision": "7da46ae693ee0329b80225c0128a37d65db10e9e",
+      "release": "v0.2.0",
+      "release_revision": "51d0a4d96e88558c84dee637f98e24e3fb2d1547",
+      "reported_results": {
+        "cells_best_or_tied": "52/52",
+        "gpt_5_5_direct_chat_gain_points": 23.5,
+        "gpt_5_5_codex_gain_points": 24.8,
+        "gpt_5_5_claude_code_gain_points": 19.1
+      },
+      "evidence_limit": "Public aggregate reporting does not include raw per-run artifacts or repeated-seed confidence intervals for every cell."
+    },
+    {
+      "name": "SkillOpt-Sleep",
+      "source_revision": "7da46ae693ee0329b80225c0128a37d65db10e9e",
+      "reported_results": {
+        "included_run_summaries": 499,
+        "searchqa_recall_k20_gain_points": 4.5,
+        "searchqa_full_history_gain_points": 5.6,
+        "ungated_searchqa_nano_stress": "55.4% -> 2.6%",
+        "gated_searchqa_nano_stress": "57.0% -> 57.0%"
+      },
+      "evidence_limit": "The sleep study is a five-night, single-seed descriptive study; real backends can transmit session excerpts, prompts, skills, memories, and generated responses to a configured provider."
+    },
+    {
+      "name": "Retrospective Harness Optimization",
+      "repository": "https://www.microsoft.com/en-us/research/publication/retrospective-harness-optimization-improving-llm-agents-via-self-preference-over-trajectory-rollouts/",
+      "reported_result": "SWE-Bench Pro 59% -> 78% after one self-supervised round",
+      "evidence_limit": "External report; no local reproduction or independent grader run."
+    },
+    {
+      "name": "SkillGen",
+      "repository": "https://www.microsoft.com/en-us/research/publication/skillgen-verified-inference-time-agent-skill-synthesis/",
+      "method": "Contrast successful and failed trajectories, then compare paired same-instance outcomes with and without the candidate skill.",
+      "local_status": "not_run"
+    },
+    {
+      "name": "SigLeak",
+      "repository": "https://arxiv.org/abs/2607.25560",
+      "reported_result": "6.88 average success-point improvement while inferring proprietary skills from behavior",
+      "decision": "security input, not an improvement engine; traces can leak procedural skill content"
+    }
+  ],
+  "local_runs": [
+    {
+      "name": "SkillOpt-Sleep deterministic mock experiment",
+      "command": "python -m skillopt_sleep.experiments.run_experiment --persona researcher --assert-improves",
+      "tasks": 12,
+      "baseline_heldout": 0.3333,
+      "after_heldout": 1.0,
+      "gate_blocked_harmful_edit": true,
+      "interpretation": "Plumbing and gate conformance only; scripted mock, not a natural trace or enterprise benefit result."
+    }
+  ],
+  "existing_frankengate_evidence": {
+    "natural_trace_candidate_generation": "not_completed",
+    "natural_heldout_skill_intervention": "not_completed",
+    "cross_user_similarity_labels": "not_available",
+    "e2_silver_recall_at_20_best": 0.818,
+    "e2_silver_recall_at_20_structured_exact": 0.808,
+    "e2_label_boundary": "publisher task identity and metadata-derived hard negatives, not blinded human similarity labels"
+  },
+  "adoption_decision": {
+    "adopt": [
+      "SkillOpt-style bounded add/delete/replace candidate edits",
+      "separate proposer, evaluator, and release authority",
+      "family-disjoint selection/test splits",
+      "strict validation gate with regression floors",
+      "staged review and rollback",
+      "SkillOpt-Sleep recall/replay as an optional proposal mechanism"
+    ],
+    "defer": [
+      "automatic adoption",
+      "self-preference as the only evaluator",
+      "cross-user skill sharing without consent and utility labels",
+      "fine-tuning or embedding adaptation before a governed hard slice",
+      "sending internal traces to external optimizer providers without egress approval"
+    ]
+  },
+  "next_decisive_test": "Run SkillGen/SkillOpt/RHO-style candidates on the same family-disjoint natural Frankengate traces with no-skill, placebo, expert, mined, and optimized arms; score paired repairs and regressions on independently verified outcomes; require rollback and no unauthorized influence."
+}

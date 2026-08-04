@@ -1,0 +1,317 @@
+{
+  "claim_boundary": {
+    "embedding_measured": false,
+    "enterprise_alias_quality_established": false,
+    "reason": "BM25 and TF-IDF are lexical controls on a public gold-skill/web-distractor corpus",
+    "retrieval_comparison_verified": true,
+    "skill_utility_established": false
+  },
+  "datasets": {
+    "bigcodebench": {
+      "bm25": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.23580409,
+          "Recall@10": 0.61146199,
+          "Recall@5": 0.50181287,
+          "Recall@50": 0.83381579,
+          "nDCG@1": 0.61666667,
+          "nDCG@10": 0.55424661,
+          "nDCG@5": 0.5060571,
+          "nDCG@50": 0.62232205
+        },
+        "queries": 1140,
+        "result_sha256": "be126ccc8b35ecfe1eb06588672b1fc0f05eae536ffe06a539a6ee297e30edb9",
+        "top_k": 50
+      },
+      "corpus_size": 26262,
+      "queries": 1140,
+      "raw_rankings_committed": false,
+      "tfidf": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.20877193,
+          "Recall@10": 0.60176901,
+          "Recall@5": 0.46314327,
+          "Recall@50": 0.86602339,
+          "nDCG@1": 0.55175439,
+          "nDCG@10": 0.52010825,
+          "nDCG@5": 0.45991112,
+          "nDCG@50": 0.60149668
+        },
+        "queries": 1140,
+        "result_sha256": "0174efffccd4861114a536972290a47f1822cc5a9dc3dc60a26b518ace5e0254",
+        "top_k": 50
+      },
+      "tfidf_minus_bm25": {
+        "Recall@1": -0.02703216,
+        "Recall@10": -0.00969298,
+        "Recall@5": -0.0386696,
+        "Recall@50": 0.0322076,
+        "nDCG@1": -0.06491228,
+        "nDCG@10": -0.03413836,
+        "nDCG@5": -0.04614598,
+        "nDCG@50": -0.02082537
+      },
+      "top_k": 50
+    },
+    "champ": {
+      "bm25": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.132287,
+          "Recall@10": 0.36098655,
+          "Recall@5": 0.30792227,
+          "Recall@50": 0.54304933,
+          "nDCG@1": 0.20627803,
+          "nDCG@10": 0.27204268,
+          "nDCG@5": 0.25219153,
+          "nDCG@50": 0.32143272
+        },
+        "queries": 223,
+        "result_sha256": "7192efc8967e7b5171eb8c1aa27b7cd2612ed641a83c994ca600fadae0bdb3ad",
+        "top_k": 50
+      },
+      "corpus_size": 26262,
+      "queries": 223,
+      "raw_rankings_committed": false,
+      "tfidf": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.07212257,
+          "Recall@10": 0.25747384,
+          "Recall@5": 0.17600897,
+          "Recall@50": 0.51457399,
+          "nDCG@1": 0.12107623,
+          "nDCG@10": 0.17144016,
+          "nDCG@5": 0.14160841,
+          "nDCG@50": 0.2372248
+        },
+        "queries": 223,
+        "result_sha256": "de79aa4f115802fc210adef65354192ab55551706a5b32cc5e7088433a847b68",
+        "top_k": 50
+      },
+      "tfidf_minus_bm25": {
+        "Recall@1": -0.06016443,
+        "Recall@10": -0.10351271,
+        "Recall@5": -0.1319133,
+        "Recall@50": -0.02847534,
+        "nDCG@1": -0.0852018,
+        "nDCG@10": -0.10060252,
+        "nDCG@5": -0.11058312,
+        "nDCG@50": -0.08420792
+      },
+      "top_k": 50
+    },
+    "logicbench": {
+      "bm25": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.11973684,
+          "Recall@10": 0.36052632,
+          "Recall@5": 0.27368421,
+          "Recall@50": 0.58026316,
+          "nDCG@1": 0.11973684,
+          "nDCG@10": 0.22575246,
+          "nDCG@5": 0.1975898,
+          "nDCG@50": 0.27376484
+        },
+        "queries": 760,
+        "result_sha256": "d0d520426bf3f61de16769ff8a14b6d807eef4c46c5a0a85dae82d7591cc3b65",
+        "top_k": 50
+      },
+      "corpus_size": 26262,
+      "queries": 760,
+      "raw_rankings_committed": false,
+      "tfidf": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.01842105,
+          "Recall@10": 0.18157895,
+          "Recall@5": 0.10789474,
+          "Recall@50": 0.37763158,
+          "nDCG@1": 0.01842105,
+          "nDCG@10": 0.08347201,
+          "nDCG@5": 0.0598583,
+          "nDCG@50": 0.12688273
+        },
+        "queries": 760,
+        "result_sha256": "4ba2b531d3d0385766bbf501f3a00eb25edba538d7720098d88eef7a192e090c",
+        "top_k": 50
+      },
+      "tfidf_minus_bm25": {
+        "Recall@1": -0.10131579,
+        "Recall@10": -0.17894737,
+        "Recall@5": -0.16578947,
+        "Recall@50": -0.20263158,
+        "nDCG@1": -0.10131579,
+        "nDCG@10": -0.14228045,
+        "nDCG@5": -0.1377315,
+        "nDCG@50": -0.14688211
+      },
+      "top_k": 50
+    },
+    "medcalcbench": {
+      "bm25": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.29272727,
+          "Recall@10": 0.69181818,
+          "Recall@5": 0.48727273,
+          "Recall@50": 0.92454545,
+          "nDCG@1": 0.29272727,
+          "nDCG@10": 0.44671304,
+          "nDCG@5": 0.38065291,
+          "nDCG@50": 0.50147627
+        },
+        "queries": 1100,
+        "result_sha256": "60fddbc2bdea6b39367d843cad5b829839b5ed2f24964864be00d5d484ef1678",
+        "top_k": 50
+      },
+      "corpus_size": 26262,
+      "queries": 1100,
+      "raw_rankings_committed": false,
+      "tfidf": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.37454545,
+          "Recall@10": 0.71363636,
+          "Recall@5": 0.57,
+          "Recall@50": 0.98363636,
+          "nDCG@1": 0.37454545,
+          "nDCG@10": 0.52022323,
+          "nDCG@5": 0.47442098,
+          "nDCG@50": 0.58281656
+        },
+        "queries": 1100,
+        "result_sha256": "f13d21ee05e07a92459b68a9ba7647d20422bdb636c39f14dbde1e4b08e5e3cd",
+        "top_k": 50
+      },
+      "tfidf_minus_bm25": {
+        "Recall@1": 0.08181818,
+        "Recall@10": 0.02181818,
+        "Recall@5": 0.08272727,
+        "Recall@50": 0.05909091,
+        "nDCG@1": 0.08181818,
+        "nDCG@10": 0.07351019,
+        "nDCG@5": 0.09376807,
+        "nDCG@50": 0.08134029
+      },
+      "top_k": 50
+    },
+    "theoremqa": {
+      "bm25": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.57161981,
+          "Recall@10": 0.80722892,
+          "Recall@5": 0.76305221,
+          "Recall@50": 0.89558233,
+          "nDCG@1": 0.57161981,
+          "nDCG@10": 0.69221388,
+          "nDCG@5": 0.67758113,
+          "nDCG@50": 0.71163721
+        },
+        "queries": 747,
+        "result_sha256": "d32ad52a5cf819467ca8075f1edefbc178fd8678f318207dfe304cc6f5d7df93",
+        "top_k": 50
+      },
+      "corpus_size": 26262,
+      "queries": 747,
+      "raw_rankings_committed": false,
+      "tfidf": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.41365462,
+          "Recall@10": 0.68808568,
+          "Recall@5": 0.62248996,
+          "Recall@50": 0.85542169,
+          "nDCG@1": 0.41365462,
+          "nDCG@10": 0.54370194,
+          "nDCG@5": 0.52265965,
+          "nDCG@50": 0.58159804
+        },
+        "queries": 747,
+        "result_sha256": "e32083d9747f928893244bf0c4b15b6f36dac7914c43364daf9243e79cd3e681",
+        "top_k": 50
+      },
+      "tfidf_minus_bm25": {
+        "Recall@1": -0.15796519,
+        "Recall@10": -0.11914324,
+        "Recall@5": -0.14056225,
+        "Recall@50": -0.04016064,
+        "nDCG@1": -0.15796519,
+        "nDCG@10": -0.14851194,
+        "nDCG@5": -0.15492148,
+        "nDCG@50": -0.13003917
+      },
+      "top_k": 50
+    },
+    "toolqa": {
+      "bm25": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.06993007,
+          "Recall@10": 0.55104895,
+          "Recall@5": 0.34965035,
+          "Recall@50": 0.78531469,
+          "nDCG@1": 0.06993007,
+          "nDCG@10": 0.27020045,
+          "nDCG@5": 0.20521639,
+          "nDCG@50": 0.3251579
+        },
+        "queries": 1430,
+        "result_sha256": "e6659d37044db6b3413c5854000ac48a5a129c58402010eb5636da930466b097",
+        "top_k": 50
+      },
+      "corpus_size": 26262,
+      "queries": 1430,
+      "raw_rankings_committed": false,
+      "tfidf": {
+        "corpus_size": 26262,
+        "metrics": {
+          "Recall@1": 0.06993007,
+          "Recall@10": 0.34965035,
+          "Recall@5": 0.20979021,
+          "Recall@50": 0.55944056,
+          "nDCG@1": 0.06993007,
+          "nDCG@10": 0.18873515,
+          "nDCG@5": 0.14176507,
+          "nDCG@50": 0.23072097
+        },
+        "queries": 1430,
+        "result_sha256": "d83c2c1e5503da8eed3bea1c443a405d0df5ea31671fb3095f9a63c81300d82d",
+        "top_k": 50
+      },
+      "tfidf_minus_bm25": {
+        "Recall@1": 0.0,
+        "Recall@10": -0.2013986,
+        "Recall@5": -0.13986014,
+        "Recall@50": -0.22587413,
+        "nDCG@1": 0.0,
+        "nDCG@10": -0.0814653,
+        "nDCG@5": -0.06345132,
+        "nDCG@50": -0.09443693
+      },
+      "top_k": 50
+    }
+  },
+  "protocol": {
+    "end_task_execution_measured": false,
+    "incorporation_measured": false,
+    "methods": [
+      "bm25",
+      "tfidf"
+    ],
+    "same_corpus_and_queries": true,
+    "stage": "skill retrieval only",
+    "top_k": 50
+  },
+  "receipt_sha256": "06c89bcadff680e87d6fd65cbc28ba8fd1f71d37cc788fb17134159fd5bade46",
+  "schema_version": "frankengate-sra-bench-bm25-tfidf-comparison-v1",
+  "source": {
+    "corpus_sha256": "16ee509ae5bea8c2e17167dffecd89100a7d8dfa31256c3742426758c7169b5e",
+    "raw_skill_content_committed": false,
+    "repository": "https://github.com/oneal2000/SR-Agents"
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "aggregate": {
+    "action_order_exact_rate": 1.0,
+    "input_keys_exact_rate": 1.0,
+    "invocation_ids_unique_rate": 1.0,
+    "records_compiled": 10,
+    "source_provenance_exact_rate": 1.0,
+    "tool_order_exact_rate": 1.0
+  },
+  "claim_boundary": {
+    "artifact_correctness_measured": false,
+    "artifact_utility_measured": false,
+    "deterministic_roundtrip_measured": true,
+    "reason": "Canonical compiler preserves observed fields and provenance only; it does not assert tool success, authority, safety, or reusable semantic intent.",
+    "replay_executed": false
+  },
+  "protocol": {
+    "capsule_fields": [
+      "tool_id",
+      "invocation_id",
+      "tool_name",
+      "input_keys",
+      "input_binding_hash",
+      "source_trace_sha256"
+    ],
+    "compiler": "deterministic canonical JSON",
+    "independent_validation": false,
+    "replay_executed": false
+  },
+  "records": [
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "dff3a4b98b3c7f38125faa9b41f0635c108717b13adcf8b7b13c3abcc8f18231",
+      "index": 0,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 4,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "bc38fb086e63b4b2ba8c162149b857f5061103c44b00f56457f168576ed02e4d",
+      "index": 1,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 11,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "3b577f2a192d50abe41bfd9e75423bb194ca2fa6197d41ba5ac167a3b5fc58e0",
+      "index": 2,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 4,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "ba0153224908406ea6e74e5e820a5e9cf776ace00a2fab450af8a11a1ddde97c",
+      "index": 3,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 3,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "4c874dd52eb0287924fca837656e6310693ee0054c72b4397881d98eb9850493",
+      "index": 4,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 4,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "17639eeef63a39f7add6d49d61dd7c0436299a5bfe63f54aa86fcf2022c21e1f",
+      "index": 5,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 4,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "67fee42d48e2a781929e52689cf79b78593c030ed574d5e085e33f5f8b5201c8",
+      "index": 6,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 9,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "5c3973afacde63d5efebf9526ffc490de30d94774e5ee705a743674087202f42",
+      "index": 7,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 5,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "b062f79fa1816976a5ed4b2d5d701f5e92eb2f9a189941966a54b40e98a28fe5",
+      "index": 8,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 12,
+      "tool_order_exact": true
+    },
+    {
+      "action_order_exact": true,
+      "capsule_sha256": "9ca901ed69ab6180542b7cc197919fbbd0f23ef422578fbbb302708b11388778",
+      "index": 9,
+      "input_keys_exact": true,
+      "invocation_ids_unique": true,
+      "source_provenance_exact": true,
+      "tool_count": 5,
+      "tool_order_exact": true
+    }
+  ],
+  "schema_version": "frankengate-cctrace-deterministic-capsule-roundtrip-v1",
+  "source": {
+    "capsules_external_dir": "/private/tmp/cctrace-capsules-20260802",
+    "eligible_bounded_episodes": 12,
+    "episodes_available": 15,
+    "raw_content_committed": false,
+    "selected": 10,
+    "trace_source_sha256": "106c5d5931cf3ccc45eba003e47a790efc92bc22dad6f31548b214307c210b6c"
+  }
+}

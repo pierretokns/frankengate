@@ -1,0 +1,31 @@
+{
+  "schema_version": "frankengate-enterprise-semantic-cohort-conformance-v1",
+  "contract_sha256": "077a7249fe3b525d258cb15a0f3b698112a805168b2353f1d0043e7652124aa4",
+  "manifest_sha256": "9fdce98224a0e4cf2dd8b1466e09c6337f18148fc9eae48f1bafce6b81b9daeb",
+  "raw_content_committed": false,
+  "structural_valid": true,
+  "promotion_ready": false,
+  "task_counts": {
+    "target": 1,
+    "hard_negative": 1
+  },
+  "mutation_counts": {
+    "approved_rename": 1,
+    "same_surface_collision": 1
+  },
+  "promotion_blockers": [
+    "target count 1 < 100",
+    "hard_negative count 1 < 50",
+    "nil_or_unclear count 0 < 25",
+    "no_change count 0 < 5",
+    "additive_field_or_parameter count 0 < 5",
+    "approved_rename count 1 < 5",
+    "same_surface_collision count 1 < 5",
+    "changed_join_grain_or_result_meaning count 0 < 5",
+    "stale_or_revoked_authority count 0 < 5",
+    "changed_tool_contract count 0 < 5"
+  ],
+  "errors": [
+
+  ]
+}

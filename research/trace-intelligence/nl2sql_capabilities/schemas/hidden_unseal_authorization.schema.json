@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.invalid/schemas/fg-hidden-unseal-authorization-v1.json",
+  "title": "Frankengate signed hidden-stage unseal authorization",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["payload", "signature"],
+  "properties": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "experiment_id",
+        "fold_id",
+        "authorization_sequence",
+        "authorization_nonce",
+        "authorized_at_unix_ms",
+        "hidden_envelope_sha256",
+        "hidden_stage_commitment_sha256",
+        "selection_gate_receipt",
+        "candidate_artifacts",
+        "bindings",
+        "prior_hidden_unseal_receipt_sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "fg-hidden-unseal-authorization-v1"
+        },
+        "experiment_id": {"$ref": "#/$defs/id"},
+        "fold_id": {"$ref": "#/$defs/id"},
+        "authorization_sequence": {"$ref": "#/$defs/positive_integer"},
+        "authorization_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "authorized_at_unix_ms": {"$ref": "#/$defs/positive_integer"},
+        "hidden_envelope_sha256": {"$ref": "#/$defs/sha256"},
+        "hidden_stage_commitment_sha256": {"$ref": "#/$defs/sha256"},
+        "selection_gate_receipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "passed",
+            "selection_manifest_sha256",
+            "selection_result_sha256",
+            "preregistered_gate_decision"
+          ],
+          "properties": {
+            "schema_version": {"const": "fg-selection-gate-receipt-v1"},
+            "passed": {"type": "boolean"},
+            "selection_manifest_sha256": {"$ref": "#/$defs/sha256"},
+            "selection_result_sha256": {"$ref": "#/$defs/sha256"},
+            "preregistered_gate_decision": {
+              "enum": ["unseal", "do_not_unseal"]
+            }
+          }
+        },
+        "candidate_artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/candidate_artifact_receipt"}
+        },
+        "bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "model_manifest_sha256",
+            "prompt_contract_sha256",
+            "tool_contract_sha256",
+            "policy_version_sha256",
+            "comparator_version_sha256",
+            "database_snapshots_sha256",
+            "authority_snapshot_sha256"
+          ],
+          "properties": {
+            "model_manifest_sha256": {"$ref": "#/$defs/sha256"},
+            "prompt_contract_sha256": {"$ref": "#/$defs/sha256"},
+            "tool_contract_sha256": {"$ref": "#/$defs/sha256"},
+            "policy_version_sha256": {"$ref": "#/$defs/sha256"},
+            "comparator_version_sha256": {"$ref": "#/$defs/sha256"},
+            "database_snapshots_sha256": {"$ref": "#/$defs/sha256"},
+            "authority_snapshot_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "prior_hidden_unseal_receipt_sha256": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/sha256"}
+          ]
+        }
+      }
+    },
+    "signature": {"$ref": "#/$defs/signature"}
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "positive_integer": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "key_id",
+        "payload_sha256",
+        "signature_base64url"
+      ],
+      "properties": {
+        "algorithm": {"const": "Ed25519"},
+        "key_id": {"$ref": "#/$defs/id"},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "signature_base64url": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        }
+      }
+    },
+    "candidate_artifact_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["payload", "signature"],
+      "properties": {
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "experiment_id",
+            "fold_id",
+            "artifact_sha256",
+            "evidence_manifest_sha256"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "fg-candidate-artifact-receipt-v1"
+            },
+            "experiment_id": {"$ref": "#/$defs/id"},
+            "fold_id": {"$ref": "#/$defs/id"},
+            "artifact_sha256": {"$ref": "#/$defs/sha256"},
+            "evidence_manifest_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "signature": {"$ref": "#/$defs/signature"}
+      }
+    }
+  }
+}

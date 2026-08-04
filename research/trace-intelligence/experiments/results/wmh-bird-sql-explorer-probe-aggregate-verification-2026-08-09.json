@@ -1,0 +1,9 @@
+{
+  "cases_per_run_verified": 8,
+  "claim_boundary_verified": true,
+  "metrics_reconciled": true,
+  "runs_verified": 2,
+  "schema_version": "frankengate-wmh-bird-sql-explorer-aggregate-verification-v1",
+  "source_result_sha256": "cbb42aea4c35af56f765a5b3b39e2f86f14fe868e288e1715d40fd7f3161e48e",
+  "verification_passed": true
+}

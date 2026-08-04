@@ -1,0 +1,410 @@
+{
+  "aggregate": {
+    "adapted_mrr": 0.330029600557781,
+    "adapted_recall_at_20": 0.533080808080808,
+    "baseline_mrr": 0.3315419713260289,
+    "baseline_recall_at_20": 0.5301346801346801,
+    "eligible_queries": 636,
+    "folds": 33,
+    "mean_mrr_delta": -0.0015123707682479785,
+    "mean_mrr_delta_bootstrap_ci95": [
+      -0.006494484286404297,
+      0.001271270015551267
+    ],
+    "mean_recall_delta": 0.002946127946127949,
+    "mean_recall_delta_bootstrap_ci95": [
+      -0.01346801346801347,
+      0.01893939393939395
+    ]
+  },
+  "claim_boundary": {
+    "causal_skill_utility_measured": false,
+    "custom_embedding_promotion_authorized": false,
+    "domain_adaptation_executed": true,
+    "human_alias_labels": false,
+    "reason": "Silver same-work labels and model-held-out replay measure metric adaptation only; no agent intervention or enterprise outcome is evaluated."
+  },
+  "dataset": {
+    "id": "toeunkim/matm-trajectories",
+    "models": 34,
+    "revision": "d84d6454fc5fcc337e2527533f484b79cf6f0872",
+    "rows": 2130,
+    "source_sha256": "626e2e6351d763739b0e2695a1bc442e1c851c1153c44301017739e3bd1155aa"
+  },
+  "folds": [
+    {
+      "adapted_mrr": 0.23794851343555395,
+      "adapted_recall_at_20": 0.3333333333333333,
+      "baseline_mrr": 0.23717413056513356,
+      "baseline_recall_at_20": 0.2777777777777778,
+      "held_out_model": "anthropic_claude-3-haiku",
+      "positive_pairs": 1775,
+      "queries": 18,
+      "train_rows": 2064,
+      "training_pairs": 3550
+    },
+    {
+      "adapted_mrr": 0.75,
+      "adapted_recall_at_20": 1.0,
+      "baseline_mrr": 0.75,
+      "baseline_recall_at_20": 1.0,
+      "held_out_model": "anthropic_claude-opus-4",
+      "positive_pairs": 1781,
+      "queries": 12,
+      "train_rows": 2070,
+      "training_pairs": 3562
+    },
+    {
+      "adapted_mrr": 0.37774122807017535,
+      "adapted_recall_at_20": 1.0,
+      "baseline_mrr": 0.37774122807017535,
+      "baseline_recall_at_20": 1.0,
+      "held_out_model": "anthropic_claude-opus-4.6",
+      "positive_pairs": 1779,
+      "queries": 24,
+      "train_rows": 2070,
+      "training_pairs": 3558
+    },
+    {
+      "adapted_mrr": 0.46374999999999994,
+      "adapted_recall_at_20": 0.8,
+      "baseline_mrr": 0.46298400673400664,
+      "baseline_recall_at_20": 0.8,
+      "held_out_model": "anthropic_claude-sonnet-4.6",
+      "positive_pairs": 1773,
+      "queries": 30,
+      "train_rows": 2064,
+      "training_pairs": 3546
+    },
+    {
+      "adapted_mrr": 0.010438397581254725,
+      "adapted_recall_at_20": 0.0,
+      "baseline_mrr": 0.010924957884640636,
+      "baseline_recall_at_20": 0.0,
+      "held_out_model": "deepseek_deepseek-chat-v3.1",
+      "positive_pairs": 1782,
+      "queries": 6,
+      "train_rows": 2070,
+      "training_pairs": 3564
+    },
+    {
+      "adapted_mrr": 0.4642599143339423,
+      "adapted_recall_at_20": 0.7916666666666666,
+      "baseline_mrr": 0.5347342472342473,
+      "baseline_recall_at_20": 0.7916666666666666,
+      "held_out_model": "deepseek_deepseek-r1",
+      "positive_pairs": 1774,
+      "queries": 24,
+      "train_rows": 2064,
+      "training_pairs": 3548
+    },
+    {
+      "adapted_mrr": 0.13279471913938445,
+      "adapted_recall_at_20": 0.3333333333333333,
+      "baseline_mrr": 0.1317307083071469,
+      "baseline_recall_at_20": 0.3333333333333333,
+      "held_out_model": "deepseek_deepseek-r1-0528",
+      "positive_pairs": 1772,
+      "queries": 36,
+      "train_rows": 2064,
+      "training_pairs": 3544
+    },
+    {
+      "adapted_mrr": 0.4891310443942023,
+      "adapted_recall_at_20": 0.9583333333333334,
+      "baseline_mrr": 0.48752848029163814,
+      "baseline_recall_at_20": 0.7916666666666666,
+      "held_out_model": "deepseek_deepseek-v3.2",
+      "positive_pairs": 1779,
+      "queries": 24,
+      "train_rows": 2070,
+      "training_pairs": 3558
+    },
+    {
+      "adapted_mrr": 0.6717948717948717,
+      "adapted_recall_at_20": 0.6666666666666666,
+      "baseline_mrr": 0.6716417910447762,
+      "baseline_recall_at_20": 0.6666666666666666,
+      "held_out_model": "google_gemini-2.5-flash",
+      "positive_pairs": 1775,
+      "queries": 18,
+      "train_rows": 2064,
+      "training_pairs": 3550
+    },
+    {
+      "adapted_mrr": 0.06949507963207213,
+      "adapted_recall_at_20": 0.2777777777777778,
+      "baseline_mrr": 0.06960050610847168,
+      "baseline_recall_at_20": 0.2777777777777778,
+      "held_out_model": "google_gemini-2.5-flash-lite",
+      "positive_pairs": 1775,
+      "queries": 18,
+      "train_rows": 2064,
+      "training_pairs": 3550
+    },
+    {
+      "adapted_mrr": 0.02543770827688168,
+      "adapted_recall_at_20": 0.0,
+      "baseline_mrr": 0.02280319535221496,
+      "baseline_recall_at_20": 0.0,
+      "held_out_model": "google_gemini-2.5-pro",
+      "positive_pairs": 1780,
+      "queries": 18,
+      "train_rows": 2070,
+      "training_pairs": 3560
+    },
+    {
+      "adapted_mrr": 0.5779959834704359,
+      "adapted_recall_at_20": 0.75,
+      "baseline_mrr": 0.583004748736688,
+      "baseline_recall_at_20": 0.7916666666666666,
+      "held_out_model": "google_gemma-4-31b-it",
+      "positive_pairs": 1779,
+      "queries": 24,
+      "train_rows": 2070,
+      "training_pairs": 3558
+    },
+    {
+      "adapted_mrr": 0.3572318422318422,
+      "adapted_recall_at_20": 0.3333333333333333,
+      "baseline_mrr": 0.3609153917977446,
+      "baseline_recall_at_20": 0.5,
+      "held_out_model": "meta-llama_llama-3.1-8b-instruct",
+      "positive_pairs": 1777,
+      "queries": 6,
+      "train_rows": 2064,
+      "training_pairs": 3554
+    },
+    {
+      "adapted_mrr": 0.05442251461988303,
+      "adapted_recall_at_20": 0.5,
+      "baseline_mrr": 0.054151404151404146,
+      "baseline_recall_at_20": 0.5,
+      "held_out_model": "meta-llama_llama-3.2-3b-instruct",
+      "positive_pairs": 1774,
+      "queries": 24,
+      "train_rows": 2064,
+      "training_pairs": 3548
+    },
+    {
+      "adapted_mrr": 0.14449575328398448,
+      "adapted_recall_at_20": 0.3333333333333333,
+      "baseline_mrr": 0.14500245964381817,
+      "baseline_recall_at_20": 0.3333333333333333,
+      "held_out_model": "meta-llama_llama-3.3-70b-instruct",
+      "positive_pairs": 1778,
+      "queries": 30,
+      "train_rows": 2070,
+      "training_pairs": 3556
+    },
+    {
+      "adapted_mrr": 0.06676587301587301,
+      "adapted_recall_at_20": 1.0,
+      "baseline_mrr": 0.05909872721018231,
+      "baseline_recall_at_20": 1.0,
+      "held_out_model": "meta-llama_llama-4-maverick",
+      "positive_pairs": 1782,
+      "queries": 6,
+      "train_rows": 2070,
+      "training_pairs": 3564
+    },
+    {
+      "adapted_mrr": 0.242061809015237,
+      "adapted_recall_at_20": 0.43333333333333335,
+      "baseline_mrr": 0.24208238382969566,
+      "baseline_recall_at_20": 0.43333333333333335,
+      "held_out_model": "minimax_minimax-m1",
+      "positive_pairs": 1773,
+      "queries": 30,
+      "train_rows": 2064,
+      "training_pairs": 3546
+    },
+    {
+      "adapted_mrr": 0.006970402686724854,
+      "adapted_recall_at_20": 0.0,
+      "baseline_mrr": 0.004455286285536371,
+      "baseline_recall_at_20": 0.0,
+      "held_out_model": "minimax_minimax-m2",
+      "positive_pairs": 1782,
+      "queries": 6,
+      "train_rows": 2070,
+      "training_pairs": 3564
+    },
+    {
+      "adapted_mrr": 0.25172413793103443,
+      "adapted_recall_at_20": 0.5,
+      "baseline_mrr": 0.251930501930502,
+      "baseline_recall_at_20": 0.5,
+      "held_out_model": "mistralai_ministral-14b-2512",
+      "positive_pairs": 1776,
+      "queries": 12,
+      "train_rows": 2064,
+      "training_pairs": 3552
+    },
+    {
+      "adapted_mrr": 0.8808778597510991,
+      "adapted_recall_at_20": 0.9166666666666666,
+      "baseline_mrr": 0.87998562803096,
+      "baseline_recall_at_20": 0.9166666666666666,
+      "held_out_model": "mistralai_mistral-large-2512",
+      "positive_pairs": 1779,
+      "queries": 24,
+      "train_rows": 2070,
+      "training_pairs": 3558
+    },
+    {
+      "adapted_mrr": 0.6804733956231487,
+      "adapted_recall_at_20": 0.7,
+      "baseline_mrr": 0.6804665660837421,
+      "baseline_recall_at_20": 0.7,
+      "held_out_model": "openai_gpt-5.4",
+      "positive_pairs": 1778,
+      "queries": 30,
+      "train_rows": 2070,
+      "training_pairs": 3556
+    },
+    {
+      "adapted_mrr": 0.3409020884453244,
+      "adapted_recall_at_20": 0.5333333333333333,
+      "baseline_mrr": 0.33402010998619336,
+      "baseline_recall_at_20": 0.5333333333333333,
+      "held_out_model": "openai_gpt-5.4-nano",
+      "positive_pairs": 1778,
+      "queries": 30,
+      "train_rows": 2070,
+      "training_pairs": 3556
+    },
+    {
+      "adapted_mrr": 0.01592912209414545,
+      "adapted_recall_at_20": 0.0,
+      "baseline_mrr": 0.016021574232328865,
+      "baseline_recall_at_20": 0.0,
+      "held_out_model": "openai_gpt-oss-120b",
+      "positive_pairs": 1777,
+      "queries": 6,
+      "train_rows": 2064,
+      "training_pairs": 3554
+    },
+    {
+      "adapted_mrr": 0.5060975609756097,
+      "adapted_recall_at_20": 0.5,
+      "baseline_mrr": 0.5058139534883721,
+      "baseline_recall_at_20": 0.5,
+      "held_out_model": "openai_gpt-oss-20b",
+      "positive_pairs": 1776,
+      "queries": 12,
+      "train_rows": 2064,
+      "training_pairs": 3552
+    },
+    {
+      "adapted_mrr": 0.0036041566810028898,
+      "adapted_recall_at_20": 0.0,
+      "baseline_mrr": 0.0035793244611848746,
+      "baseline_recall_at_20": 0.0,
+      "held_out_model": "qwen_qwen3-235b-a22b",
+      "positive_pairs": 1782,
+      "queries": 6,
+      "train_rows": 2070,
+      "training_pairs": 3564
+    },
+    {
+      "adapted_mrr": 0.5232736150015561,
+      "adapted_recall_at_20": 0.875,
+      "baseline_mrr": 0.5239922721933484,
+      "baseline_recall_at_20": 0.875,
+      "held_out_model": "qwen_qwen3-32b",
+      "positive_pairs": 1774,
+      "queries": 24,
+      "train_rows": 2064,
+      "training_pairs": 3548
+    },
+    {
+      "adapted_mrr": 0.8351909631652847,
+      "adapted_recall_at_20": 0.8333333333333334,
+      "baseline_mrr": 0.8346845938827071,
+      "baseline_recall_at_20": 0.8333333333333334,
+      "held_out_model": "qwen_qwen3.5-flash-02-23",
+      "positive_pairs": 1780,
+      "queries": 18,
+      "train_rows": 2070,
+      "training_pairs": 3560
+    },
+    {
+      "adapted_mrr": 0.2502044275780035,
+      "adapted_recall_at_20": 0.4166666666666667,
+      "baseline_mrr": 0.24761377927432093,
+      "baseline_recall_at_20": 0.4166666666666667,
+      "held_out_model": "x-ai_grok-3-mini",
+      "positive_pairs": 1774,
+      "queries": 24,
+      "train_rows": 2064,
+      "training_pairs": 3548
+    },
+    {
+      "adapted_mrr": 0.022806546598571936,
+      "adapted_recall_at_20": 0.05555555555555555,
+      "baseline_mrr": 0.024817312317312316,
+      "baseline_recall_at_20": 0.05555555555555555,
+      "held_out_model": "x-ai_grok-4-fast",
+      "positive_pairs": 1780,
+      "queries": 18,
+      "train_rows": 2070,
+      "training_pairs": 3560
+    },
+    {
+      "adapted_mrr": 0.12797881043246104,
+      "adapted_recall_at_20": 0.3333333333333333,
+      "baseline_mrr": 0.12715842733386243,
+      "baseline_recall_at_20": 0.3333333333333333,
+      "held_out_model": "x-ai_grok-4.1-fast",
+      "positive_pairs": 1779,
+      "queries": 24,
+      "train_rows": 2070,
+      "training_pairs": 3558
+    },
+    {
+      "adapted_mrr": 0.2866718976747325,
+      "adapted_recall_at_20": 0.8333333333333334,
+      "baseline_mrr": 0.2835060480015299,
+      "baseline_recall_at_20": 0.75,
+      "held_out_model": "x-ai_grok-4.20",
+      "positive_pairs": 1781,
+      "queries": 12,
+      "train_rows": 2070,
+      "training_pairs": 3562
+    },
+    {
+      "adapted_mrr": 0.7113095238095237,
+      "adapted_recall_at_20": 1.0,
+      "baseline_mrr": 0.7113095238095237,
+      "baseline_recall_at_20": 1.0,
+      "held_out_model": "z-ai_glm-4.5",
+      "positive_pairs": 1775,
+      "queries": 18,
+      "train_rows": 2064,
+      "training_pairs": 3550
+    },
+    {
+      "adapted_mrr": 0.31119705766295463,
+      "adapted_recall_at_20": 0.5833333333333334,
+      "baseline_mrr": 0.3104117854855463,
+      "baseline_recall_at_20": 0.5833333333333334,
+      "held_out_model": "z-ai_glm-5",
+      "positive_pairs": 1779,
+      "queries": 24,
+      "train_rows": 2070,
+      "training_pairs": 3558
+    }
+  ],
+  "protocol": {
+    "adapter": "fold-local logistic metric over absolute embedding differences",
+    "embedding_endpoint": "http://127.0.0.1:11434",
+    "embedding_model": "nomic-embed-text:latest",
+    "features": "action-only embedding; goal hidden from representation",
+    "hard_negatives": "highest base-cosine candidate among sampled different-signature training rows",
+    "raw_texts_or_vectors_committed": false,
+    "split": "leave-one-model-out",
+    "training_labels": "same task_type plus normalized goal signature within fold-local training models"
+  },
+  "schema_version": "frankengate-matm-domain-embedding-adapter-v1"
+}

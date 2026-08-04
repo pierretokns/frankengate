@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "adoption_present": true,
+    "datasets_not_pooled": true,
+    "four_comparisons": true,
+    "promotion_not_authorized": true,
+    "result_hash": true,
+    "schema_version": true,
+    "source_receipts_present": true
+  },
+  "passed": true,
+  "result_sha256": "3820aa4fc744c04e63cb7403e293be5a266db9bc336d2ce63d4c9e7b755086c7",
+  "schema_version": "frankengate-skill-replay-evidence-synthesis-verification-v1"
+}

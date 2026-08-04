@@ -1,0 +1,22 @@
+{
+  "claim_boundary": "Structured identifier/metadata reranking over BGE candidates on source-identity labels. Not answer quality, enterprise utility, or a learned corporate embedding.",
+  "corpus": {
+    "pages": 1281,
+    "sha256": "7e2beb2a13d98bf8dbc7595e7a0a13e403457bb0c58e37d90c16cb4722405833",
+    "wikis": 25
+  },
+  "model": "BAAI/bge-base-en-v1.5",
+  "protocol": {
+    "candidate_k": 20,
+    "rerank": "dense cosine + 1.5 token-overlap + 2.0 exact source-id match",
+    "gold": "adapted State of AI source-record identity",
+    "nil_query": "one generated nonexistent-record query"
+  },
+  "results": [
+    {"size": 1, "records": 13, "metrics": {"recall_at_1": 0.9166666666666666, "recall_at_k": 1.0, "mrr": 0.9333333333333332, "nil_false_positive_rate": 1.0}},
+    {"size": 5, "records": 61, "metrics": {"recall_at_1": 0.9, "recall_at_k": 1.0, "mrr": 0.9329629629629629, "nil_false_positive_rate": 1.0}},
+    {"size": 10, "records": 121, "metrics": {"recall_at_1": 0.875, "recall_at_k": 0.9916666666666667, "mrr": 0.9185648148148148, "nil_false_positive_rate": 1.0}},
+    {"size": 25, "records": 301, "metrics": {"recall_at_1": 0.7766666666666666, "recall_at_k": 0.92, "mrr": 0.8115845193678011, "nil_false_positive_rate": 1.0}}
+  ],
+  "schema_version": "frankengate-stateofai-wiki-identifier-reranker-v1"
+}

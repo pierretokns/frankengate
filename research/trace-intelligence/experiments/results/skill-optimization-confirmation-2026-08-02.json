@@ -1,0 +1,154 @@
+{
+  "schema_version": "frankengate-skill-optimization-confirmation-v1",
+  "study": "trace-derived skill utility and model/harness coverage audit",
+  "claim_boundary": {
+    "our_trace_mined_skill_causal_benefit_confirmed": false,
+    "skill_optimization_in_general_supported_by_external_evidence": true,
+    "real_semantic_skill_intervention_completed": true,
+    "automatic_skill_promotion_authorized": false,
+    "reason": "The r9 arm is a real family-disjoint held-out semantic intervention with two models and an expert-verified horizon, and the r13 control arm adds a formatting placebo across both harnesses; neither produced task-success lift. SkillOpt's own benchmark results establish that gated skill-document optimization can improve real tasks, but they are not evidence that Frankengate traces alone produce a beneficial skill."
+  },
+  "local_evidence": [
+    {
+      "receipt": "experiments/results/matm-trace-skill-retrieval-2026-08-02.json",
+      "what_was_tested": "Leave-one-model-out retrieval of successful procedures from MATM traces",
+      "result": "Top-10 successful-neighbor rate 0.747 versus 0.681 for all-trace neighbors; lift 0.0665 with bootstrap 95% CI [-0.0196, 0.1660]",
+      "causal": false,
+      "hard_edge": "No agent was rerun with the retrieved procedure"
+    },
+    {
+      "receipt": "experiments/results/gepa-native-tool-protocol-2026-08-02-r2.json",
+      "what_was_tested": "GEPA optimizer with a train/holdout split",
+      "result": "Optimizer executed; two candidate mutations were rejected; selected skill did not improve the 3-item protocol holdout",
+      "causal": false,
+      "hard_edge": "Fixture measures terminal tool protocol only, not task quality"
+    },
+    {
+      "receipt": "experiments/results/skill-optimization-meta-analysis-2026-08-02.json",
+      "what_was_tested": "23 paired protocol/semantic strata, including trace-mined SQL candidates",
+      "result": "No reliable pooled semantic lift; family-disjoint broker arm tied no-skill at 0/6",
+      "causal": false,
+      "hard_edge": "Small, heterogeneous arms and abstention/tool-budget failures prevent a release claim"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r9-2026-08-02.json",
+      "what_was_tested": "Eight previously unused ALFWorld paths across four task families, replayed with Llama 3.2 and Qwen 3 4B",
+      "result": "Both models produced 0/8 wins for no-skill and trace-mined arms; candidate invalid actions were 66 versus 0 for Llama and 140 versus 280 for Qwen",
+      "causal": false,
+      "hard_edge": "One Ollama-native harness and environment win flags are not an independent correctness/security verifier; no task-success lift was observed"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r11-openai-llama-2026-08-02.json",
+      "what_was_tested": "The same eight ALFWorld paths through the Ollama OpenAI-compatible harness",
+      "result": "Both arms were 0/8; the trace-mined arm emitted 66 invalid actions versus 0 for no-skill, matching the native-harness direction",
+      "causal": false,
+      "hard_edge": "Aggregate verifier passed, but independent semantic/security recomputation and larger task power remain open"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r12-replayable-2026-08-02.json",
+      "what_was_tested": "Replayable action-sequence capture across both local harnesses on the same eight-task cohort",
+      "result": "All 32 rows independently recomputed in fresh environments with zero mismatches; both harnesses remained 0/8 for baseline and candidate",
+      "causal": false,
+      "hard_edge": "All replayed actions were admissible and outcomes matched, but this verifies task replay only—not authorization/security behavior or positive skill utility"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r13-controls-2026-08-02.json",
+      "what_was_tested": "Eight sealed family-disjoint ALFWorld tasks with no-skill, formatting placebo, and trace-derived procedure arms across Llama 3.2 and both local harnesses",
+      "result": "All six model/harness/arm cells were 0/8 wins with 280 invalid actions per cell; the fresh semantic verifier recomputed all 48 rows with zero mismatches and all actions admissible",
+      "causal": false,
+      "hard_edge": "The prescribed formatting control is now exercised, but this arm has one model, no SkillOpt/SkillGen/RHO candidates, and no positive utility; promotion remains closed"
+    },
+    {
+      "receipt": "experiments/results/alfworld-family-disjoint-powered-r14-qwen-controls-2026-08-02.json",
+      "what_was_tested": "The same eight sealed tasks with no-skill, formatting placebo, and trace-derived procedure arms using Qwen 3 4B on the Ollama-native harness",
+      "result": "All three arms were 0/8 wins; each emitted 280 invalid actions; the fresh semantic verifier recomputed all 24 rows with zero mismatches and all actions admissible",
+      "causal": false,
+      "hard_edge": "Qwen control-arm replication strengthens the negative result but does not test a SkillOpt/SkillGen/RHO candidate or establish enterprise utility"
+    },
+    {
+      "receipt": "experiments/results/skillopt-alfworld-local-runtime-attempt-r15-2026-08-02.json",
+      "what_was_tested": "Attempted SkillOpt's own ALFWorld training engine against the pinned local payload and Qwen endpoint",
+      "result": "No episodes or model responses were emitted: the available Python 3.9 environment lacks dataclasses(slots=True), while Python 3.14 lacks the openai dependency",
+      "causal": false,
+      "hard_edge": "This is a typed dependency/runtime null, not a SkillOpt quality result; a Python 3.10+ dependency-complete environment is still required"
+    },
+    {
+      "receipt": "experiments/results/skillopt-alfworld-local-intervention-r16-2026-08-02.json",
+      "what_was_tested": "Retried SkillOpt after installing its dependency stack and making the disposable ALFWorld/TextWorld runtime compatible with modern Python",
+      "result": "SkillOpt and ALFWorld initialized and reached baseline rollout, but the configured local model endpoint was unavailable; no model response, candidate skill, or scored episode was emitted",
+      "causal": false,
+      "hard_edge": "This is an infrastructure null after engine startup, not evidence for or against SkillOpt quality; the generated candidate still must be replayed against the sealed control cohort"
+    },
+    {
+      "receipt": "experiments/results/skillopt-deterministic-lifecycle-r17-2026-08-02.json",
+      "what_was_tested": "Ran SkillOpt's complete ALFWorld rollout, reflection, aggregation, update, and selection-gate path with an explicit deterministic in-process backend",
+      "result": "A candidate was generated and applied cleanly, then rejected because baseline and candidate selection scores both equaled 0.0",
+      "causal": false,
+      "hard_edge": "The shim ignores task content and makes no model calls; this proves lifecycle/gate mechanics only and cannot establish semantic skill utility"
+    },
+    {
+      "receipt": "experiments/results/skillopt-alfworld-codex-r18-2026-08-02.json",
+      "what_was_tested": "Real SkillOpt optimizer and target paths using gpt-5.6-luna through the Codex subscription harness",
+      "result": "SkillOpt generated a 213-byte candidate, applied one edit, and rejected it at the hard selection gate because baseline and candidate scores were both 0.0",
+      "causal": false,
+      "hard_edge": "The candidate required independent held-out transfer evaluation; no promotion was authorized"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r19-2026-08-02.json",
+      "what_was_tested": "Codex-backed SkillOpt candidate versus no-skill and formatting placebo on two previously held-out ALFWorld tasks",
+      "result": "All three arms were 0/2 wins over the bounded three-step pilot; all six action sequences passed fresh-environment replay with zero mismatches and admissible actions",
+      "causal": false,
+      "hard_edge": "This is a small, short-horizon pilot and not a powered release decision"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r20-2026-08-02.json",
+      "what_was_tested": "The same real Codex-backed SkillOpt candidate versus no-skill and formatting placebo at an eight-step horizon on a held-out ALFWorld task",
+      "result": "All three arms were 0/1 wins after eight Codex calls; each produced eight admissible actions with zero parser-invalid actions",
+      "causal": false,
+      "hard_edge": "The longer pilot removes the three-step truncation but remains one task and is still underpowered; the independent replay verifier passed all three rows"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r20-verification-2026-08-02.json",
+      "what_was_tested": "Fresh-environment replay of every r20 Codex action sequence",
+      "result": "Three rows independently recomputed with zero mismatches and all executed actions admissible",
+      "causal": false,
+      "hard_edge": "Replay integrity is established; it does not establish positive skill utility or enterprise transfer"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r21-2026-08-02.json",
+      "what_was_tested": "The same real Codex-backed SkillOpt candidate versus no-skill and formatting placebo on a sealed task with an independently verified six-step expert horizon",
+      "result": "All three arms were 0/1 wins at an eight-step cap; each made eight admissible actions with zero parser-invalid actions",
+      "causal": false,
+      "hard_edge": "The task was expert-solvable within the cap, but Codex failed all arms; this is a one-task negative transfer result and not a powered release decision"
+    },
+    {
+      "receipt": "experiments/results/alfworld-codex-skillopt-r21-verification-2026-08-02.json",
+      "what_was_tested": "Fresh-environment replay of every r21 Codex action sequence",
+      "result": "Three rows independently recomputed with zero mismatches and all executed actions admissible",
+      "causal": false,
+      "hard_edge": "Replay integrity is established; it does not establish positive skill utility or enterprise transfer"
+    }
+  ],
+  "model_harness_coverage": {
+    "models_exercised_locally": ["llama3.2:latest", "qwen3:4b"],
+    "models_exercised_via_codex_subscription": ["gpt-5.6-luna"],
+    "harnesses_exercised_locally": ["OpenAI-compatible native-tool loop", "Ollama native API loop"],
+    "subscription_harnesses_exercised": ["Codex CLI subscription harness"],
+    "what_that_proves": "The candidate and formatting-control protocols can be executed across two local model configurations and two transport/harness paths; the same eight-task family-disjoint intervention has now been replayed through both Ollama-native and OpenAI-compatible harnesses.",
+    "what_that_does_not_prove": "Semantic task improvement, cross-harness transfer, model-quality improvement, or enterprise productivity benefit"
+  },
+  "external_reference": {
+    "project": "Microsoft SkillOpt v0.2.0",
+    "source_checkout": "/private/tmp/skillopt-latest",
+    "source_revision": "7da46ae",
+    "reported_scope": "Six benchmarks, seven target models, three execution harnesses; gated skill optimization reported gains on real benchmark evaluators",
+    "relevance": "Supports the mechanism and evaluation design, not the claim that Frankengate's traces are sufficient"
+  },
+  "required_next_experiment": {
+    "design": "Family-disjoint, held-out semantic intervention with no-skill, trace-derived skill, and an expert/formatting placebo; the no-skill/placebo/trace controls are now replicated across Llama 3.2 and Qwen 3 4B",
+    "minimum_models": 2,
+    "minimum_harnesses": 2,
+    "required_verifiers": ["independent task correctness", "security/policy verifier", "tool-budget and abstention accounting"],
+    "release_gate": "Promote only if a trace-derived or optimizer-generated arm beats no-skill and placebo on sealed held-out outcomes with uncertainty bounds and no safety regression; SkillOpt/SkillGen/RHO arms and enterprise outcome labels remain required"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "claim_boundary_verified": true,
+  "completed_verified": 10,
+  "failures_verified": 0,
+  "schema_version": "frankengate-cctrace-ssl-normalizer-verification-v1",
+  "selected_verified": 10,
+  "source_result_sha256": "7f1110c10c5df0913ff92f5693e7845dfe8ef1f0f74f02004f9d0f7257471a47",
+  "verification_passed": true
+}

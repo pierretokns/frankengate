@@ -1,0 +1,60 @@
+{
+  "all_passed": true,
+  "checks": {
+    "authorized_cohort_has_minimum_subjects_and_labels": true,
+    "denials_emit_no_candidate_digests": true,
+    "missing_consent_abstains_without_counts": true,
+    "missing_outcome_labels_abstains_without_counts": true,
+    "wrong_scope_abstains_without_counts": true
+  },
+  "claim_boundary": {
+    "causal_enterprise_outcome_confirmed": false,
+    "cross_user_similarity_quality_measured": false,
+    "raw_trace_content_committed": false,
+    "rls_and_scope_gate_mechanics_proven": true,
+    "skill_gap_or_collaboration_utility_measured": false
+  },
+  "decisions": {
+    "authorized_labeled_cohort": {
+      "candidate_count": 3,
+      "candidate_digest_count": 3,
+      "decision": "allow",
+      "distinct_subject_count": 3,
+      "labeled_candidate_count": 3,
+      "reason": "scope_and_outcome_gate_passed"
+    },
+    "cohort_without_labels": {
+      "candidate_count": 0,
+      "candidate_digest_count": 0,
+      "decision": "abstain",
+      "distinct_subject_count": 0,
+      "labeled_candidate_count": 0,
+      "reason": "human_outcome_labels_required"
+    },
+    "missing_consent": {
+      "candidate_count": 0,
+      "candidate_digest_count": 0,
+      "decision": "abstain",
+      "distinct_subject_count": 0,
+      "labeled_candidate_count": 0,
+      "reason": "cross_user_consent_required"
+    },
+    "wrong_consent_scope": {
+      "candidate_count": 0,
+      "candidate_digest_count": 0,
+      "decision": "abstain",
+      "distinct_subject_count": 0,
+      "labeled_candidate_count": 0,
+      "reason": "row_consent_scope_mismatch"
+    }
+  },
+  "gate_schema_version": "frankengate-enterprise-outcome-gate-v1",
+  "required_inputs_before_enterprise_analysis": [
+    "current authorization epoch",
+    "tenant/team/classification/purpose scope",
+    "explicit cross-user consent and matching row scope",
+    "minimum three-subject cohort",
+    "reviewed human outcome labels for outcome-bearing questions"
+  ],
+  "schema_version": "frankengate-enterprise-outcome-gate-conformance-v1"
+}

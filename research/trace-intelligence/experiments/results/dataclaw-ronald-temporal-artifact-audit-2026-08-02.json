@@ -1,0 +1,43 @@
+{
+  "schema_version": "frankengate-dataclaw-temporal-artifact-audit-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false
+  },
+  "split": {
+    "method": "per-project chronological 70/30",
+    "projects_with_train_and_eval": 30,
+    "projects_excluded_for_single_session": 16,
+    "train_sessions": 279,
+    "evaluation_sessions": 141,
+    "evaluation_sessions_with_shapes": 105
+  },
+  "reuse": {
+    "evaluation_shape_events": 2245,
+    "same_project_seen_shape_events": 370,
+    "any_project_seen_shape_events": 627,
+    "same_project_event_reuse_rate": 0.16481069042316257,
+    "any_project_event_reuse_rate": 0.27928730512249444,
+    "sessions_with_same_project_reuse": 88,
+    "sessions_with_any_project_reuse": 97,
+    "same_project_session_reuse_rate": 0.8380952380952381,
+    "any_project_session_reuse_rate": 0.9238095238095239
+  },
+  "hard_negative_proxy": {
+    "unique_train_shapes": 2445,
+    "cross_project_train_shapes": 159,
+    "cross_project_train_shape_rate": 0.06503067484662577
+  },
+  "claim_boundary": {
+    "temporal_recurrence_measured": true,
+    "same_task_or_artifact_correctness_established": false,
+    "semantic_alias_quality_established": false,
+    "skill_or_user_outcome_established": false,
+    "promotion_authorized": false,
+    "reason": "Command-shape recurrence is an exposure/provenance signal. It does not prove that repeated invocations are semantically equivalent or safe to reuse."
+  },
+  "decision": "Use temporal recurrence to prioritize review and generate cross-project hard negatives. Require parameter/authority/schema contracts and independent replay before artifact release."
+}

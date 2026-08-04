@@ -1,0 +1,114 @@
+{
+  "schema": "frankengate-skilllearnbench-paired-statistics-v1",
+  "sources": {
+    "three_arm_receipt_sha256": "85233aef44b1c1edfc5a66b0353ae4ff1845c6dc5d259dc7ed0003a066147ea0",
+    "composite_receipt_sha256": "d6193b81e26aabe2523baef2d3bae00274b9b3d100d4fc55149512757ba9936b",
+    "dataset_revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "raw_content_committed": false
+  },
+  "arms": {
+    "none": {
+      "task_count": 6,
+      "q1_full_count": 2,
+      "q1_full_rate": 0.3333333333333333,
+      "q1_mean_recall": 0.8472222222222222,
+      "q1_mean_precision": 0.9666666666666667,
+      "q3_full_count": 6,
+      "q3_full_rate": 1.0
+    },
+    "human_authored": {
+      "task_count": 6,
+      "q1_full_count": 5,
+      "q1_full_rate": 0.8333333333333334,
+      "q1_mean_recall": 0.9444444444444445,
+      "q1_mean_precision": 1.0,
+      "q3_full_count": 6,
+      "q3_full_rate": 1.0
+    },
+    "b1-one-shot-claude-sonnet-4-6": {
+      "task_count": 6,
+      "q1_full_count": 2,
+      "q1_full_rate": 0.3333333333333333,
+      "q1_mean_recall": 0.8842592592592592,
+      "q1_mean_precision": 1.0,
+      "q3_full_count": 6,
+      "q3_full_rate": 1.0
+    }
+  },
+  "paired_within_three_arm_run": {
+    "human_authored_vs_none": {
+      "left_wins": 3,
+      "left_losses": 0,
+      "ties": 3,
+      "paired_task_count": 6,
+      "interpretation": "Descriptive task-level q1-full comparison; no causal inference when receipts came from separate runs."
+    },
+    "generated_vs_none": {
+      "left_wins": 1,
+      "left_losses": 1,
+      "ties": 4,
+      "paired_task_count": 6,
+      "interpretation": "Descriptive task-level q1-full comparison; no causal inference when receipts came from separate runs."
+    }
+  },
+  "separate_run_composite_join": {
+    "shared_task_count": 6,
+    "composite_answer_present_count": 5,
+    "receipt_metadata_completed_tasks": 6,
+    "receipt_metadata_answer_presence_mismatch": true,
+    "composite_q1_full_count": 5,
+    "composite_vs_none": {
+      "wins": 4,
+      "losses": 1
+    },
+    "composite_vs_human": {
+      "wins": 1,
+      "losses": 1
+    },
+    "task_rows": [
+      {
+        "task_id_sha256": "3f21d99463817345a01aeb2505372f2acb740827f5d4f79acc4413d3b33fcfb5",
+        "primary_null_q1_full": false,
+        "primary_human_q1_full": true,
+        "composite_q1_full": true
+      },
+      {
+        "task_id_sha256": "59c97180578620e69103f3aabb94d84cab4edc1a4c8e5a2ab95c3c007e656fbe",
+        "primary_null_q1_full": false,
+        "primary_human_q1_full": false,
+        "composite_q1_full": true
+      },
+      {
+        "task_id_sha256": "c28a4ba50d34335f2c9e58c811213efef1805bbe8797d55d5a4f944a52e083e5",
+        "primary_null_q1_full": false,
+        "primary_human_q1_full": true,
+        "composite_q1_full": true
+      },
+      {
+        "task_id_sha256": "0d50ff33cb6499c96398793e219b7eeab3d46b9fd13856b98ca96fdcb81b423c",
+        "primary_null_q1_full": false,
+        "primary_human_q1_full": true,
+        "composite_q1_full": true
+      },
+      {
+        "task_id_sha256": "bf0f9aad7bf84734c8000f9ed80b6248989f6ec3e0fa8a826ca7135442e2f568",
+        "primary_null_q1_full": true,
+        "primary_human_q1_full": true,
+        "composite_q1_full": true
+      },
+      {
+        "task_id_sha256": "b6e7ebd3ca22386ced53fa4288d1c1650346e602e5df03f2c5b39d35000672d6",
+        "primary_null_q1_full": true,
+        "primary_human_q1_full": true,
+        "composite_q1_full": false
+      }
+    ],
+    "claim_boundary": "Separate-run descriptive join; not a randomized comparison or causal estimate."
+  },
+  "claim_boundary": {
+    "task_level_verifier_statistics_measured": true,
+    "skill_causal_utility_proven": false,
+    "enterprise_transfer_proven": false,
+    "reason": "One public task family, host-harness adaptation, incomplete q2 labels, and separate composite/control runs."
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "study_id": "wiki-agentic-rag-matrix-v1",
+  "status": "planned",
+  "objective": "Measure whether a frontier coding agent can retrieve and use evidence from a maintained wiki, raw Markdown, or an MCP-backed index as corpus size and ambiguity increase.",
+  "corpora": {
+    "sizes": [1, 5, 10, 25],
+    "unit": "wiki",
+    "required_controls": [
+      "same page content and identifiers across every arm",
+      "same corpus snapshot and update timestamp",
+      "same question set stratified by wiki and cross-wiki scope",
+      "same model, prompt budget, tool budget, and temperature"
+    ],
+    "recommended_sources": [
+      "Wikipedia Good Articles / Wiki Live Challenge where licensing and snapshot terms permit",
+      "WildGraphBench-style Wikipedia external-reference questions",
+      "a Karpathy-style interlinked Markdown wiki compiled from the same source pages",
+      "a synthetic enterprise wiki with exact identifiers, aliases, stale facts, and NIL questions"
+    ]
+  },
+  "arms": [
+    {"id": "filesystem_raw", "interface": "Claude/Codex filesystem tools", "backend": "Glob/Grep/Read over raw Markdown"},
+    {"id": "filesystem_compiled", "interface": "Claude/Codex filesystem tools", "backend": "Karpathy-style index plus interlinked Markdown pages"},
+    {"id": "mcp_fts", "interface": "one MCP server", "backend": "BM25/FTS lexical search plus get-page"},
+    {"id": "mcp_vector", "interface": "one MCP server", "backend": "dense vector search plus get-page"},
+    {"id": "mcp_hybrid", "interface": "one MCP server", "backend": "lexical+dense reciprocal-rank fusion plus get-page"},
+    {"id": "mcp_graph", "interface": "one MCP server", "backend": "entity/link expansion plus bounded page retrieval"},
+    {"id": "federated_mcp", "interface": "one tool per wiki plus router", "backend": "per-wiki lexical/dense indexes"},
+    {"id": "direct_api", "interface": "non-MCP retrieval function", "backend": "same retrieval implementation exposed directly"},
+    {"id": "full_context_small", "interface": "single prompt", "backend": "all pages in context where token budget permits"}
+  ],
+  "question_slices": [
+    "exact identifier and acronym",
+    "semantic paraphrase",
+    "multi-hop linked-page reasoning",
+    "cross-wiki entity disambiguation",
+    "contradictory or stale versioned facts",
+    "NIL / not-found / abstention",
+    "citation and evidence completeness",
+    "read-only tool/action request"
+  ],
+  "metrics": {
+    "retrieval": ["MRR", "Recall@1", "Recall@5", "Recall@20", "nDCG@10", "evidence_recall", "wrong_wiki_rate"],
+    "agent": ["answer_exact_or_semantic_correctness", "citation_correctness", "abstention_precision", "tool_call_validity", "turns", "tool_calls", "invalid_tool_calls"],
+    "operations": ["p50/p95_total_latency_ms", "p50/p95_retrieval_latency_ms", "input_tokens", "output_tokens", "estimated_cost", "index_build_time", "update_lag_ms"],
+    "scale": ["quality_delta_by_corpus_size", "latency_delta_by_corpus_size", "tool_description_token_growth", "wrong_wiki_rate_by_corpus_size"]
+  },
+  "analysis": {
+    "primary": "paired per-question comparison with corpus size and arm fixed effects",
+    "saturation_rule": "report the first size at which Recall@5, answer correctness, or p95 latency crosses a pre-registered degradation threshold; never infer saturation from raw top-k alone",
+    "required_ablation": ["MCP boundary overhead with identical backend", "compiled wiki versus raw pages", "hybrid versus lexical-only", "single federated tool versus one tool per wiki", "with and without NIL questions"],
+    "promotion_gate": "Do not ship an agentic-RAG default until it improves answer correctness and evidence citation at a fixed latency/cost budget on held-out questions, including NIL and cross-wiki cases."
+  },
+  "provenance": {
+    "architecture_references": [
+      "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f",
+      "https://limecloud.github.io/agentknowledge/en/reference/llm-wiki-pattern",
+      "https://github.com/OpenDataLab/MinerU-Document-Explorer"
+    ],
+    "benchmark_references": [
+      "https://agent-retrieval-bench.github.io/",
+      "https://agentresearchlab.com/benchmarks/index.html",
+      "https://arxiv.org/abs/2508.16260",
+      "https://arxiv.org/abs/2509.24002",
+      "https://arxiv.org/abs/2602.23368"
+    ],
+    "harness_references": ["https://code.claude.com/docs/en/mcp"]
+  }
+}

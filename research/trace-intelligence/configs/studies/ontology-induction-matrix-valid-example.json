@@ -1,0 +1,57 @@
+{
+  "schema_version": "frankengate-ontology-induction-matrix-v1",
+  "study_id": "ontology-induction-matrix-example",
+  "consent_scope_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "corpus_receipts": [
+    {"name": "enterprise_document_fixture", "uri": "external://enterprise-rag-bench/questions", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}
+  ],
+  "candidate_pool_frozen_before_labels": true,
+  "holdouts": {"principal": true, "team": true, "project": true, "source_system": true, "effective_time": true, "ontology_template": true},
+  "arms": ["deterministic_schema_terms", "goi_proposal", "ontogpt_population", "graphrag_extraction", "staged_governed_pipeline"],
+  "metrics": ["structural_coverage", "entity_precision", "entity_recall", "alias_f1", "relation_evidence_precision", "nil_abstention_rate", "temporal_accuracy", "authority_accuracy", "replay_success", "wrong_system_rate", "reviewer_correction_burden", "latency_ms", "cost_usd"],
+  "replay_contract": {"independent_verifier_required": true, "changed_environment_required": true, "authority_gate_required": true},
+  "minimum_promotion_counts": {"entity_or_alias_targets": 100, "hard_negatives": 50, "nil_or_unclear": 25, "annotators_per_case": 2, "changed_system_replays": 20},
+  "changed_system_replays": 0,
+  "cases": [
+    {
+      "case_id": "case-001",
+      "case_class": "alias",
+      "principal_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "team_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "project_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "source_system_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+      "source_environment_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+      "changed_environment_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+      "effective_at": "2026-08-02T00:00:00Z",
+      "candidate_pool_hash": "7777777777777777777777777777777777777777777777777777777777777777",
+      "source_receipt": {"uri": "external://case-001/source", "sha256": "8888888888888888888888888888888888888888888888888888888888888888"},
+      "label_receipt": {"uri": "external://case-001/labels", "sha256": "9999999999999999999999999999999999999999999999999999999999999999"},
+      "replay_receipt": {"uri": "external://case-001/replay", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+      "labels": [
+        {"annotator_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "decision": "same_entity", "evidence_hashes": ["cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"]},
+        {"annotator_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "decision": "same_entity", "evidence_hashes": ["eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"]}
+      ],
+      "retention": {"raw_content_external_only": true, "deletion_policy_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}
+    },
+    {
+      "case_id": "case-002",
+      "case_class": "nil",
+      "principal_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "team_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "project_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "source_system_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+      "source_environment_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+      "changed_environment_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+      "effective_at": "2026-08-02T00:00:00Z",
+      "candidate_pool_hash": "7777777777777777777777777777777777777777777777777777777777777777",
+      "source_receipt": {"uri": "external://case-002/source", "sha256": "8888888888888888888888888888888888888888888888888888888888888888"},
+      "label_receipt": {"uri": "external://case-002/labels", "sha256": "9999999999999999999999999999999999999999999999999999999999999999"},
+      "replay_receipt": {"uri": "external://case-002/replay", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+      "labels": [
+        {"annotator_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "decision": "nil", "evidence_hashes": ["cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"]},
+        {"annotator_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "decision": "nil", "evidence_hashes": ["eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"]}
+      ],
+      "retention": {"raw_content_external_only": true, "deletion_policy_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}
+    }
+  ]
+}

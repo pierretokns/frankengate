@@ -1,0 +1,84 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "nmuendler/share-codex",
+  "dataset_revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0",
+  "license": "CC-BY-4.0",
+  "source_url": "https://huggingface.co/datasets/nmuendler/share-codex",
+  "source_format": "share-codex rows containing id, ordered messages, and metadata",
+  "adapter": "share_codex_sparse_v1",
+  "publication_basis": "Intentional public release of the dataset owner's local Codex and Claude sessions",
+  "population_rows": 4333,
+  "privacy_review": {
+    "exporter_controls": [
+      "final-row redaction",
+      "secret scanning with 4476 replacements",
+      "internal prompts and reasoning excluded",
+      "developer messages and turn context excluded",
+      "37 private working-directory prefixes reviewed and excluded"
+    ],
+    "residual_risk": "Secret-scan findings and 3622 rows with no detected repository license require content-minimized research; exporter redaction is not a guarantee that transcript text is risk-free.",
+    "raw_data_committed": false,
+    "content_free_aggregate_only": true
+  },
+  "embedded_license_review": {
+    "dataset_license_scope": "Dataset card declares CC-BY-4.0.",
+    "source_material_risk": "Tool output and edited code may carry separate repository rights. Export manifest reports 3622 not_found and 56 unknown session licenses.",
+    "admitted_use": "Structural and lifecycle analysis only; no redistribution, semantic quotation, training, or fine-tuning from transcript content."
+  },
+  "known_scope": {
+    "contributors": 1,
+    "complete_home_directory": false,
+    "project_session_history": true,
+    "settings_plugins_credentials": false,
+    "timestamp_range": [
+      "2025-10-10T06:30:04.132Z",
+      "2026-06-18T12:51:29.747Z"
+    ],
+    "sessions_by_source": {
+      "codex": 4314,
+      "claude": 19
+    }
+  },
+  "sample_design": {
+    "name": "eight_position_strata_with_sixteen_consecutive_rows_each",
+    "rationale": "Cover the full ordered row range while limiting raw temporary material to 128 of 4333 sessions. Consecutive blocks amortize dataset-server access; inference must not treat the sample as random.",
+    "requests": [
+      {
+        "offset": 0,
+        "length": 16
+      },
+      {
+        "offset": 617,
+        "length": 16
+      },
+      {
+        "offset": 1233,
+        "length": 16
+      },
+      {
+        "offset": 1850,
+        "length": 16
+      },
+      {
+        "offset": 2467,
+        "length": 16
+      },
+      {
+        "offset": 3084,
+        "length": 16
+      },
+      {
+        "offset": 3700,
+        "length": 16
+      },
+      {
+        "offset": 4317,
+        "length": 16
+      }
+    ],
+    "revision_verification": "Every response must include x-revision equal to dataset_revision.",
+    "raw_cache": "Temporary local storage only"
+  },
+  "admission": "admit_sparse_sample_for_single_user_structural_and_lifecycle_validation",
+  "enterprise_transfer": "Requires consented multi-user data, independent outcomes, and prospective interventions."
+}

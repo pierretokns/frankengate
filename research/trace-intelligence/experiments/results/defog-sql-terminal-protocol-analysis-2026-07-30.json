@@ -1,0 +1,82 @@
+{
+  "claim_boundary": {
+    "adequate_sample_for_quality_claim": false,
+    "expert_skill_benefit_observed": false,
+    "hidden_test_touched": false,
+    "terminal_protocol_repaired_on_four_task_p0": true,
+    "trace_mined_skill_tested": false
+  },
+  "contract_invariants": {
+    "all_match": true,
+    "arm_iteration_order_match": true,
+    "paired_task_set_match": true,
+    "prompt_receipts_match": true,
+    "stable_source_receipts_match": {
+      "authority_manifest_sha256": true,
+      "cohort_manifest_sha256": true,
+      "dataset_manifest_sha256": true,
+      "design_manifest_sha256": true,
+      "model_manifest_sha256": true
+    }
+  },
+  "experiment_date": "2026-07-30",
+  "gates": {
+    "complete_task_arm_receipts": true,
+    "p1_effect_screen_unsealed": false,
+    "paired_sensitivity_passed": false,
+    "terminal_protocol_passed": true,
+    "zero_unauthorized_observations": true
+  },
+  "inputs": {
+    "analyzer_sha256": "735b81a53ff542a20627be9b1d528964e963e3abb55cec32bebcf54f6e64e10e",
+    "original_result_sha256": "508c78b367a791e125f83c5dfdc1f82d2363ef558d9d299812c448fe683ec250",
+    "repaired_result_sha256": "f01e9ec93a75bd044d9bb6a1bf6eeb57e0d882e76cf9bb8d32e31318ca653ad1"
+  },
+  "paired_effects": {
+    "expert_schema_navigation_seed_vs_no_skill": {
+      "losses": 0,
+      "risk_difference": 0.0,
+      "ties": 4,
+      "wins": 0
+    },
+    "expert_schema_navigation_seed_vs_unrelated_formatting_placebo": {
+      "losses": 0,
+      "risk_difference": 0.0,
+      "ties": 4,
+      "wins": 0
+    }
+  },
+  "protocol": {
+    "original_failure_rate_by_arm": {
+      "expert_schema_navigation_seed": 0.25,
+      "no_skill": 0.25,
+      "unrelated_formatting_placebo": 0.5
+    },
+    "original_missing_terminal_count": 4,
+    "remediation": {
+      "applies_identically_across_arms": true,
+      "arm_artifacts_changed": false,
+      "authority_contract_changed": false,
+      "base_prompt_changed": false,
+      "id": "explicit_terminal_state_and_terminal_only-v1",
+      "model_changed": false,
+      "task_selection_changed": false,
+      "terminal_state_message_sha256": "b7b275156b4dad4708ed53145f40063e865ae324138ab4186e816c3e981b377b",
+      "terminal_tools": [
+        "abstain",
+        "submit_sql"
+      ],
+      "tool_schemas_changed": false,
+      "transition": "when accepted SQL attempt count reaches max_sql_attempts, the attempt observation declares zero remaining SQL attempts, an arm-independent protocol-controller message requires one terminal native call, and the next model request offers only submit_sql and abstain"
+    },
+    "repaired_failure_rate_by_arm": {
+      "expert_schema_navigation_seed": 0.0,
+      "no_skill": 0.0,
+      "unrelated_formatting_placebo": 0.0
+    },
+    "repaired_missing_terminal_count": 0,
+    "repaired_unauthorized_observation_count": 0
+  },
+  "result_sha256_excluding_self": "1a2935a8161d872021b6aaacbdd3617c52ef971c0fe463db160a0fe732886c07",
+  "schema_version": "frankengate-defog-terminal-protocol-analysis-v1"
+}

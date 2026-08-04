@@ -1,0 +1,65 @@
+{
+  "schema_version": "frankengate-dataclaw-memory-skill-artifact-audit-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false
+  },
+  "cohort": {
+    "sessions": 436
+  },
+  "artifact_mentions": {
+    "sessions_by_category": {
+      "claude_config": 243,
+      "skill_file": 34,
+      "memory_file": 13,
+      "codex_config": 3
+    },
+    "mention_events_by_category": {
+      "claude_config": 1347,
+      "skill_file": 402,
+      "memory_file": 61,
+      "codex_config": 42
+    },
+    "context_counts": {
+      "tool_argument_claude_config": 643,
+      "assistant_claude_config": 257,
+      "user_claude_config": 392,
+      "prompt_claude_config": 55,
+      "user_skill_file": 43,
+      "tool_argument_skill_file": 138,
+      "assistant_skill_file": 214,
+      "user_memory_file": 12,
+      "prompt_skill_file": 7,
+      "assistant_memory_file": 20,
+      "tool_argument_memory_file": 29,
+      "assistant_codex_config": 24,
+      "tool_argument_codex_config": 14,
+      "user_codex_config": 4
+    },
+    "unique_argument_context_hashes_by_category": {
+      "claude_config": 428,
+      "skill_file": 92,
+      "memory_file": 19,
+      "codex_config": 14
+    }
+  },
+  "lifecycle_proxies": {
+    "artifact_reference_read_calls": 373,
+    "artifact_reference_write_calls": 343,
+    "sessions_with_artifact_reads": 102,
+    "sessions_with_artifact_writes": 136
+  },
+  "claim_boundary": {
+    "durable_artifact_mentions_measured": true,
+    "memory_content_quality_established": false,
+    "skill_correctness_established": false,
+    "artifact_lifecycle_semantics_established": false,
+    "user_outcome_established": false,
+    "promotion_authorized": false,
+    "reason": "Markers and tool names identify candidate artifact interactions only. This projection lacks typed tool results and independent semantic outcomes."
+  },
+  "decision": "Use artifact references to route review and import candidates. Require explicit read/write provenance, bitemporal scope, citations, contradiction handling, deletion, and replay before treating memory or skill files as durable knowledge."
+}

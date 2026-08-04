@@ -1,0 +1,98 @@
+{
+  "aggregates": {
+    "mean_content_parts": 0.0,
+    "mean_distinct_call_shapes": 3.5,
+    "mean_error_tools": 0.812,
+    "mean_messages": 57.969,
+    "mean_output_texts": 18.406,
+    "mean_raw_outputs": 19.531,
+    "mean_repeated_call_shapes": 116.938,
+    "mean_tool_uses": 120.438,
+    "mean_user_text_messages": 7.281
+  },
+  "claim_boundary": {
+    "complete_history_structure_verified_on_sample": true,
+    "cross_user_identity_verified": false,
+    "reason": "The corpus supplies richer multi-harness messages and tool outputs than the earlier flattened export, enabling artifact/friction mining pilots; it still has no independent task-success labels or organizational identity, and this is a stratified sample rather than a full-corpus causal study.",
+    "skill_transfer_verified": false,
+    "task_outcome_verified": false
+  },
+  "coverage": {
+    "artifact_fingerprints_with_both_success_and_error": 2,
+    "cross_harness_recurring_artifact_candidates": 0,
+    "cross_model_recurring_artifact_candidates": 4,
+    "cross_project_recurring_artifact_candidates": 2,
+    "distinct_content_fingerprint_count": 2592,
+    "distinct_model_digest_count": 13,
+    "distinct_project_digest_count": 16,
+    "distinct_source_digest_count": 4,
+    "recurring_successful_artifact_candidates": 9,
+    "role_counts": {
+      "assistant": 1622,
+      "user": 233
+    },
+    "sessions_with_branch": 15,
+    "sessions_with_explicit_error": 5,
+    "sessions_with_raw_tool_output": 5,
+    "sessions_with_repeated_call_shapes": 25,
+    "sessions_with_same_shape_error_to_success": 2,
+    "sessions_with_tool_output_text": 12,
+    "tool_family_counts": {
+      "delegation": 89,
+      "external_retrieval": 5,
+      "file_mutation": 1117,
+      "other": 41,
+      "read_search": 301,
+      "shell": 2301
+    },
+    "tool_status_counts": {
+      "completed": 47,
+      "error": 23,
+      "success": 1846
+    }
+  },
+  "schema": "frankengate-dataclaw-zhiyaowang-audit-v1",
+  "source": {
+    "dataset": "zhiyaowang/dataclaw-zhiyaowang",
+    "license": "mit",
+    "raw_content_committed": false,
+    "revision": "f5157333cbc22489661122a9bc5347b137144900",
+    "rows_sampled": 32,
+    "rows_total": 1013,
+    "sample_offsets": [
+      0,
+      1,
+      2,
+      3,
+      144,
+      145,
+      146,
+      147,
+      288,
+      289,
+      290,
+      291,
+      432,
+      433,
+      434,
+      435,
+      577,
+      578,
+      579,
+      580,
+      721,
+      722,
+      723,
+      724,
+      865,
+      866,
+      867,
+      868,
+      1009,
+      1010,
+      1011,
+      1012
+    ],
+    "sampling_errors": {}
+  }
+}

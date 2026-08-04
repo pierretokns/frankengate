@@ -1,0 +1,27 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "clem/ml-intern-sessions",
+  "dataset_revision": "f87189d9674394472755896350df0661154bbe0a",
+  "license": "OTHER",
+  "source_url": "https://huggingface.co/datasets/clem/ml-intern-sessions",
+  "source_format": "Dated native/local ML Intern research session JSONL snapshots",
+  "adapter": "ml_intern_session_v1",
+  "publication_basis": "Intentional public dataset release",
+  "privacy_review": "Dataset warns comprehensive redaction and human review were not performed; quarantine required",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "jsonl_files": 92,
+    "unique_session_ids": 15,
+    "dates": 12,
+    "date_start": "2026-05-01",
+    "date_end": "2026-06-11",
+    "tool_calls_and_results": true,
+    "uniform_scientific_outcome_label": false
+  },
+  "admission": "quarantine_then_admit_as_longitudinal_ml_research_stratum",
+  "enterprise_transfer": "Snapshot duplication and implicit outcomes require version-aware deduplication and independent labels"
+}

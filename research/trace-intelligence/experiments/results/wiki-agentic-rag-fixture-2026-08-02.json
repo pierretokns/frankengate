@@ -1,0 +1,404 @@
+{
+  "aggregate": [
+    {
+      "backend": "fts",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.875,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.264625,
+        "p95_latency_ms": 1.044542,
+        "recall_at_1": 0.75,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 5,
+      "size": 1
+    },
+    {
+      "backend": "tfidf",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.5833333333333334,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.233834,
+        "p95_latency_ms": 0.301708,
+        "recall_at_1": 0.25,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 5,
+      "size": 1
+    },
+    {
+      "backend": "hybrid",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.875,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.223584,
+        "p95_latency_ms": 0.276292,
+        "recall_at_1": 0.75,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 5,
+      "size": 1
+    },
+    {
+      "backend": "fts",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.7083333333333334,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.232792,
+        "p95_latency_ms": 0.285875,
+        "recall_at_1": 0.5,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 5,
+      "size": 1
+    },
+    {
+      "backend": "tfidf",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.5833333333333334,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.233917,
+        "p95_latency_ms": 0.27875,
+        "recall_at_1": 0.25,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 5,
+      "size": 1
+    },
+    {
+      "backend": "hybrid",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.7083333333333334,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.34475,
+        "p95_latency_ms": 0.407375,
+        "recall_at_1": 0.5,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 5,
+      "size": 1
+    },
+    {
+      "backend": "fts",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.875,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.312459,
+        "p95_latency_ms": 0.425625,
+        "recall_at_1": 0.75,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 21,
+      "size": 5
+    },
+    {
+      "backend": "tfidf",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.6875,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.288583,
+        "p95_latency_ms": 0.387917,
+        "recall_at_1": 0.5,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 21,
+      "size": 5
+    },
+    {
+      "backend": "hybrid",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.875,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.266625,
+        "p95_latency_ms": 0.46375,
+        "recall_at_1": 0.75,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 21,
+      "size": 5
+    },
+    {
+      "backend": "fts",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.8333333333333334,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.29825,
+        "p95_latency_ms": 0.366375,
+        "recall_at_1": 0.75,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 21,
+      "size": 5
+    },
+    {
+      "backend": "tfidf",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.6875,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.282541,
+        "p95_latency_ms": 0.544,
+        "recall_at_1": 0.5,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 21,
+      "size": 5
+    },
+    {
+      "backend": "hybrid",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.8333333333333334,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.286291,
+        "p95_latency_ms": 0.355125,
+        "recall_at_1": 0.75,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.0
+      },
+      "records": 21,
+      "size": 5
+    },
+    {
+      "backend": "fts",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.8125,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.335,
+        "p95_latency_ms": 0.481875,
+        "recall_at_1": 0.625,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.125
+      },
+      "records": 41,
+      "size": 10
+    },
+    {
+      "backend": "tfidf",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.6354166666666667,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.343292,
+        "p95_latency_ms": 0.523125,
+        "recall_at_1": 0.5,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.125
+      },
+      "records": 41,
+      "size": 10
+    },
+    {
+      "backend": "hybrid",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.8125,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.363417,
+        "p95_latency_ms": 0.422583,
+        "recall_at_1": 0.625,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.125
+      },
+      "records": 41,
+      "size": 10
+    },
+    {
+      "backend": "fts",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.7708333333333333,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.355666,
+        "p95_latency_ms": 0.598083,
+        "recall_at_1": 0.625,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.125
+      },
+      "records": 41,
+      "size": 10
+    },
+    {
+      "backend": "tfidf",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.6354166666666667,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.363208,
+        "p95_latency_ms": 0.550958,
+        "recall_at_1": 0.5,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.125
+      },
+      "records": 41,
+      "size": 10
+    },
+    {
+      "backend": "hybrid",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.7708333333333333,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.36125,
+        "p95_latency_ms": 0.474708,
+        "recall_at_1": 0.625,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.125
+      },
+      "records": 41,
+      "size": 10
+    },
+    {
+      "backend": "fts",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.7391666666666667,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.560166,
+        "p95_latency_ms": 0.84675,
+        "recall_at_1": 0.55,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.2
+      },
+      "records": 101,
+      "size": 25
+    },
+    {
+      "backend": "tfidf",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.5625,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.54275,
+        "p95_latency_ms": 0.79725,
+        "recall_at_1": 0.5,
+        "recall_at_k": 0.75,
+        "wrong_wiki_at_1": 0.2
+      },
+      "records": 101,
+      "size": 25
+    },
+    {
+      "backend": "hybrid",
+      "compiled": false,
+      "metrics": {
+        "mrr": 0.7391666666666667,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.574667,
+        "p95_latency_ms": 0.767125,
+        "recall_at_1": 0.55,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.2
+      },
+      "records": 101,
+      "size": 25
+    },
+    {
+      "backend": "fts",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.6975,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.541375,
+        "p95_latency_ms": 0.757042,
+        "recall_at_1": 0.55,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.2
+      },
+      "records": 101,
+      "size": 25
+    },
+    {
+      "backend": "tfidf",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.5833333333333334,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.573792,
+        "p95_latency_ms": 0.833583,
+        "recall_at_1": 0.5,
+        "recall_at_k": 0.75,
+        "wrong_wiki_at_1": 0.2
+      },
+      "records": 101,
+      "size": 25
+    },
+    {
+      "backend": "hybrid",
+      "compiled": true,
+      "metrics": {
+        "mrr": 0.6975,
+        "nil_false_positive_rate": 1.0,
+        "p50_latency_ms": 0.579625,
+        "p95_latency_ms": 0.838542,
+        "recall_at_1": 0.55,
+        "recall_at_k": 1.0,
+        "wrong_wiki_at_1": 0.2
+      },
+      "records": 101,
+      "size": 25
+    }
+  ],
+  "claim_boundary": "Local backend-parity and scale smoke test only. The fixture is synthetic; these results do not establish Wikipedia quality, MCP behavior, frontier-agent answer quality, or enterprise transfer.",
+  "corpus": {
+    "pages": 100,
+    "sha256": "9a48b266dfc5b7260a1800b01ec6e5f84be948a9e690f1860b5c868fed1f8311",
+    "wikis": 25
+  },
+  "fixture": {
+    "bytes": 68960,
+    "sha256": "9a48b266dfc5b7260a1800b01ec6e5f84be948a9e690f1860b5c868fed1f8311"
+  },
+  "protocol": {
+    "backends": [
+      "fts",
+      "tfidf",
+      "hybrid"
+    ],
+    "contract": [
+      "search",
+      "get_page",
+      "expand_links"
+    ],
+    "corpus_kind": "synthetic enterprise-shaped fixture",
+    "frontier_agent_run": false,
+    "mcp_wire_protocol_run": false,
+    "representations": [
+      "raw",
+      "compiled"
+    ],
+    "wikis": [
+      1,
+      5,
+      10,
+      25
+    ]
+  },
+  "run": {
+    "bytes": 578298,
+    "sha256": "8cfdd0e18f7eef607a15e9cd3b3e7ec1b187414b72670a5edd68460b08f3f895"
+  },
+  "schema_version": "frankengate-wiki-agentic-rag-receipt-v1"
+}

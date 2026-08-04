@@ -22,8 +22,10 @@ intersection: the same authorization predicate must be applied to every query
 path and cache key.
 
 Frankensearch is an optional, separately deployed index/query worker. It may
-receive only immutable, redacted documents and authorized record identifiers.
-Its results are rechecked against PostgreSQL before use. It is not a required
+receive immutable, classified documents only when it runs inside the same
+governed scope and enforces an equivalent authorization snapshot; otherwise it
+receives a destination-transformed copy plus authorized record identifiers. Its
+results are rechecked against PostgreSQL before use. It is not a required
 dependency of the inference gateway and is disabled by default in Helm.
 
 ## Why not make Redis or Qdrant authoritative

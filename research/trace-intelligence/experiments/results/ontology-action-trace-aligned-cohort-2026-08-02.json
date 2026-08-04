@@ -1,0 +1,40 @@
+{
+  "schema_version": "frankengate-wmh-bird-ontology-aligned-cohort-v1",
+  "source": {
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630",
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "sqlite_root": "external-pinned-bird-minidev",
+    "raw_content_committed": false
+  },
+  "dataset": {
+    "selected_cases": 44,
+    "database_families": ["california_schools", "card_games", "codebase_community", "debit_card_specializing", "european_football_2", "financial", "formula_1", "student_club", "superhero", "thrombosis_prediction", "toxicology"],
+    "per_database_limit": 4,
+    "split": "within-database deterministic odd/even task split; evaluation uses odd half",
+    "candidate_pool": "all tables exposed in each trace",
+    "target": "recorded SQL tables; compatibility adds independently result-preserving substitutions"
+  },
+  "protocol": {
+    "arms": ["A0", "A1", "A2", "A3", "A6", "A7"],
+    "schema_identifiers": "recorded gen_ai.tool.message DDL only",
+    "frontier_or_embedding_invoked": false,
+    "target_labels_external": true
+  },
+  "arms": {
+    "A0": {"records": 44, "strict_mrr": 0.796266, "strict_recall_at_1": 0.704545, "strict_recall_at_5": 0.886364, "strict_recall_at_10": 0.977273},
+    "A1": {"records": 44, "strict_mrr": 0.948864, "strict_recall_at_1": 0.909091, "strict_recall_at_5": 1.0, "strict_recall_at_10": 1.0},
+    "A2": {"records": 44, "strict_mrr": 0.814421, "strict_recall_at_1": 0.727273, "strict_recall_at_5": 0.909091, "strict_recall_at_10": 1.0},
+    "A3": {"records": 44, "strict_mrr": 0.946429, "strict_recall_at_1": 0.909091, "strict_recall_at_5": 0.977273, "strict_recall_at_10": 1.0},
+    "A6": {"records": 44, "strict_mrr": 0.946429, "strict_recall_at_1": 0.909091, "strict_recall_at_5": 0.977273, "strict_recall_at_10": 1.0},
+    "A7": {"records": 44, "strict_mrr": 0.948864, "strict_recall_at_1": 0.909091, "strict_recall_at_5": 1.0, "strict_recall_at_10": 1.0}
+  },
+  "claim_boundary": {
+    "aligned_proxy_cohort_measured": true,
+    "semantic_alias_quality_established": false,
+    "authority_safety_established": false,
+    "validated_artifact_utility_established": false,
+    "enterprise_skill_transfer_measured": false,
+    "reason": "The frozen public cohort has SQL table references and SQLite replay, but no reviewed aliases, principals, authority epochs, or changed-system outcomes."
+  },
+  "result_sha256": "15bf7c08e2c1fe1cde37a49962e03f3a521e111e4817db2e38a9113fff5f046d"
+}

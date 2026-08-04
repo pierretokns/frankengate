@@ -1,0 +1,54 @@
+{
+  "analysts": [
+    {
+      "elapsed_ms": 16293.153,
+      "role": "protocol",
+      "text_sha256": "5d4266a7f9127afdcf338e61b1bf1b2e8b8ac6be474edc3509ac8513f46901c8"
+    },
+    {
+      "elapsed_ms": 19218.733,
+      "role": "sql",
+      "text_sha256": "22e9aa3c1f4f0168f8ac59198ef5eb2959896d3de8db3d4446f448a9514c08b3"
+    },
+    {
+      "elapsed_ms": 14575.664,
+      "role": "transfer",
+      "text_sha256": "f1b6de114f03981b7ddde1bfe6a556820dbae4c6576cc567e96155aa83b8392c"
+    }
+  ],
+  "candidate_class": "trace2skill_style_compiled_hypothesis",
+  "candidate_text": "Invocation conditions: Use for controlled PostgreSQL analytical tasks involving schema discovery, joins, aggregation, latest-or-selected related records, date arithmetic, temporal windows, or zero-activity entities.\n\nActions: Inspect relevant tables, keys, column types, nullability, and duplicate risks. Identify the requested entity grain and population. Pre-aggregate or rank related records at that grain before joining. Define inclusive and exclusive date or timestamp boundaries explicitly, using type-compatible PostgreSQL arithmetic and numeric casts where aggregate precision requires them. Preserve required unmatched entities with outer joins, keep fact-side filters in join predicates, and count nullable fact identifiers when counting related activity. Execute the candidate statement, review cardinality, null handling, boundary behavior, ordering, and inclusion of zero-activity entities, then revise minimally using any database diagnostic and submit only after successful semantic validation.\n\nContraindications: Do not infer undocumented business rules, keys, types, or temporal semantics. Do not use epoch extraction on an integer date difference, substitute a 24-hour window for calendar-day semantics, silently alter inclusive or exclusive boundaries, move outer-join filters into WHERE, or treat successful execution as proof of correctness. Do not disclose secrets, authority identifiers, raw rows, or task-specific SQL.\n\nAbstention behavior: If schema evidence, types, relationships, requested grain, join cardinality, boundary semantics, terminal protocol, or inclusion requirements are missing or contradictory, abstain from guessing and request the specific missing constraint. If execution succeeds but semantic checks remain unresolved, report the uncertainty and do not submit the result.",
+  "candidate_text_sha256": "540fd69770d6ea1782677937a4058d5b16aa3269b24d73b5cee8d41f21e2faec",
+  "claim_boundary": "Parallel frontier analysis plus consolidation creates a candidate only; no skill utility or promotion is established until held-out governed replay beats no-skill and length-matched neutral controls.",
+  "consolidator_elapsed_ms": 13664.644,
+  "consolidator_text_sha256": "3544f2a3f2a295f72ae9c1cf8ae7954129d237921e650cdef4eb165b8dcf4e1b",
+  "promotion_authorized": false,
+  "raw_content_emitted": false,
+  "result_sha256": "e3a98cfb9647f9cd3690d109404e3bf45643b793e0bb045971e8dbd7b78c26cf",
+  "schema_version": "frankengate-trace2skill-defog-compiler-v1",
+  "source": {
+    "event_count": 95,
+    "event_counts": {
+      "agent_tool_result": 20,
+      "candidate_sql_error": 2,
+      "candidate_sql_result": 6,
+      "factorial_task_end": 6,
+      "factorial_task_start": 6,
+      "model_request": 20,
+      "model_response": 20,
+      "schema_inspection_result": 15
+    },
+    "file_count": 6,
+    "source_directories": [
+      "/private/tmp/defog-codex-frontier-audit-38560"
+    ],
+    "source_file_sha256": [
+      "4254a03c58c57dc094de82399da7647a66c81eec3189ff509e47fc06cc1596b8",
+      "b25105a52f09f433a3573dfd495749011c1e278b3f8c996a37503e7873ac86b7",
+      "782e5d66a16fca88c4164a2e71e6e12cf17d3284bf845f13c9925165b237756b",
+      "b04db068c013222c2c645498b6d2140525396db2e802d3a5290b142638388fce",
+      "99fb4019f27661c1c5e9045d5a5f6d3570baa25f092f599a78e59bb2f47f7f74",
+      "e6ed36f21fda6159bac7a8f88e910af23bd5492756f58c3528805fd56590699d"
+    ]
+  }
+}

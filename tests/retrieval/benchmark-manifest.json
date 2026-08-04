@@ -1,7 +1,7 @@
 {
   "schema_version": "retrieval-eval-v1",
-  "description": "Sanitized seed contract for finance and enterprise-jargon retrieval evaluation.",
-  "raw_text_policy": "No production prompts, outputs, document bodies, or secrets are permitted.",
+  "description": "Content-free manifest for governed finance and enterprise-jargon retrieval evaluation.",
+  "raw_text_policy": "No plaintext or credentials are permitted in Git. Authorized runners resolve full text from governed same-scope source references.",
   "required_slices": [
     "finance_exact_identifier",
     "finance_semantic_paraphrase",
@@ -28,10 +28,17 @@
       "case_id",
       "tenant_id",
       "query_hash",
+      "query_source_ref",
+      "document_source_refs",
+      "content_disposition",
       "positive_source_ids",
       "hard_negative_source_ids",
       "principal_scope",
+      "classification",
+      "purpose",
       "policy_version",
+      "authorization_epoch",
+      "deletion_epoch",
       "index_revision",
       "deleted_source_ids",
       "expected_authorized_source_ids"

@@ -1,0 +1,47 @@
+{
+  "decision": {
+    "candidate_pool_can_be_frozen_honestly": false,
+    "exposure_aware_retrieval_reproduction_ready": false,
+    "reason": "The BIRD export records tool calls and observations, but does not record candidate exposure sets, search/open relevance events, stable principals/scopes, or independent terminal outcomes required by the trajectory-supervision contract."
+  },
+  "inventory": {
+    "action_keys": {
+      "arguments": 4168,
+      "content": 4168,
+      "kind": 4168,
+      "name": 4168
+    },
+    "error_observation_rows": 7,
+    "observation_keys": {
+      "content": 4168,
+      "is_error": 4168,
+      "metadata": 4168,
+      "reward": 4168
+    },
+    "rows_with_explicit_exposure_fields": 0,
+    "rows_with_explicit_identity_fields": 0,
+    "rows_with_non_null_reward": 0,
+    "rows_with_raw_span_ids": 4168,
+    "search_or_open_action_rows": 0,
+    "step_rows": 4168,
+    "task_hashes": 222,
+    "tool_names": {
+      "bash": 4168
+    },
+    "tool_result_edges": 4168
+  },
+  "missing_requirements": {
+    "candidate_set_exposure": true,
+    "independent_terminal_outcome": true,
+    "natural_session_id": true,
+    "search_or_open_relevance_events": true,
+    "stable_principal_team_project_system": true
+  },
+  "result_sha256": "391b1ded91fde5c49d9e232a24f01aa784469200ebf30f201ec6e52a9bb535e5",
+  "schema_version": "frankengate-bird-trajectory-retrieval-fit-v1",
+  "source": {
+    "raw_content_committed": false,
+    "steps_sha256": "e9fabdfd0f5c546f2a6a5153ad9aa2c2478c5e6507e310c273c8221593469055",
+    "steps_uri": "external://world-model-harness-v0.2.2/bird-sql/index/steps.jsonl"
+  }
+}

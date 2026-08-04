@@ -1,0 +1,15 @@
+{
+  "schema_version": "frankengate.cmu-access-recheck.v2",
+  "date": "2026-08-01",
+  "dataset_id": "cx-cmu/agent_trajectories",
+  "dataset_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+  "authenticated_identity": "pierretokns",
+  "metadata_access": true,
+  "metadata_sha_or_revision": "88e2af82c116a9a57f29be6f21b9924da081c2bd",
+  "non_trajectory_readme_dry_run": true,
+  "trajectory_shard_dry_run": false,
+  "trajectory_shard_error": "Access denied. This repository requires approval.",
+  "raw_files_downloaded": false,
+  "admission_status": "metadata_admitted_raw_quarantined",
+  "claim_boundary": "No CMU trajectory metrics, training, redistribution, or enterprise inference is claimed until publisher approval is granted and the pinned raw files are downloaded into the private cache."
+}

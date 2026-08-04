@@ -1,0 +1,47 @@
+{
+  "schema_version": "frankengate-dataclaw-exact-vs-shape-temporal-v1",
+  "source": {
+    "dataset_id": "ronaldcmz/Claude-Opus-Dataclaw-Unredacted",
+    "dataset_revision": "918e6fb39c916d3459ef338b4c3645622b9a5126",
+    "path_sha256": "10942c58556f73b4aa809baeeb5af65a132c1df5df3a841ef062ee7ecc1ede2e",
+    "raw_content_committed": false,
+    "external_model_calls": false
+  },
+  "split": {
+    "method": "per-project chronological 70/30",
+    "train_sessions": 279,
+    "evaluation_sessions": 141,
+    "excluded_single_session_projects": 16
+  },
+  "events": {
+    "digest_events": 3497,
+    "shape_events": 3497,
+    "shape_same_project": 555,
+    "shape_any_project": 1060,
+    "digest_same_project": 224,
+    "digest_any_project": 295,
+    "digest_same_project_rate": 0.06405490420360309,
+    "digest_any_project_rate": 0.08435802116099514,
+    "shape_same_project_rate": 0.15870746354017728,
+    "shape_any_project_rate": 0.3031169573920503
+  },
+  "sessions": {
+    "evaluation_with_features": 105,
+    "shape_same_project_sessions": 88,
+    "shape_any_project_sessions": 97,
+    "digest_same_project_sessions": 66,
+    "digest_any_project_sessions": 76,
+    "digest_same_project_rate": 0.6285714285714286,
+    "shape_same_project_rate": 0.8380952380952381,
+    "digest_any_project_rate": 0.7238095238095238,
+    "shape_any_project_rate": 0.9238095238095239
+  },
+  "claim_boundary": {
+    "exact_vs_shape_recurrence_measured": true,
+    "semantic_artifact_correctness_established": false,
+    "task_equivalence_established": false,
+    "promotion_authorized": false,
+    "reason": "Exact string recurrence is a necessary but insufficient signal; a changed parameter, authority scope, tool version, or outcome can make an exact-looking command unsafe."
+  },
+  "decision": "Use shape recurrence for candidate generation and exact recurrence as a stronger prior, but require typed binding, scope/epoch/schema checks, and independent replay before reuse."
+}

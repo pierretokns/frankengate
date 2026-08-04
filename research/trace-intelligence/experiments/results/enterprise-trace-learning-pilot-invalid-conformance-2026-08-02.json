@@ -1,0 +1,243 @@
+{
+  "schema_version": "frankengate-enterprise-trace-learning-pilot-conformance-v1",
+  "contract_sha256": "0e488fd166aa31763f67d0364531107830b80602697cf02e59b80b044ee6c2f0",
+  "manifest_sha256": "1ba8e9c3da5f9c447fa4ba2f41ce59e133f0f6fbd0602c05d2512486e8ac7618",
+  "raw_content_committed": false,
+  "structural_valid": false,
+  "promotion_ready": false,
+  "promotion_note": "Plan conformance does not prove that an authorized cohort, labels, replay outcomes, or user outcomes exist.",
+  "errors": [
+    {
+      "path": "$.prompt",
+      "message": "raw content field is forbidden"
+    },
+    {
+      "path": "cohort_contract_uri",
+      "message": "must be a sealed or partner URI"
+    },
+    {
+      "path": "$.design.holdouts.team",
+      "message": "holdout must be enabled"
+    },
+    {
+      "path": "$.design.holdouts.project",
+      "message": "holdout must be enabled"
+    },
+    {
+      "path": "$.design.holdouts.system",
+      "message": "holdout must be enabled"
+    },
+    {
+      "path": "$.design.holdouts.effective_time",
+      "message": "holdout must be enabled"
+    },
+    {
+      "path": "$.design.holdouts.changed_schema_or_authority",
+      "message": "holdout must be enabled"
+    },
+    {
+      "path": "$.design.retrieval_arms",
+      "message": "must be an array containing every required value"
+    },
+    {
+      "path": "$.design.artifact_arms",
+      "message": "must be an array containing every required value"
+    },
+    {
+      "path": "$.design.skill_arms",
+      "message": "must be an array containing every required value"
+    },
+    {
+      "path": "$.design.environment_splits",
+      "message": "must be an array containing every required value"
+    },
+    {
+      "path": "$.design.paired_factorial",
+      "message": "must be true"
+    },
+    {
+      "path": "$.design.same_task_set_across_arms",
+      "message": "must be true"
+    },
+    {
+      "path": "$.required_case_classes",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.required_metrics",
+      "message": "must contain every required value"
+    },
+    {
+      "path": "$.promotion_gates.minimum_targets",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.minimum_hard_negatives",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.minimum_nil_or_unclear",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.minimum_replay_pass_rate",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.maximum_regression_rate",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.maximum_cost_multiplier",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.maximum_latency_multiplier",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.minimum_reviewer_agreement",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.promotion_gates.minimum_replay_pass_rate",
+      "message": "must be in [0,1]"
+    },
+    {
+      "path": "$.promotion_gates.maximum_regression_rate",
+      "message": "must be in [0,1]"
+    },
+    {
+      "path": "$.promotion_gates.minimum_reviewer_agreement",
+      "message": "must be in [0,1]"
+    },
+    {
+      "path": "$.promotion_gates.maximum_unsafe_accepts",
+      "message": "must be zero"
+    },
+    {
+      "path": "$.promotion_gates.minimum_targets",
+      "message": "must be a positive integer"
+    },
+    {
+      "path": "$.promotion_gates.minimum_hard_negatives",
+      "message": "must be a positive integer"
+    },
+    {
+      "path": "$.promotion_gates.minimum_nil_or_unclear",
+      "message": "must be a positive integer"
+    },
+    {
+      "path": "$.run_contract.same_model_across_arms",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.same_harness_across_arms",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.same_tool_budget_across_arms",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.same_timeout_budget_across_arms",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.paired_task_ids",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.candidate_pool_frozen_before_labels",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.independent_evaluator",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.proposer_excluded_from_evaluator",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.run_contract.same_model_across_arms",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.same_harness_across_arms",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.same_tool_budget_across_arms",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.same_timeout_budget_across_arms",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.paired_task_ids",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.candidate_pool_frozen_before_labels",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.independent_evaluator",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.proposer_excluded_from_evaluator",
+      "message": "must be true"
+    },
+    {
+      "path": "$.run_contract.skill_generated_from_evaluation_task",
+      "message": "must be false"
+    },
+    {
+      "path": "$.output_policy.receipts_content_free",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.output_policy.deletion_receipt_required",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.output_policy.provenance_required",
+      "message": "required field is missing"
+    },
+    {
+      "path": "$.output_policy.raw_content_external_only",
+      "message": "must be true"
+    },
+    {
+      "path": "$.output_policy.receipts_content_free",
+      "message": "must be true"
+    },
+    {
+      "path": "$.output_policy.deletion_receipt_required",
+      "message": "must be true"
+    },
+    {
+      "path": "$.output_policy.provenance_required",
+      "message": "must be true"
+    },
+    {
+      "path": "$.partner_packet.manifest_uri",
+      "message": "must be sealed or partner URI"
+    },
+    {
+      "path": "$.partner_packet.receipt_uri",
+      "message": "must be sealed or partner URI"
+    },
+    {
+      "path": "$.partner_packet.publication_review_required",
+      "message": "must be true"
+    },
+    {
+      "path": "$.partner_packet.raw_trace_export",
+      "message": "must be false"
+    }
+  ]
+}

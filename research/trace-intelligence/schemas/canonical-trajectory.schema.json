@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frankengate.dev/schemas/research/canonical-trajectory-v1.json",
+  "title": "Frankengate research canonical trajectory",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "trace_id",
+    "source",
+    "task",
+    "events",
+    "outcome",
+    "loss_receipt"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "canonical-trajectory-v1"
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "source": {
+      "type": "object",
+      "required": ["dataset_id", "dataset_revision", "adapter"],
+      "additionalProperties": true
+    },
+    "task": {
+      "type": "object",
+      "required": ["task_id"],
+      "additionalProperties": true
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "event_id",
+          "sequence",
+          "kind",
+          "observation_status",
+          "source_role",
+          "content"
+        ],
+        "properties": {
+          "event_id": {"type": "string"},
+          "sequence": {"type": "integer", "minimum": 0},
+          "kind": {"type": "string"},
+          "observation_status": {
+            "enum": ["observed", "reconstructed", "inferred", "missing"]
+          },
+          "source_role": {"type": "string"},
+          "content": {"type": ["string", "null"]},
+          "command": {"type": ["string", "null"]},
+          "parent_event_id": {"type": ["string", "null"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "required": ["value", "source"],
+      "additionalProperties": true
+    },
+    "loss_receipt": {
+      "type": "object",
+      "required": [
+        "source_event_count",
+        "canonical_event_count",
+        "silently_dropped_event_count",
+        "reconstructed_fields",
+        "known_missing_fields"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

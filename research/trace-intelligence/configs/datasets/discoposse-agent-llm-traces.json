@@ -1,0 +1,28 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "DiscoPosse/agent-llm-traces",
+  "dataset_revision": "6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+  "license": "CDLA-Permissive-2.0",
+  "source_url": "https://huggingface.co/datasets/DiscoPosse/agent-llm-traces/tree/6b1add7c19f1fb50bb0edf5b240d6149a5c621fb",
+  "source_format": "Parquet rows containing nested OpenTelemetry spans",
+  "adapter": "otel_agent_trace_projection_v1",
+  "publication_basis": "Public dataset card with explicit CDLA-Permissive-2.0 license",
+  "rights_assertion": "Dataset license applies to the package; benchmark and model-provider provenance remain separate fields",
+  "privacy_review": "Benchmark traces are not admitted as real-user behavior; aggregate-only analysis and source-stratum labels required",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "declared_rows": 1780,
+    "nested_otel_spans": true,
+    "harness_field": true,
+    "benchmark_field": true,
+    "model_field": true,
+    "collection_time_field": true,
+    "real_user_behavior": false
+  },
+  "admission": "admit_for_otel_projection_and_schema_retention_only",
+  "enterprise_transfer": "Benchmark/provider strata; no employee skill, intent, or collaboration claim"
+}

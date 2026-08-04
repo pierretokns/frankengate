@@ -1,0 +1,67 @@
+{
+  "analysts": [
+    {
+      "elapsed_ms": 18630.11,
+      "role": "protocol",
+      "text_sha256": "309639fe967715248704286c3076e9cc2206f880210cc73ddbf1c07e1109fbc1"
+    },
+    {
+      "elapsed_ms": 19270.757,
+      "role": "sql",
+      "text_sha256": "efaa3e43f787679f59d7a9dd6f9ea7e02a59096bd1374fade9d7518b107d6f27"
+    },
+    {
+      "elapsed_ms": 17126.206,
+      "role": "transfer",
+      "text_sha256": "a6429d408ef9382e9282c2c66fcc2edf9b18001f8f7614060702b0566a233db2"
+    }
+  ],
+  "candidate_class": "trace2skill_style_compiled_hypothesis",
+  "candidate_text": "Invocation conditions: Use for authorized PostgreSQL analytical tasks involving schema discovery, filters, date ranges, joins, aggregates, ratios, or terminal submission.\n\nActions: (1) Inspect the authorized schema, table grain, join keys, data types, nullability, and relevant categorical conventions; use only observed identifiers. (2) Translate the request into explicit entity populations, measures, predicates, grouping keys, date boundaries, denominator definitions, and output requirements. (3) Apply case-insensitive normalization only when explicitly required or verified by the data; otherwise preserve documented value semantics. (4) Represent calendar periods with inclusive starts and exclusive next-period boundaries. (5) For one-to-many joins, establish the intended entity grain and deduplicate entities before aggregation or use distinct entity counts where appropriate. (6) Promote arithmetic to an appropriate numeric type and protect denominators with NULLIF. (7) Run narrowly scoped, read-only validation and inspect cardinality, categories, boundary behavior, null handling, and result shape. (8) If policy denies a construct, replace it with an equivalent permitted relational formulation and revalidate. (9) Submit only after semantic checks support the intended metric, then stop after the terminal result.\n\nContraindications: Do not infer business rules, status values, identifiers, or relationships from names alone. Do not count joined rows when the metric counts entities. Do not treat empty or nonempty results, successful execution, formatting, or policy acceptance as semantic proof. Do not use unauthorized data, mutation or administrative operations, restricted row-level output, secrets, authority identifiers, or task-specific SQL.\n\nAbstention behavior: Abstain concisely when authorization or schema evidence is unavailable, entity relationships or metric definitions remain ambiguous, casing or categorical semantics cannot be resolved without guessing, no policy-compatible equivalent exists, validation is contradictory, or the requested output would disclose restricted information. Request only the generic missing clarification or evidence, without fabricating results or identifiers.",
+  "candidate_text_sha256": "79ce1f6cb98cf55acc79eb17b96b0d7f3649c1f752aa3fff2543163928363716",
+  "claim_boundary": "Parallel frontier analysis plus consolidation creates a candidate only; no skill utility or promotion is established until held-out governed replay beats no-skill and length-matched neutral controls.",
+  "consolidator_elapsed_ms": 17146.092,
+  "consolidator_text_sha256": "2301ae88ae901487c9af0bee874e9c95a4b93dcc8b0d1bd9259844dab6a91c57",
+  "promotion_authorized": false,
+  "raw_content_emitted": false,
+  "result_sha256": "24f01c94c96cf185142eb86d7bea05ea56d87f36b58e3e87cc0bf1de0279e253",
+  "schema_version": "frankengate-trace2skill-defog-compiler-v1",
+  "source": {
+    "event_count": 269,
+    "event_counts": {
+      "agent_tool_result": 57,
+      "candidate_sql_policy_denial": 1,
+      "candidate_sql_result": 21,
+      "factorial_task_end": 18,
+      "factorial_task_start": 18,
+      "model_request": 57,
+      "model_response": 57,
+      "schema_inspection_result": 40
+    },
+    "file_count": 18,
+    "source_directories": [
+      "/private/tmp/defog-codex-broker-audit-47701",
+      "/private/tmp/defog-codex-broker-audit-seed-310000-69282"
+    ],
+    "source_file_sha256": [
+      "2bda0850cc184eab34b381326fbce5cbb6a6c9f0294f4099b06b500abd256713",
+      "75a5b85893b47a5ba1e029d71a3e81ce10ec2ad2cf8eadad37632f57319f7559",
+      "a5db44a39a6c08bb812623dac0e2b96fb66c4403b17f12fa43b495e0211bfe61",
+      "e6d5f08932729d28c1c47c5de996dd1a477a81737ee5ba00270d983c0e4336a8",
+      "fdb19d1a28f9806c50d62013a63ea82f87bfdb0087561fcd79e8b54f444c390b",
+      "80ff03f51f8dac2c854376af723ab52a09ca836011391f35873e8062165f4a77",
+      "b9a8163c10773c6d6f48c8b9a4cd7af902de051922fddcdaad3506be6b57400d",
+      "c1f879d916afc6b5474542602cbbe9dc024eee358c5f7084b27c9aad3a44bc9d",
+      "d504e46b6f281dbc92ceb31e53c118e4dd139b3b00fb45f33310663984723358",
+      "168e02635948f1589f65e5065d821704b72890ac72d53e6403847c4c37a5b59b",
+      "e3b6d9ec41f47b11a985b24cde0259202b9cb55d478d368119f0c2757eb87c80",
+      "93806a916b65114fc28c407dc240a47906b478549e008d919527fed9ed71ba28",
+      "8279872b9d1d7c3bd39700bdff55f7185225c04e38eb87ef649ab7a498289441",
+      "bbc08d4db0813c82a14c2b08187aab671495ca3fdf1aad203727616fcb356420",
+      "7862c821fc4364242de7754b595e6bc8c30610a1e6a63f9f99770a125ac31e37",
+      "c79f3c8a64e846bdaa8167c2e20a844c0c93d31275fa1a774e2e45bf323e249c",
+      "b4f38a8b1102de6833804820ef37ba381b475fcfa856e02e477f320a07830bf5",
+      "33150da0689601b2ebd149f161a554b3ca1cab3389499b4f14820be85e566050"
+    ]
+  }
+}

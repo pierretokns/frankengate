@@ -1,0 +1,496 @@
+{
+  "agreement_count": 11,
+  "candidate_count": 16,
+  "claim_boundary": "Frontier silver screening of recurrence candidates; no independent task-success labels, correctness proof, safety certification, or automatic promotion.",
+  "content_policy": "Prompts are credential-scrubbed and bounded; raw candidate examples and model reasons are not committed.",
+  "labels": {
+    "context_specific": 18,
+    "insufficient_evidence": 2,
+    "reusable_procedure": 25,
+    "unsafe_or_sensitive": 3
+  },
+  "labels_by_coverage": {
+    "cross_project": {
+      "context_specific": 18,
+      "insufficient_evidence": 2,
+      "reusable_procedure": 25,
+      "unsafe_or_sensitive": 3
+    }
+  },
+  "model": "gpt-5.6-luna",
+  "repeats_per_candidate": 3,
+  "rows": [
+    {
+      "agreement": false,
+      "calls": [
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 12143.202000064775,
+          "label": "reusable_procedure",
+          "output_sha256": "0f20bb5a05ac16b942853163a3073a4738708cbeff77d449db646ddb7d8dfddd"
+        },
+        {
+          "confidence": 0.93,
+          "elapsed_ms": 12928.407249972224,
+          "label": "reusable_procedure",
+          "output_sha256": "00ea3cfe166240249ed4ff5bbf77f6b893ffcbffc4bcafb55d75ed361778edb6"
+        },
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 9929.341583047062,
+          "label": "insufficient_evidence",
+          "output_sha256": "9632a76a093139a9777433cb876e8b840d6c138715ef0665da826ba4c9849d84"
+        }
+      ],
+      "candidate_hash": "fe0d6928134f18c5",
+      "model_count": 1,
+      "project_count": 4,
+      "session_count": 5,
+      "source_count": 1,
+      "successes": 7
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 10747.18916695565,
+          "label": "context_specific",
+          "output_sha256": "381f164872460142749225110f12b916f0bfe994d2d6ea53bc9943a424f51366"
+        },
+        {
+          "confidence": 0.97,
+          "elapsed_ms": 9843.206000048667,
+          "label": "context_specific",
+          "output_sha256": "9b0d3a8591bd492fbc5961677c8c4fcda35511ca2da02c405c7b0049170463d8"
+        },
+        {
+          "confidence": 0.97,
+          "elapsed_ms": 8946.495500043966,
+          "label": "context_specific",
+          "output_sha256": "66382286a5d71f5b965b4d5ebfb53a0982f069a8121f5c92f824f26962fd08ae"
+        }
+      ],
+      "candidate_hash": "cf7f0605b09caff8",
+      "model_count": 4,
+      "project_count": 3,
+      "session_count": 8,
+      "source_count": 1,
+      "successes": 260
+    },
+    {
+      "agreement": false,
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 7343.73179206159,
+          "label": "insufficient_evidence",
+          "output_sha256": "060b073632583581e5a3d6a06f81dad38193e31145156a18256df55e70861c00"
+        },
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 10071.752708987333,
+          "label": "reusable_procedure",
+          "output_sha256": "2c8eefe27a123b168860903eec3e8f013a85bf027da309f6c46a0dfcb261f123"
+        },
+        {
+          "confidence": 0.91,
+          "elapsed_ms": 10500.294291996397,
+          "label": "reusable_procedure",
+          "output_sha256": "1963fbd182fb0b9fe2d3df2ac9a099dcc3212314f011f2ecea0e8b63aa3078eb"
+        }
+      ],
+      "candidate_hash": "2e67c1338238067a",
+      "model_count": 3,
+      "project_count": 3,
+      "session_count": 7,
+      "source_count": 1,
+      "successes": 52
+    },
+    {
+      "agreement": false,
+      "calls": [
+        {
+          "confidence": 0.97,
+          "elapsed_ms": 10814.93508303538,
+          "label": "reusable_procedure",
+          "output_sha256": "75bcf324a70a71fafa6b6620fb7b2047eaf318fc57ae64019c0017907c11a63f"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 6865.015292074531,
+          "label": "context_specific",
+          "output_sha256": "bb8ca895338427623f459ef57780747da3496a7a12f3a82ae94bbeba9e805247"
+        },
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 10322.05412501935,
+          "label": "context_specific",
+          "output_sha256": "a392d443af588d32d538c1852916edf2fe91ed40887e0b312a4d136124602858"
+        }
+      ],
+      "candidate_hash": "fc572e8392823da5",
+      "model_count": 1,
+      "project_count": 3,
+      "session_count": 4,
+      "source_count": 1,
+      "successes": 8
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 9372.152958996594,
+          "label": "reusable_procedure",
+          "output_sha256": "16a55dcc6ed77c4d3bd7a51e3f269e4e87add360dfcb5b8d9aa1c6454d7cb68a"
+        },
+        {
+          "confidence": 0.97,
+          "elapsed_ms": 8456.431541941129,
+          "label": "reusable_procedure",
+          "output_sha256": "9e50347ee273d707c93bfe328f114351dbeb8830c6b1daecda2cc11bafbb1f62"
+        },
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 8582.093374920078,
+          "label": "reusable_procedure",
+          "output_sha256": "81fb49ee97afe7ccfc3a2911da45bab1709d0d733c1a3bfceadc2bf029c06e71"
+        }
+      ],
+      "candidate_hash": "3e59568b5bd1955b",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 25
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.93,
+          "elapsed_ms": 8480.502291000448,
+          "label": "reusable_procedure",
+          "output_sha256": "7d69ae3392868474d2167da50079f9ad27093b479d7c9a042218443717781522"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 12082.533417036757,
+          "label": "reusable_procedure",
+          "output_sha256": "d1dd55c21d9ce65b8ec7099257ab53bbd52eb357e05be1914862140614cc16ab"
+        },
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 7967.250125017017,
+          "label": "reusable_procedure",
+          "output_sha256": "302361ade8df77ccc8b67ed65a9b0356fae6eeaf4c47662e69ba611a3025a4e8"
+        }
+      ],
+      "candidate_hash": "8a3d4f8f23acc62c",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 22
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 8827.60745799169,
+          "label": "reusable_procedure",
+          "output_sha256": "f916b4eb7d686728c1a91191d32b1fb0872ba6050e2e0884ac25c65ea97ed383"
+        },
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 8572.148874984123,
+          "label": "reusable_procedure",
+          "output_sha256": "cef0937f937c882cae169f35141c802e0a4c8af59faba7d8f734977d7a034d1d"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 7624.378832988441,
+          "label": "reusable_procedure",
+          "output_sha256": "d5424ceed9a9123a99e1064a9f1475e53024924e84897bd52abcf38f4d0bcd34"
+        }
+      ],
+      "candidate_hash": "28213442cc1d493c",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 10
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 7520.02649998758,
+          "label": "reusable_procedure",
+          "output_sha256": "06861ed9241be54a0d13f195f5978a18d4bbddc1fe944ff7a8b6c9dd74ec16e4"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 7471.150874975137,
+          "label": "reusable_procedure",
+          "output_sha256": "55c050bf252d5e2e81b1d4980cde49454c62987dacc059c4f5485cb4ab515c0d"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 7930.013875011355,
+          "label": "reusable_procedure",
+          "output_sha256": "e4ed46283064b815e2a1a1f3f6b2e0155b123036358fb6ae659a81773e586048"
+        }
+      ],
+      "candidate_hash": "931844d2d1fd7086",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 10
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 6290.731874993071,
+          "label": "context_specific",
+          "output_sha256": "5adb303fb7c6b07ba7c24cc1b9913f2eeef35f366bb27b66a107486c6ae35f85"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 6130.413791979663,
+          "label": "context_specific",
+          "output_sha256": "47c994d96286425f1e0d4038231171955afa3e0f291664123455fdaf5b280e6b"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 7285.075916908681,
+          "label": "context_specific",
+          "output_sha256": "504d2912a192e342f3474a41976bea9aabe68448389fcefb6970d0ed0df5e1d7"
+        }
+      ],
+      "candidate_hash": "f0902f11212fcf5c",
+      "model_count": 2,
+      "project_count": 2,
+      "session_count": 3,
+      "source_count": 1,
+      "successes": 10
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.97,
+          "elapsed_ms": 9078.904666937888,
+          "label": "context_specific",
+          "output_sha256": "f191d290c39a4ab908cbf94d431faf1569f4c3a7da2ac42bc7824e47c7e4bcbc"
+        },
+        {
+          "confidence": 0.97,
+          "elapsed_ms": 6315.227624960244,
+          "label": "context_specific",
+          "output_sha256": "b226a00f2379ec1ac44f47d62c6839909acfd722896b885dd4af3af0229d260e"
+        },
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 11274.238042067736,
+          "label": "context_specific",
+          "output_sha256": "18a948c37d3d6abebed3c474b4bd3a7328c4774167124aa37a752ef17ad6cec7"
+        }
+      ],
+      "candidate_hash": "6713b5abb7a27f4d",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 8
+    },
+    {
+      "agreement": false,
+      "calls": [
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 7913.230833015405,
+          "label": "context_specific",
+          "output_sha256": "ace319e60654b9dc466be0ce1c79d1afbbf3680bcbab7102226641638912e67a"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 8090.960875037126,
+          "label": "context_specific",
+          "output_sha256": "6941e3bfeb5223c02d2315e982676c4d0b4f81cbb17b569b4db85e68bff64f7c"
+        },
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 9329.163333051838,
+          "label": "reusable_procedure",
+          "output_sha256": "8f75499f7d4bbe1229bad21c7c977bac97a4c84e6ff755bc18b44512916dfead"
+        }
+      ],
+      "candidate_hash": "258afb345bc506c3",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 7
+    },
+    {
+      "agreement": false,
+      "calls": [
+        {
+          "confidence": 0.96,
+          "elapsed_ms": 8684.058625018224,
+          "label": "context_specific",
+          "output_sha256": "366a37954a7c3525fb943499b211a5247f6745be101139a043d1ba01303d81dc"
+        },
+        {
+          "confidence": 0.93,
+          "elapsed_ms": 8011.568833026104,
+          "label": "reusable_procedure",
+          "output_sha256": "df8913ef34c57ddbdeaa2562d99a77be6e99ab0b2ca42b8b10c53270b7f4a136"
+        },
+        {
+          "confidence": 0.86,
+          "elapsed_ms": 9442.401333944872,
+          "label": "context_specific",
+          "output_sha256": "01f1a2d119a703b83acae364dd08e7a28057a60c5dad5d3c23deb0038501e760"
+        }
+      ],
+      "candidate_hash": "bad375d6f89d1c95",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 7
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 9116.351709002629,
+          "label": "unsafe_or_sensitive",
+          "output_sha256": "3722b4f3cf03a8acdf7ecf716fcbf8f75378cf2ab8692bcdaf8e7a68917e8da8"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 7798.794458969496,
+          "label": "unsafe_or_sensitive",
+          "output_sha256": "6aac518f4d28ca53ce5f3c77a7b40b3f6d0781151206950638f18746fa3b7f47"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 9555.404208018444,
+          "label": "unsafe_or_sensitive",
+          "output_sha256": "b78467e80864abbc549a15484d3fbabadc3752854faf9dee76c285741093e5a6"
+        }
+      ],
+      "candidate_hash": "cbeedc802bf0d5ea",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 3,
+      "source_count": 1,
+      "successes": 7
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.91,
+          "elapsed_ms": 10987.980250036344,
+          "label": "reusable_procedure",
+          "output_sha256": "9c509822b66e1ff7a6bbd20a3bc2462f0550f92b29dd47dbaf25e0e4df793d0a"
+        },
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 8570.124999969266,
+          "label": "reusable_procedure",
+          "output_sha256": "63be9754d20fb9429d96ea11ff9526c8d42841bac89146a0b8634e115b62ccab"
+        },
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 8790.543667040765,
+          "label": "reusable_procedure",
+          "output_sha256": "b153a0f69e2822ce9e5e8a8f0509746e85f67c2d3b6363ab8778d0d5735b087b"
+        }
+      ],
+      "candidate_hash": "e62ecbe86fb46a13",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 7
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 6541.4354159729555,
+          "label": "reusable_procedure",
+          "output_sha256": "88cf570de5815b0aca21954541a95e99ce9f812d3ab7bd4c7738c8ee00bcd865"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 11474.429000052623,
+          "label": "reusable_procedure",
+          "output_sha256": "895932657f66688b73edb0a7b0d8256266ffd7b03285276c15dd7caae029a492"
+        },
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 5955.124208936468,
+          "label": "reusable_procedure",
+          "output_sha256": "d75e5be04d9d8eb61784cbb594725967c9edb72ac69d0895c13f46cfa4119abc"
+        }
+      ],
+      "candidate_hash": "2a48dcfb2628f747",
+      "model_count": 2,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 6
+    },
+    {
+      "agreement": true,
+      "calls": [
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 7736.872834037058,
+          "label": "context_specific",
+          "output_sha256": "cd31b444882c6a1ff5c05fa1ea34b859825034591aff8c5037a07d046344b1fe"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 6494.8589579435065,
+          "label": "context_specific",
+          "output_sha256": "64c0398c95223547929edcd770b6b389308d1b846d0d0d48403f88b6073db24a"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 6182.91941692587,
+          "label": "context_specific",
+          "output_sha256": "778cb6324966a7f40ff4ae4e602fd4e4abf1a9525aa088c2a4dc21dcc2005be2"
+        }
+      ],
+      "candidate_hash": "5b94244b180535c4",
+      "model_count": 1,
+      "project_count": 2,
+      "session_count": 2,
+      "source_count": 1,
+      "successes": 6
+    }
+  ],
+  "schema": "frankengate-dataclaw-artifact-frontier-screen-v1",
+  "source": {
+    "dataset": "zhiyaowang/dataclaw-zhiyaowang",
+    "raw_content_committed": false,
+    "revision": "f5157333cbc22489661122a9bc5347b137144900",
+    "sample_count": 64
+  },
+  "valid_call_count": 48
+}

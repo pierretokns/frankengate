@@ -1,0 +1,243 @@
+{
+  "aggregate": {
+    "baseline_exact": 1,
+    "cases": 3,
+    "changed_cases": 2,
+    "claim_boundary": "component_mechanics_and_natural_prequery_retrieval_only",
+    "combined_executed_cases": 0,
+    "combined_minus_baseline_exact": null,
+    "combined_retrieval_exact": 0,
+    "graphiti_edge_count": 0,
+    "graphiti_executed_cases": 0,
+    "graphiti_invalidated_edges": 0,
+    "graphiti_mean_identifier_recall": null,
+    "graphiti_minus_baseline_exact": null,
+    "graphiti_node_count": 0,
+    "graphiti_retrieval_exact": 0,
+    "graphiti_temporal_edges": 0,
+    "langmem_executed_cases": 1,
+    "langmem_mean_identifier_recall": 0.0,
+    "langmem_memory_count": 0,
+    "langmem_updated_existing_cases": 0,
+    "natural_cases_completed": 0
+  },
+  "claim_boundary": {
+    "does_not_establish": [
+      "memory_correctness",
+      "answer_quality",
+      "user_or_model_task_utility",
+      "causal_effect",
+      "enterprise_transfer",
+      "authorization_correctness",
+      "production_scalability",
+      "production_database_necessity"
+    ],
+    "establishes_at_most": [
+      "real_upstream_component_executability",
+      "natural_prequery_source_episode_retrieval",
+      "automatic_exact_identifier_preservation",
+      "observed_temporal_edge_mechanics",
+      "observed_memory_update_mechanics"
+    ]
+  },
+  "config_sha256": "44d002cfc0f202ac452ada4522c0aec51abb3ecc6d288d73709c7d16482b4bac",
+  "content_policy": {
+    "artifact_paths_emitted": false,
+    "model_outputs_emitted": false,
+    "native_identifiers_emitted": false,
+    "per_case_identifiers_emitted": false,
+    "raw_content_emitted": false
+  },
+  "elapsed_seconds": 22.808301,
+  "execution": [
+    {
+      "baseline_exact": true,
+      "changed": false,
+      "combined_episodes_returned": 0,
+      "combined_status": "not_executed_langmem_failed",
+      "durations_seconds": {
+        "combined_search": null,
+        "graphiti_ingestion": null,
+        "graphiti_search": null,
+        "langmem": null
+      },
+      "errors": [
+        {
+          "component": "langmem",
+          "type": "AttributeError"
+        }
+      ],
+      "graphiti_edge_count": 0,
+      "graphiti_episodes_returned": 0,
+      "graphiti_invalidated_edges": 0,
+      "graphiti_node_count": 0,
+      "graphiti_status": "not_executed_after_langmem_failure",
+      "graphiti_temporal_edges": 0,
+      "langmem_calls": 0,
+      "langmem_memory_count": 0,
+      "langmem_status": "failed",
+      "projected_bytes": 8755,
+      "projected_revisions": 2,
+      "source": "fable5"
+    },
+    {
+      "baseline_exact": false,
+      "changed": true,
+      "combined_episodes_returned": 0,
+      "combined_status": "not_executed_graphiti_failed",
+      "durations_seconds": {
+        "combined_search": null,
+        "graphiti_ingestion": null,
+        "graphiti_search": null,
+        "langmem": 4.463582
+      },
+      "errors": [
+        {
+          "component": "graphiti",
+          "type": "ValidationError"
+        }
+      ],
+      "graphiti_edge_count": 0,
+      "graphiti_episodes_returned": 0,
+      "graphiti_invalidated_edges": 0,
+      "graphiti_node_count": 0,
+      "graphiti_status": "failed",
+      "graphiti_temporal_edges": 0,
+      "langmem_calls": 2,
+      "langmem_memory_count": 0,
+      "langmem_status": "executed",
+      "projected_bytes": 20783,
+      "projected_revisions": 2,
+      "source": "fable5"
+    },
+    {
+      "baseline_exact": false,
+      "changed": true,
+      "combined_episodes_returned": 0,
+      "combined_status": "not_executed_langmem_failed",
+      "durations_seconds": {
+        "combined_search": null,
+        "graphiti_ingestion": null,
+        "graphiti_search": null,
+        "langmem": null
+      },
+      "errors": [
+        {
+          "component": "langmem",
+          "type": "AttributeError"
+        }
+      ],
+      "graphiti_edge_count": 0,
+      "graphiti_episodes_returned": 0,
+      "graphiti_invalidated_edges": 0,
+      "graphiti_node_count": 0,
+      "graphiti_status": "not_executed_after_langmem_failure",
+      "graphiti_temporal_edges": 0,
+      "langmem_calls": 0,
+      "langmem_memory_count": 0,
+      "langmem_status": "failed",
+      "projected_bytes": 500,
+      "projected_revisions": 2,
+      "source": "wisp"
+    }
+  ],
+  "experiment_id": "faithful-memory-components-v1-2026-07-30",
+  "faithfulness": {
+    "actual_upstream_imports": true,
+    "graphiti_full_natural_input": "see_execution_rows",
+    "graphiti_proxy_used": false,
+    "graphiti_structured_smoke": "executed_successfully_before_natural_run",
+    "langmem_proxy_used": false,
+    "langmem_structured_smoke": "executed_successfully_before_natural_run",
+    "model_id": "llama3.2:latest",
+    "model_manifest_binding": "explicit_local_ollama_override_without_pinned_model_receipt",
+    "natural_langmem_result": "see_execution_rows",
+    "natural_run_ceiling_seconds": 600,
+    "ollama_adapter": "public OpenAI-compatible client injection with think=false",
+    "per_openai_call_timeout_seconds": 90,
+    "run_disposition": "complete_requested_component_run"
+  },
+  "generated_at": "2026-07-31T03:29:54.756383+00:00",
+  "parent_result": {
+    "file_sha256": "8b42e33b5d5f93dd97f5104aafb45b9179e145a7b5811a4ebe2eaed7914f0db4",
+    "result_sha256": "bb939fc66b96dbec958b9bd0d41142ec6be453eb0f6a3aa27fc6c76bbe216c6d"
+  },
+  "result_sha256": "d334dc50351af5c737e5ecab3d8683936645b8a54489d784db53df0f017e0eb9",
+  "runtime_receipts": {
+    "falkordblite": "0.10.0",
+    "graphiti_core": "0.29.3",
+    "langchain": "1.3.10",
+    "langchain_core": "1.4.8",
+    "langchain_openai": "1.1.14",
+    "langgraph": "1.2.6",
+    "langgraph_checkpoint": "4.1.1",
+    "langgraph_prebuilt": "1.1.0",
+    "langgraph_sdk": "0.4.2",
+    "langmem": "0.0.30",
+    "model_id": "llama3.2:latest",
+    "model_manifest_binding": "explicit_local_ollama_override_without_pinned_model_receipt",
+    "trustcall": "0.0.39"
+  },
+  "schema_version": "frankengate.faithful-memory-components-result.v1",
+  "selection": {
+    "cases": 3,
+    "future_query_result_available_to_components": false,
+    "maximum_revisions": 2,
+    "strata": [
+      {
+        "changed": false,
+        "projected_bytes": 8755,
+        "projected_revisions": 2,
+        "source": "fable5"
+      },
+      {
+        "changed": true,
+        "projected_bytes": 20783,
+        "projected_revisions": 2,
+        "source": "fable5"
+      },
+      {
+        "changed": true,
+        "projected_bytes": 500,
+        "projected_revisions": 2,
+        "source": "wisp"
+      }
+    ]
+  },
+  "source_receipts": [
+    {
+      "dataset_id": "crispwisp/wisp-claude-code-sessions",
+      "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+      "label": "wisp",
+      "license": "MIT",
+      "manifest_sha256": "d5a6541a2177180f9ee32065d268169889487f04980f693155bfec25de0b0737",
+      "source_bytes": 25280300,
+      "source_files": 104,
+      "source_records": 10700,
+      "source_set_sha256": "b6778fb505147108b1c36cd0fc2e99ef79bac1dbcd97b26feae46495077fec26"
+    },
+    {
+      "dataset_id": "Glint-Research/Fable-5-traces",
+      "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+      "label": "fable5",
+      "license": "AGPL-3.0",
+      "manifest_sha256": "79acf75816e4040e23e1e87b555779120d57825b8070354148a18dff8d18ac64",
+      "source_bytes": 62071158,
+      "source_files": 115,
+      "source_records": 19796,
+      "source_set_sha256": "69ec76bb96e41c5bcf06994ee43b05f4533ea92f72b804d40b4db9352e8e27b0"
+    }
+  ],
+  "upstream_receipts": {
+    "graphiti": {
+      "commit": "021d3a57d511f21b10adaf7fa923bd5c1fce5e9d",
+      "license_sha256": "2825300b20d7b951209835a4a331f29e24725a39d65168e4b831df53aa372650",
+      "lock_sha256": "198c52223745dc8d49864b58a77e4badadc302d28380cf9eddb32365e8f064bf"
+    },
+    "langmem": {
+      "commit": "56d85939d80bb731bd5e237567148d817d7bfd16",
+      "license_sha256": "98af1351ea856e008c835bc89a312905960a318072f950732bf346c741027c7d",
+      "lock_sha256": "b5031c66951bf52265ab300a51403728f37e2a6939be31ed75f023eaa5d49a66"
+    }
+  }
+}

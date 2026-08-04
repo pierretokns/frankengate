@@ -1,0 +1,2830 @@
+{
+  "aggregate": {
+    "dense_scope": {
+      "nil_cases": 8,
+      "nil_top1_candidate_rate": 1.0,
+      "targeted_cases": 14,
+      "targeted_mrr": 0.689966,
+      "targeted_recall_at_1": 0.571429,
+      "targeted_recall_at_5": 0.857143,
+      "targeted_wrong_system_before_target": 0.0
+    },
+    "exact_scope": {
+      "nil_cases": 8,
+      "nil_top1_candidate_rate": 1.0,
+      "targeted_cases": 14,
+      "targeted_mrr": 0.892857,
+      "targeted_recall_at_1": 0.785714,
+      "targeted_recall_at_5": 1.0,
+      "targeted_wrong_system_before_target": 0.0
+    },
+    "frontier_scope": {
+      "nil_cases": 8,
+      "nil_top1_candidate_rate": 1.0,
+      "targeted_cases": 14,
+      "targeted_mrr": 1.0,
+      "targeted_recall_at_1": 1.0,
+      "targeted_recall_at_5": 1.0,
+      "targeted_wrong_system_before_target": 0.0
+    },
+    "lexical_scope": {
+      "nil_cases": 8,
+      "nil_top1_candidate_rate": 1.0,
+      "targeted_cases": 14,
+      "targeted_mrr": 0.805844,
+      "targeted_recall_at_1": 0.785714,
+      "targeted_recall_at_5": 0.785714,
+      "targeted_wrong_system_before_target": 0.0
+    }
+  },
+  "claim_boundary": "Gold-SQL target retrieval and constructed scope-swapped NIL benchmark on public NL2SQL data. It does not establish semantic-alias truth, human agreement, changed-agent utility, or enterprise production performance.",
+  "dataset": {
+    "categories": {
+      "explicit_target": 6,
+      "implicit_target": 8,
+      "scope_swapped_nil": 8
+    },
+    "raw_content_committed": false,
+    "raw_sha256": "3aa25a29f47cfa78a75820cb3c2ee1897e873127e8d7dfc9855202d9326261cd",
+    "selected_cases": 22
+  },
+  "frontier_calls": {
+    "completed": 22,
+    "failures": 0,
+    "receipts": [
+      {
+        "case": 0,
+        "decision": "retrieve",
+        "prompt_sha256": "8496679b9f6628f03f5e9090b7bd0586d52f7c0629bed20001c2bcc5b3680157",
+        "raw_sha256": "af94f8efb929b883820d4454172f48582bf61e661fe9f61e55860d08e76f9794",
+        "status": "ok"
+      },
+      {
+        "case": 1,
+        "decision": "retrieve",
+        "prompt_sha256": "96f6de270bb21cc35218ae8a034c5803538a1eeaf16bd43cc1bbf968762d55e1",
+        "raw_sha256": "1a32598de80005a47f8b6f050a695a2d02e4626053f23724a08538777e10ab48",
+        "status": "ok"
+      },
+      {
+        "case": 2,
+        "decision": "abstain",
+        "prompt_sha256": "34491c82e0ada2c0fb287862c05e2e3ee42536fe3ef6567c670a69c5c3c63ecf",
+        "raw_sha256": "1eab15ebc6ec06ec7863d824a71879f17b202f1b0040d9390f8b71d2dd43b580",
+        "status": "ok"
+      },
+      {
+        "case": 3,
+        "decision": "abstain",
+        "prompt_sha256": "3ef3c31dd0c6e159f7c99dc5dedb161d27cb3e959560e449e9adc0a29c22a426",
+        "raw_sha256": "29607bc833c48d33409d58d8f55d6d9be73f29f4e6948bc3b1ecb3403450de68",
+        "status": "ok"
+      },
+      {
+        "case": 4,
+        "decision": "retrieve",
+        "prompt_sha256": "41680f1a568f6518dae492211ca6b82cb74e83049b41d9e4bc7fc39a5beafc79",
+        "raw_sha256": "ead239ed9a0d57f924159f3280a37085a891150f2f131c3b6bb2c554003493dd",
+        "status": "ok"
+      },
+      {
+        "case": 5,
+        "decision": "retrieve",
+        "prompt_sha256": "534bcc4af60892c5045cd63f160164fd2266148e00858ec210089ee3eeda6c75",
+        "raw_sha256": "f83bf6cef9b20fae3020b620675fa85b493cdf25104e542bdff2ea1ab1fa1c65",
+        "status": "ok"
+      },
+      {
+        "case": 6,
+        "decision": "retrieve",
+        "prompt_sha256": "4071a02f9390ce507b31dbd8f2d180943b8704e721191da9ce60c089576fcfc8",
+        "raw_sha256": "0ad94ef5374195353e35e10ed60f607007ad98673e9101be89794681479702ce",
+        "status": "ok"
+      },
+      {
+        "case": 7,
+        "decision": "retrieve",
+        "prompt_sha256": "8ff10fff56cc27182cc3ad3ee39ef290f9d1f0f00ea8cf26634276d12d7a5d70",
+        "raw_sha256": "412174a11b0481e244e6a0593f25a162ba86fb6ab16a1c39c48f9952c5a6c85c",
+        "status": "ok"
+      },
+      {
+        "case": 8,
+        "decision": "abstain",
+        "prompt_sha256": "d92e4ee2eef880d68a8829a8e6a693899f8edf94772fab95f18512ce88af14e9",
+        "raw_sha256": "82ec736dd8bf806160c4d75b5e3e57ea31163463a7e09f85cb749f5bcdd2a68b",
+        "status": "ok"
+      },
+      {
+        "case": 9,
+        "decision": "abstain",
+        "prompt_sha256": "8ea455c26965a3091736be384522c87a84b072f3b9cef8c92765a45777ab2499",
+        "raw_sha256": "161d0308d236fa7474fd0ced4784ae061b06fa1f6dcdf22346b747a40932b5e1",
+        "status": "ok"
+      },
+      {
+        "case": 10,
+        "decision": "retrieve",
+        "prompt_sha256": "ed55265ebc28843ee4dd44b53c971717c12878e4b0c2303f07638d4e147cf910",
+        "raw_sha256": "bbf13ad5fb736774acb7af592c6cd7796b658a70a6460a6277f321739d9609b1",
+        "status": "ok"
+      },
+      {
+        "case": 11,
+        "decision": "retrieve",
+        "prompt_sha256": "323ce380fcdea9e2fdc333050b3b6a96bf70d3a67e792fdf9770fa8b18cfbf83",
+        "raw_sha256": "672be96cfb66e10c4035f9e73e4b7999d1a437e2ea985ea7649418843821afe9",
+        "status": "ok"
+      },
+      {
+        "case": 12,
+        "decision": "retrieve",
+        "prompt_sha256": "40d1d242ae105321a7cf2d533f1105060d5c07c5eaa521257178672c6efb784f",
+        "raw_sha256": "275747983d7ad5de2496728d6ce684f63f10969d78bdb2e616bb11e03eb26090",
+        "status": "ok"
+      },
+      {
+        "case": 13,
+        "decision": "retrieve",
+        "prompt_sha256": "b1716d97de44205e40901b23567747e75b89a3113d99fe31ca333b2422697818",
+        "raw_sha256": "76323ef90130f08810529a0298d6a3436e45653c12bdb609856b91d6902c8bbd",
+        "status": "ok"
+      },
+      {
+        "case": 14,
+        "decision": "abstain",
+        "prompt_sha256": "17574c28fb1b1f1bf79f42be2a050448a09d87c0ec277c708179f1a510a3331c",
+        "raw_sha256": "8b6953e87c422ed7e15909163cbc05d825ac348ef7152b6a7383c55016084412",
+        "status": "ok"
+      },
+      {
+        "case": 15,
+        "decision": "abstain",
+        "prompt_sha256": "5be3808b3231e5639b2232e9cf83b0fe7b2769a6faf91751d6ece9b3e44a93c4",
+        "raw_sha256": "4968e58669daeb8b6afd2660b1121da5c3e930c6465b80196f84a21db676be14",
+        "status": "ok"
+      },
+      {
+        "case": 16,
+        "decision": "retrieve",
+        "prompt_sha256": "038057ca00ed3b30e20a4ec0f79fb6b6d29e5e128c68e8c69ac15c72dd0e2823",
+        "raw_sha256": "f88a7b91e00c5ae1c8ad687f76b734af04f7703c88387c8b0b5733667db3db50",
+        "status": "ok"
+      },
+      {
+        "case": 17,
+        "decision": "retrieve",
+        "prompt_sha256": "9870753f09fbb977405bbab132f0f405ccbc799ebea4658a81644e1196831c00",
+        "raw_sha256": "9b92fc311cdbc791fcff59e422d8b068f65214f936f7b534294f89d1d7c54a2c",
+        "status": "ok"
+      },
+      {
+        "case": 18,
+        "decision": "retrieve",
+        "prompt_sha256": "ee45a118cf696ceec64b159b6728217a888e34b6ef13653e0f685e185947a772",
+        "raw_sha256": "d4c36e77e652c85b9c66b208585db544b298899226d712c25456f236af9bb227",
+        "status": "ok"
+      },
+      {
+        "case": 19,
+        "decision": "retrieve",
+        "prompt_sha256": "ca9452a1a51e1ead082a7c5c3bb5efe8c36102ff2c4119b418c558e34c8fc721",
+        "raw_sha256": "ebb99f730923ae17699f8729bc84411bcb8fe80adec6becacb578f0aa2ec8633",
+        "status": "ok"
+      },
+      {
+        "case": 20,
+        "decision": "abstain",
+        "prompt_sha256": "c4866688af8e423873146166f857637eb575b71bbcbc3a53b2a0911096131a14",
+        "raw_sha256": "2efd735cd195d5d8a33f8456bfa10d8007bd3f934d3d3626dc596ef79f59eabe",
+        "status": "ok"
+      },
+      {
+        "case": 21,
+        "decision": "abstain",
+        "prompt_sha256": "4369fd78ec4da5a7b3a7670f4260be83189b8899229c968d00842f4f04e01de0",
+        "raw_sha256": "266b747e8253ae2f4ee40761d009a0c3f482508455898b33ee5b4f8500ba8e8c",
+        "status": "ok"
+      }
+    ],
+    "requested": 22
+  },
+  "per_case": [
+    {
+      "candidate_fingerprints": [
+        "aecdabd5d55d5d55",
+        "8e73bc676d9eaac1",
+        "b3a739b6fdddff08",
+        "96a63f0cda346115",
+        "6cf4753b34e9616f",
+        "d96a03e8ec22aee4",
+        "2b71fc8b5d0ccc2b",
+        "1fd6969dbbfc3cc6",
+        "175d1fb1366259b3",
+        "d97048be824b1922",
+        "6a7616b66ee563b5",
+        "e0b561e36388c37d",
+        "356a048c74a4697c",
+        "087fad0bf7c79202",
+        "4ce8df162704ba50",
+        "eb564ed2d30bfc48",
+        "2a2b434d6707052d"
+      ],
+      "case_id": "defog-alias:3669de985eac7b7c",
+      "category": "implicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          3,
+          7,
+          2,
+          10,
+          9,
+          15,
+          11,
+          8,
+          6,
+          13,
+          14,
+          1,
+          0,
+          16,
+          12,
+          5,
+          4
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "frontier_scope": [
+          2,
+          4,
+          6,
+          0,
+          1,
+          3,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ]
+      },
+      "target_fingerprints": [
+        "aecdabd5d55d5d55",
+        "8e73bc676d9eaac1",
+        "b3a739b6fdddff08",
+        "96a63f0cda346115",
+        "6cf4753b34e9616f",
+        "d96a03e8ec22aee4",
+        "2b71fc8b5d0ccc2b"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "969dfd9c4b431157",
+        "8c6a6b3a186a5b8e",
+        "1f58b7de1a07f43e",
+        "8d3b745e2158008e",
+        "aecdabd5d55d5d55",
+        "8e73bc676d9eaac1",
+        "b3a739b6fdddff08",
+        "1fd6969dbbfc3cc6",
+        "175d1fb1366259b3",
+        "d97048be824b1922",
+        "6a7616b66ee563b5",
+        "e0b561e36388c37d",
+        "356a048c74a4697c",
+        "087fad0bf7c79202",
+        "4ce8df162704ba50",
+        "eb564ed2d30bfc48",
+        "2a2b434d6707052d"
+      ],
+      "case_id": "defog-alias:8b180db68ab99ef5",
+      "category": "implicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          0,
+          2,
+          3,
+          1,
+          7,
+          6,
+          5,
+          13,
+          11,
+          8,
+          15,
+          4,
+          14,
+          12,
+          10,
+          9,
+          16
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "frontier_scope": [
+          1,
+          2,
+          3,
+          6,
+          0,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ]
+      },
+      "target_fingerprints": [
+        "969dfd9c4b431157",
+        "8c6a6b3a186a5b8e",
+        "1f58b7de1a07f43e",
+        "8d3b745e2158008e",
+        "aecdabd5d55d5d55",
+        "8e73bc676d9eaac1",
+        "b3a739b6fdddff08"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "1fd6969dbbfc3cc6",
+        "175d1fb1366259b3",
+        "d97048be824b1922",
+        "6a7616b66ee563b5",
+        "e0b561e36388c37d",
+        "356a048c74a4697c",
+        "087fad0bf7c79202",
+        "4ce8df162704ba50",
+        "eb564ed2d30bfc48",
+        "2a2b434d6707052d",
+        "7c1cfaa52a943d82",
+        "b880dc4950fb8337"
+      ],
+      "case_id": "defog-alias:11585f4cb3e27bc1",
+      "category": "scope_swapped_nil",
+      "frontier_decision": "abstain",
+      "metrics": {
+        "dense_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "exact_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "frontier_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "lexical_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          0,
+          6,
+          1,
+          2,
+          3,
+          8,
+          11,
+          4,
+          7,
+          5,
+          9,
+          10
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "target_fingerprints": []
+    },
+    {
+      "candidate_fingerprints": [
+        "1fd6969dbbfc3cc6",
+        "175d1fb1366259b3",
+        "d97048be824b1922",
+        "6a7616b66ee563b5",
+        "e0b561e36388c37d",
+        "356a048c74a4697c",
+        "087fad0bf7c79202",
+        "4ce8df162704ba50",
+        "eb564ed2d30bfc48",
+        "2a2b434d6707052d",
+        "7c1cfaa52a943d82",
+        "b880dc4950fb8337"
+      ],
+      "case_id": "defog-alias:1a0bb5d863fcc165",
+      "category": "scope_swapped_nil",
+      "frontier_decision": "abstain",
+      "metrics": {
+        "dense_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "exact_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "frontier_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "lexical_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          11,
+          2,
+          0,
+          3,
+          6,
+          4,
+          9,
+          1,
+          8,
+          7,
+          5,
+          10
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "target_fingerprints": []
+    },
+    {
+      "candidate_fingerprints": [
+        "05ce183fb71af6f6",
+        "b7ff1bbe5995d9a8",
+        "02928983557ffa35",
+        "a0490df61ce42e4e",
+        "77872db0e35dcf7f",
+        "8d146f390aecbf02",
+        "d35f7867ff3cd880",
+        "6f88981107bff625",
+        "80fa242986e69e66",
+        "8ff8c59e37422344",
+        "8979d779dd9a7602",
+        "664c996aeeb4a4a4",
+        "5d9474604589036b",
+        "ec9fe76ae7139885",
+        "718dcbd725264ae4",
+        "dacf0897e4ec922f"
+      ],
+      "case_id": "defog-alias:183e6df67b88dbe7",
+      "category": "explicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          0,
+          1,
+          4,
+          13,
+          7,
+          3,
+          12,
+          14,
+          6,
+          2,
+          11,
+          15,
+          5,
+          9,
+          8,
+          10
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          11,
+          12,
+          13,
+          14,
+          15,
+          8,
+          9,
+          10
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          5,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          11,
+          12,
+          13,
+          14,
+          15,
+          8,
+          9,
+          10
+        ]
+      },
+      "target_fingerprints": [
+        "a0490df61ce42e4e",
+        "b7ff1bbe5995d9a8",
+        "77872db0e35dcf7f",
+        "8d146f390aecbf02",
+        "02928983557ffa35",
+        "d35f7867ff3cd880",
+        "6f88981107bff625",
+        "05ce183fb71af6f6"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "e0b8f081a5cec665",
+        "02928983557ffa35",
+        "ac75a5e22ff63199",
+        "5c9086344ac5c1a9",
+        "dacf0897e4ec922f",
+        "8d146f390aecbf02",
+        "5c898eb3a3a85745",
+        "40f30b57b31879ad",
+        "80fa242986e69e66",
+        "8ff8c59e37422344",
+        "8979d779dd9a7602",
+        "dc8755bd00972bbb",
+        "f9325e42f65cdd90",
+        "a9091f8d3d65e547",
+        "ee847f4b746f748c",
+        "6555c9cc82a32a2b",
+        "69e36869ea9dd81a"
+      ],
+      "case_id": "defog-alias:327c206f266125c7",
+      "category": "explicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          1,
+          6,
+          7,
+          0,
+          4,
+          5,
+          3,
+          12,
+          15,
+          2,
+          14,
+          16,
+          13,
+          11,
+          8,
+          9,
+          10
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          8,
+          9,
+          10
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          5,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          8,
+          9,
+          10
+        ]
+      },
+      "target_fingerprints": [
+        "e0b8f081a5cec665",
+        "ac75a5e22ff63199",
+        "5c9086344ac5c1a9",
+        "dacf0897e4ec922f",
+        "8d146f390aecbf02",
+        "5c898eb3a3a85745",
+        "40f30b57b31879ad",
+        "02928983557ffa35"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "6b9be16adbbaf1c9",
+        "4bd124e7a0b50076",
+        "d9a9c7640ad77c3e",
+        "e0b8f081a5cec665",
+        "dc8755bd00972bbb",
+        "f9325e42f65cdd90",
+        "a9091f8d3d65e547",
+        "ee847f4b746f748c",
+        "ac75a5e22ff63199",
+        "5c9086344ac5c1a9",
+        "6555c9cc82a32a2b",
+        "69e36869ea9dd81a",
+        "a054bcd6ceb1c3a6"
+      ],
+      "case_id": "defog-alias:663e8b0b1138be57",
+      "category": "implicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          2,
+          1,
+          0,
+          5,
+          12,
+          9,
+          3,
+          8,
+          10,
+          6,
+          11,
+          7,
+          4
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      "target_fingerprints": [
+        "6b9be16adbbaf1c9",
+        "4bd124e7a0b50076",
+        "d9a9c7640ad77c3e"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "40f30b57b31879ad",
+        "02928983557ffa35",
+        "d35f7867ff3cd880",
+        "05ce183fb71af6f6",
+        "b86b40f42db3d38e",
+        "57c4b88cb4713c1b",
+        "4ea112c57849a98a",
+        "85225363746f1bec",
+        "6f88981107bff625",
+        "e603960da8dec19b",
+        "04e16a07f2a606e7",
+        "9b5e2e2a31e8d60d",
+        "e0b8f081a5cec665"
+      ],
+      "case_id": "defog-alias:7092bf698b265ccf",
+      "category": "implicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 0.14285714285714285,
+          "recall_at_1": 0.0,
+          "recall_at_5": 0.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 0.5,
+          "recall_at_1": 0.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 0.1,
+          "recall_at_1": 0.0,
+          "recall_at_5": 0.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          6,
+          9,
+          3,
+          8,
+          10,
+          4,
+          2,
+          1,
+          5,
+          12,
+          0,
+          7,
+          11
+        ],
+        "exact_scope": [
+          3,
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          6,
+          9,
+          5,
+          8,
+          7,
+          10,
+          11,
+          12,
+          4
+        ],
+        "lexical_scope": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          0,
+          1,
+          2,
+          12
+        ]
+      },
+      "target_fingerprints": [
+        "40f30b57b31879ad",
+        "02928983557ffa35",
+        "d35f7867ff3cd880"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "e0b8f081a5cec665",
+        "dc8755bd00972bbb",
+        "f9325e42f65cdd90",
+        "a9091f8d3d65e547",
+        "ee847f4b746f748c",
+        "ac75a5e22ff63199",
+        "5c9086344ac5c1a9",
+        "6555c9cc82a32a2b",
+        "69e36869ea9dd81a",
+        "a054bcd6ceb1c3a6",
+        "7978f323729977c8",
+        "0885dbd5b1a60f40"
+      ],
+      "case_id": "defog-alias:114d32c6b8457e37",
+      "category": "scope_swapped_nil",
+      "frontier_decision": "abstain",
+      "metrics": {
+        "dense_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "exact_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "frontier_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "lexical_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          9,
+          0,
+          5,
+          2,
+          8,
+          6,
+          7,
+          3,
+          11,
+          1,
+          4,
+          10
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "target_fingerprints": []
+    },
+    {
+      "candidate_fingerprints": [
+        "ac75a5e22ff63199",
+        "88b1a94a9019d891",
+        "cb6d42c9de1facf7",
+        "6c5cb6cf994d91b9",
+        "5d9474604589036b",
+        "8d146f390aecbf02",
+        "6f88981107bff625",
+        "e0b8f081a5cec665",
+        "dc8755bd00972bbb",
+        "f9325e42f65cdd90",
+        "a9091f8d3d65e547",
+        "ee847f4b746f748c"
+      ],
+      "case_id": "defog-alias:27888868756b8ee1",
+      "category": "scope_swapped_nil",
+      "frontier_decision": "abstain",
+      "metrics": {
+        "dense_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "exact_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "frontier_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "lexical_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          6,
+          3,
+          7,
+          5,
+          9,
+          0,
+          4,
+          1,
+          11,
+          10,
+          8,
+          2
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "target_fingerprints": []
+    },
+    {
+      "candidate_fingerprints": [
+        "94d8d1b90cb52115",
+        "d1a34710cd510446",
+        "e03b630e4d81cd11",
+        "c413a79aee446f0d",
+        "95caadaff69ef0ae",
+        "b749ed86257317f0",
+        "0ec28ff432979454",
+        "b45b5e9db5a05825",
+        "663cc77cbc67e825",
+        "21e3f2ebba248646",
+        "edb6d5635a3dffac"
+      ],
+      "case_id": "defog-alias:12019f1e13f4ad75",
+      "category": "explicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 0.5,
+          "recall_at_1": 0.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          8,
+          2,
+          1,
+          0,
+          9,
+          10,
+          5,
+          3,
+          7,
+          6,
+          4
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "frontier_scope": [
+          1,
+          2,
+          3,
+          0,
+          8,
+          4,
+          5,
+          6,
+          7,
+          9,
+          10
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "target_fingerprints": [
+        "d1a34710cd510446",
+        "e03b630e4d81cd11",
+        "c413a79aee446f0d",
+        "94d8d1b90cb52115"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "ab1d8d618eae184c",
+        "d899a64a7790cf32",
+        "0c8be2df69ed44fb",
+        "3ae28e51dda1be9e",
+        "585576100ad1413a",
+        "ced4b7fb020aab61",
+        "ed0f456b1179f0e5",
+        "aa0351fec44404cd",
+        "569d619fb662def7",
+        "03b46941179d8fff",
+        "eb299ef425b18d2a"
+      ],
+      "case_id": "defog-alias:98359ec035ef07b0",
+      "category": "explicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          0,
+          3,
+          9,
+          2,
+          4,
+          10,
+          1,
+          6,
+          7,
+          8,
+          5
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "frontier_scope": [
+          2,
+          3,
+          4,
+          0,
+          1,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "target_fingerprints": [
+        "0c8be2df69ed44fb",
+        "3ae28e51dda1be9e",
+        "ab1d8d618eae184c",
+        "585576100ad1413a",
+        "d899a64a7790cf32"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "1a16b2e944c14a13",
+        "bec47f9a0c011b48",
+        "aee1b346c2cefdfb",
+        "a644de6fd9c0db81",
+        "eafad8c30455b007",
+        "d899a64a7790cf32",
+        "c67cf06235c6c31f",
+        "3b34ebc39dcf9351",
+        "80fa242986e69e66",
+        "7376a940393f439a",
+        "bc0f9d458d3a1e38",
+        "6d3f0ebd49ca7d81",
+        "e94ed3fb7049834c",
+        "c7298afe9591f401",
+        "a91ecf246041d1bd",
+        "76bf1eb94210c2db"
+      ],
+      "case_id": "defog-alias:9da4b5fa404155c0",
+      "category": "implicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          5,
+          4,
+          1,
+          2,
+          10,
+          14,
+          6,
+          7,
+          9,
+          12,
+          0,
+          8,
+          11,
+          3,
+          15,
+          13
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "frontier_scope": [
+          3,
+          5,
+          2,
+          4,
+          6,
+          9,
+          10,
+          0,
+          1,
+          7,
+          8,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      "target_fingerprints": [
+        "1a16b2e944c14a13",
+        "bec47f9a0c011b48",
+        "aee1b346c2cefdfb",
+        "a644de6fd9c0db81",
+        "eafad8c30455b007",
+        "d899a64a7790cf32"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "94cfd76b3805ed36",
+        "8e4c12b37916d4ea",
+        "bd5a4ed7bb932fe9",
+        "d899a64a7790cf32",
+        "aee1b346c2cefdfb",
+        "24221438271ed10f",
+        "585576100ad1413a",
+        "2e9e4cc9f6fa0dea",
+        "336d93f516b2e74c",
+        "17954b3e2a017274",
+        "a51a9341aac8c6fd",
+        "a644de6fd9c0db81",
+        "905d90f8b3175ee8"
+      ],
+      "case_id": "defog-alias:fe42b510db6f92ea",
+      "category": "implicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 0.3333333333333333,
+          "recall_at_1": 0.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 0.5,
+          "recall_at_1": 0.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 0.09090909090909091,
+          "recall_at_1": 0.0,
+          "recall_at_5": 0.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          3,
+          9,
+          2,
+          7,
+          6,
+          4,
+          8,
+          0,
+          11,
+          5,
+          1,
+          12,
+          10
+        ],
+        "exact_scope": [
+          3,
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "lexical_scope": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          0,
+          1,
+          2
+        ]
+      },
+      "target_fingerprints": [
+        "94cfd76b3805ed36",
+        "8e4c12b37916d4ea",
+        "bd5a4ed7bb932fe9"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "80fa242986e69e66",
+        "8ff8c59e37422344",
+        "c67cf06235c6c31f",
+        "3b34ebc39dcf9351",
+        "7376a940393f439a",
+        "bc0f9d458d3a1e38",
+        "6d3f0ebd49ca7d81",
+        "e94ed3fb7049834c",
+        "c7298afe9591f401",
+        "a91ecf246041d1bd",
+        "76bf1eb94210c2db",
+        "309eb6d8b259af48"
+      ],
+      "case_id": "defog-alias:d5056e40071450d6",
+      "category": "scope_swapped_nil",
+      "frontier_decision": "abstain",
+      "metrics": {
+        "dense_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "exact_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "frontier_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "lexical_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          3,
+          6,
+          5,
+          1,
+          4,
+          2,
+          9,
+          0,
+          10,
+          7,
+          8,
+          11
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "target_fingerprints": []
+    },
+    {
+      "candidate_fingerprints": [
+        "c67cf06235c6c31f",
+        "3b34ebc39dcf9351",
+        "80fa242986e69e66",
+        "7376a940393f439a",
+        "bc0f9d458d3a1e38",
+        "6d3f0ebd49ca7d81",
+        "e94ed3fb7049834c",
+        "c7298afe9591f401",
+        "a91ecf246041d1bd",
+        "76bf1eb94210c2db",
+        "8ff8c59e37422344",
+        "309eb6d8b259af48"
+      ],
+      "case_id": "defog-alias:e57f8f265278605b",
+      "category": "scope_swapped_nil",
+      "frontier_decision": "abstain",
+      "metrics": {
+        "dense_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "exact_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "frontier_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "lexical_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          4,
+          1,
+          3,
+          10,
+          0,
+          8,
+          7,
+          2,
+          5,
+          11,
+          6,
+          9
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "target_fingerprints": []
+    },
+    {
+      "candidate_fingerprints": [
+        "8b426b4d7dbd486f",
+        "6ebf6cd0ee2b9bd2",
+        "be404b5265af32e2",
+        "f855b4cccfe90510",
+        "35c586cafe020871",
+        "65946c11f2aa8c65",
+        "2dd0c09d23d773c7",
+        "fa0e481d6ef7a108",
+        "64d27247f305ffc7",
+        "cf0624321327474e",
+        "4d8361f2a9c5c9ad",
+        "a0dee17608f34925"
+      ],
+      "case_id": "defog-alias:96454f1f8751e0ad",
+      "category": "explicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          1,
+          2,
+          0,
+          3,
+          9,
+          5,
+          4,
+          11,
+          7,
+          10,
+          8,
+          6
+        ],
+        "exact_scope": [
+          0,
+          3,
+          4,
+          1,
+          2,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          1,
+          2
+        ]
+      },
+      "target_fingerprints": [
+        "8b426b4d7dbd486f",
+        "6ebf6cd0ee2b9bd2",
+        "be404b5265af32e2"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "c8cfd31ebd862f37",
+        "56d5fcc2ee9d6ff1",
+        "41918d36a6bdbc42",
+        "2c2573feacd9266d",
+        "f0ba313c5fd94c12",
+        "759f576359469032",
+        "ca0aca7a3cf1a5a5",
+        "b694d0dc5164a4fa",
+        "907229622ec26020",
+        "63c5bc50e43fb0dd",
+        "2b126cd1f941eb8f",
+        "a3cca0b8bb755a25",
+        "86ba060668b0c4a7",
+        "ecc8ef278791efd7"
+      ],
+      "case_id": "defog-alias:b65f7a85fde07eef",
+      "category": "explicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 0.3333333333333333,
+          "recall_at_1": 0.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          13,
+          6,
+          0,
+          9,
+          8,
+          5,
+          11,
+          1,
+          3,
+          2,
+          10,
+          7,
+          12,
+          4
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "frontier_scope": [
+          2,
+          3,
+          1,
+          4,
+          0,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          2,
+          3,
+          4
+        ]
+      },
+      "target_fingerprints": [
+        "c8cfd31ebd862f37",
+        "56d5fcc2ee9d6ff1",
+        "41918d36a6bdbc42",
+        "2c2573feacd9266d",
+        "f0ba313c5fd94c12"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "6412d3634b652ed6",
+        "5d384bc79d86e927",
+        "fce15cd4c5f07b61",
+        "037d8759ca41e670",
+        "3495019e9e76c179",
+        "3840f714b8a9a5ab",
+        "f50b136b772b8a95",
+        "0ffb7a4df7eb9b20",
+        "0488ecf5e5169e54",
+        "1965aa90d09c8561",
+        "5cc5df92249d3119",
+        "ace26937e4d928f1",
+        "cf65c95d9feee1dd"
+      ],
+      "case_id": "defog-alias:2ab9a619612d698f",
+      "category": "implicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 0.1,
+          "recall_at_1": 0.0,
+          "recall_at_5": 0.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          10,
+          11,
+          7,
+          6,
+          3,
+          9,
+          4,
+          5,
+          8,
+          0,
+          12,
+          2,
+          1
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "frontier_scope": [
+          1,
+          2,
+          0,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      "target_fingerprints": [
+        "6412d3634b652ed6",
+        "5d384bc79d86e927",
+        "fce15cd4c5f07b61"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "8b426b4d7dbd486f",
+        "6ebf6cd0ee2b9bd2",
+        "1b8425e786a23a75",
+        "be404b5265af32e2",
+        "35c586cafe020871",
+        "65946c11f2aa8c65",
+        "2dd0c09d23d773c7",
+        "fa0e481d6ef7a108",
+        "64d27247f305ffc7",
+        "cf0624321327474e",
+        "4d8361f2a9c5c9ad",
+        "a0dee17608f34925",
+        "6764516617b11059",
+        "58d33a99876891b7"
+      ],
+      "case_id": "defog-alias:891bd2a572f7e7e1",
+      "category": "implicit_target",
+      "frontier_decision": "retrieve",
+      "metrics": {
+        "dense_scope": {
+          "mrr": 0.25,
+          "recall_at_1": 0.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "exact_scope": {
+          "mrr": 0.5,
+          "recall_at_1": 0.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "frontier_scope": {
+          "mrr": 1.0,
+          "recall_at_1": 1.0,
+          "recall_at_5": 1.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        },
+        "lexical_scope": {
+          "mrr": 0.09090909090909091,
+          "recall_at_1": 0.0,
+          "recall_at_5": 0.0,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": 0.0
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          4,
+          9,
+          7,
+          3,
+          13,
+          5,
+          8,
+          6,
+          0,
+          2,
+          1,
+          12,
+          10,
+          11
+        ],
+        "exact_scope": [
+          4,
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "frontier_scope": [
+          0,
+          2,
+          3,
+          1,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "lexical_scope": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "target_fingerprints": [
+        "8b426b4d7dbd486f",
+        "6ebf6cd0ee2b9bd2",
+        "1b8425e786a23a75",
+        "be404b5265af32e2"
+      ]
+    },
+    {
+      "candidate_fingerprints": [
+        "037d8759ca41e670",
+        "3495019e9e76c179",
+        "3840f714b8a9a5ab",
+        "f50b136b772b8a95",
+        "0ffb7a4df7eb9b20",
+        "0488ecf5e5169e54",
+        "1965aa90d09c8561",
+        "5cc5df92249d3119",
+        "ace26937e4d928f1",
+        "cf65c95d9feee1dd",
+        "8d325ddbe9bec324",
+        "b461077242e9c991"
+      ],
+      "case_id": "defog-alias:1a382b29e30ffde8",
+      "category": "scope_swapped_nil",
+      "frontier_decision": "abstain",
+      "metrics": {
+        "dense_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "exact_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "frontier_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "lexical_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          8,
+          7,
+          11,
+          6,
+          10,
+          4,
+          5,
+          2,
+          9,
+          0,
+          1,
+          3
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "target_fingerprints": []
+    },
+    {
+      "candidate_fingerprints": [
+        "037d8759ca41e670",
+        "3495019e9e76c179",
+        "3840f714b8a9a5ab",
+        "f50b136b772b8a95",
+        "0ffb7a4df7eb9b20",
+        "0488ecf5e5169e54",
+        "1965aa90d09c8561",
+        "5cc5df92249d3119",
+        "ace26937e4d928f1",
+        "cf65c95d9feee1dd",
+        "8d325ddbe9bec324",
+        "b461077242e9c991"
+      ],
+      "case_id": "defog-alias:2b22d5aba1b5f534",
+      "category": "scope_swapped_nil",
+      "frontier_decision": "abstain",
+      "metrics": {
+        "dense_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "exact_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "frontier_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        },
+        "lexical_scope": {
+          "mrr": null,
+          "recall_at_1": null,
+          "recall_at_5": null,
+          "top1_is_any_candidate": 1.0,
+          "wrong_system_before_target": null
+        }
+      },
+      "orders": {
+        "dense_scope": [
+          4,
+          8,
+          5,
+          1,
+          6,
+          7,
+          11,
+          9,
+          3,
+          10,
+          2,
+          0
+        ],
+        "exact_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "frontier_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "lexical_scope": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "target_fingerprints": []
+    }
+  ],
+  "protocol": {
+    "candidate_generation": "frozen by real alias cohort manifest",
+    "embedding_model": "nomic-embed-text:latest",
+    "endpoint": "http://127.0.0.1:11434",
+    "frontier_sees_gold_targets": false,
+    "frontier_sees_source_row_ids": false,
+    "model": "gpt-5.6-luna",
+    "per_group": 2,
+    "raw_model_outputs_external": true
+  },
+  "result_sha256": "c79a8aba8eacc0c79197bfe386bffbc1f8fb911068594dd7f28190df0b31d7fc",
+  "schema_version": "frankengate-nl2sql-real-alias-benchmark-v1"
+}

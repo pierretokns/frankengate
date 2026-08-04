@@ -1,0 +1,8 @@
+{
+  "arms_verified": 2,
+  "raw_hashes_match": true,
+  "schema_version": "frankengate-nl2sql-stratified-alias-verification-v1",
+  "source_result_sha256": "d2b8e723c8cdf3ed93e1700bdc5c524f1550328c05b26348320f09b94281ea12",
+  "synthetic_only": true,
+  "verification_passed": true
+}

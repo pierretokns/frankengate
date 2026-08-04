@@ -1,0 +1,31 @@
+{
+  "claim_boundary": {
+    "local_postgresql_mechanics_proven": true,
+    "managed_aurora_behavior_proven": false,
+    "rds_proxy_or_managed_pitr_proven": false
+  },
+  "failover": {
+    "post_promotion_write_verified": true,
+    "primary_stopped": true,
+    "promotion_ms": 309.056,
+    "replica_promoted": true
+  },
+  "image": "postgres:16-alpine",
+  "pitr": {
+    "executed": false,
+    "reason": "This first lab records replication and failover only."
+  },
+  "replica_lag": {
+    "in_recovery_initial": true,
+    "marker": "lag-marker-fg-aurora-lab-972ef5a16d",
+    "marker_visible": true,
+    "propagation_ms": 293.694
+  },
+  "rls": {
+    "cross_tenant_isolation_verified": true,
+    "tenant_a_visible_rows": 2,
+    "tenant_b_visible_rows": 1
+  },
+  "run_id": "fg-aurora-lab-972ef5a16d",
+  "schema_version": "frankengate-local-postgres-replication-lab-v1"
+}

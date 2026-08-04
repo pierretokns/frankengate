@@ -1,0 +1,523 @@
+{
+  "analysis_revision": "paired-receipts-r1",
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "raw_data_committed": false,
+    "reason": "Paired receipts are small, heterogeneous, and include protocol-null arms; semantic and protocol endpoints are not pooled."
+  },
+  "inputs": [
+    "experiments/results/natural-trace-skill-protocol-intervention-2026-07-30.json",
+    "experiments/results/natural-trace-skill-protocol-intervention-qwen3-4b-2026-07-31.json",
+    "experiments/results/natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json",
+    "experiments/results/model-harness-transfer-llama-openai-vs-ollama-2026-07-31.json",
+    "experiments/results/defog-sql-factorial-fold0-terminal-only-p0-2026-07-30.json",
+    "experiments/results/defog-car-fallback-llama-2026-07-31.json",
+    "experiments/results/defog-broker-fallback-openai-llama-2026-07-31.json",
+    "experiments/results/defog-trace-mined-skill-broker-fold0-llama-2026-07-31.json",
+    "experiments/results/defog-trace-mined-skill-heldout-car-2026-08-02.json",
+    "experiments/results/defog-trace-mined-skill-heldout-car-schema-injected-2026-08-02.json",
+    "experiments/results/defog-trace-mined-skill-heldout-car-repaired-2026-08-02.json",
+    "experiments/results/defog-trace-mined-skill-heldout-car-schema-first-2026-08-02.json",
+    "experiments/results/defog-trace-mined-skill-family-broker-schema-injected-2026-08-02.json",
+    "experiments/results/defog-trace-mined-skill-family-broker-mined-schema-injected-2026-08-02.json"
+  ],
+  "missing_inputs": [],
+  "schema_version": "frankengate-skill-optimization-meta-analysis-v1",
+  "strata": {
+    "expert_seed_not_trace_mined": {
+      "protocol_studies": 1,
+      "semantic_studies": 1
+    },
+    "trace_mined_candidate": {
+      "protocol_studies": 12,
+      "semantic_studies": 9
+    }
+  },
+  "studies": [
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 3,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 3,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/natural-trace-skill-protocol-intervention-2026-07-30.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 6,
+        "bootstrap_95_percent_ci": [
+          -0.8333333333333334,
+          -0.16666666666666666
+        ],
+        "candidate_losses": 3,
+        "candidate_successes": 3,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 0.25,
+        "risk_difference": -0.5,
+        "tasks": 6,
+        "ties": 3
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/natural-trace-skill-protocol-intervention-qwen3-4b-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/natural-trace-skill-protocol-ollama-native-qwen3-4b-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "expert_schema_navigation_seed",
+      "candidate_class": "expert_seed_not_trace_mined",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 4,
+        "ties": 4
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-sql-factorial-fold0-terminal-only-p0-2026-07-30.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "expert_schema_navigation_seed",
+      "candidate_class": "expert_seed_not_trace_mined",
+      "effect": {
+        "baseline_successes": 2,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 2,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 4,
+        "ties": 4
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-sql-factorial-fold0-terminal-only-p0-2026-07-30.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 4,
+        "ties": 4
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-car-fallback-llama-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 4,
+        "ties": 4
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-car-fallback-llama-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 4,
+        "ties": 4
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-broker-fallback-openai-llama-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 4,
+        "ties": 4
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-broker-fallback-openai-llama-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 4,
+        "ties": 4
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-trace-mined-skill-broker-fold0-llama-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 4,
+        "ties": 4
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-trace-mined-skill-broker-fold0-llama-2026-07-31.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-trace-mined-skill-heldout-car-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-trace-mined-skill-heldout-car-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-trace-mined-skill-heldout-car-schema-injected-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 1,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 1,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-trace-mined-skill-heldout-car-schema-injected-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-trace-mined-skill-heldout-car-repaired-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-trace-mined-skill-heldout-car-repaired-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-trace-mined-skill-heldout-car-schema-first-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-trace-mined-skill-heldout-car-schema-first-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-trace-mined-skill-family-broker-schema-injected-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-trace-mined-skill-family-broker-schema-injected-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "protocol",
+      "receipt": "experiments/results/defog-trace-mined-skill-family-broker-mined-schema-injected-2026-08-02.json"
+    },
+    {
+      "baseline": "no_skill",
+      "candidate": "trace_mined_terminal_discipline",
+      "candidate_class": "trace_mined_candidate",
+      "effect": {
+        "baseline_successes": 0,
+        "bootstrap_95_percent_ci": [
+          0.0,
+          0.0
+        ],
+        "candidate_losses": 0,
+        "candidate_successes": 0,
+        "candidate_wins": 0,
+        "mcnemar_exact_two_sided_p": 1.0,
+        "risk_difference": 0.0,
+        "tasks": 6,
+        "ties": 6
+      },
+      "endpoint": "semantic",
+      "receipt": "experiments/results/defog-trace-mined-skill-family-broker-mined-schema-injected-2026-08-02.json"
+    }
+  ],
+  "study_count": 23
+}

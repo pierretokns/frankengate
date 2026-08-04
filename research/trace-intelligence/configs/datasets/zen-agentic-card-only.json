@@ -1,0 +1,32 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "zenlm/zen-agentic-dataset",
+  "dataset_revision": "cdc75caa622c76b86d040a3423c58c9b4aa335b1",
+  "license": "OTHER-COMMERCIAL",
+  "source_url": "https://huggingface.co/datasets/zenlm/zen-agentic-dataset",
+  "source_format": "Dataset card claims transformed Claude Code and git-history corpus",
+  "adapter": null,
+  "publication_basis": "Public metadata and documentation only",
+  "privacy_review": "Not applicable until advertised shards become retrievable",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "claimed_scope": {
+    "unique_entries": 5212393,
+    "claude_code_entries": 2573471,
+    "estimated_tokens": 12000000000,
+    "claimed_compressed_bytes": 10000000000
+  },
+  "observed_scope_at_pinned_revision": {
+    "repository_files": 8,
+    "dataset_payload_files": 0,
+    "used_storage_bytes": 0,
+    "branches": [
+      "main"
+    ]
+  },
+  "admission": "quarantine_card_only_no_retrievable_corpus",
+  "enterprise_transfer": "No empirical use until immutable payloads, provenance, deduplication, and native-versus-transformed loss are independently verified"
+}

@@ -1,0 +1,286 @@
+{
+  "aggregate": {
+    "convgqr_rewrite": {
+      "cases": 12,
+      "mrr": 0.888889,
+      "recall_at_1": 0.833333,
+      "recall_at_3": 0.916667,
+      "wrong_top1": 2
+    },
+    "lexical": {
+      "cases": 12,
+      "mrr": 0.847222,
+      "recall_at_1": 0.75,
+      "recall_at_3": 0.916667,
+      "wrong_top1": 3
+    },
+    "querygym_answer_entity": {
+      "cases": 12,
+      "mrr": 0.958333,
+      "recall_at_1": 0.916667,
+      "recall_at_3": 1.0,
+      "wrong_top1": 1
+    },
+    "querygym_corpus_feedback": {
+      "cases": 12,
+      "mrr": 0.847222,
+      "recall_at_1": 0.75,
+      "recall_at_3": 0.916667,
+      "wrong_top1": 3
+    },
+    "querygym_keyword": {
+      "cases": 12,
+      "mrr": 0.958333,
+      "recall_at_1": 0.916667,
+      "recall_at_3": 1.0,
+      "wrong_top1": 1
+    },
+    "querygym_pseudo_document": {
+      "cases": 12,
+      "mrr": 0.958333,
+      "recall_at_1": 0.916667,
+      "recall_at_3": 1.0,
+      "wrong_top1": 1
+    },
+    "sira_document_enrichment": {
+      "cases": 12,
+      "mrr": 0.958333,
+      "recall_at_1": 0.916667,
+      "recall_at_3": 1.0,
+      "wrong_top1": 1
+    }
+  },
+  "by_kind": {
+    "convgqr_rewrite": {
+      "alias": {
+        "cases": 6,
+        "mrr": 0.777778,
+        "recall_at_1": 0.666667,
+        "recall_at_3": 0.833333,
+        "wrong_top1": 2
+      },
+      "collision": {
+        "cases": 1,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "conversation": {
+        "cases": 2,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "exact": {
+        "cases": 3,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      }
+    },
+    "lexical": {
+      "alias": {
+        "cases": 6,
+        "mrr": 0.777778,
+        "recall_at_1": 0.666667,
+        "recall_at_3": 0.833333,
+        "wrong_top1": 2
+      },
+      "collision": {
+        "cases": 1,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "conversation": {
+        "cases": 2,
+        "mrr": 0.75,
+        "recall_at_1": 0.5,
+        "recall_at_3": 1.0,
+        "wrong_top1": 1
+      },
+      "exact": {
+        "cases": 3,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      }
+    },
+    "querygym_answer_entity": {
+      "alias": {
+        "cases": 6,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "collision": {
+        "cases": 1,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "conversation": {
+        "cases": 2,
+        "mrr": 0.75,
+        "recall_at_1": 0.5,
+        "recall_at_3": 1.0,
+        "wrong_top1": 1
+      },
+      "exact": {
+        "cases": 3,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      }
+    },
+    "querygym_corpus_feedback": {
+      "alias": {
+        "cases": 6,
+        "mrr": 0.777778,
+        "recall_at_1": 0.666667,
+        "recall_at_3": 0.833333,
+        "wrong_top1": 2
+      },
+      "collision": {
+        "cases": 1,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "conversation": {
+        "cases": 2,
+        "mrr": 0.75,
+        "recall_at_1": 0.5,
+        "recall_at_3": 1.0,
+        "wrong_top1": 1
+      },
+      "exact": {
+        "cases": 3,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      }
+    },
+    "querygym_keyword": {
+      "alias": {
+        "cases": 6,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "collision": {
+        "cases": 1,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "conversation": {
+        "cases": 2,
+        "mrr": 0.75,
+        "recall_at_1": 0.5,
+        "recall_at_3": 1.0,
+        "wrong_top1": 1
+      },
+      "exact": {
+        "cases": 3,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      }
+    },
+    "querygym_pseudo_document": {
+      "alias": {
+        "cases": 6,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "collision": {
+        "cases": 1,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "conversation": {
+        "cases": 2,
+        "mrr": 0.75,
+        "recall_at_1": 0.5,
+        "recall_at_3": 1.0,
+        "wrong_top1": 1
+      },
+      "exact": {
+        "cases": 3,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      }
+    },
+    "sira_document_enrichment": {
+      "alias": {
+        "cases": 6,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "collision": {
+        "cases": 1,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      },
+      "conversation": {
+        "cases": 2,
+        "mrr": 0.75,
+        "recall_at_1": 0.5,
+        "recall_at_3": 1.0,
+        "wrong_top1": 1
+      },
+      "exact": {
+        "cases": 3,
+        "mrr": 1.0,
+        "recall_at_1": 1.0,
+        "recall_at_3": 1.0,
+        "wrong_top1": 0
+      }
+    }
+  },
+  "claim_boundary": "Synthetic retrieval mechanics only. These are transparent proxies, not QueryGym/ConvGQR/SIRA implementations, and do not establish enterprise relevance, conversational quality, or production safety.",
+  "fixture": {
+    "case_kinds": {
+      "alias": 6,
+      "collision": 1,
+      "conversation": 2,
+      "exact": 3
+    },
+    "cases": 12,
+    "documents": 6,
+    "fixture_sha256": "23d8c3158c84198601eaa697f7267022a5b8a06ee726308a98517ac2f2185a6a",
+    "raw_fixture_committed": true
+  },
+  "protocol": {
+    "expansions": "reviewed fixture vocabulary and generic pseudo-document terms",
+    "gold_targets_used_only_for_scoring": true,
+    "no_model_calls": true,
+    "ranking": "deterministic lexical overlap with canonical-name bonus"
+  },
+  "result_sha256": "3f1de295e428fbc9e15187028d7edbee984a758bf3f0a2bb4a26d50b38d57bfc",
+  "schema_version": "frankengate-query-expansion-probe-v1"
+}

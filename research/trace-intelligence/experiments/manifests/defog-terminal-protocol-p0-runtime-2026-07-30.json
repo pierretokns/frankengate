@@ -1,0 +1,100 @@
+{
+  "schema_version": "frankengate-defog-terminal-protocol-runtime-receipt-v1",
+  "experiment_date": "2026-07-30",
+  "classification": "post_run_runtime_receipt_not_preregistration",
+  "model": {
+    "manifest": "configs/models/qwen3.5-9b-optiq-4bit-mlx.json",
+    "manifest_sha256": "e136e8541ee96995573e0d1eb7fdec2ebc06b2bde53c97e3686b0e80228eda6b",
+    "request_alias": "default_model",
+    "loopback_only": true,
+    "prompt_cache_size": 0
+  },
+  "postgresql": {
+    "image": "pgvector/pgvector:0.8.1-pg16",
+    "repo_digest": "sha256:33198da2828a14c30348d2ccb4750833d5ed9a44c88d840a0e523d7417120337",
+    "local_image_id": "sha256:555b506325e1876524eaea3da97ebc236125e28f1c4aa941d2fe5a4aca013c90",
+    "server_version": "16.12 (Debian 16.12-1.pgdg12+1)",
+    "loopback_port": 55432,
+    "database": "fg_defog_car_dealership",
+    "fixture_current_date": "2026-07-30",
+    "schema_dump_sha256": "776c2f82e3eab1cb2335a74277ff5f2199b0de9513aa5ee28044f3472f7cb8c5",
+    "data_dump_sha256": "e1be9d0e294208c8ef5372a88c51a8f32156868a365bcaeeb89c76c82659b96e",
+    "execution_role": {
+      "name": "fg_defog_runner",
+      "superuser": false,
+      "create_database": false,
+      "create_role": false,
+      "inherit": false,
+      "bypass_rls": false,
+      "grants": [
+        "CONNECT on fg_defog_car_dealership",
+        "USAGE on public schema",
+        "SELECT on public tables"
+      ]
+    },
+    "row_counts": {
+      "cars": 21,
+      "customers": 13,
+      "inventory_snapshots": 23,
+      "payments_made": 17,
+      "payments_received": 23,
+      "sales": 22,
+      "salespersons": 13
+    }
+  },
+  "sources": {
+    "defog_data": {
+      "url": "https://github.com/defog-ai/defog-data",
+      "revision": "856295d8f0aa8a0b0fb71b9623e86f363469797a",
+      "car_dealership_sql_sha256": "c9b89f31478729fc3e85d5765a78e967dabe61570efcfedd0c7dff89b0cbe0c3"
+    },
+    "defog_sql_eval": {
+      "url": "https://github.com/defog-ai/sql-eval",
+      "revision": "b83332416ea2d424b0cd12994a0a9ba100f4b4af"
+    }
+  },
+  "completed_run": {
+    "result": "experiments/results/defog-sql-factorial-fold0-terminal-only-p0-2026-07-30.json",
+    "result_sha256": "f01e9ec93a75bd044d9bb6a1bf6eeb57e0d882e76cf9bb8d32e31318ca653ad1",
+    "raw_audit_file_count": 12,
+    "raw_audit_file_hash_list_sha256": "5140343ebe25792176a418ac8448f6099c3f40ab727f192e3a45b001583e0b98",
+    "raw_audit_committed": false
+  },
+  "bounded_preflight": {
+    "result_sha256": "a75401c5689fa7936b9bb99cadfd4689ea75344c649f02458b5dff624cda2a7e",
+    "task_count": 1,
+    "trajectory_count": 3,
+    "all_terminal": true,
+    "unauthorized_observations": 0,
+    "raw_audit_committed": false
+  },
+  "invalidated_attempts": [
+    {
+      "id": "r1",
+      "classification": "infrastructure_failure",
+      "failure": "cold model initialization consumed the episode wall budget"
+    },
+    {
+      "id": "r2",
+      "classification": "protocol_failure",
+      "failure": "terminal-only tool scheduling was not enforced and the model emitted unavailable execute_sql"
+    },
+    {
+      "id": "r3",
+      "classification": "protocol_failure",
+      "failure": "structured terminal state alone did not prevent a long unavailable-tool generation before timeout"
+    },
+    {
+      "id": "r4",
+      "classification": "infrastructure_protocol_failure",
+      "failure": "pinned MLX server rejected a mid-conversation system role with HTTP 404"
+    }
+  ],
+  "claim_boundary": {
+    "runtime_receipt_created_after_execution": true,
+    "not_a_preregistration": true,
+    "raw_sql_or_database_rows_committed": false,
+    "aurora_runtime_tested": false,
+    "production_model_tested": false
+  }
+}

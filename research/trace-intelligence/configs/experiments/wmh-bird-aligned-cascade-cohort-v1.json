@@ -1,0 +1,41 @@
+{
+  "schema_version": "frankengate-wmh-bird-aligned-cascade-cohort-v1",
+  "cohort_id": "07137f114ba210808eaa91daefd57c47125c1deabfc3ecfeb25fff0e59777038",
+  "case_count": 44,
+  "case_set_sha256": "51a110a69a1c6919eb8df14c7f9afb7e5693704d750d1da67f60cc878ac0fe76",
+  "source": {
+    "traces_sha256": "f1f7640f17dede614f6f7f28b1f099175b2702454d02a03f153dd1064c064630",
+    "manifest_sha256": "7bf979c0a8ea9388afe15b30fe056d7c150192a64a4e69e43ec487837eafd1b8",
+    "sqlite_root": "external-pinned-bird-minidev",
+    "raw_content_committed": false
+  },
+  "selection": {
+    "algorithm": "wmh_bird_sql_explorer_cohort.select_eval_cases",
+    "per_database_limit": 4,
+    "split": "within-database deterministic odd/even task split; evaluation uses odd half",
+    "candidate_pool": "all tables exposed in each trace",
+    "target_labels": "external evaluator only"
+  },
+  "arms": [
+    "A0_lexical",
+    "A1_schema_first",
+    "A2_provenance_alias",
+    "A3_typed_plus_alias",
+    "A4_dense",
+    "A5_authority_constrained",
+    "A6_replay_backed_action",
+    "A7_schema_first_bootstrap",
+    "A8_frontier_review"
+  ],
+  "holdouts": ["database_family", "task_id", "candidate_pool"],
+  "claim_boundary": {
+    "aligned_proxy_cohort_frozen": true,
+    "enterprise_semantic_cohort": false,
+    "reviewed_alias_labels": false,
+    "principal_or_policy_epoch": false,
+    "changed_system_outcomes": false,
+    "promotion_ready": false,
+    "reason": "This freezes a public SQL-agent comparison cohort; target labels, semantic aliases, authority, and enterprise utility remain external or unavailable."
+  },
+  "receipt_sha256": "93e5a9c55c592f382ae35dbbab643832c2dec9abfc4504c6abd6b89dfa73be40"
+}

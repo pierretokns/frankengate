@@ -1,0 +1,50 @@
+{
+  "claim_boundary": {
+    "reason": "Cheap structural signals are evaluated only for triage concentration; repeated signatures are not proof of causal repair utility or skill transfer.",
+    "recovery_outcome_measured": false,
+    "repeated_failure_modes_detected": true,
+    "reusable_recovery_skill_confirmed": false
+  },
+  "schema": "frankengate-recovery-bench-failure-signals-v1",
+  "selection": {
+    "k": 15,
+    "length": {
+      "repeat_mode_rate": 0.733333,
+      "selected": 15,
+      "support3_mode_rate": 0.4,
+      "unique_modes": 9
+    },
+    "random_mean": {
+      "repeat_mode_rate": 0.414583,
+      "support3_mode_rate": 0.170833,
+      "unique_modes": 13.8125
+    },
+    "selection_fraction": 0.25,
+    "signal": {
+      "repeat_mode_rate": 0.6,
+      "selected": 15,
+      "support3_mode_rate": 0.266667,
+      "unique_modes": 13
+    }
+  },
+  "signal_totals": {
+    "error": 766,
+    "missing_resource": 432,
+    "parse": 16,
+    "permission": 12,
+    "timeout": 135,
+    "traceback": 180
+  },
+  "signature_population": {
+    "max_signature_support": 4,
+    "repeated_signatures": 11,
+    "support3_signatures": 3,
+    "unique_signatures": 47
+  },
+  "source": {
+    "manifest_sha256": "5ff72e5e9f1e480bdd108c6c31d1fea65920022fb8f64419a73c492952a6cdfa",
+    "missing_trajectory_count": 0,
+    "raw_content_committed": false,
+    "trajectory_count": 62
+  }
+}

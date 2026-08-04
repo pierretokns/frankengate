@@ -1,0 +1,66 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "fd89a2f18bdb5c049e7aaeed3c8c90ed518542701a907facbcff950abab80c18",
+  "source": {
+    "dataset_id": "frankengate/governed-conformance",
+    "dataset_revision": "governed-v1",
+    "adapter": "synthetic-governed-fixture-v1"
+  },
+  "task": {"task_id": "redaction"},
+  "events": [
+    {
+      "event_id": "e000",
+      "sequence": 0,
+      "kind": "tool_result",
+      "observation_status": "observed",
+      "source_role": "tool",
+      "content": null,
+      "classification": "restricted",
+      "source_artifact_digest": "sha256:source-artifact-001",
+      "redaction": {
+        "status": "redacted",
+        "policy_id": "policy:secrets-v3",
+        "reason": "credential",
+        "content_digest": "sha256:redacted-content-001"
+      }
+    },
+    {
+      "event_id": "e001",
+      "sequence": 1,
+      "kind": "redaction_receipt",
+      "observation_status": "observed",
+      "source_role": "governance",
+      "content": "Restricted content removed before analysis.",
+      "parent_event_id": "e000",
+      "redacted_event_id": "e000",
+      "policy_id": "policy:secrets-v3"
+    }
+  ],
+  "outcome": {
+    "value": "redacted_with_lineage",
+    "source": "governance",
+    "evidence_event_ids": ["e000", "e001"]
+  },
+  "loss_receipt": {
+    "source_event_count": 2,
+    "canonical_event_count": 2,
+    "silently_dropped_event_count": 0,
+    "reconstructed_fields": [],
+    "known_missing_fields": ["redacted_plaintext"],
+    "expected_invariants": [
+      {
+        "type": "redaction_preserves_lineage",
+        "redacted_event_id": "e000",
+        "receipt_event_id": "e001"
+      }
+    ],
+    "expected_projection_losses": [
+      {
+        "target": "atif-v1.7",
+        "feature": "redaction_policy_lineage",
+        "disposition": "degraded",
+        "reason": "Redacted text can be omitted, but policy, digest, and classified lineage require extensions."
+      }
+    ]
+  }
+}

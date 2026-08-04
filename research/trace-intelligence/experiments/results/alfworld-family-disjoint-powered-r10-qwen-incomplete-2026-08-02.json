@@ -1,0 +1,41 @@
+{
+  "schema_version": "frankengate-alfworld-family-disjoint-powered-v1",
+  "study": "larger family-disjoint trace-derived skill comparison",
+  "status": "interrupted_runtime_error",
+  "dataset": {
+    "source": "zhangdw/alfworld",
+    "split": "valid_unseen",
+    "task_count": 8,
+    "task_hashes": [
+      "abdc3f574d5d158f934a47278eae6883975892d9cbaedffb86c5224808a14360",
+      "309d4b7e15bf4cb4706654790824e5ef5ca7f15b98f845f6a7ca5187806e2200",
+      "d280ee0af78ff56e94121326313b5ebe513e774ebf858756b013accdd6b5a5d7",
+      "6346e21a83da428833518eec426a06af7ed8489bb05d3ad8c88f78fed63d4317",
+      "9c4476a740f90ec2c7d203376d138e180a6a0e5c9439e15c043a3c9dfe6379e3",
+      "4ef6a413b4a5a13395dfbc9a88312d822e4bf1ca20d555c61e9e66e8c69fa0eb",
+      "318242dca1f84ccd9062f46e6fca115cb556ba573e82f341d8b41f61116a7f35",
+      "797b0decf1fc5fd1008bb963619e2513985e6a970c37237685b599e0ab94eb7a"
+    ],
+    "task_selection": "identical explicit paths to the completed Llama r9 replay"
+  },
+  "protocol": {
+    "arms": ["no_skill", "trace_mined_procedure_v2"],
+    "model": "qwen3:4b",
+    "harness": "ollama-native-api",
+    "max_steps": 35,
+    "expert_horizon_preflight": "passed for all eight paths in the paired Llama run",
+    "completed_episode_outcomes": 0,
+    "raw_receipt": "/private/tmp/alfworld-family-disjoint-powered-r10-qwen.raw.json"
+  },
+  "runtime_failure": {
+    "failure_class": "model_service_unexpected_eof",
+    "observed_probe": "Ollama /api/chat returned unexpected EOF for qwen3:4b",
+    "replay_disposition": "interrupted before a complete episode receipt; no partial outcomes were admitted"
+  },
+  "claim_boundary": {
+    "family_disjoint_semantic_intervention_executed": false,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "The identical Qwen replay was not completed and contributes no quality estimate. Prior completed Qwen r5 remains the valid cross-model semantic comparison."
+  }
+}

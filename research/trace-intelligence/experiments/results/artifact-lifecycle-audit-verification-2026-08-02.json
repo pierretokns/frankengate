@@ -1,0 +1,7 @@
+{
+  "candidate_count": 8,
+  "promotion_ready_count": 0,
+  "receipt_sha256": "78165739abd4aaae1edf0aabb723e2b890e16691f191cffe848bf33f01d375b4",
+  "schema_version": "frankengate-artifact-lifecycle-audit-verification-v1",
+  "verification_passed": true
+}

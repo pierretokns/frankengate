@@ -1,0 +1,8 @@
+{
+  "cases_verified": 8,
+  "gold_and_tool_outputs_hidden": true,
+  "raw_hashes_match": true,
+  "schema_version": "traject-bench-query-planning-verification-v1",
+  "source_result_sha256": "8f2c29e0ec1836ce1bf40e4f0e1ea6cff902c7841474572375166c89e24d480c",
+  "verification_passed": true
+}

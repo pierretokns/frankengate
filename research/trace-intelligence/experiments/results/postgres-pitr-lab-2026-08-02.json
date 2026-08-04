@@ -1,0 +1,19 @@
+{
+  "claim_boundary": {
+    "local_postgresql_pitr_mechanics_proven": true,
+    "managed_aurora_pitr_proven": false,
+    "rds_managed_backup_semantics_proven": false
+  },
+  "image": "postgres:16-alpine",
+  "pitr": {
+    "after_marker": "after-fg-pitr-lab-b929ee64da",
+    "after_marker_rows_at_target": 0,
+    "archive_files_seen": 7,
+    "executed": true,
+    "recovery_state_after_target": "f",
+    "restore_point": "fg_before_pitr_fg_pitr_lab_b929ee64da",
+    "target_excluded_after_marker": true
+  },
+  "run_id": "fg-pitr-lab-b929ee64da",
+  "schema_version": "frankengate-local-postgres-pitr-lab-v1"
+}

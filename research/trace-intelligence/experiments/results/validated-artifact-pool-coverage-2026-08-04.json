@@ -1,0 +1,188 @@
+{
+  "aggregate": {
+    "authorized_executions": 165,
+    "execution_errors": 0,
+    "oracle_structured_top1_semantic": 0,
+    "oracle_structured_top3_semantic": 0,
+    "semantic_match_artifacts": 0,
+    "source_artifacts_checked": 165,
+    "targets": 10,
+    "targets_with_any_semantic_match": 0
+  },
+  "claim_boundary": {
+    "causal_agent_benefit_established": false,
+    "enterprise_alias_truth_established": false,
+    "pool_coverage_ceiling_measured": true,
+    "reason": "Evaluation-only oracle coverage diagnostic; target gold is never available to a deployable retriever.",
+    "retriever_quality_measured": false
+  },
+  "evaluation": {
+    "all_same_scope_validated_artifacts_executed": true,
+    "oracle_uses_target_gold_for_ranking": true,
+    "retrieval_deployable": false,
+    "semantic_matching": "independent governed PostgreSQL result comparison"
+  },
+  "result_sha256": "51922e221abbb50054e37207dbcd6f1fb793a443960d007227d7a0641f5ebcea",
+  "rows": [
+    {
+      "authorized_executions": 18,
+      "database": "broker",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.5,
+      "max_table_jaccard": 0.66666667,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "84c2cd621fb8900260b3db479df77ac3f08f98b2deb0bc984f1250d2d406238f",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 18,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "7687c37f0dbb5e1167c0c6eb09efc039e677474234b1ed0a5799816339e15731"
+    },
+    {
+      "authorized_executions": 18,
+      "database": "broker",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.2,
+      "max_table_jaccard": 1.0,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "b5b15960a64caa399fd6fdecde8edf2c3e1a4e058756ff095529a56f9da3bf96",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 18,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "afc02964d89fa6d08c15bf833f8cbb7f02d1f60cb5dc27a306c17d08b439af06"
+    },
+    {
+      "authorized_executions": 18,
+      "database": "broker",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.6,
+      "max_table_jaccard": 1.0,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "293b9b460a7c3129993e80c4a8673a4c2a777015497f2485aae628e6f5810fe9",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 18,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "11ff9148269947d01343aa8017b5ff53300e608f1f44b0d71564f7d46f5dd9fb"
+    },
+    {
+      "authorized_executions": 18,
+      "database": "broker",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.66666667,
+      "max_table_jaccard": 1.0,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "f296d32d1ad85d5b19572f7eecc5c850391a9a30bd70c2932905b20ead2a2311",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 18,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "ac7f2917c0b896e5eb7b646acf0bc0628e316caac3064799fd4f18e0ad5e1ee9"
+    },
+    {
+      "authorized_executions": 18,
+      "database": "broker",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.6,
+      "max_table_jaccard": 1.0,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "9e5a44ef3b69a7beb150c71fc883576da3201832123c92300e4afc7d76bcaf60",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 18,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "eb516b690507669f6cf2efa99ee2853761bca4feb12bcc3e7cfdac9a955c5639"
+    },
+    {
+      "authorized_executions": 15,
+      "database": "car_dealership",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.25,
+      "max_table_jaccard": 0.5,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "eee463e85e90737e24c222e5a9e4e6b390cca35727a2d6a9474e522d201a011c",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 15,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "f0ac607be8783f9ce4619987f188dec7104c8d5cb269c96a2fe84579a9b39468"
+    },
+    {
+      "authorized_executions": 15,
+      "database": "car_dealership",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.16666667,
+      "max_table_jaccard": 0.0,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "78c7607d3c0a85d588595ab275f125aacaecb5b5704c5b8c83fdf05b6afcf393",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 15,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "bc00ea847af0a5b48ee82ed430298618c9b9d204f4f79362845a1f913bc0b24d"
+    },
+    {
+      "authorized_executions": 15,
+      "database": "car_dealership",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.5,
+      "max_table_jaccard": 1.0,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "f125b7002351da11e110ac975dfa6e35624ac4a3a77ff85af74ba4d39f8c9b2b",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 15,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "09d7fd795f58a02abcc2968952fd8cc77db40d0b8d765ff0fb61eddbdb3d0be4"
+    },
+    {
+      "authorized_executions": 15,
+      "database": "car_dealership",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.66666667,
+      "max_table_jaccard": 0.4,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "1db549a4d0c25b5eab40a113306319f540016a2c2fdae9806002cbd35675b0f5",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 15,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "5072cdeed3c27370d9d84579a418d5e2c8e225be7731a340c66a43c428c21fe8"
+    },
+    {
+      "authorized_executions": 15,
+      "database": "car_dealership",
+      "execution_errors": 0,
+      "max_column_jaccard": 0.5,
+      "max_table_jaccard": 1.0,
+      "oracle_structured_top1_semantic": false,
+      "oracle_structured_top1_source_task_sha256": "e9643237b61a21f40710e9823dccf6edf51f8c90528bfb7931cd4b58b499705c",
+      "oracle_structured_top3_semantic": false,
+      "same_scope_artifact_count": 15,
+      "semantic_match_count": 0,
+      "semantic_match_source_task_sha256": [],
+      "target_task_sha256": "c742474b3c0fe0cdd53fedf32568ed868999256f2c96cb7a545a40fb2cfc9751"
+    }
+  ],
+  "schema_version": "frankengate-validated-artifact-pool-coverage-v1",
+  "source": {
+    "cohort_manifest_sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767",
+    "databases": [
+      "broker",
+      "car_dealership"
+    ],
+    "dataset_manifest_sha256": "f32e23d97c36cf9eedaf32b4cb6f0922fef97ff5749d0e5030026da893b6785b",
+    "source_artifact_files": [
+      "data/instruct_advanced_postgres.csv",
+      "data/instruct_basic_postgres.csv"
+    ],
+    "source_root": "external-pinned-defog-checkout",
+    "source_validation_failures": {
+      "SQLPolicyError": 5
+    },
+    "target_count": 10,
+    "target_source_file": "data/questions_gen_postgres.csv",
+    "validated_artifact_count": 33
+  }
+}

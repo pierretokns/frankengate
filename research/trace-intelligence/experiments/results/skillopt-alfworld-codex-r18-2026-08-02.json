@@ -1,0 +1,44 @@
+{
+  "schema_version": "frankengate-skillopt-alfworld-codex-v1",
+  "study": "Real SkillOpt ALFWorld optimizer run using the Codex subscription harness",
+  "source": {
+    "repository": "microsoft/SkillOpt",
+    "checkout": "/private/tmp/skillopt-latest",
+    "revision": "7da46ae",
+    "alfworld_dataset_sha256": "a15b6c4eef2f86ccc39d082ecd2d99a9e022f92289f71f6367906909aa208c59",
+    "codex_model": "gpt-5.6-luna",
+    "codex_cli_version": "0.146.0",
+    "codex_backend_patch_sha256": "7b7b32a07393c243bf5b2f1d3790cc5dc3429d24b7dcdb6e5a76fab1d30ced5d"
+  },
+  "configuration": {
+    "optimizer_backend": "codex_exec",
+    "target_backend": "codex_exec",
+    "train_items": 1,
+    "selection_items": 1,
+    "epochs": 1,
+    "max_steps": 3,
+    "skill_update_mode": "patch",
+    "gate_metric": "hard",
+    "raw_model_content_committed": false
+  },
+  "execution": {
+    "engine_completed": true,
+    "rollout_hard": 0.0,
+    "rollout_soft": 0.0,
+    "baseline_selection_hard": 0.0,
+    "candidate_selection_hard": 0.0,
+    "candidate_sha256": "253e353d4b027d2f1c8469e14ffdc50baefc413708f0e3d3edd7aa5691c3d378",
+    "candidate_skill_length": 213,
+    "candidate_edits_applied": 1,
+    "candidate_action": "reject",
+    "accepts": 0,
+    "rejects": 1,
+    "codex_tokens": {"prompt": 24380, "completion": 202, "total": 24582, "calls": 1}
+  },
+  "claim_boundary": {
+    "real_optimizer_candidate_generated": true,
+    "causal_skill_benefit_confirmed": false,
+    "automatic_promotion_authorized": false,
+    "reason": "This is a real Codex-backed SkillOpt candidate, but it was rejected on the selection gate and requires independent held-out evaluation."
+  }
+}

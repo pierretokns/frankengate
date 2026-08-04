@@ -1,0 +1,84 @@
+{
+  "arms": {
+    "formatting_placebo": {
+      "authority_valid": 10,
+      "episode_runs": 10,
+      "policy_accepted": 10,
+      "semantic_correct": 5,
+      "sql_attempts": 16,
+      "terminal_protocol_failures": 0,
+      "tool_calls": 36,
+      "unauthorized_observations": 0
+    },
+    "no_skill": {
+      "authority_valid": 10,
+      "episode_runs": 10,
+      "policy_accepted": 10,
+      "semantic_correct": 5,
+      "sql_attempts": 15,
+      "terminal_protocol_failures": 0,
+      "tool_calls": 35,
+      "unauthorized_observations": 0
+    },
+    "trace2skill_compiled_procedure": {
+      "authority_valid": 10,
+      "episode_runs": 10,
+      "policy_accepted": 10,
+      "semantic_correct": 10,
+      "sql_attempts": 10,
+      "terminal_protocol_failures": 0,
+      "tool_calls": 30,
+      "unauthorized_observations": 0
+    }
+  },
+  "candidate_text_sha256": "400115bd469d4d39da6c85c8924f0f3a90e7cfc9eb0724997139e93faf019019",
+  "checks": {
+    "no_unauthorized_observations": true,
+    "same_arm_set": true,
+    "same_candidate_text": true,
+    "same_task_set": true,
+    "semantic_verifiers_passed": true,
+    "two_seeds": true
+  },
+  "claim_boundary": {
+    "causal_enterprise_skill_benefit_established": false,
+    "independent_semantic_verification": true,
+    "reason": "Two seeded frontier replays on five source-disjoint broker tasks; promising composability signal, not a powered or cross-family causal estimate.",
+    "repeated_seeds_are_not_independent_tasks": true,
+    "same_database_family": true,
+    "source_task_ids_disjoint_from_targets": true
+  },
+  "dataset": {
+    "database_family": "broker",
+    "task_set_sha256": "d5ac558eea2c3207e51d4b0418cec6832e6ed7b1a836ac2942063582fcc1646c",
+    "unique_task_count": 5
+  },
+  "result_sha256": "965e1d45791803e7ba62b380cb6ea2ba6261d93943586e7650f5c6fea8f2812b",
+  "schema_version": "frankengate-composable-artifact-replay-aggregate-v1",
+  "seed_result_sha256": [
+    "1f4fde983c63357731201e28d3bc3e31f664c0ad4c9d68a963b9f160d4cef54e",
+    "3f944c8e49f0c163158c1cc68b1f53af5d5e4b3214e26f4afadd9877528bf17d"
+  ],
+  "seed_verification_sha256": [
+    "f35ca9940c5eb70432e2d686f129140a5334be9ec2266f21926d6befc9b984e9",
+    "c02e078f65ee220eb082b673d39c92c44e82dd80d9d7aab9a81aa5f8e8038516"
+  ],
+  "seeds": [
+    840000,
+    850000
+  ],
+  "stable_task_comparisons": {
+    "formatting_placebo": {
+      "stable_candidate_losses": 0,
+      "stable_candidate_wins": 3,
+      "stable_ties_or_mixed": 2,
+      "unique_tasks": 5
+    },
+    "no_skill": {
+      "stable_candidate_losses": 0,
+      "stable_candidate_wins": 3,
+      "stable_ties_or_mixed": 2,
+      "unique_tasks": 5
+    }
+  }
+}

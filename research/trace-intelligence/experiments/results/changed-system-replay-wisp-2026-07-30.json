@@ -1,0 +1,357 @@
+{
+  "assertion_results": [
+    {
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "implementation": "benign_audit",
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 3,
+      "implementation": "benign_audit",
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "implementation": "benign_audit",
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 3,
+      "implementation": "harmful_drop",
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 3,
+      "implementation": "harmful_drop",
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 3,
+      "implementation": "harmful_drop",
+      "mean_score": 0.0,
+      "n": 3,
+      "passed": 0
+    },
+    {
+      "assertion": "ANY_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "implementation": "original",
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "assertion": "EXACT",
+      "errored": 0,
+      "failed": 0,
+      "implementation": "original",
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    },
+    {
+      "assertion": "IN_ORDER",
+      "errored": 0,
+      "failed": 0,
+      "implementation": "original",
+      "mean_score": 1.0,
+      "n": 3,
+      "passed": 3
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "e71615ce89c36f5fd39e0cbb",
+      "executions": {
+        "benign_audit": {
+          "expected_transition_count": 6,
+          "final_response_sha256": "1ba015fbfb7e8e2d394c6b0bd43d1a622b3b486371d4a7afb3202d3b45fd3773",
+          "observed_result_count": 7,
+          "outcome_completed": true,
+          "outcome_reason": "all_source_transitions_applied",
+          "repeat_reset_verified": true,
+          "state_after_completed": 6,
+          "state_before_completed": 0,
+          "tool_call_count": 7,
+          "tool_path_sha256": "080f97da7283d6c3707b3f8fab6257f1859a16fdc9170b55d9f8cac25e8420eb",
+          "tool_result_evidence_sha256": "70defbfeb9c454c9fdbd0b8f63e3c0896af5f97362ed341d40e95cf625bde2e7"
+        },
+        "harmful_drop": {
+          "expected_transition_count": 6,
+          "final_response_sha256": "bfaf9625bbad7ee73c4d7650076257b46bd3b7903a559b4c4f72357a93a802ea",
+          "observed_result_count": 5,
+          "outcome_completed": false,
+          "outcome_reason": "required_source_transition_missing",
+          "repeat_reset_verified": true,
+          "state_after_completed": 5,
+          "state_before_completed": 0,
+          "tool_call_count": 5,
+          "tool_path_sha256": "eeecc78a67f746e049d61bf7ed1b511a81bc33fd8a7f4d27166c0a24aec56326",
+          "tool_result_evidence_sha256": "4c17d6b3b0fc56947ccf3c8b8da4bf1746493bf91c31fff09aca7c7c503ba52d"
+        },
+        "original": {
+          "expected_transition_count": 6,
+          "final_response_sha256": "1ba015fbfb7e8e2d394c6b0bd43d1a622b3b486371d4a7afb3202d3b45fd3773",
+          "observed_result_count": 6,
+          "outcome_completed": true,
+          "outcome_reason": "all_source_transitions_applied",
+          "repeat_reset_verified": true,
+          "state_after_completed": 6,
+          "state_before_completed": 0,
+          "tool_call_count": 6,
+          "tool_path_sha256": "956ed7adb4f62e49ef5b4aa9b3073e490778a6eae2ac0bd02d5d6953b8d84e90",
+          "tool_result_evidence_sha256": "639a3f6bf5fd615c7ca8476a2a67133167d4a882b646178880e6b73c7f065d2f"
+        }
+      },
+      "expected": {
+        "final_response_sha256": "1ba015fbfb7e8e2d394c6b0bd43d1a622b3b486371d4a7afb3202d3b45fd3773",
+        "observed_result_count": 6,
+        "tool_call_count": 6,
+        "tool_path_sha256": "956ed7adb4f62e49ef5b4aa9b3073e490778a6eae2ac0bd02d5d6953b8d84e90",
+        "tool_result_evidence_sha256": "639a3f6bf5fd615c7ca8476a2a67133167d4a882b646178880e6b73c7f065d2f"
+      },
+      "source_sha256": "01510409cffdf09dcc675e62f5b3edcb950d9566f28132a9e96076ac2dbfb2fb",
+      "task_prompt_sha256": "19f015e538e44969a467232968a6f03b7865e4e9c1f3750c712ba9050b46efe8"
+    },
+    {
+      "case_id": "31dd8c58495ee68c89a951cd",
+      "executions": {
+        "benign_audit": {
+          "expected_transition_count": 3,
+          "final_response_sha256": "5a213160f99df81a8760a71efc5a3e73d6bdf2f4489c3259453da0f7a4e0149c",
+          "observed_result_count": 4,
+          "outcome_completed": true,
+          "outcome_reason": "all_source_transitions_applied",
+          "repeat_reset_verified": true,
+          "state_after_completed": 3,
+          "state_before_completed": 0,
+          "tool_call_count": 4,
+          "tool_path_sha256": "ba30367478d389cd9476381ce0c0d5194f0e600888e11b70bf24f85c9c26dd9e",
+          "tool_result_evidence_sha256": "2e6974c7b4e204d847cf938a3134671788f2b34d3bc558f6e206b527567b17b7"
+        },
+        "harmful_drop": {
+          "expected_transition_count": 3,
+          "final_response_sha256": "bfaf9625bbad7ee73c4d7650076257b46bd3b7903a559b4c4f72357a93a802ea",
+          "observed_result_count": 2,
+          "outcome_completed": false,
+          "outcome_reason": "required_source_transition_missing",
+          "repeat_reset_verified": true,
+          "state_after_completed": 2,
+          "state_before_completed": 0,
+          "tool_call_count": 2,
+          "tool_path_sha256": "7db920719543f3454631b09cc819e430a3b096add19f592213a5207d9e457261",
+          "tool_result_evidence_sha256": "be9202b7b413a044f55c969d1a162ac5b501621497cb12dece7a488e3b940278"
+        },
+        "original": {
+          "expected_transition_count": 3,
+          "final_response_sha256": "5a213160f99df81a8760a71efc5a3e73d6bdf2f4489c3259453da0f7a4e0149c",
+          "observed_result_count": 3,
+          "outcome_completed": true,
+          "outcome_reason": "all_source_transitions_applied",
+          "repeat_reset_verified": true,
+          "state_after_completed": 3,
+          "state_before_completed": 0,
+          "tool_call_count": 3,
+          "tool_path_sha256": "f22f71be218ca9ab206f0527ef969987b7b062d5bff05657120023dca2a56dab",
+          "tool_result_evidence_sha256": "e6618242834627edd431c1fda3c18b941c785023ff8b4b14d991ad2f6ae21d3e"
+        }
+      },
+      "expected": {
+        "final_response_sha256": "5a213160f99df81a8760a71efc5a3e73d6bdf2f4489c3259453da0f7a4e0149c",
+        "observed_result_count": 3,
+        "tool_call_count": 3,
+        "tool_path_sha256": "f22f71be218ca9ab206f0527ef969987b7b062d5bff05657120023dca2a56dab",
+        "tool_result_evidence_sha256": "e6618242834627edd431c1fda3c18b941c785023ff8b4b14d991ad2f6ae21d3e"
+      },
+      "source_sha256": "03f2400246ee5b05d8c442a0865b27b47478759082904217adf8853f83688221",
+      "task_prompt_sha256": "ce208e363a5a248c1d54d3c3b8f9edf5ee5258da1fd9f0821186763264d2c206"
+    },
+    {
+      "case_id": "659fdfb28ba10bc04dcb2b75",
+      "executions": {
+        "benign_audit": {
+          "expected_transition_count": 3,
+          "final_response_sha256": "0ec0b4269ed118843672b12f37eda7ee0cb83b7a35db8c3869adcdfeb8313d36",
+          "observed_result_count": 4,
+          "outcome_completed": true,
+          "outcome_reason": "all_source_transitions_applied",
+          "repeat_reset_verified": true,
+          "state_after_completed": 3,
+          "state_before_completed": 0,
+          "tool_call_count": 4,
+          "tool_path_sha256": "6aed1b01d2c83ad879269d2baad5c9b7b69a0eb7d9fab747c44e3b3fba2927f3",
+          "tool_result_evidence_sha256": "e304bcb20faa21087f0f451e447c9e8b918c37d706ce292d6a1de4a9996befcc"
+        },
+        "harmful_drop": {
+          "expected_transition_count": 3,
+          "final_response_sha256": "bfaf9625bbad7ee73c4d7650076257b46bd3b7903a559b4c4f72357a93a802ea",
+          "observed_result_count": 2,
+          "outcome_completed": false,
+          "outcome_reason": "required_source_transition_missing",
+          "repeat_reset_verified": true,
+          "state_after_completed": 2,
+          "state_before_completed": 0,
+          "tool_call_count": 2,
+          "tool_path_sha256": "7ce431befea3231501f4cdfa6ecab27a2f8e2643280f69dbc8fa438c94938041",
+          "tool_result_evidence_sha256": "2f36973b25053777b1b62033dce4932fc482d7d06467ebe5ca9693d818334720"
+        },
+        "original": {
+          "expected_transition_count": 3,
+          "final_response_sha256": "0ec0b4269ed118843672b12f37eda7ee0cb83b7a35db8c3869adcdfeb8313d36",
+          "observed_result_count": 3,
+          "outcome_completed": true,
+          "outcome_reason": "all_source_transitions_applied",
+          "repeat_reset_verified": true,
+          "state_after_completed": 3,
+          "state_before_completed": 0,
+          "tool_call_count": 3,
+          "tool_path_sha256": "f71728b93e20b542bd08a41602c20db4fdd620adb507147c5a4451af55963d84",
+          "tool_result_evidence_sha256": "21e3371587600d66740f1e87e2d96bd9fc0679ff07cbf0ea4a13006e30c5cc0c"
+        }
+      },
+      "expected": {
+        "final_response_sha256": "0ec0b4269ed118843672b12f37eda7ee0cb83b7a35db8c3869adcdfeb8313d36",
+        "observed_result_count": 3,
+        "tool_call_count": 3,
+        "tool_path_sha256": "f71728b93e20b542bd08a41602c20db4fdd620adb507147c5a4451af55963d84",
+        "tool_result_evidence_sha256": "21e3371587600d66740f1e87e2d96bd9fc0679ff07cbf0ea4a13006e30c5cc0c"
+      },
+      "source_sha256": "058a1349ac2fe40ed8483778852c9d788e622f2b66932c594a5e52ed94110b0b",
+      "task_prompt_sha256": "b59b60f28c7fccb04ce90d3104c77db903ada7eec027ff130dc75f229ecfffbd"
+    }
+  ],
+  "changed_system_executed": true,
+  "claim_boundary": "resettable_opaque_transition_replay",
+  "corpus": {
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "license": "MIT",
+    "revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce",
+    "selection": "first 3 by source-content hash among complete single-turn histories with at least two paired tool calls and a final response"
+  },
+  "execution_protocol": {
+    "repeat_reset_verification_pairs": 9,
+    "scored_system_task_pairs": 9,
+    "total_runtime_invocations": 18,
+    "upstream_deterministic_assertion_runs": 27
+  },
+  "experiment_config": {
+    "path": "configs/experiments/changed-system-replay-v1-2026.json",
+    "sha256": "500508479559a835d8af480a39f5ae3ebf2a47fd7beded808fd1b2a5395dc6ce"
+  },
+  "implementation_sha256": "6919ddac88680d9127778d2a4e7c954022ddbc7f7d4f8d6853e8a6fd5cbb87fe",
+  "input_manifest": {
+    "path": "experiments/manifests/changed-system-replay-wisp-2026-07-30.json",
+    "sha256": "f22161b49cec35fd1bea41fc3e13f21c5a9a36991dacba0e5cd2dfa86ecd1666"
+  },
+  "natural_trajectory_count": 3,
+  "outcomes": {
+    "benign_audit": {
+      "completed": 3,
+      "incomplete": 0,
+      "n": 3
+    },
+    "harmful_drop": {
+      "completed": 0,
+      "incomplete": 3,
+      "n": 3
+    },
+    "original": {
+      "completed": 3,
+      "incomplete": 0,
+      "n": 3
+    }
+  },
+  "preregistered_claim": "A source-derived assertion can distinguish an implementation that omits a required transition from a resettable original and from a benign implementation that adds only an audit call.",
+  "prospective_metrics": [
+    {
+      "assertion": "EXACT",
+      "benign_false_positive_rate": 1.0,
+      "errored_runs": 0,
+      "harmful_regression_recall": 1.0,
+      "original_false_positive_rate": 0.0
+    },
+    {
+      "assertion": "IN_ORDER",
+      "benign_false_positive_rate": 0.0,
+      "errored_runs": 0,
+      "harmful_regression_recall": 1.0,
+      "original_false_positive_rate": 0.0
+    },
+    {
+      "assertion": "ANY_ORDER",
+      "benign_false_positive_rate": 0.0,
+      "errored_runs": 0,
+      "harmful_regression_recall": 1.0,
+      "original_false_positive_rate": 0.0
+    }
+  ],
+  "raw_artifact_policy": "content-bearing eval sets, actual OTLP, per-case upstream scores, prompts, responses, tool arguments, and tool results remain external",
+  "raw_artifacts_committed": false,
+  "result_sha256": "5589f4a1a9f580c1dba3869ae87be1db4a1addb2f752e5667e39eff2cfc64c3d",
+  "runner_sha256": "58f7f5cbeedd0642740bd58c65630a4dc3f2913d3966a937680209dee175eb15",
+  "schema_version": "frankengate-changed-system-replay-aggregate-v1",
+  "source_environment_executed": false,
+  "study_id": "changed-system-replay-wisp-2026-07-30",
+  "system_implementations": [
+    {
+      "change": "execute every source-derived transition",
+      "expected_outcome": "completed",
+      "name": "original"
+    },
+    {
+      "change": "execute every source transition plus one audit-only tool call",
+      "expected_outcome": "completed",
+      "name": "benign_audit"
+    },
+    {
+      "change": "omit the final required source-derived transition",
+      "expected_outcome": "incomplete",
+      "name": "harmful_drop"
+    }
+  ],
+  "upstream": {
+    "commit": "221febbe05927923242a5edc12e68a2b70fd5ae9",
+    "license": "Apache-2.0",
+    "license_sha256": "3b1ee5b1e14fda40515c18ec2f0796d632e65a20b2aca8f017c654bc26ca77bd",
+    "lock_sha256": "d5839865b53e776dbbd5c7ae5ae6c90864fc28f27499f74054e469ac9f77c034",
+    "package": "agentevals-cli",
+    "package_version": "0.9.7",
+    "pyproject_sha256": "22bb0564ce3defd3e5f4a20bbc15f3f028c1cdb42363528a6bda7fa1465bfdea",
+    "python_version": "3.14.2",
+    "release": "v0.9.7",
+    "repository": "https://github.com/agentevals-dev/agentevals",
+    "runtime_attestation": {
+      "agentevals_loaded_from_pinned_checkout": true,
+      "agentevals_version": "0.9.7",
+      "google_adk_version": "2.1.0"
+    },
+    "trajectory_matcher_dependency": {
+      "package": "google-adk",
+      "source_tag_commit": "6d15e19f057ee4035960ba5984499cb1eaf943ca",
+      "version": "2.1.0"
+    }
+  }
+}

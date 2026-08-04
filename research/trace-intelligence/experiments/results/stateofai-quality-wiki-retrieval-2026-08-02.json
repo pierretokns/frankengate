@@ -1,0 +1,44 @@
+{
+  "schema_version": "frankengate-stateofai-quality-wiki-retrieval-v1",
+  "source": {
+    "input_export_sha256": "2f5ac8d3e9f5992bc01e801b9883c321bced4929ac2c31449e8df76f1879c28b",
+    "corpus_sha256": "d8b48e097a4655b7c239dfe0a32da6d5e2b17fba1a016b46a7b223e402967d3c",
+    "generic_run_sha256": "9a7ca22de40feb93ecd1507e2408af7539e8b4c5908800ca7b0526a8d71cc8b3",
+    "dense_raw_sha256": "fcab8ad7385582e8bc1b57d025250bd5458ea41d05be3f498a1cc1da979ca2a0",
+    "dense_compiled_sha256": "f18f0656ef2d6c7060454f54db244b67c5580c65f3979a817a6011e4ca2a69fb",
+    "reranker_sha256": "35407fd28d69b8ec76f562592227410b2399952616570b62a655edee4b8f1e12",
+    "hard_negative_sha256": "584ef8a163e7fda1a20945d62c6674eec2703cc431b6f48f54025463bde11015"
+  },
+  "corpus": {"domains": 10, "pages": 400, "questions": 2005, "quality_records": 1274, "nil_questions": 5},
+  "protocol": {
+    "label_provenance": "deterministic silver templates from source metadata",
+    "sizes": [1, 5, 10],
+    "k": 20,
+    "embedding": "BAAI/bge-base-en-v1.5",
+    "hard_negative": "nearest same-domain title-token Jaccard distractor"
+  },
+  "selected_metrics": {
+    "generic_compiled_fts": {
+      "size_1": {"recall_at_1": 0.75, "recall_at_20": 1.0, "mrr": 0.834333, "nil_false_positive_rate": 1.0},
+      "size_5": {"recall_at_1": 0.723, "recall_at_20": 0.993, "mrr": 0.782753, "nil_false_positive_rate": 1.0},
+      "size_10": {"recall_at_1": 0.749, "recall_at_20": 0.9945, "mrr": 0.80685, "nil_false_positive_rate": 1.0}
+    },
+    "generic_compiled_hybrid": {
+      "size_10": {"recall_at_1": 0.7365, "recall_at_20": 0.9855, "mrr": 0.798288, "nil_false_positive_rate": 1.0}
+    },
+    "bge_raw": {
+      "size_10": {"recall_at_1": 0.4555, "recall_at_20": 0.9455, "mrr": 0.579563, "nil_false_positive_rate": 1.0}
+    },
+    "bge_compiled": {
+      "size_10": {"recall_at_1": 0.4755, "recall_at_20": 0.951, "mrr": 0.602511, "nil_false_positive_rate": 1.0}
+    },
+    "identifier_reranker": {
+      "size_10": {"recall_at_1": 0.6945, "recall_at_20": 0.951, "mrr": 0.760578, "nil_false_positive_rate": 1.0}
+    },
+    "hard_negative_audit_size_10": {
+      "compiled_fts": {"gold_recall_at_1": 0.749, "hard_negative_at_1_rate": 0.045, "hard_negative_in_20_rate": 0.74},
+      "compiled_hybrid": {"gold_recall_at_1": 0.737, "hard_negative_at_1_rate": 0.034, "hard_negative_in_20_rate": 0.754}
+    }
+  },
+  "claim_boundary": "The quality filter removes obvious cache/URL-title records but the questions and negatives remain silver metadata-derived labels. This is not human answer quality, a learned corporate embedding, or native MCP evidence."
+}

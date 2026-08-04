@@ -1,0 +1,132 @@
+{
+  "aggregate_label_counts": {
+    "cause": {
+      "ambiguous_requirement": 3,
+      "dependency_or_configuration": 4,
+      "invalid_argument_or_command": 3,
+      "tool_or_environment": 8
+    },
+    "evidence_strength": {
+      "circumstantial": 1,
+      "direct_trace": 16,
+      "insufficient_evidence": 1
+    },
+    "outcome": {
+      "not_recovered": 9,
+      "recovered_verified": 9
+    },
+    "productive_exploration": {
+      "mixed": 3,
+      "productive": 12,
+      "unproductive": 3
+    },
+    "relation": {
+      "same_goal_changed_method": 12,
+      "same_task_retry": 6
+    },
+    "usefulness": {
+      "eval_candidate": 1,
+      "not_useful": 3,
+      "support_candidate": 14
+    }
+  },
+  "agreement": {
+    "cause": {
+      "complete_candidate_count": 6,
+      "fleiss_kappa": 0.4424778761061946,
+      "unanimous_count": 3,
+      "unanimous_fraction": 0.5
+    },
+    "evidence_strength": {
+      "complete_candidate_count": 6,
+      "fleiss_kappa": -0.09090909090909076,
+      "unanimous_count": 4,
+      "unanimous_fraction": 0.6666666666666666
+    },
+    "outcome": {
+      "complete_candidate_count": 6,
+      "fleiss_kappa": 0.5555555555555556,
+      "unanimous_count": 4,
+      "unanimous_fraction": 0.6666666666666666
+    },
+    "productive_exploration": {
+      "complete_candidate_count": 6,
+      "fleiss_kappa": 0.33333333333333326,
+      "unanimous_count": 3,
+      "unanimous_fraction": 0.5
+    },
+    "relation": {
+      "complete_candidate_count": 6,
+      "fleiss_kappa": 0.5,
+      "unanimous_count": 4,
+      "unanimous_fraction": 0.6666666666666666
+    },
+    "usefulness": {
+      "complete_candidate_count": 6,
+      "fleiss_kappa": 0.08474576271186418,
+      "unanimous_count": 3,
+      "unanimous_fraction": 0.5
+    }
+  },
+  "claim_boundary": "same-model prompt-perturbation stability; not human gold, independent model agreement, causal diagnosis, or prospective enterprise evidence",
+  "dataset": {
+    "dataset_id": "crispwisp/wisp-claude-code-sessions",
+    "dataset_revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce"
+  },
+  "execution": {
+    "complete_candidate_count": 6,
+    "error_count": 0,
+    "errored_fraction": 0.0,
+    "expected_decision_count": 18,
+    "latency_ms": {
+      "maximum": 69367.85466699996,
+      "median": 27151.737187500046
+    },
+    "pass_count": 3,
+    "valid_decision_count": 18
+  },
+  "experiment_config": {
+    "path": "configs/experiments/wisp-recovery-model-adjudication-stability-v1-2026.json",
+    "sha256": "ea6a4aea901abcf70f374909599a10893b46636c933d0285c54a1f89d3a2f44f"
+  },
+  "implementation_sha256": "6ee62da07b226bae3aa6cde9e20b4fcd3f9a0d9bfc95055aad6568cf280fa903",
+  "model": {
+    "endpoint_location": "loopback",
+    "manifest": "research/trace-intelligence/configs/models/qwen3.5-9b-optiq-4bit-mlx-runtime-v2.json",
+    "manifest_sha256": "3c26a8b2efffa88f45004e067246bc31d7fc6c193e7540a402e05c4f5e22a88d",
+    "request_model": "mlx-community/Qwen3.5-9B-OptiQ-4bit",
+    "temperature": 0
+  },
+  "packet_sha256": "7a519a7f5666eb50dcc4cbba4f2d5d9568b8481168ad01680ae688fdd517fec4",
+  "prompt_variants": [
+    {
+      "id": "rubric_first",
+      "instruction_sha256": "d0ef7353c463f0a7645c9bcdfee899c7b8df877cad601fed9d8528101909a440"
+    },
+    {
+      "id": "evidence_first",
+      "instruction_sha256": "64f177100105f859eac78ffa8c02d1e227ebd4ae52bf47589318a1d9c8f76645"
+    },
+    {
+      "id": "skeptical",
+      "instruction_sha256": "99ca346773c592d96186d08d1b20e9502c48fc668ac659a8f5cb81bedf97bd43"
+    }
+  ],
+  "raw_candidate_level_rows_committed": false,
+  "raw_output": {
+    "committed": false,
+    "mode": "0o600",
+    "sha256": "cca85a278ead09639da6f7f0078387abb2dd1108258b6567a16a77183a511638"
+  },
+  "sample": {
+    "candidate_count": 6,
+    "controlled_tool_family_counts": {
+      "file_change": 2,
+      "file_read": 1,
+      "shell": 3
+    },
+    "selection_ids_committed": false
+  },
+  "schema_version": "frankengate.wisp-recovery-model-stability-aggregate.v1",
+  "study_id": "wisp-recovery-model-adjudication-stability-2026-07-30"
+}

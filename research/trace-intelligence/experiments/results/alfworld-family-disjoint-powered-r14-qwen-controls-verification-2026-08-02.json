@@ -1,0 +1,13 @@
+{
+  "all_executed_actions_admissible": true,
+  "all_passed": true,
+  "mismatch_count": 0,
+  "mismatches": [],
+  "raw": "alfworld-family-disjoint-powered-r14-qwen-controls.raw.json",
+  "raw_content_policy": "environment action sequences only; no prompts or model responses",
+  "raw_sha256": "6967973842e776eef3969ebb49ee6425a6e3a82d2d48c2c208fbcd5de6c1c2d2",
+  "receipt": "alfworld-family-disjoint-powered-r14-qwen-controls-2026-08-02.json",
+  "rows_verified": 24,
+  "schema_version": "frankengate-alfworld-semantic-replay-verification-v1",
+  "verifier": "fresh ALFWorld environment replay; no model calls"
+}

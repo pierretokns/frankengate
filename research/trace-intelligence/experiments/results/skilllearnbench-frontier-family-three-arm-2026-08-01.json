@@ -1,0 +1,835 @@
+{
+  "claim_boundary": {
+    "enterprise_transfer_proven": false,
+    "reason": "Three public instances from one task family and a host-harness adaptation; directional within-family evidence only.",
+    "skill_learning_causal_effect_proven": false,
+    "verifier_outcomes_measured": true
+  },
+  "harness": {
+    "adaptation": "host-path portability probe; not the benchmark's Docker runner",
+    "docker_runner": false,
+    "model": "gpt-5.6-luna",
+    "provider": "Codex subscription"
+  },
+  "receipt_input_sha256": "997391453d2084e361de6829dbd0422a47c1adb8e7c03701d4553c07a822d69a",
+  "schema": "frankengate-skilllearnbench-frontier-family-v1",
+  "source": {
+    "dataset": "cxcscmu/SkillLearnBench",
+    "dataset_revision": "a0da045a8bf64b8a8ff20730c4d6ef10dc4e2c5b",
+    "raw_content_committed": false,
+    "task_ids": [
+      "enterprise-information-search/enterprise-information-search-1",
+      "enterprise-information-search/enterprise-information-search-2",
+      "enterprise-information-search/enterprise-information-search-3",
+      "enterprise-information-search/enterprise-information-search-4",
+      "enterprise-information-search/enterprise-information-search-5",
+      "enterprise-information-search/enterprise-information-search-6"
+    ]
+  },
+  "tasks": [
+    {
+      "arms": [
+        {
+          "agent_message_count": 3,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 10,
+                "expected_count": 8,
+                "extra_count": 2,
+                "precision": 0.8,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "none",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "8436c4a34b87a22c3e6df822dc24e01a2da69f0801088e7aae674fa6e05ca75a",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 558080,
+            "input_tokens": 616320,
+            "output_tokens": 6333,
+            "reasoning_output_tokens": 3938
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "human_authored",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "b0e838541fd2b888b385dc0adb86718297bc37d0d02633f50a66eaf58cfd4b01",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 1037568,
+            "input_tokens": 1136471,
+            "output_tokens": 8123,
+            "reasoning_output_tokens": 4367
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 7,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 0.875
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": false,
+            "q1_missing": 1,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "b1-one-shot-claude-sonnet-4-6",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "b61dc1f959e608657e22f67f171db967d35aee1f084cd77db8bb917cf2111a8d",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 429824,
+            "input_tokens": 478497,
+            "output_tokens": 4823,
+            "reasoning_output_tokens": 1628
+          }
+        }
+      ],
+      "task_id": "enterprise-information-search/enterprise-information-search-1"
+    },
+    {
+      "arms": [
+        {
+          "agent_message_count": 3,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 4,
+                "expected_count": 12,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 0.3333333333333333
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": false,
+            "q1_missing": 8,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "none",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "e290f9cdd515b99fe42ad9277a536fb85809d80582488085f2678296e466c623",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 742400,
+            "input_tokens": 809223,
+            "output_tokens": 7448,
+            "reasoning_output_tokens": 4849
+          }
+        },
+        {
+          "agent_message_count": 5,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 12,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 0.6666666666666666
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": false,
+            "q1_missing": 4,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "human_authored",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "9dad08ed5b098eaa04c121dda1189e53249a0218d6182a7dd1e6a85cfceb3b41",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 1199104,
+            "input_tokens": 1278189,
+            "output_tokens": 9016,
+            "reasoning_output_tokens": 3743
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 12,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 0.6666666666666666
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": false,
+            "q1_missing": 4,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "b1-one-shot-claude-sonnet-4-6",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "22bade16873bd154680195dbbdd62bf418372efcb83a09988fe8d3fa037ce9fe",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 385792,
+            "input_tokens": 431391,
+            "output_tokens": 5438,
+            "reasoning_output_tokens": 2613
+          }
+        }
+      ],
+      "task_id": "enterprise-information-search/enterprise-information-search-2"
+    },
+    {
+      "arms": [
+        {
+          "agent_message_count": 3,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 7,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 0.875
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": false,
+            "q1_missing": 1,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "none",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "857b3908302cb3a6b863fce6448ba4e931a3bc83c6a1abf34315cf7a4854e2da",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 600576,
+            "input_tokens": 669114,
+            "output_tokens": 5533,
+            "reasoning_output_tokens": 3026
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "human_authored",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "3da96e94b7ec5f31229fafcbfe9ed06fa3f4f8929a4d3fb2367090f5160f7000",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 900352,
+            "input_tokens": 991216,
+            "output_tokens": 7366,
+            "reasoning_output_tokens": 3458
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "b1-one-shot-claude-sonnet-4-6",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "26bc8e5adb93c386ede0a94c479d9b28a2017041fa650c8fe509427bb50cd7b3",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 522752,
+            "input_tokens": 583703,
+            "output_tokens": 6096,
+            "reasoning_output_tokens": 2844
+          }
+        }
+      ],
+      "task_id": "enterprise-information-search/enterprise-information-search-3"
+    },
+    {
+      "arms": [
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 7,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 0.875
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": false,
+            "q1_missing": 1,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "none",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "e95237fe9250f850bde26c4cc2da2749202af3af4e298d43b885b1ac360d74a2",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 344576,
+            "input_tokens": 394935,
+            "output_tokens": 4084,
+            "reasoning_output_tokens": 2682
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "human_authored",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "ecb37f77ee16b926a4b5d068647b4b5c40818608f8ecf160a5b66e8d50b7f831",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 1283328,
+            "input_tokens": 1372836,
+            "output_tokens": 7703,
+            "reasoning_output_tokens": 3288
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 7,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 0.875
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": false,
+            "q1_missing": 1,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "b1-one-shot-claude-sonnet-4-6",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "bf0b86d227fbf15045515543d162ff06d9356c1a0fc5a5538b476cf6226fde4e",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 405248,
+            "input_tokens": 456420,
+            "output_tokens": 6477,
+            "reasoning_output_tokens": 3513
+          }
+        }
+      ],
+      "task_id": "enterprise-information-search/enterprise-information-search-4"
+    },
+    {
+      "arms": [
+        {
+          "agent_message_count": 3,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 9,
+                "expected_count": 9,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "none",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "a80150b01126c2a288343c9f137931c1a5e2cfee491506b517045007815a1967",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 547840,
+            "input_tokens": 645866,
+            "output_tokens": 4253,
+            "reasoning_output_tokens": 1920
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 9,
+                "expected_count": 9,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "human_authored",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "dab471f2efa39fa3b530f60fcd70e5b4323f83bed3eb8907fbd4438153048f6c",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 645376,
+            "input_tokens": 703252,
+            "output_tokens": 5854,
+            "reasoning_output_tokens": 2574
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 9,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 0.8888888888888888
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": false,
+            "q1_missing": 1,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "b1-one-shot-claude-sonnet-4-6",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "7c2503a62af8ce54eb3d59270b2f63a2b9839d21352dc0fa61f01ae4436ce4f8",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 424704,
+            "input_tokens": 469968,
+            "output_tokens": 6161,
+            "reasoning_output_tokens": 2673
+          }
+        }
+      ],
+      "task_id": "enterprise-information-search/enterprise-information-search-5"
+    },
+    {
+      "arms": [
+        {
+          "agent_message_count": 3,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "none",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "1264b189ab320b5862fb3e051c9e9362a7ab1894cadc0ccc780e4724b531b052",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 567552,
+            "input_tokens": 619928,
+            "output_tokens": 6036,
+            "reasoning_output_tokens": 3833
+          }
+        },
+        {
+          "agent_message_count": 5,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "human_authored",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "09d28e73303e207699a5954b9bebcbe0e35faab80e8ff8eae0328ecf23ad9a36",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 1028352,
+            "input_tokens": 1112315,
+            "output_tokens": 6990,
+            "reasoning_output_tokens": 3378
+          }
+        },
+        {
+          "agent_message_count": 4,
+          "answer": {
+            "answer_exists": true,
+            "exact_metrics": {
+              "q1": {
+                "answer_count": 8,
+                "expected_count": 8,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              },
+              "q3": {
+                "answer_count": 3,
+                "expected_count": 3,
+                "extra_count": 0,
+                "precision": 1.0,
+                "recall": 1.0
+              }
+            },
+            "json_object": true,
+            "passed": true,
+            "q1_missing": 0,
+            "q3_missing": 0,
+            "required_questions_present": true,
+            "token_fields_numeric": true
+          },
+          "arm": "b1-one-shot-claude-sonnet-4-6",
+          "elapsed_seconds": null,
+          "model": "gpt-5.6-luna",
+          "raw_content_retained_outside_repo": true,
+          "returncode": 0,
+          "reused_existing_run": true,
+          "stderr_sha256": null,
+          "stdout_sha256": "90347a0def434bb436d1360c8127edc2ef3b58031f06d4afc7c54102675a5641",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 395008,
+            "input_tokens": 439206,
+            "output_tokens": 5533,
+            "reasoning_output_tokens": 2655
+          }
+        }
+      ],
+      "task_id": "enterprise-information-search/enterprise-information-search-6"
+    }
+  ]
+}

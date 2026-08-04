@@ -1,0 +1,20 @@
+{
+  "actual_file_count": 28,
+  "attestation": "passed",
+  "dataset_id": "trace-commons/agent-traces-full-claude-memory-composition",
+  "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+  "expected_file_count": 28,
+  "extra_file_count": 0,
+  "inventory_digest": "8f0ffbda180f3aa7763a9df917b01c3c1cfa888d49551b6ca149551b204d3188",
+  "license": "CC-BY-4.0",
+  "manifest_digest": "f9f6258fd87ce655f10ade87c730e1312152c498bea67e6a64a2405db04d1ea9",
+  "mismatched_bytes": 0,
+  "mismatched_hashes": 0,
+  "mismatched_records": 0,
+  "missing_file_count": 0,
+  "raw_content_emitted": false,
+  "result_sha256": "bab5aab50d5db4dd7473778eb5825b86bc9a9d245c8ffc2cdf86ad9f86e6e66a",
+  "schema_version": "frankengate.trace-commons-source-attestation.v1",
+  "total_bytes": 57104737,
+  "total_records": 17991
+}

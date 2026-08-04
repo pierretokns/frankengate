@@ -1,0 +1,69 @@
+{
+  "aggregates": [
+    {
+      "avg_steps": 3.6,
+      "errors": 0,
+      "finished": 1.0,
+      "loaded_gold": 1.0,
+      "nil_abstention_accuracy": 1.0,
+      "p95_latency_ms": 38325.69775,
+      "records": 5,
+      "searched_gold": 1.0,
+      "size": 1,
+      "target_answer_accuracy": 1.0
+    },
+    {
+      "avg_steps": 3.4,
+      "errors": 0,
+      "finished": 1.0,
+      "loaded_gold": 1.0,
+      "nil_abstention_accuracy": 1.0,
+      "p95_latency_ms": 33176.356375,
+      "records": 5,
+      "searched_gold": 1.0,
+      "size": 5,
+      "target_answer_accuracy": 1.0
+    },
+    {
+      "avg_steps": 3.4,
+      "errors": 0,
+      "finished": 1.0,
+      "loaded_gold": 1.0,
+      "nil_abstention_accuracy": 1.0,
+      "p95_latency_ms": 34288.939042,
+      "records": 5,
+      "searched_gold": 1.0,
+      "size": 10,
+      "target_answer_accuracy": 1.0
+    },
+    {
+      "avg_steps": 3.6,
+      "errors": 1,
+      "finished": 0.8,
+      "loaded_gold": 1.0,
+      "nil_abstention_accuracy": 1.0,
+      "p95_latency_ms": 39426.222,
+      "records": 5,
+      "searched_gold": 1.0,
+      "size": 25,
+      "target_answer_accuracy": 0.75
+    }
+  ],
+  "claim_boundary": "Codex/Luna structured-action frontier loop over a synthetic fixture. Native MCP was not used because non-interactive Codex cancelled custom MCP calls before tools/call dispatch. This is not enterprise transfer or a claim about Claude Code.",
+  "corpus": {
+    "pages": 100,
+    "sha256": "9a48b266dfc5b7260a1800b01ec6e5f84be948a9e690f1860b5c868fed1f8311",
+    "wikis": 25
+  },
+  "protocol": {
+    "backend": "hybrid raw",
+    "harness": "Codex CLI structured JSON action loop",
+    "max_steps": 5,
+    "model": "gpt-5.6-luna",
+    "native_mcp": false,
+    "raw_traces_committed": false,
+    "workers": 2
+  },
+  "run_sha256": "a180bf82a501fed148da55233c38b30b56e9877fc4d75c84c8f7d1dd44d50d13",
+  "schema_version": "frankengate-wiki-frontier-codex-receipt-v1"
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "cfahlgren1/codex-sessions",
+  "dataset_revision": "87dcc5b0df77f94b8750772dce7078866d3e6877",
+  "license": "NOASSERTION",
+  "source_url": "https://huggingface.co/datasets/cfahlgren1/codex-sessions",
+  "source_format": "Two untouched raw Codex rollout JSONL files plus an exact derived one-row-per-session view",
+  "adapter": "public_native_history_fidelity_v1",
+  "publication_basis": "Intentional public dataset release",
+  "rights_assertion": "Hub license metadata is `other`; inspection does not establish redistribution or training rights",
+  "privacy_review": "Publisher warns that native files may contain sensitive material; aggregate-only scan required",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "raw_session_files": 2,
+    "complete_home_directory": false,
+    "byte_native": true,
+    "stable_user_identity": false
+  },
+  "admission": "admit_for_byte_native_codex_parser_fidelity",
+  "enterprise_transfer": "Too small for longitudinal or user-behavior claims; NOASSERTION rights"
+}

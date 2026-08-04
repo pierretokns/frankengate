@@ -1,0 +1,66 @@
+{
+  "aggregate": {
+    "denial_cases": 5,
+    "fail_closed": true,
+    "injection_bound_without_error": true,
+    "injection_interpreted_as_sql": false,
+    "valid_accepted": true
+  },
+  "capsule_hash": "d9396b2a1930b71228e02c81e23415af8314eb44614479e0b30e4892e2cd2a2e",
+  "cases": {
+    "bound_parameter_injection": {
+      "accepted": true,
+      "capsule_hash": "d9396b2a1930b71228e02c81e23415af8314eb44614479e0b30e4892e2cd2a2e",
+      "reasons": [],
+      "result_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "row_count": 0
+    },
+    "expired": {
+      "accepted": false,
+      "capsule_hash": "d9396b2a1930b71228e02c81e23415af8314eb44614479e0b30e4892e2cd2a2e",
+      "reasons": [
+        "expired"
+      ]
+    },
+    "schema_drift": {
+      "accepted": false,
+      "capsule_hash": "d9396b2a1930b71228e02c81e23415af8314eb44614479e0b30e4892e2cd2a2e",
+      "reasons": [
+        "schema_fingerprint_mismatch"
+      ]
+    },
+    "stale_epoch": {
+      "accepted": false,
+      "capsule_hash": "d9396b2a1930b71228e02c81e23415af8314eb44614479e0b30e4892e2cd2a2e",
+      "reasons": [
+        "authorization_epoch_mismatch"
+      ]
+    },
+    "valid": {
+      "accepted": true,
+      "capsule_hash": "d9396b2a1930b71228e02c81e23415af8314eb44614479e0b30e4892e2cd2a2e",
+      "reasons": [],
+      "result_digest": "0b2ae1a8c37f5158aca1b35a90691ad0bb5874fc99ffe8f0f459ebbd24a31020",
+      "row_count": 1
+    },
+    "wrong_parameters": {
+      "accepted": false,
+      "capsule_hash": "d9396b2a1930b71228e02c81e23415af8314eb44614479e0b30e4892e2cd2a2e",
+      "reasons": [
+        "parameter_contract_mismatch"
+      ]
+    },
+    "wrong_scope": {
+      "accepted": false,
+      "capsule_hash": "d9396b2a1930b71228e02c81e23415af8314eb44614479e0b30e4892e2cd2a2e",
+      "reasons": [
+        "authority_scope_mismatch"
+      ]
+    }
+  },
+  "claim_boundary": "Real PostgreSQL governed-executor capsule mechanics only; no claim about artifact quality or user utility.",
+  "database": "postgresql",
+  "postgres_version": "PostgreSQL 16.12 (Debian 16.12-1.pgdg12+1) on aarch64-unknown-linux-gnu",
+  "role": "least_privilege_rls_enabled",
+  "schema_version": "frankengate-artifact-capsule-postgresql-v1"
+}

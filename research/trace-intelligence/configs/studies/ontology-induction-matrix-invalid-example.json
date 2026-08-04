@@ -1,0 +1,9 @@
+{
+  "schema_version": "frankengate-ontology-induction-matrix-v1",
+  "study_id": "invalid-ontology-study",
+  "candidate_pool_frozen_before_labels": false,
+  "holdouts": {"principal": true},
+  "arms": ["goi_proposal"],
+  "metrics": ["structural_coverage"],
+  "cases": [{"case_id": "bad", "case_class": "entity", "prompt": "raw content must not be committed"}]
+}

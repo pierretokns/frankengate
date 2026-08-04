@@ -1,0 +1,36 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "trace-commons/agent-traces-memory-pairing",
+  "dataset_revision": "112ebd4d03ce852b00e935d523107c3d0c9a65bf",
+  "license": "CC-BY-4.0",
+  "source_url": "https://huggingface.co/datasets/trace-commons/agent-traces/tree/112ebd4d03ce852b00e935d523107c3d0c9a65bf/sessions/claude_code",
+  "source_format": "Volunteered raw native Claude Code sessions with observed durable-context tool interactions",
+  "adapter": "claude_native_context_transition_v1",
+  "publication_basis": "Opt-in public corpus with local scrubbing and contributor review",
+  "privacy_review": "Anonymization and path rewriting can break identity joins; raw content stays outside Git",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "claude_code_histories": 28,
+    "histories_with_context_artifact_interactions": 14,
+    "context_artifact_tool_interactions": 67,
+    "matching_tool_results": 67,
+    "explicit_reads": 19,
+    "writes_or_edits": 37,
+    "bash_or_other_context_operations": 11,
+    "cross_session_same_project_cohorts_minimum": 2,
+    "observed_artifact_types": [
+      "MEMORY.md",
+      "project memory files",
+      "PROJECT.md",
+      "CLAUDE.md",
+      "AGENTS.md",
+      "user skills"
+    ]
+  },
+  "admission": "admit_as_primary_real_trace_and_durable_context_pairing",
+  "enterprise_transfer": "Best observed read/write pairing found; selection bias, scrub loss, and small cross-session cohorts require conservative claims"
+}

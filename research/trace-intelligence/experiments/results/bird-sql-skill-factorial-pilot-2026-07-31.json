@@ -1,0 +1,247 @@
+{
+  "claim_boundary": {
+    "automatic_promotion_authorized": false,
+    "causal_skill_benefit_confirmed": false,
+    "independent_family_disjoint_run": true,
+    "reason": "Six-task pilot; a powered gate requires at least 20 held-out tasks across four families and paired confidence intervals."
+  },
+  "episodes": [
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 6883.646,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "candidate_error",
+      "response_sha256": "997e99b5d20627b66511060dba886061df8c968563c96acd52329a8105973619",
+      "task_hash": "d9cf8a492227927b1db48d54a165e6226b84d0e2af17a7961e7fc4736a5dfa36",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9911.056,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "candidate_error",
+      "response_sha256": "8f98cdda0be1a5584c0557d72a80792475df0c58c6db2ff90d9d4948066e9696",
+      "task_hash": "d9cf8a492227927b1db48d54a165e6226b84d0e2af17a7961e7fc4736a5dfa36",
+      "unordered": false
+    },
+    {
+      "arm": "trace_mined_procedure",
+      "elapsed_ms": 7347.427,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "candidate_error",
+      "response_sha256": "d0cd602231792e0751a9bb65ecf767e020f83c645af83021782a39852731092a",
+      "task_hash": "d9cf8a492227927b1db48d54a165e6226b84d0e2af17a7961e7fc4736a5dfa36",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 9333.583,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "5874bbf13e041af71b31b5fe96e4d6a8b321f6f6923c4d03b4f2d1ea2508d424",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 10364.247,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "dd7023fa5fd0dfede9c8d4af692aa1a5c9b373ef6eb0850faebf5ddcec213eec",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "trace_mined_procedure",
+      "elapsed_ms": 13824.377,
+      "exact": false,
+      "family": "card_games",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "78f7ad2d178f06b0573a9d0f486d7ea5295e26d9cb1cfbd6c8fe30a606232a19",
+      "task_hash": "7012ac466d192948979185bfa0e082e6f19d41940cd4a40ad5c85c6fabd769a7",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 7309.726,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "196f8e38a15f66bbf9afc3b5409b3fed19217110d303bad20dda5a9fb12b69b9",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9713.245,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "15192c0d2b0f934c1993a9a73a7e0b291b94805b95aa61839b1d9f3ec75d942e",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "trace_mined_procedure",
+      "elapsed_ms": 9347.479,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "a507b961be52b8fd997fe210d37e3f7539cb4f63aed7e2345bd62a111b5fa350",
+      "task_hash": "3106fb3cd52afef223599909864076134ed93707d43ec0eea2e77180c6dd8dd2",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 10783.021,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "e50f46bb19be57fda86bf27446d86e73c57c8a72c2078eaa4bffe0badf897a69",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 9738.869,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "95acd35f1da8a0b2c286bab5b054b835305baa0ffd9d0d9ebf0ca911ac320f2e",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "trace_mined_procedure",
+      "elapsed_ms": 12994.274,
+      "exact": false,
+      "family": "formula_1",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "aa7a3db9a6bf5cff59489b99a864b882d32047fd71ee5f8d25e4b3643dd71b01",
+      "task_hash": "86c3b83e3ced677b0820dfac9ff1155e655b1951c7a86f931119aafea9ffef3e",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 11321.602,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "8708a466f54f3f3e9f1deb0df41e67b17ee3d0a8dc5e2aa2d3430f3102fe1c22",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 22158.07,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "3f6bd785c5cbad04e22b0328c6dedc1aeb255213378de0ef1ba5c2db8eefe9a9",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "trace_mined_procedure",
+      "elapsed_ms": 8614.088,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "87116a74571badcbd466bb2dc67a601f89dc6e2fa456f950e07985abe5e2b988",
+      "task_hash": "f59d71a7085104ae3fed4121696cc876b833c1f3d833f75d506de3598c92deea",
+      "unordered": false
+    },
+    {
+      "arm": "no_skill",
+      "elapsed_ms": 7048.533,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "819af03ac835df693803a9e40191c75f51feff705e83d04d35995b0b63b9f46a",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    },
+    {
+      "arm": "formatting_placebo",
+      "elapsed_ms": 8160.102,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "9e76feaf2c4bbc12a3e283a0c4f88cf3d1d99918be1abe4ac7835706d98785d3",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    },
+    {
+      "arm": "trace_mined_procedure",
+      "elapsed_ms": 9313.336,
+      "exact": false,
+      "family": "financial",
+      "model": "gpt-5.6-luna",
+      "outcome": "mismatch",
+      "response_sha256": "819af03ac835df693803a9e40191c75f51feff705e83d04d35995b0b63b9f46a",
+      "task_hash": "c2322eeed9c7fd032cc9150d9b583334b386c11da680e0bc8a0a6cc9cae92f62",
+      "unordered": false
+    }
+  ],
+  "protocol": {
+    "arms": [
+      "no_skill",
+      "formatting_placebo",
+      "trace_mined_procedure"
+    ],
+    "gold_hidden_from_proposer": true,
+    "harness": "codex-cli-subscription",
+    "heldout_families": [
+      "card_games",
+      "formula_1",
+      "financial"
+    ],
+    "model": "gpt-5.6-luna",
+    "procedure_sha256": "e97b9b198615316dcf619b674618c366d9550ff7b9a05cda7425b022c4c4ed6d",
+    "task_count": 6,
+    "tasks_per_family": 2
+  },
+  "schema_version": "frankengate-bird-sql-skill-factorial-v1",
+  "summary": {
+    "formatting_placebo": {
+      "candidate_error": 1,
+      "elapsed_ms_total": 70045.589,
+      "episodes": 6,
+      "mismatch": 5
+    },
+    "no_skill": {
+      "candidate_error": 1,
+      "elapsed_ms_total": 52680.111,
+      "episodes": 6,
+      "mismatch": 5
+    },
+    "trace_mined_procedure": {
+      "candidate_error": 1,
+      "elapsed_ms_total": 61440.981,
+      "episodes": 6,
+      "mismatch": 5
+    }
+  }
+}

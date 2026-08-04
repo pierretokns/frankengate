@@ -1,0 +1,69 @@
+{
+  "candidate": {
+    "artifact_id_sha256": "400115bd469d4d39da6c85c8924f0f3a90e7cfc9eb0724997139e93faf019019",
+    "candidate_text_sha256": "400115bd469d4d39da6c85c8924f0f3a90e7cfc9eb0724997139e93faf019019",
+    "database_family": "broker"
+  },
+  "checks": {
+    "aggregate_declared_disjoint": true,
+    "historical_seed_receipts_unchanged": true,
+    "manifest_targets_match_replay": true,
+    "same_candidate_hash": true,
+    "same_task_hashes": true,
+    "source_count_matches_candidate": true,
+    "source_target_hash_overlap_zero": true
+  },
+  "corrected_claim_boundary": {
+    "causal_skill_benefit_established": false,
+    "changed_system_replay_verified": false,
+    "family_disjoint_replay_data_split_verified": true,
+    "promotion_authorized": false,
+    "source_target_disjointness_verified": true,
+    "text": "The pinned manifest and candidate selection rule verify that the 18 source artifacts came from instruct_basic/instruct_advanced rows and the five replay targets came from disjoint questions_gen rows."
+  },
+  "correction_type": "append_only_claim_boundary_reconciliation",
+  "historical_receipts_unchanged": true,
+  "original_receipts": {
+    "aggregate_sha256": "965e1d45791803e7ba62b380cb6ea2ba6261d93943586e7650f5c6fea8f2812b",
+    "seed_a_result_field": null,
+    "seed_b_result_field": null
+  },
+  "reconstructed_cohort": {
+    "candidate_artifacts": 18,
+    "replay_target_rows": 5,
+    "source_files": [
+      "data/instruct_advanced_postgres.csv",
+      "data/instruct_basic_postgres.csv"
+    ],
+    "source_manifest_rows": 19,
+    "source_target_hash_overlap": 0,
+    "source_validation_failures": 1,
+    "target_file": "data/questions_gen_postgres.csv",
+    "target_manifest_rows": 5
+  },
+  "result_sha256": "3e4019a7b4d8baf6371f5549520a04f3b9f5b453328a5e9be4051c645d7566bc",
+  "schema_version": "frankengate-composable-replay-claim-correction-v1",
+  "source_receipts": {
+    "aggregate": {
+      "raw_content_committed": false,
+      "sha256": "5ef3f17f9c8309af16bb85939fc0177fa4fa2e952e2d4c6bb916dd9841956ebd"
+    },
+    "candidate": {
+      "raw_content_committed": false,
+      "sha256": "5e89637061eeb0264fa1dae01bdf181724b617dd49908838377cff3e1725cb74"
+    },
+    "cohort_manifest": {
+      "raw_content_committed": false,
+      "sha256": "454a3e4eb7b5e9ddc3c75068148028cdd9361cc745bf0859dc79e97e944b6767"
+    },
+    "seed_a": {
+      "raw_content_committed": false,
+      "sha256": "1f4fde983c63357731201e28d3bc3e31f664c0ad4c9d68a963b9f160d4cef54e"
+    },
+    "seed_b": {
+      "raw_content_committed": false,
+      "sha256": "3f944c8e49f0c163158c1cc68b1f53af5d5e4b3214e26f4afadd9877528bf17d"
+    }
+  },
+  "stale_metadata_note": "The seed receipts retain an older visible-selection claim boundary; this append-only correction supersedes that claim text without rewriting historical evidence."
+}

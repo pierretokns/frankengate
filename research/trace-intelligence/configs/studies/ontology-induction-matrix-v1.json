@@ -1,0 +1,104 @@
+{
+  "schema_version": "frankengate-ontology-induction-matrix-v1",
+  "purpose": "Content-free contract for comparing ontology proposal and population methods on enterprise-shaped corpora and governed trace outcomes.",
+  "raw_content_policy": {
+    "raw_prompts_sql_tool_arguments_rows_and_documents_external_only": true,
+    "raw_content_committed": false,
+    "receipts_require_sha256": true,
+    "deletion_and_retention_receipts_required": true
+  },
+  "required_study_fields": [
+    "study_id",
+    "consent_scope_hash",
+    "corpus_receipts",
+    "candidate_pool_frozen_before_labels",
+    "holdouts",
+    "arms",
+    "metrics",
+    "replay_contract",
+    "minimum_promotion_counts"
+  ],
+  "required_holdouts": [
+    "principal",
+    "team",
+    "project",
+    "source_system",
+    "effective_time",
+    "ontology_template"
+  ],
+  "required_arms": [
+    "deterministic_schema_terms",
+    "goi_proposal",
+    "ontogpt_population",
+    "graphrag_extraction",
+    "staged_governed_pipeline"
+  ],
+  "case_classes": [
+    "entity",
+    "alias",
+    "relation",
+    "hard_negative",
+    "nil",
+    "unclear",
+    "temporal_replacement",
+    "authority_conflict"
+  ],
+  "label_values": [
+    "same_entity",
+    "different_entity",
+    "supported_relation",
+    "unsupported_relation",
+    "nil",
+    "unclear",
+    "current",
+    "stale",
+    "authorized",
+    "unauthorized"
+  ],
+  "required_metrics": [
+    "structural_coverage",
+    "entity_precision",
+    "entity_recall",
+    "alias_f1",
+    "relation_evidence_precision",
+    "nil_abstention_rate",
+    "temporal_accuracy",
+    "authority_accuracy",
+    "replay_success",
+    "wrong_system_rate",
+    "reviewer_correction_burden",
+    "latency_ms",
+    "cost_usd"
+  ],
+  "minimum_promotion_counts": {
+    "entity_or_alias_targets": 100,
+    "hard_negatives": 50,
+    "nil_or_unclear": 25,
+    "annotators_per_case": 2,
+    "changed_system_replays": 20
+  },
+  "required_case_fields": [
+    "case_id",
+    "case_class",
+    "principal_hash",
+    "team_hash",
+    "project_hash",
+    "source_system_hash",
+    "source_environment_hash",
+    "changed_environment_hash",
+    "effective_at",
+    "candidate_pool_hash",
+    "source_receipt",
+    "label_receipt",
+    "replay_receipt",
+    "labels",
+    "retention"
+  ],
+  "negative_policy": {
+    "not_exposed_is_missing_data": true,
+    "same_surface_wrong_system_is_separate_stratum": true,
+    "temporal_replacement_is_separate_stratum": true,
+    "authority_conflict_is_separate_stratum": true,
+    "graph_density_is_not_truth": true
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": "frankengate-oracle-hard-negative-reranker-smoke-v1",
+  "paper": "2505.18366",
+  "dataset": {
+    "source": "nvidia/TechQA-RAG-Eval",
+    "fixture_sha256": "e90f42eea14c1c3fb3769b9b892c18c773f05c82efc26acc292c45e2c18e1abb",
+    "pages": 300,
+    "train_questions": 10,
+    "test_questions": 10,
+    "candidate_limit": 300,
+    "seed": 7,
+    "max_seq_length": 128
+  },
+  "negative_arm": {
+    "name": "paper_six_encoder_composite",
+    "models": [
+      "dunzhang/stella_en_400M_v5",
+      "jinaai/jina-embeddings-v3",
+      "mixedbread-ai/mxbai-embed-large-v1",
+      "BAAI/bge-large-en-v1.5",
+      "sentence-transformers/LaBSE",
+      "sentence-transformers/all-mpnet-base-v2"
+    ],
+    "triplets_selected": 6,
+    "triplets_unavailable": 4
+  },
+  "reranker": {
+    "model_id": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "objective": "relu(margin - score(Q,PD) + score(Q,D_HN))",
+    "margin": 0.2,
+    "epochs": 1,
+    "mrr_at_3": 0.8666666666666666,
+    "mrr_at_10": 0.8666666666666666
+  },
+  "claim_boundary": [
+    "This verifies that the triplet-training implementation executes end to end on a public fixture.",
+    "The MRR values are from only 10 held-out questions and have no zero-shot or random/lexical negative control in this receipt.",
+    "They are not comparable to the paper's internal 4,250-query test or evidence of enterprise lift."
+  ],
+  "next_gate": "Run at least three seeds with fixed random, lexical, single-model, and composite negative arms, plus audited false-negative labels and zero-shot reranker baselines."
+}

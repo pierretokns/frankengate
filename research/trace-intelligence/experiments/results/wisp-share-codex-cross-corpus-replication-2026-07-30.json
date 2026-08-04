@@ -1,0 +1,274 @@
+{
+  "claim_boundary": {
+    "permitted": [
+      "cross-adapter lifecycle linkage replication",
+      "descriptive error and review-queue prevalence",
+      "schema and selection sensitivity",
+      "proposal-only candidate presence"
+    ],
+    "refused": [
+      "individual or cross-user skill inference",
+      "productivity or competence ranking",
+      "enterprise population prevalence",
+      "causal recovery",
+      "collaboration recommendations",
+      "automatic memory, skill, or eval promotion"
+    ]
+  },
+  "inputs": {
+    "share_codex_sparse": {
+      "aggregate_schema": "share-codex-sparse-pilot-v1",
+      "dataset": "nmuendler/share-codex",
+      "integrity": {
+        "sha256": "9668d538eb3b443aa95ba334973d6f85756ca3349a101a5fa5d22618678670da"
+      },
+      "revision": "3d8b1397c72dbfbf8b04f518064e2c99dde84ca0"
+    },
+    "wisp": {
+      "aggregate_schema": "content-minimized-real-user-arms-v1",
+      "dataset": "crispwisp/wisp-claude-code-sessions",
+      "integrity": {
+        "sha256": "07e7c008f398afa814e3c738bcf03d680fe1d36a28ae5d2191e6611507c042fa"
+      },
+      "revision": "c2c90b59174318ab0b163ec9c9ac82bb879288ce"
+    }
+  },
+  "metrics": {
+    "error_bearing_session_share": {
+      "caveat": "Wisp's unit includes main, benchmark, and nested-subagent JSONL files; share-codex rows are exported sessions.",
+      "comparability": "limited",
+      "observed_difference_share_codex_minus_wisp": -0.058894,
+      "share_codex_sparse": {
+        "denominator_unit": "sampled sessions",
+        "numerator_unit": "sessions with an explicit error",
+        "observed_share": 0.046875,
+        "successes": 6,
+        "total": 128,
+        "wilson_95": {
+          "lower": 0.021658,
+          "upper": 0.098498
+        }
+      },
+      "wisp": {
+        "denominator_unit": "analyzed files/sessions",
+        "numerator_unit": "files/sessions with an explicit error",
+        "observed_share": 0.105769,
+        "successes": 11,
+        "total": 104,
+        "wilson_95": {
+          "lower": 0.060093,
+          "upper": 0.179531
+        }
+      }
+    },
+    "error_to_later_success_candidate_share": {
+      "caveat": "Wisp uses a one-to-one newly proposed result within 24 records; share-codex uses any later success with no record window and may reuse one success for multiple errors. No cross-corpus difference is computed.",
+      "comparability": "not_aligned",
+      "share_codex_sparse": {
+        "denominator_unit": "explicit-error results",
+        "numerator_unit": "error results with any later non-error result",
+        "observed_share": 0.808511,
+        "successes": 38,
+        "total": 47,
+        "wilson_95": {
+          "lower": 0.67456,
+          "upper": 0.895841
+        }
+      },
+      "wisp": {
+        "denominator_unit": "explicit-error results",
+        "numerator_unit": "greedily matched candidate episodes",
+        "observed_share": 0.893204,
+        "successes": 92,
+        "total": 103,
+        "wilson_95": {
+          "lower": 0.81882,
+          "upper": 0.939313
+        }
+      }
+    },
+    "explicit_error_result_share": {
+      "caveat": "Both use exporter-provided error booleans, but native Claude and normalized Codex/Claude exporters need not label the same operational failures.",
+      "comparability": "limited",
+      "observed_difference_share_codex_minus_wisp": -0.039137,
+      "share_codex_sparse": {
+        "denominator_unit": "tool results",
+        "numerator_unit": "typed explicit-error tool results",
+        "observed_share": 0.007533,
+        "successes": 47,
+        "total": 6239,
+        "wilson_95": {
+          "lower": 0.00567,
+          "upper": 0.010002
+        }
+      },
+      "wisp": {
+        "denominator_unit": "tool results",
+        "numerator_unit": "typed explicit-error tool results",
+        "observed_share": 0.04667,
+        "successes": 103,
+        "total": 2207,
+        "wilson_95": {
+          "lower": 0.03863,
+          "upper": 0.056285
+        }
+      }
+    },
+    "matched_tool_result_share": {
+      "caveat": "Both adapters use explicit call identifiers. This measures parser linkage completeness, not task quality.",
+      "comparability": "aligned",
+      "observed_difference_share_codex_minus_wisp": 0.0,
+      "share_codex_sparse": {
+        "denominator_unit": "tool results",
+        "numerator_unit": "linked tool results",
+        "observed_share": 1.0,
+        "successes": 6239,
+        "total": 6239,
+        "wilson_95": {
+          "lower": 0.999385,
+          "upper": 1.0
+        }
+      },
+      "wisp": {
+        "denominator_unit": "tool results",
+        "numerator_unit": "linked tool results",
+        "observed_share": 1.0,
+        "successes": 2207,
+        "total": 2207,
+        "wilson_95": {
+          "lower": 0.998262,
+          "upper": 1.0
+        }
+      }
+    },
+    "proposal_resolution_share": {
+      "caveat": "Both count unresolved proposals, but Wisp is a complete file snapshot while share-codex is a clustered sparse row sample; termination and export semantics may differ.",
+      "comparability": "limited",
+      "observed_difference_share_codex_minus_wisp": -0.004356,
+      "share_codex_sparse": {
+        "denominator_unit": "tool proposals",
+        "numerator_unit": "tool proposals with an observed result",
+        "observed_share": 0.994739,
+        "successes": 6239,
+        "total": 6272,
+        "wilson_95": {
+          "lower": 0.99262,
+          "upper": 0.996251
+        }
+      },
+      "wisp": {
+        "denominator_unit": "tool proposals",
+        "numerator_unit": "tool proposals with an observed result",
+        "observed_share": 0.999095,
+        "successes": 2207,
+        "total": 2209,
+        "wilson_95": {
+          "lower": 0.996705,
+          "upper": 0.999752
+        }
+      }
+    },
+    "same_tool_or_family_candidate_share": {
+      "caveat": "Wisp compares normalized tool families in a bounded greedy match. share-codex compares exact generic tool names over an unbounded suffix. No cross-corpus difference is computed.",
+      "comparability": "not_aligned",
+      "share_codex_sparse": {
+        "denominator_unit": "later-success candidates",
+        "numerator_unit": "same-exact-tool-name later-success candidates",
+        "observed_share": 0.894737,
+        "successes": 34,
+        "total": 38,
+        "wilson_95": {
+          "lower": 0.758695,
+          "upper": 0.958297
+        }
+      },
+      "wisp": {
+        "denominator_unit": "candidate episodes",
+        "numerator_unit": "same-family candidates within 24 records",
+        "observed_share": 0.913043,
+        "successes": 84,
+        "total": 92,
+        "wilson_95": {
+          "lower": 0.837697,
+          "upper": 0.955279
+        }
+      }
+    }
+  },
+  "replication_decision": {
+    "not_replicated_or_not_testable": [
+      "a common recovery rate, because constructors are not aligned",
+      "task success, correctness, skill, productivity, or causal improvement",
+      "cross-user or enterprise collaboration benefit, because each source represents an unrelated public contributor"
+    ],
+    "replicated": [
+      "explicit tool-call/result identifiers support complete observed result linkage in both adapters",
+      "typed explicit errors select a small, concentrated session review set in both corpora",
+      "error-to-later-success structures exist in both corpora as proposal-only evidence"
+    ],
+    "required_next_step": "Run one canonical bounded episode constructor over both native adapters, then validate it against independent task outcomes and human labels before comparing rates."
+  },
+  "schema_and_selection_differences": [
+    {
+      "dimension": "sampling",
+      "implication": "share-codex rates cannot be extrapolated to its corpus",
+      "share_codex_sparse": "128 rows in eight clustered position strata from a 4333-row population",
+      "wisp": "complete pinned 104-file released snapshot"
+    },
+    {
+      "dimension": "analysis unit",
+      "implication": "session prevalence has limited comparability",
+      "share_codex_sparse": "exported conversation session rows",
+      "wisp": "main-user, benchmark-development, benchmark-task, and nested-subagent JSONL files"
+    },
+    {
+      "dimension": "harness composition",
+      "implication": "observed differences mix schema, harness, workload, and selection effects",
+      "share_codex_sparse": "121 Codex and 7 Claude sampled sessions",
+      "wisp": "native Claude Code plus nested workflow journals"
+    },
+    {
+      "dimension": "tool lifecycle",
+      "implication": "identifier linkage replicates; error semantics need a conformance study",
+      "share_codex_sparse": "OpenAI-style function calls and normalized tool rows",
+      "wisp": "native tool-use/result content blocks"
+    },
+    {
+      "dimension": "candidate recovery",
+      "implication": "recovery and same-tool rates are not replicated estimands",
+      "share_codex_sparse": "any later non-error result, reusable match, no record window, exact tool name",
+      "wisp": "greedy one-to-one, newly proposed result, 24-record window, normalized tool family"
+    },
+    {
+      "dimension": "outcomes",
+      "implication": "neither candidate definition measures successful or causal recovery",
+      "share_codex_sparse": "no independent task outcome",
+      "wisp": "no independent task outcome"
+    }
+  ],
+  "schema_version": "cross-corpus-structural-replication-v1",
+  "session_concentration": {
+    "caveat": "The session/file units and candidate constructors differ. These concentration summaries are workload diagnostics, not behavioral comparisons.",
+    "comparability": "descriptive_only",
+    "share_codex_sparse": {
+      "candidate_bearing_sessions": 6,
+      "candidates_per_candidate_bearing_session": 6.333333,
+      "error_bearing_sessions": 6,
+      "errors_per_error_bearing_session": 7.833333,
+      "sessions": 128
+    },
+    "wisp": {
+      "candidate_bearing_sessions": 7,
+      "candidates_per_candidate_bearing_session": 13.142857,
+      "error_bearing_sessions": 11,
+      "errors_per_error_bearing_session": 9.363636,
+      "sessions": 104
+    }
+  },
+  "uncertainty_contract": {
+    "cross_corpus_tests": "none",
+    "interpretation": "Intervals describe denominator uncertainty under a binomial heuristic. Events are clustered within sessions, Wisp is a complete released snapshot, and share-codex uses a non-probability clustered sample. The intervals are not population confidence intervals and must not be used for employee or enterprise inference.",
+    "method": "two-sided 95% Wilson score intervals",
+    "z": 1.959963984540054
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "schema_version": "frankengate-ontology-action-trace-architecture-v1",
+  "purpose": "Preflight contract for comparing flat retrieval, typed temporal graphs, schema-first ontology projections, and frontier refinement.",
+  "protocol_uri": "sealed://protocol/ontology-action-trace-architecture-v1",
+  "cohort_contract_uri": "sealed://study/enterprise-semantic-cohort-v1",
+  "authorization": {
+    "consent_scope_uri": "sealed://authorization/ontology-action-study",
+    "raw_content_access": "sealed-research-service-only",
+    "raw_content_committed": false
+  },
+  "representation_arms": ["A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"],
+  "required_holdouts": ["principal", "team", "project", "system", "effective_time", "changed_schema_or_authority"],
+  "required_case_classes": ["target", "hard_negative", "nil", "unclear"],
+  "required_mutation_classes": [
+    "no_change",
+    "additive_field_or_parameter",
+    "approved_rename",
+    "same_surface_collision",
+    "changed_join_grain_or_result_meaning",
+    "stale_or_revoked_authority",
+    "changed_tool_contract"
+  ],
+  "required_object_types": [
+    "user", "tenant", "team", "task", "trace", "span", "system", "tool",
+    "schema", "artifact", "eval", "failure", "skill_candidate",
+    "memory_candidate", "action", "outcome"
+  ],
+  "required_edge_statuses": ["asserted", "inferred", "contradicted", "nil", "unclear"],
+  "required_action_states": ["proposed", "approved", "replayed", "promoted", "rejected", "deprecated"],
+  "required_metrics": [
+    "retrieval_recall_at_1_3_10",
+    "retrieval_mrr",
+    "alias_precision_recall",
+    "nil_abstention_rate",
+    "wrong_system_rate",
+    "contradiction_resolution",
+    "stale_accept_rate",
+    "unauthorized_edge_count",
+    "semantic_execution_success",
+    "authority_safe",
+    "action_promotion_precision",
+    "frontier_calls",
+    "latency_ms",
+    "token_cost",
+    "storage_index_cost"
+  ],
+  "promotion_gates": {
+    "minimum_targets": 100,
+    "minimum_hard_negatives": 50,
+    "minimum_nil_or_unclear": 25,
+    "minimum_replay_pass_rate": 0.95,
+    "maximum_unauthorized_edges": 0,
+    "maximum_unsafe_actions": 0,
+    "maximum_stale_accept_rate": 0.0,
+    "maximum_regression_rate": 0.05,
+    "must_beat_A0_on_sealed_holdout": true,
+    "must_beat_no_skill_and_placebo": true
+  },
+  "run_contract": {
+    "same_model_across_arms": true,
+    "same_harness_across_arms": true,
+    "same_candidate_pool_across_arms": true,
+    "candidate_pool_frozen_before_labels": true,
+    "same_authority_epoch": true,
+    "independent_evaluator": true,
+    "proposer_excluded_from_evaluator": true,
+    "changed_system_replay_required": true,
+    "raw_content_external_only": true
+  },
+  "storage_contract": {
+    "canonical_evidence_authority": "trajectory_dag",
+    "projection_store": "postgresql_jsonb_fts_pgvector",
+    "graph_database_required": false,
+    "edge_evidence_required": true,
+    "validity_interval_required": true,
+    "policy_epoch_required": true
+  },
+  "publication_policy": {
+    "receipts_content_free": true,
+    "deletion_receipt_required": true,
+    "publication_review_required": true,
+    "promotion_ready": false
+  }
+}

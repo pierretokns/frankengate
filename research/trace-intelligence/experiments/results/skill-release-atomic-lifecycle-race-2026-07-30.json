@@ -1,0 +1,23 @@
+{
+  "schema_version": "skill-release-atomic-lifecycle-race-v1",
+  "run_date": "2026-07-30",
+  "status": "passed_local_postgresql",
+  "sql_sha256": "57d7a4c36e392acd997de95d16fa3891a68e6fbab98bd192efc54daa1db7446e",
+  "lab": {
+    "kubernetes_context": "colima",
+    "postgresql_version": "16.12 (Debian 16.12-1.pgdg12+1)",
+    "raw_trace_content_loaded": false
+  },
+  "schedule": [
+    "exposure locks active release and waits at advisory barrier",
+    "withdrawal waits on the same release row lock",
+    "exposure commits first",
+    "withdrawal rechecks active state, ends exposure, and appends event"
+  ],
+  "observed": {
+    "active_exposures_after_withdrawal": 0,
+    "lifecycle_events": 1,
+    "zero_residue": true
+  },
+  "claim_boundary": "Disposable PostgreSQL concurrency mechanics only; no Aurora, RDS Proxy, failover, replica lag, PITR, scale, or REPEATABLE READ continuous-revocation claim."
+}

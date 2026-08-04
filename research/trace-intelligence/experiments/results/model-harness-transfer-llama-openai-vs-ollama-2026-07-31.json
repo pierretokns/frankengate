@@ -1,0 +1,103 @@
+{
+  "claim_boundary": {
+    "causal_skill_benefit_established": false,
+    "multiple_harnesses_compared": true,
+    "multiple_models_compared": false,
+    "next_required": "Run the same candidate on family-disjoint held-out tasks with an independent semantic/security verifier and at least two harness implementations.",
+    "reason": "This is a content-free protocol transfer matrix. It compares terminal behavior and latency only; it does not estimate SQL quality, enterprise benefit, or long-term skill learning.",
+    "same_fixture_compared": true
+  },
+  "classification": "same_fixture_cross_harness_transfer",
+  "fixture_manifest_sha256": "d9bab577a20688253a62cfc02ed79703abfb53741c9819d0d9f4adb950887dce",
+  "frozen_schedule_sha256": "6e9fe5b994d4e086114c04d8a842d6d6a0968b7d0c5a72c5dfbc4c64651e0db4",
+  "frozen_tool_schema_sha256": "c3ae19ceb0905f40798666ea509fffab34525688f5f8cc2f390e0f2f2615a89c",
+  "models": [
+    {
+      "claim_boundary": {
+        "enterprise_quality_estimated": false,
+        "natural_trace_skill_benefit_confirmed": false,
+        "real_model_tool_loop_executed": true,
+        "reason": "Synthetic content-free protocol only; no benchmark question, SQL quality, or enterprise outcome was evaluated.",
+        "skill_protocol_sensitivity_measured": true
+      },
+      "harness_id": "openai-native",
+      "metrics_by_arm": {
+        "formatting_placebo": {
+          "episodes": 6,
+          "expected_terminal_match_rate": 0.5,
+          "expected_terminal_matches": 3,
+          "max_elapsed_ms": 1306.508,
+          "mean_elapsed_ms": 1068.0111666666667,
+          "terminal_failure_rate": 0.5,
+          "terminal_failures": 3
+        },
+        "no_skill": {
+          "episodes": 6,
+          "expected_terminal_match_rate": 0.5,
+          "expected_terminal_matches": 3,
+          "max_elapsed_ms": 1885.974,
+          "mean_elapsed_ms": 1249.9238333333333,
+          "terminal_failure_rate": 0.5,
+          "terminal_failures": 3
+        },
+        "trace_mined_terminal_discipline": {
+          "episodes": 6,
+          "expected_terminal_match_rate": 0.5,
+          "expected_terminal_matches": 3,
+          "max_elapsed_ms": 1946.196,
+          "mean_elapsed_ms": 1207.382,
+          "terminal_failure_rate": 0.5,
+          "terminal_failures": 3
+        }
+      },
+      "model_id": "llama3.2:latest",
+      "request_model_id": "llama3.2:latest",
+      "source_result_sha256": "2e1bd26707e7695540fa6d54ec9e75506a5c4bbcb04a44b03a3e134ae1e916ec"
+    },
+    {
+      "claim_boundary": {
+        "enterprise_quality_estimated": false,
+        "native_ollama_harness_executed": true,
+        "natural_trace_skill_benefit_confirmed": false,
+        "next_required": "Compare this harness on family-disjoint domain tasks with an independent semantic/security verifier.",
+        "real_model_tool_loop_executed": true,
+        "reason": "Same synthetic content-free fixture as the OpenAI-compatible arm; protocol and latency comparison only."
+      },
+      "harness_id": "ollama-native-api",
+      "metrics_by_arm": {
+        "formatting_placebo": {
+          "episodes": 6,
+          "expected_terminal_match_rate": 0.5,
+          "expected_terminal_matches": 3,
+          "max_elapsed_ms": 1166.385,
+          "mean_elapsed_ms": 953.8335,
+          "terminal_failure_rate": 0.5,
+          "terminal_failures": 3
+        },
+        "no_skill": {
+          "episodes": 6,
+          "expected_terminal_match_rate": 0.5,
+          "expected_terminal_matches": 3,
+          "max_elapsed_ms": 2067.588,
+          "mean_elapsed_ms": 1215.3953333333334,
+          "terminal_failure_rate": 0.5,
+          "terminal_failures": 3
+        },
+        "trace_mined_terminal_discipline": {
+          "episodes": 6,
+          "expected_terminal_match_rate": 0.5,
+          "expected_terminal_matches": 3,
+          "max_elapsed_ms": 1724.44,
+          "mean_elapsed_ms": 1078.1401666666666,
+          "terminal_failure_rate": 0.5,
+          "terminal_failures": 3
+        }
+      },
+      "model_id": "llama3.2:latest",
+      "request_model_id": "llama3.2:latest",
+      "source_result_sha256": "f3f934eb9485cf250522a25bf96241ed9aa388ef628f3a839630782043f9bf2a"
+    }
+  ],
+  "raw_data_committed": false,
+  "schema_version": "frankengate-model-harness-transfer-matrix-v1"
+}

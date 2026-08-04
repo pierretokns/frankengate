@@ -1,0 +1,29 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "github/byesngmin/KGA-codex-sessions",
+  "dataset_revision": "fe6ce9d6287c48adce3714e47dc561bf4887dde8",
+  "license": "NOASSERTION",
+  "source_url": "https://github.com/byesngmin/KGA-codex-sessions",
+  "source_format": "Native Codex rollout JSONL session upload",
+  "adapter": "codex_native_rollout_v1",
+  "publication_basis": "Intentional public repository; limited provenance beyond the upload commit",
+  "rights_assertion": "No repository license found; analysis does not establish redistribution or training rights",
+  "privacy_review": "Quarantine required; aggregate scan found one GitHub-token-shaped and 28 distinct sk-prefixed candidates, none validated",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "rollout_jsonl_files": 37,
+    "rollout_bytes": 44107278,
+    "records": 17663,
+    "tool_calls": 2724,
+    "tool_outputs": 2722,
+    "primary_session_ids": 37,
+    "distinct_cwd_values": 13,
+    "complete_home_directory": false
+  },
+  "admission": "conditional_native_codex_corpus_after_secret_and_provenance_review",
+  "enterprise_transfer": "Useful replication and rich MCP/collaboration/tool topology; weak provenance and no task correctness labels"
+}

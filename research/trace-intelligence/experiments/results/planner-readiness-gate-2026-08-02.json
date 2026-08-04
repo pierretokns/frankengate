@@ -1,0 +1,108 @@
+{
+  "after": {
+    "checks": {
+      "all_query_latency_budgets": true,
+      "all_required_redacted_plans": true,
+      "denied_pre_ranking_candidates_zero": true,
+      "queries": {
+        "controlled_fts": {
+          "p50_budget_ms": 5.0,
+          "p50_ms": 2.16725,
+          "p50_within_budget": true,
+          "plan_required": true,
+          "plan_signature_changed": true,
+          "redacted_plan_present": true
+        },
+        "personal_history_page": {
+          "p50_budget_ms": 5.0,
+          "p50_ms": 1.089062,
+          "p50_within_budget": true,
+          "plan_required": true,
+          "plan_signature_changed": true,
+          "redacted_plan_present": true
+        },
+        "proposal_queue": {
+          "p50_budget_ms": 2.0,
+          "p50_ms": 0.95175,
+          "p50_within_budget": true,
+          "plan_required": false,
+          "plan_signature_changed": null,
+          "redacted_plan_present": null
+        },
+        "structural_tool_events": {
+          "p50_budget_ms": 30.0,
+          "p50_ms": 21.861208,
+          "p50_within_budget": true,
+          "plan_required": true,
+          "plan_signature_changed": true,
+          "redacted_plan_present": true
+        }
+      },
+      "statistics_intervention_receipted": true
+    },
+    "claim_boundary": "local_postgresql_readiness_policy_not_an_aurora_slo",
+    "phase": "after",
+    "status": "ready"
+  },
+  "before": {
+    "checks": {
+      "all_query_latency_budgets": false,
+      "all_required_redacted_plans": true,
+      "denied_pre_ranking_candidates_zero": true,
+      "queries": {
+        "controlled_fts": {
+          "p50_budget_ms": 5.0,
+          "p50_ms": 57.188354,
+          "p50_within_budget": false,
+          "plan_required": true,
+          "plan_signature_changed": true,
+          "redacted_plan_present": true
+        },
+        "personal_history_page": {
+          "p50_budget_ms": 5.0,
+          "p50_ms": 1.182271,
+          "p50_within_budget": true,
+          "plan_required": true,
+          "plan_signature_changed": true,
+          "redacted_plan_present": true
+        },
+        "proposal_queue": {
+          "p50_budget_ms": 2.0,
+          "p50_ms": 10.973313,
+          "p50_within_budget": false,
+          "plan_required": false,
+          "plan_signature_changed": null,
+          "redacted_plan_present": null
+        },
+        "structural_tool_events": {
+          "p50_budget_ms": 30.0,
+          "p50_ms": 24.110646,
+          "p50_within_budget": true,
+          "plan_required": true,
+          "plan_signature_changed": true,
+          "redacted_plan_present": true
+        }
+      },
+      "statistics_intervention_receipted": true
+    },
+    "claim_boundary": "local_postgresql_readiness_policy_not_an_aurora_slo",
+    "phase": "before",
+    "status": "not_ready"
+  },
+  "claim_boundary": [
+    "This is a deterministic readiness check over one local PostgreSQL paired receipt.",
+    "It does not establish Aurora failover, replica, PITR, scale, or managed-extension behavior.",
+    "A ready result permits bounded latency certification only; it does not authorize a query or bypass RLS."
+  ],
+  "decision": {
+    "fresh_bulk_load_must_fail": true,
+    "post_statistics_refresh_ready": true,
+    "release_gate": true
+  },
+  "paired_unit": "same_database_same_rows_same_authority_queries",
+  "policy_id": "local-trace-query-readiness-v1",
+  "policy_sha256": "47ed64ccd2fd8b276550e60d227a9d0384c031b96f20e5b98a702ce3d3d4cf99",
+  "result_sha256": "31f570e471f25c098a97beb7682804dc5531895c67fb4965324fc1e0a110be08",
+  "schema_version": "frankengate.postgres-planner-readiness-gate.v1",
+  "source_result_sha256": "f0a69ed9c7b03bdaf29bb2df96508a0f3734992741539b97157ffd07c9ab1bda"
+}

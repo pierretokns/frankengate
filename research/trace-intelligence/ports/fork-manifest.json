@@ -1,0 +1,30 @@
+{
+  "schema": "frankengate-upstream-fork-manifest-v1",
+  "policy": "ports/UPSTREAM_PORTING.md",
+  "entries": [
+    {
+      "name": "termolator-modern",
+      "upstream_repository": "https://github.com/relationalAI/Termolator",
+      "upstream_commit": "ca2f50e246d307192ceb68372dbe00a182431148",
+      "upstream_license": "Apache-2.0",
+      "fork_repository": "https://github.com/pierretokns/frankengate-termolator-modern",
+      "fork_branch": "modern-port",
+      "implementation": "clean-concept-port",
+      "source_copy": false,
+      "uv_reproducible": true,
+      "claim_boundary": "Mechanics and candidate generation only; not upstream equivalence or enterprise efficacy."
+    },
+    {
+      "name": "acronym-expansion-modern",
+      "upstream_repository": "https://github.com/adityathakker/AcronymExpansion",
+      "upstream_commit": "8023995a5070bd8bd671cf3ba62b8b2cfc334abf",
+      "upstream_license": "not-discoverable",
+      "fork_repository": "https://github.com/pierretokns/frankengate-acronym-expansion-modern",
+      "fork_branch": "modern-port",
+      "implementation": "clean-concept-port",
+      "source_copy": false,
+      "uv_reproducible": true,
+      "claim_boundary": "Synthetic acronym capability only; not upstream equivalence or enterprise efficacy."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "trace-dataset-manifest-v1",
+  "dataset_id": "Glint-Research/Fable-5-traces",
+  "dataset_revision": "e05c417852fc59fd8da758e68b352732423ca0cb",
+  "license": "AGPL-3.0",
+  "source_url": "https://huggingface.co/datasets/Glint-Research/Fable-5-traces",
+  "source_format": "Partial native ~/.claude tree plus Pi traces",
+  "adapter": "claude_code_partial_home_v1",
+  "publication_basis": "Intentional public dataset release",
+  "privacy_review": "Public home-state subset can contain paths, pasted content, tool outputs, source text, and identifiers; raw content remains outside Git",
+  "download_policy": {
+    "raw_data_committed": false,
+    "temporary_cache_only": true,
+    "content_free_aggregate_only": true
+  },
+  "known_scope": {
+    "claude_files": 129,
+    "claude_bytes": 63184884,
+    "project_session_jsonl_files": 115,
+    "nested_subagent_jsonl_files": 36,
+    "history_index_records": 1758,
+    "present_home_areas": [
+      "projects",
+      "history.jsonl",
+      "cache",
+      "paste-cache"
+    ],
+    "complete_home_directory": false,
+    "settings_plugins_credentials": false
+  },
+  "admission": "admit_as_partial_home_and_native_topology_stratum",
+  "enterprise_transfer": "Useful for multi-path historical import fidelity; one publisher and incomplete home state cannot establish enterprise behavior"
+}

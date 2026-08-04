@@ -1,0 +1,189 @@
+{
+  "claim_boundary": "Silver frontier labels only; no independent task-equivalence ground truth or user-skill claim.",
+  "content_policy": "Session IDs are hashed; summaries and model reasons are not emitted.",
+  "model": "gpt-5.6-luna",
+  "pair_agreement_count": 8,
+  "pair_count": 8,
+  "repeats_per_pair": 2,
+  "rows": [
+    {
+      "a_session_hash": "a35e1e6dae77ba59c26b2d9432db1e61363e6c0ffc9e3fe9772cbbbec1142770",
+      "agreement": true,
+      "b_session_hash": "8f8361198525612c8a367935c626e61959638616cd02a17ff8e9abd2172b4afa",
+      "calls": [
+        {
+          "confidence": 1.0,
+          "elapsed_ms": 8492.281416,
+          "label": "different",
+          "output_sha256": "613ac328fa6e88fafdd5f89280fde7c6def2ac2d3b86cd56e418433a907c8488"
+        },
+        {
+          "confidence": 1.0,
+          "elapsed_ms": 12071.342666,
+          "label": "different",
+          "output_sha256": "6a4dcb3c6a02c1e4283d29d1ada7aa697ba1cd365ca24ab58d16bce92116acd1"
+        }
+      ],
+      "lexical_cosine": 0.0,
+      "pair_index": 0,
+      "tool_name_jaccard": 0.2
+    },
+    {
+      "a_session_hash": "a35e1e6dae77ba59c26b2d9432db1e61363e6c0ffc9e3fe9772cbbbec1142770",
+      "agreement": true,
+      "b_session_hash": "59f54911c27783278568053eb05d57b0f6eb28133b42f8fd8c0ce84fa31988e2",
+      "calls": [
+        {
+          "confidence": 1.0,
+          "elapsed_ms": 7238.325457999998,
+          "label": "different",
+          "output_sha256": "1a6878dc96083b177629f3ad2da032519f3f435d757cb4b347f0aa6b62723e05"
+        },
+        {
+          "confidence": 1.0,
+          "elapsed_ms": 8990.976499999999,
+          "label": "different",
+          "output_sha256": "861b0d017f70835b92f3999b516d3eef059ed638650144abe2484adece38ada7"
+        }
+      ],
+      "lexical_cosine": 0.0,
+      "pair_index": 1,
+      "tool_name_jaccard": 0.5
+    },
+    {
+      "a_session_hash": "a35e1e6dae77ba59c26b2d9432db1e61363e6c0ffc9e3fe9772cbbbec1142770",
+      "agreement": true,
+      "b_session_hash": "59ddb4858d4593cbba98582e23bd07e26e8f74340e086537418309518cba7430",
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 10135.927457999998,
+          "label": "different",
+          "output_sha256": "c3b0cc6dc9e87c7166b3963659a15b6e4fee680a842fc93fb15612e1848e5cb2"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 8555.0925,
+          "label": "different",
+          "output_sha256": "73840444a117a5959d5fff72980162f733e745c0f44eb2f5525c7360bdaf8bcb"
+        }
+      ],
+      "lexical_cosine": 0.0,
+      "pair_index": 2,
+      "tool_name_jaccard": 0.5
+    },
+    {
+      "a_session_hash": "a35e1e6dae77ba59c26b2d9432db1e61363e6c0ffc9e3fe9772cbbbec1142770",
+      "agreement": true,
+      "b_session_hash": "5d6c2bed4600e1ed0ca1d2532ae3fa668c9373b5abdae2628f58ce5ead200d28",
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 8023.637208000004,
+          "label": "different",
+          "output_sha256": "2b374c3114853e8f05f68cac1323d0c831fc56f1728c8d682c562f9064148e9a"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 10983.41975000001,
+          "label": "different",
+          "output_sha256": "dd5ae314b1a5c7fc5a1cdacf70e5773fe5c25f0e87fa924f4e8ee0ba06161b55"
+        }
+      ],
+      "lexical_cosine": 0.0,
+      "pair_index": 3,
+      "tool_name_jaccard": 0.3333333333333333
+    },
+    {
+      "a_session_hash": "09401cd018f5f9d5c76ccba1b48d41180adeb60611838401153257b5e221311b",
+      "agreement": true,
+      "b_session_hash": "59ddb4858d4593cbba98582e23bd07e26e8f74340e086537418309518cba7430",
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 11029.0605,
+          "label": "unclear",
+          "output_sha256": "848838ac5c6080a43bc3529476189d1ed4825887be6e0fc7984fcbe21b491fff"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 10391.008874999998,
+          "label": "unclear",
+          "output_sha256": "528849399e43556f7aeffe743c60ffad28be396ff894f609d0d1881603c9e0ed"
+        }
+      ],
+      "lexical_cosine": 0.22360679774997896,
+      "pair_index": 4,
+      "tool_name_jaccard": 0.0
+    },
+    {
+      "a_session_hash": "dae241716e8f17fb873c82a44c6bac43f98dbb0ea9f4e75b6d3faddc63a7a0a6",
+      "agreement": true,
+      "b_session_hash": "e90cc044ac1de9c9b6f689e08bf8928f26a093b2f5c0994b432a1de9d450eeb8",
+      "calls": [
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 9485.43954200001,
+          "label": "different",
+          "output_sha256": "5029ea4bc2cc2b652435e48511580d30d152b11a949c0185e4fa5bbb2fce285b"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 8664.807999999994,
+          "label": "different",
+          "output_sha256": "d6e5f2271870cd594b5f2905712b1c6371233b55bac026d965dd4f6500d46117"
+        }
+      ],
+      "lexical_cosine": 0.1796053020267749,
+      "pair_index": 5,
+      "tool_name_jaccard": 0.125
+    },
+    {
+      "a_session_hash": "dae241716e8f17fb873c82a44c6bac43f98dbb0ea9f4e75b6d3faddc63a7a0a6",
+      "agreement": true,
+      "b_session_hash": "10d1faeaaa79564f6a89bd30cec014cf8393dd1923d81700262eaf7b3a2ca976",
+      "calls": [
+        {
+          "confidence": 0.94,
+          "elapsed_ms": 11644.016792000002,
+          "label": "related_task",
+          "output_sha256": "864ae27d8e628d57f028b8e05d3f8e65369528b1b444295bd8cc31373e285520"
+        },
+        {
+          "confidence": 0.93,
+          "elapsed_ms": 10333.18541700001,
+          "label": "related_task",
+          "output_sha256": "996d034813fd4ff8268ba7407e2f89c548c1a065f9d26ae0f563d304e94b69c9"
+        }
+      ],
+      "lexical_cosine": 0.1796053020267749,
+      "pair_index": 6,
+      "tool_name_jaccard": 0.1111111111111111
+    },
+    {
+      "a_session_hash": "dae241716e8f17fb873c82a44c6bac43f98dbb0ea9f4e75b6d3faddc63a7a0a6",
+      "agreement": true,
+      "b_session_hash": "66656660a25ec34327e0ac97c42066b5b714e343e9e60fe93405760e58f0a86b",
+      "calls": [
+        {
+          "confidence": 0.98,
+          "elapsed_ms": 8571.074915999987,
+          "label": "different",
+          "output_sha256": "3e74881cffb89b98a63966cc17f919d0ac2a4fa01d801d4cfd094cd3e2afcfe4"
+        },
+        {
+          "confidence": 0.99,
+          "elapsed_ms": 7544.460584000007,
+          "label": "different",
+          "output_sha256": "d6a44f2d0dc56b1cc9c949a780842577b23c5166301c865a9d08c6d2143c2c01"
+        }
+      ],
+      "lexical_cosine": 0.1796053020267749,
+      "pair_index": 7,
+      "tool_name_jaccard": 0.3333333333333333
+    }
+  ],
+  "schema": "dataclaw-cross-user-luna-adjudication-v1",
+  "total_elapsed_ms": 152154.057582,
+  "valid_call_count": 16
+}

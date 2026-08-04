@@ -1,0 +1,16 @@
+{
+  "all_passed": true,
+  "checks": {
+    "conversation_rewrite": true,
+    "feedback_no_lift": true,
+    "fixture": true,
+    "gold_only_scoring": true,
+    "hash": true,
+    "keyword_lift": true,
+    "no_model_calls": true,
+    "not_overclaimed": true,
+    "schema": true
+  },
+  "receipt_sha256": "0c02a0e55daed284e3f0c52bd08208f603ee149f17a6b261178a214e801c4794",
+  "schema_version": "frankengate-query-expansion-verification-v1"
+}
