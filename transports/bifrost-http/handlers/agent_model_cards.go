@@ -261,14 +261,18 @@ func (h *ProviderHandler) visibleAgentModelCards(query modelListQuery) (modelcat
 }
 
 func paginateAgentModelCards(cards []modelcatalog.AgentModelCard, limit int, offset int) ([]modelcatalog.AgentModelCard, bool) {
+	total := len(cards)
 	if offset > 0 {
-		if offset >= len(cards) {
+		if offset >= total {
 			return []modelcatalog.AgentModelCard{}, false
 		}
 		cards = cards[offset:]
 	}
-	if limit <= 0 || limit >= len(cards) {
+	if limit <= 0 {
 		return cards, false
+	}
+	if limit >= len(cards) {
+		return cards, offset+len(cards) < total
 	}
 	return cards[:limit], true
 }

@@ -11,6 +11,7 @@ import (
 
 	"github.com/fasthttp/router"
 	bifrost "github.com/maximhq/bifrost/core"
+	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
 	"github.com/maximhq/bifrost/framework/modelcatalog/inbound"
@@ -30,6 +31,7 @@ type InboundA2AHandler struct {
 
 	mu    sync.Mutex
 	tasks map[string]storedA2ATask
+	now   func() time.Time
 }
 
 type storedA2ATask struct {
@@ -38,7 +40,7 @@ type storedA2ATask struct {
 }
 
 func NewInboundA2AHandler(client *bifrost.Bifrost, config *lib.Config) *InboundA2AHandler {
-	return &InboundA2AHandler{client: client, config: config, tasks: make(map[string]storedA2ATask)}
+	return &InboundA2AHandler{client: client, config: config, tasks: make(map[string]storedA2ATask), now: time.Now}
 }
 
 func (h *InboundA2AHandler) RegisterRoutes(r *router.Router, middlewares ...schemas.BifrostHTTPMiddleware) {
@@ -153,6 +155,11 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		h.writeRPCError(ctx, request.ID, -32600, "invalid JSON-RPC request")
 		return
 	}
+	taskPartition, err := inboundA2ATaskPartition(ctx)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
 	if request.Method != "message/send" {
 		h.writeRPCError(ctx, request.ID, -32601, "only message/send is supported")
 		return
@@ -168,7 +175,7 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	taskID := boundedTaskID(params.Message.MessageID)
-	if existing, ok := h.loadTask(taskID); ok {
+	if existing, ok := h.loadTask(taskPartition, taskID); ok {
 		h.writeRPCResult(ctx, request.ID, existing)
 		return
 	}
@@ -202,18 +209,28 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	output := a2aMessage{MessageID: taskID + "-result", Role: "agent", Parts: []a2aPart{{Kind: "text", Text: answer}}}
-	task := a2aTask{ID: taskID, ContextID: params.Message.MessageID, History: []a2aMessage{params.Message, output}, Artifacts: []a2aArtifact{{Name: "response", Parts: output.Parts}}, Status: a2aTaskStatus{State: "completed", Timestamp: time.Now().UTC(), Message: &output}}
-	h.storeTask(task)
+	task := a2aTask{ID: taskID, ContextID: params.Message.MessageID, History: []a2aMessage{params.Message, output}, Artifacts: []a2aArtifact{{Name: "response", Parts: output.Parts}}, Status: a2aTaskStatus{State: "completed", Timestamp: h.currentTime().UTC(), Message: &output}}
+	h.storeTask(taskPartition, task)
 	h.writeRPCResult(ctx, request.ID, task)
 }
 
 func (h *InboundA2AHandler) taskGet(ctx *fasthttp.RequestCtx) {
-	taskID := strings.TrimSpace(string(ctx.UserValue("task_id")))
+	taskIDValue := ctx.UserValue("task_id")
+	taskID, ok := taskIDValue.(string)
+	if !ok {
+		taskID = ""
+	}
+	taskID = strings.TrimSpace(taskID)
 	if taskID == "" {
 		h.writeRPCError(ctx, nil, -32602, "task_id is required")
 		return
 	}
-	task, ok := h.loadTask(taskID)
+	taskPartition, err := inboundA2ATaskPartition(ctx)
+	if err != nil {
+		SendError(ctx, fasthttp.StatusForbidden, "A2A caller authority is invalid")
+		return
+	}
+	task, ok := h.loadTask(taskPartition, taskID)
 	if !ok {
 		SendError(ctx, fasthttp.StatusNotFound, "A2A task not found")
 		return
@@ -222,10 +239,10 @@ func (h *InboundA2AHandler) taskGet(ctx *fasthttp.RequestCtx) {
 	ctx.SetBody(mustJSON(task))
 }
 
-func (h *InboundA2AHandler) storeTask(task a2aTask) {
+func (h *InboundA2AHandler) storeTask(partition string, task a2aTask) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	now := time.Now()
+	now := h.currentTime()
 	for id, stored := range h.tasks {
 		if stored.ExpiresAt.Before(now) {
 			delete(h.tasks, id)
@@ -241,20 +258,47 @@ func (h *InboundA2AHandler) storeTask(task a2aTask) {
 		}
 		delete(h.tasks, oldestID)
 	}
-	h.tasks[task.ID] = storedA2ATask{Task: task, ExpiresAt: now.Add(maxA2ATaskTTL)}
+	h.tasks[scopedA2ATaskKey(partition, task.ID)] = storedA2ATask{Task: task, ExpiresAt: now.Add(maxA2ATaskTTL)}
 }
 
-func (h *InboundA2AHandler) loadTask(id string) (a2aTask, bool) {
+func (h *InboundA2AHandler) loadTask(partition string, id string) (a2aTask, bool) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	stored, ok := h.tasks[id]
-	if !ok || stored.ExpiresAt.Before(time.Now()) {
+	key := scopedA2ATaskKey(partition, id)
+	stored, ok := h.tasks[key]
+	if !ok || stored.ExpiresAt.Before(h.currentTime()) {
 		if ok {
-			delete(h.tasks, id)
+			delete(h.tasks, key)
 		}
 		return a2aTask{}, false
 	}
 	return stored.Task, true
+}
+
+func (h *InboundA2AHandler) currentTime() time.Time {
+	if h != nil && h.now != nil {
+		return h.now()
+	}
+	return time.Now()
+}
+
+// inboundA2ATaskPartition is deliberately derived from the trusted principal
+// installed by auth middleware, never from Agent Card publisher metadata or a
+// caller-controlled tenant header. Missing authority fails closed so the
+// in-memory idempotency cache cannot become a cross-tenant oracle.
+func inboundA2ATaskPartition(ctx *fasthttp.RequestCtx) (string, error) {
+	if ctx == nil {
+		return "", authorityepoch.ErrInvalidPrincipal
+	}
+	principal, ok := ctx.UserValue(schemas.BifrostContextKeyAuthorizationPrincipal).(authorityepoch.Principal)
+	if !ok || principal.Tenant == "" || principal.Issuer == "" || principal.Subject == "" {
+		return "", authorityepoch.ErrInvalidPrincipal
+	}
+	return principal.Tenant + "\x00" + principal.Issuer + "\x00" + principal.Subject, nil
+}
+
+func scopedA2ATaskKey(partition, taskID string) string {
+	return partition + "\x00" + taskID
 }
 
 func (h *InboundA2AHandler) writeRPCResult(ctx *fasthttp.RequestCtx, id json.RawMessage, result interface{}) {

@@ -13,7 +13,7 @@ func TestAgentModelCardValidationReasonsAreStableAndDedupeCodes(t *testing.T) {
 		t.Fatalf("expected multiple validation reasons, got %#v", reasons)
 	}
 	codes := dedupeAgentModelCardReasonCodes(reasons)
-	if len(codes) != len(map[string]struct{}{"agent_model_card_provider_required": {}, "agent_model_card_model_required": {}, "agent_model_card_base_model_required": {}, "agent_model_card_wire_model_required": {}, "agent_model_card_provider_mapping_mismatch": {}}) {
+	if len(codes) != len(map[string]struct{}{"agent_model_card_provider_required": {}, "agent_model_card_model_required": {}, "agent_model_card_base_model_required": {}, "agent_model_card_wire_model_required": {}, "agent_model_card_provider_mapping_mismatch": {}, "agent_model_card_capability_state_invalid": {}}) {
 		t.Fatalf("expected stable deduplicated reason codes, got %#v", codes)
 	}
 	for _, code := range codes {
@@ -26,8 +26,12 @@ func TestAgentModelCardValidationReasonsAreStableAndDedupeCodes(t *testing.T) {
 func TestAgentModelCardPaginationAndETagMatching(t *testing.T) {
 	cards := []modelcatalog.AgentModelCard{{Model: "a"}, {Model: "b"}, {Model: "c"}}
 	page, more := paginateAgentModelCards(cards, 2, 1)
-	if len(page) != 2 || page[0].Model != "b" || !more {
+	if len(page) != 2 || page[0].Model != "b" || more {
 		t.Fatalf("unexpected page: %#v more=%v", page, more)
+	}
+	_, more = paginateAgentModelCards(cards, 2, 0)
+	if !more {
+		t.Fatal("first page should report remaining cards")
 	}
 	if !agentModelCardETagMatches(`W/"digest", "other"`, `"digest"`) || !agentModelCardETagMatches("*", `"digest"`) {
 		t.Fatal("weak and wildcard ETag matches should be honored")
