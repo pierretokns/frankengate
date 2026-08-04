@@ -95,8 +95,23 @@ func (c AgentModelCard) Validate() error {
 		if evaluation.Score != nil && (*evaluation.Score < 0 || *evaluation.Score > 1) {
 			errs = errs.appendf("evaluations[%d].score must be between 0 and 1", i)
 		}
+		if evaluation.Confidence != nil && (*evaluation.Confidence < 0 || *evaluation.Confidence > 1) {
+			errs = errs.appendf("evaluations[%d].confidence must be between 0 and 1", i)
+		}
 		errs = validateContentRef(evaluation.DatasetRef, fmt.Sprintf("evaluations[%d].dataset_ref", i), errs)
 		errs = validateContentRef(evaluation.ReportRef, fmt.Sprintf("evaluations[%d].report_ref", i), errs)
+		errs = validateContentRef(evaluation.Source, fmt.Sprintf("evaluations[%d].source", i), errs)
+		if len(evaluation.Slice) > 32 {
+			errs = errs.appendf("evaluations[%d].slice must contain at most 32 entries", i)
+		}
+		for key, value := range evaluation.Slice {
+			if key == "" || len(key) > 96 {
+				errs = errs.appendf("evaluations[%d].slice contains an invalid key", i)
+			}
+			if len(value) > 256 {
+				errs = errs.appendf("evaluations[%d].slice[%q] exceeds 256 bytes", i, key)
+			}
+		}
 	}
 	if c.Health != nil {
 		if !validHealthStatus(c.Health.Status) {

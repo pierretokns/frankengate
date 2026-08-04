@@ -325,7 +325,20 @@
         "score": { "type": "number", "minimum": 0, "maximum": 1 },
         "status": { "$ref": "#/$defs/provenanceStatus" },
         "dataset_ref": { "$ref": "#/$defs/contentRef" },
+        "dataset_revision": { "type": "string", "maxLength": 256 },
         "report_ref": { "$ref": "#/$defs/contentRef" },
+        "methodology": { "type": "string", "maxLength": 4096 },
+        "source": { "$ref": "#/$defs/contentRef" },
+        "verifier": { "type": "string", "maxLength": 256 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "run_revision": { "type": "string", "maxLength": 256 },
+        "reproducible": { "type": "boolean" },
+        "slice": {
+          "type": "object",
+          "maxProperties": 32,
+          "additionalProperties": { "type": "string", "maxLength": 256 }
+        },
+        "stale": { "type": "boolean" },
         "observed_at": { "type": "string", "format": "date-time" }
       }
     },

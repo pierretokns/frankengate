@@ -276,13 +276,22 @@ type PricingEntry struct {
 }
 
 type EvaluationEvidence struct {
-	Name       string           `json:"name"`
-	Metric     string           `json:"metric,omitempty"`
-	Score      *float64         `json:"score,omitempty"`
-	Status     ProvenanceStatus `json:"status"`
-	DatasetRef *ContentRef      `json:"dataset_ref,omitempty"`
-	ReportRef  *ContentRef      `json:"report_ref,omitempty"`
-	ObservedAt string           `json:"observed_at,omitempty"`
+	Name            string            `json:"name"`
+	Metric          string            `json:"metric,omitempty"`
+	Score           *float64          `json:"score,omitempty"`
+	Status          ProvenanceStatus  `json:"status"`
+	DatasetRef      *ContentRef       `json:"dataset_ref,omitempty"`
+	DatasetRevision string            `json:"dataset_revision,omitempty"`
+	ReportRef       *ContentRef       `json:"report_ref,omitempty"`
+	Methodology     string            `json:"methodology,omitempty"`
+	Source          *ContentRef       `json:"source,omitempty"`
+	Verifier        string            `json:"verifier,omitempty"`
+	Confidence      *float64          `json:"confidence,omitempty"`
+	RunRevision     string            `json:"run_revision,omitempty"`
+	Reproducible    *bool             `json:"reproducible,omitempty"`
+	Slice           map[string]string `json:"slice,omitempty"`
+	ObservedAt      string            `json:"observed_at,omitempty"`
+	Stale           bool              `json:"stale,omitempty"`
 }
 
 type Health struct {
