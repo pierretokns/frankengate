@@ -1,7 +1,8 @@
 package registry
 
 // This adapter deliberately parses OpenAPI as data. It never fetches a
-// referenced document, resolves an external $ref, or creates a credential
+// referenced document or resolves an external $ref; bounded local component
+// schema references are resolved in-memory. It never creates a credential
 // source. The returned tools are catalog evidence and must still pass the
 // normal trust/admission pipeline before they can be exposed to an agent.
 
@@ -35,11 +36,14 @@ type OpenAPIResult struct {
 }
 
 type openAPIDocument struct {
-	OpenAPI string                          `json:"openapi"`
-	Swagger string                          `json:"swagger"`
-	Info    struct{ Title, Version string } `json:"info"`
-	Servers []struct{ URL string }          `json:"servers"`
-	Paths   map[string]json.RawMessage      `json:"paths"`
+	OpenAPI    string                          `json:"openapi"`
+	Swagger    string                          `json:"swagger"`
+	Info       struct{ Title, Version string } `json:"info"`
+	Servers    []struct{ URL string }          `json:"servers"`
+	Paths      map[string]json.RawMessage      `json:"paths"`
+	Components struct {
+		Schemas map[string]json.RawMessage `json:"schemas"`
+	} `json:"components"`
 }
 
 type openAPIOperation struct {
@@ -94,6 +98,7 @@ func ParseOpenAPIToMCP(data []byte, options OpenAPIOptions) (OpenAPIResult, erro
 	sort.Strings(paths)
 	result := OpenAPIResult{Title: strings.TrimSpace(doc.Info.Title), Version: strings.TrimSpace(doc.Info.Version), BaseURL: baseURL}
 	seenNames := map[string]struct{}{}
+	resolver := schemaResolver{schemas: doc.Components.Schemas}
 	for _, path := range paths {
 		if !strings.HasPrefix(path, "/") || strings.Contains(path, "..") {
 			return OpenAPIResult{}, fmt.Errorf("path %q is not a safe absolute path", path)
@@ -114,7 +119,7 @@ func ParseOpenAPIToMCP(data []byte, options OpenAPIOptions) (OpenAPIResult, erro
 			if err := json.Unmarshal(pathItem[method], &operation); err != nil {
 				return OpenAPIResult{}, fmt.Errorf("decode %s %s: %w", method, path, err)
 			}
-			tool, err := operationTool(method, path, operation, options.Namespace, seenNames)
+			tool, err := operationTool(method, path, operation, options.Namespace, seenNames, resolver)
 			if err != nil {
 				return OpenAPIResult{}, fmt.Errorf("convert %s %s: %w", method, path, err)
 			}
@@ -158,7 +163,7 @@ func selectServer(servers []struct{ URL string }, options OpenAPIOptions) (strin
 	return strings.TrimRight(parsed.String(), "/"), nil
 }
 
-func operationTool(method, path string, operation openAPIOperation, namespace string, seen map[string]struct{}) (schemas.ChatTool, error) {
+func operationTool(method, path string, operation openAPIOperation, namespace string, seen map[string]struct{}, resolver schemaResolver) (schemas.ChatTool, error) {
 	name := strings.TrimSpace(operation.OperationID)
 	if name == "" {
 		name = strings.ToLower(method) + "_" + strings.Trim(path, "/")
@@ -181,7 +186,7 @@ func operationTool(method, path string, operation openAPIOperation, namespace st
 		if parameter.Name == "" || (parameter.In != "path" && parameter.In != "query" && parameter.In != "header" && parameter.In != "cookie") {
 			return schemas.ChatTool{}, fmt.Errorf("parameter %q has unsupported location", parameter.Name)
 		}
-		schema, err := schemaValue(parameter.Schema)
+		schema, err := resolver.value(parameter.Schema)
 		if err != nil {
 			return schemas.ChatTool{}, fmt.Errorf("parameter %q: %w", parameter.Name, err)
 		}
@@ -191,7 +196,7 @@ func operationTool(method, path string, operation openAPIOperation, namespace st
 		}
 	}
 	if operation.RequestBody != nil {
-		schema, err := requestBodySchema(*operation.RequestBody)
+		schema, err := requestBodySchema(*operation.RequestBody, resolver)
 		if err != nil {
 			return schemas.ChatTool{}, err
 		}
@@ -216,7 +221,7 @@ func operationTool(method, path string, operation openAPIOperation, namespace st
 	}}, nil
 }
 
-func requestBodySchema(body openAPIRequestBody) (any, error) {
+func requestBodySchema(body openAPIRequestBody, resolver schemaResolver) (any, error) {
 	if len(body.Content) == 0 {
 		return map[string]any{"type": "object"}, nil
 	}
@@ -225,10 +230,14 @@ func requestBodySchema(body openAPIRequestBody) (any, error) {
 		mediaTypes = append(mediaTypes, mediaType)
 	}
 	sort.Strings(mediaTypes)
-	return schemaValue(body.Content[mediaTypes[0]].Schema)
+	return resolver.value(body.Content[mediaTypes[0]].Schema)
 }
 
-func schemaValue(raw json.RawMessage) (any, error) {
+type schemaResolver struct {
+	schemas map[string]json.RawMessage
+}
+
+func (r schemaResolver) value(raw json.RawMessage) (any, error) {
 	if len(raw) == 0 || string(raw) == "null" {
 		return map[string]any{"type": "string"}, nil
 	}
@@ -236,34 +245,75 @@ func schemaValue(raw json.RawMessage) (any, error) {
 	if err := json.Unmarshal(raw, &value); err != nil {
 		return nil, fmt.Errorf("invalid schema: %w", err)
 	}
-	if hasExternalRef(value) {
-		return nil, fmt.Errorf("external $ref is not allowed")
-	}
-	return value, nil
+	return r.resolve(value, 0, map[string]bool{})
 }
 
-func hasExternalRef(value any) bool {
+func (r schemaResolver) resolve(value any, depth int, stack map[string]bool) (any, error) {
+	if depth > 16 {
+		return nil, fmt.Errorf("schema reference depth exceeds 16")
+	}
 	switch v := value.(type) {
 	case map[string]any:
-		for key, child := range v {
-			if key == "$ref" {
-				ref, ok := child.(string)
-				if !ok || !strings.HasPrefix(ref, "#/") {
-					return true
+		if refValue, ok := v["$ref"]; ok {
+			ref, ok := refValue.(string)
+			if !ok || !strings.HasPrefix(ref, "#/components/schemas/") {
+				return nil, fmt.Errorf("external $ref is not allowed")
+			}
+			name := strings.TrimPrefix(ref, "#/components/schemas/")
+			if name == "" || strings.Contains(name, "/") {
+				return nil, fmt.Errorf("unsupported local $ref %q", ref)
+			}
+			if stack[name] {
+				return nil, fmt.Errorf("cyclic schema $ref %q", ref)
+			}
+			raw, ok := r.schemas[name]
+			if !ok {
+				return nil, fmt.Errorf("unresolved local $ref %q", ref)
+			}
+			var referenced any
+			if err := json.Unmarshal(raw, &referenced); err != nil {
+				return nil, fmt.Errorf("decode local $ref %q: %w", ref, err)
+			}
+			stack[name] = true
+			resolved, err := r.resolve(referenced, depth+1, stack)
+			delete(stack, name)
+			if err != nil {
+				return nil, err
+			}
+			// OpenAPI 3.1 permits sibling constraints alongside $ref. Preserve
+			// them while keeping the referenced schema as the base value.
+			base, ok := resolved.(map[string]any)
+			if !ok {
+				return resolved, nil
+			}
+			for key, child := range v {
+				if key == "$ref" {
+					continue
 				}
+				base[key] = child
 			}
-			if hasExternalRef(child) {
-				return true
-			}
+			value = base
+			v = base
 		}
+		for key, child := range v {
+			resolved, err := r.resolve(child, depth+1, stack)
+			if err != nil {
+				return nil, err
+			}
+			v[key] = resolved
+		}
+		return v, nil
 	case []any:
-		for _, child := range v {
-			if hasExternalRef(child) {
-				return true
+		for i, child := range v {
+			resolved, err := r.resolve(child, depth+1, stack)
+			if err != nil {
+				return nil, err
 			}
+			v[i] = resolved
 		}
+		return v, nil
 	}
-	return false
+	return value, nil
 }
 
 func isHTTPMethod(method string) bool {

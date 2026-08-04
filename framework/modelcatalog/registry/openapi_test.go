@@ -42,6 +42,31 @@ func TestParseOpenAPIToMCPRejectsNetworkAndExternalReferenceHazards(t *testing.T
 	}
 }
 
+func TestParseOpenAPIToMCPResolvesBoundedLocalSchemaReferences(t *testing.T) {
+	doc := []byte(`{"openapi":"3.1.0","info":{"title":"Example","version":"1"},"paths":{"/items":{"post":{"operationId":"createItem","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/Item"}}}}}}},"components":{"schemas":{"Item":{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}}}}`)
+	result, err := ParseOpenAPIToMCP(doc, OpenAPIOptions{Namespace: "catalog"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Tools) != 1 {
+		t.Fatalf("expected one tool, got %#v", result.Tools)
+	}
+	body, ok := result.Tools[0].Function.Parameters.Properties.Get("body")
+	if !ok {
+		t.Fatal("resolved request body is missing")
+	}
+	if bodyMap, ok := body.(map[string]any); !ok || bodyMap["type"] != "object" {
+		t.Fatalf("local schema ref was not resolved: %#v", body)
+	}
+}
+
+func TestParseOpenAPIToMCPRejectsCyclicLocalSchemaReferences(t *testing.T) {
+	doc := []byte(`{"openapi":"3.1.0","paths":{"/x":{"post":{"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/A"}}}}}}},"components":{"schemas":{"A":{"$ref":"#/components/schemas/B"},"B":{"$ref":"#/components/schemas/A"}}}}`)
+	if _, err := ParseOpenAPIToMCP(doc, OpenAPIOptions{}); err == nil || !contains(err.Error(), "cyclic schema") {
+		t.Fatalf("expected cyclic local ref rejection, got %v", err)
+	}
+}
+
 func contains(value, fragment string) bool {
 	for i := 0; i+len(fragment) <= len(value); i++ {
 		if value[i:i+len(fragment)] == fragment {
