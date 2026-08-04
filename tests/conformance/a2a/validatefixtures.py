@@ -7,6 +7,8 @@ import re
 import sys
 from pathlib import Path
 
+from recoverychecks import run_recovery_checks
+
 
 BASE = Path(__file__).resolve().parent
 MANIFEST = BASE / "fixtures" / "manifest.json"
@@ -220,11 +222,17 @@ def main():
     if missing_manifest_entries:
         fail(errors, str(MANIFEST), f"fixture files missing from manifest: {sorted(missing_manifest_entries)}")
 
+    recovery_count = 0
+    if not errors:
+        recovery_count, recovery_errors = run_recovery_checks()
+        for error in recovery_errors:
+            fail(errors, "recoverychecks", error)
+
     if errors:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print(f"validated {len(seen_paths)} A2A fixtures")
+    print(f"validated {len(seen_paths)} A2A fixtures and {recovery_count} recovery checks")
     return 0
 
 

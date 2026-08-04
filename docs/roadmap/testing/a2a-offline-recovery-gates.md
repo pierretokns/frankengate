@@ -1,0 +1,34 @@
+# A2A Offline Recovery Gates
+
+These gates are deterministic Day-2 conformance checks for the A2A Agent Card
+and broker recovery surface. They are intentionally offline: no DNS, no remote
+Agent Card fetches, no provider calls, and no paid inference.
+
+Run:
+
+```bash
+python3 tests/conformance/a2a/validatefixtures.py
+```
+
+The validator now executes the existing fixture/provenance checks plus
+`tests/conformance/a2a/recoverychecks.py`. The recovery harness monkey-patches
+socket creation during checks so accidental network access fails the run.
+
+## Gates
+
+| Gate | Deterministic assertion |
+| --- | --- |
+| Canonical card round trips | Decode/encode keeps canonical JSON and digest stable; canonical card admission succeeds. |
+| Malformed and oversized cards | Invalid JSON, schema-minimal bad cards, and cards over 64 KiB are denied before admission. |
+| SSRF denial | Unsafe schemes, loopback, private, link-local metadata, local hostnames, file URLs, and unapproved hosts are denied with zero provider attempts. |
+| Trust and quarantine | Unapproved publisher, changed approved-card digest, and missing security requirements quarantine the card instead of silently trusting it. |
+| Admission | Tenant, protocol binding, and skill denials happen before any provider attempt. |
+| Broker terminal transitions | Valid submitted-to-working transition is allowed; terminal state resurrection is denied. |
+| Retry limits | Transient failures retry only up to the bounded limit, then end in a failed terminal state and reject further retries. |
+| Duplicate events | Exact duplicate stream events are idempotent and do not duplicate artifact side effects. |
+| Conflicting or out-of-order events | Conflicting duplicate IDs, skipped event IDs, and events after terminal state are quarantined before new side effects. |
+| Stale cards | Fresh cards admit; cards older than the fixed TTL deny new admission. |
+
+These tests are a recovery contract, not an implementation claim for a live A2A
+broker. Production code must satisfy the same decisions when the broker and
+Agent Card ingestion path land.
