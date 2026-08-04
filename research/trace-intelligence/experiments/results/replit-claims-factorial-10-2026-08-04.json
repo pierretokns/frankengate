@@ -1,0 +1,118 @@
+{
+  "schema_version": "frankengate-replit-claims-factorial-v1",
+  "protocol": {
+    "cohort": "wiki-gap-labeled-experiment-v1 plus exact-text success/unobserved controls",
+    "per_stratum": 10,
+    "collision_count_each": 10,
+    "clusterer": "DBSCAN cosine distance, min_samples=2",
+    "raw_eps": 0.3,
+    "facet_eps": 0.3,
+    "typed_signal_weight": 2.0,
+    "actionable_cluster_rule": "at least 2 members, at least 2 users, and at least 50% evidence-bearing signals",
+    "dense_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "dense_dimension": 384
+  },
+  "cohort_counts": {
+    "event_count": 424,
+    "query_count": 112,
+    "positive_query_count": 62,
+    "control_query_count": 50
+  },
+  "frankengate_deterministic_baseline": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "candidate_count": 17,
+    "false_positive_count": 0,
+    "false_negative_count": 0
+  },
+  "replit_style_arms": [
+    {
+      "arm": "raw_lexical",
+      "cluster_count": 9,
+      "noise_count": 0,
+      "actionable_cluster_count": 6,
+      "actionable_query_count": 60,
+      "positive_coverage": 0.8064516129032258,
+      "control_contamination_rate": 0.16666666666666666,
+      "actionable_cluster_purity": 0.8333333333333334,
+      "eval_candidate_count": 6,
+      "lineage_query_count": 60,
+      "encoding_and_clustering_ms": 3.088
+    },
+    {
+      "arm": "facet_lexical",
+      "cluster_count": 9,
+      "noise_count": 0,
+      "actionable_cluster_count": 6,
+      "actionable_query_count": 60,
+      "positive_coverage": 0.8064516129032258,
+      "control_contamination_rate": 0.16666666666666666,
+      "actionable_cluster_purity": 0.8333333333333334,
+      "eval_candidate_count": 6,
+      "lineage_query_count": 60,
+      "encoding_and_clustering_ms": 2.085
+    },
+    {
+      "arm": "facet_typed_lexical",
+      "cluster_count": 8,
+      "noise_count": 0,
+      "actionable_cluster_count": 5,
+      "actionable_query_count": 72,
+      "positive_coverage": 1.0,
+      "control_contamination_rate": 0.1388888888888889,
+      "actionable_cluster_purity": 0.8611111111111112,
+      "eval_candidate_count": 5,
+      "lineage_query_count": 72,
+      "encoding_and_clustering_ms": 2.06
+    },
+    {
+      "arm": "raw_dense",
+      "cluster_count": 9,
+      "noise_count": 0,
+      "actionable_cluster_count": 6,
+      "actionable_query_count": 60,
+      "positive_coverage": 0.8064516129032258,
+      "control_contamination_rate": 0.16666666666666666,
+      "actionable_cluster_purity": 0.8333333333333334,
+      "eval_candidate_count": 6,
+      "lineage_query_count": 60,
+      "encoding_and_clustering_ms": 257.561
+    },
+    {
+      "arm": "facet_dense",
+      "cluster_count": 8,
+      "noise_count": 0,
+      "actionable_cluster_count": 6,
+      "actionable_query_count": 92,
+      "positive_coverage": 1.0,
+      "control_contamination_rate": 0.32608695652173914,
+      "actionable_cluster_purity": 0.6739130434782609,
+      "eval_candidate_count": 6,
+      "lineage_query_count": 92,
+      "encoding_and_clustering_ms": 112.352
+    },
+    {
+      "arm": "facet_typed_dense",
+      "cluster_count": 8,
+      "noise_count": 0,
+      "actionable_cluster_count": 5,
+      "actionable_query_count": 72,
+      "positive_coverage": 1.0,
+      "control_contamination_rate": 0.1388888888888889,
+      "actionable_cluster_purity": 0.8611111111111112,
+      "eval_candidate_count": 5,
+      "lineage_query_count": 72,
+      "encoding_and_clustering_ms": 28.605
+    }
+  ],
+  "model_load_ms": 3806.288,
+  "interpretation": "The deterministic miner is the authoritative per-query detector. Replit-style facet clustering is evaluated as an issue-discovery and eval-candidate layer; it is not allowed to replace event-level evidence or make unsupported wiki-gap claims.",
+  "claim_boundary": {
+    "production_user_utility": false,
+    "replit_internal_metrics_reproduced": false,
+    "cluster_mechanics_measured": true,
+    "compact_facet_ablation_measured": true,
+    "candidate_lineage_measured": true
+  }
+}
