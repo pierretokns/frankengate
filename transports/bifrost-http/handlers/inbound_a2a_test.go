@@ -63,3 +63,25 @@ func TestInboundA2ATaskCacheHonorsInjectedClockAndTTL(t *testing.T) {
 		t.Fatal("expired task must not be available")
 	}
 }
+
+func TestInboundA2ATaskGetIsTenantScoped(t *testing.T) {
+	handler := &InboundA2AHandler{tasks: make(map[string]storedA2ATask), now: time.Now}
+	partitionA := "tenant-a\x00issuer\x00subject"
+	handler.storeTask(partitionA, a2aTask{ID: "same", Status: a2aTaskStatus{State: "completed"}})
+
+	allowed := &fasthttp.RequestCtx{}
+	allowed.SetUserValue("task_id", "same")
+	allowed.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "tenant-a", Issuer: "issuer", Subject: "subject"})
+	handler.taskGet(allowed)
+	if allowed.Response.StatusCode() != fasthttp.StatusOK {
+		t.Fatalf("same-tenant task lookup status = %d, want 200", allowed.Response.StatusCode())
+	}
+
+	denied := &fasthttp.RequestCtx{}
+	denied.SetUserValue("task_id", "same")
+	denied.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "tenant-b", Issuer: "issuer", Subject: "subject"})
+	handler.taskGet(denied)
+	if denied.Response.StatusCode() != fasthttp.StatusNotFound {
+		t.Fatalf("cross-tenant task lookup status = %d, want 404", denied.Response.StatusCode())
+	}
+}
