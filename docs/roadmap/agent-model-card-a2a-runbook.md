@@ -9,6 +9,8 @@ authorization grant, or proof that a remote agent is safe to invoke.
 - `GET /api/v1/agent-model-cards` lists only models visible to the caller's
   existing provider/model policy. `query`, `provider`, `limit`, `offset`, and
   `unfiltered` are filters, not authorization bypasses.
+- `GET /api/v1/agent-model-cards/metadata` returns visibility-filtered
+  revision/source metadata without card bodies.
 - `GET /api/v1/agent-model-cards/detail?provider=...&model=...` returns one
   card with the compiled revision and schema version.
 - `GET /api/v1/agent-model-cards/export` emits a complete visible snapshot
@@ -34,8 +36,9 @@ before they are eligible for routing.
 Inbound A2A tasks enter the same identity, governance, budget, MCP, model,
 audit, and kill-switch middleware as other gateway inference. A publisher's
 card never transfers publisher authority to the caller. Task identifiers are
-idempotency keys; retention is bounded and in-memory in this first transport
-adapter, so durable recovery requires the Day-2 outbox/task-store work.
+idempotency keys scoped by the validated tenant/issuer/subject principal;
+retention is bounded and in-memory in this first transport adapter, so durable
+recovery requires the Day-2 outbox/task-store work.
 
 ## Evidence and observability
 
@@ -46,6 +49,12 @@ envelope in `framework/modelcatalog/provenance` is the join key for card
 revision/digest, policy epoch, capability decision, task, remote agent,
 outcome, artifact, trace/request IDs, and cost. Raw prompts, responses,
 credentials, and tool payloads must remain behind purpose-scoped redaction.
+Inbound A2A execution attaches these bounded fields to the live trace root and
+updates outcome/artifact on completion; OTEL and audit exporters receive them
+through the normal asynchronous observation path. Registry manifests enter a
+bounded pending-review store keyed by repository, immutable revision, and
+content digest; approval requires a reviewer and reason, and quarantine is an
+explicit later decision.
 
 ## Day-2 release gates
 

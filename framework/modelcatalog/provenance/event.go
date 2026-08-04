@@ -67,3 +67,38 @@ func Digest(e Event) (string, error) {
 	sum := sha256.Sum256(payload)
 	return "sha256:" + hex.EncodeToString(sum[:]), nil
 }
+
+// TraceAttributes returns bounded metadata suitable for live trace injection.
+// Raw prompts, responses, credentials, and tool payloads are intentionally not
+// representable here.
+func TraceAttributes(e Event) (map[string]any, error) {
+	if err := e.Validate(); err != nil {
+		return nil, err
+	}
+	attributes := map[string]any{
+		"frankengate.provenance.schema_version": e.SchemaVersion,
+		"frankengate.provenance.event_id":       e.EventID,
+		"frankengate.provenance.outcome":        e.Outcome,
+	}
+	optional := map[string]string{
+		"frankengate.provenance.tenant_id":           e.TenantID,
+		"frankengate.provenance.request_id":          e.RequestID,
+		"frankengate.provenance.trace_id":            e.TraceID,
+		"frankengate.provenance.task_id":             e.TaskID,
+		"frankengate.provenance.card_digest":         e.CardDigest,
+		"frankengate.provenance.card_revision":       e.CardRevision,
+		"frankengate.provenance.policy_epoch":        e.PolicyEpoch,
+		"frankengate.provenance.capability_decision": e.CapabilityDecision,
+		"frankengate.provenance.remote_agent":        e.RemoteAgent,
+		"frankengate.provenance.artifact_ref":        e.ArtifactRef,
+	}
+	for key, value := range optional {
+		if value != "" {
+			attributes[key] = value
+		}
+	}
+	if e.CostMicros != 0 {
+		attributes["frankengate.provenance.cost_micros"] = e.CostMicros
+	}
+	return attributes, nil
+}

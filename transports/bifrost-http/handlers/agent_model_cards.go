@@ -73,6 +73,24 @@ type agentModelCardExportResponse struct {
 	Cards              []modelcatalog.AgentModelCard                 `json:"cards"`
 }
 
+type agentModelCardMetadataResponse struct {
+	SchemaVersion      string                                        `json:"schema_version"`
+	CardSchemaVersion  string                                        `json:"card_schema_version"`
+	Revision           modelcatalog.AgentModelCardRevision           `json:"revision"`
+	SourcePrecedence   []modelcatalog.AgentModelCardSourceKind       `json:"source_precedence"`
+	Sources            []modelcatalog.AgentModelCardSource           `json:"sources"`
+	UnknownBehavior    modelcatalog.AgentModelCardUnknownBehavior    `json:"unknown_behavior"`
+	DeprecatedBehavior modelcatalog.AgentModelCardDeprecatedBehavior `json:"deprecated_behavior"`
+	VisibleCardCount   int                                           `json:"visible_card_count"`
+	Export             agentModelCardExportMetadata                  `json:"export"`
+}
+
+type agentModelCardExportMetadata struct {
+	Path        string `json:"path"`
+	ContentType string `json:"content_type"`
+	Filename    string `json:"filename"`
+}
+
 type agentModelCardValidateResponse struct {
 	SchemaVersion     string                           `json:"schema_version"`
 	CardSchemaVersion string                           `json:"card_schema_version"`
@@ -119,6 +137,39 @@ func (h *ProviderHandler) listAgentModelCardsV1(ctx *fasthttp.RequestCtx) {
 		Limit:              query.Limit,
 		Offset:             query.Offset,
 		HasMore:            hasMore,
+	})
+}
+
+// getAgentModelCardMetadataV1 handles GET /api/v1/agent-model-cards/metadata.
+// It exposes stable snapshot metadata without returning card bodies.
+func (h *ProviderHandler) getAgentModelCardMetadataV1(ctx *fasthttp.RequestCtx) {
+	query, ok := h.parseModelListQuery(ctx, 0)
+	if !ok {
+		return
+	}
+	query.Limit = 0
+	query.Offset = 0
+
+	snapshot, cards, err := h.visibleAgentModelCards(query)
+	if err != nil {
+		h.sendAgentModelCardReadError(ctx, err)
+		return
+	}
+
+	sendAgentModelCardJSONWithETag(ctx, agentModelCardMetadataResponse{
+		SchemaVersion:      agentModelCardAPIResponseSchemaVersion,
+		CardSchemaVersion:  snapshot.SchemaVersion,
+		Revision:           snapshot.Revision,
+		SourcePrecedence:   snapshot.SourcePrecedence,
+		Sources:            snapshot.Sources,
+		UnknownBehavior:    snapshot.UnknownBehavior,
+		DeprecatedBehavior: snapshot.DeprecatedBehavior,
+		VisibleCardCount:   len(cards),
+		Export: agentModelCardExportMetadata{
+			Path:        "/api/v1/agent-model-cards/export",
+			ContentType: "application/json",
+			Filename:    "agent-model-cards.json",
+		},
 	})
 }
 

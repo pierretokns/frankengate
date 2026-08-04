@@ -15,6 +15,7 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
 	"github.com/maximhq/bifrost/framework/modelcatalog/inbound"
+	"github.com/maximhq/bifrost/framework/modelcatalog/provenance"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 	"github.com/valyala/fasthttp"
 )
@@ -189,6 +190,7 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	defer cancel()
+	attachInboundA2AProvenance(bifrostCtx, ctx, taskID, h.currentTime())
 	requestInput := &schemas.BifrostChatRequest{
 		Provider: schemas.ModelProvider(params.Configuration.Provider),
 		Model:    strings.TrimSpace(params.Configuration.Model),
@@ -210,6 +212,8 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 	}
 	output := a2aMessage{MessageID: taskID + "-result", Role: "agent", Parts: []a2aPart{{Kind: "text", Text: answer}}}
 	task := a2aTask{ID: taskID, ContextID: params.Message.MessageID, History: []a2aMessage{params.Message, output}, Artifacts: []a2aArtifact{{Name: "response", Parts: output.Parts}}, Status: a2aTaskStatus{State: "completed", Timestamp: h.currentTime().UTC(), Message: &output}}
+	bifrostCtx.SetTraceAttribute("frankengate.provenance.outcome", "completed")
+	bifrostCtx.SetTraceAttribute("frankengate.provenance.artifact_ref", "a2a://task/"+taskID+"/response")
 	h.storeTask(taskPartition, task)
 	h.writeRPCResult(ctx, request.ID, task)
 }
@@ -299,6 +303,70 @@ func inboundA2ATaskPartition(ctx *fasthttp.RequestCtx) (string, error) {
 
 func scopedA2ATaskKey(partition, taskID string) string {
 	return partition + "\x00" + taskID
+}
+
+func attachInboundA2AProvenance(bifrostCtx *schemas.BifrostContext, requestCtx *fasthttp.RequestCtx, taskID string, observedAt time.Time) {
+	if bifrostCtx == nil || requestCtx == nil {
+		return
+	}
+	principal, err := inboundA2ATaskPrincipal(requestCtx)
+	if err != nil {
+		return
+	}
+	policyEpoch := ""
+	if reference, ok := requestCtx.UserValue(schemas.BifrostContextKeyAuthorizationEpochReference).(authorityepoch.Reference); ok && reference.Epoch > 0 {
+		policyEpoch = fmt.Sprintf("%d", reference.Epoch)
+	}
+	event := provenance.Event{
+		SchemaVersion:      provenance.SchemaVersion,
+		EventID:            "a2a:" + taskID,
+		TenantID:           principal.Tenant,
+		RequestID:          stringValue(requestCtx.UserValue(schemas.BifrostContextKeyRequestID)),
+		TraceID:            stringValue(bifrostCtx.Value(schemas.BifrostContextKeyTraceID)),
+		TaskID:             taskID,
+		CardDigest:         inboundAgentCardDigest(requestCtx),
+		CardRevision:       "inbound-agent-v1",
+		PolicyEpoch:        policyEpoch,
+		CapabilityDecision: "admitted",
+		Outcome:            "accepted",
+		ObservedAt:         observedAt.UTC(),
+	}
+	attributes, err := provenance.TraceAttributes(event)
+	if err != nil {
+		return
+	}
+	for key, value := range attributes {
+		bifrostCtx.SetTraceAttribute(key, value)
+	}
+}
+
+func inboundA2ATaskPrincipal(ctx *fasthttp.RequestCtx) (authorityepoch.Principal, error) {
+	if ctx == nil {
+		return authorityepoch.Principal{}, authorityepoch.ErrInvalidPrincipal
+	}
+	principal, ok := ctx.UserValue(schemas.BifrostContextKeyAuthorizationPrincipal).(authorityepoch.Principal)
+	if !ok || authorityepoch.ValidatePrincipal(principal) != nil {
+		return authorityepoch.Principal{}, authorityepoch.ErrInvalidPrincipal
+	}
+	return principal, nil
+}
+
+func stringValue(value interface{}) string {
+	result, _ := value.(string)
+	return result
+}
+
+func inboundAgentCardDigest(ctx *fasthttp.RequestCtx) string {
+	base := inboundBaseURL(ctx)
+	if base == "" {
+		return ""
+	}
+	body, err := inbound.MarshalAgentCardJSON(defaultInboundRecord(base))
+	if err != nil {
+		return ""
+	}
+	sum := sha256.Sum256(body)
+	return "sha256:" + hex.EncodeToString(sum[:])
 }
 
 func (h *InboundA2AHandler) writeRPCResult(ctx *fasthttp.RequestCtx, id json.RawMessage, result interface{}) {

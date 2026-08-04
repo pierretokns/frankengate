@@ -105,6 +105,22 @@ export interface AgentModelCardDetailResponse {
 	card: AgentModelCard;
 }
 
+export interface AgentModelCardMetadataResponse {
+	schema_version: string;
+	card_schema_version: string;
+	revision: AgentModelCardRevision;
+	source_precedence: AgentModelCardSourceKind[];
+	sources: AgentModelCardSource[];
+	unknown_behavior: AgentModelCardsListResponse["unknown_behavior"];
+	deprecated_behavior: AgentModelCardsListResponse["deprecated_behavior"];
+	visible_card_count: number;
+	export: {
+		path: string;
+		content_type: string;
+		filename: string;
+	};
+}
+
 export interface AgentModelCardsListRequest {
 	query?: string;
 	provider?: string;

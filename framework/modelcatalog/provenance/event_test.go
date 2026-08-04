@@ -29,3 +29,19 @@ func TestEventRejectsInvalidAndNegativeCost(t *testing.T) {
 		t.Fatal("expected negative cost rejection")
 	}
 }
+
+func TestTraceAttributesAreMetadataOnlyAndBounded(t *testing.T) {
+	event := Event{SchemaVersion: SchemaVersion, EventID: "evt-1", TenantID: "tenant-1", TaskID: "task-1", Outcome: "accepted", ObservedAt: time.Unix(1, 0).UTC()}
+	attributes, err := TraceAttributes(event)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if attributes["frankengate.provenance.task_id"] != "task-1" || attributes["frankengate.provenance.outcome"] != "accepted" {
+		t.Fatalf("unexpected trace attributes: %#v", attributes)
+	}
+	for key := range attributes {
+		if strings.Contains(key, "prompt") || strings.Contains(key, "response") || strings.Contains(key, "credential") {
+			t.Fatalf("trace attributes expose prohibited payload field %q", key)
+		}
+	}
+}

@@ -1,6 +1,7 @@
 import {
 	AgentModelCardDetailRequest,
 	AgentModelCardDetailResponse,
+	AgentModelCardMetadataResponse,
 	AgentModelCardsListRequest,
 	AgentModelCardsListResponse,
 } from "@/lib/types/agentModelCards";
@@ -33,7 +34,11 @@ export const agentModelCardsApi = baseApi.injectEndpoints({
 			},
 			providesTags: (_result, _error, { provider, model }) => [{ type: "AgentModelCards", id: `${provider}:${model}` }],
 		}),
+		getAgentModelCardMetadata: builder.query<AgentModelCardMetadataResponse, AgentModelCardsListRequest | void>({
+			query: (params) => `/v1/agent-model-cards/metadata${buildAgentModelCardParams(params || undefined)}`,
+			providesTags: ["AgentModelCards"],
+		}),
 	}),
 });
 
-export const { useGetAgentModelCardsQuery, useGetAgentModelCardQuery } = agentModelCardsApi;
+export const { useGetAgentModelCardsQuery, useGetAgentModelCardQuery, useGetAgentModelCardMetadataQuery } = agentModelCardsApi;

@@ -1,0 +1,78 @@
+AgentModelCardInput:
+  type: object
+  additionalProperties: true
+  description: Agent Model Card payload validated as a read-only admission preflight.
+
+AgentModelCardsListResponse:
+  type: object
+  required: [schema_version, card_schema_version, revision, cards, total, limit, offset, has_more]
+  properties:
+    schema_version: { type: string }
+    card_schema_version: { type: string }
+    revision: { $ref: '#/AgentModelCardRevision' }
+    cards: { type: array, items: { $ref: '#/AgentModelCard' } }
+    total: { type: integer }
+    limit: { type: integer }
+    offset: { type: integer }
+    has_more: { type: boolean }
+
+AgentModelCardDetailResponse:
+  type: object
+  required: [schema_version, card_schema_version, revision, card]
+  properties:
+    schema_version: { type: string }
+    card_schema_version: { type: string }
+    revision: { $ref: '#/AgentModelCardRevision' }
+    card: { $ref: '#/AgentModelCard' }
+
+AgentModelCardsExportResponse:
+  allOf:
+    - $ref: '#/AgentModelCardsListResponse'
+    - type: object
+      required: [generated_at]
+      properties:
+        generated_at: { type: string, format: date-time }
+
+AgentModelCardMetadataResponse:
+  type: object
+  required: [schema_version, card_schema_version, revision, visible_card_count, export]
+  properties:
+    schema_version: { type: string }
+    card_schema_version: { type: string }
+    revision: { $ref: '#/AgentModelCardRevision' }
+    visible_card_count: { type: integer }
+    export:
+      type: object
+      required: [path, content_type, filename]
+      properties:
+        path: { type: string }
+        content_type: { type: string }
+        filename: { type: string }
+
+AgentModelCardValidationResponse:
+  type: object
+  required: [schema_version, card_schema_version, valid]
+  properties:
+    schema_version: { type: string }
+    card_schema_version: { type: string }
+    valid: { type: boolean }
+    reason_codes: { type: array, items: { type: string } }
+    reasons: { type: array, items: { type: object, additionalProperties: true } }
+
+AgentModelCardRevision:
+  type: object
+  required: [id, card_count]
+  properties:
+    id: { type: string }
+    card_count: { type: integer }
+
+AgentModelCard:
+  type: object
+  additionalProperties: true
+  required: [provider, model, base_model, capability_state, provider_mapping]
+  properties:
+    provider: { type: string }
+    model: { type: string }
+    base_model: { type: string }
+    capability_state: { type: string, enum: [known, unknown] }
+    provider_mapping: { type: object, additionalProperties: true }

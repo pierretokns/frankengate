@@ -1,0 +1,76 @@
+# FrankenGate's governed inbound A2A surface. Discovery is public; task
+# submission and retrieval are authenticated and pass through normal gateway
+# governance, budget, audit, and revocation middleware.
+
+agent-card:
+  get:
+    operationId: getInboundAgentCard
+    summary: Get the FrankenGate inbound A2A Agent Card
+    tags: [A2A]
+    security: []
+    responses:
+      '200':
+        description: Public Agent Card
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      '400':
+        $ref: '../../openapi.yaml#/components/responses/BadRequest'
+
+message-send:
+  post:
+    operationId: sendInboundA2AMessage
+    summary: Submit a governed A2A message/send task
+    tags: [A2A]
+    security:
+      - ManagementBearerAuth: []
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/management/a2a.yaml#/A2AJSONRPCRequest'
+    responses:
+      '200':
+        description: Completed or idempotently replayed A2A task
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/a2a.yaml#/A2AJSONRPCResponse'
+      '400':
+        $ref: '../../openapi.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../../openapi.yaml#/components/responses/Unauthorized'
+      '403':
+        description: Caller authority is invalid or denied by policy
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+
+task:
+  get:
+    operationId: getInboundA2ATask
+    summary: Retrieve a caller-scoped inbound A2A task
+    tags: [A2A]
+    security:
+      - ManagementBearerAuth: []
+      - BearerAuth: []
+    parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema: { type: string }
+    responses:
+      '200':
+        description: A2A task state
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      '403':
+        description: Caller authority is invalid
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      '404':
+        $ref: '../../openapi.yaml#/components/responses/NotFound'
