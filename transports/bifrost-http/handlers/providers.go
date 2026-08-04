@@ -139,6 +139,7 @@ func (h *ProviderHandler) RegisterRoutes(r *router.Router, middlewares ...schema
 	r.GET("/api/keys", lib.ChainMiddlewares(h.listKeys, middlewares...))
 	r.GET("/api/v1/agent-model-cards", lib.ChainMiddlewares(h.listAgentModelCardsV1, middlewares...))
 	r.GET("/api/v1/agent-model-cards/detail", lib.ChainMiddlewares(h.getAgentModelCardV1, middlewares...))
+	r.GET("/api/v1/agent-model-cards/export", lib.ChainMiddlewares(h.exportAgentModelCardsV1, middlewares...))
 	r.POST("/api/v1/agent-model-cards/validate", lib.ChainMiddlewares(h.validateAgentModelCardV1, middlewares...))
 	r.GET("/api/models", lib.ChainMiddlewares(h.listModels, middlewares...))
 	r.GET("/api/models/details", lib.ChainMiddlewares(h.listModelDetails, middlewares...))
