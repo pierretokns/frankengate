@@ -1,0 +1,58 @@
+{
+  "artifacts": [
+    {
+      "artifactId": "artifact-summary-001",
+      "description": "Summary generated for the completed task.",
+      "name": "summary.txt",
+      "parts": [
+        {
+          "mediaType": "text/plain",
+          "text": "The task completed and produced a stable summary artifact."
+        }
+      ]
+    }
+  ],
+  "contextId": "ctx-golden-001",
+  "history": [
+    {
+      "messageId": "msg-user-001",
+      "parts": [
+        {
+          "mediaType": "text/plain",
+          "text": "Summarize the task output."
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "messageId": "msg-agent-001",
+      "parts": [
+        {
+          "mediaType": "text/plain",
+          "text": "The task completed and produced a stable summary artifact."
+        }
+      ],
+      "role": "agent",
+      "taskId": "task-golden-001"
+    }
+  ],
+  "id": "task-golden-001",
+  "metadata": {
+    "fixture": "task.completed-with-artifact.v1"
+  },
+  "status": {
+    "message": {
+      "messageId": "msg-status-001",
+      "parts": [
+        {
+          "mediaType": "text/plain",
+          "text": "Task completed."
+        }
+      ],
+      "role": "agent",
+      "taskId": "task-golden-001"
+    },
+    "state": "TASK_STATE_COMPLETED",
+    "timestamp": "2026-08-04T00:00:00Z"
+  }
+}

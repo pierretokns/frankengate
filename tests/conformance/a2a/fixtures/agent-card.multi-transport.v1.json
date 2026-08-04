@@ -1,0 +1,73 @@
+{
+  "capabilities": {
+    "extendedAgentCard": true,
+    "pushNotifications": true,
+    "streaming": true
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "description": "Minimal official-source-derived Agent Card for FrankenGate conformance fixtures.",
+  "documentationUrl": "https://example.invalid/a2a/docs",
+  "name": "FrankenGate Golden Agent",
+  "provider": {
+    "organization": "Maxim AI",
+    "url": "https://getmaxim.ai"
+  },
+  "securityRequirements": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "securitySchemes": {
+    "bearerAuth": {
+      "bearerFormat": "JWT",
+      "scheme": "bearer",
+      "type": "http"
+    }
+  },
+  "skills": [
+    {
+      "description": "Summarizes a provided task input and returns an artifact.",
+      "examples": [
+        "Summarize the latest task output."
+      ],
+      "id": "summarize-task",
+      "inputModes": [
+        "text/plain"
+      ],
+      "name": "Summarize Task",
+      "outputModes": [
+        "text/plain",
+        "application/json"
+      ],
+      "tags": [
+        "summary",
+        "artifact"
+      ]
+    }
+  ],
+  "supportedInterfaces": [
+    {
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0",
+      "url": "https://example.invalid/a2a/jsonrpc"
+    },
+    {
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0",
+      "url": "https://example.invalid/a2a/v1"
+    },
+    {
+      "protocolBinding": "GRPC",
+      "protocolVersion": "1.0",
+      "url": "https://example.invalid/a2a/grpc"
+    }
+  ],
+  "version": "2026.08.04"
+}

@@ -1,0 +1,75 @@
+{
+  "contentType": "text/event-stream",
+  "events": [
+    {
+      "data": {
+        "contextId": "ctx-stream-001",
+        "id": "task-stream-001",
+        "status": {
+          "state": "TASK_STATE_SUBMITTED",
+          "timestamp": "2026-08-04T00:00:00Z"
+        }
+      },
+      "event": "message",
+      "id": "1"
+    },
+    {
+      "data": {
+        "contextId": "ctx-stream-001",
+        "status": {
+          "message": {
+            "messageId": "msg-stream-working-001",
+            "parts": [
+              {
+                "mediaType": "text/plain",
+                "text": "Working on the request."
+              }
+            ],
+            "role": "agent",
+            "taskId": "task-stream-001"
+          },
+          "state": "TASK_STATE_WORKING",
+          "timestamp": "2026-08-04T00:00:01Z"
+        },
+        "taskId": "task-stream-001"
+      },
+      "event": "message",
+      "id": "2"
+    },
+    {
+      "data": {
+        "append": false,
+        "artifact": {
+          "artifactId": "artifact-stream-001",
+          "name": "stream-result.json",
+          "parts": [
+            {
+              "data": {
+                "answer": "complete"
+              },
+              "mediaType": "application/json"
+            }
+          ]
+        },
+        "contextId": "ctx-stream-001",
+        "lastChunk": true,
+        "taskId": "task-stream-001"
+      },
+      "event": "message",
+      "id": "3"
+    },
+    {
+      "data": {
+        "contextId": "ctx-stream-001",
+        "status": {
+          "state": "TASK_STATE_COMPLETED",
+          "timestamp": "2026-08-04T00:00:02Z"
+        },
+        "taskId": "task-stream-001"
+      },
+      "event": "message",
+      "id": "4"
+    }
+  ],
+  "wireFormat": "server-sent-events"
+}

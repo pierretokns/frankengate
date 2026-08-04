@@ -1,0 +1,39 @@
+{
+  "agentCardSecurity": {
+    "securityRequirements": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "httpChallenge": {
+    "headers": {
+      "WWW-Authenticate": "Bearer realm=\"a2a\", error=\"invalid_token\""
+    },
+    "status": 401
+  },
+  "jsonrpcError": {
+    "error": {
+      "code": -32001,
+      "data": {
+        "securitySchemes": [
+          "bearerAuth"
+        ],
+        "taskStatus": {
+          "state": "TASK_STATE_AUTH_REQUIRED",
+          "timestamp": "2026-08-04T00:00:00Z"
+        }
+      },
+      "message": "Authentication required"
+    },
+    "id": "auth-required-001",
+    "jsonrpc": "2.0"
+  }
+}

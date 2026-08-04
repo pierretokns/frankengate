@@ -1,0 +1,149 @@
+{
+  "fixtures": [
+    {
+      "case": "agent_card",
+      "intendedUse": "Validate v1 Agent Card transport, version, capability, and security advertisement.",
+      "path": "fixtures/agent-card.multi-transport.v1.json",
+      "sha256": "01fa3a70f7cfc463b445591a809f15ee5e5393d3f6653b409bcbc60512d07f1b",
+      "source": {
+        "license": "Apache-2.0",
+        "ref": "5996b79f9cefa6fc390980e383e358a66fb9e49e",
+        "repository": "https://github.com/a2aproject/a2a-tck",
+        "sourcePath": "specification/a2a.json",
+        "sourceSha256": "175ae531b96bcd6bb809bacdbe5c696a0b45d2cca3af3c94a4f03cde51be9793",
+        "url": "https://github.com/a2aproject/a2a-tck/blob/5996b79f9cefa6fc390980e383e358a66fb9e49e/specification/a2a.json"
+      }
+    },
+    {
+      "case": "task",
+      "intendedUse": "Validate a stable completed task snapshot with history, status, and artifact output.",
+      "path": "fixtures/task.completed-with-artifact.v1.json",
+      "sha256": "7dbb3600773ba231b88d3e7a413074c9bf7748143ccb83a8b3356864a1570e8a",
+      "source": {
+        "license": "Apache-2.0",
+        "ref": "5996b79f9cefa6fc390980e383e358a66fb9e49e",
+        "repository": "https://github.com/a2aproject/a2a-tck",
+        "secondarySources": [
+          {
+            "license": "Apache-2.0",
+            "ref": "cff67270d1da52bad96172c57580dad9b002aa11",
+            "repository": "https://github.com/a2aproject/a2a-python",
+            "sourcePath": "src/a2a/helpers/proto_helpers.py",
+            "sourceSha256": "fa6a16b26b8d1d30bbc842700c5d3c42f6da33b28a2b8688e83892d87ec7baea",
+            "url": "https://github.com/a2aproject/a2a-python/blob/cff67270d1da52bad96172c57580dad9b002aa11/src/a2a/helpers/proto_helpers.py"
+          }
+        ],
+        "sourcePath": "specification/a2a.json",
+        "sourceSha256": "175ae531b96bcd6bb809bacdbe5c696a0b45d2cca3af3c94a4f03cde51be9793",
+        "url": "https://github.com/a2aproject/a2a-tck/blob/5996b79f9cefa6fc390980e383e358a66fb9e49e/specification/a2a.json"
+      }
+    },
+    {
+      "case": "streaming_event",
+      "intendedUse": "Validate decoded SSE lifecycle ordering for task, status update, artifact update, and completion events.",
+      "path": "fixtures/stream.task-lifecycle-sse.v1.json",
+      "sha256": "3246f9eef10abb1744707e662c788e2b4b9b6339914f1464231db81a33d3c8f1",
+      "source": {
+        "license": "Apache-2.0",
+        "ref": "5996b79f9cefa6fc390980e383e358a66fb9e49e",
+        "repository": "https://github.com/a2aproject/a2a-tck",
+        "secondarySources": [
+          {
+            "license": "Apache-2.0",
+            "ref": "cff67270d1da52bad96172c57580dad9b002aa11",
+            "repository": "https://github.com/a2aproject/a2a-python",
+            "sourcePath": "src/a2a/helpers/proto_helpers.py",
+            "sourceSha256": "fa6a16b26b8d1d30bbc842700c5d3c42f6da33b28a2b8688e83892d87ec7baea",
+            "url": "https://github.com/a2aproject/a2a-python/blob/cff67270d1da52bad96172c57580dad9b002aa11/src/a2a/helpers/proto_helpers.py"
+          }
+        ],
+        "sourcePath": "specification/a2a.json",
+        "sourceSha256": "175ae531b96bcd6bb809bacdbe5c696a0b45d2cca3af3c94a4f03cde51be9793",
+        "url": "https://github.com/a2aproject/a2a-tck/blob/5996b79f9cefa6fc390980e383e358a66fb9e49e/specification/a2a.json"
+      }
+    },
+    {
+      "case": "artifact",
+      "intendedUse": "Validate artifact part handling across text, structured data, and base64 raw file content.",
+      "path": "fixtures/artifact.file-data.v1.json",
+      "sha256": "a8e788f72081d9bdef438656d12c3029e09048585f7269678b59410c7a618cf4",
+      "source": {
+        "license": "Apache-2.0",
+        "ref": "5996b79f9cefa6fc390980e383e358a66fb9e49e",
+        "repository": "https://github.com/a2aproject/a2a-tck",
+        "secondarySources": [
+          {
+            "license": "Apache-2.0",
+            "ref": "cff67270d1da52bad96172c57580dad9b002aa11",
+            "repository": "https://github.com/a2aproject/a2a-python",
+            "sourcePath": "src/a2a/helpers/proto_helpers.py",
+            "sourceSha256": "fa6a16b26b8d1d30bbc842700c5d3c42f6da33b28a2b8688e83892d87ec7baea",
+            "url": "https://github.com/a2aproject/a2a-python/blob/cff67270d1da52bad96172c57580dad9b002aa11/src/a2a/helpers/proto_helpers.py"
+          }
+        ],
+        "sourcePath": "specification/a2a.json",
+        "sourceSha256": "175ae531b96bcd6bb809bacdbe5c696a0b45d2cca3af3c94a4f03cde51be9793",
+        "url": "https://github.com/a2aproject/a2a-tck/blob/5996b79f9cefa6fc390980e383e358a66fb9e49e/specification/a2a.json"
+      }
+    },
+    {
+      "case": "auth_error",
+      "intendedUse": "Validate security scheme advertisement, HTTP bearer challenge preservation, and A2A auth-required task status mapping.",
+      "path": "fixtures/auth-error.bearer-required.v1.json",
+      "sha256": "4e37e0d4dee0cb3aaebacc46a676d7baf46c1e809e4723dfa4a53fc95e0b3739",
+      "source": {
+        "license": "Apache-2.0",
+        "ref": "5996b79f9cefa6fc390980e383e358a66fb9e49e",
+        "repository": "https://github.com/a2aproject/a2a-tck",
+        "secondarySources": [
+          {
+            "license": "Apache-2.0",
+            "ref": "5996b79f9cefa6fc390980e383e358a66fb9e49e",
+            "repository": "https://github.com/a2aproject/a2a-tck",
+            "sourcePath": "docs/AUTHENTICATION_SETUP.md",
+            "sourceSha256": "63356591f216c4cb250e9ff5a815e0890ac3a971f4f44dbe2f45452a11808f74",
+            "url": "https://github.com/a2aproject/a2a-tck/blob/5996b79f9cefa6fc390980e383e358a66fb9e49e/docs/AUTHENTICATION_SETUP.md"
+          }
+        ],
+        "sourcePath": "specification/a2a.json",
+        "sourceSha256": "175ae531b96bcd6bb809bacdbe5c696a0b45d2cca3af3c94a4f03cde51be9793",
+        "url": "https://github.com/a2aproject/a2a-tck/blob/5996b79f9cefa6fc390980e383e358a66fb9e49e/specification/a2a.json"
+      }
+    },
+    {
+      "case": "version_negotiation",
+      "intendedUse": "Validate deterministic highest-compatible interface selection from declared AgentInterface entries.",
+      "path": "fixtures/version-negotiation.supported-interfaces.v1.json",
+      "sha256": "753d6802c9b9cae4586eae6bbd6d1bf3ee5bcd6a9cf1f47a49416ba0bd78f14c",
+      "source": {
+        "license": "Apache-2.0",
+        "ref": "dda32acd9e7602c0414ef05b580730cb83d10906",
+        "repository": "https://github.com/a2aproject/a2a-go",
+        "secondarySources": [
+          {
+            "license": "Apache-2.0",
+            "ref": "dda32acd9e7602c0414ef05b580730cb83d10906",
+            "repository": "https://github.com/a2aproject/a2a-go",
+            "sourcePath": "a2a/core.go",
+            "sourceSha256": "d6f927318cf31b319a87bfe4f0817de4da09be002f1edca8f369563450ab36cd",
+            "url": "https://github.com/a2aproject/a2a-go/blob/dda32acd9e7602c0414ef05b580730cb83d10906/a2a/core.go"
+          },
+          {
+            "license": "Apache-2.0",
+            "ref": "dda32acd9e7602c0414ef05b580730cb83d10906",
+            "repository": "https://github.com/a2aproject/a2a-go",
+            "sourcePath": "a2a/agent.go",
+            "sourceSha256": "e36c5bbc252faefa3f61478864fb07b9ea658e7b1bfe1281263e6bdde3fe8d46",
+            "url": "https://github.com/a2aproject/a2a-go/blob/dda32acd9e7602c0414ef05b580730cb83d10906/a2a/agent.go"
+          }
+        ],
+        "sourcePath": "a2aclient/factory_test.go",
+        "sourceSha256": "9032e9de0830a78bea2a96b32f47b3c31cb50c7266e114533e8e463579f8a9da",
+        "url": "https://github.com/a2aproject/a2a-go/blob/dda32acd9e7602c0414ef05b580730cb83d10906/a2aclient/factory_test.go"
+      }
+    }
+  ],
+  "licensePolicy": "Fixtures are minimal hand-reduced golden payloads derived from official Apache-2.0 A2A sources. SDK runtimes, generated protocol code, sample agents, and TCK code are not copied.",
+  "observedAt": "2026-08-04",
+  "schemaVersion": "bifrost.a2a.fixture-manifest.v1"
+}
