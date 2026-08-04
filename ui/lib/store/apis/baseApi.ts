@@ -197,6 +197,7 @@ export const baseApi = createApi({
 		"AlertChannels",
 		"AlertRules",
 		"AlertHistory",
+		"AgentModelCards",
 	],
 	endpoints: () => ({}),
 });
