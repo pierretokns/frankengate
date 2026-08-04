@@ -68,7 +68,7 @@ define EXPOSE_ENV
 	fi
 endef
 
-.PHONY: all help dev dev-pulse build-ui build build-cli run run-cli install-air install-pulse clean test test-cli install-ui setup-workspace work-init work-clean docs docker-image docker-run cleanup-enterprise mod-tidy test-integrations-py test-integrations-ts install-playwright run-e2e run-e2e-ui run-e2e-headed run-e2e-api format ui install-newman run-provider-harness-test run-cli-harness-test test-semantic-cache test-semantic-cache-complete _test-semantic-cache-complete-inner helm-index
+.PHONY: all help dev dev-pulse build-ui build build-cli run run-cli install-air install-pulse clean test test-cli install-ui setup-workspace work-init work-clean docs docker-image docker-run cleanup-enterprise mod-tidy test-integrations-py test-integrations-ts install-playwright run-e2e run-e2e-ui run-e2e-headed run-e2e-api format ui install-newman run-provider-harness-test run-cli-harness-test test-semantic-cache test-semantic-cache-complete _test-semantic-cache-complete-inner helm-index test-a2a-conformance
 
 all: help
 
@@ -1234,7 +1234,13 @@ test-mcp: install-gotestsum setup-mcp-tests ## Run MCP tests (Usage: make test-m
 		exit 1; \
 	fi
 
-test-all: test-core test-framework test-plugins test-http-transport test test-cli ## Run all tests
+test-a2a-conformance: ## Run offline Agent Card/A2A conformance and Day-2 recovery gates
+	@$(ECHO) "$(GREEN)Running offline A2A conformance gates...$(NC)"
+	@python3 tests/conformance/a2a/recoverychecks.py
+	@python3 tests/conformance/a2a/validatefixtures.py
+	@cd framework && go test ./modelcatalog/agentcard ./modelcatalog/a2adiscovery ./modelcatalog/admission ./modelcatalog/a2abroker ./modelcatalog/evidence ./modelcatalog/health ./modelcatalog/inbound ./modelcatalog/provenance ./modelcatalog/registry ./modelcatalog/trust
+
+test-all: test-core test-framework test-plugins test-http-transport test test-cli test-a2a-conformance ## Run all tests
 	@$(ECHO) ""
 	@$(ECHO) "$(GREEN)═══════════════════════════════════════════════════════════$(NC)"
 	@$(ECHO) "$(GREEN)              All Tests Complete - Summary                 $(NC)"
