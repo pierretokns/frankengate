@@ -2,6 +2,9 @@ import {
 	AgentModelCardDetailRequest,
 	AgentModelCardDetailResponse,
 	AgentModelCardMetadataResponse,
+	AgentModelCardDiffResponse,
+	AgentModelCardEvidenceResponse,
+	AgentModelCardVersionsResponse,
 	AgentModelCardsListRequest,
 	AgentModelCardsListResponse,
 } from "@/lib/types/agentModelCards";
@@ -38,7 +41,19 @@ export const agentModelCardsApi = baseApi.injectEndpoints({
 			query: (params) => `/v1/agent-model-cards/metadata${buildAgentModelCardParams(params || undefined)}`,
 			providesTags: ["AgentModelCards"],
 		}),
+		getAgentModelCardVersions: builder.query<AgentModelCardVersionsResponse, AgentModelCardDetailRequest>({
+			query: ({ provider, model }) => `/v1/agent-model-cards/versions?provider=${encodeURIComponent(provider)}&model=${encodeURIComponent(model)}`,
+			providesTags: (_result, _error, { provider, model }) => [{ type: "AgentModelCards", id: `${provider}:${model}:versions` }],
+		}),
+		getAgentModelCardEvidence: builder.query<AgentModelCardEvidenceResponse, AgentModelCardDetailRequest>({
+			query: ({ provider, model }) => `/v1/agent-model-cards/evidence?provider=${encodeURIComponent(provider)}&model=${encodeURIComponent(model)}`,
+			providesTags: (_result, _error, { provider, model }) => [{ type: "AgentModelCards", id: `${provider}:${model}:evidence` }],
+		}),
+		getAgentModelCardDiff: builder.query<AgentModelCardDiffResponse, AgentModelCardDetailRequest & { fromRevision: string }>({
+			query: ({ provider, model, fromRevision }) => `/v1/agent-model-cards/diff?provider=${encodeURIComponent(provider)}&model=${encodeURIComponent(model)}&from_revision=${encodeURIComponent(fromRevision)}`,
+			providesTags: (_result, _error, { provider, model, fromRevision }) => [{ type: "AgentModelCards", id: `${provider}:${model}:diff:${fromRevision}` }],
+		}),
 	}),
 });
 
-export const { useGetAgentModelCardsQuery, useGetAgentModelCardQuery, useGetAgentModelCardMetadataQuery } = agentModelCardsApi;
+export const { useGetAgentModelCardsQuery, useGetAgentModelCardQuery, useGetAgentModelCardMetadataQuery, useGetAgentModelCardVersionsQuery, useGetAgentModelCardEvidenceQuery, useGetAgentModelCardDiffQuery } = agentModelCardsApi;

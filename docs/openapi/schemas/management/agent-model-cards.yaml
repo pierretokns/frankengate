@@ -49,6 +49,51 @@ AgentModelCardMetadataResponse:
         content_type: { type: string }
         filename: { type: string }
 
+AgentModelCardVersionsResponse:
+  type: object
+  required: [schema_version, card_schema_version, current, history_available, versions]
+  properties:
+    schema_version: { type: string }
+    card_schema_version: { type: string }
+    current: { $ref: '#/AgentModelCardVersion' }
+    history_available: { type: boolean }
+    versions: { type: array, items: { $ref: '#/AgentModelCardVersion' } }
+    reason_codes: { type: array, items: { type: string } }
+
+AgentModelCardVersion:
+  type: object
+  required: [id, generated_at, card_count]
+  properties:
+    id: { type: string }
+    generated_at: { type: string, format: date-time }
+    card_count: { type: integer }
+
+AgentModelCardDiffResponse:
+  type: object
+  required: [schema_version, card_schema_version, from_revision, to_revision, history_available, changes]
+  properties:
+    schema_version: { type: string }
+    card_schema_version: { type: string }
+    from_revision: { type: string }
+    to_revision: { type: string }
+    history_available: { type: boolean }
+    changes: { type: array, items: { type: string } }
+    reason_codes: { type: array, items: { type: string } }
+
+AgentModelCardEvidenceResponse:
+  type: object
+  required: [schema_version, card_schema_version, provider, model, revision, evidence_available, health_state]
+  properties:
+    schema_version: { type: string }
+    card_schema_version: { type: string }
+    provider: { type: string }
+    model: { type: string }
+    revision: { $ref: '#/AgentModelCardRevision' }
+    evidence_available: { type: boolean }
+    evaluation_sources: { type: array, items: { type: string } }
+    health_state: { type: string }
+    reason_codes: { type: array, items: { type: string } }
+
 AgentModelCardValidationResponse:
   type: object
   required: [schema_version, card_schema_version, valid]

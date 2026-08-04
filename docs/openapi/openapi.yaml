@@ -791,6 +791,12 @@ paths:
     $ref: './paths/management/agent-model-cards.yaml#/agent-model-cards'
   /api/v1/agent-model-cards/metadata:
     $ref: './paths/management/agent-model-cards.yaml#/metadata'
+  /api/v1/agent-model-cards/versions:
+    $ref: './paths/management/agent-model-cards.yaml#/versions'
+  /api/v1/agent-model-cards/diff:
+    $ref: './paths/management/agent-model-cards.yaml#/diff'
+  /api/v1/agent-model-cards/evidence:
+    $ref: './paths/management/agent-model-cards.yaml#/evidence'
   /api/v1/agent-model-cards/detail:
     $ref: './paths/management/agent-model-cards.yaml#/detail'
   /api/v1/agent-model-cards/export:

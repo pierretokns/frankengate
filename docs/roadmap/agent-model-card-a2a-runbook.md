@@ -11,6 +11,14 @@ authorization grant, or proof that a remote agent is safe to invoke.
   `unfiltered` are filters, not authorization bypasses.
 - `GET /api/v1/agent-model-cards/metadata` returns visibility-filtered
   revision/source metadata without card bodies.
+- `GET /api/v1/agent-model-cards/versions?provider=...&model=...` reports the
+  current immutable revision and whether durable history is available.
+- `GET /api/v1/agent-model-cards/diff?provider=...&model=...&from_revision=...`
+  returns an empty same-revision diff or an explicit unavailable-history result;
+  it never fabricates a comparison.
+- `GET /api/v1/agent-model-cards/evidence?provider=...&model=...` reports
+  evaluation-source hints and health/evidence availability. Missing stores are
+  returned as `unknown`/unavailable, never as a positive safety claim.
 - `GET /api/v1/agent-model-cards/detail?provider=...&model=...` returns one
   card with the compiled revision and schema version.
 - `GET /api/v1/agent-model-cards/export` emits a complete visible snapshot

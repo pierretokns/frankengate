@@ -38558,6 +38558,306 @@
         }
       }
     },
+    "/api/v1/agent-model-cards/versions": {
+      "get": {
+        "operationId": "getAgentModelCardVersions",
+        "summary": "Get current Agent Model Card revision and history availability",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current revision and explicit history availability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "current",
+                    "history_available",
+                    "versions"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "current": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "generated_at",
+                        "card_count"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "generated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "card_count": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "history_available": {
+                      "type": "boolean"
+                    },
+                    "versions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "generated_at",
+                          "card_count"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "generated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "card_count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "reason_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/diff": {
+      "get": {
+        "operationId": "diffAgentModelCard",
+        "summary": "Compare a card revision when history is available",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from_revision",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Safe diff or explicit unavailable-history result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "from_revision",
+                    "to_revision",
+                    "history_available",
+                    "changes"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "from_revision": {
+                      "type": "string"
+                    },
+                    "to_revision": {
+                      "type": "string"
+                    },
+                    "history_available": {
+                      "type": "boolean"
+                    },
+                    "changes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "reason_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agent-model-cards/evidence": {
+      "get": {
+        "operationId": "getAgentModelCardEvidence",
+        "summary": "Get evaluation and health evidence availability for a card",
+        "tags": [
+          "Agent Model Cards"
+        ],
+        "security": [
+          {
+            "ManagementBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence availability without a false safety claim",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "card_schema_version",
+                    "provider",
+                    "model",
+                    "revision",
+                    "evidence_available",
+                    "health_state"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "type": "string"
+                    },
+                    "card_schema_version": {
+                      "type": "string"
+                    },
+                    "provider": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "card_count"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "card_count": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "evidence_available": {
+                      "type": "boolean"
+                    },
+                    "evaluation_sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "health_state": {
+                      "type": "string"
+                    },
+                    "reason_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/agent-model-cards/detail": {
       "get": {
         "operationId": "getAgentModelCard",

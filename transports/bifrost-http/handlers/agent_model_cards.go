@@ -36,6 +36,8 @@ const (
 	agentModelCardReasonWireModelRequired    = "agent_model_card_wire_model_required"
 	agentModelCardReasonCapabilityInvalid    = "agent_model_card_capability_state_invalid"
 	agentModelCardReasonSourceInvalid        = "agent_model_card_source_invalid"
+	agentModelCardReasonHistoryUnavailable   = "agent_model_card_history_unavailable"
+	agentModelCardReasonEvidenceUnavailable  = "agent_model_card_evidence_unavailable"
 	agentModelCardReasonInvalid              = "agent_model_card_invalid"
 )
 
@@ -83,6 +85,43 @@ type agentModelCardMetadataResponse struct {
 	DeprecatedBehavior modelcatalog.AgentModelCardDeprecatedBehavior `json:"deprecated_behavior"`
 	VisibleCardCount   int                                           `json:"visible_card_count"`
 	Export             agentModelCardExportMetadata                  `json:"export"`
+}
+
+type agentModelCardVersionsResponse struct {
+	SchemaVersion     string                  `json:"schema_version"`
+	CardSchemaVersion string                  `json:"card_schema_version"`
+	Current           agentModelCardVersion   `json:"current"`
+	HistoryAvailable  bool                    `json:"history_available"`
+	Versions          []agentModelCardVersion `json:"versions"`
+	ReasonCodes       []string                `json:"reason_codes,omitempty"`
+}
+
+type agentModelCardVersion struct {
+	ID          string `json:"id"`
+	GeneratedAt string `json:"generated_at"`
+	CardCount   int    `json:"card_count"`
+}
+
+type agentModelCardDiffResponse struct {
+	SchemaVersion     string   `json:"schema_version"`
+	CardSchemaVersion string   `json:"card_schema_version"`
+	FromRevision      string   `json:"from_revision"`
+	ToRevision        string   `json:"to_revision"`
+	HistoryAvailable  bool     `json:"history_available"`
+	Changes           []string `json:"changes"`
+	ReasonCodes       []string `json:"reason_codes,omitempty"`
+}
+
+type agentModelCardEvidenceResponse struct {
+	SchemaVersion     string                                  `json:"schema_version"`
+	CardSchemaVersion string                                  `json:"card_schema_version"`
+	Provider          schemas.ModelProvider                   `json:"provider"`
+	Model             string                                  `json:"model"`
+	Revision          modelcatalog.AgentModelCardRevision     `json:"revision"`
+	EvidenceAvailable bool                                    `json:"evidence_available"`
+	EvaluationSources []modelcatalog.AgentModelCardSourceKind `json:"evaluation_sources,omitempty"`
+	HealthState       string                                  `json:"health_state"`
+	ReasonCodes       []string                                `json:"reason_codes,omitempty"`
 }
 
 type agentModelCardExportMetadata struct {
@@ -173,6 +212,61 @@ func (h *ProviderHandler) getAgentModelCardMetadataV1(ctx *fasthttp.RequestCtx) 
 	})
 }
 
+// getAgentModelCardVersionsV1 reports the current immutable snapshot and
+// explicitly states when durable version history is not configured.
+func (h *ProviderHandler) getAgentModelCardVersionsV1(ctx *fasthttp.RequestCtx) {
+	snapshot, card, ok := h.visibleAgentModelCardTarget(ctx)
+	if !ok {
+		return
+	}
+	current := agentModelCardVersion{ID: snapshot.Revision.ID, GeneratedAt: snapshot.GeneratedAt.UTC().Format(time.RFC3339Nano), CardCount: snapshot.Revision.CardCount}
+	sendAgentModelCardJSONWithETag(ctx, agentModelCardVersionsResponse{
+		SchemaVersion: agentModelCardAPIResponseSchemaVersion, CardSchemaVersion: snapshot.SchemaVersion,
+		Current: current, Versions: []agentModelCardVersion{current},
+		HistoryAvailable: false, ReasonCodes: []string{agentModelCardReasonHistoryUnavailable},
+	})
+	_ = card
+}
+
+// getAgentModelCardDiffV1 is a safe no-history diff: equal revisions produce
+// an empty diff; differing revisions never produce an invented comparison.
+func (h *ProviderHandler) getAgentModelCardDiffV1(ctx *fasthttp.RequestCtx) {
+	from := strings.TrimSpace(string(ctx.QueryArgs().Peek("from_revision")))
+	if from == "" {
+		sendAgentModelCardError(ctx, fasthttp.StatusBadRequest, agentModelCardReasonMissingParameter, "from_revision is required")
+		return
+	}
+	snapshot, _, ok := h.visibleAgentModelCardTarget(ctx)
+	if !ok {
+		return
+	}
+	changes := []string{}
+	reasons := []string{}
+	if from != snapshot.Revision.ID {
+		reasons = []string{agentModelCardReasonHistoryUnavailable}
+	}
+	sendAgentModelCardJSONWithETag(ctx, agentModelCardDiffResponse{
+		SchemaVersion: agentModelCardAPIResponseSchemaVersion, CardSchemaVersion: snapshot.SchemaVersion,
+		FromRevision: from, ToRevision: snapshot.Revision.ID, HistoryAvailable: false,
+		Changes: changes, ReasonCodes: reasons,
+	})
+}
+
+// getAgentModelCardEvidenceV1 exposes evidence availability without treating
+// missing evaluation/health stores as a positive safety or routing claim.
+func (h *ProviderHandler) getAgentModelCardEvidenceV1(ctx *fasthttp.RequestCtx) {
+	snapshot, card, ok := h.visibleAgentModelCardTarget(ctx)
+	if !ok {
+		return
+	}
+	sendAgentModelCardJSONWithETag(ctx, agentModelCardEvidenceResponse{
+		SchemaVersion: agentModelCardAPIResponseSchemaVersion, CardSchemaVersion: snapshot.SchemaVersion,
+		Provider: card.Provider, Model: card.Model, Revision: snapshot.Revision,
+		EvidenceAvailable: false, EvaluationSources: card.Sources, HealthState: "unknown",
+		ReasonCodes: []string{agentModelCardReasonEvidenceUnavailable},
+	})
+}
+
 // getAgentModelCardV1 handles GET /api/v1/agent-model-cards/detail.
 func (h *ProviderHandler) getAgentModelCardV1(ctx *fasthttp.RequestCtx) {
 	provider := schemas.ModelProvider(strings.TrimSpace(string(ctx.QueryArgs().Peek("provider"))))
@@ -210,6 +304,32 @@ func (h *ProviderHandler) getAgentModelCardV1(ctx *fasthttp.RequestCtx) {
 	}
 
 	sendAgentModelCardError(ctx, fasthttp.StatusNotFound, agentModelCardReasonNotFound, "agent model card not found")
+}
+
+func (h *ProviderHandler) visibleAgentModelCardTarget(ctx *fasthttp.RequestCtx) (modelcatalog.AgentModelCardSnapshot, modelcatalog.AgentModelCard, bool) {
+	provider := schemas.ModelProvider(strings.TrimSpace(string(ctx.QueryArgs().Peek("provider"))))
+	model := strings.TrimSpace(string(ctx.QueryArgs().Peek("model")))
+	if provider == "" || model == "" {
+		sendAgentModelCardError(ctx, fasthttp.StatusBadRequest, agentModelCardReasonMissingParameter, "provider and model query parameters are required")
+		return modelcatalog.AgentModelCardSnapshot{}, modelcatalog.AgentModelCard{}, false
+	}
+	query, ok := h.parseModelListQuery(ctx, 0)
+	if !ok {
+		return modelcatalog.AgentModelCardSnapshot{}, modelcatalog.AgentModelCard{}, false
+	}
+	query.Provider, query.Query, query.Limit, query.Offset = provider, "", 0, 0
+	snapshot, cards, err := h.visibleAgentModelCards(query)
+	if err != nil {
+		h.sendAgentModelCardReadError(ctx, err)
+		return modelcatalog.AgentModelCardSnapshot{}, modelcatalog.AgentModelCard{}, false
+	}
+	for _, card := range cards {
+		if card.Provider == provider && card.Model == model {
+			return snapshot, card, true
+		}
+	}
+	sendAgentModelCardError(ctx, fasthttp.StatusNotFound, agentModelCardReasonNotFound, "agent model card not found")
+	return modelcatalog.AgentModelCardSnapshot{}, modelcatalog.AgentModelCard{}, false
 }
 
 // exportAgentModelCardsV1 returns the complete visible snapshot for offline

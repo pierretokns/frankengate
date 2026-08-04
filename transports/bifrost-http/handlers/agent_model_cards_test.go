@@ -147,3 +147,63 @@ func TestAgentModelCardMetadataUnavailableIsReasonCoded(t *testing.T) {
 		t.Fatalf("expected catalog-unavailable reason code, got %#v", bifrostErr.Error)
 	}
 }
+
+func TestAgentModelCardHistoryAndEvidenceAreExplicitlyUnavailable(t *testing.T) {
+	catalog := modelcatalog.NewTestCatalog(nil)
+	catalog.UpsertLive(schemas.OpenAI, "key-a", false, []string{"gpt-4o"})
+	h := &ProviderHandler{
+		inMemoryStore: &lib.Config{
+			Providers:    map[schemas.ModelProvider]configstore.ProviderConfig{schemas.OpenAI: {}},
+			ModelCatalog: catalog,
+		},
+		modelsManager: &mockModelsManager{filtered: map[schemas.ModelProvider][]string{
+			schemas.OpenAI: {"gpt-4o"},
+		}},
+	}
+
+	versionsCtx := newAgentModelCardRequest("/api/v1/agent-model-cards/versions?provider=openai&model=gpt-4o")
+	h.getAgentModelCardVersionsV1(versionsCtx)
+	if got := versionsCtx.Response.StatusCode(); got != fasthttp.StatusOK {
+		t.Fatalf("versions status = %d, body=%s", got, versionsCtx.Response.Body())
+	}
+	var versions agentModelCardVersionsResponse
+	if err := json.Unmarshal(versionsCtx.Response.Body(), &versions); err != nil {
+		t.Fatalf("decode versions: %v", err)
+	}
+	if versions.HistoryAvailable || len(versions.Versions) != 1 || len(versions.ReasonCodes) != 1 || versions.ReasonCodes[0] != agentModelCardReasonHistoryUnavailable {
+		t.Fatalf("expected bounded current-only history response, got %#v", versions)
+	}
+
+	diffCtx := newAgentModelCardRequest("/api/v1/agent-model-cards/diff?provider=openai&model=gpt-4o&from_revision=old-revision")
+	h.getAgentModelCardDiffV1(diffCtx)
+	if got := diffCtx.Response.StatusCode(); got != fasthttp.StatusOK {
+		t.Fatalf("diff status = %d, body=%s", got, diffCtx.Response.Body())
+	}
+	var diff agentModelCardDiffResponse
+	if err := json.Unmarshal(diffCtx.Response.Body(), &diff); err != nil {
+		t.Fatalf("decode diff: %v", err)
+	}
+	if diff.HistoryAvailable || len(diff.Changes) != 0 || len(diff.ReasonCodes) != 1 || diff.ReasonCodes[0] != agentModelCardReasonHistoryUnavailable {
+		t.Fatalf("expected no-history diff response, got %#v", diff)
+	}
+
+	evidenceCtx := newAgentModelCardRequest("/api/v1/agent-model-cards/evidence?provider=openai&model=gpt-4o")
+	h.getAgentModelCardEvidenceV1(evidenceCtx)
+	if got := evidenceCtx.Response.StatusCode(); got != fasthttp.StatusOK {
+		t.Fatalf("evidence status = %d, body=%s", got, evidenceCtx.Response.Body())
+	}
+	var evidence agentModelCardEvidenceResponse
+	if err := json.Unmarshal(evidenceCtx.Response.Body(), &evidence); err != nil {
+		t.Fatalf("decode evidence: %v", err)
+	}
+	if evidence.EvidenceAvailable || evidence.HealthState != "unknown" || len(evidence.ReasonCodes) != 1 || evidence.ReasonCodes[0] != agentModelCardReasonEvidenceUnavailable {
+		t.Fatalf("expected explicit unavailable evidence, got %#v", evidence)
+	}
+}
+
+func newAgentModelCardRequest(uri string) *fasthttp.RequestCtx {
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.Header.SetMethod(fasthttp.MethodGet)
+	ctx.Request.SetRequestURI(uri)
+	return ctx
+}

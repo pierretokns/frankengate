@@ -121,6 +121,43 @@ export interface AgentModelCardMetadataResponse {
 	};
 }
 
+export interface AgentModelCardVersion {
+	id: string;
+	generated_at: string;
+	card_count: number;
+}
+
+export interface AgentModelCardVersionsResponse {
+	schema_version: string;
+	card_schema_version: string;
+	current: AgentModelCardVersion;
+	history_available: boolean;
+	versions: AgentModelCardVersion[];
+	reason_codes?: string[];
+}
+
+export interface AgentModelCardDiffResponse {
+	schema_version: string;
+	card_schema_version: string;
+	from_revision: string;
+	to_revision: string;
+	history_available: boolean;
+	changes: string[];
+	reason_codes?: string[];
+}
+
+export interface AgentModelCardEvidenceResponse {
+	schema_version: string;
+	card_schema_version: string;
+	provider: string;
+	model: string;
+	revision: AgentModelCardRevision;
+	evidence_available: boolean;
+	evaluation_sources?: AgentModelCardSourceKind[];
+	health_state: string;
+	reason_codes?: string[];
+}
+
 export interface AgentModelCardsListRequest {
 	query?: string;
 	provider?: string;

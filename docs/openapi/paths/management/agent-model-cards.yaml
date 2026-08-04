@@ -61,6 +61,61 @@ metadata:
               type: object
               additionalProperties: true
 
+versions:
+  get:
+    operationId: getAgentModelCardVersions
+    summary: Get current Agent Model Card revision and history availability
+    tags: [Agent Model Cards]
+    security:
+      - ManagementBearerAuth: []
+    parameters:
+      - { name: provider, in: query, required: true, schema: { type: string } }
+      - { name: model, in: query, required: true, schema: { type: string } }
+    responses:
+      '200':
+        description: Current revision and explicit history availability
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardVersionsResponse'
+
+diff:
+  get:
+    operationId: diffAgentModelCard
+    summary: Compare a card revision when history is available
+    tags: [Agent Model Cards]
+    security:
+      - ManagementBearerAuth: []
+    parameters:
+      - { name: provider, in: query, required: true, schema: { type: string } }
+      - { name: model, in: query, required: true, schema: { type: string } }
+      - { name: from_revision, in: query, required: true, schema: { type: string } }
+    responses:
+      '200':
+        description: Safe diff or explicit unavailable-history result
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardDiffResponse'
+
+evidence:
+  get:
+    operationId: getAgentModelCardEvidence
+    summary: Get evaluation and health evidence availability for a card
+    tags: [Agent Model Cards]
+    security:
+      - ManagementBearerAuth: []
+    parameters:
+      - { name: provider, in: query, required: true, schema: { type: string } }
+      - { name: model, in: query, required: true, schema: { type: string } }
+    responses:
+      '200':
+        description: Evidence availability without a false safety claim
+        content:
+          application/json:
+            schema:
+              $ref: '../../schemas/management/agent-model-cards.yaml#/AgentModelCardEvidenceResponse'
+
 detail:
   get:
     operationId: getAgentModelCard
