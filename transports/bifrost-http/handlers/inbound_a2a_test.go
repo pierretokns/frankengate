@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
 	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
+	"github.com/maximhq/bifrost/framework/modelcatalog"
+	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 	"github.com/valyala/fasthttp"
 )
 
@@ -27,6 +30,23 @@ func TestInboundA2ATaskPartitionFailsClosedAndSeparatesTenants(t *testing.T) {
 	var missing fasthttp.RequestCtx
 	if _, err := inboundA2ATaskPartition(&missing); err == nil {
 		t.Fatal("missing trusted principal must fail closed")
+	}
+}
+
+func TestInboundRecordCarriesLiveModelCatalogRevision(t *testing.T) {
+	catalog := modelcatalog.NewTestCatalog(nil)
+	config := &lib.Config{ModelCatalog: catalog}
+	record := inboundRecordForConfig("https://gateway.example", config)
+	if record.Card.Version == "1" || record.Card.Version == "" {
+		t.Fatalf("expected live model catalog revision in card version, got %q", record.Card.Version)
+	}
+	raw, ok := record.Card.Extensions["frankengate.model_catalog"]
+	if !ok {
+		t.Fatal("expected model catalog metadata extension")
+	}
+	var metadata map[string]any
+	if err := json.Unmarshal(raw, &metadata); err != nil || metadata["revision"] != record.Card.Version {
+		t.Fatalf("invalid model catalog metadata: %s / %#v", raw, metadata)
 	}
 }
 

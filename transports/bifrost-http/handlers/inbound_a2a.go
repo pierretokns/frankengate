@@ -69,7 +69,7 @@ func (h *InboundA2AHandler) agentCard(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadRequest, "a2a public host is unavailable")
 		return
 	}
-	record := defaultInboundRecord(base)
+	record := inboundRecordForConfig(base, h.config)
 	body, err := inbound.MarshalAgentCardJSON(record)
 	if err != nil {
 		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("generate agent card: %v", err))
@@ -190,7 +190,7 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	defer cancel()
-	attachInboundA2AProvenance(bifrostCtx, ctx, taskID, h.currentTime())
+	attachInboundA2AProvenance(bifrostCtx, ctx, h.config, taskID, h.currentTime())
 	requestInput := &schemas.BifrostChatRequest{
 		Provider: schemas.ModelProvider(params.Configuration.Provider),
 		Model:    strings.TrimSpace(params.Configuration.Model),
@@ -305,7 +305,7 @@ func scopedA2ATaskKey(partition, taskID string) string {
 	return partition + "\x00" + taskID
 }
 
-func attachInboundA2AProvenance(bifrostCtx *schemas.BifrostContext, requestCtx *fasthttp.RequestCtx, taskID string, observedAt time.Time) {
+func attachInboundA2AProvenance(bifrostCtx *schemas.BifrostContext, requestCtx *fasthttp.RequestCtx, config *lib.Config, taskID string, observedAt time.Time) {
 	if bifrostCtx == nil || requestCtx == nil {
 		return
 	}
@@ -324,7 +324,7 @@ func attachInboundA2AProvenance(bifrostCtx *schemas.BifrostContext, requestCtx *
 		RequestID:          stringValue(requestCtx.UserValue(schemas.BifrostContextKeyRequestID)),
 		TraceID:            stringValue(bifrostCtx.Value(schemas.BifrostContextKeyTraceID)),
 		TaskID:             taskID,
-		CardDigest:         inboundAgentCardDigest(requestCtx),
+		CardDigest:         inboundAgentCardDigest(requestCtx, config),
 		CardRevision:       "inbound-agent-v1",
 		PolicyEpoch:        policyEpoch,
 		CapabilityDecision: "admitted",
@@ -356,17 +356,43 @@ func stringValue(value interface{}) string {
 	return result
 }
 
-func inboundAgentCardDigest(ctx *fasthttp.RequestCtx) string {
+func inboundAgentCardDigest(ctx *fasthttp.RequestCtx, config *lib.Config) string {
 	base := inboundBaseURL(ctx)
 	if base == "" {
 		return ""
 	}
-	body, err := inbound.MarshalAgentCardJSON(defaultInboundRecord(base))
+	body, err := inbound.MarshalAgentCardJSON(inboundRecordForConfig(base, config))
 	if err != nil {
 		return ""
 	}
 	sum := sha256.Sum256(body)
 	return "sha256:" + hex.EncodeToString(sum[:])
+}
+
+// inboundRecordForConfig is the production workflow-registry seam. The
+// transport always exposes the governed gateway workflow, while a live model
+// catalog revision is included as bounded card metadata so a publisher can
+// prove which center-plane snapshot produced the card.
+func inboundRecordForConfig(base string, config *lib.Config) inbound.Record {
+	record := defaultInboundRecord(base)
+	if config == nil || config.ModelCatalog == nil {
+		return record
+	}
+	snapshot := config.ModelCatalog.CompileAgentModelCards()
+	if snapshot.Revision.ID != "" {
+		record.Card.Version = snapshot.Revision.ID
+	}
+	if record.Card.Extensions == nil {
+		record.Card.Extensions = make(map[string]json.RawMessage)
+	}
+	metadata, err := json.Marshal(map[string]any{
+		"revision":   snapshot.Revision.ID,
+		"card_count": snapshot.Revision.CardCount,
+	})
+	if err == nil {
+		record.Card.Extensions["frankengate.model_catalog"] = metadata
+	}
+	return record
 }
 
 func (h *InboundA2AHandler) writeRPCResult(ctx *fasthttp.RequestCtx, id json.RawMessage, result interface{}) {
