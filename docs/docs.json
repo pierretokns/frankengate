@@ -178,6 +178,7 @@
             "pages": [
               "mcp/overview",
               "mcp/connecting-to-servers",
+              "mcp/version-compatibility",
               {
                 "group": "Authentication",
                 "icon": "shield-check",

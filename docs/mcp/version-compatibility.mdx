@@ -1,0 +1,42 @@
+---
+title: "MCP protocol version compatibility"
+sidebarTitle: "Version compatibility"
+description: "How FrankenGate negotiates legacy and modern MCP protocol behavior."
+---
+
+FrankenGate is a protocol gateway, so MCP compatibility is negotiated independently on each protocol leg. A downstream client can use a different MCP revision from an upstream server.
+
+## Behavioral eras
+
+FrankenGate groups revisions by wire behavior rather than maintaining separate implementations for every date string.
+
+| Era | Revisions | Lifecycle | Session behavior |
+| --- | --- | --- | --- |
+| `legacy` | `2024-11-05`, `2025-03-26`, `2025-06-18`, `2025-11-25` | `initialize` and `notifications/initialized` | Session IDs, legacy Streamable HTTP/SSE behavior, resumability where supported |
+| `modern` | `2026-07-28` | `server/discover` | Stateless requests with per-request MCP metadata; no protocol session ID |
+
+The current transport implementation is legacy-based. Modern support must not be advertised until the stateless transport and conformance suite are enabled.
+
+## Negotiation policy
+
+Each connection uses one of three policies:
+
+- `auto` selects the highest mutually supported revision and may fall back to the legacy handshake after a modern discovery probe fails because the peer is old. Authentication failures, timeouts caused by an outage, and server errors are not evidence of an older protocol.
+- `legacy` restricts the connection to the initialize/session family.
+- `pin` requires one exact revision and never falls back.
+
+The selected version and era are immutable for the life of a connection. A gateway must keep downstream and upstream selections separate. When several upstream servers are federated into one virtual MCP endpoint, the exposed set is the intersection of the servers' supported capabilities and versions.
+
+## Feature gating
+
+Code should use the version-neutral feature matrix in `core/mcp/protocol` instead of checking date strings throughout handlers. Modern-only features such as `server/discover`, per-request metadata, multi-round-trip requests, and `subscriptions/listen` must be rejected or translated explicitly when the selected connection is legacy. Legacy-only lifecycle features must not be synthesized on a modern connection.
+
+Application state remains stateful even when the protocol is stateless. Tool catalogs, authorization scopes, task records, policy decisions, audit records, and rollout state belong in managers keyed by stable request/task identities, not in MCP session state.
+
+## A2A relationship
+
+A2A version negotiation remains independent from MCP negotiation. Agent Cards should advertise MCP support through an A2A extension containing supported revisions, transports, extensions, authentication schemes, and limits. MCP and A2A task identifiers must remain distinct, with an explicit parent/child correlation link in tracing and audit records.
+
+## Upgrade rule
+
+Do not remove legacy support based on a dependency release alone. Retire a revision only after telemetry shows no remaining traffic, partner compatibility is confirmed, migration guidance is published, and the conformance matrix has a replacement path.
