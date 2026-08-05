@@ -46,11 +46,15 @@ func replayContentDigest(trace *schemas.Trace) (string, error) {
 }
 
 func verifyReplayRecordDigest(record *ReplayRecord) error {
-	if record == nil || record.Trace == nil {
+	if record == nil {
 		return fmt.Errorf("replay record integrity metadata is missing")
 	}
 	// Records written before the digest field was introduced remain readable;
-	// all new writes include it and are verified below.
+	// all new writes include it and are verified below. A legacy record may not
+	// have a trace payload, but it cannot claim integrity without a digest.
+	if record.Trace == nil && record.ContentSHA256 != "" {
+		return fmt.Errorf("replay record integrity metadata is missing")
+	}
 	if record.ContentSHA256 == "" {
 		return nil
 	}
