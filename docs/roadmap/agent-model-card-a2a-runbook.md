@@ -44,9 +44,21 @@ before they are eligible for routing.
 Inbound A2A tasks enter the same identity, governance, budget, MCP, model,
 audit, and kill-switch middleware as other gateway inference. A publisher's
 card never transfers publisher authority to the caller. Task identifiers are
-idempotency keys scoped by the validated tenant/issuer/subject principal;
-retention is bounded and in-memory in this first transport adapter, so durable
-recovery requires the Day-2 outbox/task-store work.
+idempotency keys scoped by the validated tenant/issuer/subject principal. When
+an object store is configured, completed task envelopes are persisted under a
+hashed key with an expiry tag; the process-local cache remains a bounded hot
+cache. Object-store errors fail closed rather than re-running an already
+completed task. Without an object store, the bounded in-memory adapter remains
+explicitly non-durable.
+
+If the configured authority store implements principal authorization epochs,
+inbound A2A submission and retrieval require a matching epoch reference and
+validate it against the durable store. The standard JWT identity middleware
+supplies the trusted principal; the handler resolves the current durable epoch
+for the concrete task ID, while token-bound callers may provide an explicit
+reference. This prevents a delegated caller from reusing a task after
+deactivation or epoch advancement. Legacy deployments without that store
+retain the existing principal-only compatibility path.
 
 ## Evidence and observability
 
@@ -89,6 +101,9 @@ bookkeeping. A release must also run focused Go tests for
 3. Drain or retry only idempotent tasks with the same task/idempotency key;
    never replay a side-effecting task without an explicit operator decision.
 4. Restore catalog, trust, task, and evidence stores in dependency order;
-   verify tenant/policy epoch fences before reopening routing.
+   verify tenant/policy epoch fences before reopening routing. Restore the
+   object-store task prefix before accepting idempotent retries; if it is
+   unavailable, keep A2A task routes closed rather than falling back to a new
+   inference attempt.
 5. Re-run the offline gates and a signed-card/cross-tenant smoke test, then
    record the promoted card revision and release artifact digest.

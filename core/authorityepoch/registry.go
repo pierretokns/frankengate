@@ -25,6 +25,7 @@ const (
 	ArtifactCache             ArtifactKind = "cache"
 	ArtifactMCPGrant          ArtifactKind = "mcp_grant"
 	ArtifactMCPLiveConnection ArtifactKind = "mcp_live_connection"
+	ArtifactA2ATask           ArtifactKind = "a2a_task"
 )
 
 var supportedArtifactKinds = map[ArtifactKind]struct{}{
@@ -36,6 +37,7 @@ var supportedArtifactKinds = map[ArtifactKind]struct{}{
 	ArtifactCache:             {},
 	ArtifactMCPGrant:          {},
 	ArtifactMCPLiveConnection: {},
+	ArtifactA2ATask:           {},
 }
 
 type Reason string

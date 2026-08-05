@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -13,6 +14,7 @@ import (
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
+	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
 	"github.com/maximhq/bifrost/framework/modelcatalog/inbound"
 	"github.com/maximhq/bifrost/framework/modelcatalog/provenance"
@@ -24,15 +26,18 @@ const (
 	maxA2ATaskBodyBytes = 128 * 1024
 	maxA2ATasks         = 512
 	maxA2ATaskTTL       = 1 * time.Hour
+	a2aTaskObjectPrefix = "frankengate/a2a/tasks/"
+	a2aTaskStoreTimeout = 2 * time.Second
 )
 
 type InboundA2AHandler struct {
 	client *bifrost.Bifrost
 	config *lib.Config
 
-	mu    sync.Mutex
-	tasks map[string]storedA2ATask
-	now   func() time.Time
+	mu             sync.Mutex
+	tasks          map[string]storedA2ATask
+	now            func() time.Time
+	authorityStore configstore.PrincipalAuthorizationEpochStore
 }
 
 type storedA2ATask struct {
@@ -40,8 +45,17 @@ type storedA2ATask struct {
 	ExpiresAt time.Time
 }
 
+type durableA2ATaskEnvelope struct {
+	Task      a2aTask `json:"task"`
+	ExpiresAt string  `json:"expires_at"`
+}
+
 func NewInboundA2AHandler(client *bifrost.Bifrost, config *lib.Config) *InboundA2AHandler {
-	return &InboundA2AHandler{client: client, config: config, tasks: make(map[string]storedA2ATask), now: time.Now}
+	var authorityStore configstore.PrincipalAuthorizationEpochStore
+	if config != nil && config.ConfigStore != nil {
+		authorityStore, _ = config.ConfigStore.(configstore.PrincipalAuthorizationEpochStore)
+	}
+	return &InboundA2AHandler{client: client, config: config, tasks: make(map[string]storedA2ATask), now: time.Now, authorityStore: authorityStore}
 }
 
 func (h *InboundA2AHandler) RegisterRoutes(r *router.Router, middlewares ...schemas.BifrostHTTPMiddleware) {
@@ -176,7 +190,14 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	taskID := boundedTaskID(params.Message.MessageID)
-	if existing, ok := h.loadTask(taskPartition, taskID); ok {
+	if err := h.validateInboundA2AAuthority(ctx, taskID); err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	if existing, ok, loadErr := h.loadTask(ctx, taskPartition, taskID); loadErr != nil {
+		h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
+		return
+	} else if ok {
 		h.writeRPCResult(ctx, request.ID, existing)
 		return
 	}
@@ -214,7 +235,10 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 	task := a2aTask{ID: taskID, ContextID: params.Message.MessageID, History: []a2aMessage{params.Message, output}, Artifacts: []a2aArtifact{{Name: "response", Parts: output.Parts}}, Status: a2aTaskStatus{State: "completed", Timestamp: h.currentTime().UTC(), Message: &output}}
 	bifrostCtx.SetTraceAttribute("frankengate.provenance.outcome", "completed")
 	bifrostCtx.SetTraceAttribute("frankengate.provenance.artifact_ref", "a2a://task/"+taskID+"/response")
-	h.storeTask(taskPartition, task)
+	if err := h.storeTask(ctx, taskPartition, task); err != nil {
+		h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
+		return
+	}
 	h.writeRPCResult(ctx, request.ID, task)
 }
 
@@ -234,7 +258,15 @@ func (h *InboundA2AHandler) taskGet(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusForbidden, "A2A caller authority is invalid")
 		return
 	}
-	task, ok := h.loadTask(taskPartition, taskID)
+	if err := h.validateInboundA2AAuthority(ctx, taskID); err != nil {
+		SendError(ctx, fasthttp.StatusForbidden, "A2A caller authority is invalid")
+		return
+	}
+	task, ok, loadErr := h.loadTask(ctx, taskPartition, taskID)
+	if loadErr != nil {
+		SendError(ctx, fasthttp.StatusServiceUnavailable, "A2A task registry is unavailable")
+		return
+	}
 	if !ok {
 		SendError(ctx, fasthttp.StatusNotFound, "A2A task not found")
 		return
@@ -243,10 +275,26 @@ func (h *InboundA2AHandler) taskGet(ctx *fasthttp.RequestCtx) {
 	ctx.SetBody(mustJSON(task))
 }
 
-func (h *InboundA2AHandler) storeTask(partition string, task a2aTask) {
+func (h *InboundA2AHandler) storeTask(ctx context.Context, partition string, task a2aTask) error {
+	now := h.currentTime()
+	if h.config != nil && h.config.ObjectStore != nil {
+		envelope := durableA2ATaskEnvelope{Task: task, ExpiresAt: now.Add(maxA2ATaskTTL).UTC().Format(time.RFC3339Nano)}
+		body, err := json.Marshal(envelope)
+		if err != nil {
+			return fmt.Errorf("encode durable A2A task: %w", err)
+		}
+		storeCtx, cancel := context.WithTimeout(ctx, a2aTaskStoreTimeout)
+		err = h.config.ObjectStore.Put(storeCtx, durableA2ATaskKey(partition, task.ID), body, map[string]string{
+			"kind":       "a2a-task",
+			"expires_at": envelope.ExpiresAt,
+		})
+		cancel()
+		if err != nil {
+			return fmt.Errorf("persist durable A2A task: %w", err)
+		}
+	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	now := h.currentTime()
 	for id, stored := range h.tasks {
 		if stored.ExpiresAt.Before(now) {
 			delete(h.tasks, id)
@@ -263,9 +311,32 @@ func (h *InboundA2AHandler) storeTask(partition string, task a2aTask) {
 		delete(h.tasks, oldestID)
 	}
 	h.tasks[scopedA2ATaskKey(partition, task.ID)] = storedA2ATask{Task: task, ExpiresAt: now.Add(maxA2ATaskTTL)}
+	return nil
 }
 
-func (h *InboundA2AHandler) loadTask(partition string, id string) (a2aTask, bool) {
+func (h *InboundA2AHandler) loadTask(ctx context.Context, partition string, id string) (a2aTask, bool, error) {
+	if h.config != nil && h.config.ObjectStore != nil {
+		storeCtx, cancel := context.WithTimeout(ctx, a2aTaskStoreTimeout)
+		body, err := h.config.ObjectStore.Get(storeCtx, durableA2ATaskKey(partition, id))
+		cancel()
+		if err == nil {
+			var envelope durableA2ATaskEnvelope
+			if decodeErr := json.Unmarshal(body, &envelope); decodeErr != nil {
+				return a2aTask{}, false, fmt.Errorf("decode durable A2A task: %w", decodeErr)
+			}
+			expiresAt, parseErr := time.Parse(time.RFC3339Nano, envelope.ExpiresAt)
+			if parseErr != nil {
+				return a2aTask{}, false, fmt.Errorf("decode durable A2A task expiry: %w", parseErr)
+			}
+			if expiresAt.Before(h.currentTime()) {
+				return a2aTask{}, false, nil
+			}
+			return envelope.Task, true, nil
+		}
+		if !isA2AObjectNotFound(err) {
+			return a2aTask{}, false, fmt.Errorf("load durable A2A task: %w", err)
+		}
+	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	key := scopedA2ATaskKey(partition, id)
@@ -274,9 +345,62 @@ func (h *InboundA2AHandler) loadTask(partition string, id string) (a2aTask, bool
 		if ok {
 			delete(h.tasks, key)
 		}
-		return a2aTask{}, false
+		return a2aTask{}, false, nil
 	}
-	return stored.Task, true
+	return stored.Task, true, nil
+}
+
+func durableA2ATaskKey(partition, taskID string) string {
+	digest := sha256.Sum256([]byte(partition + "\x00" + taskID))
+	return a2aTaskObjectPrefix + hex.EncodeToString(digest[:]) + ".json"
+}
+
+func isA2AObjectNotFound(err error) bool {
+	message := strings.ToLower(err.Error())
+	return strings.Contains(message, "not found") || strings.Contains(message, "no such key") || strings.Contains(message, "nosuchkey")
+}
+
+func (h *InboundA2AHandler) validateInboundA2AAuthority(ctx *fasthttp.RequestCtx, artifactID string) error {
+	principal, err := inboundA2ATaskPrincipal(ctx)
+	if err != nil {
+		return err
+	}
+	if h == nil {
+		return nil
+	}
+	authorityStore := h.authorityStore
+	if authorityStore == nil && h.config != nil && h.config.ConfigStore != nil {
+		authorityStore, _ = h.config.ConfigStore.(configstore.PrincipalAuthorizationEpochStore)
+	}
+	if authorityStore == nil {
+		return nil
+	}
+	reference, ok := ctx.UserValue(schemas.BifrostContextKeyAuthorizationEpochReference).(authorityepoch.Reference)
+	if ok {
+		if reference.Principal != principal {
+			return authorityepoch.ErrInvalidReference
+		}
+		if err := authorityepoch.ValidateReferenceShape(reference); err != nil {
+			return err
+		}
+		return authorityStore.ValidatePrincipalAuthorizationEpoch(ctx, reference)
+	}
+	if strings.TrimSpace(artifactID) == "" {
+		return authorityepoch.ErrInvalidReference
+	}
+	row, err := authorityStore.GetPrincipalAuthorizationEpoch(ctx, principal)
+	if err != nil {
+		return err
+	}
+	if row == nil {
+		return authorityepoch.ErrUnknownPrincipal
+	}
+	return authorityStore.ValidatePrincipalAuthorizationEpoch(ctx, authorityepoch.Reference{
+		Principal: principal,
+		Epoch:     row.Epoch,
+		Kind:      authorityepoch.ArtifactA2ATask,
+		ID:        artifactID,
+	})
 }
 
 func (h *InboundA2AHandler) currentTime() time.Time {

@@ -33,7 +33,7 @@ message-send:
             $ref: '../../schemas/management/a2a.yaml#/A2AJSONRPCRequest'
     responses:
       '200':
-        description: Completed or idempotently replayed A2A task
+        description: Completed or idempotently replayed A2A task. When object storage is configured, the task registry is durable and object-store failures fail closed.
         content:
           application/json:
             schema:
@@ -63,7 +63,7 @@ task:
         schema: { type: string }
     responses:
       '200':
-        description: A2A task state
+        description: Caller-scoped A2A task state. Task retention is bounded by the configured task TTL; durable deployments persist envelopes through the object store.
         content:
           application/json:
             schema: { type: object, additionalProperties: true }
