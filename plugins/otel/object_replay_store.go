@@ -85,6 +85,12 @@ func (s *ObjectReplayStore) Get(ctx context.Context, tenantID, traceID string) (
 	}
 	payload, err := s.store.Get(ctx, key)
 	if err != nil {
+		// Object-store backends generally return an implementation-specific
+		// not-found error. Do not disclose whether a tenant partition or trace
+		// exists to an unauthorized caller; the object boundary is fail-closed.
+		if os.IsNotExist(err) || strings.Contains(strings.ToLower(err.Error()), "object not found") {
+			return nil, os.ErrPermission
+		}
 		return nil, err
 	}
 	var record ReplayRecord

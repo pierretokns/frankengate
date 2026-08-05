@@ -15,6 +15,7 @@ const basisPoints = 10_000
 type Assignment struct {
 	Subject            string `json:"subject"`
 	Experiment         string `json:"experiment"`
+	Revision           uint64 `json:"revision,omitempty"`
 	Bucket             uint32 `json:"bucket"`
 	RolloutBasisPoints int    `json:"rollout_basis_points"`
 	InTreatment        bool   `json:"in_treatment"`
@@ -25,12 +26,16 @@ type Assignment struct {
 // contain an identity or tenant identifier; callers can join it through their
 // existing privacy-safe trace correlation fields.
 func (a Assignment) TraceAttributes() map[string]any {
-	return map[string]any{
+	attrs := map[string]any{
 		"routing.experiment":           a.Experiment,
 		"routing.bucket":               a.Bucket,
 		"routing.rollout_basis_points": a.RolloutBasisPoints,
 		"routing.in_treatment":         a.InTreatment,
 	}
+	if a.Revision != 0 {
+		attrs["routing.revision"] = a.Revision
+	}
+	return attrs
 }
 
 // ApplyTraceAttributes sends the privacy-safe assignment metadata to a trace

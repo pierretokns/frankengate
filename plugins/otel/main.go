@@ -38,6 +38,10 @@ const PluginName = "otel"
 const (
 	traceExportAttempts = 3
 	traceExportBackoff  = 50 * time.Millisecond
+	traceRetryQueueSize = 256
+	traceRetryAttempts  = 5
+	traceRetryBackoff   = time.Second
+	traceRetryMaxDelay  = 30 * time.Second
 )
 
 // TraceType is the type of trace to use for the OTEL collector
@@ -348,6 +352,12 @@ type otelTarget struct {
 	disableRootSpanContent bool
 }
 
+type traceDeliveryRetry struct {
+	target  *otelTarget
+	trace   *schemas.Trace
+	attempt int
+}
+
 // OtelPlugin is the plugin for OpenTelemetry.
 // It implements the ObservabilityPlugin interface to receive completed traces
 // from the tracing middleware and forward them to one or more OTEL collectors.
@@ -368,6 +378,9 @@ type OtelPlugin struct {
 
 	pluginSpanFilter *PluginSpanFilter
 	replayStore      ReplayStore
+	retryQueue       chan traceDeliveryRetry
+	retryWG          sync.WaitGroup
+	retryBackoff     time.Duration
 }
 
 // Init function for the OTEL plugin
@@ -446,6 +459,10 @@ func Init(ctx context.Context, config *Config, _logger schemas.Logger, pricingMa
 		p.replayStore = store
 	}
 	p.ctx, p.cancel = context.WithCancel(ctx)
+	p.retryQueue = make(chan traceDeliveryRetry, traceRetryQueueSize)
+	p.retryBackoff = traceRetryBackoff
+	p.retryWG.Add(1)
+	go p.runTraceRetryWorker()
 
 	for i, profile := range config.Profiles {
 		// A disabled profile exports nothing — skip building its client/exporter entirely.
@@ -794,6 +811,7 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 				}
 				if err != nil {
 					logger.Error("failed to emit trace %s to %s: %v", trace.TraceID, t.url, err)
+					p.enqueueTraceRetry(t, trace)
 				}
 			}
 			if t.metricsExporter != nil {
@@ -803,6 +821,95 @@ func (p *OtelPlugin) Inject(ctx context.Context, trace *schemas.Trace) error {
 	}
 	wg.Wait()
 	return nil
+}
+
+func (p *OtelPlugin) enqueueTraceRetry(target *otelTarget, trace *schemas.Trace) {
+	if p == nil || target == nil || trace == nil || p.retryQueue == nil {
+		return
+	}
+	job := traceDeliveryRetry{target: target, trace: trace.SnapshotForExport()}
+	select {
+	case p.retryQueue <- job:
+		p.recordRetryQueueDepth(target, 1)
+	default:
+		p.recordRetryOutcome(target, "dropped")
+		if logger != nil {
+			logger.Warn("OTEL trace retry queue is full; durable replay remains available for trace %s", trace.TraceID)
+		}
+	}
+}
+
+func (p *OtelPlugin) runTraceRetryWorker() {
+	defer p.retryWG.Done()
+	for {
+		select {
+		case <-p.ctx.Done():
+			return
+		case job := <-p.retryQueue:
+			p.recordRetryQueueDepth(job.target, -1)
+			if job.target == nil || job.trace == nil {
+				continue
+			}
+			if !p.waitRetryBackoff(job.attempt) {
+				return
+			}
+			p.recordRetryOutcome(job.target, "attempt")
+			resourceSpan := p.convertTraceToResourceSpan(job.target.serviceName, job.trace, job.target.requestHeaders, job.target.disableContentLogging, job.target.groupTracesBySession, job.target.disableRootSpanContent)
+			err := emitTraceWithRetry(p.ctx, job.target.client, []*ResourceSpan{resourceSpan})
+			if err == nil {
+				p.recordRetryOutcome(job.target, "recovered")
+				continue
+			}
+			if job.attempt+1 < traceRetryAttempts {
+				job.attempt++
+				select {
+				case p.retryQueue <- job:
+					p.recordRetryQueueDepth(job.target, 1)
+				default:
+					p.recordRetryOutcome(job.target, "dropped")
+				}
+				continue
+			}
+			p.recordRetryOutcome(job.target, "exhausted")
+			if logger != nil {
+				logger.Error("OTEL trace retry exhausted for trace %s to %s: %v", job.trace.TraceID, job.target.url, err)
+			}
+		}
+	}
+}
+
+func (p *OtelPlugin) waitRetryBackoff(attempt int) bool {
+	delay := p.retryBackoff
+	if delay <= 0 {
+		delay = traceRetryBackoff
+	}
+	for i := 0; i < attempt; i++ {
+		delay *= 2
+		if delay >= traceRetryMaxDelay {
+			delay = traceRetryMaxDelay
+			break
+		}
+	}
+	timer := time.NewTimer(delay)
+	defer timer.Stop()
+	select {
+	case <-p.ctx.Done():
+		return false
+	case <-timer.C:
+		return true
+	}
+}
+
+func (p *OtelPlugin) recordRetryQueueDepth(target *otelTarget, delta int64) {
+	if target != nil && target.metricsExporter != nil {
+		target.metricsExporter.RecordTraceRetryQueueDepth(context.Background(), delta, attribute.String("service_name", target.serviceName))
+	}
+}
+
+func (p *OtelPlugin) recordRetryOutcome(target *otelTarget, outcome string) {
+	if target != nil && target.metricsExporter != nil {
+		target.metricsExporter.RecordTraceRetry(context.Background(), outcome, attribute.String("service_name", target.serviceName))
+	}
 }
 
 // emitTraceWithRetry retries transient collector failures with a small bounded
@@ -1078,6 +1185,7 @@ func (p *OtelPlugin) Cleanup() error {
 	if p.cancel != nil {
 		p.cancel()
 	}
+	p.retryWG.Wait()
 	if p.replayStore != nil {
 		if err := p.replayStore.Close(); err != nil {
 			logger.Error("failed to close durable replay store: %v", err)

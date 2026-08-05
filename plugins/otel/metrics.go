@@ -86,9 +86,13 @@ type MetricsExporter struct {
 	// Trace exporter health. These describe the delivery path from the gateway
 	// to each configured collector (rather than the upstream inference path),
 	// making collector outages and reconnect/retry storms visible to operators.
-	traceExportsTotal      *syncInt64Counter
-	traceExportErrorsTotal *syncInt64Counter
-	traceExportLatency     *syncFloat64Histogram
+	traceExportsTotal          *syncInt64Counter
+	traceExportErrorsTotal     *syncInt64Counter
+	traceExportLatency         *syncFloat64Histogram
+	traceExportRetries         *syncInt64Counter
+	traceExportRetryDrops      *syncInt64Counter
+	traceExportRetryExhausted  *syncInt64Counter
+	traceExportRetryQueueDepth *syncFloat64UpDownCounter
 }
 
 // syncInt64Counter wraps metric.Int64Counter with thread-safe lazy initialization
@@ -140,7 +144,7 @@ type syncFloat64UpDownCounter struct {
 	meter   metric.Meter
 }
 
-func (c *syncFloat64UpDownCounter) apply(ctx context.Context, delta float64) {
+func (c *syncFloat64UpDownCounter) apply(ctx context.Context, delta float64, opts ...metric.AddOption) {
 	c.once.Do(func() {
 		var err error
 		c.counter, err = c.meter.Float64UpDownCounter(c.name,
@@ -150,7 +154,7 @@ func (c *syncFloat64UpDownCounter) apply(ctx context.Context, delta float64) {
 		}
 	})
 	if c.counter != nil && delta != 0 {
-		c.counter.Add(ctx, delta)
+		c.counter.Add(ctx, delta, opts...)
 	}
 }
 
@@ -521,6 +525,10 @@ func (m *MetricsExporter) initMetrics() {
 	m.traceExportsTotal = &syncInt64Counter{name: "bifrost_otel_trace_exports_total", desc: "Trace export attempts to configured OpenTelemetry collectors", unit: "{export}", meter: m.meter}
 	m.traceExportErrorsTotal = &syncInt64Counter{name: "bifrost_otel_trace_export_errors_total", desc: "Trace export attempts that failed or received a non-success collector response", unit: "{export}", meter: m.meter}
 	m.traceExportLatency = &syncFloat64Histogram{name: "bifrost_otel_trace_export_latency_seconds", desc: "Latency of trace exports to configured OpenTelemetry collectors", unit: "s", meter: m.meter, boundaries: upstreamLatencyBuckets}
+	m.traceExportRetries = &syncInt64Counter{name: "bifrost_otel_trace_export_retries_total", desc: "Asynchronous retries attempted for failed trace exports", unit: "{retry}", meter: m.meter}
+	m.traceExportRetryDrops = &syncInt64Counter{name: "bifrost_otel_trace_export_retry_drops_total", desc: "Trace retry jobs dropped because the bounded queue was full", unit: "{drop}", meter: m.meter}
+	m.traceExportRetryExhausted = &syncInt64Counter{name: "bifrost_otel_trace_export_retry_exhausted_total", desc: "Trace exports whose asynchronous retry budget was exhausted", unit: "{trace}", meter: m.meter}
+	m.traceExportRetryQueueDepth = &syncFloat64UpDownCounter{name: "bifrost_otel_trace_export_retry_queue_depth", desc: "Current bounded asynchronous trace retry queue depth", unit: "{job}", meter: m.meter}
 }
 
 // Shutdown gracefully shuts down the metrics exporter
@@ -558,6 +566,23 @@ func (m *MetricsExporter) RecordTraceExport(ctx context.Context, success bool, l
 	if latencySeconds >= 0 {
 		m.traceExportLatency.Record(ctx, latencySeconds, opts)
 	}
+}
+
+// RecordTraceRetry records bounded asynchronous trace-delivery outcomes. The
+// outcome is intentionally a small fixed vocabulary so collector outages do
+// not create unbounded metric cardinality.
+func (m *MetricsExporter) RecordTraceRetry(ctx context.Context, outcome string, attrs ...attribute.KeyValue) {
+	if outcome == "attempt" {
+		m.traceExportRetries.Add(ctx, 1, metric.WithAttributes(attrs...))
+	} else if outcome == "dropped" {
+		m.traceExportRetryDrops.Add(ctx, 1, metric.WithAttributes(attrs...))
+	} else if outcome == "exhausted" {
+		m.traceExportRetryExhausted.Add(ctx, 1, metric.WithAttributes(attrs...))
+	}
+}
+
+func (m *MetricsExporter) RecordTraceRetryQueueDepth(ctx context.Context, delta int64, attrs ...attribute.KeyValue) {
+	m.traceExportRetryQueueDepth.apply(ctx, float64(delta), metric.WithAttributes(attrs...))
 }
 
 // RecordInputTokens records input tokens metric
