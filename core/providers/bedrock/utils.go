@@ -940,8 +940,17 @@ func convertToolMessages(ctx context.Context, msgs []schemas.ChatMessage) (Bedro
 				})
 			} else {
 				compacted := buf.Bytes()
-				// Bedrock does not accept primitives or arrays directly in the json field
-				if len(compacted) > 0 && compacted[0] == '{' {
+				// Bedrock reserves nested "__type" keys for Smithy protocol
+				// discriminators. Passing a tool result containing one through
+				// Converse's json block can produce a non-retryable ValidationException
+				// and permanently wedge the conversation history. JSON-in-text is valid
+				// Converse input, so preserve the original result as text instead.
+				if containsNestedSmithyType(compacted) {
+					toolResultContent = append(toolResultContent, BedrockContentBlock{
+						Text: msg.Content.ContentStr,
+					})
+				} else if len(compacted) > 0 && compacted[0] == '{' {
+					// Bedrock does not accept primitives or arrays directly in the json field
 					// Objects are valid as-is
 					toolResultContent = append(toolResultContent, BedrockContentBlock{
 						JSON: json.RawMessage(compacted),
@@ -1023,6 +1032,42 @@ func convertToolMessages(ctx context.Context, msgs []schemas.ChatMessage) (Bedro
 
 	bedrockMsg.Content = contentBlocks
 	return bedrockMsg, nil
+}
+
+// containsNestedSmithyType reports whether a JSON document contains a
+// "__type" key below its root object. Bedrock treats that reserved key as a
+// Smithy union discriminator inside Converse json content. A root-level key
+// is accepted by Bedrock, but nested keys can make an otherwise valid tool
+// result permanently un-replayable.
+func containsNestedSmithyType(raw []byte) bool {
+	var value any
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	decoder.UseNumber()
+	if err := decoder.Decode(&value); err != nil {
+		return false
+	}
+	return containsNestedSmithyTypeValue(value, false)
+}
+
+func containsNestedSmithyTypeValue(value any, nested bool) bool {
+	switch typed := value.(type) {
+	case map[string]any:
+		for key, child := range typed {
+			if key == "__type" && nested {
+				return true
+			}
+			if containsNestedSmithyTypeValue(child, true) {
+				return true
+			}
+		}
+	case []any:
+		for _, child := range typed {
+			if containsNestedSmithyTypeValue(child, true) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // convertContent converts Bifrost message content to Bedrock content blocks.
