@@ -1887,6 +1887,7 @@ func mcpClientConfigToTable(clientConfig *schemas.MCPClientConfig) (configstoreT
 		Name:                      clientConfig.Name,
 		IsCodeModeClient:          clientConfig.IsCodeModeClient,
 		ConnectionType:            string(clientConfig.ConnectionType),
+		ProtocolMode:              string(normalizeMCPProtocolMode(clientConfig.MCPProtocolMode)),
 		ConnectionString:          clientConfig.ConnectionString,
 		StdioConfig:               clientConfig.StdioConfig,
 		AuthType:                  authType,
@@ -1906,6 +1907,15 @@ func mcpClientConfigToTable(clientConfig *schemas.MCPClientConfig) (configstoreT
 		PerUserHeaderKeys:         mcputils.CanonicalizeHeaderKeys(clientConfig.PerUserHeaderKeys),
 		ConfigHash:                clientConfig.ConfigHash,
 	}, nil
+}
+
+func normalizeMCPProtocolMode(mode schemas.MCPProtocolMode) schemas.MCPProtocolMode {
+	switch mode {
+	case schemas.MCPProtocolModeAuto, schemas.MCPProtocolModeModern:
+		return mode
+	default:
+		return schemas.MCPProtocolModeLegacy
+	}
 }
 
 // syncMCPConfigFromFile replaces stored MCP clients with the clients declared in config.json.

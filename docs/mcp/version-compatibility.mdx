@@ -15,7 +15,7 @@ FrankenGate groups revisions by wire behavior rather than maintaining separate i
 | `legacy` | `2024-11-05`, `2025-03-26`, `2025-06-18`, `2025-11-25` | `initialize` and `notifications/initialized` | Session IDs, legacy Streamable HTTP/SSE behavior, resumability where supported |
 | `modern` | `2026-07-28` | `server/discover` | Stateless requests with per-request MCP metadata; no protocol session ID |
 
-The current transport implementation is legacy-based. Modern support must not be advertised until the stateless transport and conformance suite are enabled.
+The downstream `/mcp` endpoint supports both paths: legacy requests retain the existing session transport, while a `2026-07-28` protocol header or `server/discover` request enters the official stateless transport. Modern support remains intentionally constrained to requests that explicitly select the modern wire behavior.
 
 ## Negotiation policy
 
@@ -30,6 +30,21 @@ The selected version and era are immutable for the life of a connection. A gatew
 ## Feature gating
 
 Code should use the version-neutral feature matrix in `core/mcp/protocol` instead of checking date strings throughout handlers. Modern-only features such as `server/discover`, per-request metadata, multi-round-trip requests, and `subscriptions/listen` must be rejected or translated explicitly when the selected connection is legacy. Legacy-only lifecycle features must not be synthesized on a modern connection.
+
+## Upstream configuration
+
+HTTP MCP clients preserve the existing transport by default. Configure a client explicitly when it should negotiate the newer upstream protocol:
+
+```json
+{
+  "name": "catalog",
+  "connection_type": "http",
+  "connection_string": "https://mcp.example.test/mcp",
+  "protocol_mode": "auto"
+}
+```
+
+`protocol_mode` accepts `legacy` (default), `auto` (modern discovery with protocol-only fallback), or `modern` (modern discovery required; fails if the upstream does not negotiate `2026-07-28`). A timeout, `401`, or `5xx` never triggers a version fallback.
 
 Application state remains stateful even when the protocol is stateless. Tool catalogs, authorization scopes, task records, policy decisions, audit records, and rollout state belong in managers keyed by stable request/task identities, not in MCP session state.
 

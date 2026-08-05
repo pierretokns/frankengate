@@ -5614,6 +5614,16 @@
           ],
           "description": "Connection type for MCP client"
         },
+        "protocol_mode": {
+          "type": "string",
+          "enum": [
+            "legacy",
+            "auto",
+            "modern"
+          ],
+          "default": "legacy",
+          "description": "Upstream HTTP MCP negotiation mode. 'legacy' preserves the existing initialize/session transport; 'auto' probes modern server/discover and falls back only for protocol incompatibility; 'modern' requires the 2026-07-28 stateless protocol."
+        },
         "connection_string": {
           "type": "string",
           "description": "HTTP or SSE URL (alternative to http_config sub-object, required for HTTP or SSE connections)"

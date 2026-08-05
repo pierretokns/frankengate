@@ -16,8 +16,9 @@ type TableMCPClient struct {
 	ID                      uint               `gorm:"primaryKey;autoIncrement" json:"id"` // ID is used as the internal primary key and is also accessed by public methods, so it must be present.
 	ClientID                string             `gorm:"type:varchar(255);uniqueIndex;not null" json:"client_id"`
 	Name                    string             `gorm:"type:varchar(255);uniqueIndex;not null" json:"name"`
-	IsCodeModeClient        bool               `gorm:"default:false" json:"is_code_mode_client"`         // Whether the client is a code mode client
-	ConnectionType          string             `gorm:"type:varchar(20);not null" json:"connection_type"` // schemas.MCPConnectionType
+	IsCodeModeClient        bool               `gorm:"default:false" json:"is_code_mode_client"`                         // Whether the client is a code mode client
+	ConnectionType          string             `gorm:"type:varchar(20);not null" json:"connection_type"`                 // schemas.MCPConnectionType
+	ProtocolMode            string             `gorm:"type:varchar(20);default:'legacy'" json:"protocol_mode,omitempty"` // schemas.MCPProtocolMode
 	ConnectionString        *schemas.SecretVar `gorm:"type:text" json:"connection_string,omitempty"`
 	StdioConfigJSON         *string            `gorm:"type:text" json:"-"`                              // JSON serialized schemas.MCPStdioConfig
 	TLSConfigJSON           *string            `gorm:"type:text" json:"-"`                              // JSON serialized schemas.MCPTLSConfig
@@ -77,6 +78,9 @@ func (TableMCPClient) TableName() string { return "config_mcp_clients" }
 // pricing) into JSON columns and encrypts the connection string and headers before writing
 // to the database. Environment-variable-backed connection strings are not encrypted.
 func (c *TableMCPClient) BeforeSave(tx *gorm.DB) error {
+	if c.ProtocolMode == "" {
+		c.ProtocolMode = string(schemas.MCPProtocolModeLegacy)
+	}
 	if c.StdioConfig != nil {
 		data, err := json.Marshal(c.StdioConfig)
 		if err != nil {

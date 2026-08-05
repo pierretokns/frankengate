@@ -21,6 +21,7 @@ require (
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/klauspost/compress v1.18.6
 	github.com/mark3labs/mcp-go v0.57.0
+	github.com/modelcontextprotocol/go-sdk v1.7.0
 	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.11.1
 	github.com/tidwall/gjson v1.18.0

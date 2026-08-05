@@ -573,6 +573,7 @@ type MCPVKConfigRequest struct {
 // accepted here; they cannot be changed after creation.
 type MCPClientUpdateRequest struct {
 	Name                  *string                      `json:"name,omitempty"`
+	ProtocolMode          *schemas.MCPProtocolMode     `json:"protocol_mode,omitempty"`
 	Disabled              *bool                        `json:"disabled,omitempty"`
 	AllowOnAllVirtualKeys *bool                        `json:"allow_on_all_virtual_keys,omitempty"`
 	IsCodeModeClient      *bool                        `json:"is_code_mode_client,omitempty"`
@@ -610,6 +611,13 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 	var req MCPClientRequest
 	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
 		SendError(ctx, fasthttp.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	if req.ProtocolMode == "" {
+		req.ProtocolMode = string(schemas.MCPProtocolModeLegacy)
+	}
+	if req.ProtocolMode != string(schemas.MCPProtocolModeLegacy) && req.ProtocolMode != string(schemas.MCPProtocolModeAuto) && req.ProtocolMode != string(schemas.MCPProtocolModeModern) {
+		SendError(ctx, fasthttp.StatusBadRequest, "protocol_mode must be one of legacy, auto, or modern")
 		return
 	}
 
@@ -705,6 +713,7 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 			IsPingAvailable:       &isPingAvailable,
 			ToolSyncInterval:      toolSyncInterval,
 			ConnectionType:        schemas.MCPConnectionType(req.ConnectionType),
+			MCPProtocolMode:       schemas.MCPProtocolMode(req.ProtocolMode),
 			ConnectionString:      req.ConnectionString,
 			StdioConfig:           req.StdioConfig,
 			AuthType:              schemas.MCPAuthTypePerUserHeaders,
@@ -806,6 +815,7 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 			IsPingAvailable:       &isPingAvailable,
 			ToolSyncInterval:      toolSyncInterval,
 			ConnectionType:        schemas.MCPConnectionType(req.ConnectionType),
+			MCPProtocolMode:       schemas.MCPProtocolMode(req.ProtocolMode),
 			ConnectionString:      req.ConnectionString,
 			StdioConfig:           req.StdioConfig,
 			TLSConfig:             req.TLSConfig,
@@ -899,6 +909,7 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 			IsPingAvailable:       req.IsPingAvailable,
 			ToolSyncInterval:      toolSyncInterval,
 			ConnectionType:        schemas.MCPConnectionType(req.ConnectionType),
+			MCPProtocolMode:       schemas.MCPProtocolMode(req.ProtocolMode),
 			ConnectionString:      req.ConnectionString,
 			StdioConfig:           req.StdioConfig,
 			TLSConfig:             req.TLSConfig,
@@ -961,6 +972,7 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 		Name:                  req.Name,
 		IsCodeModeClient:      req.IsCodeModeClient,
 		ConnectionType:        schemas.MCPConnectionType(req.ConnectionType),
+		MCPProtocolMode:       schemas.MCPProtocolMode(req.ProtocolMode),
 		ConnectionString:      req.ConnectionString,
 		StdioConfig:           req.StdioConfig,
 		TLSConfig:             req.TLSConfig,
@@ -1054,6 +1066,17 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 	name := existingConfig.Name
 	if req.Name != nil {
 		name = *req.Name
+	}
+	protocolMode := existingConfig.MCPProtocolMode
+	if req.ProtocolMode != nil {
+		protocolMode = *req.ProtocolMode
+	}
+	if protocolMode == "" {
+		protocolMode = schemas.MCPProtocolModeLegacy
+	}
+	if protocolMode != schemas.MCPProtocolModeLegacy && protocolMode != schemas.MCPProtocolModeAuto && protocolMode != schemas.MCPProtocolModeModern {
+		SendError(ctx, fasthttp.StatusBadRequest, "protocol_mode must be one of legacy, auto, or modern")
+		return
 	}
 	disabled := existingConfig.Disabled
 	if req.Disabled != nil {
@@ -1280,6 +1303,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		Name:                  name,
 		IsCodeModeClient:      isCodeMode,
 		ConnectionType:        string(existingConfig.ConnectionType),
+		ProtocolMode:          string(protocolMode),
 		ConnectionString:      existingConfig.ConnectionString,
 		StdioConfig:           existingConfig.StdioConfig,
 		ToolsToExecute:        resolvedToolsToExecute,
@@ -1440,6 +1464,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		Name:                  name,
 		IsCodeModeClient:      isCodeMode,
 		ConnectionType:        existingConfig.ConnectionType,
+		MCPProtocolMode:       protocolMode,
 		ConnectionString:      existingConfig.ConnectionString,
 		StdioConfig:           existingConfig.StdioConfig,
 		TLSConfig:             tlsConfig,

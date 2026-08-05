@@ -310,6 +310,7 @@ type MCPClientConfig struct {
 	Name              string               `json:"name"`                          // Client name
 	IsCodeModeClient  bool                 `json:"is_code_mode_client"`           // Whether the client is a code mode client
 	ConnectionType    MCPConnectionType    `json:"connection_type"`               // How to connect (HTTP, STDIO, SSE, or InProcess)
+	MCPProtocolMode   MCPProtocolMode      `json:"protocol_mode,omitempty"`       // HTTP upstream negotiation mode (legacy, auto, or modern)
 	ConnectionString  *SecretVar           `json:"connection_string,omitempty"`   // HTTP or SSE URL (required for HTTP or SSE connections)
 	StdioConfig       *MCPStdioConfig      `json:"stdio_config,omitempty"`        // STDIO configuration (required for STDIO connections)
 	TLSConfig         *MCPTLSConfig        `json:"tls_config,omitempty"`          // TLS configuration for HTTP/SSE connections
@@ -354,6 +355,17 @@ type MCPClientConfig struct {
 	DiscoveredTools           map[string]ChatTool `json:"-"` // Discovered tool schemas keyed by prefixed name
 	DiscoveredToolNameMapping map[string]string   `json:"-"` // Mapping from sanitized tool names to original MCP names
 }
+
+// MCPProtocolMode controls the upstream HTTP MCP protocol behavior. Legacy is
+// the compatibility-preserving default; auto probes modern server/discover
+// and falls back to legacy initialize; modern requires the 2026-07-28 era.
+type MCPProtocolMode string
+
+const (
+	MCPProtocolModeLegacy MCPProtocolMode = "legacy"
+	MCPProtocolModeAuto   MCPProtocolMode = "auto"
+	MCPProtocolModeModern MCPProtocolMode = "modern"
+)
 
 // UnmarshalJSON supports Go duration strings (e.g. "10m") for tool_sync_interval and
 // tool_execution_timeout. Numeric values are treated as raw nanoseconds for tool_sync_interval

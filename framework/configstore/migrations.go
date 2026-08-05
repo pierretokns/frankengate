@@ -449,6 +449,35 @@ var configstoreMigrationSteps = []migrationStep{
 	{IDs: []string{"add_virtual_key_invalidation_outbox"}, run: migrationAddVirtualKeyInvalidationOutbox},
 	{IDs: []string{"add_principal_authorization_epoch_tables"}, run: migrationAddPrincipalAuthorizationEpochTables},
 	{IDs: []string{"add_governance_reservations"}, run: migrationAddGovernanceReservations},
+	{IDs: []string{"add_mcp_client_protocol_mode_column"}, run: migrationAddMCPClientProtocolModeColumn},
+}
+
+// migrationAddMCPClientProtocolModeColumn persists the per-upstream MCP
+// negotiation policy. Existing rows remain on the legacy transport.
+func migrationAddMCPClientProtocolModeColumn(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {
+	const migrationName = "add_mcp_client_protocol_mode_column"
+	logger.Info("[configstore] starting migration %s", migrationName)
+	defer logger.Info("[configstore] finished migration %s", migrationName)
+
+	m := migrator.New(db, migrator.DefaultOptions, []*migrator.Migration{{
+		ID: migrationName,
+		Migrate: func(tx *gorm.DB) error {
+			tx = tx.WithContext(ctx)
+			if !tx.Migrator().HasColumn(&tables.TableMCPClient{}, "protocol_mode") {
+				if err := addColumnIfNotExists(tx, logger, &tables.TableMCPClient{}, "protocol_mode"); err != nil {
+					return fmt.Errorf("failed to add protocol_mode column: %w", err)
+				}
+			}
+			return tx.Exec("UPDATE config_mcp_clients SET protocol_mode = 'legacy' WHERE protocol_mode IS NULL OR protocol_mode = ''").Error
+		},
+		Rollback: func(tx *gorm.DB) error {
+			return dropColumnIfExists(tx.WithContext(ctx), logger, &tables.TableMCPClient{}, "protocol_mode")
+		},
+	}})
+	if err := m.Migrate(); err != nil {
+		return fmt.Errorf("error running %s migration: %w", migrationName, err)
+	}
+	return nil
 }
 
 func migrationAddGovernanceReservations(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {

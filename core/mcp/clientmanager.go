@@ -113,14 +113,24 @@ func (m *MCPManager) AcquireClientConn(ctx *schemas.BifrostContext, state *schem
 		if tlsErr != nil {
 			return nil, fmt.Errorf("failed to build TLS HTTP client: %w", tlsErr)
 		}
-		if perUserTLSClient != nil {
-			perUserOpts = append(perUserOpts, transport.WithHTTPBasicClient(perUserTLSClient))
+		initCtx, initCancel := context.WithTimeout(ctx, MCPClientConnectionEstablishTimeout)
+		defer initCancel()
+		if config.MCPProtocolMode == schemas.MCPProtocolModeAuto || config.MCPProtocolMode == schemas.MCPProtocolModeModern {
+			var modernErr error
+			tempClient, modernErr = newModernHTTPProxyClient(initCtx, targetURL, finalHeaders, perUserTLSClient, config)
+			if modernErr != nil {
+				return nil, modernErr
+			}
+		} else {
+			if perUserTLSClient != nil {
+				perUserOpts = append(perUserOpts, transport.WithHTTPBasicClient(perUserTLSClient))
+			}
+			httpTransport, transportErr := transport.NewStreamableHTTP(targetURL, perUserOpts...)
+			if transportErr != nil {
+				return nil, fmt.Errorf("failed to create HTTP transport: %w", transportErr)
+			}
+			tempClient = client.NewClient(httpTransport)
 		}
-		httpTransport, err := transport.NewStreamableHTTP(targetURL, perUserOpts...)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create HTTP transport: %w", err)
-		}
-		tempClient = client.NewClient(httpTransport)
 		if err := tempClient.Start(ctx); err != nil {
 			return nil, fmt.Errorf("failed to start ephemeral MCP connection: %w", err)
 		}
@@ -137,10 +147,8 @@ func (m *MCPManager) AcquireClientConn(ctx *schemas.BifrostContext, state *schem
 		}
 		// Bound the MCP `initialize` handshake — a stalled upstream (TCP open
 		// succeeds but JSON-RPC initialize never returns) would otherwise block
-		// the entire tool call until the parent request ctx fires. Mirrors the
-		// bound used for shared-connection Initialize in connectToMCPClient.
-		initCtx, initCancel := context.WithTimeout(ctx, MCPClientConnectionEstablishTimeout)
-		defer initCancel()
+		// the entire tool call until the parent request ctx fires. The same bound
+		// also covers modern server/discover in the adapter above.
 		initResult, err := tempClient.Initialize(initCtx, initRequest)
 		if err != nil {
 			_ = tempClient.Close()
@@ -1680,6 +1688,22 @@ func (m *MCPManager) createHTTPConnection(ctx context.Context, config *schemas.M
 				headers[k] = vals[0]
 			}
 		}
+	}
+
+	if config.MCPProtocolMode == schemas.MCPProtocolModeAuto || config.MCPProtocolMode == schemas.MCPProtocolModeModern {
+		httpClient, err := m.buildTLSHTTPClient(config.TLSConfig)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to build TLS HTTP client: %w", err)
+		}
+		proxyClient, err := newModernHTTPProxyClient(ctx, url, headers, httpClient, config)
+		if err != nil {
+			return nil, nil, err
+		}
+		connectionInfo := &schemas.MCPClientConnectionInfo{
+			Type:          config.ConnectionType,
+			ConnectionURL: &url,
+		}
+		return proxyClient, connectionInfo, nil
 	}
 
 	// Create StreamableHTTP transport. The static headers above are baked onto the
