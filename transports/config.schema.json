@@ -3930,6 +3930,15 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "secret_var": {
+      "type": "object",
+      "properties": {
+        "value": { "type": "string" },
+        "ref": { "type": "string" },
+        "type": { "type": "string", "enum": ["plain_text", "env", "vault"] }
+      },
+      "additionalProperties": false
+    },
     "otel_endpoint": {
       "type": "string",
       "anyOf": [
@@ -5619,10 +5628,22 @@
           "enum": [
             "legacy",
             "auto",
-            "modern"
+            "modern",
+            "pin"
           ],
           "default": "legacy",
-          "description": "Upstream HTTP MCP negotiation mode. 'legacy' preserves the existing initialize/session transport; 'auto' probes modern server/discover and falls back only for protocol incompatibility; 'modern' requires the 2026-07-28 stateless protocol."
+          "description": "Upstream HTTP MCP negotiation mode. 'legacy' preserves the existing initialize/session transport; 'auto' probes modern server/discover and falls back only for protocol incompatibility; 'modern' requires the 2026-07-28 stateless protocol; 'pin' requires protocol_version and never downgrades."
+        },
+        "protocol_version": {
+          "type": "string",
+          "enum": [
+            "2024-11-05",
+            "2025-03-26",
+            "2025-06-18",
+            "2025-11-25",
+            "2026-07-28"
+          ],
+          "description": "Exact MCP revision required when protocol_mode is 'pin'."
         },
         "connection_string": {
           "type": "string",
@@ -5638,6 +5659,35 @@
             "per_user_headers"
           ],
           "description": "Authentication type for MCP connection"
+        },
+        "token_exchange": {
+          "type": "object",
+          "description": "Opt-in per-destination RFC 8693/RFC 7523 credential exchange. Disabled unless enabled is true.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "token_url": { "oneOf": [{ "type": "string" }, { "$ref": "#/$defs/secret_var" }] },
+            "allowed_hosts": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+            "grant": { "type": "string", "enum": ["token_exchange", "jwt_bearer"], "default": "token_exchange" },
+            "client_id": { "oneOf": [{ "type": "string" }, { "$ref": "#/$defs/secret_var" }] },
+            "client_secret": { "oneOf": [{ "type": "string" }, { "$ref": "#/$defs/secret_var" }] },
+            "client_auth_method": { "type": "string", "enum": ["client_secret_basic", "client_secret_post"], "default": "client_secret_basic" },
+            "subject_token_header": { "type": "string", "default": "authorization" },
+            "subject_token_type": { "type": "string" },
+            "requested_token_type": { "type": "string" },
+            "actor_token_header": { "type": "string" },
+            "actor_token_type": { "type": "string" },
+            "audience": { "type": "array", "items": { "type": "string" } },
+            "resource": { "type": "array", "items": { "type": "string" } },
+            "scope": { "type": "array", "items": { "type": "string" } },
+            "requested_token_use": { "type": "string" },
+            "additional_parameters": { "type": "object", "additionalProperties": { "type": "string" } },
+            "allow_insecure_http": { "type": "boolean", "default": false },
+            "cache_skew_seconds": { "type": "integer", "minimum": 0 },
+            "max_cache_entries": { "type": "integer", "minimum": 0 },
+            "max_token_ttl_seconds": { "type": "integer", "minimum": 0 },
+            "timeout_seconds": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
         },
         "oauth_config_id": {
           "type": "string",

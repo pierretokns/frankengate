@@ -3,6 +3,9 @@ import { SecretVar } from "./schemas";
 
 export type MCPConnectionType = "http" | "stdio" | "sse";
 
+export type MCPProtocolMode = "legacy" | "auto" | "modern" | "pin";
+export type MCPProtocolVersion = "2024-11-05" | "2025-03-26" | "2025-06-18" | "2025-11-25" | "2026-07-28";
+
 export type MCPConnectionState = "connected" | "disconnected" | "error" | "pending_tools" | "disabled";
 
 export type MCPAuthType = "none" | "headers" | "oauth" | "per_user_oauth" | "per_user_headers";
@@ -29,6 +32,34 @@ export interface MCPTLSConfig {
 	ca_cert_pem?: SecretVar;
 }
 
+export type MCPTokenExchangeGrant = "token_exchange" | "jwt_bearer";
+export type MCPTokenExchangeClientAuthMethod = "client_secret_basic" | "client_secret_post";
+
+export interface MCPTokenExchangeConfig {
+	enabled?: boolean;
+	token_url?: SecretVar;
+	allowed_hosts?: string[];
+	grant?: MCPTokenExchangeGrant;
+	client_id?: SecretVar;
+	client_secret?: SecretVar;
+	client_auth_method?: MCPTokenExchangeClientAuthMethod;
+	subject_token_header?: string;
+	subject_token_type?: string;
+	requested_token_type?: string;
+	actor_token_header?: string;
+	actor_token_type?: string;
+	audience?: string[];
+	resource?: string[];
+	scope?: string[];
+	requested_token_use?: string;
+	additional_parameters?: Record<string, string>;
+	allow_insecure_http?: boolean;
+	cache_skew_seconds?: number;
+	max_cache_entries?: number;
+	max_token_ttl_seconds?: number;
+	timeout_seconds?: number;
+}
+
 export interface OAuthConfig {
 	client_id: SecretVar;
 	client_secret?: SecretVar; // Optional for public clients using PKCE
@@ -50,10 +81,13 @@ export interface MCPClientConfig {
 	name: string;
 	is_code_mode_client?: boolean;
 	connection_type: MCPConnectionType;
+	protocol_mode?: MCPProtocolMode;
+	protocol_version?: MCPProtocolVersion;
 	connection_string?: SecretVar;
 	stdio_config?: MCPStdioConfig;
 	tls_config?: MCPTLSConfig;
 	auth_type?: MCPAuthType;
+	token_exchange?: MCPTokenExchangeConfig;
 	oauth_config_id?: string;
 	oauth_client_id?: SecretVar; // Redacted existing client ID (populated on GET for oauth clients)
 	oauth_client_secret?: SecretVar; // Redacted existing client secret (populated on GET for oauth clients)
@@ -93,10 +127,13 @@ export interface CreateMCPClientRequest {
 	name: string;
 	is_code_mode_client?: boolean;
 	connection_type: MCPConnectionType;
+	protocol_mode?: MCPProtocolMode;
+	protocol_version?: MCPProtocolVersion;
 	connection_string?: SecretVar;
 	stdio_config?: MCPStdioConfig;
 	tls_config?: MCPTLSConfig;
 	auth_type?: MCPAuthType;
+	token_exchange?: MCPTokenExchangeConfig;
 	oauth_config?: OAuthConfig;
 	tools_to_execute?: string[];
 	tools_to_auto_execute?: string[];
@@ -137,6 +174,8 @@ export interface MCPVKConfig {
 }
 
 export interface UpdateMCPClientRequest {
+	protocol_mode?: MCPProtocolMode;
+	protocol_version?: MCPProtocolVersion;
 	name?: string;
 	is_code_mode_client?: boolean;
 	headers?: Record<string, SecretVar>;
@@ -155,6 +194,7 @@ export interface UpdateMCPClientRequest {
 	allow_on_all_virtual_keys?: boolean; // When true, available to all VKs with all tools allowed by default; explicit VK config overrides this
 	disabled?: boolean; // Set to true to shut down connection/workers; false to reconnect
 	tls_config?: MCPTLSConfig; // TLS configuration for HTTP/SSE connections
+	token_exchange?: MCPTokenExchangeConfig;
 	oauth_config?: OAuthConfigUpdate; // Only supported for existing oauth/per_user_oauth clients (credential rotation)
 	vk_configs?: MCPVKConfig[]; // When provided, replaces all VK assignments for this MCP client
 }

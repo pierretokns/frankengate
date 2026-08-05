@@ -1888,6 +1888,7 @@ func mcpClientConfigToTable(clientConfig *schemas.MCPClientConfig) (configstoreT
 		IsCodeModeClient:          clientConfig.IsCodeModeClient,
 		ConnectionType:            string(clientConfig.ConnectionType),
 		ProtocolMode:              string(normalizeMCPProtocolMode(clientConfig.MCPProtocolMode)),
+		ProtocolVersion:           clientConfig.MCPProtocolVersion,
 		ConnectionString:          clientConfig.ConnectionString,
 		StdioConfig:               clientConfig.StdioConfig,
 		AuthType:                  authType,
@@ -1911,7 +1912,7 @@ func mcpClientConfigToTable(clientConfig *schemas.MCPClientConfig) (configstoreT
 
 func normalizeMCPProtocolMode(mode schemas.MCPProtocolMode) schemas.MCPProtocolMode {
 	switch mode {
-	case schemas.MCPProtocolModeAuto, schemas.MCPProtocolModeModern:
+	case schemas.MCPProtocolModeAuto, schemas.MCPProtocolModeModern, schemas.MCPProtocolModePin:
 		return mode
 	default:
 		return schemas.MCPProtocolModeLegacy
@@ -6175,6 +6176,20 @@ func (c *Config) RedactMCPClientConfig(config *schemas.MCPClientConfig) *schemas
 			tlsCopy.CACertPEM = config.TLSConfig.CACertPEM.Redacted()
 		}
 		configCopy.TLSConfig = &tlsCopy
+	}
+
+	if config.TokenExchange != nil {
+		exchangeCopy := *config.TokenExchange
+		if config.TokenExchange.TokenURL != nil {
+			exchangeCopy.TokenURL = config.TokenExchange.TokenURL.Redacted()
+		}
+		if config.TokenExchange.ClientID != nil {
+			exchangeCopy.ClientID = config.TokenExchange.ClientID.Redacted()
+		}
+		if config.TokenExchange.ClientSecret != nil {
+			exchangeCopy.ClientSecret = config.TokenExchange.ClientSecret.Redacted()
+		}
+		configCopy.TokenExchange = &exchangeCopy
 	}
 
 	return &configCopy

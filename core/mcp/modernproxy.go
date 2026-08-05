@@ -65,11 +65,19 @@ func newModernHTTPProxyClient(
 	if err != nil {
 		return nil, fmt.Errorf("MCP upstream negotiation failed: %w", err)
 	}
-	if config != nil && config.MCPProtocolMode == schemas.MCPProtocolModeModern {
+	if config != nil && (config.MCPProtocolMode == schemas.MCPProtocolModeModern || config.MCPProtocolMode == schemas.MCPProtocolModePin) {
+		requiredVersion := protocol.Version2026_07_28
+		if config.MCPProtocolMode == schemas.MCPProtocolModePin {
+			requiredVersion = config.MCPProtocolVersion
+			if requiredVersion != protocol.Version2026_07_28 {
+				_ = session.Close()
+				return nil, fmt.Errorf("MCP pinned version %q requires the legacy transport; modern proxy only supports %q", requiredVersion, protocol.Version2026_07_28)
+			}
+		}
 		result := session.InitializeResult()
-		if result == nil || result.ProtocolVersion != protocol.Version2026_07_28 {
+		if result == nil || result.ProtocolVersion != requiredVersion {
 			_ = session.Close()
-			return nil, fmt.Errorf("MCP upstream negotiated %q, modern mode requires %q", protocolVersion(result), protocol.Version2026_07_28)
+			return nil, fmt.Errorf("MCP upstream negotiated %q, mode requires %q", protocolVersion(result), requiredVersion)
 		}
 	}
 
@@ -98,6 +106,7 @@ func newModernHTTPProxyClient(
 			result, callErr := session.CallTool(toolCtx, &modernmcp.CallToolParams{
 				Name:      toolName,
 				Arguments: request.GetArguments(),
+				Meta:      modernMetaFromLegacy(request.Params.Meta),
 			})
 			if callErr != nil {
 				return legacyMCP.NewToolResultError(callErr.Error()), nil
@@ -188,6 +197,14 @@ func modernToolToLegacy(tool *modernmcp.Tool) (legacyMCP.Tool, error) {
 	legacyTool := legacyMCP.NewToolWithRawSchema(tool.Name, tool.Description, rawSchema)
 	legacyTool.Title = tool.Title
 	legacyTool.Annotations = modernAnnotationsToLegacy(tool.Annotations)
+	if tool.OutputSchema != nil {
+		outputSchema, err := json.Marshal(tool.OutputSchema)
+		if err != nil {
+			return legacyMCP.Tool{}, fmt.Errorf("tool %q has invalid output schema: %w", tool.Name, err)
+		}
+		legacyTool.RawOutputSchema = outputSchema
+	}
+	legacyTool.Icons = modernIconsToLegacy(tool.Icons)
 	if legacyTool.Title == "" {
 		legacyTool.Title = legacyTool.Annotations.Title
 	}
@@ -209,6 +226,47 @@ func modernAnnotationsToLegacy(annotation *modernmcp.ToolAnnotations) legacyMCP.
 
 func boolPtr(value bool) *bool {
 	return &value
+}
+
+func modernIconsToLegacy(icons []modernmcp.Icon) []legacyMCP.Icon {
+	if len(icons) == 0 {
+		return nil
+	}
+	converted := make([]legacyMCP.Icon, 0, len(icons))
+	for _, icon := range icons {
+		converted = append(converted, legacyMCP.Icon{
+			Src:      icon.Source,
+			MIMEType: icon.MIMEType,
+			Sizes:    append([]string(nil), icon.Sizes...),
+			Theme:    legacyMCP.IconTheme(icon.Theme),
+		})
+	}
+	return converted
+}
+
+func modernMetaFromLegacy(meta *legacyMCP.Meta) modernmcp.Meta {
+	if meta == nil {
+		return modernmcp.Meta{}
+	}
+	values := cloneAnyMap(meta.AdditionalFields)
+	if values == nil {
+		values = make(map[string]any)
+	}
+	if meta.ProgressToken != nil {
+		values["progressToken"] = meta.ProgressToken
+	}
+	return modernmcp.Meta(values)
+}
+
+func cloneAnyMap(values map[string]any) map[string]any {
+	if len(values) == 0 {
+		return nil
+	}
+	clone := make(map[string]any, len(values))
+	for key, value := range values {
+		clone[key] = value
+	}
+	return clone
 }
 
 func modernResultToLegacy(result *modernmcp.CallToolResult) *legacyMCP.CallToolResult {
@@ -238,8 +296,21 @@ func modernResultToLegacy(result *modernmcp.CallToolResult) *legacyMCP.CallToolR
 		}
 		text += item
 	}
-	if result.IsError {
-		return legacyMCP.NewToolResultError(text)
+	legacyResult := legacyMCP.NewToolResultText(text)
+	legacyResult.StructuredContent = result.StructuredContent
+	if result.StructuredContent != nil {
+		if raw, err := json.Marshal(result.StructuredContent); err == nil {
+			legacyResult.RawStructuredContent = raw
+		}
 	}
-	return legacyMCP.NewToolResultText(text)
+	legacyMeta := cloneAnyMap(map[string]any(result.Meta))
+	progressToken, hasProgressToken := legacyMeta["progressToken"]
+	if hasProgressToken {
+		delete(legacyMeta, "progressToken")
+	}
+	legacyResult.Meta = &legacyMCP.Meta{ProgressToken: progressToken, AdditionalFields: legacyMeta}
+	if result.IsError {
+		legacyResult.IsError = true
+	}
+	return legacyResult
 }

@@ -24,6 +24,19 @@ func TestCreateSTDIOConnectionAllowsInlineEnvAssignments(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestMCPProtocolTransportSelection(t *testing.T) {
+	modern := &schemas.MCPClientConfig{MCPProtocolMode: schemas.MCPProtocolModeModern}
+	require.True(t, usesModernMCPTransport(modern))
+
+	pinnedModern := &schemas.MCPClientConfig{MCPProtocolMode: schemas.MCPProtocolModePin, MCPProtocolVersion: "2026-07-28"}
+	require.True(t, usesModernMCPTransport(pinnedModern))
+
+	pinnedLegacy := &schemas.MCPClientConfig{MCPProtocolMode: schemas.MCPProtocolModePin, MCPProtocolVersion: "2025-06-18"}
+	require.False(t, usesModernMCPTransport(pinnedLegacy))
+	require.Equal(t, "2025-06-18", mcpProtocolVersion(pinnedLegacy))
+	require.Error(t, validateMCPProtocolConfig(&schemas.MCPClientConfig{MCPProtocolMode: schemas.MCPProtocolModePin}))
+}
+
 func TestSetClientToolsReplacesSnapshotAndClearsRemovedTools(t *testing.T) {
 	manager := &MCPManager{
 		logger: &MockLogger{},

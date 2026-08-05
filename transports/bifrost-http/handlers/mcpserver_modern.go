@@ -54,7 +54,10 @@ func (h *MCPServerHandler) handleModernMCPServer(
 
 	modernHandler := modernmcp.NewStreamableHTTPHandler(
 		func(*http.Request) *modernmcp.Server { return modernServer },
-		&modernmcp.StreamableHTTPOptions{Stateless: true},
+		&modernmcp.StreamableHTTPOptions{
+			Stateless:                    true,
+			PropagateRequestCancellation: true,
+		},
 	)
 
 	// fasthttpadaptor preserves Flush() and therefore keeps modern streaming
@@ -120,6 +123,13 @@ func (h *MCPServerHandler) buildModernMCPServer(ctx context.Context, legacy *leg
 			Description: tool.Description,
 			InputSchema: inputSchema,
 			Annotations: modernToolAnnotations(tool.Annotations),
+		}
+		if len(tool.RawOutputSchema) > 0 {
+			var outputSchema any
+			if err := json.Unmarshal(tool.RawOutputSchema, &outputSchema); err != nil {
+				return nil, fmt.Errorf("tool %q has invalid output schema: %w", toolName, err)
+			}
+			modernTool.OutputSchema = outputSchema
 		}
 		modern.AddTool(modernTool, func(toolCtx context.Context, request *modernmcp.CallToolRequest) (*modernmcp.CallToolResult, error) {
 			toolCallType := "function"

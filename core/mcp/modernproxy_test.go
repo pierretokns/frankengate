@@ -32,6 +32,19 @@ func TestModernToolToLegacy(t *testing.T) {
 	require.Equal(t, "object", schema["type"])
 }
 
+func TestModernToolToLegacyPreservesOutputSchemaAndIcons(t *testing.T) {
+	tool, err := modernToolToLegacy(&modernmcp.Tool{
+		Name:         "structured",
+		InputSchema:  map[string]any{"type": "object"},
+		OutputSchema: map[string]any{"type": "object", "properties": map[string]any{"ok": map[string]any{"type": "boolean"}}},
+		Icons:        []modernmcp.Icon{{Source: "https://example.test/icon.svg", MIMEType: "image/svg+xml"}},
+	})
+	require.NoError(t, err)
+	require.JSONEq(t, `{"type":"object","properties":{"ok":{"type":"boolean"}}}`, string(tool.RawOutputSchema))
+	require.Len(t, tool.Icons, 1)
+	require.Equal(t, "https://example.test/icon.svg", tool.Icons[0].Src)
+}
+
 func TestModernToolToLegacyRejectsNonObjectSchema(t *testing.T) {
 	_, err := modernToolToLegacy(&modernmcp.Tool{Name: "invalid", InputSchema: map[string]any{"type": "string"}})
 	require.EqualError(t, err, `tool "invalid" input schema must have type object`)
@@ -53,6 +66,18 @@ func TestModernResultToLegacy(t *testing.T) {
 		IsError: true,
 	})
 	require.True(t, errResult.IsError)
+}
+
+func TestModernResultToLegacyPreservesStructuredContentAndMeta(t *testing.T) {
+	result := modernResultToLegacy(&modernmcp.CallToolResult{
+		Meta:              modernmcp.Meta{"trace": "upstream", "progressToken": "p1"},
+		StructuredContent: map[string]any{"ok": true},
+	})
+	require.Equal(t, map[string]any{"ok": true}, result.StructuredContent)
+	require.JSONEq(t, `{"ok":true}`, string(result.RawStructuredContent))
+	require.NotNil(t, result.Meta)
+	require.Equal(t, "p1", result.Meta.ProgressToken)
+	require.Equal(t, "upstream", result.Meta.AdditionalFields["trace"])
 }
 
 func TestMCPHeaderRoundTripper(t *testing.T) {
@@ -79,6 +104,14 @@ func TestMCPProtocolModeConfig(t *testing.T) {
 	var config schemas.MCPClientConfig
 	require.NoError(t, json.Unmarshal([]byte(`{"name":"catalog","connection_type":"http","protocol_mode":"auto"}`), &config))
 	require.Equal(t, schemas.MCPProtocolModeAuto, config.MCPProtocolMode)
+}
+
+func TestMCPProtocolPinConfig(t *testing.T) {
+	var config schemas.MCPClientConfig
+	require.NoError(t, json.Unmarshal([]byte(`{"name":"catalog","connection_type":"http","protocol_mode":"pin","protocol_version":"2025-06-18"}`), &config))
+	require.Equal(t, schemas.MCPProtocolModePin, config.MCPProtocolMode)
+	require.Equal(t, "2025-06-18", config.MCPProtocolVersion)
+	require.NoError(t, validateMCPProtocolConfig(&config))
 }
 
 func TestModernHTTPProxyClientNegotiatesModernUpstream(t *testing.T) {

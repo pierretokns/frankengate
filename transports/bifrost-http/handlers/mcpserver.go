@@ -307,6 +307,22 @@ func (h *MCPServerHandler) handleMCPServerSSE(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusUnauthorized, err.Error())
 		return
 	}
+	if isModernMCPRequest(ctx) {
+		bifrostCtx, cancel := lib.ConvertToBifrostContext(ctx, h.config)
+		bifrostCtx.SetValue(schemas.BifrostContextKeyIsMCPGateway, true)
+		defer cancel()
+		if authResult.jwtClaims != nil {
+			if injErr := injectJWTContext(bifrostCtx, authResult.jwtClaims, authResult.jwtVK); injErr != nil {
+				SendError(ctx, fasthttp.StatusUnauthorized, injErr.Error())
+				return
+			}
+		}
+		if err := h.handleModernMCPServer(ctx, bifrostCtx, authResult.mcpServer); err != nil {
+			logger.Warn("mcp: modern request failed: %v", err)
+			SendError(ctx, fasthttp.StatusBadRequest, err.Error())
+		}
+		return
+	}
 	// Signal to transport-plugin and tracing middlewares that this is a streaming
 	// response. Without this, fasthttpResponseToHTTPResponse calls ctx.Response.Body()
 	// during post-hook processing, which materializes the SSE body stream and

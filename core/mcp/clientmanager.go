@@ -17,6 +17,7 @@ import (
 	"github.com/mark3labs/mcp-go/client/transport"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
+	"github.com/maximhq/bifrost/core/mcp/protocol"
 	"github.com/maximhq/bifrost/core/mcp/utils"
 	"github.com/maximhq/bifrost/core/schemas"
 )
@@ -115,7 +116,7 @@ func (m *MCPManager) AcquireClientConn(ctx *schemas.BifrostContext, state *schem
 		}
 		initCtx, initCancel := context.WithTimeout(ctx, MCPClientConnectionEstablishTimeout)
 		defer initCancel()
-		if config.MCPProtocolMode == schemas.MCPProtocolModeAuto || config.MCPProtocolMode == schemas.MCPProtocolModeModern {
+		if usesModernMCPTransport(config) {
 			var modernErr error
 			tempClient, modernErr = newModernHTTPProxyClient(initCtx, targetURL, finalHeaders, perUserTLSClient, config)
 			if modernErr != nil {
@@ -137,7 +138,7 @@ func (m *MCPManager) AcquireClientConn(ctx *schemas.BifrostContext, state *schem
 
 		initRequest := mcp.InitializeRequest{
 			Params: mcp.InitializeParams{
-				ProtocolVersion: mcp.LATEST_PROTOCOL_VERSION,
+				ProtocolVersion: mcpProtocolVersion(config),
 				Capabilities:    mcp.ClientCapabilities{},
 				ClientInfo: mcp.Implementation{
 					Name:    fmt.Sprintf("Bifrost-%s-user", config.Name),
@@ -168,6 +169,7 @@ func (m *MCPManager) AcquireClientConn(ctx *schemas.BifrostContext, state *schem
 			},
 		}
 		if initResult != nil {
+			recordMCPConnectionProtocol(resp.ConnectionInfo, config, initResult.ProtocolVersion)
 			resp.ProtocolVersion = initResult.ProtocolVersion
 			resp.ServerInfo = &schemas.MCPServerInfo{
 				Name:    initResult.ServerInfo.Name,
@@ -480,7 +482,7 @@ func (m *MCPManager) VerifyPerUserOAuthConnection(ctx context.Context, config *s
 
 		initRequest := mcp.InitializeRequest{
 			Params: mcp.InitializeParams{
-				ProtocolVersion: mcp.LATEST_PROTOCOL_VERSION,
+				ProtocolVersion: mcpProtocolVersion(config),
 				Capabilities:    mcp.ClientCapabilities{},
 				ClientInfo: mcp.Implementation{
 					Name:    fmt.Sprintf("Bifrost-%s-verify", config.Name),
@@ -632,7 +634,7 @@ func (m *MCPManager) VerifyHeadersConnection(ctx context.Context, config *schema
 
 		initRequest := mcp.InitializeRequest{
 			Params: mcp.InitializeParams{
-				ProtocolVersion: mcp.LATEST_PROTOCOL_VERSION,
+				ProtocolVersion: mcpProtocolVersion(config),
 				Capabilities:    mcp.ClientCapabilities{},
 				ClientInfo: mcp.Implementation{
 					Name:    fmt.Sprintf("Bifrost-%s-verify", config.Name),
@@ -1215,12 +1217,62 @@ func (m *MCPManager) RegisterTool(name, description string, toolFunction MCPTool
 // CONNECTION HELPER METHODS
 // ============================================================================
 
+func usesModernMCPTransport(config *schemas.MCPClientConfig) bool {
+	if config == nil {
+		return false
+	}
+	if config.MCPProtocolMode == schemas.MCPProtocolModeAuto || config.MCPProtocolMode == schemas.MCPProtocolModeModern {
+		return true
+	}
+	return config.MCPProtocolMode == schemas.MCPProtocolModePin && config.MCPProtocolVersion == protocol.Version2026_07_28
+}
+
+func mcpProtocolVersion(config *schemas.MCPClientConfig) string {
+	if config != nil && config.MCPProtocolMode == schemas.MCPProtocolModePin && strings.TrimSpace(config.MCPProtocolVersion) != "" {
+		return strings.TrimSpace(config.MCPProtocolVersion)
+	}
+	return mcp.LATEST_PROTOCOL_VERSION
+}
+
+func validateMCPProtocolConfig(config *schemas.MCPClientConfig) error {
+	if config == nil {
+		return fmt.Errorf("MCP client config is required")
+	}
+	switch config.MCPProtocolMode {
+	case "", schemas.MCPProtocolModeLegacy, schemas.MCPProtocolModeAuto, schemas.MCPProtocolModeModern:
+		if strings.TrimSpace(config.MCPProtocolVersion) != "" {
+			return fmt.Errorf("protocol_version is only valid when protocol_mode is pin")
+		}
+	case schemas.MCPProtocolModePin:
+		if _, err := protocol.EraFor(config.MCPProtocolVersion); err != nil {
+			return fmt.Errorf("invalid pinned MCP protocol version: %w", err)
+		}
+	default:
+		return fmt.Errorf("unsupported MCP protocol mode %q", config.MCPProtocolMode)
+	}
+	return nil
+}
+
+func recordMCPConnectionProtocol(info *schemas.MCPClientConnectionInfo, config *schemas.MCPClientConfig, version string) {
+	if info == nil {
+		return
+	}
+	info.NegotiationMode = string(config.MCPProtocolMode)
+	info.ProtocolVersion = version
+	if era, err := protocol.EraFor(version); err == nil {
+		info.ProtocolEra = string(era)
+	}
+}
+
 // connectToMCPClient establishes a connection to an external MCP server and
 // registers its available tools with the manager. Uses exponential backoff
 // retry logic (5 retries, 1-30 seconds) for connection establishment.
 func (m *MCPManager) connectToMCPClient(requestCtx context.Context, config *schemas.MCPClientConfig) error {
 	if requestCtx == nil {
 		requestCtx = m.ctx
+	}
+	if err := validateMCPProtocolConfig(config); err != nil {
+		return err
 	}
 	// First lock: Initialize or validate client entry
 	m.mu.Lock()
@@ -1407,7 +1459,7 @@ func (m *MCPManager) connectToMCPClient(requestCtx context.Context, config *sche
 		// ServerInfo / ProtocolVersion / Capabilities.
 		extInitRequest := mcp.InitializeRequest{
 			Params: mcp.InitializeParams{
-				ProtocolVersion: mcp.LATEST_PROTOCOL_VERSION,
+				ProtocolVersion: mcpProtocolVersion(config),
 				Capabilities:    mcp.ClientCapabilities{},
 				ClientInfo: mcp.Implementation{
 					Name:    fmt.Sprintf("Bifrost-%s", config.Name),
@@ -1438,6 +1490,9 @@ func (m *MCPManager) connectToMCPClient(requestCtx context.Context, config *sche
 			return nil, fmt.Errorf("failed to initialize MCP client after %d retries: %v", initRetryConfig.MaxRetries, initErr)
 		}
 		m.logger.Debug("%s [%s] Client initialized successfully", MCPLogPrefix, config.Name)
+		if initResult != nil {
+			recordMCPConnectionProtocol(connectionInfo, config, initResult.ProtocolVersion)
+		}
 
 		// Build the gate response from captured initialize result.
 		resp := &schemas.BifrostMCPConnectResponse{
@@ -1659,6 +1714,9 @@ func (m *MCPManager) buildTLSHTTPClient(tlsCfg *schemas.MCPTLSConfig) (*http.Cli
 // are used instead of resolving them from config. This is how plugin PreHook mutations flow
 // into the transport.
 func (m *MCPManager) createHTTPConnection(ctx context.Context, config *schemas.MCPClientConfig, overrides *schemas.BifrostMCPConnectRequest) (*client.Client, *schemas.MCPClientConnectionInfo, error) {
+	if err := validateMCPProtocolConfig(config); err != nil {
+		return nil, nil, err
+	}
 	if config.ConnectionString == nil {
 		return nil, nil, fmt.Errorf("HTTP connection string is required")
 	}
@@ -1690,7 +1748,7 @@ func (m *MCPManager) createHTTPConnection(ctx context.Context, config *schemas.M
 		}
 	}
 
-	if config.MCPProtocolMode == schemas.MCPProtocolModeAuto || config.MCPProtocolMode == schemas.MCPProtocolModeModern {
+	if usesModernMCPTransport(config) {
 		httpClient, err := m.buildTLSHTTPClient(config.TLSConfig)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to build TLS HTTP client: %w", err)

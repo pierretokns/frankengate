@@ -304,22 +304,77 @@ const (
 	MCPAuthTypePerUserHeaders MCPAuthType = "per_user_headers" // Per-user header authentication (each user submits API keys / signed tokens; admin declares the required key names via PerUserHeaderKeys)
 )
 
+// MCPTokenExchangeGrant identifies the OAuth grant used when Bifrost obtains
+// a downstream credential for an MCP request. The values intentionally map to
+// operator-friendly names; the token exchange package expands them to the RFC
+// 8693/7523 URNs on the wire.
+type MCPTokenExchangeGrant string
+
+const (
+	MCPTokenExchangeGrantTokenExchange MCPTokenExchangeGrant = "token_exchange" // RFC 8693
+	MCPTokenExchangeGrantJWTBearer     MCPTokenExchangeGrant = "jwt_bearer"     // RFC 7523
+)
+
+// MCPTokenExchangeClientAuthMethod controls how the STS client authenticates.
+// private_key_jwt is reserved for the next key-provider integration; accepting
+// it in config without a signer would create a misleading fail-open path.
+type MCPTokenExchangeClientAuthMethod string
+
+const (
+	MCPTokenExchangeClientAuthBasic MCPTokenExchangeClientAuthMethod = "client_secret_basic"
+	MCPTokenExchangeClientAuthPost  MCPTokenExchangeClientAuthMethod = "client_secret_post"
+)
+
+// MCPTokenExchangeConfig configures an opt-in, per-request downstream token
+// exchange for an HTTP/SSE MCP client. Secrets remain SecretVar values so
+// env.* references and the existing encrypted config-store path work exactly
+// like the other MCP credentials.
+//
+// The original inbound credential is never replaced or persisted. The
+// exchanged token exists only in the process cache and on the outbound wire.
+type MCPTokenExchangeConfig struct {
+	Enabled              bool                             `json:"enabled,omitempty"`
+	TokenURL             *SecretVar                       `json:"token_url,omitempty"`
+	AllowedHosts         []string                         `json:"allowed_hosts,omitempty"`
+	Grant                MCPTokenExchangeGrant            `json:"grant,omitempty"`
+	ClientID             *SecretVar                       `json:"client_id,omitempty"`
+	ClientSecret         *SecretVar                       `json:"client_secret,omitempty"`
+	ClientAuthMethod     MCPTokenExchangeClientAuthMethod `json:"client_auth_method,omitempty"`
+	SubjectTokenHeader   string                           `json:"subject_token_header,omitempty"`
+	SubjectTokenType     string                           `json:"subject_token_type,omitempty"`
+	RequestedTokenType   string                           `json:"requested_token_type,omitempty"`
+	ActorTokenHeader     string                           `json:"actor_token_header,omitempty"`
+	ActorTokenType       string                           `json:"actor_token_type,omitempty"`
+	Audience             []string                         `json:"audience,omitempty"`
+	Resource             []string                         `json:"resource,omitempty"`
+	Scope                []string                         `json:"scope,omitempty"`
+	RequestedTokenUse    string                           `json:"requested_token_use,omitempty"`
+	AdditionalParameters map[string]string                `json:"additional_parameters,omitempty"`
+	AllowInsecureHTTP    bool                             `json:"allow_insecure_http,omitempty"`
+	CacheSkewSeconds     int                              `json:"cache_skew_seconds,omitempty"`
+	MaxCacheEntries      int                              `json:"max_cache_entries,omitempty"`
+	MaxTokenTTLSeconds   int                              `json:"max_token_ttl_seconds,omitempty"`
+	TimeoutSeconds       int                              `json:"timeout_seconds,omitempty"`
+}
+
 // MCPClientConfig defines tool filtering for an MCP client.
 type MCPClientConfig struct {
-	ID                string               `json:"client_id"`                     // Client ID
-	Name              string               `json:"name"`                          // Client name
-	IsCodeModeClient  bool                 `json:"is_code_mode_client"`           // Whether the client is a code mode client
-	ConnectionType    MCPConnectionType    `json:"connection_type"`               // How to connect (HTTP, STDIO, SSE, or InProcess)
-	MCPProtocolMode   MCPProtocolMode      `json:"protocol_mode,omitempty"`       // HTTP upstream negotiation mode (legacy, auto, or modern)
-	ConnectionString  *SecretVar           `json:"connection_string,omitempty"`   // HTTP or SSE URL (required for HTTP or SSE connections)
-	StdioConfig       *MCPStdioConfig      `json:"stdio_config,omitempty"`        // STDIO configuration (required for STDIO connections)
-	TLSConfig         *MCPTLSConfig        `json:"tls_config,omitempty"`          // TLS configuration for HTTP/SSE connections
-	AuthType          MCPAuthType          `json:"auth_type"`                     // Authentication type (none, headers, or oauth)
-	OauthConfigID     *string              `json:"oauth_config_id,omitempty"`     // OAuth config ID (references oauth_configs table)
-	OauthClientID     *SecretVar           `json:"oauth_client_id,omitempty"`     // Redacted OAuth client ID (populated on GET, not stored here)
-	OauthClientSecret *SecretVar           `json:"oauth_client_secret,omitempty"` // Redacted OAuth client secret (populated on GET, not stored here)
-	State             string               `json:"state,omitempty"`               // Connection state (connected, disconnected, error)
-	Headers           map[string]SecretVar `json:"headers,omitempty"`             // Headers to send with the request (for headers auth type)
+	ID                 string                  `json:"client_id"`                     // Client ID
+	Name               string                  `json:"name"`                          // Client name
+	IsCodeModeClient   bool                    `json:"is_code_mode_client"`           // Whether the client is a code mode client
+	ConnectionType     MCPConnectionType       `json:"connection_type"`               // How to connect (HTTP, STDIO, SSE, or InProcess)
+	MCPProtocolMode    MCPProtocolMode         `json:"protocol_mode,omitempty"`       // HTTP upstream negotiation mode (legacy, auto, modern, or pin)
+	MCPProtocolVersion string                  `json:"protocol_version,omitempty"`    // Exact MCP revision required when protocol_mode is pin
+	ConnectionString   *SecretVar              `json:"connection_string,omitempty"`   // HTTP or SSE URL (required for HTTP or SSE connections)
+	StdioConfig        *MCPStdioConfig         `json:"stdio_config,omitempty"`        // STDIO configuration (required for STDIO connections)
+	TLSConfig          *MCPTLSConfig           `json:"tls_config,omitempty"`          // TLS configuration for HTTP/SSE connections
+	AuthType           MCPAuthType             `json:"auth_type"`                     // Authentication type (none, headers, or oauth)
+	TokenExchange      *MCPTokenExchangeConfig `json:"token_exchange,omitempty"`      // Optional RFC 8693/7523 downstream credential exchange
+	OauthConfigID      *string                 `json:"oauth_config_id,omitempty"`     // OAuth config ID (references oauth_configs table)
+	OauthClientID      *SecretVar              `json:"oauth_client_id,omitempty"`     // Redacted OAuth client ID (populated on GET, not stored here)
+	OauthClientSecret  *SecretVar              `json:"oauth_client_secret,omitempty"` // Redacted OAuth client secret (populated on GET, not stored here)
+	State              string                  `json:"state,omitempty"`               // Connection state (connected, disconnected, error)
+	Headers            map[string]SecretVar    `json:"headers,omitempty"`             // Headers to send with the request (for headers auth type)
 	// PerUserHeaderKeys lists the header *names* each caller must supply for
 	// MCPAuthTypePerUserHeaders clients. Admin-declared schema only — the
 	// values live per-user in the mcp_per_user_header_credentials table and
@@ -358,13 +413,15 @@ type MCPClientConfig struct {
 
 // MCPProtocolMode controls the upstream HTTP MCP protocol behavior. Legacy is
 // the compatibility-preserving default; auto probes modern server/discover
-// and falls back to legacy initialize; modern requires the 2026-07-28 era.
+// and falls back to legacy initialize; modern requires the 2026-07-28 era;
+// pin requires MCPProtocolVersion and never downgrades.
 type MCPProtocolMode string
 
 const (
 	MCPProtocolModeLegacy MCPProtocolMode = "legacy"
 	MCPProtocolModeAuto   MCPProtocolMode = "auto"
 	MCPProtocolModeModern MCPProtocolMode = "modern"
+	MCPProtocolModePin    MCPProtocolMode = "pin"
 )
 
 // UnmarshalJSON supports Go duration strings (e.g. "10m") for tool_sync_interval and
@@ -611,6 +668,9 @@ type MCPClientConnectionInfo struct {
 	Type               MCPConnectionType `json:"type"`                           // Connection type (HTTP, STDIO, SSE, or InProcess)
 	ConnectionURL      *string           `json:"connection_url,omitempty"`       // HTTP/SSE endpoint URL (for HTTP/SSE connections)
 	StdioCommandString *string           `json:"stdio_command_string,omitempty"` // Command string for display (for STDIO connections)
+	ProtocolVersion    string            `json:"protocol_version,omitempty"`     // Revision negotiated on the upstream wire
+	ProtocolEra        string            `json:"protocol_era,omitempty"`         // Behavioral era (legacy or modern)
+	NegotiationMode    string            `json:"negotiation_mode,omitempty"`     // Configured mode (legacy, auto, modern, or pin)
 }
 
 // MCPClient represents a connected MCP client with its configuration and tools,

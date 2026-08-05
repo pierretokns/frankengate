@@ -12,7 +12,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { getErrorMessage, useCreateMCPClientMutation } from "@/lib/store";
-import { CreateMCPClientRequest, SecretVar, MCPAuthType, MCPConnectionType, MCPStdioConfig, MCPTLSConfig } from "@/lib/types/mcp";
+import {
+	CreateMCPClientRequest,
+	SecretVar,
+	MCPAuthType,
+	MCPConnectionType,
+	MCPProtocolMode,
+	MCPProtocolVersion,
+	MCPStdioConfig,
+	MCPTLSConfig,
+} from "@/lib/types/mcp";
 import { parseArrayFromText } from "@/lib/utils/array";
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
 import { Info } from "lucide-react";
@@ -49,9 +58,16 @@ const emptyForm: CreateMCPClientRequest = {
 	is_code_mode_client: false,
 	is_ping_available: true,
 	connection_type: "http",
+	protocol_mode: "legacy",
 	connection_string: emptySecretVar,
 	stdio_config: emptyStdioConfig,
 	auth_type: "none",
+	token_exchange: {
+		enabled: false,
+		grant: "token_exchange",
+		client_auth_method: "client_secret_basic",
+		subject_token_header: "authorization",
+	},
 };
 
 const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
@@ -65,6 +81,10 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 	// stdio process reads it from Bifrost's host environment.
 	const [envVars, setEnvVars] = useState<Record<string, string>>({});
 	const [scopesText, setScopesText] = useState("");
+	const [exchangeHostsText, setExchangeHostsText] = useState("");
+	const [exchangeAudienceText, setExchangeAudienceText] = useState("");
+	const [exchangeResourceText, setExchangeResourceText] = useState("");
+	const [exchangeScopeText, setExchangeScopeText] = useState("");
 	const [oauthFlow, setOauthFlow] = useState<{
 		authorizeUrl: string;
 		oauthConfigId: string;
@@ -94,6 +114,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 	const { control, handleSubmit, setValue, watch, reset, setError, clearErrors } = methods;
 
 	const connectionType = watch("connection_type");
+	const protocolMode = watch("protocol_mode") || "legacy";
 	const authType = watch("auth_type");
 	const headers = watch("headers");
 
@@ -149,6 +170,10 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 			setArgsText("");
 			setEnvVars({});
 			setScopesText("");
+			setExchangeHostsText("");
+			setExchangeAudienceText("");
+			setExchangeResourceText("");
+			setExchangeScopeText("");
 			setOauthFlow(null);
 			setHeadersFlow(null);
 			setPerUserHeaderKeys([]);
@@ -213,6 +238,17 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 			}
 		}
 
+		if (data.token_exchange?.enabled) {
+			if (!data.token_exchange.token_url?.value && !data.token_exchange.token_url?.ref) {
+				toast({ title: "Token endpoint required", description: "Provide the approved HTTPS token endpoint for the exchange profile.", variant: "destructive" });
+				hasErrors = true;
+			}
+			if (parseArrayFromText(exchangeHostsText).length === 0) {
+				toast({ title: "Token endpoint allowlist required", description: "List at least one approved token endpoint host.", variant: "destructive" });
+				hasErrors = true;
+			}
+		}
+
 		if (headersValidationError || hasErrors) return;
 
 		setIsLoading(true);
@@ -260,6 +296,15 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 					? data.headers
 					: undefined,
 			per_user_header_keys: authType === "per_user_headers" ? perUserHeaderKeys : undefined,
+			token_exchange: data.token_exchange?.enabled
+				? {
+						...data.token_exchange,
+						allowed_hosts: parseArrayFromText(exchangeHostsText),
+						audience: parseArrayFromText(exchangeAudienceText),
+						resource: parseArrayFromText(exchangeResourceText),
+						scope: parseArrayFromText(exchangeScopeText),
+					}
+				: undefined,
 			tools_to_execute: ["*"],
 		};
 
@@ -377,6 +422,70 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 									</FormItem>
 								)}
 							/>
+
+							{/* MCP protocol compatibility */}
+							{(connectionType === "http" || connectionType === "sse") && (
+								<section className="space-y-3 rounded-lg border p-4">
+									<div>
+										<FormLabel>MCP protocol compatibility</FormLabel>
+										<p className="text-muted-foreground text-xs">
+											Legacy is safest for existing servers. Auto probes modern MCP and falls back only when the server is genuinely older.
+										</p>
+									</div>
+									<FormField
+										control={control}
+										name="protocol_mode"
+										render={({ field }) => (
+											<Select
+												value={field.value || "legacy"}
+												onValueChange={(value: MCPProtocolMode) => {
+													field.onChange(value);
+													if (value !== "pin") setValue("protocol_version", undefined);
+												}}
+											>
+												<FormControl>
+													<SelectTrigger data-testid="mcp-protocol-mode-select">
+														<SelectValue />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													<SelectItem value="legacy">Legacy (default)</SelectItem>
+													<SelectItem value="auto">Auto-negotiate</SelectItem>
+													<SelectItem value="modern">Modern only</SelectItem>
+													<SelectItem value="pin">Pin exact revision</SelectItem>
+												</SelectContent>
+											</Select>
+										)}
+									/>
+									{protocolMode === "pin" && (
+										<FormField
+											control={control}
+											name="protocol_version"
+											rules={{ required: "Select a protocol revision" }}
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>Exact revision</FormLabel>
+													<Select value={field.value || ""} onValueChange={(value: MCPProtocolVersion) => field.onChange(value)}>
+														<FormControl>
+															<SelectTrigger data-testid="mcp-protocol-version-select">
+																<SelectValue placeholder="Select revision" />
+															</SelectTrigger>
+														</FormControl>
+														<SelectContent>
+															{["2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25", "2026-07-28"].map((version) => (
+																<SelectItem key={version} value={version}>
+																	{version}
+																</SelectItem>
+															))}
+														</SelectContent>
+													</Select>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									)}
+								</section>
+							)}
 
 							{/* Code Mode Server */}
 							<FormField
@@ -742,7 +851,51 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 										</Accordion>
 									)}
 
-									{/* TLS / Certificate */}
+					{/* Delegated credentials */}
+					<Accordion type="single" collapsible className="w-full">
+						<AccordionItem value="token-exchange" className="border-b-0">
+							<AccordionTrigger className="py-0" data-testid="token-exchange-trigger">
+								<span className="text-sm font-medium">Delegated credentials (advanced)</span>
+							</AccordionTrigger>
+							<AccordionContent className="space-y-4 pt-4 pb-0">
+								<p className="text-muted-foreground text-xs">
+									Existing OAuth or per-user headers are recommended first. This opt-in profile exchanges the authenticated caller token for this destination only.
+								</p>
+								<FormField
+									control={control}
+									name="token_exchange.enabled"
+									render={({ field }) => (
+										<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+											<FormLabel>Enable token exchange</FormLabel>
+											<FormControl><Switch checked={field.value === true} onCheckedChange={field.onChange} data-testid="token-exchange-enabled" /></FormControl>
+										</FormItem>
+									)}
+								/>
+								{watch("token_exchange.enabled") && (
+									<div className="space-y-4">
+										<FormField control={control} name="token_exchange.token_url" render={({ field }) => (
+											<FormItem><FormLabel>STS token endpoint</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="https://sts.example.com/oauth/token" data-testid="token-exchange-url" /></FormControl><FormMessage /></FormItem>
+										)} />
+										<div className="space-y-2"><Label>Approved endpoint hosts</Label><Input value={exchangeHostsText} onChange={(e) => setExchangeHostsText(e.target.value)} placeholder="sts.example.com, sts.internal.example" data-testid="token-exchange-hosts" /><p className="text-muted-foreground text-xs">Required to prevent credential egress to an unapproved host. Redirects are refused.</p></div>
+										<FormField control={control} name="token_exchange.client_id" render={({ field }) => (
+											<FormItem><FormLabel>STS client ID</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="client-id" data-testid="token-exchange-client-id" /></FormControl><FormMessage /></FormItem>
+										)} />
+										<FormField control={control} name="token_exchange.client_secret" render={({ field }) => (
+											<FormItem><FormLabel>STS client secret</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="env.STS_CLIENT_SECRET" hideValueWhenEnv maskNonEnvValue data-testid="token-exchange-client-secret" /></FormControl><FormMessage /></FormItem>
+										)} />
+										<div className="space-y-2"><Label>Audience (optional)</Label><Input value={exchangeAudienceText} onChange={(e) => setExchangeAudienceText(e.target.value)} placeholder="api://downstream" /></div>
+										<div className="space-y-2"><Label>Resource (optional)</Label><Input value={exchangeResourceText} onChange={(e) => setExchangeResourceText(e.target.value)} placeholder="https://api.example.com" /></div>
+										<div className="space-y-2"><Label>Scope (optional)</Label><Input value={exchangeScopeText} onChange={(e) => setExchangeScopeText(e.target.value)} placeholder="read write" /></div>
+										<FormField control={control} name="token_exchange.subject_token_header" render={({ field }) => (
+											<FormItem><FormLabel>Subject token header</FormLabel><FormControl><Input {...field} value={field.value || "authorization"} placeholder="authorization" /></FormControl><FormMessage /></FormItem>
+										)} />
+									</div>
+								)}
+							</AccordionContent>
+						</AccordionItem>
+					</Accordion>
+
+					{/* TLS / Certificate */}
 									<Accordion type="single" collapsible className="w-full">
 										<AccordionItem value="tls-config" className="border-b-0">
 											<AccordionTrigger className="py-0" data-testid="tls-config-trigger">

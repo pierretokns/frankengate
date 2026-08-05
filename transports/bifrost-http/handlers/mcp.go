@@ -18,6 +18,8 @@ import (
 	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/mcp"
+	"github.com/maximhq/bifrost/core/mcp/protocol"
+	"github.com/maximhq/bifrost/core/mcp/tokenexchange"
 	mcputils "github.com/maximhq/bifrost/core/mcp/utils"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
@@ -437,6 +439,7 @@ func (h *MCPHandler) getMCPClientsPaginated(ctx *fasthttp.RequestCtx, params con
 			StdioConfig:           dbClient.StdioConfig,
 			TLSConfig:             dbClient.TLSConfig,
 			AuthType:              schemas.MCPAuthType(dbClient.AuthType),
+			TokenExchange:         dbClient.TokenExchange,
 			OauthConfigID:         dbClient.OauthConfigID,
 			ToolsToExecute:        dbClient.ToolsToExecute,
 			ToolsToAutoExecute:    dbClient.ToolsToAutoExecute,
@@ -572,23 +575,62 @@ type MCPVKConfigRequest struct {
 // Immutable fields (connection_type, auth_type, connection_string, stdio_config) are not
 // accepted here; they cannot be changed after creation.
 type MCPClientUpdateRequest struct {
-	Name                  *string                      `json:"name,omitempty"`
-	ProtocolMode          *schemas.MCPProtocolMode     `json:"protocol_mode,omitempty"`
-	Disabled              *bool                        `json:"disabled,omitempty"`
-	AllowOnAllVirtualKeys *bool                        `json:"allow_on_all_virtual_keys,omitempty"`
-	IsCodeModeClient      *bool                        `json:"is_code_mode_client,omitempty"`
-	IsPingAvailable       *bool                        `json:"is_ping_available,omitempty"`
-	ToolSyncInterval      *int                         `json:"tool_sync_interval,omitempty"`
-	ToolExecutionTimeout  *int                         `json:"tool_execution_timeout,omitempty"`
-	Headers               map[string]schemas.SecretVar `json:"headers,omitempty"`
-	AllowedExtraHeaders   *schemas.WhiteList           `json:"allowed_extra_headers,omitempty"`
-	ToolPricing           map[string]float64           `json:"tool_pricing,omitempty"`
-	ToolsToExecute        *schemas.WhiteList           `json:"tools_to_execute,omitempty"`
-	ToolsToAutoExecute    *schemas.WhiteList           `json:"tools_to_auto_execute,omitempty"`
-	PerUserHeaderKeys     *[]string                    `json:"per_user_header_keys,omitempty"`
-	TLSConfig             *schemas.MCPTLSConfig        `json:"tls_config,omitempty"`
-	VKConfigs             *[]MCPVKConfigRequest        `json:"vk_configs,omitempty"`
-	OauthConfig           *OAuthConfigRequest          `json:"oauth_config,omitempty"`
+	Name                  *string                         `json:"name,omitempty"`
+	ProtocolMode          *schemas.MCPProtocolMode        `json:"protocol_mode,omitempty"`
+	ProtocolVersion       *string                         `json:"protocol_version,omitempty"`
+	Disabled              *bool                           `json:"disabled,omitempty"`
+	AllowOnAllVirtualKeys *bool                           `json:"allow_on_all_virtual_keys,omitempty"`
+	IsCodeModeClient      *bool                           `json:"is_code_mode_client,omitempty"`
+	IsPingAvailable       *bool                           `json:"is_ping_available,omitempty"`
+	ToolSyncInterval      *int                            `json:"tool_sync_interval,omitempty"`
+	ToolExecutionTimeout  *int                            `json:"tool_execution_timeout,omitempty"`
+	Headers               map[string]schemas.SecretVar    `json:"headers,omitempty"`
+	AllowedExtraHeaders   *schemas.WhiteList              `json:"allowed_extra_headers,omitempty"`
+	ToolPricing           map[string]float64              `json:"tool_pricing,omitempty"`
+	ToolsToExecute        *schemas.WhiteList              `json:"tools_to_execute,omitempty"`
+	ToolsToAutoExecute    *schemas.WhiteList              `json:"tools_to_auto_execute,omitempty"`
+	PerUserHeaderKeys     *[]string                       `json:"per_user_header_keys,omitempty"`
+	TLSConfig             *schemas.MCPTLSConfig           `json:"tls_config,omitempty"`
+	VKConfigs             *[]MCPVKConfigRequest           `json:"vk_configs,omitempty"`
+	OauthConfig           *OAuthConfigRequest             `json:"oauth_config,omitempty"`
+	TokenExchange         *schemas.MCPTokenExchangeConfig `json:"token_exchange,omitempty"`
+}
+
+func validateMCPTokenExchange(config *schemas.MCPTokenExchangeConfig) error {
+	if config == nil || !config.Enabled {
+		return nil
+	}
+	if err := tokenexchange.ValidateConfig(config); err != nil {
+		return err
+	}
+	for _, header := range []string{config.SubjectTokenHeader, config.ActorTokenHeader} {
+		header = strings.ToLower(strings.TrimSpace(header))
+		if strings.HasPrefix(header, "x-bf-") || header == "cookie" || header == "set-cookie" {
+			return fmt.Errorf("token source header %q is not permitted", header)
+		}
+	}
+	return nil
+}
+
+func validateMCPProtocolSelection(mode schemas.MCPProtocolMode, version string) error {
+	version = strings.TrimSpace(version)
+	switch mode {
+	case schemas.MCPProtocolModeLegacy, schemas.MCPProtocolModeAuto, schemas.MCPProtocolModeModern:
+		if version != "" {
+			return fmt.Errorf("protocol_version is only valid when protocol_mode is pin")
+		}
+		return nil
+	case schemas.MCPProtocolModePin:
+		if version == "" {
+			return fmt.Errorf("protocol_mode pin requires protocol_version")
+		}
+		if _, err := protocol.EraFor(version); err != nil {
+			return fmt.Errorf("unsupported protocol_version %q", version)
+		}
+		return nil
+	default:
+		return fmt.Errorf("protocol_mode must be one of legacy, auto, modern, or pin")
+	}
 }
 
 // MCPClientUpdateRequest.ToolSyncInterval is expressed in minutes, then converted
@@ -616,8 +658,12 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 	if req.ProtocolMode == "" {
 		req.ProtocolMode = string(schemas.MCPProtocolModeLegacy)
 	}
-	if req.ProtocolMode != string(schemas.MCPProtocolModeLegacy) && req.ProtocolMode != string(schemas.MCPProtocolModeAuto) && req.ProtocolMode != string(schemas.MCPProtocolModeModern) {
-		SendError(ctx, fasthttp.StatusBadRequest, "protocol_mode must be one of legacy, auto, or modern")
+	if err := validateMCPProtocolSelection(schemas.MCPProtocolMode(req.ProtocolMode), req.ProtocolVersion); err != nil {
+		SendError(ctx, fasthttp.StatusBadRequest, err.Error())
+		return
+	}
+	if err := validateMCPTokenExchange(req.TokenExchange); err != nil {
+		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("invalid token_exchange: %v", err))
 		return
 	}
 
@@ -714,9 +760,11 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 			ToolSyncInterval:      toolSyncInterval,
 			ConnectionType:        schemas.MCPConnectionType(req.ConnectionType),
 			MCPProtocolMode:       schemas.MCPProtocolMode(req.ProtocolMode),
+			MCPProtocolVersion:    req.ProtocolVersion,
 			ConnectionString:      req.ConnectionString,
 			StdioConfig:           req.StdioConfig,
 			AuthType:              schemas.MCPAuthTypePerUserHeaders,
+			TokenExchange:         req.TokenExchange,
 			PerUserHeaderKeys:     canonHeaderKeys,
 			ToolsToExecute:        req.ToolsToExecute,
 			ToolsToAutoExecute:    req.ToolsToAutoExecute,
@@ -816,10 +864,12 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 			ToolSyncInterval:      toolSyncInterval,
 			ConnectionType:        schemas.MCPConnectionType(req.ConnectionType),
 			MCPProtocolMode:       schemas.MCPProtocolMode(req.ProtocolMode),
+			MCPProtocolVersion:    req.ProtocolVersion,
 			ConnectionString:      req.ConnectionString,
 			StdioConfig:           req.StdioConfig,
 			TLSConfig:             req.TLSConfig,
 			AuthType:              schemas.MCPAuthTypePerUserOauth,
+			TokenExchange:         req.TokenExchange,
 			OauthConfigID:         &flowInitiation.OauthConfigID,
 			ToolsToExecute:        req.ToolsToExecute,
 			ToolsToAutoExecute:    req.ToolsToAutoExecute,
@@ -910,10 +960,12 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 			ToolSyncInterval:      toolSyncInterval,
 			ConnectionType:        schemas.MCPConnectionType(req.ConnectionType),
 			MCPProtocolMode:       schemas.MCPProtocolMode(req.ProtocolMode),
+			MCPProtocolVersion:    req.ProtocolVersion,
 			ConnectionString:      req.ConnectionString,
 			StdioConfig:           req.StdioConfig,
 			TLSConfig:             req.TLSConfig,
 			AuthType:              schemas.MCPAuthType(req.AuthType),
+			TokenExchange:         req.TokenExchange,
 			OauthConfigID:         &flowInitiation.OauthConfigID,
 			ToolsToExecute:        req.ToolsToExecute,
 			ToolsToAutoExecute:    req.ToolsToAutoExecute,
@@ -973,6 +1025,7 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 		IsCodeModeClient:      req.IsCodeModeClient,
 		ConnectionType:        schemas.MCPConnectionType(req.ConnectionType),
 		MCPProtocolMode:       schemas.MCPProtocolMode(req.ProtocolMode),
+		MCPProtocolVersion:    req.ProtocolVersion,
 		ConnectionString:      req.ConnectionString,
 		StdioConfig:           req.StdioConfig,
 		TLSConfig:             req.TLSConfig,
@@ -981,6 +1034,7 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 		Headers:               req.Headers,
 		AllowedExtraHeaders:   req.AllowedExtraHeaders,
 		AuthType:              schemas.MCPAuthType(req.AuthType),
+		TokenExchange:         req.TokenExchange,
 		OauthConfigID:         req.OauthConfigID,
 		IsPingAvailable:       req.IsPingAvailable,
 		ToolSyncInterval:      toolSyncInterval,
@@ -1074,8 +1128,12 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 	if protocolMode == "" {
 		protocolMode = schemas.MCPProtocolModeLegacy
 	}
-	if protocolMode != schemas.MCPProtocolModeLegacy && protocolMode != schemas.MCPProtocolModeAuto && protocolMode != schemas.MCPProtocolModeModern {
-		SendError(ctx, fasthttp.StatusBadRequest, "protocol_mode must be one of legacy, auto, or modern")
+	protocolVersion := existingConfig.MCPProtocolVersion
+	if req.ProtocolVersion != nil {
+		protocolVersion = strings.TrimSpace(*req.ProtocolVersion)
+	}
+	if err := validateMCPProtocolSelection(protocolMode, protocolVersion); err != nil {
+		SendError(ctx, fasthttp.StatusBadRequest, err.Error())
 		return
 	}
 	disabled := existingConfig.Disabled
@@ -1101,6 +1159,10 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 	allowedExtraHeaders := existingConfig.AllowedExtraHeaders
 	if req.AllowedExtraHeaders != nil {
 		allowedExtraHeaders = *req.AllowedExtraHeaders
+	}
+	tokenExchange := existingConfig.TokenExchange
+	if req.TokenExchange != nil {
+		tokenExchange = mergeMCPTokenExchange(req.TokenExchange, existingConfig.TokenExchange, h.store.RedactMCPClientConfig(existingConfig).TokenExchange)
 	}
 	// Headers: merge incoming with existing, preserving redacted values that are unchanged.
 	headers := existingConfig.Headers
@@ -1170,6 +1232,10 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 	}
 	if err := validateAllowedExtraHeaders(allowedExtraHeaders); err != nil {
 		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("Invalid allowed_extra_headers: %v", err))
+		return
+	}
+	if err := validateMCPTokenExchange(tokenExchange); err != nil {
+		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("invalid token_exchange: %v", err))
 		return
 	}
 	// Validate per_user_header_keys only when the request explicitly provides
@@ -1304,6 +1370,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		IsCodeModeClient:      isCodeMode,
 		ConnectionType:        string(existingConfig.ConnectionType),
 		ProtocolMode:          string(protocolMode),
+		ProtocolVersion:       protocolVersion,
 		ConnectionString:      existingConfig.ConnectionString,
 		StdioConfig:           existingConfig.StdioConfig,
 		ToolsToExecute:        resolvedToolsToExecute,
@@ -1315,6 +1382,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		ToolSyncInterval:      int(resolvedToolSyncInterval / time.Second),
 		ToolExecutionTimeout:  int(resolvedToolExecutionTimeout / time.Second),
 		AuthType:              string(existingConfig.AuthType),
+		TokenExchange:         tokenExchange,
 		OauthConfigID:         existingConfig.OauthConfigID,
 		AllowOnAllVirtualKeys: allowOnAllVKs,
 		Disabled:              disabled,
@@ -1465,6 +1533,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		IsCodeModeClient:      isCodeMode,
 		ConnectionType:        existingConfig.ConnectionType,
 		MCPProtocolMode:       protocolMode,
+		MCPProtocolVersion:    protocolVersion,
 		ConnectionString:      existingConfig.ConnectionString,
 		StdioConfig:           existingConfig.StdioConfig,
 		TLSConfig:             tlsConfig,
@@ -1473,6 +1542,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		Headers:               headers,
 		AllowedExtraHeaders:   allowedExtraHeaders,
 		AuthType:              existingConfig.AuthType,
+		TokenExchange:         tokenExchange,
 		OauthConfigID:         existingConfig.OauthConfigID,
 		IsPingAvailable:       isPingAvailable,
 		ToolSyncInterval:      toolSyncInterval,
@@ -1667,6 +1737,84 @@ func mergeMCPHeaders(incoming, rawExisting, redactedExisting map[string]schemas.
 		merged[key] = incomingValue
 	}
 	return merged
+}
+
+// mergeMCPTokenExchange preserves stored SecretVar references when the API
+// receives redacted values and keeps omitted scalar/list fields from a PATCH.
+// Exchange profiles are deliberately conservative: clearing the profile is
+// done by sending enabled=false, while secret rotation requires a new value.
+func mergeMCPTokenExchange(incoming, existing, redacted *schemas.MCPTokenExchangeConfig) *schemas.MCPTokenExchangeConfig {
+	if incoming == nil {
+		return existing
+	}
+	merged := *incoming
+	if existing == nil {
+		return &merged
+	}
+	if merged.TokenURL == nil {
+		merged.TokenURL = existing.TokenURL
+	} else if redacted != nil && existing.TokenURL != nil && merged.TokenURL.IsRedacted() && merged.TokenURL.Equals(redacted.TokenURL) {
+		merged.TokenURL = existing.TokenURL
+	}
+	if merged.ClientID == nil {
+		merged.ClientID = existing.ClientID
+	} else if redacted != nil && existing.ClientID != nil && merged.ClientID.IsRedacted() && merged.ClientID.Equals(redacted.ClientID) {
+		merged.ClientID = existing.ClientID
+	}
+	if merged.ClientSecret == nil {
+		merged.ClientSecret = existing.ClientSecret
+	} else if redacted != nil && existing.ClientSecret != nil && merged.ClientSecret.IsRedacted() && merged.ClientSecret.Equals(redacted.ClientSecret) {
+		merged.ClientSecret = existing.ClientSecret
+	}
+	if merged.Grant == "" {
+		merged.Grant = existing.Grant
+	}
+	if merged.ClientAuthMethod == "" {
+		merged.ClientAuthMethod = existing.ClientAuthMethod
+	}
+	if merged.SubjectTokenHeader == "" {
+		merged.SubjectTokenHeader = existing.SubjectTokenHeader
+	}
+	if merged.SubjectTokenType == "" {
+		merged.SubjectTokenType = existing.SubjectTokenType
+	}
+	if merged.RequestedTokenType == "" {
+		merged.RequestedTokenType = existing.RequestedTokenType
+	}
+	if merged.ActorTokenHeader == "" {
+		merged.ActorTokenHeader = existing.ActorTokenHeader
+	}
+	if merged.ActorTokenType == "" {
+		merged.ActorTokenType = existing.ActorTokenType
+	}
+	if merged.RequestedTokenUse == "" {
+		merged.RequestedTokenUse = existing.RequestedTokenUse
+	}
+	if merged.Audience == nil {
+		merged.Audience = existing.Audience
+	}
+	if merged.Resource == nil {
+		merged.Resource = existing.Resource
+	}
+	if merged.Scope == nil {
+		merged.Scope = existing.Scope
+	}
+	if merged.AdditionalParameters == nil {
+		merged.AdditionalParameters = existing.AdditionalParameters
+	}
+	if merged.CacheSkewSeconds == 0 {
+		merged.CacheSkewSeconds = existing.CacheSkewSeconds
+	}
+	if merged.MaxCacheEntries == 0 {
+		merged.MaxCacheEntries = existing.MaxCacheEntries
+	}
+	if merged.MaxTokenTTLSeconds == 0 {
+		merged.MaxTokenTTLSeconds = existing.MaxTokenTTLSeconds
+	}
+	if merged.TimeoutSeconds == 0 {
+		merged.TimeoutSeconds = existing.TimeoutSeconds
+	}
+	return &merged
 }
 
 // updateMCPClientWithRetry calls mcpManager.UpdateMCPClient with a short retry loop

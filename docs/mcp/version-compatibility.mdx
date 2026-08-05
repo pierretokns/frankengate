@@ -19,7 +19,7 @@ The downstream `/mcp` endpoint supports both paths: legacy requests retain the e
 
 ## Negotiation policy
 
-Each connection uses one of three policies:
+Each connection uses one of four policies:
 
 - `auto` selects the highest mutually supported revision and may fall back to the legacy handshake after a modern discovery probe fails because the peer is old. Authentication failures, timeouts caused by an outage, and server errors are not evidence of an older protocol.
 - `legacy` restricts the connection to the initialize/session family.
@@ -44,7 +44,9 @@ HTTP MCP clients preserve the existing transport by default. Configure a client 
 }
 ```
 
-`protocol_mode` accepts `legacy` (default), `auto` (modern discovery with protocol-only fallback), or `modern` (modern discovery required; fails if the upstream does not negotiate `2026-07-28`). A timeout, `401`, or `5xx` never triggers a version fallback.
+`protocol_mode` accepts `legacy` (default), `auto` (modern discovery with protocol-only fallback), `modern` (modern discovery required; fails if the upstream does not negotiate `2026-07-28`), or `pin`. With `pin`, set `protocol_version` to one of the supported revisions; the connection fails rather than downgrading if that exact revision is unavailable. A timeout, `401`, or `5xx` never triggers a version fallback.
+
+The management API and UI expose the negotiated `protocol_version`, `protocol_era`, and configured `negotiation_mode` in connection metadata. This makes rollout and incident diagnosis possible without inspecting wire logs.
 
 Application state remains stateful even when the protocol is stateless. Tool catalogs, authorization scopes, task records, policy decisions, audit records, and rollout state belong in managers keyed by stable request/task identities, not in MCP session state.
 

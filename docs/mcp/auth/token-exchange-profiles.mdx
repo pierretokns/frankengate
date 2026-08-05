@@ -1,0 +1,25 @@
+---
+title: "Token exchange profiles"
+description: "RFC 8693, RFC 7523, and future delegated credential profiles"
+---
+
+Token exchange is configured as a named, opt-in profile attached to one MCP or A2A destination. It is not a global bearer-forwarding switch.
+
+| Profile | Wire grant | Client authentication | Status |
+| --- | --- | --- | --- |
+| Subject exchange | RFC 8693 token exchange | `client_secret_basic` or `client_secret_post` | Supported behind explicit destination policy |
+| JWT bearer | RFC 7523 JWT bearer | Same approved client profiles | Adapter contract; signing key provider required |
+| Entra OBO | JWT assertion exchange | Provider-specific confidential client | Planned profile; tenant and issuer checks required |
+| Cross-App Access / ID-JAG | RFC 8693 then RFC 7523 | Separate leg profiles | Planned profile; resource and audience binding required |
+| Device authorization | RFC 8628 | Existing OAuth provider registration | Planned headless login path |
+
+The first leg of a two-leg exchange must never be silently reused as the second leg. Each authorization server, client registration, audience/resource, scope, and tenant binding is independently configured and audited.
+
+## Operator checklist
+
+1. Configure the existing OAuth or per-user header flow first.
+2. Register the exchange client at the authorization server and use a secret reference, never a literal secret in a config file.
+3. Restrict the token endpoint to approved HTTPS hosts and disable redirects.
+4. Select the destination, audience/resource, and scopes explicitly.
+5. Test with a non-production tenant and inspect redacted audit events.
+6. Enable only after the readiness check reports that authentication, destination, tenant, and secret references are valid.

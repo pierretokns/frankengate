@@ -19,12 +19,14 @@ type TableMCPClient struct {
 	IsCodeModeClient        bool               `gorm:"default:false" json:"is_code_mode_client"`                         // Whether the client is a code mode client
 	ConnectionType          string             `gorm:"type:varchar(20);not null" json:"connection_type"`                 // schemas.MCPConnectionType
 	ProtocolMode            string             `gorm:"type:varchar(20);default:'legacy'" json:"protocol_mode,omitempty"` // schemas.MCPProtocolMode
+	ProtocolVersion         string             `gorm:"type:varchar(20)" json:"protocol_version,omitempty"`               // Exact pinned MCP revision
 	ConnectionString        *schemas.SecretVar `gorm:"type:text" json:"connection_string,omitempty"`
 	StdioConfigJSON         *string            `gorm:"type:text" json:"-"`                              // JSON serialized schemas.MCPStdioConfig
 	TLSConfigJSON           *string            `gorm:"type:text" json:"-"`                              // JSON serialized schemas.MCPTLSConfig
 	ToolsToExecuteJSON      string             `gorm:"type:text" json:"-"`                              // JSON serialized []string
 	ToolsToAutoExecuteJSON  string             `gorm:"type:text" json:"-"`                              // JSON serialized []string
 	HeadersJSON             string             `gorm:"type:text" json:"-"`                              // JSON serialized map[string]string
+	TokenExchangeJSON       string             `gorm:"type:text" json:"-"`                              // JSON serialized schemas.MCPTokenExchangeConfig
 	AllowedExtraHeadersJSON string             `gorm:"type:text" json:"-"`                              // JSON serialized []string
 	IsPingAvailable         *bool              `gorm:"default:true" json:"is_ping_available,omitempty"` // Whether the MCP server supports ping for health checks
 	ToolPricingJSON         string             `gorm:"type:text" json:"-"`                              // JSON serialized map[string]float64
@@ -59,16 +61,17 @@ type TableMCPClient struct {
 	UpdatedAt time.Time `gorm:"index;not null" json:"updated_at"`
 
 	// Virtual fields for runtime use (not stored in DB)
-	StdioConfig               *schemas.MCPStdioConfig      `gorm:"-" json:"stdio_config,omitempty"`
-	TLSConfig                 *schemas.MCPTLSConfig        `gorm:"-" json:"tls_config,omitempty"`
-	ToolsToExecute            schemas.WhiteList            `gorm:"-" json:"tools_to_execute"`
-	ToolsToAutoExecute        schemas.WhiteList            `gorm:"-" json:"tools_to_auto_execute"`
-	Headers                   map[string]schemas.SecretVar `gorm:"-" json:"headers"`
-	AllowedExtraHeaders       schemas.WhiteList            `gorm:"-" json:"allowed_extra_headers"`
-	ToolPricing               map[string]float64           `gorm:"-" json:"tool_pricing"`
-	DiscoveredTools           map[string]schemas.ChatTool  `gorm:"-" json:"-"`
-	DiscoveredToolNameMapping map[string]string            `gorm:"-" json:"-"`
-	PerUserHeaderKeys         []string                     `gorm:"-" json:"per_user_header_keys"`
+	StdioConfig               *schemas.MCPStdioConfig         `gorm:"-" json:"stdio_config,omitempty"`
+	TLSConfig                 *schemas.MCPTLSConfig           `gorm:"-" json:"tls_config,omitempty"`
+	ToolsToExecute            schemas.WhiteList               `gorm:"-" json:"tools_to_execute"`
+	ToolsToAutoExecute        schemas.WhiteList               `gorm:"-" json:"tools_to_auto_execute"`
+	Headers                   map[string]schemas.SecretVar    `gorm:"-" json:"headers"`
+	TokenExchange             *schemas.MCPTokenExchangeConfig `gorm:"-" json:"token_exchange,omitempty"`
+	AllowedExtraHeaders       schemas.WhiteList               `gorm:"-" json:"allowed_extra_headers"`
+	ToolPricing               map[string]float64              `gorm:"-" json:"tool_pricing"`
+	DiscoveredTools           map[string]schemas.ChatTool     `gorm:"-" json:"-"`
+	DiscoveredToolNameMapping map[string]string               `gorm:"-" json:"-"`
+	PerUserHeaderKeys         []string                        `gorm:"-" json:"per_user_header_keys"`
 }
 
 // TableName sets the table name for each model
@@ -147,6 +150,16 @@ func (c *TableMCPClient) BeforeSave(tx *gorm.DB) error {
 		c.HeadersJSON = "{}"
 	}
 
+	if c.TokenExchange != nil {
+		data, err := json.Marshal(c.TokenExchange)
+		if err != nil {
+			return err
+		}
+		c.TokenExchangeJSON = string(data)
+	} else {
+		c.TokenExchangeJSON = ""
+	}
+
 	if c.AllowedExtraHeaders != nil {
 		if err := c.AllowedExtraHeaders.Validate(); err != nil {
 			return fmt.Errorf("invalid allowed_extra_headers: %w", err)
@@ -217,6 +230,20 @@ func (c *TableMCPClient) BeforeSave(tx *gorm.DB) error {
 			}
 			c.HeadersJSON = enc
 		}
+		if c.TokenExchangeJSON != "" {
+			enc, err := encrypt.Encrypt(c.TokenExchangeJSON)
+			if err != nil {
+				return fmt.Errorf("failed to encrypt mcp token exchange config: %w", err)
+			}
+			c.TokenExchangeJSON = enc
+		}
+		if c.TokenExchangeJSON != "" {
+			decrypted, err := encrypt.Decrypt(c.TokenExchangeJSON)
+			if err != nil {
+				return fmt.Errorf("failed to decrypt mcp token exchange config: %w", err)
+			}
+			c.TokenExchangeJSON = decrypted
+		}
 		c.EncryptionStatus = EncryptionStatusEncrypted
 	}
 
@@ -268,6 +295,11 @@ func (c *TableMCPClient) AfterFind(tx *gorm.DB) error {
 	}
 	if c.HeadersJSON != "" {
 		if err := sonic.Unmarshal([]byte(c.HeadersJSON), &c.Headers); err != nil {
+			return err
+		}
+	}
+	if c.TokenExchangeJSON != "" {
+		if err := sonic.Unmarshal([]byte(c.TokenExchangeJSON), &c.TokenExchange); err != nil {
 			return err
 		}
 	}

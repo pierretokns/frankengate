@@ -1535,6 +1535,8 @@ func (s *RDBConfigStore) GetMCPConfig(ctx context.Context) (*schemas.MCPConfig, 
 					IsCodeModeClient:          dbClient.IsCodeModeClient,
 					ConnectionType:            schemas.MCPConnectionType(dbClient.ConnectionType),
 					MCPProtocolMode:           schemas.MCPProtocolMode(dbClient.ProtocolMode),
+					MCPProtocolVersion:        dbClient.ProtocolVersion,
+					TokenExchange:             dbClient.TokenExchange,
 					ConnectionString:          dbClient.ConnectionString,
 					StdioConfig:               dbClient.StdioConfig,
 					TLSConfig:                 dbClient.TLSConfig,
@@ -1579,6 +1581,8 @@ func (s *RDBConfigStore) GetMCPConfig(ctx context.Context) (*schemas.MCPConfig, 
 			IsCodeModeClient:          dbClient.IsCodeModeClient,
 			ConnectionType:            schemas.MCPConnectionType(dbClient.ConnectionType),
 			MCPProtocolMode:           schemas.MCPProtocolMode(dbClient.ProtocolMode),
+			MCPProtocolVersion:        dbClient.ProtocolVersion,
+			TokenExchange:             dbClient.TokenExchange,
 			ConnectionString:          dbClient.ConnectionString,
 			StdioConfig:               dbClient.StdioConfig,
 			TLSConfig:                 dbClient.TLSConfig,
@@ -2003,6 +2007,8 @@ func (s *RDBConfigStore) GetMCPClientConfigByID(ctx context.Context, id string) 
 		IsCodeModeClient:          dbClient.IsCodeModeClient,
 		ConnectionType:            schemas.MCPConnectionType(dbClient.ConnectionType),
 		MCPProtocolMode:           schemas.MCPProtocolMode(dbClient.ProtocolMode),
+		MCPProtocolVersion:        dbClient.ProtocolVersion,
+		TokenExchange:             dbClient.TokenExchange,
 		ConnectionString:          dbClient.ConnectionString,
 		StdioConfig:               dbClient.StdioConfig,
 		TLSConfig:                 dbClient.TLSConfig,
@@ -2059,6 +2065,9 @@ func (s *RDBConfigStore) CreateMCPClientConfig(ctx context.Context, clientConfig
 			Name:                  clientConfigCopy.Name,
 			IsCodeModeClient:      clientConfigCopy.IsCodeModeClient,
 			ConnectionType:        string(clientConfigCopy.ConnectionType),
+			ProtocolMode:          string(clientConfigCopy.MCPProtocolMode),
+			ProtocolVersion:       clientConfigCopy.MCPProtocolVersion,
+			TokenExchange:         clientConfigCopy.TokenExchange,
 			ConnectionString:      clientConfigCopy.ConnectionString,
 			StdioConfig:           clientConfigCopy.StdioConfig,
 			TLSConfig:             clientConfigCopy.TLSConfig,
@@ -2232,6 +2241,14 @@ func (s *RDBConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, c
 		if err != nil {
 			return fmt.Errorf("failed to marshal tool_pricing: %w", err)
 		}
+		tokenExchangeJSON := ""
+		if clientConfigCopy.TokenExchange != nil {
+			data, marshalErr := json.Marshal(clientConfigCopy.TokenExchange)
+			if marshalErr != nil {
+				return fmt.Errorf("failed to marshal token_exchange: %w", marshalErr)
+			}
+			tokenExchangeJSON = string(data)
+		}
 		discoveredToolsJSON := ""
 		if clientConfig.DiscoveredTools != nil {
 			data, marshalErr := json.Marshal(clientConfig.DiscoveredTools)
@@ -2267,6 +2284,13 @@ func (s *RDBConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, c
 			}
 			headersJSONStr = encrypted
 		}
+		if encrypt.IsEnabled() && tokenExchangeJSON != "" {
+			encrypted, encErr := encrypt.Encrypt(tokenExchangeJSON)
+			if encErr != nil {
+				return fmt.Errorf("failed to encrypt mcp token exchange config: %w", encErr)
+			}
+			tokenExchangeJSON = encrypted
+		}
 
 		// Update only editable fields using a map to avoid updating connection info
 		// Connection info (ConnectionType, ConnectionString, StdioConfig) is read-only and should not be modified via API
@@ -2290,6 +2314,9 @@ func (s *RDBConfigStore) UpdateMCPClientConfig(ctx context.Context, id string, c
 		}
 		if encrypt.IsEnabled() {
 			updates["encryption_status"] = encryptionStatusEncrypted
+		}
+		if clientConfigCopy.TokenExchange != nil || clientConfigCopy.ConfigHash != "" {
+			updates["token_exchange_json"] = tokenExchangeJSON
 		}
 		if clientConfigCopy.OauthConfigID != nil {
 			updates["oauth_config_id"] = clientConfigCopy.OauthConfigID

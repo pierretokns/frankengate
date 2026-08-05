@@ -450,6 +450,36 @@ var configstoreMigrationSteps = []migrationStep{
 	{IDs: []string{"add_principal_authorization_epoch_tables"}, run: migrationAddPrincipalAuthorizationEpochTables},
 	{IDs: []string{"add_governance_reservations"}, run: migrationAddGovernanceReservations},
 	{IDs: []string{"add_mcp_client_protocol_mode_column"}, run: migrationAddMCPClientProtocolModeColumn},
+	{IDs: []string{"add_mcp_client_protocol_version_column"}, run: migrationAddMCPClientProtocolVersionColumn},
+	{IDs: []string{"add_mcp_client_token_exchange_column"}, run: migrationAddMCPClientTokenExchangeColumn},
+}
+
+// migrationAddMCPClientTokenExchangeColumn persists the opt-in delegated
+// credential profile. Existing rows remain disabled with an empty JSON value.
+func migrationAddMCPClientTokenExchangeColumn(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {
+	const migrationName = "add_mcp_client_token_exchange_column"
+	logger.Info("[configstore] starting migration %s", migrationName)
+	defer logger.Info("[configstore] finished migration %s", migrationName)
+
+	m := migrator.New(db, migrator.DefaultOptions, []*migrator.Migration{{
+		ID: migrationName,
+		Migrate: func(tx *gorm.DB) error {
+			tx = tx.WithContext(ctx)
+			if !tx.Migrator().HasColumn(&tables.TableMCPClient{}, "token_exchange_json") {
+				if err := addColumnIfNotExists(tx, logger, &tables.TableMCPClient{}, "token_exchange_json"); err != nil {
+					return fmt.Errorf("failed to add token_exchange_json column: %w", err)
+				}
+			}
+			return nil
+		},
+		Rollback: func(tx *gorm.DB) error {
+			return dropColumnIfExists(tx.WithContext(ctx), logger, &tables.TableMCPClient{}, "token_exchange_json")
+		},
+	}})
+	if err := m.Migrate(); err != nil {
+		return fmt.Errorf("error running %s migration: %w", migrationName, err)
+	}
+	return nil
 }
 
 // migrationAddMCPClientProtocolModeColumn persists the per-upstream MCP
@@ -472,6 +502,34 @@ func migrationAddMCPClientProtocolModeColumn(ctx context.Context, db *gorm.DB, l
 		},
 		Rollback: func(tx *gorm.DB) error {
 			return dropColumnIfExists(tx.WithContext(ctx), logger, &tables.TableMCPClient{}, "protocol_mode")
+		},
+	}})
+	if err := m.Migrate(); err != nil {
+		return fmt.Errorf("error running %s migration: %w", migrationName, err)
+	}
+	return nil
+}
+
+// migrationAddMCPClientProtocolVersionColumn persists an optional exact MCP
+// revision for strict pin mode. Existing rows remain unpinned.
+func migrationAddMCPClientProtocolVersionColumn(ctx context.Context, db *gorm.DB, logger schemas.Logger) error {
+	const migrationName = "add_mcp_client_protocol_version_column"
+	logger.Info("[configstore] starting migration %s", migrationName)
+	defer logger.Info("[configstore] finished migration %s", migrationName)
+
+	m := migrator.New(db, migrator.DefaultOptions, []*migrator.Migration{{
+		ID: migrationName,
+		Migrate: func(tx *gorm.DB) error {
+			tx = tx.WithContext(ctx)
+			if !tx.Migrator().HasColumn(&tables.TableMCPClient{}, "protocol_version") {
+				if err := addColumnIfNotExists(tx, logger, &tables.TableMCPClient{}, "protocol_version"); err != nil {
+					return fmt.Errorf("failed to add protocol_version column: %w", err)
+				}
+			}
+			return nil
+		},
+		Rollback: func(tx *gorm.DB) error {
+			return dropColumnIfExists(tx.WithContext(ctx), logger, &tables.TableMCPClient{}, "protocol_version")
 		},
 	}})
 	if err := m.Migrate(); err != nil {

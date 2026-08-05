@@ -1,0 +1,39 @@
+---
+title: "MCP conformance and compatibility matrix"
+sidebarTitle: "Conformance matrix"
+description: "The tested MCP compatibility boundary between legacy and modern protocol eras."
+---
+
+FrankenGate supports two MCP behavioral eras at the gateway boundary. The matrix below is the acceptance contract for releases; a row marked “translated” means the gateway deliberately adapts the behavior rather than exposing the upstream implementation directly.
+
+## Coverage matrix
+
+| Requirement | Legacy path | Modern path | Evidence | Release behavior |
+| --- | --- | --- | --- | --- |
+| `initialize` lifecycle | Supported | Not used | `core/mcp` client tests; legacy downstream tests | Preserve legacy by default |
+| `server/discover` | Rejected/legacy-routed | Supported | modern handler classification and SDK transport tests | Modern clients opt in by header/probe |
+| Streamable HTTP | Supported | Supported | upstream proxy integration tests | Auto probes, then legacy-falls back only for protocol incompatibility |
+| SSE compatibility | Supported | Stateless modern GET/DELETE semantics delegated to SDK | handler routing tests | No silent conversion of legacy SSE semantics |
+| Session IDs/resumption | Supported where the legacy transport supports them | Not retained in stateless mode | SDK options and transport tests | Do not synthesize session state for modern requests |
+| Request cancellation | Context cancellation | Propagated to modern SDK handlers | `PropagateRequestCancellation` configuration and cancellation regression coverage | Abort work when the client disconnects |
+| Per-request `_meta` | Forwarded by legacy transport | Preserved across the modern proxy facade | proxy conversion tests | Metadata is never used as a version fallback signal |
+| Structured tool results | Supported by the legacy SDK | Preserved across the modern proxy facade | structured result conversion tests | Keep structured content and text fallback |
+| Tool annotations/output schemas/icons | Supported | Preserved where both SDKs model the field | schema conversion tests | Invalid schemas fail closed during connection setup |
+| Tool list changes | Periodic `tools/list` sync | Periodic facade refresh | tool sync tests | Keep the last known good catalog on transient refresh failure |
+| Resources/prompts/tasks | Existing gateway tool surface only | Not yet exposed through the legacy tool manager | documented discrepancy | Reject or keep upstream behavior out of the tool catalog; do not fabricate tools |
+| Authentication failures/timeouts/5xx | N/A | N/A | negotiation policy tests | Never downgrade on operational failure |
+| Exact revision pinning | All supported legacy revisions | `2026-07-28` | protocol and manager tests | Fail closed when the pinned revision is unavailable |
+
+## Compatibility discrepancies
+
+The current Bifrost tool manager is intentionally tool-centric. It does not yet have durable representations for MCP resources, prompts, task polling, subscriptions, or server-initiated requests. Modern upstreams may advertise those capabilities, but FrankenGate does not claim to proxy them until they have first-class authorization, lifecycle, audit, and tracing models. Tool discovery and execution remain available, and the negotiated protocol metadata makes this boundary visible to operators.
+
+## Rollout checks
+
+Before enabling `auto`, `modern`, or `pin` for a production upstream:
+
+1. Confirm the connection metadata reports the expected `protocol_version` and `protocol_era`.
+2. Verify tool discovery and one representative tool call through the real authentication path.
+3. Confirm disconnect cancellation ends the upstream call and that no session or request remains stuck.
+4. Monitor tool-list refresh errors and retain the last known good catalog during transient failures.
+5. Keep `legacy` as the rollback value; changing the mode causes a reconnect and does not invalidate credentials.
