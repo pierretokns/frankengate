@@ -270,6 +270,13 @@ func (h *MCPServerHandler) handleMCPServer(ctx *fasthttp.RequestCtx) {
 		}
 	}
 	mcpServer := authResult.mcpServer
+	if isModernMCPRequest(ctx) {
+		if err := h.handleModernMCPServer(ctx, bifrostCtx, mcpServer); err != nil {
+			logger.Warn("mcp: modern stateless request failed: %v", err)
+			SendError(ctx, fasthttp.StatusBadRequest, err.Error())
+		}
+		return
+	}
 
 	// Use mcp-go server to handle the request
 	// HandleMessage processes JSON-RPC messages and returns appropriate responses

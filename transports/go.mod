@@ -19,6 +19,7 @@ require (
 	github.com/mark3labs/mcp-go v0.57.0
 	github.com/maximhq/bifrost/core v1.7.1
 	github.com/maximhq/bifrost/framework v1.5.1
+	github.com/modelcontextprotocol/go-sdk v1.7.0
 	github.com/maximhq/bifrost/plugins/compat v0.1.27
 	github.com/maximhq/bifrost/plugins/governance v1.6.5
 	github.com/maximhq/bifrost/plugins/logging v1.6.1
@@ -133,7 +134,7 @@ require (
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/google/cel-go v0.28.1 // indirect
-	github.com/google/jsonschema-go v0.4.2 // indirect
+	github.com/google/jsonschema-go v0.4.3 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.16 // indirect
 	github.com/googleapis/gax-go/v2 v2.22.0 // indirect
