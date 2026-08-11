@@ -63,6 +63,13 @@ func TestValidateConfigBlocksPrivateDNSResolution(t *testing.T) {
 	}
 }
 
+func TestValidateConfigRequiresResolverWhenPolicyDemandsIt(t *testing.T) {
+	cfg := Config{ID: "push-1", TaskID: "task-1", TenantID: "tenant-1", URL: "https://notify.example.test/a2a"}
+	if err := ValidateConfig(context.Background(), cfg, Policy{AllowedHosts: []string{"notify.example.test"}, RequireDNSResolution: true}); err == nil || !strings.Contains(err.Error(), "DNS resolution policy") {
+		t.Fatalf("expected missing DNS resolver to fail closed, got %v", err)
+	}
+}
+
 func TestMemoryStoreIsTenantScopedAndSecretReferenceOnly(t *testing.T) {
 	now := time.Date(2026, time.August, 11, 12, 0, 0, 0, time.UTC)
 	store := NewMemoryStore(func() time.Time { return now })

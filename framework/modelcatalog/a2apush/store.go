@@ -44,9 +44,10 @@ type Config struct {
 }
 
 type Policy struct {
-	AllowedHosts  []string
-	Resolver      Resolver
-	AllowLoopback bool
+	AllowedHosts         []string
+	Resolver             Resolver
+	AllowLoopback        bool
+	RequireDNSResolution bool
 }
 
 type Resolver interface {
@@ -84,6 +85,8 @@ func ValidateConfig(ctx context.Context, cfg Config, policy Policy) error {
 		if err := validateIP(ip, policy.AllowLoopback); err != nil {
 			return err
 		}
+	} else if policy.RequireDNSResolution && policy.Resolver == nil {
+		return errors.New("A2A push URL DNS resolution policy is not configured")
 	} else if policy.Resolver != nil {
 		ips, err := policy.Resolver.LookupIPAddr(ctx, u.Hostname())
 		if err != nil || len(ips) == 0 {

@@ -68,7 +68,8 @@ func TestInboundA2APushConfigLifecycleIsTenantScopedAndRedacted(t *testing.T) {
 	handler.ConfigurePushNotifications(
 		a2apush.NewMemoryStore(time.Now),
 		a2apush.Policy{
-			AllowedHosts: []string{"notify.example.test"},
+			AllowedHosts:         []string{"notify.example.test"},
+			RequireDNSResolution: true,
 			Resolver: a2apush.ResolverFunc(func(context.Context, string) ([]net.IPAddr, error) {
 				return []net.IPAddr{{IP: net.ParseIP("203.0.113.10")}}, nil
 			}),

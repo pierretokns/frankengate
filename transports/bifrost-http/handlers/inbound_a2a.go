@@ -75,6 +75,7 @@ func (h *InboundA2AHandler) ConfigurePushNotifications(store a2apush.Store, poli
 	if h == nil {
 		return
 	}
+	policy.RequireDNSResolution = true
 	h.pushStore = store
 	h.pushPolicy = policy
 	h.pushDelivery = delivery
