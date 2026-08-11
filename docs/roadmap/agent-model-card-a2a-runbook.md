@@ -33,11 +33,15 @@ authorization grant, or proof that a remote agent is safe to invoke.
   lifecycle methods plus the legacy slash aliases. HTTP+JSON is available at
   `POST /message:send`, `POST /message:stream`, `GET /tasks`,
   `GET /tasks/{id}`, `POST /tasks/{id}:cancel`, and
-  `POST /tasks/{id}:subscribe`. `GET /extendedAgentCard` is authenticated and
-  returns the extended card when the public card advertises that capability.
-  All task access is bounded, tenant-scoped, and TTL-limited. Push
-  notification configuration is intentionally not advertised until its
-  durable, SSRF-checked webhook store and retry worker are enabled.
+  `POST /tasks/{id}:subscribe`. Push configuration uses the current
+  `tasks/pushNotificationConfig/{create,get,list,delete}` JSON-RPC methods and
+  `/tasks/{id}/pushNotificationConfigs` REST resources. These CRUD methods are
+  disabled unless an operator-approved delivery implementation is injected;
+  the durable store, SSRF checks, lease/retry/dead-letter worker, and redacted
+  lifecycle are present, but no default task-payload sender is enabled.
+  `GET /extendedAgentCard` is authenticated and returns the extended card when
+  the public card advertises that capability. All task access is bounded,
+  tenant-scoped, and TTL-limited.
 
 ## Trust and routing semantics
 

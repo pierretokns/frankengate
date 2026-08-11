@@ -1,0 +1,129 @@
+package a2apush
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"strings"
+	"time"
+)
+
+const defaultMaxPayloadBytes = 1 << 20
+
+type PayloadSource interface {
+	Load(context.Context, string) ([]byte, error)
+}
+
+type PayloadSourceFunc func(context.Context, string) ([]byte, error)
+
+func (f PayloadSourceFunc) Load(ctx context.Context, ref string) ([]byte, error) {
+	return f(ctx, ref)
+}
+
+type Worker struct {
+	Outbox          OutboxStore
+	Configs         Store
+	Payloads        PayloadSource
+	Delivery        Delivery
+	Policy          Policy
+	Now             func() time.Time
+	Lease           time.Duration
+	RetryAfter      time.Duration
+	MaxAttempts     int
+	MaxPayloadBytes int
+}
+
+type WorkerStats struct {
+	Claimed    int
+	Delivered  int
+	Retried    int
+	DeadLetter int
+	Skipped    int
+}
+
+// RunOnce processes due records for one tenant. Network behavior remains an
+// injected Delivery implementation; this worker owns only durable state,
+// bounded payload loading, and retry/dead-letter transitions.
+func (w Worker) RunOnce(ctx context.Context, tenant string) (WorkerStats, error) {
+	var stats WorkerStats
+	if w.Outbox == nil || w.Configs == nil || w.Payloads == nil || w.Delivery == nil {
+		return stats, ErrDisabled
+	}
+	if strings.TrimSpace(tenant) == "" {
+		return stats, errors.New("A2A push worker tenant is required")
+	}
+	now := time.Now()
+	if w.Now != nil {
+		now = w.Now()
+	}
+	lease := w.Lease
+	if lease <= 0 {
+		lease = time.Minute
+	}
+	retryAfter := w.RetryAfter
+	if retryAfter <= 0 {
+		retryAfter = time.Second
+	}
+	maxAttempts := w.MaxAttempts
+	if maxAttempts <= 0 {
+		maxAttempts = 3
+	}
+	maxPayloadBytes := w.MaxPayloadBytes
+	if maxPayloadBytes <= 0 {
+		maxPayloadBytes = defaultMaxPayloadBytes
+	}
+	records, err := w.Outbox.List(ctx, tenant)
+	if err != nil {
+		return stats, err
+	}
+	for _, record := range records {
+		if record.Status == DeliveryDelivered || record.Status == DeliveryDeadLetter || record.NextAttempt.After(now) || (record.Status == DeliveryInFlight && record.LeaseUntil.After(now)) {
+			stats.Skipped++
+			continue
+		}
+		claimed, err := w.Outbox.Claim(ctx, record.TenantID, record.TaskID, record.ID, now, lease)
+		if err != nil {
+			if errors.Is(err, ErrOutboxConflict) {
+				stats.Skipped++
+				continue
+			}
+			return stats, err
+		}
+		stats.Claimed++
+		cfg, err := w.Configs.Get(ctx, claimed.TenantID, claimed.TaskID, claimed.ConfigID)
+		if err == nil {
+			if policyErr := ValidateConfig(ctx, cfg, w.Policy); policyErr != nil {
+				err = fmt.Errorf("validate A2A push destination: %w", policyErr)
+			}
+		}
+		if err == nil {
+			payload, loadErr := w.Payloads.Load(ctx, claimed.PayloadRef)
+			if loadErr != nil {
+				err = fmt.Errorf("load A2A push payload: %w", loadErr)
+			} else if len(payload) > maxPayloadBytes {
+				err = fmt.Errorf("A2A push payload exceeds %d bytes", maxPayloadBytes)
+			} else if PayloadDigest(payload) != claimed.PayloadHash {
+				err = errors.New("A2A push payload digest mismatch")
+			} else {
+				err = w.Delivery.Deliver(ctx, DeliveryRequest{Config: cfg, Payload: append([]byte(nil), payload...)})
+			}
+		}
+		if err == nil {
+			if completeErr := w.Outbox.Complete(ctx, claimed.TenantID, claimed.TaskID, claimed.ID, now); completeErr != nil {
+				return stats, completeErr
+			}
+			stats.Delivered++
+			continue
+		}
+		failed, failErr := w.Outbox.Fail(ctx, claimed.TenantID, claimed.TaskID, claimed.ID, now, retryAfter, maxAttempts, err)
+		if failErr != nil {
+			return stats, failErr
+		}
+		if failed.Status == DeliveryDeadLetter {
+			stats.DeadLetter++
+		} else {
+			stats.Retried++
+		}
+	}
+	return stats, nil
+}

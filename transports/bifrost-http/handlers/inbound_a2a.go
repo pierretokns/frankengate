@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 	"strconv"
@@ -13,11 +14,13 @@ import (
 	"time"
 
 	"github.com/fasthttp/router"
+	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2apush"
 	"github.com/maximhq/bifrost/framework/modelcatalog/inbound"
 	"github.com/maximhq/bifrost/framework/modelcatalog/provenance"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
@@ -40,6 +43,10 @@ type InboundA2AHandler struct {
 	tasks          map[string]storedA2ATask
 	now            func() time.Time
 	authorityStore configstore.PrincipalAuthorizationEpochStore
+
+	pushStore    a2apush.Store
+	pushPolicy   a2apush.Policy
+	pushDelivery a2apush.Delivery
 }
 
 type storedA2ATask struct {
@@ -58,6 +65,19 @@ func NewInboundA2AHandler(client *bifrost.Bifrost, config *lib.Config) *InboundA
 		authorityStore, _ = config.ConfigStore.(configstore.PrincipalAuthorizationEpochStore)
 	}
 	return &InboundA2AHandler{client: client, config: config, tasks: make(map[string]storedA2ATask), now: time.Now, authorityStore: authorityStore}
+}
+
+// ConfigurePushNotifications installs the durable configuration store and an
+// operator-approved delivery implementation. Push operations remain disabled
+// until both are present; configuration alone never causes task payload
+// egress or Agent Card capability advertisement.
+func (h *InboundA2AHandler) ConfigurePushNotifications(store a2apush.Store, policy a2apush.Policy, delivery a2apush.Delivery) {
+	if h == nil {
+		return
+	}
+	h.pushStore = store
+	h.pushPolicy = policy
+	h.pushDelivery = delivery
 }
 
 func (h *InboundA2AHandler) RegisterRoutes(r *router.Router, middlewares ...schemas.BifrostHTTPMiddleware) {
@@ -80,6 +100,10 @@ func (h *InboundA2AHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	r.GET("/tasks", lib.ChainMiddlewares(h.restListTasks, middlewares...))
 	r.POST("/tasks/{task_id}:cancel", lib.ChainMiddlewares(h.restCancelTask, middlewares...))
 	r.POST("/tasks/{task_id}:subscribe", lib.ChainMiddlewares(h.restSubscribeTask, middlewares...))
+	r.POST("/tasks/{task_id}/pushNotificationConfigs", lib.ChainMiddlewares(h.restCreatePushNotificationConfig, middlewares...))
+	r.GET("/tasks/{task_id}/pushNotificationConfigs", lib.ChainMiddlewares(h.restListPushNotificationConfigs, middlewares...))
+	r.GET("/tasks/{task_id}/pushNotificationConfigs/{config_id}", lib.ChainMiddlewares(h.restGetPushNotificationConfig, middlewares...))
+	r.DELETE("/tasks/{task_id}/pushNotificationConfigs/{config_id}", lib.ChainMiddlewares(h.restDeletePushNotificationConfig, middlewares...))
 	r.GET("/extendedAgentCard", lib.ChainMiddlewares(h.extendedAgentCardHTTP, middlewares...))
 }
 
@@ -96,7 +120,7 @@ func (h *InboundA2AHandler) agentCard(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadRequest, "a2a public host is unavailable")
 		return
 	}
-	record := inboundRecordForConfig(base, h.config)
+	record := h.agentCardRecord(base)
 	body, err := inbound.MarshalAgentCardJSON(record)
 	if err != nil {
 		SendError(ctx, fasthttp.StatusInternalServerError, fmt.Sprintf("generate agent card: %v", err))
@@ -186,6 +210,43 @@ type a2aArtifact struct {
 	Parts []a2aPart `json:"parts"`
 }
 
+type a2aPushAuthentication struct {
+	Scheme           string `json:"scheme,omitempty"`
+	Credentials      string `json:"credentials,omitempty"`
+	CredentialRef    string `json:"credentialRef,omitempty"`
+	SigningSecretRef string `json:"signingSecretRef,omitempty"`
+}
+
+type a2aPushNotificationConfig struct {
+	ID             string          `json:"id,omitempty"`
+	TaskID         string          `json:"taskId,omitempty"`
+	URL            string          `json:"url"`
+	Token          string          `json:"token,omitempty"`
+	TokenRef       string          `json:"tokenRef,omitempty"`
+	Authentication json.RawMessage `json:"authentication,omitempty"`
+}
+
+type a2aPushConfigRequest struct {
+	ID                     string                     `json:"id,omitempty"`
+	TaskID                 string                     `json:"taskId,omitempty"`
+	URL                    string                     `json:"url,omitempty"`
+	Token                  string                     `json:"token,omitempty"`
+	TokenRef               string                     `json:"tokenRef,omitempty"`
+	Authentication         json.RawMessage            `json:"authentication,omitempty"`
+	PushNotificationConfig *a2aPushNotificationConfig `json:"pushNotificationConfig,omitempty"`
+}
+
+type a2aPushConfigResult struct {
+	ID             string                 `json:"id"`
+	TaskID         string                 `json:"taskId"`
+	URL            string                 `json:"url"`
+	Authentication *a2aPushAuthentication `json:"authentication,omitempty"`
+}
+
+type a2aPushConfigListResult struct {
+	Configs []a2aPushConfigResult `json:"configs"`
+}
+
 type a2aJSONRPCResponse struct {
 	JSONRPC string           `json:"jsonrpc"`
 	ID      json.RawMessage  `json:"id"`
@@ -226,6 +287,18 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		return
 	case "SubscribeToTask", "tasks/subscribe":
 		h.rpcSubscribeTask(ctx, request)
+		return
+	case "CreateTaskPushNotificationConfig", "SetTaskPushNotificationConfig", "tasks/pushNotificationConfig/create", "tasks/pushNotificationConfig/set":
+		h.rpcCreatePushNotificationConfig(ctx, request)
+		return
+	case "GetTaskPushNotificationConfig", "tasks/pushNotificationConfig/get":
+		h.rpcGetPushNotificationConfig(ctx, request)
+		return
+	case "ListTaskPushNotificationConfigs", "tasks/pushNotificationConfig/list":
+		h.rpcListPushNotificationConfigs(ctx, request)
+		return
+	case "DeleteTaskPushNotificationConfig", "tasks/pushNotificationConfig/delete":
+		h.rpcDeletePushNotificationConfig(ctx, request)
 		return
 	case "GetExtendedAgentCard", "GetAuthenticatedExtendedCard":
 		h.rpcGetExtendedAgentCard(ctx, request)
@@ -272,7 +345,7 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	defer cancel()
-	attachInboundA2AProvenance(bifrostCtx, ctx, h.config, taskID, h.currentTime())
+	attachInboundA2AProvenance(bifrostCtx, ctx, h.config, taskID, h.currentTime(), h.inboundAgentCardDigest(ctx))
 	requestInput := &schemas.BifrostChatRequest{
 		Provider: schemas.ModelProvider(params.Configuration.Provider),
 		Model:    strings.TrimSpace(params.Configuration.Model),
@@ -380,6 +453,27 @@ func (h *InboundA2AHandler) restSubscribeTask(ctx *fasthttp.RequestCtx) {
 	ctx.SetBody(append([]byte("data: "), append(body, '\n', '\n')...))
 }
 
+func (h *InboundA2AHandler) restCreatePushNotificationConfig(ctx *fasthttp.RequestCtx) {
+	params := append([]byte(nil), ctx.PostBody()...)
+	params = ensureTaskID(params, stringValue(ctx.UserValue("task_id")))
+	h.restRPCCall(ctx, "CreateTaskPushNotificationConfig", params)
+}
+
+func (h *InboundA2AHandler) restListPushNotificationConfigs(ctx *fasthttp.RequestCtx) {
+	params := mustJSON(map[string]string{"taskId": stringValue(ctx.UserValue("task_id"))})
+	h.restRPCCall(ctx, "ListTaskPushNotificationConfigs", params)
+}
+
+func (h *InboundA2AHandler) restGetPushNotificationConfig(ctx *fasthttp.RequestCtx) {
+	params := mustJSON(map[string]string{"taskId": stringValue(ctx.UserValue("task_id")), "id": stringValue(ctx.UserValue("config_id"))})
+	h.restRPCCall(ctx, "GetTaskPushNotificationConfig", params)
+}
+
+func (h *InboundA2AHandler) restDeletePushNotificationConfig(ctx *fasthttp.RequestCtx) {
+	params := mustJSON(map[string]string{"taskId": stringValue(ctx.UserValue("task_id")), "id": stringValue(ctx.UserValue("config_id"))})
+	h.restRPCCall(ctx, "DeleteTaskPushNotificationConfig", params)
+}
+
 func (h *InboundA2AHandler) restRPCCall(ctx *fasthttp.RequestCtx, method string, params []byte) {
 	request := a2aJSONRPCRequest{JSONRPC: "2.0", ID: json.RawMessage(`1`), Method: method, Params: append([]byte(nil), params...)}
 	ctx.Request.SetBody(mustJSON(request))
@@ -401,7 +495,7 @@ func (h *InboundA2AHandler) extendedAgentCardHTTP(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadRequest, "a2a public host is unavailable")
 		return
 	}
-	record := inboundRecordForConfig(base, h.config)
+	record := h.agentCardRecord(base)
 	if !record.Card.Capabilities.ExtendedAgentCard && !record.Card.SupportsAuthenticatedExtendedCard {
 		SendError(ctx, fasthttp.StatusNotFound, "extended agent card is not supported")
 		return
@@ -436,7 +530,7 @@ func (h *InboundA2AHandler) rpcGetExtendedAgentCard(ctx *fasthttp.RequestCtx, re
 		h.writeRPCError(ctx, request.ID, -32000, "A2A public host is unavailable")
 		return
 	}
-	record := inboundRecordForConfig(base, h.config)
+	record := h.agentCardRecord(base)
 	if !record.Card.Capabilities.ExtendedAgentCard && !record.Card.SupportsAuthenticatedExtendedCard {
 		h.writeRPCError(ctx, request.ID, -32601, "extended agent card is not supported")
 		return
@@ -552,6 +646,228 @@ func (h *InboundA2AHandler) rpcSubscribeTask(ctx *fasthttp.RequestCtx, request a
 		return
 	}
 	h.writeSSETask(ctx, request.ID, task)
+}
+
+func (h *InboundA2AHandler) rpcCreatePushNotificationConfig(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	if !h.pushNotificationsAvailable() {
+		h.writeRPCError(ctx, request.ID, -32004, "push notifications are not supported")
+		return
+	}
+	var params a2aPushConfigRequest
+	if err := json.Unmarshal(request.Params, &params); err != nil {
+		h.writeRPCError(ctx, request.ID, -32602, "invalid push notification configuration")
+		return
+	}
+	taskID := strings.TrimSpace(params.TaskID)
+	if taskID == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "taskId is required")
+		return
+	}
+	if _, ok := h.rpcLoadAuthorizedTask(ctx, taskID); !ok {
+		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
+		return
+	}
+	principal, err := inboundA2ATaskPrincipal(ctx)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	cfg, err := pushConfigFromRequest(params, principal.Tenant, taskID)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32602, err.Error())
+		return
+	}
+	if err := a2apush.ValidateConfig(ctx, cfg, h.pushPolicy); err != nil {
+		h.writeRPCError(ctx, request.ID, -32602, safePushConfigError(err))
+		return
+	}
+	if err := h.pushStore.Create(ctx, cfg); err != nil {
+		h.writeRPCError(ctx, request.ID, pushStoreErrorCode(err), safePushConfigError(err))
+		return
+	}
+	h.writeRPCResult(ctx, request.ID, pushConfigResult(cfg))
+}
+
+func (h *InboundA2AHandler) rpcGetPushNotificationConfig(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	if !h.pushNotificationsAvailable() {
+		h.writeRPCError(ctx, request.ID, -32004, "push notifications are not supported")
+		return
+	}
+	var params a2aTaskParams
+	if err := json.Unmarshal(request.Params, &params); err != nil || strings.TrimSpace(params.ID) == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "id is required")
+		return
+	}
+	taskID := pushTaskID(request.Params)
+	if taskID == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "taskId is required")
+		return
+	}
+	if _, ok := h.rpcLoadAuthorizedTask(ctx, taskID); !ok {
+		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
+		return
+	}
+	principal, err := inboundA2ATaskPrincipal(ctx)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	cfg, err := h.pushStore.Get(ctx, principal.Tenant, taskID, params.ID)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, pushStoreErrorCode(err), safePushConfigError(err))
+		return
+	}
+	h.writeRPCResult(ctx, request.ID, pushConfigResult(cfg))
+}
+
+func (h *InboundA2AHandler) rpcListPushNotificationConfigs(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	if !h.pushNotificationsAvailable() {
+		h.writeRPCError(ctx, request.ID, -32004, "push notifications are not supported")
+		return
+	}
+	taskID := pushTaskID(request.Params)
+	if taskID == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "taskId is required")
+		return
+	}
+	if _, ok := h.rpcLoadAuthorizedTask(ctx, taskID); !ok {
+		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
+		return
+	}
+	principal, err := inboundA2ATaskPrincipal(ctx)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	configs, err := h.pushStore.List(ctx, principal.Tenant, taskID)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, pushStoreErrorCode(err), safePushConfigError(err))
+		return
+	}
+	result := a2aPushConfigListResult{Configs: make([]a2aPushConfigResult, 0, len(configs))}
+	for _, cfg := range configs {
+		result.Configs = append(result.Configs, pushConfigResult(cfg))
+	}
+	h.writeRPCResult(ctx, request.ID, result)
+}
+
+func (h *InboundA2AHandler) rpcDeletePushNotificationConfig(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	if !h.pushNotificationsAvailable() {
+		h.writeRPCError(ctx, request.ID, -32004, "push notifications are not supported")
+		return
+	}
+	var params a2aTaskParams
+	if err := json.Unmarshal(request.Params, &params); err != nil || strings.TrimSpace(params.ID) == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "id is required")
+		return
+	}
+	taskID := pushTaskID(request.Params)
+	if taskID == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "taskId is required")
+		return
+	}
+	if _, ok := h.rpcLoadAuthorizedTask(ctx, taskID); !ok {
+		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
+		return
+	}
+	principal, err := inboundA2ATaskPrincipal(ctx)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	if err := h.pushStore.Delete(ctx, principal.Tenant, taskID, params.ID); err != nil && !errors.Is(err, a2apush.ErrNotFound) {
+		h.writeRPCError(ctx, request.ID, pushStoreErrorCode(err), safePushConfigError(err))
+		return
+	}
+	h.writeRPCResult(ctx, request.ID, map[string]bool{"deleted": true})
+}
+
+func (h *InboundA2AHandler) pushNotificationsAvailable() bool {
+	return h != nil && h.pushStore != nil && h.pushDelivery != nil
+}
+
+func pushConfigFromRequest(params a2aPushConfigRequest, tenant, taskID string) (a2apush.Config, error) {
+	input := a2aPushNotificationConfig{ID: params.ID, TaskID: params.TaskID, URL: params.URL, Token: params.Token, TokenRef: params.TokenRef, Authentication: params.Authentication}
+	if params.PushNotificationConfig != nil {
+		input = *params.PushNotificationConfig
+	}
+	cfg := a2apush.Config{ID: strings.TrimSpace(input.ID), TaskID: taskID, TenantID: tenant, URL: strings.TrimSpace(input.URL)}
+	if strings.TrimSpace(input.Token) != "" {
+		return a2apush.Config{}, a2apush.ErrSecretRef
+	}
+	cfg.NotificationTokenRef = strings.TrimSpace(input.TokenRef)
+	if cfg.ID == "" {
+		cfg.ID = uuid.NewString()
+	}
+	if len(input.Authentication) > 0 && string(input.Authentication) != "null" {
+		var auth a2aPushAuthentication
+		if err := json.Unmarshal(input.Authentication, &auth); err != nil {
+			var legacy []a2aPushAuthentication
+			if err := json.Unmarshal(input.Authentication, &legacy); err != nil || len(legacy) != 1 {
+				return a2apush.Config{}, errors.New("authentication must be one object")
+			}
+			auth = legacy[0]
+		}
+		if strings.TrimSpace(auth.Credentials) != "" {
+			return a2apush.Config{}, a2apush.ErrSecretRef
+		}
+		cfg.AuthScheme = strings.ToLower(strings.TrimSpace(auth.Scheme))
+		cfg.CredentialRef = strings.TrimSpace(auth.CredentialRef)
+		cfg.SigningSecretRef = strings.TrimSpace(auth.SigningSecretRef)
+	}
+	return cfg, nil
+}
+
+func pushConfigResult(cfg a2apush.Config) a2aPushConfigResult {
+	var auth *a2aPushAuthentication
+	if cfg.AuthScheme != "" {
+		auth = &a2aPushAuthentication{Scheme: cfg.AuthScheme}
+	}
+	return a2aPushConfigResult{ID: cfg.ID, TaskID: cfg.TaskID, URL: cfg.URL, Authentication: auth}
+}
+
+func pushTaskID(raw []byte) string {
+	var params struct {
+		TaskID string `json:"taskId"`
+	}
+	if json.Unmarshal(raw, &params) != nil {
+		return ""
+	}
+	return strings.TrimSpace(params.TaskID)
+}
+
+func ensureTaskID(raw []byte, taskID string) []byte {
+	var params map[string]any
+	if json.Unmarshal(raw, &params) != nil {
+		return raw
+	}
+	if _, ok := params["taskId"]; !ok || strings.TrimSpace(fmt.Sprint(params["taskId"])) == "" {
+		params["taskId"] = taskID
+	}
+	return mustJSON(params)
+}
+
+func pushStoreErrorCode(err error) int {
+	if errors.Is(err, a2apush.ErrNotFound) {
+		return -32001
+	}
+	if errors.Is(err, a2apush.ErrSecretRef) || errors.Is(err, a2apush.ErrAlreadyExists) {
+		return -32602
+	}
+	return -32001
+}
+
+func safePushConfigError(err error) string {
+	switch {
+	case errors.Is(err, a2apush.ErrNotFound):
+		return "push notification configuration not found"
+	case errors.Is(err, a2apush.ErrAlreadyExists):
+		return "push notification configuration already exists"
+	case errors.Is(err, a2apush.ErrSecretRef):
+		return "push authentication must use a secret reference"
+	default:
+		return "push notification configuration is invalid"
+	}
 }
 
 func (h *InboundA2AHandler) rpcLoadAuthorizedTask(ctx *fasthttp.RequestCtx, taskID string) (a2aTask, bool) {
@@ -798,7 +1114,7 @@ func scopedA2ATaskKey(partition, taskID string) string {
 	return partition + "\x00" + taskID
 }
 
-func attachInboundA2AProvenance(bifrostCtx *schemas.BifrostContext, requestCtx *fasthttp.RequestCtx, config *lib.Config, taskID string, observedAt time.Time) {
+func attachInboundA2AProvenance(bifrostCtx *schemas.BifrostContext, requestCtx *fasthttp.RequestCtx, config *lib.Config, taskID string, observedAt time.Time, cardDigest string) {
 	if bifrostCtx == nil || requestCtx == nil {
 		return
 	}
@@ -817,7 +1133,7 @@ func attachInboundA2AProvenance(bifrostCtx *schemas.BifrostContext, requestCtx *
 		RequestID:          stringValue(requestCtx.UserValue(schemas.BifrostContextKeyRequestID)),
 		TraceID:            stringValue(bifrostCtx.Value(schemas.BifrostContextKeyTraceID)),
 		TaskID:             taskID,
-		CardDigest:         inboundAgentCardDigest(requestCtx, config),
+		CardDigest:         cardDigest,
 		CardRevision:       "inbound-agent-v1",
 		PolicyEpoch:        policyEpoch,
 		CapabilityDecision: "admitted",
@@ -849,17 +1165,23 @@ func stringValue(value interface{}) string {
 	return result
 }
 
-func inboundAgentCardDigest(ctx *fasthttp.RequestCtx, config *lib.Config) string {
+func (h *InboundA2AHandler) inboundAgentCardDigest(ctx *fasthttp.RequestCtx) string {
 	base := inboundBaseURL(ctx)
 	if base == "" {
 		return ""
 	}
-	body, err := inbound.MarshalAgentCardJSON(inboundRecordForConfig(base, config))
+	body, err := inbound.MarshalAgentCardJSON(h.agentCardRecord(base))
 	if err != nil {
 		return ""
 	}
 	sum := sha256.Sum256(body)
 	return "sha256:" + hex.EncodeToString(sum[:])
+}
+
+func (h *InboundA2AHandler) agentCardRecord(base string) inbound.Record {
+	record := inboundRecordForConfig(base, h.config)
+	record.Card.Capabilities.PushNotifications = h.pushNotificationsAvailable()
+	return record
 }
 
 // inboundRecordForConfig is the production workflow-registry seam. The

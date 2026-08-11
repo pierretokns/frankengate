@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"net"
 	"strings"
 	"testing"
 	"time"
@@ -12,6 +13,7 @@ import (
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2apush"
 	"github.com/maximhq/bifrost/framework/modelcatalog/inbound"
 	"github.com/maximhq/bifrost/framework/objectstore"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
@@ -51,6 +53,112 @@ func TestInboundAgentCardDoesNotAdvertiseUnimplementedGRPC(t *testing.T) {
 	}
 	if card.PreferredTransport == a2adiscovery.TransportGRPC {
 		t.Fatal("native A2A gRPC cannot be the preferred transport")
+	}
+	if card.Capabilities.PushNotifications {
+		t.Fatal("default inbound card advertised push without an injected delivery implementation")
+	}
+}
+
+type inboundPushDeliveryStub struct{}
+
+func (inboundPushDeliveryStub) Deliver(context.Context, a2apush.DeliveryRequest) error { return nil }
+
+func TestInboundA2APushConfigLifecycleIsTenantScopedAndRedacted(t *testing.T) {
+	handler := &InboundA2AHandler{tasks: make(map[string]storedA2ATask), now: time.Now}
+	handler.ConfigurePushNotifications(
+		a2apush.NewMemoryStore(time.Now),
+		a2apush.Policy{
+			AllowedHosts: []string{"notify.example.test"},
+			Resolver: a2apush.ResolverFunc(func(context.Context, string) ([]net.IPAddr, error) {
+				return []net.IPAddr{{IP: net.ParseIP("203.0.113.10")}}, nil
+			}),
+		},
+		inboundPushDeliveryStub{},
+	)
+	if !handler.agentCardRecord("https://gateway.example").Card.Capabilities.PushNotifications {
+		t.Fatal("configured push delivery was not advertised")
+	}
+	partition := "tenant-a\x00issuer\x00subject"
+	if err := handler.storeTask(context.Background(), partition, a2aTask{ID: "task-push", Status: a2aTaskStatus{State: "TASK_STATE_WORKING", Timestamp: time.Now()}}); err != nil {
+		t.Fatal(err)
+	}
+	principal := authorityepoch.Principal{Tenant: "tenant-a", Issuer: "issuer", Subject: "subject"}
+	call := func(method string, params any) map[string]any {
+		ctx := &fasthttp.RequestCtx{}
+		ctx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, principal)
+		ctx.Request.SetBody(mustJSON(map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params}))
+		handler.messageSend(ctx)
+		var response map[string]any
+		if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil {
+			t.Fatalf("decode %s: %v (%s)", method, err, ctx.Response.Body())
+		}
+		return response
+	}
+	created := call("CreateTaskPushNotificationConfig", map[string]any{
+		"taskId": "task-push",
+		"pushNotificationConfig": map[string]any{
+			"id":             "push-1",
+			"url":            "https://notify.example.test/a2a",
+			"authentication": []any{map[string]any{"scheme": "bearer", "credentialRef": "vault://tenant-a/a2a"}},
+		},
+	})
+	result, ok := created["result"].(map[string]any)
+	if !ok || result["id"] != "push-1" || result["url"] != "https://notify.example.test/a2a" {
+		t.Fatalf("create result = %#v", created)
+	}
+	if strings.Contains(string(mustJSON(created)), "vault://") {
+		t.Fatal("push response leaked credential reference")
+	}
+	got := call("GetTaskPushNotificationConfig", map[string]any{"taskId": "task-push", "id": "push-1"})
+	if got["error"] != nil {
+		t.Fatalf("get failed: %#v", got)
+	}
+	listed := call("ListTaskPushNotificationConfigs", map[string]any{"taskId": "task-push"})
+	if list, ok := listed["result"].(map[string]any)["configs"].([]any); !ok || len(list) != 1 {
+		t.Fatalf("list result = %#v", listed)
+	}
+	deleted := call("DeleteTaskPushNotificationConfig", map[string]any{"taskId": "task-push", "id": "push-1"})
+	if deleted["error"] != nil {
+		t.Fatalf("delete failed: %#v", deleted)
+	}
+	deletedAgain := call("DeleteTaskPushNotificationConfig", map[string]any{"taskId": "task-push", "id": "push-1"})
+	if deletedAgain["error"] != nil {
+		t.Fatalf("delete should be idempotent: %#v", deletedAgain)
+	}
+
+	rawSecret := call("CreateTaskPushNotificationConfig", map[string]any{
+		"taskId": "task-push",
+		"url":    "https://notify.example.test/a2a",
+		"authentication": []any{map[string]any{
+			"scheme": "bearer", "credentials": "raw-token",
+		}},
+	})
+	if rawSecret["error"] == nil {
+		t.Fatal("raw push credential was accepted")
+	}
+
+	other := &fasthttp.RequestCtx{}
+	other.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "tenant-b", Issuer: "issuer", Subject: "subject"})
+	other.Request.SetBody(mustJSON(map[string]any{"jsonrpc": "2.0", "id": 1, "method": "GetTaskPushNotificationConfig", "params": map[string]any{"taskId": "task-push", "id": "push-1"}}))
+	handler.messageSend(other)
+	if !strings.Contains(string(other.Response.Body()), "Task not found") {
+		t.Fatalf("cross-tenant push lookup leaked state: %s", other.Response.Body())
+	}
+}
+
+func TestInboundA2APushConfigAcceptsCurrentFlatWireShape(t *testing.T) {
+	cfg, err := pushConfigFromRequest(a2aPushConfigRequest{
+		ID:             "push-current",
+		TaskID:         "task-1",
+		URL:            "https://notify.example.test/a2a",
+		Authentication: mustJSON(map[string]string{"scheme": "bearer", "credentialRef": "vault://ref"}),
+	}, "tenant-1", "task-1")
+	if err != nil || cfg.ID != "push-current" || cfg.AuthScheme != "bearer" || cfg.CredentialRef != "vault://ref" {
+		t.Fatalf("current flat push config = %#v err=%v", cfg, err)
+	}
+	encoded, err := json.Marshal(pushConfigResult(cfg))
+	if err != nil || strings.Contains(string(encoded), "vault://") || !strings.Contains(string(encoded), `"authentication":{"scheme":"bearer"}`) {
+		t.Fatalf("redacted current push response = %s err=%v", encoded, err)
 	}
 }
 

@@ -4,11 +4,15 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/maximhq/bifrost/framework/objectstore"
 )
 
 // DeliveryStatus describes state that a future operator-approved sender can
@@ -45,6 +49,7 @@ var ErrOutboxConflict = errors.New("A2A push outbox state conflict")
 type OutboxStore interface {
 	Enqueue(context.Context, DeliveryRecord) error
 	Get(context.Context, string, string, string) (DeliveryRecord, error)
+	List(context.Context, string) ([]DeliveryRecord, error)
 	Claim(context.Context, string, string, string, time.Time, time.Duration) (DeliveryRecord, error)
 	Complete(context.Context, string, string, string, time.Time) error
 	Fail(context.Context, string, string, string, time.Time, time.Duration, int, error) (DeliveryRecord, error)
@@ -100,6 +105,19 @@ func (s *MemoryOutboxStore) Get(_ context.Context, tenant, task, id string) (Del
 		return DeliveryRecord{}, ErrNotFound
 	}
 	return record, nil
+}
+
+func (s *MemoryOutboxStore) List(_ context.Context, tenant string) ([]DeliveryRecord, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	result := make([]DeliveryRecord, 0)
+	for _, record := range s.items {
+		if record.TenantID == tenant {
+			result = append(result, record)
+		}
+	}
+	SortDeliveryRecords(result)
+	return result, nil
 }
 
 func (s *MemoryOutboxStore) Claim(_ context.Context, tenant, task, id string, now time.Time, lease time.Duration) (DeliveryRecord, error) {
@@ -192,4 +210,204 @@ func SortDeliveryRecords(records []DeliveryRecord) {
 		}
 		return records[i].NextAttempt.Before(records[j].NextAttempt)
 	})
+}
+
+// DurableOutboxStore persists delivery state in the configured object store.
+// Claim is at-least-once: the object-store abstraction has no conditional
+// write primitive, so multi-process deployments must use delivery IDs as
+// idempotency keys at the eventual sender. Leases still recover abandoned
+// claims after a process crash.
+type DurableOutboxStore struct {
+	mu         sync.Mutex
+	store      objectstore.ObjectStore
+	prefix     string
+	now        func() time.Time
+	IsNotFound func(error) bool
+}
+
+func NewDurableOutboxStore(store objectstore.ObjectStore, prefix string, now func() time.Time) *DurableOutboxStore {
+	if now == nil {
+		now = time.Now
+	}
+	return &DurableOutboxStore{store: store, prefix: strings.TrimSuffix(prefix, "/") + "/", now: now, IsNotFound: defaultIsNotFound}
+}
+
+func (s *DurableOutboxStore) Enqueue(ctx context.Context, record DeliveryRecord) error {
+	if err := validateDeliveryRecord(record); err != nil {
+		return err
+	}
+	if s == nil || s.store == nil {
+		return ErrDisabled
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	key := s.key(record.TenantID, record.TaskID, record.ID)
+	if _, err := s.store.Get(ctx, key); err == nil {
+		return ErrAlreadyExists
+	} else if !s.isNotFound(err) {
+		return fmt.Errorf("check existing A2A delivery: %w", err)
+	}
+	if record.Status == "" {
+		record.Status = DeliveryPending
+	}
+	if record.CreatedAt.IsZero() {
+		record.CreatedAt = s.now().UTC()
+	}
+	if record.UpdatedAt.IsZero() {
+		record.UpdatedAt = record.CreatedAt
+	}
+	if record.NextAttempt.IsZero() {
+		record.NextAttempt = record.CreatedAt
+	}
+	return s.save(ctx, record)
+}
+
+func (s *DurableOutboxStore) Get(ctx context.Context, tenant, task, id string) (DeliveryRecord, error) {
+	if s == nil || s.store == nil {
+		return DeliveryRecord{}, ErrDisabled
+	}
+	return s.load(ctx, tenant, task, id)
+}
+
+func (s *DurableOutboxStore) List(ctx context.Context, tenant string) ([]DeliveryRecord, error) {
+	if s == nil || s.store == nil {
+		return nil, ErrDisabled
+	}
+	items, err := s.store.ListByPrefix(ctx, s.prefix+hashPart(tenant)+"/")
+	if err != nil {
+		return nil, err
+	}
+	result := make([]DeliveryRecord, 0, len(items))
+	for _, item := range items {
+		body, getErr := s.store.Get(ctx, item.Key)
+		if getErr != nil {
+			return nil, getErr
+		}
+		var record DeliveryRecord
+		if err := json.Unmarshal(body, &record); err != nil {
+			return nil, fmt.Errorf("decode A2A delivery: %w", err)
+		}
+		if record.TenantID == tenant {
+			result = append(result, record)
+		}
+	}
+	SortDeliveryRecords(result)
+	return result, nil
+}
+
+func (s *DurableOutboxStore) Claim(ctx context.Context, tenant, task, id string, now time.Time, lease time.Duration) (DeliveryRecord, error) {
+	if s == nil || s.store == nil {
+		return DeliveryRecord{}, ErrDisabled
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	record, err := s.load(ctx, tenant, task, id)
+	if err != nil {
+		return DeliveryRecord{}, err
+	}
+	if record.Status == DeliveryDelivered || record.Status == DeliveryDeadLetter || (record.Status == DeliveryInFlight && record.LeaseUntil.After(now)) || record.NextAttempt.After(now) {
+		return DeliveryRecord{}, ErrOutboxConflict
+	}
+	record.Status = DeliveryInFlight
+	record.Attempts++
+	record.LeaseUntil = now.Add(lease)
+	record.UpdatedAt = now.UTC()
+	if err := s.save(ctx, record); err != nil {
+		return DeliveryRecord{}, err
+	}
+	return record, nil
+}
+
+func (s *DurableOutboxStore) Complete(ctx context.Context, tenant, task, id string, now time.Time) error {
+	if s == nil || s.store == nil {
+		return ErrDisabled
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	record, err := s.load(ctx, tenant, task, id)
+	if err != nil {
+		return err
+	}
+	if record.Status != DeliveryInFlight {
+		return ErrOutboxConflict
+	}
+	record.Status = DeliveryDelivered
+	record.LeaseUntil = time.Time{}
+	record.UpdatedAt = now.UTC()
+	return s.save(ctx, record)
+}
+
+func (s *DurableOutboxStore) Fail(ctx context.Context, tenant, task, id string, now time.Time, retryAfter time.Duration, maxAttempts int, deliveryErr error) (DeliveryRecord, error) {
+	if s == nil || s.store == nil {
+		return DeliveryRecord{}, ErrDisabled
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	record, err := s.load(ctx, tenant, task, id)
+	if err != nil {
+		return DeliveryRecord{}, err
+	}
+	if record.Status != DeliveryInFlight {
+		return DeliveryRecord{}, ErrOutboxConflict
+	}
+	record.LeaseUntil = time.Time{}
+	record.LastError = safeDeliveryError(deliveryErr)
+	if maxAttempts > 0 && record.Attempts >= maxAttempts {
+		record.Status = DeliveryDeadLetter
+	} else {
+		record.Status = DeliveryPending
+		record.NextAttempt = now.Add(retryAfter)
+	}
+	record.UpdatedAt = now.UTC()
+	if err := s.save(ctx, record); err != nil {
+		return DeliveryRecord{}, err
+	}
+	return record, nil
+}
+
+func (s *DurableOutboxStore) load(ctx context.Context, tenant, task, id string) (DeliveryRecord, error) {
+	body, err := s.store.Get(ctx, s.key(tenant, task, id))
+	if err != nil {
+		if s.isNotFound(err) {
+			return DeliveryRecord{}, ErrNotFound
+		}
+		return DeliveryRecord{}, fmt.Errorf("load A2A delivery: %w", err)
+	}
+	var record DeliveryRecord
+	if err := json.Unmarshal(body, &record); err != nil {
+		return DeliveryRecord{}, fmt.Errorf("decode A2A delivery: %w", err)
+	}
+	if record.TenantID != tenant || record.TaskID != task || record.ID != id {
+		return DeliveryRecord{}, ErrNotFound
+	}
+	return record, nil
+}
+
+func (s *DurableOutboxStore) save(ctx context.Context, record DeliveryRecord) error {
+	body, err := json.Marshal(record)
+	if err != nil {
+		return err
+	}
+	return s.store.Put(ctx, s.key(record.TenantID, record.TaskID, record.ID), body, map[string]string{"kind": "a2a_delivery", "tenant": hashPart(record.TenantID), "task": hashPart(record.TaskID)})
+}
+
+func (s *DurableOutboxStore) key(tenant, task, id string) string {
+	return s.prefix + hashPart(tenant) + "/" + hashPart(task) + "/" + hashPart(id) + ".json"
+}
+
+func (s *DurableOutboxStore) isNotFound(err error) bool {
+	if s != nil && s.IsNotFound != nil {
+		return s.IsNotFound(err)
+	}
+	return defaultIsNotFound(err)
+}
+
+func validateDeliveryRecord(record DeliveryRecord) error {
+	if strings.TrimSpace(record.ID) == "" || strings.TrimSpace(record.TenantID) == "" || strings.TrimSpace(record.TaskID) == "" || strings.TrimSpace(record.ConfigID) == "" || strings.TrimSpace(record.PayloadRef) == "" || strings.TrimSpace(record.PayloadHash) == "" {
+		return errors.New("A2A push outbox identity and payload reference are required")
+	}
+	if record.Status != "" && record.Status != DeliveryPending {
+		return errors.New("new A2A push outbox records must be pending")
+	}
+	return nil
 }

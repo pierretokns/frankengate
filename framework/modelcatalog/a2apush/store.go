@@ -31,15 +31,16 @@ var (
 // headers. CredentialRef and SigningSecretRef are opaque references resolved
 // only by an approved delivery implementation at send time.
 type Config struct {
-	ID               string    `json:"id"`
-	TaskID           string    `json:"taskId"`
-	TenantID         string    `json:"tenantId"`
-	URL              string    `json:"url"`
-	AuthScheme       string    `json:"authScheme,omitempty"`
-	CredentialRef    string    `json:"credentialRef,omitempty"`
-	SigningSecretRef string    `json:"signingSecretRef,omitempty"`
-	CreatedAt        time.Time `json:"createdAt"`
-	UpdatedAt        time.Time `json:"updatedAt"`
+	ID                   string    `json:"id"`
+	TaskID               string    `json:"taskId"`
+	TenantID             string    `json:"tenantId"`
+	URL                  string    `json:"url"`
+	AuthScheme           string    `json:"authScheme,omitempty"`
+	CredentialRef        string    `json:"credentialRef,omitempty"`
+	SigningSecretRef     string    `json:"signingSecretRef,omitempty"`
+	NotificationTokenRef string    `json:"notificationTokenRef,omitempty"`
+	CreatedAt            time.Time `json:"createdAt"`
+	UpdatedAt            time.Time `json:"updatedAt"`
 }
 
 type Policy struct {
@@ -100,7 +101,7 @@ func ValidateConfig(ctx context.Context, cfg Config, policy Policy) error {
 	if cfg.AuthScheme == "bearer" && strings.TrimSpace(cfg.CredentialRef) == "" || cfg.AuthScheme == "hmac-sha256" && strings.TrimSpace(cfg.SigningSecretRef) == "" {
 		return ErrSecretRef
 	}
-	if looksLikeSecret(cfg.CredentialRef) || looksLikeSecret(cfg.SigningSecretRef) {
+	if looksLikeSecret(cfg.CredentialRef) || looksLikeSecret(cfg.SigningSecretRef) || looksLikeSecret(cfg.NotificationTokenRef) {
 		return ErrSecretRef
 	}
 	return nil
@@ -210,7 +211,7 @@ func (s *DurableStore) Create(ctx context.Context, cfg Config) error {
 	if err != nil {
 		return err
 	}
-	return s.store.Put(ctx, key, body, map[string]string{"kind": "a2a_push_config", "tenant": cfg.TenantID, "task": cfg.TaskID})
+	return s.store.Put(ctx, key, body, map[string]string{"kind": "a2a_push_config", "tenant": hashPart(cfg.TenantID), "task": hashPart(cfg.TaskID)})
 }
 
 func (s *DurableStore) Get(ctx context.Context, tenant, task, id string) (Config, error) {

@@ -96,6 +96,11 @@ func TestDurableStoreUsesHashedTenantTaskKeysAndPropagatesBackendFailure(t *test
 		if strings.Contains(key, cfg.TenantID) || strings.Contains(key, cfg.TaskID) || strings.Contains(key, cfg.ID) {
 			t.Fatalf("object key leaked tenant/task/config identity: %q", key)
 		}
+		for _, tag := range backend.GetTags(key) {
+			if strings.Contains(tag, cfg.TenantID) || strings.Contains(tag, cfg.TaskID) || strings.Contains(tag, cfg.ID) {
+				t.Fatalf("object tag leaked tenant/task/config identity: %q", tag)
+			}
+		}
 	}
 	if err := store.Create(context.Background(), cfg); !errors.Is(err, ErrAlreadyExists) {
 		t.Fatalf("duplicate create returned %v", err)
