@@ -32,6 +32,7 @@ type Task struct {
 	ID         string
 	Endpoint   string
 	CardDigest string
+	TraceID    string
 	State      State
 	Attempt    int
 	CreatedAt  time.Time
@@ -64,6 +65,17 @@ type Sender interface {
 	Send(context.Context, SendRequest) (Event, error)
 }
 
+// TaskObserver is an optional, non-authoritative lifecycle hook for OTel,
+// metrics, and audit projections. It receives task metadata only; payloads
+// and credential headers are intentionally not part of the callback.
+type TaskObserver interface {
+	ObserveTaskEvent(Task, Event)
+}
+
+type TaskObserverFunc func(Task, Event)
+
+func (f TaskObserverFunc) ObserveTaskEvent(task Task, event Event) { f(task, event) }
+
 type RetryPolicy struct {
 	MaxAttempts int
 	BaseDelay   time.Duration
@@ -84,11 +96,12 @@ func (p RetryPolicy) withDefaults() RetryPolicy {
 }
 
 type Broker struct {
-	mu     sync.RWMutex
-	now    func() time.Time
-	ids    func() string
-	policy RetryPolicy
-	tasks  map[string]Task
+	mu       sync.RWMutex
+	now      func() time.Time
+	ids      func() string
+	policy   RetryPolicy
+	tasks    map[string]Task
+	observer TaskObserver
 }
 
 func New(now func() time.Time, ids func() string, policy RetryPolicy) *Broker {
@@ -102,6 +115,13 @@ func New(now func() time.Time, ids func() string, policy RetryPolicy) *Broker {
 }
 
 func (b *Broker) Submit(endpoint, cardDigest string, payload []byte) (Task, error) {
+	return b.SubmitWithTrace(endpoint, cardDigest, payload, "")
+}
+
+// SubmitWithTrace binds a caller-owned trace ID to task metadata so lifecycle
+// events can be correlated with the gateway's existing OTel trace. The trace
+// ID is never used as a credential or endpoint selector.
+func (b *Broker) SubmitWithTrace(endpoint, cardDigest string, payload []byte, traceID string) (Task, error) {
 	if b == nil {
 		return Task{}, fmt.Errorf("broker is nil")
 	}
@@ -109,7 +129,7 @@ func (b *Broker) Submit(endpoint, cardDigest string, payload []byte) (Task, erro
 		return Task{}, fmt.Errorf("endpoint and card digest are required")
 	}
 	now := b.now().UTC()
-	task := Task{ID: b.ids(), Endpoint: endpoint, CardDigest: cardDigest, State: StateSubmitted, Attempt: 0, CreatedAt: now, UpdatedAt: now}
+	task := Task{ID: b.ids(), Endpoint: endpoint, CardDigest: cardDigest, TraceID: traceID, State: StateSubmitted, Attempt: 0, CreatedAt: now, UpdatedAt: now}
 	if task.ID == "" {
 		return Task{}, fmt.Errorf("task id generator returned empty id")
 	}
@@ -121,6 +141,15 @@ func (b *Broker) Submit(endpoint, cardDigest string, payload []byte) (Task, erro
 	b.tasks[task.ID] = task
 	b.mu.Unlock()
 	return cloneTask(task), nil
+}
+
+func (b *Broker) SetTaskObserver(observer TaskObserver) {
+	if b == nil {
+		return
+	}
+	b.mu.Lock()
+	b.observer = observer
+	b.mu.Unlock()
 }
 
 func (b *Broker) Dispatch(ctx context.Context, taskID string, payload []byte, sender Sender) (Task, error) {
@@ -172,15 +201,17 @@ func (b *Broker) Apply(taskID string, event Event) (Task, error) {
 		return Task{}, fmt.Errorf("invalid task state %q", event.State)
 	}
 	b.mu.Lock()
-	defer b.mu.Unlock()
 	task, ok := b.tasks[taskID]
 	if !ok {
+		b.mu.Unlock()
 		return Task{}, fmt.Errorf("task %q not found", taskID)
 	}
 	if task.State.Terminal() {
+		b.mu.Unlock()
 		return Task{}, fmt.Errorf("task %q is already terminal", taskID)
 	}
 	if !validTransition(task.State, event.State) {
+		b.mu.Unlock()
 		return Task{}, fmt.Errorf("invalid task transition %q -> %q", task.State, event.State)
 	}
 	if event.At.IsZero() {
@@ -192,7 +223,18 @@ func (b *Broker) Apply(taskID string, event Event) (Task, error) {
 	task.Error = event.Error
 	task.Events = append(task.Events, event)
 	b.tasks[taskID] = task
-	return cloneTask(task), nil
+	result := cloneTask(task)
+	observer := b.observer
+	b.mu.Unlock()
+	if observer != nil {
+		notifyTaskObserver(observer, result, event)
+	}
+	return result, nil
+}
+
+func notifyTaskObserver(observer TaskObserver, task Task, event Event) {
+	defer func() { _ = recover() }()
+	observer.ObserveTaskEvent(task, event)
 }
 
 func (b *Broker) Cancel(taskID, reason string) (Task, error) {

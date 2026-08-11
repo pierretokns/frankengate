@@ -22,6 +22,7 @@ import (
 	"github.com/google/uuid"
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/mcp"
+	"github.com/maximhq/bifrost/core/mcp/tokenexchange"
 	mcputils "github.com/maximhq/bifrost/core/mcp/utils"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework"
@@ -35,6 +36,7 @@ import (
 	"github.com/maximhq/bifrost/framework/mcp_headers"
 	"github.com/maximhq/bifrost/framework/mcpcatalog"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2abroker"
 	"github.com/maximhq/bifrost/framework/modelcatalog/datasheet"
 	"github.com/maximhq/bifrost/framework/oauth2"
 	"github.com/maximhq/bifrost/framework/objectstore"
@@ -539,9 +541,13 @@ type Config struct {
 	pluginStatusMu sync.RWMutex
 	pluginStatus   map[string]schemas.PluginStatus // name -> status
 
-	OAuthProvider      *oauth2.OAuth2Provider
-	TokenRefreshWorker *oauth2.TokenRefreshWorker
-	OAuthSweepWorker   *oauth2.PerUserOAuthSweepWorker
+	OAuthProvider *oauth2.OAuth2Provider
+	// A2ACredentialResolver is the runtime-only adapter for outbound A2A
+	// dispatch. It resolves existing per-user/server OAuth credentials and
+	// explicitly configured token exchanges; it never persists token material.
+	A2ACredentialResolver *a2abroker.RuntimeCredentialResolver
+	TokenRefreshWorker    *oauth2.TokenRefreshWorker
+	OAuthSweepWorker      *oauth2.PerUserOAuthSweepWorker
 
 	// MCPHeadersProvider backs MCPAuthTypePerUserHeaders credential storage.
 	// Constructed alongside OAuthProvider and passed into the Bifrost core
@@ -4189,6 +4195,10 @@ func initFrameworkConfig(ctx context.Context, config *Config, configData *Config
 
 	// Initialize OAuth provider
 	config.OAuthProvider = oauth2.NewOAuth2Provider(config.ConfigStore, logger)
+	config.A2ACredentialResolver = &a2abroker.RuntimeCredentialResolver{
+		OAuthProvider: config.OAuthProvider,
+		Exchanger:     tokenexchange.New(nil),
+	}
 	// Initialize per-user-headers credential provider. Storage parallel of
 	// OAuthProvider for MCPAuthTypePerUserHeaders clients.
 	config.MCPHeadersProvider = mcp_headers.NewProvider(config.ConfigStore, logger)

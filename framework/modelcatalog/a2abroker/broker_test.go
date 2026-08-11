@@ -107,6 +107,29 @@ func TestBrokerDispatchesAndPreservesTaskHistory(t *testing.T) {
 	}
 }
 
+func TestBrokerTaskObserverReceivesSafeLifecycleMetadata(t *testing.T) {
+	broker := New(nil, func() string { return "task-observed" }, RetryPolicy{})
+	var observed []Event
+	var observedTask Task
+	broker.SetTaskObserver(TaskObserverFunc(func(task Task, event Event) {
+		observedTask = task
+		observed = append(observed, event)
+	}))
+	task, err := broker.SubmitWithTrace("https://agent.example/a2a", "card-digest", []byte("secret payload"), "trace-123")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := broker.Apply(task.ID, Event{State: StateWorking}); err != nil {
+		t.Fatal(err)
+	}
+	if observedTask.TraceID != "trace-123" || len(observed) != 1 || observed[0].State != StateWorking {
+		t.Fatalf("observer received task=%#v events=%#v", observedTask, observed)
+	}
+	if len(observedTask.Events) != 1 || observedTask.Events[0].Message != "" {
+		t.Fatalf("observer task history unexpectedly changed: %#v", observedTask.Events)
+	}
+}
+
 func TestBrokerRetriesTransientTransportFailuresAndBoundsAttempts(t *testing.T) {
 	broker := New(time.Now, func() string { return "task-2" }, RetryPolicy{MaxAttempts: 2, BaseDelay: 100 * time.Millisecond, MaxDelay: time.Second})
 	task, err := broker.Submit("https://agent.example/a2a", "digest", nil)

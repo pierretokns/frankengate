@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
 )
 
@@ -44,6 +45,20 @@ type CredentialRequest struct {
 	Scopes       []string
 	SubjectToken string
 	ActorToken   string
+	// OAuthConfigID selects a server-level OAuth credential when AuthMode is
+	// MCPAuthModeNone. Per-identity lookups require AuthMode, Identity, and
+	// MCPClientID together; the adapter never silently falls back between them.
+	OAuthConfigID string
+	AuthMode      schemas.MCPAuthMode
+	Identity      string
+	MCPClientID   string
+	// TokenExchange opts into an injected RFC 8693/7523 exchange source. The
+	// source is called only when this profile is explicitly present and enabled.
+	TokenExchange *schemas.MCPTokenExchangeConfig
+	// AllowSubjectPassThrough is an explicit caller decision for a bearer
+	// scheme. It prevents a resolver from treating any supplied subject token
+	// as a downstream credential by accident.
+	AllowSubjectPassThrough bool
 }
 
 type Credential struct {

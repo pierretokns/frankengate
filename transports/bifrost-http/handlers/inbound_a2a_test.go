@@ -11,6 +11,8 @@ import (
 	"github.com/maximhq/bifrost/core/schemas"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
+	"github.com/maximhq/bifrost/framework/modelcatalog/inbound"
 	"github.com/maximhq/bifrost/framework/objectstore"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 	"github.com/valyala/fasthttp"
@@ -34,6 +36,21 @@ func TestInboundA2ATaskPartitionFailsClosedAndSeparatesTenants(t *testing.T) {
 	var missing fasthttp.RequestCtx
 	if _, err := inboundA2ATaskPartition(&missing); err == nil {
 		t.Fatal("missing trusted principal must fail closed")
+	}
+}
+
+func TestInboundAgentCardDoesNotAdvertiseUnimplementedGRPC(t *testing.T) {
+	card, err := inbound.GenerateAgentCard(defaultInboundRecord("https://gateway.example"))
+	if err != nil {
+		t.Fatalf("generate inbound card: %v", err)
+	}
+	for _, iface := range card.SupportedInterfaces {
+		if iface.ProtocolBinding == a2adiscovery.TransportGRPC {
+			t.Fatal("native A2A gRPC is not implemented and must not be advertised")
+		}
+	}
+	if card.PreferredTransport == a2adiscovery.TransportGRPC {
+		t.Fatal("native A2A gRPC cannot be the preferred transport")
 	}
 }
 
