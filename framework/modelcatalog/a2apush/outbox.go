@@ -50,6 +50,7 @@ type OutboxStore interface {
 	Enqueue(context.Context, DeliveryRecord) error
 	Get(context.Context, string, string, string) (DeliveryRecord, error)
 	List(context.Context, string) ([]DeliveryRecord, error)
+	ListTenants(context.Context) ([]string, error)
 	Claim(context.Context, string, string, string, time.Time, time.Duration) (DeliveryRecord, error)
 	Complete(context.Context, string, string, string, time.Time) error
 	Fail(context.Context, string, string, string, time.Time, time.Duration, int, error) (DeliveryRecord, error)
@@ -118,6 +119,23 @@ func (s *MemoryOutboxStore) List(_ context.Context, tenant string) ([]DeliveryRe
 	}
 	SortDeliveryRecords(result)
 	return result, nil
+}
+
+func (s *MemoryOutboxStore) ListTenants(_ context.Context) ([]string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	seen := make(map[string]struct{})
+	for _, record := range s.items {
+		if record.TenantID != "" {
+			seen[record.TenantID] = struct{}{}
+		}
+	}
+	tenants := make([]string, 0, len(seen))
+	for tenant := range seen {
+		tenants = append(tenants, tenant)
+	}
+	sort.Strings(tenants)
+	return tenants, nil
 }
 
 func (s *MemoryOutboxStore) Claim(_ context.Context, tenant, task, id string, now time.Time, lease time.Duration) (DeliveryRecord, error) {
@@ -293,6 +311,36 @@ func (s *DurableOutboxStore) List(ctx context.Context, tenant string) ([]Deliver
 	}
 	SortDeliveryRecords(result)
 	return result, nil
+}
+
+func (s *DurableOutboxStore) ListTenants(ctx context.Context) ([]string, error) {
+	if s == nil || s.store == nil {
+		return nil, ErrDisabled
+	}
+	items, err := s.store.ListByPrefix(ctx, s.prefix)
+	if err != nil {
+		return nil, err
+	}
+	seen := make(map[string]struct{})
+	for _, item := range items {
+		body, getErr := s.store.Get(ctx, item.Key)
+		if getErr != nil {
+			return nil, getErr
+		}
+		var record DeliveryRecord
+		if err := json.Unmarshal(body, &record); err != nil {
+			return nil, fmt.Errorf("decode A2A delivery: %w", err)
+		}
+		if record.TenantID != "" {
+			seen[record.TenantID] = struct{}{}
+		}
+	}
+	tenants := make([]string, 0, len(seen))
+	for tenant := range seen {
+		tenants = append(tenants, tenant)
+	}
+	sort.Strings(tenants)
+	return tenants, nil
 }
 
 func (s *DurableOutboxStore) Claim(ctx context.Context, tenant, task, id string, now time.Time, lease time.Duration) (DeliveryRecord, error) {

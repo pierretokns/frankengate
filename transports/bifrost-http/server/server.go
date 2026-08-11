@@ -24,6 +24,7 @@ import (
 	"github.com/maximhq/bifrost/framework/configstore/tables"
 	"github.com/maximhq/bifrost/framework/encrypt"
 	"github.com/maximhq/bifrost/framework/logstore"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2apush"
 	dynamicPlugins "github.com/maximhq/bifrost/framework/plugins"
 	"github.com/maximhq/bifrost/framework/sidekiq"
 	"github.com/maximhq/bifrost/framework/temptoken"
@@ -201,6 +202,7 @@ type BifrostHTTPServer struct {
 
 	SidekiqRunner         *sidekiq.Runner
 	SidekiqDispatcherStop func()
+	inboundA2AHandler     *handlers.InboundA2AHandler
 
 	wsPool *bfws.Pool
 }
@@ -1629,6 +1631,7 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	oauth2SessionsHandler := handlers.NewOAuth2SessionsHandler(s.Config)
 	oauth2ConsentHandler := handlers.NewOAuth2ConsentHandler(s.Config, s.TempTokens, s.OAuth2IdentityResolver)
 	inboundA2AHandler := handlers.NewInboundA2AHandler(s.Client, s.Config)
+	s.inboundA2AHandler = inboundA2AHandler
 
 	oauth2DiscoveryHandler.RegisterRoutes(s.Router, middlewares...)
 	// No middleware needed for mcp issuance routes, they should be open
@@ -1705,6 +1708,36 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 		handlers.SendError(ctx, fasthttp.StatusNotFound, "Route not found: "+string(ctx.Path()))
 	}
 	return nil
+}
+
+// ConfigureA2APush wires an operator-approved push store, policy, and
+// delivery implementation into the already-registered inbound A2A handler.
+// It is intentionally explicit: merely loading a secret resolver never opens
+// a task-payload egress path.
+func (s *BifrostHTTPServer) ConfigureA2APush(store a2apush.Store, policy a2apush.Policy, delivery a2apush.Delivery) error {
+	if s == nil || s.inboundA2AHandler == nil {
+		return errors.New("A2A routes are not registered")
+	}
+	if delivery == nil {
+		return errors.New("A2A push delivery is required")
+	}
+	s.inboundA2AHandler.ConfigurePushNotifications(store, policy, delivery)
+	return nil
+}
+
+// StartA2APushRuntime starts the explicit A2A push worker after the caller has
+// approved egress configuration and policy. StopA2APushRuntime is safe to call
+// during every shutdown path.
+func (s *BifrostHTTPServer) StartA2APushRuntime(ctx context.Context) {
+	if s != nil && s.inboundA2AHandler != nil {
+		s.inboundA2AHandler.StartPushRuntime(ctx)
+	}
+}
+
+func (s *BifrostHTTPServer) StopA2APushRuntime() {
+	if s != nil && s.inboundA2AHandler != nil {
+		s.inboundA2AHandler.StopPushRuntime()
+	}
 }
 
 // RegisterUIRoutes registers the UI handler with the specified router
@@ -2242,6 +2275,7 @@ func (s *BifrostHTTPServer) Start() error {
 				logger.Info("stopping sidekiq runner...")
 				s.SidekiqRunner.Shutdown()
 			}
+			s.StopA2APushRuntime()
 			if s.devPprofHandler != nil {
 				logger.Info("stopping dev pprof handler...")
 				s.devPprofHandler.Cleanup()
@@ -2291,6 +2325,7 @@ func (s *BifrostHTTPServer) Start() error {
 		if s.IntegrationHandler != nil {
 			s.IntegrationHandler.Close()
 		}
+		s.StopA2APushRuntime()
 		if s.wsPool != nil {
 			s.wsPool.Close()
 		}

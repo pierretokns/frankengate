@@ -41,9 +41,10 @@ type WorkerStats struct {
 	Skipped    int
 }
 
-// RunOnce processes due records for one tenant. Network behavior remains an
-// injected Delivery implementation; this worker owns only durable state,
-// bounded payload loading, and retry/dead-letter transitions.
+// RunOnce processes due records for one tenant. The Delivery implementation is
+// injected so deployments can choose their egress client, while this worker
+// owns durable state, bounded payload loading, and retry/dead-letter
+// transitions.
 func (w Worker) RunOnce(ctx context.Context, tenant string) (WorkerStats, error) {
 	var stats WorkerStats
 	if w.Outbox == nil || w.Configs == nil || w.Payloads == nil || w.Delivery == nil {
@@ -105,7 +106,13 @@ func (w Worker) RunOnce(ctx context.Context, tenant string) (WorkerStats, error)
 			} else if PayloadDigest(payload) != claimed.PayloadHash {
 				err = errors.New("A2A push payload digest mismatch")
 			} else {
-				err = w.Delivery.Deliver(ctx, DeliveryRequest{Config: cfg, Payload: append([]byte(nil), payload...)})
+				err = w.Delivery.Deliver(ctx, DeliveryRequest{
+					Config:      cfg,
+					Payload:     append([]byte(nil), payload...),
+					DeliveryID:  claimed.ID,
+					PayloadHash: claimed.PayloadHash,
+					Attempt:     claimed.Attempts,
+				})
 			}
 		}
 		if err == nil {

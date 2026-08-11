@@ -163,6 +163,20 @@ func TestInboundA2APushConfigAcceptsCurrentFlatWireShape(t *testing.T) {
 	}
 }
 
+func TestInboundA2AStreamReplayCursorSuppressesDuplicates(t *testing.T) {
+	handler := &InboundA2AHandler{streamStates: make(map[string]*a2aStreamState)}
+	first := handler.publishA2AStreamEvent("task-stream", []byte(`{"state":"working"}`), false)
+	second := handler.publishA2AStreamEvent("task-stream", []byte(`{"state":"completed"}`), true)
+	if first.ID != "1" || second.ID != "2" {
+		t.Fatalf("stream event ids = %q, %q", first.ID, second.ID)
+	}
+	replay, subscriber, unsubscribe, terminal := handler.subscribeA2AStream("task-stream", 1)
+	defer unsubscribe()
+	if !terminal || subscriber != nil || len(replay) != 1 || replay[0].ID != "2" || string(replay[0].Body) != `{"state":"completed"}` {
+		t.Fatalf("replay=%#v subscriber=%v terminal=%v", replay, subscriber, terminal)
+	}
+}
+
 func TestInboundRecordCarriesLiveModelCatalogRevision(t *testing.T) {
 	catalog := modelcatalog.NewTestCatalog(nil)
 	config := &lib.Config{ModelCatalog: catalog}

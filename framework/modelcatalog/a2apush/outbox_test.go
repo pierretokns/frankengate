@@ -59,6 +59,20 @@ func TestMemoryOutboxTenantIsolationAndCompletion(t *testing.T) {
 	}
 }
 
+func TestOutboxListsTenantsForRestartRecovery(t *testing.T) {
+	store := NewMemoryOutboxStore(nil)
+	for _, tenant := range []string{"tenant-b", "tenant-a", "tenant-a"} {
+		record := DeliveryRecord{ID: "delivery-" + tenant, TenantID: tenant, TaskID: "task-1", ConfigID: "push-1", PayloadRef: "object://payload-1", PayloadHash: PayloadDigest([]byte(tenant))}
+		if err := store.Enqueue(context.Background(), record); err != nil && !errors.Is(err, ErrAlreadyExists) {
+			t.Fatal(err)
+		}
+	}
+	tenants, err := store.ListTenants(context.Background())
+	if err != nil || strings.Join(tenants, ",") != "tenant-a,tenant-b" {
+		t.Fatalf("tenants=%v err=%v", tenants, err)
+	}
+}
+
 func TestDurableOutboxPersistsRecoveryStateWithoutIdentityLeaks(t *testing.T) {
 	backend := objectstore.NewInMemoryObjectStore()
 	now := time.Date(2026, time.August, 11, 12, 0, 0, 0, time.UTC)

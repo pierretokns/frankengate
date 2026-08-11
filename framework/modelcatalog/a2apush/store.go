@@ -1,6 +1,5 @@
-// Package a2apush contains the durable, secret-reference-only state model for
-// A2A push notifications. It deliberately has no network sender: delivery is
-// an operator-approved egress seam implemented by the transport layer.
+// Package a2apush contains the durable, secret-reference-only state model and
+// guarded delivery implementation for A2A push notifications.
 package a2apush
 
 import (
@@ -270,12 +269,15 @@ func (s *DurableStore) Delete(ctx context.Context, tenant, task, id string) erro
 	return s.store.Delete(ctx, key)
 }
 
-// DeliveryRequest is the only transport-facing contract. A concrete sender
-// must be injected by an operator-approved egress implementation; the state
-// package itself cannot transmit task payloads.
+// DeliveryRequest is the transport-facing contract. DeliveryID, PayloadHash,
+// and Attempt are supplied by the durable worker so senders can produce
+// idempotent, auditable requests without putting state in the payload.
 type DeliveryRequest struct {
-	Config  Config
-	Payload []byte
+	Config      Config
+	Payload     []byte
+	DeliveryID  string
+	PayloadHash string
+	Attempt     int
 }
 
 type Delivery interface {

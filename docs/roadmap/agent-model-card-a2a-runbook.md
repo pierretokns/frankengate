@@ -36,9 +36,14 @@ authorization grant, or proof that a remote agent is safe to invoke.
   `POST /tasks/{id}:subscribe`. Push configuration uses the current
   `tasks/pushNotificationConfig/{create,get,list,delete}` JSON-RPC methods and
   `/tasks/{id}/pushNotificationConfigs` REST resources. These CRUD methods are
-  disabled unless an operator-approved delivery implementation is injected;
-  the durable store, SSRF checks, lease/retry/dead-letter worker, and redacted
-  lifecycle are present, but no default task-payload sender is enabled.
+  disabled unless an operator-approved delivery implementation is injected.
+  `BifrostHTTPServer.ConfigureA2APush(...)` installs the durable config,
+  payload, and outbox stores; `StartA2APushRuntime(...)` starts recovery and
+  retry polling, and `StopA2APushRuntime()` must run before the object store is
+  closed. The guarded `a2apush.HTTPDelivery` resolves opaque references only
+  at send time, blocks unsafe DNS/IP destinations, disables redirects, and
+  signs/idempotently labels requests. Nothing automatically opens an egress
+  path from a generic secret resolver.
   `GET /extendedAgentCard` is authenticated and returns the extended card when
   the public card advertises that capability. All task access is bounded,
   tenant-scoped, and TTL-limited.
@@ -82,7 +87,10 @@ outcome, artifact, trace/request IDs, and cost. Raw prompts, responses,
 credentials, and tool payloads must remain behind purpose-scoped redaction.
 Inbound A2A execution attaches these bounded fields to the live trace root and
 updates outcome/artifact on completion; OTEL and audit exporters receive them
-through the normal asynchronous observation path. Registry manifests enter a
+through the normal asynchronous observation path. Streaming requests forward
+provider deltas as ordered `message` SSE events with bounded artifact chunks,
+terminal status, disconnect cancellation, and an in-process bounded replay
+cursor (`Last-Event-ID`). Registry manifests enter a
 bounded pending-review store keyed by repository, immutable revision, and
 content digest; approval requires a reviewer and reason, and quarantine is an
 explicit later decision.

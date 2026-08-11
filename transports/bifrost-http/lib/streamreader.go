@@ -59,6 +59,16 @@ func (r *SSEStreamReader) Close() error {
 	return nil
 }
 
+// Closed returns a channel that is closed when the downstream connection has
+// gone away. Producers that fan out events to subscribers can use it to stop
+// without retaining a dead request.
+func (r *SSEStreamReader) Closed() <-chan struct{} {
+	if r == nil {
+		return nil
+	}
+	return r.closeCh
+}
+
 // Send delivers a pre-formatted event to the reader. Returns false if the reader
 // has been closed (client disconnected), in which case the producer should stop.
 func (r *SSEStreamReader) Send(event []byte) bool {
@@ -80,14 +90,31 @@ func (r *SSEStreamReader) Send(event []byte) bool {
 // If eventType is non-empty, it sends "event: <eventType>\ndata: <data>\n\n".
 // Returns false if the reader has been closed (client disconnected).
 func (r *SSEStreamReader) SendEvent(eventType string, data []byte) bool {
+	return r.SendEventWithID("", eventType, data)
+}
+
+// SendEventWithID sends an SSE event with an optional replay cursor. The ID is
+// emitted before the event/data fields so clients can use Last-Event-ID for
+// resume without parsing application payloads.
+func (r *SSEStreamReader) SendEventWithID(id, eventType string, data []byte) bool {
 	var buf []byte
+	if id != "" {
+		buf = make([]byte, 0, 4+len(id)+1+7+len(eventType)+7+len(data)+2)
+		buf = append(buf, "id: "...)
+		buf = append(buf, id...)
+		buf = append(buf, '\n')
+	}
 	if eventType != "" {
-		buf = make([]byte, 0, 7+len(eventType)+7+len(data)+2)
+		if buf == nil {
+			buf = make([]byte, 0, 7+len(eventType)+7+len(data)+2)
+		}
 		buf = append(buf, "event: "...)
 		buf = append(buf, eventType...)
 		buf = append(buf, "\ndata: "...)
 	} else {
-		buf = make([]byte, 0, 6+len(data)+2)
+		if buf == nil {
+			buf = make([]byte, 0, 6+len(data)+2)
+		}
 		buf = append(buf, "data: "...)
 	}
 	buf = append(buf, data...)

@@ -37,6 +37,7 @@ import (
 	"github.com/maximhq/bifrost/framework/mcpcatalog"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2abroker"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2apush"
 	"github.com/maximhq/bifrost/framework/modelcatalog/datasheet"
 	"github.com/maximhq/bifrost/framework/oauth2"
 	"github.com/maximhq/bifrost/framework/objectstore"
@@ -546,6 +547,12 @@ type Config struct {
 	// dispatch. It resolves existing per-user/server OAuth credentials and
 	// explicitly configured token exchanges; it never persists token material.
 	A2ACredentialResolver *a2abroker.RuntimeCredentialResolver
+	// A2A push delivery is deliberately runtime-injected: the server will not
+	// advertise push or resolve secrets unless an operator supplies a guarded
+	// delivery implementation and an allowlisted policy.
+	A2APushDelivery       a2apush.Delivery
+	A2APushSecretResolver a2apush.SecretResolver
+	A2APushPolicy         a2apush.Policy
 	TokenRefreshWorker    *oauth2.TokenRefreshWorker
 	OAuthSweepWorker      *oauth2.PerUserOAuthSweepWorker
 
