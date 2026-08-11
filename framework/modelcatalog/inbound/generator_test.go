@@ -27,6 +27,9 @@ func TestGenerateAgentCardCanonicalizesOrderedSections(t *testing.T) {
 	if !slices.Equal(card.AdditionalInterfaces, wantInterfaces) {
 		t.Fatalf("additional interfaces = %#v, want %#v", card.AdditionalInterfaces, wantInterfaces)
 	}
+	if len(card.SupportedInterfaces) != 3 || card.SupportedInterfaces[0].ProtocolBinding != a2adiscovery.TransportJSONRPC || card.SupportedInterfaces[0].ProtocolVersion != "1.0" {
+		t.Fatalf("supported interfaces = %#v", card.SupportedInterfaces)
+	}
 	if got := []string{card.Skills[0].ID, card.Skills[1].ID}; !slices.Equal(got, []string{"triage", "research"}) {
 		t.Fatalf("skills ordered by workflow record = %v", got)
 	}
@@ -66,7 +69,7 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 
 	expected := compactJSON(t, `{
 		"schemaVersion":"a2a.agent-card.v1",
-		"protocolVersion":"1.0.1",
+		"protocolVersion":"1.0.0",
 		"name":"FrankenGate Research Agent",
 		"description":"Delegates approved internal research workflows.",
 		"url":"https://agent.example/a2a/rpc",
@@ -75,9 +78,14 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 			{"url":"https://agent.example/a2a/http","transport":"HTTP+JSON"},
 			{"url":"https://agent.example/a2a/grpc","transport":"GRPC"}
 		],
+		"supportedInterfaces":[
+			{"url":"https://agent.example/a2a/rpc","transport":"JSONRPC","protocolBinding":"JSONRPC","protocolVersion":"1.0"},
+			{"url":"https://agent.example/a2a/http","transport":"HTTP+JSON","protocolBinding":"HTTP+JSON","protocolVersion":"1.0"},
+			{"url":"https://agent.example/a2a/grpc","transport":"GRPC","protocolBinding":"GRPC","protocolVersion":"1.0"}
+		],
 		"provider":{"organization":"FrankenGate","url":"https://agent.example"},
 		"version":"2026.08.04",
-		"capabilities":{"streaming":true,"stateTransitionHistory":true},
+		"capabilities":{"streaming":true,"stateTransitionHistory":true,"extendedAgentCard":true},
 		"securitySchemes":{
 			"api_key":{"type":"apiKey","description":"gateway virtual key","name":"x-bf-vk","in":"header"},
 			"bearer":{"type":"http","description":"audience-bound inbound task token","scheme":"bearer","bearerFormat":"JWT"}
@@ -107,7 +115,8 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 			}
 		],
 		"supportsAuthenticatedExtendedCard":true,
-		"extensions":{"com.frankengate.card":{"visibility":"internal"}}
+		"extensions":{"com.frankengate.card":{"visibility":"internal"}},
+		"securityRequirements":[{"schemes":{"api_key":{"list":[]}}},{"schemes":{"bearer":{"list":["agent:read","agent:write"]}}}]
 	}`)
 	if string(first) != expected {
 		t.Fatalf("unexpected canonical JSON:\n%s\nwant:\n%s", first, expected)

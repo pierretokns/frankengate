@@ -9,10 +9,85 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"slices"
 	"strings"
 	"testing"
 	"time"
 )
+
+func TestProtocolVersionCompatibilityWindow(t *testing.T) {
+	if SupportedProtocolVersion != "1.0.0" {
+		t.Fatalf("canonical A2A protocol version = %q", SupportedProtocolVersion)
+	}
+	if !IsSupportedProtocolVersion("1.0.0") || !IsSupportedProtocolVersion("1.0.1") {
+		t.Fatal("released and immediately prior A2A versions must be accepted")
+	}
+	if IsSupportedProtocolVersion("0.3") {
+		t.Fatal("unsupported A2A protocol version was accepted")
+	}
+}
+
+func TestValidateReleasedAgentCardUsesSupportedInterfaces(t *testing.T) {
+	source, err := url.Parse("https://agent.example/.well-known/agent-card.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	card := &AgentCard{
+		Name:    "Modern Agent",
+		Version: "1.0.0",
+		SupportedInterfaces: []AgentInterface{{
+			URL:             "https://agent.example/a2a",
+			ProtocolBinding: TransportJSONRPC,
+			ProtocolVersion: "1.0.0",
+		}},
+		Skills: []AgentSkill{{ID: "chat", Name: "Chat"}},
+	}
+	if err := ValidateAgentCard(card, source, HTTPSOnly); err != nil {
+		t.Fatalf("modern A2A card should validate: %v", err)
+	}
+}
+
+func TestSecuritySchemeAcceptsReleasedWrapperShape(t *testing.T) {
+	source, err := url.Parse("https://agent.example/.well-known/agent-card.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var card AgentCard
+	if err := json.Unmarshal([]byte(`{"name":"agent","version":"1","supportedInterfaces":[{"url":"https://agent.example/a2a","protocolBinding":"JSONRPC","protocolVersion":"1.0"}],"securitySchemes":{"oidc":{"openIdConnectSecurityScheme":{"openIdConnectUrl":"https://issuer.example/.well-known/openid-configuration"}}},"securityRequirements":[{"oidc":[]}],"skills":[{"id":"chat","name":"Chat"}]}`), &card); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateAgentCard(&card, source, HTTPSOnly); err != nil {
+		t.Fatalf("released security wrapper should validate: %v", err)
+	}
+	if card.SecuritySchemes["oidc"].Type != "openIdConnect" {
+		t.Fatalf("security scheme type = %#v", card.SecuritySchemes["oidc"])
+	}
+}
+
+func TestSecurityRequirementsAcceptReleasedWrapperShape(t *testing.T) {
+	var card AgentCard
+	err := json.Unmarshal([]byte(`{
+		"name":"agent",
+		"version":"1",
+		"supportedInterfaces":[{"url":"https://agent.example/a2a","protocolBinding":"JSONRPC","protocolVersion":"1.0"}],
+		"securitySchemes":{"oidc":{"openIdConnectSecurityScheme":{"openIdConnectUrl":"https://issuer.example/.well-known/openid-configuration"}}},
+		"securityRequirements":[{"schemes":{"oidc":{"list":["openid","profile"]}}}],
+		"skills":[{"id":"chat","name":"Chat"}]
+	}`), &card)
+	if err != nil {
+		t.Fatal(err)
+	}
+	source, err := url.Parse("https://agent.example/.well-known/agent-card.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateAgentCard(&card, source, HTTPSOnly); err != nil {
+		t.Fatalf("released security requirements should validate: %v", err)
+	}
+	if got := card.SecurityRequirements[0]["oidc"]; !slices.Equal(got, []string{"openid", "profile"}) {
+		t.Fatalf("security requirement scopes = %#v", got)
+	}
+}
 
 func TestFetchWellKnownHTTPSAgentCard(t *testing.T) {
 	server := newCardTLSServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

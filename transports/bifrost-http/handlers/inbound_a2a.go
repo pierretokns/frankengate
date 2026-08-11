@@ -6,6 +6,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -67,7 +69,18 @@ func (h *InboundA2AHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	a2aMiddlewares := append([]schemas.BifrostHTTPMiddleware{a2aChatRequestTypeMiddleware}, middlewares...)
 	r.POST("/a2a", lib.ChainMiddlewares(h.messageSend, a2aMiddlewares...))
 	r.POST("/a2a/jsonrpc", lib.ChainMiddlewares(h.messageSend, a2aMiddlewares...))
+	r.POST("/a2a/stream", lib.ChainMiddlewares(h.messageStream, a2aMiddlewares...))
+	// Standard HTTP+JSON aliases. JSON-RPC remains the canonical gateway
+	// surface, while these routes make the same task/auth semantics usable by
+	// REST clients and SDKs that select the HTTP+JSON interface from a card.
+	r.POST("/message:send", lib.ChainMiddlewares(h.restMessageSend, a2aMiddlewares...))
+	r.POST("/message:stream", lib.ChainMiddlewares(h.restMessageStream, a2aMiddlewares...))
 	r.GET("/a2a/tasks/{task_id}", lib.ChainMiddlewares(h.taskGet, middlewares...))
+	r.GET("/tasks/{task_id}", lib.ChainMiddlewares(h.taskGet, middlewares...))
+	r.GET("/tasks", lib.ChainMiddlewares(h.restListTasks, middlewares...))
+	r.POST("/tasks/{task_id}:cancel", lib.ChainMiddlewares(h.restCancelTask, middlewares...))
+	r.POST("/tasks/{task_id}:subscribe", lib.ChainMiddlewares(h.restSubscribeTask, middlewares...))
+	r.GET("/extendedAgentCard", lib.ChainMiddlewares(h.extendedAgentCardHTTP, middlewares...))
 }
 
 func a2aChatRequestTypeMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
@@ -116,8 +129,9 @@ type a2aMessage struct {
 }
 
 type a2aPart struct {
-	Kind string `json:"kind"`
-	Text string `json:"text,omitempty"`
+	Kind      string `json:"kind,omitempty"`
+	Text      string `json:"text,omitempty"`
+	MediaType string `json:"mediaType,omitempty"`
 }
 
 type a2aSendParams struct {
@@ -128,12 +142,37 @@ type a2aSendParams struct {
 	} `json:"configuration,omitempty"`
 }
 
+type a2aTaskParams struct {
+	ID            string `json:"id"`
+	HistoryLength int    `json:"historyLength,omitempty"`
+}
+
+type a2aListTasksParams struct {
+	ContextID        string `json:"contextId,omitempty"`
+	Status           string `json:"status,omitempty"`
+	PageSize         int    `json:"pageSize,omitempty"`
+	PageToken        string `json:"pageToken,omitempty"`
+	HistoryLength    int    `json:"historyLength,omitempty"`
+	IncludeArtifacts bool   `json:"includeArtifacts,omitempty"`
+}
+
+type a2aListTasksResult struct {
+	Tasks         []a2aTask `json:"tasks"`
+	TotalSize     int       `json:"totalSize"`
+	PageSize      int       `json:"pageSize"`
+	NextPageToken string    `json:"nextPageToken"`
+}
+
 type a2aTask struct {
 	ID        string        `json:"id"`
 	ContextID string        `json:"contextId,omitempty"`
 	Status    a2aTaskStatus `json:"status"`
 	History   []a2aMessage  `json:"history,omitempty"`
 	Artifacts []a2aArtifact `json:"artifacts,omitempty"`
+}
+
+type a2aSendResult struct {
+	Task a2aTask `json:"task"`
 }
 
 type a2aTaskStatus struct {
@@ -175,8 +214,30 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
 		return
 	}
-	if request.Method != "message/send" {
-		h.writeRPCError(ctx, request.ID, -32601, "only message/send is supported")
+	switch request.Method {
+	case "GetTask", "tasks/get":
+		h.rpcGetTask(ctx, request)
+		return
+	case "ListTasks", "tasks/list":
+		h.rpcListTasks(ctx, request)
+		return
+	case "CancelTask", "tasks/cancel":
+		h.rpcCancelTask(ctx, request)
+		return
+	case "SubscribeToTask", "tasks/subscribe":
+		h.rpcSubscribeTask(ctx, request)
+		return
+	case "GetExtendedAgentCard", "GetAuthenticatedExtendedCard":
+		h.rpcGetExtendedAgentCard(ctx, request)
+		return
+	case "SendStreamingMessage", "message/stream":
+		h.messageStream(ctx)
+		return
+	case "SendMessage", "message/send":
+		// Both the released PascalCase binding and the older slash binding are
+		// accepted during the A2A 1.0 migration window.
+	default:
+		h.writeRPCError(ctx, request.ID, -32601, "method is not supported")
 		return
 	}
 	var params a2aSendParams
@@ -198,7 +259,7 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
 		return
 	} else if ok {
-		h.writeRPCResult(ctx, request.ID, existing)
+		h.writeRPCResult(ctx, request.ID, a2aSendResult{Task: existing})
 		return
 	}
 	if h.client == nil || h.config == nil {
@@ -231,15 +292,323 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		h.writeRPCError(ctx, request.ID, -32000, "model returned no text content")
 		return
 	}
-	output := a2aMessage{MessageID: taskID + "-result", Role: "agent", Parts: []a2aPart{{Kind: "text", Text: answer}}}
-	task := a2aTask{ID: taskID, ContextID: params.Message.MessageID, History: []a2aMessage{params.Message, output}, Artifacts: []a2aArtifact{{Name: "response", Parts: output.Parts}}, Status: a2aTaskStatus{State: "completed", Timestamp: h.currentTime().UTC(), Message: &output}}
+	output := a2aMessage{MessageID: taskID + "-result", Role: a2aAgentRole(params.Message.Role), Parts: []a2aPart{{Text: answer}}}
+	task := a2aTask{ID: taskID, ContextID: params.Message.MessageID, History: []a2aMessage{params.Message, output}, Artifacts: []a2aArtifact{{Name: "response", Parts: output.Parts}}, Status: a2aTaskStatus{State: "TASK_STATE_COMPLETED", Timestamp: h.currentTime().UTC(), Message: &output}}
 	bifrostCtx.SetTraceAttribute("frankengate.provenance.outcome", "completed")
 	bifrostCtx.SetTraceAttribute("frankengate.provenance.artifact_ref", "a2a://task/"+taskID+"/response")
 	if err := h.storeTask(ctx, taskPartition, task); err != nil {
 		h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
 		return
 	}
+	h.writeRPCResult(ctx, request.ID, a2aSendResult{Task: task})
+}
+
+// messageStream provides the A2A JSON-RPC SSE binding. The current gateway
+// execution path is unary, so it emits one terminal stream event while
+// preserving the same auth, governance, provenance, and task persistence
+// path as message/send. This is intentionally explicit rather than falsely
+// advertising incremental model tokens.
+func (h *InboundA2AHandler) messageStream(ctx *fasthttp.RequestCtx) {
+	if strings.TrimSpace(string(ctx.Request.Header.Peek("Accept"))) == "" {
+		ctx.Request.Header.Set("Accept", "text/event-stream")
+	}
+	var request a2aJSONRPCRequest
+	if err := json.Unmarshal(ctx.PostBody(), &request); err != nil {
+		h.writeRPCError(ctx, nil, -32700, "Invalid JSON payload")
+		return
+	}
+	// Reuse the proven unary admission/execution path without recursively
+	// dispatching the streaming method.
+	request.Method = "SendMessage"
+	body, err := json.Marshal(request)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32600, "Invalid request")
+		return
+	}
+	ctx.Request.SetBody(body)
+	h.messageSend(ctx)
+	if ctx.Response.StatusCode() >= 400 {
+		return
+	}
+	streamBody := append([]byte(nil), ctx.Response.Body()...)
+	ctx.SetContentType("text/event-stream")
+	ctx.Response.Header.Set("Cache-Control", "no-cache")
+	ctx.Response.Header.Set("Connection", "keep-alive")
+	ctx.SetBody(append([]byte("data: "), append(streamBody, '\n', '\n')...))
+}
+
+func (h *InboundA2AHandler) restMessageSend(ctx *fasthttp.RequestCtx) {
+	h.restRPCCall(ctx, "SendMessage", ctx.PostBody())
+}
+
+func (h *InboundA2AHandler) restMessageStream(ctx *fasthttp.RequestCtx) {
+	request := a2aJSONRPCRequest{JSONRPC: "2.0", ID: json.RawMessage(`1`), Method: "SendStreamingMessage", Params: append([]byte(nil), ctx.PostBody()...)}
+	ctx.Request.SetBody(mustJSON(request))
+	h.messageStream(ctx)
+}
+
+func (h *InboundA2AHandler) restListTasks(ctx *fasthttp.RequestCtx) {
+	args := ctx.QueryArgs()
+	params := a2aListTasksParams{
+		ContextID:        string(args.Peek("contextId")),
+		Status:           string(args.Peek("status")),
+		PageToken:        string(args.Peek("pageToken")),
+		IncludeArtifacts: string(args.Peek("includeArtifacts")) == "true",
+	}
+	if raw := args.Peek("pageSize"); len(raw) > 0 {
+		params.PageSize, _ = strconv.Atoi(string(raw))
+	}
+	h.restRPCCall(ctx, "ListTasks", mustJSON(params))
+}
+
+func (h *InboundA2AHandler) restCancelTask(ctx *fasthttp.RequestCtx) {
+	params := a2aTaskParams{ID: string(ctx.UserValue("task_id").(string))}
+	h.restRPCCall(ctx, "CancelTask", mustJSON(params))
+}
+
+func (h *InboundA2AHandler) restSubscribeTask(ctx *fasthttp.RequestCtx) {
+	params := a2aTaskParams{ID: string(ctx.UserValue("task_id").(string))}
+	request := a2aJSONRPCRequest{JSONRPC: "2.0", ID: json.RawMessage(`1`), Method: "SubscribeToTask", Params: mustJSON(params)}
+	ctx.Request.SetBody(mustJSON(request))
+	h.messageSend(ctx)
+	if ctx.Response.StatusCode() >= 400 {
+		return
+	}
+	body := append([]byte(nil), ctx.Response.Body()...)
+	ctx.SetContentType("text/event-stream")
+	ctx.Response.Header.Set("Cache-Control", "no-cache")
+	ctx.SetBody(append([]byte("data: "), append(body, '\n', '\n')...))
+}
+
+func (h *InboundA2AHandler) restRPCCall(ctx *fasthttp.RequestCtx, method string, params []byte) {
+	request := a2aJSONRPCRequest{JSONRPC: "2.0", ID: json.RawMessage(`1`), Method: method, Params: append([]byte(nil), params...)}
+	ctx.Request.SetBody(mustJSON(request))
+	h.messageSend(ctx)
+	if ctx.Response.StatusCode() >= 400 {
+		return
+	}
+	var response a2aJSONRPCResponse
+	if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil || response.Error != nil {
+		return
+	}
+	ctx.SetContentType("application/a2a+json")
+	ctx.SetBody(mustJSON(response.Result))
+}
+
+func (h *InboundA2AHandler) extendedAgentCardHTTP(ctx *fasthttp.RequestCtx) {
+	base := inboundBaseURL(ctx)
+	if base == "" {
+		SendError(ctx, fasthttp.StatusBadRequest, "a2a public host is unavailable")
+		return
+	}
+	record := inboundRecordForConfig(base, h.config)
+	if !record.Card.Capabilities.ExtendedAgentCard && !record.Card.SupportsAuthenticatedExtendedCard {
+		SendError(ctx, fasthttp.StatusNotFound, "extended agent card is not supported")
+		return
+	}
+	body, err := inbound.MarshalAgentCardJSON(record)
+	if err != nil {
+		SendError(ctx, fasthttp.StatusInternalServerError, "extended agent card is unavailable")
+		return
+	}
+	ctx.SetContentType("application/a2a+json")
+	ctx.SetBody(body)
+}
+
+func (h *InboundA2AHandler) rpcGetTask(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	var params a2aTaskParams
+	if err := json.Unmarshal(request.Params, &params); err != nil || strings.TrimSpace(params.ID) == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "params.id is required")
+		return
+	}
+	task, ok := h.rpcLoadAuthorizedTask(ctx, params.ID)
+	if !ok {
+		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
+		return
+	}
+	trimTaskHistory(&task, params.HistoryLength)
 	h.writeRPCResult(ctx, request.ID, task)
+}
+
+func (h *InboundA2AHandler) rpcGetExtendedAgentCard(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	base := inboundBaseURL(ctx)
+	if base == "" {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A public host is unavailable")
+		return
+	}
+	record := inboundRecordForConfig(base, h.config)
+	if !record.Card.Capabilities.ExtendedAgentCard && !record.Card.SupportsAuthenticatedExtendedCard {
+		h.writeRPCError(ctx, request.ID, -32601, "extended agent card is not supported")
+		return
+	}
+	body, err := inbound.MarshalAgentCardJSON(record)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "extended agent card is unavailable")
+		return
+	}
+	h.writeRPCResult(ctx, request.ID, json.RawMessage(body))
+}
+
+func (h *InboundA2AHandler) rpcCancelTask(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	var params a2aTaskParams
+	if err := json.Unmarshal(request.Params, &params); err != nil || strings.TrimSpace(params.ID) == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "params.id is required")
+		return
+	}
+	partition, err := inboundA2ATaskPartition(ctx)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	if err := h.validateInboundA2AAuthority(ctx, params.ID); err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	task, ok, loadErr := h.loadTask(ctx, partition, params.ID)
+	if loadErr != nil {
+		h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
+		return
+	}
+	if !ok {
+		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
+		return
+	}
+	if isA2ATerminalState(task.Status.State) {
+		h.writeRPCError(ctx, request.ID, -32002, "Task is not cancelable")
+		return
+	}
+	task.Status.State = "TASK_STATE_CANCELED"
+	task.Status.Timestamp = h.currentTime().UTC()
+	if err := h.storeTask(ctx, partition, task); err != nil {
+		h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
+		return
+	}
+	h.writeRPCResult(ctx, request.ID, task)
+}
+
+func (h *InboundA2AHandler) rpcListTasks(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	var params a2aListTasksParams
+	if len(request.Params) > 0 && string(request.Params) != "null" {
+		if err := json.Unmarshal(request.Params, &params); err != nil {
+			h.writeRPCError(ctx, request.ID, -32602, "invalid task list parameters")
+			return
+		}
+	}
+	if params.PageSize == 0 {
+		params.PageSize = 50
+	}
+	if params.PageSize < 1 || params.PageSize > 100 {
+		h.writeRPCError(ctx, request.ID, -32602, "pageSize must be between 1 and 100")
+		return
+	}
+	offset := 0
+	if params.PageToken != "" {
+		parsed, parseErr := strconv.Atoi(params.PageToken)
+		if parseErr != nil || parsed < 0 {
+			h.writeRPCError(ctx, request.ID, -32602, "pageToken is invalid")
+			return
+		}
+		offset = parsed
+	}
+	partition, err := inboundA2ATaskPartition(ctx)
+	if err != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	tasks := h.listTasks(partition, params.ContextID, params.Status)
+	if offset > len(tasks) {
+		h.writeRPCError(ctx, request.ID, -32602, "pageToken is invalid")
+		return
+	}
+	end := offset + params.PageSize
+	if end > len(tasks) {
+		end = len(tasks)
+	}
+	result := a2aListTasksResult{TotalSize: len(tasks), PageSize: params.PageSize, Tasks: tasks[offset:end]}
+	if end < len(tasks) {
+		result.NextPageToken = strconv.Itoa(end)
+	}
+	if !params.IncludeArtifacts {
+		for i := range result.Tasks {
+			result.Tasks[i].Artifacts = nil
+		}
+	}
+	h.writeRPCResult(ctx, request.ID, result)
+}
+
+func (h *InboundA2AHandler) rpcSubscribeTask(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
+	var params a2aTaskParams
+	if err := json.Unmarshal(request.Params, &params); err != nil || strings.TrimSpace(params.ID) == "" {
+		h.writeRPCError(ctx, request.ID, -32602, "params.id is required")
+		return
+	}
+	task, ok := h.rpcLoadAuthorizedTask(ctx, params.ID)
+	if !ok {
+		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
+		return
+	}
+	if isA2ATerminalState(task.Status.State) {
+		h.writeRPCError(ctx, request.ID, -32003, "Task subscription is not supported for terminal tasks")
+		return
+	}
+	h.writeSSETask(ctx, request.ID, task)
+}
+
+func (h *InboundA2AHandler) rpcLoadAuthorizedTask(ctx *fasthttp.RequestCtx, taskID string) (a2aTask, bool) {
+	partition, err := inboundA2ATaskPartition(ctx)
+	if err != nil || h.validateInboundA2AAuthority(ctx, taskID) != nil {
+		return a2aTask{}, false
+	}
+	task, ok, loadErr := h.loadTask(ctx, partition, taskID)
+	return task, loadErr == nil && ok
+}
+
+func (h *InboundA2AHandler) listTasks(partition, contextID, status string) []a2aTask {
+	now := h.currentTime()
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	result := make([]a2aTask, 0)
+	for key, stored := range h.tasks {
+		if stored.ExpiresAt.Before(now) {
+			delete(h.tasks, key)
+			continue
+		}
+		if !strings.HasPrefix(key, partition+"\x00") || (contextID != "" && stored.Task.ContextID != contextID) || (status != "" && stored.Task.Status.State != status) {
+			continue
+		}
+		result = append(result, stored.Task)
+	}
+	sort.SliceStable(result, func(i, j int) bool {
+		if result[i].Status.Timestamp.Equal(result[j].Status.Timestamp) {
+			return result[i].ID < result[j].ID
+		}
+		return result[i].Status.Timestamp.After(result[j].Status.Timestamp)
+	})
+	return result
+}
+
+func (h *InboundA2AHandler) writeSSETask(ctx *fasthttp.RequestCtx, id json.RawMessage, task a2aTask) {
+	response := a2aJSONRPCResponse{JSONRPC: "2.0", ID: id, Result: map[string]any{"task": task}}
+	body := mustJSON(response)
+	ctx.SetContentType("text/event-stream")
+	ctx.Response.Header.Set("Cache-Control", "no-cache")
+	ctx.SetBody(append([]byte("data: "), append(body, '\n', '\n')...))
+}
+
+func trimTaskHistory(task *a2aTask, historyLength int) {
+	if task == nil || historyLength <= 0 || len(task.History) <= historyLength {
+		return
+	}
+	task.History = task.History[len(task.History)-historyLength:]
+}
+
+func isA2ATerminalState(state string) bool {
+	switch state {
+	case "completed", "failed", "canceled", "rejected", "TASK_STATE_COMPLETED", "TASK_STATE_FAILED", "TASK_STATE_CANCELED", "TASK_STATE_REJECTED":
+		return true
+	default:
+		return false
+	}
 }
 
 func (h *InboundA2AHandler) taskGet(ctx *fasthttp.RequestCtx) {
@@ -535,11 +904,20 @@ func (h *InboundA2AHandler) writeRPC(ctx *fasthttp.RequestCtx, response a2aJSONR
 func a2aMessageText(message a2aMessage) string {
 	var parts []string
 	for _, part := range message.Parts {
-		if part.Kind == "text" && strings.TrimSpace(part.Text) != "" {
+		// A2A 1.0 uses a oneof JSON shape (`text`/`file`/`data`) without
+		// the draft `kind` discriminator. Accept both wire forms.
+		if (part.Kind == "" || part.Kind == "text") && strings.TrimSpace(part.Text) != "" {
 			parts = append(parts, strings.TrimSpace(part.Text))
 		}
 	}
 	return strings.Join(parts, "\n")
+}
+
+func a2aAgentRole(input string) string {
+	if strings.HasPrefix(strings.ToUpper(strings.TrimSpace(input)), "ROLE_") {
+		return "ROLE_AGENT"
+	}
+	return "agent"
 }
 
 func chatResponseText(response *schemas.BifrostChatResponse) string {
@@ -583,9 +961,24 @@ func inboundBaseURL(ctx *fasthttp.RequestCtx) string {
 }
 
 func defaultInboundRecord(base string) inbound.Record {
-	return inbound.Record{Card: inbound.CardRecord{
-		Name: "FrankenGate Agent Gateway", Description: "Governed A2A access to FrankenGate agent workflows.", Version: "1", Interfaces: []inbound.InterfaceRecord{{URL: base + "/a2a", Transport: a2adiscovery.TransportJSONRPC}}, Capabilities: a2adiscovery.AgentCapabilities{Streaming: false, StateTransitionHistory: true}, DefaultInputModes: []string{"text"}, DefaultOutputModes: []string{"text"}, SecuritySchemes: []inbound.SecuritySchemeRecord{{ID: "bearer", Scheme: a2adiscovery.SecurityScheme{Type: "http", Scheme: "bearer", BearerFormat: "JWT"}}}, Security: []inbound.SecurityRequirementRecord{{Schemes: []inbound.SecurityRequirementScheme{{ID: "bearer", Scopes: []string{"a2a:invoke"}}}}}, SupportsAuthenticatedExtendedCard: true,
-	}, Workflows: []inbound.WorkflowRecord{{ID: "gateway-chat", Name: "Governed chat", Description: "Routes an authenticated A2A message through the normal FrankenGate policy pipeline.", InputModes: []string{"text"}, OutputModes: []string{"text"}}}}
+	return inbound.Record{
+		Card: inbound.CardRecord{
+			Name:        "FrankenGate Agent Gateway",
+			Description: "Governed A2A access to FrankenGate agent workflows.",
+			Version:     "1",
+			Interfaces: []inbound.InterfaceRecord{
+				{URL: base + "/a2a", Transport: a2adiscovery.TransportJSONRPC},
+				{URL: base + "/message:send", Transport: a2adiscovery.TransportHTTPJSON},
+			},
+			Capabilities:                      a2adiscovery.AgentCapabilities{Streaming: true, StateTransitionHistory: true},
+			DefaultInputModes:                 []string{"text"},
+			DefaultOutputModes:                []string{"text"},
+			SecuritySchemes:                   []inbound.SecuritySchemeRecord{{ID: "bearer", Scheme: a2adiscovery.SecurityScheme{Type: "http", Scheme: "bearer", BearerFormat: "JWT"}}},
+			Security:                          []inbound.SecurityRequirementRecord{{Schemes: []inbound.SecurityRequirementScheme{{ID: "bearer", Scopes: []string{"a2a:invoke"}}}}},
+			SupportsAuthenticatedExtendedCard: true,
+		},
+		Workflows: []inbound.WorkflowRecord{{ID: "gateway-chat", Name: "Governed chat", Description: "Routes an authenticated A2A message through the normal FrankenGate policy pipeline.", InputModes: []string{"text"}, OutputModes: []string{"text"}}},
+	}
 }
 
 func mustJSON(value interface{}) []byte {

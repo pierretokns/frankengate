@@ -44,11 +44,22 @@ func GenerateAgentCard(record Record) (a2adiscovery.AgentCard, error) {
 		Capabilities:                      record.Card.Capabilities,
 		SecuritySchemes:                   securitySchemes,
 		Security:                          security,
+		SecurityRequirements:              security,
 		DefaultInputModes:                 dedupeSortedStrings(record.Card.DefaultInputModes),
 		DefaultOutputModes:                dedupeSortedStrings(record.Card.DefaultOutputModes),
 		Skills:                            skills,
 		SupportsAuthenticatedExtendedCard: record.Card.SupportsAuthenticatedExtendedCard,
 		Extensions:                        cloneRawMap(record.Card.Extensions),
+	}
+	card.Capabilities.ExtendedAgentCard = card.Capabilities.ExtendedAgentCard || record.Card.SupportsAuthenticatedExtendedCard
+	card.SupportedInterfaces = make([]a2adiscovery.AgentInterface, 0, len(interfaces))
+	for _, iface := range interfaces {
+		card.SupportedInterfaces = append(card.SupportedInterfaces, a2adiscovery.AgentInterface{
+			URL:             iface.URL,
+			Transport:       iface.Transport,
+			ProtocolBinding: iface.Transport,
+			ProtocolVersion: "1.0",
+		})
 	}
 	if len(interfaces) > 1 {
 		card.AdditionalInterfaces = make([]a2adiscovery.AgentInterface, 0, len(interfaces)-1)

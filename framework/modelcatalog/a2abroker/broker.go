@@ -6,6 +6,7 @@ package a2abroker
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"sync"
 	"time"
 )
@@ -16,6 +17,7 @@ const (
 	StateSubmitted     State = "submitted"
 	StateWorking       State = "working"
 	StateInputRequired State = "input_required"
+	StateAuthRequired  State = "auth_required"
 	StateCompleted     State = "completed"
 	StateFailed        State = "failed"
 	StateCanceled      State = "canceled"
@@ -51,6 +53,11 @@ type SendRequest struct {
 	Endpoint   string
 	CardDigest string
 	Payload    []byte
+	// Headers contains only gateway-selected downstream credentials. It is
+	// deliberately kept on the injected transport request, never on Task or
+	// Event, so task history and observability cannot accidentally persist raw
+	// tokens.
+	Headers http.Header
 }
 
 type Sender interface {
@@ -117,6 +124,10 @@ func (b *Broker) Submit(endpoint, cardDigest string, payload []byte) (Task, erro
 }
 
 func (b *Broker) Dispatch(ctx context.Context, taskID string, payload []byte, sender Sender) (Task, error) {
+	return b.dispatch(ctx, taskID, payload, sender, nil)
+}
+
+func (b *Broker) dispatch(ctx context.Context, taskID string, payload []byte, sender Sender, headers http.Header) (Task, error) {
 	if sender == nil {
 		return Task{}, fmt.Errorf("sender is required")
 	}
@@ -140,7 +151,7 @@ func (b *Broker) Dispatch(ctx context.Context, taskID string, payload []byte, se
 	b.tasks[taskID] = task
 	b.mu.Unlock()
 
-	event, sendErr := sender.Send(ctx, SendRequest{TaskID: task.ID, Endpoint: task.Endpoint, CardDigest: task.CardDigest, Payload: append([]byte(nil), payload...)})
+	event, sendErr := sender.Send(ctx, SendRequest{TaskID: task.ID, Endpoint: task.Endpoint, CardDigest: task.CardDigest, Payload: append([]byte(nil), payload...), Headers: cloneHeaders(headers)})
 	if sendErr != nil {
 		if task.Attempt >= b.policy.MaxAttempts {
 			return b.Apply(taskID, Event{State: StateFailed, Error: sendErr.Error(), At: b.now()})
@@ -223,7 +234,7 @@ func (b *Broker) RetryDelay(attempt int) time.Duration {
 
 func validState(state State) bool {
 	switch state {
-	case StateSubmitted, StateWorking, StateInputRequired, StateCompleted, StateFailed, StateCanceled, StateRejected:
+	case StateSubmitted, StateWorking, StateInputRequired, StateAuthRequired, StateCompleted, StateFailed, StateCanceled, StateRejected:
 		return true
 	default:
 		return false
@@ -236,14 +247,23 @@ func validTransition(from, to State) bool {
 	}
 	switch from {
 	case StateSubmitted:
-		return to == StateWorking || to == StateRejected || to == StateFailed
+		return to == StateWorking || to == StateAuthRequired || to == StateRejected || to == StateFailed
 	case StateWorking:
-		return to == StateWorking || to == StateInputRequired || to == StateCompleted || to == StateFailed || to == StateRejected
+		return to == StateWorking || to == StateInputRequired || to == StateAuthRequired || to == StateCompleted || to == StateFailed || to == StateRejected
 	case StateInputRequired:
+		return to == StateWorking || to == StateFailed || to == StateRejected
+	case StateAuthRequired:
 		return to == StateWorking || to == StateFailed || to == StateRejected
 	default:
 		return false
 	}
+}
+
+func cloneHeaders(headers http.Header) http.Header {
+	if len(headers) == 0 {
+		return nil
+	}
+	return headers.Clone()
 }
 
 func cloneTask(task Task) Task {

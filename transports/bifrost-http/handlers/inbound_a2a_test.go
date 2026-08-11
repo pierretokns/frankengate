@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"testing"
 	"time"
 
@@ -139,5 +140,46 @@ func TestInboundA2ATaskGetIsTenantScoped(t *testing.T) {
 	handler.taskGet(denied)
 	if denied.Response.StatusCode() != fasthttp.StatusNotFound {
 		t.Fatalf("cross-tenant task lookup status = %d, want 404", denied.Response.StatusCode())
+	}
+}
+
+func TestInboundA2AJSONRPCTaskLifecycleMethodsAreScoped(t *testing.T) {
+	handler := &InboundA2AHandler{tasks: make(map[string]storedA2ATask), now: time.Now}
+	partition := "tenant-a\x00issuer\x00subject"
+	if err := handler.storeTask(context.Background(), partition, a2aTask{ID: "working", ContextID: "ctx-1", Status: a2aTaskStatus{State: "TASK_STATE_WORKING", Timestamp: time.Now()}}); err != nil {
+		t.Fatal(err)
+	}
+	principal := authorityepoch.Principal{Tenant: "tenant-a", Issuer: "issuer", Subject: "subject"}
+	call := func(method string, params string) map[string]any {
+		ctx := &fasthttp.RequestCtx{}
+		ctx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, principal)
+		ctx.Request.Header.SetMethod("POST")
+		ctx.Request.SetBody([]byte(`{"jsonrpc":"2.0","id":1,"method":"` + method + `","params":` + params + `}`))
+		handler.messageSend(ctx)
+		var response map[string]any
+		if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil {
+			t.Fatalf("decode %s response: %v (%s)", method, err, ctx.Response.Body())
+		}
+		return response
+	}
+	get := call("GetTask", `{"id":"working"}`)
+	if get["error"] != nil {
+		t.Fatalf("GetTask unexpectedly failed: %#v", get)
+	}
+	cancel := call("CancelTask", `{"id":"working"}`)
+	result, ok := cancel["result"].(map[string]any)
+	if !ok || result["status"].(map[string]any)["state"] != "TASK_STATE_CANCELED" {
+		t.Fatalf("CancelTask result = %#v", cancel)
+	}
+	list := call("ListTasks", `{"contextId":"ctx-1","includeArtifacts":true}`)
+	if list["error"] != nil || len(list["result"].(map[string]any)["tasks"].([]any)) != 1 {
+		t.Fatalf("ListTasks result = %#v", list)
+	}
+	other := &fasthttp.RequestCtx{}
+	other.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "tenant-b", Issuer: "issuer", Subject: "subject"})
+	other.Request.SetBody([]byte(`{"jsonrpc":"2.0","id":1,"method":"GetTask","params":{"id":"working"}}`))
+	handler.messageSend(other)
+	if !strings.Contains(string(other.Response.Body()), "Task not found") {
+		t.Fatalf("cross-tenant JSON-RPC lookup leaked task: %s", other.Response.Body())
 	}
 }

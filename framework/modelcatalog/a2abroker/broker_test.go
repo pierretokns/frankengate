@@ -3,14 +3,84 @@ package a2abroker
 import (
 	"context"
 	"errors"
+	"net/http"
 	"testing"
 	"time"
+
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
 )
 
 type senderFunc func(context.Context, SendRequest) (Event, error)
 
 func (f senderFunc) Send(ctx context.Context, request SendRequest) (Event, error) {
 	return f(ctx, request)
+}
+
+func TestBrokerDispatchWithCredentialsScopesHeadersToDeclaredDestination(t *testing.T) {
+	broker := New(time.Now, func() string { return "task-credentials" }, RetryPolicy{})
+	task, err := broker.Submit("https://agent.example/a2a", "sha256:card", []byte("payload"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	card := &a2adiscovery.AgentCard{
+		SecuritySchemes: map[string]a2adiscovery.SecurityScheme{
+			"bearer": {Type: "http", Scheme: "bearer"},
+		},
+		Security: []map[string][]string{{"bearer": {"a2a:invoke"}}},
+	}
+	var got http.Header
+	completed, err := broker.DispatchWithCredentials(context.Background(), task.ID, []byte("payload"), senderFunc(func(_ context.Context, request SendRequest) (Event, error) {
+		got = request.Headers
+		return Event{State: StateCompleted}, nil
+	}), card, CredentialRequest{TenantID: "tenant-a", Scopes: []string{"a2a:invoke"}}, CredentialPolicy{AllowedHosts: []string{"agent.example"}, AllowedKinds: []CredentialKind{CredentialBearer}}, CredentialResolverFunc(func(context.Context, CredentialRequest) (Credential, error) {
+		return Credential{Headers: http.Header{"Authorization": []string{"Bearer opaque"}}}, nil
+	}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if completed.State != StateCompleted || got.Get("Authorization") != "Bearer opaque" {
+		t.Fatalf("credential was not scoped to the send: task=%#v headers=%#v", completed, got)
+	}
+	got.Set("Authorization", "mutated")
+	if task.State != StateSubmitted {
+		t.Fatal("submit result was mutated by dispatch")
+	}
+}
+
+func TestBrokerCredentialRequiredBecomesAuthRequiredWithoutSecret(t *testing.T) {
+	broker := New(time.Now, func() string { return "task-auth" }, RetryPolicy{})
+	task, err := broker.Submit("https://agent.example/a2a", "digest", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	card := &a2adiscovery.AgentCard{SecuritySchemes: map[string]a2adiscovery.SecurityScheme{"oauth": {Type: "oauth2"}}}
+	waiting, err := broker.DispatchWithCredentials(context.Background(), task.ID, nil, senderFunc(func(context.Context, SendRequest) (Event, error) {
+		t.Fatal("sender must not run while authorization is required")
+		return Event{}, nil
+	}), card, CredentialRequest{TenantID: "tenant-a"}, CredentialPolicy{AllowedHosts: []string{"agent.example"}}, CredentialResolverFunc(func(context.Context, CredentialRequest) (Credential, error) {
+		return Credential{}, ErrCredentialRequired
+	}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if waiting.State != StateAuthRequired || waiting.Error != "authentication required" {
+		t.Fatalf("unexpected auth-required task: %#v", waiting)
+	}
+}
+
+func TestResolveCredentialRejectsAmbientAndUnsafeHeaders(t *testing.T) {
+	card := &a2adiscovery.AgentCard{SecuritySchemes: map[string]a2adiscovery.SecurityScheme{"key": {Type: "apiKey", Name: "X-API-Key", In: "header"}}}
+	_, err := ResolveCredential(context.Background(), CredentialRequest{Endpoint: "https://agent.example/a2a"}, card, CredentialPolicy{AllowedHosts: []string{"agent.example"}, AllowedKinds: []CredentialKind{CredentialAPIKey}}, CredentialResolverFunc(func(context.Context, CredentialRequest) (Credential, error) {
+		return Credential{Headers: http.Header{"X-API-Key": []string{"key"}, "Cookie": []string{"ambient"}}}, nil
+	}))
+	if err == nil {
+		t.Fatal("unsafe cookie header was accepted")
+	}
+	if _, err := ResolveCredential(context.Background(), CredentialRequest{Endpoint: "http://agent.example/a2a"}, card, CredentialPolicy{AllowedHosts: []string{"agent.example"}}, CredentialResolverFunc(func(context.Context, CredentialRequest) (Credential, error) {
+		return Credential{}, nil
+	})); err == nil {
+		t.Fatal("plaintext credential endpoint was accepted")
+	}
 }
 
 func TestBrokerDispatchesAndPreservesTaskHistory(t *testing.T) {

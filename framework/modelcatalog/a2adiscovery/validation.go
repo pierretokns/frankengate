@@ -50,27 +50,66 @@ func ValidateAgentCard(card *AgentCard, sourceURL *url.URL, httpsPolicy HTTPSPol
 	if card.SchemaVersion != "" && card.SchemaVersion != SupportedSchemaVersion {
 		errs = errs.appendf("schemaVersion must be %q when present", SupportedSchemaVersion)
 	}
-	if card.ProtocolVersion != SupportedProtocolVersion {
-		errs = errs.appendf("protocolVersion must be %q", SupportedProtocolVersion)
+	if card.ProtocolVersion != "" && !IsSupportedProtocolVersion(card.ProtocolVersion) {
+		errs = errs.appendf("protocolVersion must be %q, %q, or %q", SupportedProtocolVersion, LegacyProtocolVersion, ShortProtocolVersion)
 	}
 	errs = validateString(errs, "name", card.Name, true, MaxNameBytes)
 	errs = validateString(errs, "description", card.Description, false, MaxDescriptionBytes)
 	errs = validateString(errs, "version", card.Version, true, MaxVersionBytes)
 
-	endpoint, err := parseCardEndpoint(card.URL, "url")
-	if err != nil {
-		errs = append(errs, err.Error())
-	} else {
-		if httpsPolicy == HTTPSOnly && endpoint.Scheme != "https" {
-			errs = errs.appendf("url must use https")
-		}
-		if !sameOrigin(endpoint, sourceURL) {
-			errs = errs.appendf("url origin %q must match fetched card origin %q", origin(endpoint), origin(sourceURL))
+	if card.URL != "" {
+		endpoint, err := parseCardEndpoint(card.URL, "url")
+		if err != nil {
+			errs = append(errs, err.Error())
+		} else {
+			if httpsPolicy == HTTPSOnly && endpoint.Scheme != "https" {
+				errs = errs.appendf("url must use https")
+			}
+			if !sameOrigin(endpoint, sourceURL) {
+				errs = errs.appendf("url origin %q must match fetched card origin %q", origin(endpoint), origin(sourceURL))
+			}
 		}
 	}
 
 	if card.PreferredTransport != "" && !validTransportBinding(card.PreferredTransport) {
 		errs = errs.appendf("preferredTransport is invalid")
+	}
+	interfaces := card.SupportedInterfaces
+	if len(interfaces) == 0 {
+		interfaces = append([]AgentInterface(nil), card.AdditionalInterfaces...)
+		if card.URL != "" {
+			interfaces = append([]AgentInterface{{URL: card.URL, Transport: card.PreferredTransport}}, interfaces...)
+		}
+	}
+	if len(interfaces) == 0 {
+		errs = errs.appendf("supportedInterfaces or url is required")
+	}
+	if card.ProtocolVersion == "" && len(card.SupportedInterfaces) == 0 {
+		errs = errs.appendf("protocolVersion is required when supportedInterfaces is absent")
+	}
+	for i, iface := range interfaces {
+		path := fmt.Sprintf("supportedInterfaces[%d]", i)
+		binding := iface.ProtocolBinding
+		if binding == "" {
+			binding = iface.Transport
+		}
+		if !validTransportBinding(binding) {
+			errs = errs.appendf("%s.protocolBinding is invalid", path)
+		}
+		if iface.ProtocolVersion != "" && !IsSupportedProtocolVersion(iface.ProtocolVersion) {
+			errs = errs.appendf("%s.protocolVersion is unsupported", path)
+		}
+		ifaceURL, err := parseCardEndpoint(iface.URL, path+".url")
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+		if httpsPolicy == HTTPSOnly && ifaceURL.Scheme != "https" {
+			errs = errs.appendf("%s.url must use https", path)
+		}
+		if !sameOrigin(ifaceURL, sourceURL) {
+			errs = errs.appendf("%s.url origin %q must match fetched card origin %q", path, origin(ifaceURL), origin(sourceURL))
+		}
 	}
 	for i, iface := range card.AdditionalInterfaces {
 		path := fmt.Sprintf("additionalInterfaces[%d]", i)
@@ -103,7 +142,11 @@ func ValidateAgentCard(card *AgentCard, sourceURL *url.URL, httpsPolicy HTTPSPol
 	}
 
 	errs = validateSecuritySchemes(errs, card.SecuritySchemes)
-	errs = validateSecurityRequirements(errs, "security", card.Security, card.SecuritySchemes)
+	securityRequirements := card.Security
+	if len(securityRequirements) == 0 {
+		securityRequirements = card.SecurityRequirements
+	}
+	errs = validateSecurityRequirements(errs, "securityRequirements", securityRequirements, card.SecuritySchemes)
 	if card.Provider != nil {
 		errs = validateString(errs, "provider.organization", card.Provider.Organization, false, MaxNameBytes)
 		errs = validateString(errs, "provider.url", card.Provider.URL, false, MaxURLBytes)
@@ -115,6 +158,12 @@ func ValidateAgentCard(card *AgentCard, sourceURL *url.URL, httpsPolicy HTTPSPol
 	}
 	errs = validateExtensions(errs, "extensions", card.Extensions)
 	return errs.err()
+}
+
+// IsSupportedProtocolVersion accepts the released version and the immediately
+// preceding draft so operators can upgrade agents without a flag day.
+func IsSupportedProtocolVersion(version string) bool {
+	return version == SupportedProtocolVersion || version == LegacyProtocolVersion || version == ShortProtocolVersion
 }
 
 func validateSkill(errs ValidationErrors, index int, skill AgentSkill) ValidationErrors {

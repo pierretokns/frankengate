@@ -28,9 +28,16 @@ authorization grant, or proof that a remote agent is safe to invoke.
   persisting it. Validation reason codes are stable and suitable for UI and
   automation.
 - `GET /.well-known/agent-card.json` and the legacy `/.well-known/agent.json`
-  publish the canonical inbound FrankenGate card. `POST /a2a` and
-  `POST /a2a/jsonrpc` accept bounded `message/send`; `GET /a2a/tasks/{id}`
-  retrieves a bounded, TTL-limited task result.
+  publish the canonical inbound FrankenGate card. JSON-RPC is available at
+  `POST /a2a` and `POST /a2a/jsonrpc`, including the released PascalCase task
+  lifecycle methods plus the legacy slash aliases. HTTP+JSON is available at
+  `POST /message:send`, `POST /message:stream`, `GET /tasks`,
+  `GET /tasks/{id}`, `POST /tasks/{id}:cancel`, and
+  `POST /tasks/{id}:subscribe`. `GET /extendedAgentCard` is authenticated and
+  returns the extended card when the public card advertises that capability.
+  All task access is bounded, tenant-scoped, and TTL-limited. Push
+  notification configuration is intentionally not advertised until its
+  durable, SSRF-checked webhook store and retry worker are enabled.
 
 ## Trust and routing semantics
 
