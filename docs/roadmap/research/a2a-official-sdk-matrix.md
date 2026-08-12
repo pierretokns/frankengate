@@ -47,6 +47,19 @@ The manifest records each fixture path, fixture SHA-256, source repository URL, 
 
 ## Limitations
 
+## 2026-08-12 verification note
+
+The current FrankenGate implementation was exercised against the official
+Python, Go, and JavaScript SDKs over authenticated HTTPS; all three completed
+Agent Card/client smoke flows, and the JavaScript stream produced three events.
+The pinned TCK's Agent Card schema still expects the older
+`securityRequirements[].schemes.<name>.list` object, while the current official
+Go/JS SDK JSON implementation and released proto-compatible shape use
+`securityRequirements[].schemes.<name>` as an array. FrankenGate keeps the
+SDK/proto-compatible array form and accepts both forms while decoding. This is
+recorded as a pinned-TCK schema discrepancy, not a reason to regress the
+public card wire contract.
+
 - The official TCK schema file observed in this slice did not expose JSON-RPC error schema definitions, so the auth/error fixture intentionally treats the JSON-RPC error code as an implementation envelope and only asserts preservation of the HTTP challenge plus A2A `TASK_STATE_AUTH_REQUIRED` task state.
 - No source with unverified or ambiguous provenance was used for fixtures. All retained source repositories are Apache-2.0.
 - This slice does not add HTTP handlers, UI, SDK dependencies, protobuf generation, or TCK execution wiring.

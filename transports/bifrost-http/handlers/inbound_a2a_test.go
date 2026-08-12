@@ -68,6 +68,58 @@ func TestInboundAgentCardDoesNotAdvertiseUnimplementedGRPC(t *testing.T) {
 	if card.Capabilities.PushNotifications {
 		t.Fatal("default inbound card advertised push without an injected delivery implementation")
 	}
+	if len(card.DefaultInputModes) != 1 || card.DefaultInputModes[0] != "text/plain" || len(card.DefaultOutputModes) != 1 || card.DefaultOutputModes[0] != "text/plain" {
+		t.Fatalf("default card modes = input=%v output=%v, want MIME types", card.DefaultInputModes, card.DefaultOutputModes)
+	}
+}
+
+func TestInboundA2APartsSerializeReleasedV1AndAcceptLegacyFileInput(t *testing.T) {
+	released, err := json.Marshal(a2aPart{Text: "hello", MediaType: "text/plain"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(released) != `{"text":"hello","mediaType":"text/plain"}` {
+		t.Fatalf("released part = %s", released)
+	}
+
+	var legacy a2aPart
+	if err := json.Unmarshal([]byte(`{"kind":"file","file":{"name":"result.txt","mimeType":"text/plain","fileWithBytes":"aGVsbG8="}}`), &legacy); err != nil {
+		t.Fatal(err)
+	}
+	if legacy.Raw != "aGVsbG8=" || legacy.Filename != "result.txt" || legacy.MediaType != "text/plain" {
+		t.Fatalf("legacy file part = %#v", legacy)
+	}
+	reencoded, err := json.Marshal(legacy)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(reencoded), `"file"`) || !strings.Contains(string(reencoded), `"raw":"aGVsbG8="`) {
+		t.Fatalf("legacy part was not normalized to released shape: %s", reencoded)
+	}
+}
+
+func TestInboundA2ARecoveryJournalsBindingSpecificStatusUpdate(t *testing.T) {
+	handler := &InboundA2AHandler{tasks: make(map[string]storedA2ATask), streamStates: make(map[string]*a2aStreamState), now: time.Now}
+	task := a2aTask{ID: "task-restart", ContextID: "ctx-1", Status: a2aTaskStatus{State: "TASK_STATE_WORKING", Timestamp: time.Now().UTC()}}
+	partition := "tenant-a\x00issuer\x00subject"
+	handler.recoverInterruptedA2AStream(context.Background(), partition, task, true)
+	key := a2AStreamKey(partition, task.ID, true)
+	handler.streamMu.Lock()
+	state := handler.streamStates[key]
+	handler.streamMu.Unlock()
+	if state == nil || len(state.events) != 1 || state.events[0].ID != "1" {
+		t.Fatalf("recovery state = %#v", state)
+	}
+	var event map[string]any
+	if err := json.Unmarshal(state.events[0].Body, &event); err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := event["statusUpdate"]; !ok {
+		t.Fatalf("HTTP+JSON recovery event = %#v, want statusUpdate", event)
+	}
+	if _, ok := event["jsonrpc"]; ok {
+		t.Fatalf("HTTP+JSON recovery event incorrectly used JSON-RPC envelope: %#v", event)
+	}
 }
 
 type inboundPushDeliveryStub struct{}

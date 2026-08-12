@@ -126,7 +126,7 @@ func TestFetchFallsBackToLegacyWellKnownAgentCard(t *testing.T) {
 	if err != nil {
 		t.Fatalf("fetch: %v", err)
 	}
-	if result.Card.ProtocolVersion != SupportedProtocolVersion {
+	if len(result.Card.SupportedInterfaces) != 1 || result.Card.SupportedInterfaces[0].ProtocolVersion != SupportedProtocolVersion {
 		t.Fatalf("unexpected card: %+v", result.Card)
 	}
 }

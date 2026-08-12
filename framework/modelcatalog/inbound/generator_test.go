@@ -68,16 +68,8 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 	}
 
 	expected := compactJSON(t, `{
-		"schemaVersion":"a2a.agent-card.v1",
-		"protocolVersion":"1.0.0",
 		"name":"FrankenGate Research Agent",
 		"description":"Delegates approved internal research workflows.",
-		"url":"https://agent.example/a2a/rpc",
-		"preferredTransport":"JSONRPC",
-		"additionalInterfaces":[
-			{"url":"https://agent.example/a2a/http","transport":"HTTP+JSON"},
-			{"url":"https://agent.example/a2a/grpc","transport":"GRPC"}
-		],
 		"supportedInterfaces":[
 			{"url":"https://agent.example/a2a/rpc","protocolBinding":"JSONRPC","protocolVersion":"1.0"},
 			{"url":"https://agent.example/a2a/http","protocolBinding":"HTTP+JSON","protocolVersion":"1.0"},
@@ -85,13 +77,12 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 		],
 		"provider":{"organization":"FrankenGate","url":"https://agent.example"},
 		"version":"2026.08.04",
-		"capabilities":{"streaming":true,"stateTransitionHistory":true,"extendedAgentCard":true},
+		"capabilities":{"streaming":true,"extendedAgentCard":true},
 		"securitySchemes":{
-			"api_key":{"apiKeySecurityScheme":{"description":"gateway virtual key","name":"x-bf-vk","in":"header"}},
+			"api_key":{"apiKeySecurityScheme":{"description":"gateway virtual key","name":"x-bf-vk","location":"header"}},
 			"bearer":{"httpAuthSecurityScheme":{"description":"audience-bound inbound task token","scheme":"bearer","bearerFormat":"JWT"}}
 		},
-		"security":[{"api_key":[]},{"bearer":["agent:read","agent:write"]}],
-		"securityRequirements":[{"api_key":[]},{"bearer":["agent:read","agent:write"]}],
+		"securityRequirements":[{"schemes":{"api_key":[]}},{"schemes":{"bearer":["agent:read","agent:write"]}}],
 		"defaultInputModes":["application/json","text"],
 		"defaultOutputModes":["application/json","text"],
 		"skills":[
@@ -114,9 +105,7 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 				"outputModes":["application/json"],
 				"extensions":{"com.frankengate.workflow":{"version":"v2"}}
 			}
-		],
-		"supportsAuthenticatedExtendedCard":true,
-		"extensions":{"com.frankengate.card":{"visibility":"internal"}}
+		]
 	}`)
 	if string(first) != expected {
 		t.Fatalf("unexpected canonical JSON:\n%s\nwant:\n%s", first, expected)

@@ -232,8 +232,89 @@ type a2aPart struct {
 	Kind      string          `json:"kind,omitempty"`
 	Text      string          `json:"text,omitempty"`
 	MediaType string          `json:"mediaType,omitempty"`
-	File      json.RawMessage `json:"file,omitempty"`
+	URL       string          `json:"url,omitempty"`
+	Raw       string          `json:"raw,omitempty"`
+	Filename  string          `json:"filename,omitempty"`
+	File      json.RawMessage `json:"-"`
 	Data      json.RawMessage `json:"data,omitempty"`
+}
+
+// MarshalJSON always emits the released v1 member-discriminated part shape.
+// Kind and the draft file wrapper are retained only for input compatibility
+// and must never leak back onto the public wire.
+func (p a2aPart) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Text      string          `json:"text,omitempty"`
+		Raw       string          `json:"raw,omitempty"`
+		URL       string          `json:"url,omitempty"`
+		Data      json.RawMessage `json:"data,omitempty"`
+		MediaType string          `json:"mediaType,omitempty"`
+		Filename  string          `json:"filename,omitempty"`
+	}{
+		Text: p.Text, Raw: p.Raw, URL: p.URL, Data: p.Data, MediaType: p.MediaType, Filename: p.Filename,
+	})
+}
+
+// UnmarshalJSON accepts released v1.0 member-discriminated parts and the
+// older draft file wrapper. Outbound serialization stays on the released
+// flat shape.
+func (p *a2aPart) UnmarshalJSON(data []byte) error {
+	type wire struct {
+		Kind      string          `json:"kind,omitempty"`
+		Text      string          `json:"text,omitempty"`
+		MediaType string          `json:"mediaType,omitempty"`
+		URL       string          `json:"url,omitempty"`
+		Raw       string          `json:"raw,omitempty"`
+		Filename  string          `json:"filename,omitempty"`
+		File      json.RawMessage `json:"file,omitempty"`
+		Data      json.RawMessage `json:"data,omitempty"`
+	}
+	var value wire
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = a2aPart{Kind: value.Kind, Text: value.Text, MediaType: value.MediaType, URL: value.URL, Raw: value.Raw, Filename: value.Filename, File: value.File, Data: value.Data}
+	if len(value.File) == 0 || string(value.File) == "null" {
+		return nil
+	}
+	var legacy struct {
+		FileWithURI   string `json:"fileWithUri,omitempty"`
+		FileWithURL   string `json:"url,omitempty"`
+		FileWithBytes string `json:"fileWithBytes,omitempty"`
+		Raw           string `json:"raw,omitempty"`
+		MIMEType      string `json:"mimeType,omitempty"`
+		MediaType     string `json:"mediaType,omitempty"`
+		Name          string `json:"name,omitempty"`
+		Filename      string `json:"filename,omitempty"`
+	}
+	if err := json.Unmarshal(value.File, &legacy); err != nil {
+		return fmt.Errorf("decode legacy A2A file part: %w", err)
+	}
+	if p.URL == "" {
+		p.URL = legacy.FileWithURI
+		if p.URL == "" {
+			p.URL = legacy.FileWithURL
+		}
+	}
+	if p.Raw == "" {
+		p.Raw = legacy.FileWithBytes
+		if p.Raw == "" {
+			p.Raw = legacy.Raw
+		}
+	}
+	if p.MediaType == "" {
+		p.MediaType = legacy.MediaType
+		if p.MediaType == "" {
+			p.MediaType = legacy.MIMEType
+		}
+	}
+	if p.Filename == "" {
+		p.Filename = legacy.Filename
+		if p.Filename == "" {
+			p.Filename = legacy.Name
+		}
+	}
+	return nil
 }
 
 type a2aSendParams struct {
@@ -489,7 +570,7 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		h.writeRPCError(ctx, request.ID, -32000, "model returned no text content")
 		return
 	}
-	output := a2aMessage{MessageID: taskID + "-result", Role: a2aAgentRole(params.Message.Role), Parts: []a2aPart{{Text: answer}}}
+	output := a2aMessage{MessageID: taskID + "-result", Role: a2aAgentRole(params.Message.Role), Parts: []a2aPart{{Text: answer, MediaType: "text/plain"}}}
 	history := []a2aMessage{params.Message, output}
 	if followUp {
 		history = append(append([]a2aMessage(nil), previousTask.History...), history...)
@@ -714,7 +795,7 @@ func (h *InboundA2AHandler) produceA2AStream(reader *lib.SSEStreamReader, stream
 	if pending != "" && !emitArtifact(pending, true) {
 		return
 	}
-	output := a2aMessage{MessageID: task.ID + "-result", Role: "ROLE_AGENT", Parts: []a2aPart{{Text: strings.TrimSpace(answer.String())}}}
+	output := a2aMessage{MessageID: task.ID + "-result", Role: "ROLE_AGENT", Parts: []a2aPart{{Text: strings.TrimSpace(answer.String()), MediaType: "text/plain"}}}
 	task.History = append(task.History, output)
 	task.Artifacts = []a2aArtifact{{ArtifactID: task.ID + "-response", Name: "response", Parts: output.Parts}}
 	task.Status = a2aTaskStatus{State: "TASK_STATE_COMPLETED", Timestamp: h.currentTime().UTC(), Message: &output}
@@ -741,7 +822,7 @@ func (h *InboundA2AHandler) streamExistingTask(ctx *fasthttp.RequestCtx, id json
 	streamKey := a2AStreamKey(partition, task.ID, httpJSONStream)
 	replay, subscriber, unsubscribe, terminal, active := h.subscribeA2AStream(ctx, streamKey, after)
 	if subscriber == nil && !terminal && !active {
-		task = h.recoverInterruptedA2AStream(ctx, partition, task)
+		task = h.recoverInterruptedA2AStream(ctx, partition, task, httpJSONStream)
 		replay, subscriber, unsubscribe, terminal, _ = h.subscribeA2AStream(ctx, streamKey, after)
 	}
 	go func() {
@@ -936,14 +1017,19 @@ func (h *InboundA2AHandler) loadDurableA2AStreamState(ctx context.Context, taskI
 	h.streamMu.Unlock()
 }
 
-func (h *InboundA2AHandler) recoverInterruptedA2AStream(ctx context.Context, partition string, task a2aTask) a2aTask {
+func (h *InboundA2AHandler) recoverInterruptedA2AStream(ctx context.Context, partition string, task a2aTask, httpJSON bool) a2aTask {
 	if isA2ATerminalState(task.Status.State) {
 		return task
 	}
-	task.Status = a2aTaskStatus{State: "TASK_STATE_FAILED", Timestamp: h.currentTime().UTC(), Message: &a2aMessage{MessageID: task.ID + "-restart", Role: "agent", Parts: []a2aPart{{MediaType: "text/plain", Text: "A2A stream interrupted by gateway restart."}}}}
+	task.Status = a2aTaskStatus{State: "TASK_STATE_FAILED", Timestamp: h.currentTime().UTC(), Message: &a2aMessage{MessageID: task.ID + "-restart", Role: "ROLE_AGENT", Parts: []a2aPart{{MediaType: "text/plain", Text: "A2A stream interrupted by gateway restart."}}}}
 	_ = h.storeTask(ctx, partition, task)
-	key := scopedA2ATaskKey(partition, task.ID)
-	h.publishA2AStreamEvent(key, mustJSON(a2aJSONRPCError{Code: -32001, Message: "A2A stream interrupted by gateway restart"}), true)
+	key := a2AStreamKey(partition, task.ID, httpJSON)
+	event := a2aStreamStatusUpdate{TaskID: task.ID, ContextID: task.ContextID, Status: task.Status}
+	body, err := marshalA2AStreamEvent(httpJSON, json.RawMessage(`1`), event)
+	if err != nil {
+		return task
+	}
+	h.publishA2AStreamEvent(key, body, true)
 	_ = h.persistA2AStreamState(key)
 	return task
 }
@@ -1957,7 +2043,7 @@ func a2aMessageText(message a2aMessage) string {
 
 func a2AMessageHasUnsupportedPart(message a2aMessage) bool {
 	for _, part := range message.Parts {
-		if len(part.File) > 0 || len(part.Data) > 0 {
+		if part.URL != "" || part.Raw != "" || len(part.File) > 0 || len(part.Data) > 0 {
 			return true
 		}
 		mediaType := strings.ToLower(strings.TrimSpace(part.MediaType))
@@ -2026,13 +2112,13 @@ func defaultInboundRecord(base string) inbound.Record {
 				{URL: base, Transport: a2adiscovery.TransportHTTPJSON},
 			},
 			Capabilities:                      a2adiscovery.AgentCapabilities{Streaming: true, StateTransitionHistory: true},
-			DefaultInputModes:                 []string{"text"},
-			DefaultOutputModes:                []string{"text"},
+			DefaultInputModes:                 []string{"text/plain"},
+			DefaultOutputModes:                []string{"text/plain"},
 			SecuritySchemes:                   []inbound.SecuritySchemeRecord{{ID: "bearer", Scheme: a2adiscovery.SecurityScheme{Type: "http", Scheme: "bearer", BearerFormat: "JWT"}}},
 			Security:                          []inbound.SecurityRequirementRecord{{Schemes: []inbound.SecurityRequirementScheme{{ID: "bearer", Scopes: []string{"a2a:invoke"}}}}},
 			SupportsAuthenticatedExtendedCard: true,
 		},
-		Workflows: []inbound.WorkflowRecord{{ID: "gateway-chat", Name: "Governed chat", Description: "Routes an authenticated A2A message through the normal FrankenGate policy pipeline.", InputModes: []string{"text"}, OutputModes: []string{"text"}}},
+		Workflows: []inbound.WorkflowRecord{{ID: "gateway-chat", Name: "Governed chat", Description: "Routes an authenticated A2A message through the normal FrankenGate policy pipeline.", InputModes: []string{"text/plain"}, OutputModes: []string{"text/plain"}}},
 	}
 }
 

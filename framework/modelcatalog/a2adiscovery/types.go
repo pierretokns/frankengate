@@ -84,9 +84,7 @@ func (c *AgentCard) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	var wrapped []struct {
-		Schemes map[string]struct {
-			List []string `json:"list"`
-		} `json:"schemes"`
+		Schemes map[string]json.RawMessage `json:"schemes"`
 	}
 	if err := json.Unmarshal(wire.SecurityRequirements, &wrapped); err != nil {
 		return fmt.Errorf("decode securityRequirements: %w", err)
@@ -94,21 +92,96 @@ func (c *AgentCard) UnmarshalJSON(data []byte) error {
 	c.SecurityRequirements = make([]map[string][]string, 0, len(wrapped))
 	for _, requirement := range wrapped {
 		flatRequirement := make(map[string][]string, len(requirement.Schemes))
-		for id, scheme := range requirement.Schemes {
-			flatRequirement[id] = append([]string(nil), scheme.List...)
+		for id, rawScopes := range requirement.Schemes {
+			var scopes []string
+			if err := json.Unmarshal(rawScopes, &scopes); err != nil {
+				var object struct {
+					List []string `json:"list"`
+				}
+				if objectErr := json.Unmarshal(rawScopes, &object); objectErr != nil {
+					return fmt.Errorf("decode securityRequirements scheme %q: %w", id, err)
+				}
+				scopes = object.List
+			}
+			flatRequirement[id] = append([]string(nil), scopes...)
 		}
 		c.SecurityRequirements = append(c.SecurityRequirements, flatRequirement)
 	}
 	return nil
 }
 
-// MarshalJSON retains the flat securityRequirements form because it is the
-// interoperable A2A 1.0 JSON representation consumed by the official Go and
-// TypeScript SDKs. The decoder still accepts the newer wrapped form emitted by
-// some draft generators.
+// MarshalJSON emits only the released A2A 1.0 AgentCard fields. The internal
+// model retains legacy aliases so older cards can still be decoded and mapped,
+// but publishing those aliases makes a v1.0 card fail strict validators.
 func (c AgentCard) MarshalJSON() ([]byte, error) {
-	type alias AgentCard
-	return json.Marshal((*alias)(&c))
+	type released struct {
+		Name                 string                        `json:"name"`
+		Description          string                        `json:"description,omitempty"`
+		SupportedInterfaces  []AgentInterface              `json:"supportedInterfaces"`
+		Provider             *AgentProvider                `json:"provider,omitempty"`
+		Version              string                        `json:"version"`
+		DocumentationURL     string                        `json:"documentationUrl,omitempty"`
+		Capabilities         AgentCapabilities             `json:"capabilities"`
+		SecuritySchemes      map[string]SecurityScheme     `json:"securitySchemes,omitempty"`
+		SecurityRequirements []releasedSecurityRequirement `json:"securityRequirements,omitempty"`
+		DefaultInputModes    []string                      `json:"defaultInputModes"`
+		DefaultOutputModes   []string                      `json:"defaultOutputModes"`
+		Skills               []AgentSkill                  `json:"skills"`
+		IconURL              string                        `json:"iconUrl,omitempty"`
+	}
+	interfaces := append([]AgentInterface(nil), c.SupportedInterfaces...)
+	if len(interfaces) == 0 && strings.TrimSpace(c.URL) != "" {
+		protocolVersion := c.ProtocolVersion
+		if protocolVersion == "" {
+			protocolVersion = ShortProtocolVersion
+		}
+		interfaces = append(interfaces, AgentInterface{URL: c.URL, ProtocolBinding: c.PreferredTransport, ProtocolVersion: protocolVersion})
+		for _, legacy := range c.AdditionalInterfaces {
+			binding := legacy.ProtocolBinding
+			if binding == "" {
+				binding = legacy.Transport
+			}
+			interfaces = append(interfaces, AgentInterface{URL: legacy.URL, ProtocolBinding: binding, ProtocolVersion: protocolVersion})
+		}
+	}
+	requirements := c.SecurityRequirements
+	if len(requirements) == 0 {
+		requirements = c.Security
+	}
+	capabilities := c.Capabilities
+	if c.SupportsAuthenticatedExtendedCard {
+		capabilities.ExtendedAgentCard = true
+	}
+	wrappedRequirements := make([]releasedSecurityRequirement, 0, len(requirements))
+	for _, requirement := range requirements {
+		wrapped := releasedSecurityRequirement{Schemes: make(map[string][]string, len(requirement))}
+		for scheme, scopes := range requirement {
+			if scopes == nil {
+				scopes = []string{}
+			}
+			wrapped.Schemes[scheme] = append([]string{}, scopes...)
+		}
+		wrappedRequirements = append(wrappedRequirements, wrapped)
+	}
+	return json.Marshal(released{
+		Name:                 c.Name,
+		Description:          c.Description,
+		SupportedInterfaces:  interfaces,
+		Provider:             c.Provider,
+		Version:              c.Version,
+		DocumentationURL:     c.DocumentationURL,
+		Capabilities:         capabilities,
+		SecuritySchemes:      c.SecuritySchemes,
+		SecurityRequirements: wrappedRequirements,
+		DefaultInputModes:    c.DefaultInputModes,
+		DefaultOutputModes:   c.DefaultOutputModes,
+		Skills:               c.Skills,
+		IconURL:              c.IconURL,
+	})
+}
+
+type releasedSecurityRequirement struct {
+	Schemes map[string][]string `json:"schemes"`
 }
 
 type AgentProvider struct {
@@ -121,6 +194,21 @@ type AgentCapabilities struct {
 	PushNotifications      bool `json:"pushNotifications,omitempty"`
 	StateTransitionHistory bool `json:"stateTransitionHistory,omitempty"`
 	ExtendedAgentCard      bool `json:"extendedAgentCard,omitempty"`
+}
+
+// MarshalJSON omits the pre-1.0 stateTransitionHistory alias. v1.0 uses the
+// task history itself and does not declare that legacy capability bit.
+func (c AgentCapabilities) MarshalJSON() ([]byte, error) {
+	type released struct {
+		Streaming         bool `json:"streaming,omitempty"`
+		PushNotifications bool `json:"pushNotifications,omitempty"`
+		ExtendedAgentCard bool `json:"extendedAgentCard,omitempty"`
+	}
+	return json.Marshal(released{
+		Streaming:         c.Streaming,
+		PushNotifications: c.PushNotifications,
+		ExtendedAgentCard: c.ExtendedAgentCard,
+	})
 }
 
 type TransportBinding string
@@ -188,13 +276,13 @@ func (s SecurityScheme) MarshalJSON() ([]byte, error) {
 	type fields struct {
 		Description      string          `json:"description,omitempty"`
 		Name             string          `json:"name,omitempty"`
-		In               string          `json:"in,omitempty"`
+		Location         string          `json:"location,omitempty"`
 		Scheme           string          `json:"scheme,omitempty"`
 		BearerFormat     string          `json:"bearerFormat,omitempty"`
 		OpenIDConnectURL string          `json:"openIdConnectUrl,omitempty"`
 		Flows            json.RawMessage `json:"flows,omitempty"`
 	}
-	f := fields{Description: s.Description, Name: s.Name, In: s.In, Scheme: s.Scheme, BearerFormat: s.BearerFormat, OpenIDConnectURL: s.OpenIDConnectURL, Flows: s.Flows}
+	f := fields{Description: s.Description, Name: s.Name, Location: s.In, Scheme: s.Scheme, BearerFormat: s.BearerFormat, OpenIDConnectURL: s.OpenIDConnectURL, Flows: s.Flows}
 	key := ""
 	switch s.Type {
 	case "apiKey":
@@ -244,6 +332,7 @@ func (s *SecurityScheme) UnmarshalJSON(data []byte) error {
 			Description      string          `json:"description,omitempty"`
 			Name             string          `json:"name,omitempty"`
 			In               string          `json:"in,omitempty"`
+			Location         string          `json:"location,omitempty"`
 			Scheme           string          `json:"scheme,omitempty"`
 			BearerFormat     string          `json:"bearerFormat,omitempty"`
 			OpenIDConnectURL string          `json:"openIdConnectUrl,omitempty"`
@@ -255,7 +344,10 @@ func (s *SecurityScheme) UnmarshalJSON(data []byte) error {
 		s.Type = typ
 		s.Description = nested.Description
 		s.Name = nested.Name
-		s.In = nested.In
+		s.In = nested.Location
+		if s.In == "" {
+			s.In = nested.In
+		}
 		s.Scheme = nested.Scheme
 		s.BearerFormat = nested.BearerFormat
 		s.OpenIDConnectURL = nested.OpenIDConnectURL
