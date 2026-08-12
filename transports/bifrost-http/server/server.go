@@ -45,6 +45,7 @@ import (
 	dto "github.com/prometheus/client_model/go"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
+	"google.golang.org/grpc"
 	"gorm.io/gorm"
 )
 
@@ -204,6 +205,8 @@ type BifrostHTTPServer struct {
 	SidekiqRunner         *sidekiq.Runner
 	SidekiqDispatcherStop func()
 	inboundA2AHandler     *handlers.InboundA2AHandler
+	a2aGRPCServer         *grpc.Server
+	a2aGRPCListener       net.Listener
 
 	wsPool *bfws.Pool
 }
@@ -225,6 +228,54 @@ func NewBifrostHTTPServer(version string, uiContent embed.FS) *BifrostHTTPServer
 		AppDir:         DefaultAppDir,
 		LogLevel:       DefaultLogLevel,
 		LogOutputStyle: DefaultLogOutputStyle,
+	}
+}
+
+// StartA2AGRPC starts the official hosted A2A gRPC service on a caller-owned
+// listener. The listener is kept with the HTTP server so the normal shutdown
+// path stops both transports together. Card advertisement remains gated by
+// options.Health and is never enabled merely by constructing the listener.
+func (s *BifrostHTTPServer) StartA2AGRPC(listener net.Listener, options handlers.A2AGRPCOptions) error {
+	if s == nil || s.inboundA2AHandler == nil {
+		return errors.New("A2A HTTP routes must be registered before gRPC")
+	}
+	if listener == nil {
+		return errors.New("A2A gRPC listener is required")
+	}
+	if s.a2aGRPCServer != nil {
+		return errors.New("A2A gRPC server is already running")
+	}
+	server, err := s.inboundA2AHandler.NewA2AGRPCServer(options)
+	if err != nil {
+		return err
+	}
+	s.a2aGRPCServer = server
+	s.a2aGRPCListener = listener
+	s.inboundA2AHandler.SetA2AGRPCReady(true)
+	go func() {
+		defer s.inboundA2AHandler.SetA2AGRPCReady(false)
+		if serveErr := server.Serve(listener); serveErr != nil && !errors.Is(serveErr, grpc.ErrServerStopped) && logger != nil {
+			logger.Error("A2A gRPC server stopped: %v", serveErr)
+		}
+	}()
+	return nil
+}
+
+// StopA2AGRPC stops the hosted A2A gRPC service and closes its listener.
+func (s *BifrostHTTPServer) StopA2AGRPC() {
+	if s == nil {
+		return
+	}
+	if s.inboundA2AHandler != nil {
+		s.inboundA2AHandler.SetA2AGRPCReady(false)
+	}
+	if s.a2aGRPCServer != nil {
+		s.a2aGRPCServer.GracefulStop()
+		s.a2aGRPCServer = nil
+	}
+	if s.a2aGRPCListener != nil {
+		_ = s.a2aGRPCListener.Close()
+		s.a2aGRPCListener = nil
 	}
 }
 
@@ -2366,6 +2417,7 @@ func (s *BifrostHTTPServer) Start() error {
 				logger.Info("stopping sidekiq runner...")
 				s.SidekiqRunner.Shutdown()
 			}
+			s.StopA2AGRPC()
 			s.StopA2APushRuntime()
 			if s.devPprofHandler != nil {
 				logger.Info("stopping dev pprof handler...")
@@ -2416,6 +2468,7 @@ func (s *BifrostHTTPServer) Start() error {
 		if s.IntegrationHandler != nil {
 			s.IntegrationHandler.Close()
 		}
+		s.StopA2AGRPC()
 		s.StopA2APushRuntime()
 		if s.wsPool != nil {
 			s.wsPool.Close()

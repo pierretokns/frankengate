@@ -61,6 +61,10 @@ type InboundA2AHandler struct {
 	pushRuntime  *a2apush.Runtime
 	streamMu     sync.Mutex
 	streamStates map[string]*a2aStreamState
+	grpcCardMu   sync.RWMutex
+	grpcEndpoint string
+	grpcHealth   func(context.Context) bool
+	grpcRunning  bool
 }
 
 type storedA2ATask struct {
@@ -2262,6 +2266,16 @@ func (h *InboundA2AHandler) inboundAgentCardDigest(ctx *fasthttp.RequestCtx) str
 func (h *InboundA2AHandler) agentCardRecord(base string) inbound.Record {
 	record := inboundRecordForConfig(base, h.config)
 	record.Card.Capabilities.PushNotifications = h.pushNotificationsAvailable()
+	if h != nil && h.a2AGRPCHealthy(context.Background()) {
+		h.grpcCardMu.RLock()
+		endpoint := h.grpcEndpoint
+		h.grpcCardMu.RUnlock()
+		record.Card.Interfaces = append(record.Card.Interfaces, inbound.InterfaceRecord{
+			Order:     len(record.Card.Interfaces) + 1,
+			URL:       endpoint,
+			Transport: a2adiscovery.TransportGRPC,
+		})
+	}
 	return record
 }
 
