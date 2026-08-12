@@ -124,7 +124,11 @@ exports only bounded lifecycle outcomes through
 `bifrost_a2a_push_events_total`; `/health` and `/readyz` expose redacted runtime
 status and counters. Credential resolution exports only bounded kind/outcome
 metrics through `bifrost_a2a_credential_events_total`; token and secret
-material never enters OTLP or durable audit records. Registry manifests enter a
+material never enters OTLP or durable audit records. Outbound task lifecycle
+observation is wired automatically when the OTEL plugin is configured and
+exports only bounded state/retryability labels through
+`bifrost_a2a_task_events_total`; task IDs, prompts, tokens, and artifacts never
+enter metric labels. Registry manifests enter a
 bounded pending-review store keyed by repository, immutable revision, and
 content digest; approval requires a reviewer and reason, and quarantine is an
 explicit later decision.

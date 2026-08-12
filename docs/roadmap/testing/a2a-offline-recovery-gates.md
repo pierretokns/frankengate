@@ -31,14 +31,17 @@ socket creation during checks so accidental network access fails the run.
 
 These tests are the deterministic recovery contract for the live A2A broker,
 Agent Card admission, inbound task store, streaming journal, and push outbox
-seams. They complement—not replace—the Go unit/race matrix and the external
+seams. Outbound task lifecycle delivery to the OTEL observer is separately
+covered by the runtime observer test and bounded metric-label test. They
+complement—not replace—the Go unit/race matrix and the external
 official SDK/TCK run. They do not claim that every optional TCK scenario (for
 example, generic file/data artifacts or native gRPC) is implemented.
 
 The current release evidence is six fixture checks and 30 recovery checks,
 with the framework A2A/model-card packages, inbound handler, outbound broker,
-push runtime, executor-result serialization, live subscription, and streaming
-paths covered by Go tests and race tests. The external official TCK/SDK run is
+push runtime, executor-result serialization, live subscription, outbound task
+observer/OTEL metrics, and streaming paths covered by Go tests and race tests.
+The external official TCK/SDK run is
 tracked separately because its card-schema and error-classification checks
 have documented upstream discrepancies and its long-lived fixture suite
 reuses task IDs across tests.

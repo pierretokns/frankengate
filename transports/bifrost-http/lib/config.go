@@ -550,6 +550,7 @@ type Config struct {
 	A2ACredentialResolver   *a2abroker.RuntimeCredentialResolver
 	A2ACredentialObserver   a2abroker.CredentialObserver
 	A2ACredentialAuditStore a2abroker.CredentialAuditStore
+	A2ATaskObserver         a2abroker.TaskObserver
 	// A2ABroker is the explicit outbound task runtime. It never creates a
 	// network sender; callers supply a policy-approved Sender at dispatch time.
 	A2ABroker         *a2abroker.Broker
@@ -990,6 +991,18 @@ func (c *Config) SetA2ACredentialObserver(observer a2abroker.CredentialObserver)
 	c.A2ACredentialObserver = observer
 	if c.A2ABroker != nil {
 		c.A2ABroker.SetCredentialObserver(observer)
+	}
+}
+
+// SetA2ATaskObserver installs the low-cardinality outbound task lifecycle
+// projection used by OTEL and other operational observers.
+func (c *Config) SetA2ATaskObserver(observer a2abroker.TaskObserver) {
+	if c == nil {
+		return
+	}
+	c.A2ATaskObserver = observer
+	if c.A2ABroker != nil {
+		c.A2ABroker.SetTaskObserver(observer)
 	}
 }
 

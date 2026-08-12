@@ -1637,12 +1637,17 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	// callback; outbound dispatch remains caller-supplied and policy-gated.
 	if s.Config != nil && s.Config.A2ABroker != nil {
 		credentialObserver := s.Config.A2ACredentialObserver
-		if credentialObserver == nil {
-			if otelPlugin, err := lib.FindPluginAs[*otel.OtelPlugin](s.Config, otel.PluginName); err == nil {
+		taskObserver := s.Config.A2ATaskObserver
+		if otelPlugin, err := lib.FindPluginAs[*otel.OtelPlugin](s.Config, otel.PluginName); err == nil {
+			if credentialObserver == nil {
 				credentialObserver = otelPlugin
+			}
+			if taskObserver == nil {
+				taskObserver = otelPlugin
 			}
 		}
 		s.Config.SetA2ACredentialObserver(credentialObserver)
+		s.Config.SetA2ATaskObserver(taskObserver)
 	}
 	healthHandler.SetA2APushHealth(func() any {
 		health := inboundA2AHandler.PushHealth()

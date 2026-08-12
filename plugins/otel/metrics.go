@@ -84,6 +84,7 @@ type MetricsExporter struct {
 	governanceSyncReady               *syncFloat64UpDownCounter
 	a2aPushEventsTotal                *syncInt64Counter
 	a2aCredentialEventsTotal          *syncInt64Counter
+	a2aTaskEventsTotal                *syncInt64Counter
 
 	// Trace exporter health. These describe the delivery path from the gateway
 	// to each configured collector (rather than the upstream inference path),
@@ -526,6 +527,7 @@ func (m *MetricsExporter) initMetrics() {
 	m.governanceSyncReady = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_ready", desc: "Whether this pod has a fresh governance authority snapshot", unit: "{state}", meter: m.meter}
 	m.a2aPushEventsTotal = &syncInt64Counter{name: "bifrost_a2a_push_events_total", desc: "A2A push delivery lifecycle events", unit: "{event}", meter: m.meter}
 	m.a2aCredentialEventsTotal = &syncInt64Counter{name: "bifrost_a2a_credential_events_total", desc: "A2A credential resolution lifecycle events", unit: "{event}", meter: m.meter}
+	m.a2aTaskEventsTotal = &syncInt64Counter{name: "bifrost_a2a_task_events_total", desc: "A2A outbound task lifecycle events", unit: "{event}", meter: m.meter}
 	m.traceExportsTotal = &syncInt64Counter{name: "bifrost_otel_trace_exports_total", desc: "Trace export attempts to configured OpenTelemetry collectors", unit: "{export}", meter: m.meter}
 	m.traceExportErrorsTotal = &syncInt64Counter{name: "bifrost_otel_trace_export_errors_total", desc: "Trace export attempts that failed or received a non-success collector response", unit: "{export}", meter: m.meter}
 	m.traceExportLatency = &syncFloat64Histogram{name: "bifrost_otel_trace_export_latency_seconds", desc: "Latency of trace exports to configured OpenTelemetry collectors", unit: "s", meter: m.meter, boundaries: upstreamLatencyBuckets}
@@ -559,6 +561,24 @@ func (m *MetricsExporter) RecordA2ACredential(ctx context.Context, kind, outcome
 		attribute.String("kind", boundedA2ACredentialKind(kind)),
 		attribute.String("outcome", boundedA2ACredentialOutcome(outcome)),
 	))
+}
+
+// RecordA2ATask records bounded outbound task state transitions. Task IDs,
+// tenants, endpoints, payloads, and errors never become metric attributes.
+func (m *MetricsExporter) RecordA2ATask(ctx context.Context, state string, retryable bool) {
+	m.a2aTaskEventsTotal.Add(ctx, 1, metric.WithAttributes(
+		attribute.String("state", boundedA2ATaskState(state)),
+		attribute.Bool("retryable", retryable),
+	))
+}
+
+func boundedA2ATaskState(state string) string {
+	switch strings.ToLower(strings.TrimSpace(state)) {
+	case "submitted", "working", "input_required", "auth_required", "completed", "failed", "canceled", "rejected":
+		return strings.ToLower(strings.TrimSpace(state))
+	default:
+		return "other"
+	}
 }
 
 func boundedA2ACredentialKind(kind string) string {

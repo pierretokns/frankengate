@@ -769,6 +769,20 @@ func (p *OtelPlugin) ObserveA2ACredential(observation a2abroker.CredentialObserv
 	}
 }
 
+// ObserveTaskEvent implements the outbound A2A task observer. Only bounded
+// state and retryability are projected; task identity and transport material
+// stay out of metrics and traces.
+func (p *OtelPlugin) ObserveTaskEvent(_ a2abroker.Task, event a2abroker.Event) {
+	if p == nil {
+		return
+	}
+	for _, target := range p.targets {
+		if target != nil && target.metricsExporter != nil {
+			target.metricsExporter.RecordA2ATask(context.Background(), string(event.State), event.Retryable)
+		}
+	}
+}
+
 // RecordHTTPMetrics records HTTP-layer metrics (request count, duration, request/response
 // sizes) against every profile's metrics exporter. The HTTP transport's middleware calls
 // this once per completed request; it is a no-op when no profile has metrics enabled.

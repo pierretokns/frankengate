@@ -87,3 +87,25 @@ func TestConfigOutboundA2ARuntimeRequiresExplicitConfiguredSender(t *testing.T) 
 		t.Fatalf("configured dispatch failed: task=%#v err=%v", completed, err)
 	}
 }
+
+func TestConfigOutboundA2ATaskObserverReceivesSafeLifecycle(t *testing.T) {
+	var observed []a2abroker.Event
+	cfg := &Config{
+		A2ABroker: a2abroker.New(time.Now, func() string { return "task-runtime-observer" }, a2abroker.RetryPolicy{}),
+	}
+	cfg.SetA2ATaskObserver(a2abroker.TaskObserverFunc(func(_ a2abroker.Task, event a2abroker.Event) {
+		observed = append(observed, event)
+	}))
+	task, err := cfg.SubmitOutboundA2A("https://agent.example/a2a", "card-digest", []byte(`{"message":"hello"}`), "trace-runtime")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cfg.A2ABroker.Dispatch(context.Background(), task.ID, []byte(`{"message":"hello"}`), runtimeSenderFunc(func(_ context.Context, _ a2abroker.SendRequest) (a2abroker.Event, error) {
+		return a2abroker.Event{State: a2abroker.StateCompleted}, nil
+	})); err != nil {
+		t.Fatal(err)
+	}
+	if len(observed) != 2 || observed[0].State != a2abroker.StateWorking || observed[1].State != a2abroker.StateCompleted {
+		t.Fatalf("unexpected task observations: %#v", observed)
+	}
+}

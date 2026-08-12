@@ -30,6 +30,7 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 	exporter.AddGovernanceSyncMetric(ctx, "overdraft_notification_failed", 1)
 	exporter.RecordA2APush(ctx, "delivered")
 	exporter.RecordA2ACredential(ctx, "bearer", "resolved")
+	exporter.RecordA2ATask(ctx, "working", true)
 
 	for name, instrument := range map[string]any{
 		"reservations":        exporter.governanceReservationsTotal,
@@ -59,6 +60,7 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 		"bifrost_governance_sync_poll_errors_total":    false,
 		"bifrost_a2a_push_events_total":                false,
 		"bifrost_a2a_credential_events_total":          false,
+		"bifrost_a2a_task_events_total":                false,
 	}
 	for _, scope := range metrics.ScopeMetrics {
 		for _, metric := range scope.Metrics {
@@ -70,6 +72,20 @@ func TestGovernanceMetricsAreInitializedAndRecordable(t *testing.T) {
 	for name, found := range want {
 		if !found {
 			t.Errorf("collected metrics missing %s", name)
+		}
+	}
+}
+
+func TestA2ATaskStateLabelsAreBounded(t *testing.T) {
+	for _, tc := range []struct {
+		in, want string
+	}{
+		{"working", "working"},
+		{"AUTH_REQUIRED", "auth_required"},
+		{"unexpected", "other"},
+	} {
+		if got := boundedA2ATaskState(tc.in); got != tc.want {
+			t.Fatalf("boundedA2ATaskState(%q) = %q, want %q", tc.in, got, tc.want)
 		}
 	}
 }
