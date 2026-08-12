@@ -102,31 +102,13 @@ func (c *AgentCard) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// MarshalJSON emits the released wrapper form for securityRequirements while
-// retaining the legacy flat security field for clients in the migration
-// window. Internally the gateway keeps requirements in the compact flat form
-// so policy and credential selection do not need protocol-specific branches.
+// MarshalJSON retains the flat securityRequirements form because it is the
+// interoperable A2A 1.0 JSON representation consumed by the official Go and
+// TypeScript SDKs. The decoder still accepts the newer wrapped form emitted by
+// some draft generators.
 func (c AgentCard) MarshalJSON() ([]byte, error) {
 	type alias AgentCard
-	type wrappedScheme struct {
-		List []string `json:"list"`
-	}
-	type wrappedRequirement struct {
-		Schemes map[string]wrappedScheme `json:"schemes"`
-	}
-	wrapped := make([]wrappedRequirement, 0, len(c.SecurityRequirements))
-	for _, requirement := range c.SecurityRequirements {
-		schemes := make(map[string]wrappedScheme, len(requirement))
-		for id, scopes := range requirement {
-			list := append([]string{}, scopes...)
-			schemes[id] = wrappedScheme{List: list}
-		}
-		wrapped = append(wrapped, wrappedRequirement{Schemes: schemes})
-	}
-	return json.Marshal(struct {
-		*alias
-		SecurityRequirements []wrappedRequirement `json:"securityRequirements,omitempty"`
-	}{alias: (*alias)(&c), SecurityRequirements: wrapped})
+	return json.Marshal((*alias)(&c))
 }
 
 type AgentProvider struct {
@@ -196,6 +178,41 @@ type SecurityScheme struct {
 	BearerFormat     string          `json:"bearerFormat,omitempty"`
 	OpenIDConnectURL string          `json:"openIdConnectUrl,omitempty"`
 	Flows            json.RawMessage `json:"flows,omitempty"`
+}
+
+// MarshalJSON emits the released A2A 1.0 oneof wrapper vocabulary. The
+// decoder above remains liberal for legacy flat cards, but official Go/TS
+// SDKs use the released discriminated form and reject a flat {type:http}
+// security scheme.
+func (s SecurityScheme) MarshalJSON() ([]byte, error) {
+	type fields struct {
+		Description      string          `json:"description,omitempty"`
+		Name             string          `json:"name,omitempty"`
+		In               string          `json:"in,omitempty"`
+		Scheme           string          `json:"scheme,omitempty"`
+		BearerFormat     string          `json:"bearerFormat,omitempty"`
+		OpenIDConnectURL string          `json:"openIdConnectUrl,omitempty"`
+		Flows            json.RawMessage `json:"flows,omitempty"`
+	}
+	f := fields{Description: s.Description, Name: s.Name, In: s.In, Scheme: s.Scheme, BearerFormat: s.BearerFormat, OpenIDConnectURL: s.OpenIDConnectURL, Flows: s.Flows}
+	key := ""
+	switch s.Type {
+	case "apiKey":
+		key = "apiKeySecurityScheme"
+	case "http":
+		key = "httpAuthSecurityScheme"
+	case "oauth2":
+		key = "oauth2SecurityScheme"
+	case "openIdConnect":
+		key = "openIdConnectSecurityScheme"
+	case "mutualTLS":
+		key = "mtlsSecurityScheme"
+	default:
+		return json.Marshal(struct {
+			Type string `json:"type"`
+		}{Type: s.Type})
+	}
+	return json.Marshal(map[string]fields{key: f})
 }
 
 // UnmarshalJSON accepts both the early flat security-scheme shape and the

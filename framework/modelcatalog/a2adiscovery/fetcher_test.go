@@ -71,7 +71,7 @@ func TestSecurityRequirementsAcceptReleasedWrapperShape(t *testing.T) {
 		"version":"1",
 		"supportedInterfaces":[{"url":"https://agent.example/a2a","protocolBinding":"JSONRPC","protocolVersion":"1.0"}],
 		"securitySchemes":{"oidc":{"openIdConnectSecurityScheme":{"openIdConnectUrl":"https://issuer.example/.well-known/openid-configuration"}}},
-		"securityRequirements":[{"schemes":{"oidc":{"list":["openid","profile"]}}}],
+		"securityRequirements":[{"oidc":["openid","profile"]}],
 		"skills":[{"id":"chat","name":"Chat"}]
 	}`), &card)
 	if err != nil {

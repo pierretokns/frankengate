@@ -87,10 +87,11 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 		"version":"2026.08.04",
 		"capabilities":{"streaming":true,"stateTransitionHistory":true,"extendedAgentCard":true},
 		"securitySchemes":{
-			"api_key":{"type":"apiKey","description":"gateway virtual key","name":"x-bf-vk","in":"header"},
-			"bearer":{"type":"http","description":"audience-bound inbound task token","scheme":"bearer","bearerFormat":"JWT"}
+			"api_key":{"apiKeySecurityScheme":{"description":"gateway virtual key","name":"x-bf-vk","in":"header"}},
+			"bearer":{"httpAuthSecurityScheme":{"description":"audience-bound inbound task token","scheme":"bearer","bearerFormat":"JWT"}}
 		},
 		"security":[{"api_key":[]},{"bearer":["agent:read","agent:write"]}],
+		"securityRequirements":[{"api_key":[]},{"bearer":["agent:read","agent:write"]}],
 		"defaultInputModes":["application/json","text"],
 		"defaultOutputModes":["application/json","text"],
 		"skills":[
@@ -115,8 +116,7 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 			}
 		],
 		"supportsAuthenticatedExtendedCard":true,
-		"extensions":{"com.frankengate.card":{"visibility":"internal"}},
-		"securityRequirements":[{"schemes":{"api_key":{"list":[]}}},{"schemes":{"bearer":{"list":["agent:read","agent:write"]}}}]
+		"extensions":{"com.frankengate.card":{"visibility":"internal"}}
 	}`)
 	if string(first) != expected {
 		t.Fatalf("unexpected canonical JSON:\n%s\nwant:\n%s", first, expected)
