@@ -29,3 +29,15 @@ gateway machinery, but it does not implement the normative hosted `A2AService`
 itself. FrankenGate's hosted-service gap is tracked explicitly as Bead
 `bif-86bq.16.3`; TCK gRPC coverage remains a release gate for deployments that
 enable the binding, not something to silently claim for HTTP-only deployments.
+
+## Conformance status
+
+The pinned `a2a-tck` gRPC status tests currently expect `UNIMPLEMENTED` for
+push-notification-disabled and unsupported-version errors. FrankenGate uses
+the official `a2a-go/v2.4.0` generated server and its normative `grpcutil`
+mapping, which emits `FAILED_PRECONDITION` for those two A2A sentinel errors;
+the SDK's own mapping tests assert this. The handler now rejects unsupported
+`a2a-version` metadata before authentication or task execution, with a
+focused test. This is recorded as an upstream TCK numeric-code discrepancy,
+not an unvalidated version path. The official generated Go client, focused
+bufconn tests, and isolated TCK stream/error checks pass.

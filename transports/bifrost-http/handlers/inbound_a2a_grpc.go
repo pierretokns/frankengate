@@ -148,6 +148,11 @@ func (h *inboundA2AGRPCHandler) authorized(ctx context.Context, artifactID strin
 		return nil, authorityepoch.Principal{}, err
 	}
 	md, _ := metadata.FromIncomingContext(ctx)
+	for _, version := range md.Get("a2a-version") {
+		if version = strings.TrimSpace(version); version != "" && version != a2aProtocolVersion {
+			return nil, authorityepoch.Principal{}, grpcError(a2a.ErrVersionNotSupported, "A2A version is not supported")
+		}
+	}
 	principal, reference, err := h.options.Authenticator(ctx, md)
 	if err != nil || authorityepoch.ValidatePrincipal(principal) != nil {
 		return nil, authorityepoch.Principal{}, a2a.NewError(a2a.ErrUnauthenticated, "A2A metadata authentication failed")

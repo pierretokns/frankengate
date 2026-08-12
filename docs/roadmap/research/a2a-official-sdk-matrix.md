@@ -49,6 +49,26 @@ The manifest records each fixture path, fixture SHA-256, source repository URL, 
 
 ## 2026-08-12 verification note
 
+The native gRPC boundary was then exercised against the pinned TCK commit
+`5996b79f9cefa6fc390980e383e358a66fb9e49e` through a live loopback listener
+and the official generated Go service. The focused gRPC selection reported
+12 passed, 2 failed, and 3 skipped out of 17 selected requirements. The two
+reported failures are status-code expectations in the pinned TCK: it requires
+`UNIMPLEMENTED` for `PUSH_NOTIFICATION_NOT_SUPPORTED` and
+`VERSION_NOT_SUPPORTED`, while the official `a2a-go/v2.4.0` `grpcutil` mapping
+used by FrankenGate intentionally emits `FAILED_PRECONDITION` for both. The
+official SDK's own mapping tests assert that behavior, so FrankenGate keeps
+the SDK-compatible status and error-info reason rather than returning a code
+that the official client would decode as `METHOD_NOT_FOUND`. The version
+semantic itself is enforced by the gRPC handler and has a focused regression
+test; the TCK failure is only the stale numeric-code expectation.
+
+The selected TCK stream/error checks pass when run in isolation. The broad
+selection can report a skip after reusing deterministic task IDs across tests;
+the pinned TCK's long-lived SUT fixture assumes test isolation that a single
+process does not provide. FrankenGate's generated Go-client and race tests
+cover the same stream, replay, cancellation, and tenant-boundary paths.
+
 The current FrankenGate implementation was exercised against the official
 Python, Go, and JavaScript SDKs over authenticated HTTPS; all three completed
 Agent Card/client smoke flows, and the JavaScript stream produced three events.

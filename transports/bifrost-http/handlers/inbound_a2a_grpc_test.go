@@ -258,6 +258,27 @@ func TestInboundA2AGRPCCardHealthGate(t *testing.T) {
 	}
 }
 
+func TestInboundA2AGRPCRejectsUnsupportedProtocolVersion(t *testing.T) {
+	handler := NewInboundA2AHandler(nil, nil)
+	handler.SetA2AExecutionResolver(A2AExecutionResolverFunc(func(context.Context, A2AExecutionInput) (A2AExecutionResult, error) {
+		return A2AExecutionResult{Handled: true, MessageText: "unexpected"}, nil
+	}))
+	client, closeServer := startA2AGRPCBufconn(t, handler, A2AGRPCOptions{Authenticator: grpcTestAuthenticator})
+	defer closeServer()
+
+	request, err := pbconv.ToProtoSendMessageRequest(grpcTestMessage("message-version", "reject me"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx := metadata.NewOutgoingContext(context.Background(), metadata.Pairs(
+		"authorization", "Bearer tenant-a",
+		"a2a-version", "99.0",
+	))
+	if _, err := client.SendMessage(ctx, request); status.Code(err) != codes.FailedPrecondition {
+		t.Fatalf("unsupported A2A version code = %s, want FailedPrecondition", status.Code(err))
+	}
+}
+
 type grpcTestPushDelivery struct{}
 
 func (grpcTestPushDelivery) Deliver(context.Context, a2apush.DeliveryRequest) error { return nil }
