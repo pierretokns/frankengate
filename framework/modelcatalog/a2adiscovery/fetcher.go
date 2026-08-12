@@ -140,6 +140,25 @@ func NewFetcher(opts Options) (*Fetcher, error) {
 	return f, nil
 }
 
+// NewProxyHTTPClient returns an HTTP client with the same URL, redirect, DNS,
+// and dial-time SSRF policy used by Agent Card discovery. Unlike NewFetcher's
+// client, the returned client has no whole-response timeout: callers must
+// attach a deadline to each request so streaming A2A responses can remain
+// live while still being bounded by the caller's policy.
+//
+// ResponseHeaderTimeout remains enabled, so an upstream must produce response
+// headers within Options.Timeout. The transport disables compression because a
+// transparent proxy must not rewrite or inspect an implicitly transformed body.
+func NewProxyHTTPClient(opts Options) (*http.Client, error) {
+	f, err := NewFetcher(opts)
+	if err != nil {
+		return nil, err
+	}
+	client := *f.client
+	client.Timeout = 0
+	return &client, nil
+}
+
 func (f *Fetcher) Fetch(ctx context.Context, rawURL string) (*FetchResult, error) {
 	target, err := parseFetchURL(rawURL)
 	if err != nil {

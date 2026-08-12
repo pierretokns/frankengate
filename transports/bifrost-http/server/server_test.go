@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"embed"
 	"net"
 	"testing"
 
@@ -47,6 +48,22 @@ func TestConfiguredA2APushUsesDurableStoresWithoutImplicitDelivery(t *testing.T)
 	server.StopA2APushRuntime()
 	if server.inboundA2AHandler.PushHealth().Running {
 		t.Fatal("expected push runtime to stop cleanly")
+	}
+}
+
+func TestA2AProxyServerWiringIsExplicitOptIn(t *testing.T) {
+	server := NewBifrostHTTPServer("test", embed.FS{})
+	if server.a2aProxyHandler != nil {
+		t.Fatal("A2A proxy was enabled without explicit configuration")
+	}
+	if err := server.ConfigureA2AProxy(handlers.A2AProxyOptions{
+		UpstreamURL:  "https://agent.example/.well-known/agent-card.json",
+		AllowedHosts: []string{"agent.example"},
+	}); err != nil {
+		t.Fatalf("configure A2A proxy: %v", err)
+	}
+	if server.a2aProxyHandler == nil {
+		t.Fatal("explicit A2A proxy configuration did not install a handler")
 	}
 }
 

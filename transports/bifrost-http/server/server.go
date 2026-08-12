@@ -164,6 +164,7 @@ type BifrostHTTPServer struct {
 	HealthHandler      *handlers.HealthHandler
 	devPprofHandler    *handlers.DevPprofHandler
 	IntegrationHandler *handlers.IntegrationHandler
+	a2aProxyHandler    *handlers.A2AProxyHandler
 
 	AuthMiddleware *handlers.AuthMiddleware
 	// JWTIdentityMiddleware is optional and must be configured before Initialize.
@@ -232,6 +233,19 @@ func NewBifrostHTTPServer(version string, uiContent embed.FS) *BifrostHTTPServer
 // boundary. Passing nil disables this additive adapter.
 func (s *BifrostHTTPServer) SetJWTIdentityMiddleware(m *handlers.JWTIdentityMiddleware) {
 	s.JWTIdentityMiddleware = m
+}
+
+// ConfigureA2AProxy installs an explicit live Agentgateway-compatible A2A
+// proxy. The route is registered during RegisterAPIRoutes; no transparent
+// upstream forwarding exists unless this method is called with a validated
+// upstream URL and allowlist.
+func (s *BifrostHTTPServer) ConfigureA2AProxy(options handlers.A2AProxyOptions) error {
+	handler, err := handlers.NewA2AProxyHandler(options)
+	if err != nil {
+		return err
+	}
+	s.a2aProxyHandler = handler
+	return nil
 }
 
 type GovernanceInMemoryStore struct {
@@ -1676,6 +1690,9 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	oauth2SessionsHandler.RegisterRoutes(s.Router, middlewares...)
 	oauth2ConsentHandler.RegisterRoutes(s.Router, middlewares...)
 	inboundA2AHandler.RegisterRoutes(s.Router, middlewares...)
+	if s.a2aProxyHandler != nil {
+		s.a2aProxyHandler.RegisterRoutes(s.Router, middlewares...)
+	}
 	if err := s.configureConfiguredA2APush(); err != nil {
 		return err
 	}
