@@ -63,7 +63,13 @@ public card wire contract.
 The rebuilt authenticated HTTPS harness reported `139 passed, 5 failed, 121
 skipped` across the official TCK's JSON-RPC and HTTP+JSON suites (`76/102`
 JSON-RPC and `72/96` HTTP+JSON requirements; Agent Card `9/10`; gRPC remains
-skipped). Structured artifacts, direct Message responses, input-required
+skipped). The skip set is now classified: 72 are unadvertised gRPC transport
+cases, 20 are push cases without an injected delivery runtime, 18 are
+fixture-isolation cases from the TCK reusing a deterministic input-required
+message ID, 4 are negative streaming cases that require streaming to be
+unsupported, and the remainder are optional extension/negative cases. Fresh
+server task IDs are no longer derived from `messageId`, so the 18 lifecycle
+skips are not a production idempotency behavior. Structured artifacts, direct Message responses, input-required
 states, live subscriptions, and streaming-order scenarios now exercise the
 production handler through an injected executor seam and pass where the TCK
 executes them. The remaining five reported failures are bounded discrepancies:
@@ -96,8 +102,20 @@ and object store; the worker remains stopped until an egress/readiness gate
 explicitly starts it. These runtime seams are covered by Go unit and race
 tests in addition to the offline fixtures.
 
+Agentgateway interoperability was separately audited at commit
+`e9881bd182408b76eaa5aacc3d8c7199ec8a85a0`. Its A2A module is a transparent
+proxy: the body-preserving request classifier, Agent Card URL rewrite, and
+bounded response inspector do not host tasks or implement the normative
+`A2AService` gRPC service. FrankenGate ports those useful intentions as
+transport-neutral Go helpers and tests in
+`framework/modelcatalog/a2adiscovery/proxy_compat.go` and
+`proxy_compat_test.go`; hosted task responses remain FrankenGate-owned. The
+native hosted gRPC gap is tracked as Bead `bif-86bq.16.3` and is not hidden by
+the current TCK skips.
+
 - The official TCK schema file observed in this slice did not expose JSON-RPC error schema definitions, so the auth/error fixture intentionally treats the JSON-RPC error code as an implementation envelope and only asserts preservation of the HTTP challenge plus A2A `TASK_STATE_AUTH_REQUIRED` task state.
 - No source with unverified or ambiguous provenance was used for fixtures. All retained source repositories are Apache-2.0.
 - This slice does not add UI, SDK dependencies, protobuf generation, or native
-  gRPC execution wiring. The production HTTP handlers and external TCK/SDK
+  gRPC execution wiring. Native hosted gRPC is an explicit follow-up, not an
+  advertised transport; the production HTTP handlers and external TCK/SDK
   harnesses are kept separate from the vendored fixture set.

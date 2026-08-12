@@ -700,7 +700,12 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		h.writeRPCError(ctx, request.ID, -32602, "message must contain bounded text content")
 		return
 	}
-	taskID := boundedTaskID(params.Message.MessageID)
+	// A message ID identifies the input message; it is not the server-owned
+	// task ID. The TCK and real clients may reuse a deterministic message ID
+	// across independent requests, so deriving task identity from it would
+	// incorrectly replay a prior task and hide lifecycle behavior behind
+	// fixture-driven skips. Follow-up requests still supply taskId explicitly.
+	taskID := newA2ATaskID()
 	requestedTaskID := strings.TrimSpace(params.TaskID)
 	if requestedTaskID == "" {
 		requestedTaskID = strings.TrimSpace(params.Message.TaskID)
@@ -870,7 +875,9 @@ func (h *InboundA2AHandler) messageStream(ctx *fasthttp.RequestCtx) {
 		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
 		return
 	}
-	taskID := boundedTaskID(params.Message.MessageID)
+	// See messageSend: a fresh task is server-owned unless the caller supplies
+	// taskId for a follow-up.
+	taskID := newA2ATaskID()
 	requestedTaskID := strings.TrimSpace(params.TaskID)
 	if requestedTaskID == "" {
 		requestedTaskID = strings.TrimSpace(params.Message.TaskID)
@@ -2411,13 +2418,8 @@ func chatResponseText(response *schemas.BifrostChatResponse) string {
 	return strings.TrimSpace(*message.Content.ContentStr)
 }
 
-func boundedTaskID(messageID string) string {
-	messageID = strings.TrimSpace(messageID)
-	if len(messageID) <= 128 {
-		return messageID
-	}
-	sum := sha256.Sum256([]byte(messageID))
-	return "task-" + hex.EncodeToString(sum[:])
+func newA2ATaskID() string {
+	return "task-" + uuid.NewString()
 }
 
 func inboundBaseURL(ctx *fasthttp.RequestCtx) string {

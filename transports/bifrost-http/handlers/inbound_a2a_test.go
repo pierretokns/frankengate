@@ -208,6 +208,41 @@ func TestInboundA2AExecutionResolverSupportsInputRequiredAndRejectsInvalidOutput
 	}
 }
 
+func TestInboundA2ANewMessagesReceiveDistinctServerTaskIDs(t *testing.T) {
+	handler := NewInboundA2AHandler(nil, nil)
+	handler.SetA2AExecutionResolver(A2AExecutionResolverFunc(func(_ context.Context, _ A2AExecutionInput) (A2AExecutionResult, error) {
+		return A2AExecutionResult{Handled: true, State: "TASK_STATE_INPUT_REQUIRED", MessageText: "need input"}, nil
+	}))
+
+	ids := make([]string, 0, 2)
+	for _, messageID := range []string{"same-shape-message", "same-shape-message"} {
+		ctx := newInboundA2ATestContext()
+		ctx.Request.SetBody(mustJSON(map[string]any{
+			"jsonrpc": "2.0", "id": messageID, "method": "SendMessage",
+			"params": map[string]any{"message": map[string]any{
+				"messageId": messageID, "role": "ROLE_USER", "parts": []any{map[string]any{"text": "hello"}},
+			}},
+		}))
+		handler.messageSend(ctx)
+		var response map[string]any
+		if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil {
+			t.Fatal(err)
+		}
+		result, ok := response["result"].(map[string]any)
+		if !ok {
+			t.Fatalf("response = %#v", response)
+		}
+		task, ok := result["task"].(map[string]any)
+		if !ok {
+			t.Fatalf("task response = %#v", response)
+		}
+		ids = append(ids, task["id"].(string))
+	}
+	if ids[0] == ids[1] {
+		t.Fatalf("independent messages reused server task ID %q", ids[0])
+	}
+}
+
 func newInboundA2ATestContext() *fasthttp.RequestCtx {
 	ctx := &fasthttp.RequestCtx{}
 	ctx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "tenant-test", Issuer: "issuer", Subject: "subject"})
