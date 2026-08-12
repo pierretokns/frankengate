@@ -44,12 +44,21 @@ authorization grant, or proof that a remote agent is safe to invoke.
   at send time, blocks unsafe DNS/IP destinations, disables redirects, and
   signs/idempotently labels requests. Nothing automatically opens an egress
   path from a generic secret resolver.
+  When `Config.A2APushDelivery` is supplied by the deployment, normal API
+  bootstrap installs the same durable stores automatically; it intentionally
+  leaves the worker stopped until the deployment's egress/readiness gate calls
+  `StartA2APushRuntime(...)`. If object storage is unavailable, bootstrap fails
+  rather than silently downgrading push recovery to memory.
   Outbound A2A task admission is available through
   `Config.SubmitOutboundA2A` and `Config.DispatchOutboundA2A`: the latter uses
   the configured OAuth, pass-through, or RFC 8693/7523 resolver only at
   dispatch time, requires a caller-supplied allowlist policy and Sender, and
   keeps credentials out of task/event state. The transport does not silently
   create a network sender.
+  `Config.SetA2AOutboundSender(...)` plus
+  `Config.DispatchConfiguredOutboundA2A(...)` is the explicit convenience
+  path for a deployment-owned guarded sender; without it, configured outbound
+  dispatch fails closed.
   When an object store is configured, credential decisions are durably written
   under the hashed `a2a/credential-audit` prefix before dispatch; an audit
   write failure blocks the downstream sender. Records contain only tenant/task
@@ -127,6 +136,11 @@ out-of-order events, stale cards, deterministic round trips, and recovery
 bookkeeping. A release must also run focused Go tests for
 `modelcatalog/agentcard`, `a2adiscovery`, `admission`, `a2abroker`, `evidence`,
 `health`, `inbound`, `provenance`, and `registry`.
+For the runtime seams, also run the `a2apush` package, inbound handler tests,
+configured outbound sender tests, and their race variants. The official
+Python, Go, and JavaScript SDK smoke harness is required for release interop;
+the pinned official TCK result is tracked in the SDK matrix and must not be
+summarized as fully green while its documented discrepancies remain.
 
 ## Recovery playbook
 

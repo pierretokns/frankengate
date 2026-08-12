@@ -552,7 +552,8 @@ type Config struct {
 	A2ACredentialAuditStore a2abroker.CredentialAuditStore
 	// A2ABroker is the explicit outbound task runtime. It never creates a
 	// network sender; callers supply a policy-approved Sender at dispatch time.
-	A2ABroker *a2abroker.Broker
+	A2ABroker         *a2abroker.Broker
+	A2AOutboundSender a2abroker.Sender
 	// A2A push delivery is deliberately runtime-injected: the server will not
 	// advertise push or resolve secrets unless an operator supplies a guarded
 	// delivery implementation and an allowlisted policy.
@@ -992,6 +993,17 @@ func (c *Config) SetA2ACredentialObserver(observer a2abroker.CredentialObserver)
 	}
 }
 
+// SetA2AOutboundSender installs the operator-approved outbound transport used
+// by DispatchConfiguredOutboundA2A. A nil sender disables configured outbound
+// dispatch. Credential resolution and transport policy remain separate so
+// adding OAuth credentials can never silently open a network egress path.
+func (c *Config) SetA2AOutboundSender(sender a2abroker.Sender) {
+	if c == nil {
+		return
+	}
+	c.A2AOutboundSender = sender
+}
+
 // DispatchOutboundA2A performs the complete runtime credential path after
 // task admission. The caller supplies an already-approved Sender and endpoint
 // policy; the configured resolver obtains OAuth/pass-through/token-exchange
@@ -1001,6 +1013,17 @@ func (c *Config) DispatchOutboundA2A(ctx context.Context, taskID string, payload
 		return a2abroker.Task{}, errors.New("A2A outbound credential runtime is not configured")
 	}
 	return c.A2ABroker.DispatchWithCredentials(ctx, taskID, payload, sender, card, request, policy, c.A2ACredentialResolver)
+}
+
+// DispatchConfiguredOutboundA2A uses the sender explicitly installed by the
+// operator. It is a convenience boundary for normal runtime callers; unlike
+// constructing a sender from an endpoint, it cannot cause credential-bearing
+// egress unless transport policy was configured separately first.
+func (c *Config) DispatchConfiguredOutboundA2A(ctx context.Context, taskID string, payload []byte, card *a2adiscovery.AgentCard, request a2abroker.CredentialRequest, policy a2abroker.CredentialPolicy) (a2abroker.Task, error) {
+	if c == nil || c.A2AOutboundSender == nil {
+		return a2abroker.Task{}, errors.New("A2A outbound sender is not explicitly configured")
+	}
+	return c.DispatchOutboundA2A(ctx, taskID, payload, c.A2AOutboundSender, card, request, policy)
 }
 
 const declarativeAlertingConfigKey = "frankengate.alerting.v1"

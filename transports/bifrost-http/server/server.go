@@ -1671,6 +1671,9 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	oauth2SessionsHandler.RegisterRoutes(s.Router, middlewares...)
 	oauth2ConsentHandler.RegisterRoutes(s.Router, middlewares...)
 	inboundA2AHandler.RegisterRoutes(s.Router, middlewares...)
+	if err := s.configureConfiguredA2APush(); err != nil {
+		return err
+	}
 	healthHandler.RegisterRoutes(s.Router, middlewares...)
 	providerHandler.RegisterRoutes(s.Router, middlewares...)
 	mcpHandler.RegisterRoutes(s.Router, middlewares...)
@@ -1738,6 +1741,30 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	// 404 handler
 	s.Router.NotFound = func(ctx *fasthttp.RequestCtx) {
 		handlers.SendError(ctx, fasthttp.StatusNotFound, "Route not found: "+string(ctx.Path()))
+	}
+	return nil
+}
+
+// configureConfiguredA2APush connects an explicitly supplied delivery
+// implementation to durable configuration, outbox, and payload stores during
+// normal server bootstrap. A secret resolver alone is intentionally inert: it
+// has no destination policy and must never open a payload egress path.
+//
+// The worker is not started here. Deployments must explicitly call
+// StartA2APushRuntime after their egress authorization/readiness gate; this
+// prevents boot from delivering queued payloads as an unexpected side effect.
+func (s *BifrostHTTPServer) configureConfiguredA2APush() error {
+	if s == nil || s.Config == nil || s.Config.A2APushDelivery == nil {
+		return nil
+	}
+	if s.Config.ObjectStore == nil {
+		return errors.New("A2A push delivery requires durable object storage")
+	}
+	policy := s.Config.A2APushPolicy
+	policy.RequireDNSResolution = true
+	store := a2apush.NewDurableStore(s.Config.ObjectStore, "frankengate/a2a/push/configs", time.Now)
+	if err := s.ConfigureA2APush(store, policy, s.Config.A2APushDelivery); err != nil {
+		return fmt.Errorf("configure A2A push runtime: %w", err)
 	}
 	return nil
 }

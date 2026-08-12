@@ -29,6 +29,12 @@ socket creation during checks so accidental network access fails the run.
 | Conflicting or out-of-order events | Conflicting duplicate IDs, skipped event IDs, and events after terminal state are quarantined before new side effects. |
 | Stale cards | Fresh cards admit; cards older than the fixed TTL deny new admission. |
 
-These tests are a recovery contract, not an implementation claim for a live A2A
-broker. Production code must satisfy the same decisions when the broker and
-Agent Card ingestion path land.
+These tests are the deterministic recovery contract for the live A2A broker,
+Agent Card admission, inbound task store, streaming journal, and push outbox
+seams. They complement—not replace—the Go unit/race matrix and the external
+official SDK/TCK run. They do not claim that every optional TCK scenario (for
+example, generic file/data artifacts or native gRPC) is implemented.
+
+The current release evidence is six fixture checks and 30 recovery checks,
+with the framework A2A/model-card packages, inbound handler, outbound broker,
+push runtime, and streaming paths covered by Go tests and race tests.

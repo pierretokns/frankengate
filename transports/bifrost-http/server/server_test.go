@@ -2,13 +2,53 @@ package server
 
 import (
 	"context"
+	"net"
 	"testing"
 
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2apush"
+	"github.com/maximhq/bifrost/framework/objectstore"
+	"github.com/maximhq/bifrost/transports/bifrost-http/handlers"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 )
+
+type serverA2APushDelivery struct{}
+
+func (serverA2APushDelivery) Deliver(context.Context, a2apush.DeliveryRequest) error { return nil }
+
+func TestConfiguredA2APushUsesDurableStoresWithoutImplicitDelivery(t *testing.T) {
+	config := &lib.Config{
+		ObjectStore:     objectstore.NewInMemoryObjectStore(),
+		A2APushDelivery: serverA2APushDelivery{},
+		A2APushPolicy: a2apush.Policy{
+			AllowedHosts:         []string{"notify.example.test"},
+			RequireDNSResolution: true,
+			Resolver: a2apush.ResolverFunc(func(context.Context, string) ([]net.IPAddr, error) {
+				return []net.IPAddr{{IP: net.ParseIP("203.0.113.10")}}, nil
+			}),
+		},
+	}
+	server := &BifrostHTTPServer{Config: config, inboundA2AHandler: handlers.NewInboundA2AHandler(nil, config)}
+	if err := server.configureConfiguredA2APush(); err != nil {
+		t.Fatal(err)
+	}
+	health := server.inboundA2AHandler.PushHealth()
+	if !health.Enabled || health.Running {
+		t.Fatalf("expected configured-but-stopped durable runtime, got %#v", health)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	server.StartA2APushRuntime(ctx)
+	if !server.inboundA2AHandler.PushHealth().Running {
+		t.Fatal("expected explicit push runtime start to mark the worker running")
+	}
+	cancel()
+	server.StopA2APushRuntime()
+	if server.inboundA2AHandler.PushHealth().Running {
+		t.Fatal("expected push runtime to stop cleanly")
+	}
+}
 
 // TestConfig is a sample config struct for testing
 type TestConfig struct {

@@ -60,6 +60,28 @@ SDK/proto-compatible array form and accepts both forms while decoding. This is
 recorded as a pinned-TCK schema discrepancy, not a reason to regress the
 public card wire contract.
 
+The same rebuilt authenticated HTTPS harness reported `122 passed, 15 failed,
+128 skipped` across the official TCK's JSON-RPC and HTTP+JSON suites. The
+remaining failures are known compatibility gaps or harness assumptions, not
+an unqualified conformance claim: the pinned card-schema mismatch above,
+scenario-driven file/data artifact and direct-Message expectations, input-
+required scenarios that the generic governed text mock completes immediately,
+and one unsupported-media case whose protocol error is classified differently
+by the runner. The focused lifecycle, streaming/order, transport, and recovery
+checks pass; gRPC remains excluded by the separately documented native-gRPC
+boundary.
+
+The implementation now includes inbound JSON-RPC and HTTP+JSON handlers,
+ordered SSE streaming with bounded replay/restart recovery, durable push
+configuration/outbox/payload stores, guarded secret-reference delivery, and an
+explicit configured outbound sender path. Normal server bootstrap installs
+durable push stores only when a deployment supplies a delivery implementation
+and object store; the worker remains stopped until an egress/readiness gate
+explicitly starts it. These runtime seams are covered by Go unit and race
+tests in addition to the offline fixtures.
+
 - The official TCK schema file observed in this slice did not expose JSON-RPC error schema definitions, so the auth/error fixture intentionally treats the JSON-RPC error code as an implementation envelope and only asserts preservation of the HTTP challenge plus A2A `TASK_STATE_AUTH_REQUIRED` task state.
 - No source with unverified or ambiguous provenance was used for fixtures. All retained source repositories are Apache-2.0.
-- This slice does not add HTTP handlers, UI, SDK dependencies, protobuf generation, or TCK execution wiring.
+- This slice does not add UI, SDK dependencies, protobuf generation, or native
+  gRPC execution wiring. The production HTTP handlers and external TCK/SDK
+  harnesses are kept separate from the vendored fixture set.
