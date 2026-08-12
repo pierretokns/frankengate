@@ -28,6 +28,14 @@ three explicit deployment roles:
    does not replace hosted task ownership, and does not create an open egress
    path.
 
+The hosted gRPC binding is deliberately opt-in because it opens a separate
+HTTP/2 listener. After the HTTP A2A routes are initialized, a deployment passes
+its TLS or h2c `net.Listener` to `BifrostHTTPServer.StartA2AGRPC(...)` with a
+real metadata authenticator, endpoint, health predicate, and (for the default
+model executor) provider/model selection. `StopA2AGRPC()` participates in the
+normal shutdown path. The card does not advertise `GRPC` until that listener
+is running and healthy.
+
 - `GET /api/v1/agent-model-cards` lists only models visible to the caller's
   existing provider/model policy. `query`, `provider`, `limit`, `offset`, and
   `unfiltered` are filters, not authorization bypasses.
