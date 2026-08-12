@@ -40,16 +40,18 @@ type A2AProxyOptions struct {
 	UpstreamURL   string
 	PublicBaseURL string
 
-	MaxRequestBytes  int64
-	MaxResponseBytes int
-	Timeout          time.Duration
-	HTTPSPolicy      a2adiscovery.HTTPSPolicy
-	MaxRedirects     int
-	AllowedHosts     []string
-	AllowedDomains   []string
-	Resolver         a2adiscovery.Resolver
-	DialContext      a2adiscovery.DialContextFunc
-	TLSClientConfig  *tls.Config
+	MaxRequestBytes      int64
+	MaxResponseBytes     int
+	Timeout              time.Duration
+	HTTPSPolicy          a2adiscovery.HTTPSPolicy
+	MaxRedirects         int
+	AllowedHosts         []string
+	AllowedDomains       []string
+	Resolver             a2adiscovery.Resolver
+	DialContext          a2adiscovery.DialContextFunc
+	TLSClientConfig      *tls.Config
+	ForwardAuthorization bool
+	ForwardCookies       bool
 
 	ResponseObserver A2AProxyResponseObserver
 }
@@ -58,15 +60,17 @@ type A2AProxyOptions struct {
 // intentionally opt-in: constructing and registering one requires an
 // upstream URL and an explicit DNS/host allowlist.
 type A2AProxyHandler struct {
-	routePrefix    string
-	upstreamCard   *url.URL
-	upstreamOrigin *url.URL
-	publicBase     *url.URL
-	maxRequest     int64
-	maxResponse    int
-	timeout        time.Duration
-	client         *http.Client
-	observer       A2AProxyResponseObserver
+	routePrefix          string
+	upstreamCard         *url.URL
+	upstreamOrigin       *url.URL
+	publicBase           *url.URL
+	maxRequest           int64
+	maxResponse          int
+	timeout              time.Duration
+	client               *http.Client
+	observer             A2AProxyResponseObserver
+	forwardAuthorization bool
+	forwardCookies       bool
 }
 
 // NewA2AProxyHandler validates the proxy configuration and builds a client
@@ -100,9 +104,8 @@ func NewA2AProxyHandler(options A2AProxyOptions) (*A2AProxyHandler, error) {
 	card.RawPath = ""
 
 	origin := *upstream
-	origin.Path = ""
+	origin.Path = basePath
 	origin.RawPath = ""
-	origin.RawQuery = ""
 	origin.ForceQuery = false
 
 	var publicBase *url.URL
@@ -141,15 +144,17 @@ func NewA2AProxyHandler(options A2AProxyOptions) (*A2AProxyHandler, error) {
 		return nil, fmt.Errorf("A2A proxy client: %w", err)
 	}
 	return &A2AProxyHandler{
-		routePrefix:    routePrefix,
-		upstreamCard:   &card,
-		upstreamOrigin: &origin,
-		publicBase:     publicBase,
-		maxRequest:     maxRequest,
-		maxResponse:    maxResponse,
-		timeout:        timeout,
-		client:         client,
-		observer:       options.ResponseObserver,
+		routePrefix:          routePrefix,
+		upstreamCard:         &card,
+		upstreamOrigin:       &origin,
+		publicBase:           publicBase,
+		maxRequest:           maxRequest,
+		maxResponse:          maxResponse,
+		timeout:              timeout,
+		client:               client,
+		observer:             options.ResponseObserver,
+		forwardAuthorization: options.ForwardAuthorization,
+		forwardCookies:       options.ForwardCookies,
 	}, nil
 }
 
@@ -224,7 +229,7 @@ func (h *A2AProxyHandler) handle(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadGateway, "A2A proxy could not create the upstream request")
 		return
 	}
-	copyRequestHeaders(&ctx.Request.Header, &req.Header)
+	copyRequestHeaders(&ctx.Request.Header, &req.Header, h.forwardAuthorization, h.forwardCookies)
 	req.Header.Set("Accept-Encoding", "identity")
 	req.ContentLength = int64(len(body))
 
@@ -428,10 +433,16 @@ func readA2AProxyBody(body io.Reader, limit int) ([]byte, bool, bool, error) {
 	return data, err == nil, false, err
 }
 
-func copyRequestHeaders(src *fasthttp.RequestHeader, dst *http.Header) {
+func copyRequestHeaders(src *fasthttp.RequestHeader, dst *http.Header, forwardAuthorization, forwardCookies bool) {
 	src.VisitAll(func(key, value []byte) {
 		name := string(key)
 		if isA2AHopByHopHeader(name) || strings.EqualFold(name, "Host") || strings.EqualFold(name, "Content-Length") {
+			return
+		}
+		if strings.EqualFold(name, "Authorization") && !forwardAuthorization {
+			return
+		}
+		if strings.EqualFold(name, "Cookie") && !forwardCookies {
 			return
 		}
 		dst.Add(name, string(value))

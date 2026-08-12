@@ -6,6 +6,28 @@ authorization grant, or proof that a remote agent is safe to invoke.
 
 ## Surfaces
 
+FrankenGate is a governed A2A center plane, not only a reverse proxy. It has
+three explicit deployment roles:
+
+1. **Hosted agent runtime.** FrankenGate owns the Agent Card, task lifecycle,
+   artifacts, ordered streaming/replay, push delivery, execution policy, and
+   OTel/audit signals. Clients discover it through the well-known card and use
+   the advertised JSON-RPC, HTTP+JSON, or (when independently enabled and
+   healthy) gRPC binding.
+2. **Outbound A2A broker.** FrankenGate discovers and admits remote cards,
+   applies tenant/authority and endpoint policy, resolves OAuth/pass-through
+   or RFC 8693/7523 credentials at dispatch time, and sends through a
+   deployment-owned guarded sender. This is the normal center-plane path for
+   Strands, Claude SDK, and other agent clients that need to call other
+   agents.
+3. **Optional transparent edge proxy.** A deployment may explicitly install
+   `ConfigureA2AProxy` with an upstream URL and host/domain allowlist. This
+   mode preserves upstream request/response bytes, rewrites only the upstream
+   Agent Card URLs, and adds bounded telemetry. It is for putting policy and
+   observability in front of an existing agent; it is not enabled by default,
+   does not replace hosted task ownership, and does not create an open egress
+   path.
+
 - `GET /api/v1/agent-model-cards` lists only models visible to the caller's
   existing provider/model policy. `query`, `provider`, `limit`, `offset`, and
   `unfiltered` are filters, not authorization bypasses.

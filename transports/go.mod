@@ -3,6 +3,7 @@ module github.com/maximhq/bifrost/transports
 go 1.26.5
 
 require (
+	github.com/a2aproject/a2a-go/v2 v2.4.0
 	github.com/andybalholm/brotli v1.2.2
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10
 	github.com/aws/aws-sdk-go-v2/service/ses v1.36.1
@@ -19,7 +20,6 @@ require (
 	github.com/mark3labs/mcp-go v0.57.0
 	github.com/maximhq/bifrost/core v1.7.1
 	github.com/maximhq/bifrost/framework v1.5.1
-	github.com/modelcontextprotocol/go-sdk v1.7.0
 	github.com/maximhq/bifrost/plugins/compat v0.1.27
 	github.com/maximhq/bifrost/plugins/governance v1.6.5
 	github.com/maximhq/bifrost/plugins/logging v1.6.1
@@ -29,6 +29,7 @@ require (
 	github.com/maximhq/bifrost/plugins/prompts v1.0.28
 	github.com/maximhq/bifrost/plugins/semanticcache v1.5.28
 	github.com/maximhq/bifrost/plugins/telemetry v1.5.28
+	github.com/modelcontextprotocol/go-sdk v1.7.0
 	github.com/pion/rtcp v1.2.16
 	github.com/pion/webrtc/v4 v4.2.9
 	github.com/prometheus/client_golang v1.23.2
@@ -232,7 +233,7 @@ require (
 	golang.org/x/time v0.15.0 // indirect
 	google.golang.org/api v0.282.0 // indirect
 	google.golang.org/genproto v0.0.0-20260319201613-d00831a3d3e7 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260414002931-afd174a4e478 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260427160629-7cedc36a6bc4 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260523011958-0a33c5d7ca68 // indirect
 	google.golang.org/grpc v1.82.1 // indirect
 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect

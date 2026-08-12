@@ -27,7 +27,7 @@ func TestA2AProxyCardRewriteAndJSONPassthrough(t *testing.T) {
 			_, _ = io.WriteString(w, `{"name":"upstream","supportedInterfaces":[{"protocolBinding":"JSONRPC","url":"https://upstream.example/a2a"}]}`)
 			return
 		}
-		if r.URL.Path != "/a2a" || r.Method != http.MethodPost {
+		if r.URL.Path != "/agent/a2a" || r.Method != http.MethodPost {
 			http.NotFound(w, r)
 			return
 		}
@@ -75,7 +75,7 @@ func TestA2AProxyPassthroughSSEAndOversizedJSON(t *testing.T) {
 	var observed atomic.Int32
 	proxyURL, closeServers := newA2AProxyTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case "/a2a/stream":
+		case "/agent/a2a/stream":
 			w.Header().Set("Content-Type", "text/event-stream")
 			flusher, _ := w.(http.Flusher)
 			_, _ = io.WriteString(w, "data: first\n\n")
@@ -83,7 +83,7 @@ func TestA2AProxyPassthroughSSEAndOversizedJSON(t *testing.T) {
 				flusher.Flush()
 			}
 			_, _ = io.WriteString(w, "data: second\n\n")
-		case "/a2a/large":
+		case "/agent/a2a/large":
 			w.Header().Set("Content-Type", "application/json")
 			_, _ = io.WriteString(w, `{"result":{"kind":"task","status":{"state":"completed"}},"padding":"0123456789"}`)
 		default:
@@ -113,7 +113,7 @@ func TestA2AProxyRejectsBodyDeadlineAllowlistAndSSRFViolations(t *testing.T) {
 	var calls atomic.Int32
 	proxyURL, closeServers := newA2AProxyTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		calls.Add(1)
-		if r.URL.Path == "/slow" {
+		if r.URL.Path == "/agent/slow" {
 			time.Sleep(100 * time.Millisecond)
 		}
 		_, _ = io.WriteString(w, `{"result":{}}`)
@@ -160,6 +160,65 @@ func TestA2AProxyRejectsBodyDeadlineAllowlistAndSSRFViolations(t *testing.T) {
 func TestNewA2AProxyHandlerRequiresAllowlist(t *testing.T) {
 	if _, err := NewA2AProxyHandler(A2AProxyOptions{UpstreamURL: "https://agent.example"}); err == nil {
 		t.Fatal("proxy without an allowlist was accepted")
+	}
+}
+
+func TestA2AProxyCredentialForwardingIsExplicit(t *testing.T) {
+	var authorization, cookie atomic.Value
+	proxyURL, closeServers := newA2AProxyTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		authorization.Store(r.Header.Get("Authorization"))
+		cookie.Store(r.Header.Get("Cookie"))
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"result":{}}`)
+	}, A2AProxyOptions{})
+	defer closeServers()
+
+	request := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(request)
+	response := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(response)
+	request.SetRequestURI(proxyURL + "/a2a/proxy/a2a")
+	request.Header.SetMethod(http.MethodPost)
+	request.Header.SetContentType("application/json")
+	request.Header.Set("Authorization", "Bearer secret")
+	request.Header.Set("Cookie", "session=secret")
+	request.SetBodyString("{}")
+	if err := (&fasthttp.Client{}).Do(request, response); err != nil {
+		t.Fatal(err)
+	}
+	if got := authorization.Load().(string); got != "" {
+		t.Fatalf("authorization forwarded without opt-in: %q", got)
+	}
+	if got := cookie.Load().(string); got != "" {
+		t.Fatalf("cookie forwarded without opt-in: %q", got)
+	}
+
+	var forwardedAuthorization, forwardedCookie atomic.Value
+	forwardURL, closeForward := newA2AProxyTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		forwardedAuthorization.Store(r.Header.Get("Authorization"))
+		forwardedCookie.Store(r.Header.Get("Cookie"))
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"result":{}}`)
+	}, A2AProxyOptions{ForwardAuthorization: true, ForwardCookies: true})
+	defer closeForward()
+	request = fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(request)
+	response = fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(response)
+	request.SetRequestURI(forwardURL + "/a2a/proxy/a2a")
+	request.Header.SetMethod(http.MethodPost)
+	request.Header.SetContentType("application/json")
+	request.Header.Set("Authorization", "Bearer secret")
+	request.Header.Set("Cookie", "session=secret")
+	request.SetBodyString("{}")
+	if err := (&fasthttp.Client{}).Do(request, response); err != nil {
+		t.Fatal(err)
+	}
+	if got := forwardedAuthorization.Load().(string); got != "Bearer secret" {
+		t.Fatalf("authorization opt-in forwarding = %q", got)
+	}
+	if got := forwardedCookie.Load().(string); got != "session=secret" {
+		t.Fatalf("cookie opt-in forwarding = %q", got)
 	}
 }
 

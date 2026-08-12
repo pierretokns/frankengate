@@ -1,27 +1,31 @@
 # A2A native gRPC boundary
 
-FrankenGate currently supports A2A JSON-RPC and HTTP+JSON. Its published Agent
-Card advertises only those bindings, and the HTTP transport has no native A2A
-gRPC service endpoint.
+FrankenGate supports A2A JSON-RPC and HTTP+JSON, with a separately registered
+native A2A gRPC binding built on the official `a2a-go/v2` generated service.
+The published Agent Card advertises gRPC only after the configured gRPC
+listener is healthy and the metadata authenticator is installed. The proxy
+mode is a separate HTTP/JSON edge feature and is not evidence of native gRPC
+hosting.
 
 This is an intentional, tested boundary rather than a compatibility claim:
 
-- the repository does not contain the normative A2A protobuf service contract
-  and generated Go stubs needed to define a stable gRPC API;
-- advertising `GRPC` without that service would cause clients to select an
-  endpoint that cannot accept the protocol;
-- the inbound card test fails if the default card ever advertises `GRPC` before
-  the service is implemented.
+- the official generated service is registered only through the explicit
+  `RegisterA2AGRPCServer`/`NewA2AGRPCServer` APIs;
+- a nil authenticator fails closed and caller-supplied tenant metadata is never
+  trusted;
+- bounded receive/send sizes and context deadlines apply at the gRPC server;
+- the inbound card test still fails if the default card advertises `GRPC`
+  before a healthy configured endpoint exists.
 
-Native gRPC becomes eligible only after a separately reviewed change adds the
-pinned A2A protobuf contract, generated stubs, auth and tenant middleware,
-deadline/cancellation limits, streaming semantics, conformance fixtures, and
-an Agent Card advertisement test. Until then, gRPC clients should use the
-advertised HTTP+JSON binding.
+Native gRPC is eligible only when the pinned generated service, auth and
+tenant middleware, deadline/cancellation limits, streaming semantics,
+conformance fixtures, and healthy Agent Card advertisement are enabled
+together. Deployments without that listener should use the advertised
+HTTP+JSON binding.
 
 The Agentgateway comparison does not remove this requirement. Its A2A module
 is an HTTP proxy policy: it can route an upstream gRPC service through generic
 gateway machinery, but it does not implement the normative hosted `A2AService`
 itself. FrankenGate's hosted-service gap is tracked explicitly as Bead
-`bif-86bq.16.3`; the current TCK gRPC skips are therefore honest exclusions,
-not evidence that the hosted gRPC contract is complete.
+`bif-86bq.16.3`; TCK gRPC coverage remains a release gate for deployments that
+enable the binding, not something to silently claim for HTTP-only deployments.

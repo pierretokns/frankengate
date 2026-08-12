@@ -13,12 +13,12 @@ stay on the gateway, and extracts bounded telemetry from JSON responses. It
 does not host an A2A task registry, implement task state transitions, or
 provide the normative `A2AService` gRPC server.
 
-FrankenGate's current inbound surface is a hosted agent. It owns task IDs,
+FrankenGate's inbound surface is a hosted agent, and it now has an explicit
+opt-in transparent proxy mode alongside it. The hosted surface owns task IDs,
 task state, artifacts, subscriptions, push delivery, recovery, and model
-execution. Therefore the two implementations must not be compared as if they
-had the same output contract: FrankenGate is expected to create and validate
-task envelopes, while a future FrankenGate proxy mode must preserve upstream
-envelopes and only rewrite gateway-owned URLs.
+execution; the proxy preserves upstream envelopes and only rewrites
+gateway-owned URLs. Therefore hosted and proxy mode must not be compared as if
+they had the same output contract.
 
 ## Behavior comparison
 
@@ -30,7 +30,7 @@ envelopes and only rewrite gateway-owned URLs.
 | Call response | Upstream body is preserved byte-for-byte; telemetry is derived only from complete JSON (`success`, `error`, or `unknown`). | Handler owns the response envelope and task state. | Hosted behavior remains authoritative; proxy mode must use the preserved-body inspector. |
 | Streaming | Agentgateway safely inspects finite JSON bodies and skips telemetry for partial/invalid/non-JSON bodies. | FrankenGate emits ordered SSE lifecycle/artifact events with replay and durable journals. | FrankenGate is stronger for hosted streaming; port the safety rule to proxy inspection. |
 | Task lifecycle | No task registry or hosted state machine in the A2A module. | Durable task state, subscriptions, cancellation, restart recovery, push outbox, and OTel lifecycle metrics. | Keep hosted lifecycle in FrankenGate; do not import proxy assumptions into it. |
-| gRPC | A2A policy does not implement `A2AService`; generic gateway routing can proxy an upstream gRPC service. | No native hosted A2A gRPC service or gRPC card advertisement yet. | Remains an explicit hosted-service gap. A proxy implementation may forward gRPC only after HTTP/2 listener, auth, metadata, and card-rewrite boundaries are defined. |
+| gRPC | A2A policy does not implement `A2AService`; generic gateway routing can proxy an upstream gRPC service. | Native hosted gRPC is a separate official-SDK adapter and remains health-gated; proxy mode is HTTP/JSON only unless a separate HTTP/2 policy is configured. | Do not infer native gRPC from proxy support. Advertise hosted gRPC only after its listener, auth, limits, streaming, and readiness gates are live. |
 | Auth/token exchange | Shared Agentgateway traffic policies include backend OAuth, JWT assertion, token exchange, and cross-app-access examples. | FrankenGate has opt-in credential resolution, RFC 8693/7523 exchange, pass-through controls, audit, and fail-closed runtime seams. | Compare credential policy at the broker boundary; never copy proxy auth code into the hosted task handler. |
 
 ## Ported test intentions
@@ -47,10 +47,9 @@ Agentgateway cases into Go without copying Rust code:
   bodies.
 
 The implementation lives in `proxy_compat.go` as bounded, body-preserving
-helpers. It is intentionally transport-neutral until a separate proxy route
-owns upstream forwarding, authentication, streaming, and failure semantics.
-The hosted handler does not call these helpers because doing so would mutate a
-FrankenGate-owned Agent Card or incorrectly replace a server task envelope.
+helpers and is used by the explicit `A2AProxyHandler` route. The hosted handler
+does not call these helpers because doing so would mutate a FrankenGate-owned
+Agent Card or incorrectly replace a server task envelope.
 
 ## Breaking-signature audit
 
@@ -69,8 +68,8 @@ Agentgateway. The meaningful differences are intentional:
    proxy that replaces every interface URL with one common base is a breaking
    client-routing change.
 
-The comparison does not justify advertising gRPC from FrankenGate today. The
+The comparison does not make proxy mode a substitute for hosted gRPC. The
 native boundary remains documented in
-`docs/roadmap/research/a2a-grpc-boundary.md` until the official protobuf
-service, listener, metadata auth, cancellation/deadline, streaming, and TCK
-fixtures are implemented together.
+`docs/roadmap/research/a2a-grpc-boundary.md`, including its independent
+listener, metadata auth, cancellation/deadline, streaming, and card-health
+gates.
