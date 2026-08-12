@@ -37,4 +37,8 @@ example, generic file/data artifacts or native gRPC) is implemented.
 
 The current release evidence is six fixture checks and 30 recovery checks,
 with the framework A2A/model-card packages, inbound handler, outbound broker,
-push runtime, and streaming paths covered by Go tests and race tests.
+push runtime, executor-result serialization, live subscription, and streaming
+paths covered by Go tests and race tests. The external official TCK/SDK run is
+tracked separately because its card-schema and error-classification checks
+have documented upstream discrepancies and its long-lived fixture suite
+reuses task IDs across tests.

@@ -43,6 +43,13 @@ type InboundA2AHandler struct {
 	client *bifrost.Bifrost
 	config *lib.Config
 
+	// executionResolver is the boundary between the A2A transport and an
+	// application-specific agent executor. The default remains the gateway's
+	// text-model path; an injected resolver can return protocol-native task
+	// states, direct messages, and structured artifacts without teaching the
+	// transport about test fixtures or a particular model runtime.
+	executionResolver A2AExecutionResolver
+
 	mu             sync.Mutex
 	tasks          map[string]storedA2ATask
 	now            func() time.Time
@@ -91,6 +98,65 @@ func NewInboundA2AHandler(client *bifrost.Bifrost, config *lib.Config) *InboundA
 		authorityStore, _ = config.ConfigStore.(configstore.PrincipalAuthorizationEpochStore)
 	}
 	return &InboundA2AHandler{client: client, config: config, tasks: make(map[string]storedA2ATask), streamStates: make(map[string]*a2aStreamState), now: time.Now, authorityStore: authorityStore}
+}
+
+// A2AExecutionInput is the bounded, protocol-level input passed to an
+// optional agent executor. It intentionally contains no gateway credentials
+// or raw request payload beyond the normalized text message.
+type A2AExecutionInput struct {
+	MessageID           string
+	TaskID              string
+	ContextID           string
+	InputText           string
+	AcceptedOutputModes []string
+	FollowUp            bool
+}
+
+// A2AExecutionArtifactPart is one released A2A artifact part. Exactly one of
+// Text, Raw, URL, or Data should be populated. Raw is the protocol's base64
+// representation and Data must contain a complete JSON value.
+type A2AExecutionArtifactPart struct {
+	Text      string
+	Raw       string
+	URL       string
+	Data      json.RawMessage
+	Filename  string
+	MediaType string
+}
+
+type A2AExecutionArtifact struct {
+	ArtifactID string
+	Name       string
+	Parts      []A2AExecutionArtifactPart
+}
+
+// A2AExecutionResult lets an executor select the A2A outcome while leaving
+// persistence, authorization, streaming, and wire serialization to the
+// gateway. State defaults to TASK_STATE_COMPLETED.
+type A2AExecutionResult struct {
+	Handled       bool
+	State         string
+	MessageText   string
+	ReturnMessage bool
+	Artifacts     []A2AExecutionArtifact
+}
+
+type A2AExecutionResolver interface {
+	ResolveA2A(context.Context, A2AExecutionInput) (A2AExecutionResult, error)
+}
+
+type A2AExecutionResolverFunc func(context.Context, A2AExecutionInput) (A2AExecutionResult, error)
+
+func (f A2AExecutionResolverFunc) ResolveA2A(ctx context.Context, input A2AExecutionInput) (A2AExecutionResult, error) {
+	return f(ctx, input)
+}
+
+// SetA2AExecutionResolver installs the application-specific execution seam.
+// Passing nil restores the built-in text-model execution path.
+func (h *InboundA2AHandler) SetA2AExecutionResolver(resolver A2AExecutionResolver) {
+	if h != nil {
+		h.executionResolver = resolver
+	}
 }
 
 // ConfigurePushNotifications installs the durable configuration store and an
@@ -322,14 +388,16 @@ type a2aSendParams struct {
 	TaskID        string     `json:"taskId,omitempty"`
 	ContextID     string     `json:"contextId,omitempty"`
 	Configuration struct {
-		Provider string `json:"provider,omitempty"`
-		Model    string `json:"model,omitempty"`
+		Provider            string   `json:"provider,omitempty"`
+		Model               string   `json:"model,omitempty"`
+		AcceptedOutputModes []string `json:"acceptedOutputModes,omitempty"`
 	} `json:"configuration,omitempty"`
 }
 
 type a2aTaskParams struct {
-	ID            string `json:"id"`
-	HistoryLength int    `json:"historyLength,omitempty"`
+	ID                 string `json:"id"`
+	HistoryLength      *int   `json:"historyLength,omitempty"`
+	HistoryLengthSnake *int   `json:"history_length,omitempty"`
 }
 
 type a2aListTasksParams struct {
@@ -358,6 +426,146 @@ type a2aTask struct {
 
 type a2aSendResult struct {
 	Task a2aTask `json:"task"`
+}
+
+var supportedA2AExecutionStates = map[string]struct{}{
+	"TASK_STATE_SUBMITTED":      {},
+	"TASK_STATE_WORKING":        {},
+	"TASK_STATE_INPUT_REQUIRED": {},
+	"TASK_STATE_AUTH_REQUIRED":  {},
+	"TASK_STATE_COMPLETED":      {},
+	"TASK_STATE_CANCELED":       {},
+	"TASK_STATE_FAILED":         {},
+	"TASK_STATE_REJECTED":       {},
+}
+
+func (h *InboundA2AHandler) resolveA2AExecution(ctx context.Context, input A2AExecutionInput) (A2AExecutionResult, bool, error) {
+	if h == nil || h.executionResolver == nil {
+		return A2AExecutionResult{}, false, nil
+	}
+	result, err := h.executionResolver.ResolveA2A(ctx, input)
+	if err != nil {
+		return A2AExecutionResult{}, true, err
+	}
+	if !result.Handled {
+		return A2AExecutionResult{}, false, nil
+	}
+	if result.State == "" {
+		result.State = "TASK_STATE_COMPLETED"
+	}
+	if _, ok := supportedA2AExecutionStates[result.State]; !ok {
+		return A2AExecutionResult{}, true, fmt.Errorf("unsupported A2A execution state %q", result.State)
+	}
+	if err := validateA2AExecutionResult(result); err != nil {
+		return A2AExecutionResult{}, true, err
+	}
+	return result, true, nil
+}
+
+func validateA2AExecutionResult(result A2AExecutionResult) error {
+	if len(result.MessageText) > maxA2ATaskBodyBytes {
+		return fmt.Errorf("A2A execution message exceeds the task limit")
+	}
+	if len(result.Artifacts) > maxA2AStreamEvents {
+		return fmt.Errorf("A2A execution returned too many artifacts")
+	}
+	total := len(result.MessageText)
+	for _, artifact := range result.Artifacts {
+		if len(artifact.ArtifactID) > 256 || len(artifact.Name) > 256 {
+			return fmt.Errorf("A2A execution artifact identity is too long")
+		}
+		if len(artifact.Parts) == 0 || len(artifact.Parts) > maxA2AStreamEvents {
+			return fmt.Errorf("A2A execution artifact has invalid part count")
+		}
+		for _, part := range artifact.Parts {
+			variants := 0
+			if part.Text != "" {
+				variants++
+			}
+			if part.Raw != "" {
+				variants++
+			}
+			if part.URL != "" {
+				variants++
+			}
+			if len(part.Data) > 0 && string(part.Data) != "null" {
+				variants++
+				if !json.Valid(part.Data) {
+					return fmt.Errorf("A2A execution artifact data is invalid JSON")
+				}
+			}
+			if variants != 1 {
+				return fmt.Errorf("A2A execution artifact part must contain exactly one content variant")
+			}
+			if len(part.Text)+len(part.Raw)+len(part.URL)+len(part.Data)+len(part.Filename)+len(part.MediaType) > maxA2ATaskBodyBytes {
+				return fmt.Errorf("A2A execution artifact part exceeds the task limit")
+			}
+			total += len(part.Text) + len(part.Raw) + len(part.URL) + len(part.Data)
+			if total > maxA2ATaskBodyBytes {
+				return fmt.Errorf("A2A execution output exceeds the task limit")
+			}
+		}
+	}
+	if result.ReturnMessage && result.State != "TASK_STATE_COMPLETED" {
+		return fmt.Errorf("direct A2A message requires TASK_STATE_COMPLETED")
+	}
+	if result.ReturnMessage && result.MessageText == "" {
+		return fmt.Errorf("direct A2A message requires message text")
+	}
+	return nil
+}
+
+func executionArtifactParts(parts []A2AExecutionArtifactPart) []a2aPart {
+	converted := make([]a2aPart, 0, len(parts))
+	for _, part := range parts {
+		converted = append(converted, a2aPart{Text: part.Text, Raw: part.Raw, URL: part.URL, Data: append(json.RawMessage(nil), part.Data...), Filename: part.Filename, MediaType: part.MediaType})
+	}
+	return converted
+}
+
+func executionOutputMessage(taskID string, result A2AExecutionResult) *a2aMessage {
+	parts := make([]a2aPart, 0, 1)
+	if result.MessageText != "" {
+		parts = append(parts, a2aPart{Text: result.MessageText, MediaType: "text/plain"})
+	}
+	if len(parts) == 0 && len(result.Artifacts) > 0 {
+		parts = append(parts, executionArtifactParts(result.Artifacts[0].Parts)...)
+	}
+	if len(parts) == 0 {
+		return nil
+	}
+	return &a2aMessage{MessageID: taskID + "-result", Role: "ROLE_AGENT", Parts: parts}
+}
+
+func executionArtifacts(taskID string, result A2AExecutionResult, output *a2aMessage) []a2aArtifact {
+	if len(result.Artifacts) > 0 {
+		artifacts := make([]a2aArtifact, 0, len(result.Artifacts))
+		for index, artifact := range result.Artifacts {
+			id := strings.TrimSpace(artifact.ArtifactID)
+			if id == "" {
+				id = fmt.Sprintf("%s-artifact-%d", taskID, index+1)
+			}
+			artifacts = append(artifacts, a2aArtifact{ArtifactID: id, Name: artifact.Name, Parts: executionArtifactParts(artifact.Parts)})
+		}
+		return artifacts
+	}
+	if output == nil {
+		return nil
+	}
+	return []a2aArtifact{{ArtifactID: taskID + "-response", Name: "response", Parts: output.Parts}}
+}
+
+func (h *InboundA2AHandler) taskFromExecutionResult(taskID, contextID string, input a2aMessage, previous a2aTask, followUp bool, result A2AExecutionResult) (a2aTask, *a2aMessage) {
+	output := executionOutputMessage(taskID, result)
+	history := []a2aMessage{input}
+	if followUp {
+		history = append(append([]a2aMessage(nil), previous.History...), history...)
+	}
+	if output != nil {
+		history = append(history, *output)
+	}
+	task := a2aTask{ID: taskID, ContextID: contextID, History: history, Artifacts: executionArtifacts(taskID, result, output), Status: a2aTaskStatus{State: result.State, Timestamp: h.currentTime().UTC(), Message: output}}
+	return task, output
 }
 
 type a2aTaskStatus struct {
@@ -540,6 +748,34 @@ func (h *InboundA2AHandler) messageSend(ctx *fasthttp.RequestCtx) {
 		h.writeRPCResult(ctx, request.ID, a2aSendResult{Task: existing})
 		return
 	}
+	executionInput := A2AExecutionInput{
+		MessageID:           params.Message.MessageID,
+		TaskID:              taskID,
+		ContextID:           contextID,
+		InputText:           text,
+		AcceptedOutputModes: append([]string(nil), params.Configuration.AcceptedOutputModes...),
+		FollowUp:            followUp,
+	}
+	if execution, handled, executionErr := h.resolveA2AExecution(ctx, executionInput); handled {
+		if executionErr != nil {
+			h.writeRPCError(ctx, request.ID, -32006, executionErr.Error())
+			return
+		}
+		task, output := h.taskFromExecutionResult(taskID, contextID, params.Message, previousTask, followUp, execution)
+		if execution.ReturnMessage {
+			// SendMessageResponse is a JSON oneof. Both released JSON
+			// bindings use the `message` discriminator here; restRPCCall
+			// unwraps the outer JSON-RPC envelope for HTTP+JSON.
+			h.writeRPCResult(ctx, request.ID, map[string]any{"message": *output})
+			return
+		}
+		if err := h.storeTask(ctx, taskPartition, task); err != nil {
+			h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
+			return
+		}
+		h.writeRPCResult(ctx, request.ID, a2aSendResult{Task: task})
+		return
+	}
 	if h.client == nil || h.config == nil {
 		h.writeRPCError(ctx, request.ID, -32000, "A2A execution is unavailable")
 		return
@@ -669,6 +905,26 @@ func (h *InboundA2AHandler) messageStream(ctx *fasthttp.RequestCtx) {
 		h.streamExistingTask(ctx, request.ID, partition, existing)
 		return
 	}
+	executionInput := A2AExecutionInput{
+		MessageID:           params.Message.MessageID,
+		TaskID:              taskID,
+		ContextID:           contextID,
+		InputText:           text,
+		AcceptedOutputModes: append([]string(nil), params.Configuration.AcceptedOutputModes...),
+	}
+	if execution, handled, executionErr := h.resolveA2AExecution(ctx, executionInput); handled {
+		if executionErr != nil {
+			h.writeRPCError(ctx, request.ID, -32006, executionErr.Error())
+			return
+		}
+		submitted := a2aTask{ID: taskID, ContextID: contextID, History: []a2aMessage{params.Message}, Status: a2aTaskStatus{State: "TASK_STATE_SUBMITTED", Timestamp: h.currentTime().UTC()}}
+		if err := h.storeTask(ctx, partition, submitted); err != nil {
+			h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
+			return
+		}
+		h.startResolvedA2AStream(ctx, request.ID, partition, submitted, params.Message, execution)
+		return
+	}
 	if h.client == nil || h.config == nil {
 		h.writeRPCError(ctx, request.ID, -32000, "A2A execution is unavailable")
 		return
@@ -715,6 +971,72 @@ func (h *InboundA2AHandler) messageStream(ctx *fasthttp.RequestCtx) {
 	ctx.SetUserValue(schemas.BifrostContextKeyDeferTraceCompletion, true)
 	ctx.Response.SetBodyStream(reader, -1)
 	go h.produceA2AStream(reader, stream, cancel, partition, submitted, params.Message, httpJSONStream, request.ID)
+}
+
+func (h *InboundA2AHandler) startResolvedA2AStream(ctx *fasthttp.RequestCtx, requestID json.RawMessage, partition string, submitted a2aTask, input a2aMessage, result A2AExecutionResult) {
+	httpJSONStream := isA2AHTTPJSONStream(ctx)
+	streamKey := a2AStreamKey(partition, submitted.ID, httpJSONStream)
+	h.markA2AStreamActive(streamKey)
+	reader := lib.NewSSEStreamReader()
+	ctx.SetContentType("text/event-stream")
+	ctx.Response.Header.Set("Cache-Control", "no-cache")
+	ctx.Response.Header.Set("Connection", "keep-alive")
+	ctx.Response.SetBodyStream(reader, -1)
+	go h.produceResolvedA2AStream(reader, context.Background(), partition, submitted, input, result, httpJSONStream, requestID)
+}
+
+func (h *InboundA2AHandler) produceResolvedA2AStream(reader *lib.SSEStreamReader, runCtx context.Context, partition string, submitted a2aTask, input a2aMessage, result A2AExecutionResult, httpJSON bool, requestID json.RawMessage) {
+	streamKey := a2AStreamKey(partition, submitted.ID, httpJSON)
+	defer reader.Done()
+	terminal := false
+	defer func() {
+		if terminal {
+			h.finishA2AStream(streamKey)
+		}
+	}()
+	send := func(event any, terminalEvent bool) bool {
+		body, err := marshalA2AStreamEvent(httpJSON, requestID, event)
+		if err != nil {
+			return false
+		}
+		published := h.publishA2AStreamEvent(streamKey, body, terminalEvent)
+		if persistErr := h.persistA2AStreamState(streamKey); persistErr != nil {
+			return false
+		}
+		return reader.SendEventWithID(published.ID, "message", published.Body)
+	}
+	if !send(submitted, false) {
+		return
+	}
+	if result.State == "TASK_STATE_COMPLETED" {
+		working := submitted
+		working.Status = a2aTaskStatus{State: "TASK_STATE_WORKING", Timestamp: h.currentTime().UTC(), Message: &a2aMessage{MessageID: submitted.ID + "-working", Role: "ROLE_AGENT", Parts: []a2aPart{{MediaType: "text/plain", Text: "Working on the request."}}}}
+		if err := h.persistDetachedA2ATask(partition, working); err != nil {
+			terminal = true
+			_ = send(a2aJSONRPCError{Code: -32001, Message: "A2A task registry is unavailable"}, true)
+			return
+		}
+		if !send(a2aStreamStatusUpdate{TaskID: submitted.ID, ContextID: submitted.ContextID, Status: working.Status}, false) {
+			return
+		}
+	}
+	task, output := h.taskFromExecutionResult(submitted.ID, submitted.ContextID, input, submitted, false, result)
+	for _, artifact := range task.Artifacts {
+		if !send(a2aStreamArtifactUpdate{TaskID: task.ID, ContextID: task.ContextID, Artifact: artifact, Append: false, LastChunk: true}, false) {
+			return
+		}
+	}
+	if runCtx == nil {
+		runCtx = context.Background()
+	}
+	if err := h.storeTask(runCtx, partition, task); err != nil {
+		terminal = true
+		_ = send(a2aJSONRPCError{Code: -32001, Message: "A2A task registry is unavailable"}, true)
+		return
+	}
+	terminal = true
+	_ = send(a2aStreamStatusUpdate{TaskID: task.ID, ContextID: task.ContextID, Status: task.Status}, true)
+	_ = output
 }
 
 func (h *InboundA2AHandler) produceA2AStream(reader *lib.SSEStreamReader, stream chan *schemas.BifrostStreamChunk, cancel context.CancelFunc, partition string, task a2aTask, input a2aMessage, httpJSON bool, requestID json.RawMessage) {
@@ -820,11 +1142,7 @@ func (h *InboundA2AHandler) streamExistingTask(ctx *fasthttp.RequestCtx, id json
 	}
 	httpJSONStream := isA2AHTTPJSONStream(ctx)
 	streamKey := a2AStreamKey(partition, task.ID, httpJSONStream)
-	replay, subscriber, unsubscribe, terminal, active := h.subscribeA2AStream(ctx, streamKey, after)
-	if subscriber == nil && !terminal && !active {
-		task = h.recoverInterruptedA2AStream(ctx, partition, task, httpJSONStream)
-		replay, subscriber, unsubscribe, terminal, _ = h.subscribeA2AStream(ctx, streamKey, after)
-	}
+	replay, subscriber, unsubscribe, terminal, _ := h.subscribeA2AStream(ctx, streamKey, after)
 	go func() {
 		defer reader.Done()
 		defer unsubscribe()
@@ -1122,22 +1440,27 @@ func (h *InboundA2AHandler) restTaskAction(ctx *fasthttp.RequestCtx) {
 }
 
 func (h *InboundA2AHandler) restSubscribeTask(ctx *fasthttp.RequestCtx) {
-	params := a2aTaskParams{ID: string(ctx.UserValue("task_id").(string))}
-	request := a2aJSONRPCRequest{JSONRPC: "2.0", ID: json.RawMessage(`1`), Method: "SubscribeToTask", Params: mustJSON(params)}
-	ctx.Request.SetBody(mustJSON(request))
-	h.messageSend(ctx)
-	if ctx.Response.StatusCode() >= 400 {
+	taskID := stringValue(ctx.UserValue("task_id"))
+	partition, err := inboundA2ATaskPartition(ctx)
+	if err != nil || h.validateInboundA2AAuthority(ctx, taskID) != nil {
+		writeA2AHTTPError(ctx, -32000, "A2A caller authority is invalid")
 		return
 	}
-	body := append([]byte(nil), ctx.Response.Body()...)
-	var response a2aJSONRPCResponse
-	if err := json.Unmarshal(body, &response); err == nil && response.Error != nil {
-		writeA2AHTTPError(ctx, response.Error.Code, response.Error.Message)
+	task, ok, loadErr := h.loadTask(ctx, partition, taskID)
+	if loadErr != nil {
+		writeA2AHTTPError(ctx, -32001, "A2A task registry is unavailable")
 		return
 	}
-	ctx.SetContentType("text/event-stream")
-	ctx.Response.Header.Set("Cache-Control", "no-cache")
-	ctx.SetBody(append([]byte("data: "), append(body, '\n', '\n')...))
+	if !ok {
+		writeA2AHTTPError(ctx, -32001, "Task not found")
+		return
+	}
+	if isA2ATerminalState(task.Status.State) {
+		writeA2AHTTPError(ctx, -32003, "Task subscription is not supported for terminal tasks")
+		return
+	}
+	ctx.SetUserValue("frankengate-a2a-http-json-stream", true)
+	h.streamExistingTask(ctx, json.RawMessage(`1`), partition, task)
 }
 
 func (h *InboundA2AHandler) restCreatePushNotificationConfig(ctx *fasthttp.RequestCtx) {
@@ -1212,7 +1535,13 @@ func (h *InboundA2AHandler) rpcGetTask(ctx *fasthttp.RequestCtx, request a2aJSON
 		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
 		return
 	}
-	trimTaskHistory(&task, params.HistoryLength)
+	historyLength := params.HistoryLength
+	if historyLength == nil {
+		historyLength = params.HistoryLengthSnake
+	}
+	if historyLength != nil {
+		trimTaskHistory(&task, *historyLength)
+	}
 	h.writeRPCResult(ctx, request.ID, task)
 }
 
@@ -1328,7 +1657,16 @@ func (h *InboundA2AHandler) rpcSubscribeTask(ctx *fasthttp.RequestCtx, request a
 		h.writeRPCError(ctx, request.ID, -32602, "params.id is required")
 		return
 	}
-	task, ok := h.rpcLoadAuthorizedTask(ctx, params.ID)
+	partition, err := inboundA2ATaskPartition(ctx)
+	if err != nil || h.validateInboundA2AAuthority(ctx, params.ID) != nil {
+		h.writeRPCError(ctx, request.ID, -32000, "A2A caller authority is invalid")
+		return
+	}
+	task, ok, loadErr := h.loadTask(ctx, partition, params.ID)
+	if loadErr != nil {
+		h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
+		return
+	}
 	if !ok {
 		h.writeRPCError(ctx, request.ID, -32001, "Task not found")
 		return
@@ -1337,7 +1675,7 @@ func (h *InboundA2AHandler) rpcSubscribeTask(ctx *fasthttp.RequestCtx, request a
 		h.writeRPCError(ctx, request.ID, -32003, "Task subscription is not supported for terminal tasks")
 		return
 	}
-	h.writeSSETask(ctx, request.ID, task)
+	h.streamExistingTask(ctx, request.ID, partition, task)
 }
 
 func (h *InboundA2AHandler) rpcCreatePushNotificationConfig(ctx *fasthttp.RequestCtx, request a2aJSONRPCRequest) {
@@ -1637,7 +1975,11 @@ func marshalA2AStreamEvent(httpJSON bool, id json.RawMessage, event any) ([]byte
 }
 
 func trimTaskHistory(task *a2aTask, historyLength int) {
-	if task == nil || historyLength <= 0 || len(task.History) <= historyLength {
+	if task == nil || historyLength < 0 || len(task.History) <= historyLength {
+		return
+	}
+	if historyLength == 0 {
+		task.History = nil
 		return
 	}
 	task.History = task.History[len(task.History)-historyLength:]

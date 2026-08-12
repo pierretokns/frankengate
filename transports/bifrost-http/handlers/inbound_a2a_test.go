@@ -98,6 +98,122 @@ func TestInboundA2APartsSerializeReleasedV1AndAcceptLegacyFileInput(t *testing.T
 	}
 }
 
+func TestInboundA2AExecutionResolverSupportsDirectMessagesAndArtifacts(t *testing.T) {
+	handler := NewInboundA2AHandler(nil, nil)
+	handler.SetA2AExecutionResolver(A2AExecutionResolverFunc(func(_ context.Context, input A2AExecutionInput) (A2AExecutionResult, error) {
+		if input.InputText != "hello" || input.TaskID == "" {
+			t.Fatalf("resolver input = %#v", input)
+		}
+		return A2AExecutionResult{Handled: true, ReturnMessage: true, MessageText: "Direct response"}, nil
+	}))
+	ctx := newInboundA2ATestContext()
+	ctx.Request.SetBody(mustJSON(map[string]any{
+		"jsonrpc": "2.0", "id": 1, "method": "SendMessage",
+		"params": map[string]any{"message": map[string]any{
+			"messageId": "direct-1", "role": "ROLE_USER", "parts": []any{map[string]any{"text": "hello"}},
+		}},
+	}))
+	handler.messageSend(ctx)
+	var response map[string]any
+	if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil {
+		t.Fatal(err)
+	}
+	result, ok := response["result"].(map[string]any)
+	if !ok || result["task"] != nil {
+		t.Fatalf("direct message response = %#v", response)
+	}
+	message, ok := result["message"].(map[string]any)
+	if !ok {
+		t.Fatalf("direct message payload = %#v", result)
+	}
+	if parts, ok := message["parts"].([]any); !ok || len(parts) != 1 || parts[0].(map[string]any)["text"] != "Direct response" {
+		t.Fatalf("direct message parts = %#v", message["parts"])
+	}
+
+	handler.SetA2AExecutionResolver(A2AExecutionResolverFunc(func(_ context.Context, _ A2AExecutionInput) (A2AExecutionResult, error) {
+		return A2AExecutionResult{Handled: true, MessageText: "summary", Artifacts: []A2AExecutionArtifact{
+			{ArtifactID: "file-1", Name: "file", Parts: []A2AExecutionArtifactPart{{Raw: "aGVsbG8=", Filename: "out.txt", MediaType: "text/plain"}}},
+			{ArtifactID: "url-1", Parts: []A2AExecutionArtifactPart{{URL: "https://example.test/out.txt", Filename: "out.txt", MediaType: "text/plain"}}},
+			{ArtifactID: "data-1", Parts: []A2AExecutionArtifactPart{{Data: json.RawMessage(`{"key":"value"}`), MediaType: "application/json"}}},
+		}}, nil
+	}))
+	ctx = newInboundA2ATestContext()
+	ctx.Request.SetBody(mustJSON(map[string]any{
+		"jsonrpc": "2.0", "id": 2, "method": "SendMessage",
+		"params": map[string]any{"message": map[string]any{
+			"messageId": "artifact-1", "role": "ROLE_USER", "parts": []any{map[string]any{"text": "hello"}},
+		}},
+	}))
+	handler.messageSend(ctx)
+	response = map[string]any{}
+	if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil {
+		t.Fatal(err)
+	}
+	result, ok = response["result"].(map[string]any)
+	if !ok {
+		t.Fatalf("artifact response = %#v", response)
+	}
+	task, ok := result["task"].(map[string]any)
+	if !ok {
+		t.Fatalf("artifact task response = %#v", response)
+	}
+	artifacts, ok := task["artifacts"].([]any)
+	if !ok || len(artifacts) != 3 {
+		t.Fatalf("artifacts = %#v", task["artifacts"])
+	}
+	if got := artifacts[0].(map[string]any)["parts"].([]any)[0].(map[string]any)["raw"]; got != "aGVsbG8=" {
+		t.Fatalf("raw artifact = %#v", got)
+	}
+}
+
+func TestInboundA2AExecutionResolverSupportsInputRequiredAndRejectsInvalidOutput(t *testing.T) {
+	handler := NewInboundA2AHandler(nil, nil)
+	handler.SetA2AExecutionResolver(A2AExecutionResolverFunc(func(_ context.Context, _ A2AExecutionInput) (A2AExecutionResult, error) {
+		return A2AExecutionResult{Handled: true, State: "TASK_STATE_INPUT_REQUIRED", MessageText: "Please provide approval"}, nil
+	}))
+	ctx := newInboundA2ATestContext()
+	ctx.Request.SetBody(mustJSON(map[string]any{
+		"jsonrpc": "2.0", "id": 1, "method": "SendMessage",
+		"params": map[string]any{"message": map[string]any{
+			"messageId": "input-required-1", "role": "ROLE_USER", "parts": []any{map[string]any{"text": "hello"}},
+		}},
+	}))
+	handler.messageSend(ctx)
+	var response map[string]any
+	if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil {
+		t.Fatal(err)
+	}
+	task := response["result"].(map[string]any)["task"].(map[string]any)
+	if state := task["status"].(map[string]any)["state"]; state != "TASK_STATE_INPUT_REQUIRED" {
+		t.Fatalf("input-required state = %#v", state)
+	}
+
+	handler.SetA2AExecutionResolver(A2AExecutionResolverFunc(func(_ context.Context, _ A2AExecutionInput) (A2AExecutionResult, error) {
+		return A2AExecutionResult{Handled: true, Artifacts: []A2AExecutionArtifact{{Parts: []A2AExecutionArtifactPart{{Text: "two", Raw: "bad"}}}}}, nil
+	}))
+	ctx = newInboundA2ATestContext()
+	ctx.Request.SetBody(mustJSON(map[string]any{
+		"jsonrpc": "2.0", "id": 2, "method": "SendMessage",
+		"params": map[string]any{"message": map[string]any{
+			"messageId": "invalid-output-1", "role": "ROLE_USER", "parts": []any{map[string]any{"text": "hello"}},
+		}},
+	}))
+	handler.messageSend(ctx)
+	response = map[string]any{}
+	if err := json.Unmarshal(ctx.Response.Body(), &response); err != nil {
+		t.Fatal(err)
+	}
+	if response["error"].(map[string]any)["code"] != float64(-32006) {
+		t.Fatalf("invalid output response = %#v", response)
+	}
+}
+
+func newInboundA2ATestContext() *fasthttp.RequestCtx {
+	ctx := &fasthttp.RequestCtx{}
+	ctx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, authorityepoch.Principal{Tenant: "tenant-test", Issuer: "issuer", Subject: "subject"})
+	return ctx
+}
+
 func TestInboundA2ARecoveryJournalsBindingSpecificStatusUpdate(t *testing.T) {
 	handler := &InboundA2AHandler{tasks: make(map[string]storedA2ATask), streamStates: make(map[string]*a2aStreamState), now: time.Now}
 	task := a2aTask{ID: "task-restart", ContextID: "ctx-1", Status: a2aTaskStatus{State: "TASK_STATE_WORKING", Timestamp: time.Now().UTC()}}

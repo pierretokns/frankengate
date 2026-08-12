@@ -59,6 +59,14 @@ authorization grant, or proof that a remote agent is safe to invoke.
   `Config.DispatchConfiguredOutboundA2A(...)` is the explicit convenience
   path for a deployment-owned guarded sender; without it, configured outbound
   dispatch fails closed.
+  Inbound execution can optionally be supplied by an application-owned
+  `A2AExecutionResolver`. The resolver receives only bounded normalized task
+  input and may return a direct Message, an input-required/rejected task, or
+  validated text/raw-file/URL-file/JSON-data artifacts. The gateway owns task
+  persistence, tenant scoping, SSE ordering/replay, push enqueue, and wire
+  serialization. Leaving the resolver unset keeps the existing governed
+  text-model execution path; production does not interpret conformance-test
+  message IDs.
   When an object store is configured, credential decisions are durably written
   under the hashed `a2a/credential-audit` prefix before dispatch; an audit
   write failure blocks the downstream sender. Records contain only tenant/task

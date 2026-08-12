@@ -60,16 +60,32 @@ SDK/proto-compatible array form and accepts both forms while decoding. This is
 recorded as a pinned-TCK schema discrepancy, not a reason to regress the
 public card wire contract.
 
-The same rebuilt authenticated HTTPS harness reported `122 passed, 15 failed,
-128 skipped` across the official TCK's JSON-RPC and HTTP+JSON suites. The
-remaining failures are known compatibility gaps or harness assumptions, not
-an unqualified conformance claim: the pinned card-schema mismatch above,
-scenario-driven file/data artifact and direct-Message expectations, input-
-required scenarios that the generic governed text mock completes immediately,
-and one unsupported-media case whose protocol error is classified differently
-by the runner. The focused lifecycle, streaming/order, transport, and recovery
+The rebuilt authenticated HTTPS harness reported `139 passed, 5 failed, 121
+skipped` across the official TCK's JSON-RPC and HTTP+JSON suites (`76/102`
+JSON-RPC and `72/96` HTTP+JSON requirements; Agent Card `9/10`; gRPC remains
+skipped). Structured artifacts, direct Message responses, input-required
+states, live subscriptions, and streaming-order scenarios now exercise the
+production handler through an injected executor seam and pass where the TCK
+executes them. The remaining five reported failures are bounded discrepancies:
+the pinned card-schema mismatch above (CARD-STRUCT-001 and CARD-EXT-001), and
+two transport instances of CORE-SEND-003 where FrankenGate correctly returns
+JSON-RPC `-32005`/HTTP `415` with `CONTENT_TYPE_NOT_SUPPORTED` but the TCK
+requirement omits an `expected_error` and its runner labels the expected error
+as an operation failure. Several history/cancel/subscription cases are also
+recorded as skipped by the TCK collector because its long-lived SUT reuses the
+same `tck-input-required` task ID after a prior test has completed it; this is
+a fixture-isolation assumption, not a production task-idempotency defect.
+The focused lifecycle, streaming/order, transport, recovery, and SDK smoke
 checks pass; gRPC remains excluded by the separately documented native-gRPC
 boundary.
+
+The inbound handler now exposes an application-owned `A2AExecutionResolver`
+boundary. A resolver can return a direct Message or a persisted Task with
+`TASK_STATE_INPUT_REQUIRED`, `TASK_STATE_REJECTED`, or another validated
+terminal state, plus text, raw file, URL file, and JSON data artifacts. Output
+variants are size-bounded, oneof-validated, and serialized in the released
+A2A shape. A nil resolver preserves the normal governed text-model path; no
+TCK message-ID prefixes are interpreted by production code.
 
 The implementation now includes inbound JSON-RPC and HTTP+JSON handlers,
 ordered SSE streaming with bounded replay/restart recovery, durable push
