@@ -140,7 +140,7 @@ func TestExchangeCapsCacheToSubjectExpiry(t *testing.T) {
 	require.Len(t, exchanger.cache, 1)
 	entry := exchanger.cache[cacheKey(config, subject, "")]
 	require.WithinDuration(t, now.Add(9*time.Second), entry.expiresAt, time.Second)
-	_ = calls
+	require.Equal(t, int32(1), calls.Load())
 }
 
 func TestExchangeRedactsEndpointDetailsAndSecrets(t *testing.T) {
