@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"sort"
 	"strconv"
 	"strings"
@@ -151,6 +152,10 @@ func (h *InboundA2AHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	r.GET(a2adiscovery.WellKnownAgentCardPath, h.agentCard)
 	r.GET(a2adiscovery.LegacyAgentCardPath, h.agentCard)
 	a2aMiddlewares := append([]schemas.BifrostHTTPMiddleware{a2aChatRequestTypeMiddleware}, middlewares...)
+	// A2A JSON-RPC clients POST to the interface URL itself. Registering the
+	// root binding avoids router-added slash redirects that clients do not have
+	// to follow for a JSON-RPC transport.
+	r.POST("/", lib.ChainMiddlewares(h.messageSend, a2aMiddlewares...))
 	r.POST("/a2a", lib.ChainMiddlewares(h.messageSend, a2aMiddlewares...))
 	r.POST("/a2a/jsonrpc", lib.ChainMiddlewares(h.messageSend, a2aMiddlewares...))
 	r.POST("/a2a/stream", lib.ChainMiddlewares(h.messageStream, a2aMiddlewares...))
@@ -162,8 +167,11 @@ func (h *InboundA2AHandler) RegisterRoutes(r *router.Router, middlewares ...sche
 	r.GET("/a2a/tasks/{task_id}", lib.ChainMiddlewares(h.taskGet, middlewares...))
 	r.GET("/tasks/{task_id}", lib.ChainMiddlewares(h.taskGet, middlewares...))
 	r.GET("/tasks", lib.ChainMiddlewares(h.restListTasks, middlewares...))
-	r.POST("/tasks/{task_id}:cancel", lib.ChainMiddlewares(h.restCancelTask, middlewares...))
-	r.POST("/tasks/{task_id}:subscribe", lib.ChainMiddlewares(h.restSubscribeTask, middlewares...))
+	// fasthttp/router treats a parameter followed by a colon suffix as a
+	// wildcard regex. Registering both :cancel and :subscribe independently
+	// therefore panics during server startup. Capture the whole segment once
+	// and dispatch the standards-defined colon action in restTaskAction.
+	r.POST("/tasks/{task_id}", lib.ChainMiddlewares(h.restTaskAction, middlewares...))
 	r.POST("/tasks/{task_id}/pushNotificationConfigs", lib.ChainMiddlewares(h.restCreatePushNotificationConfig, middlewares...))
 	r.GET("/tasks/{task_id}/pushNotificationConfigs", lib.ChainMiddlewares(h.restListPushNotificationConfigs, middlewares...))
 	r.GET("/tasks/{task_id}/pushNotificationConfigs/{config_id}", lib.ChainMiddlewares(h.restGetPushNotificationConfig, middlewares...))
@@ -193,6 +201,7 @@ func (h *InboundA2AHandler) agentCard(ctx *fasthttp.RequestCtx) {
 	hash := sha256.Sum256(body)
 	etag := `"` + hex.EncodeToString(hash[:]) + `"`
 	ctx.Response.Header.Set("ETag", etag)
+	ctx.Response.Header.Set("Last-Modified", time.Now().UTC().Format(http.TimeFormat))
 	ctx.Response.Header.Set("Cache-Control", "public, max-age=60, must-revalidate")
 	if string(ctx.Request.Header.Peek("If-None-Match")) == etag {
 		ctx.SetStatusCode(fasthttp.StatusNotModified)
@@ -905,6 +914,20 @@ func (h *InboundA2AHandler) restListTasks(ctx *fasthttp.RequestCtx) {
 func (h *InboundA2AHandler) restCancelTask(ctx *fasthttp.RequestCtx) {
 	params := a2aTaskParams{ID: string(ctx.UserValue("task_id").(string))}
 	h.restRPCCall(ctx, "CancelTask", mustJSON(params))
+}
+
+func (h *InboundA2AHandler) restTaskAction(ctx *fasthttp.RequestCtx) {
+	rawTaskID := stringValue(ctx.UserValue("task_id"))
+	switch {
+	case strings.HasSuffix(rawTaskID, ":cancel"):
+		ctx.SetUserValue("task_id", strings.TrimSuffix(rawTaskID, ":cancel"))
+		h.restCancelTask(ctx)
+	case strings.HasSuffix(rawTaskID, ":subscribe"):
+		ctx.SetUserValue("task_id", strings.TrimSuffix(rawTaskID, ":subscribe"))
+		h.restSubscribeTask(ctx)
+	default:
+		SendError(ctx, fasthttp.StatusNotFound, "A2A task action is unavailable")
+	}
 }
 
 func (h *InboundA2AHandler) restSubscribeTask(ctx *fasthttp.RequestCtx) {
@@ -1764,8 +1787,11 @@ func defaultInboundRecord(base string) inbound.Record {
 			Description: "Governed A2A access to FrankenGate agent workflows.",
 			Version:     "1",
 			Interfaces: []inbound.InterfaceRecord{
-				{URL: base + "/a2a", Transport: a2adiscovery.TransportJSONRPC},
-				{URL: base + "/message:send", Transport: a2adiscovery.TransportHTTPJSON},
+				{URL: base, Transport: a2adiscovery.TransportJSONRPC},
+				// HTTP+JSON clients append the operation binding (for example
+				// /message:send) to this interface URL. JSON-RPC clients post to
+				// the interface URL itself, so these URLs intentionally differ.
+				{URL: base, Transport: a2adiscovery.TransportHTTPJSON},
 			},
 			Capabilities:                      a2adiscovery.AgentCapabilities{Streaming: true, StateTransitionHistory: true},
 			DefaultInputModes:                 []string{"text"},

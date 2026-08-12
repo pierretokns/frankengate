@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/fasthttp/router"
 	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/schemas"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
@@ -19,6 +20,16 @@ import (
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 	"github.com/valyala/fasthttp"
 )
+
+func TestInboundA2ARoutesRegisterColonTaskActions(t *testing.T) {
+	handler := NewInboundA2AHandler(nil, nil)
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			t.Fatalf("A2A route registration panicked: %v", recovered)
+		}
+	}()
+	handler.RegisterRoutes(router.New())
+}
 
 func TestInboundA2ATaskPartitionFailsClosedAndSeparatesTenants(t *testing.T) {
 	var first, second fasthttp.RequestCtx

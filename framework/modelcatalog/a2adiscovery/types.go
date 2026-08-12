@@ -156,6 +156,26 @@ type AgentInterface struct {
 	ProtocolVersion string           `json:"protocolVersion,omitempty"`
 }
 
+// MarshalJSON emits the released A2A 1.0 interface vocabulary when the
+// protocolBinding field is present, while retaining the legacy transport-only
+// shape for additionalInterfaces during the migration window. Emitting both
+// vocabularies makes a released Agent Card fail the official schema.
+func (i AgentInterface) MarshalJSON() ([]byte, error) {
+	type released struct {
+		URL             string           `json:"url"`
+		ProtocolBinding TransportBinding `json:"protocolBinding"`
+		ProtocolVersion string           `json:"protocolVersion,omitempty"`
+	}
+	type legacy struct {
+		URL       string           `json:"url"`
+		Transport TransportBinding `json:"transport"`
+	}
+	if i.ProtocolBinding != "" {
+		return json.Marshal(released{URL: i.URL, ProtocolBinding: i.ProtocolBinding, ProtocolVersion: i.ProtocolVersion})
+	}
+	return json.Marshal(legacy{URL: i.URL, Transport: i.Transport})
+}
+
 type AgentSkill struct {
 	ID          string                     `json:"id"`
 	Name        string                     `json:"name"`

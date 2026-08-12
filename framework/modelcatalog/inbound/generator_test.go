@@ -79,9 +79,9 @@ func TestMarshalAgentCardJSONIsDeterministic(t *testing.T) {
 			{"url":"https://agent.example/a2a/grpc","transport":"GRPC"}
 		],
 		"supportedInterfaces":[
-			{"url":"https://agent.example/a2a/rpc","transport":"JSONRPC","protocolBinding":"JSONRPC","protocolVersion":"1.0"},
-			{"url":"https://agent.example/a2a/http","transport":"HTTP+JSON","protocolBinding":"HTTP+JSON","protocolVersion":"1.0"},
-			{"url":"https://agent.example/a2a/grpc","transport":"GRPC","protocolBinding":"GRPC","protocolVersion":"1.0"}
+			{"url":"https://agent.example/a2a/rpc","protocolBinding":"JSONRPC","protocolVersion":"1.0"},
+			{"url":"https://agent.example/a2a/http","protocolBinding":"HTTP+JSON","protocolVersion":"1.0"},
+			{"url":"https://agent.example/a2a/grpc","protocolBinding":"GRPC","protocolVersion":"1.0"}
 		],
 		"provider":{"organization":"FrankenGate","url":"https://agent.example"},
 		"version":"2026.08.04",
