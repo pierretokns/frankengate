@@ -1,0 +1,33 @@
+{
+  "tenant_id": "enterprise-fixture",
+  "rubric": {
+    "schema_version": "autoeval-rubric-v1",
+    "rubric_id": "support.refund@1",
+    "task_family": "support.refund",
+    "objective": "Verify eligibility before issuing a refund.",
+    "weights": {
+      "goal_progress": 0.35,
+      "precondition_correctness": 0.25,
+      "information_gain": 0.15,
+      "risk_recoverability": 0.20,
+      "cost": 0.05
+    }
+  },
+  "assessment": {
+    "case_id": "case-fixture-001",
+    "candidate_id": "candidate-fixture-001",
+    "trace_id": "fixture-enterprise-001",
+    "action_type": "call_tool",
+    "tool_name": "refund.check",
+    "authorized": true,
+    "valid_schema": true,
+    "dimensions": {
+      "goal_progress": 4,
+      "precondition_correctness": 4,
+      "information_gain": 3,
+      "risk_recoverability": 4,
+      "cost": 3
+    },
+    "evidence_event_ids": ["e1", "e2", "e3"]
+  }
+}
