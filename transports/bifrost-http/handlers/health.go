@@ -16,6 +16,14 @@ import (
 type HealthHandler struct {
 	config         *lib.Config
 	readinessCheck func() bool
+	a2aPushHealth  func() any
+}
+
+// SetA2APushHealth adds a redacted push-runtime component to health responses.
+// It is intentionally separate from liveness and does not expose credentials,
+// destinations, tenant IDs, or payload data.
+func (h *HealthHandler) SetA2APushHealth(check func() any) {
+	h.a2aPushHealth = check
 }
 
 // NewHealthHandler creates a new health handler instance.
@@ -54,8 +62,13 @@ func (h *HealthHandler) getHealth(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	// If DB pings are disabled, just return OK
+	components := map[string]any{}
+	if h.a2aPushHealth != nil {
+		components["a2a_push"] = h.a2aPushHealth()
+	}
 	if h.config.ClientConfig.DisableDBPingsInHealth {
-		SendJSON(ctx, map[string]any{"status": "ok", "components": map[string]any{"db_pings": "disabled"}})
+		components["db_pings"] = "disabled"
+		SendJSON(ctx, map[string]any{"status": "ok", "components": components})
 		return
 	}
 	// Pinging config store
@@ -109,5 +122,6 @@ func (h *HealthHandler) getHealth(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusServiceUnavailable, errors[0])
 		return
 	}
-	SendJSON(ctx, map[string]any{"status": "ok", "components": map[string]any{"db_pings": "ok"}})
+	components["db_pings"] = "ok"
+	SendJSON(ctx, map[string]any{"status": "ok", "components": components})
 }

@@ -28,6 +28,29 @@ const (
 	DeliveryDeadLetter DeliveryStatus = "dead_letter"
 )
 
+// Observation contains only bounded operational labels. It deliberately
+// excludes tenant IDs, task IDs, URLs, payloads, and error text.
+type Observation struct {
+	Outcome    string
+	Status     DeliveryStatus
+	ErrorClass string
+}
+
+// Observer is the optional runtime metrics/audit projection for push delivery.
+// Implementations must treat the callback as best-effort and must not persist
+// credential material.
+type Observer interface {
+	ObserveA2APush(context.Context, Observation)
+}
+
+type ObserverFunc func(context.Context, Observation)
+
+func (f ObserverFunc) ObserveA2APush(ctx context.Context, observation Observation) {
+	if f != nil {
+		f(ctx, observation)
+	}
+}
+
 type DeliveryRecord struct {
 	ID          string         `json:"id"`
 	TenantID    string         `json:"tenantId"`

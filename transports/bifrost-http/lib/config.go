@@ -37,6 +37,7 @@ import (
 	"github.com/maximhq/bifrost/framework/mcpcatalog"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2abroker"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2adiscovery"
 	"github.com/maximhq/bifrost/framework/modelcatalog/a2apush"
 	"github.com/maximhq/bifrost/framework/modelcatalog/datasheet"
 	"github.com/maximhq/bifrost/framework/oauth2"
@@ -546,13 +547,19 @@ type Config struct {
 	// A2ACredentialResolver is the runtime-only adapter for outbound A2A
 	// dispatch. It resolves existing per-user/server OAuth credentials and
 	// explicitly configured token exchanges; it never persists token material.
-	A2ACredentialResolver *a2abroker.RuntimeCredentialResolver
+	A2ACredentialResolver   *a2abroker.RuntimeCredentialResolver
+	A2ACredentialObserver   a2abroker.CredentialObserver
+	A2ACredentialAuditStore a2abroker.CredentialAuditStore
+	// A2ABroker is the explicit outbound task runtime. It never creates a
+	// network sender; callers supply a policy-approved Sender at dispatch time.
+	A2ABroker *a2abroker.Broker
 	// A2A push delivery is deliberately runtime-injected: the server will not
 	// advertise push or resolve secrets unless an operator supplies a guarded
 	// delivery implementation and an allowlisted policy.
 	A2APushDelivery       a2apush.Delivery
 	A2APushSecretResolver a2apush.SecretResolver
 	A2APushPolicy         a2apush.Policy
+	A2APushObserver       a2apush.Observer
 	TokenRefreshWorker    *oauth2.TokenRefreshWorker
 	OAuthSweepWorker      *oauth2.PerUserOAuthSweepWorker
 
@@ -805,6 +812,7 @@ func LoadConfig(ctx context.Context, configDirPath string) (*Config, error) {
 		Providers:       make(map[schemas.ModelProvider]configstore.ProviderConfig),
 		LLMPlugins:      atomic.Pointer[[]schemas.LLMPlugin]{},
 		lifecycleCancel: lifecycleCancel,
+		A2ABroker:       a2abroker.New(time.Now, uuid.NewString, a2abroker.RetryPolicy{}),
 	}
 	// Register feature flags before any file/DB-driven init so the
 	// registry is populated even when config.json is absent. initFeatureFlags
@@ -961,6 +969,38 @@ func LoadConfig(ctx context.Context, configDirPath string) (*Config, error) {
 		}
 	}
 	return config, nil
+}
+
+// SubmitOutboundA2A creates an outbound task in the configured broker. This
+// is state admission only; no network request is made.
+func (c *Config) SubmitOutboundA2A(endpoint, cardDigest string, payload []byte, traceID string) (a2abroker.Task, error) {
+	if c == nil || c.A2ABroker == nil {
+		return a2abroker.Task{}, errors.New("A2A outbound broker is not configured")
+	}
+	return c.A2ABroker.SubmitWithTrace(endpoint, cardDigest, payload, traceID)
+}
+
+// SetA2ACredentialObserver installs a redacted credential-selection projection
+// on the outbound broker. It is safe to use during runtime reloads.
+func (c *Config) SetA2ACredentialObserver(observer a2abroker.CredentialObserver) {
+	if c == nil {
+		return
+	}
+	c.A2ACredentialObserver = observer
+	if c.A2ABroker != nil {
+		c.A2ABroker.SetCredentialObserver(observer)
+	}
+}
+
+// DispatchOutboundA2A performs the complete runtime credential path after
+// task admission. The caller supplies an already-approved Sender and endpoint
+// policy; the configured resolver obtains OAuth/pass-through/token-exchange
+// headers at dispatch time and those headers never enter task state.
+func (c *Config) DispatchOutboundA2A(ctx context.Context, taskID string, payload []byte, sender a2abroker.Sender, card *a2adiscovery.AgentCard, request a2abroker.CredentialRequest, policy a2abroker.CredentialPolicy) (a2abroker.Task, error) {
+	if c == nil || c.A2ABroker == nil || c.A2ACredentialResolver == nil {
+		return a2abroker.Task{}, errors.New("A2A outbound credential runtime is not configured")
+	}
+	return c.A2ABroker.DispatchWithCredentials(ctx, taskID, payload, sender, card, request, policy, c.A2ACredentialResolver)
 }
 
 const declarativeAlertingConfigKey = "frankengate.alerting.v1"
@@ -4205,6 +4245,10 @@ func initFrameworkConfig(ctx context.Context, config *Config, configData *Config
 	config.A2ACredentialResolver = &a2abroker.RuntimeCredentialResolver{
 		OAuthProvider: config.OAuthProvider,
 		Exchanger:     tokenexchange.New(nil),
+	}
+	if config.ObjectStore != nil && config.A2ABroker != nil {
+		config.A2ACredentialAuditStore = a2abroker.NewDurableCredentialAuditStore(config.ObjectStore, "a2a/credential-audit", time.Now)
+		config.A2ABroker.SetCredentialAuditStore(config.A2ACredentialAuditStore)
 	}
 	// Initialize per-user-headers credential provider. Storage parallel of
 	// OAuthProvider for MCPAuthTypePerUserHeaders clients.

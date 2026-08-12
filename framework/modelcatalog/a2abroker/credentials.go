@@ -309,10 +309,32 @@ func (b *Broker) DispatchWithCredentials(ctx context.Context, taskID string, pay
 	}
 	credential, err := ResolveCredential(ctx, request, card, policy, resolver)
 	if err != nil {
+		outcome := credentialOutcome(err)
+		kind := CredentialNone
+		if request.Scheme.Type != "" {
+			if declaredKind, kindErr := kindForScheme(request.Scheme); kindErr == nil {
+				kind = declaredKind
+			}
+		}
+		if auditErr := b.recordCredentialAudit(ctx, task, request, kind, outcome); auditErr != nil {
+			return Task{}, fmt.Errorf("persist A2A credential outcome: %w", auditErr)
+		}
+		b.observeCredential(CredentialObservation{Kind: kind, Outcome: outcome})
 		if errors.Is(err, ErrCredentialRequired) {
 			return b.Apply(taskID, Event{State: StateAuthRequired, Error: "authentication required", At: b.now()})
 		}
 		return Task{}, err
 	}
+	if auditErr := b.recordCredentialAudit(ctx, task, request, credential.Kind, "resolved"); auditErr != nil {
+		return Task{}, fmt.Errorf("persist A2A credential outcome: %w", auditErr)
+	}
+	b.observeCredential(CredentialObservation{Kind: credential.Kind, Outcome: "resolved"})
 	return b.dispatch(ctx, taskID, payload, sender, credential.Headers)
+}
+
+func credentialOutcome(err error) string {
+	if errors.Is(err, ErrCredentialRequired) {
+		return "auth_required"
+	}
+	return "rejected"
 }

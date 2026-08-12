@@ -170,10 +170,27 @@ func TestInboundA2AStreamReplayCursorSuppressesDuplicates(t *testing.T) {
 	if first.ID != "1" || second.ID != "2" {
 		t.Fatalf("stream event ids = %q, %q", first.ID, second.ID)
 	}
-	replay, subscriber, unsubscribe, terminal := handler.subscribeA2AStream("task-stream", 1)
+	replay, subscriber, unsubscribe, terminal, _ := handler.subscribeA2AStream(context.Background(), "task-stream", 1)
 	defer unsubscribe()
 	if !terminal || subscriber != nil || len(replay) != 1 || replay[0].ID != "2" || string(replay[0].Body) != `{"state":"completed"}` {
 		t.Fatalf("replay=%#v subscriber=%v terminal=%v", replay, subscriber, terminal)
+	}
+}
+
+func TestInboundA2AStreamJournalSurvivesHandlerRestart(t *testing.T) {
+	backend := objectstore.NewInMemoryObjectStore()
+	first := NewInboundA2AHandler(nil, &lib.Config{ObjectStore: backend})
+	first.publishA2AStreamEvent("tenant-a\x00task-stream", []byte(`{"state":"working"}`), false)
+	first.publishA2AStreamEvent("tenant-a\x00task-stream", []byte(`{"state":"completed"}`), true)
+	if err := first.persistA2AStreamState("tenant-a\x00task-stream"); err != nil {
+		t.Fatalf("persist stream journal: %v", err)
+	}
+
+	second := NewInboundA2AHandler(nil, &lib.Config{ObjectStore: backend})
+	replay, subscriber, unsubscribe, terminal, active := second.subscribeA2AStream(context.Background(), "tenant-a\x00task-stream", 1)
+	defer unsubscribe()
+	if !terminal || active || subscriber != nil || len(replay) != 1 || replay[0].ID != "2" {
+		t.Fatalf("restart replay=%#v subscriber=%v terminal=%v active=%v", replay, subscriber, terminal, active)
 	}
 }
 

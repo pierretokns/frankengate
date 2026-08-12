@@ -72,6 +72,21 @@ func TestWorkerRetriesThenDeadLettersAndDoesNotCrossTenants(t *testing.T) {
 	}
 }
 
+func TestDeliveryErrorClassIsRedactedAndBounded(t *testing.T) {
+	for _, tc := range []struct {
+		message, want string
+	}{
+		{"A2A push URL DNS resolution failed", "destination"},
+		{"resolve A2A push bearer credential", "credential"},
+		{"A2A push payload digest mismatch", "payload"},
+		{"unexpected downstream response", "delivery"},
+	} {
+		if got := deliveryErrorClass(errors.New(tc.message)); got != tc.want {
+			t.Fatalf("deliveryErrorClass(%q) = %q, want %q", tc.message, got, tc.want)
+		}
+	}
+}
+
 func workerTestPolicy() Policy {
 	return Policy{
 		AllowedHosts:         []string{"notify.example.test"},

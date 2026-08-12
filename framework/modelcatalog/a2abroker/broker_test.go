@@ -18,6 +18,10 @@ func (f senderFunc) Send(ctx context.Context, request SendRequest) (Event, error
 
 func TestBrokerDispatchWithCredentialsScopesHeadersToDeclaredDestination(t *testing.T) {
 	broker := New(time.Now, func() string { return "task-credentials" }, RetryPolicy{})
+	var observations []CredentialObservation
+	broker.SetCredentialObserver(CredentialObserverFunc(func(observation CredentialObservation) {
+		observations = append(observations, observation)
+	}))
 	task, err := broker.Submit("https://agent.example/a2a", "sha256:card", []byte("payload"))
 	if err != nil {
 		t.Fatal(err)
@@ -41,6 +45,9 @@ func TestBrokerDispatchWithCredentialsScopesHeadersToDeclaredDestination(t *test
 	if completed.State != StateCompleted || got.Get("Authorization") != "Bearer opaque" {
 		t.Fatalf("credential was not scoped to the send: task=%#v headers=%#v", completed, got)
 	}
+	if len(observations) != 1 || observations[0].Kind != CredentialBearer || observations[0].Outcome != "resolved" {
+		t.Fatalf("credential observation=%#v", observations)
+	}
 	got.Set("Authorization", "mutated")
 	if task.State != StateSubmitted {
 		t.Fatal("submit result was mutated by dispatch")
@@ -49,6 +56,11 @@ func TestBrokerDispatchWithCredentialsScopesHeadersToDeclaredDestination(t *test
 
 func TestBrokerCredentialRequiredBecomesAuthRequiredWithoutSecret(t *testing.T) {
 	broker := New(time.Now, func() string { return "task-auth" }, RetryPolicy{})
+	var audited []CredentialAuditEvent
+	broker.SetCredentialAuditStore(CredentialAuditStoreFunc(func(_ context.Context, event CredentialAuditEvent) error {
+		audited = append(audited, event)
+		return nil
+	}))
 	task, err := broker.Submit("https://agent.example/a2a", "digest", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -65,6 +77,37 @@ func TestBrokerCredentialRequiredBecomesAuthRequiredWithoutSecret(t *testing.T) 
 	}
 	if waiting.State != StateAuthRequired || waiting.Error != "authentication required" {
 		t.Fatalf("unexpected auth-required task: %#v", waiting)
+	}
+	if len(audited) != 1 || audited[0].Outcome != "auth_required" || audited[0].TaskID != task.ID || audited[0].TenantID != "tenant-a" {
+		t.Fatalf("unexpected credential audit: %#v", audited)
+	}
+}
+
+func TestBrokerCredentialAuditFailureBlocksCredentialDispatch(t *testing.T) {
+	broker := New(time.Now, func() string { return "task-audit-failure" }, RetryPolicy{})
+	broker.SetCredentialAuditStore(CredentialAuditStoreFunc(func(context.Context, CredentialAuditEvent) error {
+		return errors.New("audit store unavailable")
+	}))
+	task, err := broker.Submit("https://agent.example/a2a", "digest", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	called := false
+	card := &a2adiscovery.AgentCard{SecuritySchemes: map[string]a2adiscovery.SecurityScheme{"bearer": {Type: "http", Scheme: "bearer"}}}
+	if _, err := broker.DispatchWithCredentials(context.Background(), task.ID, nil, senderFunc(func(context.Context, SendRequest) (Event, error) {
+		called = true
+		return Event{State: StateCompleted}, nil
+	}), card, CredentialRequest{TenantID: "tenant-a"}, CredentialPolicy{AllowedHosts: []string{"agent.example"}, AllowedKinds: []CredentialKind{CredentialBearer}}, CredentialResolverFunc(func(context.Context, CredentialRequest) (Credential, error) {
+		return Credential{Headers: http.Header{"Authorization": []string{"Bearer opaque"}}}, nil
+	})); err == nil {
+		t.Fatal("audit failure was ignored")
+	}
+	if called {
+		t.Fatal("sender ran before durable credential audit succeeded")
+	}
+	current, ok := broker.Get(task.ID)
+	if !ok || current.State != StateSubmitted {
+		t.Fatalf("audit failure changed task state: %#v", current)
 	}
 }
 

@@ -82,6 +82,8 @@ type MetricsExporter struct {
 	governanceSyncReloadLatency       *syncFloat64UpDownCounter
 	governanceSyncConsumerLag         *syncFloat64UpDownCounter
 	governanceSyncReady               *syncFloat64UpDownCounter
+	a2aPushEventsTotal                *syncInt64Counter
+	a2aCredentialEventsTotal          *syncInt64Counter
 
 	// Trace exporter health. These describe the delivery path from the gateway
 	// to each configured collector (rather than the upstream inference path),
@@ -522,6 +524,8 @@ func (m *MetricsExporter) initMetrics() {
 	m.governanceSyncReloadLatency = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_reload_latency_seconds", desc: "Most recent governance authority reload latency", unit: "s", meter: m.meter}
 	m.governanceSyncConsumerLag = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_consumer_lag", desc: "Current governance invalidation consumer lag in outbox event IDs", unit: "{event}", meter: m.meter}
 	m.governanceSyncReady = &syncFloat64UpDownCounter{name: "bifrost_governance_sync_ready", desc: "Whether this pod has a fresh governance authority snapshot", unit: "{state}", meter: m.meter}
+	m.a2aPushEventsTotal = &syncInt64Counter{name: "bifrost_a2a_push_events_total", desc: "A2A push delivery lifecycle events", unit: "{event}", meter: m.meter}
+	m.a2aCredentialEventsTotal = &syncInt64Counter{name: "bifrost_a2a_credential_events_total", desc: "A2A credential resolution lifecycle events", unit: "{event}", meter: m.meter}
 	m.traceExportsTotal = &syncInt64Counter{name: "bifrost_otel_trace_exports_total", desc: "Trace export attempts to configured OpenTelemetry collectors", unit: "{export}", meter: m.meter}
 	m.traceExportErrorsTotal = &syncInt64Counter{name: "bifrost_otel_trace_export_errors_total", desc: "Trace export attempts that failed or received a non-success collector response", unit: "{export}", meter: m.meter}
 	m.traceExportLatency = &syncFloat64Histogram{name: "bifrost_otel_trace_export_latency_seconds", desc: "Latency of trace exports to configured OpenTelemetry collectors", unit: "s", meter: m.meter, boundaries: upstreamLatencyBuckets}
@@ -529,6 +533,50 @@ func (m *MetricsExporter) initMetrics() {
 	m.traceExportRetryDrops = &syncInt64Counter{name: "bifrost_otel_trace_export_retry_drops_total", desc: "Trace retry jobs dropped because the bounded queue was full", unit: "{drop}", meter: m.meter}
 	m.traceExportRetryExhausted = &syncInt64Counter{name: "bifrost_otel_trace_export_retry_exhausted_total", desc: "Trace exports whose asynchronous retry budget was exhausted", unit: "{trace}", meter: m.meter}
 	m.traceExportRetryQueueDepth = &syncFloat64UpDownCounter{name: "bifrost_otel_trace_export_retry_queue_depth", desc: "Current bounded asynchronous trace retry queue depth", unit: "{job}", meter: m.meter}
+}
+
+// RecordA2APush records only bounded lifecycle outcomes. Destination URLs,
+// tenant IDs, task IDs, payloads, and credential references never become
+// metric attributes.
+func (m *MetricsExporter) RecordA2APush(ctx context.Context, outcome string) {
+	m.a2aPushEventsTotal.Add(ctx, 1, metric.WithAttributes(attribute.String("outcome", boundedA2APushOutcome(outcome))))
+}
+
+func boundedA2APushOutcome(outcome string) string {
+	switch strings.ToLower(strings.TrimSpace(outcome)) {
+	case "enqueued", "delivered", "retry", "dead_letter", "recovered":
+		return strings.ToLower(strings.TrimSpace(outcome))
+	default:
+		return "other"
+	}
+}
+
+// RecordA2ACredential records only bounded credential lifecycle outcomes. Token
+// material, endpoints, task IDs, tenant IDs, and secret references never become
+// metric attributes.
+func (m *MetricsExporter) RecordA2ACredential(ctx context.Context, kind, outcome string) {
+	m.a2aCredentialEventsTotal.Add(ctx, 1, metric.WithAttributes(
+		attribute.String("kind", boundedA2ACredentialKind(kind)),
+		attribute.String("outcome", boundedA2ACredentialOutcome(outcome)),
+	))
+}
+
+func boundedA2ACredentialKind(kind string) string {
+	switch strings.ToLower(strings.TrimSpace(kind)) {
+	case "none", "pass_through", "api_key", "bearer", "oauth2", "oidc", "mtls", "token_exchange":
+		return strings.ToLower(strings.TrimSpace(kind))
+	default:
+		return "other"
+	}
+}
+
+func boundedA2ACredentialOutcome(outcome string) string {
+	switch strings.ToLower(strings.TrimSpace(outcome)) {
+	case "resolved", "auth_required", "rejected":
+		return strings.ToLower(strings.TrimSpace(outcome))
+	default:
+		return "other"
+	}
 }
 
 // Shutdown gracefully shuts down the metrics exporter

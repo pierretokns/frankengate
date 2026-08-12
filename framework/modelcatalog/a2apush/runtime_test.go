@@ -14,6 +14,12 @@ func (d *runtimeDelivery) Deliver(_ context.Context, request DeliveryRequest) er
 	return nil
 }
 
+type runtimeObserver struct{ outcomes []string }
+
+func (o *runtimeObserver) ObserveA2APush(_ context.Context, observation Observation) {
+	o.outcomes = append(o.outcomes, observation.Outcome)
+}
+
 func TestRuntimeEnqueuesDurablePayloadAndWorkerDelivers(t *testing.T) {
 	configs := NewMemoryStore(time.Now)
 	if err := configs.Create(context.Background(), Config{ID: "push-1", TaskID: "task-1", TenantID: "tenant-1", URL: "https://notify.example.test/a2a"}); err != nil {
@@ -22,6 +28,7 @@ func TestRuntimeEnqueuesDurablePayloadAndWorkerDelivers(t *testing.T) {
 	outbox := NewMemoryOutboxStore(time.Now)
 	payloads := NewMemoryPayloadStore()
 	delivery := &runtimeDelivery{}
+	observer := &runtimeObserver{}
 	runtime := NewRuntime(configs, outbox, payloads, delivery, Policy{
 		AllowedHosts:         []string{"notify.example.test"},
 		RequireDNSResolution: true,
@@ -29,6 +36,7 @@ func TestRuntimeEnqueuesDurablePayloadAndWorkerDelivers(t *testing.T) {
 			return []net.IPAddr{{IP: net.ParseIP("203.0.113.10")}}, nil
 		}),
 	})
+	runtime.SetObserver(observer)
 	payload := []byte(`{"id":"task-1","state":"completed"}`)
 	if err := runtime.Enqueue(context.Background(), "tenant-1", "task-1", payload); err != nil {
 		t.Fatal(err)
@@ -39,6 +47,12 @@ func TestRuntimeEnqueuesDurablePayloadAndWorkerDelivers(t *testing.T) {
 	}
 	if string(delivery.requests[0].Payload) != string(payload) || delivery.requests[0].DeliveryID == "" || delivery.requests[0].PayloadHash == "" {
 		t.Fatalf("delivery request=%#v", delivery.requests[0])
+	}
+	if health := runtime.Health(); !health.Enabled || health.Enqueued != 1 || health.Delivered != 1 || health.LastOutcome != "delivered" {
+		t.Fatalf("unexpected runtime health: %#v", health)
+	}
+	if len(observer.outcomes) != 2 || observer.outcomes[0] != "enqueued" || observer.outcomes[1] != "delivered" {
+		t.Fatalf("unexpected observer outcomes: %#v", observer.outcomes)
 	}
 }
 

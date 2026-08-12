@@ -76,6 +76,25 @@ type TaskObserverFunc func(Task, Event)
 
 func (f TaskObserverFunc) ObserveTaskEvent(task Task, event Event) { f(task, event) }
 
+// CredentialObservation is a bounded projection of credential selection. It
+// contains no token, endpoint, tenant, task, or secret-reference material.
+type CredentialObservation struct {
+	Kind    CredentialKind
+	Outcome string
+}
+
+type CredentialObserver interface {
+	ObserveA2ACredential(CredentialObservation)
+}
+
+type CredentialObserverFunc func(CredentialObservation)
+
+func (f CredentialObserverFunc) ObserveA2ACredential(observation CredentialObservation) {
+	if f != nil {
+		f(observation)
+	}
+}
+
 type RetryPolicy struct {
 	MaxAttempts int
 	BaseDelay   time.Duration
@@ -96,12 +115,14 @@ func (p RetryPolicy) withDefaults() RetryPolicy {
 }
 
 type Broker struct {
-	mu       sync.RWMutex
-	now      func() time.Time
-	ids      func() string
-	policy   RetryPolicy
-	tasks    map[string]Task
-	observer TaskObserver
+	mu                 sync.RWMutex
+	now                func() time.Time
+	ids                func() string
+	policy             RetryPolicy
+	tasks              map[string]Task
+	observer           TaskObserver
+	credentialObserver CredentialObserver
+	auditStore         CredentialAuditStore
 }
 
 func New(now func() time.Time, ids func() string, policy RetryPolicy) *Broker {
@@ -150,6 +171,53 @@ func (b *Broker) SetTaskObserver(observer TaskObserver) {
 	b.mu.Lock()
 	b.observer = observer
 	b.mu.Unlock()
+}
+
+func (b *Broker) SetCredentialObserver(observer CredentialObserver) {
+	if b == nil {
+		return
+	}
+	b.mu.Lock()
+	b.credentialObserver = observer
+	b.mu.Unlock()
+}
+
+func (b *Broker) SetCredentialAuditStore(store CredentialAuditStore) {
+	if b == nil {
+		return
+	}
+	b.mu.Lock()
+	b.auditStore = store
+	b.mu.Unlock()
+}
+
+func (b *Broker) recordCredentialAudit(ctx context.Context, task Task, request CredentialRequest, kind CredentialKind, outcome string) error {
+	b.mu.RLock()
+	store := b.auditStore
+	b.mu.RUnlock()
+	if store == nil {
+		return nil
+	}
+	return store.AppendCredentialAudit(ctx, CredentialAuditEvent{
+		TenantID:   request.TenantID,
+		TaskID:     task.ID,
+		Endpoint:   task.Endpoint,
+		CardDigest: task.CardDigest,
+		Kind:       kind,
+		Outcome:    outcome,
+		At:         b.now(),
+	})
+}
+
+func (b *Broker) observeCredential(observation CredentialObservation) {
+	b.mu.RLock()
+	observer := b.credentialObserver
+	b.mu.RUnlock()
+	if observer == nil {
+		return
+	}
+	defer func() { _ = recover() }()
+	observer.ObserveA2ACredential(observation)
 }
 
 func (b *Broker) Dispatch(ctx context.Context, taskID string, payload []byte, sender Sender) (Task, error) {

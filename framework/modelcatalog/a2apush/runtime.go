@@ -99,17 +99,82 @@ type Runtime struct {
 
 	PollInterval time.Duration
 	Worker       Worker
+	Observer     Observer
 
 	mu      sync.Mutex
 	tenants map[string]struct{}
 	stop    context.CancelFunc
 	wg      sync.WaitGroup
+	health  runtimeHealthState
+}
+
+// RuntimeHealth is a redacted snapshot suitable for readiness and health
+// surfaces. It contains no destination or tenant identity.
+type RuntimeHealth struct {
+	Enabled        bool
+	Running        bool
+	Enqueued       int64
+	Delivered      int64
+	Retried        int64
+	DeadLettered   int64
+	LastOutcome    string
+	LastErrorClass string
+	LastEventAt    time.Time
+}
+
+type runtimeHealthState struct {
+	mu sync.RWMutex
+	RuntimeHealth
 }
 
 func NewRuntime(configs Store, outbox OutboxStore, payloads PayloadWriter, delivery Delivery, policy Policy) *Runtime {
 	runtime := &Runtime{Configs: configs, Outbox: outbox, Payloads: payloads, Delivery: delivery, Policy: policy, tenants: make(map[string]struct{})}
-	runtime.Worker = Worker{Outbox: outbox, Configs: configs, Payloads: payloads, Delivery: delivery, Policy: policy}
+	runtime.Worker = Worker{Outbox: outbox, Configs: configs, Payloads: payloads, Delivery: delivery, Policy: policy, Observer: runtime}
+	runtime.health.Enabled = configs != nil && outbox != nil && payloads != nil && delivery != nil
 	return runtime
+}
+
+func (r *Runtime) ObserveA2APush(_ context.Context, observation Observation) {
+	if r == nil {
+		return
+	}
+	r.health.mu.Lock()
+	r.health.LastOutcome = observation.Outcome
+	if observation.ErrorClass != "" {
+		r.health.LastErrorClass = observation.ErrorClass
+	}
+	r.health.LastEventAt = time.Now().UTC()
+	switch observation.Outcome {
+	case "delivered":
+		r.health.Delivered++
+	case "retry":
+		r.health.Retried++
+	case "dead_letter":
+		r.health.DeadLettered++
+	}
+	r.health.mu.Unlock()
+	if observer := r.Observer; observer != nil && observer != r {
+		notifyObserver(observer, context.Background(), observation)
+	}
+}
+
+func (r *Runtime) Health() RuntimeHealth {
+	if r == nil {
+		return RuntimeHealth{}
+	}
+	r.health.mu.RLock()
+	defer r.health.mu.RUnlock()
+	return r.health.RuntimeHealth
+}
+
+func (r *Runtime) SetObserver(observer Observer) {
+	if r == nil {
+		return
+	}
+	r.mu.Lock()
+	r.Observer = observer
+	r.Worker.Observer = r
+	r.mu.Unlock()
 }
 
 func (r *Runtime) Enqueue(ctx context.Context, tenant, task string, payload []byte) error {
@@ -136,6 +201,12 @@ func (r *Runtime) Enqueue(ctx context.Context, tenant, task string, payload []by
 		if err := r.Outbox.Enqueue(ctx, record); err != nil && !errors.Is(err, ErrAlreadyExists) {
 			return fmt.Errorf("enqueue A2A push delivery: %w", err)
 		}
+		r.health.mu.Lock()
+		r.health.Enqueued++
+		r.health.LastOutcome = "enqueued"
+		r.health.LastEventAt = time.Now().UTC()
+		r.health.mu.Unlock()
+		notifyObserver(r.Observer, ctx, Observation{Outcome: "enqueued", Status: DeliveryPending})
 	}
 	r.mu.Lock()
 	r.tenants[tenant] = struct{}{}
@@ -159,6 +230,9 @@ func (r *Runtime) Start(ctx context.Context) {
 		return
 	}
 	r.stop = cancel
+	r.health.mu.Lock()
+	r.health.Running = true
+	r.health.mu.Unlock()
 	r.mu.Unlock()
 	if tenants, err := r.Outbox.ListTenants(workerCtx); err == nil {
 		r.mu.Lock()
@@ -197,6 +271,9 @@ func (r *Runtime) Stop() {
 	r.wg.Wait()
 	r.mu.Lock()
 	r.stop = nil
+	r.health.mu.Lock()
+	r.health.Running = false
+	r.health.mu.Unlock()
 	r.mu.Unlock()
 }
 

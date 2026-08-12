@@ -31,6 +31,8 @@ const (
 	maxA2ATaskBodyBytes = 128 * 1024
 	maxA2ATasks         = 512
 	maxA2ATaskTTL       = 1 * time.Hour
+	maxA2AStreamEvents  = 128
+	maxA2AStreamJournal = 512 * 1024
 	a2aTaskObjectPrefix = "frankengate/a2a/tasks/"
 	a2aTaskStoreTimeout = 2 * time.Second
 )
@@ -63,8 +65,14 @@ type durableA2ATaskEnvelope struct {
 }
 
 type a2aStreamEvent struct {
-	ID   string
-	Body []byte
+	ID   string `json:"id"`
+	Body []byte `json:"body"`
+}
+
+type durableA2AStreamEnvelope struct {
+	Next     int              `json:"next"`
+	Events   []a2aStreamEvent `json:"events"`
+	Terminal bool             `json:"terminal"`
 }
 
 type a2aStreamState struct {
@@ -72,6 +80,7 @@ type a2aStreamState struct {
 	events      []a2aStreamEvent
 	subscribers map[chan a2aStreamEvent]struct{}
 	terminal    bool
+	active      bool
 }
 
 func NewInboundA2AHandler(client *bifrost.Bifrost, config *lib.Config) *InboundA2AHandler {
@@ -118,6 +127,21 @@ func (h *InboundA2AHandler) StopPushRuntime() {
 	if h != nil && h.pushRuntime != nil {
 		h.pushRuntime.Stop()
 	}
+}
+
+// SetPushObserver attaches a low-cardinality metrics/audit projection to the
+// already configured runtime. It never receives payloads or credentials.
+func (h *InboundA2AHandler) SetPushObserver(observer a2apush.Observer) {
+	if h != nil && h.pushRuntime != nil {
+		h.pushRuntime.SetObserver(observer)
+	}
+}
+
+func (h *InboundA2AHandler) PushHealth() a2apush.RuntimeHealth {
+	if h == nil || h.pushRuntime == nil {
+		return a2apush.RuntimeHealth{}
+	}
+	return h.pushRuntime.Health()
 }
 
 func (h *InboundA2AHandler) RegisterRoutes(r *router.Router, middlewares ...schemas.BifrostHTTPMiddleware) {
@@ -508,6 +532,7 @@ func (h *InboundA2AHandler) messageStream(ctx *fasthttp.RequestCtx) {
 		h.writeRPCError(ctx, request.ID, -32001, "A2A task registry is unavailable")
 		return
 	}
+	h.markA2AStreamActive(scopedA2ATaskKey(partition, taskID))
 	reader := lib.NewSSEStreamReader()
 	ctx.SetContentType("text/event-stream")
 	ctx.Response.Header.Set("Cache-Control", "no-cache")
@@ -527,17 +552,18 @@ func (h *InboundA2AHandler) produceA2AStream(reader *lib.SSEStreamReader, stream
 			h.finishA2AStream(streamKey)
 		}
 	}()
-	sequence := 0
-	send := func(event any) bool {
-		sequence++
+	send := func(event any, terminalEvent bool) bool {
 		body, err := json.Marshal(event)
 		if err != nil {
 			return false
 		}
-		published := h.publishA2AStreamEvent(streamKey, body, false)
+		published := h.publishA2AStreamEvent(streamKey, body, terminalEvent)
+		if persistErr := h.persistA2AStreamState(streamKey); persistErr != nil {
+			return false
+		}
 		return reader.SendEventWithID(published.ID, "message", published.Body)
 	}
-	if !send(task) {
+	if !send(task, false) {
 		go drainA2AStream(stream)
 		return
 	}
@@ -545,11 +571,11 @@ func (h *InboundA2AHandler) produceA2AStream(reader *lib.SSEStreamReader, stream
 	working.Status = a2aTaskStatus{State: "TASK_STATE_WORKING", Timestamp: h.currentTime().UTC(), Message: &a2aMessage{MessageID: task.ID + "-working", Role: "agent", Parts: []a2aPart{{MediaType: "text/plain", Text: "Working on the request."}}}}
 	if err := h.persistDetachedA2ATask(partition, working); err != nil {
 		terminal = true
-		_ = send(a2aJSONRPCError{Code: -32001, Message: "A2A task registry is unavailable"})
+		_ = send(a2aJSONRPCError{Code: -32001, Message: "A2A task registry is unavailable"}, true)
 		go drainA2AStream(stream)
 		return
 	}
-	if !send(a2aStreamStatusUpdate{TaskID: task.ID, ContextID: task.ContextID, Status: working.Status}) {
+	if !send(a2aStreamStatusUpdate{TaskID: task.ID, ContextID: task.ContextID, Status: working.Status}, false) {
 		go drainA2AStream(stream)
 		return
 	}
@@ -560,7 +586,7 @@ func (h *InboundA2AHandler) produceA2AStream(reader *lib.SSEStreamReader, stream
 		if value == "" && !last {
 			return true
 		}
-		return send(a2aStreamArtifactUpdate{TaskID: task.ID, ContextID: task.ContextID, Artifact: a2aArtifact{Name: "response", Parts: []a2aPart{{MediaType: "text/plain", Text: value}}}, Append: true, LastChunk: last})
+		return send(a2aStreamArtifactUpdate{TaskID: task.ID, ContextID: task.ContextID, Artifact: a2aArtifact{Name: "response", Parts: []a2aPart{{MediaType: "text/plain", Text: value}}}, Append: true, LastChunk: last}, last)
 	}
 	for chunk := range stream {
 		if chunk == nil {
@@ -571,7 +597,7 @@ func (h *InboundA2AHandler) produceA2AStream(reader *lib.SSEStreamReader, stream
 			failed := task
 			failed.Status = a2aTaskStatus{State: "TASK_STATE_FAILED", Timestamp: h.currentTime().UTC()}
 			_ = h.persistDetachedA2ATask(partition, failed)
-			_ = send(a2aJSONRPCError{Code: -32000, Message: bifrost.GetErrorMessage(chunk.BifrostError)})
+			_ = send(a2aJSONRPCError{Code: -32000, Message: bifrost.GetErrorMessage(chunk.BifrostError)}, true)
 			return
 		}
 		delta := a2AStreamChunkText(chunk)
@@ -580,7 +606,7 @@ func (h *InboundA2AHandler) produceA2AStream(reader *lib.SSEStreamReader, stream
 		}
 		if answer.Len()+len(delta) > maxA2ATaskBodyBytes {
 			terminal = true
-			_ = send(a2aJSONRPCError{Code: -32000, Message: "A2A stream output exceeds the task limit"})
+			_ = send(a2aJSONRPCError{Code: -32000, Message: "A2A stream output exceeds the task limit"}, true)
 			go drainA2AStream(stream)
 			return
 		}
@@ -600,11 +626,11 @@ func (h *InboundA2AHandler) produceA2AStream(reader *lib.SSEStreamReader, stream
 	task.Status = a2aTaskStatus{State: "TASK_STATE_COMPLETED", Timestamp: h.currentTime().UTC(), Message: &output}
 	if err := h.persistDetachedA2ATask(partition, task); err != nil {
 		terminal = true
-		_ = send(a2aJSONRPCError{Code: -32001, Message: "A2A task registry is unavailable"})
+		_ = send(a2aJSONRPCError{Code: -32001, Message: "A2A task registry is unavailable"}, true)
 		return
 	}
 	terminal = true
-	_ = send(a2aStreamStatusUpdate{TaskID: task.ID, ContextID: task.ContextID, Status: task.Status, Final: true})
+	_ = send(a2aStreamStatusUpdate{TaskID: task.ID, ContextID: task.ContextID, Status: task.Status, Final: true}, true)
 }
 
 func (h *InboundA2AHandler) streamExistingTask(ctx *fasthttp.RequestCtx, _ json.RawMessage, partition string, task a2aTask) {
@@ -617,7 +643,12 @@ func (h *InboundA2AHandler) streamExistingTask(ctx *fasthttp.RequestCtx, _ json.
 	if parsed, err := strconv.Atoi(strings.TrimSpace(string(ctx.Request.Header.Peek("Last-Event-ID")))); err == nil && parsed > 0 {
 		after = parsed
 	}
-	replay, subscriber, unsubscribe, terminal := h.subscribeA2AStream(scopedA2ATaskKey(partition, task.ID), after)
+	streamKey := scopedA2ATaskKey(partition, task.ID)
+	replay, subscriber, unsubscribe, terminal, active := h.subscribeA2AStream(ctx, streamKey, after)
+	if subscriber == nil && !terminal && !active {
+		task = h.recoverInterruptedA2AStream(ctx, partition, task)
+		replay, subscriber, unsubscribe, terminal, _ = h.subscribeA2AStream(ctx, streamKey, after)
+	}
 	go func() {
 		defer reader.Done()
 		defer unsubscribe()
@@ -661,11 +692,15 @@ func (h *InboundA2AHandler) publishA2AStreamEvent(taskID string, body []byte, te
 		state = &a2aStreamState{subscribers: make(map[chan a2aStreamEvent]struct{})}
 		h.streamStates[taskID] = state
 	}
+	state.active = !terminal
 	state.next++
 	event := a2aStreamEvent{ID: strconv.Itoa(state.next), Body: append([]byte(nil), body...)}
 	state.events = append(state.events, event)
-	if len(state.events) > 128 {
-		state.events = state.events[len(state.events)-128:]
+	if len(state.events) > maxA2AStreamEvents {
+		state.events = state.events[len(state.events)-maxA2AStreamEvents:]
+	}
+	for totalStreamEventBytes(state.events) > maxA2AStreamJournal && len(state.events) > 1 {
+		state.events = state.events[1:]
 	}
 	if terminal {
 		state.terminal = true
@@ -681,7 +716,8 @@ func (h *InboundA2AHandler) publishA2AStreamEvent(taskID string, body []byte, te
 	return event
 }
 
-func (h *InboundA2AHandler) subscribeA2AStream(taskID string, after int) ([]a2aStreamEvent, <-chan a2aStreamEvent, func(), bool) {
+func (h *InboundA2AHandler) subscribeA2AStream(ctx context.Context, taskID string, after int) ([]a2aStreamEvent, <-chan a2aStreamEvent, func(), bool, bool) {
+	h.loadDurableA2AStreamState(ctx, taskID)
 	h.streamMu.Lock()
 	defer h.streamMu.Unlock()
 	if h.streamStates == nil {
@@ -689,7 +725,7 @@ func (h *InboundA2AHandler) subscribeA2AStream(taskID string, after int) ([]a2aS
 	}
 	state := h.streamStates[taskID]
 	if state == nil {
-		return nil, nil, func() {}, false
+		return nil, nil, func() {}, false, false
 	}
 	replay := make([]a2aStreamEvent, 0, len(state.events))
 	for _, event := range state.events {
@@ -699,8 +735,9 @@ func (h *InboundA2AHandler) subscribeA2AStream(taskID string, after int) ([]a2aS
 		}
 	}
 	if state.terminal {
-		return replay, nil, func() {}, true
+		return replay, nil, func() {}, true, false
 	}
+	active := state.active
 	subscriber := make(chan a2aStreamEvent, 16)
 	state.subscribers[subscriber] = struct{}{}
 	return replay, subscriber, func() {
@@ -710,19 +747,113 @@ func (h *InboundA2AHandler) subscribeA2AStream(taskID string, after int) ([]a2aS
 			close(subscriber)
 		}
 		h.streamMu.Unlock()
-	}, false
+	}, false, active
 }
 
 func (h *InboundA2AHandler) finishA2AStream(taskID string) {
 	h.streamMu.Lock()
 	if state := h.streamStates[taskID]; state != nil {
 		state.terminal = true
+		state.active = false
 		for subscriber := range state.subscribers {
 			close(subscriber)
 			delete(state.subscribers, subscriber)
 		}
 	}
 	h.streamMu.Unlock()
+}
+
+func (h *InboundA2AHandler) markA2AStreamActive(taskID string) {
+	h.streamMu.Lock()
+	state := h.streamStates[taskID]
+	if state == nil {
+		state = &a2aStreamState{subscribers: make(map[chan a2aStreamEvent]struct{})}
+		h.streamStates[taskID] = state
+	}
+	state.active = true
+	h.streamMu.Unlock()
+}
+
+func (h *InboundA2AHandler) persistA2AStreamState(taskID string) error {
+	if h == nil || h.config == nil || h.config.ObjectStore == nil {
+		return nil
+	}
+	h.streamMu.Lock()
+	state := h.streamStates[taskID]
+	if state == nil {
+		h.streamMu.Unlock()
+		return nil
+	}
+	envelope := durableA2AStreamEnvelope{Next: state.next, Events: cloneA2AStreamEvents(state.events), Terminal: state.terminal}
+	h.streamMu.Unlock()
+	body, err := json.Marshal(envelope)
+	if err != nil {
+		return fmt.Errorf("encode durable A2A stream journal: %w", err)
+	}
+	storeCtx, cancel := context.WithTimeout(context.Background(), a2aTaskStoreTimeout)
+	defer cancel()
+	return h.config.ObjectStore.Put(storeCtx, durableA2AStreamKey(taskID), body, map[string]string{"kind": "a2a-stream-journal"})
+}
+
+func (h *InboundA2AHandler) loadDurableA2AStreamState(ctx context.Context, taskID string) {
+	if h == nil || h.config == nil || h.config.ObjectStore == nil {
+		return
+	}
+	h.streamMu.Lock()
+	_, exists := h.streamStates[taskID]
+	h.streamMu.Unlock()
+	if exists {
+		return
+	}
+	storeCtx, cancel := context.WithTimeout(ctx, a2aTaskStoreTimeout)
+	body, err := h.config.ObjectStore.Get(storeCtx, durableA2AStreamKey(taskID))
+	cancel()
+	if err != nil {
+		return
+	}
+	var envelope durableA2AStreamEnvelope
+	if json.Unmarshal(body, &envelope) != nil {
+		return
+	}
+	state := &a2aStreamState{next: envelope.Next, events: cloneA2AStreamEvents(envelope.Events), terminal: envelope.Terminal, subscribers: make(map[chan a2aStreamEvent]struct{})}
+	h.streamMu.Lock()
+	if _, exists := h.streamStates[taskID]; !exists {
+		h.streamStates[taskID] = state
+	}
+	h.streamMu.Unlock()
+}
+
+func (h *InboundA2AHandler) recoverInterruptedA2AStream(ctx context.Context, partition string, task a2aTask) a2aTask {
+	if isA2ATerminalState(task.Status.State) {
+		return task
+	}
+	task.Status = a2aTaskStatus{State: "TASK_STATE_FAILED", Timestamp: h.currentTime().UTC(), Message: &a2aMessage{MessageID: task.ID + "-restart", Role: "agent", Parts: []a2aPart{{MediaType: "text/plain", Text: "A2A stream interrupted by gateway restart."}}}}
+	_ = h.storeTask(ctx, partition, task)
+	key := scopedA2ATaskKey(partition, task.ID)
+	h.publishA2AStreamEvent(key, mustJSON(a2aJSONRPCError{Code: -32001, Message: "A2A stream interrupted by gateway restart"}), true)
+	_ = h.persistA2AStreamState(key)
+	return task
+}
+
+func cloneA2AStreamEvents(events []a2aStreamEvent) []a2aStreamEvent {
+	clone := make([]a2aStreamEvent, len(events))
+	for i, event := range events {
+		clone[i] = a2aStreamEvent{ID: event.ID, Body: append([]byte(nil), event.Body...)}
+	}
+	return clone
+}
+
+func totalStreamEventBytes(events []a2aStreamEvent) int {
+	total := 0
+	for _, event := range events {
+		total += len(event.ID) + len(event.Body)
+	}
+	return total
+}
+
+func durableA2AStreamKey(taskID string) string {
+	sum := sha256.Sum256([]byte(taskID))
+	return a2aTaskObjectPrefix + "streams/" + hex.EncodeToString(sum[:]) + ".json"
 }
 
 func (h *InboundA2AHandler) persistDetachedA2ATask(partition string, task a2aTask) error {

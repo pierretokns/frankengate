@@ -31,6 +31,7 @@ type Worker struct {
 	RetryAfter      time.Duration
 	MaxAttempts     int
 	MaxPayloadBytes int
+	Observer        Observer
 }
 
 type WorkerStats struct {
@@ -120,6 +121,7 @@ func (w Worker) RunOnce(ctx context.Context, tenant string) (WorkerStats, error)
 				return stats, completeErr
 			}
 			stats.Delivered++
+			notifyObserver(w.Observer, ctx, Observation{Outcome: "delivered", Status: DeliveryDelivered})
 			continue
 		}
 		failed, failErr := w.Outbox.Fail(ctx, claimed.TenantID, claimed.TaskID, claimed.ID, now, retryAfter, maxAttempts, err)
@@ -128,9 +130,38 @@ func (w Worker) RunOnce(ctx context.Context, tenant string) (WorkerStats, error)
 		}
 		if failed.Status == DeliveryDeadLetter {
 			stats.DeadLetter++
+			notifyObserver(w.Observer, ctx, Observation{Outcome: "dead_letter", Status: failed.Status, ErrorClass: deliveryErrorClass(err)})
 		} else {
 			stats.Retried++
+			notifyObserver(w.Observer, ctx, Observation{Outcome: "retry", Status: failed.Status, ErrorClass: deliveryErrorClass(err)})
 		}
 	}
 	return stats, nil
+}
+
+func deliveryErrorClass(err error) string {
+	if err == nil {
+		return "unknown"
+	}
+	message := strings.ToLower(err.Error())
+	switch {
+	case strings.Contains(message, "payload"):
+		return "payload"
+	case strings.Contains(message, "credential"), strings.Contains(message, "secret"):
+		return "credential"
+	case strings.Contains(message, "dns"), strings.Contains(message, "destination"):
+		return "destination"
+	case strings.Contains(message, "timeout"), strings.Contains(message, "context"):
+		return "timeout"
+	default:
+		return "delivery"
+	}
+}
+
+func notifyObserver(observer Observer, ctx context.Context, observation Observation) {
+	if observer == nil {
+		return
+	}
+	defer func() { _ = recover() }()
+	observer.ObserveA2APush(ctx, observation)
 }

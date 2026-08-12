@@ -17,6 +17,8 @@ import (
 	"github.com/maximhq/bifrost/core/reservations"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/modelcatalog"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2abroker"
+	"github.com/maximhq/bifrost/framework/modelcatalog/a2apush"
 	"github.com/maximhq/bifrost/framework/objectstore"
 	"go.opentelemetry.io/otel/attribute"
 	commonpb "go.opentelemetry.io/proto/otlp/common/v1"
@@ -736,6 +738,33 @@ func (p *OtelPlugin) AddGovernanceSyncMetric(name string, value float64) {
 	for _, target := range p.targets {
 		if target.metricsExporter != nil {
 			target.metricsExporter.AddGovernanceSyncMetric(context.Background(), name, value)
+		}
+	}
+}
+
+// ObserveA2APush implements the optional a2apush.Observer projection. The
+// callback is intentionally low-cardinality and fan-outs to configured OTLP
+// metric profiles without carrying task, tenant, URL, or credential data.
+func (p *OtelPlugin) ObserveA2APush(ctx context.Context, observation a2apush.Observation) {
+	if p == nil {
+		return
+	}
+	for _, target := range p.targets {
+		if target != nil && target.metricsExporter != nil {
+			target.metricsExporter.RecordA2APush(ctx, observation.Outcome)
+		}
+	}
+}
+
+// ObserveA2ACredential implements the optional a2abroker.CredentialObserver
+// projection. Only bounded kind/outcome labels are forwarded to OTLP metrics.
+func (p *OtelPlugin) ObserveA2ACredential(observation a2abroker.CredentialObservation) {
+	if p == nil {
+		return
+	}
+	for _, target := range p.targets {
+		if target != nil && target.metricsExporter != nil {
+			target.metricsExporter.RecordA2ACredential(context.Background(), string(observation.Kind), observation.Outcome)
 		}
 	}
 }

@@ -44,6 +44,16 @@ authorization grant, or proof that a remote agent is safe to invoke.
   at send time, blocks unsafe DNS/IP destinations, disables redirects, and
   signs/idempotently labels requests. Nothing automatically opens an egress
   path from a generic secret resolver.
+  Outbound A2A task admission is available through
+  `Config.SubmitOutboundA2A` and `Config.DispatchOutboundA2A`: the latter uses
+  the configured OAuth, pass-through, or RFC 8693/7523 resolver only at
+  dispatch time, requires a caller-supplied allowlist policy and Sender, and
+  keeps credentials out of task/event state. The transport does not silently
+  create a network sender.
+  When an object store is configured, credential decisions are durably written
+  under the hashed `a2a/credential-audit` prefix before dispatch; an audit
+  write failure blocks the downstream sender. Records contain only tenant/task
+  correlation, endpoint, card digest, credential kind, and bounded outcome.
   `GET /extendedAgentCard` is authenticated and returns the extended card when
   the public card advertises that capability. All task access is bounded,
   tenant-scoped, and TTL-limited.
@@ -89,8 +99,15 @@ Inbound A2A execution attaches these bounded fields to the live trace root and
 updates outcome/artifact on completion; OTEL and audit exporters receive them
 through the normal asynchronous observation path. Streaming requests forward
 provider deltas as ordered `message` SSE events with bounded artifact chunks,
-terminal status, disconnect cancellation, and an in-process bounded replay
-cursor (`Last-Event-ID`). Registry manifests enter a
+terminal status, disconnect cancellation, and a bounded replay cursor
+(`Last-Event-ID`) persisted in the object store when configured. A non-terminal
+stream found after process restart is closed as an explicit restart-interrupted
+failure rather than left as a permanently live subscription. Push delivery
+exports only bounded lifecycle outcomes through
+`bifrost_a2a_push_events_total`; `/health` and `/readyz` expose redacted runtime
+status and counters. Credential resolution exports only bounded kind/outcome
+metrics through `bifrost_a2a_credential_events_total`; token and secret
+material never enters OTLP or durable audit records. Registry manifests enter a
 bounded pending-review store keyed by repository, immutable revision, and
 content digest; approval requires a reviewer and reason, and quarantine is an
 explicit later decision.

@@ -1632,6 +1632,38 @@ func (s *BifrostHTTPServer) RegisterAPIRoutes(ctx context.Context, callbacks Ser
 	oauth2ConsentHandler := handlers.NewOAuth2ConsentHandler(s.Config, s.TempTokens, s.OAuth2IdentityResolver)
 	inboundA2AHandler := handlers.NewInboundA2AHandler(s.Client, s.Config)
 	s.inboundA2AHandler = inboundA2AHandler
+	// Wire credential lifecycle observations to the configured low-cardinality
+	// projection. Credential material and destination identity never enter this
+	// callback; outbound dispatch remains caller-supplied and policy-gated.
+	if s.Config != nil && s.Config.A2ABroker != nil {
+		credentialObserver := s.Config.A2ACredentialObserver
+		if credentialObserver == nil {
+			if otelPlugin, err := lib.FindPluginAs[*otel.OtelPlugin](s.Config, otel.PluginName); err == nil {
+				credentialObserver = otelPlugin
+			}
+		}
+		s.Config.SetA2ACredentialObserver(credentialObserver)
+	}
+	healthHandler.SetA2APushHealth(func() any {
+		health := inboundA2AHandler.PushHealth()
+		if !health.Enabled {
+			return map[string]any{"status": "disabled"}
+		}
+		status := "stopped"
+		if health.Running {
+			status = "running"
+		}
+		return map[string]any{
+			"status":           status,
+			"enqueued":         health.Enqueued,
+			"delivered":        health.Delivered,
+			"retried":          health.Retried,
+			"dead_lettered":    health.DeadLettered,
+			"last_outcome":     health.LastOutcome,
+			"last_error_class": health.LastErrorClass,
+			"last_event_at":    health.LastEventAt,
+		}
+	})
 
 	oauth2DiscoveryHandler.RegisterRoutes(s.Router, middlewares...)
 	// No middleware needed for mcp issuance routes, they should be open
@@ -1722,6 +1754,16 @@ func (s *BifrostHTTPServer) ConfigureA2APush(store a2apush.Store, policy a2apush
 		return errors.New("A2A push delivery is required")
 	}
 	s.inboundA2AHandler.ConfigurePushNotifications(store, policy, delivery)
+	observer := a2apush.Observer(nil)
+	if s.Config != nil {
+		observer = s.Config.A2APushObserver
+	}
+	if observer == nil && s.Config != nil {
+		if otelPlugin, err := lib.FindPluginAs[*otel.OtelPlugin](s.Config, otel.PluginName); err == nil {
+			observer = otelPlugin
+		}
+	}
+	s.inboundA2AHandler.SetPushObserver(observer)
 	return nil
 }
 

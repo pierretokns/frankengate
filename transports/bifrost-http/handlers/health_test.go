@@ -37,6 +37,23 @@ func TestReadyzUsesDependencyReadinessChecks(t *testing.T) {
 	require.JSONEq(t, `{"status":"ok","components":{"db_pings":"disabled"}}`, string(ctx.Response.Body()))
 }
 
+func TestHealthIncludesRedactedA2APushRuntimeComponent(t *testing.T) {
+	r := router.New()
+	h := NewHealthHandler(&lib.Config{ClientConfig: &configstore.ClientConfig{DisableDBPingsInHealth: true}})
+	h.SetA2APushHealth(func() any {
+		return map[string]any{"status": "running", "delivered": 2, "dead_lettered": 1}
+	})
+	h.RegisterRoutes(r)
+
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.SetRequestURI("/health")
+	ctx.Request.Header.SetMethod(fasthttp.MethodGet)
+	r.Handler(ctx)
+
+	require.Equal(t, fasthttp.StatusOK, ctx.Response.StatusCode())
+	require.JSONEq(t, `{"status":"ok","components":{"db_pings":"disabled","a2a_push":{"status":"running","delivered":2,"dead_lettered":1}}}`, string(ctx.Response.Body()))
+}
+
 func TestReadyzFailsClosedUntilAuthorityReadinessGateOpens(t *testing.T) {
 	r := router.New()
 	h := NewHealthHandler(&lib.Config{ClientConfig: &configstore.ClientConfig{DisableDBPingsInHealth: true}})
