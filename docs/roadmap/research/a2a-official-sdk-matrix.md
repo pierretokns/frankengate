@@ -60,19 +60,25 @@ SDK/proto-compatible array form and accepts both forms while decoding. This is
 recorded as a pinned-TCK schema discrepancy, not a reason to regress the
 public card wire contract.
 
-The rebuilt authenticated HTTPS harness reported `139 passed, 5 failed, 121
-skipped` across the official TCK's JSON-RPC and HTTP+JSON suites (`76/102`
-JSON-RPC and `72/96` HTTP+JSON requirements; Agent Card `9/10`; gRPC remains
-skipped). The skip set is now classified: 72 are unadvertised gRPC transport
-cases, 20 are push cases without an injected delivery runtime, 18 are
+The last rebuilt authenticated HTTPS harness reported `139 passed, 5 failed,
+121 skipped` across the official TCK's JSON-RPC and HTTP+JSON suites (`76/102`
+JSON-RPC and `72/96` HTTP+JSON requirements; Agent Card `9/10`). That result
+predates native gRPC enablement and must remain labeled as a historical
+HTTP-only run. The newly merged gRPC boundary has focused official generated
+Go-client coverage over bufconn for unary, true streaming, push CRUD,
+tenant-isolation, fail-closed auth, cancellation/limits, and card readiness;
+the external TCK still needs a fresh run with gRPC advertised by a live
+listener. The historical skip set was classified as 72 unadvertised gRPC
+transport cases, 20 push cases without an injected delivery runtime, 18
 fixture-isolation cases from the TCK reusing a deterministic input-required
-message ID, 4 are negative streaming cases that require streaming to be
-unsupported, and the remainder are optional extension/negative cases. Fresh
+message ID, 4 negative streaming cases that require streaming to be
+unsupported, and the remainder optional extension/negative cases. Fresh
 server task IDs are no longer derived from `messageId`, so the 18 lifecycle
-skips are not a production idempotency behavior. Structured artifacts, direct Message responses, input-required
-states, live subscriptions, and streaming-order scenarios now exercise the
-production handler through an injected executor seam and pass where the TCK
-executes them. The remaining five reported failures are bounded discrepancies:
+skips are not a production idempotency behavior. Structured artifacts, direct
+Message responses, input-required states, live subscriptions, and
+streaming-order scenarios now exercise the production handler through an
+injected executor seam and pass where the TCK executes them. The remaining
+five reported failures are bounded discrepancies:
 the pinned card-schema mismatch above (CARD-STRUCT-001 and CARD-EXT-001), and
 two transport instances of CORE-SEND-003 where FrankenGate correctly returns
 JSON-RPC `-32005`/HTTP `415` with `CONTENT_TYPE_NOT_SUPPORTED` but the TCK
@@ -81,9 +87,10 @@ as an operation failure. Several history/cancel/subscription cases are also
 recorded as skipped by the TCK collector because its long-lived SUT reuses the
 same `tck-input-required` task ID after a prior test has completed it; this is
 a fixture-isolation assumption, not a production task-idempotency defect.
-The focused lifecycle, streaming/order, transport, recovery, and SDK smoke
-checks pass; gRPC remains excluded by the separately documented native-gRPC
-boundary.
+The focused lifecycle, streaming/order, transport, recovery, SDK smoke, and
+official Go gRPC client checks pass. Deployments that do not start the gRPC
+listener correctly continue to omit it from the card; this is a readiness
+gate, not an unsupported implementation claim.
 
 The inbound handler now exposes an application-owned `A2AExecutionResolver`
 boundary. A resolver can return a direct Message or a persisted Task with
@@ -107,15 +114,14 @@ Agentgateway interoperability was separately audited at commit
 proxy: the body-preserving request classifier, Agent Card URL rewrite, and
 bounded response inspector do not host tasks or implement the normative
 `A2AService` gRPC service. FrankenGate ports those useful intentions as
-transport-neutral Go helpers and tests in
-`framework/modelcatalog/a2adiscovery/proxy_compat.go` and
-`proxy_compat_test.go`; hosted task responses remain FrankenGate-owned. The
-native hosted gRPC gap is tracked as Bead `bif-86bq.16.3` and is not hidden by
-the current TCK skips.
+transport-neutral Go helpers and uses them in the explicit
+`A2AProxyHandler` route; hosted task responses remain FrankenGate-owned. The
+native hosted gRPC implementation is now tracked as completed Bead
+`bif-86bq.16.3`; only its external TCK rerun remains open.
 
 - The official TCK schema file observed in this slice did not expose JSON-RPC error schema definitions, so the auth/error fixture intentionally treats the JSON-RPC error code as an implementation envelope and only asserts preservation of the HTTP challenge plus A2A `TASK_STATE_AUTH_REQUIRED` task state.
 - No source with unverified or ambiguous provenance was used for fixtures. All retained source repositories are Apache-2.0.
-- This slice does not add UI, SDK dependencies, protobuf generation, or native
-  gRPC execution wiring. Native hosted gRPC is an explicit follow-up, not an
-  advertised transport; the production HTTP handlers and external TCK/SDK
-  harnesses are kept separate from the vendored fixture set.
+- This slice does not vendor SDK runtimes or TCK code. The production transport
+  uses the pinned official `a2a-go/v2` generated gRPC service, while Python,
+  Go, and JavaScript SDKs remain external smoke clients. The gRPC card binding
+  is advertised only when its listener is healthy and authenticated.
