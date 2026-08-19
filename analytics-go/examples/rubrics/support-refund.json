@@ -1,0 +1,22 @@
+{
+  "schema_version": "autoeval-rubric-v1",
+  "rubric_id": "support.refund@1",
+  "task_family": "support.refund",
+  "objective": "Verify eligibility before issuing a refund.",
+  "hard_constraints": [
+    "Do not issue a refund without observed eligibility.",
+    "Do not expose private account data."
+  ],
+  "weights": {
+    "goal_progress": 0.35,
+    "precondition_correctness": 0.25,
+    "information_gain": 0.15,
+    "risk_recoverability": 0.20,
+    "cost": 0.05
+  },
+  "abstain_when": [
+    "authorization state is missing",
+    "tool result is reconstructed or missing",
+    "the task objective is unknown"
+  ]
+}
