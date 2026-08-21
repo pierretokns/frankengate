@@ -1,7 +1,7 @@
 {
   "brand": "FrankenGate",
   "source": "https://getbifrost.ai/datasheet",
-  "retrieved_at": "2026-08-20T04:03:16Z",
+  "retrieved_at": "2026-08-21T04:05:31Z",
   "models": {
     "1024-x-1024/50-steps/bedrock/amazon.nova-canvas-v1:0": {
       "base_model": "nova-canvas",
@@ -15347,25 +15347,57 @@
       "supports_reasoning": true,
       "supports_tool_choice": true
     },
+    "databricks/databricks-claude-fable-5": {
+      "base_model": "claude-fable-5",
+      "cache_creation_input_token_cost": 0.00001250004,
+      "cache_creation_input_token_dbu_cost": 0.000178572,
+      "cache_read_input_token_cost": 0.00000100002,
+      "cache_read_input_token_dbu_cost": 0.000014286,
+      "input_cost_per_token": 0.00001000006,
+      "input_dbu_cost_per_token": 0.000142858,
+      "max_input_tokens": 200000,
+      "max_output_tokens": 64000,
+      "max_tokens": 64000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Text-only input. Prompts and responses retained 30 days for trust and safety. In-geo endpoint is 10% higher."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00005000002,
+      "output_dbu_cost_per_token": 0.000714286,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": false
+    },
     "databricks/databricks-claude-haiku-4-5": {
       "base_model": "claude-haiku-4-5",
-      "input_cost_per_token": 0.000001,
+      "cache_creation_input_token_cost": 0.00000124999,
+      "cache_creation_input_token_dbu_cost": 0.000017857,
+      "cache_read_input_token_cost": 1.0003e-7,
+      "cache_read_input_token_dbu_cost": 0.000001429,
+      "input_cost_per_token": 0.00000100002,
       "input_dbu_cost_per_token": 0.000014286,
       "max_input_tokens": 200000,
       "max_output_tokens": 64000,
       "max_tokens": 64000,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. In-geo endpoint is 10% higher."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.0000049999999999999996,
+      "output_cost_per_token": 0.00000500003,
       "output_dbu_cost_per_token": 0.000071429,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_tool_choice": true
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-claude-opus-4": {
       "base_model": "claude-opus-4",
@@ -15389,47 +15421,63 @@
     },
     "databricks/databricks-claude-opus-4-1": {
       "base_model": "claude-opus-4-1",
-      "input_cost_per_token": 0.000014999999999999999,
+      "cache_creation_input_token_cost": 0.00001874999,
+      "cache_creation_input_token_dbu_cost": 0.000267857,
+      "cache_read_input_token_cost": 0.00000150003,
+      "cache_read_input_token_dbu_cost": 0.000021429,
+      "input_cost_per_token": 0.00001500002,
       "input_dbu_cost_per_token": 0.000214286,
       "max_input_tokens": 200000,
       "max_output_tokens": 32000,
       "max_tokens": 32000,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Same rate for Global and In-geo endpoints."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000075,
+      "output_cost_per_token": 0.00007500003,
       "output_dbu_cost_per_token": 0.001071429,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_tool_choice": true
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-claude-opus-4-5": {
       "base_model": "claude-opus-4-5",
-      "input_cost_per_token": 0.0000049999999999999996,
+      "cache_creation_input_token_cost": 0.00000625002,
+      "cache_creation_input_token_dbu_cost": 0.000089286,
+      "cache_read_input_token_cost": 5.0001e-7,
+      "cache_read_input_token_dbu_cost": 0.000007143,
+      "input_cost_per_token": 0.00000500003,
       "input_dbu_cost_per_token": 0.000071429,
       "max_input_tokens": 200000,
       "max_output_tokens": 64000,
       "max_tokens": 64000,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Billed under the 'Claude Opus 4.5 / 4.6 / 4.7 / 4.8 / 5' row. In-geo endpoint is 10% higher."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000024999999999999998,
+      "output_cost_per_token": 0.00002500001,
       "output_dbu_cost_per_token": 0.000357143,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
       "supports_output_config": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_tool_choice": true
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-claude-opus-4-6": {
       "base_model": "claude-opus-4-6",
+      "cache_creation_input_token_cost": 0.00000625002,
+      "cache_creation_input_token_dbu_cost": 0.000089286,
+      "cache_read_input_token_cost": 5.0001e-7,
+      "cache_read_input_token_dbu_cost": 0.000007143,
       "input_cost_per_token": 0.00000500003,
       "input_dbu_cost_per_token": 0.000071429,
       "max_input_tokens": 200000,
@@ -15446,11 +15494,17 @@
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
       "supports_minimal_reasoning_effort": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_tool_choice": true
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-claude-opus-4-7": {
       "base_model": "claude-opus-4-7",
+      "cache_creation_input_token_cost": 0.00000625002,
+      "cache_creation_input_token_dbu_cost": 0.000089286,
+      "cache_read_input_token_cost": 5.0001e-7,
+      "cache_read_input_token_dbu_cost": 0.000007143,
       "input_cost_per_token": 0.00000500003,
       "input_dbu_cost_per_token": 0.000071429,
       "max_input_tokens": 200000,
@@ -15467,11 +15521,17 @@
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
       "supports_minimal_reasoning_effort": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_tool_choice": true
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-claude-opus-4-8": {
       "base_model": "claude-opus-4-8",
+      "cache_creation_input_token_cost": 0.00000625002,
+      "cache_creation_input_token_dbu_cost": 0.000089286,
+      "cache_read_input_token_cost": 5.0001e-7,
+      "cache_read_input_token_dbu_cost": 0.000007143,
       "input_cost_per_token": 0.00000500003,
       "input_dbu_cost_per_token": 0.000071429,
       "max_input_tokens": 1000000,
@@ -15488,29 +15548,62 @@
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
       "supports_minimal_reasoning_effort": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-claude-opus-5": {
+      "base_model": "claude-opus-5",
+      "cache_creation_input_token_cost": 0.00000625002,
+      "cache_creation_input_token_dbu_cost": 0.000089286,
+      "cache_read_input_token_cost": 5.0001e-7,
+      "cache_read_input_token_dbu_cost": 0.000007143,
+      "input_cost_per_token": 0.00000500003,
+      "input_dbu_cost_per_token": 0.000071429,
+      "max_input_tokens": 200000,
+      "max_output_tokens": 64000,
+      "max_tokens": 64000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Billed under the 'Claude Opus 4.5 / 4.6 / 4.7 / 4.8 / 5' row. In-geo endpoint is 10% higher."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00002500001,
+      "output_dbu_cost_per_token": 0.000357143,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
     "databricks/databricks-claude-sonnet-4": {
       "base_model": "claude-sonnet-4",
-      "input_cost_per_token": 0.000003,
+      "cache_creation_input_token_cost": 0.00000374997,
+      "cache_creation_input_token_dbu_cost": 0.000053571,
+      "cache_read_input_token_cost": 3.0002e-7,
+      "cache_read_input_token_dbu_cost": 0.000004286,
+      "input_cost_per_token": 0.00000299999,
       "input_dbu_cost_per_token": 0.000042857,
       "max_input_tokens": 200000,
       "max_output_tokens": 64000,
       "max_tokens": 64000,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Same rate for Global and In-geo endpoints. Deprecated."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000014999999999999999,
+      "output_cost_per_token": 0.00001500002,
       "output_dbu_cost_per_token": 0.000214286,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_tool_choice": true
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-claude-sonnet-4-1": {
       "base_model": "claude-sonnet-4-1",
@@ -15534,26 +15627,36 @@
     },
     "databricks/databricks-claude-sonnet-4-5": {
       "base_model": "claude-sonnet-4-5",
-      "input_cost_per_token": 0.000003,
+      "cache_creation_input_token_cost": 0.00000374997,
+      "cache_creation_input_token_dbu_cost": 0.000053571,
+      "cache_read_input_token_cost": 3.0002e-7,
+      "cache_read_input_token_dbu_cost": 0.000004286,
+      "input_cost_per_token": 0.00000299999,
       "input_dbu_cost_per_token": 0.000042857,
       "max_input_tokens": 200000,
       "max_output_tokens": 64000,
       "max_tokens": 64000,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Billed under the 'Claude Sonnet 4.5 / 4.6' row. In-geo endpoint is 10% higher."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000014999999999999999,
+      "output_cost_per_token": 0.00001500002,
       "output_dbu_cost_per_token": 0.000214286,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_tool_choice": true
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-claude-sonnet-4-6": {
       "base_model": "claude-sonnet-4-6",
+      "cache_creation_input_token_cost": 0.00000374997,
+      "cache_creation_input_token_dbu_cost": 0.000053571,
+      "cache_read_input_token_cost": 3.0002e-7,
+      "cache_read_input_token_dbu_cost": 0.000004286,
       "input_cost_per_token": 0.00000299999,
       "input_dbu_cost_per_token": 0.000042857,
       "max_input_tokens": 200000,
@@ -15569,98 +15672,244 @@
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
       "supports_assistant_prefill": true,
       "supports_function_calling": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_tool_choice": true
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-claude-sonnet-5": {
+      "base_model": "claude-sonnet-5",
+      "cache_creation_input_token_cost": 0.00000249998,
+      "cache_creation_input_token_dbu_cost": 0.000035714,
+      "cache_read_input_token_cost": 1.9999e-7,
+      "cache_read_input_token_dbu_cost": 0.000002857,
+      "input_cost_per_token": 0.00000199997,
+      "input_dbu_cost_per_token": 0.000028571,
+      "max_input_tokens": 200000,
+      "max_output_tokens": 64000,
+      "max_tokens": 64000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. INTRODUCTORY PRICING through Aug 31, 2026. After that, Sonnet 5 reverts to the Sonnet 4.5/4.6 rates (42.857 input / 214.286 output DBU per 1M). Does not support temperature, top_p or top_k."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00000999999,
+      "output_dbu_cost_per_token": 0.000142857,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gemini-2-5-flash": {
       "base_model": "gemini-2.5-flash",
-      "input_cost_per_token": 3e-7,
-      "input_dbu_cost_per_token": 0.000004285999999999999,
-      "max_input_tokens": 1048576,
-      "max_output_tokens": 65535,
-      "max_tokens": 65535,
-      "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
-      },
-      "mode": "chat",
-      "output_cost_per_token": 0.0000024999999999999998,
-      "output_dbu_cost_per_token": 0.000035714,
-      "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
-      "supports_function_calling": true,
-      "supports_tool_choice": true
-    },
-    "databricks/databricks-gemini-2-5-pro": {
-      "base_model": "gemini-2.5-pro",
-      "input_cost_per_token": 0.0000012499999999999999,
-      "input_dbu_cost_per_token": 0.000017857,
+      "cache_creation_input_token_cost": 3.7499e-7,
+      "cache_creation_input_token_dbu_cost": 0.000005357,
+      "cache_read_input_token_cost": 3.752e-8,
+      "cache_read_input_token_dbu_cost": 5.36e-7,
+      "input_cost_per_token": 3.7499e-7,
+      "input_dbu_cost_per_token": 0.000005357,
       "max_input_tokens": 1048576,
       "max_output_tokens": 65536,
       "max_tokens": 65536,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Rates exclude a 20% promotional discount until Jan 31, 2027. Deprecated; retires Oct 2, 2026."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000009999999999999999,
-      "output_dbu_cost_per_token": 0.000142857,
+      "output_cost_per_token": 0.00000312501,
+      "output_dbu_cost_per_token": 0.000044643,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
       "supports_function_calling": true,
-      "supports_tool_choice": true
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gemini-2-5-pro": {
+      "base_model": "gemini-2.5-pro",
+      "cache_creation_input_token_cost": 0.00000156247,
+      "cache_creation_input_token_dbu_cost": 0.000022321,
+      "cache_read_input_token_cost": 1.5624e-7,
+      "cache_read_input_token_dbu_cost": 0.000002232,
+      "input_cost_per_token": 0.00000156247,
+      "input_dbu_cost_per_token": 0.000022321,
+      "max_input_tokens": 1048576,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Long context (\u003e200k tokens) tier: 44.643 input / 267.857 output DBU per 1M. Rates exclude a 20% promotional discount until Jan 31, 2027. Model retires Oct 2, 2026."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00001249997,
+      "output_dbu_cost_per_token": 0.000178571,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gemini-3-1-flash-lite": {
       "base_model": "gemini-3.1-flash-lite",
-      "input_cost_per_token": 2.5e-7,
+      "cache_creation_input_token_cost": 3.1248e-7,
+      "cache_creation_input_token_dbu_cost": 0.000004464,
+      "cache_read_input_token_cost": 3.122e-8,
+      "cache_read_input_token_dbu_cost": 4.46e-7,
+      "input_cost_per_token": 3.1248e-7,
       "input_dbu_cost_per_token": 0.000004464,
       "max_input_tokens": 1048576,
       "max_output_tokens": 65536,
       "max_tokens": 65536,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Rates exclude a 20% promotional discount in effect until Jan 31, 2027. In-geo endpoint is 10% higher."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.0000015,
+      "output_cost_per_token": 0.00000187502,
       "output_dbu_cost_per_token": 0.000026786,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
       "supports_function_calling": true,
-      "supports_tool_choice": true
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gemini-3-1-pro": {
       "base_model": "gemini-3.1-pro",
-      "input_cost_per_token": 0.000002,
+      "cache_creation_input_token_cost": 0.00000249998,
+      "cache_creation_input_token_dbu_cost": 0.000035714,
+      "cache_read_input_token_cost": 2.4997e-7,
+      "cache_read_input_token_dbu_cost": 0.000003571,
+      "input_cost_per_token": 0.00000249998,
       "input_dbu_cost_per_token": 0.000035714,
       "max_input_tokens": 1048576,
       "max_output_tokens": 65536,
       "max_tokens": 65536,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Billed under the 'Gemini 3.0 / 3.1 Pro' row. Long context (\u003e200k tokens) tier: 71.429 input / 321.429 output DBU per 1M. Rates exclude a 20% promotional discount until Jan 31, 2027."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000012,
+      "output_cost_per_token": 0.00001500002,
       "output_dbu_cost_per_token": 0.000214286,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
       "supports_function_calling": true,
-      "supports_tool_choice": true
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gemini-3-5-flash": {
+      "base_model": "gemini-3.5-flash",
+      "cache_creation_input_token_cost": 0.00000187502,
+      "cache_creation_input_token_dbu_cost": 0.000026786,
+      "cache_read_input_token_cost": 1.8753e-7,
+      "cache_read_input_token_dbu_cost": 0.000002679,
+      "input_cost_per_token": 0.00000187502,
+      "input_dbu_cost_per_token": 0.000026786,
+      "max_input_tokens": 1048576,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Rates exclude a 20% promotional discount in effect until Jan 31, 2027. In-geo endpoint is 10% higher."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00001124998,
+      "output_dbu_cost_per_token": 0.000160714,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gemini-3-5-flash-lite": {
+      "base_model": "gemini-3.5-flash-lite",
+      "cache_creation_input_token_cost": 3.7499e-7,
+      "cache_creation_input_token_dbu_cost": 0.000005357,
+      "cache_read_input_token_cost": 3.752e-8,
+      "cache_read_input_token_dbu_cost": 5.36e-7,
+      "input_cost_per_token": 3.7499e-7,
+      "input_dbu_cost_per_token": 0.000005357,
+      "max_input_tokens": 1048576,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Rates exclude a 20% promotional discount in effect until Jan 31, 2027. In-geo endpoint is 10% higher."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00000312501,
+      "output_dbu_cost_per_token": 0.000044643,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gemini-3-6-flash": {
+      "base_model": "gemini-3.6-flash",
+      "cache_creation_input_token_cost": 0.00000187502,
+      "cache_creation_input_token_dbu_cost": 0.000026786,
+      "cache_read_input_token_cost": 1.8753e-7,
+      "cache_read_input_token_dbu_cost": 0.000002679,
+      "input_cost_per_token": 0.00000187502,
+      "input_dbu_cost_per_token": 0.000026786,
+      "max_input_tokens": 1048576,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Rates exclude a 20% promotional discount in effect until Jan 31, 2027 (actual billed price is 20% lower)."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00000937503,
+      "output_dbu_cost_per_token": 0.000133929,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gemini-3-flash": {
       "base_model": "gemini-3-flash",
-      "input_cost_per_token": 5e-7,
+      "cache_creation_input_token_cost": 6.2503e-7,
+      "cache_creation_input_token_dbu_cost": 0.000008929,
+      "cache_read_input_token_cost": 6.251e-8,
+      "cache_read_input_token_dbu_cost": 8.93e-7,
+      "input_cost_per_token": 6.2503e-7,
       "input_dbu_cost_per_token": 0.000008929,
       "max_input_tokens": 1048576,
       "max_output_tokens": 65536,
       "max_tokens": 65536,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Billed under the 'Gemini 3.0 Flash' row. Rates exclude a 20% promotional discount until Jan 31, 2027."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000003,
+      "output_cost_per_token": 0.00000374997,
       "output_dbu_cost_per_token": 0.000053571,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
       "supports_function_calling": true,
-      "supports_tool_choice": true
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gemini-3-pro": {
       "base_model": "gemini-3-pro",
@@ -15682,11 +15931,11 @@
     },
     "databricks/databricks-gemma-3-12b": {
       "base_model": "gemma-3-12b",
-      "input_cost_per_token": 1.5000999999999998e-7,
-      "input_dbu_cost_per_token": 0.0000021429999999999996,
-      "max_input_tokens": 128000,
-      "max_output_tokens": 32000,
-      "max_tokens": 32000,
+      "input_cost_per_token": 1.5001e-7,
+      "input_dbu_cost_per_token": 0.000002143,
+      "max_input_tokens": 131072,
+      "max_output_tokens": 8192,
+      "max_tokens": 8192,
       "metadata": {
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
@@ -15694,39 +15943,87 @@
       "output_cost_per_token": 5.0001e-7,
       "output_dbu_cost_per_token": 0.000007143,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": false,
+      "supports_reasoning": false,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-glm-5-2": {
+      "base_model": "glm-5.2",
+      "cache_read_input_token_cost": 2.5998e-7,
+      "cache_read_input_token_dbu_cost": 0.000003714,
+      "input_cost_per_token": 0.0000014,
+      "input_dbu_cost_per_token": 0.00002,
+      "max_input_tokens": 1000000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Pay-per-token only; no provisioned throughput. 1M token context per Databricks docs."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00000439999,
+      "output_dbu_cost_per_token": 0.000062857,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": false
     },
     "databricks/databricks-gpt-5": {
       "base_model": "gpt-5",
-      "input_cost_per_token": 0.0000012499999999999999,
+      "cache_creation_input_token_cost": 0.00000124999,
+      "cache_creation_input_token_dbu_cost": 0.000017857,
+      "cache_read_input_token_cost": 1.2502e-7,
+      "cache_read_input_token_dbu_cost": 0.000001786,
+      "input_cost_per_token": 0.00000124999,
       "input_dbu_cost_per_token": 0.000017857,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000009999999999999999,
+      "output_cost_per_token": 0.00000999999,
       "output_dbu_cost_per_token": 0.000142857,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-5-1": {
-      "base_model": "gpt-5-1",
-      "input_cost_per_token": 0.0000012499999999999999,
+      "base_model": "gpt-5.1",
+      "cache_creation_input_token_cost": 0.00000124999,
+      "cache_creation_input_token_dbu_cost": 0.000017857,
+      "cache_read_input_token_cost": 1.2502e-7,
+      "cache_read_input_token_dbu_cost": 0.000001786,
+      "input_cost_per_token": 0.00000124999,
       "input_dbu_cost_per_token": 0.000017857,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000009999999999999999,
+      "output_cost_per_token": 0.00000999999,
       "output_dbu_cost_per_token": 0.000142857,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-5-1-codex-max": {
       "base_model": "gpt-5-1-codex-max",
@@ -15761,10 +16058,14 @@
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
     },
     "databricks/databricks-gpt-5-2": {
-      "base_model": "gpt-5-2",
+      "base_model": "gpt-5.2",
+      "cache_creation_input_token_cost": 0.00000175,
+      "cache_creation_input_token_dbu_cost": 0.000025,
+      "cache_read_input_token_cost": 1.75e-7,
+      "cache_read_input_token_dbu_cost": 0.0000025,
       "input_cost_per_token": 0.00000175,
       "input_dbu_cost_per_token": 0.000025,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
@@ -15774,7 +16075,13 @@
       "output_cost_per_token": 0.000014,
       "output_dbu_cost_per_token": 0.0002,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-5-2-codex": {
       "base_model": "gpt-5-2-codex",
@@ -15793,105 +16100,293 @@
       "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
     },
     "databricks/databricks-gpt-5-3-codex": {
-      "base_model": "gpt-5-3-codex",
+      "base_model": "gpt-5.3-codex",
+      "cache_creation_input_token_cost": 0.00000175,
+      "cache_creation_input_token_dbu_cost": 0.000025,
+      "cache_read_input_token_cost": 1.75e-7,
+      "cache_read_input_token_dbu_cost": 0.0000025,
       "input_cost_per_token": 0.00000175,
       "input_dbu_cost_per_token": 0.000025,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Billed under the 'GPT 5.2/5.3 Codex' row. Responses API only; no batch inference."
       },
       "mode": "chat",
       "output_cost_per_token": 0.000014,
       "output_dbu_cost_per_token": 0.0002,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-5-4": {
-      "base_model": "gpt-5-4",
-      "input_cost_per_token": 0.0000024999999999999998,
+      "base_model": "gpt-5.4",
+      "cache_creation_input_token_cost": 0.00000249998,
+      "cache_creation_input_token_dbu_cost": 0.000035714,
+      "cache_read_input_token_cost": 2.4997e-7,
+      "cache_read_input_token_dbu_cost": 0.000003571,
+      "input_cost_per_token": 0.00000249998,
       "input_dbu_cost_per_token": 0.000035714,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Long context (\u003e200k input) tier: 71.428 input / 321.429 output DBU per 1M."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000014999999999999999,
+      "output_cost_per_token": 0.00001500002,
       "output_dbu_cost_per_token": 0.000214286,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-5-4-mini": {
-      "base_model": "gpt-5-4-mini",
-      "input_cost_per_token": 7.5e-7,
+      "base_model": "gpt-5.4-mini",
+      "cache_creation_input_token_cost": 7.4998e-7,
+      "cache_creation_input_token_dbu_cost": 0.000010714,
+      "cache_read_input_token_cost": 7.497e-8,
+      "cache_read_input_token_dbu_cost": 0.000001071,
+      "input_cost_per_token": 7.4998e-7,
       "input_dbu_cost_per_token": 0.000010714,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.0000045,
+      "output_cost_per_token": 0.00000450002,
       "output_dbu_cost_per_token": 0.000064286,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-5-4-nano": {
-      "base_model": "gpt-5-4-nano",
-      "input_cost_per_token": 2e-7,
+      "base_model": "gpt-5.4-nano",
+      "cache_creation_input_token_cost": 1.9999e-7,
+      "cache_creation_input_token_dbu_cost": 0.000002857,
+      "cache_read_input_token_cost": 2.002e-8,
+      "cache_read_input_token_dbu_cost": 2.86e-7,
+      "input_cost_per_token": 1.9999e-7,
       "input_dbu_cost_per_token": 0.000002857,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.0000012499999999999999,
+      "output_cost_per_token": 0.00000124999,
       "output_dbu_cost_per_token": 0.000017857,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gpt-5-5": {
+      "base_model": "gpt-5.5",
+      "cache_creation_input_token_cost": 0.00000500003,
+      "cache_creation_input_token_dbu_cost": 0.000071429,
+      "cache_read_input_token_cost": 5.0001e-7,
+      "cache_read_input_token_dbu_cost": 0.000007143,
+      "input_cost_per_token": 0.00000500003,
+      "input_dbu_cost_per_token": 0.000071429,
+      "max_input_tokens": 400000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Long context (\u003e200k input) tier: 142.857 input / 642.857 output DBU per 1M. Responses API only."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00002999997,
+      "output_dbu_cost_per_token": 0.000428571,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gpt-5-5-pro": {
+      "base_model": "gpt-5.5-pro",
+      "cache_creation_input_token_cost": 0.00002999997,
+      "cache_creation_input_token_dbu_cost": 0.000428571,
+      "input_cost_per_token": 0.00002999997,
+      "input_dbu_cost_per_token": 0.000428571,
+      "max_input_tokens": 400000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Billed under the 'GPT 5.4/5.5 Pro' row. No cache-read tier. Long context tier: 857.142 input / 3857.144 output DBU per 1M. Responses API only."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00018000003,
+      "output_dbu_cost_per_token": 0.002571429,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": false,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gpt-5-6-luna": {
+      "base_model": "gpt-5.6-luna",
+      "cache_creation_input_token_cost": 2.4997e-7,
+      "cache_creation_input_token_dbu_cost": 0.000003571,
+      "cache_read_input_token_cost": 2.002e-8,
+      "cache_read_input_token_dbu_cost": 2.86e-7,
+      "input_cost_per_token": 1.9999e-7,
+      "input_dbu_cost_per_token": 0.000002857,
+      "max_input_tokens": 400000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Long context (\u003e200k input) tier: 5.714 input / 25.714 output DBU per 1M. In-geo endpoint is 10% higher."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00000120001,
+      "output_dbu_cost_per_token": 0.000017143,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gpt-5-6-sol": {
+      "base_model": "gpt-5.6-sol",
+      "cache_creation_input_token_cost": 0.00000625002,
+      "cache_creation_input_token_dbu_cost": 0.000089286,
+      "cache_read_input_token_cost": 5.0001e-7,
+      "cache_read_input_token_dbu_cost": 0.000007143,
+      "input_cost_per_token": 0.00000500003,
+      "input_dbu_cost_per_token": 0.000071429,
+      "max_input_tokens": 400000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Long context (\u003e200k input) tier: 142.857 input / 642.857 output DBU per 1M. In-geo endpoint is 10% higher."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00002999997,
+      "output_dbu_cost_per_token": 0.000428571,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-gpt-5-6-terra": {
+      "base_model": "gpt-5.6-terra",
+      "cache_creation_input_token_cost": 0.00000249998,
+      "cache_creation_input_token_dbu_cost": 0.000035714,
+      "cache_read_input_token_cost": 1.9999e-7,
+      "cache_read_input_token_dbu_cost": 0.000002857,
+      "input_cost_per_token": 0.00000199997,
+      "input_dbu_cost_per_token": 0.000028571,
+      "max_input_tokens": 400000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Long context (\u003e200k input) tier: 57.143 input / 257.143 output DBU per 1M. In-geo endpoint is 10% higher."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00001200003,
+      "output_dbu_cost_per_token": 0.000171429,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-5-mini": {
       "base_model": "gpt-5-mini",
-      "input_cost_per_token": 2.5e-7,
+      "cache_creation_input_token_cost": 2.4997e-7,
+      "cache_creation_input_token_dbu_cost": 0.000003571,
+      "cache_read_input_token_cost": 2.499e-8,
+      "cache_read_input_token_dbu_cost": 3.57e-7,
+      "input_cost_per_token": 2.4997e-7,
       "input_dbu_cost_per_token": 0.000003571,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.000002,
+      "output_cost_per_token": 0.00000199997,
       "output_dbu_cost_per_token": 0.000028571,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-5-nano": {
       "base_model": "gpt-5-nano",
-      "input_cost_per_token": 5e-8,
+      "cache_creation_input_token_cost": 4.998e-8,
+      "cache_creation_input_token_dbu_cost": 7.14e-7,
+      "cache_read_input_token_cost": 4.97e-9,
+      "cache_read_input_token_dbu_cost": 7.1e-8,
+      "input_cost_per_token": 4.998e-8,
       "input_dbu_cost_per_token": 7.14e-7,
-      "max_input_tokens": 272000,
+      "max_input_tokens": 400000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "metadata": {
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 4e-7,
-      "output_dbu_cost_per_token": 0.000005714000000000001,
+      "output_cost_per_token": 3.9998e-7,
+      "output_dbu_cost_per_token": 0.000005714,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/proprietary-foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-gpt-oss-120b": {
       "base_model": "gpt-oss-120b",
-      "input_cost_per_token": 7.2e-8,
-      "input_dbu_cost_per_token": 0.0000021429999999999996,
+      "input_cost_per_token": 1.5001e-7,
+      "input_dbu_cost_per_token": 0.000002143,
       "max_input_tokens": 131072,
       "max_output_tokens": 131072,
       "max_tokens": 131072,
@@ -15899,14 +16394,20 @@
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 2.8e-7,
+      "output_cost_per_token": 5.9997e-7,
       "output_dbu_cost_per_token": 0.000008571,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": false,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": false
     },
     "databricks/databricks-gpt-oss-20b": {
       "base_model": "gpt-oss-20b",
-      "input_cost_per_token": 5e-8,
+      "input_cost_per_token": 7e-8,
       "input_dbu_cost_per_token": 0.000001,
       "max_input_tokens": 131072,
       "max_output_tokens": 131072,
@@ -15915,19 +16416,25 @@
         "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 2e-7,
-      "output_dbu_cost_per_token": 0.000004285999999999999,
+      "output_cost_per_token": 3.0002e-7,
+      "output_dbu_cost_per_token": 0.000004286,
       "provider": "databricks",
-      "source": "https://www.databricks.com/product/pricing/foundation-model-serving"
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": false,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": false
     },
     "databricks/databricks-gte-large-en": {
-      "base_model": "gte-large-en",
-      "input_cost_per_token": 1.2999000000000001e-7,
+      "base_model": "gte-large-en-v1.5",
+      "input_cost_per_token": 1.2999e-7,
       "input_dbu_cost_per_token": 0.000001857,
       "max_input_tokens": 8192,
       "max_tokens": 8192,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070, based on databricks Llama 3.1 70B conversion. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Does not generate normalized embeddings."
       },
       "mode": "embedding",
       "output_cost_per_token": 0,
@@ -15935,6 +16442,50 @@
       "output_vector_size": 1024,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/foundation-model-serving"
+    },
+    "databricks/databricks-inkling": {
+      "base_model": "inkling",
+      "cache_read_input_token_cost": 1.7003e-7,
+      "cache_read_input_token_dbu_cost": 0.000002429,
+      "input_cost_per_token": 0.00000100002,
+      "input_dbu_cost_per_token": 0.000014286,
+      "max_input_tokens": 1000000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Public Preview. Pay-per-token only. 1M token context per Databricks docs."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00000404999,
+      "output_dbu_cost_per_token": 0.000057857,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "databricks/databricks-kimi-k3": {
+      "base_model": "kimi-k3",
+      "cache_read_input_token_cost": 3.0002e-7,
+      "cache_read_input_token_dbu_cost": 0.000004286,
+      "input_cost_per_token": 0.00000299999,
+      "input_dbu_cost_per_token": 0.000042857,
+      "max_input_tokens": 1000000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Pay-per-token only; no provisioned throughput. 1M token context per Databricks docs."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00001500002,
+      "output_dbu_cost_per_token": 0.000214286,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "databricks/databricks-llama-2-70b-chat": {
       "base_model": "llama-2-70b-chat",
@@ -16004,21 +16555,26 @@
       "source": "https://www.databricks.com/product/pricing/foundation-model-serving"
     },
     "databricks/databricks-meta-llama-3-3-70b-instruct": {
-      "base_model": "llama-3-3-70b-instruct",
+      "base_model": "llama-3.3-70b-instruct",
       "input_cost_per_token": 5.0001e-7,
       "input_dbu_cost_per_token": 0.000007143,
-      "max_input_tokens": 128000,
-      "max_output_tokens": 128000,
-      "max_tokens": 128000,
+      "max_input_tokens": 131072,
+      "max_output_tokens": 8192,
+      "max_tokens": 8192,
       "metadata": {
-        "notes": "Input/output cost per token is dbu cost * $0.070, based on databricks Llama 3.1 70B conversion. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation."
       },
       "mode": "chat",
-      "output_cost_per_token": 0.0000015000300000000002,
+      "output_cost_per_token": 0.00000150003,
       "output_dbu_cost_per_token": 0.000021429,
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
-      "supports_tool_choice": true
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": false,
+      "supports_reasoning": false,
+      "supports_tool_choice": true,
+      "supports_vision": false
     },
     "databricks/databricks-meta-llama-3-70b-instruct": {
       "base_model": "llama-3-70b-instruct",
@@ -16087,6 +16643,63 @@
       "provider": "databricks",
       "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
       "supports_tool_choice": true
+    },
+    "databricks/databricks-qwen3-embedding-0-6b": {
+      "base_model": "qwen3-embedding-0.6b",
+      "input_cost_per_token": 2.002e-8,
+      "input_dbu_cost_per_token": 2.86e-7,
+      "max_input_tokens": 32768,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Public Preview. Configurable output dimensionality up to 1024."
+      },
+      "mode": "embedding",
+      "output_cost_per_token": 0,
+      "output_dbu_cost_per_token": 0,
+      "output_vector_size": 1024,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving"
+    },
+    "databricks/databricks-qwen3-next-80b-a3b-instruct": {
+      "base_model": "qwen3-next-80b-a3b-instruct",
+      "input_cost_per_token": 1.5001e-7,
+      "input_dbu_cost_per_token": 0.000002143,
+      "max_input_tokens": 262144,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Public Preview."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00000120001,
+      "output_dbu_cost_per_token": 0.000017143,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": false,
+      "supports_reasoning": false,
+      "supports_tool_choice": true,
+      "supports_vision": false
+    },
+    "databricks/databricks-qwen35-122b-a10b": {
+      "base_model": "qwen3.5-122b-a10b",
+      "input_cost_per_token": 2.2001e-7,
+      "input_dbu_cost_per_token": 0.000003143,
+      "max_input_tokens": 256000,
+      "max_output_tokens": 25000,
+      "max_tokens": 25000,
+      "metadata": {
+        "notes": "Input/output cost per token is dbu cost * $0.070. Number provided for reference, '*_dbu_cost_per_token' used in actual calculation. Public Preview. Reasoning-only model; reasoning cannot be disabled. A 'Priority' tier is billed at 2x (6.286 input / 62.858 output DBU per 1M)."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 0.00000220003,
+      "output_dbu_cost_per_token": 0.000031429,
+      "provider": "databricks",
+      "source": "https://www.databricks.com/product/pricing/foundation-model-serving",
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_prompt_caching": false,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": false
     },
     "dataforseo/search": {
       "base_model": "search",
@@ -24676,7 +25289,7 @@
       "supports_pdf_input": false,
       "supports_prompt_caching": false,
       "supports_response_schema": false,
-      "supports_system_messages": true,
+      "supports_system_messages": false,
       "supports_tool_choice": false,
       "supports_vision": false
     },
@@ -31582,7 +32195,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.5-9B",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -31610,6 +32222,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.6-35B-A3B",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -31713,6 +32326,20 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2",
       "supports_function_calling": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true
+    },
+    "huggingface/deepinfra/deepseek-ai/DeepSeek-V4-Flash": {
+      "base_model": "DeepSeek-V4-Flash",
+      "input_cost_per_token": 9e-8,
+      "max_input_tokens": 1048576,
+      "max_tokens": 1048576,
+      "mode": "chat",
+      "output_cost_per_token": 1.8e-7,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash",
+      "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/deepinfra/deepseek-ai/DeepSeek-V4-Flash-0731": {
@@ -32078,7 +32705,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/zai-org/GLM-5.1",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/deepinfra/zai-org/GLM-5.2": {
@@ -32359,6 +32985,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3-235B-A22B-Instruct-2507",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/novita/Qwen/Qwen3-235B-A22B-Thinking-2507": {
@@ -32553,6 +33180,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/novita/deepseek-ai/DeepSeek-R1-0528": {
@@ -32565,7 +33193,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-0528",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/novita/deepseek-ai/DeepSeek-R1-Distill-Llama-70B": {
@@ -32678,6 +33305,18 @@
       "supports_function_calling": true,
       "supports_tool_choice": true
     },
+    "huggingface/novita/deepseek-ai/DeepSeek-V4-Pro": {
+      "base_model": "DeepSeek-V4-Pro",
+      "input_cost_per_token": 0.0000016,
+      "max_input_tokens": 1048576,
+      "max_tokens": 1048576,
+      "mode": "chat",
+      "output_cost_per_token": 0.0000032,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+      "supports_function_calling": true,
+      "supports_tool_choice": true
+    },
     "huggingface/novita/deepseek-ai/DeepSeek-V4-Pro-0813": {
       "base_model": "DeepSeek-V4-Pro-0813",
       "input_cost_per_token": 0.00000132,
@@ -32700,6 +33339,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -32713,6 +33353,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/google/gemma-4-31B-it",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -32738,6 +33379,18 @@
       "output_cost_per_token": 5e-8,
       "provider": "huggingface",
       "source": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct"
+    },
+    "huggingface/novita/meta-llama/Llama-3.3-70B-Instruct": {
+      "base_model": "Llama-3.3-70B-Instruct",
+      "input_cost_per_token": 1.35e-7,
+      "max_input_tokens": 12288,
+      "max_tokens": 12288,
+      "mode": "chat",
+      "output_cost_per_token": 4e-7,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+      "supports_function_calling": true,
+      "supports_tool_choice": true
     },
     "huggingface/novita/meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8": {
       "base_model": "Llama-4-Maverick-17B-128E-Instruct-FP8",
@@ -32829,19 +33482,6 @@
       "supports_tool_choice": true,
       "supports_vision": true
     },
-    "huggingface/novita/openai/gpt-oss-120b": {
-      "base_model": "gpt-oss-120b",
-      "input_cost_per_token": 5e-8,
-      "max_input_tokens": 131072,
-      "max_tokens": 131072,
-      "mode": "chat",
-      "output_cost_per_token": 2.5e-7,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/openai/gpt-oss-120b",
-      "supports_function_calling": true,
-      "supports_response_schema": true,
-      "supports_tool_choice": true
-    },
     "huggingface/novita/openai/gpt-oss-20b": {
       "base_model": "gpt-oss-20b",
       "input_cost_per_token": 4e-8,
@@ -32850,7 +33490,8 @@
       "mode": "chat",
       "output_cost_per_token": 1.5e-7,
       "provider": "huggingface",
-      "source": "https://huggingface.co/openai/gpt-oss-20b"
+      "source": "https://huggingface.co/openai/gpt-oss-20b",
+      "supports_response_schema": true
     },
     "huggingface/novita/zai-org/AutoGLM-Phone-9B-Multilingual": {
       "base_model": "AutoGLM-Phone-9B-Multilingual",
@@ -33028,6 +33669,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3-235B-A22B",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/nscale/Qwen/Qwen3-235B-A22B-Instruct-2507": {
@@ -33267,6 +33909,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/openai/gpt-oss-20b",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/publicai/aisingapore/Gemma-SEA-LION-v4-27B-IT": {
@@ -33311,6 +33954,14 @@
       "supports_response_schema": true,
       "supports_tool_choice": true
     },
+    "huggingface/publicai/swiss-ai/Apertus-8B-Instruct-2509": {
+      "base_model": "Apertus-8B-Instruct-2509",
+      "input_cost_per_token": 1e-7,
+      "mode": "chat",
+      "output_cost_per_token": 2e-7,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/swiss-ai/Apertus-8B-Instruct-2509"
+    },
     "huggingface/publicai/swiss-ai/Apertus-v1.5-70B": {
       "base_model": "Apertus-v1.5-70B",
       "input_cost_per_token": 8.199999999999999e-7,
@@ -33320,6 +33971,17 @@
       "source": "https://huggingface.co/swiss-ai/Apertus-v1.5-70B",
       "supports_function_calling": true,
       "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
+    "huggingface/publicai/swiss-ai/Apertus-v1.5-8B": {
+      "base_model": "Apertus-v1.5-8B",
+      "input_cost_per_token": 1e-7,
+      "mode": "chat",
+      "output_cost_per_token": 2e-7,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/swiss-ai/Apertus-v1.5-8B",
+      "supports_function_calling": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -33377,6 +34039,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -33425,19 +34088,6 @@
       "supports_tool_choice": true,
       "supports_vision": true
     },
-    "huggingface/together/Qwen/Qwen2.5-7B-Instruct": {
-      "base_model": "Qwen2.5-7B-Instruct",
-      "input_cost_per_token": 3e-7,
-      "max_input_tokens": 32768,
-      "max_tokens": 32768,
-      "mode": "chat",
-      "output_cost_per_token": 3e-7,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
-      "supports_function_calling": true,
-      "supports_response_schema": true,
-      "supports_tool_choice": true
-    },
     "huggingface/together/Qwen/Qwen3.5-9B": {
       "base_model": "Qwen3.5-9B",
       "input_cost_per_token": 1.7000000000000001e-7,
@@ -33451,18 +34101,6 @@
       "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
-    },
-    "huggingface/together/Qwen/Qwen3.8-2.4T-A95B": {
-      "base_model": "Qwen3.8-2.4T-A95B",
-      "input_cost_per_token": 0.0000024999999999999998,
-      "max_input_tokens": 1010000,
-      "max_tokens": 1010000,
-      "mode": "chat",
-      "output_cost_per_token": 0.0000062499999999999995,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
-      "supports_function_calling": true,
-      "supports_tool_choice": true
     },
     "huggingface/together/deepcogito/cogito-671b-v2.1": {
       "base_model": "cogito-671b-v2.1",
@@ -33581,19 +34219,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/meta-models/Muse-Glimmer-30B",
       "supports_function_calling": true,
-      "supports_tool_choice": true,
-      "supports_vision": true
-    },
-    "huggingface/together/moonshotai/Kimi-K2.6": {
-      "base_model": "Kimi-K2.6",
-      "input_cost_per_token": 0.0000012,
-      "max_input_tokens": 262144,
-      "max_tokens": 262144,
-      "mode": "chat",
-      "output_cost_per_token": 0.0000045,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/moonshotai/Kimi-K2.6",
-      "supports_function_calling": true,
       "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
@@ -33615,8 +34240,8 @@
     "huggingface/together/moonshotai/Kimi-K3": {
       "base_model": "Kimi-K3",
       "input_cost_per_token": 0.000003,
-      "max_input_tokens": 1000000,
-      "max_tokens": 1000000,
+      "max_input_tokens": 1048576,
+      "max_tokens": 1048576,
       "mode": "chat",
       "output_cost_per_token": 0.000014999999999999999,
       "provider": "huggingface",
@@ -33661,6 +34286,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/openai/gpt-oss-20b",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/together/pearl-ai/Gemma-4-31B-it-pearl": {
@@ -41274,16 +41900,6 @@
       "provider": "opencode-zen",
       "source": "https://opencode.ai/docs/zen/"
     },
-    "opencode-zen/deepseek-v4-flash-free": {
-      "base_model": "deepseek-v4-flash-free",
-      "cache_creation_input_token_cost": 0,
-      "cache_read_input_token_cost": 0,
-      "input_cost_per_token": 0,
-      "mode": "chat",
-      "output_cost_per_token": 0,
-      "provider": "opencode-zen",
-      "source": "https://opencode.ai/docs/zen/"
-    },
     "opencode-zen/gemini-3-flash": {
       "base_model": "gemini-3-flash",
       "cache_creation_input_token_cost": 0,
@@ -41634,16 +42250,6 @@
       "provider": "opencode-zen",
       "source": "https://opencode.ai/docs/zen/"
     },
-    "opencode-zen/laguna-s-2.1-free": {
-      "base_model": "laguna-s-2.1-free",
-      "cache_creation_input_token_cost": 0,
-      "cache_read_input_token_cost": 0,
-      "input_cost_per_token": 0,
-      "mode": "chat",
-      "output_cost_per_token": 0,
-      "provider": "opencode-zen",
-      "source": "https://opencode.ai/docs/zen/"
-    },
     "opencode-zen/mimo-v2.5-free": {
       "base_model": "mimo-v2.5-free",
       "cache_creation_input_token_cost": 0,
@@ -41661,6 +42267,26 @@
       "input_cost_per_token": 0.00000125,
       "mode": "chat",
       "output_cost_per_token": 0.00000425,
+      "provider": "opencode-zen",
+      "source": "https://opencode.ai/docs/zen/"
+    },
+    "opencode-zen/muse-spark-1.2-contributor": {
+      "base_model": "muse-spark-1.2-contributor",
+      "cache_creation_input_token_cost": 0,
+      "cache_read_input_token_cost": 2e-9,
+      "input_cost_per_token": 1e-7,
+      "mode": "chat",
+      "output_cost_per_token": 2e-7,
+      "provider": "opencode-zen",
+      "source": "https://opencode.ai/docs/zen/"
+    },
+    "opencode-zen/muse-spark-1.2-contributor-free": {
+      "base_model": "muse-spark-1.2-contributor-free",
+      "cache_creation_input_token_cost": 0,
+      "cache_read_input_token_cost": 0,
+      "input_cost_per_token": 0,
+      "mode": "chat",
+      "output_cost_per_token": 0,
       "provider": "opencode-zen",
       "source": "https://opencode.ai/docs/zen/"
     },
@@ -41703,19 +42329,6 @@
       "output_cost_per_token": 0.000006,
       "provider": "opencode-zen",
       "source": "https://opencode.ai/docs/zen/"
-    },
-    "openrouter/ai21/jamba-large-1.7": {
-      "base_model": "jamba-large-1.7",
-      "input_cost_per_token": 0.000002,
-      "max_input_tokens": 256000,
-      "max_output_tokens": 4096,
-      "max_tokens": 4096,
-      "mode": "chat",
-      "output_cost_per_token": 0.000008,
-      "provider": "openrouter",
-      "supports_function_calling": true,
-      "supports_response_schema": true,
-      "supports_tool_choice": true
     },
     "openrouter/aion-labs/aion-2.0": {
       "base_model": "aion-2.0",
@@ -42751,13 +43364,12 @@
     },
     "openrouter/deepseek/deepseek-chat-v3-0324": {
       "base_model": "deepseek-chat-v3-0324",
-      "cache_read_input_token_cost": 1.35e-7,
-      "input_cost_per_token": 2.7e-7,
+      "input_cost_per_token": 2.5e-7,
       "max_input_tokens": 163840,
-      "max_output_tokens": 65536,
-      "max_tokens": 65536,
+      "max_output_tokens": 163840,
+      "max_tokens": 163840,
       "mode": "chat",
-      "output_cost_per_token": 0.00000112,
+      "output_cost_per_token": 0.000001,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -42879,13 +43491,13 @@
     },
     "openrouter/deepseek/deepseek-v4-flash": {
       "base_model": "deepseek-v4-flash",
-      "cache_read_input_token_cost": 1.652e-8,
-      "input_cost_per_token": 8.26e-8,
+      "cache_read_input_token_cost": 1.77212e-8,
+      "input_cost_per_token": 8.8606e-8,
       "max_input_tokens": 1024000,
       "max_output_tokens": 384000,
       "max_tokens": 384000,
       "mode": "chat",
-      "output_cost_per_token": 1.652e-7,
+      "output_cost_per_token": 1.77212e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -42911,13 +43523,13 @@
     },
     "openrouter/deepseek/deepseek-v4-pro": {
       "base_model": "deepseek-v4-pro",
-      "cache_read_input_token_cost": 2.2e-8,
-      "input_cost_per_token": 6.6e-7,
+      "cache_read_input_token_cost": 1.215e-7,
+      "input_cost_per_token": 0.00000144,
       "max_input_tokens": 1048576,
-      "max_output_tokens": 384000,
-      "max_tokens": 384000,
+      "max_output_tokens": 393216,
+      "max_tokens": 393216,
       "mode": "chat",
-      "output_cost_per_token": 0.00000198,
+      "output_cost_per_token": 0.00000288,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -42927,13 +43539,12 @@
     },
     "openrouter/deepseek/deepseek-v4-pro-0813": {
       "base_model": "deepseek-v4-pro-0813",
-      "cache_read_input_token_cost": 2.2e-8,
-      "input_cost_per_token": 6.6e-7,
-      "max_input_tokens": 1048576,
-      "max_output_tokens": 384000,
-      "max_tokens": 384000,
+      "cache_read_input_token_cost": 3.96e-8,
+      "input_cost_per_token": 0.000001188,
+      "max_input_tokens": 1048575,
+      "max_tokens": 1048575,
       "mode": "chat",
-      "output_cost_per_token": 0.00000198,
+      "output_cost_per_token": 0.000003564,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -43408,8 +44019,8 @@
       "base_model": "gemini-3.1-flash-lite-image",
       "input_cost_per_token": 2.5e-7,
       "max_input_tokens": 65536,
-      "max_output_tokens": 66000,
-      "max_tokens": 66000,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
       "mode": "chat",
       "output_cost_per_token": 0.0000015,
       "provider": "openrouter",
@@ -44064,14 +44675,13 @@
     },
     "openrouter/mancer/weaver": {
       "base_model": "weaver",
-      "input_cost_per_token": 5e-7,
+      "input_cost_per_token": 5.000000000000001e-7,
       "max_input_tokens": 8000,
-      "max_output_tokens": 6000,
-      "max_tokens": 6000,
+      "max_output_tokens": 2000,
+      "max_tokens": 2000,
       "mode": "chat",
-      "output_cost_per_token": 7.5e-7,
+      "output_cost_per_token": 7.499999999999999e-7,
       "provider": "openrouter",
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "openrouter/meituan/longcat-2.0": {
@@ -44393,11 +45003,11 @@
     },
     "openrouter/minimax/minimax-m2.5": {
       "base_model": "minimax-m2.5",
-      "cache_read_input_token_cost": 5e-8,
-      "input_cost_per_token": 2.2e-7,
-      "max_input_tokens": 196608,
-      "max_output_tokens": 196608,
-      "max_tokens": 196608,
+      "cache_read_input_token_cost": 6e-8,
+      "input_cost_per_token": 2.25e-7,
+      "max_input_tokens": 65536,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
       "mode": "chat",
       "output_cost_per_token": 9e-7,
       "provider": "openrouter",
@@ -47723,13 +48333,13 @@
     },
     "openrouter/qwen/qwen3.5-35b-a3b": {
       "base_model": "qwen3.5-35b-a3b",
-      "cache_read_input_token_cost": 2.25e-7,
-      "input_cost_per_token": 2.25e-7,
+      "cache_read_input_token_cost": 2.5e-7,
+      "input_cost_per_token": 2.5e-7,
       "max_input_tokens": 262144,
-      "max_output_tokens": 65536,
-      "max_tokens": 65536,
+      "max_output_tokens": 262144,
+      "max_tokens": 262144,
       "mode": "chat",
-      "output_cost_per_token": 0.0000018,
+      "output_cost_per_token": 0.00000125,
       "provider": "openrouter",
       "source": "https://openrouter.ai/qwen/qwen3.5-35b-a3b",
       "supports_function_calling": true,
@@ -47823,13 +48433,13 @@
     },
     "openrouter/qwen/qwen3.6-27b": {
       "base_model": "qwen3.6-27b",
-      "cache_read_input_token_cost": 3e-8,
-      "input_cost_per_token": 3e-7,
+      "cache_read_input_token_cost": 1.2e-7,
+      "input_cost_per_token": 6e-7,
       "max_input_tokens": 262144,
-      "max_output_tokens": 65536,
-      "max_tokens": 65536,
+      "max_output_tokens": 262144,
+      "max_tokens": 262144,
       "mode": "chat",
-      "output_cost_per_token": 0.000002,
+      "output_cost_per_token": 0.0000036,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -48998,13 +49608,13 @@
     },
     "openrouter/~deepseek/deepseek-v4-flash-latest": {
       "base_model": "deepseek-v4-flash-latest",
-      "cache_read_input_token_cost": 1.53e-8,
-      "input_cost_per_token": 7.65e-8,
+      "cache_read_input_token_cost": 1.4e-8,
+      "input_cost_per_token": 6.5e-8,
       "max_input_tokens": 262144,
       "max_output_tokens": 262144,
       "max_tokens": 262144,
       "mode": "chat",
-      "output_cost_per_token": 1.53e-7,
+      "output_cost_per_token": 1.4e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -49124,6 +49734,22 @@
       "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
+    },
+    "openrouter/~z-ai/glm-latest": {
+      "base_model": "glm-latest",
+      "cache_read_input_token_cost": 2.6e-7,
+      "input_cost_per_token": 0.0000014,
+      "max_input_tokens": 1048576,
+      "max_output_tokens": 131072,
+      "max_tokens": 131072,
+      "mode": "chat",
+      "output_cost_per_token": 0.0000044,
+      "provider": "openrouter",
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true
     },
     "ovhcloud/DeepSeek-R1-Distill-Llama-70B": {
       "base_model": "deepseek-r1-distill-llama-70b",
