@@ -1,150 +1,8 @@
 {
   "brand": "FrankenGate",
   "source": "https://getbifrost.ai/datasheet",
-  "retrieved_at": "2026-08-24T04:10:10Z",
+  "retrieved_at": "2026-08-25T04:04:14Z",
   "models": {
-    "1024-x-1024/50-steps/bedrock/amazon.nova-canvas-v1:0": {
-      "base_model": "nova-canvas",
-      "deprecation_date": "2026-09-30",
-      "max_input_tokens": 2600,
-      "mode": "image_generation",
-      "output_cost_per_image": 0.06,
-      "provider": "bedrock"
-    },
-    "1024-x-1024/50-steps/stability.stable-diffusion-xl-v1": {
-      "base_model": "stable-diffusion-xl-v1",
-      "max_input_tokens": 77,
-      "max_tokens": 77,
-      "mode": "image_generation",
-      "output_cost_per_image": 0.04,
-      "provider": "bedrock"
-    },
-    "1024-x-1024/dall-e-2": {
-      "base_model": "dall-e-2",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 1.9e-8,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
-    },
-    "1024-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.009,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "1024-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.009,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "1024-x-1024/max-steps/stability.stable-diffusion-xl-v1": {
-      "base_model": "stable-diffusion-xl-v1",
-      "max_input_tokens": 77,
-      "max_tokens": 77,
-      "mode": "image_generation",
-      "output_cost_per_image": 0.08,
-      "provider": "bedrock"
-    },
-    "1024-x-1536/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "1024-x-1536/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "1536-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "1536-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "256-x-256/dall-e-2": {
-      "base_model": "dall-e-2",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 2.4414e-7,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
-    },
-    "512-x-512/50-steps/stability.stable-diffusion-xl-v0": {
-      "base_model": "stable-diffusion-xl-v0",
-      "max_input_tokens": 77,
-      "max_tokens": 77,
-      "mode": "image_generation",
-      "output_cost_per_image": 0.018,
-      "provider": "bedrock"
-    },
-    "512-x-512/dall-e-2": {
-      "base_model": "dall-e-2",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 6.86e-8,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
-    },
-    "512-x-512/max-steps/stability.stable-diffusion-xl-v0": {
-      "base_model": "stable-diffusion-xl-v0",
-      "max_input_tokens": 77,
-      "max_tokens": 77,
-      "mode": "image_generation",
-      "output_cost_per_image": 0.036,
-      "provider": "bedrock"
-    },
     "agentcore/search": {
       "base_model": "search",
       "input_cost_per_query": 0,
@@ -482,15 +340,6 @@
       "supports_response_schema": true,
       "supports_video_input": true,
       "supports_vision": true
-    },
-    "amazon.nova-canvas-v1:0": {
-      "base_model": "nova-canvas",
-      "deprecation_date": "2026-09-30",
-      "max_input_tokens": 2600,
-      "mode": "image_generation",
-      "output_cost_per_image": 0.06,
-      "provider": "bedrock",
-      "supports_nova_canvas_image_edit": true
     },
     "amazon.nova-lite-v1:0": {
       "base_model": "nova-lite",
@@ -3250,6 +3099,17 @@
       "base_model": "container",
       "code_interpreter_cost_per_session": 0.03,
       "mode": "chat",
+      "provider": "azure"
+    },
+    "azure/dall-e-3": {
+      "base_model": "dall-e-3",
+      "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels_hd_quality": 0.0799959,
+      "output_cost_per_image_above_1024_and_1024_pixels_standard_quality": 0.0399999,
+      "output_cost_per_image_above_1024_and_1792_pixels_hd_quality": 0.119991,
+      "output_cost_per_image_above_1024_and_1792_pixels_standard_quality": 0.079988,
+      "output_cost_per_image_above_1792_and_1024_pixels_hd_quality": 0.119991,
+      "output_cost_per_image_above_1792_and_1024_pixels_standard_quality": 0.079988,
       "provider": "azure"
     },
     "azure/deepseek-r1": {
@@ -7297,6 +7157,15 @@
       "input_cost_per_image_token": 0.00001,
       "input_cost_per_token": 0.0000049999999999999996,
       "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels_high_quality": 0.167,
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.011,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.042,
+      "output_cost_per_image_above_1024_and_1536_pixels_high_quality": 0.25,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.016,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.063,
+      "output_cost_per_image_above_1536_and_1024_pixels_high_quality": 0.25,
+      "output_cost_per_image_above_1536_and_1024_pixels_low_quality": 0.016,
+      "output_cost_per_image_above_1536_and_1024_pixels_medium_quality": 0.063,
       "output_cost_per_image_token": 0.00004,
       "output_cost_per_token": 0.000039999999999999996,
       "provider": "azure",
@@ -7312,6 +7181,15 @@
       "input_cost_per_image_token": 0.0000025,
       "input_cost_per_token": 0.000002,
       "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels_high_quality": 0.03328,
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.002176,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.008448,
+      "output_cost_per_image_above_1024_and_1536_pixels_high_quality": 0.04992,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.003264,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.012672,
+      "output_cost_per_image_above_1536_and_1024_pixels_high_quality": 0.049664,
+      "output_cost_per_image_above_1536_and_1024_pixels_low_quality": 0.0032,
+      "output_cost_per_image_above_1536_and_1024_pixels_medium_quality": 0.012544,
       "output_cost_per_image_token": 0.000008,
       "provider": "azure",
       "supported_endpoints": [
@@ -7700,93 +7578,6 @@
       "supports_tool_choice": true,
       "supports_web_search": true
     },
-    "azure/hd/1024-x-1024/dall-e-3": {
-      "base_model": "dall-e-3",
-      "input_cost_per_pixel": 7.629e-8,
-      "mode": "image_generation",
-      "output_cost_per_token": 0,
-      "provider": "azure"
-    },
-    "azure/hd/1024-x-1792/dall-e-3": {
-      "base_model": "dall-e-3",
-      "input_cost_per_pixel": 6.539e-8,
-      "mode": "image_generation",
-      "output_cost_per_token": 0,
-      "provider": "azure"
-    },
-    "azure/hd/1792-x-1024/dall-e-3": {
-      "base_model": "dall-e-3",
-      "input_cost_per_pixel": 6.539e-8,
-      "mode": "image_generation",
-      "output_cost_per_token": 0,
-      "provider": "azure"
-    },
-    "azure/high/1024-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 1.59263611e-7,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/high/1024-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 3.173828125e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/high/1024-x-1536/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 1.58945719e-7,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/high/1024-x-1536/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 3.173828125e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/high/1536-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 1.58945719e-7,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/high/1536-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 3.1575520833e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
     "azure/jais-30b-chat": {
       "base_model": "jais-30b-chat",
       "input_cost_per_token": 0.0032,
@@ -7848,138 +7639,6 @@
       "supports_tool_choice": true,
       "supports_video_input": true,
       "supports_vision": true
-    },
-    "azure/low/1024-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 1.0490417e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/low/1024-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 2.0751953125e-9,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/low/1024-x-1536/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 1.0172526e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/low/1024-x-1536/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 2.0751953125e-9,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/low/1536-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 1.0172526e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/low/1536-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 2.0345052083e-9,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/medium/1024-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 4.0054321e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/medium/1024-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 8.056640625e-9,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/medium/1024-x-1536/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 4.0054321e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/medium/1024-x-1536/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 8.056640625e-9,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/medium/1536-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_pixel": 4.0054321e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "azure/medium/1536-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2027-04-07",
-      "input_cost_per_pixel": 7.9752604167e-9,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "azure",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
     },
     "azure/ministral-3b": {
       "base_model": "ministral-3b",
@@ -8559,34 +8218,6 @@
       "mode": "audio_speech",
       "provider": "azure",
       "source": "https://azure.microsoft.com/en-us/pricing/calculator/"
-    },
-    "azure/standard/1024-x-1024/dall-e-2": {
-      "base_model": "dall-e-2",
-      "input_cost_per_pixel": 0,
-      "mode": "image_generation",
-      "output_cost_per_token": 0,
-      "provider": "azure"
-    },
-    "azure/standard/1024-x-1024/dall-e-3": {
-      "base_model": "dall-e-3",
-      "input_cost_per_pixel": 3.81469e-8,
-      "mode": "image_generation",
-      "output_cost_per_token": 0,
-      "provider": "azure"
-    },
-    "azure/standard/1024-x-1792/dall-e-3": {
-      "base_model": "dall-e-3",
-      "input_cost_per_pixel": 4.359e-8,
-      "mode": "image_generation",
-      "output_cost_per_token": 0,
-      "provider": "azure"
-    },
-    "azure/standard/1792-x-1024/dall-e-3": {
-      "base_model": "dall-e-3",
-      "input_cost_per_pixel": 4.359e-8,
-      "mode": "image_generation",
-      "output_cost_per_token": 0,
-      "provider": "azure"
     },
     "azure/text-embedding-3-large": {
       "base_model": "text-embedding-3-large",
@@ -9725,6 +9356,15 @@
       "output_cost_per_second": 0.0066027,
       "provider": "bedrock",
       "supports_tool_choice": true
+    },
+    "bedrock/amazon.nova-canvas-v1:0": {
+      "base_model": "nova-canvas",
+      "deprecation_date": "2026-09-30",
+      "max_input_tokens": 2600,
+      "mode": "image_generation",
+      "output_cost_per_image": 0.06,
+      "provider": "bedrock",
+      "supports_nova_canvas_image_edit": true
     },
     "bedrock/ap-northeast-1/1-month-commitment/anthropic.claude-instant-v1": {
       "base_model": "claude-instant-v1",
@@ -12127,6 +11767,337 @@
       "supports_reasoning": true,
       "supports_response_schema": true,
       "supports_tool_choice": true
+    },
+    "bedrock_mantle/us-gov-west-1/google.gemma-4-26b-a4b": {
+      "base_model": "gemma-4-26b-a4b",
+      "input_cost_per_token": 1.3e-7,
+      "max_input_tokens": 256000,
+      "max_output_tokens": 256000,
+      "max_tokens": 256000,
+      "mode": "chat",
+      "output_cost_per_token": 4e-7,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/chat/completions",
+        "/v1/responses"
+      ],
+      "supports_function_calling": true,
+      "supports_parallel_function_calling": false,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/google.gemma-4-31b": {
+      "base_model": "gemma-4-31b",
+      "input_cost_per_token": 1.4e-7,
+      "max_input_tokens": 256000,
+      "max_output_tokens": 256000,
+      "max_tokens": 256000,
+      "mode": "chat",
+      "output_cost_per_token": 4e-7,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/chat/completions",
+        "/v1/responses"
+      ],
+      "supports_function_calling": true,
+      "supports_parallel_function_calling": false,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/google.gemma-4-e2b": {
+      "base_model": "gemma-4-e2b",
+      "input_cost_per_token": 4e-8,
+      "max_input_tokens": 128000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "mode": "chat",
+      "output_cost_per_token": 8e-8,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/chat/completions",
+        "/v1/responses"
+      ],
+      "supports_function_calling": true,
+      "supports_parallel_function_calling": false,
+      "supports_reasoning": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-5.4": {
+      "base_model": "gpt-5.4",
+      "cache_read_input_token_cost": 3.3e-7,
+      "input_cost_per_token": 0.0000033,
+      "max_input_tokens": 272000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "mode": "responses",
+      "output_cost_per_token": 0.0000198,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/responses"
+      ],
+      "supported_modalities": [
+        "text",
+        "image"
+      ],
+      "supported_output_modalities": [
+        "text"
+      ],
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_service_tier": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-5.5": {
+      "base_model": "gpt-5.5",
+      "cache_read_input_token_cost": 5.5e-7,
+      "input_cost_per_token": 0.0000055,
+      "max_input_tokens": 272000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "mode": "responses",
+      "output_cost_per_token": 0.000033,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/responses"
+      ],
+      "supported_modalities": [
+        "text",
+        "image"
+      ],
+      "supported_output_modalities": [
+        "text"
+      ],
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-5.6-luna": {
+      "base_model": "gpt-5.6-luna",
+      "cache_creation_input_token_cost": 2.75e-7,
+      "cache_creation_input_token_cost_above_272k_tokens": 5.5e-7,
+      "cache_read_input_token_cost": 2.2e-8,
+      "cache_read_input_token_cost_above_272k_tokens": 4.4e-8,
+      "input_cost_per_token": 2.2e-7,
+      "input_cost_per_token_above_272k_tokens": 4.4e-7,
+      "max_input_tokens": 1000000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "mode": "responses",
+      "output_cost_per_token": 0.00000132,
+      "output_cost_per_token_above_272k_tokens": 0.00000198,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/responses"
+      ],
+      "supported_modalities": [
+        "text",
+        "image"
+      ],
+      "supported_output_modalities": [
+        "text"
+      ],
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-5.6-sol": {
+      "base_model": "gpt-5.6-sol",
+      "cache_creation_input_token_cost": 0.000006875,
+      "cache_creation_input_token_cost_above_272k_tokens": 0.00001375,
+      "cache_read_input_token_cost": 5.5e-7,
+      "cache_read_input_token_cost_above_272k_tokens": 0.0000011,
+      "input_cost_per_token": 0.0000055,
+      "input_cost_per_token_above_272k_tokens": 0.000011,
+      "max_input_tokens": 1000000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "mode": "responses",
+      "output_cost_per_token": 0.000033,
+      "output_cost_per_token_above_272k_tokens": 0.0000495,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/responses"
+      ],
+      "supported_modalities": [
+        "text",
+        "image"
+      ],
+      "supported_output_modalities": [
+        "text"
+      ],
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-5.6-terra": {
+      "base_model": "gpt-5.6-terra",
+      "cache_creation_input_token_cost": 0.00000275,
+      "cache_creation_input_token_cost_above_272k_tokens": 0.0000055,
+      "cache_read_input_token_cost": 2.2e-7,
+      "cache_read_input_token_cost_above_272k_tokens": 4.4e-7,
+      "input_cost_per_token": 0.0000022,
+      "input_cost_per_token_above_272k_tokens": 0.0000044,
+      "max_input_tokens": 1000000,
+      "max_output_tokens": 128000,
+      "max_tokens": 128000,
+      "mode": "responses",
+      "output_cost_per_token": 0.0000132,
+      "output_cost_per_token_above_272k_tokens": 0.0000198,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/responses"
+      ],
+      "supported_modalities": [
+        "text",
+        "image"
+      ],
+      "supported_output_modalities": [
+        "text"
+      ],
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-oss-120b": {
+      "base_model": "gpt-oss-120b",
+      "input_cost_per_token": 1.5e-7,
+      "max_input_tokens": 131072,
+      "max_output_tokens": 32768,
+      "max_tokens": 32768,
+      "mode": "chat",
+      "output_cost_per_token": 6e-7,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/chat/completions",
+        "/v1/responses"
+      ],
+      "supports_function_calling": true,
+      "supports_parallel_function_calling": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-oss-20b": {
+      "base_model": "gpt-oss-20b",
+      "input_cost_per_token": 7.5e-8,
+      "max_input_tokens": 131072,
+      "max_output_tokens": 32768,
+      "max_tokens": 32768,
+      "mode": "chat",
+      "output_cost_per_token": 3e-7,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/chat/completions",
+        "/v1/responses"
+      ],
+      "supports_function_calling": true,
+      "supports_parallel_function_calling": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-oss-safeguard-120b": {
+      "base_model": "gpt-oss-120b",
+      "input_cost_per_token": 1.5e-7,
+      "max_input_tokens": 131072,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
+      "mode": "chat",
+      "output_cost_per_token": 6e-7,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/chat/completions"
+      ],
+      "supports_function_calling": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true
+    },
+    "bedrock_mantle/us-gov-west-1/openai.gpt-oss-safeguard-20b": {
+      "base_model": "gpt-oss-20b",
+      "input_cost_per_token": 7.5e-8,
+      "max_input_tokens": 131072,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
+      "mode": "chat",
+      "output_cost_per_token": 3e-7,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/chat/completions"
+      ],
+      "supports_function_calling": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true
+    },
+    "bedrock_mantle/us-gov-west-1/xai.grok-4.3": {
+      "base_model": "grok-4.3",
+      "cache_read_input_token_cost": 2e-7,
+      "input_cost_per_token": 0.00000125,
+      "max_input_tokens": 131072,
+      "max_output_tokens": 16384,
+      "max_tokens": 16384,
+      "mode": "responses",
+      "output_cost_per_token": 0.0000025,
+      "provider": "bedrock_mantle",
+      "source": "https://aws.amazon.com/bedrock/pricing/",
+      "supported_endpoints": [
+        "/v1/responses"
+      ],
+      "supports_function_calling": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
+    },
+    "bedrock_mantle/us-gov-west-1/xai.grok-4.6": {
+      "base_model": "grok-4.6",
+      "cache_read_input_token_cost": 5.5e-7,
+      "input_cost_per_token": 0.0000022,
+      "max_input_tokens": 500000,
+      "max_output_tokens": 500000,
+      "max_tokens": 500000,
+      "mode": "chat",
+      "output_cost_per_token": 0.0000066,
+      "provider": "bedrock_mantle",
+      "supported_endpoints": [
+        "/v1/chat/completions",
+        "/v1/responses"
+      ],
+      "supports_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true,
+      "use_openai_responses_path": true
     },
     "bedrock_mantle/xai.grok-4.3": {
       "base_model": "grok-4.3",
@@ -14745,6 +14716,9 @@
       "input_cost_per_image": 0.02,
       "is_deprecated": true,
       "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels": 0.0199229,
+      "output_cost_per_image_above_256_and_256_pixels": 0.016,
+      "output_cost_per_image_above_512_and_512_pixels": 0.0179831,
       "provider": "openai",
       "supported_endpoints": [
         "/v1/images/generations",
@@ -14758,6 +14732,12 @@
       "input_cost_per_image": 0.04,
       "is_deprecated": true,
       "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels_hd_quality": 0.0799959,
+      "output_cost_per_image_above_1024_and_1024_pixels_standard_quality": 0.0399999,
+      "output_cost_per_image_above_1024_and_1792_pixels_hd_quality": 0.119991,
+      "output_cost_per_image_above_1024_and_1792_pixels_standard_quality": 0.079988,
+      "output_cost_per_image_above_1792_and_1024_pixels_hd_quality": 0.119991,
+      "output_cost_per_image_above_1792_and_1024_pixels_standard_quality": 0.079988,
       "provider": "openai",
       "supported_endpoints": [
         "/v1/images/generations"
@@ -18658,6 +18638,33 @@
       "supports_reasoning": true,
       "supports_tool_choice": true
     },
+    "deepseek/deepSeek-v4-flash-0731": {
+      "base_model": "deepseek-v4-flash",
+      "cache_creation_input_token_cost": 0,
+      "cache_read_input_token_cost": 1.4e-8,
+      "input_cost_per_token": 4.4e-7,
+      "input_cost_per_token_cache_hit": 1.4e-8,
+      "max_input_tokens": 1000000,
+      "max_output_tokens": 393216,
+      "max_tokens": 393216,
+      "mode": "chat",
+      "output_cost_per_token": 0.00000132,
+      "provider": "deepseek",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing",
+      "supported_endpoints": [
+        "/v1/chat/completions"
+      ],
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_native_streaming": true,
+      "supports_parallel_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_system_messages": true,
+      "supports_tool_choice": true,
+      "supports_vision": false
+    },
     "deepseek/deepseek-chat": {
       "base_model": "deepseek-chat",
       "cache_creation_input_token_cost": 0,
@@ -18776,13 +18783,13 @@
       "base_model": "deepseek-v4-flash",
       "cache_creation_input_token_cost": 0,
       "cache_read_input_token_cost": 1.4e-8,
-      "input_cost_per_token": 1.4e-7,
+      "input_cost_per_token": 4.4e-7,
       "input_cost_per_token_cache_hit": 1.4e-8,
       "max_input_tokens": 1000000,
       "max_output_tokens": 393216,
       "max_tokens": 393216,
       "mode": "chat",
-      "output_cost_per_token": 2.8e-7,
+      "output_cost_per_token": 0.00000132,
       "provider": "deepseek",
       "source": "https://api-docs.deepseek.com/quick_start/pricing",
       "supported_endpoints": [
@@ -18799,17 +18806,71 @@
       "supports_tool_choice": true,
       "supports_vision": false
     },
+    "deepseek/deepseek-v4-flash-vision-exp": {
+      "base_model": "deepseek-v4-flash-vision-exp",
+      "cache_creation_input_token_cost": 0,
+      "cache_read_input_token_cost": 1.4e-8,
+      "input_cost_per_token": 4.4e-7,
+      "input_cost_per_token_cache_hit": 1.4e-8,
+      "max_input_tokens": 1000000,
+      "max_output_tokens": 393216,
+      "max_tokens": 393216,
+      "mode": "chat",
+      "output_cost_per_token": 0.00000132,
+      "provider": "deepseek",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing",
+      "supported_endpoints": [
+        "/v1/chat/completions"
+      ],
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_native_streaming": true,
+      "supports_parallel_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_system_messages": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
     "deepseek/deepseek-v4-pro": {
       "base_model": "deepseek-v4-pro",
       "cache_creation_input_token_cost": 0,
       "cache_read_input_token_cost": 4.4e-8,
-      "input_cost_per_token": 4.3499999999999996e-7,
+      "input_cost_per_token": 0.00000132,
       "input_cost_per_token_cache_hit": 4.4e-8,
       "max_input_tokens": 1000000,
       "max_output_tokens": 393216,
       "max_tokens": 393216,
       "mode": "chat",
-      "output_cost_per_token": 8.699999999999999e-7,
+      "output_cost_per_token": 0.00000396,
+      "provider": "deepseek",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing",
+      "supported_endpoints": [
+        "/v1/chat/completions"
+      ],
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_native_streaming": true,
+      "supports_parallel_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_system_messages": true,
+      "supports_tool_choice": true,
+      "supports_vision": false
+    },
+    "deepseek/deepseek-v4-pro-0813": {
+      "base_model": "deepseek-v4-pro",
+      "cache_creation_input_token_cost": 0,
+      "cache_read_input_token_cost": 4.4e-8,
+      "input_cost_per_token": 0.00000132,
+      "input_cost_per_token_cache_hit": 4.4e-8,
+      "max_input_tokens": 1000000,
+      "max_output_tokens": 393216,
+      "max_tokens": 393216,
+      "mode": "chat",
+      "output_cost_per_token": 0.00000396,
       "provider": "deepseek",
       "source": "https://api-docs.deepseek.com/quick_start/pricing",
       "supported_endpoints": [
@@ -19926,602 +19987,26 @@
       },
       "mode": "image_generation",
       "output_cost_per_image": 0.145,
+      "output_cost_per_image_above_1024_and_1024_pixels_high_quality": 0.211,
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.006,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.053,
+      "output_cost_per_image_above_1024_and_1536_pixels_high_quality": 0.165,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.005,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.042,
+      "output_cost_per_image_above_1024_and_768_pixels_high_quality": 0.145,
+      "output_cost_per_image_above_1024_and_768_pixels_low_quality": 0.005,
+      "output_cost_per_image_above_1024_and_768_pixels_medium_quality": 0.037,
+      "output_cost_per_image_above_1920_and_1080_pixels_high_quality": 0.158,
+      "output_cost_per_image_above_1920_and_1080_pixels_low_quality": 0.005,
+      "output_cost_per_image_above_1920_and_1080_pixels_medium_quality": 0.04,
+      "output_cost_per_image_above_2560_and_1440_pixels_high_quality": 0.222,
+      "output_cost_per_image_above_2560_and_1440_pixels_low_quality": 0.007,
+      "output_cost_per_image_above_2560_and_1440_pixels_medium_quality": 0.056,
+      "output_cost_per_image_above_3840_and_2160_pixels_high_quality": 0.401,
+      "output_cost_per_image_above_3840_and_2160_pixels_low_quality": 0.012,
+      "output_cost_per_image_above_3840_and_2160_pixels_medium_quality": 0.101,
       "provider": "fal_ai",
       "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-1024/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.211,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-1024/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.211,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-1024/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.219,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-1536/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.165,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-1536/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.165,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-1536/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.178,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-768/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.145,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-768/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.145,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1024-x-768/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.151,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1920-x-1080/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.158,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1920-x-1080/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.158,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/1920-x-1080/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.158,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/2560-x-1440/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.222,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/2560-x-1440/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.222,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/2560-x-1440/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.234,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/3840-x-2160/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.401,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/3840-x-2160/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.401,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/high/3840-x-2160/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.413,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-1024/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.006,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-1024/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.006,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-1024/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.015,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-1536/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.005,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-1536/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.005,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-1536/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.018,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-768/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.005,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-768/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.005,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1024-x-768/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.011,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1920-x-1080/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.005,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1920-x-1080/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.005,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/1920-x-1080/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.017,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/2560-x-1440/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.007,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/2560-x-1440/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.007,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/2560-x-1440/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.019,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/3840-x-2160/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.012,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/3840-x-2160/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.012,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/low/3840-x-2160/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.024,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-1024/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.053,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-1024/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.053,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-1024/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.061,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-1536/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.042,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-1536/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.042,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-1536/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.054,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-768/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.037,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-768/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.037,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1024-x-768/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.043,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1920-x-1080/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.04,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1920-x-1080/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.04,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/1920-x-1080/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.053,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/2560-x-1440/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.056,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/2560-x-1440/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.056,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/2560-x-1440/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.068,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/3840-x-2160/gpt-image-2": {
-      "base_model": "gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.101,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/3840-x-2160/openai/gpt-image-2": {
-      "base_model": "openai/gpt-image-2",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.101,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ],
-      "supports_vision": true
-    },
-    "fal_ai/medium/3840-x-2160/openai/gpt-image-2/edit": {
-      "base_model": "openai/gpt-image-2/edit",
-      "mode": "image_generation",
-      "output_cost_per_image": 0.113,
-      "provider": "fal_ai",
-      "source": "https://fal.ai/models/openai/gpt-image-2/edit",
       "supported_endpoints": [
         "/v1/images/generations"
       ],
@@ -20534,6 +20019,24 @@
       },
       "mode": "image_generation",
       "output_cost_per_image": 0.145,
+      "output_cost_per_image_above_1024_and_1024_pixels_high_quality": 0.211,
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.006,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.053,
+      "output_cost_per_image_above_1024_and_1536_pixels_high_quality": 0.165,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.005,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.042,
+      "output_cost_per_image_above_1024_and_768_pixels_high_quality": 0.145,
+      "output_cost_per_image_above_1024_and_768_pixels_low_quality": 0.005,
+      "output_cost_per_image_above_1024_and_768_pixels_medium_quality": 0.037,
+      "output_cost_per_image_above_1920_and_1080_pixels_high_quality": 0.158,
+      "output_cost_per_image_above_1920_and_1080_pixels_low_quality": 0.005,
+      "output_cost_per_image_above_1920_and_1080_pixels_medium_quality": 0.04,
+      "output_cost_per_image_above_2560_and_1440_pixels_high_quality": 0.222,
+      "output_cost_per_image_above_2560_and_1440_pixels_low_quality": 0.007,
+      "output_cost_per_image_above_2560_and_1440_pixels_medium_quality": 0.056,
+      "output_cost_per_image_above_3840_and_2160_pixels_high_quality": 0.401,
+      "output_cost_per_image_above_3840_and_2160_pixels_low_quality": 0.012,
+      "output_cost_per_image_above_3840_and_2160_pixels_medium_quality": 0.101,
       "provider": "fal_ai",
       "source": "https://fal.ai/models/openai/gpt-image-2",
       "supported_endpoints": [
@@ -20548,6 +20051,24 @@
       },
       "mode": "image_generation",
       "output_cost_per_image": 0.151,
+      "output_cost_per_image_above_1024_and_1024_pixels_high_quality": 0.219,
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.015,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.061,
+      "output_cost_per_image_above_1024_and_1536_pixels_high_quality": 0.178,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.018,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.054,
+      "output_cost_per_image_above_1024_and_768_pixels_high_quality": 0.151,
+      "output_cost_per_image_above_1024_and_768_pixels_low_quality": 0.011,
+      "output_cost_per_image_above_1024_and_768_pixels_medium_quality": 0.043,
+      "output_cost_per_image_above_1920_and_1080_pixels_high_quality": 0.158,
+      "output_cost_per_image_above_1920_and_1080_pixels_low_quality": 0.017,
+      "output_cost_per_image_above_1920_and_1080_pixels_medium_quality": 0.053,
+      "output_cost_per_image_above_2560_and_1440_pixels_high_quality": 0.234,
+      "output_cost_per_image_above_2560_and_1440_pixels_low_quality": 0.019,
+      "output_cost_per_image_above_2560_and_1440_pixels_medium_quality": 0.068,
+      "output_cost_per_image_above_3840_and_2160_pixels_high_quality": 0.413,
+      "output_cost_per_image_above_3840_and_2160_pixels_low_quality": 0.024,
+      "output_cost_per_image_above_3840_and_2160_pixels_medium_quality": 0.113,
       "provider": "fal_ai",
       "source": "https://fal.ai/models/openai/gpt-image-2/edit",
       "supported_endpoints": [
@@ -26808,7 +26329,7 @@
         "search_context_size_low": 0.014,
         "search_context_size_medium": 0.014
       },
-      "source": "https://ai.google.dev/gemini-api/docs/models/gemini-3.7-flash",
+      "source": "https://ai.google.dev/gemini-api/docs/models/gemini-3.7-flash?s",
       "supported_endpoints": [
         "/v1/chat/completions",
         "/v1/batch"
@@ -31809,6 +31330,7 @@
       "cache_creation_input_token_cost_flex": 1.25e-7,
       "cache_creation_input_token_cost_flex_above_272k_tokens": 2.5e-7,
       "cache_creation_input_token_cost_priority": 5e-7,
+      "cache_creation_input_token_cost_priority_above_272k_tokens": 0.000001,
       "cache_read_input_token_cost": 2e-8,
       "cache_read_input_token_cost_above_272k_tokens": 4e-8,
       "cache_read_input_token_cost_above_272k_tokens_flex": 2e-8,
@@ -31817,6 +31339,7 @@
       "cache_read_input_token_cost_flex": 1e-8,
       "cache_read_input_token_cost_flex_above_272k_tokens": 2e-8,
       "cache_read_input_token_cost_priority": 4e-8,
+      "cache_read_input_token_cost_priority_above_272k_tokens": 8e-8,
       "input_cost_per_token": 2e-7,
       "input_cost_per_token_above_272k_tokens": 4e-7,
       "input_cost_per_token_above_272k_tokens_flex": 2e-7,
@@ -31825,6 +31348,7 @@
       "input_cost_per_token_flex": 1e-7,
       "input_cost_per_token_flex_above_272k_tokens": 2e-7,
       "input_cost_per_token_priority": 4e-7,
+      "input_cost_per_token_priority_above_272k_tokens": 8e-7,
       "max_input_tokens": 1050000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
@@ -31838,6 +31362,7 @@
       "output_cost_per_token_flex": 6e-7,
       "output_cost_per_token_flex_above_272k_tokens": 9e-7,
       "output_cost_per_token_priority": 0.0000024,
+      "output_cost_per_token_priority_above_272k_tokens": 0.0000036,
       "provider": "openai",
       "regional_processing_uplift_multiplier_eu": 1.1,
       "regional_processing_uplift_multiplier_us": 1.1,
@@ -31878,43 +31403,47 @@
     },
     "gpt-5.6-sol": {
       "base_model": "gpt-5.6-sol",
-      "cache_creation_input_token_cost": 0.00000625,
-      "cache_creation_input_token_cost_above_272k_tokens": 0.0000125,
-      "cache_creation_input_token_cost_above_272k_tokens_flex": 0.00000625,
-      "cache_creation_input_token_cost_batches": 0.000003125,
-      "cache_creation_input_token_cost_batches_above_272k_tokens": 0.00000625,
-      "cache_creation_input_token_cost_flex": 0.000003125,
-      "cache_creation_input_token_cost_flex_above_272k_tokens": 0.00000625,
-      "cache_creation_input_token_cost_priority": 0.0000125,
-      "cache_read_input_token_cost": 5e-7,
-      "cache_read_input_token_cost_above_272k_tokens": 0.000001,
-      "cache_read_input_token_cost_above_272k_tokens_flex": 5e-7,
-      "cache_read_input_token_cost_batches": 2.5e-7,
-      "cache_read_input_token_cost_batches_above_272k_tokens": 5e-7,
-      "cache_read_input_token_cost_flex": 2.5e-7,
-      "cache_read_input_token_cost_flex_above_272k_tokens": 5e-7,
-      "cache_read_input_token_cost_priority": 0.000001,
-      "input_cost_per_token": 0.000005,
-      "input_cost_per_token_above_272k_tokens": 0.00001,
-      "input_cost_per_token_above_272k_tokens_flex": 0.000005,
-      "input_cost_per_token_batches": 0.0000025,
-      "input_cost_per_token_batches_above_272k_tokens": 0.000005,
-      "input_cost_per_token_flex": 0.0000025,
-      "input_cost_per_token_flex_above_272k_tokens": 0.000005,
-      "input_cost_per_token_priority": 0.00001,
+      "cache_creation_input_token_cost": 0.000005,
+      "cache_creation_input_token_cost_above_272k_tokens": 0.00001,
+      "cache_creation_input_token_cost_above_272k_tokens_flex": 0.000005,
+      "cache_creation_input_token_cost_batches": 0.0000025,
+      "cache_creation_input_token_cost_batches_above_272k_tokens": 0.000005,
+      "cache_creation_input_token_cost_flex": 0.0000025,
+      "cache_creation_input_token_cost_flex_above_272k_tokens": 0.000005,
+      "cache_creation_input_token_cost_priority": 0.00001,
+      "cache_creation_input_token_cost_priority_above_272k_tokens": 0.00002,
+      "cache_read_input_token_cost": 4e-7,
+      "cache_read_input_token_cost_above_272k_tokens": 8e-7,
+      "cache_read_input_token_cost_above_272k_tokens_flex": 4e-7,
+      "cache_read_input_token_cost_batches": 2e-7,
+      "cache_read_input_token_cost_batches_above_272k_tokens": 4e-7,
+      "cache_read_input_token_cost_flex": 2e-7,
+      "cache_read_input_token_cost_flex_above_272k_tokens": 4e-7,
+      "cache_read_input_token_cost_priority": 8e-7,
+      "cache_read_input_token_cost_priority_above_272k_tokens": 0.0000016,
+      "input_cost_per_token": 0.000004,
+      "input_cost_per_token_above_272k_tokens": 0.000008,
+      "input_cost_per_token_above_272k_tokens_flex": 0.000004,
+      "input_cost_per_token_batches": 0.000002,
+      "input_cost_per_token_batches_above_272k_tokens": 0.000004,
+      "input_cost_per_token_flex": 0.000002,
+      "input_cost_per_token_flex_above_272k_tokens": 0.000004,
+      "input_cost_per_token_priority": 0.000008,
+      "input_cost_per_token_priority_above_272k_tokens": 0.000016,
       "max_input_tokens": 1050000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
       "mode": "chat",
       "model": "gpt-5.6-sol",
-      "output_cost_per_token": 0.00003,
-      "output_cost_per_token_above_272k_tokens": 0.000045,
-      "output_cost_per_token_above_272k_tokens_flex": 0.0000225,
-      "output_cost_per_token_batches": 0.000015,
-      "output_cost_per_token_batches_above_272k_tokens": 0.0000225,
-      "output_cost_per_token_flex": 0.000015,
-      "output_cost_per_token_flex_above_272k_tokens": 0.0000225,
-      "output_cost_per_token_priority": 0.00006,
+      "output_cost_per_token": 0.00002,
+      "output_cost_per_token_above_272k_tokens": 0.00003,
+      "output_cost_per_token_above_272k_tokens_flex": 0.000015,
+      "output_cost_per_token_batches": 0.00001,
+      "output_cost_per_token_batches_above_272k_tokens": 0.000015,
+      "output_cost_per_token_flex": 0.00001,
+      "output_cost_per_token_flex_above_272k_tokens": 0.000015,
+      "output_cost_per_token_priority": 0.00004,
+      "output_cost_per_token_priority_above_272k_tokens": 0.00006,
       "provider": "openai",
       "regional_processing_uplift_multiplier_eu": 1.1,
       "regional_processing_uplift_multiplier_us": 1.1,
@@ -31964,6 +31493,7 @@
       "cache_creation_input_token_cost_flex": 0.00000125,
       "cache_creation_input_token_cost_flex_above_272k_tokens": 0.0000025,
       "cache_creation_input_token_cost_priority": 0.000005,
+      "cache_creation_input_token_cost_priority_above_272k_tokens": 0.00001,
       "cache_read_input_token_cost": 2e-7,
       "cache_read_input_token_cost_above_272k_tokens": 4e-7,
       "cache_read_input_token_cost_above_272k_tokens_flex": 2e-7,
@@ -31972,6 +31502,7 @@
       "cache_read_input_token_cost_flex": 1e-7,
       "cache_read_input_token_cost_flex_above_272k_tokens": 2e-7,
       "cache_read_input_token_cost_priority": 4e-7,
+      "cache_read_input_token_cost_priority_above_272k_tokens": 8e-7,
       "input_cost_per_token": 0.000002,
       "input_cost_per_token_above_272k_tokens": 0.000004,
       "input_cost_per_token_above_272k_tokens_flex": 0.000002,
@@ -31980,6 +31511,7 @@
       "input_cost_per_token_flex": 0.000001,
       "input_cost_per_token_flex_above_272k_tokens": 0.000002,
       "input_cost_per_token_priority": 0.000004,
+      "input_cost_per_token_priority_above_272k_tokens": 0.000008,
       "max_input_tokens": 1050000,
       "max_output_tokens": 128000,
       "max_tokens": 128000,
@@ -31993,6 +31525,7 @@
       "output_cost_per_token_flex": 0.000006,
       "output_cost_per_token_flex_above_272k_tokens": 0.000009,
       "output_cost_per_token_priority": 0.000024,
+      "output_cost_per_token_priority_above_272k_tokens": 0.000036,
       "provider": "openai",
       "regional_processing_uplift_multiplier_eu": 1.1,
       "regional_processing_uplift_multiplier_us": 1.1,
@@ -32263,6 +31796,15 @@
       "input_cost_per_image_token": 0.00001,
       "input_cost_per_token": 0.000005,
       "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels_high_quality": 0.167,
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.011,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.042,
+      "output_cost_per_image_above_1024_and_1536_pixels_high_quality": 0.25,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.016,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.063,
+      "output_cost_per_image_above_1536_and_1024_pixels_high_quality": 0.25,
+      "output_cost_per_image_above_1536_and_1024_pixels_low_quality": 0.016,
+      "output_cost_per_image_above_1536_and_1024_pixels_medium_quality": 0.063,
       "output_cost_per_image_token": 0.00004,
       "provider": "openai",
       "supported_endpoints": [
@@ -32277,6 +31819,12 @@
       "input_cost_per_image_token": 0.0000025,
       "input_cost_per_token": 0.000002,
       "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.005,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.011,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.006,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.015,
+      "output_cost_per_image_above_1536_and_1024_pixels_low_quality": 0.006,
+      "output_cost_per_image_above_1536_and_1024_pixels_medium_quality": 0.015,
       "output_cost_per_image_token": 0.000008,
       "provider": "openai",
       "supported_endpoints": [
@@ -32291,6 +31839,21 @@
       "input_cost_per_image_token": 0.000008,
       "input_cost_per_token": 0.000005,
       "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels": 0.009,
+      "output_cost_per_image_above_1024_and_1024_pixels_high_quality": 0.133,
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.009,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.034,
+      "output_cost_per_image_above_1024_and_1024_pixels_standard_quality": 0.009,
+      "output_cost_per_image_above_1024_and_1536_pixels": 0.013,
+      "output_cost_per_image_above_1024_and_1536_pixels_high_quality": 0.2,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.013,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.05,
+      "output_cost_per_image_above_1024_and_1536_pixels_standard_quality": 0.013,
+      "output_cost_per_image_above_1536_and_1024_pixels": 0.013,
+      "output_cost_per_image_above_1536_and_1024_pixels_high_quality": 0.2,
+      "output_cost_per_image_above_1536_and_1024_pixels_low_quality": 0.013,
+      "output_cost_per_image_above_1536_and_1024_pixels_medium_quality": 0.05,
+      "output_cost_per_image_above_1536_and_1024_pixels_standard_quality": 0.013,
       "output_cost_per_image_token": 0.000032,
       "output_cost_per_token": 0.00001,
       "provider": "openai",
@@ -32307,6 +31870,21 @@
       "input_cost_per_image_token": 0.000008,
       "input_cost_per_token": 0.000005,
       "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels": 0.009,
+      "output_cost_per_image_above_1024_and_1024_pixels_high_quality": 0.133,
+      "output_cost_per_image_above_1024_and_1024_pixels_low_quality": 0.009,
+      "output_cost_per_image_above_1024_and_1024_pixels_medium_quality": 0.034,
+      "output_cost_per_image_above_1024_and_1024_pixels_standard_quality": 0.009,
+      "output_cost_per_image_above_1024_and_1536_pixels": 0.013,
+      "output_cost_per_image_above_1024_and_1536_pixels_high_quality": 0.2,
+      "output_cost_per_image_above_1024_and_1536_pixels_low_quality": 0.013,
+      "output_cost_per_image_above_1024_and_1536_pixels_medium_quality": 0.05,
+      "output_cost_per_image_above_1024_and_1536_pixels_standard_quality": 0.013,
+      "output_cost_per_image_above_1536_and_1024_pixels": 0.013,
+      "output_cost_per_image_above_1536_and_1024_pixels_high_quality": 0.2,
+      "output_cost_per_image_above_1536_and_1024_pixels_low_quality": 0.013,
+      "output_cost_per_image_above_1536_and_1024_pixels_medium_quality": 0.05,
+      "output_cost_per_image_above_1536_and_1024_pixels_standard_quality": 0.013,
       "output_cost_per_image_token": 0.000032,
       "output_cost_per_token": 0.00001,
       "provider": "openai",
@@ -33216,33 +32794,6 @@
       "output_cost_per_second": 0,
       "provider": "groq"
     },
-    "hd/1024-x-1024/dall-e-3": {
-      "base_model": "dall-e-3",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 7.629e-8,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
-    },
-    "hd/1024-x-1792/dall-e-3": {
-      "base_model": "dall-e-3",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 6.539e-8,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
-    },
-    "hd/1792-x-1024/dall-e-3": {
-      "base_model": "dall-e-3",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 6.539e-8,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
-    },
     "heroku/claude-3-5-haiku": {
       "base_model": "claude-3-5-haiku",
       "max_input_tokens": 200000,
@@ -33287,117 +32838,6 @@
       "supports_system_messages": true,
       "supports_tool_choice": true
     },
-    "high/1024-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.167,
-      "input_cost_per_pixel": 1.59263611e-7,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "high/1024-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.133,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "high/1024-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.133,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "high/1024-x-1536/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.25,
-      "input_cost_per_pixel": 1.58945719e-7,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "high/1024-x-1536/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.2,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "high/1024-x-1536/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.2,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "high/1536-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.25,
-      "input_cost_per_pixel": 1.58945719e-7,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "high/1536-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.2,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "high/1536-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.2,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
     "huggingface/baseten/deepseek-ai/DeepSeek-V4-Flash-0731": {
       "base_model": "DeepSeek-V4-Flash-0731",
       "input_cost_per_token": 1.3e-7,
@@ -33408,6 +32848,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/baseten/deepseek-ai/DeepSeek-V4-Pro": {
@@ -33733,7 +33174,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.5-122B-A10B",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -33882,7 +33322,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/deepseek-ai/DeepSeek-V3-0324",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/deepinfra/deepseek-ai/DeepSeek-V3.1": {
@@ -34093,6 +33532,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/meta-models/Muse-Glimmer-30B",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -34352,6 +33792,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/MiniMaxAI/MiniMax-M2.7",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/fireworks-ai/MiniMaxAI/MiniMax-M3": {
@@ -34694,7 +34135,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -35211,6 +34651,18 @@
       "supports_function_calling": true,
       "supports_tool_choice": true
     },
+    "huggingface/novita/zai-org/GLM-4.7-Flash": {
+      "base_model": "GLM-4.7-Flash",
+      "input_cost_per_token": 7e-8,
+      "max_input_tokens": 200000,
+      "max_tokens": 200000,
+      "mode": "chat",
+      "output_cost_per_token": 4e-7,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/zai-org/GLM-4.7-Flash",
+      "supports_function_calling": true,
+      "supports_tool_choice": true
+    },
     "huggingface/novita/zai-org/GLM-5": {
       "base_model": "GLM-5",
       "input_cost_per_token": 0.000001,
@@ -35233,7 +34685,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/zai-org/GLM-5.2",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/nscale/Qwen/Qwen2.5-Coder-32B-Instruct": {
@@ -35244,7 +34695,8 @@
       "mode": "chat",
       "output_cost_per_token": 2e-7,
       "provider": "huggingface",
-      "source": "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct"
+      "source": "https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct",
+      "supports_response_schema": true
     },
     "huggingface/nscale/Qwen/Qwen2.5-Coder-3B-Instruct": {
       "base_model": "Qwen2.5-Coder-3B-Instruct",
@@ -35290,6 +34742,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3-235B-A22B",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/nscale/Qwen/Qwen3-235B-A22B-Instruct-2507": {
@@ -35375,8 +34828,7 @@
       "mode": "chat",
       "output_cost_per_token": 2e-7,
       "provider": "huggingface",
-      "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B",
-      "supports_response_schema": true
+      "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B"
     },
     "huggingface/nscale/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B": {
       "base_model": "DeepSeek-R1-Distill-Qwen-7B",
@@ -35386,7 +34838,8 @@
       "mode": "chat",
       "output_cost_per_token": 1.5e-7,
       "provider": "huggingface",
-      "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
+      "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+      "supports_response_schema": true
     },
     "huggingface/nscale/meta-llama/Llama-3.1-8B-Instruct": {
       "base_model": "Llama-3.1-8B-Instruct",
@@ -35461,6 +34914,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.5-397B-A17B",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -35537,7 +34991,8 @@
       "mode": "chat",
       "output_cost_per_token": 4e-7,
       "provider": "huggingface",
-      "source": "https://huggingface.co/aisingapore/Gemma-SEA-LION-v4-27B-IT"
+      "source": "https://huggingface.co/aisingapore/Gemma-SEA-LION-v4-27B-IT",
+      "supports_response_schema": true
     },
     "huggingface/publicai/aisingapore/Qwen-SEA-LION-v4-32B-IT": {
       "base_model": "Qwen-SEA-LION-v4-32B-IT",
@@ -35568,6 +35023,17 @@
       "output_cost_per_token": 0.00000292,
       "provider": "huggingface",
       "source": "https://huggingface.co/swiss-ai/Apertus-70B-Instruct-2509",
+      "supports_function_calling": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true
+    },
+    "huggingface/publicai/swiss-ai/Apertus-8B-Instruct-2509": {
+      "base_model": "Apertus-8B-Instruct-2509",
+      "input_cost_per_token": 8.199999999999999e-7,
+      "mode": "chat",
+      "output_cost_per_token": 0.00000292,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/swiss-ai/Apertus-8B-Instruct-2509",
       "supports_function_calling": true,
       "supports_response_schema": true,
       "supports_tool_choice": true
@@ -35638,7 +35104,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -35661,6 +35126,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/openai/gpt-oss-120b",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/scaleway/zai-org/GLM-5.2": {
@@ -35671,7 +35137,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/zai-org/GLM-5.2",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/together/MiniMaxAI/MiniMax-M3": {
@@ -35787,7 +35252,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/together/meta-llama/Llama-Guard-4-12B": {
@@ -35829,6 +35293,19 @@
       "supports_tool_choice": true,
       "supports_vision": true
     },
+    "huggingface/together/moonshotai/Kimi-K3": {
+      "base_model": "Kimi-K3",
+      "input_cost_per_token": 0.000003,
+      "max_input_tokens": 1048576,
+      "max_tokens": 1048576,
+      "mode": "chat",
+      "output_cost_per_token": 0.000014999999999999999,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/moonshotai/Kimi-K3",
+      "supports_function_calling": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
     "huggingface/together/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4": {
       "base_model": "NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
       "input_cost_per_token": 6e-7,
@@ -35865,7 +35342,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/openai/gpt-oss-20b",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/together/pearl-ai/Gemma-4-31B-it-pearl": {
@@ -37298,304 +36774,6 @@
       "provider": "llamagate",
       "supports_function_calling": true,
       "supports_response_schema": true,
-      "supports_vision": true
-    },
-    "low/1024-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.011,
-      "input_cost_per_pixel": 1.0490417e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "low/1024-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.005,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "low/1024-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.009,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "low/1024-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.009,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "low/1024-x-1536/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.016,
-      "input_cost_per_pixel": 1.0172526e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "low/1024-x-1536/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.006,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "low/1024-x-1536/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "low/1024-x-1536/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "low/1536-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.016,
-      "input_cost_per_pixel": 1.0172526e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "low/1536-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.006,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "low/1536-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "low/1536-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "max-x-max/50-steps/stability.stable-diffusion-xl-v0": {
-      "base_model": "stable-diffusion-xl-v0",
-      "max_input_tokens": 77,
-      "max_tokens": 77,
-      "mode": "image_generation",
-      "output_cost_per_image": 0.036,
-      "provider": "bedrock"
-    },
-    "max-x-max/max-steps/stability.stable-diffusion-xl-v0": {
-      "base_model": "stable-diffusion-xl-v0",
-      "max_input_tokens": 77,
-      "max_tokens": 77,
-      "mode": "image_generation",
-      "output_cost_per_image": 0.072,
-      "provider": "bedrock"
-    },
-    "medium/1024-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.042,
-      "input_cost_per_pixel": 4.0054321e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "medium/1024-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.011,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "medium/1024-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.034,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "medium/1024-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.034,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "medium/1024-x-1536/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.063,
-      "input_cost_per_pixel": 4.0054321e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "medium/1024-x-1536/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.015,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "medium/1024-x-1536/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.05,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "medium/1024-x-1536/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.05,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "medium/1536-x-1024/gpt-image-1": {
-      "base_model": "gpt-image-1",
-      "deprecation_date": "2026-10-23",
-      "input_cost_per_image": 0.063,
-      "input_cost_per_pixel": 4.0054321e-8,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "medium/1536-x-1024/gpt-image-1-mini": {
-      "base_model": "gpt-image-1-mini",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.015,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations"
-      ]
-    },
-    "medium/1536-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.05,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "medium/1536-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.05,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
       "supports_vision": true
     },
     "medlm-large": {
@@ -45175,13 +44353,13 @@
     },
     "openrouter/deepseek/deepseek-v4-flash": {
       "base_model": "deepseek-v4-flash",
-      "cache_read_input_token_cost": 1.0612e-8,
-      "input_cost_per_token": 5.306e-8,
+      "cache_read_input_token_cost": 1.148e-8,
+      "input_cost_per_token": 5.74e-8,
       "max_input_tokens": 1024000,
       "max_output_tokens": 384000,
       "max_tokens": 384000,
       "mode": "chat",
-      "output_cost_per_token": 1.0612e-7,
+      "output_cost_per_token": 1.148e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -45191,13 +44369,13 @@
     },
     "openrouter/deepseek/deepseek-v4-flash-0731": {
       "base_model": "deepseek-v4-flash-0731",
-      "cache_read_input_token_cost": 1.6e-8,
-      "input_cost_per_token": 8e-8,
+      "cache_read_input_token_cost": 2.8e-8,
+      "input_cost_per_token": 1.4e-7,
       "max_input_tokens": 1048576,
-      "max_output_tokens": 384000,
-      "max_tokens": 384000,
+      "max_output_tokens": 131072,
+      "max_tokens": 131072,
       "mode": "chat",
-      "output_cost_per_token": 1.8e-7,
+      "output_cost_per_token": 2.8e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -45224,14 +44402,14 @@
     },
     "openrouter/deepseek/deepseek-v4-pro": {
       "base_model": "deepseek-v4-pro",
-      "cache_read_input_token_cost": 3.30745e-8,
-      "input_cost_per_token": 3.96894e-7,
+      "cache_read_input_token_cost": 4.3848e-8,
+      "input_cost_per_token": 5.26176e-7,
       "input_cost_per_token_cache_hit": 4.4e-8,
       "max_input_tokens": 1024000,
       "max_output_tokens": 384000,
       "max_tokens": 384000,
       "mode": "chat",
-      "output_cost_per_token": 7.93788e-7,
+      "output_cost_per_token": 0.000001052352,
       "provider": "openrouter",
       "source": "https://openrouter.ai/deepseek/deepseek-v4-pro",
       "supports_function_calling": true,
@@ -46747,13 +45925,12 @@
     },
     "openrouter/minimax/minimax-m2.7": {
       "base_model": "minimax-m2.7",
-      "cache_read_input_token_cost": 6e-8,
-      "input_cost_per_token": 3e-7,
-      "max_input_tokens": 204800,
-      "max_output_tokens": 131072,
-      "max_tokens": 131072,
+      "cache_read_input_token_cost": 4.8e-8,
+      "input_cost_per_token": 2.4e-7,
+      "max_input_tokens": 196608,
+      "max_tokens": 196608,
       "mode": "chat",
-      "output_cost_per_token": 0.0000012,
+      "output_cost_per_token": 9.6e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -47295,6 +46472,7 @@
       "cache_read_input_token_cost": 3e-7,
       "input_cost_per_token": 0.000003,
       "max_input_tokens": 1048576,
+      "max_output_tokens": 1048576,
       "max_tokens": 1048576,
       "mode": "chat",
       "output_cost_per_token": 0.000015,
@@ -49868,8 +49046,9 @@
     "openrouter/qwen/qwen3-embedding-8b": {
       "base_model": "qwen3-embedding-8b",
       "input_cost_per_token": 1e-8,
-      "max_input_tokens": 32768,
-      "max_tokens": 32768,
+      "max_input_tokens": 32000,
+      "max_output_tokens": 32000,
+      "max_tokens": 32000,
       "mode": "embedding",
       "provider": "openrouter",
       "supports_response_schema": true
@@ -50088,15 +49267,17 @@
     },
     "openrouter/qwen/qwen3.5-397b-a17b": {
       "base_model": "qwen3.5-397b-a17b",
-      "input_cost_per_token": 3.9e-7,
+      "cache_read_input_token_cost": 3e-7,
+      "input_cost_per_token": 5e-7,
       "max_input_tokens": 262144,
-      "max_output_tokens": 65536,
-      "max_tokens": 65536,
+      "max_output_tokens": 262144,
+      "max_tokens": 262144,
       "mode": "chat",
-      "output_cost_per_token": 0.00000234,
+      "output_cost_per_token": 0.0000036,
       "provider": "openrouter",
       "source": "https://openrouter.ai/qwen/qwen3.5-397b-a17b",
       "supports_function_calling": true,
+      "supports_prompt_caching": true,
       "supports_reasoning": true,
       "supports_response_schema": true,
       "supports_tool_choice": true,
@@ -50170,16 +49351,14 @@
     },
     "openrouter/qwen/qwen3.6-27b": {
       "base_model": "qwen3.6-27b",
-      "cache_read_input_token_cost": 1.2e-7,
-      "input_cost_per_token": 6e-7,
+      "input_cost_per_token": 3.2e-7,
       "max_input_tokens": 262144,
-      "max_output_tokens": 262144,
-      "max_tokens": 262144,
+      "max_output_tokens": 81920,
+      "max_tokens": 81920,
       "mode": "chat",
-      "output_cost_per_token": 0.0000036,
+      "output_cost_per_token": 0.0000032,
       "provider": "openrouter",
       "supports_function_calling": true,
-      "supports_prompt_caching": true,
       "supports_reasoning": true,
       "supports_response_schema": true,
       "supports_tool_choice": true,
@@ -50686,9 +49865,9 @@
     "openrouter/thedrummer/unslopnemo-12b": {
       "base_model": "unslopnemo-12b",
       "input_cost_per_token": 4e-7,
-      "max_input_tokens": 1024000,
-      "max_output_tokens": 1024000,
-      "max_tokens": 1024000,
+      "max_input_tokens": 32768,
+      "max_output_tokens": 32768,
+      "max_tokens": 32768,
       "mode": "chat",
       "output_cost_per_token": 4e-7,
       "provider": "openrouter",
@@ -50745,7 +49924,6 @@
       "supports_function_calling": true,
       "supports_prompt_caching": true,
       "supports_reasoning": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -51376,13 +50554,13 @@
     },
     "openrouter/~deepseek/deepseek-v4-flash-latest": {
       "base_model": "deepseek-v4-flash-latest",
-      "cache_read_input_token_cost": 1e-8,
-      "input_cost_per_token": 5e-8,
-      "max_input_tokens": 262144,
-      "max_output_tokens": 262144,
-      "max_tokens": 262144,
+      "cache_read_input_token_cost": 8e-9,
+      "input_cost_per_token": 4e-8,
+      "max_input_tokens": 1048576,
+      "max_output_tokens": 1048576,
+      "max_tokens": 1048576,
       "mode": "chat",
-      "output_cost_per_token": 1.3e-7,
+      "output_cost_per_token": 8e-8,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -54914,6 +54092,26 @@
       "output_cost_per_image": 0.6,
       "provider": "bedrock"
     },
+    "stability.stable-diffusion-xl-v0": {
+      "base_model": "stable-diffusion-xl-v0",
+      "max_input_tokens": 77,
+      "max_tokens": 77,
+      "mode": "image_generation",
+      "output_cost_per_image_above_512_and_512_pixels_50_steps": 0.018,
+      "output_cost_per_image_above_512_and_512_pixels_max_steps": 0.036,
+      "output_cost_per_image_above_max_and_max_pixels_50_steps": 0.036,
+      "output_cost_per_image_above_max_and_max_pixels_max_steps": 0.072,
+      "provider": "bedrock"
+    },
+    "stability.stable-diffusion-xl-v1": {
+      "base_model": "stable-diffusion-xl-v1",
+      "max_input_tokens": 77,
+      "max_tokens": 77,
+      "mode": "image_generation",
+      "output_cost_per_image_above_1024_and_1024_pixels_50_steps": 0.04,
+      "output_cost_per_image_above_1024_and_1024_pixels_max_steps": 0.08,
+      "provider": "bedrock"
+    },
     "stability.stable-fast-upscale-v1:0": {
       "base_model": "stable-fast-upscale",
       "max_input_tokens": 77,
@@ -55229,108 +54427,6 @@
       "supported_endpoints": [
         "/v1/images/edits"
       ]
-    },
-    "standard/1024-x-1024/dall-e-3": {
-      "base_model": "dall-e-3",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 3.81469e-8,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
-    },
-    "standard/1024-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.009,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "standard/1024-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.009,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "standard/1024-x-1536/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "standard/1024-x-1536/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "standard/1024-x-1792/dall-e-3": {
-      "base_model": "dall-e-3",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 4.359e-8,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
-    },
-    "standard/1536-x-1024/gpt-image-1.5": {
-      "base_model": "gpt-image-1.5",
-      "deprecation_date": "2026-12-01",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "standard/1536-x-1024/gpt-image-1.5-2025-12-16": {
-      "base_model": "gpt-image-1.5",
-      "input_cost_per_image": 0.013,
-      "mode": "image_generation",
-      "provider": "openai",
-      "supported_endpoints": [
-        "/v1/images/generations",
-        "/v1/images/edits"
-      ],
-      "supports_pdf_input": true,
-      "supports_vision": true
-    },
-    "standard/1792-x-1024/dall-e-3": {
-      "base_model": "dall-e-3",
-      "deprecation_date": "2026-05-12",
-      "input_cost_per_pixel": 4.359e-8,
-      "is_deprecated": true,
-      "mode": "image_generation",
-      "output_cost_per_pixel": 0,
-      "provider": "openai"
     },
     "tavily/search": {
       "base_model": "search",
