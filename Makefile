@@ -2205,3 +2205,25 @@ run-provider-harness-test: $(if $(HELP),,install-newman) ## Run the Bifrost prov
 	fi; \
 	if [ "$$NEWMAN_EXIT" -ne 0 ]; then exit $$NEWMAN_EXIT; fi; \
 	exit $$STREAM_CANCEL_EXIT
+
+analytics-test: ## Run Go analytics contract and sanitization tests
+	@cd analytics-go && go test ./...
+
+analytics-build: ## Build the separately deployed FrankenGate Analytics binary
+	@mkdir -p tmp
+	@cd analytics-go && go build -trimpath -ldflags='-s -w' -o ../tmp/frankengate-analytics ./cmd/frankengate-analytics
+
+analytics-check: ## Run the Go analytics binary's dependency-free contract check
+	@cd analytics-go && go run ./cmd/frankengate-analytics --check
+
+analytics-integration: ## Verify Go analytics against a disposable ClickHouse container
+	@./scripts/verify-analytics-go.sh
+
+analytics-image-verify: ## Build and verify the Go analytics container contract
+	@./scripts/verify-analytics-image.sh
+
+analytics-package: ## Build a versioned Go analytics tarball and SHA-256 checksum
+	@./scripts/package-analytics-go.sh
+
+analytics-package-matrix: ## Build macOS/Linux Go analytics artifacts and an aggregate checksum manifest
+	@./scripts/package-analytics-go-matrix.sh

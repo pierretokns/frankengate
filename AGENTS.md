@@ -938,3 +938,10 @@ Keep agent-facing and user-facing updates brief and outcome-first.
 * Follow **strict folder structure and routing conventions**
 * Use **the right tool for the right problem**
 * Keep code **simple, predictable, and maintainable**
+
+
+## Trace-native continual evaluation
+
+The Go beta is documented in [analytics-engine-and-autoeval-beta](docs/roadmap/architecture/analytics-engine-and-autoeval-beta.md), with trace preparation, rubric calibration, and OTEL/CASS interoperability guidance in the linked roadmap documents. The recipe is based on Amar Singh's article, [How to evaluate models without actually running them](https://x.com/amarsvs/status/2087215028860747960?s=46): use incumbent traces as deterministic checkpoints, remove incumbent assistant prose and private reasoning, preserve factual tool observations, and score candidate next actions for task-directed value. Treat the article's gains as hypotheses requiring executed references, random audits, holdouts, mutants, and abstention.
+
+CASS is only the local coding-agent history search/slice-discovery layer; it is not the canonical Autoeval trajectory source. Use a version-pinned CASS adapter, include tool records, strip reasoning/private content before persistence, and make harness, model, skill, and knowledge-base revisions explicit in lineage. Use PostgreSQL for control-plane authority and one ClickHouse analytical projection; keep analytics outside the inference availability path.
