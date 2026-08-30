@@ -1080,6 +1080,11 @@ func (s *BifrostHTTPServer) ReloadClientConfigFromConfigStore(ctx context.Contex
 		); err != nil {
 			logger.Warn("failed to sync MCP tool manager config during client config reload: %v", err)
 		}
+		if s.Config.MCPConfig != nil {
+			if err := s.Client.UpdateMCPToolSyncInterval(s.Config.MCPConfig.ToolSyncInterval); err != nil {
+				logger.Warn("failed to sync MCP tool discovery interval during client config reload: %v", err)
+			}
+		}
 	}
 	return nil
 }

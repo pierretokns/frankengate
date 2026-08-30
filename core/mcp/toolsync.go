@@ -23,10 +23,11 @@ type ClientToolSyncer struct {
 	timeout    time.Duration
 	logger     schemas.Logger
 	mu         sync.Mutex
-	ticker     *time.Ticker
 	ctx        context.Context
 	cancel     context.CancelFunc
+	intervalCh chan time.Duration
 	isSyncing  bool
+	usesGlobal bool
 }
 
 // NewClientToolSyncer creates a new tool syncer for an MCP client
@@ -67,9 +68,12 @@ func (cts *ClientToolSyncer) Start() {
 
 	cts.isSyncing = true
 	cts.ctx, cts.cancel = context.WithCancel(context.Background())
-	cts.ticker = time.NewTicker(cts.interval)
+	cts.intervalCh = make(chan time.Duration, 1)
+	ctx := cts.ctx
+	intervalCh := cts.intervalCh
+	interval := cts.interval
 
-	go cts.syncLoop()
+	go cts.syncLoop(ctx, intervalCh, interval)
 	cts.logger.Debug("%s Tool syncer started for client %s (interval: %v)", MCPLogPrefix, cts.clientID, cts.interval)
 }
 
@@ -83,23 +87,59 @@ func (cts *ClientToolSyncer) Stop() {
 	}
 
 	cts.isSyncing = false
-	if cts.ticker != nil {
-		cts.ticker.Stop()
-	}
 	if cts.cancel != nil {
 		cts.cancel()
 	}
+	cts.intervalCh = nil
 	cts.logger.Debug("%s Tool syncer stopped for client %s", MCPLogPrefix, cts.clientID)
 }
 
+// SetInterval updates the sync interval. A running syncer is retimed immediately.
+func (cts *ClientToolSyncer) SetInterval(interval time.Duration) {
+	if interval <= 0 {
+		interval = DefaultToolSyncInterval
+	}
+
+	cts.mu.Lock()
+	cts.interval = interval
+	if cts.isSyncing && cts.intervalCh != nil {
+		// Keep only the newest interval update. The sync loop owns the timer.
+		select {
+		case <-cts.intervalCh:
+		default:
+		}
+		select {
+		case cts.intervalCh <- interval:
+		default:
+		}
+	}
+	cts.mu.Unlock()
+}
+
 // syncLoop runs the tool sync loop
-func (cts *ClientToolSyncer) syncLoop() {
+
+func (cts *ClientToolSyncer) syncLoop(ctx context.Context, intervalCh <-chan time.Duration, interval time.Duration) {
+	timer := time.NewTimer(interval)
+	defer timer.Stop()
+
 	for {
 		select {
-		case <-cts.ctx.Done():
+		case <-ctx.Done():
 			return
-		case <-cts.ticker.C:
+		case interval = <-intervalCh:
+			if interval <= 0 {
+				interval = DefaultToolSyncInterval
+			}
+			if !timer.Stop() {
+				select {
+				case <-timer.C:
+				default:
+				}
+			}
+			timer.Reset(interval)
+		case <-timer.C:
 			cts.performSync()
+			timer.Reset(interval)
 		}
 	}
 }
@@ -144,6 +184,13 @@ func (cts *ClientToolSyncer) performSync() {
 		cts.manager.mu.Unlock()
 		return
 	}
+	// A reconnect replaces Conn while an older list_tools request may still be
+	// in flight. Never let that stale response overwrite the new connection's
+	// tools or a deliberately disabled client.
+	if clientState.Conn != conn || clientState.State == schemas.MCPConnectionStateDisabled {
+		cts.manager.mu.Unlock()
+		return
+	}
 
 	// Check if tools have changed
 	oldToolCount := len(clientState.ToolMap)
@@ -181,13 +228,61 @@ func NewToolSyncManager(globalInterval time.Duration) *ToolSyncManager {
 
 // GetGlobalInterval returns the global tool sync interval
 func (tsm *ToolSyncManager) GetGlobalInterval() time.Duration {
+	tsm.mu.RLock()
+	defer tsm.mu.RUnlock()
 	return tsm.globalInterval
 }
 
-// StartSyncing starts syncing for a specific client
-func (tsm *ToolSyncManager) StartSyncing(syncer *ClientToolSyncer) {
+// SetGlobalInterval updates the global interval and immediately retimes all
+// currently running syncers that use the global setting. Per-client overrides
+// are intentionally not changed.
+func (tsm *ToolSyncManager) SetGlobalInterval(interval time.Duration) {
+	if interval <= 0 {
+		interval = DefaultToolSyncInterval
+	}
+
+	tsm.mu.Lock()
+	tsm.globalInterval = interval
+	for _, syncer := range tsm.syncers {
+		if syncer.usesGlobal {
+			syncer.SetInterval(interval)
+		}
+	}
+	tsm.mu.Unlock()
+}
+
+// SetClientInterval retimes an existing client syncer. A non-positive value
+// stops and removes the syncer; a positive value starts it when absent.
+func (tsm *ToolSyncManager) SetClientInterval(clientID string, interval time.Duration, create func() *ClientToolSyncer) {
 	tsm.mu.Lock()
 	defer tsm.mu.Unlock()
+
+	if interval <= 0 {
+		if syncer, ok := tsm.syncers[clientID]; ok {
+			syncer.Stop()
+			delete(tsm.syncers, clientID)
+		}
+		return
+	}
+	if syncer, ok := tsm.syncers[clientID]; ok {
+		syncer.SetInterval(interval)
+		return
+	}
+	if create == nil {
+		return
+	}
+	syncer := create()
+	tsm.syncers[clientID] = syncer
+	syncer.Start()
+}
+
+// StartSyncing starts syncing for a specific client
+func (tsm *ToolSyncManager) StartSyncing(syncer *ClientToolSyncer, usesGlobal ...bool) {
+	tsm.mu.Lock()
+	defer tsm.mu.Unlock()
+	if len(usesGlobal) > 0 {
+		syncer.usesGlobal = usesGlobal[0]
+	}
 
 	// Stop any existing syncer for this client
 	if existing, ok := tsm.syncers[syncer.clientID]; ok {

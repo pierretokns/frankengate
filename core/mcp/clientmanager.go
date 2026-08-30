@@ -831,6 +831,20 @@ func (m *MCPManager) DisableClient(id string) error {
 	return nil
 }
 
+// isEnableable reports whether an entry can be passed to EnableClient. The
+// config clause covers a partially-applied enable where the persisted/runtime
+// config still says disabled even though a concurrent lifecycle operation moved
+// the state away from Disabled.
+func isEnableable(clientState *schemas.MCPClientState) bool {
+	if clientState == nil {
+		return false
+	}
+	if clientState.State == schemas.MCPConnectionStateDisabled {
+		return true
+	}
+	return clientState.ExecutionConfig != nil && clientState.ExecutionConfig.Disabled
+}
+
 // EnableClient re-enables a previously disabled MCP client by reconnecting it
 // and restarting its health monitor and tool syncer.
 //
@@ -846,7 +860,11 @@ func (m *MCPManager) EnableClient(id string) error {
 		m.mu.Unlock()
 		return fmt.Errorf("client %s not found", id)
 	}
-	if clientState.State != schemas.MCPConnectionStateDisabled {
+	if clientState.ExecutionConfig == nil {
+		m.mu.Unlock()
+		return fmt.Errorf("client %s has no execution config", id)
+	}
+	if !isEnableable(clientState) {
 		m.mu.Unlock()
 		return fmt.Errorf("client %s is not disabled (current state: %s)", clientState.ExecutionConfig.Name, clientState.State)
 	}
@@ -883,34 +901,28 @@ func (m *MCPManager) EnableClient(id string) error {
 	defer m.reconnectingClients.Delete(id)
 
 	if err := m.connectToMCPClient(m.ctx, configCopy); err != nil {
-		// Connection failed — leave the entry as Disconnected so the health monitor can
-		// recover it, but only if the client has not been disabled in the meantime.
+		// The first enable attempt failed. Park the entry back at Disabled so a
+		// later explicit enable remains possible; leaving it Disconnected would
+		// wedge the old state-only enable guard permanently.
 		m.mu.Lock()
-		alreadyDisabled := false
 		if cs, exists := m.clientMap[id]; exists {
-			if cs.State == schemas.MCPConnectionStateDisabled {
-				alreadyDisabled = true
-			} else {
-				cs.State = schemas.MCPConnectionStateDisconnected
+			if cs.State != schemas.MCPConnectionStateDisabled {
+				cs.State = schemas.MCPConnectionStateDisabled
 			}
 		}
 		m.mu.Unlock()
 
-		if !alreadyDisabled {
-			isPingAvailable := true
-			if configCopy.IsPingAvailable != nil {
-				isPingAvailable = *configCopy.IsPingAvailable
-			}
-			monitor := NewClientHealthMonitor(m, id, DefaultHealthCheckInterval, isPingAvailable, m.logger)
-			m.healthMonitorManager.StartMonitoring(monitor)
-		}
-
-		return fmt.Errorf("failed to connect MCP client '%s': %w", configCopy.Name, err)
+		return fmt.Errorf("%w for '%s': %w", ErrMCPEnableConnectFailed, configCopy.Name, err)
 	}
 
 	m.logger.Debug("%s MCP client '%s' enabled successfully", MCPLogPrefix, configCopy.Name)
 	return nil
 }
+
+// ErrMCPEnableConnectFailed signals that EnableClient accepted the enable but
+// the initial connection failed. The entry is parked at Disabled so the admin
+// can retry, while the config remains enabled for persistence reconciliation.
+var ErrMCPEnableConnectFailed = errors.New("mcp client enabled, but establishing its connection failed")
 
 // UpdateClient updates an existing MCP client's configuration and refreshes its tool list.
 // It updates the client's execution config with new settings and retrieves updated tools
@@ -1028,7 +1040,36 @@ func (m *MCPManager) UpdateClient(id string, updatedConfig *schemas.MCPClientCon
 	// Also update the client Name field
 	client.Name = updatedConfig.Name
 
+	// The interval is part of the live client configuration. Reconcile it after
+	// releasing the manager lock so a PATCH takes effect without waiting for a
+	// full config reload.
+	go m.reconcileClientToolSync(id)
+
 	return nil
+}
+
+func (m *MCPManager) reconcileClientToolSync(id string) {
+	m.mu.RLock()
+	state, exists := m.clientMap[id]
+	if !exists || state == nil || state.ExecutionConfig == nil {
+		m.mu.RUnlock()
+		m.toolSyncManager.SetClientInterval(id, 0, nil)
+		return
+	}
+	config := state.ExecutionConfig
+	name := config.Name
+	run := state.Conn != nil && state.State != schemas.MCPConnectionStateDisabled &&
+		!config.Disabled && !m.credStore.RequiresPerCallConnection(config)
+	globalInterval := m.toolSyncManager.GetGlobalInterval()
+	interval := time.Duration(0)
+	if run {
+		interval = ResolveToolSyncInterval(config, globalInterval)
+	}
+	m.mu.RUnlock()
+
+	m.toolSyncManager.SetClientInterval(id, interval, func() *ClientToolSyncer {
+		return NewClientToolSyncer(m, id, name, interval, m.logger)
+	})
 }
 
 // UpdateClientConnection updates auth-related fields (headers) for an existing MCP client by
@@ -1609,9 +1650,11 @@ func (m *MCPManager) connectToMCPClient(requestCtx context.Context, config *sche
 			client.CancelFunc = cancel
 		}
 
-		// Store discovered tools
-		for toolName, tool := range tools {
-			client.ToolMap[toolName] = tool
+		// Replace discovered tools wholesale. A reconnect can remove tools; merging
+		// would leave stale entries available for execution indefinitely.
+		client.ToolMap = maps.Clone(tools)
+		if client.ToolMap == nil {
+			client.ToolMap = make(map[string]schemas.ChatTool)
 		}
 
 		// Store tool name mapping for execution (sanitized_name -> original_mcp_name)
@@ -1649,7 +1692,7 @@ func (m *MCPManager) connectToMCPClient(requestCtx context.Context, config *sche
 			// fires OnConnectionLost after the lock is released, by which point
 			// State is already Disabled — do not clobber it.
 			m.mu.Lock()
-			if client, exists := m.clientMap[config.ID]; exists && client.State != schemas.MCPConnectionStateDisabled {
+			if client, exists := m.clientMap[config.ID]; exists && client.Conn == externalClient && client.State != schemas.MCPConnectionStateDisabled {
 				client.State = schemas.MCPConnectionStateDisconnected
 			}
 			m.mu.Unlock()
@@ -1669,7 +1712,7 @@ func (m *MCPManager) connectToMCPClient(requestCtx context.Context, config *sche
 		syncInterval := ResolveToolSyncInterval(config, m.toolSyncManager.GetGlobalInterval())
 		if syncInterval > 0 {
 			syncer := NewClientToolSyncer(m, config.ID, config.Name, syncInterval, m.logger)
-			m.toolSyncManager.StartSyncing(syncer)
+			m.toolSyncManager.StartSyncing(syncer, config.ToolSyncInterval <= 0)
 		}
 	}
 
