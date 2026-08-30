@@ -1,0 +1,42 @@
+{
+  "schema_version": "canonical-trajectory-v1",
+  "trace_id": "fixture-enterprise-001",
+  "tenant_id": "enterprise-fixture",
+  "source": "sanitized-fixture",
+  "source_revision": "sanitized-fixture@1",
+  "source_digest": "sha256:fixture-source-enterprise-001",
+  "task_family": "support.refund",
+  "harness_revision": "frankengate-harness@1",
+  "model_revision": "candidate-model@1",
+  "skill_revision": "support-skill@4",
+  "kb_revision": "support-kb@2026-08-01",
+  "privacy": {
+    "receipt_id": "privacy-fixture-001",
+    "policy": "enterprise-eval-redact-v1",
+    "transform": "redact-and-digest-v1",
+    "version": "1",
+    "raw_allowed": false
+  },
+  "authorization": {
+    "source_authorized": true,
+    "purpose": "offline-enterprise-evaluation",
+    "actor": "fixture-owner"
+  },
+  "deletion": {
+    "subject_id": "fixture-subject-001",
+    "revision": "deletion-epoch-1",
+    "active": true
+  },
+  "loss_receipt": {
+    "source_event_count": 4,
+    "canonical_event_count": 4,
+    "silently_dropped_event_count": 0
+  },
+  "events": [
+    {"event_id":"e0","trace_id":"fixture-enterprise-001","sequence":0,"kind":"user.task","observation_status":"observed","source_role":"user","content":"Please check whether this order is eligible for a refund."},
+    {"event_id":"e1","trace_id":"fixture-enterprise-001","sequence":1,"parent_event_id":"e0","kind":"skill.applied","observation_status":"observed","source_role":"harness","skill_name":"refund-eligibility"},
+    {"event_id":"e2","trace_id":"fixture-enterprise-001","sequence":2,"parent_event_id":"e1","kind":"knowledge_base.query","observation_status":"observed","source_role":"retriever","knowledge_base":"support-kb","content":"refund eligibility order policy"},
+    {"event_id":"e3","trace_id":"fixture-enterprise-001","sequence":3,"parent_event_id":"e2","kind":"tool.proposed","observation_status":"observed","source_role":"assistant","tool_name":"refund.check","arguments":{"order_id_digest":"sha256:fixture-order"}}
+  ],
+  "outcome": {"status":"eligibility_verified","evidence_id":"outcome-fixture-001","observed":true,"success":true}
+}
