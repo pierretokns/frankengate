@@ -297,6 +297,51 @@ func (m *MCPManager) UpdateToolManagerConfig(config *schemas.MCPToolManagerConfi
 	m.toolsManager.UpdateConfig(config)
 }
 
+// UpdateToolSyncInterval applies a new global tool discovery interval and
+// reconciles all connected shared clients immediately. Per-client overrides
+// remain authoritative; clients with sync disabled or without a persistent
+// connection keep no background syncer.
+func (m *MCPManager) UpdateToolSyncInterval(interval time.Duration) {
+	m.toolSyncManager.SetGlobalInterval(interval)
+
+	type syncTarget struct {
+		id       string
+		name     string
+		interval time.Duration
+		run      bool
+	}
+
+	m.mu.RLock()
+	targets := make([]syncTarget, 0, len(m.clientMap))
+	globalInterval := m.toolSyncManager.GetGlobalInterval()
+	for id, state := range m.clientMap {
+		if id == BifrostMCPClientKey || state == nil || state.ExecutionConfig == nil {
+			continue
+		}
+		run := state.Conn != nil && state.State != schemas.MCPConnectionStateDisabled &&
+			!m.credStore.RequiresPerCallConnection(state.ExecutionConfig) && !state.ExecutionConfig.Disabled
+		effective := time.Duration(0)
+		if run {
+			effective = ResolveToolSyncInterval(state.ExecutionConfig, globalInterval)
+		}
+		targets = append(targets, syncTarget{id: id, name: state.ExecutionConfig.Name, interval: effective, run: run})
+	}
+	m.mu.RUnlock()
+
+	for _, target := range targets {
+		if !target.run {
+			m.toolSyncManager.SetClientInterval(target.id, 0, nil)
+			continue
+		}
+		clientID := target.id
+		clientName := target.name
+		interval := target.interval
+		m.toolSyncManager.SetClientInterval(clientID, interval, func() *ClientToolSyncer {
+			return NewClientToolSyncer(m, clientID, clientName, interval, m.logger)
+		})
+	}
+}
+
 // CheckAndExecuteAgentForChatRequest checks if the chat response contains tool calls,
 // and if so, executes agent mode to handle the tool calls iteratively. If no tool calls
 // are present, it returns the original response unchanged.

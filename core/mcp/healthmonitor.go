@@ -195,20 +195,29 @@ func (chm *ClientHealthMonitor) performHealthCheck() {
 	}
 
 	if err != nil {
+		// The connection may have been replaced while the probe was in flight.
+		// Discard results from the old connection so it cannot mark the new one
+		// unhealthy or trigger an unnecessary reconnect.
+		if !chm.isCurrentConnection(conn) {
+			return
+		}
 		chm.incrementFailures()
 
 		if chm.getConsecutiveFailures() >= chm.maxConsecutiveFailures {
-			chm.updateClientState(schemas.MCPConnectionStateDisconnected)
+			chm.updateClientState(conn, schemas.MCPConnectionStateDisconnected)
 			chm.mu.Lock()
 			if !chm.isReconnecting {
 				chm.isReconnecting = true
-				go chm.attemptReconnect()
+				go chm.attemptReconnect(conn)
 			}
 			chm.mu.Unlock()
 		}
 	} else {
+		if !chm.isCurrentConnection(conn) {
+			return
+		}
 		chm.resetFailures()
-		chm.updateClientState(schemas.MCPConnectionStateConnected)
+		chm.updateClientState(conn, schemas.MCPConnectionStateConnected)
 	}
 }
 
@@ -216,7 +225,7 @@ func (chm *ClientHealthMonitor) performHealthCheck() {
 // which internally applies full exponential backoff retry logic.
 // On success the failure counter is reset; on failure the isReconnecting flag
 // is cleared so the next health check cycle can try again.
-func (chm *ClientHealthMonitor) attemptReconnect() {
+func (chm *ClientHealthMonitor) attemptReconnect(expectedConn *client.Client) {
 	defer func() {
 		chm.mu.Lock()
 		chm.isReconnecting = false
@@ -230,8 +239,9 @@ func (chm *ClientHealthMonitor) attemptReconnect() {
 	chm.manager.mu.RLock()
 	clientState, exists := chm.manager.clientMap[chm.clientID]
 	isDisabled := exists && clientState != nil && clientState.State == schemas.MCPConnectionStateDisabled
+	isCurrent := exists && clientState != nil && clientState.Conn == expectedConn
 	chm.manager.mu.RUnlock()
-	if isDisabled {
+	if isDisabled || !isCurrent {
 		chm.logger.Debug("%s Skipping reconnect for disabled MCP client %s", MCPLogPrefix, chm.clientID)
 		return
 	}
@@ -245,11 +255,16 @@ func (chm *ClientHealthMonitor) attemptReconnect() {
 	chm.resetFailures()
 }
 
-// updateClientState updates the client's connection state
-func (chm *ClientHealthMonitor) updateClientState(state schemas.MCPConnectionState) {
+// updateClientState updates the client's connection state if the probe still
+// belongs to the currently installed connection.
+func (chm *ClientHealthMonitor) updateClientState(conn *client.Client, state schemas.MCPConnectionState) {
 	chm.manager.mu.Lock()
 	clientState, exists := chm.manager.clientMap[chm.clientID]
 	if !exists {
+		chm.manager.mu.Unlock()
+		return
+	}
+	if clientState.Conn != conn {
 		chm.manager.mu.Unlock()
 		return
 	}
@@ -273,6 +288,13 @@ func (chm *ClientHealthMonitor) updateClientState(state schemas.MCPConnectionSta
 	if stateChanged {
 		chm.logger.Info(fmt.Sprintf("%s Client %s connection state changed to: %s", MCPLogPrefix, clientState.ExecutionConfig.Name, state))
 	}
+}
+
+func (chm *ClientHealthMonitor) isCurrentConnection(conn *client.Client) bool {
+	chm.manager.mu.RLock()
+	defer chm.manager.mu.RUnlock()
+	clientState, exists := chm.manager.clientMap[chm.clientID]
+	return exists && clientState != nil && clientState.Conn == conn
 }
 
 // incrementFailures increments the consecutive failure counter
