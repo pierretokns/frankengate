@@ -1,7 +1,7 @@
 {
   "brand": "FrankenGate",
   "source": "https://getbifrost.ai/datasheet",
-  "retrieved_at": "2026-08-29T10:12:40Z",
+  "retrieved_at": "2026-08-30T09:20:35Z",
   "models": {
     "agentcore/search": {
       "base_model": "search",
