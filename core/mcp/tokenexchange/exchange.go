@@ -26,6 +26,8 @@ const (
 	tokenExchangeGrantType = "urn:ietf:params:oauth:grant-type:token-exchange"
 	jwtBearerGrantType     = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 	accessTokenType        = "urn:ietf:params:oauth:token-type:access_token"
+	idJAGTokenType         = "urn:ietf:params:oauth:token-type:id-jag"
+	bearerTokenType        = "Bearer"
 	defaultCacheSkew       = 30 * time.Second
 	defaultHTTPTimeout     = 15 * time.Second
 	defaultMaxCacheEntries = 256
@@ -162,56 +164,45 @@ func ValidateConfig(config *schemas.MCPTokenExchangeConfig) error {
 }
 
 func (e *Exchanger) exchange(ctx context.Context, config *schemas.MCPTokenExchangeConfig, subjectToken, actorToken string, now time.Time, key string) (string, error) {
-	form, err := buildForm(config, subjectToken, actorToken)
-	if err != nil {
-		return "", err
-	}
-	if config.ClientAuthMethod == schemas.MCPTokenExchangeClientAuthPost {
-		form.Set("client_id", config.ClientID.GetValue())
-		form.Set("client_secret", config.ClientSecret.GetValue())
-	}
-	requestCtx := ctx
-	var cancel context.CancelFunc
-	if config.TimeoutSeconds > 0 {
-		requestCtx, cancel = context.WithTimeout(ctx, time.Duration(config.TimeoutSeconds)*time.Second)
-		defer cancel()
-	}
-	req, err := http.NewRequestWithContext(requestCtx, http.MethodPost, config.TokenURL.GetValue(), strings.NewReader(form.Encode()))
-	if err != nil {
-		return "", fmt.Errorf("%w: token endpoint request could not be created", ErrInvalidConfig)
-	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	if config.ClientAuthMethod == "" || config.ClientAuthMethod == schemas.MCPTokenExchangeClientAuthBasic {
-		req.SetBasicAuth(config.ClientID.GetValue(), config.ClientSecret.GetValue())
-	}
-
-	resp, err := e.client.Do(req)
-	if err != nil {
-		if ctx.Err() != nil {
-			return "", ctx.Err()
-		}
-		return "", errors.New("token endpoint request failed")
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(io.LimitReader(resp.Body, maxTokenResponseBytes+1))
-	if err != nil {
-		return "", errors.New("token endpoint response unreadable")
-	}
-	if len(body) > maxTokenResponseBytes {
-		return "", errors.New("token endpoint response exceeded the safety limit")
-	}
 	var reply tokenReply
-	if err := json.Unmarshal(body, &reply); err != nil {
-		return "", fmt.Errorf("token exchange failed with HTTP %d", resp.StatusCode)
-	}
-	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		if safe := safeOAuthError(reply.Error); safe != "" {
-			return "", fmt.Errorf("token exchange rejected: %s", safe)
+	var err error
+	if config.Mode == schemas.MCPTokenExchangeModeIDJAG {
+		first := *config
+		first.RequestedTokenType = idJAGTokenType
+		reply, err = e.requestToken(ctx, &first, subjectToken, actorToken)
+		if err != nil {
+			return "", err
 		}
-		return "", fmt.Errorf("token exchange failed with HTTP %d", resp.StatusCode)
-	}
-	if strings.TrimSpace(reply.AccessToken) == "" {
-		return "", ErrInvalidTokenReply
+		if !strings.EqualFold(reply.IssuedTokenType, idJAGTokenType) {
+			return "", fmt.Errorf("%w: first leg did not return an ID-JAG", ErrInvalidTokenReply)
+		}
+		second := *config
+		second.Mode = schemas.MCPTokenExchangeModeDirect
+		second.TokenURL = config.ResourceTokenURL
+		second.AllowedHosts = config.ResourceAllowedHosts
+		second.ClientID = config.ResourceClientID
+		second.ClientSecret = config.ResourceClientSecret
+		second.ClientAuthMethod = config.ResourceClientAuthMethod
+		second.Grant = schemas.MCPTokenExchangeGrantJWTBearer
+		second.SubjectTokenType = ""
+		second.RequestedTokenType = ""
+		second.ActorTokenHeader = ""
+		second.ActorTokenType = ""
+		second.Audience = nil
+		second.AdditionalParameters = config.AdditionalParameters
+		finalReply, err := e.requestToken(ctx, &second, reply.AccessToken, "")
+		if err != nil {
+			return "", err
+		}
+		if finalReply.TokenType != "" && !strings.EqualFold(finalReply.TokenType, bearerTokenType) {
+			return "", fmt.Errorf("%w: second leg did not return a bearer token", ErrInvalidTokenReply)
+		}
+		reply = finalReply
+	} else {
+		reply, err = e.requestToken(ctx, config, subjectToken, actorToken)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	expiresIn := time.Duration(reply.ExpiresIn) * time.Second
@@ -242,10 +233,67 @@ func (e *Exchanger) exchange(ctx context.Context, config *schemas.MCPTokenExchan
 	return reply.AccessToken, nil
 }
 
+func (e *Exchanger) requestToken(ctx context.Context, config *schemas.MCPTokenExchangeConfig, subjectToken, actorToken string) (tokenReply, error) {
+	form, err := buildForm(config, subjectToken, actorToken)
+	if err != nil {
+		return tokenReply{}, err
+	}
+	if config.ClientAuthMethod == schemas.MCPTokenExchangeClientAuthPost {
+		form.Set("client_id", config.ClientID.GetValue())
+		form.Set("client_secret", config.ClientSecret.GetValue())
+	}
+	requestCtx := ctx
+	var cancel context.CancelFunc
+	if config.TimeoutSeconds > 0 {
+		requestCtx, cancel = context.WithTimeout(ctx, time.Duration(config.TimeoutSeconds)*time.Second)
+		defer cancel()
+	}
+	req, err := http.NewRequestWithContext(requestCtx, http.MethodPost, config.TokenURL.GetValue(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return tokenReply{}, fmt.Errorf("%w: token endpoint request could not be created", ErrInvalidConfig)
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	if config.ClientAuthMethod == "" || config.ClientAuthMethod == schemas.MCPTokenExchangeClientAuthBasic {
+		req.SetBasicAuth(config.ClientID.GetValue(), config.ClientSecret.GetValue())
+	}
+
+	resp, err := e.client.Do(req)
+	if err != nil {
+		if ctx.Err() != nil {
+			return tokenReply{}, ctx.Err()
+		}
+		return tokenReply{}, errors.New("token endpoint request failed")
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxTokenResponseBytes+1))
+	if err != nil {
+		return tokenReply{}, errors.New("token endpoint response unreadable")
+	}
+	if len(body) > maxTokenResponseBytes {
+		return tokenReply{}, errors.New("token endpoint response exceeded the safety limit")
+	}
+	var reply tokenReply
+	if err := json.Unmarshal(body, &reply); err != nil {
+		return tokenReply{}, fmt.Errorf("token exchange failed with HTTP %d", resp.StatusCode)
+	}
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		if safe := safeOAuthError(reply.Error); safe != "" {
+			return tokenReply{}, fmt.Errorf("token exchange rejected: %s", safe)
+		}
+		return tokenReply{}, fmt.Errorf("token exchange failed with HTTP %d", resp.StatusCode)
+	}
+	if strings.TrimSpace(reply.AccessToken) == "" {
+		return tokenReply{}, ErrInvalidTokenReply
+	}
+	return reply, nil
+}
+
 type tokenReply struct {
-	AccessToken string `json:"access_token"`
-	ExpiresIn   int64  `json:"expires_in"`
-	Error       string `json:"error"`
+	AccessToken     string `json:"access_token"`
+	TokenType       string `json:"token_type"`
+	IssuedTokenType string `json:"issued_token_type"`
+	ExpiresIn       int64  `json:"expires_in"`
+	Error           string `json:"error"`
 }
 
 func buildForm(config *schemas.MCPTokenExchangeConfig, subjectToken, actorToken string) (url.Values, error) {
@@ -317,6 +365,33 @@ func addSpaceDelimitedValue(form url.Values, key string, values []string) {
 }
 
 func validateConfig(config *schemas.MCPTokenExchangeConfig) error {
+	mode := config.Mode
+	if mode == "" {
+		mode = schemas.MCPTokenExchangeModeDirect
+	}
+	if mode != schemas.MCPTokenExchangeModeDirect && mode != schemas.MCPTokenExchangeModeIDJAG {
+		return fmt.Errorf("%w: unsupported exchange mode %q", ErrInvalidConfig, mode)
+	}
+	if mode == schemas.MCPTokenExchangeModeIDJAG {
+		if config.Grant != "" && config.Grant != schemas.MCPTokenExchangeGrantTokenExchange {
+			return fmt.Errorf("%w: id_jag mode requires the token_exchange grant", ErrInvalidConfig)
+		}
+		if len(nonEmpty(config.Audience)) != 1 {
+			return fmt.Errorf("%w: id_jag mode requires exactly one audience for the resource authorization server", ErrInvalidConfig)
+		}
+		if config.ResourceTokenURL == nil || strings.TrimSpace(config.ResourceTokenURL.GetValue()) == "" {
+			return fmt.Errorf("%w: id_jag mode requires resource_token_url", ErrInvalidConfig)
+		}
+		if len(config.ResourceAllowedHosts) == 0 {
+			return fmt.Errorf("%w: id_jag mode requires resource_allowed_hosts", ErrInvalidConfig)
+		}
+		if config.ResourceClientID == nil || config.ResourceClientSecret == nil || strings.TrimSpace(config.ResourceClientID.GetValue()) == "" || strings.TrimSpace(config.ResourceClientSecret.GetValue()) == "" {
+			return fmt.Errorf("%w: id_jag mode requires resource_client_id and resource_client_secret", ErrInvalidConfig)
+		}
+		if config.ResourceClientAuthMethod != "" && config.ResourceClientAuthMethod != schemas.MCPTokenExchangeClientAuthBasic && config.ResourceClientAuthMethod != schemas.MCPTokenExchangeClientAuthPost {
+			return fmt.Errorf("%w: unsupported resource client authentication profile", ErrInvalidConfig)
+		}
+	}
 	if config.TokenURL == nil || strings.TrimSpace(config.TokenURL.GetValue()) == "" {
 		return fmt.Errorf("%w: token_url is required", ErrInvalidConfig)
 	}
@@ -333,6 +408,15 @@ func validateConfig(config *schemas.MCPTokenExchangeConfig) error {
 	if !hostAllowed(u, config.AllowedHosts) {
 		return fmt.Errorf("%w: token endpoint host is not allowlisted", ErrInvalidConfig)
 	}
+	if mode == schemas.MCPTokenExchangeModeIDJAG {
+		resourceURL, err := parseEndpoint(config.ResourceTokenURL.GetValue(), config.AllowInsecureHTTP)
+		if err != nil {
+			return err
+		}
+		if !hostAllowed(resourceURL, config.ResourceAllowedHosts) {
+			return fmt.Errorf("%w: resource token endpoint host is not allowlisted", ErrInvalidConfig)
+		}
+	}
 	if config.ClientAuthMethod != "" && config.ClientAuthMethod != schemas.MCPTokenExchangeClientAuthBasic && config.ClientAuthMethod != schemas.MCPTokenExchangeClientAuthPost {
 		return fmt.Errorf("%w: unsupported client authentication profile", ErrInvalidConfig)
 	}
@@ -343,6 +427,30 @@ func validateConfig(config *schemas.MCPTokenExchangeConfig) error {
 		return fmt.Errorf("%w: limits cannot be negative", ErrInvalidConfig)
 	}
 	return nil
+}
+
+func parseEndpoint(raw string, allowInsecure bool) (*url.URL, error) {
+	u, err := url.Parse(raw)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return nil, fmt.Errorf("%w: token_url must be an absolute URL", ErrInvalidConfig)
+	}
+	if u.User != nil || u.Fragment != "" {
+		return nil, fmt.Errorf("%w: token_url must not contain userinfo or a fragment", ErrInvalidConfig)
+	}
+	if u.Scheme != "https" && !(allowInsecure && u.Scheme == "http") {
+		return nil, fmt.Errorf("%w: token_url must use https unless allow_insecure_http is enabled", ErrInvalidConfig)
+	}
+	return u, nil
+}
+
+func nonEmpty(values []string) []string {
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			result = append(result, value)
+		}
+	}
+	return result
 }
 
 func hostAllowed(endpoint *url.URL, allowed []string) bool {
@@ -447,6 +555,18 @@ func cacheKey(config *schemas.MCPTokenExchangeConfig, subjectToken, actorToken s
 		h.Write([]byte(value))
 	}
 	write(config.TokenURL.GetValue())
+	write(string(config.Mode))
+	if config.ResourceTokenURL != nil {
+		write(config.ResourceTokenURL.GetValue())
+	}
+	write(strings.Join(config.ResourceAllowedHosts, "\x00"))
+	if config.ResourceClientID != nil {
+		write(config.ResourceClientID.GetValue())
+	}
+	if config.ResourceClientSecret != nil {
+		write(config.ResourceClientSecret.GetValue())
+	}
+	write(string(config.ResourceClientAuthMethod))
 	write(string(config.Grant))
 	write(string(config.ClientAuthMethod))
 	write(config.SubjectTokenType)

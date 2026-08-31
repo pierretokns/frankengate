@@ -6,6 +6,17 @@ attach the matching immutable tag and artifact digests.
 
 ## Unreleased
 
+### Beta `v0.3.20-beta.5`
+
+- Added enterprise-managed MCP authorization with explicit two-leg ID-JAG
+  exchange: RFC 8693 delegation at the identity provider followed by RFC 7523
+  redemption at the resource authorization server.
+- Added audience/resource binding, separate resource-leg credentials and host
+  allowlisting, intermediate-token type validation, final-token-only caching,
+  and UI/schema support for the profile.
+- Added focused conformance coverage proving that inbound and intermediate
+  credentials are not forwarded to the MCP destination.
+
 ### Beta `v0.3.20-beta.4`
 
 - Added the isolated Rust analytics control plane for tenant-scoped

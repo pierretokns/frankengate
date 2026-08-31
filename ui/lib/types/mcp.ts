@@ -34,9 +34,11 @@ export interface MCPTLSConfig {
 
 export type MCPTokenExchangeGrant = "token_exchange" | "jwt_bearer";
 export type MCPTokenExchangeClientAuthMethod = "client_secret_basic" | "client_secret_post";
+export type MCPTokenExchangeMode = "direct" | "id_jag";
 
 export interface MCPTokenExchangeConfig {
 	enabled?: boolean;
+	mode?: MCPTokenExchangeMode;
 	token_url?: SecretVar;
 	allowed_hosts?: string[];
 	grant?: MCPTokenExchangeGrant;
@@ -53,6 +55,11 @@ export interface MCPTokenExchangeConfig {
 	scope?: string[];
 	requested_token_use?: string;
 	additional_parameters?: Record<string, string>;
+	resource_token_url?: SecretVar;
+	resource_allowed_hosts?: string[];
+	resource_client_id?: SecretVar;
+	resource_client_secret?: SecretVar;
+	resource_client_auth_method?: MCPTokenExchangeClientAuthMethod;
 	allow_insecure_http?: boolean;
 	cache_skew_seconds?: number;
 	max_cache_entries?: number;

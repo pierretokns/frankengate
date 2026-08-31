@@ -58,6 +58,7 @@ const emptyForm: CreateMCPClientRequest = {
 	auth_type: "none",
 	token_exchange: {
 		enabled: false,
+		mode: "direct",
 		grant: "token_exchange",
 		client_auth_method: "client_secret_basic",
 		subject_token_header: "authorization",
@@ -265,6 +266,24 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 					variant: "destructive",
 				});
 				hasErrors = true;
+			}
+			if ((data.token_exchange.mode || "direct") === "id_jag") {
+				if (parseArrayFromText(exchangeAudienceText).length !== 1) {
+					toast({ title: "ID-JAG audience required", description: "Provide exactly one resource authorization server issuer as the first-leg audience.", variant: "destructive" });
+					hasErrors = true;
+				}
+				if (!data.token_exchange.resource_token_url?.value && !data.token_exchange.resource_token_url?.ref) {
+					toast({ title: "Resource token endpoint required", description: "ID-JAG needs a separate token endpoint for the resource authorization server.", variant: "destructive" });
+					hasErrors = true;
+				}
+				if ((data.token_exchange.resource_allowed_hosts || []).length === 0) {
+					toast({ title: "Resource endpoint allowlist required", description: "List at least one approved resource token endpoint host.", variant: "destructive" });
+					hasErrors = true;
+				}
+				if (!data.token_exchange.resource_client_id?.value && !data.token_exchange.resource_client_id?.ref || !data.token_exchange.resource_client_secret?.value && !data.token_exchange.resource_client_secret?.ref) {
+					toast({ title: "Resource client credentials required", description: "Provide the separate resource authorization server client credentials.", variant: "destructive" });
+					hasErrors = true;
+				}
 			}
 		}
 
@@ -841,21 +860,43 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														</FormItem>
 													)}
 												/>
-												{watch("token_exchange.enabled") && (
-													<div className="space-y-4">
-														<FormField
-															control={control}
-															name="token_exchange.token_url"
-															render={({ field }) => (
-																<FormItem>
-																	<FormLabel>STS token endpoint</FormLabel>
-																	<FormControl>
-																		<SecretVarInput value={field.value} onChange={field.onChange} placeholder="https://sts.example.com/oauth/token" data-testid="token-exchange-url" />
-																	</FormControl>
-																	<FormMessage />
-																</FormItem>
-															)}
-														/>
+								{watch("token_exchange.enabled") && (
+									<div className="space-y-4">
+										<div className="space-y-2">
+											<Label>Exchange mode</Label>
+											<Select value={watch("token_exchange.mode") || "direct"} onValueChange={(value: "direct" | "id_jag") => setValue("token_exchange.mode", value)}>
+												<SelectTrigger data-testid="token-exchange-mode">
+													<SelectValue />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value="direct">Direct token exchange</SelectItem>
+													<SelectItem value="id_jag">Enterprise ID-JAG (two leg)</SelectItem>
+												</SelectContent>
+											</Select>
+											<p className="text-muted-foreground text-xs">ID-JAG first obtains a delegation artifact, then redeems it at the MCP resource authorization server.</p>
+										</div>
+										<FormField
+											control={control}
+											name="token_exchange.token_url"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>STS token endpoint</FormLabel>
+													<FormControl>
+														<SecretVarInput value={field.value} onChange={field.onChange} placeholder="https://sts.example.com/oauth/token" data-testid="token-exchange-url" />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										{watch("token_exchange.mode") === "id_jag" && (
+											<div className="space-y-4 rounded-lg border p-3">
+												<p className="text-sm font-medium">Resource authorization server leg</p>
+												<FormField control={control} name="token_exchange.resource_token_url" render={({ field }) => (<FormItem><FormLabel>Resource token endpoint</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="https://resource.example.com/oauth/token" /></FormControl><FormMessage /></FormItem>)} />
+												<div className="space-y-2"><Label>Approved resource endpoint hosts</Label><Input value={watch("token_exchange.resource_allowed_hosts")?.join(", ") || ""} onChange={(e) => setValue("token_exchange.resource_allowed_hosts", e.target.value.split(",").map((value) => value.trim()).filter(Boolean))} placeholder="resource.example.com" /></div>
+												<FormField control={control} name="token_exchange.resource_client_id" render={({ field }) => (<FormItem><FormLabel>Resource client ID</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="resource-client-id" /></FormControl><FormMessage /></FormItem>)} />
+												<FormField control={control} name="token_exchange.resource_client_secret" render={({ field }) => (<FormItem><FormLabel>Resource client secret</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="env.RESOURCE_CLIENT_SECRET" hideValueWhenEnv maskNonEnvValue /></FormControl><FormMessage /></FormItem>)} />
+											</div>
+										)}
 														<div className="space-y-2">
 															<Label>Approved endpoint hosts</Label>
 															<Input value={exchangeHostsText} onChange={(e) => setExchangeHostsText(e.target.value)} placeholder="sts.example.com, sts.internal.example" data-testid="token-exchange-hosts" />

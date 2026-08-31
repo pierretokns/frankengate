@@ -1780,11 +1780,32 @@ func mergeMCPTokenExchange(incoming, existing, redacted *schemas.MCPTokenExchang
 	} else if redacted != nil && existing.ClientSecret != nil && merged.ClientSecret.IsRedacted() && merged.ClientSecret.Equals(redacted.ClientSecret) {
 		merged.ClientSecret = existing.ClientSecret
 	}
+	if merged.ResourceTokenURL == nil {
+		merged.ResourceTokenURL = existing.ResourceTokenURL
+	} else if redacted != nil && existing.ResourceTokenURL != nil && merged.ResourceTokenURL.IsRedacted() && merged.ResourceTokenURL.Equals(redacted.ResourceTokenURL) {
+		merged.ResourceTokenURL = existing.ResourceTokenURL
+	}
+	if merged.ResourceClientID == nil {
+		merged.ResourceClientID = existing.ResourceClientID
+	} else if redacted != nil && existing.ResourceClientID != nil && merged.ResourceClientID.IsRedacted() && merged.ResourceClientID.Equals(redacted.ResourceClientID) {
+		merged.ResourceClientID = existing.ResourceClientID
+	}
+	if merged.ResourceClientSecret == nil {
+		merged.ResourceClientSecret = existing.ResourceClientSecret
+	} else if redacted != nil && existing.ResourceClientSecret != nil && merged.ResourceClientSecret.IsRedacted() && merged.ResourceClientSecret.Equals(redacted.ResourceClientSecret) {
+		merged.ResourceClientSecret = existing.ResourceClientSecret
+	}
+	if merged.Mode == "" {
+		merged.Mode = existing.Mode
+	}
 	if merged.Grant == "" {
 		merged.Grant = existing.Grant
 	}
 	if merged.ClientAuthMethod == "" {
 		merged.ClientAuthMethod = existing.ClientAuthMethod
+	}
+	if merged.ResourceClientAuthMethod == "" {
+		merged.ResourceClientAuthMethod = existing.ResourceClientAuthMethod
 	}
 	if merged.SubjectTokenHeader == "" {
 		merged.SubjectTokenHeader = existing.SubjectTokenHeader
@@ -1815,6 +1836,9 @@ func mergeMCPTokenExchange(incoming, existing, redacted *schemas.MCPTokenExchang
 	}
 	if merged.AdditionalParameters == nil {
 		merged.AdditionalParameters = existing.AdditionalParameters
+	}
+	if merged.ResourceAllowedHosts == nil {
+		merged.ResourceAllowedHosts = existing.ResourceAllowedHosts
 	}
 	if merged.CacheSkewSeconds == 0 {
 		merged.CacheSkewSeconds = existing.CacheSkewSeconds

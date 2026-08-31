@@ -1,6 +1,6 @@
 ---
 title: "Token exchange profiles"
-description: "RFC 8693, RFC 7523, and future delegated credential profiles"
+description: "RFC 8693, RFC 7523, and enterprise-managed delegated credential profiles"
 ---
 
 Token exchange is configured as a named, opt-in profile attached to one MCP or A2A destination. It is not a global bearer-forwarding switch.
@@ -10,10 +10,29 @@ Token exchange is configured as a named, opt-in profile attached to one MCP or A
 | Subject exchange | RFC 8693 token exchange | `client_secret_basic` or `client_secret_post` | Supported behind explicit destination policy |
 | JWT bearer | RFC 7523 JWT bearer | Same approved client profiles | Adapter contract; signing key provider required |
 | Entra OBO | JWT assertion exchange | Provider-specific confidential client | Planned profile; tenant and issuer checks required |
-| Cross-App Access / ID-JAG | RFC 8693 then RFC 7523 | Separate leg profiles | Planned profile; resource and audience binding required |
+| Cross-App Access / ID-JAG | RFC 8693 then RFC 7523 | Separate leg profiles | Supported with explicit two-leg configuration |
 | Device authorization | RFC 8628 | Existing OAuth provider registration | Planned headless login path |
 
 The first leg of a two-leg exchange must never be silently reused as the second leg. Each authorization server, client registration, audience/resource, scope, and tenant binding is independently configured and audited.
+
+## Enterprise ID-JAG
+
+Set `mode` to `id_jag` on the destination's `token_exchange` profile. The first
+leg posts an RFC 8693 token exchange to `token_url`, requesting
+`urn:ietf:params:oauth:token-type:id-jag`. `audience` must contain exactly one
+value: the issuer identifier of the resource authorization server. `resource`
+may identify the MCP resource server.
+
+Configure the second leg with `resource_token_url`,
+`resource_allowed_hosts`, `resource_client_id`, and `resource_client_secret`.
+FrankenGate redeems the ID-JAG using the RFC 7523 JWT bearer grant and sends
+only the resulting bearer token to the MCP server. The intermediate ID-JAG is
+never forwarded, persisted, or returned to the caller. Only the final token is
+cached, bounded by its expiry, configured TTL, and the original subject JWT's
+expiry when available.
+
+This follows the stable [MCP enterprise-managed authorization
+specification](https://github.com/modelcontextprotocol/ext-auth/blob/main/specification/stable/enterprise-managed-authorization.mdx).
 
 ## Operator checklist
 

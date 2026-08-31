@@ -316,6 +316,15 @@ const (
 	MCPTokenExchangeGrantJWTBearer     MCPTokenExchangeGrant = "jwt_bearer"     // RFC 7523
 )
 
+// MCPTokenExchangeMode selects whether the profile performs one direct
+// exchange or the MCP enterprise-managed authorization two-leg ID-JAG flow.
+type MCPTokenExchangeMode string
+
+const (
+	MCPTokenExchangeModeDirect MCPTokenExchangeMode = "direct"
+	MCPTokenExchangeModeIDJAG  MCPTokenExchangeMode = "id_jag"
+)
+
 // MCPTokenExchangeClientAuthMethod controls how the STS client authenticates.
 // private_key_jwt is reserved for the next key-provider integration; accepting
 // it in config without a signer would create a misleading fail-open path.
@@ -335,6 +344,7 @@ const (
 // exchanged token exists only in the process cache and on the outbound wire.
 type MCPTokenExchangeConfig struct {
 	Enabled              bool                             `json:"enabled,omitempty"`
+	Mode                 MCPTokenExchangeMode             `json:"mode,omitempty"`
 	TokenURL             *SecretVar                       `json:"token_url,omitempty"`
 	AllowedHosts         []string                         `json:"allowed_hosts,omitempty"`
 	Grant                MCPTokenExchangeGrant            `json:"grant,omitempty"`
@@ -351,11 +361,19 @@ type MCPTokenExchangeConfig struct {
 	Scope                []string                         `json:"scope,omitempty"`
 	RequestedTokenUse    string                           `json:"requested_token_use,omitempty"`
 	AdditionalParameters map[string]string                `json:"additional_parameters,omitempty"`
-	AllowInsecureHTTP    bool                             `json:"allow_insecure_http,omitempty"`
-	CacheSkewSeconds     int                              `json:"cache_skew_seconds,omitempty"`
-	MaxCacheEntries      int                              `json:"max_cache_entries,omitempty"`
-	MaxTokenTTLSeconds   int                              `json:"max_token_ttl_seconds,omitempty"`
-	TimeoutSeconds       int                              `json:"timeout_seconds,omitempty"`
+	// Resource* configure the second authorization-server leg of the ID-JAG
+	// profile. They are intentionally separate from the first-leg credentials
+	// so a token cannot be accidentally redeemed at the wrong issuer.
+	ResourceTokenURL         *SecretVar                       `json:"resource_token_url,omitempty"`
+	ResourceAllowedHosts     []string                         `json:"resource_allowed_hosts,omitempty"`
+	ResourceClientID         *SecretVar                       `json:"resource_client_id,omitempty"`
+	ResourceClientSecret     *SecretVar                       `json:"resource_client_secret,omitempty"`
+	ResourceClientAuthMethod MCPTokenExchangeClientAuthMethod `json:"resource_client_auth_method,omitempty"`
+	AllowInsecureHTTP        bool                             `json:"allow_insecure_http,omitempty"`
+	CacheSkewSeconds         int                              `json:"cache_skew_seconds,omitempty"`
+	MaxCacheEntries          int                              `json:"max_cache_entries,omitempty"`
+	MaxTokenTTLSeconds       int                              `json:"max_token_ttl_seconds,omitempty"`
+	TimeoutSeconds           int                              `json:"timeout_seconds,omitempty"`
 }
 
 // MCPClientConfig defines tool filtering for an MCP client.
