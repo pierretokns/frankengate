@@ -1981,6 +1981,7 @@ func mcpClientConfigToTable(clientConfig *schemas.MCPClientConfig) (configstoreT
 		ConnectionString:          clientConfig.ConnectionString,
 		StdioConfig:               clientConfig.StdioConfig,
 		AuthType:                  authType,
+		TokenExchange:             clientConfig.TokenExchange,
 		OauthConfigID:             clientConfig.OauthConfigID,
 		ToolsToExecute:            clientConfig.ToolsToExecute,
 		ToolsToAutoExecute:        clientConfig.ToolsToAutoExecute,

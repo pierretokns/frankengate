@@ -12,16 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { getErrorMessage, useCreateMCPClientMutation } from "@/lib/store";
-import {
-	CreateMCPClientRequest,
-	SecretVar,
-	MCPAuthType,
-	MCPConnectionType,
-	MCPProtocolMode,
-	MCPProtocolVersion,
-	MCPStdioConfig,
-	MCPTLSConfig,
-} from "@/lib/types/mcp";
+import { CreateMCPClientRequest, SecretVar, MCPAuthType, MCPConnectionType, MCPProtocolMode, MCPProtocolVersion, MCPStdioConfig, MCPTLSConfig } from "@/lib/types/mcp";
 import { parseArrayFromText } from "@/lib/utils/array";
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
 import { Info } from "lucide-react";
@@ -50,7 +41,10 @@ function buildTLSConfigPayload(tls: MCPTLSConfig | undefined): MCPTLSConfig | un
 	const hasSkipVerify = tls.insecure_skip_verify === true;
 	const hasCACert = tls.ca_cert_pem?.value || tls.ca_cert_pem?.type === "env" || tls.ca_cert_pem?.type === "vault";
 	if (!hasSkipVerify && !hasCACert) return undefined;
-	return { insecure_skip_verify: tls.insecure_skip_verify, ca_cert_pem: hasCACert ? tls.ca_cert_pem : undefined };
+	return {
+		insecure_skip_verify: tls.insecure_skip_verify,
+		ca_cert_pem: hasCACert ? tls.ca_cert_pem : undefined,
+	};
 }
 
 const emptyForm: CreateMCPClientRequest = {
@@ -100,13 +94,15 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 	// flow exactly: nothing is persisted until the test succeeds.
 	const [perUserHeaderKeys, setPerUserHeaderKeys] = useState<string[]>([]);
 	const [newHeaderKeyInput, setNewHeaderKeyInput] = useState("");
-	const [headersFlow, setHeadersFlow] = useState<{ payload: CreateMCPClientRequest } | null>(null);
+	const [headersFlow, setHeadersFlow] = useState<{
+		payload: CreateMCPClientRequest;
+	} | null>(null);
 
 	// UI splits the canonical `auth_type` into two dropdowns:
-	//   - authKind: none | headers | oauth
+	//   - authKind: none | headers | oauth | token_exchange
 	//   - authScope: shared | per_user (hidden when authKind = none)
 	// They recombine into the wire `auth_type` ("oauth", "per_user_oauth",
-	// "headers", "per_user_headers", "none") so the backend contract is
+	// "headers", "per_user_headers", "token_exchange", "none") so the backend contract is
 	// unchanged.
 	const [authScope, setAuthScope] = useState<"shared" | "per_user">("shared");
 
@@ -118,23 +114,26 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 	const authType = watch("auth_type");
 	const headers = watch("headers");
 
-	const authKind: "none" | "headers" | "oauth" =
-		authType === "oauth" || authType === "per_user_oauth"
-			? "oauth"
-			: authType === "headers" || authType === "per_user_headers"
-				? "headers"
-				: "none";
+	const authKind: "none" | "headers" | "oauth" | "token_exchange" = authType === "oauth" || authType === "per_user_oauth" ? "oauth" : authType === "headers" || authType === "per_user_headers" ? "headers" : authType === "token_exchange" ? "token_exchange" : "none";
 
-	const applyAuthKind = (kind: "none" | "headers" | "oauth") => {
+	const applyAuthKind = (kind: "none" | "headers" | "oauth" | "token_exchange") => {
 		if (kind === "none") {
 			setValue("auth_type", "none");
+			setValue("token_exchange.enabled", false);
+			return;
+		}
+		if (kind === "token_exchange") {
+			setValue("auth_type", "token_exchange");
+			setValue("token_exchange.enabled", true);
 			return;
 		}
 		if (kind === "oauth") {
 			setValue("auth_type", authScope === "per_user" ? "per_user_oauth" : "oauth");
+			setValue("token_exchange.enabled", false);
 			return;
 		}
 		setValue("auth_type", authScope === "per_user" ? "per_user_headers" : "headers");
+		setValue("token_exchange.enabled", false);
 	};
 
 	const applyAuthScope = (scope: "shared" | "per_user") => {
@@ -191,7 +190,9 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 			const connRef = data.connection_string?.ref?.trim() || "";
 			const isSecret = data.connection_string?.type === "env" || data.connection_string?.type === "vault";
 			if (!connVal && !connRef) {
-				setError("connection_string", { message: "Connection URL is required" });
+				setError("connection_string", {
+					message: "Connection URL is required",
+				});
 				hasErrors = true;
 			} else if (!isSecret && connVal && !/^https?:\/\/.+/.test(connVal)) {
 				setError("connection_string", {
@@ -204,25 +205,35 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 		if (connectionType === "stdio") {
 			const cmd = data.stdio_config?.command || "";
 			if (!cmd.trim()) {
-				setError("stdio_config.command", { message: "Command is required for STDIO connections" });
+				setError("stdio_config.command", {
+					message: "Command is required for STDIO connections",
+				});
 				hasErrors = true;
 			} else if (/[<>|&;]/.test(cmd)) {
-				setError("stdio_config.command", { message: "Command cannot contain special shell characters" });
+				setError("stdio_config.command", {
+					message: "Command cannot contain special shell characters",
+				});
 				hasErrors = true;
 			}
 		}
 
 		if (authType === "oauth" || authType === "per_user_oauth") {
 			if (data.oauth_config?.authorize_url && !/^https?:\/\/.+$/.test(data.oauth_config.authorize_url)) {
-				setError("oauth_config.authorize_url", { message: "Authorize URL must start with http:// or https://" });
+				setError("oauth_config.authorize_url", {
+					message: "Authorize URL must start with http:// or https://",
+				});
 				hasErrors = true;
 			}
 			if (data.oauth_config?.token_url && !/^https?:\/\/.+$/.test(data.oauth_config.token_url)) {
-				setError("oauth_config.token_url", { message: "Token URL must start with http:// or https://" });
+				setError("oauth_config.token_url", {
+					message: "Token URL must start with http:// or https://",
+				});
 				hasErrors = true;
 			}
 			if (data.oauth_config?.registration_url && !/^https?:\/\/.+$/.test(data.oauth_config.registration_url)) {
-				setError("oauth_config.registration_url", { message: "Registration URL must start with http:// or https://" });
+				setError("oauth_config.registration_url", {
+					message: "Registration URL must start with http:// or https://",
+				});
 				hasErrors = true;
 			}
 		}
@@ -240,11 +251,19 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 
 		if (data.token_exchange?.enabled) {
 			if (!data.token_exchange.token_url?.value && !data.token_exchange.token_url?.ref) {
-				toast({ title: "Token endpoint required", description: "Provide the approved HTTPS token endpoint for the exchange profile.", variant: "destructive" });
+				toast({
+					title: "Token endpoint required",
+					description: "Provide the approved HTTPS token endpoint for the exchange profile.",
+					variant: "destructive",
+				});
 				hasErrors = true;
 			}
 			if (parseArrayFromText(exchangeHostsText).length === 0) {
-				toast({ title: "Token endpoint allowlist required", description: "List at least one approved token endpoint host.", variant: "destructive" });
+				toast({
+					title: "Token endpoint allowlist required",
+					description: "List at least one approved token endpoint host.",
+					variant: "destructive",
+				});
 				hasErrors = true;
 			}
 		}
@@ -275,12 +294,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 				authType === "oauth" || authType === "per_user_oauth"
 					? {
 							client_id: data.oauth_config?.client_id ?? emptySecretVar,
-							client_secret:
-								data.oauth_config?.client_secret?.value ||
-								data.oauth_config?.client_secret?.type === "env" ||
-								data.oauth_config?.client_secret?.type === "vault"
-									? data.oauth_config.client_secret
-									: undefined,
+							client_secret: data.oauth_config?.client_secret?.value || data.oauth_config?.client_secret?.type === "env" || data.oauth_config?.client_secret?.type === "vault" ? data.oauth_config.client_secret : undefined,
 							authorize_url: data.oauth_config?.authorize_url || undefined,
 							token_url: data.oauth_config?.token_url || undefined,
 							registration_url: data.oauth_config?.registration_url || undefined,
@@ -291,10 +305,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 			// "headers" and "per_user_headers" both can carry static admin
 			// headers on data.headers (per-user values are submitted
 			// separately by end users). Persist when present.
-			headers:
-				(authType === "headers" || authType === "per_user_headers") && data.headers && Object.keys(data.headers).length > 0
-					? data.headers
-					: undefined,
+			headers: (authType === "headers" || authType === "per_user_headers") && data.headers && Object.keys(data.headers).length > 0 ? data.headers : undefined,
 			per_user_header_keys: authType === "per_user_headers" ? perUserHeaderKeys : undefined,
 			token_exchange: data.token_exchange?.enabled
 				? {
@@ -342,7 +353,11 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 				setError("name", { message: getErrorMessage(error) });
 				return;
 			}
-			toast({ title: "Error", description: getErrorMessage(error), variant: "destructive" });
+			toast({
+				title: "Error",
+				description: getErrorMessage(error),
+				variant: "destructive",
+			});
 		}
 	};
 
@@ -363,8 +378,14 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 								name="name"
 								rules={{
 									required: "Server name is required",
-									minLength: { value: 3, message: "Server name must be at least 3 characters" },
-									maxLength: { value: 50, message: "Server name cannot exceed 50 characters" },
+									minLength: {
+										value: 3,
+										message: "Server name must be at least 3 characters",
+									},
+									maxLength: {
+										value: 50,
+										message: "Server name cannot exceed 50 characters",
+									},
 									validate: {
 										format: (v) => /^[a-zA-Z0-9_]+$/.test(v) || "Server name can only contain letters, numbers, and underscores",
 										noLeadingDigit: (v) => !/^[0-9]/.test(v) || "Server name cannot start with a number",
@@ -428,9 +449,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 								<section className="space-y-3 rounded-lg border p-4">
 									<div>
 										<FormLabel>MCP protocol compatibility</FormLabel>
-										<p className="text-muted-foreground text-xs">
-											Legacy is safest for existing servers. Auto probes modern MCP and falls back only when the server is genuinely older.
-										</p>
+										<p className="text-muted-foreground text-xs">Legacy is safest for existing servers. Auto probes modern MCP and falls back only when the server is genuinely older.</p>
 									</div>
 									<FormField
 										control={control}
@@ -498,14 +517,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 											<TooltipProvider>
 												<Tooltip>
 													<TooltipTrigger asChild>
-														<a
-															href="https://docs.getbifrost.ai/mcp/code-mode"
-															target="_blank"
-															rel="noopener noreferrer"
-															data-testid="code-mode-link-help"
-															className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
-															aria-label="Learn more about Code Mode"
-														>
+														<a href="https://docs.getbifrost.ai/mcp/code-mode" target="_blank" rel="noopener noreferrer" data-testid="code-mode-link-help" className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none" aria-label="Learn more about Code Mode">
 															<Info className="h-4 w-4 cursor-help" />
 														</a>
 													</TooltipTrigger>
@@ -534,20 +546,12 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														<Info className="text-muted-foreground h-4 w-4 cursor-help" />
 													</TooltipTrigger>
 													<TooltipContent className="max-w-xs">
-														<p>
-															Enable to use lightweight ping method for health checks. Disable if your MCP server doesn't support ping -
-															will use listTools instead.
-														</p>
+														<p>Enable to use lightweight ping method for health checks. Disable if your MCP server doesn't support ping - will use listTools instead.</p>
 													</TooltipContent>
 												</Tooltip>
 											</TooltipProvider>
 										</div>
-										<Switch
-											id="ping-available"
-											data-testid="mcp-is-ping-available"
-											checked={field.value === true}
-											onCheckedChange={field.onChange}
-										/>
+										<Switch id="ping-available" data-testid="mcp-is-ping-available" checked={field.value === true} onCheckedChange={field.onChange} />
 									</div>
 								)}
 							/>
@@ -578,7 +582,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 									{/* Auth Type */}
 									<FormItem className="w-full">
 										<FormLabel>Authentication Type</FormLabel>
-										<Select value={authKind} onValueChange={(value: "none" | "headers" | "oauth") => applyAuthKind(value)}>
+										<Select value={authKind} onValueChange={(value: "none" | "headers" | "oauth" | "token_exchange") => applyAuthKind(value)}>
 											<FormControl>
 												<SelectTrigger className="w-full" data-testid="auth-type-select">
 													<SelectValue placeholder="Select authentication type" />
@@ -594,12 +598,15 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 												<SelectItem value="oauth" data-testid="auth-type-oauth">
 													OAuth 2.0
 												</SelectItem>
+												<SelectItem value="token_exchange" data-testid="auth-type-token-exchange">
+													Okta / OBO token exchange
+												</SelectItem>
 											</SelectContent>
 										</Select>
 									</FormItem>
 
 									{/* Auth Scope — only meaningful when there's an auth flow */}
-									{authKind !== "none" && (
+									{authKind !== "none" && authKind !== "token_exchange" && (
 										<FormItem className="w-full">
 											<FormLabel>Auth Scope</FormLabel>
 											<Select value={authScope} onValueChange={(value: "shared" | "per_user") => applyAuthScope(value)}>
@@ -626,14 +633,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 											name="headers"
 											render={({ field }) => (
 												<FormItem data-testid="mcp-headers-table">
-													<HeadersTable
-														value={field.value || {}}
-														onChange={field.onChange}
-														keyPlaceholder="Header name"
-														valuePlaceholder="Header value"
-														label="Headers"
-														useSecretVarInput
-													/>
+													<HeadersTable value={field.value || {}} onChange={field.onChange} keyPlaceholder="Header name" valuePlaceholder="Header value" label="Headers" useSecretVarInput />
 													{headersValidationError && <p className="text-destructive text-xs">{headersValidationError}</p>}
 													<FormMessage />
 												</FormItem>
@@ -652,8 +652,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 												<div className="space-y-0.5">
 													<div className="text-sm font-medium">Required Headers</div>
 													<p className="text-muted-foreground text-sm">
-														Comma-separated list of header names each caller must supply when they first use this server (e.g.{" "}
-														<code>X-API-Key, X-Tenant-ID</code>). Values are submitted per user - never stored on this server config.
+														Comma-separated list of header names each caller must supply when they first use this server (e.g. <code>X-API-Key, X-Tenant-ID</code>). Values are submitted per user - never stored on this server config.
 													</p>
 												</div>
 												<Textarea
@@ -675,14 +674,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 												name="headers"
 												render={({ field }) => (
 													<FormItem>
-														<HeadersTable
-															value={field.value || {}}
-															onChange={field.onChange}
-															keyPlaceholder="Header name"
-															valuePlaceholder="Header value"
-															label="Static Headers (optional, applied alongside user values)"
-															useSecretVarInput
-														/>
+														<HeadersTable value={field.value || {}} onChange={field.onChange} keyPlaceholder="Header name" valuePlaceholder="Header value" label="Static Headers (optional, applied alongside user values)" useSecretVarInput />
 														{headersValidationError && <p className="text-destructive text-xs">{headersValidationError}</p>}
 														<FormMessage />
 													</FormItem>
@@ -717,25 +709,15 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 																				<Info className="text-muted-foreground h-4 w-4 cursor-help" />
 																			</TooltipTrigger>
 																			<TooltipContent className="max-w-xs">
-																				<p>
-																					Leave empty to use Dynamic Client Registration (RFC 7591). Bifrost will automatically register
-																					with the OAuth provider if supported.
-																				</p>
+																				<p>Leave empty to use Dynamic Client Registration (RFC 7591). Bifrost will automatically register with the OAuth provider if supported.</p>
 																			</TooltipContent>
 																		</Tooltip>
 																	</TooltipProvider>
 																</div>
 																<FormControl>
-																	<SecretVarInput
-																		value={field.value}
-																		onChange={field.onChange}
-																		placeholder="your-client-id (auto-generated if empty)"
-																		data-testid="mcp-oauth-client-id"
-																	/>
+																	<SecretVarInput value={field.value} onChange={field.onChange} placeholder="your-client-id (auto-generated if empty)" data-testid="mcp-oauth-client-id" />
 																</FormControl>
-																<p className="text-muted-foreground text-xs">
-																	Will be auto-generated via dynamic registration if left empty and provider supports it
-																</p>
+																<p className="text-muted-foreground text-xs">Will be auto-generated via dynamic registration if left empty and provider supports it</p>
 																<FormMessage />
 															</FormItem>
 														)}
@@ -749,14 +731,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 															<FormItem>
 																<FormLabel>OAuth Client Secret (optional for PKCE)</FormLabel>
 																<FormControl>
-																	<SecretVarInput
-																		value={field.value}
-																		onChange={field.onChange}
-																		placeholder="your-client-secret"
-																		hideValueWhenEnv
-																		maskNonEnvValue
-																		data-testid="mcp-oauth-client-secret"
-																	/>
+																	<SecretVarInput value={field.value} onChange={field.onChange} placeholder="your-client-secret" hideValueWhenEnv maskNonEnvValue data-testid="mcp-oauth-client-secret" />
 																</FormControl>
 																<p className="text-muted-foreground text-xs">Leave empty for public clients using PKCE</p>
 																<FormMessage />
@@ -839,63 +814,111 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 													{/* Scopes (local state, not RHF field) */}
 													<div className="space-y-2">
 														<Label>Scopes (optional, comma-separated)</Label>
-														<Input
-															value={scopesText}
-															onChange={(e) => setScopesText(e.target.value)}
-															placeholder="read, write, admin"
-															data-testid="mcp-oauth-scopes-input"
-														/>
+														<Input value={scopesText} onChange={(e) => setScopesText(e.target.value)} placeholder="read, write, admin" data-testid="mcp-oauth-scopes-input" />
 													</div>
 												</AccordionContent>
 											</AccordionItem>
 										</Accordion>
 									)}
 
-					{/* Delegated credentials */}
-					<Accordion type="single" collapsible className="w-full">
-						<AccordionItem value="token-exchange" className="border-b-0">
-							<AccordionTrigger className="py-0" data-testid="token-exchange-trigger">
-								<span className="text-sm font-medium">Delegated credentials (advanced)</span>
-							</AccordionTrigger>
-							<AccordionContent className="space-y-4 pt-4 pb-0">
-								<p className="text-muted-foreground text-xs">
-									Existing OAuth or per-user headers are recommended first. This opt-in profile exchanges the authenticated caller token for this destination only.
-								</p>
-								<FormField
-									control={control}
-									name="token_exchange.enabled"
-									render={({ field }) => (
-										<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-											<FormLabel>Enable token exchange</FormLabel>
-											<FormControl><Switch checked={field.value === true} onCheckedChange={field.onChange} data-testid="token-exchange-enabled" /></FormControl>
-										</FormItem>
-									)}
-								/>
-								{watch("token_exchange.enabled") && (
-									<div className="space-y-4">
-										<FormField control={control} name="token_exchange.token_url" render={({ field }) => (
-											<FormItem><FormLabel>STS token endpoint</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="https://sts.example.com/oauth/token" data-testid="token-exchange-url" /></FormControl><FormMessage /></FormItem>
-										)} />
-										<div className="space-y-2"><Label>Approved endpoint hosts</Label><Input value={exchangeHostsText} onChange={(e) => setExchangeHostsText(e.target.value)} placeholder="sts.example.com, sts.internal.example" data-testid="token-exchange-hosts" /><p className="text-muted-foreground text-xs">Required to prevent credential egress to an unapproved host. Redirects are refused.</p></div>
-										<FormField control={control} name="token_exchange.client_id" render={({ field }) => (
-											<FormItem><FormLabel>STS client ID</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="client-id" data-testid="token-exchange-client-id" /></FormControl><FormMessage /></FormItem>
-										)} />
-										<FormField control={control} name="token_exchange.client_secret" render={({ field }) => (
-											<FormItem><FormLabel>STS client secret</FormLabel><FormControl><SecretVarInput value={field.value} onChange={field.onChange} placeholder="env.STS_CLIENT_SECRET" hideValueWhenEnv maskNonEnvValue data-testid="token-exchange-client-secret" /></FormControl><FormMessage /></FormItem>
-										)} />
-										<div className="space-y-2"><Label>Audience (optional)</Label><Input value={exchangeAudienceText} onChange={(e) => setExchangeAudienceText(e.target.value)} placeholder="api://downstream" /></div>
-										<div className="space-y-2"><Label>Resource (optional)</Label><Input value={exchangeResourceText} onChange={(e) => setExchangeResourceText(e.target.value)} placeholder="https://api.example.com" /></div>
-										<div className="space-y-2"><Label>Scope (optional)</Label><Input value={exchangeScopeText} onChange={(e) => setExchangeScopeText(e.target.value)} placeholder="read write" /></div>
-										<FormField control={control} name="token_exchange.subject_token_header" render={({ field }) => (
-											<FormItem><FormLabel>Subject token header</FormLabel><FormControl><Input {...field} value={field.value || "authorization"} placeholder="authorization" /></FormControl><FormMessage /></FormItem>
-										)} />
-									</div>
-								)}
-							</AccordionContent>
-						</AccordionItem>
-					</Accordion>
+									{/* Delegated credentials */}
+									<Accordion type="single" collapsible className="w-full">
+										<AccordionItem value="token-exchange" className="border-b-0">
+											<AccordionTrigger className="py-0" data-testid="token-exchange-trigger">
+												<span className="text-sm font-medium">Delegated credentials (advanced)</span>
+											</AccordionTrigger>
+											<AccordionContent className="space-y-4 pt-4 pb-0">
+												<p className="text-muted-foreground text-xs">Existing OAuth or per-user headers are recommended first. This opt-in profile exchanges the authenticated caller token for this destination only.</p>
+												<FormField
+													control={control}
+													name="token_exchange.enabled"
+													render={({ field }) => (
+														<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+															<FormLabel>Enable token exchange</FormLabel>
+															<FormControl>
+																<Switch checked={field.value === true} onCheckedChange={field.onChange} data-testid="token-exchange-enabled" />
+															</FormControl>
+														</FormItem>
+													)}
+												/>
+												{watch("token_exchange.enabled") && (
+													<div className="space-y-4">
+														<FormField
+															control={control}
+															name="token_exchange.token_url"
+															render={({ field }) => (
+																<FormItem>
+																	<FormLabel>STS token endpoint</FormLabel>
+																	<FormControl>
+																		<SecretVarInput value={field.value} onChange={field.onChange} placeholder="https://sts.example.com/oauth/token" data-testid="token-exchange-url" />
+																	</FormControl>
+																	<FormMessage />
+																</FormItem>
+															)}
+														/>
+														<div className="space-y-2">
+															<Label>Approved endpoint hosts</Label>
+															<Input value={exchangeHostsText} onChange={(e) => setExchangeHostsText(e.target.value)} placeholder="sts.example.com, sts.internal.example" data-testid="token-exchange-hosts" />
+															<p className="text-muted-foreground text-xs">Required to prevent credential egress to an unapproved host. Redirects are refused.</p>
+														</div>
+														<FormField
+															control={control}
+															name="token_exchange.client_id"
+															render={({ field }) => (
+																<FormItem>
+																	<FormLabel>STS client ID</FormLabel>
+																	<FormControl>
+																		<SecretVarInput value={field.value} onChange={field.onChange} placeholder="client-id" data-testid="token-exchange-client-id" />
+																	</FormControl>
+																	<FormMessage />
+																</FormItem>
+															)}
+														/>
+														<FormField
+															control={control}
+															name="token_exchange.client_secret"
+															render={({ field }) => (
+																<FormItem>
+																	<FormLabel>STS client secret</FormLabel>
+																	<FormControl>
+																		<SecretVarInput value={field.value} onChange={field.onChange} placeholder="env.STS_CLIENT_SECRET" hideValueWhenEnv maskNonEnvValue data-testid="token-exchange-client-secret" />
+																	</FormControl>
+																	<FormMessage />
+																</FormItem>
+															)}
+														/>
+														<div className="space-y-2">
+															<Label>Audience (optional)</Label>
+															<Input value={exchangeAudienceText} onChange={(e) => setExchangeAudienceText(e.target.value)} placeholder="api://downstream" />
+														</div>
+														<div className="space-y-2">
+															<Label>Resource (optional)</Label>
+															<Input value={exchangeResourceText} onChange={(e) => setExchangeResourceText(e.target.value)} placeholder="https://api.example.com" />
+														</div>
+														<div className="space-y-2">
+															<Label>Scope (optional)</Label>
+															<Input value={exchangeScopeText} onChange={(e) => setExchangeScopeText(e.target.value)} placeholder="read write" />
+														</div>
+														<FormField
+															control={control}
+															name="token_exchange.subject_token_header"
+															render={({ field }) => (
+																<FormItem>
+																	<FormLabel>Subject token header</FormLabel>
+																	<FormControl>
+																		<Input {...field} value={field.value || "authorization"} placeholder="authorization" />
+																	</FormControl>
+																	<FormMessage />
+																</FormItem>
+															)}
+														/>
+													</div>
+												)}
+											</AccordionContent>
+										</AccordionItem>
+									</Accordion>
 
-					{/* TLS / Certificate */}
+									{/* TLS / Certificate */}
 									<Accordion type="single" collapsible className="w-full">
 										<AccordionItem value="tls-config" className="border-b-0">
 											<AccordionTrigger className="py-0" data-testid="tls-config-trigger">
@@ -909,17 +932,10 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 															<div className="space-y-0.5">
 																<FormLabel>Skip TLS verification</FormLabel>
-																<p className="text-muted-foreground text-sm">
-																	Disable TLS certificate verification. Use only in trusted isolated environments. Takes priority over CA
-																	certificate.
-																</p>
+																<p className="text-muted-foreground text-sm">Disable TLS certificate verification. Use only in trusted isolated environments. Takes priority over CA certificate.</p>
 															</div>
 															<FormControl>
-																<Switch
-																	checked={field.value ?? false}
-																	onCheckedChange={field.onChange}
-																	data-testid="mcp-tls-insecure-skip-verify"
-																/>
+																<Switch checked={field.value ?? false} onCheckedChange={field.onChange} data-testid="mcp-tls-insecure-skip-verify" />
 															</FormControl>
 														</FormItem>
 													)}
@@ -931,21 +947,9 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														<FormItem>
 															<FormLabel>CA Certificate (PEM) (Optional)</FormLabel>
 															<FormControl>
-																<SecretVarInput
-																	variant="textarea"
-																	placeholder={`-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE----- or env.MCP_CA_CERT_PEM`}
-																	className="font-mono text-xs"
-																	rows={6}
-																	hideValueWhenEnv
-																	redactNonEnvValue
-																	{...field}
-																	value={field.value}
-																	data-testid="mcp-tls-ca-cert-pem"
-																/>
+																<SecretVarInput variant="textarea" placeholder={`-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE----- or env.MCP_CA_CERT_PEM`} className="font-mono text-xs" rows={6} hideValueWhenEnv redactNonEnvValue {...field} value={field.value} data-testid="mcp-tls-ca-cert-pem" />
 															</FormControl>
-															<p className="text-muted-foreground text-sm">
-																PEM-encoded CA certificate to trust for MCP server connections (e.g. self-signed or private CA).
-															</p>
+															<p className="text-muted-foreground text-sm">PEM-encoded CA certificate to trust for MCP server connections (e.g. self-signed or private CA).</p>
 															<FormMessage />
 														</FormItem>
 													)}
@@ -963,11 +967,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 											<Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-700" />
 											<div className="flex-1">
 												<p className="text-xs font-medium text-amber-900">Docker Notice</p>
-												<p className="mt-0.5 text-xs text-amber-800">
-													If not using the official Bifrost Docker image, STDIO connections may not work if required commands (npx, python,
-													etc.) aren't installed. You can safely ignore this if running locally or using a custom image with the necessary
-													dependencies.
-												</p>
+												<p className="mt-0.5 text-xs text-amber-800">If not using the official Bifrost Docker image, STDIO connections may not work if required commands (npx, python, etc.) aren't installed. You can safely ignore this if running locally or using a custom image with the necessary dependencies.</p>
 											</div>
 										</div>
 									</div>
@@ -999,12 +999,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 									{/* Args (local state) */}
 									<div className="space-y-2">
 										<Label>Arguments (comma-separated)</Label>
-										<Input
-											value={argsText}
-											onChange={(e) => setArgsText(e.target.value)}
-											placeholder="--port, 3000, --config, config.json"
-											data-testid="stdio-args-input"
-										/>
+										<Input value={argsText} onChange={(e) => setArgsText(e.target.value)} placeholder="--port, 3000, --config, config.json" data-testid="stdio-args-input" />
 									</div>
 
 									{/* Envs (local state) */}
@@ -1017,20 +1012,12 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														<Info className="text-muted-foreground h-4 w-4 cursor-help" />
 													</TooltipTrigger>
 													<TooltipContent className="max-w-xs">
-														<p>
-															Add a value for each variable, or leave it blank to read the value from the environment where Bifrost runs.
-														</p>
+														<p>Add a value for each variable, or leave it blank to read the value from the environment where Bifrost runs.</p>
 													</TooltipContent>
 												</Tooltip>
 											</TooltipProvider>
 										</div>
-										<HeadersTable
-											value={envVars}
-											onChange={setEnvVars}
-											keyPlaceholder="API_KEY"
-											valuePlaceholder="Value (or leave blank to use host env)"
-											label=""
-										/>
+										<HeadersTable value={envVars} onChange={setEnvVars} keyPlaceholder="API_KEY" valuePlaceholder="Value (or leave blank to use host env)" label="" />
 									</div>
 								</>
 							)}
@@ -1046,12 +1033,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 									<Tooltip>
 										<TooltipTrigger asChild>
 											<span className="inline-block">
-												<Button
-													type="submit"
-													disabled={isLoading || !hasCreateMCPClientAccess}
-													isLoading={isLoading}
-													data-testid="save-client-btn"
-												>
+												<Button type="submit" disabled={isLoading || !hasCreateMCPClientAccess} isLoading={isLoading} data-testid="save-client-btn">
 													Create
 												</Button>
 											</span>
@@ -1077,13 +1059,20 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 						setOauthFlow(null);
 					}}
 					onSuccess={() => {
-						toast({ title: "Success", description: "MCP server connected with OAuth" });
+						toast({
+							title: "Success",
+							description: "MCP server connected with OAuth",
+						});
 						setOauthFlow(null);
 						onClose();
 						onSaved();
 					}}
 					onError={(error) => {
-						toast({ title: "OAuth Error", description: error, variant: "destructive" });
+						toast({
+							title: "OAuth Error",
+							description: error,
+							variant: "destructive",
+						});
 					}}
 					onConflict={(error) => {
 						setOauthFlow(null);
@@ -1109,7 +1098,10 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 					}}
 					onSuccess={() => {
 						setHeadersFlow(null);
-						toast({ title: "Success", description: "MCP server connected with per-user headers" });
+						toast({
+							title: "Success",
+							description: "MCP server connected with per-user headers",
+						});
 						onSaved();
 						onClose();
 					}}

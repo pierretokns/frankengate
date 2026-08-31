@@ -8,7 +8,7 @@ export type MCPProtocolVersion = "2024-11-05" | "2025-03-26" | "2025-06-18" | "2
 
 export type MCPConnectionState = "connected" | "disconnected" | "error" | "pending_tools" | "disabled";
 
-export type MCPAuthType = "none" | "headers" | "oauth" | "per_user_oauth" | "per_user_headers";
+export type MCPAuthType = "none" | "headers" | "oauth" | "per_user_oauth" | "per_user_headers" | "token_exchange";
 
 // Lifecycle states for a per-user MCP header credential row. Mirrors the
 // status column on mcp_per_user_header_credentials.

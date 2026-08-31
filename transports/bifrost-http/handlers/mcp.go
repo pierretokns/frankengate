@@ -612,6 +612,20 @@ func validateMCPTokenExchange(config *schemas.MCPTokenExchangeConfig) error {
 	return nil
 }
 
+func validateMCPTokenExchangeForAuth(authType schemas.MCPAuthType, config *schemas.MCPTokenExchangeConfig) error {
+	if err := validateMCPTokenExchange(config); err != nil {
+		return err
+	}
+	enabled := config != nil && config.Enabled
+	if enabled && authType != schemas.MCPAuthTypeTokenExchange {
+		return fmt.Errorf("token_exchange requires auth_type %q", schemas.MCPAuthTypeTokenExchange)
+	}
+	if authType == schemas.MCPAuthTypeTokenExchange && !enabled {
+		return fmt.Errorf("auth_type %q requires an enabled token_exchange profile", schemas.MCPAuthTypeTokenExchange)
+	}
+	return nil
+}
+
 func validateMCPProtocolSelection(mode schemas.MCPProtocolMode, version string) error {
 	version = strings.TrimSpace(version)
 	switch mode {
@@ -662,7 +676,7 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadRequest, err.Error())
 		return
 	}
-	if err := validateMCPTokenExchange(req.TokenExchange); err != nil {
+	if err := validateMCPTokenExchangeForAuth(schemas.MCPAuthType(req.AuthType), req.TokenExchange); err != nil {
 		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("invalid token_exchange: %v", err))
 		return
 	}
@@ -1234,7 +1248,7 @@ func (h *MCPHandler) updateMCPClient(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("Invalid allowed_extra_headers: %v", err))
 		return
 	}
-	if err := validateMCPTokenExchange(tokenExchange); err != nil {
+	if err := validateMCPTokenExchangeForAuth(existingConfig.AuthType, tokenExchange); err != nil {
 		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("invalid token_exchange: %v", err))
 		return
 	}
@@ -2198,7 +2212,7 @@ func (h *MCPHandler) createMCPLibraryEntry(ctx *fasthttp.RequestCtx) {
 	}
 	switch req.AuthType {
 	case schemas.MCPAuthTypeNone, schemas.MCPAuthTypeHeaders, schemas.MCPAuthTypeOauth,
-		schemas.MCPAuthTypePerUserOauth, schemas.MCPAuthTypePerUserHeaders:
+		schemas.MCPAuthTypePerUserOauth, schemas.MCPAuthTypePerUserHeaders, schemas.MCPAuthTypeTokenExchange:
 	default:
 		SendError(ctx, fasthttp.StatusBadRequest, "invalid auth_type")
 		return

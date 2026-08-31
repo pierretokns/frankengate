@@ -67,6 +67,10 @@ func (m *JWTIdentityMiddleware) Middleware() schemas.BifrostHTTPMiddleware {
 			// RequestCtx is the parent context used by downstream BifrostContext
 			// instances, so this propagation remains available across handlers.
 			ctx.SetUserValue(schemas.BifrostContextKeyAuthorizationPrincipal, claims.Principal)
+			// Make the verified subject available to the user-scoped MCP server
+			// selector. This is derived from the validated principal, never from a
+			// caller-supplied header.
+			ctx.SetUserValue(schemas.BifrostContextKeyUserID, claims.Principal.Subject)
 			if len(claims.Groups) > 0 {
 				ctx.SetUserValue("frankengate.identity.groups", slices.Clone(claims.Groups))
 			}

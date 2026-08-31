@@ -13,6 +13,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -169,7 +170,13 @@ func (e *Exchanger) exchange(ctx context.Context, config *schemas.MCPTokenExchan
 		form.Set("client_id", config.ClientID.GetValue())
 		form.Set("client_secret", config.ClientSecret.GetValue())
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, config.TokenURL.GetValue(), strings.NewReader(form.Encode()))
+	requestCtx := ctx
+	var cancel context.CancelFunc
+	if config.TimeoutSeconds > 0 {
+		requestCtx, cancel = context.WithTimeout(ctx, time.Duration(config.TimeoutSeconds)*time.Second)
+		defer cancel()
+	}
+	req, err := http.NewRequestWithContext(requestCtx, http.MethodPost, config.TokenURL.GetValue(), strings.NewReader(form.Encode()))
 	if err != nil {
 		return "", fmt.Errorf("%w: token endpoint request could not be created", ErrInvalidConfig)
 	}
@@ -275,7 +282,7 @@ func buildForm(config *schemas.MCPTokenExchangeConfig, subjectToken, actorToken 
 	}
 	addValues(form, "audience", config.Audience)
 	addValues(form, "resource", config.Resource)
-	addValues(form, "scope", config.Scope)
+	addSpaceDelimitedValue(form, "scope", config.Scope)
 	if config.RequestedTokenUse != "" {
 		form.Set("requested_token_use", config.RequestedTokenUse)
 	}
@@ -294,6 +301,18 @@ func addValues(form url.Values, key string, values []string) {
 		if strings.TrimSpace(value) != "" {
 			form.Add(key, value)
 		}
+	}
+}
+
+func addSpaceDelimitedValue(form url.Values, key string, values []string) {
+	clean := make([]string, 0, len(values))
+	for _, value := range values {
+		if value = strings.TrimSpace(value); value != "" {
+			clean = append(clean, value)
+		}
+	}
+	if len(clean) > 0 {
+		form.Set(key, strings.Join(clean, " "))
 	}
 }
 
@@ -429,11 +448,26 @@ func cacheKey(config *schemas.MCPTokenExchangeConfig, subjectToken, actorToken s
 	}
 	write(config.TokenURL.GetValue())
 	write(string(config.Grant))
+	write(string(config.ClientAuthMethod))
+	write(config.SubjectTokenType)
+	write(config.RequestedTokenType)
+	write(config.ActorTokenType)
+	write(config.RequestedTokenUse)
 	write(strings.Join(config.Audience, "\x00"))
 	write(strings.Join(config.Resource, "\x00"))
 	write(strings.Join(config.Scope, "\x00"))
+	write(config.ClientSecret.GetValue())
 	if config.ClientID != nil {
 		write(config.ClientID.GetValue())
+	}
+	additionalKeys := make([]string, 0, len(config.AdditionalParameters))
+	for key := range config.AdditionalParameters {
+		additionalKeys = append(additionalKeys, key)
+	}
+	sort.Strings(additionalKeys)
+	for _, key := range additionalKeys {
+		write(key)
+		write(config.AdditionalParameters[key])
 	}
 	for _, value := range []string{subjectToken, actorToken} {
 		digest := sha256.Sum256([]byte(value))

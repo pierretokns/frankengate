@@ -5656,7 +5656,8 @@
             "headers",
             "oauth",
             "per_user_oauth",
-            "per_user_headers"
+            "per_user_headers",
+            "token_exchange"
           ],
           "description": "Authentication type for MCP connection"
         },

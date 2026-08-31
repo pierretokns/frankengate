@@ -302,6 +302,7 @@ const (
 	MCPAuthTypeOauth          MCPAuthType = "oauth"            // OAuth 2.0 authentication (server-level, admin authenticates once)
 	MCPAuthTypePerUserOauth   MCPAuthType = "per_user_oauth"   // Per-user OAuth 2.0 authentication (each user authenticates individually)
 	MCPAuthTypePerUserHeaders MCPAuthType = "per_user_headers" // Per-user header authentication (each user submits API keys / signed tokens; admin declares the required key names via PerUserHeaderKeys)
+	MCPAuthTypeTokenExchange  MCPAuthType = "token_exchange"   // Per-request RFC 8693/7523 exchange of a trusted inbound credential
 )
 
 // MCPTokenExchangeGrant identifies the OAuth grant used when Bifrost obtains
