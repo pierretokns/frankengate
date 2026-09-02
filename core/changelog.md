@@ -1,3 +1,4 @@
+- fix: accept top-level arrays from OpenAI-compatible model APIs [@dani29](https://github.com/dani29)
 - feat: add Sarvam AI provider with chat, text-to-speech, and speech-to-text support (thanks [@Purvi09](https://github.com/Purvi09)!)
 - feat: add ElevenLabs sound effects (text-to-sound) support (thanks [@SecretSun](https://github.com/SecretSun)!)
 - feat: add `ProjectID` to Bedrock and Bedrock Mantle key configs with per-alias overrides for Bedrock, Bedrock Mantle, and Vertex
