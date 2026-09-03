@@ -6,7 +6,7 @@ Status: proposed decision
 
 Keep analytics as an add-on service, not a module embedded in the FrankenGate
 inference binary. Make `analytics-go` the separately deployed analytics and
-evaluation binary. Keep `analytics-rs` as migration reference code only. Add
+evaluation binary. Keep the analytics service separate from the inference path. Add
 Go adapters and workers where they touch the gateway, existing logstore,
 OpenTelemetry, and ClickHouse.
 
@@ -66,7 +66,7 @@ gateway / OTel / authorized exports
 analytics-go control plane/workers
   -> ClickHouse facts and evaluation reports
 
-legacy analytics-rs control plane (PostgreSQL, migration source)
+analytics control plane (ClickHouse projection and Go service)
   -> job/run/evaluation/artifact lineage
   -> leases, retries, tenant fencing, deletion propagation
 ```

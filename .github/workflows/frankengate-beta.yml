@@ -18,7 +18,6 @@ on:
       - ".github/workflows/frankengate-beta.yml"
       - ".github/workflows/scripts/**"
       - "scripts/benchmark-gateway-overhead*.sh"
-      - "analytics-rs/**"
       - "helm-charts/bifrost/**"
       - "CHANGELOG.md"
   workflow_dispatch:
@@ -49,7 +48,6 @@ jobs:
     env:
       GOCACHE: ${{ github.workspace }}/.cache/go-build
       GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
-      FORK_RELEASE: "1"
       MODULE_CHECK_MAX_PARALLEL: "2"
       MODULE_TIMEOUT_SECONDS: "480"
     steps:
@@ -93,10 +91,7 @@ jobs:
           heartbeat() { while sleep 30; do echo "[$(date -u +%FT%TZ)] beta checks heartbeat"; done; }
           heartbeat & pid=$!; trap 'kill "$pid" 2>/dev/null || true' EXIT
           timeout --foreground --signal=TERM --kill-after=30s 12m \
-            .github/workflows/scripts/fork-go-checks.sh beta
-
-      - name: Test analytics control plane
-        run: timeout --foreground --signal=TERM --kill-after=30s 5m cargo test --manifest-path analytics-rs/Cargo.toml
+            .github/workflows/scripts/go-checks.sh beta
 
       - name: Provenance self-test
         if: ${{ false }} # deferred P10 provenance lane
@@ -190,17 +185,12 @@ jobs:
           package="frankengate-beta-${short}-linux-amd64"
           mkdir -p "dist/${package}"
           cp tmp/bifrost-http "dist/${package}/frankengate"
-          timeout --foreground --signal=TERM --kill-after=30s 8m \
-            cargo build --release --manifest-path analytics-rs/Cargo.toml
-          analytics-rs/target/release/frankengate-analytics-control --check
-          cp analytics-rs/target/release/frankengate-analytics-control \
-            "dist/${package}/frankengate-analytics-control"
           cp LICENSE NOTICE "dist/${package}/"
           git log -n 30 --date=short --pretty=format:'%h %ad %s' > "dist/${package}/CHANGELOG.md"
           ./tmp/bifrost-http -version > "dist/${package}/version.txt"
           printf '{"source_sha":"%s","ref":"%s","workflow_sha":"%s","go_version":"%s","node_version":"%s"}\n' \
             "$sha" "$REF_NAME" "$GITHUB_SHA" "$GO_VERSION" "$NODE_VERSION" > "dist/${package}/build-metadata.json"
-          (cd "dist/${package}" && sha256sum frankengate frankengate-analytics-control > SHA256SUMS)
+          (cd "dist/${package}" && sha256sum frankengate > SHA256SUMS)
           tar -C dist -czf "dist/${package}.tar.gz" "${package}"
 
       - name: Upload beta binary artifact

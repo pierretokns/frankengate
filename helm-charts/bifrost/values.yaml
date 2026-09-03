@@ -5,33 +5,28 @@
 # Bifrost application configuration
 replicaCount: 1
 
-# Optional separately deployed Rust analytics/control plane. Disabled by
+# Optional separately deployed Go analytics control plane. Disabled by
 # default: enabling it requires an image that contains the analytics service;
 # it never runs inside gateway inference pods.
 analyticsControlPlane:
   enabled: false
   image:
-    repository: ghcr.io/pierretokns/frankengate-analytics-control
+    repository: ghcr.io/pierretokns/frankengate-analytics-go
     tag: "dev"
     digest: ""
     pullPolicy: IfNotPresent
   replicas: 1
-  command: ["frankengate-analytics-control", "--serve"]
+  command: ["frankengate-analytics", "--port", "8081"]
   terminationGracePeriodSeconds: 60
-  # Secret containing the PostgreSQL URL. When unset, the control plane uses
-  # its local protocol store and does not advertise durable persistence.
-  databaseUrlSecret:
-    name: ""
-    key: DATABASE_URL
+  # Environment variables for ClickHouse and other analytics settings.
+  # Typical values include CLICKHOUSE_ADDR, CLICKHOUSE_DATABASE,
+  # CLICKHOUSE_USERNAME, CLICKHOUSE_PASSWORD, and CLICKHOUSE_SECURE.
+  extraEnv: {}
   # Optional Secret containing the bearer token required for /v1 control-plane
   # requests. Leave unset only behind an equivalent network boundary.
   workerTokenSecret:
     name: ""
     key: ANALYTICS_WORKER_TOKEN
-  # Bound each replica's pool so HPA growth cannot exhaust Postgres/Aurora.
-  # Set this to the per-pod connection budget after accounting for all other
-  # clients of the database.
-  databaseMaxConnections: 10
   # The service binds its port only after migrations and the DB fence pass.
   # Give that one-time boot work a bounded window without weakening steady-state probes.
   startupProbe:

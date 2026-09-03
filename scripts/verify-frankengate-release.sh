@@ -18,8 +18,9 @@ echo "[2/4] Helm rendering"
 helm template frankengate helm-charts/bifrost >/tmp/frankengate-helm.yaml
 rg -q 'raw\.githubusercontent\.com/pierretokns/frankengate/.*/transports/config\.schema\.json' /tmp/frankengate-helm.yaml
 
-echo "[3/4] Rust analytics contract"
-cargo test --manifest-path analytics-rs/Cargo.toml
+echo "[3/4] Go analytics contract"
+(cd analytics-go && GOWORK=off go test ./...)
+(cd analytics-go && GOWORK=off go run ./cmd/frankengate-analytics --check)
 
 echo "[4/4] pricing mirror contract"
 (cd scripts/pricing-sync && GOWORK=off CGO_ENABLED=0 GOCACHE="${GOCACHE:-/tmp/frankengate-go-cache}" go test ./...)

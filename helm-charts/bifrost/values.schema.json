@@ -11,7 +11,7 @@
     },
     "analyticsControlPlane": {
       "type": "object",
-      "description": "Optional independently scaled Rust analytics control plane",
+      "description": "Optional independently scaled Go analytics control plane",
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -53,18 +53,11 @@
           "type": "integer",
           "minimum": 1
         },
-        "databaseUrlSecret": {
+        "extraEnv": {
           "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "key": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          "additionalProperties": false
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "workerTokenSecret": {
           "type": "object",
@@ -78,11 +71,6 @@
             }
           },
           "additionalProperties": false
-        },
-        "databaseMaxConnections": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 1000
         },
         "startupProbe": {
           "type": "object",

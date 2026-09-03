@@ -10,10 +10,9 @@ evidence envelope, ClickHouse projection, and rubric contracts. It is a
 separate Go module and deployable artifact, not a package linked into
 `bifrost-http`.
 
-The existing `analytics-rs/` service is unused historical reference code. New
-Autoeval features land only in Go. There is no controlled production cutover:
-Rust never served the runtime path. Remove or archive that directory separately
-when repository cleanup is scheduled.
+All Autoeval features land in Go. The analytics service is a separate deployable
+artifact and is not linked into `bifrost-http` or the inference availability
+path.
 
 ## Tonight's publishable slice
 
