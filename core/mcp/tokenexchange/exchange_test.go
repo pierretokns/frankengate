@@ -173,6 +173,86 @@ func TestJWTBearerGrant(t *testing.T) {
 	require.Empty(t, got.Get("subject_token"))
 }
 
+func TestIDJAGExchangeRedeemsAtResourceAuthorizationServer(t *testing.T) {
+	var firstCalls, secondCalls atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.NoError(t, r.ParseForm())
+		user, password, ok := r.BasicAuth()
+		require.True(t, ok)
+		switch r.URL.Path {
+		case "/idp":
+			firstCalls.Add(1)
+			require.Equal(t, "client", user)
+			require.Equal(t, "secret", password)
+			require.Equal(t, tokenExchangeGrantType, r.Form.Get("grant_type"))
+			require.Equal(t, "subject", r.Form.Get("subject_token"))
+			require.Equal(t, idJAGTokenType, r.Form.Get("requested_token_type"))
+			require.Equal(t, "https://resource-as.example/", r.Form.Get("audience"))
+			_, _ = w.Write([]byte(`{"access_token":"id-jag","issued_token_type":"urn:ietf:params:oauth:token-type:id-jag","token_type":"N_A","expires_in":60}`))
+		case "/resource":
+			secondCalls.Add(1)
+			require.Equal(t, "resource-client", user)
+			require.Equal(t, "resource-secret", password)
+			require.Equal(t, jwtBearerGrantType, r.Form.Get("grant_type"))
+			require.Equal(t, "id-jag", r.Form.Get("assertion"))
+			require.Empty(t, r.Form.Get("subject_token"))
+			_, _ = w.Write([]byte(`{"access_token":"mcp-bearer","token_type":"Bearer","expires_in":120}`))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	config := testConfig(server.URL + "/idp")
+	config.Mode = schemas.MCPTokenExchangeModeIDJAG
+	config.Audience = []string{"https://resource-as.example/"}
+	config.ResourceTokenURL = schemas.NewSecretVar(server.URL + "/resource")
+	config.ResourceAllowedHosts = []string{"127.0.0.1"}
+	config.ResourceClientID = schemas.NewSecretVar("resource-client")
+	config.ResourceClientSecret = schemas.NewSecretVar("resource-secret")
+
+	exchanger := New(nil)
+	got, err := exchanger.Exchange(context.Background(), config, "subject", "")
+	require.NoError(t, err)
+	require.Equal(t, "mcp-bearer", got)
+	require.Equal(t, int32(1), firstCalls.Load())
+	require.Equal(t, int32(1), secondCalls.Load())
+
+	got, err = exchanger.Exchange(context.Background(), config, "subject", "")
+	require.NoError(t, err)
+	require.Equal(t, "mcp-bearer", got)
+	require.Equal(t, int32(1), firstCalls.Load())
+	require.Equal(t, int32(1), secondCalls.Load())
+}
+
+func TestIDJAGExchangeRejectsNonIDJAGIntermediate(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"access_token":"wrong","token_type":"Bearer","expires_in":60}`))
+	}))
+	defer server.Close()
+	config := testConfig(server.URL)
+	config.Mode = schemas.MCPTokenExchangeModeIDJAG
+	config.Audience = []string{"https://resource-as.example/"}
+	config.ResourceTokenURL = schemas.NewSecretVar(server.URL)
+	config.ResourceAllowedHosts = []string{"127.0.0.1"}
+	config.ResourceClientID = schemas.NewSecretVar("resource-client")
+	config.ResourceClientSecret = schemas.NewSecretVar("resource-secret")
+
+	_, err := New(nil).Exchange(context.Background(), config, "subject", "")
+	require.ErrorIs(t, err, ErrInvalidTokenReply)
+}
+
+func TestIDJAGConfigRequiresResourceLegAndSingleAudience(t *testing.T) {
+	config := testConfig("https://sts.example.com/token")
+	config.AllowedHosts = []string{"sts.example.com"}
+	config.Mode = schemas.MCPTokenExchangeModeIDJAG
+	config.Audience = []string{"one", "two"}
+	require.Error(t, ValidateConfig(config))
+
+	config.Audience = []string{"https://resource-as.example/"}
+	require.Error(t, ValidateConfig(config))
+}
+
 func TestParseExpiresIn(t *testing.T) {
 	got, err := ParseExpiresIn(" 42 ")
 	require.NoError(t, err)

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/maximhq/bifrost/core/mcp/tokenexchange"
 	"github.com/maximhq/bifrost/core/mcp/utils"
 	"github.com/maximhq/bifrost/core/schemas"
 )
@@ -36,6 +37,7 @@ type CredStore struct {
 // resolver — pass nil if the configstore-backed provider isn't wired up
 // (the resolver returns a clear error rather than nil-pointering at use).
 func NewCredStore(oauth2Provider schemas.OAuth2Provider, headersProvider schemas.MCPHeadersProvider, logger schemas.Logger) *CredStore {
+	exchanger := tokenexchange.New(nil)
 	return &CredStore{
 		resolvers: map[schemas.MCPAuthType]resolver{
 			schemas.MCPAuthTypeNone:           &noneResolver{},
@@ -43,6 +45,7 @@ func NewCredStore(oauth2Provider schemas.OAuth2Provider, headersProvider schemas
 			schemas.MCPAuthTypeOauth:          &sharedOAuthResolver{provider: oauth2Provider},
 			schemas.MCPAuthTypePerUserOauth:   &perUserOAuthResolver{provider: oauth2Provider},
 			schemas.MCPAuthTypePerUserHeaders: &perUserHeadersResolver{provider: headersProvider},
+			schemas.MCPAuthTypeTokenExchange:  &tokenExchangeResolver{exchanger: exchanger},
 		},
 		logger: logger,
 	}

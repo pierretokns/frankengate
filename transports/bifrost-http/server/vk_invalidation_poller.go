@@ -360,7 +360,7 @@ func (s *BifrostHTTPServer) reconcileMCPClientRuntimeOnce(ctx context.Context, i
 
 func usesPersistedMCPToolSnapshot(config *schemas.MCPClientConfig) bool {
 	return config != nil && !config.Disabled &&
-		(config.AuthType == schemas.MCPAuthTypePerUserOauth || config.AuthType == schemas.MCPAuthTypePerUserHeaders)
+		(config.AuthType == schemas.MCPAuthTypePerUserOauth || config.AuthType == schemas.MCPAuthTypePerUserHeaders || config.AuthType == schemas.MCPAuthTypeTokenExchange)
 }
 
 func (s *BifrostHTTPServer) scheduleMCPClientRuntimeReconcile(ctx context.Context, id string) *mcpRuntimeReconcileState {

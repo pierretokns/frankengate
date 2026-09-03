@@ -1981,6 +1981,7 @@ func mcpClientConfigToTable(clientConfig *schemas.MCPClientConfig) (configstoreT
 		ConnectionString:          clientConfig.ConnectionString,
 		StdioConfig:               clientConfig.StdioConfig,
 		AuthType:                  authType,
+		TokenExchange:             clientConfig.TokenExchange,
 		OauthConfigID:             clientConfig.OauthConfigID,
 		ToolsToExecute:            clientConfig.ToolsToExecute,
 		ToolsToAutoExecute:        clientConfig.ToolsToAutoExecute,
@@ -6290,6 +6291,15 @@ func (c *Config) RedactMCPClientConfig(config *schemas.MCPClientConfig) *schemas
 		}
 		if config.TokenExchange.ClientSecret != nil {
 			exchangeCopy.ClientSecret = config.TokenExchange.ClientSecret.Redacted()
+		}
+		if config.TokenExchange.ResourceTokenURL != nil {
+			exchangeCopy.ResourceTokenURL = config.TokenExchange.ResourceTokenURL.Redacted()
+		}
+		if config.TokenExchange.ResourceClientID != nil {
+			exchangeCopy.ResourceClientID = config.TokenExchange.ResourceClientID.Redacted()
+		}
+		if config.TokenExchange.ResourceClientSecret != nil {
+			exchangeCopy.ResourceClientSecret = config.TokenExchange.ResourceClientSecret.Redacted()
 		}
 		configCopy.TokenExchange = &exchangeCopy
 	}

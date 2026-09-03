@@ -994,6 +994,7 @@ func (m *MCPManager) UpdateClient(id string, updatedConfig *schemas.MCPClientCon
 		ConnectionString: client.ExecutionConfig.ConnectionString,
 		StdioConfig:      client.ExecutionConfig.StdioConfig,
 		AuthType:         client.ExecutionConfig.AuthType,
+		TokenExchange:    updatedConfig.TokenExchange,
 		OauthConfigID:    oauthConfigID,
 		State:            client.ExecutionConfig.State,
 		InProcessServer:  client.ExecutionConfig.InProcessServer,
