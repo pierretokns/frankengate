@@ -53,6 +53,18 @@ func TestOAuth2IssuerURL(t *testing.T) {
 	})
 }
 
+func TestWWWAuthenticateValueWithError(t *testing.T) {
+	store := &mockOAuth2Store{}
+	cfg := newTestOAuth2Config(store, configtables.MCPServerAuthModeBoth, false)
+	ctx := &fasthttp.RequestCtx{}
+
+	assert.Equal(t,
+		`Bearer resource_metadata="https://bifrost.test/.well-known/oauth-protected-resource/mcp", error="invalid_token"`,
+		wwwAuthenticateValueWithError(ctx, cfg, "invalid_token"),
+	)
+	assert.Equal(t, wwwAuthenticateValue(ctx, cfg), wwwAuthenticateValueWithError(ctx, cfg, ""))
+}
+
 func TestOAuth2ServerCfg_DefaultsWhenUnset(t *testing.T) {
 	cfg := &lib.Config{
 		ConfigStore:  &mockOAuth2Store{},

@@ -27,7 +27,6 @@ jobs:
     env:
       GOCACHE: ${{ github.workspace }}/.cache/go-build
       GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
-      FORK_RELEASE: "1"
       GOFLAGS: "-p=2"
     steps:
       - name: Harden runner
@@ -80,10 +79,10 @@ jobs:
           heartbeat_pid=$!
           trap 'kill "$heartbeat_pid" 2>/dev/null || true' EXIT
           timeout --foreground --signal=TERM --kill-after=30s 25m \
-            .github/workflows/scripts/fork-go-checks.sh test-vet
+            .github/workflows/scripts/go-checks.sh test-vet
 
       - name: Run vulnerability checks
-        run: .github/workflows/scripts/fork-go-checks.sh vuln
+        run: .github/workflows/scripts/go-checks.sh vuln
 
   build-ui:
     name: Build embedded UI once
@@ -197,13 +196,6 @@ jobs:
           package="frankengate-${VERSION}-${ARTIFACT}"
           mkdir -p "dist/${package}"
           cp tmp/bifrost-http "dist/${package}/frankengate"
-          if [[ "${ARTIFACT}" == "linux-amd64" ]]; then
-            timeout --foreground --signal=TERM --kill-after=30s 12m \
-              cargo build --release --manifest-path analytics-rs/Cargo.toml
-            analytics-rs/target/release/frankengate-analytics-control --check
-            cp analytics-rs/target/release/frankengate-analytics-control \
-              "dist/${package}/frankengate-analytics-control"
-          fi
           cp LICENSE NOTICE "dist/${package}/"
 
       - name: Generate release SPDX manifest
@@ -320,10 +312,6 @@ jobs:
             mkdir -p "$inspect/$name"
             tar -xzf "$archive" -C "$inspect/$name"
             test -x "$inspect/$name/$name/frankengate"
-            if [[ "$name" == *-linux-amd64 ]]; then
-              test -x "$inspect/$name/$name/frankengate-analytics-control"
-              "$inspect/$name/$name/frankengate-analytics-control" --check
-            fi
             cmp LICENSE "$inspect/$name/$name/LICENSE"
             cmp NOTICE "$inspect/$name/$name/NOTICE"
             jq -e '.spdxVersion == "SPDX-2.3" and (.packages | length > 0)' \

@@ -39,7 +39,7 @@ All three discovery paths
   -> audit, privacy receipt and kill switch
 ```
 
-The A2A broker belongs beside the Rust analytics/control plane because A2A tasks may be long-running, asynchronous, streaming, callback-driven and artifact-producing. It gets its own Deployment, service account, PostgreSQL role/pool, egress policy, HPA signals and disruption budget. Gateway pods may authenticate and admit an A2A request or return a task handle, but they do not supervise remote tasks or hold their streams.
+The A2A broker belongs beside the analytics control plane because A2A tasks may be long-running, asynchronous, streaming, callback-driven and artifact-producing. It gets its own Deployment, service account, database role/pool, egress policy, HPA signals and disruption budget. Gateway pods may authenticate and admit an A2A request or return a task handle, but they do not supervise remote tasks or hold their streams.
 
 No new mandatory AWS service is needed. The broker can reuse EKS, Aurora PostgreSQL, S3, KMS, Secrets Manager, ALB/WAF, ECR and OpenTelemetry/CloudWatch. PostgreSQL outbox/leases remain the default task substrate; do not add SQS, EventBridge or ElastiCache until measured load or delivery semantics require them.
 

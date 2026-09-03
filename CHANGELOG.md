@@ -6,6 +6,16 @@ attach the matching immutable tag and artifact digests.
 
 ## Unreleased
 
+### Maintenance
+
+- Removed the retired Rust analytics/Cargo surface and image packaging, migrated
+  the optional analytics chart deployment to the Go service, and removed the
+  dedicated fork-only CI workflow. Release checks now use the Go analytics
+  module and the generic bounded Go check helper.
+- MCP JWT failures now advertise RFC 6750 `invalid_token` alongside the MCP
+  protected-resource metadata hint, allowing clients to restart authorization
+  instead of retrying a bad cached credential.
+
 ### Beta `v0.3.20-beta.5`
 
 - Added enterprise-managed MCP authorization with explicit two-leg ID-JAG

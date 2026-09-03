@@ -4,7 +4,7 @@ set -euo pipefail
 MODE="${1:-test-vet}"
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 
-echo "[$(date -u +%FT%TZ)] fork-go-checks starting mode=${MODE} root=${ROOT}"
+echo "[$(date -u +%FT%TZ)] go-checks starting mode=${MODE} root=${ROOT}"
 
 MODULES=()
 while IFS= read -r module_file; do
@@ -29,29 +29,13 @@ if [ "${#MODULES[@]}" -eq 0 ]; then
   exit 1
 fi
 
-# Release verification must cover everything that can enter the shipped
-# binaries, but it should not rebuild example servers and service fixtures that
-# have their own CI jobs. Those modules made immutable-tag verification spend
-# most of its timeout compiling code that cannot be packaged into FrankenGate.
-if [[ "${FORK_RELEASE:-0}" == "1" ]]; then
-  RELEASE_MODULES=()
-  for module in "${MODULES[@]}"; do
-    case "$module" in
-      cli|core|framework|plugins/*|transports)
-        RELEASE_MODULES+=("$module")
-        ;;
-    esac
-  done
-  MODULES=("${RELEASE_MODULES[@]}")
-fi
-
 # The required PR lane validates code that can ship in the gateway. Examples,
 # test harnesses, migration utilities, and CI-only tools have their own jobs
 # (or are not packaged at all); including them here duplicates compilation and
 # was the main source of 20+ minute timeouts. Keep the full discovered list for
 # the explicit release/vulnerability lanes, but make the default test-vet lane
 # deterministic and bounded.
-if [[ "$MODE" == "test-vet" && "${FORK_RELEASE:-0}" != "1" ]]; then
+if [[ "$MODE" == "test-vet" ]]; then
   SHIPPED_MODULES=()
   for module in "${MODULES[@]}"; do
     case "$module" in
@@ -66,7 +50,7 @@ fi
 # Every module still uses the upstream-compatible
 # github.com/maximhq/bifrost/... namespace. Running a module in isolation can
 # therefore download a published upstream sibling instead of testing the local
-# fork. Build an isolated workspace and force every command below through it so
+# checkout. Build an isolated workspace and force every command below through it so
 # cross-module imports always resolve to this checkout.
 WORKSPACE_DIR="$(mktemp -d)"
 echo "[$(date -u +%FT%TZ)] creating isolated Go workspace at ${WORKSPACE_DIR}"
@@ -107,11 +91,11 @@ done
 )
 export GOWORK="$WORKSPACE_DIR/go.work"
 
-echo "using local fork workspace: $GOWORK"
+echo "using local workspace: $GOWORK"
 echo "[$(date -u +%FT%TZ)] validating local module graph"
 graph_heartbeat() {
   while sleep 30; do
-    echo "[$(date -u +%FT%TZ)] fork-go-checks module graph heartbeat"
+    echo "[$(date -u +%FT%TZ)] go-checks module graph heartbeat"
   done
 }
 graph_heartbeat &

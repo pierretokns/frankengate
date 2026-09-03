@@ -7,15 +7,10 @@ Status: v0.3.19 published; local and external artifact verification recorded.
 - `make release-local-verify`
   - fork-owned branding checks;
   - Helm rendering and fork schema URL;
-  - Rust analytics contract tests;
+  - Go analytics contract tests;
   - pricing mirror contract tests.
-- `cargo test --manifest-path analytics-rs/Cargo.toml` currently passes 22
-  tests covering protocol versioning, leasing, renewal, expiry/requeue,
-  cancellation, completion, lineage, checkpoints, drain, retry, and durable
-  SQLx lifecycle (when Postgres is configured).
-- `cargo build --release --locked` plus the exact binary `--check` passes;
-  Helm lint and enabled analytics-control-plane rendering pass. Analytics pods
-  use a configurable startup probe for migration/database boot fencing.
+- `make analytics-test` and `make analytics-check` pass; Helm lint and enabled
+  analytics-control-plane rendering pass against the Go service.
 - The analytics control-plane exposes bounded, tenant-scoped metadata
   projections for experiments, runs, evaluations, artifacts, and attempts;
   each projection sets the database tenant fence in-transaction and returns
@@ -53,9 +48,9 @@ Status: v0.3.19 published; local and external artifact verification recorded.
 - Replace remaining fork-facing upstream URLs in UI/runtime surfaces and
   regenerate any derived assets.
 - Verify GitHub Pages pricing snapshot externally.
-- Do not claim the Rust analytics plane is production-ready until the durable
-  PostgreSQL adapter, RLS integration tests, supervised worker runtime, and
-  independent Kubernetes deployment/scaling evidence exist.
+- Do not claim the Go analytics plane is production-ready until its durable
+  tenant isolation, retention, and independent Kubernetes deployment/scaling
+  evidence exist.
 
 The checklist intentionally separates “local gates pass” from “stable release
 published”; satisfying the former is necessary but not sufficient.

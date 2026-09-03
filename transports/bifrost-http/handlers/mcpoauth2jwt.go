@@ -27,6 +27,11 @@ import (
 // lifetime, so an entry never goes stale.
 var mcpJWTPublicKeys sync.Map // publicKeyPEM (string) -> *rsa.PublicKey
 
+// errInvalidMCPJWT marks failures caused by the presented access token. It is
+// distinct from signing-key/configuration failures so the HTTP challenge can
+// advertise RFC 6750 invalid_token only when re-authentication can help.
+var errInvalidMCPJWT = errors.New("invalid MCP access token")
+
 // mcpJWTPublicKey returns the verification public key for the given signing key,
 // parsing and caching it on first use.
 func mcpJWTPublicKey(signingKey *configtables.OAuth2SigningKey) (*rsa.PublicKey, error) {
@@ -228,22 +233,22 @@ func verifyMCPJWT(ctx *fasthttp.RequestCtx, rawToken string, store *lib.Config, 
 		// RS256 so verification matches issuance.
 		jwt.WithValidMethods([]string{jwt.SigningMethodRS256.Alg()}))
 	if err != nil {
-		return nil, fmt.Errorf("invalid token: %w", err)
+		return nil, fmt.Errorf("%w: %v", errInvalidMCPJWT, err)
 	}
 	if !tok.Valid {
-		return nil, fmt.Errorf("token is not valid")
+		return nil, fmt.Errorf("%w: token is not valid", errInvalidMCPJWT)
 	}
 	// WithIssuedAt only validates iat when present; require it, since every
 	// token we issue stamps one.
 	if claims.IssuedAt == nil {
-		return nil, fmt.Errorf("token missing iat claim")
+		return nil, fmt.Errorf("%w: token missing iat claim", errInvalidMCPJWT)
 	}
 
 	// RFC 8707: the token must have been issued for this specific resource.
 	resource := oauth2MCPResourceURL(ctx, store)
 	aud, err := claims.GetAudience()
 	if err != nil || !slices.Contains(aud, resource) {
-		return nil, fmt.Errorf("token audience does not match this resource")
+		return nil, fmt.Errorf("%w: token audience does not match this resource", errInvalidMCPJWT)
 	}
 
 	return claims, nil
@@ -300,4 +305,14 @@ func injectJWTContext(bifrostCtx *schemas.BifrostContext, claims *jwtMCPClaims, 
 func wwwAuthenticateValue(ctx *fasthttp.RequestCtx, store *lib.Config) string {
 	base := oauth2IssuerURL(ctx, store)
 	return fmt.Sprintf(`Bearer resource_metadata="%s/.well-known/oauth-protected-resource/mcp"`, base)
+}
+
+// wwwAuthenticateValueWithError adds the RFC 6750 challenge error code while
+// preserving the MCP protected-resource metadata hint.
+func wwwAuthenticateValueWithError(ctx *fasthttp.RequestCtx, store *lib.Config, errorCode string) string {
+	value := wwwAuthenticateValue(ctx, store)
+	if errorCode == "" {
+		return value
+	}
+	return fmt.Sprintf(`%s, error="%s"`, value, errorCode)
 }

@@ -4,7 +4,7 @@ Status: architecture and dependency decision record, 2026-07-18.
 
 ## Executive decision
 
-The Franken ecosystem contains several strong conceptual matches for FrankenGate, but it must not become a bundle of mandatory services. The operational objective remains fewer moving pieces: Go inference data plane, PostgreSQL authority, a separately scalable Rust analytics control plane, object storage for large artifacts, and optional workers selected by proven workload.
+The Franken ecosystem contains several strong conceptual matches for FrankenGate, but it must not become a bundle of mandatory services. The operational objective remains fewer moving pieces: Go inference data plane, Go analytics service, ClickHouse projections, object storage for large artifacts, and optional workers selected by proven workload.
 
 The intended operator and beneficiary is Brandon, using the system independently—not OpenAI or Anthropic. Merely using an OpenAI coding model does not by itself make Brandon, FrankenGate, or every artifact produced with that model an OpenAI affiliate, contractor, representative, or project operated for OpenAI's benefit. The rider still matters, but it must be applied to the actual actor, use, packaging, and distribution path rather than treated as a blanket ban triggered by the development tool.
 
@@ -98,7 +98,6 @@ These are not all Franken-named, but they determine whether a proposed bundle is
 | Project | Potential role | Decision |
 |---|---|---|
 | Asupersync v0.3.9 | Structured-concurrency runtime for the Rust control plane | Evaluate in a separate-binary control-plane bakeoff against Tokio; do not vendor casually. |
-| `fastapi_rust` v0.3.0 | Rust analytics HTTP API | Evaluate with Asupersync as a coherent upstream stack, acknowledging early-development maturity. |
 | `sqlmodel_rust` v0.3.0 | Typed PostgreSQL model/query layer | Evaluate with the coherent stack; SQLx remains the maturity/control baseline. |
 | Beads Rust / Beads Viewer | Planning and dependency graph | Adopt as external development tooling; never product runtime or customer data store. The emerging `beads_viewer_rust` static pages exporter may supply the roadmap/DAG browser surface after a stable release, avoiding a custom viewer. |
 | NTM / FrankenTerm | Agent development orchestration | External build/research tooling only; never Helm dependency. |
@@ -199,7 +198,7 @@ The following rules cover meaningful combinations without enumerating useless su
 
 ### Now
 
-- Build the Rust analytics plane on Axum/Tokio/SQLx/PostgreSQL with explicit cancellation and supervision contracts.
+- Keep analytics-go behind an explicit service boundary with bounded cancellation, tenant isolation, and retention contracts.
 - Preserve the Go gateway and one-origin dashboard architecture.
 - Keep pgvector/PostgreSQL as the authorized retrieval default.
 - Add an adoption-mode and license/provenance gate before every Franken integration Bead.

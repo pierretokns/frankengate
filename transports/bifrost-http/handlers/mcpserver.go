@@ -851,12 +851,14 @@ func (h *MCPServerHandler) getMCPServerForRequest(ctx *fasthttp.RequestCtx) (*mc
 		claims, err := verifyMCPJWT(ctx, rawJWT, h.config, signingKey)
 		if err != nil {
 			if discoveryEnabled {
-				ctx.Response.Header.Set("WWW-Authenticate", wwwAuthenticateValue(ctx, h.config))
+				challenge := wwwAuthenticateValue(ctx, h.config)
+				if errors.Is(err, errInvalidMCPJWT) {
+					challenge = wwwAuthenticateValueWithError(ctx, h.config, "invalid_token")
+				}
+				ctx.Response.Header.Set("WWW-Authenticate", challenge)
 			}
-			// Forward verifyMCPJWT's error verbatim: it already labels a genuine
-			// token failure ("invalid token: ...") precisely, while its config
-			// faults ("signing key unavailable", ...) must not be mislabeled as
-			// the client's token being bad.
+			// Forward verifyMCPJWT's error verbatim. Configuration/key faults are
+			// deliberately not advertised as invalid_token challenges.
 			return nil, err
 		}
 		if err := h.validateJWTAuthority(ctx, claims); err != nil {

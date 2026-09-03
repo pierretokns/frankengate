@@ -119,7 +119,6 @@ transports/Dockerfile.release	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim H
 .github/workflows/dependency-review.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
 .github/workflows/docs-validation.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
 .github/workflows/e2e-tests.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
-.github/workflows/fork-ci.yml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Fork CI automation surface.
 .github/workflows/frankengate-release.yml	local-fork	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors; FrankenGate fork modifications	yes	NOTICE	none	Fork release automation surface.
 .github/workflows/helm-release.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.
 .github/workflows/npx-publish.yml	upstream-bifrost	Apache-2.0	Bifrost AI Gateway / Maxim HQ contributors	no	none	none	Build and repository automation surface.

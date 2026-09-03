@@ -1,7 +1,4 @@
 {{- if .Values.analyticsControlPlane.enabled }}
-{{- if and .Values.analyticsControlPlane.serviceMonitor.enabled .Values.analyticsControlPlane.databaseUrlSecret.name (not .Values.analyticsControlPlane.serviceMonitor.tenant) }}
-{{- fail "analyticsControlPlane.serviceMonitor.tenant is required when analyticsControlPlane.databaseUrlSecret.name is set" }}
-{{- end }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -88,16 +85,9 @@ spec:
           imagePullPolicy: {{ .Values.analyticsControlPlane.image.pullPolicy }}
           command: {{ toJson .Values.analyticsControlPlane.command }}
           env:
-          {{- with .Values.analyticsControlPlane.databaseUrlSecret }}
-          {{- if .name }}
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .name | quote }}
-                  key: {{ .key | quote }}
-            - name: DATABASE_MAX_CONNECTIONS
-              value: {{ $.Values.analyticsControlPlane.databaseMaxConnections | quote }}
-          {{- end }}
+          {{- range $name, $value := .Values.analyticsControlPlane.extraEnv }}
+            - name: {{ $name | quote }}
+              value: {{ $value | quote }}
           {{- end }}
           {{- with .Values.analyticsControlPlane.workerTokenSecret }}
           {{- if .name }}
