@@ -17,6 +17,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/authorityepoch"
+	coremcp "github.com/maximhq/bifrost/core/mcp"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	"github.com/maximhq/bifrost/framework/configstore/tables"
@@ -37,6 +38,15 @@ type MCPToolManager interface {
 	ExecuteChatMCPTool(ctx context.Context, toolCall *schemas.ChatAssistantMessageToolCall) (*schemas.ChatMessage, *schemas.BifrostError)
 	ExecuteResponsesMCPTool(ctx context.Context, toolCall *schemas.ResponsesToolMessage) (*schemas.ResponsesMessage, *schemas.BifrostError)
 }
+
+// MCPToolSearchManager is an optional extension implemented by the concrete
+// Bifrost engine. Search is authorization-aware because the engine applies the
+// same client/tool filters used by normal tool injection before scoring.
+type MCPToolSearchManager interface {
+	SearchMCPTools(ctx context.Context, query string, limit int) []coremcp.ToolSearchResult
+}
+
+const mcpSearchToolName = "frankengate_search_tools"
 
 // VirtualKeyCache resolves a virtual key by its row ID from an in-memory cache,
 // letting the JWT auth path avoid a per-request database read. Satisfied by the
@@ -631,6 +641,38 @@ func (h *MCPServerHandler) syncServer(server *server.MCPServer, availableTools [
 			InputSchema: inputSchema,
 			Annotations: toolAnnotation,
 		}, handler)
+	}
+
+	// MCP has no standardized tools/search method. Expose a namespaced gateway
+	// tool so MCP hosts can perform deferred discovery without forcing every
+	// connected tool schema into the model context. The result contains only
+	// tools visible to the current request context.
+	if searchManager, ok := h.toolManager.(MCPToolSearchManager); ok {
+		if _, collision := server.ListTools()[mcpSearchToolName]; collision {
+			logger.Warn("MCP tool %q is already provided by an upstream client; gateway search tool is disabled for this server", mcpSearchToolName)
+			return
+		}
+		server.AddTool(mcp.NewToolWithRawSchema(
+			mcpSearchToolName,
+			"Search the connected MCP tool catalog and return matching tool definitions. Use this before invoking a tool that is not already listed.",
+			[]byte(`{"type":"object","properties":{"query":{"type":"string","description":"Natural-language description or tool name to search for"},"limit":{"type":"integer","minimum":1,"maximum":50,"default":10}},"required":["query"]}`),
+		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			if toolFilter != nil {
+				ctx = context.WithValue(ctx, schemas.MCPContextKeyIncludeTools, toolFilter)
+			}
+			args := request.GetArguments()
+			query, _ := args["query"].(string)
+			limit := 10
+			if rawLimit, ok := args["limit"].(float64); ok && rawLimit > 0 {
+				limit = int(rawLimit)
+			}
+			results := searchManager.SearchMCPTools(ctx, query, limit)
+			return mcp.NewToolResultJSON(map[string]any{
+				"query":   query,
+				"results": results,
+				"next":    "Invoke a returned tool by its exact name after reviewing its schema.",
+			})
+		})
 	}
 }
 

@@ -914,6 +914,10 @@ type MCPRequestType string
 const (
 	MCPRequestTypePing      MCPRequestType = "ping"
 	MCPRequestTypeListTools MCPRequestType = "list_tools"
+	MCPRequestTypeListResources MCPRequestType = "list_resources"
+	MCPRequestTypeReadResource  MCPRequestType = "read_resource"
+	MCPRequestTypeListPrompts   MCPRequestType = "list_prompts"
+	MCPRequestTypeGetPrompt     MCPRequestType = "get_prompt"
 
 	// [DEPRECATED] these will be replaced by MCPRequestTypeExecuteTool in the next major bump, but are kept for backward compatibility for now since some tools still rely on the old fields
 	MCPRequestTypeChatToolCall      MCPRequestType = "chat_tool_call"      // Chat API format
