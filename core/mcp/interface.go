@@ -6,8 +6,19 @@ import (
 	"context"
 	"time"
 
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/maximhq/bifrost/core/schemas"
 )
+
+// MCPDiscoveryManager exposes the standard non-tool MCP surfaces. It is kept
+// as a small optional extension so integrations that only need tools remain
+// source-compatible.
+type MCPDiscoveryManager interface {
+	GetAvailableMCPResources(ctx *schemas.BifrostContext) ([]ResourceEntry, []ResourceTemplateEntry, error)
+	ReadMCPResource(ctx *schemas.BifrostContext, clientName, uri string) ([]mcp.ResourceContents, error)
+	GetAvailableMCPPrompts(ctx *schemas.BifrostContext) ([]PromptEntry, error)
+	GetMCPPrompt(ctx *schemas.BifrostContext, clientName, name string, arguments map[string]string) (*mcp.GetPromptResult, error)
+}
 
 // MCPManagerInterface defines the interface for MCP management functionality.
 // This interface allows different implementations to be used interchangeably
