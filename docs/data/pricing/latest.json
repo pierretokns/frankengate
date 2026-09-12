@@ -1,7 +1,7 @@
 {
   "brand": "FrankenGate",
   "source": "https://getbifrost.ai/datasheet",
-  "retrieved_at": "2026-09-11T08:09:55Z",
+  "retrieved_at": "2026-09-12T08:00:04Z",
   "models": {
     "agentcore/search": {
       "base_model": "search",
@@ -24230,6 +24230,73 @@
       "supports_tool_choice": true,
       "supports_vision": false
     },
+    "deepseek-flash": {
+      "base_model": "deepseek-flash",
+      "cache_read_input_token_cost": 6e-9,
+      "input_cost_per_token": 3e-7,
+      "max_input_tokens": 1048576,
+      "max_output_tokens": 393216,
+      "max_tokens": 393216,
+      "metadata": {
+        "calculation": "Peak: $0.30/M cache-miss input, $0.006/M cache-hit input, $1.20/M output. Off-peak = 0.5x.",
+        "notes": "DeepSeek-V4.1-Flash. Legacy names deepseek-v4-flash and deepseek-v4-flash-vision-exp route here at Flash pricing; deepseek-v4-pro also routes here from 2026-09-14 until V4.1 Pro ships."
+      },
+      "mode": "chat",
+      "off_peak_cost_multiplier": 0.5,
+      "output_cost_per_token": 0.0000012,
+      "peak_hours": {
+        "timezone": "UTC",
+        "windows": [
+          {
+            "days": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "end": "04:00",
+            "start": "01:00"
+          },
+          {
+            "days": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "end": "10:00",
+            "start": "06:00"
+          }
+        ]
+      },
+      "provider": "deepseek",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing",
+      "supported_endpoints": [
+        "/v1/chat/completions",
+        "/v1/completions",
+        "/v1/responses",
+        "/v1/messages"
+      ],
+      "supported_modalities": [
+        "text",
+        "image"
+      ],
+      "supported_output_modalities": [
+        "text"
+      ],
+      "supports_assistant_prefill": true,
+      "supports_function_calling": true,
+      "supports_native_streaming": true,
+      "supports_parallel_function_calling": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_system_messages": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
     "deepseek-v3-2-251201": {
       "base_model": "deepseek-v3-2",
       "input_cost_per_token": 0,
@@ -26709,6 +26776,44 @@
       "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": false
+    },
+    "fireworks_ai/accounts/fireworks/models/deepseek-v4p1-flash": {
+      "base_model": "deepseek-flash",
+      "cache_read_input_token_cost": 7e-9,
+      "cache_read_input_token_cost_priority": 8.75e-9,
+      "input_cost_per_token": 2.2e-7,
+      "input_cost_per_token_priority": 2.75e-7,
+      "max_input_tokens": 1048576,
+      "max_output_tokens": 393216,
+      "max_tokens": 393216,
+      "metadata": {
+        "calculation": "Standard: $0.22/M uncached input, $0.007/M cached input, $0.66/M output. Priority: $0.275/M, $0.00875/M, $0.825/M.",
+        "notes": "DeepSeek-V4.1-Flash on Fireworks serverless (552B MoE, 1M context, image input). Priority serving tier is 1.25x Standard across all token types."
+      },
+      "mode": "chat",
+      "output_cost_per_token": 6.6e-7,
+      "output_cost_per_token_priority": 8.25e-7,
+      "provider": "fireworks_ai",
+      "source": "https://fireworks.ai/models/fireworks/deepseek-v4p1-flash",
+      "supported_endpoints": [
+        "/v1/chat/completions"
+      ],
+      "supported_modalities": [
+        "text",
+        "image"
+      ],
+      "supported_output_modalities": [
+        "text"
+      ],
+      "supports_function_calling": true,
+      "supports_native_streaming": true,
+      "supports_prompt_caching": true,
+      "supports_reasoning": true,
+      "supports_response_schema": true,
+      "supports_service_tier": true,
+      "supports_system_messages": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
     },
     "fireworks_ai/accounts/fireworks/models/devstral-small-2505": {
       "base_model": "devstral-small",
