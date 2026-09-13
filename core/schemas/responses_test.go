@@ -1,9 +1,35 @@
 package schemas
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 )
+
+func TestResponsesToolMessageActionStringRoundTrip(t *testing.T) {
+	raw := []byte(`{"action":"generate"}`)
+	var call struct {
+		Action ResponsesToolMessageActionStruct `json:"action"`
+	}
+	if err := Unmarshal(raw, &call); err != nil {
+		t.Fatalf("unmarshal bare action: %v", err)
+	}
+	if call.Action.ResponsesToolCallActionStr == nil || *call.Action.ResponsesToolCallActionStr != "generate" {
+		t.Fatalf("unexpected action: %#v", call.Action.ResponsesToolCallActionStr)
+	}
+
+	encoded, err := MarshalSorted(call)
+	if err != nil {
+		t.Fatalf("marshal bare action: %v", err)
+	}
+	var decoded map[string]json.RawMessage
+	if err := json.Unmarshal(encoded, &decoded); err != nil {
+		t.Fatalf("decode round-tripped action: %v", err)
+	}
+	if got := string(decoded["action"]); got != `"generate"` {
+		t.Fatalf("round-tripped action = %s, want %q", got, "generate")
+	}
+}
 
 // TestBifrostResponsesStreamResponseOmitsEmptyItem verifies that events without
 // an item object (response.created, output_text.delta, response.completed, ...)
