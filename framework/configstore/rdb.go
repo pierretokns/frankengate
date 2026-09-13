@@ -3107,6 +3107,25 @@ func (s *RDBConfigStore) UpdatePlugin(ctx context.Context, plugin *tables.TableP
 		}
 		// not found — nothing to delete
 	} else {
+		// Preserve the config.json hash and version across this delete-and-recreate: callers
+		// that do not set them (UI/API edits) would otherwise clear them, making the next
+		// startup read the file as changed and revert the edit.
+		if plugin.ConfigHash == "" {
+			plugin.ConfigHash = existing.ConfigHash
+		}
+		// Placement and order are DB-only - the UI has no control over them and config.json
+		// is documented as ignoring them - so a caller that sends neither is not asking to
+		// clear them.
+		if plugin.Placement == nil {
+			plugin.Placement = existing.Placement
+		}
+		if plugin.Order == nil {
+			plugin.Order = existing.Order
+		}
+		if plugin.Version == 0 {
+			plugin.Version = existing.Version
+		}
+		plugin.CreatedAt = existing.CreatedAt
 		if err := txDB.WithContext(ctx).Delete(&existing).Error; err != nil {
 			if localTx {
 				txDB.Rollback()

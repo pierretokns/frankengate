@@ -1550,6 +1550,7 @@ type ResponsesCodeExecutionCall struct {
 }
 
 type ResponsesToolMessageActionStruct struct {
+	ResponsesToolCallActionStr        *string // Bare-string action (e.g. image_generation_call's "generate")
 	ResponsesComputerToolCallAction   *ResponsesComputerToolCallAction
 	ResponsesWebSearchToolCallAction  *ResponsesWebSearchToolCallAction
 	ResponsesWebFetchToolCallAction   *ResponsesWebFetchToolCallAction
@@ -1558,6 +1559,9 @@ type ResponsesToolMessageActionStruct struct {
 }
 
 func (action ResponsesToolMessageActionStruct) MarshalJSON() ([]byte, error) {
+	if action.ResponsesToolCallActionStr != nil {
+		return MarshalSorted(*action.ResponsesToolCallActionStr)
+	}
 	if action.ResponsesComputerToolCallAction != nil {
 		return MarshalSorted(action.ResponsesComputerToolCallAction)
 	}
@@ -1577,6 +1581,13 @@ func (action ResponsesToolMessageActionStruct) MarshalJSON() ([]byte, error) {
 }
 
 func (action *ResponsesToolMessageActionStruct) UnmarshalJSON(data []byte) error {
+	// Some actions are bare strings, not objects (e.g. image_generation_call's "generate").
+	var str string
+	if err := Unmarshal(data, &str); err == nil {
+		action.ResponsesToolCallActionStr = &str
+		return nil
+	}
+
 	// First, peek at the type field to determine which variant to unmarshal
 	var typeStruct struct {
 		Type string `json:"type"`
@@ -1886,6 +1897,13 @@ type ResponsesReasoningSummary struct {
 // ResponsesImageGenerationCall represents an image generation tool call
 type ResponsesImageGenerationCall struct {
 	Result string `json:"result"`
+
+	// Generation settings echoed back on the completed item.
+	Background    *string `json:"background,omitempty"`
+	OutputFormat  *string `json:"output_format,omitempty"`
+	Quality       *string `json:"quality,omitempty"`
+	RevisedPrompt *string `json:"revised_prompt,omitempty"`
+	Size          *string `json:"size,omitempty"`
 }
 
 // -----------------------------------------------------------------------------
@@ -2970,6 +2988,7 @@ type ResponsesToolCodeInterpreter struct {
 
 // ResponsesToolImageGeneration represents a tool image generation
 type ResponsesToolImageGeneration struct {
+	Action            *string                                     `json:"action,omitempty"`             // "generate" | "edit" | "auto"
 	Background        *string                                     `json:"background,omitempty"`         // "transparent" | "opaque" | "auto"
 	InputFidelity     *string                                     `json:"input_fidelity,omitempty"`     // "high" | "low"
 	InputImageMask    *ResponsesToolImageGenerationInputImageMask `json:"input_image_mask,omitempty"`   // Optional mask for inpainting
@@ -3152,8 +3171,11 @@ type BifrostResponsesStreamResponse struct {
 
 	Response *BifrostResponsesResponse `json:"response,omitempty"`
 
-	OutputIndex *int              `json:"output_index,omitempty"`
-	Item        *ResponsesMessage `json:"item"`
+	OutputIndex *int `json:"output_index,omitempty"`
+	// Item is only emitted on output_item.added / output_item.done. omitempty is
+	// required: other event types must not serialize "item": null — strict
+	// Responses clients (opencode open-responses protocol) reject null there.
+	Item *ResponsesMessage `json:"item,omitempty"`
 	// SummaryIndex identifies which summary block within an item a delta belongs to.
 	// Emitted on response.reasoning_summary_text.{delta,done} and
 	// response.reasoning_summary_part.{added,done}.
@@ -3195,6 +3217,21 @@ type BifrostResponsesStreamResponse struct {
 	SearchResults []SearchResult `json:"search_results,omitempty"`
 	Videos        []VideoResult  `json:"videos,omitempty"`
 	Citations     []string       `json:"citations,omitempty"`
+}
+
+// MarshalJSON omits event-scoped fields that are nil so strict Responses
+// clients do not see explicit nulls on unrelated event types. Some event types
+// still intentionally emit empty arrays after WithDefaults populates them.
+func (resp BifrostResponsesStreamResponse) MarshalJSON() ([]byte, error) {
+	type alias BifrostResponsesStreamResponse
+	encoded, err := Marshal(alias(resp))
+	if err != nil {
+		return nil, err
+	}
+	if resp.LogProbs == nil && gjson.GetBytes(encoded, "logprobs").Exists() {
+		return sjson.DeleteBytes(encoded, "logprobs")
+	}
+	return encoded, nil
 }
 
 func (resp *BifrostResponsesStreamResponse) WithDefaults() *BifrostResponsesStreamResponse {

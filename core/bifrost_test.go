@@ -3060,6 +3060,20 @@ func TestClearAnthropicPassthroughForNonNativeProvider(t *testing.T) {
 	}
 }
 
+// TestClearCtxForFallback_ClearsProviderResponseHeaders verifies that provider-specific
+// response headers do not survive a fallback boundary.
+func TestClearCtxForFallback_ClearsProviderResponseHeaders(t *testing.T) {
+	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+	ctx.SetValue(schemas.BifrostContextKeyProviderResponseHeaders, map[string]string{
+		"retry-after":                  "60",
+		"x-ratelimit-remaining-tokens": "0",
+	})
+	clearCtxForFallback(ctx)
+	if headers, ok := ctx.Value(schemas.BifrostContextKeyProviderResponseHeaders).(map[string]string); ok {
+		t.Fatalf("ProviderResponseHeaders survived clearCtxForFallback: %v", headers)
+	}
+}
+
 // Test that releaseChannelMessage clears all request-scoped references so an
 // idle pooled ChannelMessage cannot pin the parsed request body, the request
 // context, or an undelivered response/error.
