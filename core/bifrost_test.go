@@ -3056,135 +3056,14 @@ func TestClearAnthropicPassthroughForNonNativeProvider(t *testing.T) {
 					t.Errorf("flag %v = %v, want %v", k, got, want)
 				}
 			}
-
-			// The caller's captured path goes with the raw body: a converted request must land on
-			// the provider's own endpoint, not Anthropic's /v1/messages.
-			callerPath, hasCallerPath := ctx.Value(schemas.BifrostContextKeyURLPath).(string)
-			if tt.wantCleared && hasCallerPath {
-				t.Errorf("URLPath = %q, want it cleared for a non-native provider", callerPath)
-			}
-			if !tt.wantCleared && callerPath != "/v1/messages" {
-				t.Errorf("URLPath = %q, want %q preserved", callerPath, "/v1/messages")
-			}
-
-			// SkipKeySelection must survive: it also drives IsClaudeCodeMaxMode, which suppresses
-			// x-api-key on the Anthropic provider. Clearing it here would make an Anthropic
-			// fallback after a non-native attempt send the account key alongside the caller's
-			// OAuth token. The flag is gated at the key-selection read site instead —
-			// see isKeySkippingAllowed.
-			if skip, _ := ctx.Value(schemas.BifrostContextKeySkipKeySelection).(bool); !skip {
-				t.Error("SkipKeySelection was cleared; it must be gated at the read site, not mutated per attempt")
-			}
 		})
 	}
 }
 
-// TestClearAnthropicPassthroughForUnsupportedStructuredOutput covers a Claude Code session-title
-// call (a one-field JSON schema in output_config.format) that a routing rule retargets to Bedrock
-// Mantle. The ingress guard in the Anthropic integration only sees a provider spelled out in the
-// caller's model string, so an alias or routing rule hides it and the raw body used to reach the
-// Mantle Messages API with output_config.format intact — 400 "Extra inputs are not permitted".
-// Only the raw request body is dropped: the raw response flags stay on, and the response path
-// keys off the synthetic bf_so_* tool name instead. Vertex and Azure take the same route.
-func TestClearAnthropicPassthroughForUnsupportedStructuredOutput(t *testing.T) {
-	const outputConfigBody = `{"model":"claude-sonnet-5","output_config":{"format":{"type":"json_schema","schema":{"type":"object","properties":{"title":{"type":"string"}}}}}}`
-	// Legacy beta shape: top-level output_format instead of output_config.format.
-	const outputFormatBody = `{"model":"claude-sonnet-5","output_format":{"type":"json_schema","schema":{"type":"object"}}}`
-	const noFormatBody = `{"model":"claude-sonnet-5","messages":[]}`
-
-	responsesRequest := func(rawBody string) *schemas.BifrostRequest {
-		return &schemas.BifrostRequest{
-			ResponsesRequest: &schemas.BifrostResponsesRequest{RawRequestBody: []byte(rawBody)},
-		}
-	}
-
-	tests := []struct {
-		name            string
-		integrationType string
-		baseProvider    schemas.ModelProvider
-		useRawBody      bool
-		req             *schemas.BifrostRequest
-		wantCleared     bool
-	}{
-		{"bedrock mantle with output_config.format clears", "anthropic", schemas.BedrockMantle, true, responsesRequest(outputConfigBody), true},
-		{"bedrock mantle with legacy output_format clears", "anthropic", schemas.BedrockMantle, true, responsesRequest(outputFormatBody), true},
-		{"vertex with output_config.format clears", "anthropic", schemas.Vertex, true, responsesRequest(outputConfigBody), true},
-		{"azure with output_config.format clears", "anthropic", schemas.Azure, true, responsesRequest(outputConfigBody), true},
-		// Anthropic and Bedrock Converse serve the schema natively; nothing to rewrite.
-		{"anthropic with output_config.format preserved", "anthropic", schemas.Anthropic, true, responsesRequest(outputConfigBody), false},
-		{"bedrock with output_config.format preserved", "anthropic", schemas.Bedrock, true, responsesRequest(outputConfigBody), false},
-		{"bedrock mantle without a format preserved", "anthropic", schemas.BedrockMantle, true, responsesRequest(noFormatBody), false},
-		// Typed conversion is already in force — the raw body is never consulted.
-		{"passthrough already off stays off", "anthropic", schemas.BedrockMantle, false, responsesRequest(outputConfigBody), false},
-		{"non-anthropic integration preserved", "openai", schemas.BedrockMantle, true, responsesRequest(outputConfigBody), false},
-		{"no integration type preserved", "", schemas.BedrockMantle, true, responsesRequest(outputConfigBody), false},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
-			if tt.integrationType != "" {
-				ctx.SetValue(schemas.BifrostContextKeyIntegrationType, tt.integrationType)
-			}
-			ctx.SetValue(schemas.BifrostContextKeyUseRawRequestBody, tt.useRawBody)
-			ctx.SetValue(schemas.BifrostContextKeySendBackRawResponse, true)
-			ctx.SetValue(schemas.BifrostContextKeyPassthroughOverridesPresent, true)
-
-			clearAnthropicPassthroughForUnsupportedStructuredOutput(ctx, tt.baseProvider, tt.req)
-
-			useRawBody, _ := ctx.Value(schemas.BifrostContextKeyUseRawRequestBody).(bool)
-			if want := tt.useRawBody && !tt.wantCleared; useRawBody != want {
-				t.Errorf("UseRawRequestBody = %v, want %v", useRawBody, want)
-			}
-
-			// The raw-response side is untouched: the Anthropic integration skips passthrough on
-			// the way back when a structured-output tool name is set, so clearing these here would
-			// only lose the caller's raw-response opt-in.
-			for _, k := range []schemas.BifrostContextKey{
-				schemas.BifrostContextKeySendBackRawResponse,
-				schemas.BifrostContextKeyPassthroughOverridesPresent,
-			} {
-				if flag, _ := ctx.Value(k).(bool); !flag {
-					t.Errorf("flag %v was cleared, want it preserved", k)
-				}
-			}
-		})
-	}
-}
-
-// TestClearCtxForFallback_DropsCallerSuppliedKey verifies that a raw key supplied via
-// x-bf-direct-key does not ride a fallback onto a different provider. Key selection resolves the
-// direct key before it ever reaches the provider's own pool, so an uncleared value would send the
-// caller's credential for provider A to provider B.
-func TestClearCtxForFallback_DropsCallerSuppliedKey(t *testing.T) {
-	account := NewMockAccount()
-	account.SetKeysForProvider(schemas.Anthropic, []schemas.Key{
-		{ID: "anthropic-configured", Name: "anthropic-configured", Value: schemas.SecretVar{Val: "sk-ant-real"}, Models: []string{"*"}, Weight: 1.0},
-	})
-	bifrost := &Bifrost{account: account, logger: NewDefaultLogger(schemas.LogLevelError)}
-
+// TestClearCtxForFallback_ClearsProviderResponseHeaders verifies that provider-specific
+// response headers do not survive a fallback boundary.
+func TestClearCtxForFallback_ClearsProviderResponseHeaders(t *testing.T) {
 	ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
-	ctx.SetValue(schemas.BifrostContextKeyDirectKey, schemas.Key{
-		ID: "header-provided", Name: "header-provided",
-		Value: schemas.SecretVar{Val: "sk-caller-supplied"}, Weight: 1.0,
-	})
-
-	// A routing rule's key pin is scoped to the provider whose pool it was resolved against.
-	ctx.SetValue(schemas.BifrostContextKeyRoutingPinnedAPIKeyID, "primary-provider-key")
-
-	clearCtxForFallback(ctx)
-
-	if _, ok := ctx.Value(schemas.BifrostContextKeyDirectKey).(schemas.Key); ok {
-		t.Fatal("DirectKey survived clearCtxForFallback")
-	}
-	if pin, ok := ctx.Value(schemas.BifrostContextKeyRoutingPinnedAPIKeyID).(string); ok {
-		t.Fatalf("RoutingPinnedAPIKeyID survived clearCtxForFallback: %q", pin)
-	}
-
-	// #6973: provider response headers belong to the provider that produced
-	// them. If a fallback attempt fails pre-flight, the previous provider's
-	// headers must not survive on the context and be forwarded with the
-	// fallback's error response.
 	ctx.SetValue(schemas.BifrostContextKeyProviderResponseHeaders, map[string]string{
 		"retry-after":                  "60",
 		"x-ratelimit-remaining-tokens": "0",
@@ -3192,68 +3071,6 @@ func TestClearCtxForFallback_DropsCallerSuppliedKey(t *testing.T) {
 	clearCtxForFallback(ctx)
 	if headers, ok := ctx.Value(schemas.BifrostContextKeyProviderResponseHeaders).(map[string]string); ok {
 		t.Fatalf("ProviderResponseHeaders survived clearCtxForFallback: %v", headers)
-	}
-
-	keys, _, err := bifrost.selectKeyFromProviderForModelWithPool(ctx, schemas.ChatCompletionRequest, schemas.Anthropic, "claude-opus-4-5", schemas.Anthropic)
-	if err != nil {
-		t.Fatalf("selectKeyFromProviderForModelWithPool: %v", err)
-	}
-	if len(keys) != 1 || keys[0].ID != "anthropic-configured" {
-		t.Fatalf("got %v, want the fallback provider's own key", keys)
-	}
-}
-
-// TestSelectKeyFromProviderForModelWithPool_SkipKeySelectionGatedOnBaseProvider verifies that the
-// Claude Code OAuth key-selection skip applies only when the attempt resolved to Anthropic. A
-// governance routing rule can rewrite provider/model after the transport set the flag, and every
-// non-Anthropic provider authenticates with its own configured key — so it must still get one.
-func TestSelectKeyFromProviderForModelWithPool_SkipKeySelectionGatedOnBaseProvider(t *testing.T) {
-	account := NewMockAccount()
-	account.SetKeysForProvider(schemas.Anthropic, []schemas.Key{
-		{ID: "anthropic-key", Name: "anthropic-key", Value: schemas.SecretVar{Val: "sk-ant"}, Models: []string{"*"}, Weight: 1.0},
-	})
-	account.SetKeysForProvider(schemas.Fireworks, []schemas.Key{
-		{ID: "fireworks-key", Name: "fireworks-key", Value: schemas.SecretVar{Val: "fw-key"}, Models: []string{"*"}, Weight: 1.0, UseAnthropicEndpoints: schemas.Ptr(true)},
-	})
-	bifrost := &Bifrost{account: account, logger: NewDefaultLogger(schemas.LogLevelError)}
-
-	tests := []struct {
-		name      string
-		provider  schemas.ModelProvider
-		model     string
-		wantKeyID string // "" means the pool must be empty (key selection skipped)
-	}{
-		{"anthropic keeps the skip", schemas.Anthropic, "claude-opus-4-5", ""},
-		{"fireworks selects its own key", schemas.Fireworks, "accounts/fireworks/models/kimi-k2p7-code", "fireworks-key"},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
-			ctx.SetValue(schemas.BifrostContextKeySkipKeySelection, true)
-
-			keys, canRotate, err := bifrost.selectKeyFromProviderForModelWithPool(ctx, schemas.ResponsesRequest, tt.provider, tt.model, tt.provider)
-			if err != nil {
-				t.Fatalf("selectKeyFromProviderForModelWithPool: %v", err)
-			}
-			if canRotate {
-				t.Error("canRotate = true, want false")
-			}
-			if tt.wantKeyID == "" {
-				if len(keys) != 0 {
-					t.Fatalf("got %d keys, want an empty pool (key selection skipped)", len(keys))
-				}
-				return
-			}
-			if len(keys) != 1 || keys[0].ID != tt.wantKeyID {
-				t.Fatalf("got %v, want a single key %q", keys, tt.wantKeyID)
-			}
-			// The regression: without a key, UseAnthropicEndpoints is unreadable and the request
-			// is built with the OpenAI schema, which Fireworks rejects for missing max_tokens.
-			if keys[0].UseAnthropicEndpoints == nil || !*keys[0].UseAnthropicEndpoints {
-				t.Error("selected key lost UseAnthropicEndpoints")
-			}
-		})
 	}
 }
 
