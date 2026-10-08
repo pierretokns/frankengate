@@ -1,0 +1,173 @@
+# Official openai-node v7.30.0 src/resources/decisions.ts, verified 2026-10-08.
+# Unknown extension fields remain on the wire; known fields are validated.
+OpenAIDecisionsRequest:
+  type: object
+  required: [model, input, questions]
+  not:
+    required: [stream]
+  properties:
+    model: {type: string, enum: [gpt-6-luna]}
+    safety_identifier: {type: string, nullable: true}
+    input:
+      oneOf:
+        - type: string
+        - type: array
+          minItems: 1
+          items:
+            $ref: '#/OpenAIDecisionMessage'
+    questions:
+      type: array
+      minItems: 1
+      description: Named questions must have unique names. Answers retain question order.
+      items:
+        $ref: '#/OpenAIDecisionQuestion'
+
+OpenAIDecisionMessage:
+  type: object
+  required: [role, content]
+  properties:
+    role: {type: string, enum: [user]}
+    type: {type: string, enum: [message]}
+    content:
+      oneOf:
+        - type: string
+        - type: array
+          minItems: 1
+          items:
+            oneOf:
+              - type: object
+                required: [type, text]
+                properties:
+                  type: {type: string, enum: [input_text]}
+                  text: {type: string}
+              - type: object
+                required: [type, image_url]
+                properties:
+                  type: {type: string, enum: [input_image]}
+                  image_url:
+                    type: string
+                    pattern: '^data:image/[^,]+;base64,.+'
+                    description: Inline base64 only; at most 128 images across the request.
+                  detail:
+                    type: string
+                    nullable: true
+                    enum: [auto, low, high, original, null]
+
+OpenAIDecisionQuestion:
+  oneOf:
+    - type: object
+      required: [type, instructions]
+      properties:
+        type: {type: string, enum: [predicate]}
+        instructions: {type: string}
+        name: {type: string}
+    - type: object
+      required: [type, instructions, choices]
+      properties:
+        type: {type: string, enum: [choice]}
+        instructions: {type: string}
+        name: {type: string}
+        choices:
+          type: array
+          minItems: 1
+          description: Values must be distinct; boolean true and string "true" are different.
+          items:
+            type: object
+            required: [value]
+            properties:
+              value:
+                oneOf: [{type: string}, {type: boolean}]
+              description: {type: string}
+    - type: object
+      required: [type, instructions, levels]
+      properties:
+        type: {type: string, enum: [score]}
+        instructions: {type: string}
+        name: {type: string}
+        levels:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [label]
+            properties:
+              label: {type: string}
+              description: {type: string}
+
+OpenAIDecisionsResponse:
+  type: object
+  required: [model, answers, usage]
+  properties:
+    model: {type: string, minLength: 1}
+    answers:
+      type: array
+      items:
+        $ref: '#/OpenAIDecisionAnswer'
+    usage:
+      $ref: '#/OpenAIDecisionUsage'
+
+OpenAIDecisionAnswer:
+  oneOf:
+    - type: object
+      required: [type, name, probability]
+      properties:
+        type: {type: string, enum: [predicate]}
+        name: {type: string, nullable: true}
+        probability: {type: number, minimum: 0, maximum: 1}
+    - type: object
+      required: [type, name, choice, confidence, probabilities]
+      properties:
+        type: {type: string, enum: [choice]}
+        name: {type: string, nullable: true}
+        choice:
+          oneOf: [{type: string}, {type: boolean}]
+        confidence: {type: number, minimum: 0, maximum: 1}
+        probabilities:
+          type: array
+          items:
+            type: object
+            required: [value, probability]
+            properties:
+              value:
+                oneOf: [{type: string}, {type: boolean}]
+              probability: {type: number, minimum: 0, maximum: 1}
+    - type: object
+      required: [type, name, score, confidence, probabilities]
+      properties:
+        type: {type: string, enum: [score]}
+        name: {type: string, nullable: true}
+        score: {type: number, minimum: 0}
+        confidence: {type: number, minimum: 0, maximum: 1}
+        probabilities:
+          type: array
+          items:
+            type: object
+            required: [value, label, probability]
+            properties:
+              value: {type: integer, minimum: 0}
+              label: {type: string}
+              probability: {type: number, minimum: 0, maximum: 1}
+    - type: object
+      required: [type, name]
+      properties:
+        type: {type: string, enum: [refusal]}
+        name: {type: string, nullable: true}
+
+OpenAIDecisionUsage:
+  type: object
+  required: [input_tokens, input_tokens_details, output_tokens, output_tokens_details, total_tokens]
+  properties:
+    input_tokens: {type: integer, minimum: 0}
+    output_tokens: {type: integer, minimum: 0}
+    total_tokens: {type: integer, minimum: 0}
+    input_tokens_details:
+      type: object
+      required: [cached_tokens, cache_write_tokens]
+      properties:
+        cached_tokens: {type: integer, minimum: 0}
+        cache_write_tokens: {type: integer, minimum: 0}
+    output_tokens_details:
+      type: object
+      required: [reasoning_tokens]
+      properties:
+        reasoning_tokens: {type: integer, minimum: 0}

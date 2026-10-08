@@ -7344,6 +7344,15 @@ func (provider *OpenAIProvider) Passthrough(
 		return nil, err
 	}
 
+	var decision *OpenAIDecisionsRequest
+	if req.IsOpenAIDecisions() {
+		ctx.SuppressContentLogging()
+		var err error
+		decision, err = ParseOpenAIDecisionsRequest(req.Body)
+		if err != nil || req.Method != fasthttp.MethodPost || req.Model != decision.Model {
+			return nil, DecisionsGatewayError("invalid decisions request or model routing", fasthttp.StatusBadRequest)
+		}
+	}
 	url := provider.buildPassthroughURL(req)
 
 	fasthttpReq := fasthttp.AcquireRequest()
@@ -7381,8 +7390,24 @@ func (provider *OpenAIProvider) Passthrough(
 	}
 
 	var passthroughUsage *schemas.BifrostPassthroughUsage
+	decisionRegional := decision != nil && isOpenAIDecisionsRegionalURL(url)
 	if resp.StatusCode() >= 200 && resp.StatusCode() < 300 {
+		if decision != nil {
+			if _, err := ValidateOpenAIDecisionsResponse(body, decision); err != nil {
+				validationErr := DecisionsGatewayError("invalid upstream decisions response", fasthttp.StatusBadGateway)
+				// Preserve independently parseable usage for settlement even on invalid answers.
+				if usage := ExtractOpenAIPassthroughUsage(req.Method, req.Path, req.Body, body); usage != nil {
+					usage.LLMUsage.DecisionsRegional = decisionRegional
+					validationErr.ExtraFields.BilledUsage = usage.LLMUsage
+				}
+				return nil, validationErr
+			}
+		}
 		passthroughUsage = ExtractOpenAIPassthroughUsage(req.Method, req.Path, req.Body, body)
+		if decision != nil && passthroughUsage != nil {
+			passthroughUsage.DecisionsRegional = decisionRegional
+			passthroughUsage.LLMUsage.DecisionsRegional = decisionRegional
+		}
 	}
 
 	bifrostResponse := &schemas.BifrostPassthroughResponse{
@@ -7439,6 +7464,9 @@ func (provider *OpenAIProvider) PassthroughStream(
 		return nil, err
 	}
 
+	if req.IsOpenAIDecisions() {
+		return nil, DecisionsGatewayError("decisions does not support streaming", fasthttp.StatusBadRequest)
+	}
 	providerUtils.SetStreamIdleTimeoutIfEmpty(ctx, provider.networkConfig.StreamIdleTimeoutInSeconds)
 	url := provider.buildPassthroughURL(req)
 

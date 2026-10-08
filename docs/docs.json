@@ -429,6 +429,7 @@
                 "icon": "openai",
                 "pages": [
                   "integrations/openai-sdk/overview",
+                  "integrations/openai-sdk/decisions",
                   "integrations/openai-sdk/files-and-batch"
                 ]
               },

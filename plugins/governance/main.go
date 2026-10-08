@@ -17,6 +17,7 @@ import (
 	bifrost "github.com/maximhq/bifrost/core"
 	"github.com/maximhq/bifrost/core/authorityepoch"
 	"github.com/maximhq/bifrost/core/identity"
+	"github.com/maximhq/bifrost/core/providers/openai"
 	"github.com/maximhq/bifrost/core/schemas"
 	"github.com/maximhq/bifrost/framework/configstore"
 	configstoreTables "github.com/maximhq/bifrost/framework/configstore/tables"
@@ -1572,6 +1573,22 @@ func (p *GovernancePlugin) validateCatalogCapabilityFor(provider schemas.ModelPr
 	}
 }
 
+// Generic passthrough is not a catalog capability. The native Decisions wire
+// endpoint instead has an explicit, verified OpenAI contract (gpt-6-luna only).
+// Admit that capability independently of generic Luna chat/Responses rows;
+// provider/model entitlements and all governance limits still run below.
+func (p *GovernancePlugin) validateRequestCapability(req *schemas.BifrostRequest, provider schemas.ModelProvider, model string) *schemas.BifrostError {
+	if req.RequestType == schemas.PassthroughRequest && req.PassthroughRequest.IsOpenAIDecisions() {
+		wire := req.PassthroughRequest
+		decision, err := openai.ParseOpenAIDecisionsRequest(wire.Body)
+		if err != nil || wire.Method != "POST" || provider != schemas.OpenAI || model != decision.Model {
+			return openai.DecisionsGatewayError("invalid decisions capability or model routing", 400)
+		}
+		return nil
+	}
+	return p.validateCatalogCapabilityFor(provider, model, req.RequestType)
+}
+
 // PreLLMHook intercepts requests before they are processed (governance decision point)
 // Parameters:
 //   - ctx: The Bifrost context
@@ -1626,7 +1643,7 @@ func (p *GovernancePlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.
 		}
 		recordIdentityEntitlementDecision(ctx, true, "provider_model", "granted")
 	}
-	if capabilityErr := p.validateCatalogCapabilityFor(provider, model, req.RequestType); capabilityErr != nil {
+	if capabilityErr := p.validateRequestCapability(req, provider, model); capabilityErr != nil {
 		return req, &schemas.LLMPluginShortCircuit{Error: capabilityErr}, nil
 	}
 	// Create request context for evaluation
