@@ -330,6 +330,7 @@ const (
 	BifrostContextKeyAllowPerRequestRawOverride          BifrostContextKey = "bifrost-allow-per-request-raw-override"           // bool (set by transport from config — gates whether x-bf-send-back-raw-request and x-bf-send-back-raw-response per-request overrides are honored)
 	BifrostContextKeyRedactionData                       BifrostContextKey = "bifrost-redaction-data"                           // RedactionData (set by enterprise guardrails plugin - DO NOT SET THIS MANUALLY)
 	BifrostContextKeyDisableContentLogging               BifrostContextKey = "x-bf-disable-content-logging"                     // bool (per-request override for content logging; only honored when BifrostContextKeyAllowPerRequestStorageOverride is true)
+	BifrostContextKeySuppressContentLogging              BifrostContextKey = "bifrost-suppress-content-logging"                 // bool, gateway-owned content suppression; cannot be relaxed by a client override
 	BifrostContextKeySkipListModelsGovernanceFiltering   BifrostContextKey = "bifrost-skip-list-models-governance-filtering"    // bool (set by bifrost - DO NOT SET THIS MANUALLY))
 	BifrostContextKeySCIMClaims                          BifrostContextKey = "scim_claims"
 	BifrostContextKeyUserID                              BifrostContextKey = "bifrost-user-id"                       // string (to store the user ID (set by enterprise auth middleware - DO NOT SET THIS MANUALLY))
@@ -2020,4 +2021,9 @@ type BifrostErrorExtraFields struct {
 	// the provider actually billed us for. Nil when the failure consumed no
 	// tokens (e.g. 401/403/429 before the model ran).
 	BilledUsage *BifrostLLMUsage `json:"billed_usage,omitempty"`
+	// OpenAIDecisionsUpstreamSuccess records a native upstream 2xx response
+	// rejected during decoding/validation. When usage is unavailable, durable
+	// admission retains its conservative reservation instead of refunding a
+	// potentially processed request. This internal marker is never serialized.
+	OpenAIDecisionsUpstreamSuccess bool `json:"-"`
 }
