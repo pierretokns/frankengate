@@ -166,3 +166,28 @@ func TestDecisionsRefundRetainsBilledUsage(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, reservations.Amount{Tokens: 100, CostMicros: 10}, row.SettledAmount)
 }
+
+func TestDecisionsMalformedSuccessRetainsConservativeReservation(t *testing.T) {
+	for _, directRefund := range []bool{false, true} {
+		p := admissionTestPlugin(t)
+		defer p.Cleanup()
+		store := testBudgetReservationStore{InMemoryStore: reservations.NewInMemoryStore()}
+		coordinator := &DurableReservationCoordinator{Store: store, Estimator: ConfiguredReservationEstimator{MaxTokens: 1000, CostMicrosPerToken: 1}}
+		p.SetReservationCoordinator(coordinator)
+		ctx := schemas.NewBifrostContext(context.Background(), schemas.NoDeadline)
+		handle, err := coordinator.Reserve(ctx, AdmissionRequest{RequestID: "malformed-unknown-usage", Result: &EvaluationResult{BudgetInfo: []*tables.TableBudget{{ID: "budget"}}}})
+		require.NoError(t, err)
+		setReservationHandle(ctx, handle)
+		gatewayErr := &schemas.BifrostError{StatusCode: schemas.Ptr(502), ExtraFields: schemas.BifrostErrorExtraFields{OpenAIDecisionsUpstreamSuccess: true, RequestType: schemas.PassthroughRequest}}
+		if directRefund {
+			require.NoError(t, coordinator.Refund(ctx, handle, AdmissionSettlement{Error: gatewayErr}))
+		} else {
+			_, _, err = p.PostLLMHook(ctx, nil, gatewayErr)
+			require.NoError(t, err)
+		}
+		row, err := store.Get(ctx, handle.(*durableReservationHandle).rows[0].ID)
+		require.NoError(t, err)
+		require.Equal(t, row.ReservedAmount, row.SettledAmount)
+		require.Zero(t, row.RefundedAmount)
+	}
+}

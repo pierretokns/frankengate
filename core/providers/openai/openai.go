@@ -7386,7 +7386,9 @@ func (provider *OpenAIProvider) Passthrough(
 
 	body, err := providerUtils.CheckAndDecodeBody(resp)
 	if err != nil {
-		return nil, providerUtils.NewBifrostOperationError("failed to decode response body", err)
+		decodeErr := providerUtils.NewBifrostOperationError("failed to decode response body", err)
+		decodeErr.ExtraFields.OpenAIDecisionsUpstreamSuccess = decision != nil && resp.StatusCode() >= 200 && resp.StatusCode() < 300
+		return nil, decodeErr
 	}
 
 	var passthroughUsage *schemas.BifrostPassthroughUsage
@@ -7395,6 +7397,7 @@ func (provider *OpenAIProvider) Passthrough(
 		if decision != nil {
 			if _, err := ValidateOpenAIDecisionsResponse(body, decision); err != nil {
 				validationErr := DecisionsGatewayError("invalid upstream decisions response", fasthttp.StatusBadGateway)
+				validationErr.ExtraFields.OpenAIDecisionsUpstreamSuccess = true
 				// Preserve independently parseable usage for settlement even on invalid answers.
 				if usage := ExtractOpenAIPassthroughUsage(req.Method, req.Path, req.Body, body); usage != nil {
 					usage.LLMUsage.DecisionsRegional = decisionRegional

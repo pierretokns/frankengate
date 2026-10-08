@@ -278,6 +278,35 @@ func TestDecisionsProviderTimeout(t *testing.T) {
 	}
 }
 
+func TestDecisionsMalformedSuccessAccountingMarker(t *testing.T) {
+	good := string(decisionsFixture(t, "response"))
+	for _, tc := range []struct{ name, body, encoding string }{
+		{"missing usage", `{"answers":[]}`, ""},
+		{"invalid usage", strings.Replace(good, `"input_tokens": 100,`, "", 1), ""},
+		{"malformed JSON", `{"private upstream sentinel":`, ""},
+		{"invalid gzip", "private upstream sentinel", "gzip"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				if tc.encoding != "" {
+					w.Header().Set("Content-Encoding", tc.encoding)
+				}
+				_, _ = io.WriteString(w, tc.body)
+			}))
+			defer server.Close()
+			p := NewOpenAIProvider(&schemas.ProviderConfig{NetworkConfig: schemas.NetworkConfig{BaseURL: server.URL, AllowPrivateNetwork: true, DefaultRequestTimeoutInSeconds: 1}}, passthroughTestLogger{})
+			resp, bErr := p.Passthrough(schemas.NewBifrostContext(context.Background(), schemas.NoDeadline), schemas.Key{}, &schemas.BifrostPassthroughRequest{Provider: schemas.OpenAI, Model: "gpt-6-luna", Method: "POST", Path: "/v1/decisions", Body: decisionsFixture(t, "request")})
+			if resp != nil || bErr == nil || !bErr.ExtraFields.OpenAIDecisionsUpstreamSuccess || bErr.ExtraFields.BilledUsage != nil {
+				t.Fatal("known upstream success with unknown usage lost its conservative settlement marker")
+			}
+			encoded, err := json.Marshal(bErr)
+			if err != nil || strings.Contains(string(encoded), "OpenAIDecisionsUpstreamSuccess") || strings.Contains(string(encoded), "private upstream sentinel") {
+				t.Fatal("internal marker or evidence leaked into wire error")
+			}
+		})
+	}
+}
+
 func TestDecisionsPassthroughPermission(t *testing.T) {
 	p := NewOpenAIProvider(&schemas.ProviderConfig{CustomProviderConfig: &schemas.CustomProviderConfig{AllowedRequests: &schemas.AllowedRequests{ChatCompletion: true}}}, passthroughTestLogger{})
 	_, bErr := p.Passthrough(schemas.NewBifrostContext(context.Background(), schemas.NoDeadline), schemas.Key{}, &schemas.BifrostPassthroughRequest{Provider: schemas.OpenAI, Model: "gpt-6-luna", Method: "POST", Path: "/v1/decisions", Body: decisionsFixture(t, "request")})

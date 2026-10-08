@@ -2021,4 +2021,9 @@ type BifrostErrorExtraFields struct {
 	// the provider actually billed us for. Nil when the failure consumed no
 	// tokens (e.g. 401/403/429 before the model ran).
 	BilledUsage *BifrostLLMUsage `json:"billed_usage,omitempty"`
+	// OpenAIDecisionsUpstreamSuccess records a native upstream 2xx response
+	// rejected during decoding/validation. When usage is unavailable, durable
+	// admission retains its conservative reservation instead of refunding a
+	// potentially processed request. This internal marker is never serialized.
+	OpenAIDecisionsUpstreamSuccess bool `json:"-"`
 }

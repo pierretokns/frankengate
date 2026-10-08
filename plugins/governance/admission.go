@@ -682,7 +682,7 @@ func (c *DurableReservationCoordinator) Renew(ctx context.Context, handle any) e
 }
 
 func (c *DurableReservationCoordinator) Refund(ctx context.Context, handle any, settlement AdmissionSettlement) error {
-	if settlement.Error != nil && settlement.Error.ExtraFields.BilledUsage != nil {
+	if settlement.Error != nil && (settlement.Error.ExtraFields.BilledUsage != nil || settlement.Error.ExtraFields.OpenAIDecisionsUpstreamSuccess) {
 		return c.Settle(ctx, handle, settlement)
 	}
 	h, ok := handle.(*durableReservationHandle)

@@ -1751,7 +1751,7 @@ func (p *GovernancePlugin) PostLLMHook(ctx *schemas.BifrostContext, result *sche
 				}
 			} else if err != nil || bifrost.IsFinalChunk(ctx) || !streamRequest {
 				var settleErr error
-				if (err != nil && err.ExtraFields.BilledUsage == nil) || (isOpenAIDecisionsFailure(result) && settlement.decisionsUsage() == nil) {
+				if (err != nil && err.ExtraFields.BilledUsage == nil && !err.ExtraFields.OpenAIDecisionsUpstreamSuccess) || (isOpenAIDecisionsFailure(result) && settlement.decisionsUsage() == nil) {
 					settleErr = coordinator.Refund(ctx, handle, settlement)
 				} else {
 					settleErr = coordinator.Settle(ctx, handle, settlement)
