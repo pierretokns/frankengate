@@ -37,7 +37,11 @@ decisions:
       '502':
         description: Malformed upstream success response; content is not returned.
       '500':
-        description: Provider transport failure, timeout, or internal gateway error.
+        description: Provider transport failure or internal gateway error.
+      '499':
+        description: Request context was cancelled before provider completion.
+      '504':
+        description: Request context deadline or provider network timeout exceeded.
     security:
       - BearerAuth: []
       - BasicAuth: []

@@ -60,7 +60,7 @@ The adapter uses the existing inference middleware, virtual-key and identity ent
 
 Capability admission recognizes the verified native Decisions contract for OpenAI and exact `gpt-6-luna`, independently of generic Luna chat/Responses catalog rows. Other passthrough paths retain their existing catalog checks. Entitlements and limits still apply to the actual provider and model. A plugin that changes the routing model without changing the valid wire contract is rejected.
 
-The built-in logging plugin stores safe method/path/model, status, usage, cost, and latency metadata. Evidence, questions, images, answers, raw bodies, and query strings are suppressed even when content logging or a client storage override is enabled. Existing traces retain provider/model/passthrough operation metadata. Custom plugins still receive the request in memory and must honor the content-suppression context flag when exporting data.
+The built-in logging plugin stores safe method/path/model, status, usage, cost, and latency metadata. Evidence, questions, images, answers, raw bodies, and query strings are suppressed even when content logging or a client storage override is enabled. Outer HTTP access logs omit Decisions queries and console error-body dumps; root HTTP spans retain only the path. Existing traces retain provider/model/passthrough operation metadata. Custom plugins still receive the request in memory and must honor the content-suppression context flag when exporting data.
 
 Provider network timeouts and context cancellation use the existing passthrough implementation. Cancellation returns an error and waits for the in-flight fasthttp operation to finish before releasing pooled buffers; it does not immediately abort the socket. Configure the provider timeout to bound that wait.
 
@@ -69,6 +69,8 @@ Provider network timeouts and context cancellation use the existing passthrough 
 The verified standard rate is `$0.10` per million input tokens, or `$0.20` when input exceeds 272,000 tokens. The tier applies to all input tokens. Output, cache reads, and cache writes have no separate charges; reported input tokens are counted once. Configured `us.api.openai.com` and `eu.api.openai.com` endpoints receive the documented 10% regional-processing premium.
 
 Generic Luna chat/Responses prices are never used for this endpoint. Existing scoped pricing overrides can target the exact accounting key `gpt-6-luna@decisions` with the `chat_completion` request type (the existing chat pricing mode). This key is only for accounting; send `gpt-6-luna` on the wire. Rates are a dated default and can be overridden if your contract changes. Custom proxy hosts do not infer a regional premium; configure an appropriate pricing override. Valid usage on malformed success responses is retained for budget settlement even though the response is rejected.
+
+Durable admission settles reported tokens and the same resolved Decisions price, including overrides and regional processing. Its integer microdollar ledger rounds fractional microdollars upward. When no pricing catalog is available, the configured reservation estimator's per-token rate remains the conservative fallback. An upstream non-success response without usage refunds its reservation and does not increment successful-request counters. Explicitly reported zero usage settles zero; missing usage on a successful call retains the conservative reservation.
 
 ## Exclusions and validation status
 

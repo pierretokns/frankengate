@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"sync"
 	"sync/atomic"
@@ -368,6 +369,12 @@ func (e ConfiguredReservationEstimator) Estimate(context.Context, AdmissionReque
 }
 
 func (e ConfiguredReservationEstimator) Actual(_ context.Context, settlement AdmissionSettlement) reservations.Amount {
+	if settlement.Error != nil && settlement.Error.ExtraFields.BilledUsage != nil {
+		return e.actualLLMUsage(settlement.Error.ExtraFields.BilledUsage, settlement.Cost)
+	}
+	if settlement.Response != nil && settlement.Response.PassthroughResponse != nil && settlement.Response.PassthroughResponse.PassthroughUsage != nil {
+		return e.actualLLMUsage(settlement.Response.PassthroughResponse.PassthroughUsage.LLMUsage, settlement.Cost)
+	}
 	if settlement.Response != nil && settlement.Response.ChatResponse != nil && settlement.Response.ChatResponse.Usage != nil {
 		u := settlement.Response.ChatResponse.Usage
 		amount := reservations.Amount{Tokens: int64(u.TotalTokens)}
@@ -399,6 +406,31 @@ func (e ConfiguredReservationEstimator) Actual(_ context.Context, settlement Adm
 		return amount
 	}
 	return reservations.Amount{}
+}
+
+func (e ConfiguredReservationEstimator) actualLLMUsage(usage *schemas.BifrostLLMUsage, cost *float64) reservations.Amount {
+	if usage == nil {
+		return reservations.Amount{}
+	}
+	amount := reservations.Amount{Tokens: int64(usage.TotalTokens)}
+	if cost != nil {
+		// Durable ledgers use whole microdollars. Round up a fractional micro so
+		// a small, billable Decisions request cannot disappear from its budget.
+		micros := *cost * 1_000_000
+		nearest := math.Round(micros)
+		// Token rate, regional uplift, and unit conversion can leave an exact
+		// integer a few floating-point ULPs above itself. Do not charge an extra
+		// micro for that representation error; genuine fractions still round up.
+		if math.Abs(micros-nearest) <= 4*(math.Nextafter(micros, math.Inf(1))-micros) {
+			micros = nearest
+		}
+		amount.CostMicros = int64(math.Ceil(micros))
+	} else if usage.Cost != nil && usage.Cost.TotalCost > 0 {
+		amount.CostMicros = int64(usage.Cost.TotalCost * 1_000_000)
+	} else {
+		amount.CostMicros = int64(usage.TotalTokens) * e.CostMicrosPerToken
+	}
+	return amount
 }
 
 type durableReservationHandle struct{ rows []reservations.Reservation }
@@ -576,7 +608,7 @@ func (c *DurableReservationCoordinator) Settle(ctx context.Context, handle any, 
 		// into a free request. Keep the conservative reservation as the settled
 		// amount; callers can reconcile the exact cost later from durable logs.
 		settleAmount := amount
-		if settleAmount.Tokens == 0 && settleAmount.CostMicros == 0 {
+		if settleAmount.Tokens == 0 && settleAmount.CostMicros == 0 && settlement.decisionsUsage() == nil {
 			settleAmount = r.ReservedAmount
 		}
 		excess := reservations.Amount{}
@@ -650,6 +682,9 @@ func (c *DurableReservationCoordinator) Renew(ctx context.Context, handle any) e
 }
 
 func (c *DurableReservationCoordinator) Refund(ctx context.Context, handle any, settlement AdmissionSettlement) error {
+	if settlement.Error != nil && settlement.Error.ExtraFields.BilledUsage != nil {
+		return c.Settle(ctx, handle, settlement)
+	}
 	h, ok := handle.(*durableReservationHandle)
 	if !ok {
 		return fmt.Errorf("invalid durable reservation handle")
@@ -669,6 +704,23 @@ func (c *DurableReservationCoordinator) Refund(ctx context.Context, handle any, 
 type AdmissionSettlement struct {
 	Response *schemas.BifrostResponse
 	Error    *schemas.BifrostError
+	// Cost is the gateway's resolved native Decisions cost, including scoped
+	// overrides and regional pricing. Nil keeps the configured estimator rate
+	// when no pricing authority is available.
+	Cost *float64
+}
+
+func (s AdmissionSettlement) decisionsUsage() *schemas.BifrostLLMUsage {
+	var usage *schemas.BifrostLLMUsage
+	if s.Error != nil {
+		usage = s.Error.ExtraFields.BilledUsage
+	} else if s.Response != nil && s.Response.PassthroughResponse != nil && s.Response.PassthroughResponse.PassthroughUsage != nil {
+		usage = s.Response.PassthroughResponse.PassthroughUsage.LLMUsage
+	}
+	if usage != nil && usage.OpenAIDecisions {
+		return usage
+	}
+	return nil
 }
 
 // ReservationCoordinator is an optional durable admission boundary. Handle is

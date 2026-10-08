@@ -16,6 +16,13 @@ import (
 // not translate to chat, Responses, or TypeSafe decisions.
 type OpenAIDecisionsRouter struct{ *GenericRouter }
 
+// IsOpenAIDecisionsHTTPPath also identifies rejected requests before the router
+// runs, so outer access logs and root spans can suppress private query/error
+// content regardless of which middleware returns the response.
+func IsOpenAIDecisionsHTTPPath(path string) bool {
+	return path == "/v1/decisions" || path == "/openai/v1/decisions" || path == "/openai/decisions"
+}
+
 func NewOpenAIDecisionsRouter(client *bifrost.Bifrost, store lib.HandlerStore, logger schemas.Logger) *OpenAIDecisionsRouter {
 	return &OpenAIDecisionsRouter{NewGenericRouter(client, store, nil, &PassthroughConfig{
 		Provider: schemas.OpenAI, StripPrefix: []string{"/openai"},

@@ -35,11 +35,13 @@ jobs:
       - name: Use local modules
         run: source .github/workflows/scripts/setup-go-workspace.sh
       - name: Contract, policy, privacy, billing, and local HTTP tests
-        run: go test -race ./core/providers/openai ./transports/bifrost-http/integrations ./plugins/logging ./plugins/governance ./framework/modelcatalog/datasheet -run '^TestDecisions' -count=1
+        run: go test -race ./core/providers/openai ./transports/bifrost-http/integrations ./transports/bifrost-http/handlers ./plugins/logging ./plugins/governance ./framework/modelcatalog/datasheet -run '^TestDecisions' -count=1
       - name: Relevant unit regressions
         run: go test ./core/schemas ./core/providers/openai ./transports/bifrost-http/integrations ./plugins/logging ./framework/modelcatalog/datasheet
+      - name: Admission and HTTP middleware regressions
+        run: go test ./plugins/governance ./transports/bifrost-http/handlers -run 'Test(ConfiguredReservationEstimator|DurableCoordinator|DurableReservation|PostLLMHook|CorsMiddleware|TracingMiddleware)' -count=1
       - name: Vet changed packages
-        run: go vet ./core/schemas ./core/providers/openai ./transports/bifrost-http/integrations ./plugins/logging ./plugins/governance ./framework/modelcatalog/datasheet
+        run: go vet ./core/schemas ./core/providers/openai ./transports/bifrost-http/integrations ./transports/bifrost-http/handlers ./plugins/logging ./plugins/governance ./framework/modelcatalog/datasheet
       - name: Bundle OpenAPI sources outside the checkout
         run: |
           python3 -m pip install 'PyYAML==6.0.3'

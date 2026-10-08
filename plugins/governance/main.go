@@ -1723,8 +1723,22 @@ func (p *GovernancePlugin) PostLLMHook(ctx *schemas.BifrostContext, result *sche
 	if coordinator := p.admissionCoordinator(); coordinator != nil {
 		if handle, ok := reservationHandleFromContext(ctx); ok {
 			settlement := AdmissionSettlement{Response: result, Error: err}
+			// Native Decisions has its own input-only price. Resolve it before
+			// durable settlement, using the same scopes as usage reporting.
+			if p.modelCatalog != nil && settlement.decisionsUsage() != nil {
+				requestType, provider, model, _ := bifrost.GetResponseFields(result, err)
+				if routing := bifrost.GetResponseRoutingInfo(result, err); routing.Provider != "" {
+					provider, model = routing.Provider, routing.Model
+				}
+				scopes := modelcatalog.PricingLookupScopesFromContext(ctx, string(provider))
+				if err != nil {
+					settlement.Cost = schemas.Ptr(p.modelCatalog.CalculateCostForUsage(err.ExtraFields.BilledUsage, provider, model, requestType, scopes))
+				} else {
+					settlement.Cost = schemas.Ptr(p.modelCatalog.CalculateCost(result, scopes))
+				}
+			}
 			// Streaming reservations remain open until the terminal chunk. A
-			// provider error has no terminal success chunk and is refunded here.
+			// provider error with billed usage must still consume its budgets.
 			streamRequest := bifrost.IsStreamRequestType(func() schemas.RequestType {
 				t, _, _, _ := bifrost.GetResponseFields(result, err)
 				return t
@@ -1737,7 +1751,7 @@ func (p *GovernancePlugin) PostLLMHook(ctx *schemas.BifrostContext, result *sche
 				}
 			} else if err != nil || bifrost.IsFinalChunk(ctx) || !streamRequest {
 				var settleErr error
-				if err != nil {
+				if (err != nil && err.ExtraFields.BilledUsage == nil) || (isOpenAIDecisionsFailure(result) && settlement.decisionsUsage() == nil) {
 					settleErr = coordinator.Refund(ctx, handle, settlement)
 				} else {
 					settleErr = coordinator.Settle(ctx, handle, settlement)
@@ -2158,6 +2172,23 @@ func (p *GovernancePlugin) Cleanup() error {
 	return cleanupErr
 }
 
+func isOpenAIDecisionsFailure(result *schemas.BifrostResponse) bool {
+	if result == nil || result.PassthroughResponse == nil {
+		return false
+	}
+	r := result.PassthroughResponse
+	provider := r.ExtraFields.RoutingInfo.Provider
+	if provider == "" {
+		provider = r.ExtraFields.Provider
+	}
+	path := r.ExtraFields.PassthroughPath
+	if path == "" {
+		path = r.Path
+	}
+	native := (&schemas.BifrostPassthroughRequest{Provider: provider, Path: path}).IsOpenAIDecisions()
+	return native && (r.StatusCode < 200 || r.StatusCode >= 300)
+}
+
 // postHookWorker is a worker function that processes the response and updates usage tracking
 // It is used to avoid blocking the main thread when updating usage tracking
 // Handles both cases: with virtual key and without virtual key (empty string)
@@ -2177,7 +2208,7 @@ func (p *GovernancePlugin) Cleanup() error {
 //   - pricingScopes: Prebuilt pricing lookup scopes using governance VK ID (nil if not applicable)
 func (p *GovernancePlugin) postHookWorker(result *schemas.BifrostResponse, bifrostErr *schemas.BifrostError, provider schemas.ModelProvider, model string, requestType schemas.RequestType, virtualKey, requestID, userID string, isFinalChunk bool, attemptNumber int, pricingScopes *modelcatalog.PricingLookupScopes) {
 	// Determine if request was successful
-	success := (result != nil)
+	success := result != nil && !isOpenAIDecisionsFailure(result)
 	billedReason := "success"
 
 	// Streaming detection
