@@ -37,32 +37,54 @@ func TestDecisionsContractFixtures(t *testing.T) {
 	if resp.Answers[3].Type != "refusal" || resp.Usage.InputTokens != 100 {
 		t.Fatal("lost refusal or usage")
 	}
+	// Confidence is a separate numeric field; the official SDK does not bound it.
+	extendedConfidence := strings.Replace(string(decisionsFixture(t, "response")), `"confidence": 0.9`, `"confidence": 1.7`, 1)
+	if _, err := ValidateOpenAIDecisionsResponse([]byte(extendedConfidence), req); err != nil {
+		t.Fatal("invented a confidence range outside the official contract", err)
+	}
+	// Ordinal values are JSON numbers, including decimal/exponent spellings.
+	numericOrdinals := strings.Replace(string(decisionsFixture(t, "response")), `"value": 0`, `"value": 0.0`, 1)
+	numericOrdinals = strings.Replace(numericOrdinals, `"value": 1`, `"value": 1e0`, 1)
+	if _, err := ValidateOpenAIDecisionsResponse([]byte(numericOrdinals), req); err != nil {
+		t.Fatal("rejected equivalent numeric ordinals", err)
+	}
 	// The boolean true and string "true" are different categories.
 	req.Questions[1].Choices = []OpenAIDecisionChoice{{Value: json.RawMessage(`true`)}, {Value: json.RawMessage(`"true"`)}}
 	b, _ := json.Marshal(req)
 	if _, err := ParseOpenAIDecisionsRequest(b); err != nil {
 		t.Fatal(err)
 	}
+	// Extension objects may use arbitrary keys without influencing typed fields.
+	extension := strings.Replace(string(body), `"model":`, `"future_metadata":{"MODEL":"free-form"},"model":`, 1)
+	if _, err := ParseOpenAIDecisionsRequest([]byte(extension)); err != nil {
+		t.Fatal("rejected a non-colliding extension object", err)
+	}
 }
 
 func TestDecisionsRejectInvalidRequests(t *testing.T) {
 	base := `{"model":"gpt-6-luna","input":"private sentinel","questions":[{"type":"predicate","instructions":"check"}]}`
 	for name, body := range map[string]string{
-		"missing input":        `{"model":"gpt-6-luna","questions":[{"type":"predicate","instructions":"check"}]}`,
-		"unsupported model":    strings.Replace(base, "gpt-6-luna", "gpt-6-sol", 1),
-		"stream false":         strings.Replace(base, `"input":`, `"stream":false,"input":`, 1),
-		"stream true":          strings.Replace(base, `"input":`, `"stream":true,"input":`, 1),
-		"duplicate model":      strings.Replace(base, `"model":`, `"model":"gpt-6-sol","model":`, 1),
-		"assistant":            strings.Replace(base, `"private sentinel"`, `[{"role":"assistant","content":"x"}]`, 1),
-		"hosted image":         strings.Replace(base, `"private sentinel"`, `[{"role":"user","content":[{"type":"input_image","image_url":"https://example.com/image.png"}]}]`, 1),
-		"file":                 strings.Replace(base, `"private sentinel"`, `[{"role":"user","content":[{"type":"input_file","file_id":"file-test"}]}]`, 1),
-		"bad base64":           strings.Replace(base, `"private sentinel"`, `[{"role":"user","content":[{"type":"input_image","image_url":"data:image/png;base64,!!!"}]}]`, 1),
-		"number choices":       strings.Replace(base, `{"type":"predicate","instructions":"check"}`, `{"type":"choice","instructions":"check","choices":[{"value":42}]}`, 1),
-		"duplicate choice":     strings.Replace(base, `{"type":"predicate","instructions":"check"}`, `{"type":"choice","instructions":"check","choices":[{"value":true},{"value":true}]}`, 1),
-		"missing instructions": strings.Replace(base, `,"instructions":"check"`, "", 1),
-		"null question name":   strings.Replace(base, `"instructions":"check"`, `"instructions":"check","name":null`, 1),
-		"null description":     strings.Replace(base, `{"type":"predicate","instructions":"check"}`, `{"type":"choice","instructions":"check","choices":[{"value":true,"description":null}]}`, 1),
-		"trailing":             base + ` {}`,
+		"missing input":          `{"model":"gpt-6-luna","questions":[{"type":"predicate","instructions":"check"}]}`,
+		"unsupported model":      strings.Replace(base, "gpt-6-luna", "gpt-6-sol", 1),
+		"stream false":           strings.Replace(base, `"input":`, `"stream":false,"input":`, 1),
+		"stream true":            strings.Replace(base, `"input":`, `"stream":true,"input":`, 1),
+		"duplicate model":        strings.Replace(base, `"model":`, `"model":"gpt-6-sol","model":`, 1),
+		"case variant model":     strings.Replace(base, `"model":`, `"MODEL":"gpt-6-sol","model":`, 1),
+		"shadowed model":         strings.Replace(base, `"model":"gpt-6-luna"`, `"model":"gpt-6-sol","MODEL":"gpt-6-luna"`, 1),
+		"case variant questions": strings.Replace(base, `"questions":`, `"QUESTIONS":`, 1),
+		"case variant choices":   strings.Replace(base, `{"type":"predicate","instructions":"check"}`, `{"type":"choice","instructions":"check","CHOICES":[{"value":true}]}`, 1),
+		"assistant":              strings.Replace(base, `"private sentinel"`, `[{"role":"assistant","content":"x"}]`, 1),
+		"empty message type":     strings.Replace(base, `"private sentinel"`, `[{"role":"user","type":"","content":"x"}]`, 1),
+		"null message type":      strings.Replace(base, `"private sentinel"`, `[{"role":"user","type":null,"content":"x"}]`, 1),
+		"hosted image":           strings.Replace(base, `"private sentinel"`, `[{"role":"user","content":[{"type":"input_image","image_url":"https://example.com/image.png"}]}]`, 1),
+		"file":                   strings.Replace(base, `"private sentinel"`, `[{"role":"user","content":[{"type":"input_file","file_id":"file-test"}]}]`, 1),
+		"bad base64":             strings.Replace(base, `"private sentinel"`, `[{"role":"user","content":[{"type":"input_image","image_url":"data:image/png;base64,!!!"}]}]`, 1),
+		"number choices":         strings.Replace(base, `{"type":"predicate","instructions":"check"}`, `{"type":"choice","instructions":"check","choices":[{"value":42}]}`, 1),
+		"duplicate choice":       strings.Replace(base, `{"type":"predicate","instructions":"check"}`, `{"type":"choice","instructions":"check","choices":[{"value":true},{"value":true}]}`, 1),
+		"missing instructions":   strings.Replace(base, `,"instructions":"check"`, "", 1),
+		"null question name":     strings.Replace(base, `"instructions":"check"`, `"instructions":"check","name":null`, 1),
+		"null description":       strings.Replace(base, `{"type":"predicate","instructions":"check"}`, `{"type":"choice","instructions":"check","choices":[{"value":true,"description":null}]}`, 1),
+		"trailing":               base + ` {}`,
 	} {
 		t.Run(name, func(t *testing.T) {
 			_, err := ParseOpenAIDecisionsRequest([]byte(body))

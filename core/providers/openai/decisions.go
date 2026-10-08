@@ -71,7 +71,7 @@ func ParseOpenAIDecisionsRequest(body []byte) (*OpenAIDecisionsRequest, error) {
 	}
 	var fields map[string]json.RawMessage
 	var req OpenAIDecisionsRequest
-	if json.Unmarshal(body, &fields) != nil || fields == nil || json.Unmarshal(body, &req) != nil {
+	if json.Unmarshal(body, &fields) != nil || fields == nil || !canonicalDecisionFields(fields, "model", "input", "questions", "safety_identifier", "stream") || json.Unmarshal(body, &req) != nil {
 		return nil, errors.New("invalid decisions JSON request")
 	}
 	if _, present := fields["stream"]; present {
@@ -96,7 +96,7 @@ func ParseOpenAIDecisionsRequest(body []byte) (*OpenAIDecisionsRequest, error) {
 	_ = json.Unmarshal(fields["questions"], &questionFields)
 	names := map[string]bool{}
 	for i, q := range req.Questions {
-		if !optionalDecisionStrings(questionFields[i], "name") {
+		if !canonicalDecisionFields(questionFields[i], "type", "name", "instructions", "choices", "levels") || !optionalDecisionStrings(questionFields[i], "name") {
 			return nil, errors.New("invalid decisions question name")
 		}
 		if q.Instructions == nil {
@@ -121,7 +121,7 @@ func ParseOpenAIDecisionsRequest(body []byte) (*OpenAIDecisionsRequest, error) {
 			var choiceFields []map[string]json.RawMessage
 			_ = json.Unmarshal(questionFields[i]["choices"], &choiceFields)
 			for j, c := range q.Choices {
-				if !optionalDecisionStrings(choiceFields[j], "description") {
+				if !canonicalDecisionFields(choiceFields[j], "value", "description") || !optionalDecisionStrings(choiceFields[j], "description") {
 					return nil, errors.New("invalid decisions choice description")
 				}
 				key, ok := decisionChoiceKey(c.Value)
@@ -137,7 +137,7 @@ func ParseOpenAIDecisionsRequest(body []byte) (*OpenAIDecisionsRequest, error) {
 			var levelFields []map[string]json.RawMessage
 			_ = json.Unmarshal(questionFields[i]["levels"], &levelFields)
 			for j, l := range q.Levels {
-				if !optionalDecisionStrings(levelFields[j], "description") {
+				if !canonicalDecisionFields(levelFields[j], "label", "description") || !optionalDecisionStrings(levelFields[j], "description") {
 					return nil, errors.New("invalid decisions level description")
 				}
 				if l.Label == nil {
@@ -163,6 +163,21 @@ func optionalDecisionStrings(fields map[string]json.RawMessage, keys ...string) 
 	return true
 }
 
+// encoding/json matches struct fields without case sensitivity; the wire API
+// uses exact JSON names. Reject colliding spellings only in typed objects so a
+// MODEL extension cannot overwrite the model seen by governance. Arbitrary
+// unknown extension objects remain untouched and may use their own key names.
+func canonicalDecisionFields(fields map[string]json.RawMessage, known ...string) bool {
+	for field := range fields {
+		for _, name := range known {
+			if field != name && strings.EqualFold(field, name) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func validateDecisionInput(raw json.RawMessage) error {
 	var text string
 	if len(raw) != 0 && raw[0] == '"' && json.Unmarshal(raw, &text) == nil {
@@ -170,15 +185,17 @@ func validateDecisionInput(raw json.RawMessage) error {
 	}
 	var messages []struct {
 		Role    string          `json:"role"`
-		Type    string          `json:"type"`
+		Type    *string         `json:"type"`
 		Content json.RawMessage `json:"content"`
 	}
 	if json.Unmarshal(raw, &messages) != nil || len(messages) == 0 {
 		return errors.New("decisions input must be text or user messages")
 	}
+	var messageFields []map[string]json.RawMessage
+	_ = json.Unmarshal(raw, &messageFields)
 	images := 0
-	for _, m := range messages {
-		if m.Role != "user" || (m.Type != "" && m.Type != "message") {
+	for i, m := range messages {
+		if m.Role != "user" || !canonicalDecisionFields(messageFields[i], "role", "type", "content") || !optionalDecisionStrings(messageFields[i], "type") || (m.Type != nil && *m.Type != "message") {
 			return errors.New("decisions supports only user messages")
 		}
 		if len(m.Content) != 0 && m.Content[0] == '"' && json.Unmarshal(m.Content, &text) == nil {
@@ -193,7 +210,12 @@ func validateDecisionInput(raw json.RawMessage) error {
 		if json.Unmarshal(m.Content, &parts) != nil || len(parts) == 0 {
 			return errors.New("invalid decisions message content")
 		}
-		for _, p := range parts {
+		var partFields []map[string]json.RawMessage
+		_ = json.Unmarshal(m.Content, &partFields)
+		for i, p := range parts {
+			if !canonicalDecisionFields(partFields[i], "type", "text", "image_url", "detail") {
+				return errors.New("invalid decisions input field spelling")
+			}
 			switch p.Type {
 			case "input_text":
 				if p.Text == nil {
@@ -249,6 +271,10 @@ func ValidateOpenAIDecisionsResponse(body []byte, req *OpenAIDecisionsRequest) (
 	if uniqueDecisionJSON(body) != nil {
 		return nil, errors.New("invalid decisions response JSON")
 	}
+	var fields map[string]json.RawMessage
+	if json.Unmarshal(body, &fields) != nil || !canonicalDecisionFields(fields, "model", "answers", "usage") {
+		return nil, errors.New("invalid decisions response field spelling")
+	}
 	var resp OpenAIDecisionsResponse
 	if json.Unmarshal(body, &resp) != nil || resp.Model == "" || resp.Usage == nil || len(resp.Answers) != len(req.Questions) {
 		return nil, errors.New("invalid decisions response envelope")
@@ -262,6 +288,9 @@ func ValidateOpenAIDecisionsResponse(body []byte, req *OpenAIDecisionsRequest) (
 	_ = json.Unmarshal(body, &envelope)
 	for i, a := range resp.Answers {
 		q := req.Questions[i]
+		if !canonicalDecisionFields(envelope.Answers[i], "type", "name", "probability", "choice", "score", "confidence", "probabilities") {
+			return nil, errors.New("invalid decisions answer field spelling")
+		}
 		if _, present := envelope.Answers[i]["name"]; !present {
 			return nil, errors.New("missing decisions answer name")
 		}
@@ -280,7 +309,9 @@ func ValidateOpenAIDecisionsResponse(body []byte, req *OpenAIDecisionsRequest) (
 			}
 			continue
 		}
-		if !decisionProbability(a.Confidence) {
+		// The pinned SDK declares confidence as a number, without a range.
+		// Do not invent probability bounds for this separate confidence field.
+		if a.Confidence == nil {
 			return nil, errors.New("invalid decisions confidence")
 		}
 		count := len(q.Choices)
@@ -292,7 +323,12 @@ func ValidateOpenAIDecisionsResponse(body []byte, req *OpenAIDecisionsRequest) (
 		}
 		seen := map[string]bool{}
 		sum, weighted := 0.0, 0.0
-		for _, p := range a.Probabilities {
+		var probabilityFields []map[string]json.RawMessage
+		_ = json.Unmarshal(envelope.Answers[i]["probabilities"], &probabilityFields)
+		for i, p := range a.Probabilities {
+			if !canonicalDecisionFields(probabilityFields[i], "value", "label", "probability") {
+				return nil, errors.New("invalid decisions distribution field spelling")
+			}
 			if !decisionProbability(p.Probability) {
 				return nil, errors.New("invalid decisions distribution probability")
 			}
@@ -309,16 +345,20 @@ func ValidateOpenAIDecisionsResponse(body []byte, req *OpenAIDecisionsRequest) (
 				}
 				seen[key] = true
 			} else {
-				var index *int
-				if json.Unmarshal(p.Value, &index) != nil || index == nil || *index < 0 || *index >= count || p.Label == nil || *p.Label != *q.Levels[*index].Label {
+				var ordinal *float64
+				if json.Unmarshal(p.Value, &ordinal) != nil || ordinal == nil || *ordinal < 0 || *ordinal >= float64(count) || math.Trunc(*ordinal) != *ordinal {
+					return nil, errors.New("invalid decisions score index")
+				}
+				index := int(*ordinal)
+				if p.Label == nil || *p.Label != *q.Levels[index].Label {
 					return nil, errors.New("invalid decisions score level")
 				}
-				key := strconv.Itoa(*index)
+				key := strconv.Itoa(index)
 				if seen[key] {
 					return nil, errors.New("duplicate decisions score level")
 				}
 				seen[key] = true
-				weighted += float64(*index) * *p.Probability
+				weighted += float64(index) * *p.Probability
 			}
 		}
 		if math.Abs(sum-1) > 0.0001 {
@@ -350,6 +390,10 @@ func validDecisionUsage(body []byte, u *schemas.ResponsesResponseUsage) bool {
 	if json.Unmarshal(body, &envelope) != nil {
 		return false
 	}
+	var fields map[string]json.RawMessage
+	if json.Unmarshal(body, &fields) != nil || !canonicalDecisionFields(fields, "usage") || !canonicalDecisionFields(envelope.Usage, "input_tokens", "output_tokens", "total_tokens", "input_tokens_details", "output_tokens_details") {
+		return false
+	}
 	counters := func(fields map[string]json.RawMessage, keys ...string) bool {
 		for _, key := range keys {
 			var n *int
@@ -366,7 +410,7 @@ func validDecisionUsage(body []byte, u *schemas.ResponsesResponseUsage) bool {
 	if json.Unmarshal(envelope.Usage["input_tokens_details"], &input) != nil || json.Unmarshal(envelope.Usage["output_tokens_details"], &output) != nil {
 		return false
 	}
-	return counters(input, "cached_tokens", "cache_write_tokens") && counters(output, "reasoning_tokens")
+	return canonicalDecisionFields(input, "cached_tokens", "cache_write_tokens") && canonicalDecisionFields(output, "reasoning_tokens") && counters(input, "cached_tokens", "cache_write_tokens") && counters(output, "reasoning_tokens")
 }
 
 // DecisionsGatewayError has no evidence, raw body, or retriable fallback path.

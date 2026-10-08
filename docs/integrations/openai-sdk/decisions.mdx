@@ -52,7 +52,7 @@ print(decision.answers)
 | Usage | Required input/output/total counters and cache/reasoning details; returned unchanged and used for accounting. |
 | Errors | Upstream non-success status, body, request ID, and safe headers such as `Retry-After` are preserved. Invalid requests return 400; malformed upstream success responses return 502 without the malformed body. |
 
-Question names, when supplied, must be unique. Answers must follow question order and echo names. Distributions must cover the supplied choices/levels once and sum to 1 within `0.0001`; weighted scores use the same tolerance. Duplicate JSON object keys are rejected to keep policy and upstream parsers consistent. Unknown beta fields are preserved, but OpenAI may reject unsupported extensions.
+Question names, when supplied, must be unique. Answers must follow question order and echo names. Distributions must cover the supplied choices/levels once and sum to 1 within `0.0001`; weighted scores use the same tolerance. Confidence is a separate numeric field; the pinned contract does not specify a range. Duplicate JSON object keys and case variants of known fields (such as `MODEL`) are rejected to keep policy and upstream parsers consistent. Unknown beta fields and their nested objects are preserved, but OpenAI may reject unsupported extensions.
 
 ## Governance and observability
 
