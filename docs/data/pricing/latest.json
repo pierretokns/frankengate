@@ -1,7 +1,7 @@
 {
   "brand": "FrankenGate",
   "source": "https://getbifrost.ai/datasheet",
-  "retrieved_at": "2026-10-10T09:58:55Z",
+  "retrieved_at": "2026-10-11T10:08:34Z",
   "models": {
     "agentcore/search": {
       "base_model": "search",
@@ -1618,6 +1618,23 @@
       "supports_response_schema": true,
       "supports_tool_choice": true
     },
+    "amazon.nova-premier-v1:0": {
+      "base_model": "nova-premier",
+      "cache_read_input_token_cost": 6.25e-7,
+      "input_cost_per_token": 0.0000025,
+      "max_input_tokens": 1000000,
+      "max_output_tokens": 10000,
+      "max_tokens": 10000,
+      "mode": "chat",
+      "output_cost_per_token": 0.0000125,
+      "provider": "bedrock",
+      "supports_function_calling": true,
+      "supports_pdf_input": true,
+      "supports_prompt_caching": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
     "amazon.nova-pro-v1:0": {
       "base_model": "nova-pro",
       "cache_read_input_token_cost": 2e-7,
@@ -1728,22 +1745,22 @@
     },
     "amazon.titan-text-express-v1": {
       "base_model": "titan-text-express-v1",
-      "input_cost_per_token": 0.0000013,
+      "input_cost_per_token": 2e-7,
       "max_input_tokens": 42000,
       "max_output_tokens": 8000,
       "max_tokens": 8000,
       "mode": "chat",
-      "output_cost_per_token": 0.0000017,
+      "output_cost_per_token": 6e-7,
       "provider": "bedrock"
     },
     "amazon.titan-text-lite-v1": {
       "base_model": "titan-text-lite-v1",
-      "input_cost_per_token": 3e-7,
+      "input_cost_per_token": 1.5e-7,
       "max_input_tokens": 42000,
       "max_output_tokens": 4000,
       "max_tokens": 4000,
       "mode": "chat",
-      "output_cost_per_token": 4e-7,
+      "output_cost_per_token": 2e-7,
       "provider": "bedrock"
     },
     "amazon.titan-text-premier-v1:0": {
@@ -3384,13 +3401,13 @@
     },
     "apac.amazon.nova-2-lite-v1:0": {
       "base_model": "nova-2-lite",
-      "cache_read_input_token_cost": 8.25e-8,
-      "input_cost_per_token": 3.3e-7,
+      "cache_read_input_token_cost": 9.9e-8,
+      "input_cost_per_token": 3.96e-7,
       "max_input_tokens": 1000000,
       "max_output_tokens": 64000,
       "max_tokens": 64000,
       "mode": "chat",
-      "output_cost_per_token": 0.00000275,
+      "output_cost_per_token": 0.000003311,
       "provider": "bedrock",
       "supports_function_calling": true,
       "supports_pdf_input": true,
@@ -13364,7 +13381,7 @@
     },
     "azure/gpt-realtime-translate": {
       "base_model": "gpt-realtime-translate",
-      "deprecation_date": "2027-05-06",
+      "deprecation_date": "2027-11-09",
       "input_cost_per_second": 0.000566666666667,
       "max_input_tokens": 32000,
       "max_output_tokens": 4096,
@@ -19559,29 +19576,31 @@
     "bedrock/moonshotai.kimi-k2-thinking": {
       "base_model": "kimi-k2-thinking",
       "deprecation_date": "2027-03-30",
-      "input_cost_per_token": 7.3e-7,
-      "input_cost_per_token_flex": 3.6e-7,
+      "input_cost_per_token": 6e-7,
+      "input_cost_per_token_flex": 3e-7,
       "max_input_tokens": 262144,
       "max_output_tokens": 16000,
       "max_tokens": 16000,
       "mode": "chat",
-      "output_cost_per_token": 0.00000303,
-      "output_cost_per_token_flex": 0.00000152,
+      "output_cost_per_token": 0.0000025,
+      "output_cost_per_token_flex": 0.00000125,
       "provider": "bedrock",
-      "source": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k2-thinking.html",
+      "source": "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/bedrock/USD/current/bedrock.json",
       "supports_function_calling": true,
       "supports_reasoning": true
     },
     "bedrock/moonshotai.kimi-k2.5": {
       "base_model": "kimi-k2.5",
       "input_cost_per_token": 6e-7,
+      "input_cost_per_token_flex": 3e-7,
       "max_input_tokens": 262144,
       "max_output_tokens": 16000,
       "max_tokens": 16000,
       "mode": "chat",
       "output_cost_per_token": 0.0000029999999999999997,
+      "output_cost_per_token_flex": 0.0000015,
       "provider": "bedrock",
-      "source": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k2-5.html",
+      "source": "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/bedrock/USD/current/bedrock.json",
       "supports_audio_input": false,
       "supports_function_calling": true,
       "supports_reasoning": true,
@@ -30147,28 +30166,6 @@
       "supports_reasoning": false,
       "supports_response_schema": false
     },
-    "cloudflare/workers-ai/@cf/cloudflare/clef-omni": {
-      "base_model": "cloudflare/workers-ai/",
-      "input_cost_per_token": 1.5e-7,
-      "max_input_tokens": 65536,
-      "max_output_tokens": 65536,
-      "max_tokens": 65536,
-      "mode": "chat",
-      "output_cost_per_token": 0,
-      "provider": "cloudflare",
-      "source": "https://models.dev/api.json",
-      "supported_modalities": [
-        "text",
-        "image"
-      ],
-      "supported_output_modalities": [
-        "text"
-      ],
-      "supports_function_calling": false,
-      "supports_reasoning": false,
-      "supports_response_schema": true,
-      "supports_vision": true
-    },
     "cloudflare/workers-ai/@cf/deepseek-ai/deepseek-r1-distill-qwen-32b": {
       "base_model": "cloudflare/workers-ai/",
       "input_cost_per_token": 4.97e-7,
@@ -32360,6 +32357,19 @@
       "supports_function_calling": true,
       "supports_reasoning": true,
       "supports_tool_choice": true
+    },
+    "databricks/ai_decide": {
+      "base_model": "ai-decide",
+      "cache_creation_input_token_cost": 0,
+      "cache_read_input_token_cost": 0,
+      "input_cost_per_token": 0,
+      "metadata": {
+        "notes": "The ai_decide AI Function (Beta), called through POST /api/2.0/ai-functions/ai-decide. Its response carries no token usage, so LiteLLM records no spend for it."
+      },
+      "mode": "evaluation",
+      "output_cost_per_token": 0,
+      "provider": "databricks",
+      "source": "https://docs.databricks.com/api/ai-functions/v1/ai-decide"
     },
     "databricks/claude-haiku-4-5": {
       "base_model": "claude-haiku-4-5",
@@ -38953,13 +38963,13 @@
     },
     "eu.amazon.nova-2-lite-v1:0": {
       "base_model": "nova-2-lite",
-      "cache_read_input_token_cost": 8.25e-8,
-      "input_cost_per_token": 3.3e-7,
+      "cache_read_input_token_cost": 1.0725e-7,
+      "input_cost_per_token": 4.29e-7,
       "max_input_tokens": 1000000,
       "max_output_tokens": 64000,
       "max_tokens": 64000,
       "mode": "chat",
-      "output_cost_per_token": 0.00000275,
+      "output_cost_per_token": 0.000003597,
       "provider": "bedrock",
       "supports_function_calling": true,
       "supports_pdf_input": true,
@@ -56914,6 +56924,20 @@
       "supports_tool_choice": true,
       "supports_vision": true
     },
+    "huggingface/baseten/moonshotai/Kimi-K3": {
+      "base_model": "Kimi-K3",
+      "input_cost_per_token": 0.000003,
+      "max_input_tokens": 1048576,
+      "max_tokens": 1048576,
+      "mode": "chat",
+      "output_cost_per_token": 0.000014999999999999999,
+      "provider": "huggingface",
+      "source": "https://huggingface.co/moonshotai/Kimi-K3",
+      "supports_function_calling": true,
+      "supports_response_schema": true,
+      "supports_tool_choice": true,
+      "supports_vision": true
+    },
     "huggingface/baseten/openai/gpt-oss-120b": {
       "base_model": "gpt-oss-120b",
       "input_cost_per_token": 1e-7,
@@ -57081,7 +57105,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3-235B-A22B-Thinking-2507",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/deepinfra/Qwen/Qwen3-30B-A3B": {
@@ -57217,7 +57240,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.5-9B",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -57230,20 +57252,6 @@
       "output_cost_per_token": 0.0000032,
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.6-27B",
-      "supports_function_calling": true,
-      "supports_response_schema": true,
-      "supports_tool_choice": true,
-      "supports_vision": true
-    },
-    "huggingface/deepinfra/Qwen/Qwen3.6-35B-A3B": {
-      "base_model": "Qwen3.6-35B-A3B",
-      "input_cost_per_token": 1e-7,
-      "max_input_tokens": 262144,
-      "max_tokens": 262144,
-      "mode": "chat",
-      "output_cost_per_token": 9.499999999999999e-7,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/Qwen/Qwen3.6-35B-A3B",
       "supports_function_calling": true,
       "supports_response_schema": true,
       "supports_tool_choice": true,
@@ -57376,6 +57384,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/deepinfra/deepseek-ai/DeepSeek-V4-Flash": {
@@ -57824,7 +57833,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/thinkingmachines/Inkling",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -57855,19 +57863,6 @@
       "supports_response_schema": true,
       "supports_tool_choice": true
     },
-    "huggingface/deepinfra/zai-org/GLM-4.7": {
-      "base_model": "GLM-4.7",
-      "input_cost_per_token": 4e-7,
-      "max_input_tokens": 202752,
-      "max_tokens": 202752,
-      "mode": "chat",
-      "output_cost_per_token": 0.00000175,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/zai-org/GLM-4.7",
-      "supports_function_calling": true,
-      "supports_response_schema": true,
-      "supports_tool_choice": true
-    },
     "huggingface/deepinfra/zai-org/GLM-4.7-Flash": {
       "base_model": "GLM-4.7-Flash",
       "input_cost_per_token": 6.000000000000001e-8,
@@ -57878,7 +57873,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/zai-org/GLM-4.7-Flash",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/deepinfra/zai-org/GLM-5": {
@@ -57890,19 +57884,6 @@
       "output_cost_per_token": 0.00000208,
       "provider": "huggingface",
       "source": "https://huggingface.co/zai-org/GLM-5",
-      "supports_function_calling": true,
-      "supports_response_schema": true,
-      "supports_tool_choice": true
-    },
-    "huggingface/deepinfra/zai-org/GLM-5.1": {
-      "base_model": "GLM-5.1",
-      "input_cost_per_token": 0.00000105,
-      "max_input_tokens": 202752,
-      "max_tokens": 202752,
-      "mode": "chat",
-      "output_cost_per_token": 0.0000035,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/zai-org/GLM-5.1",
       "supports_function_calling": true,
       "supports_response_schema": true,
       "supports_tool_choice": true
@@ -57919,33 +57900,6 @@
       "supports_function_calling": true,
       "supports_response_schema": true,
       "supports_tool_choice": true
-    },
-    "huggingface/deepinfra/zai-org/GLM-5.3": {
-      "base_model": "GLM-5.3",
-      "input_cost_per_token": 9e-7,
-      "max_input_tokens": 1048576,
-      "max_tokens": 1048576,
-      "mode": "chat",
-      "output_cost_per_token": 0.000004,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/zai-org/GLM-5.3",
-      "supports_function_calling": true,
-      "supports_response_schema": true,
-      "supports_tool_choice": true
-    },
-    "huggingface/deepinfra/zai-org/GLM-5.3-Flash": {
-      "base_model": "GLM-5.3-Flash",
-      "input_cost_per_token": 1.5e-7,
-      "max_input_tokens": 1048576,
-      "max_tokens": 1048576,
-      "mode": "chat",
-      "output_cost_per_token": 5e-7,
-      "provider": "huggingface",
-      "source": "https://huggingface.co/zai-org/GLM-5.3-Flash",
-      "supports_function_calling": true,
-      "supports_response_schema": true,
-      "supports_tool_choice": true,
-      "supports_vision": true
     },
     "huggingface/fireworks-ai/MiniMaxAI/MiniMax-M3": {
       "base_model": "MiniMax-M3",
@@ -58320,7 +58274,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -58730,7 +58683,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3-32B",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/nscale/Qwen/Qwen3-4B-Instruct-2507": {
@@ -58756,7 +58708,6 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3-4B-Thinking-2507",
       "supports_function_calling": true,
-      "supports_response_schema": true,
       "supports_tool_choice": true
     },
     "huggingface/nscale/Qwen/Qwen3-8B": {
@@ -58779,8 +58730,7 @@
       "mode": "chat",
       "output_cost_per_token": 5e-8,
       "provider": "huggingface",
-      "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
-      "supports_response_schema": true
+      "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
     },
     "huggingface/nscale/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B": {
       "base_model": "DeepSeek-R1-Distill-Qwen-14B",
@@ -58790,7 +58740,8 @@
       "mode": "chat",
       "output_cost_per_token": 2e-7,
       "provider": "huggingface",
-      "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B"
+      "source": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B",
+      "supports_response_schema": true
     },
     "huggingface/nscale/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B": {
       "base_model": "DeepSeek-R1-Distill-Qwen-7B",
@@ -58875,6 +58826,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.5-397B-A17B",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -58888,6 +58840,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.5-9B",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -58901,6 +58854,7 @@
       "provider": "huggingface",
       "source": "https://huggingface.co/Qwen/Qwen3.6-27B",
       "supports_function_calling": true,
+      "supports_response_schema": true,
       "supports_tool_choice": true,
       "supports_vision": true
     },
@@ -58963,7 +58917,8 @@
       "mode": "chat",
       "output_cost_per_token": 4e-7,
       "provider": "huggingface",
-      "source": "https://huggingface.co/aisingapore/Gemma-SEA-LION-v4-27B-IT"
+      "source": "https://huggingface.co/aisingapore/Gemma-SEA-LION-v4-27B-IT",
+      "supports_response_schema": true
     },
     "huggingface/publicai/aisingapore/Qwen-SEA-LION-v4-32B-IT": {
       "base_model": "Qwen-SEA-LION-v4-32B-IT",
@@ -70461,9 +70416,9 @@
     "openrouter/cloudflare/clef": {
       "base_model": "clef",
       "input_cost_per_token": 2.4e-7,
-      "max_input_tokens": 65536,
-      "max_output_tokens": 58982,
-      "max_tokens": 58982,
+      "max_input_tokens": 16384,
+      "max_output_tokens": 14745,
+      "max_tokens": 14745,
       "mode": "chat",
       "provider": "openrouter",
       "supports_vision": true
@@ -70711,8 +70666,8 @@
     },
     "openrouter/deepseek/deepseek-v4-flash": {
       "base_model": "deepseek-v4-flash",
-      "cache_read_input_token_cost": 1.42e-8,
-      "input_cost_per_token": 1.42e-8,
+      "cache_read_input_token_cost": 3e-8,
+      "input_cost_per_token": 3e-8,
       "max_input_tokens": 1048576,
       "max_output_tokens": 943718,
       "max_tokens": 943718,
@@ -70727,13 +70682,13 @@
     },
     "openrouter/deepseek/deepseek-v4-flash-0731": {
       "base_model": "deepseek-v4-flash-0731",
-      "cache_read_input_token_cost": 7.9e-9,
-      "input_cost_per_token": 7.9e-9,
+      "cache_read_input_token_cost": 1.49e-8,
+      "input_cost_per_token": 1.49e-8,
       "max_input_tokens": 1048576,
       "max_output_tokens": 943718,
       "max_tokens": 943718,
       "mode": "chat",
-      "output_cost_per_token": 0.00000128,
+      "output_cost_per_token": 6.4e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -70760,13 +70715,13 @@
     },
     "openrouter/deepseek/deepseek-v4-pro": {
       "base_model": "deepseek-v4-pro",
-      "cache_read_input_token_cost": 7.9025e-8,
-      "input_cost_per_token": 9.483e-7,
+      "cache_read_input_token_cost": 1.74e-8,
+      "input_cost_per_token": 2.088e-7,
       "max_input_tokens": 1024000,
       "max_output_tokens": 384000,
       "max_tokens": 384000,
       "mode": "chat",
-      "output_cost_per_token": 0.0000018966,
+      "output_cost_per_token": 4.176e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -73116,13 +73071,13 @@
     },
     "openrouter/moonshotai/kimi-k3": {
       "base_model": "kimi-k3",
-      "cache_read_input_token_cost": 2.8e-7,
-      "input_cost_per_token": 6.4e-7,
+      "cache_read_input_token_cost": 5.5e-7,
+      "input_cost_per_token": 8e-7,
       "max_input_tokens": 1048576,
       "max_output_tokens": 943718,
       "max_tokens": 943718,
       "mode": "chat",
-      "output_cost_per_token": 0.0000135,
+      "output_cost_per_token": 0.00001,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -73274,13 +73229,13 @@
     },
     "openrouter/nvidia/nemotron-3-ultra-550b-a55b": {
       "base_model": "nemotron-3-ultra-550b-a55b",
-      "cache_read_input_token_cost": 1e-7,
-      "input_cost_per_token": 5e-7,
-      "max_input_tokens": 262144,
-      "max_output_tokens": 16384,
-      "max_tokens": 16384,
+      "cache_read_input_token_cost": 1.2e-7,
+      "input_cost_per_token": 6e-7,
+      "max_input_tokens": 202800,
+      "max_output_tokens": 182520,
+      "max_tokens": 182520,
       "mode": "chat",
-      "output_cost_per_token": 0.0000022,
+      "output_cost_per_token": 0.0000024,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -76535,12 +76490,12 @@
     },
     "openrouter/qwen/qwen3-14b": {
       "base_model": "qwen3-14b",
-      "input_cost_per_token": 1e-7,
+      "input_cost_per_token": 1.2e-7,
       "max_input_tokens": 40960,
-      "max_output_tokens": 36864,
-      "max_tokens": 36864,
+      "max_output_tokens": 16384,
+      "max_tokens": 16384,
       "mode": "chat",
-      "output_cost_per_token": 2.2e-7,
+      "output_cost_per_token": 2.4e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_reasoning": true,
@@ -76944,13 +76899,13 @@
     },
     "openrouter/qwen/qwen3.6-35b-a3b": {
       "base_model": "qwen3.6-35b-a3b",
-      "cache_read_input_token_cost": 5e-8,
-      "input_cost_per_token": 1.5e-7,
+      "cache_read_input_token_cost": 1e-7,
+      "input_cost_per_token": 1e-7,
       "max_input_tokens": 262144,
-      "max_output_tokens": 235929,
-      "max_tokens": 235929,
+      "max_output_tokens": 65536,
+      "max_tokens": 65536,
       "mode": "chat",
-      "output_cost_per_token": 0.000001,
+      "output_cost_per_token": 9.5e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -77064,14 +77019,13 @@
     },
     "openrouter/qwen/qwen3.8-27b": {
       "base_model": "qwen3.8-27b",
-      "cache_creation_input_token_cost": 5.3125e-7,
-      "cache_read_input_token_cost": 8.5e-8,
-      "input_cost_per_token": 4.25e-7,
-      "max_input_tokens": 1000000,
-      "max_output_tokens": 131072,
-      "max_tokens": 131072,
+      "cache_read_input_token_cost": 1.98e-8,
+      "input_cost_per_token": 4e-8,
+      "max_input_tokens": 262144,
+      "max_output_tokens": 235929,
+      "max_tokens": 235929,
       "mode": "chat",
-      "output_cost_per_token": 0.00000255,
+      "output_cost_per_token": 0.0000023,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -78219,8 +78173,8 @@
     },
     "openrouter/z-ai/glm-5.3": {
       "base_model": "glm-5.3",
-      "cache_read_input_token_cost": 3.8e-8,
-      "input_cost_per_token": 3.9e-8,
+      "cache_read_input_token_cost": 5e-8,
+      "input_cost_per_token": 7e-8,
       "max_input_tokens": 1048576,
       "max_output_tokens": 943718,
       "max_tokens": 943718,
@@ -78411,13 +78365,13 @@
     },
     "openrouter/~deepseek/deepseek-flash-latest": {
       "base_model": "deepseek-flash-latest",
-      "cache_read_input_token_cost": 5e-9,
-      "input_cost_per_token": 7e-10,
+      "cache_read_input_token_cost": 6.96e-10,
+      "input_cost_per_token": 3.48e-8,
       "max_input_tokens": 1048576,
-      "max_output_tokens": 943718,
-      "max_tokens": 943718,
+      "max_output_tokens": 393216,
+      "max_tokens": 393216,
       "mode": "chat",
-      "output_cost_per_token": 6e-7,
+      "output_cost_per_token": 1.392e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -78428,13 +78382,13 @@
     },
     "openrouter/~deepseek/deepseek-pro-latest": {
       "base_model": "deepseek-pro-latest",
-      "cache_read_input_token_cost": 2.19e-7,
-      "input_cost_per_token": 3e-7,
+      "cache_read_input_token_cost": 6.972e-9,
+      "input_cost_per_token": 2.1912e-7,
       "max_input_tokens": 1048576,
-      "max_output_tokens": 943718,
-      "max_tokens": 943718,
+      "max_output_tokens": 393216,
+      "max_tokens": 393216,
       "mode": "chat",
-      "output_cost_per_token": 0.000005,
+      "output_cost_per_token": 6.5736e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -78444,13 +78398,13 @@
     },
     "openrouter/~deepseek/deepseek-v4-flash-latest": {
       "base_model": "deepseek-v4-flash-latest",
-      "cache_read_input_token_cost": 7.9e-9,
-      "input_cost_per_token": 7.9e-9,
+      "cache_read_input_token_cost": 1.49e-8,
+      "input_cost_per_token": 1.49e-8,
       "max_input_tokens": 1048576,
       "max_output_tokens": 943718,
       "max_tokens": 943718,
       "mode": "chat",
-      "output_cost_per_token": 0.00000128,
+      "output_cost_per_token": 6.4e-7,
       "provider": "openrouter",
       "supports_function_calling": true,
       "supports_prompt_caching": true,
@@ -78503,7 +78457,7 @@
     "openrouter/~moonshotai/kimi-latest": {
       "base_model": "kimi-latest",
       "cache_read_input_token_cost": 2.9e-7,
-      "input_cost_per_token": 3.74e-7,
+      "input_cost_per_token": 7.5e-7,
       "max_input_tokens": 1048576,
       "max_output_tokens": 943718,
       "max_tokens": 943718,
@@ -78657,8 +78611,8 @@
     },
     "openrouter/~z-ai/glm-latest": {
       "base_model": "glm-latest",
-      "cache_read_input_token_cost": 3.8e-8,
-      "input_cost_per_token": 3.9e-8,
+      "cache_read_input_token_cost": 5e-8,
+      "input_cost_per_token": 7e-8,
       "max_input_tokens": 1048576,
       "max_output_tokens": 943718,
       "max_tokens": 943718,
@@ -84174,6 +84128,57 @@
       "provider": "sarvam",
       "supports_reasoning": true
     },
+    "scaledown/classify": {
+      "base_model": "classify",
+      "input_cost_per_token": 5e-8,
+      "mode": "chat",
+      "output_cost_per_token": 0,
+      "provider": "scaledown",
+      "supports_function_calling": false,
+      "supports_system_messages": false,
+      "supports_vision": false
+    },
+    "scaledown/compress": {
+      "base_model": "compress",
+      "input_cost_per_token": 5e-8,
+      "mode": "chat",
+      "output_cost_per_token": 0,
+      "provider": "scaledown",
+      "supports_function_calling": false,
+      "supports_system_messages": true,
+      "supports_vision": false
+    },
+    "scaledown/decisions": {
+      "base_model": "decisions",
+      "input_cost_per_token": 5e-8,
+      "mode": "chat",
+      "output_cost_per_token": 0,
+      "provider": "scaledown",
+      "supports_function_calling": false,
+      "supports_system_messages": false,
+      "supports_vision": false
+    },
+    "scaledown/extract": {
+      "base_model": "extract",
+      "input_cost_per_token": 5e-8,
+      "mode": "chat",
+      "output_cost_per_token": 0,
+      "provider": "scaledown",
+      "supports_function_calling": false,
+      "supports_response_schema": false,
+      "supports_system_messages": false,
+      "supports_vision": false
+    },
+    "scaledown/summarize": {
+      "base_model": "summarize",
+      "input_cost_per_token": 5e-8,
+      "mode": "chat",
+      "output_cost_per_token": 0,
+      "provider": "scaledown",
+      "supports_function_calling": false,
+      "supports_system_messages": true,
+      "supports_vision": false
+    },
     "scaleway/BAAI/bge-multilingual-gemma2": {
       "base_model": "bge-multilingual-gemma2",
       "input_cost_per_token": 1e-7,
@@ -86305,7 +86310,6 @@
     "together_ai/deepseek-ai/DeepSeek-V4-Flash-0731": {
       "base_model": "deepseek-v4-flash",
       "cache_read_input_token_cost": 3e-8,
-      "deprecation_date": "2026-10-22",
       "input_cost_per_token": 1.4e-7,
       "max_input_tokens": 1048576,
       "max_tokens": 1048576,
@@ -86437,7 +86441,6 @@
     },
     "together_ai/meta-llama/Llama-3.3-70B-Instruct-Turbo": {
       "base_model": "llama-3.3-70b-instruct-turbo",
-      "deprecation_date": "2026-10-22",
       "input_cost_per_token": 8.8e-7,
       "max_input_tokens": 131072,
       "max_tokens": 131072,
@@ -97145,28 +97148,6 @@
       "supports_function_calling": false,
       "supports_reasoning": false,
       "supports_response_schema": false
-    },
-    "workers-ai/workers-ai/@cf/cloudflare/clef-omni": {
-      "base_model": "cloudflare/workers-ai/",
-      "input_cost_per_token": 1.5e-7,
-      "max_input_tokens": 65536,
-      "max_output_tokens": 65536,
-      "max_tokens": 65536,
-      "mode": "chat",
-      "output_cost_per_token": 0,
-      "provider": "workers-ai",
-      "source": "https://models.dev/api.json",
-      "supported_modalities": [
-        "text",
-        "image"
-      ],
-      "supported_output_modalities": [
-        "text"
-      ],
-      "supports_function_calling": false,
-      "supports_reasoning": false,
-      "supports_response_schema": true,
-      "supports_vision": true
     },
     "workers-ai/workers-ai/@cf/deepseek-ai/deepseek-r1-distill-qwen-32b": {
       "base_model": "cloudflare/workers-ai/",
