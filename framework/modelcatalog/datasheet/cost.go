@@ -49,6 +49,9 @@ func (s *Store) CalculateCostForUsage(usage *schemas.BifrostLLMUsage, provider s
 	if scopes != nil {
 		lookupScopes = *scopes
 	}
+	if provider == schemas.OpenAI && usage.OpenAIDecisions {
+		return s.calculateOpenAIDecisionsCost(usage, &schemas.BifrostPassthroughUsage{DecisionsRegional: usage.DecisionsRegional}, lookupScopes)
+	}
 
 	// If the provider already computed cost, trust it (matches calculateBaseCost).
 	if usage.Cost != nil && usage.Cost.TotalCost > 0 {
@@ -144,6 +147,13 @@ func (s *Store) calculateBaseCost(result *schemas.BifrostResponse, scopes Lookup
 
 	// Extract usage data from the response (passthrough and native paths unified)
 	input := extractCostInput(result)
+
+	// Decisions has endpoint-specific input-only rates. Never price it as a
+	// generic Luna chat/Responses request, including on the raw passthrough route.
+	if result.PassthroughResponse != nil && routingInfo.Provider == schemas.OpenAI &&
+		(extraFields.PassthroughPath == "/decisions" || extraFields.PassthroughPath == "/v1/decisions") {
+		return s.calculateOpenAIDecisionsCost(input.usage, result.PassthroughResponse.PassthroughUsage, scopes)
+	}
 
 	// If provider already computed cost, use it
 	if input.usage != nil && input.usage.Cost != nil && input.usage.Cost.TotalCost > 0 {

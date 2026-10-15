@@ -1635,6 +1635,10 @@ type ContentLogProb struct {
 
 // BifrostLLMUsage represents token usage information
 type BifrostLLMUsage struct {
+	// Native Decisions billing lineage, including failed response validation.
+	// Internal only: never returned in a provider's usage JSON.
+	OpenAIDecisions         bool                         `json:"-"`
+	DecisionsRegional       bool                         `json:"-"`
 	PromptTokens            int                          `json:"prompt_tokens,omitempty"`
 	PromptTokensDetails     *ChatPromptTokensDetails     `json:"prompt_tokens_details,omitempty"`
 	CompletionTokens        int                          `json:"completion_tokens,omitempty"`

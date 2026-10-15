@@ -2748,6 +2748,20 @@ func (bifrost *Bifrost) Passthrough(
 	}
 
 	req.Provider = provider
+	if req.IsOpenAIDecisions() {
+		if ctx == nil {
+			var cancel context.CancelFunc
+			ctx, cancel = schemas.NewBifrostContextWithCancel(bifrost.ctx)
+			defer cancel()
+		}
+		ctx.SuppressContentLogging()
+		decision, err := openai.ParseOpenAIDecisionsRequest(req.Body)
+		if err != nil || req.Method != fasthttp.MethodPost {
+			return nil, openai.DecisionsGatewayError("invalid decisions request or method", fasthttp.StatusBadRequest)
+		}
+		// Governance and key selection must see the same model as the raw body.
+		req.Model = decision.Model
+	}
 
 	bifrostReq := bifrost.getBifrostRequest()
 	bifrostReq.RequestType = schemas.PassthroughRequest
@@ -2783,6 +2797,9 @@ func (bifrost *Bifrost) PassthroughStream(
 	}
 
 	req.Provider = provider
+	if req.IsOpenAIDecisions() {
+		return nil, openai.DecisionsGatewayError("decisions does not support streaming", fasthttp.StatusBadRequest)
+	}
 
 	bifrostReq := bifrost.getBifrostRequest()
 	bifrostReq.RequestType = schemas.PassthroughStreamRequest

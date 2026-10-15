@@ -1,0 +1,65 @@
+{
+  "model": "gpt-6-luna",
+  "input": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "Export fails in Safari but works in Chrome."
+        },
+        {
+          "type": "input_image",
+          "image_url": "data:image/png;base64,iVBORw0KGgo=",
+          "detail": "auto"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "type": "predicate",
+      "name": "visible_damage",
+      "instructions": "Does the product have visible damage?"
+    },
+    {
+      "type": "choice",
+      "name": "department",
+      "instructions": "Which department?",
+      "choices": [
+        {
+          "value": "billing",
+          "description": "Payments"
+        },
+        {
+          "value": true,
+          "description": "Other"
+        }
+      ]
+    },
+    {
+      "type": "score",
+      "name": "severity",
+      "instructions": "How severe is the issue?",
+      "levels": [
+        {
+          "label": "Cosmetic"
+        },
+        {
+          "label": "Workaround available"
+        },
+        {
+          "label": "Fully blocked"
+        }
+      ]
+    },
+    {
+      "type": "predicate",
+      "instructions": "Evaluate the restricted request."
+    }
+  ],
+  "safety_identifier": "test-opaque-id",
+  "future_extension": {
+    "enabled": true
+  }
+}
