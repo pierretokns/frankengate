@@ -1,0 +1,59 @@
+decisions:
+  post: &decision-operation
+    operationId: openaiCreateDecision
+    summary: Evaluate native OpenAI Decisions questions
+    description: |
+      Validated native OpenAI beta wire passthrough for exact gpt-6-luna.
+      Preserves raw JSON, per-question refusals, typed choices, and safe upstream
+      status/error headers. Uses inference middleware and existing passthrough
+      permissions, provider/model grants, budgets, and rate limits. No streaming,
+      normalized routing, aliases, caching, or async jobs. Payload content is
+      suppressed in built-in logs; usage and safe metadata remain available.
+    tags: [OpenAI Integration]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../../../schemas/integrations/openai/decisions.yaml#/OpenAIDecisionsRequest'
+    responses:
+      '200':
+        description: Ordered predicate, choice, score, or refusal answers.
+        content:
+          application/json:
+            schema:
+              $ref: '../../../schemas/integrations/openai/decisions.yaml#/OpenAIDecisionsResponse'
+      '400':
+        description: Invalid contract, unsupported model/input/streaming, or upstream bad request.
+      '401':
+        description: Gateway authentication or upstream authentication failed.
+      '403':
+        description: Provider/model/identity permission or upstream access denied.
+      '429':
+        description: Governance admission/rate limit or upstream rate limit.
+        headers:
+          Retry-After:
+            schema: {type: string}
+      '502':
+        description: Malformed upstream success response; content is not returned.
+      '500':
+        description: Provider transport failure or internal gateway error.
+      '499':
+        description: Request context was cancelled before provider completion.
+      '504':
+        description: Request context deadline or provider network timeout exceeded.
+    security:
+      - BearerAuth: []
+      - BasicAuth: []
+      - VirtualKeyAuth: []
+      - ApiKeyAuth: []
+
+decisions-v1:
+  post:
+    <<: *decision-operation
+    operationId: createOpenAIDecision
+
+decisions-openai:
+  post:
+    <<: *decision-operation
+    operationId: openaiCreateDecisionWithoutV1

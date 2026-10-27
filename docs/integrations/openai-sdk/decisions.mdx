@@ -1,0 +1,81 @@
+---
+title: "Decisions API"
+description: "Validated OpenAI Decisions wire compatibility in FrankenGate."
+icon: "list-check"
+---
+
+FrankenGate accepts the native OpenAI Decisions beta contract verified on October 8, 2026. Requests and successful responses retain their original JSON bytes, including unknown extension fields. Known fields are validated before forwarding and before returning a successful response. This is a validated passthrough adapter; it does not translate Decisions into Chat Completions, Responses, or TypeSafe decisions.
+
+## Routes and SDK setup
+
+Send `POST` with `Content-Type: application/json` to `/v1/decisions`, `/openai/v1/decisions`, or `/openai/decisions`. All three use the selected OpenAI provider key and the configured OpenAI upstream base URL. The native upstream endpoint is `/v1/decisions`.
+
+Use an existing OpenAI provider configuration, an authorized FrankenGate virtual key, and an OpenAI account entitled to the beta. The guide lists Python SDK 3.26.0 and JavaScript SDK 7.30.0 as the minimum versions. No new credentials or security settings are required by this adapter.
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://localhost:8080/openai/v1",
+    api_key=os.environ["FRANKENGATE_VIRTUAL_KEY"],
+    default_headers={"x-bf-vk": os.environ["FRANKENGATE_VIRTUAL_KEY"]},
+)
+decision = client.decisions.create(
+    model="gpt-6-luna",
+    input="A customer says an invoice was charged twice.",
+    questions=[
+        {"type": "predicate", "name": "billing", "instructions": "Is this a billing issue?"},
+        {
+            "type": "choice",
+            "name": "department",
+            "instructions": "Select the responsible department.",
+            "choices": [{"value": "billing"}, {"value": "technical_support"}],
+        },
+    ],
+)
+print(decision.answers)
+```
+
+## Supported contract
+
+| Field or behavior | Support |
+| --- | --- |
+| Model | Exact `gpt-6-luna`; provider prefixes and model aliases are rejected. |
+| Input | Text string, or ordered `user` messages containing a string or `input_text`/`input_image` parts. |
+| Images | Inline base64 image data URLs, at most 128 per request. Detail can be `auto`, `low`, `high`, `original`, or null. Image contents are validated by OpenAI. |
+| Predicate questions | Instructions and optional name; probability between 0 and 1. |
+| Choice questions | Distinct string or boolean values; selected value, confidence, and a probability for every supplied value. Boolean `true` and string `"true"` remain distinct. |
+| Score questions | Ordered labeled levels; indexed probabilities and a probability-weighted score. |
+| Refusals | Preserved per question with its name, or null for unnamed questions. |
+| Safety identifier | Optional opaque string or null; forwarded unchanged. |
+| Usage | Required input/output/total counters and cache/reasoning details; returned unchanged and used for accounting. |
+| Errors | Upstream non-success status, body, request ID, and safe headers such as `Retry-After` are preserved. Invalid requests return 400; malformed upstream success responses return 502 without the malformed body. |
+
+Question names, when supplied, must be unique. Answers must follow question order and echo names. Distributions must cover the supplied choices/levels once and sum to 1 within `0.0001`; weighted scores use the same tolerance. Confidence is a separate numeric field; the pinned contract does not specify a range. Duplicate JSON object keys and case variants of known fields (such as `MODEL`) are rejected to keep policy and upstream parsers consistent. Unknown beta fields and their nested objects are preserved, but OpenAI may reject unsupported extensions.
+
+## Governance and observability
+
+The adapter uses the existing inference middleware, virtual-key and identity entitlements, provider/model allowlists, key selection, queues, budgets, rate limits, configured durable reservations, and post hooks. It requires the existing `passthrough` operation permission; enabling Chat Completions alone does not enable Decisions.
+
+Capability admission recognizes the verified native Decisions contract for OpenAI and exact `gpt-6-luna`, independently of generic Luna chat/Responses catalog rows. Other passthrough paths retain their existing catalog checks. Entitlements and limits still apply to the actual provider and model. A plugin that changes the routing model without changing the valid wire contract is rejected.
+
+The built-in logging plugin stores safe method/path/model, status, usage, cost, and latency metadata. Evidence, questions, images, answers, raw bodies, and query strings are suppressed even when content logging or a client storage override is enabled. Outer HTTP access logs omit Decisions queries and console error-body dumps; root HTTP spans retain only the path. Existing traces retain provider/model/passthrough operation metadata. Custom plugins still receive the request in memory and must honor the content-suppression context flag when exporting data.
+
+Provider network timeouts and context cancellation use the existing passthrough implementation. Cancellation returns an error and waits for the in-flight fasthttp operation to finish before releasing pooled buffers; it does not immediately abort the socket. Configure the provider timeout to bound that wait.
+
+## Accounting
+
+The verified standard rate is `$0.10` per million input tokens, or `$0.20` when input exceeds 272,000 tokens. The tier applies to all input tokens. Output, cache reads, and cache writes have no separate charges; reported input tokens are counted once. Configured `us.api.openai.com` and `eu.api.openai.com` endpoints receive the documented 10% regional-processing premium.
+
+Generic Luna chat/Responses prices are never used for this endpoint. Existing scoped pricing overrides can target the exact accounting key `gpt-6-luna@decisions` with the `chat_completion` request type (the existing chat pricing mode). This key is only for accounting; send `gpt-6-luna` on the wire. Rates are a dated default and can be overridden if your contract changes. Custom proxy hosts do not infer a regional premium; configure an appropriate pricing override. Valid usage on malformed success responses is retained for budget settlement even though the response is rejected.
+
+Durable admission settles reported tokens and the same resolved Decisions price, including overrides and regional processing. Its integer microdollar ledger rounds fractional microdollars upward. When no pricing catalog is available, the configured reservation estimator's per-token rate remains the conservative fallback. An upstream non-success response without usage refunds its reservation and does not increment successful-request counters. Explicitly reported zero usage settles zero. A native upstream 2xx rejected for malformed JSON, decoding errors, or missing/invalid usage retains the conservative reservation when reliable usage cannot be recovered; it still returns a gateway error and does not count as a successful request. That reservation is an estimate for later reconciliation, not invented provider usage.
+
+## Exclusions and validation status
+
+Streaming (including a `stream: false` field), hosted image URLs, files, audio, function/tool calls, non-user messages, item references, Azure, other providers, model aliases, normalized core request/response support, dynamic routing, semantic caching, and asynchronous job APIs are excluded. Normalized content guardrails are not implied by passthrough support. No Decisions-specific fallback or quality calibration is provided.
+
+The contract, routing, privacy, billing, and policy tests use synthetic fixtures and local mock servers. Live beta entitlement, real image decoding, decision quality, calibration, latency, and invoice reconciliation have not been validated. A live test requires an already approved credential and spend limit.
+
+Sources: [OpenAI Decisions guide](https://developers.openai.com/api/docs/guides/decisions), [official JavaScript SDK contract at v7.30.0](https://github.com/openai/openai-node/blob/a4942ba48e999f9f637f81c5c925ed91b326343f/src/resources/decisions.ts), [OpenAI pricing](https://developers.openai.com/api/docs/pricing), and [regional processing](https://developers.openai.com/api/docs/guides/your-data#sub-processors-and-regional-request-processing).

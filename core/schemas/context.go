@@ -12,6 +12,7 @@ import (
 var NoDeadline time.Time
 
 var reservedKeys = []any{
+	BifrostContextKeySuppressContentLogging,
 	BifrostContextKeyVirtualKey,
 	BifrostContextKeyAPIKeyName,
 	BifrostContextKeyAPIKeyID,
@@ -176,6 +177,12 @@ func (bc *BifrostContext) Root() *BifrostContext {
 // BlockRestrictedWrites returns true if restricted writes are blocked.
 func (bc *BifrostContext) BlockRestrictedWrites() {
 	bc.blockRestrictedWrites.Store(true)
+}
+
+// SuppressContentLogging is a monotonic privacy restriction for sensitive wire
+// endpoints. It cannot be undone by a client storage override or plugin writes.
+func (bc *BifrostContext) SuppressContentLogging() {
+	bc.setReservedValue(BifrostContextKeySuppressContentLogging, true)
 }
 
 // UnblockRestrictedWrites unblocks restricted writes.
@@ -343,6 +350,9 @@ func (bc *BifrostContext) SetValue(key, value any) {
 		bc.valueDelegate.SetValue(key, value)
 		return
 	}
+	if key == BifrostContextKeySuppressContentLogging && value != true {
+		return // Privacy restrictions cannot be relaxed on a reused context.
+	}
 	// Check if the key is a reserved key
 	if bc.blockRestrictedWrites.Load() && slices.Contains(reservedKeys, key) {
 		// we silently drop writes for these reserved keys
@@ -380,6 +390,9 @@ func (bc *BifrostContext) ClearValue(key any) {
 		bc.valueDelegate.ClearValue(key)
 		return
 	}
+	if key == BifrostContextKeySuppressContentLogging {
+		return
+	}
 	// Check if the key is a reserved key
 	if bc.blockRestrictedWrites.Load() && slices.Contains(reservedKeys, key) {
 		// we silently drop writes for these reserved keys
@@ -401,6 +414,9 @@ func (bc *BifrostContext) GetAndSetValue(key any, value any) any {
 	bc.valuesMu.Lock()
 	defer bc.valuesMu.Unlock()
 	// Check if the key is a reserved key
+	if key == BifrostContextKeySuppressContentLogging && value != true {
+		return bc.userValues[key]
+	}
 	if bc.blockRestrictedWrites.Load() && slices.Contains(reservedKeys, key) {
 		// we silently drop writes for these reserved keys
 		return bc.userValues[key]

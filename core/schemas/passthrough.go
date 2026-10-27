@@ -11,10 +11,19 @@ type BifrostPassthroughRequest struct {
 	SafeHeaders map[string]string // client headers, auth already stripped
 }
 
+// IsOpenAIDecisions identifies the dedicated OpenAI wire endpoint, never a
+// similarly named route on another provider or a TypeSafe decision operation.
+func (r *BifrostPassthroughRequest) IsOpenAIDecisions() bool {
+	return r != nil && r.Provider == OpenAI && (r.Path == "/decisions" || r.Path == "/v1/decisions")
+}
+
 // BifrostPassthroughUsage carries usage data extracted by the provider at stream
 // completion. The pricing module converts this into cost using the existing compute
-// functions — no new pricing logic is required.
+// functions or endpoint-specific rates where the native contract requires them.
 type BifrostPassthroughUsage struct {
+	// DecisionsRegional records the regional processing premium for the native
+	// Decisions endpoint. It is set from the configured upstream host.
+	DecisionsRegional bool
 	// Text / chat / responses / embeddings
 	LLMUsage     *BifrostLLMUsage
 	ServiceTier  *BifrostServiceTier // "priority" | "flex" | nil (default)
