@@ -1,0 +1,48 @@
+name: Decisions compatibility
+
+on:
+  pull_request:
+    paths:
+      - 'core/**'
+      - 'framework/modelcatalog/**'
+      - 'plugins/governance/**'
+      - 'plugins/logging/**'
+      - 'transports/**'
+      - 'docs/openapi/**'
+      - '.github/workflows/decisions-compatibility.yml'
+  push:
+    branches: ['codex/decisions-api-compat']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: decisions-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENAI_API_KEY: ''
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version: '1.26.5'
+          cache-dependency-path: '**/go.sum'
+      - name: Use local modules
+        run: source .github/workflows/scripts/setup-go-workspace.sh
+      - name: Contract, policy, privacy, billing, and local HTTP tests
+        run: go test -race ./core/providers/openai ./transports/bifrost-http/integrations ./transports/bifrost-http/handlers ./plugins/logging ./plugins/governance ./framework/modelcatalog/datasheet -run '^TestDecisions' -count=1
+      - name: Relevant unit regressions
+        run: go test ./core/schemas ./core/providers/openai ./transports/bifrost-http/integrations ./plugins/logging ./framework/modelcatalog/datasheet
+      - name: Admission and HTTP middleware regressions
+        run: go test ./plugins/governance ./transports/bifrost-http/handlers -run 'Test(ConfiguredReservationEstimator|DurableCoordinator|DurableReservation|PostLLMHook|CorsMiddleware|TracingMiddleware)' -count=1
+      - name: Vet changed packages
+        run: go vet ./core/schemas ./core/providers/openai ./transports/bifrost-http/integrations ./transports/bifrost-http/handlers ./plugins/logging ./plugins/governance ./framework/modelcatalog/datasheet
+      - name: Bundle OpenAPI sources outside the checkout
+        run: |
+          python3 -m pip install 'PyYAML==6.0.3'
+          python3 docs/openapi/bundle.py --output /tmp/frankengate-decisions-openapi.json

@@ -21,6 +21,20 @@ func ExtractOpenAIPassthroughUsage(method, path string, reqBody, body []byte) *s
 	}
 
 	switch {
+	case path == "/decisions" || path == "/v1/decisions":
+		if !strings.EqualFold(method, "POST") || uniqueDecisionJSON(body) != nil {
+			return nil
+		}
+		var resp struct {
+			Usage *schemas.ResponsesResponseUsage `json:"usage"`
+		}
+		if sonic.Unmarshal(body, &resp) != nil || !validDecisionUsage(body, resp.Usage) {
+			return nil
+		}
+		u := resp.Usage
+		usage := buildOAIResponsesUsage(u, nil)
+		usage.LLMUsage.OpenAIDecisions = true
+		return usage
 	case strings.HasSuffix(path, "/chat/completions"),
 		strings.HasSuffix(path, "/completions"):
 		return extractOAIChatUsage(body)

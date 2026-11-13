@@ -185,6 +185,11 @@ func (c *CorsMiddleware) Middleware() schemas.BifrostHTTPMiddleware {
 				return strings.HasPrefix(string(ctx.RequestURI()), path)
 			}) == -1
 			if shouldLog {
+				suppressContent := integrations.IsOpenAIDecisionsHTTPPath(string(ctx.Path()))
+				target := string(ctx.RequestURI())
+				if suppressContent {
+					target = string(ctx.Path())
+				}
 				startTime := time.Now()
 				defer func() {
 					statusCode := ctx.Response.Header.StatusCode()
@@ -196,7 +201,7 @@ func (c *CorsMiddleware) Middleware() schemas.BifrostHTTPMiddleware {
 					}
 					logBuilder := logger.LogHTTPRequest(level, "request completed").
 						Str("http.method", string(ctx.Method())).
-						Str("http.target", string(ctx.RequestURI())).
+						Str("http.target", target).
 						Int("http.status_code", statusCode).
 						Int64("http.request_duration_ms", time.Since(startTime).Milliseconds()).
 						Str("http.remote_addr", ctx.RemoteAddr().String()).
@@ -211,7 +216,7 @@ func (c *CorsMiddleware) Middleware() schemas.BifrostHTTPMiddleware {
 					if requestID := string(ctx.Request.Header.Peek("x-request-id")); requestID != "" {
 						logBuilder = logBuilder.Str("request_id", requestID)
 					}
-					if cfg.dumpErrorsInConsoleLogs {
+					if cfg.dumpErrorsInConsoleLogs && !suppressContent {
 						if statusCode >= 400 && !ctx.Response.IsBodyStream() {
 							if body := ctx.Response.Body(); len(body) > 0 {
 								logBuilder = logBuilder.Str("http.error", string(body))
@@ -1331,7 +1336,11 @@ func (m *TracingMiddleware) Middleware() schemas.BifrostHTTPMiddleware {
 				tracer.ForceCleanupStreamAccumulator(traceID)
 			})
 			// Create root span for the HTTP request
-			spanCtx, rootSpan := tracer.StartSpan(ctx, string(ctx.RequestURI()), schemas.SpanKindHTTPRequest)
+			target := string(ctx.RequestURI())
+			if integrations.IsOpenAIDecisionsHTTPPath(string(ctx.Path())) {
+				target = string(ctx.Path())
+			}
+			spanCtx, rootSpan := tracer.StartSpan(ctx, target, schemas.SpanKindHTTPRequest)
 			if rootSpan != nil {
 				for name, value := range dimensions {
 					// "path" and "method" stay reserved for the standard http.* attributes.
@@ -1340,7 +1349,7 @@ func (m *TracingMiddleware) Middleware() schemas.BifrostHTTPMiddleware {
 					}
 				}
 				tracer.SetAttribute(rootSpan, "http.method", string(ctx.Method()))
-				tracer.SetAttribute(rootSpan, "http.url", string(ctx.RequestURI()))
+				tracer.SetAttribute(rootSpan, "http.url", target)
 				tracer.SetAttribute(rootSpan, "http.user_agent", string(ctx.Request.Header.UserAgent()))
 				// Set root span ID in context for child span creation
 				if spanID, ok := spanCtx.Value(schemas.BifrostContextKeySpanID).(string); ok {
