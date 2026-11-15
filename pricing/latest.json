@@ -1,7 +1,7 @@
 {
   "brand": "FrankenGate",
   "source": "https://getbifrost.ai/datasheet",
-  "retrieved_at": "2026-11-14T10:39:07Z",
+  "retrieved_at": "2026-11-15T11:11:41Z",
   "models": {
     "abliteration/abliterated-model": {
       "base_model": "abliterated-model",
@@ -7697,6 +7697,7 @@
       "deprecation_date": "2026-11-15",
       "deprecation_source": "https://learn.microsoft.com/en-us/azure/foundry/concepts/model-lifecycle-retirement",
       "input_cost_per_token": 0.0000015,
+      "is_deprecated": true,
       "max_input_tokens": 200000,
       "max_output_tokens": 100000,
       "mode": "responses",
@@ -8088,6 +8089,7 @@
       "deprecation_date": "2026-11-15",
       "deprecation_source": "https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirement-schedule",
       "input_cost_per_token": 0.00000165,
+      "is_deprecated": true,
       "mode": "responses",
       "output_cost_per_token": 0.0000066,
       "provider": "azure",
@@ -16651,6 +16653,7 @@
       "deprecation_date": "2026-11-15",
       "deprecation_source": "https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirement-schedule",
       "input_cost_per_token": 0.00000165,
+      "is_deprecated": true,
       "mode": "responses",
       "output_cost_per_token": 0.0000066,
       "provider": "azure",
