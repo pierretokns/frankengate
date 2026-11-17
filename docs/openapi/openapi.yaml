@@ -271,6 +271,14 @@ paths:
     $ref: './paths/inference/realtime.yaml#/realtime-sessions'
 
   # ==================== OpenAI Integration ====================
+  # Native Decisions beta (validated wire passthrough)
+  /v1/decisions:
+    $ref: './paths/integrations/openai/decisions.yaml#/decisions-v1'
+  /openai/v1/decisions:
+    $ref: './paths/integrations/openai/decisions.yaml#/decisions'
+  /openai/decisions:
+    $ref: './paths/integrations/openai/decisions.yaml#/decisions-openai'
+
   # Chat Completions
   /openai/v1/chat/completions:
     $ref: './paths/integrations/openai/chat.yaml#/chat-completions'
@@ -1340,6 +1348,18 @@ components:
       $ref: './schemas/inference/ocr.yaml#/OCRUsageInfo'
 
     # ==================== OpenAI Integration ====================
+    OpenAIDecisionsRequest:
+      $ref: './schemas/integrations/openai/decisions.yaml#/OpenAIDecisionsRequest'
+    OpenAIDecisionsResponse:
+      $ref: './schemas/integrations/openai/decisions.yaml#/OpenAIDecisionsResponse'
+    OpenAIDecisionMessage:
+      $ref: './schemas/integrations/openai/decisions.yaml#/OpenAIDecisionMessage'
+    OpenAIDecisionQuestion:
+      $ref: './schemas/integrations/openai/decisions.yaml#/OpenAIDecisionQuestion'
+    OpenAIDecisionAnswer:
+      $ref: './schemas/integrations/openai/decisions.yaml#/OpenAIDecisionAnswer'
+    OpenAIDecisionUsage:
+      $ref: './schemas/integrations/openai/decisions.yaml#/OpenAIDecisionUsage'
     OpenAIChatRequest:
       $ref: './schemas/integrations/openai/chat.yaml#/OpenAIChatRequest'
     OpenAIMessage:

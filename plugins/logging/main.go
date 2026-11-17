@@ -148,6 +148,9 @@ func sanitizeErrorForLogging(err *schemas.BifrostError, contentLoggingEnabled, s
 // ConvertToBifrostContext from allow_per_request_content_storage_override config).
 func (p *LoggerPlugin) contentLoggingEnabled(ctx *schemas.BifrostContext) bool {
 	if ctx != nil {
+		if suppress, _ := ctx.Value(schemas.BifrostContextKeySuppressContentLogging).(bool); suppress {
+			return false
+		}
 		if perRequestAllowed, _ := ctx.Value(schemas.BifrostContextKeyAllowPerRequestStorageOverride).(bool); perRequestAllowed {
 			if override, ok := ctx.Value(schemas.BifrostContextKeyDisableContentLogging).(bool); ok {
 				return !override
@@ -728,6 +731,12 @@ func (p *LoggerPlugin) PreLLMHook(ctx *schemas.BifrostContext, req *schemas.Bifr
 	}
 	if req.RequestType == schemas.RealtimeRequest {
 		initialData.Object = "realtime.turn"
+	}
+	if req.PassthroughRequest.IsOpenAIDecisions() {
+		initialData.Params = &schemas.PassthroughLogParams{
+			Method: req.PassthroughRequest.Method, Path: req.PassthroughRequest.Path,
+			Model: req.PassthroughRequest.Model,
+		}
 	}
 
 	if p.contentLoggingEnabled(ctx) {
