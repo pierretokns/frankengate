@@ -1,7 +1,7 @@
 {
   "brand": "FrankenGate",
   "source": "https://getbifrost.ai/datasheet",
-  "retrieved_at": "2026-11-23T13:10:35Z",
+  "retrieved_at": "2026-11-24T13:56:42Z",
   "models": {
     "abliteration/abliterated-model": {
       "base_model": "abliterated-model",
@@ -63267,6 +63267,7 @@
       "deprecation_date": "2026-11-24",
       "input_cost_per_token": 0.000005,
       "input_cost_per_token_batches": 0.0000025,
+      "is_deprecated": true,
       "max_input_tokens": 200000,
       "max_output_tokens": 64000,
       "mode": "chat",
@@ -63306,6 +63307,7 @@
       "deprecation_date": "2026-11-24",
       "input_cost_per_token": 0.000005,
       "input_cost_per_token_batches": 0.0000025,
+      "is_deprecated": true,
       "max_input_tokens": 200000,
       "max_output_tokens": 64000,
       "mode": "chat",
@@ -167005,6 +167007,7 @@
       "deprecation_source": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/claude/opus-4-5",
       "input_cost_per_token": 0.000005,
       "input_cost_per_token_batches": 0.0000025,
+      "is_deprecated": true,
       "max_input_tokens": 200000,
       "max_output_tokens": 64000,
       "mode": "chat",
@@ -167043,6 +167046,7 @@
       "deprecation_source": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/claude/opus-4-5",
       "input_cost_per_token": 0.000005,
       "input_cost_per_token_batches": 0.0000025,
+      "is_deprecated": true,
       "max_input_tokens": 200000,
       "max_output_tokens": 64000,
       "mode": "chat",
